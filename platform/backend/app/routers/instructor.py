@@ -28,7 +28,13 @@ from app.services.docker_manager import get_track_directory_name
 # Lab ZIP upload is an optional authoring capability; absent from editions
 # that do not ship it (the upload endpoint 404s when this import fails).
 try:
-    from app.services.lab_upload import validate_and_extract_lab_zip, generate_slug, ZipValidationError
+    from app.services.lab_upload import (
+        validate_and_extract_lab_zip,
+        generate_slug,
+        next_lab_number,
+        relocate_lab,
+        ZipValidationError,
+    )
     _LAB_UPLOAD_AVAILABLE = True
 except ImportError:
     _LAB_UPLOAD_AVAILABLE = False
@@ -402,9 +408,32 @@ async def upload_lab_zip(
     if not lab_name:
         raise HTTPException(status_code=400, detail="lab.yaml must have a 'name' field")
 
+    # A lab's directory name is its slug, and discovery reads the level and lab
+    # number from that name. Requiring a level here keeps uploads rediscoverable
+    # after a database rebuild instead of letting them silently disappear.
+    if level_id is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Choose a level for the exercise. The slug includes the level "
+                   "and lab number so the lab survives a database rebuild.",
+        )
+    level = db.query(Level).filter(Level.id == level_id).first()
+    if not level:
+        raise HTTPException(status_code=400, detail=f"Level {level_id} not found")
+    if not level.track or level.track.slug != track:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Level {level_id} does not belong to track '{track}'",
+        )
+
+    # Next free lab number in the level: max of sort_order and the number parsed
+    # out of existing slugs, so ordering stays unique even for legacy uploads
+    # that were stored with sort_order=0.
+    lab_num = next_lab_number(level, track)
+
     # Generate slug
     try:
-        slug = generate_slug(lab_name, track)
+        slug = generate_slug(lab_name, track, level.level_number, lab_num)
     except ZipValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -443,15 +472,6 @@ async def upload_lab_zip(
     scenario = lab_data.get("scenario", "")
     scenario_brief = (scenario[:150] + "...") if scenario and len(scenario) > 150 else scenario
 
-    # Validate level_id if provided
-    if level_id:
-        from app.models import Level
-        level = db.query(Level).filter(Level.id == level_id).first()
-        if not level:
-            # Clean up extracted files
-            shutil.rmtree(target_dir, ignore_errors=True)
-            raise HTTPException(status_code=400, detail=f"Level {level_id} not found")
-
     # Create Lab record
     lab = Lab(
         name=lab_data.get("name", slug),
@@ -472,7 +492,7 @@ async def upload_lab_zip(
         visibility="draft",
         created_by=current_user.id,
         is_active=True,
-        sort_order=0,
+        sort_order=lab_num,
     )
 
     # Set workbook if present
@@ -505,10 +525,10 @@ async def upload_lab_zip(
 
             # Derive chapter directory from track slug and exercise slug.
             # Convention: CH_<TRACK>_<Exercise_Name>
-            # e.g. track="web", slug="web-sql-injection" -> CH_WEB_Sql_Injection
-            short_name = slug
-            if short_name.startswith(track.lower() + "-"):
-                short_name = short_name[len(track) + 1:]
+            # e.g. track="web", slug="web-4-1-sql-injection" -> CH_WEB_Sql_Injection
+            short_name = re.sub(
+                rf"^{re.escape(track)}-\d+-\d+-", "", slug, count=1
+            )
             chapter_suffix = "_".join(
                 part.capitalize() for part in short_name.split("-") if part
             )
@@ -637,10 +657,30 @@ async def update_own_lab(
     # level_id: explicit null clears (moves to "Course Assessments" bucket); omit key to leave alone
     if 'level_id' in payload.model_fields_set:
         new_level_id = payload.level_id
+        new_level = None
         if new_level_id is not None:
             from app.models import Level
-            if not db.query(Level).filter(Level.id == new_level_id).first():
+            new_level = db.query(Level).options(
+                joinedload(Level.track)
+            ).filter(Level.id == new_level_id).first()
+            if not new_level:
                 raise HTTPException(status_code=400, detail=f"Level {new_level_id} not found")
+
+        # Labs created through the UI keep their level in the slug, because
+        # discovery reads it from the directory name. Move them so the next
+        # scan does not put them back in the old level. Discovered labs
+        # (created_by is None) are managed from disk and keep their slug.
+        if (
+            _LAB_UPLOAD_AVAILABLE
+            and lab.created_by is not None
+            and new_level is not None
+            and lab.level_id != new_level.id
+        ):
+            try:
+                relocate_lab(lab, new_level, db)
+            except ZipValidationError as e:
+                raise HTTPException(status_code=400, detail=str(e))
+
         lab.level_id = new_level_id
 
     db.commit()

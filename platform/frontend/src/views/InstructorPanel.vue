@@ -731,7 +731,7 @@
               <option value="advanced">Advanced</option>
             </select>
             <button v-if="exerciseAuthoring" class="btn btn--primary btn--sm" @click="router.push('/studio')" title="Browse templates, generate with AI, and review staged exercises">Exercise Studio</button>
-            <button v-if="exerciseAuthoring" class="btn btn--success btn--sm" @click="showUploadModal = true">+ Upload Exercise</button>
+            <button v-if="exerciseAuthoring" class="btn btn--success btn--sm" @click="openUploadModal">+ Upload Exercise</button>
           </div>
 
           <div class="results-count">
@@ -1006,12 +1006,25 @@ services:
             <div class="form-row-inline">
               <div class="form-group" style="flex:1">
                 <label>Track</label>
-                <select aria-label="Track" v-model="uploadTrack" class="form-input">
+                <select aria-label="Track" v-model="uploadTrack" @change="uploadLevelId = null" class="form-input">
                   <option value="">Select track...</option>
-                  <option v-for="t in trackSummaries" :key="t.slug" :value="t.slug">{{ t.name }}</option>
+                  <option v-for="t in trackCatalog" :key="t.slug" :value="t.slug">{{ t.name }}</option>
+                </select>
+              </div>
+              <div v-if="uploadTrack" class="form-group" style="flex:1">
+                <label>Level</label>
+                <select aria-label="Level" v-model="uploadLevelId" class="form-input">
+                  <option :value="null">Select level...</option>
+                  <option v-for="lv in uploadLevelOptions" :key="lv.id" :value="lv.id">
+                    Level {{ lv.level_number }} - {{ lv.name }}
+                  </option>
                 </select>
               </div>
             </div>
+            <p class="upload-hint">
+              The level and lab number become part of the exercise slug, so the
+              lab keeps its place in the curriculum after a database rebuild.
+            </p>
             <div v-if="uploadError" class="upload-error">{{ uploadError }}</div>
             <div v-if="uploadWarnings.length" class="upload-warnings">
               <div v-for="(w, i) in uploadWarnings" :key="i" class="upload-warning-item">⚠ {{ w }}</div>
@@ -1020,7 +1033,7 @@ services:
         </div>
         <div class="modal-footer">
           <button class="btn btn--secondary btn--sm" @click="showUploadModal = false; resetUploadForm()">Cancel</button>
-          <button class="btn btn--success btn--sm" @click="submitUpload" :disabled="uploading || !uploadFile || !uploadTrack">
+          <button class="btn btn--success btn--sm" @click="submitUpload" :disabled="uploading || !uploadFile || !uploadTrack || !uploadLevelId">
             {{ uploading ? 'Uploading...' : 'Upload' }}
           </button>
         </div>
@@ -2136,6 +2149,15 @@ async function quickUnassignLab(labId, courseId, courseName) {
 
 // ---- Upload functions ----
 
+async function openUploadModal() {
+  showUploadModal.value = true
+  try {
+    await ensureTrackCatalog()
+  } catch (e) {
+    uploadError.value = 'Failed to load tracks and levels'
+  }
+}
+
 function handleFileSelect(event) {
   const file = event.target.files[0]
   if (!file) { uploadFile.value = null; uploadPreview.value = null; return }
@@ -2146,8 +2168,8 @@ function handleFileSelect(event) {
 }
 
 async function submitUpload() {
-  if (!uploadFile.value || !uploadTrack.value) {
-    uploadError.value = 'Please select a ZIP file and a track'
+  if (!uploadFile.value || !uploadTrack.value || !uploadLevelId.value) {
+    uploadError.value = 'Please select a ZIP file, a track, and a level'
     return
   }
   uploading.value = true
@@ -2214,6 +2236,11 @@ const categorizeLab = ref(null)
 const categorizeTrackId = ref(null)
 const categorizeLevelId = ref(null)
 const categorizeSaving = ref(false)
+const uploadLevelOptions = computed(() => {
+  if (!uploadTrack.value) return []
+  const t = trackCatalog.value.find(t => t.slug === uploadTrack.value)
+  return t ? t.levels : []
+})
 const categorizeLevelOptions = computed(() => {
   if (!categorizeTrackId.value) return []
   const t = trackCatalog.value.find(t => t.id === categorizeTrackId.value)
@@ -3771,6 +3798,12 @@ onUnmounted(() => {
   padding: 0.375rem 0.5rem;
   background: var(--bg-primary);
   border-radius: 4px;
+}
+.upload-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 .upload-error {
   color: #f87171;

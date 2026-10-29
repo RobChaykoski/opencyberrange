@@ -5,12 +5,14 @@ Handles the complete pipeline from receiving a ZIP file to having
 validated files on disk ready for Docker to build and run.
 """
 
+import glob
 import io
 import os
 import re
 import shutil
 import stat
 import zipfile
+from typing import Optional
 
 import yaml
 
@@ -20,32 +22,160 @@ MAX_EXTRACTED_SIZE = 500 * 1024 * 1024  # 500 MB uncompressed
 REQUIRED_FILES = ["lab.yaml", "docker-compose.yml"]
 VALID_DIFFICULTIES = {"beginner", "intermediate", "advanced"}
 
+# Must stay in sync with SLUG_PATTERN in scripts/validate-lab.py and
+# parse_lab_slug() in app/scripts/discover_labs.py. Discovery reads the level
+# and lab number from the directory name, so a slug without them is skipped on
+# the next database rebuild.
+SLUG_PATTERN = re.compile(
+    r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+|final-\d+)-[a-z0-9-]+$"
+)
+MAX_SLUG_LENGTH = 80
+
 
 class ZipValidationError(Exception):
     """Raised when ZIP validation fails."""
     pass
 
 
-def generate_slug(name: str, track: str) -> str:
-    """Generate a URL-safe slug from a lab name and track.
+def _slugify(text: str) -> str:
+    """Lowercase, hyphen-separated slug fragment."""
+    base = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return re.sub(r"-{2,}", "-", base)
 
-    Returns e.g. 'linux-my-ssh-exercise' from name='My SSH Exercise', track='linux'.
+
+def generate_slug(name: str, track: str, level_number: int, lab_num: int) -> str:
+    """Generate a discovery-compatible slug from a lab name, track and level.
+
+    Returns e.g. 'web-4-1-my-ssh-exercise' from name='My SSH Exercise',
+    track='web', level_number=4, lab_num=1.
+
+    The level and lab number are part of the slug because discovery parses them
+    from the directory name. Without them the uploaded lab works until the next
+    database rebuild, then silently disappears.
     """
-    # Lowercase and replace non-alphanumeric with hyphens
-    base = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
-    # Remove consecutive hyphens
-    base = re.sub(r"-{2,}", "-", base)
-    slug = f"{track.lower()}-{base}"
-    # Validate format
-    if not re.match(r"^[a-z][a-z0-9-]*$", slug):
+    track_slug = _slugify(track)
+    if not track_slug:
+        raise ZipValidationError(f"Track '{track}' does not produce a usable slug")
+    try:
+        level_number = int(level_number)
+        lab_num = int(lab_num)
+    except (TypeError, ValueError):
+        raise ZipValidationError("Level and lab number must be integers")
+    if level_number < 1 or lab_num < 1:
+        raise ZipValidationError("Level and lab number must be positive")
+
+    prefix = f"{track_slug}-{level_number}-{lab_num}-"
+    base = _slugify(name)
+    if not base:
+        raise ZipValidationError(
+            f"Lab name '{name}' does not produce a usable slug. Use at least "
+            "one letter or number."
+        )
+
+    # Cap the total length by trimming the descriptive tail, never the prefix.
+    available = MAX_SLUG_LENGTH - len(prefix)
+    if available < 1:
+        raise ZipValidationError(
+            f"Track and level produce a slug prefix that is too long: '{prefix}'"
+        )
+    base = base[:available].rstrip("-") or "exercise"
+
+    slug = prefix + base
+    if not SLUG_PATTERN.match(slug):
         raise ZipValidationError(
             f"Generated slug '{slug}' is invalid. Lab name must start with "
             f"a letter and contain only letters, numbers, spaces, and hyphens."
         )
-    # Cap length
-    if len(slug) > 80:
-        slug = slug[:80].rstrip("-")
     return slug
+
+
+def slug_base(slug: str, track_slug: str) -> str:
+    """Descriptive tail of a conforming slug ('web-4-1-xss' -> 'xss')."""
+    match = re.match(rf"^{re.escape(track_slug)}-\d+-\d+-(.+)$", slug or "")
+    return match.group(1) if match else ""
+
+
+def next_lab_number(level, track_slug: str) -> int:
+    """Next free lab number in *level*.
+
+    Uses both ``sort_order`` and the number embedded in existing slugs so
+    legacy uploads stored with ``sort_order=0`` do not collide.
+    """
+    pattern = re.compile(rf"^{re.escape(track_slug)}-{level.level_number}-(\d+)-")
+    used = [lab.sort_order or 0 for lab in level.labs]
+    for lab in level.labs:
+        match = pattern.match(lab.slug or "")
+        if match:
+            used.append(int(match.group(1)))
+    return max(used, default=0) + 1
+
+
+def relocate_lab(lab, new_level, db, labs_dir: Optional[str] = None) -> str:
+    """Move a UI-created lab to *new_level*, renaming its directory and slug.
+
+    Discovery derives a lab's level from its directory name, so a lab whose
+    level changes must change its slug too, or the next scan puts it back where
+    it was. Returns the new slug; the caller commits *lab*.
+    """
+    track = new_level.track
+    if track is None:
+        raise ZipValidationError("Level has no track")
+
+    old_track_slug = ""
+    if lab.level is not None and lab.level.track is not None:
+        old_track_slug = lab.level.track.slug
+    if not old_track_slug:
+        old_track_slug = (lab.slug or "").split("-")[0]
+
+    base = slug_base(lab.slug, old_track_slug) or _slugify(lab.name)
+    if not base:
+        raise ZipValidationError(
+            f"Lab name '{lab.name}' does not produce a usable slug"
+        )
+
+    lab_num = next_lab_number(new_level, track.slug)
+    new_slug = generate_slug(base, track.slug, new_level.level_number, lab_num)
+    if new_slug == lab.slug:
+        return new_slug
+
+    clash = db.query(type(lab)).filter(
+        type(lab).slug == new_slug,
+        type(lab).id != lab.id,
+    ).first()
+    if clash:
+        raise ZipValidationError(f"Slug '{new_slug}' is already in use")
+
+    # A running session still points at the old directory; move it later.
+    from app.models import LabSession
+    active = db.query(LabSession).filter(
+        LabSession.lab_id == lab.id,
+        LabSession.status.in_(["starting", "running", "stopping"]),
+    ).count()
+    if active:
+        raise ZipValidationError(
+            f"Cannot move the exercise while {active} session(s) are active"
+        )
+
+    labs_root = labs_dir or os.environ.get("LABS_DIR", "/labs")
+    old_dir = None
+    for candidate in glob.glob(os.path.join(labs_root, "*", lab.slug or "")):
+        if os.path.isdir(candidate):
+            old_dir = candidate
+            break
+
+    if old_dir:
+        from app.services.docker_manager import get_track_directory_name
+        new_dir = os.path.join(
+            labs_root, get_track_directory_name(track.slug), new_slug
+        )
+        if os.path.exists(new_dir):
+            raise ZipValidationError(f"Directory already exists: {new_dir}")
+        os.makedirs(os.path.dirname(new_dir), exist_ok=True)
+        os.rename(old_dir, new_dir)
+
+    lab.slug = new_slug
+    lab.sort_order = lab_num
+    return new_slug
 
 
 def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:

@@ -862,10 +862,33 @@ async def update_lab(
     # level_id: explicit null clears (moves to "Course Assessments" bucket); omit key to leave alone
     if 'level_id' in request.model_fields_set:
         new_level_id = request.level_id
+        new_level = None
         if new_level_id is not None:
-            from app.models import Level
-            if not db.query(Level).filter(Level.id == new_level_id).first():
+            new_level = db.query(Level).options(
+                joinedload(Level.track)
+            ).filter(Level.id == new_level_id).first()
+            if not new_level:
                 raise HTTPException(status_code=400, detail=f"Level {new_level_id} not found")
+
+        # Labs created through the UI keep their level in the slug, because
+        # discovery reads it from the directory name. Move them so the next
+        # scan does not put them back in the old level. Discovered labs
+        # (created_by is None) are managed from disk and keep their slug.
+        if (
+            lab.created_by is not None
+            and new_level is not None
+            and lab.level_id != new_level.id
+        ):
+            try:
+                from app.services.lab_upload import relocate_lab, ZipValidationError
+            except ImportError:
+                relocate_lab = None
+            if relocate_lab is not None:
+                try:
+                    relocate_lab(lab, new_level, db)
+                except ZipValidationError as e:
+                    raise HTTPException(status_code=400, detail=str(e))
+
         lab.level_id = new_level_id
 
     db.commit()
