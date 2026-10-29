@@ -2495,9 +2495,11 @@ fi
 
     RANGEBOX_IMAGE = os.environ.get("RANGEBOX_IMAGE", "opencyberrange/rangebox:lite")
     UBUNTUBOX_IMAGE = os.environ.get("UBUNTUBOX_IMAGE", "opencyberrange/ubuntubox:latest")
+    REMNUX_IMAGE = os.environ.get("REMNUX_IMAGE", "opencyberrange/remnuxbox:noble")
     RANGEBOX_IMAGES = {
         "kali": RANGEBOX_IMAGE,
         "ubuntu": UBUNTUBOX_IMAGE,
+        "remnux": REMNUX_IMAGE,
     }
     RANGEBOX_MEM_LIMIT = os.environ.get("RANGEBOX_MEM_LIMIT", "2g")
     RANGEBOX_CPU_QUOTA = int(os.environ.get("RANGEBOX_CPU_QUOTA", "50000"))  # 0.5 CPU
@@ -2615,6 +2617,20 @@ fi
             return self.RANGEBOX_IMAGES[image]
         return image or self.RANGEBOX_IMAGE
 
+    @staticmethod
+    def _rangebox_image_shorthand(image: Optional[str]) -> str:
+        """Map a RangeBox shorthand or image name to its display shorthand.
+
+        Accepts either the UI shorthand ("kali", "ubuntu", "remnux") or a full
+        image reference (e.g. "opencyberrange/remnuxbox:noble") and returns the
+        shorthand used for the container hostname and the status payload.
+        """
+        name = str(image or "").strip().lower()
+        for shorthand in ("remnux", "ubuntu"):
+            if shorthand in name:
+                return shorthand
+        return "kali"
+
     def _template_instance_env(self, lab_slug: str) -> dict:
         """
         Return the per-instance FLAG / CRED_* env vars for a lab that was
@@ -2730,7 +2746,7 @@ fi
         Spawn a RangeBox container on the lab network.
 
         Args:
-            image: Docker image or shorthand ("kali", "ubuntu"). Defaults to RANGEBOX_IMAGE.
+            image: Docker image or shorthand ("kali", "ubuntu", "remnux"). Defaults to RANGEBOX_IMAGE.
 
         Returns the container ID on success, or None on failure.
         Raises RangeBoxCapacityError if the server is at capacity.
@@ -2860,7 +2876,7 @@ fi
         except docker.errors.ImageNotFound:
             logger.error(
                 f"RangeBox image '{resolved_image}' not found. "
-                f"Build it with: docker build -t {resolved_image} RangeBox/ (or UbuntuBox/)"
+                f"Build it with: docker build -t {resolved_image} RangeBox/, UbuntuBox/, or RemnuxBox/"
             )
             return None
         except Exception as e:
@@ -3279,7 +3295,7 @@ fi
         Spawn a standalone RangeBox (not tied to any lab session).
 
         Args:
-            image: Docker image or shorthand ("kali", "ubuntu"). Defaults to RANGEBOX_IMAGE.
+            image: Docker image or shorthand ("kali", "ubuntu", "remnux"). Defaults to RANGEBOX_IMAGE.
             username: Platform username to display in shell prompt (e.g. "instructor@ocr").
 
         One per user. Returns the container ID on success, or None.
@@ -3328,7 +3344,7 @@ fi
             # by Docker. Use the OS name, not "ocr": a self-referencing "ocr"
             # entry looked like a planted target inside the pentest box and
             # leaked the platform brand.
-            box_hostname = "ubuntu" if str(image or "").lower().startswith("ubuntu") else "kali"
+            box_hostname = self._rangebox_image_shorthand(image)
             container = self.client.containers.run(
                 image=resolved_image,
                 name=container_name,
@@ -3406,7 +3422,7 @@ fi
         except docker.errors.ImageNotFound:
             logger.error(
                 f"RangeBox image '{resolved_image}' not found. "
-                f"Build it with: docker build -t {resolved_image} RangeBox/ (or UbuntuBox/)"
+                f"Build it with: docker build -t {resolved_image} RangeBox/, UbuntuBox/, or RemnuxBox/"
             )
             return None
         except Exception as e:
@@ -3465,10 +3481,7 @@ fi
             container = self.client.containers.get(container_name)
             # Determine image shorthand from label
             image_label = container.labels.get("ocr.image", "")
-            if "ubuntubox" in image_label.lower():
-                image_name = "ubuntu"
-            else:
-                image_name = "kali"
+            image_name = self._rangebox_image_shorthand(image_label)
 
             # Parse expiration from label
             expires_at_str = container.labels.get("ocr.expires_at", "")

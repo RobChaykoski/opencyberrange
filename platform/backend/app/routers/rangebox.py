@@ -99,7 +99,7 @@ async def rangebox_capacity(
 @router.post("/standalone/launch")
 async def standalone_rangebox_launch(
     current_user: User = Depends(get_current_active_user),
-    image: str = Query(default=None, description="Image shorthand: 'kali' or 'ubuntu'"),
+    image: str = Query(default=None, description="Image shorthand: 'kali', 'ubuntu', or 'remnux'"),
 ):
     """Launch a standalone RangeBox (not tied to any lab session)."""
     try:

@@ -513,7 +513,7 @@ const activeLab = ref(null)
 const { copied, copyText } = useClipboard()
 
 const loading = ref(false)
-const launchingImage = ref(null)  // which image button was clicked: null, 'kali', or 'ubuntu'
+const launchingImage = ref(null)  // which image button was clicked: null, 'kali', 'ubuntu', or 'remnux'
 const activeRangeboxImage = ref('kali')  // persists which image is running after launch
 
 // Flag submission

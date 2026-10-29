@@ -42,7 +42,7 @@ flowchart LR
     Bridge --> Tgt[Lab targets 10.100.x]
 ```
 
-**RangeBox** is a Kali or Ubuntu desktop that runs in your browser, already on the lab network. Launch it from the panel and it opens in a dedicated tab. Its toolbar offers Reconnect, Clipboard send and get, Minimize, and Fullscreen. You need no VPN for RangeBox.
+**RangeBox** is a Kali, Ubuntu, or REMnux desktop that runs in your browser, already on the lab network. Pick the image you need before you launch: Kali for general pentesting, Ubuntu for a plain Linux environment, and REMnux for malware analysis and reverse engineering. Launch it from the panel and it opens in a dedicated tab. Its toolbar offers Reconnect, Clipboard send and get, Minimize, and Fullscreen. You need no VPN for RangeBox.
 
 **Your own machine** reaches the same targets over the WireGuard tunnel. Use this when you prefer your local tools.
 

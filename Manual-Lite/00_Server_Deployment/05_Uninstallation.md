@@ -34,12 +34,14 @@ flowchart TD
    sudo rm -rf ~/opencyberrange
    ```
 
-2. Remove the lab base images you no longer need, such as the RangeBox and UbuntuBox images:
+2. Remove the lab base images you no longer need, such as the RangeBox, UbuntuBox, and RemnuxBox images:
 
    ```bash
-   docker image ls | grep -E 'rangebox|ubuntubox'
+   docker image ls | grep -E 'rangebox|ubuntubox|remnuxbox'
    docker image rm <image-id>
    ```
+
+   RemnuxBox is the largest of the three: expect roughly 14 GB on disk for that image alone.
 
 3. Disable the platform and helper systemd units so nothing re-creates firewall rules on the next boot:
 

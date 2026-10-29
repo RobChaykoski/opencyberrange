@@ -745,7 +745,12 @@ build_and_start() {
     if [ -d "$REPO_DIR/UbuntuBox" ]; then
         log "Building UbuntuBox image (Ubuntu desktop)..."
         docker build -t opencyberrange/ubuntubox:latest "$REPO_DIR/UbuntuBox/" || \
-            warn "UbuntuBox build failed — this is optional"
+            warn "UbuntuBox build failed - this is optional"
+    fi
+    if [ -d "$REPO_DIR/RemnuxBox" ]; then
+        log "Building RemnuxBox image (REMnux analysis desktop, ~14 GB on disk)..."
+        docker build -t opencyberrange/remnuxbox:noble "$REPO_DIR/RemnuxBox/" || \
+            warn "RemnuxBox build failed - this is optional"
     fi
 
     log "${GREEN}✓ Containers built and started${NC}"

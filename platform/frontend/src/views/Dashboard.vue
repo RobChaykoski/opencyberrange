@@ -112,6 +112,11 @@
                     :class="{ 'image-toggle__btn--active': rangeboxImage === 'ubuntu' }"
                     @click="rangeboxImage = 'ubuntu'"
                   >Ubuntu</button>
+                  <button
+                    class="image-toggle__btn"
+                    :class="{ 'image-toggle__btn--active': rangeboxImage === 'remnux' }"
+                    @click="rangeboxImage = 'remnux'"
+                  >REMnux</button>
                 </div>
               </div>
             </div>
@@ -872,7 +877,7 @@ onMounted(() => {
   transition: all 0.2s;
 }
 
-.image-toggle__btn:first-child {
+.image-toggle__btn:not(:last-child) {
   border-right: 1px solid var(--border-color);
 }
 

@@ -117,7 +117,7 @@ const statusLabel = computed(() => STATUS_LABELS[connectionState.value] || conne
 
 const imageDisplayName = computed(() => {
   if (!props.imageName) return ''
-  const names = { kali: 'Kali', ubuntu: 'Ubuntu' }
+  const names = { kali: 'Kali', ubuntu: 'Ubuntu', remnux: 'REMnux' }
   return names[props.imageName.toLowerCase()] || props.imageName
 })
 

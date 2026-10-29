@@ -185,7 +185,7 @@ async def spawn_lab(
     except Exception:
         pass
     rangebox_enabled = body.get("rangebox", False)
-    rangebox_image = body.get("rangebox_image", None)  # "kali" or "ubuntu"
+    rangebox_image = body.get("rangebox_image", None)  # "kali", "ubuntu", or "remnux"
     # Backward compatibility: clients that pass {"wait": true} get the old
     # blocking behavior where the response arrives once the lab is up.
     wait_for_ready = bool(body.get("wait", False))

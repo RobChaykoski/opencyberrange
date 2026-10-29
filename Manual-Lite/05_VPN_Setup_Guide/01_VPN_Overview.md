@@ -15,7 +15,7 @@ Every lab runs on an isolated network that is not exposed to the public internet
 
 The VPN Configuration card lets you download a WireGuard configuration file, install WireGuard locally, and bring up the tunnel. Your own terminal, browser, and tools then reach the lab targets directly. You need local administrator or sudo rights to install WireGuard and raise the interface.
 
-The RangeBox card launches a Kali or Ubuntu desktop that runs in the platform and appears in your browser tab. No VPN, no installs, and no admin rights on your own machine. RangeBox is capacity limited: the card shows running sessions against the maximum, and the launch button is disabled when the pool is full.
+The RangeBox card launches a Kali, Ubuntu, or REMnux desktop that runs in the platform and appears in your browser tab. No VPN, no installs, and no admin rights on your own machine. RangeBox is capacity limited: the card shows running sessions against the maximum, and the launch button is disabled when the pool is full.
 
 ## VPN data path
 

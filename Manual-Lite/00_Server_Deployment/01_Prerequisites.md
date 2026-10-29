@@ -21,9 +21,11 @@ CPU core count matters beyond raw throughput: the backend computes its worker co
 
 Prebuilt lab images consume roughly 200 GB on a production host. An evaluation install that builds images on demand fits in 100 GB.
 
+The optional REMnux RangeBox image is the largest single artifact: roughly 6 GB to download and 14 GB on disk. The installer builds it after RangeBox and UbuntuBox and treats a failure as non-fatal, so add its footprint to the disk budget only if you plan to offer REMnux to students.
+
 ## Memory and RangeBox capacity
 
-RAM is the resource that decides how large a class the host can serve at once, and most of it goes to RangeBoxes, the in-browser Kali and Ubuntu desktops students use when they skip the VPN. Each tenant has a predictable footprint:
+RAM is the resource that decides how large a class the host can serve at once, and most of it goes to RangeBoxes, the in-browser Kali, Ubuntu, and REMnux desktops students use when they skip the VPN. Each tenant has a predictable footprint:
 
 | Tenant | Approximate RAM | When it runs |
 |--------|-----------------|--------------|
