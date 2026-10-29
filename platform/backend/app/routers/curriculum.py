@@ -531,13 +531,13 @@ async def verify_certificate(
     certificate_id: str,
     db: Session = Depends(get_db),
 ):
-    \"\"\"Public verification endpoint for a certificate ID.
+    """Public verification endpoint for a certificate ID.
 
     Returns whether the ID matches the deterministic format issued by the
     platform. Detailed recipient/level data is only returned when a matching
     user/level can be resolved; otherwise the certificate is reported as
     unverifiable.
-    \"\"\"
+    """
     # Parse the certificate id: OCR-<TRACK>-L<NN>-<DIGEST>
     import re as _re
     m = _re.match(r"^OCR-([A-Z0-9]{1,8})-L(\d{2})-([A-F0-9]{10})$", certificate_id)
