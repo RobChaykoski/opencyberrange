@@ -19,6 +19,11 @@
     "namespace": "range",
     "serve_path": "/wiki/range/netfor/"
   },
+  "ot": {
+    "auth": "student",
+    "namespace": "range",
+    "serve_path": "/wiki/range/ot/"
+  },
   "webpt": {
     "auth": "student",
     "namespace": "range",

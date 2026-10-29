@@ -18,6 +18,12 @@
     "expected_auth": "student"
   },
   {
+    "slug": "ot",
+    "namespace": "range",
+    "serve_path": "/wiki/range/ot/",
+    "expected_auth": "student"
+  },
+  {
     "slug": "webpt",
     "namespace": "range",
     "serve_path": "/wiki/range/webpt/",

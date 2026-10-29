@@ -18,6 +18,12 @@
       "docs_dir": "Workbook",
       "theme": "deep purple"
     },
+    "ot": {
+      "auth": "student",
+      "config": "mkdocs-ot.yml",
+      "docs_dir": "Workbook",
+      "theme": "green"
+    },
     "webpt": {
       "auth": "student",
       "config": "mkdocs-webpt.yml",

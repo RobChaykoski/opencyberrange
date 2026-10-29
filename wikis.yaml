@@ -24,6 +24,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: deep orange
+  ot:
+    config: mkdocs-ot.yml
+    docs_dir: Workbook
+    auth: student
+    theme: green
 reference:
   manual:
     config: mkdocs-manual-lite.yml

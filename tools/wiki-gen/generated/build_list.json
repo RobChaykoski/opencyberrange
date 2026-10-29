@@ -23,6 +23,12 @@
     "namespace": "range",
     "site_dir": "_site_netfor"
   },
+  "ot": {
+    "config": "mkdocs-ot.yml",
+    "docs_dir": "Workbook",
+    "namespace": "range",
+    "site_dir": "_site_ot"
+  },
   "webpt": {
     "config": "mkdocs-webpt.yml",
     "docs_dir": "Workbook",
