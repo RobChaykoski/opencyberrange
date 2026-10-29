@@ -9,6 +9,7 @@ from typing import List
 from datetime import datetime, timezone, timedelta
 import os
 import logging
+import tempfile
 
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -37,6 +38,7 @@ from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCa
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
+from app.services.file_lock import open_locked
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -1481,29 +1483,26 @@ async def get_sessions_health(
 
 # Track which lab the admin is currently impersonating.
 # Stored in a shared JSON file so all uvicorn workers see the same state.
-import json as _json, fcntl as _fcntl
+import json as _json
 
-_IMPERSONATION_FILE = "/tmp/ocr_admin_impersonation.json"
+_IMPERSONATION_FILE = os.path.join(
+    tempfile.gettempdir(), "ocr_admin_impersonation.json"
+)
 
 
 def _read_impersonation_store() -> dict:
     """Read the shared impersonation state (worker-safe)."""
     try:
-        with open(_IMPERSONATION_FILE, "r") as f:
-            _fcntl.flock(f, _fcntl.LOCK_SH)
-            data = _json.load(f)
-            _fcntl.flock(f, _fcntl.LOCK_UN)
-            return data
+        with open_locked(_IMPERSONATION_FILE, "r") as f:
+            return _json.load(f)
     except (FileNotFoundError, _json.JSONDecodeError):
         return {}
 
 
 def _write_impersonation_store(data: dict):
     """Write the shared impersonation state (worker-safe)."""
-    with open(_IMPERSONATION_FILE, "w") as f:
-        _fcntl.flock(f, _fcntl.LOCK_EX)
+    with open_locked(_IMPERSONATION_FILE, "w") as f:
         _json.dump(data, f)
-        _fcntl.flock(f, _fcntl.LOCK_UN)
 
 
 class _AdminImpersonation:
