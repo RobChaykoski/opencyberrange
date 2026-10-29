@@ -30,13 +30,16 @@ Open an issue with the `enhancement` label describing:
 
 ### Exercise Contributions
 
-New exercise scenarios are especially welcome. Each exercise is a self-contained directory with a `lab.yaml`, a `docker-compose.yml`, and its container build files, so the simplest starting point is to copy an existing lab and adapt it.
+New exercise scenarios are especially welcome. Each exercise is a self-contained directory with a `lab.yaml`, a `docker-compose.yml`, and its container build files.
 
 To contribute an exercise:
-1. Follow the directory structure of an existing lab
-2. Build and test locally with `docker compose up`
-3. Validate with `python3 scripts/validate-lab.py labs/{Track}/{slug}/`
-4. Submit a pull request or upload via the Instructor Panel
+1. Scaffold it with the generator: `python3 scripts/new-lab.py --track web --level 4 --name "Reflected XSS"`. Run it with `--list` first to see which levels are seeded and which are still empty.
+2. Fill in `lab.yaml` and replace the placeholder target in `containers/target/`.
+3. Build and test locally with `docker compose up`.
+4. Validate with `python3 scripts/validate-lab.py platform/labs/{Track}/{slug}/` (the generator runs this for you).
+5. Submit a pull request or upload the ZIP via the Instructor Panel.
+
+New labs are written as `visibility: draft`, so they stay out of the student curriculum and out of the prerequisite chain until you are ready to publish them. The generator also refuses to reuse a lab number within a level, so new exercises sort after the existing ones instead of tying with them. Run **Admin -> Scan for Exercises** (or `python /app/app/scripts/discover_labs.py` in the backend container) to load the lab after adding it.
 
 ### Documentation
 
