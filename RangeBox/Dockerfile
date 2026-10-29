@@ -41,6 +41,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     enum4linux smbclient smbmap dnsrecon \
     # Active Directory & Windows
     netexec evil-winrm \
+    # Exploit database (searchsploit)
+    exploitdb \
     # Exploitation
     sqlmap \
     # Remote access
@@ -77,6 +79,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Browser for web exploitation labs
     firefox-esr \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Backwards-compat alias: crackmapexec was renamed to netexec in Kali.
+RUN if command -v nxc >/dev/null 2>&1 && [ ! -e /usr/bin/crackmapexec ]; then ln -s "$(command -v nxc)" /usr/bin/crackmapexec; fi
 
 # ── Layer 3: Python tools ──────────────────────────────────────────────
 RUN pip3 install --no-cache-dir --break-system-packages \
