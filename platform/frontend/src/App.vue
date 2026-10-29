@@ -306,4 +306,25 @@ body {
     flex-direction: column;
   }
 }
+
+/* Printing a certificate should produce only the certificate, not the app
+   chrome around it. Certificate.vue hides its own buttons. */
+@media print {
+  .sidebar,
+  .theme-toggle,
+  .impersonation-banner,
+  .tour-overlay {
+    display: none !important;
+  }
+
+  .app-root,
+  .main-content {
+    display: block !important;
+    overflow: visible !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+  }
+}
 </style>

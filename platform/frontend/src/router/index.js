@@ -62,6 +62,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/certificate/:trackSlug/:levelId',
+    name: 'Certificate',
+    component: () => import('../views/Certificate.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/exercises/:trackSlug',
     name: 'TrackDetail',
     component: () => import('../views/TrackDetail.vue'),

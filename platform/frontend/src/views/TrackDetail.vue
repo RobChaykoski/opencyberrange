@@ -60,6 +60,18 @@
             </div>
           </div>
           <div class="level-header__right">
+            <button
+              v-if="level.is_complete"
+              class="level-certificate-btn"
+              title="Print a certificate for this level"
+              @click.stop="openCertificate(level)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M8.2 13.3 7 22l5-3 5 3-1.2-8.7"/>
+              </svg>
+              Certificate
+            </button>
             <span class="level-progress">{{ level.completed_labs }}/{{ level.total_labs }}</span>
             <div class="level-progress-ring" :class="{ 'level-progress-ring--complete': level.is_complete }">
               <svg viewBox="0 0 36 36">
@@ -794,6 +806,11 @@ const openWorkbookForLab = (lab) => {
   }
 }
 
+const openCertificate = (level) => {
+  if (!track.value?.slug || !level?.id) return
+  router.push(`/certificate/${track.value.slug}/${level.id}`)
+}
+
 const openActiveLab = async (lab) => {
   try {
     const token = localStorage.getItem('token')
@@ -1426,6 +1443,32 @@ watch(timeRemaining, (val) => {
 .level-progress {
   font-size: 0.875rem;
   color: var(--text-secondary);
+}
+
+.level-certificate-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(176, 141, 60, 0.5);
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.level-certificate-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.level-certificate-btn:hover {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: #b45309;
 }
 
 .level-progress-ring {

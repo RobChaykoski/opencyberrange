@@ -2451,6 +2451,14 @@ async def create_lab(
     if scenario:
         scenario_brief = scenario[:150] + "..." if len(scenario) > 150 else scenario
 
+    # Place new labs after the existing ones in the level. Writing 0 here used
+    # to tie the new lab with the first lab in the level, which made sequential
+    # unlocking order depend on database row order.
+    max_order = db.query(func.max(Lab.sort_order)).filter(
+        Lab.level_id == payload.level_id
+    ).scalar()
+    next_order = (max_order if max_order is not None else 0) + 1
+
     lab = Lab(
         name=name,
         slug=slug,
@@ -2469,7 +2477,7 @@ async def create_lab(
         flag_hash=flag_hash,
         visibility=visibility,
         is_active=True,
-        sort_order=0,
+        sort_order=next_order,
     )
     db.add(lab)
     db.commit()

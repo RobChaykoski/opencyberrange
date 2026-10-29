@@ -56,6 +56,22 @@ def get_user_completions(db: Session, user_id: int) -> set:
     return {c.lab_id for c in completions}
 
 
+def lab_order_key(lab):
+    """Deterministic ordering for labs in a level.
+
+    ``sort_order`` is nullable and admin-created labs used to be written with
+    ``0``, which tied them with the first lab in the level. Ties were broken by
+    whatever order the database returned, so the "previous lab" in the unlock
+    check and the order shown in the UI could disagree. That made a completed
+    level sometimes look locked. Tie-break by primary key so every caller sees
+    the same order on every request.
+    """
+    return (
+        lab.sort_order if lab.sort_order is not None else 10 ** 9,
+        lab.id,
+    )
+
+
 def is_lab_unlocked(
     db: Session,
     user_id: int,
@@ -96,7 +112,7 @@ def is_lab_unlocked(
             l for l in level.labs
             if l.is_active and (visible_lab_ids is None or l.id in visible_lab_ids)
         ],
-        key=lambda l: l.sort_order,
+        key=lab_order_key,
     )
     
     # If no active labs in level, unlock this lab (edge case)
@@ -150,7 +166,7 @@ def get_current_lab(
     open.
     """
     for level in sorted(track.levels, key=lambda l: l.level_number):
-        for lab in sorted(level.labs, key=lambda l: l.sort_order or 9999):
+        for lab in sorted(level.labs, key=lab_order_key):
             if visible_lab_ids is not None and lab.id not in visible_lab_ids:
                 continue
             if lab.id not in completed_ids:
@@ -387,6 +403,89 @@ async def list_tracks(
     return {"tracks": result}
 
 
+@router.get(
+    "/tracks/{track_slug}/levels/{level_id}/certificate",
+    summary="Get a printable level-completion certificate",
+    response_description="Certificate metadata for a completed level",
+)
+async def get_level_certificate(
+    track_slug: str,
+    level_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the data needed to render a printable certificate.
+
+    A certificate is only issued when every lab the student can see in the
+    level has been completed. The certificate ID is deterministic for a
+    (user, track, level) triple so the same certificate can be reissued without
+    changing its identifier.
+    """
+    track = db.query(Track).options(
+        joinedload(Track.levels).joinedload(Level.labs)
+    ).filter(
+        Track.slug == track_slug,
+        Track.is_active == True,
+    ).first()
+    if not track:
+        raise HTTPException(status_code=404, detail="Track not found")
+
+    level = next((lv for lv in track.levels if lv.id == level_id), None)
+    if not level:
+        raise HTTPException(status_code=404, detail="Level not found")
+
+    accessible_course_lab_ids = get_accessible_exclusive_lab_ids(db, current_user.id)
+    visible_labs = [
+        lab for lab in level.labs
+        if _is_lab_visible(lab, current_user, accessible_course_lab_ids)
+    ]
+    if not visible_labs:
+        raise HTTPException(
+            status_code=400,
+            detail="This level has no exercises available to you.",
+        )
+
+    completed_ids = get_user_completions(db, current_user.id)
+    completed_labs = [lab for lab in visible_labs if lab.id in completed_ids]
+    if len(completed_labs) < len(visible_labs):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Complete every exercise in this level before requesting a "
+                "certificate."
+            ),
+        )
+
+    completion_rows = db.query(LabCompletion.completed_at).filter(
+        LabCompletion.user_id == current_user.id,
+        LabCompletion.lab_id.in_([lab.id for lab in visible_labs]),
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).all()
+    completion_dates = [row[0] for row in completion_rows if row[0] is not None]
+    issued_at = max(completion_dates) if completion_dates else datetime.now(timezone.utc)
+
+    digest = hashlib.sha256(
+        f"{current_user.id}:{track.slug}:{level.id}".encode()
+    ).hexdigest()[:10].upper()
+    certificate_id = f"OCR-{track.slug.upper()[:8]}-L{level.level_number:02d}-{digest}"
+
+    return {
+        "certificate_id": certificate_id,
+        "recipient": current_user.username,
+        "track_name": track.name,
+        "track_slug": track.slug,
+        "level_id": level.id,
+        "level_number": level.level_number,
+        "level_name": level.name,
+        "exercises_completed": len(completed_labs),
+        "exercises_total": len(visible_labs),
+        "issued_on": issued_at.date().isoformat(),
+        "issued_display": issued_at.strftime("%d %B %Y"),
+        "issuer": "SWOCTS",
+    }
+
+
 @router.get("/tracks/{track_slug}")
 async def get_track(
     track_slug: str,
@@ -443,7 +542,7 @@ async def get_track(
     levels_data = []
     for level in sorted(track.levels, key=lambda l: l.level_number):
         labs_data = []
-        for lab in sorted(level.labs, key=lambda l: l.sort_order or 9999):
+        for lab in sorted(level.labs, key=lab_order_key):
             # Hide labs that aren't visible to this user
             if not _is_lab_visible(lab, current_user, accessible_course_lab_ids):
                 continue
