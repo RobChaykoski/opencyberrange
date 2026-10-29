@@ -32,9 +32,9 @@ VALID_CATEGORIES = {
     "network-analysis", "post-exploitation", "privesc",
     "privilege-escalation", "reconnaissance", "web",
 }
-# Standard: {track}-{level}-{lab}-{name}. Midterm: {track}-midterm-{lab}-{name}
+# Standard: {track}-{level}-{lab}-{name}. Midterm/final: {track}-{midterm|final}-{lab}-{name}
 # Track prefix may be multi-word (e.g., windows-server).
-SLUG_PATTERN = re.compile(r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+)-[a-z0-9-]+$")
+SLUG_PATTERN = re.compile(r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+|final-\d+)-[a-z0-9-]+$")
 FLAG_PATTERN = re.compile(r"^OCR\{.+\}$")
 REQUIRED_YAML_FIELDS = ["name", "description", "difficulty", "flag"]
 KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "capitalflow", "forensics", "refinery", "windows-server"}
@@ -190,8 +190,8 @@ def extract_track_from_slug(slug):
         prefix = track + "-"
         if slug.startswith(prefix):
             remainder = slug[len(prefix):]
-            # Remainder must start with digits (level) or 'midterm'
-            if re.match(r"^(\d+|midterm)-", remainder):
+            # Remainder must start with digits (level), 'midterm', or 'final'
+            if re.match(r"^(\d+|midterm|final)-", remainder):
                 return track
     return slug.split("-")[0]
 
@@ -217,7 +217,7 @@ def check_slug_format(lab_dir):
         results.append(CheckResult(
             "Slug format valid",
             False,
-            f"Got '{slug}', expected: {{track}}-{{level}}-{{lab}}-{{name}} (e.g., windows-1-1-basic-port-scan) or {{track}}-midterm-{{lab}}-{{name}} (e.g., windows-midterm-1-network-enumeration-assessment)"
+            f"Got '{slug}', expected: {{track}}-{{level}}-{{lab}}-{{name}} (e.g., windows-1-1-basic-port-scan), {{track}}-midterm-{{lab}}-{{name}} (e.g., windows-midterm-1-network-enumeration-assessment), or {{track}}-final-{{lab}}-{{name}} (e.g., linux-final-1-branch-office-practice)"
         ))
 
     return results
