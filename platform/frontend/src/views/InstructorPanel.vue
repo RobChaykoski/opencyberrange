@@ -327,6 +327,27 @@
                   {{ allAssignedExpanded ? 'Collapse All' : 'Expand All' }}
                 </button>
               </div>
+              <div v-if="assignedLevelKeys.length > 0" class="assign-bulk-bar">
+                <label class="lab-checkbox-label lab-checkbox-label--select-all">
+                  <input
+                    type="checkbox"
+                    :checked="allAssignedSelected"
+                    :indeterminate.prop="someAssignedSelected"
+                    @change="toggleAllAssigned"
+                  />
+                  <span>Select all {{ courseLabs.length }}</span>
+                </label>
+                <span v-if="selectedAssignedLabIds.size > 0" class="assign-bulk-count">
+                  {{ selectedAssignedLabIds.size }} selected
+                </span>
+                <button
+                  class="btn btn--danger btn--xs"
+                  :disabled="selectedAssignedLabIds.size === 0 || bulkRemoving"
+                  @click="bulkUnassignSelected"
+                >
+                  {{ bulkRemoving ? 'Removing...' : `Remove selected (${selectedAssignedLabIds.size})` }}
+                </button>
+              </div>
               <div v-if="assignedLevelKeys.length > 0" class="assign-accordion">
                 <div v-for="levelKey in assignedLevelKeys" :key="levelKey" class="assign-group">
                   <div class="assign-group__header-row">
@@ -349,6 +370,13 @@
                         <button @click="cancelRenameLab" class="btn btn--secondary btn--xs">Cancel</button>
                       </template>
                       <template v-else>
+                        <input
+                          type="checkbox"
+                          class="assigned-lab-checkbox"
+                          :checked="selectedAssignedLabIds.has(lab.id)"
+                          @change="toggleAssignedLab(lab.id)"
+                          :aria-label="`Select ${lab.name}`"
+                        />
                         <span class="lab-checkbox-name" :class="{ 'lab-name--custom': lab.display_name }" :title="lab.display_name ? 'Custom name (click pencil to edit)' : ''">{{ lab.name }}</span>
                         <span class="lab-checkbox-diff">{{ lab.difficulty }}</span>
                         <button @click.stop="openLab(lab)" class="btn btn--outline btn--xs" title="Launch / Test">&#9654;</button>
@@ -1146,6 +1174,8 @@ const courseStudents = ref([])
 const courseLabs = ref([])
 const availableLabs = ref([])
 const selectedLabIds = ref([])
+const selectedAssignedLabIds = ref(new Set())
+const bulkRemoving = ref(false)
 const expandedAssignCategories = ref({})
 const expandedAssignedCategories = ref({})
 const studentLabDetails = ref({})
@@ -1488,6 +1518,48 @@ function selectAllInGroup(levelKey) {
   selectedLabIds.value = [...current]
 }
 
+// --- Multi-select for already-assigned exercises ---
+const allAssignedSelected = computed(() =>
+  courseLabs.value.length > 0
+  && courseLabs.value.every(lab => selectedAssignedLabIds.value.has(lab.id))
+)
+const someAssignedSelected = computed(() =>
+  !allAssignedSelected.value && selectedAssignedLabIds.value.size > 0
+)
+
+function toggleAssignedLab(labId) {
+  const next = new Set(selectedAssignedLabIds.value)
+  if (next.has(labId)) next.delete(labId)
+  else next.add(labId)
+  selectedAssignedLabIds.value = next
+}
+
+function toggleAllAssigned() {
+  if (allAssignedSelected.value) {
+    selectedAssignedLabIds.value = new Set()
+  } else {
+    selectedAssignedLabIds.value = new Set(courseLabs.value.map(lab => lab.id))
+  }
+}
+
+async function bulkUnassignSelected() {
+  const ids = [...selectedAssignedLabIds.value]
+  if (ids.length === 0 || !managingCourse.value) return
+  if (!confirm(`Remove ${ids.length} selected exercise(s) from this course?`)) return
+  bulkRemoving.value = true
+  try {
+    await axios.post(`/courses/${managingCourse.value.id}/labs/bulk-remove`, { lab_ids: ids })
+    selectedAssignedLabIds.value = new Set()
+    showAlert(`${ids.length} exercise(s) removed`)
+    await fetchCourseLabs()
+    await fetchCourses()
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to remove exercises', 'error')
+  } finally {
+    bulkRemoving.value = false
+  }
+}
+
 async function fetchEnrollableUsers() {
   if (!managingCourse.value) return
   try {
@@ -1627,6 +1699,10 @@ async function fetchCourseLabs() {
   try {
     const res = await axios.get(`/courses/${managingCourse.value.id}`)
     courseLabs.value = res.data.labs || []
+    const presentIds = new Set(courseLabs.value.map(lab => lab.id))
+    selectedAssignedLabIds.value = new Set(
+      [...selectedAssignedLabIds.value].filter(id => presentIds.has(id))
+    )
     const keys = assignedLevelKeys.value
     const expanded = {}
     keys.forEach(k => { expanded[k] = true })
@@ -2892,6 +2968,33 @@ onUnmounted(() => {
   gap: 0.5rem;
   padding: 0.35rem 0;
   font-size: 0.8125rem;
+}
+
+.assigned-lab-checkbox {
+  flex-shrink: 0;
+  accent-color: var(--accent, #38bdf8);
+}
+
+.assign-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+}
+
+.lab-checkbox-label--select-all {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.assign-bulk-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 .attempts-toggle {

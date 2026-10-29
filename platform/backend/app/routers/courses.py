@@ -21,18 +21,18 @@ from app.database import get_db
 from app.models import (
     User, Lab, LabCompletion, Course, CourseEnrollment,
     CourseLabAssignment, Achievement, CourseCompletionReset,
-    Assignment, AssignmentLab, FlagAttempt,
+    Assignment, AssignmentLab, FlagAttempt, CustomAchievement,
 )
 from app.auth import get_current_active_user, get_current_instructor_user, get_current_admin_user
 from app import entitlement
 from app.schemas import (
     CourseCreate, CourseUpdate, CourseResponse, CourseJoinRequest,
-    CourseLabAssignRequest, CourseLabReorderRequest, CourseLabUpdateRequest, AssignmentReorderRequest,
+    CourseLabAssignRequest, CourseLabBulkRemoveRequest, CourseLabReorderRequest, CourseLabUpdateRequest, AssignmentReorderRequest,
     BulkEnrollRequest,
     ScoreboardEntry, ScoreboardResponse, AchievementResponse,
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
 )
-from app.services.achievements import ACHIEVEMENT_LABELS
+from app.services.achievements import resolve_achievement_label
 from app.services.activity import log_activity, EventTypes
 from app.services.course_wiki import rebuild_course_wiki
 
@@ -797,6 +797,44 @@ async def assign_labs(
     return {"message": f"{added} lab(s) assigned"}
 
 
+@router.post(
+    "/{course_id}/labs/bulk-remove",
+    summary="Remove several exercises from a course",
+    response_description="Number of assignments removed",
+)
+async def bulk_remove_labs(
+    course_id: int,
+    data: CourseLabBulkRemoveRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Remove multiple exercises from a course in one request.
+
+    Used by the instructor panel's multi-select action. Labs that are not
+    assigned to the course are ignored so a stale selection cannot fail the
+    whole batch.
+    """
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+
+    assignments = db.query(CourseLabAssignment).filter(
+        CourseLabAssignment.course_id == course_id,
+        CourseLabAssignment.lab_id.in_(data.lab_ids),
+    ).all()
+    removed = 0
+    for assignment in assignments:
+        db.delete(assignment)
+        removed += 1
+
+    db.commit()
+    rebuild_course_wiki(db, course)
+    return {
+        "message": f"{removed} lab(s) removed",
+        "removed": removed,
+        "requested": len(data.lab_ids),
+    }
+
+
 @router.delete("/{course_id}/labs/{lab_id}")
 async def remove_lab(
     course_id: int,
@@ -1076,13 +1114,29 @@ async def list_achievements(
             "user_id": a.user_id,
             "username": a.user.username if a.user else None,
             "achievement_type": a.achievement_type,
-            "label": ACHIEVEMENT_LABELS.get(a.achievement_type, a.achievement_type),
+            "label": resolve_achievement_label(db, a.achievement_type),
             "lab_id": a.lab_id,
             "lab_name": lab_name,
             "awarded_at": a.awarded_at,
         })
 
-    return {"achievements": result}
+    custom_rows = db.query(CustomAchievement).order_by(CustomAchievement.id).all()
+    custom_definitions = {
+        f"custom_{row.id}": {
+            "label": row.name,
+            "icon": row.icon or "\U0001F3C5",
+            "description": row.description or "",
+            "trigger": row.trigger,
+            "threshold": row.threshold,
+            "is_active": row.is_active,
+        }
+        for row in custom_rows
+    }
+
+    return {
+        "achievements": result,
+        "custom_achievements": custom_definitions,
+    }
 
 
 # ==================== Completion Reset ====================
@@ -1290,7 +1344,7 @@ def _build_student_scores(
     for a in ach_rows:
         achievements.append({
             "type": a.achievement_type,
-            "label": ACHIEVEMENT_LABELS.get(a.achievement_type, a.achievement_type),
+            "label": resolve_achievement_label(db, a.achievement_type),
             "lab_name": (dn_map.get(a.lab_id) or a.lab.name) if a.lab else None,
         })
 

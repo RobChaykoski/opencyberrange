@@ -452,12 +452,20 @@ const ACHIEVEMENT_MAP = {
   streak: { label: 'On a Roll', icon: '\u{1F525}' },
 }
 
+// Admin-defined achievements arrive with the achievements response so the
+// scoreboard can label awards it has never heard of.
+const customAchievementMap = ref({})
+
 function achievementLabel(type) {
-  return ACHIEVEMENT_MAP[type]?.label || type
+  return customAchievementMap.value[type]?.label
+    || ACHIEVEMENT_MAP[type]?.label
+    || type
 }
 
 function achievementIcon(type) {
-  return ACHIEVEMENT_MAP[type]?.icon || '\u{1F3C5}'
+  return customAchievementMap.value[type]?.icon
+    || ACHIEVEMENT_MAP[type]?.icon
+    || '\u{1F3C5}'
 }
 
 function uniqueAchievements(list) {
@@ -958,6 +966,7 @@ async function fetchAchievements() {
   try {
     const res = await axios.get(`/courses/${courseId.value}/achievements`)
     achievements.value = res.data.achievements
+    customAchievementMap.value = res.data.custom_achievements || {}
   } catch (e) {
     console.error('Failed to fetch achievements', e)
   } finally {

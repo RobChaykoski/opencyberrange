@@ -334,6 +334,10 @@ class CourseLabAssignRequest(BaseModel):
     lab_ids: List[int]
 
 
+class CourseLabBulkRemoveRequest(BaseModel):
+    lab_ids: List[int]
+
+
 class CourseLabReorderRequest(BaseModel):
     lab_order: List[dict]
 
@@ -451,6 +455,25 @@ class StudentDashboardResponse(BaseModel):
 
 class SettingsBulkUpdate(BaseModel):
     settings: dict  # {"key": "value", ...}
+
+
+class CustomAchievementCreate(BaseModel):
+    """Admin-defined achievement definition."""
+    name: str = Field(..., min_length=2, max_length=80)
+    description: str | None = Field(None, max_length=500)
+    icon: str = Field("\U0001F3C5", max_length=16)
+    trigger: str = Field("labs_completed", max_length=30)
+    threshold: int = Field(1, ge=1, le=10000)
+    is_active: bool = True
+
+
+class CustomAchievementUpdate(BaseModel):
+    name: str | None = Field(None, min_length=2, max_length=80)
+    description: str | None = Field(None, max_length=500)
+    icon: str | None = Field(None, max_length=16)
+    trigger: str | None = Field(None, max_length=30)
+    threshold: int | None = Field(None, ge=1, le=10000)
+    is_active: bool | None = None
 
 
 # ==================== Curriculum Admin Schemas ====================

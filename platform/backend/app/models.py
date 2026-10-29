@@ -369,6 +369,25 @@ class Achievement(Base):
     )
 
 
+class CustomAchievement(Base):
+    """Admin-defined achievement awarded for aggregate progress.
+
+    Built-in achievements are fixed code paths; this table lets an operator add
+    extra goals (for example "complete 10 exercises without hints") without a
+    deployment. Awards are stored in ``achievements`` as ``custom_<id>``.
+    """
+    __tablename__ = "custom_achievements"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(80), nullable=False)
+    description = Column(Text, nullable=True)
+    icon = Column(String(16), nullable=False, default="\U0001F3C5")
+    trigger = Column(String(30), nullable=False, default="labs_completed")
+    threshold = Column(Integer, nullable=False, default=1)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
 class CourseCompletionReset(Base):
     """Instructor-initiated reset of a lab completion within a course.
     Does NOT delete LabCompletion — just marks it stale for this course."""

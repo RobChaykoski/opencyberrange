@@ -1322,6 +1322,50 @@
             </template>
           </div>
 
+          <!-- Custom achievements -->
+          <div v-else-if="activeSettingsCategory === 'achievements'" class="settings-form">
+            <p class="section-desc">
+              Define extra achievements that are awarded automatically after a
+              student submits a correct flag. Built-in achievements
+              (First Blood, Self-Reliant, and so on) always run as well.
+            </p>
+
+            <div class="custom-ach-create">
+              <input v-model="newAchievement.icon" class="form-input form-input--sm custom-ach-create__icon" maxlength="4" title="Icon (emoji)" />
+              <input v-model="newAchievement.name" class="form-input form-input--sm" placeholder="Achievement name" />
+              <input v-model="newAchievement.description" class="form-input form-input--sm custom-ach-create__desc" placeholder="Description (optional)" />
+              <select v-model="newAchievement.trigger" class="form-input form-input--sm">
+                <option v-for="t in achievementTriggers" :key="t.value" :value="t.value">{{ t.label }}</option>
+              </select>
+              <input v-model.number="newAchievement.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="newAchievement.trigger === 'course_completed'" title="How many exercises are required" />
+              <button class="btn btn--success btn--sm" :disabled="savingAchievement || !newAchievement.name.trim()" @click="createCustomAchievement">
+                {{ savingAchievement ? 'Adding...' : 'Add achievement' }}
+              </button>
+            </div>
+
+            <div v-if="customAchievements.length === 0" class="empty-state">
+              No custom achievements yet. Built-in achievements are still active.
+            </div>
+            <div v-else class="custom-ach-list">
+              <div v-for="ach in customAchievements" :key="ach.id" class="custom-ach-row" :class="{ 'custom-ach-row--inactive': !ach.is_active }">
+                <input v-model="ach.icon" class="form-input form-input--sm custom-ach-create__icon" maxlength="4" title="Icon (emoji)" />
+                <input v-model="ach.name" class="form-input form-input--sm" />
+                <input v-model="ach.description" class="form-input form-input--sm custom-ach-create__desc" placeholder="Description" />
+                <select v-model="ach.trigger" class="form-input form-input--sm">
+                  <option v-for="t in achievementTriggers" :key="t.value" :value="t.value">{{ t.label }}</option>
+                </select>
+                <input v-model.number="ach.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="ach.trigger === 'course_completed'" />
+                <button class="visibility-toggle" :class="ach.is_active ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'" @click="toggleCustomAchievement(ach)">
+                  {{ ach.is_active ? 'Active' : 'Disabled' }}
+                </button>
+                <button class="btn btn--outline btn--xs" :disabled="savingAchievementId === ach.id" @click="saveCustomAchievement(ach)">
+                  {{ savingAchievementId === ach.id ? 'Saving...' : 'Save' }}
+                </button>
+                <button class="btn btn--danger btn--xs" @click="deleteCustomAchievement(ach)">Delete</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Generic settings form for other categories -->
           <div v-else class="settings-form">
             <div v-if="settingsLoading" class="empty-state">Loading settings...</div>
@@ -3063,13 +3107,16 @@ const settingsCategories = computed(() => {
       .map(([, val]) => val.category)
   )
   const base = order.filter(c => populated.has(c))
+  // Custom achievements are managed by their own CRUD endpoints rather than
+  // platform_settings rows, so the tab is always available.
+  base.push('achievements')
   // The Modules tab (optional-module enable/disable) is a real admin control,
   // not a dev tool: show it whenever the edition ships optional modules, so an
   // operator can turn SOC on/off on a production install.
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', modules: 'Modules' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', modules: 'Modules', achievements: 'Achievements' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
@@ -3077,6 +3124,95 @@ const settingsEdits = reactive({})
 const togglesSaving = reactive({})
 const settingsLoading = ref(false)
 const savingSettings = ref(false)
+
+// --- Custom achievements (settings section) ---
+const customAchievements = ref([])
+const achievementTriggers = ref([])
+const savingAchievement = ref(false)
+const savingAchievementId = ref(null)
+const newAchievement = reactive({
+  icon: '\u{1F3C5}',
+  name: '',
+  description: '',
+  trigger: 'labs_completed',
+  threshold: 1,
+})
+
+const fetchCustomAchievements = async () => {
+  try {
+    const { data } = await axios.get('/settings/custom-achievements')
+    customAchievements.value = data.achievements || []
+    achievementTriggers.value = data.triggers || []
+    if (!achievementTriggers.value.some(t => t.value === newAchievement.trigger)) {
+      newAchievement.trigger = achievementTriggers.value[0]?.value || 'labs_completed'
+    }
+  } catch (e) {
+    showAlert('Failed to load custom achievements', 'error')
+  }
+}
+
+const createCustomAchievement = async () => {
+  if (!newAchievement.name.trim()) return
+  savingAchievement.value = true
+  try {
+    await axios.post('/settings/custom-achievements', {
+      icon: newAchievement.icon || '\u{1F3C5}',
+      name: newAchievement.name.trim(),
+      description: newAchievement.description.trim(),
+      trigger: newAchievement.trigger,
+      threshold: newAchievement.threshold || 1,
+      is_active: true,
+    })
+    newAchievement.name = ''
+    newAchievement.description = ''
+    newAchievement.threshold = 1
+    await fetchCustomAchievements()
+    showAlert('Custom achievement created')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to create achievement', 'error')
+  } finally {
+    savingAchievement.value = false
+  }
+}
+
+const saveCustomAchievement = async (ach) => {
+  savingAchievementId.value = ach.id
+  try {
+    await axios.put(`/settings/custom-achievements/${ach.id}`, {
+      icon: ach.icon || '\u{1F3C5}',
+      name: ach.name,
+      description: ach.description,
+      trigger: ach.trigger,
+      threshold: ach.threshold || 1,
+      is_active: ach.is_active,
+    })
+    await fetchCustomAchievements()
+    showAlert('Achievement saved')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to save achievement', 'error')
+  } finally {
+    savingAchievementId.value = null
+  }
+}
+
+const toggleCustomAchievement = (ach) => {
+  ach.is_active = !ach.is_active
+}
+
+const deleteCustomAchievement = async (ach) => {
+  if (!confirm(`Delete the achievement "${ach.name}"? Students keep awards they already earned.`)) return
+  try {
+    await axios.delete(`/settings/custom-achievements/${ach.id}`)
+    await fetchCustomAchievements()
+    showAlert('Achievement deleted')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to delete achievement', 'error')
+  }
+}
+
+watch(activeSettingsCategory, (category) => {
+  if (category === 'achievements') fetchCustomAchievements()
+})
 
 const settingMeta = {
   setup_complete:            { label: 'Setup Complete',          desc: 'Indicates whether the first-run setup wizard has been completed.' },
@@ -8537,6 +8673,49 @@ watch(activeTab, (tab) => {
 }
 
 .settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Custom achievements */
+.custom-ach-create,
+.custom-ach-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--bg-secondary);
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+
+.custom-ach-create {
+  border-style: dashed;
+}
+
+.custom-ach-row--inactive {
+  opacity: 0.6;
+}
+
+.custom-ach-create__icon {
+  width: 3rem;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.custom-ach-create__desc {
+  flex: 1 1 220px;
+  min-width: 160px;
+}
+
+.custom-ach-create__threshold {
+  width: 4.5rem;
+  flex: 0 0 auto;
+}
+
+.custom-ach-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

@@ -960,6 +960,87 @@ async def student_dashboard(
                         scoreboard_rank = rank
                         break
 
+    # --- Completion matrix: courses (rows) x levels (columns) ---
+    # A student may be enrolled in several courses whose exercises come from
+    # different tracks and levels, so the columns are the union of every level
+    # that has at least one exercise assigned to one of their courses. Each
+    # cell counts only the exercises assigned to that course.
+    matrix_columns = {}
+    matrix_rows = []
+    matrix_totals = {}
+
+    enrollment_rows = db.query(Course, CourseEnrollment).join(
+        CourseEnrollment,
+        CourseEnrollment.course_id == Course.id,
+    ).filter(
+        CourseEnrollment.user_id == current_user.id,
+        Course.is_active == True,
+        Course.end_date >= now_utc,
+    ).order_by(Course.code).all()
+
+    for course, _enrollment in enrollment_rows:
+        assigned_lab_ids = [
+            r[0] for r in db.query(CourseLabAssignment.lab_id).filter(
+                CourseLabAssignment.course_id == course.id,
+            ).all()
+        ]
+        course_labs = []
+        if assigned_lab_ids:
+            course_labs = db.query(Lab).options(
+                joinedload(Lab.level).joinedload(Level.track)
+            ).filter(
+                Lab.id.in_(assigned_lab_ids),
+                Lab.is_active == True,
+            ).all()
+
+        cells = {}
+        for lab in course_labs:
+            level = lab.level
+            if not level:
+                continue
+            key = f"L{level.id}"
+            track_name = level.track.name if level.track else "Uncategorized"
+            matrix_columns.setdefault(key, {
+                "key": key,
+                "track_name": track_name,
+                "track_slug": level.track.slug if level.track else None,
+                "level_number": level.level_number,
+                "level_name": level.name,
+            })
+            cell = cells.setdefault(key, {"completed": 0, "total": 0})
+            cell["total"] += 1
+            if lab.id in completed_ids:
+                cell["completed"] += 1
+
+        row_completed = sum(c["completed"] for c in cells.values())
+        row_total = sum(c["total"] for c in cells.values())
+        matrix_rows.append({
+            "course_id": course.id,
+            "course_code": course.code,
+            "course_name": course.name,
+            "cells": cells,
+            "completed": row_completed,
+            "total": row_total,
+        })
+        for key, cell in cells.items():
+            total = matrix_totals.setdefault(key, {"completed": 0, "total": 0})
+            total["completed"] += cell["completed"]
+            total["total"] += cell["total"]
+
+    ordered_columns = sorted(
+        matrix_columns.values(),
+        key=lambda c: (c["track_name"].lower(), c["level_number"]),
+    )
+    completion_matrix = {
+        "columns": ordered_columns,
+        "rows": matrix_rows,
+        "totals": {
+            "cells": matrix_totals,
+            "completed": sum(r["completed"] for r in matrix_rows),
+            "total": sum(r["total"] for r in matrix_rows),
+        },
+    }
+
     return {
         "next_objective": next_objective,
         "progress_percent": progress_percent,
@@ -968,4 +1049,5 @@ async def student_dashboard(
         "vpn_status": vpn_status,
         "scoreboard_rank": scoreboard_rank,
         "course_name": course_name,
+        "completion_matrix": completion_matrix,
     }

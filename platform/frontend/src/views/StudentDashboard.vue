@@ -90,6 +90,83 @@
         </div>
       </div>
     </div>
+
+    <!-- Completion matrix: courses x levels -->
+    <div v-if="matrix.columns.length" class="card card--matrix">
+      <div class="card__header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="card__icon card__icon--purple">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="9" y1="3" x2="9" y2="21"/>
+          <line x1="15" y1="3" x2="15" y2="21"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="3" y1="15" x2="21" y2="15"/>
+        </svg>
+        <div>
+          <h2 class="card__title">Exercise Completion Matrix</h2>
+          <p class="matrix-subtitle">Exercises completed per course and level</p>
+        </div>
+      </div>
+
+      <div class="matrix-scroll">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="matrix-corner">Course</th>
+              <th v-for="col in matrix.columns" :key="col.key" class="matrix-col-head">
+                <span class="matrix-track">{{ col.track_name }}</span>
+                <span class="matrix-level">Level {{ col.level_number }} &middot; {{ col.level_name }}</span>
+              </th>
+              <th class="matrix-col-head matrix-col-head--total">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in matrix.rows" :key="row.course_id">
+              <th class="matrix-row-head">
+                <span class="matrix-course-code">{{ row.course_code }}</span>
+                <span class="matrix-course-name">{{ row.course_name }}</span>
+              </th>
+              <td
+                v-for="col in matrix.columns"
+                :key="col.key"
+                class="matrix-cell"
+                :class="cellClass(row.cells[col.key])"
+              >
+                <template v-if="row.cells[col.key] && row.cells[col.key].total">
+                  {{ row.cells[col.key].completed }}/{{ row.cells[col.key].total }}
+                </template>
+                <span v-else class="matrix-empty">&ndash;</span>
+              </td>
+              <td class="matrix-cell matrix-cell--total">{{ row.completed }}/{{ row.total }}</td>
+            </tr>
+          </tbody>
+          <tfoot v-if="matrix.rows.length > 1">
+            <tr>
+              <th class="matrix-row-head">All courses</th>
+              <td
+                v-for="col in matrix.columns"
+                :key="col.key"
+                class="matrix-cell"
+                :class="cellClass(matrix.totals.cells[col.key])"
+              >
+                <template v-if="matrix.totals.cells[col.key] && matrix.totals.cells[col.key].total">
+                  {{ matrix.totals.cells[col.key].completed }}/{{ matrix.totals.cells[col.key].total }}
+                </template>
+                <span v-else class="matrix-empty">&ndash;</span>
+              </td>
+              <td class="matrix-cell matrix-cell--total">
+                {{ matrix.totals.completed }}/{{ matrix.totals.total }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="matrix-legend">
+        <span><i class="matrix-swatch matrix-swatch--complete"></i> Complete</span>
+        <span><i class="matrix-swatch matrix-swatch--partial"></i> In progress</span>
+        <span><i class="matrix-swatch matrix-swatch--empty"></i> Not started</span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -135,6 +212,22 @@ const fetchDashboard = async () => {
   } catch (e) {
     console.error('Failed to fetch student dashboard:', e)
   }
+}
+
+const matrix = computed(() => (
+  data.value.completion_matrix || {
+    columns: [],
+    rows: [],
+    totals: { cells: {}, completed: 0, total: 0 },
+  }
+))
+
+// A cell with no assigned exercises is rendered as a dash rather than 0/0.
+const cellClass = (cell) => {
+  if (!cell || !cell.total) return 'matrix-cell--empty'
+  if (cell.completed >= cell.total) return 'matrix-cell--complete'
+  if (cell.completed > 0) return 'matrix-cell--partial'
+  return 'matrix-cell--empty'
 }
 
 onMounted(() => {
@@ -397,6 +490,167 @@ onMounted(() => {
   width: 16px;
   height: 16px;
 }
+
+/* Completion matrix */
+.card--matrix {
+  margin-top: 1.5rem;
+}
+
+.card__icon--purple { color: #a78bfa; }
+
+.matrix-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.matrix-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  min-width: 560px;
+}
+
+.matrix-table th,
+.matrix-table td {
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.matrix-table thead th {
+  background: var(--bg-tertiary);
+  vertical-align: bottom;
+}
+
+.matrix-table tbody tr:last-child th,
+.matrix-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.matrix-table th:last-child,
+.matrix-table td:last-child {
+  border-right: 0;
+}
+
+.matrix-corner,
+.matrix-row-head {
+  text-align: left;
+  position: sticky;
+  left: 0;
+  background: var(--bg-secondary);
+  z-index: 1;
+}
+
+.matrix-table thead .matrix-corner {
+  background: var(--bg-tertiary);
+}
+
+.matrix-row-head {
+  min-width: 150px;
+  max-width: 190px;
+  white-space: normal;
+}
+
+.matrix-course-code {
+  display: block;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.matrix-course-name {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.matrix-col-head {
+  min-width: 92px;
+}
+
+.matrix-track {
+  display: block;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.matrix-level {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.matrix-col-head--total {
+  min-width: 64px;
+}
+
+.matrix-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.matrix-cell--complete {
+  background: rgba(34, 197, 94, 0.16);
+  color: var(--success);
+}
+
+.matrix-cell--partial {
+  background: rgba(245, 158, 11, 0.16);
+  color: var(--warning);
+}
+
+.matrix-cell--empty {
+  color: var(--text-muted);
+}
+
+.matrix-cell--total {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.matrix-empty {
+  opacity: 0.5;
+}
+
+.matrix-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.matrix-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.matrix-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.matrix-swatch--complete { background: rgba(34, 197, 94, 0.5); }
+.matrix-swatch--partial { background: rgba(245, 158, 11, 0.5); }
+.matrix-swatch--empty { background: var(--bg-tertiary); }
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -140,7 +140,11 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
         'sort_order': 5,
         'levels': [   {   'level_number': 1,
                           'name': 'Malware Fundamentals',
-                          'description': 'Safe handling, triage, and sample identification'}]}]
+                          'description': 'Safe handling, triage, and sample identification'},
+                      {   'level_number': 2,
+                          'name': 'Executable Analysis',
+                          'description': 'PE headers, sections, imports, and static triage of '
+                                         'Windows binaries'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)

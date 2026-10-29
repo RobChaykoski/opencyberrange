@@ -7,7 +7,7 @@ import logging
 from sqlalchemy.orm import Session
 from app.models import (
     Achievement, Course, CourseEnrollment, CourseLabAssignment,
-    CourseCompletionReset, Lab, LabCompletion
+    CourseCompletionReset, Lab, LabCompletion, CustomAchievement
 )
 from app.services.activity import log_activity, EventTypes
 
@@ -38,6 +38,66 @@ ACHIEVEMENT_DESCRIPTIONS = {
     CLEAN_SWEEP: "Completed all assigned labs in the course",
     STREAK: "Completed 3+ labs in a row with no hints and first attempt",
 }
+
+# Triggers available to admin-defined achievements. The value is what the
+# settings UI shows; the evaluator below implements each one.
+CUSTOM_ACHIEVEMENT_TRIGGERS = {
+    "labs_completed": "Complete N exercises in the course",
+    "no_hint_labs": "Complete N exercises without using hints",
+    "perfect_labs": "Complete N exercises on the first attempt",
+    "course_completed": "Complete every exercise assigned to the course",
+}
+
+BUILTIN_ACHIEVEMENT_ICONS = {
+    FIRST_BLOOD: "\U0001F3AF",
+    NO_HINTS: "\U0001F9E0",
+    PERFECTIONIST: "\u2B50",
+    SPEED_DEMON: "\u26A1",
+    CLEAN_SWEEP: "\U0001F3C6",
+    STREAK: "\U0001F525",
+}
+
+
+def custom_achievement_type(custom_id: int) -> str:
+    """Achievement type stored for an admin-defined achievement."""
+    return f"custom_{custom_id}"
+
+
+def _custom_id_from_type(achievement_type: str) -> int | None:
+    if not achievement_type.startswith("custom_"):
+        return None
+    try:
+        return int(achievement_type.split("_", 1)[1])
+    except (ValueError, IndexError):
+        return None
+
+
+def resolve_achievement_label(db: Session, achievement_type: str) -> str:
+    """Human label for a built-in or admin-defined achievement."""
+    if achievement_type in ACHIEVEMENT_LABELS:
+        return ACHIEVEMENT_LABELS[achievement_type]
+    custom_id = _custom_id_from_type(achievement_type)
+    if custom_id is not None:
+        row = db.query(CustomAchievement).filter(
+            CustomAchievement.id == custom_id
+        ).first()
+        if row:
+            return row.name
+    return achievement_type
+
+
+def resolve_achievement_icon(db: Session, achievement_type: str) -> str:
+    """Emoji icon for a built-in or admin-defined achievement."""
+    if achievement_type in BUILTIN_ACHIEVEMENT_ICONS:
+        return BUILTIN_ACHIEVEMENT_ICONS[achievement_type]
+    custom_id = _custom_id_from_type(achievement_type)
+    if custom_id is not None:
+        row = db.query(CustomAchievement).filter(
+            CustomAchievement.id == custom_id
+        ).first()
+        if row and row.icon:
+            return row.icon
+    return "\U0001F3C5"
 
 
 def _award(db: Session, user_id: int, course_id: int, lab_id: int | None, achievement_type: str):
@@ -232,4 +292,51 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
                 and all(c.hints_used == 0 and c.attempts == 1 for c in recent_valid)):
             _award(db, user_id, course_id, None, STREAK)
 
+        # --- admin-defined achievements ---
+        valid_completions = [c for c in recent_all if _valid_in_course(c)]
+        _check_custom_achievements(
+            db, user_id, course_id, course_lab_ids, valid_completions,
+        )
+
     db.commit()
+
+
+def _check_custom_achievements(
+    db: Session,
+    user_id: int,
+    course_id: int,
+    course_lab_ids: set,
+    valid_completions: list,
+):
+    """Evaluate the admin-defined achievements for one user and course.
+
+    Definitions are global (they apply to every course); an award is still
+    scoped to the course, so the same definition can be earned once per course.
+    """
+    definitions = db.query(CustomAchievement).filter(
+        CustomAchievement.is_active == True
+    ).all()
+    if not definitions:
+        return
+
+    labs_completed = len(valid_completions)
+    no_hint_labs = sum(1 for c in valid_completions if c.hints_used == 0)
+    perfect_labs = sum(1 for c in valid_completions if c.attempts == 1)
+    completed_lab_ids = {c.lab_id for c in valid_completions}
+    course_completed = bool(course_lab_ids) and course_lab_ids.issubset(completed_lab_ids)
+
+    for definition in definitions:
+        if definition.trigger == "no_hint_labs":
+            reached = no_hint_labs >= (definition.threshold or 1)
+        elif definition.trigger == "perfect_labs":
+            reached = perfect_labs >= (definition.threshold or 1)
+        elif definition.trigger == "course_completed":
+            reached = course_completed
+        else:  # labs_completed (default)
+            reached = labs_completed >= (definition.threshold or 1)
+
+        if reached:
+            _award(
+                db, user_id, course_id, None,
+                custom_achievement_type(definition.id),
+            )

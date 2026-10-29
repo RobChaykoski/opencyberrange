@@ -995,15 +995,17 @@ const submitFlag = async () => {
     if (data.correct) {
       flagSuccess.value = true
       stopHintTimer()
-      // Backend auto-stops the lab on correct flag — refresh after brief delay
-      setTimeout(async () => {
-        if (activeCourseId.value) {
-          router.push(`/courses/${activeCourseId.value}`)
-        } else {
-          await fetchTrack(route.params.trackSlug)
-          activeLab.value = null
-        }
-      }, 2500)
+      // The backend commits the completion before it responds, so refresh
+      // immediately. Waiting used to leave the next lab locked until the
+      // delayed refresh landed; a second refresh catches the background
+      // session stop (Docker teardown can take a while).
+      if (activeCourseId.value) {
+        router.push(`/courses/${activeCourseId.value}`)
+      } else {
+        activeLab.value = null
+        await fetchTrack(route.params.trackSlug)
+        setTimeout(() => fetchTrack(route.params.trackSlug), 3000)
+      }
     } else {
       flagError.value = true
     }
