@@ -995,6 +995,7 @@ const submitFlag = async () => {
     if (data.correct) {
       flagSuccess.value = true
       stopHintTimer()
+      fireConfetti()
       // The backend commits the completion before it responds, so refresh
       // immediately. Waiting used to leave the next lab locked until the
       // delayed refresh landed; a second refresh catches the background
@@ -1100,6 +1101,31 @@ const stopHintTimer = () => {
     clearInterval(hintTimerInterval)
     hintTimerInterval = null
   }
+}
+
+// Lightweight confetti burst on a correct flag (Juice Shop-style success feedback).
+const fireConfetti = () => {
+  const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#ef4444', '#06b6d4']
+  const count = 60
+  const container = document.createElement('div')
+  container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;'
+  document.body.appendChild(container)
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div')
+    const size = 6 + Math.random() * 6
+    piece.style.cssText = `position:absolute;left:${Math.random() * 100}%;top:-10px;width:${size}px;height:${size * 1.4}px;background:${colors[i % colors.length]};opacity:${0.7 + Math.random() * 0.3};transform:rotate(${Math.random() * 360}deg);border-radius:2px;`
+    const duration = 1800 + Math.random() * 1200
+    const drift = (Math.random() - 0.5) * 200
+    piece.animate(
+      [
+        { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
+        { transform: `translate(${drift}px, ${window.innerHeight + 40}px) rotate(${Math.random() * 720}deg)`, opacity: 0 },
+      ],
+      { duration, easing: 'cubic-bezier(.2,.8,.4,1)', fill: 'forwards' }
+    )
+    container.appendChild(piece)
+  }
+  setTimeout(() => container.remove(), 3200)
 }
 
 // Two visibility-gated usePoll instances cover the two speeds: a 3s
