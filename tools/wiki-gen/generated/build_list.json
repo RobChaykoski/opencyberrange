@@ -5,6 +5,12 @@
     "namespace": "range",
     "site_dir": "_site_linpt"
   },
+  "malware": {
+    "config": "mkdocs-malware.yml",
+    "docs_dir": "Workbook",
+    "namespace": "range",
+    "site_dir": "_site_malware"
+  },
   "manual": {
     "config": "mkdocs-manual-lite.yml",
     "docs_dir": "Manual-Lite",

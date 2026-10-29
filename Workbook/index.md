@@ -31,6 +31,12 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 | CH N1; Log Analysis | Firewall logs, DNS logs, SSH auth logs, HTTP PCAP | 4 exercises |
 | CH N2; PCAP Forensics | FTP, SMTP, HTTP sessions, DNS tunneling, attack chains | 5 exercises |
 
+### Malware Analysis
+
+| Chapter | Focus | Exercises |
+|---------|-------|------|
+| CH M1; Malware Fundamentals | Safe handling, strings triage, Ghidra reversing, C2 PCAP, live INetSim detection | 5 exercises |
+
 ## How to Use This Workbook
 
 1. **Launch an exercise** in the OpenCyberRange platform

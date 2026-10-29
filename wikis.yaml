@@ -19,6 +19,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: red
+  malware:
+    config: mkdocs-malware.yml
+    docs_dir: Workbook
+    auth: student
+    theme: deep orange
 reference:
   manual:
     config: mkdocs-manual-lite.yml

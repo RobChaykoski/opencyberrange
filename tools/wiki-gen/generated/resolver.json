@@ -4,6 +4,11 @@
     "namespace": "range",
     "serve_path": "/wiki/range/linpt/"
   },
+  "malware": {
+    "auth": "student",
+    "namespace": "range",
+    "serve_path": "/wiki/range/malware/"
+  },
   "manual": {
     "auth": "student",
     "namespace": "reference",
