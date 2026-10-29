@@ -790,11 +790,27 @@ def check_topology_ip_offset_match(lab_dir):
         if "ip_offset" in labels:
             compose_offsets[svc_name] = str(labels["ip_offset"])
 
+    # The platform spawns the network tap itself (see DockerManager), so a
+    # "network-tap" topology node never has a matching compose service. Validate
+    # its fixed offset instead of failing the compose cross-check.
+    tap_enabled = bool(compose_data.get("x-ocr-network-tap"))
+
     results = []
     for node in topo_nodes:
         node_id = node.get("id", "")
         node_offset = str(node.get("ip_offset", ""))
         if not node_offset or node_id == "attacker":
+            continue
+
+        if node_id == "network-tap" and tap_enabled:
+            if node_offset != "253":
+                results.append(CheckResult(
+                    "Topology node 'network-tap' uses the platform tap offset",
+                    False,
+                    f"Node 'network-tap' has ip_offset={node_offset}; the platform "
+                    "spawns its tap at 253.",
+                    severity="error"
+                ))
             continue
 
         # Check if this offset exists in any compose service
