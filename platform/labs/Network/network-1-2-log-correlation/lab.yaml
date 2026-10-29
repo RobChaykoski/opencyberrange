@@ -98,27 +98,27 @@ topology:
 test:
   steps:
     - name: "SSH to analysis workstation"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>&1"
       expect: "connected"
       timeout: 15
 
     - name: "Verify PCAP file exists"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'test -f /home/analyst/evidence/capture.pcap && echo pcap_found' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'test -f /home/analyst/evidence/capture.pcap && echo pcap_found' 2>&1"
       expect: "pcap_found"
       timeout: 15
 
     - name: "Extract token 1 from HTTP POST body"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -A 2>/dev/null | grep -o \"token=[a-z0-9_]*\" | sed \"s/^token=//\" | head -1' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -A 2>/dev/null | grep -o \"token=[a-z0-9_]*\" | sed \"s/^token=//\" | head -1' 2>&1"
       expect: "c0rr3l4t3"
       timeout: 20
 
     - name: "Extract token 2 from FTP PASS command"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -A 2>/dev/null | grep -o \"PASS [a-z0-9_]*\" | sed \"s/^PASS //\" | head -1' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -A 2>/dev/null | grep -o \"PASS [a-z0-9_]*\" | sed \"s/^PASS //\" | head -1' 2>&1"
       expect: "l0g"
       timeout: 20
 
     - name: "Extract token 3 from DNS exfiltration query"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -n port 53 2>/dev/null | grep -o \"token_[a-z0-9]*\\.exfil\\.evil-dns\\.net\" | head -1 | sed \"s/token_//;s/\\..*//\"' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -n port 53 2>/dev/null | grep -o \"token_[a-z0-9]*\\.exfil\\.evil-dns\\.net\" | head -1 | sed \"s/token_//;s/\\..*//\"' 2>&1"
       expect: "hunt"
       timeout: 20
 

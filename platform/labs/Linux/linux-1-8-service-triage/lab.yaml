@@ -97,17 +97,17 @@ topology:
 test:
   steps:
     - name: "Verify target-alpha responds"
-      command: "nmap -sn {target.target-alpha} 2>/dev/null | grep -c 'Host is up'"
+      command: "nmap -sn {target.target-alpha} 2>&1 | grep -c 'Host is up'"
       expect: "1"
       timeout: 15
 
     - name: "Verify target-bravo responds"
-      command: "nmap -sn {target.target-bravo} 2>/dev/null | grep -c 'Host is up'"
+      command: "nmap -sn {target.target-bravo} 2>&1 | grep -c 'Host is up'"
       expect: "1"
       timeout: 15
 
     - name: "Verify target-charlie responds"
-      command: "nmap -sn {target.target-charlie} 2>/dev/null | grep -c 'Host is up'"
+      command: "nmap -sn {target.target-charlie} 2>&1 | grep -c 'Host is up'"
       expect: "1"
       timeout: 15
 
@@ -127,7 +127,7 @@ test:
       timeout: 20
 
     - name: "Extract token 3 from target-charlie port 9999"
-      command: "timeout 3 bash -c 'cat < /dev/tcp/{target.target-charlie}/9999' 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "timeout 3 bash -c 'cat < /dev/tcp/{target.target-charlie}/9999' 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "t4rg3t"
       timeout: 15
 

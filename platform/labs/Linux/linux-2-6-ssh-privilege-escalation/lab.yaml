@@ -1158,5 +1158,5 @@ test:
       command: "nc -w 5 {target.target} 22 </dev/null | head -1"
       expect: "SSH"
     - name: "SSH login and retrieve flag via sudo cat"
-      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'sudo cat /root/flag.txt 2>/dev/null' 2>/dev/null"
+      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'sudo cat /root/flag.txt 2>/dev/null' 2>&1"
       expect: "OCR{sud0_3sc}"

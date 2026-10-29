@@ -815,5 +815,5 @@ test:
       command: "nc -w 5 {target.target} 22 </dev/null | head -1"
       expect: "SSH"
     - name: "SSH login and retrieve flag from user_info.txt"
-      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'cat ~/user_info.txt 2>/dev/null || grep -r OCR /home/ 2>/dev/null' 2>/dev/null"
+      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'cat ~/user_info.txt 2>/dev/null || grep -r OCR /home/ 2>/dev/null' 2>&1"
       expect: "OCR{us3r_d1sc0v3ry}"

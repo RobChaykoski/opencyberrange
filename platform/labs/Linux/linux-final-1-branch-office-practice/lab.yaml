@@ -109,27 +109,27 @@ topology:
 test:
   steps:
     - name: "SMB port responds"
-      command: "nmap -p 445 --open {target.branch-fs} 2>/dev/null | grep -c '445.*open'"
+      command: "nmap -p 445 --open {target.branch-fs} 2>&1 | grep -c '445.*open'"
       expect: "1"
       timeout: 15
 
     - name: "Token 1 retrievable from SNMP sysContact"
-      command: "snmpwalk -v2c -c public {target.branch-fs} 1.3.6.1.2.1.1.4.0 2>/dev/null | grep -o 'token=atl4s'"
+      command: "snmpwalk -v2c -c public {target.branch-fs} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o 'token=atl4s'"
       expect: "token=atl4s"
       timeout: 20
 
     - name: "Anonymous SMB lists branch-shared"
-      command: "smbclient -L //{target.branch-fs} -N 2>/dev/null | grep -c 'branch-shared'"
+      command: "smbclient -L //{target.branch-fs} -N 2>&1 | grep -c 'branch-shared'"
       expect: "1"
       timeout: 15
 
     - name: "Handover doc leaks dispatch_svc credentials"
-      command: "smbclient //{target.branch-fs}/branch-shared -N -c 'get IT_Handover_Notes.txt /tmp/atlas_handover.txt' 2>/dev/null && grep -o 'B4ckup_Atl4s_2024#' /tmp/atlas_handover.txt"
+      command: "smbclient //{target.branch-fs}/branch-shared -N -c 'get IT_Handover_Notes.txt /tmp/atlas_handover.txt' 2>&1 && grep -o 'B4ckup_Atl4s_2024#' /tmp/atlas_handover.txt"
       expect: "B4ckup_Atl4s_2024#"
       timeout: 15
 
     - name: "Token 2 retrievable from dispatch-backups with creds"
-      command: "smbclient //{target.branch-fs}/dispatch-backups -U dispatch_svc%B4ckup_Atl4s_2024# -c 'get branch_status_report.txt /tmp/atlas_status.txt' 2>/dev/null && grep -o 'token=h4rv3st' /tmp/atlas_status.txt"
+      command: "smbclient //{target.branch-fs}/dispatch-backups -U dispatch_svc%B4ckup_Atl4s_2024# -c 'get branch_status_report.txt /tmp/atlas_status.txt' 2>&1 && grep -o 'token=h4rv3st' /tmp/atlas_status.txt"
       expect: "token=h4rv3st"
       timeout: 15
 

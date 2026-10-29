@@ -239,5 +239,5 @@ test:
       expect: "flag.txt"
 
     - name: "Retrieve flag from SMB private share"
-      command: "smbclient //{target.target}/private -U '{cred.smb-user.user}%{cred.smb-user.pass}' -c 'get flag.txt -' 2>/dev/null"
+      command: "smbclient //{target.target}/private -U '{cred.smb-user.user}%{cred.smb-user.pass}' -c 'get flag.txt -' 2>&1"
       expect: "OCR{"

@@ -72,22 +72,22 @@ topology:
 test:
   steps:
     - name: "SNMP port 161 is accessible"
-      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>/dev/null | head -1"
+      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>&1 | head -1"
       expect: "Greystone"
       timeout: 15
 
     - name: "Extract token 1 from sysDescr"
-      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "snmp"
       timeout: 15
 
     - name: "Extract token 2 from sysLocation"
-      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.6.0 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.6.0 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "w4lk"
       timeout: 15
 
     - name: "Extract token 3 from sysContact"
-      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "c0mmun1ty"
       timeout: 15
 

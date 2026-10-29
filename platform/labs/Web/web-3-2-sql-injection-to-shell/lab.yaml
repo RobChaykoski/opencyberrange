@@ -122,7 +122,7 @@ test:
       expect: "sql1_un10n"
 
     - name: "MySQL query extracts second token from audit_flags table"
-      command: "mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' vertex_portal -N -e 'SELECT value FROM audit_flags WHERE name=\"assessment\"' 2>/dev/null"
+      command: "mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' vertex_portal -N -e 'SELECT value FROM audit_flags WHERE name=\"assessment\"' 2>&1"
       expect: "3xtr4ct"
       timeout: 20
 

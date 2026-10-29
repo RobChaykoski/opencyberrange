@@ -109,7 +109,7 @@ test:
       expect: "St0n3br1dg3_DB#"
 
     - name: "Query MySQL for flag part 2"
-      command: "mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' stonebridge -N -e 'SELECT value FROM audit_flags LIMIT 1' 2>/dev/null"
+      command: "mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' stonebridge -N -e 'SELECT value FROM audit_flags LIMIT 1' 2>&1"
       expect: "l34k"
       timeout: 20
 

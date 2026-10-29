@@ -195,5 +195,5 @@ test:
       expect: "flag.txt"
 
     - name: "Download and display flag file from SMB share"
-      command: "smbclient //{target.target}/public -N -c 'get flag.txt -' 2>/dev/null"
+      command: "smbclient //{target.target}/public -N -c 'get flag.txt -' 2>&1"
       expect: "OCR{"

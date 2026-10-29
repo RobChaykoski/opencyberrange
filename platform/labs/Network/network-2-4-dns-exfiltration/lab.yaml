@@ -236,7 +236,7 @@ test:
       command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'ls /home/analyst/captures/dns-tunnel.pcap'"
       expect: "dns-tunnel.pcap"
     - name: "Flag found in PCAP captures"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'tshark -r /home/analyst/captures/dns-tunnel.pcap -Y \"dns.qry.name contains data-exfil.tk and dns.flags.response == 0\" -T fields -e dns.qry.name 2>/dev/null | sed \"s/\\.data-exfil\\.tk//\" | tr -d \"\\n\" | xxd -r -p | grep -o \"OCR{[^}]*}\"'"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'tshark -r /home/analyst/captures/dns-tunnel.pcap -Y \"dns.qry.name contains data-exfil.tk and dns.flags.response == 0\" -T fields -e dns.qry.name 2>&1 | sed \"s/\\.data-exfil\\.tk//\" | tr -d \"\\n\" | xxd -r -p | grep -o \"OCR{[^}]*}\"'"
       expect: "OCR{dns_tunn3l_d3t3ct3d}"
 
     - name: "Echo confirmed flag"

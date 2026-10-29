@@ -293,7 +293,7 @@ test:
       command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'ls /home/analyst/captures/medical-records-ftp.pcap'"
       expect: "medical-records-ftp.pcap"
     - name: "Flag found in PCAP captures"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'strings /home/analyst/captures/*.pcap 2>/dev/null | grep -o \"OCR{[^}]*}\" | head -1'"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o \"OCR{[^}]*}\" | head -1'"
       expect: "OCR{ftp_us3r_p4ssw0rd_l34k}"
 
     - name: "Echo confirmed flag"

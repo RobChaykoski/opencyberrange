@@ -119,41 +119,41 @@ topology:
 test:
   steps:
     - name: "Verify analyst SSH access"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>&1"
       expect: "connected"
       timeout: 15
 
     - name: "Verify Suricata is running on IDS sensor"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'pgrep -x Suricata-Main > /dev/null && echo suricata_running' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'pgrep -x Suricata-Main > /dev/null && echo suricata_running' 2>&1"
       expect: "suricata_running"
       timeout: 15
 
     - name: "Observe attack traffic arriving on the IDS sensor"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'sudo timeout 25 tcpdump -i eth0 -A -c 5 port 80 2>/dev/null | grep -ci http' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'sudo timeout 25 tcpdump -i eth0 -A -c 5 port 80 2>/dev/null | grep -ci http' 2>&1"
       timeout: 40
 
     - name: "Write Suricata rules for SQLi and command injection detection"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'printf \"alert http any any -> any any (msg:\\\"SQLi Attack Detected\\\"; content:\\\"UNION SELECT\\\"; nocase; http_uri; sid:1000001; rev:1;)\\nalert http any any -> any any (msg:\\\"Command Injection Detected\\\"; content:\\\"cat /etc\\\"; nocase; http_client_body; sid:1000002; rev:1;)\\n\" > /etc/suricata/rules/local.rules && sudo kill -USR2 $(pgrep -x Suricata-Main) && echo rules_deployed' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'printf \"alert http any any -> any any (msg:\\\"SQLi Attack Detected\\\"; content:\\\"UNION SELECT\\\"; nocase; http_uri; sid:1000001; rev:1;)\\nalert http any any -> any any (msg:\\\"Command Injection Detected\\\"; content:\\\"cat /etc\\\"; nocase; http_client_body; sid:1000002; rev:1;)\\n\" > /etc/suricata/rules/local.rules && sudo kill -USR2 $(pgrep -x Suricata-Main) && echo rules_deployed' 2>&1"
       expect: "rules_deployed"
       timeout: 20
 
     - name: "Wait for attack cycle and verify Suricata alerts fire"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'sleep 20 && jq -r \"select(.alert) | .alert.signature\" /var/log/suricata/eve.json 2>/dev/null | sort -u' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'sleep 20 && jq -r \"select(.alert) | .alert.signature\" /var/log/suricata/eve.json 2>/dev/null | sort -u' 2>&1"
       expect: "Detected"
       timeout: 45
 
     - name: "Extract flag part 1 from SQLi alert payload (campaign tag)"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'jq -r \"select(.alert) | select(.alert.signature_id == 1000001) | .http.url\" /var/log/suricata/eve.json 2>/dev/null | grep -o \"campaign=[^&]*\" | sed \"s/^campaign=//\" | head -1' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'jq -r \"select(.alert) | select(.alert.signature_id == 1000001) | .http.url\" /var/log/suricata/eve.json 2>/dev/null | grep -o \"campaign=[^&]*\" | sed \"s/^campaign=//\" | head -1' 2>&1"
       expect: "d3t3ct"
       timeout: 15
 
     - name: "Extract flag part 2 from CMDi alert payload (exfil tag)"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'jq -r \"select(.alert) | select(.alert.signature_id == 1000002) | .payload_printable\" /var/log/suricata/eve.json 2>/dev/null | grep -o \"exfil=[^& ]*\" | sed \"s/^exfil=//\" | head -1' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'jq -r \"select(.alert) | select(.alert.signature_id == 1000002) | .payload_printable\" /var/log/suricata/eve.json 2>/dev/null | grep -o \"exfil=[^& ]*\" | sed \"s/^exfil=//\" | head -1' 2>&1"
       expect: "rul3"
       timeout: 15
 
     - name: "SSH to target and extract attacker User-Agent from access log"
-      command: "sshpass -p '{cred.webadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webadmin.user}@{target.target} 'grep -o \"SentinelBreaker/[a-zA-Z0-9_]*\" /var/log/nginx/access.log | head -1 | cut -d/ -f2' 2>/dev/null"
+      command: "sshpass -p '{cred.webadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webadmin.user}@{target.target} 'grep -o \"SentinelBreaker/[a-zA-Z0-9_]*\" /var/log/nginx/access.log | head -1 | cut -d/ -f2' 2>&1"
       expect: "wr1t3r"
       timeout: 15
 

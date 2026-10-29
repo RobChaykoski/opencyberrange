@@ -333,7 +333,7 @@ test:
       command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'ls /home/analyst/captures/email-exfiltration.pcap'"
       expect: "email-exfiltration.pcap"
     - name: "Flag found in PCAP captures"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'strings /home/analyst/captures/*.pcap 2>/dev/null | grep -o \"OCR{[^}]*}\" | head -1'"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o \"OCR{[^}]*}\" | head -1'"
       expect: "OCR{smtp_d4t4_3xf1ltr4t10n}"
 
     - name: "Echo confirmed flag"

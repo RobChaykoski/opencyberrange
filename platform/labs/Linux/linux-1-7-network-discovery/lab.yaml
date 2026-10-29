@@ -71,7 +71,7 @@ topology:
 test:
   steps:
     - name: "Port scan discovers multiple services"
-      command: "nmap -sV -p 21,22,80,8888 {target.target} 2>/dev/null | grep -c open"
+      command: "nmap -sV -p 21,22,80,8888 {target.target} 2>&1 | grep -c open"
       expect: "4"
       timeout: 30
 
@@ -84,7 +84,7 @@ test:
       expect: "4n0n"
 
     - name: "Extract token 3 from service banner on port 8888"
-      command: "timeout 3 bash -c 'cat < /dev/tcp/{target.target}/8888' 2>/dev/null | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
+      command: "timeout 3 bash -c 'cat < /dev/tcp/{target.target}/8888' 2>&1 | grep -o 'Token: [a-z0-9_]*' | awk '{print $2}'"
       expect: "h1dd3n"
 
     - name: "Verify complete flag"

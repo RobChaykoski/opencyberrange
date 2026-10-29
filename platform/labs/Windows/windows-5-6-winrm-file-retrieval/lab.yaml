@@ -450,7 +450,7 @@ test:
       expect: "open"
 
     - name: "Search for flag file via SSH"
-      command: "sshpass -p '{cred.winrm-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.winrm-user.user}@{target.target} 'find /tmp -name flag.txt 2>/dev/null'"
+      command: "sshpass -p '{cred.winrm-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.winrm-user.user}@{target.target} 'find /tmp -name flag.txt 2>&1'"
       expect: "/tmp/flag.txt"
 
     - name: "Retrieve flag via SSH"

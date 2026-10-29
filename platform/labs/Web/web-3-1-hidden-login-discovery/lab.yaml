@@ -131,7 +131,7 @@ test:
       expect: "Pr0d_DB_2024#"
 
     - name: "Connect to MySQL and extract token 3"
-      command: "mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' novatech -N -e 'SELECT token_value FROM audit_tokens WHERE token_name=\"assessment_marker\"' 2>/dev/null"
+      command: "mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' novatech -N -e 'SELECT token_value FROM audit_tokens WHERE token_name=\"assessment_marker\"' 2>&1"
       expect: "3xp0s3d"
       timeout: 20
 

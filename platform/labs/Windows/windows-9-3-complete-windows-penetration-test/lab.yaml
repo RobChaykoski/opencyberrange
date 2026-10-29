@@ -450,5 +450,5 @@ test:
       expect: "+"
 
     - name: "Retrieve flag via SSH credential reuse"
-      command: "sshpass -p '{cred.admin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.admin.user}@{target.target} 'cat /tmp/private/flag.txt' 2>/dev/null"
+      command: "sshpass -p '{cred.admin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.admin.user}@{target.target} 'cat /tmp/private/flag.txt' 2>&1"
       expect: "OCR{c0mpl3t3_w1nd0ws_p3nt3st}"

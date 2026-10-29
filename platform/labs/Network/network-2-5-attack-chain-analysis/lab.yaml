@@ -241,7 +241,7 @@ test:
       command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.network-2-5} 'ls /home/analyst/captures/full-attack.pcap'"
       expect: "full-attack.pcap"
     - name: "Flag found in PCAP captures"
-      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.network-2-5} 'strings /home/analyst/captures/*.pcap 2>/dev/null | grep -o \"OCR{[^}]*}\" | head -1'"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.network-2-5} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o \"OCR{[^}]*}\" | head -1'"
       expect: "OCR{full_4tt4ck_ch41n_m4pp3d}"
 
     - name: "Echo confirmed flag"

