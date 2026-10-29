@@ -56,9 +56,23 @@ def get_user_completions(db: Session, user_id: int) -> set:
     return {c.lab_id for c in completions}
 
 
-def is_lab_unlocked(db: Session, user_id: int, lab: Lab, completed_ids: set, user_is_admin: bool = False) -> bool:
-    """Check if user can access this lab based on prerequisites"""
-    
+def is_lab_unlocked(
+    db: Session,
+    user_id: int,
+    lab: Lab,
+    completed_ids: set,
+    user_is_admin: bool = False,
+    visible_lab_ids: Optional[set] = None,
+) -> bool:
+    """Check if user can access this lab based on prerequisites.
+
+    ``visible_lab_ids`` is the set of labs the user can actually see in this
+    track. Prerequisites are limited to that set: a draft or course-only lab
+    that is hidden from the student can never be completed, so counting it
+    would permanently lock every lab that follows it. Callers that omit the
+    set keep the previous (unfiltered) behaviour.
+    """
+
     # Admin users bypass all prerequisites
     if user_is_admin:
         return True
@@ -75,8 +89,15 @@ def is_lab_unlocked(db: Session, user_id: int, lab: Lab, completed_ids: set, use
 
     track_levels = sorted(level.track.levels, key=lambda l: l.level_number)
     
-    # Get all ACTIVE labs in this level, ordered (skip inactive labs for prerequisite checking)
-    level_labs = sorted([l for l in level.labs if l.is_active], key=lambda l: l.sort_order)
+    # Labs that count as prerequisites: active, and visible to this user when
+    # the caller supplied a visibility set (skip inactive/hidden labs).
+    level_labs = sorted(
+        [
+            l for l in level.labs
+            if l.is_active and (visible_lab_ids is None or l.id in visible_lab_ids)
+        ],
+        key=lambda l: l.sort_order,
+    )
     
     # If no active labs in level, unlock this lab (edge case)
     if not level_labs:
@@ -104,18 +125,34 @@ def is_lab_unlocked(db: Session, user_id: int, lab: Lab, completed_ids: set, use
         level_index = next((i for i, l in enumerate(track_levels) if l.id == level.id), -1)
         if level_index > 0:
             prev_level = track_levels[level_index - 1]
-            # Only check active labs in previous level
-            prev_level_active_lab_ids = {l.id for l in prev_level.labs if l.is_active}
+            # Only check active, visible labs in previous level
+            prev_level_active_lab_ids = {
+                l.id for l in prev_level.labs
+                if l.is_active and (visible_lab_ids is None or l.id in visible_lab_ids)
+            }
             if prev_level_active_lab_ids and not prev_level_active_lab_ids.issubset(completed_ids):
                 return False
     
     return True
 
 
-def get_current_lab(db: Session, user_id: int, track: Track, completed_ids: set) -> Optional[int]:
-    """Get the ID of the next lab to complete in a track"""
+def get_current_lab(
+    db: Session,
+    user_id: int,
+    track: Track,
+    completed_ids: set,
+    visible_lab_ids: Optional[set] = None,
+) -> Optional[int]:
+    """Get the ID of the next lab to complete in a track.
+
+    ``visible_lab_ids`` mirrors :func:`is_lab_unlocked`: hidden labs are skipped
+    so the "current lab" pointer never lands on something the student cannot
+    open.
+    """
     for level in sorted(track.levels, key=lambda l: l.level_number):
         for lab in sorted(level.labs, key=lambda l: l.sort_order or 9999):
+            if visible_lab_ids is not None and lab.id not in visible_lab_ids:
+                continue
             if lab.id not in completed_ids:
                 return lab.id
     return None
@@ -184,6 +221,21 @@ def _is_lab_visible(lab, user, accessible_course_lab_ids: set, *, course_context
             return True
         return lab.id in accessible_course_lab_ids
     return False
+
+
+def _visible_lab_ids(track: Track, user, accessible_course_lab_ids: set) -> set:
+    """IDs of the labs *user* can see anywhere in *track*.
+
+    Sequential unlocking and the "current lab" pointer must only count labs a
+    student can actually open. A hidden draft or course-only lab in the chain
+    is uncompletable, so counting it would lock every lab that follows it.
+    """
+    return {
+        lab.id
+        for level in track.levels
+        for lab in level.labs
+        if _is_lab_visible(lab, user, accessible_course_lab_ids)
+    }
 
 
 def check_rate_limit(db: Session, user_id: int, lab_id: int) -> bool:
@@ -376,8 +428,11 @@ async def get_track(
                 raise HTTPException(status_code=404, detail="Track not found")
     
     completed_ids = get_user_completions(db, current_user.id)
-    current_lab_id = get_current_lab(db, current_user.id, track, completed_ids)
     accessible_course_lab_ids = get_accessible_exclusive_lab_ids(db, current_user.id)
+    visible_lab_ids = _visible_lab_ids(track, current_user, accessible_course_lab_ids)
+    current_lab_id = get_current_lab(
+        db, current_user.id, track, completed_ids, visible_lab_ids
+    )
 
     # Get active session if any
     active_session = db.query(LabSession).filter(
@@ -394,7 +449,10 @@ async def get_track(
                 continue
             
             is_completed = lab.id in completed_ids
-            is_unlocked = is_lab_unlocked(db, current_user.id, lab, completed_ids, current_user.is_admin)
+            is_unlocked = is_lab_unlocked(
+                db, current_user.id, lab, completed_ids,
+                current_user.is_admin, visible_lab_ids,
+            )
             is_current = lab.id == current_lab_id
             is_active = active_session and active_session.lab_id == lab.id
             
@@ -858,7 +916,13 @@ async def submit_flag(
         next_lab = None
         if lab.level:
             completed_ids = get_user_completions(db, current_user.id)
-            next_lab_id = get_current_lab(db, current_user.id, lab.level.track, completed_ids)
+            next_lab_id = get_current_lab(
+                db, current_user.id, lab.level.track, completed_ids,
+                _visible_lab_ids(
+                    lab.level.track, current_user,
+                    get_accessible_exclusive_lab_ids(db, current_user.id),
+                ),
+            )
             if next_lab_id:
                 next = db.query(Lab).filter(Lab.id == next_lab_id).first()
                 if next:
@@ -1168,7 +1232,16 @@ async def get_lab_details(
                     course_bypass = True
 
     completed_ids = get_user_completions(db, current_user.id)
-    is_unlocked = is_lab_unlocked(db, current_user.id, lab, completed_ids, current_user.is_instructor)
+    # Prerequisite chains only count labs this user can see; a hidden draft or
+    # course-only lab would otherwise become an uncompletable prerequisite.
+    visible_lab_ids = _visible_lab_ids(
+        lab.level.track, current_user,
+        get_accessible_exclusive_lab_ids(db, current_user.id),
+    )
+    is_unlocked = is_lab_unlocked(
+        db, current_user.id, lab, completed_ids,
+        current_user.is_instructor, visible_lab_ids,
+    )
 
     if not is_unlocked and not course_bypass and not current_user.is_instructor:
         raise HTTPException(
