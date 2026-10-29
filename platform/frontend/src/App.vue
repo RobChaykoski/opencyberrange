@@ -32,6 +32,10 @@
     <main v-else class="main-content main-content--guest">
       <router-view :key="'guest'" />
     </main>
+
+    <footer class="app-footer">
+      Powered by <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer">SWOCTS</a>
+    </footer>
   </div>
 </template>
 
@@ -327,4 +331,19 @@ body {
     background: #fff !important;
   }
 }
+.app-footer {
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+}
+.app-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.app-footer a:hover {
+  text-decoration: underline;
+}
+
 </style>

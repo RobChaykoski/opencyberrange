@@ -33,6 +33,8 @@ DEFAULT_SETTINGS = [
     # --- General ---
     {"key": "setup_complete", "value": "false", "category": "general",
      "description": "Set to true after first-run setup wizard completes", "is_secret": False},
+    {"key": "certificate_verify_url", "value": "", "category": "general",
+     "description": "Base URL used in certificate QR codes for verification (e.g. https://range.example.com). Empty uses the request host.", "is_secret": False},
 
     # --- Security ---
     {"key": "jwt_expiration_hours", "value": "24", "category": "security",

@@ -19,7 +19,7 @@ from app.database import engine, Base
 # before create_all() runs in the lifespan startup.
 from app import modules as module_registry
 module_registry.register_models()
-from app.routers import auth, labs, admin, curriculum, courses, dashboard, setup, curriculum_admin, instructor
+from app.routers import auth, labs, admin, curriculum, courses, dashboard, setup, curriculum_admin, instructor, quiz
 from app.routers import settings as settings_router
 from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
@@ -473,6 +473,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(labs.router, prefix="/api/labs", tags=["Labs"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(curriculum.router, prefix="/api/exercises", tags=["Exercises"])
+app.include_router(quiz.router, prefix="/api/exercises", tags=["Quizzes"])
 app.include_router(courses.router, prefix="/api/courses", tags=["Courses"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])

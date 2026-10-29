@@ -158,6 +158,7 @@ class Lab(Base):
     week = Column(Integer, nullable=True)
     # Who created this lab (NULL for system-discovered labs)
     created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+
     # Static validation results (populated by lab scanner / validate-lab.py)
     validation_status = Column(String(20), nullable=True)  # ok | warning | error
     validation_errors = Column(Text, nullable=True)  # JSON array of {name, passed, message, severity}
@@ -174,6 +175,57 @@ class Lab(Base):
     completions = relationship("LabCompletion", back_populates="lab")
     flag_attempts = relationship("FlagAttempt", back_populates="lab")
     course_assignments = relationship("CourseLabAssignment", back_populates="lab")
+
+
+class LevelQuiz(Base):
+    """Optional 20-question quiz attached to a level."""
+    __tablename__ = "level_quizzes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    level_id = Column(Integer, ForeignKey("levels.id", ondelete="CASCADE"), nullable=False, unique=True)
+    title = Column(String(120), nullable=False, default="Level Quiz")
+    passing_score = Column(Integer, nullable=False, default=70)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    level = relationship("Level")
+    questions = relationship("QuizQuestion", back_populates="quiz", cascade="all, delete-orphan", order_by="QuizQuestion.sort_order")
+
+
+class QuizQuestion(Base):
+    """A single multiple-choice question for a level quiz."""
+    __tablename__ = "quiz_questions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    quiz_id = Column(Integer, ForeignKey("level_quizzes.id", ondelete="CASCADE"), nullable=False)
+    sort_order = Column(Integer, default=0)
+    question = Column(Text, nullable=False)
+    # JSON array of option strings
+    options = Column(Text, nullable=False)
+    # Index of the correct option
+    correct_index = Column(Integer, nullable=False)
+    explanation = Column(Text, nullable=True)
+
+    quiz = relationship("LevelQuiz", back_populates="questions")
+
+
+class QuizAttempt(Base):
+    """A student's attempt at a level quiz."""
+    __tablename__ = "quiz_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    quiz_id = Column(Integer, ForeignKey("level_quizzes.id", ondelete="CASCADE"), nullable=False)
+    score = Column(Integer, nullable=False)  # percentage 0-100
+    total = Column(Integer, nullable=False)
+    correct = Column(Integer, nullable=False)
+    passed = Column(Boolean, default=False)
+    answers = Column(Text, nullable=True)  # JSON array of selected indices
+    taken_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        Index('ix_quiz_attempt_user_quiz', 'user_id', 'quiz_id'),
+    )
 
 
 class LabSession(Base):

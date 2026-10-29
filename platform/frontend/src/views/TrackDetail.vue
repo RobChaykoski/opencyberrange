@@ -63,6 +63,19 @@
             <button
               v-if="level.is_complete"
               class="level-certificate-btn"
+              title="Take the optional level quiz"
+              @click.stop="openQuiz(level)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              Quiz
+            </button>
+            <button
+              v-if="level.is_complete"
+              class="level-certificate-btn"
               title="Print a certificate for this level"
               @click.stop="openCertificate(level)"
             >
@@ -470,6 +483,44 @@
       </div>
     </transition>
 
+    <!-- Level Quiz Modal (optional, after level completion) -->
+    <div v-if="showQuizModal" class="quiz-modal-backdrop" @click.self="closeQuizModal">
+      <div class="quiz-modal">
+        <div class="quiz-modal__header">
+          <h2>{{ quizData?.title || 'Level Quiz' }}</h2>
+          <button class="close-btn" @click="closeQuizModal" aria-label="Close quiz">&times;</button>
+        </div>
+        <p v-if="quizData" class="quiz-modal__meta">
+          Passing score: {{ quizData.passing_score }}% &middot; {{ quizData.question_count }} questions
+          <span v-if="quizData.best_score !== null"> &middot; Best: {{ quizData.best_score }}%</span>
+        </p>
+
+        <div v-if="quizResult" class="quiz-result" :class="quizResult.passed ? 'quiz-result--pass' : 'quiz-result--fail'">
+          <strong>{{ quizResult.passed ? 'Passed!' : 'Not passed' }}</strong>
+          Score: {{ quizResult.score }}% ({{ quizResult.correct }}/{{ quizResult.total }})
+          <p v-if="quizResult.passed" class="quiz-result__note">Your score will appear on your certificate.</p>
+        </div>
+
+        <div v-else class="quiz-modal__body">
+          <div v-for="(q, qi) in (quizData?.questions || [])" :key="q.id" class="quiz-question">
+            <p class="quiz-question__text">{{ qi + 1 }}. {{ q.question }}</p>
+            <label v-for="(opt, oi) in q.options" :key="oi" class="quiz-option">
+              <input type="radio" :name="'q' + q.id" :value="oi" v-model="quizAnswers[qi]" />
+              <span>{{ opt }}</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="quiz-modal__footer">
+          <button v-if="!quizResult" class="btn btn--primary" :disabled="quizSubmitting || !allQuizAnswered" @click="submitQuiz">
+            {{ quizSubmitting ? 'Submitting...' : 'Submit Quiz' }}
+          </button>
+          <button v-else class="btn btn--secondary" @click="closeQuizModal">Close</button>
+          <button class="btn btn--secondary" @click="closeQuizModal">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div v-if="loading || spawning" class="loading-overlay" role="status" aria-live="polite">
       <div class="loading-box">
@@ -522,6 +573,14 @@ const router = useRouter()
 const track = ref(null)
 const expandedLevels = ref([])
 const activeLab = ref(null)
+
+// Level quiz state
+const showQuizModal = ref(false)
+const quizLoading = ref(false)
+const quizSubmitting = ref(false)
+const quizData = ref(null)
+const quizAnswers = ref([])
+const quizResult = ref(null)
 const { copied, copyText } = useClipboard()
 
 const loading = ref(false)
@@ -809,6 +868,59 @@ const openWorkbookForLab = (lab) => {
 const openCertificate = (level) => {
   if (!track.value?.slug || !level?.id) return
   router.push(`/certificate/${track.value.slug}/${level.id}`)
+}
+
+const openQuiz = async (level) => {
+  if (!track.value?.slug || !level?.id) return
+  showQuizModal.value = true
+  quizLoading.value = true
+  quizResult.value = null
+  quizAnswers.value = []
+  quizData.value = null
+  try {
+    const token = localStorage.getItem('token')
+    const { data } = await axios.get(`/exercises/tracks/${track.value.slug}/levels/${level.id}/quiz`, {
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    })
+    quizData.value = data
+    quizAnswers.value = new Array(data.question_count).fill(null)
+  } catch (e) {
+    quizData.value = null
+    alert(e.response?.data?.detail || 'No quiz available for this level.')
+    showQuizModal.value = false
+  } finally {
+    quizLoading.value = false
+  }
+}
+
+const closeQuizModal = () => {
+  showQuizModal.value = false
+  quizData.value = null
+  quizAnswers.value = []
+  quizResult.value = null
+}
+
+const allQuizAnswered = computed(() => {
+  if (!quizAnswers.value.length) return false
+  return quizAnswers.value.every(a => a !== null && a !== undefined)
+})
+
+const submitQuiz = async () => {
+  if (!track.value?.slug || !quizData.value) return
+  quizSubmitting.value = true
+  try {
+    const token = localStorage.getItem('token')
+    const { data } = await axios.post(
+      `/exercises/tracks/${track.value.slug}/levels/${quizData.value.level_id}/quiz/submit`,
+      { answers: quizAnswers.value },
+      { headers: token ? { 'Authorization': `Bearer ${token}` } : {} }
+    )
+    quizResult.value = data
+  } catch (e) {
+    alert(e.response?.data?.detail || 'Failed to submit quiz.')
+  } finally {
+    quizSubmitting.value = false
+  }
 }
 
 const openActiveLab = async (lab) => {
@@ -2661,4 +2773,83 @@ watch(timeRemaining, (val) => {
   color: #5cb85c;
   font-weight: 500;
 }
+/* Level quiz modal */
+.quiz-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1rem;
+}
+.quiz-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: auto;
+  padding: 1.5rem;
+}
+.quiz-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.quiz-modal__meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.quiz-question {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.quiz-question__text {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.quiz-option input {
+  accent-color: var(--accent);
+}
+.quiz-result {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+.quiz-result--pass {
+  background: rgba(34, 197, 94, 0.16);
+  color: var(--success);
+}
+.quiz-result--fail {
+  background: rgba(239, 68, 68, 0.16);
+  color: var(--danger);
+}
+.quiz-result__note {
+  font-weight: 400;
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+.quiz-modal__footer {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+
 </style>

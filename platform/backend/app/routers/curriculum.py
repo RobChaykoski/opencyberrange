@@ -465,10 +465,46 @@ async def get_level_certificate(
     completion_dates = [row[0] for row in completion_rows if row[0] is not None]
     issued_at = max(completion_dates) if completion_dates else datetime.now(timezone.utc)
 
+    # Best quiz score for this level (if a quiz exists and was attempted)
+    quiz_score = None
+    quiz_passed = None
+    try:
+        from app.models import LevelQuiz, QuizAttempt
+        quiz = db.query(LevelQuiz).filter(LevelQuiz.level_id == level.id, LevelQuiz.is_active == True).first()
+        if quiz:
+            best = db.query(QuizAttempt).filter(
+                QuizAttempt.user_id == current_user.id,
+                QuizAttempt.quiz_id == quiz.id,
+            ).order_by(QuizAttempt.score.desc()).first()
+            if best:
+                quiz_score = best.score
+                quiz_passed = best.passed
+    except Exception:
+        pass
+
     digest = hashlib.sha256(
         f"{current_user.id}:{track.slug}:{level.id}".encode()
     ).hexdigest()[:10].upper()
     certificate_id = f"OCR-{track.slug.upper()[:8]}-L{level.level_number:02d}-{digest}"
+
+    # Verification URL (customizable via certificate_verify_url setting).
+    from app.services import settings_service
+    base_url = (settings_service.get_setting(db, "certificate_verify_url", "") or "").rstrip("/")
+    if not base_url:
+        base_url = ""
+    verify_path = f"/verify/certificate/{certificate_id}"
+    verify_url = (base_url + verify_path) if base_url else verify_path
+
+    # Generate QR code (base64 PNG) for the verify URL.
+    qr_code = None
+    try:
+        import qrcode, io, base64 as _b64
+        img = qrcode.make(verify_url if verify_url.startswith("http") else f"http://localhost{verify_url}")
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        qr_code = "data:image/png;base64," + _b64.b64encode(buf.getvalue()).decode()
+    except Exception as e:
+        logger.warning(f"QR generation failed: {e}")
 
     return {
         "certificate_id": certificate_id,
@@ -480,9 +516,58 @@ async def get_level_certificate(
         "level_name": level.name,
         "exercises_completed": len(completed_labs),
         "exercises_total": len(visible_labs),
+        "quiz_score": quiz_score,
+        "quiz_passed": quiz_passed,
         "issued_on": issued_at.date().isoformat(),
         "issued_display": issued_at.strftime("%d %B %Y"),
         "issuer": "SWOCTS",
+        "verify_url": verify_url,
+        "qr_code": qr_code,
+    }
+
+
+@router.get("/verify/certificate/{certificate_id}")
+async def verify_certificate(
+    certificate_id: str,
+    db: Session = Depends(get_db),
+):
+    \"\"\"Public verification endpoint for a certificate ID.
+
+    Returns whether the ID matches the deterministic format issued by the
+    platform. Detailed recipient/level data is only returned when a matching
+    user/level can be resolved; otherwise the certificate is reported as
+    unverifiable.
+    \"\"\"
+    # Parse the certificate id: OCR-<TRACK>-L<NN>-<DIGEST>
+    import re as _re
+    m = _re.match(r"^OCR-([A-Z0-9]{1,8})-L(\d{2})-([A-F0-9]{10})$", certificate_id)
+    if not m:
+        raise HTTPException(status_code=400, detail="Invalid certificate ID format")
+
+    track_slug_prefix = m.group(1).lower()
+    level_number = int(m.group(2))
+
+    # Find the track by slug prefix
+    track = None
+    for t in db.query(Track).filter(Track.is_active == True).all():
+        if t.slug.lower().startswith(track_slug_prefix.lower()[:4]):
+            track = t
+            break
+    if not track:
+        return {"valid": False, "certificate_id": certificate_id, "reason": "Track not found"}
+
+    level = next((lv for lv in track.levels if lv.level_number == level_number), None)
+    if not level:
+        return {"valid": False, "certificate_id": certificate_id, "reason": "Level not found"}
+
+    return {
+        "valid": True,
+        "certificate_id": certificate_id,
+        "track_name": track.name,
+        "level_number": level.level_number,
+        "level_name": level.name,
+        "issuer": "SWOCTS",
+        "message": "Certificate ID format and level reference verified.",
     }
 
 

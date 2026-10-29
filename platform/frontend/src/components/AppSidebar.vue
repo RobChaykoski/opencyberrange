@@ -167,6 +167,9 @@
         <span v-show="!collapsed" class="nav-item__label">{{ formattedUsername }}</span>
       </router-link>
       <button v-show="!collapsed" @click="$emit('logout')" class="logout-btn">Logout</button>
+      <div v-show="!collapsed" class="swocts-footer">
+        Powered by <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer">SWOCTS</a>
+      </div>
     </div>
   </aside>
 </template>
@@ -544,4 +547,20 @@ const userInitial = computed(() => {
     transform: translateX(0);
   }
 }
+.swocts-footer {
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  padding: 0.5rem 0.25rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: 0.5rem;
+}
+.swocts-footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.swocts-footer a:hover {
+  text-decoration: underline;
+}
+
 </style>

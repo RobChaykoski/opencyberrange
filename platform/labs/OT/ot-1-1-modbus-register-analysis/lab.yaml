@@ -1,0 +1,78 @@
+name: "Halcyon Industrial - Modbus Register Triage"
+description: "A simulated industrial controller exposes a Modbus TCP service. Enumerate the register map, read the holding registers, and decode the analyst marker stored in the first block."
+difficulty: beginner
+category: ot
+duration_minutes: 40
+visibility: public
+flag: "OCR{m0dbu5_r3g15t3r5_r3v34l3d}"
+
+tools:
+  - python3
+  - nmap
+  - mbpoll
+
+objectives:
+  - Discover the Modbus TCP service on the controller
+  - Read the holding register map
+  - Decode the ASCII marker stored in consecutive registers
+  - Record the device identity and register layout
+
+scenario: |
+  Halcyon Industrial Controls operates a small process line. An analyst
+  captured a Modbus TCP conversation during a routine audit and noticed the
+  controller's holding registers contain more than setpoints. The controller
+  is online in the lab at the address shown under Target Hostnames.
+
+  Level 1 of the OT track starts with the protocol itself. Modbus has no
+  authentication and no encryption: anyone who can reach TCP 502 can read
+  every register. Your job is to enumerate the device, read the holding
+  registers, and recover the analyst marker stored in the first block.
+
+workbook: "wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/"
+
+hostnames:
+  - ip_offset: "60"
+    hostname: "plc"
+    description: "HIC-2400 process controller (Modbus TCP)"
+
+topology:
+  nodes:
+    - id: "plc"
+      label: "HIC-2400 PLC"
+      type: "server"
+      ip_offset: "60"
+      ports: [502]
+      services: ["modbus"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Find the service first:
+      nmap -sV -p 502 <plc_ip>
+      Then read holding registers 0..40 with a Modbus client. mbpoll is
+      available on the RangeBox; python3 with a raw socket also works.
+    unlock_after_minutes: 5
+  - text: |
+      Modbus TCP read-holding-registers (function 0x03) request layout:
+      7-byte MBAP header + 5-byte PDU (function, start_hi, start_lo, count_hi, count_lo).
+      Each register is 16 bits; the flag is stored one ASCII character per
+      register, starting at address 0.
+    unlock_after_minutes: 12
+  - text: |
+      Decode the register values with chr() in Python. Stop at the first
+      register that is not a printable ASCII character; that marks the end
+      of the marker.
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Modbus service is reachable"
+      command: "python3 -c \"import socket;s=socket.create_connection(('{target.plc}',502),5);s.close();print('ok')\""
+      expect: "ok"
+      timeout: 20
+
+    - name: "Holding registers decode to the flag"
+      command: "python3 -c \"import socket,struct;s=socket.create_connection(('{target.plc}',502),5);req=struct.pack('>HHHBBHH',1,0,6,1,3,0,40);s.sendall(req);r=s.recv(256);bc=r[8];vals=struct.unpack('>%dH'%(bc//2),r[9:9+bc]);out=''.join(chr(v) for v in vals if 32<=v<127);print(out.split(chr(0))[0])\""
+      expect: "OCR{m0dbu5_r3g15t3r5_r3v34l3d}"
+      timeout: 20
