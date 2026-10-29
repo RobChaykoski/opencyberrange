@@ -40,6 +40,7 @@ TRACK_DIRS = {
     "linux": "Linux",
     "web": "Web",
     "network": "Network",
+    "malware": "Malware",
     "capitalflow": "Capital Flow",
     "forensics": "Forensics",
     "refinery": "Refinery",

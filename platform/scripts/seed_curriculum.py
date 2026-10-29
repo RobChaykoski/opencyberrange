@@ -130,7 +130,17 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                       {   'level_number': 12,
                           'name': 'Firewalls and Filtering',
                           'description': 'Controlling inbound traffic and hardening firewall '
-                                         'policy'}]}]
+                                         'policy'}]},
+    {   'name': 'Malware Analysis',
+        'slug': 'malware',
+        'description': 'Triage malicious samples safely: identify, hash, and reason about '
+                       'what a file does before anything runs.',
+        'icon': 'forensics',
+        'color': '#F59E0B',
+        'sort_order': 5,
+        'levels': [   {   'level_number': 1,
+                          'name': 'Malware Fundamentals',
+                          'description': 'Safe handling, triage, and sample identification'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)

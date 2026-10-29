@@ -107,7 +107,8 @@ def get_track_directory_name(track_slug: str) -> str:
         "web": "Web",
         "windows": "Windows",
         "linux": "Linux",
-        "network": "Network"
+        "network": "Network",
+        "malware": "Malware"
     }
     return track_name_map.get(track_slug, track_slug.capitalize())
 
