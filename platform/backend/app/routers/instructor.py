@@ -666,7 +666,7 @@ async def delete_own_lab(
     from app.models import LabSession
     active_sessions = db.query(LabSession).filter(
         LabSession.lab_id == lab_id,
-        LabSession.ended_at.is_(None),
+        LabSession.status.in_(["starting", "running", "stopping"]),
     ).count()
     if active_sessions > 0:
         raise HTTPException(
