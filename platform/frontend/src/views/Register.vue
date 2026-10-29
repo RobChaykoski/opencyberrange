@@ -6,7 +6,7 @@
         <div class="form-panel-inner">
           <!-- Brand -->
           <div class="brand">
-            <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="brand-icon" />
+            <img src="/swocts_logo.jpg" alt="SWOCTS" class="brand-icon" />
             <div class="brand-text">
               <h1 class="brand-title">OpenCyberRange</h1>
               <p class="brand-subtitle">Create Account</p>

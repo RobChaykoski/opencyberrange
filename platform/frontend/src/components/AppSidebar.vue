@@ -9,7 +9,7 @@
         </svg>
       </button>
       <router-link to="/dashboard" class="brand-link">
-        <img src="/ocr-logo-dark.png" alt="OCR" class="brand-icon" />
+        <img src="/swocts_logo.jpg" alt="SWOCTS" class="brand-icon" />
         <span v-show="!collapsed" class="brand-text">OpenCyberRange</span>
       </router-link>
     </div>

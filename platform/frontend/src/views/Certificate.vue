@@ -34,7 +34,7 @@
         <div class="certificate__corner certificate__corner--br"></div>
 
         <header class="certificate__header">
-          <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="certificate__logo" />
+          <img src="/swocts_logo.jpg" alt="SWOCTS" class="certificate__logo" />
           <p class="certificate__eyebrow">OpenCyberRange</p>
           <h1 class="certificate__title">Certificate of Completion</h1>
           <div class="certificate__rule"></div>
