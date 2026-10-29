@@ -170,6 +170,61 @@
           <p v-else class="empty-courses">Not enrolled in any courses yet.</p>
         </div>
 
+        <!-- Two-Factor Authentication (TOTP) -->
+        <div class="profile-section">
+          <h2 class="section-title">Two-Factor Authentication (TOTP)</h2>
+          <p class="help-text" style="margin: 0 0 0.85rem;">
+            Add a second factor using an authenticator app (Google Authenticator, Authy, 1Password, etc.).
+          </p>
+
+          <div v-if="user.mfa_enabled" class="info-grid">
+            <div class="info-item">
+              <label class="info-label">Status</label>
+              <div class="info-value"><span class="status-badge status-badge--approved">Enabled</span></div>
+            </div>
+          </div>
+
+          <div v-if="!user.mfa_enabled && !mfa.enrolling" class="join-row" style="margin-top: 0.5rem;">
+            <button class="btn btn--primary" :disabled="mfa.loading" @click="startMfaEnroll">
+              {{ mfa.loading ? 'Starting...' : 'Enable MFA' }}
+            </button>
+            <p v-if="mfa.error" class="error-message" style="margin-top: 0.5rem;">{{ mfa.error }}</p>
+          </div>
+
+          <div v-if="!user.mfa_enabled && mfa.enrolling" style="margin-top: 0.75rem;">
+            <p class="help-text">Scan this URI in your authenticator app, or enter the secret manually:</p>
+            <div class="info-item" style="margin: 0.5rem 0;">
+              <label class="info-label">Secret</label>
+              <div class="info-value"><code>{{ mfa.secret }}</code></div>
+            </div>
+            <div class="info-item" style="margin: 0.5rem 0;">
+              <label class="info-label">Provisioning URI</label>
+              <div class="info-value" style="word-break: break-all;"><code>{{ mfa.uri }}</code></div>
+            </div>
+            <div class="join-row" style="margin-top: 0.75rem;">
+              <input v-model="mfa.code" type="text" inputmode="numeric" placeholder="6-digit code" class="form-input" @keyup.enter="verifyMfa" />
+              <button class="btn btn--primary" :disabled="mfa.loading || !mfa.code.trim()" @click="verifyMfa">
+                {{ mfa.loading ? 'Verifying...' : 'Verify & Enable' }}
+              </button>
+              <button class="btn btn--secondary" @click="cancelMfaEnroll">Cancel</button>
+            </div>
+            <p v-if="mfa.error" class="error-message" style="margin-top: 0.5rem;">{{ mfa.error }}</p>
+            <p v-if="mfa.success" class="success-message" style="margin-top: 0.5rem;">{{ mfa.success }}</p>
+          </div>
+
+          <div v-if="user.mfa_enabled" style="margin-top: 0.75rem;">
+            <div class="join-row" style="flex-wrap: wrap;">
+              <input v-model="mfa.password" type="password" placeholder="Current password" class="form-input" />
+              <input v-model="mfa.code" type="text" inputmode="numeric" placeholder="6-digit code" class="form-input" />
+              <button class="btn btn--ghost-danger" :disabled="mfa.loading" @click="disableMfa">
+                {{ mfa.loading ? 'Disabling...' : 'Disable MFA' }}
+              </button>
+            </div>
+            <p v-if="mfa.error" class="error-message" style="margin-top: 0.5rem;">{{ mfa.error }}</p>
+            <p v-if="mfa.success" class="success-message" style="margin-top: 0.5rem;">{{ mfa.success }}</p>
+          </div>
+        </div>
+
         <!-- Password Change Section -->
         <div class="profile-section">
           <h2 class="section-title">Change Password</h2>
@@ -298,6 +353,17 @@ const route = useRoute()
 const { exerciseAuthoring, fetchModules } = useModules()
 const user = ref(null)
 const { vpnStatus, fetchVpnStatus, isVpnRegistered } = useVpnStatus()
+
+const mfa = reactive({
+  loading: false,
+  enrolling: false,
+  secret: '',
+  uri: '',
+  code: '',
+  password: '',
+  error: '',
+  success: '',
+})
 const loading = ref(true)
 
 // Exercise Studio LLM connections (instructor/admin)
@@ -513,6 +579,64 @@ const changePassword = async () => {
 }
 
 // fetchVpnStatus is now provided by useVpnStatus composable
+
+const startMfaEnroll = async () => {
+  mfa.loading = true
+  mfa.error = ''
+  mfa.success = ''
+  try {
+    const r = await axios.post('/auth/mfa/enroll')
+    mfa.secret = r.data.secret
+    mfa.uri = r.data.provisioning_uri
+    mfa.enrolling = true
+  } catch (e) {
+    mfa.error = e.response?.data?.detail || 'Failed to start MFA enrollment'
+  } finally {
+    mfa.loading = false
+  }
+}
+
+const cancelMfaEnroll = () => {
+  mfa.enrolling = false
+  mfa.secret = ''
+  mfa.uri = ''
+  mfa.code = ''
+  mfa.error = ''
+}
+
+const verifyMfa = async () => {
+  mfa.loading = true
+  mfa.error = ''
+  mfa.success = ''
+  try {
+    await axios.post('/auth/mfa/verify', { code: mfa.code.trim() })
+    mfa.success = 'MFA enabled successfully.'
+    mfa.enrolling = false
+    mfa.code = ''
+    await fetchUserInfo()
+  } catch (e) {
+    mfa.error = e.response?.data?.detail || 'Invalid MFA code'
+  } finally {
+    mfa.loading = false
+  }
+}
+
+const disableMfa = async () => {
+  mfa.loading = true
+  mfa.error = ''
+  mfa.success = ''
+  try {
+    await axios.post('/auth/mfa/disable', { password: mfa.password, code: mfa.code.trim() })
+    mfa.success = 'MFA disabled.'
+    mfa.password = ''
+    mfa.code = ''
+    await fetchUserInfo()
+  } catch (e) {
+    mfa.error = e.response?.data?.detail || 'Failed to disable MFA'
+  } finally {
+    mfa.loading = false
+  }
+}
 
 const fetchUserInfo = async () => {
   try {

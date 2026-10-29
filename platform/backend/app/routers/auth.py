@@ -72,6 +72,9 @@ class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: str = Field(..., max_length=100)
     student_id: Optional[str] = Field(None, min_length=5, max_length=20)
+    first_name: Optional[str] = Field(None, max_length=80)
+    last_name: Optional[str] = Field(None, max_length=80)
+    organization: Optional[str] = Field(None, max_length=120)
     password: str = Field(..., min_length=8, max_length=128)
     invite_code: Optional[str] = Field(None, min_length=4, max_length=64)
 
@@ -178,13 +181,42 @@ async def login(
                 detail="MFA code required",
                 headers={"WWW-Authenticate": "Bearer", "X-MFA-Required": "true"},
             )
-        if not totp_service.verify_code(user.totp_secret, totp_code):
+        # Accept either a live TOTP code or a single-use recovery code.
+        ok = totp_service.verify_code(user.totp_secret, totp_code)
+        if not ok and getattr(user, "mfa_recovery_codes", None):
+            try:
+                stored = _json.loads(user.mfa_recovery_codes)
+            except Exception:
+                stored = []
+            h = hashlib.sha256(totp_code.strip().upper().encode()).hexdigest()
+            if h in stored:
+                stored.remove(h)
+                user.mfa_recovery_codes = _json.dumps(stored)
+                db.commit()
+                ok = True
+                logger.info(f"User {user.username} used a recovery code at login")
+        if not ok:
             logger.info(f"Failed MFA attempt for user: {user.username}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid MFA code",
                 headers={"WWW-Authenticate": "Bearer", "X-MFA-Required": "true"},
             )
+
+    # Record login metadata (session awareness / login notifications).
+    client_ip = request.client.host if request.client else None
+    is_new_ip = bool(client_ip and user.last_login_ip and client_ip != user.last_login_ip)
+    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_ip = client_ip
+    db.commit()
+
+    if getattr(user, "login_notifications", True) and is_new_ip:
+        logger.info(
+            "Login notification: user %s logged in from new IP %s (previous %s)",
+            user.username, client_ip, user.last_login_ip,
+        )
+        # Email delivery is not configured in this deployment; the event is
+        # recorded above and surfaced through the activity feed instead.
 
     # Create access token
     access_token_expires = timedelta(hours=settings.JWT_EXPIRATION_HOURS)
@@ -215,6 +247,174 @@ async def login(
         "user": user_dict
     }
 
+
+# ==================== User settings (optional security/privacy) ====================
+
+import hashlib
+import json as _json
+import secrets as _secrets
+
+class UserSettingsUpdate(BaseModel):
+    first_name: Optional[str] = Field(None, max_length=80)
+    last_name: Optional[str] = Field(None, max_length=80)
+    organization: Optional[str] = Field(None, max_length=120)
+    timezone: Optional[str] = Field(None, max_length=64)
+    show_on_scoreboard: Optional[bool] = None
+    login_notifications: Optional[bool] = None
+    notification_prefs: Optional[dict] = None
+
+class RecoveryCodeVerifyRequest(BaseModel):
+    code: str = Field(..., min_length=6, max_length=32)
+
+@router.get("/settings")
+async def get_user_settings(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    prefs = None
+    if getattr(current_user, "notification_prefs", None):
+        try:
+            prefs = _json.loads(current_user.notification_prefs)
+        except Exception:
+            prefs = None
+    recovery_count = 0
+    if getattr(current_user, "mfa_recovery_codes", None):
+        try:
+            recovery_count = len(_json.loads(current_user.mfa_recovery_codes))
+        except Exception:
+            recovery_count = 0
+    return {
+        "first_name": current_user.first_name,
+        "last_name": current_user.last_name,
+        "organization": current_user.organization,
+        "timezone": current_user.timezone,
+        "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
+        "login_notifications": getattr(current_user, "login_notifications", True),
+        "notification_prefs": prefs or {},
+        "mfa_enabled": getattr(current_user, "mfa_enabled", False),
+        "recovery_codes_remaining": recovery_count,
+        "last_login_at": current_user.last_login_at,
+        "last_login_ip": current_user.last_login_ip,
+    }
+
+@router.put("/settings")
+async def update_user_settings(
+    payload: UserSettingsUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    if payload.first_name is not None:
+        current_user.first_name = payload.first_name
+    if payload.last_name is not None:
+        current_user.last_name = payload.last_name
+    if payload.organization is not None:
+        current_user.organization = payload.organization
+    if payload.timezone is not None:
+        current_user.timezone = payload.timezone
+    if payload.show_on_scoreboard is not None:
+        current_user.show_on_scoreboard = payload.show_on_scoreboard
+    if payload.login_notifications is not None:
+        current_user.login_notifications = payload.login_notifications
+    if payload.notification_prefs is not None:
+        current_user.notification_prefs = _json.dumps(payload.notification_prefs)
+    db.commit()
+    db.refresh(current_user)
+    return {"message": "Settings updated"}
+
+@router.post("/mfa/recovery-codes")
+async def generate_recovery_codes(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    # Generate 10 single-use codes; store only their hashes.
+    codes = [_secrets.token_hex(4).upper() for _ in range(10)]
+    hashed = [hashlib.sha256(c.encode()).hexdigest() for c in codes]
+    current_user.mfa_recovery_codes = _json.dumps(hashed)
+    db.commit()
+    logger.info(f"User {current_user.username} generated MFA recovery codes")
+    return {"codes": codes, "message": "Store these codes safely. They will not be shown again."}
+
+@router.post("/mfa/recovery-codes/verify")
+async def verify_recovery_code(
+    body: RecoveryCodeVerifyRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    if not current_user.mfa_recovery_codes:
+        raise HTTPException(status_code=400, detail="No recovery codes available")
+    try:
+        stored = _json.loads(current_user.mfa_recovery_codes)
+    except Exception:
+        stored = []
+    h = hashlib.sha256(body.code.strip().upper().encode()).hexdigest()
+    if h not in stored:
+        raise HTTPException(status_code=401, detail="Invalid recovery code")
+    stored.remove(h)
+    current_user.mfa_recovery_codes = _json.dumps(stored)
+    db.commit()
+    return {"message": "Recovery code accepted", "remaining": len(stored)}
+
+@router.get("/sessions")
+async def list_sessions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    return {
+        "current": {
+            "last_login_at": current_user.last_login_at,
+            "last_login_ip": current_user.last_login_ip,
+        },
+        "note": "Individual session tracking is not stored; use 'Sign out everywhere' to revoke all tokens.",
+    }
+
+@router.post("/sessions/revoke-all")
+async def revoke_all_sessions(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    from app.auth import revoke_all_user_tokens
+    revoke_all_user_tokens(db, current_user)
+    logger.info(f"User {current_user.username} revoked all sessions")
+    return {"message": "All sessions revoked. Please log in again."}
+
+@router.get("/export")
+async def export_user_data(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    # Collect the user's completions and achievements.
+    from app.models import LabCompletion, Achievement
+    completions = db.query(LabCompletion).filter(LabCompletion.user_id == current_user.id).all()
+    achievements = db.query(Achievement).filter(Achievement.user_id == current_user.id).all()
+    return {
+        "user": {
+            "id": current_user.id,
+            "username": current_user.username,
+            "email": current_user.email,
+            "first_name": current_user.first_name,
+            "last_name": current_user.last_name,
+            "organization": current_user.organization,
+            "student_id": current_user.student_id,
+            "role": current_user.role,
+            "created_at": current_user.created_at,
+        },
+        "completions": [
+            {"lab_id": c.lab_id, "completed_at": c.completed_at, "hints_used": c.hints_used, "attempts": c.attempts}
+            for c in completions
+        ],
+        "achievements": [
+            {"type": a.achievement_type, "course_id": a.course_id, "awarded_at": a.awarded_at}
+            for a in achievements
+        ],
+    }
+
+@router.post("/delete-request")
+async def request_account_deletion(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    logger.info(f"User {current_user.username} (id={current_user.id}) requested account deletion")
+    return {"message": "Deletion request recorded. An administrator will process it."}
 
 @router.post("/register", response_model=UserResponse)
 @limiter.limit("5/minute")  # 5 registrations per minute per IP
@@ -296,6 +496,9 @@ async def register(
         username=user_data.username,
         email=user_data.email,
         student_id=user_data.student_id,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
+        organization=user_data.organization,
         hashed_password=hashed_password,
         is_admin=False,
         is_approved=not require_approval,
@@ -390,6 +593,9 @@ async def get_current_user_info(
         "username": current_user.username,
         "email": current_user.email,
         "student_id": current_user.student_id,
+        "first_name": getattr(current_user, 'first_name', None),
+        "last_name": getattr(current_user, 'last_name', None),
+        "organization": getattr(current_user, 'organization', None),
         "is_active": getattr(current_user, 'is_active', True),
         "is_approved": current_user.is_approved,
         "is_admin": current_user.role == 'admin',

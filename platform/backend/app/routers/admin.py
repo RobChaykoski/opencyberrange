@@ -450,6 +450,17 @@ async def update_user(
         changes['email'] = {'old': user.email, 'new': user_request.email}
         user.email = user_request.email
     
+    # Update optional profile details if provided
+    if user_request.first_name is not None:
+        changes['first_name'] = {'old': user.first_name, 'new': user_request.first_name}
+        user.first_name = user_request.first_name
+    if user_request.last_name is not None:
+        changes['last_name'] = {'old': user.last_name, 'new': user_request.last_name}
+        user.last_name = user_request.last_name
+    if user_request.organization is not None:
+        changes['organization'] = {'old': user.organization, 'new': user_request.organization}
+        user.organization = user_request.organization
+    
     # Update password if provided
     if user_request.password is not None:
         _eff_role = user_request.role or getattr(user, 'role', 'student')

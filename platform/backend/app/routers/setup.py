@@ -104,6 +104,9 @@ async def complete_setup(
     admin = User(
         username=payload.admin_username,
         email=payload.admin_email,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
+        organization=payload.organization,
         hashed_password=get_password_hash(payload.admin_password),
         is_admin=True,
         role="admin",

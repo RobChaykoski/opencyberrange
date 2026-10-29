@@ -34,6 +34,9 @@ class UserResponse(BaseModel):
     username: str
     email: str
     student_id: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    organization: Optional[str] = None
     is_active: Optional[bool] = True
     is_approved: Optional[bool] = False
     is_admin: Optional[bool] = False
@@ -49,6 +52,9 @@ class UserAdminResponse(BaseModel):
     username: str
     email: str
     student_id: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    organization: Optional[str] = None
     is_active: Optional[bool] = True
     is_approved: Optional[bool] = False
     is_admin: Optional[bool] = False
@@ -137,6 +143,9 @@ class UpdateUserRequest(BaseModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     email: Optional[EmailStr] = None
     password: Optional[str] = Field(None, min_length=8, max_length=128)
+    first_name: Optional[str] = Field(None, max_length=80)
+    last_name: Optional[str] = Field(None, max_length=80)
+    organization: Optional[str] = Field(None, max_length=120)
     is_active: Optional[bool] = None
     is_approved: Optional[bool] = None
     is_admin: Optional[bool] = None
@@ -546,6 +555,9 @@ class SetupRequest(BaseModel):
     admin_username: str = Field(..., min_length=3, max_length=50)
     admin_email: EmailStr
     admin_password: str = Field(..., min_length=8, max_length=128)
+    first_name: Optional[str] = Field(None, max_length=80)
+    last_name: Optional[str] = Field(None, max_length=80)
+    organization: Optional[str] = Field(None, max_length=120)
     require_approval: Optional[bool] = True
     # One-time install token; required only when the server sets SETUP_TOKEN
     # (see /setup/complete). Blank on isolated installs that don't set it.

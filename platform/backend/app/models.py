@@ -15,6 +15,26 @@ class User(Base):
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     student_id = Column(String(20), unique=True, index=True, nullable=True)
+    first_name = Column(String(80), nullable=True)
+    last_name = Column(String(80), nullable=True)
+    organization = Column(String(120), nullable=True)
+
+    # --- Optional user security/privacy settings ---
+    # MFA recovery (backup) codes, stored hashed (JSON array of hashes).
+    mfa_recovery_codes = Column(Text, nullable=True)
+    # Show this user on public scoreboards / leaderboards.
+    show_on_scoreboard = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # Trusted devices (JSON list of {id, name, created_at, last_used}).
+    trusted_devices = Column(Text, nullable=True)
+    # IANA tz name (e.g. "America/Chicago"); null = UTC.
+    timezone = Column(String(64), nullable=True)
+    # JSON object of notification toggles.
+    notification_prefs = Column(Text, nullable=True)
+    # Email the user on a new login from a new IP.
+    login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # Last successful login metadata (for session awareness).
+    last_login_at = Column(DateTime, nullable=True)
+    last_login_ip = Column(String(64), nullable=True)
     hashed_password = Column(String(255), nullable=False)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)  # Kept for backward compat; derived from role
