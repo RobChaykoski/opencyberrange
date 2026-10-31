@@ -173,6 +173,23 @@ show_menu() {
     fi
 }
 
+# Last-resort Compose v2 install for distros whose apt repositories do not
+# carry docker-compose-v2 or docker-compose-plugin.
+install_compose_binary() {
+    local arch
+    arch=$(uname -m)
+    case "$arch" in
+        x86_64|aarch64) ;;
+        *) return 1 ;;
+    esac
+    sudo mkdir -p /usr/local/lib/docker/cli-plugins || return 1
+    sudo curl -fsSL \
+        "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}" \
+        -o /usr/local/lib/docker/cli-plugins/docker-compose || return 1
+    sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+    docker compose version >/dev/null 2>&1
+}
+
 # Pre-flight checks — installs missing dependencies automatically
 preflight_checks() {
     log "${BLUE}Running pre-flight checks...${NC}"
@@ -208,6 +225,7 @@ preflight_checks() {
         sudo apt-get update -qq
         sudo apt-get install -y docker-compose-plugin 2>/dev/null || \
             sudo apt-get install -y docker-compose-v2 2>/dev/null || \
+            install_compose_binary || \
             error_exit "Could not install Docker Compose v2. Please install it manually."
         log "${GREEN}✓ Docker Compose installed${NC}"
     else
@@ -919,7 +937,13 @@ fresh_install() {
     log "${CYAN}========================================${NC}"
     log ""
     
-    # Remove existing installation if present
+    # Remove existing installation if present. Fresh install is destructive
+    # (it removes the postgres volume), so keep a backup when one exists.
+    if [ -f "$PLATFORM_DIR/docker-compose.yml" ]; then
+        log "${YELLOW}Existing installation found — creating a backup before fresh install...${NC}"
+        create_upgrade_backup || log "${YELLOW}Backup failed; continuing with fresh install${NC}"
+        log ""
+    fi
     cleanup_old_installation
     log ""
     

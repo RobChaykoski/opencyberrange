@@ -28,9 +28,12 @@ You install OpenCyberRange on an internet-reachable host so students connect fro
 
    | Port | Protocol | Purpose |
    |------|----------|---------|
+   | 80 | TCP | HTTP redirect and ACME/Certbot validation |
    | 443 | TCP | Frontend HTTPS |
    | 51820 | UDP | WireGuard VPN |
    | 5555 | TCP | WSTunnel fallback for VPN over WebSocket |
+
+   Do **not** open port 5000. The Peer Manager API is internal to the host and Docker network.
 
 4. The installer detects the WireGuard endpoint from the server public IP using a fallback chain that ends with `curl ifconfig.me`. The detected endpoint is written into the VPN configs students download.
 

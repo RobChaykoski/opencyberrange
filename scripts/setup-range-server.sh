@@ -47,7 +47,11 @@ GENERATE_SELF_SIGNED="${GENERATE_SELF_SIGNED:-false}"
 VPN_LISTEN_PORT="${VPN_LISTEN_PORT:-51820}"
 VPN_SERVER_ADDRESS="${VPN_SERVER_ADDRESS:-10.0.0.1/24}"
 VPN_INTERFACE="${VPN_INTERFACE:-wg0}"
-LAB_CIDR="${LAB_CIDR:-10.100.0.0/16}"
+# Lab subnets are allocated per user: 10.100.0.0/16 only covers user_ids
+# 1-250. The backend moves to 10.101-10.103 after that, so /14 is the correct
+# default for the first ~1,265 users. Larger deployments should widen this
+# (see _LAB_SUBNETS in app/services/docker_manager.py).
+LAB_CIDR="${LAB_CIDR:-10.100.0.0/14}"
 
 PEER_MANAGER_PORT="${PEER_MANAGER_PORT:-5000}"
 PEER_MANAGER_BIND="${PEER_MANAGER_BIND:-0.0.0.0}"
@@ -94,6 +98,23 @@ info()  { echo -e "${BLUE}[·]${NC} $1"; }
 header(){ echo -e "\n${CYAN}═══ $1 ═══${NC}\n"; }
 
 die() { err "$1"; exit 1; }
+
+# Last-resort Compose v2 install. Some Ubuntu/Debian releases ship neither
+# docker-compose-v2 nor docker-compose-plugin in their apt repositories.
+install_compose_binary() {
+    local arch
+    arch=$(uname -m)
+    case "$arch" in
+        x86_64|aarch64) ;;
+        *) return 1 ;;
+    esac
+    mkdir -p /usr/local/lib/docker/cli-plugins
+    curl -fsSL \
+        "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-${arch}" \
+        -o /usr/local/lib/docker/cli-plugins/docker-compose || return 1
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+    docker compose version >/dev/null 2>&1
+}
 
 # Hand the git clone back to the invoking user. The install runs as root and
 # writes into the clone (logs, build outputs, and the platform dir when it
@@ -170,16 +191,19 @@ phase_1_packages() {
 
     apt-get update -qq
 
-    # Docker
+    # Docker. Install the engine first and the Compose plugin separately:
+    # docker-compose-v2 is not present in every Ubuntu/Debian release, and
+    # requesting both in one apt command makes the whole install fail on those
+    # hosts even though Docker itself is available.
     if command -v docker &>/dev/null; then
         log "Docker already installed ($(docker --version))"
     else
         info "Installing Docker..."
-        apt-get install -y docker.io docker-compose-v2
+        apt-get install -y docker.io || die "Could not install Docker Engine"
         systemctl enable --now docker
-        usermod -aG docker "$REAL_USER"
         log "Docker installed"
     fi
+    usermod -aG docker "$REAL_USER" 2>/dev/null || true
 
     # Docker Compose (v2 plugin check)
     if docker compose version &>/dev/null; then
@@ -188,8 +212,10 @@ phase_1_packages() {
         warn "Docker Compose v2 not found — installing plugin"
         apt-get install -y docker-compose-v2 2>/dev/null || \
             apt-get install -y docker-compose-plugin 2>/dev/null || \
-            die "Could not install Docker Compose v2"
+            install_compose_binary || \
+            die "Could not install Docker Compose v2 (install docker-compose-plugin manually)"
     fi
+    systemctl enable --now docker &>/dev/null || true
 
     # Python3 (needed for Docker build and scripts)
     if command -v python3 &>/dev/null; then
@@ -995,15 +1021,21 @@ phase_7_platform() {
     if platform_healthy; then
         warn "Existing healthy platform found at $PLATFORM_DIR — skipping install. Use 'Update' to update."
     else
+        # A compose file with no running backend means a half-installed or
+        # stopped platform, not an empty host. Never run --fresh here: that
+        # path deletes the postgres volume. Repair via --update so student
+        # accounts, courses, and completions survive.
+        local install_mode="--fresh"
         if [ -f "$PLATFORM_DIR/docker-compose.yml" ]; then
-            warn "A previous install is present but not running — repairing it."
+            warn "A previous install is present but not running — repairing it (data preserved)."
+            install_mode="--update"
         fi
         if [ -f "$REPO_DIR/scripts/install-platform.sh" ]; then
-            info "Running platform installer..."
+            info "Running platform installer ($install_mode)..."
             echo ""
             # Run directly (not via sudo -u) so SUDO_USER from the outer
             # invocation is preserved.
-            if bash "$REPO_DIR/scripts/install-platform.sh" --fresh; then
+            if bash "$REPO_DIR/scripts/install-platform.sh" "$install_mode"; then
                 chown -R "$REAL_USER":"$REAL_USER" "$PLATFORM_DIR" 2>/dev/null || true
                 log "Platform installer finished"
             else
@@ -1017,6 +1049,10 @@ phase_7_platform() {
             die "install-platform.sh not found at $REPO_DIR/scripts/"
         fi
     fi
+
+    # Existing installs created before this check may have a world-readable
+    # .env. Tighten it during both install and repair.
+    [ -f "$PLATFORM_DIR/.env" ] && chmod 600 "$PLATFORM_DIR/.env" 2>/dev/null || true
 }
 
 ensure_platform_running() {
@@ -1226,6 +1262,13 @@ phase_8_verification() {
     check "Docker running"                       "systemctl is-active docker"
     check "Docker Compose available"             "docker compose version"
     check "IP forwarding enabled"                "[ \$(cat /proc/sys/net/ipv4/ip_forward) = 1 ]"
+
+    # VM-based labs need hardware virtualization. Docker-only labs do not.
+    if [ -e /dev/kvm ]; then
+        check "KVM device available" "[ -r /dev/kvm ] && [ -w /dev/kvm ]"
+    else
+        info "KVM not available — Docker labs work, but VM-based labs need /dev/kvm"
+    fi
 
     # ── VPN checks (only if WireGuard is installed) ──
     local vpn_installed=false
