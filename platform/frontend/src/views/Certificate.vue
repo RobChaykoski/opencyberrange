@@ -34,7 +34,7 @@
         <div class="certificate__corner certificate__corner--br"></div>
 
         <header class="certificate__header">
-          <img src="/swocts_logo.jpg" alt="SWOCTS" class="certificate__logo" />
+          <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="certificate__logo" />
           <p class="certificate__eyebrow">OpenCyberRange</p>
           <h1 class="certificate__title">Certificate of Completion</h1>
           <div class="certificate__rule"></div>
@@ -54,8 +54,10 @@
 
         <footer class="certificate__footer">
           <div class="certificate__signature">
-            <div class="certificate__signature-line"></div>
-            <p class="certificate__signature-name">Presented by SWOCTS</p>
+            <p class="certificate__signature-label">Powered by:</p>
+            <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
+              <img src="/swocts_logo.jpg" alt="SWOCTS" class="certificate__signature-logo" />
+            </a>
             <p class="certificate__signature-role">OpenCyberRange Training Range</p>
           </div>
 
@@ -316,19 +318,20 @@ onMounted(load)
   min-width: 190px;
 }
 
-.certificate__signature-line {
-  width: 190px;
-  height: 1px;
-  background: #9ca3af;
-  margin-bottom: 0.45rem;
+.certificate__signature-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6b7280;
+  font-weight: 600;
 }
 
-.certificate__signature-name {
-  margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #111827;
+.certificate__signature-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
 }
 
 .certificate__signature-role {
@@ -415,7 +418,7 @@ onMounted(load)
     text-align: center;
   }
 
-  .certificate__signature-line {
+  .certificate__signature-logo {
     margin-left: auto;
     margin-right: auto;
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="student-dashboard">
     <div class="dashboard-header">
-      <img src="/swocts_logo.jpg" alt="SWOCTS" class="dashboard-logo" />
+      <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="dashboard-logo" />
       <div class="dashboard-header__text">
         <h1 class="page-title">Welcome, {{ username }}</h1>
         <p class="page-subtitle">Your training dashboard</p>
@@ -253,6 +253,7 @@ onMounted(() => {
   width: 72px;
   height: 72px;
   flex-shrink: 0;
+  object-fit: contain;
   background: var(--bg-primary);
   border-radius: 14px;
   padding: 5px;

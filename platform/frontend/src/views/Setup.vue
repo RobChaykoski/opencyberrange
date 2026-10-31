@@ -3,7 +3,7 @@
     <div class="setup-container">
       <!-- Header -->
       <div class="setup-header">
-        <img src="/swocts_logo.jpg" alt="SWOCTS" class="setup-logo" />
+        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="setup-logo" />
         <div class="brand-section">
           <h1 class="brand-title">OpenCyberRange</h1>
         </div>

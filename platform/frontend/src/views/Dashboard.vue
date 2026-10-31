@@ -3,7 +3,7 @@
     <div class="dashboard-container">
       <!-- Welcome Header -->
       <div class="welcome-header">
-        <img src="/swocts_logo.jpg" alt="SWOCTS" class="welcome-logo" />
+        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="welcome-logo" />
         <div class="welcome-text">
           <h1 class="page-title">Welcome, {{ username }}</h1>
           <p class="page-subtitle">Configure your VPN connection to access lab environments</p>
@@ -745,6 +745,7 @@ onMounted(() => {
   width: 72px;
   height: 72px;
   flex-shrink: 0;
+  object-fit: contain;
   background: var(--bg-primary);
   border-radius: 14px;
   padding: 5px;

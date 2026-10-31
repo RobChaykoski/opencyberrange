@@ -9,7 +9,7 @@
         </svg>
       </button>
       <router-link to="/dashboard" class="brand-link">
-        <img src="/swocts_logo.jpg" alt="SWOCTS" class="brand-icon" />
+        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="brand-icon" />
         <span v-show="!collapsed" class="brand-text">OpenCyberRange</span>
       </router-link>
     </div>
@@ -168,7 +168,10 @@
       </router-link>
       <button v-show="!collapsed" @click="$emit('logout')" class="logout-btn">Logout</button>
       <div v-show="!collapsed" class="swocts-footer">
-        Powered by <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer">SWOCTS</a>
+        <span>Powered by:</span>
+        <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
+          <img src="/swocts_logo.jpg" alt="SWOCTS" class="swocts-footer__logo" />
+        </a>
       </div>
     </div>
   </aside>
@@ -548,7 +551,10 @@ const userInitial = computed(() => {
   }
 }
 .swocts-footer {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   font-size: 0.7rem;
   color: var(--text-muted);
   padding: 0.5rem 0.25rem;
@@ -558,9 +564,17 @@ const userInitial = computed(() => {
 .swocts-footer a {
   color: var(--accent);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 .swocts-footer a:hover {
-  text-decoration: underline;
+  opacity: 0.8;
+}
+.swocts-footer__logo {
+  height: 16px;
+  width: auto;
+  display: block;
+  border-radius: 3px;
 }
 
 </style>

@@ -34,7 +34,10 @@
     </main>
 
     <footer class="app-footer">
-      Powered by <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer">SWOCTS</a>
+      <span>Powered by:</span>
+      <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
+        <img src="/swocts_logo.jpg" alt="SWOCTS" class="app-footer__logo" />
+      </a>
     </footer>
   </div>
 </template>
@@ -332,7 +335,10 @@ body {
   }
 }
 .app-footer {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   padding: 0.5rem;
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -341,9 +347,17 @@ body {
 .app-footer a {
   color: var(--accent);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 .app-footer a:hover {
-  text-decoration: underline;
+  opacity: 0.8;
+}
+.app-footer__logo {
+  height: 18px;
+  width: auto;
+  display: block;
+  border-radius: 3px;
 }
 
 </style>

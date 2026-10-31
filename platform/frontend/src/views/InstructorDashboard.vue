@@ -1,7 +1,7 @@
 <template>
   <div class="instructor-dashboard">
     <div class="dashboard-header">
-      <img src="/swocts_logo.jpg" alt="SWOCTS" class="dashboard-logo" />
+      <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="dashboard-logo" />
       <div class="dashboard-header__text">
         <h1 class="page-title">Ops Center</h1>
         <p class="page-subtitle">Real-time platform overview</p>
@@ -747,6 +747,7 @@ onMounted(() => {
   width: 72px;
   height: 72px;
   flex-shrink: 0;
+  object-fit: contain;
   background: var(--bg-primary);
   border-radius: 14px;
   padding: 5px;

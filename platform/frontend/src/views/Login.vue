@@ -6,7 +6,7 @@
         <div class="form-panel-inner">
           <!-- Brand -->
           <div class="brand">
-            <img src="/swocts_logo.jpg" alt="SWOCTS" class="brand-icon" />
+            <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="brand-icon" />
             <div class="brand-text">
               <h1 class="brand-title">OpenCyberRange</h1>
               <p class="brand-subtitle">Welcome back</p>
@@ -233,6 +233,7 @@ const handleLogin = async () => {
   width: 96px;
   height: 96px;
   flex-shrink: 0;
+  object-fit: contain;
 }
 
 .brand-text {
