@@ -17,6 +17,10 @@ RUN npm run build
 # Production stage - serve with nginx
 FROM nginx:alpine
 
+# Used by the compose healthcheck; nginx:alpine does not guarantee curl across
+# base-image updates.
+RUN apk add --no-cache curl
+
 # Copy built files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 

@@ -88,6 +88,8 @@ If deploying to a cloud provider, open the following ports in your provider's se
 
 The setup script configures `iptables` on the server itself, but cloud providers add a separate firewall layer that defaults to blocking all inbound traffic. Both layers must allow these ports.
 
+> **Do not open port 5000.** The Peer Manager API is an internal service used by the backend container. It is not meant to be reachable from the internet, and opening it adds attack surface without enabling any student feature.
+
 > **KVM note:** Labs that use QEMU/KVM virtual machines require hardware virtualization. Most standard cloud VPS instances do not expose `/dev/kvm`. Use a bare-metal server (Hetzner AX-series, AWS `.metal` instances, OVH dedicated) or a VPS with nested virtualization enabled. Docker-only labs work on any VPS.
 
 For public-facing deployments behind a domain, the [Cloud Deployment guide](Manual-Lite/00_Server_Deployment/03_Cloud_Deployment.md) covers optional Cloudflare Tunnel configuration.
@@ -99,7 +101,7 @@ For public-facing deployments behind a domain, the [Cloud Deployment guide](Manu
 | 1. System packages | Docker, Python 3, WireGuard, iptables-persistent | Same |
 | 2. IP forwarding | Enabled | Enabled |
 | 3. WireGuard VPN | Server keys generated, wg0 interface configured (LAN endpoint) | Same (public IP endpoint) |
-| 4. Peer Manager API | Deployed on localhost:5000 | Same |
+| 4. Peer Manager API | Deployed internally on port 5000 (never public) | Same |
 | 5. VPN firewall rules | NAT, forwarding, and isolation rules applied | Same |
 | 6. Host firewall | Ports 80, 443, 51820/UDP opened | Same |
 | 7. Platform | `.env` generated, Docker Compose starts backend + frontend + database | Same |

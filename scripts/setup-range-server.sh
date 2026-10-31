@@ -906,14 +906,15 @@ phase_6_firewall_ports() {
     echo "  - 22/tcp           (SSH — for management)"
     echo ""
 
-    # If ufw is active, add rules
+    # If ufw is active, add rules. Port 5000 is deliberately NOT opened: the
+    # Peer Manager API is an internal service reached by the backend container
+    # through host.docker.internal. It must never be exposed to the internet.
     if command -v ufw &>/dev/null && ufw status | grep -q "active"; then
         ufw allow "${VPN_LISTEN_PORT}/udp" comment "WireGuard VPN" 2>/dev/null || true
-        ufw allow 5000/tcp comment "Peer Manager API" 2>/dev/null || true
         ufw allow 80/tcp comment "HTTP" 2>/dev/null || true
         ufw allow 443/tcp comment "HTTPS" 2>/dev/null || true
         ufw allow 22/tcp comment "SSH" 2>/dev/null || true
-        log "UFW rules added"
+        log "UFW rules added (Peer Manager port ${PEER_MANAGER_PORT} stays internal)"
     else
         info "UFW not active — skipping"
     fi
@@ -1275,6 +1276,7 @@ phase_8_verification() {
     if [ -f "$PLATFORM_DIR/.env" ]; then
         check ".env has JWT_SECRET"           "grep -q '^JWT_SECRET=' '$PLATFORM_DIR/.env'"
         check ".env has DATABASE_URL"         "grep -q '^DATABASE_URL=' '$PLATFORM_DIR/.env'"
+        check ".env is not world-readable"    "[ \$(stat -c %a '$PLATFORM_DIR/.env') = 600 ]"
 
         # VPN-specific env vars (only if VPN is installed)
         if [ "$vpn_installed" = true ]; then
@@ -1334,9 +1336,13 @@ show_summary() {
     echo -e "  ${BOLD}Peer Manager URL${NC}   : ${CYAN}http://${PEER_MANAGER_BIND}:${PEER_MANAGER_PORT}${NC}"
     echo -e "  ${DIM}──────────────────────────────────────────${NC}"
     echo ""
+    local access_scheme="http"
+    [ -f "$PLATFORM_DIR/certs/selfsigned.crt" ] && access_scheme="https"
+    local access_host="${SERVER_PUBLIC_HOST:-localhost}"
+
     echo -e "  ${BOLD}${MAGENTA}Next steps:${NC}"
     echo -e "    ${CYAN}1.${NC} Verify VPN: ${DIM}sudo wg show${NC}"
-    echo -e "    ${CYAN}2.${NC} Access platform: ${BOLD}https://localhost${NC}"
+    echo -e "    ${CYAN}2.${NC} Access platform: ${BOLD}${access_scheme}://${access_host}${NC}"
     echo -e "    ${CYAN}3.${NC} Share the server's IP with students"
     echo ""
     echo -e "  ${DIM}WireGuard config : /etc/wireguard/${VPN_INTERFACE}.conf${NC}"

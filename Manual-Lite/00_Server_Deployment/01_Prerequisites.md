@@ -50,6 +50,7 @@ The platform exposes a small, fixed set of ports. The backend API is never publi
 | 51820 | UDP | Public | WireGuard VPN |
 | 5555 | TCP | Public | WSTunnel fallback for VPN over WebSocket |
 | 8000 | TCP | Loopback only | Backend API, bound to 127.0.0.1 |
+| 5000 | TCP | Internal only | Peer Manager API, reached by the backend container — never expose it |
 | 5432 | TCP | Internal | PostgreSQL, container network only |
 
 The diagram shows which surfaces face the internet and which stay on the host.
@@ -71,8 +72,8 @@ flowchart TB
     BE -->|internal net| DB
 ```
 
-!!! warning "Never expose port 8000"
-    The backend binds to 127.0.0.1:8000 inside the compose file. Publishing it to a public interface would expose the full API surface. Leave the binding as it is.
+!!! warning "Never expose ports 8000 or 5000"
+    The backend binds to 127.0.0.1:8000 inside the compose file. Publishing it to a public interface would expose the full API surface. The Peer Manager on port 5000 is likewise internal to the host and Docker network. Leave both closed in the cloud firewall.
 
 ## Docker
 

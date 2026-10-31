@@ -472,7 +472,7 @@ LABS_HOST_PATH=$LABS_PATH
 SERVER_PUBLIC_HOST=${SERVER_PUBLIC_HOST:-localhost}
 
 # CORS — allowed frontend origins
-CORS_ORIGINS=http://localhost,https://localhost
+CORS_ORIGINS=http://localhost,https://localhost,http://${SERVER_PUBLIC_HOST:-localhost},https://${SERVER_PUBLIC_HOST:-localhost}
 
 # JWT defaults
 JWT_ALGORITHM=HS256
@@ -487,7 +487,11 @@ POSTGRES_DB=labdb
 # Deployment mode (local or internet)
 DEPLOYMENT_MODE=${OCR_DEPLOYMENT_MODE:-internet}
 EOF
-    
+
+    # The file contains the JWT secret, database password, WireGuard key and
+    # setup token. Keep it unreadable to other local users.
+    chmod 600 "$PLATFORM_DIR/.env"
+
     log "${GREEN}✓ .env file created (all secrets auto-generated)${NC}"
 }
 
@@ -496,8 +500,6 @@ create_docker_compose() {
     log "${BLUE}Creating docker-compose.yml...${NC}"
     
     cat > "$PLATFORM_DIR/docker-compose.yml" << 'EOF'
-version: '3.8'
-
 services:
   db:
     image: postgres:15-alpine
@@ -561,6 +563,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     restart: unless-stopped
 
   frontend:
@@ -578,7 +586,15 @@ services:
       # Self-signed TLS: the entrypoint enables HTTPS when these files exist.
       - ./certs:/etc/nginx/certs:ro
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      # Works with both HTTP-only and self-signed HTTPS deployments.
+      test: ["CMD-SHELL", "curl -fsSk https://127.0.0.1/ -o /dev/null || curl -fsSk http://127.0.0.1/ -o /dev/null"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
     restart: unless-stopped
 
 volumes:
@@ -689,24 +705,22 @@ run_migrations() {
 # Seed database
 seed_database() {
     log "${BLUE}Seeding database with curriculum data...${NC}"
-    
+
     cd "$PLATFORM_DIR"
-    
-    # Copy seed script
-    if [ -f "$REPO_DIR/platform/scripts/seed_curriculum.py" ]; then
-        mkdir -p "$PLATFORM_DIR/backend/app/scripts"
-        cp "$REPO_DIR/platform/scripts/seed_curriculum.py" "$PLATFORM_DIR/backend/app/scripts/" 2>/dev/null || true
-        
-        # Wait for backend to be ready
+
+    # Use the backend's own seed script. platform/scripts/seed_curriculum.py is
+    # a legacy standalone copy; copying it over app/scripts/ used to overwrite
+    # the current track definitions with an older set (missing the OT track and
+    # later Malware levels).
+    if docker compose exec -T backend test -f /app/app/scripts/seed_curriculum.py 2>/dev/null; then
         log "Waiting for backend container to be ready..."
         sleep 10
-        
-        # Run seed script
-        docker compose exec -T backend python /app/scripts/seed_curriculum.py 2>/dev/null || \
-        docker compose exec -T backend python /app/app/scripts/seed_curriculum.py 2>/dev/null || \
-        log "${YELLOW}Note: Seed script may have already been run${NC}"
+        docker compose exec -T backend python /app/app/scripts/seed_curriculum.py || \
+            log "${YELLOW}Note: Seed script may have already been run${NC}"
+    else
+        log "${YELLOW}Warning: backend seed script not found; skipping curriculum seed${NC}"
     fi
-    
+
     log "${GREEN}✓ Database seeding completed${NC}"
 }
 
@@ -724,9 +738,10 @@ build_and_start() {
     log "Building containers..."
     docker compose build --no-cache || error_exit "Docker build failed"
     
-    # Start containers
+    # Start containers and wait for the healthchecks. Without --wait the
+    # installer can report success while the backend is still migrating.
     log "Starting containers..."
-    docker compose up -d || error_exit "Docker compose up failed"
+    docker compose up -d --wait || error_exit "Docker compose up failed"
 
     # Build RangeBox images (browser-based desktops). RangeBox/ and UbuntuBox/
     # sit at the repo root next to platform/, so resolve them from REPO_DIR --
@@ -947,7 +962,7 @@ fresh_install() {
     log "${GREEN}Fresh installation completed!${NC}"
     log "${GREEN}========================================${NC}"
     log ""
-    log "Platform URL: http://localhost"
+    log "Platform URL: http://${SERVER_PUBLIC_HOST:-localhost}"
     log ""
     log "Next steps:"
     log "1. Open http://localhost in a browser. The setup wizard runs on"
