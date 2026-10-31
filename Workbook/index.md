@@ -35,7 +35,7 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 
 | Chapter | Focus | Exercises |
 |---------|-------|------|
-| CH M1; Malware Fundamentals | Safe handling, strings triage, Ghidra reversing, C2 PCAP, live INetSim detection, email attachment analysis | 6 exercises |
+| CH M1; Malware Fundamentals | Safe handling, strings triage, Ghidra reversing, C2 PCAP, live INetSim detection, email attachment and embedded-document analysis | 7 exercises |
 | CH M2; Executable Analysis | PE headers, sections, imports, static triage of Windows binaries | 1 exercise |
 | CH OT1; Modbus Fundamentals | Modbus TCP enumeration and register decoding | 1 exercise |
 

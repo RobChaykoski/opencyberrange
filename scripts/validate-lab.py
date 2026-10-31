@@ -4,7 +4,7 @@ OpenCyberRange - Lab Validator
 Validates lab structure, metadata, and configuration before deployment.
 
 Usage:
-    python3 scripts/validate-lab.py labs/Windows/windows-1-1-basic-port-scan/
+    python3 scripts/validate-lab.py platform/labs/Windows/windows-1-1-basic-port-scan/
     python3 scripts/validate-lab.py --all
     python3 scripts/validate-lab.py --all --json
 """
@@ -29,7 +29,7 @@ VALID_DIFFICULTIES = {"beginner", "intermediate", "advanced", "expert"}
 VALID_CATEGORIES = {
     "assessment", "authentication", "credential-attacks", "crypto",
     "enumeration", "exploitation", "forensics", "general", "network",
-    "network-analysis", "post-exploitation", "privesc",
+    "network-analysis", "ot", "post-exploitation", "privesc",
     "privilege-escalation", "reconnaissance", "web",
 }
 # Standard: {track}-{level}-{lab}-{name}. Midterm/final: {track}-{midterm|final}-{lab}-{name}
@@ -37,7 +37,7 @@ VALID_CATEGORIES = {
 SLUG_PATTERN = re.compile(r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+|final-\d+)-[a-z0-9-]+$")
 FLAG_PATTERN = re.compile(r"^OCR\{.+\}$")
 REQUIRED_YAML_FIELDS = ["name", "description", "difficulty", "flag"]
-KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "capitalflow", "forensics", "refinery", "windows-server"}
+KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "ot", "capitalflow", "forensics", "refinery", "windows-server"}
 DANGEROUS_PASSWORD_CHARS = set('!`$\\"')
 DANGEROUS_PASSWORD_CHARS_DISPLAY = "! ` $ \\ \""
 
@@ -97,7 +97,7 @@ def check_yaml_valid(lab_dir):
         return [CheckResult("lab.yaml parseable", False, "File does not exist")]
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError as e:
         return [CheckResult("lab.yaml parseable", False, f"YAML parse error: {e}")]
@@ -230,7 +230,7 @@ def check_compose_valid(lab_dir):
         return []
 
     try:
-        with open(compose_path, "r") as f:
+        with open(compose_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError as e:
         return [CheckResult("docker-compose.yml parseable", False, f"YAML parse error: {e}")]
@@ -331,7 +331,7 @@ def check_flag_consistency(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError:
         return []
@@ -369,7 +369,7 @@ def check_flag_consistency(lab_dir):
         uses_shared = False
         if os.path.exists(compose_path):
             try:
-                with open(compose_path, "r") as f:
+                with open(compose_path, "r", encoding="utf-8") as f:
                     compose_data = yaml.safe_load(f)
                 uses_shared = isinstance(compose_data, dict) and "x-ocr-shared-containers" in compose_data
             except (yaml.YAMLError, IOError):
@@ -392,7 +392,7 @@ def check_flag_consistency(lab_dir):
     flag_found_in_any = False
     for fpath in searchable_files:
         try:
-            with open(fpath, "r", errors="ignore") as f:
+            with open(fpath, "r", errors="ignore", encoding="utf-8") as f:
                 content = f.read()
             if yaml_flag in content:
                 flag_found_in_any = True
@@ -410,7 +410,7 @@ def check_flag_consistency(lab_dir):
     for df_path in dockerfiles:
         rel_path = os.path.relpath(df_path, lab_dir)
         try:
-            with open(df_path, "r") as f:
+            with open(df_path, "r", encoding="utf-8") as f:
                 content = f.read()
             has_noninteractive = "DEBIAN_FRONTEND=noninteractive" in content
             # Only warn for ubuntu/debian based images
@@ -434,7 +434,7 @@ def check_hint_flag_leaks(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError:
         return []
@@ -491,6 +491,7 @@ def check_track_placement(lab_dir):
         "web": "Web",
         "network": "Network",
         "malware": "Malware",
+        "ot": "OT",
         "capitalflow": "Capital Flow",
         "forensics": "Forensics",
         "refinery": "Refinery",
@@ -518,7 +519,7 @@ def check_password_safety(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError:
         return []
@@ -553,7 +554,7 @@ def check_command_antipatterns(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError:
         return []
@@ -620,7 +621,7 @@ def check_template_resolution(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError:
         return []
@@ -639,7 +640,7 @@ def check_template_resolution(lab_dir):
     compose_path = os.path.join(lab_dir, "docker-compose.yml")
     if os.path.exists(compose_path):
         try:
-            with open(compose_path, "r") as f:
+            with open(compose_path, "r", encoding="utf-8") as f:
                 compose = yaml.safe_load(f) or {}
             for svc_name in compose.get("services", {}).keys():
                 node_ids.add(svc_name)
@@ -713,7 +714,7 @@ def check_mysql_auth_plugin(lab_dir):
             fpath = os.path.join(root, f)
             if f in ("Dockerfile", "docker-compose.yml"):
                 try:
-                    with open(fpath, "r", errors="ignore") as fh:
+                    with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
                     if "mysql:8" in content.lower() or "mysql:latest" in content.lower():
                         mysql8_used = True
@@ -729,7 +730,7 @@ def check_mysql_auth_plugin(lab_dir):
             _, ext = os.path.splitext(f)
             if ext.lower() in (".sql", "") or f == "Dockerfile":
                 try:
-                    with open(fpath, "r", errors="ignore") as fh:
+                    with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
                 except IOError:
                     continue
@@ -762,9 +763,9 @@ def check_topology_ip_offset_match(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             lab_data = yaml.safe_load(f) or {}
-        with open(compose_path, "r") as f:
+        with open(compose_path, "r", encoding="utf-8") as f:
             compose_data = yaml.safe_load(f) or {}
     except yaml.YAMLError:
         return []
@@ -837,7 +838,7 @@ def check_test_steps_exist(lab_dir):
         return []
 
     try:
-        with open(yaml_path, "r") as f:
+        with open(yaml_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
     except yaml.YAMLError:
         return []
@@ -882,7 +883,7 @@ def check_dockerfile_password_safety(lab_dir):
             if f == "Dockerfile" or ext in (".sh", ".bash"):
                 fpath = os.path.join(root, f)
                 try:
-                    with open(fpath, "r", errors="ignore") as fh:
+                    with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
                 except IOError:
                     continue
@@ -933,6 +934,18 @@ def validate_lab(lab_dir):
     results.extend(check_test_steps_exist(lab_dir))
 
     return results
+
+
+def detect_labs_dir(project_root):
+    """Return the first labs root that exists, preferring the standalone layout."""
+    candidates = [
+        os.path.join(project_root, "labs"),
+        os.path.join(project_root, "platform", "labs"),
+    ]
+    for candidate in candidates:
+        if os.path.isdir(candidate):
+            return candidate
+    return candidates[0]
 
 
 def find_all_labs(labs_dir):
@@ -1002,7 +1015,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  %(prog)s labs/Windows/windows-1-1-basic-port-scan/
+  %(prog)s platform/labs/Windows/windows-1-1-basic-port-scan/
   %(prog)s --all
   %(prog)s --all --verbose
   %(prog)s --all --json
@@ -1026,7 +1039,7 @@ Examples:
     # Find labs root
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.dirname(script_dir)
-    labs_dir = args.labs_dir or os.path.join(project_root, "labs")
+    labs_dir = args.labs_dir or detect_labs_dir(project_root)
 
     if args.all:
         lab_dirs = find_all_labs(labs_dir)
