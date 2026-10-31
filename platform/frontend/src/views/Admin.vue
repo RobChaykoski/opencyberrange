@@ -103,6 +103,8 @@
                 <div class="form-grid">
                   <input v-model="newUser.username" placeholder="Username" class="form-input">
                   <input v-model="newUser.email" type="email" placeholder="Email" class="form-input">
+                  <input v-model="newUser.first_name" placeholder="First name (optional)" class="form-input" autocomplete="given-name">
+                  <input v-model="newUser.last_name" placeholder="Last name (optional)" class="form-input" autocomplete="family-name">
                   <input v-model="newUser.password" type="password" placeholder="Password" class="form-input">
                 </div>
                 <div class="form-actions">
@@ -2326,6 +2328,32 @@ test:
                 </div>
 
                 <div class="form-group">
+                  <label for="edit-first-name">First name</label>
+                  <input aria-label="First name"
+                    id="edit-first-name"
+                    v-model="editForm.first_name"
+                    type="text"
+                    maxlength="80"
+                    placeholder="First name"
+                    class="form-input"
+                    autocomplete="given-name"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="edit-last-name">Last name</label>
+                  <input aria-label="Last name"
+                    id="edit-last-name"
+                    v-model="editForm.last_name"
+                    type="text"
+                    maxlength="80"
+                    placeholder="Last name"
+                    class="form-input"
+                    autocomplete="family-name"
+                  />
+                </div>
+
+                <div class="form-group">
                   <label for="edit-password">New Password (leave blank to keep current)</label>
                   <input aria-label="New Password (leave blank to keep current)"
                     id="edit-password"
@@ -3034,13 +3062,15 @@ function getTimeRangeDates(rangeVal, customStart, customEnd) {
 }
 
 const showCreateForm = ref(false)
-const newUser = reactive({ username: '', email: '', password: '', is_approved: false, role: 'student' })
+const newUser = reactive({ username: '', email: '', first_name: '', last_name: '', password: '', is_approved: false, role: 'student' })
 
 const showEditUserModal = ref(false)
 const editUser = ref(null)
 const editForm = reactive({
   username: '',
   email: '',
+  first_name: '',
+  last_name: '',
   password: '',
   confirmPassword: '',
   is_approved: false,
@@ -4819,7 +4849,7 @@ const createUser = async () => {
   try {
     await axios.post('/admin/users/create', newUser)
     showAlert('User created successfully')
-    Object.assign(newUser, { username: '', email: '', password: '', is_approved: false, role: 'student' })
+    Object.assign(newUser, { username: '', email: '', first_name: '', last_name: '', password: '', is_approved: false, role: 'student' })
     showCreateForm.value = false
     fetchAll()
   } catch (e) {
@@ -4916,6 +4946,8 @@ const openEditUserModal = (user) => {
   editUser.value = user
   editForm.username = user.username || ''
   editForm.email = user.email || ''
+  editForm.first_name = user.first_name || ''
+  editForm.last_name = user.last_name || ''
   editForm.password = ''
   editForm.confirmPassword = ''
   editForm.is_approved = user.is_approved || false
@@ -5011,6 +5043,12 @@ const saveUserEdits = async () => {
     }
     if (editForm.email !== editUser.value.email) {
       payload.email = editForm.email
+    }
+    if ((editForm.first_name || '') !== (editUser.value.first_name || '')) {
+      payload.first_name = editForm.first_name.trim()
+    }
+    if ((editForm.last_name || '') !== (editUser.value.last_name || '')) {
+      payload.last_name = editForm.last_name.trim()
     }
     if (editForm.password) {
       payload.password = editForm.password

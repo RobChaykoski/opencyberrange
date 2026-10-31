@@ -6,6 +6,55 @@
       <div v-if="loading" class="loading-message">Loading profile information...</div>
 
       <div v-else-if="user" class="profile-content">
+        <!-- Personal Information Section -->
+        <div class="profile-section">
+          <h2 class="section-title">Personal Information</h2>
+          <p class="help-text" style="margin: -0.5rem 0 1rem;">
+            Your first and last name are printed on completion certificates.
+            If you leave both blank, your username is used instead.
+          </p>
+
+          <form class="name-form" @submit.prevent="saveName">
+            <div class="name-grid">
+              <div class="form-group">
+                <label for="firstName">First name</label>
+                <input
+                  id="firstName"
+                  v-model="nameForm.first_name"
+                  type="text"
+                  maxlength="80"
+                  class="form-input"
+                  placeholder="e.g. Alex"
+                  autocomplete="given-name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last name</label>
+                <input
+                  id="lastName"
+                  v-model="nameForm.last_name"
+                  type="text"
+                  maxlength="80"
+                  class="form-input"
+                  placeholder="e.g. Morgan"
+                  autocomplete="family-name"
+                />
+              </div>
+            </div>
+
+            <p class="help-text certificate-preview">
+              Certificates will show:
+              <strong>{{ certificateName }}</strong>
+            </p>
+            <p v-if="nameMessage" :class="nameError ? 'error-message' : 'success-message'" style="margin-top: 0.75rem;">
+              {{ nameMessage }}
+            </p>
+            <button type="submit" :disabled="nameSaving" class="btn btn--primary">
+              {{ nameSaving ? 'Saving...' : 'Save name' }}
+            </button>
+          </form>
+        </div>
+
         <!-- Account Information Section -->
         <div class="profile-section">
           <h2 class="section-title">Account Information</h2>
@@ -366,6 +415,51 @@ const mfa = reactive({
 })
 const loading = ref(true)
 
+// Personal information shown on certificates
+const nameForm = reactive({ first_name: '', last_name: '' })
+const nameSaving = ref(false)
+const nameMessage = ref('')
+const nameError = ref(false)
+
+const certificateName = computed(() => {
+  const parts = [nameForm.first_name.trim(), nameForm.last_name.trim()].filter(Boolean)
+  return parts.length ? parts.join(' ') : (user.value?.username || '')
+})
+
+const saveName = async () => {
+  if (nameSaving.value) return
+  nameSaving.value = true
+  nameMessage.value = ''
+  nameError.value = false
+  // Empty strings are deliberate: the settings endpoint treats null as
+  // "leave unchanged", while "" clears a previously saved name.
+  const payload = {
+    first_name: nameForm.first_name.trim(),
+    last_name: nameForm.last_name.trim(),
+  }
+  try {
+    await axios.put('/auth/settings', payload)
+    if (user.value) {
+      user.value.first_name = payload.first_name || null
+      user.value.last_name = payload.last_name || null
+    }
+    // Keep the cached login object in sync so other views see the new name.
+    const cached = JSON.parse(localStorage.getItem('user') || '{}')
+    cached.first_name = payload.first_name || null
+    cached.last_name = payload.last_name || null
+    localStorage.setItem('user', JSON.stringify(cached))
+    nameMessage.value = (payload.first_name || payload.last_name)
+      ? 'Name saved. It will appear on your certificates.'
+      : 'Name cleared. Certificates will use your username.'
+    if (window.__updateAuthState) window.__updateAuthState()
+  } catch (e) {
+    nameError.value = true
+    nameMessage.value = e.response?.data?.detail || 'Failed to save your name. Please try again.'
+  } finally {
+    nameSaving.value = false
+  }
+}
+
 // Exercise Studio LLM connections (instructor/admin)
 const isInstructor = computed(() => ['instructor', 'admin'].includes(user.value?.role))
 const llm = reactive({
@@ -645,6 +739,8 @@ const fetchUserInfo = async () => {
       fetchVpnStatus() // Fetch VPN status in parallel using shared composable
     ])
     user.value = userResponse.data
+    nameForm.first_name = user.value?.first_name || ''
+    nameForm.last_name = user.value?.last_name || ''
     if (['instructor', 'admin'].includes(user.value?.role)) {
       await fetchModules()
       loadStudioLlm()
@@ -830,6 +926,30 @@ watch(() => route.path, (newPath) => {
   background: rgba(148, 163, 184, 0.15);
   color: var(--text-secondary);
   border: 1px solid var(--text-secondary);
+}
+
+.name-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.name-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.name-form .form-input {
+  padding-right: 1rem;
+}
+
+.certificate-preview {
+  margin: 0.25rem 0 0;
+}
+
+.certificate-preview strong {
+  color: var(--text-primary);
 }
 
 .password-form {

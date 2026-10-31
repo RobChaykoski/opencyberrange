@@ -508,7 +508,9 @@ async def get_level_certificate(
 
     return {
         "certificate_id": certificate_id,
-        "recipient": current_user.username,
+        # Prefer the name the student supplied in their profile; fall back to
+        # the login handle so a half-filled profile still prints something.
+        "recipient": current_user.display_name,
         "track_name": track.name,
         "track_slug": track.slug,
         "level_id": level.id,

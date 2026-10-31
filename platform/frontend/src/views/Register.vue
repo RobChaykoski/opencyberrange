@@ -62,6 +62,33 @@
             </div>
 
             <div class="form-group">
+              <label for="firstName" class="form-label">First name <span class="label-optional">(optional)</span></label>
+              <input
+                id="firstName"
+                v-model="form.firstName"
+                type="text"
+                class="form-input"
+                maxlength="80"
+                placeholder="Enter your first name"
+                autocomplete="given-name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="lastName" class="form-label">Last name <span class="label-optional">(optional)</span></label>
+              <input
+                id="lastName"
+                v-model="form.lastName"
+                type="text"
+                class="form-input"
+                maxlength="80"
+                placeholder="Enter your last name"
+                autocomplete="family-name"
+              />
+              <p class="help-text">Your name appears on completion certificates. You can change it later in your profile.</p>
+            </div>
+
+            <div class="form-group">
               <label for="password" class="form-label">Password</label>
               <div class="input-wrapper">
                 <input
@@ -225,6 +252,8 @@ const router = useRouter()
 const form = reactive({
   username: '',
   email: '',
+  firstName: '',
+  lastName: '',
   password: '',
   confirmPassword: '',
   inviteCode: ''
@@ -352,6 +381,8 @@ const handleRegister = async () => {
       email: form.email,
       password: form.password
     }
+    if (form.firstName.trim()) payload.first_name = form.firstName.trim()
+    if (form.lastName.trim()) payload.last_name = form.lastName.trim()
     const inviteCode = form.inviteCode.trim()
     if (inviteCode) {
       payload.invite_code = inviteCode
@@ -364,6 +395,8 @@ const handleRegister = async () => {
     // Clear form
     form.username = ''
     form.email = ''
+    form.firstName = ''
+    form.lastName = ''
     form.password = ''
     form.confirmPassword = ''
     form.inviteCode = ''
@@ -499,6 +532,11 @@ const handleRegister = async () => {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
+}
+
+.label-optional {
+  font-weight: 400;
+  color: var(--text-muted);
 }
 
 .input-wrapper {

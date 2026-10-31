@@ -121,6 +121,8 @@ class CreateUserRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
     student_id: Optional[str] = None
+    first_name: Optional[str] = Field(None, max_length=80)
+    last_name: Optional[str] = Field(None, max_length=80)
     password: str = Field(..., min_length=8, max_length=128)
     is_approved: bool = False
     is_admin: bool = False

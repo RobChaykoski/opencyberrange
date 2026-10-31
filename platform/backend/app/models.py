@@ -67,6 +67,21 @@ class User(Base):
         """True if user has instructor or admin role."""
         return self.role in ('instructor', 'admin')
 
+    @property
+    def display_name(self):
+        """Name shown to people: full name when provided, else username.
+
+        Certificates and other human-facing output use this instead of the
+        login handle. Either name part is enough; whitespace-only values are
+        treated as missing so a blank profile field cannot print as " ".
+        """
+        parts = [
+            part.strip()
+            for part in (self.first_name, self.last_name)
+            if part and part.strip()
+        ]
+        return " ".join(parts) if parts else self.username
+
     # Relationships
     sessions = relationship("LabSession", back_populates="user", foreign_keys="[LabSession.user_id]")
     wireguard_config = relationship("WireGuardConfig", back_populates="user", uselist=False)

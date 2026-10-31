@@ -386,6 +386,8 @@ async def create_user(
         username=user_data.username,
         email=user_data.email,
         student_id=user_data.student_id,
+        first_name=user_data.first_name,
+        last_name=user_data.last_name,
         hashed_password=get_password_hash(user_data.password),
         is_approved=user_data.is_approved,
         is_admin=is_admin,
