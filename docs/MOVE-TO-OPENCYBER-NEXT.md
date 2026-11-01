@@ -1,21 +1,19 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: executed. The current tree is frozen at tag
-`final-current-2026-11-01`, which includes the generated software-security wiki
-HTML and nginx routing. The new tree has been rebased onto it; see the copy of
-this document in `opencyberrange-next` for the verification record.
+Status: sync executed and verified. The current tree is frozen at `3a8d312`
+(tag `final-current-2026-11-01`). The next tree is `3a8d312` + Wave 0
+(`f670c8e`) plus this status update. Only remote creation and the push remain.
 
 ## Current state
 
 | Tree | Location | State |
 |---|---|---|
-| Current / production | `RobChaykoski/opencyberrange-backup` | Frozen at the final software-security commit |
-| Next / upgrade staging | local `opencyberrange-next` | Cloned at `aba4678` plus the Wave 0 scaffold commit `63efba6` |
+| Current / production | `RobChaykoski/opencyberrange-backup` | Frozen at `3a8d312`, tag `final-current-2026-11-01` |
+| Next / upgrade staging | local `opencyberrange-next` | `3a8d312` + Wave 0 (`f670c8e`) + status update; verified |
 | Next remote | `RobChaykoski/opencyberrange-next` | Configured as `origin`, not created yet |
 
-The next tree was cloned before the software-security work, so it does not yet
-contain the final current content. The Wave 0 commit is the only commit unique
-to next.
+The next tree now contains every tracked file from current plus the Wave 0
+scaffold. The rebase was clean; no content was dropped.
 
 ## Goal
 
@@ -27,7 +25,7 @@ Make `opencyberrange-next` contain:
 4. the same licence, notices, provenance, and skills;
 5. no `.env`, backups, generated output, or other ignored state.
 
-## 1. Freeze the current tree
+## 1. Freeze the current tree (complete)
 
 The final current commit is the last commit on `main`. Tag it before moving:
 
@@ -45,7 +43,7 @@ From this point:
 - only a critical hotfix may be cherry-picked from next;
 - the tag is the rollback point.
 
-## 2. Rebase the Wave 0 scaffold onto current
+## 2. Rebase the Wave 0 scaffold onto current (complete)
 
 The next tree has one unique commit. Replay it on top of current so the result
 is a linear `current + Wave 0` history.
@@ -73,20 +71,15 @@ git cherry-pick <wave-0-commit>
 git branch -f main migration
 ```
 
-## 3. Update the Wave 0 baseline reference
+## 3. Update the Wave 0 baseline reference (complete)
 
-`docs/WAVE-0-BASELINE.md` currently names `aba4678` as its source. After the
-rebase, replace that with the final current commit:
-
-```bash
-git rev-parse current/main
-# edit docs/WAVE-0-BASELINE.md
-```
+`docs/WAVE-0-BASELINE.md` now names `3a8d312` as its source, matching the
+frozen current commit.
 
 Also check `README-UPGRADE.md` and `docs/UPGRADE-TO-LATEST-GA-PLAN.md` for any
 stale commit references.
 
-## 4. Verify the new tree
+## 4. Verify the new tree (complete)
 
 ```bash
 cd /path/to/opencyberrange-next
@@ -96,7 +89,8 @@ git log --oneline -5
 git diff --stat current/main..HEAD
 ```
 
-The diff should show only the Wave 0 scaffold. Then run the full gates:
+The diff should show the Wave 0 scaffold plus this migration-status update.
+Then run the full gates:
 
 ```bash
 # Backend
@@ -121,7 +115,17 @@ docker compose --env-file .env -f docker-compose.prod.yml config >/dev/null
 Also run the two software-security labs and the DevFest seed smoke test, or
 reuse the recorded results from the final current commit.
 
-## 5. Create and push the new repository
+Verified on `f670c8e`:
+
+- 47 backend tests passed on PostgreSQL 17.
+- Frontend lint: 0 errors; production build passed.
+- Both Software Security labs validated (21/22 checks; informational resource
+  limit suggestion only).
+- `docker compose config` resolved `LABS_HOST_PATH` to the next tree.
+- `git diff --stat current/main..HEAD` contains the Wave 0 scaffold and this
+  migration-status update.
+
+## 5. Create and push the new repository (pending)
 
 Create an **empty private** GitHub repository named
 `RobChaykoski/opencyberrange-next` with no README, licence, or `.gitignore`.
