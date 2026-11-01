@@ -521,6 +521,20 @@
       </div>
     </div>
 
+    <!-- Flag capture celebration -->
+    <FlagCelebration
+      :show="celebrationShow"
+      :headline="celebrationHeadline"
+      :lab-name="celebrationData.labName"
+      :time-seconds="celebrationData.timeSeconds"
+      :attempts="celebrationData.attempts"
+      :hints-used="celebrationData.hintsUsed"
+      :next-label="celebrationData.nextLabel"
+      :new-achievements="celebrationAchievements"
+      @close="handleCelebrationClose"
+      @next="handleCelebrationNext"
+    />
+
     <!-- Loading Overlay -->
     <div v-if="loading || spawning" class="loading-overlay" role="status" aria-live="polite">
       <div class="loading-box">
@@ -564,6 +578,7 @@ import ServerIcon from '../components/icons/ServerIcon.vue'
 import FlagIcon from '../components/icons/FlagIcon.vue'
 import LightbulbIcon from '../components/icons/LightbulbIcon.vue'
 import ArrowLeftIcon from '../components/icons/ArrowLeftIcon.vue'
+import FlagCelebration from '../components/FlagCelebration.vue'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)
 
 const route = useRoute()
@@ -596,6 +611,21 @@ const submittingFlag = ref(false)
 // True when a correct flag is tearing down a live environment, so the panel
 // can say so instead of silently vanishing
 const flagStoppedSession = ref(false)
+
+// Flag-capture celebration overlay. The capture data is snapshotted at solve
+// time because the lab panel may be torn down before the overlay closes.
+const celebrationShow = ref(false)
+const celebrationData = ref({
+  labName: '',
+  timeSeconds: 0,
+  attempts: 0,
+  hintsUsed: 0,
+  durationMinutes: 0,
+  nextLabId: null,
+  nextLabel: 'Back to exercises',
+})
+const celebrationAchievements = ref([])
+let pendingCourseRedirect = null
 
 // Hints
 const receivedHints = ref([])
@@ -1087,6 +1117,100 @@ const extendSession = async () => {
   }
 }
 
+// Achievement IDs are fetched alongside the submission so the celebration can
+// reveal badges that the backend awards in its background task. Returns null
+// when the baseline cannot be read; in that case the overlay still celebrates
+// the capture but skips the badge reveal.
+const fetchAchievementIds = async () => {
+  try {
+    const { data } = await axios.get('/profile/summary')
+    return new Set((data.achievements || []).map((achievement) => String(achievement.id)))
+  } catch {
+    return null
+  }
+}
+
+const pollNewAchievements = async (beforeIds) => {
+  if (!beforeIds) return
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+    if (!celebrationShow.value) return
+    try {
+      const { data } = await axios.get('/profile/summary')
+      const fresh = (data.achievements || []).filter(
+        (achievement) => !beforeIds.has(String(achievement.id))
+      )
+      if (fresh.length) {
+        celebrationAchievements.value = fresh
+        return
+      }
+    } catch {
+      return
+    }
+  }
+}
+
+const openCelebration = (result, achievementIdsBeforePromise) => {
+  const lab = activeLab.value?.lab
+  celebrationData.value = {
+    labName: lab?.name || 'Exercise complete',
+    timeSeconds: result.time_to_solve_seconds || 0,
+    attempts: result.attempts || 0,
+    hintsUsed: result.hints_used || 0,
+    durationMinutes: lab?.duration_minutes || 0,
+    nextLabId: result.next_lab?.id || null,
+    nextLabel: result.next_lab ? 'Next objective' : 'Back to exercises',
+  }
+  celebrationAchievements.value = []
+  celebrationShow.value = true
+  // Show the capture immediately; the badge reveal arrives when the profile
+  // baseline resolves and the background achievement check has landed.
+  Promise.resolve(achievementIdsBeforePromise)
+    .then((ids) => pollNewAchievements(ids))
+    .catch(() => {})
+}
+
+const celebrationHeadline = computed(() => {
+  const data = celebrationData.value
+  if (data.attempts === 1 && data.hintsUsed === 0) return 'Flawless capture'
+  if (data.attempts === 1) return 'First-try flag'
+  if (data.hintsUsed === 0) return 'Clean solve'
+  if (
+    data.timeSeconds > 0 &&
+    data.durationMinutes > 0 &&
+    data.timeSeconds < data.durationMinutes * 60 * 0.5
+  ) {
+    return 'Speed run'
+  }
+  return 'Flag captured'
+})
+
+const handleCelebrationClose = () => {
+  celebrationShow.value = false
+  if (pendingCourseRedirect) {
+    const target = pendingCourseRedirect
+    pendingCourseRedirect = null
+    router.push(target)
+  }
+}
+
+const handleCelebrationNext = () => {
+  const nextLabId = celebrationData.value.nextLabId
+  celebrationShow.value = false
+  if (activeCourseId.value) {
+    router.push(`/courses/${activeCourseId.value}`)
+    return
+  }
+  if (nextLabId && route.params.trackSlug) {
+    router.push({
+      path: `/exercises/${route.params.trackSlug}`,
+      query: { labId: String(nextLabId) },
+    })
+    return
+  }
+  router.push('/exercises')
+}
+
 const submitFlag = async () => {
   if (!flagInput.value || submittingFlag.value) return
 
@@ -1095,6 +1219,8 @@ const submitFlag = async () => {
   flagError.value = false
   flagSuccess.value = false
   flagStoppedSession.value = !!activeLab.value?.session
+
+  const achievementIdsBefore = fetchAchievementIds()
 
   try {
     const flagUrl = activeCourseId.value
@@ -1107,13 +1233,13 @@ const submitFlag = async () => {
     if (data.correct) {
       flagSuccess.value = true
       stopHintTimer()
-      fireConfetti()
+      openCelebration(data, achievementIdsBefore)
       // The backend commits the completion before it responds, so refresh
       // immediately. Waiting used to leave the next lab locked until the
       // delayed refresh landed; a second refresh catches the background
       // session stop (Docker teardown can take a while).
       if (activeCourseId.value) {
-        router.push(`/courses/${activeCourseId.value}`)
+        pendingCourseRedirect = `/courses/${activeCourseId.value}`
       } else {
         activeLab.value = null
         await fetchTrack(route.params.trackSlug)
@@ -1213,31 +1339,6 @@ const stopHintTimer = () => {
     clearInterval(hintTimerInterval)
     hintTimerInterval = null
   }
-}
-
-// Lightweight confetti burst on a correct flag (Juice Shop-style success feedback).
-const fireConfetti = () => {
-  const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#ef4444', '#06b6d4']
-  const count = 60
-  const container = document.createElement('div')
-  container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;'
-  document.body.appendChild(container)
-  for (let i = 0; i < count; i++) {
-    const piece = document.createElement('div')
-    const size = 6 + Math.random() * 6
-    piece.style.cssText = `position:absolute;left:${Math.random() * 100}%;top:-10px;width:${size}px;height:${size * 1.4}px;background:${colors[i % colors.length]};opacity:${0.7 + Math.random() * 0.3};transform:rotate(${Math.random() * 360}deg);border-radius:2px;`
-    const duration = 1800 + Math.random() * 1200
-    const drift = (Math.random() - 0.5) * 200
-    piece.animate(
-      [
-        { transform: `translate(0,0) rotate(0deg)`, opacity: 1 },
-        { transform: `translate(${drift}px, ${window.innerHeight + 40}px) rotate(${Math.random() * 720}deg)`, opacity: 0 },
-      ],
-      { duration, easing: 'cubic-bezier(.2,.8,.4,1)', fill: 'forwards' }
-    )
-    container.appendChild(piece)
-  }
-  setTimeout(() => container.remove(), 3200)
 }
 
 // Two visibility-gated usePoll instances cover the two speeds: a 3s

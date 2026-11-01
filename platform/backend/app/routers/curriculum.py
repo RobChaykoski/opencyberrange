@@ -1244,7 +1244,13 @@ async def submit_flag(
         return {
             "correct": True,
             "message": "🎉 Congratulations! Flag accepted!",
-            "next_lab": next_lab
+            "next_lab": next_lab,
+            # Celebration metadata: shown in the capture overlay, not used for
+            # grading. time_to_solve is elapsed session time, so it includes
+            # reading and thinking, not just the final command.
+            "attempts": attempt_count,
+            "hints_used": hints_used,
+            "time_to_solve_seconds": time_to_solve,
         }
     else:
         log_activity(db, EventTypes.FLAG_INCORRECT,
