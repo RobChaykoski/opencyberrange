@@ -4896,13 +4896,41 @@ const toggleUserActive = async (user) => {
 }
 
 const deleteUser = async (id) => {
-  if (!confirm('Are you sure you want to delete this user?')) return
+  const target = users.value.find((u) => u.id === id)
+    || pendingUsers.value.find((u) => u.id === id)
+  const label = target?.username || `user #${id}`
+  const typed = window.prompt(
+    `Permanently delete ${label} and all personal data?\n\n`
+    + 'This removes their profile, VPN config, progress, badges, enrolments '
+    + 'and activity history. It cannot be undone.\n\n'
+    + `Type ${label} to confirm.`
+  )
+  if (typed === null) return
+  if (typed.trim() !== label) {
+    showAlert('Deletion cancelled: the username did not match', 'error')
+    return
+  }
+
   try {
     await axios.delete(`/admin/users/${id}`)
-    showAlert('User deleted')
+    showAlert('User and personal data deleted')
     fetchAll()
   } catch (e) {
-    showAlert('Failed to delete user', 'error')
+    const detail = e.response?.data?.detail
+    if (detail && typeof detail === 'object') {
+      const courses = detail.details?.courses || []
+      if (detail.code === 'owned_courses') {
+        showAlert(
+          `Cannot delete: this account owns ${courses.length} course(s). `
+          + 'Transfer them in Admin → Courses → Manage, then try again.',
+          'error'
+        )
+      } else {
+        showAlert(detail.message || 'Failed to delete user', 'error')
+      }
+    } else {
+      showAlert(detail || 'Failed to delete user', 'error')
+    }
   }
 }
 

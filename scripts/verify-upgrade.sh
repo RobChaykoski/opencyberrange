@@ -173,6 +173,18 @@ else
   fail "scripts/user_transfer.py is missing"
 fi
 
+if [[ -f "$SCRIPT_DIR/purge_erased_accounts.py" ]]; then
+  pass "erasure restore-purge utility exists"
+else
+  fail "scripts/purge_erased_accounts.py is missing"
+fi
+
+if [[ -f "$SOURCE_ROOT/platform/backend/app/services/erasure_ledger.py" ]]; then
+  pass "erasure suppression ledger module exists"
+else
+  fail "platform/backend/app/services/erasure_ledger.py is missing"
+fi
+
 if [[ -f "$SCRIPT_DIR/upgrade-from-backup.sh" ]]; then
   pass "upgrade script exists"
 else

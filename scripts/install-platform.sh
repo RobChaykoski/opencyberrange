@@ -504,6 +504,12 @@ POSTGRES_DB=labdb
 
 # Deployment mode (local or internet)
 DEPLOYMENT_MODE=${OCR_DEPLOYMENT_MODE:-internet}
+
+# Deleted-account suppression ledger. Lives on the persistent /workbook volume
+# so a database restore cannot resurrect an erased account.
+ERASURE_LEDGER_PATH=/workbook/erasure-ledger.jsonl
+# Empty means use JWT_SECRET. Set a dedicated long-lived key if you rotate JWT.
+ERASURE_LEDGER_KEY=
 EOF
 
     # The file contains the JWT secret, database password, WireGuard key and
@@ -1059,6 +1065,15 @@ create_upgrade_backup() {
     else
         log "  ${YELLOW}⚠ Database container not running, skipping database backup${NC}"
     fi
+
+    # Back up the erasure suppression ledger. It lives on the /workbook volume,
+    # outside PostgreSQL, so it is not part of the SQL dump.
+    if docker compose -f "$PLATFORM_DIR/docker-compose.yml" ps backend 2>/dev/null | grep -q "Up"; then
+        if docker compose -f "$PLATFORM_DIR/docker-compose.yml" cp \
+            backend:/workbook/erasure-ledger.jsonl "$backup_path/erasure-ledger.jsonl" 2>/dev/null; then
+            log "  ✓ erasure-ledger.jsonl"
+        fi
+    fi
     
     # Create backup manifest
     cat > "$backup_path/BACKUP_MANIFEST.txt" << EOF
@@ -1075,12 +1090,16 @@ Backed Up Files:
 - frontend/ (full directory)
 - scripts/ (if exists)
 - database/labdb.sql (if database was accessible)
+- erasure-ledger.jsonl (deleted-account suppression hashes, if present)
 
 To restore from this backup:
 1. Stop containers: docker compose down
 2. Restore files from: $backup_path
 3. Restore database: docker compose exec -T db psql -U labuser labdb < database/labdb.sql
-4. Restart: docker compose up -d
+4. Restore the erasure ledger (outside the database):
+   docker compose cp erasure-ledger.jsonl backend:/workbook/erasure-ledger.jsonl
+5. Re-apply deletions: see scripts/purge_erased_accounts.py
+6. Restart: docker compose up -d
 
 EOF
     

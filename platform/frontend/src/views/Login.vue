@@ -15,6 +15,10 @@
 
           <p class="form-subtext">Sign in to continue your training</p>
 
+          <div v-if="$route.query.deleted" class="success-message" role="status">
+            Your account and personal data have been deleted.
+          </div>
+
           <!-- Error Message -->
           <div v-if="errorMessage" class="error-message">
             {{ errorMessage }}
@@ -261,6 +265,16 @@ const handleLogin = async () => {
   color: var(--text-secondary);
   font-size: 0.9375rem;
   margin-bottom: 2rem;
+}
+
+.success-message {
+  background: var(--success-bg);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
 }
 
 /* Error */

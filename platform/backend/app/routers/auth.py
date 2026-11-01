@@ -42,6 +42,8 @@ from app.config import settings
 from app.schemas import ChangePasswordRequest, ImpersonateRequest, ImpersonateResponse, _validate_password
 from app.services.wireguard_manager import WireGuardManager
 from app.services.activity import log_activity, EventTypes
+from app.services.audit import log_admin_action, AuditActions
+from app.services.erasure import erase_user, ErasureBlocked
 from app.services.settings_service import get_setting_fresh
 
 wireguard_manager = WireGuardManager()
@@ -441,39 +443,317 @@ async def export_user_data(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    # Collect the user's completions and achievements.
-    from app.models import LabCompletion, Achievement
-    completions = db.query(LabCompletion).filter(LabCompletion.user_id == current_user.id).all()
-    achievements = db.query(Achievement).filter(Achievement.user_id == current_user.id).all()
+    """Return the account holder's personal data in a portable JSON document.
+
+    Secrets are deliberately excluded (password hash, TOTP secret, recovery
+    codes, trusted-device tokens and the WireGuard private key). Everything
+    else the platform holds about the account is included so this can serve as
+    the response to a subject-access request.
+    """
+    from app.models import (
+        Achievement,
+        ActivityEvent,
+        Competition,
+        CompetitionParticipant,
+        Course,
+        CourseEnrollment,
+        FlagAttempt,
+        Lab,
+        LabCompletion,
+        LabSession,
+        LevelQuiz,
+        QuizAttempt,
+        WireGuardConfig,
+    )
+
+    def _json_or_raw(value):
+        if not value:
+            return None
+        try:
+            return _json.loads(value)
+        except Exception:
+            return value
+
+    uid = current_user.id
+    completions = db.query(LabCompletion).filter(LabCompletion.user_id == uid).all()
+    achievements = db.query(Achievement).filter(Achievement.user_id == uid).all()
+    attempts = db.query(FlagAttempt).filter(FlagAttempt.user_id == uid).all()
+    quiz_attempts = (
+        db.query(QuizAttempt, LevelQuiz)
+        .join(LevelQuiz, LevelQuiz.id == QuizAttempt.quiz_id, isouter=True)
+        .filter(QuizAttempt.user_id == uid)
+        .all()
+    )
+    enrollments = (
+        db.query(CourseEnrollment, Course)
+        .join(Course, Course.id == CourseEnrollment.course_id, isouter=True)
+        .filter(CourseEnrollment.user_id == uid)
+        .all()
+    )
+    sessions = (
+        db.query(LabSession, Lab)
+        .join(Lab, Lab.id == LabSession.lab_id, isouter=True)
+        .filter(LabSession.user_id == uid)
+        .all()
+    )
+    competitions = (
+        db.query(CompetitionParticipant, Competition)
+        .join(Competition, Competition.id == CompetitionParticipant.competition_id, isouter=True)
+        .filter(CompetitionParticipant.user_id == uid)
+        .all()
+    )
+    activity = (
+        db.query(ActivityEvent)
+        .filter(
+            (ActivityEvent.actor_id == uid)
+            | (
+                (ActivityEvent.target_type == "user")
+                & (ActivityEvent.target_id == uid)
+            )
+        )
+        .order_by(ActivityEvent.created_at)
+        .all()
+    )
+    vpn = db.query(WireGuardConfig).filter(WireGuardConfig.user_id == uid).first()
+
+    completion_lab_ids = [c.lab_id for c in completions]
+    lab_by_id = {
+        row.id: row
+        for row in db.query(Lab).filter(Lab.id.in_(completion_lab_ids)).all()
+    } if completion_lab_ids else {}
+
     return {
-        "user": {
+        "format_version": 2,
+        "generated_at": datetime.now(timezone.utc),
+        "account": {
             "id": current_user.id,
             "username": current_user.username,
             "email": current_user.email,
             "first_name": current_user.first_name,
             "last_name": current_user.last_name,
-            "organization": current_user.organization,
             "student_id": current_user.student_id,
+            "organization": current_user.organization,
             "role": current_user.role,
+            "is_active": current_user.is_active,
+            "is_approved": current_user.is_approved,
+            "is_locked": current_user.is_locked,
+            "avatar_data": current_user.avatar_data,
             "created_at": current_user.created_at,
+            "last_login_at": current_user.last_login_at,
+            "last_login_ip": current_user.last_login_ip,
+            "timezone": current_user.timezone,
+            "show_on_scoreboard": current_user.show_on_scoreboard,
+            "login_notifications": current_user.login_notifications,
+            "notification_prefs": _json_or_raw(current_user.notification_prefs),
+            "mfa_enabled": bool(current_user.mfa_enabled),
+            "vpn_registered": bool(current_user.vpn_registered),
         },
+        "vpn": (
+            {
+                "client_ip": vpn.client_ip,
+                "public_key": vpn.public_key,
+                "created_at": vpn.created_at,
+            }
+            if vpn
+            else None
+        ),
+        "courses": [
+            {
+                "course_id": course.id if course else enrollment.course_id,
+                "code": course.code if course else None,
+                "name": course.name if course else None,
+                "semester": course.semester if course else None,
+                "enrolled_at": enrollment.enrolled_at,
+                "seat_number": enrollment.seat_number,
+            }
+            for enrollment, course in enrollments
+        ],
         "completions": [
-            {"lab_id": c.lab_id, "completed_at": c.completed_at, "hints_used": c.hints_used, "attempts": c.attempts}
+            {
+                "lab_id": c.lab_id,
+                "lab_name": lab_by_id[c.lab_id].name if c.lab_id in lab_by_id else None,
+                "lab_slug": lab_by_id[c.lab_id].slug if c.lab_id in lab_by_id else None,
+                "completed_at": c.completed_at,
+                "attempts": c.attempts,
+                "hints_used": c.hints_used,
+                "time_spent_minutes": c.time_spent_minutes,
+            }
             for c in completions
         ],
+        "flag_attempts": [
+            {
+                "lab_id": a.lab_id,
+                "is_correct": a.is_correct,
+                "attempted_at": a.attempted_at,
+            }
+            for a in attempts
+        ],
+        "quiz_attempts": [
+            {
+                "quiz_id": attempt.quiz_id,
+                "quiz_title": quiz.title if quiz else None,
+                "score": attempt.score,
+                "total": attempt.total,
+                "correct": attempt.correct,
+                "passed": attempt.passed,
+                "taken_at": attempt.taken_at,
+                "answers": _json_or_raw(attempt.answers),
+            }
+            for attempt, quiz in quiz_attempts
+        ],
         "achievements": [
-            {"type": a.achievement_type, "course_id": a.course_id, "awarded_at": a.awarded_at}
+            {
+                "type": a.achievement_type,
+                "course_id": a.course_id,
+                "lab_id": a.lab_id,
+                "awarded_at": a.awarded_at,
+            }
             for a in achievements
+        ],
+        "lab_sessions": [
+            {
+                "lab_id": session.lab_id,
+                "lab_name": lab.name if lab else None,
+                "lab_slug": lab.slug if lab else None,
+                "status": session.status,
+                "started_at": session.started_at,
+                "expires_at": session.expires_at,
+                "stopped_at": session.stopped_at,
+            }
+            for session, lab in sessions
+        ],
+        "competitions": [
+            {
+                "competition_id": participant.competition_id,
+                "name": competition.name if competition else None,
+                "joined_at": participant.joined_at,
+                "source": participant.source,
+            }
+            for participant, competition in competitions
+        ],
+        "activity": [
+            {
+                "event_type": event.event_type,
+                "target_type": event.target_type,
+                "target_label": event.target_label,
+                "detail": _json_or_raw(event.detail),
+                "ip_address": event.ip_address,
+                "created_at": event.created_at,
+            }
+            for event in activity
         ],
     }
 
-@router.post("/delete-request")
+
+class DeleteAccountRequest(BaseModel):
+    password: str = Field(..., min_length=1, max_length=128)
+    code: Optional[str] = Field(None, min_length=6, max_length=8)
+    confirm: str = Field(..., min_length=1, max_length=16)
+
+
+@router.post("/delete-account")
+@limiter.limit("3/minute")
+async def delete_my_account(
+    request: Request,
+    body: DeleteAccountRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Permanently erase the signed-in account and its personal data.
+
+    Requires the current password, a live TOTP code (or an unused recovery
+    code) when MFA is enabled, and the literal confirmation ``DELETE``.
+    """
+    if is_impersonating(current_user):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You cannot delete an account while impersonating another user.",
+        )
+    if body.confirm != "DELETE":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Type DELETE exactly to confirm account deletion.",
+        )
+    if not verify_password(body.password, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Current password is incorrect.",
+        )
+
+    if getattr(current_user, "mfa_enabled", False):
+        if not body.code:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Enter your authenticator code to delete this account.",
+            )
+        ok = totp_service.verify_code(current_user.totp_secret, body.code)
+        if not ok and getattr(current_user, "mfa_recovery_codes", None):
+            try:
+                stored = _json.loads(current_user.mfa_recovery_codes)
+            except Exception:
+                stored = []
+            h = hashlib.sha256(body.code.strip().upper().encode()).hexdigest()
+            # Do not consume the code here: if erasure is blocked (owned
+            # courses or last admin), the code must remain valid.
+            ok = h in stored
+        if not ok:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authenticator or recovery code.",
+            )
+
+    captured_id = current_user.id
+    try:
+        result = erase_user(db, current_user, actor="self")
+    except ErasureBlocked as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": exc.code,
+                "message": exc.message,
+                "details": exc.details,
+            },
+        ) from exc
+
+    log_admin_action(
+        action=AuditActions.USER_SELF_DELETED,
+        admin_user_id=captured_id,
+        admin_username="self-service",
+        target_type="user",
+        target_id=None,
+        target_identifier=None,
+        details={
+            "erased": result.deleted,
+            "anonymised": result.anonymised,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+
+    return {
+        "message": "Your account and personal data have been deleted.",
+        "erased": result.deleted,
+        "anonymised": result.anonymised,
+    }
+
+
+@router.post("/delete-request", status_code=status.HTTP_410_GONE)
 async def request_account_deletion(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    logger.info(f"User {current_user.username} (id={current_user.id}) requested account deletion")
-    return {"message": "Deletion request recorded. An administrator will process it."}
+    """Retired no-op endpoint.
+
+    It previously claimed to record a request while only writing a log line.
+    Self-service deletion is now immediate and authenticated; keep this route
+    so older clients get a clear instruction instead of a silent no-op.
+    """
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail=(
+            "Deletion requests are no longer queued. Use "
+            "POST /api/auth/delete-account from the Profile page."
+        ),
+    )
 
 @router.post("/register", response_model=UserResponse)
 @limiter.limit("5/minute")  # 5 registrations per minute per IP

@@ -581,6 +581,8 @@
             </button>
           </form>
         </div>
+
+        <PrivacyDataPanel :mfa-enabled="!!user.mfa_enabled" />
       </div>
 
       <div v-else class="error-message">Failed to load profile information</div>
@@ -595,6 +597,7 @@ import axios from '../api/axios'
 import { useVpnStatus } from '../composables/useVpnStatus'
 import { usePoll } from '../composables/usePoll'
 import { useModules } from '../composables/useModules'
+import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 
 const route = useRoute()
 const { exerciseAuthoring, fetchModules } = useModules()

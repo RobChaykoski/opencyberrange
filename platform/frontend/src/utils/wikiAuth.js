@@ -21,3 +21,15 @@ export function setWikiAuthCookie() {
     ? `; Domain=${host}` : ''
   document.cookie = `wiki_auth=${token}; path=/; SameSite=Lax; max-age=86400${domainAttr}`
 }
+
+// Remove the wiki auth cookie on logout or account deletion. Clear both the
+// runtime derived domain scope and the bare host-only variant so no copy of
+// the token survives a session.
+export function clearWikiAuthCookie() {
+  const host = window.location.hostname
+  const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host)
+  const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
+    ? `; Domain=${host}` : ''
+  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${domainAttr}`
+  document.cookie = 'wiki_auth=; path=/; SameSite=Lax; max-age=0'
+}

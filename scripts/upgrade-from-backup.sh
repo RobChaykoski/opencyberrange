@@ -26,6 +26,8 @@ PLATFORM_DIR="$REPO_DIR/platform"
 USER_TRANSFER="$SCRIPT_DIR/user_transfer.py"
 TARGET_REPO=""
 BACKUP_ROOT="${BACKUP_ROOT:-$HOME/opencyberrange-backups}"
+BACKUP_RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-30}"
+ERASURE_LEDGER_PATH="${ERASURE_LEDGER_PATH:-/workbook/erasure-ledger.jsonl}"
 REMOTE="${GIT_REMOTE:-backup}"
 BRANCH="${GIT_BRANCH:-main}"
 DB_USER="${DB_USER:-}"
@@ -63,6 +65,9 @@ Options:
   --skip-rangebox       Do not rebuild Kali, Ubuntu, and REMnux RangeBox images
   --skip-verify         Skip the read-only preflight verification
   --prebuild-parallel N Build N lab images concurrently (default: 1)
+  --backup-retention-days N
+                        Delete completed ocr-* backups older than N days after
+                        a successful upgrade (default: 30; 0 disables)
   -h, --help            Show this help
 
 By default the upgrade refreshes curriculum/lab definitions, rebuilds every lab
@@ -71,7 +76,8 @@ prebuilds can take a long time and need significant disk space; use --skip-labs
 or --skip-rangebox for a code-only upgrade.
 
 Environment overrides:
-  BACKUP_ROOT, GIT_REMOTE, GIT_BRANCH, DB_USER, DB_NAME, PREBUILD_PARALLEL
+  BACKUP_ROOT, BACKUP_RETENTION_DAYS, ERASURE_LEDGER_PATH, GIT_REMOTE,
+  GIT_BRANCH, DB_USER, DB_NAME, PREBUILD_PARALLEL
 EOF
 }
 
@@ -90,6 +96,7 @@ while [[ $# -gt 0 ]]; do
     --skip-rangebox) SKIP_RANGEBOX=true; shift ;;
     --skip-verify) SKIP_VERIFY=true; shift ;;
     --prebuild-parallel) PREBUILD_PARALLEL="${2:?--prebuild-parallel requires a value}"; shift 2 ;;
+    --backup-retention-days) BACKUP_RETENTION_DAYS="${2:?--backup-retention-days requires a value}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -291,12 +298,22 @@ if [[ "$SKIP_USERS" == false ]]; then
   chmod 600 "$BACKUP_DIR/users-export.json" 2>/dev/null || true
 fi
 
+# The suppression ledger is outside PostgreSQL so a database restore cannot
+# overwrite it. Copy it for disaster recovery, but restore procedures must use
+# the live file and re-apply it after importing an older dump.
+if compose_in exec -T backend test -f "$ERASURE_LEDGER_PATH"; then
+  log "Copying erasure suppression ledger"
+  compose_in cp "backend:$ERASURE_LEDGER_PATH" "$(docker_path "$BACKUP_DIR/erasure-ledger.jsonl")" >/dev/null
+  chmod 600 "$BACKUP_DIR/erasure-ledger.jsonl" 2>/dev/null || true
+fi
+
 cat > "$BACKUP_DIR/README.txt" <<EOF
 OpenCyberRange backup: $BACKUP_DIR
 
 Files:
   database.dump       PostgreSQL custom-format dump
   users-export.json   Portable user export (password hashes; sensitive)
+  erasure-ledger.jsonl Suppression hashes for deleted accounts (if present)
   .env                Platform environment
   docker-compose*     Compose configuration
   certs/              TLS certificates, if present
@@ -305,14 +322,21 @@ Full database restore (destructive):
   ${COMPOSE_DISPLAY}stop backend frontend
   cat "$BACKUP_DIR/database.dump" | ${COMPOSE_DISPLAY}exec -T db pg_restore -U $DB_USER -d $DB_NAME --clean --if-exists
   ${COMPOSE_DISPLAY}up -d backend frontend
+  # A dump may predate deletion requests. Re-apply the LIVE ledger (not the
+  # copy in this backup) so erased accounts cannot come back:
+  ${COMPOSE_DISPLAY}cp "$(docker_path "$REPO_DIR/scripts/purge_erased_accounts.py")" backend:/tmp/purge_erased_accounts.py
+  ${COMPOSE_DISPLAY}exec -T backend python /tmp/purge_erased_accounts.py --dry-run
+  ${COMPOSE_DISPLAY}exec -T backend python /tmp/purge_erased_accounts.py
 
 User merge only:
   ${COMPOSE_DISPLAY}cp "$(docker_path "$BACKUP_DIR/users-export.json")" backend:/tmp/users-export.json
-  ${COMPOSE_DISPLAY}exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --dry-run
-  ${COMPOSE_DISPLAY}exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json
+  ${COMPOSE_DISPLAY}exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --ledger "$ERASURE_LEDGER_PATH" --dry-run
+  ${COMPOSE_DISPLAY}exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --ledger "$ERASURE_LEDGER_PATH"
 
 The user export contains password hashes and personal data. Delete this backup
 directory after the upgrade has been verified and retained elsewhere if needed.
+Backups older than ${BACKUP_RETENTION_DAYS} days are removed automatically after a
+successful upgrade (set --backup-retention-days 0 to keep them).
 EOF
 log "Backup complete: $BACKUP_DIR"
 
@@ -394,9 +418,9 @@ if [[ "$SKIP_USERS" == false ]]; then
   compose_in cp "$(docker_path "$USER_TRANSFER")" backend:/tmp/user_transfer.py >/dev/null
   compose_in cp "$(docker_path "$BACKUP_DIR/users-export.json")" backend:/tmp/users-export.json >/dev/null
   if [[ "$UPDATE_USERS" == true ]]; then
-    compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --update
+    compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --update --ledger "$ERASURE_LEDGER_PATH"
   else
-    compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json
+    compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --ledger "$ERASURE_LEDGER_PATH"
   fi
   compose_in exec -T backend rm -f /tmp/user_transfer.py /tmp/users-export.json
 fi
@@ -421,6 +445,14 @@ log "Running post-install health checks"
 bash "$SCRIPT_DIR/verify-upgrade.sh" --runtime-only \
   --repo "$REPO_DIR" --db-user "$DB_USER" --db-name "$DB_NAME"
 
+CURRENT_STEP="backup retention"
+if [[ "$BACKUP_RETENTION_DAYS" =~ ^[0-9]+$ ]] && [[ "$BACKUP_RETENTION_DAYS" -gt 0 ]]; then
+  log "Pruning completed backups older than ${BACKUP_RETENTION_DAYS} days"
+  find "$BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'ocr-*' \
+    -mtime +"$BACKUP_RETENTION_DAYS" -print -exec rm -rf {} + \
+    || warn "backup retention cleanup failed; review $BACKUP_ROOT manually"
+fi
+
 LAB_STATUS="rebuilt"
 [[ "$PREBUILD_LABS" == true ]] || LAB_STATUS="skipped (--skip-labs)"
 RANGEBOX_STATUS="rebuilt"
@@ -432,6 +464,7 @@ cat <<EOF
     Previous commit: $OLD_COMMIT
     Current commit:  $NEW_COMMIT
     Backup:          $BACKUP_DIR
+    Backups kept:    ${BACKUP_RETENTION_DAYS} days
     Lab images:      $LAB_STATUS
     RangeBox images: $RANGEBOX_STATUS
 

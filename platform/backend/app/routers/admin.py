@@ -38,6 +38,7 @@ from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCa
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
+from app.services.erasure import erase_user, ErasureBlocked
 from app.services.file_lock import open_locked
 from app.config import settings
 
@@ -642,60 +643,6 @@ async def force_logout_user(
     return {"message": f"All sessions revoked for {user.username}"}
 
 
-# Relations that reference users(id) through a foreign key that predates the
-# ON DELETE rules now declared in models.py. On a database created before those
-# rules, Postgres defaults to NO ACTION, so a user who has any of these rows
-# cannot be deleted at all: the delete fails with a ForeignKeyViolation naming
-# whichever table the planner happened to check first. Deletion therefore
-# succeeded for users with no SOC or Studio history and failed for those with
-# it, which reads like a random bug.
-#
-# Clearing these explicitly keeps deletion working regardless of whether a given
-# deployment's constraints were migrated. "delete" removes rows that belong to
-# the user; "null" keeps a row that has independent value and drops only the
-# identity link.
-_USER_REFERENCE_CLEANUP = (
-    ("revoked_tokens",        "user_id",         "delete"),
-    ("invite_codes",          "created_by",      "delete"),
-    ("invite_codes",          "used_by",         "null"),
-    ("lab_sessions",          "impersonated_by", "null"),
-    ("template_instances",    "instructor_id",   "delete"),
-    ("studio_pending_review", "instructor_id",   "delete"),
-    ("exercise_gen_jobs",     "instructor_id",   "delete"),
-    # Present on some instances only, skipped where the table does not exist.
-    # soc_exercise_* are orphans on older databases: leftovers from the retired
-    # tracks that earlier releases shipped. No model defines them any more,
-    # their constraints still block user deletion, because a foreign key does not
-    # care whether any code uses the table.
-    # llmr_* belong to the LLM Range build and land here when that branch merges.
-    ("llmr_seats",            "user_id",       "delete"),
-    ("llmr_findings",         "user_id",       "delete"),
-    ("llmr_defense_configs",  "submitted_by",  "null"),
-)
-
-
-def _clear_user_references(db: Session, user_id: int) -> None:
-    """Clear rows referencing a user that would otherwise block deletion.
-
-    Tables absent from this deployment are skipped, so an install without the
-    SOC or Studio modules is unaffected. Table and column names come from the
-    constant above, never from request input.
-    """
-    from sqlalchemy import text
-
-    for table, column, action in _USER_REFERENCE_CLEANUP:
-        try:
-            if not db.execute(text("SELECT to_regclass(:t) IS NOT NULL"),
-                              {"t": table}).scalar():
-                continue
-            stmt = (f"DELETE FROM {table} WHERE {column} = :uid"
-                    if action == "delete"
-                    else f"UPDATE {table} SET {column} = NULL WHERE {column} = :uid")
-            db.execute(text(stmt), {"uid": user_id})
-        except Exception as exc:
-            logger.warning(f"User delete cleanup skipped {table}.{column}: {exc}")
-
-
 @router.delete("/users/{user_id}")
 @limiter.limit("5/minute")
 async def delete_user(
@@ -704,84 +651,47 @@ async def delete_user(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
-    """Delete a user (stops their active labs first) - rate limited to 5 per minute"""
+    """Erase an account and its personal data.
+
+    Refuses when the account owns courses (transfer them first) or is the last
+    usable administrator. The audit record keeps the admin identity, action and
+    timestamp but not the erased person's identifier.
+    """
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
-    # Allow admins to delete other admin users (removed restriction)
-    
-    # Stop any active labs
-    active_session = db.query(LabSession).filter(
-        LabSession.user_id == user_id,
-        LabSession.status == "running"
-    ).first()
-    
-    if active_session:
-        try:
-            docker_manager.destroy_lab_environment(user_id, active_session.lab.slug)
-        except Exception:
-            pass
-    
-    # Remove VPN peer from Peer Manager
-    wg_config = db.query(WireGuardConfig).filter(WireGuardConfig.user_id == user_id).first()
-    if wg_config:
-        try:
-            wireguard_manager.remove_peer(wg_config.public_key)
-            logger.info(f"Removed VPN peer for deleted user {user.username}")
-        except Exception as e:
-            logger.error(f"Failed to remove VPN peer: {e}")
-        db.delete(wg_config)
-    
-    # Delete all related records (handles cases where DB lacks CASCADE constraints)
-    db.query(CourseCompletionReset).filter(CourseCompletionReset.user_id == user_id).delete()
-    db.query(CourseCompletionReset).filter(CourseCompletionReset.reset_by == user_id).update({"reset_by": None})
-    db.query(Achievement).filter(Achievement.user_id == user_id).delete()
-    db.query(CourseEnrollment).filter(CourseEnrollment.user_id == user_id).delete()
-    db.query(FlagAttempt).filter(FlagAttempt.user_id == user_id).delete()
-    db.query(LabCompletion).filter(LabCompletion.user_id == user_id).delete()
-    db.query(LabSession).filter(LabSession.user_id == user_id).delete()
-    db.query(ActivityEvent).filter(ActivityEvent.actor_id == user_id).update({"actor_id": None})
-    # Delete courses where user is instructor (no CASCADE on instructor_id FK)
-    db.query(Course).filter(Course.instructor_id == user_id).delete()
-    # Clear SOC, Studio, and token relations whose FKs may lack an ON DELETE rule
-    _clear_user_references(db, user_id)
 
-    # Store username before deletion for audit log
-    deleted_username = user.username
-    deleted_user_id = user.id
-
-    # Delete user
     try:
-        db.delete(user)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        logger.error(f"Failed to delete user {user.username}: {e}")
-        # Name the blocking table in the response. The previous message said only
-        # "database constraint error", which gave an admin nothing to act on and
-        # meant every occurrence needed a log dive to identify.
-        import re as _re
-        match = _re.search(r'on table "([A-Za-z0-9_]+)"', str(e))
-        blocker = (f" Records in '{match.group(1)}' still reference this account."
-                   if match else "")
+        result = erase_user(db, user, actor="admin")
+    except ErasureBlocked as exc:
         raise HTTPException(
-            status_code=500,
-            detail=f"Failed to delete user: a database constraint blocked it.{blocker}"
-        )
-    
-    # Audit log
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "code": exc.code,
+                "message": exc.message,
+                "details": exc.details,
+            },
+        ) from exc
+
     log_admin_action(
         action=AuditActions.USER_DELETED,
         admin_user_id=admin.id,
         admin_username=admin.username,
         target_type="user",
-        target_id=deleted_user_id,
-        target_identifier=deleted_username,
-        ip_address=request.client.host if request.client else None
+        target_id=None,
+        target_identifier=None,
+        details={
+            "erased": result.deleted,
+            "anonymised": result.anonymised,
+        },
+        ip_address=request.client.host if request.client else None,
     )
-    
-    return {"message": f"User {deleted_username} deleted"}
+
+    return {
+        "message": "User and personal data deleted",
+        "erased": result.deleted,
+        "anonymised": result.anonymised,
+    }
 
 
 # ==================== Lab Management ====================
@@ -2918,12 +2828,32 @@ async def create_backup(
 
         size = os.path.getsize(backup_file)
 
+        # Keep the suppression ledger beside the dump. A restore from this
+        # backup must still re-apply the live ledger, but the copy makes the
+        # backup self-documenting and usable for disaster recovery.
+        ledger_source = os.environ.get(
+            "ERASURE_LEDGER_PATH", "/workbook/erasure-ledger.jsonl"
+        )
+        ledger_file = None
+        if os.path.exists(ledger_source):
+            import shutil
+            ledger_file = f"{backup_dir}/ocr_erasure_ledger_{timestamp}.jsonl"
+            shutil.copy2(ledger_source, ledger_file)
+            try:
+                os.chmod(ledger_file, 0o600)
+            except OSError:
+                pass
+
         log_admin_action(
             action="DATABASE_BACKUP",
             admin_user_id=admin.id,
             admin_username=admin.username,
             target_type="database",
-            details={"file": backup_file, "size_bytes": size},
+            details={
+                "file": backup_file,
+                "size_bytes": size,
+                "ledger_file": ledger_file,
+            },
             ip_address=request.client.host if request.client else None
         )
 
@@ -2931,6 +2861,7 @@ async def create_backup(
             "message": "Backup created successfully",
             "file": backup_file,
             "size_bytes": size,
+            "ledger_file": ledger_file,
             "timestamp": timestamp,
         }
     except subprocess.TimeoutExpired:

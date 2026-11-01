@@ -13,6 +13,8 @@ Run inside the backend container (psycopg2 is already installed):
     python /tmp/user_transfer.py import /tmp/users-export.json
 """
 import argparse
+import hashlib
+import hmac
 import json
 import os
 import stat
@@ -25,6 +27,9 @@ from psycopg2.extras import RealDictCursor
 
 FORMAT = "opencyberrange-users"
 VERSION = 1
+DEFAULT_LEDGER_PATH = os.environ.get(
+    "ERASURE_LEDGER_PATH", "/workbook/erasure-ledger.jsonl"
+)
 
 # Common fields in the Lite/new schema. The exporter and importer both check
 # information_schema, so a field is used only when the target table has it.
@@ -75,6 +80,45 @@ def table_columns(conn) -> set:
             "WHERE table_schema = 'public' AND table_name = 'users'"
         )
         return {row[0] for row in cur.fetchall()}
+
+
+def ledger_hash(value: str, key: str | bytes | None) -> str | None:
+    if not value:
+        return None
+    secret = key or "opencyberrange-erasure-ledger"
+    if isinstance(secret, str):
+        secret = secret.encode("utf-8")
+    return hmac.new(secret, value.strip().lower().encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def load_ledger_hashes(path: str | None, key: str | None) -> set[str]:
+    """Read the persistent erasure suppression ledger.
+
+    The ledger lives on the backend's /workbook volume by default and is
+    copied into backups. A restore or user merge must consult the live ledger
+    so an older dump cannot resurrect a deleted account.
+    """
+    if not path:
+        return set()
+    ledger = Path(path).expanduser()
+    if not ledger.exists():
+        return set()
+    state: dict[str, str] = {}
+    with ledger.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            status = entry.get("status") or "committed"
+            for field in ("username_hash", "email_hash"):
+                value = entry.get(field)
+                if value:
+                    state[value] = status
+    return {value for value, status in state.items() if status == "committed"}
 
 
 def json_value(value):
@@ -184,6 +228,23 @@ def import_users(args):
     conn = connect(database_url)
     created = updated = skipped = errors = 0
     warnings = []
+    # Keep programmatic callers (and older tests) working when they do not
+    # pass the newer ledger options.
+    include_erased = getattr(args, "include_erased", False)
+    ledger_path = getattr(args, "ledger", DEFAULT_LEDGER_PATH)
+    ledger_key = getattr(
+        args,
+        "ledger_key",
+        os.environ.get("ERASURE_LEDGER_KEY") or os.environ.get("JWT_SECRET"),
+    )
+    erased_hashes = set()
+    if not include_erased:
+        erased_hashes = load_ledger_hashes(ledger_path, ledger_key)
+        if ledger_path and not Path(ledger_path).expanduser().exists():
+            warnings.append(
+                f"erasure ledger not found at {ledger_path}; "
+                "no suppressed accounts will be filtered"
+            )
 
     try:
         columns = table_columns(conn)
@@ -199,6 +260,15 @@ def import_users(args):
             username = str(record.get("username") or "").strip()
             email = str(record.get("email") or "").strip().lower()
             password_hash = record.get("password_hash") or record.get("hashed_password")
+            if erased_hashes:
+                candidate_hashes = {
+                    ledger_hash(username, ledger_key),
+                    ledger_hash(email, ledger_key),
+                }
+                if candidate_hashes & erased_hashes:
+                    skipped += 1
+                    warnings.append(f"{username}: skipped (erased suppression ledger)")
+                    continue
             if not username or not email or not password_hash:
                 errors += 1
                 warnings.append(f"row {index}: missing username, email, or password hash")
@@ -361,6 +431,27 @@ def main():
         "--dry-run",
         action="store_true",
         help="Validate and report what would change without writing",
+    )
+    import_parser.add_argument(
+        "--ledger",
+        default=DEFAULT_LEDGER_PATH,
+        help=(
+            "Erasure suppression ledger (default: ERASURE_LEDGER_PATH or "
+            "/workbook/erasure-ledger.jsonl)"
+        ),
+    )
+    import_parser.add_argument(
+        "--ledger-key",
+        default=os.environ.get("ERASURE_LEDGER_KEY") or os.environ.get("JWT_SECRET"),
+        help="Key used to hash ledger identifiers (default: ERASURE_LEDGER_KEY or JWT_SECRET)",
+    )
+    import_parser.add_argument(
+        "--include-erased",
+        action="store_true",
+        help=(
+            "Import accounts that appear in the suppression ledger. "
+            "Disaster recovery only; this undoes erasure."
+        ),
     )
     import_parser.set_defaults(func=import_users)
 

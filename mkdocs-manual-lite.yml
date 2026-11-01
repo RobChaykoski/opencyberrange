@@ -79,6 +79,7 @@ nav:
     - "Achievements and Badges": 02_Student_Guide/15_Achievements_and_Badges.md
     - "Viewing Your Profile": 02_Student_Guide/16_Viewing_Your_Profile.md
     - "Changing Your Password": 02_Student_Guide/17_Changing_Your_Password.md
+    - "Privacy and Your Data": 02_Student_Guide/18_Privacy_And_Your_Data.md
   - "VPN Setup Guide":
     - "VPN Overview": 05_VPN_Setup_Guide/01_VPN_Overview.md
     - "Downloading Your VPN Config": 05_VPN_Setup_Guide/02_Downloading_Your_VPN_Config.md
@@ -153,3 +154,4 @@ nav:
     - "Viewing Activity Audit Logs": 04_Admin_Guide/21_Viewing_Activity_Audit_Logs.md
     - "Disk Management": 04_Admin_Guide/24_Disk_Management.md
     - "Impersonation": 04_Admin_Guide/25_Impersonation.md
+    - "Privacy, Erasure, and Backups": 04_Admin_Guide/27_Privacy_And_Erasure.md

@@ -142,6 +142,14 @@ create_backup() {
     if [ -d "$PLATFORM_DIR/frontend" ]; then
         cp -r "$PLATFORM_DIR/frontend" "$backup_path/frontend"
     fi
+
+    # The erasure suppression ledger lives on the /workbook volume, not in the
+    # database or the source tree. Copy it so a rollback cannot resurrect a
+    # deleted account.
+    if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^ocr-backend$'; then
+        docker cp ocr-backend:/workbook/erasure-ledger.jsonl \
+            "$backup_path/erasure-ledger.jsonl" 2>/dev/null || true
+    fi
     
     log "${GREEN}✓ Backup created${NC}"
     echo "$backup_path"

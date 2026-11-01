@@ -1,0 +1,16 @@
+# Shell entrypoints must stay LF so they run on Linux and in containers.
+.gitattributes text eol=lf
+*.sh text eol=lf
+
+# Python and frontend sources are portable text; keep one canonical EOL.
+*.py text eol=lf
+*.vue text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.example text eol=lf
+Dockerfile text eol=lf
+*.conf text eol=lf

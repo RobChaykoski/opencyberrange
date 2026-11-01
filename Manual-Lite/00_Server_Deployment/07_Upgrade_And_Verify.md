@@ -99,14 +99,16 @@ The upgrade performs the following in order:
 | Backup | Creates a timestamped directory under `~/opencyberrange-backups/` |
 | Database | Exports a full `pg_dump` in custom format |
 | Users | Exports every user to `users-export.json` |
+| Erasure ledger | Copies the deleted-account suppression ledger, if present |
 | Config | Copies `.env`, compose files, and certificates |
 | Source | Fetches and fast-forwards to the selected remote branch |
 | Platform | Rebuilds and recreates `db`, `backend`, and `frontend` |
 | Curriculum | Runs the curriculum seeder and lab discovery |
 | Lab images | Rebuilds every lab image with `prebuild-labs.sh` |
 | RangeBox | Rebuilds Kali, Ubuntu, and REMnux images |
-| Users | Merges the user export; existing accounts are preserved by default |
+| Users | Merges the user export; existing accounts are preserved by default and erased accounts are skipped |
 | Verify | Checks container status, backend health, and the user count |
+| Retention | Prunes completed backups older than 30 days (configurable) |
 
 By default all lab images and all RangeBox images are rebuilt. The first full
 run can take a long time and needs significant disk space. The default REMnux
@@ -132,7 +134,33 @@ sudo bash scripts/upgrade-from-backup.sh --skip-users
 
 # Skip curriculum seeding and lab discovery
 sudo bash scripts/upgrade-from-backup.sh --skip-discovery
+
+# Change backup retention (0 keeps every backup)
+sudo bash scripts/upgrade-from-backup.sh --backup-retention-days 14
 ```
+
+## Erased accounts and restores
+
+Deleted accounts are recorded in an append-only suppression ledger on the
+backend's persistent `/workbook` volume. The upgrade script copies it into the
+backup and skips those accounts when merging `users-export.json`.
+
+A database dump can predate a deletion. After any full restore, re-apply the
+live ledger so the account cannot come back:
+
+```bash
+docker compose -f platform/docker-compose.prod.yml -f platform/docker-compose.override.yml \
+  cp scripts/purge_erased_accounts.py backend:/tmp/purge_erased_accounts.py
+docker compose -f platform/docker-compose.prod.yml -f platform/docker-compose.override.yml \
+  exec -T backend python /tmp/purge_erased_accounts.py --dry-run
+docker compose -f platform/docker-compose.prod.yml -f platform/docker-compose.override.yml \
+  exec -T backend python /tmp/purge_erased_accounts.py
+```
+
+Backups contain password hashes and personal data. Keep them access-controlled
+and delete them when the retention period ends. See
+[Privacy, Erasure, and Backups](../04_Admin_Guide/27_Privacy_And_Erasure.md) for
+the full data map and retention guidance.
 
 Use `--skip-labs` or `--skip-rangebox` only when you know those images are
 already current. Lab definitions are still refreshed unless

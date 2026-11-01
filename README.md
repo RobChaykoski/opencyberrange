@@ -8,7 +8,7 @@
 
 A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, AI security, and open-source intelligence (OSINT).
 
-Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. Instructors and administrators manage courses, progress, and the platform from the same interface.
+Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
 > **Build provenance:** This repository is an updated build maintained by
 > Robert Chaykoski, based on the original OpenCyberRange/OCR-Lite build created

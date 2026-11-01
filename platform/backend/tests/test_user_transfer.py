@@ -138,3 +138,58 @@ def test_import_update_refreshes_existing_profile(tmp_path, db_session, test_use
     updated = db_session.query(User).filter(User.id == test_user.id).one()
     assert updated.first_name == "Updated"
     assert updated.last_name == "Name"
+
+
+def test_import_skips_accounts_in_erasure_ledger(tmp_path, db_session):
+    from app.services.erasure_ledger import append_erasure
+
+    suffix = uuid.uuid4().hex[:10]
+    username = f"pytest_erased_{suffix}"
+    email = f"{username}@university.edu"
+    password = "Erased#Pass9"
+    ledger_key = b"test-ledger-key"
+    ledger = tmp_path / "erasure-ledger.jsonl"
+    append_erasure(username, email, actor="self", path=ledger, key=ledger_key)
+
+    export = {
+        "format": user_transfer.FORMAT,
+        "version": 1,
+        "users": [{
+            "username": username,
+            "email": email,
+            "password_hash": get_password_hash(password),
+            "role": "student",
+            "is_admin": False,
+            "is_active": True,
+            "is_approved": True,
+        }],
+    }
+    path = tmp_path / "users.json"
+    path.write_text(json.dumps(export), encoding="utf-8")
+
+    user_transfer.import_users(SimpleNamespace(
+        input=str(path),
+        database_url=os.environ["DATABASE_URL"],
+        update=False,
+        dry_run=False,
+        ledger=str(ledger),
+        ledger_key=ledger_key,
+        include_erased=False,
+    ))
+    db_session.expire_all()
+    assert db_session.query(User).filter(User.username == username).first() is None
+
+    # An explicit disaster-recovery override can still import the account.
+    user_transfer.import_users(SimpleNamespace(
+        input=str(path),
+        database_url=os.environ["DATABASE_URL"],
+        update=False,
+        dry_run=False,
+        ledger=str(ledger),
+        ledger_key=ledger_key,
+        include_erased=True,
+    ))
+    db_session.expire_all()
+    created = db_session.query(User).filter(User.username == username).one()
+    db_session.query(User).filter(User.id == created.id).delete()
+    db_session.commit()

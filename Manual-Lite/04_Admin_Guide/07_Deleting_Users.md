@@ -35,11 +35,24 @@ flowchart TD
 
 1. Find the account on the Users tab.
 2. Click the **Delete** action (the trash icon) on the row.
-3. Confirm the deletion when prompted.
+3. Type the username exactly when prompted, then confirm.
 
-**What you should see:** the row disappears and the account is gone. Rejecting a pending account from the [Pending list](02_Approving_New_Users.md) performs the same delete.
+**What you should see:** the row disappears and the account's personal data is erased. Rejecting a pending account from the [Pending list](02_Approving_New_Users.md) performs the same delete.
 
-!!! warning "Delete cascades and cannot be undone"
-    Deleting a user removes that account's lab sessions, course enrollments, and progress along with the record. Never delete a real student. When in doubt, disable instead.
+!!! warning "Delete is an erasure, not a hide"
+    Deletion removes the account's profile, VPN configuration, lab sessions, course enrolments, progress, badges, quiz attempts, and activity identifiers. It cannot be undone. Never delete a real student without a documented request. When in doubt, disable instead.
+
+### If deletion is blocked
+
+Two guards protect other people's data:
+
+- **The account owns courses.** Transfer each course first in **Admin → Courses → Manage → Assigned instructor**. Deleting the instructor would otherwise delete every enrolled student's course records.
+- **The account is the last usable administrator.** Promote or create another administrator first.
+
+### Backups and erased accounts
+
+A backup taken before the deletion can still contain the account until it ages out of the retention window. After restoring a database, run `scripts/purge_erased_accounts.py` so the live suppression ledger is re-applied. The upgrade script copies the ledger and skips erased accounts during a user merge. See [Privacy, Erasure, and Backups](27_Privacy_And_Erasure.md).
+
+Students can also delete their own account from **Profile → Privacy and data**. That path requires their password, MFA code when enabled, and typing `DELETE`.
 
 To deactivate without removing data, use Disable above. To change account details, see [Editing User Accounts](04_Editing_User_Accounts.md).

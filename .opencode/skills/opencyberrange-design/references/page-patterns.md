@@ -40,7 +40,8 @@ The profile is a record page, not a settings dump. Preserve this order:
 4. **Account information** — username, email, status, registration date, VPN, role.
 5. **Course enrolment** — join form and enrolled courses.
 6. **Security** — MFA and password change.
-7. **Instructor Studio** — only when the module is available and the user is instructor/admin.
+7. **Privacy and data** — download the account export and delete the account. Deletion requires the current password, MFA when enabled, and typing `DELETE`; explain what is erased, what is anonymised, and the backup retention window.
+8. **Instructor Studio** — only when the module is available and the user is instructor/admin.
 
 Profile rules:
 
@@ -51,6 +52,8 @@ Profile rules:
 - Completion details can be collapsed with `<details>`; keep the summary count visible.
 - Print/PDF styling must not include sidebar, buttons, or form controls.
 - The hero must not push the record below the fold on a typical laptop.
+- Account deletion is never a one-click action. Show the consequences, require re-authentication, and keep the export action next to it so the user can take their data first.
+- If deletion is blocked by course ownership or the last-admin rule, explain the fix (transfer courses, promote another admin) instead of showing a generic failure.
 
 ## Track detail / lab catalogue
 
