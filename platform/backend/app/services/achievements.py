@@ -6,7 +6,7 @@ Called after successful flag submissions to award micro-credentials.
 import logging
 from sqlalchemy.orm import Session
 from app.models import (
-    Achievement, Course, CourseEnrollment, CourseLabAssignment,
+    Achievement, CourseEnrollment, CourseLabAssignment,
     CourseCompletionReset, Lab, LabCompletion, CustomAchievement
 )
 from app.services.activity import log_activity, EventTypes
@@ -63,13 +63,19 @@ def custom_achievement_type(custom_id: int) -> str:
     return f"custom_{custom_id}"
 
 
-def _custom_id_from_type(achievement_type: str) -> int | None:
+def custom_achievement_id(achievement_type: str) -> int | None:
+    """Return the definition ID for a ``custom_<id>`` award type."""
     if not achievement_type.startswith("custom_"):
         return None
     try:
         return int(achievement_type.split("_", 1)[1])
     except (ValueError, IndexError):
         return None
+
+
+# Kept for the existing internal call sites; new code should use the public
+# helper above.
+_custom_id_from_type = custom_achievement_id
 
 
 def resolve_achievement_label(db: Session, achievement_type: str) -> str:
@@ -191,7 +197,7 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
             if r.lab_id not in reset_map or r.reset_at > reset_map[r.lab_id]:
                 reset_map[r.lab_id] = r.reset_at
 
-        def _valid_in_course(c):
+        def _valid_in_course(c, enrolled_at=enrolled_at, reset_map=reset_map):
             """Check if a completion counts in this course context."""
             if not c or not c.completed_at or not c.flag_submitted:
                 return False

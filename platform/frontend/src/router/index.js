@@ -44,6 +44,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/celebrations',
+    name: 'Celebrations',
+    component: () => import('../views/Celebrations.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/vpn-setup',
     name: 'VPNSetup',
     component: () => import('../views/Dashboard.vue'),

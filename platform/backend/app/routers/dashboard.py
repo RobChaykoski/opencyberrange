@@ -13,16 +13,24 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func, text
+from sqlalchemy import func
 
 from app.database import get_db
 from app.models import (
     User, Lab, LabSession, LabCompletion, FlagAttempt, WireGuardConfig,
     Course, CourseEnrollment, CourseLabAssignment, ActivityEvent,
-    Track, Level,
+    Track, Level, Achievement, CustomAchievement,
 )
-from app.auth import get_current_active_user, get_current_admin_user, get_current_instructor_user
+from app.auth import get_current_active_user, get_current_instructor_user
 from app.services.activity import EVENT_LABELS
+from app.services.achievements import (
+    ACHIEVEMENT_DESCRIPTIONS,
+    ACHIEVEMENT_LABELS,
+    BUILTIN_ACHIEVEMENT_ICONS,
+    CLEAN_SWEEP,
+    FIRST_BLOOD,
+    custom_achievement_id,
+)
 from app.services.pdf_report import generate_dashboard_report
 
 REPORT_LOCAL_TZ = ZoneInfo("America/Chicago")
@@ -935,7 +943,7 @@ async def student_dashboard(
             if assigned_lab_ids:
                 # Single aggregated query: compute scores for all enrolled
                 # students in one pass instead of N separate queries.
-                from sqlalchemy import case, literal_column
+                from sqlalchemy import case
                 score_expr = (
                     func.count(LabCompletion.id) * 100
                     + func.sum(case((LabCompletion.hints_used == 0, 25), else_=0))
@@ -955,7 +963,7 @@ async def student_dashboard(
                     .order_by(func.coalesce(score_expr, 0).desc())
                     .all()
                 )
-                for rank, (uid, score) in enumerate(score_rows, 1):
+                for rank, (uid, _score) in enumerate(score_rows, 1):
                     if uid == current_user.id:
                         scoreboard_rank = rank
                         break
@@ -1050,4 +1058,275 @@ async def student_dashboard(
         "scoreboard_rank": scoreboard_rank,
         "course_name": course_name,
         "completion_matrix": completion_matrix,
+    }
+
+
+# ==================== Celebration Wall ====================
+
+def _iso_utc(value: Optional[datetime]) -> Optional[str]:
+    """Serialize a datetime as ISO 8601 with an explicit timezone."""
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value.isoformat()
+
+
+def _achievement_display(achievement_type: str, custom_defs: dict) -> tuple:
+    """Return (label, icon, description) for a built-in or custom award.
+
+    ``custom_defs`` is the pre-fetched CustomAchievement map, so a feed of
+    awards only hits the database once for all of its labels.
+    """
+    if achievement_type in ACHIEVEMENT_LABELS:
+        return (
+            ACHIEVEMENT_LABELS[achievement_type],
+            BUILTIN_ACHIEVEMENT_ICONS.get(achievement_type, "\U0001F3C5"),
+            ACHIEVEMENT_DESCRIPTIONS.get(achievement_type),
+        )
+
+    custom_id = custom_achievement_id(achievement_type)
+    definition = custom_defs.get(custom_id) if custom_id is not None else None
+    if definition:
+        return (
+            definition.name,
+            definition.icon or "\U0001F3C5",
+            definition.description,
+        )
+    return (achievement_type, "\U0001F3C5", None)
+
+
+@router.get("/celebrations")
+async def celebration_wall(
+    limit: int = Query(15, ge=1, le=50, description="Recent wins to return"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """A cross-course wall of achievement wins, visible to every signed-in user.
+
+    Only active users who have not opted out of scoreboards are counted in the
+    public stats, feed, and leaderboard. Admin accounts are left off the public
+    wall because they are the diagnostic actors in the instructor views. The
+    current user's own awards are still returned in ``me`` so someone in
+    privacy mode can see their personal corner.
+    """
+    now = datetime.now(timezone.utc)
+    week_start = now - timedelta(days=7)
+    admin_ids = _admin_user_ids(db)
+
+    def public_awards():
+        """Awards eligible for the shared wall."""
+        q = db.query(Achievement).join(
+            User, User.id == Achievement.user_id
+        ).filter(
+            User.is_active == True,
+            User.show_on_scoreboard == True,
+        )
+        if admin_ids:
+            q = q.filter(~Achievement.user_id.in_(admin_ids))
+        return q
+
+    custom_defs = {
+        row.id: row for row in db.query(CustomAchievement).all()
+    }
+
+    total_awards = public_awards().count()
+    unique_earners = public_awards().with_entities(
+        func.count(func.distinct(Achievement.user_id))
+    ).scalar() or 0
+    awards_this_week = public_awards().filter(
+        Achievement.awarded_at >= week_start
+    ).count()
+    first_bloods = public_awards().filter(
+        Achievement.achievement_type == FIRST_BLOOD
+    ).count()
+    clean_sweeps = public_awards().filter(
+        Achievement.achievement_type == CLEAN_SWEEP
+    ).count()
+
+    # Recent wins, newest first. Eager-load the people and places so a feed
+    # of fifteen rows stays one query plus the joins.
+    recent_rows = (
+        public_awards()
+        .options(
+            joinedload(Achievement.user),
+            joinedload(Achievement.course),
+            joinedload(Achievement.lab),
+        )
+        .order_by(Achievement.awarded_at.desc().nullslast(), Achievement.id.desc())
+        .limit(limit)
+        .all()
+    )
+
+    recent = []
+    for row in recent_rows:
+        label, icon, description = _achievement_display(
+            row.achievement_type, custom_defs
+        )
+        user = row.user
+        recent.append({
+            "id": row.id,
+            "user_id": row.user_id,
+            "username": user.username if user else None,
+            "display_name": user.display_name if user else None,
+            "achievement_type": row.achievement_type,
+            "label": label,
+            "icon": icon,
+            "description": description,
+            "lab_name": row.lab.name if row.lab else None,
+            "course_code": row.course.code if row.course else None,
+            "course_name": row.course.name if row.course else None,
+            "awarded_at": _iso_utc(row.awarded_at),
+            "is_mine": row.user_id == current_user.id,
+        })
+
+    # Friendly spotlight: people with the most celebration moments. Tie-break
+    # on the most recent award so an active newcomer can still feature. One row
+    # per earner also gives us the current user's exact rank without a second
+    # aggregate query.
+    ranked_rows = (
+        public_awards()
+        .with_entities(
+            Achievement.user_id.label("user_id"),
+            func.count(Achievement.id).label("badge_count"),
+            func.count(func.distinct(Achievement.achievement_type)).label("unique_badges"),
+            func.max(Achievement.awarded_at).label("latest_at"),
+        )
+        .group_by(Achievement.user_id)
+        .order_by(
+            func.count(Achievement.id).desc(),
+            func.max(Achievement.awarded_at).desc(),
+        )
+        .all()
+    )
+
+    leader_rows = ranked_rows[:8]
+    leader_ids = [row.user_id for row in leader_rows]
+    leader_users = {
+        user.id: user
+        for user in db.query(User).filter(User.id.in_(leader_ids)).all()
+    } if leader_ids else {}
+
+    leaders = []
+    for row in leader_rows:
+        user = leader_users.get(row.user_id)
+        if user is None:
+            continue
+        leaders.append({
+            "rank": len(leaders) + 1,
+            "user_id": user.id,
+            "username": user.username,
+            "display_name": user.display_name,
+            "badge_count": row.badge_count,
+            "unique_badges": row.unique_badges,
+            "latest_at": _iso_utc(row.latest_at),
+            "is_mine": user.id == current_user.id,
+        })
+
+    # Badge gallery: how often each badge has been awarded, and to how many
+    # different people. Counts are public-only, matching the rest of the wall.
+    badge_rows = (
+        public_awards()
+        .with_entities(
+            Achievement.achievement_type.label("achievement_type"),
+            func.count(Achievement.id).label("award_count"),
+            func.count(func.distinct(Achievement.user_id)).label("earners"),
+            func.max(Achievement.awarded_at).label("latest_at"),
+        )
+        .group_by(Achievement.achievement_type)
+        .order_by(func.count(Achievement.id).desc())
+        .all()
+    )
+
+    badges = []
+    for row in badge_rows:
+        label, icon, description = _achievement_display(
+            row.achievement_type, custom_defs
+        )
+        badges.append({
+            "type": row.achievement_type,
+            "label": label,
+            "icon": icon,
+            "description": description,
+            "count": row.award_count,
+            "earners": row.earners,
+            "latest_at": _iso_utc(row.latest_at),
+        })
+
+    # The current user's own corner. Their awards are returned even when they
+    # opted out of the public wall; ``listed`` tells the page whether they are
+    # part of the shared feed and ranking.
+    my_badge_count = db.query(func.count(Achievement.id)).filter(
+        Achievement.user_id == current_user.id
+    ).scalar() or 0
+    my_unique_badges = db.query(
+        func.count(func.distinct(Achievement.achievement_type))
+    ).filter(
+        Achievement.user_id == current_user.id
+    ).scalar() or 0
+
+    my_recent_rows = (
+        db.query(Achievement)
+        .options(
+            joinedload(Achievement.course),
+            joinedload(Achievement.lab),
+        )
+        .filter(Achievement.user_id == current_user.id)
+        .order_by(Achievement.awarded_at.desc().nullslast(), Achievement.id.desc())
+        .limit(3)
+        .all()
+    )
+
+    my_recent = []
+    for row in my_recent_rows:
+        label, icon, description = _achievement_display(
+            row.achievement_type, custom_defs
+        )
+        my_recent.append({
+            "id": row.id,
+            "achievement_type": row.achievement_type,
+            "label": label,
+            "icon": icon,
+            "description": description,
+            "lab_name": row.lab.name if row.lab else None,
+            "course_code": row.course.code if row.course else None,
+            "awarded_at": _iso_utc(row.awarded_at),
+        })
+
+    can_list = bool(
+        current_user.is_active
+        and current_user.id not in admin_ids
+    )
+    listed = bool(
+        can_list
+        and getattr(current_user, "show_on_scoreboard", True)
+    )
+
+    my_rank = None
+    if listed and my_badge_count:
+        for index, row in enumerate(ranked_rows, 1):
+            if row.user_id == current_user.id:
+                my_rank = index
+                break
+
+    return {
+        "generated_at": _iso_utc(now),
+        "stats": {
+            "total_awards": total_awards,
+            "unique_earners": unique_earners,
+            "awards_this_week": awards_this_week,
+            "first_bloods": first_bloods,
+            "clean_sweeps": clean_sweeps,
+        },
+        "recent": recent,
+        "leaders": leaders,
+        "badges": badges,
+        "me": {
+            "badge_count": my_badge_count,
+            "unique_badges": my_unique_badges,
+            "rank": my_rank,
+            "listed": listed,
+            "can_list": can_list,
+            "recent": my_recent,
+        },
     }
