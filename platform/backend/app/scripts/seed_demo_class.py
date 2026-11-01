@@ -3,7 +3,8 @@
 Demo Class Seed Script  [DEVELOPMENT ONLY — do not run in production]
 Creates a demo instructor, 6 demo students with varied statistics,
 a demo course, and enrolls everyone — showcasing all platform features.
-Uses hardcoded credentials for demo purposes only.
+Generates demo credentials at runtime (or reads the DEMO_* environment
+overrides) and prints them once so no working password is committed.
 
 Run inside Docker:
   docker compose exec backend python /app/app/scripts/seed_demo_class.py
@@ -45,10 +46,20 @@ NOW = datetime.now(timezone.utc)
 # DEMO ACCOUNTS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+# Never commit a working demo password. A facilitator can set these env vars
+# to a memorable value for a workshop; otherwise each run generates one and
+# prints it at the end.
+INSTRUCTOR_PASSWORD = (
+    os.environ.get("DEMO_INSTRUCTOR_PASSWORD") or secrets.token_urlsafe(12)
+)
+STUDENT_PASSWORD = (
+    os.environ.get("DEMO_STUDENT_PASSWORD") or secrets.token_urlsafe(12)
+)
+
 INSTRUCTOR = {
     "username": "dr_martinez",
     "email": "martinez@university.edu",
-    "password": "Instructor2026!",
+    "password": INSTRUCTOR_PASSWORD,
     "role": "instructor",
 }
 
@@ -97,7 +108,7 @@ STUDENTS = [
     },
 ]
 
-PASSWORD = "Student2026!"
+PASSWORD = STUDENT_PASSWORD
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # STUDENT PROFILES — defines how each personality completes labs

@@ -8,7 +8,9 @@
 
 # Secrets — never commit .env (use .env.example as a template)
 .env
+.env.*
 *.env.local
+!**/.env.example
 
 # Logs
 *.log
