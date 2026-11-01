@@ -2,6 +2,12 @@
 
 Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides you step by step, explains the underlying concepts, and prompts you to record and interpret your findings.
 
+!!! note "AI-assisted content"
+    Parts of this workbook were drafted with AI assistance and reviewed by a
+    human maintainer. Verify every command, target, and flag against the running
+    lab before relying on it. See `BUILD_NOTICE.md` in the repository root for
+    attribution and the full AI-assistance disclosure.
+
 ## Available Tracks
 
 ### Windows Penetration Testing
@@ -15,6 +21,9 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 | CH05; WinRM Exploitation | Service detection, authentication, command execution, file retrieval | 6 exercises |
 | CH06; MSSQL Exploitation | Service detection, authentication, queries, file system access | 7 exercises |
 | CH07; LDAP Enumeration | Service detection, anonymous bind, users, groups, full dump | 6 exercises |
+| CH08; Credential Reuse | Cross-service credential discovery and lateral movement | 5 exercises |
+| CH09; Complete Assessment | Multi-service exploitation and full penetration test | 3 exercises |
+| CH10; Midterm Assessment | Network enumeration and midterm assessment | 2 exercises |
 
 ### Linux Penetration Testing
 
@@ -37,6 +46,11 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 |---------|-------|------|
 | CH M1; Malware Fundamentals | Safe handling, strings triage, Ghidra reversing, C2 PCAP, live INetSim detection, email attachment and embedded-document analysis | 7 exercises |
 | CH M2; Executable Analysis | PE headers, sections, imports, static triage of Windows binaries | 1 exercise |
+
+### OT/ICS Security
+
+| Chapter | Focus | Exercises |
+|---------|-------|------|
 | CH OT1; Modbus Fundamentals | Modbus TCP enumeration and register decoding | 1 exercise |
 
 ### AI Hacking
@@ -44,6 +58,9 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 | Chapter | Focus | Exercises |
 |---------|-------|------|
 | CH AI1; AI Security Foundations | Prompt injection, jailbreak policy bypass, indirect prompt injection | 3 exercises |
+
+Start the AI Hacking stream at
+[CH AI1 — AI Security Foundations](CH_AI01_AI_Foundations/00_Introduction.md).
 
 ## How to Use This Workbook
 

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -3638,6 +3638,11 @@ adjust firewall rules and the VPN endpoint to suit your provider.</p>
 </thead>
 <tbody>
 <tr>
+<td>80</td>
+<td>TCP</td>
+<td>HTTP redirect and ACME/Certbot validation</td>
+</tr>
+<tr>
 <td>443</td>
 <td>TCP</td>
 <td>Frontend HTTPS</td>
@@ -3654,6 +3659,7 @@ adjust firewall rules and the VPN endpoint to suit your provider.</p>
 </tr>
 </tbody>
 </table>
+<p>Do <strong>not</strong> open port 5000. The Peer Manager API is internal to the host and Docker network.</p>
 <ol>
 <li>
 <p>The installer detects the WireGuard endpoint from the server public IP using a fallback chain that ends with <code>curl ifconfig.me</code>. The detected endpoint is written into the VPN configs students download.</p>

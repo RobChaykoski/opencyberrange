@@ -48,7 +48,7 @@ Team Challenges links are conditional. The platform shows a Team Challenges link
 
 At the bottom of the sidebar you find:
 
-- **Profile**, which opens your profile page.
+- **Profile**, which opens your profile page with your avatar, completion stats, certificates, achievements, and PDF transcript download.
 - **Logout**, which ends your session.
 - **Privacy Mode** (instructors and admins only), a toggle that masks student names across the views you see.
 

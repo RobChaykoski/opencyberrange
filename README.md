@@ -1,11 +1,33 @@
 # OpenCyberRange
 
-[![Labs](https://img.shields.io/badge/labs-121-blue)](platform/labs/)
-[![Tracks](https://img.shields.io/badge/tracks-4-green)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-133-blue)](platform/labs/)
+[![Tracks](https://img.shields.io/badge/tracks-7-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
+[![AI-assisted](https://img.shields.io/badge/AI-assisted%20build-8b5cf6)](#ai-assistance-disclosure)
 
-A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network forensics, web exploitation, and more.
+A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network forensics, web exploitation, malware analysis, OT/ICS security, and AI security.
+
+Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. Instructors and administrators manage courses, progress, and the platform from the same interface.
+
+> **Build provenance:** This repository is an updated build maintained by
+> Robert Chaykoski, based on the original OpenCyberRange/OCR-Lite build created
+> by Lewis Heuermann. It is not an official upstream release or endorsed by the
+> original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
+> The original copyright and PolyForm Noncommercial licence remain in force.
+
+## AI assistance disclosure
+
+**This updated build was created with AI assistance.** AI tools helped draft
+code, tests, documentation, workbook content, curriculum material, and design
+guidance. A human maintainer reviewed and takes responsibility for the changes,
+but AI-assisted output can contain errors or omissions. Verify commands, lab
+instructions, security controls, and licence obligations before relying on them
+in production.
+
+See [BUILD_NOTICE.md](BUILD_NOTICE.md#ai-assistance-disclosure) for the
+build-specific disclosure and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+for the open-source attribution inventory.
 
 ![The Ops Center dashboard](docs/img/dashboard.png)
 
@@ -33,6 +55,53 @@ panel.
 ![Admin panel](docs/img/admin.png)
 
 ![Platform settings](docs/img/settings.png)
+
+**Profile and records.** Every student has a profile with an avatar, completion
+stats, earned certificates, track progress, completion details, achievements,
+and a downloadable PDF transcript.
+
+## Included tracks
+
+| Track | Labs | Focus |
+|-------|------|-------|
+| Windows Penetration Testing | 53 | Enumeration, SMB, RDP, WinRM, MSSQL, LDAP, credential reuse |
+| Linux Fundamentals | 39 | Service enumeration, SSH, privilege escalation, pivoting, detection |
+| Web Application Security | 16 | Reconnaissance, injection, traversal, API and authentication testing |
+| Network Security | 13 | Traffic analysis, protocol attacks, firewalls, exfiltration |
+| Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
+| OT/ICS Security | 1 | Modbus enumeration and register analysis |
+| **AI Hacking** | **3** | Prompt injection, jailbreak policy bypass, indirect prompt injection |
+
+## AI Hacking stream
+
+The **AI Hacking** track starts with a beginner module, **AI Security
+Foundations**, containing three labs:
+
+- **Prompt Injection Basics** — override a mock assistant's hidden instructions.
+- **Jailbreak Policy Bypass** — move past a keyword filter with role-play and
+  authority framing.
+- **Indirect Prompt Injection** — plant instructions in a support ticket that a
+  summariser reads.
+
+Each lab uses a deterministic, dependency-free mock assistant inside the lab
+network. No external model, API key, or internet access is required. The next
+levels — instruction hierarchy, RAG/data exposure, agent tool abuse, model
+supply chain, and an AI-assisted capstone — are defined in the curriculum and
+will appear as their labs are published.
+
+## Profile, certificates, and transcripts
+
+The student profile is the record of completed work:
+
+- Upload or remove an avatar; the browser resizes it before saving.
+- View every earned certificate and open its printable certificate page.
+- Track progress by track and level, with completion counts and certified-level
+  markers.
+- Expand the completion table to see every solved exercise, date, attempts, and
+  hints used.
+- See course achievements earned in enrolled courses.
+- Download a PDF transcript containing identity details, completion totals,
+  certificates, track progress, completed exercises, and achievements.
 
 ## Quick Start
 
@@ -128,13 +197,18 @@ For production deployments or custom configurations, see the [Server Deployment 
 ```
 opencyberrange/
 ├── platform/
-│   ├── backend/          # FastAPI application
-│   ├── frontend/         # Vue.js SPA + nginx config
+│   ├── backend/          # FastAPI application, migrations, curriculum/lab scripts
+│   ├── frontend/         # Vue.js SPA, nginx config, baked workbook wiki
 │   ├── labs/             # Exercise library (organized by track)
 │   └── .env.example      # Environment variable template
 ├── Workbook/             # Student walkthroughs (MkDocs wiki source)
-├── Manual-Lite/          # Platform documentation (deployment, user, admin, instructor guides)
-├── scripts/              # Setup, deployment, and validation tools
+├── Manual-Lite/          # Platform documentation (deployment, student, instructor, admin)
+├── tools/                # Wiki generation and maintenance tools
+├── .opencode/            # Project-local design and authoring skills
+├── scripts/              # Setup, deployment, and lab validation tools
+├── BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
+├── THIRD_PARTY_NOTICES.md # Open-source licence inventory and attribution checklist
+├── THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
 └── CONTRIBUTING.md       # Contributor guidelines
 ```
 
@@ -143,8 +217,13 @@ opencyberrange/
 | Guide | Audience |
 |-------|----------|
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
-| [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers extending the platform |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contributors submitting changes |
+| [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
+| [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
+| [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |
+| [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
+| [Build Notice](BUILD_NOTICE.md) | Upstream attribution, AI-assistance disclosure, and changes in this updated build |
+| [Third-Party Notices](THIRD_PARTY_NOTICES.md) | Open-source dependencies, licence families, and attribution checklist |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contributors submitting labs or platform changes |
 
 ## HTTPS
 

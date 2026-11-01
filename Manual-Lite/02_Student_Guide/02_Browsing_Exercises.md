@@ -29,6 +29,11 @@ Each track card shows:
 
 ## Choose a track and open it
 
+Current tracks include Windows Penetration Testing, Linux Fundamentals, Web
+Application Security, Network Security, Malware Analysis, OT/ICS Security, and
+AI Hacking. The available set depends on the edition and content enabled on your
+server.
+
 1. Open `/exercises` from the sidebar.
 2. Scan the track cards and read the descriptions to pick a path.
 3. Click a track card. The platform opens that track at `/exercises/<slug>`, where the levels and labs appear.

@@ -1,5 +1,11 @@
 # Chapter AI1: AI Security Foundations
 
+!!! note "AI-assisted content"
+    This chapter and its lab walkthroughs were drafted with AI assistance and
+    reviewed by a human maintainer. Verify every command and flag against the
+    running lab. See `BUILD_NOTICE.md` in the repository root for attribution
+    and the full AI-assistance disclosure.
+
 ## Why AI Systems Need Their Own Security Model
 
 Large language models do not execute code the way a web server does. They read

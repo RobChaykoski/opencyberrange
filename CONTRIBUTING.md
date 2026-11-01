@@ -2,6 +2,13 @@
 
 Thank you for your interest in contributing to OpenCyberRange.
 
+This repository is an updated build maintained by Robert Chaykoski, based on the
+original OpenCyberRange/OCR-Lite build by Lewis Heuermann. Contributions must
+preserve the upstream copyright, `Required Notice:`, and license terms. The
+updated build was created with AI assistance and reviewed by a human maintainer;
+see [`BUILD_NOTICE.md`](BUILD_NOTICE.md) for provenance and
+[`LICENSING.md`](LICENSING.md) for the license summary.
+
 ## How to Contribute
 
 ### Reporting Bugs
@@ -39,7 +46,53 @@ To contribute an exercise:
 4. Validate with `python3 scripts/validate-lab.py platform/labs/{Track}/{slug}/` (the generator runs this for you).
 5. Submit a pull request or upload the ZIP via the Instructor Panel.
 
+Available track slugs include `windows`, `linux`, `web`, `network`, `malware`,
+`ot`, and `ai`. AI labs use `category: ai` and must follow the safety rules in
+the AI Hacking workbook: deterministic mock targets, no real model keys, no
+external network dependency for the core solve path, and no real personal data,
+credentials, or malware.
+
 New labs are written as `visibility: draft`, so they stay out of the student curriculum and out of the prerequisite chain until you are ready to publish them. The generator also refuses to reuse a lab number within a level, so new exercises sort after the existing ones instead of tying with them. Run **Admin -> Scan for Exercises** (or `python /app/app/scripts/discover_labs.py` in the backend container) to load the lab after adding it.
+
+### Design and frontend changes
+
+For UI work, load the project skill at
+`.opencode/skills/opencyberrange-design/SKILL.md` first. It is the project source
+of truth for tokens, page patterns, accessibility, Vue conventions, and course
+content. The generic `ui-ux-pro-max` skill is available as an advisory input, but
+the project skill takes precedence.
+
+Before submitting frontend changes:
+
+```bash
+cd platform/frontend
+npm run lint
+npm run build
+```
+
+### AI-assisted contributions
+
+AI assistance is allowed, but the human contributor remains responsible for the
+result. In the pull request:
+
+- State that the change was AI-assisted.
+- List the tests, builds, or manual checks you ran.
+- Verify commands, claims, and licence implications rather than trusting
+  generated text.
+- Do not submit generated secrets, personal data, or unlicensed third-party
+  content.
+
+### Documentation and workbooks
+
+Workbook source lives in `Workbook/`. The built wiki is generated with MkDocs
+and checked into `platform/frontend/wiki/`.
+
+- Add or update the chapter markdown in `Workbook/`.
+- Add the chapter to the relevant `mkdocs-*.yml` navigation.
+- Add the generated wiki output under `platform/frontend/wiki/range/<track>/`.
+- Update `Workbook/index.md` when a new chapter is added.
+- Keep `README.md`, `Manual-Lite/`, and workbook links consistent with the
+  current track and lab names.
 
 ### Documentation
 

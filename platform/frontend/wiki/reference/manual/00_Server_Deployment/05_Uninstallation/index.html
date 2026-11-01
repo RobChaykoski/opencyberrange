@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -3578,11 +3578,12 @@
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>~/opencyberrange
 </code></pre></div>
 <ol>
-<li>Remove the lab base images you no longer need, such as the RangeBox and UbuntuBox images:</li>
+<li>Remove the lab base images you no longer need, such as the RangeBox, UbuntuBox, and RemnuxBox images:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">&#39;rangebox|ubuntubox&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>image<span class="w"> </span>ls<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'rangebox|ubuntubox|remnuxbox'</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>image<span class="w"> </span>rm<span class="w"> </span>&lt;image-id&gt;
 </code></pre></div>
+<p>RemnuxBox is the largest of the three: expect roughly 14 GB on disk for that image alone.</p>
 <ol>
 <li>Disable the platform and helper systemd units so nothing re-creates firewall rules on the next boot:</li>
 </ol>

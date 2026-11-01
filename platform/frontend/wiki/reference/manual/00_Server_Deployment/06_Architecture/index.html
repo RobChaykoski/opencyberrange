@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -2786,10 +2786,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#schema-changes" class="md-nav__link">
+  <a href="#schema-changes-and-migrations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Schema changes
+        Schema changes and migrations
       
     </span>
   </a>
@@ -3717,11 +3717,37 @@
     P7 --&gt; P8[8 Verification]</code></pre>
 <h2 id="security-model">Security model</h2>
 <p>An impersonation read-only middleware enforces that an admin viewing a student account cannot mutate data: it returns 403 for POST, PUT, DELETE, and PATCH while impersonating, whitelisting only the impersonate, exit, and change-password actions. The admin view is observe-only.</p>
-<h2 id="schema-changes">Schema changes</h2>
-<p>The platform has no migration framework. Schema changes are applied as manual <code>ALTER TABLE</code> statements against the running database.</p>
-<div class="admonition warning">
-<p class="admonition-title">Plan schema changes by hand</p>
-<p>When an update adds a column, you run the matching <code>ALTER TABLE</code> yourself. The application does not migrate the schema on start, so a missing column surfaces as a runtime error rather than an auto-applied change.</p>
+<h2 id="schema-changes-and-migrations">Schema changes and migrations</h2>
+<p>Database tables are created with SQLAlchemy <code>create_all</code>. Additive column
+changes for existing databases are applied idempotently at backend startup in
+<code>platform/backend/app/main.py</code>, so a normal upgrade does not require manual SQL.</p>
+<p>Tracked schema revisions live in <code>platform/backend/alembic/versions/</code>. The
+current head is:</p>
+<table>
+<thead>
+<tr>
+<th>Revision</th>
+<th>Change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0004_user_avatar</code></td>
+<td>Adds <code>users.avatar_data</code> for profile avatars</td>
+</tr>
+</tbody>
+</table>
+<p>For an explicitly managed migration, run <code>alembic upgrade head</code> from
+<code>platform/backend</code> with the deployment database URL. Back up the database
+before any schema change. The startup checks cover the columns the application
+expects today; they are not a replacement for reviewing and testing a migration
+on a copy of production data.</p>
+<div class="admonition note">
+<p class="admonition-title">Profile avatars are database-backed</p>
+<p>Avatars are stored as small base64 data URLs in <code>users.avatar_data</code>. They do
+not use a shared upload volume, so they survive container rebuilds with the
+rest of the database. The browser resizes images before upload and the
+backend rejects oversized or non-image payloads.</p>
 </div>
 
 

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -3599,8 +3599,9 @@
 </table>
 <p>CPU core count matters beyond raw throughput: the backend computes its worker count from the host CPU, so an undersized processor lowers concurrency. See <a href="../06_Architecture/">Architecture</a> for the worker formula.</p>
 <p>Prebuilt lab images consume roughly 200 GB on a production host. An evaluation install that builds images on demand fits in 100 GB.</p>
+<p>The optional REMnux RangeBox image is the largest single artifact: roughly 6 GB to download and 14 GB on disk. The installer builds it after RangeBox and UbuntuBox and treats a failure as non-fatal, so add its footprint to the disk budget only if you plan to offer REMnux to students.</p>
 <h2 id="memory-and-rangebox-capacity">Memory and RangeBox capacity</h2>
-<p>RAM is the resource that decides how large a class the host can serve at once, and most of it goes to RangeBoxes, the in-browser Kali and Ubuntu desktops students use when they skip the VPN. Each tenant has a predictable footprint:</p>
+<p>RAM is the resource that decides how large a class the host can serve at once, and most of it goes to RangeBoxes, the in-browser Kali, Ubuntu, and REMnux desktops students use when they skip the VPN. Each tenant has a predictable footprint:</p>
 <table>
 <thead>
 <tr>
@@ -3671,6 +3672,12 @@
 <td>Backend API, bound to 127.0.0.1</td>
 </tr>
 <tr>
+<td>5000</td>
+<td>TCP</td>
+<td>Internal only</td>
+<td>Peer Manager API, reached by the backend container — never expose it</td>
+</tr>
+<tr>
 <td>5432</td>
 <td>TCP</td>
 <td>Internal</td>
@@ -3694,8 +3701,8 @@
     FE --&gt;|loopback| BE
     BE --&gt;|internal net| DB</code></pre>
 <div class="admonition warning">
-<p class="admonition-title">Never expose port 8000</p>
-<p>The backend binds to 127.0.0.1:8000 inside the compose file. Publishing it to a public interface would expose the full API surface. Leave the binding as it is.</p>
+<p class="admonition-title">Never expose ports 8000 or 5000</p>
+<p>The backend binds to 127.0.0.1:8000 inside the compose file. Publishing it to a public interface would expose the full API surface. The Peer Manager on port 5000 is likewise internal to the host and Docker network. Leave both closed in the cloud firewall.</p>
 </div>
 <h2 id="docker">Docker</h2>
 <p>The installer runs preflight checks and installs Docker Engine and Docker Compose v2 if they are missing, then adds your user to the <code>docker</code> group.</p>

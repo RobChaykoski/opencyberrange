@@ -4,12 +4,13 @@ Track how many exercises you have solved, see which exercise comes next, and che
 
 ## Where progress shows
 
-Your progress appears in four places:
+Your progress appears in five places:
 
 - **Dashboard cards:** Next Objective, My Progress (a bar plus "X / Y labs completed"), VPN Status, and Your Rank.
 - **Exercises hub:** a three stat summary at the top (Completed, Total Exercises, Overall Progress percent) plus a progress bar on each track card.
 - **Track page:** a per level completion ring and a green "Complete" badge when a level is finished.
 - **Course scoreboard:** your rank and points inside a course. See [Viewing the Scoreboard](14_Viewing_the_Scoreboard.md).
+- **Profile:** completion totals, track and level progress, certificates, the completion table, achievements, and the PDF transcript. See [Viewing Your Profile](16_Viewing_Your_Profile.md).
 
 <figure markdown>
 
@@ -32,7 +33,16 @@ flowchart LR
     B --> C[Dashboard count and percent]
     B --> D[Track and level progress bars]
     B --> E[Course score and rank]
+    B --> F[Profile record and certificates]
 ```
+
+## Certificates and transcript
+
+When every visible exercise in a level is complete, the platform issues a
+certificate for that level. The certificate page shows the level, track,
+completion count, award date, and certificate ID. Your profile collects every
+certificate you have earned and can generate a PDF transcript of your full
+completion record.
 
 ## Course scoring
 

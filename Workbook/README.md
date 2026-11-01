@@ -1,10 +1,18 @@
-# Windows Penetration Testing: Student Workbook
+# OpenCyberRange Student Workbook
+
+!!! note "AI-assisted content"
+    Parts of this workbook were drafted with AI assistance and reviewed by a
+    human maintainer. Verify commands, targets, and flags against the running
+    lab. See `BUILD_NOTICE.md` in the repository root for the full disclosure.
 
 ## What Is a Workbook?
 
 The User Manual explains how the platform works. The Workbook walks you through the actual labs; what to type, what the output means, where to record your findings, and why each step matters. Think of it as a guided companion that sits next to you while you work through each exercise.
 
-Each chapter covers one level of the Windows track. Inside each chapter, every lab is presented as a self-contained walkthrough with:
+Each chapter covers one level of a track. The Windows track is used as the
+example below, but the same chapter pattern applies to Linux, Web, Network,
+Malware, OT/ICS, and AI Hacking. Inside each chapter, every lab is presented as
+a self-contained walkthrough with:
 
 - **Background** explaining the protocol, service, or technique you are about to use; written for someone encountering it for the first time
 - **Tool Primer** covering the specific tool commands you will run, what each flag does, and how to read the output
@@ -12,11 +20,28 @@ Each chapter covers one level of the Windows track. Inside each chapter, every l
 - **Analysis Questions** asking you to interpret what you found and understand what it means, rather than just copying output
 - **Key Takeaways** summarizing what you learned and how it connects to the next exercise
 
+## Available chapters
+
+| Track | Chapters | Exercises |
+|-------|----------|-----------|
+| Windows Penetration Testing | CH01–CH09 | 53 |
+| Linux Fundamentals | CH L1–CH L3 | 39 |
+| Web Application Security | CH W1–CH W2 | 16 |
+| Network Forensics | CH N1–CH N2, CH NETSY12 | 13 |
+| Malware Analysis | CH M1–CH M2 | 8 |
+| OT/ICS Security | CH OT1 | 1 |
+| AI Hacking | CH AI1 | 3 |
+
+The AI Hacking chapter starts at
+[CH AI1 — AI Security Foundations](CH_AI01_AI_Foundations/00_Introduction.md).
+
 ---
 
 ## How the Workbook Is Structured
 
-The Windows track has 51 labs across 9 levels. Each level becomes one chapter in the workbook:
+The Windows track currently has 53 labs across 9 core levels plus a midterm
+assessment. Each level becomes one chapter in the workbook; the other tracks
+follow the same pattern:
 
 ```
 Workbook/
@@ -42,35 +67,12 @@ Workbook/
 │   ├── ...                            ← Labs 3.1 through 3.5
 │   └── 06_Chapter_Review.md
 │
-├── CH04_RDP/
-│   ├── 00_Introduction.md             ← What Remote Desktop Protocol is and where you see it
-│   ├── ...                            ← Labs 4.1 through 4.6
-│   └── 07_Chapter_Review.md
-│
-├── CH05_WinRM/
-│   ├── 00_Introduction.md             ← What Windows Remote Management is and when admins use it
-│   ├── ...                            ← Labs 5.1 through 5.6
-│   └── 07_Chapter_Review.md
-│
-├── CH06_MSSQL/
-│   ├── 00_Introduction.md             ← What MS-SQL is and why databases are high-value targets
-│   ├── ...                            ← Labs 6.1 through 6.7
-│   └── 08_Chapter_Review.md
-│
-├── CH07_LDAP/
-│   ├── 00_Introduction.md             ← What LDAP and Active Directory are
-│   ├── ...                            ← Labs 7.1 through 7.6
-│   └── 07_Chapter_Review.md
-│
+├── CH04_RDP_Exploitation/
+├── CH05_WinRM_Exploitation/
+├── CH06_MSSQL_Exploitation/
+├── CH07_LDAP_Enumeration/
 ├── CH08_Credential_Reuse/
-│   ├── 00_Introduction.md             ← Why one password can compromise an entire network
-│   ├── ...                            ← Labs 8.1 through 8.5
-│   └── 06_Chapter_Review.md
-│
-└── CH09_Complete_Assessment/
-    ├── 00_Introduction.md             ← Putting it all together into a real engagement
-    ├── ...                            ← Labs 9.1 through 9.3
-    └── 04_Chapter_Review.md
+└── CH09_Assessment/
 ```
 
 ---

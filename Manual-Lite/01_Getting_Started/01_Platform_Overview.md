@@ -61,6 +61,36 @@ Ops Center and Academy are visible to everyone. The Instructor section appears f
 
 For a guided tour of every sidebar item, see [Navigating the Interface](06_Navigating_the_Interface.md).
 
+## Training streams
+
+The platform ships with seven training streams:
+
+| Track | Focus |
+|-------|-------|
+| Windows Penetration Testing | Windows enumeration and service exploitation |
+| Linux Fundamentals | Linux services, SSH, privilege escalation, and pivoting |
+| Web Application Security | Web reconnaissance, injection, traversal, and API testing |
+| Network Security | Traffic analysis, protocol attacks, firewalls, and exfiltration |
+| Malware Analysis | Safe triage, reversing, C2 traffic, and document analysis |
+| OT/ICS Security | Modbus and operational-technology protocols |
+| AI Hacking | Prompt injection, jailbreaks, data exposure, and AI agent abuse |
+
+The **AI Hacking** stream currently includes the beginner module **AI Security
+Foundations**. Its later levels are defined in the curriculum and become visible
+as their labs are published.
+
+## Profile and completion records
+
+Your profile is the record of your work, not only a settings page. It shows your
+avatar, display name, completion totals, earned certificates, track progress,
+completion details, and course achievements. You can also download a PDF
+transcript of the same record.
+
+The certificate and transcript rules are covered in
+[Viewing Your Profile](../02_Student_Guide/16_Viewing_Your_Profile.md). Progress
+appears on the dashboard, Exercises hub, track pages, course scoreboard, and
+profile.
+
 ## VPN and RangeBox
 
 Lab targets live on private networks you cannot reach directly. You have two ways in:

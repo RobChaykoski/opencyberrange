@@ -133,9 +133,27 @@ flowchart TD
 
 An impersonation read-only middleware enforces that an admin viewing a student account cannot mutate data: it returns 403 for POST, PUT, DELETE, and PATCH while impersonating, whitelisting only the impersonate, exit, and change-password actions. The admin view is observe-only.
 
-## Schema changes
+## Schema changes and migrations
 
-The platform has no migration framework. Schema changes are applied as manual `ALTER TABLE` statements against the running database.
+Database tables are created with SQLAlchemy `create_all`. Additive column
+changes for existing databases are applied idempotently at backend startup in
+`platform/backend/app/main.py`, so a normal upgrade does not require manual SQL.
 
-!!! warning "Plan schema changes by hand"
-    When an update adds a column, you run the matching `ALTER TABLE` yourself. The application does not migrate the schema on start, so a missing column surfaces as a runtime error rather than an auto-applied change.
+Tracked schema revisions live in `platform/backend/alembic/versions/`. The
+current head is:
+
+| Revision | Change |
+|----------|--------|
+| `0004_user_avatar` | Adds `users.avatar_data` for profile avatars |
+
+For an explicitly managed migration, run `alembic upgrade head` from
+`platform/backend` with the deployment database URL. Back up the database
+before any schema change. The startup checks cover the columns the application
+expects today; they are not a replacement for reviewing and testing a migration
+on a copy of production data.
+
+!!! note "Profile avatars are database-backed"
+    Avatars are stored as small base64 data URLs in `users.avatar_data`. They do
+    not use a shared upload volume, so they survive container rebuilds with the
+    rest of the database. The browser resizes images before upload and the
+    backend rejects oversized or non-image payloads.
