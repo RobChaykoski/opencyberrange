@@ -533,6 +533,15 @@ run_database_scripts() {
         log "${YELLOW}Note: Seed script may have already been run${NC}"
     fi
     
+    # Seed the default learning-path achievements (idempotent; existing
+    # operator-edited definitions are left untouched).
+    if [ -f "$PLATFORM_DIR/backend/app/scripts/seed_achievements.py" ]; then
+        log "Seeding default learning achievements..."
+        docker compose exec -T backend python /app/app/scripts/seed_achievements.py || \
+        docker compose exec -T backend python /app/scripts/seed_achievements.py || \
+        log "${YELLOW}Note: Achievement seed may have already been run${NC}"
+    fi
+
     # Run lab discovery script to update labs and flags from lab.yaml files
     log "Discovering labs and updating flags..."
     

@@ -28,11 +28,16 @@ from app.models import (
     CourseEnrollment,
     CourseLabAssignment,
     CourseCompletionReset,
+    Achievement,
 )
 from app.auth import get_current_active_user
 from app.services.docker_manager import DockerManager
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
+from app.services.achievements import (
+    resolve_achievement_icon,
+    resolve_achievement_label,
+)
 
 
 
@@ -140,6 +145,12 @@ def is_lab_unlocked(
         level_index = next((i for i, l in enumerate(track_levels) if l.id == level.id), -1)
         if level_index > 0:
             prev_level = track_levels[level_index - 1]
+            # Level 0 is an optional foundations level. It is available from
+            # the start, but it must not gate the first graded level: adding a
+            # foundations level ahead of an existing track would otherwise lock
+            # every student who was already working through level 1.
+            if prev_level.level_number == 0:
+                return True
             # Only check active, visible labs in previous level
             prev_level_active_lab_ids = {
                 l.id for l in prev_level.labs
@@ -402,6 +413,63 @@ async def list_tracks(
     return {"tracks": result}
 
 
+def _certificate_achievements(
+    db: Session,
+    user_id: int,
+    level_lab_ids: set,
+) -> List[dict]:
+    """Achievements earned in courses that contain labs from this level.
+
+    Achievements are course-scoped, while a certificate is level-scoped. When a
+    level is taught inside one or more courses, show the achievements the
+    student earned in those courses. Deduplicate per achievement type so a
+    per-lab award such as First Blood is shown once with a count.
+    """
+    if not level_lab_ids:
+        return []
+
+    course_rows = db.query(CourseLabAssignment.course_id).join(
+        CourseEnrollment,
+        CourseEnrollment.course_id == CourseLabAssignment.course_id,
+    ).filter(
+        CourseEnrollment.user_id == user_id,
+        CourseLabAssignment.lab_id.in_(level_lab_ids),
+    ).distinct().all()
+    course_ids = {row[0] for row in course_rows}
+    if not course_ids:
+        return []
+
+    rows = db.query(Achievement).options(
+        joinedload(Achievement.course)
+    ).filter(
+        Achievement.user_id == user_id,
+        Achievement.course_id.in_(course_ids),
+    ).order_by(Achievement.awarded_at.asc(), Achievement.id.asc()).all()
+
+    grouped: dict[str, dict] = {}
+    for row in rows:
+        entry = grouped.setdefault(row.achievement_type, {
+            "type": row.achievement_type,
+            "label": resolve_achievement_label(db, row.achievement_type),
+            "icon": resolve_achievement_icon(db, row.achievement_type),
+            "count": 0,
+            "courses": [],
+            "first_awarded": row.awarded_at,
+        })
+        entry["count"] += 1
+        course_name = row.course.name if row.course else None
+        if course_name and course_name not in entry["courses"]:
+            entry["courses"].append(course_name)
+
+    return sorted(
+        grouped.values(),
+        key=lambda item: (
+            item["first_awarded"] or datetime.min,
+            item["label"].lower(),
+        ),
+    )
+
+
 def build_level_certificate(
     db: Session,
     current_user: User,
@@ -411,6 +479,7 @@ def build_level_certificate(
     completed_ids: set,
     *,
     include_qr: bool = True,
+    include_achievements: bool = True,
 ) -> Optional[dict]:
     """Build the certificate payload for one level, or None when incomplete.
 
@@ -495,6 +564,12 @@ def build_level_certificate(
         "issuer": "SWOCTS",
         "verify_url": verify_url,
         "qr_code": qr_code,
+        "achievements": (
+            _certificate_achievements(
+                db, current_user.id, {lab.id for lab in visible_labs}
+            )
+            if include_achievements else []
+        ),
     }
 
 
@@ -506,6 +581,10 @@ def build_level_certificate(
 async def get_level_certificate(
     track_slug: str,
     level_id: int,
+    include_achievements: bool = Query(
+        True,
+        description="Include achievements earned in courses that contain this level's labs",
+    ),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -542,7 +621,8 @@ async def get_level_certificate(
 
     completed_ids = get_user_completions(db, current_user.id)
     certificate = build_level_certificate(
-        db, current_user, track, level, visible_labs, completed_ids
+        db, current_user, track, level, visible_labs, completed_ids,
+        include_achievements=include_achievements,
     )
     if certificate is None:
         raise HTTPException(

@@ -8,6 +8,10 @@
         </svg>
         Back
       </button>
+      <label v-if="certificate?.achievements?.length" class="certificate-toggle">
+        <input v-model="showAchievements" type="checkbox" />
+        Include achievements
+      </label>
       <button v-if="certificate" class="btn btn--primary" @click="printCertificate">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 6 2 18 2 18 9"/>
@@ -50,6 +54,29 @@
             {{ certificate.exercises_completed }} of {{ certificate.exercises_total }}
             exercises completed
           </p>
+
+          <section
+            v-if="showAchievements && certificate.achievements?.length"
+            class="certificate__achievements"
+            aria-labelledby="certificate-achievements-title"
+          >
+            <p id="certificate-achievements-title" class="certificate__achievements-title">
+              Achievements earned
+            </p>
+            <ul class="certificate__achievements-list">
+              <li
+                v-for="achievement in certificate.achievements"
+                :key="achievement.type"
+                class="certificate__achievement"
+              >
+                <span class="certificate__achievement-icon" aria-hidden="true">{{ achievement.icon }}</span>
+                <span class="certificate__achievement-label">{{ achievement.label }}</span>
+                <span v-if="achievement.count > 1" class="certificate__achievement-count">
+                  &times;{{ achievement.count }}
+                </span>
+              </li>
+            </ul>
+          </section>
         </section>
 
         <footer class="certificate__footer">
@@ -90,6 +117,7 @@ const router = useRouter()
 const certificate = ref(null)
 const loading = ref(true)
 const error = ref('')
+const showAchievements = ref(true)
 
 const load = async () => {
   loading.value = true
@@ -137,9 +165,27 @@ onMounted(load)
 .certificate-actions {
   width: min(100%, 1040px);
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
+  padding-right: 2.75rem;
+}
+
+.certificate-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.certificate-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
 }
 
 .btn {
@@ -232,7 +278,8 @@ onMounted(load)
   width: 64px;
   height: 64px;
   object-fit: contain;
-  margin-bottom: 0.5rem;
+  display: block;
+  margin: 0 auto 0.5rem;
 }
 
 .certificate__eyebrow {
@@ -306,15 +353,65 @@ onMounted(load)
   text-transform: uppercase;
 }
 
+.certificate__achievements {
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5dcc4;
+  break-inside: avoid;
+}
+
+.certificate__achievements-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a6d2f;
+  font-weight: 700;
+}
+
+.certificate__achievements-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 0.5rem;
+}
+
+.certificate__achievement {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid #e2d5b6;
+  border-radius: 999px;
+  background: #fbf7ec;
+  color: #4b5563;
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.certificate__achievement-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.certificate__achievement-count {
+  color: #8a6d2f;
+  font-weight: 700;
+}
+
 .certificate__footer {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: end;
   gap: 1rem;
 }
 
 .certificate__signature {
   justify-self: start;
+  text-align: left;
   min-width: 190px;
 }
 
@@ -332,6 +429,7 @@ onMounted(load)
   height: 48px;
   object-fit: contain;
   display: block;
+  margin: 0;
 }
 
 .certificate__signature-role {
@@ -401,6 +499,11 @@ onMounted(load)
 }
 
 @media (max-width: 720px) {
+  .certificate-actions {
+    padding-right: 0;
+    padding-top: 2.5rem;
+  }
+
   .certificate__frame {
     min-height: 0;
   }

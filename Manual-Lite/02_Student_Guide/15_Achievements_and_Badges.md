@@ -1,6 +1,6 @@
 # Achievements and Badges
 
-Earn achievements for how you solve labs inside a course: solving first, solving without hints, solving on your first attempt, and finishing fast. Achievements are course scoped; the icons shown as badges on the scoreboard are these same achievements.
+Earn achievements for how you solve labs inside a course and how far you explore: solving first, solving without hints, solving on your first attempt, and reaching learning milestones. Achievements are course scoped; the icons shown as badges on the scoreboard are these same achievements.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Achievements show in three places:
 <figcaption>The Achievements tab lists the achievements you have earned in the course; an empty course shows a no achievements message.</figcaption>
 </figure>
 
-## The six achievements
+## Built-in achievements
 
 | Achievement | How you earn it |
 |-------------|-----------------|
@@ -38,6 +38,35 @@ Achievements show in three places:
 | Speed Demon | Solve a lab in under half its estimated time |
 | Clean Sweep | Solve every lab in the course |
 | On a Roll | Solve three or more in a row with no hints or on first attempt |
+
+## Learning-path achievements
+
+The platform ships with a prepopulated learning ladder. These are defined as
+custom achievements, so an administrator can edit, deactivate, or add more
+under **Admin -> Settings -> Achievements**.
+
+| Achievement | How you earn it |
+|-------------|-----------------|
+| 👋 Hello, World | Complete your first exercise |
+| 🔎 Curious by Default | Complete 3 exercises |
+| 🧭 Terminal Tourist | Complete 5 exercises |
+| 📡 Packet Whisperer | Complete 8 exercises |
+| 🐚 Shell We Dance? | Complete 10 exercises |
+| 🌱 Root of the Problem | Complete 15 exercises |
+| 🐭 Lab Rat | Complete 20 exercises |
+| 🏔️ The Long Game | Complete 25 exercises |
+| 🐺 Lone Wolf | Complete 3 exercises without hints |
+| 📚 RTFM | Complete 5 exercises without hints |
+| 🧠 Hacker Ethos | Complete 8 exercises without hints |
+| 🧑‍🎓 Always Be Learning | Complete 10 exercises without hints |
+| 🎯 First Try, No Cry | Complete 3 exercises on the first attempt |
+| ⚡ One-Shot Wonder | Complete 5 exercises on the first attempt |
+| 🔬 No Guesswork | Complete 8 exercises on the first attempt |
+
+!!! tip "They are a ladder, not a leaderboard"
+    The milestones reward curiosity, practice, and understanding. They do not
+    require speed, and they are not a measure of whether someone belongs in
+    cybersecurity.
 
 ## Course scoped only
 
