@@ -1,5 +1,11 @@
 {
   "tracks": {
+    "ai": {
+      "auth": "student",
+      "config": "mkdocs-ai.yml",
+      "docs_dir": "Workbook",
+      "theme": "pink"
+    },
     "linpt": {
       "auth": "student",
       "config": "mkdocs-linpt.yml",

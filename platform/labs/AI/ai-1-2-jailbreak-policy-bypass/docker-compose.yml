@@ -1,0 +1,24 @@
+services:
+  chatbot:
+    mem_limit: 192m
+    cpus: 0.25
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: safechat
+    labels:
+      ip_offset: "71"
+    environment:
+      LAB_MODE: "jailbreak"
+      FLAG: "OCR{j41lbr34k_p0l1cy_byp4ss}"
+      BOT_NAME: "SafeChat"
+      COMPANY: "Meridian Support"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

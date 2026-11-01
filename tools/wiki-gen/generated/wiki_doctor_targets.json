@@ -1,5 +1,11 @@
 [
   {
+    "slug": "ai",
+    "namespace": "range",
+    "serve_path": "/wiki/range/ai/",
+    "expected_auth": "student"
+  },
+  {
     "slug": "linpt",
     "namespace": "range",
     "serve_path": "/wiki/range/linpt/",

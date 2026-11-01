@@ -1,0 +1,24 @@
+services:
+  chatbot:
+    mem_limit: 192m
+    cpus: 0.25
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: assistant
+    labels:
+      ip_offset: "70"
+    environment:
+      LAB_MODE: "system_prompt"
+      FLAG: "OCR{pr0mpt_1nj3ct10n_syst3m_l34k}"
+      BOT_NAME: "Nova"
+      COMPANY: "Asteria Cloud"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

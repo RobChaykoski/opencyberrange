@@ -29,6 +29,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: green
+  ai:
+    config: mkdocs-ai.yml
+    docs_dir: Workbook
+    auth: student
+    theme: pink
 reference:
   manual:
     config: mkdocs-manual-lite.yml

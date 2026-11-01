@@ -39,6 +39,12 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 | CH M2; Executable Analysis | PE headers, sections, imports, static triage of Windows binaries | 1 exercise |
 | CH OT1; Modbus Fundamentals | Modbus TCP enumeration and register decoding | 1 exercise |
 
+### AI Hacking
+
+| Chapter | Focus | Exercises |
+|---------|-------|------|
+| CH AI1; AI Security Foundations | Prompt injection, jailbreak policy bypass, indirect prompt injection | 3 exercises |
+
 ## How to Use This Workbook
 
 1. **Launch an exercise** in the OpenCyberRange platform

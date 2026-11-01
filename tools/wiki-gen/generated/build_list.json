@@ -1,4 +1,10 @@
 {
+  "ai": {
+    "config": "mkdocs-ai.yml",
+    "docs_dir": "Workbook",
+    "namespace": "range",
+    "site_dir": "_site_ai"
+  },
   "linpt": {
     "config": "mkdocs-linpt.yml",
     "docs_dir": "Workbook",

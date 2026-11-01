@@ -1,4 +1,9 @@
 {
+  "ai": {
+    "auth": "student",
+    "namespace": "range",
+    "serve_path": "/wiki/range/ai/"
+  },
   "linpt": {
     "auth": "student",
     "namespace": "range",

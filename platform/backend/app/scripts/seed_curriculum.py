@@ -154,7 +154,38 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
         'sort_order': 6,
         'levels': [   {   'level_number': 1,
                           'name': 'Modbus Fundamentals',
-                          'description': 'Modbus TCP enumeration and register decoding'}]}]
+                          'description': 'Modbus TCP enumeration and register decoding'}]},
+    {   'name': 'AI Hacking',
+        'slug': 'ai',
+        'description': 'Attack and defend large language model applications: prompt '
+                       'injection, jailbreaks, data exposure, and agent abuse.',
+        'icon': 'aisec',
+        'color': '#EC4899',
+        'sort_order': 7,
+        'levels': [   {   'level_number': 1,
+                          'name': 'AI Security Foundations',
+                          'description': 'Prompt injection, policy bypass, and indirect '
+                                         'prompt injection against safe mock assistants'},
+                      {   'level_number': 2,
+                          'name': 'Instruction Hierarchy and Evasion',
+                          'description': 'Encoded payloads, multi-turn attacks, and '
+                                         'defences that separate data from instructions'},
+                      {   'level_number': 3,
+                          'name': 'LLM Data Exposure and RAG',
+                          'description': 'System-prompt leakage, retrieval poisoning, and '
+                                         'secret handling in AI applications'},
+                      {   'level_number': 4,
+                          'name': 'AI Agents and Tool Abuse',
+                          'description': 'Function calling, excessive agency, and indirect '
+                                         'injection that reaches an action'},
+                      {   'level_number': 5,
+                          'name': 'Model Supply Chain and Adversarial ML',
+                          'description': 'Model provenance, malicious artifacts, and input '
+                                         'manipulation risks'},
+                      {   'level_number': 6,
+                          'name': 'AI-Assisted Security and Capstone',
+                          'description': 'Using AI responsibly in security operations and a '
+                                         'full AI application assessment'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)
@@ -306,7 +337,7 @@ def seed_curriculum():
                 levels_created += 1
 
         db.commit()
-        print(f"\n✓ Curriculum seeding complete!")
+        print("\n✓ Curriculum seeding complete!")
         print(f"  Tracks: {tracks_created} created, {tracks_updated} updated")
         print(f"  Levels: {levels_created} created, {levels_updated} updated")
         

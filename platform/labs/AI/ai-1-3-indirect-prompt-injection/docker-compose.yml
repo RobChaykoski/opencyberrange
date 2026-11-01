@@ -1,0 +1,24 @@
+services:
+  chatbot:
+    mem_limit: 192m
+    cpus: 0.25
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: ticketbot
+    labels:
+      ip_offset: "72"
+    environment:
+      LAB_MODE: "indirect"
+      FLAG: "OCR{1nd1r3ct_pr0mpt_1nj3ct10n}"
+      BOT_NAME: "TicketBot"
+      COMPANY: "Northwind Service Desk"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped
