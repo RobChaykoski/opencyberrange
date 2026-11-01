@@ -1,0 +1,125 @@
+name: "Can You Reach It? Ping Fundamentals"
+description: "A help-desk ticket says the internal portal is down. Use ICMP echo requests to test reachability, read latency and packet loss, and learn why a reply does not prove the service is working."
+difficulty: beginner
+category: network
+duration_minutes: 20
+
+visibility: public
+
+objectives:
+  - Explain what an ICMP echo request and echo reply are
+  - Use ping to test whether a host is reachable
+  - Read round-trip time, TTL, and packet loss
+  - Explain why a successful ping does not prove a service is working
+  - Capture the flag
+
+scenario: |
+  You are on the help desk at Northwind School Board. A teacher reports that the
+  internal portal is "down." Your first check is simple: can your workstation
+  reach the server at all?
+
+  The portal host is `{target.target}`. Ping it, read the reply, then open the
+  maintenance note at `http://{target.target}/` to confirm whether the web
+  service itself is running.
+
+  A reply proves the host is reachable. It does not prove the service is up.
+  Keep that distinction in mind when you write your answer.
+
+hostnames:
+  - ip_offset: "10"
+    hostname: "intranet-portal"
+    description: "Internal portal host and maintenance page"
+
+topology:
+  nodes:
+    - id: "target"
+      label: "Intranet Portal"
+      type: "server"
+      ip_offset: "10"
+
+flag: "OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}"
+
+hints:
+  - text: |
+      **What ping does**
+
+      `ping` sends an ICMP **echo request** to a host and waits for an ICMP
+      **echo reply**. It is the simplest reachability test on an IP network.
+
+      On Linux and macOS:
+      ```bash
+      ping -c 4 <host>
+      ```
+
+      On Windows:
+      ```cmd
+      ping -n 4 <host>
+      ```
+
+      Read the summary line. It reports packets transmitted, packets received,
+      packet loss, and round-trip time (min/avg/max).
+    unlock_after_minutes: 0
+
+  - text: |
+      **Reading the output**
+
+      A healthy reply looks like this:
+
+      ```
+      64 bytes from 10.100.3.10: icmp_seq=1 ttl=64 time=0.42 ms
+      ```
+
+      - `time=` is the round-trip time. On a local lab network it should be
+        small (often under a few milliseconds).
+      - `ttl=` is the remaining Time To Live. It hints at the number of hops,
+        but it is not a reliable OS fingerprint by itself.
+      - `0% packet loss` means every request was answered.
+
+      A timeout, `Destination Host Unreachable`, or 100% packet loss means the
+      reply did not come back. That could be the host, the network path, or a
+      firewall blocking ICMP.
+    unlock_after_minutes: 4
+
+  - text: |
+      **Host up is not service up**
+
+      Ping tests the host's network stack, not the application. A web server can
+      be stopped while the host still answers ping. A firewall can also block
+      ping while allowing HTTP.
+
+      In this lab:
+      1. Ping the portal host.
+      2. Open `http://<host>/` in a browser or with `curl`.
+      3. Read the maintenance note and record the flag.
+
+      ```bash
+      ping -c 4 {target.target}
+      curl http://{target.target}/
+      ```
+    unlock_after_minutes: 8
+
+  - text: |
+      **Solution**
+
+      ```bash
+      ping -c 4 {target.target}
+      curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'
+      ```
+
+      The ping proves the host is reachable. The page proves the web service is
+      running. Neither one proves that every service on the host is healthy.
+    unlock_after_minutes: 12
+
+workbook: "wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/"
+
+test:
+  steps:
+    - name: "Host answers ICMP echo requests"
+      command: "ping -c 2 -W 2 {target.target}"
+      expect: "0% packet loss"
+    - name: "Maintenance page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.target}/"
+      expect: "200"
+    - name: "Flag is on the maintenance page"
+      command: "curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}"

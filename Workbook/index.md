@@ -33,12 +33,16 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
 | CH L2; SSH Authentication | Basic login, user discovery, file discovery | 3 exercises |
 | CH L3; SSH Post-Exploitation | Command execution, history analysis, privilege escalation | 3 exercises |
 
-### Network Forensics
+### Network Security
 
 | Chapter | Focus | Exercises |
 |---------|-------|------|
+| CH N0; Network Foundations | IP addresses, ping, DNS, name-resolution troubleshooting | 3 exercises |
 | CH N1; Log Analysis | Firewall logs, DNS logs, SSH auth logs, HTTP PCAP | 4 exercises |
 | CH N2; PCAP Forensics | FTP, SMTP, HTTP sessions, DNS tunneling, attack chains | 5 exercises |
+
+Start the Network Foundations chapter at
+[CH N0 — Network Foundations](CH_N0_Network_Foundations/00_Introduction.md).
 
 ### Malware Analysis
 

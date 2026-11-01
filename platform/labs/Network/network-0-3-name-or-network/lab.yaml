@@ -1,0 +1,115 @@
+name: "Name or Network? Troubleshooting a Broken Portal"
+description: "A portal name resolves to a stale address. Use ping and DNS queries to separate a name problem from a network problem, find the current host, and read the maintenance note."
+difficulty: beginner
+category: network
+duration_minutes: 30
+
+visibility: public
+
+objectives:
+  - Separate a name-resolution problem from a reachability problem
+  - Use DNS TXT records to find operational notes
+  - Confirm the corrected name with ping
+  - Read the service page and capture the flag
+
+scenario: |
+  The help desk ticket says: "The portal is down. I can't reach
+  `stale.range.local`."
+
+  The internal DNS server at `{target.target}` still has the old name, and it
+  points at a documentation address that is not on this network. Before you
+  change anything, read the DNS records carefully: the TXT note at
+  `_note.range.local` explains where the portal moved.
+
+  Resolve the current name, confirm the host with ping, then read the
+  maintenance note at `http://<current-ip>/`.
+
+hostnames:
+  - ip_offset: "10"
+    hostname: "internal-dns-portal"
+    description: "DNS server and current portal host"
+
+topology:
+  nodes:
+    - id: "target"
+      label: "Internal DNS and Portal"
+      type: "server"
+      ip_offset: "10"
+
+flag: "OCR{ch3ck_th3_n4m3_th3n_th3_h0st}"
+
+hints:
+  - text: |
+      **Start with the name**
+
+      Query the name from the ticket and compare it with the TXT note:
+
+      ```bash
+      dig @{target.target} stale.range.local A +short
+      dig @{target.target} _note.range.local TXT +short
+      ```
+
+      The old name resolves to `192.0.2.99`. That is a documentation address
+      (TEST-NET-1), not a real host on this lab network. This is a **name**
+      problem, not proof that the network is down.
+    unlock_after_minutes: 0
+
+  - text: |
+      **Follow the note**
+
+      Resolve the current name:
+
+      ```bash
+      dig @{target.target} portal.range.local A +short
+      ```
+
+      Then confirm the host is reachable:
+
+      ```bash
+      ping -c 4 <current-ip>
+      ```
+
+      If ping succeeds, the host is up. Now check the service.
+    unlock_after_minutes: 7
+
+  - text: |
+      **Read the service page**
+
+      ```bash
+      curl http://<current-ip>/
+      ```
+
+      The page contains the flag and a short explanation of the difference
+      between a stale name and a broken host.
+    unlock_after_minutes: 14
+
+  - text: |
+      **Solution**
+
+      ```bash
+      dig @{target.target} _note.range.local TXT +short
+      dig @{target.target} portal.range.local A +short
+      ping -c 2 <current-ip>
+      curl -s http://<current-ip>/ | grep -o 'OCR{[^}]*}'
+      ```
+
+      The old name was stale. The new name resolved correctly, the host
+      answered ping, and the web service returned the flag.
+    unlock_after_minutes: 20
+
+workbook: "wiki/range/netfor/CH_N0_Network_Foundations/03_Name_or_Network/"
+
+test:
+  steps:
+    - name: "Stale name resolves to the documentation address"
+      command: "dig @{target.target} stale.range.local A +short"
+      expect: "192.0.2.99"
+    - name: "TXT note points at the current name"
+      command: "dig @{target.target} _note.range.local TXT +short"
+      expect: "portal.range.local"
+    - name: "Current name resolves to the lab host"
+      command: "dig @{target.target} portal.range.local A +short"
+      expect: "10."
+    - name: "Portal page contains the flag"
+      command: "curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{ch3ck_th3_n4m3_th3n_th3_h0st}"

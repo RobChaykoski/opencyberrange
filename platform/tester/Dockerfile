@@ -18,6 +18,7 @@ FROM alpine:3.19
 
 RUN apk add --no-cache \
     nmap nmap-scripts \
+    iputils \
     curl wget \
     netcat-openbsd \
     lftp \

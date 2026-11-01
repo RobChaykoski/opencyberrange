@@ -1,12 +1,12 @@
 # OpenCyberRange
 
-[![Labs](https://img.shields.io/badge/labs-131-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-134-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-7-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
 [![AI-assisted](https://img.shields.io/badge/AI-assisted%20build-8b5cf6)](#ai-assistance-disclosure)
 
-A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network forensics, web exploitation, malware analysis, OT/ICS security, and AI security.
+A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, and AI security.
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
@@ -67,10 +67,24 @@ and a downloadable PDF transcript.
 | Windows Penetration Testing | 53 | Enumeration, SMB, RDP, WinRM, MSSQL, LDAP, credential reuse |
 | Linux Fundamentals | 37 | Service enumeration, SSH, privilege escalation, pivoting, detection |
 | Web Application Security | 16 | Reconnaissance, injection, traversal, API and authentication testing |
-| Network Security | 13 | Traffic analysis, protocol attacks, firewalls, exfiltration |
+| Network Security | 16 | Network foundations (ping, DNS), traffic analysis, protocol attacks, firewalls, exfiltration |
 | Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
 | **AI Hacking** | **3** | Prompt injection, jailbreak policy bypass, indirect prompt injection |
+
+## Network Foundations stream
+
+The **Network Security** track opens with a beginner **Network Foundations**
+level for students who have never used a terminal:
+
+- **Ping Basics** — reachability, latency, packet loss, and why a reply is not a
+  service check.
+- **DNS Basics** — A, CNAME, MX, and TXT records, queried directly against an
+  authoritative lab server.
+- **Name or Network?** — a troubleshooting capstone that separates a stale name
+  from a dead host and a stopped service.
+
+The matching workbook chapter is **CH N0 -- Network Foundations**.
 
 ## AI Hacking stream
 

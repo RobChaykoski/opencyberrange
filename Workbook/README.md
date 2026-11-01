@@ -27,7 +27,7 @@ a self-contained walkthrough with:
 | Windows Penetration Testing | CH01–CH09 | 53 |
 | Linux Fundamentals | CH L1–CH L3 | 37 |
 | Web Application Security | CH W1–CH W2 | 16 |
-| Network Forensics | CH N1–CH N2, CH NETSY12 | 13 |
+| Network Security | CH N0–CH N2, CH NETSY12 | 16 |
 | Malware Analysis | CH M1–CH M2 | 8 |
 | OT/ICS Security | CH OT1 | 1 |
 | AI Hacking | CH AI1 | 3 |

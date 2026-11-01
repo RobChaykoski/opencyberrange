@@ -1,0 +1,123 @@
+name: "The Internet's Phone Book: DNS Records"
+description: "An internal service was deployed without documentation. Query the lab DNS server, read the common record types, and find the TXT record that holds the deployment note."
+difficulty: beginner
+category: network
+duration_minutes: 25
+
+visibility: public
+
+objectives:
+  - Explain the difference between a domain name and an IP address
+  - Query A, CNAME, MX, and TXT records
+  - Read TTL and explain caching at a high level
+  - Explain why DNS is a trust boundary and is not encrypted by default
+  - Capture the flag
+
+scenario: |
+  The internal DNS server at `{target.target}` serves the zone `range.local`.
+  A new portal was deployed last week, but nobody wrote down its address.
+
+  Use `nslookup`, `dig`, or `host` to query the lab DNS server directly. Start
+  with the portal name, follow the alias, and read the TXT record at
+  `_note.range.local`. The note contains the deployment flag.
+
+  Remember: the DNS server is the authority for this zone. Public resolvers will
+  not know these names.
+
+hostnames:
+  - ip_offset: "10"
+    hostname: "internal-dns"
+    description: "Authoritative DNS server for range.local"
+
+topology:
+  nodes:
+    - id: "target"
+      label: "Internal DNS"
+      type: "server"
+      ip_offset: "10"
+
+flag: "OCR{dns_1s_th3_ph0n3b00k}"
+
+hints:
+  - text: |
+      **What DNS does**
+
+      DNS turns a human-readable name such as `portal.range.local` into an IP
+      address such as `10.100.3.10`. Think of it as the internet's phone book:
+      people use names, computers use addresses.
+
+      Common record types:
+
+      - **A** - name to IPv4 address
+      - **AAAA** - name to IPv6 address
+      - **CNAME** - alias to another name
+      - **MX** - mail server for a domain
+      - **TXT** - free-form text; often used for verification and policy
+    unlock_after_minutes: 0
+
+  - text: |
+      **Querying the lab server directly**
+
+      ```bash
+      nslookup portal.range.local {target.target}
+      ```
+
+      ```bash
+      dig @{target.target} portal.range.local A
+      ```
+
+      ```bash
+      host portal.range.local {target.target}
+      ```
+
+      The `@{target.target}` part tells `dig` to ask the lab server instead of
+      your normal resolver.
+
+      Try the alias and the mail record too:
+
+      ```bash
+      dig @{target.target} alias.range.local CNAME
+      dig @{target.target} range.local MX
+      ```
+    unlock_after_minutes: 5
+
+  - text: |
+      **Read the TXT record**
+
+      TXT records hold text. They are commonly used for SPF, domain
+      verification, and service notes.
+
+      ```bash
+      dig @{target.target} _note.range.local TXT
+      ```
+
+      Add `+short` to trim the output:
+
+      ```bash
+      dig @{target.target} _note.range.local TXT +short
+      ```
+    unlock_after_minutes: 10
+
+  - text: |
+      **Solution**
+
+      ```bash
+      dig @{target.target} _note.range.local TXT +short
+      ```
+
+      The quoted value is the flag. Record it in the platform.
+    unlock_after_minutes: 15
+
+workbook: "wiki/range/netfor/CH_N0_Network_Foundations/02_DNS_Basics/"
+
+test:
+  steps:
+    - name: "DNS server answers an A query"
+      command: "dig @{target.target} portal.range.local A +short"
+      expect: "10."
+    - name: "Alias points at the portal name"
+      command: "dig @{target.target} alias.range.local CNAME +short"
+      expect: "portal.range.local."
+    - name: "TXT record contains the flag"
+      command: "dig @{target.target} _note.range.local TXT +short"
+      expect: "OCR{dns_1s_th3_ph0n3b00k}"

@@ -1,0 +1,17 @@
+services:
+  target:
+    build:
+      context: ./containers/target
+      dockerfile: Dockerfile
+    hostname: internal-dns-portal
+    labels:
+      ip_offset: "10"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 96M
+        reservations:
+          cpus: '0.05'
+          memory: 48M
