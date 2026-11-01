@@ -391,5 +391,9 @@ if (( FAIL > 0 )); then
 fi
 
 echo "Verification passed. You can run:"
-echo "  sudo bash scripts/upgrade-from-backup.sh --remote $REMOTE --branch $BRANCH"
+if [[ -n "$TARGET_REPO" ]]; then
+  echo "  sudo bash $SCRIPT_DIR/upgrade-from-backup.sh --repo '$REPO_DIR' --remote $REMOTE --branch $BRANCH"
+else
+  echo "  sudo bash scripts/upgrade-from-backup.sh --remote $REMOTE --branch $BRANCH"
+fi
 exit 0
