@@ -5,6 +5,9 @@ mkdocs==1.6.1
 mkdocs-material==9.7.4
 pymdown-extensions==10.8
 
+# Lint tooling
+ruff==0.17.3
+
 # Test harness (pytest suite under tests/, config in pytest.ini)
 pytest==8.2.2
 pytest-asyncio==0.23.7
