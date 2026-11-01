@@ -1,0 +1,320 @@
+{
+  "schema_version": "0.1",
+  "description": "Machine-readable contract for OpenCyberRange learning-impact metrics. Every entry is a proxy, not a diagnosis. See references/metrics-catalogue.md for the full rationale.",
+  "metric_families": {
+    "retention": "Durable recall and application after a delay.",
+    "load": "Working-memory demand placed by the task and environment.",
+    "speed": "Decision quality under a stated time limit.",
+    "reprioritisation": "Reordering work after new evidence or constraints.",
+    "transfer": "Application in a new context and calibration of confidence.",
+    "supporting": "Context measures for delivery, help-seeking, and collaboration."
+  },
+  "metrics": {
+    "delayed_checkpoint_score": {
+      "family": "retention",
+      "construct": "Durable retrieval and application after a delay.",
+      "observable": "Score on an equivalent task at 7, 30, or 90 days.",
+      "formula": "correct_items / total_items",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["checkpoint:immediate", "checkpoint:delayed", "delay_days"],
+      "report_with": ["n", "median", "iqr", "delay_days", "aids_allowed"],
+      "do_not": "Call a same-day retest retention."
+    },
+    "retention_index": {
+      "family": "retention",
+      "construct": "Proportion of immediate performance that survives the delay.",
+      "observable": "Ratio of delayed to immediate checkpoint scores.",
+      "formula": "min(delayed_score / immediate_score, 1.0)",
+      "unit": "ratio",
+      "direction": "higher_is_better",
+      "minimum_data": ["checkpoint:immediate", "checkpoint:delayed"],
+      "report_with": ["raw_immediate", "raw_delayed", "delay_days", "equivalent_form_id"],
+      "do_not": "Compare indices across different delays or task difficulty."
+    },
+    "hint_free_delayed_success": {
+      "family": "retention",
+      "construct": "Independent retrieval without scaffolding.",
+      "observable": "Delayed task solved with zero hints and no workbook.",
+      "formula": "hint_free_correct_solves / attempts",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["hint_request", "checkpoint:delayed"],
+      "report_with": ["hint_policy", "solve_definition", "n"],
+      "do_not": "Treat hint use as cheating."
+    },
+    "error_recurrence_rate": {
+      "family": "retention",
+      "construct": "Whether feedback corrected a misconception.",
+      "observable": "The same error class appearing again in later sessions.",
+      "formula": "repeated_error_classes / error_classes_observed_at_least_twice",
+      "unit": "proportion",
+      "direction": "lower_is_better",
+      "minimum_data": ["two_sessions", "stable_error_taxonomy"],
+      "report_with": ["taxonomy_version", "window", "n"],
+      "do_not": "Infer recurrence from a single typo or click."
+    },
+    "spacing_adherence": {
+      "family": "retention",
+      "construct": "Whether the intended reinforcement schedule was delivered.",
+      "observable": "Gap between practice sessions.",
+      "formula": "median_days_between_sessions; proportion_inside_intended_window",
+      "unit": "days / proportion",
+      "direction": "context",
+      "minimum_data": ["session:started_at"],
+      "report_with": ["intended_schedule", "n"],
+      "do_not": "Treat adherence as a learner trait."
+    },
+    "nasa_tlx_mental_demand": {
+      "family": "load",
+      "construct": "Perceived mental demand of the task.",
+      "observable": "NASA-TLX mental-demand subscale, 0-100, after the task.",
+      "formula": "subscale_score",
+      "unit": "score_0_100",
+      "direction": "lower_is_better",
+      "minimum_data": ["post_task_survey"],
+      "report_with": ["task_id", "time_limit", "accommodations", "n", "median", "iqr"],
+      "do_not": "Call a high score low intelligence or poor memory."
+    },
+    "interruption_recovery_time": {
+      "family": "load",
+      "construct": "Cost of rebuilding task state after an interruption.",
+      "observable": "Time from interruption end to the next correct action.",
+      "formula": "t_next_correct_action - t_interruption_end",
+      "unit": "seconds",
+      "direction": "lower_is_better",
+      "minimum_data": ["interruption", "resume", "decision"],
+      "report_with": ["interruption_kind", "notes_allowed", "median", "p90"],
+      "do_not": "Compare labs with different interruption designs."
+    },
+    "aid_use": {
+      "family": "load",
+      "construct": "External support required by the task.",
+      "observable": "Workbook opens, hint requests, and note lookups per task.",
+      "formula": "aid_events / tasks",
+      "unit": "events_per_task",
+      "direction": "context",
+      "minimum_data": ["task_start", "hint_request", "workbook_open"],
+      "report_with": ["aid_policy", "distribution"],
+      "do_not": "Rank learners by independence without stating the aid policy."
+    },
+    "dual_task_decrement": {
+      "family": "load",
+      "construct": "Performance cost when attention is divided.",
+      "observable": "Primary-task accuracy or latency with and without a secondary task.",
+      "formula": "(dual_task_performance - single_task_performance) / single_task_performance",
+      "unit": "proportion",
+      "direction": "lower_is_better",
+      "minimum_data": ["counterbalanced_conditions"],
+      "report_with": ["secondary_task", "order", "n"],
+      "do_not": "Run in a live cohort without a pilot and ethics review."
+    },
+    "decision_latency": {
+      "family": "speed",
+      "construct": "Time to commit to a decision.",
+      "observable": "Time from the decision prompt to the submitted choice.",
+      "formula": "median_latency_s; p90_latency_s",
+      "unit": "seconds",
+      "direction": "context",
+      "minimum_data": ["decision:latency_s"],
+      "report_with": ["accuracy", "task_id", "time_limit", "n"],
+      "do_not": "Publish latency alone or treat it as expertise."
+    },
+    "decision_accuracy": {
+      "family": "speed",
+      "construct": "Correctness of the chosen action.",
+      "observable": "Rubric score for the decision.",
+      "formula": "correct_decisions / decisions",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["decision:correct", "rubric"],
+      "report_with": ["latency", "decision_count", "n"],
+      "do_not": "Score a defensible alternative as wrong because it was not the preferred click path."
+    },
+    "throughput_correct_per_minute": {
+      "family": "speed",
+      "construct": "Useful decision throughput.",
+      "observable": "Correct decisions divided by active decision time.",
+      "formula": "correct_decisions / (sum(decision_latency_s) / 60)",
+      "unit": "decisions_per_minute",
+      "direction": "higher_is_better",
+      "minimum_data": ["decision:latency_s", "decision:correct"],
+      "report_with": ["accuracy", "active_time_definition", "n"],
+      "do_not": "Compare learners with different reading loads or accommodation time."
+    },
+    "timeout_rate": {
+      "family": "speed",
+      "construct": "Whether the time limit drove the outcome.",
+      "observable": "Decision opportunities that expired without a submission.",
+      "formula": "timeouts / decision_opportunities",
+      "unit": "proportion",
+      "direction": "lower_is_better",
+      "minimum_data": ["decision_opportunity", "timeout"],
+      "report_with": ["time_limit", "accuracy", "n"],
+      "do_not": "Treat a timeout as a wrong answer without saying so."
+    },
+    "time_to_first_correct_decision": {
+      "family": "speed",
+      "construct": "How quickly the learner finds a workable path.",
+      "observable": "Time from scenario start to the first correct decision.",
+      "formula": "t_first_correct_decision - t_scenario_start",
+      "unit": "seconds",
+      "direction": "context",
+      "minimum_data": ["task_start", "decision:correct"],
+      "report_with": ["prior_incorrect_decisions", "median", "range", "n"],
+      "do_not": "Use as a selection test."
+    },
+    "priority_alignment_top3": {
+      "family": "reprioritisation",
+      "construct": "Reordering work toward the highest-value items after a change.",
+      "observable": "Learner top three priorities and an expert reference ranking.",
+      "formula": "|learner_top3 intersect expert_top3| / 3",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["change_event", "reprioritize:ranked", "reprioritize:expert_ranked"],
+      "report_with": ["item_sets", "expert_rationale", "n"],
+      "do_not": "Treat one expert ranking as objective truth."
+    },
+    "time_to_replan": {
+      "family": "reprioritisation",
+      "construct": "How quickly the learner acts on new information.",
+      "observable": "Time from the change event to the first consistent action.",
+      "formula": "t_first_revised_action - t_change_event",
+      "unit": "seconds",
+      "direction": "lower_is_better",
+      "minimum_data": ["change_event", "action_consistent_with_new_priority"],
+      "report_with": ["action_definition", "time_limit", "median", "p90"],
+      "do_not": "Count a reflexive click as a re-plan."
+    },
+    "priority_inversion_rate": {
+      "family": "reprioritisation",
+      "construct": "Whether low-value work displaced high-value work.",
+      "observable": "High-priority tasks left incomplete while low-priority tasks completed.",
+      "formula": "sessions_with_inversion / sessions",
+      "unit": "proportion",
+      "direction": "lower_is_better",
+      "minimum_data": ["task_priorities", "completion_events"],
+      "report_with": ["priority_source", "time_limit", "inversion_list"],
+      "do_not": "Call every unfinished task an inversion."
+    },
+    "recovery_after_interruption": {
+      "family": "reprioritisation",
+      "construct": "Ability to resume the right task after a disruption.",
+      "observable": "Correct resumption of the interrupted task.",
+      "formula": "correct_resumptions / interruptions",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["interruption", "resume:correct_next_step"],
+      "report_with": ["interruption_kind", "recovery_window", "n"],
+      "do_not": "Penalise correct abandonment after a scenario change."
+    },
+    "novel_context_score": {
+      "family": "transfer",
+      "construct": "Application of a procedure in an unfamiliar but equivalent context.",
+      "observable": "Checkpoint score on a new system, artefact, or scenario.",
+      "formula": "correct_items / total_items",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["checkpoint:transfer", "novelty_statement"],
+      "report_with": ["practice_transfer_mapping", "n"],
+      "do_not": "Reuse the same hostnames, flags, or walkthrough steps."
+    },
+    "confidence_accuracy_gap": {
+      "family": "transfer",
+      "construct": "Calibration: knowing when you are unsure.",
+      "observable": "Confidence rating and correctness per decision.",
+      "formula": "mean(confidence) - accuracy",
+      "unit": "proportion",
+      "direction": "closer_to_zero_is_better",
+      "minimum_data": ["decision:confidence", "decision:correct"],
+      "report_with": ["brier_score", "n", "decision_mix"],
+      "do_not": "Interpret one decision as a calibration trait."
+    },
+    "brier_score": {
+      "family": "transfer",
+      "construct": "Probabilistic accuracy of confidence judgments.",
+      "observable": "Confidence and binary outcome per decision.",
+      "formula": "mean((confidence - outcome)^2)",
+      "unit": "score_0_1",
+      "direction": "lower_is_better",
+      "minimum_data": ["decision:confidence", "decision:correct"],
+      "report_with": ["base_rate_correct", "n"],
+      "do_not": "Compare across tasks of different difficulty without adjustment."
+    },
+    "completion": {
+      "family": "supporting",
+      "construct": "Programme delivery and drop-off.",
+      "observable": "Labs completed and labs started.",
+      "formula": "completed_labs / started_labs",
+      "unit": "proportion",
+      "direction": "context",
+      "minimum_data": ["lab_start", "lab_complete"],
+      "report_with": ["n", "drop_off_points"],
+      "do_not": "Treat completion as learning."
+    },
+    "time_to_criterion": {
+      "family": "supporting",
+      "construct": "Practice time needed to reach a defined criterion.",
+      "observable": "Sessions or active hours to the criterion.",
+      "formula": "median_sessions_to_criterion; median_active_hours_to_criterion",
+      "unit": "sessions_or_hours",
+      "direction": "context",
+      "minimum_data": ["criterion_definition", "session:started_at"],
+      "report_with": ["criterion", "n", "median", "iqr"],
+      "do_not": "Rank individuals by speed."
+    },
+    "hint_dependency": {
+      "family": "supporting",
+      "construct": "How much scaffolding the task required.",
+      "observable": "Hint requests relative to decisions or tasks.",
+      "formula": "hint_requests / decisions",
+      "unit": "hints_per_decision",
+      "direction": "context",
+      "minimum_data": ["hint_request", "decision"],
+      "report_with": ["hint_policy", "n", "distribution"],
+      "do_not": "Call hints cheating."
+    },
+    "help_seeking_quality": {
+      "family": "supporting",
+      "construct": "Whether help was sought at an appropriate time and specificity.",
+      "observable": "Rubric score for timing and specificity of help.",
+      "formula": "rubric_score",
+      "unit": "score",
+      "direction": "higher_is_better",
+      "minimum_data": ["help_event", "rubric"],
+      "report_with": ["rubric_version", "n"],
+      "do_not": "Penalise appropriate help."
+    },
+    "collaboration_handoff_quality": {
+      "family": "supporting",
+      "construct": "Quality of team handoff and escalation.",
+      "observable": "Rubric score for completeness, accuracy, and escalation.",
+      "formula": "rubric_score",
+      "unit": "score",
+      "direction": "higher_is_better",
+      "minimum_data": ["handoff_artifact", "rubric"],
+      "report_with": ["rubric_version", "n"],
+      "do_not": "Score personality."
+    },
+    "return_practice_rate": {
+      "family": "supporting",
+      "construct": "Whether learners return for reinforcement practice.",
+      "observable": "Learners with a second practice session.",
+      "formula": "returning_learners / starters",
+      "unit": "proportion",
+      "direction": "higher_is_better",
+      "minimum_data": ["session:started_at"],
+      "report_with": ["n", "invitation_method"],
+      "do_not": "Shame low returners."
+    }
+  },
+  "reporting_rules": {
+    "minimum_group_comparison_n": 10,
+    "default_spread": "median_and_iqr",
+    "require_n": true,
+    "require_limitation": true,
+    "forbid_public_individual_ranking": true,
+    "forbid_diagnosis": true,
+    "forbid_flags_or_credentials_in_reports": true
+  }
+}

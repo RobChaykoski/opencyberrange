@@ -68,6 +68,14 @@ inclusive representation, avoiding stock hacker/victim tropes, and adding a
 restrained near-future AI texture without turning the exercise into science
 fiction.
 
+For learning-outcome reporting, load
+`.opencode/skills/opencyberrange-learning-impact/SKILL.md`. It defines the
+metric families (retention and recall, working-memory load, rapid decision
+quality, reprioritisation, transfer and calibration), the learner/instructor/
+organisation report templates, and the event schema for future timing and
+coordinated-support features. Treat every measure as a proxy, never a diagnosis
+or a public ranking.
+
 Before submitting frontend changes:
 
 ```bash
