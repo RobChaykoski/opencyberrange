@@ -113,8 +113,8 @@ workbook: "wiki/range/netfor/CH_N0_Network_Foundations/02_DNS_Basics/"
 test:
   steps:
     - name: "DNS server answers an A query"
-      command: "dig @{target.target} portal.range.local A +short"
-      expect: "10."
+      command: "dig @{target.target} portal.range.local A +short | grep -Eq '^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$' && echo address-ok"
+      expect: "address-ok"
     - name: "Alias points at the portal name"
       command: "dig @{target.target} alias.range.local CNAME +short"
       expect: "portal.range.local."
