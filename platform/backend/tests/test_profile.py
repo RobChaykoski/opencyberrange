@@ -16,6 +16,12 @@ pytestmark = pytest.mark.db
 
 TEST_PASSWORD = "Correct#Horse7Battery"
 
+# 1x1 transparent PNG, valid for the avatar image verifier.
+TINY_PNG = (
+    "data:image/png;base64,"
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+)
+
 
 @pytest.fixture()
 def admin_auth(client, db_session):
@@ -101,6 +107,82 @@ def test_profile_names_can_be_cleared(client, auth_headers, test_user):
     assert me.status_code == 200
     assert not me.json()["first_name"]
     assert not me.json()["last_name"]
+
+
+def test_profile_avatar_round_trip(client, auth_headers, test_user):
+    resp = client.put(
+        "/api/auth/settings",
+        json={"avatar_data": TINY_PNG},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+
+    me = client.get("/api/auth/me", headers=auth_headers)
+    assert me.status_code == 200
+    assert me.json()["avatar_data"] == TINY_PNG
+
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200
+    assert settings.json()["avatar_data"] == TINY_PNG
+
+    summary = client.get("/api/profile/summary", headers=auth_headers)
+    assert summary.status_code == 200
+    assert summary.json()["user"]["avatar_data"] == TINY_PNG
+
+    cleared = client.put(
+        "/api/auth/settings",
+        json={"avatar_data": ""},
+        headers=auth_headers,
+    )
+    assert cleared.status_code == 200, cleared.text
+    assert client.get("/api/auth/me", headers=auth_headers).json()["avatar_data"] is None
+
+
+def test_profile_avatar_rejects_non_image_data(client, auth_headers, test_user):
+    resp = client.put(
+        "/api/auth/settings",
+        json={"avatar_data": "data:image/svg+xml;base64,PHN2Zz48L3N2Zz4="},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 422
+
+    not_base64 = client.put(
+        "/api/auth/settings",
+        json={"avatar_data": "data:image/png;base64,not really an image"},
+        headers=auth_headers,
+    )
+    assert not_base64.status_code == 422
+
+
+def test_profile_summary_includes_certificates_and_completions(
+    client, auth_headers, test_user, completed_level
+):
+    track, level = completed_level
+    resp = client.get("/api/profile/summary", headers=auth_headers)
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+
+    matching = [c for c in body["certificates"] if c["track_slug"] == track.slug]
+    assert len(matching) == 1
+    certificate = matching[0]
+    assert certificate["level_id"] == level.id
+    assert certificate["recipient"] == test_user.display_name
+    assert certificate["exercises_completed"] == 1
+    assert certificate["exercises_total"] == 1
+
+    completion = next(
+        item for item in body["completions"] if item["lab_slug"].startswith("certificate-lab-")
+    )
+    assert completion["track_slug"] == track.slug
+    assert completion["completed_at"]
+
+
+def test_profile_transcript_pdf(client, auth_headers, completed_level):
+    resp = client.get("/api/profile/transcript.pdf", headers=auth_headers)
+    assert resp.status_code == 200, resp.text
+    assert resp.headers["content-type"].startswith("application/pdf")
+    assert "attachment" in resp.headers["content-disposition"]
+    assert resp.content.startswith(b"%PDF")
 
 
 @pytest.fixture()

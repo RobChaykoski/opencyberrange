@@ -8,10 +8,11 @@ Earn achievements for how you solve labs inside a course: solving first, solving
 
 ## Where achievements appear
 
-Achievements show in two places inside a course:
+Achievements show in three places:
 
 - The **Achievements** tab, which lists each earned achievement with an icon and label.
 - As badge icons on each row of the **Scoreboard** tab.
+- On your **Profile**, where earned course achievements appear with your certificates and completion record.
 
 ## Opening the Achievements tab
 
@@ -40,7 +41,7 @@ Achievements show in two places inside a course:
 
 ## Course scoped only
 
-Achievements exist only inside a course. Solving a lab outside any course earns no achievement, and there is no platform wide badge wall on your profile. To earn achievements, solve labs you reach through a course. See [Course Labs and Assignments](13_Course_Labs_and_Assignments.md).
+Achievements are earned inside a course. Solving a lab outside any course earns no achievement, but every achievement you earn is still collected on your profile. To earn achievements, solve labs you reach through a course. See [Course Labs and Assignments](13_Course_Labs_and_Assignments.md).
 
 !!! note "Awarding can lag"
     The platform checks for new achievements right after you submit a correct flag. The check runs in the background, so a badge can take a moment to appear on the tab.

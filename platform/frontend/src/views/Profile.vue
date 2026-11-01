@@ -1,12 +1,191 @@
 <template>
   <div class="profile-page">
     <div class="profile-container">
-      <h1 class="page-title">My Profile</h1>
-
       <div v-if="loading" class="loading-message">Loading profile information...</div>
 
       <div v-else-if="user" class="profile-content">
-        <!-- Personal Information Section -->
+        <!-- Profile hero: avatar, identity, and completion stats -->
+        <section class="profile-hero">
+          <div class="profile-avatar">
+            <div class="profile-avatar__frame" :class="{ 'profile-avatar__frame--empty': !avatarPreview }">
+              <img v-if="avatarPreview" :src="avatarPreview" alt="Your profile picture" />
+              <span v-else>{{ initials }}</span>
+            </div>
+            <input
+              ref="avatarInput"
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              class="avatar-input"
+              @change="onAvatarSelected"
+            />
+            <div class="profile-avatar__actions">
+              <button type="button" class="btn btn--secondary btn--sm" :disabled="avatarSaving" @click="chooseAvatar">
+                {{ avatarSaving ? 'Saving...' : (avatarPreview ? 'Change photo' : 'Add photo') }}
+              </button>
+              <button v-if="avatarPreview" type="button" class="btn btn--ghost-danger btn--sm" :disabled="avatarSaving" @click="removeAvatar">
+                Remove
+              </button>
+            </div>
+            <p v-if="avatarMessage" :class="avatarError ? 'error-message' : 'success-message'" class="avatar-message">
+              {{ avatarMessage }}
+            </p>
+          </div>
+
+          <div class="profile-hero__identity">
+            <p class="profile-hero__eyebrow">OpenCyberRange profile</p>
+            <h1 class="profile-hero__name">{{ displayName }}</h1>
+            <p class="profile-hero__handle">
+              <span>@{{ user.username }}</span>
+              <span class="profile-hero__dot">·</span>
+              <span>{{ user.email }}</span>
+            </p>
+            <p v-if="user.organization" class="profile-hero__org">{{ user.organization }}</p>
+            <div class="profile-hero__badges">
+              <span class="status-badge" :class="roleBadgeClass">{{ roleLabel }}</span>
+              <span v-if="user.is_approved" class="status-badge status-badge--approved">Approved</span>
+              <span v-else class="status-badge status-badge--pending">Pending approval</span>
+              <span v-if="user.created_at" class="profile-hero__joined">Member since {{ formatDateOnly(user.created_at) }}</span>
+            </div>
+          </div>
+
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <span class="profile-stat__value">{{ summary ? summary.totals.certificates : '—' }}</span>
+              <span class="profile-stat__label">Certificates</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat__value">
+                {{ summary ? summary.totals.labs_completed : '—' }}<small v-if="summary">/{{ summary.totals.labs_total }}</small>
+              </span>
+              <span class="profile-stat__label">Exercises</span>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-stat__value">{{ summary ? summary.totals.progress_percent : '—' }}<small v-if="summary">%</small></span>
+              <span class="profile-stat__label">Complete</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Certificates and printable transcript -->
+        <section class="profile-section transcript-section">
+          <div class="transcript-head">
+            <div>
+              <h2 class="section-title">Certificates &amp; completion</h2>
+              <p class="help-text transcript-help">
+                Certificates are issued when every visible exercise in a level is complete.
+                The PDF includes your certificates, every completed exercise, and course achievements.
+              </p>
+            </div>
+            <button type="button" class="btn btn--primary transcript-download" :disabled="downloadingPdf || summaryLoading" @click="downloadTranscript">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              {{ downloadingPdf ? 'Preparing PDF...' : 'Download PDF' }}
+            </button>
+          </div>
+
+          <p v-if="pdfMessage" :class="pdfError ? 'error-message' : 'success-message'" class="transcript-message">{{ pdfMessage }}</p>
+          <p v-if="summaryError" class="error-message transcript-message">{{ summaryError }}</p>
+          <p v-if="summaryLoading && !summary" class="help-text">Loading your completion record...</p>
+
+          <template v-if="summary">
+            <div v-if="certificates.length" class="certificate-grid">
+              <router-link
+                v-for="cert in certificates"
+                :key="cert.certificate_id"
+                :to="`/certificate/${cert.track_slug}/${cert.level_id}`"
+                class="certificate-card"
+              >
+                <span class="certificate-card__seal" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="9" r="5"/>
+                    <path d="M8.5 13.2 7 21l5-2.6L17 21l-1.5-7.8"/>
+                  </svg>
+                </span>
+                <span class="certificate-card__track" :style="{ color: cert.track_color || 'var(--accent)' }">{{ cert.track_name }}</span>
+                <span class="certificate-card__title">Level {{ cert.level_number }}: {{ cert.level_name }}</span>
+                <span class="certificate-card__meta">
+                  Awarded {{ cert.issued_display }} · {{ cert.exercises_completed }} exercises
+                  <template v-if="cert.quiz_score !== null && cert.quiz_score !== undefined"> · Quiz {{ cert.quiz_score }}%</template>
+                </span>
+                <span class="certificate-card__id">{{ cert.certificate_id }}</span>
+              </router-link>
+            </div>
+            <p v-else class="empty-transcript">
+              No certificates yet. Finish every exercise in a level and the certificate appears here.
+            </p>
+
+            <div v-if="tracks.length" class="profile-tracks">
+              <h3 class="subsection-title">Track progress</h3>
+              <div v-for="track in tracks" :key="track.track_slug" class="track-progress">
+                <div class="track-progress__head">
+                  <span class="track-progress__name">{{ track.track_name }}</span>
+                  <span class="track-progress__count">{{ track.completed_labs }} / {{ track.total_labs }} exercises</span>
+                </div>
+                <div class="track-progress__bar" role="progressbar" :aria-valuenow="track.progress_percent" aria-valuemin="0" aria-valuemax="100">
+                  <span :style="{ width: track.progress_percent + '%' }"></span>
+                </div>
+                <div class="track-progress__levels">
+                  <span
+                    v-for="level in track.levels"
+                    :key="level.id"
+                    class="level-pill"
+                    :class="{ 'level-pill--complete': level.is_complete }"
+                  >
+                    L{{ level.level_number }} · {{ level.completed_labs }}/{{ level.total_labs }}
+                    <span v-if="level.certificate_id" aria-label="Certificate earned">✓</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <details v-if="completions.length" class="completion-details">
+              <summary>Completion details ({{ completions.length }})</summary>
+              <div class="completion-table-wrap">
+                <table class="completion-table">
+                  <thead>
+                    <tr>
+                      <th>Exercise</th>
+                      <th>Track</th>
+                      <th>Completed</th>
+                      <th>Attempts</th>
+                      <th>Hints</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item in completions" :key="item.lab_id">
+                      <td>
+                        <span class="completion-table__lab">{{ item.lab_name }}</span>
+                        <span class="completion-table__level">Level {{ item.level_number }}: {{ item.level_name }}</span>
+                      </td>
+                      <td>{{ item.track_name }}</td>
+                      <td>{{ formatCompletionDate(item.completed_at) }}</td>
+                      <td>{{ item.attempts }}</td>
+                      <td>{{ item.hints_used }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+
+            <div v-if="achievements.length" class="achievement-strip">
+              <h3 class="subsection-title">Course achievements</h3>
+              <div class="achievement-list">
+                <span
+                  v-for="achievement in achievements"
+                  :key="achievement.id"
+                  class="achievement-chip"
+                  :title="achievement.description || achievement.label"
+                >
+                  <span class="achievement-chip__icon" aria-hidden="true">{{ achievement.icon }}</span>
+                  {{ achievement.label }}
+                </span>
+              </div>
+            </div>
+          </template>
+        </section>
         <div class="profile-section">
           <h2 class="section-title">Personal Information</h2>
           <p class="help-text" style="margin: -0.5rem 0 1rem;">
@@ -38,6 +217,18 @@
                   class="form-input"
                   placeholder="e.g. Morgan"
                   autocomplete="family-name"
+                />
+              </div>
+              <div class="form-group">
+                <label for="organization">Organization <span class="help-text">(optional)</span></label>
+                <input
+                  id="organization"
+                  v-model="nameForm.organization"
+                  type="text"
+                  maxlength="120"
+                  class="form-input"
+                  placeholder="e.g. University or team"
+                  autocomplete="organization"
                 />
               </div>
             </div>
@@ -415,8 +606,58 @@ const mfa = reactive({
 })
 const loading = ref(true)
 
+// Completion record (certificates, track progress, achievements) for the hero
+// and transcript sections. Loaded separately from /auth/me so the account
+// forms render immediately even when that aggregate query is slow.
+const summary = ref(null)
+const summaryLoading = ref(true)
+const summaryError = ref('')
+const downloadingPdf = ref(false)
+const pdfMessage = ref('')
+const pdfError = ref(false)
+
+// Profile avatar. Images are resized in the browser and stored on the user row
+// as a data URL by /auth/settings, so no upload volume is required.
+const avatarInput = ref(null)
+const avatarSaving = ref(false)
+const avatarMessage = ref('')
+const avatarError = ref(false)
+
+const displayName = computed(() => {
+  if (!user.value) return ''
+  const parts = [user.value.first_name, user.value.last_name].filter(part => part && part.trim())
+  return parts.length ? parts.join(' ') : user.value.username
+})
+
+const initials = computed(() => {
+  const source = displayName.value || user.value?.username || '?'
+  const words = source.trim().split(/\s+/).filter(Boolean)
+  if (!words.length) return '?'
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
+  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+})
+
+const avatarPreview = computed(() => user.value?.avatar_data || '')
+
+const roleLabel = computed(() => {
+  if (user.value?.role === 'admin') return 'Admin'
+  if (user.value?.role === 'instructor') return 'Instructor'
+  return 'Student'
+})
+
+const roleBadgeClass = computed(() => ({
+  'status-badge--admin': user.value?.role === 'admin',
+  'status-badge--instructor': user.value?.role === 'instructor',
+  'status-badge--user': !['admin', 'instructor'].includes(user.value?.role),
+}))
+
+const certificates = computed(() => summary.value?.certificates || [])
+const tracks = computed(() => summary.value?.tracks || [])
+const completions = computed(() => summary.value?.completions || [])
+const achievements = computed(() => summary.value?.achievements || [])
+
 // Personal information shown on certificates
-const nameForm = reactive({ first_name: '', last_name: '' })
+const nameForm = reactive({ first_name: '', last_name: '', organization: '' })
 const nameSaving = ref(false)
 const nameMessage = ref('')
 const nameError = ref(false)
@@ -436,17 +677,20 @@ const saveName = async () => {
   const payload = {
     first_name: nameForm.first_name.trim(),
     last_name: nameForm.last_name.trim(),
+    organization: nameForm.organization.trim(),
   }
   try {
     await axios.put('/auth/settings', payload)
     if (user.value) {
       user.value.first_name = payload.first_name || null
       user.value.last_name = payload.last_name || null
+      user.value.organization = payload.organization || null
     }
     // Keep the cached login object in sync so other views see the new name.
     const cached = JSON.parse(localStorage.getItem('user') || '{}')
     cached.first_name = payload.first_name || null
     cached.last_name = payload.last_name || null
+    cached.organization = payload.organization || null
     localStorage.setItem('user', JSON.stringify(cached))
     nameMessage.value = (payload.first_name || payload.last_name)
       ? 'Name saved. It will appear on your certificates.'
@@ -458,6 +702,154 @@ const saveName = async () => {
   } finally {
     nameSaving.value = false
   }
+}
+
+function responseMessage(error, fallback) {
+  const detail = error?.response?.data?.detail
+  if (typeof detail === 'string' && detail) return detail
+  if (Array.isArray(detail) && detail.length) return detail[0]?.msg || fallback
+  return fallback
+}
+
+function chooseAvatar() {
+  avatarInput.value?.click()
+}
+
+function resizeAvatar(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Could not read that image.'))
+    reader.onload = () => {
+      const image = new Image()
+      image.onerror = () => reject(new Error('That file is not a readable image.'))
+      image.onload = () => {
+        const maxSize = 320
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height))
+        const width = Math.max(1, Math.round(image.width * scale))
+        const height = Math.max(1, Math.round(image.height * scale))
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const context = canvas.getContext('2d')
+        // JPEG has no alpha; fill white so transparent PNGs do not turn black.
+        context.fillStyle = '#ffffff'
+        context.fillRect(0, 0, width, height)
+        context.drawImage(image, 0, 0, width, height)
+        resolve(canvas.toDataURL('image/jpeg', 0.86))
+      }
+      image.src = reader.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+async function onAvatarSelected(event) {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+    avatarError.value = true
+    avatarMessage.value = 'Choose a PNG, JPEG, or WebP image.'
+    return
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    avatarError.value = true
+    avatarMessage.value = 'Choose an image smaller than 10 MB.'
+    return
+  }
+
+  avatarSaving.value = true
+  avatarMessage.value = ''
+  avatarError.value = false
+  try {
+    const dataUrl = await resizeAvatar(file)
+    await axios.put('/auth/settings', { avatar_data: dataUrl })
+    if (user.value) user.value.avatar_data = dataUrl
+    if (summary.value?.user) summary.value.user.avatar_data = dataUrl
+    avatarMessage.value = 'Profile photo updated.'
+  } catch (error) {
+    avatarError.value = true
+    avatarMessage.value = responseMessage(error, 'Could not save your profile photo.')
+  } finally {
+    avatarSaving.value = false
+  }
+}
+
+async function removeAvatar() {
+  if (avatarSaving.value) return
+  avatarSaving.value = true
+  avatarMessage.value = ''
+  avatarError.value = false
+  try {
+    await axios.put('/auth/settings', { avatar_data: '' })
+    if (user.value) user.value.avatar_data = null
+    if (summary.value?.user) summary.value.user.avatar_data = null
+    avatarMessage.value = 'Profile photo removed.'
+  } catch (error) {
+    avatarError.value = true
+    avatarMessage.value = responseMessage(error, 'Could not remove your profile photo.')
+  } finally {
+    avatarSaving.value = false
+  }
+}
+
+async function fetchSummary() {
+  summaryLoading.value = true
+  summaryError.value = ''
+  try {
+    const { data } = await axios.get('/profile/summary')
+    summary.value = data
+    if (user.value && data.user) {
+      if (data.user.avatar_data) user.value.avatar_data = data.user.avatar_data
+      user.value.organization = data.user.organization
+    }
+  } catch (error) {
+    summaryError.value = responseMessage(error, 'Could not load your completion record.')
+  } finally {
+    summaryLoading.value = false
+  }
+}
+
+async function downloadTranscript() {
+  if (downloadingPdf.value) return
+  downloadingPdf.value = true
+  pdfMessage.value = ''
+  pdfError.value = false
+  try {
+    const response = await axios.get('/profile/transcript.pdf', { responseType: 'blob' })
+    const blob = response.data instanceof Blob
+      ? response.data
+      : new Blob([response.data], { type: 'application/pdf' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `OpenCyberRange-Transcript-${user.value?.username || 'profile'}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    pdfMessage.value = 'Your transcript PDF was downloaded.'
+  } catch (error) {
+    pdfError.value = true
+    pdfMessage.value = responseMessage(error, 'Could not generate the transcript PDF.')
+  } finally {
+    downloadingPdf.value = false
+  }
+}
+
+const formatDateOnly = (dateStr) => {
+  if (!dateStr) return '—'
+  const value = dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z'
+  return new Date(value).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  })
+}
+
+const formatCompletionDate = (dateStr) => {
+  if (!dateStr) return '—'
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric',
+  })
 }
 
 // Exercise Studio LLM connections (instructor/admin)
@@ -741,6 +1133,7 @@ const fetchUserInfo = async () => {
     user.value = userResponse.data
     nameForm.first_name = user.value?.first_name || ''
     nameForm.last_name = user.value?.last_name || ''
+    nameForm.organization = user.value?.organization || ''
     if (['instructor', 'admin'].includes(user.value?.role)) {
       await fetchModules()
       loadStudioLlm()
@@ -772,6 +1165,7 @@ usePoll(refreshVpnStatus, 10000)
 
 onMounted(() => {
   fetchUserInfo()
+  fetchSummary()
   fetchEnrolledCourses()
 
   // Window focus covers clicking back into the browser from another app,
@@ -804,7 +1198,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .profile-container {
-  max-width: 900px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 
@@ -1263,6 +1657,555 @@ watch(() => route.path, (newPath) => {
   color: var(--nav-label);
   font-size: 0.875rem;
   margin-top: 1rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Profile hero                                                        */
+/* ------------------------------------------------------------------ */
+
+.profile-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 1.75rem;
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  background:
+    radial-gradient(circle at 8% 18%, rgba(59, 130, 246, 0.18), transparent 42%),
+    radial-gradient(circle at 92% 82%, rgba(139, 92, 246, 0.14), transparent 46%),
+    var(--bg-secondary);
+  box-shadow: 0 18px 45px rgba(2, 6, 23, 0.18);
+  overflow: hidden;
+}
+
+.profile-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b);
+}
+
+.profile-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  width: 138px;
+}
+
+.profile-avatar__frame {
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 28px rgba(30, 64, 175, 0.35);
+}
+
+.profile-avatar__frame--empty {
+  background:
+    linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(139, 92, 246, 0.9));
+}
+
+.profile-avatar__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar__frame span {
+  color: #fff;
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.avatar-input {
+  display: none;
+}
+
+.profile-avatar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.profile-avatar__actions .btn {
+  align-self: auto;
+}
+
+.avatar-message {
+  margin: 0;
+  max-width: 180px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.profile-hero__identity {
+  min-width: 0;
+}
+
+.profile-hero__eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.profile-hero__name {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.profile-hero__handle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.55rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.profile-hero__dot {
+  color: var(--text-muted);
+}
+
+.profile-hero__org {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.profile-hero__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.profile-hero__joined {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.profile-stat {
+  min-width: 86px;
+  padding: 0.7rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: rgba(15, 23, 42, 0.22);
+  text-align: center;
+}
+
+[data-theme="light"] .profile-stat {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.profile-stat__value {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.profile-stat__value small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.profile-stat__label {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ */
+/* Certificates and completion record                                  */
+/* ------------------------------------------------------------------ */
+
+.transcript-section {
+  padding: 1.6rem;
+}
+
+.transcript-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.transcript-head .section-title {
+  margin: 0 0 0.3rem;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.transcript-help {
+  margin: 0;
+  max-width: 660px;
+  font-size: 0.82rem;
+}
+
+.transcript-download {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.transcript-download svg {
+  width: 16px;
+  height: 16px;
+}
+
+.transcript-message {
+  margin-top: 1rem;
+}
+
+.certificate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.35rem;
+}
+
+.certificate-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.05rem 1rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid rgba(176, 141, 60, 0.35);
+  background:
+    linear-gradient(150deg, rgba(245, 158, 11, 0.11), transparent 58%),
+    var(--bg-primary);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.certificate-card:hover {
+  transform: translateY(-2px);
+  border-color: #b08d3c;
+  box-shadow: 0 12px 26px rgba(2, 6, 23, 0.18);
+}
+
+.certificate-card__seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 0.3rem;
+  border-radius: 50%;
+  border: 1px solid rgba(176, 141, 60, 0.55);
+  background: rgba(245, 158, 11, 0.12);
+  color: #b08d3c;
+}
+
+.certificate-card__seal svg {
+  width: 22px;
+  height: 22px;
+}
+
+.certificate-card__track {
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.certificate-card__title {
+  color: var(--text-primary);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.certificate-card__meta {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.certificate-card__id {
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+}
+
+.empty-transcript {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.profile-tracks {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.subsection-title {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.track-progress {
+  margin-top: 0.75rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.track-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+}
+
+.track-progress__name {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.track-progress__count {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.track-progress__bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.track-progress__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  transition: width 0.35s ease;
+}
+
+.track-progress__levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.65rem;
+}
+
+.level-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.69rem;
+}
+
+.level-pill--complete {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.completion-details {
+  margin-top: 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.completion-details summary {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.completion-details summary:hover {
+  color: var(--accent);
+}
+
+.completion-table-wrap {
+  margin-top: 0.85rem;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.completion-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.completion-table th {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.completion-table td {
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+
+.completion-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.completion-table__lab {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.completion-table__level {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.achievement-strip {
+  margin-top: 1.5rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.achievement-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.achievement-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.achievement-chip__icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .profile-hero {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .profile-stats {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+  }
+
+  .profile-stat {
+    flex: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-page {
+    padding: 1rem;
+  }
+
+  .profile-hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    padding: 1.4rem 1rem;
+  }
+
+  .profile-hero__handle,
+  .profile-hero__badges {
+    justify-content: center;
+  }
+
+  .profile-stats {
+    width: 100%;
+  }
+
+  .profile-stat {
+    min-width: 0;
+    padding: 0.6rem 0.4rem;
+  }
+
+  .transcript-section {
+    padding: 1.1rem;
+  }
+
+  .transcript-head {
+    flex-direction: column;
+  }
+
+  .transcript-download {
+    width: 100%;
+  }
 }
 </style>
 

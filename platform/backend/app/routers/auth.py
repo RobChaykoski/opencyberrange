@@ -8,6 +8,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional
+import base64
+import binascii
+import io
 import logging
 import re
 
@@ -254,14 +257,62 @@ import hashlib
 import json as _json
 import secrets as _secrets
 
+# Avatars are stored inline as a data URL so they survive container rebuilds
+# without a shared upload volume. The browser resizes before upload; the cap
+# here is a server-side guard, not the expected size (~30-80 KB).
+_AVATAR_DATA_URL_RE = re.compile(
+    r"^data:image/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=\s]+)$"
+)
+_MAX_AVATAR_BYTES = 512 * 1024
+
+
+def _validate_avatar_data(value: Optional[str]) -> Optional[str]:
+    """Accept only a small, real raster image as a base64 data URL."""
+    if value is None or value == "":
+        return value
+    match = _AVATAR_DATA_URL_RE.match(value)
+    if not match:
+        raise ValueError("Avatar must be a PNG, JPEG, or WebP image.")
+    try:
+        encoded = re.sub(r"\s+", "", match.group(2))
+        raw = base64.b64decode(encoded, validate=True)
+    except (binascii.Error, ValueError):
+        raise ValueError("Avatar image data is not valid base64.")
+    if len(raw) > _MAX_AVATAR_BYTES:
+        raise ValueError("Avatar image must be 512 KB or smaller after upload.")
+    try:
+        from PIL import Image
+        with Image.open(io.BytesIO(raw)) as image:
+            width, height = image.size
+            # Reject decompression bombs before decoding. A small base64 payload
+            # can describe an enormous canvas; real avatars are ~320 px square.
+            if width < 1 or height < 1 or width * height > 4_000_000:
+                raise ValueError("Avatar dimensions are too large.")
+            declared = "jpeg" if match.group(1).lower() == "jpg" else match.group(1).lower()
+            if (image.format or "").lower() != declared:
+                raise ValueError("Avatar content does not match its image type.")
+            image.verify()
+    except ValueError:
+        raise
+    except Exception:
+        raise ValueError("Avatar file is not a readable image.")
+    return value
+
+
 class UserSettingsUpdate(BaseModel):
     first_name: Optional[str] = Field(None, max_length=80)
     last_name: Optional[str] = Field(None, max_length=80)
     organization: Optional[str] = Field(None, max_length=120)
+    avatar_data: Optional[str] = Field(None, max_length=800_000)
     timezone: Optional[str] = Field(None, max_length=64)
     show_on_scoreboard: Optional[bool] = None
     login_notifications: Optional[bool] = None
     notification_prefs: Optional[dict] = None
+
+    @field_validator("avatar_data")
+    @classmethod
+    def avatar_valid(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_avatar_data(v)
 
 class RecoveryCodeVerifyRequest(BaseModel):
     code: str = Field(..., min_length=6, max_length=32)
@@ -287,6 +338,7 @@ async def get_user_settings(
         "first_name": current_user.first_name,
         "last_name": current_user.last_name,
         "organization": current_user.organization,
+        "avatar_data": getattr(current_user, "avatar_data", None),
         "timezone": current_user.timezone,
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
         "login_notifications": getattr(current_user, "login_notifications", True),
@@ -309,6 +361,8 @@ async def update_user_settings(
         current_user.last_name = payload.last_name
     if payload.organization is not None:
         current_user.organization = payload.organization
+    if payload.avatar_data is not None:
+        current_user.avatar_data = payload.avatar_data or None
     if payload.timezone is not None:
         current_user.timezone = payload.timezone
     if payload.show_on_scoreboard is not None:
@@ -596,6 +650,7 @@ async def get_current_user_info(
         "first_name": getattr(current_user, 'first_name', None),
         "last_name": getattr(current_user, 'last_name', None),
         "organization": getattr(current_user, 'organization', None),
+        "avatar_data": getattr(current_user, 'avatar_data', None),
         "is_active": getattr(current_user, 'is_active', True),
         "is_approved": current_user.is_approved,
         "is_admin": current_user.role == 'admin',

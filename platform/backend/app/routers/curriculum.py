@@ -2,7 +2,7 @@
 Exercises routes for learning tracks, progress tracking, and flag submission
 """
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from datetime import datetime, timezone, timedelta
@@ -11,7 +11,6 @@ import hashlib
 import hmac
 import json
 import logging
-import os
 
 from slowapi import Limiter
 from slowapi.util import get_remote_address
@@ -455,7 +454,6 @@ def build_level_certificate(
     certificate_id = f"OCR-{track.slug.upper()[:8]}-L{level.level_number:02d}-{digest}"
 
     # Verification URL (customizable via certificate_verify_url setting).
-    from app.services import settings_service
     base_url = (settings_service.get_setting(db, "certificate_verify_url", "") or "").rstrip("/")
     verify_path = f"/verify/certificate/{certificate_id}"
     verify_url = (base_url + verify_path) if base_url else verify_path
@@ -464,7 +462,11 @@ def build_level_certificate(
     qr_code = None
     if include_qr:
         try:
-            import qrcode, io, base64 as _b64
+            import base64 as _b64
+            import io
+
+            import qrcode
+
             img = qrcode.make(verify_url if verify_url.startswith("http") else f"http://localhost{verify_url}")
             buf = io.BytesIO()
             img.save(buf, format="PNG")

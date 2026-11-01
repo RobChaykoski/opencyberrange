@@ -1,17 +1,33 @@
 # Viewing Your Profile
 
-Open your profile to check your account details, see your enrolled courses, join a new course, and change your password. The profile is your single account page.
+Open your profile to check your account details, view your certificates and completion record, download a PDF transcript, see your enrolled courses, join a new course, and change your password. The profile is your single account page.
 
 ## Opening your profile
 
-Click **Profile** in the sidebar. The page opens with your account information at the top.
+Click **Profile** in the sidebar. The page opens with your profile card: avatar, display name, account badges, and completion stats.
 
 <figure markdown>
 
-![Profile page showing account information, course enrollment, and a change password section](img/profile.png)
+![Profile page showing the profile card, certificates, track progress, and account sections](img/profile.png)
 
-<figcaption>The profile page shows your account fields, your enrolled courses, a join by code form, and the change password section.</figcaption>
+<figcaption>The profile page shows your avatar and completion summary, your certificates and track progress, your account fields, enrolled courses, and the change password section.</figcaption>
 </figure>
+
+## Profile photo
+
+Use **Add photo** under your avatar to upload a profile picture. The browser resizes the image before saving it, so ordinary phone photos work. PNG, JPEG, and WebP images are accepted, up to 10 MB before resizing. Use **Change photo** to replace it or **Remove** to go back to your initials.
+
+## Certificates and completion
+
+The **Certificates & completion** section lists every certificate you have earned. Each card opens that level's printable certificate. The section also shows:
+
+- **Track progress** with a bar and per-level completion pills. A check mark marks a level where you earned a certificate.
+- **Completion details**, an expandable table of every completed exercise with its completed date, attempts, and hints used.
+- **Course achievements** earned in your enrolled courses.
+
+## Downloading a PDF transcript
+
+Click **Download PDF** at the top of the certificates section. The PDF contains your display name and account details, completion totals, every certificate ID, track progress, every completed exercise, and your course achievements. The file downloads as `OpenCyberRange-Transcript-<username>.pdf`.
 
 ## Account Information
 
