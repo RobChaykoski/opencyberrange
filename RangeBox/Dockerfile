@@ -119,7 +119,9 @@ COPY supervisord.conf /etc/supervisor/conf.d/rangebox.conf
 
 # Entrypoint script
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Normalize CRLF from Windows checkouts; a CR in the shebang makes the
+# container fail with "exec /entrypoint.sh: no such file or directory".
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 # XFCE preferred applications — ensure terminal icon opens the terminal, not the browser
 RUN mkdir -p /home/kali/.config/xfce4 && \

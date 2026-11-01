@@ -432,15 +432,22 @@
           </div>
 
           <div v-if="!user.mfa_enabled && mfa.enrolling" style="margin-top: 0.75rem;">
-            <p class="help-text">Scan this URI in your authenticator app, or enter the secret manually:</p>
-            <div class="info-item" style="margin: 0.5rem 0;">
-              <label class="info-label">Secret</label>
-              <div class="info-value"><code>{{ mfa.secret }}</code></div>
+            <p class="help-text">Scan the QR code with your authenticator app, or enter the secret manually:</p>
+            <div v-if="mfa.qr" class="mfa-qr-wrap">
+              <img :src="mfa.qr" alt="QR code to add this account to an authenticator app" class="mfa-qr" />
+              <p class="help-text">Works with Google Authenticator, 1Password, Authy, and similar apps.</p>
             </div>
-            <div class="info-item" style="margin: 0.5rem 0;">
-              <label class="info-label">Provisioning URI</label>
-              <div class="info-value" style="word-break: break-all;"><code>{{ mfa.uri }}</code></div>
-            </div>
+            <details class="mfa-manual">
+              <summary>Can't scan? Enter the secret manually</summary>
+              <div class="info-item" style="margin: 0.5rem 0;">
+                <label class="info-label">Secret</label>
+                <div class="info-value"><code>{{ mfa.secret }}</code></div>
+              </div>
+              <div class="info-item" style="margin: 0.5rem 0;">
+                <label class="info-label">Provisioning URI</label>
+                <div class="info-value" style="word-break: break-all;"><code>{{ mfa.uri }}</code></div>
+              </div>
+            </details>
             <div class="join-row" style="margin-top: 0.75rem;">
               <input v-model="mfa.code" type="text" inputmode="numeric" placeholder="6-digit code" class="form-input" @keyup.enter="verifyMfa" />
               <button class="btn btn--primary" :disabled="mfa.loading || !mfa.code.trim()" @click="verifyMfa">
@@ -599,6 +606,7 @@ const mfa = reactive({
   enrolling: false,
   secret: '',
   uri: '',
+  qr: '',
   code: '',
   password: '',
   error: '',
@@ -1074,6 +1082,7 @@ const startMfaEnroll = async () => {
     const r = await axios.post('/auth/mfa/enroll')
     mfa.secret = r.data.secret
     mfa.uri = r.data.provisioning_uri
+    mfa.qr = r.data.qr_data_url || ''
     mfa.enrolling = true
   } catch (e) {
     mfa.error = e.response?.data?.detail || 'Failed to start MFA enrollment'
@@ -1086,6 +1095,7 @@ const cancelMfaEnroll = () => {
   mfa.enrolling = false
   mfa.secret = ''
   mfa.uri = ''
+  mfa.qr = ''
   mfa.code = ''
   mfa.error = ''
 }
@@ -1098,6 +1108,7 @@ const verifyMfa = async () => {
     await axios.post('/auth/mfa/verify', { code: mfa.code.trim() })
     mfa.success = 'MFA enabled successfully.'
     mfa.enrolling = false
+    mfa.qr = ''
     mfa.code = ''
     await fetchUserInfo()
   } catch (e) {
@@ -2206,6 +2217,35 @@ watch(() => route.path, (newPath) => {
   .transcript-download {
     width: 100%;
   }
+}
+
+.mfa-qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin: 0.6rem 0;
+}
+
+.mfa-qr {
+  width: 180px;
+  height: 180px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+  image-rendering: pixelated;
+}
+
+.mfa-manual {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.mfa-manual summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 600;
 }
 </style>
 

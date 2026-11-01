@@ -81,7 +81,9 @@ RUN printf 'remnux ALL=(ALL) NOPASSWD:ALL\n' > /etc/sudoers.d/90-remnux \
 
 COPY supervisord.conf /etc/supervisor/conf.d/remnuxbox.conf
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Normalize CRLF from Windows checkouts; a CR in the shebang makes the
+# container fail with "exec /entrypoint.sh: no such file or directory".
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 # XFCE preferred applications
 RUN mkdir -p /home/remnux/.config/xfce4 && \

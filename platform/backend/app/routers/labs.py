@@ -3,7 +3,7 @@ Lab management routes - spawn, stop, and manage lab sessions
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, Response
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone, timedelta
 import logging
@@ -725,6 +725,40 @@ async def get_vpn_config(
     return config_content
 
 
+@router.get("/vpn-config/qr")
+async def get_vpn_config_qr(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the user's WireGuard config as a QR code image.
+
+    WireGuard mobile apps can import a tunnel by scanning the full config. The
+    image contains the user's private key, so it is generated on demand and
+    marked no-store. The web UI reveals it only after an explicit click.
+    """
+    import io
+    import qrcode
+
+    config_content = await get_vpn_config(request, db, current_user)
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=6,
+        border=2,
+    )
+    qr.add_data(config_content)
+    qr.make(fit=True)
+    image = qr.make_image(fill_color="black", back_color="white")
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return Response(
+        content=buffer.getvalue(),
+        media_type="image/png",
+        headers={"Cache-Control": "no-store"},
+    )
+
+
 @router.get("/vpn-status")
 async def get_vpn_status(
     db: Session = Depends(get_db),
@@ -787,7 +821,7 @@ def get_track_for_lab(db: Session, lab: Lab):
     """Get the track_id for a lab via lab.level.track. Returns None if unavailable."""
     if not lab or not lab.level_id:
         return None
-    from app.models import Level, Track
+    from app.models import Level
     level = db.query(Level).filter(Level.id == lab.level_id).first()
     if level and level.track_id:
         return level.track_id

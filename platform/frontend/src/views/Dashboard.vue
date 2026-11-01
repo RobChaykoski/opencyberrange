@@ -49,20 +49,47 @@
               </div>
             </div>
 
-            <button
-              @click="downloadVpnConfig"
-              :disabled="!vpnStatus.enabled"
-              class="btn btn--lg vpn-download-btn"
-              :class="vpnStatus.enabled ? 'btn--primary' : 'btn--disabled'"
-              :title="vpnStatus.enabled ? '' : 'An administrator has turned VPN access off for this platform'"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
-                <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              {{ vpnStatus.enabled ? 'Download VPN Config' : 'VPN Disabled' }}
-            </button>
+            <div class="vpn-actions">
+              <button
+                @click="downloadVpnConfig"
+                :disabled="!vpnStatus.enabled"
+                class="btn btn--lg vpn-download-btn"
+                :class="vpnStatus.enabled ? 'btn--primary' : 'btn--disabled'"
+                :title="vpnStatus.enabled ? '' : 'An administrator has turned VPN access off for this platform'"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                  <path d="M21 15V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                {{ vpnStatus.enabled ? 'Download VPN Config' : 'VPN Disabled' }}
+              </button>
+              <button
+                v-if="vpnStatus.enabled"
+                type="button"
+                class="btn btn--outline btn--lg"
+                @click="toggleVpnQr"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/>
+                  <path d="M14 14h3v3h-3zM19 19h2v2h-2zM19 14h2M14 19h1"/>
+                </svg>
+                {{ showVpnQr ? 'Hide QR code' : 'Show QR code' }}
+              </button>
+            </div>
+            <div v-if="showVpnQr" class="vpn-qr">
+              <p v-if="vpnQrLoading" class="vpn-qr__status">Generating QR code...</p>
+              <template v-else-if="vpnQrUrl">
+                <img :src="vpnQrUrl" alt="QR code for your WireGuard configuration" class="vpn-qr__image" />
+                <p class="vpn-qr__hint">Scan this with the WireGuard mobile app to import the tunnel.</p>
+                <p class="vpn-qr__warning">
+                  This QR code contains your private key. Do not share it or leave it visible on a shared screen.
+                </p>
+              </template>
+              <p v-else-if="vpnQrError" class="vpn-qr__error" role="alert">{{ vpnQrError }}</p>
+            </div>
             <p v-if="!vpnStatus.enabled" class="vpn-card__description" style="margin-top:0.5rem;">
               VPN access is turned off for this platform. Launch a RangeBox to reach your labs from the browser instead.
             </p>
@@ -449,7 +476,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, h } from 'vue'
+import { ref, onMounted, onUnmounted, computed, h } from 'vue'
 import axios from '../api/axios'
 import { useVpnStatus } from '../composables/useVpnStatus'
 import { usePoll } from '../composables/usePoll'
@@ -470,6 +497,50 @@ const vpnStatusHint = computed(() => {
   if (s.vpn_registered) return 'Your peer is registered on the server but no recent handshake was seen; activate the tunnel on your machine'
   return 'Config downloaded but the peer is not registered yet'
 })
+
+// The QR encodes the full WireGuard config, including the private key. Generate
+// it only after an explicit click, keep it out of the DOM when hidden, and
+// release the blob URL so a tab left open does not retain it.
+const showVpnQr = ref(false)
+const vpnQrLoading = ref(false)
+const vpnQrUrl = ref('')
+const vpnQrError = ref('')
+
+const clearVpnQr = () => {
+  if (vpnQrUrl.value) {
+    window.URL.revokeObjectURL(vpnQrUrl.value)
+    vpnQrUrl.value = ''
+  }
+}
+
+const toggleVpnQr = async () => {
+  if (showVpnQr.value) {
+    showVpnQr.value = false
+    clearVpnQr()
+    return
+  }
+
+  showVpnQr.value = true
+  vpnQrError.value = ''
+  if (vpnQrUrl.value) return
+
+  vpnQrLoading.value = true
+  try {
+    const response = await axios.get('/labs/vpn-config/qr', {
+      responseType: 'blob',
+    })
+    vpnQrUrl.value = window.URL.createObjectURL(new Blob([response.data], { type: 'image/png' }))
+    await fetchVpnStatus()
+  } catch (error) {
+    console.error('Failed to generate VPN QR code:', error)
+    vpnQrError.value = 'Could not generate the QR code. Use the download option instead.'
+    showToast(vpnQrError.value, 'error')
+  } finally {
+    vpnQrLoading.value = false
+  }
+}
+
+onUnmounted(clearVpnQr)
 
 // Shared clipboard helper; feedback goes through the global toast.
 const { copyText } = useClipboard(2000)
@@ -994,9 +1065,52 @@ onMounted(() => {
   margin-left: 0.25rem;
 }
 
+.vpn-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 .vpn-download-btn {
   align-self: flex-start;
 }
+
+.vpn-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.vpn-qr__image {
+  width: 220px;
+  height: 220px;
+  image-rendering: pixelated;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.vpn-qr__status,
+.vpn-qr__hint,
+.vpn-qr__warning,
+.vpn-qr__error {
+  margin: 0;
+  font-size: 0.76rem;
+}
+
+.vpn-qr__hint { color: var(--text-secondary); }
+
+.vpn-qr__warning {
+  max-width: 44ch;
+  color: var(--warning);
+}
+
+.vpn-qr__error { color: var(--danger); }
 
 /* Instructions Card */
 .instructions-card {

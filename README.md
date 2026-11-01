@@ -194,6 +194,38 @@ new-participant sign-up link. Existing learners can use the competition page's
 **Join event** button; new accounts created through the sign-up link are marked
 as **New sign-up** on the organizer dashboard.
 
+## VPN, MFA, and secret handling
+
+- **WireGuard setup** supports downloading the `ocr-vpn.conf` file and an
+  on-demand **QR code** for the WireGuard mobile apps. The QR contains the
+  private key, so it is only generated after a click, is not cached
+  (`Cache-Control: no-store`), and includes an on-screen warning not to share it.
+- **TOTP enrollment** returns a scannable QR code plus the manual secret and
+  provisioning URI. The QR is generated server-side, so the browser does not
+  need a QR library.
+- Production installations should set `WG_SERVER_ENDPOINT`,
+  `WG_SERVER_PUBLIC_KEY`, `WG_API_URL`, and `WG_API_KEY` through the setup
+  script or `.env`. Placeholder values such as `dummy` or a loopback endpoint
+  are fine for UI testing but will not produce a working tunnel.
+
+## Free security checks
+
+The repository includes GitHub-native checks that need no third-party account
+or repository secret:
+
+- **Dependabot** — weekly dependency and Docker base-image update PRs.
+- **CodeQL** — Python and JavaScript/TypeScript static analysis.
+- **Trivy** — filesystem vulnerability, secret, and configuration scanning.
+
+Findings appear in the repository's **Security** tab. Code scanning on a public
+repository is free; a private repository needs GitHub Advanced Security for the
+same feature.
+
+Snyk Free is also available, but it requires a Snyk account and `SNYK_TOKEN`, so
+it is not part of the default workflow. No scanner is a compliance certificate:
+retention, access control, backups, incident response, and privacy reviews still
+need to be documented separately.
+
 ## Profile, certificates, and transcripts
 
 The student profile is the record of completed work:

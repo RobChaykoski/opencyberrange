@@ -27,6 +27,10 @@ _PLACEHOLDER_URL = (
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL or _PLACEHOLDER_URL
 os.environ.setdefault("JWT_SECRET", "pytest-only-jwt-secret-do-not-deploy")
 os.environ.setdefault("CORS_ORIGINS", "http://testserver")
+# TOTP enrollment and WireGuard key storage use the same Fernet key. A random
+# test-only key keeps crypto paths real without depending on the operator .env.
+from cryptography.fernet import Fernet  # noqa: E402
+os.environ.setdefault("WG_ENCRYPTION_KEY", Fernet.generate_key().decode())
 # Point entitlement at a path that never exists unless a test overrides it,
 # so a stray data/entitlement.json in the working tree cannot leak in.
 os.environ.setdefault("OCR_ENTITLEMENT_FILE", "/nonexistent/pytest-entitlement.json")

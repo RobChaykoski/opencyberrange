@@ -1,0 +1,55 @@
+version: 2
+
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/platform/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Frontend dependencies
+  - package-ecosystem: "npm"
+    directory: "/platform/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Platform images
+  - package-ecosystem: "docker"
+    directory: "/platform/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: "docker"
+    directory: "/platform/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+
+  # Browser desktop images
+  - package-ecosystem: "docker"
+    directory: "/RangeBox"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: "docker"
+    directory: "/UbuntuBox"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: "docker"
+    directory: "/RemnuxBox"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+
+  # Keep Actions pinned and current
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

@@ -12,6 +12,7 @@ import base64
 import binascii
 import io
 import logging
+import qrcode
 import re
 
 from slowapi import Limiter
@@ -1121,11 +1122,31 @@ async def enroll_mfa(
 
     logger.info(f"User {current_user.username} started MFA enrollment")
 
+    provisioning_uri = totp_service.provisioning_uri(
+        secret, current_user.email or current_user.username
+    )
+    # The QR is generated on the server so the browser never needs a QR
+    # library, and the secret is delivered in one authenticated response.
+    qr = qrcode.QRCode(
+        version=None,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=6,
+        border=2,
+    )
+    qr.add_data(provisioning_uri)
+    qr.make(fit=True)
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+    qr_buffer = io.BytesIO()
+    qr_image.save(qr_buffer, format="PNG")
+    qr_data_url = (
+        "data:image/png;base64,"
+        + base64.b64encode(qr_buffer.getvalue()).decode("ascii")
+    )
+
     return {
         "secret": secret,
-        "provisioning_uri": totp_service.provisioning_uri(
-            secret, current_user.email or current_user.username
-        ),
+        "provisioning_uri": provisioning_uri,
+        "qr_data_url": qr_data_url,
         "issuer": totp_service.ISSUER_NAME,
     }
 
