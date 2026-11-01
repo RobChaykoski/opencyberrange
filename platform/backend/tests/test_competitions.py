@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.auth import get_password_hash
-from app.models import Competition, User
+from app.models import Competition, CompetitionParticipant, User
 
 pytestmark = pytest.mark.db
 
@@ -104,6 +104,15 @@ def test_competition_join_score_and_privacy(
     assert entries[0]["solved_count"] == 1
     assert entries[0]["is_me"] is True
     assert body["leaderboard"]["my_entry"]["rank"] == 1
+    assert body["leaderboard"]["registration_counts"]["opt_in"] == 1
+
+    manager_detail = client.get(
+        f"/api/competitions/{competition_id}", headers=instructor_auth
+    )
+    assert manager_detail.status_code == 200, manager_detail.text
+    manager_entry = manager_detail.json()["leaderboard"]["entries"][0]
+    assert manager_entry["source"] == "opt_in"
+    assert manager_entry["joined_at"]
 
     # A learner who opted out of public scoreboards is masked on the event
     # leaderboard even though they explicitly joined the event.
@@ -135,6 +144,64 @@ def test_competition_join_score_and_privacy(
     assert db_session.query(Competition).filter(
         Competition.id == competition_id
     ).first() is None
+
+
+def test_new_user_signup_marks_competition_registration(
+    client, db_session, test_lab, instructor_auth
+):
+    start_at, end_at = _window()
+    created = client.post(
+        "/api/competitions",
+        json={
+            "name": "DevFest Windsor-Essex 2026",
+            "description": "High-school community event.",
+            "start_at": start_at.isoformat(),
+            "end_at": end_at.isoformat(),
+            "lab_ids": [test_lab.id],
+        },
+        headers=instructor_auth,
+    )
+    assert created.status_code == 201, created.text
+    competition_id = created.json()["id"]
+
+    public_info = client.get(f"/api/competitions/public/{competition_id}")
+    assert public_info.status_code == 200, public_info.text
+    assert public_info.json()["competition"]["name"] == "DevFest Windsor-Essex 2026"
+
+    suffix = uuid.uuid4().hex[:8]
+    registered = client.post(
+        "/api/auth/register",
+        json={
+            "username": f"devfest_student_{suffix}",
+            "email": f"devfest_student_{suffix}@example.invalid",
+            "password": TEST_PASSWORD,
+            "competition_id": competition_id,
+        },
+    )
+    assert registered.status_code == 200, registered.text
+    student_id = registered.json()["id"]
+
+    participant = db_session.query(CompetitionParticipant).filter(
+        CompetitionParticipant.competition_id == competition_id,
+        CompetitionParticipant.user_id == student_id,
+    ).first()
+    assert participant is not None
+    assert participant.source == "new_user"
+
+    manager_detail = client.get(
+        f"/api/competitions/{competition_id}", headers=instructor_auth
+    )
+    assert manager_detail.status_code == 200, manager_detail.text
+    counts = manager_detail.json()["leaderboard"]["registration_counts"]
+    assert counts["new_user"] == 1
+    assert counts["opt_in"] == 0
+
+    deleted = client.delete(
+        f"/api/competitions/{competition_id}", headers=instructor_auth
+    )
+    assert deleted.status_code == 200, deleted.text
+    db_session.query(User).filter(User.id == student_id).delete()
+    db_session.commit()
 
 
 def test_student_cannot_create_competition(client, auth_headers, test_lab):

@@ -16,17 +16,18 @@ import re
 
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from jose import jwt as _jose_jwt, JWTError as _JWTError
-
 from app.database import get_db
-from app.models import User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment, Course, InviteCode, Assignment, AssignmentLab
+from app.models import (
+    User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
+    Course, InviteCode, Assignment, AssignmentLab,
+    Competition, CompetitionParticipant,
+)
 from app.auth import (
     authenticate_user,
     get_password_hash,
     create_access_token,
     get_user_by_username,
     get_current_active_user,
-    get_current_instructor_user,
     verify_password,
     validate_privileged_password,
     is_impersonating,
@@ -80,6 +81,9 @@ class RegisterRequest(BaseModel):
     organization: Optional[str] = Field(None, max_length=120)
     password: str = Field(..., min_length=8, max_length=128)
     invite_code: Optional[str] = Field(None, min_length=4, max_length=64)
+    # Optional competition sign-up link. A valid, open competition adds the new
+    # account to the participant roster as a "new_user" registration.
+    competition_id: Optional[int] = None
 
     @field_validator('username')
     @classmethod
@@ -564,6 +568,25 @@ async def register(
     db.add(new_user)
     db.flush()  # assign new_user.id without ending the transaction
 
+    # Competition sign-up link: add the new account to the event roster in the
+    # same transaction as the user insert. A closed or missing competition never
+    # blocks account creation; it simply does not add a roster entry.
+    if user_data.competition_id:
+        competition = db.query(Competition).filter(
+            Competition.id == user_data.competition_id,
+            Competition.is_active == True,
+        ).first()
+        if competition:
+            end_at = competition.end_at
+            if end_at.tzinfo is None:
+                end_at = end_at.replace(tzinfo=timezone.utc)
+            if datetime.now(timezone.utc) <= end_at:
+                db.add(CompetitionParticipant(
+                    competition_id=competition.id,
+                    user_id=new_user.id,
+                    source="new_user",
+                ))
+
     # Burn the invite code in the same transaction as the user insert, so
     # the with_for_update() row lock holds until both changes land together.
     if invite is not None:
@@ -851,11 +874,13 @@ async def wiki_released_chapters(
                 continue
             start = asn.start_date
             if start is None:
-                released.add(chapter); break
+                released.add(chapter)
+                break
             if start.tzinfo is None:
                 start = start.replace(tzinfo=timezone.utc)
             if start <= now:
-                released.add(chapter); break
+                released.add(chapter)
+                break
     if not seen_any:
         return {"all": True, "chapters": []}
     return {"all": False, "chapters": sorted(released)}

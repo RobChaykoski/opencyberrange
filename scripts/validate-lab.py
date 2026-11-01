@@ -37,7 +37,7 @@ VALID_CATEGORIES = {
 SLUG_PATTERN = re.compile(r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+|final-\d+)-[a-z0-9-]+$")
 FLAG_PATTERN = re.compile(r"^OCR\{.+\}$")
 REQUIRED_YAML_FIELDS = ["name", "description", "difficulty", "flag"]
-KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "ot", "ai", "osint", "capitalflow", "forensics", "refinery", "windows-server"}
+KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "ot", "ai", "osint", "high-school", "capitalflow", "forensics", "refinery", "windows-server"}
 DANGEROUS_PASSWORD_CHARS = set('!`$\\"')
 DANGEROUS_PASSWORD_CHARS_DISPLAY = "! ` $ \\ \""
 

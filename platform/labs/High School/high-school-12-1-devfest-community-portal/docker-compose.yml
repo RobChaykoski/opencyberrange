@@ -1,0 +1,23 @@
+services:
+  portal:
+    mem_limit: 160m
+    cpus: 0.2
+    build:
+      context: ../../OSINT/_shared
+      dockerfile: Dockerfile
+    hostname: devfest
+    labels:
+      ip_offset: "90"
+    environment:
+      LAB_MODE: "devfest"
+      FLAG: "OCR{d3vf3st_c0mmun1ty_p0rtal}"
+      COMPANY: "DevFest Windsor-Essex"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

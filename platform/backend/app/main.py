@@ -271,6 +271,17 @@ async def lifespan(app: FastAPI):
                 conn.commit()
                 logger.info("Added display_name column to course_lab_assignments table")
 
+        # --- Competitions: participant source (new sign-up vs existing opt-in) ---
+        if 'competition_participants' in inspector.get_table_names():
+            cp_columns = {c['name'] for c in inspector.get_columns('competition_participants')}
+            if 'source' not in cp_columns:
+                conn.execute(text(
+                    "ALTER TABLE competition_participants "
+                    "ADD COLUMN source VARCHAR(20) DEFAULT 'opt_in' NOT NULL"
+                ))
+                conn.commit()
+                logger.info("Added source column to competition_participants")
+
         # --- SOC Deliverables Workspace: new columns ---
 
 

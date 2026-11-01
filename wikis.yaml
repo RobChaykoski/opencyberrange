@@ -39,6 +39,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: teal
+  high-school:
+    config: mkdocs-highschool.yml
+    docs_dir: Workbook
+    auth: student
+    theme: deep purple
 reference:
   manual:
     config: mkdocs-manual-lite.yml

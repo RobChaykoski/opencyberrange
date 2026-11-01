@@ -76,6 +76,15 @@ Start the AI Hacking stream at
 Start the OSINT stream at
 [CH OSINT1 — Digital Footprint Foundations](CH_OSINT01_OSINT_Foundations/00_Introduction.md).
 
+### High School Cybersecurity
+
+| Chapter | Focus | Exercises |
+|---------|-------|-----------|
+| CH HS12; Grade 12 Applied Cybersecurity | Browser-only OSINT, file metadata, privacy, and community event challenges | 1 exercise |
+
+Start the high-school pathway at
+[CH HS12 — Grade 12 Applied Cybersecurity](CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md).
+
 ## How to Use This Workbook
 
 1. **Launch an exercise** in the OpenCyberRange platform

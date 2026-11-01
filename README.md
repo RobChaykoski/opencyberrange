@@ -1,7 +1,7 @@
 # OpenCyberRange
 
-[![Labs](https://img.shields.io/badge/labs-138-blue)](platform/labs/)
-[![Tracks](https://img.shields.io/badge/tracks-8-green)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-139-blue)](platform/labs/)
+[![Tracks](https://img.shields.io/badge/tracks-9-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
 [![AI-assisted](https://img.shields.io/badge/AI-assisted%20build-8b5cf6)](#ai-assistance-disclosure)
@@ -76,6 +76,9 @@ public scoreboards appear as “Anonymous participant”.
 
 Competitions are separate from course grades and the learning record; they are
 not used for progression, discipline, or public ranking of learning outcomes.
+Learners can **practise without joining**, and joining only affects the event
+leaderboard. Organizers get a dedicated competition dashboard with total
+participants, new sign-ups, existing opt-ins, and a copyable sign-up link.
 
 ## Included tracks
 
@@ -88,7 +91,8 @@ not used for progression, discipline, or public ranking of learning outcomes.
 | Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
 | AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
-| **OSINT** | **4** | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
+| OSINT | 4 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
+| **High School Cybersecurity** | **1** | Browser-first Grades 9–12 pathway; Grade 12 DevFest community portal |
 
 ## Network Foundations stream
 
@@ -159,6 +163,36 @@ existing learning ladder: **Signal in the Noise**, **Digital Footprint**,
 **Metadata Miner**, **Open Source Operative**, **Clean Footprint**, and
 **First-Pass Analyst**. They are course-scoped, so a student earns them in any
 course that assigns the OSINT exercises.
+
+## High School pathway · Grades 9–12
+
+The **High School Cybersecurity** track is a browser-first pathway for students
+who are curious but may be new to the field:
+
+| Grade | Focus |
+|---|---|
+| 9 | Digital safety foundations |
+| 10 | Systems and networks |
+| 11 | Defensive security |
+| 12 | Applied cybersecurity and community event challenges |
+
+The Grade 12 **DevFest Community Portal** exercise is a gentle OSINT challenge
+themed around [DevFest Windsor-Essex 2026](https://wedevfest.com) on
+November 21, 2026. SWOCTS is a community partner. Students open a fictional
+DevFest speaker profile, download a slide export, and read the PNG metadata in
+the browser. No terminal or prior experience is required, hints are expected,
+and students can practise without joining the competition.
+
+The live DevFest competition can be created after discovering the lab:
+
+```bash
+docker compose exec backend python /app/app/scripts/seed_devfest_competition.py
+```
+
+The script creates an opt-in **Windsor-Essex DevFest 2026** event and prints the
+new-participant sign-up link. Existing learners can use the competition page's
+**Join event** button; new accounts created through the sign-up link are marked
+as **New sign-up** on the organizer dashboard.
 
 ## Profile, certificates, and transcripts
 

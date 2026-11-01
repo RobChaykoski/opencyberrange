@@ -147,15 +147,32 @@ def _leaderboard(
 ) -> dict:
     lab_rows = _lab_rows(db, competition.id)
     labs = [row.lab for row in lab_rows if row.lab and row.lab.is_active]
+    is_manager = _can_manage(competition, current_user)
     participants = db.query(CompetitionParticipant).options(
         joinedload(CompetitionParticipant.user)
     ).filter(
         CompetitionParticipant.competition_id == competition.id
     ).all()
     participants = [p for p in participants if p.user and p.user.is_active]
+    # Pending accounts are visible to the organiser as new sign-ups, but they
+    # do not appear on the public event leaderboard until approved.
+    if not is_manager:
+        participants = [p for p in participants if p.user.is_approved]
 
     if not participants or not labs:
-        return {"entries": [], "my_entry": None}
+        return {
+            "entries": [],
+            "my_entry": None,
+            "registration_counts": {
+                "total": len(participants),
+                "new_user": sum(
+                    1 for p in participants if (p.source or "opt_in") == "new_user"
+                ),
+                "opt_in": sum(
+                    1 for p in participants if (p.source or "opt_in") == "opt_in"
+                ),
+            },
+        }
 
     user_ids = [p.user_id for p in participants]
     lab_ids = [lab.id for lab in labs]
@@ -210,6 +227,8 @@ def _leaderboard(
             "score": score,
             "solved_count": solved,
             "last_solved_at": _iso(last_solved),
+            "source": participant.source or "opt_in",
+            "joined_at": _iso(participant.joined_at),
             "is_me": user.id == current_user.id,
             "_last": last_solved,
             "_joined": participant.joined_at,
@@ -228,10 +247,26 @@ def _leaderboard(
         entry.pop("_last", None)
         entry.pop("_joined", None)
 
+    registration_counts = {
+        "total": len(participants),
+        "new_user": sum(1 for p in participants if (p.source or "opt_in") == "new_user"),
+        "opt_in": sum(1 for p in participants if (p.source or "opt_in") == "opt_in"),
+    }
+
+    # Registration source is organiser information, not public leaderboard data.
+    if not is_manager:
+        for entry in entries:
+            entry.pop("source", None)
+            entry.pop("joined_at", None)
+
     my_entry = next(
         (entry for entry in entries if entry["user_id"] == current_user.id), None
     )
-    return {"entries": entries, "my_entry": my_entry}
+    return {
+        "entries": entries,
+        "my_entry": my_entry,
+        "registration_counts": registration_counts,
+    }
 
 
 @router.get("")
@@ -286,6 +321,25 @@ async def list_competitions(
             )
             for c in competitions
         ]
+    }
+
+
+@router.get("/public/{competition_id}")
+async def public_competition(competition_id: int, db: Session = Depends(get_db)):
+    """Minimal public event information for a competition sign-up link."""
+    competition = _competition_or_404(db, competition_id)
+    if not competition.is_active:
+        raise HTTPException(status_code=404, detail="Competition not found")
+    now = datetime.now(timezone.utc)
+    return {
+        "competition": {
+            "id": competition.id,
+            "name": competition.name,
+            "description": competition.description,
+            "start_at": _iso(competition.start_at),
+            "end_at": _iso(competition.end_at),
+            "status": _status(competition, now),
+        }
     }
 
 
@@ -446,6 +500,7 @@ async def join_competition(
         db.add(CompetitionParticipant(
             competition_id=competition_id,
             user_id=current_user.id,
+            source="opt_in",
         ))
         db.commit()
     return {"message": "Joined competition", "joined": True}

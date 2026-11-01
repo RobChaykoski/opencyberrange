@@ -137,6 +137,19 @@
             </p>
           </div>
           <div class="comp-detail__actions">
+            <router-link
+              :to="`/competitions/${selected.competition.id}`"
+              class="btn btn--outline btn--sm"
+            >
+              Open dashboard
+            </router-link>
+            <router-link
+              v-if="!selected.competition.joined && selected.labs.length"
+              :to="practiceLink"
+              class="btn btn--outline btn--sm"
+            >
+              Practice without joining
+            </router-link>
             <button
               v-if="canJoinSelected"
               type="button"
@@ -162,9 +175,10 @@
           {{ selected.competition.description }}
         </p>
         <p class="privacy-note">
-          Joining shows your display name on this event leaderboard. If you opted
-          out of public scoreboards, you appear as “Anonymous participant”. You can
-          leave at any time.
+          Joining is optional. You can practise the exercises without joining and
+          nothing is published until you choose to join. Joining shows your display
+          name on this event leaderboard; if you opted out of public scoreboards,
+          you appear as “Anonymous participant”. You can leave at any time.
         </p>
         <p v-if="actionError" class="form-error" role="alert">{{ actionError }}</p>
 
@@ -293,6 +307,15 @@ const canJoinSelected = computed(() => {
   if (!selected.value) return false
   return !selected.value.competition.joined
     && ['upcoming', 'active'].includes(selected.value.competition.status)
+})
+
+const practiceLink = computed(() => {
+  const lab = selected.value?.labs?.[0]
+  if (!lab?.track_slug) return '/exercises'
+  return {
+    path: `/exercises/${lab.track_slug}`,
+    query: { labId: String(lab.id) },
+  }
 })
 
 const statusLabel = (status) => ({
@@ -735,6 +758,9 @@ onMounted(async () => {
 }
 
 .comp-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
   flex-shrink: 0;
 }
 

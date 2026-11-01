@@ -5,6 +5,12 @@
     "namespace": "range",
     "site_dir": "_site_ai"
   },
+  "high-school": {
+    "config": "mkdocs-highschool.yml",
+    "docs_dir": "Workbook",
+    "namespace": "range",
+    "site_dir": "_site_high-school"
+  },
   "linpt": {
     "config": "mkdocs-linpt.yml",
     "docs_dir": "Workbook",

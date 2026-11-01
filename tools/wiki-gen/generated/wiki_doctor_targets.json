@@ -6,6 +6,12 @@
     "expected_auth": "student"
   },
   {
+    "slug": "high-school",
+    "namespace": "range",
+    "serve_path": "/wiki/range/high-school/",
+    "expected_auth": "student"
+  },
+  {
     "slug": "linpt",
     "namespace": "range",
     "serve_path": "/wiki/range/linpt/",

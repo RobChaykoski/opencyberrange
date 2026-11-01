@@ -3,6 +3,7 @@
 General range tracks. Course material is not listed here.
 
 - [ai](/wiki/range/ai/)
+- [high-school](/wiki/range/high-school/)
 - [linpt](/wiki/range/linpt/)
 - [malware](/wiki/range/malware/)
 - [netfor](/wiki/range/netfor/)

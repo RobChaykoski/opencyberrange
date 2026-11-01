@@ -533,6 +533,9 @@ class CompetitionParticipant(Base):
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     joined_at = Column(DateTime, server_default=func.now())
+    # "new_user" when the account was created through a competition sign-up
+    # link; "opt_in" when an existing account joined from the competitions page.
+    source = Column(String(20), default="opt_in", server_default="opt_in", nullable=False)
 
     competition = relationship("Competition", back_populates="participants")
     user = relationship("User")

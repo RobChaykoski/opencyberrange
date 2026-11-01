@@ -1,0 +1,98 @@
+name: "DevFest Community Portal"
+description: "A gentle, browser-only OSINT challenge for the Windsor-Essex DevFest community. Explore a fictional conference portal, open a speaker's slide export, and read the metadata to recover the flag. No prior experience needed."
+difficulty: beginner
+category: osint
+duration_minutes: 25
+visibility: public
+flag: "OCR{d3vf3st_c0mmun1ty_p0rtal}"
+
+tools:
+  - browser
+
+objectives:
+  - Explore a conference portal without using a terminal
+  - Open a speaker profile and download a shared file
+  - Read PNG text metadata in the browser
+  - Recover the flag and explain why metadata is public content
+
+scenario: |
+  DevFest Windsor-Essex is a community developer conference. The volunteer
+  team built a small portal for the schedule, speakers, and shared slide
+  exports.
+
+  One speaker exported their slide deck as a PNG. The slides look ordinary,
+  but the file metadata still contains the speaker notes from the community
+  track handoff.
+
+  This is a safe, fictional training portal. The speaker, talk, and files are
+  fictional, and the portal does not use real attendee data. You cannot break
+  anything, you can use hints, and you can stop at any time. If this is your
+  first cybersecurity exercise, start with the first hint and take it one step
+  at a time.
+
+workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/"
+
+hostnames:
+  - ip_offset: "90"
+    hostname: "devfest.lab"
+    description: "DevFest community portal (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "DevFest community portal"
+      type: "server"
+      ip_offset: "90"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://devfest.lab:8080 in the lab browser. This exercise is
+      browser-only: you do not need a terminal or any installed tools. You
+      cannot break anything here. Start with the home page and read the
+      speaker list.
+    unlock_after_minutes: 0
+
+  - text: |
+      Go to Speakers, choose Ada Mercer, and download the slide deck. Then open
+      the portal's browser metadata viewer:
+
+      http://devfest.lab:8080/tools/metadata.html
+
+      Choose the downloaded PNG and look for a note about the community track.
+    unlock_after_minutes: 5
+
+  - text: |
+      The flag is in the PNG's Description metadata. If you are using a
+      terminal, you can also run:
+
+      curl -s http://devfest.lab:8080/assets/devfest-slide.png | grep -a -o 'OCR{[^}]*}'
+
+      If you are still unsure, ask a teacher or classmate. Using a hint is part
+      of learning.
+    unlock_after_minutes: 10
+
+test:
+  steps:
+    - name: "DevFest portal responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Speaker page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/speakers/ada-mercer"
+      expect: "200"
+      timeout: 20
+
+    - name: "Slide export is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/assets/devfest-slide.png"
+      expect: "200"
+      timeout: 20
+
+    - name: "Flag is present in the slide metadata"
+      command: "curl -s http://{target.portal}:8080/assets/devfest-slide.png | grep -a -o 'OCR{[^}]*}'"
+      expect: "OCR{d3vf3st_c0mmun1ty_p0rtal}"
+      timeout: 20

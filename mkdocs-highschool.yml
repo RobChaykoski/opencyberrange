@@ -1,0 +1,68 @@
+site_name: "High School Cybersecurity"
+site_description: "A browser-first cybersecurity pathway for grades 9-12"
+site_url: ""
+docs_dir: Workbook
+site_dir: _site_highschool
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css?v=4
+
+extra_javascript:
+  - javascripts/mermaid-fix.js?v=4
+  - javascripts/pdf-export.js?v=2
+  - https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
+
+nav:
+  - Home: index.md
+  - "CH HS12 -- Grade 12 Applied Cybersecurity":
+    - Introduction: CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md
+    - "DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
+    - Chapter Review: CH_HS12_Grade_12_Applied_Cybersecurity/02_Chapter_Review.md

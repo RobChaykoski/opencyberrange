@@ -56,6 +56,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/competitions/:id',
+    name: 'CompetitionDetail',
+    component: () => import('../views/CompetitionDetail.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/vpn-setup',
     name: 'VPNSetup',
     component: () => import('../views/Dashboard.vue'),

@@ -15,6 +15,25 @@
 
           <p class="form-subtext">Join the cybersecurity training platform</p>
 
+          <div v-if="competition" class="competition-callout">
+            <p class="competition-callout__kicker">Competition registration</p>
+            <p>
+              You are creating an account for <strong>{{ competition.name }}</strong>.
+              The event runs {{ formatCompetitionDates(competition) }}.
+            </p>
+            <label v-if="competition.status !== 'ended'" class="competition-callout__join">
+              <input v-model="joinCompetition" type="checkbox" />
+              <span>Add me to the competition participant list</span>
+            </label>
+            <p v-else class="help-text">
+              This event has finished. You can still create an account and explore the platform.
+            </p>
+            <p v-if="competition.status !== 'ended'" class="help-text">
+              Your display name appears on the event leaderboard. If you opted out of
+              public scoreboards, you appear as “Anonymous participant”.
+            </p>
+          </div>
+
           <!-- Error Message -->
           <div v-if="errorMessage" class="error-message">
             {{ errorMessage }}
@@ -243,11 +262,37 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref, reactive } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for registration (no token needed)
 
 const router = useRouter()
+const route = useRoute()
+const competition = ref(null)
+const competitionId = ref(null)
+const joinCompetition = ref(true)
+
+const formatCompetitionDates = (event) => {
+  if (!event?.start_at || !event?.end_at) return ''
+  const start = new Date(event.start_at)
+  const end = new Date(event.end_at)
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return ''
+  return `${start.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} – ${end.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`
+}
+
+onMounted(async () => {
+  const requested = Number(route.query.competition)
+  if (!Number.isInteger(requested) || requested <= 0) return
+  competitionId.value = requested
+  try {
+    const { data } = await axios.get(`/api/competitions/public/${requested}`)
+    competition.value = data.competition
+    joinCompetition.value = data.competition.status !== 'ended'
+  } catch {
+    competition.value = null
+    competitionId.value = null
+  }
+})
 
 const form = reactive({
   username: '',
@@ -387,6 +432,9 @@ const handleRegister = async () => {
     if (inviteCode) {
       payload.invite_code = inviteCode
     }
+    if (competitionId.value && joinCompetition.value) {
+      payload.competition_id = competitionId.value
+    }
 
     await axios.post('/api/auth/register', payload)
 
@@ -493,6 +541,44 @@ const handleRegister = async () => {
   color: var(--text-secondary);
   font-size: 0.9375rem;
   margin-bottom: 1.75rem;
+}
+
+.competition-callout {
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.competition-callout__kicker {
+  margin: 0 0 0.2rem;
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.competition-callout p {
+  margin: 0.2rem 0;
+}
+
+.competition-callout__join {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin: 0.55rem 0 0.3rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.competition-callout__join input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
 }
 
 /* Messages */
