@@ -255,10 +255,19 @@ body {
 .btn--sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
 .btn--xs { padding: 0.25rem 0.5rem; font-size: 0.6875rem; }
 
-/* App layout: sidebar + content */
+/* App layout: sidebar + content + a footer that belongs to the content column.
+   A flex row put the footer beside the main content, which pushed its logo to
+   the far right; the grid keeps the footer below the content instead. */
 .app-root {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
   min-height: 100vh;
+}
+
+.app-root > .sidebar {
+  grid-column: 1;
+  grid-row: 1 / -1;
 }
 
 /* Offset for impersonation banner */
@@ -267,10 +276,11 @@ body {
 }
 
 .main-content {
-  flex: 1;
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
+  min-height: 0;
   overflow-y: auto;
-  min-height: 100vh;
 }
 
 .main-content--guest {
@@ -320,7 +330,8 @@ body {
   .sidebar,
   .theme-toggle,
   .impersonation-banner,
-  .tour-overlay {
+  .tour-overlay,
+  .app-footer {
     display: none !important;
   }
 
@@ -335,6 +346,8 @@ body {
   }
 }
 .app-footer {
+  grid-column: 2;
+  grid-row: 2;
   display: flex;
   align-items: center;
   justify-content: center;
