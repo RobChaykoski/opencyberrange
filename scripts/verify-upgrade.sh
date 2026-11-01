@@ -13,8 +13,12 @@
 
 set -uo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$SOURCE_ROOT"
 PLATFORM_DIR="$REPO_DIR/platform"
+USER_TRANSFER="$SCRIPT_DIR/user_transfer.py"
+TARGET_REPO=""
 BACKUP_ROOT="${BACKUP_ROOT:-$HOME/opencyberrange-backups}"
 REMOTE="${GIT_REMOTE:-backup}"
 BRANCH="${GIT_BRANCH:-main}"
@@ -32,6 +36,8 @@ usage() {
 Usage: verify-upgrade.sh [options]
 
 Options:
+  --repo DIR          Existing OpenCyberRange deployment to verify (the
+                      directory containing platform/.env)
   --remote NAME       Git remote to verify (default: backup, then origin)
   --branch NAME       Git branch to verify (default: main)
   --backup-root DIR   Backup destination to check
@@ -43,6 +49,7 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --repo) TARGET_REPO="${2:?--repo requires a value}"; shift 2 ;;
     --remote) REMOTE="${2:?--remote requires a value}"; shift 2 ;;
     --branch) BRANCH="${2:?--branch requires a value}"; shift 2 ;;
     --backup-root) BACKUP_ROOT="${2:?--backup-root requires a value}"; shift 2 ;;
@@ -72,8 +79,18 @@ docker_path() {
   fi
 }
 
+if [[ -n "$TARGET_REPO" ]]; then
+  if [[ ! -d "$TARGET_REPO" ]]; then
+    echo "deployment directory does not exist: $TARGET_REPO" >&2
+    exit 2
+  fi
+  REPO_DIR="$(cd "$TARGET_REPO" && pwd)"
+  PLATFORM_DIR="$REPO_DIR/platform"
+fi
+
 echo "OpenCyberRange upgrade verification"
 echo "Repository: $REPO_DIR"
+echo "Scripts:    $SCRIPT_DIR"
 echo
 
 # ---------------------------------------------------------------------------
@@ -120,33 +137,33 @@ if [[ -z "$DB_NAME" ]]; then
 fi
 pass "database target resolves to $DB_USER@$DB_NAME"
 
-if [[ -f "$REPO_DIR/scripts/user_transfer.py" ]]; then
+if [[ -f "$USER_TRANSFER" ]]; then
   pass "user transfer utility exists"
 else
   fail "scripts/user_transfer.py is missing"
 fi
 
-if [[ -f "$REPO_DIR/scripts/upgrade-from-backup.sh" ]]; then
+if [[ -f "$SCRIPT_DIR/upgrade-from-backup.sh" ]]; then
   pass "upgrade script exists"
 else
   fail "scripts/upgrade-from-backup.sh is missing"
 fi
 
-if [[ -f "$REPO_DIR/scripts/prebuild-labs.sh" ]]; then
+if [[ -f "$SCRIPT_DIR/prebuild-labs.sh" ]]; then
   pass "lab prebuild script exists"
 else
   fail "scripts/prebuild-labs.sh is missing"
 fi
 
-LAB_COUNT="$(find "$REPO_DIR/platform/labs" -type f -name lab.yaml 2>/dev/null | wc -l | tr -d '[:space:]')"
+LAB_COUNT="$(find "$SOURCE_ROOT/platform/labs" -type f -name lab.yaml 2>/dev/null | wc -l | tr -d '[:space:]')"
 if [[ "$LAB_COUNT" =~ ^[0-9]+$ ]] && (( LAB_COUNT > 0 )); then
   pass "found $LAB_COUNT lab definitions"
 else
   fail "no lab definitions found under platform/labs"
 fi
 
-if [[ -f "$REPO_DIR/scripts/prebuild-labs.sh" ]]; then
-  PREBUILD_COUNT="$(bash "$REPO_DIR/scripts/prebuild-labs.sh" --dry-run 2>/dev/null \
+if [[ -f "$SCRIPT_DIR/prebuild-labs.sh" ]]; then
+  PREBUILD_COUNT="$(bash "$SCRIPT_DIR/prebuild-labs.sh" --dry-run 2>/dev/null \
     | grep -cE '^[[:space:]]*\[[0-9]+/[0-9]+\].*Would build:')"
   if [[ "$PREBUILD_COUNT" =~ ^[0-9]+$ ]] && (( PREBUILD_COUNT > 0 )); then
     if [[ "$LAB_COUNT" =~ ^[0-9]+$ ]] && (( PREBUILD_COUNT != LAB_COUNT )); then
@@ -160,7 +177,7 @@ if [[ -f "$REPO_DIR/scripts/prebuild-labs.sh" ]]; then
 fi
 
 for box in RangeBox UbuntuBox RemnuxBox; do
-  if [[ -f "$REPO_DIR/$box/Dockerfile" ]]; then
+  if [[ -f "$SOURCE_ROOT/$box/Dockerfile" ]]; then
     pass "$box build source exists"
   else
     fail "$box/Dockerfile is missing"
@@ -308,8 +325,8 @@ else
     fail "pg_dump schema test failed"
   fi
 
-  if [[ -f "$REPO_DIR/scripts/user_transfer.py" && ${#COMPOSE[@]} -gt 0 ]]; then
-    compose_in cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" \
+  if [[ -f "$USER_TRANSFER" && ${#COMPOSE[@]} -gt 0 ]]; then
+    compose_in cp "$(docker_path "$USER_TRANSFER")" \
       backend:/tmp/ocr-verify-user-transfer.py >/dev/null 2>&1 || true
     if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
         export -o /tmp/ocr-verify-users.json >/dev/null 2>&1; then

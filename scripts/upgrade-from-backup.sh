@@ -19,8 +19,12 @@
 
 set -Eeuo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SOURCE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+REPO_DIR="$SOURCE_ROOT"
 PLATFORM_DIR="$REPO_DIR/platform"
+USER_TRANSFER="$SCRIPT_DIR/user_transfer.py"
+TARGET_REPO=""
 BACKUP_ROOT="${BACKUP_ROOT:-$HOME/opencyberrange-backups}"
 REMOTE="${GIT_REMOTE:-backup}"
 BRANCH="${GIT_BRANCH:-main}"
@@ -44,6 +48,8 @@ usage() {
 Usage: upgrade-from-backup.sh [options]
 
 Options:
+  --repo DIR            Existing OpenCyberRange deployment to upgrade (the
+                        directory containing platform/.env)
   --remote NAME         Git remote to upgrade from (default: backup, then origin)
   --branch NAME         Git branch to upgrade to (default: main)
   --backup-root DIR     Where to create the timestamped backup
@@ -70,6 +76,7 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --repo) TARGET_REPO="${2:?--repo requires a value}"; shift 2 ;;
     --remote) REMOTE="${2:?--remote requires a value}"; shift 2 ;;
     --branch) BRANCH="${2:?--branch requires a value}"; shift 2 ;;
     --backup-root) BACKUP_ROOT="${2:?--backup-root requires a value}"; shift 2 ;;
@@ -116,6 +123,12 @@ docker_path() {
     printf '%s' "$1"
   fi
 }
+
+if [[ -n "$TARGET_REPO" ]]; then
+  [[ -d "$TARGET_REPO" ]] || fail "deployment directory does not exist: $TARGET_REPO"
+  REPO_DIR="$(cd "$TARGET_REPO" && pwd)"
+  PLATFORM_DIR="$REPO_DIR/platform"
+fi
 
 # ---------------------------------------------------------------------------
 # Preflight
@@ -168,18 +181,20 @@ compose() { "${COMPOSE[@]}" "$@"; }
 compose_in() { MSYS_NO_PATHCONV=1 "${COMPOSE[@]}" "$@"; }
 COMPOSE_DISPLAY="$(printf '%q ' "${COMPOSE[@]}")"
 
-if [[ "$SKIP_USERS" == false && ! -f "$REPO_DIR/scripts/user_transfer.py" ]]; then
+if [[ "$SKIP_USERS" == false && ! -f "$USER_TRANSFER" ]]; then
   fail "scripts/user_transfer.py is missing; copy it to the server or use --skip-users"
 fi
 
 log "Repository: $REPO_DIR"
+log "Scripts:    $SCRIPT_DIR"
 log "Remote:     $REMOTE/$BRANCH"
 log "Database:   $DB_USER@$DB_NAME"
 
 if [[ "$SKIP_VERIFY" == false ]]; then
   CURRENT_STEP="preflight verification"
   log "Running read-only preflight verification"
-  bash "$REPO_DIR/scripts/verify-upgrade.sh" \
+  bash "$SCRIPT_DIR/verify-upgrade.sh" \
+    --repo "$REPO_DIR" \
     --remote "$REMOTE" \
     --branch "$BRANCH" \
     --db-user "$DB_USER" \
@@ -213,7 +228,7 @@ compose_in exec -T db pg_dump -U "$DB_USER" -d "$DB_NAME" -Fc > "$BACKUP_DIR/dat
 
 if [[ "$SKIP_USERS" == false ]]; then
   log "Exporting users"
-  compose_in cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" backend:/tmp/user_transfer.py >/dev/null
+  compose_in cp "$(docker_path "$USER_TRANSFER")" backend:/tmp/user_transfer.py >/dev/null
   compose_in exec -T backend python /tmp/user_transfer.py export -o /tmp/users-export.json
   compose_in cp backend:/tmp/users-export.json "$(docker_path "$BACKUP_DIR/users-export.json")" >/dev/null
   compose_in exec -T backend rm -f /tmp/user_transfer.py /tmp/users-export.json
@@ -283,7 +298,9 @@ fi
 if [[ "$PREBUILD_LABS" == true ]]; then
   CURRENT_STEP="lab image prebuild"
   log "Rebuilding all lab images (cached layers are reused where possible)"
-  bash "$REPO_DIR/scripts/prebuild-labs.sh" --parallel "$PREBUILD_PARALLEL"
+  PREBUILD_SCRIPT="$REPO_DIR/scripts/prebuild-labs.sh"
+  [[ -f "$PREBUILD_SCRIPT" ]] || PREBUILD_SCRIPT="$SCRIPT_DIR/prebuild-labs.sh"
+  bash "$PREBUILD_SCRIPT" --parallel "$PREBUILD_PARALLEL"
 fi
 
 if [[ "$SKIP_RANGEBOX" == false ]]; then
@@ -297,7 +314,7 @@ fi
 if [[ "$SKIP_USERS" == false ]]; then
   CURRENT_STEP="user merge"
   log "Merging users from the backup (existing users are preserved by default)"
-  compose_in cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" backend:/tmp/user_transfer.py >/dev/null
+  compose_in cp "$(docker_path "$USER_TRANSFER")" backend:/tmp/user_transfer.py >/dev/null
   compose_in cp "$(docker_path "$BACKUP_DIR/users-export.json")" backend:/tmp/users-export.json >/dev/null
   if [[ "$UPDATE_USERS" == true ]]; then
     compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --update

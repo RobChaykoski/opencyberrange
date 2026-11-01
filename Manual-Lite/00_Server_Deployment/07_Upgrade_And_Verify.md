@@ -5,6 +5,37 @@ full upgrade backs up the current state, fast-forwards the checkout, rebuilds
 the platform, refreshes every lab image, rebuilds all three RangeBox images,
 and merges the existing users.
 
+## Already running an older checkout?
+
+If `scripts/verify-upgrade.sh` is not on the server yet, fetch the repository
+once into a temporary directory and point the scripts at the live deployment.
+`--repo` is the directory that contains `platform/.env`; adjust it if the
+platform is installed somewhere else.
+
+```bash
+git clone --depth 1 --branch main \
+  https://github.com/RobChaykoski/opencyberrange-backup.git /tmp/ocr-upgrade
+
+sudo bash /tmp/ocr-upgrade/scripts/verify-upgrade.sh \
+  --repo "$HOME/opencyberrange" --remote backup --branch main
+
+sudo bash /tmp/ocr-upgrade/scripts/upgrade-from-backup.sh \
+  --repo "$HOME/opencyberrange" --remote backup --branch main
+```
+
+The existing deployment must be a Git checkout, and it must have a remote that
+contains the branch being deployed:
+
+```bash
+cd "$HOME/opencyberrange"
+git remote -v
+git remote add backup https://github.com/RobChaykoski/opencyberrange-backup.git
+```
+
+For a private repository, configure a deploy key or personal access token on
+the server first. The upgrade fetches the remote itself, so you do not need to
+copy files to the server by hand.
+
 ## 1. Verify first
 
 Run from the repository root on the server:
