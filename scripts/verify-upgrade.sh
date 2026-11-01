@@ -145,6 +145,20 @@ else
   fail "no lab definitions found under platform/labs"
 fi
 
+if [[ -f "$REPO_DIR/scripts/prebuild-labs.sh" ]]; then
+  PREBUILD_COUNT="$(bash "$REPO_DIR/scripts/prebuild-labs.sh" --dry-run 2>/dev/null \
+    | grep -cE '^[[:space:]]*\[[0-9]+/[0-9]+\].*Would build:')"
+  if [[ "$PREBUILD_COUNT" =~ ^[0-9]+$ ]] && (( PREBUILD_COUNT > 0 )); then
+    if [[ "$LAB_COUNT" =~ ^[0-9]+$ ]] && (( PREBUILD_COUNT != LAB_COUNT )); then
+      warn "lab prebuild script found $PREBUILD_COUNT labs but $LAB_COUNT lab definitions exist"
+    else
+      pass "lab prebuild script discovered $PREBUILD_COUNT buildable labs"
+    fi
+  else
+    fail "lab prebuild script did not discover any buildable labs"
+  fi
+fi
+
 for box in RangeBox UbuntuBox RemnuxBox; do
   if [[ -f "$REPO_DIR/$box/Dockerfile" ]]; then
     pass "$box build source exists"

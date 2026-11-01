@@ -32,7 +32,13 @@ NC='\033[0m'
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-LABS_DIR="$PROJECT_ROOT/labs"
+# Lab definitions live under platform/labs; keep the top-level fallback for
+# older checkouts.
+if [ -d "$PROJECT_ROOT/platform/labs" ]; then
+    LABS_DIR="$PROJECT_ROOT/platform/labs"
+else
+    LABS_DIR="$PROJECT_ROOT/labs"
+fi
 LOG_DIR="$PROJECT_ROOT/scripts/.build-logs"
 
 # Defaults
