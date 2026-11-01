@@ -1180,48 +1180,33 @@ async def celebration_wall(
             "is_mine": row.user_id == current_user.id,
         })
 
-    # Friendly spotlight: people with the most celebration moments. Tie-break
-    # on the most recent award so an active newcomer can still feature. One row
-    # per earner also gives us the current user's exact rank without a second
-    # aggregate query.
-    ranked_rows = (
-        public_awards()
-        .with_entities(
-            Achievement.user_id.label("user_id"),
-            func.count(Achievement.id).label("badge_count"),
-            func.count(func.distinct(Achievement.achievement_type)).label("unique_badges"),
-            func.max(Achievement.awarded_at).label("latest_at"),
+    # Celebration spotlight: the most recently celebrated people, one row per
+    # person. Deliberately not a leaderboard. A public badge ranking turns a
+    # learning record into a competition and conflicts with the platform's
+    # learning-impact guidance; the wall celebrates moments instead.
+    spotlight = []
+    seen_user_ids = set()
+    for row in recent_rows:
+        if row.user_id in seen_user_ids:
+            continue
+        seen_user_ids.add(row.user_id)
+        label, icon, _description = _achievement_display(
+            row.achievement_type, custom_defs
         )
-        .group_by(Achievement.user_id)
-        .order_by(
-            func.count(Achievement.id).desc(),
-            func.max(Achievement.awarded_at).desc(),
-        )
-        .all()
-    )
-
-    leader_rows = ranked_rows[:8]
-    leader_ids = [row.user_id for row in leader_rows]
-    leader_users = {
-        user.id: user
-        for user in db.query(User).filter(User.id.in_(leader_ids)).all()
-    } if leader_ids else {}
-
-    leaders = []
-    for row in leader_rows:
-        user = leader_users.get(row.user_id)
+        user = row.user
         if user is None:
             continue
-        leaders.append({
-            "rank": len(leaders) + 1,
+        spotlight.append({
             "user_id": user.id,
             "username": user.username,
             "display_name": user.display_name,
-            "badge_count": row.badge_count,
-            "unique_badges": row.unique_badges,
-            "latest_at": _iso_utc(row.latest_at),
+            "latest_label": label,
+            "latest_icon": icon,
+            "awarded_at": _iso_utc(row.awarded_at),
             "is_mine": user.id == current_user.id,
         })
+        if len(spotlight) >= 6:
+            break
 
     # Badge gallery: how often each badge has been awarded, and to how many
     # different people. Counts are public-only, matching the rest of the wall.
@@ -1302,13 +1287,6 @@ async def celebration_wall(
         and getattr(current_user, "show_on_scoreboard", True)
     )
 
-    my_rank = None
-    if listed and my_badge_count:
-        for index, row in enumerate(ranked_rows, 1):
-            if row.user_id == current_user.id:
-                my_rank = index
-                break
-
     return {
         "generated_at": _iso_utc(now),
         "stats": {
@@ -1319,12 +1297,11 @@ async def celebration_wall(
             "clean_sweeps": clean_sweeps,
         },
         "recent": recent,
-        "leaders": leaders,
+        "spotlight": spotlight,
         "badges": badges,
         "me": {
             "badge_count": my_badge_count,
             "unique_badges": my_unique_badges,
-            "rank": my_rank,
             "listed": listed,
             "can_list": can_list,
             "recent": my_recent,

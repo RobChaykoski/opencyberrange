@@ -86,6 +86,13 @@ The extractor reads the PNG chunk stream, decompresses the pixel data, reads
 the blue-channel LSBs, and prints the payload. It uses only the Python
 standard library.
 
+**No terminal or low-bandwidth route:** open
+`http://connect.lab:8080/tools/extract.html` in the lab browser, choose the
+badge image, and read the result on the page. The extraction happens inside
+the browser tab; the image is not uploaded to a third-party service. This is
+the recommended route on a Chromebook, tablet, or shared computer without
+local tools.
+
 ### Step 4: Submit the flag
 
 Copy the `OCR{...}` value printed by the extractor into the exercise flag box.
@@ -122,5 +129,6 @@ end-of-image marker.
 - Check that you downloaded the file from `/assets/badge.png` and did not
   rename a screenshot.
 - Run `file badge.png`; it should report a PNG image.
-- If `zsteg` is missing, use the served `extract_lsb.py`.
+- If `zsteg` is missing, use the served `extract_lsb.py` or the browser
+  extractor at `/tools/extract.html`.
 - The payload starts at the top-left pixel and uses the blue channel.

@@ -531,6 +531,130 @@ def _extract_script() -> str:
         return "# extractor not available\n"
 
 
+def _browser_extractor() -> str:
+    """Client-side LSB extractor for learners without local tooling."""
+    return """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Badge image extractor · Kestrel Connect</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      background: #07111c;
+      color: #e8eef5;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main {
+      width: min(720px, 100%);
+      padding: clamp(1.4rem, 4vw, 2.2rem);
+      border: 1px solid #27435a;
+      border-radius: 18px;
+      background: #0d1c2b;
+    }
+    h1 { margin: 0 0 0.5rem; font-size: clamp(1.5rem, 4vw, 2.1rem); }
+    p { color: #9fb3c8; line-height: 1.6; }
+    label {
+      display: inline-block;
+      margin: 0.5rem 0 1rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 8px;
+      background: #5eead4;
+      color: #07111c;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    pre {
+      min-height: 3rem;
+      padding: 0.8rem;
+      border: 1px solid #27435a;
+      border-radius: 8px;
+      background: #081019;
+      color: #f5c76a;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    .note { font-size: 0.82rem; color: #9fb3c8; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Badge image extractor</h1>
+    <p>Choose the badge PNG. Extraction runs in this browser tab; the image is
+    not uploaded anywhere.</p>
+    <label for="file">Choose badge.png</label>
+    <input id="file" type="file" accept="image/png">
+    <pre id="out" aria-live="polite">Waiting for an image...</pre>
+    <p class="note">If this page is unavailable, use the Python extractor or
+    <code>zsteg</code> as described in the workbook.</p>
+  </main>
+  <script>
+    const input = document.getElementById("file");
+    const out = document.getElementById("out");
+
+    function findMagic(bytes) {
+      const magic = [0x4f, 0x43, 0x52, 0x53, 0x54, 0x45, 0x47];
+      for (let i = 0; i <= bytes.length - magic.length; i += 1) {
+        if (magic.every((value, offset) => bytes[i + offset] === value)) return i;
+      }
+      return -1;
+    }
+
+    input.addEventListener("change", async () => {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      out.textContent = "Reading image...";
+      try {
+        const bitmap = await createImageBitmap(file);
+        const canvas = document.createElement("canvas");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        context.drawImage(bitmap, 0, 0);
+        const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+
+        const bits = [];
+        for (let i = 0; i < pixels.length; i += 4) bits.push(pixels[i + 2] & 1);
+
+        const bytes = [];
+        for (let i = 0; i + 7 < bits.length; i += 8) {
+          let value = 0;
+          for (let j = 0; j < 8; j += 1) value = (value << 1) | bits[i + j];
+          bytes.push(value);
+        }
+
+        const marker = findMagic(bytes);
+        if (marker === -1) {
+          out.textContent = "No OCRSTEG payload found in the blue channel. "
+            + "Make sure you saved the image without re-encoding it.";
+          return;
+        }
+
+        const length = (
+          (bytes[marker + 7] << 24)
+          | (bytes[marker + 8] << 16)
+          | (bytes[marker + 9] << 8)
+          | bytes[marker + 10]
+        ) >>> 0;
+        const payload = new Uint8Array(bytes.slice(marker + 11, marker + 11 + length));
+        out.textContent = new TextDecoder().decode(payload);
+      } catch (error) {
+        out.textContent = "Could not read that image: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>"""
+
+
 def _swocts_mirror() -> str:
     """Offline mirror of the public SWOCTS homepage for the source-code lab.
 
@@ -667,6 +791,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send(
                 200, _app_js().encode("utf-8"), "application/javascript; charset=utf-8"
             )
+        elif path in ("/tools/extract.html", "/tools/extract"):
+            self._html(_browser_extractor())
         elif path == "/tools/extract_lsb.py":
             self._send(
                 200,

@@ -60,6 +60,13 @@ panel.
 stats, earned certificates, track progress, completion details, achievements,
 and a downloadable PDF transcript.
 
+**Celebration Wall.** A shared recognition page for recent wins. It is a
+spotlight, not a public leaderboard: individual badge counts and ranks are not
+shown. Learners can opt out of the public wall at any time and still see their
+own private corner.
+
+![Celebration Wall](docs/img/celebration-wall.png)
+
 ## Included tracks
 
 | Track | Labs | Focus |
@@ -114,13 +121,18 @@ employee badge, and a public code trail:
   flag in a review page's HTML source.
 - **Badge Photo Intelligence** — inspect PNG metadata, then extract a flag from
   the least-significant bits of the blue channel. The exercise ships with a
-  dependency-free extractor and also works with `zsteg`.
+  dependency-free Python extractor, a browser-based extractor for shared or
+  low-tooling devices, and also works with `zsteg`.
 - **The Developer's Trail** — fetch a static JavaScript asset and recover a
   staging token left in a developer comment. This exercise also includes a
   bonus flag hidden in the public OpenCyberRange repository.
 - **The Public Homepage** — treat a live public site (`www.swocts.com`) as an
   OSINT source, search its document metadata, and find the flag left in the
   page head. A local mirror is available for offline practice.
+
+![The OSINT track](docs/img/osint-track.png)
+
+![Badge Photo Intelligence workbook](docs/img/osint-workbook.png)
 
 The live SWOCTS exercise expects the meta tag documented in
 [`platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md`](platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md).
@@ -151,6 +163,37 @@ The student profile is the record of completed work:
 - See course achievements earned in enrolled courses.
 - Download a PDF transcript containing identity details, completion totals,
   certificates, track progress, completed exercises, and achievements.
+
+## Inclusive learning and privacy
+
+The platform is designed for mixed-confidence learners, shared devices, and
+classrooms where not every student has the same hardware:
+
+- **Synthetic content only.** The OSINT personas, badges, tokens, and flags are
+  fictional. No real employee data, credentials, or live third-party systems are
+  required. The public-homepage exercise uses the organisation's own site and a
+  local mirror; the workbook tells learners not to probe unrelated sites.
+- **More than one access route.** The image-steganography exercise supports
+  `zsteg`, a dependency-free Python extractor, and a browser-based extractor for
+  Chromebooks, tablets, and shared computers. RangeBox, UbuntuBox, and RemnuxBox
+  ship the supporting tools.
+- **No public ranking.** The Celebration Wall shows recent wins and a
+  non-ranked spotlight. It does not publish individual badge counts or ranks.
+  Learners can opt out via “Show me on the wall”; opted-out users still see their
+  own private corner. Admin diagnostic accounts are excluded.
+- **Data minimisation.** The wall exposes only a display name, the latest badge,
+  and a relative timestamp. It does not expose email addresses, student IDs, or
+  avatars.
+- **Learning-impact stance.** Completion, time, and badge counts are activity
+  signals, not measures of ability. The platform does not use them for public
+  rankings, hiring, promotion, or discipline.
+- **Accessibility.** New pages use semantic headings, labelled controls, visible
+  focus, reduced-motion handling, and the existing dark/light theme tokens.
+  Workbook images carry alt text, and the browser extractor works without a
+  local terminal.
+
+The screenshots in this README use a temporary synthetic account and temporary
+demo records. No real learner names, emails, or records are shown.
 
 ## Quick Start
 

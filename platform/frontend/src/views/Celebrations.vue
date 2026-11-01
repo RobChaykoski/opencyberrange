@@ -58,12 +58,14 @@
             <strong>{{ me.badge_count || 0 }}</strong>
             <span>{{ me.badge_count === 1 ? 'badge' : 'badges' }}</span>
           </div>
-          <p v-if="me.rank" class="your-corner__rank">#{{ me.rank }} on the wall</p>
-          <p v-else-if="!me.can_list" class="your-corner__rank your-corner__rank--muted">
+          <p v-if="!me.can_list" class="your-corner__rank your-corner__rank--muted">
             Admin accounts are not listed
           </p>
           <p v-else-if="!me.listed" class="your-corner__rank your-corner__rank--muted">
             Private mode: your wins stay off the wall
+          </p>
+          <p v-else-if="me.badge_count" class="your-corner__rank">
+            Your wins are on the wall
           </p>
           <p v-else class="your-corner__rank your-corner__rank--muted">
             Your first badge is waiting
@@ -155,32 +157,30 @@
           <section class="card wall-fame">
             <div class="card__header">
               <div>
-                <h2 class="card__title">Wall of fame</h2>
-                <p class="card__subtitle">Most badges earned</p>
+                <h2 class="card__title">Spotlight</h2>
+                <p class="card__subtitle">Recently celebrated people, not a ranking</p>
               </div>
             </div>
 
-            <ol v-if="leaders.length" class="fame-list">
+            <ol v-if="spotlight.length" class="fame-list">
               <li
-                v-for="leader in leaders"
-                :key="leader.user_id"
+                v-for="person in spotlight"
+                :key="person.user_id"
                 class="fame-row"
-                :class="{ 'fame-row--mine': leader.is_mine }"
+                :class="{ 'fame-row--mine': person.is_mine }"
               >
-                <span class="fame-rank" :class="`fame-rank--${Math.min(leader.rank, 4)}`">
-                  {{ rankLabel(leader.rank) }}
-                </span>
                 <span class="fame-avatar" aria-hidden="true">
-                  {{ initials(leader.display_name || leader.username) }}
+                  {{ initials(person.display_name || person.username) }}
                 </span>
                 <span class="fame-name">
-                  {{ leader.display_name || leader.username }}
-                  <small v-if="leader.is_mine">you</small>
+                  {{ person.display_name || person.username }}
+                  <small v-if="person.is_mine">you</small>
+                  <span class="fame-badge">{{ person.latest_icon }} {{ person.latest_label }}</span>
                 </span>
-                <span class="fame-count">{{ leader.badge_count }}</span>
+                <span class="fame-time">{{ relativeTime(person.awarded_at) }}</span>
               </li>
             </ol>
-            <p v-else class="empty-state empty-state--compact">The podium is wide open.</p>
+            <p v-else class="empty-state empty-state--compact">The spotlight is ready for its first win.</p>
           </section>
 
           <section class="card wall-nudge">
@@ -242,7 +242,7 @@ import FlameIcon from '../components/icons/FlameIcon.vue'
 const wall = ref({
   stats: {},
   recent: [],
-  leaders: [],
+  spotlight: [],
   badges: [],
   me: null,
 })
@@ -254,7 +254,7 @@ const privacyMessage = ref('')
 
 const stats = computed(() => wall.value.stats || {})
 const recent = computed(() => wall.value.recent || [])
-const leaders = computed(() => wall.value.leaders || [])
+const spotlight = computed(() => wall.value.spotlight || [])
 const badges = computed(() => wall.value.badges || [])
 const me = computed(() => wall.value.me)
 const hasData = computed(() => Boolean(wall.value.generated_at))
@@ -301,7 +301,6 @@ const setListing = async (event) => {
     await axios.put('/auth/settings', { show_on_scoreboard: shown })
     if (wall.value.me) {
       wall.value.me.listed = shown
-      if (!shown) wall.value.me.rank = null
     }
     privacyMessage.value = shown
       ? 'You are back on the wall.'
@@ -323,13 +322,6 @@ const initials = (name) => {
     return (parts[0][0] + parts[1][0]).toUpperCase()
   }
   return cleaned.slice(0, 2).toUpperCase()
-}
-
-const rankLabel = (rank) => {
-  if (rank === 1) return '1'
-  if (rank === 2) return '2'
-  if (rank === 3) return '3'
-  return String(rank)
 }
 
 const toneClass = (type) => {
@@ -813,47 +805,34 @@ const relativeTime = (iso) => {
   background: var(--accent-bg);
 }
 
-.fame-rank {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
-  border-radius: 6px;
-  background: var(--bg-primary);
-  color: var(--text-muted);
-  font-size: 0.68rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.fame-rank--1 {
-  background: rgba(245, 158, 11, 0.18);
-  color: var(--warning);
-}
-
-.fame-rank--2 {
-  background: rgba(148, 163, 184, 0.2);
-  color: var(--text-secondary);
-}
-
-.fame-rank--3 {
-  background: rgba(251, 146, 60, 0.18);
-  color: #fb923c;
-}
-
 .fame-name {
   display: flex;
   align-items: baseline;
-  gap: 0.35rem;
+  flex-wrap: wrap;
+  gap: 0.3rem;
   flex: 1;
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.fame-badge {
+  flex-basis: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.fame-time {
+  flex-shrink: 0;
+  font-size: 0.64rem;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .fame-name small {
@@ -865,17 +844,6 @@ const relativeTime = (iso) => {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-}
-
-.fame-count {
-  flex-shrink: 0;
-  padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  background: var(--bg-primary);
-  color: var(--text-secondary);
-  font-size: 0.68rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
 }
 
 /* Nudge card */

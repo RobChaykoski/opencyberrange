@@ -47,10 +47,22 @@ nothing in this track reaches the real internet.
 - Stay inside the simulated target. Do not probe real Kestrel Ridge domains;
   they do not exist.
 - Do not upload the badge image to a third-party service. Extract the payload
-  locally.
+  locally, or use the lab's browser-based extractor.
 - Record the exact source URL and the command that produced each finding.
 - If you find something that looks like a real secret, stop and tell your
   instructor. The flags in this track are deliberately fake.
+
+## Access and Privacy
+
+- The image exercise has a browser-only extraction route for learners on a
+  Chromebook, tablet, or shared computer without local tools.
+- The public-homepage exercise uses a local mirror by default. The live SWOCTS
+  page is the organisation's own intentionally published site; do not probe
+  unrelated sites.
+- Every persona, badge, token, and flag in this track is fictional. Do not use
+  real names, real employee data, or real credentials in your notes.
+- The public-repository bonus is a deliberately planted teaching artifact. If
+  you find a real secret in any repository, stop and report it privately.
 
 ## Flag Format
 

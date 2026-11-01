@@ -2,7 +2,7 @@
 
 The wall is shared by every signed-in user, so its visibility rules matter:
 active users who opted out of scoreboards and diagnostic admin accounts must
-not appear in the public feed, stats, or leaderboard. A user's own awards are
+not appear in the public feed, stats, or spotlight. A user's own awards are
 still returned in the personal corner.
 """
 import uuid
@@ -188,18 +188,17 @@ def test_wall_shows_public_earners_and_resolves_badge_details(
     assert custom["icon"] == "\U0001F680"
     assert custom["description"] == celebration_data["custom"].description
 
-    leader_ids = {row["user_id"] for row in body["leaders"]}
-    assert test_user.id in leader_ids
-    assert celebration_data["other"].id in leader_ids
-    assert celebration_data["hidden"].id not in leader_ids
-    assert celebration_data["admin"].id not in leader_ids
+    spotlight_ids = {row["user_id"] for row in body["spotlight"]}
+    assert test_user.id in spotlight_ids
+    assert celebration_data["other"].id in spotlight_ids
+    assert celebration_data["hidden"].id not in spotlight_ids
+    assert celebration_data["admin"].id not in spotlight_ids
 
     assert body["stats"]["total_awards"] >= 3
     assert body["stats"]["awards_this_week"] >= 3
     assert body["stats"]["first_bloods"] >= 1
 
     assert body["me"]["badge_count"] == 1
-    assert body["me"]["rank"] is not None
     assert body["me"]["listed"] is True
     assert body["me"]["can_list"] is True
     assert body["me"]["recent"][0]["achievement_type"] == "first_blood"
@@ -222,10 +221,9 @@ def test_opted_out_user_keeps_a_private_personal_corner(
     body = resp.json()
 
     assert test_user.id not in {item["user_id"] for item in body["recent"]}
-    assert test_user.id not in {row["user_id"] for row in body["leaders"]}
+    assert test_user.id not in {row["user_id"] for row in body["spotlight"]}
 
     assert body["me"]["listed"] is False
     assert body["me"]["can_list"] is True
-    assert body["me"]["rank"] is None
     assert body["me"]["badge_count"] == 1
     assert body["me"]["recent"][0]["achievement_type"] == "first_blood"

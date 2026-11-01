@@ -994,6 +994,12 @@ channel's least significant bit, written from the top-left pixel onward.</p>
 <p>The extractor reads the PNG chunk stream, decompresses the pixel data, reads
 the blue-channel LSBs, and prints the payload. It uses only the Python
 standard library.</p>
+<p><strong>No terminal or low-bandwidth route:</strong> open
+<code>http://connect.lab:8080/tools/extract.html</code> in the lab browser, choose the
+badge image, and read the result on the page. The extraction happens inside
+the browser tab; the image is not uploaded to a third-party service. This is
+the recommended route on a Chromebook, tablet, or shared computer without
+local tools.</p>
 <h3 id="step-4-submit-the-flag">Step 4: Submit the flag</h3>
 <p>Copy the <code>OCR{...}</code> value printed by the extractor into the exercise flag box.</p>
 <h2 id="what-just-happened">What Just Happened?</h2>
@@ -1025,7 +1031,8 @@ end-of-image marker.</p>
 <li>Check that you downloaded the file from <code>/assets/badge.png</code> and did not
   rename a screenshot.</li>
 <li>Run <code>file badge.png</code>; it should report a PNG image.</li>
-<li>If <code>zsteg</code> is missing, use the served <code>extract_lsb.py</code>.</li>
+<li>If <code>zsteg</code> is missing, use the served <code>extract_lsb.py</code> or the browser
+  extractor at <code>/tools/extract.html</code>.</li>
 <li>The payload starts at the top-left pixel and uses the blue channel.</li>
 </ul>
 

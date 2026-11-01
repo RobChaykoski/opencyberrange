@@ -189,8 +189,8 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
     {   'name': 'OSINT',
         'slug': 'osint',
         'description': 'Collect and correlate public information from web pages, '
-                       'images, metadata, and code. Follow a fictional insider trail '
-                       'without touching a real target.',
+                       'images, metadata, and code. Follow a fictional organisation\'s '
+                       'public footprint without touching a real target.',
         'icon': 'osint',
         'color': '#0EA5E9',
         'sort_order': 8,
