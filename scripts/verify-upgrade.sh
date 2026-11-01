@@ -1,0 +1,361 @@
+#!/usr/bin/env bash
+# Read-only preflight verification for an OpenCyberRange upgrade.
+#
+# This script never upgrades, restarts, or writes to the database. It checks
+# that the repository, remote, containers, database, backup path, user export,
+# and health endpoints are ready before the full upgrade script runs.
+#
+# Usage:
+#   bash scripts/verify-upgrade.sh
+#   bash scripts/verify-upgrade.sh --remote backup --branch main
+#
+# Exit codes: 0 = ready, 1 = one or more blocking failures.
+
+set -uo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PLATFORM_DIR="$REPO_DIR/platform"
+BACKUP_ROOT="${BACKUP_ROOT:-$HOME/opencyberrange-backups}"
+REMOTE="${GIT_REMOTE:-backup}"
+BRANCH="${GIT_BRANCH:-main}"
+DB_USER="${DB_USER:-}"
+DB_NAME="${DB_NAME:-}"
+RANGEBOX_IMAGE="${RANGEBOX_IMAGE:-opencyberrange/rangebox:lite}"
+UBUNTUBOX_IMAGE="${UBUNTUBOX_IMAGE:-opencyberrange/ubuntubox:latest}"
+REMNUX_IMAGE="${REMNUX_IMAGE:-opencyberrange/remnuxbox:noble}"
+PASS=0
+FAIL=0
+WARN=0
+
+usage() {
+  cat <<'EOF'
+Usage: verify-upgrade.sh [options]
+
+Options:
+  --remote NAME       Git remote to verify (default: backup, then origin)
+  --branch NAME       Git branch to verify (default: main)
+  --backup-root DIR   Backup destination to check
+  --db-user USER      PostgreSQL user (default: POSTGRES_USER from platform/.env)
+  --db-name NAME      PostgreSQL database (default: POSTGRES_DB from platform/.env)
+  -h, --help          Show this help
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --remote) REMOTE="${2:?--remote requires a value}"; shift 2 ;;
+    --branch) BRANCH="${2:?--branch requires a value}"; shift 2 ;;
+    --backup-root) BACKUP_ROOT="${2:?--backup-root requires a value}"; shift 2 ;;
+    --db-user) DB_USER="${2:?--db-user requires a value}"; shift 2 ;;
+    --db-name) DB_NAME="${2:?--db-name requires a value}"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
+  esac
+done
+
+pass() { printf '[PASS] %s\n' "$*"; PASS=$((PASS + 1)); }
+fail() { printf '[FAIL] %s\n' "$*" >&2; FAIL=$((FAIL + 1)); }
+warn() { printf '[WARN] %s\n' "$*"; WARN=$((WARN + 1)); }
+
+env_value() {
+  local key="$1" file="$2"
+  [[ -f "$file" ]] || return 0
+  grep -E "^${key}=" "$file" | tail -1 | cut -d= -f2- \
+    | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
+}
+
+docker_path() {
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -w "$1"
+  else
+    printf '%s' "$1"
+  fi
+}
+
+echo "OpenCyberRange upgrade verification"
+echo "Repository: $REPO_DIR"
+echo
+
+# ---------------------------------------------------------------------------
+# Tooling and files
+# ---------------------------------------------------------------------------
+
+if command -v docker >/dev/null 2>&1; then
+  pass "docker is installed"
+else
+  fail "docker is not installed or not on PATH"
+fi
+
+if docker compose version >/dev/null 2>&1; then
+  pass "docker compose v2 is available"
+else
+  fail "docker compose v2 is not available"
+fi
+
+if command -v git >/dev/null 2>&1; then
+  pass "git is installed"
+else
+  fail "git is not installed"
+fi
+
+if git -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  pass "repository is a git checkout"
+else
+  fail "not a git checkout: $REPO_DIR"
+fi
+
+if [[ -f "$PLATFORM_DIR/.env" ]]; then
+  pass "platform/.env exists"
+else
+  fail "platform/.env is missing"
+fi
+
+if [[ -z "$DB_USER" ]]; then
+  DB_USER="$(env_value POSTGRES_USER "$PLATFORM_DIR/.env")"
+  DB_USER="${DB_USER:-labuser}"
+fi
+if [[ -z "$DB_NAME" ]]; then
+  DB_NAME="$(env_value POSTGRES_DB "$PLATFORM_DIR/.env")"
+  DB_NAME="${DB_NAME:-labdb}"
+fi
+pass "database target resolves to $DB_USER@$DB_NAME"
+
+if [[ -f "$REPO_DIR/scripts/user_transfer.py" ]]; then
+  pass "user transfer utility exists"
+else
+  fail "scripts/user_transfer.py is missing"
+fi
+
+if [[ -f "$REPO_DIR/scripts/upgrade-from-backup.sh" ]]; then
+  pass "upgrade script exists"
+else
+  fail "scripts/upgrade-from-backup.sh is missing"
+fi
+
+if [[ -f "$REPO_DIR/scripts/prebuild-labs.sh" ]]; then
+  pass "lab prebuild script exists"
+else
+  fail "scripts/prebuild-labs.sh is missing"
+fi
+
+LAB_COUNT="$(find "$REPO_DIR/platform/labs" -type f -name lab.yaml 2>/dev/null | wc -l | tr -d '[:space:]')"
+if [[ "$LAB_COUNT" =~ ^[0-9]+$ ]] && (( LAB_COUNT > 0 )); then
+  pass "found $LAB_COUNT lab definitions"
+else
+  fail "no lab definitions found under platform/labs"
+fi
+
+for box in RangeBox UbuntuBox RemnuxBox; do
+  if [[ -f "$REPO_DIR/$box/Dockerfile" ]]; then
+    pass "$box build source exists"
+  else
+    fail "$box/Dockerfile is missing"
+  fi
+done
+
+for image in "$RANGEBOX_IMAGE" "$UBUNTUBOX_IMAGE" "$REMNUX_IMAGE"; do
+  if docker image inspect "$image" >/dev/null 2>&1; then
+    pass "RangeBox image is present: $image"
+  else
+    warn "RangeBox image is not built yet; the upgrade will build it: $image"
+  fi
+done
+
+# ---------------------------------------------------------------------------
+# Compose
+# ---------------------------------------------------------------------------
+
+COMPOSE=()
+if [[ -f "$PLATFORM_DIR/docker-compose.yml" ]]; then
+  COMPOSE=(docker compose -f "$PLATFORM_DIR/docker-compose.yml")
+elif [[ -f "$PLATFORM_DIR/docker-compose.prod.yml" ]]; then
+  COMPOSE=(docker compose -f "$PLATFORM_DIR/docker-compose.prod.yml")
+fi
+if [[ ${#COMPOSE[@]} -gt 0 && -f "$PLATFORM_DIR/docker-compose.override.yml" ]]; then
+  COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.override.yml")
+fi
+compose() { "${COMPOSE[@]}" "$@"; }
+
+if [[ ${#COMPOSE[@]} -eq 0 ]]; then
+  fail "no docker-compose.yml or docker-compose.prod.yml found"
+else
+  if compose config --quiet >/dev/null 2>&1; then
+    pass "docker compose configuration is valid"
+  else
+    fail "docker compose configuration is invalid"
+  fi
+fi
+
+for svc in db backend frontend; do
+  if [[ ${#COMPOSE[@]} -gt 0 ]] && compose ps -q "$svc" 2>/dev/null | grep -q .; then
+    pass "$svc container is running"
+  else
+    fail "$svc container is not running"
+  fi
+done
+
+if [[ ${#COMPOSE[@]} -gt 0 ]]; then
+  if compose exec -T db pg_isready -U "$DB_USER" -d "$DB_NAME" >/dev/null 2>&1; then
+    pass "PostgreSQL is accepting connections"
+  else
+    fail "PostgreSQL is not accepting connections for $DB_USER@$DB_NAME"
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+# Git remote and upgrade path
+# ---------------------------------------------------------------------------
+
+if git -C "$REPO_DIR" remote get-url "$REMOTE" >/dev/null 2>&1; then
+  pass "git remote '$REMOTE' exists"
+else
+  if [[ "$REMOTE" == "backup" ]] && git -C "$REPO_DIR" remote get-url origin >/dev/null 2>&1; then
+    warn "remote 'backup' not found; origin exists"
+    REMOTE=origin
+    pass "git remote 'origin' exists"
+  else
+    fail "git remote '$REMOTE' does not exist"
+  fi
+fi
+
+DIRTY="$(git -C "$REPO_DIR" status --porcelain --untracked-files=no 2>/dev/null || true)"
+if [[ -z "$DIRTY" ]]; then
+  pass "working tree has no modified tracked files"
+else
+  fail "working tree has uncommitted tracked changes; commit or stash them first"
+fi
+
+if git -C "$REPO_DIR" fetch --quiet "$REMOTE" "$BRANCH" >/dev/null 2>&1; then
+  pass "fetched $REMOTE/$BRANCH"
+  LOCAL_SHA="$(git -C "$REPO_DIR" rev-parse HEAD)"
+  REMOTE_SHA="$(git -C "$REPO_DIR" rev-parse "$REMOTE/$BRANCH" 2>/dev/null || true)"
+  if [[ -z "$REMOTE_SHA" ]]; then
+    fail "could not resolve $REMOTE/$BRANCH after fetch"
+  elif [[ "$LOCAL_SHA" == "$REMOTE_SHA" ]]; then
+    pass "checkout is already at $REMOTE/$BRANCH ($LOCAL_SHA)"
+  elif git -C "$REPO_DIR" merge-base --is-ancestor "$LOCAL_SHA" "$REMOTE_SHA"; then
+    pass "checkout can fast-forward to $REMOTE/$BRANCH"
+  else
+    fail "checkout cannot fast-forward to $REMOTE/$BRANCH; resolve divergence first"
+  fi
+else
+  fail "could not fetch $REMOTE/$BRANCH"
+fi
+
+# ---------------------------------------------------------------------------
+# Health endpoints
+# ---------------------------------------------------------------------------
+
+if [[ ${#COMPOSE[@]} -gt 0 ]]; then
+  if compose exec -T backend curl -fsS http://localhost:8000/health 2>/dev/null | grep -q '"status":"healthy"'; then
+    pass "backend health endpoint reports healthy"
+  else
+    fail "backend health endpoint is not healthy"
+  fi
+fi
+
+if command -v curl >/dev/null 2>&1; then
+  if curl -fsS -o /dev/null http://localhost/ 2>/dev/null; then
+    pass "frontend responds on http://localhost/"
+  else
+    fail "frontend does not respond on http://localhost/"
+  fi
+  if curl -kfsS -o /dev/null https://localhost/ 2>/dev/null; then
+    pass "frontend responds on https://localhost/"
+  else
+    warn "frontend HTTPS check failed (self-signed or HTTP-only is possible)"
+  fi
+else
+  warn "curl is not installed; frontend HTTP checks skipped"
+fi
+
+# ---------------------------------------------------------------------------
+# Backup path and dump
+# ---------------------------------------------------------------------------
+
+if mkdir -p "$BACKUP_ROOT" 2>/dev/null && [[ -w "$BACKUP_ROOT" ]]; then
+  pass "backup root is writable: $BACKUP_ROOT"
+else
+  fail "backup root is not writable: $BACKUP_ROOT"
+fi
+
+TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ocr-verify.XXXXXX" 2>/dev/null || true)"
+if [[ -z "$TMP_DIR" ]]; then
+  warn "could not create a temporary directory; dump test skipped"
+else
+  if [[ ${#COMPOSE[@]} -gt 0 ]] && compose exec -T db pg_dump \
+      -U "$DB_USER" -d "$DB_NAME" --schema-only --no-owner --no-privileges -Fc \
+      > "$TMP_DIR/schema.dump" 2>/dev/null && [[ -s "$TMP_DIR/schema.dump" ]]; then
+    pass "pg_dump schema test succeeded"
+  else
+    fail "pg_dump schema test failed"
+  fi
+
+  if [[ -f "$REPO_DIR/scripts/user_transfer.py" && ${#COMPOSE[@]} -gt 0 ]]; then
+    compose cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" \
+      backend:/tmp/ocr-verify-user-transfer.py >/dev/null 2>&1 || true
+    if compose exec -T backend python /tmp/ocr-verify-user-transfer.py \
+        export -o /tmp/ocr-verify-users.json >/dev/null 2>&1; then
+      if compose cp backend:/tmp/ocr-verify-users.json "$TMP_DIR/users.json" >/dev/null 2>&1; then
+        if compose exec -T backend python -c \
+            "import json; d=json.load(open('/tmp/ocr-verify-users.json')); assert d.get('format')=='opencyberrange-users'; assert isinstance(d.get('users'), list); print(len(d['users']))" \
+            >/dev/null 2>&1; then
+          pass "user export test succeeded"
+        else
+          fail "user export payload is invalid"
+        fi
+      else
+        fail "could not copy the user export out of the backend"
+      fi
+      if compose exec -T backend python /tmp/ocr-verify-user-transfer.py \
+          import /tmp/ocr-verify-users.json --dry-run >/dev/null 2>&1; then
+        pass "user import dry-run succeeded (no writes)"
+      else
+        fail "user import dry-run failed"
+      fi
+    else
+      fail "user export failed"
+    fi
+    compose exec -T backend rm -f \
+      /tmp/ocr-verify-user-transfer.py /tmp/ocr-verify-users.json >/dev/null 2>&1 || true
+  fi
+  rm -rf "$TMP_DIR"
+fi
+
+if [[ ${#COMPOSE[@]} -gt 0 ]]; then
+  USER_COUNT="$(compose exec -T db psql -U "$DB_USER" -d "$DB_NAME" \
+    -tAc "SELECT count(*) FROM users;" 2>/dev/null | tr -d '[:space:]')"
+  if [[ "$USER_COUNT" =~ ^[0-9]+$ ]]; then
+    pass "users table is readable ($USER_COUNT accounts)"
+  else
+    fail "could not read the users table"
+  fi
+fi
+
+if command -v df >/dev/null 2>&1; then
+  AVAIL_KB="$(df -Pk "$BACKUP_ROOT" 2>/dev/null | awk 'NR==2 {print $4}')"
+  if [[ -n "$AVAIL_KB" && "$AVAIL_KB" =~ ^[0-9]+$ ]]; then
+    if (( AVAIL_KB >= 20971520 )); then
+      pass "backup disk has at least 20 GiB free for lab and RangeBox rebuilds"
+    elif (( AVAIL_KB >= 10485760 )); then
+      warn "backup disk has 10-20 GiB free; a full lab/RangeBox rebuild may be tight"
+    else
+      fail "backup disk has less than 10 GiB free; full lab/RangeBox rebuild will fail"
+    fi
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+# Summary
+# ---------------------------------------------------------------------------
+
+echo
+echo "Summary: $PASS passed, $FAIL failed, $WARN warning(s)"
+if (( FAIL > 0 )); then
+  echo "Not ready for upgrade. Fix the failures above." >&2
+  exit 1
+fi
+
+echo "Verification passed. You can run:"
+echo "  sudo bash scripts/upgrade-from-backup.sh --remote $REMOTE --branch $BRANCH"
+exit 0

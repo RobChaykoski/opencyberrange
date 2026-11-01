@@ -1,0 +1,120 @@
+# Upgrade and Verify a Server
+
+Use the verification script before an upgrade, then run the upgrade script. The
+full upgrade backs up the current state, fast-forwards the checkout, rebuilds
+the platform, refreshes every lab image, rebuilds all three RangeBox images,
+and merges the existing users.
+
+## 1. Verify first
+
+Run from the repository root on the server:
+
+```bash
+sudo bash scripts/verify-upgrade.sh --remote backup --branch main
+```
+
+The verification is read-only. It checks:
+
+- Docker, Compose, Git, and the repository state
+- `platform/.env` and the detected database target
+- The compose configuration and running `db`, `backend`, and `frontend`
+- PostgreSQL connectivity and the `users` table
+- Backend and frontend health endpoints
+- The Git remote and whether the checkout can fast-forward
+- Backup path, free disk space, and a schema-only `pg_dump`
+- The user export and an import dry-run
+- Every lab definition under `platform/labs`
+- The `RangeBox`, `UbuntuBox`, and `RemnuxBox` build sources and images
+
+**What you should see:** all checks pass, with warnings for optional HTTPS or a
+RangeBox image that has not been built yet. If any check fails, fix it before
+upgrading.
+
+## 2. Upgrade
+
+```bash
+sudo bash scripts/upgrade-from-backup.sh --remote backup --branch main
+```
+
+The upgrade performs the following in order:
+
+| Step | What happens |
+|------|--------------|
+| Preflight | Runs `verify-upgrade.sh` unless `--skip-verify` is set |
+| Backup | Creates a timestamped directory under `~/opencyberrange-backups/` |
+| Database | Exports a full `pg_dump` in custom format |
+| Users | Exports every user to `users-export.json` |
+| Config | Copies `.env`, compose files, and certificates |
+| Source | Fetches and fast-forwards to the selected remote branch |
+| Platform | Rebuilds and recreates `db`, `backend`, and `frontend` |
+| Curriculum | Runs the curriculum seeder and lab discovery |
+| Lab images | Rebuilds every lab image with `prebuild-labs.sh` |
+| RangeBox | Rebuilds Kali, Ubuntu, and REMnux images |
+| Users | Merges the user export; existing accounts are preserved by default |
+| Verify | Checks container status, backend health, and the user count |
+
+By default all lab images and all RangeBox images are rebuilt. The first full
+run can take a long time and needs significant disk space. The default REMnux
+image is about 6 GB compressed and 14 GB on disk.
+
+## Common options
+
+```bash
+# Skip the read-only verification only when you have just run it manually
+sudo bash scripts/upgrade-from-backup.sh --skip-verify
+
+# Code-only upgrade: no lab image or RangeBox rebuild
+sudo bash scripts/upgrade-from-backup.sh --skip-labs --skip-rangebox
+
+# Rebuild lab images four at a time
+sudo bash scripts/upgrade-from-backup.sh --prebuild-parallel 4
+
+# Refresh existing users from the backup instead of only adding missing ones
+sudo bash scripts/upgrade-from-backup.sh --update-users
+
+# Leave users untouched
+sudo bash scripts/upgrade-from-backup.sh --skip-users
+
+# Skip curriculum seeding and lab discovery
+sudo bash scripts/upgrade-from-backup.sh --skip-discovery
+```
+
+Use `--skip-labs` or `--skip-rangebox` only when you know those images are
+already current. Lab definitions are still refreshed unless
+`--skip-discovery` is also used.
+
+## Backups and rollback
+
+Each run creates:
+
+```text
+~/opencyberrange-backups/ocr-YYYYMMDD-HHMMSS/
+├── database.dump
+├── users-export.json
+├── .env
+├── docker-compose*.yml
+├── certs/
+└── README.txt
+```
+
+The user export contains password hashes. The directory is created with
+restrictive permissions; delete it after the upgrade is verified or move it to
+secure storage.
+
+The upgrade script prints the restore instructions and writes them to the
+backup's `README.txt`. A full database restore is destructive; stop the
+backend and frontend before restoring.
+
+If the upgrade fails, the script stops at the failed step and prints the backup
+path. The source checkout is already fast-forwarded, so fix the reported problem
+and rerun the script; the backup step is safe to repeat.
+
+## What is not migrated
+
+- MFA/TOTP enrollment and recovery codes
+- Trusted devices and active sessions
+- WireGuard VPN peers and configuration
+- Course enrollments, completions, achievements, and lab history
+
+See [Migrating Users](../04_Admin_Guide/26_Migrating_Users.md) for the user-only
+workflow and its limitations.

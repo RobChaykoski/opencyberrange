@@ -329,6 +329,8 @@ def import_users(args):
             print(f"warning: {warning}")
         if len(warnings) > 50:
             print(f"warning: {len(warnings) - 50} more warning(s) not shown")
+        if errors:
+            raise SystemExit(1)
     finally:
         conn.close()
 

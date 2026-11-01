@@ -126,6 +126,7 @@ nav:
     - "Cloud Deployment": 00_Server_Deployment/03_Cloud_Deployment.md
     - "Post Installation": 00_Server_Deployment/04_Post_Installation.md
     - "Uninstallation": 00_Server_Deployment/05_Uninstallation.md
+    - "Upgrade and Verify": 00_Server_Deployment/07_Upgrade_And_Verify.md
     - "Architecture": 00_Server_Deployment/06_Architecture.md
   - "Admin Guide":
     - "Admin Panel Overview": 04_Admin_Guide/01_Admin_Panel_Overview.md

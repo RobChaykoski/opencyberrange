@@ -1,6 +1,6 @@
 # OpenCyberRange
 
-[![Labs](https://img.shields.io/badge/labs-133-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-131-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-7-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -65,7 +65,7 @@ and a downloadable PDF transcript.
 | Track | Labs | Focus |
 |-------|------|-------|
 | Windows Penetration Testing | 53 | Enumeration, SMB, RDP, WinRM, MSSQL, LDAP, credential reuse |
-| Linux Fundamentals | 39 | Service enumeration, SSH, privilege escalation, pivoting, detection |
+| Linux Fundamentals | 37 | Service enumeration, SSH, privilege escalation, pivoting, detection |
 | Web Application Security | 16 | Reconnaissance, injection, traversal, API and authentication testing |
 | Network Security | 13 | Traffic analysis, protocol attacks, firewalls, exfiltration |
 | Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
@@ -217,6 +217,7 @@ opencyberrange/
 | Guide | Audience |
 |-------|----------|
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
+| [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation |
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
