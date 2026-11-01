@@ -2,6 +2,10 @@
 
 Status: planning document. Nothing in this document changes runtime behaviour.
 
+Wave 0 scaffold is present: `versions.yaml`, `docs/SUPPORTED-VERSIONS.md`,
+`docs/WAVE-0-BASELINE.md`, `scripts/report-versions.py`, CI workflows, and
+Renovate configuration.
+
 ## 1. What "latest supported GA" means
 
 Do not equate this with "newest version of everything". The target is the newest
