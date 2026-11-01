@@ -17,14 +17,13 @@ RUN mkdir -p /run/sshd && \
 RUN useradd -m -s /bin/bash webadmin && \
     echo 'webadmin:WebServer2024#' | chpasswd
 
-# Create web directory structure with flag
-RUN mkdir -p /var/www/html/backups && \
-    echo '<html><body>FinanceCorp Web Portal</body></html>' > /var/www/html/index.html && \
-    echo 'Deployment Notes - v3.2.1\nDeployed: 2024-01-15\nFlag: OCR{f1l3_d1sc0v3ry}' > /var/www/html/backups/deployment_notes.txt
+# Web directory structure. These files are the discovery targets for the
+# exercise: configuration, environment secrets, backups, and the flag note.
+COPY html/ /var/www/html/
 
 EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 CMD ["/entrypoint.sh"]

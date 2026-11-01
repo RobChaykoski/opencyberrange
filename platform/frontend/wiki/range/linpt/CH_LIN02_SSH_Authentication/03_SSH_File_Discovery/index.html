@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.4">
     
     
       
@@ -846,10 +846,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-5-search-for-configuration-files" class="md-nav__link">
+  <a href="#step-4-search-for-configuration-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 5: Search for Configuration Files
+        Step 4: Search for Configuration Files
       
     </span>
   </a>
@@ -857,10 +857,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-6-locate-environment-files" class="md-nav__link">
+  <a href="#step-5-locate-environment-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 6: Locate Environment Files
+        Step 5: Locate Environment Files
       
     </span>
   </a>
@@ -868,10 +868,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-7-discover-backup-files" class="md-nav__link">
+  <a href="#step-6-discover-backup-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 7: Discover Backup Files
+        Step 6: Discover Backup Files
       
     </span>
   </a>
@@ -879,10 +879,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-8-search-for-credentials-with-grep" class="md-nav__link">
+  <a href="#step-7-search-for-credentials-with-grep" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 8: Search for Credentials with grep
+        Step 7: Search for Credentials with grep
       
     </span>
   </a>
@@ -890,10 +890,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-9-capture-the-flag" class="md-nav__link">
+  <a href="#step-8-capture-the-flag" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 9: Capture the Flag
+        Step 8: Capture the Flag
       
     </span>
   </a>
@@ -912,10 +912,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-10-record-the-flag" class="md-nav__link">
+  <a href="#step-9-record-the-flag" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 10: Record the Flag
+        Step 9: Record the Flag
       
     </span>
   </a>
@@ -1321,10 +1321,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-5-search-for-configuration-files" class="md-nav__link">
+  <a href="#step-4-search-for-configuration-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 5: Search for Configuration Files
+        Step 4: Search for Configuration Files
       
     </span>
   </a>
@@ -1332,10 +1332,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-6-locate-environment-files" class="md-nav__link">
+  <a href="#step-5-locate-environment-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 6: Locate Environment Files
+        Step 5: Locate Environment Files
       
     </span>
   </a>
@@ -1343,10 +1343,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-7-discover-backup-files" class="md-nav__link">
+  <a href="#step-6-discover-backup-files" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 7: Discover Backup Files
+        Step 6: Discover Backup Files
       
     </span>
   </a>
@@ -1354,10 +1354,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-8-search-for-credentials-with-grep" class="md-nav__link">
+  <a href="#step-7-search-for-credentials-with-grep" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 8: Search for Credentials with grep
+        Step 7: Search for Credentials with grep
       
     </span>
   </a>
@@ -1365,10 +1365,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-9-capture-the-flag" class="md-nav__link">
+  <a href="#step-8-capture-the-flag" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 9: Capture the Flag
+        Step 8: Capture the Flag
       
     </span>
   </a>
@@ -1387,10 +1387,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-10-record-the-flag" class="md-nav__link">
+  <a href="#step-9-record-the-flag" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 10: Record the Flag
+        Step 9: Record the Flag
       
     </span>
   </a>
@@ -1536,89 +1536,90 @@
 </code></pre></div>
 <p>Review the output. Focus on files that are likely to store credentials or sensitive data.</p>
 </div>
-<h3 id="step-5-search-for-configuration-files">Step 5: Search for Configuration Files</h3>
+<h3 id="step-4-search-for-configuration-files">Step 4: Search for Configuration Files</h3>
 <div class="admonition target">
 <p class="admonition-title">Find and read configuration files</p>
 <p>Use the <code>find</code> command to locate configuration files across the web directory. The <code>2&gt;/dev/null</code> redirect suppresses permission-denied noise.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>find /var/www/html/ -name &quot;config*&quot; \
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>find /var/www/html/ -name "config*" \
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  -type f 2&gt;/dev/null
 </code></pre></div>
 <p>Read the discovered <code>config.php</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>&lt;?php
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>// Database Configuration
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>$db_host = &quot;localhost&quot;;
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>$db_user = &quot;webapp_admin&quot;;
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>$db_pass = &quot;W3bApp_S3cur3_2024&quot;;
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>$db_name = &quot;financecorp_webapp&quot;;
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>// FinanceCorp Web Application Configuration
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>$db_host = "10.10.10.100";
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>$db_user = "webapp_user";
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>$db_pass = "W3bApp_DB_P@ss2024#";
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>$db_name = "financecorp_portal";
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>// API Configuration
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>$api_key = &quot;fc-api-8a3b2c1d4e5f&quot;;
-<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>?&gt;
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>$api_key = "fc_api_sk_live_xK9mN2pQ4rT6vW8yZ";
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>$app_debug = true;
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>$app_env = "production";
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>?&gt;
 </code></pre></div>
 <p>Record every credential and key found. The database password and API key are reusable against other services.</p>
 </div>
-<h3 id="step-6-locate-environment-files">Step 6: Locate Environment Files</h3>
+<h3 id="step-5-locate-environment-files">Step 5: Locate Environment Files</h3>
 <div class="admonition target">
 <p class="admonition-title">Find and read environment files</p>
 <p>Search for <code>.env</code> files that store application secrets.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>find /var/www/ -name &quot;.env&quot; \
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>find /var/www/ -name ".env" \
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  -type f 2&gt;/dev/null
 </code></pre></div>
 <p>Read the discovered environment file:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>cat /var/www/html/.env
 </code></pre></div>
 <p>Expected output:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>APP_NAME=FinanceCorp Portal
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>APP_NAME=FinanceCorp
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>APP_ENV=production
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>APP_KEY=base64:Fc8k3mN7pQ2xR5vB9wY1zA4cE6gH8jL0
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>APP_DEBUG=true
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>APP_DEBUG=true
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>APP_URL=https://portal.financecorp.local
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>DB_CONNECTION=mysql
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>DB_HOST=127.0.0.1
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>DB_HOST=10.10.10.100
 <a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>DB_PORT=3306
 <a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>DB_DATABASE=financecorp_portal
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>DB_USERNAME=portal_user
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>DB_PASSWORD=P0rt4l_Pr0d_2024
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
-<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>MAIL_HOST=smtp.financecorp.local
-<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>MAIL_USERNAME=noreply@financecorp.local
-<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>MAIL_PASSWORD=M4il_S3rv3r_2024
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>DB_USERNAME=webapp_user
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>DB_PASSWORD=W3bApp_DB_P@ss2024#
 </code></pre></div>
-<p>Catalog the database and mail credentials. Note <code>APP_DEBUG=true</code>, which means the application leaks detailed errors in production.</p>
+<p>Catalog the database credentials. Note <code>APP_DEBUG=true</code>, which means the application leaks detailed errors in production.</p>
 </div>
-<h3 id="step-7-discover-backup-files">Step 7: Discover Backup Files</h3>
+<h3 id="step-6-discover-backup-files">Step 6: Discover Backup Files</h3>
 <div class="admonition target">
 <p class="admonition-title">Find and read backup files</p>
 <p>Backup files are frequently left in place after updates. Search for common backup extensions.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>find /var/www/html/ -name &quot;*.bak&quot; -o \
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  -name &quot;*.old&quot; -o -name &quot;*.backup&quot; \
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>find /var/www/html/ -name "*.bak" -o \
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  -name "*.old" -o -name "*.backup" \
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>  2&gt;/dev/null
 </code></pre></div>
 <p>Read any discovered backup files:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>cat /var/www/html/config.php.bak
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>cat /var/www/html/backups/old_config.php.bak
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>cat /var/www/html/backups/db_backup.sql
 </code></pre></div>
-<p>Backup files often contain older credentials that may still be valid on other systems.</p>
+<p>Backup files often contain older credentials that may still be valid on other systems. <code>db_backup.sql</code> is a database dump; inspect it for user tables and configuration values, but do not import it.</p>
 </div>
-<h3 id="step-8-search-for-credentials-with-grep">Step 8: Search for Credentials with grep</h3>
+<h3 id="step-7-search-for-credentials-with-grep">Step 7: Search for Credentials with grep</h3>
 <div class="admonition target">
 <p class="admonition-title">Grep recursively for password strings</p>
 <p>Use <code>grep</code> to search for password strings across all files.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>grep -ri &quot;password&quot; /var/www/html/ \
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>grep -ri "password" /var/www/html/ \
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  2&gt;/dev/null
 </code></pre></div>
 <p>The <code>-r</code> flag searches recursively and <code>-i</code> makes the search case-insensitive. Each match points to another file worth reading in full.</p>
 </div>
-<h3 id="step-9-capture-the-flag">Step 9: Capture the Flag</h3>
+<h3 id="step-8-capture-the-flag">Step 8: Capture the Flag</h3>
 <div class="admonition target">
 <p class="admonition-title">Locate and read the flag</p>
-<p>Locate the flag for this exercise.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>find /var/www/html/ -name &quot;*flag*&quot; \
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  -type f 2&gt;/dev/null
+<p>The flag is left in a deployment note inside the web backup directory.
+Search for it rather than guessing a filename:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>grep -r "OCR{" /var/www/html/ 2&gt;/dev/null
 </code></pre></div>
-<p>Read the flag file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>cat /var/www/html/flag.txt
+<p>Read the note:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>cat /var/www/html/backups/deployment_notes.txt
 </code></pre></div>
-<p>Expected flag format: <code>OCR{...}</code>. Record the value for submission.</p>
+<p>The <code>Security Assessment Flag:</code> line contains the value. Record it for
+submission.</p>
 </div>
 <h3 id="record-your-findings">Record Your Findings</h3>
 <blockquote>
@@ -1633,15 +1634,23 @@
 <tbody>
 <tr>
 <td><code>/var/www/html/config.php</code></td>
-<td><strong><em>_</em></strong>___</td>
+<td>__________</td>
 </tr>
 <tr>
 <td><code>/var/www/html/.env</code></td>
-<td><strong><em>_</em></strong>___</td>
+<td>__________</td>
 </tr>
 <tr>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
+<td><code>/var/www/html/backups/old_config.php.bak</code></td>
+<td>__________</td>
+</tr>
+<tr>
+<td><code>/var/www/html/backups/db_backup.sql</code></td>
+<td>__________</td>
+</tr>
+<tr>
+<td><code>/var/www/html/backups/deployment_notes.txt</code></td>
+<td>__________</td>
 </tr>
 </tbody>
 </table>
@@ -1658,34 +1667,28 @@
 <tbody>
 <tr>
 <td>config.php</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
+<td>__________</td>
+<td>__________</td>
+<td>__________</td>
 </tr>
 <tr>
 <td>.env (DB)</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
+<td>__________</td>
+<td>__________</td>
+<td>__________</td>
 </tr>
 <tr>
-<td>.env (Mail)</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
-</tr>
-<tr>
-<td>config.php.bak</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
-<td><strong><em>_</em></strong>___</td>
+<td>old_config.php.bak</td>
+<td>__________</td>
+<td>__________</td>
+<td>__________</td>
 </tr>
 </tbody>
 </table>
 <p><strong>How to submit:</strong> enter the flag on the exercise page exactly as you recovered it, keeping the <code>OCR{...}</code> wrapper.</p>
 <p><strong>Flag:</strong> <code>OCR{____________}</code></p>
 </blockquote>
-<h3 id="step-10-record-the-flag">Step 10: Record the Flag</h3>
+<h3 id="step-9-record-the-flag">Step 9: Record the Flag</h3>
 <p>Copy the flag (it follows the <code>OCR{...}</code> format) and submit it on the lab platform in the designated field to complete Exercise L2.3.</p>
 <div class="admonition target">
 <p class="admonition-title">Close the SSH session</p>

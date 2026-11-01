@@ -98,7 +98,7 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
 
     Review the output. Focus on files that are likely to store credentials or sensitive data.
 
-### Step 5: Search for Configuration Files
+### Step 4: Search for Configuration Files
 
 !!! target "Find and read configuration files"
     Use the `find` command to locate configuration files across the web directory. The `2>/dev/null` redirect suppresses permission-denied noise.
@@ -112,20 +112,23 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
 
     ```
     <?php
-    // Database Configuration
-    $db_host = "localhost";
-    $db_user = "webapp_admin";
-    $db_pass = "W3bApp_S3cur3_2024";
-    $db_name = "financecorp_webapp";
+    // FinanceCorp Web Application Configuration
+    $db_host = "10.10.10.100";
+    $db_user = "webapp_user";
+    $db_pass = "W3bApp_DB_P@ss2024#";
+    $db_name = "financecorp_portal";
 
     // API Configuration
-    $api_key = "fc-api-8a3b2c1d4e5f";
+    $api_key = "fc_api_sk_live_xK9mN2pQ4rT6vW8yZ";
+
+    $app_debug = true;
+    $app_env = "production";
     ?>
     ```
 
     Record every credential and key found. The database password and API key are reusable against other services.
 
-### Step 6: Locate Environment Files
+### Step 5: Locate Environment Files
 
 !!! target "Find and read environment files"
     Search for `.env` files that store application secrets.
@@ -144,26 +147,22 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
     Expected output:
 
     ```
-    APP_NAME=FinanceCorp Portal
+    APP_NAME=FinanceCorp
     APP_ENV=production
-    APP_KEY=base64:Fc8k3mN7pQ2xR5vB9wY1zA4cE6gH8jL0
     APP_DEBUG=true
+    APP_URL=https://portal.financecorp.local
 
     DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
+    DB_HOST=10.10.10.100
     DB_PORT=3306
     DB_DATABASE=financecorp_portal
-    DB_USERNAME=portal_user
-    DB_PASSWORD=P0rt4l_Pr0d_2024
-
-    MAIL_HOST=smtp.financecorp.local
-    MAIL_USERNAME=noreply@financecorp.local
-    MAIL_PASSWORD=M4il_S3rv3r_2024
+    DB_USERNAME=webapp_user
+    DB_PASSWORD=W3bApp_DB_P@ss2024#
     ```
 
-    Catalog the database and mail credentials. Note `APP_DEBUG=true`, which means the application leaks detailed errors in production.
+    Catalog the database credentials. Note `APP_DEBUG=true`, which means the application leaks detailed errors in production.
 
-### Step 7: Discover Backup Files
+### Step 6: Discover Backup Files
 
 !!! target "Find and read backup files"
     Backup files are frequently left in place after updates. Search for common backup extensions.
@@ -177,12 +176,13 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
     Read any discovered backup files:
 
     ```
-    cat /var/www/html/config.php.bak
+    cat /var/www/html/backups/old_config.php.bak
+    cat /var/www/html/backups/db_backup.sql
     ```
 
-    Backup files often contain older credentials that may still be valid on other systems.
+    Backup files often contain older credentials that may still be valid on other systems. `db_backup.sql` is a database dump; inspect it for user tables and configuration values, but do not import it.
 
-### Step 8: Search for Credentials with grep
+### Step 7: Search for Credentials with grep
 
 !!! target "Grep recursively for password strings"
     Use `grep` to search for password strings across all files.
@@ -194,23 +194,24 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
 
     The `-r` flag searches recursively and `-i` makes the search case-insensitive. Each match points to another file worth reading in full.
 
-### Step 9: Capture the Flag
+### Step 8: Capture the Flag
 
 !!! target "Locate and read the flag"
-    Locate the flag for this exercise.
+    The flag is left in a deployment note inside the web backup directory.
+    Search for it rather than guessing a filename:
 
     ```
-    find /var/www/html/ -name "*flag*" \
-      -type f 2>/dev/null
+    grep -r "OCR{" /var/www/html/ 2>/dev/null
     ```
 
-    Read the flag file:
+    Read the note:
 
     ```
-    cat /var/www/html/flag.txt
+    cat /var/www/html/backups/deployment_notes.txt
     ```
 
-    Expected flag format: `OCR{...}`. Record the value for submission.
+    The `Security Assessment Flag:` line contains the value. Record it for
+    submission.
 
 ### Record Your Findings
 
@@ -220,7 +221,9 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
 > |-----------|----------|
 > | `/var/www/html/config.php` | __________ |
 > | `/var/www/html/.env` | __________ |
-> | __________ | __________ |
+> | `/var/www/html/backups/old_config.php.bak` | __________ |
+> | `/var/www/html/backups/db_backup.sql` | __________ |
+> | `/var/www/html/backups/deployment_notes.txt` | __________ |
 >
 > **Discovered Credentials**
 >
@@ -228,14 +231,13 @@ Verify your identity with `whoami`, then move to the web root. Unlike the previo
 > |--------|----------|----------|---------|
 > | config.php | __________ | __________ | __________ |
 > | .env (DB) | __________ | __________ | __________ |
-> | .env (Mail) | __________ | __________ | __________ |
-> | config.php.bak | __________ | __________ | __________ |
+> | old_config.php.bak | __________ | __________ | __________ |
 >
 > **How to submit:** enter the flag on the exercise page exactly as you recovered it, keeping the `OCR{...}` wrapper.
 >
 > **Flag:** `OCR{____________}`
 
-### Step 10: Record the Flag
+### Step 9: Record the Flag
 
 Copy the flag (it follows the `OCR{...}` format) and submit it on the lab platform in the designated field to complete Exercise L2.3.
 
