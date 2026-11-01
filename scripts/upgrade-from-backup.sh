@@ -129,7 +129,10 @@ docker_path() {
 # trip Git's dubious-ownership check or create root-owned files.
 repo_git() {
   if [[ "$(id -u)" -eq 0 && -n "${SUDO_USER:-}" ]]; then
-    sudo -u "$SUDO_USER" git -C "$REPO_DIR" "$@"
+    sudo -u "$SUDO_USER" \
+      SSH_AUTH_SOCK="${SSH_AUTH_SOCK:-}" \
+      GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-}" \
+      git -C "$REPO_DIR" "$@"
   else
     git -C "$REPO_DIR" "$@"
   fi
@@ -320,7 +323,10 @@ log "Backup complete: $BACKUP_DIR"
 CURRENT_STEP="git fetch/merge"
 OLD_COMMIT="$(repo_git rev-parse HEAD)"
 log "Fetching $REMOTE/$BRANCH"
-repo_git fetch "$REMOTE" "$BRANCH"
+if ! repo_git fetch "$REMOTE" \
+    "+refs/heads/$BRANCH:refs/remotes/$REMOTE/$BRANCH"; then
+  fail "could not fetch $REMOTE/$BRANCH; try: git -C $REPO_DIR fetch $REMOTE $BRANCH"
+fi
 log "Fast-forwarding to $REMOTE/$BRANCH"
 repo_git merge --ff-only "$REMOTE/$BRANCH"
 NEW_COMMIT="$(repo_git rev-parse HEAD)"

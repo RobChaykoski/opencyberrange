@@ -84,7 +84,10 @@ docker_path() {
 # trip Git's dubious-ownership check or create root-owned files.
 repo_git() {
   if [[ "$(id -u)" -eq 0 && -n "${SUDO_USER:-}" ]]; then
-    sudo -u "$SUDO_USER" git -C "$REPO_DIR" "$@"
+    sudo -u "$SUDO_USER" \
+      SSH_AUTH_SOCK="${SSH_AUTH_SOCK:-}" \
+      GIT_SSH_COMMAND="${GIT_SSH_COMMAND:-}" \
+      git -C "$REPO_DIR" "$@"
   else
     git -C "$REPO_DIR" "$@"
   fi
@@ -278,7 +281,8 @@ else
   fail "working tree has uncommitted tracked changes; commit or stash them first"
 fi
 
-if repo_git fetch --quiet "$REMOTE" "$BRANCH" >/dev/null 2>&1; then
+if repo_git fetch --quiet "$REMOTE" \
+    "+refs/heads/$BRANCH:refs/remotes/$REMOTE/$BRANCH" >/dev/null 2>&1; then
   pass "fetched $REMOTE/$BRANCH"
   LOCAL_SHA="$(repo_git rev-parse HEAD)"
   REMOTE_SHA="$(repo_git rev-parse "$REMOTE/$BRANCH" 2>/dev/null || true)"
@@ -292,7 +296,7 @@ if repo_git fetch --quiet "$REMOTE" "$BRANCH" >/dev/null 2>&1; then
     fail "checkout cannot fast-forward to $REMOTE/$BRANCH; resolve divergence first"
   fi
 else
-  fail "could not fetch $REMOTE/$BRANCH"
+  fail "could not fetch $REMOTE/$BRANCH (try: git -C $REPO_DIR fetch $REMOTE $BRANCH)"
 fi
 
 # ---------------------------------------------------------------------------
