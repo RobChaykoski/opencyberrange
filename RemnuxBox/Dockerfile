@@ -61,6 +61,15 @@ RUN install -d -m 0755 /etc/apt/keyrings && \
     apt-get update && apt-get install -y firefox \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# ── Layer 2b: Image analysis & steganography extras ─────────────────────
+# REMnux already carries a deep forensics toolkit; these packages cover the
+# OSINT track's metadata and LSB workflows in the browser desktop.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    binwalk foremost libimage-exiftool-perl pngcheck steghide \
+    imagemagick ruby ruby-dev zlib1g-dev python3-pil \
+    && gem install --no-document zsteg \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # ── Layer 3: Desktop account ────────────────────────────────────────────
 # The distro ships a "remnux" user whose home holds the toolchain, so keep it
 # as the desktop account: PATH, virtualenvs and tool config behave exactly as

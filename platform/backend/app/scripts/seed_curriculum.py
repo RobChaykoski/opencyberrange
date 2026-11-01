@@ -185,7 +185,23 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                       {   'level_number': 6,
                           'name': 'AI-Assisted Security and Capstone',
                           'description': 'Using AI responsibly in security operations and a '
-                                         'full AI application assessment'}]}]
+                                         'full AI application assessment'}]},
+    {   'name': 'OSINT',
+        'slug': 'osint',
+        'description': 'Collect and correlate public information from web pages, '
+                       'images, metadata, and code. Follow a fictional insider trail '
+                       'without touching a real target.',
+        'icon': 'osint',
+        'color': '#0EA5E9',
+        'sort_order': 8,
+        'levels': [   {   'level_number': 1,
+                          'name': 'Digital Footprint Foundations',
+                          'description': 'Public profiles, robots.txt, source comments, '
+                                         'and image metadata'},
+                      {   'level_number': 2,
+                          'name': 'Code and Sources',
+                          'description': 'Static assets, JavaScript comments, and leaked '
+                                         'public repository material'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)

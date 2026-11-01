@@ -1,0 +1,72 @@
+site_name: "OSINT"
+site_description: "Open-source intelligence exercises for OpenCyberRange"
+site_url: ""
+docs_dir: Workbook
+site_dir: _site_osint
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css?v=4
+
+extra_javascript:
+  - javascripts/mermaid-fix.js?v=4
+  - javascripts/pdf-export.js?v=2
+  - https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
+
+nav:
+  - Home: index.md
+  - "CH OSINT1 -- Digital Footprint Foundations":
+    - Introduction: CH_OSINT01_OSINT_Foundations/00_Introduction.md
+    - "Exercise 1.1 -- The Public Footprint": CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint.md
+    - "Exercise 1.2 -- Badge Photo Intelligence": CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence.md
+  - "CH OSINT2 -- Code and Sources":
+    - "Exercise 2.1 -- The Developer's Trail": CH_OSINT01_OSINT_Foundations/03_The_Developers_Trail.md
+    - "Exercise 2.2 -- The Public Homepage": CH_OSINT01_OSINT_Foundations/04_The_Public_Homepage.md
+    - Chapter Review: CH_OSINT01_OSINT_Foundations/05_Chapter_Review.md

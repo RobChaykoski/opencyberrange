@@ -24,6 +24,12 @@
       "docs_dir": "Workbook",
       "theme": "deep purple"
     },
+    "osint": {
+      "auth": "student",
+      "config": "mkdocs-osint.yml",
+      "docs_dir": "Workbook",
+      "theme": "teal"
+    },
     "ot": {
       "auth": "student",
       "config": "mkdocs-ot.yml",

@@ -1,0 +1,87 @@
+name: "The Public Footprint"
+description: "Kestrel Ridge's intranet exposes a people directory, a kudos wall, and a robots.txt that was never meant to be a secret. Follow the trail from the dashboard to a restricted notes page and recover the flag from its source."
+difficulty: beginner
+category: osint
+duration_minutes: 35
+visibility: public
+flag: "OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}"
+
+tools:
+  - browser
+  - curl
+
+objectives:
+  - Map the visible pages of the Kestrel Connect intranet
+  - Read robots.txt for paths the site owner tried to hide
+  - Inspect page source for comments, metadata, and stale review notes
+  - Recover the flag from the restricted notes page
+
+scenario: |
+  Kestrel Ridge runs an internal "Connect" site for staff: a dashboard, a
+  people directory, a kudos wall, and the usual company notices. The site is
+  only meant for employees, but one of its review pages is still reachable.
+
+  You have been asked to review the intranet's public surface the way an
+  outside researcher would. Start at the dashboard, follow the people trail,
+  and see what the site accidentally tells you about its own structure.
+
+  This is a safe, simulated intranet. It has no connection to the real
+  internet and no real employee data.
+
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint/"
+
+hostnames:
+  - ip_offset: "80"
+    hostname: "connect.lab"
+    description: "Kestrel Connect intranet (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "intranet"
+      label: "Kestrel Connect"
+      type: "server"
+      ip_offset: "80"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Start at http://connect.lab:8080 and browse the dashboard. The people
+      directory is the most useful page. Profiles are intentionally public to
+      everyone on the intranet.
+    unlock_after_minutes: 5
+
+  - text: |
+      A site can hide a path without protecting it. Fetch the robots file:
+
+      curl -s http://connect.lab:8080/robots.txt
+
+      Look for the page under /people/dana.whitfield/ that is disallowed.
+    unlock_after_minutes: 12
+
+  - text: |
+      Open the restricted notes page in the browser and view the page source.
+      The flag is in an HTML comment near the bottom of the document. From the
+      terminal:
+
+      curl -s http://connect.lab:8080/people/dana.whitfield/notes | grep -o 'OCR{[^}]*}'
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Intranet dashboard responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "robots.txt exposes the review path"
+      command: "curl -s http://{target.intranet}:8080/robots.txt | grep -o '/people/[a-z.]*/notes'"
+      expect: "/people/dana.whitfield/notes"
+      timeout: 20
+
+    - name: "Flag is present in the notes page source"
+      command: "curl -s http://{target.intranet}:8080/people/dana.whitfield/notes | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}"
+      timeout: 20

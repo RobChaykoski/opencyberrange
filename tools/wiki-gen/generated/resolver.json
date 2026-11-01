@@ -24,6 +24,11 @@
     "namespace": "range",
     "serve_path": "/wiki/range/netfor/"
   },
+  "osint": {
+    "auth": "student",
+    "namespace": "range",
+    "serve_path": "/wiki/range/osint/"
+  },
   "ot": {
     "auth": "student",
     "namespace": "range",

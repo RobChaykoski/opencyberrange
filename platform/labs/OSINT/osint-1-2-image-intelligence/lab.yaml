@@ -1,0 +1,99 @@
+name: "Badge Photo Intelligence"
+description: "A Kestrel Ridge employee badge photo is public. The metadata looks ordinary, but the pixels carry more than they should. Extract the hidden payload and recover the flag."
+difficulty: beginner
+category: osint
+duration_minutes: 45
+visibility: public
+flag: "OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}"
+
+tools:
+  - browser
+  - curl
+  - exiftool
+  - python3
+  - zsteg
+
+objectives:
+  - Download an image from a public profile without altering it
+  - Inspect EXIF and PNG text metadata for context
+  - Recognise least-significant-bit steganography
+  - Extract the hidden payload and recover the flag
+
+scenario: |
+  People Security refreshed the staff badge photos last week. Dana
+  Whitfield's profile still points at the old export, and the file is served
+  from the intranet with no access control.
+
+  A badge photo should contain a face and a name. This one also contains a
+  message that was never meant to be visible. Your job is to separate the
+  visible image from the data underneath it.
+
+  This is a safe, simulated image. It contains no real person and no real
+  credentials.
+
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence/"
+
+hostnames:
+  - ip_offset: "81"
+    hostname: "connect.lab"
+    description: "Kestrel Connect intranet (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "intranet"
+      label: "Kestrel Connect"
+      type: "server"
+      ip_offset: "81"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://connect.lab:8080/people/dana.whitfield and download the badge
+      photo. Save it without opening and re-saving it in an image editor: some
+      editors rewrite the pixel data and destroy the hidden payload.
+
+      curl -s http://connect.lab:8080/assets/badge.png -o badge.png
+    unlock_after_minutes: 5
+
+  - text: |
+      Start with the obvious metadata:
+
+      exiftool badge.png
+      file badge.png
+      strings badge.png | head
+
+      The metadata gives context, but the flag is not stored there. The image
+      is a PNG, so the compressed pixel data is the place to look.
+    unlock_after_minutes: 12
+
+  - text: |
+      The payload is written into the least significant bit of the blue
+      channel, one bit per pixel. If you have zsteg:
+
+      zsteg -a badge.png
+
+      If you do not, the intranet serves a dependency-free extractor:
+
+      curl -s http://connect.lab:8080/tools/extract_lsb.py -o extract_lsb.py
+      python3 extract_lsb.py badge.png
+    unlock_after_minutes: 22
+
+test:
+  steps:
+    - name: "Profile page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/people/dana.whitfield"
+      expect: "200"
+      timeout: 20
+
+    - name: "Badge image is served as a PNG"
+      command: "curl -s http://{target.intranet}:8080/assets/badge.png | head -c 8 | od -An -tx1 | tr -d ' \n'"
+      expect: "89504e470d0a1a0a"
+      timeout: 20
+
+    - name: "Extractor recovers the hidden flag"
+      command: "curl -s http://{target.intranet}:8080/assets/badge.png -o /tmp/badge.png && curl -s http://{target.intranet}:8080/tools/extract_lsb.py -o /tmp/extract_lsb.py && python3 /tmp/extract_lsb.py /tmp/badge.png"
+      expect: "OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}"
+      timeout: 30

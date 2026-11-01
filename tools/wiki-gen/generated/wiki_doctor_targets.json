@@ -24,6 +24,12 @@
     "expected_auth": "student"
   },
   {
+    "slug": "osint",
+    "namespace": "range",
+    "serve_path": "/wiki/range/osint/",
+    "expected_auth": "student"
+  },
+  {
     "slug": "ot",
     "namespace": "range",
     "serve_path": "/wiki/range/ot/",

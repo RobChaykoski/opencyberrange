@@ -61,6 +61,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     snmp onesixtyone \
     # Forensics & analysis
     binwalk foremost libimage-exiftool-perl sleuthkit \
+    # OSINT, image analysis & steganography
+    steghide pngcheck imagemagick ruby ruby-dev zlib1g-dev python3-pil \
     # Network defense
     suricata \
     # Scripting & development
@@ -89,6 +91,7 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     volatility3 \
     requests \
     beautifulsoup4 \
+    && gem install --no-document zsteg \
     && ln -sf /usr/local/bin/vol /usr/local/bin/vol3 \
     && ln -sf /usr/bin/python3 /usr/local/bin/python \
     && ln -sf /usr/share/doc/python3-impacket/examples/mssqlclient.py /usr/local/bin/mssqlclient.py \

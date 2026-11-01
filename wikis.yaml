@@ -34,6 +34,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: pink
+  osint:
+    config: mkdocs-osint.yml
+    docs_dir: Workbook
+    auth: student
+    theme: teal
 reference:
   manual:
     config: mkdocs-manual-lite.yml

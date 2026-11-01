@@ -66,6 +66,16 @@ Start the Network Foundations chapter at
 Start the AI Hacking stream at
 [CH AI1 — AI Security Foundations](CH_AI01_AI_Foundations/00_Introduction.md).
 
+### OSINT
+
+| Chapter | Focus | Exercises |
+|---------|-------|-----------|
+| CH OSINT1; Digital Footprint Foundations | Public profiles, `robots.txt`, source comments, image steganography | 2 exercises |
+| CH OSINT2; Code and Sources | Static JavaScript, source-code comments, public metadata, public-repository leaks | 2 exercises |
+
+Start the OSINT stream at
+[CH OSINT1 — Digital Footprint Foundations](CH_OSINT01_OSINT_Foundations/00_Introduction.md).
+
 ## How to Use This Workbook
 
 1. **Launch an exercise** in the OpenCyberRange platform

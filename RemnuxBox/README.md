@@ -42,6 +42,9 @@ the browser connects through FastAPI's authenticated WebSocket proxy.
 
 - The desktop runs as the distro's own `remnux` user so PATH, virtualenvs and
   tool configuration match the upstream image. Passwordless `sudo` is added.
+- Image and OSINT extras are included for the OSINT track: `exiftool`,
+  `binwalk`, `foremost`, `steghide`, `pngcheck`, `zsteg`, ImageMagick, and
+  Python Pillow.
 - Wine-dependent tools (`scdbg`, `ssview`, `shellcode2exe-bat`, `runsc`) and
   VS Code are excluded from the upstream container. Install them with
   `remnux install --user remnux` if an exercise needs them.

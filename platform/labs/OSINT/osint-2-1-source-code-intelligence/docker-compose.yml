@@ -1,0 +1,23 @@
+services:
+  intranet:
+    mem_limit: 160m
+    cpus: 0.2
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: connect
+    labels:
+      ip_offset: "82"
+    environment:
+      LAB_MODE: "code_intel"
+      FLAG: "OCR{c0d3_c0mm3nts_l34k_s3cr3ts}"
+      COMPANY: "Kestrel Ridge"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

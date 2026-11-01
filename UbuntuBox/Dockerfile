@@ -54,11 +54,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Editors & terminal tools
     vim nano tmux \
     # Utilities
-    jq file unzip zip tar gzip \
+    jq file unzip zip tar gzip xxd \
     openssh-client \
     htop tree less \
     gnupg ca-certificates \
+    # OSINT, image analysis & steganography
+    binwalk foremost libimage-exiftool-perl pngcheck steghide \
+    imagemagick ruby ruby-dev zlib1g-dev python3-pil \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN gem install --no-document zsteg
 
 # ── Layer 2b: Firefox from Mozilla APT repo (snap stub doesn't work in Docker)
 RUN install -d -m 0755 /etc/apt/keyrings && \

@@ -41,6 +41,7 @@ TRACK_DIRS = {
     "web": "Web",
     "network": "Network",
     "malware": "Malware",
+    "osint": "OSINT",
     "capitalflow": "Capital Flow",
     "forensics": "Forensics",
     "refinery": "Refinery",

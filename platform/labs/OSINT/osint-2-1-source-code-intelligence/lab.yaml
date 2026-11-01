@@ -1,0 +1,86 @@
+name: "The Developer's Trail"
+description: "The Kestrel Connect front end ships a small JavaScript bundle. A leftover developer comment still carries a staging token. Review the code like an outside researcher and recover the flag."
+difficulty: intermediate
+category: osint
+duration_minutes: 35
+visibility: public
+flag: "OCR{c0d3_c0mm3nts_l34k_s3cr3ts}"
+
+tools:
+  - browser
+  - curl
+  - grep
+
+objectives:
+  - Inspect a site's static assets instead of only its rendered pages
+  - Read JavaScript comments and build metadata
+  - Recognise why secrets do not belong in client-side code
+  - Recover the staging token and the bonus public-repository flag
+
+scenario: |
+  Kestrel Connect's dashboard is built from a handful of static files. The
+  visible pages are deliberately ordinary, but the front end shipped with a
+  developer note that was supposed to be removed before launch.
+
+  This is the bonus challenge in the OSINT track. Treat the public web
+  surface as a source: JavaScript, CSS, comments, source maps, and the public
+  repository are all fair game.
+
+  A second bonus flag has escaped into the public OpenCyberRange repository.
+  Search for Kestrel Ridge or the badge ID KR-0421 to find the staging note.
+  That flag is not required to complete this exercise.
+
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_The_Developers_Trail/"
+
+hostnames:
+  - ip_offset: "82"
+    hostname: "connect.lab"
+    description: "Kestrel Connect intranet (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "intranet"
+      label: "Kestrel Connect"
+      type: "server"
+      ip_offset: "82"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://connect.lab:8080 and view the page source. The page loads a
+      script from /static/app.js. Static assets are part of the public attack
+      surface even when they are not linked in the navigation.
+    unlock_after_minutes: 5
+
+  - text: |
+      Fetch the script and search it for comments or staging strings:
+
+      curl -s http://connect.lab:8080/static/app.js
+      curl -s http://connect.lab:8080/static/app.js | grep -n -i 'TODO\|token\|staging\|OCR'
+    unlock_after_minutes: 12
+
+  - text: |
+      The flag is in a block comment near the bottom of app.js. Submit it from
+      the exercise panel. For the bonus flag, search the public OpenCyberRange
+      repository for "Kestrel Ridge" or "KR-0421" and read the staging note.
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Dashboard responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "JavaScript asset is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/static/app.js"
+      expect: "200"
+      timeout: 20
+
+    - name: "Flag is present in a JavaScript comment"
+      command: "curl -s http://{target.intranet}:8080/static/app.js | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{c0d3_c0mm3nts_l34k_s3cr3ts}"
+      timeout: 20

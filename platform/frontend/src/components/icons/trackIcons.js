@@ -18,6 +18,7 @@ import PentestIcon from './PentestIcon.vue'
 import AdptIcon from './AdptIcon.vue'
 import AisecIcon from './AisecIcon.vue'
 import MasaIcon from './MasaIcon.vue'
+import OsintIcon from './OsintIcon.vue'
 
 export const iconComponents = {
   windows: WindowsIcon,
@@ -36,7 +37,8 @@ export const iconComponents = {
   pentest: PentestIcon,
   adpt: AdptIcon,
   aisec: AisecIcon,
-  masa: MasaIcon
+  masa: MasaIcon,
+  osint: OsintIcon
 }
 
 export const getTrackIcon = (iconName) => iconComponents[iconName] || WindowsIcon

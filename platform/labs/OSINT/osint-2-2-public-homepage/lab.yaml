@@ -1,0 +1,81 @@
+name: "The Public Homepage"
+description: "A real community site is part of the target surface. Inspect the source of www.swocts.com, find the flag left in its metadata, and explain why source-code clues are still OSINT."
+difficulty: beginner
+category: osint
+duration_minutes: 25
+visibility: public
+flag: "OCR{swocts_v13w_s0urc3}"
+
+tools:
+  - browser
+  - curl
+  - grep
+
+objectives:
+  - Treat a public homepage as an OSINT source
+  - Fetch the page source instead of only reading the rendered page
+  - Search metadata and comments for a hidden marker
+  - Record the exact URL and source location of the finding
+
+scenario: |
+  SWOCTS Hub is the public home of the Southwestern Ontario Cybersecurity
+  community. Like any modern site, it ships metadata and source code to every
+  visitor.
+
+  A flag has been placed in the site's source for this exercise. The rendered
+  page looks ordinary; the flag is in the document metadata.
+
+  The live target is https://www.swocts.com. A local mirror is available at
+  http://connect.lab:8080 for offline practice and validation. Use the live
+  site when you can, then confirm the same technique against the mirror.
+
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Public_Homepage/"
+
+hostnames:
+  - ip_offset: "83"
+    hostname: "connect.lab"
+    description: "SWOCTS public homepage mirror (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "publicsite"
+      label: "SWOCTS Hub mirror"
+      type: "server"
+      ip_offset: "83"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the live site in a browser and use View Page Source. If you are
+      working offline, use the mirror:
+
+      curl -s http://connect.lab:8080/
+    unlock_after_minutes: 4
+
+  - text: |
+      Search the source for the flag prefix and for anything unusual in the
+      document head:
+
+      curl -s https://www.swocts.com/ | grep -i 'OCR{\|osint\|meta name'
+    unlock_after_minutes: 10
+
+  - text: |
+      The marker is a custom meta tag in the page head. Look for a name that
+      starts with x- and a content value containing OCR{...}. Submit the whole
+      flag exactly as it appears.
+    unlock_after_minutes: 16
+
+test:
+  steps:
+    - name: "Mirror homepage responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.publicsite}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Flag is present in the page metadata"
+      command: "curl -s http://{target.publicsite}:8080/ | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{swocts_v13w_s0urc3}"
+      timeout: 20

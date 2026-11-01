@@ -1,12 +1,12 @@
 # OpenCyberRange
 
-[![Labs](https://img.shields.io/badge/labs-134-blue)](platform/labs/)
-[![Tracks](https://img.shields.io/badge/tracks-7-green)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-138-blue)](platform/labs/)
+[![Tracks](https://img.shields.io/badge/tracks-8-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
 [![AI-assisted](https://img.shields.io/badge/AI-assisted%20build-8b5cf6)](#ai-assistance-disclosure)
 
-A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, and AI security.
+A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, AI security, and open-source intelligence (OSINT).
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
@@ -70,7 +70,8 @@ and a downloadable PDF transcript.
 | Network Security | 16 | Network foundations (ping, DNS), traffic analysis, protocol attacks, firewalls, exfiltration |
 | Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
-| **AI Hacking** | **3** | Prompt injection, jailbreak policy bypass, indirect prompt injection |
+| AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
+| **OSINT** | **4** | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
 
 ## Network Foundations stream
 
@@ -102,6 +103,34 @@ network. No external model, API key, or internet access is required. The next
 levels — instruction hierarchy, RAG/data exposure, agent tool abuse, model
 supply chain, and an AI-assisted capstone — are defined in the curriculum and
 will appear as their labs are published.
+
+## OSINT stream
+
+The **OSINT** track teaches students to work from the outside in. The target is
+**Kestrel Ridge**, a fictional company with a simulated intranet, a public
+employee badge, and a public code trail:
+
+- **The Public Footprint** — map a staff intranet, read `robots.txt`, and find a
+  flag in a review page's HTML source.
+- **Badge Photo Intelligence** — inspect PNG metadata, then extract a flag from
+  the least-significant bits of the blue channel. The exercise ships with a
+  dependency-free extractor and also works with `zsteg`.
+- **The Developer's Trail** — fetch a static JavaScript asset and recover a
+  staging token left in a developer comment. This exercise also includes a
+  bonus flag hidden in the public OpenCyberRange repository.
+- **The Public Homepage** — treat a live public site (`www.swocts.com`) as an
+  OSINT source, search its document metadata, and find the flag left in the
+  page head. A local mirror is available for offline practice.
+
+The live SWOCTS exercise expects the meta tag documented in
+[`platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md`](platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md).
+The GitHub bonus flag is discoverable by searching the public repository for
+`Kestrel Ridge` or `KR-0421`.
+
+The matching workbook chapters are **CH OSINT1 -- Digital Footprint
+Foundations** and **CH OSINT2 -- Code and Sources**. The RangeBox, UbuntuBox,
+and RemnuxBox images include the supporting tooling: `exiftool`, `binwalk`,
+`foremost`, `steghide`, `pngcheck`, `zsteg`, ImageMagick, and Python Pillow.
 
 ## Profile, certificates, and transcripts
 

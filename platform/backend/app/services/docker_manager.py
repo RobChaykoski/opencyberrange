@@ -108,7 +108,8 @@ def get_track_directory_name(track_slug: str) -> str:
         "windows": "Windows",
         "linux": "Linux",
         "network": "Network",
-        "malware": "Malware"
+        "malware": "Malware",
+        "osint": "OSINT"
     }
     return track_name_map.get(track_slug, track_slug.capitalize())
 
@@ -2046,7 +2047,7 @@ fi
                     f' action mirred egress mirror dev {gre_name} 2>/dev/null'
                 )
             tc_script = (
-                f'apk add --no-cache iproute2 >/dev/null 2>&1\n'
+                'apk add --no-cache iproute2 >/dev/null 2>&1\n'
                 + "\n".join(mirror_cmds)
                 + f'\necho "TC mirrors to {gre_name} configured for {len(veth_indices)} veths"'
             )
@@ -2271,7 +2272,6 @@ fi
         removed_count = 0
         
         try:
-            from datetime import datetime, timezone, timedelta
             from app.database import SessionLocal
             from app.models import LabSession
             
