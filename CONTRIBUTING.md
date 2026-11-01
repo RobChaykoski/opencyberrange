@@ -62,6 +62,12 @@ of truth for tokens, page patterns, accessibility, Vue conventions, and course
 content. The generic `ui-ux-pro-max` skill is available as an advisory input, but
 the project skill takes precedence.
 
+For course, lab, workbook, persona, or achievement content, also load
+`.opencode/skills/opencyberrange-inclusive-curriculum/SKILL.md`. It covers
+inclusive representation, avoiding stock hacker/victim tropes, and adding a
+restrained near-future AI texture without turning the exercise into science
+fiction.
+
 Before submitting frontend changes:
 
 ```bash
