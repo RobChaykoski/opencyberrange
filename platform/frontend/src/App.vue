@@ -147,7 +147,7 @@ function maybeStartTour() {
   setTimeout(() => { if (isAuthenticated.value && userRole.value !== 'admin') showTour.value = true }, 900)
 }
 function onTourFinish() {
-  try { localStorage.setItem(tourKey.value, '1') } catch (e) { /* private mode */ }
+  try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
   showTour.value = false
 }
 function startTour() { showTour.value = true }

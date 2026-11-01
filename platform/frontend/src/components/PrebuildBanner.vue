@@ -24,7 +24,7 @@ const fetchStatus = async () => {
     const { data } = await axios.get('/labs/prebuild-status')
     prebuild.value = data
     if (!data.active && timer) { clearInterval(timer); timer = null }
-  } catch (e) { /* endpoint absent on older backends; leave the banner hidden */ }
+  } catch { /* endpoint absent on older backends; leave the banner hidden */ }
 }
 
 onMounted(() => {

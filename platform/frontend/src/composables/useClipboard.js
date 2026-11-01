@@ -11,7 +11,7 @@ export function useClipboard(resetMs = 1500) {
   async function copyText(value, key = 'default') {
     try {
       await navigator.clipboard.writeText(value)
-    } catch (e) {
+    } catch {
       // Clipboard can be blocked (permissions, insecure context); the flash
       // still runs so the UI acknowledges the click.
     }

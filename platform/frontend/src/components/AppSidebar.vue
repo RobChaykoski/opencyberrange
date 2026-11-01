@@ -181,7 +181,6 @@
 import { computed, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePrivacy } from '../composables/usePrivacy'
-import { useModules } from '../composables/useModules'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
 
 const props = defineProps({
@@ -199,7 +198,6 @@ const route = useRoute()
 const { privacyMode, togglePrivacy } = usePrivacy()
 const startTour = inject('startTour', null)
 const replayTour = () => { if (startTour) startTour() }
-const { isModuleEnabled } = useModules()
 
 const showInstructor = computed(() => ['instructor', 'admin'].includes(props.userRole))
 const showAdmin = computed(() => props.userRole === 'admin')

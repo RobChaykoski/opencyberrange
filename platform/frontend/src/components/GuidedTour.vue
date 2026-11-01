@@ -68,7 +68,7 @@ async function applyStep() {
   const s = step.value
   // navigate first if the step lives on another route
   if (s.route && route.path !== s.route) {
-    try { await router.push(s.route) } catch (e) { /* redundant nav */ }
+    try { await router.push(s.route) } catch { /* redundant nav */ }
     await new Promise(r => setTimeout(r, reduced() ? 150 : 450))
   }
   await locate(s)

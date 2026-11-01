@@ -159,7 +159,7 @@ const form = reactive({
   setup_token: '',
 })
 
-const ShieldIcon = {
+const _ShieldIcon = {
   template: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 2L3 7V12C3 16.97 7.02 21.45 12 22C16.98 21.45 21 16.97 21 12V7L12 2Z"/>
   </svg>`
