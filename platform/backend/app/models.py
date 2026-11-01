@@ -2,7 +2,7 @@
 Database models
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey, Text, Index, UniqueConstraint, CheckConstraint, text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey, Text, Index, CheckConstraint, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -477,6 +477,72 @@ class CustomAchievement(Base):
     threshold = Column(Integer, nullable=False, default=1)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, server_default=func.now())
+
+
+class Competition(Base):
+    """An opt-in, time-boxed special event using a selected set of labs."""
+    __tablename__ = "competitions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(150), nullable=False)
+    description = Column(Text, nullable=True)
+    start_at = Column(DateTime, nullable=False)
+    end_at = Column(DateTime, nullable=False)
+    is_active = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    creator = relationship("User", foreign_keys=[created_by])
+    labs = relationship(
+        "CompetitionLab", back_populates="competition", cascade="all, delete-orphan"
+    )
+    participants = relationship(
+        "CompetitionParticipant", back_populates="competition",
+        cascade="all, delete-orphan",
+    )
+
+
+class CompetitionLab(Base):
+    """A lab included in a competition."""
+    __tablename__ = "competition_labs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
+    )
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
+    sort_order = Column(Integer, default=0)
+
+    competition = relationship("Competition", back_populates="labs")
+    lab = relationship("Lab")
+
+    __table_args__ = (
+        Index("ix_competition_lab_unique", "competition_id", "lab_id", unique=True),
+    )
+
+
+class CompetitionParticipant(Base):
+    """Explicit opt-in for a competition leaderboard."""
+    __tablename__ = "competition_participants"
+
+    id = Column(Integer, primary_key=True, index=True)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    joined_at = Column(DateTime, server_default=func.now())
+
+    competition = relationship("Competition", back_populates="participants")
+    user = relationship("User")
+
+    __table_args__ = (
+        Index(
+            "ix_competition_participant_unique",
+            "competition_id", "user_id", unique=True,
+        ),
+    )
 
 
 class CourseCompletionReset(Base):

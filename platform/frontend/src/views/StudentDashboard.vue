@@ -53,6 +53,10 @@
               <FlagIcon />
               {{ completedLabs }} {{ completedLabs === 1 ? 'lab' : 'labs' }} cleared
             </span>
+            <span v-if="data.scoreboard_rank" class="hero-pill hero-pill--rank">
+              <TrophyIcon />
+              #{{ data.scoreboard_rank }}<template v-if="data.course_name"> in {{ data.course_name }}</template>
+            </span>
             <span v-if="streak.current > 0" class="hero-pill hero-pill--streak">
               <FlameIcon />
               {{ streak.current }}-day streak
@@ -129,18 +133,7 @@
         </div>
       </div>
 
-      <div v-if="data.scoreboard_rank" class="card card--rank">
-        <div class="card__header">
-          <span class="card__icon card__icon--amber"><TrophyIcon /></span>
-          <h2 class="card__title">Your rank</h2>
-        </div>
-        <div class="rank-info">
-          <span class="rank-number">#{{ data.scoreboard_rank }}</span>
-          <span v-if="data.course_name" class="rank-course">in {{ data.course_name }}</span>
-        </div>
-      </div>
-
-      <div v-else class="card card--milestone">
+      <div class="card card--milestone">
         <div class="card__header">
           <span class="card__icon card__icon--green"><FlameIcon /></span>
           <h2 class="card__title">Next milestone</h2>
@@ -280,58 +273,67 @@
         </div>
       </div>
 
-      <div class="matrix-scroll">
-        <table class="matrix-table">
-          <thead>
-            <tr>
-              <th class="matrix-corner">Course</th>
-              <th v-for="col in matrix.columns" :key="col.key" class="matrix-col-head">
-                <span class="matrix-track">{{ col.track_name }}</span>
-                <span class="matrix-level">Level {{ col.level_number }} · {{ col.level_name }}</span>
-              </th>
-              <th class="matrix-col-head matrix-col-head--total">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="row in matrix.rows" :key="row.course_id">
-              <th class="matrix-row-head">
-                <span class="matrix-course-code">{{ row.course_code }}</span>
-                <span class="matrix-course-name">{{ row.course_name }}</span>
-              </th>
-              <td
-                v-for="col in matrix.columns"
-                :key="col.key"
-                class="matrix-cell"
-                :class="cellClass(row.cells[col.key])"
-              >
-                <template v-if="row.cells[col.key] && row.cells[col.key].total">
-                  {{ row.cells[col.key].completed }}/{{ row.cells[col.key].total }}
-                </template>
-                <span v-else class="matrix-empty">&ndash;</span>
-              </td>
-              <td class="matrix-cell matrix-cell--total">{{ row.completed }}/{{ row.total }}</td>
-            </tr>
-          </tbody>
-          <tfoot v-if="matrix.rows.length > 1">
-            <tr>
-              <th class="matrix-row-head">All courses</th>
-              <td
-                v-for="col in matrix.columns"
-                :key="col.key"
-                class="matrix-cell"
-                :class="cellClass(matrix.totals.cells[col.key])"
-              >
-                <template v-if="matrix.totals.cells[col.key] && matrix.totals.cells[col.key].total">
-                  {{ matrix.totals.cells[col.key].completed }}/{{ matrix.totals.cells[col.key].total }}
-                </template>
-                <span v-else class="matrix-empty">&ndash;</span>
-              </td>
-              <td class="matrix-cell matrix-cell--total">
-                {{ matrix.totals.completed }}/{{ matrix.totals.total }}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+      <div class="matrix-groups">
+        <section v-for="group in matrixGroups" :key="group.key" class="matrix-group">
+          <div class="matrix-group__head">
+            <span class="matrix-group__label">{{ group.label }}</span>
+          </div>
+          <div class="matrix-scroll">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th class="matrix-corner">Course</th>
+                  <th v-for="col in group.columns" :key="col.key" class="matrix-col-head">
+                    <span class="matrix-track">{{ col.track_name }}</span>
+                    <span class="matrix-level">Level {{ col.level_number }} · {{ col.level_name }}</span>
+                  </th>
+                  <th v-if="group.isLast" class="matrix-col-head matrix-col-head--total">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in matrix.rows" :key="row.course_id">
+                  <th class="matrix-row-head">
+                    <span class="matrix-course-code">{{ row.course_code }}</span>
+                    <span class="matrix-course-name">{{ row.course_name }}</span>
+                  </th>
+                  <td
+                    v-for="col in group.columns"
+                    :key="col.key"
+                    class="matrix-cell"
+                    :class="cellClass(row.cells[col.key])"
+                  >
+                    <template v-if="row.cells[col.key] && row.cells[col.key].total">
+                      {{ row.cells[col.key].completed }}/{{ row.cells[col.key].total }}
+                    </template>
+                    <span v-else class="matrix-empty">&ndash;</span>
+                  </td>
+                  <td v-if="group.isLast" class="matrix-cell matrix-cell--total">
+                    {{ row.completed }}/{{ row.total }}
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot v-if="matrix.rows.length > 1">
+                <tr>
+                  <th class="matrix-row-head">All courses</th>
+                  <td
+                    v-for="col in group.columns"
+                    :key="col.key"
+                    class="matrix-cell"
+                    :class="cellClass(matrix.totals.cells[col.key])"
+                  >
+                    <template v-if="matrix.totals.cells[col.key] && matrix.totals.cells[col.key].total">
+                      {{ matrix.totals.cells[col.key].completed }}/{{ matrix.totals.cells[col.key].total }}
+                    </template>
+                    <span v-else class="matrix-empty">&ndash;</span>
+                  </td>
+                  <td v-if="group.isLast" class="matrix-cell matrix-cell--total">
+                    {{ matrix.totals.completed }}/{{ matrix.totals.total }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </section>
       </div>
 
       <div class="matrix-legend">
@@ -621,6 +623,30 @@ const matrix = computed(
       totals: { cells: {}, completed: 0, total: 0 },
     }
 )
+
+// Keep each matrix table easy to scan. More than four level columns become a
+// second table below the first, with the course column repeated for context.
+const MATRIX_COLUMNS_PER_GROUP = 4
+const matrixGroups = computed(() => {
+  const columns = matrix.value.columns
+  if (!columns.length) return []
+
+  const groups = []
+  for (let start = 0; start < columns.length; start += MATRIX_COLUMNS_PER_GROUP) {
+    const end = Math.min(start + MATRIX_COLUMNS_PER_GROUP, columns.length)
+    groups.push({
+      key: `matrix-${start}`,
+      columns: columns.slice(start, end),
+      label: `Levels ${start + 1}–${end} of ${columns.length}`,
+      isLast: end >= columns.length,
+    })
+  }
+
+  if (groups.length === 1) {
+    groups[0].label = `All ${columns.length} ${columns.length === 1 ? 'level' : 'levels'}`
+  }
+  return groups
+})
 
 const cellClass = (cell) => {
   if (!cell || !cell.total) return 'matrix-cell--empty'
@@ -933,6 +959,10 @@ onMounted(loadDashboard)
   color: #fb923c;
 }
 
+.hero-pill--rank :deep(svg) {
+  color: var(--warning);
+}
+
 .hero__ring {
   position: relative;
   display: grid;
@@ -988,7 +1018,7 @@ onMounted(loadDashboard)
 /* Layout */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 1rem;
 }
@@ -1141,25 +1171,7 @@ onMounted(loadDashboard)
   color: var(--accent);
 }
 
-/* Rank and milestone */
-.rank-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.rank-number {
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1.1;
-  color: var(--warning);
-}
-
-.rank-course {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
+/* Milestone */
 .milestone-info {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -1533,6 +1545,26 @@ onMounted(loadDashboard)
 /* Completion matrix */
 .card--matrix {
   margin-top: 0;
+}
+
+.matrix-groups {
+  display: grid;
+  gap: 1rem;
+}
+
+.matrix-group__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.matrix-group__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .matrix-scroll {

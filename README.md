@@ -67,6 +67,16 @@ own private corner.
 
 ![Celebration Wall](docs/img/celebration-wall.png)
 
+**Special competitions.** Instructors and admins can open opt-in, time-boxed
+events using selected exercises. The event uses the existing lab scoring rules
+(completion, no-hint, first-attempt, speed, and competition first blood).
+Only solves during the event window count. Learners choose to join, can leave
+at any time, and see a dedicated event leaderboard. Learners who opted out of
+public scoreboards appear as “Anonymous participant”.
+
+Competitions are separate from course grades and the learning record; they are
+not used for progression, discipline, or public ranking of learning outcomes.
+
 ## Included tracks
 
 | Track | Labs | Focus |
