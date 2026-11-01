@@ -102,7 +102,7 @@ platform upgrade.
 Recommended: a separate staging repository, not a branch on the production
 repo.
 
-- Name: `opencyberrange-next` (or `opencyberrange-ga-2026`).
+- Name: `opencyberrange-next` (decided).
 - Start from `backup/main` at the current commit, preserving history.
 - Preserve `LICENSE`, `NOTICE`, `LICENSING.md`, `BUILD_NOTICE.md`, and
   `THIRD_PARTY_NOTICES.md`; this project is PolyForm Noncommercial.
@@ -192,8 +192,10 @@ use a self-hosted runner on the lab host, or build only changed labs in PRs.
 
 ### Wave 1 — runtime and toolchain images
 
-- Node 18 → Node 22 or 24 LTS in the frontend builder.
-- Python 3.11 → 3.13 (or 3.14 if all wheels are available).
+- Node 18 → start with Node 22 LTS; re-evaluate Node 24 LTS after Wave 0
+  compatibility results. Node 18 must not remain.
+- Python 3.11 → start with Python 3.13; re-evaluate 3.14 after Wave 0/2 wheel
+  and dependency checks. Do not assume 3.14 is safe for every library.
 - Pin Nginx to a supported stable line and digest.
 - Upgrade `@vitejs/plugin-vue`, Vite, ESLint/plugin-vue, globals together.
 - Gate: build/test only; no application dependency changes yet.
@@ -227,9 +229,9 @@ use a self-hosted runner on the lab host, or build only changed labs in PRs.
 - Gate: build, lint, browser smoke tests (login, dashboard, catalogue, lab
   launch, profile privacy panel, admin delete guard, certificate print).
 
-### Wave 6 — PostgreSQL major
+### Wave 6 - PostgreSQL major
 
-- 15 → 17 or 18 in its own deployment.
+- 15 → 17 (decided) in its own deployment.
 - Audit extensions, `ensure-db-password.sh`, healthcheck, Alembic.
 - Runbook: backup, dump/restore or `pg_upgrade`, verification, rollback.
 - Gate: restore the production-sized backup into the new major, run the full
@@ -242,20 +244,17 @@ use a self-hosted runner on the lab host, or build only changed labs in PRs.
   compatible MkDocs 1.x + Material 9.x until Material supports 2.x.
 - Gate: build the manuals and workbooks, check internal links and nav.
 
-### Wave 8 — labs: infrastructure only
+### Out of scope: lab and RangeBox images
 
-- Upgrade non-vulnerable base images: Alpine attacker images, Python mock
-  services, shared AI service, UbuntuBox, RemnuxBox tracking.
-- Add a `upgrade_policy` field or catalog entry per lab: `platform`,
-  `infrastructure`, or `frozen`.
-- Gate: `validate-lab.py`, image build, manual solve of each affected lab.
+The decision for this programme is **platform only**. Do not upgrade lab base
+images or RangeBox/UbuntuBox/REMnuxBox images here. That includes the ~148
+Ubuntu 22.04 lab images, Alpine 3.18/3.19 attacker images, PHP 8.1, MySQL 8.0,
+Kali rolling, and REMnux. Some of those pins are intentionally vulnerable and
+are part of the exercise.
 
-### Wave 9 — labs: frozen review
-
-- Review every intentionally vulnerable pin (PHP 8.1, MySQL 8.0, old OpenSSH,
-  SMB, etc.). Most should remain frozen.
-- Any change needs a lab-level risk note and a solve test.
-- This is the longest wave; do not block the platform release on it.
+Keep a separate follow-up programme for lab images with its own catalog:
+`upgrade_policy: platform | infrastructure | frozen`. Do not block the platform
+release on that work.
 
 ## 6. Deployment and rollback
 
@@ -299,27 +298,30 @@ use a self-hosted runner on the lab host, or build only changed labs in PRs.
 | Frontend toolchain/runtime | 2–4 days |
 | PostgreSQL major + restore drill | 2–3 days plus downtime |
 | Docs toolchain | 1–2 days |
-| Lab infrastructure (non-frozen) | 1–3 weeks depending on batch size |
-| Full lab frozen review | Separate project; weeks |
+| Lab and RangeBox images | Out of scope; separate programme |
 
-## 9. Decisions needed
+## 9. Decisions (locked)
 
-1. New repo name and owner: `RobChaykoski/opencyberrange-next`?
-2. Python target: 3.13 (safer wheel coverage) or 3.14 (newest)?
-3. Node target: 22 LTS (conservative) or 24 LTS (newest)?
-4. PostgreSQL target: 17 or 18, and acceptable maintenance window?
-5. Labs: upgrade non-vulnerable bases only, or attempt all 148 Ubuntu 22.04
-   images in the same programme?
-6. CI runner: GitHub-hosted only, or a self-hosted runner for lab image builds?
-7. Release cadence: one wave per PR (recommended) or one large upgrade branch?
+| Decision | Choice |
+|---|---|
+| Repo | New `RobChaykoski/opencyberrange-next`, cloned from `backup/main` |
+| Runtime | Start Python 3.13 + Node 22 LTS; let Wave 0/2 compatibility testing decide whether to move to 3.14/Node 24 |
+| PostgreSQL | 17, in its own deployment with a dump/restore runbook |
+| Lab/RangeBox images | Out of scope for this programme; platform only |
+| Release cadence | One wave per PR (recommended; do not use one giant branch) |
+| CI runner | GitHub-hosted for platform CI; lab-image runners are out of scope |
 
 ## 10. First actions
 
-1. Answer the decisions above.
-2. Create the new repo from `backup/main` and protect `main`.
+1. Create `RobChaykoski/opencyberrange-next` from `backup/main`; preserve
+   `LICENSE`, `NOTICE`, `LICENSING.md`, `BUILD_NOTICE.md`, and
+   `THIRD_PARTY_NOTICES.md`.
+2. Protect `main`; require PR + CI.
 3. Add `docs/SUPPORTED-VERSIONS.md`, `scripts/report-versions.py`, CI, and
    Renovate.
-4. Run Wave 0 and record the baseline passing state.
-5. Start Wave 1 (Node/Python images) without changing application packages.
-6. Proceed one wave at a time; do not mix the PostgreSQL major or lab images
-   with the platform dependency waves.
+4. Run Wave 0 and record the baseline passing state: 47 backend tests, frontend
+   build/lint, compose config, one representative lab.
+5. Start Wave 1 (Python 3.13 + Node 22 images) without changing application
+   packages.
+6. Proceed one wave at a time. Do not mix the PostgreSQL 17 major upgrade with
+   dependency waves, and do not include lab/RangeBox images.
