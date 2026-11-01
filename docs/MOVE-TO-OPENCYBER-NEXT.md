@@ -1,7 +1,9 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: plan. The current tree is frozen after this commit. The new tree becomes
-the canonical development repository after the sync and verification below.
+Status: executed. The current tree is frozen at tag
+`final-current-2026-11-01`, which includes the generated software-security wiki
+HTML and nginx routing. The new tree has been rebased onto it; see the copy of
+this document in `opencyberrange-next` for the verification record.
 
 ## Current state
 

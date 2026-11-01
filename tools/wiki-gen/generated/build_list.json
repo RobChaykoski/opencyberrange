@@ -47,6 +47,12 @@
     "namespace": "range",
     "site_dir": "_site_ot"
   },
+  "software-security": {
+    "config": "mkdocs-swsec.yml",
+    "docs_dir": "Workbook",
+    "namespace": "range",
+    "site_dir": "_site_software-security"
+  },
   "webpt": {
     "config": "mkdocs-webpt.yml",
     "docs_dir": "Workbook",

@@ -39,6 +39,11 @@
     "namespace": "range",
     "serve_path": "/wiki/range/ot/"
   },
+  "software-security": {
+    "auth": "student",
+    "namespace": "range",
+    "serve_path": "/wiki/range/software-security/"
+  },
   "webpt": {
     "auth": "student",
     "namespace": "range",

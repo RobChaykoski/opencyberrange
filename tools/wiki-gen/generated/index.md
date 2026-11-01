@@ -9,6 +9,7 @@ General range tracks. Course material is not listed here.
 - [netfor](/wiki/range/netfor/)
 - [osint](/wiki/range/osint/)
 - [ot](/wiki/range/ot/)
+- [software-security](/wiki/range/software-security/)
 - [webpt](/wiki/range/webpt/)
 - [winpt](/wiki/range/winpt/)
 

@@ -42,6 +42,12 @@
       "docs_dir": "Workbook",
       "theme": "green"
     },
+    "software-security": {
+      "auth": "student",
+      "config": "mkdocs-swsec.yml",
+      "docs_dir": "Workbook",
+      "theme": "blue"
+    },
     "webpt": {
       "auth": "student",
       "config": "mkdocs-webpt.yml",

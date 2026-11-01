@@ -42,6 +42,12 @@
     "expected_auth": "student"
   },
   {
+    "slug": "software-security",
+    "namespace": "range",
+    "serve_path": "/wiki/range/software-security/",
+    "expected_auth": "student"
+  },
+  {
     "slug": "webpt",
     "namespace": "range",
     "serve_path": "/wiki/range/webpt/",
