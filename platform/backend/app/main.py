@@ -183,6 +183,13 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added role column to users table, migrated from is_admin")
 
+        # --- Profile avatar: add 'avatar_data' to users (base64 data URL) ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'avatar_data' not in users_columns:
+            conn.execute(text("ALTER TABLE users ADD COLUMN avatar_data TEXT"))
+            conn.commit()
+            logger.info("Added avatar_data column to users table")
+
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]

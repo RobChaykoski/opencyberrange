@@ -18,6 +18,10 @@ class User(Base):
     first_name = Column(String(80), nullable=True)
     last_name = Column(String(80), nullable=True)
     organization = Column(String(120), nullable=True)
+    # Optional profile avatar as a small base64 data URL (image/png|jpeg|webp).
+    # Stored in the row so it survives container rebuilds and needs no shared
+    # upload volume; the browser downsizes images before upload.
+    avatar_data = Column(Text, nullable=True)
 
     # --- Optional user security/privacy settings ---
     # MFA recovery (backup) codes, stored hashed (JSON array of hashes).

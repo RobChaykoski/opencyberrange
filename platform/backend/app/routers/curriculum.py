@@ -403,6 +403,99 @@ async def list_tracks(
     return {"tracks": result}
 
 
+def build_level_certificate(
+    db: Session,
+    current_user: User,
+    track: Track,
+    level: Level,
+    visible_labs: List[Lab],
+    completed_ids: set,
+    *,
+    include_qr: bool = True,
+) -> Optional[dict]:
+    """Build the certificate payload for one level, or None when incomplete.
+
+    Shared by the single-certificate endpoint and the profile transcript so the
+    two views can never disagree about when a certificate exists or what its
+    deterministic ID is.
+    """
+    completed_labs = [lab for lab in visible_labs if lab.id in completed_ids]
+    if not visible_labs or len(completed_labs) < len(visible_labs):
+        return None
+
+    completion_rows = db.query(LabCompletion.completed_at).filter(
+        LabCompletion.user_id == current_user.id,
+        LabCompletion.lab_id.in_([lab.id for lab in visible_labs]),
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).all()
+    completion_dates = [row[0] for row in completion_rows if row[0] is not None]
+    issued_at = max(completion_dates) if completion_dates else datetime.now(timezone.utc)
+
+    # Best quiz score for this level (if a quiz exists and was attempted)
+    quiz_score = None
+    quiz_passed = None
+    try:
+        from app.models import LevelQuiz, QuizAttempt
+        quiz = db.query(LevelQuiz).filter(LevelQuiz.level_id == level.id, LevelQuiz.is_active == True).first()
+        if quiz:
+            best = db.query(QuizAttempt).filter(
+                QuizAttempt.user_id == current_user.id,
+                QuizAttempt.quiz_id == quiz.id,
+            ).order_by(QuizAttempt.score.desc()).first()
+            if best:
+                quiz_score = best.score
+                quiz_passed = best.passed
+    except Exception:
+        pass
+
+    digest = hashlib.sha256(
+        f"{current_user.id}:{track.slug}:{level.id}".encode()
+    ).hexdigest()[:10].upper()
+    certificate_id = f"OCR-{track.slug.upper()[:8]}-L{level.level_number:02d}-{digest}"
+
+    # Verification URL (customizable via certificate_verify_url setting).
+    from app.services import settings_service
+    base_url = (settings_service.get_setting(db, "certificate_verify_url", "") or "").rstrip("/")
+    verify_path = f"/verify/certificate/{certificate_id}"
+    verify_url = (base_url + verify_path) if base_url else verify_path
+
+    # Generate QR code (base64 PNG) for the verify URL.
+    qr_code = None
+    if include_qr:
+        try:
+            import qrcode, io, base64 as _b64
+            img = qrcode.make(verify_url if verify_url.startswith("http") else f"http://localhost{verify_url}")
+            buf = io.BytesIO()
+            img.save(buf, format="PNG")
+            qr_code = "data:image/png;base64," + _b64.b64encode(buf.getvalue()).decode()
+        except Exception as e:
+            logger.warning(f"QR generation failed: {e}")
+
+    return {
+        "certificate_id": certificate_id,
+        # Prefer the name the student supplied in their profile; fall back to
+        # the login handle so a half-filled profile still prints something.
+        "recipient": current_user.display_name,
+        "track_name": track.name,
+        "track_slug": track.slug,
+        "track_color": track.color,
+        "level_id": level.id,
+        "level_number": level.level_number,
+        "level_name": level.name,
+        "level_description": level.description,
+        "exercises_completed": len(completed_labs),
+        "exercises_total": len(visible_labs),
+        "quiz_score": quiz_score,
+        "quiz_passed": quiz_passed,
+        "issued_on": issued_at.date().isoformat(),
+        "issued_display": issued_at.strftime("%d %B %Y"),
+        "issuer": "SWOCTS",
+        "verify_url": verify_url,
+        "qr_code": qr_code,
+    }
+
+
 @router.get(
     "/tracks/{track_slug}/levels/{level_id}/certificate",
     summary="Get a printable level-completion certificate",
@@ -446,8 +539,10 @@ async def get_level_certificate(
         )
 
     completed_ids = get_user_completions(db, current_user.id)
-    completed_labs = [lab for lab in visible_labs if lab.id in completed_ids]
-    if len(completed_labs) < len(visible_labs):
+    certificate = build_level_certificate(
+        db, current_user, track, level, visible_labs, completed_ids
+    )
+    if certificate is None:
         raise HTTPException(
             status_code=403,
             detail=(
@@ -455,77 +550,7 @@ async def get_level_certificate(
                 "certificate."
             ),
         )
-
-    completion_rows = db.query(LabCompletion.completed_at).filter(
-        LabCompletion.user_id == current_user.id,
-        LabCompletion.lab_id.in_([lab.id for lab in visible_labs]),
-        LabCompletion.flag_submitted.isnot(None),
-        LabCompletion.flag_submitted != "",
-    ).all()
-    completion_dates = [row[0] for row in completion_rows if row[0] is not None]
-    issued_at = max(completion_dates) if completion_dates else datetime.now(timezone.utc)
-
-    # Best quiz score for this level (if a quiz exists and was attempted)
-    quiz_score = None
-    quiz_passed = None
-    try:
-        from app.models import LevelQuiz, QuizAttempt
-        quiz = db.query(LevelQuiz).filter(LevelQuiz.level_id == level.id, LevelQuiz.is_active == True).first()
-        if quiz:
-            best = db.query(QuizAttempt).filter(
-                QuizAttempt.user_id == current_user.id,
-                QuizAttempt.quiz_id == quiz.id,
-            ).order_by(QuizAttempt.score.desc()).first()
-            if best:
-                quiz_score = best.score
-                quiz_passed = best.passed
-    except Exception:
-        pass
-
-    digest = hashlib.sha256(
-        f"{current_user.id}:{track.slug}:{level.id}".encode()
-    ).hexdigest()[:10].upper()
-    certificate_id = f"OCR-{track.slug.upper()[:8]}-L{level.level_number:02d}-{digest}"
-
-    # Verification URL (customizable via certificate_verify_url setting).
-    from app.services import settings_service
-    base_url = (settings_service.get_setting(db, "certificate_verify_url", "") or "").rstrip("/")
-    if not base_url:
-        base_url = ""
-    verify_path = f"/verify/certificate/{certificate_id}"
-    verify_url = (base_url + verify_path) if base_url else verify_path
-
-    # Generate QR code (base64 PNG) for the verify URL.
-    qr_code = None
-    try:
-        import qrcode, io, base64 as _b64
-        img = qrcode.make(verify_url if verify_url.startswith("http") else f"http://localhost{verify_url}")
-        buf = io.BytesIO()
-        img.save(buf, format="PNG")
-        qr_code = "data:image/png;base64," + _b64.b64encode(buf.getvalue()).decode()
-    except Exception as e:
-        logger.warning(f"QR generation failed: {e}")
-
-    return {
-        "certificate_id": certificate_id,
-        # Prefer the name the student supplied in their profile; fall back to
-        # the login handle so a half-filled profile still prints something.
-        "recipient": current_user.display_name,
-        "track_name": track.name,
-        "track_slug": track.slug,
-        "level_id": level.id,
-        "level_number": level.level_number,
-        "level_name": level.name,
-        "exercises_completed": len(completed_labs),
-        "exercises_total": len(visible_labs),
-        "quiz_score": quiz_score,
-        "quiz_passed": quiz_passed,
-        "issued_on": issued_at.date().isoformat(),
-        "issued_display": issued_at.strftime("%d %B %Y"),
-        "issuer": "SWOCTS",
-        "verify_url": verify_url,
-        "qr_code": qr_code,
-    }
+    return certificate
 
 
 @router.get("/verify/certificate/{certificate_id}")
