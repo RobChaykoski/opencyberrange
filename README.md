@@ -132,6 +132,12 @@ Foundations** and **CH OSINT2 -- Code and Sources**. The RangeBox, UbuntuBox,
 and RemnuxBox images include the supporting tooling: `exiftool`, `binwalk`,
 `foremost`, `steghide`, `pngcheck`, `zsteg`, ImageMagick, and Python Pillow.
 
+Completing the track unlocks OSINT-specific achievements, seeded alongside the
+existing learning ladder: **Signal in the Noise**, **Digital Footprint**,
+**Metadata Miner**, **Open Source Operative**, **Clean Footprint**, and
+**First-Pass Analyst**. They are course-scoped, so a student earns them in any
+course that assigns the OSINT exercises.
+
 ## Profile, certificates, and transcripts
 
 The student profile is the record of completed work:

@@ -7,7 +7,7 @@ import logging
 from sqlalchemy.orm import Session
 from app.models import (
     Achievement, CourseEnrollment, CourseLabAssignment,
-    CourseCompletionReset, Lab, LabCompletion, CustomAchievement
+    CourseCompletionReset, Lab, Level, LabCompletion, CustomAchievement, Track
 )
 from app.services.activity import log_activity, EventTypes
 
@@ -46,6 +46,10 @@ CUSTOM_ACHIEVEMENT_TRIGGERS = {
     "no_hint_labs": "Complete N exercises without using hints",
     "perfect_labs": "Complete N exercises on the first attempt",
     "course_completed": "Complete every exercise assigned to the course",
+    "osint_labs_completed": "Complete N OSINT exercises in the course",
+    "osint_no_hint_labs": "Complete N OSINT exercises without using hints",
+    "osint_perfect_labs": "Complete N OSINT exercises on the first attempt",
+    "osint_track_completed": "Complete every assigned OSINT exercise in the course",
 }
 
 BUILTIN_ACHIEVEMENT_ICONS = {
@@ -331,6 +335,25 @@ def _check_custom_achievements(
     completed_lab_ids = {c.lab_id for c in valid_completions}
     course_completed = bool(course_lab_ids) and course_lab_ids.issubset(completed_lab_ids)
 
+    # OSINT-specific progress. The trigger uses the track slug rather than a
+    # hard-coded lab list so future OSINT exercises count automatically.
+    osint_lab_ids = {
+        row[0] for row in db.query(Lab.id).join(
+            Level, Lab.level_id == Level.id
+        ).join(
+            Track, Level.track_id == Track.id
+        ).filter(Track.slug == "osint").all()
+    }
+    osint_completions = [c for c in valid_completions if c.lab_id in osint_lab_ids]
+    osint_labs_completed = len(osint_completions)
+    osint_no_hint_labs = sum(1 for c in osint_completions if c.hints_used == 0)
+    osint_perfect_labs = sum(1 for c in osint_completions if c.attempts == 1)
+    osint_assigned_lab_ids = course_lab_ids & osint_lab_ids
+    osint_track_completed = (
+        bool(osint_assigned_lab_ids)
+        and osint_assigned_lab_ids.issubset(completed_lab_ids)
+    )
+
     for definition in definitions:
         if definition.trigger == "no_hint_labs":
             reached = no_hint_labs >= (definition.threshold or 1)
@@ -338,6 +361,14 @@ def _check_custom_achievements(
             reached = perfect_labs >= (definition.threshold or 1)
         elif definition.trigger == "course_completed":
             reached = course_completed
+        elif definition.trigger == "osint_labs_completed":
+            reached = osint_labs_completed >= (definition.threshold or 1)
+        elif definition.trigger == "osint_no_hint_labs":
+            reached = osint_no_hint_labs >= (definition.threshold or 1)
+        elif definition.trigger == "osint_perfect_labs":
+            reached = osint_perfect_labs >= (definition.threshold or 1)
+        elif definition.trigger == "osint_track_completed":
+            reached = osint_track_completed
         else:  # labs_completed (default)
             reached = labs_completed >= (definition.threshold or 1)
 

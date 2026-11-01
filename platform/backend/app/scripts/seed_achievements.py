@@ -130,6 +130,48 @@ DEFAULT_ACHIEVEMENTS = [
         "trigger": "perfect_labs",
         "threshold": 8,
     },
+    {
+        "name": "Signal in the Noise",
+        "description": "Complete your first OSINT exercise. The public surface is bigger than it looks.",
+        "icon": "🔎",
+        "trigger": "osint_labs_completed",
+        "threshold": 1,
+    },
+    {
+        "name": "Digital Footprint",
+        "description": "Complete 2 OSINT exercises. Follow the trail, not the noise.",
+        "icon": "👣",
+        "trigger": "osint_labs_completed",
+        "threshold": 2,
+    },
+    {
+        "name": "Metadata Miner",
+        "description": "Complete 3 OSINT exercises. You are reading between the pixels.",
+        "icon": "🔬",
+        "trigger": "osint_labs_completed",
+        "threshold": 3,
+    },
+    {
+        "name": "Open Source Operative",
+        "description": "Complete every OSINT exercise assigned to the course. The whole picture, from public sources.",
+        "icon": "🌐",
+        "trigger": "osint_track_completed",
+        "threshold": 1,
+    },
+    {
+        "name": "Clean Footprint",
+        "description": "Complete 3 OSINT exercises without using hints. Your notes were enough.",
+        "icon": "🧭",
+        "trigger": "osint_no_hint_labs",
+        "threshold": 3,
+    },
+    {
+        "name": "First-Pass Analyst",
+        "description": "Complete 3 OSINT exercises on the first flag attempt. Evidence beats guessing.",
+        "icon": "🛰️",
+        "trigger": "osint_perfect_labs",
+        "threshold": 3,
+    },
 ]
 
 
