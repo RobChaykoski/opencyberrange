@@ -153,16 +153,19 @@ fi
 
 COMPOSE=()
 if [[ -f "$PLATFORM_DIR/docker-compose.yml" ]]; then
-  COMPOSE=(docker compose -f "$PLATFORM_DIR/docker-compose.yml")
+  COMPOSE=(docker compose -f "$(docker_path "$PLATFORM_DIR/docker-compose.yml")")
 elif [[ -f "$PLATFORM_DIR/docker-compose.prod.yml" ]]; then
-  COMPOSE=(docker compose -f "$PLATFORM_DIR/docker-compose.prod.yml")
+  COMPOSE=(docker compose -f "$(docker_path "$PLATFORM_DIR/docker-compose.prod.yml")")
 else
   fail "no docker-compose.yml or docker-compose.prod.yml in $PLATFORM_DIR"
 fi
 if [[ -f "$PLATFORM_DIR/docker-compose.override.yml" ]]; then
-  COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.override.yml")
+  COMPOSE+=(-f "$(docker_path "$PLATFORM_DIR/docker-compose.override.yml")")
 fi
 compose() { "${COMPOSE[@]}" "$@"; }
+# Git Bash rewrites absolute container paths such as /tmp/x into Windows paths
+# before Docker sees them. Disable that conversion for exec/cp arguments.
+compose_in() { MSYS_NO_PATHCONV=1 "${COMPOSE[@]}" "$@"; }
 COMPOSE_DISPLAY="$(printf '%q ' "${COMPOSE[@]}")"
 
 if [[ "$SKIP_USERS" == false && ! -f "$REPO_DIR/scripts/user_transfer.py" ]]; then
@@ -205,15 +208,15 @@ log "Starting database and backend for the backup"
 compose up -d db backend >/dev/null
 
 log "Dumping the database"
-compose exec -T db pg_dump -U "$DB_USER" -d "$DB_NAME" -Fc > "$BACKUP_DIR/database.dump"
+compose_in exec -T db pg_dump -U "$DB_USER" -d "$DB_NAME" -Fc > "$BACKUP_DIR/database.dump"
 [[ -s "$BACKUP_DIR/database.dump" ]] || fail "database dump is empty"
 
 if [[ "$SKIP_USERS" == false ]]; then
   log "Exporting users"
-  compose cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" backend:/tmp/user_transfer.py >/dev/null
-  compose exec -T backend python /tmp/user_transfer.py export -o /tmp/users-export.json
-  compose cp backend:/tmp/users-export.json "$BACKUP_DIR/users-export.json" >/dev/null
-  compose exec -T backend rm -f /tmp/user_transfer.py /tmp/users-export.json
+  compose_in cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" backend:/tmp/user_transfer.py >/dev/null
+  compose_in exec -T backend python /tmp/user_transfer.py export -o /tmp/users-export.json
+  compose_in cp backend:/tmp/users-export.json "$(docker_path "$BACKUP_DIR/users-export.json")" >/dev/null
+  compose_in exec -T backend rm -f /tmp/user_transfer.py /tmp/users-export.json
   chmod 600 "$BACKUP_DIR/users-export.json" 2>/dev/null || true
 fi
 
@@ -262,7 +265,7 @@ CURRENT_STEP="backend health"
 log "Waiting for the backend health endpoint"
 READY=false
 for _ in $(seq 1 60); do
-  if compose exec -T backend curl -fsS http://localhost:8000/health >/dev/null 2>&1; then
+  if compose_in exec -T backend curl -fsS http://localhost:8000/health >/dev/null 2>&1; then
     READY=true
     break
   fi
@@ -273,8 +276,8 @@ done
 if [[ "$SKIP_DISCOVERY" == false ]]; then
   CURRENT_STEP="curriculum/discovery"
   log "Seeding curriculum and discovering labs"
-  compose exec -T backend python -m app.scripts.seed_curriculum
-  compose exec -T backend python /app/app/scripts/discover_labs.py
+  compose_in exec -T backend python -m app.scripts.seed_curriculum
+  compose_in exec -T backend python /app/app/scripts/discover_labs.py
 fi
 
 if [[ "$PREBUILD_LABS" == true ]]; then
@@ -294,14 +297,14 @@ fi
 if [[ "$SKIP_USERS" == false ]]; then
   CURRENT_STEP="user merge"
   log "Merging users from the backup (existing users are preserved by default)"
-  compose cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" backend:/tmp/user_transfer.py >/dev/null
-  compose cp "$(docker_path "$BACKUP_DIR/users-export.json")" backend:/tmp/users-export.json >/dev/null
+  compose_in cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" backend:/tmp/user_transfer.py >/dev/null
+  compose_in cp "$(docker_path "$BACKUP_DIR/users-export.json")" backend:/tmp/users-export.json >/dev/null
   if [[ "$UPDATE_USERS" == true ]]; then
-    compose exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --update
+    compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json --update
   else
-    compose exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json
+    compose_in exec -T backend python /tmp/user_transfer.py import /tmp/users-export.json
   fi
-  compose exec -T backend rm -f /tmp/user_transfer.py /tmp/users-export.json
+  compose_in exec -T backend rm -f /tmp/user_transfer.py /tmp/users-export.json
 fi
 
 # ---------------------------------------------------------------------------
@@ -313,11 +316,11 @@ log "Container status"
 compose ps
 
 log "Backend health"
-compose exec -T backend curl -fsS http://localhost:8000/health
+compose_in exec -T backend curl -fsS http://localhost:8000/health
 printf '\n'
 
 log "User count"
-compose exec -T db psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT count(*) FROM users;"
+compose_in exec -T db psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT count(*) FROM users;"
 
 LAB_STATUS="rebuilt"
 [[ "$PREBUILD_LABS" == true ]] || LAB_STATUS="skipped (--skip-labs)"

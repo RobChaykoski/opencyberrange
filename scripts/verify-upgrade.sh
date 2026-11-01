@@ -167,14 +167,17 @@ done
 
 COMPOSE=()
 if [[ -f "$PLATFORM_DIR/docker-compose.yml" ]]; then
-  COMPOSE=(docker compose -f "$PLATFORM_DIR/docker-compose.yml")
+  COMPOSE=(docker compose -f "$(docker_path "$PLATFORM_DIR/docker-compose.yml")")
 elif [[ -f "$PLATFORM_DIR/docker-compose.prod.yml" ]]; then
-  COMPOSE=(docker compose -f "$PLATFORM_DIR/docker-compose.prod.yml")
+  COMPOSE=(docker compose -f "$(docker_path "$PLATFORM_DIR/docker-compose.prod.yml")")
 fi
 if [[ ${#COMPOSE[@]} -gt 0 && -f "$PLATFORM_DIR/docker-compose.override.yml" ]]; then
-  COMPOSE+=(-f "$PLATFORM_DIR/docker-compose.override.yml")
+  COMPOSE+=(-f "$(docker_path "$PLATFORM_DIR/docker-compose.override.yml")")
 fi
 compose() { "${COMPOSE[@]}" "$@"; }
+# Git Bash rewrites absolute container paths such as /tmp/x into Windows paths
+# before Docker sees them. Disable that conversion for exec/cp arguments.
+compose_in() { MSYS_NO_PATHCONV=1 "${COMPOSE[@]}" "$@"; }
 
 if [[ ${#COMPOSE[@]} -eq 0 ]]; then
   fail "no docker-compose.yml or docker-compose.prod.yml found"
@@ -195,7 +198,7 @@ for svc in db backend frontend; do
 done
 
 if [[ ${#COMPOSE[@]} -gt 0 ]]; then
-  if compose exec -T db pg_isready -U "$DB_USER" -d "$DB_NAME" >/dev/null 2>&1; then
+  if compose_in exec -T db pg_isready -U "$DB_USER" -d "$DB_NAME" >/dev/null 2>&1; then
     pass "PostgreSQL is accepting connections"
   else
     fail "PostgreSQL is not accepting connections for $DB_USER@$DB_NAME"
@@ -247,7 +250,7 @@ fi
 # ---------------------------------------------------------------------------
 
 if [[ ${#COMPOSE[@]} -gt 0 ]]; then
-  if compose exec -T backend curl -fsS http://localhost:8000/health 2>/dev/null | grep -q '"status":"healthy"'; then
+  if compose_in exec -T backend curl -fsS http://localhost:8000/health 2>/dev/null | grep -q '"status":"healthy"'; then
     pass "backend health endpoint reports healthy"
   else
     fail "backend health endpoint is not healthy"
@@ -283,7 +286,7 @@ TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ocr-verify.XXXXXX" 2>/dev/null || true)"
 if [[ -z "$TMP_DIR" ]]; then
   warn "could not create a temporary directory; dump test skipped"
 else
-  if [[ ${#COMPOSE[@]} -gt 0 ]] && compose exec -T db pg_dump \
+  if [[ ${#COMPOSE[@]} -gt 0 ]] && compose_in exec -T db pg_dump \
       -U "$DB_USER" -d "$DB_NAME" --schema-only --no-owner --no-privileges -Fc \
       > "$TMP_DIR/schema.dump" 2>/dev/null && [[ -s "$TMP_DIR/schema.dump" ]]; then
     pass "pg_dump schema test succeeded"
@@ -292,12 +295,12 @@ else
   fi
 
   if [[ -f "$REPO_DIR/scripts/user_transfer.py" && ${#COMPOSE[@]} -gt 0 ]]; then
-    compose cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" \
+    compose_in cp "$(docker_path "$REPO_DIR/scripts/user_transfer.py")" \
       backend:/tmp/ocr-verify-user-transfer.py >/dev/null 2>&1 || true
-    if compose exec -T backend python /tmp/ocr-verify-user-transfer.py \
+    if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
         export -o /tmp/ocr-verify-users.json >/dev/null 2>&1; then
-      if compose cp backend:/tmp/ocr-verify-users.json "$TMP_DIR/users.json" >/dev/null 2>&1; then
-        if compose exec -T backend python -c \
+      if compose_in cp backend:/tmp/ocr-verify-users.json "$(docker_path "$TMP_DIR/users.json")" >/dev/null 2>&1; then
+        if compose_in exec -T backend python -c \
             "import json; d=json.load(open('/tmp/ocr-verify-users.json')); assert d.get('format')=='opencyberrange-users'; assert isinstance(d.get('users'), list); print(len(d['users']))" \
             >/dev/null 2>&1; then
           pass "user export test succeeded"
@@ -307,7 +310,7 @@ else
       else
         fail "could not copy the user export out of the backend"
       fi
-      if compose exec -T backend python /tmp/ocr-verify-user-transfer.py \
+      if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
           import /tmp/ocr-verify-users.json --dry-run >/dev/null 2>&1; then
         pass "user import dry-run succeeded (no writes)"
       else
@@ -316,14 +319,14 @@ else
     else
       fail "user export failed"
     fi
-    compose exec -T backend rm -f \
+    compose_in exec -T backend rm -f \
       /tmp/ocr-verify-user-transfer.py /tmp/ocr-verify-users.json >/dev/null 2>&1 || true
   fi
   rm -rf "$TMP_DIR"
 fi
 
 if [[ ${#COMPOSE[@]} -gt 0 ]]; then
-  USER_COUNT="$(compose exec -T db psql -U "$DB_USER" -d "$DB_NAME" \
+  USER_COUNT="$(compose_in exec -T db psql -U "$DB_USER" -d "$DB_NAME" \
     -tAc "SELECT count(*) FROM users;" 2>/dev/null | tr -d '[:space:]')"
   if [[ "$USER_COUNT" =~ ^[0-9]+$ ]]; then
     pass "users table is readable ($USER_COUNT accounts)"
