@@ -167,6 +167,12 @@ if [[ -z "$DB_NAME" ]]; then
 fi
 pass "database target resolves to $DB_USER@$DB_NAME"
 
+LABS_HOST_PATH_VALUE="$(env_value LABS_HOST_PATH "$PLATFORM_DIR/.env" | tr -d '\r')"
+if [[ -z "$LABS_HOST_PATH_VALUE" ]]; then
+  fail "LABS_HOST_PATH is empty in $PLATFORM_DIR/.env; set it to the absolute path of the labs directory"
+fi
+pass "LABS_HOST_PATH resolves to $LABS_HOST_PATH_VALUE"
+
 if [[ -f "$USER_TRANSFER" ]]; then
   pass "user transfer utility exists"
 else

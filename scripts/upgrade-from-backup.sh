@@ -124,6 +124,36 @@ env_value() {
     | sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
 }
 
+# Older .env files can have an empty LABS_HOST_PATH. Docker then expands the
+# mount to ":/labs:ro" and fails with "empty section between colons" before the
+# backup step even starts. Derive the absolute path instead of making the
+# operator debug Compose.
+ensure_labs_host_path() {
+  local env_file="$PLATFORM_DIR/.env"
+  [[ -f "$env_file" ]] || return 0
+
+  local current
+  current="$(env_value LABS_HOST_PATH "$env_file" | tr -d '\r')"
+  [[ -n "$current" ]] && return 0
+
+  local labs_dir=""
+  if [[ -d "$PLATFORM_DIR/labs" ]]; then
+    labs_dir="$(cd "$PLATFORM_DIR/labs" && pwd)"
+  elif [[ -d "$REPO_DIR/platform/labs" ]]; then
+    labs_dir="$(cd "$REPO_DIR/platform/labs" && pwd)"
+  else
+    warn "LABS_HOST_PATH is empty in $env_file and no labs directory was found"
+    return 0
+  fi
+
+  if grep -q '^LABS_HOST_PATH=' "$env_file"; then
+    sed -i "s|^LABS_HOST_PATH=.*|LABS_HOST_PATH=$labs_dir|" "$env_file"
+  else
+    printf '\nLABS_HOST_PATH=%s\n' "$labs_dir" >> "$env_file"
+  fi
+  log "Set LABS_HOST_PATH=$labs_dir in $env_file"
+}
+
 docker_path() {
   if command -v cygpath >/dev/null 2>&1; then
     cygpath -w "$1"
@@ -252,6 +282,8 @@ log "Deployment: $PLATFORM_DIR"
 log "Layout:     $(if [[ "$INSTALLER_LAYOUT" == true ]]; then echo installed; else echo checkout; fi)"
 log "Remote:     $REMOTE/$BRANCH"
 log "Database:   $DB_USER@$DB_NAME"
+
+ensure_labs_host_path
 
 if [[ "$SKIP_VERIFY" == false ]]; then
   CURRENT_STEP="preflight verification"

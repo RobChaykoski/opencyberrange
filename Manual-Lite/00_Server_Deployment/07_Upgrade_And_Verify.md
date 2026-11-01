@@ -139,6 +139,33 @@ sudo bash scripts/upgrade-from-backup.sh --skip-discovery
 sudo bash scripts/upgrade-from-backup.sh --backup-retention-days 14
 ```
 
+## Compose error: empty section between colons
+
+If Docker reports `invalid spec: :/labs:ro: empty section between colons`, the
+`LABS_HOST_PATH` value in `platform/.env` is empty. Set it to the absolute path
+of the labs directory on the host:
+
+```bash
+cd /opt/opencyberrange          # or your checkout path
+if [ -d platform/labs ]; then
+  LABS_DIR="$(cd platform/labs && pwd)"
+else
+  LABS_DIR="$(cd labs && pwd)"
+fi
+sed -i "s|^LABS_HOST_PATH=.*|LABS_HOST_PATH=$LABS_DIR|" platform/.env
+grep '^LABS_HOST_PATH=' platform/.env
+```
+
+If the line is missing entirely, append it:
+
+```bash
+printf '\nLABS_HOST_PATH=%s\n' "$LABS_DIR" >> platform/.env
+```
+
+Then rerun the upgrade. The upgrade script now derives this value when it is
+empty, and `verify-upgrade.sh` fails with a clear message if it is still
+missing.
+
 ## Erased accounts and restores
 
 Deleted accounts are recorded in an append-only suppression ledger on the
