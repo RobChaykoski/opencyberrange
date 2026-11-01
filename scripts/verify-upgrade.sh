@@ -36,8 +36,9 @@ usage() {
 Usage: verify-upgrade.sh [options]
 
 Options:
-  --repo DIR          Existing OpenCyberRange deployment to verify (the
-                      directory containing platform/.env)
+  --repo DIR          Existing OpenCyberRange deployment to verify (a Git
+                      checkout with .env and docker-compose.yml at its root,
+                      or platform/.env for the development layout)
   --remote NAME       Git remote to verify (default: backup, then origin)
   --branch NAME       Git branch to verify (default: main)
   --backup-root DIR   Backup destination to check
@@ -79,18 +80,36 @@ docker_path() {
   fi
 }
 
+# Run git as the repository owner when started with sudo, so root does not
+# trip Git's dubious-ownership check or create root-owned files.
+repo_git() {
+  if [[ "$(id -u)" -eq 0 && -n "${SUDO_USER:-}" ]]; then
+    sudo -u "$SUDO_USER" git -C "$REPO_DIR" "$@"
+  else
+    git -C "$REPO_DIR" "$@"
+  fi
+}
+
 if [[ -n "$TARGET_REPO" ]]; then
   if [[ ! -d "$TARGET_REPO" ]]; then
     echo "deployment directory does not exist: $TARGET_REPO" >&2
     exit 2
   fi
   REPO_DIR="$(cd "$TARGET_REPO" && pwd)"
+fi
+# Installed deployments keep docker-compose.yml and .env at the checkout root
+# and copy the code into backend/ and frontend/. Checkout deployments keep the
+# compose files under platform/.
+if [[ -f "$REPO_DIR/docker-compose.yml" && -f "$REPO_DIR/.env" ]]; then
+  PLATFORM_DIR="$REPO_DIR"
+else
   PLATFORM_DIR="$REPO_DIR/platform"
 fi
 
 echo "OpenCyberRange upgrade verification"
 echo "Repository: $REPO_DIR"
 echo "Scripts:    $SCRIPT_DIR"
+echo "Deployment: $PLATFORM_DIR"
 echo
 
 # ---------------------------------------------------------------------------
@@ -115,16 +134,16 @@ else
   fail "git is not installed"
 fi
 
-if git -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+if repo_git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   pass "repository is a git checkout"
 else
   fail "not a git checkout: $REPO_DIR"
 fi
 
 if [[ -f "$PLATFORM_DIR/.env" ]]; then
-  pass "platform/.env exists"
+  pass "deployment .env exists"
 else
-  fail "platform/.env is missing"
+  fail "deployment .env is missing"
 fi
 
 if [[ -z "$DB_USER" ]]; then
@@ -240,10 +259,10 @@ fi
 # Git remote and upgrade path
 # ---------------------------------------------------------------------------
 
-if git -C "$REPO_DIR" remote get-url "$REMOTE" >/dev/null 2>&1; then
+if repo_git remote get-url "$REMOTE" >/dev/null 2>&1; then
   pass "git remote '$REMOTE' exists"
 else
-  if [[ "$REMOTE" == "backup" ]] && git -C "$REPO_DIR" remote get-url origin >/dev/null 2>&1; then
+  if [[ "$REMOTE" == "backup" ]] && repo_git remote get-url origin >/dev/null 2>&1; then
     warn "remote 'backup' not found; origin exists"
     REMOTE=origin
     pass "git remote 'origin' exists"
@@ -252,22 +271,22 @@ else
   fi
 fi
 
-DIRTY="$(git -C "$REPO_DIR" status --porcelain --untracked-files=no 2>/dev/null || true)"
+DIRTY="$(repo_git status --porcelain --untracked-files=no 2>/dev/null || true)"
 if [[ -z "$DIRTY" ]]; then
   pass "working tree has no modified tracked files"
 else
   fail "working tree has uncommitted tracked changes; commit or stash them first"
 fi
 
-if git -C "$REPO_DIR" fetch --quiet "$REMOTE" "$BRANCH" >/dev/null 2>&1; then
+if repo_git fetch --quiet "$REMOTE" "$BRANCH" >/dev/null 2>&1; then
   pass "fetched $REMOTE/$BRANCH"
-  LOCAL_SHA="$(git -C "$REPO_DIR" rev-parse HEAD)"
-  REMOTE_SHA="$(git -C "$REPO_DIR" rev-parse "$REMOTE/$BRANCH" 2>/dev/null || true)"
+  LOCAL_SHA="$(repo_git rev-parse HEAD)"
+  REMOTE_SHA="$(repo_git rev-parse "$REMOTE/$BRANCH" 2>/dev/null || true)"
   if [[ -z "$REMOTE_SHA" ]]; then
     fail "could not resolve $REMOTE/$BRANCH after fetch"
   elif [[ "$LOCAL_SHA" == "$REMOTE_SHA" ]]; then
     pass "checkout is already at $REMOTE/$BRANCH ($LOCAL_SHA)"
-  elif git -C "$REPO_DIR" merge-base --is-ancestor "$LOCAL_SHA" "$REMOTE_SHA"; then
+  elif repo_git merge-base --is-ancestor "$LOCAL_SHA" "$REMOTE_SHA"; then
     pass "checkout can fast-forward to $REMOTE/$BRANCH"
   else
     fail "checkout cannot fast-forward to $REMOTE/$BRANCH; resolve divergence first"

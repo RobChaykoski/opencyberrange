@@ -3628,8 +3628,13 @@ and merges the existing users.</p>
 <h2 id="already-running-an-older-checkout">Already running an older checkout?</h2>
 <p>If <code>scripts/verify-upgrade.sh</code> is not on the server yet, fetch the repository
 once into a temporary directory and point the scripts at the live deployment.
-<code>--repo</code> is the directory that contains <code>platform/.env</code>; adjust it if the
-platform is installed somewhere else.</p>
+<code>--repo</code> is the Git checkout that holds the running deployment: installed
+servers have <code>.env</code> and <code>docker-compose.yml</code> at that top level, and development
+checkouts have them under <code>platform/</code>. Adjust the path if the platform is
+installed somewhere else.</p>
+<p>For an installed server, the upgrade copies the updated <code>platform/backend</code>,
+<code>platform/frontend</code>, and <code>platform/db</code> trees into the deployment before
+rebuilding, while preserving the generated <code>frontend/wiki</code> tree.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>--branch<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span>https://github.com/RobChaykoski/opencyberrange-backup.git<span class="w"> </span>/tmp/ocr-upgrade
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -3765,6 +3770,8 @@ already current. Lab definitions are still refreshed unless
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>├── certs/
 <a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>└── README.txt
 </code></pre></div>
+<p>When the script is run with <code>sudo</code>, <code>~/opencyberrange-backups</code> resolves to
+root's home. Pass <code>--backup-root DIR</code> if you want the backup elsewhere.</p>
 <p>The user export contains password hashes. The directory is created with
 restrictive permissions; delete it after the upgrade is verified or move it to
 secure storage.</p>

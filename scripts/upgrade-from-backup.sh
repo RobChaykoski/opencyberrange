@@ -48,8 +48,9 @@ usage() {
 Usage: upgrade-from-backup.sh [options]
 
 Options:
-  --repo DIR            Existing OpenCyberRange deployment to upgrade (the
-                        directory containing platform/.env)
+  --repo DIR            Existing OpenCyberRange deployment to upgrade (a Git
+                        checkout with .env and docker-compose.yml at its root,
+                        or platform/.env for the development layout)
   --remote NAME         Git remote to upgrade from (default: backup, then origin)
   --branch NAME         Git branch to upgrade to (default: main)
   --backup-root DIR     Where to create the timestamped backup
@@ -124,10 +125,29 @@ docker_path() {
   fi
 }
 
+# Run git as the repository owner when started with sudo, so root does not
+# trip Git's dubious-ownership check or create root-owned files.
+repo_git() {
+  if [[ "$(id -u)" -eq 0 && -n "${SUDO_USER:-}" ]]; then
+    sudo -u "$SUDO_USER" git -C "$REPO_DIR" "$@"
+  else
+    git -C "$REPO_DIR" "$@"
+  fi
+}
+
 if [[ -n "$TARGET_REPO" ]]; then
   [[ -d "$TARGET_REPO" ]] || fail "deployment directory does not exist: $TARGET_REPO"
   REPO_DIR="$(cd "$TARGET_REPO" && pwd)"
+fi
+# Installed deployments keep docker-compose.yml and .env at the checkout root
+# and copy the code into backend/ and frontend/. Checkout deployments keep the
+# compose files under platform/.
+if [[ -f "$REPO_DIR/docker-compose.yml" && -f "$REPO_DIR/.env" ]]; then
+  PLATFORM_DIR="$REPO_DIR"
+  INSTALLER_LAYOUT=true
+else
   PLATFORM_DIR="$REPO_DIR/platform"
+  INSTALLER_LAYOUT=false
 fi
 
 # ---------------------------------------------------------------------------
@@ -138,7 +158,7 @@ log "Preflight checks"
 command -v docker >/dev/null 2>&1 || fail "docker is not installed"
 docker compose version >/dev/null 2>&1 || fail "docker compose v2 is not available"
 command -v git >/dev/null 2>&1 || fail "git is not installed"
-git -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+repo_git rev-parse --is-inside-work-tree >/dev/null 2>&1 \
   || fail "not a git checkout: $REPO_DIR"
 [[ -f "$PLATFORM_DIR/.env" ]] || fail "missing $PLATFORM_DIR/.env"
 
@@ -151,8 +171,8 @@ if [[ -z "$DB_NAME" ]]; then
   DB_NAME="${DB_NAME:-labdb}"
 fi
 
-if ! git -C "$REPO_DIR" remote get-url "$REMOTE" >/dev/null 2>&1; then
-  if [[ "$REMOTE" == "backup" ]] && git -C "$REPO_DIR" remote get-url origin >/dev/null 2>&1; then
+if ! repo_git remote get-url "$REMOTE" >/dev/null 2>&1; then
+  if [[ "$REMOTE" == "backup" ]] && repo_git remote get-url origin >/dev/null 2>&1; then
     warn "remote 'backup' not found; using 'origin'"
     REMOTE=origin
   else
@@ -160,7 +180,7 @@ if ! git -C "$REPO_DIR" remote get-url "$REMOTE" >/dev/null 2>&1; then
   fi
 fi
 
-if [[ -n "$(git -C "$REPO_DIR" status --porcelain --untracked-files=no)" ]]; then
+if [[ -n "$(repo_git status --porcelain --untracked-files=no)" ]]; then
   fail "the checkout has uncommitted changes; commit or stash them before upgrading"
 fi
 
@@ -181,12 +201,45 @@ compose() { "${COMPOSE[@]}" "$@"; }
 compose_in() { MSYS_NO_PATHCONV=1 "${COMPOSE[@]}" "$@"; }
 COMPOSE_DISPLAY="$(printf '%q ' "${COMPOSE[@]}")"
 
+# Installer deployments build from copies in backend/ and frontend/, so pull
+# the updated source from platform/ before recreating the containers. The
+# deployed frontend/wiki tree is generated separately and must be preserved.
+sync_installed_code() {
+  local tree src dst
+  log "Syncing platform source into the installed deployment"
+  for tree in backend frontend db; do
+    src="$REPO_DIR/platform/$tree"
+    dst="$PLATFORM_DIR/$tree"
+    [[ -d "$src" ]] || continue
+    mkdir -p "$dst"
+    if command -v rsync >/dev/null 2>&1; then
+      if [[ "$tree" == "frontend" ]]; then
+        rsync -rlpt --delete --exclude='__pycache__' --exclude='wiki' "$src/" "$dst/"
+      else
+        rsync -rlpt --delete --exclude='__pycache__' "$src/" "$dst/"
+      fi
+    elif [[ "$tree" == "frontend" ]]; then
+      find "$src" -mindepth 1 -maxdepth 1 ! -name '__pycache__' ! -name 'wiki' \
+        -exec cp -r {} "$dst/" \;
+    else
+      find "$src" -mindepth 1 -maxdepth 1 ! -name '__pycache__' \
+        -exec cp -r {} "$dst/" \;
+    fi
+    if [[ "$EUID" -eq 0 && -n "${SUDO_USER:-}" ]]; then
+      chown -R "$SUDO_USER:$SUDO_USER" "$dst" 2>/dev/null || true
+    fi
+  done
+  chmod +x "$PLATFORM_DIR/db/"*.sh 2>/dev/null || true
+}
+
 if [[ "$SKIP_USERS" == false && ! -f "$USER_TRANSFER" ]]; then
   fail "scripts/user_transfer.py is missing; copy it to the server or use --skip-users"
 fi
 
 log "Repository: $REPO_DIR"
 log "Scripts:    $SCRIPT_DIR"
+log "Deployment: $PLATFORM_DIR"
+log "Layout:     $(if [[ "$INSTALLER_LAYOUT" == true ]]; then echo installed; else echo checkout; fi)"
 log "Remote:     $REMOTE/$BRANCH"
 log "Database:   $DB_USER@$DB_NAME"
 
@@ -265,16 +318,34 @@ log "Backup complete: $BACKUP_DIR"
 # ---------------------------------------------------------------------------
 
 CURRENT_STEP="git fetch/merge"
-OLD_COMMIT="$(git -C "$REPO_DIR" rev-parse HEAD)"
+OLD_COMMIT="$(repo_git rev-parse HEAD)"
 log "Fetching $REMOTE/$BRANCH"
-git -C "$REPO_DIR" fetch "$REMOTE" "$BRANCH"
+repo_git fetch "$REMOTE" "$BRANCH"
 log "Fast-forwarding to $REMOTE/$BRANCH"
-git -C "$REPO_DIR" merge --ff-only "$REMOTE/$BRANCH"
-NEW_COMMIT="$(git -C "$REPO_DIR" rev-parse HEAD)"
+repo_git merge --ff-only "$REMOTE/$BRANCH"
+NEW_COMMIT="$(repo_git rev-parse HEAD)"
+
+if [[ "$INSTALLER_LAYOUT" == true ]]; then
+  CURRENT_STEP="platform sync"
+  sync_installed_code
+  if [[ -f "$REPO_DIR/platform/scripts/init_database.sh" ]]; then
+    log "Initializing database schema (idempotent)"
+    (cd "$PLATFORM_DIR" && bash "$REPO_DIR/platform/scripts/init_database.sh") \
+      || fail "database initialization failed"
+  fi
+fi
 
 CURRENT_STEP="docker build/recreate"
 log "Rebuilding and recreating database, backend, and frontend"
 compose up -d --build db backend frontend
+
+if [[ "$INSTALLER_LAYOUT" == true ]] && command -v systemctl >/dev/null 2>&1; then
+  if systemctl is-enabled ocr-vpn-firewall.service >/dev/null 2>&1; then
+    systemctl restart ocr-vpn-firewall.service >/dev/null 2>&1 \
+      && log "Re-applied VPN firewall rules" \
+      || warn "could not restart ocr-vpn-firewall.service"
+  fi
+fi
 
 CURRENT_STEP="backend health"
 log "Waiting for the backend health endpoint"

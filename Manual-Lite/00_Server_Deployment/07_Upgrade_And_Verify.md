@@ -9,8 +9,14 @@ and merges the existing users.
 
 If `scripts/verify-upgrade.sh` is not on the server yet, fetch the repository
 once into a temporary directory and point the scripts at the live deployment.
-`--repo` is the directory that contains `platform/.env`; adjust it if the
-platform is installed somewhere else.
+`--repo` is the Git checkout that holds the running deployment: installed
+servers have `.env` and `docker-compose.yml` at that top level, and development
+checkouts have them under `platform/`. Adjust the path if the platform is
+installed somewhere else.
+
+For an installed server, the upgrade copies the updated `platform/backend`,
+`platform/frontend`, and `platform/db` trees into the deployment before
+rebuilding, while preserving the generated `frontend/wiki` tree.
 
 ```bash
 git clone --depth 1 --branch main \
@@ -127,6 +133,9 @@ Each run creates:
 ├── certs/
 └── README.txt
 ```
+
+When the script is run with `sudo`, `~/opencyberrange-backups` resolves to
+root's home. Pass `--backup-root DIR` if you want the backup elsewhere.
 
 The user export contains password hashes. The directory is created with
 restrictive permissions; delete it after the upgrade is verified or move it to
