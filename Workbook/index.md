@@ -76,6 +76,15 @@ Start the AI Hacking stream at
 Start the OSINT stream at
 [CH OSINT1 — Digital Footprint Foundations](CH_OSINT01_OSINT_Foundations/00_Introduction.md).
 
+### Software Security
+
+| Chapter | Focus | Exercises |
+|---------|-------|-----------|
+| CH SWSEC; Software Security | Reading shipped code, hidden routes, client-side secrets, command injection, and remediation | 2 exercises |
+
+Start the software-security stream at
+[CH SWSEC — Software Security](CH_SWSEC_Software_Security/00_Introduction.md).
+
 ### High School Cybersecurity
 
 | Chapter | Focus | Exercises |

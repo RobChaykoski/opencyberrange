@@ -1,0 +1,24 @@
+services:
+  diagnostics:
+    mem_limit: 128m
+    cpus: 0.2
+    build:
+      context: ../../_swsec_shared
+      dockerfile: Dockerfile
+    hostname: diag
+    labels:
+      ip_offset: "92"
+    environment:
+      LAB_MODE: "command_injection"
+      FLAG: "OCR{sh3ll_1nj3ct10n_1s_4_bug}"
+      COMPANY: "DevFest Windsor-Essex"
+      PORT: "8080"
+      FLAG_PATH: "/tmp/flag"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

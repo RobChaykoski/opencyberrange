@@ -1,0 +1,24 @@
+services:
+  portal:
+    mem_limit: 128m
+    cpus: 0.2
+    build:
+      context: ../../_swsec_shared
+      dockerfile: Dockerfile
+    hostname: review
+    labels:
+      ip_offset: "91"
+    environment:
+      LAB_MODE: "code_review"
+      FLAG: "OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}"
+      COMPANY: "DevFest Windsor-Essex"
+      PORT: "8080"
+      EXPORT_TOKEN: "devfest-export-2026"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

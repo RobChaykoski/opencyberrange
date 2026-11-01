@@ -44,6 +44,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: deep purple
+  software-security:
+    config: mkdocs-swsec.yml
+    docs_dir: Workbook
+    auth: student
+    theme: blue
 reference:
   manual:
     config: mkdocs-manual-lite.yml

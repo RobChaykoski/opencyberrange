@@ -5,6 +5,7 @@ Scans the labs directory for lab.yaml files and populates the database
 """
 
 import os
+import re
 import sys
 import hashlib
 import json
@@ -52,28 +53,61 @@ LABS_DIR = os.environ.get('LABS_DIR', '/labs')
 
 
 def parse_lab_slug(dirname):
-    """Extract track, level, and lab number from directory name
-    
+    """Extract track, level, and lab number from a lab directory name.
+
     Examples:
         web-1-1-basic-directory-enumeration -> (web, 1, 1)
-        web-2-1-basic-sql-injection-get -> (web, 2, 1)
-        windows-1-1-basic-port-scan -> (windows, 1, 1)
-        windows-8-1-single-service-credential-discovery -> (windows, 8, 1)
-    
-    Directory names directly reflect level numbers (1-9 for Windows track)
+        windows-server-1-1-dc-port-discovery -> (windows-server, 1, 1)
+        software-security-1-1-hidden-export-route -> (software-security, 1, 1)
+        linux-midterm-3-blind-penetration-test -> (linux, None, 3)
+
+    Compound track slugs are supported: consume non-numeric prefix parts until
+    the first numeric level part. This mirrors the backend discoverer.
     """
     parts = dirname.split('-')
-    if len(parts) >= 3:
-        track_slug = parts[0].lower()
+    if len(parts) < 3:
+        return None, None, None
+
+    track_parts = []
+    i = 0
+    while i < len(parts):
         try:
-            level_num = int(parts[1])
-            lab_num = int(parts[2])
-            
-            # No mapping needed - directory names use correct level numbers
-            return track_slug, level_num, lab_num
+            int(parts[i])
+            break
         except ValueError:
             pass
-    return None, None, None
+        drill_match = re.match(r'^[Dd](\d+)$', parts[i])
+        if drill_match:
+            break
+        track_parts.append(parts[i].lower())
+        i += 1
+
+    if not track_parts or i + 1 >= len(parts):
+        return None, None, None
+
+    if track_parts[-1] in ('midterm', 'final'):
+        base_track = '-'.join(track_parts[:-1])
+        if not base_track:
+            return None, None, None
+        try:
+            special_num = int(parts[i])
+            if track_parts[-1] == 'final':
+                special_num = 500 + special_num
+            return base_track, None, special_num
+        except (ValueError, IndexError):
+            return None, None, None
+
+    track_slug = '-'.join(track_parts)
+    try:
+        drill_match = re.match(r'^[Dd](\d+)$', parts[i])
+        if drill_match:
+            level_num = 900 + int(drill_match.group(1))
+        else:
+            level_num = int(parts[i])
+        lab_num = int(parts[i + 1])
+        return track_slug, level_num, lab_num
+    except (ValueError, IndexError):
+        return None, None, None
 
 
 def hash_flag(flag):

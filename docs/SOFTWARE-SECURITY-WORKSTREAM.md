@@ -1,6 +1,7 @@
 # Software Security Workstream
 
-Status: planning. Target: current production tree, not `opencyberrange-next`.
+Status: starter track implemented; pending deployment and browser rehearsal.
+Target: current production tree, not `opencyberrange-next`.
 
 ## 1. Goal
 
@@ -177,11 +178,39 @@ Questions → Defensive Takeaways → If You Get Stuck → Further Reading.
 - Responsible disclosure and write-up.
 - A capstone that combines source review, exploitation, and remediation.
 
-## 10. Open decisions
+## 10. Decisions and status
 
-1. Dedicated `software-security` track, or levels 7–8 of the existing Web track?
-2. Keep the existing OSINT lab in the DevFest competition, or run only the two
-   new exercises?
-3. Code review + command injection (recommended), or code review + SQL
-   injection?
-4. Build the two draft labs now, or finish the workstream design first?
+Locked:
+
+1. Dedicated `software-security` track.
+2. Code review + command injection as the DevFest starter pair.
+3. Existing OSINT lab plus both new labs in the initial competition.
+4. Both draft labs were built and validated.
+
+Implemented:
+
+- Track and levels 1–5 in both curriculum seeds.
+- Two public labs: `software-security-1-1-hidden-export-route` and
+  `software-security-2-1-diagnostics-command-injection`.
+- Shared dependency-free target under `platform/labs/_swsec_shared`.
+- Workbook chapter, wiki config, and `wikis.yaml` entry.
+- DevFest seed now includes all three labs and adds missing labs to an existing
+  competition.
+- `opencyberrange-software-security` skill with plain-language concepts and a
+  bad-practices-to-exploits catalogue.
+
+Verification performed:
+
+- Both labs pass `scripts/validate-lab.py` (21/22 checks; one informational
+  resource-limit suggestion).
+- Both compose files build.
+- Code-review route and command-injection payload were exercised in Docker.
+- Seed/discovery/competition smoke test: 5 levels, 2 labs, 3 competition labs.
+
+Not yet done:
+
+- Browser-based manual solve and event rehearsal.
+- Deployment of this commit to the live server.
+- Levels 3–5 lab content and the exploit-development workbook.
+- A dedicated `mkdocs` build check (the local MkDocs 2.0 install is incompatible
+  with Material; the config uses the same structure as the existing manuals).

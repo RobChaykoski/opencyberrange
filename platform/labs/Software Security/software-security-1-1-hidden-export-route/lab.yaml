@@ -1,0 +1,86 @@
+name: "Hidden Export Route"
+description: "A browser-only source review for the DevFest software-security starter. The volunteer portal ships its JavaScript to every visitor; a temporary export route and token are still in the bundle. Find the route and recover the flag without using a terminal."
+difficulty: beginner
+category: web
+duration_minutes: 15
+visibility: public
+flag: "OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}"
+
+tools:
+  - browser
+
+objectives:
+  - Inspect the portal's shipped JavaScript in the browser
+  - Identify a hidden route and a client-side token
+  - Request the route and recover the flag
+  - Explain why a client-side secret is not access control
+
+scenario: |
+  DevFest Windsor-Essex runs a small volunteer portal for speaker handoffs and
+  community-track exports. The portal is a training target: every person,
+  speaker, and file in it is fictional.
+
+  The organiser moved the speaker export to a new admin console, but an old
+  route was left in the JavaScript bundle. The route still accepts a temporary
+  token.
+
+  This exercise is browser-only. You do not need a terminal, a VPN, or any
+  installed tools. Viewing the page source is allowed, and using hints is part
+  of the exercise.
+
+workbook: "wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/"
+
+hostnames:
+  - ip_offset: "91"
+    hostname: "review.lab"
+    description: "DevFest speaker portal (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "DevFest speaker portal"
+      type: "server"
+      ip_offset: "91"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://review.lab:8080 in the lab browser. Read the page and look
+      for the link to the portal JavaScript. You can also use the browser's
+      View Source command. This is a training portal; nothing here is real.
+    unlock_after_minutes: 0
+
+  - text: |
+      The JavaScript file contains a developer comment about a temporary
+      export route. Look for a path that starts with /admin/ and a token
+      parameter.
+    unlock_after_minutes: 4
+
+  - text: |
+      Open the route directly in the browser, for example:
+
+      http://review.lab:8080/admin/export?token=devfest-export-2026
+
+      The flag is in the export page. If it is still not clear, ask a
+      facilitator. Using a hint is allowed.
+    unlock_after_minutes: 8
+
+test:
+  steps:
+    - name: "Portal responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "JavaScript contains the export route"
+      command: "curl -s http://{target.portal}:8080/static/app.js | grep -o '/admin/export?token=devfest-export-2026'"
+      expect: "/admin/export?token=devfest-export-2026"
+      timeout: 20
+
+    - name: "Export route returns the flag"
+      command: "curl -s 'http://{target.portal}:8080/admin/export?token=devfest-export-2026' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}"
+      timeout: 20

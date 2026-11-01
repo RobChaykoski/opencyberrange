@@ -157,7 +157,34 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
         'sort_order': 6,
         'levels': [   {   'level_number': 1,
                           'name': 'Modbus Fundamentals',
-                          'description': 'Modbus TCP enumeration and register decoding'}]}]
+                          'description': 'Modbus TCP enumeration and register decoding'}]},
+    {   'name': 'Software Security',
+        'slug': 'software-security',
+        'description': 'Read code, find missing checks, and build safe exploits '
+                       'against isolated training targets.',
+        'icon': 'web',
+        'color': '#0EA5E9',
+        'sort_order': 7,
+        'levels': [   {   'level_number': 1,
+                          'name': 'Reading Code for Bugs',
+                          'description': 'Source review, hidden routes, and '
+                                         'client-side secrets'},
+                      {   'level_number': 2,
+                          'name': 'Injection and Exploitation',
+                          'description': 'Command injection and the first exploit '
+                                         'payload'},
+                      {   'level_number': 3,
+                          'name': 'Authentication and Authorization',
+                          'description': 'IDOR, broken access control, and session '
+                                         'checks'},
+                      {   'level_number': 4,
+                          'name': 'Memory Safety and Exploit Development',
+                          'description': 'Crash triage, offsets, and a first exploit '
+                                         'script'},
+                      {   'level_number': 5,
+                          'name': 'Capstone Exploit Development',
+                          'description': 'End-to-end exploitation, mitigation, and '
+                                         'disclosure'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)

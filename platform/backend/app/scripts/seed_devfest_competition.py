@@ -19,7 +19,11 @@ sys.path.insert(0, "/app")
 from app.database import SessionLocal
 from app.models import Competition, CompetitionLab, Lab, User
 
-LAB_SLUG = "high-school-12-1-devfest-community-portal"
+LAB_SLUGS = (
+    "high-school-12-1-devfest-community-portal",
+    "software-security-1-1-hidden-export-route",
+    "software-security-2-1-diagnostics-command-injection",
+)
 COMPETITION_NAME = "Windsor-Essex DevFest 2026"
 DEFAULT_START = "2026-11-21T09:00:00-05:00"
 DEFAULT_END = "2026-11-21T17:00:00-05:00"
@@ -28,16 +32,42 @@ DEFAULT_END = "2026-11-21T17:00:00-05:00"
 def seed_devfest_competition():
     db = SessionLocal()
     try:
+        labs = []
+        for slug in LAB_SLUGS:
+            lab = db.query(Lab).filter(Lab.slug == slug).first()
+            if lab:
+                labs.append(lab)
+            else:
+                print(f"Lab not found, skipping: {slug}. Run discover_labs.py first.")
+
+        if not labs:
+            print("No DevFest labs found; run discover_labs.py first.")
+            return
+
         existing = db.query(Competition).filter(
             Competition.name == COMPETITION_NAME
         ).first()
         if existing:
-            print(f"Competition already exists: {COMPETITION_NAME} (id={existing.id})")
-            return
-
-        lab = db.query(Lab).filter(Lab.slug == LAB_SLUG).first()
-        if not lab:
-            print(f"Lab not found: {LAB_SLUG}. Run discover_labs.py first.")
+            existing_ids = {
+                row.lab_id for row in db.query(CompetitionLab).filter(
+                    CompetitionLab.competition_id == existing.id
+                ).all()
+            }
+            added = 0
+            for order, lab in enumerate(labs):
+                if lab.id not in existing_ids:
+                    db.add(CompetitionLab(
+                        competition_id=existing.id,
+                        lab_id=lab.id,
+                        sort_order=order,
+                    ))
+                    added += 1
+            if added:
+                db.commit()
+            print(
+                f"Competition already exists: {COMPETITION_NAME} "
+                f"(id={existing.id}); added {added} lab(s)"
+            )
             return
 
         owner = db.query(User).filter(
@@ -58,9 +88,10 @@ def seed_devfest_competition():
         competition = Competition(
             name=COMPETITION_NAME,
             description=(
-                "A browser-first, opt-in OSINT challenge for the Windsor-Essex "
-                "DevFest community. Explore a fictional conference portal, open "
-                "a speaker's slide export, and recover the flag from its metadata."
+                "Three browser-first, opt-in starter challenges for the "
+                "Windsor-Essex DevFest community: a metadata OSINT exercise, a "
+                "source-review exercise, and a command-injection exercise. No "
+                "terminal or VPN is required."
             ),
             start_at=start_at,
             end_at=end_at,
@@ -69,16 +100,19 @@ def seed_devfest_competition():
         )
         db.add(competition)
         db.flush()
-        db.add(CompetitionLab(
-            competition_id=competition.id,
-            lab_id=lab.id,
-            sort_order=0,
-        ))
+        for order, lab in enumerate(labs):
+            db.add(CompetitionLab(
+                competition_id=competition.id,
+                lab_id=lab.id,
+                sort_order=order,
+            ))
         db.commit()
 
         print(f"Created competition: {COMPETITION_NAME} (id={competition.id})")
         print(f"Owner: {owner.username}")
-        print(f"Lab: {lab.name}")
+        print("Labs:")
+        for lab in labs:
+            print(f"  - {lab.name} ({lab.slug})")
         print(f"New-user sign-up: /register?competition={competition.id}")
     except Exception as exc:
         db.rollback()
