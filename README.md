@@ -218,6 +218,7 @@ opencyberrange/
 |-------|----------|
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
+| [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation |
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
 | [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |

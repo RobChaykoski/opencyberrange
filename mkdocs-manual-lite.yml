@@ -131,6 +131,7 @@ nav:
     - "Admin Panel Overview": 04_Admin_Guide/01_Admin_Panel_Overview.md
     - "Approving New Users": 04_Admin_Guide/02_Approving_New_Users.md
     - "Creating Users Manually": 04_Admin_Guide/03_Creating_Users_Manually.md
+    - "Migrating Users": 04_Admin_Guide/26_Migrating_Users.md
     - "Editing User Accounts": 04_Admin_Guide/04_Editing_User_Accounts.md
     - "Locking and Unlocking Users": 04_Admin_Guide/05_Locking_and_Unlocking_Users.md
     - "Resetting User Passwords": 04_Admin_Guide/06_Resetting_User_Passwords.md

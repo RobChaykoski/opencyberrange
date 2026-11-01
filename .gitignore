@@ -75,3 +75,6 @@ platform/backend/backups/
 platform/backend/data/entitlement.instance.json
 scripts/.update-state
 scripts/deploy.log
+
+# User migration exports contain password hashes and PII. Never commit them.
+users-export*.json
