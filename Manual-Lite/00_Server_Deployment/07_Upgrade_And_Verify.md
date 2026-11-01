@@ -67,6 +67,24 @@ The verification is read-only. It checks:
 RangeBox image that has not been built yet. If any check fails, fix it before
 upgrading.
 
+## Post-install checks
+
+After an installation or upgrade, run the read-only runtime check:
+
+```bash
+bash scripts/post-install-check.sh
+```
+
+It checks the containers, database connectivity, schema drift, user count, lab
+definitions, RangeBox images, health endpoints, and disk. It exits non-zero if
+a required check fails, and it does not check Git state or write to the
+database. When running it from a temporary clone, pass `--repo`:
+
+```bash
+bash /tmp/ocr-upgrade/scripts/post-install-check.sh \
+  --repo "$HOME/opencyberrange"
+```
+
 ## 2. Upgrade
 
 ```bash

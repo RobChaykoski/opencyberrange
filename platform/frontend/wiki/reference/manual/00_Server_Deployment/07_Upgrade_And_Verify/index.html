@@ -2733,6 +2733,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#post-install-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-install checks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#2-upgrade" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3673,8 +3684,19 @@ copy files to the server by hand.</p>
 <p><strong>What you should see:</strong> all checks pass, with warnings for optional HTTPS or a
 RangeBox image that has not been built yet. If any check fails, fix it before
 upgrading.</p>
+<h2 id="post-install-checks">Post-install checks</h2>
+<p>After an installation or upgrade, run the read-only runtime check:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>bash<span class="w"> </span>scripts/post-install-check.sh
+</code></pre></div>
+<p>It checks the containers, database connectivity, schema drift, user count, lab
+definitions, RangeBox images, health endpoints, and disk. It exits non-zero if
+a required check fails, and it does not check Git state or write to the
+database. When running it from a temporary clone, pass <code>--repo</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>bash<span class="w"> </span>/tmp/ocr-upgrade/scripts/post-install-check.sh<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span>--repo<span class="w"> </span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/opencyberrange"</span>
+</code></pre></div>
 <h2 id="2-upgrade">2. Upgrade</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--remote<span class="w"> </span>backup<span class="w"> </span>--branch<span class="w"> </span>main
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--remote<span class="w"> </span>backup<span class="w"> </span>--branch<span class="w"> </span>main
 </code></pre></div>
 <p>The upgrade performs the following in order:</p>
 <table>
@@ -3739,36 +3761,36 @@ upgrading.</p>
 run can take a long time and needs significant disk space. The default REMnux
 image is about 6 GB compressed and 14 GB on disk.</p>
 <h2 id="common-options">Common options</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Skip the read-only verification only when you have just run it manually</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-verify
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Code-only upgrade: no lab image or RangeBox rebuild</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-labs<span class="w"> </span>--skip-rangebox
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="c1"># Rebuild lab images four at a time</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--prebuild-parallel<span class="w"> </span><span class="m">4</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># Refresh existing users from the backup instead of only adding missing ones</span>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--update-users
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="c1"># Leave users untouched</span>
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-users
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="c1"># Skip curriculum seeding and lab discovery</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-discovery
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Skip the read-only verification only when you have just run it manually</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-verify
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Code-only upgrade: no lab image or RangeBox rebuild</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-labs<span class="w"> </span>--skip-rangebox
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Rebuild lab images four at a time</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--prebuild-parallel<span class="w"> </span><span class="m">4</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Refresh existing users from the backup instead of only adding missing ones</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--update-users
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Leave users untouched</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-users
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="c1"># Skip curriculum seeding and lab discovery</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>sudo<span class="w"> </span>bash<span class="w"> </span>scripts/upgrade-from-backup.sh<span class="w"> </span>--skip-discovery
 </code></pre></div>
 <p>Use <code>--skip-labs</code> or <code>--skip-rangebox</code> only when you know those images are
 already current. Lab definitions are still refreshed unless
 <code>--skip-discovery</code> is also used.</p>
 <h2 id="backups-and-rollback">Backups and rollback</h2>
 <p>Each run creates:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>~/opencyberrange-backups/ocr-YYYYMMDD-HHMMSS/
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>├── database.dump
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├── users-export.json
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>├── .env
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>├── docker-compose*.yml
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>├── certs/
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>└── README.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>~/opencyberrange-backups/ocr-YYYYMMDD-HHMMSS/
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>├── database.dump
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>├── users-export.json
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>├── .env
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>├── docker-compose*.yml
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>├── certs/
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>└── README.txt
 </code></pre></div>
 <p>When the script is run with <code>sudo</code>, <code>~/opencyberrange-backups</code> resolves to
 root's home. Pass <code>--backup-root DIR</code> if you want the backup elsewhere.</p>

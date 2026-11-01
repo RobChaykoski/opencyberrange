@@ -27,6 +27,7 @@ DB_NAME="${DB_NAME:-}"
 RANGEBOX_IMAGE="${RANGEBOX_IMAGE:-opencyberrange/rangebox:lite}"
 UBUNTUBOX_IMAGE="${UBUNTUBOX_IMAGE:-opencyberrange/ubuntubox:latest}"
 REMNUX_IMAGE="${REMNUX_IMAGE:-opencyberrange/remnuxbox:noble}"
+RUNTIME_ONLY=false
 PASS=0
 FAIL=0
 WARN=0
@@ -44,6 +45,8 @@ Options:
   --backup-root DIR   Backup destination to check
   --db-user USER      PostgreSQL user (default: POSTGRES_USER from platform/.env)
   --db-name NAME      PostgreSQL database (default: POSTGRES_DB from platform/.env)
+  --runtime-only      Skip Git/upgrade checks; check only runtime health, schema,
+                      labs, images, and disk (use after an installation)
   -h, --help          Show this help
 EOF
 }
@@ -56,6 +59,7 @@ while [[ $# -gt 0 ]]; do
     --backup-root) BACKUP_ROOT="${2:?--backup-root requires a value}"; shift 2 ;;
     --db-user) DB_USER="${2:?--db-user requires a value}"; shift 2 ;;
     --db-name) DB_NAME="${2:?--db-name requires a value}"; shift 2 ;;
+    --runtime-only) RUNTIME_ONLY=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
   esac
@@ -109,7 +113,11 @@ else
   PLATFORM_DIR="$REPO_DIR/platform"
 fi
 
-echo "OpenCyberRange upgrade verification"
+if [[ "$RUNTIME_ONLY" == true ]]; then
+  echo "OpenCyberRange post-install health check"
+else
+  echo "OpenCyberRange upgrade verification"
+fi
 echo "Repository: $REPO_DIR"
 echo "Scripts:    $SCRIPT_DIR"
 echo "Deployment: $PLATFORM_DIR"
@@ -262,41 +270,43 @@ fi
 # Git remote and upgrade path
 # ---------------------------------------------------------------------------
 
-if repo_git remote get-url "$REMOTE" >/dev/null 2>&1; then
-  pass "git remote '$REMOTE' exists"
-else
-  if [[ "$REMOTE" == "backup" ]] && repo_git remote get-url origin >/dev/null 2>&1; then
-    warn "remote 'backup' not found; origin exists"
-    REMOTE=origin
-    pass "git remote 'origin' exists"
+if [[ "$RUNTIME_ONLY" == false ]]; then
+  if repo_git remote get-url "$REMOTE" >/dev/null 2>&1; then
+    pass "git remote '$REMOTE' exists"
   else
-    fail "git remote '$REMOTE' does not exist"
+    if [[ "$REMOTE" == "backup" ]] && repo_git remote get-url origin >/dev/null 2>&1; then
+      warn "remote 'backup' not found; origin exists"
+      REMOTE=origin
+      pass "git remote 'origin' exists"
+    else
+      fail "git remote '$REMOTE' does not exist"
+    fi
   fi
-fi
 
-DIRTY="$(repo_git status --porcelain --untracked-files=no 2>/dev/null || true)"
-if [[ -z "$DIRTY" ]]; then
-  pass "working tree has no modified tracked files"
-else
-  fail "working tree has uncommitted tracked changes; commit or stash them first"
-fi
-
-if repo_git fetch --quiet "$REMOTE" \
-    "+refs/heads/$BRANCH:refs/remotes/$REMOTE/$BRANCH" >/dev/null 2>&1; then
-  pass "fetched $REMOTE/$BRANCH"
-  LOCAL_SHA="$(repo_git rev-parse HEAD)"
-  REMOTE_SHA="$(repo_git rev-parse "$REMOTE/$BRANCH" 2>/dev/null || true)"
-  if [[ -z "$REMOTE_SHA" ]]; then
-    fail "could not resolve $REMOTE/$BRANCH after fetch"
-  elif [[ "$LOCAL_SHA" == "$REMOTE_SHA" ]]; then
-    pass "checkout is already at $REMOTE/$BRANCH ($LOCAL_SHA)"
-  elif repo_git merge-base --is-ancestor "$LOCAL_SHA" "$REMOTE_SHA"; then
-    pass "checkout can fast-forward to $REMOTE/$BRANCH"
+  DIRTY="$(repo_git status --porcelain --untracked-files=no 2>/dev/null || true)"
+  if [[ -z "$DIRTY" ]]; then
+    pass "working tree has no modified tracked files"
   else
-    fail "checkout cannot fast-forward to $REMOTE/$BRANCH; resolve divergence first"
+    fail "working tree has uncommitted tracked changes; commit or stash them first"
   fi
-else
-  fail "could not fetch $REMOTE/$BRANCH (try: git -C $REPO_DIR fetch $REMOTE $BRANCH)"
+
+  if repo_git fetch --quiet "$REMOTE" \
+      "+refs/heads/$BRANCH:refs/remotes/$REMOTE/$BRANCH" >/dev/null 2>&1; then
+    pass "fetched $REMOTE/$BRANCH"
+    LOCAL_SHA="$(repo_git rev-parse HEAD)"
+    REMOTE_SHA="$(repo_git rev-parse "$REMOTE/$BRANCH" 2>/dev/null || true)"
+    if [[ -z "$REMOTE_SHA" ]]; then
+      fail "could not resolve $REMOTE/$BRANCH after fetch"
+    elif [[ "$LOCAL_SHA" == "$REMOTE_SHA" ]]; then
+      pass "checkout is already at $REMOTE/$BRANCH ($LOCAL_SHA)"
+    elif repo_git merge-base --is-ancestor "$LOCAL_SHA" "$REMOTE_SHA"; then
+      pass "checkout can fast-forward to $REMOTE/$BRANCH"
+    else
+      fail "checkout cannot fast-forward to $REMOTE/$BRANCH; resolve divergence first"
+    fi
+  else
+    fail "could not fetch $REMOTE/$BRANCH (try: git -C $REPO_DIR fetch $REMOTE $BRANCH)"
+  fi
 fi
 
 # ---------------------------------------------------------------------------
@@ -330,53 +340,55 @@ fi
 # Backup path and dump
 # ---------------------------------------------------------------------------
 
-if mkdir -p "$BACKUP_ROOT" 2>/dev/null && [[ -w "$BACKUP_ROOT" ]]; then
-  pass "backup root is writable: $BACKUP_ROOT"
-else
-  fail "backup root is not writable: $BACKUP_ROOT"
-fi
-
-TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ocr-verify.XXXXXX" 2>/dev/null || true)"
-if [[ -z "$TMP_DIR" ]]; then
-  warn "could not create a temporary directory; dump test skipped"
-else
-  if [[ ${#COMPOSE[@]} -gt 0 ]] && compose_in exec -T db pg_dump \
-      -U "$DB_USER" -d "$DB_NAME" --schema-only --no-owner --no-privileges -Fc \
-      > "$TMP_DIR/schema.dump" 2>/dev/null && [[ -s "$TMP_DIR/schema.dump" ]]; then
-    pass "pg_dump schema test succeeded"
+if [[ "$RUNTIME_ONLY" == false ]]; then
+  if mkdir -p "$BACKUP_ROOT" 2>/dev/null && [[ -w "$BACKUP_ROOT" ]]; then
+    pass "backup root is writable: $BACKUP_ROOT"
   else
-    fail "pg_dump schema test failed"
+    fail "backup root is not writable: $BACKUP_ROOT"
   fi
 
-  if [[ -f "$USER_TRANSFER" && ${#COMPOSE[@]} -gt 0 ]]; then
-    compose_in cp "$(docker_path "$USER_TRANSFER")" \
-      backend:/tmp/ocr-verify-user-transfer.py >/dev/null 2>&1 || true
-    if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
-        export -o /tmp/ocr-verify-users.json >/dev/null 2>&1; then
-      if compose_in cp backend:/tmp/ocr-verify-users.json "$(docker_path "$TMP_DIR/users.json")" >/dev/null 2>&1; then
-        if compose_in exec -T backend python -c \
-            "import json; d=json.load(open('/tmp/ocr-verify-users.json')); assert d.get('format')=='opencyberrange-users'; assert isinstance(d.get('users'), list); print(len(d['users']))" \
-            >/dev/null 2>&1; then
-          pass "user export test succeeded"
+  TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ocr-verify.XXXXXX" 2>/dev/null || true)"
+  if [[ -z "$TMP_DIR" ]]; then
+    warn "could not create a temporary directory; dump test skipped"
+  else
+    if [[ ${#COMPOSE[@]} -gt 0 ]] && compose_in exec -T db pg_dump \
+        -U "$DB_USER" -d "$DB_NAME" --schema-only --no-owner --no-privileges -Fc \
+        > "$TMP_DIR/schema.dump" 2>/dev/null && [[ -s "$TMP_DIR/schema.dump" ]]; then
+      pass "pg_dump schema test succeeded"
+    else
+      fail "pg_dump schema test failed"
+    fi
+
+    if [[ -f "$USER_TRANSFER" && ${#COMPOSE[@]} -gt 0 ]]; then
+      compose_in cp "$(docker_path "$USER_TRANSFER")" \
+        backend:/tmp/ocr-verify-user-transfer.py >/dev/null 2>&1 || true
+      if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
+          export -o /tmp/ocr-verify-users.json >/dev/null 2>&1; then
+        if compose_in cp backend:/tmp/ocr-verify-users.json "$(docker_path "$TMP_DIR/users.json")" >/dev/null 2>&1; then
+          if compose_in exec -T backend python -c \
+              "import json; d=json.load(open('/tmp/ocr-verify-users.json')); assert d.get('format')=='opencyberrange-users'; assert isinstance(d.get('users'), list); print(len(d['users']))" \
+              >/dev/null 2>&1; then
+            pass "user export test succeeded"
+          else
+            fail "user export payload is invalid"
+          fi
         else
-          fail "user export payload is invalid"
+          fail "could not copy the user export out of the backend"
+        fi
+        if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
+            import /tmp/ocr-verify-users.json --dry-run >/dev/null 2>&1; then
+          pass "user import dry-run succeeded (no writes)"
+        else
+          fail "user import dry-run failed"
         fi
       else
-        fail "could not copy the user export out of the backend"
+        fail "user export failed"
       fi
-      if compose_in exec -T backend python /tmp/ocr-verify-user-transfer.py \
-          import /tmp/ocr-verify-users.json --dry-run >/dev/null 2>&1; then
-        pass "user import dry-run succeeded (no writes)"
-      else
-        fail "user import dry-run failed"
-      fi
-    else
-      fail "user export failed"
+      compose_in exec -T backend rm -f \
+        /tmp/ocr-verify-user-transfer.py /tmp/ocr-verify-users.json >/dev/null 2>&1 || true
     fi
-    compose_in exec -T backend rm -f \
-      /tmp/ocr-verify-user-transfer.py /tmp/ocr-verify-users.json >/dev/null 2>&1 || true
+    rm -rf "$TMP_DIR"
   fi
-  rm -rf "$TMP_DIR"
 fi
 
 if [[ ${#COMPOSE[@]} -gt 0 ]]; then
@@ -386,6 +398,35 @@ if [[ ${#COMPOSE[@]} -gt 0 ]]; then
     pass "users table is readable ($USER_COUNT accounts)"
   else
     fail "could not read the users table"
+  fi
+
+  SCHEMA_OUT="$(compose_in exec -T backend python - 2>/dev/null <<'PY'
+import sys
+from sqlalchemy import inspect
+from app.database import engine, Base
+import app.models  # noqa: F401 - register all tables
+
+insp = inspect(engine)
+missing = []
+for table in Base.metadata.sorted_tables:
+    if not insp.has_table(table.name):
+        missing.append("table:" + table.name)
+        continue
+    existing = {c["name"] for c in insp.get_columns(table.name)}
+    for column in table.columns:
+        if column.name not in existing:
+            missing.append(table.name + "." + column.name)
+if missing:
+    print("\n".join(missing))
+    sys.exit(1)
+print("ok")
+PY
+)"
+  if [[ $? -eq 0 && "$SCHEMA_OUT" == "ok" ]]; then
+    pass "database schema matches the application models"
+  else
+    MISSING_PREVIEW="$(printf '%s' "$SCHEMA_OUT" | head -5 | tr '\n' ' ')"
+    fail "database schema is missing: ${MISSING_PREVIEW:-unknown (could not inspect)}"
   fi
 fi
 
@@ -413,10 +454,14 @@ if (( FAIL > 0 )); then
   exit 1
 fi
 
-echo "Verification passed. You can run:"
-if [[ -n "$TARGET_REPO" ]]; then
-  echo "  sudo bash $SCRIPT_DIR/upgrade-from-backup.sh --repo '$REPO_DIR' --remote $REMOTE --branch $BRANCH"
+if [[ "$RUNTIME_ONLY" == true ]]; then
+  echo "Runtime checks passed."
 else
-  echo "  sudo bash scripts/upgrade-from-backup.sh --remote $REMOTE --branch $BRANCH"
+  echo "Verification passed. You can run:"
+  if [[ -n "$TARGET_REPO" ]]; then
+    echo "  sudo bash $SCRIPT_DIR/upgrade-from-backup.sh --repo '$REPO_DIR' --remote $REMOTE --branch $BRANCH"
+  else
+    echo "  sudo bash scripts/upgrade-from-backup.sh --remote $REMOTE --branch $BRANCH"
+  fi
 fi
 exit 0

@@ -416,6 +416,11 @@ printf '\n'
 log "User count"
 compose_in exec -T db psql -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT count(*) FROM users;"
 
+CURRENT_STEP="post-install checks"
+log "Running post-install health checks"
+bash "$SCRIPT_DIR/verify-upgrade.sh" --runtime-only \
+  --repo "$REPO_DIR" --db-user "$DB_USER" --db-name "$DB_NAME"
+
 LAB_STATUS="rebuilt"
 [[ "$PREBUILD_LABS" == true ]] || LAB_STATUS="skipped (--skip-labs)"
 RANGEBOX_STATUS="rebuilt"
