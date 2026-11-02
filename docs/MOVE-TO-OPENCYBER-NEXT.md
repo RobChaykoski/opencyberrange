@@ -1,21 +1,19 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: executed. The current tree is frozen at tag
-`final-current-2026-11-01`, which includes the generated software-security wiki
-HTML and nginx routing. The new tree has been rebased onto it; see the copy of
-this document in `opencyberrange-next` for the verification record.
+Status: complete. The next tree is rebased onto the current tree and pushed to
+`RobChaykoski/opencyberrange-next`; see the copy of this document in that
+repository for the full verification record and the push-protection caveat.
 
 ## Current state
 
 | Tree | Location | State |
 |---|---|---|
-| Current / production | `RobChaykoski/opencyberrange-backup` | Frozen at the final software-security commit |
-| Next / upgrade staging | local `opencyberrange-next` | Cloned at `aba4678` plus the Wave 0 scaffold commit `63efba6` |
-| Next remote | `RobChaykoski/opencyberrange-next` | Configured as `origin`, not created yet |
+| Current / production | `RobChaykoski/opencyberrange-backup` | `8be1e9d`, tag `v2.1.3` |
+| Next / upgrade staging | `RobChaykoski/opencyberrange-next` | `8be1e9d` + Wave 0 (`c93c529`); pushed |
+| Next remote | `RobChaykoski/opencyberrange-next` | Public, default branch `main` |
 
-The next tree was cloned before the software-security work, so it does not yet
-contain the final current content. The Wave 0 commit is the only commit unique
-to next.
+The next tree now contains every tracked file from current plus the Wave 0
+scaffold, and its `main` tracks `origin/main`.
 
 ## Goal
 
@@ -73,18 +71,10 @@ git cherry-pick <wave-0-commit>
 git branch -f main migration
 ```
 
-## 3. Update the Wave 0 baseline reference
+## 3. Update the Wave 0 baseline reference (complete)
 
-`docs/WAVE-0-BASELINE.md` currently names `aba4678` as its source. After the
-rebase, replace that with the final current commit:
-
-```bash
-git rev-parse current/main
-# edit docs/WAVE-0-BASELINE.md
-```
-
-Also check `README-UPGRADE.md` and `docs/UPGRADE-TO-LATEST-GA-PLAN.md` for any
-stale commit references.
+`docs/WAVE-0-BASELINE.md` in the next tree now names `8be1e9d` as its source,
+matching the current commit.
 
 ## 4. Verify the new tree
 
@@ -121,34 +111,22 @@ docker compose --env-file .env -f docker-compose.prod.yml config >/dev/null
 Also run the two software-security labs and the DevFest seed smoke test, or
 reuse the recorded results from the final current commit.
 
-## 5. Create and push the new repository
+## 5. Create and push the new repository (complete)
 
-Create an **empty private** GitHub repository named
-`RobChaykoski/opencyberrange-next` with no README, licence, or `.gitignore`.
-`gh` is not installed on the current workstation; use the GitHub UI or install
-`gh` and run:
+The repository exists at <https://github.com/RobChaykoski/opencyberrange-next>,
+is public, uses `main` as its default branch, and holds `main` plus the tags
+`final-current-2026-11-01`, `v2.1.0`–`v2.1.3`, and `wave-0-baseline`.
 
-```bash
-gh repo create RobChaykoski/opencyberrange-next --private
-```
+The initial push was rejected with `GH013` because the account blocks pushes of
+detected secrets to public repositories. The training labs deliberately contain
+a well-known Stripe demo key, so the repository was made private for the import
+and then switched back to public. Secret scanning alerts stay enabled. See the
+copy of this document in the next repository for the full record.
 
-Then push:
+Still optional on the new repository:
 
-```bash
-cd /path/to/opencyberrange-next
-git push -u origin main
-git push origin final-current-2026-11-01
-git push origin wave-0-baseline
-```
-
-If the tag does not exist in next, recreate it on the final current commit
-before pushing.
-
-After the push:
-
-- set `main` as the default branch;
 - protect `main` (PR + CI required);
-- enable Renovate, CodeQL, and Trivy;
+- enable Renovate, CodeQL, and Trivy settings in the UI;
 - confirm the new CI workflows run.
 
 ## 6. Switch development to next
@@ -216,8 +194,9 @@ Confirm `LICENSE`, `NOTICE`, `LICENSING.md`, `BUILD_NOTICE.md`, and
 
 ## 10. Rollback
 
-- Current is frozen at `final-current-2026-11-01` and remains on the production
-  remote.
+- Current is archived at tag `final-current-2026-11-01` (the wiki-complete
+  snapshot) and remains on the production remote; later fix rounds continue on
+  `main` up to `v2.1.3`.
 - If next is wrong, delete or reset it and recreate from the tag.
 - Production continues to pull from the production remote until a deliberate
   promotion.
