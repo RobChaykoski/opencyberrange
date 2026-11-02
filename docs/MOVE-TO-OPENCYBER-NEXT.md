@@ -1,16 +1,16 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: complete. The current tree is at `8be1e9d` (tag `v2.1.3`; the earlier
+Status: complete. The current tree is at release `v2.1.4`; the earlier
 `final-current-2026-11-01` tag remains at the wiki-complete commit `4947bdd`).
-The next tree is `8be1e9d` + Wave 0 (`c93c529`) plus the status updates, and it
+The next tree is `v2.1.4` + Wave 0 plus the status updates, and it
 is pushed to `RobChaykoski/opencyberrange-next`.
 
 ## Current state
 
 | Tree | Location | State |
 |---|---|---|
-| Current / production | `RobChaykoski/opencyberrange-backup` | `8be1e9d`, tag `v2.1.3` |
-| Next / upgrade staging | local `opencyberrange-next` | `8be1e9d` + Wave 0 (`c93c529`) + status update; verified |
+| Current / production | `RobChaykoski/opencyberrange-backup` | `main`, release `v2.1.4` |
+| Next / upgrade staging | local `opencyberrange-next` | `v2.1.4` + Wave 0 + status update; verified |
 | Next remote | `RobChaykoski/opencyberrange-next` | Public, default branch `main`, tracking `origin/main` |
 
 The next tree now contains every tracked file from current plus the Wave 0
@@ -74,7 +74,7 @@ git branch -f main migration
 
 ## 3. Update the Wave 0 baseline reference (complete)
 
-`docs/WAVE-0-BASELINE.md` now names `8be1e9d` as its source, matching the
+`docs/WAVE-0-BASELINE.md` names the release commit as its source, matching the
 current commit.
 
 Also check `README-UPGRADE.md` and `docs/UPGRADE-TO-LATEST-GA-PLAN.md` for any
@@ -137,7 +137,7 @@ git push -u origin main
 git push origin --tags
 ```
 
-Tags present: `final-current-2026-11-01`, `v2.1.0`–`v2.1.3`,
+Tags present: `final-current-2026-11-01`, `v2.1.0`–`v2.1.4`,
 `wave-0-baseline`.
 
 ### Push-protection caveat
@@ -181,7 +181,7 @@ After the push:
 Do not point production hosts at next directly. Use a release promotion:
 
 1. `opencyberrange-next` passes CI and staging checks.
-2. Create a release tag, e.g. `v2.1.3`.
+2. Create a release tag, e.g. `v2.2.0`.
 3. Promote the release to the production remote, either by:
    - mirroring `next/main` to `opencyberrange-backup` after review; or
    - adding `opencyberrange-next` as a remote on the hosts and switching
