@@ -20,12 +20,13 @@ Students also get a profile with completion statistics, certificates, achievemen
 
 | Repository | Purpose | State |
 |---|---|---|
-| [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Current / production build | `v2.3.0` |
-| [`opencyberrange-next`](https://github.com/RobChaykoski/opencyberrange-next) | Upgrade staging on the latest supported GA stack | `v2.3.0`, CI green |
+| [`opencyberrange`](https://github.com/RobChaykoski/opencyberrange) | Production and development (canonical) | `v2.3.2`, CI green |
+| [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Read-only archive of the pre-cutover tree | `v2.3.2`; archived at cutover |
 
-The two trees share history: `next` is `current` plus the upgrade scaffold and
-the dependency waves. See `docs/MOVE-TO-OPENCYBER-NEXT.md` and the
-`WAVE-*.md` records for the migration trail.
+This repository is the only development tree. It contains all history from the
+pre-cutover tree plus the upgrade scaffold and dependency waves. See
+`docs/MOVE-TO-OPENCYBER-NEXT.md` and `docs/CUTOVER-TO-CANONICAL-REPO.md` for the
+migration and cutover trail.
 
 ## AI assistance disclosure
 
@@ -230,9 +231,9 @@ or repository secret:
 - **Dependency audit** — `pip-audit` and `npm audit --omit=dev` on every pull
   request and weekly.
 
-Current status at `v2.3.0`: `pip-audit` reports **0 packages with advisories**
+Current status at `v2.3.2`: `pip-audit` reports **0 packages with advisories**
 and `npm audit` reports **0 vulnerabilities**. The remediation trail is in the
-`WAVE-A`, `WAVE-B`, and `WAVE-C` documents in the next repository.
+`WAVE-A`, `WAVE-B`, and `WAVE-C` documents in `docs/`.
 
 Findings appear in the repository's **Security** tab. Code scanning on a public
 repository is free; a private repository needs GitHub Advanced Security for the
@@ -433,7 +434,7 @@ After installation, log in as admin and navigate to **Admin Panel > System Healt
 
 - **OS:** Ubuntu 22.04 LTS or later (Debian-based)
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** Python 3.11, Node 22 (frontend build), PostgreSQL 15, Docker Compose v2. Current pins and the upgrade trail are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange-next/blob/main/versions.yaml) and the `WAVE-*.md` documents in the next repository.
+- **Platform stack:** Python 3.11, Node 22 (frontend build), PostgreSQL 15, Docker Compose v2. Current pins and the upgrade trail are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

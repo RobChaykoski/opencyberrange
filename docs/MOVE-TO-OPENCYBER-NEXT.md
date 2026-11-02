@@ -1,20 +1,19 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: complete. The current tree is at release `v2.1.4`; the earlier
-`final-current-2026-11-01` tag remains at the wiki-complete commit `4947bdd`).
-The next tree is `v2.1.4` + Wave 0 plus the status updates, and it
-is pushed to `RobChaykoski/opencyberrange-next`.
+Status: historical. This document records the move from the pre-cutover tree to
+the staging repository. The staging repository was subsequently renamed to
+`RobChaykoski/opencyberrange` and is now the canonical tree. See
+`CUTOVER-TO-CANONICAL-REPO.md` for the remaining cutover steps.
 
 ## Current state
 
 | Tree | Location | State |
 |---|---|---|
-| Current / production | `RobChaykoski/opencyberrange-backup` | `main`, release `v2.1.4` |
-| Next / upgrade staging | local `opencyberrange-next` | `v2.1.4` + Wave 0 + status update; verified |
-| Next remote | `RobChaykoski/opencyberrange-next` | Public, default branch `main`, tracking `origin/main` |
+| Canonical | `RobChaykoski/opencyberrange` (formerly `opencyberrange-next`) | `main`, release line `v2.3.2` plus Waves 0–C |
+| Pre-cutover archive | `RobChaykoski/opencyberrange-backup` | `main`, `v2.3.2`; read-only after the cutover |
 
-The next tree now contains every tracked file from current plus the Wave 0
-scaffold. The rebase was clean; no content was dropped.
+The canonical tree contains every tracked file and commit from the pre-cutover
+tree plus the Wave 0 scaffold and the dependency waves.
 
 ## Goal
 
@@ -166,26 +165,28 @@ After the push:
 - [ ] install the Renovate app (Dependabot is already active);
 - [x] confirm the new CI workflows run.
 
-## 6. Switch development to next
+## 6. Switch development to the canonical repository
 
-- Treat `opencyberrange-next` as the only development tree.
-- Keep current as a read-only archive and rollback tag.
+- Treat `opencyberrange` (formerly `opencyberrange-next`) as the only
+  development tree.
+- Keep the pre-cutover repository as a read-only archive and rollback tag.
 - Rename the local remotes for clarity if desired:
-  - `origin` = `opencyberrange-next`;
+  - `origin` = `opencyberrange`;
   - `current` = `opencyberrange-backup` (frozen);
   - optionally `legacy` = the old backup remote.
-- Do not delete the current repository or its tags.
+- Do not delete the pre-cutover repository or its tags.
 
 ## 7. Production promotion
 
-Do not point production hosts at next directly. Use a release promotion:
+Do not point production hosts at the canonical development branch directly. Use
+a release promotion:
 
-1. `opencyberrange-next` passes CI and staging checks.
-2. Create a release tag, e.g. `v2.2.0`.
-3. Promote the release to the production remote, either by:
-   - mirroring `next/main` to `opencyberrange-backup` after review; or
-   - adding `opencyberrange-next` as a remote on the hosts and switching
-     `GIT_REMOTE`/`--remote` at the same time.
+1. `opencyberrange` passes CI and staging checks.
+2. Create a release tag, e.g. `v2.3.3`.
+3. Promote the release through the production remote, either by:
+   - mirroring `main` to `opencyberrange-backup` after review; or
+   - pointing the hosts at `opencyberrange` and switching `GIT_REMOTE`/`--remote`
+     at the same time.
 4. Keep the existing host upgrade scripts on the production remote until the
    promotion is complete.
 
