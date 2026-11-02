@@ -889,8 +889,9 @@ console.</p>
 script link.</p>
 <p>Look for a developer comment. It contains a temporary export route and token.</p>
 <h3 id="step-3-request-the-route">Step 3: Request the route</h3>
-<p>Open the route in the browser:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>http://review.lab:8080/admin/export?token=devfest-export-2026
+<p>Open the route in the browser. Use the route and token you found in the
+JavaScript comment - do not guess them:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>http://review.lab:8080/admin/export?token=&lt;token-from-the-bundle&gt;
 </code></pre></div>
 <p>The export page returns the flag.</p>
 <h3 id="step-4-submit-the-flag">Step 4: Submit the flag</h3>

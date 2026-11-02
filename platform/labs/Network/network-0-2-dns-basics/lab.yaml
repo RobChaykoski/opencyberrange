@@ -73,6 +73,14 @@ hints:
       The `@{target.target}` part tells `dig` to ask the lab server instead of
       your normal resolver.
 
+      Some `nslookup` builds also ask for an IPv6 (AAAA) record and print
+      `NXDOMAIN` even when the A record worked. If you see that, ask for the
+      type explicitly:
+
+      ```bash
+      nslookup -type=A portal.range.local {target.target}
+      ```
+
       Try the alias and the mail record too:
 
       ```bash

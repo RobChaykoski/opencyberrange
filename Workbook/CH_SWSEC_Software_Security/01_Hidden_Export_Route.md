@@ -63,10 +63,11 @@ Look for a developer comment. It contains a temporary export route and token.
 
 ### Step 3: Request the route
 
-Open the route in the browser:
+Open the route in the browser. Use the route and token you found in the
+JavaScript comment - do not guess them:
 
 ```text
-http://review.lab:8080/admin/export?token=devfest-export-2026
+http://review.lab:8080/admin/export?token=<token-from-the-bundle>
 ```
 
 The export page returns the flag.

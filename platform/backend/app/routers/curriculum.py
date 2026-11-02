@@ -32,6 +32,7 @@ from app.models import (
 )
 from app.auth import get_current_active_user
 from app.services.docker_manager import DockerManager
+from app.services.lab_text import render_lab_text
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
 from app.config import settings
@@ -248,6 +249,34 @@ def _is_lab_visible(lab, user, accessible_course_lab_ids: set, *, course_context
             return True
         return lab.id in accessible_course_lab_ids
     return False
+
+
+def lab_unlocked_for_user(db: Session, user, lab: Lab) -> bool:
+    """Whether ``user`` may open ``lab`` under the sequential-track rules.
+
+    Mirrors the lock enforced by ``get_lab_details`` so spawn/launch cannot
+    start an environment for a lab the student is not allowed to open. Keeping
+    the two paths in one helper prevents them from drifting again.
+    """
+    if user.is_admin or getattr(user, "is_instructor", False):
+        return True
+    if not lab.level_id:
+        return True
+
+    completed_ids = get_user_completions(db, user.id)
+    visible_lab_ids = _visible_lab_ids(
+        lab.level.track,
+        user,
+        get_accessible_exclusive_lab_ids(db, user.id),
+    )
+    return is_lab_unlocked(
+        db,
+        user.id,
+        lab,
+        completed_ids,
+        getattr(user, "is_instructor", False),
+        visible_lab_ids,
+    )
 
 
 def _visible_lab_ids(track: Track, user, accessible_course_lab_ids: set) -> set:
@@ -1374,6 +1403,14 @@ async def get_hint(
             raise HTTPException(status_code=404, detail="Lab not found")
         _assert_lab_accessible(db, current_user, lab)
 
+        # Hints use the same {target.X} grammar as the scenario, so they need
+        # the active session to resolve addresses.
+        session = db.query(LabSession).filter(
+            LabSession.user_id == current_user.id,
+            LabSession.lab_id == lab_id,
+            LabSession.status == "running",
+        ).first()
+
         # Parse hints (support both old string format and new object format)
         try:
             hints = json.loads(lab.hints) if lab.hints else []
@@ -1533,7 +1570,7 @@ async def get_hint(
 
         current_hint = available_hints[current_hint_index]
         return {
-            "hint": current_hint["text"],
+            "hint": render_lab_text(current_hint["text"], lab, session),
             "hint_number": current_hint_index + 1,
             "point_cost": current_hint.get("point_cost", 0),
             "hints_available": len(available_hints),
@@ -1755,7 +1792,7 @@ async def get_lab_details(
             # Get the first N hints that were requested (hints are given in order)
             for i in range(min(hints_used, len(available_hints_list))):
                 requested_hints.append({
-                    "text": available_hints_list[i]["text"],
+                    "text": render_lab_text(available_hints_list[i]["text"], lab, session),
                     "number": i + 1
                 })
         except Exception as e:
@@ -1785,7 +1822,7 @@ async def get_lab_details(
             "name": lab.name,
             "slug": lab.slug,
             "description": lab.description,
-            "scenario": lab.scenario if lab.scenario else None,
+            "scenario": render_lab_text(lab.scenario, lab, session) if lab.scenario else None,
             "scenario_brief": scenario_brief,
             "difficulty": lab.difficulty,
             "category": lab.category,

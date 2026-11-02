@@ -1012,6 +1012,24 @@ const viewLab = async (lab) => {
   await openActiveLab(lab)
 }
 
+// Labs whose workbook assumes a pre-installed tool on a desktop image
+// (Ghidra, Volatility, Kali tooling) must be launched with that image.
+const RANGEBOX_IMAGE_BY_TOOL = {
+  ghidra: 'remnux',
+  remnux: 'remnux',
+  volatility: 'remnux',
+  kali: 'kali',
+}
+
+const rangeboxImageForLab = (lab) => {
+  const tools = Array.isArray(lab?.tools) ? lab.tools : []
+  for (const tool of tools) {
+    const image = RANGEBOX_IMAGE_BY_TOOL[String(tool).toLowerCase()]
+    if (image) return image
+  }
+  return null
+}
+
 const launchLab = async (lab) => {
   const trackSlug = track.value?.slug || route.params.trackSlug
   loading.value = true
@@ -1019,7 +1037,14 @@ const launchLab = async (lab) => {
   sessionExpired.value = false
   startSpawnTimer()
   try {
-    const { data: sp } = await axios.post(`/labs/spawn/${lab.slug}`, { rangebox: false })
+    // Some labs assume a desktop image (for example Ghidra on REMnux). The
+    // plain Launch button used to spawn them without one, so the student got
+    // an evidence server and a workbook that said "open the REMnux desktop".
+    const rangeboxImage = rangeboxImageForLab(lab)
+    const spawnBody = rangeboxImage
+      ? { rangebox: true, rangebox_image: rangeboxImage }
+      : { rangebox: false }
+    const { data: sp } = await axios.post(`/labs/spawn/${lab.slug}`, spawnBody)
     // Async spawn: wait for the session to actually reach running before opening
     // the panel, otherwise it shows a not-ready lab and never updates.
     if (sp?.session_id && sp.status !== 'running') {

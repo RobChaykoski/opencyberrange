@@ -235,6 +235,12 @@ fi
 if [[ -f "$PLATFORM_DIR/docker-compose.override.yml" ]]; then
   COMPOSE+=(-f "$(docker_path "$PLATFORM_DIR/docker-compose.override.yml")")
 fi
+# Optional operator layer. Existing deployments use it to pin a named volume
+# (for example adopting the Postgres volume that already holds the data)
+# without editing tracked compose files. Keep it last so it wins.
+if [[ -f "$PLATFORM_DIR/docker-compose.adopt.yml" ]]; then
+  COMPOSE+=(-f "$(docker_path "$PLATFORM_DIR/docker-compose.adopt.yml")")
+fi
 compose() { "${COMPOSE[@]}" "$@"; }
 # Git Bash rewrites absolute container paths such as /tmp/x into Windows paths
 # before Docker sees them. Disable that conversion for exec/cp arguments.
@@ -309,7 +315,7 @@ mkdir -p "$BACKUP_DIR"
 chmod 700 "$BACKUP_DIR" 2>/dev/null || true
 
 cp "$PLATFORM_DIR/.env" "$BACKUP_DIR/.env"
-for f in docker-compose.yml docker-compose.prod.yml docker-compose.override.yml; do
+for f in docker-compose.yml docker-compose.prod.yml docker-compose.override.yml docker-compose.adopt.yml; do
   [[ -f "$PLATFORM_DIR/$f" ]] && cp "$PLATFORM_DIR/$f" "$BACKUP_DIR/$f"
 done
 [[ -d "$PLATFORM_DIR/certs" ]] && cp -R "$PLATFORM_DIR/certs" "$BACKUP_DIR/certs"

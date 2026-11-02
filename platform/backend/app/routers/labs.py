@@ -148,6 +148,18 @@ async def spawn_lab(
             detail=f"Lab '{lab_slug}' not found"
         )
 
+    # A sequential track must not hand out an environment for a lab the
+    # student cannot open. The detail endpoint already enforces this; without
+    # the same check here a student can burn a session on a locked lab and
+    # only discover the lock when the panel refuses to load.
+    from app.routers.curriculum import lab_unlocked_for_user
+
+    if not lab_unlocked_for_user(db, current_user, lab):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This lab is locked. Complete previous labs first.",
+        )
+
     # Still preparing? When the installer pre-builds lab images in the
     # background (so the admin gets in fast), a container lab whose image is not
     # built yet cannot spawn. Return a clear "preparing" message instead of a
