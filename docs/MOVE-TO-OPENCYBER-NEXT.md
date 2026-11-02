@@ -1,9 +1,9 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: sync executed and verified. The current tree is at `8be1e9d`
-(tag `v2.1.3`; the earlier `final-current-2026-11-01` tag remains at the
-wiki-complete commit `4947bdd`). The next tree is `8be1e9d` + Wave 0
-(`c93c529`) plus this status update. Only remote creation and the push remain.
+Status: complete. The current tree is at `8be1e9d` (tag `v2.1.3`; the earlier
+`final-current-2026-11-01` tag remains at the wiki-complete commit `4947bdd`).
+The next tree is `8be1e9d` + Wave 0 (`c93c529`) plus the status updates, and it
+is pushed to `RobChaykoski/opencyberrange-next`.
 
 ## Current state
 
@@ -11,7 +11,7 @@ wiki-complete commit `4947bdd`). The next tree is `8be1e9d` + Wave 0
 |---|---|---|
 | Current / production | `RobChaykoski/opencyberrange-backup` | `8be1e9d`, tag `v2.1.3` |
 | Next / upgrade staging | local `opencyberrange-next` | `8be1e9d` + Wave 0 (`c93c529`) + status update; verified |
-| Next remote | `RobChaykoski/opencyberrange-next` | Configured as `origin`, not created yet |
+| Next remote | `RobChaykoski/opencyberrange-next` | Public, `main` at `3d3dee4`, tags pushed |
 
 The next tree now contains every tracked file from current plus the Wave 0
 scaffold. The rebase was clean; no content was dropped.
@@ -126,35 +126,45 @@ Verified on the rebased Wave 0 tree:
 - `git diff --stat current/main..HEAD` contains the Wave 0 scaffold and this
   migration-status update.
 
-## 5. Create and push the new repository (pending)
+## 5. Create and push the new repository (complete)
 
-Create an **empty private** GitHub repository named
-`RobChaykoski/opencyberrange-next` with no README, licence, or `.gitignore`.
-`gh` is not installed on the current workstation; use the GitHub UI or install
-`gh` and run:
-
-```bash
-gh repo create RobChaykoski/opencyberrange-next --private
-```
-
-Then push:
+The repository exists at <https://github.com/RobChaykoski/opencyberrange-next>,
+is public, and uses `main` as its default branch. Pushed content:
 
 ```bash
 cd /path/to/opencyberrange-next
 git push -u origin main
-git push origin final-current-2026-11-01
-git push origin wave-0-baseline
+git push origin --tags
 ```
 
-If the tag does not exist in next, recreate it on the final current commit
-before pushing.
+Tags present: `final-current-2026-11-01`, `v2.1.0`–`v2.1.3`,
+`wave-0-baseline`.
+
+### Push-protection caveat
+
+The account blocks pushes of detected secrets to **public** repositories,
+independent of the repository-level setting. The training labs deliberately
+contain a well-known Stripe demo key
+(`platform/labs/Linux/linux-4-1-credential-pivot-attack/.../Dockerfile`), so
+the initial import was rejected with `GH013` even after
+`secret_scanning_push_protection` was set to `disabled`.
+
+The import was completed by temporarily making the repository private:
+
+```bash
+# repository was set private, main + tags pushed, then set public again
+```
+
+Secret scanning alerts remain enabled on the repository. If history is ever
+force-pushed through a public path, expect the same `GH013` rejection and use
+the temporary-private method again.
 
 After the push:
 
-- set `main` as the default branch;
-- protect `main` (PR + CI required);
-- enable Renovate, CodeQL, and Trivy;
-- confirm the new CI workflows run.
+- [x] set `main` as the default branch;
+- [ ] protect `main` (PR + CI required);
+- [ ] enable Renovate, CodeQL, and Trivy;
+- [ ] confirm the new CI workflows run.
 
 ## 6. Switch development to next
 
