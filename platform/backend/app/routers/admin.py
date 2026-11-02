@@ -1574,6 +1574,14 @@ async def impersonate_launch_lab(
 
     try:
         compose_content = (lab.compose_file or "").strip()
+        hostname_entries = []
+        if lab.hostnames:
+            try:
+                parsed = _json.loads(lab.hostnames)
+                if isinstance(parsed, list):
+                    hostname_entries = parsed
+            except (TypeError, ValueError):
+                pass
 
         if compose_content:
             # Lab has containers — start them
@@ -1584,6 +1592,7 @@ async def impersonate_launch_lab(
                     user_id=target_user_id,
                     lab_slug=lab_slug,
                     compose_content=compose_content,
+                    hostname_entries=hostname_entries,
                 )
             )
             second_octet, third_octet = get_subnet_id(target_user_id, lab_slug)
