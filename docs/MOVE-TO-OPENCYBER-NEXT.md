@@ -126,8 +126,9 @@ copy of this document in the next repository for the full record.
 Still optional on the new repository:
 
 - protect `main` (PR + CI required);
-- enable Renovate, CodeQL, and Trivy settings in the UI;
-- confirm the new CI workflows run.
+- install the Renovate app (Dependabot is already active).
+
+CI, CodeQL, Trivy, and the dependency audit run green on `main`.
 
 ## 6. Switch development to next
 
