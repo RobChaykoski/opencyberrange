@@ -8,8 +8,8 @@ repository for the full verification record and the push-protection caveat.
 
 | Tree | Location | State |
 |---|---|---|
-| Current / production | `RobChaykoski/opencyberrange-backup` | `8be1e9d`, tag `v2.1.3` |
-| Next / upgrade staging | `RobChaykoski/opencyberrange-next` | `8be1e9d` + Wave 0 (`c93c529`); pushed |
+| Current / production | `RobChaykoski/opencyberrange-backup` | `main`, release `v2.1.4` |
+| Next / upgrade staging | `RobChaykoski/opencyberrange-next` | `v2.1.4` + Wave 0; pushed |
 | Next remote | `RobChaykoski/opencyberrange-next` | Public, default branch `main` |
 
 The next tree now contains every tracked file from current plus the Wave 0
@@ -73,7 +73,7 @@ git branch -f main migration
 
 ## 3. Update the Wave 0 baseline reference (complete)
 
-`docs/WAVE-0-BASELINE.md` in the next tree now names `8be1e9d` as its source,
+`docs/WAVE-0-BASELINE.md` in the next tree names the release commit as its source,
 matching the current commit.
 
 ## 4. Verify the new tree
@@ -115,7 +115,7 @@ reuse the recorded results from the final current commit.
 
 The repository exists at <https://github.com/RobChaykoski/opencyberrange-next>,
 is public, uses `main` as its default branch, and holds `main` plus the tags
-`final-current-2026-11-01`, `v2.1.0`–`v2.1.3`, and `wave-0-baseline`.
+`final-current-2026-11-01`, `v2.1.0`–`v2.1.4`, and `wave-0-baseline`.
 
 The initial push was rejected with `GH013` because the account blocks pushes of
 detected secrets to public repositories. The training labs deliberately contain
@@ -197,7 +197,7 @@ Confirm `LICENSE`, `NOTICE`, `LICENSING.md`, `BUILD_NOTICE.md`, and
 
 - Current is archived at tag `final-current-2026-11-01` (the wiki-complete
   snapshot) and remains on the production remote; later fix rounds continue on
-  `main` up to `v2.1.3`.
+  `main` up to `v2.1.4`.
 - If next is wrong, delete or reset it and recreate from the tag.
 - Production continues to pull from the production remote until a deliberate
   promotion.
