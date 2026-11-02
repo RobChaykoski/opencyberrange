@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- [ ] Launched the exercise and can reach `http://voice.lab`
+- [ ] Launched the exercise and can reach `http://voice.lab:8080`
 - [ ] Downloaded `voip-call.pcap`
 - [ ] You have Wireshark/tshark and Python 3, or RangeBox
 - [ ] You know the call is fictional and safe to analyze
@@ -19,7 +19,7 @@ for the training token.
 ## Step 1: Download the capture
 
 ```bash
-curl -O http://voice.lab/voip-call.pcap
+curl -O http://voice.lab:8080/voip-call.pcap
 ```
 
 ## Step 2: Find the signalling
@@ -67,7 +67,7 @@ G.711 frame.
 The evidence package includes a small reconstruction script:
 
 ```bash
-curl -O http://voice.lab/reconstruct.py
+curl -O http://voice.lab:8080/reconstruct.py
 python3 reconstruct.py voip-call.pcap call.wav
 ```
 
