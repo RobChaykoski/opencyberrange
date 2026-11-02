@@ -55,6 +55,39 @@ router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
 
+def _registration_rate_limit() -> str:
+    """Per-IP registration limits, relaxed while a competition is live.
+
+    A DevFest-style event sends a room of sign-ups through one NAT address in
+    a few minutes, which the normal limits would reject. Inside an active,
+    non-archived event window the burst allowance applies; outside it the
+    stricter limits do. Read at request time so no restart is needed.
+    """
+    try:
+        from datetime import datetime, timezone
+
+        from app.database import SessionLocal
+        from app.models import Competition
+
+        db = SessionLocal()
+        try:
+            now = datetime.now(timezone.utc).replace(tzinfo=None)
+            live = db.query(Competition.id).filter(
+                Competition.is_active == True,
+                Competition.is_archived == False,
+                Competition.start_at <= now,
+                Competition.end_at >= now,
+            ).first()
+        finally:
+            db.close()
+        if live:
+            return "20/minute;120/hour;400/day"
+    except Exception:
+        logger.warning("Registration burst check failed; using strict limits", exc_info=True)
+    return "5/minute;30/hour;100/day"
+
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -756,7 +789,7 @@ async def request_account_deletion(
     )
 
 @router.post("/register", response_model=UserResponse)
-@limiter.limit("5/minute;30/hour;100/day")  # per-IP registration limits
+@limiter.limit(_registration_rate_limit)
 async def register(
     request: Request,
     user_data: RegisterRequest,
@@ -764,9 +797,10 @@ async def register(
 ):
     """Register a new user.
 
-    Per-IP limits: 5/minute (stops a burst), 30/hour (still fits a class
-    behind one NAT), 100/day (stops slow enumeration). The invite-code and
-    approval gates remain the controls that decide *who* may register.
+    Per-IP limits are strict normally (5/minute; 30/hour; 100/day) and relax
+    to a burst allowance (20/minute; 120/hour; 400/day) while a competition
+    window is live. The invite-code and approval gates remain the controls
+    that decide *who* may register.
     """
     # Check for existing username, email, or student_id.
     # Use a single generic error to prevent account enumeration.
