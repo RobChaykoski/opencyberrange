@@ -79,8 +79,8 @@ Declared ranges are older than the lockfile. The lockfile currently resolves:
 | Backend base | `python:3.11-slim` | Debian slim, unpinned patch |
 | Frontend base | `node:18-alpine` → `nginx:alpine` | Node EOL; Nginx floating |
 | Docker CLI | installed from Docker apt repo in the backend image | Pin or track host compatibility |
-| Docs | MkDocs 1.6.1 / Material 9.7.4 / pymdown 10.8 | MkDocs 2.0 is currently incompatible with Material |
-| CI | `actions/checkout@v4`, CodeQL v3, Trivy 0.28.0 | No build/test workflow exists yet |
+| Docs | MkDocs 1.6.1 / Material 9.8.0 / pymdown 11.0.1 | MkDocs 2.0 is currently incompatible with Material |
+| CI | `actions/checkout@v7`, CodeQL v4, Trivy 0.36.0 | No build/test workflow exists yet |
 
 ### Lab images (separate upgrade tier)
 

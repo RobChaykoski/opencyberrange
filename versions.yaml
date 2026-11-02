@@ -94,13 +94,13 @@ infrastructure:
   frontend_builder: "node:22-alpine"
   frontend_server: "nginx:alpine"
   postgres_image: "postgres:15-alpine"
-  ci_checkout: "actions/checkout@v4"
-  ci_codeql: "github/codeql-action@v3"
-  ci_trivy: "aquasecurity/trivy-action@0.28.0"
+  ci_checkout: "actions/checkout@v7"
+  ci_codeql: "github/codeql-action@v4"
+  ci_trivy: "aquasecurity/trivy-action@0.36.0"
   docs:
     mkdocs: "1.6.1"
-    mkdocs-material: "9.7.4"
-    pymdown-extensions: "10.8"
+    mkdocs-material: "9.8.0"
+    pymdown-extensions: "11.0.1"
 
 out_of_scope:
   - "platform/labs/**"

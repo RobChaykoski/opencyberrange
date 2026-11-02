@@ -76,11 +76,11 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 |---|---|---|---|
 | PostgreSQL image | `postgres:15-alpine` | `postgres:17-alpine` digest | Wave 6 |
 | MkDocs | 1.6.1 | Newest compatible 1.x | Do not move to 2.0 until Material supports it |
-| Material for MkDocs | 9.7.4 | Newest 9.x | |
-| pymdown-extensions | 10.8 | Newest compatible | |
-| CodeQL action | v3 | Current major | Renovate |
-| Trivy action | 0.28.0 | Current | Renovate |
-| checkout action | v4 | Current major | Renovate |
+| Material for MkDocs | 9.8.0 | Newest 9.x | |
+| pymdown-extensions | 11.0.1 | Newest compatible | Required by Material 9.8 |
+| CodeQL action | v4 | Current major | Renovate |
+| Trivy action | 0.36.0 | Current | Renovate |
+| checkout action | v7 | Current major | Renovate |
 
 ## Out of scope
 
