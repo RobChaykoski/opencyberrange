@@ -53,13 +53,32 @@
               />
             </div>
 
+            <div v-if="mfaRequired" class="form-group">
+              <label for="mfa-code" class="form-label">Authenticator or recovery code</label>
+              <input
+                id="mfa-code"
+                v-model="mfaCode"
+                type="text"
+                inputmode="numeric"
+                class="form-input"
+                :class="{ 'form-input--error': errorMessage }"
+                placeholder="6-digit code"
+                autocomplete="one-time-code"
+                required
+              />
+              <p class="mfa-help">
+                Enter the code from your authenticator app, or one of your recovery codes.
+              </p>
+            </div>
+
             <button
               type="submit"
               class="login-button"
               :disabled="loading"
             >
-              <span v-if="!loading">Sign In</span>
-              <span v-else>Signing In...</span>
+              <span v-if="loading">Signing In...</span>
+              <span v-else-if="mfaRequired">Verify &amp; Sign In</span>
+              <span v-else>Sign In</span>
             </button>
           </form>
 
@@ -142,6 +161,8 @@ const router = useRouter()
 
 const username = ref('')
 const password = ref('')
+const mfaRequired = ref(false)
+const mfaCode = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
 
@@ -155,6 +176,9 @@ const handleLogin = async () => {
     const params = new URLSearchParams()
     params.append('username', username.value)
     params.append('password', password.value)
+    if (mfaRequired.value && mfaCode.value.trim()) {
+      params.append('totp_code', mfaCode.value.trim())
+    }
 
     const response = await axios.post('/api/auth/login', params, {
       headers: {
@@ -189,10 +213,20 @@ const handleLogin = async () => {
     // Redirect to dashboard
     router.push('/dashboard')
   } catch (error) {
-    if (error.response?.data?.detail) {
-      errorMessage.value = error.response.data.detail
+    const mfaHeader = error.response?.headers?.['x-mfa-required']
+    if (mfaHeader === 'true' || error.response?.data?.detail === 'MFA code required') {
+      mfaRequired.value = true
+      errorMessage.value = mfaCode.value.trim()
+        ? 'That authenticator code was not accepted. Try the current code or a recovery code.'
+        : 'Enter the code from your authenticator app to finish signing in.'
     } else {
-      errorMessage.value = 'Login failed. Please check your credentials and try again.'
+      mfaRequired.value = false
+      mfaCode.value = ''
+      if (error.response?.data?.detail) {
+        errorMessage.value = error.response.data.detail
+      } else {
+        errorMessage.value = 'Login failed. Please check your credentials and try again.'
+      }
     }
   } finally {
     loading.value = false
@@ -326,6 +360,13 @@ const handleLogin = async () => {
 
 .form-input::placeholder {
   color: var(--text-muted);
+}
+
+.mfa-help {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
 }
 
 .form-input--error {
