@@ -15,8 +15,7 @@ import logging
 import qrcode
 import re
 
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from app.ratelimit import create_limiter
 from app.database import get_db
 from app.models import (
     User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
@@ -34,6 +33,7 @@ from app.auth import (
     is_impersonating,
     create_impersonation_token,
     revoke_token,
+    revoke_all_user_tokens,
     _decode_token,
     oauth2_scheme,
 )
@@ -53,7 +53,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Rate limiter for auth endpoints - stricter limits for security
-limiter = Limiter(key_func=get_remote_address)
+limiter = create_limiter()
 
 
 def _registration_rate_limit() -> str:
@@ -279,6 +279,7 @@ async def login(
         "is_admin": user.role == 'admin' if hasattr(user, 'role') else user.is_admin,
         "is_approved": user.is_approved,
         "must_change_password": getattr(user, 'must_change_password', False),
+        "timezone": getattr(user, 'timezone', None),
     }
     
     # Add is_active if it exists
@@ -467,8 +468,7 @@ async def revoke_all_sessions(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    from app.auth import revoke_all_user_tokens
-    revoke_all_user_tokens(db, current_user)
+    revoke_all_user_tokens(current_user.username)
     logger.info(f"User {current_user.username} revoked all sessions")
     return {"message": "All sessions revoked. Please log in again."}
 
@@ -955,6 +955,7 @@ async def get_current_user_info(
             "role": "student" if imp_mode == 'role_course' else getattr(current_user, '_imp_mode', 'student'),
             "must_change_password": False,
             "mfa_enabled": False,
+            "timezone": getattr(current_user, 'timezone', None),
             "impersonating": True,
             "impersonation": {
                 "original_user": {
@@ -1002,6 +1003,7 @@ async def get_current_user_info(
         "role": current_user.role,
         "must_change_password": getattr(current_user, 'must_change_password', False),
         "mfa_enabled": bool(getattr(current_user, "mfa_enabled", False)),
+        "timezone": getattr(current_user, 'timezone', None),
     }
 
     if imp:
@@ -1386,10 +1388,18 @@ async def change_password(
         current_user.must_change_password = False
     
     db.commit()
-    
-    logger.info(f"User {current_user.username} changed their password")
 
-    return {"message": "Password changed successfully"}
+    # A password change invalidates every token that existed beforehand. This
+    # closes the window where a stolen token keeps working after the victim
+    # rotates their credentials.
+    revoke_all_user_tokens(current_user.username)
+
+    logger.info(f"User {current_user.username} changed their password and all sessions were revoked")
+
+    return {
+        "message": "Password changed successfully. Please log in again.",
+        "reauth_required": True,
+    }
 
 
 @router.post("/logout")

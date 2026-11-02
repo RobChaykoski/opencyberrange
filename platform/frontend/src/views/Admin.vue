@@ -2672,6 +2672,7 @@ test:
 import InfoTip from '../components/InfoTip.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import AdminPendingTab from '../components/AdminPendingTab.vue'
+import { getUserTimeZone } from '../utils/timezone'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
@@ -4745,7 +4746,7 @@ const formatDate = (dateStr) => {
   if (!dateStr) return '-'
   // Backend stores naive UTC — append 'Z' so JS knows it's UTC, then display in CST
   const d = new Date(dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z')
-  return d.toLocaleString('en-US', { timeZone: 'America/Chicago' })
+  return d.toLocaleString('en-US', { timeZone: getUserTimeZone() })
 }
 
 const isDiagnosticEvent = (event) => {
@@ -6152,7 +6153,7 @@ const copyToClipboard = (text) => {
 const formatDateShort = (dt) => {
   if (!dt) return ''
   const d = new Date(dt.endsWith('Z') || dt.includes('+') ? dt : dt + 'Z')
-  return d.toLocaleDateString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric', year: 'numeric' })
+  return d.toLocaleDateString('en-US', { timeZone: getUserTimeZone(), month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 // Fetch tab-specific data when switching tabs (immediate: true ensures it
