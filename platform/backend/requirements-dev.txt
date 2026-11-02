@@ -10,4 +10,4 @@ pytest==8.2.2
 pytest-asyncio==0.23.7
 httpx==0.26.0
 # Postgres driver for the ephemeral test database (same pin as requirements.txt)
-psycopg2-binary==2.9.13
+psycopg[binary]==3.3.6

@@ -6,7 +6,7 @@ Treat the exported file as a secret: it contains account data and credential
 material. MFA enrollments, recovery codes, trusted devices, VPN peer keys, and
 completion history are not exported.
 
-Run inside the backend container (psycopg2 is already installed):
+Run inside the backend container (psycopg 3 is already installed):
 
     python /tmp/user_transfer.py export -o /tmp/users-export.json
     python /tmp/user_transfer.py import /tmp/users-export.json --dry-run
@@ -22,8 +22,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 
 FORMAT = "opencyberrange-users"
 VERSION = 1
@@ -66,7 +66,7 @@ def fail(message: str, code: int = 1):
 
 def connect(database_url: str):
     try:
-        conn = psycopg2.connect(database_url)
+        conn = psycopg.connect(database_url)
         conn.autocommit = False
         return conn
     except Exception as exc:
@@ -148,7 +148,7 @@ def export_users(args):
         columns = table_columns(conn)
         if "username" not in columns or "email" not in columns or "hashed_password" not in columns:
             fail("the users table is missing username, email, or hashed_password")
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+        with conn.cursor(row_factory=dict_row) as cur:
             cur.execute("SELECT * FROM users ORDER BY id")
             rows = cur.fetchall()
 
@@ -317,7 +317,7 @@ def import_users(args):
                 update_data.pop("is_admin", None)
 
             try:
-                with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute(
                         "SELECT id, username, email FROM users "
                         "WHERE lower(username) = lower(%s) OR lower(email) = lower(%s)",

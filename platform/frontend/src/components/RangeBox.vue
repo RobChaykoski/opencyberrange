@@ -252,7 +252,7 @@ const connect = async () => {
   }
 
   try {
-    const { default: RFB } = await import('@novnc/novnc/lib/rfb.js')
+    const { default: RFB } = await import('@novnc/novnc')
     const url = await getWsUrl()
     if (!url) {
       connectionState.value = 'disconnected'
