@@ -10,6 +10,23 @@
       <!-- Alert messages render through the shared global toast -->
       <Toast />
 
+      <!-- New registration notification: shown while the admin is on the portal -->
+      <div v-if="newRegistrations.length" class="registration-banner" role="status" aria-live="polite">
+        <div class="registration-banner__body">
+          <span class="registration-banner__dot" aria-hidden="true"></span>
+          <div>
+            <strong>{{ newRegistrations.length }} new registration{{ newRegistrations.length === 1 ? '' : 's' }}</strong>
+            <p>{{ newRegistrationSummary }}</p>
+          </div>
+        </div>
+        <div class="registration-banner__actions">
+          <button class="btn btn--success btn--sm" @click="reviewNewRegistrations">
+            {{ newRegistrationHasPending ? 'Review pending' : 'View users' }}
+          </button>
+          <button class="btn btn--secondary btn--sm" @click="dismissNewRegistrations">Dismiss</button>
+        </div>
+      </div>
+
       <!-- Stats Cards -->
       <div class="stats-grid">
         <div class="stat-card stat-card--health" :class="dashboardHealthClass ? `stat-card--health-${dashboardHealthClass}` : ''" @click="activeTab = 'system'; systemSubTab = 'health'" style="cursor: pointer;">
@@ -2909,6 +2926,33 @@ const userStatusFilter = ref('')
 const userRoleFilter = ref('')
 const userPage = ref(1)
 const usersPerPage = 25
+const newRegistrations = ref([])
+const registrationPollReady = ref(false)
+let registrationPollTimer = null
+let registrationPollInFlight = false
+const REGISTRATION_POLL_MS = 30000
+
+const sortPendingUsers = (list) => [...list].sort((a, b) =>
+  (a.username || '').toLocaleLowerCase().localeCompare((b.username || '').toLocaleLowerCase())
+)
+
+const newRegistrationHasPending = computed(() =>
+  newRegistrations.value.some(u => !u.is_approved)
+)
+
+const newRegistrationSummary = computed(() => {
+  const names = newRegistrations.value.slice(0, 3).map(u => maskUsername(u.username))
+  const extra = newRegistrations.value.length - names.length
+  return names.join(', ') + (extra > 0 ? ` and ${extra} more` : '')
+})
+
+const syncNewRegistrationsFromUsers = () => {
+  if (!newRegistrations.value.length) return
+  const byId = new Map(users.value.map(u => [u.id, u]))
+  newRegistrations.value = newRegistrations.value
+    .map(u => byId.get(u.id))
+    .filter(Boolean)
+}
 
 const filteredUsers = computed(() => {
   let list = users.value
@@ -4752,9 +4796,8 @@ const fetchAll = async () => {
     ])
     stats.value = statsRes.data
     users.value = usersRes.data
-    pendingUsers.value = [...pendingRes.data].sort((a, b) =>
-      (a.username || '').toLocaleLowerCase().localeCompare((b.username || '').toLocaleLowerCase())
-    )
+    syncNewRegistrationsFromUsers()
+    pendingUsers.value = sortPendingUsers(pendingRes.data)
     labs.value = labsRes.data
     activeSessions.value = sessionsRes.data
     // Session history now returns paginated response
@@ -4764,6 +4807,7 @@ const fetchAll = async () => {
     sessionHistoryPage.value = historyRes.data.page || 1
     vpnPeers.value = vpnPeersRes.data.peers || []
     vpnStatus.value = vpnStatusRes.data
+    registrationPollReady.value = true
   } catch (e) {
     showAlert('Failed to load data', 'error')
   }
@@ -4794,15 +4838,87 @@ const formatTimeRemaining = (seconds) => {
   return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
 }
 
-onMounted(() => {
-  fetchAll()
+const pollNewRegistrations = async () => {
+  if (!registrationPollReady.value || registrationPollInFlight) return
+  if (document.visibilityState === 'hidden') return
+  registrationPollInFlight = true
+  try {
+    const { data: nextStats } = await axios.get('/admin/stats')
+    const totalIncreased = (nextStats.total_users || 0) > (stats.value.total_users || 0)
+    const pendingIncreased = (nextStats.pending_users || 0) > (stats.value.pending_users || 0)
+    if (!totalIncreased && !pendingIncreased) {
+      stats.value = nextStats
+      return
+    }
+
+    const [usersRes, pendingRes] = await Promise.all([
+      axios.get('/admin/users'),
+      axios.get('/admin/users/pending')
+    ])
+    const known = new Set(users.value.map(u => u.id))
+    const fresh = usersRes.data.filter(u => !known.has(u.id))
+    users.value = usersRes.data
+    pendingUsers.value = sortPendingUsers(pendingRes.data)
+    stats.value = nextStats
+
+    syncNewRegistrationsFromUsers()
+
+    if (fresh.length) {
+      const existing = new Set(newRegistrations.value.map(u => u.id))
+      const added = fresh.filter(u => !existing.has(u.id))
+      newRegistrations.value = [...added, ...newRegistrations.value]
+      if (added.length) {
+        const names = added.slice(0, 3).map(u => maskUsername(u.username)).join(', ')
+        const extra = added.length > 3 ? ` and ${added.length - 3} more` : ''
+        showToast(
+          added.length === 1
+            ? `New registration: ${names}`
+            : `${added.length} new registrations: ${names}${extra}`,
+          'info',
+          10000
+        )
+      }
+    }
+  } catch {
+    // Best-effort polling: a transient failure must not interrupt the admin.
+  } finally {
+    registrationPollInFlight = false
+  }
+}
+
+const reviewNewRegistrations = () => {
+  const first = newRegistrations.value[0]
+  if (newRegistrationHasPending.value) {
+    activeTab.value = 'pending'
+  } else {
+    activeTab.value = 'users'
+    userSearch.value = newRegistrations.value.length === 1 && first ? first.username : ''
+    userPage.value = 1
+  }
+  newRegistrations.value = []
+}
+
+const dismissNewRegistrations = () => {
+  newRegistrations.value = []
+}
+
+const onAdminVisibilityChange = () => {
+  if (document.visibilityState === 'visible') pollNewRegistrations()
+}
+
+onMounted(async () => {
+  await fetchAll()
   fetchCurriculum()
   fetchDashboardHealth()
   healthPollTimer = setInterval(fetchDashboardHealth, 5 * 60 * 1000)
+  registrationPollTimer = setInterval(pollNewRegistrations, REGISTRATION_POLL_MS)
+  document.addEventListener('visibilitychange', onAdminVisibilityChange)
 })
 
 onUnmounted(() => {
   if (healthPollTimer) clearInterval(healthPollTimer)
+  if (registrationPollTimer) { clearInterval(registrationPollTimer); registrationPollTimer = null }
+  document.removeEventListener('visibilitychange', onAdminVisibilityChange)
   if (_testerPollTimer) { clearTimeout(_testerPollTimer); _testerPollTimer = null }
   if (_provisionEventSource) { _provisionEventSource.close(); _provisionEventSource = null }
 })
@@ -6134,6 +6250,59 @@ watch(activeTab, (tab) => {
   color: rgba(234, 179, 8, 0.85);
   padding: 0.2rem 0;
   border-top: 1px solid rgba(234, 179, 8, 0.1);
+}
+
+/* Registration notification banner */
+.registration-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1rem 0;
+  padding: 0.85rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--accent, #3b82f6);
+  border-radius: 10px;
+}
+
+.registration-banner__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.registration-banner__dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 0.35rem;
+  border-radius: 50%;
+  background: var(--accent, #3b82f6);
+  flex: 0 0 auto;
+}
+
+.registration-banner strong {
+  color: var(--text-primary);
+}
+
+.registration-banner p {
+  margin: 0.15rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.registration-banner__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .registration-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Stats Grid */
