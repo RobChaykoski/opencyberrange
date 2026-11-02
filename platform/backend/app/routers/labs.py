@@ -427,10 +427,9 @@ async def stop_lab(
     ).first()
     
     if not session:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No active lab session found"
-        )
+        # Idempotent stop: a second click, or a stop after auto-stop on
+        # completion, is not an error.
+        return {"message": "No active lab session"}
     
     lab = db.query(Lab).filter(Lab.id == session.lab_id).first()
     lab_slug = lab.slug if lab else "unknown"

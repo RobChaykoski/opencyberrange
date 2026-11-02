@@ -255,6 +255,19 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added rangebox_enabled column to lab_sessions table")
 
+        # --- Achievements: allow awards outside a course (standalone labs,
+        # competitions). Hidden/global badges were unreachable for students
+        # with no enrollment while the column was NOT NULL.
+        if 'achievements' in inspector.get_table_names():
+            ach_columns = {c['name']: c for c in inspector.get_columns('achievements')}
+            course_col = ach_columns.get('course_id')
+            if course_col is not None and not course_col.get('nullable', True):
+                conn.execute(text(
+                    "ALTER TABLE achievements ALTER COLUMN course_id DROP NOT NULL"
+                ))
+                conn.commit()
+                logger.info("Allowed global achievements (course_id nullable)")
+
         # --- Assignment start_date: add 'start_date' column to assignments ---
         if 'assignments' in inspector.get_table_names():
             asn_columns = [c['name'] for c in inspector.get_columns('assignments')]

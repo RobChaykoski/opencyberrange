@@ -133,7 +133,7 @@ def resolve_achievement_icon(db: Session, achievement_type: str) -> str:
     return "\U0001F3C5"
 
 
-def _award(db: Session, user_id: int, course_id: int, lab_id: int | None, achievement_type: str):
+def _award(db: Session, user_id: int, course_id: int | None, lab_id: int | None, achievement_type: str):
     """Award an achievement if not already awarded (idempotent)."""
     query = db.query(Achievement).filter(
         Achievement.user_id == user_id,
@@ -156,7 +156,7 @@ def _award(db: Session, user_id: int, course_id: int, lab_id: int | None, achiev
     ))
     logger.info(
         f"Awarded {achievement_type} to user {user_id} "
-        f"in course {course_id} for lab {lab_id}"
+        f"(course {course_id}) for lab {lab_id}"
     )
     log_activity(db, EventTypes.ACHIEVEMENT_AWARDED,
                   actor_id=user_id, target_type="achievement",
@@ -166,28 +166,16 @@ def _award(db: Session, user_id: int, course_id: int, lab_id: int | None, achiev
 
 
 def check_achievements(db: Session, user_id: int, lab_id: int):
-    """Check and award achievements for all courses this user+lab belongs to.
+    """Award course-scoped and global achievements for a completed lab.
+
+    Course-scoped badges keep their per-course semantics. A lab that is not
+    part of any course the student is enrolled in still awards the global
+    badges (hidden lab badges and admin-defined achievements); otherwise a
+    student playing standalone labs or a DevFest competition would earn
+    nothing, making the hidden set unreachable.
 
     Called after a successful flag submission and db.commit().
     """
-    # Find courses where user is enrolled AND this lab is assigned
-    course_ids = db.query(CourseEnrollment.course_id).filter(
-        CourseEnrollment.user_id == user_id
-    ).all()
-    course_ids = {r[0] for r in course_ids}
-
-    if not course_ids:
-        return
-
-    assignments = db.query(CourseLabAssignment).filter(
-        CourseLabAssignment.course_id.in_(course_ids),
-        CourseLabAssignment.lab_id == lab_id,
-    ).all()
-
-    if not assignments:
-        return
-
-    # Get the completion record
     completion = db.query(LabCompletion).filter(
         LabCompletion.user_id == user_id,
         LabCompletion.lab_id == lab_id,
@@ -200,6 +188,25 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
 
     lab = db.query(Lab).filter(Lab.id == lab_id).first()
     if not lab:
+        return
+
+    # Courses where the user is enrolled
+    course_ids = {
+        r[0] for r in db.query(CourseEnrollment.course_id).filter(
+            CourseEnrollment.user_id == user_id
+        ).all()
+    }
+
+    assignments = []
+    if course_ids:
+        assignments = db.query(CourseLabAssignment).filter(
+            CourseLabAssignment.course_id.in_(course_ids),
+            CourseLabAssignment.lab_id == lab_id,
+        ).all()
+
+    if not assignments:
+        _check_global_achievements(db, user_id, lab, completion)
+        db.commit()
         return
 
     for assignment in assignments:
@@ -343,6 +350,42 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
     db.commit()
 
 
+def _check_global_achievements(
+    db: Session, user_id: int, lab: Lab, completion: LabCompletion
+):
+    """Awards that are not tied to a course enrolment.
+
+    Runs when the completed lab is not assigned to any course the student is
+    enrolled in: standalone public labs and competition challenges. The same
+    admin-defined definitions are evaluated with a global scope (NULL
+    ``course_id``) so DevFest Ghost, Range Cartographer, and the hidden lab
+    badges are reachable without a course.
+    """
+    completions = db.query(LabCompletion).filter(
+        LabCompletion.user_id == user_id,
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).all()
+
+    # Hidden lab badges are per-lab, not per-course.
+    if (
+        lab.slug == "software-security-2-1-diagnostics-command-injection"
+        and completion.hints_used == 0
+        and completion.attempts == 1
+    ):
+        _award(db, user_id, None, lab.id, SHELL_SHOCKED)
+    if (
+        lab.slug == "software-security-1-1-hidden-export-route"
+        and completion.hints_used == 0
+    ):
+        _award(db, user_id, None, lab.id, SOURCE_WHISPERER)
+
+    active_lab_ids = {
+        row[0] for row in db.query(Lab.id).filter(Lab.is_active == True).all()
+    }
+    _check_custom_achievements(db, user_id, None, active_lab_ids, completions)
+
+
 def _track_lab_ids(db: Session, track_slug: str) -> set:
     """All lab IDs in one track, used by hidden track-specific badges."""
     return {
@@ -392,7 +435,7 @@ def _all_tracks_completed(db: Session, user_id: int) -> bool:
 def _check_custom_achievements(
     db: Session,
     user_id: int,
-    course_id: int,
+    course_id: int | None,
     course_lab_ids: set,
     valid_completions: list,
 ):

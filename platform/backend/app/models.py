@@ -440,12 +440,17 @@ class CourseLabAssignment(Base):
 
 
 class Achievement(Base):
-    """Micro-credentials awarded to students within a course"""
+    """Micro-credentials awarded to students within a course, or globally.
+
+    ``course_id`` is NULL for awards earned outside a course (standalone labs,
+    DevFest competition) so the hidden/global achievements remain reachable
+    without an enrollment.
+    """
     __tablename__ = "achievements"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=True)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=True)
     achievement_type = Column(String(30), nullable=False)
     awarded_at = Column(DateTime, server_default=func.now())

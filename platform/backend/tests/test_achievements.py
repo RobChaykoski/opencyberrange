@@ -298,3 +298,38 @@ def test_hidden_comeback_trigger(
             CustomAchievement.id == definition.id
         ).delete()
         db_session.commit()
+
+
+def test_global_achievement_without_course(
+    client, auth_headers, test_user, test_lab, test_flag, db_session
+):
+    """Standalone labs (no enrollment) still award admin-defined achievements."""
+    definition = CustomAchievement(
+        name=f"Global Test {uuid.uuid4().hex[:6]}",
+        description="Awarded outside any course.",
+        icon="\U0001F30D",
+        trigger="labs_completed",
+        threshold=1,
+        is_active=True,
+    )
+    db_session.add(definition)
+    db_session.commit()
+
+    try:
+        _submit_flag(client, auth_headers, test_lab, test_flag)
+        db_session.expire_all()
+        rows = db_session.query(Achievement).filter(
+            Achievement.user_id == test_user.id,
+            Achievement.achievement_type == f"custom_{definition.id}",
+        ).all()
+        assert rows, "global achievement was not awarded without a course"
+        assert rows[0].course_id is None
+    finally:
+        db_session.query(Achievement).filter(
+            Achievement.user_id == test_user.id,
+            Achievement.achievement_type == f"custom_{definition.id}",
+        ).delete()
+        db_session.query(CustomAchievement).filter(
+            CustomAchievement.id == definition.id
+        ).delete()
+        db_session.commit()

@@ -185,6 +185,27 @@ def bulk_update_settings(db: Session, updates: Dict[str, str]) -> int:
     return count
 
 
+def _default_certificate_verify_url() -> str:
+    """Derive the certificate verify base URL for a first-run install.
+
+    The admin can override it in Settings; seeding a sensible value removes
+    the trap where an empty setting made QR codes point at the API origin.
+    """
+    from app.config import settings
+
+    host = (getattr(settings, "SERVER_PUBLIC_HOST", "") or "").strip().rstrip("/")
+    if not host:
+        return ""
+    # The config default is "localhost"; a bare localhost is not a public
+    # origin, so leave the setting empty and let the request host decide.
+    if host in ("localhost", "127.0.0.1", "[::1]"):
+        return ""
+    if host.startswith(("http://", "https://")):
+        return host
+    scheme = "http" if host.startswith(("localhost", "127.0.0.1", "[::1]")) else "https"
+    return f"{scheme}://{host}"
+
+
 def seed_defaults(db: Session) -> int:
     """Insert default settings that don't already exist. Returns count of new rows."""
     created = 0
@@ -194,9 +215,12 @@ def seed_defaults(db: Session) -> int:
             PlatformSetting.key == defn["key"]
         ).first()
         if not existing:
+            value = defn["value"]
+            if defn["key"] == "certificate_verify_url" and not value:
+                value = _default_certificate_verify_url()
             db.add(PlatformSetting(
                 key=defn["key"],
-                value=defn["value"],
+                value=value,
                 category=defn.get("category", "general"),
                 description=defn.get("description"),
                 is_secret=defn.get("is_secret", False),
