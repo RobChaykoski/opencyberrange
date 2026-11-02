@@ -11,7 +11,7 @@ is pushed to `RobChaykoski/opencyberrange-next`.
 |---|---|---|
 | Current / production | `RobChaykoski/opencyberrange-backup` | `8be1e9d`, tag `v2.1.3` |
 | Next / upgrade staging | local `opencyberrange-next` | `8be1e9d` + Wave 0 (`c93c529`) + status update; verified |
-| Next remote | `RobChaykoski/opencyberrange-next` | Public, `main` at `3d3dee4`, tags pushed |
+| Next remote | `RobChaykoski/opencyberrange-next` | Public, default branch `main`, tracking `origin/main` |
 
 The next tree now contains every tracked file from current plus the Wave 0
 scaffold. The rebase was clean; no content was dropped.
