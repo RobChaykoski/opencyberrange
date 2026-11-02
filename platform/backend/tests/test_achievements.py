@@ -168,3 +168,88 @@ def test_osint_triggers_award_all_matching_achievements(
 
     for definition in osint_course["definitions"]:
         assert f"custom_{definition.id}" in awarded, definition.name
+
+
+def _submit_flag(client, auth_headers, lab, flag):
+    resp = client.post(
+        f"/api/exercises/labs/{lab.id}/submit-flag",
+        json={"flag": flag},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["correct"] is True
+
+
+def test_hidden_shell_shocked_awarded(
+    client, auth_headers, test_user, test_lab, test_flag, osint_course, db_session
+):
+    test_lab.slug = "software-security-2-1-diagnostics-command-injection"
+    db_session.commit()
+    _submit_flag(client, auth_headers, test_lab, test_flag)
+
+    db_session.expire_all()
+    awarded = {
+        row.achievement_type
+        for row in db_session.query(Achievement).filter(
+            Achievement.user_id == test_user.id,
+            Achievement.course_id == osint_course["course"].id,
+        ).all()
+    }
+    assert "shell_shocked" in awarded
+
+
+def test_hidden_source_whisperer_awarded(
+    client, auth_headers, test_user, test_lab, test_flag, osint_course, db_session
+):
+    test_lab.slug = "software-security-1-1-hidden-export-route"
+    db_session.commit()
+    _submit_flag(client, auth_headers, test_lab, test_flag)
+
+    db_session.expire_all()
+    awarded = {
+        row.achievement_type
+        for row in db_session.query(Achievement).filter(
+            Achievement.user_id == test_user.id,
+            Achievement.course_id == osint_course["course"].id,
+        ).all()
+    }
+    assert "source_whisperer" in awarded
+
+
+def test_hidden_devfest_ghost_custom_trigger(
+    client, auth_headers, test_user, test_lab, test_flag, osint_course, db_session
+):
+    test_lab.slug = "high-school-12-1-devfest-community-portal"
+    db_session.commit()
+
+    definition = CustomAchievement(
+        name=f"DevFest Ghost Test {uuid.uuid4().hex[:6]}",
+        description="Complete a DevFest starter without hints.",
+        icon="\U0001F47B",
+        trigger="devfest_no_hint_labs",
+        threshold=1,
+        is_active=True,
+    )
+    db_session.add(definition)
+    db_session.commit()
+
+    try:
+        _submit_flag(client, auth_headers, test_lab, test_flag)
+        db_session.expire_all()
+        awarded = {
+            row.achievement_type
+            for row in db_session.query(Achievement).filter(
+                Achievement.user_id == test_user.id,
+                Achievement.course_id == osint_course["course"].id,
+            ).all()
+        }
+        assert f"custom_{definition.id}" in awarded
+    finally:
+        db_session.query(Achievement).filter(
+            Achievement.course_id == osint_course["course"].id,
+            Achievement.achievement_type == f"custom_{definition.id}",
+        ).delete()
+        db_session.query(CustomAchievement).filter(
+            CustomAchievement.id == definition.id
+        ).delete()
+        db_session.commit()

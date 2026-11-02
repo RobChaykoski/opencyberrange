@@ -99,6 +99,15 @@
             <p class="certificate__meta-label">Date awarded</p>
             <p class="certificate__meta-value">{{ certificate.issued_display }}</p>
             <p class="certificate__meta-id">Certificate ID {{ certificate.certificate_id }}</p>
+            <p v-if="certificate.verify_url" class="certificate__verify">
+              <a :href="certificate.verify_url" target="_blank" rel="noopener">
+                Verify this certificate
+              </a>
+            </p>
+            <div v-if="certificate.qr_code" class="certificate__qr">
+              <img :src="certificate.qr_code" alt="QR code to verify this certificate" />
+              <span>Scan to verify</span>
+            </div>
           </div>
         </footer>
       </div>
@@ -496,6 +505,39 @@ onMounted(load)
   font-size: 0.62rem;
   color: #9ca3af;
   letter-spacing: 0.02em;
+}
+
+.certificate__verify {
+  margin: 0.35rem 0 0;
+  font-size: 0.62rem;
+}
+
+.certificate__verify a {
+  color: #8a6d2f;
+}
+
+.certificate__qr {
+  margin-top: 0.45rem;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.certificate__qr img {
+  width: 72px;
+  height: 72px;
+  padding: 4px;
+  background: #fff;
+  border: 1px solid #d8c08a;
+  border-radius: 4px;
+}
+
+.certificate__qr span {
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a6d2f;
 }
 
 @media (max-width: 720px) {

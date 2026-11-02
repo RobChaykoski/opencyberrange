@@ -1339,7 +1339,7 @@
               <select v-model="newAchievement.trigger" class="form-input form-input--sm">
                 <option v-for="t in achievementTriggers" :key="t.value" :value="t.value">{{ t.label }}</option>
               </select>
-              <input v-model.number="newAchievement.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="newAchievement.trigger === 'course_completed' || newAchievement.trigger === 'osint_track_completed'" title="How many exercises are required" />
+              <input v-model.number="newAchievement.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="['course_completed', 'osint_track_completed', 'all_tracks_completed'].includes(newAchievement.trigger)" title="How many exercises are required" />
               <button class="btn btn--success btn--sm" :disabled="savingAchievement || !newAchievement.name.trim()" @click="createCustomAchievement">
                 {{ savingAchievement ? 'Adding...' : 'Add achievement' }}
               </button>
@@ -1356,7 +1356,7 @@
                 <select v-model="ach.trigger" class="form-input form-input--sm">
                   <option v-for="t in achievementTriggers" :key="t.value" :value="t.value">{{ t.label }}</option>
                 </select>
-                <input v-model.number="ach.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="ach.trigger === 'course_completed' || ach.trigger === 'osint_track_completed'" />
+                <input v-model.number="ach.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="['course_completed', 'osint_track_completed', 'all_tracks_completed'].includes(ach.trigger)" />
                 <button class="visibility-toggle" :class="ach.is_active ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'" @click="toggleCustomAchievement(ach)">
                   {{ ach.is_active ? 'Active' : 'Disabled' }}
                 </button>

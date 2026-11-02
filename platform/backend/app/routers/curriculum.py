@@ -34,6 +34,7 @@ from app.auth import get_current_active_user
 from app.services.docker_manager import DockerManager
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
+from app.config import settings
 from app.services.achievements import (
     resolve_achievement_icon,
     resolve_achievement_label,
@@ -480,6 +481,7 @@ def build_level_certificate(
     *,
     include_qr: bool = True,
     include_achievements: bool = True,
+    base_url: Optional[str] = None,
 ) -> Optional[dict]:
     """Build the certificate payload for one level, or None when incomplete.
 
@@ -522,8 +524,18 @@ def build_level_certificate(
     ).hexdigest()[:10].upper()
     certificate_id = f"OCR-{track.slug.upper()[:8]}-L{level.level_number:02d}-{digest}"
 
-    # Verification URL (customizable via certificate_verify_url setting).
-    base_url = (settings_service.get_setting(db, "certificate_verify_url", "") or "").rstrip("/")
+    # Verification URL. Prefer an explicit request-derived base, then the
+    # certificate_verify_url setting, then the platform's public host.
+    configured_base = (
+        settings_service.get_setting(db, "certificate_verify_url", "") or ""
+    ).rstrip("/")
+    base_url = (base_url or configured_base).rstrip("/")
+    if not base_url:
+        public_host = (getattr(settings, "SERVER_PUBLIC_HOST", "") or "").strip()
+        if public_host and public_host not in ("localhost", "127.0.0.1"):
+            if not public_host.startswith(("http://", "https://")):
+                public_host = f"https://{public_host}"
+            base_url = public_host.rstrip("/")
     verify_path = f"/verify/certificate/{certificate_id}"
     verify_url = (base_url + verify_path) if base_url else verify_path
 
@@ -573,12 +585,32 @@ def build_level_certificate(
     }
 
 
+def _certificate_base_url(request: Request, db: Session) -> str:
+    """Absolute base for certificate QR links behind the reverse proxy."""
+    configured = (
+        settings_service.get_setting(db, "certificate_verify_url", "") or ""
+    ).rstrip("/")
+    if configured:
+        return configured
+    proto = request.headers.get("x-forwarded-proto") or request.url.scheme
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+    if host:
+        return f"{proto}://{host}".rstrip("/")
+    public_host = (getattr(settings, "SERVER_PUBLIC_HOST", "") or "").strip()
+    if public_host:
+        if not public_host.startswith(("http://", "https://")):
+            public_host = f"https://{public_host}"
+        return public_host.rstrip("/")
+    return ""
+
+
 @router.get(
     "/tracks/{track_slug}/levels/{level_id}/certificate",
     summary="Get a printable level-completion certificate",
     response_description="Certificate metadata for a completed level",
 )
 async def get_level_certificate(
+    request: Request,
     track_slug: str,
     level_id: int,
     include_achievements: bool = Query(
@@ -623,6 +655,7 @@ async def get_level_certificate(
     certificate = build_level_certificate(
         db, current_user, track, level, visible_labs, completed_ids,
         include_achievements=include_achievements,
+        base_url=_certificate_base_url(request, db),
     )
     if certificate is None:
         raise HTTPException(
@@ -636,48 +669,101 @@ async def get_level_certificate(
 
 
 @router.get("/verify/certificate/{certificate_id}")
+@limiter.limit("30/minute")
 async def verify_certificate(
+    request: Request,
     certificate_id: str,
     db: Session = Depends(get_db),
 ):
     """Public verification endpoint for a certificate ID.
 
-    Returns whether the ID matches the deterministic format issued by the
-    platform. Detailed recipient/level data is only returned when a matching
-    user/level can be resolved; otherwise the certificate is reported as
-    unverifiable.
+    Certificates are derived from completion records, so this resolves the
+    deterministic ID back to the matching user/level and re-checks that the
+    level is still complete. Only public certificate fields are returned; no
+    username, email, or account details are exposed.
     """
-    # Parse the certificate id: OCR-<TRACK>-L<NN>-<DIGEST>
     import re as _re
-    m = _re.match(r"^OCR-([A-Z0-9]{1,8})-L(\d{2})-([A-F0-9]{10})$", certificate_id)
+    m = _re.match(r"^OCR-([A-Z0-9-]{1,8})-L(\d{2})-([A-F0-9]{10})$", certificate_id)
     if not m:
         raise HTTPException(status_code=400, detail="Invalid certificate ID format")
 
-    track_slug_prefix = m.group(1).lower()
+    track_prefix = m.group(1).upper()
     level_number = int(m.group(2))
-
-    # Find the track by slug prefix
-    track = None
-    for t in db.query(Track).filter(Track.is_active == True).all():
-        if t.slug.lower().startswith(track_slug_prefix.lower()[:4]):
-            track = t
-            break
-    if not track:
-        return {"valid": False, "certificate_id": certificate_id, "reason": "Track not found"}
-
-    level = next((lv for lv in track.levels if lv.level_number == level_number), None)
-    if not level:
-        return {"valid": False, "certificate_id": certificate_id, "reason": "Level not found"}
-
-    return {
-        "valid": True,
+    digest = m.group(3)
+    invalid = {
+        "valid": False,
         "certificate_id": certificate_id,
-        "track_name": track.name,
-        "level_number": level.level_number,
-        "level_name": level.name,
-        "issuer": "SWOCTS",
-        "message": "Certificate ID format and level reference verified.",
+        "reason": "Certificate not found or no longer valid.",
     }
+
+    tracks = [
+        track for track in db.query(Track).filter(Track.is_active == True).all()
+        if track.slug.upper()[:8] == track_prefix
+    ]
+    if not tracks:
+        return invalid
+
+    for track in tracks:
+        level = next(
+            (lv for lv in track.levels if lv.level_number == level_number),
+            None,
+        )
+        if not level:
+            continue
+
+        lab_ids = [lab.id for lab in level.labs if lab.is_active]
+        if not lab_ids:
+            continue
+
+        candidate_ids = {
+            row[0] for row in db.query(LabCompletion.user_id).filter(
+                LabCompletion.lab_id.in_(lab_ids),
+                LabCompletion.flag_submitted.isnot(None),
+                LabCompletion.flag_submitted != "",
+            ).distinct().all()
+        }
+        for user_id in candidate_ids:
+            expected = hashlib.sha256(
+                f"{user_id}:{track.slug}:{level.id}".encode()
+            ).hexdigest()[:10].upper()
+            if expected != digest:
+                continue
+
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                continue
+
+            accessible = get_accessible_exclusive_lab_ids(db, user_id)
+            visible_labs = [
+                lab for lab in level.labs
+                if lab.is_active and _is_lab_visible(lab, user, accessible)
+            ]
+            completed_ids = get_user_completions(db, user_id)
+            certificate = build_level_certificate(
+                db, user, track, level, visible_labs, completed_ids,
+                include_qr=False,
+                include_achievements=False,
+                base_url=_certificate_base_url(request, db),
+            )
+            if not certificate:
+                return invalid
+
+            return {
+                "valid": True,
+                "certificate_id": certificate["certificate_id"],
+                "recipient": certificate["recipient"],
+                "track_name": certificate["track_name"],
+                "level_number": certificate["level_number"],
+                "level_name": certificate["level_name"],
+                "exercises_completed": certificate["exercises_completed"],
+                "exercises_total": certificate["exercises_total"],
+                "issued_on": certificate["issued_on"],
+                "issued_display": certificate["issued_display"],
+                "issuer": certificate["issuer"],
+                "message": "Certificate is valid and matches a completed level record.",
+            }
+
+    return invalid
 
 
 @router.get("/tracks/{track_slug}")

@@ -172,6 +172,34 @@ DEFAULT_ACHIEVEMENTS = [
         "trigger": "osint_perfect_labs",
         "threshold": 3,
     },
+    {
+        "name": "DevFest Ghost",
+        "description": "Complete all three DevFest starter challenges without hints. You were never really here.",
+        "icon": "\U0001F47B",
+        "trigger": "devfest_no_hint_labs",
+        "threshold": 3,
+    },
+    {
+        "name": "Range Cartographer",
+        "description": "Complete at least one exercise in every active track. You have mapped the whole range.",
+        "icon": "\U0001F5FA\uFE0F",
+        "trigger": "all_tracks_completed",
+        "threshold": 1,
+    },
+    {
+        "name": "Phoenix",
+        "description": "Complete an exercise after five or more flag attempts. Persistence is a security skill.",
+        "icon": "\U0001F525",
+        "trigger": "comeback_labs",
+        "threshold": 1,
+    },
+    {
+        "name": "Night Shift",
+        "description": "Complete an exercise between 00:00 and 05:00. The quiet hours are productive.",
+        "icon": "\U0001F319",
+        "trigger": "night_labs",
+        "threshold": 1,
+    },
 ]
 
 

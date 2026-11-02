@@ -86,6 +86,16 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/verify',
+    name: 'VerifyCertificate',
+    component: () => import('../views/VerifyCertificate.vue')
+  },
+  {
+    path: '/verify/certificate/:certificateId',
+    name: 'VerifyCertificateResult',
+    component: () => import('../views/VerifyCertificate.vue')
+  },
+  {
     path: '/exercises/:trackSlug',
     name: 'TrackDetail',
     component: () => import('../views/TrackDetail.vue'),

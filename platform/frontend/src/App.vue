@@ -38,6 +38,7 @@
       <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
         <img src="/swocts_logo.jpg" alt="SWOCTS" class="app-footer__logo" />
       </a>
+      <router-link to="/verify" class="app-footer__verify">Verify a certificate</router-link>
     </footer>
   </div>
 </template>
@@ -349,6 +350,7 @@ body {
   grid-column: 2;
   grid-row: 2;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
@@ -356,6 +358,18 @@ body {
   font-size: 0.75rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border-color);
+}
+
+.app-footer__verify {
+  margin-left: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.app-footer__verify:hover {
+  color: var(--accent);
 }
 .app-footer a {
   color: var(--accent);

@@ -20,6 +20,8 @@ PERFECTIONIST = "perfectionist"
 SPEED_DEMON = "speed_demon"
 CLEAN_SWEEP = "clean_sweep"
 STREAK = "streak"
+SHELL_SHOCKED = "shell_shocked"
+SOURCE_WHISPERER = "source_whisperer"
 
 ACHIEVEMENT_LABELS = {
     FIRST_BLOOD: "First Blood",
@@ -28,6 +30,8 @@ ACHIEVEMENT_LABELS = {
     SPEED_DEMON: "Speed Demon",
     CLEAN_SWEEP: "Clean Sweep",
     STREAK: "On a Roll",
+    SHELL_SHOCKED: "Shell Shocked",
+    SOURCE_WHISPERER: "Source Whisperer",
 }
 
 ACHIEVEMENT_DESCRIPTIONS = {
@@ -37,7 +41,17 @@ ACHIEVEMENT_DESCRIPTIONS = {
     SPEED_DEMON: "Completed a lab in under half the estimated time",
     CLEAN_SWEEP: "Completed all assigned labs in the course",
     STREAK: "Completed 3+ labs in a row with no hints and first attempt",
+    SHELL_SHOCKED: "Found the command-injection bug and captured the flag on the first attempt without hints",
+    SOURCE_WHISPERER: "Found the hidden export route without using hints",
 }
+
+# The three browser-first DevFest starter exercises. These slugs are stable;
+# the hidden DevFest achievement uses them rather than a track-wide count.
+DEVFEST_LAB_SLUGS = (
+    "high-school-12-1-devfest-community-portal",
+    "software-security-1-1-hidden-export-route",
+    "software-security-2-1-diagnostics-command-injection",
+)
 
 # Triggers available to admin-defined achievements. The value is what the
 # settings UI shows; the evaluator below implements each one.
@@ -50,6 +64,13 @@ CUSTOM_ACHIEVEMENT_TRIGGERS = {
     "osint_no_hint_labs": "Complete N OSINT exercises without using hints",
     "osint_perfect_labs": "Complete N OSINT exercises on the first attempt",
     "osint_track_completed": "Complete every assigned OSINT exercise in the course",
+    "software_security_labs": "Complete N Software Security exercises",
+    "software_security_no_hint_labs": "Complete N Software Security exercises without hints",
+    "devfest_labs": "Complete N DevFest starter exercises",
+    "devfest_no_hint_labs": "Complete N DevFest starter exercises without hints",
+    "comeback_labs": "Complete N exercises after 5 or more flag attempts",
+    "night_labs": "Complete N exercises between 00:00 and 05:00",
+    "all_tracks_completed": "Complete at least one exercise in every active track",
 }
 
 BUILTIN_ACHIEVEMENT_ICONS = {
@@ -59,6 +80,8 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     SPEED_DEMON: "\u26A1",
     CLEAN_SWEEP: "\U0001F3C6",
     STREAK: "\U0001F525",
+    SHELL_SHOCKED: "\U0001F4A5",
+    SOURCE_WHISPERER: "\U0001F50E",
 }
 
 
@@ -277,6 +300,15 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
                 and completion.time_spent_minutes < lab.duration_minutes * 0.5):
             _award(db, user_id, course_id, lab_id, SPEED_DEMON)
 
+        # --- hidden software-security lab badges ---
+        if (lab.slug == "software-security-2-1-diagnostics-command-injection"
+                and completion.hints_used == 0
+                and completion.attempts == 1):
+            _award(db, user_id, course_id, lab_id, SHELL_SHOCKED)
+        if (lab.slug == "software-security-1-1-hidden-export-route"
+                and completion.hints_used == 0):
+            _award(db, user_id, course_id, lab_id, SOURCE_WHISPERER)
+
         # --- clean_sweep: all assigned labs in course completed (course-aware) ---
         course_lab_ids = {
             a.lab_id for a in db.query(CourseLabAssignment).filter(
@@ -309,6 +341,52 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
         )
 
     db.commit()
+
+
+def _track_lab_ids(db: Session, track_slug: str) -> set:
+    """All lab IDs in one track, used by hidden track-specific badges."""
+    return {
+        row[0] for row in db.query(Lab.id).join(
+            Level, Lab.level_id == Level.id
+        ).join(
+            Track, Level.track_id == Track.id
+        ).filter(Track.slug == track_slug).all()
+    }
+
+
+def _all_tracks_completed(db: Session, user_id: int) -> bool:
+    """True when the user has completed at least one lab in every active track.
+
+    Only tracks that currently contain active labs count, so an empty future
+    track cannot make the badge impossible to earn.
+    """
+    active_track_ids = {
+        row[0] for row in db.query(Track.id).join(
+            Level, Level.track_id == Track.id
+        ).join(
+            Lab, Lab.level_id == Level.id
+        ).filter(
+            Track.is_active == True,
+            Lab.is_active == True,
+        ).distinct().all()
+    }
+    if not active_track_ids:
+        return False
+
+    completed_track_ids = {
+        row[0] for row in db.query(Track.id).join(
+            Level, Level.track_id == Track.id
+        ).join(
+            Lab, Lab.level_id == Level.id
+        ).join(
+            LabCompletion, LabCompletion.lab_id == Lab.id
+        ).filter(
+            LabCompletion.user_id == user_id,
+            LabCompletion.flag_submitted.isnot(None),
+            LabCompletion.flag_submitted != "",
+        ).distinct().all()
+    }
+    return active_track_ids.issubset(completed_track_ids)
 
 
 def _check_custom_achievements(
@@ -354,6 +432,33 @@ def _check_custom_achievements(
         and osint_assigned_lab_ids.issubset(completed_lab_ids)
     )
 
+    software_security_lab_ids = _track_lab_ids(db, "software-security")
+    software_security_completions = [
+        c for c in valid_completions if c.lab_id in software_security_lab_ids
+    ]
+    software_security_labs = len(software_security_completions)
+    software_security_no_hints = sum(
+        1 for c in software_security_completions if c.hints_used == 0
+    )
+
+    devfest_lab_ids = {
+        row[0] for row in db.query(Lab.id).filter(
+            Lab.slug.in_(DEVFEST_LAB_SLUGS)
+        ).all()
+    }
+    devfest_completions = [
+        c for c in valid_completions if c.lab_id in devfest_lab_ids
+    ]
+    devfest_labs = len(devfest_completions)
+    devfest_no_hints = sum(1 for c in devfest_completions if c.hints_used == 0)
+
+    comeback_labs = sum(1 for c in valid_completions if (c.attempts or 0) >= 5)
+    night_labs = sum(
+        1 for c in valid_completions
+        if c.completed_at and 0 <= c.completed_at.hour < 5
+    )
+    all_tracks_completed = _all_tracks_completed(db, user_id)
+
     for definition in definitions:
         if definition.trigger == "no_hint_labs":
             reached = no_hint_labs >= (definition.threshold or 1)
@@ -369,6 +474,20 @@ def _check_custom_achievements(
             reached = osint_perfect_labs >= (definition.threshold or 1)
         elif definition.trigger == "osint_track_completed":
             reached = osint_track_completed
+        elif definition.trigger == "software_security_labs":
+            reached = software_security_labs >= (definition.threshold or 1)
+        elif definition.trigger == "software_security_no_hint_labs":
+            reached = software_security_no_hints >= (definition.threshold or 1)
+        elif definition.trigger == "devfest_labs":
+            reached = devfest_labs >= (definition.threshold or 1)
+        elif definition.trigger == "devfest_no_hint_labs":
+            reached = devfest_no_hints >= (definition.threshold or 1)
+        elif definition.trigger == "comeback_labs":
+            reached = comeback_labs >= (definition.threshold or 1)
+        elif definition.trigger == "night_labs":
+            reached = night_labs >= (definition.threshold or 1)
+        elif definition.trigger == "all_tracks_completed":
+            reached = all_tracks_completed
         else:  # labs_completed (default)
             reached = labs_completed >= (definition.threshold or 1)
 

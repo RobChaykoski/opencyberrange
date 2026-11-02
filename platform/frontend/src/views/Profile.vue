@@ -1108,7 +1108,8 @@ const verifyMfa = async () => {
   mfa.error = ''
   mfa.success = ''
   try {
-    await axios.post('/auth/mfa/verify', { code: mfa.code.trim() })
+    const response = await axios.post('/auth/mfa/verify', { code: mfa.code.trim() })
+    if (user.value) user.value.mfa_enabled = response.data?.mfa_enabled !== false
     mfa.success = 'MFA enabled successfully.'
     mfa.enrolling = false
     mfa.qr = ''
@@ -1126,7 +1127,8 @@ const disableMfa = async () => {
   mfa.error = ''
   mfa.success = ''
   try {
-    await axios.post('/auth/mfa/disable', { password: mfa.password, code: mfa.code.trim() })
+    const response = await axios.post('/auth/mfa/disable', { password: mfa.password, code: mfa.code.trim() })
+    if (user.value) user.value.mfa_enabled = response.data?.mfa_enabled === true
     mfa.success = 'MFA disabled.'
     mfa.password = ''
     mfa.code = ''

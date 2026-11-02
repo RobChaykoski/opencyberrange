@@ -914,6 +914,7 @@ async def get_current_user_info(
             "is_admin": False,
             "role": "student" if imp_mode == 'role_course' else getattr(current_user, '_imp_mode', 'student'),
             "must_change_password": False,
+            "mfa_enabled": False,
             "impersonating": True,
             "impersonation": {
                 "original_user": {
@@ -960,6 +961,7 @@ async def get_current_user_info(
         "is_admin": current_user.role == 'admin',
         "role": current_user.role,
         "must_change_password": getattr(current_user, 'must_change_password', False),
+        "mfa_enabled": bool(getattr(current_user, "mfa_enabled", False)),
     }
 
     if imp:
