@@ -128,15 +128,35 @@
                   <span :style="{ width: track.progress_percent + '%' }"></span>
                 </div>
                 <div class="track-progress__levels">
-                  <span
+                  <div
                     v-for="level in track.levels"
                     :key="level.id"
-                    class="level-pill"
-                    :class="{ 'level-pill--complete': level.is_complete }"
+                    class="level-card"
+                    :class="{
+                      'level-card--complete': level.is_complete,
+                      'level-card--started': level.completed_labs > 0 && !level.is_complete,
+                    }"
                   >
-                    L{{ level.level_number }} · {{ level.completed_labs }}/{{ level.total_labs }}
-                    <span v-if="level.certificate_id" aria-label="Certificate earned">✓</span>
-                  </span>
+                    <div class="level-card__head">
+                      <span class="level-card__number">Level {{ level.level_number }}</span>
+                      <span class="level-card__status">{{ levelStatus(level) }}</span>
+                    </div>
+                    <span class="level-card__name">{{ level.level_name }}</span>
+                    <div
+                      class="level-card__progress"
+                      role="progressbar"
+                      :aria-valuenow="levelPercent(level)"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      :aria-label="`${level.level_name}: ${level.completed_labs} of ${level.total_labs} exercises complete`"
+                    >
+                      <span :style="{ width: levelPercent(level) + '%' }"></span>
+                    </div>
+                    <div class="level-card__foot">
+                      <span>{{ level.completed_labs }} / {{ level.total_labs }} exercises</span>
+                      <span v-if="level.certificate_id" class="level-card__cert">Certificate</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -144,14 +164,14 @@
             <details v-if="completions.length" class="completion-details">
               <summary>Completion details ({{ completions.length }})</summary>
               <div class="completion-table-wrap">
-                <table class="completion-table">
+                <table class="completion-table" aria-label="Completed exercises">
                   <thead>
                     <tr>
-                      <th>Exercise</th>
-                      <th>Track</th>
-                      <th>Completed</th>
-                      <th>Attempts</th>
-                      <th>Hints</th>
+                      <th scope="col">Exercise</th>
+                      <th scope="col">Track</th>
+                      <th scope="col">Completed</th>
+                      <th scope="col">Attempts</th>
+                      <th scope="col">Hints</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -647,6 +667,17 @@ const initials = computed(() => {
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
   return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 })
+
+const levelPercent = (level) => {
+  const total = Number(level?.total_labs) || 0
+  const done = Number(level?.completed_labs) || 0
+  return total ? Math.round((done / total) * 100) : 0
+}
+
+const levelStatus = (level) => {
+  if (level?.is_complete) return 'Complete'
+  return Number(level?.completed_labs) > 0 ? 'In progress' : 'Not started'
+}
 
 const avatarPreview = computed(() => user.value?.avatar_data || '')
 
@@ -2050,28 +2081,93 @@ watch(() => route.path, (newPath) => {
 }
 
 .track-progress__levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.level-card {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.35rem;
-  margin-top: 0.65rem;
-}
-
-.level-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-  padding: 0.18rem 0.55rem;
-  border-radius: 999px;
+  min-width: 0;
+  padding: 0.6rem 0.7rem;
   border: 1px solid var(--border-color);
+  border-radius: 8px;
   background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-size: 0.69rem;
 }
 
-.level-pill--complete {
-  border-color: rgba(16, 185, 129, 0.45);
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
+.level-card--started {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border-color));
+}
+
+.level-card--complete {
+  border-color: color-mix(in srgb, var(--success) 45%, var(--border-color));
+  background: var(--success-bg);
+}
+
+.level-card__head,
+.level-card__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.level-card__number {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.level-card__status {
+  color: var(--text-secondary);
+  font-size: 0.64rem;
+  font-weight: 600;
+}
+
+.level-card--complete .level-card__status {
+  color: var(--success);
+}
+
+.level-card__name {
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.level-card__progress {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.level-card__progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.35s ease;
+}
+
+.level-card--complete .level-card__progress span {
+  background: var(--success);
+}
+
+.level-card__foot {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+}
+
+.level-card__cert {
+  color: var(--success);
+  font-weight: 700;
 }
 
 .completion-details {
