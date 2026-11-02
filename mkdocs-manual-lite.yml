@@ -124,6 +124,7 @@ nav:
     - "Course Assessments": 03_Instructor_Guide/16_Course_Assessments.md
   - "Server Deployment":
     - "Prerequisites": 00_Server_Deployment/01_Prerequisites.md
+    - "Docker Compose Manual": 00_Server_Deployment/08_Docker_Deploy_Manual.md
     - "Local Deployment": 00_Server_Deployment/02_Local_Deployment.md
     - "Cloud Deployment": 00_Server_Deployment/03_Cloud_Deployment.md
     - "Post Installation": 00_Server_Deployment/04_Post_Installation.md

@@ -49,3 +49,5 @@ flowchart LR
 - Teaching a course? See the [Instructor Guide](03_Instructor_Guide/01_Instructor_Dashboard.md).
 - Running the server? See [Server Deployment](00_Server_Deployment/01_Prerequisites.md)
   and the [Admin Guide](04_Admin_Guide/01_Admin_Panel_Overview.md).
+- Prefer direct Docker Compose? See the
+  [Docker Compose Deployment Manual](00_Server_Deployment/08_Docker_Deploy_Manual.md).
