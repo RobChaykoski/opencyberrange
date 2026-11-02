@@ -45,6 +45,7 @@ from app.services.activity import log_activity, EventTypes
 from app.services.audit import log_admin_action, AuditActions
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.settings_service import get_setting_fresh
+from app.services.privacy import redact_ip
 
 wireguard_manager = WireGuardManager()
 
@@ -386,7 +387,7 @@ async def get_user_settings(
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
         "recovery_codes_remaining": recovery_count,
         "last_login_at": current_user.last_login_at,
-        "last_login_ip": current_user.last_login_ip,
+        "last_login_ip": redact_ip(current_user.last_login_ip),
     }
 
 @router.put("/settings")
@@ -456,7 +457,7 @@ async def list_sessions(
     return {
         "current": {
             "last_login_at": current_user.last_login_at,
-            "last_login_ip": current_user.last_login_ip,
+            "last_login_ip": redact_ip(current_user.last_login_ip),
         },
         "note": "Individual session tracking is not stored; use 'Sign out everywhere' to revoke all tokens.",
     }
@@ -573,7 +574,7 @@ async def export_user_data(
             "avatar_data": current_user.avatar_data,
             "created_at": current_user.created_at,
             "last_login_at": current_user.last_login_at,
-            "last_login_ip": current_user.last_login_ip,
+            "last_login_ip": redact_ip(current_user.last_login_ip),
             "timezone": current_user.timezone,
             "show_on_scoreboard": current_user.show_on_scoreboard,
             "login_notifications": current_user.login_notifications,
@@ -583,7 +584,7 @@ async def export_user_data(
         },
         "vpn": (
             {
-                "client_ip": vpn.client_ip,
+                "client_ip": redact_ip(vpn.client_ip),
                 "public_key": vpn.public_key,
                 "created_at": vpn.created_at,
             }
@@ -670,7 +671,7 @@ async def export_user_data(
                 "target_type": event.target_type,
                 "target_label": event.target_label,
                 "detail": _json_or_raw(event.detail),
-                "ip_address": event.ip_address,
+                "ip_address": redact_ip(event.ip_address),
                 "created_at": event.created_at,
             }
             for event in activity
