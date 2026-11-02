@@ -48,4 +48,8 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 EXPOSE 22
+
+HEALTHCHECK --interval=15s --timeout=5s --retries=5 \
+    CMD bash -c '</dev/tcp/127.0.0.1/22' || exit 1
+
 CMD ["/start.sh"]
