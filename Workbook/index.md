@@ -85,6 +85,16 @@ Start the OSINT stream at
 Start the software-security stream at
 [CH SWSEC — Software Security](CH_SWSEC_Software_Security/00_Introduction.md).
 
+### Digital Forensics
+
+| Chapter | Focus | Exercises |
+|---------|-------|-----------|
+| CH FOR01; Memory Forensics | Memory images, processes, registry data, and Volatility 3 | 1 exercise |
+| CH FOR02; Network Forensics | Packet captures, SIP/RTP, and voice reconstruction | 1 exercise |
+
+Start the forensics pathway at
+[CH FOR01 - Memory Forensics](CH_FOR01_Memory_Forensics/00_Introduction.md).
+
 ### High School Cybersecurity
 
 | Chapter | Focus | Exercises |
