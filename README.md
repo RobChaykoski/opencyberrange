@@ -1,5 +1,20 @@
 # OpenCyberRange
 
+> **Original project and attribution**
+>
+> OpenCyberRange is based on the original
+> [Open Cyber Range](https://opencyberrange.com/) (OCR-Lite) project, designed
+> and built by **[Lewis Heuermann](https://github.com/syntaxoverride)** and
+> published at
+> [syntaxoverride/opencyberrange](https://github.com/syntaxoverride/opencyberrange).
+> Lewis is a cybersecurity and data analytics professor and a Capture the Flag
+> coach. **This project would not exist without his original hard work.**
+>
+> This repository is an independent updated build maintained by Robert
+> Chaykoski. It is not an official upstream release and is not endorsed by the
+> original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
+> The original copyright and PolyForm Noncommercial licence remain in force.
+
 [![Labs](https://img.shields.io/badge/labs-141-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-10-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
@@ -9,12 +24,6 @@
 A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, AI security, and open-source intelligence (OSINT).
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
-
-> **Build provenance:** This repository is an updated build maintained by
-> Robert Chaykoski, based on the original OpenCyberRange/OCR-Lite build created
-> by Lewis Heuermann. It is not an official upstream release or endorsed by the
-> original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
-> The original copyright and PolyForm Noncommercial licence remain in force.
 
 ### Release and repositories
 
