@@ -1,8 +1,8 @@
 # Cutover to the canonical repository
 
-Status: prepared on `cutover/canonical-repo`. The file changes are in place; the
-cutover is complete only after the GitHub rename, the production host switch,
-and the archive step below.
+Status: the repository is renamed to `RobChaykoski/opencyberrange` and branch
+protection is enabled. The remaining steps are the production host switch and
+archiving the pre-cutover repository.
 
 Target end state:
 
@@ -11,10 +11,10 @@ Target end state:
 | `RobChaykoski/opencyberrange` (renamed from `opencyberrange-next`) | Canonical development and production tree |
 | `RobChaykoski/opencyberrange-backup` | Read-only archive and rollback point |
 
-The canonical URLs in the documentation resolve after step 1. Until then they
-return 404; that is expected for this branch.
+The canonical URLs in the documentation now resolve, and the old
+`opencyberrange-next` URL redirects.
 
-## What this branch changes
+## What the cutover changed
 
 - `scripts/upgrade-from-backup.sh` and `scripts/verify-upgrade.sh` now default
   to `origin` and fall back to the legacy `backup` remote when `origin` is
@@ -29,16 +29,18 @@ return 404; that is expected for this branch.
 
 ## Before merging
 
-- [ ] CI is green on `cutover/canonical-repo`.
-- [ ] `opencyberrange-next` still contains every pre-cutover commit:
+- [x] CI is green on `cutover/canonical-repo` (merged as PR #24).
+- [x] `opencyberrange-next` still contains every pre-cutover commit:
       `git rev-list --left-right --count current/main...HEAD` reports `0` on the
       left.
-- [ ] The pre-cutover tags exist locally and on the backup remote:
+- [x] The pre-cutover tags exist locally and on the backup remote:
       `v2.1.0`–`v2.3.2`, `final-current-2026-11-01`, `wave-0-baseline`.
 - [ ] No production host has uncommitted work
       (`git -C <checkout> status --porcelain --untracked-files=no` is empty).
 
 ## 1. Rename the repository
+
+Completed on 2026-11-02.
 
 In GitHub: **Settings → Repository name → `opencyberrange` → Rename**.
 
@@ -65,18 +67,19 @@ curl -sI https://github.com/RobChaykoski/opencyberrange | head -n 1
 curl -sI https://github.com/RobChaykoski/opencyberrange/security/advisories/new | head -n 1
 ```
 
-- [ ] The canonical URL returns `200`.
-- [ ] The old URL redirects to the canonical URL.
-- [ ] Private vulnerability reporting is enabled on the canonical repository.
-- [ ] `main` is the default branch.
-- [ ] Branch protection on `main` is enabled if you want PR + CI enforcement.
+- [x] The canonical URL returns `200`.
+- [x] The old URL redirects to the canonical URL.
+- [x] Private vulnerability reporting is enabled on the canonical repository.
+- [x] `main` is the default branch.
+- [x] Branch protection on `main` requires the backend, frontend, and compose
+      checks, linear history, and resolved conversations.
 
 ## 3. Resolve Dependabot work
 
-The pre-cutover repository had nine open Dependabot PRs; the staging repository
-has its own set. Decide each one before archiving:
+The pre-cutover repository had nine open Dependabot PRs; the canonical
+repository has thirteen. Decide each one before archiving:
 
-- [ ] Merge or close the staging PRs that should land.
+- [ ] Merge or close the canonical PRs that should land.
 - [ ] Close the pre-cutover PRs that are already covered by Waves A–C, or let
       archiving close them.
 - [ ] Confirm Renovate is installed on the canonical repository
