@@ -59,10 +59,9 @@
                 id="mfa-code"
                 v-model="mfaCode"
                 type="text"
-                inputmode="numeric"
                 class="form-input"
                 :class="{ 'form-input--error': errorMessage }"
-                placeholder="6-digit code"
+                placeholder="6-digit or recovery code"
                 autocomplete="one-time-code"
                 required
               />

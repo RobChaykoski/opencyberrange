@@ -253,3 +253,48 @@ def test_hidden_devfest_ghost_custom_trigger(
             CustomAchievement.id == definition.id
         ).delete()
         db_session.commit()
+
+
+def test_hidden_comeback_trigger(
+    client, auth_headers, test_user, test_lab, test_flag, osint_course, db_session
+):
+    definition = CustomAchievement(
+        name=f"Phoenix Test {uuid.uuid4().hex[:6]}",
+        description="Return after five failed attempts.",
+        icon="\U0001F525",
+        trigger="comeback_labs",
+        threshold=1,
+        is_active=True,
+    )
+    db_session.add(definition)
+    db_session.commit()
+
+    try:
+        for _ in range(5):
+            wrong = client.post(
+                f"/api/exercises/labs/{test_lab.id}/submit-flag",
+                json={"flag": "OCR{definitely_not_the_flag}"},
+                headers=auth_headers,
+            )
+            assert wrong.status_code == 200, wrong.text
+            assert wrong.json()["correct"] is False
+
+        _submit_flag(client, auth_headers, test_lab, test_flag)
+        db_session.expire_all()
+        awarded = {
+            row.achievement_type
+            for row in db_session.query(Achievement).filter(
+                Achievement.user_id == test_user.id,
+                Achievement.course_id == osint_course["course"].id,
+            ).all()
+        }
+        assert f"custom_{definition.id}" in awarded
+    finally:
+        db_session.query(Achievement).filter(
+            Achievement.course_id == osint_course["course"].id,
+            Achievement.achievement_type == f"custom_{definition.id}",
+        ).delete()
+        db_session.query(CustomAchievement).filter(
+            CustomAchievement.id == definition.id
+        ).delete()
+        db_session.commit()
