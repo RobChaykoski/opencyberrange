@@ -11,6 +11,15 @@ see [`BUILD_NOTICE.md`](BUILD_NOTICE.md) for provenance and
 
 ## How to Contribute
 
+### Before you start
+
+- Python 3.11, Node 22, PostgreSQL 15, Docker Compose v2.
+- Backend tests: `cd platform/backend && pytest -q` with `TEST_DATABASE_URL`
+  pointing at a throwaway PostgreSQL database.
+- Frontend: `cd platform/frontend && npm ci && npm run lint && npm run build`.
+- Security checks: `pip-audit -r platform/backend/requirements.txt` and
+  `npm audit --omit=dev` in `platform/frontend` should stay clean.
+
 ### Reporting Bugs
 
 Open an issue on GitHub with:
@@ -47,10 +56,10 @@ To contribute an exercise:
 5. Submit a pull request or upload the ZIP via the Instructor Panel.
 
 Available track slugs include `windows`, `linux`, `web`, `network`, `malware`,
-`ot`, and `ai`. AI labs use `category: ai` and must follow the safety rules in
-the AI Hacking workbook: deterministic mock targets, no real model keys, no
-external network dependency for the core solve path, and no real personal data,
-credentials, or malware.
+`ot`, `ai`, `osint`, `high-school`, and `software-security`. AI labs use
+`category: ai` and must follow the safety rules in the AI Hacking workbook:
+deterministic mock targets, no real model keys, no external network dependency
+for the core solve path, and no real personal data, credentials, or malware.
 
 New labs are written as `visibility: draft`, so they stay out of the student curriculum and out of the prerequisite chain until you are ready to publish them. The generator also refuses to reuse a lab number within a level, so new exercises sort after the existing ones instead of tying with them. Run **Admin -> Scan for Exercises** (or `python /app/app/scripts/discover_labs.py` in the backend container) to load the lab after adding it.
 
