@@ -89,10 +89,12 @@ Start the software-security stream at
 
 | Chapter | Focus | Exercises |
 |---------|-------|-----------|
+| CH HS09; Grade 9 RangeBox Basics | Launching RangeBox, terminal basics, file search | 2 exercises |
+| CH HS10; Grade 10 RangeBox Basics | Hostnames, HTTP responses, browser source | 2 exercises |
 | CH HS12; Grade 12 Applied Cybersecurity | Browser-only OSINT, file metadata, privacy, and community event challenges | 1 exercise |
 
 Start the high-school pathway at
-[CH HS12 — Grade 12 Applied Cybersecurity](CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md).
+[CH HS09 - Grade 9 RangeBox Basics](CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md).
 
 ## How to Use This Workbook
 
