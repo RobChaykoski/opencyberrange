@@ -68,7 +68,7 @@ jobs:
       matrix:
         # Wave 0 records the current baseline on Node 18. Wave 1 moves this to
         # Node 22 LTS (and then evaluates 24 LTS).
-        node-version: ["18"]
+        node-version: ["22"]
     steps:
       - uses: actions/checkout@v4
 
