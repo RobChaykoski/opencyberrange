@@ -255,6 +255,16 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added rangebox_enabled column to lab_sessions table")
 
+        # --- Competitions: archive flag (keeps results, hides from default list)
+        if 'competitions' in inspector.get_table_names():
+            comp_columns = {c['name'] for c in inspector.get_columns('competitions')}
+            if 'is_archived' not in comp_columns:
+                conn.execute(text(
+                    "ALTER TABLE competitions ADD COLUMN is_archived BOOLEAN DEFAULT FALSE NOT NULL"
+                ))
+                conn.commit()
+                logger.info("Added is_archived column to competitions table")
+
         # --- Achievements: allow awards outside a course (standalone labs,
         # competitions). Hidden/global badges were unreachable for students
         # with no enrollment while the column was NOT NULL.

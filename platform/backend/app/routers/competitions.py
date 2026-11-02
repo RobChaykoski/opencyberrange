@@ -63,6 +63,8 @@ def _iso(value: Optional[datetime]) -> Optional[str]:
 
 
 def _status(competition: Competition, now: datetime) -> str:
+    if getattr(competition, "is_archived", False):
+        return "archived"
     if not competition.is_active:
         return "inactive"
     if now < _aware(competition.start_at):
@@ -102,7 +104,19 @@ def _lab_rows(db: Session, competition_id: int):
 
 def _lab_payload(row: CompetitionLab) -> dict:
     lab = row.lab
-    track = lab.level.track if lab and lab.level and lab.level.track else None
+    level = lab.level if lab and lab.level else None
+    track = level.track if level and level.track else None
+    # High-school content is one track of lessons, not a numbered level ladder.
+    # Grade 12 material is a special lesson inside it. Neither should read as
+    # "Level 12" anywhere a student sees it.
+    is_high_school = bool(track and track.slug == "high-school")
+    special = bool(level and "grade 12" in (level.name or "").lower())
+    if is_high_school:
+        level_label = None
+    elif special:
+        level_label = level.name if level else None
+    else:
+        level_label = f"Level {level.level_number}" if level else None
     return {
         "id": lab.id if lab else None,
         "name": lab.name if lab else "Removed exercise",
@@ -111,8 +125,10 @@ def _lab_payload(row: CompetitionLab) -> dict:
         "duration_minutes": lab.duration_minutes if lab else None,
         "track_name": track.name if track else "Uncategorized",
         "track_slug": track.slug if track else None,
-        "level_name": lab.level.name if lab and lab.level else "Uncategorized",
-        "level_number": lab.level.level_number if lab and lab.level else None,
+        "level_name": level.name if level else "Uncategorized",
+        "level_number": level.level_number if level else None,
+        "level_label": level_label,
+        "is_special_lesson": is_high_school or special,
         "sort_order": row.sort_order,
     }
 
@@ -133,6 +149,7 @@ def _summary(
         "end_at": _iso(competition.end_at),
         "status": _status(competition, now),
         "is_active": competition.is_active,
+        "is_archived": bool(getattr(competition, "is_archived", False)),
         "participant_count": participant_count,
         "lab_count": lab_count,
         "joined": joined,
@@ -469,6 +486,33 @@ async def update_competition(
     return {"message": "Competition updated"}
 
 
+@router.post("/{competition_id}/archive")
+async def archive_competition(
+    competition_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Archive an event: keep every result, hide it from the default list."""
+    competition = _competition_or_404(db, competition_id)
+    _require_manage(competition, current_user)
+    competition.is_archived = True
+    db.commit()
+    return {"message": "Competition archived", "is_archived": True}
+
+
+@router.post("/{competition_id}/unarchive")
+async def unarchive_competition(
+    competition_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    competition = _competition_or_404(db, competition_id)
+    _require_manage(competition, current_user)
+    competition.is_archived = False
+    db.commit()
+    return {"message": "Competition restored", "is_archived": False}
+
+
 @router.delete("/{competition_id}")
 async def delete_competition(
     competition_id: int,
@@ -490,7 +534,7 @@ async def join_competition(
 ):
     competition = _competition_or_404(db, competition_id)
     status = _status(competition, datetime.now(timezone.utc))
-    if status in ("ended", "inactive"):
+    if status in ("ended", "inactive", "archived"):
         raise HTTPException(status_code=400, detail="This competition is closed")
     existing = db.query(CompetitionParticipant).filter(
         CompetitionParticipant.competition_id == competition_id,

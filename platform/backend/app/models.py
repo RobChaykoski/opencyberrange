@@ -494,6 +494,10 @@ class Competition(Base):
     start_at = Column(DateTime, nullable=False)
     end_at = Column(DateTime, nullable=False)
     is_active = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # Archived events keep every result and leaderboard row but move out of the
+    # default list, so a past competition stays readable without cluttering the
+    # active ones. Delete remains a separate, explicit action.
+    is_archived = Column(Boolean, default=False, server_default=text("false"), nullable=False)
     created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 

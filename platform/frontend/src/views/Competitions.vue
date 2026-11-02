@@ -102,7 +102,16 @@
     <div v-else class="competitions-layout">
       <section class="competition-list" aria-label="Competitions">
         <button
-          v-for="comp in sortedCompetitions"
+          v-if="archivedCount"
+          type="button"
+          class="archive-toggle"
+          :aria-pressed="showArchived"
+          @click="showArchived = !showArchived"
+        >
+          {{ showArchived ? 'Hide archived events' : `Show archived events (${archivedCount})` }}
+        </button>
+        <button
+          v-for="comp in visibleCompetitions"
           :key="comp.id"
           type="button"
           class="comp-card"
@@ -168,6 +177,26 @@
             >
               {{ joining ? 'Leaving...' : 'Leave event' }}
             </button>
+            <button
+              v-if="selected.competition.can_manage"
+              type="button"
+              class="btn btn--outline btn--sm"
+              :disabled="archiving"
+              @click="toggleArchiveSelected"
+            >
+              {{ archiving
+                ? 'Saving...'
+                : (selected.competition.is_archived ? 'Restore event' : 'Archive event') }}
+            </button>
+            <button
+              v-if="selected.competition.can_manage"
+              type="button"
+              class="btn btn--outline btn--sm comp-delete"
+              :disabled="deleting"
+              @click="deleteSelected"
+            >
+              {{ deleting ? 'Deleting...' : 'Delete' }}
+            </button>
           </div>
         </div>
 
@@ -187,8 +216,10 @@
             <h3>Exercises</h3>
             <ol v-if="selected.labs.length" class="event-labs">
               <li v-for="lab in selected.labs" :key="lab.id">
-                <span>{{ lab.name }}</span>
-                <small>{{ lab.track_name }} · Level {{ lab.level_number }}</small>
+                <router-link class="event-lab-link" :to="labPracticeLink(lab)">
+                  {{ lab.name }}
+                </router-link>
+                <small>{{ labMeta(lab) }}</small>
               </li>
             </ol>
             <p v-else class="muted-note">No exercises selected yet.</p>
@@ -261,6 +292,9 @@ const creating = ref(false)
 const createError = ref('')
 const labsLoading = ref(false)
 const availableLabs = ref([])
+const showArchived = ref(false)
+const archiving = ref(false)
+const deleting = ref(false)
 const newCompetition = reactive({
   name: '',
   description: '',
@@ -278,13 +312,20 @@ const isInstructor = computed(() => {
   }
 })
 
-const statusOrder = { active: 0, upcoming: 1, ended: 2, inactive: 3 }
+const statusOrder = { active: 0, upcoming: 1, ended: 2, inactive: 3, archived: 4 }
 const sortedCompetitions = computed(() => (
   [...competitions.value].sort((a, b) => {
     const byStatus = (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
     if (byStatus !== 0) return byStatus
     return new Date(b.start_at) - new Date(a.start_at)
   })
+))
+
+const archivedCount = computed(
+  () => competitions.value.filter(c => c.is_archived).length
+)
+const visibleCompetitions = computed(() => (
+  sortedCompetitions.value.filter(c => showArchived.value || !c.is_archived)
 ))
 
 const labTracks = computed(() => {
@@ -323,7 +364,19 @@ const statusLabel = (status) => ({
   upcoming: 'Upcoming',
   ended: 'Finished',
   inactive: 'Hidden',
+  archived: 'Archived',
 }[status] || status)
+
+const labPracticeLink = (lab) => (
+  lab?.track_slug
+    ? { path: `/exercises/${lab.track_slug}`, query: { labId: String(lab.id) } }
+    : '/exercises'
+)
+
+// High-school lessons carry no level label: the track name alone is the context.
+const labMeta = (lab) => (
+  lab.level_label ? `${lab.track_name} · ${lab.level_label}` : lab.track_name
+)
 
 const formatDate = (iso) => {
   if (!iso) return ''
@@ -423,6 +476,45 @@ const leaveSelected = async () => {
     actionError.value = err.response?.data?.detail || 'Could not leave that competition.'
   } finally {
     joining.value = false
+  }
+}
+
+const toggleArchiveSelected = async () => {
+  if (!selectedId.value || !selected.value) return
+  archiving.value = true
+  actionError.value = ''
+  const id = selectedId.value
+  const action = selected.value.competition.is_archived ? 'unarchive' : 'archive'
+  try {
+    await axios.post(`/competitions/${id}/${action}`)
+    await loadCompetitions(true)
+    await selectCompetition(id)
+  } catch (err) {
+    actionError.value = err.response?.data?.detail || 'Could not change the archive state.'
+  } finally {
+    archiving.value = false
+  }
+}
+
+const deleteSelected = async () => {
+  if (!selectedId.value || !selected.value) return
+  const name = selected.value.competition.name
+  const confirmed = window.confirm(
+    `Delete "${name}"?\n\nThis removes the event and its leaderboard rows permanently. ` +
+    'Archive it instead if you only want it out of the active list.'
+  )
+  if (!confirmed) return
+  deleting.value = true
+  actionError.value = ''
+  try {
+    await axios.delete(`/competitions/${selectedId.value}`)
+    selected.value = null
+    selectedId.value = null
+    await loadCompetitions()
+  } catch (err) {
+    actionError.value = err.response?.data?.detail || 'Could not delete that competition.'
+  } finally {
+    deleting.value = false
   }
 }
 
@@ -906,6 +998,45 @@ onMounted(async () => {
 .status-pill--inactive {
   background: var(--danger-bg);
   color: var(--danger);
+}
+
+.status-pill--archived {
+  background: rgba(120, 113, 108, 0.2);
+  color: #d6d3d1;
+  border: 1px solid rgba(168, 162, 158, 0.35);
+}
+
+.archive-toggle {
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.archive-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+.event-lab-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-color);
+}
+
+.event-lab-link:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.comp-delete {
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fca5a5;
 }
 
 .joined-pill {

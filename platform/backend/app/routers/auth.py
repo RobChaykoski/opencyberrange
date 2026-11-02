@@ -756,13 +756,18 @@ async def request_account_deletion(
     )
 
 @router.post("/register", response_model=UserResponse)
-@limiter.limit("5/minute")  # 5 registrations per minute per IP
+@limiter.limit("5/minute;30/hour;100/day")  # per-IP registration limits
 async def register(
     request: Request,
     user_data: RegisterRequest,
     db: Session = Depends(get_db)
 ):
-    """Register a new user - rate limited to 5 per minute"""
+    """Register a new user.
+
+    Per-IP limits: 5/minute (stops a burst), 30/hour (still fits a class
+    behind one NAT), 100/day (stops slow enumeration). The invite-code and
+    approval gates remain the controls that decide *who* may register.
+    """
     # Check for existing username, email, or student_id.
     # Use a single generic error to prevent account enumeration.
     existing = get_user_by_username(db, user_data.username)

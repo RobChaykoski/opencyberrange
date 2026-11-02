@@ -133,8 +133,8 @@
           <h2>Exercises</h2>
           <ol v-if="detail.labs.length" class="event-labs">
             <li v-for="lab in detail.labs" :key="lab.id">
-              <span>{{ lab.name }}</span>
-              <small>{{ lab.track_name }} · Level {{ lab.level_number }}</small>
+              <router-link class="event-lab-link" :to="labLink(lab)">{{ lab.name }}</router-link>
+              <small>{{ labMeta(lab) }}</small>
             </li>
           </ol>
           <p v-else class="muted-note">No exercises selected yet.</p>
@@ -215,6 +215,17 @@ const practiceLink = computed(() => {
     query: { labId: String(lab.id) },
   }
 })
+
+const labLink = (lab) => (
+  lab?.track_slug
+    ? { path: `/exercises/${lab.track_slug}`, query: { labId: String(lab.id) } }
+    : '/exercises'
+)
+
+// High-school lessons carry no level label: the track name alone is the context.
+const labMeta = (lab) => (
+  lab.level_label ? `${lab.track_name} · ${lab.level_label}` : lab.track_name
+)
 
 const statusLabel = (status) => ({
   active: 'Live',
@@ -535,6 +546,17 @@ onMounted(loadDetail)
 
 .event-labs li + li { margin-top: 0.35rem; }
 .event-labs small { display: block; color: var(--text-muted); font-size: 0.66rem; }
+
+.event-lab-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-color);
+}
+
+.event-lab-link:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
 
 .table-wrap { overflow-x: auto; }
 .row--me { background: var(--accent-bg); }
