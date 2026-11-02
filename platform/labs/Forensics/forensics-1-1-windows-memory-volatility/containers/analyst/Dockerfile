@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openssh-server \
+    sudo \
     curl \
     ca-certificates \
     p7zip-full \
@@ -23,7 +24,10 @@ RUN pip3 install --no-cache-dir volatility3==2.28.2 pycryptodome
 # Analyst account. The password is intentionally simple for a training
 # container and is documented in the lab metadata.
 RUN useradd -m -s /bin/bash analyst && \
-    echo 'analyst:M3m0ry_4n4lys1s' | chpasswd
+    echo 'analyst:M3m0ry_4n4lys1s' | chpasswd && \
+    usermod -aG sudo analyst && \
+    printf 'analyst ALL=(ALL) NOPASSWD:ALL\n' > /etc/sudoers.d/90-analyst && \
+    chmod 0440 /etc/sudoers.d/90-analyst
 
 # Symbol file for the Windows Server 2008 SP1 x86 kernel in the image.
 RUN mkdir -p /home/analyst/symbols/windows/ntkrpamp.pdb
@@ -47,9 +51,9 @@ RUN mkdir -p /run/sshd
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22
+USER analyst
 
 HEALTHCHECK --interval=15s --timeout=5s --retries=5 \
     CMD bash -c '</dev/tcp/127.0.0.1/22' || exit 1
 
-CMD ["/start.sh"]
+CMD ["sudo", "/start.sh"]
