@@ -253,7 +253,20 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                       {   'level_number': 5,
                           'name': 'Capstone Exploit Development',
                           'description': 'End-to-end exploitation, mitigation, and '
-                                         'disclosure'}]}]
+                                         'disclosure'}]},
+    {   'name': 'Digital Forensics',
+        'slug': 'forensics',
+        'description': 'Investigate memory and network evidence: reconstruct '
+                       'activity from volatile data and captured traffic.',
+        'icon': 'forensics',
+        'color': '#14B8A6',
+        'sort_order': 11,
+        'levels': [   {   'level_number': 1,
+                          'name': 'Memory Forensics',
+                          'description': 'Memory images, processes, and volatile evidence'},
+                      {   'level_number': 2,
+                          'name': 'Network Forensics',
+                          'description': 'Packet captures, voice traffic, and protocol reconstruction'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)
