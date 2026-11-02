@@ -161,7 +161,7 @@ def _award(db: Session, user_id: int, course_id: int | None, lab_id: int | None,
     log_activity(db, EventTypes.ACHIEVEMENT_AWARDED,
                   actor_id=user_id, target_type="achievement",
                   target_id=lab_id,
-                  target_label=ACHIEVEMENT_LABELS.get(achievement_type, achievement_type),
+                  target_label=resolve_achievement_label(db, achievement_type),
                   commit=False)
 
 

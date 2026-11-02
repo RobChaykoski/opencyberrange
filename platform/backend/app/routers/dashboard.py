@@ -30,6 +30,7 @@ from app.services.achievements import (
     CLEAN_SWEEP,
     FIRST_BLOOD,
     custom_achievement_id,
+    resolve_achievement_label,
 )
 from app.services.pdf_report import generate_dashboard_report
 
@@ -374,7 +375,7 @@ async def instructor_feed(
             "actor_role": e.actor.role if e.actor else None,
             "target_type": e.target_type,
             "target_id": e.target_id,
-            "target_label": e.target_label,
+            "target_label": (resolve_achievement_label(db, e.target_label) if e.target_type == "achievement" and e.target_label else e.target_label),
             "detail": e.detail,
             "created_at": (e.created_at.isoformat() + "Z") if e.created_at else None,
         })
@@ -490,7 +491,7 @@ async def instructor_report(
             "event_label": EVENT_LABELS.get(e.event_type, e.event_type),
             "actor_username": e.actor.username if e.actor else None,
             "actor_role": e.actor.role if e.actor else None,
-            "target_label": e.target_label,
+            "target_label": (resolve_achievement_label(db, e.target_label) if e.target_type == "achievement" and e.target_label else e.target_label),
             "detail": e.detail,
             "created_at": e.created_at,
         })

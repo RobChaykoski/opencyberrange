@@ -324,6 +324,19 @@ def test_global_achievement_without_course(
         ).all()
         assert rows, "global achievement was not awarded without a course"
         assert rows[0].course_id is None
+
+        # The activity feed must show the achievement name, not "custom_<id>".
+        from app.models import ActivityEvent
+        from app.services.achievements import resolve_achievement_label
+
+        assert resolve_achievement_label(db_session, f"custom_{definition.id}") == definition.name
+        event = db_session.query(ActivityEvent).filter(
+            ActivityEvent.actor_id == test_user.id,
+            ActivityEvent.target_type == "achievement",
+            ActivityEvent.event_type == "achievement_awarded",
+        ).order_by(ActivityEvent.id.desc()).first()
+        assert event is not None
+        assert event.target_label == definition.name
     finally:
         db_session.query(Achievement).filter(
             Achievement.user_id == test_user.id,

@@ -38,6 +38,7 @@ from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCa
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
+from app.services.achievements import resolve_achievement_label
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.file_lock import open_locked
 from app.config import settings
@@ -2711,7 +2712,7 @@ async def get_activity_log(
             "actor_role": actor_role,
             "target_type": e.target_type,
             "target_id": e.target_id,
-            "target_label": e.target_label,
+            "target_label": (resolve_achievement_label(db, e.target_label) if e.target_type == "achievement" and e.target_label else e.target_label),
             "detail": e.detail,
             "ip_address": e.ip_address,
             "created_at": e.created_at.isoformat() if e.created_at else None,
