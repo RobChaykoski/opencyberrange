@@ -305,10 +305,14 @@ demo records. No real learner names, emails, or records are shown.
 Run the setup script on a fresh Ubuntu 22.04+ server (see [Requirements](#requirements) for sizing):
 
 ```bash
-git clone https://github.com/syntaxoverride/opencyberrange.git
+git clone https://github.com/RobChaykoski/opencyberrange.git
 cd opencyberrange
 sudo bash scripts/setup-range-server.sh --install
 ```
+
+Prefer to run Docker Compose yourself? See the
+[Docker Compose Deployment Manual](Manual-Lite/00_Server_Deployment/08_Docker_Deploy_Manual.md)
+for a command-by-command deployment.
 
 The first prompt in the setup script asks how students will reach the server:
 
@@ -378,7 +382,7 @@ For public-facing deployments behind a domain, the [Cloud Deployment guide](Manu
 
 ## Manual Setup
 
-For production deployments or custom configurations, see the [Server Deployment guides](Manual-Lite/00_Server_Deployment/) which cover each step individually.
+For production deployments or custom configurations, see the [Server Deployment guides](Manual-Lite/00_Server_Deployment/) which cover each step individually. For a direct, command-by-command path, use the [Docker Compose Deployment Manual](Manual-Lite/00_Server_Deployment/08_Docker_Deploy_Manual.md).
 
 ## Platform Components
 
