@@ -2927,7 +2927,17 @@ const filteredUsers = computed(() => {
   if (userRoleFilter.value) {
     list = list.filter(u => u.role === userRoleFilter.value)
   }
-  return list
+
+  // Approval queue first, then alphabetical, with staff accounts last within
+  // each approval group. Copy before sorting so the source list is not mutated.
+  const staffRank = (u) => (u.role === 'admin' || u.role === 'instructor' ? 1 : 0)
+  const approvalRank = (u) => (u.is_approved ? 1 : 0)
+  const nameKey = (u) => (u.username || '').toLocaleLowerCase()
+  return [...list].sort((a, b) =>
+    approvalRank(a) - approvalRank(b) ||
+    staffRank(a) - staffRank(b) ||
+    nameKey(a).localeCompare(nameKey(b))
+  )
 })
 
 const userTotalPages = computed(() => Math.ceil(filteredUsers.value.length / usersPerPage))
@@ -4742,7 +4752,9 @@ const fetchAll = async () => {
     ])
     stats.value = statsRes.data
     users.value = usersRes.data
-    pendingUsers.value = pendingRes.data
+    pendingUsers.value = [...pendingRes.data].sort((a, b) =>
+      (a.username || '').toLocaleLowerCase().localeCompare((b.username || '').toLocaleLowerCase())
+    )
     labs.value = labsRes.data
     activeSessions.value = sessionsRes.data
     // Session history now returns paginated response
