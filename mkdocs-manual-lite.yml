@@ -104,6 +104,7 @@ nav:
     - "Cannot Reach Lab Target": 07_Troubleshooting/05_Cannot_Reach_Lab_Target.md
     - "Flag Not Accepted": 07_Troubleshooting/06_Flag_Not_Accepted.md
     - "Session Expired Unexpectedly": 07_Troubleshooting/07_Session_Expired_Unexpectedly.md
+  - "Glossary": 08_Glossary/01_Glossary.md
   - "Instructor Guide":
     - "Instructor Dashboard": 03_Instructor_Guide/01_Instructor_Dashboard.md
     - "Creating a Course": 03_Instructor_Guide/02_Creating_a_Course.md
