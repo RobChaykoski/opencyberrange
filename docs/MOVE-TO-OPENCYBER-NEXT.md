@@ -1,15 +1,16 @@
 # Moving All Content to `opencyberrange-next`
 
-Status: sync executed and verified. The current tree is frozen at `3a8d312`
-(tag `final-current-2026-11-01`). The next tree is `3a8d312` + Wave 0
-(`f670c8e`) plus this status update. Only remote creation and the push remain.
+Status: sync executed and verified. The current tree is at `8be1e9d`
+(tag `v2.1.3`; the earlier `final-current-2026-11-01` tag remains at the
+wiki-complete commit `4947bdd`). The next tree is `8be1e9d` + Wave 0
+(`c93c529`) plus this status update. Only remote creation and the push remain.
 
 ## Current state
 
 | Tree | Location | State |
 |---|---|---|
-| Current / production | `RobChaykoski/opencyberrange-backup` | Frozen at `3a8d312`, tag `final-current-2026-11-01` |
-| Next / upgrade staging | local `opencyberrange-next` | `3a8d312` + Wave 0 (`f670c8e`) + status update; verified |
+| Current / production | `RobChaykoski/opencyberrange-backup` | `8be1e9d`, tag `v2.1.3` |
+| Next / upgrade staging | local `opencyberrange-next` | `8be1e9d` + Wave 0 (`c93c529`) + status update; verified |
 | Next remote | `RobChaykoski/opencyberrange-next` | Configured as `origin`, not created yet |
 
 The next tree now contains every tracked file from current plus the Wave 0
@@ -73,8 +74,8 @@ git branch -f main migration
 
 ## 3. Update the Wave 0 baseline reference (complete)
 
-`docs/WAVE-0-BASELINE.md` now names `3a8d312` as its source, matching the
-frozen current commit.
+`docs/WAVE-0-BASELINE.md` now names `8be1e9d` as its source, matching the
+current commit.
 
 Also check `README-UPGRADE.md` and `docs/UPGRADE-TO-LATEST-GA-PLAN.md` for any
 stale commit references.
@@ -115,9 +116,9 @@ docker compose --env-file .env -f docker-compose.prod.yml config >/dev/null
 Also run the two software-security labs and the DevFest seed smoke test, or
 reuse the recorded results from the final current commit.
 
-Verified on `f670c8e`:
+Verified on the rebased Wave 0 tree:
 
-- 47 backend tests passed on PostgreSQL 17.
+- 54 backend tests passed on PostgreSQL 17.
 - Frontend lint: 0 errors; production build passed.
 - Both Software Security labs validated (21/22 checks; informational resource
   limit suggestion only).
@@ -170,7 +171,7 @@ After the push:
 Do not point production hosts at next directly. Use a release promotion:
 
 1. `opencyberrange-next` passes CI and staging checks.
-2. Create a release tag, e.g. `v2.1.0`.
+2. Create a release tag, e.g. `v2.1.3`.
 3. Promote the release to the production remote, either by:
    - mirroring `next/main` to `opencyberrange-backup` after review; or
    - adding `opencyberrange-next` as a remote on the hosts and switching
