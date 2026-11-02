@@ -11,8 +11,7 @@ import os
 import logging
 import tempfile
 
-from slowapi import Limiter
-from slowapi.util import get_remote_address
+from app.ratelimit import create_limiter
 
 from app.database import get_db
 from app.models import (
@@ -31,7 +30,7 @@ from app.schemas import (
     UpdateLabRequest,
     LabCreate,
 )
-from app.auth import get_current_admin_user, get_current_instructor_user, get_password_hash, validate_privileged_password
+from app.auth import get_current_admin_user, get_current_instructor_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens
 from app import entitlement
 from app.services import settings_service
 from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError
@@ -47,7 +46,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Rate limiter for admin endpoints
-limiter = Limiter(key_func=get_remote_address)
+limiter = create_limiter()
 
 docker_manager = DockerManager()
 wireguard_manager = WireGuardManager(
@@ -611,7 +610,11 @@ async def reset_password(
     user.failed_attempts = 0
     user.locked_at = None
     db.commit()
-    
+
+    # An admin-driven reset must also invalidate outstanding sessions; otherwise
+    # whoever had the old password (or a stolen token) stays logged in.
+    revoke_all_user_tokens(user.username)
+
     # Audit log
     log_admin_action(
         action=AuditActions.PASSWORD_RESET,

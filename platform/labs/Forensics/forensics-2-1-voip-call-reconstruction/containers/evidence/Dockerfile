@@ -3,6 +3,7 @@ FROM nginxinc/nginx-unprivileged:alpine
 COPY voip-call.pcap /usr/share/nginx/html/voip-call.pcap
 COPY reconstruct.py /usr/share/nginx/html/reconstruct.py
 COPY README.txt /usr/share/nginx/html/README.txt
+COPY transcript.txt /usr/share/nginx/html/transcript.txt
 
 USER 101
 

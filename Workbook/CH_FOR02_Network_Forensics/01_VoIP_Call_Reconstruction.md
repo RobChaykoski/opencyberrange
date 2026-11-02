@@ -6,6 +6,7 @@
 - [ ] Downloaded `voip-call.pcap`
 - [ ] You have Wireshark/tshark and Python 3, or RangeBox
 - [ ] You know the call is fictional and safe to analyze
+- [ ] If audio is unavailable, you know `transcript.txt` is the audio-free path
 
 ## Scenario
 
@@ -99,6 +100,12 @@ sox -t ul -r 8000 -c 1 call.ulaw call.wav
 ## Step 5: Listen and read the signalling
 
 Play `call.wav`. The caller says where the training token is stored.
+
+!!! note "Audio-free path"
+    If you cannot play or hear the recording, download
+    `http://voice.lab:8080/transcript.txt`. It contains the spoken message
+    and points you at the same SIP evidence. The transcript does not contain
+    the flag itself.
 
 Then return to the SIP `INVITE` and read the headers. The `Subject` header
 contains the `OCR{...}` token.

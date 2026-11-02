@@ -28,6 +28,10 @@ scenario: |
   from the media, reconstruct the audio, listen to the message, and then review
   the SIP headers for the training token.
 
+  The evidence package includes `transcript.txt` as an audio-free path. Use it
+  if you cannot play the reconstructed recording; it points at the same SIP
+  evidence as the audio.
+
   The capture is fictional training data. The audio was synthesized for this
   exercise, and the people and phone numbers are not real.
 
@@ -85,6 +89,11 @@ test:
     - name: "Capture is downloadable"
       command: "curl -s -o /dev/null -w '%{http_code}' http://{target.evidence}:8080/voip-call.pcap"
       expect: "200"
+      timeout: 20
+
+    - name: "Transcript is available for the audio-free path"
+      command: "curl -s http://{target.evidence}:8080/transcript.txt | grep -c 'Subject line'"
+      expect: "1"
       timeout: 20
 
     - name: "Capture contains a SIP INVITE"

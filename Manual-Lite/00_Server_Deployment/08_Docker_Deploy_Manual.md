@@ -19,6 +19,7 @@ For the guided installer, see [Local Deployment](02_Local_Deployment.md) or
 | Service | Container | Port | Purpose |
 |---|---|---|---|
 | `db` | `ocr-db` | internal `5432` | PostgreSQL database |
+| `redis` | `ocr-redis` | internal `6379` | Shared rate-limit counters |
 | `backend` | `ocr-backend` | `127.0.0.1:8000` | FastAPI API and lab orchestration |
 | `frontend` | `ocr-frontend` | `80`, `443` | Vue app, API proxy, HTTPS |
 
@@ -96,6 +97,7 @@ Edit `platform/.env` and fill in every value. The important ones:
 | `WG_API_KEY` | A fresh 64-character hex string |
 | `WG_ENCRYPTION_KEY` | The Fernet key generated above |
 | `DEPLOYMENT_MODE` | `local` for a LAN install, `internet` for public access |
+| `RATELIMIT_STORAGE_URI` | `redis://redis:6379/0` (default). Use `memory://` only for single-worker development |
 
 `DATABASE_URL` must match `POSTGRES_USER`, `POSTGRES_PASSWORD`, and
 `POSTGRES_DB`. If the password contains URL-reserved characters, percent-encode
@@ -156,6 +158,7 @@ Expected:
 
 ```text
 ocr-db        healthy
+ocr-redis     healthy
 ocr-backend   healthy
 ocr-frontend  healthy
 ```
@@ -342,6 +345,7 @@ resurrected from an older dump. See
 | Setup token rejected | `grep SETUP_TOKEN platform/.env` | Use the same value, or blank it on an isolated network |
 | Database password changed after first start | Reused `postgres_data` volume | See `platform/db/ensure-db-password.sh`; the container reconciles it |
 | Labs missing after update | `Admin Panel → Exercises → Scan` | Run `discover_labs.py` |
+| Rate limits reset or behave differently per worker | `docker compose ... ps redis` | Start the bundled Redis service and keep `RATELIMIT_STORAGE_URI=redis://redis:6379/0` |
 
 ## 12. Security checklist
 
