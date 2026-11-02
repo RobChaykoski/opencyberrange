@@ -8,7 +8,7 @@ This records the passing state before any application dependency is changed.
 
 | Item | Value |
 |---|---|
-| Source | `RobChaykoski/opencyberrange-backup` at `3a8d312` |
+| Source | `RobChaykoski/opencyberrange-backup` at `8be1e9d` |
 | Backend test database | PostgreSQL 17 (local container) |
 | Backend Python | 3.11.9 (existing venv) |
 | Frontend Node | v24.22.1 (workstation); CI baseline uses Node 18 |
@@ -18,7 +18,7 @@ This records the passing state before any application dependency is changed.
 
 | Gate | Result |
 |---|---|
-| Backend test suite | **47 passed** |
+| Backend test suite | **54 passed** |
 | `ruff check app` | 119 legacy findings; non-blocking in CI until cleanup |
 | Frontend `npm ci` | Passed |
 | Frontend `npm run lint` | 0 errors, 144 existing warnings |
