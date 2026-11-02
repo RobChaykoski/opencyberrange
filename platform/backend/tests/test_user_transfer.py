@@ -36,7 +36,7 @@ def test_export_contains_portable_fields_without_mfa(tmp_path, db_session, test_
     assert payload["format"] == user_transfer.FORMAT
     exported = next(u for u in payload["users"] if u["username"] == test_user.username)
     assert exported["email"] == test_user.email
-    assert exported["password_hash"].startswith("$2")
+    assert exported["password_hash"].startswith(("$argon2", "$2"))
     assert "totp_secret" not in exported
     assert "mfa_recovery_codes" not in exported
     assert "vpn_registered" not in exported

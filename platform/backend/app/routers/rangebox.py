@@ -44,7 +44,8 @@ async def _authenticate_ws(token: str) -> tuple[int | None, bool]:
         return user_id, False
 
     # Fall back to JWT for backward compatibility
-    from jose import JWTError, jwt
+    import jwt
+    from jwt import PyJWTError as JWTError
     from app.config import settings
 
     try:

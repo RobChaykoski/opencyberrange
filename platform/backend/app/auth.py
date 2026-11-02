@@ -9,8 +9,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from passlib.context import CryptContext
+import jwt  # PyJWT
+from jwt import PyJWTError as JWTError
+from pwdlib import PasswordHash
+from pwdlib.hashers.argon2 import Argon2Hasher
+from pwdlib.hashers.bcrypt import BcryptHasher
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -19,21 +22,40 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Argon2 for new hashes. Bcrypt stays as a verifier so accounts created before
+# the migration keep working; a successful login rewrites the hash to Argon2.
+pwd_context = PasswordHash((Argon2Hasher(), BcryptHasher()))
 
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 def get_password_hash(password: str) -> str:
-    """Hash a password"""
+    """Hash a password with Argon2id."""
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash"""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a password against its hash, whatever scheme produced it."""
+    try:
+        valid, _ = pwd_context.verify_and_update(plain_password, hashed_password)
+        return valid
+    except Exception:
+        return False
+
+
+def verify_password_and_upgrade(
+    plain_password: str, hashed_password: str
+) -> tuple[bool, Optional[str]]:
+    """Verify and return an upgraded hash when the stored scheme is legacy.
+
+    ``verify_and_update`` returns ``(valid, new_hash)``; ``new_hash`` is None
+    when the stored hash already uses the preferred scheme.
+    """
+    try:
+        return pwd_context.verify_and_update(plain_password, hashed_password)
+    except Exception:
+        return False, None
 
 
 PRIVILEGED_PASSWORD_MIN_LENGTH = 14
@@ -265,8 +287,9 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
             # Locked without timestamp (manual lock by admin), don't auto-unlock
             return None
     
-    # Verify password
-    if not verify_password(password, user.hashed_password):
+    # Verify password (bcrypt legacy hashes are upgraded to Argon2 here)
+    valid, upgraded_hash = verify_password_and_upgrade(password, user.hashed_password)
+    if not valid:
         # Increment failed attempts
         user.failed_attempts = (user.failed_attempts or 0) + 1
         
@@ -278,10 +301,14 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
         db.commit()
         return None
     
-    # Successful login - reset failed attempts
+    # Successful login - reset failed attempts and upgrade a legacy hash
     if user.failed_attempts and user.failed_attempts > 0:
         user.failed_attempts = 0
         db.commit()
+    if upgraded_hash and upgraded_hash != user.hashed_password:
+        user.hashed_password = upgraded_hash
+        db.commit()
+        logger.info("Upgraded password hash for user %s", user.username)
     
     return user
 
@@ -317,7 +344,7 @@ async def get_current_user(
     """Get current authenticated user from JWT token.
 
     Checks:
-      1. Token is valid and not expired (jose handles this)
+      1. Token is valid and not expired (PyJWT handles this)
       2. Token's jti has not been individually revoked
       3. Token was not issued before a per-user revocation timestamp
       4. User still exists in the database

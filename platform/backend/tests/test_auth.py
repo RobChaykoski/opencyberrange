@@ -1,7 +1,7 @@
 """Login smoke tests: bad credentials rejected, JWT issued on good ones."""
 import pytest
 
-from jose import jwt
+import jwt
 
 from app.config import settings
 
@@ -53,3 +53,21 @@ def test_token_grants_access_to_me_endpoint(client, auth_headers, test_user):
     resp = client.get("/api/auth/me", headers=auth_headers)
     assert resp.status_code == 200
     assert resp.json()["username"] == test_user.username
+
+
+def test_legacy_bcrypt_hash_is_upgraded_on_login(client, db_session, test_user, test_password):
+    """Accounts created before the Argon2 migration keep working and rehash."""
+    import bcrypt
+
+    legacy = bcrypt.hashpw(test_password.encode(), bcrypt.gensalt()).decode()
+    test_user.hashed_password = legacy
+    db_session.commit()
+
+    resp = client.post(
+        "/api/auth/login",
+        data={"username": test_user.username, "password": test_password},
+    )
+    assert resp.status_code == 200, resp.text
+
+    db_session.refresh(test_user)
+    assert test_user.hashed_password.startswith("$argon2"), test_user.hashed_password

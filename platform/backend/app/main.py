@@ -490,7 +490,7 @@ async def impersonation_read_only_middleware(request: Request, call_next):
             if auth_header.startswith("Bearer "):
                 token_str = auth_header[7:]
                 try:
-                    from jose import jwt as _jwt
+                    import jwt as _jwt
                     payload = _jwt.decode(
                         token_str, settings.JWT_SECRET,
                         algorithms=[settings.JWT_ALGORITHM],

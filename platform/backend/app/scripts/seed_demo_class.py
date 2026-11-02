@@ -17,7 +17,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 
 _missing = []
-for _mod in ['sqlalchemy', 'passlib']:
+for _mod in ['sqlalchemy', 'pwdlib']:
     try:
         __import__(_mod)
     except ImportError:
@@ -33,12 +33,11 @@ sys.path.insert(0, '/app')
 
 from sqlalchemy import create_engine, text, inspect
 from sqlalchemy.orm import sessionmaker
-from passlib.context import CryptContext
+from app.auth import get_password_hash
 
 DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://labuser:labpass@db:5432/labdb')
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 NOW = datetime.now(timezone.utc)
 
@@ -208,7 +207,7 @@ def get_profile(personality, lab_index, total_labs):
 def upsert_user(db, username, email, password, role, student_id=None, days_ago=30):
     """Create or update user. Returns user_id."""
     row = db.execute(text("SELECT id FROM users WHERE username = :u"), {"u": username}).fetchone()
-    hashed = pwd_context.hash(password)
+    hashed = get_password_hash(password)
     created = (NOW - timedelta(days=days_ago)).isoformat()
 
     if row:
