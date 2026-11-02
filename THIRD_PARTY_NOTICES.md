@@ -44,7 +44,7 @@ Apache-2.0, ISC, PSF, and MPL-2.0 components; an SBOM is the reliable inventory.
 | fastapi | MIT | Include copyright notice |
 | uvicorn | BSD-3-Clause | Include copyright notice |
 | sqlalchemy | MIT | Include copyright notice |
-| psycopg2-binary | LGPL with exceptions | Notice-sensitive; include licence and exception text |
+| psycopg (v3) | LGPL with exceptions | Notice-sensitive; include licence and exception text |
 | python-jose | MIT | Include copyright notice |
 | passlib | BSD | Include copyright notice |
 | bcrypt | Apache-2.0 | Include licence and any NOTICE |
@@ -159,7 +159,7 @@ will miss them:
 - `fpdf2` — LGPL-3.0-or-later. Include the licence and enough information to
   replace/relink the library. If you distribute a container, keep the package
   source path and licence notice available.
-- `psycopg2-binary` — LGPL with exceptions. Include the licence and exception.
+- `psycopg` (v3) - LGPL with exceptions. Include the licence and exception.
 - `@novnc/novnc` — MPL-2.0. Include the licence; if you modify MPL-covered
   files, make those files available under MPL-2.0.
 - `dompurify` — MPL-2.0 OR Apache-2.0. Choose one and include its terms.
