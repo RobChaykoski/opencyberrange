@@ -163,8 +163,8 @@ After the push:
 
 - [x] set `main` as the default branch;
 - [ ] protect `main` (PR + CI required);
-- [ ] enable Renovate, CodeQL, and Trivy;
-- [ ] confirm the new CI workflows run.
+- [ ] install the Renovate app (Dependabot is already active);
+- [x] confirm the new CI workflows run.
 
 ## 6. Switch development to next
 
