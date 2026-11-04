@@ -8,6 +8,17 @@
       </router-link>
     </div>
 
+    <div v-if="trackError" class="track-state" role="alert">
+      <h1>We could not load this exercise track</h1>
+      <p>{{ trackError }}</p>
+      <div class="track-state__actions">
+        <button type="button" class="btn btn--primary" @click="fetchTrack(route.params.trackSlug)">
+          Try again
+        </button>
+        <router-link to="/exercises" class="btn btn--secondary">Back to exercises</router-link>
+      </div>
+    </div>
+
     <!-- Track Header -->
     <div v-if="track" class="track-header" :style="{ '--track-color': track.color }">
       <div class="track-header__left">
@@ -43,15 +54,7 @@
         class="level-section"
         :class="{ 'level-section--expanded': expandedLevels.includes(level.id) }"
       >
-        <div
-          class="level-header"
-          role="button"
-          tabindex="0"
-          :aria-expanded="expandedLevels.includes(level.id)"
-          @click="toggleLevel(level.id)"
-          @keydown.enter.prevent="toggleLevel(level.id)"
-          @keydown.space.prevent="toggleLevel(level.id)"
-        >
+        <div class="level-header" @click="toggleLevel(level.id)">
           <div class="level-header__left">
             <span class="level-number">{{ level.level_number }}</span>
             <div class="level-info">
@@ -99,7 +102,15 @@
                 />
               </svg>
             </div>
-            <ChevronIcon class="level-chevron" />
+            <button
+              type="button"
+              class="level-toggle"
+              :aria-expanded="expandedLevels.includes(level.id)"
+              :aria-label="`${expandedLevels.includes(level.id) ? 'Collapse' : 'Expand'} ${level.name}`"
+              @click.stop="toggleLevel(level.id)"
+            >
+              <ChevronIcon class="level-chevron" />
+            </button>
           </div>
         </div>
 
@@ -152,6 +163,10 @@
                     <ClockIcon />
                     {{ lab.duration_minutes }} min
                   </span>
+                  <span v-if="lab.is_completed" class="lab-status lab-status--completed">Completed</span>
+                  <span v-else-if="lab.is_active" class="lab-status lab-status--active">In progress</span>
+                  <span v-else-if="lab.is_current" class="lab-status lab-status--current">Next up</span>
+                  <span v-else-if="!lab.is_unlocked" class="lab-status lab-status--locked">Locked</span>
                   <span v-for="tool in lab.tools?.slice(0, 3)" :key="tool" class="lab-tool">
                     {{ tool }}
                   </span>
@@ -605,6 +620,7 @@ const router = useRouter()
 
 // State
 const track = ref(null)
+const trackError = ref('')
 const expandedLevels = ref([])
 const activeLab = ref(null)
 
@@ -833,6 +849,7 @@ const isRangeBoxActive = computed(() => {
 // Methods
 const fetchTrack = async (slug) => {
   loading.value = true
+  trackError.value = ''
   try {
     const token = localStorage.getItem('token')
     if (!token) {
@@ -867,7 +884,12 @@ const fetchTrack = async (slug) => {
     console.error('Failed to fetch track:', error)
     if (error.response?.status === 404) {
       router.push('/exercises')
+      return
     }
+    track.value = null
+    trackError.value = error.response?.status === 403
+      ? 'Your account does not have access to this track. Ask your instructor to enrol you in the course that owns it.'
+      : 'The exercise track did not load. Check your connection and try again.'
   } finally {
     loading.value = false
   }
@@ -1570,6 +1592,35 @@ watch(timeRemaining, (val) => {
   padding-bottom: 75vh;
 }
 
+.track-state {
+  max-width: 640px;
+  margin: 3rem auto;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  text-align: center;
+}
+
+.track-state h1 {
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.track-state p {
+  margin: 0 0 1.25rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.track-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
 /* Breadcrumb */
 .track-breadcrumb {
   margin-bottom: 1.5rem;
@@ -1634,11 +1685,13 @@ watch(timeRemaining, (val) => {
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 0.25rem;
+  overflow-wrap: anywhere;
 }
 
 .track-header__description {
   color: var(--text-secondary);
   font-size: 0.875rem;
+  overflow-wrap: anywhere;
 }
 
 .track-header__stats {
@@ -1738,6 +1791,7 @@ watch(timeRemaining, (val) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.75rem;
   padding: 1rem 1.5rem;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -1751,6 +1805,11 @@ watch(timeRemaining, (val) => {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
+}
+
+.level-info {
+  min-width: 0;
 }
 
 .level-number {
@@ -1770,11 +1829,13 @@ watch(timeRemaining, (val) => {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 0.125rem;
+  overflow-wrap: anywhere;
 }
 
 .level-description {
   font-size: 0.875rem;
   color: var(--text-secondary);
+  overflow-wrap: anywhere;
 }
 
 .level-header__right {
@@ -1847,10 +1908,33 @@ watch(timeRemaining, (val) => {
   fill: rgba(34, 197, 94, 0.1);
 }
 
+.level-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.level-toggle:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.level-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .level-chevron {
   width: 20px;
   height: 20px;
-  color: var(--text-secondary);
+  color: currentColor;
   transition: transform 0.2s ease;
 }
 
@@ -1926,9 +2010,42 @@ watch(timeRemaining, (val) => {
 }
 
 .lab-row--completed .lab-row__title {
-  text-decoration: line-through;
-  text-decoration-color: rgba(34, 197, 94, 0.4);
-  color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.lab-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lab-status--completed {
+  border-color: color-mix(in srgb, var(--success) 45%, var(--border-color));
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+  color: var(--success);
+}
+
+.lab-status--active {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border-color));
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.lab-status--current {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--border-color));
+  background: color-mix(in srgb, var(--warning) 12%, transparent);
+  color: var(--warning);
+}
+
+.lab-status--locked {
+  color: var(--text-muted);
 }
 .kvm-badge {
   display: inline-block;
@@ -1961,6 +2078,7 @@ watch(timeRemaining, (val) => {
 
 .lab-row__content {
   flex: 1;
+  min-width: 0;
 }
 
 .lab-row__title {
@@ -1968,6 +2086,7 @@ watch(timeRemaining, (val) => {
   font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 0.25rem;
+  overflow-wrap: anywhere;
 }
 
 .lab-row__title-btn {
@@ -1998,6 +2117,7 @@ watch(timeRemaining, (val) => {
   margin-top: 0.25rem;
   margin-bottom: 0.5rem;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .lab-row__meta {
@@ -2183,7 +2303,7 @@ watch(timeRemaining, (val) => {
 .active-lab-panel {
   position: fixed;
   bottom: 0;
-  left: 250px;
+  left: var(--app-sidebar-width, 250px);
   right: 0;
   max-height: 70vh;
   background: var(--bg-secondary);
@@ -2216,6 +2336,7 @@ watch(timeRemaining, (val) => {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
+  overflow-wrap: anywhere;
 }
 
 .active-badge {
@@ -2967,6 +3088,7 @@ watch(timeRemaining, (val) => {
   .track-header {
     flex-direction: column;
     text-align: center;
+    padding: 1.25rem 1rem;
   }
 
   .track-header__left {
@@ -2976,25 +3098,132 @@ watch(timeRemaining, (val) => {
 
   .track-header__stats {
     justify-content: center;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  .level-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0.9rem 1rem;
+  }
+
+  .level-header__left {
+    flex: 1 1 100%;
+  }
+
+  .level-header__right {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .level-progress {
+    margin-left: auto;
   }
 
   .active-lab-panel {
     left: 0;
+    max-height: 78vh;
+  }
+
+  .active-lab-panel__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.65rem 0.75rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .active-lab-panel__title-group {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .active-lab-panel__title-group h2 {
+    flex: 1 1 100%;
+    font-size: 1.1rem;
+  }
+
+  .active-lab-panel__timer-section {
+    grid-column: 1;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .active-lab-panel__timer {
+    font-size: 1.05rem;
+  }
+
+  .close-btn {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .active-lab-panel__body {
+    padding: 1rem;
   }
 
   .active-lab-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .lab-row {
     flex-wrap: wrap;
+    padding: 0.9rem 1rem;
   }
 
   .lab-row__actions {
     display: flex;
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.6rem;
     width: 100%;
     margin-top: 0.5rem;
+  }
+
+  .lab-row__actions .btn {
+    flex: 1 1 8rem;
+  }
+
+  .lab-row__actions .locked-text {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .track-header__stats {
+    gap: 0.75rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .level-header__right {
+    gap: 0.5rem;
+  }
+
+  .level-certificate-btn {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .lab-row__actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timer--warning,
+  .level-chevron,
+  .lab-row,
+  .breadcrumb-link {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

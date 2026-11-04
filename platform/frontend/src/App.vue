@@ -1,5 +1,12 @@
 <template>
-  <div id="app" class="app-root" :class="{ 'app-root--impersonating': isImpersonating }">
+  <div
+    id="app"
+    class="app-root"
+    :class="{
+      'app-root--impersonating': isImpersonating,
+      'app-root--sidebar-collapsed': sidebarCollapsed,
+    }"
+  >
     <!-- Impersonation Banner -->
     <ImpersonationBanner />
 
@@ -287,10 +294,15 @@ body {
    A flex row put the footer beside the main content, which pushed its logo to
    the far right; the grid keeps the footer below the content instead. */
 .app-root {
+  --app-sidebar-width: 250px;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   grid-template-rows: minmax(0, 1fr) auto;
   min-height: 100vh;
+}
+
+.app-root--sidebar-collapsed {
+  --app-sidebar-width: 64px;
 }
 
 .app-root > .sidebar {
@@ -348,6 +360,7 @@ body {
 /* Responsive */
 @media (max-width: 768px) {
   .app-root {
+    --app-sidebar-width: 0px;
     flex-direction: column;
   }
 }

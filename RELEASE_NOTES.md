@@ -19,6 +19,10 @@ account email plus the recent validation fixes.
   email from Profile → Privacy and data. The panel explains the purpose, states
   that email is not marketing, records the consent version and update time, and
   supports withdrawal under PIPEDA.
+- **Exercise catalogue and panel polish:** visible Completed, In progress,
+  Next up, and Locked labels; a retry state when a track fails to load; a real
+  keyboard toggle for level headers; mobile-safe action rows and active-lab
+  headers; and reduced-motion support.
 - **Version identity:** the backend exposes `GET /api/version`, and the app
   footer shows the running release.
 - **Certificate verification hardening:** malformed IDs, including emoji,
