@@ -39,7 +39,7 @@ from app.auth import (
 )
 from app.services import totp as totp_service
 from app.config import settings
-from app.schemas import ChangePasswordRequest, ImpersonateRequest, ImpersonateResponse, _validate_password
+from app.schemas import ChangePasswordRequest, ImpersonateRequest, ImpersonateResponse, _validate_password, _password_policy_error
 from app.services.wireguard_manager import WireGuardManager
 from app.services.activity import log_activity, EventTypes
 from app.services.audit import log_admin_action, AuditActions
@@ -312,6 +312,13 @@ _AVATAR_DATA_URL_RE = re.compile(
 )
 _MAX_AVATAR_BYTES = 512 * 1024
 
+# Cosmetic avatar ring. Values are short tokens; the frontend maps them to CSS,
+# so a profile row can never inject arbitrary style text into the page.
+AVATAR_BORDER_STYLES = ("none", "solid", "dashed", "double", "glow", "gradient")
+AVATAR_BORDER_COLORS = (
+    "blue", "violet", "emerald", "amber", "rose", "cyan", "slate", "gold",
+)
+
 
 def _validate_avatar_data(value: Optional[str]) -> Optional[str]:
     """Accept only a small, real raster image as a base64 data URL."""
@@ -351,6 +358,12 @@ class UserSettingsUpdate(BaseModel):
     last_name: Optional[str] = Field(None, max_length=80)
     organization: Optional[str] = Field(None, max_length=120)
     avatar_data: Optional[str] = Field(None, max_length=800_000)
+    avatar_border_style: Optional[Literal[
+        "none", "solid", "dashed", "double", "glow", "gradient"
+    ]] = None
+    avatar_border_color: Optional[Literal[
+        "blue", "violet", "emerald", "amber", "rose", "cyan", "slate", "gold"
+    ]] = None
     timezone: Optional[str] = Field(None, max_length=64)
     show_on_scoreboard: Optional[bool] = None
     scoreboard_name_mode: Optional[Literal["real_name", "username", "anonymous"]] = None
@@ -387,6 +400,8 @@ async def get_user_settings(
         "last_name": current_user.last_name,
         "organization": current_user.organization,
         "avatar_data": getattr(current_user, "avatar_data", None),
+        "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
+        "avatar_border_color": getattr(current_user, "avatar_border_color", None) or "blue",
         "timezone": current_user.timezone,
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
         "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
@@ -394,6 +409,7 @@ async def get_user_settings(
         "notification_prefs": prefs or {},
         "survey_opt_in": bool(getattr(current_user, "survey_opt_in", False)),
         "survey_consent_version": getattr(current_user, "survey_consent_version", None),
+        "data_exported_at": getattr(current_user, "data_exported_at", None),
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
         "recovery_codes_remaining": recovery_count,
         "last_login_at": current_user.last_login_at,
@@ -414,6 +430,10 @@ async def update_user_settings(
         current_user.organization = payload.organization
     if payload.avatar_data is not None:
         current_user.avatar_data = payload.avatar_data or None
+    if payload.avatar_border_style is not None:
+        current_user.avatar_border_style = payload.avatar_border_style
+    if payload.avatar_border_color is not None:
+        current_user.avatar_border_color = payload.avatar_border_color
     if payload.timezone is not None:
         current_user.timezone = payload.timezone
     if payload.show_on_scoreboard is not None:
@@ -674,9 +694,13 @@ async def export_user_data(
         for row in db.query(Lab).filter(Lab.id.in_(completion_lab_ids)).all()
     } if completion_lab_ids else {}
 
+    exported_at = datetime.now(timezone.utc)
+    current_user.data_exported_at = exported_at
+    db.commit()
+
     return {
         "format_version": 2,
-        "generated_at": datetime.now(timezone.utc),
+        "generated_at": exported_at,
         "account": {
             "id": current_user.id,
             "username": current_user.username,
@@ -690,6 +714,8 @@ async def export_user_data(
             "is_approved": current_user.is_approved,
             "is_locked": current_user.is_locked,
             "avatar_data": current_user.avatar_data,
+            "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
+            "avatar_border_color": getattr(current_user, "avatar_border_color", None) or "blue",
             "created_at": current_user.created_at,
             "last_login_at": current_user.last_login_at,
             "last_login_ip": redact_ip(current_user.last_login_ip),
@@ -809,6 +835,16 @@ async def export_user_data(
                 for event in consent_events
             ],
         },
+    }
+
+
+@router.get("/export-status")
+async def export_status(
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return when the account last downloaded a copy of its data."""
+    return {
+        "last_exported_at": getattr(current_user, "data_exported_at", None),
     }
 
 
@@ -1130,6 +1166,8 @@ async def get_current_user_info(
         "last_name": getattr(current_user, 'last_name', None),
         "organization": getattr(current_user, 'organization', None),
         "avatar_data": getattr(current_user, 'avatar_data', None),
+        "avatar_border_style": getattr(current_user, 'avatar_border_style', None) or "solid",
+        "avatar_border_color": getattr(current_user, 'avatar_border_color', None) or "blue",
         "is_active": getattr(current_user, 'is_active', True),
         "is_approved": current_user.is_approved,
         "is_admin": current_user.role == 'admin',
@@ -1484,26 +1522,13 @@ async def change_password(
             detail="New password and confirm password do not match"
         )
     
-    # Validate new password meets requirements (using RegisterRequest validator logic)
-    if len(password_data.new_password) < 8:
+    # Validate new password meets requirements. The shared helper uses
+    # Unicode-aware letter/digit classes and rejects control characters.
+    basic_policy_error = _password_policy_error(password_data.new_password)
+    if basic_policy_error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must be at least 8 characters"
-        )
-    if not re.search(r'[A-Z]', password_data.new_password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one uppercase letter"
-        )
-    if not re.search(r'[a-z]', password_data.new_password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one lowercase letter"
-        )
-    if not re.search(r'[0-9]', password_data.new_password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Password must contain at least one number"
+            detail=basic_policy_error
         )
 
     # Stricter policy for privileged accounts

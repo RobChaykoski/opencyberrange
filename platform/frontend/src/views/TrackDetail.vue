@@ -116,13 +116,6 @@
                 'lab-row--locked': !lab.is_unlocked,
                 'lab-row--active': lab.is_active
               }"
-              :role="(lab.is_unlocked || lab.is_completed) ? 'button' : undefined"
-              :tabindex="(lab.is_unlocked || lab.is_completed) ? 0 : undefined"
-              :aria-label="(lab.is_unlocked || lab.is_completed) ? `Open details for ${lab.name}` : undefined"
-              @click="(lab.is_unlocked || lab.is_completed) && selectLab(lab)"
-              @keydown.enter.self.prevent="(lab.is_unlocked || lab.is_completed) && selectLab(lab)"
-              @keydown.space.self.prevent="(lab.is_unlocked || lab.is_completed) && selectLab(lab)"
-              :style="{ cursor: (lab.is_unlocked || lab.is_completed) ? 'pointer' : 'default' }"
             >
               <div class="lab-row__status">
                 <span v-if="lab.is_completed" class="status-bar status-bar--completed"></span>
@@ -134,7 +127,15 @@
 
               <div class="lab-row__content">
                 <h4 class="lab-row__title">
-                  {{ lab.name }}
+                  <button
+                    v-if="lab.is_unlocked || lab.is_completed"
+                    type="button"
+                    class="lab-row__title-btn"
+                    @click="selectLab(lab)"
+                  >
+                    {{ lab.name }}
+                  </button>
+                  <span v-else>{{ lab.name }}</span>
                   <span v-if="isDrill(lab)" class="drill-badge">Drill</span>
                   <span
                     v-if="lab.requires_kvm && !kvmAvailable"
@@ -1967,6 +1968,28 @@ watch(timeRemaining, (val) => {
   font-weight: 500;
   color: var(--text-primary);
   margin-bottom: 0.25rem;
+}
+
+.lab-row__title-btn {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lab-row__title-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.lab-row__title-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .lab-row__scenario-brief {

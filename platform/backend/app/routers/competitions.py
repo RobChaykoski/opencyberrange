@@ -16,6 +16,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.database import get_db
 from app.models import (
+    Achievement,
     Competition,
     CompetitionLab,
     CompetitionParticipant,
@@ -25,6 +26,12 @@ from app.models import (
     User,
 )
 from app.routers.courses import calculate_lab_score
+from app.services.achievements import (
+    COMPETITION_BADGE_INFO,
+    award_competition_placements,
+    competition_achievement_display,
+    competition_achievement_parts,
+)
 
 router = APIRouter()
 
@@ -180,6 +187,7 @@ def _leaderboard(
         return {
             "entries": [],
             "my_entry": None,
+            "badges": [],
             "registration_counts": {
                 "total": len(participants),
                 "new_user": sum(
@@ -265,6 +273,57 @@ def _leaderboard(
         entry.pop("_last", None)
         entry.pop("_joined", None)
 
+    # Event placements are final once the window closes. Awarding here is
+    # idempotent and makes the badges visible the first time anyone opens the
+    # result, even if the organiser never presses Archive.
+    if _status(competition, datetime.now(timezone.utc)) in ("ended", "archived"):
+        award_competition_placements(db, competition, entries)
+        db.commit()
+
+    achievement_rows = db.query(Achievement).filter(
+        Achievement.user_id.in_(user_ids),
+        Achievement.achievement_type.like(f"comp_{competition.id}_%"),
+    ).all()
+    achievements_by_user = {}
+    badge_counts = {
+        code: {"count": 0, "earners": set()}
+        for code in COMPETITION_BADGE_INFO
+    }
+    for row in achievement_rows:
+        parts = competition_achievement_parts(row.achievement_type)
+        if not parts or parts[0] != competition.id:
+            continue
+        display = competition_achievement_display(
+            row.achievement_type, competition.name
+        )
+        if not display:
+            continue
+        label, icon, description = display
+        achievements_by_user.setdefault(row.user_id, []).append({
+            "type": row.achievement_type,
+            "code": parts[1],
+            "label": label,
+            "icon": icon,
+            "description": description,
+        })
+        badge_counts[parts[1]]["count"] += 1
+        badge_counts[parts[1]]["earners"].add(row.user_id)
+
+    for entry in entries:
+        entry["achievements"] = achievements_by_user.get(entry["user_id"], [])
+
+    badges = [
+        {
+            "code": code,
+            "label": info[0],
+            "description": info[1],
+            "icon": info[2],
+            "count": badge_counts[code]["count"],
+            "earners": len(badge_counts[code]["earners"]),
+        }
+        for code, info in COMPETITION_BADGE_INFO.items()
+    ]
+
     registration_counts = {
         "total": len(participants),
         "new_user": sum(1 for p in participants if (p.source or "opt_in") == "new_user"),
@@ -283,6 +342,7 @@ def _leaderboard(
     return {
         "entries": entries,
         "my_entry": my_entry,
+        "badges": badges,
         "registration_counts": registration_counts,
     }
 
@@ -498,6 +558,9 @@ async def archive_competition(
     _require_manage(competition, current_user)
     competition.is_archived = True
     db.commit()
+    # Freeze the final placements on the way out, even if the organiser never
+    # opened the result after the event window closed.
+    _leaderboard(db, competition, current_user)
     return {"message": "Competition archived", "is_archived": True}
 
 
@@ -522,6 +585,12 @@ async def delete_competition(
 ):
     competition = _competition_or_404(db, competition_id)
     _require_manage(competition, current_user)
+    # Event badges are keyed by competition id in achievement_type, so they
+    # must be removed with the event; otherwise they would remain in profiles
+    # and on the wall with a name that no longer resolves.
+    db.query(Achievement).filter(
+        Achievement.achievement_type.like(f"comp_{competition.id}_%")
+    ).delete(synchronize_session=False)
     db.delete(competition)
     db.commit()
     return {"message": "Competition deleted"}

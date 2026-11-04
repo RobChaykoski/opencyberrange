@@ -33,6 +33,13 @@
 
     <p v-if="exportError" class="error-message" role="alert">{{ exportError }}</p>
     <p v-if="exportSuccess" class="success-message" role="status">{{ exportSuccess }}</p>
+    <p class="privacy-panel__last-export">
+      <template v-if="exportStatusLoading">Checking your last download...</template>
+      <template v-else-if="lastExportedAt">
+        Most recent copy downloaded: {{ formatExportDate(lastExportedAt) }}
+      </template>
+      <template v-else>You have not downloaded a copy of your data yet.</template>
+    </p>
 
     <div v-if="confirming" class="privacy-panel__confirm">
       <h3 class="privacy-panel__confirm-title">Permanently delete your account</h3>
@@ -126,7 +133,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { clearWikiAuthCookie } from '../utils/wikiAuth'
@@ -140,6 +147,8 @@ const router = useRouter()
 const exporting = ref(false)
 const exportError = ref('')
 const exportSuccess = ref('')
+const lastExportedAt = ref(null)
+const exportStatusLoading = ref(true)
 
 const confirming = ref(false)
 const password = ref('')

@@ -9,6 +9,7 @@ apart.
 
 from datetime import datetime, timezone
 from typing import Optional
+import json
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse, Response
@@ -206,6 +207,8 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
             "role": current_user.role,
             "created_at": _iso(current_user.created_at),
             "avatar_data": getattr(current_user, "avatar_data", None),
+            "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
+            "avatar_border_color": getattr(current_user, "avatar_border_color", None) or "blue",
         },
         "totals": {
             "labs_total": total_labs,

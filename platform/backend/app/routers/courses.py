@@ -603,8 +603,10 @@ async def join_course(
     current_user: User = Depends(get_current_active_user),
 ):
     """Join a course via invite code."""
+    # Match case-insensitively: invite codes are generated with mixed case, and
+    # users often retype or paste them in the wrong case.
     course = db.query(Course).filter(
-        Course.invite_code == data.invite_code,
+        func.upper(Course.invite_code) == data.invite_code.upper(),
         Course.is_active == True,
         Course.is_archived == False,
     ).first()

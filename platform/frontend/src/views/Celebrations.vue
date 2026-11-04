@@ -127,9 +127,13 @@
               class="win"
               :class="{ 'win--mine': win.is_mine }"
             >
-              <span class="win__avatar" aria-hidden="true">
-                {{ initials(win.display_name || win.username) }}
-              </span>
+              <UserAvatar
+                :src="win.avatar_data"
+                :name="win.display_name || win.username"
+                :border-style="win.avatar_border_style"
+                :border-color="win.avatar_border_color"
+                :size="36"
+              />
               <span class="win__body">
                 <span class="win__who">
                   <strong>{{ win.display_name || win.username || 'A trainee' }}</strong>
@@ -186,9 +190,13 @@
                 class="fame-row"
                 :class="{ 'fame-row--mine': person.is_mine }"
               >
-                <span class="fame-avatar" aria-hidden="true">
-                  {{ initials(person.display_name || person.username) }}
-                </span>
+                <UserAvatar
+                  :src="person.avatar_data"
+                  :name="person.display_name || person.username"
+                  :border-style="person.avatar_border_style"
+                  :border-color="person.avatar_border_color"
+                  :size="30"
+                />
                 <span class="fame-name">
                   {{ person.display_name || person.username }}
                   <small v-if="person.is_mine">you</small>
@@ -255,6 +263,7 @@ import axios from '../api/axios'
 import { usePoll } from '../composables/usePoll'
 import TrophyIcon from '../components/icons/TrophyIcon.vue'
 import FlameIcon from '../components/icons/FlameIcon.vue'
+import UserAvatar from '../components/UserAvatar.vue'
 
 const wall = ref({
   stats: {},
@@ -354,19 +363,10 @@ const setNameMode = async (event) => {
   }
 }
 
-const initials = (name) => {
-  const cleaned = String(name || '?').trim()
-  if (!cleaned) return '?'
-  const parts = cleaned.split(/\s+/).filter(Boolean)
-  if (parts.length > 1) {
-    return (parts[0][0] + parts[1][0]).toUpperCase()
-  }
-  return cleaned.slice(0, 2).toUpperCase()
-}
-
 const toneClass = (type) => {
   if (!type) return 'tone--custom'
   if (type.startsWith('custom_')) return 'tone--custom'
+  if (type.startsWith('comp_')) return 'tone--competition'
   return `tone--${type.replaceAll('_', '-')}`
 }
 
@@ -736,29 +736,6 @@ const relativeTime = (iso) => {
     linear-gradient(90deg, color-mix(in srgb, var(--warning) 17%, transparent), transparent 65%);
 }
 
-.win__avatar,
-.fame-avatar {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--bg-tertiary);
-  color: var(--text-secondary);
-  font-weight: 700;
-}
-
-.win__avatar {
-  width: 36px;
-  height: 36px;
-  font-size: 0.72rem;
-}
-
-.fame-avatar {
-  width: 28px;
-  height: 28px;
-  font-size: 0.62rem;
-}
-
 .win__body {
   display: flex;
   flex: 1;
@@ -1021,6 +998,7 @@ const relativeTime = (iso) => {
 .tone--clean-sweep { --tone: #a78bfa; }
 .tone--streak { --tone: #fb923c; }
 .tone--custom { --tone: #14b8a6; }
+.tone--competition { --tone: #eab308; }
 
 /* Loading, empty, and error states */
 .wall-loading {

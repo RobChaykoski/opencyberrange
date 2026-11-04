@@ -7,10 +7,14 @@
         <!-- Profile hero: avatar, identity, and completion stats -->
         <section class="profile-hero">
           <div class="profile-avatar">
-            <div class="profile-avatar__frame" :class="{ 'profile-avatar__frame--empty': !avatarPreview }">
-              <img v-if="avatarPreview" :src="avatarPreview" alt="Your profile picture" />
-              <span v-else>{{ initials }}</span>
-            </div>
+            <UserAvatar
+              :src="avatarPreview"
+              :name="displayName"
+              :border-style="avatarBorderStyle"
+              :border-color="avatarBorderColor"
+              :size="118"
+              alt="Your profile picture"
+            />
             <input
               ref="avatarInput"
               type="file"
@@ -26,6 +30,54 @@
                 Remove
               </button>
             </div>
+
+            <fieldset class="avatar-border">
+              <legend>Avatar border</legend>
+              <div class="avatar-border__styles" role="radiogroup" aria-label="Avatar border style">
+                <label
+                  v-for="option in borderStyleOptions"
+                  :key="option.value"
+                  class="avatar-border__option"
+                  :class="{ 'avatar-border__option--active': avatarBorderStyle === option.value }"
+                >
+                  <input
+                    v-model="avatarBorderStyle"
+                    type="radio"
+                    name="avatar-border-style"
+                    :value="option.value"
+                    :disabled="borderSaving"
+                    @change="saveAvatarBorder"
+                  />
+                  <span>{{ option.label }}</span>
+                </label>
+              </div>
+              <div class="avatar-border__colors" role="radiogroup" aria-label="Avatar border colour">
+                <label
+                  v-for="option in borderColorOptions"
+                  :key="option.value"
+                  class="avatar-border__color"
+                  :class="{ 'avatar-border__color--active': avatarBorderColor === option.value }"
+                  :title="option.label"
+                >
+                  <input
+                    v-model="avatarBorderColor"
+                    type="radio"
+                    name="avatar-border-colour"
+                    :value="option.value"
+                    :disabled="borderSaving"
+                    @change="saveAvatarBorder"
+                  />
+                  <span
+                    class="avatar-border__swatch"
+                    :style="{ '--swatch': option.hex }"
+                    aria-hidden="true"
+                  ></span>
+                  <span class="sr-only">{{ option.label }}</span>
+                </label>
+              </div>
+              <p v-if="borderMessage" class="avatar-message">{{ borderMessage }}</p>
+            </fieldset>
+
             <p v-if="avatarMessage" :class="avatarError ? 'error-message' : 'success-message'" class="avatar-message">
               {{ avatarMessage }}
             </p>
@@ -124,7 +176,7 @@
                   <span class="track-progress__name">{{ track.track_name }}</span>
                   <span class="track-progress__count">{{ track.completed_labs }} / {{ track.total_labs }} exercises</span>
                 </div>
-                <div class="track-progress__bar" role="progressbar" :aria-valuenow="track.progress_percent" aria-valuemin="0" aria-valuemax="100">
+                <div class="track-progress__bar" role="progressbar" :aria-label="`${track.track_name} progress`" :aria-valuenow="track.progress_percent" aria-valuemin="0" aria-valuemax="100">
                   <span :style="{ width: track.progress_percent + '%' }"></span>
                 </div>
                 <div class="track-progress__levels">
@@ -513,6 +565,8 @@
                   type="button"
                   @click="showCurrentPassword = !showCurrentPassword"
                   class="password-toggle"
+                  :aria-label="showCurrentPassword ? 'Hide current password' : 'Show current password'"
+                  :aria-pressed="showCurrentPassword"
                 >
                   <svg v-if="showCurrentPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
@@ -544,6 +598,8 @@
                   type="button"
                   @click="showNewPassword = !showNewPassword"
                   class="password-toggle"
+                  :aria-label="showNewPassword ? 'Hide new password' : 'Show new password'"
+                  :aria-pressed="showNewPassword"
                 >
                   <svg v-if="showNewPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
@@ -578,6 +634,8 @@
                   type="button"
                   @click="showConfirmPassword = !showConfirmPassword"
                   class="password-toggle"
+                  :aria-label="showConfirmPassword ? 'Hide confirmed password' : 'Show confirmed password'"
+                  :aria-pressed="showConfirmPassword"
                 >
                   <svg v-if="showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
@@ -620,6 +678,7 @@ import { usePoll } from '../composables/usePoll'
 import { useModules } from '../composables/useModules'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
+import UserAvatar from '../components/UserAvatar.vue'
 import { getUserTimeZone } from '../utils/timezone'
 
 const route = useRoute()
@@ -657,19 +716,67 @@ const avatarInput = ref(null)
 const avatarSaving = ref(false)
 const avatarMessage = ref('')
 const avatarError = ref(false)
+const avatarBorderStyle = ref('solid')
+const avatarBorderColor = ref('blue')
+const borderSaving = ref(false)
+const borderMessage = ref('')
+
+const borderStyleOptions = [
+  { value: 'none', label: 'None' },
+  { value: 'solid', label: 'Solid' },
+  { value: 'dashed', label: 'Dashed' },
+  { value: 'double', label: 'Double' },
+  { value: 'glow', label: 'Glow' },
+  { value: 'gradient', label: 'Gradient' },
+]
+
+const borderColorOptions = [
+  { value: 'blue', label: 'Blue', hex: '#3b82f6' },
+  { value: 'violet', label: 'Violet', hex: '#8b5cf6' },
+  { value: 'emerald', label: 'Emerald', hex: '#10b981' },
+  { value: 'amber', label: 'Amber', hex: '#f59e0b' },
+  { value: 'rose', label: 'Rose', hex: '#f43f5e' },
+  { value: 'cyan', label: 'Cyan', hex: '#06b6d4' },
+  { value: 'slate', label: 'Slate', hex: '#64748b' },
+  { value: 'gold', label: 'Gold', hex: '#d4a017' },
+]
+
+const syncAvatarBorder = (source) => {
+  if (!source) return
+  avatarBorderStyle.value = source.avatar_border_style || 'solid'
+  avatarBorderColor.value = source.avatar_border_color || 'blue'
+}
+
+async function saveAvatarBorder() {
+  if (borderSaving.value) return
+  borderSaving.value = true
+  borderMessage.value = ''
+  try {
+    await axios.put('/auth/settings', {
+      avatar_border_style: avatarBorderStyle.value,
+      avatar_border_color: avatarBorderColor.value,
+    })
+    if (user.value) {
+      user.value.avatar_border_style = avatarBorderStyle.value
+      user.value.avatar_border_color = avatarBorderColor.value
+    }
+    if (summary.value?.user) {
+      summary.value.user.avatar_border_style = avatarBorderStyle.value
+      summary.value.user.avatar_border_color = avatarBorderColor.value
+    }
+    borderMessage.value = 'Avatar border updated.'
+  } catch (error) {
+    borderMessage.value = responseMessage(error, 'Could not save your avatar border.')
+    syncAvatarBorder(user.value)
+  } finally {
+    borderSaving.value = false
+  }
+}
 
 const displayName = computed(() => {
   if (!user.value) return ''
   const parts = [user.value.first_name, user.value.last_name].filter(part => part && part.trim())
   return parts.length ? parts.join(' ') : user.value.username
-})
-
-const initials = computed(() => {
-  const source = displayName.value || user.value?.username || '?'
-  const words = source.trim().split(/\s+/).filter(Boolean)
-  if (!words.length) return '?'
-  if (words.length === 1) return words[0].slice(0, 2).toUpperCase()
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase()
 })
 
 const levelPercent = (level) => {
@@ -848,6 +955,9 @@ async function fetchSummary() {
     if (user.value && data.user) {
       if (data.user.avatar_data) user.value.avatar_data = data.user.avatar_data
       user.value.organization = data.user.organization
+      user.value.avatar_border_style = data.user.avatar_border_style
+      user.value.avatar_border_color = data.user.avatar_border_color
+      syncAvatarBorder(data.user)
     }
   } catch (error) {
     summaryError.value = responseMessage(error, 'Could not load your completion record.')
@@ -1186,6 +1296,7 @@ const fetchUserInfo = async () => {
       fetchVpnStatus() // Fetch VPN status in parallel using shared composable
     ])
     user.value = userResponse.data
+    syncAvatarBorder(user.value)
     nameForm.first_name = user.value?.first_name || ''
     nameForm.last_name = user.value?.last_name || ''
     nameForm.organization = user.value?.organization || ''
@@ -1748,38 +1859,106 @@ watch(() => route.path, (newPath) => {
   flex-direction: column;
   align-items: center;
   gap: 0.55rem;
-  width: 138px;
+  width: 200px;
 }
 
-.profile-avatar__frame {
-  width: 124px;
-  height: 124px;
-  border-radius: 50%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  border: 3px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 10px 28px rgba(30, 64, 175, 0.35);
-}
-
-.profile-avatar__frame--empty {
-  background:
-    linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(139, 92, 246, 0.9));
-}
-
-.profile-avatar__frame img {
+.avatar-border {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  margin: 0.15rem 0 0;
+  padding: 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-primary);
 }
 
-.profile-avatar__frame span {
-  color: #fff;
-  font-size: 2.25rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+.avatar-border legend {
+  padding: 0 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.avatar-border__styles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.avatar-border__option {
+  position: relative;
+  padding: 0.22rem 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+
+.avatar-border__option input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+
+.avatar-border__option--active,
+.avatar-border__option:focus-within {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-primary);
+}
+
+.avatar-border__colors {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.avatar-border__color {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.avatar-border__color input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+
+.avatar-border__color--active,
+.avatar-border__color:focus-within {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 2px var(--bg-primary);
+}
+
+.avatar-border__swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--swatch);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .avatar-input {

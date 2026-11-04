@@ -22,6 +22,14 @@ class User(Base):
     # Stored in the row so it survives container rebuilds and needs no shared
     # upload volume; the browser downsizes images before upload.
     avatar_data = Column(Text, nullable=True)
+    # Cosmetic ring around the avatar, used on the profile and celebration wall.
+    # Values are short tokens validated by the settings endpoint, not raw CSS.
+    avatar_border_style = Column(
+        String(20), default="solid", server_default=text("'solid'"), nullable=False
+    )
+    avatar_border_color = Column(
+        String(20), default="blue", server_default=text("'blue'"), nullable=False
+    )
 
     # --- Optional user security/privacy settings ---
     # MFA recovery (backup) codes, stored hashed (JSON array of hashes).
@@ -50,6 +58,8 @@ class User(Base):
     survey_opt_in = Column(Boolean, default=False, server_default=text("false"), nullable=False)
     survey_opt_in_at = Column(DateTime, nullable=True)
     survey_consent_version = Column(String(32), nullable=True)
+    # Last time the account holder downloaded a copy of their personal data.
+    data_exported_at = Column(DateTime, nullable=True)
     # Last successful login metadata (for session awareness).
     last_login_at = Column(DateTime, nullable=True)
     last_login_ip = Column(String(64), nullable=True)

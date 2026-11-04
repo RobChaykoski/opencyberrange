@@ -7,7 +7,8 @@ import logging
 from sqlalchemy.orm import Session
 from app.models import (
     Achievement, CourseEnrollment, CourseLabAssignment,
-    CourseCompletionReset, Lab, Level, LabCompletion, CustomAchievement, Track
+    CourseCompletionReset, Lab, Level, LabCompletion, CustomAchievement, Track,
+    Competition, CompetitionLab, CompetitionParticipant,
 )
 from app.services.activity import log_activity, EventTypes
 
@@ -143,6 +144,61 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     FORENSICS_PATHFINDER: "\U0001F9ED",
 }
 
+# --- Competition-specific achievements -------------------------------------
+# Awards earned inside a time-boxed event are stored with the same Achievement
+# table, but the event id is part of the type. This keeps the unique index and
+# needs no schema change while still letting a learner win the same badge in
+# different competitions. Codes are short so the type fits VARCHAR(30).
+COMPETITION_PREFIX = "comp_"
+
+COMPETITION_BADGE_INFO = {
+    "c": ("Competitor", "Solved at least one exercise in the event", "\U0001F3BD"),
+    "fb": ("Event First Blood", "First participant to solve an exercise in the event", "\U0001F3AF"),
+    "cs": ("Event Clean Sweep", "Solved every exercise in the event", "\U0001F3C6"),
+    "pr": ("Perfect Event", "Solved every event exercise without hints and on the first attempt", "\U0001F48E"),
+    "ch": ("Champion", "Finished first in the event", "\U0001F947"),
+    "ru": ("Runner-up", "Finished second in the event", "\U0001F948"),
+    "tp": ("Third Place", "Finished third in the event", "\U0001F949"),
+}
+
+COMPETITION_PLACEMENT_CODES = {1: "ch", 2: "ru", 3: "tp"}
+
+
+def competition_achievement_type(competition_id: int, code: str) -> str:
+    """Build the stored type for an event badge."""
+    return f"{COMPETITION_PREFIX}{competition_id}_{code}"
+
+
+def competition_achievement_parts(achievement_type: str) -> tuple[int, str] | None:
+    """Return (competition_id, badge_code) for an event award type."""
+    if not achievement_type.startswith(COMPETITION_PREFIX):
+        return None
+    parts = achievement_type.split("_")
+    if len(parts) != 3:
+        return None
+    try:
+        competition_id = int(parts[1])
+    except ValueError:
+        return None
+    if parts[2] not in COMPETITION_BADGE_INFO:
+        return None
+    return competition_id, parts[2]
+
+
+def competition_achievement_display(
+    achievement_type: str, competition_name: str | None
+) -> tuple[str, str, str] | None:
+    """Return (label, icon, description) for an event badge."""
+    parts = competition_achievement_parts(achievement_type)
+    if not parts:
+        return None
+    label, description, icon = COMPETITION_BADGE_INFO[parts[1]]
+    if competition_name:
+        label = f"{competition_name}: {label}"
+        description = f"{description} ({competition_name})"
+    return label, icon, description
+
+
 
 def custom_achievement_type(custom_id: int) -> str:
     """Achievement type stored for an admin-defined achievement."""
@@ -165,9 +221,19 @@ _custom_id_from_type = custom_achievement_id
 
 
 def resolve_achievement_label(db: Session, achievement_type: str) -> str:
-    """Human label for a built-in or admin-defined achievement."""
+    """Human label for a built-in, competition, or admin-defined achievement."""
     if achievement_type in ACHIEVEMENT_LABELS:
         return ACHIEVEMENT_LABELS[achievement_type]
+    competition_parts = competition_achievement_parts(achievement_type)
+    if competition_parts:
+        competition = db.query(Competition).filter(
+            Competition.id == competition_parts[0]
+        ).first()
+        display = competition_achievement_display(
+            achievement_type, competition.name if competition else None
+        )
+        if display:
+            return display[0]
     custom_id = _custom_id_from_type(achievement_type)
     if custom_id is not None:
         row = db.query(CustomAchievement).filter(
@@ -179,9 +245,12 @@ def resolve_achievement_label(db: Session, achievement_type: str) -> str:
 
 
 def resolve_achievement_icon(db: Session, achievement_type: str) -> str:
-    """Emoji icon for a built-in or admin-defined achievement."""
+    """Emoji icon for a built-in, competition, or admin-defined achievement."""
     if achievement_type in BUILTIN_ACHIEVEMENT_ICONS:
         return BUILTIN_ACHIEVEMENT_ICONS[achievement_type]
+    competition_parts = competition_achievement_parts(achievement_type)
+    if competition_parts:
+        return COMPETITION_BADGE_INFO[competition_parts[1]][2]
     custom_id = _custom_id_from_type(achievement_type)
     if custom_id is not None:
         row = db.query(CustomAchievement).filter(
@@ -287,6 +356,132 @@ def _check_collection_achievements(db: Session, user_id: int):
         _award(db, user_id, None, None, FORENSICS_PATHFINDER)
 
 
+def _check_competition_achievements(
+    db: Session,
+    user_id: int,
+    lab: Lab,
+    completion: LabCompletion,
+):
+    """Award event badges for a completion inside a competition window.
+
+    Competitions are opt-in and time-boxed, so the same lab can be practised
+    outside the event without producing an event badge. Placement badges are
+    awarded separately once the event has ended (see
+    :func:`award_competition_placements`).
+    """
+    if not completion or not completion.completed_at:
+        return
+
+    events = (
+        db.query(Competition)
+        .join(
+            CompetitionParticipant,
+            CompetitionParticipant.competition_id == Competition.id,
+        )
+        .join(
+            CompetitionLab,
+            CompetitionLab.competition_id == Competition.id,
+        )
+        .filter(
+            CompetitionParticipant.user_id == user_id,
+            CompetitionLab.lab_id == lab.id,
+            Competition.start_at <= completion.completed_at,
+            Competition.end_at >= completion.completed_at,
+            Competition.is_active == True,
+            Competition.is_archived == False,
+        )
+        .all()
+    )
+
+    for competition in events:
+        event_lab_ids = {
+            row[0] for row in db.query(CompetitionLab.lab_id).filter(
+                CompetitionLab.competition_id == competition.id
+            ).all()
+        }
+        if not event_lab_ids:
+            continue
+
+        rows = db.query(LabCompletion).filter(
+            LabCompletion.user_id == user_id,
+            LabCompletion.lab_id.in_(event_lab_ids),
+            LabCompletion.flag_submitted.isnot(None),
+            LabCompletion.flag_submitted != "",
+            LabCompletion.completed_at >= competition.start_at,
+            LabCompletion.completed_at <= competition.end_at,
+        ).all()
+        completed_ids = {row.lab_id for row in rows}
+        if lab.id not in completed_ids:
+            continue
+
+        _award(
+            db, user_id, None, None,
+            competition_achievement_type(competition.id, "c"),
+        )
+
+        if event_lab_ids.issubset(completed_ids):
+            _award(
+                db, user_id, None, None,
+                competition_achievement_type(competition.id, "cs"),
+            )
+            per_lab = {
+                row.lab_id: row for row in rows if row.lab_id in event_lab_ids
+            }
+            if all(
+                per_lab.get(lab_id)
+                and per_lab[lab_id].hints_used == 0
+                and per_lab[lab_id].attempts == 1
+                for lab_id in event_lab_ids
+            ):
+                _award(
+                    db, user_id, None, None,
+                    competition_achievement_type(competition.id, "pr"),
+                )
+
+        participant_ids = [
+            row[0] for row in db.query(CompetitionParticipant.user_id).filter(
+                CompetitionParticipant.competition_id == competition.id
+            ).all()
+        ]
+        first = db.query(LabCompletion).filter(
+            LabCompletion.user_id.in_(participant_ids),
+            LabCompletion.lab_id.in_(event_lab_ids),
+            LabCompletion.flag_submitted.isnot(None),
+            LabCompletion.flag_submitted != "",
+            LabCompletion.completed_at >= competition.start_at,
+            LabCompletion.completed_at <= competition.end_at,
+        ).order_by(
+            LabCompletion.completed_at.asc(), LabCompletion.id.asc()
+        ).first()
+        if first and first.user_id == user_id:
+            _award(
+                db, user_id, None, None,
+                competition_achievement_type(competition.id, "fb"),
+            )
+
+
+def award_competition_placements(
+    db: Session,
+    competition: Competition,
+    entries: list,
+):
+    """Award Champion / Runner-up / Third Place after an event has ended.
+
+    ``entries`` is the ordered leaderboard produced by the competitions router.
+    Awarding is idempotent, so calling this on each event view is safe.
+    """
+    for entry in entries[:3]:
+        if (entry.get("solved_count") or 0) < 1:
+            continue
+        code = COMPETITION_PLACEMENT_CODES.get(entry.get("rank"))
+        if not code:
+            continue
+        _award(
+            db, entry["user_id"], None, None,
+            competition_achievement_type(competition.id, code),
+        )
+
+
 def check_achievements(db: Session, user_id: int, lab_id: int):
     """Award course-scoped and global achievements for a completed lab.
 
@@ -311,6 +506,10 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
     lab = db.query(Lab).filter(Lab.id == lab_id).first()
     if not lab:
         return
+
+    # Event badges are independent of course enrolment: a competition can use
+    # the same labs as a course, but only solves inside the event window count.
+    _check_competition_achievements(db, user_id, lab, completion)
 
     # Courses where the user is enrolled
     course_ids = {

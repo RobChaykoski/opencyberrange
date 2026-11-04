@@ -491,13 +491,21 @@ def _certificate_achievements(
         if course_name and course_name not in entry["courses"]:
             entry["courses"].append(course_name)
 
-    return sorted(
+    ordered = sorted(
         grouped.values(),
         key=lambda item: (
             item["first_awarded"] or datetime.min,
             item["label"].lower(),
         ),
     )
+    # The profile summary serializes certificates with JSONResponse, so keep
+    # every value JSON-safe. The certificate endpoint can still use the ISO
+    # timestamp if a client wants to display it.
+    for item in ordered:
+        item["first_awarded"] = (
+            item["first_awarded"].isoformat() if item["first_awarded"] else None
+        )
+    return ordered
 
 
 CERTIFICATE_DESIGNS = {"classic", "executive", "modern", "minimal"}

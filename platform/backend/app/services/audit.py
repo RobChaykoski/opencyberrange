@@ -109,6 +109,8 @@ class AuditActions:
 
     # Settings management
     SETTINGS_UPDATED = "SETTINGS_UPDATED"
+    ACTIVITY_LOG_EXPORTED = "ACTIVITY_LOG_EXPORTED"
+    ACTIVITY_LOG_CLEARED = "ACTIVITY_LOG_CLEARED"
 
     # Curriculum management
     TRACK_CREATED = "TRACK_CREATED"

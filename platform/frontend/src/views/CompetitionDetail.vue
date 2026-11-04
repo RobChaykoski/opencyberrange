@@ -155,6 +155,7 @@
                   <th>Participant</th>
                   <th>Score</th>
                   <th>Solved</th>
+                  <th>Badges</th>
                   <th>Last solve</th>
                 </tr>
               </thead>
@@ -168,6 +169,15 @@
                   <td>{{ entry.display_name || entry.username }}<small v-if="entry.is_me">you</small></td>
                   <td>{{ entry.score }}</td>
                   <td>{{ entry.solved_count }}</td>
+                  <td class="leaderboard-badges">
+                    <span
+                      v-for="badge in entry.achievements"
+                      :key="badge.type"
+                      class="leaderboard-badge"
+                      :title="badge.description"
+                    >{{ badge.icon }}</span>
+                    <span v-if="!entry.achievements?.length" class="muted-note">—</span>
+                  </td>
                   <td>{{ entry.last_solved_at ? formatDate(entry.last_solved_at) : '—' }}</td>
                 </tr>
               </tbody>
@@ -179,6 +189,28 @@
           <p v-else class="muted-note">No solves yet. Be the first on the board.</p>
         </section>
       </div>
+
+      <section v-if="eventBadges.length" class="detail-card event-badges">
+        <div class="detail-card__head">
+          <div>
+            <h2>Event badges</h2>
+            <p class="muted-note">Earned only for solves inside this competition window.</p>
+          </div>
+        </div>
+        <div class="event-badge-grid">
+          <article v-for="badge in eventBadges" :key="badge.code" class="event-badge">
+            <span class="event-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+            <div>
+              <h3>{{ badge.label }}</h3>
+              <p>{{ badge.description }}</p>
+              <small>
+                {{ badge.count }} awarded to
+                {{ badge.earners }} {{ badge.earners === 1 ? 'participant' : 'participants' }}
+              </small>
+            </div>
+          </article>
+        </div>
+      </section>
     </template>
   </div>
 </template>
@@ -200,6 +232,10 @@ const copied = ref(false)
 
 const counts = computed(() => (
   detail.value?.leaderboard?.registration_counts || { total: 0, new_user: 0, opt_in: 0 }
+))
+
+const eventBadges = computed(() => (
+  detail.value?.leaderboard?.badges || []
 ))
 
 const signupLink = computed(() => {
@@ -486,6 +522,62 @@ onMounted(loadDetail)
   font-size: 0.58rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.leaderboard-badges {
+  white-space: nowrap;
+}
+
+.leaderboard-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.2rem;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+  font-size: 0.7rem;
+}
+
+.event-badges {
+  margin-top: 0.9rem;
+}
+
+.event-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.55rem;
+}
+
+.event-badge {
+  display: flex;
+  gap: 0.55rem;
+  padding: 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.event-badge__icon {
+  flex-shrink: 0;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.event-badge h3 {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.event-badge p {
+  margin: 0.15rem 0;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.event-badge small {
+  color: var(--text-muted);
+  font-size: 0.64rem;
 }
 
 .source-pill {

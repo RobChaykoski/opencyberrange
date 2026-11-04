@@ -19,7 +19,7 @@ from app.database import get_db
 from app.models import (
     User, Lab, LabSession, LabCompletion, FlagAttempt, WireGuardConfig,
     Course, CourseEnrollment, CourseLabAssignment, ActivityEvent,
-    Track, Level, Achievement, CustomAchievement,
+    Track, Level, Achievement, CustomAchievement, Competition,
 )
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.services.activity import EVENT_LABELS
@@ -29,6 +29,8 @@ from app.services.achievements import (
     BUILTIN_ACHIEVEMENT_ICONS,
     CLEAN_SWEEP,
     FIRST_BLOOD,
+    competition_achievement_display,
+    competition_achievement_parts,
     custom_achievement_id,
     resolve_achievement_label,
 )
@@ -1077,11 +1079,14 @@ def _iso_utc(value: Optional[datetime]) -> Optional[str]:
     return value.isoformat()
 
 
-def _achievement_display(achievement_type: str, custom_defs: dict) -> tuple:
+def _achievement_display(
+    achievement_type: str, custom_defs: dict, competition_defs: dict | None = None
+) -> tuple:
     """Return (label, icon, description) for a built-in or custom award.
 
     ``custom_defs`` is the pre-fetched CustomAchievement map, so a feed of
-    awards only hits the database once for all of its labels.
+    awards only hits the database once for all of its labels. ``competition_defs``
+    is the matching Competition map for event badges.
     """
     if achievement_type in ACHIEVEMENT_LABELS:
         return (
@@ -1089,6 +1094,15 @@ def _achievement_display(achievement_type: str, custom_defs: dict) -> tuple:
             BUILTIN_ACHIEVEMENT_ICONS.get(achievement_type, "\U0001F3C5"),
             ACHIEVEMENT_DESCRIPTIONS.get(achievement_type),
         )
+
+    competition_parts = competition_achievement_parts(achievement_type)
+    if competition_parts:
+        competition = (competition_defs or {}).get(competition_parts[0])
+        display = competition_achievement_display(
+            achievement_type, competition.name if competition else None
+        )
+        if display:
+            return display
 
     custom_id = custom_achievement_id(achievement_type)
     definition = custom_defs.get(custom_id) if custom_id is not None else None
@@ -1134,6 +1148,9 @@ async def celebration_wall(
     custom_defs = {
         row.id: row for row in db.query(CustomAchievement).all()
     }
+    competition_defs = {
+        row.id: row for row in db.query(Competition).all()
+    }
 
     total_awards = public_awards().count()
     unique_earners = public_awards().with_entities(
@@ -1166,16 +1183,26 @@ async def celebration_wall(
     recent = []
     for row in recent_rows:
         label, icon, description = _achievement_display(
-            row.achievement_type, custom_defs
+            row.achievement_type, custom_defs, competition_defs
         )
         user = row.user
         name_mode = (getattr(user, "scoreboard_name_mode", None) or "real_name") if user else "real_name"
+        # Anonymous users keep their border cosmetics but never publish a photo
+        # that could identify them.
+        show_avatar = bool(user and name_mode != "anonymous")
         recent.append({
             "id": row.id,
             "user_id": row.user_id,
             "username": user.username if user and name_mode != "anonymous" else None,
             "display_name": user.scoreboard_name if user else None,
             "name_mode": name_mode,
+            "avatar_data": user.avatar_data if show_avatar else None,
+            "avatar_border_style": (
+                getattr(user, "avatar_border_style", None) or "solid"
+            ) if user else "solid",
+            "avatar_border_color": (
+                getattr(user, "avatar_border_color", None) or "blue"
+            ) if user else "blue",
             "achievement_type": row.achievement_type,
             "label": label,
             "icon": icon,
@@ -1198,17 +1225,21 @@ async def celebration_wall(
             continue
         seen_user_ids.add(row.user_id)
         label, icon, _description = _achievement_display(
-            row.achievement_type, custom_defs
+            row.achievement_type, custom_defs, competition_defs
         )
         user = row.user
         if user is None:
             continue
         name_mode = getattr(user, "scoreboard_name_mode", None) or "real_name"
+        show_avatar = name_mode != "anonymous"
         spotlight.append({
             "user_id": user.id,
             "username": user.username if name_mode != "anonymous" else None,
             "display_name": user.scoreboard_name,
             "name_mode": name_mode,
+            "avatar_data": user.avatar_data if show_avatar else None,
+            "avatar_border_style": getattr(user, "avatar_border_style", None) or "solid",
+            "avatar_border_color": getattr(user, "avatar_border_color", None) or "blue",
             "latest_label": label,
             "latest_icon": icon,
             "awarded_at": _iso_utc(row.awarded_at),
@@ -1235,7 +1266,7 @@ async def celebration_wall(
     badges = []
     for row in badge_rows:
         label, icon, description = _achievement_display(
-            row.achievement_type, custom_defs
+            row.achievement_type, custom_defs, competition_defs
         )
         badges.append({
             "type": row.achievement_type,
@@ -1274,7 +1305,7 @@ async def celebration_wall(
     my_recent = []
     for row in my_recent_rows:
         label, icon, description = _achievement_display(
-            row.achievement_type, custom_defs
+            row.achievement_type, custom_defs, competition_defs
         )
         my_recent.append({
             "id": row.id,
@@ -1317,6 +1348,9 @@ async def celebration_wall(
             "display_name": current_user.display_name,
             "scoreboard_name": current_user.scoreboard_name,
             "name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
+            "avatar_data": getattr(current_user, "avatar_data", None),
+            "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
+            "avatar_border_color": getattr(current_user, "avatar_border_color", None) or "blue",
             "recent": my_recent,
         },
     }

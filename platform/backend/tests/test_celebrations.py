@@ -58,6 +58,9 @@ def celebration_data(db_session, test_user):
         role="student",
         is_approved=True,
         show_on_scoreboard=True,
+        avatar_data="data:image/png;base64,cHl0ZXN0LWF2YXRhcg==",
+        avatar_border_style="glow",
+        avatar_border_color="gold",
     )
     hidden = User(
         username=f"celebration_hidden_{suffix}",
@@ -169,6 +172,17 @@ def test_wall_shows_public_earners_and_resolves_badge_details(
     ]
     assert other_items
     assert all(item["display_name"] == "Ada Lovelace" for item in other_items)
+    assert all(item["avatar_data"] for item in other_items)
+    assert all(item["avatar_border_style"] == "glow" for item in other_items)
+    assert all(item["avatar_border_color"] == "gold" for item in other_items)
+
+    other_spotlight = next(
+        row for row in body["spotlight"]
+        if row["user_id"] == celebration_data["other"].id
+    )
+    assert other_spotlight["avatar_data"]
+    assert other_spotlight["avatar_border_style"] == "glow"
+    assert other_spotlight["avatar_border_color"] == "gold"
 
     first = next(
         item for item in body["recent"]
@@ -273,4 +287,31 @@ def test_wall_can_show_an_anonymous_name(
     assert all(item["display_name"] == "Anonymous participant" for item in items)
     assert all(item["username"] is None for item in items)
     assert all(item["name_mode"] == "anonymous" for item in items)
+    assert all(item["avatar_data"] is None for item in items)
     assert other.id in {row["user_id"] for row in body["spotlight"]}
+
+
+def test_avatar_border_settings_round_trip(client, auth_headers):
+    updated = client.put(
+        "/api/auth/settings",
+        json={"avatar_border_style": "gradient", "avatar_border_color": "rose"},
+        headers=auth_headers,
+    )
+    assert updated.status_code == 200, updated.text
+
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200, settings.text
+    assert settings.json()["avatar_border_style"] == "gradient"
+    assert settings.json()["avatar_border_color"] == "rose"
+
+    me = client.get("/api/auth/me", headers=auth_headers)
+    assert me.status_code == 200, me.text
+    assert me.json()["avatar_border_style"] == "gradient"
+    assert me.json()["avatar_border_color"] == "rose"
+
+    invalid = client.put(
+        "/api/auth/settings",
+        json={"avatar_border_color": "not-a-colour"},
+        headers=auth_headers,
+    )
+    assert invalid.status_code == 422, invalid.text

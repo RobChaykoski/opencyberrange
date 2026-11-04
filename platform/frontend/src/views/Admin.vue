@@ -95,7 +95,7 @@
           </div>
           <div class="stat-card__content">
             <span class="stat-card__value">{{ stats.vpn_registered }}</span>
-            <span class="stat-card__label">VPN Peers<InfoTip text="Configured WireGuard peers — students with VPN access to the lab network." /></span>
+            <span class="stat-card__label">VPN Peers<InfoTip text="Configured WireGuard peers â€” students with VPN access to the lab network." /></span>
           </div>
         </div>
       </div>
@@ -146,14 +146,14 @@
           <!-- Users Search & Filter Bar -->
           <div class="filter-bar">
             <input v-model="userSearch" type="text" placeholder="Search by username or email..." class="search-input" style="flex: 2;" />
-            <select v-model="userStatusFilter" class="filter-select">
+            <select v-model="userStatusFilter" class="filter-select" aria-label="Filter users by status">
               <option value="">All Statuses</option>
               <option value="active">Active</option>
               <option value="pending">Pending</option>
               <option value="locked">Locked</option>
               <option value="disabled">Disabled</option>
             </select>
-            <select v-model="userRoleFilter" class="filter-select">
+            <select v-model="userRoleFilter" class="filter-select" aria-label="Filter users by role">
               <option value="">All Roles</option>
               <option value="admin">Admin</option>
               <option value="instructor">Instructor</option>
@@ -182,7 +182,7 @@
                   <td class="cell-primary">
                     <span class="exercise-status-dot" :class="user.is_active ? 'exercise-status-dot--active' : 'exercise-status-dot--inactive'" style="display: inline-block; margin-right: 0.4rem;"></span>
                     <span class="masked-email">{{ maskUsername(user.username) }}</span>
-                    <span v-if="user.must_change_password" class="password-change-badge" title="Password change required">🔒</span>
+                    <span v-if="user.must_change_password" class="password-change-badge" title="Password change required">ðŸ”’</span>
                   </td>
                   <td class="masked-email" :title="'Click user profile to view full email'">{{ maskEmail(user.email) }}</td>
                   <td>
@@ -343,17 +343,17 @@
               <template v-if="exercisesView === 'manage'">
                 <div class="filter-bar">
                   <input v-model="labSearch" type="text" placeholder="Search exercises..." class="search-input" />
-                  <select v-model="difficultyFilter" class="filter-select">
+                  <select v-model="difficultyFilter" class="filter-select" aria-label="Filter exercises by difficulty">
                     <option value="">All difficulties</option>
                     <option value="beginner">Beginner</option>
                     <option value="intermediate">Intermediate</option>
                     <option value="advanced">Advanced</option>
                   </select>
-                  <select v-model="labInstructorFilter" class="filter-select">
+                  <select v-model="labInstructorFilter" class="filter-select" aria-label="Filter exercises by instructor">
                     <option value="">All Instructors</option>
                     <option v-for="[id, name] in labCreators" :key="id" :value="id">{{ name }}</option>
                   </select>
-                  <select v-model="labVisibilityFilter" class="filter-select">
+                  <select v-model="labVisibilityFilter" class="filter-select" aria-label="Filter exercises by visibility">
                     <option value="">All Visibility</option>
                     <option value="public">Public</option>
                     <option value="course">Course</option>
@@ -393,7 +393,7 @@
                         </td>
                         <td>
                           <span class="track-badge" :style="{ background: (adminTrackColorMap[lab.track_name] || '#3b82f6') + '1a', color: adminTrackColorMap[lab.track_name] || '#3b82f6' }">
-                            {{ lab.track_name || '—' }}
+                            {{ lab.track_name || 'â€”' }}
                           </span>
                           <div v-if="lab.level_name" class="lab-desc">{{ lab.level_name }}</div>
                         </td>
@@ -401,7 +401,7 @@
                           <span v-if="lab.difficulty" :class="['difficulty-badge', 'difficulty-' + lab.difficulty]">{{ lab.difficulty }}</span>
                           <span v-else class="lab-desc">&mdash;</span>
                         </td>
-                        <td>{{ lab.duration_minutes ? lab.duration_minutes + ' min' : '—' }}</td>
+                        <td>{{ lab.duration_minutes ? lab.duration_minutes + ' min' : 'â€”' }}</td>
                         <td>
                           <select
                             class="exercise-vis-select"
@@ -512,7 +512,7 @@
                         <span v-if="!track.is_active" class="exercise-badge exercise-badge--creator">Inactive</span>
                       </span>
                       <span class="lab-category-count">({{ track.level_count }} levels, {{ track.lab_count }} exercises)</span>
-                      <span class="lab-category-toggle">{{ expandedCurriculumTracks[track.id] ? '−' : '+' }}</span>
+                      <span class="lab-category-toggle">{{ expandedCurriculumTracks[track.id] ? 'âˆ’' : '+' }}</span>
                     </button>
 
                     <div v-if="expandedCurriculumTracks[track.id]">
@@ -722,7 +722,7 @@
                       target="_blank"
                       title="View student's RangeBox screen in new tab"
                     >
-                      Active ↗
+                      Active â†—
                       <span v-if="session.rangebox?.mode === 'standalone'" class="vpn-handshake">(standalone)</span>
                     </a>
                     <span v-else-if="session.rangebox?.enabled" class="vpn-badge vpn-badge--disconnected">Stopped</span>
@@ -741,7 +741,7 @@
                     <line x1="12" y1="9" x2="12" y2="13"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                   </svg>
-                  <span>Stale session — DB shows running but no containers exist</span>
+                  <span>Stale session â€” DB shows running but no containers exist</span>
                 </div>
 
                 <div class="containers-section">
@@ -791,7 +791,7 @@
             <div v-if="viewingLogsSessionId" class="modal-overlay" @click.self="closeSessionLogs">
               <div class="modal" style="max-width: 900px; max-height: 80vh; overflow: auto;">
                 <div class="modal-header">
-                  <h3 class="modal-title">Container Logs — Session #{{ viewingLogsSessionId }}</h3>
+                  <h3 class="modal-title">Container Logs â€” Session #{{ viewingLogsSessionId }}</h3>
                   <button @click="closeSessionLogs" class="modal-close">&times;</button>
                 </div>
                 <div v-if="sessionLogsLoading" class="empty-state">Loading logs...</div>
@@ -989,10 +989,10 @@
                       </td>
                       <td class="cell-muted cell-mono">
                         <template v-if="peer.transfer_rx || peer.transfer_tx">
-                          <span class="transfer-down">↓ {{ peer.transfer_rx || '0 B' }}</span>
-                          <span class="transfer-up">↑ {{ peer.transfer_tx || '0 B' }}</span>
+                          <span class="transfer-down">â†“ {{ peer.transfer_rx || '0 B' }}</span>
+                          <span class="transfer-up">â†‘ {{ peer.transfer_tx || '0 B' }}</span>
                         </template>
-                        <span v-else class="cell-muted">—</span>
+                        <span v-else class="cell-muted">â€”</span>
                       </td>
                       <td>
                         <template v-if="!peer.is_labs_server">
@@ -1025,10 +1025,50 @@
           <div v-if="monitoringSubTab === 'activity'" class="sub-tab-content">
             <div class="panel-header">
               <h2 class="panel-title">Activity Log</h2>
-              <select v-model="activityFilter" @change="fetchActivity(1)" class="form-input form-input--sm" style="width: auto;">
-                <option value="">All Events</option>
-                <option v-for="et in activityEventTypes" :key="et" :value="et">{{ eventTypeLabel(et) }}</option>
-              </select>
+              <div class="activity-header-actions">
+                <select v-model="activityFilter" @change="fetchActivity(1)" class="form-input form-input--sm" style="width: auto;">
+                  <option value="">All Events</option>
+                  <option v-for="et in activityEventTypes" :key="et" :value="et">{{ eventTypeLabel(et) }}</option>
+                </select>
+                <button class="btn btn--secondary btn--sm" :disabled="!!activityExporting" @click="exportActivity('json')">
+                  {{ activityExporting === 'json' ? 'Exporting...' : 'Export JSON' }}
+                </button>
+                <button class="btn btn--secondary btn--sm" :disabled="!!activityExporting" @click="exportActivity('csv')">
+                  {{ activityExporting === 'csv' ? 'Exporting...' : 'Export CSV' }}
+                </button>
+                <button class="btn btn--danger btn--sm" @click="openActivityClear">Clear log</button>
+              </div>
+            </div>
+            <p v-if="activityMessage" class="success-message">{{ activityMessage }}</p>
+            <div v-if="activityClearOpen" class="activity-clear-panel">
+              <h3>Clear activity log</h3>
+              <p>
+                Export the log first if you need a permanent copy. Clearing is
+                recorded in the audit stream and leaves a single "Activity Log
+                Cleared" entry.
+              </p>
+              <div class="activity-clear-options">
+                <label><input v-model="activityClearScope" type="radio" value="90" /> Older than 90 days</label>
+                <label><input v-model="activityClearScope" type="radio" value="30" /> Older than 30 days</label>
+                <label><input v-model="activityClearScope" type="radio" value="all" /> All events</label>
+              </div>
+              <div class="form-group">
+                <label for="activity-clear-confirm">Type <strong>CLEAR</strong> to confirm</label>
+                <input id="activity-clear-confirm" v-model="activityClearConfirm" class="form-input form-input--sm" autocomplete="off" />
+              </div>
+              <p v-if="activityClearError" class="error-message">{{ activityClearError }}</p>
+              <div class="activity-clear-actions">
+                <button
+                  class="btn btn--danger btn--sm"
+                  :disabled="activityClearing || activityClearConfirm !== 'CLEAR'"
+                  @click="clearActivity"
+                >
+                  {{ activityClearing ? 'Clearing...' : 'Clear activity log' }}
+                </button>
+                <button class="btn btn--secondary btn--sm" :disabled="activityClearing" @click="cancelActivityClear">
+                  Cancel
+                </button>
+              </div>
             </div>
             <div class="vpn-filter-bar">
               <div class="vpn-filter-presets">
@@ -1074,8 +1114,8 @@
                         <span class="event-badge" :class="isDiagnosticEvent(event) ? 'event-badge--diagnostic' : 'event-badge--' + event.event_type">{{ event.label }}</span>
                         <span v-if="isDiagnosticEvent(event)" class="diagnostic-tag">Diagnostics</span>
                       </td>
-                      <td>{{ event.actor_name || '—' }}</td>
-                      <td>{{ event.target_label || '—' }}</td>
+                      <td>{{ event.actor_name || 'â€”' }}</td>
+                      <td>{{ event.target_label || 'â€”' }}</td>
                       <td class="cell-muted" style="max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ formatActivityDetail(event.detail) }}</td>
                     </tr>
                   </tbody>
@@ -1194,7 +1234,7 @@
                   <td class="cell-primary">{{ course.name }}</td>
                   <td>{{ course.code }}</td>
                   <td>{{ course.semester }}</td>
-                  <td>{{ course.instructor_name || '—' }}</td>
+                  <td>{{ course.instructor_name || 'â€”' }}</td>
                   <td>{{ course.student_count }}</td>
                   <td>{{ course.lab_count }}</td>
                   <td>
@@ -1424,7 +1464,7 @@
                     <div class="setting-input-group">
                       <input
                         v-model="settingsEdits[key]"
-                        :type="value === '••••••••' ? 'password' : 'text'"
+                        :type="value === 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢' ? 'password' : 'text'"
                         :placeholder="settingPlaceholder(key)"
                         class="form-input form-input--sm"
                       />
@@ -1836,13 +1876,13 @@
                   Total: <strong>{{ stressResults.total_calls }}</strong> calls in <strong>{{ stressResults.duration_seconds }}s</strong>
                 </div>
                 <div :style="{ background: stressResults.error_rate_passed ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.error_rate_passed ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
-                  {{ stressResults.error_rate_passed ? 'PASS' : 'FAIL' }} — Error rate: <strong>{{ stressResults.error_rate }}%</strong> (threshold: 5%)
+                  {{ stressResults.error_rate_passed ? 'PASS' : 'FAIL' }} â€” Error rate: <strong>{{ stressResults.error_rate }}%</strong> (threshold: 5%)
                 </div>
                 <div :style="{ background: stressResults.all_thresholds_passed ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.all_thresholds_passed ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
-                  {{ stressResults.all_thresholds_passed ? 'PASS' : 'FAIL' }} — {{ stressResults.all_thresholds_passed ? 'All endpoints within thresholds' : 'Some endpoints exceeded thresholds' }}
+                  {{ stressResults.all_thresholds_passed ? 'PASS' : 'FAIL' }} â€” {{ stressResults.all_thresholds_passed ? 'All endpoints within thresholds' : 'Some endpoints exceeded thresholds' }}
                 </div>
                 <div v-if="stressResults.prespawn_total" :style="{ background: stressResults.prespawn_pass ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.prespawn_pass ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
-                  {{ stressResults.prespawn_pass ? 'PASS' : 'FAIL' }} — Pre-spawn: <strong>{{ stressResults.prespawn_succeeded }}/{{ stressResults.prespawn_total }}</strong> {{ stressResults.level === 4 ? 'RangeBoxes' : 'labs' }}
+                  {{ stressResults.prespawn_pass ? 'PASS' : 'FAIL' }} â€” Pre-spawn: <strong>{{ stressResults.prespawn_succeeded }}/{{ stressResults.prespawn_total }}</strong> {{ stressResults.level === 4 ? 'RangeBoxes' : 'labs' }}
                   <span v-if="stressResults.prespawn_failed > 0" style="color: #eab308;"> ({{ stressResults.prespawn_failed }} failed)</span>
                 </div>
                 <div v-if="stressResults.host_cpu_pct != null" style="background: rgba(30,41,59,0.5); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.8rem;">
@@ -3438,6 +3478,13 @@ const activityTotal = ref(0)
 const activityPages = ref(0)
 const activityFilter = ref('')
 const activityEventTypes = ref([])
+const activityExporting = ref('')
+const activityMessage = ref('')
+const activityClearOpen = ref(false)
+const activityClearScope = ref('90')
+const activityClearConfirm = ref('')
+const activityClearing = ref(false)
+const activityClearError = ref('')
 
 const eventTypeLabelMap = {
   lab_started: 'Lab Started',
@@ -3488,7 +3535,7 @@ const pruningImages = ref(false)
 const pruningBuildCache = ref(false)
 const deletingLabImages = ref({})
 
-// ── Exercise Tester state ──
+// â”€â”€ Exercise Tester state â”€â”€
 const testerLabList = ref([])
 const testerTracks = ref([])
 const testerCategories = ref([])
@@ -3504,11 +3551,11 @@ const testerCancelling = ref(false)
 const testerSections = ref([])
 const testerComplete = ref(null)
 const testerTerminalRef = ref(null)
-const testerResults = ref({})  // slug → { status, date, labName, category, duration, sections }
+const testerResults = ref({})  // slug â†’ { status, date, labName, category, duration, sections }
 const testerRunId = ref(null)
 const quickTestSlug = ref(null)
 const quickTestTerminalRef = ref(null)
-// (testerAbortController removed — polling-based now, no fetch to abort)
+// (testerAbortController removed â€” polling-based now, no fetch to abort)
 
 // Progress tracking
 const testerProgressCurrent = ref(0)   // labs completed so far
@@ -3638,7 +3685,7 @@ const saveSettings = async () => {
   try {
     const payload = {}
     for (const [key, val] of Object.entries(settingsEdits)) {
-      if (val !== '••••••••') payload[key] = val
+      if (val !== 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢') payload[key] = val
     }
     await axios.put('/settings/', { settings: payload })
     showAlert('Settings saved')
@@ -3668,15 +3715,21 @@ const scanLabs = async () => {
 }
 
 // Activity log
+const activityQueryParams = () => {
+  const params = {}
+  if (activityFilter.value) params.event_type = activityFilter.value
+  const { start, end } = getTimeRangeDates(activityTimeRange.value, activityCustomStart.value, activityCustomEnd.value)
+  if (start) params.start_date = start
+  if (end) params.end_date = end
+  return params
+}
+
 const fetchActivity = async (page = 1) => {
   activityLoading.value = true
   try {
-    const params = { page, per_page: 50 }
-    if (activityFilter.value) params.event_type = activityFilter.value
-    const { start, end } = getTimeRangeDates(activityTimeRange.value, activityCustomStart.value, activityCustomEnd.value)
-    if (start) params.start_date = start
-    if (end) params.end_date = end
-    const { data } = await axios.get('/admin/activity', { params })
+    const { data } = await axios.get('/admin/activity', {
+      params: { page, per_page: 50, ...activityQueryParams() },
+    })
     activityEvents.value = data.events
     activityTotal.value = data.total
     activityPages.value = data.pages
@@ -3686,6 +3739,67 @@ const fetchActivity = async (page = 1) => {
     showAlert('Failed to load activity log', 'error')
   } finally {
     activityLoading.value = false
+  }
+}
+
+const exportActivity = async (format) => {
+  activityExporting.value = format
+  activityMessage.value = ''
+  try {
+    const { data } = await axios.get('/admin/activity/export', {
+      params: { format, ...activityQueryParams() },
+      responseType: 'blob',
+    })
+    const blob = new Blob([data], { type: format === 'csv' ? 'text/csv' : 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `activity-log-${new Date().toISOString().slice(0, 10)}.${format}`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    activityMessage.value = `Activity log exported as ${format.toUpperCase()}.`
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to export activity log', 'error')
+  } finally {
+    activityExporting.value = ''
+  }
+}
+
+const openActivityClear = () => {
+  activityClearOpen.value = true
+  activityClearConfirm.value = ''
+  activityClearError.value = ''
+  activityMessage.value = ''
+}
+
+const cancelActivityClear = () => {
+  activityClearOpen.value = false
+  activityClearConfirm.value = ''
+  activityClearError.value = ''
+}
+
+const clearActivity = async () => {
+  if (activityClearConfirm.value !== 'CLEAR') return
+  activityClearing.value = true
+  activityClearError.value = ''
+  try {
+    const body = { confirm: 'CLEAR' }
+    if (activityClearScope.value === 'all') {
+      body.all = true
+    } else {
+      body.older_than_days = Number(activityClearScope.value)
+    }
+    const { data } = await axios.post('/admin/activity/clear', body)
+    activityMessage.value = data.message
+    activityClearOpen.value = false
+    activityClearConfirm.value = ''
+    await fetchActivity(1)
+  } catch (e) {
+    activityClearError.value = e.response?.data?.detail || 'Failed to clear activity log'
+  } finally {
+    activityClearing.value = false
   }
 }
 
@@ -3737,7 +3851,7 @@ const dashboardHealthTip = computed(() => {
 })
 
 
-// ── Exercise Tester functions ──
+// â”€â”€ Exercise Tester functions â”€â”€
 
 const fetchTesterLabs = async () => {
   try {
@@ -3994,7 +4108,7 @@ const generateTestReport = async (slug) => {
   }
 }
 
-// ── Stress Tester ────────────────────────────────────────────────────────
+// â”€â”€ Stress Tester â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 let _stressPollTimer = null
 
@@ -4116,7 +4230,7 @@ const checkActiveStressTest = async () => {
       _startStressPolling(res.data.run_id)
       return
     }
-    // No active test — try to restore last completed results
+    // No active test â€” try to restore last completed results
     if (!stressResults.value) {
       const last = await axios.get('/admin/stress-test/last-result')
       if (last.data.results) {
@@ -4157,7 +4271,7 @@ const stressCleanup = async () => {
   }
 }
 
-// ── End Stress Tester ───────────────────────────────────────────────────
+// â”€â”€ End Stress Tester â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const closeVmTerminal = (vmName) => {
   const term = vmTerminals.value[vmName]
@@ -4165,12 +4279,12 @@ const closeVmTerminal = (vmName) => {
   delete vmTerminals.value[vmName]
 }
 
-// ── Provision event streaming (SSE) ─────────────────────────────────────
+// â”€â”€ Provision event streaming (SSE) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Uses Server-Sent Events for real-time event delivery from the backend.
-// The backend pushes events as they happen — no polling, no timers, no race conditions.
+// The backend pushes events as they happen â€” no polling, no timers, no race conditions.
 let _provisionEventSource = null
 
-// ── VM Definition CRUD ──────────────────────────────────────────────────
+// â”€â”€ VM Definition CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const resetVmDefForm = () => {
   Object.assign(vmDefForm, {
@@ -4485,7 +4599,7 @@ const checkImpersonationStatus = async () => {
       if (match) impersonatingSessionId.value = match.session_id
     }
   } catch {
-    // Ignore — not critical
+    // Ignore â€” not critical
   }
 }
 
@@ -4685,7 +4799,7 @@ const parseLabYaml = () => {
   yamlParseError.value = ''
   if (!createLabForm.lab_yaml.trim()) return
   try {
-    // Simple YAML parser for lab.yaml — handles the key fields we need
+    // Simple YAML parser for lab.yaml â€” handles the key fields we need
     const text = createLabForm.lab_yaml
     const parsed = {}
     // Extract simple key: value fields
@@ -4757,7 +4871,7 @@ const showAlert = (message, type = 'success') => showToast(message, type, 5000)
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  // Backend stores naive UTC — append 'Z' so JS knows it's UTC, then display in CST
+  // Backend stores naive UTC â€” append 'Z' so JS knows it's UTC, then display in CST
   const d = new Date(dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z')
   return d.toLocaleString('en-US', { timeZone: getUserTimeZone() })
 }
@@ -4790,7 +4904,7 @@ const formatActivityDetail = (detail) => {
       if (['time_to_solve_seconds', 'attempts', 'hints_used', 'hint_number', 'source'].includes(k)) continue
       parts.push(`${k.replace(/_/g, ' ')}: ${v}`)
     }
-    return parts.join(' · ')
+    return parts.join(' Â· ')
   } catch {
     return detail
   }
@@ -4825,7 +4939,7 @@ const fetchAll = async () => {
   } catch (e) {
     showAlert('Failed to load data', 'error')
   }
-  // Load session health in background — it queries Docker per-session and can take 30s+
+  // Load session health in background â€” it queries Docker per-session and can take 30s+
   axios.get('/admin/sessions/health').then(res => {
     sessionsHealth.value = res.data
     checkImpersonationStatus()
@@ -5064,7 +5178,7 @@ const deleteUser = async (id) => {
       if (detail.code === 'owned_courses') {
         showAlert(
           `Cannot delete: this account owns ${courses.length} course(s). `
-          + 'Transfer them in Admin → Courses → Manage, then try again.',
+          + 'Transfer them in Admin â†’ Courses â†’ Manage, then try again.',
           'error'
         )
       } else {
@@ -5468,7 +5582,7 @@ const adminFilteredLabs = computed(() => {
   })
 })
 
-// Computed properties for lab organization by Track → Level
+// Computed properties for lab organization by Track â†’ Level
 const labsByTrackLevel = computed(() => {
   const grouped = {}
   // Apply filters before grouping
@@ -5592,7 +5706,7 @@ const bulkToggleCategory = async (levelKey, enable) => {
   try {
     await axios.post('/admin/labs/bulk-toggle', { lab_ids: labIds, is_active: enable })
     fetchAll()
-    showAlert(`${enable ? 'Enabled' : 'Disabled'} ${labIds.length} exercises in ${group.track_name} → ${group.level_name}`, 'success')
+    showAlert(`${enable ? 'Enabled' : 'Disabled'} ${labIds.length} exercises in ${group.track_name} â†’ ${group.level_name}`, 'success')
   } catch (e) {
     showAlert('Failed to toggle exercises', 'error')
   }
@@ -5638,7 +5752,7 @@ const terminateSession = async (id) => {
     }
     fetchAll()
   } catch (e) {
-    // If 400, session was already stopped — just remove it from UI
+    // If 400, session was already stopped â€” just remove it from UI
     if (e.response?.status === 400) {
       showAlert('Session already stopped')
       if (sessionsHealth.value.sessions) {
@@ -6102,7 +6216,7 @@ const archiveCourse = async (course) => {
 const unarchiveCourse = async (course) => {
   try {
     await axios.post(`/courses/${course.id}/unarchive`)
-    showAlert('Course unarchived (still inactive — activate manually)')
+    showAlert('Course unarchived (still inactive â€” activate manually)')
     fetchAdminCourses()
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to unarchive', 'error')
@@ -7843,12 +7957,12 @@ watch(activeTab, (tab) => {
 }
 
 .transfer-down::before {
-  content: '↓';
+  content: 'â†“';
   margin-right: 0.25rem;
 }
 
 .transfer-up::before {
-  content: '↑';
+  content: 'â†‘';
   margin-right: 0.25rem;
 }
 
@@ -9698,7 +9812,7 @@ watch(activeTab, (tab) => {
   outline-offset: -1px;
 }
 
-/* ── Diagnostics Terminal ── */
+/* â”€â”€ Diagnostics Terminal â”€â”€ */
 .vm-terminals-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
@@ -9875,7 +9989,7 @@ watch(activeTab, (tab) => {
   50% { opacity: 0; }
 }
 
-/* ── Exercise Tester ── */
+/* â”€â”€ Exercise Tester â”€â”€ */
 .tester-controls {
   display: flex;
   flex-direction: column;
@@ -10483,7 +10597,7 @@ watch(activeTab, (tab) => {
   50% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0); }
 }
 
-/* ── VM Definition Slide Panel ─────────────────────────────── */
+/* â”€â”€ VM Definition Slide Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 .vm-def-overlay {
   position: fixed;
@@ -10775,5 +10889,55 @@ watch(activeTab, (tab) => {
 .build-status__fill { height: 100%; border-radius: 3px; transition: width .6s ease;
   background: linear-gradient(90deg,#f5a524,#fbbf24); }
 .build-status__note { font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; }
-</style>
 
+/* Activity log archive/clear controls */
+.activity-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+.activity-clear-panel {
+  margin: 0.75rem 0 1rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, var(--border-color));
+  border-radius: 10px;
+  background: var(--danger-bg);
+}
+.activity-clear-panel h3 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.activity-clear-panel p {
+  margin: 0 0 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.activity-clear-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+.activity-clear-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.activity-clear-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+@media (max-width: 720px) {
+  .activity-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+</style>

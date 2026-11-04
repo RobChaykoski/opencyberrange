@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.auth import get_password_hash
-from app.models import Competition, CompetitionParticipant, User
+from app.models import Competition, CompetitionParticipant, LabCompletion, User
 
 pytestmark = pytest.mark.db
 
@@ -105,6 +105,37 @@ def test_competition_join_score_and_privacy(
     assert entries[0]["is_me"] is True
     assert body["leaderboard"]["my_entry"]["rank"] == 1
     assert body["leaderboard"]["registration_counts"]["opt_in"] == 1
+    # Event-specific awards: solving inside the window earns the competitor
+    # badge, and the first solve in the event earns Event First Blood.
+    codes = {badge["code"] for badge in entries[0]["achievements"]}
+    assert {"c", "fb"}.issubset(codes)
+    assert len(body["leaderboard"]["badges"]) == 7
+
+    # Closing the event finalises placement badges on the next view. Move the
+    # solve safely inside the window before shortening the event.
+    completion = db_session.query(LabCompletion).filter(
+        LabCompletion.user_id == test_user.id,
+        LabCompletion.lab_id == test_lab.id,
+    ).first()
+    completion.completed_at = datetime.now(timezone.utc) - timedelta(minutes=2)
+    db_session.commit()
+    patched = client.patch(
+        f"/api/competitions/{competition_id}",
+        json={"end_at": (datetime.now(timezone.utc) - timedelta(minutes=1)).isoformat()},
+        headers=instructor_auth,
+    )
+    assert patched.status_code == 200, patched.text
+    ended = client.get(
+        f"/api/competitions/{competition_id}", headers=auth_headers
+    )
+    assert ended.status_code == 200, ended.text
+    ended_body = ended.json()
+    assert ended_body["competition"]["status"] == "ended"
+    ended_codes = {
+        badge["code"]
+        for badge in ended_body["leaderboard"]["entries"][0]["achievements"]
+    }
+    assert "ch" in ended_codes
 
     manager_detail = client.get(
         f"/api/competitions/{competition_id}", headers=instructor_auth

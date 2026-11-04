@@ -130,10 +130,15 @@ const username = computed(() => {
 
 // ---- First-time-use orientation tour ----
 const showTour = ref(false)
-const currentUserId = computed(() => {
-  try { const u = JSON.parse(authState.value.user || '{}'); return u.id ?? null } catch { return null }
+const tourUser = computed(() => {
+  try {
+    const u = JSON.parse(authState.value.user || '{}')
+    return u.username || String(u.id || 'anon')
+  } catch {
+    return 'anon'
+  }
 })
-const tourKey = computed(() => 'ocr_orientation_seen_v1_' + (currentUserId.value ?? 'anon'))
+const tourKey = computed(() => 'ocr_orientation_seen_v1_' + tourUser.value)
 const tourSteps = [
   { title: 'Welcome to the range', body: 'Here is a quick tour to get you from zero to your first running lab. It takes under a minute.', placement: 'center' },
   { title: '1. Connect over the VPN', body: 'Most labs run on an isolated network you reach over a VPN. Open VPN Setup to download your config and connect. You only do this once.', selector: '[data-tour="nav-vpn"]' },
@@ -143,9 +148,16 @@ const tourSteps = [
   { title: 'You are set', body: 'That is the whole loop: connect, launch, follow the workbook. You can replay this tour anytime from the sidebar menu. Have fun.', placement: 'center', route: '/exercises' },
 ]
 function maybeStartTour() {
-  if (!authState.value.token || userRole.value === 'admin') return
+  if (!authState.value.token || userRole.value !== 'student') return
   if (localStorage.getItem(tourKey.value)) return
-  setTimeout(() => { if (isAuthenticated.value && userRole.value !== 'admin') showTour.value = true }, 900)
+  setTimeout(() => {
+    if (!isAuthenticated.value || userRole.value !== 'student') return
+    // Persist as soon as it opens. Otherwise closing the tab, navigating away,
+    // or reloading before pressing Skip/Finish makes it reappear on the next
+    // login. The sidebar still offers "Take the tour" for a deliberate replay.
+    try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
+    showTour.value = true
+  }, 900)
 }
 function onTourFinish() {
   try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }

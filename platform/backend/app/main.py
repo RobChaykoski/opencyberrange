@@ -184,6 +184,18 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added avatar_data column to users table")
 
+        # --- Avatar border style/colour (profile + celebration wall) ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        avatar_border_columns = {
+            'avatar_border_style': "VARCHAR(20) DEFAULT 'solid' NOT NULL",
+            'avatar_border_color': "VARCHAR(20) DEFAULT 'blue' NOT NULL",
+        }
+        for column, ddl in avatar_border_columns.items():
+            if column not in users_columns:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {column} {ddl}"))
+                conn.commit()
+                logger.info("Added %s column to users table", column)
+
         # --- Celebration wall / scoreboard name preference ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'scoreboard_name_mode' not in users_columns:
@@ -206,6 +218,13 @@ async def lifespan(app: FastAPI):
                 conn.execute(text(f"ALTER TABLE users ADD COLUMN {column} {ddl}"))
                 conn.commit()
                 logger.info("Added %s column to users table", column)
+
+        # --- Personal-data export timestamp (privacy panel) ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'data_exported_at' not in users_columns:
+            conn.execute(text("ALTER TABLE users ADD COLUMN data_exported_at TIMESTAMP"))
+            conn.commit()
+            logger.info("Added data_exported_at column to users table")
 
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations

@@ -2,14 +2,19 @@
 Admin routes for user, lab, and session management
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request, WebSocket, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Request, WebSocket, Query, Response
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from typing import List
 from datetime import datetime, timezone, timedelta
+import csv
+import io
+import json
 import os
 import logging
 import tempfile
+
+from pydantic import BaseModel
 
 from app.ratelimit import create_limiter
 
@@ -2812,6 +2817,201 @@ async def get_activity_log(
         "pages": (total + per_page - 1) // per_page,
         "event_types": list(EVENT_LABELS.keys()),
     }
+
+
+class ActivityClearRequest(BaseModel):
+    confirm: str
+    all: bool = False
+    older_than_days: int | None = None
+
+
+def _apply_activity_filters(query, event_type, start_date, end_date):
+    from datetime import datetime as dt_cls
+
+    if event_type:
+        query = query.filter(ActivityEvent.event_type == event_type)
+    if start_date:
+        try:
+            sd = dt_cls.fromisoformat(start_date.replace("Z", "+00:00")).replace(tzinfo=None)
+            query = query.filter(ActivityEvent.created_at >= sd)
+        except (ValueError, TypeError):
+            pass
+    if end_date:
+        try:
+            ed = dt_cls.fromisoformat(end_date.replace("Z", "+00:00")).replace(tzinfo=None)
+            query = query.filter(ActivityEvent.created_at <= ed)
+        except (ValueError, TypeError):
+            pass
+    return query
+
+
+def _activity_export_rows(db: Session, events: list[ActivityEvent]) -> list[dict]:
+    from app.services.activity import EVENT_LABELS
+
+    actor_ids = {e.actor_id for e in events if e.actor_id}
+    actors = {}
+    if actor_ids:
+        actors = {
+            row.id: (row.username, row.role)
+            for row in db.query(User).filter(User.id.in_(actor_ids)).all()
+        }
+
+    rows = []
+    for e in events:
+        actor = actors.get(e.actor_id)
+        rows.append({
+            "id": e.id,
+            "created_at": e.created_at.isoformat() if e.created_at else None,
+            "event_type": e.event_type,
+            "label": EVENT_LABELS.get(e.event_type, e.event_type),
+            "actor_id": e.actor_id,
+            "actor_name": actor[0] if actor else (f"user#{e.actor_id}" if e.actor_id else None),
+            "actor_role": actor[1] if actor else None,
+            "target_type": e.target_type,
+            "target_id": e.target_id,
+            "target_label": (
+                resolve_achievement_label(db, e.target_label)
+                if e.target_type == "achievement" and e.target_label
+                else e.target_label
+            ),
+            "detail": e.detail,
+            "ip_address": e.ip_address,
+        })
+    return rows
+
+
+@router.get("/activity/export")
+async def export_activity_log(
+    request: Request,
+    format: str = Query("json", pattern="^(json|csv)$"),
+    event_type: str = None,
+    start_date: str = None,
+    end_date: str = None,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Download the filtered activity log as JSON or CSV.
+
+    This is the archive path: export before clearing so the record survives
+    outside the platform. The export itself is audited.
+    """
+    query = _apply_activity_filters(
+        db.query(ActivityEvent).order_by(ActivityEvent.created_at.desc()),
+        event_type,
+        start_date,
+        end_date,
+    )
+    events = query.limit(50000).all()
+    rows = _activity_export_rows(db, events)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+
+    if format == "csv":
+        fields = [
+            "id", "created_at", "event_type", "label", "actor_id", "actor_name",
+            "actor_role", "target_type", "target_id", "target_label", "detail",
+            "ip_address",
+        ]
+        buffer = io.StringIO()
+        writer = csv.DictWriter(buffer, fieldnames=fields)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({key: row.get(key) for key in fields})
+        content = buffer.getvalue()
+        media_type = "text/csv"
+        filename = f"activity-log-{stamp}.csv"
+    else:
+        content = json.dumps(rows, indent=2, default=str)
+        media_type = "application/json"
+        filename = f"activity-log-{stamp}.json"
+
+    log_admin_action(
+        action=AuditActions.ACTIVITY_LOG_EXPORTED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="activity_log",
+        details={
+            "format": format,
+            "rows": len(rows),
+            "event_type": event_type,
+            "start_date": start_date,
+            "end_date": end_date,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+    return Response(
+        content=content,
+        media_type=media_type,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.post("/activity/clear")
+async def clear_activity_log(
+    payload: ActivityClearRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Delete activity events, either all of them or those older than N days.
+
+    The action is written to the structured audit log and a new
+    ``activity_log_cleared`` event is inserted so the activity feed shows that
+    the log was cleared rather than looking silently truncated.
+    """
+    if payload.confirm != "CLEAR":
+        raise HTTPException(status_code=400, detail='Type "CLEAR" to confirm.')
+
+    cutoff = None
+    query = db.query(ActivityEvent)
+    if payload.all:
+        pass
+    elif payload.older_than_days is not None:
+        if payload.older_than_days < 1 or payload.older_than_days > 3650:
+            raise HTTPException(
+                status_code=400,
+                detail="older_than_days must be between 1 and 3650.",
+            )
+        cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(
+            days=payload.older_than_days
+        )
+        query = query.filter(ActivityEvent.created_at < cutoff)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="Choose all=true or older_than_days.",
+        )
+
+    deleted = query.delete(synchronize_session=False)
+    db.commit()
+
+    log_admin_action(
+        action=AuditActions.ACTIVITY_LOG_CLEARED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="activity_log",
+        details={
+            "deleted": deleted,
+            "all": payload.all,
+            "older_than_days": payload.older_than_days,
+            "cutoff": cutoff.isoformat() if cutoff else None,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+    if deleted:
+        log_activity(
+            db,
+            EventTypes.ACTIVITY_LOG_CLEARED,
+            actor_id=admin.id,
+            target_type="activity",
+            target_label=f"Cleared {deleted} events",
+            detail={
+                "deleted": deleted,
+                "all": payload.all,
+                "older_than_days": payload.older_than_days,
+            },
+            ip_address=request.client.host if request.client else None,
+        )
+    return {"message": f"Cleared {deleted} activity event(s).", "deleted": deleted}
 
 
 # ==================== Container Logs ====================

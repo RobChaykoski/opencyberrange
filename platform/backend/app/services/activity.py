@@ -25,6 +25,7 @@ class EventTypes:
     ACHIEVEMENT_AWARDED = "achievement_awarded"
     IMPERSONATION_START = "impersonation_start"
     IMPERSONATION_END = "impersonation_end"
+    ACTIVITY_LOG_CLEARED = "activity_log_cleared"
 
 
 # Human-readable labels for the feed
@@ -43,6 +44,7 @@ EVENT_LABELS = {
     EventTypes.ACHIEVEMENT_AWARDED: "Achievement Earned",
     EventTypes.IMPERSONATION_START: "Started Impersonation",
     EventTypes.IMPERSONATION_END: "Ended Impersonation",
+    EventTypes.ACTIVITY_LOG_CLEARED: "Activity Log Cleared",
 }
 
 

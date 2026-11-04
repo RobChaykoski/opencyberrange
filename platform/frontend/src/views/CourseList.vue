@@ -20,6 +20,11 @@
               type="text"
               placeholder="Enter invite code"
               class="join-input"
+              aria-label="Course invite code"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              maxlength="64"
               @keyup.enter="joinCourse"
             />
             <button @click="joinCourse" :disabled="!inviteCode || joining" class="join-btn">
@@ -102,17 +107,23 @@ async function fetchCourses() {
 }
 
 async function joinCourse() {
-  if (!inviteCode.value) return
+  const code = inviteCode.value.trim()
+  if (!code) return
   joining.value = true
   joinMessage.value = ''
   try {
-    const res = await axios.post('/courses/join', { invite_code: inviteCode.value })
+    const res = await axios.post('/courses/join', { invite_code: code })
     joinMessage.value = res.data.message
     joinError.value = false
     inviteCode.value = ''
     fetchCourses()
   } catch (e) {
-    joinMessage.value = e.response?.data?.detail || 'Failed to join course'
+    const detail = e.response?.data?.detail
+    if (Array.isArray(detail)) {
+      joinMessage.value = detail.map((item) => item.msg || String(item)).join(' ')
+    } else {
+      joinMessage.value = detail || 'Failed to join course'
+    }
     joinError.value = true
   } finally {
     joining.value = false

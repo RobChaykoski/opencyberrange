@@ -6,18 +6,37 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 from typing import Optional, List, Any
 from datetime import datetime
 import re
+import unicodedata
+
+
+def _password_policy_error(v: str) -> Optional[str]:
+    """Return the first password-policy error, or None when the password is ok.
+
+    Uses Unicode-aware character classes so kanji, full-width letters, and
+    other scripts are not silently treated as symbols. The policy is about
+    categories, not the Latin alphabet: an uppercase letter, lowercase letter,
+    and digit may come from any script.
+    """
+    if len(v) < 8:
+        return "Password must be at least 8 characters"
+    if len(v) > 128:
+        return "Password must be at most 128 characters"
+    if any(unicodedata.category(ch) == "Cc" for ch in v):
+        return "Password must not contain control characters"
+    if not any(ch.isupper() for ch in v):
+        return "Password must contain at least one uppercase letter"
+    if not any(ch.islower() for ch in v):
+        return "Password must contain at least one lowercase letter"
+    if not any(ch.isdigit() for ch in v):
+        return "Password must contain at least one number"
+    return None
 
 
 def _validate_password(v: str) -> str:
     """Shared password complexity check used by all schemas that accept passwords."""
-    if len(v) < 8:
-        raise ValueError('Password must be at least 8 characters')
-    if not re.search(r'[A-Z]', v):
-        raise ValueError('Password must contain at least one uppercase letter')
-    if not re.search(r'[a-z]', v):
-        raise ValueError('Password must contain at least one lowercase letter')
-    if not re.search(r'[0-9]', v):
-        raise ValueError('Password must contain at least one number')
+    error = _password_policy_error(v)
+    if error:
+        raise ValueError(error)
     return v
 
 
@@ -348,7 +367,20 @@ class CourseResponse(BaseModel):
 
 
 class CourseJoinRequest(BaseModel):
-    invite_code: str = Field(..., min_length=6, max_length=20)
+    # Allow surrounding whitespace and full-width input to be normalised before
+    # the 6-20 character check, so a pasted code is not rejected for formatting.
+    invite_code: str = Field(..., min_length=1, max_length=64)
+
+    @field_validator("invite_code")
+    @classmethod
+    def normalize_invite_code(cls, v: str) -> str:
+        value = unicodedata.normalize("NFKC", v)
+        value = re.sub(r"\s+", "", value)
+        if not re.fullmatch(r"[A-Za-z0-9_-]{6,20}", value):
+            raise ValueError(
+                "Invite code must be 6-20 letters, numbers, hyphens, or underscores"
+            )
+        return value
 
 
 class CourseLabAssignRequest(BaseModel):
