@@ -8,18 +8,28 @@
         </svg>
         Back
       </button>
-      <label v-if="certificate?.achievements?.length" class="certificate-toggle">
-        <input v-model="showAchievements" type="checkbox" />
-        Include achievements
-      </label>
-      <button v-if="certificate" class="btn btn--primary" @click="printCertificate">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="6 9 6 2 18 2 18 9"/>
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-          <rect x="6" y="14" width="12" height="8"/>
-        </svg>
-        Print certificate
-      </button>
+      <div class="certificate-actions__right">
+        <label v-if="certificate?.achievements?.length" class="certificate-toggle">
+          <input v-model="showAchievements" type="checkbox" />
+          Include achievements
+        </label>
+        <label v-if="certificate" class="certificate-design">
+          <span>Design</span>
+          <select v-model="activeDesign" class="form-input form-input--sm">
+            <option v-for="design in certificateDesigns" :key="design.value" :value="design.value">
+              {{ design.label }}
+            </option>
+          </select>
+        </label>
+        <button v-if="certificate" class="btn btn--primary" @click="printCertificate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Print certificate
+        </button>
+      </div>
     </div>
 
     <div v-if="loading" class="certificate-state">Preparing your certificate...</div>
@@ -30,7 +40,7 @@
       <button class="btn btn--primary no-print" @click="goBack">Return to the track</button>
     </div>
 
-    <article v-else-if="certificate" class="certificate" aria-label="Certificate of completion">
+    <article v-else-if="certificate" class="certificate" :class="`certificate--${activeDesign}`" aria-label="Certificate of completion">
       <div class="certificate__frame">
         <div class="certificate__corner certificate__corner--tl"></div>
         <div class="certificate__corner certificate__corner--tr"></div>
@@ -39,9 +49,11 @@
 
         <header class="certificate__header">
           <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="certificate__logo" />
-          <p class="certificate__eyebrow">OpenCyberRange</p>
-          <h1 class="certificate__title">Certificate of Completion</h1>
-          <div class="certificate__rule"></div>
+          <div class="certificate__heading">
+            <p class="certificate__eyebrow">OpenCyberRange</p>
+            <h1 class="certificate__title">Certificate of Completion</h1>
+            <div class="certificate__rule"></div>
+          </div>
         </header>
 
         <section class="certificate__body">
@@ -116,17 +128,26 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 
 const route = useRoute()
 const router = useRouter()
 
+const certificateDesigns = [
+  { value: 'classic', label: 'Classic' },
+  { value: 'executive', label: 'Executive' },
+  { value: 'modern', label: 'Modern' },
+  { value: 'minimal', label: 'Minimal' },
+]
+const designStorageKey = 'ocr_certificate_design'
+
 const certificate = ref(null)
 const loading = ref(true)
 const error = ref('')
 const showAchievements = ref(true)
+const activeDesign = ref('classic')
 
 const load = async () => {
   loading.value = true
@@ -136,6 +157,11 @@ const load = async () => {
       `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate`
     )
     certificate.value = data
+    const stored = localStorage.getItem(designStorageKey)
+    const valid = (value) => certificateDesigns.some((design) => design.value === value)
+    activeDesign.value = valid(stored)
+      ? stored
+      : (valid(data.design) ? data.design : 'classic')
   } catch (e) {
     error.value = e?.response?.data?.detail
       || 'We could not issue a certificate for this level yet.'
@@ -143,6 +169,14 @@ const load = async () => {
     loading.value = false
   }
 }
+
+watch(activeDesign, (value) => {
+  try {
+    localStorage.setItem(designStorageKey, value)
+  } catch {
+    // Storage can be unavailable in private browsing; the design still applies.
+  }
+})
 
 const printCertificate = () => window.print()
 
@@ -179,6 +213,27 @@ onMounted(load)
   align-items: center;
   gap: 0.75rem;
   padding-right: 2.75rem;
+}
+
+.certificate-actions__right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.certificate-design {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.certificate-design select {
+  min-width: 8.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
 }
 
 .certificate-toggle {
@@ -252,6 +307,8 @@ onMounted(load)
   color: #1f2937;
   border-radius: 6px;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .certificate__frame {
@@ -281,6 +338,10 @@ onMounted(load)
 
 .certificate__header {
   text-align: center;
+}
+
+.certificate__heading {
+  display: block;
 }
 
 .certificate__logo {
@@ -540,10 +601,130 @@ onMounted(load)
   color: #8a6d2f;
 }
 
+/* --- Executive: navy, gold, left-aligned corporate layout --- */
+.certificate--executive { background: #ffffff; }
+
+.certificate--executive .certificate__frame {
+  border: 1px solid #0b2545;
+  outline: 3px solid #c8a24a;
+  outline-offset: 6px;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.75rem, 5vw, 5rem);
+}
+
+.certificate--executive .certificate__corner { display: none; }
+
+.certificate--executive .certificate__header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: left;
+  border-bottom: 2px solid #0b2545;
+  padding-bottom: 1.1rem;
+}
+
+.certificate--executive .certificate__logo { margin: 0; width: 58px; height: 58px; }
+.certificate--executive .certificate__heading { flex: 1; }
+.certificate--executive .certificate__eyebrow { color: #0b2545; letter-spacing: 0.22em; }
+.certificate--executive .certificate__title { color: #0b2545; font-size: clamp(1.6rem, 3.2vw, 2.5rem); }
+.certificate--executive .certificate__rule { display: none; }
+.certificate--executive .certificate__body { text-align: left; }
+.certificate--executive .certificate__recipient { border-bottom: 2px solid #c8a24a; color: #0b2545; }
+.certificate--executive .certificate__level { color: #0b2545; }
+.certificate--executive .certificate__footer { border-top: 1px solid #d7dee8; padding-top: 1rem; }
+.certificate--executive .certificate__seal-ring {
+  border-color: #c8a24a;
+  color: #0b2545;
+  background: radial-gradient(circle, rgba(200, 162, 74, 0.12), transparent 68%);
+}
+.certificate--executive .certificate__qr img { border-color: #c8a24a; }
+
+/* --- Modern: white, teal accent, right-aligned brand, clean sans --- */
+.certificate--modern { background: #ffffff; }
+
+.certificate--modern .certificate__frame {
+  border: 0;
+  outline: 0;
+  border-left: 10px solid #0f766e;
+  box-shadow: inset 0 0 0 1px #e2e8f0;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.75rem, 5vw, 5rem);
+}
+
+.certificate--modern .certificate__corner { display: none; }
+
+.certificate--modern .certificate__header {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.certificate--modern .certificate__logo { margin: 0; width: 58px; height: 58px; }
+.certificate--modern .certificate__heading { flex: 1; }
+.certificate--modern .certificate__eyebrow { color: #0f766e; letter-spacing: 0.18em; }
+.certificate--modern .certificate__title {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  color: #0f172a;
+}
+.certificate--modern .certificate__rule { margin: 0.8rem 0 0; width: 80px; background: #0f766e; }
+.certificate--modern .certificate__body { text-align: left; }
+.certificate--modern .certificate__recipient {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  border-bottom: 3px solid #0f766e;
+  color: #0f172a;
+}
+.certificate--modern .certificate__detail { color: #0f766e; }
+.certificate--modern .certificate__footer { border-top: 1px solid #e2e8f0; padding-top: 1rem; }
+.certificate--modern .certificate__seal-ring {
+  border-color: #0f766e;
+  color: #0f766e;
+  background: radial-gradient(circle, rgba(15, 118, 110, 0.1), transparent 68%);
+}
+.certificate--modern .certificate__qr img { border-color: #0f766e; }
+
+/* --- Minimal: monochrome, thin rule, generous whitespace --- */
+.certificate--minimal { background: #ffffff; }
+
+.certificate--minimal .certificate__frame {
+  border: 1px solid #d1d5db;
+  outline: 0;
+  padding: clamp(2.25rem, 5vw, 4.5rem) clamp(2rem, 6vw, 5.5rem);
+}
+
+.certificate--minimal .certificate__corner { display: none; }
+.certificate--minimal .certificate__logo { width: 48px; height: 48px; }
+.certificate--minimal .certificate__eyebrow { color: #6b7280; letter-spacing: 0.3em; }
+.certificate--minimal .certificate__title {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: clamp(1.4rem, 2.8vw, 2.1rem);
+  color: #111827;
+}
+.certificate--minimal .certificate__rule { width: 40px; height: 1px; background: #9ca3af; }
+.certificate--minimal .certificate__recipient {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 600;
+  border-bottom: 1px solid #d1d5db;
+  color: #111827;
+}
+.certificate--minimal .certificate__detail { color: #6b7280; }
+.certificate--minimal .certificate__seal-ring {
+  border-color: #d1d5db;
+  color: #6b7280;
+  background: none;
+}
+.certificate--minimal .certificate__qr img { border-color: #d1d5db; }
+
 @media (max-width: 720px) {
   .certificate-actions {
     padding-right: 0;
     padding-top: 2.5rem;
+  }
+
+  .certificate-actions__right {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .certificate__frame {

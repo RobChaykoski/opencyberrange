@@ -1410,6 +1410,13 @@
                       {{ togglesSaving[key] ? 'Saving...' : (settingsEdits[key] === 'true' ? 'Enabled' : 'Disabled') }}
                     </button>
                   </template>
+                  <template v-else-if="key === 'certificate_design'">
+                    <select v-model="settingsEdits[key]" class="form-input form-input--sm">
+                      <option v-for="design in certificateDesigns" :key="design.value" :value="design.value">
+                        {{ design.label }}
+                      </option>
+                    </select>
+                  </template>
                   <template v-else-if="key.includes('color')">
                     <input type="color" v-model="settingsEdits[key]" class="color-input" />
                   </template>
@@ -3206,6 +3213,12 @@ const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase(
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
 const settingsEdits = reactive({})
+const certificateDesigns = [
+  { value: 'classic', label: 'Classic' },
+  { value: 'executive', label: 'Executive' },
+  { value: 'modern', label: 'Modern' },
+  { value: 'minimal', label: 'Minimal' },
+]
 const togglesSaving = reactive({})
 const settingsLoading = ref(false)
 const savingSettings = ref(false)

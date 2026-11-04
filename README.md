@@ -101,8 +101,11 @@ and a downloadable PDF transcript.
 
 **Certificates and transcripts.** Completing every visible exercise in a level
 issues a certificate with a deterministic ID, a verification QR code, and a
-print/PDF action. The same profile view generates a PDF transcript containing
-certificates, every completed exercise, track progress, and course achievements.
+print/PDF action. Certificates can be rendered in **Classic**, **Executive**,
+**Modern**, or **Minimal** designs. Choose one from the certificate page, or set
+the platform default in Admin → Settings → General → Certificate Design. The
+same profile view generates a PDF transcript containing certificates, every
+completed exercise, track progress, and course achievements.
 
 ![Earned certificates on the profile](docs/img/profile-certificates.png)
 

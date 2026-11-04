@@ -500,6 +500,17 @@ def _certificate_achievements(
     )
 
 
+CERTIFICATE_DESIGNS = {"classic", "executive", "modern", "minimal"}
+
+
+def _certificate_design(db: Session) -> str:
+    """Return the configured certificate design, falling back to classic."""
+    value = (
+        settings_service.get_setting(db, "certificate_design", "classic") or "classic"
+    ).strip().lower()
+    return value if value in CERTIFICATE_DESIGNS else "classic"
+
+
 def build_level_certificate(
     db: Session,
     current_user: User,
@@ -586,6 +597,7 @@ def build_level_certificate(
 
     return {
         "certificate_id": certificate_id,
+        "design": _certificate_design(db),
         # Prefer the name the student supplied in their profile; fall back to
         # the login handle so a half-filled profile still prints something.
         "recipient": current_user.display_name,
