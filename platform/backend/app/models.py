@@ -168,6 +168,31 @@ class User(Base):
     achievements = relationship("Achievement", back_populates="user")
 
 
+class IdentityProvider(Base):
+    """V3-only LDAP/SSO identity provider configuration.
+
+    ``config`` holds non-secret provider settings as JSON. ``secrets`` holds an
+    encrypted JSON object for bind passwords, client secrets, and private keys.
+    Secret values are never returned by the API.
+    """
+    __tablename__ = "identity_providers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(120), nullable=False)
+    kind = Column(String(20), nullable=False)  # ldap, oidc, saml
+    enabled = Column(Boolean, default=False, server_default=text("false"), nullable=False)
+    is_default = Column(Boolean, default=False, server_default=text("false"), nullable=False)
+    config = Column(Text, nullable=False, default="{}", server_default=text("'{}'"))
+    secrets = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_identity_provider_name", "name", unique=True),
+        Index("ix_identity_provider_kind", "kind"),
+    )
+
+
 class Track(Base):
     """Learning tracks (Windows, Linux, Web, Network)"""
     __tablename__ = "tracks"

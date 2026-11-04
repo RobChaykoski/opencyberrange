@@ -24,6 +24,7 @@ from app.database import engine, Base
 from app import modules as module_registry
 module_registry.register_models()
 from app.routers import auth, labs, admin, curriculum, courses, competitions, dashboard, setup, curriculum_admin, instructor, quiz, profile, exercise_quiz
+from app.routers import identity as identity_router
 from app.routers import analytics as analytics_router
 from app.routers import settings as settings_router
 from app.routers import modules as modules_router
@@ -941,6 +942,7 @@ app.include_router(analytics_router.router, prefix="/api/analytics", tags=["Anal
 app.include_router(competitions.router, prefix="/api/competitions", tags=["Competitions"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
+app.include_router(identity_router.router, prefix="/api/identity", tags=["Identity Providers"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 app.include_router(setup.router, prefix="/api/setup", tags=["Setup"])
 app.include_router(curriculum_admin.router, prefix="/api/admin/curriculum", tags=["Curriculum Admin"])

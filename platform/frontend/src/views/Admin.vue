@@ -1749,6 +1749,11 @@
             <QuestionBankAdmin />
           </div>
 
+          <!-- V3 identity providers -->
+          <div v-else-if="activeSettingsCategory === 'identity'" class="settings-form">
+            <IdentityProvidersPanel />
+          </div>
+
           <!-- Generic settings form for other categories -->
           <div v-else class="settings-form">
             <div v-if="settingsLoading" class="empty-state">Loading settings...</div>
@@ -3883,6 +3888,7 @@ import AchievementStudio from '../components/AchievementStudio.vue'
 import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
+import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
@@ -4637,13 +4643,15 @@ const settingsCategories = computed(() => {
   base.push('achievements')
   // Certification question banks are admin-only data, not a platform setting.
   base.push('question-banks')
+  // Identity provider settings: LDAP/OIDC/SAML configuration.
+  base.push('identity')
   // The Modules tab (optional-module enable/disable) is a real admin control,
   // not a dev tool: show it whenever the edition ships optional modules, so an
   // operator can turn SOC on/off on a production install.
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
