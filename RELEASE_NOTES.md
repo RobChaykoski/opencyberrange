@@ -1,8 +1,8 @@
-# OpenCyberRange Community / Academic 1.1.0
+# OpenCyberRange Community / Academic 1.1.1
 
 Edition: **Community / Academic** — supported single-host teaching platform,
 lab and workbook improvements, exercise authoring, maintenance, and security.
-Professional 2.0 adds analytics, reporting, cohort analysis, competency
+Professional 2.1 adds analytics, reporting, cohort analysis, competency
 evidence, accreditation support, and research exports. Enterprise 3.0 adds HA,
 SSO, enterprise reporting, multi-tenant support, LMS integration, and
 compliance reporting.
@@ -44,9 +44,9 @@ account email plus the recent validation fixes.
 ## Upgrade notes
 
 1. Take a database snapshot.
-2. Pull the `v1.1.0` tag or the matching `main` commit.
+2. Pull the `v1.1.1` tag or the matching `main` commit.
 3. Rebuild the backend and frontend images.
-4. Start the stack and verify `GET /api/version` reports `1.1.0`.
+4. Start the stack and verify `GET /api/version` reports `1.1.1`.
 5. Open Admin → Settings → Email, save the relay settings, and send a test
    message.
 

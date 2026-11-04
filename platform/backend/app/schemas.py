@@ -210,6 +210,11 @@ class UpdateUserRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8, max_length=128)
+    # Re-authentication: an admin token alone must not be enough to take over
+    # another account.
+    admin_password: str = Field(..., min_length=1, max_length=128)
+    # Force the target to choose a new password at the next sign-in.
+    must_change_password: bool = True
 
     @field_validator('new_password')
     @classmethod

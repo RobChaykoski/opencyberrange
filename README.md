@@ -15,7 +15,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Release](https://img.shields.io/badge/release-1.1.0-blue)](RELEASE_NOTES.md)
+[![Release](https://img.shields.io/badge/release-1.1.1-blue)](RELEASE_NOTES.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
@@ -624,6 +624,10 @@ opencyberrange/
 | [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
 | [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
+| [Career and certification resources](docs/CAREER-AND-CERTIFICATION-RESOURCES.md) | Learners, instructors, and programme leads planning next steps |
+| [Community / Academic backlog](docs/COMMUNITY-ACADEMIC-BACKLOG.md) | Maintainers reviewing lab and workbook improvements |
+| [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md) | Operators checking indexing and AI-scraper policy |
+| [Reverse proxy and Nginx Proxy Manager](docs/REVERSE-PROXY.md) | Operators terminating TLS in front of the platform |
 | [Learning framework](docs/LEARNING-FRAMEWORK.md) | Instructors and curriculum designers mapping tracks, levels, labs, and evidence |
 | [NICE mapping matrix](docs/NICE-MAPPING.md) | Programme reviewers mapping tracks to NICE categories and work roles |
 | [Survey privacy and consent](docs/SURVEY-PRIVACY.md) | Privacy officers and survey operators |

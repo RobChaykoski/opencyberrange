@@ -46,6 +46,83 @@
       </div>
     </div>
 
+    <!-- Certification pathways -->
+    <details v-if="track" class="cert-pathways">
+      <summary class="cert-pathways__summary">
+        <span class="cert-pathways__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3 3 8l9 5 9-5-9-5Z"/>
+            <path d="M5 10v5c0 2 3.5 4 7 4s7-2 7-4v-5"/>
+            <path d="M21 8v6"/>
+          </svg>
+        </span>
+        <span class="cert-pathways__heading">
+          <strong>Certification pathways</strong>
+          <small>Where {{ track.name }} can take you</small>
+        </span>
+        <span class="cert-pathways__chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </span>
+      </summary>
+      <div class="cert-pathways__body">
+        <p class="cert-pathways__summary-text">{{ certificationPath.summary }}</p>
+        <div class="cert-pathways__grid">
+          <section>
+            <h3>Start here</h3>
+            <ul>
+              <li v-for="cert in certificationPath.entry" :key="cert">{{ cert }}</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Build on it</h3>
+            <ul>
+              <li v-for="cert in certificationPath.core" :key="cert">{{ cert }}</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Go further</h3>
+            <ul>
+              <li v-for="cert in certificationPath.advanced" :key="cert">{{ cert }}</li>
+            </ul>
+          </section>
+        </div>
+        <p class="cert-pathways__roles">
+          <strong>Roles this can lead to:</strong> {{ certificationPath.roles.join(' · ') }}
+        </p>
+        <div class="cert-pathways__footer">
+          <div class="cert-pathways__links">
+            <a :href="CERTIFICATION_ROADMAP_URL" target="_blank" rel="noopener noreferrer">
+              Security Certification Roadmap (Paul Jerimy)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+            <a :href="CISO_MINDMAP_URL" target="_blank" rel="noopener noreferrer">
+              CISO MindMap 2026 (Rafeeq Rehman)
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+            <a :href="SWOCTS_RESOURCES_URL" target="_blank" rel="noopener noreferrer">
+              SWOCTS learning resources
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          </div>
+          <span>Vendor certifications change. Verify requirements with the vendor. This is guidance, not a guarantee of certification or employment.</span>
+        </div>
+      </div>
+    </details>
+
     <!-- Levels Accordion -->
     <div v-if="track" class="levels-container">
       <div
@@ -613,6 +690,7 @@ import FlagIcon from '../components/icons/FlagIcon.vue'
 import LightbulbIcon from '../components/icons/LightbulbIcon.vue'
 import ArrowLeftIcon from '../components/icons/ArrowLeftIcon.vue'
 import FlagCelebration from '../components/FlagCelebration.vue'
+import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getCertificationPath } from '../data/certificationPaths'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)
 
 const route = useRoute()
@@ -786,6 +864,7 @@ const kvmAvailable = computed(() => track.value?.kvm_available !== false)
 
 const extendingVmSession = ref(false)
 const isAdminUser = computed(() => hasRole('instructor'))  // true for instructors AND admins
+const certificationPath = computed(() => getCertificationPath(track.value))
 const canManageVms = isAdminUser
 
 // Timer
@@ -1775,6 +1854,196 @@ watch(timeRemaining, (val) => {
 }
 
 /* Levels */
+.cert-pathways {
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.cert-pathways__summary {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.cert-pathways__summary::-webkit-details-marker {
+  display: none;
+}
+
+.cert-pathways__summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.cert-pathways__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-tertiary));
+  color: var(--accent);
+}
+
+.cert-pathways__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.cert-pathways__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.cert-pathways__heading strong {
+  color: var(--text-primary);
+  font-size: 0.86rem;
+}
+
+.cert-pathways__heading small {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.cert-pathways__chevron {
+  margin-left: auto;
+  color: var(--text-muted);
+  transition: transform 0.18s ease;
+}
+
+.cert-pathways__chevron svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+
+.cert-pathways[open] .cert-pathways__chevron {
+  transform: rotate(180deg);
+}
+
+.cert-pathways__body {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.cert-pathways__summary-text {
+  margin: 0.85rem 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.cert-pathways__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.cert-pathways__grid section {
+  min-width: 0;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+}
+
+.cert-pathways__grid h3 {
+  margin: 0 0 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cert-pathways__grid ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cert-pathways__grid li {
+  color: var(--text-primary);
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.cert-pathways__grid li::before {
+  content: '·';
+  margin-right: 0.35rem;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.cert-pathways__roles {
+  margin: 0.85rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.cert-pathways__roles strong {
+  color: var(--text-primary);
+}
+
+.cert-pathways__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.85rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.cert-pathways__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+}
+
+.cert-pathways__footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  align-self: flex-start;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.cert-pathways__footer a:hover {
+  text-decoration: underline;
+}
+
+.cert-pathways__footer a svg {
+  width: 13px;
+  height: 13px;
+}
+
+.cert-pathways__footer span {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .cert-pathways__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .levels-container {
   background: var(--bg-secondary);
   border-radius: 16px;

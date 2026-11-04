@@ -35,7 +35,7 @@ from app.schemas import (
     UpdateLabRequest,
     LabCreate,
 )
-from app.auth import get_current_admin_user, get_current_instructor_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens
+from app.auth import get_current_admin_user, get_current_instructor_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens, verify_password
 from app import entitlement
 from app.services import settings_service
 from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError
@@ -432,7 +432,16 @@ async def update_user(
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
+    # Password changes are a separate, re-authenticated action. Allowing them
+    # through the general profile update would bypass the reset audit, rate
+    # limit, and token revocation.
+    if user_request.password is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="Password changes must use the dedicated reset-password action",
+        )
+
     # Track changes for audit log
     changes = {}
     
@@ -470,16 +479,6 @@ async def update_user(
     if user_request.organization is not None:
         changes['organization'] = {'old': user.organization, 'new': user_request.organization}
         user.organization = user_request.organization
-    
-    # Update password if provided
-    if user_request.password is not None:
-        _eff_role = user_request.role or getattr(user, 'role', 'student')
-        if _eff_role in ('instructor', 'admin') or getattr(user, 'role', 'student') in ('instructor', 'admin'):
-            policy_error = validate_privileged_password(user_request.password)
-            if policy_error:
-                raise HTTPException(status_code=400, detail=policy_error)
-        user.hashed_password = get_password_hash(user_request.password)
-        changes['password'] = 'updated'
     
     # Update account flags
     if user_request.is_active is not None:
@@ -601,10 +600,37 @@ async def reset_password(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
-    """Reset a user's password - rate limited to 5 per minute"""
+    """Reset another user's password after re-authenticating the admin.
+
+    This is deliberately separate from the general profile update. The action
+    re-checks the admin password, revokes every target session, forces a
+    password change, and writes a PASSWORD_RESET audit record.
+    """
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
+
+    if user.id == admin.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Use your profile security settings to change your own password",
+        )
+
+    if not verify_password(password_data.admin_password, admin.hashed_password):
+        log_admin_action(
+            action=AuditActions.PASSWORD_RESET,
+            admin_user_id=admin.id,
+            admin_username=admin.username,
+            target_type="user",
+            target_id=user.id,
+            target_identifier=user.username,
+            details={"result": "denied", "reason": "admin_reauthentication_failed"},
+            ip_address=request.client.host if request.client else None,
+        )
+        raise HTTPException(
+            status_code=403,
+            detail="Your admin password is incorrect",
+        )
 
     # Stricter password policy when the target account is privileged
     if user.role in ('instructor', 'admin'):
@@ -616,6 +642,10 @@ async def reset_password(
     user.is_locked = False
     user.failed_attempts = 0
     user.locked_at = None
+    # Privileged accounts always rotate again at next sign-in. A resettable
+    # admin password must not become a long-lived shared credential.
+    force_change = password_data.must_change_password or user.role in ('instructor', 'admin')
+    user.must_change_password = force_change
     db.commit()
 
     # An admin-driven reset must also invalidate outstanding sessions; otherwise
@@ -630,6 +660,10 @@ async def reset_password(
         target_type="user",
         target_id=user.id,
         target_identifier=user.username,
+        details={
+            "tokens_revoked": True,
+            "must_change_password": force_change,
+        },
         ip_address=request.client.host if request.client else None
     )
     

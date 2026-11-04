@@ -2,7 +2,28 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [1.0.0] - 2026-11-04
+## [1.1.1] - 2026-11-04
+
+Maintenance release for the Community / Academic line.
+
+### Security and operations
+- Deny-all `robots.txt`, `noindex` metadata, `X-Robots-Tag`, and a crawler
+  user-agent block for search and AI scrapers.
+- Preserve an upstream `X-Forwarded-Proto` so certificate and mail links keep
+  the public HTTPS scheme behind a reverse proxy.
+- Admin password resets now require the administrator's own password, revoke
+  the target's sessions, force a password change, and are audited. The general
+  profile update endpoint rejects password changes.
+- Nginx Proxy Manager guidance for WebSockets, SSE, uploads, forwarded headers,
+  and crawler blocking.
+
+### Learning and guidance
+- Login preview certificate and SWOCTS branding with website and LinkedIn links.
+- Certification pathway panel on each track, with links to the Security
+  Certification Roadmap, the CISO MindMap 2026, and SWOCTS resources.
+- Community / Academic edition naming and scope.
+
+## [1.1.0] - 2026-11-04
 
 First supported self-hosted teaching release.
 

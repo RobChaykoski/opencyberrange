@@ -2448,29 +2448,11 @@ test:
                 </div>
 
                 <div class="form-group">
-                  <label for="edit-password">New Password (leave blank to keep current)</label>
-                  <input aria-label="New Password (leave blank to keep current)"
-                    id="edit-password"
-                    v-model="editForm.password"
-                    type="password"
-                    placeholder="New password"
-                    class="form-input"
-                    :class="{ 'error': editErrors.password }"
-                  />
-                  <p v-if="editErrors.password" class="error-text">{{ editErrors.password }}</p>
-                </div>
-
-                <div class="form-group">
-                  <label for="edit-confirm-password">Confirm New Password</label>
-                  <input aria-label="Confirm New Password"
-                    id="edit-confirm-password"
-                    v-model="editForm.confirmPassword"
-                    type="password"
-                    placeholder="Confirm new password"
-                    class="form-input"
-                    :class="{ 'error': editErrors.confirmPassword }"
-                  />
-                  <p v-if="editErrors.confirmPassword" class="error-text">{{ editErrors.confirmPassword }}</p>
+                  <label for="edit-password">Password reset</label>
+                  <p class="form-hint">
+                    Password changes are a separate, audited action. Use the
+                    <strong>Reset password</strong> button below.
+                  </p>
                 </div>
               </div>
 
@@ -2514,6 +2496,16 @@ test:
                     <span>Force password change on next login</span>
                   </label>
                 </div>
+
+                <div class="password-reset-panel">
+                  <div>
+                    <strong>Password</strong>
+                    <p>Password changes are a separate, audited action.</p>
+                  </div>
+                  <button type="button" class="btn btn--secondary" @click="openResetPasswordModal">
+                    Reset password
+                  </button>
+                </div>
               </div>
 
               <p v-if="editErrorMessage" class="error-message">{{ editErrorMessage }}</p>
@@ -2531,6 +2523,102 @@ test:
         </div>
       </transition>
 
+
+      <!-- Reset Password Modal -->
+      <transition name="fade">
+        <div v-if="showResetPasswordModal" class="modal-overlay" @click.self="closeResetPasswordModal">
+          <div class="modal" role="dialog" aria-modal="true" aria-labelledby="reset-password-title">
+            <h3 id="reset-password-title" class="modal-title">Reset password</h3>
+            <p class="modal-subtitle">
+              Target: <strong>{{ resetPasswordTarget?.username }}</strong>
+            </p>
+
+            <div class="reset-warning" role="note">
+              <strong>This signs the user out everywhere.</strong>
+              <span>
+                You must re-enter your admin password. The target will be required to choose
+                a new password at the next sign-in.
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="reset-confirm-username">
+                Type <strong>{{ resetPasswordTarget?.username }}</strong> to confirm
+              </label>
+              <input
+                id="reset-confirm-username"
+                v-model="resetPasswordForm.confirmUsername"
+                type="text"
+                class="form-input"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reset-admin-password">Your admin password</label>
+              <input
+                id="reset-admin-password"
+                v-model="resetPasswordForm.adminPassword"
+                :type="showResetPasswords ? 'text' : 'password'"
+                class="form-input"
+                autocomplete="current-password"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reset-new-password">New password</label>
+              <input
+                id="reset-new-password"
+                v-model="resetPasswordForm.newPassword"
+                :type="showResetPasswords ? 'text' : 'password'"
+                class="form-input"
+                autocomplete="new-password"
+              />
+              <p class="form-hint">At least 8 characters with uppercase, lowercase, and a number.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="reset-confirm-password">Confirm new password</label>
+              <input
+                id="reset-confirm-password"
+                v-model="resetPasswordForm.confirmPassword"
+                :type="showResetPasswords ? 'text' : 'password'"
+                class="form-input"
+                autocomplete="new-password"
+              />
+            </div>
+
+            <button type="button" class="show-password-toggle" @click="showResetPasswords = !showResetPasswords">
+              {{ showResetPasswords ? 'Hide passwords' : 'Show passwords' }}
+            </button>
+
+            <label class="checkbox-label reset-force-change">
+              <input
+                v-model="resetPasswordForm.mustChangePassword"
+                type="checkbox"
+                class="checkbox-input"
+              />
+              <span>Require a password change at next sign-in</span>
+            </label>
+
+            <p v-if="resetPasswordError" class="error-message" role="alert">{{ resetPasswordError }}</p>
+            <p v-if="resetPasswordMessage" class="success-message" role="status">{{ resetPasswordMessage }}</p>
+
+            <div class="modal-actions">
+              <button type="button" class="btn btn--secondary" @click="closeResetPasswordModal">Cancel</button>
+              <button
+                type="button"
+                class="btn btn--danger"
+                :disabled="resetPasswordLoading"
+                @click="submitResetPassword"
+              >
+                {{ resetPasswordLoading ? 'Resetting...' : 'Reset password' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
 
       <!-- User Details Modal -->
       <transition name="fade">
@@ -3203,8 +3291,6 @@ const editForm = reactive({
   email: '',
   first_name: '',
   last_name: '',
-  password: '',
-  confirmPassword: '',
   is_approved: false,
   role: 'student',
   is_active: true,
@@ -3212,13 +3298,25 @@ const editForm = reactive({
 })
 const editErrors = reactive({
   username: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
+  email: ''
 })
 const editLoading = ref(false)
 const editErrorMessage = ref('')
 const editSuccessMessage = ref('')
+
+const showResetPasswordModal = ref(false)
+const resetPasswordTarget = ref(null)
+const resetPasswordLoading = ref(false)
+const resetPasswordMessage = ref('')
+const resetPasswordError = ref('')
+const showResetPasswords = ref(false)
+const resetPasswordForm = reactive({
+  confirmUsername: '',
+  adminPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+  mustChangePassword: true
+})
 
 const editLab = ref(null)
 const trackCatalog = ref([])  // [{id, name, slug, levels: [{id,name,level_number}]}]
@@ -5275,20 +5373,17 @@ const openEditUserModal = (user) => {
   editForm.email = user.email || ''
   editForm.first_name = user.first_name || ''
   editForm.last_name = user.last_name || ''
-  editForm.password = ''
-  editForm.confirmPassword = ''
   editForm.is_approved = user.is_approved || false
   editForm.role = user.role || 'student'
   editForm.is_active = user.is_active !== undefined ? user.is_active : true
   editForm.must_change_password = user.must_change_password || false
   
-  // Clear errors
+  // Clear errors and any privileged reset state
   editErrors.username = ''
   editErrors.email = ''
-  editErrors.password = ''
-  editErrors.confirmPassword = ''
   editErrorMessage.value = ''
   editSuccessMessage.value = ''
+  closeResetPasswordModal()
   
   showEditUserModal.value = true
 }
@@ -5299,8 +5394,6 @@ const validateEditForm = () => {
   // Clear previous errors
   editErrors.username = ''
   editErrors.email = ''
-  editErrors.password = ''
-  editErrors.confirmPassword = ''
   
   // Validate username if provided
   if (editForm.username) {
@@ -5320,32 +5413,6 @@ const validateEditForm = () => {
       editErrors.email = 'Invalid email format'
       isValid = false
     }
-  }
-  
-  // Validate password if provided
-  if (editForm.password) {
-    if (editForm.password.length < 8) {
-      editErrors.password = 'Password must be at least 8 characters'
-      isValid = false
-    } else if (!/[A-Z]/.test(editForm.password)) {
-      editErrors.password = 'Password must contain at least one uppercase letter'
-      isValid = false
-    } else if (!/[a-z]/.test(editForm.password)) {
-      editErrors.password = 'Password must contain at least one lowercase letter'
-      isValid = false
-    } else if (!/[0-9]/.test(editForm.password)) {
-      editErrors.password = 'Password must contain at least one number'
-      isValid = false
-    }
-    
-    // Validate password confirmation
-    if (editForm.password !== editForm.confirmPassword) {
-      editErrors.confirmPassword = 'Passwords do not match'
-      isValid = false
-    }
-  } else if (editForm.confirmPassword) {
-    editErrors.confirmPassword = 'Please enter a password first'
-    isValid = false
   }
   
   return isValid
@@ -5377,9 +5444,6 @@ const saveUserEdits = async () => {
     if ((editForm.last_name || '') !== (editUser.value.last_name || '')) {
       payload.last_name = editForm.last_name.trim()
     }
-    if (editForm.password) {
-      payload.password = editForm.password
-    }
     if (editForm.is_approved !== editUser.value.is_approved) {
       payload.is_approved = editForm.is_approved
     }
@@ -5404,6 +5468,7 @@ const saveUserEdits = async () => {
     // Close modal after short delay
     setTimeout(() => {
       showEditUserModal.value = false
+      closeResetPasswordModal()
     }, 1000)
   } catch (error) {
     const msg = parseApiError(error, 'Failed to update user. Please try again.')
@@ -5411,6 +5476,90 @@ const saveUserEdits = async () => {
     showAlert(msg, 'error')
   } finally {
     editLoading.value = false
+  }
+}
+
+// Password reset is a separate privileged action. It requires the admin's own
+// password, revokes the target's sessions, and forces a password change.
+const openResetPasswordModal = () => {
+  resetPasswordTarget.value = editUser.value
+  resetPasswordForm.confirmUsername = ''
+  resetPasswordForm.adminPassword = ''
+  resetPasswordForm.newPassword = ''
+  resetPasswordForm.confirmPassword = ''
+  resetPasswordForm.mustChangePassword = true
+  resetPasswordError.value = ''
+  resetPasswordMessage.value = ''
+  showResetPasswords.value = false
+  showResetPasswordModal.value = true
+  nextTick(() => document.getElementById('reset-confirm-username')?.focus())
+}
+
+const closeResetPasswordModal = () => {
+  showResetPasswordModal.value = false
+  resetPasswordTarget.value = null
+  resetPasswordForm.confirmUsername = ''
+  resetPasswordForm.adminPassword = ''
+  resetPasswordForm.newPassword = ''
+  resetPasswordForm.confirmPassword = ''
+  resetPasswordError.value = ''
+  resetPasswordMessage.value = ''
+  showResetPasswords.value = false
+}
+
+const submitResetPassword = async () => {
+  if (!resetPasswordTarget.value) return
+
+  resetPasswordError.value = ''
+  resetPasswordMessage.value = ''
+  let valid = true
+
+  if (resetPasswordForm.confirmUsername.trim() !== resetPasswordTarget.value.username) {
+    resetPasswordError.value = `Type ${resetPasswordTarget.value.username} exactly to confirm`
+    valid = false
+  }
+  if (!resetPasswordForm.adminPassword) {
+    resetPasswordError.value = 'Enter your admin password to re-authenticate'
+    valid = false
+  }
+  const complexityErrors = validatePasswordComplexity(resetPasswordForm.newPassword)
+  if (complexityErrors.length) {
+    resetPasswordError.value = complexityErrors[0]
+    valid = false
+  }
+  if (resetPasswordForm.newPassword !== resetPasswordForm.confirmPassword) {
+    resetPasswordError.value = 'Passwords do not match'
+    valid = false
+  }
+  if (!valid) return
+
+  resetPasswordLoading.value = true
+  try {
+    const { data } = await axios.post(
+      `/admin/users/${resetPasswordTarget.value.id}/reset-password`,
+      {
+        new_password: resetPasswordForm.newPassword,
+        admin_password: resetPasswordForm.adminPassword,
+        must_change_password: resetPasswordForm.mustChangePassword,
+      }
+    )
+    resetPasswordMessage.value = `${data.message || 'Password reset'}. Existing sessions were revoked.`
+    showAlert(resetPasswordMessage.value)
+    resetPasswordForm.adminPassword = ''
+    resetPasswordForm.newPassword = ''
+    resetPasswordForm.confirmPassword = ''
+    resetPasswordForm.confirmUsername = ''
+    showResetPasswords.value = false
+    await fetchAll()
+  } catch (error) {
+    const status = error.response?.status
+    const detail = error.response?.data?.detail
+    resetPasswordError.value = status === 403
+      ? (detail || 'Your admin password is incorrect')
+      : (detail || 'Failed to reset password. Please try again.')
+    showAlert(resetPasswordError.value, 'error')
+  } finally {
+    resetPasswordLoading.value = false
   }
 }
 
@@ -10981,6 +11130,75 @@ watch(activeTab, (tab) => {
   .activity-header-actions {
     width: 100%;
     justify-content: flex-start;
+  }
+}
+
+.password-reset-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.25rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+}
+
+.password-reset-panel strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.password-reset-panel p {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.reset-warning {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 38%, var(--border-color));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warning) 8%, var(--bg-primary));
+}
+
+.reset-warning strong {
+  color: var(--text-primary);
+  font-size: 0.78rem;
+}
+
+.reset-warning span {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.show-password-toggle {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.reset-force-change {
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .password-reset-panel {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>
