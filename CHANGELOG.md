@@ -15,6 +15,14 @@ All notable changes to OpenCyberRange are recorded here.
 - The login preview shows a sample learner certificate and SWOCTS branding, with
   links to the SWOCTS website and LinkedIn page.
 
+### Security
+- Serve a deny-all `robots.txt`, send `noindex`/`nofollow` metadata and
+  `X-Robots-Tag`, and return `403` to known search and AI crawler user agents.
+- Preserve an upstream `X-Forwarded-Proto` so certificate and mail links keep
+  the public HTTPS scheme behind a TLS-terminating proxy.
+- Document Nginx Proxy Manager WebSocket, SSE, upload, forwarded-header, and
+  crawler settings in `docs/REVERSE-PROXY.md`.
+
 ### 2.x feature scope
 - Reporting, learning analytics, and survey insight remain the only active 2.x
   feature workstreams. Multi-host HA moved to v3; see
