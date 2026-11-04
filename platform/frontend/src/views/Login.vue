@@ -217,7 +217,7 @@
                       href="https://www.swocts.com/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      aria-label="SWOCTS website"
+                      title="SWOCTS website"
                     >swocts.com</a>
                     <a
                       class="preview-certificate__social"
