@@ -489,6 +489,9 @@ LABS_HOST_PATH=$LABS_PATH
 # Server hostname (for VPN config generation and URLs)
 SERVER_PUBLIC_HOST=${SERVER_PUBLIC_HOST:-localhost}
 
+# Survey privacy statement contact. Use a monitored role address.
+PRIVACY_CONTACT_EMAIL=${PRIVACY_CONTACT_EMAIL:-privacy@example.org}
+
 # CORS — allowed frontend origins
 CORS_ORIGINS=http://localhost,https://localhost,http://${SERVER_PUBLIC_HOST:-localhost},https://${SERVER_PUBLIC_HOST:-localhost}
 
@@ -573,6 +576,7 @@ services:
       WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.0.0}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@example.org}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,https://localhost}
       TZ: UTC
     volumes:

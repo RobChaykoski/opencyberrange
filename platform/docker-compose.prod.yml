@@ -78,6 +78,7 @@ services:
       WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.0.0}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@opencyberrange.local}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://localhost}
       # Shared counter store so every worker enforces the same limits. Keep
       # the default when running redis; set "memory://" only for single-worker
