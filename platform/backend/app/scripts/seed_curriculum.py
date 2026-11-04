@@ -208,21 +208,22 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                                          'public repository material'}]},
     {   'name': 'High School Cybersecurity',
         'slug': 'high-school',
-        'description': 'A browser-first pathway for grades 9-12. Start with digital '
-                       'safety, move into systems and networks, then apply defensive '
-                       'security in Grade 12.',
+        'description': 'A browser-first pathway for grades 9-12. Start with RangeBox '
+                       'basics, move into networks and browser source, practise '
+                       'defensive log reading in Grade 11, then apply those skills in '
+                       'Grade 12.',
         'icon': 'brain',
         'color': '#8B5CF6',
         'sort_order': 9,
         'levels': [   {   'level_number': 9,
-                          'name': 'Grade 9 · Digital Safety Foundations',
-                          'description': 'Accounts, privacy, phishing, and safe browsing'},
+                          'name': 'Grade 9 · RangeBox Basics',
+                          'description': 'Launching the practice desktop, terminal basics, and file discovery'},
                       {   'level_number': 10,
-                          'name': 'Grade 10 · Systems and Networks',
-                          'description': 'How computers, addresses, and the web fit together'},
+                          'name': 'Grade 10 · Networks and the Web',
+                          'description': 'Hostnames, HTTP responses, and browser source'},
                       {   'level_number': 11,
                           'name': 'Grade 11 · Defensive Security',
-                          'description': 'Logs, evidence, and responsible response'},
+                          'description': 'Reading logs, spotting suspicious requests, and explaining evidence'},
                       {   'level_number': 12,
                           'name': 'Grade 12 · Applied Cybersecurity',
                           'description': 'Community event challenges, metadata, and '
@@ -293,8 +294,9 @@ def seed_curriculum():
         levels_updated = 0
         
         for track_data in TRACKS:
-            levels = track_data.pop('levels')
+            levels = track_data.get('levels', [])
             track_slug = track_data['slug']
+            track_payload = {k: v for k, v in track_data.items() if k != 'levels'}
             
             # Check if track exists
             existing_track = db.execute(
@@ -316,7 +318,7 @@ def seed_curriculum():
                             is_active = TRUE
                         WHERE slug = :slug
                     """),
-                    {**track_data, "slug": track_slug}
+                    {**track_payload, "slug": track_slug}
                 )
                 print(f"✓ Updated track: {track_data['name']} (id={track_id})")
                 tracks_updated += 1
@@ -328,7 +330,7 @@ def seed_curriculum():
                         VALUES (:name, :slug, :description, :icon, :color, :sort_order, TRUE)
                         RETURNING id
                     """),
-                    {**track_data, "slug": track_slug}
+                    {**track_payload, "slug": track_slug}
                 )
                 track_id = result.fetchone()[0]
                 print(f"✓ Created track: {track_data['name']} (id={track_id})")

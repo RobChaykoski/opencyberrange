@@ -85,8 +85,12 @@ context.
 
 ## Analysis Questions
 
-1. Why did the README matter before running `grep`?
-2. What is the difference between `find` and `grep`?
-3. Why might an investigator list files before opening them?
-4. What could happen if you trusted a filename without reading the file?
-5. How would you remove the decoy from your results?
+**1. Why did the README matter before running `grep`?**
+
+**2. What is the difference between `find` and `grep`?**
+
+**3. Why might an investigator list files before opening them?**
+
+**4. What could happen if you trusted a filename without reading the file?**
+
+**5. How would you remove the decoy from your results?**

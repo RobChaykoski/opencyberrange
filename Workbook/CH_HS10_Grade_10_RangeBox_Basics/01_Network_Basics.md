@@ -76,8 +76,12 @@ incident triage.
 
 ## Analysis Questions
 
-1. What is the difference between a status line, a header, and a body?
-2. Why might a browser hide response headers from a normal user?
-3. What does `curl -i` add to the output?
-4. What does `-o /dev/null` do in the filtering command?
-5. Why is a custom header a poor place to store a real secret?
+**1. What is the difference between a status line, a header, and a body?**
+
+**2. Why might a browser hide response headers from a normal user?**
+
+**3. What does `curl -i` add to the output?**
+
+**4. What does `-o /dev/null` do in the filtering command?**
+
+**5. Why is a custom header a poor place to store a real secret?**

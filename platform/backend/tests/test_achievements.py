@@ -363,6 +363,7 @@ def test_global_achievement_without_course(
         ("high-school-9-2-rangebox-file-hunt", {"file_hunter"}),
         ("high-school-10-1-rangebox-network-basics", {"header_hunter"}),
         ("high-school-10-2-rangebox-browser-and-source", {"source_sleuth"}),
+        ("high-school-11-1-rangebox-log-detective", {"log_detective"}),
     ],
 )
 def test_new_lab_badges_awarded(

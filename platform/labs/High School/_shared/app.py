@@ -7,6 +7,7 @@ Each lab selects a mode with LAB_MODE and supplies its own FLAG:
     filehunt - a small evidence archive with one flag file among decoys
     network  - a status endpoint and a token in the response headers
     browser  - a page whose HTML source contains the flag
+    logs     - a synthetic web access log with a suspicious request
 
 Nothing here reaches the internet, calls a real service, or stores state.
 """
@@ -226,6 +227,50 @@ def browser_body() -> str:
     """
 
 
+def logs_body() -> str:
+    return """
+      <span class="pill">Defensive security</span>
+      <h1>Read the web server log</h1>
+      <p class="lede">A log is a record of what a service saw. Most lines are
+      ordinary. A few can tell you that someone was probing the server.</p>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Download the access log, find the suspicious requests, and recover the
+        training token from the request that should never have succeeded.</p>
+        <a class="button" href="/access.log">Open access.log</a>
+      </div>
+      <div class="card">
+        <h2>Try the terminal too</h2>
+        <pre>curl http://logs.lab:8080/access.log
+grep " 404 " access.log
+grep "OCR{" access.log</pre>
+      </div>
+      <div class="card note">
+        <h2>Think like a defender</h2>
+        <p>One source address is making repeated failed requests, then a request
+        with an unusual query string. That pattern is worth explaining in a short
+        incident note.</p>
+      </div>
+    """
+
+
+def access_log() -> str:
+    lines = [
+        '10.0.40.15 - - [18/Mar/2026:09:01:12 +0000] "GET / HTTP/1.1" 200 512 "-" "Mozilla/5.0"',
+        '10.0.40.22 - - [18/Mar/2026:09:02:45 +0000] "GET /schedule HTTP/1.1" 200 1203 "-" "Mozilla/5.0"',
+        '10.0.40.31 - - [18/Mar/2026:09:04:03 +0000] "GET /health HTTP/1.1" 200 32 "-" "curl/8.5.0"',
+        '10.0.40.15 - - [18/Mar/2026:09:06:20 +0000] "GET /?debug=' + DECOY_FLAG + ' HTTP/1.1" 200 512 "-" "Mozilla/5.0"',
+        '203.0.113.66 - - [18/Mar/2026:09:12:10 +0000] "GET /admin HTTP/1.1" 404 189 "-" "sqlmap/1.8"',
+        '203.0.113.66 - - [18/Mar/2026:09:12:13 +0000] "GET /wp-login.php HTTP/1.1" 404 189 "-" "sqlmap/1.8"',
+        '203.0.113.66 - - [18/Mar/2026:09:12:17 +0000] "GET /backup.sql HTTP/1.1" 404 189 "-" "sqlmap/1.8"',
+        '203.0.113.66 - - [18/Mar/2026:09:12:22 +0000] "GET /admin?token=' + FLAG + ' HTTP/1.1" 200 512 "-" "sqlmap/1.8"',
+        '10.0.40.22 - - [18/Mar/2026:09:14:51 +0000] "GET /schedule HTTP/1.1" 200 1203 "-" "Mozilla/5.0"',
+        '10.0.40.31 - - [18/Mar/2026:09:16:08 +0000] "GET /health HTTP/1.1" 200 32 "-" "curl/8.5.0"',
+        '10.0.40.15 - - [18/Mar/2026:09:18:33 +0000] "GET / HTTP/1.1" 200 512 "-" "Mozilla/5.0"',
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def evidence_zip() -> bytes:
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
@@ -306,6 +351,16 @@ class Handler(BaseHTTPRequestHandler):
                     "lesson": "Read the X-OCR-Token response header.",
                 }
                 self._send(200, json.dumps(payload), "application/json")
+                return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "logs":
+            if path in ("/", "/index.html"):
+                body = page("Log detective", logs_body())
+            elif path == "/access.log":
+                self._send(200, access_log(), "text/plain; charset=utf-8")
                 return
             else:
                 self._send(404, page("Not found", "<h1>Not found</h1>"))

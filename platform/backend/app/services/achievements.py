@@ -30,6 +30,7 @@ RANGEBOX_ROOKIE = "rangebox_rookie"
 FILE_HUNTER = "file_hunter"
 HEADER_HUNTER = "header_hunter"
 SOURCE_SLEUTH = "source_sleuth"
+LOG_DETECTIVE = "log_detective"
 RANGEBOX_RANGER = "rangebox_ranger"
 FORENSICS_PATHFINDER = "forensics_pathfinder"
 
@@ -50,6 +51,7 @@ ACHIEVEMENT_LABELS = {
     FILE_HUNTER: "File Hunter",
     HEADER_HUNTER: "Header Hunter",
     SOURCE_SLEUTH: "Source Sleuth",
+    LOG_DETECTIVE: "Log Detective",
     RANGEBOX_RANGER: "RangeBox Ranger",
     FORENSICS_PATHFINDER: "Forensics Pathfinder",
 }
@@ -71,6 +73,7 @@ ACHIEVEMENT_DESCRIPTIONS = {
     FILE_HUNTER: "Completed the RangeBox file hunt",
     HEADER_HUNTER: "Completed the RangeBox network basics lab",
     SOURCE_SLEUTH: "Completed the RangeBox browser and source lab",
+    LOG_DETECTIVE: "Read the access log and captured the flag",
     RANGEBOX_RANGER: "Completed all four RangeBox basics exercises",
     FORENSICS_PATHFINDER: "Completed both Digital Forensics exercises",
 }
@@ -135,6 +138,7 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     FILE_HUNTER: "\U0001F5C2\uFE0F",
     HEADER_HUNTER: "\U0001F4E1",
     SOURCE_SLEUTH: "\U0001F50E",
+    LOG_DETECTIVE: "\U0001F4DC",
     RANGEBOX_RANGER: "\U0001F3D5\uFE0F",
     FORENSICS_PATHFINDER: "\U0001F9ED",
 }
@@ -244,6 +248,8 @@ def _check_lab_badges(
         _award(db, user_id, course_id, lab.id, HEADER_HUNTER)
     elif lab.slug == "high-school-10-2-rangebox-browser-and-source":
         _award(db, user_id, course_id, lab.id, SOURCE_SLEUTH)
+    elif lab.slug == "high-school-11-1-rangebox-log-detective":
+        _award(db, user_id, course_id, lab.id, LOG_DETECTIVE)
 
     # Existing hidden software-security badges.
     if (lab.slug == "software-security-2-1-diagnostics-command-injection"

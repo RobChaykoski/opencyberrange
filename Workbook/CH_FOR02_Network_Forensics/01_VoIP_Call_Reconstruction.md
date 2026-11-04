@@ -23,6 +23,12 @@ for the training token.
 curl -O http://voice.lab:8080/voip-call.pcap
 ```
 
+!!! note "Download the example capture"
+    If you are reviewing this exercise without the lab, download the capture
+    and reconstruction helper here:
+    [voip-call.pcap](captures/voip-call.pcap) and
+    [reconstruct.py](captures/reconstruct.py).
+
 ## Step 2: Find the signalling
 
 Open the capture in Wireshark and filter for SIP:
@@ -136,8 +142,12 @@ Real VoIP investigations often combine:
 
 ## Analysis Questions
 
-1. What is the difference between SIP and RTP?
-2. What does the SDP body tell you before you extract any audio?
-3. Why is G.711 audio easy to reconstruct from RTP?
-4. What could an investigator learn from the signalling even without the audio?
-5. Which controls would make a real call harder to intercept?
+**1. What is the difference between SIP and RTP?**
+
+**2. What does the SDP body tell you before you extract any audio?**
+
+**3. Why is G.711 audio easy to reconstruct from RTP?**
+
+**4. What could an investigator learn from the signalling even without the audio?**
+
+**5. Which controls would make a real call harder to intercept?**

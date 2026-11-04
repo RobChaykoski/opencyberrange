@@ -91,9 +91,12 @@ are, find out what you have, and ask a service for information.
 
 ## Analysis Questions
 
-1. What is the difference between the RangeBox account and your OpenCyberRange
-   account?
-2. Why is it useful to run `pwd` before opening a file?
-3. What does `curl` do, in one sentence?
-4. Which command would you use to list the files in a folder?
-5. What would you try first if a command printed an error?
+**1. What is the difference between the RangeBox account and your OpenCyberRange account?**
+
+**2. Why is it useful to run `pwd` before opening a file?**
+
+**3. What does `curl` do, in one sentence?**
+
+**4. Which command would you use to list the files in a folder?**
+
+**5. What would you try first if a command printed an error?**

@@ -82,8 +82,12 @@ system. A page listed as disallowed can still be opened by a person.
 
 ## Analysis Questions
 
-1. What is the difference between what the browser displays and the HTML source?
-2. Why are HTML comments easy to overlook?
-3. What kinds of information should never appear in a comment?
-4. Does `robots.txt` stop a person from opening a page? Why or why not?
-5. How would you check a page before publishing it?
+**1. What is the difference between what the browser displays and the HTML source?**
+
+**2. Why are HTML comments easy to overlook?**
+
+**3. What kinds of information should never appear in a comment?**
+
+**4. Does `robots.txt` stop a person from opening a page? Why or why not?**
+
+**5. How would you check a page before publishing it?**

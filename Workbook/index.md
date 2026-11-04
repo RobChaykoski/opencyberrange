@@ -8,6 +8,13 @@ Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides
     lab before relying on it. See `BUILD_NOTICE.md` in the repository root for
     attribution and the full AI-assistance disclosure.
 
+!!! note "Example IP addresses"
+    The walkthrough examples use `10.100.13.0/24`, the subnet in the reference
+    setup. The platform assigns each student session its own `/24` and shows it
+    in the **Active Lab View**. If your session uses a different subnet,
+    substitute your address in every command. Workbook examples are static and
+    may not reflect later changes to the address range.
+
 ## Available Tracks
 
 ### Windows Penetration Testing
@@ -101,6 +108,7 @@ Start the forensics pathway at
 |---------|-------|-----------|
 | CH HS09; Grade 9 RangeBox Basics | Launching RangeBox, terminal basics, file search | 2 exercises |
 | CH HS10; Grade 10 RangeBox Basics | Hostnames, HTTP responses, browser source | 2 exercises |
+| CH HS11; Grade 11 Defensive Security | Web server logs, suspicious requests, evidence and response | 1 exercise |
 | CH HS12; Grade 12 Applied Cybersecurity | Browser-only OSINT, file metadata, privacy, and community event challenges | 1 exercise |
 
 Start the high-school pathway at

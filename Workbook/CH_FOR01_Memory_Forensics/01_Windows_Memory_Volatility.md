@@ -114,8 +114,12 @@ a reboot can remove it.
 
 ## Analysis Questions
 
-1. What is the difference between disk evidence and memory evidence?
-2. Why does Volatility need a symbol file?
-3. What can a process list tell an investigator that a file listing cannot?
-4. Why is a memory image sensitive even if the disk is encrypted?
-5. What would you document before and after acquiring memory?
+**1. What is the difference between disk evidence and memory evidence?**
+
+**2. Why does Volatility need a symbol file?**
+
+**3. What can a process list tell an investigator that a file listing cannot?**
+
+**4. Why is a memory image sensitive even if the disk is encrypted?**
+
+**5. What would you document before and after acquiring memory?**

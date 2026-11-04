@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Form, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Literal, Optional
 import base64
 import binascii
 import io
@@ -348,6 +348,7 @@ class UserSettingsUpdate(BaseModel):
     avatar_data: Optional[str] = Field(None, max_length=800_000)
     timezone: Optional[str] = Field(None, max_length=64)
     show_on_scoreboard: Optional[bool] = None
+    scoreboard_name_mode: Optional[Literal["real_name", "username", "anonymous"]] = None
     login_notifications: Optional[bool] = None
     notification_prefs: Optional[dict] = None
 
@@ -383,6 +384,7 @@ async def get_user_settings(
         "avatar_data": getattr(current_user, "avatar_data", None),
         "timezone": current_user.timezone,
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
+        "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
         "login_notifications": getattr(current_user, "login_notifications", True),
         "notification_prefs": prefs or {},
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
@@ -409,6 +411,8 @@ async def update_user_settings(
         current_user.timezone = payload.timezone
     if payload.show_on_scoreboard is not None:
         current_user.show_on_scoreboard = payload.show_on_scoreboard
+    if payload.scoreboard_name_mode is not None:
+        current_user.scoreboard_name_mode = payload.scoreboard_name_mode
     if payload.login_notifications is not None:
         current_user.login_notifications = payload.login_notifications
     if payload.notification_prefs is not None:
@@ -577,6 +581,7 @@ async def export_user_data(
             "last_login_ip": redact_ip(current_user.last_login_ip),
             "timezone": current_user.timezone,
             "show_on_scoreboard": current_user.show_on_scoreboard,
+            "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
             "login_notifications": current_user.login_notifications,
             "notification_prefs": _json_or_raw(current_user.notification_prefs),
             "mfa_enabled": bool(current_user.mfa_enabled),
@@ -1004,6 +1009,8 @@ async def get_current_user_info(
         "must_change_password": getattr(current_user, 'must_change_password', False),
         "mfa_enabled": bool(getattr(current_user, "mfa_enabled", False)),
         "timezone": getattr(current_user, 'timezone', None),
+        "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
+        "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
     }
 
     if imp:
