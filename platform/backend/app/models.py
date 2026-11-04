@@ -2,7 +2,7 @@
 Database models
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Float, ForeignKey, Text, Index, CheckConstraint, text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, Float, ForeignKey, Text, Index, CheckConstraint, text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -52,6 +52,17 @@ class User(Base):
     notification_prefs = Column(Text, nullable=True)
     # Email the user on a new login from a new IP.
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # Consent to optional account email. Essential security/service messages may
+    # still be sent where required; the version and timestamp make the consent
+    # record auditable and support withdrawal under PIPEDA.
+    email_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    email_consent_version = Column(String(32), nullable=True)
+    email_consent_updated_at = Column(DateTime, nullable=True)
+    # Consecutive UTC calendar days with a successful sign-in. Kept separately
+    # from last_login_at so the dashboard can show a stable streak even when a
+    # learner signs in several times in one day.
+    login_streak = Column(Integer, default=0, server_default=text("0"), nullable=False)
+    last_login_day = Column(Date, nullable=True)
     # --- Optional survey consent (platform/usage surveys only) ---
     # Opt-in is explicit and separate from account creation. The timestamp and
     # statement version make the consent record auditable and support withdrawal.
@@ -373,6 +384,34 @@ class ExercisePulseSurvey(Base):
     )
 
 
+class ExerciseReaction(Base):
+    """Lightweight thumbs-up / thumbs-down feedback on an exercise.
+
+    Separate from ``ExercisePulseSurvey`` because this control is available
+    while a learner is working, is not gated by survey consent, and feeds a
+    simple course report. One reaction is kept per learner and exercise; the
+    course context is stored so course reports do not mix cohorts.
+    """
+    __tablename__ = "exercise_reactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True)
+    reaction = Column(String(10), nullable=False)  # like or dislike
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User")
+    lab = relationship("Lab")
+    course = relationship("Course")
+
+    __table_args__ = (
+        Index("ix_reaction_user_lab_unique", "user_id", "lab_id", unique=True),
+        Index("ix_reaction_course_lab", "course_id", "lab_id"),
+    )
+
+
 class Survey(Base):
     """Instructor-created survey attached to one or more courses."""
     __tablename__ = "surveys"
@@ -616,6 +655,8 @@ class Competition(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
+    # Optional event mark shown on the competition list and detail header.
+    logo_data = Column(Text, nullable=True)
     start_at = Column(DateTime, nullable=False)
     end_at = Column(DateTime, nullable=False)
     is_active = Column(Boolean, default=True, server_default=text("true"), nullable=False)

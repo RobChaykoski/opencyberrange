@@ -475,6 +475,53 @@
               </p>
             </div>
 
+            <!-- Quick reaction: available once the learner has started -->
+            <div
+              v-if="!isAdminUser && (activeLab.session || activeLab.lab.is_completed)"
+              class="panel-section panel-section--full exercise-reaction"
+            >
+              <h3 class="section-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
+                  <path d="M7 10v11"/>
+                  <path d="M15 5.5 13.5 10H19a2 2 0 0 1 2 2.3l-1.2 6A2.4 2.4 0 0 1 17.4 20H7V10l4.6-7a1.7 1.7 0 0 1 3.4 2.5Z"/>
+                </svg>
+                Exercise feedback
+              </h3>
+              <p class="exercise-reaction__lead">
+                Was this exercise useful? Your instructor sees totals, not your name.
+              </p>
+              <div class="exercise-reaction__buttons" role="group" aria-label="Exercise feedback">
+                <button
+                  type="button"
+                  class="exercise-reaction__btn"
+                  :class="{ 'exercise-reaction__btn--active': reaction === 'like' }"
+                  :aria-pressed="reaction === 'like'"
+                  :disabled="reactionSaving"
+                  @click="setReaction('like')"
+                >
+                  <span aria-hidden="true">&#128077;</span> Like
+                </button>
+                <button
+                  type="button"
+                  class="exercise-reaction__btn"
+                  :class="{ 'exercise-reaction__btn--active': reaction === 'dislike' }"
+                  :aria-pressed="reaction === 'dislike'"
+                  :disabled="reactionSaving"
+                  @click="setReaction('dislike')"
+                >
+                  <span aria-hidden="true">&#128078;</span> Dislike
+                </button>
+              </div>
+              <p
+                v-if="reactionMessage"
+                class="exercise-reaction__message"
+                :class="{ 'exercise-reaction__message--error': reactionError }"
+                role="status"
+              >
+                {{ reactionMessage }}
+              </p>
+            </div>
+
             <!-- Hints -->
             <div class="panel-section panel-section--full">
               <h3 class="section-title">
@@ -636,6 +683,12 @@ const flagMessage = ref('')
 const flagError = ref(false)
 const flagSuccess = ref(false)
 const submittingFlag = ref(false)
+
+// Quick exercise reaction (like/dislike) shown to learners while they work.
+const reaction = ref(null)
+const reactionSaving = ref(false)
+const reactionMessage = ref('')
+const reactionError = ref(false)
 // True when a correct flag is tearing down a live environment, so the panel
 // can say so instead of silently vanishing
 const flagStoppedSession = ref(false)
@@ -1005,6 +1058,7 @@ const openActiveLab = async (lab) => {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
     })
     activeLab.value = data
+    loadReaction(data.lab?.id || lab.id)
 
     if (data.session) {
       if (data.session.time_remaining_seconds !== undefined) {
@@ -1047,11 +1101,53 @@ const openActiveLab = async (lab) => {
   }
 }
 
+const loadReaction = async (labId) => {
+  reaction.value = null
+  reactionMessage.value = ''
+  reactionError.value = false
+  if (!labId || isAdminUser.value) return
+  try {
+    const { data } = await axios.get(`/analytics/reaction/${labId}`)
+    reaction.value = data.reaction || null
+  } catch {
+    // Feedback is optional; a failed lookup must not block the exercise.
+  }
+}
+
+const setReaction = async (value) => {
+  if (!activeLab.value?.lab?.id || reactionSaving.value) return
+  const next = reaction.value === value ? null : value
+  reactionSaving.value = true
+  reactionMessage.value = ''
+  reactionError.value = false
+  try {
+    const { data } = await axios.post(
+      `/analytics/reaction/${activeLab.value.lab.id}`,
+      {
+        reaction: next,
+        course_id: activeCourseId.value ? Number(activeCourseId.value) : null,
+      },
+    )
+    reaction.value = data.reaction || null
+    reactionMessage.value = next
+      ? 'Thanks. Your feedback was saved.'
+      : 'Feedback cleared.'
+  } catch (error) {
+    reactionError.value = true
+    reactionMessage.value = error.response?.data?.detail || 'Could not save your feedback.'
+  } finally {
+    reactionSaving.value = false
+  }
+}
+
 const closeActiveLab = () => {
   activeLab.value = null
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
+  reaction.value = null
+  reactionMessage.value = ''
+  reactionError.value = false
 }
 
 const focusRunningLab = async (running) => {
@@ -2364,6 +2460,60 @@ watch(timeRemaining, (val) => {
 .section-title svg {
   width: 18px;
   height: 18px;
+}
+
+.exercise-reaction__lead {
+  margin: -0.35rem 0 0.8rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.exercise-reaction__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.exercise-reaction__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.exercise-reaction__btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.exercise-reaction__btn--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--bg-secondary));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.exercise-reaction__btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.exercise-reaction__message {
+  margin: 0.7rem 0 0;
+  color: var(--success);
+  font-size: 0.76rem;
+}
+
+.exercise-reaction__message--error {
+  color: var(--danger);
 }
 
 .objectives-list {

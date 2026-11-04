@@ -30,8 +30,16 @@
           <strong>{{ totals.enrolled_learners || 0 }}</strong>
         </article>
         <article class="reports-stat">
+          <span>Learning hours</span>
+          <strong>{{ totals.total_learning_hours || 0 }}</strong>
+        </article>
+        <article class="reports-stat">
           <span>Pulse responses</span>
           <strong>{{ totals.pulse_responses || 0 }}</strong>
+        </article>
+        <article class="reports-stat">
+          <span>Exercise feedback</span>
+          <strong>{{ totals.positive_rate || 0 }}<small>% positive</small></strong>
         </article>
         <article class="reports-stat reports-stat--rag">
           <span>Signals</span>
@@ -78,6 +86,7 @@
               <th scope="col">Completion</th>
               <th scope="col">Abandonment</th>
               <th scope="col">Learning</th>
+              <th scope="col">Feedback</th>
               <th scope="col">Confidence</th>
               <th scope="col">Pulse</th>
               <th scope="col"><span class="sr-only">Open</span></th>
@@ -107,6 +116,13 @@
                 {{ row.summary.learning_reported ?? '—' }}<small v-if="row.summary.learning_reported !== null">/5</small>
               </td>
               <td>
+                <template v-if="row.summary.reaction_count">
+                  <strong>{{ row.summary.positive_rate }}%</strong>
+                  <small>{{ row.summary.likes }} like{{ row.summary.likes === 1 ? '' : 's' }} · {{ row.summary.dislikes }} dislike{{ row.summary.dislikes === 1 ? '' : 's' }}</small>
+                </template>
+                <span v-else>—</span>
+              </td>
+              <td>
                 {{ row.summary.confidence_gain !== null ? `${row.summary.confidence_gain > 0 ? '+' : ''}${row.summary.confidence_gain}` : '—' }}
               </td>
               <td>{{ row.summary.pulse_responses }}</td>
@@ -122,6 +138,7 @@
 
       <p class="reports-note">
         RAG is a teaching signal, not a learner label. Learning is self-reported;
+        exercise reactions are optional and shown as totals, never by learner name;
         confidence gain is a performance-growth proxy, not a psychological score.
       </p>
     </template>
@@ -155,15 +172,19 @@ const load = async () => {
 }
 
 const exportCsv = () => {
-  const header = ['Course code', 'Course', 'RAG', 'Learners', 'Completion %', 'Abandonment %', 'Learning reported', 'Confidence gain', 'Pulse responses']
+  const header = ['Course code', 'Course', 'RAG', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses']
   const lines = rows.value.map((row) => [
     row.course.code,
     row.course.name,
     ragLabel(row.summary.rag),
     row.summary.enrolled_learners,
+    row.summary.total_learning_hours ?? 0,
     row.summary.completion_rate,
     row.summary.abandonment_rate,
     row.summary.learning_reported ?? '',
+    row.summary.likes ?? 0,
+    row.summary.dislikes ?? 0,
+    row.summary.positive_rate ?? 0,
     row.summary.confidence_gain ?? '',
     row.summary.pulse_responses,
   ])

@@ -26,6 +26,11 @@
           <span class="learning-stat__detail">exercises started</span>
         </article>
         <article class="learning-stat">
+          <span class="learning-stat__label">Learning time</span>
+          <strong>{{ data.summary.total_learning_hours ?? 0 }}<small> h</small></strong>
+          <span class="learning-stat__detail">{{ data.summary.total_learning_minutes ?? 0 }} min across started exercises</span>
+        </article>
+        <article class="learning-stat">
           <span class="learning-stat__label">Median time</span>
           <strong>{{ data.summary.median_time_minutes ?? '—' }}<small v-if="data.summary.median_time_minutes !== null"> min</small></strong>
           <span class="learning-stat__detail">per completed exercise</span>

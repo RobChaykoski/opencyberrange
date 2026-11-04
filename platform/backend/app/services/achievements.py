@@ -34,6 +34,26 @@ SOURCE_SLEUTH = "source_sleuth"
 LOG_DETECTIVE = "log_detective"
 RANGEBOX_RANGER = "rangebox_ranger"
 FORENSICS_PATHFINDER = "forensics_pathfinder"
+# Learning-time and sign-in streak badges are global (course_id NULL).
+LEARNING_1H = "learning_hours_1"
+LEARNING_5H = "learning_hours_5"
+LEARNING_15H = "learning_hours_15"
+LEARNING_30H = "learning_hours_30"
+LOGIN_STREAK_3 = "login_streak_3"
+LOGIN_STREAK_7 = "login_streak_7"
+LOGIN_STREAK_30 = "login_streak_30"
+
+LEARNING_ACHIEVEMENTS = (
+    (1 * 60, LEARNING_1H),
+    (5 * 60, LEARNING_5H),
+    (15 * 60, LEARNING_15H),
+    (30 * 60, LEARNING_30H),
+)
+LOGIN_STREAK_ACHIEVEMENTS = (
+    (3, LOGIN_STREAK_3),
+    (7, LOGIN_STREAK_7),
+    (30, LOGIN_STREAK_30),
+)
 
 ACHIEVEMENT_LABELS = {
     FIRST_BLOOD: "First Blood",
@@ -55,6 +75,13 @@ ACHIEVEMENT_LABELS = {
     LOG_DETECTIVE: "Log Detective",
     RANGEBOX_RANGER: "RangeBox Ranger",
     FORENSICS_PATHFINDER: "Forensics Pathfinder",
+    LEARNING_1H: "Curious Mind",
+    LEARNING_5H: "Deep Dive",
+    LEARNING_15H: "Dedicated Learner",
+    LEARNING_30H: "Scholar",
+    LOGIN_STREAK_3: "Checking In",
+    LOGIN_STREAK_7: "Week Strong",
+    LOGIN_STREAK_30: "Month of Momentum",
 }
 
 ACHIEVEMENT_DESCRIPTIONS = {
@@ -77,6 +104,13 @@ ACHIEVEMENT_DESCRIPTIONS = {
     LOG_DETECTIVE: "Read the access log and captured the flag",
     RANGEBOX_RANGER: "Completed all four RangeBox basics exercises",
     FORENSICS_PATHFINDER: "Completed both Digital Forensics exercises",
+    LEARNING_1H: "Spent at least 1 hour learning on exercises",
+    LEARNING_5H: "Spent at least 5 hours learning on exercises",
+    LEARNING_15H: "Spent at least 15 hours learning on exercises",
+    LEARNING_30H: "Spent at least 30 hours learning on exercises",
+    LOGIN_STREAK_3: "Signed in on 3 consecutive days",
+    LOGIN_STREAK_7: "Signed in on 7 consecutive days",
+    LOGIN_STREAK_30: "Signed in on 30 consecutive days",
 }
 
 # The three browser-first DevFest starter exercises. These slugs are stable;
@@ -142,6 +176,13 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     LOG_DETECTIVE: "\U0001F4DC",
     RANGEBOX_RANGER: "\U0001F3D5\uFE0F",
     FORENSICS_PATHFINDER: "\U0001F9ED",
+    LEARNING_1H: "\U0001F331",
+    LEARNING_5H: "\U0001F50D",
+    LEARNING_15H: "\U0001F4DA",
+    LEARNING_30H: "\U0001F393",
+    LOGIN_STREAK_3: "\U0001F4C5",
+    LOGIN_STREAK_7: "\U0001F5D3\uFE0F",
+    LOGIN_STREAK_30: "\U0001F3C5",
 }
 
 # --- Competition-specific achievements -------------------------------------
@@ -291,6 +332,30 @@ def _award(db: Session, user_id: int, course_id: int | None, lab_id: int | None,
                   target_id=lab_id,
                   target_label=resolve_achievement_label(db, achievement_type),
                   commit=False)
+
+
+def _award_learning_achievements(db: Session, user_id: int):
+    """Award global learning-hour badges from the shared time calculation."""
+    from app.services.learning_time import total_learning_minutes
+
+    minutes = total_learning_minutes(db, user_id)
+    for threshold, achievement_type in LEARNING_ACHIEVEMENTS:
+        if minutes >= threshold:
+            _award(db, user_id, None, None, achievement_type)
+
+
+def check_learning_achievements(db: Session, user_id: int):
+    """Public entry point for callers that are not completing an exercise."""
+    _award_learning_achievements(db, user_id)
+    db.commit()
+
+
+def check_login_streak_achievements(db: Session, user_id: int, streak_days: int):
+    """Award global badges when a sign-in streak reaches a threshold."""
+    for days, achievement_type in LOGIN_STREAK_ACHIEVEMENTS:
+        if streak_days >= days:
+            _award(db, user_id, None, None, achievement_type)
+    db.commit()
 
 
 def _check_lab_badges(
@@ -527,6 +592,7 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
 
     if not assignments:
         _check_global_achievements(db, user_id, lab, completion)
+        _award_learning_achievements(db, user_id)
         db.commit()
         return
 
@@ -663,6 +729,7 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
         )
 
     _check_collection_achievements(db, user_id)
+    _award_learning_achievements(db, user_id)
 
     db.commit()
 

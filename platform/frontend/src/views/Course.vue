@@ -464,6 +464,13 @@ const ACHIEVEMENT_MAP = {
   speed_demon: { label: 'Speed Demon', icon: '\u{26A1}' },
   clean_sweep: { label: 'Clean Sweep', icon: '\u{1F3C6}' },
   streak: { label: 'On a Roll', icon: '\u{1F525}' },
+  learning_hours_1: { label: 'Curious Mind', icon: '\u{1F331}' },
+  learning_hours_5: { label: 'Deep Dive', icon: '\u{1F50D}' },
+  learning_hours_15: { label: 'Dedicated Learner', icon: '\u{1F4DA}' },
+  learning_hours_30: { label: 'Scholar', icon: '\u{1F393}' },
+  login_streak_3: { label: 'Checking In', icon: '\u{1F4C5}' },
+  login_streak_7: { label: 'Week Strong', icon: '\u{1F5D3}\u{FE0F}' },
+  login_streak_30: { label: 'Month of Momentum', icon: '\u{1F3C5}' },
 }
 
 // Admin-defined achievements arrive with the achievements response so the

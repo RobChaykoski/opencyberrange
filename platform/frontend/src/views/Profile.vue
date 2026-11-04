@@ -175,6 +175,24 @@
               <span v-else class="status-badge status-badge--pending">Pending approval</span>
               <span v-if="user.created_at" class="profile-hero__joined">Member since {{ formatDateOnly(user.created_at) }}</span>
             </div>
+
+            <div v-if="summary" class="profile-hero__progress">
+              <div class="profile-hero__progress-head">
+                <span>Your learning trail</span>
+                <span>{{ summary.totals.labs_completed }} / {{ summary.totals.labs_total }} exercises</span>
+              </div>
+              <div
+                class="profile-hero__progress-bar"
+                role="progressbar"
+                :aria-valuenow="summary.totals.progress_percent"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                :aria-label="`Overall progress: ${summary.totals.progress_percent}%`"
+              >
+                <span :style="{ width: summary.totals.progress_percent + '%' }"></span>
+              </div>
+              <p class="profile-hero__progress-note">{{ progressMessage }}</p>
+            </div>
           </div>
 
           <div class="profile-stats">
@@ -1010,6 +1028,16 @@ const roleBadgeClass = computed(() => ({
 }))
 
 const certificates = computed(() => summary.value?.certificates || [])
+
+const progressMessage = computed(() => {
+  const percent = summary.value?.totals?.progress_percent ?? 0
+  if (percent >= 100) return 'Every visible exercise is complete. Excellent work.'
+  if (percent >= 75) return 'Strong run. The finish line is close.'
+  if (percent >= 50) return 'More than halfway there. Keep the momentum going.'
+  if (percent >= 25) return 'You are building a solid rhythm.'
+  if (percent > 0) return 'Your first steps are in. Keep going.'
+  return 'Your first exercise is waiting when you are ready.'
+})
 const tracks = computed(() => summary.value?.tracks || [])
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
@@ -2537,6 +2565,42 @@ watch(() => route.path, (newPath) => {
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.9rem;
+}
+
+.profile-hero__progress {
+  margin-top: 1rem;
+  width: min(100%, 440px);
+}
+
+.profile-hero__progress-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.profile-hero__progress-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.profile-hero__progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  transition: width 0.35s ease;
+}
+
+.profile-hero__progress-note {
+  margin: 0.4rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
 }
 
 .profile-hero__joined {

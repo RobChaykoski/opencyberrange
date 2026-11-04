@@ -1,9 +1,12 @@
 """Login smoke tests: bad credentials rejected, JWT issued on good ones."""
+from datetime import datetime, timedelta, timezone
+
 import pytest
 
 import jwt
 
 from app.config import settings
+from app.models import Achievement
 
 pytestmark = pytest.mark.db
 
@@ -47,6 +50,30 @@ def test_login_issues_jwt_on_good_creds(client, test_user, test_password):
     )
     assert claims["sub"] == test_user.username
     assert "exp" in claims
+
+
+def test_login_tracks_streak_and_awards_badge(
+    client, db_session, test_user, test_password
+):
+    test_user.login_streak = 2
+    test_user.last_login_day = (
+        datetime.now(timezone.utc).date() - timedelta(days=1)
+    )
+    db_session.commit()
+
+    resp = client.post(
+        "/api/auth/login",
+        data={"username": test_user.username, "password": test_password},
+    )
+    assert resp.status_code == 200, resp.text
+
+    db_session.refresh(test_user)
+    assert test_user.login_streak == 3
+    award = db_session.query(Achievement).filter(
+        Achievement.user_id == test_user.id,
+        Achievement.achievement_type == "login_streak_3",
+    ).first()
+    assert award is not None
 
 
 def test_token_grants_access_to_me_endpoint(client, auth_headers, test_user):

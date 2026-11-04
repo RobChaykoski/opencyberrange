@@ -33,6 +33,13 @@ const ICONS = {
   speed_demon: markRaw(ClockIcon),
   clean_sweep: markRaw(ShieldCheckIcon),
   streak: markRaw(FlameIcon),
+  learning_hours_1: markRaw(BrainIcon),
+  learning_hours_5: markRaw(BrainIcon),
+  learning_hours_15: markRaw(BrainIcon),
+  learning_hours_30: markRaw(TrophyIcon),
+  login_streak_3: markRaw(FlameIcon),
+  login_streak_7: markRaw(FlameIcon),
+  login_streak_30: markRaw(TrophyIcon),
 }
 
 const iconComponent = computed(() => {

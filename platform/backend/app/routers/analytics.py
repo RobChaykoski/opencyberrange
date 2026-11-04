@@ -20,12 +20,17 @@ from sqlalchemy.orm import Session, joinedload
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.database import get_db
 from app.services.activity import EventTypes, log_activity
+from app.services.learning_time import (
+    learning_minutes_by_pair,
+    learning_minutes_by_user,
+)
 from app.models import (
     Course,
     CourseCompletionReset,
     CourseEnrollment,
     CourseLabAssignment,
     ExercisePulseSurvey,
+    ExerciseReaction,
     FlagAttempt,
     Lab,
     LabCompletion,
@@ -171,11 +176,60 @@ def _session_rows(db: Session, user_ids: set, lab_ids: set):
     ).all()
 
 
+def _reaction_rows(db: Session, lab_ids: set, course_id: Optional[int] = None):
+    if not lab_ids:
+        return []
+    query = db.query(ExerciseReaction).filter(
+        ExerciseReaction.lab_id.in_(lab_ids)
+    )
+    if course_id is not None:
+        query = query.filter(ExerciseReaction.course_id == course_id)
+    return query.all()
+
+
+def _reaction_fields(rows) -> dict:
+    likes = sum(1 for row in rows if row.reaction == "like")
+    dislikes = sum(1 for row in rows if row.reaction == "dislike")
+    total = likes + dislikes
+    return {
+        "likes": likes,
+        "dislikes": dislikes,
+        "reaction_count": total,
+        "positive_rate": _rate(likes, total),
+    }
+
+
+def _require_started_lab(db: Session, current_user: User, lab_id: int):
+    if current_user.role in {"admin", "instructor"}:
+        return
+    started = db.query(LabSession.id).filter(
+        LabSession.user_id == current_user.id,
+        LabSession.lab_id == lab_id,
+        LabSession.is_diagnostic == False,
+    ).first()
+    completed = db.query(LabCompletion.id).filter(
+        LabCompletion.user_id == current_user.id,
+        LabCompletion.lab_id == lab_id,
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).first()
+    if not started and not completed:
+        raise HTTPException(
+            status_code=403,
+            detail="Start the exercise before rating it",
+        )
+
+
 class PulseSurveyRequest(BaseModel):
     difficulty: int = Field(..., ge=1, le=5)
     learning: int = Field(..., ge=1, le=5)
     unclear: Optional[str] = Field(None, max_length=2000)
     topic_interest: Optional[str] = Field(None, max_length=50)
+    course_id: Optional[int] = None
+
+
+class ExerciseReactionRequest(BaseModel):
+    reaction: Optional[str] = Field(None, pattern="^(like|dislike)$")
     course_id: Optional[int] = None
 
 
@@ -455,6 +509,8 @@ def _student_summary(completions: list[LabCompletion], sessions: list[LabSession
     started_labs = {row.lab_id for row in sessions}
     completed_labs = {row.lab_id for row in completions}
     total_time = sum(row.time_spent_minutes or 0 for row in completions)
+    learning_pairs = learning_minutes_by_pair(completions, sessions)
+    total_learning_minutes = int(sum(learning_minutes_by_user(learning_pairs).values()))
     total_hints = sum(row.hints_used or 0 for row in completions)
     first_attempt = sum(1 for row in completions if (row.attempts or 0) == 1)
     return {
@@ -462,6 +518,8 @@ def _student_summary(completions: list[LabCompletion], sessions: list[LabSession
         "completed_exercises": len(completed_labs),
         "completion_rate": _rate(len(completed_labs), len(started_labs)),
         "total_time_minutes": total_time,
+        "total_learning_minutes": total_learning_minutes,
+        "total_learning_hours": round(total_learning_minutes / 60, 1),
         "median_time_minutes": _median(
             [row.time_spent_minutes for row in completions]
         ),
@@ -552,6 +610,10 @@ async def metric_dictionary(
              "definition": "Completed exercises divided by exercises that were started."},
             {"key": "median_time", "label": "Median time", "unit": "minutes",
              "definition": "Median reported time spent on completed exercises."},
+            {"key": "learning_hours", "label": "Learning hours", "unit": "hours",
+             "definition": "Tracked time on completed exercises, plus bounded session time for started exercises without a completion."},
+            {"key": "exercise_reaction", "label": "Exercise reaction", "unit": "likes / dislikes",
+             "definition": "Optional thumbs-up or thumbs-down feedback on an exercise. Reports show totals, not learner names."},
             {"key": "hints_per_completion", "label": "Hints per completion", "unit": "hints",
              "definition": "Total hints used divided by completed exercises."},
             {"key": "hint_free_rate", "label": "Hint-free rate", "unit": "%",
@@ -742,6 +804,14 @@ async def course_overview(
 
     started_users = {row.user_id for row in sessions}
     completed_users = {row.user_id for row in completions}
+    learning_pairs = learning_minutes_by_pair(completions, sessions)
+    learning_by_user = learning_minutes_by_user(learning_pairs)
+    total_learning_minutes = int(sum(learning_by_user.values()))
+    active_learning_minutes = [
+        value for value in learning_by_user.values() if value > 0
+    ]
+    reaction_rows = _reaction_rows(db, {lab.id for lab in labs}, course.id)
+    reaction_summary = _reaction_fields(reaction_rows)
     total_possible = len(user_ids) * len(labs)
     time_over = sum(
         1 for row in completions
@@ -791,7 +861,12 @@ async def course_overview(
             "median_time_minutes": _median(
                 [row.time_spent_minutes for row in completions]
             ),
+            "total_learning_minutes": total_learning_minutes,
+            "total_learning_hours": round(total_learning_minutes / 60, 1),
+            "learning_learners": len(active_learning_minutes),
+            "median_learning_minutes_per_learner": _median(active_learning_minutes),
             "time_over_estimate_rate": _rate(time_over, timed),
+            **reaction_summary,
             "hints_per_completion": (
                 round(
                     sum(row.hints_used or 0 for row in completions)
@@ -877,6 +952,22 @@ async def reports_overview(
             "pulse_responses": sum(
                 row["summary"]["pulse_responses"] for row in rows
             ),
+            "total_learning_hours": round(
+                sum(
+                    row["summary"]["total_learning_minutes"]
+                    for row in rows
+                ) / 60,
+                1,
+            ),
+            "likes": sum(row["summary"]["likes"] for row in rows),
+            "dislikes": sum(row["summary"]["dislikes"] for row in rows),
+            "reaction_count": sum(
+                row["summary"]["reaction_count"] for row in rows
+            ),
+            "positive_rate": _rate(
+                sum(row["summary"]["likes"] for row in rows),
+                sum(row["summary"]["reaction_count"] for row in rows),
+            ),
             "rag_counts": rag_counts,
         },
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -921,11 +1012,22 @@ async def course_exercises(
     by_lab_pulse = {}
     for row in _pulse_rows(db, {lab.id for lab in labs}, course_id=course.id):
         by_lab_pulse.setdefault(row.lab_id, []).append(row)
+    learning_pairs = learning_minutes_by_pair(completions, sessions)
+    by_lab_reactions = {}
+    for row in _reaction_rows(db, {lab.id for lab in labs}, course.id):
+        by_lab_reactions.setdefault(row.lab_id, []).append(row)
 
     rows = []
     for lab in labs:
         lab_completions = by_lab_completions.get(lab.id, [])
         lab_pulse = by_lab_pulse.get(lab.id, [])
+        lab_learning_minutes = sum(
+            value for (_user_id, lab_id), value in learning_pairs.items()
+            if lab_id == lab.id
+        )
+        lab_reaction_summary = _reaction_fields(
+            by_lab_reactions.get(lab.id, [])
+        )
         completed_users = {row.user_id for row in lab_completions}
         started_users = by_lab_sessions.get(lab.id, set())
         attempts = [row.attempts or 0 for row in lab_completions]
@@ -991,6 +1093,9 @@ async def course_exercises(
             "median_time_minutes": _median(
                 [row.time_spent_minutes for row in lab_completions]
             ),
+            "total_learning_minutes": int(lab_learning_minutes),
+            "total_learning_hours": round(lab_learning_minutes / 60, 1),
+            **lab_reaction_summary,
             "median_attempts": median_attempts,
             "hint_pressure_rate": hint_pressure,
             "first_attempt_rate": _rate(
@@ -1077,6 +1182,112 @@ async def workbook_opened(
         commit=True,
     )
     return {"message": "Workbook activity recorded"}
+
+
+@router.get("/reaction/{lab_id}")
+async def get_exercise_reaction(
+    lab_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the signed-in learner's own reaction to an exercise."""
+    lab = db.query(Lab).filter(Lab.id == lab_id).first()
+    if not lab:
+        raise HTTPException(status_code=404, detail="Exercise not found")
+    row = db.query(ExerciseReaction).filter(
+        ExerciseReaction.user_id == current_user.id,
+        ExerciseReaction.lab_id == lab_id,
+    ).first()
+    return {
+        "lab_id": lab_id,
+        "reaction": row.reaction if row else None,
+        "course_id": row.course_id if row else None,
+        "updated_at": (
+            row.updated_at.isoformat()
+            if row and row.updated_at else None
+        ),
+    }
+
+
+@router.post("/reaction/{lab_id}")
+async def set_exercise_reaction(
+    lab_id: int,
+    payload: ExerciseReactionRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Create, change, or clear a learner's reaction to an exercise.
+
+    One reaction is kept per learner and exercise. Passing ``null`` clears it.
+    Reports only aggregate likes and dislikes; they never show who reacted.
+    """
+    lab = db.query(Lab).filter(
+        Lab.id == lab_id, Lab.is_active == True
+    ).first()
+    if not lab:
+        raise HTTPException(status_code=404, detail="Exercise not found")
+
+    course_id = payload.course_id
+    if course_id is not None:
+        course = db.query(Course).filter(
+            Course.id == course_id, Course.is_active == True
+        ).first()
+        if not course:
+            raise HTTPException(status_code=404, detail="Course not found")
+        assigned = db.query(CourseLabAssignment.id).filter(
+            CourseLabAssignment.course_id == course_id,
+            CourseLabAssignment.lab_id == lab_id,
+        ).first()
+        if not assigned:
+            raise HTTPException(
+                status_code=400,
+                detail="Exercise is not assigned to this course",
+            )
+        if current_user.role == "student":
+            enrolled = db.query(CourseEnrollment.id).filter(
+                CourseEnrollment.course_id == course_id,
+                CourseEnrollment.user_id == current_user.id,
+            ).first()
+            if not enrolled:
+                raise HTTPException(
+                    status_code=403,
+                    detail="Join the course before rating its exercises",
+                )
+
+    _require_started_lab(db, current_user, lab_id)
+
+    row = db.query(ExerciseReaction).filter(
+        ExerciseReaction.user_id == current_user.id,
+        ExerciseReaction.lab_id == lab_id,
+    ).first()
+
+    if payload.reaction is None:
+        if row is not None:
+            db.delete(row)
+            db.commit()
+        return {"reaction": None, "course_id": course_id, "updated_at": None}
+
+    now = datetime.now(timezone.utc)
+    if row is None:
+        row = ExerciseReaction(
+            user_id=current_user.id,
+            lab_id=lab_id,
+            course_id=course_id,
+            reaction=payload.reaction,
+            created_at=now,
+            updated_at=now,
+        )
+        db.add(row)
+    else:
+        row.reaction = payload.reaction
+        row.course_id = course_id
+        row.updated_at = now
+    db.commit()
+    return {
+        "reaction": row.reaction,
+        "course_id": row.course_id,
+        "updated_at": row.updated_at.isoformat() if row.updated_at else None,
+    }
 
 
 @router.get("/pulse/{lab_id}")

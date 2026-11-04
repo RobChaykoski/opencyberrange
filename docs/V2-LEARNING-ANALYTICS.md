@@ -125,6 +125,7 @@ Capture these automatically from existing activity:
 | Completions | `lab_completions` | Success |
 | Abandonment rate | started learner-lab pairs without a completion | Difficulty or friction |
 | Average/median completion time | `lab_completions.time_spent_minutes` | Effort |
+| Learning hours | timed completions plus bounded session windows for unfinished exercises | Cumulative effort, shown privately to the learner and in aggregate to instructors |
 | Hint usage | `lab_completions.hints_used` | Learning support needs |
 | Workbook downloads | explicit activity event from workbook links | Engagement |
 | Retry attempts | `lab_completions.attempts`, `flag_attempts` | Friction |
@@ -147,6 +148,39 @@ One response per learner and exercise, with course context. The survey must be s
 
 An optional fourth prompt asks which topic the learner wants covered next. Those choices feed the **Trending topics** report.
 
+## Quick exercise reaction
+
+Learners also get a one-tap **Like / Dislike** control while an exercise is open.
+It is separate from the pulse survey:
+
+- It is available as soon as the exercise has been started, not only after a
+  successful flag.
+- It is not gated by survey consent and does not collect free text.
+- One reaction is kept per learner and exercise; choosing the same reaction
+  again clears it.
+- Reports show aggregate likes, dislikes, and positive rate. They do not show
+  learner names.
+
+The reaction is intended as a fast teaching signal, not a rating of a learner or
+a substitute for the pulse survey's learning and difficulty questions.
+
+## Learning hours and engagement badges
+
+Learning hours are calculated from the same records analytics already uses:
+
+- a valid completion's `time_spent_minutes` when present;
+- otherwise, merged session windows for that learner and exercise, bounded by
+  `stopped_at`, `expires_at`, and the current time, with an eight-hour cap per
+  exercise.
+
+A learner/exercise pair is counted once, so a completed exercise is not also
+counted from its session. The total is shown to the learner and as a course or
+cross-course aggregate. It is not a public ranking.
+
+Global achievements recognise 1, 5, 15, and 30 tracked learning hours. Sign-in
+streak achievements recognise 3, 7, and 30 consecutive UTC calendar days with a
+successful login. Both are idempotent and awarded outside a course scope.
+
 ## Survey management
 
 The instructor survey page provides:
@@ -167,9 +201,10 @@ A dedicated **Reports** page gives instructors and administrators a cross-course
 
 - Course-level RAG status and reason.
 - Completion, abandonment, learning reported, confidence gain, and pulse counts.
+- Learning hours and aggregate exercise likes/dislikes.
 - Trending topics across courses.
 - Direct links to each course analytics tab.
-- CSV export for course review.
+- CSV export for course review, including learning hours and feedback totals.
 
 The page is a reporting surface, not a ranking: it summarises teaching signals and links back to the evidence.
 
@@ -235,6 +270,7 @@ Add an **Analytics** tab to each course:
 
 - Completion funnel per exercise.
 - Median attempts, median time, hint pressure.
+- Learning hours and like/dislike totals per exercise.
 - Common stuck point: high starts, low completions.
 - Difficulty vs estimated duration.
 - Reattempt recovery.

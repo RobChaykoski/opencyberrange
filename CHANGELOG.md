@@ -7,10 +7,26 @@ All notable changes to OpenCyberRange are recorded here.
 ### 2.x feature scope
 - Reporting, learning analytics, survey insight, and the HA lab pool remain the
   only active feature workstreams. See `docs/V2-PROGRAM-CHARTER.md`.
+- The OWASP Top 10 is now the v2 security baseline for the interface, data, and
+  delivery process, with required tests and a documented exception process. See
+  `docs/V2-SECURITY-OWASP-TOP-10.md`.
+
+### 2.x analytics and reporting
+- Learning hours: tracked time on completed exercises, with bounded session
+  time for started exercises that have no completion, shown in student and
+  course analytics and in the cross-course report.
+- Per-exercise like/dislike feedback for learners, aggregated as likes,
+  dislikes, and positive rate in course analytics and reports. Learner identities
+  are not shown in the aggregate views.
+- Global achievements for learning hours (1, 5, 15, and 30 hours) and sign-in
+  streaks (3, 7, and 30 consecutive days).
+- Login now records a UTC calendar-day streak without changing the
+  authentication decision path.
 
 ### Carried forward from 1.1
 - SMTP settings in Admin → Settings → Email, including a save-then-test flow.
 - Registration email for new accounts, with separate approved and pending-approval messages. The registration form exposes it as an opt-in checkbox with transactional-email privacy language.
+- Profile email preferences in Privacy and data, with PIPEDA consent withdrawal language and an auditable consent version/timestamp.
 
 ### Maintenance and fixes
 - Fresh installs now include the Redis rate-limit service, and existing

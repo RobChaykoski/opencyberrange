@@ -370,6 +370,13 @@ it is not part of the default workflow. No scanner is a compliance certificate:
 retention, access control, backups, incident response, and privacy reviews still
 need to be documented separately.
 
+The 2.x line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+as a merge and release requirement. It maps each category to interface, data,
+and project controls, names the required tests, and defines the exception
+process. New endpoints need allowed/denied authorization tests, new personal
+data needs export/erasure coverage, and new rich-text surfaces need XSS
+regression tests.
+
 For vulnerability reporting, see [SECURITY.md](SECURITY.md).
 
 ## Profile, certificates, and transcripts
@@ -413,6 +420,11 @@ classrooms where not every student has the same hardware:
   withdrawal at any time. Survey consent covers platform feedback only; it does
   not permit collection of passwords, grades, lab flags, or sensitive personal
   data. See [Survey privacy and consent](docs/SURVEY-PRIVACY.md).
+- **Email consent and withdrawal.** Profile → **Privacy and data** explains why
+  account email is collected, states that it is not marketing, and lets the
+  learner withdraw consent to optional account email under PIPEDA. The consent
+  version and update time are recorded. Essential security and service messages
+  may still be sent where required to operate the account.
 - **Learning-impact stance.** Completion, time, and badge counts are activity
   signals, not measures of ability. The platform does not use them for public
   rankings, hiring, promotion, or discipline.

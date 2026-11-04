@@ -46,32 +46,40 @@ _SPONSOR_LOGO_RE = re.compile(
 _MAX_SPONSOR_LOGO_BYTES = 256 * 1024
 
 
-def _validate_sponsor_logo(value: str) -> str:
-    """Accept a small raster sponsor logo and reject disguised payloads."""
+def _validate_logo(value: str, label: str = "Logo") -> str:
+    """Accept a small raster image and reject disguised payloads."""
     match = _SPONSOR_LOGO_RE.match(value)
     if not match:
-        raise ValueError("Sponsor logo must be a PNG, JPEG, or WebP image")
+        raise ValueError(f"{label} must be a PNG, JPEG, or WebP image")
     try:
         raw = base64.b64decode(re.sub(r"\s+", "", match.group(2)), validate=True)
     except (binascii.Error, ValueError):
-        raise ValueError("Sponsor logo data is not valid base64")
+        raise ValueError(f"{label} data is not valid base64")
     if len(raw) > _MAX_SPONSOR_LOGO_BYTES:
-        raise ValueError("Sponsor logo must be 256 KB or smaller")
+        raise ValueError(f"{label} must be 256 KB or smaller")
     try:
         from PIL import Image
         with Image.open(io.BytesIO(raw)) as image:
             width, height = image.size
             if width < 1 or height < 1 or width * height > 1_048_576:
-                raise ValueError("Sponsor logo dimensions are too large")
+                raise ValueError(f"{label} dimensions are too large")
             declared = "jpeg" if match.group(1).lower() == "jpg" else match.group(1).lower()
             if (image.format or "").lower() != declared:
-                raise ValueError("Sponsor logo content does not match its image type")
+                raise ValueError(f"{label} content does not match its image type")
             image.verify()
     except ValueError:
         raise
     except Exception:
-        raise ValueError("Sponsor logo is not a readable image")
+        raise ValueError(f"{label} is not a readable image")
     return value
+
+
+def _validate_sponsor_logo(value: str) -> str:
+    return _validate_logo(value, "Sponsor logo")
+
+
+def _validate_competition_logo(value: str) -> str:
+    return _validate_logo(value, "Competition logo")
 
 
 

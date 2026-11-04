@@ -10,6 +10,7 @@ from app.models import (
     CourseEnrollment,
     CourseLabAssignment,
     ExercisePulseSurvey,
+    ExerciseReaction,
     Lab,
     LabCompletion,
     LabSession,
@@ -209,6 +210,9 @@ def analytics_data(client, db_session):
     db_session.query(ExercisePulseSurvey).filter(
         ExercisePulseSurvey.lab_id.in_(lab_ids)
     ).delete(synchronize_session=False)
+    db_session.query(ExerciseReaction).filter(
+        ExerciseReaction.lab_id.in_(lab_ids)
+    ).delete(synchronize_session=False)
     db_session.query(LabCompletion).filter(
         LabCompletion.lab_id.in_(lab_ids)
     ).delete(synchronize_session=False)
@@ -243,6 +247,8 @@ def test_student_analytics_summary_and_growth(client, analytics_data):
     assert summary["hint_free_rate"] == 50.0
     assert summary["first_attempt_rate"] == 50.0
     assert summary["reattempt_rate"] == 50.0
+    assert summary["total_learning_minutes"] == 450
+    assert summary["total_learning_hours"] == 7.5
 
     growth = {item["label"]: item for item in body["growth"]}
     assert growth["Hint usage"]["status"] == "improving"
@@ -293,6 +299,10 @@ def test_course_overview_and_exercises(client, analytics_data):
     assert summary["abandonment_rate"] == 0.0
     assert summary["learning_reported"] == 4.5
     assert summary["confidence_gain"] is not None
+    assert summary["total_learning_minutes"] == 510
+    assert summary["total_learning_hours"] == 8.5
+    assert summary["learning_learners"] == 2
+    assert summary["median_learning_minutes_per_learner"] == 255.0
     assert summary["rag"] == "amber"
 
     exercises = client.get(
@@ -317,6 +327,71 @@ def test_course_overview_and_exercises(client, analytics_data):
     )
     assert comments.status_code == 200, comments.text
     assert comments.json()["comments"][0]["unclear"] == "The final hint could be clearer."
+
+
+def test_exercise_reaction_is_reported_and_can_be_cleared(client, analytics_data):
+    student = _login(client, analytics_data["student_one"])
+    instructor = _login(client, analytics_data["instructor"])
+    lab_id = analytics_data["labs"][0].id
+    course_id = analytics_data["course"].id
+
+    initial = client.get(f"/api/analytics/reaction/{lab_id}", headers=student)
+    assert initial.status_code == 200, initial.text
+    assert initial.json()["reaction"] is None
+
+    liked = client.post(
+        f"/api/analytics/reaction/{lab_id}",
+        json={"reaction": "like", "course_id": course_id},
+        headers=student,
+    )
+    assert liked.status_code == 200, liked.text
+    assert liked.json()["reaction"] == "like"
+
+    overview = client.get(
+        f"/api/analytics/courses/{course_id}/overview", headers=instructor
+    )
+    summary = overview.json()["summary"]
+    assert summary["likes"] == 1
+    assert summary["dislikes"] == 0
+    assert summary["reaction_count"] == 1
+    assert summary["positive_rate"] == 100.0
+
+    exercises = client.get(
+        f"/api/analytics/courses/{course_id}/exercises", headers=instructor
+    )
+    row = next(
+        item for item in exercises.json()["exercises"]
+        if item["lab_id"] == lab_id
+    )
+    assert row["likes"] == 1
+    assert row["reaction_count"] == 1
+
+    changed = client.post(
+        f"/api/analytics/reaction/{lab_id}",
+        json={"reaction": "dislike", "course_id": course_id},
+        headers=student,
+    )
+    assert changed.status_code == 200, changed.text
+    assert changed.json()["reaction"] == "dislike"
+
+    cleared = client.post(
+        f"/api/analytics/reaction/{lab_id}",
+        json={"reaction": None, "course_id": course_id},
+        headers=student,
+    )
+    assert cleared.status_code == 200, cleared.text
+    assert cleared.json()["reaction"] is None
+
+
+def test_exercise_reaction_requires_started_exercise(client, analytics_data):
+    student_two = _login(client, analytics_data["student_two"])
+    unstarted_lab = analytics_data["labs"][5].id
+    resp = client.post(
+        f"/api/analytics/reaction/{unstarted_lab}",
+        json={"reaction": "like", "course_id": analytics_data["course"].id},
+        headers=student_two,
+    )
+    assert resp.status_code == 403
 
 
 def test_pulse_survey_is_completion_gated_and_upserts(

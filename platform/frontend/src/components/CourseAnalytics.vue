@@ -16,9 +16,19 @@
           <small>{{ overview.summary.started_rate }}% of assigned seats</small>
         </article>
         <article class="analytics-stat">
+          <span>Learning time</span>
+          <strong>{{ overview.summary.total_learning_hours ?? 0 }}<small> h</small></strong>
+          <small>{{ overview.summary.learning_learners }} learners with tracked time</small>
+        </article>
+        <article class="analytics-stat">
           <span>Median time</span>
           <strong>{{ overview.summary.median_time_minutes ?? '—' }}<small v-if="overview.summary.median_time_minutes !== null"> min</small></strong>
           <small>{{ overview.summary.time_over_estimate_rate }}% over estimate</small>
+        </article>
+        <article class="analytics-stat">
+          <span>Feedback</span>
+          <strong>{{ overview.summary.positive_rate }}<small>% positive</small></strong>
+          <small>{{ overview.summary.likes }} likes · {{ overview.summary.dislikes }} dislikes</small>
         </article>
         <article class="analytics-stat">
           <span>Hint-free</span>
@@ -81,6 +91,7 @@
               <th scope="col">Completed</th>
               <th scope="col">Abandoned</th>
               <th scope="col">Learning</th>
+              <th scope="col">Feedback</th>
               <th scope="col">Attempts</th>
               <th scope="col">Signal</th>
             </tr>
@@ -102,6 +113,13 @@
               </td>
               <td>
                 {{ exercise.learning_reported ?? '—' }}<small v-if="exercise.learning_reported !== null">/5 · {{ exercise.pulse_responses }} pulse</small>
+              </td>
+              <td>
+                <template v-if="exercise.reaction_count">
+                  <span class="analytics-rate">{{ exercise.positive_rate }}%</span>
+                  <small>{{ exercise.likes }} like{{ exercise.likes === 1 ? '' : 's' }} · {{ exercise.dislikes }} dislike{{ exercise.dislikes === 1 ? '' : 's' }}</small>
+                </template>
+                <span v-else class="analytics-muted">No feedback yet</span>
               </td>
               <td>{{ exercise.median_attempts ?? '—' }}<small>{{ exercise.first_attempt_rate }}% first try</small></td>
               <td>

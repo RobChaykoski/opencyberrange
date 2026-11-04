@@ -19,7 +19,7 @@ from app.ratelimit import create_limiter
 from app.database import get_db
 from app.models import (
     User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
-    Course, InviteCode, Assignment, AssignmentLab,
+    Course, ExerciseReaction, InviteCode, Assignment, AssignmentLab,
     Competition, CompetitionParticipant, SurveyConsentEvent,
 )
 from app.auth import (
@@ -260,9 +260,34 @@ async def login(
     # Record login metadata (session awareness / login notifications).
     client_ip = request.client.host if request.client else None
     is_new_ip = bool(client_ip and user.last_login_ip and client_ip != user.last_login_ip)
-    user.last_login_at = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
+    today = now.date()
+    previous_login_day = getattr(user, "last_login_day", None)
+    if previous_login_day == today:
+        pass
+    elif previous_login_day == today - timedelta(days=1):
+        user.login_streak = (getattr(user, "login_streak", 0) or 0) + 1
+    else:
+        user.login_streak = 1
+    user.last_login_day = today
+    user.last_login_at = now
     user.last_login_ip = client_ip
     db.commit()
+
+    # Streak and learning badges are global and idempotent. A failure here must
+    # never block a valid sign-in.
+    try:
+        from app.services.achievements import (
+            check_learning_achievements,
+            check_login_streak_achievements,
+        )
+        check_login_streak_achievements(
+            db, user.id, getattr(user, "login_streak", 1) or 1
+        )
+        check_learning_achievements(db, user.id)
+    except Exception:
+        db.rollback()
+        logger.exception("Could not evaluate engagement achievements for user %s", user.username)
 
     if getattr(user, "login_notifications", True) and is_new_ip:
         logger.info(
@@ -358,6 +383,9 @@ def _validate_avatar_data(value: Optional[str]) -> Optional[str]:
     return value
 
 
+EMAIL_CONSENT_VERSION = "2026-11-04"
+
+
 class UserSettingsUpdate(BaseModel):
     first_name: Optional[str] = Field(None, max_length=80)
     last_name: Optional[str] = Field(None, max_length=80)
@@ -373,6 +401,7 @@ class UserSettingsUpdate(BaseModel):
     show_on_scoreboard: Optional[bool] = None
     scoreboard_name_mode: Optional[Literal["real_name", "username", "anonymous"]] = None
     login_notifications: Optional[bool] = None
+    email_notifications: Optional[bool] = None
     notification_prefs: Optional[dict] = None
 
     @field_validator("avatar_data")
@@ -411,6 +440,9 @@ async def get_user_settings(
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
         "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
         "login_notifications": getattr(current_user, "login_notifications", True),
+        "email_notifications": getattr(current_user, "email_notifications", True),
+        "email_consent_version": getattr(current_user, "email_consent_version", None),
+        "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
         "notification_prefs": prefs or {},
         "survey_opt_in": bool(getattr(current_user, "survey_opt_in", False)),
         "survey_consent_version": getattr(current_user, "survey_consent_version", None),
@@ -447,6 +479,10 @@ async def update_user_settings(
         current_user.scoreboard_name_mode = payload.scoreboard_name_mode
     if payload.login_notifications is not None:
         current_user.login_notifications = payload.login_notifications
+    if payload.email_notifications is not None:
+        current_user.email_notifications = payload.email_notifications
+        current_user.email_consent_version = EMAIL_CONSENT_VERSION
+        current_user.email_consent_updated_at = datetime.now(timezone.utc)
     if payload.notification_prefs is not None:
         current_user.notification_prefs = _json.dumps(payload.notification_prefs)
     db.commit()
@@ -627,6 +663,7 @@ async def export_user_data(
         CompetitionParticipant,
         Course,
         CourseEnrollment,
+        ExerciseReaction,
         FlagAttempt,
         Lab,
         LabCompletion,
@@ -647,6 +684,9 @@ async def export_user_data(
 
     uid = current_user.id
     completions = db.query(LabCompletion).filter(LabCompletion.user_id == uid).all()
+    reactions = db.query(ExerciseReaction).filter(
+        ExerciseReaction.user_id == uid
+    ).all()
     achievements = db.query(Achievement).filter(Achievement.user_id == uid).all()
     attempts = db.query(FlagAttempt).filter(FlagAttempt.user_id == uid).all()
     quiz_attempts = (
@@ -694,6 +734,7 @@ async def export_user_data(
     )
 
     completion_lab_ids = [c.lab_id for c in completions]
+    completion_lab_ids += [r.lab_id for r in reactions]
     lab_by_id = {
         row.id: row
         for row in db.query(Lab).filter(Lab.id.in_(completion_lab_ids)).all()
@@ -728,6 +769,11 @@ async def export_user_data(
             "show_on_scoreboard": current_user.show_on_scoreboard,
             "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
             "login_notifications": current_user.login_notifications,
+            "email_notifications": getattr(current_user, "email_notifications", True),
+            "email_consent_version": getattr(current_user, "email_consent_version", None),
+            "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
+            "login_streak": getattr(current_user, "login_streak", 0),
+            "last_login_day": getattr(current_user, "last_login_day", None),
             "notification_prefs": _json_or_raw(current_user.notification_prefs),
             "mfa_enabled": bool(current_user.mfa_enabled),
             "vpn_registered": bool(current_user.vpn_registered),
@@ -763,6 +809,18 @@ async def export_user_data(
                 "time_spent_minutes": c.time_spent_minutes,
             }
             for c in completions
+        ],
+        "exercise_reactions": [
+            {
+                "lab_id": r.lab_id,
+                "lab_name": lab_by_id[r.lab_id].name if r.lab_id in lab_by_id else None,
+                "lab_slug": lab_by_id[r.lab_id].slug if r.lab_id in lab_by_id else None,
+                "course_id": r.course_id,
+                "reaction": r.reaction,
+                "created_at": r.created_at,
+                "updated_at": r.updated_at,
+            }
+            for r in reactions
         ],
         "flag_attempts": [
             {
@@ -1088,6 +1146,10 @@ async def register(
     if invite is not None:
         invite.used_by = new_user.id
         invite.used_at = datetime.now(timezone.utc)
+
+    new_user.email_notifications = bool(user_data.send_registration_email)
+    new_user.email_consent_version = EMAIL_CONSENT_VERSION
+    new_user.email_consent_updated_at = datetime.now(timezone.utc)
 
     db.commit()
     db.refresh(new_user)

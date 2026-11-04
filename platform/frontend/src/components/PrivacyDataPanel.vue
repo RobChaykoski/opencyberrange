@@ -6,6 +6,44 @@
       account. Deletion is immediate and cannot be undone.
     </p>
 
+    <section class="privacy-panel__email" aria-labelledby="email-pref-title">
+      <div class="privacy-panel__email-head">
+        <div>
+          <h3 id="email-pref-title">Email preferences</h3>
+          <p class="privacy-panel__email-help">
+            We collect your email address to create and secure your account,
+            confirm registration, and send essential service notices. We do not
+            sell your email or use it for marketing.
+          </p>
+        </div>
+      </div>
+
+      <label class="privacy-panel__email-toggle">
+        <input
+          v-model="emailNotifications"
+          type="checkbox"
+          :disabled="emailSaving"
+          @change="saveEmailPreference"
+        />
+        <span>Email me about my account</span>
+      </label>
+
+      <p class="privacy-panel__email-help">
+        Under PIPEDA, you can withdraw consent to optional account email at any
+        time. Turning this off does not close your account. Essential security
+        and service messages may still be sent where required to operate your
+        account. You can access, correct, export, or delete your information
+        from this panel, and contact the privacy contact for questions.
+      </p>
+      <p v-if="emailConsentUpdatedAt" class="privacy-panel__email-meta">
+        Consent preference updated {{ formatExportDate(emailConsentUpdatedAt) }}
+        <template v-if="emailConsentVersion"> · version {{ emailConsentVersion }}</template>
+      </p>
+      <p v-if="emailMessage" :class="emailError ? 'error-message' : 'success-message'" role="status">
+        {{ emailMessage }}
+      </p>
+    </section>
+
     <div class="privacy-panel__actions">
       <button
         type="button"
@@ -149,6 +187,12 @@ const exportError = ref('')
 const exportSuccess = ref('')
 const lastExportedAt = ref(null)
 const exportStatusLoading = ref(true)
+const emailNotifications = ref(true)
+const emailConsentVersion = ref('')
+const emailConsentUpdatedAt = ref('')
+const emailSaving = ref(false)
+const emailMessage = ref('')
+const emailError = ref(false)
 
 const formatExportDate = (value) => {
   if (!value) return ''
@@ -165,6 +209,9 @@ const fetchExportStatus = async () => {
   try {
     const { data } = await axios.get('/auth/settings')
     lastExportedAt.value = data.data_exported_at || null
+    emailNotifications.value = data.email_notifications !== false
+    emailConsentVersion.value = data.email_consent_version || ''
+    emailConsentUpdatedAt.value = data.email_consent_updated_at || ''
   } catch {
     lastExportedAt.value = null
   } finally {
@@ -173,6 +220,28 @@ const fetchExportStatus = async () => {
 }
 
 onMounted(fetchExportStatus)
+
+const saveEmailPreference = async () => {
+  emailSaving.value = true
+  emailMessage.value = ''
+  emailError.value = false
+  const previous = !emailNotifications.value
+  try {
+    await axios.put('/auth/settings', {
+      email_notifications: emailNotifications.value,
+    })
+    await fetchExportStatus()
+    emailMessage.value = emailNotifications.value
+      ? 'Email preference saved. We will email you about your account.'
+      : 'Email preference saved. Optional account email is now off.'
+  } catch {
+    emailNotifications.value = previous
+    emailError.value = true
+    emailMessage.value = 'Could not save your email preference. Please try again.'
+  } finally {
+    emailSaving.value = false
+  }
+}
 
 const confirming = ref(false)
 const password = ref('')
@@ -282,6 +351,55 @@ const deleteAccount = async () => {
   color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0 0 0.85rem;
+}
+
+.privacy-panel__email {
+  margin: 0 0 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-primary);
+}
+
+.privacy-panel__email-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.privacy-panel__email h3 {
+  margin: 0 0 0.35rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.privacy-panel__email-help {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.privacy-panel__email-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0.8rem 0;
+  color: var(--text-primary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.privacy-panel__email-toggle input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
+}
+
+.privacy-panel__email-meta {
+  margin: 0.55rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
 }
 
 .privacy-panel__actions {

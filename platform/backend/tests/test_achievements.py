@@ -17,11 +17,36 @@ from app.models import (
     CourseLabAssignment,
     CustomAchievement,
     Lab,
+    LabCompletion,
     Level,
     Track,
 )
 
 pytestmark = pytest.mark.db
+
+
+def test_learning_hours_award_global_badges(db_session, test_user, test_lab):
+    from app.services.achievements import check_learning_achievements
+
+    db_session.add(LabCompletion(
+        user_id=test_user.id,
+        lab_id=test_lab.id,
+        flag_submitted="OCR{learning-time-test}",
+        time_spent_minutes=60,
+    ))
+    db_session.commit()
+
+    check_learning_achievements(db_session, test_user.id)
+
+    types = {
+        row.achievement_type
+        for row in db_session.query(Achievement).filter(
+            Achievement.user_id == test_user.id,
+            Achievement.achievement_type.like("learning_hours_%"),
+        ).all()
+    }
+    assert "learning_hours_1" in types
+    assert "learning_hours_5" not in types
 
 
 @pytest.fixture()
