@@ -554,6 +554,14 @@
       @next="handleCelebrationNext"
     />
 
+    <PulseSurveyModal
+      :show="pulseShow"
+      :lab-id="pendingPulseLab?.id"
+      :lab-name="pendingPulseLab?.name || ''"
+      :course-id="activeCourseId"
+      @done="handlePulseDone"
+    />
+
     <!-- Loading Overlay -->
     <div v-if="loading || spawning" class="loading-overlay" role="status" aria-live="polite">
       <div class="loading-box">
@@ -598,6 +606,7 @@ import FlagIcon from '../components/icons/FlagIcon.vue'
 import LightbulbIcon from '../components/icons/LightbulbIcon.vue'
 import ArrowLeftIcon from '../components/icons/ArrowLeftIcon.vue'
 import FlagCelebration from '../components/FlagCelebration.vue'
+import PulseSurveyModal from '../components/PulseSurveyModal.vue'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)
 
 const route = useRoute()
@@ -644,6 +653,9 @@ const celebrationData = ref({
   nextLabel: 'Back to exercises',
 })
 const celebrationAchievements = ref([])
+const pendingPulseLab = ref(null)
+const pulseShow = ref(false)
+const pulseAfterNext = ref(false)
 let pendingCourseRedirect = null
 
 // Hints
@@ -1281,18 +1293,7 @@ const celebrationHeadline = computed(() => {
   return 'Flag captured'
 })
 
-const handleCelebrationClose = () => {
-  celebrationShow.value = false
-  if (pendingCourseRedirect) {
-    const target = pendingCourseRedirect
-    pendingCourseRedirect = null
-    router.push(target)
-  }
-}
-
-const handleCelebrationNext = () => {
-  const nextLabId = celebrationData.value.nextLabId
-  celebrationShow.value = false
+const navigateAfterCelebration = (nextLabId) => {
   if (courseExercisesLink.value) {
     router.push(courseExercisesLink.value)
     return
@@ -1305,6 +1306,45 @@ const handleCelebrationNext = () => {
     return
   }
   router.push('/exercises')
+}
+
+const handleCelebrationClose = () => {
+  celebrationShow.value = false
+  if (pendingPulseLab.value) {
+    pulseShow.value = true
+    return
+  }
+  if (pendingCourseRedirect) {
+    const target = pendingCourseRedirect
+    pendingCourseRedirect = null
+    router.push(target)
+  }
+}
+
+const handleCelebrationNext = () => {
+  celebrationShow.value = false
+  if (pendingPulseLab.value) {
+    pulseAfterNext.value = true
+    pulseShow.value = true
+    return
+  }
+  navigateAfterCelebration(celebrationData.value.nextLabId)
+}
+
+const handlePulseDone = () => {
+  pulseShow.value = false
+  const goNext = pulseAfterNext.value
+  pulseAfterNext.value = false
+  pendingPulseLab.value = null
+  if (goNext) {
+    navigateAfterCelebration(celebrationData.value.nextLabId)
+    return
+  }
+  if (pendingCourseRedirect) {
+    const target = pendingCourseRedirect
+    pendingCourseRedirect = null
+    router.push(target)
+  }
 }
 
 const submitFlag = async () => {
@@ -1329,6 +1369,10 @@ const submitFlag = async () => {
     if (data.correct) {
       flagSuccess.value = true
       stopHintTimer()
+      pendingPulseLab.value = {
+        id: activeLab.value.lab.id,
+        name: activeLab.value.lab.name,
+      }
       openCelebration(data, achievementIdsBefore)
       // The backend commits the completion before it responds, so refresh
       // immediately. Waiting used to leave the next lab locked until the

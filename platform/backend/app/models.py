@@ -341,10 +341,39 @@ class LabCompletion(Base):
     )
 
 
+class ExercisePulseSurvey(Base):
+    """Three-question learner pulse taken after an exercise.
+
+    One response per learner and exercise. ``course_id`` records the course
+    context when the response was collected so course analytics can aggregate
+    the right surveys without exposing free text to other learners.
+    """
+    __tablename__ = "exercise_pulse_surveys"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=True)
+    # 1 = much too easy / very little learning, 5 = much too difficult / extensive.
+    difficulty = Column(Integer, nullable=False)
+    learning = Column(Integer, nullable=False)
+    unclear = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User")
+    lab = relationship("Lab")
+    course = relationship("Course")
+
+    __table_args__ = (
+        Index("ix_pulse_user_lab_unique", "user_id", "lab_id", unique=True),
+        Index("ix_pulse_course_lab", "course_id", "lab_id"),
+    )
+
+
 class FlagAttempt(Base):
     """Log all flag submission attempts"""
     __tablename__ = "flag_attempts"
-    
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False)

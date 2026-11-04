@@ -41,6 +41,13 @@
         >
           Achievements
         </button>
+        <button
+          v-if="isInstructor"
+          @click="setTab('analytics')"
+          :class="['tab', { active: activeTab === 'analytics' }]"
+        >
+          Analytics
+        </button>
       </div>
 
       <!-- Labs Tab -->
@@ -299,6 +306,11 @@
         </div>
       </div>
 
+      <!-- Analytics Tab -->
+      <div v-if="activeTab === 'analytics'" class="tab-content">
+        <CourseAnalytics :course-id="courseId" />
+      </div>
+
     </div>
 
     <!-- Loading -->
@@ -314,6 +326,7 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { usePrivacy } from '../composables/usePrivacy'
 import { getUserTimeZone } from '../utils/timezone'
+import CourseAnalytics from '../components/CourseAnalytics.vue'
 
 const route = useRoute()
 const { maskUsername, maskEmail } = usePrivacy()
@@ -327,7 +340,7 @@ const loading = ref(true)
 const showScoringGuide = ref(false)
 const expandedScoreboardRow = ref(null)
 
-const tabFromRoute = () => (route.query.tab && ['assignments', 'scoreboard', 'achievements', 'manage-labs', 'students', 'settings'].includes(route.query.tab)) ? route.query.tab : 'assignments'
+const tabFromRoute = () => (route.query.tab && ['assignments', 'scoreboard', 'achievements', 'analytics', 'manage-labs', 'students', 'settings'].includes(route.query.tab)) ? route.query.tab : 'assignments'
 const activeTab = ref(tabFromRoute())
 
 // Assignments tab

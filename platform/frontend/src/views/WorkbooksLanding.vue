@@ -67,6 +67,10 @@ const canReorder = (() => {
 
 function open(wb) {
   setWikiAuthCookie()
+  api.post('/analytics/events/workbook-open', {
+    title: wb.name,
+    url: wb.url,
+  }).catch(() => { /* analytics is best-effort */ })
   window.open(wb.url, '_blank')
 }
 

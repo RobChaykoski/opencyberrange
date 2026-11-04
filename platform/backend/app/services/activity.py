@@ -26,6 +26,7 @@ class EventTypes:
     IMPERSONATION_START = "impersonation_start"
     IMPERSONATION_END = "impersonation_end"
     ACTIVITY_LOG_CLEARED = "activity_log_cleared"
+    WORKBOOK_OPENED = "workbook_opened"
 
 
 # Human-readable labels for the feed
@@ -45,6 +46,7 @@ EVENT_LABELS = {
     EventTypes.IMPERSONATION_START: "Started Impersonation",
     EventTypes.IMPERSONATION_END: "Ended Impersonation",
     EventTypes.ACTIVITY_LOG_CLEARED: "Activity Log Cleared",
+    EventTypes.WORKBOOK_OPENED: "Opened Workbook",
 }
 
 

@@ -255,6 +255,8 @@
       </section>
     </div>
 
+    <LearningAnalytics />
+
     <!-- Completion matrix: one card per course with a level-by-level heatmap -->
     <section v-if="matrix.columns.length" class="card card--matrix">
       <div class="matrix-head">
@@ -354,6 +356,7 @@ import { computed, markRaw, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import { getTrackIcon } from '../components/icons/trackIcons.js'
 import AchievementMedallion from '../components/AchievementMedallion.vue'
+import LearningAnalytics from '../components/LearningAnalytics.vue'
 import TargetIcon from '../components/icons/TargetIcon.vue'
 import TrophyIcon from '../components/icons/TrophyIcon.vue'
 import FlameIcon from '../components/icons/FlameIcon.vue'
