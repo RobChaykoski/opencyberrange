@@ -46,7 +46,7 @@ echo "[*] checking workbook links in the running frontend"
 if docker inspect "$FRONTEND_CONTAINER" >/dev/null 2>&1; then
     while IFS='|' read -r slug workbook; do
         [ -n "$workbook" ] || continue
-        path="/usr/share/nginx/wiki/${workbook#/}"
+        path="/usr/share/nginx/${workbook#/}"
         if ! docker exec "$FRONTEND_CONTAINER" test -f "$path/index.html" >/dev/null 2>&1; then
             case "$workbook" in
                 wiki/course/*)
