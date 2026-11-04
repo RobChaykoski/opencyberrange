@@ -1,3 +1,37 @@
+# OpenCyberRange 2.0 development
+
+Status: development line. This is not a GA release and may change before 2.0.0.
+
+## Added in this build
+
+- **Learning hours:** tracked time on completed exercises, plus bounded session
+  time for started exercises without a completion, shown privately to learners
+  and as course and cross-course aggregates.
+- **Exercise reactions:** a one-tap Like/Dislike control while an exercise is
+  open, reported as aggregate likes, dislikes, and positive rate. Learner names
+  are not shown in the reports.
+- **Engagement badges:** global achievements for 1, 5, 15, and 30 tracked
+  learning hours, and for 3, 7, and 30 consecutive sign-in days.
+- **Profile email consent:** a Privacy and data control for optional account
+  email, with PIPEDA withdrawal language and an auditable consent version and
+  timestamp.
+- **Security baseline:** the v2 interface, data, and delivery process now use
+  the OWASP Top 10 as a merge and release requirement. See
+  `docs/V2-SECURITY-OWASP-TOP-10.md`.
+
+## Upgrade notes for the development line
+
+1. Take a database snapshot before upgrading.
+2. Pull the current `main` commit.
+3. Rebuild the backend and frontend images.
+4. Start the stack and confirm `/health` and `/api/version` respond.
+5. Verify the new `exercise_reactions` table and the `users` login-streak and
+   email-consent columns exist.
+
+The backend startup migration is idempotent and creates the new table and
+columns automatically. Existing users, courses, completions, and achievements
+are preserved.
+
 # OpenCyberRange 1.0.0
 
 Released: 4 November 2026
