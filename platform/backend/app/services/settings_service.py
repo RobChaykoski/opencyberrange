@@ -9,9 +9,7 @@ present in the database, so existing .env deployments keep working.
 import logging
 import os
 import time as _time
-from datetime import datetime, timezone
-from typing import Optional, Dict, Any, List
-from urllib.parse import urlparse
+from typing import Optional, Dict, List
 
 from sqlalchemy.orm import Session
 
@@ -37,6 +35,28 @@ DEFAULT_SETTINGS = [
      "description": "Base URL used in certificate QR codes for verification (e.g. https://range.example.com). Empty uses the request host.", "is_secret": False},
     {"key": "certificate_design", "value": "classic", "category": "general",
      "description": "Default certificate design: classic, executive, modern, or minimal", "is_secret": False},
+
+    # --- Email ---
+    {"key": "mail_enabled", "value": "false", "category": "email",
+     "description": "Send account and test email through the configured SMTP relay", "is_secret": False},
+    {"key": "mail_host", "value": "", "category": "email",
+     "description": "SMTP server hostname, for example smtp.example.com", "is_secret": False},
+    {"key": "mail_port", "value": "587", "category": "email",
+     "description": "SMTP port: 587 for STARTTLS, 465 for SSL/TLS, or 25 for plain SMTP", "is_secret": False},
+    {"key": "mail_security", "value": "starttls", "category": "email",
+     "description": "SMTP transport security: starttls, ssl, or none", "is_secret": False},
+    {"key": "mail_username", "value": "", "category": "email",
+     "description": "SMTP username. Leave empty when the relay does not require authentication.", "is_secret": False},
+    {"key": "mail_password", "value": "", "category": "email",
+     "description": "SMTP password. The admin API returns it masked.", "is_secret": True},
+    {"key": "mail_from_email", "value": "", "category": "email",
+     "description": "From address for platform email, for example no-reply@example.com", "is_secret": False},
+    {"key": "mail_from_name", "value": "OpenCyberRange", "category": "email",
+     "description": "Display name for the From address", "is_secret": False},
+    {"key": "mail_public_url", "value": "", "category": "email",
+     "description": "Public URL used in email links, for example https://range.example.com. Empty falls back to the certificate URL or request host.", "is_secret": False},
+    {"key": "mail_timeout_seconds", "value": "15", "category": "email",
+     "description": "SMTP connection timeout in seconds", "is_secret": False},
 
     # --- Security ---
     {"key": "jwt_expiration_hours", "value": "24", "category": "security",

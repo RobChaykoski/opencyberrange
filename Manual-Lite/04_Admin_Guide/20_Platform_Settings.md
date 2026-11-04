@@ -8,9 +8,9 @@ Platform Settings is where you tune platform-wide behavior: general identity val
 
 ## Where it lives
 
-The settings screen is the **Settings** tab of the Admin Panel, reached from the **Settings** link in the left sidebar (or directly at `/admin?tab=settings`). The settings live behind four category tabs: General, Security, Labs, and VPN.
+The settings screen is the **Settings** tab of the Admin Panel, reached from the **Settings** link in the left sidebar (or directly at `/admin?tab=settings`). The settings live behind five category tabs: General, Security, Labs, VPN, and Email.
 
-The four settings categories and what each one controls.
+The five settings categories and what each one controls.
 
 ```mermaid
 flowchart LR
@@ -18,16 +18,18 @@ flowchart LR
   S --> SE[Security]
   S --> L[Labs]
   S --> V[VPN]
+  S --> E[Email]
   G --> A[Platform wide values]
   SE --> A
   L --> A
   V --> A
+  E --> A
 ```
 
 ## Steps
 
 1. Open the **Settings** tab from the sidebar.
-2. Click a category tab: **General**, **Security**, **Labs**, or **VPN**.
+2. Click a category tab: **General**, **Security**, **Labs**, **VPN**, or **Email**.
 3. Edit the values in the rows. Each row uses the control that fits its type:
    - A boolean shows an **Enabled** / **Disabled** toggle button.
    - A value whose key contains "color" shows a color picker.
@@ -54,6 +56,31 @@ After you click **Save Settings**, the button shows "Saving..." and then returns
 
 !!! note "Secret values are masked"
     A secret value renders as a row of dots. To change it you type the full new value; the masked placeholder is not the stored secret.
+
+## Registration email
+
+The **Email** tab configures the SMTP relay used for registration messages and
+admin test email.
+
+1. Set **Mail Enabled** to **Enabled**.
+2. Enter the **Mail Host**, **Mail Port**, and **Mail Security** values from your
+   provider. Use STARTTLS on port 587, SSL/TLS on port 465, or None on port 25.
+3. Enter the SMTP username and password when your relay requires authentication.
+4. Set **Mail From Email** to an address your relay is allowed to send from, and
+   optionally change **Mail From Name**.
+5. Set **Mail Public URL** to the address students use in the browser, for
+   example `https://range.example.com`. This is used in the sign-in link.
+6. Click **Save Settings**, then click **Send test email**. The test goes to the
+   signed-in administrator unless the API is called with another recipient.
+
+Registration email is best effort. A missing or failed SMTP relay never blocks
+account creation; the failure is logged and the account remains usable.
+
+!!! warning "Protect the settings database"
+    The SMTP password is stored in `platform_settings` and masked in the admin
+    API, not encrypted separately. Treat database backups and exports as
+    sensitive, and use a relay-specific credential rather than a personal
+    mailbox password.
 
 !!! tip "Empty categories are normal"
     A category with no live settings shows "No settings in this category." That is expected, not an error.

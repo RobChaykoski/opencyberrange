@@ -1,46 +1,45 @@
-# OpenCyberRange 1.0.0
+# OpenCyberRange 1.1.0
 
 Released: 4 November 2026
 
-OpenCyberRange 1.0 is the first supported self-hosted teaching release. It is intended for instructors and platform administrators running hands-on cybersecurity exercises on their own infrastructure.
+OpenCyberRange 1.1 is a maintenance-line feature release on Ubuntu 22.04 LTS.
+It keeps the 1.0 deployment and upgrade path and adds account email plus the
+recent validation fixes.
 
 ## Highlights
 
-- **Certificates and recognition**: selectable certificate designs, QR verification, SWOCTS trust marks, scoped achievements, and course achievement summaries.
-- **Competitions**: opt-in events, event leaderboards, competition-specific achievements, and multi-sponsor recognition with Gold, Silver, and Bronze tiers.
-- **Profiles and accessibility**: profile photos, avatar borders, improved keyboard and screen-reader behaviour, and a cleaner completion matrix.
-- **Privacy and resilience**: personal-data export, audited erasure, persistent daily database snapshots, and a snapshot calendar that matches the files on disk.
-- **Safer input handling**: Unicode-aware passwords, validated image uploads, and normalised course invite codes.
+- **Registration email:** new accounts receive a registration-success message.
+  Accounts that need approval are told they are pending; auto-approved accounts
+  receive a sign-in link.
+- **SMTP settings:** admins configure the relay, from address, public URL, and
+  credentials under Admin → Settings → Email, then send a test message.
+- **Version identity:** the backend exposes `GET /api/version`, and the app
+  footer shows the running release.
+- **Certificate verification hardening:** malformed IDs, including emoji,
+  kanji, non-ASCII digits, and whitespace, are rejected before lookup.
 
 ## Upgrade notes
 
-1. Take a database snapshot before upgrading.
-2. Pull the `v1.0.0` tag or the matching `main` commit.
+1. Take a database snapshot.
+2. Pull the `v1.1.0` tag or the matching `main` commit.
 3. Rebuild the backend and frontend images.
-4. Start the stack and verify `/health` reports `version: 1.0.0`.
-5. Confirm the Backups tab lists the pre-upgrade snapshot and that a new daily snapshot can be collected.
-
-The new `backups_data` volume is created automatically. Existing snapshots that were stored only inside the old backend container were not persistent and cannot be recovered after the container is replaced.
+4. Start the stack and verify `GET /api/version` reports `1.1.0`.
+5. Open Admin → Settings → Email, save the relay settings, and send a test
+   message.
 
 ## Supported scope
 
+- Ubuntu 22.04 LTS for the 1.x maintenance line.
 - Self-hosted Docker Compose deployments.
-- WireGuard-based learner access, with optional WSTunnel deployments.
-- Current supported runtime versions are recorded in `versions.yaml`.
+- WireGuard learner access, with optional WSTunnel deployments.
 
 ## Known limitations
 
-- Backups are retained for 30 days by default. Configure `OCR_BACKUP_RETENTION_DAYS` to change this.
-- Snapshot encryption at rest is an operator responsibility; store snapshots on encrypted storage.
-- Sponsor logos are stored in the database as resized image data, capped at 256 KB.
+- SMTP delivery is best effort. A failed relay never blocks account creation.
+- The SMTP password is stored in `platform_settings` and masked in the admin API,
+  not encrypted separately. Protect database backups.
+- The footer version is informational and does not gate access.
 
-## Verification
+## Previous release
 
-Release verification for 1.0.0 includes:
-
-- Backend test suite.
-- Frontend lint and production build.
-- Test-stack deployment.
-- Production upgrade from the previous supported commit.
-- Snapshot collection and container-recreation persistence check.
-- Restore drill using the generated snapshot.
+See the `v1.0.0` tag for the 1.0.0 release notes.

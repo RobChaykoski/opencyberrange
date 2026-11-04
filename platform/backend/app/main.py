@@ -24,7 +24,7 @@ from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.config import settings
-from app.version import APP_VERSION
+from app.version import APP_VERSION, RELEASE_NAME
 from app.ratelimit import create_limiter
 
 # Configure logging
@@ -594,6 +594,12 @@ module_registry.mount_routers(app)
 @app.get("/")
 async def root():
     return {"message": "OpenCyberRange API", "version": APP_VERSION}
+
+
+@app.get("/api/version")
+async def api_version():
+    """Public build identity for the web interface and support reports."""
+    return {"version": APP_VERSION, "release": RELEASE_NAME}
 
 
 @app.get("/health")

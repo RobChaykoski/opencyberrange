@@ -3,7 +3,7 @@ Pydantic schemas for request/response validation
 """
 
 from pydantic import BaseModel, EmailStr, Field, field_validator
-from typing import Optional, List, Any
+from typing import Optional, List
 from datetime import datetime
 import re
 import unicodedata
@@ -508,6 +508,11 @@ class StudentDashboardResponse(BaseModel):
 
 class SettingsBulkUpdate(BaseModel):
     settings: dict  # {"key": "value", ...}
+
+
+class MailTestRequest(BaseModel):
+    """Optional recipient for an admin-triggered SMTP test."""
+    to: Optional[EmailStr] = None
 
 
 class CustomAchievementCreate(BaseModel):

@@ -3,7 +3,7 @@ Authentication routes for login and registration
 """
 
 from datetime import timedelta, datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, status, Form, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Form, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
@@ -37,6 +37,7 @@ from app.auth import (
     _decode_token,
     oauth2_scheme,
 )
+from app.services import mail
 from app.services import totp as totp_service
 from app.config import settings
 from app.schemas import ChangePasswordRequest, ImpersonateRequest, ImpersonateResponse, _validate_password, _password_policy_error
@@ -963,6 +964,7 @@ async def request_account_deletion(
 async def register(
     request: Request,
     user_data: RegisterRequest,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
     """Register a new user.
@@ -1091,6 +1093,16 @@ async def register(
     log_activity(db, EventTypes.USER_REGISTERED,
                   actor_id=new_user.id, target_type="user",
                   target_id=new_user.id, target_label=new_user.username)
+
+    background_tasks.add_task(
+        mail.send_registration_email,
+        user_id=new_user.id,
+        email=new_user.email,
+        username=new_user.username,
+        display_name=new_user.display_name,
+        approved=bool(new_user.is_approved),
+        request_base=str(request.base_url),
+    )
 
     return new_user
 

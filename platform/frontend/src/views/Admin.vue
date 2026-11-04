@@ -1429,6 +1429,10 @@
           <div v-else class="settings-form">
             <div v-if="settingsLoading" class="empty-state">Loading settings...</div>
             <template v-else>
+              <p v-if="activeSettingsCategory === 'email'" class="section-desc">
+                Configure the SMTP relay used for registration and test email.
+                Save the settings before sending a test.
+              </p>
               <div v-for="(value, key) in filteredSettings" :key="key" class="setting-row">
                 <div class="setting-info">
                   <span class="setting-key">
@@ -1457,6 +1461,23 @@
                       </option>
                     </select>
                   </template>
+                  <template v-else-if="key === 'mail_security'">
+                    <select v-model="settingsEdits[key]" class="form-input form-input--sm">
+                      <option value="starttls">STARTTLS (usually port 587)</option>
+                      <option value="ssl">SSL/TLS (usually port 465)</option>
+                      <option value="none">None (usually port 25, not recommended)</option>
+                    </select>
+                  </template>
+                  <template v-else-if="key === 'mail_password'">
+                    <div class="setting-input-group">
+                      <input
+                        v-model="settingsEdits[key]"
+                        type="password"
+                        :placeholder="settingPlaceholder(key)"
+                        class="form-input form-input--sm"
+                      />
+                    </div>
+                  </template>
                   <template v-else-if="key.includes('color')">
                     <input type="color" v-model="settingsEdits[key]" class="color-input" />
                   </template>
@@ -1478,6 +1499,15 @@
               </div>
             </template>
             <div class="form-actions" style="margin-top: 1rem;">
+              <button
+                v-if="activeSettingsCategory === 'email'"
+                type="button"
+                @click="sendTestMail"
+                class="btn btn--outline"
+                :disabled="sendingTestMail"
+              >
+                {{ sendingTestMail ? 'Sending...' : 'Send test email' }}
+              </button>
               <button @click="saveSettings" class="btn btn--success" :disabled="savingSettings">
                 {{ savingSettings ? 'Saving...' : 'Save Settings' }}
               </button>
@@ -3232,7 +3262,7 @@ const settingsCategories = computed(() => {
   // Only show a category tab if it has at least one visible setting (so an
   // emptied category -- e.g. General after platform_name/deployment_mode were
   // removed -- doesn't render as a blank tab).
-  const order = ['general', 'security', 'labs', 'vpn']
+  const order = ['general', 'security', 'labs', 'vpn', 'email']
   const populated = new Set(
     Object.entries(allSettings.value)
       .filter(([key]) => !hiddenSettingKeys.value.has(key))
@@ -3248,7 +3278,7 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', modules: 'Modules', achievements: 'Achievements' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', modules: 'Modules', achievements: 'Achievements' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
@@ -3262,6 +3292,7 @@ const certificateDesigns = [
 const togglesSaving = reactive({})
 const settingsLoading = ref(false)
 const savingSettings = ref(false)
+const sendingTestMail = ref(false)
 
 // --- Custom achievements (settings section) ---
 const customAchievements = ref([])
@@ -3693,6 +3724,18 @@ const saveSettings = async () => {
     showAlert(e.response?.data?.detail || 'Failed to save settings', 'error')
   } finally {
     savingSettings.value = false
+  }
+}
+
+const sendTestMail = async () => {
+  sendingTestMail.value = true
+  try {
+    const { data } = await axios.post('/settings/mail/test', {})
+    showAlert(data.message || 'Test email sent')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Could not send test email', 'error')
+  } finally {
+    sendingTestMail.value = false
   }
 }
 

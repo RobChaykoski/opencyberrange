@@ -15,7 +15,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Release](https://img.shields.io/badge/release-1.0.0-blue)](RELEASE_NOTES.md)
+[![Release](https://img.shields.io/badge/release-1.1.0-blue)](RELEASE_NOTES.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
@@ -25,6 +25,19 @@
 A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, AI security, and open-source intelligence (OSINT).
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
+
+## What's new in 1.1
+
+- **Registration email.** New accounts receive a registration-success message;
+  pending accounts are told they need approval.
+- **SMTP settings.** Admins configure the relay under **Admin → Settings →
+  Email** and can send a test message before enabling registration email.
+- **Version identity.** `GET /api/version` and the app footer report the running
+  release.
+- **Verification hardening.** Malformed certificate IDs, including emoji, kanji,
+  non-ASCII digits, and whitespace, are rejected before lookup.
+
+See [RELEASE_NOTES.md](RELEASE_NOTES.md) for upgrade notes and limitations.
 
 ## Measurable outcomes
 

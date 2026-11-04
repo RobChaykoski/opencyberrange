@@ -9,6 +9,14 @@ import os
 
 import pytest
 
+from app.version import APP_VERSION, RELEASE_NAME
+
+
+def test_version_endpoint_reports_build_identity(client):
+    resp = client.get("/api/version")
+    assert resp.status_code == 200
+    assert resp.json() == {"version": APP_VERSION, "release": RELEASE_NAME}
+
 
 @pytest.mark.skipif(
     not os.environ.get("TEST_DATABASE_URL"),
