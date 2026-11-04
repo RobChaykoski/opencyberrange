@@ -9,8 +9,8 @@ pymdown-extensions==11.0.1
 ruff==0.17.3
 
 # Test harness (pytest suite under tests/, config in pytest.ini)
-pytest==8.2.2
-pytest-asyncio==0.23.7
+pytest==9.0.3
+pytest-asyncio==1.4.1.post1
 httpx==0.26.0
 # Postgres driver for the ephemeral test database (same pin as requirements.txt)
 psycopg[binary]==3.3.6
