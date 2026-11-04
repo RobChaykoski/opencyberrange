@@ -2,6 +2,7 @@
 from email import policy
 from email.parser import BytesParser
 
+from app.routers.auth import RegisterRequest
 from app.services import mail as mail_service
 
 
@@ -32,6 +33,25 @@ def test_registration_email_for_pending_user_explains_approval():
     assert "received" in subject.lower()
     assert "approve" in text_body.lower()
     assert "sign in at https://range.example.com/login" not in text_body
+
+
+def test_registration_email_is_opt_in_by_default():
+    request = RegisterRequest(
+        username="optinuser",
+        email="optin@example.com",
+        password="Strong#Pass1",
+    )
+    assert request.send_registration_email is True
+
+
+def test_registration_email_can_be_disabled():
+    request = RegisterRequest(
+        username="optoutuser",
+        email="optout@example.com",
+        password="Strong#Pass1",
+        send_registration_email=False,
+    )
+    assert request.send_registration_email is False
 
 
 def test_mail_config_requires_enabled_host_and_from_address():

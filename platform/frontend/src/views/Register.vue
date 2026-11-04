@@ -81,6 +81,23 @@
             </div>
 
             <div class="form-group">
+              <label class="form-check" for="sendRegistrationEmail">
+                <input
+                  id="sendRegistrationEmail"
+                  v-model="form.sendRegistrationEmail"
+                  type="checkbox"
+                />
+                <span>Email me a registration confirmation</span>
+              </label>
+              <p class="help-text">
+                Optional. We use your email only to confirm this account and, where enabled,
+                to deliver essential security notices. It is not marketing. If you leave this
+                unchecked, no registration email is sent. You can review your data and account
+                controls later under Profile → Privacy and data.
+              </p>
+            </div>
+
+            <div class="form-group">
               <label for="firstName" class="form-label">First name <span class="label-optional">(optional)</span></label>
               <input
                 id="firstName"
@@ -301,7 +318,8 @@ const form = reactive({
   lastName: '',
   password: '',
   confirmPassword: '',
-  inviteCode: ''
+  inviteCode: '',
+  sendRegistrationEmail: true
 })
 
 const errors = reactive({
@@ -424,7 +442,8 @@ const handleRegister = async () => {
     const payload = {
       username: form.username,
       email: form.email,
-      password: form.password
+      password: form.password,
+      send_registration_email: form.sendRegistrationEmail
     }
     if (form.firstName.trim()) payload.first_name = form.firstName.trim()
     if (form.lastName.trim()) payload.last_name = form.lastName.trim()
@@ -448,6 +467,7 @@ const handleRegister = async () => {
     form.password = ''
     form.confirmPassword = ''
     form.inviteCode = ''
+    form.sendRegistrationEmail = true
 
     // Redirect to login after 5 seconds
     setTimeout(() => {
@@ -577,6 +597,20 @@ const handleRegister = async () => {
 }
 
 .competition-callout__join input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
+}
+
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.form-check input {
   margin-top: 0.15rem;
   accent-color: var(--accent);
 }

@@ -10,7 +10,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 ### Carried forward from 1.1
 - SMTP settings in Admin → Settings → Email, including a save-then-test flow.
-- Registration email for new accounts, with separate approved and pending-approval messages.
+- Registration email for new accounts, with separate approved and pending-approval messages. The registration form exposes it as an opt-in checkbox with transactional-email privacy language.
 
 ### Maintenance and fixes
 - Fresh installs now include the Redis rate-limit service, and existing
