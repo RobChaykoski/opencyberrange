@@ -1,8 +1,11 @@
-# OpenCyberRange Base 1.1.0
+# OpenCyberRange Community / Academic 1.1.0
 
-Edition: **Base** — supported single-host teaching platform and maintenance line.
-Pro 2.0 adds analytics and reporting. Enterprise 3.0 adds multi-host HA and
-identity federation.
+Edition: **Community / Academic** — supported single-host teaching platform,
+lab and workbook improvements, exercise authoring, maintenance, and security.
+Professional 2.0 adds analytics, reporting, cohort analysis, competency
+evidence, accreditation support, and research exports. Enterprise 3.0 adds HA,
+SSO, enterprise reporting, multi-tenant support, LMS integration, and
+compliance reporting.
 
 Released: 4 November 2026
 
@@ -12,6 +15,12 @@ account email plus the recent validation fixes.
 
 ## Highlights
 
+- **Private by default:** the platform serves a deny-all `robots.txt`, sends
+  `noindex`/`nofollow` metadata and `X-Robots-Tag`, and returns `403` to known
+  search and AI crawler user agents. See `docs/ANTI-SCRAPING.md` and
+  `docs/REVERSE-PROXY.md`.
+- **Login preview:** the sign-in page shows a sample learner certificate, the
+  SWOCTS mark, and links to the SWOCTS website and LinkedIn page.
 - **Registration email:** new accounts can opt in with a checkbox to receive a
   registration-success message. Accounts that need approval are told they are
   pending; auto-approved accounts receive a sign-in link. The form states that

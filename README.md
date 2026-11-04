@@ -26,12 +26,23 @@ A self-hosted cybersecurity training platform that deploys hands-on exercises in
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
-## Edition: Base
+## Edition: Community / Academic
 
-OpenCyberRange 1.1 is the **Base** edition: the supported single-host teaching
-platform and maintenance line. **Pro 2.0** adds learning analytics, reporting,
-and exports on one host. **Enterprise 3.0** adds multi-host HA, LDAP/OIDC/SAML,
-and enterprise operations. Base remains the reference behaviour and fallback.
+OpenCyberRange 1.1 is the **Community / Academic** edition: the supported
+single-host teaching platform, focused on lab and workbook improvements,
+exercise authoring, bug fixes, maintenance, and security.
+
+**Professional 2.0** adds educational analytics, reporting, cohort analysis,
+competency evidence, accreditation support, and research exports on one host.
+**Enterprise 3.0** adds HA, SSO, enterprise reporting, multi-tenant support,
+LMS integration, and compliance reporting.
+
+The five Professional priorities — Competency Framework Engine, Student
+Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
+Instructor Intervention Dashboard — are **Professional and Enterprise only**.
+They are not Community / Academic features.
+
+Community / Academic remains the reference behaviour and fallback.
 
 ## What's new in 1.1
 
