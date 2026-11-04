@@ -24,7 +24,7 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
-## [Unreleased]
+## [2.1.0] - 2026-11-04
 
 ### Login experience
 - The login preview shows a sample learner certificate and SWOCTS branding, with

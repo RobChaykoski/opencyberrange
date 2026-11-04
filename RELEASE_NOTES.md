@@ -1,9 +1,9 @@
-# OpenCyberRange Professional 2.0 development
+# OpenCyberRange Professional 2.1
 
 Edition: **Professional** — Community / Academic 1.1 plus analytics, reporting,
 cohort analysis, competency evidence, accreditation support, and research
 exports.
-Status: development line. This is not a GA release and may change before 2.0.0.
+Status: release. This is the final 2.1 build.
 
 Enterprise 3.0 is the separate HA, SSO, enterprise reporting, multi-tenant,
 LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.

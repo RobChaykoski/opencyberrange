@@ -1,7 +1,7 @@
-# OpenCyberRange Professional 2.x Program Charter
+﻿# OpenCyberRange Professional 2.x Program Charter
 
 Status: **Active scope guard**
-Edition: **Professional** — Community / Academic 1.1 plus analytics, reporting,
+Edition: **Professional** â€” Community / Academic 1.1 plus analytics, reporting,
 cohort analysis, competency evidence, and research exports
 Owner: Robert Chaykoski
 Last reviewed: 2026-11-04
@@ -86,20 +86,20 @@ These are Enterprise 3.0 candidates unless the charter is amended:
 
 | ID | Item | Classification | State | Owner |
 |---|---|---|---|---|
-| A1 | Student learning analytics view | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
-| A2 | Course analytics overview and exercise drill-down | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
-| A3 | Metric dictionary and shared definitions | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
-| C1 | Competency Framework Engine | In scope — Analytics | Planned | Product |
-| C2 | Student Feedback Engine | In scope — Analytics | Planned | Product |
-| C3 | Radar / Spider Web Reporting | In scope — Analytics | Planned | Product |
-| C4 | Exercise Health Analytics | In scope — Analytics | Planned | Product |
-| C5 | Instructor Intervention Dashboard | In scope — Analytics | Planned | Product |
-| R1 | Cross-course Reports page with RAG signals | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
-| R2 | Pulse surveys and course survey reporting | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
-| R3 | CSV/PDF export for teaching review | In scope — Reporting | Shipped — CSV and PDF | Product |
-| R4 | Cohort analysis and accreditation support | In scope — Reporting | Planned | Product |
-| R5 | Research exports for approved studies | In scope — Reporting | Partial — cross-course CSV/PDF and survey package | Research |
-| H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Partial — host/platform pass; network/lab/recovery gates pending | Platform |
+| A1 | Student learning analytics view | In scope â€” Analytics | Delivered; deployed on the 24.04 preview | Product |
+| A2 | Course analytics overview and exercise drill-down | In scope â€” Analytics | Delivered; deployed on the 24.04 preview | Product |
+| A3 | Metric dictionary and shared definitions | In scope â€” Analytics | Delivered; deployed on the 24.04 preview | Product |
+| C1 | Competency Framework Engine | In scope â€” Analytics | Planned | Product |
+| C2 | Student Feedback Engine | In scope â€” Analytics | Planned | Product |
+| C3 | Radar / Spider Web Reporting | In scope â€” Analytics | Planned | Product |
+| C4 | Exercise Health Analytics | In scope â€” Analytics | Planned | Product |
+| C5 | Instructor Intervention Dashboard | In scope â€” Analytics | Planned | Product |
+| R1 | Cross-course Reports page with RAG signals | In scope â€” Reporting | Delivered; deployed on the 24.04 preview | Product |
+| R2 | Pulse surveys and course survey reporting | In scope â€” Reporting | Delivered; deployed on the 24.04 preview | Product |
+| R3 | CSV/PDF export for teaching review | In scope â€” Reporting | Shipped â€” CSV and PDF | Product |
+| R4 | Cohort analysis and accreditation support | In scope â€” Reporting | Planned | Product |
+| R5 | Research exports for approved studies | In scope â€” Reporting | Partial â€” cross-course CSV/PDF and survey package | Research |
+| H1 | Ubuntu 24.04 target for 2.0 | Update â€” required platform path | Partial â€” host/platform pass; network/lab/recovery gates pending | Platform |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
 | M3 | Version identity endpoint and footer | Update - operational | Shipped | Platform |

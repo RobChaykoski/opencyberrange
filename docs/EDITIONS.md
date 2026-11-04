@@ -1,4 +1,4 @@
-# OpenCyberRange editions
+﻿# OpenCyberRange editions
 
 Status: **Active product model**
 
@@ -9,12 +9,12 @@ previous one.
 | Edition | Version line | Shape | Primary user |
 |---|---|---|---|
 | **Community / Academic** | 1.1.x | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
-| **Professional** | 2.0.x | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Professional** | 2.1.x | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
 | **Enterprise** | 3.0.x | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
 
-### Community / Academic — 1.1
+### Community / Academic â€” 1.1
 
 Community / Academic is the supported, stable teaching platform:
 
@@ -29,20 +29,20 @@ Community / Academic is the supported, stable teaching platform:
 Community / Academic is the reference behaviour. Professional and Enterprise
 must not regress it.
 
-### Professional — 2.0
+### Professional â€” 2.0
 
 Professional adds the teaching intelligence and evidence layer on the same
 single-host deployment. The Professional and Enterprise priority set is:
 
-1. **Competency Framework Engine** — explicit competency definitions, mappings,
+1. **Competency Framework Engine** â€” explicit competency definitions, mappings,
    evidence rules, and progression levels.
-2. **Student Feedback Engine** — structured, consent-aware feedback tied to
+2. **Student Feedback Engine** â€” structured, consent-aware feedback tied to
    exercises, tracks, and competencies.
-3. **Radar / Spider Web Reporting** — competency profiles for learners, cohorts,
+3. **Radar / Spider Web Reporting** â€” competency profiles for learners, cohorts,
    and programmes.
-4. **Exercise Health Analytics** — which labs are failing, where learners
+4. **Exercise Health Analytics** â€” which labs are failing, where learners
    abandon, and which exercises need authoring attention.
-5. **Instructor Intervention Dashboard** — early, explainable support signals
+5. **Instructor Intervention Dashboard** â€” early, explainable support signals
    for instructors.
 
 Professional also carries:
@@ -61,7 +61,7 @@ Professional is not a multi-host or identity-federation product. It remains a
 single Docker host and does not add SSO, multi-tenancy, LMS integration, or
 distributed scheduling.
 
-### Enterprise — 3.0
+### Enterprise â€” 3.0
 
 Enterprise adds the deployment, identity, and institutional layer:
 
