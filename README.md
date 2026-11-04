@@ -624,7 +624,7 @@ After installation, log in as admin and navigate to **Admin Panel > System Healt
 
 ## Requirements
 
-- **OS:** Ubuntu 22.04 LTS or later (Debian-based)
+- **OS:** Ubuntu 22.04 LTS or Ubuntu 24.04 LTS (Debian-based)
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
 - **Platform stack:** Python 3.11, Node 22 (frontend build), PostgreSQL 15, Docker Compose v2. Current pins and the upgrade trail are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).

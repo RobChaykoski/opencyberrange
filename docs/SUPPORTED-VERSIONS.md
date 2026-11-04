@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-01**.
+Last reviewed: **2026-11-04**. Current release: **1.1.0**.
 
 ## Policy
 
@@ -23,6 +23,7 @@ Last reviewed: **2026-11-01**.
 
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
+| Host OS | Ubuntu 22.04 LTS | Ubuntu 24.04 LTS | Supported | 1.1 supports and is validated on both LTS releases |
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |

@@ -2,9 +2,9 @@
 
 Released: 4 November 2026
 
-OpenCyberRange 1.1 is a maintenance-line feature release on Ubuntu 22.04 LTS.
-It keeps the 1.0 deployment and upgrade path and adds account email plus the
-recent validation fixes.
+OpenCyberRange 1.1 is a maintenance-line feature release for Ubuntu 22.04 LTS
+and Ubuntu 24.04 LTS. It keeps the 1.0 deployment and upgrade path and adds
+account email plus the recent validation fixes.
 
 ## Highlights
 
@@ -29,7 +29,7 @@ recent validation fixes.
 
 ## Supported scope
 
-- Ubuntu 22.04 LTS for the 1.x maintenance line.
+- Ubuntu 22.04 LTS and Ubuntu 24.04 LTS for the 1.x maintenance line.
 - Self-hosted Docker Compose deployments.
 - WireGuard learner access, with optional WSTunnel deployments.
 

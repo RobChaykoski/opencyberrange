@@ -4,11 +4,11 @@ Before you install OpenCyberRange you size the host, open the right ports, and c
 
 ## Operating system
 
-Use Ubuntu 22.04 LTS or a newer Debian-based distribution. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point.
+Use Ubuntu 22.04 LTS or Ubuntu 24.04 LTS. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point.
 
 ## Hardware
 
-The host runs three core containers plus every lab container students spawn. Size for the largest class you expect to run at once.
+The host runs four core containers plus every lab container students spawn. Size for the largest class you expect to run at once.
 
 | Resource | Minimum | Recommended (20+ students) |
 |----------|---------|----------------------------|

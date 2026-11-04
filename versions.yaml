@@ -1,20 +1,18 @@
 # OpenCyberRange version policy and Wave 0 baseline.
 #
-# Release 1.0.0 is the first supported self-hosted teaching release.
+# Release 1.1.0 is the supported self-hosted teaching release.
 # "latest supported GA" means the newest stable release that is still
 # supported upstream and compatible with the rest of the selected stack.
 # It does not mean the newest possible release of every package.
-
-release:
-  version: "1.0.0"
-  status: "supported"
-  date: "2026-11-04"
 
 release:
   version: "1.1.0"
   status: "supported"
   date: "2026-11-04"
   focus: "registration email and SMTP settings"
+  host_os:
+    - "ubuntu-22.04"
+    - "ubuntu-24.04"
 
 policy:
   name: latest-supported-ga
@@ -35,9 +33,8 @@ runtime:
     candidate: "3.14"
     status: "compatibility-testing"
   node:
-    current: "18"
-    target: "22"
-    candidate: "24"
+    current: "22"
+    target: "24"
     status: "compatibility-testing"
   postgres:
     current: "15"

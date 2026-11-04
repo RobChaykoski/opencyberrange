@@ -33,7 +33,7 @@ backend as `/labs`.
 
 ## 1. Prerequisites
 
-- Ubuntu 22.04 LTS or later, or a comparable Linux server
+- Ubuntu 22.04 LTS or Ubuntu 24.04 LTS, or a comparable Linux server
 - Docker Engine 24+ with the Compose v2 plugin
 - Git
 - 4+ CPU cores, 32 GB RAM minimum, 500 GB disk for a production classroom
