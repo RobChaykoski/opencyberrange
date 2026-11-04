@@ -12,7 +12,7 @@ release:
 
 development:
   version: "2.0.0-dev"
-  focus: "reporting, analytics, scoring, and multi-host deployment"
+  focus: "analytics, reporting, and high availability"
 
 policy:
   name: latest-supported-ga

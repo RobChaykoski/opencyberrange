@@ -40,7 +40,7 @@ fixes and security updates continue on the 1.1 line and are merged forward into
 |---|---|---|---|
 | `1.1.x` | **Supported** | Ubuntu 22.04 LTS | Production installs; bug and security fixes stay on the 22.04 baseline |
 | `1.0.x` | Prior release | Ubuntu 22.04 LTS | Upgrade path to 1.1 |
-| `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting, analytics, scoring, and multi-host deployment goals |
+| `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting, analytics, and multi-host high availability only |
 
 Version 1.1 bug fixes are not rebased onto 24.04. They land on the 1.1 line and
 merge forward into 2.0. The 24.04 migration and the HA lab-pool design are
@@ -49,14 +49,22 @@ tracked in [the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) and
 
 ### Version 2.0 goals
 
+The 2.x feature set is deliberately limited to three workstreams:
+
 | Workstream | What it changes | Status |
 |---|---|---|
 | Reporting | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, and CSV export. | Development preview in this tree |
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses: completion funnels, median time, hint pressure, attempt burden, within-person growth, and a shared metric dictionary. | Development preview in this tree |
 | Survey insight | Optional quick-pulse surveys after completion, instructor-built course surveys, consent-gated responses, and aggregate reporting. | Development preview in this tree |
-| Account email | Admin-configured SMTP relay, registration-success email, pending-approval wording, and a test-send action. | Development preview in this tree |
-| Scoring improvements | A clearer, configurable scoring model that explains how completion, hints, attempts, and time contribute, keeps competition scoring intact, and never turns analytics into a public ranking. | In design |
-| Deployment scale-out | Support multiple Docker hosts ("pods") first, then Kubernetes, without changing lab definitions or the student experience. | Planned |
+| Deployment scale-out | A multi-host Docker lab pool with failover, routing, shared state, and recovery. | Planned |
+
+**Scope guard:** 2.x adds analytics, reporting, and high availability only.
+Bug fixes, security updates, dependency/runtime updates, and small compatibility
+corrections are still allowed. New features, scoring changes, integrations, and
+new product domains are v3 work.
+
+- [2.x program charter](docs/V2-PROGRAM-CHARTER.md)
+- [v3 parking lot](docs/V3-PARKING-LOT.md)
 
 ### Reporting and analytics (development preview)
 
@@ -83,16 +91,6 @@ teaching-improvement prompts, cohort bands, and a consent-filtered research
 workspace with de-identified exports and small-cell suppression. The
 [analytics plan](docs/V2-LEARNING-ANALYTICS.md) records the metric definitions,
 privacy rules, and open decisions.
-
-### Scoring goals
-
-Version 2.0 revisits scoring without discarding the 1.0 signals. The design goal
-is a model that is explainable to a learner and configurable by an instructor:
-each component (completion, hint use, attempts, time, and competition first
-blood) is reported separately, course weights can be reviewed before a term
-starts, and the same calculation powers the scoreboard, exports, and reports.
-Competition scoring remains available as its own ruleset. Scoring is a teaching
-signal, not a public ranking or a high-stakes grade.
 
 ### Deployment goals
 
@@ -704,6 +702,8 @@ opencyberrange/
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
 | [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
 | [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the 24.04 validation checklist |
+| [2.x program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in 2.x |
+| [v3 parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding 2.x |
 | [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.1 stays on 22.04 |
 | [V2 HA lab pool plan](docs/V2-HA-LAB-POOL.md) | Architects planning multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
