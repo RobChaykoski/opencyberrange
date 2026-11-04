@@ -24,6 +24,7 @@ from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.config import settings
+from app.version import APP_VERSION
 from app.ratelimit import create_limiter
 
 # Configure logging
@@ -458,7 +459,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="OpenCyberRange",
     description="Cybersecurity Training Platform",
-    version="2.0.0",
+    version=APP_VERSION,
     lifespan=lifespan,
 )
 
@@ -592,7 +593,7 @@ module_registry.mount_routers(app)
 
 @app.get("/")
 async def root():
-    return {"message": "OpenCyberRange API", "version": "2.0.0"}
+    return {"message": "OpenCyberRange API", "version": APP_VERSION}
 
 
 @app.get("/health")
@@ -614,4 +615,4 @@ def health():
             status_code=503,
             content={"status": "degraded", "database": "down"},
         )
-    return {"status": "healthy", "database": "up"}
+    return {"status": "healthy", "database": "up", "version": APP_VERSION}

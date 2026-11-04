@@ -1,11 +1,14 @@
 # OpenCyberRange version policy and Wave 0 baseline.
 #
+# Release 1.0.0 is the first supported self-hosted teaching release.
 # "latest supported GA" means the newest stable release that is still
 # supported upstream and compatible with the rest of the selected stack.
 # It does not mean the newest possible release of every package.
-#
-# Runtime targets are provisional until the Wave 0/2 compatibility checks
-# finish. Do not upgrade lab or RangeBox images in this programme.
+
+release:
+  version: "1.0.0"
+  status: "supported"
+  date: "2026-11-04"
 
 policy:
   name: latest-supported-ga
