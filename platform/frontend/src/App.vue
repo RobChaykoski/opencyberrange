@@ -39,6 +39,7 @@
         <img src="/swocts_logo.jpg" alt="SWOCTS" class="app-footer__logo" />
       </a>
       <router-link to="/verify" class="app-footer__verify">Verify a certificate</router-link>
+      <span v-if="appVersion" class="app-footer__version" :title="appRelease">v{{ appVersion }}</span>
     </footer>
   </div>
 </template>
@@ -53,6 +54,7 @@ import { useTheme } from './composables/useTheme'
 import { useModules } from './composables/useModules'
 import { setWikiAuthCookie } from './utils/wikiAuth'
 import { useImpersonation } from './composables/useImpersonation'
+import api from './api/axios'
 
 const router = useRouter()
 const { isDark, toggleTheme } = useTheme()
@@ -60,6 +62,8 @@ const { fetchModules, isModuleEnabled, resetModules } = useModules()
 const { isImpersonating } = useImpersonation()
 
 const sidebarCollapsed = ref(false)
+const appVersion = ref('')
+const appRelease = ref('')
 
 // Reactive state to track auth changes - this ensures Vue reactivity works
 const authState = ref({
@@ -87,12 +91,23 @@ let storageListener = null
 // the shared helper.
 const refreshWikiAuthCookie = () => setWikiAuthCookie()
 
+const loadAppVersion = async () => {
+  try {
+    const { data } = await api.get('/version')
+    appVersion.value = data.version || ''
+    appRelease.value = data.release || ''
+  } catch {
+    // Version display is informational; never block the interface on it.
+  }
+}
+
 onMounted(() => {
   storageListener = () => { updateAuthState(); refreshWikiAuthCookie() }
   window.addEventListener('storage', storageListener)
   // Initial update
   updateAuthState()
   refreshWikiAuthCookie()
+  loadAppVersion()
   // Fetch module status if authenticated
   if (authState.value.token) {
     fetchModules()
@@ -382,6 +397,15 @@ body {
 
 .app-footer__verify:hover {
   color: var(--accent);
+}
+
+.app-footer__version {
+  margin-left: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .app-footer a {
   color: var(--accent);
