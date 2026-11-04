@@ -53,8 +53,8 @@ COURSE_SPECS = [
         "semester": "Fall",
         "domains": ["web", "web"],
         "students": 9,
-        "start_rate": 0.95,
-        "complete_rate": 0.9,
+        "start_rate": 0.98,
+        "complete_rate": 0.98,
         "hint_rate": 0.25,
         "heavy_attempt_rate": 0.15,
         "learning": (4, 5),
@@ -113,6 +113,9 @@ def _cleanup(db):
         db.query(LabCompletion).filter(
             LabCompletion.user_id.in_(user_ids)
         ).delete(synchronize_session=False)
+        db.query(FlagAttempt).filter(
+            FlagAttempt.user_id.in_(user_ids)
+        ).delete(synchronize_session=False)
         db.query(LabSession).filter(
             LabSession.user_id.in_(user_ids)
         ).delete(synchronize_session=False)
@@ -145,6 +148,14 @@ def _cleanup(db):
         ).delete(synchronize_session=False)
         for lab in labs:
             db.delete(lab)
+        db.flush()
+    demo_levels = db.query(Level).filter(
+        Level.description == "Seeded analytics data"
+    ).all()
+    for level in demo_levels:
+        remaining = db.query(Lab).filter(Lab.level_id == level.id).count()
+        if remaining == 0:
+            db.delete(level)
     if demo_users:
         for user in demo_users:
             db.delete(user)
