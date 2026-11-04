@@ -1425,6 +1425,11 @@
             </div>
           </div>
 
+          <!-- V3 identity providers -->
+          <div v-else-if="activeSettingsCategory === 'identity'" class="settings-form">
+            <IdentityProvidersPanel />
+          </div>
+
           <!-- Generic settings form for other categories -->
           <div v-else class="settings-form">
             <div v-if="settingsLoading" class="empty-state">Loading settings...</div>
@@ -2749,6 +2754,7 @@ test:
 import InfoTip from '../components/InfoTip.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import AdminPendingTab from '../components/AdminPendingTab.vue'
+import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -3272,13 +3278,15 @@ const settingsCategories = computed(() => {
   // Custom achievements are managed by their own CRUD endpoints rather than
   // platform_settings rows, so the tab is always available.
   base.push('achievements')
+  // V3 identity settings: LDAP/OIDC/SAML provider configuration.
+  base.push('identity')
   // The Modules tab (optional-module enable/disable) is a real admin control,
   // not a dev tool: show it whenever the edition ships optional modules, so an
   // operator can turn SOC on/off on a production install.
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', modules: 'Modules', achievements: 'Achievements' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', modules: 'Modules', achievements: 'Achievements', identity: 'Identity providers' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
