@@ -156,6 +156,27 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+# ── Host OS detection ─────────────────────────────────────────────────────────
+# The validated matrix is Ubuntu 22.04 LTS (supported) and Ubuntu 24.04 LTS
+# (recommended for new 2.0 installs). Warn rather than block on other hosts so
+# Debian-based installs keep their existing path.
+HOST_OS_ID="$(
+    if [ -r /etc/os-release ]; then
+        . /etc/os-release
+        printf '%s:%s' "${ID:-}" "${VERSION_ID:-}"
+    else
+        printf 'unknown:'
+    fi
+)"
+HOST_OS_NAME="$(
+    if [ -r /etc/os-release ]; then
+        . /etc/os-release
+        printf '%s' "${PRETTY_NAME:-Linux}"
+    else
+        printf 'Unknown Linux'
+    fi
+)"
+
 # ── Banner ────────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${RED}${BOLD}     ██████╗  ██████╗██████╗ ${NC}"
@@ -172,6 +193,7 @@ echo -e "${BOLD}${MAGENTA}    ╚═══════════════�
 echo ""
 echo -e "  ${DIM}──────────────────────────────────────────${NC}"
 info "User               : ${BOLD}$REAL_USER${NC}"
+info "Host OS            : ${BOLD}${HOST_OS_NAME}${NC}"
 info "Home               : ${BOLD}$REAL_HOME${NC}"
 info "Repo               : ${BOLD}$REPO_DIR${NC}"
 info "Platform dir       : ${BOLD}$PLATFORM_DIR${NC}"
@@ -181,6 +203,21 @@ info "Peer Manager port  : ${BOLD}${PEER_MANAGER_PORT}${NC} (internal API — no
 info "Primary interface  : ${BOLD}$PRIMARY_IFACE${NC}"
 echo -e "  ${DIM}──────────────────────────────────────────${NC}"
 echo ""
+
+case "$HOST_OS_ID" in
+    ubuntu:24.04)
+        log "Host OS is Ubuntu 24.04 LTS (recommended for new 2.0 installs)"
+        ;;
+    ubuntu:22.04)
+        warn "Host OS is Ubuntu 22.04 LTS (supported); Ubuntu 24.04 LTS is recommended for new installs"
+        ;;
+    ubuntu:*)
+        warn "Host OS ${HOST_OS_NAME} is outside the validated matrix (Ubuntu 22.04/24.04)"
+        ;;
+    *)
+        warn "Host OS ${HOST_OS_NAME} is not in the validated matrix; see docs/OS-SUPPORT.md"
+        ;;
+esac
 
 # ==============================================================================
 # PHASE FUNCTIONS
