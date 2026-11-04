@@ -1,4 +1,4 @@
-# OpenCyberRange
+﻿# OpenCyberRange
 
 > **Original project and attribution**
 >
@@ -36,7 +36,7 @@ describe scope and operational shape, not three separate codebases.
 |---|---|---|---|---|
 | **Community / Academic** | `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
 | **Professional** | `2.1.x` (`2.1.0`) | **Release** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `3.0.x` | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
+| **Enterprise** | `3.0.x` (`3.0.0`) | **Release** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
 Community / Academic 1.1 remains the reference behaviour and the fallback.
 Professional is additive: the Community / Academic curriculum, learner
@@ -45,9 +45,9 @@ Enterprise is additive again: it adds the lab pool, control-plane HA, gateway
 failover, identity federation, multi-tenancy, LMS integration, and compliance
 reporting without removing the single-host path.
 
-The five Professional priorities — Competency Framework Engine, Student
+The five Professional priorities â€” Competency Framework Engine, Student
 Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
-Instructor Intervention Dashboard — are **Professional and Enterprise only**.
+Instructor Intervention Dashboard â€” are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on Community / Academic 1.1 and merge
@@ -202,7 +202,7 @@ and a downloadable PDF transcript.
 issues a certificate with a deterministic ID, a verification QR code, and a
 print/PDF action. Certificates can be rendered in **Classic**, **Executive**,
 **Modern**, or **Minimal** designs. Choose one from the certificate page, or set
-the platform default in Admin → Settings → General → Certificate Design. The
+the platform default in Admin â†’ Settings â†’ General â†’ Certificate Design. The
 same profile view generates a PDF transcript containing certificates, every
 completed exercise, track progress, and course achievements.
 
@@ -243,21 +243,21 @@ participants, new sign-ups, existing opt-ins, and a copyable sign-up link.
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
 | AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
 | OSINT | 4 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
-| **High School Cybersecurity** | **6** | Browser-first Grades 9–12 pathway; RangeBox basics, defensive logs, and the Grade 12 DevFest community portal |
+| **High School Cybersecurity** | **6** | Browser-first Grades 9â€“12 pathway; RangeBox basics, defensive logs, and the Grade 12 DevFest community portal |
 | Software Security | 2 | Source review, hidden routes, command injection, and remediation |
 | Digital Forensics | 2 | Memory analysis and VoIP network evidence reconstruction |
-| **Total** | **148** | **11 tracks · 51 levels** |
+| **Total** | **148** | **11 tracks Â· 51 levels** |
 
 ## Network Foundations stream
 
 The **Network Security** track opens with a beginner **Network Foundations**
 level for students who have never used a terminal:
 
-- **Ping Basics** — reachability, latency, packet loss, and why a reply is not a
+- **Ping Basics** â€” reachability, latency, packet loss, and why a reply is not a
   service check.
-- **DNS Basics** — A, CNAME, MX, and TXT records, queried directly against an
+- **DNS Basics** â€” A, CNAME, MX, and TXT records, queried directly against an
   authoritative lab server.
-- **Name or Network?** — a troubleshooting capstone that separates a stale name
+- **Name or Network?** â€” a troubleshooting capstone that separates a stale name
   from a dead host and a stopped service.
 
 The matching workbook chapter is **CH N0 -- Network Foundations**.
@@ -267,16 +267,16 @@ The matching workbook chapter is **CH N0 -- Network Foundations**.
 The **AI Hacking** track starts with a beginner module, **AI Security
 Foundations**, containing three labs:
 
-- **Prompt Injection Basics** — override a mock assistant's hidden instructions.
-- **Jailbreak Policy Bypass** — move past a keyword filter with role-play and
+- **Prompt Injection Basics** â€” override a mock assistant's hidden instructions.
+- **Jailbreak Policy Bypass** â€” move past a keyword filter with role-play and
   authority framing.
-- **Indirect Prompt Injection** — plant instructions in a support ticket that a
+- **Indirect Prompt Injection** â€” plant instructions in a support ticket that a
   summariser reads.
 
 Each lab uses a deterministic, dependency-free mock assistant inside the lab
 network. No external model, API key, or internet access is required. The next
-levels — instruction hierarchy, RAG/data exposure, agent tool abuse, model
-supply chain, and an AI-assisted capstone — are defined in the curriculum and
+levels â€” instruction hierarchy, RAG/data exposure, agent tool abuse, model
+supply chain, and an AI-assisted capstone â€” are defined in the curriculum and
 will appear as their labs are published.
 
 ## OSINT stream
@@ -285,16 +285,16 @@ The **OSINT** track teaches students to work from the outside in. The target is
 **Kestrel Ridge**, a fictional company with a simulated intranet, a public
 employee badge, and a public code trail:
 
-- **The Public Footprint** — map a staff intranet, read `robots.txt`, and find a
+- **The Public Footprint** â€” map a staff intranet, read `robots.txt`, and find a
   flag in a review page's HTML source.
-- **Badge Photo Intelligence** — inspect PNG metadata, then extract a flag from
+- **Badge Photo Intelligence** â€” inspect PNG metadata, then extract a flag from
   the least-significant bits of the blue channel. The exercise ships with a
   dependency-free Python extractor, a browser-based extractor for shared or
   low-tooling devices, and also works with `zsteg`.
-- **The Developer's Trail** — fetch a static JavaScript asset and recover a
+- **The Developer's Trail** â€” fetch a static JavaScript asset and recover a
   staging token left in a developer comment. This exercise also includes a
   bonus flag hidden in the public OpenCyberRange repository.
-- **The Public Homepage** — treat a live public site (`www.swocts.com`) as an
+- **The Public Homepage** â€” treat a live public site (`www.swocts.com`) as an
   OSINT source, search its document metadata, and find the flag left in the
   page head. A local mirror is available for offline practice.
 
@@ -318,7 +318,7 @@ existing learning ladder: **Signal in the Noise**, **Digital Footprint**,
 **First-Pass Analyst**. They are course-scoped, so a student earns them in any
 course that assigns the OSINT exercises.
 
-## High School pathway · Grades 9–12
+## High School pathway Â· Grades 9â€“12
 
 The **High School Cybersecurity** track is a browser-first pathway for students
 who are curious but may be new to the field:
@@ -372,10 +372,10 @@ as **New sign-up** on the organizer dashboard.
 The repository includes GitHub-native checks that need no third-party account
 or repository secret:
 
-- **Dependabot** — weekly dependency and Docker base-image update PRs.
-- **CodeQL** — Python and JavaScript/TypeScript static analysis.
-- **Trivy** — filesystem vulnerability, secret, and configuration scanning.
-- **Dependency audit** — `pip-audit` and `npm audit --omit=dev` on every pull
+- **Dependabot** â€” weekly dependency and Docker base-image update PRs.
+- **CodeQL** â€” Python and JavaScript/TypeScript static analysis.
+- **Trivy** â€” filesystem vulnerability, secret, and configuration scanning.
+- **Dependency audit** â€” `pip-audit` and `npm audit --omit=dev` on every pull
   request and weekly.
 
 Current status on `main`: `pip-audit` reports **0 packages with advisories**
@@ -431,18 +431,18 @@ classrooms where not every student has the same hardware:
 - **No public ranking.** The Celebration Wall shows recent wins and a
   non-ranked spotlight. It does not publish individual badge counts or ranks.
   Learners choose a real-name, username, or anonymous label, and can opt out via
-  “Show me on the wall”; opted-out users still see their own private corner.
+  â€œShow me on the wallâ€; opted-out users still see their own private corner.
   Admin diagnostic accounts are excluded.
 - **Data minimisation.** The wall exposes only a display name, the latest badge,
   and a relative timestamp. It does not expose email addresses, student IDs, or
   avatars.
 - **Optional surveys, explicit consent.** Platform and usage surveys are
-  off by default. Profile → **Surveys** shows the versioned privacy statement
+  off by default. Profile â†’ **Surveys** shows the versioned privacy statement
   before consent is recorded, keeps an append-only consent history, and allows
   withdrawal at any time. Survey consent covers platform feedback only; it does
   not permit collection of passwords, grades, lab flags, or sensitive personal
   data. See [Survey privacy and consent](docs/SURVEY-PRIVACY.md).
-- **Email consent and withdrawal.** Profile → **Privacy and data** explains why
+- **Email consent and withdrawal.** Profile â†’ **Privacy and data** explains why
   account email is collected, states that it is not marketing, and lets the
   learner withdraw consent to optional account email under PIPEDA. The consent
   version and update time are recorded. Essential security and service messages
@@ -553,10 +553,10 @@ building during a student spawn.
 
 ### Data deletion process
 
-- **Self-service:** Profile → **Privacy and data** → **Delete my account**.
+- **Self-service:** Profile â†’ **Privacy and data** â†’ **Delete my account**.
   The request requires the current password, a live TOTP or recovery code when
   MFA is enabled, and typing `DELETE`.
-- **Administrator:** Admin → Users → Delete requires typing the username and
+- **Administrator:** Admin â†’ Users â†’ Delete requires typing the username and
   uses the same erasure service.
 - Deletion removes identity and credential data, the WireGuard peer and keys,
   enrolments, completions, flag and quiz attempts, achievements, competition
@@ -695,38 +695,38 @@ workstream and is not part of the 2.0 release gate.
 
 ```
 opencyberrange/
-├── platform/
-│   ├── backend/          # FastAPI app, migrations, curriculum and lab scripts
-│   ├── frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
-│   ├── db/               # PostgreSQL init and password bootstrap
-│   ├── labs/             # Exercise library (organized by track)
-│   ├── rangebox/         # RangeBox container build
-│   ├── templates/        # Exercise Studio template catalog
-│   ├── tester/           # Exercise tester module
-│   ├── wiki-builder/     # MkDocs builder image for the wiki_data volume
-│   ├── certs/            # Local TLS certificates (not committed)
-│   ├── docker-compose.prod.yml
-│   └── .env.example      # Environment variable template
-├── docs/                 # Architecture, analytics, privacy, research, release docs
-├── Manual-Lite/          # Deployment, student, instructor, and admin guides
-├── Workbook/             # Student walkthroughs (MkDocs source)
-├── RangeBox/             # Kali in-browser desktop image source
-├── UbuntuBox/            # Ubuntu in-browser desktop image source
-├── RemnuxBox/            # REMnux in-browser desktop image source
-├── scripts/              # Setup, deployment, backup, and lab validation tools
-├── tools/                # Wiki generation and maintenance tools
-├── wiki-overrides/       # MkDocs theme overrides
-├── .github/              # CI, CodeQL, Dependabot, and Trivy workflows
-├── .opencode/            # Project-local design and authoring skills
-├── mkdocs-*.yml          # Per-track workbook build configuration
-├── versions.yaml         # Runtime, dependency, and image pins
-├── wikis.yaml            # Workbook wiki registry
-├── BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
-├── THIRD_PARTY_NOTICES.md # Open-source licence inventory and attribution checklist
-├── THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
-├── RELEASE_NOTES.md      # Current release notes
-├── CHANGELOG.md          # Release and change history
-└── CONTRIBUTING.md       # Contributor guidelines
+â”œâ”€â”€ platform/
+â”‚   â”œâ”€â”€ backend/          # FastAPI app, migrations, curriculum and lab scripts
+â”‚   â”œâ”€â”€ frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
+â”‚   â”œâ”€â”€ db/               # PostgreSQL init and password bootstrap
+â”‚   â”œâ”€â”€ labs/             # Exercise library (organized by track)
+â”‚   â”œâ”€â”€ rangebox/         # RangeBox container build
+â”‚   â”œâ”€â”€ templates/        # Exercise Studio template catalog
+â”‚   â”œâ”€â”€ tester/           # Exercise tester module
+â”‚   â”œâ”€â”€ wiki-builder/     # MkDocs builder image for the wiki_data volume
+â”‚   â”œâ”€â”€ certs/            # Local TLS certificates (not committed)
+â”‚   â”œâ”€â”€ docker-compose.prod.yml
+â”‚   â””â”€â”€ .env.example      # Environment variable template
+â”œâ”€â”€ docs/                 # Architecture, analytics, privacy, research, release docs
+â”œâ”€â”€ Manual-Lite/          # Deployment, student, instructor, and admin guides
+â”œâ”€â”€ Workbook/             # Student walkthroughs (MkDocs source)
+â”œâ”€â”€ RangeBox/             # Kali in-browser desktop image source
+â”œâ”€â”€ UbuntuBox/            # Ubuntu in-browser desktop image source
+â”œâ”€â”€ RemnuxBox/            # REMnux in-browser desktop image source
+â”œâ”€â”€ scripts/              # Setup, deployment, backup, and lab validation tools
+â”œâ”€â”€ tools/                # Wiki generation and maintenance tools
+â”œâ”€â”€ wiki-overrides/       # MkDocs theme overrides
+â”œâ”€â”€ .github/              # CI, CodeQL, Dependabot, and Trivy workflows
+â”œâ”€â”€ .opencode/            # Project-local design and authoring skills
+â”œâ”€â”€ mkdocs-*.yml          # Per-track workbook build configuration
+â”œâ”€â”€ versions.yaml         # Runtime, dependency, and image pins
+â”œâ”€â”€ wikis.yaml            # Workbook wiki registry
+â”œâ”€â”€ BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
+â”œâ”€â”€ THIRD_PARTY_NOTICES.md # Open-source licence inventory and attribution checklist
+â”œâ”€â”€ THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
+â”œâ”€â”€ RELEASE_NOTES.md      # Current release notes
+â”œâ”€â”€ CHANGELOG.md          # Release and change history
+â””â”€â”€ CONTRIBUTING.md       # Contributor guidelines
 ```
 
 ## Documentation
