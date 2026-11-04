@@ -11,6 +11,10 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Login experience
+- The login preview shows a sample learner certificate and SWOCTS branding, with
+  links to the SWOCTS website and LinkedIn page.
+
 ### 2.x feature scope
 - Reporting, learning analytics, and survey insight remain the only active 2.x
   feature workstreams. Multi-host HA moved to v3; see

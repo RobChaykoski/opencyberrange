@@ -1,9 +1,31 @@
 <template>
   <div class="login-page">
-    <div class="login-powered" aria-label="Powered by SWOCTS">
-      <span>Powered by</span>
-      <img src="/swocts_logo.jpg" alt="SWOCTS" />
-    </div>
+    <nav class="login-powered" aria-label="SWOCTS">
+      <a
+        class="login-powered__brand"
+        href="https://www.swocts.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Powered by SWOCTS — open the SWOCTS website"
+        title="swocts.com"
+      >
+        <span>Powered by</span>
+        <img src="/swocts_logo.jpg" alt="SWOCTS" />
+      </a>
+      <span class="login-powered__divider" aria-hidden="true"></span>
+      <a
+        class="login-powered__social"
+        href="https://www.linkedin.com/company/swocts"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="SWOCTS on LinkedIn"
+        title="SWOCTS on LinkedIn"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z"/>
+        </svg>
+      </a>
+    </nav>
 
     <div class="login-split">
       <!-- Left: form panel -->
@@ -189,8 +211,26 @@
                   <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="preview-certificate__logo" />
                   <strong>OpenCyberRange</strong>
                   <span class="preview-certificate__powered">
-                    Powered by
-                    <img src="/swocts_logo.jpg" alt="SWOCTS" />
+                    <span>Powered by</span>
+                    <a
+                      class="preview-certificate__site"
+                      href="https://www.swocts.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="SWOCTS website"
+                    >swocts.com</a>
+                    <a
+                      class="preview-certificate__social"
+                      href="https://www.linkedin.com/company/swocts"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="SWOCTS on LinkedIn"
+                      title="SWOCTS on LinkedIn"
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z"/>
+                      </svg>
+                    </a>
                   </span>
                 </div>
                 <div class="preview-certificate__main">
@@ -311,23 +351,68 @@ const handleLogin = async () => {
   z-index: 3;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.55rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  gap: 0.45rem;
+  padding: 0.28rem 0.4rem 0.28rem 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 999px;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.62);
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.login-powered__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
   color: #cbd5e1;
   font-size: 0.62rem;
   font-weight: 600;
-  backdrop-filter: blur(8px);
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
-.login-powered img {
+.login-powered__brand:hover {
+  color: #f8fafc;
+}
+
+.login-powered__brand img {
   height: 14px;
   width: auto;
   padding: 1px 3px;
   border-radius: 3px;
   background: #ffffff;
+}
+
+.login-powered__divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(148, 163, 184, 0.28);
+}
+
+.login-powered__social {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #cbd5e1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.login-powered__social:hover {
+  background: rgba(56, 189, 248, 0.16);
+  color: #e0f2fe;
+}
+
+.login-powered__social svg {
+  width: 13px;
+  height: 13px;
+}
+
+.login-powered a:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
 }
 
 .login-split {
@@ -815,7 +900,7 @@ const handleLogin = async () => {
 .preview-certificate__powered {
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.25rem;
   margin-left: auto;
   color: #94a3b8;
   font-size: 0.48rem;
@@ -824,12 +909,42 @@ const handleLogin = async () => {
   text-transform: none;
 }
 
-.preview-certificate__powered img {
-  height: 11px;
-  width: auto;
-  padding: 1px 2px;
-  border-radius: 2px;
-  background: #ffffff;
+.preview-certificate__site {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.preview-certificate__site:hover {
+  color: #f8fafc;
+  text-decoration: underline;
+}
+
+.preview-certificate__social {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: rgba(56, 189, 248, 0.16);
+  color: #93c5fd;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.preview-certificate__social:hover {
+  background: rgba(56, 189, 248, 0.28);
+  color: #e0f2fe;
+}
+
+.preview-certificate__social svg {
+  width: 9px;
+  height: 9px;
+}
+
+.preview-certificate a:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 .preview-certificate__main {
@@ -937,6 +1052,10 @@ const handleLogin = async () => {
   .login-powered {
     top: 0.6rem;
     right: 0.6rem;
+    padding: 0.24rem 0.32rem 0.24rem 0.5rem;
+  }
+
+  .login-powered__brand {
     font-size: 0.58rem;
   }
 
@@ -969,7 +1088,11 @@ const handleLogin = async () => {
 @media (prefers-reduced-motion: reduce) {
   .form-input,
   .login-button,
-  .password-toggle {
+  .password-toggle,
+  .login-powered__brand,
+  .login-powered__social,
+  .preview-certificate__site,
+  .preview-certificate__social {
     transition: none;
   }
 }
