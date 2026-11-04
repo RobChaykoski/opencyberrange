@@ -17,18 +17,28 @@ bug fix, a maintenance update, or a v3 candidate.**
 
 OpenCyberRange uses three cumulative editions:
 
-1. **Base 1.1** — supported single-host teaching platform and maintenance line.
-2. **Pro 2.0** — Base plus analytics, reporting, and exports.
-3. **Enterprise 3.0** — Pro plus multi-host HA, LDAP/OIDC/SAML, and enterprise
-   operations.
+1. **Community / Academic 1.1** — supported single-host teaching platform,
+   lab/workbook improvements, exercise authoring, maintenance, and security.
+2. **Professional 2.0** — Community / Academic plus analytics, reporting,
+   cohort analysis, competency evidence, accreditation support, and research
+   exports.
+3. **Enterprise 3.0** — Professional plus HA, SSO, enterprise reporting,
+   multi-tenant support, LMS integration, and compliance reporting.
 
-For Pro 2.x the declared feature set is:
+The five Professional priorities are Competency Framework Engine, Student
+Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
+Instructor Intervention Dashboard. They are Professional and Enterprise only,
+not Community / Academic.
 
-1. **Analytics** — learner, course, and programme insight.
-2. **Reporting** — reports, exports, and teaching-review surfaces.
+For Professional 2.x the declared feature set is:
 
-Multi-host HA, identity federation, and enterprise operations are Enterprise 3.0
-work. No third Pro workstream is added without a written scope change.
+1. **Analytics** — learner, course, cohort, competency, and programme insight.
+2. **Reporting and evidence** — reports, accreditation support, research
+   exports, and teaching-review surfaces.
+
+Multi-host HA, SSO, enterprise reporting, multi-tenancy, LMS integration, and
+compliance reporting are Enterprise 3.0 work. No third Professional workstream
+is added without a written scope change.
 
 ## Classification workflow
 
@@ -36,11 +46,11 @@ Every request gets exactly one classification before work starts:
 
 | Classification | Meaning | Action |
 |---|---|---|
-| **In scope** | Directly advances analytics or reporting | Add to the active workstream |
+| **In scope** | Directly advances Professional analytics, reporting, competency evidence, or instructor support | Add to the active workstream |
 | **Bug fix** | Restores intended behaviour, security, correctness, or compatibility | Allowed; keep it small and add a regression test |
 | **Update** | Dependency, version, OS, documentation, or operational correction with no new product surface | Allowed; record it in the maintenance log |
 | **Carry-forward** | Already shipped on the 1.x maintenance line and inherited by 2.x | Do not count as a 2.x feature commitment |
-| **v3 candidate** | New product capability, new workflow, new integration, or major model change | Write it in the v3 parking lot; do not implement |
+| **Enterprise candidate** | New product capability, workflow, integration, tenancy, SSO, or major model change | Write it in the Enterprise parking lot; do not implement |
 | **Reject** | Conflicts with privacy, safety, or the charter | Record the reason |
 
 If a request does not fit one row in under a minute, it is too vague to schedule.

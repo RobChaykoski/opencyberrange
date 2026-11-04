@@ -4,10 +4,25 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## Edition model
 
-- **Base 1.1** — supported single-host teaching platform and maintenance line.
-- **Pro 2.0** — Base plus learning analytics, reporting, and CSV/PDF exports.
-- **Enterprise 3.0** — Pro plus multi-host HA, LDAP/OIDC/SAML, and enterprise
-  operations. See `docs/EDITIONS.md` and `docs/decisions/0002-edition-model.md`.
+- **Community / Academic 1.1** — supported single-host teaching platform, lab
+  and workbook improvements, exercise authoring, maintenance, and security.
+- **Professional 2.0** — Community / Academic plus analytics, reporting, cohort
+  analysis, competency evidence, accreditation support, and research exports.
+- **Enterprise 3.0** — Professional plus HA, SSO, enterprise reporting,
+  multi-tenant support, LMS integration, and compliance reporting. See
+  `docs/EDITIONS.md`, `docs/decisions/0002-edition-model.md`, and
+  `docs/decisions/0003-edition-scope-refinement.md`.
+
+### Professional and Enterprise priorities
+
+- Competency Framework Engine.
+- Student Feedback Engine.
+- Radar / Spider Web Reporting.
+- Exercise Health Analytics.
+- Instructor Intervention Dashboard.
+
+These five priorities are Professional 2.0 and Enterprise 3.0 only. See
+`docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
 ## [Unreleased]
 
@@ -24,10 +39,13 @@ All notable changes to OpenCyberRange are recorded here.
   crawler settings in `docs/REVERSE-PROXY.md`.
 
 ### 2.x feature scope
-- Reporting, learning analytics, and survey insight remain the only active 2.x
-  feature workstreams. Multi-host HA moved to v3; see
-  `docs/V2-PROGRAM-CHARTER.md` and `docs/V3-HA-LAB-POOL.md`.
-- The OWASP Top 10 is now the v2 security baseline for the interface, data, and
+- Reporting, learning analytics, cohort analysis, competency evidence, and
+  survey insight are the active Professional feature workstreams. The five
+  Professional priorities are defined in `docs/PROFESSIONAL-PRIORITIES.md`.
+  Multi-host HA, SSO, multi-tenancy, LMS integration, and compliance reporting
+  are Enterprise 3.0; see `docs/V2-PROGRAM-CHARTER.md`,
+  `docs/V3-PARKING-LOT.md`, and `docs/V3-HA-LAB-POOL.md`.
+- The OWASP Top 10 is the 2.x security baseline for the interface, data, and
   delivery process, with required tests and a documented exception process. See
   `docs/V2-SECURITY-OWASP-TOP-10.md`.
 

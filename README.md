@@ -34,20 +34,27 @@ describe scope and operational shape, not three separate codebases.
 
 | Edition | Version | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Base** | `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; maintenance and security line |
-| **Pro** | `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS | Base plus learning analytics, reporting, and exports on one host |
-| **Enterprise** | `3.0.x` | **Development** | Ubuntu 24.04 LTS | Pro plus multi-host HA, LDAP/OIDC/SAML, and enterprise operations |
+| **Community / Academic** | `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `3.0.x` | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
-Base 1.1 remains the reference behaviour and the fallback. Pro is additive:
-the Base curriculum, learner workflows, privacy controls, and single-host Docker
-Compose install remain. Enterprise is additive again: it adds the lab pool,
-control-plane HA, gateway failover, and identity federation without removing the
-single-host path.
+Community / Academic 1.1 remains the reference behaviour and the fallback.
+Professional is additive: the Community / Academic curriculum, learner
+workflows, privacy controls, and single-host Docker Compose install remain.
+Enterprise is additive again: it adds the lab pool, control-plane HA, gateway
+failover, identity federation, multi-tenancy, LMS integration, and compliance
+reporting without removing the single-host path.
 
-**Bug fixes and security updates continue on Base 1.1 and merge forward into Pro
-and Enterprise**, so a fix does not wait for a feature release. There is no
-separate fork to maintain. See [Editions](docs/EDITIONS.md) and
-[ADR 0002](docs/decisions/0002-edition-model.md).
+The five Professional priorities — Competency Framework Engine, Student
+Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
+Instructor Intervention Dashboard — are **Professional and Enterprise only**.
+They are not Community / Academic work.
+
+**Bug fixes and security updates continue on Community / Academic 1.1 and merge
+forward into Professional and Enterprise**, so a fix does not wait for a feature
+release. There is no separate fork to maintain. See
+[Editions](docs/EDITIONS.md) and
+[ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
 
 ### Version 2.0 goals
 
@@ -55,17 +62,24 @@ The 2.x feature set is deliberately limited to two workstreams:
 
 | Workstream | What it changes | Status |
 |---|---|---|
-| Reporting | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, and CSV/PDF export. | Development preview in this tree |
-| Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses: completion funnels, median time, hint pressure, attempt burden, within-person growth, and a shared metric dictionary. | Development preview in this tree |
-| Survey insight | Optional quick-pulse surveys after completion, instructor-built course surveys, consent-gated responses, and aggregate reporting. This is part of the reporting workstream. | Development preview in this tree |
+| Reporting and evidence | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, CSV/PDF export, accreditation support, and research exports. | Development preview in this tree |
+| Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses, plus the Competency Framework Engine, Student Feedback Engine, radar reporting, exercise health, and the instructor intervention dashboard. | Development preview plus planned priorities |
 
-**Scope guard:** 2.x adds analytics and reporting only. Bug fixes, security
-updates, dependency/runtime updates, and small compatibility corrections are
-still allowed. New features, scoring changes, integrations, new product domains,
-and multi-host HA are v3 work.
+The five priority capabilities are defined in
+[Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md). The
+five programme reports are defined in
+[Programme reports](docs/PROGRAMME-REPORTS.md).
+
+**Scope guard:** Professional 2.x adds analytics, reporting, competency
+evidence, and instructor support only. Bug fixes, security updates,
+dependency/runtime updates, and small compatibility corrections are still
+allowed. New features, scoring changes, enterprise integrations, multi-tenancy,
+SSO, compliance reporting, and multi-host HA are Enterprise 3.0 work.
 
 - [Edition model](docs/EDITIONS.md)
-- [Pro 2.x program charter](docs/V2-PROGRAM-CHARTER.md)
+- [Professional 2.x program charter](docs/V2-PROGRAM-CHARTER.md)
+- [Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md)
+- [Programme reports](docs/PROGRAMME-REPORTS.md)
 - [Enterprise v3 parking lot](docs/V3-PARKING-LOT.md)
 - [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
 - [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md)

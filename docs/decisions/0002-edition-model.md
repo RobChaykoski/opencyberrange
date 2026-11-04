@@ -1,6 +1,7 @@
 # ADR 0002: Base, Pro, and Enterprise editions
 
-Status: **Accepted**
+Status: **Accepted; naming and scope refined by
+[ADR 0003](0003-edition-scope-refinement.md)**
 Date: 2026-11-04
 
 ## Context

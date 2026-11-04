@@ -6,24 +6,24 @@
 # It does not mean the newest possible release of every package.
 
 editions:
-  base:
-    name: "Base"
+  community_academic:
+    name: "Community / Academic"
     version: "1.1.0"
     status: "supported"
     shape: "single-host"
-    focus: "teaching platform, maintenance, and security"
-  pro:
-    name: "Pro"
+    focus: "teaching platform, lab and workbook improvements, exercise authoring, maintenance, and security"
+  professional:
+    name: "Professional"
     version: "2.0.0-dev"
     status: "development"
     shape: "single-host"
-    focus: "analytics, reporting, and exports"
+    focus: "analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports"
   enterprise:
     name: "Enterprise"
     version: "3.0.0-dev"
     status: "development"
     shape: "multi-host HA"
-    focus: "HA, identity federation, and enterprise operations"
+    focus: "HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting"
 
 release:
   version: "1.0.0"

@@ -133,6 +133,29 @@ Capture these automatically from existing activity:
 
 “Workbook downloads” requires an explicit event because the workbook is static. Use a small authenticated tracking endpoint when a learner opens or downloads a workbook resource; do not scrape reverse-proxy logs.
 
+### Category 1: engagement metrics
+
+These are the core engagement measures used by the Professional and Enterprise
+reports. They are **not** Community / Academic features.
+
+| Metric | Why it matters | Definition | State |
+|---|---|---|---|
+| Lab start rate | Interest | Learner-lab pairs with at least one session / assigned learner-lab pairs | Data available; report pending |
+| Completion rate | Success | Completed learner-lab pairs / assigned pairs, with started-to-complete as a second view | Implemented |
+| Abandonment rate | Difficulty | Started learner-lab pairs without a completion / started pairs | Implemented |
+| Average time | Effort | Median active minutes per completed exercise; mean is secondary and outlier-flagged | Implemented as median |
+| Re-attempt count | Friction | Flag attempts per started learner-lab pair; median and share needing 3+ | Implemented from attempts data |
+| Workbook views | Preparation | Authenticated workbook-open events per learner or exercise | Implemented event capture |
+| Hint usage | Knowledge gaps | Hints per completion, hint-free rate, and exercise hint pressure | Implemented |
+| Return visits | Engagement | Learners active on 2+ distinct days in the window / active learners | Planned |
+
+Every metric is reported with its sample size. A missing denominator is shown as
+“insufficient evidence”, not zero.
+
+The five Professional priority engines that consume these metrics are described
+in [Professional and Enterprise priorities](PROFESSIONAL-PRIORITIES.md). The
+programme-level report definitions are in [Programme reports](PROGRAMME-REPORTS.md).
+
 ## Quick pulse survey
 
 After a successful exercise completion, ask three questions only:
