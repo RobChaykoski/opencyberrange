@@ -405,7 +405,11 @@ build_lab() {
         # retagging. The hash tag keeps an immutable record of what was built.
         local svc img_id
         for svc in $lab_services; do
-            img_id=$(docker compose -f "$lab_dir/docker-compose.yml" -p "prebuild-${lab_slug}" images -q "$svc" 2>/dev/null | head -n 1)
+            img_id=""
+            for candidate in "prebuild-${lab_slug}-${svc}:latest" "${lab_slug}-${svc}:latest"; do
+                img_id=$(docker image inspect "$candidate" --format '{{.Id}}' 2>/dev/null || true)
+                [ -n "$img_id" ] && break
+            done
             if [ -z "$img_id" ]; then
                 echo -e "  [${index}/${total}] ${RED}FAILED${NC} ${track_name}/${lab_slug} (no image for service ${svc})"
                 echo -e "           ${YELLOW}Log: $log_file${NC}"
