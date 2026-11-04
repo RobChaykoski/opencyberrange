@@ -16,23 +16,30 @@
         <div class="verify-form__row">
           <input
             id="certificate-id"
-            v-model.trim="certificateId"
+            v-model="certificateId"
             type="text"
             class="form-input"
             placeholder="OCR-TRACK-L01-0123456789"
             autocomplete="off"
+            autocapitalize="characters"
             spellcheck="false"
+            :aria-invalid="validationError ? 'true' : 'false'"
+            aria-describedby="certificate-id-error"
             required
+            @input="clearValidationError"
           />
           <button type="submit" class="btn btn--primary" :disabled="!certificateId">
             Verify
           </button>
         </div>
+        <p v-if="validationError" id="certificate-id-error" class="verify-form__error" role="alert">
+          {{ validationError }}
+        </p>
       </form>
 
       <p v-if="loading" class="verify-state" role="status">Checking the certificate...</p>
 
-      <p v-if="error" class="error-message" role="alert">{{ error }}</p>
+      <p v-if="error" class="verify-form__error" role="alert">{{ error }}</p>
 
       <section v-if="result" class="verify-result" :class="result.valid ? 'verify-result--valid' : 'verify-result--invalid'" aria-live="polite">
         <template v-if="result.valid">
@@ -87,15 +94,48 @@ import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 
+// Certificate IDs are ASCII-only: OCR-<track prefix>-L<level>-<hex digest>.
+// Keep this in step with _CERTIFICATE_ID_RE in the backend curriculum router.
+const CERTIFICATE_ID_RE = /^OCR-[A-Z0-9-]{1,8}-L[0-9]{2}-[A-F0-9]{10}$/
+const CERTIFICATE_ID_MAX_LENGTH = 27
+
 const route = useRoute()
 const router = useRouter()
 const certificateId = ref(route.params.certificateId || '')
 const loading = ref(false)
 const error = ref('')
+const validationError = ref('')
 const result = ref(null)
 
-const load = async (id) => {
-  if (!id) return
+const normalizeCertificateId = (value) => String(value || '').trim().toUpperCase()
+
+const validateCertificateId = (value) => {
+  const id = normalizeCertificateId(value)
+  if (!id) {
+    validationError.value = 'Enter a certificate ID.'
+    return null
+  }
+  if (id.length > CERTIFICATE_ID_MAX_LENGTH || !CERTIFICATE_ID_RE.test(id)) {
+    validationError.value =
+      'Certificate IDs use letters, numbers, and hyphens only, for example OCR-WEB-L01-0123456789.'
+    return null
+  }
+  validationError.value = ''
+  return id
+}
+
+const clearValidationError = () => {
+  validationError.value = ''
+}
+
+const load = async (rawId) => {
+  const id = validateCertificateId(rawId)
+  if (!id) {
+    result.value = null
+    loading.value = false
+    return
+  }
+  certificateId.value = id
   loading.value = true
   error.value = ''
   result.value = null
@@ -110,8 +150,9 @@ const load = async (id) => {
 }
 
 const submit = () => {
-  const id = certificateId.value.trim()
+  const id = validateCertificateId(certificateId.value)
   if (!id) return
+  certificateId.value = id
   if (route.params.certificateId) {
     load(id)
   } else {
@@ -122,6 +163,7 @@ const submit = () => {
 const reset = () => {
   result.value = null
   error.value = ''
+  validationError.value = ''
   certificateId.value = ''
   if (route.params.certificateId) {
     router.push('/verify')
@@ -202,6 +244,13 @@ watch(
   flex: 1;
   min-width: 0;
   font-family: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.verify-form__error {
+  margin: 0.35rem 0 0;
+  color: var(--danger);
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .verify-state {

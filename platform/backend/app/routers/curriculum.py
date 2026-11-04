@@ -11,6 +11,7 @@ import hashlib
 import hmac
 import json
 import logging
+import re
 
 from app.ratelimit import create_limiter
 
@@ -53,6 +54,31 @@ docker_manager = DockerManager()
 
 
 # ==================== Helper Functions ====================
+
+# Certificate IDs are ASCII-only: OCR-<track prefix>-L<level>-<hex digest>.
+# [0-9] plus re.ASCII keeps Unicode digits (Arabic-Indic, Devanagari, etc.)
+# from being parsed as a level number, while emoji, kanji, fullwidth letters,
+# whitespace, and punctuation are rejected before any database lookup.
+_CERTIFICATE_ID_MAX_LENGTH = 27
+_CERTIFICATE_ID_RE = re.compile(
+    r"^OCR-([A-Z0-9-]{1,8})-L([0-9]{2})-([A-F0-9]{10})$",
+    re.ASCII,
+)
+
+
+def parse_certificate_id(certificate_id: str):
+    """Return the match for a valid certificate ID, or None.
+
+    Validation is deliberately strict and ASCII-only. The caller treats a
+    missing match as a client error rather than allowing a malformed value to
+    reach the database or be echoed back in the verification result.
+    """
+    if not isinstance(certificate_id, str):
+        return None
+    if len(certificate_id) > _CERTIFICATE_ID_MAX_LENGTH:
+        return None
+    return _CERTIFICATE_ID_RE.fullmatch(certificate_id)
+
 
 def get_user_completions(db: Session, user_id: int) -> set:
     """Get set of completed lab IDs for user (only counts actual flag submissions)"""
@@ -765,8 +791,7 @@ async def verify_certificate(
     level is still complete. Only public certificate fields are returned; no
     username, email, or account details are exposed.
     """
-    import re as _re
-    m = _re.match(r"^OCR-([A-Z0-9-]{1,8})-L(\d{2})-([A-F0-9]{10})$", certificate_id)
+    m = parse_certificate_id(certificate_id)
     if not m:
         raise HTTPException(status_code=400, detail="Invalid certificate ID format")
 
