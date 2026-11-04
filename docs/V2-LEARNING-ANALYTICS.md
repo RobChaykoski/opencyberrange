@@ -1,6 +1,6 @@
 # V2 Learning Analytics and Research Dashboard
 
-Status: design draft for OpenCyberRange 2.x
+Status: Phase 1 implemented in the `ocr-v2-test` stack
 
 ## Purpose
 

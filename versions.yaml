@@ -10,6 +10,10 @@ release:
   status: "supported"
   date: "2026-11-04"
 
+development:
+  version: "2.0.0-dev"
+  focus: "learning analytics and research dashboard"
+
 policy:
   name: latest-supported-ga
   reviewed: "2026-11-02"
