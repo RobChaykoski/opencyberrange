@@ -64,7 +64,7 @@ These are v3 candidates unless the charter is amended:
 | R1 | Cross-course Reports page with RAG signals | In scope — Reporting | Preview in 2.0 tree | Product |
 | R2 | Pulse surveys and course survey reporting | In scope — Reporting | Preview in 2.0 tree | Product |
 | R3 | CSV/PDF export for teaching review | In scope — Reporting | Partial | Product |
-| H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Validation pending | Platform |
+| H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Build-out planned; access gate | Platform |
 | H2 | Multi-host Docker lab pool design | In scope — HA | Design complete | Architecture |
 | H3 | Control-plane and lab-node failover | In scope — HA | Planned | Architecture |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |

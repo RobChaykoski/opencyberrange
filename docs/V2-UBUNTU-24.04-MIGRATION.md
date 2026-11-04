@@ -2,6 +2,8 @@
 
 Status: **Planned — 24.04 validation pending**
 
+Execution checklist: [`V2-24.04-BUILD-OUT.md`](V2-24.04-BUILD-OUT.md)
+
 ## Goal
 
 Move the OpenCyberRange **2.0** line to Ubuntu 24.04 LTS as its supported host
