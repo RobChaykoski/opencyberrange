@@ -1,4 +1,4 @@
-# OpenCyberRange version policy and Wave 0 baseline.
+﻿# OpenCyberRange version policy and Wave 0 baseline.
 #
 # Release 1.0.0 is the first supported self-hosted teaching release.
 # "latest supported GA" means the newest stable release that is still
@@ -8,20 +8,20 @@
 editions:
   community_academic:
     name: "Community / Academic"
-    version: "1.1.0"
+    version: "1.1.1"
     status: "supported"
     shape: "single-host"
     focus: "teaching platform, lab and workbook improvements, exercise authoring, maintenance, and security"
   professional:
     name: "Professional"
-    version: "2.0.0-dev"
-    status: "development"
+    version: "2.1.0"
+    status: "release"
     shape: "single-host"
     focus: "analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports"
   enterprise:
     name: "Enterprise"
-    version: "3.0.0-dev"
-    status: "development"
+    version: "3.0.0"
+    status: "release"
     shape: "multi-host HA"
     focus: "HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting"
 
@@ -31,8 +31,8 @@ release:
   date: "2026-11-04"
 
 development:
-  version: "2.0.0-dev"
-  focus: "analytics and reporting"
+  version: "3.0.0"
+  focus: "Enterprise HA, SSO, enterprise reporting, multi-tenancy, LMS, and compliance reporting"
 
 policy:
   name: latest-supported-ga

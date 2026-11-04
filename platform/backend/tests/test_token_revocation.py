@@ -100,7 +100,11 @@ def test_admin_password_reset_revokes_target_tokens(client, db_session, test_use
         resp = client.post(
             f"/api/admin/users/{test_user.id}/reset-password",
             headers=admin_headers,
-            json={"new_password": NEW_PASSWORD},
+            json={
+                "new_password": NEW_PASSWORD,
+                "admin_password": "Admin#Horse7Battery",
+                "must_change_password": True,
+            },
         )
         assert resp.status_code == 200, resp.text
 
@@ -111,3 +115,77 @@ def test_admin_password_reset_revokes_target_tokens(client, db_session, test_use
         ).delete(synchronize_session=False)
         db_session.query(User).filter(User.id == admin.id).delete()
         db_session.commit()
+
+
+def _make_reset_admin(db_session):
+    suffix = uuid.uuid4().hex[:10]
+    admin = User(
+        username=f"pytest_reset_admin_{suffix}",
+        email=f"pytest_reset_admin_{suffix}@university.edu",
+        hashed_password=get_password_hash("Admin#Horse7Battery"),
+        is_active=True,
+        is_admin=True,
+        role="admin",
+        is_approved=True,
+    )
+    db_session.add(admin)
+    db_session.commit()
+    db_session.refresh(admin)
+    return admin
+
+
+def _cleanup_reset_admin(db_session, admin, test_user):
+    db_session.query(RevokedToken).filter(
+        RevokedToken.user_id.in_([admin.id, test_user.id])
+    ).delete(synchronize_session=False)
+    db_session.query(User).filter(User.id == admin.id).delete()
+    db_session.commit()
+
+
+def test_admin_password_reset_requires_admin_reauthentication(
+    client, db_session, test_user, test_password
+):
+    admin = _make_reset_admin(db_session)
+    try:
+        admin_login = _login(client, admin.username, "Admin#Horse7Battery")
+        assert admin_login.status_code == 200, admin_login.text
+        admin_headers = {
+            "Authorization": f"Bearer {admin_login.json()['access_token']}"
+        }
+
+        resp = client.post(
+            f"/api/admin/users/{test_user.id}/reset-password",
+            headers=admin_headers,
+            json={
+                "new_password": NEW_PASSWORD,
+                "admin_password": "Wrong#Admin9Password",
+                "must_change_password": True,
+            },
+        )
+        assert resp.status_code == 403, resp.text
+
+        # The target password and session must be untouched after a failed
+        # re-authentication.
+        assert _login(client, test_user.username, test_password).status_code == 200
+    finally:
+        _cleanup_reset_admin(db_session, admin, test_user)
+
+
+def test_general_update_cannot_change_password(client, db_session, test_user):
+    admin = _make_reset_admin(db_session)
+    try:
+        admin_login = _login(client, admin.username, "Admin#Horse7Battery")
+        assert admin_login.status_code == 200, admin_login.text
+        admin_headers = {
+            "Authorization": f"Bearer {admin_login.json()['access_token']}"
+        }
+
+        resp = client.put(
+            f"/api/admin/users/{test_user.id}",
+            headers=admin_headers,
+            json={"password": NEW_PASSWORD},
+        )
+        assert resp.status_code == 400, resp.text
+        assert "dedicated" in resp.json()["detail"].lower()
+    finally:
+        _cleanup_reset_admin(db_session, admin, test_user)

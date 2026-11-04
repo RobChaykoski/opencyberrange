@@ -187,6 +187,9 @@ note naming the role check.
 - JWTs are signed, expire, and are checked against the revocation table.
 - Login, registration, password reset, and MFA endpoints are rate-limited.
 - Failed-attempt lockout and administrator approval remain enforced server-side.
+- Admin password resets require the administrator's own password, revoke the
+  target's sessions, force a password change, and are audited. The general
+  profile update endpoint rejects password changes.
 - Login streak tracking uses calendar dates only; it does not add new
   authentication signals.
 

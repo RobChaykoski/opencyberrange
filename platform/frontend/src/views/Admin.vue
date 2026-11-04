@@ -2392,145 +2392,343 @@ test:
 
       <!-- Edit User Modal -->
       <transition name="fade">
-        <div v-if="showEditUserModal" class="modal-overlay" @click.self="showEditUserModal = false">
-          <div class="modal modal--large">
-            <h3 class="modal-title">Edit User: {{ editUser?.username }}</h3>
-            
-            <form @submit.prevent="saveUserEdits" class="edit-user-form">
-              <div class="form-section">
-                <h4 class="section-title">Account Information</h4>
-                
-                <div class="form-group">
-                  <label for="edit-username">Username</label>
-                  <input aria-label="Username"
-                    id="edit-username"
-                    v-model="editForm.username"
-                    type="text"
-                    placeholder="Username"
-                    class="form-input"
-                    :class="{ 'error': editErrors.username }"
-                  />
-                  <p v-if="editErrors.username" class="error-text">{{ editErrors.username }}</p>
-                </div>
-
-                <div class="form-group">
-                  <label for="edit-email">Email</label>
-                  <input aria-label="Email"
-                    id="edit-email"
-                    v-model="editForm.email"
-                    type="email"
-                    placeholder="Email"
-                    class="form-input"
-                    :class="{ 'error': editErrors.email }"
-                  />
-                  <p v-if="editErrors.email" class="error-text">{{ editErrors.email }}</p>
-                </div>
-
-                <div class="form-group">
-                  <label for="edit-first-name">First name</label>
-                  <input aria-label="First name"
-                    id="edit-first-name"
-                    v-model="editForm.first_name"
-                    type="text"
-                    maxlength="80"
-                    placeholder="First name"
-                    class="form-input"
-                    autocomplete="given-name"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="edit-last-name">Last name</label>
-                  <input aria-label="Last name"
-                    id="edit-last-name"
-                    v-model="editForm.last_name"
-                    type="text"
-                    maxlength="80"
-                    placeholder="Last name"
-                    class="form-input"
-                    autocomplete="family-name"
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label for="edit-password">New Password (leave blank to keep current)</label>
-                  <input aria-label="New Password (leave blank to keep current)"
-                    id="edit-password"
-                    v-model="editForm.password"
-                    type="password"
-                    placeholder="New password"
-                    class="form-input"
-                    :class="{ 'error': editErrors.password }"
-                  />
-                  <p v-if="editErrors.password" class="error-text">{{ editErrors.password }}</p>
-                </div>
-
-                <div class="form-group">
-                  <label for="edit-confirm-password">Confirm New Password</label>
-                  <input aria-label="Confirm New Password"
-                    id="edit-confirm-password"
-                    v-model="editForm.confirmPassword"
-                    type="password"
-                    placeholder="Confirm new password"
-                    class="form-input"
-                    :class="{ 'error': editErrors.confirmPassword }"
-                  />
-                  <p v-if="editErrors.confirmPassword" class="error-text">{{ editErrors.confirmPassword }}</p>
+        <div v-if="showEditUserModal" class="modal-overlay" @click.self="closeEditUserModal">
+          <div
+            class="modal modal--large user-modal user-modal--edit"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-user-title"
+          >
+            <header class="user-modal__head user-modal__head--compact">
+              <div class="user-modal__identity">
+                <span class="user-avatar user-avatar--sm" aria-hidden="true">{{ userInitials(editUser) }}</span>
+                <div class="user-modal__identity-text">
+                  <p class="user-modal__eyebrow">Edit account</p>
+                  <h3 id="edit-user-title" class="user-modal__title">{{ displayName(editUser) }}</h3>
+                  <p class="user-modal__handle">
+                    @{{ editUser?.username || 'user' }}
+                    <span v-if="editUser?.email"> · {{ editUser.email }}</span>
+                  </p>
                 </div>
               </div>
+              <button
+                type="button"
+                class="user-modal__close"
+                aria-label="Close edit user"
+                @click="closeEditUserModal"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </header>
 
-              <div class="form-section">
-                <h4 class="section-title">Account Status</h4>
-                
-                <div class="checkbox-group">
-                  <label class="checkbox-label">
+            <form @submit.prevent="saveUserEdits" class="edit-user-form">
+              <section class="user-form-section">
+                <header class="user-form-section__head">
+                  <div>
+                    <h4>Identity</h4>
+                    <p>How this account appears in courses, reports, and certificates.</p>
+                  </div>
+                </header>
+
+                <div class="user-form-grid">
+                  <div class="form-group">
+                    <label for="edit-username">Username</label>
                     <input
-                      v-model="editForm.is_approved"
-                      type="checkbox"
-                      class="checkbox-input"
+                      id="edit-username"
+                      v-model="editForm.username"
+                      type="text"
+                      placeholder="Username"
+                      class="form-input"
+                      :class="{ 'error': editErrors.username }"
+                      autocomplete="username"
+                      aria-describedby="edit-username-help"
                     />
-                    <span>Approved</span>
-                  </label>
+                    <p id="edit-username-help" class="user-form-hint">
+                      3–50 characters, starting with a letter.
+                    </p>
+                    <p v-if="editErrors.username" class="error-text">{{ editErrors.username }}</p>
+                  </div>
 
-                  <div class="form-group form-group--inline">
-                    <label>Role</label>
-                    <select aria-label="Role" v-model="editForm.role" class="form-select">
+                  <div class="form-group">
+                    <label for="edit-email">Email</label>
+                    <input
+                      id="edit-email"
+                      v-model="editForm.email"
+                      type="email"
+                      placeholder="Email"
+                      class="form-input"
+                      :class="{ 'error': editErrors.email }"
+                      autocomplete="email"
+                    />
+                    <p v-if="editErrors.email" class="error-text">{{ editErrors.email }}</p>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="edit-first-name">First name</label>
+                    <input
+                      id="edit-first-name"
+                      v-model="editForm.first_name"
+                      type="text"
+                      maxlength="80"
+                      placeholder="First name"
+                      class="form-input"
+                      autocomplete="given-name"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label for="edit-last-name">Last name</label>
+                    <input
+                      id="edit-last-name"
+                      v-model="editForm.last_name"
+                      type="text"
+                      maxlength="80"
+                      placeholder="Last name"
+                      class="form-input"
+                      autocomplete="family-name"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section class="user-form-section">
+                <header class="user-form-section__head">
+                  <div>
+                    <h4>Access</h4>
+                    <p>Role and account state. Changes take effect on the next request.</p>
+                  </div>
+                </header>
+
+                <div class="user-form-grid user-form-grid--access">
+                  <div class="form-group">
+                    <label for="edit-role">Role</label>
+                    <select id="edit-role" v-model="editForm.role" class="form-select">
                       <option value="student">Student</option>
                       <option value="instructor">Instructor</option>
                       <option value="admin">Admin</option>
                     </select>
+                    <p class="user-form-hint">Instructors can author courses and exercises. Admins can manage the platform.</p>
                   </div>
+                  <div class="user-form-note">
+                    <span class="user-form-note__label">Current state</span>
+                    <strong>{{ userAccountStatusLabel(editUser) }}</strong>
+                    <span>Approval and activity changes are audited.</span>
+                  </div>
+                </div>
 
-                  <label class="checkbox-label">
-                    <input
-                      v-model="editForm.is_active"
-                      type="checkbox"
-                      class="checkbox-input"
-                    />
-                    <span>Active</span>
+                <div class="user-toggle-grid">
+                  <label class="user-toggle">
+                    <input v-model="editForm.is_approved" type="checkbox" class="checkbox-input" />
+                    <span>
+                      <strong>Approved</strong>
+                      <small>Can sign in and join courses.</small>
+                    </span>
                   </label>
-
-                  <label class="checkbox-label">
-                    <input
-                      v-model="editForm.must_change_password"
-                      type="checkbox"
-                      class="checkbox-input"
-                    />
-                    <span>Force password change on next login</span>
+                  <label class="user-toggle">
+                    <input v-model="editForm.is_active" type="checkbox" class="checkbox-input" />
+                    <span>
+                      <strong>Active</strong>
+                      <small>Disabling blocks sign-in without deleting data.</small>
+                    </span>
+                  </label>
+                  <label class="user-toggle">
+                    <input v-model="editForm.must_change_password" type="checkbox" class="checkbox-input" />
+                    <span>
+                      <strong>Force password change</strong>
+                      <small>Require a new password at the next sign-in.</small>
+                    </span>
                   </label>
                 </div>
-              </div>
+              </section>
 
-              <p v-if="editErrorMessage" class="error-message">{{ editErrorMessage }}</p>
-              <p v-if="editSuccessMessage" class="success-message">{{ editSuccessMessage }}</p>
+              <section class="user-form-section user-form-section--danger">
+                <header class="user-form-section__head">
+                  <div>
+                    <h4>Password reset</h4>
+                    <p>Privileged recovery action. This is separate from profile edits.</p>
+                  </div>
+                  <span class="user-form-section__tag">Audited</span>
+                </header>
 
-              <div class="modal-actions">
-                <button type="button" @click="showEditUserModal = false" class="btn btn--secondary">Cancel</button>
-                <button type="submit" :disabled="editLoading" class="btn btn--primary">
-                  <span v-if="editLoading">Saving...</span>
-                  <span v-else>Save Changes</span>
-                </button>
-              </div>
+                <div v-if="editingSelf" class="user-security-note">
+                  Use <strong>Profile → Security</strong> to change your own password.
+                </div>
+
+                <template v-else>
+                  <div class="user-reset-warning" role="note">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+                    </svg>
+                    <div>
+                      <strong>Resetting this password signs the user out everywhere.</strong>
+                      <span>
+                        You must re-enter your admin password. The user will be required to choose
+                        a new password at the next sign-in.
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    v-if="!showPasswordReset"
+                    type="button"
+                    class="btn btn--secondary user-reset-open"
+                    @click="openPasswordReset"
+                  >
+                    Reset password
+                  </button>
+
+                  <div v-else class="user-reset-panel">
+                    <div class="user-form-grid">
+                      <div class="form-group">
+                        <label for="reset-confirm-username">
+                          Type <strong>{{ editUser?.username }}</strong> to confirm
+                        </label>
+                        <input
+                          id="reset-confirm-username"
+                          v-model="passwordResetForm.confirmUsername"
+                          type="text"
+                          class="form-input"
+                          :class="{ 'error': passwordResetErrors.confirmUsername }"
+                          autocomplete="off"
+                          spellcheck="false"
+                        />
+                        <p v-if="passwordResetErrors.confirmUsername" class="error-text">
+                          {{ passwordResetErrors.confirmUsername }}
+                        </p>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="reset-admin-password">Your admin password</label>
+                        <div class="user-password">
+                          <input
+                            id="reset-admin-password"
+                            v-model="passwordResetForm.adminPassword"
+                            :type="showAdminPassword ? 'text' : 'password'"
+                            class="form-input"
+                            :class="{ 'error': passwordResetErrors.adminPassword }"
+                            autocomplete="current-password"
+                          />
+                          <button
+                            type="button"
+                            class="user-password__toggle"
+                            :aria-label="showAdminPassword ? 'Hide admin password' : 'Show admin password'"
+                            @click="showAdminPassword = !showAdminPassword"
+                          >
+                            {{ showAdminPassword ? 'Hide' : 'Show' }}
+                          </button>
+                        </div>
+                        <p class="user-form-hint">Re-authentication is required for this action.</p>
+                        <p v-if="passwordResetErrors.adminPassword" class="error-text">
+                          {{ passwordResetErrors.adminPassword }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="user-form-grid">
+                      <div class="form-group">
+                        <label for="reset-new-password">New password</label>
+                        <div class="user-password">
+                          <input
+                            id="reset-new-password"
+                            v-model="passwordResetForm.newPassword"
+                            :type="showResetPassword ? 'text' : 'password'"
+                            class="form-input"
+                            :class="{ 'error': passwordResetErrors.newPassword }"
+                            autocomplete="new-password"
+                          />
+                          <button
+                            type="button"
+                            class="user-password__toggle"
+                            :aria-label="showResetPassword ? 'Hide new password' : 'Show new password'"
+                            @click="showResetPassword = !showResetPassword"
+                          >
+                            {{ showResetPassword ? 'Hide' : 'Show' }}
+                          </button>
+                        </div>
+                        <p class="user-form-hint">At least 8 characters with uppercase, lowercase, and a number.</p>
+                        <p v-if="passwordResetErrors.newPassword" class="error-text">
+                          {{ passwordResetErrors.newPassword }}
+                        </p>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="reset-confirm-password">Confirm new password</label>
+                        <div class="user-password">
+                          <input
+                            id="reset-confirm-password"
+                            v-model="passwordResetForm.confirmPassword"
+                            :type="showResetConfirmPassword ? 'text' : 'password'"
+                            class="form-input"
+                            :class="{ 'error': passwordResetErrors.confirmPassword }"
+                            autocomplete="new-password"
+                          />
+                          <button
+                            type="button"
+                            class="user-password__toggle"
+                            :aria-label="showResetConfirmPassword ? 'Hide password confirmation' : 'Show password confirmation'"
+                            @click="showResetConfirmPassword = !showResetConfirmPassword"
+                          >
+                            {{ showResetConfirmPassword ? 'Hide' : 'Show' }}
+                          </button>
+                        </div>
+                        <p v-if="passwordResetErrors.confirmPassword" class="error-text">
+                          {{ passwordResetErrors.confirmPassword }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <label class="user-toggle user-toggle--wide">
+                      <input
+                        v-model="passwordResetForm.mustChangePassword"
+                        type="checkbox"
+                        class="checkbox-input"
+                      />
+                      <span>
+                        <strong>Require a password change at next sign-in</strong>
+                        <small>Recommended. The temporary password is not shown again after this action.</small>
+                      </span>
+                    </label>
+
+                    <p v-if="passwordResetMessage" class="success-message" role="status">
+                      {{ passwordResetMessage }}
+                    </p>
+
+                    <div class="user-reset-actions">
+                      <button type="button" class="btn btn--secondary" @click="cancelPasswordReset">
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn--danger"
+                        :disabled="passwordResetLoading"
+                        @click="submitPasswordReset"
+                      >
+                        {{ passwordResetLoading ? 'Resetting...' : 'Reset password' }}
+                      </button>
+                    </div>
+                  </div>
+
+                  <p v-if="!showPasswordReset && passwordResetMessage" class="success-message" role="status">
+                    {{ passwordResetMessage }}
+                  </p>
+                </template>
+              </section>
+
+              <p v-if="editErrorMessage" class="error-message" role="alert">{{ editErrorMessage }}</p>
+              <p v-if="editSuccessMessage" class="success-message" role="status">{{ editSuccessMessage }}</p>
+
+              <footer class="user-modal__foot user-modal__foot--sticky">
+                <p>Changes are audited. The user is not notified automatically.</p>
+                <div class="user-modal__foot-actions">
+                  <button type="button" @click="closeEditUserModal" class="btn btn--secondary">Cancel</button>
+                  <button type="submit" :disabled="editLoading" class="btn btn--primary">
+                    <span v-if="editLoading">Saving...</span>
+                    <span v-else>Save changes</span>
+                  </button>
+                </div>
+              </footer>
             </form>
           </div>
         </div>
@@ -2540,141 +2738,267 @@ test:
       <!-- User Details Modal -->
       <transition name="fade">
         <div v-if="showUserDetailsModal" class="modal-overlay" @click.self="showUserDetailsModal = false">
-          <div class="modal modal--large">
-            <h3 class="modal-title">User Details: {{ userDetails?.username }}</h3>
-            
-            <div v-if="loadingUserDetails" class="loading-state">
-              <p>Loading user details...</p>
+          <div
+            class="modal modal--xlarge user-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="user-details-title"
+          >
+            <header class="user-modal__head">
+              <div class="user-modal__identity">
+                <span class="user-avatar" aria-hidden="true">{{ userInitials(userDetails) }}</span>
+                <div class="user-modal__identity-text">
+                  <p class="user-modal__eyebrow">Account record</p>
+                  <h3 id="user-details-title" class="user-modal__title">{{ displayName(userDetails) }}</h3>
+                  <p class="user-modal__handle">
+                    @{{ userDetails?.username || 'loading' }}
+                    <span v-if="userDetails?.email"> · {{ userDetails.email }}</span>
+                  </p>
+                  <div v-if="userDetails" class="user-modal__badges">
+                    <span class="status-badge" :class="userRoleBadgeClass(userDetails)">
+                      {{ userRoleLabel(userDetails) }}
+                    </span>
+                    <span class="status-badge" :class="userAccountBadgeClass(userDetails)">
+                      {{ userAccountStatusLabel(userDetails) }}
+                    </span>
+                    <span
+                      class="status-badge"
+                      :class="userDetails.vpn_registered ? 'status-badge--approved' : 'status-badge--pending'"
+                    >
+                      {{ userDetails.vpn_registered ? 'VPN ready' : 'VPN not set up' }}
+                    </span>
+                    <span v-if="userDetails.must_change_password" class="status-badge status-badge--pending">
+                      Password change required
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="user-modal__head-actions">
+                <button
+                  v-if="userDetails"
+                  type="button"
+                  class="btn btn--secondary btn--sm"
+                  @click="openEditUserFromDetails"
+                >
+                  Edit user
+                </button>
+                <button
+                  type="button"
+                  class="user-modal__close"
+                  aria-label="Close user details"
+                  @click="showUserDetailsModal = false"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </header>
+
+            <div v-if="loadingUserDetails" class="user-modal__loading" aria-live="polite">
+              <div class="user-skeleton user-skeleton--hero"></div>
+              <div class="user-skeleton-row">
+                <div class="user-skeleton"></div>
+                <div class="user-skeleton"></div>
+                <div class="user-skeleton"></div>
+                <div class="user-skeleton"></div>
+              </div>
+              <div class="user-skeleton user-skeleton--table"></div>
             </div>
-            
-            <div v-else-if="userDetails" class="user-details-content">
-              <!-- User Information Section -->
-              <div class="form-section">
-                <h4 class="section-title">Account Information</h4>
-                <div class="info-grid">
-                  <div class="info-item">
-                    <span class="info-label">Username:</span>
-                    <span class="info-value">{{ userDetails.username }}</span>
+
+            <div v-else-if="!userDetails" class="user-empty">
+              <p>Could not load this account record.</p>
+              <button type="button" class="btn btn--secondary btn--sm" @click="openUserDetailsModal(userIdBeingViewed)">
+                Try again
+              </button>
+            </div>
+
+            <div v-else class="user-details-content">
+              <section class="user-stat-row" aria-label="Learning summary">
+                <article class="user-stat">
+                  <span class="user-stat__icon user-stat__icon--accent" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/>
+                    </svg>
+                  </span>
+                  <div>
+                    <span class="user-stat__label">Exercises completed</span>
+                    <strong class="user-stat__value">{{ userDetails.total_labs_completed }}</strong>
+                    <span class="user-stat__hint">{{ userTrackCount }} track{{ userTrackCount === 1 ? '' : 's' }} covered</span>
                   </div>
-                  <div class="info-item">
-                    <span class="info-label">Email:</span>
-                    <span class="info-value">{{ userDetails.email }}</span>
+                </article>
+                <article class="user-stat">
+                  <span class="user-stat__icon user-stat__icon--warning" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/>
+                    </svg>
+                  </span>
+                  <div>
+                    <span class="user-stat__label">Flag attempts</span>
+                    <strong class="user-stat__value">{{ userDetails.total_flag_attempts }}</strong>
+                    <span class="user-stat__hint">Across this account</span>
                   </div>
-                  <div class="info-item" v-if="userDetails.student_id">
-                    <span class="info-label">Student ID:</span>
-                    <span class="info-value">{{ userDetails.student_id }}</span>
+                </article>
+                <article class="user-stat">
+                  <span class="user-stat__icon user-stat__icon--success" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12c.5.5 1 1.2 1 2h6c0-.8.5-1.5 1-2A7 7 0 0 0 12 2Z"/>
+                    </svg>
+                  </span>
+                  <div>
+                    <span class="user-stat__label">Hints used</span>
+                    <strong class="user-stat__value">{{ userDetails.total_hints_used }}</strong>
+                    <span class="user-stat__hint">{{ userHintsPerCompletion }} per completion</span>
                   </div>
-                  <div class="info-item">
-                    <span class="info-label">Role:</span>
-                    <span class="info-value">
-                      <span v-if="userDetails.role === 'admin'" class="status-badge status-badge--admin">Admin</span>
-                      <span v-else-if="userDetails.role === 'instructor'" class="status-badge status-badge--instructor">Instructor</span>
-                      <span v-else class="status-badge status-badge--approved">Student</span>
-                    </span>
+                </article>
+                <article class="user-stat">
+                  <span class="user-stat__icon user-stat__icon--purple" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                    </svg>
+                  </span>
+                  <div>
+                    <span class="user-stat__label">Avg. time</span>
+                    <strong class="user-stat__value">
+                      {{ userDetails.average_time_per_lab ? `${userDetails.average_time_per_lab} min` : '—' }}
+                    </strong>
+                    <span class="user-stat__hint">Per completed exercise</span>
                   </div>
-                  <div class="info-item">
-                    <span class="info-label">Status:</span>
-                    <span class="info-value">
-                      <span v-if="userDetails.is_locked" class="status-badge status-badge--locked">Locked</span>
-                      <span v-else-if="!userDetails.is_approved" class="status-badge status-badge--pending">Pending</span>
-                      <span v-else class="status-badge status-badge--approved">Active</span>
-                    </span>
+                </article>
+              </section>
+
+              <div class="user-details-grid">
+                <section class="user-panel">
+                  <header class="user-panel__head">
+                    <div>
+                      <h4>Account</h4>
+                      <p>Identity, access, and sign-in state.</p>
+                    </div>
+                  </header>
+                  <dl class="user-facts">
+                    <div class="user-fact">
+                      <dt>Username</dt>
+                      <dd>{{ userDetails.username }}</dd>
+                    </div>
+                    <div class="user-fact">
+                      <dt>Email</dt>
+                      <dd class="user-fact__wrap">{{ userDetails.email }}</dd>
+                    </div>
+                    <div v-if="userDetails.student_id" class="user-fact">
+                      <dt>Student ID</dt>
+                      <dd>{{ userDetails.student_id }}</dd>
+                    </div>
+                    <div class="user-fact">
+                      <dt>Role</dt>
+                      <dd>
+                        <span class="status-badge" :class="userRoleBadgeClass(userDetails)">
+                          {{ userRoleLabel(userDetails) }}
+                        </span>
+                      </dd>
+                    </div>
+                    <div class="user-fact">
+                      <dt>Account created</dt>
+                      <dd>{{ formatDate(userDetails.created_at) }}</dd>
+                    </div>
+                    <div class="user-fact">
+                      <dt>Last sign-in</dt>
+                      <dd>{{ userDetails.last_login_at ? formatDate(userDetails.last_login_at) : 'No sign-in recorded' }}</dd>
+                    </div>
+                    <div class="user-fact">
+                      <dt>Password</dt>
+                      <dd>{{ userDetails.must_change_password ? 'Change required at next sign-in' : 'Set by the user' }}</dd>
+                    </div>
+                    <div class="user-fact">
+                      <dt>VPN</dt>
+                      <dd>{{ userDetails.vpn_registered ? 'Registered' : 'Not registered' }}</dd>
+                    </div>
+                  </dl>
+                </section>
+
+                <section class="user-panel">
+                  <header class="user-panel__head">
+                    <div>
+                      <h4>Active sessions</h4>
+                      <p>Running lab environments for this account.</p>
+                    </div>
+                    <span class="user-panel__count">{{ userDetails.active_sessions?.length || 0 }}</span>
+                  </header>
+                  <div v-if="userDetails.active_sessions && userDetails.active_sessions.length" class="user-session-list">
+                    <article v-for="session in userDetails.active_sessions" :key="session.id" class="user-session">
+                      <div class="user-session__top">
+                        <strong>{{ session.lab_name }}</strong>
+                        <span class="session-status session-status--running">{{ session.status }}</span>
+                      </div>
+                      <div class="user-session__meta">
+                        <span>Started {{ formatDate(session.started_at) }}</span>
+                        <span v-if="session.expires_at">Expires {{ formatDate(session.expires_at) }}</span>
+                        <span v-if="session.targets?.length">{{ session.targets.length }} target{{ session.targets.length === 1 ? '' : 's' }}</span>
+                      </div>
+                    </article>
                   </div>
-                  <div class="info-item">
-                    <span class="info-label">VPN Registered:</span>
-                    <span class="info-value">
-                      <span v-if="userDetails.vpn_registered" class="status-badge status-badge--approved">Yes</span>
-                      <span v-else class="status-badge status-badge--pending">No</span>
-                    </span>
+                  <div v-else class="user-panel__empty">
+                    <p>No active lab sessions.</p>
+                    <span>The account is not consuming a lab slot right now.</span>
                   </div>
-                  <div class="info-item">
-                    <span class="info-label">Account Created:</span>
-                    <span class="info-value">{{ formatDate(userDetails.created_at) }}</span>
-                  </div>
-                </div>
+                </section>
               </div>
 
-              <!-- Statistics Section -->
-              <div class="form-section">
-                <h4 class="section-title">Statistics</h4>
-                <div class="stats-grid">
-                  <div class="stat-item">
-                    <span class="stat-label">Exercises Completed</span>
-                    <span class="stat-value">{{ userDetails.total_labs_completed }}</span>
+              <section class="user-panel">
+                <header class="user-panel__head user-panel__head--stack">
+                  <div>
+                    <h4>Completed exercises</h4>
+                    <p>
+                      {{ filteredUserCompletions.length }} of {{ userDetails.completions?.length || 0 }} shown
+                    </p>
                   </div>
-                  <div class="stat-item">
-                    <span class="stat-label">Total Flag Attempts</span>
-                    <span class="stat-value">{{ userDetails.total_flag_attempts }}</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-label">Total Hints Used</span>
-                    <span class="stat-value">{{ userDetails.total_hints_used }}</span>
-                  </div>
-                  <div class="stat-item">
-                    <span class="stat-label">Avg Time per Exercise</span>
-                    <span class="stat-value">
-                      {{ userDetails.average_time_per_lab ? `${userDetails.average_time_per_lab} min` : 'N/A' }}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                  <label class="user-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>
+                    </svg>
+                    <input
+                      v-model="userCompletionFilter"
+                      type="search"
+                      placeholder="Filter by exercise or track"
+                      aria-label="Filter completed exercises"
+                    />
+                  </label>
+                </header>
 
-              <!-- Active Sessions Section -->
-              <div class="form-section" v-if="userDetails.active_sessions && userDetails.active_sessions.length > 0">
-                <h4 class="section-title">Active Sessions</h4>
-                <div class="table-container">
-                  <table class="data-table data-table--compact">
+                <div v-if="!userDetails.completions || userDetails.completions.length === 0" class="user-empty user-empty--inline">
+                  <p>No exercises completed yet.</p>
+                  <span>Completion evidence appears here after the first successful flag.</span>
+                </div>
+                <div v-else-if="filteredUserCompletions.length === 0" class="user-empty user-empty--inline">
+                  <p>No exercises match “{{ userCompletionFilter }}”.</p>
+                  <button type="button" class="user-link-btn" @click="userCompletionFilter = ''">Clear filter</button>
+                </div>
+                <div v-else class="table-container">
+                  <table class="data-table user-completions-table">
                     <thead>
                       <tr>
                         <th>Exercise</th>
-                        <th>Started</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="session in userDetails.active_sessions" :key="session.id">
-                        <td>{{ session.lab_name }}</td>
-                        <td>{{ formatDate(session.started_at) }}</td>
-                        <td>
-                          <span class="session-status session-status--running">{{ session.status }}</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <!-- Completed Labs Section -->
-              <div class="form-section">
-                <h4 class="section-title">Completed Exercises</h4>
-                <div v-if="!userDetails.completions || userDetails.completions.length === 0" class="empty-state">
-                  <p>No exercises completed yet</p>
-                </div>
-                <div v-else class="table-container">
-                  <table class="data-table">
-                    <thead>
-                      <tr>
-                        <th>Exercise Name</th>
-                        <th>Track</th>
-                        <th>Level</th>
+                        <th>Track / level</th>
                         <th>Completed</th>
                         <th>Attempts</th>
                         <th>Hints</th>
                         <th>Time</th>
-                        <th>Actions</th>
+                        <th class="cell-actions">Action</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="completion in userDetails.completions" :key="completion.lab_id">
+                      <tr v-for="completion in filteredUserCompletions" :key="completion.lab_id">
                         <td class="cell-primary">{{ completion.lab_name }}</td>
-                        <td>{{ completion.track_name || '-' }}</td>
-                        <td>{{ completion.level_number || '-' }}</td>
+                        <td>
+                          <span class="user-track">{{ completion.track_name || 'Uncategorised' }}</span>
+                          <small v-if="completion.level_number" class="user-level">Level {{ completion.level_number }}</small>
+                        </td>
                         <td>{{ formatDate(completion.completed_at) }}</td>
                         <td>{{ completion.attempts }}</td>
                         <td>{{ completion.hints_used }}</td>
-                        <td>{{ completion.time_spent_minutes ? `${completion.time_spent_minutes} min` : '-' }}</td>
+                        <td>{{ completion.time_spent_minutes ? `${completion.time_spent_minutes} min` : '—' }}</td>
                         <td class="cell-actions">
-                          <button 
+                          <button
+                            type="button"
                             @click="resetLabForUser(userDetails.id, completion.lab_id, completion.lab_name)"
                             class="btn btn--secondary btn--sm"
                             :disabled="resettingLab"
@@ -2687,12 +3011,13 @@ test:
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </section>
             </div>
 
-            <div class="modal-actions">
-              <button @click="showUserDetailsModal = false" class="btn btn--secondary">Close</button>
-            </div>
+            <footer class="user-modal__foot">
+              <p>Read-only account preview. Resetting an exercise requires confirmation.</p>
+              <button type="button" @click="showUserDetailsModal = false" class="btn btn--secondary">Close</button>
+            </footer>
           </div>
         </div>
       </transition>
@@ -3209,8 +3534,6 @@ const editForm = reactive({
   email: '',
   first_name: '',
   last_name: '',
-  password: '',
-  confirmPassword: '',
   is_approved: false,
   role: 'student',
   is_active: true,
@@ -3218,13 +3541,41 @@ const editForm = reactive({
 })
 const editErrors = reactive({
   username: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
+  email: ''
 })
 const editLoading = ref(false)
 const editErrorMessage = ref('')
 const editSuccessMessage = ref('')
+
+const showPasswordReset = ref(false)
+const showAdminPassword = ref(false)
+const showResetPassword = ref(false)
+const showResetConfirmPassword = ref(false)
+const passwordResetLoading = ref(false)
+const passwordResetMessage = ref('')
+const passwordResetForm = reactive({
+  confirmUsername: '',
+  adminPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+  mustChangePassword: true
+})
+const passwordResetErrors = reactive({
+  confirmUsername: '',
+  adminPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+const editingSelf = computed(() => {
+  if (!editUser.value) return false
+  try {
+    const me = JSON.parse(localStorage.getItem('user') || '{}')
+    return Boolean(me.id) && editUser.value.id === me.id
+  } catch {
+    return false
+  }
+})
 
 const editLab = ref(null)
 const trackCatalog = ref([])  // [{id, name, slug, levels: [{id,name,level_number}]}]
@@ -3238,6 +3589,34 @@ const editLevelOptions = computed(() => {
 const showUserDetailsModal = ref(false)
 const userDetails = ref(null)
 const loadingUserDetails = ref(false)
+const userIdBeingViewed = ref(null)
+const userCompletionFilter = ref('')
+
+const filteredUserCompletions = computed(() => {
+  const rows = userDetails.value?.completions || []
+  const query = userCompletionFilter.value.trim().toLowerCase()
+  if (!query) return rows
+  return rows.filter((row) =>
+    [row.lab_name, row.track_name]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+  )
+})
+
+const userTrackCount = computed(() => {
+  const tracks = (userDetails.value?.completions || [])
+    .map((row) => row.track_name)
+    .filter(Boolean)
+  return new Set(tracks).size
+})
+
+const userHintsPerCompletion = computed(() => {
+  const total = userDetails.value?.total_labs_completed || 0
+  if (!total) return '—'
+  return ((userDetails.value?.total_hints_used || 0) / total).toFixed(1)
+})
+
+
 const resettingLab = ref(false)
 
 const syncing = ref(false)
@@ -5241,17 +5620,70 @@ const deleteUser = async (id) => {
   }
 }
 
+const displayName = (user) => {
+  if (!user) return 'Loading account…'
+  const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ').trim()
+  return fullName || user.username || 'User'
+}
+
+const userInitials = (user) => {
+  if (!user) return '?'
+  const parts = [user.first_name, user.last_name].filter(Boolean)
+  if (parts.length) {
+    return parts.map((part) => part[0]).join('').slice(0, 2).toUpperCase()
+  }
+  return (user.username || '?').slice(0, 2).toUpperCase()
+}
+
+const userRole = (user) => user?.role || (user?.is_admin ? 'admin' : 'student')
+
+const userRoleLabel = (user) => {
+  const role = userRole(user)
+  return role === 'admin' ? 'Admin' : role === 'instructor' ? 'Instructor' : 'Student'
+}
+
+const userRoleBadgeClass = (user) => {
+  const role = userRole(user)
+  if (role === 'admin') return 'status-badge--admin'
+  if (role === 'instructor') return 'status-badge--instructor'
+  return 'status-badge--approved'
+}
+
+const userAccountStatusLabel = (user) => {
+  if (!user) return 'Loading'
+  if (user.is_locked) return 'Locked'
+  if (!user.is_approved) return 'Pending approval'
+  if (user.is_active === false) return 'Disabled'
+  return 'Active'
+}
+
+const userAccountBadgeClass = (user) => {
+  if (!user) return 'status-badge--pending'
+  if (user.is_locked) return 'status-badge--locked'
+  if (!user.is_approved) return 'status-badge--pending'
+  if (user.is_active === false) return 'status-badge--locked'
+  return 'status-badge--approved'
+}
+
+const openEditUserFromDetails = () => {
+  if (!userDetails.value) return
+  showUserDetailsModal.value = false
+  openEditUserModal(userDetails.value)
+}
+
 const openUserDetailsModal = async (userId) => {
+  userIdBeingViewed.value = userId
+  userCompletionFilter.value = ''
   showUserDetailsModal.value = true
   loadingUserDetails.value = true
   userDetails.value = null
-  
+
   try {
     const { data } = await axios.get(`/admin/users/${userId}/details`)
     userDetails.value = data
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to load user details', 'error')
-    showUserDetailsModal.value = false
+    userDetails.value = null
   } finally {
     loadingUserDetails.value = false
   }
@@ -5283,22 +5715,24 @@ const openEditUserModal = (user) => {
   editForm.email = user.email || ''
   editForm.first_name = user.first_name || ''
   editForm.last_name = user.last_name || ''
-  editForm.password = ''
-  editForm.confirmPassword = ''
   editForm.is_approved = user.is_approved || false
   editForm.role = user.role || 'student'
   editForm.is_active = user.is_active !== undefined ? user.is_active : true
   editForm.must_change_password = user.must_change_password || false
-  
-  // Clear errors
+
+  // Clear errors and any previous privileged reset state.
   editErrors.username = ''
   editErrors.email = ''
-  editErrors.password = ''
-  editErrors.confirmPassword = ''
   editErrorMessage.value = ''
   editSuccessMessage.value = ''
-  
+  cancelPasswordReset()
+
   showEditUserModal.value = true
+}
+
+const closeEditUserModal = () => {
+  cancelPasswordReset()
+  showEditUserModal.value = false
 }
 
 const validateEditForm = () => {
@@ -5307,8 +5741,6 @@ const validateEditForm = () => {
   // Clear previous errors
   editErrors.username = ''
   editErrors.email = ''
-  editErrors.password = ''
-  editErrors.confirmPassword = ''
   
   // Validate username if provided
   if (editForm.username) {
@@ -5328,32 +5760,6 @@ const validateEditForm = () => {
       editErrors.email = 'Invalid email format'
       isValid = false
     }
-  }
-  
-  // Validate password if provided
-  if (editForm.password) {
-    if (editForm.password.length < 8) {
-      editErrors.password = 'Password must be at least 8 characters'
-      isValid = false
-    } else if (!/[A-Z]/.test(editForm.password)) {
-      editErrors.password = 'Password must contain at least one uppercase letter'
-      isValid = false
-    } else if (!/[a-z]/.test(editForm.password)) {
-      editErrors.password = 'Password must contain at least one lowercase letter'
-      isValid = false
-    } else if (!/[0-9]/.test(editForm.password)) {
-      editErrors.password = 'Password must contain at least one number'
-      isValid = false
-    }
-    
-    // Validate password confirmation
-    if (editForm.password !== editForm.confirmPassword) {
-      editErrors.confirmPassword = 'Passwords do not match'
-      isValid = false
-    }
-  } else if (editForm.confirmPassword) {
-    editErrors.confirmPassword = 'Please enter a password first'
-    isValid = false
   }
   
   return isValid
@@ -5385,9 +5791,6 @@ const saveUserEdits = async () => {
     if ((editForm.last_name || '') !== (editUser.value.last_name || '')) {
       payload.last_name = editForm.last_name.trim()
     }
-    if (editForm.password) {
-      payload.password = editForm.password
-    }
     if (editForm.is_approved !== editUser.value.is_approved) {
       payload.is_approved = editForm.is_approved
     }
@@ -5411,7 +5814,7 @@ const saveUserEdits = async () => {
     
     // Close modal after short delay
     setTimeout(() => {
-      showEditUserModal.value = false
+      closeEditUserModal()
     }, 1000)
   } catch (error) {
     const msg = parseApiError(error, 'Failed to update user. Please try again.')
@@ -5419,6 +5822,114 @@ const saveUserEdits = async () => {
     showAlert(msg, 'error')
   } finally {
     editLoading.value = false
+  }
+}
+
+// Password reset is a separate privileged action. It is deliberately not part
+// of the normal profile update: it requires re-authentication, revokes target
+// sessions, and forces a password change.
+const openPasswordReset = () => {
+  passwordResetForm.confirmUsername = ''
+  passwordResetForm.adminPassword = ''
+  passwordResetForm.newPassword = ''
+  passwordResetForm.confirmPassword = ''
+  passwordResetForm.mustChangePassword = true
+  passwordResetErrors.confirmUsername = ''
+  passwordResetErrors.adminPassword = ''
+  passwordResetErrors.newPassword = ''
+  passwordResetErrors.confirmPassword = ''
+  passwordResetMessage.value = ''
+  showAdminPassword.value = false
+  showResetPassword.value = false
+  showResetConfirmPassword.value = false
+  showPasswordReset.value = true
+  nextTick(() => document.getElementById('reset-confirm-username')?.focus())
+}
+
+const cancelPasswordReset = () => {
+  showPasswordReset.value = false
+  passwordResetForm.confirmUsername = ''
+  passwordResetForm.adminPassword = ''
+  passwordResetForm.newPassword = ''
+  passwordResetForm.confirmPassword = ''
+  passwordResetErrors.confirmUsername = ''
+  passwordResetErrors.adminPassword = ''
+  passwordResetErrors.newPassword = ''
+  passwordResetErrors.confirmPassword = ''
+  passwordResetMessage.value = ''
+  showAdminPassword.value = false
+  showResetPassword.value = false
+  showResetConfirmPassword.value = false
+}
+
+const submitPasswordReset = async () => {
+  if (!editUser.value) return
+
+  passwordResetErrors.confirmUsername = ''
+  passwordResetErrors.adminPassword = ''
+  passwordResetErrors.newPassword = ''
+  passwordResetErrors.confirmPassword = ''
+  passwordResetMessage.value = ''
+
+  let valid = true
+  if (passwordResetForm.confirmUsername.trim() !== editUser.value.username) {
+    passwordResetErrors.confirmUsername = `Type ${editUser.value.username} exactly to confirm`
+    valid = false
+  }
+  if (!passwordResetForm.adminPassword) {
+    passwordResetErrors.adminPassword = 'Enter your admin password to re-authenticate'
+    valid = false
+  }
+  const complexityErrors = validatePasswordComplexity(passwordResetForm.newPassword)
+  if (complexityErrors.length) {
+    passwordResetErrors.newPassword = complexityErrors[0]
+    valid = false
+  }
+  if (passwordResetForm.newPassword !== passwordResetForm.confirmPassword) {
+    passwordResetErrors.confirmPassword = 'Passwords do not match'
+    valid = false
+  }
+  if (!valid) return
+
+  passwordResetLoading.value = true
+  try {
+    const { data } = await axios.post(
+      `/admin/users/${editUser.value.id}/reset-password`,
+      {
+        new_password: passwordResetForm.newPassword,
+        admin_password: passwordResetForm.adminPassword,
+        must_change_password: passwordResetForm.mustChangePassword,
+      }
+    )
+    const message = data.message || `Password reset for ${editUser.value.username}`
+    passwordResetMessage.value = `${message}. Existing sessions were revoked.`
+    showAlert(passwordResetMessage.value)
+    editUser.value.must_change_password = passwordResetForm.mustChangePassword
+
+    // Never keep the secrets in the component after the request completes.
+    passwordResetForm.adminPassword = ''
+    passwordResetForm.newPassword = ''
+    passwordResetForm.confirmPassword = ''
+    passwordResetForm.confirmUsername = ''
+    showAdminPassword.value = false
+    showResetPassword.value = false
+    showResetConfirmPassword.value = false
+    showPasswordReset.value = false
+
+    await fetchAll()
+  } catch (error) {
+    const status = error.response?.status
+    const detail = error.response?.data?.detail
+    if (status === 403) {
+      passwordResetErrors.adminPassword = detail || 'Your admin password is incorrect'
+    } else if (status === 400) {
+      passwordResetErrors.newPassword = detail || 'The password reset was rejected'
+    } else {
+      passwordResetErrors.newPassword = detail || 'Failed to reset password. Please try again.'
+    }
+    showAlert(detail || 'Failed to reset password. Please try again.', 'error')
+  } finally {
+    passwordResetLoading.value = false
   }
 }
 
@@ -10989,6 +11500,828 @@ watch(activeTab, (tab) => {
   .activity-header-actions {
     width: 100%;
     justify-content: flex-start;
+  }
+}
+
+/* Admin user preview and edit */
+.user-modal {
+  display: flex;
+  flex-direction: column;
+  max-width: 1040px;
+  max-height: 92vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+.user-modal--edit {
+  max-width: 820px;
+}
+
+.user-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background:
+    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 42%),
+    var(--bg-secondary);
+}
+
+.user-modal__head--compact {
+  padding: 1.1rem 1.35rem;
+}
+
+.user-modal__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--border-color));
+  background: color-mix(in srgb, var(--accent) 16%, var(--bg-tertiary));
+  color: var(--accent);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.user-avatar--sm {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  font-size: 0.9rem;
+}
+
+.user-modal__identity-text {
+  min-width: 0;
+}
+
+.user-modal__eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--accent);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.user-modal__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.35rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.user-modal__handle {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.user-modal__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.user-modal__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.user-modal__close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.user-modal__close:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.user-modal__close svg {
+  width: 16px;
+  height: 16px;
+}
+
+.user-modal__close:focus-visible,
+.user-link-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.user-details-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+}
+
+.user-stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.user-stat {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.8rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.user-stat__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--bg-tertiary);
+}
+
+.user-stat__icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.user-stat__icon--accent {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-tertiary));
+}
+
+.user-stat__icon--warning {
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 14%, var(--bg-tertiary));
+}
+
+.user-stat__icon--success {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, var(--bg-tertiary));
+}
+
+.user-stat__icon--purple {
+  color: var(--purple);
+  background: color-mix(in srgb, var(--purple) 14%, var(--bg-tertiary));
+}
+
+.user-stat__label {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.user-stat__value {
+  display: block;
+  margin: 0.1rem 0;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  line-height: 1.1;
+}
+
+.user-stat__hint {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+}
+
+.user-details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1rem;
+}
+
+.user-panel {
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.user-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.8rem 0.95rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.user-panel__head h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.user-panel__head p {
+  margin: 0.15rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.user-panel__head--stack {
+  align-items: center;
+}
+
+.user-panel__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.user-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1rem;
+  margin: 0;
+  padding: 0.35rem 0.95rem 0.55rem;
+}
+
+.user-fact {
+  min-width: 0;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+}
+
+.user-fact dt {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.user-fact dd {
+  margin: 0.12rem 0 0;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.user-session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0.95rem;
+}
+
+.user-session {
+  padding: 0.6rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.user-session__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.user-session__top strong {
+  color: var(--text-primary);
+  font-size: 0.78rem;
+}
+
+.user-session__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.7rem;
+  margin-top: 0.3rem;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+}
+
+.user-panel__empty {
+  padding: 0.9rem 0.95rem;
+}
+
+.user-panel__empty p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.user-panel__empty span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.user-search {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 210px;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-primary);
+}
+
+.user-search svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.user-search input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  outline: none;
+}
+
+.user-search input::placeholder {
+  color: var(--text-muted);
+}
+
+.user-completions-table {
+  width: 100%;
+}
+
+.user-track {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.74rem;
+}
+
+.user-level {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+}
+
+.user-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.4rem;
+  text-align: center;
+}
+
+.user-empty p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.user-empty span {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.user-empty--inline {
+  padding: 1.2rem;
+}
+
+.user-link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.user-modal__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.user-modal__foot p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.user-modal__foot--sticky {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -1.5rem -1.25rem;
+}
+
+.user-modal__foot-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-modal__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.user-skeleton {
+  height: 54px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    color-mix(in srgb, var(--bg-tertiary) 55%, var(--bg-secondary)) 37%,
+    var(--bg-tertiary) 63%
+  );
+  background-size: 400% 100%;
+  animation: user-shimmer 1.4s ease infinite;
+}
+
+.user-skeleton--hero {
+  height: 74px;
+}
+
+.user-skeleton-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.user-skeleton-row .user-skeleton {
+  height: 72px;
+}
+
+.user-skeleton--table {
+  height: 180px;
+}
+
+@keyframes user-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.edit-user-form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+}
+
+.user-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.user-form-section__head {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.user-form-section__head h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.user-form-section__head p {
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.user-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem 1rem;
+}
+
+.user-form-grid--access {
+  align-items: start;
+}
+
+.user-form-hint {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+.user-form-note {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+}
+
+.user-form-note__label {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.user-form-note strong {
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.user-form-note span:last-child {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+}
+
+.user-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.user-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  cursor: pointer;
+}
+
+.user-toggle:has(input:checked) {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border-color));
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-primary));
+}
+
+.user-toggle input {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+
+.user-toggle span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.user-toggle strong {
+  color: var(--text-primary);
+  font-size: 0.74rem;
+}
+
+.user-toggle small {
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  line-height: 1.35;
+}
+
+.user-password {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.user-password .form-input {
+  padding-right: 4.2rem;
+}
+
+.user-password__toggle {
+  position: absolute;
+  right: 0.55rem;
+  padding: 0.2rem;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.user-password__toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.user-form-section--danger {
+  padding: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--border-color));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--danger) 4%, var(--bg-primary));
+}
+
+.user-form-section--danger .user-form-section__head {
+  border-bottom-color: color-mix(in srgb, var(--danger) 22%, var(--border-color));
+}
+
+.user-form-section__tag {
+  flex-shrink: 0;
+  padding: 0.18rem 0.45rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, var(--border-color));
+  border-radius: 999px;
+  color: var(--danger);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.user-security-note {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.user-security-note strong {
+  color: var(--text-primary);
+}
+
+.user-reset-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 38%, var(--border-color));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warning) 8%, var(--bg-primary));
+}
+
+.user-reset-warning svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: var(--warning);
+}
+
+.user-reset-warning div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.user-reset-warning strong {
+  color: var(--text-primary);
+  font-size: 0.76rem;
+}
+
+.user-reset-warning span {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.user-reset-open {
+  align-self: flex-start;
+}
+
+.user-reset-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-top: 0.25rem;
+}
+
+.user-reset-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--danger) 16%, var(--border-color));
+}
+
+.user-toggle--wide {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .user-stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .user-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-toggle-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .user-modal {
+    max-height: 96vh;
+    border-radius: 10px;
+  }
+
+  .user-modal__head,
+  .user-details-content,
+  .edit-user-form,
+  .user-modal__loading {
+    padding: 1rem;
+  }
+
+  .user-modal__head {
+    flex-direction: column;
+  }
+
+  .user-modal__head-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .user-stat-row,
+  .user-facts,
+  .user-form-grid,
+  .user-form-grid--access {
+    grid-template-columns: 1fr;
+  }
+
+  .user-skeleton-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .user-panel__head--stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-search {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .user-modal__foot {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.8rem 1rem;
+  }
+
+  .user-modal__foot-actions {
+    justify-content: flex-end;
+  }
+
+  .user-modal__foot--sticky {
+    margin: 0 -1rem -1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-skeleton {
+    animation: none;
   }
 }
 </style>

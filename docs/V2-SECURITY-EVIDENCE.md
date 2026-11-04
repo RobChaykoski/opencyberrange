@@ -16,7 +16,7 @@ the evidence was produced for the build being released.
 | A04 Insecure design | Aggregate-only analytics, no public ranking, consent withdrawal, bounded learning-time model | Pass |
 | A05 Security misconfiguration | Nginx CSP/HSTS/frame/content-type/referrer/permissions headers; deny-all `robots.txt`; `X-Robots-Tag` and `noindex` metadata; crawler user agents return `403`; external probe of port 5000 and 8000 failed | Pass |
 | A06 Vulnerable components | `pip-audit -r requirements.txt`: no known vulnerabilities; `npm audit --omit=dev`: 0 vulnerabilities | Pass |
-| A07 Authentication failures | Login, MFA, lockout, token revocation, and login-streak tests | Pass |
+| A07 Authentication failures | Login, MFA, lockout, token revocation, and login-streak tests; admin resets require re-authentication, revoke target sessions, force a password change, and reject password changes on the general update endpoint | Pass for covered paths |
 | A08 Integrity failures | Restore drill into temporary database, image type/size validation, idempotent migrations | Pass |
 | A09 Logging/monitoring failures | Activity/audit events for security actions, redacted IP handling, no secret logging in tested paths | Pass for covered paths |
 | A10 SSRF | No user-supplied server-side fetch in the reporting/feedback path; Peer Manager remains internal and port 5000 is externally blocked | Pass |

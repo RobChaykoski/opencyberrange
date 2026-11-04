@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [3.0.0] - 2026-11-04
+
+Enterprise release line.
+
+- LDAP, OIDC, and SAML identity-provider settings with encrypted secrets and
+  audit logging (settings-only; login federation remains in the Enterprise HA
+  workstream).
+- Enterprise inherits the Professional 2.1 analytics, reporting, competency,
+  feedback, certification guidance, and admin security changes.
+- Multi-host HA, gateway failover, multi-tenancy, LMS integration, and
+  regulatory reporting remain in the Enterprise programme; see
+  `docs/V3-HA-LAB-POOL.md` and `docs/EDITIONS.md`.
+
 ## Edition model
 
 - **Community / Academic 1.1** — supported single-host teaching platform, lab
@@ -24,11 +37,31 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
-## [Unreleased]
+## [2.1.0] - 2026-11-04
 
 ### Login experience
 - The login preview shows a sample learner certificate and SWOCTS branding, with
   links to the SWOCTS website and LinkedIn page.
+- The exercise like/dislike control now sits at the top of the active exercise
+  instead of below the scenario and flag form.
+
+### Admin experience
+- The admin user record preview now has an account hero, learning summary,
+  searchable completion evidence, active-session cards, and a clear separation
+  between read-only review and destructive resets.
+- The edit-user dialog now groups identity, access, and password recovery, with
+  keyboard-visible focus, inline help, and mobile layouts.
+- Admin password reset is a separate privileged action: the admin must
+  re-authenticate, the target's sessions are revoked, a password change is
+  forced, and the action is audited. The general profile update endpoint now
+  rejects password changes.
+
+### Learning and career guidance
+- Each track now shows a certification pathway panel with entry, core, and
+  advanced vendor certifications, role direction, and links to the Security
+  Certification Roadmap, the CISO MindMap 2026, and SWOCTS resources.
+- The community/academic backlog records the CISO MindMap-informed curriculum
+  breadth and the in-workspace exercise brief pop-out.
 
 ### Security
 - Serve a deny-all `robots.txt`, send `noindex`/`nofollow` metadata and

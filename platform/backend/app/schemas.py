@@ -111,6 +111,8 @@ class UserDetailResponse(BaseModel):
     username: str
     email: str
     student_id: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     is_active: Optional[bool] = True
     is_approved: Optional[bool] = False
     is_admin: Optional[bool] = False
@@ -121,6 +123,7 @@ class UserDetailResponse(BaseModel):
     vpn_registered: Optional[bool] = False
     must_change_password: Optional[bool] = False
     created_at: Optional[datetime] = None
+    last_login_at: Optional[datetime] = None
 
     # Statistics
     total_labs_completed: int = 0
@@ -210,6 +213,11 @@ class UpdateUserRequest(BaseModel):
 
 class ResetPasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8, max_length=128)
+    # Re-authentication: an admin token alone must not be enough to take over
+    # another account.
+    admin_password: str = Field(..., min_length=1, max_length=128)
+    # Force the target to choose a new password at the next sign-in.
+    must_change_password: bool = True
 
     @field_validator('new_password')
     @classmethod

@@ -1,20 +1,28 @@
-# OpenCyberRange Professional 2.0 development
+# OpenCyberRange Enterprise 3.0
 
-Edition: **Professional** — Community / Academic 1.1 plus analytics, reporting,
-cohort analysis, competency evidence, accreditation support, and research
-exports.
-Status: development line. This is not a GA release and may change before 2.0.0.
+Edition: **Enterprise** — Professional 2.1 plus HA, SSO, enterprise reporting,
+multi-tenant support, LMS integration, and compliance reporting.
+Status: release line. HA and full SSO federation are not deployed in this tree;
+see `docs/EDITIONS.md` for delivery status.
 
-Enterprise 3.0 is the separate HA, SSO, enterprise reporting, multi-tenant,
-LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
-
-The five Professional priorities are Competency Framework Engine, Student
-Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
-Instructor Intervention Dashboard. They are Professional and Enterprise only;
-see `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
+Enterprise inherits the Professional analytics and reporting surface plus the
+five Professional priorities: Competency Framework Engine, Student Feedback
+Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and Instructor
+Intervention Dashboard.
 
 ## Added in this build
 
+- **Admin user record:** a clearer account preview with learning summary,
+  searchable completion evidence, active sessions, and an in-context edit
+  action.
+- **Admin password reset:** a separate privileged action with admin
+  re-authentication, token revocation, forced password change, and audit
+  logging. The general profile update no longer accepts password changes.
+- **Exercise feedback:** the like/dislike control is now visible at the top of
+  the active exercise instead of below the scenario and flag form.
+- **Career guidance:** each track shows certification pathways, role direction,
+  and links to the Security Certification Roadmap, the CISO MindMap 2026, and
+  SWOCTS resources.
 - **Learning hours:** tracked time on completed exercises, plus bounded session
   time for started exercises without a completion, shown privately to learners
   and as course and cross-course aggregates.

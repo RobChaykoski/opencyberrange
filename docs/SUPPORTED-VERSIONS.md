@@ -1,12 +1,12 @@
-# Supported Versions
+﻿# Supported Versions
 
 This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
 Last reviewed: **2026-11-04**. Current editions: **Community / Academic 1.1**,
-**Professional 2.0 (2.0.0-dev)**, **Enterprise 3.0 (development)**. See
-[Editions](EDITIONS.md). Platform development version: **2.0.0-dev**.
+**Professional 2.1 (2.1.0)**, **Enterprise 3.0 (development)**. See
+[Editions](EDITIONS.md). Platform development version: **2.1.0**.
 
 ## Policy
 
@@ -25,7 +25,7 @@ Last reviewed: **2026-11-04**. Current editions: **Community / Academic 1.1**,
 
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
-| Host OS | Community / Academic 1.1: Ubuntu 22.04 and 24.04 LTS; Professional 2.0 and Enterprise 3.0: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise | Validation in progress | Community / Academic supports both LTS releases; Professional host/platform deployed and KVM ready, network/VPN and recovery gates remain; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
+| Host OS | Community / Academic 1.1: Ubuntu 22.04 and 24.04 LTS; Professional 2.1 and Enterprise 3.0: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise | Validation in progress | Community / Academic supports both LTS releases; Professional host/platform deployed and KVM ready, network/VPN and recovery gates remain; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
@@ -90,7 +90,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 
 The following remain on their current bases in this programme:
 
-- `platform/labs/**` — including ~148 Ubuntu 22.04 images, Alpine 3.18/3.19,
+- `platform/labs/**` â€” including ~148 Ubuntu 22.04 images, Alpine 3.18/3.19,
   PHP 8.1, MySQL 8.0, and Python 3.11 mock services.
 - `RangeBox/**`, `UbuntuBox/**`, `RemnuxBox/**`.
 
