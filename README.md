@@ -28,8 +28,10 @@ Students also get a profile with completion statistics, certificates, achievemen
 
 ## What's new in 1.1
 
-- **Registration email.** New accounts receive a registration-success message;
-  pending accounts are told they need approval.
+- **Registration email.** New accounts can opt in with a checkbox to receive a
+  registration confirmation; pending accounts are told they need approval. The
+  form explains that the message is transactional, not marketing, and that no
+  email is sent if the box is cleared.
 - **SMTP settings.** Admins configure the relay under **Admin → Settings →
   Email** and can send a test message before enabling registration email.
 - **Version identity.** `GET /api/version` and the app footer report the running

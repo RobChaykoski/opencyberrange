@@ -8,9 +8,11 @@ account email plus the recent validation fixes.
 
 ## Highlights
 
-- **Registration email:** new accounts receive a registration-success message.
-  Accounts that need approval are told they are pending; auto-approved accounts
-  receive a sign-in link.
+- **Registration email:** new accounts can opt in with a checkbox to receive a
+  registration-success message. Accounts that need approval are told they are
+  pending; auto-approved accounts receive a sign-in link. The form states that
+  the email is transactional, not marketing, and clears the checkbox to send
+  nothing.
 - **SMTP settings:** admins configure the relay, from address, public URL, and
   credentials under Admin → Settings → Email, then send a test message.
 - **Version identity:** the backend exposes `GET /api/version`, and the app

@@ -127,6 +127,10 @@ class RegisterRequest(BaseModel):
     # Optional competition sign-up link. A valid, open competition adds the new
     # account to the participant roster as a "new_user" registration.
     competition_id: Optional[int] = None
+    # Transactional account email. The registration form asks the learner to
+    # opt in; an explicit false suppresses the message without affecting the
+    # account or approval state.
+    send_registration_email: bool = True
 
     @field_validator('username')
     @classmethod
@@ -1094,15 +1098,16 @@ async def register(
                   actor_id=new_user.id, target_type="user",
                   target_id=new_user.id, target_label=new_user.username)
 
-    background_tasks.add_task(
-        mail.send_registration_email,
-        user_id=new_user.id,
-        email=new_user.email,
-        username=new_user.username,
-        display_name=new_user.display_name,
-        approved=bool(new_user.is_approved),
-        request_base=str(request.base_url),
-    )
+    if user_data.send_registration_email:
+        background_tasks.add_task(
+            mail.send_registration_email,
+            user_id=new_user.id,
+            email=new_user.email,
+            username=new_user.username,
+            display_name=new_user.display_name,
+            approved=bool(new_user.is_approved),
+            request_base=str(request.base_url),
+        )
 
     return new_user
 
