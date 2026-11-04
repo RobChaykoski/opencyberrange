@@ -5,13 +5,13 @@ Status: **Planned — 24.04 validation pending**
 ## Goal
 
 Move the OpenCyberRange **2.0** line to Ubuntu 24.04 LTS as its supported host
-OS, while keeping the **1.0 maintenance line on Ubuntu 22.04 LTS**.
+OS, while keeping the **1.1 maintenance line on Ubuntu 22.04 LTS**.
 
 The split is deliberate:
 
-- 1.0 bug fixes and security patches stay on the 22.04 baseline. Do not
-  backport 24.04-specific host changes into 1.0.
-- Bug fixes that also affect 2.0 continue to land on 1.0 first and are merged
+- 1.1 bug fixes and security patches stay on the 22.04 baseline. Do not
+  backport 24.04-specific host changes into 1.1.
+- Bug fixes that also affect 2.0 continue to land on 1.1 first and are merged
   forward into `main`.
 - 2.0 targets 24.04 for new installs. 22.04 remains a supported upgrade source
   until the 2.0 validation window closes.
@@ -25,7 +25,7 @@ This migration does **not** change:
 - the ~148 exercise images on `ubuntu:22.04`;
 - the UbuntuBox desktop image, which stays on `ubuntu:22.04` for 2.0.0;
 - the Kali-based RangeBox, which follows `kali-rolling`;
-- the 1.0 release branch or its deployment documentation.
+- the 1.1 release branch or its deployment documentation.
 
 Changing any of those is a separate workstream with its own solve tests.
 
@@ -33,16 +33,16 @@ Changing any of those is a separate workstream with its own solve tests.
 
 | Line | Branch / tag | Host OS | Change policy |
 |---|---|---|---|
-| 1.0 | `release/1.0` or `v1.0.x` tags | Ubuntu 22.04 | Bug and security fixes only |
-| 2.0 | `main` and `v2.0.x` tags | Ubuntu 24.04 target | Features plus forward-merged 1.0 fixes |
+| 1.1 | `release/1.1` or `v1.1.x` tags | Ubuntu 22.04 | Bug and security fixes only |
+| 2.0 | `main` and `v2.0.x` tags | Ubuntu 24.04 target | Features plus forward-merged 1.1 fixes |
 
 Rules:
 
-1. A host-level fix for 22.04 may land directly on the 1.0 line.
-2. A host-level fix that applies to both lines lands on 1.0 first, then merges
+1. A host-level fix for 22.04 may land directly on the 1.1 line.
+2. A host-level fix that applies to both lines lands on 1.1 first, then merges
    into `main`.
-3. A 24.04-only change never lands on the 1.0 line.
-4. CI keeps a 22.04 job for 1.0 and a 24.04 job for 2.0 once the validation
+3. A 24.04-only change never lands on the 1.1 line.
+4. CI keeps a 22.04 job for 1.1 and a 24.04 job for 2.0 once the validation
    phase starts.
 
 ## Migration phases
@@ -57,7 +57,7 @@ Status: **done**
 - Make the installer print the detected OS and warn outside the 22.04/24.04
   matrix.
 
-Exit criteria: documentation names 22.04 for 1.0 and 24.04 for 2.0 without
+Exit criteria: documentation names 22.04 for 1.1 and 24.04 for 2.0 without
 ambiguity.
 
 ### Phase 1 — Clean-host installer validation
@@ -113,7 +113,7 @@ on 24.04.
 
 Test both paths:
 
-1. Existing 22.04 1.0 deployment upgraded to 2.0 on 22.04.
+1. Existing 22.04 1.1 deployment upgraded to 2.0 on 22.04.
 2. The same deployment moved to 24.04 using a documented host-upgrade or
    rebuild procedure.
 
@@ -135,12 +135,12 @@ When Phases 1–4 pass:
 At a 2.0 minor release after the compatibility window:
 
 - stop testing 22.04 for 2.0;
-- keep 22.04 in the 1.0 maintenance documentation until that line retires;
+- keep 22.04 in the 1.1 maintenance documentation until that line retires;
 - update `versions.yaml` so 24.04 is the only supported 2.0 host.
 
 ## Test matrix
 
-| Area | 22.04 (1.0) | 24.04 (2.0 target) |
+| Area | 22.04 (1.1) | 24.04 (2.0 target) |
 |---|---|---|
 | Installer | Required | Required |
 | Docker/Compose | Required | Required |
@@ -150,7 +150,7 @@ At a 2.0 minor release after the compatibility window:
 | RangeBox / UbuntuBox / REMnuxBox | Required | Required |
 | KVM lab | Required where hardware exists | Required where hardware exists |
 | Backup and restore | Required | Required |
-| 1.0 → 2.0 upgrade | Required | Required |
+| 1.1 → 2.0 upgrade | Required | Required |
 | Host upgrade 22.04 → 24.04 | n/a | Required drill |
 
 ## Rollback
@@ -159,7 +159,7 @@ At a 2.0 minor release after the compatibility window:
   image tags.
 - Host rollback: rebuild on Ubuntu 22.04 and restore the snapshot. Ubuntu does
   not support an in-place downgrade.
-- Keep the 1.0 line deployable on 22.04 throughout the migration.
+- Keep the 1.1 line deployable on 22.04 throughout the migration.
 
 ## Risks
 
@@ -174,6 +174,6 @@ At a 2.0 minor release after the compatibility window:
 ## Definition of done
 
 - 24.04 is the documented default for new 2.0 installs.
-- 1.0 documentation still says 22.04 and the branch remains on 22.04.
+- 1.1 documentation still says 22.04 and the branch remains on 22.04.
 - Full installer, firewall, lab, and upgrade drills pass on 24.04.
 - `versions.yaml`, README, prerequisites, and deployment manuals agree.

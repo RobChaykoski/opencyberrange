@@ -1,6 +1,6 @@
 # Host OS Support and Ubuntu 24.04 Decision
 
-Status: **1.0 remains on Ubuntu 22.04 LTS. 2.0 targets Ubuntu 24.04 LTS, with
+Status: **1.1 remains on Ubuntu 22.04 LTS. 2.0 targets Ubuntu 24.04 LTS, with
 a validation gate before 24.04 is marked fully supported.**
 
 ## Decision
@@ -9,7 +9,7 @@ The host OS follows the release line:
 
 | Release line | Host OS | State |
 |---|---|---|
-| `1.0.x` maintenance | **Ubuntu 22.04 LTS only** | Supported. Bug and security fixes stay on the 22.04 baseline; do not rebase 1.0 to 24.04. |
+| `1.1.x` maintenance | **Ubuntu 22.04 LTS only** | Supported. Bug and security fixes stay on the 22.04 baseline; do not rebase 1.1 to 24.04. |
 | `2.0.x` development | **Ubuntu 24.04 LTS target** | Migration in progress. 22.04 remains the supported source for upgrades during the 2.0 validation window. |
 
 For new 2.0 installs, use:
@@ -17,12 +17,12 @@ For new 2.0 installs, use:
 | Host OS | State | Guidance |
 |---|---|---|
 | Ubuntu 24.04 LTS (Noble) | **Recommended** | Target for 2.0 deployments once the validation checklist below passes |
-| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.0-to-2.0 upgrades and the 2.0 validation window, not the long-term 2.0 target |
+| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1-to-2.0 upgrades and the 2.0 validation window, not the long-term 2.0 target |
 | Debian 12/13 | Best effort | Not part of the tested server matrix |
 | Other Debian-based distributions | Unsupported | Package names, firewall backends, and systemd behaviour may differ |
 
 Ubuntu 22.04 standard support ends in June 2027; Ubuntu 24.04 standard support
-runs to June 2029. Keeping 1.0 on 22.04 avoids re-validating the maintenance
+runs to June 2029. Keeping 1.1 on 22.04 avoids re-validating the maintenance
 line. Moving 2.0 to 24.04 gives a new release a host OS that remains supported
 for the life of the 2.0 line.
 
@@ -49,12 +49,12 @@ This decision is about the **host OS only**. It does not change:
   image. What remains untested is the host installer, firewall persistence, and
   the interactive lab runtime described in the validation gate.
 
-## Why keep 1.0 on 22.04
+## Why keep 1.1 on 22.04
 
 - It is the validated baseline for the supported maintenance line.
 - Bug fixes stay on the release they were tested against; an OS rebase would
   turn routine maintenance into a platform migration.
-- Existing 1.0 classrooms should not be forced into a host upgrade to keep
+- Existing 1.x classrooms should not be forced into a host upgrade to keep
   receiving fixes.
 - Lab images and UbuntuBox remain on 22.04, so existing exercise behaviour does
   not change.

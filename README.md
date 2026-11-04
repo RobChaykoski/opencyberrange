@@ -15,7 +15,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Release](https://img.shields.io/badge/release-1.0.0%20supported-blue)](RELEASE_NOTES.md)
+[![Release](https://img.shields.io/badge/release-1.1.0%20supported-blue)](RELEASE_NOTES.md)
 [![Next](https://img.shields.io/badge/next-2.0%20development-8b5cf6)](docs/V2-LEARNING-ANALYTICS.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
@@ -29,19 +29,20 @@ Students also get a profile with completion statistics, certificates, achievemen
 
 ## Version 2.0
 
-OpenCyberRange 1.0 is the supported production release. Version 2.0 is the next
-feature line, and it is additive: the 1.0 curriculum, learner workflows, privacy
+OpenCyberRange 1.1 is the supported maintenance release. Version 2.0 is the next
+feature line, and it is additive: the 1.x curriculum, learner workflows, privacy
 controls, and single-host Docker Compose install remain the baseline. **Bug
-fixes and security updates continue on the 1.0 line and are merged forward into
+fixes and security updates continue on the 1.1 line and are merged forward into
 2.0**, so a fix does not wait for the next feature release. There is no separate
 2.0 fork to maintain.
 
 | Release line | State | Host OS | Purpose |
 |---|---|---|---|
-| `1.0.x` | **Supported** | Ubuntu 22.04 LTS | Production installs; bug and security fixes stay on the 22.04 baseline |
+| `1.1.x` | **Supported** | Ubuntu 22.04 LTS | Production installs; bug and security fixes stay on the 22.04 baseline |
+| `1.0.x` | Prior release | Ubuntu 22.04 LTS | Upgrade path to 1.1 |
 | `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting, analytics, scoring, and multi-host deployment goals |
 
-Version 1.0 bug fixes are not rebased onto 24.04. They land on the 1.0 line and
+Version 1.1 bug fixes are not rebased onto 24.04. They land on the 1.1 line and
 merge forward into 2.0. The 24.04 migration and the HA lab-pool design are
 tracked in [the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) and
 [the HA lab pool plan](docs/V2-HA-LAB-POOL.md).
@@ -95,7 +96,7 @@ signal, not a public ranking or a high-stakes grade.
 
 ### Deployment goals
 
-The 1.0 installer remains a single-host Docker Compose deployment. Version 2.0
+The 1.x installer remains a single-host Docker Compose deployment. Version 2.0
 adds scale-out targets for multiple Docker hosts ("pods") and Kubernetes while
 keeping the same platform images, lab definitions, WireGuard access, and student
 workflow. See [Deployment topologies](#deployment-topologies) for the supported
@@ -125,8 +126,8 @@ These are current, checkable counts from this repository and metrics the platfor
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. `main` carries the 2.0
-development line, while the `v1.0.0` tag is the supported production release.
-Bug fixes and security updates land on the 1.0 line first and are merged forward
+development line, while the `v1.1.0` tag is the supported production release.
+Bug fixes and security updates land on the 1.1 line first and are merged forward
 into `main`. The tree contains all history from the pre-cutover tree plus the
 upgrade scaffold and dependency waves. See
 `docs/MOVE-TO-OPENCYBER-NEXT.md` and `docs/CUTOVER-TO-CANONICAL-REPO.md` for the
@@ -640,7 +641,7 @@ truth for the platform version; runtime and dependency pins live in
 
 ## Deployment topologies
 
-The 1.0 installer is a **single-host Docker Compose** deployment. Version 2.0
+The 1.x installer is a **single-host Docker Compose** deployment. Version 2.0
 keeps that path as the default and adds two scale-out targets.
 
 | Topology | State | Notes |
@@ -703,7 +704,7 @@ opencyberrange/
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
 | [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
 | [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the 24.04 validation checklist |
-| [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.0 stays on 22.04 |
+| [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.1 stays on 22.04 |
 | [V2 HA lab pool plan](docs/V2-HA-LAB-POOL.md) | Architects planning multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
@@ -738,7 +739,7 @@ After installation, log in as admin and navigate to **Admin Panel > System Healt
 
 ## Requirements
 
-- **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.0 maintenance line stays on Ubuntu 22.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
+- **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.1 maintenance line stays on Ubuntu 22.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
 - **Platform stack:** OpenCyberRange 2.0.0-dev; Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are 2.0 goals, not supported deployment targets yet. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
