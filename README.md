@@ -45,8 +45,8 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Repository | Purpose | State |
 |---|---|---|
-| [`opencyberrange`](https://github.com/RobChaykoski/opencyberrange) | Production and development (canonical) | `v2.3.2`, CI green |
-| [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Read-only archive of the pre-cutover tree | `v2.3.2`; archived at cutover |
+| [`opencyberrange`](https://github.com/RobChaykoski/opencyberrange) | Production and development (canonical) | `main`, CI green |
+| [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. It contains all history from the
 pre-cutover tree plus the upgrade scaffold and dependency waves. See
@@ -96,6 +96,17 @@ panel.
 **Profile and records.** Every student has a profile with an avatar, completion
 stats, earned certificates, track progress, completion details, achievements,
 and a downloadable PDF transcript.
+
+![Learner profile with completion stats and certificates](docs/img/profile.png)
+
+**Certificates and transcripts.** Completing every visible exercise in a level
+issues a certificate with a deterministic ID, a verification QR code, and a
+print/PDF action. The same profile view generates a PDF transcript containing
+certificates, every completed exercise, track progress, and course achievements.
+
+![Earned certificates on the profile](docs/img/profile-certificates.png)
+
+![A generated certificate of completion](docs/img/certificate.png)
 
 **Celebration Wall.** A shared recognition page for recent wins. It is a
 spotlight, not a public leaderboard: individual badge counts and ranks are not
@@ -265,7 +276,7 @@ or repository secret:
 - **Dependency audit** — `pip-audit` and `npm audit --omit=dev` on every pull
   request and weekly.
 
-Current status at `v2.3.2`: `pip-audit` reports **0 packages with advisories**
+Current status on `main`: `pip-audit` reports **0 packages with advisories**
 and `npm audit` reports **0 vulnerabilities**. The remediation trail is in the
 `WAVE-A`, `WAVE-B`, and `WAVE-C` documents in `docs/`.
 
