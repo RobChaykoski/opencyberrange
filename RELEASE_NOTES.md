@@ -1,4 +1,8 @@
-# OpenCyberRange 1.1.0
+# OpenCyberRange Base 1.1.0
+
+Edition: **Base** — supported single-host teaching platform and maintenance line.
+Pro 2.0 adds analytics and reporting. Enterprise 3.0 adds multi-host HA and
+identity federation.
 
 Released: 4 November 2026
 

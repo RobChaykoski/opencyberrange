@@ -26,6 +26,13 @@ A self-hosted cybersecurity training platform that deploys hands-on exercises in
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
+## Edition: Base
+
+OpenCyberRange 1.1 is the **Base** edition: the supported single-host teaching
+platform and maintenance line. **Pro 2.0** adds learning analytics, reporting,
+and exports on one host. **Enterprise 3.0** adds multi-host HA, LDAP/OIDC/SAML,
+and enterprise operations. Base remains the reference behaviour and fallback.
+
 ## What's new in 1.1
 
 - **Registration email.** New accounts can opt in with a checkbox to receive a
