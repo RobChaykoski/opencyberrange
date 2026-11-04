@@ -235,6 +235,73 @@ def test_new_user_signup_marks_competition_registration(
     db_session.commit()
 
 
+def test_competition_sponsors_are_created_and_replaced(
+    client, db_session, test_lab, instructor_auth
+):
+    start_at, end_at = _window()
+    tiny_png = (
+        "data:image/png;base64,"
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    )
+    created = client.post(
+        "/api/competitions",
+        json={
+            "name": "Sponsored Sprint",
+            "start_at": start_at.isoformat(),
+            "end_at": end_at.isoformat(),
+            "lab_ids": [test_lab.id],
+            "sponsors": [
+                {
+                    "name": "Northstar Bank",
+                    "tier": "gold",
+                    "description": "Community sponsor",
+                    "website_url": "northstar.example",
+                    "logo_data": tiny_png,
+                },
+                {"name": "Harbour Coffee", "tier": "bronze"},
+            ],
+        },
+        headers=instructor_auth,
+    )
+    assert created.status_code == 201, created.text
+    competition_id = created.json()["id"]
+
+    detail = client.get(
+        f"/api/competitions/{competition_id}", headers=instructor_auth
+    )
+    assert detail.status_code == 200, detail.text
+    sponsors = detail.json()["competition"]["sponsors"]
+    assert [item["tier"] for item in sponsors] == ["gold", "bronze"]
+    assert sponsors[0]["name"] == "Northstar Bank"
+    assert sponsors[0]["website_url"] == "https://northstar.example"
+    assert sponsors[0]["logo_data"] == tiny_png
+
+    replaced = client.patch(
+        f"/api/competitions/{competition_id}",
+        json={"sponsors": [{"name": "Silver Labs", "tier": "silver"}]},
+        headers=instructor_auth,
+    )
+    assert replaced.status_code == 200, replaced.text
+    after = client.get(
+        f"/api/competitions/{competition_id}", headers=instructor_auth
+    )
+    sponsors = after.json()["competition"]["sponsors"]
+    assert [item["name"] for item in sponsors] == ["Silver Labs"]
+    assert sponsors[0]["tier"] == "silver"
+
+    listed = client.get("/api/competitions", headers=instructor_auth)
+    assert listed.status_code == 200, listed.text
+    row = next(
+        item for item in listed.json()["competitions"]
+        if item["id"] == competition_id
+    )
+    assert row["sponsors"][0]["name"] == "Silver Labs"
+
+    client.delete(
+        f"/api/competitions/{competition_id}", headers=instructor_auth
+    )
+
+
 def test_student_cannot_create_competition(client, auth_headers, test_lab):
     start_at, end_at = _window()
     resp = client.post(

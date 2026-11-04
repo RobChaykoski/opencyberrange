@@ -91,6 +91,9 @@ services:
       # Exercise Studio workbook state. The wiki itself is baked into the
       # frontend image; this volume only holds builder inputs/outputs.
       - workbook_data:/workbook
+      # Database snapshots survive container recreation. Without this mount,
+      # every deploy wiped /app/backups and the admin list silently emptied.
+      - backups_data:/app/backups
       # Exercise Studio template catalog lives outside the backend build context,
       # so it is mounted in read-only. The publish-gate linters are baked into
       # the backend image (app/services/workbook_linters), not mounted, so no
@@ -155,3 +158,4 @@ volumes:
   postgres_data:
   workbook_data:
   wiki_data:
+  backups_data:

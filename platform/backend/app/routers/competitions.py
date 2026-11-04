@@ -6,10 +6,14 @@ event leaderboard is time-boxed. The score reuses the course scoreboard rules
 (completion, no-hint, first-attempt, speed, and competition first blood).
 """
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Optional, Literal
+import base64
+import binascii
+import io
+import re
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
@@ -20,6 +24,7 @@ from app.models import (
     Competition,
     CompetitionLab,
     CompetitionParticipant,
+    CompetitionSponsor,
     Lab,
     LabCompletion,
     Level,
@@ -35,6 +40,85 @@ from app.services.achievements import (
 
 router = APIRouter()
 
+_SPONSOR_LOGO_RE = re.compile(
+    r"^data:image/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=\s]+)$"
+)
+_MAX_SPONSOR_LOGO_BYTES = 256 * 1024
+
+
+def _validate_sponsor_logo(value: str) -> str:
+    """Accept a small raster sponsor logo and reject disguised payloads."""
+    match = _SPONSOR_LOGO_RE.match(value)
+    if not match:
+        raise ValueError("Sponsor logo must be a PNG, JPEG, or WebP image")
+    try:
+        raw = base64.b64decode(re.sub(r"\s+", "", match.group(2)), validate=True)
+    except (binascii.Error, ValueError):
+        raise ValueError("Sponsor logo data is not valid base64")
+    if len(raw) > _MAX_SPONSOR_LOGO_BYTES:
+        raise ValueError("Sponsor logo must be 256 KB or smaller")
+    try:
+        from PIL import Image
+        with Image.open(io.BytesIO(raw)) as image:
+            width, height = image.size
+            if width < 1 or height < 1 or width * height > 1_048_576:
+                raise ValueError("Sponsor logo dimensions are too large")
+            declared = "jpeg" if match.group(1).lower() == "jpg" else match.group(1).lower()
+            if (image.format or "").lower() != declared:
+                raise ValueError("Sponsor logo content does not match its image type")
+            image.verify()
+    except ValueError:
+        raise
+    except Exception:
+        raise ValueError("Sponsor logo is not a readable image")
+    return value
+
+
+
+class CompetitionSponsorInput(BaseModel):
+    name: str = Field(..., min_length=1, max_length=150)
+    description: Optional[str] = Field(None, max_length=500)
+    logo_data: Optional[str] = Field(None, max_length=400_000)
+    website_url: Optional[str] = Field(None, max_length=500)
+    tier: Literal["gold", "silver", "bronze"] = "gold"
+
+    @field_validator("name")
+    @classmethod
+    def clean_name(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Sponsor name is required")
+        return cleaned
+
+    @field_validator("description")
+    @classmethod
+    def clean_description(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        return cleaned or None
+
+    @field_validator("website_url")
+    @classmethod
+    def clean_website(cls, value: Optional[str]) -> Optional[str]:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        if not cleaned:
+            return None
+        if not re.match(r"^https?://", cleaned, re.IGNORECASE):
+            cleaned = f"https://{cleaned}"
+        if len(cleaned) > 500:
+            raise ValueError("Sponsor website URL is too long")
+        return cleaned
+
+    @field_validator("logo_data")
+    @classmethod
+    def validate_logo(cls, value: Optional[str]) -> Optional[str]:
+        if value is None or value == "":
+            return None
+        return _validate_sponsor_logo(value)
+
 
 class CompetitionCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=150)
@@ -42,6 +126,7 @@ class CompetitionCreate(BaseModel):
     start_at: datetime
     end_at: datetime
     lab_ids: List[int] = Field(..., min_length=1)
+    sponsors: List[CompetitionSponsorInput] = Field(default_factory=list)
 
 
 class CompetitionUpdate(BaseModel):
@@ -50,7 +135,52 @@ class CompetitionUpdate(BaseModel):
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
     lab_ids: Optional[List[int]] = Field(None, min_length=1)
+    sponsors: Optional[List[CompetitionSponsorInput]] = None
     is_active: Optional[bool] = None
+
+
+SPONSOR_TIER_ORDER = {"gold": 0, "silver": 1, "bronze": 2}
+
+
+def _sponsor_payload(row: CompetitionSponsor) -> dict:
+    return {
+        "id": row.id,
+        "name": row.name,
+        "description": row.description,
+        "logo_data": row.logo_data,
+        "website_url": row.website_url,
+        "tier": row.tier,
+    }
+
+
+def _ordered_sponsors(competition: Competition) -> list:
+    return sorted(
+        competition.sponsors,
+        key=lambda row: (
+            SPONSOR_TIER_ORDER.get(row.tier, 9),
+            row.sort_order or 0,
+            row.id or 0,
+        ),
+    )
+
+
+def _replace_sponsors(
+    db: Session, competition: Competition, sponsors: List[CompetitionSponsorInput]
+):
+    db.query(CompetitionSponsor).filter(
+        CompetitionSponsor.competition_id == competition.id
+    ).delete(synchronize_session=False)
+    db.flush()
+    for order, sponsor in enumerate(sponsors):
+        db.add(CompetitionSponsor(
+            competition_id=competition.id,
+            name=sponsor.name,
+            description=sponsor.description,
+            logo_data=sponsor.logo_data,
+            website_url=sponsor.website_url,
+            tier=sponsor.tier,
+            sort_order=order,
+        ))
 
 
 def _aware(value: Optional[datetime]) -> Optional[datetime]:
@@ -86,7 +216,9 @@ def _can_manage(competition: Competition, user: User) -> bool:
 
 
 def _competition_or_404(db: Session, competition_id: int) -> Competition:
-    competition = db.query(Competition).filter(
+    competition = db.query(Competition).options(
+        joinedload(Competition.sponsors)
+    ).filter(
         Competition.id == competition_id
     ).first()
     if not competition:
@@ -161,6 +293,9 @@ def _summary(
         "lab_count": lab_count,
         "joined": joined,
         "can_manage": _can_manage(competition, current_user),
+        "sponsors": [
+            _sponsor_payload(row) for row in _ordered_sponsors(competition)
+        ],
     }
 
 
@@ -356,7 +491,9 @@ async def list_competitions(
     query = db.query(Competition)
     if current_user.role not in ("instructor", "admin"):
         query = query.filter(Competition.is_active == True)
-    competitions = query.order_by(Competition.start_at.desc()).limit(100).all()
+    competitions = query.options(
+        joinedload(Competition.sponsors)
+    ).order_by(Competition.start_at.desc()).limit(100).all()
 
     now = datetime.now(timezone.utc)
     competition_ids = [c.id for c in competitions]
@@ -490,6 +627,16 @@ async def create_competition(
             lab_id=lab_id,
             sort_order=order,
         ))
+    for order, sponsor in enumerate(payload.sponsors):
+        db.add(CompetitionSponsor(
+            competition_id=competition.id,
+            name=sponsor.name,
+            description=sponsor.description,
+            logo_data=sponsor.logo_data,
+            website_url=sponsor.website_url,
+            tier=sponsor.tier,
+            sort_order=order,
+        ))
     db.commit()
     db.refresh(competition)
     return {"message": "Competition created", "id": competition.id}
@@ -542,6 +689,9 @@ async def update_competition(
                 lab_id=lab_id,
                 sort_order=order,
             ))
+
+    if payload.sponsors is not None:
+        _replace_sponsors(db, competition, payload.sponsors)
 
     db.commit()
     return {"message": "Competition updated"}

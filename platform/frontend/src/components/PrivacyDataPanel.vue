@@ -150,6 +150,30 @@ const exportSuccess = ref('')
 const lastExportedAt = ref(null)
 const exportStatusLoading = ref(true)
 
+const formatExportDate = (value) => {
+  if (!value) return ''
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  return date.toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
+}
+
+const fetchExportStatus = async () => {
+  exportStatusLoading.value = true
+  try {
+    const { data } = await axios.get('/auth/settings')
+    lastExportedAt.value = data.data_exported_at || null
+  } catch {
+    lastExportedAt.value = null
+  } finally {
+    exportStatusLoading.value = false
+  }
+}
+
+onMounted(fetchExportStatus)
+
 const confirming = ref(false)
 const password = ref('')
 const code = ref('')
@@ -186,6 +210,7 @@ const downloadData = async () => {
     link.click()
     link.remove()
     URL.revokeObjectURL(url)
+    lastExportedAt.value = data.generated_at || new Date().toISOString()
     exportSuccess.value = 'Your data export has been downloaded.'
   } catch (e) {
     exportError.value =

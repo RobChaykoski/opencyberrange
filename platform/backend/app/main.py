@@ -301,6 +301,27 @@ async def lifespan(app: FastAPI):
                 conn.commit()
                 logger.info("Added is_archived column to competitions table")
 
+        # --- Competition sponsors: logo payload (newer than the sponsor table)
+        if 'competition_sponsors' in inspector.get_table_names():
+            sponsor_columns = {
+                c['name'] for c in inspector.get_columns('competition_sponsors')
+            }
+            if 'logo_data' not in sponsor_columns:
+                conn.execute(text(
+                    "ALTER TABLE competition_sponsors ADD COLUMN logo_data TEXT"
+                ))
+                conn.commit()
+                logger.info("Added logo_data column to competition_sponsors table")
+            sponsor_columns = {
+                c['name'] for c in inspector.get_columns('competition_sponsors')
+            }
+            if 'website_url' not in sponsor_columns:
+                conn.execute(text(
+                    "ALTER TABLE competition_sponsors ADD COLUMN website_url VARCHAR(500)"
+                ))
+                conn.commit()
+                logger.info("Added website_url column to competition_sponsors table")
+
         # --- Achievements: allow awards outside a course (standalone labs,
         # competitions). Hidden/global badges were unreachable for students
         # with no enrollment while the column was NOT NULL.

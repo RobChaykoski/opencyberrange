@@ -255,85 +255,34 @@
       </section>
     </div>
 
-    <!-- Completion matrix: courses x levels -->
-    <div v-if="matrix.columns.length" class="card card--matrix">
-      <div class="card__header">
-        <span class="card__icon card__icon--purple">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <line x1="9" y1="3" x2="9" y2="21" />
-            <line x1="15" y1="3" x2="15" y2="21" />
-            <line x1="3" y1="9" x2="21" y2="9" />
-            <line x1="3" y1="15" x2="21" y2="15" />
-          </svg>
-        </span>
-        <div>
-          <h2 class="card__title">Exercise completion matrix</h2>
-          <p class="card__subtitle">Exercises completed per course and level</p>
+    <!-- Completion matrix: one card per course with a level-by-level heatmap -->
+    <section v-if="matrix.columns.length" class="card card--matrix">
+      <div class="matrix-head">
+        <div class="matrix-head__copy">
+          <span class="card__icon card__icon--purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+              <line x1="15" y1="3" x2="15" y2="21" />
+              <line x1="3" y1="9" x2="21" y2="9" />
+              <line x1="3" y1="15" x2="21" y2="15" />
+            </svg>
+          </span>
+          <div>
+            <h2 class="card__title">Exercise completion matrix</h2>
+            <p class="card__subtitle">Exercises completed per course and level</p>
+          </div>
         </div>
-      </div>
 
-      <div class="matrix-groups">
-        <section v-for="group in matrixGroups" :key="group.key" class="matrix-group">
-          <div class="matrix-group__head">
-            <span class="matrix-group__label">{{ group.label }}</span>
+        <div class="matrix-overview" aria-label="Overall exercise completion">
+          <div class="matrix-ring" :style="{ '--matrix-pct': matrixOverallPercent }">
+            <span>{{ matrixOverallPercent }}%</span>
           </div>
-          <div class="matrix-scroll">
-            <table class="matrix-table">
-              <thead>
-                <tr>
-                  <th class="matrix-corner">Course</th>
-                  <th v-for="col in group.columns" :key="col.key" class="matrix-col-head">
-                    <span class="matrix-track">{{ col.track_name }}</span>
-                    <span class="matrix-level">Level {{ col.level_number }} · {{ col.level_name }}</span>
-                  </th>
-                  <th v-if="group.isLast" class="matrix-col-head matrix-col-head--total">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="row in matrix.rows" :key="row.course_id">
-                  <th class="matrix-row-head">
-                    <span class="matrix-course-code">{{ row.course_code }}</span>
-                    <span class="matrix-course-name">{{ row.course_name }}</span>
-                  </th>
-                  <td
-                    v-for="col in group.columns"
-                    :key="col.key"
-                    class="matrix-cell"
-                    :class="cellClass(row.cells[col.key])"
-                  >
-                    <template v-if="row.cells[col.key] && row.cells[col.key].total">
-                      {{ row.cells[col.key].completed }}/{{ row.cells[col.key].total }}
-                    </template>
-                    <span v-else class="matrix-empty">&ndash;</span>
-                  </td>
-                  <td v-if="group.isLast" class="matrix-cell matrix-cell--total">
-                    {{ row.completed }}/{{ row.total }}
-                  </td>
-                </tr>
-              </tbody>
-              <tfoot v-if="matrix.rows.length > 1">
-                <tr>
-                  <th class="matrix-row-head">All courses</th>
-                  <td
-                    v-for="col in group.columns"
-                    :key="col.key"
-                    class="matrix-cell"
-                    :class="cellClass(matrix.totals.cells[col.key])"
-                  >
-                    <template v-if="matrix.totals.cells[col.key] && matrix.totals.cells[col.key].total">
-                      {{ matrix.totals.cells[col.key].completed }}/{{ matrix.totals.cells[col.key].total }}
-                    </template>
-                    <span v-else class="matrix-empty">&ndash;</span>
-                  </td>
-                  <td v-if="group.isLast" class="matrix-cell matrix-cell--total">
-                    {{ matrix.totals.completed }}/{{ matrix.totals.total }}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
+          <div class="matrix-overview__copy">
+            <strong>{{ matrix.totals.completed }}/{{ matrix.totals.total }}</strong>
+            <span>exercises complete</span>
           </div>
-        </section>
+        </div>
       </div>
 
       <div class="matrix-legend">
@@ -341,7 +290,62 @@
         <span><i class="matrix-swatch matrix-swatch--partial"></i> In progress</span>
         <span><i class="matrix-swatch matrix-swatch--empty"></i> Not started</span>
       </div>
-    </div>
+
+      <div class="matrix-courses">
+        <article
+          v-for="row in matrixCourseRows"
+          :key="row.course_id"
+          class="matrix-course"
+        >
+          <header class="matrix-course__head">
+            <div class="matrix-course__identity">
+              <span class="matrix-course__code">{{ row.course_code }}</span>
+              <h3>{{ row.course_name }}</h3>
+            </div>
+            <div class="matrix-course__progress">
+              <div class="matrix-course__numbers">
+                <strong>{{ row.completed }}/{{ row.total }}</strong>
+                <span>{{ row.percent }}%</span>
+              </div>
+              <div
+                class="matrix-course__bar"
+                role="progressbar"
+                :aria-label="`${row.course_name} completion`"
+                :aria-valuenow="row.percent"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              >
+                <span :style="{ width: row.percent + '%' }"></span>
+              </div>
+            </div>
+          </header>
+
+          <div class="matrix-course__levels">
+            <div
+              v-for="level in row.levels"
+              :key="level.key"
+              class="matrix-level-tile"
+              :class="cellClass(level)"
+            >
+              <div class="matrix-level-tile__top">
+                <span class="matrix-level-tile__track">{{ level.track_name }}</span>
+                <span class="matrix-level-tile__status">{{ cellStatus(level) }}</span>
+              </div>
+              <span class="matrix-level-tile__name">
+                Level {{ level.level_number }} · {{ level.level_name }}
+              </span>
+              <div class="matrix-level-tile__foot">
+                <span class="matrix-level-tile__count">{{ level.completed }}/{{ level.total }}</span>
+                <span class="matrix-level-tile__label">{{ cellStatus(level) }}</span>
+              </div>
+              <div class="matrix-level-tile__bar" aria-hidden="true">
+                <span :style="{ width: levelPercent(level) + '%' }"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -624,29 +628,36 @@ const matrix = computed(
     }
 )
 
-// Keep each matrix table easy to scan. More than four level columns become a
-// second table below the first, with the course column repeated for context.
-const MATRIX_COLUMNS_PER_GROUP = 4
-const matrixGroups = computed(() => {
-  const columns = matrix.value.columns
-  if (!columns.length) return []
+// Course rows keep the level heatmap tidy: each course shows only the levels
+// that actually have assigned exercises, with its own progress summary.
+const matrixCourseRows = computed(() => (
+  matrix.value.rows.map((row) => {
+    const levels = matrix.value.columns
+      .map((column) => ({
+        ...column,
+        ...(row.cells?.[column.key] || { completed: 0, total: 0 }),
+      }))
+      .filter((level) => level.total > 0)
+    const percent = row.total ? Math.round((row.completed / row.total) * 100) : 0
+    return { ...row, levels, percent }
+  })
+))
 
-  const groups = []
-  for (let start = 0; start < columns.length; start += MATRIX_COLUMNS_PER_GROUP) {
-    const end = Math.min(start + MATRIX_COLUMNS_PER_GROUP, columns.length)
-    groups.push({
-      key: `matrix-${start}`,
-      columns: columns.slice(start, end),
-      label: `Levels ${start + 1}–${end} of ${columns.length}`,
-      isLast: end >= columns.length,
-    })
-  }
-
-  if (groups.length === 1) {
-    groups[0].label = `All ${columns.length} ${columns.length === 1 ? 'level' : 'levels'}`
-  }
-  return groups
+const matrixOverallPercent = computed(() => {
+  const totals = matrix.value.totals || { completed: 0, total: 0 }
+  return totals.total ? Math.round((totals.completed / totals.total) * 100) : 0
 })
+
+const levelPercent = (cell) => (
+  cell && cell.total ? Math.round((cell.completed / cell.total) * 100) : 0
+)
+
+const cellStatus = (cell) => {
+  if (!cell || !cell.total) return 'Not assigned'
+  if (cell.completed >= cell.total) return 'Complete'
+  if (cell.completed > 0) return 'In progress'
+  return 'Not started'
+}
 
 const cellClass = (cell) => {
   if (!cell || !cell.total) return 'matrix-cell--empty'
@@ -1545,157 +1556,88 @@ onMounted(loadDashboard)
 /* Completion matrix */
 .card--matrix {
   margin-top: 0;
+  padding: 1.15rem;
 }
 
-.matrix-groups {
-  display: grid;
-  gap: 1rem;
-}
-
-.matrix-group__head {
+.matrix-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.4rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.85rem;
 }
 
-.matrix-group__label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
+.matrix-head__copy {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
 }
 
-.matrix-scroll {
-  overflow-x: auto;
+.matrix-overview {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 14px;
+  background: var(--bg-primary);
 }
 
-.matrix-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
-  min-width: 560px;
+.matrix-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--success) calc(var(--matrix-pct) * 1%),
+    var(--bg-tertiary) 0
+  );
 }
 
-.matrix-table th,
-.matrix-table td {
-  padding: 0.55rem 0.65rem;
-  border-bottom: 1px solid var(--border-color);
-  border-right: 1px solid var(--border-color);
-  text-align: center;
-  white-space: nowrap;
+.matrix-ring::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--bg-primary);
 }
 
-.matrix-table thead th {
-  background: var(--bg-tertiary);
-  vertical-align: bottom;
-}
-
-.matrix-table tbody tr:last-child th,
-.matrix-table tbody tr:last-child td {
-  border-bottom: 0;
-}
-
-.matrix-table th:last-child,
-.matrix-table td:last-child {
-  border-right: 0;
-}
-
-.matrix-corner,
-.matrix-row-head {
-  position: sticky;
-  left: 0;
+.matrix-ring span {
+  position: relative;
   z-index: 1;
-  background: var(--bg-secondary);
-  text-align: left;
-}
-
-.matrix-table thead .matrix-corner {
-  background: var(--bg-tertiary);
-}
-
-.matrix-row-head {
-  min-width: 150px;
-  max-width: 190px;
-  white-space: normal;
-}
-
-.matrix-course-code {
-  display: block;
-  font-weight: 700;
   color: var(--text-primary);
+  font-size: 0.66rem;
+  font-weight: 800;
 }
 
-.matrix-course-name {
-  display: block;
-  font-size: 0.68rem;
-  font-weight: 400;
-  color: var(--text-muted);
+.matrix-overview__copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
 }
 
-.matrix-col-head {
-  min-width: 92px;
-}
-
-.matrix-track {
-  display: block;
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  font-weight: 600;
-}
-
-.matrix-level {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.matrix-col-head--total {
-  min-width: 64px;
-}
-
-.matrix-cell {
+.matrix-overview__copy strong {
+  color: var(--text-primary);
+  font-size: 0.9rem;
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: var(--text-secondary);
 }
 
-.matrix-cell--complete {
-  background: rgba(34, 197, 94, 0.16);
-  color: var(--success);
-}
-
-.matrix-cell--partial {
-  background: rgba(245, 158, 11, 0.16);
-  color: var(--warning);
-}
-
-.matrix-cell--empty {
+.matrix-overview__copy span {
   color: var(--text-muted);
-}
-
-.matrix-cell--total {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-.matrix-empty {
-  opacity: 0.5;
+  font-size: 0.62rem;
 }
 
 .matrix-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 0.75rem;
-  font-size: 0.72rem;
+  gap: 0.9rem;
+  margin-bottom: 0.8rem;
   color: var(--text-muted);
+  font-size: 0.66rem;
 }
 
 .matrix-legend span {
@@ -1706,14 +1648,212 @@ onMounted(loadDashboard)
 
 .matrix-swatch {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
 }
 
-.matrix-swatch--complete { background: rgba(34, 197, 94, 0.5); }
-.matrix-swatch--partial { background: rgba(245, 158, 11, 0.5); }
-.matrix-swatch--empty { background: var(--bg-tertiary); }
+.matrix-swatch--complete { background: var(--success); }
+.matrix-swatch--partial { background: var(--warning); }
+.matrix-swatch--empty { background: var(--bg-tertiary); border: 1px solid var(--border-color); }
+
+.matrix-courses {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.matrix-course {
+  padding: 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 55%),
+    var(--bg-primary);
+}
+
+.matrix-course__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.7rem;
+}
+
+.matrix-course__identity {
+  min-width: 0;
+}
+
+.matrix-course__code {
+  display: block;
+  margin-bottom: 0.1rem;
+  color: var(--accent);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.matrix-course__identity h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.matrix-course__progress {
+  min-width: 180px;
+  flex: 0 1 240px;
+}
+
+.matrix-course__numbers {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.matrix-course__numbers strong {
+  color: var(--text-primary);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix-course__numbers span {
+  color: var(--success);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.matrix-course__bar {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.matrix-course__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--success));
+}
+
+.matrix-course__levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 0.5rem;
+}
+
+.matrix-level-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 0.6rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 11px;
+  background: var(--bg-secondary);
+}
+
+.matrix-level-tile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.matrix-level-tile__track {
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.matrix-level-tile__status {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 0.56rem;
+  font-weight: 700;
+}
+
+.matrix-level-tile__name {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.matrix-level-tile__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.matrix-level-tile__count {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.matrix-level-tile__label {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+}
+
+.matrix-level-tile__bar {
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.matrix-level-tile__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.matrix-cell--complete {
+  border-color: color-mix(in srgb, var(--success) 45%, var(--border-color));
+  background: color-mix(in srgb, var(--success) 9%, var(--bg-secondary));
+}
+
+.matrix-cell--complete .matrix-level-tile__status,
+.matrix-cell--complete .matrix-level-tile__label,
+.matrix-cell--complete .matrix-level-tile__count {
+  color: var(--success);
+}
+
+.matrix-cell--complete .matrix-level-tile__bar span {
+  background: var(--success);
+}
+
+.matrix-cell--partial {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--border-color));
+  background: color-mix(in srgb, var(--warning) 9%, var(--bg-secondary));
+}
+
+.matrix-cell--partial .matrix-level-tile__status,
+.matrix-cell--partial .matrix-level-tile__label,
+.matrix-cell--partial .matrix-level-tile__count {
+  color: var(--warning);
+}
+
+.matrix-cell--partial .matrix-level-tile__bar span {
+  background: var(--warning);
+}
 
 /* Responsive */
 @media (max-width: 900px) {

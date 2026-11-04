@@ -43,6 +43,7 @@ from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
 from app.services.achievements import resolve_achievement_label
+from app.services.backups import backup_directory, create_database_backup
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.file_lock import open_locked
 from app.services.lab_naming import parse_lab_slug
@@ -3075,85 +3076,28 @@ async def create_backup(
     admin: User = Depends(get_current_admin_user)
 ):
     """Create a database backup (pg_dump)."""
-    import subprocess, os
-    from urllib.parse import urlparse
-
-    db_url = settings.DATABASE_URL
-    parsed = urlparse(db_url)
-
-    backup_dir = "/app/backups"
-    os.makedirs(backup_dir, exist_ok=True)
-
-    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    backup_file = f"{backup_dir}/ocr_backup_{timestamp}.sql"
-
-    env = os.environ.copy()
-    env["PGPASSWORD"] = parsed.password or ""
-
     try:
-        result = subprocess.run(
-            [
-                "pg_dump",
-                "-h", parsed.hostname or "db",
-                "-p", str(parsed.port or 5432),
-                "-U", parsed.username or "labuser",
-                "-d", parsed.path.lstrip("/") or "labdb",
-                "-f", backup_file,
-                "--no-owner",
-                "--no-acl",
-                "--clean",
-                "--if-exists",
-            ],
-            env=env,
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-
-        if result.returncode != 0:
-            raise Exception(result.stderr or "pg_dump failed")
-
-        size = os.path.getsize(backup_file)
-
-        # Keep the suppression ledger beside the dump. A restore from this
-        # backup must still re-apply the live ledger, but the copy makes the
-        # backup self-documenting and usable for disaster recovery.
-        ledger_source = os.environ.get(
-            "ERASURE_LEDGER_PATH", "/workbook/erasure-ledger.jsonl"
-        )
-        ledger_file = None
-        if os.path.exists(ledger_source):
-            import shutil
-            ledger_file = f"{backup_dir}/ocr_erasure_ledger_{timestamp}.jsonl"
-            shutil.copy2(ledger_source, ledger_file)
-            try:
-                os.chmod(ledger_file, 0o600)
-            except OSError:
-                pass
-
+        result = create_database_backup()
         log_admin_action(
             action="DATABASE_BACKUP",
             admin_user_id=admin.id,
             admin_username=admin.username,
             target_type="database",
             details={
-                "file": backup_file,
-                "size_bytes": size,
-                "ledger_file": ledger_file,
+                "file": result["file"],
+                "size_bytes": result["size_bytes"],
+                "ledger_file": result["ledger_file"],
             },
             ip_address=request.client.host if request.client else None
         )
-
         return {
             "message": "Backup created successfully",
-            "file": backup_file,
-            "size_bytes": size,
-            "ledger_file": ledger_file,
-            "timestamp": timestamp,
+            **result,
         }
-    except subprocess.TimeoutExpired:
-        raise HTTPException(status_code=500, detail="Backup timed out")
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=f"Backup failed: {e}")
     except Exception as e:
+        logger.exception("Unexpected backup failure")
         raise HTTPException(status_code=500, detail=f"Backup failed: {e}")
 
 
@@ -3211,8 +3155,15 @@ async def activity_calendar(
             if ts and (not days[key]["last_change_ts"] or ts > days[key]["last_change_ts"]):
                 days[key]["last_change_ts"] = ts
 
-    backup_dir = "/app/backups"
-    if os.path.exists(backup_dir):
+    # Snapshot files are the source of truth for the heatmap. A database audit
+    # event can outlive a deleted or pruned file, which made the calendar claim
+    # snapshots that no longer appeared in the list.
+    for day_data in days.values():
+        day_data["backups"] = 0
+        day_data["last_backup_ts"] = None
+
+    backup_dir = backup_directory()
+    if os.path.isdir(backup_dir):
         for f in os.listdir(backup_dir):
             if f.endswith(".sql"):
                 mtime = os.path.getmtime(os.path.join(backup_dir, f))
@@ -3220,7 +3171,7 @@ async def activity_calendar(
                 ts = datetime.fromtimestamp(mtime).isoformat()
                 if key not in days:
                     days[key] = _empty()
-                days[key]["backups"] = max(days[key]["backups"], 1)
+                days[key]["backups"] += 1
                 if not days[key]["last_backup_ts"] or ts > days[key]["last_backup_ts"]:
                     days[key]["last_backup_ts"] = ts
 
@@ -3235,7 +3186,7 @@ async def list_backups(
     """List available database backups."""
     import os
 
-    backup_dir = "/app/backups"
+    backup_dir = backup_directory()
     if not os.path.exists(backup_dir):
         return {"backups": []}
 
@@ -3264,8 +3215,8 @@ async def download_backup(
     if ".." in filename or "/" in filename:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
-    path = os.path.realpath(f"/app/backups/{filename}")
-    if not path.startswith("/app/backups/"):
+    path = os.path.realpath(os.path.join(backup_directory(), filename))
+    if not path.startswith(os.path.realpath(backup_directory()) + os.sep):
         raise HTTPException(status_code=400, detail="Invalid filename")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Backup not found")
@@ -3287,8 +3238,8 @@ async def delete_backup(
     if ".." in filename or "/" in filename:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
-    path = os.path.realpath(f"/app/backups/{filename}")
-    if not path.startswith("/app/backups/"):
+    path = os.path.realpath(os.path.join(backup_directory(), filename))
+    if not path.startswith(os.path.realpath(backup_directory()) + os.sep):
         raise HTTPException(status_code=400, detail="Invalid filename")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Backup not found")
@@ -3326,8 +3277,8 @@ async def restore_backup(
     if ".." in filename or "/" in filename:
         raise HTTPException(status_code=400, detail="Invalid filename")
 
-    path = os.path.realpath(f"/app/backups/{filename}")
-    if not path.startswith("/app/backups/"):
+    path = os.path.realpath(os.path.join(backup_directory(), filename))
+    if not path.startswith(os.path.realpath(backup_directory()) + os.sep):
         raise HTTPException(status_code=400, detail="Invalid filename")
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Backup not found")
@@ -3430,7 +3381,7 @@ async def system_status(
     # 5. Backups -- same dir the backup writer and the Backups tab use.
     try:
         import os
-        bdir = os.environ.get("OCR_BACKUP_DIR", "/app/backups")
+        bdir = backup_directory()
         newest = None
         if os.path.isdir(bdir):
             files = [os.path.join(bdir, f) for f in os.listdir(bdir) if f.endswith((".sql", ".gz", ".tar", ".zip"))]

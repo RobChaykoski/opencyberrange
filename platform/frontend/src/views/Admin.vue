@@ -4474,6 +4474,9 @@ const backupHeatmapData = computed(() => {
   backupTimestamps.sort()
   const lastGlobalBackupTs = backupTimestamps.length
     ? backupTimestamps[backupTimestamps.length - 1] : 0
+  const totalBackups = backupTimestamps.filter(
+    (ts) => ts >= oneYearAgo.getTime()
+  ).length
 
   const weeks = []
   let currentWeek = []
@@ -4484,7 +4487,6 @@ const backupHeatmapData = computed(() => {
   const monthLabels = []
   let lastMonth = -1
   let weekIdx = 0
-  let totalBackups = 0
 
   while (cursor <= now) {
     const m = cursor.getMonth()
@@ -4506,11 +4508,9 @@ const backupHeatmapData = computed(() => {
     if (hasBackup && hasChanges && dayChangeTs > dayBackupTs) {
       color = 'split'
       tooltip = key + ': Backup created, but changes occurred after'
-      totalBackups++
     } else if (hasBackup) {
       color = 'green'
       tooltip = key + ': Snapshot created'
-      totalBackups++
     } else if (hasChanges && dayChangeTs > lastGlobalBackupTs) {
       color = 'yellow'
       tooltip = key + ': System changes (not yet backed up)'

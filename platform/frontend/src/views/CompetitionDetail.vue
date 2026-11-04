@@ -52,6 +52,7 @@
       <p v-if="detail.competition.description" class="detail-description">
         {{ detail.competition.description }}
       </p>
+      <SponsorShowcase :sponsors="detail.competition.sponsors || []" />
       <p class="privacy-note">
         Joining is optional. You can practise the exercises without joining and
         nothing is published until you choose to join. This event uses the name
@@ -220,6 +221,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 import ClockIcon from '../components/icons/ClockIcon.vue'
+import SponsorShowcase from '../components/SponsorShowcase.vue'
 
 const route = useRoute()
 const detail = ref(null)

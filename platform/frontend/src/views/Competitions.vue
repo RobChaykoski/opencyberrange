@@ -50,6 +50,85 @@
           <textarea v-model="newCompetition.description" rows="3" placeholder="What should participants know?" />
         </label>
 
+        <section class="sponsor-editor" aria-labelledby="sponsor-editor-title">
+          <div class="sponsor-editor__head">
+            <div>
+              <h3 id="sponsor-editor-title">Sponsored by</h3>
+              <p>Optional. Add one or more event partners and choose their recognition tier.</p>
+            </div>
+            <button type="button" class="btn btn--outline btn--xs" @click="addSponsor">
+              + Add sponsor
+            </button>
+          </div>
+
+          <p v-if="!newCompetition.sponsors.length" class="sponsor-editor__empty">
+            No sponsors yet. Events can recognise Gold, Silver, and Bronze partners.
+          </p>
+
+          <div
+            v-for="(sponsor, index) in newCompetition.sponsors"
+            :key="sponsor.key"
+            class="sponsor-row"
+            :class="`sponsor-row--${sponsor.tier}`"
+          >
+            <div class="sponsor-row__logo">
+              <div class="sponsor-row__logo-preview">
+                <img v-if="sponsor.logo_data" :src="sponsor.logo_data" :alt="`${sponsor.name || 'Sponsor'} logo`" />
+                <span v-else aria-hidden="true">{{ sponsorInitials(sponsor.name) }}</span>
+              </div>
+              <label class="sponsor-row__upload">
+                {{ sponsor.logo_data ? 'Replace logo' : 'Upload logo' }}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  @change="onSponsorLogoSelected($event, index)"
+                />
+              </label>
+              <button
+                v-if="sponsor.logo_data"
+                type="button"
+                class="sponsor-row__logo-remove"
+                @click="removeSponsorLogo(index)"
+              >
+                Remove logo
+              </button>
+            </div>
+            <label class="field sponsor-row__tier">
+              <span>Tier</span>
+              <select v-model="sponsor.tier">
+                <option value="gold">Gold</option>
+                <option value="silver">Silver</option>
+                <option value="bronze">Bronze</option>
+              </select>
+            </label>
+            <label class="field sponsor-row__name">
+              <span>Sponsor name</span>
+              <input v-model="sponsor.name" type="text" maxlength="150" placeholder="Organisation name" />
+            </label>
+            <button
+              type="button"
+              class="sponsor-row__remove"
+              :aria-label="`Remove sponsor ${index + 1}`"
+              @click="removeSponsor(index)"
+            >
+              Remove
+            </button>
+            <label class="field sponsor-row__website">
+              <span>Website (optional)</span>
+              <input v-model="sponsor.website_url" type="text" maxlength="500" placeholder="https://example.com" />
+            </label>
+            <label class="field sponsor-row__description">
+              <span>Description</span>
+              <textarea
+                v-model="sponsor.description"
+                rows="2"
+                maxlength="500"
+                placeholder="A short note about this partner (optional)"
+              />
+            </label>
+          </div>
+        </section>
+
         <div class="lab-picker">
           <div class="lab-picker__head">
             <span class="lab-picker__label">
@@ -129,6 +208,9 @@
           <span class="comp-card__stats">
             {{ comp.lab_count }} {{ comp.lab_count === 1 ? 'exercise' : 'exercises' }}
             · {{ comp.participant_count }} {{ comp.participant_count === 1 ? 'participant' : 'participants' }}
+            <template v-if="comp.sponsors?.length">
+              · {{ comp.sponsors.length }} {{ comp.sponsors.length === 1 ? 'sponsor' : 'sponsors' }}
+            </template>
           </span>
         </button>
       </section>
@@ -203,6 +285,7 @@
         <p v-if="selected.competition.description" class="comp-detail__description">
           {{ selected.competition.description }}
         </p>
+        <SponsorShowcase :sponsors="selected.competition.sponsors || []" />
         <p class="privacy-note">
           Joining is optional. You can practise the exercises without joining and
           nothing is published until you choose to join. Joining shows your display
@@ -277,6 +360,8 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
 import TrophyIcon from '../components/icons/TrophyIcon.vue'
 import ClockIcon from '../components/icons/ClockIcon.vue'
+import SponsorShowcase from '../components/SponsorShowcase.vue'
+import { resizeImageFile } from '../utils/imageResize'
 
 const competitions = ref([])
 const selected = ref(null)
@@ -301,7 +386,57 @@ const newCompetition = reactive({
   start_at: '',
   end_at: '',
   lab_ids: [],
+  sponsors: [],
 })
+
+const addSponsor = () => {
+  newCompetition.sponsors.push({
+    key: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    name: '',
+    description: '',
+    logo_data: null,
+    website_url: '',
+    tier: 'gold',
+  })
+}
+
+const removeSponsor = (index) => {
+  newCompetition.sponsors.splice(index, 1)
+}
+
+const sponsorInitials = (name) => {
+  const words = String(name || '').trim().split(/\s+/).filter(Boolean)
+  if (!words.length) return '+'
+  if (words.length === 1) return Array.from(words[0]).slice(0, 2).join('').toUpperCase()
+  return `${Array.from(words[0])[0]}${Array.from(words[words.length - 1])[0]}`.toUpperCase()
+}
+
+const onSponsorLogoSelected = async (event, index) => {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  createError.value = ''
+  if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+    createError.value = 'Sponsor logos must be a PNG, JPEG, or WebP image.'
+    return
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    createError.value = 'Choose a sponsor logo smaller than 5 MB.'
+    return
+  }
+  try {
+    const logo = await resizeImageFile(file, { maxDimension: 512, quality: 0.88 })
+    const sponsor = newCompetition.sponsors[index]
+    if (sponsor) sponsor.logo_data = logo
+  } catch {
+    createError.value = 'Could not process that sponsor logo.'
+  }
+}
+
+const removeSponsorLogo = (index) => {
+  const sponsor = newCompetition.sponsors[index]
+  if (sponsor) sponsor.logo_data = null
+}
 
 const isInstructor = computed(() => {
   try {
@@ -402,6 +537,7 @@ const resetNewCompetition = () => {
   newCompetition.start_at = toLocalInput(now)
   newCompetition.end_at = toLocalInput(new Date(now.getTime() + 2 * 60 * 60 * 1000))
   newCompetition.lab_ids = []
+  newCompetition.sponsors = []
   createError.value = ''
 }
 
@@ -552,6 +688,15 @@ const createCompetition = async () => {
     createError.value = 'Select at least one exercise.'
     return
   }
+  const sponsors = newCompetition.sponsors
+    .map(({ name, description, tier, logo_data, website_url }) => ({
+      name: name.trim(),
+      description: description.trim() || null,
+      tier,
+      logo_data: logo_data || null,
+      website_url: website_url.trim() || null,
+    }))
+    .filter((sponsor) => sponsor.name)
   creating.value = true
   try {
     const response = await axios.post('/competitions', {
@@ -560,6 +705,7 @@ const createCompetition = async () => {
       start_at: new Date(newCompetition.start_at).toISOString(),
       end_at: new Date(newCompetition.end_at).toISOString(),
       lab_ids: newCompetition.lab_ids,
+      sponsors,
     })
     showCreate.value = false
     await loadCompetitions()
@@ -659,7 +805,8 @@ onMounted(async () => {
 }
 
 .field input,
-.field textarea {
+.field textarea,
+.field select {
   width: 100%;
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--border-color);
@@ -670,9 +817,156 @@ onMounted(async () => {
 }
 
 .field input:focus,
-.field textarea:focus {
+.field textarea:focus,
+.field select:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
+}
+
+/* Sponsors */
+.sponsor-editor {
+  padding: 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-primary);
+}
+
+.sponsor-editor__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.sponsor-editor__head h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+}
+
+.sponsor-editor__head p {
+  margin: 0.15rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.sponsor-editor__empty {
+  margin: 0;
+  padding: 0.6rem 0.7rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.sponsor-row {
+  --tier-accent: #d4a017;
+  display: grid;
+  grid-template-columns: 92px 130px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "logo tier name remove"
+    "logo website website website"
+    "logo description description description";
+  gap: 0.5rem 0.65rem;
+  margin-top: 0.55rem;
+  padding: 0.7rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--tier-accent);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.sponsor-row--gold { --tier-accent: #d4a017; }
+.sponsor-row--silver { --tier-accent: #94a3b8; }
+.sponsor-row--bronze { --tier-accent: #b87333; }
+
+.sponsor-row__logo {
+  grid-area: logo;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.sponsor-row__logo-preview {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-tertiary);
+  color: var(--tier-accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.sponsor-row__logo-preview img {
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  object-fit: contain;
+}
+
+.sponsor-row__upload {
+  position: relative;
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+
+.sponsor-row__upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.sponsor-row__logo-remove {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.sponsor-row__tier { grid-area: tier; }
+.sponsor-row__name { grid-area: name; }
+.sponsor-row__website { grid-area: website; }
+.sponsor-row__description { grid-area: description; }
+
+.sponsor-row__remove {
+  grid-area: remove;
+  align-self: end;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  cursor: pointer;
+}
+
+.sponsor-row__remove:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .sponsor-row {
+    grid-template-columns: 82px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "logo tier remove"
+      "logo name name"
+      "website website website"
+      "description description description";
+  }
 }
 
 .lab-picker {

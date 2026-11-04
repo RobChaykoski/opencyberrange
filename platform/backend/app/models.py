@@ -548,6 +548,32 @@ class Competition(Base):
         "CompetitionParticipant", back_populates="competition",
         cascade="all, delete-orphan",
     )
+    sponsors = relationship(
+        "CompetitionSponsor", back_populates="competition",
+        cascade="all, delete-orphan",
+    )
+
+
+class CompetitionSponsor(Base):
+    """A Gold, Silver, or Bronze sponsor shown with a competition."""
+    __tablename__ = "competition_sponsors"
+
+    id = Column(Integer, primary_key=True, index=True)
+    competition_id = Column(
+        Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
+    )
+    name = Column(String(150), nullable=False)
+    description = Column(Text, nullable=True)
+    logo_data = Column(Text, nullable=True)
+    website_url = Column(String(500), nullable=True)
+    tier = Column(String(10), nullable=False, default="gold", server_default="gold")
+    sort_order = Column(Integer, default=0)
+
+    competition = relationship("Competition", back_populates="sponsors")
+
+    __table_args__ = (
+        Index("ix_competition_sponsor_order", "competition_id", "tier", "sort_order"),
+    )
 
 
 class CompetitionLab(Base):

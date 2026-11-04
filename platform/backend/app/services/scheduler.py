@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import LabSession
+from app.services import backups
 from app.services.docker_manager import DockerManager
 from app import modules as module_registry
 
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 docker_manager = DockerManager()
 _session_cleanup_task = None
+_backup_task = None
 _module_tasks = {}   # label -> asyncio.Task, one per discovered module tick
 
 
@@ -142,9 +144,33 @@ async def cleanup_expired_sessions():
             await asyncio.sleep(60)  # Wait 1 minute before retrying
 
 
+async def collect_database_snapshots():
+    """Create a daily database snapshot and prune files past retention.
+
+    The task sleeps for an hour at a time and relies on the file mtime, so a
+    manually created snapshot also satisfies the interval. Set
+    ``OCR_BACKUP_INTERVAL_HOURS=0`` to disable automatic collection.
+    """
+    while True:
+        try:
+            if backups.should_collect_backup():
+                result = await asyncio.to_thread(backups.create_database_backup)
+                logger.info(
+                    "Collected database snapshot %s (%s bytes)",
+                    result["filename"], result["size_bytes"],
+                )
+        except asyncio.CancelledError:
+            logger.info("Database snapshot collector cancelled")
+            break
+        except Exception as exc:
+            logger.error("Database snapshot collection failed: %s", exc)
+
+        await asyncio.sleep(3600)
+
+
 def start_scheduler():
     """Start the background scheduler tasks"""
-    global _session_cleanup_task
+    global _session_cleanup_task, _backup_task
 
     logger.info("Starting background scheduler...")
 
@@ -152,6 +178,12 @@ def start_scheduler():
     if _session_cleanup_task is None or _session_cleanup_task.done():
         _session_cleanup_task = asyncio.create_task(cleanup_expired_sessions())
         logger.info("Started expired session cleanup task")
+
+    # Collect a daily database snapshot into the shared backup volume. The
+    # first tick runs immediately, so a fresh install does not wait 24 hours.
+    if _backup_task is None or _backup_task.done():
+        _backup_task = asyncio.create_task(collect_database_snapshots())
+        logger.info("Started database snapshot collector")
 
     # Start each present module's background tick. Editions with no
     # optional modules installed have none to start.
@@ -165,13 +197,15 @@ def start_scheduler():
 
 def shutdown_scheduler():
     """Stop all background scheduler tasks"""
-    global _session_cleanup_task
+    global _session_cleanup_task, _backup_task
 
     logger.info("Shutting down background scheduler...")
 
     tasks = []
     if _session_cleanup_task and not _session_cleanup_task.done():
         tasks.append(_session_cleanup_task)
+    if _backup_task and not _backup_task.done():
+        tasks.append(_backup_task)
     tasks.extend(t for t in _module_tasks.values() if t and not t.done())
 
     for t in tasks:
@@ -182,4 +216,5 @@ def shutdown_scheduler():
             pass
 
     _session_cleanup_task = None
+    _backup_task = None
     _module_tasks.clear()
