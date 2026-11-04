@@ -1,5 +1,10 @@
 <template>
   <div class="login-page">
+    <div class="login-powered" aria-label="Powered by SWOCTS">
+      <span>Powered by</span>
+      <img src="/swocts_logo.jpg" alt="SWOCTS" />
+    </div>
+
     <div class="login-split">
       <!-- Left: form panel -->
       <div class="login-form-panel">
@@ -180,18 +185,28 @@
 
             <article class="preview-card preview-card--certificate">
               <div class="preview-certificate">
-                <span class="preview-certificate__seal">OCR</span>
-                <div class="preview-certificate__body">
-                  <small class="preview-certificate__eyebrow">Certificate of Completion</small>
-                  <strong class="preview-certificate__name">Avery Chen</strong>
-                  <span>Network Foundations · Level 1</span>
-                  <small class="preview-certificate__meta">Issued 04 Nov 2026 · OCR-2026-0142</small>
-                  <span class="preview-certificate__verified">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-                      <path d="m5 12 4 4L19 6"/>
-                    </svg>
-                    Verified
+                <div class="preview-certificate__brandline">
+                  <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="preview-certificate__logo" />
+                  <strong>OpenCyberRange</strong>
+                  <span class="preview-certificate__powered">
+                    Powered by
+                    <img src="/swocts_logo.jpg" alt="SWOCTS" />
                   </span>
+                </div>
+                <div class="preview-certificate__main">
+                  <span class="preview-certificate__seal">OCR</span>
+                  <div class="preview-certificate__body">
+                    <small class="preview-certificate__eyebrow">Certificate of Completion</small>
+                    <strong class="preview-certificate__name">Avery Chen</strong>
+                    <span>Network Foundations · Level 1</span>
+                    <small class="preview-certificate__meta">Issued 04 Nov 2026 · OCR-2026-0142</small>
+                    <span class="preview-certificate__verified">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                        <path d="m5 12 4 4L19 6"/>
+                      </svg>
+                      Verified
+                    </span>
+                  </div>
                 </div>
               </div>
             </article>
@@ -284,8 +299,35 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-page {
+  position: relative;
   min-height: 100vh;
   background: var(--bg-primary);
+}
+
+.login-powered {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.55);
+  color: #cbd5e1;
+  font-size: 0.62rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+}
+
+.login-powered img {
+  height: 14px;
+  width: auto;
+  padding: 1px 3px;
+  border-radius: 3px;
+  background: #ffffff;
 }
 
 .login-split {
@@ -739,16 +781,61 @@ const handleLogin = async () => {
 
 .preview-certificate {
   display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
+  flex-direction: column;
+  gap: 0.5rem;
   min-width: 0;
   width: 100%;
-  padding: 0.65rem;
+  padding: 0.6rem;
   border: 1px solid rgba(251, 191, 36, 0.32);
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent 52%),
     rgba(15, 23, 42, 0.55);
+}
+
+.preview-certificate__brandline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.18);
+  color: #f8fafc;
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.preview-certificate__logo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.preview-certificate__powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 0.48rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.preview-certificate__powered img {
+  height: 11px;
+  width: auto;
+  padding: 1px 2px;
+  border-radius: 2px;
+  background: #ffffff;
+}
+
+.preview-certificate__main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
 }
 
 .preview-certificate__seal {
@@ -847,6 +934,16 @@ const handleLogin = async () => {
 }
 
 @media (max-width: 560px) {
+  .login-powered {
+    top: 0.6rem;
+    right: 0.6rem;
+    font-size: 0.58rem;
+  }
+
+  .login-powered img {
+    height: 12px;
+  }
+
   .login-form-panel {
     padding: 2rem 1rem;
   }
