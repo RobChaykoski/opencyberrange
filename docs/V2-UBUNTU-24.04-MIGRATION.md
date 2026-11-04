@@ -7,11 +7,11 @@ Execution checklist: [`V2-24.04-BUILD-OUT.md`](V2-24.04-BUILD-OUT.md)
 ## Goal
 
 Move the OpenCyberRange **2.0** line to Ubuntu 24.04 LTS as its supported host
-OS, while keeping the **1.1 maintenance line on Ubuntu 22.04 LTS**.
+OS, while the **1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS**.
 
 The split is deliberate:
 
-- 1.1 bug fixes and security patches stay on the 22.04 baseline. Do not
+- 1.1 bug fixes and security patches support the 22.04 and 24.04 baselines. Do not
   backport 24.04-specific host changes into 1.1.
 - Bug fixes that also affect 2.0 continue to land on 1.1 first and are merged
   forward into `main`.
@@ -35,7 +35,7 @@ Changing any of those is a separate workstream with its own solve tests.
 
 | Line | Branch / tag | Host OS | Change policy |
 |---|---|---|---|
-| 1.1 | `release/1.1` or `v1.1.x` tags | Ubuntu 22.04 | Bug and security fixes only |
+| 1.1 | `release/1.1` or `v1.1.x` tags | Ubuntu 22.04 / 24.04 | Bug and security fixes only |
 | 2.0 | `main` and `v2.0.x` tags | Ubuntu 24.04 target | Features plus forward-merged 1.1 fixes |
 
 Rules:

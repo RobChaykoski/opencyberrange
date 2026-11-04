@@ -38,7 +38,7 @@ fixes and security updates continue on the 1.1 line and are merged forward into
 
 | Release line | State | Host OS | Purpose |
 |---|---|---|---|
-| `1.1.x` | **Supported** | Ubuntu 22.04 LTS | Production installs; bug and security fixes stay on the 22.04 baseline |
+| `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Production installs; both LTS baselines are supported |
 | `1.0.x` | Prior release | Ubuntu 22.04 LTS | Upgrade path to 1.1 |
 | `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting, analytics, and multi-host high availability only |
 
@@ -704,7 +704,7 @@ opencyberrange/
 | [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the 24.04 validation checklist |
 | [2.x program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in 2.x |
 | [v3 parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding 2.x |
-| [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.1 stays on 22.04 |
+| [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.1 supports 22.04 and 24.04 |
 | [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment or HA work |
 | [V2 HA lab pool plan](docs/V2-HA-LAB-POOL.md) | Architects planning multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
@@ -740,7 +740,7 @@ After installation, log in as admin and navigate to **Admin Panel > System Healt
 
 ## Requirements
 
-- **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.1 maintenance line stays on Ubuntu 22.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
+- **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
 - **Platform stack:** OpenCyberRange 2.0.0-dev; Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are 2.0 goals, not supported deployment targets yet. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).

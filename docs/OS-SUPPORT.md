@@ -1,8 +1,9 @@
 # Host OS Support and Ubuntu 24.04 Decision
 
-Status: **1.1 remains on Ubuntu 22.04 LTS. 2.0 targets Ubuntu 24.04 LTS.
-A 24.04 host is deployed and healthy, and KVM is available; network/VPN, lab,
-and recovery gates remain before it is marked fully supported.**
+Status: **1.1 supports Ubuntu 22.04 LTS and Ubuntu 24.04 LTS. 2.0 targets
+Ubuntu 24.04 LTS. A 24.04 host is deployed and healthy, and KVM is available;
+network/VPN, lab, and recovery gates remain before 2.0 is marked fully
+supported.**
 
 ## Decision
 
@@ -10,7 +11,7 @@ The host OS follows the release line:
 
 | Release line | Host OS | State |
 |---|---|---|
-| `1.1.x` maintenance | **Ubuntu 22.04 LTS only** | Supported. Bug and security fixes stay on the 22.04 baseline; do not rebase 1.1 to 24.04. |
+| `1.1.x` maintenance | **Ubuntu 22.04 / 24.04 LTS** | Supported on both LTS baselines. 22.04 remains the documented baseline; 24.04 is validated in production. |
 | `2.0.x` development | **Ubuntu 24.04 LTS target** | Migration in progress. 22.04 remains the supported source for upgrades during the 2.0 validation window. |
 
 For new 2.0 installs, use:
