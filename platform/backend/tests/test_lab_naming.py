@@ -21,7 +21,7 @@ from app.services.lab_naming import parse_lab_slug
         ),
         (
             "linux-midterm-3-blind-penetration-test",
-            ("linux", None, 3),
+            ("linux", 9, 103),
         ),
         ("windows-D1-2-drill", ("windows", 901, 2)),
         ("not-a-lab", (None, None, None)),

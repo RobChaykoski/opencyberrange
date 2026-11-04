@@ -11,7 +11,8 @@ def parse_lab_slug(dirname: str):
         high-school-10-1-rangebox-network-basics -> (high-school, 10, 1)
         software-security-2-1-diagnostics-command-injection
             -> (software-security, 2, 1)
-        linux-midterm-3-blind-penetration-test -> (linux, None, 3)
+        linux-midterm-3-blind-penetration-test -> (linux, 9, 103)
+        linux-final-1-branch-office-practice -> (linux, 9, 201)
 
     Supports compound track slugs: walks parts left-to-right, concatenating
     non-numeric parts as the track slug until the first numeric part (level).
@@ -43,11 +44,13 @@ def parse_lab_slug(dirname: str):
             return None, None, None
         try:
             special_num = int(parts[i])
-            if track_parts[-1] == "final":
-                special_num = 500 + special_num
-            return base_track, None, special_num
         except (ValueError, IndexError):
             return None, None, None
+        # Midterms and finals belong to the track's capstone level (9). Sort
+        # midterms before finals, after the numbered capstone labs.
+        if track_parts[-1] == "midterm":
+            return base_track, 9, 100 + special_num
+        return base_track, 9, 200 + special_num
 
     track_slug = "-".join(track_parts)
     try:
