@@ -552,6 +552,18 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    container_name: ocr-redis
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
   backend:
     build:
       context: ./backend
@@ -578,6 +590,8 @@ services:
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@example.org}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,https://localhost}
+      # Shared rate-limit counters so every worker enforces the same limits.
+      RATELIMIT_STORAGE_URI: ${RATELIMIT_STORAGE_URI:-redis://redis:6379/0}
       TZ: UTC
     volumes:
       - ./backend:/app
@@ -590,6 +604,8 @@ services:
       - ./templates:/app/templates:ro
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/health"]

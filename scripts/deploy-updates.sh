@@ -379,6 +379,66 @@ patch_wiki_courses_volume() {
     log "${GREEN}✓ docker-compose.yml patched with wiki_courses volume${NC}"
 }
 
+# Ensure existing deployments get the shared Redis rate-limit service without
+# rewriting operator-managed compose files. Fresh installs include Redis in the
+# generated compose file; this override covers upgrades from older installs.
+patch_redis_service() {
+    local compose_file="$PLATFORM_DIR/docker-compose.yml"
+    local override_file="$PLATFORM_DIR/docker-compose.override.yml"
+
+    if [ ! -f "$compose_file" ]; then
+        return 0
+    fi
+
+    if grep -q '^  redis:' "$compose_file" 2>/dev/null; then
+        log "${GREEN}✓ docker-compose.yml already has Redis${NC}"
+        return 0
+    fi
+
+    if [ -f "$override_file" ] && grep -q '^  redis:' "$override_file" 2>/dev/null; then
+        log "${GREEN}✓ docker-compose.override.yml already has Redis${NC}"
+        return 0
+    fi
+
+    if [ -f "$override_file" ]; then
+        log "${YELLOW}⚠ docker-compose.override.yml exists without a Redis service; add it manually${NC}"
+        return 0
+    fi
+
+    log "Adding Redis rate-limit override..."
+
+    if [ "$DRY_RUN" = true ]; then
+        log "${YELLOW}[DRY RUN] Would create docker-compose.override.yml with Redis${NC}"
+        return 0
+    fi
+
+    cat > "$override_file" <<'YAML'
+# Added by deploy-updates.sh for shared rate-limit counters.
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: ocr-redis
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    environment:
+      RATELIMIT_STORAGE_URI: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+YAML
+
+    chmod 644 "$override_file"
+    log "${GREEN}✓ docker-compose.override.yml created with Redis${NC}"
+}
+
 # Seed the workbook volume with source files and build all wikis.
 # Copies Workbook/, mkdocs.yml, and all mkdocs-*.yml configs into the
 # workbook_data volume, then triggers a full multi-wiki build.
@@ -726,6 +786,8 @@ main() {
         patch_workbook_volumes
         log ""
         patch_wiki_courses_volume
+        log ""
+        patch_redis_service
         log ""
         rebuild_containers
         log ""
