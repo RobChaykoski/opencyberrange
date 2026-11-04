@@ -82,6 +82,7 @@ SSO, compliance reporting, and multi-host HA are Enterprise 3.0 work.
 - [Programme reports](docs/PROGRAMME-REPORTS.md)
 - [Community / Academic backlog](docs/COMMUNITY-ACADEMIC-BACKLOG.md)
 - [Career and certification resources](docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
+- [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
 - [Enterprise v3 parking lot](docs/V3-PARKING-LOT.md)
 - [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
 - [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md)
