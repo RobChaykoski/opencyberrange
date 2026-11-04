@@ -1,6 +1,6 @@
 ---
 name: OpenCyberRange Program Management
-description: Use when planning, scoping, reviewing, or accepting work for OpenCyberRange releases. Guards the 2.x scope to analytics, reporting, and high availability; classifies every request as in-scope, bug fix/update only, or v3; and requires a change decision before new feature work starts.
+description: Use when planning, scoping, reviewing, or accepting work for OpenCyberRange releases. Guards the 2.x scope to analytics and reporting; treats multi-host HA as a v3 workstream; classifies every request as in-scope, bug fix/update only, or v3; and requires a change decision before new feature work starts.
 ---
 
 # OpenCyberRange Program Management
@@ -19,9 +19,9 @@ For OpenCyberRange 2.x the declared feature set is:
 
 1. **Analytics** — learner, course, and programme insight.
 2. **Reporting** — reports, exports, and teaching-review surfaces.
-3. **High availability** — multi-host Docker/lab pools, failover, and recovery.
 
-No fourth workstream is added to 2.x without a written scope change.
+Multi-host HA, Docker lab pools, and failover are v3 work. No third 2.x
+workstream is added without a written scope change.
 
 ## Classification workflow
 
@@ -29,7 +29,7 @@ Every request gets exactly one classification before work starts:
 
 | Classification | Meaning | Action |
 |---|---|---|
-| **In scope** | Directly advances analytics, reporting, or HA | Add to the active workstream |
+| **In scope** | Directly advances analytics or reporting | Add to the active workstream |
 | **Bug fix** | Restores intended behaviour, security, correctness, or compatibility | Allowed; keep it small and add a regression test |
 | **Update** | Dependency, version, OS, documentation, or operational correction with no new product surface | Allowed; record it in the maintenance log |
 | **Carry-forward** | Already shipped on the 1.x maintenance line and inherited by 2.x | Do not count as a 2.x feature commitment |
@@ -43,7 +43,7 @@ If a request does not fit one row in under a minute, it is too vague to schedule
 Before touching code, complete this sentence:
 
 > For **<user>**, this changes **<behaviour>**, measured by **<evidence>**, and
-> it belongs to **<analytics / reporting / HA>** because **<reason>**.
+> it belongs to **<analytics / reporting>** because **<reason>**.
 
 If the last blank says "it would be nice", "it is quick", or "we are already in
 the file", stop. It is a v3 candidate or a separate maintenance item.
@@ -93,7 +93,7 @@ ceremony.
 When a request arrives, answer in this order:
 
 1. **Classification:** in scope, bug fix, update, carry-forward, v3, or reject.
-2. **Why:** one sentence tied to analytics, reporting, or HA.
+2. **Why:** one sentence tied to analytics or reporting.
 3. **Decision:** proceed now, defer, or write it down.
 4. **Record:** the file/row you updated.
 

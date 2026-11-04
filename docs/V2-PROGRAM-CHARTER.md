@@ -11,20 +11,20 @@ written scope change is accepted.
 ## Program objective
 
 Ship a 2.0 release that makes OpenCyberRange better at **understanding learning**
-and **running reliably for a cohort**, without turning the release into a general
-platform expansion.
+and **reporting on it**, while running reliably on the validated 24.04 baseline,
+without turning the release into a general platform expansion.
 
 ## The 2.x feature set
 
-Only these three workstreams may add product capability in 2.x:
+Only these two workstreams may add product capability in 2.x:
 
 | Workstream | Commitment | Evidence of success |
 |---|---|---|
 | **Analytics** | Learner growth, course insight, exercise signals, and a shared metric dictionary | A learner can see their own progress; an instructor can see where a cohort is struggling without ranking individuals |
 | **Reporting** | Cross-course reports, teaching-review signals, pulse feedback, and exports | An instructor or administrator can review a course and export the evidence |
-| **High availability** | Multi-host Docker lab pools, routing, failover, shared state, and recovery | A lab session survives control-plane failure; node failure is detected, cleaned up, and recoverable by relaunch |
 
-Nothing else is a 2.x feature commitment.
+Nothing else is a 2.x feature commitment. High availability and multi-host lab
+pools were moved to v3; see [`V3-HA-LAB-POOL.md`](V3-HA-LAB-POOL.md).
 
 ## Allowed outside the feature set
 
@@ -50,7 +50,8 @@ These are v3 candidates unless the charter is amended:
 - SSO, SAML, LDAP, or external identity providers.
 - LMS, SIS, or calendar integrations.
 - New product domains or tracks (beyond curriculum maintenance).
-- New architectural targets beyond the HA lab pool.
+- Multi-host lab pools, distributed scheduling, HA failover, or a new
+  architectural target. These are v3 candidates.
 - A public leaderboard, predictive model, or automated high-stakes decision.
 - A new notification framework, chat system, or support-desk product.
 
@@ -65,8 +66,6 @@ These are v3 candidates unless the charter is amended:
 | R2 | Pulse surveys and course survey reporting | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
 | R3 | CSV/PDF export for teaching review | In scope — Reporting | Shipped — CSV and PDF | Product |
 | H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Partial — host/platform pass; network/lab/recovery gates pending | Platform |
-| H2 | Multi-host Docker lab pool design | In scope — HA | Design complete | Architecture |
-| H3 | Control-plane and lab-node failover | In scope — HA | Not started — required before 2.0 GA | Architecture |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
 | M3 | Version identity endpoint and footer | Update — operational | Shipped | Platform |
@@ -82,7 +81,7 @@ These are v3 candidates unless the charter is amended:
 A new 2.x feature needs a written change request with:
 
 1. The user and the behaviour it changes.
-2. The workstream: analytics, reporting, or HA.
+2. The workstream: analytics or reporting.
 3. The evidence that proves it worked.
 4. The data, privacy, and failure impact.
 5. The work it displaces from the current release.
@@ -129,10 +128,8 @@ A 2.x release is ready only when:
 - bug fixes and updates are recorded separately from features;
 - the v3 parking lot contains every deferred idea;
 - the README, release notes, and register agree;
-- H1 (24.04) is frozen and recorded in the support matrix;
-- H3 (HA failover) meets the acceptance test in
-  [`V2-HA-LAB-POOL.md`](V2-HA-LAB-POOL.md).
+- H1 (24.04) is frozen and recorded in the support matrix.
 
 **Current status:** analytics and reporting are delivered and running on the
-24.04 preview host, but 2.0 GA is blocked by H1 (network/lab/recovery gates) and
-H3 (HA implementation).
+24.04 preview host. 2.0 GA is blocked only by H1 (network/lab/recovery gates).
+HA is a v3 workstream and is not a 2.0 release gate.

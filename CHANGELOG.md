@@ -5,8 +5,9 @@ All notable changes to OpenCyberRange are recorded here.
 ## [Unreleased]
 
 ### 2.x feature scope
-- Reporting, learning analytics, survey insight, and the HA lab pool remain the
-  only active feature workstreams. See `docs/V2-PROGRAM-CHARTER.md`.
+- Reporting, learning analytics, and survey insight remain the only active 2.x
+  feature workstreams. Multi-host HA moved to v3; see
+  `docs/V2-PROGRAM-CHARTER.md` and `docs/V3-HA-LAB-POOL.md`.
 - The OWASP Top 10 is now the v2 security baseline for the interface, data, and
   delivery process, with required tests and a documented exception process. See
   `docs/V2-SECURITY-OWASP-TOP-10.md`.
@@ -40,7 +41,7 @@ All notable changes to OpenCyberRange are recorded here.
   deployments receive a Redis override during update.
 - Public `GET /api/version` and a footer build-version label.
 - Certificate verification now rejects non-ASCII digits, emoji, kanji, whitespace, and malformed IDs before any database lookup.
-- Documentation now records the Ubuntu 22.04 baseline for 1.1, the Ubuntu 24.04 target for 2.0, the multi-host lab pool plan, and the 2.x program charter.
+- Documentation now records the Ubuntu 22.04 baseline for 1.1, the Ubuntu 24.04 target for 2.0, the v3 multi-host lab pool plan, and the 2.x program charter.
 
 ## [1.0.0] - 2026-11-04
 

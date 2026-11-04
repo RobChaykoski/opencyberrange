@@ -39,8 +39,9 @@ the evidence was produced for the build being released.
 - Full lab matrix: multi-container, capture, shared-container, RangeBox,
   UbuntuBox, and REMnuxBox exercises.
 - WireGuard client tunnel and reboot-persistence check.
-- HA failover acceptance tests from
-  [`V2-HA-LAB-POOL.md`](V2-HA-LAB-POOL.md).
+HA failover acceptance tests are part of the v3 workstream in
+[`V3-HA-LAB-POOL.md`](V3-HA-LAB-POOL.md), not a 2.0 release gate.
 
-These are release blockers for 2.0 GA, not claims that the current preview is
-insecure. Any accepted exception needs an owner, expiry, and follow-up issue.
+The lab-matrix and WireGuard items above are release blockers for 2.0 GA, not
+claims that the current preview is insecure. Any accepted exception needs an
+owner, expiry, and follow-up issue.

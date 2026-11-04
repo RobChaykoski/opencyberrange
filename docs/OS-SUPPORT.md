@@ -61,8 +61,8 @@ This decision is about the **host OS only**. It does not change:
 - Lab images and UbuntuBox remain on 22.04, so existing exercise behaviour does
   not change.
 
-The 2.0 HA and multi-host design is separate from the host OS migration. See
-[the HA lab pool plan](V2-HA-LAB-POOL.md).
+The multi-host HA design is a v3 workstream, separate from the host OS
+migration. See [the v3 HA lab pool plan](V3-HA-LAB-POOL.md).
 
 ## Ubuntu 24.04 validation gate
 

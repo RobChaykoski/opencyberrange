@@ -1,10 +1,15 @@
-# V2 Multi-Host Lab Pool and HA Deployment Plan
+# V3 Multi-Host Lab Pool and HA Deployment Plan
 
-Status: **Design — not implemented**
+Status: **Moved to v3 — design complete, not implemented**
+Program link: [`docs/V3-PARKING-LOT.md`](V3-PARKING-LOT.md)
+
+> Scope change: high availability and multi-host lab pools were moved out of the
+> 2.x programme. They remain the first v3 architecture candidate. The v2
+> analytics and reporting workstreams do not depend on this plan.
 
 ## Purpose
 
-This plan defines how 2.0 can move from a single Docker host to a pool of lab
+This plan defines how v3 can move from a single Docker host to a pool of lab
 hosts for capacity and high availability. It also explains where Docker Swarm
 and Kubernetes fit, and why the first target is a controller plus node-agent
 pool rather than Swarm scheduling of lab sessions.

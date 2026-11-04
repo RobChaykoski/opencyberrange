@@ -40,28 +40,27 @@ fixes and security updates continue on the 1.1 line and are merged forward into
 |---|---|---|---|
 | `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Production installs; both LTS baselines are supported |
 | `1.0.x` | Prior release | Ubuntu 22.04 LTS | Upgrade path to 1.1 |
-| `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting, analytics, and multi-host high availability only |
+| `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting and analytics only |
 
 Version 1.1 bug fixes are not rebased onto 24.04. They land on the 1.1 line and
-merge forward into 2.0. The 24.04 migration and the HA lab-pool design are
-tracked in [the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) and
-[the HA lab pool plan](docs/V2-HA-LAB-POOL.md).
+merge forward into 2.0. The 24.04 migration is tracked in
+[the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md). Multi-host HA was
+moved to v3; see [the v3 HA lab pool plan](docs/V3-HA-LAB-POOL.md).
 
 ### Version 2.0 goals
 
-The 2.x feature set is deliberately limited to three workstreams:
+The 2.x feature set is deliberately limited to two workstreams:
 
 | Workstream | What it changes | Status |
 |---|---|---|
-| Reporting | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, and CSV export. | Development preview in this tree |
+| Reporting | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, and CSV/PDF export. | Development preview in this tree |
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses: completion funnels, median time, hint pressure, attempt burden, within-person growth, and a shared metric dictionary. | Development preview in this tree |
-| Survey insight | Optional quick-pulse surveys after completion, instructor-built course surveys, consent-gated responses, and aggregate reporting. | Development preview in this tree |
-| Deployment scale-out | A multi-host Docker lab pool with failover, routing, shared state, and recovery. | Planned |
+| Survey insight | Optional quick-pulse surveys after completion, instructor-built course surveys, consent-gated responses, and aggregate reporting. This is part of the reporting workstream. | Development preview in this tree |
 
-**Scope guard:** 2.x adds analytics, reporting, and high availability only.
-Bug fixes, security updates, dependency/runtime updates, and small compatibility
-corrections are still allowed. New features, scoring changes, integrations, and
-new product domains are v3 work.
+**Scope guard:** 2.x adds analytics and reporting only. Bug fixes, security
+updates, dependency/runtime updates, and small compatibility corrections are
+still allowed. New features, scoring changes, integrations, new product domains,
+and multi-host HA are v3 work.
 
 - [2.x program charter](docs/V2-PROGRAM-CHARTER.md)
 - [v3 parking lot](docs/V3-PARKING-LOT.md)
@@ -653,22 +652,22 @@ truth for the platform version; runtime and dependency pins live in
 ## Deployment topologies
 
 The 1.x installer is a **single-host Docker Compose** deployment. Version 2.0
-keeps that path as the default and adds two scale-out targets.
+keeps that path as the only supported production topology.
 
 | Topology | State | Notes |
 |---|---|---|
 | Single host, Docker Compose | **Supported** | The current installer, upgrade path, backup workflow, and WireGuard host services |
-| Multiple Docker hosts ("pods") | **Planned for 2.0** | A controller and per-host agent place each learner session on a registered lab host, track per-host CPU and memory, drain hosts for maintenance, and keep the per-session `/24` isolated whichever host runs the lab. See [the HA lab pool plan](docs/V2-HA-LAB-POOL.md) for the Docker Swarm and Kubernetes comparison |
-| Kubernetes | **Planned for 2.0** | The same platform and lab images, with the scheduler running as a controller and PostgreSQL, Redis, workbook storage, ingress, and the VPN control plane treated as shared services |
+| Multiple Docker hosts ("pods") | **v3 candidate** | A controller and per-host agent place each learner session on a registered lab host, track per-host CPU and memory, drain hosts for maintenance, and keep the per-session `/24` isolated whichever host runs the lab. See [the v3 HA lab pool plan](docs/V3-HA-LAB-POOL.md) |
+| Kubernetes | **v3 candidate** | The same platform and lab images, with the scheduler running as a controller and PostgreSQL, Redis, workbook storage, ingress, and the VPN control plane treated as shared services |
 
 The scale-out design keeps lab definitions and student workflows unchanged:
 students still connect through WireGuard and open the same frontend, and
 instructors still assign the same exercises. The work is in placement, capacity,
 health, and shared state rather than in the curriculum.
 
-Multi-host Docker and Kubernetes are **not supported deployment targets yet**.
-The setup script and Compose files stay single-host until the 2.0 release notes
-and deployment manual say otherwise.
+Multi-host Docker and Kubernetes are **not supported deployment targets**.
+The setup script and Compose files stay single-host. Multi-host HA is a v3
+workstream and is not part of the 2.0 release gate.
 
 ## Repository Structure
 
@@ -718,8 +717,8 @@ opencyberrange/
 | [2.x program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in 2.x |
 | [v3 parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding 2.x |
 | [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.1 supports 22.04 and 24.04 |
-| [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment or HA work |
-| [V2 HA lab pool plan](docs/V2-HA-LAB-POOL.md) | Architects planning multi-host Docker pods, routing, storage, and failure recovery |
+| [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment |
+| [V3 HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the v3 multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation |
@@ -755,7 +754,7 @@ After installation, log in as admin and navigate to **Admin Panel > System Healt
 
 - **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** OpenCyberRange 2.0.0-dev; Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are 2.0 goals, not supported deployment targets yet. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** OpenCyberRange 2.0.0-dev; Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

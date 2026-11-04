@@ -12,7 +12,7 @@ release:
 
 development:
   version: "2.0.0-dev"
-  focus: "analytics, reporting, and high availability"
+  focus: "analytics and reporting"
 
 policy:
   name: latest-supported-ga
@@ -35,7 +35,7 @@ runtime:
       status: "24.04-validation-pending"
     plans:
       migration: "docs/V2-UBUNTU-24.04-MIGRATION.md"
-      ha: "docs/V2-HA-LAB-POOL.md"
+      ha: "docs/V3-HA-LAB-POOL.md"
   python:
     current: "3.11"
     target: "3.13"

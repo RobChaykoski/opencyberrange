@@ -26,8 +26,9 @@ Status: development line. This is not a GA release and may change before 2.0.0.
 ## Release status
 
 Analytics and reporting are delivered and running on the 24.04 preview host.
-2.0 GA remains blocked by the 24.04 network/lab/recovery gates and the HA
-failover implementation described in `docs/V2-PROGRAM-CHARTER.md`.
+2.0 GA remains blocked by the 24.04 network/lab/recovery gates described in
+`docs/V2-PROGRAM-CHARTER.md`. Multi-host HA moved to v3 and is not a 2.0 release
+gate; see `docs/V3-HA-LAB-POOL.md`.
 
 ## Upgrade notes for the development line
 
