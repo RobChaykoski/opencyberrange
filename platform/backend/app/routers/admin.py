@@ -2687,8 +2687,9 @@ async def discover_labs(
                 existing.sort_order = lab_num
                 if flag_hash:
                     existing.flag_hash = flag_hash
-                if lab_data.get('workbook'):
-                    existing.workbook = lab_data['workbook']
+                # Keep the workbook field in step with lab.yaml. If the source
+                # removed it, clear the stale link instead of leaving a 404.
+                existing.workbook = lab_data.get('workbook') or None
                 updated += 1
             else:
                 new_lab = Lab(
