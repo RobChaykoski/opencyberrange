@@ -189,8 +189,10 @@ Alerts must cover:
 
 ## Failure and acceptance tests
 
-Read [`references/failure-and-acceptance.md`](references/failure-and-acceptance.md).
-The release gate is not "the dashboard is green". It is:
+Read [`references/failure-and-acceptance.md`](references/failure-and-acceptance.md)
+for the failure matrix and test evidence, and
+[`references/operations-runbook.md`](references/operations-runbook.md) for the
+operator procedures. The release gate is not "the dashboard is green". It is:
 
 1. Two control-plane API replicas and two lab nodes run 100 concurrent sessions.
 2. No duplicate CIDRs; every active CIDR has exactly one route.
