@@ -2,6 +2,7 @@
 
 Status: **Moved to v3 — design complete, not implemented**
 Program link: [`docs/V3-PARKING-LOT.md`](V3-PARKING-LOT.md)
+Design skill: `.opencode/skills/opencyberrange-ha-architecture/SKILL.md`
 
 > Scope change: high availability and multi-host lab pools were moved out of the
 > 2.x programme. They remain the first v3 architecture candidate. The v2
