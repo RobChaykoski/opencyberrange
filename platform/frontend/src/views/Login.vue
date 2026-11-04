@@ -1,5 +1,32 @@
 <template>
   <div class="login-page">
+    <nav class="login-powered" aria-label="SWOCTS">
+      <a
+        class="login-powered__brand"
+        href="https://www.swocts.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Powered by SWOCTS — open the SWOCTS website"
+        title="swocts.com"
+      >
+        <span>Powered by</span>
+        <img src="/swocts_logo.jpg" alt="SWOCTS" />
+      </a>
+      <span class="login-powered__divider" aria-hidden="true"></span>
+      <a
+        class="login-powered__social"
+        href="https://www.linkedin.com/company/swocts"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="SWOCTS on LinkedIn"
+        title="SWOCTS on LinkedIn"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z"/>
+        </svg>
+      </a>
+    </nav>
+
     <div class="login-split">
       <!-- Left: form panel -->
       <div class="login-form-panel">
@@ -180,18 +207,46 @@
 
             <article class="preview-card preview-card--certificate">
               <div class="preview-certificate">
-                <span class="preview-certificate__seal">OCR</span>
-                <div class="preview-certificate__body">
-                  <small class="preview-certificate__eyebrow">Certificate of Completion</small>
-                  <strong class="preview-certificate__name">Avery Chen</strong>
-                  <span>Network Foundations · Level 1</span>
-                  <small class="preview-certificate__meta">Issued 04 Nov 2026 · OCR-2026-0142</small>
-                  <span class="preview-certificate__verified">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
-                      <path d="m5 12 4 4L19 6"/>
-                    </svg>
-                    Verified
+                <div class="preview-certificate__brandline">
+                  <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="preview-certificate__logo" />
+                  <strong>OpenCyberRange</strong>
+                  <span class="preview-certificate__powered">
+                    <span>Powered by</span>
+                    <a
+                      class="preview-certificate__site"
+                      href="https://www.swocts.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="SWOCTS website"
+                    >swocts.com</a>
+                    <a
+                      class="preview-certificate__social"
+                      href="https://www.linkedin.com/company/swocts"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="SWOCTS on LinkedIn"
+                      title="SWOCTS on LinkedIn"
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z"/>
+                      </svg>
+                    </a>
                   </span>
+                </div>
+                <div class="preview-certificate__main">
+                  <span class="preview-certificate__seal">OCR</span>
+                  <div class="preview-certificate__body">
+                    <small class="preview-certificate__eyebrow">Certificate of Completion</small>
+                    <strong class="preview-certificate__name">Avery Chen</strong>
+                    <span>Network Foundations · Level 1</span>
+                    <small class="preview-certificate__meta">Issued 04 Nov 2026 · OCR-2026-0142</small>
+                    <span class="preview-certificate__verified">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                        <path d="m5 12 4 4L19 6"/>
+                      </svg>
+                      Verified
+                    </span>
+                  </div>
                 </div>
               </div>
             </article>
@@ -284,8 +339,80 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-page {
+  position: relative;
   min-height: 100vh;
   background: var(--bg-primary);
+}
+
+.login-powered {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.4rem 0.28rem 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.62);
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.login-powered__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  color: #cbd5e1;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.login-powered__brand:hover {
+  color: #f8fafc;
+}
+
+.login-powered__brand img {
+  height: 14px;
+  width: auto;
+  padding: 1px 3px;
+  border-radius: 3px;
+  background: #ffffff;
+}
+
+.login-powered__divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(148, 163, 184, 0.28);
+}
+
+.login-powered__social {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #cbd5e1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.login-powered__social:hover {
+  background: rgba(56, 189, 248, 0.16);
+  color: #e0f2fe;
+}
+
+.login-powered__social svg {
+  width: 13px;
+  height: 13px;
+}
+
+.login-powered a:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
 }
 
 .login-split {
@@ -739,16 +866,91 @@ const handleLogin = async () => {
 
 .preview-certificate {
   display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
+  flex-direction: column;
+  gap: 0.5rem;
   min-width: 0;
   width: 100%;
-  padding: 0.65rem;
+  padding: 0.6rem;
   border: 1px solid rgba(251, 191, 36, 0.32);
   border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent 52%),
     rgba(15, 23, 42, 0.55);
+}
+
+.preview-certificate__brandline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.18);
+  color: #f8fafc;
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.preview-certificate__logo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.preview-certificate__powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 0.48rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.preview-certificate__site {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.preview-certificate__site:hover {
+  color: #f8fafc;
+  text-decoration: underline;
+}
+
+.preview-certificate__social {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: rgba(56, 189, 248, 0.16);
+  color: #93c5fd;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.preview-certificate__social:hover {
+  background: rgba(56, 189, 248, 0.28);
+  color: #e0f2fe;
+}
+
+.preview-certificate__social svg {
+  width: 9px;
+  height: 9px;
+}
+
+.preview-certificate a:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.preview-certificate__main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
 }
 
 .preview-certificate__seal {
@@ -847,6 +1049,20 @@ const handleLogin = async () => {
 }
 
 @media (max-width: 560px) {
+  .login-powered {
+    top: 0.6rem;
+    right: 0.6rem;
+    padding: 0.24rem 0.32rem 0.24rem 0.5rem;
+  }
+
+  .login-powered__brand {
+    font-size: 0.58rem;
+  }
+
+  .login-powered img {
+    height: 12px;
+  }
+
   .login-form-panel {
     padding: 2rem 1rem;
   }
@@ -872,7 +1088,11 @@ const handleLogin = async () => {
 @media (prefers-reduced-motion: reduce) {
   .form-input,
   .login-button,
-  .password-toggle {
+  .password-toggle,
+  .login-powered__brand,
+  .login-powered__social,
+  .preview-certificate__site,
+  .preview-certificate__social {
     transition: none;
   }
 }
