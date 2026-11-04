@@ -18,7 +18,7 @@ slowapi==0.1.10
 fpdf2==2.9.0
 matplotlib>=3.10
 aiohttp==3.14.5
-pywinrm>=0.4.3
+pywinrm>=0.5.0
 alembic==1.20.1
 pyotp==2.10.0
 # Backing store for shared rate-limit counters (RATELIMIT_STORAGE_URI=redis://)
