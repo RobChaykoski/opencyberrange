@@ -16,7 +16,7 @@ installed somewhere else.
 
 For an installed server, the upgrade copies the updated `platform/backend`,
 `platform/frontend`, and `platform/db` trees into the deployment before
-rebuilding, while preserving the generated `frontend/wiki` tree.
+rebuilding, while preserving generated workbook and wiki state.
 
 ```bash
 git clone --depth 1 --branch main \

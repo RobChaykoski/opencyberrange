@@ -2,14 +2,16 @@
 
 ## Supported versions
 
-Security fixes land on the current release line. At the time of writing that is
-`v2.3.x` (tag `v2.3.0` and later on `main`).
+Security fixes land on the current supported release line. At the time of
+writing that is `v1.0.x` (tag `v1.0.0` and later on the 1.0 maintenance line).
+The `main` branch carries the 2.0 development line, and fixes land on 1.0 first
+and are merged forward.
 
 | Version | Supported |
 |---|---|
-| `v2.3.x` | Yes |
-| `v2.2.x` and earlier | No — upgrade to `v2.3.x` |
-| `main` | Yes (development for the next release) |
+| `v1.0.x` | Yes |
+| `v2.0.x` / `main` | Yes for development builds; next feature release |
+| Pre-1.0 builds | No — upgrade to `v1.0.x` |
 
 ## Reporting a vulnerability
 
@@ -60,6 +62,6 @@ synthetic reproduction.
 
 ## Dependency posture
 
-`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.3.2` both report zero
+`pip-audit` and `npm audit --omit=dev` run in CI. At `v1.0.0` both report zero
 known advisories. When an advisory cannot be fixed immediately, it is recorded
 with an owner and an expiry in the release notes rather than ignored silently.

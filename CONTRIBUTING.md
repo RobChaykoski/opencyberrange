@@ -13,7 +13,8 @@ see [`BUILD_NOTICE.md`](BUILD_NOTICE.md) for provenance and
 
 ### Before you start
 
-- Python 3.11, Node 22, PostgreSQL 15, Docker Compose v2.
+- Python 3.11, Node 22, PostgreSQL 15, Redis 7, and Docker Compose v2.
+  Current pins are in [`versions.yaml`](versions.yaml).
 - Backend tests: `cd platform/backend && pytest -q` with `TEST_DATABASE_URL`
   pointing at a throwaway PostgreSQL database.
 - Frontend: `cd platform/frontend && npm ci && npm run lint && npm run build`.

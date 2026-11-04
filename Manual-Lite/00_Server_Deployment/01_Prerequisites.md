@@ -4,11 +4,30 @@ Before you install OpenCyberRange you size the host, open the right ports, and c
 
 ## Operating system
 
-Use Ubuntu 22.04 LTS or a newer Debian-based distribution. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point.
+Use **Ubuntu 24.04 LTS** for a new 2.0 deployment. The **1.0 maintenance line stays on Ubuntu 22.04 LTS**; bug fixes for 1.0 are not rebased onto 24.04. **Ubuntu 22.04** remains the upgrade source for 2.0 during the validation window. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](../../docs/OS-SUPPORT.md) and the [24.04 migration plan](../../docs/V2-UBUNTU-24.04-MIGRATION.md).
+
+## Platform versions
+
+The current supported stack for the 2.0.0 development line is:
+
+| Component | Version | Notes |
+|---|---|---|
+| Host OS | Ubuntu 24.04 LTS for 2.0 | 1.0 maintenance stays on Ubuntu 22.04 LTS |
+| OpenCyberRange | `2.0.0-dev` | Shown in the page footer and returned by `GET /api/version` |
+| Python | 3.11 | Backend image: `python:3.11-slim` |
+| Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
+| PostgreSQL | 15 | Database image: `postgres:15-alpine` |
+| Redis | 7 | `redis:7-alpine`, shared rate-limit counters |
+| nginx | stable Alpine | Frontend runtime image |
+| Docker Engine | 24 or newer | With the Compose v2 plugin |
+
+[`versions.yaml`](../../versions.yaml) is the source of truth for exact dependency
+and image pins. Python 3.13, Node.js 24, and PostgreSQL 17 are tracked there as
+future targets; they are not part of the current single-host installation.
 
 ## Hardware
 
-The host runs three core containers plus every lab container students spawn. Size for the largest class you expect to run at once.
+The host runs four core containers plus every lab container students spawn. Size for the largest class you expect to run at once.
 
 | Resource | Minimum | Recommended (20+ students) |
 |----------|---------|----------------------------|

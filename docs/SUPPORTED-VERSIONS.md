@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-01**.
+Last reviewed: **2026-11-04**. Platform development version: **2.0.0-dev**.
 
 ## Policy
 
@@ -23,9 +23,11 @@ Last reviewed: **2026-11-01**.
 
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
+| Host OS | 1.0: Ubuntu 22.04 LTS; 2.0: Ubuntu 24.04 LTS target | 24.04 for 2.0 | Validation pending | 1.0 bug fixes stay on 22.04; see [Host OS support](OS-SUPPORT.md) and the [24.04 migration plan](V2-UBUNTU-24.04-MIGRATION.md) |
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
+| Redis | 7 | 7 | Supported | Shared rate-limit counters; no persistence |
 | Backend base | `python:3.11-slim` | Pin a 3.13 slim digest | Wave 1 | psycopg3/cryptography wheels are available; test the runtime swap |
 | Frontend builder | `node:22-alpine` | Pin a digest | Applied in Wave C | Required by Vite 8 |
 | Frontend server | `nginx:alpine` | Pin a supported stable digest | Wave 1 | Verify nginx config compatibility |

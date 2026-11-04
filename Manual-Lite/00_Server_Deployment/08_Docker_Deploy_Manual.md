@@ -23,19 +23,24 @@ For the guided installer, see [Local Deployment](02_Local_Deployment.md) or
 | `backend` | `ocr-backend` | `127.0.0.1:8000` | FastAPI API and lab orchestration |
 | `frontend` | `ocr-frontend` | `80`, `443` | Vue app, API proxy, HTTPS |
 
+Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `redis:7-alpine`. The exact pins are in [`versions.yaml`](../../versions.yaml).
+
 Persistent volumes:
 
 - `postgres_data` — database files
 - `workbook_data` — workbook and erasure-ledger state
+- `wiki_data` — generated workbook wiki, mounted read-only by the frontend
+- `backups_data` — database snapshots
 
 The repository's `platform/labs` directory is mounted read-only into the
 backend as `/labs`.
 
 ## 1. Prerequisites
 
-- Ubuntu 22.04 LTS or later, or a comparable Linux server
+- Ubuntu 24.04 LTS for 2.0; Ubuntu 22.04 LTS remains supported for 1.0 and as a 2.0 upgrade source; see [Host OS support](../../docs/OS-SUPPORT.md)
 - Docker Engine 24+ with the Compose v2 plugin
 - Git
+- Current platform versions are listed under [Platform versions](01_Prerequisites.md#platform-versions)
 - 4+ CPU cores, 32 GB RAM minimum, 500 GB disk for a production classroom
 - Ports `80/tcp` and `443/tcp` open
 - Port `51820/udp` open only if students will use the built-in WireGuard VPN

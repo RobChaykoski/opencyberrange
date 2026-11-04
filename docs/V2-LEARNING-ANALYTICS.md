@@ -1,6 +1,6 @@
 # V2 Learning Analytics and Research Dashboard
 
-Status: Phase 1 implemented in the `ocr-v2-test` stack
+Status: Phase 1 implemented in this development tree; Phase 2 and Phase 3 planned
 
 ## Purpose
 

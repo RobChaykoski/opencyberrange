@@ -17,7 +17,7 @@ provider.
 
 ## What you will do
 
-1. Meet the prerequisites on a clean Ubuntu 22.04+ host.
+1. Meet the prerequisites on a clean Ubuntu 24.04 LTS host (Ubuntu 22.04 LTS is also supported).
 2. Clone this repository.
 3. Run the one installer script and answer its prompts.
 4. Complete the first-run setup wizard in your browser (it needs a token the
@@ -26,7 +26,7 @@ provider.
 
 ## 1. Prerequisites
 
-- A clean Ubuntu 22.04 or newer host with sudo access.
+- A clean Ubuntu 24.04 LTS host (recommended) or Ubuntu 22.04 LTS with sudo access.
 - Docker and Docker Compose (the installer installs them if missing).
 - At least 4 CPU cores, 8 GB RAM, and 40 GB free disk for a small class.
 - Outbound internet access for the first install (to pull base images).

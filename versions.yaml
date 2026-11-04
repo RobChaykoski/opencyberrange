@@ -12,7 +12,7 @@ release:
 
 development:
   version: "2.0.0-dev"
-  focus: "learning analytics and research dashboard"
+  focus: "reporting, analytics, scoring, and multi-host deployment"
 
 policy:
   name: latest-supported-ga
@@ -27,20 +27,31 @@ policy:
     - record_every_exception_with_an_expiry
 
 runtime:
+  host_os:
+    release_1_0: "ubuntu-22.04"
+    release_2_0:
+      target: "ubuntu-24.04"
+      upgrade_source: "ubuntu-22.04"
+      status: "24.04-validation-pending"
+    plans:
+      migration: "docs/V2-UBUNTU-24.04-MIGRATION.md"
+      ha: "docs/V2-HA-LAB-POOL.md"
   python:
     current: "3.11"
     target: "3.13"
     candidate: "3.14"
     status: "compatibility-testing"
   node:
-    current: "18"
-    target: "22"
-    candidate: "24"
+    current: "22"
+    target: "24"
     status: "compatibility-testing"
   postgres:
     current: "15"
     target: "17"
     status: "planned-major-upgrade"
+  redis:
+    current: "7"
+    status: "supported"
 
 backend:
   fastapi: "0.162.0"

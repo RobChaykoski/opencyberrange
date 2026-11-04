@@ -15,7 +15,8 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Release](https://img.shields.io/badge/release-1.0.0-blue)](RELEASE_NOTES.md)
+[![Release](https://img.shields.io/badge/release-1.0.0%20supported-blue)](RELEASE_NOTES.md)
+[![Next](https://img.shields.io/badge/next-2.0%20development-8b5cf6)](docs/V2-LEARNING-ANALYTICS.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
@@ -25,6 +26,79 @@
 A self-hosted cybersecurity training platform that deploys hands-on exercises inside isolated Docker containers. Students connect over WireGuard VPN, solve challenges across instructor-defined tracks, and submit flags for automated scoring. The platform ships with foundational exercises spanning penetration testing, network foundations and forensics, web exploitation, malware analysis, OT/ICS security, AI security, and open-source intelligence (OSINT).
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
+
+## Version 2.0
+
+OpenCyberRange 1.0 is the supported production release. Version 2.0 is the next
+feature line, and it is additive: the 1.0 curriculum, learner workflows, privacy
+controls, and single-host Docker Compose install remain the baseline. **Bug
+fixes and security updates continue on the 1.0 line and are merged forward into
+2.0**, so a fix does not wait for the next feature release. There is no separate
+2.0 fork to maintain.
+
+| Release line | State | Host OS | Purpose |
+|---|---|---|---|
+| `1.0.x` | **Supported** | Ubuntu 22.04 LTS | Production installs; bug and security fixes stay on the 22.04 baseline |
+| `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting, analytics, scoring, and multi-host deployment goals |
+
+Version 1.0 bug fixes are not rebased onto 24.04. They land on the 1.0 line and
+merge forward into 2.0. The 24.04 migration and the HA lab-pool design are
+tracked in [the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) and
+[the HA lab pool plan](docs/V2-HA-LAB-POOL.md).
+
+### Version 2.0 goals
+
+| Workstream | What it changes | Status |
+|---|---|---|
+| Reporting | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, and CSV export. | Development preview in this tree |
+| Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses: completion funnels, median time, hint pressure, attempt burden, within-person growth, and a shared metric dictionary. | Development preview in this tree |
+| Survey insight | Optional quick-pulse surveys after completion, instructor-built course surveys, consent-gated responses, and aggregate reporting. | Development preview in this tree |
+| Scoring improvements | A clearer, configurable scoring model that explains how completion, hints, attempts, and time contribute, keeps competition scoring intact, and never turns analytics into a public ranking. | In design |
+| Deployment scale-out | Support multiple Docker hosts ("pods") first, then Kubernetes, without changing lab definitions or the student experience. | Planned |
+
+### Reporting and analytics (development preview)
+
+The first 2.0 slice is implemented in this tree and documented in
+[V2 Learning Analytics and Research Dashboard](docs/V2-LEARNING-ANALYTICS.md):
+
+- **Learner view:** completion and weekly progress, median time against the
+  exercise estimate, hint and first-attempt trends, reattempt recovery, and
+  plain-language growth cards. Students never see a comparative ranking.
+- **Course Analytics tab:** assigned vs started vs completed, time over
+  estimate, hint-free and first-attempt rates, abandonment, and per-exercise
+  drill-down.
+- **Reports page:** a cross-course teaching view with red/amber/green signals
+  and the reason behind each signal, plus CSV export.
+- **Pulse and course surveys:** a short optional pulse after completion, custom
+  instructor surveys, and consent-gated responses. Survey consent stays separate
+  from analytics use and can be withdrawn.
+- **Metric dictionary:** one definition per metric, shared by the UI and
+  exports, so terms such as "completion rate" or "hint pressure" cannot drift
+  between screens.
+
+Phase 2 and Phase 3 add deeper within-person growth detail,
+teaching-improvement prompts, cohort bands, and a consent-filtered research
+workspace with de-identified exports and small-cell suppression. The
+[analytics plan](docs/V2-LEARNING-ANALYTICS.md) records the metric definitions,
+privacy rules, and open decisions.
+
+### Scoring goals
+
+Version 2.0 revisits scoring without discarding the 1.0 signals. The design goal
+is a model that is explainable to a learner and configurable by an instructor:
+each component (completion, hint use, attempts, time, and competition first
+blood) is reported separately, course weights can be reviewed before a term
+starts, and the same calculation powers the scoreboard, exports, and reports.
+Competition scoring remains available as its own ruleset. Scoring is a teaching
+signal, not a public ranking or a high-stakes grade.
+
+### Deployment goals
+
+The 1.0 installer remains a single-host Docker Compose deployment. Version 2.0
+adds scale-out targets for multiple Docker hosts ("pods") and Kubernetes while
+keeping the same platform images, lab definitions, WireGuard access, and student
+workflow. See [Deployment topologies](#deployment-topologies) for the supported
+and planned states.
 
 ## Measurable outcomes
 
@@ -49,8 +123,11 @@ These are current, checkable counts from this repository and metrics the platfor
 | [`opencyberrange`](https://github.com/RobChaykoski/opencyberrange) | Production and development (canonical) | `main`, CI green |
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
-This repository is the only development tree. It contains all history from the
-pre-cutover tree plus the upgrade scaffold and dependency waves. See
+This repository is the only development tree. `main` carries the 2.0
+development line, while the `v1.0.0` tag is the supported production release.
+Bug fixes and security updates land on the 1.0 line first and are merged forward
+into `main`. The tree contains all history from the pre-cutover tree plus the
+upgrade scaffold and dependency waves. See
 `docs/MOVE-TO-OPENCYBER-NEXT.md` and `docs/CUTOVER-TO-CANONICAL-REPO.md` for the
 migration and cutover trail.
 
@@ -463,7 +540,7 @@ building during a student spawn.
 
 ## Quick Start
 
-Run the setup script on a fresh Ubuntu 22.04+ server (see [Requirements](#requirements) for sizing):
+Run the setup script on a fresh Ubuntu 24.04 LTS server (Ubuntu 22.04 LTS is also supported; see [Requirements](#requirements) for sizing):
 
 ```bash
 git clone https://github.com/RobChaykoski/opencyberrange.git
@@ -549,28 +626,72 @@ For production deployments or custom configurations, see the [Server Deployment 
 
 | Component | Technology | Container |
 |-----------|-----------|-----------|
-| Frontend | Vue.js 3 + Vite, served by nginx | `ocr-frontend` (port 80/443) |
-| Backend | Python / FastAPI | `ocr-backend` (port 8000, localhost only) |
+| Frontend | Vue.js 3.5.44 + Vite 8.3.5, served by nginx | `ocr-frontend` (port 80/443) |
+| Backend | Python 3.11 + FastAPI 0.162.0 | `ocr-backend` (port 8000, localhost only) |
 | Database | PostgreSQL 15 | `ocr-db` (port 5432, internal only) |
+| Cache and rate limits | Redis 7 | `ocr-redis` (port 6379, internal only) |
 | VPN | WireGuard + Peer Manager API | Host systemd services (port 51820/UDP) |
+
+The running version is available from `GET /api/version` and is shown in the
+footer of every page. `platform/backend/app/version.py` is the single source of
+truth for the platform version; runtime and dependency pins live in
+[`versions.yaml`](versions.yaml).
+
+## Deployment topologies
+
+The 1.0 installer is a **single-host Docker Compose** deployment. Version 2.0
+keeps that path as the default and adds two scale-out targets.
+
+| Topology | State | Notes |
+|---|---|---|
+| Single host, Docker Compose | **Supported** | The current installer, upgrade path, backup workflow, and WireGuard host services |
+| Multiple Docker hosts ("pods") | **Planned for 2.0** | A controller and per-host agent place each learner session on a registered lab host, track per-host CPU and memory, drain hosts for maintenance, and keep the per-session `/24` isolated whichever host runs the lab. See [the HA lab pool plan](docs/V2-HA-LAB-POOL.md) for the Docker Swarm and Kubernetes comparison |
+| Kubernetes | **Planned for 2.0** | The same platform and lab images, with the scheduler running as a controller and PostgreSQL, Redis, workbook storage, ingress, and the VPN control plane treated as shared services |
+
+The scale-out design keeps lab definitions and student workflows unchanged:
+students still connect through WireGuard and open the same frontend, and
+instructors still assign the same exercises. The work is in placement, capacity,
+health, and shared state rather than in the curriculum.
+
+Multi-host Docker and Kubernetes are **not supported deployment targets yet**.
+The setup script and Compose files stay single-host until the 2.0 release notes
+and deployment manual say otherwise.
 
 ## Repository Structure
 
 ```
 opencyberrange/
 ├── platform/
-│   ├── backend/          # FastAPI application, migrations, curriculum/lab scripts
-│   ├── frontend/         # Vue.js SPA, nginx config, baked workbook wiki
+│   ├── backend/          # FastAPI app, migrations, curriculum and lab scripts
+│   ├── frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
+│   ├── db/               # PostgreSQL init and password bootstrap
 │   ├── labs/             # Exercise library (organized by track)
+│   ├── rangebox/         # RangeBox container build
+│   ├── templates/        # Exercise Studio template catalog
+│   ├── tester/           # Exercise tester module
+│   ├── wiki-builder/     # MkDocs builder image for the wiki_data volume
+│   ├── certs/            # Local TLS certificates (not committed)
+│   ├── docker-compose.prod.yml
 │   └── .env.example      # Environment variable template
-├── Workbook/             # Student walkthroughs (MkDocs wiki source)
-├── Manual-Lite/          # Platform documentation (deployment, student, instructor, admin)
+├── docs/                 # Architecture, analytics, privacy, research, release docs
+├── Manual-Lite/          # Deployment, student, instructor, and admin guides
+├── Workbook/             # Student walkthroughs (MkDocs source)
+├── RangeBox/             # Kali in-browser desktop image source
+├── UbuntuBox/            # Ubuntu in-browser desktop image source
+├── RemnuxBox/            # REMnux in-browser desktop image source
+├── scripts/              # Setup, deployment, backup, and lab validation tools
 ├── tools/                # Wiki generation and maintenance tools
+├── wiki-overrides/       # MkDocs theme overrides
+├── .github/              # CI, CodeQL, Dependabot, and Trivy workflows
 ├── .opencode/            # Project-local design and authoring skills
-├── scripts/              # Setup, deployment, and lab validation tools
+├── mkdocs-*.yml          # Per-track workbook build configuration
+├── versions.yaml         # Runtime, dependency, and image pins
+├── wikis.yaml            # Workbook wiki registry
 ├── BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
 ├── THIRD_PARTY_NOTICES.md # Open-source licence inventory and attribution checklist
 ├── THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
+├── RELEASE_NOTES.md      # Current release notes
+├── CHANGELOG.md          # Release and change history
 └── CONTRIBUTING.md       # Contributor guidelines
 ```
 
@@ -579,6 +700,10 @@ opencyberrange/
 | Guide | Audience |
 |-------|----------|
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
+| [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
+| [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the 24.04 validation checklist |
+| [V2 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.0 to 24.04 while 1.0 stays on 22.04 |
+| [V2 HA lab pool plan](docs/V2-HA-LAB-POOL.md) | Architects planning multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation |
@@ -587,6 +712,7 @@ opencyberrange/
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
 | [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
 | [Learning framework](docs/LEARNING-FRAMEWORK.md) | Instructors and curriculum designers mapping tracks, levels, labs, and evidence |
+| [Version 2.0 analytics plan](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
 | [NICE mapping matrix](docs/NICE-MAPPING.md) | Programme reviewers mapping tracks to NICE categories and work roles |
 | [Survey privacy and consent](docs/SURVEY-PRIVACY.md) | Privacy officers and survey operators |
 | [REB-ready survey package](docs/research/REB-SURVEY-PACKAGE.md) | Researchers and REB reviewers preparing a survey protocol |
@@ -607,13 +733,13 @@ cd platform && docker compose up -d frontend
 
 ## Verifying Health
 
-After installation, log in as admin and navigate to **Admin Panel > System Health**. The health check verifies Docker, the database, disk space, and the Peer Manager VPN service (if installed). All indicators should show green.
+After installation, log in as admin and navigate to **Admin Panel > System Health**. The health check verifies Docker, the database, disk space, and the Peer Manager VPN service (if installed). All indicators should show green. The page footer shows the running platform version, and `GET /api/version` returns the same value for support reports.
 
 ## Requirements
 
-- **OS:** Ubuntu 22.04 LTS or later (Debian-based)
+- **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.0 maintenance line stays on Ubuntu 22.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** Python 3.11, Node 22 (frontend build), PostgreSQL 15, Docker Compose v2. Current pins and the upgrade trail are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** OpenCyberRange 2.0.0-dev; Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are 2.0 goals, not supported deployment targets yet. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used
