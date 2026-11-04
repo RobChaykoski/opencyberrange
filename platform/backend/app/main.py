@@ -292,6 +292,28 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added rangebox_enabled column to lab_sessions table")
 
+        # --- Users: optional account email consent (PIPEDA withdrawal record)
+        if 'users' in inspector.get_table_names():
+            user_columns = {c['name'] for c in inspector.get_columns('users')}
+            if 'email_notifications' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN email_notifications BOOLEAN DEFAULT TRUE NOT NULL"
+                ))
+                conn.commit()
+                logger.info("Added email_notifications column to users table")
+            if 'email_consent_version' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN email_consent_version VARCHAR(32)"
+                ))
+                conn.commit()
+                logger.info("Added email_consent_version column to users table")
+            if 'email_consent_updated_at' not in user_columns:
+                conn.execute(text(
+                    "ALTER TABLE users ADD COLUMN email_consent_updated_at TIMESTAMP"
+                ))
+                conn.commit()
+                logger.info("Added email_consent_updated_at column to users table")
+
         # --- Competitions: archive flag (keeps results, hides from default list)
         if 'competitions' in inspector.get_table_names():
             comp_columns = {c['name'] for c in inspector.get_columns('competitions')}

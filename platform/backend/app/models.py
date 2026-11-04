@@ -52,6 +52,12 @@ class User(Base):
     notification_prefs = Column(Text, nullable=True)
     # Email the user on a new login from a new IP.
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    # Consent to optional account email. Essential security/service messages may
+    # still be sent where required; the version and timestamp make the consent
+    # record auditable and support withdrawal under PIPEDA.
+    email_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    email_consent_version = Column(String(32), nullable=True)
+    email_consent_updated_at = Column(DateTime, nullable=True)
     # --- Optional survey consent (platform/usage surveys only) ---
     # Opt-in is explicit and separate from account creation. The timestamp and
     # statement version make the consent record auditable and support withdrawal.

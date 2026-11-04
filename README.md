@@ -351,6 +351,11 @@ classrooms where not every student has the same hardware:
   withdrawal at any time. Survey consent covers platform feedback only; it does
   not permit collection of passwords, grades, lab flags, or sensitive personal
   data. See [Survey privacy and consent](docs/SURVEY-PRIVACY.md).
+- **Email consent and withdrawal.** Profile → **Privacy and data** explains why
+  account email is collected, states that it is not marketing, and lets the
+  learner withdraw consent to optional account email under PIPEDA. The consent
+  version and update time are recorded. Essential security and service messages
+  may still be sent where required to operate the account.
 - **Learning-impact stance.** Completion, time, and badge counts are activity
   signals, not measures of ability. The platform does not use them for public
   rankings, hiring, promotion, or discipline.

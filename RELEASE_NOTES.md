@@ -15,6 +15,10 @@ account email plus the recent validation fixes.
   nothing.
 - **SMTP settings:** admins configure the relay, from address, public URL, and
   credentials under Admin → Settings → Email, then send a test message.
+- **Profile email consent:** learners can opt in or out of optional account
+  email from Profile → Privacy and data. The panel explains the purpose, states
+  that email is not marketing, records the consent version and update time, and
+  supports withdrawal under PIPEDA.
 - **Version identity:** the backend exposes `GET /api/version`, and the app
   footer shows the running release.
 - **Certificate verification hardening:** malformed IDs, including emoji,

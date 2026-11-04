@@ -358,6 +358,9 @@ def _validate_avatar_data(value: Optional[str]) -> Optional[str]:
     return value
 
 
+EMAIL_CONSENT_VERSION = "2026-11-04"
+
+
 class UserSettingsUpdate(BaseModel):
     first_name: Optional[str] = Field(None, max_length=80)
     last_name: Optional[str] = Field(None, max_length=80)
@@ -373,6 +376,7 @@ class UserSettingsUpdate(BaseModel):
     show_on_scoreboard: Optional[bool] = None
     scoreboard_name_mode: Optional[Literal["real_name", "username", "anonymous"]] = None
     login_notifications: Optional[bool] = None
+    email_notifications: Optional[bool] = None
     notification_prefs: Optional[dict] = None
 
     @field_validator("avatar_data")
@@ -411,6 +415,9 @@ async def get_user_settings(
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
         "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
         "login_notifications": getattr(current_user, "login_notifications", True),
+        "email_notifications": getattr(current_user, "email_notifications", True),
+        "email_consent_version": getattr(current_user, "email_consent_version", None),
+        "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
         "notification_prefs": prefs or {},
         "survey_opt_in": bool(getattr(current_user, "survey_opt_in", False)),
         "survey_consent_version": getattr(current_user, "survey_consent_version", None),
@@ -447,6 +454,10 @@ async def update_user_settings(
         current_user.scoreboard_name_mode = payload.scoreboard_name_mode
     if payload.login_notifications is not None:
         current_user.login_notifications = payload.login_notifications
+    if payload.email_notifications is not None:
+        current_user.email_notifications = payload.email_notifications
+        current_user.email_consent_version = EMAIL_CONSENT_VERSION
+        current_user.email_consent_updated_at = datetime.now(timezone.utc)
     if payload.notification_prefs is not None:
         current_user.notification_prefs = _json.dumps(payload.notification_prefs)
     db.commit()
@@ -1088,6 +1099,10 @@ async def register(
     if invite is not None:
         invite.used_by = new_user.id
         invite.used_at = datetime.now(timezone.utc)
+
+    new_user.email_notifications = bool(user_data.send_registration_email)
+    new_user.email_consent_version = EMAIL_CONSENT_VERSION
+    new_user.email_consent_updated_at = datetime.now(timezone.utc)
 
     db.commit()
     db.refresh(new_user)
