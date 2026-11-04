@@ -7,7 +7,7 @@ duration_minutes: 90
 randomize_ip_offsets: true
 visibility: course
 week: 10
-workbook: "wiki/range/webpt/CH_COURSE01_Weekly_Challenges/27_Full_Web_to_Root/"
+workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/27_Full_Web_to_Root/"
 
 flag: "OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}"
 
