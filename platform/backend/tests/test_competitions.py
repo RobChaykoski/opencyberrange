@@ -302,6 +302,43 @@ def test_competition_sponsors_are_created_and_replaced(
     )
 
 
+def test_competition_logo_round_trip(client, test_lab, instructor_auth):
+    import base64
+    import io
+
+    from PIL import Image
+
+    buffer = io.BytesIO()
+    Image.new("RGB", (16, 16), (37, 99, 235)).save(buffer, format="PNG")
+    logo = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode()
+
+    start_at, end_at = _window()
+    created = client.post(
+        "/api/competitions",
+        json={
+            "name": "Logo Round Trip",
+            "logo_data": logo,
+            "start_at": start_at.isoformat(),
+            "end_at": end_at.isoformat(),
+            "lab_ids": [test_lab.id],
+        },
+        headers=instructor_auth,
+    )
+    assert created.status_code == 201, created.text
+    competition_id = created.json()["id"]
+
+    try:
+        detail = client.get(
+            f"/api/competitions/{competition_id}", headers=instructor_auth
+        )
+        assert detail.status_code == 200, detail.text
+        assert detail.json()["competition"]["logo_data"] == logo
+    finally:
+        client.delete(
+            f"/api/competitions/{competition_id}", headers=instructor_auth
+        )
+
+
 def test_student_cannot_create_competition(client, auth_headers, test_lab):
     start_at, end_at = _window()
     resp = client.post(

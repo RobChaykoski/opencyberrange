@@ -373,7 +373,8 @@ need to be documented separately.
 The 2.x line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
-process. New endpoints need allowed/denied authorization tests, new personal
+process. The current verification pass is recorded in
+[V2 security evidence](docs/V2-SECURITY-EVIDENCE.md). New endpoints need allowed/denied authorization tests, new personal
 data needs export/erasure coverage, and new rich-text surfaces need XSS
 regression tests.
 

@@ -6,14 +6,24 @@
         <h1>Learning reports</h1>
         <p>Cross-course performance, learning, and confidence signals for teaching review.</p>
       </div>
-      <button
-        type="button"
-        class="btn btn--outline btn--sm"
-        :disabled="!rows.length"
-        @click="exportCsv"
-      >
-        Export CSV
-      </button>
+      <div class="reports-head__actions">
+        <button
+          type="button"
+          class="btn btn--outline btn--sm"
+          :disabled="!rows.length"
+          @click="exportCsv"
+        >
+          Export CSV
+        </button>
+        <button
+          type="button"
+          class="btn btn--outline btn--sm"
+          :disabled="!rows.length || exportingPdf"
+          @click="exportPdf"
+        >
+          {{ exportingPdf ? 'Preparing PDF...' : 'Export PDF' }}
+        </button>
+      </div>
     </header>
 
     <p v-if="loading" class="reports-state">Loading course reports...</p>
@@ -152,6 +162,7 @@ import axios from '../api/axios'
 const data = ref(null)
 const loading = ref(true)
 const error = ref('')
+const exportingPdf = ref(false)
 
 const rows = computed(() => data.value?.courses || [])
 const totals = computed(() => data.value?.totals || {})
@@ -202,6 +213,29 @@ const exportCsv = () => {
   URL.revokeObjectURL(url)
 }
 
+const exportPdf = async () => {
+  exportingPdf.value = true
+  error.value = ''
+  try {
+    const response = await axios.get('/analytics/reports/export.pdf', {
+      responseType: 'blob',
+    })
+    const blob = new Blob([response.data], { type: 'application/pdf' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `learning-reports-${new Date().toISOString().slice(0, 10)}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  } catch {
+    error.value = 'Could not prepare the PDF report. Please try again.'
+  } finally {
+    exportingPdf.value = false
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -218,6 +252,12 @@ onMounted(load)
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.2rem;
+}
+
+.reports-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .reports-head__eyebrow {

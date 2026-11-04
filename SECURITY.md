@@ -73,4 +73,5 @@ The 2.x line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TO
 as a merge and release requirement. It covers the web interface, platform data,
 and delivery process, and it names the tests or evidence expected for each
 category. Exceptions must be recorded with an owner and expiry; an expired
-exception is an open finding.
+exception is an open finding. The current pass is recorded in
+[V2 security evidence](docs/V2-SECURITY-EVIDENCE.md).

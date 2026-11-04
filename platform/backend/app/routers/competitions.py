@@ -128,9 +128,16 @@ class CompetitionSponsorInput(BaseModel):
         return _validate_sponsor_logo(value)
 
 
+def _clean_competition_logo(value: Optional[str]) -> Optional[str]:
+    if value is None or value == "":
+        return None
+    return _validate_competition_logo(value)
+
+
 class CompetitionCreate(BaseModel):
     name: str = Field(..., min_length=2, max_length=150)
     description: Optional[str] = None
+    logo_data: Optional[str] = Field(None, max_length=400_000)
     start_at: datetime
     end_at: datetime
     lab_ids: List[int] = Field(..., min_length=1)
@@ -140,6 +147,7 @@ class CompetitionCreate(BaseModel):
 class CompetitionUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=2, max_length=150)
     description: Optional[str] = None
+    logo_data: Optional[str] = Field(None, max_length=400_000)
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
     lab_ids: Optional[List[int]] = Field(None, min_length=1)
@@ -292,6 +300,7 @@ def _summary(
         "id": competition.id,
         "name": competition.name,
         "description": competition.description,
+        "logo_data": competition.logo_data,
         "start_at": _iso(competition.start_at),
         "end_at": _iso(competition.end_at),
         "status": _status(competition, now),
@@ -559,6 +568,7 @@ async def public_competition(competition_id: int, db: Session = Depends(get_db))
             "id": competition.id,
             "name": competition.name,
             "description": competition.description,
+            "logo_data": competition.logo_data,
             "start_at": _iso(competition.start_at),
             "end_at": _iso(competition.end_at),
             "status": _status(competition, now),
@@ -622,6 +632,7 @@ async def create_competition(
     competition = Competition(
         name=payload.name.strip(),
         description=(payload.description or "").strip() or None,
+        logo_data=_clean_competition_logo(payload.logo_data),
         start_at=payload.start_at,
         end_at=payload.end_at,
         created_by=current_user.id,
@@ -671,6 +682,8 @@ async def update_competition(
         competition.name = payload.name.strip()
     if payload.description is not None:
         competition.description = payload.description.strip() or None
+    if payload.logo_data is not None:
+        competition.logo_data = _clean_competition_logo(payload.logo_data)
     competition.start_at = start_at
     competition.end_at = end_at
     if payload.is_active is not None:

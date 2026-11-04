@@ -10,9 +10,11 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 from statistics import median
 from typing import Optional
+import io
 import json
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
@@ -972,6 +974,26 @@ async def reports_overview(
         },
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@router.get("/reports/export.pdf")
+async def reports_export_pdf(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Download the cross-course report as a PDF."""
+    from app.services.analytics_report import generate_reports_pdf
+
+    payload = await reports_overview(db, current_user)
+    pdf_bytes = generate_reports_pdf(payload)
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": 'attachment; filename="learning-reports.pdf"',
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 @router.get("/courses/{course_id}/exercises")

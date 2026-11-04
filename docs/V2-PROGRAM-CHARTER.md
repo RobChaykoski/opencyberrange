@@ -58,15 +58,15 @@ These are v3 candidates unless the charter is amended:
 
 | ID | Item | Classification | State | Owner |
 |---|---|---|---|---|
-| A1 | Student learning analytics view | In scope — Analytics | Preview in 2.0 tree | Product |
-| A2 | Course analytics overview and exercise drill-down | In scope — Analytics | Preview in 2.0 tree | Product |
-| A3 | Metric dictionary and shared definitions | In scope — Analytics | Preview in 2.0 tree | Product |
-| R1 | Cross-course Reports page with RAG signals | In scope — Reporting | Preview in 2.0 tree | Product |
-| R2 | Pulse surveys and course survey reporting | In scope — Reporting | Preview in 2.0 tree | Product |
-| R3 | CSV/PDF export for teaching review | In scope — Reporting | Partial | Product |
-| H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Build-out in progress; host/platform pass, network/lab gates pending | Platform |
+| A1 | Student learning analytics view | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
+| A2 | Course analytics overview and exercise drill-down | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
+| A3 | Metric dictionary and shared definitions | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
+| R1 | Cross-course Reports page with RAG signals | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
+| R2 | Pulse surveys and course survey reporting | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
+| R3 | CSV/PDF export for teaching review | In scope — Reporting | Shipped — CSV and PDF | Product |
+| H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Partial — host/platform pass; network/lab/recovery gates pending | Platform |
 | H2 | Multi-host Docker lab pool design | In scope — HA | Design complete | Architecture |
-| H3 | Control-plane and lab-node failover | In scope — HA | Planned | Architecture |
+| H3 | Control-plane and lab-node failover | In scope — HA | Not started — required before 2.0 GA | Architecture |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
 | M3 | Version identity endpoint and footer | Update — operational | Shipped | Platform |
@@ -128,4 +128,11 @@ A 2.x release is ready only when:
 - no unregistered feature shipped;
 - bug fixes and updates are recorded separately from features;
 - the v3 parking lot contains every deferred idea;
-- the README, release notes, and register agree.
+- the README, release notes, and register agree;
+- H1 (24.04) is frozen and recorded in the support matrix;
+- H3 (HA failover) meets the acceptance test in
+  [`V2-HA-LAB-POOL.md`](V2-HA-LAB-POOL.md).
+
+**Current status:** analytics and reporting are delivered and running on the
+24.04 preview host, but 2.0 GA is blocked by H1 (network/lab/recovery gates) and
+H3 (HA implementation).

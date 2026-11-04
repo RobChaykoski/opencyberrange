@@ -15,9 +15,19 @@ Status: development line. This is not a GA release and may change before 2.0.0.
 - **Profile email consent:** a Privacy and data control for optional account
   email, with PIPEDA withdrawal language and an auditable consent version and
   timestamp.
+- **Reporting exports:** cross-course Reports can be downloaded as CSV or PDF,
+  including learning hours and aggregate exercise feedback.
+- **Competition event marks:** optional validated competition logos appear on
+  event cards and detail headers.
 - **Security baseline:** the v2 interface, data, and delivery process now use
   the OWASP Top 10 as a merge and release requirement. See
   `docs/V2-SECURITY-OWASP-TOP-10.md`.
+
+## Release status
+
+Analytics and reporting are delivered and running on the 24.04 preview host.
+2.0 GA remains blocked by the 24.04 network/lab/recovery gates and the HA
+failover implementation described in `docs/V2-PROGRAM-CHARTER.md`.
 
 ## Upgrade notes for the development line
 

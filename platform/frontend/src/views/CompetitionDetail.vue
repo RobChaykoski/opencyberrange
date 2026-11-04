@@ -9,16 +9,24 @@
 
     <template v-else-if="detail">
       <header class="detail-head">
-        <div>
-          <router-link to="/competitions" class="back-link">← All competitions</router-link>
-          <span class="status-pill" :class="`status-pill--${detail.competition.status}`">
-            {{ statusLabel(detail.competition.status) }}
-          </span>
-          <h1>{{ detail.competition.name }}</h1>
-          <p class="detail-dates">
-            <ClockIcon />
-            {{ formatDate(detail.competition.start_at) }} – {{ formatDate(detail.competition.end_at) }}
-          </p>
+        <div class="detail-head__identity">
+          <img
+            v-if="detail.competition.logo_data"
+            class="detail-head__logo"
+            :src="detail.competition.logo_data"
+            :alt="`${detail.competition.name} event mark`"
+          />
+          <div>
+            <router-link to="/competitions" class="back-link">← All competitions</router-link>
+            <span class="status-pill" :class="`status-pill--${detail.competition.status}`">
+              {{ statusLabel(detail.competition.status) }}
+            </span>
+            <h1>{{ detail.competition.name }}</h1>
+            <p class="detail-dates">
+              <ClockIcon />
+              {{ formatDate(detail.competition.start_at) }} – {{ formatDate(detail.competition.end_at) }}
+            </p>
+          </div>
         </div>
         <div class="detail-actions">
           <router-link
@@ -355,6 +363,23 @@ onMounted(loadDetail)
   border: 1px solid var(--border-color);
   border-radius: 14px;
   background: var(--bg-secondary);
+}
+
+.detail-head__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.detail-head__logo {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  object-fit: contain;
+  background: var(--bg-primary);
 }
 
 .back-link {

@@ -394,6 +394,14 @@ def test_exercise_reaction_requires_started_exercise(client, analytics_data):
     assert resp.status_code == 403
 
 
+def test_reports_pdf_export(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    resp = client.get("/api/analytics/reports/export.pdf", headers=headers)
+    assert resp.status_code == 200, resp.text
+    assert resp.headers["content-type"] == "application/pdf"
+    assert resp.content.startswith(b"%PDF")
+
+
 def test_pulse_survey_is_completion_gated_and_upserts(
     client, analytics_data
 ):

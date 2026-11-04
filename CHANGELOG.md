@@ -20,6 +20,9 @@ All notable changes to OpenCyberRange are recorded here.
   are not shown in the aggregate views.
 - Global achievements for learning hours (1, 5, 15, and 30 hours) and sign-in
   streaks (3, 7, and 30 consecutive days).
+- Cross-course report PDF export, alongside the existing CSV export.
+- Optional competition event marks, validated and stored with the same image
+  safety rules as sponsor logos.
 - Login now records a UTC calendar-day streak without changing the
   authentication decision path.
 

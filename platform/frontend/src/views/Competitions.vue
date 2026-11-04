@@ -50,6 +50,40 @@
           <textarea v-model="newCompetition.description" rows="3" placeholder="What should participants know?" />
         </label>
 
+        <div class="event-logo-field">
+          <div class="event-logo-field__preview">
+            <img
+              v-if="newCompetition.logo_data"
+              :src="newCompetition.logo_data"
+              alt="Competition event mark preview"
+            />
+            <TrophyIcon v-else class="event-logo-field__placeholder" />
+          </div>
+          <div class="event-logo-field__body">
+            <strong>Event mark</strong>
+            <p>Optional PNG, JPEG, or WebP shown on the event card and detail header.</p>
+            <div class="event-logo-field__actions">
+              <label class="btn btn--outline btn--xs">
+                {{ newCompetition.logo_data ? 'Replace mark' : 'Upload mark' }}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  class="sr-only"
+                  @change="onCompetitionLogoSelected"
+                />
+              </label>
+              <button
+                v-if="newCompetition.logo_data"
+                type="button"
+                class="btn btn--outline btn--xs"
+                @click="newCompetition.logo_data = null"
+              >
+                Remove mark
+              </button>
+            </div>
+          </div>
+        </div>
+
         <section class="sponsor-editor" aria-labelledby="sponsor-editor-title">
           <div class="sponsor-editor__head">
             <div>
@@ -201,7 +235,10 @@
             <span class="status-pill" :class="`status-pill--${comp.status}`">{{ statusLabel(comp.status) }}</span>
             <span v-if="comp.joined" class="joined-pill">Joined</span>
           </span>
-          <span class="comp-card__name">{{ comp.name }}</span>
+          <span class="comp-card__identity">
+            <img v-if="comp.logo_data" class="comp-card__logo" :src="comp.logo_data" :alt="`${comp.name} event mark`" />
+            <span class="comp-card__name">{{ comp.name }}</span>
+          </span>
           <span class="comp-card__meta">
             {{ formatDate(comp.start_at) }} – {{ formatDate(comp.end_at) }}
           </span>
@@ -217,15 +254,23 @@
 
       <section v-if="selected" class="comp-detail" aria-live="polite">
         <div class="comp-detail__head">
-          <div>
-            <span class="status-pill" :class="`status-pill--${selected.competition.status}`">
-              {{ statusLabel(selected.competition.status) }}
-            </span>
-            <h2>{{ selected.competition.name }}</h2>
-            <p class="comp-detail__dates">
-              <ClockIcon />
-              {{ formatDate(selected.competition.start_at) }} – {{ formatDate(selected.competition.end_at) }}
-            </p>
+          <div class="comp-detail__identity">
+            <img
+              v-if="selected.competition.logo_data"
+              class="comp-detail__logo"
+              :src="selected.competition.logo_data"
+              :alt="`${selected.competition.name} event mark`"
+            />
+            <div>
+              <span class="status-pill" :class="`status-pill--${selected.competition.status}`">
+                {{ statusLabel(selected.competition.status) }}
+              </span>
+              <h2>{{ selected.competition.name }}</h2>
+              <p class="comp-detail__dates">
+                <ClockIcon />
+                {{ formatDate(selected.competition.start_at) }} – {{ formatDate(selected.competition.end_at) }}
+              </p>
+            </div>
           </div>
           <div class="comp-detail__actions">
             <router-link
@@ -383,11 +428,35 @@ const deleting = ref(false)
 const newCompetition = reactive({
   name: '',
   description: '',
+  logo_data: null,
   start_at: '',
   end_at: '',
   lab_ids: [],
   sponsors: [],
 })
+
+const onCompetitionLogoSelected = async (event) => {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  createError.value = ''
+  if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+    createError.value = 'Event marks must be a PNG, JPEG, or WebP image.'
+    return
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    createError.value = 'Choose an event mark smaller than 5 MB.'
+    return
+  }
+  try {
+    newCompetition.logo_data = await resizeImageFile(file, {
+      maxDimension: 512,
+      quality: 0.88,
+    })
+  } catch {
+    createError.value = 'Could not process that event mark.'
+  }
+}
 
 const addSponsor = () => {
   newCompetition.sponsors.push({
@@ -534,6 +603,7 @@ const resetNewCompetition = () => {
   const now = new Date()
   newCompetition.name = ''
   newCompetition.description = ''
+  newCompetition.logo_data = null
   newCompetition.start_at = toLocalInput(now)
   newCompetition.end_at = toLocalInput(new Date(now.getTime() + 2 * 60 * 60 * 1000))
   newCompetition.lab_ids = []
@@ -702,6 +772,7 @@ const createCompetition = async () => {
     const response = await axios.post('/competitions', {
       name: newCompetition.name.trim(),
       description: newCompetition.description.trim() || null,
+      logo_data: newCompetition.logo_data || null,
       start_at: new Date(newCompetition.start_at).toISOString(),
       end_at: new Date(newCompetition.end_at).toISOString(),
       lab_ids: newCompetition.lab_ids,
@@ -787,6 +858,63 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+}
+
+.event-logo-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.event-logo-field__preview {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+.event-logo-field__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 9px;
+}
+
+.event-logo-field__placeholder {
+  width: 26px;
+  height: 26px;
+}
+
+.event-logo-field__body {
+  min-width: 0;
+}
+
+.event-logo-field__body strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.event-logo-field__body p {
+  margin: 0.15rem 0 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.event-logo-field__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 .create-form__row {
@@ -967,6 +1095,18 @@ onMounted(async () => {
       "website website website"
       "description description description";
   }
+
+  .comp-detail__head {
+    flex-direction: column;
+  }
+
+  .comp-detail__actions {
+    width: 100%;
+  }
+
+  .event-logo-field {
+    flex-direction: column;
+  }
 }
 
 .lab-picker {
@@ -1097,10 +1237,27 @@ onMounted(async () => {
   gap: 0.35rem;
 }
 
+.comp-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.comp-card__logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  object-fit: contain;
+  background: var(--bg-primary);
+}
+
 .comp-card__name {
   font-size: 0.86rem;
   font-weight: 700;
   color: var(--text-primary);
+  overflow-wrap: anywhere;
 }
 
 .comp-card__meta,
@@ -1121,6 +1278,23 @@ onMounted(async () => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.comp-detail__identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.comp-detail__logo {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  object-fit: contain;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
 }
 
 .comp-detail__head h2 {

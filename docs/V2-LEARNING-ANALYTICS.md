@@ -204,7 +204,7 @@ A dedicated **Reports** page gives instructors and administrators a cross-course
 - Learning hours and aggregate exercise likes/dislikes.
 - Trending topics across courses.
 - Direct links to each course analytics tab.
-- CSV export for course review, including learning hours and feedback totals.
+- CSV and PDF export for course review, including learning hours and feedback totals.
 
 The page is a reporting surface, not a ranking: it summarises teaching signals and links back to the evidence.
 
