@@ -581,6 +581,11 @@ opencyberrange/
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
 | [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
+| [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
+| [Learning framework](docs/LEARNING-FRAMEWORK.md) | Instructors and curriculum designers mapping tracks, levels, labs, and evidence |
+| [NICE mapping matrix](docs/NICE-MAPPING.md) | Programme reviewers mapping tracks to NICE categories and work roles |
+| [Survey privacy and consent](docs/SURVEY-PRIVACY.md) | Privacy officers and survey operators |
+| [REB-ready survey package](docs/research/REB-SURVEY-PACKAGE.md) | Researchers and REB reviewers preparing a survey protocol |
 | [Build Notice](BUILD_NOTICE.md) | Upstream attribution, AI-assistance disclosure, and changes in this updated build |
 | [Third-Party Notices](THIRD_PARTY_NOTICES.md) | Open-source dependencies, licence families, and attribution checklist |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributors submitting labs or platform changes |
