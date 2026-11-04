@@ -4,7 +4,9 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-04**. Platform development version: **2.0.0-dev**.
+Last reviewed: **2026-11-04**. Current editions: **Base 1.1**, **Pro 2.0
+(2.0.0-dev)**, **Enterprise 3.0 (development)**. See [Editions](EDITIONS.md).
+Platform development version: **2.0.0-dev**.
 
 ## Policy
 
@@ -23,7 +25,7 @@ Last reviewed: **2026-11-04**. Platform development version: **2.0.0-dev**.
 
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
-| Host OS | 1.1: Ubuntu 22.04 and 24.04 LTS; 2.0: Ubuntu 24.04 LTS target | 24.04 for 2.0 | Validation in progress | 1.1 supports both LTS releases; 2.0 host/platform deployed and KVM ready, network/VPN and recovery gates remain; see [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
+| Host OS | Base 1.1: Ubuntu 22.04 and 24.04 LTS; Pro 2.0 and Enterprise 3.0: Ubuntu 24.04 LTS | 24.04 for Pro/Enterprise | Validation in progress | Base supports both LTS releases; Pro host/platform deployed and KVM ready, network/VPN and recovery gates remain; Enterprise inherits the Pro baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |

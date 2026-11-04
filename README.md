@@ -27,25 +27,27 @@ A self-hosted cybersecurity training platform that deploys hands-on exercises in
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
-## Version 2.0
+## Editions
 
-OpenCyberRange 1.1 is the supported maintenance release. Version 2.0 is the next
-feature line, and it is additive: the 1.x curriculum, learner workflows, privacy
-controls, and single-host Docker Compose install remain the baseline. **Bug
-fixes and security updates continue on the 1.1 line and are merged forward into
-2.0**, so a fix does not wait for the next feature release. There is no separate
-2.0 fork to maintain.
+OpenCyberRange uses three cumulative deployment editions. The edition names
+describe scope and operational shape, not three separate codebases.
 
-| Release line | State | Host OS | Purpose |
-|---|---|---|---|
-| `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Production installs; both LTS baselines are supported |
-| `1.0.x` | Prior release | Ubuntu 22.04 LTS | Upgrade path to 1.1 |
-| `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS target | Reporting and analytics only |
+| Edition | Version | State | Host OS | Purpose |
+|---|---|---|---|---|
+| **Base** | `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; maintenance and security line |
+| **Pro** | `2.0.x` (`2.0.0-dev`) | **Development** | Ubuntu 24.04 LTS | Base plus learning analytics, reporting, and exports on one host |
+| **Enterprise** | `3.0.x` | **Development** | Ubuntu 24.04 LTS | Pro plus multi-host HA, LDAP/OIDC/SAML, and enterprise operations |
 
-Version 1.1 bug fixes are not rebased onto 24.04. They land on the 1.1 line and
-merge forward into 2.0. The 24.04 migration is tracked in
-[the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md). Multi-host HA was
-moved to v3; see [the v3 HA lab pool plan](docs/V3-HA-LAB-POOL.md).
+Base 1.1 remains the reference behaviour and the fallback. Pro is additive:
+the Base curriculum, learner workflows, privacy controls, and single-host Docker
+Compose install remain. Enterprise is additive again: it adds the lab pool,
+control-plane HA, gateway failover, and identity federation without removing the
+single-host path.
+
+**Bug fixes and security updates continue on Base 1.1 and merge forward into Pro
+and Enterprise**, so a fix does not wait for a feature release. There is no
+separate fork to maintain. See [Editions](docs/EDITIONS.md) and
+[ADR 0002](docs/decisions/0002-edition-model.md).
 
 ### Version 2.0 goals
 
@@ -62,8 +64,10 @@ updates, dependency/runtime updates, and small compatibility corrections are
 still allowed. New features, scoring changes, integrations, new product domains,
 and multi-host HA are v3 work.
 
-- [2.x program charter](docs/V2-PROGRAM-CHARTER.md)
-- [v3 parking lot](docs/V3-PARKING-LOT.md)
+- [Edition model](docs/EDITIONS.md)
+- [Pro 2.x program charter](docs/V2-PROGRAM-CHARTER.md)
+- [Enterprise v3 parking lot](docs/V3-PARKING-LOT.md)
+- [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
 
 ### Reporting and analytics (development preview)
 

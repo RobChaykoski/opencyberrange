@@ -1,8 +1,11 @@
-# OpenCyberRange 2.x Program Charter
+# OpenCyberRange Pro 2.x Program Charter
 
 Status: **Active scope guard**
+Edition: **Pro** — Base 1.1 plus analytics and reporting
 Owner: Robert Chaykoski
 Last reviewed: 2026-11-04
+
+See [Editions](EDITIONS.md) for the Base/Pro/Enterprise boundary.
 
 This charter is the source of truth for what 2.x is allowed to become. If a
 request, branch, or release note disagrees with this page, the page wins until a
@@ -10,9 +13,13 @@ written scope change is accepted.
 
 ## Program objective
 
-Ship a 2.0 release that makes OpenCyberRange better at **understanding learning**
-and **reporting on it**, while running reliably on the validated 24.04 baseline,
-without turning the release into a general platform expansion.
+Ship the **Pro 2.0** edition: the Base 1.1 teaching platform plus the capability
+to **understand learning** and **report on it**, while running reliably on the
+validated 24.04 baseline, without turning the release into a general platform
+expansion.
+
+Pro is not the HA or identity-federation edition. Those are
+**Enterprise 3.0**.
 
 ## The 2.x feature set
 
@@ -23,8 +30,9 @@ Only these two workstreams may add product capability in 2.x:
 | **Analytics** | Learner growth, course insight, exercise signals, and a shared metric dictionary | A learner can see their own progress; an instructor can see where a cohort is struggling without ranking individuals |
 | **Reporting** | Cross-course reports, teaching-review signals, pulse feedback, and exports | An instructor or administrator can review a course and export the evidence |
 
-Nothing else is a 2.x feature commitment. High availability and multi-host lab
-pools were moved to v3; see [`V3-HA-LAB-POOL.md`](V3-HA-LAB-POOL.md).
+Nothing else is a Pro 2.x feature commitment. High availability, multi-host lab
+pools, LDAP/OIDC/SAML, and enterprise operations are **Enterprise 3.0**; see
+[`V3-HA-LAB-POOL.md`](V3-HA-LAB-POOL.md) and [`EDITIONS.md`](EDITIONS.md).
 
 ## Allowed outside the feature set
 

@@ -5,6 +5,26 @@
 # supported upstream and compatible with the rest of the selected stack.
 # It does not mean the newest possible release of every package.
 
+editions:
+  base:
+    name: "Base"
+    version: "1.1.0"
+    status: "supported"
+    shape: "single-host"
+    focus: "teaching platform, maintenance, and security"
+  pro:
+    name: "Pro"
+    version: "2.0.0-dev"
+    status: "development"
+    shape: "single-host"
+    focus: "analytics, reporting, and exports"
+  enterprise:
+    name: "Enterprise"
+    version: "3.0.0-dev"
+    status: "development"
+    shape: "multi-host HA"
+    focus: "HA, identity federation, and enterprise operations"
+
 release:
   version: "1.0.0"
   status: "supported"

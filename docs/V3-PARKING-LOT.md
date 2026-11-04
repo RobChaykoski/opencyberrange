@@ -1,7 +1,10 @@
-# OpenCyberRange v3 Parking Lot
+# OpenCyberRange Enterprise 3.0 Parking Lot
 
-This file holds real ideas that are deliberately **not** in the 2.x programme.
-Keeping them here prevents scope drift without losing them.
+This file holds real ideas that are deliberately **not** in the Pro 2.x
+programme. Keeping them here prevents scope drift without losing them.
+
+Enterprise 3.0 is the HA and identity-federation edition. It builds on Pro 2.0
+and Base 1.1. See [Editions](EDITIONS.md).
 
 ## Rules
 
