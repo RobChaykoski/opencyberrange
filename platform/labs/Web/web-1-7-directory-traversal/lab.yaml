@@ -7,7 +7,6 @@ duration_minutes: 35
 randomize_ip_offsets: true
 visibility: course
 week: 4
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/04_Directory_Traversal/"
 flag: "OCR{p4th_tr4v3rs3d}"
 
 objectives:

@@ -7,7 +7,6 @@ duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 6
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/22_Filtered_Injection/"
 flag: "OCR{f1lt3r_byp4ss_pwn3d}"
 
 objectives:

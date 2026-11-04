@@ -7,7 +7,6 @@ duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 9
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/09_Meridian_Data_Breach_Assessment/"
 
 flag: "OCR{d4ta_br34ch_3xp0s3d}"
 

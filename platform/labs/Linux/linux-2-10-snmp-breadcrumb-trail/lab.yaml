@@ -7,7 +7,6 @@ duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 3
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/19_SNMP_Breadcrumb_Trail/"
 flag: "OCR{snmp_ch41n_l0g1n}"
 
 objectives:

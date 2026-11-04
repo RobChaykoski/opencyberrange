@@ -5,7 +5,6 @@ category: assessment
 duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/02_Midterm_Assessment/"
 
 objectives:
   - Discover all live hosts on your assigned subnet using discovery scanning

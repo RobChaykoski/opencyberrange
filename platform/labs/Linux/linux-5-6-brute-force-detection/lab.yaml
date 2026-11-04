@@ -7,7 +7,6 @@ duration_minutes: 75
 randomize_ip_offsets: true
 visibility: course
 week: 14
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/30_Brute_Force_Detection/"
 flag: "OCR{brut3_d3t3ct_bl0ck}"
 
 objectives:

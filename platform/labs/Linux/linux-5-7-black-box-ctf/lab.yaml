@@ -7,7 +7,6 @@ duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
 week: 15
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/31_Black_Box_CTF/"
 flag: "OCR{t1t4n_bl4ck_b0x_pwn}"
 
 objectives:

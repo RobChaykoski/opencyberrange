@@ -7,7 +7,6 @@ duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
 week: 15
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/15_Capstone_CTF/"
 flag: "OCR{z3n1th_pwn3d_v1ct0ry}"
 
 objectives:

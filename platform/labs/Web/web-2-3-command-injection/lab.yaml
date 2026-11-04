@@ -7,7 +7,6 @@ duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 6
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/06_Command_Injection/"
 flag: "OCR{cmd_1nj3ct3d}"
 
 objectives:

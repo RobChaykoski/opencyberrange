@@ -7,7 +7,6 @@ duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 8
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/08_Password_Hash_Cracking/"
 flag: "OCR{cr4ck3d_h4sh3s}"
 
 objectives:

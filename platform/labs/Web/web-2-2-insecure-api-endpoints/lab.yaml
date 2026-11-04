@@ -7,7 +7,6 @@ duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 5
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/05_Insecure_API_Endpoints/"
 flag: "OCR{4p1_br0k3n_acc3ss}"
 
 objectives:

@@ -18,6 +18,7 @@ import re
 import sys
 
 SKIP_DIRS = {".git", "__pycache__", "node_modules", ".venv", "wiki", "wiki.prev", "dist"}
+SKIP_FILES = {"lab.yaml", "README.md"}
 SKIP_SUFFIXES = (".pyc", ".pyo")
 
 
@@ -81,7 +82,7 @@ def main() -> int:
         for dirpath, dirnames, filenames in os.walk(root):
             dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
             for filename in sorted(filenames):
-                if filename.endswith(SKIP_SUFFIXES):
+                if filename in SKIP_FILES or filename.endswith(SKIP_SUFFIXES):
                     continue
                 path = os.path.join(dirpath, filename)
                 if path in seen_files:

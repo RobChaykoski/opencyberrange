@@ -7,7 +7,6 @@ duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
 week: 16
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/16_Pinecrest_Family_Practice_Final_Exam/"
 
 flag: "OCR{p1n3cr3st_l34k_0wn3d}"
 

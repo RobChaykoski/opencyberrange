@@ -7,7 +7,6 @@ duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 8
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/24_Hash_Relay/"
 flag: "OCR{h4sh_r3l4y_ch41n}"
 
 objectives:

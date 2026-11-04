@@ -7,7 +7,6 @@ duration_minutes: 180
 randomize_ip_offsets: true
 visibility: course
 week: 15
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/15_Kestrel_Architecture_Studio_Mock_Final/"
 
 flag: "OCR{dr4ft_bluepr1nt_t4lon}"
 

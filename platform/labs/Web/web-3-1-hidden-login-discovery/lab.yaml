@@ -7,7 +7,6 @@ duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 10
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/10_Hidden_Login_Discovery/"
 flag: "OCR{h1dd3n_d3f4ult_3xp0s3d}"
 
 objectives:

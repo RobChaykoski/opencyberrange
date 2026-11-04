@@ -7,7 +7,6 @@ duration_minutes: 35
 randomize_ip_offsets: true
 visibility: course
 week: 2
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/02_SMB_Share_Enumeration/"
 flag: "OCR{3num_sh4r3d}"
 
 objectives:

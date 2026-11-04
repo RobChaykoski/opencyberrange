@@ -7,7 +7,6 @@ duration_minutes: 55
 randomize_ip_offsets: true
 visibility: course
 week: 11
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/27_Three_Hop_Pivot/"
 flag: "OCR{thr33_h0p_l4t3r4l}"
 
 objectives:

@@ -7,7 +7,6 @@ duration_minutes: 30
 randomize_ip_offsets: true
 visibility: course
 week: 1
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/01_Network_Discovery/"
 flag: "OCR{sc4nn3d_4n0n_h1dd3n}"
 
 objectives:

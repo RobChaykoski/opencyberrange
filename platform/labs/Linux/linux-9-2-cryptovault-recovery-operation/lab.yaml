@@ -7,7 +7,6 @@ duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 9
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/09_CryptoVault_Recovery_Operation/"
 
 flag: "OCR{r3c0v3ry_pr0c3dur3_f0ll0w3d}"
 

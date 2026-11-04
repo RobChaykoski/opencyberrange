@@ -7,7 +7,6 @@ duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 12
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/28_Encrypted_Exfiltration/"
 flag: "OCR{3ncrypt_d3c0d3_3xf1l}"
 
 objectives:

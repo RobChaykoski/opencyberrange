@@ -7,7 +7,6 @@ duration_minutes: 35
 randomize_ip_offsets: true
 visibility: course
 week: 3
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/03_SNMP_Community_Strings/"
 flag: "OCR{snmp_w4lk_c0mmun1ty}"
 
 objectives:

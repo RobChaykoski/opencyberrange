@@ -7,7 +7,6 @@ duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 7
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/23_SUID_Maze/"
 flag: "OCR{su1d_m4z3_p01s0n}"
 
 objectives:

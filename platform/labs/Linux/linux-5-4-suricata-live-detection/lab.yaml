@@ -7,7 +7,6 @@ duration_minutes: 75
 randomize_ip_offsets: true
 visibility: course
 week: 14
-workbook: "wiki/course/pentest/CH_COURSE01_Weekly_Challenges/14_Live_IDS_Detection/"
 flag: "OCR{d3t3ct_rul3_wr1t3r}"
 
 objectives:
