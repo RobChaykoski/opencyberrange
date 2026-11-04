@@ -42,6 +42,14 @@
 
     <article v-else-if="certificate" class="certificate" :class="`certificate--${activeDesign}`" aria-label="Certificate of completion">
       <div class="certificate__frame">
+        <div class="certificate__watermark" aria-hidden="true">
+          <img src="/swocts_logo.jpg" alt="" />
+          <div class="certificate__watermark-text">
+            <span>SWOCTS</span>
+            <span>Verified</span>
+          </div>
+        </div>
+
         <div class="certificate__corner certificate__corner--tl"></div>
         <div class="certificate__corner certificate__corner--tr"></div>
         <div class="certificate__corner certificate__corner--bl"></div>
@@ -100,8 +108,9 @@
             <p class="certificate__signature-role">OpenCyberRange Training Range</p>
           </div>
 
-          <div class="certificate__seal" aria-hidden="true">
+          <div class="certificate__seal" role="img" aria-label="SWOCTS verified emblem">
             <div class="certificate__seal-ring">
+              <img src="/swocts_logo.jpg" alt="" class="certificate__seal-emblem" />
               <span>SWOCTS</span>
               <small>VERIFIED</small>
             </div>
@@ -322,6 +331,50 @@ onMounted(load)
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
+}
+
+.certificate__watermark {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transform: rotate(-16deg);
+  opacity: 0.075;
+  pointer-events: none;
+  user-select: none;
+}
+
+.certificate__watermark img {
+  width: min(46%, 320px);
+  height: auto;
+  filter: grayscale(1) contrast(1.2);
+  mix-blend-mode: multiply;
+}
+
+.certificate__watermark-text {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  color: #1f2937;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 4.5vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.certificate__header,
+.certificate__body,
+.certificate__footer {
+  position: relative;
+  z-index: 1;
 }
 
 .certificate__corner {
@@ -524,6 +577,14 @@ onMounted(load)
   color: #8a6d2f;
   background:
     radial-gradient(circle, rgba(176, 141, 60, 0.12), transparent 68%);
+}
+
+.certificate__seal-emblem {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-bottom: 0.1rem;
+  filter: grayscale(1) contrast(1.15);
 }
 
 .certificate__seal-ring span {

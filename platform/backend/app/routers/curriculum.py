@@ -4,7 +4,7 @@ Exercises routes for learning tracks, progress tracking, and flag submission
 
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 import hashlib
@@ -28,6 +28,7 @@ from app.models import (
     CourseLabAssignment,
     CourseCompletionReset,
     Achievement,
+    CompetitionLab,
 )
 from app.auth import get_current_active_user
 from app.services.docker_manager import DockerManager
@@ -36,6 +37,7 @@ from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
 from app.config import settings
 from app.services.achievements import (
+    competition_achievement_parts,
     resolve_achievement_icon,
     resolve_achievement_label,
 )
@@ -448,12 +450,20 @@ def _certificate_achievements(
     user_id: int,
     level_lab_ids: set,
 ) -> List[dict]:
-    """Achievements earned in courses that contain labs from this level.
+    """Achievements earned for this certificate's exercises and contexts.
 
-    Achievements are course-scoped, while a certificate is level-scoped. When a
-    level is taught inside one or more courses, show the achievements the
-    student earned in those courses. Deduplicate per achievement type so a
-    per-lab award such as First Blood is shown once with a count.
+    Achievements are course- or competition-scoped, while a certificate is
+    level-scoped. A certificate therefore shows:
+
+    * per-exercise awards whose ``lab_id`` is one of this level's exercises;
+    * course-level awards from a course that teaches this level (for example a
+      Clean Sweep or admin-defined course badge);
+    * competition awards from an event whose exercise set includes this level.
+
+    Awards from other exercises in the same course, unrelated courses, or
+    competitions that never use this level are deliberately excluded. Without
+    the lab filter, a course with several levels leaked every badge from every
+    level onto each level's certificate.
     """
     if not level_lab_ids:
         return []
@@ -466,15 +476,39 @@ def _certificate_achievements(
         CourseLabAssignment.lab_id.in_(level_lab_ids),
     ).distinct().all()
     course_ids = {row[0] for row in course_rows}
-    if not course_ids:
-        return []
 
-    rows = db.query(Achievement).options(
-        joinedload(Achievement.course)
-    ).filter(
-        Achievement.user_id == user_id,
-        Achievement.course_id.in_(course_ids),
-    ).order_by(Achievement.awarded_at.asc(), Achievement.id.asc()).all()
+    rows = []
+    if course_ids:
+        rows = db.query(Achievement).options(
+            joinedload(Achievement.course)
+        ).filter(
+            Achievement.user_id == user_id,
+            Achievement.course_id.in_(course_ids),
+            or_(
+                Achievement.lab_id.is_(None),
+                Achievement.lab_id.in_(level_lab_ids),
+            ),
+        ).order_by(Achievement.awarded_at.asc(), Achievement.id.asc()).all()
+
+    # Competition awards have no course_id. Include an event only when its lab
+    # set includes at least one exercise from this level, so an unrelated event
+    # cannot decorate the certificate.
+    competition_ids = {
+        row[0] for row in db.query(CompetitionLab.competition_id).filter(
+            CompetitionLab.lab_id.in_(level_lab_ids)
+        ).all()
+    }
+    if competition_ids:
+        competition_rows = db.query(Achievement).filter(
+            Achievement.user_id == user_id,
+            Achievement.achievement_type.like("comp_%"),
+        ).order_by(Achievement.awarded_at.asc(), Achievement.id.asc()).all()
+        for row in competition_rows:
+            parts = competition_achievement_parts(row.achievement_type)
+            if parts and parts[0] in competition_ids:
+                rows.append(row)
+
+    rows.sort(key=lambda row: (row.awarded_at or datetime.min, row.id or 0))
 
     grouped: dict[str, dict] = {}
     for row in rows:

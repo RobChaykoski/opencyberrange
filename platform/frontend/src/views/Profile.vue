@@ -31,52 +31,129 @@
               </button>
             </div>
 
-            <fieldset class="avatar-border">
-              <legend>Avatar border</legend>
-              <div class="avatar-border__styles" role="radiogroup" aria-label="Avatar border style">
-                <label
-                  v-for="option in borderStyleOptions"
-                  :key="option.value"
-                  class="avatar-border__option"
-                  :class="{ 'avatar-border__option--active': avatarBorderStyle === option.value }"
+            <div ref="borderMenuRef" class="avatar-border-control">
+              <button
+                ref="borderTriggerRef"
+                type="button"
+                class="avatar-border-trigger"
+                :aria-expanded="borderMenuOpen"
+                aria-controls="avatar-border-menu"
+                @click="toggleBorderMenu"
+              >
+                <span
+                  class="avatar-border-trigger__ring"
+                  :class="`ring-preview--${avatarBorderStyle}`"
+                  :style="{ '--preview-color': currentBorderHex }"
+                  aria-hidden="true"
+                ></span>
+                <span class="avatar-border-trigger__copy">
+                  <span class="avatar-border-trigger__label">Avatar border</span>
+                  <span class="avatar-border-trigger__value">{{ currentBorderLabel }}</span>
+                </span>
+                <ChevronIcon class="avatar-border-trigger__chevron" :class="{ 'is-open': borderMenuOpen }" />
+              </button>
+
+              <Transition name="border-menu">
+                <div
+                  v-if="borderMenuOpen"
+                  id="avatar-border-menu"
+                  class="avatar-border-menu"
+                  role="dialog"
+                  aria-label="Customize avatar border"
                 >
-                  <input
-                    v-model="avatarBorderStyle"
-                    type="radio"
-                    name="avatar-border-style"
-                    :value="option.value"
-                    :disabled="borderSaving"
-                    @change="saveAvatarBorder"
-                  />
-                  <span>{{ option.label }}</span>
-                </label>
-              </div>
-              <div class="avatar-border__colors" role="radiogroup" aria-label="Avatar border colour">
-                <label
-                  v-for="option in borderColorOptions"
-                  :key="option.value"
-                  class="avatar-border__color"
-                  :class="{ 'avatar-border__color--active': avatarBorderColor === option.value }"
-                  :title="option.label"
-                >
-                  <input
-                    v-model="avatarBorderColor"
-                    type="radio"
-                    name="avatar-border-colour"
-                    :value="option.value"
-                    :disabled="borderSaving"
-                    @change="saveAvatarBorder"
-                  />
-                  <span
-                    class="avatar-border__swatch"
-                    :style="{ '--swatch': option.hex }"
-                    aria-hidden="true"
-                  ></span>
-                  <span class="sr-only">{{ option.label }}</span>
-                </label>
-              </div>
-              <p v-if="borderMessage" class="avatar-message">{{ borderMessage }}</p>
-            </fieldset>
+                  <div class="avatar-border-menu__head">
+                    <div>
+                      <p class="avatar-border-menu__eyebrow">Customize</p>
+                      <h2>Avatar border</h2>
+                    </div>
+                    <button
+                      type="button"
+                      class="avatar-border-menu__close"
+                      aria-label="Close border menu"
+                      @click="closeBorderMenu(true)"
+                    >
+                      <XIcon />
+                    </button>
+                  </div>
+
+                  <div class="avatar-border-menu__section">
+                    <div class="avatar-border-menu__section-head">
+                      <span>Style</span>
+                      <span>{{ currentStyleLabel }}</span>
+                    </div>
+                    <div class="avatar-border-styles" role="radiogroup" aria-label="Avatar border style">
+                      <label
+                        v-for="option in borderStyleOptions"
+                        :key="option.value"
+                        class="avatar-border-style"
+                        :class="{ 'avatar-border-style--active': avatarBorderStyle === option.value }"
+                      >
+                        <input
+                          v-model="avatarBorderStyle"
+                          type="radio"
+                          name="avatar-border-style"
+                          :value="option.value"
+                          :disabled="borderSaving"
+                          @change="saveAvatarBorder"
+                        />
+                        <span
+                          class="avatar-border-style__ring"
+                          :class="`ring-preview--${option.value}`"
+                          :style="{ '--preview-color': currentBorderHex }"
+                          aria-hidden="true"
+                        ></span>
+                        <span class="avatar-border-style__label">{{ option.label }}</span>
+                        <CheckIcon
+                          v-if="avatarBorderStyle === option.value"
+                          class="avatar-border-style__check"
+                        />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="avatar-border-menu__section">
+                    <div class="avatar-border-menu__section-head">
+                      <span>Colour</span>
+                      <span>{{ currentColorLabel }}</span>
+                    </div>
+                    <div class="avatar-border-colors" role="radiogroup" aria-label="Avatar border colour">
+                      <label
+                        v-for="option in borderColorOptions"
+                        :key="option.value"
+                        class="avatar-border-color"
+                        :class="{ 'avatar-border-color--active': avatarBorderColor === option.value }"
+                      >
+                        <input
+                          v-model="avatarBorderColor"
+                          type="radio"
+                          name="avatar-border-colour"
+                          :value="option.value"
+                          :disabled="borderSaving"
+                          @change="saveAvatarBorder"
+                        />
+                        <span
+                          class="avatar-border-color__swatch"
+                          :style="{ '--swatch': option.hex }"
+                          aria-hidden="true"
+                        >
+                          <CheckIcon v-if="avatarBorderColor === option.value" />
+                        </span>
+                        <span class="avatar-border-color__label">{{ option.label }}</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="avatar-border-menu__foot">
+                    <button type="button" class="avatar-border-menu__reset" @click="resetAvatarBorder">
+                      Reset
+                    </button>
+                    <span class="avatar-border-menu__status" aria-live="polite">
+                      {{ borderSaving ? 'Saving…' : (borderMessage || 'Changes save automatically') }}
+                    </span>
+                  </div>
+                </div>
+              </Transition>
+            </div>
 
             <p v-if="avatarMessage" :class="avatarError ? 'error-message' : 'success-message'" class="avatar-message">
               {{ avatarMessage }}
@@ -115,6 +192,97 @@
               <span class="profile-stat__value">{{ summary ? summary.totals.progress_percent : '—' }}<small v-if="summary">%</small></span>
               <span class="profile-stat__label">Complete</span>
             </div>
+            <div class="profile-stat">
+              <span class="profile-stat__value">{{ summary ? summary.totals.achievements : '—' }}</span>
+              <span class="profile-stat__label">Badges</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Course achievements: grouped by course so the profile is a summary,
+             not a raw badge feed. -->
+        <section
+          v-if="courseAchievements.length || otherAchievementBadges.length"
+          class="profile-section achievements-section"
+          aria-labelledby="course-achievements-title"
+        >
+          <div class="achievements-section__head">
+            <div>
+              <p class="profile-hero__eyebrow">Recognition</p>
+              <h2 id="course-achievements-title" class="section-title">Course achievements</h2>
+              <p class="help-text">
+                Badges earned through your courses, grouped so progress is easy to scan.
+                Competition and range-wide awards appear separately.
+              </p>
+            </div>
+            <div class="achievements-section__total">
+              <strong>{{ achievements.length }}</strong>
+              <span>{{ achievements.length === 1 ? 'badge earned' : 'badges earned' }}</span>
+            </div>
+          </div>
+
+          <div class="course-achievement-grid">
+            <article
+              v-for="group in courseAchievements"
+              :key="group.course_id"
+              class="course-achievement-card"
+            >
+              <header class="course-achievement-card__head">
+                <div>
+                  <span class="course-achievement-card__code">{{ group.course_code }}</span>
+                  <h3>{{ group.course_name }}</h3>
+                </div>
+                <span
+                  class="course-achievement-card__count"
+                  :aria-label="`${group.total_awards} badges in ${group.course_name}`"
+                >{{ group.total_awards }}</span>
+              </header>
+              <div class="course-achievement-card__badges">
+                <span
+                  v-for="badge in group.badges"
+                  :key="badge.type"
+                  class="course-achievement-badge"
+                  :title="badge.description || badge.label"
+                >
+                  <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+                  <span>{{ badge.label }}</span>
+                  <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
+                </span>
+              </div>
+              <footer class="course-achievement-card__foot">
+                <span>{{ group.unique_badges }} unique {{ group.unique_badges === 1 ? 'badge' : 'badges' }}</span>
+                <span v-if="group.latest_awarded_at">Latest {{ formatDateOnly(group.latest_awarded_at) }}</span>
+              </footer>
+            </article>
+
+            <article
+              v-if="otherAchievementBadges.length"
+              class="course-achievement-card course-achievement-card--other"
+            >
+              <header class="course-achievement-card__head">
+                <div>
+                  <span class="course-achievement-card__code">Across the range</span>
+                  <h3>Competitions &amp; special badges</h3>
+                </div>
+                <span class="course-achievement-card__count">{{ otherAchievements.length }}</span>
+              </header>
+              <div class="course-achievement-card__badges">
+                <span
+                  v-for="badge in otherAchievementBadges"
+                  :key="badge.type"
+                  class="course-achievement-badge"
+                  :title="badge.description || badge.label"
+                >
+                  <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+                  <span>{{ badge.label }}</span>
+                  <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
+                </span>
+              </div>
+              <footer class="course-achievement-card__foot">
+                <span>{{ otherAchievementBadges.length }} unique {{ otherAchievementBadges.length === 1 ? 'badge' : 'badges' }}</span>
+                <span>Not tied to a course</span>
+              </footer>
+            </article>
           </div>
         </section>
 
@@ -241,21 +409,6 @@
                 </table>
               </div>
             </details>
-
-            <div v-if="achievements.length" class="achievement-strip">
-              <h3 class="subsection-title">Course achievements</h3>
-              <div class="achievement-list">
-                <span
-                  v-for="achievement in achievements"
-                  :key="achievement.id"
-                  class="achievement-chip"
-                  :title="achievement.description || achievement.label"
-                >
-                  <span class="achievement-chip__icon" aria-hidden="true">{{ achievement.icon }}</span>
-                  {{ achievement.label }}
-                </span>
-              </div>
-            </div>
           </template>
         </section>
         <div class="profile-section">
@@ -679,6 +832,9 @@ import { useModules } from '../composables/useModules'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import UserAvatar from '../components/UserAvatar.vue'
+import CheckIcon from '../components/icons/CheckIcon.vue'
+import ChevronIcon from '../components/icons/ChevronIcon.vue'
+import XIcon from '../components/icons/XIcon.vue'
 import { getUserTimeZone } from '../utils/timezone'
 
 const route = useRoute()
@@ -720,6 +876,9 @@ const avatarBorderStyle = ref('solid')
 const avatarBorderColor = ref('blue')
 const borderSaving = ref(false)
 const borderMessage = ref('')
+const borderMenuOpen = ref(false)
+const borderMenuRef = ref(null)
+const borderTriggerRef = ref(null)
 
 const borderStyleOptions = [
   { value: 'none', label: 'None' },
@@ -740,6 +899,46 @@ const borderColorOptions = [
   { value: 'slate', label: 'Slate', hex: '#64748b' },
   { value: 'gold', label: 'Gold', hex: '#d4a017' },
 ]
+
+const currentColorOption = computed(
+  () => borderColorOptions.find((option) => option.value === avatarBorderColor.value)
+    || borderColorOptions[0]
+)
+const currentStyleOption = computed(
+  () => borderStyleOptions.find((option) => option.value === avatarBorderStyle.value)
+    || borderStyleOptions[1]
+)
+const currentBorderHex = computed(() => currentColorOption.value.hex)
+const currentColorLabel = computed(() => currentColorOption.value.label)
+const currentStyleLabel = computed(() => currentStyleOption.value.label)
+const currentBorderLabel = computed(
+  () => `${currentStyleLabel.value} · ${currentColorLabel.value}`
+)
+
+const closeBorderMenu = (returnFocus = false) => {
+  borderMenuOpen.value = false
+  if (returnFocus) {
+    borderTriggerRef.value?.focus()
+  }
+}
+
+const toggleBorderMenu = () => {
+  borderMenuOpen.value = !borderMenuOpen.value
+}
+
+const handleBorderMenuPointer = (event) => {
+  if (!borderMenuOpen.value) return
+  if (borderMenuRef.value && !borderMenuRef.value.contains(event.target)) {
+    closeBorderMenu()
+  }
+}
+
+const handleBorderMenuKeydown = (event) => {
+  if (event.key === 'Escape' && borderMenuOpen.value) {
+    event.stopPropagation()
+    closeBorderMenu(true)
+  }
+}
 
 const syncAvatarBorder = (source) => {
   if (!source) return
@@ -764,13 +963,19 @@ async function saveAvatarBorder() {
       summary.value.user.avatar_border_style = avatarBorderStyle.value
       summary.value.user.avatar_border_color = avatarBorderColor.value
     }
-    borderMessage.value = 'Avatar border updated.'
+    borderMessage.value = 'Saved'
   } catch (error) {
     borderMessage.value = responseMessage(error, 'Could not save your avatar border.')
     syncAvatarBorder(user.value)
   } finally {
     borderSaving.value = false
   }
+}
+
+function resetAvatarBorder() {
+  avatarBorderStyle.value = 'solid'
+  avatarBorderColor.value = 'blue'
+  saveAvatarBorder()
 }
 
 const displayName = computed(() => {
@@ -808,6 +1013,27 @@ const certificates = computed(() => summary.value?.certificates || [])
 const tracks = computed(() => summary.value?.tracks || [])
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
+const courseAchievements = computed(() => summary.value?.course_achievements || [])
+const otherAchievements = computed(
+  () => achievements.value.filter((item) => !item.course_id)
+)
+const otherAchievementBadges = computed(() => {
+  const grouped = new Map()
+  for (const item of otherAchievements.value) {
+    const entry = grouped.get(item.type) || {
+      type: item.type,
+      label: item.label,
+      icon: item.icon,
+      description: item.description,
+      count: 0,
+    }
+    entry.count += 1
+    grouped.set(item.type, entry)
+  }
+  return [...grouped.values()].sort(
+    (a, b) => b.count - a.count || a.label.localeCompare(b.label)
+  )
+})
 
 // Personal information shown on certificates
 const nameForm = reactive({ first_name: '', last_name: '', organization: '' })
@@ -1337,11 +1563,15 @@ onMounted(() => {
   // Window focus covers clicking back into the browser from another app,
   // which does not fire visibilitychange (the tab was never hidden).
   window.addEventListener('focus', onWindowFocus)
+  document.addEventListener('pointerdown', handleBorderMenuPointer)
+  document.addEventListener('keydown', handleBorderMenuKeydown)
 })
 
 // Cleanup on unmount
 onUnmounted(() => {
   window.removeEventListener('focus', onWindowFocus)
+  document.removeEventListener('pointerdown', handleBorderMenuPointer)
+  document.removeEventListener('keydown', handleBorderMenuKeydown)
 })
 
 // Watch for route changes (when navigating to profile page)
@@ -1843,7 +2073,7 @@ watch(() => route.path, (newPath) => {
     radial-gradient(circle at 92% 82%, rgba(139, 92, 246, 0.14), transparent 46%),
     var(--bg-secondary);
   box-shadow: 0 18px 45px rgba(2, 6, 23, 0.18);
-  overflow: hidden;
+  overflow: visible;
 }
 
 .profile-hero::before {
@@ -1851,6 +2081,7 @@ watch(() => route.path, (newPath) => {
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
+  border-radius: 18px 18px 0 0;
   background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b);
 }
 
@@ -1862,103 +2093,375 @@ watch(() => route.path, (newPath) => {
   width: 200px;
 }
 
-.avatar-border {
+.avatar-border-control {
+  position: relative;
   width: 100%;
-  margin: 0.15rem 0 0;
-  padding: 0.6rem;
+}
+
+.avatar-border-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.avatar-border legend {
-  padding: 0 0.35rem;
+.avatar-border-trigger:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border-color));
+}
+
+.avatar-border-trigger[aria-expanded="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.avatar-border-trigger__ring {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+}
+
+.avatar-border-trigger__copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.avatar-border-trigger__label {
   color: var(--text-muted);
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.avatar-border__styles {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
+.avatar-border-trigger__value {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.avatar-border__option {
-  position: relative;
-  padding: 0.22rem 0.45rem;
-  border: 1px solid var(--border-color);
-  border-radius: 999px;
-  color: var(--text-secondary);
-  font-size: 0.68rem;
-  cursor: pointer;
+.avatar-border-trigger__chevron {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 0.15s ease;
 }
 
-.avatar-border__option input {
+.avatar-border-trigger__chevron.is-open {
+  transform: rotate(180deg);
+}
+
+.avatar-border-menu {
   position: absolute;
-  opacity: 0;
-  inset: 0;
+  top: 0;
+  left: calc(100% + 0.8rem);
+  z-index: 30;
+  width: min(330px, calc(100vw - 3rem));
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  box-shadow: 0 20px 55px rgba(2, 6, 23, 0.38);
+}
+
+.avatar-border-menu__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.avatar-border-menu__eyebrow {
+  margin: 0 0 0.1rem;
+  color: var(--accent);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.avatar-border-menu__head h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.avatar-border-menu__close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
-.avatar-border__option--active,
-.avatar-border__option:focus-within {
-  border-color: var(--accent);
-  background: var(--accent-bg);
+.avatar-border-menu__close:hover,
+.avatar-border-menu__close:focus-visible {
+  border-color: var(--border-color);
+  background: var(--bg-primary);
   color: var(--text-primary);
 }
 
-.avatar-border__colors {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.35rem;
-  margin-top: 0.55rem;
+.avatar-border-menu__close svg {
+  width: 14px;
+  height: 14px;
 }
 
-.avatar-border__color {
+.avatar-border-menu__section + .avatar-border-menu__section {
+  margin-top: 0.85rem;
+}
+
+.avatar-border-menu__section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.avatar-border-menu__section-head span:last-child {
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.avatar-border-styles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.avatar-border-style {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.3rem 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.avatar-border-style:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border-color));
+}
+
+.avatar-border-style--active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.avatar-border-style input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.avatar-border-style__ring {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-tertiary);
+}
+
+.avatar-border-style__label {
+  color: var(--text-secondary);
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+
+.avatar-border-style--active .avatar-border-style__label {
+  color: var(--text-primary);
+}
+
+.avatar-border-style__check {
+  position: absolute;
+  top: 0.28rem;
+  right: 0.28rem;
+  width: 12px;
+  height: 12px;
+  color: var(--accent);
+}
+
+.avatar-border-colors {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.avatar-border-color {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.28rem 0.35rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.avatar-border-color:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border-color));
+}
+
+.avatar-border-color--active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+
+.avatar-border-color input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.avatar-border-color__swatch {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid transparent;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.avatar-border__color input {
-  position: absolute;
-  opacity: 0;
-  inset: 0;
-  cursor: pointer;
-}
-
-.avatar-border__color--active,
-.avatar-border__color:focus-within {
-  border-color: var(--text-primary);
-  box-shadow: 0 0 0 2px var(--bg-primary);
-}
-
-.avatar-border__swatch {
-  width: 16px;
-  height: 16px;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--swatch);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+.avatar-border-color__swatch svg {
+  width: 10px;
+  height: 10px;
+}
+
+.avatar-border-color__label {
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+.avatar-border-color--active .avatar-border-color__label {
+  color: var(--text-primary);
+}
+
+.avatar-border-menu__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.avatar-border-menu__reset {
+  padding: 0;
   border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.avatar-border-menu__reset:hover {
+  color: var(--accent);
+}
+
+.avatar-border-menu__status {
+  color: var(--text-muted);
+  font-size: 0.63rem;
+  text-align: right;
+}
+
+.border-menu-enter-active,
+.border-menu-leave-active {
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+.border-menu-enter-from,
+.border-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+}
+
+.ring-preview--none {
+  border: 1px dashed var(--border-color);
+}
+
+.ring-preview--solid {
+  border: 3px solid var(--preview-color);
+}
+
+.ring-preview--dashed {
+  border: 3px dashed var(--preview-color);
+}
+
+.ring-preview--double {
+  border: 4px double var(--preview-color);
+}
+
+.ring-preview--glow {
+  border: 3px solid var(--preview-color);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--preview-color) 22%, transparent),
+    0 0 12px color-mix(in srgb, var(--preview-color) 55%, transparent);
+}
+
+.ring-preview--gradient {
+  background: conic-gradient(
+    from 140deg,
+    var(--preview-color),
+    color-mix(in srgb, var(--preview-color) 28%, #ffffff),
+    var(--preview-color),
+    color-mix(in srgb, var(--preview-color) 38%, #000000),
+    var(--preview-color)
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 4px));
+}
+
+@media (max-width: 900px) {
+  .avatar-border-menu {
+    top: calc(100% + 0.5rem);
+    left: 0;
+  }
 }
 
 .avatar-input {
@@ -2043,6 +2546,7 @@ watch(() => route.path, (newPath) => {
 
 .profile-stats {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.65rem;
 }
 
@@ -2424,38 +2928,184 @@ watch(() => route.path, (newPath) => {
   font-size: 0.7rem;
 }
 
-.achievement-strip {
-  margin-top: 1.5rem;
-  padding-top: 1.1rem;
-  border-top: 1px solid var(--border-color);
+.achievements-section {
+  position: relative;
+  overflow: hidden;
 }
 
-.achievement-list {
+.achievements-section::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #8b5cf6, #f59e0b);
+}
+
+.achievements-section__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.achievements-section__head .section-title {
+  margin-bottom: 0.25rem;
+}
+
+.achievements-section__total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 104px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border-color));
+  border-radius: 14px;
+  background: var(--accent-bg);
+}
+
+.achievements-section__total strong {
+  color: var(--text-primary);
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.achievements-section__total span {
+  margin-top: 0.1rem;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.course-achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.85rem;
+}
+
+.course-achievement-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 58%),
+    var(--bg-primary);
+}
+
+.course-achievement-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.course-achievement-card__code {
+  display: block;
+  margin-bottom: 0.1rem;
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.course-achievement-card__head h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.course-achievement-card__count {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.45rem;
+  border-radius: 10px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.course-achievement-card__badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.35rem;
 }
 
-.achievement-chip {
+.course-achievement-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.32rem 0.7rem;
-  border-radius: 999px;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem;
   border: 1px solid var(--border-color);
-  background: var(--bg-primary);
+  border-radius: 999px;
+  background: var(--bg-secondary);
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  line-height: 1.25;
 }
 
-.achievement-chip__icon {
-  font-size: 0.95rem;
+.course-achievement-badge__icon {
+  font-size: 0.85rem;
   line-height: 1;
+}
+
+.course-achievement-badge__count {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.course-achievement-card__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.64rem;
+}
+
+.course-achievement-card--other {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(234, 179, 8, 0.14), transparent 58%),
+    var(--bg-primary);
+}
+
+.course-achievement-card--other .course-achievement-card__code,
+.course-achievement-card--other .course-achievement-card__count {
+  color: #b45309;
+}
+
+.course-achievement-card--other .course-achievement-card__count {
+  background: rgba(234, 179, 8, 0.14);
 }
 
 @media (max-width: 900px) {
   .profile-hero {
     grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .achievements-section__head {
+    flex-direction: column;
+  }
+
+  .achievements-section__total {
+    align-items: flex-start;
+    width: 100%;
   }
 
   .profile-stats {

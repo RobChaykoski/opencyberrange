@@ -173,10 +173,57 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
             "icon": resolve_achievement_icon(db, row.achievement_type),
             "description": ACHIEVEMENT_DESCRIPTIONS.get(row.achievement_type),
             "lab_name": row.lab.name if row.lab else None,
+            "course_id": row.course_id,
             "course_name": row.course.name if row.course else None,
             "course_code": row.course.code if row.course else None,
             "awarded_at": _iso(row.awarded_at),
         })
+
+    # Course achievements are a summary, not a raw feed: group by course and
+    # fold repeated badge types into one entry with a count. Competition and
+    # range-wide badges have no course and remain in the flat ``achievements``
+    # list for the profile's "Across the range" card.
+    course_groups = {}
+    for item in achievements:
+        course_id = item.get("course_id")
+        if not course_id:
+            continue
+        group = course_groups.setdefault(course_id, {
+            "course_id": course_id,
+            "course_name": item.get("course_name"),
+            "course_code": item.get("course_code"),
+            "total_awards": 0,
+            "unique_badges": 0,
+            "latest_awarded_at": None,
+            "badges": {},
+        })
+        group["total_awards"] += 1
+        badge = group["badges"].setdefault(item["type"], {
+            "type": item["type"],
+            "label": item["label"],
+            "icon": item["icon"],
+            "description": item.get("description"),
+            "count": 0,
+            "latest_awarded_at": None,
+        })
+        badge["count"] += 1
+        awarded_at = item.get("awarded_at")
+        if awarded_at and (not badge["latest_awarded_at"] or awarded_at > badge["latest_awarded_at"]):
+            badge["latest_awarded_at"] = awarded_at
+        if awarded_at and (not group["latest_awarded_at"] or awarded_at > group["latest_awarded_at"]):
+            group["latest_awarded_at"] = awarded_at
+
+    course_achievements = []
+    for group in course_groups.values():
+        group["unique_badges"] = len(group["badges"])
+        group["badges"] = sorted(
+            group["badges"].values(),
+            key=lambda badge: (-badge["count"], badge["label"].lower()),
+        )
+        course_achievements.append(group)
+    course_achievements.sort(
+        key=lambda group: group.get("latest_awarded_at") or "", reverse=True
+    )
 
     enrollment_rows = db.query(Course, CourseEnrollment).join(
         CourseEnrollment,
@@ -217,11 +264,13 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
             "certificates": len(certificates),
             "tracks": len(track_summaries),
             "achievements": len(achievements),
+            "course_achievements": len(course_achievements),
         },
         "certificates": certificates,
         "tracks": track_summaries,
         "completions": completion_details,
         "achievements": achievements,
+        "course_achievements": course_achievements,
         "courses": courses,
     }
 
