@@ -68,6 +68,8 @@ and multi-host HA are v3 work.
 - [Pro 2.x program charter](docs/V2-PROGRAM-CHARTER.md)
 - [Enterprise v3 parking lot](docs/V3-PARKING-LOT.md)
 - [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
+- [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md)
+- [Reverse proxy and Nginx Proxy Manager](docs/REVERSE-PROXY.md)
 
 ### Reporting and analytics (development preview)
 

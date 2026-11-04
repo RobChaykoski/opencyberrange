@@ -136,6 +136,9 @@ note naming the role check.
 
 - Nginx keeps `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
   `Permissions-Policy`, CSP, and HSTS on the TLS listener.
+- A deny-all `robots.txt`, `noindex` page metadata, `X-Robots-Tag`, and a
+  user-agent map return `403` to known search and AI crawlers. See
+  [Anti-scraping and crawler controls](ANTI-SCRAPING.md).
 - CSP changes are reviewed against the actual scripts and fonts in use.
 - Debug mode, stack traces, and permissive CORS are not enabled in production.
 
