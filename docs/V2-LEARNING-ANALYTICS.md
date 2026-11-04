@@ -145,6 +145,34 @@ After a successful exercise completion, ask three questions only:
 
 One response per learner and exercise, with course context. The survey must be skippable and must not block the next exercise permanently.
 
+An optional fourth prompt asks which topic the learner wants covered next. Those choices feed the **Trending topics** report.
+
+## Survey management
+
+The instructor survey page provides:
+
+- A **Quick Pulse history** summary across the instructor's courses.
+- A custom survey builder with scale, multiple-choice, and text questions.
+- Course attachment at creation time.
+- Response counts and per-question aggregates.
+- Recent submission history and free-text responses.
+- A delete action for surveys the instructor owns.
+- An explicit note that participation is opt-in.
+
+Students see available course surveys on their dashboard only after opting in under **Privacy and data**, and the API rejects submissions from learners who have not opted in.
+
+## Reporting page
+
+A dedicated **Reports** page gives instructors and administrators a cross-course view:
+
+- Course-level RAG status and reason.
+- Completion, abandonment, learning reported, confidence gain, and pulse counts.
+- Trending topics across courses.
+- Direct links to each course analytics tab.
+- CSV export for course review.
+
+The page is a reporting surface, not a ranking: it summarises teaching signals and links back to the evidence.
+
 ## RAG status
 
 Use Red/Amber/Green to summarise teaching signals, not to label learners.

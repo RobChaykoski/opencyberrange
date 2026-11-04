@@ -59,6 +59,23 @@
           />
         </div>
 
+        <div class="pulse-question">
+          <p class="pulse-question__label">Which topic should we cover next? <span class="pulse-optional">(optional)</span></p>
+          <div class="pulse-options">
+            <button
+              v-for="topic in topicOptions"
+              :key="topic.value"
+              type="button"
+              class="pulse-option"
+              :class="{ 'pulse-option--active': topicInterest === topic.value }"
+              :aria-pressed="topicInterest === topic.value"
+              @click="toggleTopic(topic.value)"
+            >
+              {{ topic.label }}
+            </button>
+          </div>
+        </div>
+
         <p v-if="error" class="pulse-error" role="alert">{{ error }}</p>
 
         <footer class="pulse-modal__foot">
@@ -106,19 +123,44 @@ const learningOptions = [
   { value: 4, label: 'Significant' },
   { value: 5, label: 'Extensive' },
 ]
+const topicOptions = [
+  { value: 'web', label: 'Web Security' },
+  { value: 'osint', label: 'OSINT' },
+  { value: 'forensics', label: 'Forensics' },
+  { value: 'malware', label: 'Malware' },
+  { value: 'ot', label: 'OT / ICS' },
+  { value: 'ai', label: 'AI Security' },
+  { value: 'cloud', label: 'Cloud Security' },
+  { value: 'network', label: 'Network Security' },
+  { value: 'software-security', label: 'Software Security' },
+  { value: 'career', label: 'Career skills' },
+]
 
 const difficulty = ref(null)
 const learning = ref(null)
 const unclear = ref('')
+const topicInterest = ref('')
 const saving = ref(false)
 const error = ref('')
+
+const toggleTopic = (value) => {
+  topicInterest.value = topicInterest.value === value ? '' : value
+}
 
 watch(() => props.show, (open) => {
   if (!open) return
   difficulty.value = null
   learning.value = null
   unclear.value = ''
+  topicInterest.value = ''
   error.value = ''
+  axios.get('/auth/settings').then(({ data }) => {
+    if (!data.survey_opt_in) {
+      emit('done', false)
+    }
+  }).catch(() => {
+    emit('done', false)
+  })
 })
 
 const submit = async () => {
@@ -130,6 +172,7 @@ const submit = async () => {
       difficulty: difficulty.value,
       learning: learning.value,
       unclear: unclear.value.trim() || null,
+      topic_interest: topicInterest.value || null,
       course_id: props.courseId ? Number(props.courseId) : null,
     })
     emit('done', true)
@@ -235,8 +278,15 @@ const skip = () => {
   border-radius: 999px;
   background: var(--bg-primary);
   color: var(--text-secondary);
+  font: inherit;
   font-size: 0.66rem;
   cursor: pointer;
+}
+
+.pulse-optional {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 500;
 }
 
 .pulse-option input {

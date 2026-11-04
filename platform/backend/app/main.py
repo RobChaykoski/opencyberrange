@@ -324,6 +324,18 @@ async def lifespan(app: FastAPI):
                 conn.commit()
                 logger.info("Added website_url column to competition_sponsors table")
 
+        # --- Pulse surveys: optional trending-topic interest
+        if 'exercise_pulse_surveys' in inspector.get_table_names():
+            pulse_columns = {
+                c['name'] for c in inspector.get_columns('exercise_pulse_surveys')
+            }
+            if 'topic_interest' not in pulse_columns:
+                conn.execute(text(
+                    "ALTER TABLE exercise_pulse_surveys ADD COLUMN topic_interest VARCHAR(50)"
+                ))
+                conn.commit()
+                logger.info("Added topic_interest column to exercise_pulse_surveys table")
+
         # --- Achievements: allow awards outside a course (standalone labs,
         # competitions). Hidden/global badges were unreachable for students
         # with no enrollment while the column was NOT NULL.

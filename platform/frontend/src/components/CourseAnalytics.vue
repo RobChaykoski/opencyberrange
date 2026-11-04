@@ -55,6 +55,15 @@
         </article>
       </div>
 
+      <div v-if="overview.trending_topics?.length" class="trending-strip">
+        <span class="trending-strip__label">Trending topics</span>
+        <span
+          v-for="topic in overview.trending_topics"
+          :key="topic.key"
+          class="trending-chip"
+        >{{ topic.label }} <b>{{ topic.count }}</b></span>
+      </div>
+
       <div class="analytics-section-head">
         <div>
           <h3>Exercise signals</h3>
@@ -289,6 +298,37 @@ onMounted(load)
   color: var(--text-muted);
   font-size: 0.62rem;
   line-height: 1.4;
+}
+
+.trending-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.trending-strip__label {
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.trending-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.18rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.64rem;
+}
+
+.trending-chip b {
+  color: var(--accent);
 }
 
 .analytics-section-head {

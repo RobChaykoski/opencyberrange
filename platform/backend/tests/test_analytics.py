@@ -14,6 +14,9 @@ from app.models import (
     LabCompletion,
     LabSession,
     Level,
+    Survey,
+    SurveyAttachment,
+    SurveyResponse,
     Track,
     User,
 )
@@ -62,6 +65,7 @@ def analytics_data(client, db_session):
         role="student",
         first_name="Avery",
         last_name="One",
+        survey_opt_in=True,
     )
     student_two = User(
         username=f"analytics_student_two_{suffix}",
@@ -345,8 +349,11 @@ def test_pulse_survey_is_completion_gated_and_upserts(
     assert pulse["unclear"] == "The setup step was unclear."
 
 
-def test_pulse_survey_requires_completion(client, analytics_data):
-    headers = _login(client, analytics_data["student_two"])
+def test_pulse_survey_requires_completion(client, analytics_data, db_session):
+    student = analytics_data["student_two"]
+    student.survey_opt_in = True
+    db_session.commit()
+    headers = _login(client, student)
     # Student two has no completion for lab six.
     unfinished_lab = analytics_data["labs"][5].id
     resp = client.post(
@@ -355,6 +362,72 @@ def test_pulse_survey_requires_completion(client, analytics_data):
         headers=headers,
     )
     assert resp.status_code == 400
+
+
+def test_surveys_respect_opt_in_and_record_responses(client, analytics_data):
+    instructor = _login(client, analytics_data["instructor"])
+    student_one = _login(client, analytics_data["student_one"])
+    student_two = _login(client, analytics_data["student_two"])
+    course_id = analytics_data["course"].id
+
+    created = client.post(
+        "/api/analytics/surveys",
+        json={
+            "title": "Analytics reflection",
+            "description": "Short course reflection",
+            "course_ids": [course_id],
+            "questions": [
+                {"prompt": "How useful was this course?", "type": "scale"},
+                {"prompt": "Would you recommend it?", "type": "choice", "options": ["Yes", "No"]},
+                {"prompt": "What should change?", "type": "text"},
+            ],
+        },
+        headers=instructor,
+    )
+    assert created.status_code == 200, created.text
+    survey_id = created.json()["id"]
+
+    try:
+        # Student two has not opted in and must not see or submit the survey.
+        blocked_list = client.get("/api/analytics/surveys/available", headers=student_two)
+        assert blocked_list.status_code == 200
+        assert blocked_list.json()["reason"] == "opt_in_required"
+        blocked_submit = client.post(
+            f"/api/analytics/surveys/{survey_id}/responses",
+            json={"answers": {"0": 5, "1": "Yes", "2": "More labs"}},
+            headers=student_two,
+        )
+        assert blocked_submit.status_code == 403
+
+        # An opted-in learner sees the survey and can respond once.
+        available = client.get("/api/analytics/surveys/available", headers=student_one)
+        assert available.status_code == 200, available.text
+        assert any(item["id"] == survey_id for item in available.json()["surveys"])
+
+        submitted = client.post(
+            f"/api/analytics/surveys/{survey_id}/responses",
+            json={"answers": {"0": 5, "1": "Yes", "2": "More labs"}},
+            headers=student_one,
+        )
+        assert submitted.status_code == 200, submitted.text
+
+        responses = client.get(
+            f"/api/analytics/surveys/{survey_id}/responses", headers=instructor
+        )
+        assert responses.status_code == 200, responses.text
+        body = responses.json()
+        assert body["survey"]["response_count"] == 1
+        assert body["summary"]["0"]["counts"]["5"] == 1
+        assert body["responses"][0]["answers"]["2"] == "More labs"
+
+        listed = client.get("/api/analytics/surveys", headers=instructor)
+        assert listed.status_code == 200
+        assert any(
+            item["id"] == survey_id and item["response_count"] == 1
+            for item in listed.json()["surveys"]
+        )
+    finally:
+        client.delete(f"/api/analytics/surveys/{survey_id}", headers=instructor)
 
 
 def test_analytics_permissions(client, analytics_data):

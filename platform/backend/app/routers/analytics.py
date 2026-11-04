@@ -6,9 +6,11 @@ the course instructor or an administrator.
 """
 from __future__ import annotations
 
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 from statistics import median
 from typing import Optional
+import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -29,6 +31,9 @@ from app.models import (
     LabCompletion,
     LabSession,
     Level,
+    Survey,
+    SurveyAttachment,
+    SurveyResponse,
     Track,
     User,
 )
@@ -170,12 +175,40 @@ class PulseSurveyRequest(BaseModel):
     difficulty: int = Field(..., ge=1, le=5)
     learning: int = Field(..., ge=1, le=5)
     unclear: Optional[str] = Field(None, max_length=2000)
+    topic_interest: Optional[str] = Field(None, max_length=50)
     course_id: Optional[int] = None
 
 
 class WorkbookOpenRequest(BaseModel):
     title: Optional[str] = Field(None, max_length=200)
     url: Optional[str] = Field(None, max_length=500)
+
+
+class SurveyQuestionInput(BaseModel):
+    prompt: str = Field(..., min_length=1, max_length=500)
+    type: str = Field(..., pattern="^(scale|choice|text)$")
+    options: list[str] = Field(default_factory=list, max_length=12)
+
+    def normalized(self):
+        options = [item.strip() for item in self.options if item.strip()]
+        if self.type == "choice" and len(options) < 2:
+            raise ValueError("Choice questions need at least two options")
+        return {
+            "prompt": self.prompt.strip(),
+            "type": self.type,
+            "options": options if self.type == "choice" else [],
+        }
+
+
+class SurveyCreateInput(BaseModel):
+    title: str = Field(..., min_length=2, max_length=150)
+    description: Optional[str] = Field(None, max_length=2000)
+    questions: list[SurveyQuestionInput] = Field(..., min_length=1, max_length=20)
+    course_ids: list[int] = Field(..., min_length=1)
+
+
+class SurveyResponseInput(BaseModel):
+    answers: dict = Field(default_factory=dict)
 
 
 def _pulse_rows(
@@ -220,6 +253,33 @@ DOMAIN_BY_TRACK = {
     for definition in DOMAIN_DEFINITIONS
     for slug in definition["track_slugs"]
 }
+
+TOPIC_INTERESTS = {
+    "web": "Web Security",
+    "osint": "OSINT",
+    "forensics": "Forensics",
+    "malware": "Malware Analysis",
+    "ot": "OT / ICS",
+    "ai": "AI Security",
+    "cloud": "Cloud Security",
+    "network": "Network Security",
+    "linux": "Linux",
+    "windows": "Windows",
+    "software-security": "Software Security",
+    "career": "Career skills",
+    "other": "Something else",
+}
+
+
+def _trending_topics(pulse_rows) -> list[dict]:
+    counts = Counter(
+        row.topic_interest for row in pulse_rows
+        if row.topic_interest and row.topic_interest in TOPIC_INTERESTS
+    )
+    return [
+        {"key": key, "label": TOPIC_INTERESTS[key], "count": count}
+        for key, count in counts.most_common()
+    ]
 
 
 def _track_slug(row) -> Optional[str]:
@@ -763,7 +823,62 @@ async def course_overview(
             "completion_rate": completion_rate,
             "confidence_gain": confidence_gain,
         },
+        "trending_topics": _trending_topics(pulse_rows),
         "domains": _domain_performance(completions, sessions),
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@router.get("/reports/overview")
+async def reports_overview(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Cross-course reporting landing data for instructors and admins."""
+    query = db.query(Course).filter(Course.is_active == True)
+    if current_user.role != "admin":
+        query = query.filter(Course.instructor_id == current_user.id)
+    courses = query.order_by(Course.name).all()
+
+    rows = []
+    for course in courses:
+        detail = await course_overview(course.id, db, current_user)
+        rows.append({
+            "course": detail["course"],
+            "summary": detail["summary"],
+            "trending_topics": detail.get("trending_topics", []),
+        })
+
+    rag_counts = {"red": 0, "amber": 0, "green": 0}
+    topic_counts = Counter()
+    for row in rows:
+        rag = row["summary"].get("rag")
+        if rag in rag_counts:
+            rag_counts[rag] += 1
+        for topic in row.get("trending_topics", []):
+            topic_counts[topic["key"]] += topic["count"]
+
+    trending_topics = [
+        {"key": key, "label": TOPIC_INTERESTS.get(key, key), "count": count}
+        for key, count in topic_counts.most_common()
+    ]
+
+    return {
+        "courses": rows,
+        "trending_topics": trending_topics,
+        "totals": {
+            "courses": len(rows),
+            "enrolled_learners": sum(
+                row["summary"]["enrolled_learners"] for row in rows
+            ),
+            "assigned_exercises": sum(
+                row["summary"]["assigned_exercises"] for row in rows
+            ),
+            "pulse_responses": sum(
+                row["summary"]["pulse_responses"] for row in rows
+            ),
+            "rag_counts": rag_counts,
+        },
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -979,6 +1094,7 @@ async def get_pulse(
                 "difficulty": row.difficulty,
                 "learning": row.learning,
                 "unclear": row.unclear,
+                "topic_interest": row.topic_interest,
                 "updated_at": row.updated_at.isoformat() if row.updated_at else None,
             } if row else None
         ),
@@ -995,6 +1111,11 @@ async def submit_pulse(
     lab = db.query(Lab).filter(Lab.id == lab_id).first()
     if not lab:
         raise HTTPException(status_code=404, detail="Exercise not found")
+    if not getattr(current_user, "survey_opt_in", False):
+        raise HTTPException(
+            status_code=403,
+            detail="Survey participation requires opting in under Privacy and data",
+        )
 
     completion = db.query(LabCompletion).filter(
         LabCompletion.user_id == current_user.id,
@@ -1016,6 +1137,9 @@ async def submit_pulse(
         if not enrolled:
             raise HTTPException(status_code=403, detail="Not enrolled in that course")
 
+    if payload.topic_interest and payload.topic_interest not in TOPIC_INTERESTS:
+        raise HTTPException(status_code=400, detail="Unknown topic interest")
+
     row = db.query(ExercisePulseSurvey).filter(
         ExercisePulseSurvey.user_id == current_user.id,
         ExercisePulseSurvey.lab_id == lab_id,
@@ -1030,5 +1154,284 @@ async def submit_pulse(
     row.difficulty = payload.difficulty
     row.learning = payload.learning
     row.unclear = (payload.unclear or "").strip() or None
+    row.topic_interest = payload.topic_interest
     db.commit()
     return {"message": "Pulse feedback saved"}
+
+
+def _survey_questions(survey: Survey) -> list:
+    try:
+        return json.loads(survey.questions or "[]")
+    except (TypeError, ValueError):
+        return []
+
+
+def _survey_owner_or_403(db: Session, survey_id: int, current_user: User) -> Survey:
+    survey = db.query(Survey).options(
+        joinedload(Survey.attachments).joinedload(SurveyAttachment.course),
+    ).filter(Survey.id == survey_id).first()
+    if not survey:
+        raise HTTPException(status_code=404, detail="Survey not found")
+    if current_user.role != "admin" and survey.created_by != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to manage this survey")
+    return survey
+
+
+def _survey_payload(db: Session, survey: Survey, response_count: int) -> dict:
+    return {
+        "id": survey.id,
+        "title": survey.title,
+        "description": survey.description,
+        "questions": _survey_questions(survey),
+        "is_active": bool(survey.is_active),
+        "created_at": survey.created_at.isoformat() if survey.created_at else None,
+        "response_count": response_count,
+        "courses": [
+            {
+                "id": attachment.course.id,
+                "code": attachment.course.code,
+                "name": attachment.course.name,
+            }
+            for attachment in survey.attachments
+            if attachment.course
+        ],
+    }
+
+
+@router.get("/surveys")
+async def list_surveys(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    query = db.query(Survey).options(
+        joinedload(Survey.attachments).joinedload(SurveyAttachment.course),
+    )
+    if current_user.role != "admin":
+        query = query.filter(Survey.created_by == current_user.id)
+    surveys = query.order_by(Survey.created_at.desc()).all()
+    counts = dict(
+        db.query(SurveyResponse.survey_id, func.count(SurveyResponse.id))
+        .group_by(SurveyResponse.survey_id)
+        .all()
+    )
+    return {
+        "surveys": [
+            _survey_payload(db, survey, counts.get(survey.id, 0))
+            for survey in surveys
+        ]
+    }
+
+
+@router.post("/surveys")
+async def create_survey(
+    payload: SurveyCreateInput,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    course_ids = list(dict.fromkeys(payload.course_ids))
+    query = db.query(Course).filter(Course.id.in_(course_ids))
+    if current_user.role != "admin":
+        query = query.filter(Course.instructor_id == current_user.id)
+    courses = query.all()
+    if len(courses) != len(course_ids):
+        raise HTTPException(status_code=403, detail="One or more courses are not yours")
+
+    try:
+        questions = [question.normalized() for question in payload.questions]
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    survey = Survey(
+        title=payload.title.strip(),
+        description=(payload.description or "").strip() or None,
+        questions=json.dumps(questions),
+        created_by=current_user.id,
+        is_active=True,
+    )
+    db.add(survey)
+    db.flush()
+    for course in courses:
+        db.add(SurveyAttachment(survey_id=survey.id, course_id=course.id))
+    db.commit()
+    return {"message": "Survey created", "id": survey.id}
+
+
+@router.get("/surveys/available")
+async def available_surveys(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    course_ids = {
+        row[0] for row in db.query(CourseEnrollment.course_id).filter(
+            CourseEnrollment.user_id == current_user.id
+        ).all()
+    }
+    if not course_ids:
+        return {"surveys": []}
+    if not getattr(current_user, "survey_opt_in", False):
+        return {"surveys": [], "reason": "opt_in_required"}
+    attachments = db.query(SurveyAttachment).options(
+        joinedload(SurveyAttachment.survey),
+        joinedload(SurveyAttachment.course),
+    ).filter(
+        SurveyAttachment.course_id.in_(course_ids)
+    ).all()
+    responded = {
+        row[0] for row in db.query(SurveyResponse.survey_id).filter(
+            SurveyResponse.user_id == current_user.id
+        ).all()
+    }
+    surveys = []
+    for attachment in attachments:
+        survey = attachment.survey
+        if not survey or not survey.is_active or survey.id in responded:
+            continue
+        surveys.append({
+            **_survey_payload(db, survey, 0),
+            "attachment_id": attachment.id,
+            "course": {
+                "id": attachment.course.id,
+                "code": attachment.course.code,
+                "name": attachment.course.name,
+            },
+        })
+    return {"surveys": surveys}
+
+
+@router.post("/surveys/{survey_id}/responses")
+async def submit_survey_response(
+    survey_id: int,
+    payload: SurveyResponseInput,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    survey = db.query(Survey).filter(Survey.id == survey_id).first()
+    if not survey or not survey.is_active:
+        raise HTTPException(status_code=404, detail="Survey not available")
+    if not getattr(current_user, "survey_opt_in", False):
+        raise HTTPException(
+            status_code=403,
+            detail="Survey participation requires opting in under Privacy and data",
+        )
+    course_ids = {
+        row[0] for row in db.query(SurveyAttachment.course_id).filter(
+            SurveyAttachment.survey_id == survey_id
+        ).all()
+    }
+    enrolled = db.query(CourseEnrollment).filter(
+        CourseEnrollment.user_id == current_user.id,
+        CourseEnrollment.course_id.in_(course_ids),
+    ).first()
+    if not enrolled:
+        raise HTTPException(status_code=403, detail="You are not enrolled in this survey's course")
+
+    questions = _survey_questions(survey)
+    answers = {}
+    for index, question in enumerate(questions):
+        key = str(index)
+        value = payload.answers.get(key)
+        if value is None or value == "":
+            raise HTTPException(
+                status_code=400,
+                detail=f"Question {index + 1} requires an answer",
+            )
+        if question["type"] == "scale":
+            try:
+                number = int(value)
+            except (TypeError, ValueError):
+                raise HTTPException(status_code=400, detail=f"Question {index + 1} must be a number")
+            if number < 1 or number > 5:
+                raise HTTPException(status_code=400, detail=f"Question {index + 1} must be 1-5")
+            answers[key] = number
+        elif question["type"] == "choice":
+            if str(value) not in question["options"]:
+                raise HTTPException(status_code=400, detail=f"Question {index + 1} has an invalid option")
+            answers[key] = str(value)
+        else:
+            text = str(value).strip()
+            if not text or len(text) > 2000:
+                raise HTTPException(status_code=400, detail=f"Question {index + 1} text is invalid")
+            answers[key] = text
+
+    row = db.query(SurveyResponse).filter(
+        SurveyResponse.survey_id == survey_id,
+        SurveyResponse.user_id == current_user.id,
+    ).first()
+    if row is None:
+        row = SurveyResponse(
+            survey_id=survey_id,
+            user_id=current_user.id,
+            course_id=enrolled.course_id,
+        )
+        db.add(row)
+    else:
+        row.course_id = enrolled.course_id
+        row.submitted_at = datetime.now(timezone.utc)
+    row.answers = json.dumps(answers)
+    db.commit()
+    return {"message": "Survey response saved"}
+
+
+@router.get("/surveys/{survey_id}/responses")
+async def survey_responses(
+    survey_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    survey = _survey_owner_or_403(db, survey_id, current_user)
+    questions = _survey_questions(survey)
+    rows = db.query(SurveyResponse).options(
+        joinedload(SurveyResponse.user),
+        joinedload(SurveyResponse.course),
+    ).filter(SurveyResponse.survey_id == survey.id).order_by(
+        SurveyResponse.submitted_at.desc()
+    ).all()
+
+    responses = []
+    summary = {}
+    for row in rows:
+        try:
+            answers = json.loads(row.answers or "{}")
+        except (TypeError, ValueError):
+            answers = {}
+        responses.append({
+            "user_id": row.user_id,
+            "display_name": row.user.display_name if row.user else "Unknown learner",
+            "course_code": row.course.code if row.course else None,
+            "answers": answers,
+            "submitted_at": row.submitted_at.isoformat() if row.submitted_at else None,
+        })
+        for index, question in enumerate(questions):
+            key = str(index)
+            entry = summary.setdefault(key, {
+                "prompt": question["prompt"],
+                "type": question["type"],
+                "counts": {},
+                "texts": [],
+            })
+            value = answers.get(key)
+            if value is None:
+                continue
+            if question["type"] == "text":
+                if len(entry["texts"]) < 20:
+                    entry["texts"].append(str(value))
+            else:
+                entry["counts"][str(value)] = entry["counts"].get(str(value), 0) + 1
+
+    return {
+        "survey": _survey_payload(db, survey, len(rows)),
+        "summary": summary,
+        "responses": responses,
+    }
+
+
+@router.delete("/surveys/{survey_id}")
+async def delete_survey(
+    survey_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    survey = _survey_owner_or_403(db, survey_id, current_user)
+    db.delete(survey)
+    db.commit()
+    return {"message": "Survey deleted"}

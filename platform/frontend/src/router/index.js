@@ -129,6 +129,18 @@ const routes = [
     component: () => import('../views/InstructorPanel.vue'),
     meta: { requiresAuth: true, requiresInstructor: true }
   },
+  {
+    path: '/reports',
+    name: 'Reports',
+    component: () => import('../views/Reports.vue'),
+    meta: { requiresAuth: true, requiresInstructor: true }
+  },
+  {
+    path: '/surveys',
+    name: 'Surveys',
+    component: () => import('../views/Surveys.vue'),
+    meta: { requiresAuth: true, requiresInstructor: true }
+  },
   
   {
     path: '/admin',
