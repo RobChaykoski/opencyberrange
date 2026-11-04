@@ -1802,6 +1802,7 @@ watch(timeRemaining, (val) => {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
 }
 
 .track-header__icon {
@@ -1981,7 +1982,9 @@ watch(timeRemaining, (val) => {
 .level-header__right {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
 }
 
 .level-progress {
@@ -2460,6 +2463,8 @@ watch(timeRemaining, (val) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   padding: 1rem 1.5rem;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
@@ -2469,7 +2474,9 @@ watch(timeRemaining, (val) => {
 .active-lab-panel__title-group {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.75rem;
+  min-width: 0;
 }
 
 .active-lab-panel__title-group h2 {
@@ -2501,6 +2508,7 @@ watch(timeRemaining, (val) => {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  margin-left: auto;
 }
 
 .active-lab-panel__timer {
