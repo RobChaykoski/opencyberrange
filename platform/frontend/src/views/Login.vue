@@ -181,10 +181,17 @@
             <article class="preview-card preview-card--certificate">
               <div class="preview-certificate">
                 <span class="preview-certificate__seal">OCR</span>
-                <div>
-                  <strong>Certificate of Completion</strong>
+                <div class="preview-certificate__body">
+                  <small class="preview-certificate__eyebrow">Certificate of Completion</small>
+                  <strong class="preview-certificate__name">Avery Chen</strong>
                   <span>Network Foundations · Level 1</span>
-                  <small>Verified · OCR-2026-0142</small>
+                  <small class="preview-certificate__meta">Issued 04 Nov 2026 · OCR-2026-0142</small>
+                  <span class="preview-certificate__verified">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+                      <path d="m5 12 4 4L19 6"/>
+                    </svg>
+                    Verified
+                  </span>
                 </div>
               </div>
             </article>
@@ -732,42 +739,90 @@ const handleLogin = async () => {
 
 .preview-certificate {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  align-items: flex-start;
+  gap: 0.7rem;
   min-width: 0;
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent 52%),
+    rgba(15, 23, 42, 0.55);
 }
 
 .preview-certificate__seal {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 1px solid rgba(251, 191, 36, 0.55);
-  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.65);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.22), transparent 45%),
+    rgba(251, 191, 36, 0.14);
   color: #fbbf24;
-  font-size: 0.55rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.58rem;
   font-weight: 900;
   letter-spacing: 0.04em;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.07);
 }
 
-.preview-certificate strong {
+.preview-certificate__body {
+  min-width: 0;
+}
+
+.preview-certificate__eyebrow {
   display: block;
+  color: #fbbf24;
+  font-size: 0.52rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.preview-certificate__name {
+  display: block;
+  margin: 0.1rem 0 0.12rem;
   color: #f8fafc;
-  font-size: 0.7rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
 }
 
-.preview-certificate span {
+.preview-certificate__body > span:not(.preview-certificate__verified) {
   display: block;
-  color: #cbd5e1;
+  color: #dbeafe;
   font-size: 0.62rem;
+  line-height: 1.4;
 }
 
-.preview-certificate small {
+.preview-certificate__meta {
   display: block;
+  margin-top: 0.15rem;
   color: #94a3b8;
-  font-size: 0.58rem;
+  font-size: 0.54rem;
+}
+
+.preview-certificate__verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  margin-top: 0.3rem;
+  color: #86efac;
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.preview-certificate__verified svg {
+  width: 11px;
+  height: 11px;
 }
 
 .hero-note {
