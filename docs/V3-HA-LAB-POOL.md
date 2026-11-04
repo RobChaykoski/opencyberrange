@@ -4,8 +4,9 @@ Status: **Enterprise 3.0 — design complete, not implemented**
 Program link: [`docs/V3-PARKING-LOT.md`](V3-PARKING-LOT.md)
 Design skill: `.opencode/skills/opencyberrange-ha-architecture/SKILL.md`
 
-> Enterprise 3.0 adds high availability and multi-host lab pools on top of Pro
-> 2.0. The Pro analytics and reporting workstreams do not depend on this plan.
+> Enterprise 3.0 adds high availability and multi-host lab pools on top of
+> Professional 2.0. The Professional analytics and reporting workstreams do not
+> depend on this plan.
 
 ## Purpose
 

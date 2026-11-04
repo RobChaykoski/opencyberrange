@@ -1,7 +1,7 @@
 # Anti-scraping and crawler controls
 
 Status: **Active**
-Applies to: Base 1.1, Pro 2.0, Enterprise 3.0
+Applies to: Community / Academic 1.1, Professional 2.0, Enterprise 3.0
 
 OpenCyberRange is a private training platform. Its public surface is the login,
 registration, certificate-verification, and setup pages. Those pages must not be

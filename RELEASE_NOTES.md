@@ -1,10 +1,17 @@
-# OpenCyberRange Pro 2.0 development
+# OpenCyberRange Professional 2.0 development
 
-Edition: **Pro** — Base 1.1 plus analytics and reporting.
+Edition: **Professional** — Community / Academic 1.1 plus analytics, reporting,
+cohort analysis, competency evidence, accreditation support, and research
+exports.
 Status: development line. This is not a GA release and may change before 2.0.0.
 
-Enterprise 3.0 is the separate HA, identity-federation, and operations edition.
-See `docs/EDITIONS.md`.
+Enterprise 3.0 is the separate HA, SSO, enterprise reporting, multi-tenant,
+LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
+
+The five Professional priorities are Competency Framework Engine, Student
+Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
+Instructor Intervention Dashboard. They are Professional and Enterprise only;
+see `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
 ## Added in this build
 
