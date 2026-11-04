@@ -149,6 +149,59 @@ if [ "$DRY_RUN" = true ]; then
     echo ""
 fi
 
+# --- Incremental build manifest ---------------------------------------------
+# A lab is rebuilt when its content hash (lab dir + every build context) or
+# service list changes, or when a stable image tag is missing. The manifest is
+# generated state and is not committed.
+lab_meta() {
+    python3 "$HASH_HELPER" "$1"
+}
+
+manifest_hash() {
+    [ -f "$MANIFEST_FILE" ] || { echo ""; return 0; }
+    python3 - "$MANIFEST_FILE" "$1" <<'PY'
+import json, sys
+try:
+    data = json.load(open(sys.argv[1], encoding="utf-8"))
+except Exception:
+    print("")
+    raise SystemExit
+entry = (data.get("labs") or {}).get(sys.argv[2]) or {}
+print(entry.get("hash", ""))
+PY
+}
+
+images_present() {
+    local slug="$1"; shift
+    [ "$#" -gt 0 ] || return 0
+    local svc
+    for svc in "$@"; do
+        docker image inspect "ocr-lab/${slug}-${svc}:latest" >/dev/null 2>&1 || return 1
+    done
+    return 0
+}
+
+manifest_record() {
+    local slug="$1" hash="$2" services="$3"
+    mkdir -p "$(dirname "$MANIFEST_FILE")"
+    python3 - "$MANIFEST_FILE" "$slug" "$hash" "$services" <<'PY'
+import datetime, json, sys
+path, slug, digest, services = sys.argv[1:5]
+try:
+    data = json.load(open(path, encoding="utf-8"))
+except Exception:
+    data = {"version": 1, "labs": {}}
+data.setdefault("labs", {})[slug] = {
+    "hash": digest,
+    "services": services.split(),
+    "built_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+}
+with open(path, "w", encoding="utf-8") as handle:
+    json.dump(data, handle, indent=2, sort_keys=True)
+    handle.write("\n")
+PY
+}
+
 # Collect labs to build
 declare -a LABS_TO_BUILD=()
 SKIPPED=0
