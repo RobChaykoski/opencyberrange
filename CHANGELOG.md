@@ -29,6 +29,10 @@ All notable changes to OpenCyberRange are recorded here.
 - Profile email preferences in Privacy and data, with PIPEDA consent withdrawal language and an auditable consent version/timestamp.
 
 ### Maintenance and fixes
+- Exercise catalogue and exercise panel responsive pass: visible Completed,
+  In progress, Next up, and Locked labels; a retry state when a track fails to
+  load; a real keyboard toggle for level headers instead of nested buttons;
+  mobile-safe action rows and active-lab headers; and reduced-motion support.
 - Fresh installs now include the Redis rate-limit service, and existing
   deployments receive a Redis override during update.
 - Public `GET /api/version` and a footer build-version label.
