@@ -22,10 +22,14 @@
 
 ## Security checklist
 
+- [ ] OWASP Top 10 categories touched are listed (see `docs/V2-SECURITY-OWASP-TOP-10.md`)
 - [ ] No real credentials, personal data, or live targets added
 - [ ] New lab content is fictional and isolated
-- [ ] Authorization checks added or preserved on new endpoints
-- [ ] `pip-audit` / `npm audit` still clean, or the exception is documented
+- [ ] Authorization checks added or preserved on new endpoints, with allowed/denied tests
+- [ ] New rich text/markdown is sanitized and has an XSS regression test
+- [ ] New personal data is covered by export, erasure, and retention notes
+- [ ] Security-relevant actions emit an audit or activity event
+- [ ] `pip-audit` / `npm audit` still clean, or the exception is documented with owner and expiry
 
 ## Notes for reviewers
 

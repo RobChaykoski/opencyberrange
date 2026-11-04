@@ -20,6 +20,9 @@ see [`BUILD_NOTICE.md`](BUILD_NOTICE.md) for provenance and
 - Frontend: `cd platform/frontend && npm ci && npm run lint && npm run build`.
 - Security checks: `pip-audit -r platform/backend/requirements.txt` and
   `npm audit --omit=dev` in `platform/frontend` should stay clean.
+- Security design: read the [OWASP Top 10 baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+  before changing an interface, data model, authentication path, or integration.
+  List the categories the change touches in the pull request.
 
 ### Reporting Bugs
 

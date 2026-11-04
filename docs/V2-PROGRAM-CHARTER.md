@@ -70,6 +70,7 @@ These are v3 candidates unless the charter is amended:
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
 | M3 | Version identity endpoint and footer | Update — operational | Shipped | Platform |
+| S1 | OWASP Top 10 security baseline for interface, data, and delivery | Update — required process | Active | Security |
 | V3-1 | Configurable scoring model | v3 candidate | Parking lot | Product |
 | V3-2 | SSO / external identity | v3 candidate | Parking lot | Platform |
 | V3-3 | LMS/SIS integration | v3 candidate | Parking lot | Product |
