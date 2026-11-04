@@ -1,7 +1,8 @@
 # Host OS Support and Ubuntu 24.04 Decision
 
-Status: **1.1 remains on Ubuntu 22.04 LTS. 2.0 targets Ubuntu 24.04 LTS, with
-a validation gate before 24.04 is marked fully supported.**
+Status: **1.1 remains on Ubuntu 22.04 LTS. 2.0 targets Ubuntu 24.04 LTS.
+A 24.04 host is deployed and healthy; network, VPN, lab, and recovery gates
+remain before it is marked fully supported.**
 
 ## Decision
 
@@ -16,7 +17,7 @@ For new 2.0 installs, use:
 
 | Host OS | State | Guidance |
 |---|---|---|
-| Ubuntu 24.04 LTS (Noble) | **Recommended** | Target for 2.0 deployments once the validation checklist below passes |
+| Ubuntu 24.04 LTS (Noble) | **Validation in progress** | Host and platform deployment pass; network/VPN, KVM, and lab-recovery gates remain |
 | Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1-to-2.0 upgrades and the 2.0 validation window, not the long-term 2.0 target |
 | Debian 12/13 | Best effort | Not part of the tested server matrix |
 | Other Debian-based distributions | Unsupported | Package names, firewall backends, and systemd behaviour may differ |

@@ -13,6 +13,8 @@ All notable changes to OpenCyberRange are recorded here.
 - Registration email for new accounts, with separate approved and pending-approval messages.
 
 ### Maintenance and fixes
+- Fresh installs now include the Redis rate-limit service, and existing
+  deployments receive a Redis override during update.
 - Public `GET /api/version` and a footer build-version label.
 - Certificate verification now rejects non-ASCII digits, emoji, kanji, whitespace, and malformed IDs before any database lookup.
 - Documentation now records the Ubuntu 22.04 baseline for 1.1, the Ubuntu 24.04 target for 2.0, the multi-host lab pool plan, and the 2.x program charter.

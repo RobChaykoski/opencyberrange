@@ -1,6 +1,6 @@
 # V2 Ubuntu 24.04 Migration Plan
 
-Status: **Planned — 24.04 validation pending**
+Status: **In progress — host/platform deployed, network and lab gates pending**
 
 Execution checklist: [`V2-24.04-BUILD-OUT.md`](V2-24.04-BUILD-OUT.md)
 
