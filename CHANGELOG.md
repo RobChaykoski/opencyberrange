@@ -2,6 +2,13 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## Edition model
+
+- **Base 1.1** — supported single-host teaching platform and maintenance line.
+- **Pro 2.0** — Base plus learning analytics, reporting, and CSV/PDF exports.
+- **Enterprise 3.0** — Pro plus multi-host HA, LDAP/OIDC/SAML, and enterprise
+  operations. See `docs/EDITIONS.md` and `docs/decisions/0002-edition-model.md`.
+
 ## [Unreleased]
 
 ### 2.x feature scope

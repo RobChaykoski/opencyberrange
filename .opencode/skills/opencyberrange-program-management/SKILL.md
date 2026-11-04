@@ -15,13 +15,20 @@ commit.
 **The current release ships only its declared feature set. Everything else is a
 bug fix, a maintenance update, or a v3 candidate.**
 
-For OpenCyberRange 2.x the declared feature set is:
+OpenCyberRange uses three cumulative editions:
+
+1. **Base 1.1** — supported single-host teaching platform and maintenance line.
+2. **Pro 2.0** — Base plus analytics, reporting, and exports.
+3. **Enterprise 3.0** — Pro plus multi-host HA, LDAP/OIDC/SAML, and enterprise
+   operations.
+
+For Pro 2.x the declared feature set is:
 
 1. **Analytics** — learner, course, and programme insight.
 2. **Reporting** — reports, exports, and teaching-review surfaces.
 
-Multi-host HA, Docker lab pools, and failover are v3 work. No third 2.x
-workstream is added without a written scope change.
+Multi-host HA, identity federation, and enterprise operations are Enterprise 3.0
+work. No third Pro workstream is added without a written scope change.
 
 ## Classification workflow
 

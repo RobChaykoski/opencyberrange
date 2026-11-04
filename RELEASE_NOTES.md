@@ -1,6 +1,10 @@
-# OpenCyberRange 2.0 development
+# OpenCyberRange Pro 2.0 development
 
+Edition: **Pro** — Base 1.1 plus analytics and reporting.
 Status: development line. This is not a GA release and may change before 2.0.0.
+
+Enterprise 3.0 is the separate HA, identity-federation, and operations edition.
+See `docs/EDITIONS.md`.
 
 ## Added in this build
 
