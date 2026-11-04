@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Added
+- SMTP settings in Admin → Settings → Email, including a save-then-test flow.
+- Registration email for new accounts, with separate approved and pending-approval messages.
+- Public `GET /api/version` and a footer build-version label.
+
+### Changed
+- Documentation now records the Ubuntu 22.04 baseline for 1.0, the Ubuntu 24.04 target for 2.0, and the multi-host lab pool plan.
+
+### Fixed
+- Certificate verification now rejects non-ASCII digits, emoji, kanji, whitespace, and malformed IDs before any database lookup.
+
 ## [1.0.0] - 2026-11-04
 
 First supported self-hosted teaching release.

@@ -53,6 +53,7 @@ tracked in [the 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) and
 | Reporting | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, and CSV export. | Development preview in this tree |
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses: completion funnels, median time, hint pressure, attempt burden, within-person growth, and a shared metric dictionary. | Development preview in this tree |
 | Survey insight | Optional quick-pulse surveys after completion, instructor-built course surveys, consent-gated responses, and aggregate reporting. | Development preview in this tree |
+| Account email | Admin-configured SMTP relay, registration-success email, pending-approval wording, and a test-send action. | Development preview in this tree |
 | Scoring improvements | A clearer, configurable scoring model that explains how completion, hints, attempts, and time contribute, keeps competition scoring intact, and never turns analytics into a public ranking. | In design |
 | Deployment scale-out | Support multiple Docker hosts ("pods") first, then Kubernetes, without changing lab definitions or the student experience. | Planned |
 

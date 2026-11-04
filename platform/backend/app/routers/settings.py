@@ -12,9 +12,9 @@ from app.database import get_db
 from app.auth import get_current_admin_user
 from app.models import User, CustomAchievement
 from app.schemas import (
-    SettingsBulkUpdate, CustomAchievementCreate, CustomAchievementUpdate,
+    SettingsBulkUpdate, MailTestRequest, CustomAchievementCreate, CustomAchievementUpdate,
 )
-from app.services import settings_service
+from app.services import mail, settings_service
 from app.services.achievements import CUSTOM_ACHIEVEMENT_TRIGGERS
 from app.services.audit import log_admin_action, AuditActions
 
@@ -223,13 +223,53 @@ async def get_settings_by_category(
     admin: User = Depends(get_current_admin_user)
 ):
     """Return settings for a specific category."""
-    valid_categories = ["general", "security", "labs", "vpn", "appearance", "modules"]
+    valid_categories = ["general", "security", "labs", "vpn", "email", "appearance", "modules"]
     if category not in valid_categories:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid category. Must be one of: {valid_categories}"
         )
     return settings_service.get_settings_by_category(db, category)
+
+
+@router.post("/mail/test")
+async def send_mail_test(
+    payload: MailTestRequest | None = None,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Send a test message using the saved SMTP settings.
+
+    The recipient defaults to the signed-in administrator. A failed relay is a
+    bad gateway, and an unconfigured relay is a client error, so the operator can
+    tell the difference without reading container logs.
+    """
+    recipient = str(payload.to) if payload and payload.to else admin.email
+    text_body = (
+        "This is a test email from OpenCyberRange. "
+        "If you received it, the SMTP settings are working."
+    )
+    try:
+        sent = mail.send_email(
+            db,
+            to_email=recipient,
+            subject="OpenCyberRange mail test",
+            text_body=text_body,
+            raise_on_error=True,
+            fresh_settings=True,
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Mail delivery failed: {exc}",
+        )
+
+    if not sent:
+        raise HTTPException(
+            status_code=400,
+            detail="Mail is disabled or not configured. Save the SMTP settings first.",
+        )
+    return {"message": f"Test email sent to {recipient}"}
 
 
 @router.put("/")
