@@ -15,6 +15,17 @@ see `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
 ## Added in this build
 
+- **Admin user record:** a clearer account preview with learning summary,
+  searchable completion evidence, active sessions, and an in-context edit
+  action.
+- **Admin password reset:** a separate privileged action with admin
+  re-authentication, token revocation, forced password change, and audit
+  logging. The general profile update no longer accepts password changes.
+- **Exercise feedback:** the like/dislike control is now visible at the top of
+  the active exercise instead of below the scenario and flag form.
+- **Career guidance:** each track shows certification pathways, role direction,
+  and links to the Security Certification Roadmap, the CISO MindMap 2026, and
+  SWOCTS resources.
 - **Learning hours:** tracked time on completed exercises, plus bounded session
   time for started exercises without a completion, shown privately to learners
   and as course and cross-course aggregates.

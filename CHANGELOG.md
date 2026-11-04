@@ -29,6 +29,26 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 ### Login experience
 - The login preview shows a sample learner certificate and SWOCTS branding, with
   links to the SWOCTS website and LinkedIn page.
+- The exercise like/dislike control now sits at the top of the active exercise
+  instead of below the scenario and flag form.
+
+### Admin experience
+- The admin user record preview now has an account hero, learning summary,
+  searchable completion evidence, active-session cards, and a clear separation
+  between read-only review and destructive resets.
+- The edit-user dialog now groups identity, access, and password recovery, with
+  keyboard-visible focus, inline help, and mobile layouts.
+- Admin password reset is a separate privileged action: the admin must
+  re-authenticate, the target's sessions are revoked, a password change is
+  forced, and the action is audited. The general profile update endpoint now
+  rejects password changes.
+
+### Learning and career guidance
+- Each track now shows a certification pathway panel with entry, core, and
+  advanced vendor certifications, role direction, and links to the Security
+  Certification Roadmap, the CISO MindMap 2026, and SWOCTS resources.
+- The community/academic backlog records the CISO MindMap-informed curriculum
+  breadth and the in-workspace exercise brief pop-out.
 
 ### Security
 - Serve a deny-all `robots.txt`, send `noindex`/`nofollow` metadata and

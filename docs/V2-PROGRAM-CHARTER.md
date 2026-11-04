@@ -102,8 +102,10 @@ These are Enterprise 3.0 candidates unless the charter is amended:
 | H1 | Ubuntu 24.04 target for 2.0 | Update — required platform path | Partial — host/platform pass; network/lab/recovery gates pending | Platform |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
-| M3 | Version identity endpoint and footer | Update — operational | Shipped | Platform |
-| S1 | OWASP Top 10 security baseline for interface, data, and delivery | Update — required process | Active | Security |
+| M3 | Version identity endpoint and footer | Update - operational | Shipped | Platform |
+| M4 | Admin user record preview and edit usability | Update - usability fix on an existing admin surface | Delivered in this change | Design |
+| M5 | Admin password reset re-authentication and dedicated action | Bug fix - security | Delivered in this change | Security |
+| S1 | OWASP Top 10 security baseline for interface, data, and delivery | Update - required process | Active | Security |
 | V3-1 | Configurable scoring model | Enterprise candidate | Parking lot | Product |
 | V3-2 | SSO / external identity | Enterprise candidate | Settings only | Platform |
 | V3-3 | LMS/SIS integration | Enterprise candidate | Parking lot | Product |
