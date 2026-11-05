@@ -397,13 +397,15 @@ const logout = async () => {
   }
   localStorage.removeItem('token')
   localStorage.removeItem('user')
+  if (postLogoutUrl) {
+    // Navigate to the IdP before any in-app request can hit a revoked token and
+    // win the race with the 401 interceptor's /login redirect.
+    window.location.assign(postLogoutUrl)
+    return
+  }
   updateAuthState() // Update reactive state immediately
   resetModules()
-  if (postLogoutUrl) {
-    window.location.assign(postLogoutUrl)
-  } else {
-    router.push('/login')
-  }
+  router.push('/login')
 }
 
 // Expose updateAuthState globally for Login.vue to call
