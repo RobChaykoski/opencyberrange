@@ -63,6 +63,39 @@ flowchart TD
   SYS --> SY1[Health and Backups]
 ```
 
+## Users tab at a glance
+
+The Users tab opens by default and shows one row per account:
+
+| Column | What it shows |
+| --- | --- |
+| User | Masked username and an active/inactive dot |
+| Email | Masked address |
+| Role | Admin, Instructor, or Student |
+| Status | Active, Pending approval, Locked, or Disabled |
+| Last sign-in | A relative label such as `5 min ago` or `Never`; hover for the exact local time |
+| VPN | Whether a WireGuard peer is registered |
+| Actions | View details, unlock, approve, edit, enable/disable, delete |
+
+The toolbar above the table lets you:
+
+- search by name, username, email, student ID, or organization;
+- filter by status and role;
+- filter by last sign-in: today, last 7 days, last 30 days, or never;
+- filter by VPN registration;
+- sort by needs-attention first, newest or oldest sign-in, username, or newest
+  account;
+- see the visible result range and clear every filter at once.
+
+Filters compose. If a combination has no matches, the table shows an empty state
+with a **Clear filters** action. Pagination returns to page 1 when a filter
+changes.
+
+!!! note "Last sign-in is recorded on successful login"
+    An account that has never signed in shows `Never`. The relative label is a
+    quick scan; hover the cell to see the exact timestamp in the timezone
+    configured for your admin account.
+
 ## Legacy deep links
 
 Older bookmarks still resolve. The following query values redirect to the current location:
