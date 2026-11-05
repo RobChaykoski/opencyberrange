@@ -1,4 +1,4 @@
-"""
+﻿"""
 Database connection and session management
 """
 
@@ -17,6 +17,18 @@ engine = create_engine(
     pool_timeout=30,
 )
 
+# SQLite is used by the local test suite. Enforce foreign keys there so
+# ON DELETE CASCADE behaves like PostgreSQL; without this, deleted users can
+# leave orphan achievements and survey events behind between tests.
+if engine.dialect.name == "sqlite":
+    from sqlalchemy import event
+
+    @event.listens_for(engine, "connect")
+    def _enable_sqlite_foreign_keys(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -32,4 +44,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
