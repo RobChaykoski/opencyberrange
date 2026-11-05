@@ -62,6 +62,47 @@
                 required
                 autocomplete="username"
               />
+              <button
+                type="button"
+                class="forgot-username-link"
+                @click="toggleUsernameHelp"
+              >
+                Forgot username?
+              </button>
+            </div>
+
+            <div v-if="showUsernameHelp" class="forgot-username-panel">
+              <p class="forgot-username-help">
+                Enter the email address on your account. We will send your
+                username to that address only.
+              </p>
+              <div class="forgot-username-row">
+                <input
+                  id="reminder-email"
+                  v-model="reminderEmail"
+                  type="email"
+                  class="form-input"
+                  placeholder="you@example.edu"
+                  autocomplete="email"
+                  @keyup.enter="requestUsername"
+                />
+                <button
+                  type="button"
+                  class="forgot-username-submit"
+                  :disabled="reminderLoading || !reminderEmail.trim()"
+                  @click="requestUsername"
+                >
+                  {{ reminderLoading ? 'Sending...' : 'Email my username' }}
+                </button>
+              </div>
+              <p
+                v-if="reminderMessage"
+                class="forgot-username-message"
+                :class="{ 'forgot-username-message--error': reminderError }"
+                role="status"
+              >
+                {{ reminderMessage }}
+              </p>
             </div>
 
             <div class="form-group">
@@ -276,6 +317,46 @@ const mfaRequired = ref(false)
 const mfaCode = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
+
+// "Forgot username" flow: email the username to the address on the account.
+const showUsernameHelp = ref(false)
+const reminderEmail = ref('')
+const reminderMessage = ref('')
+const reminderError = ref(false)
+const reminderLoading = ref(false)
+
+const toggleUsernameHelp = () => {
+  showUsernameHelp.value = !showUsernameHelp.value
+  reminderMessage.value = ''
+  reminderError.value = false
+}
+
+const requestUsername = async () => {
+  if (reminderLoading.value) return
+  reminderMessage.value = ''
+  reminderError.value = false
+  reminderLoading.value = true
+  try {
+    const { data } = await axios.post('/api/auth/forgot-username', {
+      email: reminderEmail.value.trim(),
+    })
+    reminderMessage.value = data?.message
+      || 'If that email is registered, we have sent the username to it.'
+  } catch (error) {
+    if (error.response?.status === 429) {
+      reminderError.value = true
+      reminderMessage.value = 'Too many requests. Wait a minute and try again.'
+    } else if (error.response?.status === 422) {
+      reminderError.value = true
+      reminderMessage.value = 'Enter a valid email address.'
+    } else {
+      reminderError.value = true
+      reminderMessage.value = 'We could not process that request. Try again later.'
+    }
+  } finally {
+    reminderLoading.value = false
+  }
+}
 
 const handleLogin = async () => {
   errorMessage.value = ''
@@ -512,6 +593,71 @@ const handleLogin = async () => {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary);
+}
+
+.forgot-username-link {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.forgot-username-link:hover {
+  text-decoration: underline;
+}
+
+.forgot-username-panel {
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.forgot-username-help {
+  margin: 0 0 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.forgot-username-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.forgot-username-row .form-input {
+  min-width: 0;
+}
+
+.forgot-username-submit {
+  flex-shrink: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.forgot-username-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.forgot-username-message {
+  margin: 0.5rem 0 0;
+  color: var(--success);
+  font-size: 0.76rem;
+}
+
+.forgot-username-message--error {
+  color: var(--danger);
 }
 
 .form-input {

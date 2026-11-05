@@ -131,6 +131,9 @@ nav:
     - "Uninstallation": 00_Server_Deployment/05_Uninstallation.md
     - "Upgrade and Verify": 00_Server_Deployment/07_Upgrade_And_Verify.md
     - "Architecture": 00_Server_Deployment/06_Architecture.md
+  - "Manual editions": VERSIONS.md
+  - "Professional 2.1 supplement": 09_Professional/index.md
+  - "Enterprise 3.0 supplement": 10_Enterprise/index.md
   - "Admin Guide":
     - "Admin Panel Overview": 04_Admin_Guide/01_Admin_Panel_Overview.md
     - "Approving New Users": 04_Admin_Guide/02_Approving_New_Users.md

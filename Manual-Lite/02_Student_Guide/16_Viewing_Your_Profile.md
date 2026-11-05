@@ -23,7 +23,10 @@ The **Certificates & completion** section lists every certificate you have earne
 
 - **Track progress** with a bar and per-level completion pills. A check mark marks a level where you earned a certificate.
 - **Completion details**, an expandable table of every completed exercise with its completed date, attempts, and hints used.
-- **Course achievements** earned in your enrolled courses.
+- **Course achievements** earned in your enrolled courses, including the
+  range-wide learning-hour badges.
+- **Secret badges** when you click **Show secret badges**. The switch is
+  remembered on your account and can be turned off again.
 
 ## Downloading a PDF transcript
 

@@ -156,6 +156,73 @@ def render_registration_email(
     return subject, text_body, html_body
 
 
+def render_username_reminder_email(
+    *,
+    usernames: list[str],
+    login_url: str = "",
+    support_email: str = "",
+) -> tuple[str, str, str]:
+    """Build a username reminder that never contains a password.
+
+    The recipient is already the address on file, so this is a service
+    message rather than a marketing email. If several accounts share the
+    address (legacy data), list each username once.
+    """
+    clean_usernames = sorted({_clean(value) for value in usernames if _clean(value)})
+    subject = "Your OpenCyberRange username"
+    safe_login = html.escape(login_url, quote=True)
+    safe_support = html.escape(support_email)
+
+    username_lines = "\n".join(f"- {name}" for name in clean_usernames)
+    if len(clean_usernames) == 1:
+        username_lines = f"Username: {clean_usernames[0]}"
+
+    text_body = "\n".join([
+        "You asked us to remind you of the username for the OpenCyberRange",
+        "account registered to this email address.",
+        "",
+        username_lines,
+        "",
+        (
+            f"Sign in at {login_url}"
+            if login_url
+            else "Open the platform and sign in with this username."
+        ),
+        "",
+        "For your security, this message does not include your password. If you",
+        "did not ask for this reminder, you can ignore it.",
+        (
+            f"Questions? Contact {support_email}."
+            if support_email
+            else "Questions? Contact your instructor or administrator."
+        ),
+    ])
+
+    username_html = "".join(
+        f"<li><strong>{html.escape(name)}</strong></li>" for name in clean_usernames
+    )
+    html_body = (
+        "<!doctype html><html><body>"
+        "<p>You asked us to remind you of the username for the OpenCyberRange "
+        "account registered to this email address.</p>"
+        f"<ul>{username_html}</ul>"
+        + (
+            f'<p><a href="{safe_login}">Sign in to OpenCyberRange</a></p>'
+            if safe_login
+            else "<p>Open the platform and sign in with this username.</p>"
+        )
+        + "<p>For your security, this message does not include your password. "
+        "If you did not ask for this reminder, you can ignore it.</p>"
+        + (
+            f'<p>Questions? Contact <a href="mailto:{safe_support}">{safe_support}</a>.</p>'
+            if safe_support
+            else "<p>Questions? Contact your instructor or administrator.</p>"
+        )
+        + "</body></html>"
+    )
+    return subject, text_body, html_body
+
+
 def send_email(
     db: Session,
     *,
@@ -258,6 +325,47 @@ def send_registration_email(
         )
     except Exception as exc:
         logger.warning("Registration email for %s failed: %s", username, exc)
+        return False
+    finally:
+        if db is not None:
+            db.close()
+
+
+def send_username_reminder_email(
+    *,
+    to_email: str,
+    usernames: list[str],
+    request_base: str = "",
+) -> bool:
+    """Background-task entry point for a username reminder.
+
+    The caller has already matched the address to an account. Delivery stays
+    best effort so an unavailable relay never changes the generic response.
+    """
+    from app.database import SessionLocal
+    from app.config import settings
+
+    db = None
+    try:
+        db = SessionLocal()
+        support_email = getattr(settings, "PRIVACY_CONTACT_EMAIL", "") or ""
+        login_url = public_base_url(db, request_base)
+        login_url = f"{login_url}/login" if login_url else ""
+        subject, text_body, html_body = render_username_reminder_email(
+            usernames=usernames,
+            login_url=login_url,
+            support_email=support_email,
+        )
+        return send_email(
+            db,
+            to_email=to_email,
+            subject=subject,
+            text_body=text_body,
+            html_body=html_body,
+            fresh_settings=True,
+        )
+    except Exception as exc:
+        logger.warning("Username reminder for %s failed: %s", to_email, exc)
         return False
     finally:
         if db is not None:

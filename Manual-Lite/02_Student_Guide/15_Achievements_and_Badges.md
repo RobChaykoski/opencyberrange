@@ -68,9 +68,43 @@ under **Admin -> Settings -> Achievements**.
     require speed, and they are not a measure of whether someone belongs in
     cybersecurity.
 
-## Course scoped only
+## Learning-time badges
 
-Achievements are earned inside a course. Solving a lab outside any course earns no achievement, but every achievement you earn is still collected on your profile. To earn achievements, solve labs you reach through a course. See [Course Labs and Assignments](13_Course_Labs_and_Assignments.md).
+Separate from the course ladder, the platform tracks time spent on exercises
+and awards four range-wide badges. They appear on your profile under
+**Across the range**, not inside a course card.
+
+| Badge | How you earn it |
+|-------|-----------------|
+| Curious Mind | Spend at least 1 hour learning on exercises |
+| Deep Dive | Spend at least 5 hours learning on exercises |
+| Dedicated Learner | Spend at least 15 hours learning on exercises |
+| Scholar | Spend at least 30 hours learning on exercises |
+
+Time is counted once per learner and exercise. A timed completion is preferred;
+otherwise the platform uses the bounded session windows so an abandoned tab
+does not inflate the total. The platform checks these badges at sign-in and
+after a correct flag, and backfills any badge you already qualified for.
+
+## Hidden and secret badges
+
+Some badges are intentionally hidden, including the RangeBox, Forensics, and
+Software Security discovery badges. They are not shown on your profile by
+default. To reveal the ones you have earned:
+
+1. Open **Profile**.
+2. Find the **Course achievements** section.
+3. Click **Show secret badges**.
+4. Click **Hide secret badges** to put them away again.
+
+The preference is stored on your account. It affects only what your own profile
+shows; it does not change whether a badge is awarded.
+
+## Course scoped badges
+
+Most achievements are earned inside a course. Solving a lab outside any course
+still awards global badges, but course-scoped badges need a course enrolment.
+Every achievement you earn is collected on your profile. See [Course Labs and Assignments](13_Course_Labs_and_Assignments.md).
 
 !!! note "Awarding can lag"
     The platform checks for new achievements right after you submit a correct flag. The check runs in the background, so a badge can take a moment to appear on the tab.

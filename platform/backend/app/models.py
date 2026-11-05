@@ -50,6 +50,11 @@ class User(Base):
     timezone = Column(String(64), nullable=True)
     # JSON object of notification toggles.
     notification_prefs = Column(Text, nullable=True)
+    # Show hidden/secret badges on the profile. Off by default so a learner is
+    # not surprised by a badge they did not know existed.
+    show_hidden_achievements = Column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     # Email the user on a new login from a new IP.
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
     # Consent to optional account email. Essential security/service messages may
@@ -344,6 +349,32 @@ class LabCompletion(Base):
     
     __table_args__ = (
         Index('ix_completion_user_lab', 'user_id', 'lab_id', unique=True),
+    )
+
+
+class ExerciseReaction(Base):
+    """Lightweight thumbs-up / thumbs-down feedback on an exercise.
+
+    One reaction is kept per learner and exercise; the course context is stored
+    so course reports do not mix cohorts.
+    """
+    __tablename__ = "exercise_reactions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True)
+    reaction = Column(String(10), nullable=False)  # like or dislike
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User")
+    lab = relationship("Lab")
+    course = relationship("Course")
+
+    __table_args__ = (
+        Index("ix_reaction_user_lab_unique", "user_id", "lab_id", unique=True),
+        Index("ix_reaction_course_lab", "course_id", "lab_id"),
     )
 
 

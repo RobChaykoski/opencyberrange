@@ -317,6 +317,13 @@
             <h2>{{ activeLab.lab.name }}</h2>
             <span v-if="activeLab.session" class="active-badge">Active</span>
             <span v-else-if="activeLab.lab.is_completed" class="completed-badge">Completed</span>
+            <button
+              v-if="isRangeBoxActive"
+              @click="openRangeBox"
+              class="btn btn--primary btn--sm"
+            >
+              Open RangeBox
+            </button>
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
               <div class="launch-buttons">
@@ -398,6 +405,61 @@
               {{ launchingLab ? 'Starting...' : 'Clear and Relaunch' }}
             </button>
             <button class="btn btn--secondary btn--sm" @click="spawnError = ''">Dismiss</button>
+          </div>
+        </div>
+
+        <!-- Quick reaction: visible at the top of the exercise once started -->
+        <div
+          v-if="!isAdminUser"
+          class="exercise-reaction-bar"
+          :class="{ 'exercise-reaction-bar--disabled': !(activeLab.session || activeLab.lab.is_completed) }"
+          aria-label="Exercise feedback"
+        >
+          <div class="exercise-reaction-bar__text">
+            <strong>{{ activeLab.session || activeLab.lab.is_completed ? 'Was this exercise useful?' : 'Exercise feedback' }}</strong>
+            <span>
+              {{ activeLab.session || activeLab.lab.is_completed
+                ? 'Your instructor sees totals, not your name.'
+                : 'Start the exercise to enable feedback.' }}
+            </span>
+          </div>
+          <div class="exercise-reaction-bar__actions" role="group" aria-label="Exercise feedback">
+            <button
+              type="button"
+              class="exercise-reaction__btn"
+              :class="{ 'exercise-reaction__btn--active': reaction === 'like' }"
+              :aria-pressed="reaction === 'like'"
+              :disabled="reactionSaving || !(activeLab.session || activeLab.lab.is_completed)"
+              @click="setReaction('like')"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 10v11"/>
+                <path d="M15 5.5 13.5 10H19a2 2 0 0 1 2 2.3l-1.2 6A2.4 2.4 0 0 1 17.4 20H7V10l4.6-7a1.7 1.7 0 0 1 3.4 2.5Z"/>
+              </svg>
+              Like
+            </button>
+            <button
+              type="button"
+              class="exercise-reaction__btn"
+              :class="{ 'exercise-reaction__btn--active': reaction === 'dislike' }"
+              :aria-pressed="reaction === 'dislike'"
+              :disabled="reactionSaving || !(activeLab.session || activeLab.lab.is_completed)"
+              @click="setReaction('dislike')"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 14V3"/>
+                <path d="M9 18.5 10.5 14H5a2 2 0 0 1-2-2.3l1.2-6A2.4 2.4 0 0 1 6.6 4H17v10l-4.6 7a1.7 1.7 0 0 1-3.4-2.5Z"/>
+              </svg>
+              Dislike
+            </button>
+            <span
+              v-if="reactionMessage"
+              class="exercise-reaction__message"
+              :class="{ 'exercise-reaction__message--error': reactionError }"
+              role="status"
+            >
+              {{ reactionMessage }}
+            </span>
           </div>
         </div>
 
@@ -714,6 +776,12 @@ const { copied, copyText } = useClipboard()
 const loading = ref(false)
 const launchingImage = ref(null)  // which image button was clicked: null, 'kali', 'ubuntu', or 'remnux'
 const activeRangeboxImage = ref('kali')  // persists which image is running after launch
+
+// Quick exercise reaction (like/dislike) shown to learners while they work.
+const reaction = ref(null)
+const reactionSaving = ref(false)
+const reactionMessage = ref('')
+const reactionError = ref(false)
 
 // Flag submission
 const flagInput = ref('')
@@ -1094,6 +1162,7 @@ const openActiveLab = async (lab) => {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
     })
     activeLab.value = data
+    loadReaction(data.lab?.id)
 
     if (data.session) {
       if (data.session.time_remaining_seconds !== undefined) {
@@ -1136,11 +1205,53 @@ const openActiveLab = async (lab) => {
   }
 }
 
+const loadReaction = async (labId) => {
+  reaction.value = null
+  reactionMessage.value = ''
+  reactionError.value = false
+  if (!labId || isAdminUser.value) return
+  try {
+    const { data } = await axios.get(`/analytics/reaction/${labId}`)
+    reaction.value = data.reaction || null
+  } catch {
+    // Feedback is optional; a failed lookup must not block the exercise.
+  }
+}
+
+const setReaction = async (value) => {
+  if (!activeLab.value?.lab?.id || reactionSaving.value) return
+  const next = reaction.value === value ? null : value
+  reactionSaving.value = true
+  reactionMessage.value = ''
+  reactionError.value = false
+  try {
+    const { data } = await axios.post(
+      `/analytics/reaction/${activeLab.value.lab.id}`,
+      {
+        reaction: next,
+        course_id: activeCourseId.value ? Number(activeCourseId.value) : null,
+      },
+    )
+    reaction.value = data.reaction || null
+    reactionMessage.value = next
+      ? 'Thanks. Your feedback was saved.'
+      : 'Feedback cleared.'
+  } catch (error) {
+    reactionError.value = true
+    reactionMessage.value = error.response?.data?.detail || 'Could not save your feedback.'
+  } finally {
+    reactionSaving.value = false
+  }
+}
+
 const closeActiveLab = () => {
   activeLab.value = null
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
+  reaction.value = null
+  reactionMessage.value = ''
+  reactionError.value = false
 }
 
 const focusRunningLab = async (running) => {
@@ -1168,6 +1279,22 @@ const exitExercise = () => {
   if (courseExercisesLink.value) {
     router.push(courseExercisesLink.value)
   }
+}
+
+// Keep the learner in this tab: the RangeBox window carries the lab IPs and
+// the flag form in its own dock, so there is no reason to split the workflow
+// across two windows.
+const openRangeBox = () => {
+  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
+  router.push({
+    path: '/rangebox',
+    query: {
+      session: String(rangeboxSessionId.value),
+      image: activeRangeboxImage.value,
+      lab: String(activeLab.value.lab.id),
+      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
+    },
+  })
 }
 
 const viewLab = async (lab) => {
@@ -3607,4 +3734,104 @@ watch(timeRemaining, (val) => {
   justify-content: flex-end;
 }
 
+.exercise-reaction__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.exercise-reaction__btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.exercise-reaction__btn--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--bg-secondary));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+.exercise-reaction__btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.exercise-reaction__message {
+  margin: 0;
+  color: var(--success);
+  font-size: 0.76rem;
+}
+
+.exercise-reaction__message--error {
+  color: var(--danger);
+}
+
+.exercise-reaction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  background: color-mix(in srgb, var(--accent) 4%, var(--bg-secondary));
+}
+
+.exercise-reaction-bar__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.exercise-reaction-bar__text strong {
+  color: var(--text-primary);
+  font-size: 0.84rem;
+}
+
+.exercise-reaction-bar__text span {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.exercise-reaction-bar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.exercise-reaction-bar--disabled {
+  background: var(--bg-secondary);
+}
+
+.exercise-reaction-bar--disabled .exercise-reaction__btn {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.exercise-reaction__btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 640px) {
+  .exercise-reaction-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .exercise-reaction-bar__actions {
+    width: 100%;
+  }
+}
 </style>

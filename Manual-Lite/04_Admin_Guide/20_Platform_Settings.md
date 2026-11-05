@@ -76,6 +76,13 @@ admin test email.
 Registration email is best effort. A missing or failed SMTP relay never blocks
 account creation; the failure is logged and the account remains usable.
 
+The same relay also sends the **Forgot username** message. A learner enters the
+email address on their account and the platform mails the username to that
+address only. The response is identical for unknown addresses, so the form
+cannot be used to enumerate accounts. No password is ever included. Configure
+SMTP before telling learners to use the **Forgot username?** link on the login
+page.
+
 !!! warning "Protect the settings database"
     The SMTP password is stored in `platform_settings` and masked in the admin
     API, not encrypted separately. Treat database backups and exports as

@@ -34,6 +34,14 @@ flowchart LR
   U -. WireGuard VPN .-> L
 ```
 
+## Manual editions
+
+This is the **Community / Academic 1.1** core manual. Professional 2.1 and
+Enterprise 3.0 are cumulative, so this manual still applies to them. Their
+extra pages live in the [Professional supplement](09_Professional/index.md)
+and the [Enterprise supplement](10_Enterprise/index.md). See
+[Manual editions](VERSIONS.md) for the feature matrix.
+
 ## Where to start
 
 - New here? Begin with [Getting Started](01_Getting_Started/01_Platform_Overview.md).

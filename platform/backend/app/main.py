@@ -19,6 +19,7 @@ from app.database import engine, Base
 from app import modules as module_registry
 module_registry.register_models()
 from app.routers import auth, labs, admin, curriculum, courses, competitions, dashboard, setup, curriculum_admin, instructor, quiz, profile
+from app.routers import analytics as analytics_router
 from app.routers import settings as settings_router
 from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
@@ -219,6 +220,16 @@ async def lifespan(app: FastAPI):
                 conn.execute(text(f"ALTER TABLE users ADD COLUMN {column} {ddl}"))
                 conn.commit()
                 logger.info("Added %s column to users table", column)
+
+        # --- Hidden achievement display preference ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'show_hidden_achievements' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN show_hidden_achievements "
+                "BOOLEAN DEFAULT FALSE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added show_hidden_achievements column to users table")
 
         # --- Personal-data export timestamp (privacy panel) ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
@@ -599,6 +610,7 @@ app.include_router(courses.router, prefix="/api/courses", tags=["Courses"])
 app.include_router(competitions.router, prefix="/api/competitions", tags=["Competitions"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
+app.include_router(analytics_router.router, prefix="/api/analytics", tags=["Analytics"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 app.include_router(setup.router, prefix="/api/setup", tags=["Setup"])
 app.include_router(curriculum_admin.router, prefix="/api/admin/curriculum", tags=["Curriculum Admin"])

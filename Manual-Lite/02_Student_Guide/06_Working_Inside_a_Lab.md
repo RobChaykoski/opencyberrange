@@ -42,7 +42,19 @@ flowchart LR
     Bridge --> Tgt[Lab targets 10.100.x]
 ```
 
-**RangeBox** is a Kali, Ubuntu, or REMnux desktop that runs in your browser, already on the lab network. Pick the image you need before you launch: Kali for general pentesting, Ubuntu for a plain Linux environment, and REMnux for malware analysis and reverse engineering. Launch it from the panel and it opens in a dedicated tab. Its toolbar offers Reconnect, Clipboard send and get, Minimize, and Fullscreen. You need no VPN for RangeBox.
+**RangeBox** is a Kali, Ubuntu, or REMnux desktop that runs in your browser, already on the lab network. Pick the image you need before you launch: Kali for general pentesting, Ubuntu for a plain Linux environment, and REMnux for malware analysis and reverse engineering. When a running exercise has RangeBox enabled, the Active Lab panel shows **Open RangeBox**. It opens the desktop in the same tab, so your exercise does not split across two windows. Its toolbar offers Reconnect, Clipboard send and get, Minimize, and Fullscreen. You need no VPN for RangeBox.
+
+At the bottom of the RangeBox window, the **lab dock** shows the lab name,
+its subnet, and the target IPs when the exercise is built to reveal them. The
+same dock contains a **Flag** field and **Submit flag** button. You can capture
+the flag in the desktop, submit it without leaving RangeBox, and then close the
+window or return to the exercise. A correct flag shows the usual success message
+and tears the environment down.
+
+!!! tip "Workbook and flags in one place"
+    Open the workbook in a second tab if you like. Keep RangeBox open in the
+    first tab and use the dock to submit the flag as soon as you find it. You do
+    not need to switch back to the Active Lab panel.
 
 **Your own machine** reaches the same targets over the WireGuard tunnel. Use this when you prefer your local tools.
 
