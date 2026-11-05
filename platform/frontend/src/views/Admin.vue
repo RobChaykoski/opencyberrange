@@ -231,6 +231,7 @@
           <!-- Users Table -->
           <div class="table-container user-table-container">
             <table class="data-table user-table">
+              <caption class="visually-hidden">Users with role, account status, last sign-in, and VPN registration</caption>
               <thead>
                 <tr>
                   <th scope="col">User</th>
@@ -315,24 +316,24 @@
                     <span v-else class="vpn-status vpn-status--no" title="VPN not registered">-</span>
                   </td>
                   <td class="cell-actions" data-label="Actions">
-                    <button @click="openUserDetailsModal(user.id)" class="action-btn action-btn--view" title="View Details">
+                    <button @click="openUserDetailsModal(user.id)" class="action-btn action-btn--view" title="View Details" aria-label="View details">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"/>
                         <circle cx="12" cy="12" r="3"/>
                       </svg>
                     </button>
-                    <button v-if="user.is_locked" @click="unlockUser(user.id)" class="action-btn action-btn--unlock" title="Unlock">
+                    <button v-if="user.is_locked" @click="unlockUser(user.id)" class="action-btn action-btn--unlock" title="Unlock" aria-label="Unlock account">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
                         <path d="M7 11V7C7 4.2 9.2 2 12 2C13.5 2 14.8 2.6 15.8 3.6"/>
                       </svg>
                     </button>
-                    <button v-if="!user.is_approved" @click="approveUser(user.id)" class="action-btn action-btn--approve" title="Approve">
+                    <button v-if="!user.is_approved" @click="approveUser(user.id)" class="action-btn action-btn--approve" title="Approve" aria-label="Approve account">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"/>
                       </svg>
                     </button>
-                    <button @click="openEditUserModal(user)" class="action-btn action-btn--reset" title="Edit User">
+                    <button @click="openEditUserModal(user)" class="action-btn action-btn--reset" title="Edit User" aria-label="Edit user">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 2L19 4M19 4L15.5 7.5L16.5 8.5L20 5L19 4Z"/>
                         <path d="M11 6C7.7 6 5 8.7 5 12S7.7 18 11 18C12.7 18 14.2 17.3 15.2 16.2"/>
@@ -342,7 +343,7 @@
                     <button
                       @click="toggleUserActive(user)"
                       :class="['action-btn', user.is_active ? 'action-btn--archive' : 'action-btn--approve']"
-                      :title="user.is_active ? 'Disable' : 'Enable'"
+                      :title="user.is_active ? 'Disable' : 'Enable'" :aria-label="user.is_active ? 'Disable account' : 'Enable account'"
                     >
                       <svg v-if="!user.is_active" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"/>
@@ -351,7 +352,7 @@
                         <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
                       </svg>
                     </button>
-                    <button @click="deleteUser(user.id)" class="action-btn action-btn--delete" title="Delete">
+                    <button @click="deleteUser(user.id)" class="action-btn action-btn--delete" title="Delete" aria-label="Delete account">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"/>
                         <path d="M19 6V20C19 21.1 18.1 22 17 22H7C5.9 22 5 21.1 5 20V6M8 6V4C8 2.9 8.9 2 10 2H14C15.1 2 16 2.9 16 4V6"/>
