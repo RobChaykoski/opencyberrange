@@ -35,6 +35,22 @@ LOG_DETECTIVE = "log_detective"
 RANGEBOX_RANGER = "rangebox_ranger"
 FORENSICS_PATHFINDER = "forensics_pathfinder"
 # Learning-time and sign-in streak badges are global (course_id NULL).
+HIDDEN_ACHIEVEMENT_TYPES = {
+    SHELL_SHOCKED,
+    SOURCE_WHISPERER,
+    MEMORY_MINER,
+    GHOST_IN_THE_RAM,
+    VOICE_FROM_THE_WIRE,
+    SIP_WHISPERER,
+    RANGEBOX_ROOKIE,
+    FILE_HUNTER,
+    HEADER_HUNTER,
+    SOURCE_SLEUTH,
+    LOG_DETECTIVE,
+    RANGEBOX_RANGER,
+    FORENSICS_PATHFINDER,
+}
+
 LEARNING_1H = "learning_hours_1"
 LEARNING_5H = "learning_hours_5"
 LEARNING_15H = "learning_hours_15"

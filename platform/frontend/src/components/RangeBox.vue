@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="rangebox" :class="{ 'rangebox--fullscreen': isFullscreen, 'rangebox--collapsed': isCollapsed }">
     <!-- Toolbar -->
     <div class="rangebox__toolbar">
@@ -70,6 +70,46 @@
         <button @click="connect" class="rangebox__btn rangebox__btn--primary">Reconnect</button>
       </div>
     </div>
+
+    <!-- Lab dock: target addresses and flag entry without leaving the desktop -->
+    <div v-if="labContext && !isCollapsed && !isAdminViewer" class="rangebox__lab-dock">
+      <div class="rangebox__lab-meta">
+        <strong class="rangebox__lab-name">{{ labContext.lab_name }}</strong>
+        <span v-if="labContext.network_subnet" class="rangebox__lab-network">
+          Network <code>{{ labContext.network_subnet }}</code>
+        </span>
+        <span
+          v-for="target in labContext.target_ips"
+          :key="target.id || target.ip"
+          class="rangebox__ip-chip"
+          :title="target.label"
+        >
+          {{ target.label }} <code>{{ target.ip }}</code>
+        </span>
+        <span v-if="labCompleted" class="rangebox__flag-accepted">Flag accepted</span>
+      </div>
+
+      <form v-if="!labCompleted" class="rangebox__flag-form" @submit.prevent="submitFlag">
+        <label for="rangebox-flag" class="rangebox__flag-label">Flag</label>
+        <input
+          id="rangebox-flag"
+          v-model="flagValue"
+          type="text"
+          class="rangebox__flag-input"
+          placeholder="OCR{your_flag_here}"
+          autocomplete="off"
+          spellcheck="false"
+          :disabled="flagSubmitting"
+        />
+        <button type="submit" class="rangebox__btn rangebox__btn--primary" :disabled="flagSubmitting || !flagValue.trim()">
+          {{ flagSubmitting ? 'Checking...' : 'Submit flag' }}
+        </button>
+        <span v-if="flagMessage" class="rangebox__flag-message" :class="{ 'rangebox__flag-message--error': flagError }">
+          {{ flagMessage }}
+        </span>
+      </form>
+      <p v-else class="rangebox__flag-done">You can close this window or return to the exercise.</p>
+    </div>
   </div>
 </template>
 
@@ -85,6 +125,8 @@ const props = defineProps({
   imageName: { type: String, default: '' },
   adminTargetUserId: { type: Number, default: null },
   statusData: { type: Object, default: null },
+  // Lab metadata for the in-window flag/IP dock (exercise RangeBox only).
+  labContext: { type: Object, default: null },
 })
 
 // State
@@ -94,6 +136,13 @@ const isFullscreen = ref(false)
 const isCollapsed = ref(false)
 const showClipboard = ref(false)
 const clipboardText = ref('')
+
+// In-window flag submission (exercise RangeBox only).
+const flagValue = ref('')
+const flagMessage = ref('')
+const flagError = ref(false)
+const flagSubmitting = ref(false)
+const flagAccepted = ref(false)
 
 const timeRemaining = ref(null)
 const impersonation = ref(null)
@@ -122,9 +171,10 @@ const imageDisplayName = computed(() => {
 })
 
 const isAdminViewer = computed(() => !!props.adminTargetUserId)
+const labCompleted = computed(() => flagAccepted.value || !!props.labContext?.completed)
 
 const toolbarLabel = computed(() => {
-  if (isAdminViewer.value) return `Admin View — Student ${props.adminTargetUserId}`
+  if (isAdminViewer.value) return `Admin View â€” Student ${props.adminTargetUserId}`
   return imageDisplayName.value ? `RangeBox - ${imageDisplayName.value}` : 'RangeBox'
 })
 
@@ -157,7 +207,7 @@ const fetchTimeRemaining = async () => {
       timeRemaining.value = data.time_remaining
     }
   } catch {
-    // Silently ignore — timer is a nice-to-have
+    // Silently ignore â€” timer is a nice-to-have
   }
 }
 
@@ -167,7 +217,7 @@ const startTimer = () => {
     if (timeRemaining.value !== null) {
       timeRemaining.value = Math.max(0, timeRemaining.value - 1)
       if (timeRemaining.value <= 0) {
-        // Session expired — disconnect
+        // Session expired â€” disconnect
         connectionState.value = 'disconnected'
         if (rfb) {
           try { rfb.disconnect() } catch {}
@@ -221,9 +271,9 @@ const getWsUrl = async () => {
     const { data } = await axios.post('/rangebox/ws-ticket')
     credential = data.ticket
   } catch {
-    // Do NOT fall back to raw JWT — it would leak into URLs, logs, and browser history.
+    // Do NOT fall back to raw JWT â€” it would leak into URLs, logs, and browser history.
     // Force the user to retry instead.
-    console.warn('Failed to obtain WebSocket ticket — connection will not be established.')
+    console.warn('Failed to obtain WebSocket ticket â€” connection will not be established.')
     return null
   }
   return `${proto}//${window.location.host}/api/rangebox/${path}?token=${encodeURIComponent(credential)}`
@@ -325,6 +375,36 @@ const toggleClipboard = () => {
   showClipboard.value = !showClipboard.value
 }
 
+const submitFlag = async () => {
+  const labId = props.labContext?.lab_id
+  const flag = flagValue.value.trim()
+  if (!labId || !flag || flagSubmitting.value) return
+  flagSubmitting.value = true
+  flagMessage.value = ''
+  flagError.value = false
+  try {
+    const params = props.labContext?.course_id
+      ? { course_id: props.labContext.course_id }
+      : {}
+    const { data } = await axios.post(
+      `/exercises/labs/${labId}/submit-flag`,
+      { flag },
+      { params },
+    )
+    flagError.value = !data?.correct
+    flagMessage.value = data?.message || (data?.correct ? 'Flag accepted.' : 'Flag not accepted yet.')
+    if (data?.correct) {
+      flagValue.value = ''
+      flagAccepted.value = true
+    }
+  } catch (error) {
+    flagError.value = true
+    flagMessage.value = error.response?.data?.detail || 'Could not submit the flag. Try again.'
+  } finally {
+    flagSubmitting.value = false
+  }
+}
+
 // Getting text into the guest by TYPING it as keystrokes. rfb.clipboardPasteFrom
 // only sets the RFB clipboard channel, which needs a clipboard agent inside the
 // guest to land anywhere -- Dockur Windows ships none, so the old "Send to VM"
@@ -355,7 +435,7 @@ const sendClipboard = async () => {
 }
 
 const receiveClipboard = () => {
-  // Request clipboard from VNC — the 'clipboard' event handler above will catch it
+  // Request clipboard from VNC â€” the 'clipboard' event handler above will catch it
   if (rfb) {
     rfb.focus()
   }
@@ -603,8 +683,110 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   min-height: 0;
 }
 
-/* noVNC handles canvas sizing via scaleViewport — do NOT override
+/* noVNC handles canvas sizing via scaleViewport â€” do NOT override
    width/height here or mouse coordinates will be offset. */
+
+/* Lab dock: target IPs and flag entry inside the RangeBox window */
+.rangebox__lab-dock {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  padding: 0.55rem 0.75rem;
+  background: #12122a;
+  border-top: 1px solid var(--border-color, #2a2a3e);
+}
+
+.rangebox__lab-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.75rem;
+  min-width: 0;
+}
+
+.rangebox__lab-name {
+  color: #e0e0f0;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.rangebox__lab-network,
+.rangebox__ip-chip {
+  color: #a0a0c0;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.rangebox__ip-chip {
+  padding: 0.12rem 0.45rem;
+  border: 1px solid rgba(100, 100, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(100, 100, 255, 0.1);
+}
+
+.rangebox__lab-network code,
+.rangebox__ip-chip code {
+  color: #c7d2fe;
+}
+
+.rangebox__flag-accepted {
+  color: #5cb85c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rangebox__flag-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+  min-width: 0;
+}
+
+.rangebox__flag-label {
+  color: #a0a0c0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rangebox__flag-input {
+  width: min(260px, 40vw);
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-color, #2a2a3e);
+  border-radius: 4px;
+  background: #1a1a2e;
+  color: #e0e0f0;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.78rem;
+}
+
+.rangebox__flag-input:focus {
+  outline: 2px solid rgba(100, 100, 255, 0.55);
+  outline-offset: 1px;
+}
+
+.rangebox__flag-message {
+  flex-basis: 100%;
+  color: #5cb85c;
+  font-size: 0.72rem;
+}
+
+.rangebox__flag-message--error,
+.rangebox__flag-done {
+  color: #f0ad4e;
+}
+
+.rangebox__flag-done {
+  margin: 0;
+  font-size: 0.72rem;
+}
 
 /* Connecting overlay */
 .rangebox__connecting,
@@ -643,3 +825,5 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   to { transform: rotate(360deg); }
 }
 </style>
+
+

@@ -221,6 +221,16 @@ async def lifespan(app: FastAPI):
                 conn.commit()
                 logger.info("Added %s column to users table", column)
 
+        # --- Hidden achievement display preference ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'show_hidden_achievements' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN show_hidden_achievements "
+                "BOOLEAN DEFAULT FALSE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added show_hidden_achievements column to users table")
+
         # --- Personal-data export timestamp (privacy panel) ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'data_exported_at' not in users_columns:

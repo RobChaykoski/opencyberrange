@@ -1,4 +1,4 @@
-"""Learning analytics for students, instructors, and administrators.
+﻿"""Learning analytics for students, instructors, and administrators.
 
 V2 Phase 1 keeps analytics descriptive and explanatory. It never ranks
 learners, predicts grades, or exposes small groups. Course access is limited to
@@ -7,7 +7,7 @@ the course instructor or an administrator.
 from __future__ import annotations
 
 from collections import Counter
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from statistics import median
 from typing import Optional
 import io
@@ -41,7 +41,6 @@ from app.models import (
     Survey,
     SurveyAttachment,
     SurveyResponse,
-    Track,
     User,
 )
 
@@ -485,7 +484,7 @@ def _growth(completions: list[LabCompletion]) -> list[dict]:
             round(time_latest, 2) if time_latest is not None else None,
             time_status,
             "Median time as a fraction of the exercise estimate. Lower is more efficient.",
-            "× estimate",
+            "Ã— estimate",
         ),
         {
             "label": "Persistence",

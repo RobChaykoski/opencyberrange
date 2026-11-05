@@ -6,6 +6,7 @@
       :standalone="isStandalone"
       :image-name="imageName"
       :admin-target-user-id="adminTargetUserId"
+      :lab-context="labContext"
     />
     <div v-else class="rangebox-page__error">
       <p>Missing session or standalone parameter.</p>
@@ -15,8 +16,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import axios from '../api/axios'
 import RangeBox from '../components/RangeBox.vue'
 
 const route = useRoute()
@@ -37,6 +39,27 @@ const adminTargetUserId = computed(() => {
 })
 
 const ready = computed(() => sessionId.value || isStandalone.value)
+
+// The RangeBox window carries the exercise context: lab name, target IPs, and
+// the flag form. It is fetched here so the dock can render before the VNC
+// connection finishes.
+const labContext = ref(null)
+
+async function loadLabContext() {
+  if (!sessionId.value || isStandalone.value || adminTargetUserId.value) {
+    labContext.value = null
+    return
+  }
+  try {
+    const { data } = await axios.get(`/rangebox/${sessionId.value}/lab`)
+    labContext.value = data || null
+  } catch {
+    // A missing context should not break the desktop; the dock simply hides.
+    labContext.value = null
+  }
+}
+
+watch([sessionId, isStandalone, adminTargetUserId], loadLabContext, { immediate: true })
 </script>
 
 <style scoped>

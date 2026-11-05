@@ -317,6 +317,13 @@
             <h2>{{ activeLab.lab.name }}</h2>
             <span v-if="activeLab.session" class="active-badge">Active</span>
             <span v-else-if="activeLab.lab.is_completed" class="completed-badge">Completed</span>
+            <button
+              v-if="isRangeBoxActive"
+              @click="openRangeBox"
+              class="btn btn--primary btn--sm"
+            >
+              Open RangeBox
+            </button>
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
               <div class="launch-buttons">
@@ -1284,6 +1291,22 @@ const exitExercise = () => {
   if (courseExercisesLink.value) {
     router.push(courseExercisesLink.value)
   }
+}
+
+// Keep the learner in this tab: the RangeBox window carries the lab IPs and
+// the flag form in its own dock, so there is no reason to split the workflow
+// across two windows.
+const openRangeBox = () => {
+  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
+  router.push({
+    path: '/rangebox',
+    query: {
+      session: String(rangeboxSessionId.value),
+      image: activeRangeboxImage.value,
+      lab: String(activeLab.value.lab.id),
+      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
+    },
+  })
 }
 
 const viewLab = async (lab) => {

@@ -1,5 +1,5 @@
-"""
-RangeBox routes — browser-based Kali attack desktop via noVNC.
+﻿"""
+RangeBox routes â€” browser-based Kali attack desktop via noVNC.
 
 Provides WebSocket proxy between the browser's noVNC client and the
 RangeBox container's websockify server. Authentication is handled here
@@ -7,6 +7,7 @@ so the VNC server inside the container needs no password.
 """
 
 import asyncio
+import json
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query, status
@@ -14,9 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db, SessionLocal
 from app.auth import get_current_active_user, create_ws_ticket, validate_ws_ticket
-from app.models import User, Lab, LabSession
-from app.services import settings_service
-from datetime import datetime, timedelta, timezone
+from app.models import User, Lab, LabSession, LabCompletion, CourseEnrollment, CourseLabAssignment
 from app.services.docker_manager import DockerManager, RangeBoxCapacityError
 
 logger = logging.getLogger(__name__)
@@ -25,7 +24,7 @@ router = APIRouter()
 docker_manager = DockerManager()
 
 
-# ─── Helper: authenticate WebSocket connections ──────────────────────
+# â”€â”€â”€ Helper: authenticate WebSocket connections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async def _authenticate_ws(token: str) -> tuple[int | None, bool]:
     """
     Validate a WebSocket ticket (preferred) or JWT token and return
@@ -67,7 +66,7 @@ async def _authenticate_ws(token: str) -> tuple[int | None, bool]:
         db.close()
 
 
-# ─── WebSocket ticket endpoint ─────────────────────────────────────
+# â”€â”€â”€ WebSocket ticket endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.post("/ws-ticket")
 async def get_ws_ticket(
@@ -79,7 +78,7 @@ async def get_ws_ticket(
     return {"ticket": ticket}
 
 
-# ─── Standalone RangeBox (not tied to a lab session) ───────────────
+# â”€â”€â”€ Standalone RangeBox (not tied to a lab session) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # NOTE: These MUST be defined before /{session_id}/... routes,
 # otherwise FastAPI matches "standalone" as a session_id int and returns 422.
 
@@ -205,7 +204,7 @@ async def standalone_rangebox_vnc_proxy(
                     except WebSocketDisconnect:
                         pass
                     except Exception as e:
-                        logger.debug(f"standalone browser→container relay ended: {e}")
+                        logger.debug(f"standalone browserâ†’container relay ended: {e}")
                     finally:
                         await upstream.close()
 
@@ -221,7 +220,7 @@ async def standalone_rangebox_vnc_proxy(
                             elif msg.type == aiohttp.WSMsgType.ERROR:
                                 break
                     except Exception as e:
-                        logger.debug(f"standalone container→browser relay ended: {e}")
+                        logger.debug(f"standalone containerâ†’browser relay ended: {e}")
                     finally:
                         try:
                             await websocket.close()
@@ -282,7 +281,122 @@ async def standalone_rangebox_vnc_proxy(
 
 
 
-# ─── Session-based REST endpoints ──────────────────────────────────
+# â”€â”€â”€ Session-based REST endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+def _subnet_base(network_subnet: str | None) -> str | None:
+    if not network_subnet:
+        return None
+    try:
+        return ".".join(network_subnet.split("/")[0].split(".")[:3])
+    except (AttributeError, IndexError):
+        return None
+
+
+def _json_list(raw) -> list:
+    if not raw:
+        return []
+    try:
+        value = json.loads(raw) if isinstance(raw, str) else raw
+        return value if isinstance(value, list) else []
+    except (TypeError, ValueError):
+        return []
+
+
+def _rangebox_lab_context(db: Session, session: LabSession, current_user: User) -> dict:
+    """Lab details the RangeBox window needs for the flag and IP dock.
+
+    The exercise page used to be the only place that knew the target IPs and
+    the flag form. Passing the same information into the RangeBox page lets a
+    learner stay on the desktop while reading the addresses and submitting the
+    flag.
+    """
+    lab = db.query(Lab).filter(Lab.id == session.lab_id).first()
+    if not lab:
+        raise HTTPException(status_code=404, detail="Exercise not found")
+
+    reveal_ips = bool(getattr(lab, "show_target_ips", False))
+    base = _subnet_base(session.network_subnet) if reveal_ips else None
+
+    target_ips = []
+    if base:
+        for node in _json_list(lab.topology_nodes):
+            try:
+                offset = int(node.get("ip_offset"))
+            except (TypeError, ValueError, AttributeError):
+                continue
+            target_ips.append({
+                "id": node.get("id", ""),
+                "label": node.get("label") or node.get("id") or "Target",
+                "ip": f"{base}.{offset}",
+            })
+
+    hostnames = []
+    for entry in _json_list(lab.hostnames):
+        if not isinstance(entry, dict):
+            continue
+        hostname = entry.get("hostname")
+        if not hostname:
+            continue
+        ip = None
+        if base:
+            try:
+                ip = f"{base}.{int(entry.get('ip_offset'))}"
+            except (TypeError, ValueError):
+                ip = None
+        hostnames.append({
+            "hostname": hostname,
+            "description": entry.get("description", ""),
+            "ip": ip,
+        })
+
+    completed = db.query(LabCompletion.id).filter(
+        LabCompletion.user_id == current_user.id,
+        LabCompletion.lab_id == lab.id,
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).first() is not None
+
+    # Prefer the course that assigned this lab, so a correct answer counts for
+    # course credit when the RangeBox was opened from a course exercise.
+    course_id = None
+    enrollment = db.query(CourseEnrollment).join(
+        CourseLabAssignment,
+        CourseLabAssignment.course_id == CourseEnrollment.course_id,
+    ).filter(
+        CourseEnrollment.user_id == current_user.id,
+        CourseLabAssignment.lab_id == lab.id,
+    ).order_by(CourseEnrollment.enrolled_at.desc()).first()
+    if enrollment:
+        course_id = enrollment.course_id
+
+    return {
+        "session_id": session.id,
+        "lab_id": lab.id,
+        "lab_slug": lab.slug,
+        "lab_name": lab.name,
+        "network_subnet": session.network_subnet,
+        "target_ips": target_ips,
+        "hostnames": hostnames,
+        "completed": completed,
+        "course_id": course_id,
+    }
+
+
+@router.get("/{session_id}/lab")
+async def rangebox_lab(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the lab name, target IPs, and flag state for this RangeBox."""
+    session = db.query(LabSession).filter(
+        LabSession.id == session_id,
+        LabSession.user_id == current_user.id,
+    ).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return _rangebox_lab_context(db, session, current_user)
+
 
 @router.get("/{session_id}/status")
 async def rangebox_status(
@@ -308,7 +422,7 @@ async def rangebox_status(
     return docker_manager.get_rangebox_status(current_user.id, lab_slug)
 
 
-# ─── Session-based WebSocket VNC proxy ─────────────────────────────
+# â”€â”€â”€ Session-based WebSocket VNC proxy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.websocket("/{session_id}/vnc")
 async def rangebox_vnc_proxy(
@@ -322,7 +436,7 @@ async def rangebox_vnc_proxy(
 
     Auth: JWT passed as ?token= query parameter.
     """
-    # ── 1. Authenticate ──────────────────────────────────────────────
+    # â”€â”€ 1. Authenticate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if not token:
         await websocket.close(code=4401, reason="Missing token")
         return
@@ -332,7 +446,7 @@ async def rangebox_vnc_proxy(
         await websocket.close(code=4401, reason="Invalid token")
         return
 
-    # ── 2. Validate session ownership ────────────────────────────────
+    # â”€â”€ 2. Validate session ownership â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     db = SessionLocal()
     try:
         session = db.query(LabSession).filter(
@@ -354,7 +468,7 @@ async def rangebox_vnc_proxy(
     finally:
         db.close()
 
-    # ── 3. Resolve RangeBox container address ──────────────────────────
+    # â”€â”€ 3. Resolve RangeBox container address â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     rangebox_ip = docker_manager.get_rangebox_ip(user_id, lab_slug)
     if not rangebox_ip:
         await websocket.close(code=4500, reason="RangeBox IP not found")
@@ -362,7 +476,7 @@ async def rangebox_vnc_proxy(
 
     rangebox_ws_url = f"ws://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}/websockify"
 
-    # ── 4. Connect to the upstream RangeBox websockify ─────────────────
+    # â”€â”€ 4. Connect to the upstream RangeBox websockify â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     try:
         import aiohttp
     except ImportError:
@@ -377,12 +491,12 @@ async def rangebox_vnc_proxy(
             async with http_session.ws_connect(
                 rangebox_ws_url,
                 protocols=["binary"],
-                max_msg_size=16 * 1024 * 1024,  # 16MB — VNC can send large frames
+                max_msg_size=16 * 1024 * 1024,  # 16MB â€” VNC can send large frames
             ) as upstream:
-                # ── 5. Bidirectional relay ────────────────────────────
+                # â”€â”€ 5. Bidirectional relay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
                 async def browser_to_container():
-                    """Forward messages from browser → RangeBox."""
+                    """Forward messages from browser â†’ RangeBox."""
                     try:
                         while True:
                             msg = await websocket.receive()
@@ -400,12 +514,12 @@ async def rangebox_vnc_proxy(
                     except WebSocketDisconnect:
                         pass
                     except Exception as e:
-                        logger.debug(f"browser→container relay ended: {e}")
+                        logger.debug(f"browserâ†’container relay ended: {e}")
                     finally:
                         await upstream.close()
 
                 async def container_to_browser():
-                    """Forward messages from RangeBox → browser."""
+                    """Forward messages from RangeBox â†’ browser."""
                     try:
                         async for msg in upstream:
                             if msg.type == aiohttp.WSMsgType.BINARY:
@@ -417,7 +531,7 @@ async def rangebox_vnc_proxy(
                             elif msg.type == aiohttp.WSMsgType.ERROR:
                                 break
                     except Exception as e:
-                        logger.debug(f"container→browser relay ended: {e}")
+                        logger.debug(f"containerâ†’browser relay ended: {e}")
                     finally:
                         try:
                             await websocket.close()
@@ -453,7 +567,7 @@ async def rangebox_vnc_proxy(
             pass
 
 
-# ─── Admin: view a student's RangeBox VNC session ─────────────────
+# â”€â”€â”€ Admin: view a student's RangeBox VNC session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @router.websocket("/admin/{target_user_id}/{session_id}/vnc")
 async def admin_rangebox_vnc_proxy(
@@ -467,7 +581,7 @@ async def admin_rangebox_vnc_proxy(
     Authenticates the caller as an admin, then proxies VNC to
     the target student's RangeBox container.
     """
-    # ── 1. Authenticate caller ───────────────────────────────────
+    # â”€â”€ 1. Authenticate caller â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     if not token:
         await websocket.close(code=4401, reason="Missing token")
         return
@@ -477,7 +591,7 @@ async def admin_rangebox_vnc_proxy(
         await websocket.close(code=4401, reason="Invalid token")
         return
 
-    # ── 2. Verify caller is an admin ─────────────────────────────
+    # â”€â”€ 2. Verify caller is an admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     db = SessionLocal()
     try:
         admin = db.query(User).filter(User.id == admin_user_id, User.is_active == True).first()
@@ -485,7 +599,7 @@ async def admin_rangebox_vnc_proxy(
             await websocket.close(code=4403, reason="Admin access required")
             return
 
-        # ── 3. Look up the target student's session ──────────────
+        # â”€â”€ 3. Look up the target student's session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         session = db.query(LabSession).filter(
             LabSession.id == session_id,
             LabSession.user_id == target_user_id,
@@ -502,7 +616,7 @@ async def admin_rangebox_vnc_proxy(
     finally:
         db.close()
 
-    # ── 4. Resolve target student's RangeBox IP ──────────────────
+    # â”€â”€ 4. Resolve target student's RangeBox IP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     # Try lab-specific RangeBox first, then fall back to standalone.
     # get_rangebox_ip() always returns a computed IP (never None),
     # so we verify the container actually exists before using it.
@@ -526,7 +640,7 @@ async def admin_rangebox_vnc_proxy(
     rangebox_ws_url = f"ws://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}/websockify"
     logger.info(f"Admin {admin.username} viewing RangeBox for user {target_user_id} session {session_id}")
 
-    # ── 5. Proxy (same relay logic as regular endpoint) ──────────
+    # â”€â”€ 5. Proxy (same relay logic as regular endpoint) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     try:
         import aiohttp
     except ImportError:
@@ -557,7 +671,7 @@ async def admin_rangebox_vnc_proxy(
                     except WebSocketDisconnect:
                         pass
                     except Exception as e:
-                        logger.debug(f"admin browser→container relay ended: {e}")
+                        logger.debug(f"admin browserâ†’container relay ended: {e}")
                     finally:
                         await upstream.close()
 
@@ -573,7 +687,7 @@ async def admin_rangebox_vnc_proxy(
                             elif msg.type == aiohttp.WSMsgType.ERROR:
                                 break
                     except Exception as e:
-                        logger.debug(f"admin container→browser relay ended: {e}")
+                        logger.debug(f"admin containerâ†’browser relay ended: {e}")
                     finally:
                         try:
                             await websocket.close()
