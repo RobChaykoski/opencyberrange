@@ -29,6 +29,10 @@ const updateAuthState = inject('updateAuthState', null)
 const loading = ref(true)
 const errorMessage = ref('')
 
+// Vue can mount this view more than once during a fast route transition. The
+// ticket is single-use, so guard the exchange for the life of the page.
+let exchangeStarted = false
+
 const friendlyError = (code) => {
   if (code === 'pending_approval') {
     return 'Your account is awaiting administrator approval. Ask your instructor or administrator to approve it, then try again.'
@@ -59,6 +63,9 @@ const finishSignIn = async (data) => {
 }
 
 onMounted(async () => {
+  if (exchangeStarted) return
+  exchangeStarted = true
+
   const code = route.query.error
   if (code) {
     errorMessage.value = friendlyError(String(code))
