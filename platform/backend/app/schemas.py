@@ -84,6 +84,7 @@ class UserAdminResponse(BaseModel):
     vpn_registered: Optional[bool] = False
     must_change_password: Optional[bool] = False
     created_at: Optional[datetime] = None
+    last_login_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -111,6 +112,8 @@ class UserDetailResponse(BaseModel):
     username: str
     email: str
     student_id: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     is_active: Optional[bool] = True
     is_approved: Optional[bool] = False
     is_admin: Optional[bool] = False
@@ -121,6 +124,7 @@ class UserDetailResponse(BaseModel):
     vpn_registered: Optional[bool] = False
     must_change_password: Optional[bool] = False
     created_at: Optional[datetime] = None
+    last_login_at: Optional[datetime] = None
 
     # Statistics
     total_labs_completed: int = 0

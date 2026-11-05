@@ -144,63 +144,177 @@
           </div>
 
           <!-- Users Search & Filter Bar -->
-          <div class="filter-bar">
-            <input v-model="userSearch" type="text" placeholder="Search by username or email..." class="search-input" style="flex: 2;" />
-            <select v-model="userStatusFilter" class="filter-select" aria-label="Filter users by status">
-              <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="pending">Pending</option>
-              <option value="locked">Locked</option>
-              <option value="disabled">Disabled</option>
-            </select>
-            <select v-model="userRoleFilter" class="filter-select" aria-label="Filter users by role">
-              <option value="">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="instructor">Instructor</option>
-              <option value="student">Student</option>
-            </select>
-          </div>
-          <div class="results-count" style="margin-bottom: 0.5rem;">
-            {{ filteredUsers.length }} user{{ filteredUsers.length !== 1 ? 's' : '' }}
-            <span v-if="userSearch || userStatusFilter || userRoleFilter"> (filtered)</span>
+          <div class="user-toolbar">
+            <div class="user-toolbar__search">
+              <label class="visually-hidden" for="admin-user-search">Search users</label>
+              <input
+                id="admin-user-search"
+                v-model="userSearch"
+                type="search"
+                placeholder="Search name, username, email, or student ID..."
+                class="search-input"
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="user-toolbar__filters">
+              <label class="filter-field">
+                <span class="filter-field__label">Status</span>
+                <select v-model="userStatusFilter" class="filter-select" aria-label="Filter users by status">
+                  <option value="">All statuses</option>
+                  <option value="active">Active</option>
+                  <option value="pending">Pending approval</option>
+                  <option value="locked">Locked</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span class="filter-field__label">Role</span>
+                <select v-model="userRoleFilter" class="filter-select" aria-label="Filter users by role">
+                  <option value="">All roles</option>
+                  <option value="admin">Admin</option>
+                  <option value="instructor">Instructor</option>
+                  <option value="student">Student</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span class="filter-field__label">Last sign-in</span>
+                <select v-model="userLoginFilter" class="filter-select" aria-label="Filter users by last sign-in">
+                  <option value="">Any time</option>
+                  <option value="today">Today</option>
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="never">Never signed in</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span class="filter-field__label">VPN</span>
+                <select v-model="userVpnFilter" class="filter-select" aria-label="Filter users by VPN registration">
+                  <option value="">Any VPN state</option>
+                  <option value="registered">Registered</option>
+                  <option value="unregistered">Not registered</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span class="filter-field__label">Sort by</span>
+                <select v-model="userSort" class="filter-select" aria-label="Sort users">
+                  <option value="attention">Needs attention first</option>
+                  <option value="last_login_desc">Last sign-in: newest</option>
+                  <option value="last_login_asc">Last sign-in: oldest</option>
+                  <option value="username">Username A-Z</option>
+                  <option value="created_desc">Newest accounts</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="user-toolbar__summary">
+              <span class="results-count">
+                Showing {{ userRangeStart }}–{{ userRangeEnd }} of {{ filteredUsers.length }}
+                user{{ filteredUsers.length !== 1 ? 's' : '' }}
+                <span v-if="userFiltersActive"> (filtered)</span>
+              </span>
+              <button
+                v-if="userViewAdjusted"
+                type="button"
+                class="btn btn--secondary btn--sm"
+                @click="clearUserFilters"
+              >
+                Clear filters
+              </button>
+            </div>
           </div>
 
           <!-- Users Table -->
-          <div class="table-container">
-            <table class="data-table">
+          <div class="table-container user-table-container">
+            <table class="data-table user-table">
               <thead>
                 <tr>
-                  <th style="width: 20%">Username</th>
-                  <th style="width: 25%">Email</th>
-                  <th style="width: 10%">Status</th>
-                  <th style="width: 5%">VPN</th>
-                  <th style="width: 40%">Actions</th>
+                  <th scope="col">User</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Last sign-in</th>
+                  <th scope="col">VPN</th>
+                  <th scope="col" class="cell-actions-header">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="user in paginatedUsers" :key="user.id" :class="{ 'row--inactive': !user.is_active }">
-                  <td class="cell-primary">
-                    <span class="exercise-status-dot" :class="user.is_active ? 'exercise-status-dot--active' : 'exercise-status-dot--inactive'" style="display: inline-block; margin-right: 0.4rem;"></span>
-                    <span class="masked-email">{{ maskUsername(user.username) }}</span>
-                    <span v-if="user.must_change_password" class="password-change-badge" title="Password change required">ðŸ”’</span>
+                <tr v-if="filteredUsers.length === 0">
+                  <td colspan="7" class="empty-row">
+                    No users match the current filters.
+                    <button
+                      v-if="userViewAdjusted"
+                      type="button"
+                      class="link-button"
+                      @click="clearUserFilters"
+                    >
+                      Clear filters
+                    </button>
                   </td>
-                  <td class="masked-email" :title="'Click user profile to view full email'">{{ maskEmail(user.email) }}</td>
-                  <td>
-                    <span v-if="user.is_locked" class="status-badge status-badge--locked">Locked</span>
-                    <span v-else-if="!user.is_approved" class="status-badge status-badge--pending">Pending</span>
-                    <span v-else-if="user.role === 'admin'" class="status-badge status-badge--admin">Admin</span>
-                    <span v-else-if="user.role === 'instructor'" class="status-badge status-badge--instructor">Instructor</span>
-                    <span v-else class="status-badge status-badge--approved">Student</span>
+                </tr>
+                <tr
+                  v-for="user in paginatedUsers"
+                  :key="user.id"
+                  :class="{ 'row--inactive': !user.is_active }"
+                >
+                  <td class="cell-primary" data-label="User">
+                    <div class="user-identity">
+                      <span
+                        class="exercise-status-dot"
+                        :class="user.is_active ? 'exercise-status-dot--active' : 'exercise-status-dot--inactive'"
+                        aria-hidden="true"
+                      ></span>
+                      <div class="user-identity__body">
+                        <div class="user-identity__name">
+                          {{ maskUsername(user.username) }}
+                          <span
+                            v-if="user.must_change_password"
+                            class="password-change-badge"
+                            title="Password change required"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                              <rect x="4" y="10" width="16" height="11" rx="2"/>
+                              <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                            </svg>
+                            <span class="visually-hidden">Password change required</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                   </td>
-                  <td>
-                    <span v-if="user.vpn_registered" class="vpn-status vpn-status--yes">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <td class="masked-email" data-label="Email" :title="'Click user profile to view full email'">{{ maskEmail(user.email) }}</td>
+                  <td data-label="Role">
+                    <span class="status-badge" :class="roleBadgeClass(user.role)">
+                      {{ roleLabel(user.role) }}
+                    </span>
+                  </td>
+                  <td data-label="Status">
+                    <span class="status-badge" :class="statusBadgeClass(user)">
+                      {{ statusLabel(user) }}
+                    </span>
+                  </td>
+                  <td class="cell-last-login" data-label="Last sign-in">
+                    <span
+                      :class="['last-login', { 'last-login--never': !user.last_login_at }]"
+                      :title="lastLoginTitle(user)"
+                    >
+                      {{ lastLoginLabel(user) }}
+                    </span>
+                  </td>
+                  <td data-label="VPN">
+                    <span v-if="user.vpn_registered" class="vpn-status vpn-status--yes" title="VPN registered">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <polyline points="20 6 9 17 4 12"/>
                       </svg>
+                      <span class="visually-hidden">Registered</span>
                     </span>
-                    <span v-else class="vpn-status vpn-status--no">-</span>
+                    <span v-else class="vpn-status vpn-status--no" title="VPN not registered">-</span>
                   </td>
-                  <td class="cell-actions">
+                  <td class="cell-actions" data-label="Actions">
                     <button @click="openUserDetailsModal(user.id)" class="action-btn action-btn--view" title="View Details">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12S5 4 12 4S23 12 23 12S19 20 12 20S1 12 1 12Z"/>
@@ -248,10 +362,10 @@
               </tbody>
             </table>
           </div>
-          <div v-if="userTotalPages > 1" class="pagination" style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center; align-items: center;">
-            <button @click="userPage = userPage - 1" :disabled="userPage <= 1" class="btn btn--secondary btn--sm">Prev</button>
-            <span style="padding: 0.4rem 0.75rem; color: #94a3b8;">Page {{ userPage }} of {{ userTotalPages }}</span>
-            <button @click="userPage = userPage + 1" :disabled="userPage >= userTotalPages" class="btn btn--secondary btn--sm">Next</button>
+          <div v-if="userTotalPages > 1" class="user-pagination">
+            <button type="button" @click="userPage = userPage - 1" :disabled="userPage <= 1" class="btn btn--secondary btn--sm">Prev</button>
+            <span class="pagination__status">Page {{ userPage }} of {{ userTotalPages }}</span>
+            <button type="button" @click="userPage = userPage + 1" :disabled="userPage >= userTotalPages" class="btn btn--secondary btn--sm">Next</button>
           </div>
         </div>
 
@@ -2639,6 +2753,10 @@ test:
                     <span class="info-label">Username:</span>
                     <span class="info-value">{{ userDetails.username }}</span>
                   </div>
+                  <div class="info-item" v-if="userDetails.first_name || userDetails.last_name">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value">{{ [userDetails.first_name, userDetails.last_name].filter(Boolean).join(' ') }}</span>
+                  </div>
                   <div class="info-item">
                     <span class="info-label">Email:</span>
                     <span class="info-value">{{ userDetails.email }}</span>
@@ -2673,6 +2791,12 @@ test:
                   <div class="info-item">
                     <span class="info-label">Account Created:</span>
                     <span class="info-value">{{ formatDate(userDetails.created_at) }}</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Last sign-in:</span>
+                    <span class="info-value" :title="lastLoginTitle(userDetails)">
+                      {{ userDetails.last_login_at ? formatDate(userDetails.last_login_at) : 'Never' }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -3090,6 +3214,9 @@ const pendingUsers = ref([])
 const userSearch = ref('')
 const userStatusFilter = ref('')
 const userRoleFilter = ref('')
+const userLoginFilter = ref('')
+const userVpnFilter = ref('')
+const userSort = ref('attention')
 const userPage = ref(1)
 const usersPerPage = 25
 const newRegistrations = ref([])
@@ -3120,11 +3247,58 @@ const syncNewRegistrationsFromUsers = () => {
     .filter(Boolean)
 }
 
+const userFiltersActive = computed(() => Boolean(
+  userSearch.value.trim() ||
+  userStatusFilter.value ||
+  userRoleFilter.value ||
+  userLoginFilter.value ||
+  userVpnFilter.value
+))
+
+const userViewAdjusted = computed(() => userFiltersActive.value || userSort.value !== 'attention')
+
+const lastLoginTime = (user) => {
+  if (!user.last_login_at) return null
+  const raw = String(user.last_login_at)
+  const date = new Date(raw.endsWith('Z') || raw.includes('+') ? raw : raw + 'Z')
+  return Number.isNaN(date.getTime()) ? null : date.getTime()
+}
+
+const userMatchesLoginFilter = (user) => {
+  if (!userLoginFilter.value) return true
+  if (userLoginFilter.value === 'never') return !user.last_login_at
+  const time = lastLoginTime(user)
+  if (time === null) return false
+  if (userLoginFilter.value === 'today') {
+    const date = new Date(time)
+    const now = new Date()
+    return date.toDateString() === now.toDateString()
+  }
+  const days = userLoginFilter.value === '7d' ? 7 : 30
+  return Date.now() - time <= days * 24 * 60 * 60 * 1000
+}
+
+const compareLastLogin = (a, b) => {
+  const at = lastLoginTime(a)
+  const bt = lastLoginTime(b)
+  if (at === null && bt === null) return 0
+  if (at === null) return 1
+  if (bt === null) return -1
+  return at - bt
+}
+
 const filteredUsers = computed(() => {
   let list = users.value
-  if (userSearch.value) {
-    const q = userSearch.value.toLowerCase()
-    list = list.filter(u => u.username.toLowerCase().includes(q) || (u.email && u.email.toLowerCase().includes(q)))
+  const q = userSearch.value.trim().toLowerCase()
+  if (q) {
+    list = list.filter(u => [
+      u.username,
+      u.email,
+      u.first_name,
+      u.last_name,
+      u.student_id,
+      u.organization,
+    ].some(value => value && String(value).toLowerCase().includes(q)))
   }
   if (userStatusFilter.value) {
     switch (userStatusFilter.value) {
@@ -3135,30 +3309,84 @@ const filteredUsers = computed(() => {
     }
   }
   if (userRoleFilter.value) {
-    list = list.filter(u => u.role === userRoleFilter.value)
+    list = list.filter(u => (u.role || 'student') === userRoleFilter.value)
+  }
+  if (userLoginFilter.value) {
+    list = list.filter(userMatchesLoginFilter)
+  }
+  if (userVpnFilter.value) {
+    list = list.filter(u => userVpnFilter.value === 'registered' ? u.vpn_registered : !u.vpn_registered)
   }
 
-  // Approval queue first, then alphabetical, with staff accounts last within
-  // each approval group. Copy before sorting so the source list is not mutated.
   const staffRank = (u) => (u.role === 'admin' || u.role === 'instructor' ? 1 : 0)
   const approvalRank = (u) => (u.is_approved ? 1 : 0)
   const nameKey = (u) => (u.username || '').toLocaleLowerCase()
-  return [...list].sort((a, b) =>
-    approvalRank(a) - approvalRank(b) ||
-    staffRank(a) - staffRank(b) ||
-    nameKey(a).localeCompare(nameKey(b))
-  )
+  const sorters = {
+    attention: (a, b) => approvalRank(a) - approvalRank(b) || staffRank(a) - staffRank(b) || nameKey(a).localeCompare(nameKey(b)),
+    last_login_desc: (a, b) => compareLastLogin(b, a) || nameKey(a).localeCompare(nameKey(b)),
+    last_login_asc: (a, b) => compareLastLogin(a, b) || nameKey(a).localeCompare(nameKey(b)),
+    username: (a, b) => nameKey(a).localeCompare(nameKey(b)),
+    created_desc: (a, b) => (Date.parse(b.created_at || 0) || 0) - (Date.parse(a.created_at || 0) || 0),
+  }
+  return [...list].sort(sorters[userSort.value] || sorters.attention)
 })
 
-const userTotalPages = computed(() => Math.ceil(filteredUsers.value.length / usersPerPage))
+const userTotalPages = computed(() => Math.max(1, Math.ceil(filteredUsers.value.length / usersPerPage)))
+
+const userRangeStart = computed(() => filteredUsers.value.length === 0 ? 0 : (userPage.value - 1) * usersPerPage + 1)
+const userRangeEnd = computed(() => Math.min(userPage.value * usersPerPage, filteredUsers.value.length))
 
 const paginatedUsers = computed(() => {
   const start = (userPage.value - 1) * usersPerPage
   return filteredUsers.value.slice(start, start + usersPerPage)
 })
 
-// Reset to page 1 when filters change
-watch([userSearch, userStatusFilter, userRoleFilter], () => { userPage.value = 1 })
+const clearUserFilters = () => {
+  userSearch.value = ''
+  userStatusFilter.value = ''
+  userRoleFilter.value = ''
+  userLoginFilter.value = ''
+  userVpnFilter.value = ''
+  userSort.value = 'attention'
+}
+
+const roleLabel = (role) => role === 'admin' ? 'Admin' : role === 'instructor' ? 'Instructor' : 'Student'
+const roleBadgeClass = (role) => role === 'admin' ? 'status-badge--admin' : role === 'instructor' ? 'status-badge--instructor' : 'status-badge--student'
+
+const statusLabel = (user) => {
+  if (user.is_locked) return 'Locked'
+  if (!user.is_active) return 'Disabled'
+  if (!user.is_approved) return 'Pending'
+  return 'Active'
+}
+const statusBadgeClass = (user) => {
+  if (user.is_locked) return 'status-badge--locked'
+  if (!user.is_active) return 'status-badge--muted'
+  if (!user.is_approved) return 'status-badge--pending'
+  return 'status-badge--approved'
+}
+
+const lastLoginLabel = (user) => {
+  if (!user.last_login_at) return 'Never'
+  const time = lastLoginTime(user)
+  if (time === null) return 'Unknown'
+  const minutes = Math.floor((Date.now() - time) / 60000)
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes} min ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours} hr${hours === 1 ? '' : 's'} ago`
+  const days = Math.floor(hours / 24)
+  if (days === 1) return 'Yesterday'
+  if (days < 7) return `${days} days ago`
+  return formatDateShort(user.last_login_at)
+}
+
+const lastLoginTitle = (user) => user.last_login_at
+  ? `Last sign-in: ${formatDate(user.last_login_at)}`
+  : 'This account has not signed in yet'
+
+watch([userSearch, userStatusFilter, userRoleFilter, userLoginFilter, userVpnFilter, userSort], () => { userPage.value = 1 })
+watch(userTotalPages, (pages) => { if (userPage.value > pages) userPage.value = pages })
 const labs = ref([])
 const activeSessions = ref([])
 const sessionHistory = ref([])
@@ -9148,6 +9376,200 @@ watch(activeTab, (tab) => {
   margin-left: 0.5rem;
   font-size: 0.875rem;
   opacity: 0.8;
+}
+
+/* User management toolbar and table */
+.user-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.user-toolbar__search {
+  width: 100%;
+}
+
+.user-toolbar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 9.5rem;
+}
+
+.filter-field__label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.user-toolbar__summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.user-toolbar__summary .results-count {
+  margin-bottom: 0;
+}
+
+.user-table {
+  min-width: 62rem;
+}
+
+.user-table .cell-actions {
+  flex-wrap: nowrap;
+}
+
+.cell-actions-header {
+  text-align: right;
+}
+
+.user-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.user-identity__body {
+  min-width: 0;
+}
+
+.user-identity__name {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.cell-last-login {
+  white-space: nowrap;
+}
+
+.last-login {
+  color: var(--text-secondary);
+}
+
+.last-login--never {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.status-badge--student {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-secondary);
+}
+
+.password-change-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.375rem;
+  color: var(--warning);
+  vertical-align: middle;
+}
+
+.password-change-badge svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.user-pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination__status {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  padding: 0 0.25rem;
+}
+
+.link-button:hover {
+  color: var(--accent-hover, var(--accent));
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 900px) {
+  .user-toolbar__filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-field {
+    min-width: 0;
+  }
+
+  .user-table {
+    min-width: 0;
+  }
+
+  .user-table thead {
+    display: none;
+  }
+
+  .user-table tr {
+    display: block;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 0;
+  }
+
+  .user-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border: 0;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .user-table td::before {
+    content: attr(data-label);
+    color: var(--text-muted);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .user-table td.empty-row::before {
+    content: none;
+  }
+
+  .user-table .cell-actions {
+    justify-content: flex-end;
+  }
 }
 
 /* User Details Modal */
