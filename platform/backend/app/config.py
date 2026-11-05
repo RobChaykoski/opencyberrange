@@ -52,6 +52,17 @@ class Settings(BaseSettings):
     # Server public hostname (for general use)
     SERVER_PUBLIC_HOST: str = "localhost"
 
+    # SSO / OIDC. PUBLIC_BASE_URL must be the stable external origin; the OIDC
+    # redirect URI is derived from it, not from the request Host header.
+    PUBLIC_BASE_URL: str = ""
+    FRONTEND_BASE_URL: str = ""
+    SSO_STATE_TTL_SECONDS: int = 600
+    SSO_TICKET_TTL_SECONDS: int = 120
+    SSO_HTTP_TIMEOUT_SECONDS: int = 10
+    SSO_DISCOVERY_CACHE_SECONDS: int = 300
+    # Local development only. Production issuers must be https://.
+    SSO_ALLOW_INSECURE_HTTP: bool = False
+
     # Contact shown in the survey privacy statement and other privacy notices.
     PRIVACY_CONTACT_EMAIL: str = "privacy@swocts.com"
     

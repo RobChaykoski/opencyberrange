@@ -1817,7 +1817,21 @@ async def logout(
     jti = payload.get("jti")
     if jti:
         revoke_token(jti, float(payload.get("exp", 0)), user_id=current_user.id)
-    return {"message": "Logged out"}
+
+    # Only SSO-issued tokens redirect to the IdP. A local password login for an
+    # SSO-linked account stays on the local logout path.
+    post_logout_url = None
+    provider_id = payload.get("sso_provider_id")
+    if provider_id:
+        try:
+            from app.services import oidc
+
+            post_logout_url = oidc.build_end_session_url(
+                db, current_user, int(provider_id)
+            )
+        except Exception:
+            logger.exception("Could not build the SSO end-session URL")
+    return {"message": "Logged out", "post_logout_url": post_logout_url}
 
 
 # ==================== MFA (TOTP) ====================

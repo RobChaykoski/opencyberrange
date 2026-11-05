@@ -347,6 +347,7 @@ async def get_user_details(
         created_at=user.created_at,
         last_login_at=user.last_login_at,
         equipped_title=user.equipped_title,
+        password_login_disabled=user.password_login_disabled,
         total_labs_completed=len(completions_data),
         total_flag_attempts=flag_attempts_count,
         total_hints_used=total_hints,

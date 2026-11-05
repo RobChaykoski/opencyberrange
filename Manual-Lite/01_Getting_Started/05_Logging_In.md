@@ -23,9 +23,25 @@ Logging in opens your session on the platform. You enter your username and passw
 <figcaption>The login screen takes a username and password; there is no second authentication step.</figcaption>
 </figure>
 
+## Institution sign-in (SSO)
+
+If your institution has enabled OIDC single sign-on, the login page shows one or
+more **Sign in with …** buttons above the local form.
+
+1. Select your institution.
+2. Sign in on the institution's page, including any MFA it requires.
+3. The platform returns you to your dashboard.
+
+SSO-provisioned accounts do not use the local password form. If your account is
+pending approval, the platform asks you to contact an administrator. Keep the
+local administrator account available as a break-glass path if the identity
+provider is unavailable.
+
 ## What happens when you sign in
 
-Login is single factor: a username and a password, with no second step. The platform checks your credentials and then routes you based on your account state.
+Local login is single factor: a username and a password, with no second step.
+SSO may add the institution's own MFA. The platform checks your credentials and
+then routes you based on your account state.
 
 ```mermaid
 flowchart TB

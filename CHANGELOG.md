@@ -2,6 +2,87 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+<<<<<<< HEAD
+=======
+## [3.1.0] - 2026-11-05
+
+Enterprise single sign-on release.
+
+### OIDC SSO
+- Authorization-code login with PKCE, state, nonce, discovery, JWKS, and
+  issuer/audience/signature validation.
+- Shared PostgreSQL flow state and one-time SPA exchange tickets. Any API
+  replica can complete a callback started on another replica; no sticky
+  sessions are required.
+- Stable public callback URL derived from `PUBLIC_BASE_URL`.
+- Auto-provisioning, auto-approval, verified-email linking, and SSO-only
+  accounts. Administrator accounts are never auto-linked.
+- A local break-glass administrator remains available.
+- Provider test endpoint for OIDC discovery and JWKS reachability.
+- The provider card shows the exact redirect URI to register at the IdP.
+- Activity and audit events for SSO login, provisioning, and linking.
+- RP-initiated logout when the provider advertises an end-session endpoint.
+  The ID token is stored encrypted and removed after use.
+- New `password_login_disabled` account flag and `external_identities`,
+  `sso_login_states`, `sso_login_tickets`, and `sso_sessions` tables.
+
+### Documentation
+- Added ADR 0004 (SSO HA contract) and `docs/SSO-OIDC.md`.
+- Updated the Enterprise manual supplement and login guide.
+- Moved the Enterprise version line to **3.1.x**.
+
+### Limits
+- SAML and LDAP login adapters are not part of 3.1.0; their settings remain.
+- A formal SSO security review remains.
+
+## [3.0.3] - 2026-11-05
+
+### Learner profile
+- Added **Skill DNA**: five activity-based traits (Explorer, Builder, Defender,
+  Investigator, Leader), a class, a tier, and a certification alignment card on
+  the profile.
+- Added achievement **titles**. Unlocked titles can be equipped or cleared; the
+  class title returns when no achievement title is equipped. Hidden titles stay
+  secret until unlocked.
+- Added the **Title collection** and the equipped-title badge on the profile.
+- Added explicit course, competition, advanced-lab, and teaching signals to the
+  Leader trait.
+- Added the metric model in `docs/SKILL-DNA.md`.
+
+## [3.0.2] - 2026-11-05
+
+Maintenance release for the Enterprise line.
+
+### Admin user management
+- The Users table shows the last sign-in time, with a relative label and the
+  exact timestamp on hover.
+- Added filters for status, role, last sign-in window, and VPN registration,
+  plus a sort control, result range, clear-filters action, and empty state.
+- Role and account status are separate columns; the table has accessible
+  headers and a stacked layout on narrow screens.
+
+### Reliability
+- Rate limiting now degrades to in-process limits when Redis is unavailable
+  instead of returning HTTP 500 on login.
+
+### Design and release
+- Added the OpenCyberRange Design Tester skill for light/dark, layout, filter,
+  and accessibility reviews.
+
+## [3.0.0] - 2026-11-04
+
+Enterprise release line.
+
+- LDAP, OIDC, and SAML identity-provider settings with encrypted secrets and
+  audit logging (settings-only; login federation remains in the Enterprise HA
+  workstream).
+- Enterprise inherits the Professional 2.1 analytics, reporting, competency,
+  feedback, certification guidance, and admin security changes.
+- Multi-host HA, gateway failover, multi-tenancy, LMS integration, and
+  regulatory reporting remain in the Enterprise programme; see
+  `docs/V3-HA-LAB-POOL.md` and `docs/EDITIONS.md`.
+
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 ## Edition model
 
 - **Community / Academic 1.1** — supported single-host teaching platform, lab

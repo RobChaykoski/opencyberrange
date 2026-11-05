@@ -8,6 +8,7 @@ OpenCyberRange has three cumulative editions. The edition names describe scope
 and operational shape, not three separate codebases. Each edition builds on the
 previous one.
 
+<<<<<<< HEAD
 One platform release number covers this tree. Edition names select scope and
 entitlement; they are not separate version lines. See
 [ADR 0004](decisions/0004-single-platform-release-version.md).
@@ -17,6 +18,13 @@ entitlement; they are not separate version lines. See
 | **Community / Academic** | Release 3 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
 | **Professional** | Release 3 | Release profile — analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
 | **Enterprise** | Release 3 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
+=======
+| Edition | Version line | Shape | Primary user |
+|---|---|---|---|
+| **Community / Academic** | 1.1.x | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
+| **Professional** | 2.1.x | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Enterprise** | 3.1.x | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 
 ## Edition boundaries
 
@@ -69,7 +77,11 @@ Professional is not a multi-host or identity-federation product. It remains a
 single Docker host and does not add SSO, multi-tenancy, LMS integration, or
 distributed scheduling.
 
+<<<<<<< HEAD
 ### Enterprise profile (preview)
+=======
+### Enterprise â€” 3.1
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 
 Enterprise is a preview profile on Release 3 until the HA workstream ships. It adds
 the deployment, identity, and institutional layer:
@@ -79,7 +91,8 @@ the deployment, identity, and institutional layer:
 - node agent, mTLS control channel, drain, node-loss recovery, and reconciliation;
 - replicated frontend/API, PostgreSQL HA, Redis HA, shared object storage;
 - WireGuard gateway failover;
-- LDAP, OIDC, and SAML single sign-on;
+- OIDC single sign-on in 3.1; LDAP and SAML provider settings are retained for
+  the next adapter;
 - enterprise reporting and regulatory/compliance reporting;
 - multi-tenant support;
 - LMS integration;
@@ -90,9 +103,13 @@ which remains the default and fallback.
 
 ## Feature matrix
 
+<<<<<<< HEAD
 The matrix shows current delivery status by profile: **Delivered**, **Partial**, or **Planned**. Scope boundaries are described above.
 
 | Capability | Community / Academic profile | Professional profile | Enterprise preview |
+=======
+| Capability | Community / Academic 1.1 | Professional 2.0 | Enterprise 3.1 |
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 |---|---:|---:|---:|
 | Courses, labs, RangeBox, flags, hints | Yes | Yes | Yes |
 | Lab and workbook improvements | Yes | Yes | Yes |
@@ -126,6 +143,7 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 
 | Item | State |
 |---|---|
+<<<<<<< HEAD
 | Community / Academic profile on Release 3 | Delivered and supported |
 | Community / Academic 1.1.3 maintenance line | Supported for existing installs |
 | Professional analytics and course reporting | Delivered |
@@ -140,12 +158,31 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 | Enterprise preview HA | Design complete in the private HA repository; not deployed |
 | Enterprise preview SSO | Settings-only on the `v3` branch; login flows not implemented |
 | Enterprise preview reporting, multi-tenancy, LMS, compliance reporting | Planned |
+=======
+| Community / Academic 1.1 core platform | Delivered and supported |
+| Professional 2.0 analytics and course reporting | Delivered on the 24.04 preview |
+| Professional 2.0 Competency Framework Engine | Planned |
+| Professional 2.0 Student Feedback Engine | Planned |
+| Professional 2.0 Radar / Spider Web Reporting | Planned |
+| Professional 2.0 Exercise Health Analytics | Planned |
+| Professional 2.0 Instructor Intervention Dashboard | Planned |
+| Professional 2.0 cohort analysis | Planned |
+| Professional 2.0 accreditation support | Planned |
+| Professional 2.0 research exports | Partially delivered (cross-course CSV/PDF and survey package) |
+| Enterprise 3.1 HA | Reference implementation and local control-plane drills; production multi-host deployment still required |
+| Enterprise 3.1 SSO | **OIDC login and RP-initiated logout implemented and tested across two API replicas**; SAML/LDAP login adapters next |
+| Enterprise 3.1 enterprise reporting, multi-tenancy, LMS, compliance reporting | Planned |
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 
 ## Upgrade path
 
 ```text
+<<<<<<< HEAD
 Community / Academic profile  ->  Professional profile  ->  Enterprise preview
                  all on Release 3
+=======
+Community / Academic 1.1  ->  Professional 2.0  ->  Enterprise 3.1
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 ```
 
 1. **Community / Academic to Professional:** back up, move to Ubuntu 24.04,
@@ -162,6 +199,7 @@ Community / Academic profile  ->  Professional profile  ->  Enterprise preview
 
 ## Support policy
 
+<<<<<<< HEAD
 - **Community / Academic 1.1.3** is the maintenance line for existing installs.
   Security and correctness fixes land here first and merge forward.
 - **Community / Academic, Professional, and Enterprise** are profiles on platform
@@ -169,6 +207,15 @@ Community / Academic profile  ->  Professional profile  ->  Enterprise preview
 - **Enterprise is a preview profile** until HA, SSO, multi-tenancy, LMS, and
   compliance reporting are shipped and verified. The separate HA repository has
   its own version and a compatibility statement, not a platform version.
+=======
+- **Community / Academic 1.1** is the maintenance line. Security and
+  correctness fixes land here first and merge forward.
+- **Professional 2.0** is the current feature line for teaching analytics,
+  reporting, cohort analysis, accreditation support, and research exports.
+- **Enterprise 3.1** is the HA, identity, multi-tenancy, LMS, and compliance
+  line. It carries the Professional feature set plus enterprise deployment
+  controls.
+>>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 - A fix does not create a separate fork. It lands on the earliest affected
   edition and merges forward.
 

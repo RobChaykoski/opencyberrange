@@ -282,7 +282,12 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     user = get_user_by_username(db, username)
     if not user:
         return None
-    
+
+    # SSO-provisioned accounts must use the identity provider. Do not reveal
+    # the difference between a missing user and an SSO-only account.
+    if getattr(user, "password_login_disabled", False):
+        return None
+
     # Check if account is locked
     if user.is_locked:
         # Check if lockout period has expired
