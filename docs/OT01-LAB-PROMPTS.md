@@ -1,5 +1,7 @@
 # OT/IoT Lab Prompts - OpenCyberRange
 
+> Moved from `SESSION_SUMMARY.md`. This file contains lab prompt material, not a coding-session summary.
+
 ## Modbus Fundamentals (CH_OT01)
 
 ### Lab 1.1: Modbus Register Analysis — Prompt Questions
@@ -22,7 +24,7 @@
 **4. Security Implications**
 - Why is Modbus considered "insecure by design"?
 - What are the risks of exposing Modbus port 502 to untrusted networks?
-- How could an attacker use Modbus register reads to gather intelligence about a industrial control system?
+- How could an attacker use Modbus register reads to gather intelligence about an industrial control system?
 - What defensive controls would you recommend for a Modbus deployment?
 
 **5. Troubleshooting**
@@ -67,7 +69,7 @@
 | **Modbus Authentication** | None. Any client can read/write any registered address. |
 | **Modbus Encryption** | None. Traffic is cleartext. Use TLS/DTLS gateways if needed. |
 | **Common Function Codes** | 0x01 Coils, 0x02 Discrete Inputs, 0x03 Holding Registers, 0x04 Input Registers, 0x05/0x06 Single Write |
-| **Register Addressing** | 0-based or 1-dependent depending on implementation; always verify the device's mapping |
+| **Register Addressing** | 0-based or 1-based depending on the implementation; always verify the device's mapping |
 | **Broadcast Writes** | Function code 0xFF (or 0x05/0x06 with unit ID 0) writes to all devices on the network — use with extreme caution |
 | **Typical Attack Vectors** | — Register read for reconnaissance (motor status, tank levels, PID values) — Register write to disrupt process (over-speed motor, open/close valve) — DMA/chaos attacks via broadcast writes — PLC firmware extraction via crafted PDUs |
 | **Defensive Controls** | — Network segmentation (OT VLAN, separate switch) — Firewall rules restricting port 502 to known SCADA IPs — IDS/IPS signatures for Modbus function codes — Unidirectional gateways for critical data flows — Read-only gateways for monitoring only — Network traffic normalization and anomaly detection |

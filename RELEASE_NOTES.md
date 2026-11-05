@@ -1,4 +1,4 @@
-# OpenCyberRange Community / Academic 1.1.1
+# OpenCyberRange Community / Academic 1.1.2
 
 Edition: **Community / Academic** — supported single-host teaching platform,
 lab and workbook improvements, exercise authoring, maintenance, and security.
@@ -7,48 +7,49 @@ evidence, accreditation support, and research exports. Enterprise 3.0 adds HA,
 SSO, enterprise reporting, multi-tenant support, LMS integration, and
 compliance reporting.
 
-Released: 4 November 2026
+Released: 5 November 2026
 
-OpenCyberRange 1.1 is a maintenance-line feature release for Ubuntu 22.04 LTS
-and Ubuntu 24.04 LTS. It keeps the 1.0 deployment and upgrade path and adds
-account email plus the recent validation fixes.
+OpenCyberRange 1.1.2 is a maintenance release for Ubuntu 22.04 LTS and Ubuntu
+24.04 LTS. It keeps the 1.1 deployment and upgrade path.
 
 ## Highlights
 
-- **Private by default:** the platform serves a deny-all `robots.txt`, sends
-  `noindex`/`nofollow` metadata and `X-Robots-Tag`, and returns `403` to known
-  search and AI crawler user agents. See `docs/ANTI-SCRAPING.md` and
-  `docs/REVERSE-PROXY.md`.
-- **Login preview:** the sign-in page shows a sample learner certificate, the
-  SWOCTS mark, and links to the SWOCTS website and LinkedIn page.
-- **Registration email:** new accounts can opt in with a checkbox to receive a
-  registration-success message. Accounts that need approval are told they are
-  pending; auto-approved accounts receive a sign-in link. The form states that
-  the email is transactional, not marketing, and clears the checkbox to send
-  nothing.
-- **SMTP settings:** admins configure the relay, from address, public URL, and
-  credentials under Admin → Settings → Email, then send a test message.
-- **Profile email consent:** learners can opt in or out of optional account
-  email from Profile → Privacy and data. The panel explains the purpose, states
-  that email is not marketing, records the consent version and update time, and
-  supports withdrawal under PIPEDA.
-- **Exercise catalogue and panel polish:** visible Completed, In progress,
-  Next up, and Locked labels; a retry state when a track fails to load; a real
-  keyboard toggle for level headers; mobile-safe action rows and active-lab
-  headers; and reduced-motion support.
-- **Version identity:** the backend exposes `GET /api/version`, and the app
-  footer shows the running release.
-- **Certificate verification hardening:** malformed IDs, including emoji,
-  kanji, non-ASCII digits, and whitespace, are rejected before lookup.
+### Admin user management
+
+- The Users table now shows the **last sign-in** time. The cell uses a readable
+  relative label and exposes the exact local timestamp on hover.
+- New filters for **status**, **role**, **last sign-in window** (today, 7 days,
+  30 days, or never), and **VPN registration**, plus a sort control.
+- A result range, a clear-filters action, and a real empty state replace the old
+  single-line count.
+- **Role** and **account status** are separate columns instead of one badge that
+  mixed them together.
+- The table uses accessible column headers and switches to stacked rows on
+  narrow screens.
+- The user detail view now shows the account name and last sign-in.
+
+### Reliability
+
+- Rate limiting now degrades to in-process limits when Redis is unavailable.
+  A Redis outage no longer turns login into HTTP 500.
+- Added regression coverage for the limiter configuration and the admin user
+  API contract.
+
+### Design and release
+
+- Added the **OpenCyberRange Design Tester** skill. It reviews a design change
+  against the design skill for view hierarchy, light and dark themes, responsive
+  layout, filters, table density, and accessibility.
+- Release version is now **1.1.2** in `GET /api/version`, the footer, and the
+  frontend package.
 
 ## Upgrade notes
 
 1. Take a database snapshot.
-2. Pull the `v1.1.1` tag or the matching `main` commit.
+2. Pull the `v1.1.2` tag or the matching release commit.
 3. Rebuild the backend and frontend images.
-4. Start the stack and verify `GET /api/version` reports `1.1.1`.
-5. Open Admin → Settings → Email, save the relay settings, and send a test
-   message.
+4. Start the stack and verify `GET /api/version` reports `1.1.2`.
+5. Open **Admin → Users** and confirm the last sign-in column and filters.
 
 ## Supported scope
 
@@ -61,8 +62,9 @@ account email plus the recent validation fixes.
 - SMTP delivery is best effort. A failed relay never blocks account creation.
 - The SMTP password is stored in `platform_settings` and masked in the admin API,
   not encrypted separately. Protect database backups.
-- The footer version is informational and does not gate access.
+- Last sign-in is recorded on successful login. Accounts that have never signed
+  in show `Never`.
 
 ## Previous release
 
-See the `v1.0.0` tag for the 1.0.0 release notes.
+See the `v1.1.1` tag for the 1.1.1 release notes.
