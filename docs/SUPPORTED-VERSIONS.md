@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-05**. Current release: **1.1.2**.
+Last reviewed: **2026-11-05**. Current release: **1.1.3**.
 
 ## Policy
 

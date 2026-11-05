@@ -1,4 +1,4 @@
-# OpenCyberRange Community / Academic 1.1.2
+# OpenCyberRange Community / Academic 1.1.3
 
 Edition: **Community / Academic** — supported single-host teaching platform,
 lab and workbook improvements, exercise authoring, maintenance, and security.
@@ -9,47 +9,58 @@ compliance reporting.
 
 Released: 5 November 2026
 
-OpenCyberRange 1.1.2 is a maintenance release for Ubuntu 22.04 LTS and Ubuntu
-24.04 LTS. It keeps the 1.1 deployment and upgrade path.
+OpenCyberRange 1.1.3 adds the learner **Skill DNA** character sheet and
+achievement titles to the profile. It keeps the 1.1 deployment and upgrade path.
 
 ## Highlights
 
-### Admin user management
+### Skill DNA
 
-- The Users table now shows the **last sign-in** time. The cell uses a readable
-  relative label and exposes the exact local timestamp on hover.
-- New filters for **status**, **role**, **last sign-in window** (today, 7 days,
-  30 days, or never), and **VPN registration**, plus a sort control.
-- A result range, a clear-filters action, and a real empty state replace the old
-  single-line count.
-- **Role** and **account status** are separate columns instead of one badge that
-  mixed them together.
-- The table uses accessible column headers and switches to stacked rows on
-  narrow screens.
-- The user detail view now shows the account name and last sign-in.
+- Five activity-based traits: **Explorer**, **Builder**, **Defender**,
+  **Investigator**, and **Leader**.
+- A current class and tier: Pathfinder, Artificer, Warden, Seeker, or Commander,
+  from Initiate to Master.
+- Each trait bar shows a 0–100 score, the evidence behind it, and a next-step
+  suggestion.
+- A **Career alignment** card maps the current class to the existing
+  certification roadmap: OSINT, Web/AppSec, Network/SOC, Forensics/DFIR, or
+  general foundations.
+- Scores are descriptive, not predictive. They are not a grade or a ranking.
 
-### Reliability
+### Achievement titles
 
-- Rate limiting now degrades to in-process limits when Redis is unavailable.
-  A Redis outage no longer turns login into HTTP 500.
-- Added regression coverage for the limiter configuration and the admin user
-  API contract.
+- Achievements unlock cosmetic titles with a rarity from common to legendary.
+- Learners can equip one unlocked title or clear it to return to the class title.
+- Hidden achievement titles show as **Secret title** until unlocked.
+- The profile shows the equipped title next to the learner's name and in the
+  Cyber DNA class card.
+- The title collection is collapsible and available on every profile.
 
-### Design and release
+### Profile and accessibility
 
-- Added the **OpenCyberRange Design Tester** skill. It reviews a design change
-  against the design skill for view hierarchy, light and dark themes, responsive
-  layout, filters, table density, and accessibility.
-- Release version is now **1.1.2** in `GET /api/version`, the footer, and the
-  frontend package.
+- The profile stacks the class card, traits, certification card, and title
+  collection cleanly on narrow screens.
+- Trait bars expose text scores and accessible progress-bar values.
+- The sidebar collapse control now has an accessible name and expanded state.
+- The metric model is documented in `docs/SKILL-DNA.md`.
+
+### Retained from 1.1.2
+
+- Admin users show last sign-in and support status, role, last-sign-in, and VPN
+  filters.
+- Rate limiting degrades safely when Redis is unavailable.
+- The OpenCyberRange Design Tester skill is available for UI review.
 
 ## Upgrade notes
 
 1. Take a database snapshot.
-2. Pull the `v1.1.2` tag or the matching release commit.
+2. Pull the `v1.1.3` tag or the matching release commit.
 3. Rebuild the backend and frontend images.
-4. Start the stack and verify `GET /api/version` reports `1.1.2`.
-5. Open **Admin → Users** and confirm the last sign-in column and filters.
+4. Start the stack. The startup migration adds the nullable
+   `users.equipped_title` column; existing accounts are unchanged.
+5. Verify `GET /api/version` reports `1.1.3`.
+6. Open **Profile** and confirm the Cyber DNA section, class card, and title
+   collection.
 
 ## Supported scope
 
@@ -59,12 +70,14 @@ OpenCyberRange 1.1.2 is a maintenance release for Ubuntu 22.04 LTS and Ubuntu
 
 ## Known limitations
 
+- Skill DNA is a practice summary, not a competency assessment or a prediction
+  of job performance.
+- The formula is versioned (`2026.11`) and may change as the curriculum grows.
+- Titles are cosmetic. They do not grant lab access, change scores, or rank
+  learners.
+- The transcription PDF does not yet include the Skill DNA section.
 - SMTP delivery is best effort. A failed relay never blocks account creation.
-- The SMTP password is stored in `platform_settings` and masked in the admin API,
-  not encrypted separately. Protect database backups.
-- Last sign-in is recorded on successful login. Accounts that have never signed
-  in show `Never`.
 
 ## Previous release
 
-See the `v1.1.1` tag for the 1.1.1 release notes.
+See the `v1.1.2` tag for the 1.1.2 release notes.

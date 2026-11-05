@@ -1,7 +1,7 @@
 # Skill DNA
 
-Status: **Active learner profile feature** (Community / Academic 1.1, inherited
-by Professional 2.1 and Enterprise 3.0)
+Status: **Released in 1.1.3, 2.1.3, and 3.0.3** across Community / Academic,
+Professional, and Enterprise.
 
 Skill DNA is a learner character sheet. It summarises what a learner has
 practised in the range across five traits, gives the learner a class, and points

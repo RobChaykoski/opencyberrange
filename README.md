@@ -15,7 +15,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Release](https://img.shields.io/badge/release-1.1.2-blue)](RELEASE_NOTES.md)
+[![Release](https://img.shields.io/badge/release-1.1.3-blue)](RELEASE_NOTES.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
@@ -625,6 +625,7 @@ opencyberrange/
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
 | [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
 | [Career and certification resources](docs/CAREER-AND-CERTIFICATION-RESOURCES.md) | Learners, instructors, and programme leads planning next steps |
+| [Skill DNA metric model](docs/SKILL-DNA.md) | Learners, instructors, and programme leads reviewing profile traits, titles, and certification alignment |
 | [Community / Academic backlog](docs/COMMUNITY-ACADEMIC-BACKLOG.md) | Maintainers reviewing lab and workbook improvements |
 | [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md) | Design and product reviewing exercise layout and RangeBox |
 | [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md) | Operators checking indexing and AI-scraper policy |

@@ -22,6 +22,13 @@ Use **Add photo** under your avatar to upload a profile picture. The browser res
 The **Cyber DNA** section is your learner character sheet. It shows five traits
 built from your range activity:
 
+<figure markdown>
+
+![Cyber DNA section showing the class card, five trait bars, and the equipped title](img/profile-dna.png)
+
+<figcaption>The Cyber DNA section shows your current class, five activity-based traits, and your equipped title.</figcaption>
+</figure>
+
 | Trait | What it reflects |
 |---|---|
 | Explorer | Breadth across tracks, categories, and labs you have opened |
