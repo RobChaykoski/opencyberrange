@@ -100,7 +100,11 @@ def test_admin_password_reset_revokes_target_tokens(client, db_session, test_use
         resp = client.post(
             f"/api/admin/users/{test_user.id}/reset-password",
             headers=admin_headers,
-            json={"new_password": NEW_PASSWORD},
+            json={
+                "new_password": NEW_PASSWORD,
+                "admin_password": "Admin#Horse7Battery",
+                "must_change_password": True,
+            },
         )
         assert resp.status_code == 200, resp.text
 

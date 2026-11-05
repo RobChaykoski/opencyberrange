@@ -2,7 +2,7 @@
 Admin routes for user, lab, and session management
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request, WebSocket, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Query, Response
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from typing import List
@@ -13,6 +13,8 @@ import json
 import os
 import logging
 import tempfile
+import threading
+import uuid as _uuid
 
 from pydantic import BaseModel
 
@@ -20,12 +22,10 @@ from app.ratelimit import create_limiter
 
 from app.database import get_db
 from app.models import (
-    User, Lab, LabSession, WireGuardConfig, LabCompletion, FlagAttempt, Level, Track, Course,
-    CourseEnrollment, Achievement, CourseCompletionReset, ActivityEvent,
+    User, Lab, LabSession, WireGuardConfig, LabCompletion, FlagAttempt, Level, Track, ActivityEvent,
 )
 from app.schemas import (
     UserAdminResponse,
-    LabResponse,
     UserDetailResponse,
     LabCompletionDetail,
     LabSessionResponse,
@@ -35,10 +35,9 @@ from app.schemas import (
     UpdateLabRequest,
     LabCreate,
 )
-from app.auth import get_current_admin_user, get_current_instructor_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens, verify_password
+from app.auth import get_current_admin_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens, verify_password
 from app import entitlement
-from app.services import settings_service
-from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError
+from app.services.docker_manager import DockerManager, get_subnet_id
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
@@ -529,7 +528,7 @@ async def update_user(
             user.must_change_password = user_request.must_change_password
         except AttributeError:
             # Column doesn't exist yet - skip this update
-            logger.warning(f"must_change_password column does not exist in database. Migration required.")
+            logger.warning("must_change_password column does not exist in database. Migration required.")
     
     db.commit()
     db.refresh(user)
@@ -748,7 +747,7 @@ async def list_labs(
 ):
     """List all labs with track and level information"""
     from sqlalchemy.orm import joinedload
-    from app.models import Level, Track
+    from app.models import Level
     
     labs = db.query(Lab).options(
         joinedload(Lab.level).joinedload(Level.track),
@@ -2373,7 +2372,9 @@ async def create_lab(
     admin: User = Depends(get_current_admin_user)
 ):
     """Create a new lab from the web UI."""
-    import yaml as yaml_lib, hashlib, json
+    import yaml as yaml_lib
+    import hashlib
+    import json
 
     # If lab_yaml is provided, parse it and use values as defaults
     lab_data = {}
@@ -2616,7 +2617,10 @@ async def discover_labs(
     admin: User = Depends(get_current_admin_user)
 ):
     """Scan the /labs directory for lab.yaml files and sync to database."""
-    import os, yaml, hashlib, json
+    import os
+    import yaml
+    import hashlib
+    import json
 
     # Dev-only. On a shared-host / multi-instance setup the /labs dir holds
     # every instance's labs, so a bulk scan would ingest exercises that do not
@@ -3301,7 +3305,8 @@ async def restore_backup(
     admin: User = Depends(get_current_admin_user)
 ):
     """Restore the database from a backup file using psql."""
-    import subprocess, os
+    import subprocess
+    import os
     from urllib.parse import urlparse
 
     filename = body.get("filename")
@@ -3705,60 +3710,89 @@ async def stress_test_cleanup(
 
 
 
-import json
-import docker
+
+# --- Stress-test run state -----------------------------------------------
+# The endpoints above share a small file-backed run store so the status
+# endpoints can be served by any uvicorn worker, not just the one that
+# started the test.
+_STRESS_DIR = os.environ.get(
+    "OCR_STRESS_DIR",
+    os.path.join(tempfile.gettempdir(), "opencyberrange-stress"),
+)
+_stress_cancel_flags: dict[str, threading.Event] = {}
+_stress_state_lock = threading.Lock()
 
 
+def _stress_path(run_id: str, suffix: str) -> str:
+    return os.path.join(_STRESS_DIR, f"{run_id}_{suffix}")
 
 
+def _stress_read_state(run_id: str) -> dict:
+    path = _stress_path(run_id, "state.json")
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+        return data if isinstance(data, dict) else {}
+    except (FileNotFoundError, ValueError, OSError):
+        return {}
 
 
+def _stress_write_state(run_id: str, state: dict) -> None:
+    os.makedirs(_STRESS_DIR, exist_ok=True)
+    path = _stress_path(run_id, "state.json")
+    temp_path = f"{path}.tmp"
+    with _stress_state_lock:
+        with open(temp_path, "w", encoding="utf-8") as handle:
+            json.dump(state, handle)
+        os.replace(temp_path, path)
 
 
+def _stress_append_event(run_id: str, event: dict) -> None:
+    os.makedirs(_STRESS_DIR, exist_ok=True)
+    with _stress_state_lock:
+        with open(_stress_path(run_id, "events.jsonl"), "a", encoding="utf-8") as handle:
+            handle.write(json.dumps(event, default=str) + "\n")
 
 
+def _stress_read_events(run_id: str, after: int = 0) -> list[dict]:
+    path = _stress_path(run_id, "events.jsonl")
+    events = []
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            for index, line in enumerate(handle):
+                if index < after:
+                    continue
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    events.append(json.loads(line))
+                except ValueError:
+                    continue
+    except FileNotFoundError:
+        return []
+    return events
 
 
+def _stress_count_events(run_id: str) -> int:
+    path = _stress_path(run_id, "events.jsonl")
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return sum(1 for line in handle if line.strip())
+    except FileNotFoundError:
+        return 0
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def _stress_find_active() -> tuple[str | None, dict]:
+    try:
+        names = os.listdir(_STRESS_DIR)
+    except FileNotFoundError:
+        return None, {}
+    for name in sorted(names, reverse=True):
+        if not name.endswith("_state.json"):
+            continue
+        run_id = name[: -len("_state.json")]
+        state = _stress_read_state(run_id)
+        if state.get("status") == "running":
+            return run_id, state
+    return None, {}
