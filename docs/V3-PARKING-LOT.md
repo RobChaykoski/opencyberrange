@@ -22,7 +22,7 @@ Academic 1.1, and inherits the five Professional priorities. See
 | ID | Candidate | Problem it solves | Why not Professional | What would make it schedulable |
 |---|---|---|---|---|
 | V3-1 | Configurable scoring model | Instructors want course-specific weighting and clearer score explanations | Scoring is a major product model change; 2.x is analytics, reporting, and competency evidence | A validated scoring design, instructor review, migration plan, and a release gate |
-| V3-2 | SSO / SAML / LDAP | Institutions want central identity | New identity surface and security boundary | Settings UI exists on `v3`; login flows, provider tests, and a security review remain |
+| V3-2 | SSO / SAML / LDAP | Institutions want central identity | New identity surface and security boundary | OIDC login and RP-initiated logout implemented and HA-tested in 3.1.0; SAML/LDAP adapters and a formal security review remain |
 | V3-3 | LMS / SIS integration | Course rosters and grades need to sync | New integration and data-sharing contract | A named LMS, data-sharing agreement, and privacy review |
 | V3-4 | Multi-tenant support | One deployment serves several institutions or faculties | Tenant isolation changes the data model and operations | A tenancy model, isolation tests, migration plan, and security review |
 | V3-5 | Enterprise reporting | Institution-wide reporting across tenants and cohorts | Professional reports stop at the programme/course boundary | A reporting model, role model, and export contract |

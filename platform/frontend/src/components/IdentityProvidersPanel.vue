@@ -5,9 +5,9 @@
         <p class="idp-panel__eyebrow">V3 · Identity</p>
         <h3 id="idp-title">Identity providers</h3>
         <p class="idp-panel__lead">
-          Configure LDAP, OpenID Connect, or SAML providers. Secrets are encrypted
-          and never returned by the API. Login flows are enabled by the v3
-          identity adapter, not by this settings panel alone.
+          Configure LDAP, OpenID Connect, or SAML providers. OIDC sign-in is
+          active in 3.1; SAML and LDAP settings are stored for the next adapter.
+          Secrets are encrypted and never returned by the API.
         </p>
       </div>
       <button type="button" class="btn btn--primary btn--sm" @click="startCreate">
@@ -35,6 +35,15 @@
             </span>
           </div>
           <div class="idp-card__actions">
+            <button
+              v-if="provider.kind === 'oidc'"
+              type="button"
+              class="btn btn--outline btn--xs"
+              :disabled="testingId === provider.id"
+              @click="testProvider(provider)"
+            >
+              {{ testingId === provider.id ? 'Testing...' : 'Test' }}
+            </button>
             <button type="button" class="btn btn--outline btn--xs" @click="startEdit(provider)">Edit</button>
             <button
               v-if="!provider.is_default && provider.enabled"
@@ -50,7 +59,19 @@
         <dl class="idp-card__meta">
           <div><dt>Endpoint</dt><dd>{{ summary(provider) }}</dd></div>
           <div><dt>Secret fields</dt><dd>{{ provider.secret_keys?.length ? provider.secret_keys.join(', ') : 'None stored' }}</dd></div>
+          <div v-if="provider.kind === 'oidc'" class="idp-card__meta-wide">
+            <dt>Redirect URI</dt>
+            <dd class="idp-mono">{{ provider.resolved_redirect_uri }}</dd>
+          </div>
         </dl>
+        <p
+          v-if="testResults[provider.id]"
+          class="idp-test-result"
+          :class="{ 'idp-test-result--error': !testResults[provider.id].ok }"
+          role="status"
+        >
+          {{ testResults[provider.id].message }}
+        </p>
       </article>
     </div>
 
@@ -147,6 +168,37 @@
             <input v-model="form.secrets.client_secret" type="password" autocomplete="new-password" />
           </label>
         </div>
+        <div class="idp-form__row">
+          <label class="field idp-form__wide">
+            <span>Discovery URL (optional)</span>
+            <input v-model="form.config.discovery_url" type="text" placeholder="https://idp.example.edu/.well-known/openid-configuration" />
+          </label>
+          <label class="field">
+            <span>Default role</span>
+            <select v-model="form.config.default_role">
+              <option value="student">Student</option>
+              <option value="instructor">Instructor</option>
+            </select>
+          </label>
+        </div>
+        <div class="idp-form__row idp-form__checks">
+          <label class="idp-check">
+            <input v-model="form.config.auto_provision" type="checkbox" />
+            <span>Auto-provision new users</span>
+          </label>
+          <label class="idp-check">
+            <input v-model="form.config.auto_approve" type="checkbox" />
+            <span>Auto-approve provisioned users</span>
+          </label>
+          <label class="idp-check">
+            <input v-model="form.config.link_existing_by_email" type="checkbox" />
+            <span>Link existing accounts by verified email</span>
+          </label>
+        </div>
+        <p class="idp-form__note">
+          Use the same redirect URI in your identity provider. The callback is
+          stable and does not depend on which API replica handles the request.
+        </p>
       </template>
 
       <template v-else>
@@ -204,6 +256,8 @@ const showForm = ref(false)
 const editing = ref(null)
 const saving = ref(false)
 const formError = ref('')
+const testingId = ref(null)
+const testResults = reactive({})
 
 const blankConfig = () => ({
   server_url: '',
@@ -215,6 +269,11 @@ const blankConfig = () => ({
   issuer: '',
   client_id: '',
   scopes: 'openid email profile',
+  discovery_url: '',
+  auto_provision: true,
+  auto_approve: true,
+  link_existing_by_email: true,
+  default_role: 'student',
   idp_entity_id: '',
   sp_entity_id: '',
   sso_url: '',
@@ -326,6 +385,26 @@ const saveProvider = async () => {
     formError.value = e.response?.data?.detail || 'Could not save the identity provider.'
   } finally {
     saving.value = false
+  }
+}
+
+const testProvider = async (provider) => {
+  if (testingId.value) return
+  testingId.value = provider.id
+  testResults[provider.id] = null
+  try {
+    const { data } = await axios.post(`/identity/providers/${provider.id}/test`)
+    testResults[provider.id] = {
+      ok: true,
+      message: `Discovery OK · ${data.issuer} · ${data.signing_keys} signing key${data.signing_keys === 1 ? '' : 's'}`,
+    }
+  } catch (e) {
+    testResults[provider.id] = {
+      ok: false,
+      message: e.response?.data?.detail || 'Provider test failed.',
+    }
+  } finally {
+    testingId.value = null
   }
 }
 
@@ -470,6 +549,28 @@ onMounted(load)
   margin: 0.1rem 0 0;
   color: var(--text-secondary);
   overflow-wrap: anywhere;
+}
+.idp-card__meta-wide { grid-column: 1 / -1; }
+.idp-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.66rem;
+}
+.idp-test-result {
+  margin: 0.6rem 0 0;
+  color: var(--success);
+  font-size: 0.72rem;
+}
+.idp-test-result--error { color: var(--danger); }
+.idp-form__checks {
+  align-items: center;
+  gap: 1rem;
+}
+.idp-form__checks .idp-check { padding-bottom: 0; }
+.idp-form__note {
+  margin: 0 0 0.7rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
 }
 .idp-form {
   padding: 1rem;

@@ -283,6 +283,13 @@
                             </svg>
                             <span class="visually-hidden">Password change required</span>
                           </span>
+                          <span
+                            v-if="user.password_login_disabled"
+                            class="status-badge status-badge--sso"
+                            title="Managed by an identity provider"
+                          >
+                            SSO
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -9832,6 +9839,14 @@ watch(activeTab, (tab) => {
 .status-badge--student {
   background: rgba(148, 163, 184, 0.15);
   color: var(--text-secondary);
+}
+
+.status-badge--sso {
+  margin-left: 0.35rem;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
 }
 
 .password-change-badge {

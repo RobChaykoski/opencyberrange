@@ -2,6 +2,37 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [3.1.0] - 2026-11-05
+
+Enterprise single sign-on release.
+
+### OIDC SSO
+- Authorization-code login with PKCE, state, nonce, discovery, JWKS, and
+  issuer/audience/signature validation.
+- Shared PostgreSQL flow state and one-time SPA exchange tickets. Any API
+  replica can complete a callback started on another replica; no sticky
+  sessions are required.
+- Stable public callback URL derived from `PUBLIC_BASE_URL`.
+- Auto-provisioning, auto-approval, verified-email linking, and SSO-only
+  accounts. Administrator accounts are never auto-linked.
+- A local break-glass administrator remains available.
+- Provider test endpoint for OIDC discovery and JWKS reachability.
+- The provider card shows the exact redirect URI to register at the IdP.
+- Activity and audit events for SSO login, provisioning, and linking.
+- RP-initiated logout when the provider advertises an end-session endpoint.
+  The ID token is stored encrypted and removed after use.
+- New `password_login_disabled` account flag and `external_identities`,
+  `sso_login_states`, `sso_login_tickets`, and `sso_sessions` tables.
+
+### Documentation
+- Added ADR 0004 (SSO HA contract) and `docs/SSO-OIDC.md`.
+- Updated the Enterprise manual supplement and login guide.
+- Moved the Enterprise version line to **3.1.x**.
+
+### Limits
+- SAML and LDAP login adapters are not part of 3.1.0; their settings remain.
+- A formal SSO security review remains.
+
 ## [3.0.3] - 2026-11-05
 
 ### Learner profile

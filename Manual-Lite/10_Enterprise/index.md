@@ -1,6 +1,6 @@
-# OpenCyberRange Enterprise 3.0 — manual supplement
+# OpenCyberRange Enterprise 3.1 — manual supplement
 
-Enterprise 3.0 is **Professional 2.1 plus HA, SSO, enterprise reporting,
+Enterprise 3.1 is **Professional 2.1 plus HA, SSO, enterprise reporting,
 multi-tenant support, LMS/SIS integration, and compliance reporting**. Read the
 [core manual](../index.md) and the
 [Professional supplement](../09_Professional/index.md) first. Enterprise is
@@ -11,15 +11,17 @@ cumulative too.
 | Capability | State in the 3.0 tree |
 |---|---|
 | Professional analytics and reporting | Inherited |
-| SSO / LDAP / OIDC / SAML settings | Settings-only; login federation is in the HA workstream |
+| SSO / OIDC | **OIDC login implemented and tested across two API replicas** |
+| SSO / LDAP / SAML settings | Stored and encrypted; SAML and LDAP login adapters are next |
 | Multi-host HA lab pool | Reference implementation in the separate HA repository; not a supported production deployment yet |
 | Multi-tenancy | Planned |
 | LMS / SIS integration | Planned |
 | Enterprise and compliance reporting | Planned |
 
-Do not describe Enterprise as fully HA or fully SSO until the failure matrix
-and identity-provider login tests pass. See `docs/EDITIONS.md`,
-`docs/V3-HA-LAB-POOL.md`, and `docs/V3-PARKING-LOT.md`.
+OIDC is implemented and HA-tested at the control-plane level. SAML and LDAP
+login adapters, a formal SSO security review, and the full multi-host HA failure
+matrix remain. See `docs/EDITIONS.md`, `docs/V3-HA-LAB-POOL.md`, and
+`docs/V3-PARKING-LOT.md`.
 
 ## HA topology at a glance
 
@@ -39,11 +41,42 @@ flowchart TB
 The single-host Compose path remains the default and fallback. HA is a separate
 deployment shape, not a checkbox in the single-host installer.
 
+## OIDC single sign-on
+
+Enterprise 3.1 adds OIDC sign-in on top of the HA control plane. The login page
+shows a button for each enabled OIDC provider.
+
+1. Create an OIDC application at the identity provider. Use the redirect URI
+   shown on the provider card:
+
+   ```text
+   https://<public-origin>/api/auth/sso/oidc/<provider-id>/callback
+   ```
+
+2. In **Admin → Settings → Identity providers**, add an **OpenID Connect**
+   provider with the issuer, client ID, client secret, and scopes.
+3. Choose whether new users are auto-provisioned, auto-approved, and whether
+   verified emails may link existing student or instructor accounts.
+4. Select **Test** to check discovery and JWKS reachability.
+5. Sign out and use the provider button on the login page.
+
+If the IdP supports RP-initiated logout, also register the platform
+`https://<public-origin>/login` URL as the post-logout redirect. Logout revokes
+the platform JWT and redirects through the IdP; otherwise it stays local.
+
+SSO-provisioned accounts cannot use the local password form. Existing local
+accounts keep their password unless an administrator changes the flag. Admin
+accounts are never auto-linked; keep a local break-glass administrator.
+
+For setup examples, claim mapping, and troubleshooting, see
+[`docs/SSO-OIDC.md`](../../docs/SSO-OIDC.md) and
+[ADR 0004](../../docs/decisions/0004-sso-ha-contract.md).
+
 ## Administrator notes
 
-- **Identity providers:** the v3 settings screen stores LDAP, OIDC, and SAML
+- **Identity providers:** the settings screen stores LDAP, OIDC, and SAML
   configuration and encrypts bind passwords, client secrets, and private keys.
-  Creating a provider does not enable login federation by itself.
+  OIDC login is active in 3.1; SAML and LDAP login adapters are next.
 - **Secrets:** protect `WG_ENCRYPTION_KEY` and database backups. The identity
   provider secrets use the same Fernet key as WireGuard keys.
 - **Node agents:** never expose the Docker socket or the node-agent port

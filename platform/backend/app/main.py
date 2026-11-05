@@ -20,6 +20,7 @@ from app import modules as module_registry
 module_registry.register_models()
 from app.routers import auth, labs, admin, curriculum, courses, competitions, dashboard, setup, curriculum_admin, instructor, quiz, profile
 from app.routers import identity as identity_router
+from app.routers import sso as sso_router
 from app.routers import analytics as analytics_router
 from app.routers import settings as settings_router
 from app.routers import modules as modules_router
@@ -245,6 +246,16 @@ async def lifespan(app: FastAPI):
             conn.execute(text("ALTER TABLE users ADD COLUMN equipped_title VARCHAR(64)"))
             conn.commit()
             logger.info("Added equipped_title column to users table")
+
+        # --- SSO-managed account flag (Enterprise 3.1) ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'password_login_disabled' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN password_login_disabled "
+                "BOOLEAN DEFAULT FALSE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added password_login_disabled column to users table")
 
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations
@@ -650,6 +661,7 @@ app.include_router(competitions.router, prefix="/api/competitions", tags=["Compe
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
 app.include_router(identity_router.router, prefix="/api/identity", tags=["Identity Providers"])
+app.include_router(sso_router.router, prefix="/api/auth/sso", tags=["Single Sign-On"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 app.include_router(setup.router, prefix="/api/setup", tags=["Setup"])
 app.include_router(curriculum_admin.router, prefix="/api/admin/curriculum", tags=["Curriculum Admin"])

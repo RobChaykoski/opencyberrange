@@ -10,7 +10,7 @@ previous one.
 |---|---|---|---|
 | **Community / Academic** | 1.1.x | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
 | **Professional** | 2.1.x | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
-| **Enterprise** | 3.0.x | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
+| **Enterprise** | 3.1.x | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
 
@@ -61,7 +61,7 @@ Professional is not a multi-host or identity-federation product. It remains a
 single Docker host and does not add SSO, multi-tenancy, LMS integration, or
 distributed scheduling.
 
-### Enterprise â€” 3.0
+### Enterprise â€” 3.1
 
 Enterprise adds the deployment, identity, and institutional layer:
 
@@ -70,7 +70,8 @@ Enterprise adds the deployment, identity, and institutional layer:
 - node agent, mTLS control channel, drain, node-loss recovery, and reconciliation;
 - replicated frontend/API, PostgreSQL HA, Redis HA, shared object storage;
 - WireGuard gateway failover;
-- LDAP, OIDC, and SAML single sign-on;
+- OIDC single sign-on in 3.1; LDAP and SAML provider settings are retained for
+  the next adapter;
 - enterprise reporting and regulatory/compliance reporting;
 - multi-tenant support;
 - LMS integration;
@@ -81,7 +82,7 @@ which remains the default and fallback.
 
 ## Feature matrix
 
-| Capability | Community / Academic 1.1 | Professional 2.0 | Enterprise 3.0 |
+| Capability | Community / Academic 1.1 | Professional 2.0 | Enterprise 3.1 |
 |---|---:|---:|---:|
 | Courses, labs, RangeBox, flags, hints | Yes | Yes | Yes |
 | Lab and workbook improvements | Yes | Yes | Yes |
@@ -125,14 +126,14 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 | Professional 2.0 cohort analysis | Planned |
 | Professional 2.0 accreditation support | Planned |
 | Professional 2.0 research exports | Partially delivered (cross-course CSV/PDF and survey package) |
-| Enterprise 3.0 HA | Design complete in the private HA repository; not deployed |
-| Enterprise 3.0 SSO | Settings-only on the `v3` branch; login flows not implemented |
-| Enterprise 3.0 enterprise reporting, multi-tenancy, LMS, compliance reporting | Planned |
+| Enterprise 3.1 HA | Reference implementation and local control-plane drills; production multi-host deployment still required |
+| Enterprise 3.1 SSO | **OIDC login and RP-initiated logout implemented and tested across two API replicas**; SAML/LDAP login adapters next |
+| Enterprise 3.1 enterprise reporting, multi-tenancy, LMS, compliance reporting | Planned |
 
 ## Upgrade path
 
 ```text
-Community / Academic 1.1  ->  Professional 2.0  ->  Enterprise 3.0
+Community / Academic 1.1  ->  Professional 2.0  ->  Enterprise 3.1
 ```
 
 1. **Community / Academic to Professional:** back up, move to Ubuntu 24.04,
@@ -153,7 +154,7 @@ Community / Academic 1.1  ->  Professional 2.0  ->  Enterprise 3.0
   correctness fixes land here first and merge forward.
 - **Professional 2.0** is the current feature line for teaching analytics,
   reporting, cohort analysis, accreditation support, and research exports.
-- **Enterprise 3.0** is the HA, identity, multi-tenancy, LMS, and compliance
+- **Enterprise 3.1** is the HA, identity, multi-tenancy, LMS, and compliance
   line. It carries the Professional feature set plus enterprise deployment
   controls.
 - A fix does not create a separate fork. It lands on the earliest affected

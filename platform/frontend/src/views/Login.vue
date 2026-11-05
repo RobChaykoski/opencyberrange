@@ -49,6 +49,30 @@
             {{ errorMessage }}
           </div>
 
+          <div v-if="ssoError" class="error-message" role="alert">
+            {{ ssoError }}
+          </div>
+
+          <div v-if="ssoProviders.length" class="sso-panel">
+            <p class="sso-panel__label">Institution sign-in</p>
+            <button
+              v-for="provider in ssoProviders"
+              :key="provider.id"
+              type="button"
+              class="sso-button"
+              :class="{ 'sso-button--primary': provider.is_default }"
+              :disabled="ssoLoading"
+              @click="startSso(provider)"
+            >
+              <span class="sso-button__mark" aria-hidden="true">{{ provider.name.charAt(0) }}</span>
+              <span>
+                <span class="sso-button__title">Sign in with {{ provider.name }}</span>
+                <span class="sso-button__hint">Use your institution account</span>
+              </span>
+            </button>
+            <div class="sso-divider"><span>or use a local account</span></div>
+          </div>
+
           <form @submit.prevent="handleLogin" class="login-form">
             <div class="form-group">
               <label for="username" class="form-label">Username</label>
@@ -303,12 +327,46 @@
 </template>
 
 <script setup>
-import { ref, nextTick, inject } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, nextTick, inject, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for login (no token needed)
 import { setWikiAuthCookie } from '../utils/wikiAuth'
 
+const route = useRoute()
 const router = useRouter()
+const ssoProviders = ref([])
+const ssoLoading = ref(false)
+const ssoError = ref('')
+
+const ssoErrorFor = (code) => {
+  if (code === 'unavailable') {
+    return 'Institution sign-in is temporarily unavailable. Use your local account or try again.'
+  }
+  return 'Institution sign-in could not start. Use your local account or try again.'
+}
+
+const fetchSsoProviders = async () => {
+  try {
+    const { data } = await axios.get('/api/auth/sso/providers')
+    ssoProviders.value = data?.providers || []
+  } catch {
+    ssoProviders.value = []
+  }
+}
+
+const startSso = (provider) => {
+  if (ssoLoading.value) return
+  ssoLoading.value = true
+  const returnTo = route.query.return_to || '/dashboard'
+  const path = `${provider.login_path}?return_to=${encodeURIComponent(returnTo)}`
+  window.location.assign(path)
+}
+
+onMounted(() => {
+  const code = route.query.sso_error
+  if (code) ssoError.value = ssoErrorFor(String(code))
+  fetchSsoProviders()
+})
 
 const username = ref('')
 const password = ref('')
@@ -575,6 +633,96 @@ const handleLogin = async () => {
   background: var(--danger-bg);
   border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
   color: var(--danger);
+}
+
+.sso-panel {
+  margin-bottom: 1.1rem;
+}
+
+.sso-panel__label {
+  margin: 0 0 0.55rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sso-button {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.sso-button + .sso-button {
+  margin-top: 0.5rem;
+}
+
+.sso-button--primary {
+  border-color: var(--accent);
+}
+
+.sso-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--hover-bg);
+}
+
+.sso-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sso-button__mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.sso-button__title {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sso-button__hint {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.sso-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sso-divider::before,
+.sso-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
 }
 
 .login-form {

@@ -13,9 +13,11 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_admin_user
+from app.config import settings
 from app.crypto import decrypt_secret, encrypt_secret
 from app.database import get_db
 from app.models import IdentityProvider, User
+from app.services import oidc
 from app.services.audit import log_admin_action
 
 router = APIRouter()
@@ -75,12 +77,44 @@ def _validate_config(kind: str, config: dict) -> dict:
         config.setdefault("start_tls", False)
         config.setdefault("tls_verify", True)
     elif kind == "oidc":
-        issuer = str(config.get("issuer", "")).strip()
-        if not issuer.startswith("https://"):
-            raise HTTPException(status_code=400, detail="OIDC issuer must be an https:// URL")
+        issuer = str(config.get("issuer", "")).rstrip("/")
+        secure_issuer = issuer.startswith("https://")
+        local_issuer = settings.SSO_ALLOW_INSECURE_HTTP and issuer.startswith("http://")
+        if not (secure_issuer or local_issuer):
+            raise HTTPException(
+                status_code=400,
+                detail="OIDC issuer must be an https:// URL",
+            )
         if not str(config.get("client_id", "")).strip():
             raise HTTPException(status_code=400, detail="OIDC client_id is required")
+        config["issuer"] = issuer
         config.setdefault("scopes", "openid email profile")
+        config.setdefault("auto_provision", True)
+        config.setdefault("auto_approve", True)
+        config.setdefault("link_existing_by_email", True)
+        config.setdefault("default_role", "student")
+        config.setdefault("username_claim", "preferred_username")
+        config.setdefault("email_claim", "email")
+        config.setdefault("name_claim", "name")
+        if str(config["default_role"]).lower() not in {"student", "instructor"}:
+            raise HTTPException(
+                status_code=400,
+                detail="OIDC default_role must be student or instructor",
+            )
+        config["default_role"] = str(config["default_role"]).lower()
+        discovery_url = str(config.get("discovery_url", "")).strip()
+        if discovery_url:
+            if discovery_url.startswith("http://") and not settings.SSO_ALLOW_INSECURE_HTTP:
+                raise HTTPException(
+                    status_code=400,
+                    detail="OIDC discovery_url must use https://",
+                )
+            if not discovery_url.startswith(("https://", "http://")):
+                raise HTTPException(
+                    status_code=400,
+                    detail="OIDC discovery_url must be an http(s) URL",
+                )
+            config["discovery_url"] = discovery_url
     elif kind == "saml":
         for key in ("idp_entity_id", "sso_url", "sp_entity_id", "acs_url"):
             if not str(config.get(key, "")).strip():
@@ -110,7 +144,7 @@ def _secret_keys(value: str | None) -> list[str]:
 
 
 def _serialize(row: IdentityProvider) -> dict:
-    return {
+    data = {
         "id": row.id,
         "name": row.name,
         "kind": row.kind,
@@ -122,6 +156,9 @@ def _serialize(row: IdentityProvider) -> dict:
         "created_at": row.created_at,
         "updated_at": row.updated_at,
     }
+    if row.kind == "oidc":
+        data["resolved_redirect_uri"] = oidc.redirect_uri(row.id)
+    return data
 
 
 def _set_default(db: Session, row: IdentityProvider) -> None:
@@ -255,6 +292,28 @@ def make_default_identity_provider(
     db.refresh(row)
     _audit(request, current_user, "IDENTITY_PROVIDER_DEFAULTED", row)
     return _serialize(row)
+
+
+@router.post("/providers/{provider_id}/test")
+def test_identity_provider(
+    provider_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user),
+):
+    """Validate an OIDC discovery document and JWKS reachability."""
+    row = db.query(IdentityProvider).filter(IdentityProvider.id == provider_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Identity provider not found")
+    if row.kind != "oidc":
+        raise HTTPException(status_code=400, detail="Only OIDC providers can be tested yet")
+    try:
+        result = oidc.test_provider(row)
+    except oidc.OIDCError as exc:
+        _audit(request, current_user, "IDENTITY_PROVIDER_TEST_FAILED", row)
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    _audit(request, current_user, "IDENTITY_PROVIDER_TESTED", row)
+    return {"ok": True, **result}
 
 
 @router.delete("/providers/{provider_id}")

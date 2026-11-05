@@ -62,6 +62,7 @@ class UserResponse(BaseModel):
     role: Optional[str] = "student"
     must_change_password: Optional[bool] = False
     equipped_title: Optional[str] = None
+    password_login_disabled: Optional[bool] = False
 
     class Config:
         from_attributes = True
@@ -87,6 +88,7 @@ class UserAdminResponse(BaseModel):
     created_at: Optional[datetime] = None
     last_login_at: Optional[datetime] = None
     equipped_title: Optional[str] = None
+    password_login_disabled: Optional[bool] = False
 
     class Config:
         from_attributes = True
@@ -128,6 +130,7 @@ class UserDetailResponse(BaseModel):
     created_at: Optional[datetime] = None
     last_login_at: Optional[datetime] = None
     equipped_title: Optional[str] = None
+    password_login_disabled: Optional[bool] = False
 
     # Statistics
     total_labs_completed: int = 0

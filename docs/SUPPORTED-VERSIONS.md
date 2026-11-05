@@ -5,8 +5,8 @@ upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
 Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
-**Professional 2.1 (2.1.3)**, **Enterprise 3.0 (3.0.3)**. See
-[Editions](EDITIONS.md). Platform development version: **3.0.3**.
+**Professional 2.1 (2.1.3)**, **Enterprise 3.1 (3.1.0)**. See
+[Editions](EDITIONS.md). Platform development version: **3.1.0**.
 
 ## Policy
 
@@ -25,7 +25,7 @@ Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
 
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
-| Host OS | Community / Academic 1.1: Ubuntu 22.04 and 24.04 LTS; Professional 2.1 and Enterprise 3.0: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise | Validation in progress | Community / Academic supports both LTS releases; Professional host/platform deployed and KVM ready, network/VPN and recovery gates remain; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
+| Host OS | Community / Academic 1.1: Ubuntu 22.04 and 24.04 LTS; Professional 2.1 and Enterprise 3.1: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise | Validation in progress | Community / Academic supports both LTS releases; Professional host/platform deployed and KVM ready, network/VPN and recovery gates remain; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
