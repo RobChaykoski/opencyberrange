@@ -2,7 +2,7 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [3.0.3] - 2026-11-05
 
 ### Learner profile
 - Added **Skill DNA**: five activity-based traits (Explorer, Builder, Defender,
