@@ -84,6 +84,7 @@ class UserAdminResponse(BaseModel):
     vpn_registered: Optional[bool] = False
     must_change_password: Optional[bool] = False
     created_at: Optional[datetime] = None
+    last_login_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
