@@ -1,4 +1,4 @@
-"""Account erasure for the GDPR right to erasure.
+﻿"""Account erasure for the GDPR right to erasure.
 
 This module owns the destructive part of account deletion so the admin path and
 the self-service path cannot drift apart. It erases the account row and
@@ -21,7 +21,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any, Iterable
 
-from sqlalchemy import and_, func, or_, text
+from sqlalchemy import func, text
 from sqlalchemy.orm import Session, joinedload
 
 from app.services.erasure_ledger import append_erasure
@@ -102,9 +102,17 @@ _OPTIONAL_USER_REFERENCES: tuple[tuple[str, str, str], ...] = (
 
 
 def _table_exists(db: Session, table: str) -> bool:
-    return bool(
-        db.execute(text("SELECT to_regclass(:table)"), {"table": table}).scalar()
-    )
+    """Return True when the optional table exists in this database.
+
+    ``to_regclass`` is PostgreSQL-only and made the erasure path unusable on
+    SQLite test databases. The inspector works on every supported backend.
+    """
+    from sqlalchemy import inspect
+
+    try:
+        return inspect(db.get_bind()).has_table(table)
+    except Exception:
+        return False
 
 
 def _apply_optional_references(db: Session, user_id: int) -> dict[str, int]:

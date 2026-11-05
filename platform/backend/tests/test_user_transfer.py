@@ -1,4 +1,4 @@
-"""Portable user export/import tests.
+﻿"""Portable user export/import tests.
 
 The transfer utility lives outside the backend package so it can be copied into
 an older installation. These tests exercise it against the same ephemeral
@@ -16,7 +16,14 @@ import pytest
 from app.auth import get_password_hash, verify_password
 from app.models import User
 
-pytestmark = pytest.mark.db
+_TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "")
+pytestmark = [
+    pytest.mark.db,
+    pytest.mark.skipif(
+        not _TEST_DATABASE_URL.startswith(("postgresql://", "postgres://")),
+        reason="user_transfer uses psycopg and requires PostgreSQL",
+    ),
+]
 
 SCRIPT = Path(__file__).resolve().parents[3] / "scripts" / "user_transfer.py"
 _spec = importlib.util.spec_from_file_location("user_transfer", SCRIPT)
