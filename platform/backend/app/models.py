@@ -50,6 +50,11 @@ class User(Base):
     timezone = Column(String(64), nullable=True)
     # JSON object of notification toggles.
     notification_prefs = Column(Text, nullable=True)
+    # Show hidden/secret badges on the profile. Off by default so a learner is
+    # not surprised by a badge they did not know existed.
+    show_hidden_achievements = Column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     # Email the user on a new login from a new IP.
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
     # Consent to optional account email. Essential security/service messages may

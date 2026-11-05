@@ -22,6 +22,13 @@ Submitting the correct flag is how you complete a lab. The Submit Flag form sits
 
 **What you should see:** a green success message on a correct flag, then the panel closes itself after a couple of seconds as the environment is torn down. A wrong flag shows a red message and the lab keeps running.
 
+## Submit from RangeBox
+
+When the exercise is running in RangeBox, you do not need to return to the
+Active Lab panel to submit the flag. The lab dock at the bottom of the RangeBox
+window shows the target IPs and a **Flag** field. Paste the flag there and click
+**Submit flag**. The same format, case, rate-limit, and teardown rules apply.
+
 ## Flag format and matching rules
 
 The platform matches flags exactly. Keep these rules in mind.

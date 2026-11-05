@@ -220,7 +220,7 @@
         <!-- Course achievements: grouped by course so the profile is a summary,
              not a raw badge feed. -->
         <section
-          v-if="courseAchievements.length || otherAchievementBadges.length"
+          v-if="summary"
           class="profile-section achievements-section"
           aria-labelledby="course-achievements-title"
         >
@@ -236,6 +236,14 @@
             <div class="achievements-section__total">
               <strong>{{ achievements.length }}</strong>
               <span>{{ achievements.length === 1 ? 'badge earned' : 'badges earned' }}</span>
+              <button
+                type="button"
+                class="btn btn--secondary btn--sm"
+                :disabled="hiddenAchievementsSaving"
+                @click="toggleHiddenAchievements"
+              >
+                {{ showHiddenAchievements ? 'Hide secret badges' : 'Show secret badges' }}
+              </button>
             </div>
           </div>
 
@@ -1042,6 +1050,23 @@ const tracks = computed(() => summary.value?.tracks || [])
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
 const courseAchievements = computed(() => summary.value?.course_achievements || [])
+const showHiddenAchievements = computed(
+  () => !!user.value?.show_hidden_achievements
+)
+const hiddenAchievementsSaving = ref(false)
+
+async function toggleHiddenAchievements() {
+  if (hiddenAchievementsSaving.value) return
+  hiddenAchievementsSaving.value = true
+  try {
+    const next = !showHiddenAchievements.value
+    await axios.put('/auth/settings', { show_hidden_achievements: next })
+    if (user.value) user.value.show_hidden_achievements = next
+    await fetchSummary()
+  } finally {
+    hiddenAchievementsSaving.value = false
+  }
+}
 const otherAchievements = computed(
   () => achievements.value.filter((item) => !item.course_id)
 )

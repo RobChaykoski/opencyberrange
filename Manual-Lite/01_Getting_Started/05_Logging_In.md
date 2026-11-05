@@ -42,6 +42,25 @@ flowchart TB
 
 If your account is flagged to change its password on first sign-in, the platform sends you to the change-password screen before you reach the dashboard.
 
+## Forgot your username
+
+If you remember the email address on your account but not your username:
+
+1. Open the login page and click **Forgot username?** under the username field.
+2. Enter the email address on your account and click **Email my username**.
+3. Check that mailbox. The platform sends the username to that address only.
+
+The response is deliberately the same whether or not the address is
+registered, so the form cannot be used to discover which emails have accounts.
+Mail delivery is best effort: if the administrator has not configured SMTP yet,
+the request is accepted but no message is sent. Ask your instructor or
+administrator to enable **Admin -> Settings -> Email**.
+
+!!! note
+    The username email never contains your password. If you also need a
+    password reset, ask an administrator. The platform does not email password
+    reset links.
+
 ## When sign-in fails
 
 | Message | What it means | What to do |

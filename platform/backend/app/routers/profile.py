@@ -1,4 +1,4 @@
-"""Profile summary and printable transcript endpoints.
+﻿"""Profile summary and printable transcript endpoints.
 
 The profile page needs one authoritative view of a student's completion
 record: the same certificate IDs the certificate page issues, the labs behind
@@ -9,7 +9,6 @@ apart.
 
 from datetime import datetime, timezone
 from typing import Optional
-import json
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse, Response
@@ -36,6 +35,7 @@ from app.routers.curriculum import (
 )
 from app.services.achievements import (
     ACHIEVEMENT_DESCRIPTIONS,
+    HIDDEN_ACHIEVEMENT_TYPES,
     resolve_achievement_icon,
     resolve_achievement_label,
 )
@@ -164,11 +164,15 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
         Achievement.user_id == current_user.id
     ).order_by(Achievement.awarded_at.desc()).all()
 
+    show_hidden = bool(getattr(current_user, "show_hidden_achievements", False))
     achievements = []
     for row in achievement_rows:
+        if not show_hidden and row.achievement_type in HIDDEN_ACHIEVEMENT_TYPES:
+            continue
         achievements.append({
             "id": row.id,
             "type": row.achievement_type,
+            "hidden": row.achievement_type in HIDDEN_ACHIEVEMENT_TYPES,
             "label": resolve_achievement_label(db, row.achievement_type),
             "icon": resolve_achievement_icon(db, row.achievement_type),
             "description": ACHIEVEMENT_DESCRIPTIONS.get(row.achievement_type),

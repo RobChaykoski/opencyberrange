@@ -5,6 +5,7 @@ Authentication routes for login and registration
 from datetime import timedelta, datetime, timezone
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Form, Request
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, field_validator
 from typing import Literal, Optional
@@ -162,6 +163,52 @@ class RegisterRequest(BaseModel):
     @classmethod
     def password_strong(cls, v: str) -> str:
         return _validate_password(v)
+
+
+class UsernameReminderRequest(BaseModel):
+    """Email address for the "forgot username" flow."""
+
+    email: str = Field(..., min_length=3, max_length=254)
+
+    @field_validator("email")
+    @classmethod
+    def email_valid(cls, value: str) -> str:
+        email = value.strip().lower()
+        if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", email):
+            raise ValueError("Invalid email format")
+        return email
+
+
+@router.post("/forgot-username")
+@limiter.limit("3/minute")
+async def forgot_username(
+    request: Request,
+    payload: UsernameReminderRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """Email the username to the address already on the account.
+
+    The response is always the same, whether or not the address is registered,
+    so this endpoint cannot be used to enumerate accounts. Mail is sent to the
+    address supplied only after it matches an account; no other address is
+    ever used.
+    """
+    email = payload.email
+    rows = db.query(User).filter(func.lower(User.email) == email).all()
+    usernames = sorted({row.username for row in rows if row.username})
+    if usernames:
+        background_tasks.add_task(
+            mail.send_username_reminder_email,
+            to_email=email,
+            usernames=usernames,
+            request_base=str(request.base_url),
+        )
+    return {
+        "message": (
+            "If that email is registered, we have sent the username to it."
+        )
+    }
 
 
 @router.post("/login", response_model=Token)
@@ -403,6 +450,7 @@ class UserSettingsUpdate(BaseModel):
     login_notifications: Optional[bool] = None
     email_notifications: Optional[bool] = None
     notification_prefs: Optional[dict] = None
+    show_hidden_achievements: Optional[bool] = None
 
     @field_validator("avatar_data")
     @classmethod
@@ -444,6 +492,9 @@ async def get_user_settings(
         "email_consent_version": getattr(current_user, "email_consent_version", None),
         "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
         "notification_prefs": prefs or {},
+        "show_hidden_achievements": bool(
+            getattr(current_user, "show_hidden_achievements", False)
+        ),
         "survey_opt_in": bool(getattr(current_user, "survey_opt_in", False)),
         "survey_consent_version": getattr(current_user, "survey_consent_version", None),
         "data_exported_at": getattr(current_user, "data_exported_at", None),
@@ -485,6 +536,8 @@ async def update_user_settings(
         current_user.email_consent_updated_at = datetime.now(timezone.utc)
     if payload.notification_prefs is not None:
         current_user.notification_prefs = _json.dumps(payload.notification_prefs)
+    if payload.show_hidden_achievements is not None:
+        current_user.show_hidden_achievements = payload.show_hidden_achievements
     db.commit()
     db.refresh(current_user)
     return {"message": "Settings updated"}
@@ -663,7 +716,6 @@ async def export_user_data(
         CompetitionParticipant,
         Course,
         CourseEnrollment,
-        ExerciseReaction,
         FlagAttempt,
         Lab,
         LabCompletion,
@@ -1256,6 +1308,9 @@ async def get_current_user_info(
         "timezone": getattr(current_user, 'timezone', None),
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
         "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
+        "show_hidden_achievements": bool(
+            getattr(current_user, "show_hidden_achievements", False)
+        ),
     }
 
     if imp:
