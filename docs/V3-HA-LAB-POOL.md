@@ -1,6 +1,7 @@
 # Enterprise 3.0 Multi-Host Lab Pool and HA Deployment Plan
 
-Status: **Enterprise 3.0 — design complete, not implemented**
+Status: **Enterprise 3.0 — control-plane HA reference implemented and locally
+drilled; lab-pool and full multi-host validation not implemented**
 Program link: [`docs/V3-PARKING-LOT.md`](V3-PARKING-LOT.md)
 Design skill: `.opencode/skills/opencyberrange-ha-architecture/SKILL.md`
 
@@ -248,15 +249,30 @@ CIDRs, correct VPN routes, and no cross-session reachability.
 
 ### Phase 4 — Control-plane HA
 
-- Run two frontend and two backend replicas behind a load balancer.
-- Move PostgreSQL and Redis to HA services.
-- Move backups, wiki, and ledger state to shared storage.
-- Move `/tmp` coordination to Redis/PostgreSQL.
+Reference implementation status: **implemented in `opencyberrange-ha`, locally
+drilled on one Docker host in November 2026.**
+
+- Run two frontend and two backend replicas behind a load balancer. **Done in
+  the reference compose and HAProxy config.**
+- Move PostgreSQL and Redis to HA services. **Reference primary/standby
+  PostgreSQL and Redis primary/replica/three-Sentinel composes added; managed
+  services are still the production recommendation.**
+- Move backups, wiki, and ledger state to shared storage. **Shared volumes are
+  wired into the reference compose, with a filesystem adapter and verification
+  probe; the production object-store adapter is still required.**
+- Move `/tmp` coordination to Redis/PostgreSQL. **The exercise-tester run
+  directory is on a shared volume as an interim step; it is not yet moved to a
+  shared service.**
 - Add active/standby WireGuard gateways with peer and route reconciliation.
-- Test failover of each component.
+  **Route and peer reconcilers are implemented and unit-tested; the live
+  keepalived/WireGuard drill is still required.**
+- Test failover of each component. **Local pass: API loss, frontend loss, Redis
+  degradation, PostgreSQL promotion, and Redis Sentinel failover. Pending:
+  multi-host failure domains, gateway failover, and the 24-hour soak.**
 
 Exit criteria: killing any control-plane replica does not stop a running lab,
-and a new login/launch succeeds during the failover window.
+and a new login/launch succeeds during the failover window. **Local single-host
+replica-loss drill passes; the multi-host exit gate is still open.**
 
 ### Phase 5 — Operations and optional orchestrators
 
