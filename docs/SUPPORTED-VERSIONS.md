@@ -4,9 +4,9 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-04**. Current editions: **Community / Academic 1.1**,
-**Professional 2.1 (2.1.0)**, **Enterprise 3.0 (development)**. See
-[Editions](EDITIONS.md). Platform development version: **2.1.0**.
+Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
+**Professional 2.1 (2.1.2)**, **Enterprise 3.0 (development)**. See
+[Editions](EDITIONS.md). Platform development version: **2.1.2**.
 
 ## Policy
 

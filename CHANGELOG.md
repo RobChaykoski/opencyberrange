@@ -24,6 +24,26 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
+## [2.1.2] - 2026-11-05
+
+Maintenance release for the Professional line.
+
+### Admin user management
+- The Users table shows the last sign-in time, with a relative label and the
+  exact timestamp on hover.
+- Added filters for status, role, last sign-in window, and VPN registration,
+  plus a sort control, result range, clear-filters action, and empty state.
+- Role and account status are separate columns; the table has accessible
+  headers and a stacked layout on narrow screens.
+
+### Reliability
+- Rate limiting now degrades to in-process limits when Redis is unavailable
+  instead of returning HTTP 500 on login.
+
+### Design and release
+- Added the OpenCyberRange Design Tester skill for light/dark, layout, filter,
+  and accessibility reviews.
+
 ## [2.1.0] - 2026-11-04
 
 ### Login experience
