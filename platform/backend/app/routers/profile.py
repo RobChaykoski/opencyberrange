@@ -10,8 +10,9 @@ apart.
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
+from pydantic import BaseModel
 from app.ratelimit import create_limiter
 from sqlalchemy.orm import Session, joinedload
 
@@ -40,9 +41,15 @@ from app.services.achievements import (
     resolve_achievement_label,
 )
 from app.services.profile_report import generate_profile_transcript
+from app.services.skill_dna import build_skill_dna
+from app.services.titles import equip_title
 
 router = APIRouter()
 limiter = create_limiter()
+
+
+class TitleUpdate(BaseModel):
+    title: Optional[str] = None
 
 
 def _iso(value: Optional[datetime]) -> Optional[str]:
@@ -245,6 +252,8 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
         "is_archived": course.is_archived,
     } for course, _enrollment in enrollment_rows]
 
+    skill_dna = build_skill_dna(db, current_user)
+
     return {
         "user": {
             "id": current_user.id,
@@ -256,6 +265,7 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
             "display_name": current_user.display_name,
             "organization": current_user.organization,
             "role": current_user.role,
+            "equipped_title": skill_dna["titles"]["equipped"],
             "created_at": _iso(current_user.created_at),
             "avatar_data": getattr(current_user, "avatar_data", None),
             "avatar_border_style": getattr(current_user, "avatar_border_style", None) or "solid",
@@ -276,6 +286,7 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
         "achievements": achievements,
         "course_achievements": course_achievements,
         "courses": courses,
+        "skill_dna": skill_dna,
     }
 
 
@@ -289,6 +300,39 @@ async def profile_summary(
     """Return everything the profile page renders in one round trip."""
     return JSONResponse(
         content=_build_profile_summary(db, current_user),
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get("/skill-dna", summary="Learner Skill DNA character sheet")
+@limiter.limit("60/minute")
+async def get_skill_dna(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the learner's five traits, class, and title collection."""
+    return JSONResponse(
+        content=build_skill_dna(db, current_user),
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.put("/title", summary="Equip an unlocked achievement title")
+@limiter.limit("20/minute")
+async def set_profile_title(
+    request: Request,
+    payload: TitleUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Equip an unlocked title, or clear it to return to the class title."""
+    try:
+        result = equip_title(db, current_user, payload.title)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return JSONResponse(
+        content={"ok": True, **result},
         headers={"Cache-Control": "no-store"},
     )
 

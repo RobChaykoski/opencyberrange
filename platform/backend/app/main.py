@@ -238,6 +238,13 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added data_exported_at column to users table")
 
+        # --- Equipped achievement title (Skill DNA character sheet) ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'equipped_title' not in users_columns:
+            conn.execute(text("ALTER TABLE users ADD COLUMN equipped_title VARCHAR(64)"))
+            conn.commit()
+            logger.info("Added equipped_title column to users table")
+
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]

@@ -55,6 +55,9 @@ class User(Base):
     show_hidden_achievements = Column(
         Boolean, default=False, server_default=text("false"), nullable=False
     )
+    # Equipped achievement title (key from app.services.titles). Null shows the
+    # learner's current Skill DNA class instead.
+    equipped_title = Column(String(64), nullable=True)
     # Email the user on a new login from a new IP.
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
     # Consent to optional account email. Essential security/service messages may

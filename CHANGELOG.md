@@ -24,6 +24,20 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
+## [Unreleased]
+
+### Learner profile
+- Added **Skill DNA**: five activity-based traits (Explorer, Builder, Defender,
+  Investigator, Leader), a class, a tier, and a certification alignment card on
+  the profile.
+- Added achievement **titles**. Unlocked titles can be equipped or cleared; the
+  class title returns when no achievement title is equipped. Hidden titles stay
+  secret until unlocked.
+- Added the **Title collection** and the equipped-title badge on the profile.
+- Added explicit course, competition, advanced-lab, and teaching signals to the
+  Leader trait.
+- Added the metric model in `docs/SKILL-DNA.md`.
+
 ## [2.1.2] - 2026-11-05
 
 Maintenance release for the Professional line.
