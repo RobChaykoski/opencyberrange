@@ -21,4 +21,8 @@ def create_limiter(**kwargs) -> Limiter:
     """Build a Limiter that honours RATELIMIT_STORAGE_URI."""
     kwargs.setdefault("key_func", get_remote_address)
     kwargs.setdefault("storage_uri", rate_limit_storage_uri())
+    # A Redis outage must degrade rate limiting, not take authentication down.
+    # Slowapi logs the storage error and falls back to in-process limits.
+    kwargs.setdefault("swallow_errors", True)
+    kwargs.setdefault("in_memory_fallback_enabled", True)
     return Limiter(**kwargs)
