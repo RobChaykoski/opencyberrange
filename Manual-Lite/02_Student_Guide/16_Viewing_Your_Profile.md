@@ -17,6 +17,36 @@ Click **Profile** in the sidebar. The page opens with your profile card: avatar,
 
 Use **Add photo** under your avatar to upload a profile picture. The browser resizes the image before saving it, so ordinary phone photos work. PNG, JPEG, and WebP images are accepted, up to 10 MB before resizing. Use **Change photo** to replace it or **Remove** to go back to your initials.
 
+## Cyber DNA and titles
+
+The **Cyber DNA** section is your learner character sheet. It shows five traits
+built from your range activity:
+
+| Trait | What it reflects |
+|---|---|
+| Explorer | Breadth across tracks, categories, and labs you have opened |
+| Builder | Hands-on completions, time on task, and clean solves |
+| Defender | Defensive, forensics, network-analysis, and OT practice |
+| Investigator | OSINT, reconnaissance, traffic analysis, and forensics |
+| Leader | Competitions, courses, badges, advanced labs, and teaching |
+
+Your highest trait becomes your **class**: Pathfinder, Artificer, Warden,
+Seeker, or Commander. Each trait has a score from 0 to 100 and a tier from
+Initiate to Master. The numbers describe what you have practised; they are not a
+grade or a ranking.
+
+The **Career alignment** card maps your current class to a certification path
+using the same track guidance as the certification panel. The roadmap link opens
+Paul Jerimy's Security Certification Roadmap. Treat it as guidance, not an
+official mapping.
+
+Achievements also unlock cosmetic **titles**. Open **Title collection**, choose
+an unlocked title, and select **Equip**. Select **Clear** to return to your class
+title. Hidden titles show as **Secret title** until you unlock them.
+
+Your DNA updates as you complete labs and earn badges. A new account starts as a
+Recruit; open an exercise to begin.
+
 ## Certificates and completion
 
 The **Certificates & completion** section lists every certificate you have earned. Each card opens that level's printable certificate. The section also shows:

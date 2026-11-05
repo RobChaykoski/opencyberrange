@@ -34,6 +34,25 @@ The panel also lists the roles the track can lead toward and links to all three
 references. The panel is in `platform/frontend/src/data/certificationPaths.js`
 and `platform/frontend/src/views/TrackDetail.vue`.
 
+### Skill DNA alignment
+
+The learner profile's **Cyber DNA** card uses the same certification guidance.
+The highest trait becomes the current class, and the card shows the matching
+entry, core, and advanced certifications plus the roles the track can lead
+toward:
+
+| Class | Trait | Certification path |
+|---|---|---|
+| Pathfinder | Explorer | OSINT and reconnaissance |
+| Artificer | Builder | Web and AppSec |
+| Warden | Defender | Network and security operations |
+| Seeker | Investigator | Forensics and DFIR |
+| Commander | Leader | General foundations and leadership |
+
+This is guidance, not an official mapping. The DNA score describes practice, not
+employability, and must not be used for ranking or high-stakes decisions. See
+[`SKILL-DNA.md`](SKILL-DNA.md).
+
 ### CISO MindMap: beyond the first certification
 
 The CISO MindMap is deliberately broader than a certification path. It is used
