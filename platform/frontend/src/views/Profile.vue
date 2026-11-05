@@ -173,6 +173,13 @@
               <span class="status-badge" :class="roleBadgeClass">{{ roleLabel }}</span>
               <span v-if="user.is_approved" class="status-badge status-badge--approved">Approved</span>
               <span v-else class="status-badge status-badge--pending">Pending approval</span>
+              <span
+                v-if="summary?.skill_dna?.titles?.equipped"
+                class="profile-hero__title"
+                :class="`profile-hero__title--${summary.skill_dna.titles.equipped.rarity}`"
+              >
+                {{ summary.skill_dna.titles.equipped.label }}
+              </span>
               <span v-if="user.created_at" class="profile-hero__joined">Member since {{ formatDateOnly(user.created_at) }}</span>
             </div>
 
@@ -216,6 +223,20 @@
             </div>
           </div>
         </section>
+
+        <SkillDnaProfile
+          v-if="summary?.skill_dna"
+          :dna="summary.skill_dna"
+          :busy="titleSaving"
+          @equip-title="equipTitle"
+        />
+        <p
+          v-if="titleMessage"
+          :class="titleError ? 'error-message' : 'success-message'"
+          class="dna-title-message"
+        >
+          {{ titleMessage }}
+        </p>
 
         <!-- Course achievements: grouped by course so the profile is a summary,
              not a raw badge feed. -->
@@ -857,6 +878,7 @@ import { usePoll } from '../composables/usePoll'
 import { useModules } from '../composables/useModules'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
+import SkillDnaProfile from '../components/SkillDnaProfile.vue'
 import UserAvatar from '../components/UserAvatar.vue'
 import CheckIcon from '../components/icons/CheckIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
@@ -888,6 +910,9 @@ const loading = ref(true)
 const summary = ref(null)
 const summaryLoading = ref(true)
 const summaryError = ref('')
+const titleSaving = ref(false)
+const titleMessage = ref('')
+const titleError = ref(false)
 const downloadingPdf = ref(false)
 const pdfMessage = ref('')
 const pdfError = ref(false)
@@ -1242,6 +1267,25 @@ async function fetchSummary() {
     summaryError.value = responseMessage(error, 'Could not load your completion record.')
   } finally {
     summaryLoading.value = false
+  }
+}
+
+async function equipTitle(key) {
+  if (titleSaving.value) return
+  titleSaving.value = true
+  titleMessage.value = ''
+  titleError.value = false
+  try {
+    await axios.put('/profile/title', { title: key })
+    await fetchSummary()
+    titleMessage.value = key
+      ? 'Title equipped.'
+      : 'Title cleared. Your class title is showing again.'
+  } catch (error) {
+    titleError.value = true
+    titleMessage.value = responseMessage(error, 'Could not update your title.')
+  } finally {
+    titleSaving.value = false
   }
 }
 
@@ -2631,6 +2675,26 @@ watch(() => route.path, (newPath) => {
 .profile-hero__joined {
   color: var(--text-muted);
   font-size: 0.78rem;
+}
+
+.profile-hero__title {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.profile-hero__title--uncommon { color: var(--success); border-color: var(--success); }
+.profile-hero__title--rare { color: var(--accent); border-color: var(--accent); }
+.profile-hero__title--epic { color: var(--purple); border-color: var(--purple); }
+.profile-hero__title--legendary { color: var(--warning); border-color: var(--warning); }
+
+.dna-title-message {
+  margin: 0.5rem 0 0;
 }
 
 .profile-stats {

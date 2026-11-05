@@ -2,7 +2,13 @@
   <aside class="sidebar" :class="{ 'sidebar--collapsed': collapsed }">
     <!-- Brand -->
     <div class="sidebar__brand">
-      <button @click="$emit('toggle')" class="collapse-btn" :title="collapsed ? 'Expand' : 'Collapse'">
+      <button
+      @click="$emit('toggle')"
+      class="collapse-btn"
+      :title="collapsed ? 'Expand' : 'Collapse'"
+      :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      :aria-expanded="!collapsed"
+    >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline v-if="collapsed" points="9 18 15 12 9 6"/>
           <polyline v-else points="15 18 9 12 15 6"/>
