@@ -51,7 +51,7 @@ RAM is the resource that decides how large a class the host can serve at once, a
 | Base platform (backend, database, frontend, VPN manager) | ~3 GB | Always |
 | Each RangeBox desktop | 2 GB hard cap | Per active box |
 
-The platform sizes RangeBox concurrency itself: it starts as many RangeBoxes as the server's free memory can hold, keeping a reserve (8 GB by default) for everything else, and the capacity meter on the dashboard reflects what is actually available. You do not hand-tune a box count. Two environment variables adjust the behavior if you need to:
+The platform sizes RangeBox concurrency itself. The dashboard denominator is a stable capacity based on total RAM minus the reserve (8 GB by default), so it does not drift upward as boxes start. A separate live check refuses a new launch when free memory cannot fit another 2 GB box, which protects the platform and the SIEM when they are running. You do not hand-tune a box count. Two environment variables adjust the behavior if you need to:
 
 - `RANGEBOX_MEM_RESERVE_GB` raises or lowers the memory kept free for the platform.
 - `MAX_CONCURRENT_RANGEBOXES` pins a fixed cap and disables the automatic sizing.

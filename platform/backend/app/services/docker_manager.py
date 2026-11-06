@@ -2649,34 +2649,75 @@ fi
             pass
         return 0
 
+    @staticmethod
+    def _mem_total_bytes() -> int:
+        """Physical RAM of the host, read from /proc/meminfo."""
+        try:
+            with open("/proc/meminfo") as f:
+                for line in f:
+                    if line.startswith("MemTotal:"):
+                        return int(line.split()[1]) * 1024  # kB -> bytes
+        except Exception:
+            pass
+        return 0
+
+    @property
+    def _rangebox_per_box_bytes(self) -> int:
+        return self._parse_mem_bytes(self.RANGEBOX_MEM_LIMIT) or (2 * 1024 ** 3)
+
+    @property
+    def _rangebox_reserve_bytes(self) -> int:
+        return int(self.RANGEBOX_MEM_RESERVE_GB * (1024 ** 3))
+
     @property
     def MAX_CONCURRENT_RANGEBOXES(self) -> int:
-        """Live concurrency cap: the boxes already running plus however many more
-        the currently free memory can hold, after reserving RANGEBOX_MEM_RESERVE_GB
-        for the platform. Tracks reality, so the meter shrinks when the SIEM or the
-        Security Onion VM are up and grows when they are stopped. An explicit
+        """Stable physical concurrency cap for the host.
+
+        The denominator is based on MemTotal minus the platform reserve, not on
+        the current free memory. Using MemAvailable here made the total grow as
+        RangeBoxes started (containers rarely consume their full memory limit),
+        so the gauge could show 1/9, then 1/10, then 1/11 without any new usage
+        being accounted for. The live free-memory check is applied separately in
+        ``has_rangebox_memory_headroom`` so a SIEM or Security Onion workload can
+        still block new launches without moving the denominator. An explicit
         MAX_CONCURRENT_RANGEBOXES env value pins a fixed cap instead."""
         if self._RANGEBOX_MAX_OVERRIDE:
             try:
                 return max(0, int(self._RANGEBOX_MAX_OVERRIDE))
             except ValueError:
                 pass
-        per_box = self._parse_mem_bytes(self.RANGEBOX_MEM_LIMIT) or (2 * 1024 ** 3)
-        reserve = int(self.RANGEBOX_MEM_RESERVE_GB * (1024 ** 3))
-        avail = self._mem_available_bytes()
-        running = self._count_running_rangeboxes()
-        if avail <= 0:
+        total = self._mem_total_bytes()
+        if total <= 0:
             # /proc/meminfo unreadable: do not authorize growth beyond what runs.
-            return max(running, 1)
-        extra = max(0, (avail - reserve) // per_box)
-        return max(running, min(self.RANGEBOX_MAX_CEILING, running + int(extra)))
+            return max(self._count_running_rangeboxes(), 1)
+        usable = max(0, total - self._rangebox_reserve_bytes)
+        return max(1, min(self.RANGEBOX_MAX_CEILING, int(usable // self._rangebox_per_box_bytes)))
+
+    def has_rangebox_memory_headroom(self) -> bool:
+        """True when live free memory can fit one more RangeBox.
+
+        This is checked separately from the stable concurrency cap so the
+        display does not move, but the server still refuses to overcommit when
+        another workload (SIEM, Security Onion VM) has consumed the reserve.
+        """
+        avail = self._mem_available_bytes()
+        if avail <= 0:
+            # Unknown memory state: fall back to the stable cap only.
+            return True
+        return (avail - self._rangebox_reserve_bytes) >= self._rangebox_per_box_bytes
 
     def _check_rangebox_capacity(self):
         """Raise RangeBoxCapacityError if the server is at capacity."""
         count = self._count_running_rangeboxes()
-        if count >= self.MAX_CONCURRENT_RANGEBOXES:
+        maximum = self.MAX_CONCURRENT_RANGEBOXES
+        if count >= maximum:
             raise RangeBoxCapacityError(
-                f"Server at capacity ({count}/{self.MAX_CONCURRENT_RANGEBOXES} RangeBoxes running)"
+                f"Server at capacity ({count}/{maximum} RangeBoxes running)"
+            )
+        if not self.has_rangebox_memory_headroom():
+            raise RangeBoxCapacityError(
+                "Server is low on free memory; stop another RangeBox or workload "
+                "before launching a new one"
             )
 
     def _resolve_rangebox_image(self, image: Optional[str] = None) -> str:
