@@ -1,6 +1,6 @@
 # Architecture
 
-The architecture page describes how OpenCyberRange runs: the container stack, the network and IP scheme, the firewall model, lab spawning, and wiki delivery. Read it when you operate a range, debug an install, or plan capacity.
+The architecture page describes how SWOCTS Cyber Range runs: the container stack, the network and IP scheme, the firewall model, lab spawning, and wiki delivery. Read it when you operate a range, debug an install, or plan capacity.
 
 ## Container stack
 

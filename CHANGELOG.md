@@ -2,6 +2,11 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+
+### Branding
+- Rebranded the user-facing platform as **SWOCTS Cyber Range** with the SWOCTS crest as the primary mark and title.
+- Kept **OpenCyberRange** as the powered-by attribution with the OpenCyberRange shield.
+
 ## [1.1.3] - 2026-11-05
 
 ### Learner profile

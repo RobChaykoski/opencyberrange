@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-Cross-service credential reuse testing requires access to multiple protocols on the same target. Before starting, confirm that your Kali Linux virtual machine (VM) is connected to the OpenCyberRange network through the WireGuard VPN tunnel. Verify connectivity by pinging the target IP address shown on the lab dashboard.
+Cross-service credential reuse testing requires access to multiple protocols on the same target. Before starting, confirm that your Kali Linux virtual machine (VM) is connected to the SWOCTS Cyber Range network through the WireGuard VPN tunnel. Verify connectivity by pinging the target IP address shown on the lab dashboard.
 
 Ensure the following tools are installed on your Kali VM:
 
@@ -86,7 +86,7 @@ The unified syntax makes CME efficient for testing one credential pair against m
 
 ### Step 1: Launch the Exercise
 
-Open the OpenCyberRange dashboard and start Exercise 8.2 from the Credential Reuse track. Wait for the environment to report a ready status and note the target IP address. All commands in the walkthrough use this target IP.
+Open the SWOCTS Cyber Range dashboard and start Exercise 8.2 from the Credential Reuse track. Wait for the environment to report a ready status and note the target IP address. All commands in the walkthrough use this target IP.
 
 !!! kali "Confirm connectivity to the target"
     Send a ping to the target IP shown on the lab dashboard to verify the VPN path is up.
@@ -200,7 +200,7 @@ Cross-service credential reuse amplifies the impact of a single compromised cred
 
 ### Step 8: Find and Submit the Flag
 
-Return to the OpenCyberRange dashboard and paste the `OCR{...}` flag into the submission field for Exercise 8.2. Successful validation confirms that you authenticated via SSH and retrieved the flag from the target filesystem.
+Return to the SWOCTS Cyber Range dashboard and paste the `OCR{...}` flag into the submission field for Exercise 8.2. Successful validation confirms that you authenticated via SSH and retrieved the flag from the target filesystem.
 
 ---
 

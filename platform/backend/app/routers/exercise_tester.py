@@ -1793,7 +1793,7 @@ class _ExerciseTestPDF(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 10)
         self.set_text_color(100, 100, 100)
-        self.cell(0, 6, f"OpenCyberRange - {self.report_title}", ln=True, align="R")
+        self.cell(0, 6, f"SWOCTS Cyber Range - {self.report_title}", ln=True, align="R")
         self.ln(2)
 
     def footer(self):
@@ -1989,7 +1989,7 @@ def _generate_exercise_test_pdf(data: dict) -> bytes:
     pdf.set_text_color(150, 150, 150)
     pdf.cell(
         0, 6,
-        f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')} | OpenCyberRange",
+        f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')} | SWOCTS Cyber Range",
         ln=True, align="C"
     )
 

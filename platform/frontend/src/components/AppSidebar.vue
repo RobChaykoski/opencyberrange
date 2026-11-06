@@ -14,9 +14,12 @@
           <polyline v-else points="15 18 9 12 15 6"/>
         </svg>
       </button>
-      <router-link to="/dashboard" class="brand-link">
-        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="brand-icon" />
-        <span v-show="!collapsed" class="brand-text">OpenCyberRange</span>
+      <router-link to="/dashboard" class="brand-link" aria-label="SWOCTS Cyber Range home">
+        <img src="/swocts-cyber-range-mark.png" alt="" class="brand-icon" />
+        <span v-show="!collapsed" class="brand-text">
+          <span class="brand-text__name">SWOCTS</span>
+          <span class="brand-text__sub">Cyber Range</span>
+        </span>
       </router-link>
     </div>
 
@@ -193,10 +196,11 @@
         <span v-show="!collapsed" class="nav-item__label">{{ formattedUsername }}</span>
       </router-link>
       <button v-show="!collapsed" @click="$emit('logout')" class="logout-btn">Logout</button>
-      <div v-show="!collapsed" class="swocts-footer">
-        <span>Powered by:</span>
-        <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
-          <img src="/swocts_logo.jpg" alt="SWOCTS" class="swocts-footer__logo" />
+      <div v-show="!collapsed" class="powered-footer">
+        <span>Powered by</span>
+        <a href="https://github.com/RobChaykoski/opencyberrange" target="_blank" rel="noopener noreferrer" aria-label="OpenCyberRange on GitHub">
+          <img src="/ocr-logo-dark.png" alt="" class="powered-footer__logo" />
+          <span>OpenCyberRange</span>
         </a>
       </div>
     </div>
@@ -312,12 +316,16 @@ const userInitial = computed(() => {
 }
 
 .brand-text {
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  line-height: 1.05;
   white-space: nowrap;
   color: var(--text-primary);
 }
+.brand-text__name { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.13em; }
+.brand-text__sub { font-size: 0.66rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-muted); }
 
 .collapse-btn {
   position: absolute;
@@ -574,7 +582,7 @@ const userInitial = computed(() => {
     transform: translateX(0);
   }
 }
-.swocts-footer {
+.powered-footer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -585,16 +593,18 @@ const userInitial = computed(() => {
   border-top: 1px solid var(--border-color);
   margin-top: 0.5rem;
 }
-.swocts-footer a {
+.powered-footer a {
   color: var(--accent);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
 }
-.swocts-footer a:hover {
+.powered-footer a:hover {
   opacity: 0.8;
 }
-.swocts-footer__logo {
+.powered-footer__logo {
   height: 16px;
   width: auto;
   display: block;

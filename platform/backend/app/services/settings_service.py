@@ -51,7 +51,7 @@ DEFAULT_SETTINGS = [
      "description": "SMTP password. The admin API returns it masked.", "is_secret": True},
     {"key": "mail_from_email", "value": "", "category": "email",
      "description": "From address for platform email, for example no-reply@example.com", "is_secret": False},
-    {"key": "mail_from_name", "value": "OpenCyberRange", "category": "email",
+    {"key": "mail_from_name", "value": "SWOCTS Cyber Range", "category": "email",
      "description": "Display name for the From address", "is_secret": False},
     {"key": "mail_public_url", "value": "", "category": "email",
      "description": "Public URL used in email links, for example https://range.example.com. Empty falls back to the certificate URL or request host.", "is_secret": False},
@@ -261,6 +261,17 @@ def seed_defaults(db: Session) -> int:
                 existing.description = desc
                 existing.category = cat
                 resynced += 1
+
+    # Branding migration: replace only the old seeded default, never a name an
+    # administrator has customised.
+    old_from_name = db.query(PlatformSetting).filter(
+        PlatformSetting.key == "mail_from_name",
+        PlatformSetting.value == "OpenCyberRange",
+    ).first()
+    if old_from_name is not None:
+        old_from_name.value = "SWOCTS Cyber Range"
+        resynced += 1
+
     if created or resynced:
         db.commit()
         _invalidate_cache()

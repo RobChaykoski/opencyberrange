@@ -1,7 +1,7 @@
 # Migrating Users from Another Installation
 
-Use the user transfer utility to move accounts from an earlier OpenCyberRange
-installation into this updated build. The utility exports usernames, email
+Use the user transfer utility to move accounts from an earlier SWOCTS Cyber Range
+or OpenCyberRange installation into this updated build. The utility exports usernames, email
 addresses, password hashes, roles, approval state, profile names, and the other
 portable account fields.
 

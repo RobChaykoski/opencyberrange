@@ -75,7 +75,7 @@ For each lab:
 
 ## What You Need
 
-- A terminal in the OpenCyberRange lab network
+- A terminal in the SWOCTS Cyber Range lab network
 - The target address shown in each exercise
 - No previous networking knowledge
 

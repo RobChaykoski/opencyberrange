@@ -43,7 +43,7 @@
     <article v-else-if="certificate" class="certificate" :class="`certificate--${activeDesign}`" aria-label="Certificate of completion">
       <div class="certificate__frame">
         <div class="certificate__watermark" aria-hidden="true">
-          <img src="/swocts_logo.jpg" alt="" />
+          <img src="/swocts-cyber-range-mark.png" alt="" />
           <div class="certificate__watermark-text">
             <span>SWOCTS</span>
             <span>Verified</span>
@@ -56,9 +56,9 @@
         <div class="certificate__corner certificate__corner--br"></div>
 
         <header class="certificate__header">
-          <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="certificate__logo" />
+          <img src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="certificate__logo" />
           <div class="certificate__heading">
-            <p class="certificate__eyebrow">OpenCyberRange</p>
+            <p class="certificate__eyebrow">SWOCTS Cyber Range</p>
             <h1 class="certificate__title">Certificate of Completion</h1>
             <div class="certificate__rule"></div>
           </div>
@@ -101,16 +101,16 @@
 
         <footer class="certificate__footer">
           <div class="certificate__signature">
-            <p class="certificate__signature-label">Powered by:</p>
-            <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
-              <img src="/swocts_logo.jpg" alt="SWOCTS" class="certificate__signature-logo" />
+            <p class="certificate__signature-label">Powered by</p>
+            <a href="https://github.com/RobChaykoski/opencyberrange" target="_blank" rel="noopener noreferrer" aria-label="OpenCyberRange">
+              <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="certificate__signature-logo" />
             </a>
-            <p class="certificate__signature-role">OpenCyberRange Training Range</p>
+            <p class="certificate__signature-role">OpenCyberRange</p>
           </div>
 
-          <div class="certificate__seal" role="img" aria-label="SWOCTS verified emblem">
+          <div class="certificate__seal" role="img" aria-label="SWOCTS Cyber Range verified emblem">
             <div class="certificate__seal-ring">
-              <img src="/swocts_logo.jpg" alt="" class="certificate__seal-emblem" />
+              <img src="/swocts-cyber-range-mark.png" alt="" class="certificate__seal-emblem" />
               <span>SWOCTS</span>
               <small>VERIFIED</small>
             </div>

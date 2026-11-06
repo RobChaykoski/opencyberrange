@@ -16,7 +16,7 @@ This is the bonus challenge in the OSINT track. Treat the public web surface
 as a source: JavaScript, CSS, comments, source maps, and the public repository
 are all fair game.
 
-A second bonus flag has escaped into the public OpenCyberRange repository.
+A second bonus flag has escaped into the public SWOCTS Cyber Range repository.
 That one is not required to complete this exercise, but it is part of the
 same lesson: public code leaks.
 
@@ -82,7 +82,7 @@ Copy the `OCR{...}` value into the exercise flag box.
 
 ### Bonus: The public repository leak
 
-A Kestrel Ridge staging note escaped into the public OpenCyberRange
+A Kestrel Ridge staging note escaped into the public SWOCTS Cyber Range
 repository. Find it using GitHub's code search or by browsing the repository:
 
 - search for `Kestrel Ridge`

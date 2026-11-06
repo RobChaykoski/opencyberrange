@@ -44,7 +44,7 @@ whoami
 ```
 
 You should see your RangeBox account name. This is the account you are using
-inside the training desktop, not your OpenCyberRange login.
+inside the training desktop, not your SWOCTS Cyber Range login.
 
 ### Step 4: Look at the current folder
 
@@ -91,7 +91,7 @@ are, find out what you have, and ask a service for information.
 
 ## Analysis Questions
 
-**1. What is the difference between the RangeBox account and your OpenCyberRange account?**
+**1. What is the difference between the RangeBox account and your SWOCTS Cyber Range account?**
 
 **2. Why is it useful to run `pwd` before opening a file?**
 

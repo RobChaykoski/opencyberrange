@@ -161,7 +161,7 @@
           </div>
 
           <div class="profile-hero__identity">
-            <p class="profile-hero__eyebrow">OpenCyberRange profile</p>
+            <p class="profile-hero__eyebrow">SWOCTS Cyber Range profile</p>
             <h1 class="profile-hero__name">{{ displayName }}</h1>
             <p class="profile-hero__handle">
               <span>@{{ user.username }}</span>
@@ -1302,7 +1302,7 @@ async function downloadTranscript() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `OpenCyberRange-Transcript-${user.value?.username || 'profile'}.pdf`
+    link.download = `SWOCTS-Cyber-Range-Transcript-${user.value?.username || 'profile'}.pdf`
     document.body.appendChild(link)
     link.click()
     link.remove()

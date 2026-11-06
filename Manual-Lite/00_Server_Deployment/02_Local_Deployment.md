@@ -4,7 +4,7 @@
     See the [Docker Compose Deployment Manual](08_Docker_Deploy_Manual.md) for
     a command-by-command deployment without the installer.
 
-You install OpenCyberRange for a classroom on a single LAN, where every student reaches the server on the same subnet. The install uses one script that opens with the deployment-scenario question, asks a few more prompts as it runs, and finishes with a self-signed TLS certificate that the frontend wires in automatically.
+You install SWOCTS Cyber Range for a classroom on a single LAN, where every student reaches the server on the same subnet. The install uses one script that opens with the deployment-scenario question, asks a few more prompts as it runs, and finishes with a self-signed TLS certificate that the frontend wires in automatically.
 
 ## Prerequisites
 

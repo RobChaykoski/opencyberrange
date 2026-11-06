@@ -39,7 +39,7 @@
     <!-- Hero -->
     <header class="hero">
       <div class="hero__main">
-        <img src="/ocr-logo-dark.png" alt="" class="hero__logo" />
+        <img src="/swocts-cyber-range-mark.png" alt="" class="hero__logo" />
         <div class="hero__copy">
           <p class="hero__eyebrow">{{ greeting }}, welcome back</p>
           <h1 class="hero__title">{{ displayName }}</h1>

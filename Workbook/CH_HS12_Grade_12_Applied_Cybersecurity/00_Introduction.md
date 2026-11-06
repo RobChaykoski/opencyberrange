@@ -32,7 +32,7 @@ activity, rate it again. The number is for you, not for a grade.
 ## What You Need
 
 - A browser
-- The exercise panel open in OpenCyberRange
+- The exercise panel open in SWOCTS Cyber Range
 - No terminal, no installed tools, and no local setup
 
 Every activity in this chapter works in the lab browser. If you have a terminal

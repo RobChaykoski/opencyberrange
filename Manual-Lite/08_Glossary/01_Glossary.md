@@ -1,6 +1,6 @@
 # Glossary
 
-This glossary defines the terms used across OpenCyberRange. Where a term has a
+This glossary defines the terms used across SWOCTS Cyber Range. Where a term has a
 standard meaning in cyber threat intelligence, the definition follows the
 [MISP data model](https://www.misp-project.org/datamodels/) and the
 [MISP taxonomies](https://github.com/MISP/misp-taxonomies). The MISP machine tag
@@ -10,7 +10,7 @@ exports.
 Two kinds of entry appear here:
 
 - **Standard term** — follows MISP or another named standard.
-- **Platform term** — specific to the OpenCyberRange training workflow. It is
+- **Platform term** — specific to the SWOCTS Cyber Range training workflow. It is
   not a MISP concept and should not be tagged as one.
 
 ## How MISP machine tags work
@@ -100,7 +100,7 @@ workflow:state="complete"
 | Process list | The set of processes that were running when a memory image was captured. | No taxonomy value |
 | Injected code | Code placed into another process's memory, often to hide execution or evade detection. | Describe with an ATT&CK technique; no single taxonomy value |
 
-## OpenCyberRange platform terms
+## SWOCTS Cyber Range platform terms
 
 These are training-platform terms. They are deliberately not mapped to MISP
 taxonomies because they do not describe threat intelligence.

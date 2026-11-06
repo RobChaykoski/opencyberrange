@@ -1,5 +1,7 @@
-﻿# OpenCyberRange
+﻿# SWOCTS Cyber Range
 
+> **SWOCTS Cyber Range** is the SWOCTS-branded deployment of the OpenCyberRange training platform. The product identity, crest, and title are SWOCTS; the underlying platform, code, and upstream attribution remain OpenCyberRange.
+>
 > **Original project and attribution**
 >
 > OpenCyberRange is based on the original
@@ -26,9 +28,9 @@ A self-hosted cybersecurity training platform that deploys hands-on exercises in
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
-## Edition: Community / Academic
+## SWOCTS Cyber Range: Community / Academic
 
-OpenCyberRange 1.1 is the **Community / Academic** edition: the supported
+SWOCTS Cyber Range 1.1 is the **Community / Academic** edition: the supported
 single-host teaching platform, focused on lab and workbook improvements,
 exercise authoring, bug fixes, maintenance, and security.
 

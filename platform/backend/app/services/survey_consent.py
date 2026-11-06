@@ -14,7 +14,7 @@ SURVEY_CONSENT_UPDATED = "2026-11-04"
 
 def survey_privacy_statement(contact_email: str) -> dict:
     """Return the current statement as structured sections for the UI."""
-    contact = (contact_email or "privacy@opencyberrange.local").strip()
+    contact = (contact_email or "privacy@swocts.com").strip()
     return {
         "version": SURVEY_CONSENT_VERSION,
         "updated": SURVEY_CONSENT_UPDATED,
@@ -30,7 +30,7 @@ def survey_privacy_statement(contact_email: str) -> dict:
                 "heading": "Why we are asking",
                 "paragraphs": [
                     "We would like to run occasional short surveys about the "
-                    "OpenCyberRange platform: which features people use, what "
+                    "SWOCTS Cyber Range platform: which features people use, what "
                     "is confusing, what is missing, and how the platform "
                     "performs in real classes.",
                     "The surveys are about the platform and its usage only. "

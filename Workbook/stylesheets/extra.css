@@ -160,3 +160,19 @@
     border-top: 1px solid #ddd;
   }
 }
+
+/* SWOCTS Cyber Range branding */
+.md-copyright .ocr-powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+.md-copyright .ocr-powered::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("../assets/opencyberrange-logo.png") center/contain no-repeat;
+  border-radius: 2px;
+}

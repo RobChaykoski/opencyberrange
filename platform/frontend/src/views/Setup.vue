@@ -3,9 +3,9 @@
     <div class="setup-container">
       <!-- Header -->
       <div class="setup-header">
-        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="setup-logo" />
+        <img src="/swocts-cyber-range-mark.png" alt="" class="setup-logo" />
         <div class="brand-section">
-          <h1 class="brand-title">OpenCyberRange</h1>
+          <h1 class="brand-title">SWOCTS Cyber Range</h1>
         </div>
         <p class="setup-subtitle">First-Run Setup</p>
       </div>

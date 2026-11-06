@@ -55,7 +55,7 @@ def mail_config(db: Session, *, fresh: bool = False) -> dict:
         "username": username,
         "password": password,
         "from_email": from_email,
-        "from_name": _clean(get(db, "mail_from_name", "OpenCyberRange")) or "OpenCyberRange",
+        "from_name": _clean(get(db, "mail_from_name", "SWOCTS Cyber Range")) or "SWOCTS Cyber Range",
         "public_url": _clean(get(db, "mail_public_url", "")),
         "timeout": _as_int(get(db, "mail_timeout_seconds", 15), 15, 1, 120),
     }
@@ -105,12 +105,12 @@ def render_registration_email(
     safe_support = html.escape(support_email)
 
     if approved:
-        subject = "Your OpenCyberRange account is ready"
+        subject = "Your SWOCTS Cyber Range account is ready"
         action_text = (
             f"You can sign in at {login_url}" if login_url else "You can now sign in."
         )
     else:
-        subject = "Your OpenCyberRange registration was received"
+        subject = "Your SWOCTS Cyber Range registration was received"
         action_text = (
             "An administrator must approve your account before you can sign in."
         )
@@ -119,7 +119,7 @@ def render_registration_email(
         [
             f"Hi {name},",
             "",
-            "Your OpenCyberRange account has been created.",
+            "Your SWOCTS Cyber Range account has been created.",
             "",
             f"Username: {username}",
             "",
@@ -134,7 +134,7 @@ def render_registration_email(
     )
 
     action_html = (
-        f'<p><a href="{safe_login}">Sign in to OpenCyberRange</a></p>'
+        f'<p><a href="{safe_login}">Sign in to SWOCTS Cyber Range</a></p>'
         if approved and safe_login
         else f"<p>{html.escape(action_text)}</p>"
     )
@@ -147,7 +147,7 @@ def render_registration_email(
     html_body = (
         "<!doctype html><html><body>"
         f"<p>Hi {safe_name},</p>"
-        "<p>Your OpenCyberRange account has been created.</p>"
+        "<p>Your SWOCTS Cyber Range account has been created.</p>"
         f"<p><strong>Username:</strong> {safe_username}</p>"
         f"{action_html}"
         f"{support_html}"
@@ -169,7 +169,7 @@ def render_username_reminder_email(
     address (legacy data), list each username once.
     """
     clean_usernames = sorted({_clean(value) for value in usernames if _clean(value)})
-    subject = "Your OpenCyberRange username"
+    subject = "Your SWOCTS Cyber Range username"
     safe_login = html.escape(login_url, quote=True)
     safe_support = html.escape(support_email)
 
@@ -178,7 +178,7 @@ def render_username_reminder_email(
         username_lines = f"Username: {clean_usernames[0]}"
 
     text_body = "\n".join([
-        "You asked us to remind you of the username for the OpenCyberRange",
+        "You asked us to remind you of the username for the SWOCTS Cyber Range",
         "account registered to this email address.",
         "",
         username_lines,
@@ -203,11 +203,11 @@ def render_username_reminder_email(
     )
     html_body = (
         "<!doctype html><html><body>"
-        "<p>You asked us to remind you of the username for the OpenCyberRange "
+        "<p>You asked us to remind you of the username for the SWOCTS Cyber Range "
         "account registered to this email address.</p>"
         f"<ul>{username_html}</ul>"
         + (
-            f'<p><a href="{safe_login}">Sign in to OpenCyberRange</a></p>'
+            f'<p><a href="{safe_login}">Sign in to SWOCTS Cyber Range</a></p>'
             if safe_login
             else "<p>Open the platform and sign in with this username.</p>"
         )

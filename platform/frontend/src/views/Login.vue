@@ -1,16 +1,17 @@
 <template>
   <div class="login-page">
-    <nav class="login-powered" aria-label="SWOCTS">
+    <nav class="login-powered" aria-label="Powered by OpenCyberRange">
       <a
         class="login-powered__brand"
-        href="https://www.swocts.com/"
+        href="https://github.com/RobChaykoski/opencyberrange"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Powered by SWOCTS — open the SWOCTS website"
-        title="swocts.com"
+        aria-label="Powered by OpenCyberRange"
+        title="Powered by OpenCyberRange"
       >
         <span>Powered by</span>
-        <img src="/swocts_logo.jpg" alt="SWOCTS" />
+        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" />
+        <span>OpenCyberRange</span>
       </a>
       <span class="login-powered__divider" aria-hidden="true"></span>
       <a
@@ -32,9 +33,9 @@
       <div class="login-form-panel">
         <div class="form-panel-inner">
           <div class="brand">
-            <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="brand-icon" />
+            <img src="/swocts-cyber-range-mark.png" alt="" class="brand-icon" />
             <div class="brand-text">
-              <h1 class="brand-title">OpenCyberRange</h1>
+              <h1 class="brand-title">SWOCTS Cyber Range</h1>
               <p class="brand-subtitle">Welcome back</p>
             </div>
           </div>
@@ -249,17 +250,17 @@
             <article class="preview-card preview-card--certificate">
               <div class="preview-certificate">
                 <div class="preview-certificate__brandline">
-                  <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="preview-certificate__logo" />
-                  <strong>OpenCyberRange</strong>
+                  <img src="/swocts-cyber-range-mark.png" alt="" class="preview-certificate__logo" />
+                  <strong>SWOCTS Cyber Range</strong>
                   <span class="preview-certificate__powered">
                     <span>Powered by</span>
                     <a
                       class="preview-certificate__site"
-                      href="https://www.swocts.com/"
+                      href="https://github.com/RobChaykoski/opencyberrange"
                       target="_blank"
                       rel="noopener noreferrer"
-                      title="SWOCTS website"
-                    >swocts.com</a>
+                      title="OpenCyberRange project"
+                    >OpenCyberRange</a>
                     <a
                       class="preview-certificate__social"
                       href="https://www.linkedin.com/company/swocts"
@@ -275,12 +276,12 @@
                   </span>
                 </div>
                 <div class="preview-certificate__main">
-                  <span class="preview-certificate__seal">OCR</span>
+                  <span class="preview-certificate__seal">SWOCTS</span>
                   <div class="preview-certificate__body">
                     <small class="preview-certificate__eyebrow">Certificate of Completion</small>
                     <strong class="preview-certificate__name">Avery Chen</strong>
                     <span>Network Foundations · Level 1</span>
-                    <small class="preview-certificate__meta">Issued 04 Nov 2026 · OCR-2026-0142</small>
+                    <small class="preview-certificate__meta">Issued 04 Nov 2026 · SWOCTS-2026-0142</small>
                     <span class="preview-certificate__verified">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
                         <path d="m5 12 4 4L19 6"/>

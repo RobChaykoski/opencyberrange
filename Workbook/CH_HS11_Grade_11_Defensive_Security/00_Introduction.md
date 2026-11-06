@@ -13,7 +13,7 @@ browser, and hints are always allowed.
 ## What You Need
 
 - A browser
-- The exercise panel open in OpenCyberRange
+- The exercise panel open in SWOCTS Cyber Range
 - A RangeBox desktop, or the lab browser as a fallback
 
 ## Three Ideas to Carry Forward

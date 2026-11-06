@@ -84,7 +84,7 @@ during credential analysis are 230 (User logged in) and 530 (Login incorrect).
 
 ### Step 1: Launch the Exercise and Note Your Target IP
 
-Start the lab from the OpenCyberRange platform and note the target IP address
+Start the lab from the SWOCTS Cyber Range platform and note the target IP address
 displayed on the launch page.
 
 ### Step 2: SSH into the Analyst Workstation

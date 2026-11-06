@@ -110,7 +110,7 @@ An anonymous bind (no `-D` or `-w` flags) connects without credentials. Many LDA
 
 ### Step 1: Launch the Exercise
 
-Open the OpenCyberRange platform in your browser and start the exercise environment.
+Open the SWOCTS Cyber Range platform in your browser and start the exercise environment.
 
 - Navigate to **Exercises** then **Windows** then **Level 2**
 - Click **Launch** on "Credential Discovery and Reuse Chain"

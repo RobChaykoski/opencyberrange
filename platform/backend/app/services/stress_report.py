@@ -368,7 +368,7 @@ class StressTestPDF(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 8)
         self.set_text_color(*TEXT_MUTED)
-        self.cell(0, 5, "OpenCyberRange  |  Stress Test Report", ln=True, align="R")
+        self.cell(0, 5, "SWOCTS Cyber Range  |  Stress Test Report", ln=True, align="R")
         self.ln(2)
 
     def footer(self):

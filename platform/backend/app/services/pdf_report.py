@@ -39,7 +39,7 @@ class GradeReportPDF(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 10)
         self.set_text_color(100, 100, 100)
-        self.cell(0, 6, f"OpenCyberRange - {self.course_code}", ln=True, align="R")
+        self.cell(0, 6, f"SWOCTS Cyber Range - {self.course_code}", ln=True, align="R")
         self.ln(2)
 
     def footer(self):
@@ -276,7 +276,7 @@ def _add_student_page(
     pdf.set_text_color(150, 150, 150)
     pdf.cell(
         0, 6,
-        f"Generated: {datetime.now(timezone.utc).astimezone(local_tz).strftime('%Y-%m-%d %H:%M %Z')} | OpenCyberRange",
+        f"Generated: {datetime.now(timezone.utc).astimezone(local_tz).strftime('%Y-%m-%d %H:%M %Z')} | SWOCTS Cyber Range - Powered by OpenCyberRange",
         ln=True, align="C"
     )
 
@@ -293,7 +293,7 @@ class DashboardReportPDF(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 10)
         self.set_text_color(100, 100, 100)
-        self.cell(0, 6, f"OpenCyberRange - {self.title_text}", ln=True, align="R")
+        self.cell(0, 6, f"SWOCTS Cyber Range - {self.title_text}", ln=True, align="R")
         self.ln(2)
 
     def footer(self):
@@ -480,7 +480,7 @@ def generate_dashboard_report(
     pdf.set_text_color(150, 150, 150)
     pdf.cell(
         0, 6,
-        f"Generated: {datetime.now(timezone.utc).astimezone(local_tz).strftime('%Y-%m-%d %H:%M %Z')} | OpenCyberRange",
+        f"Generated: {datetime.now(timezone.utc).astimezone(local_tz).strftime('%Y-%m-%d %H:%M %Z')} | SWOCTS Cyber Range - Powered by OpenCyberRange",
         ln=True, align="C"
     )
 

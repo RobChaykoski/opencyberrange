@@ -2,7 +2,7 @@
   <div class="change-password-page">
     <div class="change-password-container">
       <div class="header">
-        <h1 class="title">OpenCyberRange</h1>
+        <h1 class="title">SWOCTS Cyber Range</h1>
         <p class="subtitle">Change Your Password</p>
         <p class="message">Your password must be changed before you can continue.</p>
       </div>

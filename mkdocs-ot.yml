@@ -1,11 +1,14 @@
-site_name: "OT/ICS Security"
-site_description: "OT/ICS Security and detection exercises for OpenCyberRange"
+site_name: "SWOCTS Cyber Range - OT/ICS Security"
+site_description: "OT/ICS security and detection exercises for SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
 site_dir: _site_ot
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
 theme:
   name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: deep-orange

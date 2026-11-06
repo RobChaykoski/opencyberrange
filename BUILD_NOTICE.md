@@ -12,6 +12,15 @@ This updated build is not affiliated with, sponsored by, or endorsed by the
 original author. The original copyright, attribution, and `Required Notice:`
 line remain in force and are not replaced by this notice.
 
+## SWOCTS Cyber Range branding
+
+**SWOCTS Cyber Range** is the product name and visual identity used by this
+deployment. The underlying platform, code, and upstream project remain
+**OpenCyberRange**. The SWOCTS crest is used as the primary platform mark; the
+OpenCyberRange name and shield mark are used for the "Powered by OpenCyberRange"
+attribution. This branding does not change the licence, copyright, or upstream
+attribution in this notice.
+
 ## Licensing
 
 The upstream source and this updated build remain subject to the **PolyForm

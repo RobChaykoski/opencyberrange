@@ -1,6 +1,6 @@
 # Prerequisites and Sizing
 
-Before you install OpenCyberRange you size the host, open the right ports, and confirm Docker is available. Read this page first, then follow either [Local Deployment](02_Local_Deployment.md) or [Cloud Deployment](03_Cloud_Deployment.md).
+Before you install SWOCTS Cyber Range you size the host, open the right ports, and confirm Docker is available. Read this page first, then follow either [Local Deployment](02_Local_Deployment.md) or [Cloud Deployment](03_Cloud_Deployment.md).
 
 ## Operating system
 
