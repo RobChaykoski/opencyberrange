@@ -1,15 +1,16 @@
 # OIDC single sign-on
 
-Status: **Enterprise 3.1.0**. OIDC login is implemented. SAML and LDAP provider
-settings are stored, but their login adapters are not part of 3.1.0.
+Status: **Enterprise 3.1.1**. OIDC login is implemented. SAML and LDAP login
+adapters are documented in [`SSO-SAML-LDAP.md`](SSO-SAML-LDAP.md).
 
 This guide is for administrators configuring an OpenID Connect provider, and for
 operators validating it on an HA control plane.
 
 ## How it works
 
-1. The login page lists enabled OIDC providers.
-2. The learner selects a provider.
+1. The login page lists enabled OIDC and SAML providers, plus an institution
+   account form for each LDAP provider.
+2. The learner selects a provider or enters directory credentials.
 3. The backend creates a state, nonce, and PKCE verifier and redirects to the
    IdP.
 4. The IdP redirects back to the stable callback URL.

@@ -35,9 +35,14 @@ then upgraded: Vue Router 5.4.0, ESLint 10.14.0, `@eslint/js` 10.0.1,
 `eslint-plugin-vue` 10.12.0, and `vue-eslint-parser` 10.4.2.
 =======
 Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
+<<<<<<< HEAD
 **Professional 2.1 (2.1.3)**, **Enterprise 3.1 (3.1.0)**. See
 [Editions](EDITIONS.md). Platform development version: **3.1.0**.
 >>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
+=======
+**Professional 2.1 (2.1.3)**, **Enterprise 3.1 (3.1.1)**. See
+[Editions](EDITIONS.md). Platform development version: **3.1.1**.
+>>>>>>> d3fcd574 (feat(sso): add SAML and LDAP login adapters for Enterprise 3.1.1)
 
 ## Policy
 

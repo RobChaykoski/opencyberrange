@@ -235,10 +235,12 @@ class ExternalIdentity(Base):
 
 
 class SsoLoginState(Base):
-    """Short-lived OIDC authorization request state.
+    """Short-lived login flow state shared by OIDC and SAML.
 
     Stored in the shared database, not process memory, so any API replica can
     complete the callback. The row is consumed atomically to prevent replay.
+    OIDC stores the nonce and PKCE verifier; SAML stores the AuthnRequest ID and
+    ACS URL.
     """
 
     __tablename__ = "sso_login_states"

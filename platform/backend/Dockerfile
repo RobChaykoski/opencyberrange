@@ -6,7 +6,14 @@ WORKDIR /app
 
 # Build-only toolchain. The runtime image does not keep gcc or headers.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential libpq-dev && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    pkg-config \
+    libxml2-dev \
+    libxslt1-dev \
+    libxmlsec1-dev \
+    libssl-dev && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -35,7 +42,14 @@ WORKDIR /app
 # Runtime-only packages. curl and gnupg are used only to add the Docker apt
 # repository; postgresql-client provides pg_dump/pg_restore for backups.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends postgresql-client curl gnupg && \
+    apt-get install -y --no-install-recommends \
+    postgresql-client \
+    curl \
+    gnupg \
+    libxml2 \
+    libxslt1.1 \
+    libxmlsec1 \
+    libxmlsec1-openssl && \
     rm -rf /var/lib/apt/lists/*
 
 # Docker CLI for lab orchestration. The backend talks to a socket proxy over

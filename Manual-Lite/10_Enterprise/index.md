@@ -49,10 +49,13 @@ flowchart TB
 The single-host Compose path remains the default and fallback. HA is a separate
 deployment shape, not a checkbox in the single-host installer.
 
-## OIDC single sign-on
+## Single sign-on (OIDC, SAML, LDAP)
 
-Enterprise 3.1 adds OIDC sign-in on top of the HA control plane. The login page
-shows a button for each enabled OIDC provider.
+Enterprise 3.1 adds OIDC, SAML 2.0, and LDAP/Active Directory sign-in on top of
+the HA control plane. The login page shows a button for each enabled OIDC or SAML
+provider, and an institution-account form for each LDAP provider.
+
+### OIDC
 
 1. Create an OIDC application at the identity provider. Use the redirect URI
    shown on the provider card:
@@ -72,19 +75,47 @@ If the IdP supports RP-initiated logout, also register the platform
 `https://<public-origin>/login` URL as the post-logout redirect. Logout revokes
 the platform JWT and redirects through the IdP; otherwise it stays local.
 
-SSO-provisioned accounts cannot use the local password form. Existing local
-accounts keep their password unless an administrator changes the flag. Admin
-accounts are never auto-linked; keep a local break-glass administrator.
+### SAML 2.0
+
+1. Create a SAML application at the IdP. Register the SP entity ID and the ACS
+   URL shown on the provider card:
+
+   ```text
+   https://<public-origin>/api/auth/sso/saml/<provider-id>/acs
+   ```
+
+2. Add a **SAML 2.0** provider with the IdP entity ID, SSO URL, IdP signing
+   certificate, and attribute mapping.
+3. Add an email claim at the IdP. Optionally add name and group claims.
+4. Select **Test** to validate the SAML settings, then sign in from the login
+   page.
+
+### LDAP / Active Directory
+
+1. Add an **LDAP / Active Directory** provider with `ldaps://` (or StartTLS),
+   the base DN, and a service bind account.
+2. Set the user search filter, for example `(sAMAccountName={username})` for
+   Active Directory or `(uid={username})` for OpenLDAP.
+3. Map the email, username, name, and group attributes.
+4. Select **Test** to verify the service bind, then sign in with a directory
+   username and password on the login page.
+
+All three adapters share the same account policy. SSO-provisioned accounts
+cannot use the local password form. Existing local accounts keep their password
+unless an administrator changes the flag. Admin accounts are never auto-linked;
+keep a local break-glass administrator. Group mapping can grant `instructor`,
+but never `admin`.
 
 For setup examples, claim mapping, and troubleshooting, see
-[`docs/SSO-OIDC.md`](../../docs/SSO-OIDC.md) and
+[`docs/SSO-OIDC.md`](../../docs/SSO-OIDC.md),
+[`docs/SSO-SAML-LDAP.md`](../../docs/SSO-SAML-LDAP.md), and
 [ADR 0004](../../docs/decisions/0004-sso-ha-contract.md).
 
 ## Administrator notes
 
 - **Identity providers:** the settings screen stores LDAP, OIDC, and SAML
   configuration and encrypts bind passwords, client secrets, and private keys.
-  OIDC login is active in 3.1; SAML and LDAP login adapters are next.
+  OIDC, SAML, and LDAP login are active in 3.1.1.
 - **Secrets:** protect `WG_ENCRYPTION_KEY` and database backups. The identity
   provider secrets use the same Fernet key as WireGuard keys.
 - **Node agents:** never expose the Docker socket or the node-agent port

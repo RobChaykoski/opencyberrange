@@ -91,8 +91,8 @@ the deployment, identity, and institutional layer:
 - node agent, mTLS control channel, drain, node-loss recovery, and reconciliation;
 - replicated frontend/API, PostgreSQL HA, Redis HA, shared object storage;
 - WireGuard gateway failover;
-- OIDC single sign-on in 3.1; LDAP and SAML provider settings are retained for
-  the next adapter;
+- OIDC, SAML 2.0, and LDAP/Active Directory single sign-on, with HA-safe flow
+  state and RP-initiated OIDC logout;
 - enterprise reporting and regulatory/compliance reporting;
 - multi-tenant support;
 - LMS integration;
@@ -170,7 +170,7 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 | Professional 2.0 accreditation support | Planned |
 | Professional 2.0 research exports | Partially delivered (cross-course CSV/PDF and survey package) |
 | Enterprise 3.1 HA | Reference implementation and local control-plane drills; production multi-host deployment still required |
-| Enterprise 3.1 SSO | **OIDC login and RP-initiated logout implemented and tested across two API replicas**; SAML/LDAP login adapters next |
+| Enterprise 3.1 SSO | **OIDC, SAML, and LDAP login implemented and tested across two API replicas**; RP-initiated OIDC logout; SAML SLO remains |
 | Enterprise 3.1 enterprise reporting, multi-tenancy, LMS, compliance reporting | Planned |
 >>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 

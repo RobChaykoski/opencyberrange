@@ -17,6 +17,12 @@
   </div>
 </template>
 
+<script>
+// Tickets are single-use. Track exchanges for the life of the page so a
+// duplicate mount of this view cannot consume the same ticket twice.
+const ssoExchangeTickets = new Set()
+</script>
+
 <script setup>
 import { inject, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -28,10 +34,6 @@ const router = useRouter()
 const updateAuthState = inject('updateAuthState', null)
 const loading = ref(true)
 const errorMessage = ref('')
-
-// Vue can mount this view more than once during a fast route transition. The
-// ticket is single-use, so guard the exchange for the life of the page.
-let exchangeStarted = false
 
 const friendlyError = (code) => {
   if (code === 'pending_approval') {
@@ -63,9 +65,6 @@ const finishSignIn = async (data) => {
 }
 
 onMounted(async () => {
-  if (exchangeStarted) return
-  exchangeStarted = true
-
   const code = route.query.error
   if (code) {
     errorMessage.value = friendlyError(String(code))
@@ -78,8 +77,11 @@ onMounted(async () => {
     loading.value = false
     return
   }
+  const ticketValue = String(ticket)
+  if (ssoExchangeTickets.has(ticketValue)) return
+  ssoExchangeTickets.add(ticketValue)
   try {
-    const { data } = await axios.post('/api/auth/sso/exchange', { ticket: String(ticket) })
+    const { data } = await axios.post('/api/auth/sso/exchange', { ticket: ticketValue })
     await finishSignIn(data)
   } catch (error) {
     errorMessage.value = error.response?.data?.detail

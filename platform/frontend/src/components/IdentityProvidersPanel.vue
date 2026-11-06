@@ -5,9 +5,9 @@
         <p class="idp-panel__eyebrow">V3 · Identity</p>
         <h3 id="idp-title">Identity providers</h3>
         <p class="idp-panel__lead">
-          Configure LDAP, OpenID Connect, or SAML providers. OIDC sign-in is
-          active in 3.1; SAML and LDAP settings are stored for the next adapter.
-          Secrets are encrypted and never returned by the API.
+          Configure LDAP, OpenID Connect, or SAML providers. All three sign-in
+          adapters are active in 3.1. Secrets are encrypted and never returned
+          by the API. Keep a local break-glass administrator account.
         </p>
       </div>
       <button type="button" class="btn btn--primary btn--sm" @click="startCreate">
@@ -36,7 +36,6 @@
           </div>
           <div class="idp-card__actions">
             <button
-              v-if="provider.kind === 'oidc'"
               type="button"
               class="btn btn--outline btn--xs"
               :disabled="testingId === provider.id"
@@ -62,6 +61,10 @@
           <div v-if="provider.kind === 'oidc'" class="idp-card__meta-wide">
             <dt>Redirect URI</dt>
             <dd class="idp-mono">{{ provider.resolved_redirect_uri }}</dd>
+          </div>
+          <div v-if="provider.kind === 'saml'" class="idp-card__meta-wide">
+            <dt>ACS URL</dt>
+            <dd class="idp-mono">{{ provider.resolved_acs_url }}</dd>
           </div>
         </dl>
         <p
@@ -145,6 +148,34 @@
             <input v-model="form.secrets.bind_password" type="password" autocomplete="new-password" />
           </label>
         </div>
+        <div class="idp-form__row">
+          <label class="field">
+            <span>Email attribute</span>
+            <input v-model="form.config.email_attribute" type="text" placeholder="mail" />
+          </label>
+          <label class="field">
+            <span>Username attribute</span>
+            <input v-model="form.config.username_attribute" type="text" placeholder="uid" />
+          </label>
+          <label class="field">
+            <span>Group attribute</span>
+            <input v-model="form.config.group_attribute" type="text" placeholder="memberOf" />
+          </label>
+        </div>
+        <div class="idp-form__row">
+          <label class="field">
+            <span>First name attribute</span>
+            <input v-model="form.config.first_name_attribute" type="text" placeholder="givenName" />
+          </label>
+          <label class="field">
+            <span>Last name attribute</span>
+            <input v-model="form.config.last_name_attribute" type="text" placeholder="sn" />
+          </label>
+          <label class="field">
+            <span>Display name attribute</span>
+            <input v-model="form.config.display_name_attribute" type="text" placeholder="cn" />
+          </label>
+        </div>
       </template>
 
       <template v-else-if="form.kind === 'oidc'">
@@ -174,25 +205,8 @@
             <input v-model="form.config.discovery_url" type="text" placeholder="https://idp.example.edu/.well-known/openid-configuration" />
           </label>
           <label class="field">
-            <span>Default role</span>
-            <select v-model="form.config.default_role">
-              <option value="student">Student</option>
-              <option value="instructor">Instructor</option>
-            </select>
-          </label>
-        </div>
-        <div class="idp-form__row idp-form__checks">
-          <label class="idp-check">
-            <input v-model="form.config.auto_provision" type="checkbox" />
-            <span>Auto-provision new users</span>
-          </label>
-          <label class="idp-check">
-            <input v-model="form.config.auto_approve" type="checkbox" />
-            <span>Auto-approve provisioned users</span>
-          </label>
-          <label class="idp-check">
-            <input v-model="form.config.link_existing_by_email" type="checkbox" />
-            <span>Link existing accounts by verified email</span>
+            <span>Groups claim</span>
+            <input v-model="form.config.groups_claim" type="text" placeholder="groups" />
           </label>
         </div>
         <p class="idp-form__note">
@@ -215,11 +229,17 @@
         <div class="idp-form__row">
           <label class="field idp-form__wide">
             <span>SSO URL</span>
-            <input v-model="form.config.sso_url" type="text" required />
+            <input v-model="form.config.sso_url" type="text" placeholder="https://idp.example.edu/sso" required />
           </label>
           <label class="field idp-form__wide">
-            <span>ACS URL</span>
-            <input v-model="form.config.acs_url" type="text" required />
+            <span>ACS URL (optional, derived)</span>
+            <input v-model="form.config.acs_url" type="text" placeholder="Leave blank to derive from the public base URL" />
+          </label>
+        </div>
+        <div class="idp-form__row">
+          <label class="field idp-form__wide">
+            <span>IdP X.509 certificate</span>
+            <textarea v-model="form.config.idp_x509_cert" rows="3" placeholder="PEM or base64 certificate" required />
           </label>
         </div>
         <div class="idp-form__row">
@@ -228,11 +248,86 @@
             <input v-model="form.config.slo_url" type="text" />
           </label>
           <label class="field idp-form__wide">
-            <span>{{ editing && hasSecret('private_key') ? 'New private key (leave blank to keep)' : 'SP private key' }}</span>
+            <span>SP X.509 certificate (optional, for signed requests)</span>
+            <textarea v-model="form.config.sp_x509_cert" rows="3" />
+          </label>
+        </div>
+        <div class="idp-form__row">
+          <label class="field idp-form__wide">
+            <span>{{ editing && hasSecret('private_key') ? 'New SP private key (leave blank to keep)' : 'SP private key (optional)' }}</span>
             <textarea v-model="form.secrets.private_key" rows="3" autocomplete="off" />
           </label>
         </div>
+        <div class="idp-form__row">
+          <label class="field">
+            <span>Email attribute</span>
+            <input v-model="form.config.email_attribute" type="text" placeholder="email" />
+          </label>
+          <label class="field">
+            <span>Username attribute</span>
+            <input v-model="form.config.username_attribute" type="text" placeholder="uid" />
+          </label>
+          <label class="field">
+            <span>Group attribute</span>
+            <input v-model="form.config.group_attribute" type="text" placeholder="groups" />
+          </label>
+        </div>
+        <div class="idp-form__row">
+          <label class="field">
+            <span>First name attribute</span>
+            <input v-model="form.config.first_name_attribute" type="text" placeholder="givenName" />
+          </label>
+          <label class="field">
+            <span>Last name attribute</span>
+            <input v-model="form.config.last_name_attribute" type="text" placeholder="sn" />
+          </label>
+          <label class="field">
+            <span>Display name attribute</span>
+            <input v-model="form.config.display_name_attribute" type="text" placeholder="displayName" />
+          </label>
+        </div>
+        <p class="idp-form__note">
+          Register the SP entity ID and ACS URL at your identity provider. Leave
+          ACS blank to use the stable
+          <code>/api/auth/sso/saml/&lt;id&gt;/acs</code> endpoint.
+        </p>
       </template>
+
+      <div class="idp-form__row">
+        <label class="field">
+          <span>Default role</span>
+          <select v-model="form.config.default_role">
+            <option value="student">Student</option>
+            <option value="instructor">Instructor</option>
+          </select>
+        </label>
+        <label class="field idp-form__wide">
+          <span>Instructor group (optional)</span>
+          <input
+            v-model="form.config.instructor_group"
+            type="text"
+            placeholder="A group name or DN that grants the instructor role"
+          />
+        </label>
+      </div>
+      <div class="idp-form__row idp-form__checks">
+        <label class="idp-check">
+          <input v-model="form.config.auto_provision" type="checkbox" />
+          <span>Auto-provision new users</span>
+        </label>
+        <label class="idp-check">
+          <input v-model="form.config.auto_approve" type="checkbox" />
+          <span>Auto-approve provisioned users</span>
+        </label>
+        <label class="idp-check">
+          <input v-model="form.config.link_existing_by_email" type="checkbox" />
+          <span>Link existing accounts by verified email</span>
+        </label>
+      </div>
+      <p class="idp-form__note">
+        External accounts are never granted administrator access. Existing
+        administrator accounts are never linked automatically.
+      </p>
 
       <p v-if="formError" class="idp-state idp-state--error" role="alert">{{ formError }}</p>
       <div class="idp-form__footer">
@@ -259,27 +354,60 @@ const formError = ref('')
 const testingId = ref(null)
 const testResults = reactive({})
 
-const blankConfig = () => ({
-  server_url: '',
-  base_dn: '',
-  bind_dn: '',
-  user_search_filter: '(uid={username})',
-  start_tls: false,
-  tls_verify: true,
-  issuer: '',
-  client_id: '',
-  scopes: 'openid email profile',
-  discovery_url: '',
-  auto_provision: true,
-  auto_approve: true,
-  link_existing_by_email: true,
-  default_role: 'student',
-  idp_entity_id: '',
-  sp_entity_id: '',
-  sso_url: '',
-  slo_url: '',
-  acs_url: '',
-})
+const blankConfig = (kind = 'ldap') => {
+  const common = {
+    auto_provision: true,
+    auto_approve: true,
+    link_existing_by_email: true,
+    default_role: 'student',
+    instructor_group: '',
+  }
+  if (kind === 'ldap') {
+    return {
+      ...common,
+      server_url: '',
+      base_dn: '',
+      bind_dn: '',
+      user_search_filter: '(uid={username})',
+      start_tls: false,
+      tls_verify: true,
+      email_attribute: 'mail',
+      username_attribute: 'uid',
+      first_name_attribute: 'givenName',
+      last_name_attribute: 'sn',
+      display_name_attribute: 'cn',
+      group_attribute: 'memberOf',
+    }
+  }
+  if (kind === 'oidc') {
+    return {
+      ...common,
+      issuer: '',
+      client_id: '',
+      scopes: 'openid email profile',
+      groups_claim: 'groups',
+      discovery_url: '',
+    }
+  }
+  return {
+    ...common,
+    idp_entity_id: '',
+    sp_entity_id: '',
+    sso_url: '',
+    slo_url: '',
+    acs_url: '',
+    idp_x509_cert: '',
+    sp_x509_cert: '',
+    name_id_format: 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+    email_attribute: 'email',
+    username_attribute: 'uid',
+    first_name_attribute: 'givenName',
+    last_name_attribute: 'sn',
+    display_name_attribute: 'displayName',
+    group_attribute: 'groups',
+    subject_attribute: '',
+  }
+}
 
 const blankSecrets = () => ({ bind_password: '', client_secret: '', private_key: '' })
 
@@ -288,7 +416,7 @@ const form = reactive({
   kind: 'ldap',
   enabled: false,
   is_default: false,
-  config: blankConfig(),
+  config: blankConfig('ldap'),
   secrets: blankSecrets(),
 })
 
@@ -320,7 +448,7 @@ const resetForm = () => {
   form.kind = 'ldap'
   form.enabled = false
   form.is_default = false
-  form.config = blankConfig()
+  form.config = blankConfig('ldap')
   form.secrets = blankSecrets()
   formError.value = ''
 }
@@ -337,7 +465,7 @@ const startEdit = (provider) => {
   form.kind = provider.kind
   form.enabled = provider.enabled
   form.is_default = provider.is_default
-  form.config = { ...blankConfig(), ...(provider.config || {}) }
+  form.config = { ...blankConfig(provider.kind), ...(provider.config || {}) }
   form.secrets = blankSecrets()
   formError.value = ''
   showForm.value = true
@@ -351,7 +479,7 @@ const closeForm = () => {
 }
 
 const onKindChange = () => {
-  form.config = blankConfig()
+  form.config = blankConfig(form.kind)
   form.secrets = blankSecrets()
 }
 
@@ -396,7 +524,7 @@ const testProvider = async (provider) => {
     const { data } = await axios.post(`/identity/providers/${provider.id}/test`)
     testResults[provider.id] = {
       ok: true,
-      message: `Discovery OK · ${data.issuer} · ${data.signing_keys} signing key${data.signing_keys === 1 ? '' : 's'}`,
+      message: data.message || 'Provider test passed.',
     }
   } catch (e) {
     testResults[provider.id] = {
