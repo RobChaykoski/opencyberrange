@@ -12,7 +12,9 @@ You can download a copy of your account data or delete your account from
 The download is a JSON file containing your profile, VPN metadata, course
 enrolments, completions, flag attempts, quiz attempts, achievements, lab
 sessions, competition entries, and activity history. Password hashes, MFA
-secrets, recovery codes, and your WireGuard private key are not included.
+secrets, recovery codes, and your WireGuard private key are not included. The
+download is recorded in the audit trail with the purpose "Self-service subject
+access request".
 
 ## Delete your account
 

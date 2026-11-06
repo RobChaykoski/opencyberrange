@@ -2,17 +2,16 @@
 
 ## Supported versions
 
-Security fixes land on the current supported release line. At the time of
-writing that is `v1.1.x` (tag `v1.1.0` and later on the 1.1 maintenance line).
-The `main` branch carries the 2.0 development line, and fixes land on 1.1 first
-and are merged forward.
+Security fixes land on the current supported release line. The current release
+line is `v2.1.x` (Professional 2.1), with security fixes also maintained on the
+`v1.1.x` Community/Academic maintenance line where the same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v1.1.x` | Yes |
-| `v1.0.x` | Security fixes only — upgrade to `v1.1.x` |
-| `v2.0.x` / `main` | Yes for development builds; next feature release |
-| Pre-1.0 builds | No — upgrade to `v1.1.x` |
+| `v2.1.x` / `main` | Yes |
+| `v2.0.x` | Security fixes only — upgrade to `v2.1.x` |
+| `v1.1.x` | Security fixes only — upgrade to `v2.1.x` for the current feature line |
+| Pre-1.0 builds | No — upgrade to a supported release |
 
 ## Reporting a vulnerability
 
@@ -38,6 +37,7 @@ In scope:
 
 - authentication, session handling, MFA, password reset and account deletion;
 - authorization between students, instructors and administrators;
+- administrative data exports, user imports, and snapshot restore safeguards;
 - the platform API, frontend, installer and upgrade scripts;
 - container escape or cross-lab isolation failures;
 - secrets committed to the repository or shipped in an image;
@@ -53,6 +53,27 @@ Out of scope:
 - Findings that require a compromised administrator account unless they cross a
   privilege boundary.
 - Missing hardening headers with no demonstrated impact.
+
+## Administrative exports and restores
+
+- Every administrative or instructor data export requires an operator-supplied
+  reason of at least five characters. The reason, exporter, record count, and
+  format are written to the audit log. Self-service subject-access and
+  transcript exports record a fixed purpose instead of prompting.
+- The administrative **Import / Export Users** export includes password hashes so
+  migrated learners keep their existing passwords. It excludes MFA secrets and
+  recovery codes, trusted devices, VPN peer keys, lab sessions, and learning
+  progress. Treat the JSON file as credential material: transfer it over a
+  secure channel, restrict access, and delete it after a successful import.
+- User imports never overwrite an existing administrator account. The signed-in
+  administrator is protected by user ID, other existing administrators are
+  skipped with a warning, and the erasure suppression ledger is consulted before
+  any account is created.
+- **Restore from another system** is restricted to administrators, accepts only
+  plain `.sql` snapshots, caps uploads at 512 MB, and applies the file in a single
+  transaction with `ON_ERROR_STOP=1`. A full restore replaces every account and
+  record in the target installation; cross-version moves should use the portable
+  user export instead.
 
 ## Lab safety
 

@@ -18,6 +18,7 @@ The Activity Log is a sub-tab of **Monitoring**. Open the **Monitoring** link in
 4. Click a time-range pill to bound the window: **1h**, **6h**, **24h**, **7d**, **All**, or **Custom**. Custom reveals two date-time pickers for a start and end.
 5. Read the table. Each row shows **Time**, **Event**, **User** (the actor), **Target**, and **Details**.
 6. Page through results with **Prev** and **Next** at the bottom.
+7. To keep a copy, enter a **Reason for export** of at least five characters and click **Export JSON** or **Export CSV**. The reason, exporter, format, filters, and row count are written to the audit log.
 
 <figure markdown>
 

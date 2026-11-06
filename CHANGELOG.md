@@ -24,6 +24,31 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
+## [Unreleased]
+
+### Administration
+- Added **Admin → Users → Import / Export Users**: portable user JSON export,
+  preview-before-import, optional update of matching usernames, and optional
+  avatar export.
+- User imports now never overwrite an existing administrator. The signed-in
+  administrator is protected by user ID and other administrators are skipped
+  with a warning.
+- Added **Admin → System → Backups → Restore from another system**: upload a
+  plain `.sql` snapshot and restore it or stage it as a local snapshot. Uploads
+  are administrator-only, extension-checked, and capped at 512 MB.
+
+### Privacy and security
+- Every data export now requires a reason of at least five characters. The
+  reason, exporter, format, and scope are written to the audit log.
+- Applied the reason requirement to user, activity-log, backup-download,
+  learning-report, course/student/assignment-report, and exercise/stress-test
+  exports. Self-service account and transcript exports record fixed purposes.
+- Export responses use `Cache-Control: no-store`; administrative user exports
+  embed `reason` and `exported_by` in the JSON.
+- Added `docs/PRIVACY-AND-DATA-DELETION.md`, `SECURITY.md`, OWASP evidence, and
+  admin-guide coverage for user migration, cross-system restore, and export
+  accountability.
+
 ## [2.1.4] - 2026-11-05
 
 ### Reporting

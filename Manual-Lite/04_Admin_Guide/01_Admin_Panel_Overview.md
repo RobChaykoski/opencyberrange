@@ -51,6 +51,7 @@ flowchart TD
   A --> SYS[System tab]
 
   U --> U1[Create, edit, unlock, disable, delete users]
+  U --> U2[Import / Export users]
   P --> P1[Approve or reject registrations]
   E --> E1[Manage exercises]
   E --> E2[Tracks and Levels]
@@ -60,7 +61,7 @@ flowchart TD
   M --> M2[VPN Peers]
   M --> M3[Activity Log]
   SET --> S1[General, Security, Labs, VPN]
-  SYS --> SY1[Health and Backups]
+  SYS --> SY1[Health, snapshots, restore from another system]
 ```
 
 ## Users tab at a glance
@@ -90,6 +91,22 @@ The toolbar above the table lets you:
 Filters compose. If a combination has no matches, the table shows an empty state
 with a **Clear filters** action. Pagination returns to page 1 when a filter
 changes.
+
+### Import / Export Users
+
+The Users tab includes an **Import / Export Users** panel:
+
+- **Export accounts** downloads a portable JSON file. Enter a reason first; the
+  reason is written to the audit log. Enable avatars only when they are needed.
+- **Import accounts** accepts a file from this or another installation. Use
+  **Preview** first, then **Import**. Existing usernames are skipped unless
+  **Update existing usernames** is enabled.
+- Password hashes travel so imported users keep their existing password. MFA,
+  trusted devices, VPN keys, sessions, and learning progress are not included.
+- Existing administrators are never overwritten by an import, including the
+  administrator performing it.
+
+See [Migrating Users](26_Migrating_Users.md) for the full procedure.
 
 !!! note "Last sign-in is recorded on successful login"
     An account that has never signed in shows `Never`. The relative label is a

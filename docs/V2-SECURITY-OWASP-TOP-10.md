@@ -40,6 +40,13 @@ line when it is touched, or sooner if a risk is rated high.
   ownership before aggregation.
 - Research or cross-course views require an explicit role grant.
 - Exports repeat the same authorization checks as the screen that offered them.
+- Administrative user imports never overwrite an existing administrator. The
+  signed-in administrator is protected by user ID, other administrators are
+  skipped with a warning, and new administrator creation remains an explicit
+  action.
+- Full snapshot restore is restricted to administrators and is a deliberate,
+  destructive replacement; the UI warns that the signed-in administrator will be
+  replaced.
 
 **Project and tests**
 
@@ -70,6 +77,10 @@ note naming the role check.
 - Backups are treated as sensitive data and encrypted at rest where the host
   supports it.
 - New personal data is included in the account export and erasure path.
+- Administrative migration exports contain password hashes but exclude MFA
+  secrets, trusted devices, VPN keys, sessions, and learning progress. Export
+  responses use `Cache-Control: no-store`, and the file is treated as credential
+  material.
 
 **Project and tests**
 
@@ -213,6 +224,9 @@ note naming the role check.
 - Lab images and compose files are built from reviewed sources.
 - Database migrations are idempotent and run before traffic is served.
 - Backups are verified by a restore drill, not only by file creation.
+- Cross-system snapshot uploads are administrator-only, restricted to plain
+  `.sql` files, capped at 512 MB, stored in the backup volume, and applied in a
+  single transaction with `ON_ERROR_STOP=1`.
 - Achievement and completion writes remain idempotent.
 
 **Project and tests**
@@ -235,6 +249,9 @@ note naming the role check.
 
 - Authentication, authorization failures, admin actions, account deletion, and
   mail-setting changes are logged.
+- Every data export records the operator-supplied reason, exporter, format, and
+  scope. Self-service exports and transcripts record a fixed purpose instead of
+  prompting the learner.
 - Logs redact IP addresses where the privacy policy requires it.
 - Retention and access to logs are documented.
 

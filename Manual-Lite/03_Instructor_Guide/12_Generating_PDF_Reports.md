@@ -23,6 +23,7 @@ The Ops Center also exports a filtered activity report in PDF or CSV from the **
 2. On the **My Courses** tab, click the course.
 3. Click the **Reports** sub-tab.
 4. Click **Download Full Class Report (PDF)**.
+5. Enter a reason of at least five characters when prompted. The reason is recorded in the audit log with your username and the report scope.
 
 **What you should see:** the button shows **Generating...** while the report builds, then your browser downloads a PDF with one page per enrolled student.
 
@@ -42,4 +43,4 @@ The Ops Center also exports a filtered activity report in PDF or CSV from the **
     The PDF generator renders text with a font that handles only the latin-1 character set, and it fails on Unicode dashes. If you set a custom course name, assignment name, or description, use a hyphen, comma, colon, or period instead of an en-dash or em-dash, or the report will not build.
 
 !!! tip
-    Reports include masked-out internal identifiers but still list student work. Generate and store them where only authorized staff can read them, and do not share PDFs that contain real student emails.
+    Reports include masked-out internal identifiers but still list student work. Generate and store them where only authorized staff can read them, and do not share PDFs that contain real student emails. Every report export asks for a reason; the reason is written to the audit log and should match the teaching or compliance purpose.

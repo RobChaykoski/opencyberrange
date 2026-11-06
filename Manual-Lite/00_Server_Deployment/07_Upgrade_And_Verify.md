@@ -202,6 +202,26 @@ Use `--skip-labs` or `--skip-rangebox` only when you know those images are
 already current. Lab definitions are still refreshed unless
 `--skip-discovery` is also used.
 
+## Migrating users or restoring from another system
+
+Two admin-panel paths cover moves between installations:
+
+- **Admin → Users → Import / Export Users** exports a portable JSON file and
+  imports it with a preview. Enter a reason before exporting; it is written to
+  the audit log. The file includes password hashes so users keep their
+  passwords, but excludes MFA, trusted devices, VPN keys, sessions, and learning
+  progress. Existing administrators are never overwritten by an import,
+  including the signed-in administrator.
+- **Admin → System → Backups → Restore from another system** uploads and
+  optionally restores a plain `.sql` snapshot. A full restore replaces every
+  account and record, including the current administrator, so take a local
+  snapshot first. Use the user import for cross-version moves or when local
+  administrators must be preserved.
+
+After any full restore, re-apply the live erasure ledger as described above.
+Backups and user exports contain password hashes and personal data; keep them
+access-controlled and delete them when no longer needed.
+
 ## Backups and rollback
 
 Each run creates:

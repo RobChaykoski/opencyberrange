@@ -44,13 +44,44 @@ service runs when a student deletes their own account from
 the account record, VPN metadata, courses, completions, flag attempts, quiz
 attempts, achievements, sessions, competitions, and activity. Password hashes,
 MFA secrets, recovery codes, trusted-device tokens, and the WireGuard private
-key are excluded.
+key are excluded. The download is audited with the fixed purpose "Self-service
+subject access request"; the transcript download records "Self-service
+transcript request".
+
+### Administrative user export and import
+
+**Admin → Users → Import / Export Users** moves accounts between installations.
+Enter a reason before exporting; the reason, exporter, user count, and avatar
+setting are written to the audit log. The export includes password hashes so
+users keep their passwords, but excludes MFA secrets, recovery codes, trusted
+devices, VPN keys, sessions, and learning progress. Treat the file as a secret
+and delete it after the import is verified.
+
+The import screen previews the file before writing. It consults the live erasure
+ledger, so an erased account is not resurrected. It also never overwrites an
+existing administrator: the signed-in admin is protected by user ID and other
+existing admins are skipped with a warning.
+
+### Report and backup exports
+
+Activity-log exports, snapshot downloads, learning reports, course and student
+reports, and exercise/stress-test reports require a reason of at least five
+characters. The reason and exporter are recorded in the audit log. Export
+responses use `Cache-Control: no-store`.
 
 ## Backups and restores
 
 The erasure ledger is an append-only file on the backend's persistent
 `/workbook` volume. It stores keyed hashes, not usernames or emails. PostgreSQL
 restores cannot overwrite it.
+
+**Admin → System → Backups** can create and download snapshots, and **Restore
+from another system** can upload a plain `.sql` snapshot from another
+installation. A full restore replaces every account and record, including the
+administrator performing the restore. Take a local snapshot first and be ready
+to sign in with an account that exists in the restored data. For cross-version
+moves or when local administrators must be preserved, use **Admin → Users →
+Import / Export Users** instead.
 
 `scripts/upgrade-from-backup.sh`:
 
@@ -92,6 +123,9 @@ disaster recovery.
 - Keep `ERASURE_LEDGER_KEY` stable. If it is empty, `JWT_SECRET` is used.
 - Back up the ledger separately from the database.
 - Encrypt backups at rest and delete them when retention ends.
+- Store user exports and snapshot downloads as sensitive credential data.
+- Review export reasons in the audit log during access reviews.
+- Confirm an import cannot overwrite the existing administrators.
 - Run a restore drill and confirm the purge utility works.
 - Review the 90-day audit and 30-day backup defaults with counsel.
 

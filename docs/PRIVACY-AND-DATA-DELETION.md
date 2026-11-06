@@ -77,11 +77,49 @@ backups 30 days. Adjust these to match the institution's retention schedule.
 
 ## Data export
 
+### Self-service subject access and portability
+
 `GET /api/auth/export` returns a JSON document containing the account record,
 VPN metadata, courses, completions, flag attempts, quiz attempts,
 achievements, lab sessions, competition entries, and activity history.
 Password hashes, TOTP secrets, recovery codes, trusted-device tokens, and the
-WireGuard private key are excluded.
+WireGuard private key are excluded. The export updates `data_exported_at` and is
+audited with the fixed purpose "Self-service subject access request". Profile →
+**Privacy and data** offers the same export to the learner.
+
+Downloaded certificate and transcript PDFs are generated on demand and are not
+stored by the platform. The transcript download is audited with the purpose
+"Self-service transcript request".
+
+### Administrative user migration
+
+Admin → Users → **Import / Export Users** moves accounts between installations.
+The export contains the account and profile fields needed to recreate the user,
+including the password hash so the learner keeps their existing password. It
+does **not** contain MFA secrets or recovery codes, trusted devices, VPN peer
+keys, lab sessions, course enrolment, completions, achievements, or other
+learning progress.
+
+Every administrative user export requires a reason of at least five characters.
+The audit record stores the reason, the exporting administrator, the user count,
+and whether avatars were included. The JSON file also embeds `reason` and
+`exported_by`. Treat the file as credential material and delete it after the
+import has been verified.
+
+The importer supports a preview before writing. It consults the erasure
+suppression ledger by default, so an erased account is not resurrected by an
+older export. Existing administrator accounts are never overwritten: the
+signed-in administrator is protected by user ID and other existing
+administrators are skipped with a warning. Use the user panel for deliberate
+administrator changes.
+
+### Report, activity, and backup exports
+
+Activity-log exports, database snapshot downloads, learning reports, course,
+student, and assignment reports, and exercise/stress-test reports all require
+an operator-supplied reason. The reason and exporter are written to the audit
+log along with the format and scope. Export responses use
+`Cache-Control: no-store`.
 
 ## Suppression ledger and backups
 
@@ -94,6 +132,14 @@ key, or leave it empty to use `JWT_SECRET`. Changing the key invalidates old
 entries.
 
 ### Restore procedure
+
+A snapshot can be restored from **Admin → System → Backups**. The same screen
+can upload a plain `.sql` snapshot from another installation through **Restore
+from another system**. A full restore replaces every account and record,
+including the administrator performing the restore, so take a local snapshot
+first and be prepared to sign in with an account that exists in the restored
+data. Use the portable user import for cross-version moves or when the local
+administrators must be preserved.
 
 A database dump can predate a deletion. After any full restore:
 
@@ -111,8 +157,13 @@ manual transfer.
 
 ### User export merge
 
-`scripts/user_transfer.py import` consults the ledger by default and skips
-erased accounts:
+The admin interface path is **Admin → Users → Import / Export Users**. Preview
+the file first, then import. The importer consults the live ledger, skips erased
+accounts, and refuses to overwrite existing administrators. The JSON export
+requires an audited reason and contains password hashes, so handle it as
+sensitive data.
+
+The command-line equivalent is `scripts/user_transfer.py import`:
 
 ```bash
 python /tmp/user_transfer.py import /tmp/users-export.json \
@@ -142,5 +193,8 @@ them at rest where possible, and delete them once the retention period ends.
       by member state).
 - [ ] Keep `ERASURE_LEDGER_KEY` stable and backed up separately from the DB.
 - [ ] Run a restore drill and confirm `purge_erased_accounts.py` works.
+- [ ] Review export reasons in the audit log as part of the access review.
+- [ ] Confirm imported accounts never overwrite the existing administrators.
+- [ ] Store user exports and database snapshots as sensitive credential data.
 - [ ] Review the 90-day audit and 30-day backup defaults with counsel.
 - [ ] Document the breach-notification and data-subject-request procedures.

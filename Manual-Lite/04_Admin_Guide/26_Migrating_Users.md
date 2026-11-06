@@ -37,7 +37,9 @@ The same portable export is available in the web interface:
    usernames** only when you intend to overwrite matching accounts.
 
 The preview and import report counts for created, updated, skipped, and errored
-rows, plus any username, email, or student-ID conflicts.
+rows, plus any username, email, or student-ID conflicts. Existing administrator
+accounts are never overwritten by an import, including the administrator
+performing it; those rows are skipped with a warning.
 
 To restore a complete snapshot from another installation, open **Admin → System
 → Backups**, expand **Restore from another system**, upload a plain `.sql`

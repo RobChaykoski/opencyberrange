@@ -6,7 +6,20 @@
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.
 
-## Current pass — 4 November 2026
+## Current pass — 6 November 2026
+
+| Category | Evidence produced | Result |
+|---|---|---|
+| A01 Broken access control | Admin user export/import tests; signed-in administrator and other-administrator overwrite protection; role-protected export endpoints | Pass |
+| A02 Cryptographic failures | Administrative export carries password hashes with `Cache-Control: no-store`; self-service export excludes secrets; backup downloads are audited | Pass |
+| A08 Integrity failures | Uploaded `.sql` snapshot validation (extension and 512 MB cap); staged upload test; single-transaction restore with `ON_ERROR_STOP=1` | Pass |
+| A09 Logging/monitoring failures | Export reason recorded for user, activity, backup, report, and test-report exports; self-service and transcript exports record fixed purposes | Pass |
+
+Backend suite: 177 passed in the verification environment. Frontend production
+build passed. Existing restore-drill and dependency-audit evidence from the
+4 November pass still applies.
+
+## Previous pass — 4 November 2026
 
 | Category | Evidence produced | Result |
 |---|---|---|

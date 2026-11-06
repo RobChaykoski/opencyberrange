@@ -188,7 +188,11 @@ finished what.
 ![Courses](docs/img/courses.png)
 
 **Administration.** Users, sessions, VPN peers and platform settings in one
-panel.
+panel. The Users tab includes a portable **Import / Export Users** workflow for
+moving accounts between installations, and the System → Backups tab can create,
+download, upload, and restore snapshots, including a plain SQL snapshot from
+another installation. Every export requires a reason that is written to the
+audit log.
 
 ![Admin panel](docs/img/admin.png)
 
@@ -505,9 +509,10 @@ building during a student spawn.
 - New passwords are hashed with **Argon2id** through `pwdlib`.
 - Legacy **bcrypt** hashes still verify; a successful login transparently
   rewrites them to Argon2id.
-- Plaintext passwords are never stored. Password hashes, TOTP secrets,
-  recovery codes, trusted-device tokens, and WireGuard private keys are
-  excluded from the user data export.
+- Plaintext passwords are never stored. The self-service account export excludes
+  password hashes, TOTP secrets, recovery codes, trusted-device tokens, and
+  WireGuard private keys. The administrative migration export includes password
+  hashes so users keep their existing passwords; treat that file as a secret.
 
 ### Backup strategy
 
@@ -518,6 +523,20 @@ building during a student spawn.
 - The default retention is **30 days**. `upgrade-from-backup.sh` copies the
   ledger into each backup and prunes older completed backups; use
   `--backup-retention-days N` to change the window or `0` to disable pruning.
+- **Cross-system restore.** Admin → System → Backups → **Restore from another
+  system** accepts a plain `.sql` snapshot from another installation. A full
+  restore replaces every account and record, including the signed-in
+  administrator; take a local snapshot first. Use the portable user import to
+  merge accounts without replacing the local administrators.
+- **Portable user migration.** Admin → Users → **Import / Export Users** writes
+  a JSON export and imports it with a preview. Password hashes travel so users
+  keep their passwords; MFA, trusted devices, VPN keys, sessions, and learning
+  progress are excluded. Existing administrator accounts are never overwritten
+  by an import, and the erasure ledger is consulted before any account is
+  created. See [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md).
+- **Export accountability.** User, activity, backup, and report exports require
+  a reason of at least five characters. The reason is stored in the audit log;
+  the user export JSON also records the reason and the exporting administrator.
 - After a restore, re-apply the **live** erasure ledger with
   `scripts/purge_erased_accounts.py`. Otherwise an older dump could resurrect a
   deleted account. `user_transfer.py import` consults the ledger by default.
@@ -745,7 +764,9 @@ opencyberrange/
 | [V3 HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the v3 multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
-| [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation |
+| [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation, in the admin UI or CLI |
+| [Privacy, Erasure, and Backups](docs/PRIVACY-AND-DATA-DELETION.md) | Privacy officers, DPOs, and administrators reviewing erasure, exports, and retention |
+| [Security policy](SECURITY.md) | Security reporters and reviewers checking scope and export/restore safeguards |
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
 | [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
