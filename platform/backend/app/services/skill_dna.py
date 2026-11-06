@@ -18,6 +18,7 @@ so a future review can change them without a migration.
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 
 from sqlalchemy import func
@@ -394,4 +395,89 @@ def build_skill_dna(db: Session, user: User) -> dict:
         "dimensions": dimensions,
         "titles": titles,
         "signals": signals,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Skill-tree coverage
+# ---------------------------------------------------------------------------
+
+SKILL_BRANCH_ORDER = DIMENSION_ORDER
+SKILL_BRANCH_LABELS = {spec.key: spec.label for spec in DIMENSIONS}
+
+
+def skill_branch_for_lab(lab: Lab | None) -> str:
+    """Assign one curriculum exercise to one Skill DNA branch.
+
+    The report needs a single branch per exercise so the radar is a true mix
+    that sums to 100%. The rules follow the Skill DNA categories, with the
+    following tie-breaks:
+
+    * advanced/expert exercises count as Leader (capstone/advanced work);
+    * OSINT, forensics, and malware analysis count as Investigator;
+    * network analysis and OT count as Defender;
+    * builder categories count as Builder;
+    * reconnaissance, enumeration, assessment, and the remaining foundations
+      count as Explorer.
+    """
+    if lab is None:
+        return "explorer"
+    category = (getattr(lab, "category", None) or "general").strip().lower()
+    difficulty = (getattr(lab, "difficulty", None) or "").strip().lower()
+    level = getattr(lab, "level", None)
+    track = getattr(level, "track", None) if level else None
+    track_slug = _track_slug(track)
+
+    if difficulty in {"advanced", "expert"}:
+        return "leader"
+    if category in {"osint", "forensics"} or track_slug in {
+        "osint",
+        "forensics",
+        "malware",
+    }:
+        return "investigator"
+    if category in {"network-analysis", "ot"} or track_slug in {"network", "ot"}:
+        return "defender"
+    if category in BUILDER_CATEGORIES:
+        return "builder"
+    return "explorer"
+
+
+def _skill_pct(count: int, total: int) -> float:
+    return round(count / total * 100, 1) if total else 0.0
+
+
+def skill_branch_mix(labs: list[Lab], completions: list[LabCompletion]) -> dict:
+    """Summarise assigned and completed exercises by Skill DNA branch.
+
+    ``completions`` may contain several learners for the same exercise. The
+    completed side counts distinct exercises, matching the assigned side.
+    """
+    assigned_counts = Counter(skill_branch_for_lab(lab) for lab in labs if lab)
+    completed_labs: dict[int, Lab] = {}
+    for row in completions:
+        lab = getattr(row, "lab", None)
+        if lab is not None:
+            completed_labs[lab.id] = lab
+    completed_counts = Counter(
+        skill_branch_for_lab(lab) for lab in completed_labs.values()
+    )
+    assigned_total = sum(assigned_counts.values())
+    completed_total = sum(completed_counts.values())
+
+    return {
+        "dimensions": [
+            {
+                "key": key,
+                "label": SKILL_BRANCH_LABELS[key],
+                "assigned": assigned_counts.get(key, 0),
+                "completed": completed_counts.get(key, 0),
+                "assigned_pct": _skill_pct(assigned_counts.get(key, 0), assigned_total),
+                "completed_pct": _skill_pct(completed_counts.get(key, 0), completed_total),
+            }
+            for key in SKILL_BRANCH_ORDER
+        ],
+        "assigned_total": assigned_total,
+        "completed_total": completed_total,
+        "completion_pct": _skill_pct(completed_total, assigned_total),
     }

@@ -76,6 +76,10 @@ web security but weak in forensics.
 - Confidence/evidence labels for every axis.
 - Accessible table fallback for the chart.
 
+**Delivered in 3.1.2:** the course and all-course skill-tree radar in Learning
+reports, using the five Skill DNA branches. Learner-level and cohort
+competency radar remain.
+
 **Data:** competency evidence from the Competency Framework Engine.
 
 **Guardrails:** within-person and aggregate comparison only. No public

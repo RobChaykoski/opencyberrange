@@ -120,7 +120,7 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 | Professional 2.0 analytics and course reporting | Delivered on the 24.04 preview |
 | Professional 2.0 Competency Framework Engine | Planned |
 | Professional 2.0 Student Feedback Engine | Planned |
-| Professional 2.0 Radar / Spider Web Reporting | Planned |
+| Professional 2.0 Radar / Spider Web Reporting | Partially delivered: course and all-course skill-tree radar in Learning reports; learner/cohort competency radar planned |
 | Professional 2.0 Exercise Health Analytics | Planned |
 | Professional 2.0 Instructor Intervention Dashboard | Planned |
 | Professional 2.0 cohort analysis | Planned |

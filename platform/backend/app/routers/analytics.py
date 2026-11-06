@@ -26,6 +26,11 @@ from app.services.learning_time import (
     learning_minutes_by_pair,
     learning_minutes_by_user,
 )
+from app.services.skill_dna import (
+    SKILL_BRANCH_LABELS,
+    SKILL_BRANCH_ORDER,
+    skill_branch_mix,
+)
 from app.models import (
     Course,
     CourseCompletionReset,
@@ -901,7 +906,39 @@ async def course_overview(
         },
         "trending_topics": _trending_topics(pulse_rows),
         "domains": _domain_performance(completions, sessions),
+        "skill_tree": skill_branch_mix(labs, completions),
         "generated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def _total_skill_tree(rows: list[dict]) -> dict:
+    """Aggregate per-course skill-tree mixes for the all-courses radar."""
+    assigned = {key: 0 for key in SKILL_BRANCH_ORDER}
+    completed = {key: 0 for key in SKILL_BRANCH_ORDER}
+    for row in rows:
+        tree = row.get("skill_tree") or {}
+        for dimension in tree.get("dimensions", []):
+            key = dimension.get("key")
+            if key in assigned:
+                assigned[key] += int(dimension.get("assigned") or 0)
+                completed[key] += int(dimension.get("completed") or 0)
+    assigned_total = sum(assigned.values())
+    completed_total = sum(completed.values())
+    return {
+        "dimensions": [
+            {
+                "key": key,
+                "label": SKILL_BRANCH_LABELS[key],
+                "assigned": assigned[key],
+                "completed": completed[key],
+                "assigned_pct": _rate(assigned[key], assigned_total),
+                "completed_pct": _rate(completed[key], completed_total),
+            }
+            for key in SKILL_BRANCH_ORDER
+        ],
+        "assigned_total": assigned_total,
+        "completed_total": completed_total,
+        "completion_pct": _rate(completed_total, assigned_total),
     }
 
 
@@ -923,6 +960,7 @@ async def reports_overview(
             "course": detail["course"],
             "summary": detail["summary"],
             "trending_topics": detail.get("trending_topics", []),
+            "skill_tree": detail.get("skill_tree"),
         })
 
     rag_counts = {"red": 0, "amber": 0, "green": 0}
@@ -970,6 +1008,7 @@ async def reports_overview(
                 sum(row["summary"]["reaction_count"] for row in rows),
             ),
             "rag_counts": rag_counts,
+            "skill_tree": _total_skill_tree(rows),
         },
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

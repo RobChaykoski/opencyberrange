@@ -76,6 +76,54 @@ def generate_reports_pdf(payload: dict) -> bytes:
         pdf.cell(box_width, 9, _sanitize_for_pdf(str(value)), border=1, align="C")
     pdf.ln(12)
 
+    skill_tree = totals.get("skill_tree") or {}
+    if skill_tree.get("dimensions"):
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.set_text_color(30, 41, 59)
+        pdf.cell(0, 7, "Skill tree coverage", ln=True)
+        pdf.set_font("Helvetica", "", 8)
+        pdf.set_text_color(100, 116, 139)
+        pdf.cell(
+            0,
+            5,
+            _sanitize_for_pdf(
+                "Assigned and completed exercises by Skill DNA branch. "
+                "Shares are the mix of exercises, not learner scores."
+            ),
+            ln=True,
+        )
+        pdf.ln(1)
+        skill_headers = [
+            ("Branch", 52), ("Assigned", 24), ("Share", 22),
+            ("Completed", 28), ("Share", 22),
+        ]
+        pdf.set_fill_color(30, 41, 59)
+        pdf.set_text_color(255, 255, 255)
+        for title, width in skill_headers:
+            _cell(pdf, width, title, bold=True, align="C", fill=True)
+        pdf.ln(7)
+        for index, dimension in enumerate(skill_tree["dimensions"]):
+            values = [
+                dimension.get("label") or dimension.get("key") or "",
+                dimension.get("assigned", 0),
+                f"{dimension.get('assigned_pct', 0)}%",
+                dimension.get("completed", 0),
+                f"{dimension.get('completed_pct', 0)}%",
+            ]
+            fill = index % 2 == 0
+            if fill:
+                pdf.set_fill_color(248, 250, 252)
+            for value, (_title, width) in zip(values, skill_headers):
+                _cell(
+                    pdf,
+                    width,
+                    value,
+                    align="L" if width == 52 else "C",
+                    fill=fill,
+                )
+            pdf.ln(7)
+        pdf.ln(7)
+
     headers = [
         ("Course", 48), ("RAG", 20), ("Learners", 20), ("Hours", 18),
         ("Complete", 22), ("Abandon", 22), ("Learning", 20),

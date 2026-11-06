@@ -12,7 +12,7 @@ and tests share one meaning. The capabilities that deliver them are described in
 | # | Question | Primary capability | Current state |
 |---|---|---|---|
 | 1 | Which labs are failing? | Exercise Health Analytics | Course exercise drill-down available; programme report planned |
-| 2 | Which tracks are strongest? | Radar / Spider Web Reporting | Domain performance available; programme ranking planned |
+| 2 | Which tracks are strongest? | Radar / Spider Web Reporting | Course and all-course skill-tree coverage radar delivered; programme ranking and learner/cohort radar planned |
 | 3 | Which competencies are weakest? | Competency Framework Engine | Six-domain performance available; explicit competencies planned |
 | 4 | How long does competency development take? | Competency Framework Engine | Median time per exercise available; time-to-competency planned |
 | 5 | Which students become top performers? | Instructor Intervention Dashboard | Growth indicators available; private sustained-performance view planned |
