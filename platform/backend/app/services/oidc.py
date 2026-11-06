@@ -9,96 +9,50 @@ from __future__ import annotations
 
 import base64
 import hashlib
-import json
 import logging
 import secrets
 import time
 from datetime import datetime, timedelta, timezone
-from typing import Any
 from urllib.parse import urlencode
 
 import jwt
 import requests
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.auth import create_access_token, get_password_hash
 from app.config import settings
 from app.crypto import decrypt_secret, encrypt_secret
-from app.models import (
-    ExternalIdentity,
-    IdentityProvider,
-    SsoLoginState,
-    SsoLoginTicket,
-    SsoSession,
-    User,
+from app.models import IdentityProvider, SsoSession, User
+from app.services.external_identity import (
+    SSOError,
+    ExternalUser,
+    provider_config,
+    provider_secrets,
+    truthy,
+    utcnow,
 )
-from app.services.achievements import (
-    check_learning_achievements,
-    check_login_streak_achievements,
+from app.services.sso_flow import (
+    cleanup_expired,
+    consume_login_state,
+    consume_login_ticket,
+    create_flow_state,
+    create_login_ticket,
+    frontend_base_url,
+    login_payload,
+    public_base_url,
+    record_login,
+    sanitize_return_to,
 )
 
 logger = logging.getLogger(__name__)
 
 _DISCOVERY_CACHE: dict[str, tuple[float, dict]] = {}
 
-
-class OIDCError(RuntimeError):
-    """A safe, operator-facing OIDC failure."""
-
-
-def utcnow() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-def _as_utc(value: datetime | None) -> datetime | None:
-    if value is None:
-        return None
-    return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
-
-
-def public_base_url() -> str:
-    configured = (settings.PUBLIC_BASE_URL or "").strip()
-    if configured:
-        return configured.rstrip("/")
-    host = (settings.SERVER_PUBLIC_HOST or "localhost").strip()
-    if host.startswith(("http://", "https://")):
-        return host.rstrip("/")
-    return f"https://{host}"
-
-
-def frontend_base_url() -> str:
-    configured = (settings.FRONTEND_BASE_URL or "").strip()
-    return configured.rstrip("/") if configured else public_base_url()
+# Kept as an alias so existing callers and tests can catch every adapter error.
+OIDCError = SSOError
 
 
 def redirect_uri(provider_id: int) -> str:
     return f"{public_base_url()}/api/auth/sso/oidc/{provider_id}/callback"
-
-
-def sanitize_return_to(value: str | None) -> str:
-    value = (value or "").strip()
-    if not value.startswith("/") or value.startswith("//"):
-        return "/dashboard"
-    return value[:500]
-
-
-def provider_config(provider: IdentityProvider) -> dict:
-    try:
-        data = json.loads(provider.config or "{}")
-    except (TypeError, ValueError):
-        data = {}
-    return data if isinstance(data, dict) else {}
-
-
-def provider_secrets(provider: IdentityProvider) -> dict:
-    if not provider.secrets:
-        return {}
-    try:
-        data = json.loads(decrypt_secret(provider.secrets))
-    except Exception:
-        return {}
-    return data if isinstance(data, dict) else {}
 
 
 def _http_get_json(url: str) -> dict:
@@ -241,33 +195,12 @@ def validate_id_token(provider: IdentityProvider, id_token: str, nonce: str) -> 
     return claims
 
 
-def _truthy(value: Any) -> bool:
-    if isinstance(value, bool):
-        return value
-    return str(value).strip().lower() in {"1", "true", "yes"}
-
-
-def _safe_username(candidate: str, db: Session) -> str:
-    raw = (candidate or "").strip().lower()
-    cleaned = "".join(ch if ch.isalnum() or ch in "_-" else "-" for ch in raw)
-    cleaned = cleaned.strip("-_")
-    if not cleaned or not cleaned[0].isalpha():
-        cleaned = f"user-{cleaned or secrets.token_hex(3)}"
-    cleaned = cleaned[:50]
-    base = cleaned
-    index = 2
-    while db.query(User).filter(func.lower(User.username) == cleaned).first():
-        suffix = f"-{index}"
-        cleaned = f"{base[: 50 - len(suffix)]}{suffix}"
-        index += 1
-    return cleaned
-
-
-def _identity_from_claims(claims: dict, config: dict | None = None) -> dict:
+def _identity_from_claims(claims: dict, config: dict | None = None) -> ExternalUser:
     config = config or {}
     email_claim = str(config.get("email_claim", "email"))
     username_claim = str(config.get("username_claim", "preferred_username"))
     name_claim = str(config.get("name_claim", "name"))
+    groups_claim = str(config.get("groups_claim", "groups"))
     subject = str(claims.get("sub", "")).strip()
     if not subject:
         raise OIDCError("The identity provider did not return a subject.")
@@ -288,15 +221,23 @@ def _identity_from_claims(claims: dict, config: dict | None = None) -> dict:
         or email.split("@", 1)[0]
         or f"user-{subject[:10]}"
     )
-    return {
-        "subject": subject,
-        "email": email,
-        "email_verified": _truthy(claims.get("email_verified")),
-        "username_hint": str(username_hint),
-        "first_name": first_name,
-        "last_name": last_name,
-        "name": full_name or None,
-    }
+    raw_groups = claims.get(groups_claim)
+    if isinstance(raw_groups, str):
+        groups = [part for part in raw_groups.replace(";", ",").split(",") if part.strip()]
+    elif isinstance(raw_groups, (list, tuple)):
+        groups = [str(value) for value in raw_groups if str(value).strip()]
+    else:
+        groups = []
+    return ExternalUser(
+        subject=subject,
+        email=email,
+        email_verified=truthy(claims.get("email_verified")),
+        username_hint=str(username_hint),
+        first_name=first_name,
+        last_name=last_name,
+        name=full_name or None,
+        groups=groups,
+    )
 
 
 def provision_or_link_user(
@@ -309,114 +250,11 @@ def provision_or_link_user(
     """Return (user, provisioned, linked_existing)."""
     config = provider_config(provider)
     identity = _identity_from_claims(claims, config)
-    link = (
-        db.query(ExternalIdentity)
-        .filter(
-            ExternalIdentity.provider_id == provider.id,
-            ExternalIdentity.subject == identity["subject"],
-        )
-        .first()
+    from app.services.external_identity import provision_or_link_external_user
+
+    return provision_or_link_external_user(
+        db, provider, identity, client_ip=client_ip
     )
-    if link is not None:
-        user = db.query(User).filter(User.id == link.user_id).first()
-        if user is None:
-            raise OIDCError("The linked local account no longer exists.")
-        if not user.is_active:
-            raise OIDCError("The linked local account is disabled.")
-        if not user.is_approved:
-            raise OIDCError("The linked local account is not approved.")
-        link.email = identity["email"]
-        link.last_login_at = utcnow()
-        db.commit()
-        return user, False, False
-
-    existing = (
-        db.query(User)
-        .filter(func.lower(User.email) == identity["email"].lower())
-        .first()
-    )
-    if existing is not None:
-        if existing.role == "admin" or existing.is_admin:
-            raise OIDCError(
-                "An administrator account already uses this email. "
-                "Contact an administrator to link it explicitly."
-            )
-        link_existing = bool(config.get("link_existing_by_email", True))
-        if not link_existing or not identity["email_verified"]:
-            raise OIDCError(
-                "An account with this email already exists. "
-                "Sign in with your local password or ask an administrator to link it."
-            )
-        db.add(
-            ExternalIdentity(
-                provider_id=provider.id,
-                subject=identity["subject"],
-                user_id=existing.id,
-                email=identity["email"],
-                last_login_at=utcnow(),
-            )
-        )
-        db.commit()
-        return existing, False, True
-
-    if not bool(config.get("auto_provision", True)):
-        raise OIDCError(
-            "No local account is linked to this identity. "
-            "Ask an administrator to create or link your account."
-        )
-
-    role = str(config.get("default_role", "student")).strip().lower()
-    if role not in {"student", "instructor"}:
-        role = "student"
-    approve = bool(config.get("auto_approve", True))
-    user = User(
-        username=_safe_username(identity["username_hint"], db),
-        email=identity["email"],
-        first_name=identity["first_name"],
-        last_name=identity["last_name"],
-        hashed_password=get_password_hash(secrets.token_urlsafe(48)),
-        is_active=True,
-        is_approved=approve,
-        is_admin=False,
-        role=role,
-        password_login_disabled=True,
-    )
-    db.add(user)
-    db.flush()
-    db.add(
-        ExternalIdentity(
-            provider_id=provider.id,
-            subject=identity["subject"],
-            user_id=user.id,
-            email=identity["email"],
-            last_login_at=utcnow(),
-        )
-    )
-    db.commit()
-    db.refresh(user)
-    logger.info("Provisioned SSO user %s from provider %s", user.username, provider.name)
-    return user, True, False
-
-
-def record_login(db: Session, user: User, client_ip: str | None) -> None:
-    now = utcnow()
-    today = now.date()
-    previous_login_day = getattr(user, "last_login_day", None)
-    if previous_login_day == today:
-        pass
-    elif previous_login_day == today - timedelta(days=1):
-        user.login_streak = (getattr(user, "login_streak", 0) or 0) + 1
-    else:
-        user.login_streak = 1
-    user.last_login_day = today
-    user.last_login_at = now
-    user.last_login_ip = client_ip
-    db.commit()
-    try:
-        check_login_streak_achievements(db, user.id, getattr(user, "login_streak", 1) or 1)
-        check_learning_achievements(db, user.id)
-    except Exception:
-        logger.exception("Could not evaluate SSO login achievements for %s", user.username)
 
 
 def create_sso_session(
@@ -473,7 +311,7 @@ def build_end_session_url(db: Session, user: User, provider_id: int) -> str | No
     if session is None:
         return None
     provider = db.query(IdentityProvider).filter(IdentityProvider.id == provider_id).first()
-    if provider is None:
+    if provider is None or provider.kind != "oidc":
         return None
     try:
         document = discover(provider)
@@ -503,102 +341,6 @@ def build_end_session_url(db: Session, user: User, provider_id: int) -> str | No
     return url
 
 
-def login_payload(user: User, provider_id: int | None = None) -> dict:
-    token_data = {"sub": user.username}
-    if provider_id is not None:
-        token_data["sso_provider_id"] = provider_id
-    token = create_access_token(
-        data=token_data,
-        expires_delta=timedelta(hours=settings.JWT_EXPIRATION_HOURS),
-    )
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "user": {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "student_id": user.student_id,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "role": user.role,
-            "is_admin": user.is_admin,
-            "is_approved": user.is_approved,
-            "is_active": user.is_active,
-            "must_change_password": user.must_change_password,
-            "timezone": getattr(user, "timezone", None),
-            "equipped_title": getattr(user, "equipped_title", None),
-        },
-    }
-
-
-def create_login_ticket(
-    db: Session,
-    *,
-    user: User,
-    provider: IdentityProvider,
-    return_to: str,
-) -> str:
-    ticket = secrets.token_urlsafe(32)
-    db.add(
-        SsoLoginTicket(
-            ticket=ticket,
-            user_id=user.id,
-            provider_id=provider.id,
-            return_to=sanitize_return_to(return_to),
-            expires_at=utcnow() + timedelta(seconds=settings.SSO_TICKET_TTL_SECONDS),
-        )
-    )
-    db.commit()
-    return ticket
-
-
-def consume_login_ticket(db: Session, ticket: str) -> SsoLoginTicket:
-    now = utcnow()
-    updated = (
-        db.query(SsoLoginTicket)
-        .filter(
-            SsoLoginTicket.ticket == ticket,
-            SsoLoginTicket.consumed_at.is_(None),
-            SsoLoginTicket.expires_at >= now,
-        )
-        .update({SsoLoginTicket.consumed_at: now}, synchronize_session=False)
-    )
-    db.commit()
-    if updated != 1:
-        raise OIDCError("This sign-in link has expired or was already used.")
-    return db.query(SsoLoginTicket).filter(SsoLoginTicket.ticket == ticket).first()
-
-
-def consume_login_state(db: Session, state: str, provider_id: int) -> SsoLoginState:
-    now = utcnow()
-    updated = (
-        db.query(SsoLoginState)
-        .filter(
-            SsoLoginState.state == state,
-            SsoLoginState.provider_id == provider_id,
-            SsoLoginState.consumed_at.is_(None),
-            SsoLoginState.expires_at >= now,
-        )
-        .update({SsoLoginState.consumed_at: now}, synchronize_session=False)
-    )
-    db.commit()
-    if updated != 1:
-        raise OIDCError("This sign-in request has expired or was already used.")
-    return db.query(SsoLoginState).filter(SsoLoginState.state == state).first()
-
-
-def cleanup_expired(db: Session) -> None:
-    now = utcnow()
-    db.query(SsoLoginState).filter(
-        SsoLoginState.expires_at < now - timedelta(days=1)
-    ).delete(synchronize_session=False)
-    db.query(SsoLoginTicket).filter(
-        SsoLoginTicket.expires_at < now - timedelta(days=1)
-    ).delete(synchronize_session=False)
-    db.commit()
-
-
 def create_login_state(
     db: Session,
     *,
@@ -606,20 +348,15 @@ def create_login_state(
     return_to: str,
 ) -> tuple[str, str, str, str]:
     verifier, challenge = generate_pkce()
-    state = secrets.token_urlsafe(32)
     nonce = secrets.token_urlsafe(32)
-    db.add(
-        SsoLoginState(
-            state=state,
-            provider_id=provider.id,
-            nonce=nonce,
-            code_verifier=verifier,
-            redirect_uri=redirect_uri(provider.id),
-            return_to=sanitize_return_to(return_to),
-            expires_at=utcnow() + timedelta(seconds=settings.SSO_STATE_TTL_SECONDS),
-        )
+    state = create_flow_state(
+        db,
+        provider=provider,
+        return_to=return_to,
+        nonce=nonce,
+        code_verifier=verifier,
+        redirect_uri=redirect_uri(provider.id),
     )
-    db.commit()
     return state, nonce, verifier, challenge
 
 
@@ -636,6 +373,10 @@ def test_provider(provider: IdentityProvider) -> dict:
     except Exception as exc:
         raise OIDCError(f"Could not fetch the JWKS document: {exc}") from exc
     return {
+        "message": (
+            f"Discovery OK · {document.get('issuer')} · "
+            f"{len(keys)} signing key{'s' if len(keys) != 1 else ''}"
+        ),
         "issuer": document.get("issuer"),
         "authorization_endpoint": document.get("authorization_endpoint"),
         "token_endpoint": document.get("token_endpoint"),

@@ -131,6 +131,7 @@ def test_oidc_and_saml_validation(admin_auth, client):
                 "sso_url": "https://idp.example.edu/sso",
                 "sp_entity_id": "https://ocr.example.edu/saml",
                 "acs_url": "https://ocr.example.edu/api/identity/saml/acs",
+                "idp_x509_cert": "-----BEGIN CERTIFICATE-----\nMIIBfake\n-----END CERTIFICATE-----",
             },
         },
         headers=headers,
@@ -146,7 +147,7 @@ def test_default_provider_must_be_enabled_and_is_exclusive(admin_auth, client):
             "name": "Test LDAP",
             "kind": "ldap",
             "enabled": True,
-            "config": {"server_url": "ldap://ldap.example.edu", "base_dn": "dc=example,dc=edu"},
+            "config": {"server_url": "ldaps://ldap.example.edu", "base_dn": "dc=example,dc=edu"},
         },
         headers=headers,
     ).json()

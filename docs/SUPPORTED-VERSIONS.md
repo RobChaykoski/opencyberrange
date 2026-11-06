@@ -1,12 +1,12 @@
-﻿# Supported Versions
+# Supported Versions
 
 This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
 Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
-**Professional 2.1 (2.1.3)**, **Enterprise 3.1 (3.1.0)**. See
-[Editions](EDITIONS.md). Platform development version: **3.1.0**.
+**Professional 2.1 (2.1.3)**, **Enterprise 3.1 (3.1.1)**. See
+[Editions](EDITIONS.md). Platform development version: **3.1.1**.
 
 ## Policy
 

@@ -23,5 +23,8 @@ alembic==1.20.1
 pyotp==2.10.0
 # Backing store for shared rate-limit counters (RATELIMIT_STORAGE_URI=redis://)
 redis==8.1.0
+# Enterprise SSO adapters
+ldap3==2.9.1
+python3-saml==1.16.0
 
 qrcode[pil]==8.2

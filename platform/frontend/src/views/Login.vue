@@ -56,7 +56,7 @@
           <div v-if="ssoProviders.length" class="sso-panel">
             <p class="sso-panel__label">Institution sign-in</p>
             <button
-              v-for="provider in ssoProviders"
+              v-for="provider in redirectProviders"
               :key="provider.id"
               type="button"
               class="sso-button"
@@ -70,6 +70,44 @@
                 <span class="sso-button__hint">Use your institution account</span>
               </span>
             </button>
+            <form
+              v-for="provider in ldapProviders"
+              :key="`ldap-${provider.id}`"
+              class="sso-ldap"
+              @submit.prevent="loginLdap(provider)"
+            >
+              <p class="sso-ldap__title">Sign in with {{ provider.name }}</p>
+              <input
+                v-model="ldapState[provider.id].username"
+                type="text"
+                class="form-input"
+                placeholder="Directory username"
+                autocomplete="username"
+                required
+              />
+              <input
+                v-model="ldapState[provider.id].password"
+                type="password"
+                class="form-input"
+                placeholder="Directory password"
+                autocomplete="current-password"
+                required
+              />
+              <p
+                v-if="ldapState[provider.id].error"
+                class="sso-ldap__error"
+                role="alert"
+              >
+                {{ ldapState[provider.id].error }}
+              </p>
+              <button
+                type="submit"
+                class="sso-ldap__submit"
+                :disabled="ldapState[provider.id].loading"
+              >
+                {{ ldapState[provider.id].loading ? 'Signing in...' : 'Sign in' }}
+              </button>
+            </form>
             <div class="sso-divider"><span>or use a local account</span></div>
           </div>
 
@@ -327,7 +365,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, inject, onMounted } from 'vue'
+import { ref, computed, nextTick, inject, onMounted, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for login (no token needed)
 import { setWikiAuthCookie } from '../utils/wikiAuth'
@@ -337,6 +375,21 @@ const router = useRouter()
 const ssoProviders = ref([])
 const ssoLoading = ref(false)
 const ssoError = ref('')
+const ldapState = reactive({})
+
+const redirectProviders = computed(() =>
+  ssoProviders.value.filter((provider) => provider.kind !== 'ldap')
+)
+const ldapProviders = computed(() =>
+  ssoProviders.value.filter((provider) => provider.kind === 'ldap')
+)
+
+const ensureLdapState = (providerId) => {
+  if (!ldapState[providerId]) {
+    ldapState[providerId] = { username: '', password: '', loading: false, error: '' }
+  }
+  return ldapState[providerId]
+}
 
 const ssoErrorFor = (code) => {
   if (code === 'unavailable') {
@@ -349,17 +402,62 @@ const fetchSsoProviders = async () => {
   try {
     const { data } = await axios.get('/api/auth/sso/providers')
     ssoProviders.value = data?.providers || []
+    ssoProviders.value
+      .filter((provider) => provider.kind === 'ldap')
+      .forEach((provider) => ensureLdapState(provider.id))
   } catch {
     ssoProviders.value = []
   }
 }
 
 const startSso = (provider) => {
-  if (ssoLoading.value) return
+  if (ssoLoading.value || !provider.login_path) return
   ssoLoading.value = true
   const returnTo = route.query.return_to || '/dashboard'
   const path = `${provider.login_path}?return_to=${encodeURIComponent(returnTo)}`
   window.location.assign(path)
+}
+
+const loginLdap = async (provider) => {
+  const state = ensureLdapState(provider.id)
+  if (state.loading) return
+  state.error = ''
+  if (!state.username.trim() || !state.password) {
+    state.error = 'Enter your directory username and password.'
+    return
+  }
+  state.loading = true
+  try {
+    const returnTo = String(route.query.return_to || '/dashboard')
+    const { data } = await axios.post(`/api/auth/sso/ldap/${provider.id}/login`, {
+      username: state.username.trim(),
+      password: state.password,
+      return_to: returnTo,
+    })
+    state.password = ''
+    router.push({
+      path: '/sso/callback',
+      query: { ticket: data.ticket, return_to: data.return_to },
+    })
+  } catch (error) {
+    state.password = ''
+    const status = error.response?.status
+    if (status === 401) {
+      state.error = 'Invalid username or password.'
+    } else if (status === 403) {
+      state.error = error.response?.data?.detail
+        || 'Your institution account is not available yet.'
+    } else if (status === 429) {
+      state.error = 'Too many attempts. Wait a minute and try again.'
+    } else if (status === 503) {
+      state.error = 'The institution directory is unavailable. Try again later.'
+    } else {
+      state.error = error.response?.data?.detail
+        || 'Institution sign-in failed. Try again.'
+    }
+  } finally {
+    state.loading = false
+  }
 }
 
 onMounted(() => {
@@ -704,6 +802,52 @@ const handleLogin = async () => {
   margin-top: 0.1rem;
   color: var(--text-muted);
   font-size: 0.72rem;
+}
+
+.sso-ldap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.sso-ldap__title {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.sso-ldap .form-input {
+  padding: 0.55rem 0.7rem;
+  font-size: 0.8125rem;
+}
+
+.sso-ldap__submit {
+  align-self: flex-start;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sso-ldap__submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sso-ldap__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.74rem;
 }
 
 .sso-divider {

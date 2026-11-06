@@ -2,6 +2,48 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [3.1.1] - 2026-11-05
+
+Enterprise SSO adapter release.
+
+### SAML 2.0 sign-in
+- SP-initiated SAML login with signed assertion validation, audience/recipient
+  checks, and AuthnRequest ID validation through `python3-saml`.
+- Shared PostgreSQL state stores the RelayState and AuthnRequest ID, so the ACS
+  can run on a different API replica from the login start.
+- ACS endpoint at `/api/auth/sso/saml/{id}/acs`; the SP entity ID and ACS URL
+  are shown in the provider card.
+- Optional signed AuthnRequests with an SP certificate and private key.
+- Attribute mapping for email, username, name, and groups, with an optional
+  instructor group.
+
+### LDAP and Active Directory sign-in
+- Service bind, user search, and a user rebind to verify the password.
+- LDAP filter escaping, StartTLS, certificate verification, and a configurable
+  server timeout.
+- Attribute mapping for email, username, name, and groups, with an optional
+  instructor group.
+- Direct institution-account form on the login page; failures distinguish bad
+  credentials from a directory outage.
+
+### Shared identity policy
+- OIDC, SAML, and LDAP now use one provisioning and linking service.
+- Verified-email linking, administrator-link refusal, and SSO-only accounts are
+  identical across adapters.
+- New accounts can be provisioned as student or instructor through group
+  mapping. External identities never receive administrator access.
+- Provider test actions validate OIDC discovery, LDAP service bind, and SAML
+  settings.
+
+### Documentation
+- Added `docs/SSO-SAML-LDAP.md`; updated the OIDC guide, ADR 0004, the
+  Enterprise manual supplement, editions, and supported versions.
+
+### Limits
+- SAML RP-initiated logout/SLO remains local; OIDC logout remains the only
+  IdP-initiated logout path.
+- A formal SSO security review remains.
+
 ## [3.1.0] - 2026-11-05
 
 Enterprise single sign-on release.

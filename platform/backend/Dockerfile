@@ -5,13 +5,18 @@ WORKDIR /app
 # Enforce UTC timezone for consistent datetime handling
 ENV TZ=UTC
 
-# Install system dependencies including Docker CLI
+# Install system dependencies including Docker CLI and the runtime libraries
+# used by python3-saml/xmlsec for SAML signature verification.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
     postgresql-client \
     curl \
     gnupg \
+    libxml2 \
+    libxslt1.1 \
+    libxmlsec1 \
+    libxmlsec1-openssl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Docker CLI (for managing lab containers)
