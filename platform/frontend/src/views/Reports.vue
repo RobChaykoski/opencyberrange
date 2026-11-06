@@ -82,6 +82,134 @@
         </div>
       </div>
 
+      <section
+        v-if="skillTree && skillTree.dimensions?.length && skillTree.assigned_total"
+        class="skill-panel"
+        aria-labelledby="skill-tree-title"
+      >
+        <div class="skill-panel__head">
+          <div>
+            <p class="skill-panel__eyebrow">Skill tree</p>
+            <h2 id="skill-tree-title">Exercise coverage by skill branch</h2>
+            <p>
+              How {{ skillScopeLabel }} spreads across the five Skill DNA branches.
+              The outer shape is the assigned curriculum; the inner shape is what
+              learners completed.
+            </p>
+          </div>
+          <label class="skill-panel__scope">
+            <span>Scope</span>
+            <select v-model="selectedCourseId">
+              <option value="all">All courses</option>
+              <option
+                v-for="row in rows"
+                :key="row.course.id"
+                :value="String(row.course.id)"
+              >
+                {{ row.course.code }} · {{ row.course.name }}
+              </option>
+            </select>
+          </label>
+        </div>
+
+        <div class="skill-panel__body">
+          <div class="skill-chart">
+            <svg
+              class="skill-radar"
+              viewBox="0 0 360 320"
+              role="img"
+              :aria-label="skillAriaLabel"
+            >
+              <polygon
+                v-for="(ring, index) in radarRings"
+                :key="`ring-${index}`"
+                :points="ring"
+                class="skill-radar__grid"
+              />
+              <line
+                v-for="(axis, index) in radarAxes"
+                :key="`axis-${index}`"
+                :x1="radarCenter.x"
+                :y1="radarCenter.y"
+                :x2="axis.x"
+                :y2="axis.y"
+                class="skill-radar__axis"
+              />
+              <polygon
+                :points="assignedPolygon"
+                class="skill-radar__area skill-radar__area--assigned"
+              />
+              <polygon
+                :points="completedPolygon"
+                class="skill-radar__area skill-radar__area--completed"
+              />
+              <circle
+                v-for="point in assignedPoints"
+                :key="`assigned-${point.key}`"
+                :cx="point.x"
+                :cy="point.y"
+                r="3.4"
+                class="skill-radar__dot skill-radar__dot--assigned"
+              />
+              <circle
+                v-for="point in completedPoints"
+                :key="`completed-${point.key}`"
+                :cx="point.x"
+                :cy="point.y"
+                r="3.4"
+                class="skill-radar__dot skill-radar__dot--completed"
+              />
+              <text
+                v-for="label in radarLabels"
+                :key="`label-${label.key}`"
+                :x="label.x"
+                :y="label.y"
+                :text-anchor="label.anchor"
+                class="skill-radar__label"
+              >
+                {{ label.label }}
+              </text>
+            </svg>
+            <div class="skill-legend">
+              <span class="skill-legend__item skill-legend__item--assigned">
+                Assigned <b>{{ skillTree.assigned_total }}</b>
+              </span>
+              <span class="skill-legend__item skill-legend__item--completed">
+                Completed <b>{{ skillTree.completed_total }}</b>
+                <small>{{ skillTree.completion_pct }}%</small>
+              </span>
+            </div>
+          </div>
+
+          <div class="skill-table-wrap">
+            <table class="skill-table">
+              <thead>
+                <tr>
+                  <th scope="col">Branch</th>
+                  <th scope="col">Assigned</th>
+                  <th scope="col">Share</th>
+                  <th scope="col">Completed</th>
+                  <th scope="col">Share</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="dimension in skillTree.dimensions" :key="dimension.key">
+                  <th scope="row">{{ dimension.label }}</th>
+                  <td>{{ dimension.assigned }}</td>
+                  <td>{{ dimension.assigned_pct }}%</td>
+                  <td>{{ dimension.completed }}</td>
+                  <td>{{ dimension.completed_pct }}%</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="skill-panel__note">
+              Shares describe the mix of exercises, not learner scores. Completed
+              exercises are distinct exercises with at least one completion.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <div v-if="!rows.length" class="reports-empty">
         No active courses yet. Create a course to start collecting analytics.
       </div>
@@ -169,6 +297,117 @@ const totals = computed(() => data.value?.totals || {})
 
 const ragLabel = (rag) => ({ red: 'Red', amber: 'Amber', green: 'Green' }[rag] || 'No signal')
 
+const RADAR_CENTER = { x: 180, y: 155 }
+const RADAR_RADIUS = 112
+const RADAR_LABEL_RADIUS = 126
+
+const selectedCourseId = ref('all')
+const radarCenter = RADAR_CENTER
+
+const skillTree = computed(() => {
+  if (selectedCourseId.value === 'all') return totals.value?.skill_tree || null
+  const row = rows.value.find(
+    (item) => String(item.course.id) === selectedCourseId.value
+  )
+  return row?.skill_tree || null
+})
+
+const skillScopeLabel = computed(() => {
+  if (selectedCourseId.value === 'all') return 'all selected courses'
+  const row = rows.value.find(
+    (item) => String(item.course.id) === selectedCourseId.value
+  )
+  return row ? `${row.course.code} · ${row.course.name}` : 'this course'
+})
+
+const skillDimensions = computed(() => skillTree.value?.dimensions || [])
+
+const radarAnchor = (x) => {
+  if (x < RADAR_CENTER.x - 6) return 'end'
+  if (x > RADAR_CENTER.x + 6) return 'start'
+  return 'middle'
+}
+
+const radarPoint = (index, value, radius = RADAR_RADIUS) => {
+  const count = skillDimensions.value.length || 5
+  const angle = -Math.PI / 2 + (2 * Math.PI * index) / count
+  const clamped = Math.max(0, Math.min(100, Number(value) || 0))
+  const distance = radius * (clamped / 100)
+  return {
+    x: Number((RADAR_CENTER.x + Math.cos(angle) * distance).toFixed(2)),
+    y: Number((RADAR_CENTER.y + Math.sin(angle) * distance).toFixed(2)),
+  }
+}
+
+const radarPolygon = (values) => {
+  const count = skillDimensions.value.length || 5
+  return Array.from({ length: count }, (_, index) => {
+    const point = radarPoint(index, values[index] ?? 0)
+    return `${point.x},${point.y}`
+  }).join(' ')
+}
+
+const radarRings = computed(() =>
+  [25, 50, 75, 100].map((level) =>
+    radarPolygon(Array(skillDimensions.value.length || 5).fill(level))
+  )
+)
+
+const radarAxes = computed(() =>
+  Array.from(
+    { length: skillDimensions.value.length || 5 },
+    (_, index) => radarPoint(index, 100)
+  )
+)
+
+const assignedValues = computed(() =>
+  skillDimensions.value.map((dimension) => Number(dimension.assigned_pct) || 0)
+)
+const completedValues = computed(() =>
+  skillDimensions.value.map((dimension) => Number(dimension.completed_pct) || 0)
+)
+const assignedPolygon = computed(() => radarPolygon(assignedValues.value))
+const completedPolygon = computed(() => radarPolygon(completedValues.value))
+const assignedPoints = computed(() =>
+  skillDimensions.value.map((dimension, index) => ({
+    key: dimension.key,
+    ...radarPoint(index, assignedValues.value[index]),
+  }))
+)
+const completedPoints = computed(() =>
+  skillDimensions.value.map((dimension, index) => ({
+    key: dimension.key,
+    ...radarPoint(index, completedValues.value[index]),
+  }))
+)
+const radarLabels = computed(() =>
+  skillDimensions.value.map((dimension, index) => {
+    const point = radarPoint(index, 100, RADAR_LABEL_RADIUS)
+    return {
+      key: dimension.key,
+      label: dimension.label,
+      x: point.x,
+      y: point.y,
+      anchor: radarAnchor(point.x),
+    }
+  })
+)
+const skillAriaLabel = computed(() =>
+  `Skill tree coverage for ${skillScopeLabel.value}. ` +
+  skillDimensions.value
+    .map(
+      (dimension) =>
+        `${dimension.label}: ${dimension.assigned_pct}% assigned, ${dimension.completed_pct}% completed`
+    )
+    .join('. ')
+)
+
+const skillMix = (tree, field) =>
+  (tree?.dimensions || [])
+    .map((dimension) => `${dimension.label} ${dimension[field]}%`)
+    .join('; ')
+
+
 const load = async () => {
   loading.value = true
   error.value = ''
@@ -183,7 +422,7 @@ const load = async () => {
 }
 
 const exportCsv = () => {
-  const header = ['Course code', 'Course', 'RAG', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses']
+  const header = ['Course code', 'Course', 'RAG', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
   const lines = rows.value.map((row) => [
     row.course.code,
     row.course.name,
@@ -198,6 +437,8 @@ const exportCsv = () => {
     row.summary.positive_rate ?? 0,
     row.summary.confidence_gain ?? '',
     row.summary.pulse_responses,
+    skillMix(row.skill_tree, 'assigned_pct'),
+    skillMix(row.skill_tree, 'completed_pct'),
   ])
   const csv = [header, ...lines]
     .map((line) => line.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(','))
@@ -419,6 +660,196 @@ onMounted(load)
   color: var(--accent);
 }
 
+.skill-panel {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.skill-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.skill-panel__eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--accent);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.skill-panel h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.skill-panel__head p {
+  max-width: 68ch;
+  margin: 0.2rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.skill-panel__scope {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  flex: 0 0 auto;
+  min-width: 14rem;
+}
+
+.skill-panel__scope span {
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.skill-panel__scope select {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.72rem;
+}
+
+.skill-panel__body {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.skill-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.skill-radar {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  overflow: visible;
+}
+
+.skill-radar__grid,
+.skill-radar__axis {
+  fill: none;
+  stroke: var(--border-color);
+  stroke-width: 1;
+}
+
+.skill-radar__area {
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.skill-radar__area--assigned {
+  fill: color-mix(in srgb, var(--accent) 16%, transparent);
+  stroke: var(--accent);
+}
+
+.skill-radar__area--completed {
+  fill: color-mix(in srgb, var(--success) 15%, transparent);
+  stroke: var(--success);
+  stroke-dasharray: 4 3;
+}
+
+.skill-radar__dot--assigned { fill: var(--accent); }
+.skill-radar__dot--completed { fill: var(--success); }
+
+.skill-radar__label {
+  fill: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.skill-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+}
+
+.skill-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.skill-legend__item::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.skill-legend__item--assigned::before { background: var(--accent); }
+.skill-legend__item--completed::before { background: var(--success); }
+.skill-legend b { color: var(--text-primary); }
+.skill-legend small { color: var(--text-muted); }
+
+.skill-table-wrap { min-width: 0; }
+
+.skill-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+}
+
+.skill-table th,
+.skill-table td {
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: right;
+}
+
+.skill-table thead th {
+  color: var(--text-muted);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.skill-table th:first-child,
+.skill-table thead th:first-child {
+  text-align: left;
+}
+
+.skill-table tbody th {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-align: left;
+}
+
+.skill-table tbody tr:last-child th,
+.skill-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.skill-panel__note {
+  margin: 0.55rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  line-height: 1.45;
+}
+
 .reports-table {
   width: 100%;
   min-width: 980px;
@@ -500,8 +931,21 @@ onMounted(load)
   font-size: 0.64rem;
 }
 
+@media (max-width: 900px) {
+  .skill-panel__body {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-chart {
+    justify-self: center;
+    width: 100%;
+  }
+}
+
 @media (max-width: 720px) {
   .reports-page { padding: 1rem; }
   .reports-head { flex-direction: column; }
+  .skill-panel__head { flex-direction: column; }
+  .skill-panel__scope { width: 100%; }
 }
 </style>

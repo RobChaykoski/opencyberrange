@@ -23,6 +23,14 @@ The class is the highest-scoring trait. Ties break in the order Explorer,
 Builder, Defender, Investigator, Leader. A learner with no activity is a
 **Recruit**.
 
+## Reporting
+
+Learning reports use the same five branches for a **skill-tree radar**. The
+radar shows the mix of assigned exercises and the mix of completed exercises
+for all visible courses or one selected course. It is a curriculum-coverage
+view, not a learner score. Learner-level and cohort competency radar remain
+planned.
+
 ## Score model
 
 Each trait is scored from 0 to 100. Scores are capped, so a very active learner

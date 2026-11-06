@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timedelta, timezone
+from types import SimpleNamespace
 
 import pytest
 
@@ -19,7 +20,11 @@ from app.models import (
     Level,
     Track,
 )
-from app.services.skill_dna import build_skill_dna
+from app.services.skill_dna import (
+    build_skill_dna,
+    skill_branch_for_lab,
+    skill_branch_mix,
+)
 from app.services.titles import equip_title
 
 
@@ -296,3 +301,46 @@ def test_title_api_equips_and_rejects_locked(client, auth_headers, db_session, t
     )
     assert cleared.status_code == 200, cleared.text
     assert cleared.json()["equipped_title"] is None
+
+
+def test_skill_branch_mapping_and_mix():
+    counter = {"id": 0}
+
+    def lab(category, difficulty="beginner", track="web"):
+        counter["id"] += 1
+        return SimpleNamespace(
+            id=counter["id"],
+            category=category,
+            difficulty=difficulty,
+            level=SimpleNamespace(track=SimpleNamespace(slug=track)),
+        )
+
+    assert skill_branch_for_lab(lab("reconnaissance")) == "explorer"
+    assert skill_branch_for_lab(lab("web")) == "builder"
+    assert skill_branch_for_lab(lab("forensics")) == "investigator"
+    assert skill_branch_for_lab(lab("network-analysis")) == "defender"
+    assert skill_branch_for_lab(lab("ot")) == "defender"
+    assert skill_branch_for_lab(lab("web", difficulty="advanced")) == "leader"
+
+    labs = [
+        lab("reconnaissance"),
+        lab("web"),
+        lab("forensics"),
+        lab("network-analysis"),
+        lab("web", difficulty="advanced"),
+    ]
+    completions = [
+        SimpleNamespace(lab=labs[1]),
+        SimpleNamespace(lab=labs[1]),
+        SimpleNamespace(lab=labs[2]),
+    ]
+    mix = skill_branch_mix(labs, completions)
+    by_key = {row["key"]: row for row in mix["dimensions"]}
+
+    assert mix["assigned_total"] == 5
+    assert mix["completed_total"] == 2
+    assert mix["completion_pct"] == 40.0
+    assert by_key["builder"]["assigned"] == 1
+    assert by_key["builder"]["completed"] == 1
+    assert by_key["investigator"]["completed"] == 1
+    assert by_key["explorer"]["assigned_pct"] == 20.0

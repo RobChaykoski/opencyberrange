@@ -550,3 +550,29 @@ def test_analytics_permissions(client, analytics_data):
         headers=instructor_headers,
     )
     assert owner.status_code == 200
+
+
+def test_reports_overview_includes_skill_tree(client, analytics_data):
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+
+    resp = client.get("/api/analytics/reports/overview", headers=headers)
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+
+    row = next(
+        item for item in body["courses"] if item["course"]["id"] == course_id
+    )
+    tree = row["skill_tree"]
+    assert len(tree["dimensions"]) == 5
+    assert tree["assigned_total"] == 6
+    assert tree["completed_total"] == 6
+    dimensions = {item["key"]: item for item in tree["dimensions"]}
+    assert dimensions["builder"]["assigned"] == 6
+    assert dimensions["builder"]["completed"] == 6
+    assert dimensions["builder"]["assigned_pct"] == 100.0
+
+    totals = body["totals"]["skill_tree"]
+    assert totals["assigned_total"] == 6
+    assert totals["completed_total"] == 6
+    assert dimensions["explorer"]["assigned"] == 0

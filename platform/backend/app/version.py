@@ -1,4 +1,4 @@
 ﻿"""Single source of truth for the OpenCyberRange release version."""
 
-APP_VERSION = "2.1.3"
-RELEASE_NAME = "OpenCyberRange 2.1.3"
+APP_VERSION = "2.1.4"
+RELEASE_NAME = "OpenCyberRange 2.1.4"

@@ -24,6 +24,24 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
+## [2.1.4] - 2026-11-05
+
+### Reporting
+- Added the **skill tree radar** to Learning reports. The chart maps assigned and
+  completed exercises across the five Skill DNA branches: Explorer, Builder,
+  Defender, Investigator, and Leader.
+- Added an **All courses** view plus a per-course scope selector, with an
+  accessible table fallback beside the chart.
+- Extended CSV export with per-course skill-tree mixes and added a skill-tree
+  coverage table to the PDF export.
+- The reporting API now returns a `skill_tree` object on each course row and in
+  report totals.
+
+### Notes
+- The radar describes the **mix of exercises**, not learner scores. Completed
+  exercises are distinct exercises with at least one completion.
+- Learner-level and cohort competency radar remain planned.
+
 ## [2.1.3] - 2026-11-05
 
 ### Learner profile
