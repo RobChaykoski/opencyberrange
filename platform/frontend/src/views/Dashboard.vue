@@ -3,7 +3,7 @@
     <div class="dashboard-container">
       <!-- Welcome Header -->
       <div class="welcome-header">
-        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="welcome-logo" />
+        <img src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="welcome-logo" />
         <div class="welcome-text">
           <h1 class="page-title">Welcome, {{ username }}</h1>
           <p class="page-subtitle">Configure your VPN connection to access lab environments</p>

@@ -41,9 +41,19 @@
     </main>
 
     <footer class="app-footer">
-      <span>Powered by:</span>
-      <a href="https://www.swocts.com/" target="_blank" rel="noopener noreferrer" aria-label="SWOCTS">
-        <img src="/swocts_logo.jpg" alt="SWOCTS" class="app-footer__logo" />
+      <router-link to="/dashboard" class="app-footer__brand" aria-label="SWOCTS Cyber Range">
+        <img src="/swocts-cyber-range-mark.png" alt="" class="app-footer__mark" />
+        <span>SWOCTS Cyber Range</span>
+      </router-link>
+      <span class="app-footer__powered-label">Powered by</span>
+      <a
+        href="https://github.com/RobChaykoski/opencyberrange"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="app-footer__powered"
+      >
+        <img src="/ocr-logo-dark.png" alt="" class="app-footer__logo" />
+        <span>OpenCyberRange</span>
       </a>
       <router-link to="/verify" class="app-footer__verify">Verify a certificate</router-link>
       <span v-if="appVersion" class="app-footer__version" :title="appRelease">v{{ appVersion }}</span>
@@ -434,6 +444,28 @@ body {
   width: auto;
   display: block;
   border-radius: 3px;
+}
+
+.app-footer__brand {
+  gap: 0.35rem;
+  font-weight: 700;
+  color: var(--text-secondary) !important;
+}
+
+.app-footer__mark {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 3px;
+}
+
+.app-footer__powered-label {
+  color: var(--text-muted);
+}
+
+.app-footer__powered {
+  gap: 0.3rem;
+  font-weight: 600;
 }
 
 </style>

@@ -149,7 +149,7 @@ async def export_users(
     payload["reason"] = reason
     payload["exported_by"] = admin.username
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    filename = f"opencyberrange-users-{stamp}.json"
+    filename = f"swocts-cyber-range-users-{stamp}.json"
 
     log_admin_action(
         action=AuditActions.USERS_EXPORTED,

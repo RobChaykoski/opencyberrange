@@ -6,17 +6,17 @@
       "docs_dir": "Workbook",
       "theme": "pink"
     },
-    "high-school": {
-      "auth": "student",
-      "config": "mkdocs-highschool.yml",
-      "docs_dir": "Workbook",
-      "theme": "deep purple"
-    },
     "forensics": {
       "auth": "student",
       "config": "mkdocs-forensics.yml",
       "docs_dir": "Workbook",
       "theme": "teal"
+    },
+    "high-school": {
+      "auth": "student",
+      "config": "mkdocs-highschool.yml",
+      "docs_dir": "Workbook",
+      "theme": "deep purple"
     },
     "linpt": {
       "auth": "student",

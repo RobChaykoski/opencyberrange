@@ -1,4 +1,4 @@
-# Survey privacy and consent
+# SWOCTS Cyber Range: survey privacy and consent
 
 This document describes the optional survey consent feature. It is an
 engineering and operations reference, not legal advice. The published
@@ -47,7 +47,7 @@ optional feedback survey:
 Set a monitored role address in the deployment `.env`:
 
 ```bash
-PRIVACY_CONTACT_EMAIL=privacy@example.org
+PRIVACY_CONTACT_EMAIL=privacy@swocts.com
 ```
 
 The value is returned in the statement and shown in the UI. Do not use a

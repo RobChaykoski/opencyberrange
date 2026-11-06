@@ -1,11 +1,14 @@
-site_name: "OCR-Lite User Manual"
-site_description: "Platform user manual for OpenCyberRange: getting started through administration"
+site_name: "SWOCTS Cyber Range - User Manual"
+site_description: "Platform user manual for SWOCTS Cyber Range, powered by OpenCyberRange: getting started through administration"
 site_url: ""
 docs_dir: Manual-Lite
 site_dir: _site_manual_lite
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
 theme:
   name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: indigo
@@ -51,6 +54,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md

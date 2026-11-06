@@ -1,6 +1,6 @@
 # Uninstallation
 
-You remove OpenCyberRange when you decommission a range. Teardown happens in a fixed order: stop the containers and disable the platform service first, then remove the VPN, the helper services, and finally the firewall rules. Order matters because the firewall re-applies itself when the backend starts.
+You remove SWOCTS Cyber Range when you decommission a range. Teardown happens in a fixed order: stop the containers and disable the platform service first, then remove the VPN, the helper services, and finally the firewall rules. Order matters because the firewall re-applies itself when the backend starts.
 
 ## Prerequisites
 

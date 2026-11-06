@@ -1,4 +1,6 @@
-# OpenCyberRange
+# SWOCTS Cyber Range
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
 
 This is the canonical production and development tree for the
 latest-supported-GA platform. The pre-cutover tree remains at

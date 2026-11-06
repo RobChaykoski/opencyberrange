@@ -2,7 +2,7 @@
   <div class="reports-page">
     <header class="reports-head">
       <div>
-        <p class="reports-head__eyebrow">V2 analytics</p>
+        <p class="reports-head__eyebrow">SWOCTS Cyber Range analytics</p>
         <h1>Learning reports</h1>
         <p>Cross-course performance, learning, and confidence signals for teaching review.</p>
       </div>

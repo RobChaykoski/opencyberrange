@@ -1,4 +1,4 @@
-# OpenCyberRange is a private training platform.
+# SWOCTS Cyber Range is a private training platform, powered by OpenCyberRange.
 # Do not crawl, index, archive, or use its pages or content for model training.
 
 User-agent: *

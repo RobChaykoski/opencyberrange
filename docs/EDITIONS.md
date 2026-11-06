@@ -1,4 +1,6 @@
-﻿# OpenCyberRange editions
+﻿# SWOCTS Cyber Range editions
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Status: **Active product model**
 

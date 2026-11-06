@@ -15,7 +15,7 @@ activities with the lab browser or any terminal your teacher provides.
 ## What You Need
 
 - A browser
-- The exercise panel open in OpenCyberRange
+- The exercise panel open in SWOCTS Cyber Range
 - A RangeBox desktop, or the lab browser as a fallback
 
 ## How to Launch RangeBox

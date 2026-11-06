@@ -156,7 +156,7 @@
             <transition name="slide">
               <div v-if="showUserTransfer" class="create-form">
                 <p class="section-desc">
-                  Move accounts between OpenCyberRange installations. Passwords are
+                  Move accounts between SWOCTS Cyber Range installations. Passwords are
                   carried as hashes, so imported users keep their existing password.
                   MFA, trusted devices, VPN keys, sessions, and learning progress are
                   not included. Treat the export file as sensitive.
@@ -1821,7 +1821,7 @@
                 <div v-if="showRestoreUpload" class="create-form">
                   <p class="section-desc">
                     Upload a plain SQL snapshot (<code>.sql</code>) created by another
-                    OpenCyberRange installation. A full restore replaces every account,
+                    SWOCTS Cyber Range installation. A full restore replaces every account,
                     course, and record in this installation — including the administrator
                     account you are signed in with — so take a snapshot here first. To
                     merge users without replacing the existing administrators, use
@@ -6007,7 +6007,7 @@ const exportUsers = async () => {
     })
     const disposition = response.headers?.['content-disposition'] || ''
     const match = disposition.match(/filename="?([^";]+)"?/)
-    const filename = match ? match[1] : 'opencyberrange-users.json'
+    const filename = match ? match[1] : 'swocts-cyber-range-users.json'
     const blob = new Blob([response.data], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')

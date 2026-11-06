@@ -76,7 +76,7 @@ and a privileged account sending data outside normal communication patterns.
 
 ### Step 1: Launch the Exercise and Note Your Target IP
 
-Start the lab from the OpenCyberRange platform and note the target IP address
+Start the lab from the SWOCTS Cyber Range platform and note the target IP address
 displayed on the launch page.
 
 ### Step 2: SSH into the Analyst Workstation and Obtain the PCAP

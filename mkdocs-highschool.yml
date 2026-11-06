@@ -1,11 +1,14 @@
-site_name: "High School Cybersecurity"
-site_description: "A browser-first cybersecurity pathway for grades 9-12"
+site_name: "SWOCTS Cyber Range - High School Cybersecurity"
+site_description: "A browser-first cybersecurity pathway for grades 9-12 in the SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
 site_dir: _site_highschool
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
 theme:
   name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: deep purple

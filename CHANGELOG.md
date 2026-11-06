@@ -26,6 +26,17 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+### Branding
+- Rebranded the user-facing platform as **SWOCTS Cyber Range** with the SWOCTS
+  crest as the primary mark and title.
+- Added **Powered by OpenCyberRange** attribution with the OpenCyberRange shield
+  across the sidebar, login, footer, certificates, emails, PDF reports, and
+  documentation.
+- Updated MkDocs site names, logos, favicons, and copyright lines, plus the
+  frontend title, favicon, and meta description.
+- Kept internal package names, API paths, data formats, environment variables,
+  and upstream attribution unchanged for compatibility and licensing.
+
 ### Administration
 - Added **Admin → Users → Import / Export Users**: portable user JSON export,
   preview-before-import, optional update of matching usernames, and optional

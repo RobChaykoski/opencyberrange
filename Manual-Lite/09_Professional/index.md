@@ -1,4 +1,4 @@
-# OpenCyberRange Professional 2.1 — manual supplement
+# SWOCTS Cyber Range Professional 2.1 - manual supplement
 
 Professional 2.1 is **Community / Academic 1.1 plus learning analytics,
 reporting, cohort analysis, competency evidence, and research exports**. Read

@@ -1,4 +1,4 @@
-﻿# OpenCyberRange Professional 2.x Program Charter
+﻿# SWOCTS Cyber Range Professional 2.x Program Charter
 
 Status: **Active scope guard**
 Edition: **Professional** â€” Community / Academic 1.1 plus analytics, reporting,

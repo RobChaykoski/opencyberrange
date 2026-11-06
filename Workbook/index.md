@@ -1,6 +1,8 @@
-# OpenCyberRange Workbook
+# SWOCTS Cyber Range Workbook
 
-Welcome to the OpenCyberRange student workbook. Each exercise walkthrough guides you step by step, explains the underlying concepts, and prompts you to record and interpret your findings.
+SWOCTS Cyber Range is powered by SWOCTS Cyber Range.
+
+Welcome to the SWOCTS Cyber Range student workbook. Each exercise walkthrough guides you step by step, explains the underlying concepts, and prompts you to record and interpret your findings.
 
 !!! note "AI-assisted content"
     Parts of this workbook were drafted with AI assistance and reviewed by a
@@ -116,7 +118,7 @@ Start the high-school pathway at
 
 ## How to Use This Workbook
 
-1. **Launch an exercise** in the OpenCyberRange platform
+1. **Launch an exercise** in the SWOCTS Cyber Range platform
 2. **Click the Workbook button** to open the walkthrough for that exercise
 3. **Follow the steps** in the walkthrough while working in your terminal
 4. **Record your findings** in the spaces provided

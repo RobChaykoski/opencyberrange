@@ -1,4 +1,6 @@
-# Security policy
+# SWOCTS Cyber Range security policy
+
+SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded deployment and the upstream platform code it runs.
 
 ## Supported versions
 

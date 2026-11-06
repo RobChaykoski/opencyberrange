@@ -1,4 +1,4 @@
-# OT/IoT Lab Prompts - OpenCyberRange
+# OT/IoT Lab Prompts - SWOCTS Cyber Range
 
 > Moved from `SESSION_SUMMARY.md`. This file contains lab prompt material, not a coding-session summary.
 

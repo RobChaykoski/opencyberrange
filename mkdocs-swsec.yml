@@ -1,11 +1,14 @@
-site_name: "Software Security"
-site_description: "Software security foundations and safe exploit development for OpenCyberRange"
+site_name: "SWOCTS Cyber Range - Software Security"
+site_description: "Software security foundations and safe exploit development for SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
 site_dir: _site_swsec
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
 theme:
   name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: blue

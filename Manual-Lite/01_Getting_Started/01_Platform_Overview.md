@@ -1,6 +1,6 @@
 # Platform Overview
 
-OpenCyberRange is a browser-based platform for running hands-on cybersecurity labs. You launch an isolated lab environment, connect to it over a private VPN, solve a challenge, and submit a flag to prove you finished. Read this page when you want to understand which role you hold and which parts of the platform you can reach.
+SWOCTS Cyber Range is a browser-based platform for running hands-on cybersecurity labs. You launch an isolated lab environment, connect to it over a private VPN, solve a challenge, and submit a flag to prove you finished. Read this page when you want to understand which role you hold and which parts of the platform you can reach.
 
 ## Who uses the platform
 

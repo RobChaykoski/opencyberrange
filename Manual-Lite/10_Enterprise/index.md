@@ -1,4 +1,4 @@
-# OpenCyberRange Enterprise 3.0 — manual supplement
+# SWOCTS Cyber Range Enterprise 3.0 - manual supplement
 
 Enterprise 3.0 is **Professional 2.1 plus HA, SSO, enterprise reporting,
 multi-tenant support, LMS/SIS integration, and compliance reporting**. Read the

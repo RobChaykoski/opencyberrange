@@ -15,7 +15,7 @@ class LearningReportPDF(FPDF):
     def header(self):
         self.set_font("Helvetica", "B", 9)
         self.set_text_color(100, 116, 139)
-        self.cell(0, 6, "OpenCyberRange - Learning reports", ln=True, align="R")
+        self.cell(0, 6, "SWOCTS Cyber Range - Learning reports", ln=True, align="R")
         self.set_text_color(30, 41, 59)
 
     def footer(self):

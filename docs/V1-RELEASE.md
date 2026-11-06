@@ -1,4 +1,4 @@
-# OpenCyberRange 1.0 release record
+# SWOCTS Cyber Range 1.0 release record (powered by OpenCyberRange)
 
 ## Release identity
 

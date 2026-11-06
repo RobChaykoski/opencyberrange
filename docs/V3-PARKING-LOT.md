@@ -1,4 +1,4 @@
-# OpenCyberRange Enterprise 3.0 Parking Lot
+# SWOCTS Cyber Range Enterprise 3.0 Parking Lot
 
 This file holds real ideas that are deliberately **not** in the Professional
 2.x programme. Keeping them here prevents scope drift without losing them.

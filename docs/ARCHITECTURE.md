@@ -1,4 +1,6 @@
-# System architecture
+# SWOCTS Cyber Range: system architecture
+
+SWOCTS Cyber Range is powered by OpenCyberRange. The runtime components and trust boundaries below describe that deployment.
 
 This is the runtime architecture of a production OpenCyberRange deployment. It
 shows the request path, the data stores, the lab runtime, the VPN boundary, and

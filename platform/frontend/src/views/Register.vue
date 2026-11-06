@@ -6,9 +6,9 @@
         <div class="form-panel-inner">
           <!-- Brand -->
           <div class="brand">
-            <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="brand-icon" />
+            <img src="/swocts-cyber-range-mark.png" alt="" class="brand-icon" />
             <div class="brand-text">
-              <h1 class="brand-title">OpenCyberRange</h1>
+              <h1 class="brand-title">SWOCTS Cyber Range</h1>
               <p class="brand-subtitle">Create Account</p>
             </div>
           </div>
@@ -237,12 +237,12 @@
               <span class="terminal__dot terminal__dot--red"></span>
               <span class="terminal__dot terminal__dot--yellow"></span>
               <span class="terminal__dot terminal__dot--green"></span>
-              <span class="terminal__titlebar-text">ocr ~ setup</span>
+              <span class="terminal__titlebar-text">swocts ~ setup</span>
             </div>
             <div class="terminal__body">
               <div class="terminal__line">
                 <span class="terminal__prompt">$</span>
-                <span class="terminal__cmd">ocr init --user new</span>
+                <span class="terminal__cmd">swocts init --user new</span>
               </div>
               <div class="terminal__line terminal__line--output">
                 Initializing training environment...

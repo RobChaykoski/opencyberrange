@@ -93,7 +93,7 @@ The consistency of CrackMapExec is its greatest strength. Once you learn the syn
 
 ### Step 1: Launch the Exercise
 
-Open the OpenCyberRange platform in your browser and start the exercise environment.
+Open the SWOCTS Cyber Range platform in your browser and start the exercise environment.
 
 - Navigate to **Exercises** then **Windows** then **Level 2**
 - Click **Launch** on "Multi-Service Credential Reuse"

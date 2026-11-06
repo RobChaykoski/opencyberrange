@@ -11,7 +11,7 @@ import pyotp
 
 from app.crypto import encrypt_secret, decrypt_secret, is_encrypted
 
-ISSUER_NAME = "OpenCyberRange"
+ISSUER_NAME = "SWOCTS Cyber Range"
 
 # Accept one 30-second step of clock drift in either direction.
 TOTP_VALID_WINDOW = 1

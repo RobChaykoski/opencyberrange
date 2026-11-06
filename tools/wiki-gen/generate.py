@@ -184,6 +184,7 @@ def build_nginx_namespace_block(namespace, auth, slugs):
         add_header Content-Security-Policy "{CSP}" always;
         add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
     }}
 """
 
@@ -221,6 +222,7 @@ def build_nginx_index_block():
         add_header Content-Security-Policy "{CSP}" always;
         add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
     }}
 """
 
@@ -279,7 +281,7 @@ def build_doctor_targets(all_wikis):
 
 
 def build_index_md(all_wikis):
-    lines = ["# OpenCyberRange Wikis", "",
+    lines = ["# SWOCTS Cyber Range Wikis", "",
              "General range tracks. Course material is not listed here.", ""]
     for w in all_wikis:
         if w["namespace"] != "range":
@@ -313,20 +315,34 @@ def build_index_html(all_wikis):
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OpenCyberRange Wikis</title>
+<title>SWOCTS Cyber Range Wikis</title>
 <style>
  body{{font-family:system-ui,sans-serif;max-width:680px;margin:3rem auto;padding:0 1rem;color:#1a1a1a}}
- h1{{font-size:1.6rem}} h2{{font-size:1.2rem;margin-top:2rem}} p{{color:#555}}
+ header{{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem}}
+ header img{{width:64px;height:64px;object-fit:contain}}
+ h1{{font-size:1.6rem;margin:0}} h2{{font-size:1.2rem;margin-top:2rem}} p{{color:#555}}
  ul{{list-style:none;padding:0}} li{{margin:.4rem 0}}
  a{{display:inline-block;padding:.5rem .8rem;background:#f3f4f6;border-radius:6px;text-decoration:none;color:#1f2937}}
  a:hover{{background:#e5e7eb}}
+ footer{{margin-top:2.5rem;padding-top:1rem;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:.4rem;color:#6b7280;font-size:.8rem}}
+ footer img{{width:18px;height:18px;object-fit:contain}}
 </style></head><body>
-<h1>OpenCyberRange Wikis</h1>
-<p>General range tracks. Course material is not listed here.</p>
+<header>
+  <img src="/swocts-cyber-range-mark.png" alt="">
+  <div>
+    <h1>SWOCTS Cyber Range Wikis</h1>
+    <p>General range tracks. Course material is not listed here.</p>
+  </div>
+</header>
 <ul>
 {items}
 </ul>
-{ref_section}</body></html>
+{ref_section}<footer>
+  <span>Powered by</span>
+  <img src="/ocr-logo-dark.png" alt="OpenCyberRange">
+  <span>OpenCyberRange</span>
+</footer>
+</body></html>
 """
 
 
@@ -447,7 +463,7 @@ def cmd_check(against_dir, all_wikis):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="OpenCyberRange wiki generator")
+    ap = argparse.ArgumentParser(description="SWOCTS Cyber Range wiki generator")
     ap.add_argument("mode", nargs="?", default="summary",
                     choices=["summary", "audit", "emit", "check"])
     ap.add_argument("--out", help="output dir for emit")

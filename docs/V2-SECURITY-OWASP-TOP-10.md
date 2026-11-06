@@ -1,4 +1,6 @@
-# V2 security baseline: OWASP Top 10
+# SWOCTS Cyber Range: V2 security baseline (OWASP Top 10)
+
+This baseline applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
 **Status:** Active for the 2.x line. Applies to the web interface, platform data,
 and the project delivery process. The 1.1 line keeps its existing maintenance

@@ -669,7 +669,7 @@ async def instructor_report(
     # CSV
     buf = io.StringIO()
     writer = csv.writer(buf)
-    writer.writerow(["# OpenCyberRange Ops Center Report"])
+    writer.writerow(["# SWOCTS Cyber Range Ops Center Report"])
     writer.writerow(["# Scope", scope_label])
     writer.writerow(["# Range", filters["range_label"]])
     writer.writerow(["# Window (local)", f"{filters['start_local']} to {filters['end_local']}"])

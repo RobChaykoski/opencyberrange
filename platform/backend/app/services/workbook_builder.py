@@ -206,8 +206,8 @@ def _range_index_html(tracks: dict) -> str:
         for slug, t in sorted(tracks.items()) if t.get("auth") != "admin"
     )
     return ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">\n'
-            "<title>OpenCyberRange Wikis</title></head><body>\n"
-            "<h1>OpenCyberRange Wikis</h1>\n"
+            "<title>SWOCTS Cyber Range Wikis</title></head><body>\n"
+            "<h1>SWOCTS Cyber Range Wikis</h1>\n"
             "<p>General range tracks. Course material is not listed here.</p>\n"
             f"<ul>\n{items}\n</ul>\n</body></html>\n")
 

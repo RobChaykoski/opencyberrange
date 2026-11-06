@@ -348,7 +348,7 @@ async def profile_transcript_pdf(
     """Render the profile summary as a PDF transcript."""
     summary = _build_profile_summary(db, current_user)
     pdf_bytes = generate_profile_transcript(summary, current_user.timezone)
-    filename = f"OpenCyberRange-Transcript-{current_user.username}.pdf"
+    filename = f"SWOCTS-Cyber-Range-Transcript-{current_user.username}.pdf"
     log_admin_action(
         action=AuditActions.USER_DATA_EXPORTED,
         admin_user_id=current_user.id,

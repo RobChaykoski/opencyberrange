@@ -23,7 +23,7 @@ class ProfileTranscriptPDF(FPDF):
             return
         self.set_font("Helvetica", "B", 8)
         self.set_text_color(120, 130, 145)
-        self.cell(0, 5, "OpenCyberRange Training Transcript", align="R")
+        self.cell(0, 5, "SWOCTS Cyber Range Training Transcript", align="R")
         self.ln(2)
         self.set_draw_color(220, 225, 232)
         self.line(MARGIN, self.get_y(), 210 - MARGIN, self.get_y())
@@ -33,7 +33,7 @@ class ProfileTranscriptPDF(FPDF):
         self.set_y(-13)
         self.set_font("Helvetica", "I", 8)
         self.set_text_color(140, 148, 160)
-        self.cell(0, 8, f"Page {self.page_no()}/{{nb}}  |  OpenCyberRange", align="C")
+        self.cell(0, 8, f"Page {self.page_no()}/{{nb}}  |  SWOCTS Cyber Range", align="C")
 
 
 def _sanitize(value) -> str:
@@ -108,7 +108,7 @@ def _draw_identity(pdf: FPDF, summary: dict, local_tz=UTC):
     pdf.set_xy(text_x, 15)
     pdf.set_font("Helvetica", "B", 8)
     pdf.set_text_color(138, 109, 47)
-    pdf.cell(0, 4, "OPENCYBERRANGE  /  TRAINING RECORD", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 4, "SWOCTS CYBER RANGE  /  TRAINING RECORD", new_x="LMARGIN", new_y="NEXT")
 
     pdf.set_x(text_x)
     pdf.set_font("Helvetica", "B", 21)
@@ -325,7 +325,7 @@ def generate_profile_transcript(summary: dict, timezone_name: str | None = None)
     pdf.set_text_color(140, 148, 160)
     pdf.multi_cell(
         0, 4.5,
-        "Certificate IDs above match the IDs shown on each OpenCyberRange "
+        "Certificate IDs above match the IDs shown on each SWOCTS Cyber Range "
         "certificate page. This transcript is generated from the platform's "
         "completion record.",
         new_x="LMARGIN", new_y="NEXT",

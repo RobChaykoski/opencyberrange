@@ -2,7 +2,7 @@
   <div class="verify-page">
     <main class="verify-card">
       <header class="verify-card__header">
-        <p class="verify-card__eyebrow">OpenCyberRange</p>
+        <p class="verify-card__eyebrow">SWOCTS Cyber Range</p>
         <h1>Verify a certificate</h1>
         <p class="verify-card__lead">
           Enter the certificate ID printed on the certificate, or scan its QR
@@ -83,7 +83,7 @@
       </section>
 
       <p class="verify-card__footer">
-        <router-link to="/">OpenCyberRange</router-link>
+        <router-link to="/">SWOCTS Cyber Range</router-link>
       </p>
     </main>
   </div>

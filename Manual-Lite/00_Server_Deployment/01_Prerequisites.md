@@ -1,6 +1,6 @@
 # Prerequisites and Sizing
 
-Before you install OpenCyberRange you size the host, open the right ports, and confirm Docker is available. Read this page first, then follow either [Local Deployment](02_Local_Deployment.md) or [Cloud Deployment](03_Cloud_Deployment.md).
+Before you install SWOCTS Cyber Range you size the host, open the right ports, and confirm Docker is available. Read this page first, then follow either [Local Deployment](02_Local_Deployment.md) or [Cloud Deployment](03_Cloud_Deployment.md).
 
 ## Operating system
 
@@ -13,7 +13,7 @@ The current supported stack for the 2.0.0 development line is:
 | Component | Version | Notes |
 |---|---|---|
 | Host OS | Ubuntu 24.04 LTS for 2.0 | 1.0 maintenance stays on Ubuntu 22.04 LTS |
-| OpenCyberRange | `2.0.0-dev` | Shown in the page footer and returned by `GET /api/version` |
+| SWOCTS Cyber Range | `2.0.0-dev` | Shown in the page footer and returned by `GET /api/version` |
 | Python | 3.11 | Backend image: `python:3.11-slim` |
 | Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
 | PostgreSQL | 15 | Database image: `postgres:15-alpine` |

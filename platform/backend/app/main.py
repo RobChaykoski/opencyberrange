@@ -1,5 +1,5 @@
 """
-OpenCyberRange Platform - Main Application
+SWOCTS Cyber Range - Main Application (powered by OpenCyberRange)
 """
 
 from fastapi import FastAPI, Request
@@ -109,7 +109,7 @@ def _release_scheduler_leadership() -> None:
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
     # Startup
-    logger.info("Starting OpenCyberRange Platform...")
+    logger.info("Starting SWOCTS Cyber Range...")
 
     # Wait for database to become available (handles Docker restart race condition
     # where backend starts before PostgreSQL is accepting connections)
@@ -527,8 +527,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="OpenCyberRange",
-    description="Cybersecurity Training Platform",
+    title="SWOCTS Cyber Range",
+    description="Cybersecurity training platform, powered by OpenCyberRange.",
     version=APP_VERSION,
     lifespan=lifespan,
 )
@@ -664,7 +664,7 @@ module_registry.mount_routers(app)
 
 @app.get("/")
 async def root():
-    return {"message": "OpenCyberRange API", "version": APP_VERSION}
+    return {"message": "SWOCTS Cyber Range API", "version": APP_VERSION}
 
 
 @app.get("/api/version")

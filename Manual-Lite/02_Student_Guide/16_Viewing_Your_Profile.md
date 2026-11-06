@@ -67,7 +67,7 @@ The **Certificates & completion** section lists every certificate you have earne
 
 ## Downloading a PDF transcript
 
-Click **Download PDF** at the top of the certificates section. The PDF contains your display name and account details, completion totals, every certificate ID, track progress, every completed exercise, and your course achievements. The file downloads as `OpenCyberRange-Transcript-<username>.pdf`.
+Click **Download PDF** at the top of the certificates section. The PDF contains your display name and account details, completion totals, every certificate ID, track progress, every completed exercise, and your course achievements. The file downloads as `SWOCTS-Cyber-Range-Transcript-<username>.pdf`.
 
 ## Account Information
 

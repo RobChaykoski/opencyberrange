@@ -63,7 +63,7 @@ this exercise differs from Exercise 1.3 in a critical way. Exercise 1.3 identifi
 
 ### Step 1: Launch the Exercise
 
-Start the lab environment from the OpenCyberRange launcher. Wait for the container status to show as running before proceeding. this exercise uses a single container that provides SSH access to the analysis environment.
+Start the lab environment from the SWOCTS Cyber Range launcher. Wait for the container status to show as running before proceeding. this exercise uses a single container that provides SSH access to the analysis environment.
 
 ### Step 2: SSH into the Container
 

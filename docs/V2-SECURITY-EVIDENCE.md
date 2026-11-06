@@ -1,4 +1,6 @@
-# V2 security evidence record
+# SWOCTS Cyber Range: V2 security evidence record
+
+This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
 **Status:** Active. This is the release evidence companion to
 [`V2-SECURITY-OWASP-TOP-10.md`](V2-SECURITY-OWASP-TOP-10.md).

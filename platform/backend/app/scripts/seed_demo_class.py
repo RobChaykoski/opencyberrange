@@ -281,7 +281,7 @@ def seed_demo_class():
 
 def _run(db):
     print("=" * 60)
-    print("  OpenCyberRange Demo Class Seeder")
+    print("  SWOCTS Cyber Range Demo Class Seeder")
     print("=" * 60)
 
     # ── 1. Create Instructor ─────────────────────────────────

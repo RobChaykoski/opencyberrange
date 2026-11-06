@@ -672,7 +672,7 @@ def _ai_prompts(
             "title": "Turn hints into understanding",
             "reason": "You are using hints on a meaningful share of exercises.",
             "prompt": (
-                f"I am working on \"{lab_name}\" in {track_name} on OpenCyberRange. "
+                f"I am working on \"{lab_name}\" in {track_name} on SWOCTS Cyber Range. "
                 "I have used several hints and want to understand the concept rather "
                 "than skip it. Act as a Socratic coach: ask me one question at a time, "
                 "help me form a hypothesis, and do not give me the flag or the final answer. "
@@ -686,7 +686,7 @@ def _ai_prompts(
             "title": "Debug your approach",
             "reason": "Several exercises needed more than one flag attempt.",
             "prompt": (
-                f"I am stuck on \"{lab_name}\" in {track_name} on OpenCyberRange after "
+                f"I am stuck on \"{lab_name}\" in {track_name} on SWOCTS Cyber Range after "
                 "more than one flag attempt. Act as a debugging coach, not an answer key. "
                 "Ask for my observations and evidence, suggest one check at a time, and "
                 "do not reveal the flag or final answer. Begin by asking me to summarize "
@@ -717,7 +717,7 @@ def _ai_prompts(
             "title": "Restart with a plan",
             "reason": "You have started more exercises than you have completed.",
             "prompt": (
-                f"I have started \"{lab_name}\" in {track_name} on OpenCyberRange but "
+                f"I have started \"{lab_name}\" in {track_name} on SWOCTS Cyber Range but "
                 "have not completed it. Help me decide the next small step. Ask me what "
                 "I have already confirmed, what is still uncertain, and what one check "
                 "I can run next. Do not provide the flag or final answer."
@@ -730,7 +730,7 @@ def _ai_prompts(
             "title": "Lock in what you learned",
             "reason": "A teach-back prompt helps turn a completed exercise into durable understanding.",
             "prompt": (
-                f"I have completed \"{lab_name}\" in {track_name} on OpenCyberRange. "
+                f"I have completed \"{lab_name}\" in {track_name} on SWOCTS Cyber Range. "
                 "Act as a study partner: ask me to explain the vulnerability or technique, "
                 "the evidence I used, and one defensive control in my own words. Then give "
                 "me one follow-up question. Do not give me another flag or final answer."

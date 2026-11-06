@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OpenCyberRange — First-Run Platform Initialization
+SWOCTS Cyber Range — First-Run Platform Initialization
 Runs all seed scripts in the correct order for a clean deployment.
 
 Usage (inside Docker):
@@ -21,7 +21,7 @@ import sys
 sys.path.insert(0, '/app')
 
 print("=" * 60)
-print("  OpenCyberRange — Platform Initialization")
+print("  SWOCTS Cyber Range — Platform Initialization")
 print("=" * 60)
 
 print("\n[1/4] Seeding curriculum (tracks & levels)...")

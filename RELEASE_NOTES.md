@@ -1,4 +1,6 @@
-# OpenCyberRange Professional 2.1
+# SWOCTS Cyber Range Professional 2.1
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Edition: **Professional** — Community / Academic 1.1 plus analytics, reporting,
 cohort analysis, competency evidence, accreditation support, and research
@@ -65,11 +67,11 @@ The backend startup migration is idempotent and creates the new table and
 columns automatically. Existing users, courses, completions, and achievements
 are preserved.
 
-# OpenCyberRange 1.0.0
+# SWOCTS Cyber Range 1.0.0 (powered by OpenCyberRange)
 
 Released: 4 November 2026
 
-OpenCyberRange 1.0 is the first supported self-hosted teaching release. It is intended for instructors and platform administrators running hands-on cybersecurity exercises on their own infrastructure.
+SWOCTS Cyber Range 1.0 is the first supported self-hosted teaching release, powered by OpenCyberRange. It is intended for instructors and platform administrators running hands-on cybersecurity exercises on their own infrastructure.
 
 ## Highlights
 

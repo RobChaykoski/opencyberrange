@@ -1,11 +1,14 @@
-site_name: "OSINT"
-site_description: "Open-source intelligence exercises for OpenCyberRange"
+site_name: "SWOCTS Cyber Range - OSINT"
+site_description: "Open-source intelligence exercises for SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
 site_dir: _site_osint
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
 theme:
   name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: teal

@@ -1,4 +1,6 @@
-# Privacy, Erasure, and Backups
+# SWOCTS Cyber Range: Privacy, Erasure, and Backups
+
+SWOCTS Cyber Range is powered by OpenCyberRange. This document covers the branded deployment and the platform code it runs.
 
 This document describes the platform's technical controls for the GDPR right
 to erasure (Article 17), the right of access/portability (Articles 15 and 20),

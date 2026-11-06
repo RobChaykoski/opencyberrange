@@ -246,14 +246,14 @@ async def send_mail_test(
     """
     recipient = str(payload.to) if payload and payload.to else admin.email
     text_body = (
-        "This is a test email from OpenCyberRange. "
+        "This is a test email from SWOCTS Cyber Range, powered by OpenCyberRange. "
         "If you received it, the SMTP settings are working."
     )
     try:
         sent = mail.send_email(
             db,
             to_email=recipient,
-            subject="OpenCyberRange mail test",
+            subject="SWOCTS Cyber Range mail test",
             text_body=text_body,
             raise_on_error=True,
             fresh_settings=True,

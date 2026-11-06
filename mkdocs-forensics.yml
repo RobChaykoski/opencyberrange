@@ -1,11 +1,14 @@
-site_name: "Digital Forensics"
-site_description: "Memory and network forensics for OpenCyberRange"
+site_name: "SWOCTS Cyber Range - Digital Forensics"
+site_description: "Memory and network forensics for SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
 site_dir: _site_forensics
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
 theme:
   name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: teal

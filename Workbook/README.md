@@ -1,4 +1,4 @@
-# OpenCyberRange Student Workbook
+# SWOCTS Cyber Range Student Workbook
 
 !!! note "AI-assisted content"
     Parts of this workbook were drafted with AI assistance and reviewed by a

@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-Credential discovery exercises test whether known or guessed credentials grant access to network services. Before starting the lab, confirm that your Kali Linux virtual machine (VM) is connected to the OpenCyberRange environment through the WireGuard VPN tunnel. You should be able to reach the lab target at its assigned IP address before proceeding.
+Credential discovery exercises test whether known or guessed credentials grant access to network services. Before starting the lab, confirm that your Kali Linux virtual machine (VM) is connected to the SWOCTS Cyber Range environment through the WireGuard VPN tunnel. You should be able to reach the lab target at its assigned IP address before proceeding.
 
 Make sure you have the following tools available on your Kali VM:
 
@@ -71,7 +71,7 @@ The `-U` flag accepts credentials in the format `username%password`. When the co
 
 ### Step 1: Launch the Exercise
 
-Open the OpenCyberRange dashboard and navigate to the Credential Reuse track. Start Exercise 8.1 and wait for the environment to report a ready status. Note the target IP address displayed on the lab panel; all subsequent commands will use the target IP shown in your environment.
+Open the SWOCTS Cyber Range dashboard and navigate to the Credential Reuse track. Start Exercise 8.1 and wait for the environment to report a ready status. Note the target IP address displayed on the lab panel; all subsequent commands will use the target IP shown in your environment.
 
 !!! kali "Confirm connectivity to the target"
     Send a ping to the target IP shown on the lab panel to verify the path is up before running any tools.
@@ -213,7 +213,7 @@ Consider what the findings mean from a risk perspective. Weak credentials on a f
 
 ### Step 7: Find and Submit the Flag
 
-Return to the OpenCyberRange dashboard and paste the `OCR{...}` flag value into the submission field for Exercise 8.1. The platform validates the flag against the expected value stored in the lab configuration. A successful submission confirms that you completed the full credential discovery workflow.
+Return to the SWOCTS Cyber Range dashboard and paste the `OCR{...}` flag value into the submission field for Exercise 8.1. The platform validates the flag against the expected value stored in the lab configuration. A successful submission confirms that you completed the full credential discovery workflow.
 
 ---
 

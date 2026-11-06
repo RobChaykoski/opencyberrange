@@ -1,6 +1,8 @@
-# OpenCyberRange User Manual
+# SWOCTS Cyber Range User Manual
 
-OpenCyberRange is a self-hosted platform for hands-on cybersecurity training. It
+SWOCTS Cyber Range is powered by OpenCyberRange.
+
+SWOCTS Cyber Range is a self-hosted platform for hands-on cybersecurity training. It
 serves browser-based lab exercises, gates access to those labs behind a per-user
 WireGuard VPN, organizes exercises into tracks and instructor courses, and gives
 operators a full administrative console for users, sessions, and infrastructure.

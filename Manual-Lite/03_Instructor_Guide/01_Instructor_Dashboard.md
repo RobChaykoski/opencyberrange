@@ -3,11 +3,11 @@
 The Ops Center is your landing page after you sign in as an instructor. The page gives you a read-only, real-time view of how your students are doing: how many flags they captured today, how many labs are running right now, and how long completions are taking. You use it to take the pulse of your class before drilling into a specific course.
 
 !!! note "One account is admin and instructor in Lite"
-    OCR Lite runs on a single privileged account. You are the administrator and the instructor at once: you create courses, enroll students, and assign labs from the same login. Where this guide says "instructor," it means you. The edition does not create separate instructor logins; that is a paid-tier feature.
+    SWOCTS Cyber Range Community/Academic runs on a single privileged account. You are the administrator and the instructor at once: you create courses, enroll students, and assign labs from the same login. Where this guide says "instructor," it means you. The edition does not create separate instructor logins; that is a paid-tier feature.
 
 ## Prerequisites
 
-- You are signed in to the privileged account. In OCR Lite that single account is both administrator and instructor, so everything in this guide is done from the account you created during first-run setup. There is no separate instructor account to register or approve.
+- You are signed in to the privileged account. In the Community/Academic edition that single account is both administrator and instructor, so everything in this guide is done from the account you created during first-run setup. There is no separate instructor account to register or approve.
 - At least one course assigned to you, so the figures have data to report. See [Creating a Course](02_Creating_a_Course.md).
 
 ## Where it lives

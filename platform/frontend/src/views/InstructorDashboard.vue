@@ -1,7 +1,7 @@
 <template>
   <div class="instructor-dashboard">
     <div class="dashboard-header">
-      <img src="/ocr-logo-dark.png" alt="OpenCyberRange" class="dashboard-logo" />
+      <img src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="dashboard-logo" />
       <div class="dashboard-header__text">
         <h1 class="page-title">Ops Center</h1>
         <p class="page-subtitle">Real-time platform overview</p>
