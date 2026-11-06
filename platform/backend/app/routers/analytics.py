@@ -13,7 +13,7 @@ from typing import Optional
 import io
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func
@@ -21,7 +21,9 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.database import get_db
+from app.export_reason import require_export_reason
 from app.services.activity import EventTypes, log_activity
+from app.services.audit import log_admin_action, AuditActions
 from app.services.learning_time import (
     learning_minutes_by_pair,
     learning_minutes_by_user,
@@ -1014,8 +1016,43 @@ async def reports_overview(
     }
 
 
+class ReportExportAuditRequest(BaseModel):
+    format: str = Field(..., pattern="^(csv|pdf)$")
+    reason: str = Field(..., min_length=5, max_length=500)
+
+
+@router.post("/reports/export-audit")
+async def audit_report_export(
+    payload: ReportExportAuditRequest,
+    request: Request,
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Record why a report was exported.
+
+    The CSV is assembled in the browser from data the instructor can already
+    see, so this endpoint exists to keep the compliance trail complete. The PDF
+    path records the same fields directly in ``reports_export_pdf``.
+    """
+    reason = payload.reason.strip()
+    if len(reason) < 5:
+        raise HTTPException(
+            status_code=400, detail="A reason of at least 5 characters is required."
+        )
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="report",
+        details={"format": payload.format, "reason": reason},
+        ip_address=request.client.host if request.client else None,
+    )
+    return {"ok": True}
+
+
 @router.get("/reports/export.pdf")
 async def reports_export_pdf(
+    request: Request,
+    reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
@@ -1024,6 +1061,14 @@ async def reports_export_pdf(
 
     payload = await reports_overview(db, current_user)
     pdf_bytes = generate_reports_pdf(payload)
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="report",
+        details={"format": "pdf", "reason": reason},
+        ip_address=request.client.host if request.client else None,
+    )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",

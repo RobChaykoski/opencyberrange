@@ -1087,6 +1087,7 @@ import { usePrivacy } from '../composables/usePrivacy'
 import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
 import { getUserTimeZone } from '../utils/timezone'
+import { requireExportReason } from '../utils/exportReason'
 
 const { maskUsername, maskEmail } = usePrivacy()
 const { startImpersonation } = useImpersonation()
@@ -1861,9 +1862,14 @@ async function removeStudent(student) {
 }
 
 async function downloadStudentReport(student) {
+  const reason = requireExportReason('Why are you exporting this student report?')
+  if (!reason) return
   downloadingReportUserId.value = student.id
   try {
-    const res = await axios.get(`/courses/${managingCourse.value.id}/report/${student.id}`, { responseType: 'blob' })
+    const res = await axios.get(`/courses/${managingCourse.value.id}/report/${student.id}`, {
+      params: { reason },
+      responseType: 'blob',
+    })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
     const a = document.createElement('a')
     a.href = url
@@ -1878,9 +1884,14 @@ async function downloadStudentReport(student) {
 }
 
 async function downloadClassReport() {
+  const reason = requireExportReason('Why are you exporting the class report?')
+  if (!reason) return
   downloadingReport.value = true
   try {
-    const res = await axios.get(`/courses/${managingCourse.value.id}/report`, { responseType: 'blob' })
+    const res = await axios.get(`/courses/${managingCourse.value.id}/report`, {
+      params: { reason },
+      responseType: 'blob',
+    })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
     const a = document.createElement('a')
     a.href = url
@@ -2068,10 +2079,12 @@ async function removeLabFromAssignment(asnId, labId) {
 }
 
 async function downloadAssignmentReport(asn) {
+  const reason = requireExportReason('Why are you exporting this assignment report?')
+  if (!reason) return
   try {
     const res = await axios.get(
       `/courses/${managingCourse.value.id}/assignments/${asn.id}/report`,
-      { responseType: 'blob' }
+      { params: { reason }, responseType: 'blob' }
     )
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
     const a = document.createElement('a')

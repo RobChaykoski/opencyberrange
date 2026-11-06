@@ -34,6 +34,8 @@ from sqlalchemy.orm import Session
 import requests as http_requests
 
 from app.auth import get_current_admin_user, get_current_instructor_user, create_access_token
+from app.export_reason import require_export_reason
+from app.services.audit import log_admin_action, AuditActions
 from app.timezones import resolve_timezone
 from app.config import settings
 from app.database import get_db
@@ -1999,6 +2001,8 @@ def _generate_exercise_test_pdf(data: dict) -> bytes:
 @router.post("/exercise-test/report")
 async def generate_exercise_test_report(
     body: dict,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     admin: User = Depends(get_current_instructor_user),
 ):
     """Generate a PDF report from exercise test results.
@@ -2011,6 +2015,15 @@ async def generate_exercise_test_report(
     filename = f"exercise_test_{safe_name}.pdf"
 
     pdf_bytes = _generate_exercise_test_pdf(body)
+
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="exercise_test_report",
+        details={"format": "pdf", "lab_name": lab_name, "reason": reason},
+        ip_address=request.client.host if request.client else None,
+    )
 
     return StreamingResponse(
         io.BytesIO(pdf_bytes),

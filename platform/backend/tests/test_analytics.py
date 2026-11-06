@@ -396,7 +396,9 @@ def test_exercise_reaction_requires_started_exercise(client, analytics_data):
 
 def test_reports_pdf_export(client, analytics_data):
     headers = _login(client, analytics_data["instructor"])
-    resp = client.get("/api/analytics/reports/export.pdf", headers=headers)
+    resp = client.get(
+        "/api/analytics/reports/export.pdf?reason=compliance-test", headers=headers
+    )
     assert resp.status_code == 200, resp.text
     assert resp.headers["content-type"] == "application/pdf"
     assert resp.content.startswith(b"%PDF")

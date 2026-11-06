@@ -2,7 +2,18 @@
 Admin routes for user, lab, and session management
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Query, Response
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    status,
+    Request,
+    Query,
+    Response,
+    UploadFile,
+)
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from typing import List
@@ -11,6 +22,7 @@ import csv
 import io
 import json
 import os
+import re
 import logging
 import tempfile
 import threading
@@ -46,6 +58,11 @@ from app.services.backups import backup_directory, create_database_backup
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.file_lock import open_locked
 from app.services.lab_naming import parse_lab_slug
+from app.services.user_transfer import (
+    export_users as build_user_export,
+    import_users as apply_user_import,
+)
+from app.export_reason import require_export_reason
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -53,6 +70,10 @@ router = APIRouter()
 
 # Rate limiter for admin endpoints
 limiter = create_limiter()
+
+# A plain SQL snapshot of a large classroom install is still small next to the
+# lab images, but cap the upload so a bad request cannot fill the disk.
+MAX_BACKUP_UPLOAD_BYTES = 512 * 1024 * 1024
 
 docker_manager = DockerManager()
 wireguard_manager = WireGuardManager(
@@ -107,6 +128,101 @@ async def list_locked_users(
     """List locked user accounts"""
     users = db.query(User).filter(User.is_locked == True).all()
     return users
+
+
+@router.get("/users/export")
+@limiter.limit("10/minute")
+async def export_users(
+    request: Request,
+    reason: str = Depends(require_export_reason),
+    include_avatars: bool = Query(False),
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Download every account as a portable JSON file.
+
+    Password hashes are included so migrated users keep their existing
+    passwords. MFA, trusted devices, VPN peers, sessions, and learning progress
+    are intentionally excluded. Treat the download as sensitive.
+    """
+    payload = build_user_export(db, include_avatars=include_avatars)
+    payload["reason"] = reason
+    payload["exported_by"] = admin.username
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    filename = f"opencyberrange-users-{stamp}.json"
+
+    log_admin_action(
+        action=AuditActions.USERS_EXPORTED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="users",
+        details={
+            "reason": reason,
+            "user_count": payload["user_count"],
+            "include_avatars": include_avatars,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+
+    return Response(
+        content=json.dumps(payload, indent=2, default=str),
+        media_type="application/json",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.post("/users/import")
+@limiter.limit("5/minute")
+async def import_users(
+    request: Request,
+    body: dict,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Import accounts from a portable export.
+
+    ``dry_run`` validates the file and reports what would happen without
+    writing. ``update`` replaces matching usernames instead of skipping them.
+    """
+    payload = body.get("payload", body)
+    update = bool(body.get("update", False))
+    dry_run = bool(body.get("dry_run", False))
+    include_erased = bool(body.get("include_erased", False))
+
+    try:
+        result = apply_user_import(
+            db,
+            payload,
+            update=update,
+            dry_run=dry_run,
+            include_erased=include_erased,
+            protect_user_id=admin.id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    log_admin_action(
+        action=AuditActions.USERS_IMPORTED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="users",
+        details={
+            "dry_run": dry_run,
+            "update": update,
+            "include_erased": include_erased,
+            "created": result["created"],
+            "updated": result["updated"],
+            "skipped": result["skipped"],
+            "errors": result["errors"],
+            "user_count": result["user_count"],
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+
+    return {"dry_run": dry_run, **result}
 
 
 @router.get("/users/{user_id}", response_model=UserAdminResponse)
@@ -2927,6 +3043,7 @@ def _activity_export_rows(db: Session, events: list[ActivityEvent]) -> list[dict
 @router.get("/activity/export")
 async def export_activity_log(
     request: Request,
+    reason: str = Depends(require_export_reason),
     format: str = Query("json", pattern="^(json|csv)$"),
     event_type: str = None,
     start_date: str = None,
@@ -2974,6 +3091,7 @@ async def export_activity_log(
         admin_username=admin.username,
         target_type="activity_log",
         details={
+            "reason": reason,
             "format": format,
             "rows": len(rows),
             "event_type": event_type,
@@ -2985,7 +3103,10 @@ async def export_activity_log(
     return Response(
         content=content,
         media_type=media_type,
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+        },
     )
 
 
@@ -3249,6 +3370,8 @@ async def list_backups(
 @router.get("/system/backups/{filename}")
 async def download_backup(
     filename: str,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     admin: User = Depends(get_current_admin_user)
 ):
     """Download a specific backup file."""
@@ -3264,7 +3387,21 @@ async def download_backup(
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="Backup not found")
 
-    return FileResponse(path, media_type="application/sql", filename=filename)
+    log_admin_action(
+        action=AuditActions.BACKUP_DOWNLOADED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="database",
+        details={"filename": filename, "reason": reason},
+        ip_address=request.client.host if request.client else None,
+    )
+
+    return FileResponse(
+        path,
+        media_type="application/sql",
+        filename=filename,
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @router.delete("/system/backups/{filename}")
@@ -3301,31 +3438,15 @@ async def delete_backup(
     return {"message": "Backup deleted"}
 
 
-@router.post("/system/restore")
-@limiter.limit("1/minute")
-async def restore_backup(
-    body: dict,
+def _restore_database_from_path(
+    path: str,
+    filename: str,
+    admin: User,
     request: Request,
-    db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
-):
-    """Restore the database from a backup file using psql."""
+) -> dict:
+    """Run psql against one snapshot and audit the outcome."""
     import subprocess
-    import os
     from urllib.parse import urlparse
-
-    filename = body.get("filename")
-    if not filename:
-        raise HTTPException(status_code=400, detail="filename is required")
-
-    if ".." in filename or "/" in filename:
-        raise HTTPException(status_code=400, detail="Invalid filename")
-
-    path = os.path.realpath(os.path.join(backup_directory(), filename))
-    if not path.startswith(os.path.realpath(backup_directory()) + os.sep):
-        raise HTTPException(status_code=400, detail="Invalid filename")
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="Backup not found")
 
     db_url = settings.DATABASE_URL
     parsed = urlparse(db_url)
@@ -3342,6 +3463,7 @@ async def restore_backup(
                 "-U", parsed.username or "labuser",
                 "-d", parsed.path.lstrip("/") or "labdb",
                 "-f", path,
+                "-v", "ON_ERROR_STOP=1",
                 "--single-transaction",
             ],
             env=env,
@@ -3366,8 +3488,127 @@ async def restore_backup(
         return {"message": f"Database restored from {filename}"}
     except subprocess.TimeoutExpired:
         raise HTTPException(status_code=500, detail="Restore timed out after 5 minutes")
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Restore failed: {e}")
+
+
+@router.post("/system/restore")
+@limiter.limit("1/minute")
+async def restore_backup(
+    body: dict,
+    request: Request,
+    admin: User = Depends(get_current_admin_user)
+):
+    """Restore the database from a snapshot already on this install."""
+    filename = body.get("filename")
+    if not filename:
+        raise HTTPException(status_code=400, detail="filename is required")
+
+    if ".." in filename or "/" in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
+    path = os.path.realpath(os.path.join(backup_directory(), filename))
+    if not path.startswith(os.path.realpath(backup_directory()) + os.sep):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Backup not found")
+
+    return _restore_database_from_path(path, filename, admin, request)
+
+
+@router.post("/system/restore/upload")
+@limiter.limit("1/minute")
+async def restore_uploaded_backup(
+    request: Request,
+    file: UploadFile = File(...),
+    restore_now: bool = Form(True),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Accept a plain SQL snapshot from another installation.
+
+    The file is saved into the normal snapshot directory. With ``restore_now``
+    it is applied immediately in one transaction; otherwise it is left in the
+    list so an administrator can restore it later. A full restore replaces every
+    account, so the caller should warn before using this across versions.
+    """
+    original = os.path.basename(file.filename or "").strip()
+    if not original.lower().endswith(".sql"):
+        raise HTTPException(
+            status_code=400,
+            detail="Upload a plain SQL snapshot (.sql) created by the backup feature.",
+        )
+
+    safe_name = re.sub(r"[^A-Za-z0-9._-]+", "_", original).strip("._") or "backup.sql"
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    filename = f"ocr_uploaded_{stamp}_{safe_name}"
+    directory = backup_directory()
+    os.makedirs(directory, exist_ok=True)
+    path = os.path.realpath(os.path.join(directory, filename))
+    if not path.startswith(os.path.realpath(directory) + os.sep):
+        raise HTTPException(status_code=400, detail="Invalid filename")
+
+    total = 0
+    try:
+        with open(path, "wb") as output:
+            while True:
+                chunk = await file.read(1024 * 1024)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > MAX_BACKUP_UPLOAD_BYTES:
+                    raise HTTPException(
+                        status_code=413,
+                        detail="Snapshot is larger than the 512 MB upload limit.",
+                    )
+                output.write(chunk)
+    except HTTPException:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+        raise
+    except Exception as exc:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+        raise HTTPException(status_code=500, detail=f"Could not save upload: {exc}")
+    finally:
+        await file.close()
+
+    if total == 0:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+        raise HTTPException(status_code=400, detail="The uploaded snapshot is empty.")
+
+    log_admin_action(
+        action="BACKUP_UPLOADED",
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="database",
+        details={"filename": filename, "size_bytes": total, "restore_now": restore_now},
+        ip_address=request.client.host if request.client else None,
+    )
+
+    if not restore_now:
+        return {
+            "message": f"Snapshot uploaded as {filename}",
+            "filename": filename,
+            "size_bytes": total,
+            "restored": False,
+        }
+
+    result = _restore_database_from_path(path, filename, admin, request)
+    return {
+        "filename": filename,
+        "size_bytes": total,
+        "restored": True,
+        **result,
+    }
 
 
 @router.get("/system/status")
@@ -3646,6 +3887,8 @@ async def cancel_stress_test(
 @router.post("/stress-test/report")
 async def generate_stress_report_pdf(
     body: dict,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     admin: User = Depends(get_current_admin_user),
 ):
     """Generate a PDF report from stress test results."""
@@ -3656,6 +3899,14 @@ async def generate_stress_report_pdf(
         except ImportError:
             raise HTTPException(status_code=404, detail="Stress reporting is not available in this edition")
         pdf_bytes = generate_stress_report(body)
+        log_admin_action(
+            action=AuditActions.REPORT_EXPORTED,
+            admin_user_id=admin.id,
+            admin_username=admin.username,
+            target_type="stress_test_report",
+            details={"format": "pdf", "reason": reason},
+            ip_address=request.client.host if request.client else None,
+        )
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",

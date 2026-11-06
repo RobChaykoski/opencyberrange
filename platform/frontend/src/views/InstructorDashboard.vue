@@ -271,6 +271,7 @@ import axios from '../api/axios'
 import { usePrivacy } from '../composables/usePrivacy'
 import { usePoll } from '../composables/usePoll'
 import { isAdmin } from '../utils/roles'
+import { requireExportReason } from '../utils/exportReason'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
 
@@ -655,12 +656,15 @@ const rangeLabelText = () => {
 
 const downloadReport = async () => {
   if (exportLoading.value) return
+  const reason = requireExportReason('Why are you exporting this operations report?')
+  if (!reason) return
   exportLoading.value = true
   try {
     const range = filterRange.value
     const params = {
       format: exportFormat.value,
       range_label: rangeLabelText(),
+      reason,
       ..._scopeParams(),
     }
     if (range.start) params.start = range.start

@@ -7,10 +7,19 @@
         <p>Cross-course performance, learning, and confidence signals for teaching review.</p>
       </div>
       <div class="reports-head__actions">
+        <label class="reports-reason">
+          <span>Reason for export (required)</span>
+          <input
+            v-model="exportReason"
+            type="text"
+            maxlength="500"
+            placeholder="e.g. end-of-term teaching review"
+          />
+        </label>
         <button
           type="button"
           class="btn btn--outline btn--sm"
-          :disabled="!rows.length"
+          :disabled="!rows.length || exportReason.trim().length < 5"
           @click="exportCsv"
         >
           Export CSV
@@ -18,7 +27,7 @@
         <button
           type="button"
           class="btn btn--outline btn--sm"
-          :disabled="!rows.length || exportingPdf"
+          :disabled="!rows.length || exportingPdf || exportReason.trim().length < 5"
           @click="exportPdf"
         >
           {{ exportingPdf ? 'Preparing PDF...' : 'Export PDF' }}
@@ -291,6 +300,7 @@ const data = ref(null)
 const loading = ref(true)
 const error = ref('')
 const exportingPdf = ref(false)
+const exportReason = ref('')
 
 const rows = computed(() => data.value?.courses || [])
 const totals = computed(() => data.value?.totals || {})
@@ -421,7 +431,20 @@ const load = async () => {
   }
 }
 
-const exportCsv = () => {
+const exportCsv = async () => {
+  const reason = exportReason.value.trim()
+  error.value = ''
+  if (reason.length < 5) {
+    error.value = 'Enter a reason of at least 5 characters before exporting.'
+    return
+  }
+  try {
+    await axios.post('/analytics/reports/export-audit', { format: 'csv', reason })
+  } catch (e) {
+    error.value = e.response?.data?.detail || 'Could not record the export reason.'
+    return
+  }
+
   const header = ['Course code', 'Course', 'RAG', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
   const lines = rows.value.map((row) => [
     row.course.code,
@@ -452,13 +475,20 @@ const exportCsv = () => {
   link.click()
   link.remove()
   URL.revokeObjectURL(url)
+  exportReason.value = ''
 }
 
 const exportPdf = async () => {
-  exportingPdf.value = true
+  const reason = exportReason.value.trim()
   error.value = ''
+  if (reason.length < 5) {
+    error.value = 'Enter a reason of at least 5 characters before exporting.'
+    return
+  }
+  exportingPdf.value = true
   try {
     const response = await axios.get('/analytics/reports/export.pdf', {
+      params: { reason },
       responseType: 'blob',
     })
     const blob = new Blob([response.data], { type: 'application/pdf' })
@@ -470,6 +500,7 @@ const exportPdf = async () => {
     link.click()
     link.remove()
     URL.revokeObjectURL(url)
+    exportReason.value = ''
   } catch {
     error.value = 'Could not prepare the PDF report. Please try again.'
   } finally {
@@ -498,7 +529,26 @@ onMounted(load)
 .reports-head__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-end;
   gap: 0.5rem;
+}
+
+.reports-reason {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  min-width: 220px;
+}
+
+.reports-reason input {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
 }
 
 .reports-head__eyebrow {

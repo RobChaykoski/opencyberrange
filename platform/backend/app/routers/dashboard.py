@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 from app.timezones import resolve_timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import Response
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
@@ -22,7 +22,9 @@ from app.models import (
     Track, Level, Achievement, CustomAchievement, Competition,
 )
 from app.auth import get_current_active_user, get_current_instructor_user
+from app.export_reason import require_export_reason
 from app.services.activity import EVENT_LABELS
+from app.services.audit import log_admin_action, AuditActions
 from app.services.achievements import (
     ACHIEVEMENT_DESCRIPTIONS,
     ACHIEVEMENT_LABELS,
@@ -441,6 +443,8 @@ async def instructor_filter_options(
 
 @router.get("/instructor/report")
 async def instructor_report(
+    request: Request,
+    reason: str = Depends(require_export_reason),
     format: str = Query("pdf", description="Report format: 'pdf' or 'csv'"),
     start: Optional[str] = Query(None),
     end: Optional[str] = Query(None),
@@ -643,6 +647,19 @@ async def instructor_report(
             events=events,
             timezone_name=getattr(current_user, "timezone", None),
         )
+        log_admin_action(
+            action=AuditActions.REPORT_EXPORTED,
+            admin_user_id=current_user.id,
+            admin_username=current_user.username,
+            target_type="dashboard_report",
+            details={
+                "format": "pdf",
+                "course_id": course_id,
+                "user_id": user_id,
+                "reason": reason,
+            },
+            ip_address=request.client.host if request.client else None,
+        )
         return Response(
             content=bytes(pdf_bytes),
             media_type="application/pdf",
@@ -702,6 +719,19 @@ async def instructor_report(
         ])
 
     csv_bytes = buf.getvalue().encode("utf-8")
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="dashboard_report",
+        details={
+            "format": "csv",
+            "course_id": course_id,
+            "user_id": user_id,
+            "reason": reason,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
     return Response(
         content=csv_bytes,
         media_type="text/csv",

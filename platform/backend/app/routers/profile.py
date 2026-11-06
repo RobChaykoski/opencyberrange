@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.auth import get_current_active_user
 from app.database import get_db
+from app.services.audit import log_admin_action, AuditActions
 from app.models import (
     Achievement,
     Course,
@@ -348,6 +349,15 @@ async def profile_transcript_pdf(
     summary = _build_profile_summary(db, current_user)
     pdf_bytes = generate_profile_transcript(summary, current_user.timezone)
     filename = f"OpenCyberRange-Transcript-{current_user.username}.pdf"
+    log_admin_action(
+        action=AuditActions.USER_DATA_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="transcript",
+        target_id=current_user.id,
+        details={"format": "pdf", "reason": "Self-service transcript request"},
+        ip_address=request.client.host if request.client else None,
+    )
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",

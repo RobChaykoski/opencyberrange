@@ -699,6 +699,7 @@ async def revoke_all_sessions(
 
 @router.get("/export")
 async def export_user_data(
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
@@ -795,6 +796,18 @@ async def export_user_data(
     exported_at = datetime.now(timezone.utc)
     current_user.data_exported_at = exported_at
     db.commit()
+
+    # The account holder's request is itself the reason. Record it so the
+    # compliance trail is complete without prompting the user for a purpose.
+    log_admin_action(
+        action=AuditActions.USER_DATA_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="user",
+        target_id=current_user.id,
+        details={"reason": "Self-service subject access request"},
+        ip_address=request.client.host if request.client else None,
+    )
 
     return {
         "format_version": 2,

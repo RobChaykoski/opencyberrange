@@ -46,7 +46,7 @@ def test_activity_export_and_clear(client, db_session):
         db_session.commit()
 
         exported = client.get(
-            "/api/admin/activity/export?format=json", headers=headers
+            "/api/admin/activity/export?format=json&reason=compliance-test", headers=headers
         )
         assert exported.status_code == 200, exported.text
         assert "attachment" in exported.headers["content-disposition"]

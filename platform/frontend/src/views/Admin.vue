@@ -143,6 +143,114 @@
             </transition>
           </div>
 
+          <!-- Import / Export Users -->
+          <div class="panel-section">
+            <button @click="showUserTransfer = !showUserTransfer" class="expand-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   class="expand-icon" :class="{ 'expand-icon--open': showUserTransfer }">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+              Import / Export Users
+            </button>
+
+            <transition name="slide">
+              <div v-if="showUserTransfer" class="create-form">
+                <p class="section-desc">
+                  Move accounts between OpenCyberRange installations. Passwords are
+                  carried as hashes, so imported users keep their existing password.
+                  MFA, trusted devices, VPN keys, sessions, and learning progress are
+                  not included. Treat the export file as sensitive.
+                </p>
+
+                <div class="user-transfer-grid">
+                  <div class="user-transfer-card">
+                    <h4 class="section-title">Export accounts</h4>
+                    <p class="cell-muted">
+                      Download a JSON file you can import on another installation.
+                    </p>
+                    <label class="checkbox-label">
+                      <input type="checkbox" v-model="userExportIncludeAvatars">
+                      <span>Include profile avatars (larger file)</span>
+                    </label>
+                    <label class="filter-field">
+                      <span class="filter-field__label">Reason for export (required)</span>
+                      <input
+                        v-model="userExportReason"
+                        class="form-input"
+                        maxlength="500"
+                        placeholder="e.g. migrating accounts to a new server"
+                      >
+                    </label>
+                    <button
+                      class="btn btn--secondary btn--sm"
+                      :disabled="userExporting || userExportReason.trim().length < 5"
+                      @click="exportUsers"
+                    >
+                      {{ userExporting ? 'Preparing...' : 'Download users JSON' }}
+                    </button>
+                    <p class="cell-muted">
+                      The reason is written to the audit log with the export.
+                    </p>
+                  </div>
+
+                  <div class="user-transfer-card">
+                    <h4 class="section-title">Import accounts</h4>
+                    <p class="cell-muted">
+                      Select a file exported from this or another installation.
+                      Preview first to see what would change.
+                    </p>
+                    <input
+                      type="file"
+                      accept=".json,application/json"
+                      class="form-input"
+                      @change="onUserImportFile"
+                    >
+                    <p v-if="userImportFileName" class="cell-muted file-name">
+                      Selected: {{ userImportFileName }}
+                    </p>
+                    <label class="checkbox-label">
+                      <input type="checkbox" v-model="userImportUpdate">
+                      <span>Update existing usernames instead of skipping them</span>
+                    </label>
+                    <div class="form-actions">
+                      <button
+                        class="btn btn--secondary btn--sm"
+                        :disabled="!userImportFile || userImportBusy"
+                        @click="previewUserImport"
+                      >
+                        {{ userImportBusy && userImportDryRun ? 'Checking...' : 'Preview' }}
+                      </button>
+                      <button
+                        class="btn btn--success btn--sm"
+                        :disabled="!userImportFile || userImportBusy"
+                        @click="importUsers"
+                      >
+                        {{ userImportBusy && !userImportDryRun ? 'Importing...' : 'Import' }}
+                      </button>
+                    </div>
+                    <div v-if="userImportResult" class="user-import-result">
+                      <strong>
+                        {{ userImportResult.dry_run ? 'Preview' : 'Import complete' }}:
+                      </strong>
+                      {{ userImportResult.created }} created,
+                      {{ userImportResult.updated }} updated,
+                      {{ userImportResult.skipped }} skipped,
+                      {{ userImportResult.errors }} error(s).
+                      <ul v-if="userImportResult.warnings && userImportResult.warnings.length">
+                        <li v-for="(warning, index) in userImportResult.warnings" :key="index">
+                          {{ warning }}
+                        </li>
+                      </ul>
+                      <p v-if="userImportResult.warnings_truncated" class="cell-muted">
+                        More warnings were not shown.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </transition>
+          </div>
+
           <!-- Users Search & Filter Bar -->
           <div class="user-toolbar">
             <div class="user-toolbar__search">
@@ -1145,10 +1253,25 @@
                   <option value="">All Events</option>
                   <option v-for="et in activityEventTypes" :key="et" :value="et">{{ eventTypeLabel(et) }}</option>
                 </select>
-                <button class="btn btn--secondary btn--sm" :disabled="!!activityExporting" @click="exportActivity('json')">
+                <input
+                  v-model="activityExportReason"
+                  class="form-input form-input--sm"
+                  maxlength="500"
+                  placeholder="Reason for export (required)"
+                  style="width: 230px;"
+                >
+                <button
+                  class="btn btn--secondary btn--sm"
+                  :disabled="!!activityExporting || activityExportReason.trim().length < 5"
+                  @click="exportActivity('json')"
+                >
                   {{ activityExporting === 'json' ? 'Exporting...' : 'Export JSON' }}
                 </button>
-                <button class="btn btn--secondary btn--sm" :disabled="!!activityExporting" @click="exportActivity('csv')">
+                <button
+                  class="btn btn--secondary btn--sm"
+                  :disabled="!!activityExporting || activityExportReason.trim().length < 5"
+                  @click="exportActivity('csv')"
+                >
                   {{ activityExporting === 'csv' ? 'Exporting...' : 'Export CSV' }}
                 </button>
                 <button class="btn btn--danger btn--sm" @click="openActivityClear">Clear log</button>
@@ -1683,6 +1806,55 @@
               </button>
             </div>
             <p class="section-desc">Snapshots capture all users, courses, enrollments, exercise assignments, scores, achievements, and activity logs. Use restore to roll back to a previous point in time.</p>
+
+            <!-- Restore from another system -->
+            <div class="panel-section">
+              <button @click="showRestoreUpload = !showRestoreUpload" class="expand-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     class="expand-icon" :class="{ 'expand-icon--open': showRestoreUpload }">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                Restore from another system
+              </button>
+
+              <transition name="slide">
+                <div v-if="showRestoreUpload" class="create-form">
+                  <p class="section-desc">
+                    Upload a plain SQL snapshot (<code>.sql</code>) created by another
+                    OpenCyberRange installation. A full restore replaces every account,
+                    course, and record in this installation — including the administrator
+                    account you are signed in with — so take a snapshot here first. To
+                    merge users without replacing the existing administrators, use
+                    <strong>Users → Import / Export Users</strong> instead.
+                  </p>
+                  <input
+                    type="file"
+                    accept=".sql,application/sql"
+                    class="form-input"
+                    @change="onRestoreUploadFile"
+                  >
+                  <p v-if="restoreUploadFileName" class="cell-muted file-name">
+                    Selected: {{ restoreUploadFileName }}
+                  </p>
+                  <label class="checkbox-label">
+                    <input type="checkbox" v-model="restoreUploadImmediately">
+                    <span>Restore immediately after upload</span>
+                  </label>
+                  <div class="form-actions">
+                    <button
+                      class="btn btn--warning"
+                      :disabled="!restoreUploadFile || restoreUploadBusy"
+                      @click="uploadRestoreBackup"
+                    >
+                      {{ restoreUploadBusy
+                        ? 'Working...'
+                        : (restoreUploadImmediately ? 'Upload and restore' : 'Upload snapshot') }}
+                    </button>
+                  </div>
+                  <p v-if="restoreUploadMessage" class="cell-muted">{{ restoreUploadMessage }}</p>
+                </div>
+              </transition>
+            </div>
 
             <!-- Backup Activity Heatmap -->
             <div class="backup-heatmap-card">
@@ -3194,6 +3366,7 @@ import InfoTip from '../components/InfoTip.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import AdminPendingTab from '../components/AdminPendingTab.vue'
 import { getUserTimeZone } from '../utils/timezone'
+import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
@@ -3451,6 +3624,16 @@ const userVpnFilter = ref('')
 const userSort = ref('attention')
 const userPage = ref(1)
 const usersPerPage = 25
+const showUserTransfer = ref(false)
+const userExportIncludeAvatars = ref(false)
+const userExportReason = ref('')
+const userExporting = ref(false)
+const userImportFile = ref(null)
+const userImportFileName = ref('')
+const userImportUpdate = ref(false)
+const userImportBusy = ref(false)
+const userImportDryRun = ref(true)
+const userImportResult = ref(null)
 const newRegistrations = ref([])
 const registrationPollReady = ref(false)
 let registrationPollTimer = null
@@ -4112,6 +4295,7 @@ const activityPages = ref(0)
 const activityFilter = ref('')
 const activityEventTypes = ref([])
 const activityExporting = ref('')
+const activityExportReason = ref('')
 const activityMessage = ref('')
 const activityClearOpen = ref(false)
 const activityClearScope = ref('90')
@@ -4148,6 +4332,12 @@ const creatingBackup = ref(false)
 const restoringBackup = ref(false)
 const calendarDays = ref({})
 const deletingBackup = ref(null)
+const showRestoreUpload = ref(false)
+const restoreUploadFile = ref(null)
+const restoreUploadFileName = ref('')
+const restoreUploadImmediately = ref(true)
+const restoreUploadBusy = ref(false)
+const restoreUploadMessage = ref('')
 
 // Header system-health dot state (proactive, runs on mount)
 const dashboardHealthStatus = ref('')
@@ -4388,11 +4578,16 @@ const fetchActivity = async (page = 1) => {
 }
 
 const exportActivity = async (format) => {
+  const reason = activityExportReason.value.trim()
+  if (reason.length < 5) {
+    showAlert('Enter a reason of at least 5 characters before exporting.', 'error')
+    return
+  }
   activityExporting.value = format
   activityMessage.value = ''
   try {
     const { data } = await axios.get('/admin/activity/export', {
-      params: { format, ...activityQueryParams() },
+      params: { format, reason, ...activityQueryParams() },
       responseType: 'blob',
     })
     const blob = new Blob([data], { type: format === 'csv' ? 'text/csv' : 'application/json' })
@@ -4404,6 +4599,7 @@ const exportActivity = async (format) => {
     link.click()
     link.remove()
     URL.revokeObjectURL(url)
+    activityExportReason.value = ''
     activityMessage.value = `Activity log exported as ${format.toUpperCase()}.`
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to export activity log', 'error')
@@ -4737,9 +4933,14 @@ const checkActiveTestRun = async () => {
 const generateTestReport = async (slug) => {
   const result = testerResults.value[slug]
   if (!result) return
+  const reason = requireExportReason('Why are you exporting this exercise test report?')
+  if (!reason) return
 
   try {
-    const res = await axios.post('/admin/exercise-test/report', result, { responseType: 'blob' })
+    const res = await axios.post('/admin/exercise-test/report', result, {
+      params: { reason },
+      responseType: 'blob'
+    })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
     const a = document.createElement('a')
     a.href = url
@@ -4889,8 +5090,13 @@ const checkActiveStressTest = async () => {
 
 const downloadStressReport = async () => {
   if (!stressResults.value) return
+  const reason = requireExportReason('Why are you exporting this stress test report?')
+  if (!reason) return
   try {
-    const res = await axios.post('/admin/stress-test/report', stressResults.value, { responseType: 'blob' })
+    const res = await axios.post('/admin/stress-test/report', stressResults.value, {
+      params: { reason },
+      responseType: 'blob'
+    })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
     const a = document.createElement('a')
     a.href = url
@@ -5036,22 +5242,32 @@ const createBackup = async () => {
   }
 }
 
-const downloadBackup = (filename) => {
-  const token = localStorage.getItem('token')
-  const url = `${axios.defaults.baseURL || ''}/admin/system/backups/${filename}`
-  const a = document.createElement('a')
-  a.href = url
-  a.setAttribute('download', filename)
-  const headers = token ? { Authorization: `Bearer ${token}` } : {}
-  axios.get(`/admin/system/backups/${filename}`, { responseType: 'blob', headers })
-    .then(resp => {
-      const blob = new Blob([resp.data], { type: 'application/sql' })
-      const objUrl = URL.createObjectURL(blob)
-      a.href = objUrl
-      a.click()
-      URL.revokeObjectURL(objUrl)
+const downloadBackup = async (filename) => {
+  const reason = (prompt(
+    'Why is this backup being downloaded?\n\n' +
+    'A reason of at least 5 characters is required and is recorded in the audit log.'
+  ) || '').trim()
+  if (reason.length < 5) {
+    showAlert('A reason of at least 5 characters is required before downloading a backup.', 'error')
+    return
+  }
+  try {
+    const response = await axios.get(`/admin/system/backups/${encodeURIComponent(filename)}`, {
+      params: { reason },
+      responseType: 'blob'
     })
-    .catch(() => showAlert('Failed to download backup', 'error'))
+    const blob = new Blob([response.data], { type: 'application/sql' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  } catch (e) {
+    showAlert(parseApiError(e, 'Failed to download backup'), 'error')
+  }
 }
 
 const confirmRestore = (backup) => {
@@ -5072,6 +5288,50 @@ const restoreBackup = async (filename) => {
     showAlert(e.response?.data?.detail || 'Restore failed', 'error')
   } finally {
     restoringBackup.value = false
+  }
+}
+
+const onRestoreUploadFile = (event) => {
+  const file = event.target?.files?.[0] || null
+  restoreUploadFile.value = file
+  restoreUploadFileName.value = file?.name || ''
+  restoreUploadMessage.value = ''
+}
+
+const uploadRestoreBackup = async () => {
+  if (!restoreUploadFile.value) return
+  const willRestore = restoreUploadImmediately.value
+
+  if (willRestore) {
+    if (!confirm(
+      'RESTORE FROM ANOTHER SYSTEM\n\nThis will replace ALL current data with ' +
+      'the uploaded snapshot. This action cannot be undone.\n\nContinue?'
+    )) return
+    if (!confirm('Final confirmation: every current account, course, and record will be overwritten. Continue?')) return
+  }
+
+  restoreUploadBusy.value = true
+  restoreUploadMessage.value = ''
+  try {
+    const form = new FormData()
+    form.append('file', restoreUploadFile.value)
+    form.append('restore_now', willRestore ? 'true' : 'false')
+    const { data } = await axios.post('/admin/system/restore/upload', form)
+    restoreUploadMessage.value = data.message || 'Snapshot uploaded'
+    showAlert(data.message || 'Snapshot uploaded')
+    fetchBackups()
+    fetchActivityCalendar()
+    if (data.restored) {
+      fetchSystemStatus()
+      restoreUploadMessage.value +=
+        ' If you were signed out, sign in with an account that exists in the restored snapshot.'
+    }
+    restoreUploadFile.value = null
+    restoreUploadFileName.value = ''
+  } catch (e) {
+    showAlert(parseApiError(e, 'Restore upload failed'), 'error')
+  } finally {
+    restoreUploadBusy.value = false
   }
 }
 
@@ -5730,6 +5990,96 @@ const validatePasswordComplexity = (password) => {
 }
 
 // User actions
+const exportUsers = async () => {
+  const reason = userExportReason.value.trim()
+  if (reason.length < 5) {
+    showAlert('Enter a reason of at least 5 characters before exporting.', 'error')
+    return
+  }
+  userExporting.value = true
+  try {
+    const response = await axios.get('/admin/users/export', {
+      params: {
+        include_avatars: userExportIncludeAvatars.value,
+        reason
+      },
+      responseType: 'blob'
+    })
+    const disposition = response.headers?.['content-disposition'] || ''
+    const match = disposition.match(/filename="?([^";]+)"?/)
+    const filename = match ? match[1] : 'opencyberrange-users.json'
+    const blob = new Blob([response.data], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    link.click()
+    URL.revokeObjectURL(url)
+    userExportReason.value = ''
+    showAlert('User export downloaded. Treat the file as sensitive.')
+  } catch (e) {
+    showAlert(parseApiError(e, 'Failed to export users'), 'error')
+  } finally {
+    userExporting.value = false
+  }
+}
+
+const onUserImportFile = (event) => {
+  const file = event.target?.files?.[0] || null
+  userImportFile.value = file
+  userImportFileName.value = file?.name || ''
+  userImportResult.value = null
+}
+
+const submitUserImport = async (dryRun) => {
+  if (!userImportFile.value) return
+  userImportBusy.value = true
+  userImportDryRun.value = dryRun
+  userImportResult.value = null
+  try {
+    let payload
+    try {
+      payload = JSON.parse(await userImportFile.value.text())
+    } catch (e) {
+      showAlert('That file is not valid JSON.', 'error')
+      return
+    }
+    const { data } = await axios.post('/admin/users/import', {
+      payload,
+      update: userImportUpdate.value,
+      dry_run: dryRun
+    })
+    userImportResult.value = data
+    if (dryRun) {
+      showAlert(
+        `Preview: ${data.created} would be created, ${data.updated} updated, ` +
+        `${data.skipped} skipped, ${data.errors} error(s).`
+      )
+    } else {
+      showAlert(
+        `Import complete: ${data.created} created, ${data.updated} updated, ` +
+        `${data.skipped} skipped, ${data.errors} error(s).`
+      )
+      fetchAll()
+    }
+  } catch (e) {
+    showAlert(parseApiError(e, 'User import failed'), 'error')
+  } finally {
+    userImportBusy.value = false
+  }
+}
+
+const previewUserImport = () => submitUserImport(true)
+
+const importUsers = async () => {
+  if (!userImportFile.value) return
+  const mode = userImportUpdate.value
+    ? 'Existing usernames will be updated with the imported values.'
+    : 'Existing usernames will be skipped.'
+  if (!confirm(`Import users from ${userImportFileName.value}?\n\n${mode}\n\nContinue?`)) return
+  await submitUserImport(false)
+}
+
 const createUser = async () => {
   // Frontend validation
   const errors = []
@@ -7015,8 +7365,11 @@ const deleteCourse = async (course) => {
 }
 
 const downloadStudentReport = async (student) => {
+  const reason = requireExportReason('Why are you exporting this student report?')
+  if (!reason) return
   try {
     const res = await axios.get(`/courses/${managingCourse.value.id}/report/${student.id}`, {
+      params: { reason },
       responseType: 'blob'
     })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
@@ -7031,9 +7384,12 @@ const downloadStudentReport = async (student) => {
 }
 
 const downloadClassReportAdmin = async () => {
+  const reason = requireExportReason('Why are you exporting the class report?')
+  if (!reason) return
   downloadingAdminReport.value = true
   try {
     const res = await axios.get(`/courses/${managingCourse.value.id}/report`, {
+      params: { reason },
       responseType: 'blob'
     })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
@@ -10577,6 +10933,53 @@ watch(activeTab, (tab) => {
   gap: 0.4rem;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+/* User import/export */
+.user-transfer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.user-transfer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.user-transfer-card .section-title {
+  margin: 0;
+}
+
+.user-import-result {
+  margin-top: 0.35rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  background: var(--bg-tertiary);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.user-import-result ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--text-muted);
+}
+
+.user-import-result li {
+  margin-bottom: 0.2rem;
+}
+
+.file-name {
+  margin: 0;
+  word-break: break-all;
+  font-size: 0.75rem;
 }
 
 .btn--xs {

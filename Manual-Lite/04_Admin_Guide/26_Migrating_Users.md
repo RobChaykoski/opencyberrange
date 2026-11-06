@@ -22,6 +22,29 @@ trusted devices, VPN peer keys, lab sessions, or completion history.
 The utility is `scripts/user_transfer.py`. It uses `psycopg2`, which is already
 installed in the backend image.
 
+## Migrate from the admin interface
+
+The same portable export is available in the web interface:
+
+1. On the old installation, open **Admin → Users** and expand **Import / Export Users**.
+2. Leave **Include profile avatars** off unless you need them. Enter a short
+   **Reason for export** (for example, "migrating accounts to the new server"),
+   then click **Download users JSON**. The reason is written to the audit log.
+   Treat the downloaded file as sensitive.
+3. On the new installation, open the same panel, choose the JSON file, and
+   click **Preview** to see what would change.
+4. Click **Import** when the preview looks right. Enable **Update existing
+   usernames** only when you intend to overwrite matching accounts.
+
+The preview and import report counts for created, updated, skipped, and errored
+rows, plus any username, email, or student-ID conflicts.
+
+To restore a complete snapshot from another installation, open **Admin → System
+→ Backups**, expand **Restore from another system**, upload a plain `.sql`
+snapshot, and choose whether to restore it immediately. A full snapshot restore
+replaces every account and record, so it is intended for same-version recovery,
+not for moving users between versions. Use the user export for that.
+
 ## 1. Export from the old installation
 
 Run these commands from the old repository root. The default backend service

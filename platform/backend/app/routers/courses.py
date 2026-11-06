@@ -12,7 +12,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
@@ -33,6 +33,8 @@ from app.schemas import (
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
 )
 from app.services.achievements import resolve_achievement_label
+from app.export_reason import require_export_reason
+from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
 from app.services.course_wiki import rebuild_course_wiki
 
@@ -1212,6 +1214,8 @@ async def reset_student_lab(
 @router.get("/{course_id}/report")
 async def class_report(
     course_id: int,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
@@ -1225,6 +1229,15 @@ async def class_report(
     students_data = _build_all_students_data(db, course)
 
     pdf_bytes = generate_class_report(course_dict, students_data, current_user.timezone)
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="course_report",
+        target_id=course_id,
+        details={"format": "pdf", "scope": "class", "reason": reason},
+        ip_address=request.client.host if request.client else None,
+    )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
@@ -1238,6 +1251,8 @@ async def class_report(
 async def student_report(
     course_id: int,
     user_id: int,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
@@ -1268,6 +1283,19 @@ async def student_report(
     }
 
     pdf_bytes = generate_student_report(student_dict, course_dict, lab_scores, achievements, current_user.timezone)
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="student_report",
+        target_id=user_id,
+        details={
+            "format": "pdf",
+            "course_id": course_id,
+            "reason": reason,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
@@ -1719,6 +1747,8 @@ async def remove_lab_from_assignment(
 async def assignment_class_report(
     course_id: int,
     assignment_id: int,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
@@ -1750,6 +1780,20 @@ async def assignment_class_report(
 
     pdf_bytes = generate_class_report(course_dict, all_data, current_user.timezone)
     safe_name = assignment.name.replace(" ", "_")[:30]
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="assignment_report",
+        target_id=assignment_id,
+        details={
+            "format": "pdf",
+            "course_id": course_id,
+            "scope": "class",
+            "reason": reason,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
@@ -1764,6 +1808,8 @@ async def assignment_student_report(
     course_id: int,
     assignment_id: int,
     user_id: int,
+    request: Request,
+    reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
@@ -1808,6 +1854,20 @@ async def assignment_student_report(
     }
     pdf_bytes = generate_student_report(student_dict, course_dict, lab_scores, achievements, current_user.timezone)
     safe_name = assignment.name.replace(" ", "_")[:30]
+    log_admin_action(
+        action=AuditActions.REPORT_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="assignment_report",
+        target_id=assignment_id,
+        details={
+            "format": "pdf",
+            "course_id": course_id,
+            "user_id": user_id,
+            "reason": reason,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",

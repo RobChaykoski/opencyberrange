@@ -326,6 +326,7 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { usePrivacy } from '../composables/usePrivacy'
 import { getUserTimeZone } from '../utils/timezone'
+import { requireExportReason } from '../utils/exportReason'
 import CourseAnalytics from '../components/CourseAnalytics.vue'
 
 const route = useRoute()
@@ -798,9 +799,14 @@ async function resetStudentLab(student, lab) {
 }
 
 async function downloadStudentReport(student) {
+  const reason = requireExportReason('Why are you exporting this student report?')
+  if (!reason) return
   downloadingReportUserId.value = student.id
   try {
-    const res = await axios.get(`/courses/${courseId.value}/report/${student.id}`, { responseType: 'blob' })
+    const res = await axios.get(`/courses/${courseId.value}/report/${student.id}`, {
+      params: { reason },
+      responseType: 'blob',
+    })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
     const a = document.createElement('a')
     a.href = url
@@ -996,9 +1002,12 @@ async function fetchAchievements() {
 }
 
 async function downloadClassReport() {
+  const reason = requireExportReason('Why are you exporting the class report?')
+  if (!reason) return
   downloadingReport.value = true
   try {
     const res = await axios.get(`/courses/${courseId.value}/report`, {
+      params: { reason },
       responseType: 'blob',
     })
     const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
