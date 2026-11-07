@@ -47,7 +47,7 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Celebration Wall</span>
         </router-link>
-        <router-link to="/competitions" class="nav-item" :class="{ 'nav-item--active': isActive('/competitions') }">
+        <router-link to="/events" class="nav-item" :class="{ 'nav-item--active': isActive('/events') || isActive('/competitions') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M8 21h8"/>
             <path d="M12 17v4"/>
@@ -55,7 +55,7 @@
             <path d="M7 6H4a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3h1"/>
             <path d="M17 6h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3h-1"/>
           </svg>
-          <span v-show="!collapsed" class="nav-item__label">Competitions</span>
+          <span v-show="!collapsed" class="nav-item__label">Events</span>
         </router-link>
         <router-link to="/vpn-setup" data-tour="nav-vpn" class="nav-item" :class="{ 'nav-item--active': isActive('/vpn-setup') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">

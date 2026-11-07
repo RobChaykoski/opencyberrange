@@ -50,16 +50,26 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/competitions',
-    name: 'Competitions',
+    path: '/events',
+    name: 'Events',
     component: () => import('../views/Competitions.vue'),
     meta: { requiresAuth: true }
   },
   {
-    path: '/competitions/:id',
-    name: 'CompetitionDetail',
+    path: '/events/:id',
+    name: 'EventDetail',
     component: () => import('../views/CompetitionDetail.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    // Compatibility aliases for older bookmarks. The API and internal model
+    // names remain competition-based so existing data keeps working.
+    path: '/competitions',
+    redirect: '/events'
+  },
+  {
+    path: '/competitions/:id',
+    redirect: (to) => `/events/${to.params.id}`
   },
   {
     path: '/vpn-setup',

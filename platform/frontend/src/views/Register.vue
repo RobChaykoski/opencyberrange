@@ -16,14 +16,14 @@
           <p class="form-subtext">Join the cybersecurity training platform</p>
 
           <div v-if="competition" class="competition-callout">
-            <p class="competition-callout__kicker">Competition registration</p>
+            <p class="competition-callout__kicker">Event registration</p>
             <p>
               You are creating an account for <strong>{{ competition.name }}</strong>.
               The event runs {{ formatCompetitionDates(competition) }}.
             </p>
             <label v-if="competition.status !== 'ended'" class="competition-callout__join">
               <input v-model="joinCompetition" type="checkbox" />
-              <span>Add me to the competition participant list</span>
+              <span>Add me to the event participant list</span>
             </label>
             <p v-else class="help-text">
               This event has finished. You can still create an account and explore the platform.
@@ -298,7 +298,7 @@ const formatCompetitionDates = (event) => {
 }
 
 onMounted(async () => {
-  const requested = Number(route.query.competition)
+  const requested = Number(route.query.event || route.query.competition)
   if (!Number.isInteger(requested) || requested <= 0) return
   competitionId.value = requested
   try {

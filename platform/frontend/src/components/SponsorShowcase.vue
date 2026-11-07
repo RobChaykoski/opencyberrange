@@ -1,5 +1,5 @@
 <template>
-  <section v-if="sponsors && sponsors.length" class="sponsor-showcase" aria-label="Competition sponsors">
+  <section v-if="sponsors && sponsors.length" class="sponsor-showcase" aria-label="Event sponsors">
     <div class="sponsor-showcase__head">
       <span class="sponsor-showcase__eyebrow">Sponsored by</span>
       <span class="sponsor-showcase__count">

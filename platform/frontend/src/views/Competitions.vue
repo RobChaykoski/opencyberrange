@@ -3,7 +3,7 @@
     <header class="page-head">
       <div>
         <p class="page-head__eyebrow">Special events</p>
-        <h1>Competitions</h1>
+        <h1>Events</h1>
         <p class="page-head__subtitle">
           Opt-in, time-boxed events using selected exercises. Joining is optional;
           leaving is always allowed.
@@ -15,7 +15,7 @@
         class="btn btn--primary btn--sm"
         @click="showCreate = !showCreate"
       >
-        {{ showCreate ? 'Close form' : 'Create competition' }}
+        {{ showCreate ? 'Close form' : 'Create event' }}
       </button>
     </header>
 
@@ -25,7 +25,7 @@
     </div>
 
     <section v-if="isInstructor && showCreate" class="create-panel" aria-labelledby="create-heading">
-      <h2 id="create-heading">Create a competition</h2>
+      <h2 id="create-heading">Create an event</h2>
       <p class="create-panel__note">
         Only solves inside the event window count. Scores reuse the course
         scoring rules: completion, no-hint, first-attempt, speed, and event first blood.
@@ -55,7 +55,7 @@
             <img
               v-if="newCompetition.logo_data"
               :src="newCompetition.logo_data"
-              alt="Competition event mark preview"
+              alt="Event mark preview"
             />
             <TrophyIcon v-else class="event-logo-field__placeholder" />
           </div>
@@ -180,7 +180,7 @@
           </div>
           <div v-if="labsLoading" class="muted-note">Loading exercises...</div>
           <div v-else-if="!labTracks.length" class="muted-note">
-            No exercises are available for competition selection.
+            No exercises are available for event selection.
           </div>
           <div v-else class="lab-picker__groups">
             <section v-for="track in labTracks" :key="track.slug" class="lab-group">
@@ -202,18 +202,18 @@
       </form>
     </section>
 
-    <div v-if="loading" class="muted-note">Loading competitions...</div>
+    <div v-if="loading" class="muted-note">Loading events...</div>
 
     <div v-else-if="!competitions.length" class="empty-state">
       <TrophyIcon class="empty-state__icon" />
-      <p class="empty-state__title">No competitions yet.</p>
+      <p class="empty-state__title">No events yet.</p>
       <p class="empty-state__hint">
         {{ isInstructor ? 'Create a short event for your learners.' : 'Check back when an instructor opens an event.' }}
       </p>
     </div>
 
     <div v-else class="competitions-layout">
-      <section class="competition-list" aria-label="Competitions">
+      <section class="competition-list" aria-label="Events">
         <button
           v-if="archivedCount"
           type="button"
@@ -274,7 +274,7 @@
           </div>
           <div class="comp-detail__actions">
             <router-link
-              :to="`/competitions/${selected.competition.id}`"
+              :to="`/events/${selected.competition.id}`"
               class="btn btn--outline btn--sm"
             >
               Open dashboard
@@ -632,7 +632,7 @@ const loadCompetitions = async (preserveSelection = false) => {
       selectedId.value = null
     }
   } catch {
-    error.value = 'We could not load competitions. Check your connection and try again.'
+    error.value = 'We could not load events. Check your connection and try again.'
   } finally {
     loading.value = false
   }
@@ -646,7 +646,7 @@ const selectCompetition = async (id) => {
     selected.value = response.data
   } catch (err) {
     selected.value = null
-    actionError.value = err.response?.data?.detail || 'Could not load that competition.'
+    actionError.value = err.response?.data?.detail || 'Could not load that event.'
   }
 }
 
@@ -665,7 +665,7 @@ const joinSelected = async () => {
     await axios.post(`/competitions/${selectedId.value}/join`)
     await loadCompetitions(true)
   } catch (err) {
-    actionError.value = err.response?.data?.detail || 'Could not join that competition.'
+    actionError.value = err.response?.data?.detail || 'Could not join that event.'
   } finally {
     joining.value = false
   }
@@ -679,7 +679,7 @@ const leaveSelected = async () => {
     await axios.post(`/competitions/${selectedId.value}/leave`)
     await loadCompetitions(true)
   } catch (err) {
-    actionError.value = err.response?.data?.detail || 'Could not leave that competition.'
+    actionError.value = err.response?.data?.detail || 'Could not leave that event.'
   } finally {
     joining.value = false
   }
@@ -718,7 +718,7 @@ const deleteSelected = async () => {
     selectedId.value = null
     await loadCompetitions()
   } catch (err) {
-    actionError.value = err.response?.data?.detail || 'Could not delete that competition.'
+    actionError.value = err.response?.data?.detail || 'Could not delete that event.'
   } finally {
     deleting.value = false
   }
@@ -747,7 +747,7 @@ const clearLabs = () => {
 const createCompetition = async () => {
   createError.value = ''
   if (!newCompetition.name.trim()) {
-    createError.value = 'Give the competition a name.'
+    createError.value = 'Give the event a name.'
     return
   }
   if (!newCompetition.start_at || !newCompetition.end_at) {
@@ -783,7 +783,7 @@ const createCompetition = async () => {
     await selectCompetition(response.data.id)
     resetNewCompetition()
   } catch (err) {
-    createError.value = err.response?.data?.detail || 'Could not create the competition.'
+    createError.value = err.response?.data?.detail || 'Could not create the event.'
   } finally {
     creating.value = false
   }

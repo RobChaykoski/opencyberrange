@@ -15,7 +15,7 @@ flowchart LR
     WB --> PRACTICE
     PRACTICE --> FLAG["Flag submission<br/>automated verification"]
     FLAG --> COMPLETE["Level completion<br/>certificate"]
-    COMPLETE --> COURSE["Course or competition<br/>instructor view"]
+    COMPLETE --> COURSE["Course or event<br/>instructor view"]
     COMPLETE --> PROFILE["Profile, transcript,<br/>achievements"]
     FLAG --> SIGNALS["Measurable signals<br/>completion, attempts,<br/>hints, time"]
     SIGNALS --> REPORT["Instructor reports<br/>aggregate trends"]
@@ -31,7 +31,7 @@ flowchart LR
 | Check | Submits a flag or answer | Immediate automated feedback; attempts and hints are recorded |
 | Consolidate | Reviews the chapter and analysis questions | Workbook review, explanation, and reflection prompts |
 | Progress | Completes the level | Certificate, track progress, achievements, and transcript entry |
-| Extend | Joins a course or competition | Instructor assignments, scoreboards, reports, and time-boxed events |
+| Extend | Joins a course or event | Instructor assignments, scoreboards, reports, and time-boxed events |
 
 ## Design principles
 
@@ -75,7 +75,7 @@ flowchart TB
     QUIZ["Level quiz<br/>optional"]
     CERT["Level certificate"]
     COURSE["Course assignment"]
-    COMP["Competition event"]
+    COMP["Event"]
 
     TRACK --> LEVEL
     LEVEL --> LAB
@@ -109,7 +109,7 @@ The platform records the following signals per learner and per lab:
 - quiz score and pass/fail where a level quiz exists;
 - certificates issued per completed level;
 - course enrolments and assignment completion;
-- competition participation and event-scoped scores.
+- event participation and event-scoped scores.
 
 Reports and the PDF transcript aggregate these signals. They are intended to
 support formative feedback and course administration, not to rank learners

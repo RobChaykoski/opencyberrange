@@ -376,7 +376,7 @@
               <h2 id="course-achievements-title" class="section-title">Course achievements</h2>
               <p class="help-text">
                 Badges earned through your courses, grouped so progress is easy to scan.
-                Competition and range-wide awards appear separately.
+                Event and range-wide awards appear separately.
               </p>
             </div>
             <div class="achievements-section__total">
@@ -434,7 +434,7 @@
               <header class="course-achievement-card__head">
                 <div>
                   <span class="course-achievement-card__code">Across the range</span>
-                  <h3>Competitions &amp; special badges</h3>
+                  <h3>Events &amp; special badges</h3>
                 </div>
                 <span class="course-achievement-card__count">{{ otherAchievements.length }}</span>
               </header>

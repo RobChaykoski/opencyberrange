@@ -154,7 +154,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
 | Course delivery | Assignments, completion counts, and scoreboard | Per-student completion, attempt, hint, and time records |
-| Recognition | Achievement and competition scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
+| Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
@@ -245,17 +245,17 @@ still seeing their own private corner.
 
 ![Celebration Wall](docs/img/celebration-wall.png)
 
-**Special competitions.** Instructors and admins can open opt-in, time-boxed
+**Special events.** Instructors and admins can open opt-in, time-boxed
 events using selected exercises. The event uses the existing lab scoring rules
-(completion, no-hint, first-attempt, speed, and competition first blood).
+(completion, no-hint, first-attempt, speed, and event first blood).
 Only solves during the event window count. Learners choose to join, can leave
 at any time, and see a dedicated event leaderboard. The same name preference
 applies: real name, username, or "Anonymous participant".
 
-Competitions are separate from course grades and the learning record; they are
+Events are separate from course grades and the learning record; they are
 not used for progression, discipline, or public ranking of learning outcomes.
 Learners can **practise without joining**, and joining only affects the event
-leaderboard. Organizers get a dedicated competition dashboard with total
+leaderboard. Organizers get a dedicated event dashboard with total
 participants, new sign-ups, existing opt-ins, and a copyable sign-up link.
 
 ## Included tracks
@@ -367,16 +367,16 @@ themed around [DevFest Windsor-Essex 2026](https://wedevfest.com) on
 November 21, 2026. SWOCTS is a community partner. Students open a fictional
 DevFest speaker profile, download a slide export, and read the PNG metadata in
 the browser. No terminal or prior experience is required, hints are expected,
-and students can practise without joining the competition.
+and students can practise without joining the event.
 
-The live DevFest competition can be created after discovering the lab:
+The live DevFest event can be created after discovering the lab:
 
 ```bash
 docker compose exec backend python /app/app/scripts/seed_devfest_competition.py
 ```
 
 The script creates an opt-in **Windsor-Essex DevFest 2026** event and prints the
-new-participant sign-up link. Existing learners can use the competition page's
+new-participant sign-up link. Existing learners can use the event page's
 **Join event** button; new accounts created through the sign-up link are marked
 as **New sign-up** on the organizer dashboard.
 
@@ -536,7 +536,7 @@ building during a student spawn.
 - Login is rate-limited to 10 attempts per minute per IP. Five failed attempts
   lock an account for 30 minutes. Registration is limited to 5/minute,
   30/hour, and 100/day per IP, with a documented relaxation during live
-  competitions.
+  events.
 - Registration can require administrator approval and, optionally, a valid
   invite code. Instructor and administrator passwords must meet stricter
   complexity rules.
@@ -617,7 +617,7 @@ building during a student spawn.
 - **Administrator:** Admin → Users → Delete requires typing the username and
   uses the same erasure service.
 - Deletion removes identity and credential data, the WireGuard peer and keys,
-  enrolments, completions, flag and quiz attempts, achievements, competition
+  enrolments, completions, flag and quiz attempts, achievements, event
   entries, lab sessions/containers, and WebSocket tickets. Activity and audit
   records are anonymised; authored labs keep their content but lose the author
   link.

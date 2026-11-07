@@ -29,7 +29,7 @@ maintenance line remains available for existing installs; new installs use the
 - courses, exercises, tracks, labs, RangeBox, flags, hints, and achievements;
 - lab improvements and workbook improvements;
 - exercise authoring;
-- profiles, certificates, transcripts, and competitions;
+- profiles, certificates, transcripts, and events;
 - single-host Docker Compose deployment on Ubuntu 22.04 or 24.04;
 - WireGuard learner access, backups, privacy, erasure, and mail settings;
 - bug fixes, maintenance, and security updates.
@@ -96,7 +96,7 @@ which remains the default and fallback.
 | Lab and workbook improvements | Yes | Yes | Yes |
 | Exercise authoring | Yes | Yes | Yes |
 | Profiles, certificates, transcripts | Yes | Yes | Yes |
-| Competitions and achievements | Yes | Yes | Yes |
+| Events and achievements | Yes | Yes | Yes |
 | Single-host Docker Compose | Yes | Yes | Yes |
 | Ubuntu 22.04 support | Yes | Maintenance reference | No |
 | Ubuntu 24.04 support | Yes | Yes | Yes |

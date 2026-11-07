@@ -17,7 +17,7 @@ prediction of job performance, or a claim about a learner's ability.
 | Builder | Artificer | Hands-on completion, time, and clean solves | AppSec, secure development, web testing |
 | Defender | Warden | Defensive, forensics, network-analysis, and OT practice | SOC, network defence, incident response |
 | Investigator | Seeker | OSINT, reconnaissance, traffic analysis, and forensics practice | DFIR, malware analysis, forensics |
-| Leader | Commander | Competitions, courses, badges, advanced labs, teaching | Security leadership, governance, programme delivery |
+| Leader | Commander | Events, courses, badges, advanced labs, teaching | Security leadership, governance, programme delivery |
 
 The class is the highest-scoring trait. Ties break in the order Explorer,
 Builder, Defender, Investigator, Leader. A learner with no activity is a
@@ -36,7 +36,7 @@ the traits.
 | Offensive Security / Penetration Testing | Web, exploitation, privilege-escalation, post-exploitation, credential-attack, and supporting reconnaissance or enumeration labs | Penetration tester, red team operator, security consultant |
 | Defensive Security / SOC | Forensics, network-analysis, and OT labs | SOC analyst, detection engineer, network security analyst |
 | DFIR / Investigation | OSINT, forensics, malware, and evidence-handling labs | DFIR analyst, forensic examiner, threat intelligence analyst |
-| Security Leadership / Education | Competitions, courses, advanced work, and teaching | Security lead, security educator, programme coordinator |
+| Security Leadership / Education | Events, courses, advanced work, and teaching | Security lead, security educator, programme coordinator |
 
 Each affinity reports an evidence level (`no_evidence`, `early`, `growing`,
 `strong`) and the raw evidence behind it. The strongest positive affinity is
@@ -125,7 +125,7 @@ counts completions with difficulty `advanced` or `expert`. `builder_labs`,
 - Defender and Investigator are deliberately different lenses on overlapping
   content. A forensics lab can feed both, because it is both defensive work and
   investigative work.
-- Leader rewards community and cohort participation, competitions, advanced
+- Leader rewards community and cohort participation, events, advanced
   work, and teaching. It is not a measure of seniority.
 
 ## Titles

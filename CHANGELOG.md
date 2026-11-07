@@ -58,6 +58,13 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   Cisco Networking Academy. Links are references only; third-party content is
   not copied or reproduced.
 
+### Events rename
+- Renamed the user-facing **Competitions** area to **Events** across the
+  sidebar, list, detail, registration, profile, and manuals.
+- Added canonical `/events` and `/events/:id` routes. The existing
+  `/competitions` routes redirect for older bookmarks, and the API/model names
+  remain unchanged for data compatibility.
+
 ### Version policy
 - Adopted **one platform release number, 2.1.4**, for this tree. Community /
   Academic, Professional, and Enterprise are edition profiles, not three

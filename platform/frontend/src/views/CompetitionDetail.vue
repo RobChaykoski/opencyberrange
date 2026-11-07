@@ -2,10 +2,10 @@
   <div class="competition-detail-page">
     <div v-if="error" class="error-card" role="alert">
       <p>{{ error }}</p>
-      <router-link to="/competitions" class="btn btn--outline btn--sm">Back to competitions</router-link>
+      <router-link to="/events" class="btn btn--outline btn--sm">Back to events</router-link>
     </div>
 
-    <div v-else-if="loading" class="muted-note">Loading competition...</div>
+    <div v-else-if="loading" class="muted-note">Loading event...</div>
 
     <template v-else-if="detail">
       <header class="detail-head">
@@ -17,7 +17,7 @@
             :alt="`${detail.competition.name} event mark`"
           />
           <div>
-            <router-link to="/competitions" class="back-link">← All competitions</router-link>
+            <router-link to="/events" class="back-link">← All events</router-link>
             <span class="status-pill" :class="`status-pill--${detail.competition.status}`">
               {{ statusLabel(detail.competition.status) }}
             </span>
@@ -203,7 +203,7 @@
         <div class="detail-card__head">
           <div>
             <h2>Event badges</h2>
-            <p class="muted-note">Earned only for solves inside this competition window.</p>
+            <p class="muted-note">Earned only for solves inside this event window.</p>
           </div>
         </div>
         <div class="event-badge-grid">
@@ -250,7 +250,7 @@ const eventBadges = computed(() => (
 
 const signupLink = computed(() => {
   if (!detail.value) return ''
-  return `${window.location.origin}/register?competition=${detail.value.competition.id}`
+  return `${window.location.origin}/register?event=${detail.value.competition.id}`
 })
 
 const practiceLink = computed(() => {
@@ -301,7 +301,7 @@ const loadDetail = async () => {
     const { data } = await axios.get(`/competitions/${route.params.id}`)
     detail.value = data
   } catch (err) {
-    error.value = err.response?.data?.detail || 'We could not load this competition.'
+    error.value = err.response?.data?.detail || 'We could not load this event.'
   } finally {
     loading.value = false
     refreshing.value = false
@@ -315,7 +315,7 @@ const join = async () => {
     await axios.post(`/competitions/${route.params.id}/join`)
     await loadDetail()
   } catch (err) {
-    actionError.value = err.response?.data?.detail || 'Could not join the competition.'
+    actionError.value = err.response?.data?.detail || 'Could not join the event.'
   } finally {
     joining.value = false
   }
@@ -328,7 +328,7 @@ const leave = async () => {
     await axios.post(`/competitions/${route.params.id}/leave`)
     await loadDetail()
   } catch (err) {
-    actionError.value = err.response?.data?.detail || 'Could not leave the competition.'
+    actionError.value = err.response?.data?.detail || 'Could not leave the event.'
   } finally {
     joining.value = false
   }

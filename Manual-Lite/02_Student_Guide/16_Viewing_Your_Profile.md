@@ -55,7 +55,7 @@ The five traits are:
 | Builder | Hands-on completions, time on task, and clean solves |
 | Defender | Defensive, forensics, network-analysis, and OT practice |
 | Investigator | OSINT, reconnaissance, traffic analysis, and forensics |
-| Leader | Competitions, courses, badges, advanced labs, and teaching |
+| Leader | Events, courses, badges, advanced labs, and teaching |
 
 Your highest trait becomes your **class**: Pathfinder, Artificer, Warden,
 Seeker, or Commander. Each trait has a score from 0 to 100 and a tier from

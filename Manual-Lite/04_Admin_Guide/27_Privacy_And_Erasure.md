@@ -20,7 +20,7 @@ service runs when a student deletes their own account from
 - Password hash, MFA secret, recovery codes, trusted devices, last-login IP
 - VPN keys and client IP (the WireGuard peer is removed)
 - Course enrolments, completions, flag attempts, quiz attempts, achievements,
-  competition entries, completion resets
+  event entries, completion resets
 - Lab sessions (all running containers are destroyed) and WebSocket tickets
 - Activity identities: actor, target, label, detail, and IP are cleared
 
@@ -42,7 +42,7 @@ service runs when a student deletes their own account from
 
 `GET /api/auth/export` returns the account's personal data as JSON. It includes
 the account record, VPN metadata, courses, completions, flag attempts, quiz
-attempts, achievements, sessions, competitions, and activity. Password hashes,
+attempts, achievements, sessions, events, and activity. Password hashes,
 MFA secrets, recovery codes, trusted-device tokens, and the WireGuard private
 key are excluded. The download is audited with the fixed purpose "Self-service
 subject access request"; the transcript download records "Self-service
