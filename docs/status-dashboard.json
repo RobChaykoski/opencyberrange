@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-07T20:39:47+00:00",
+  "generated_at": "2026-11-07T20:47:17+00:00",
   "overall": "healthy",
   "message": "All deployments are up and on the expected version.",
   "deployments": [
@@ -46,7 +46,7 @@
       "main_asset": "index-CJWOh6S5.js",
       "css_asset": "index-BKbIZQ9N.css",
       "asset_count": 3,
-      "response_ms": 267,
+      "response_ms": 35,
       "server": "nginx/1.31.8",
       "tls": "self-signed / unverified",
       "errors": [
