@@ -148,7 +148,7 @@
                       Reset
                     </button>
                     <span class="avatar-border-menu__status" aria-live="polite">
-                      {{ borderSaving ? 'Savingâ€¦' : (borderMessage || 'Changes save automatically') }}
+                      {{ borderSaving ? 'Saving…' : (borderMessage || 'Changes save automatically') }}
                     </span>
                   </div>
                 </div>
@@ -165,7 +165,7 @@
             <h1 class="profile-hero__name">{{ displayName }}</h1>
             <p class="profile-hero__handle">
               <span>@{{ user.username }}</span>
-              <span class="profile-hero__dot">Â·</span>
+              <span class="profile-hero__dot">·</span>
               <span>{{ user.email }}</span>
             </p>
             <p v-if="user.organization" class="profile-hero__org">{{ user.organization }}</p>
@@ -204,21 +204,21 @@
 
           <div class="profile-stats">
             <div class="profile-stat">
-              <span class="profile-stat__value">{{ summary ? summary.totals.certificates : 'â€”' }}</span>
+              <span class="profile-stat__value">{{ summary ? summary.totals.certificates : '—' }}</span>
               <span class="profile-stat__label">Certificates</span>
             </div>
             <div class="profile-stat">
               <span class="profile-stat__value">
-                {{ summary ? summary.totals.labs_completed : 'â€”' }}<small v-if="summary">/{{ summary.totals.labs_total }}</small>
+                {{ summary ? summary.totals.labs_completed : '—' }}<small v-if="summary">/{{ summary.totals.labs_total }}</small>
               </span>
               <span class="profile-stat__label">Exercises</span>
             </div>
             <div class="profile-stat">
-              <span class="profile-stat__value">{{ summary ? summary.totals.progress_percent : 'â€”' }}<small v-if="summary">%</small></span>
+              <span class="profile-stat__value">{{ summary ? summary.totals.progress_percent : '—' }}<small v-if="summary">%</small></span>
               <span class="profile-stat__label">Complete</span>
             </div>
             <div class="profile-stat">
-              <span class="profile-stat__value">{{ summary ? summary.totals.achievements : 'â€”' }}</span>
+              <span class="profile-stat__value">{{ summary ? summary.totals.achievements : '—' }}</span>
               <span class="profile-stat__label">Badges</span>
             </div>
           </div>
@@ -418,7 +418,7 @@
                 >
                   <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
                   <span>{{ badge.label }}</span>
-                  <span v-if="badge.count > 1" class="course-achievement-badge__count">Ã—{{ badge.count }}</span>
+                  <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
                 </span>
               </div>
               <footer class="course-achievement-card__foot">
@@ -447,7 +447,7 @@
                 >
                   <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
                   <span>{{ badge.label }}</span>
-                  <span v-if="badge.count > 1" class="course-achievement-badge__count">Ã—{{ badge.count }}</span>
+                  <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
                 </span>
               </div>
               <footer class="course-achievement-card__foot">
@@ -498,8 +498,8 @@
                 <span class="certificate-card__track" :style="{ color: cert.track_color || 'var(--accent)' }">{{ cert.track_name }}</span>
                 <span class="certificate-card__title">Level {{ cert.level_number }}: {{ cert.level_name }}</span>
                 <span class="certificate-card__meta">
-                  Awarded {{ cert.issued_display }} Â· {{ cert.exercises_completed }} exercises
-                  <template v-if="cert.quiz_score !== null && cert.quiz_score !== undefined"> Â· Quiz {{ cert.quiz_score }}%</template>
+                  Awarded {{ cert.issued_display }} · {{ cert.exercises_completed }} exercises
+                  <template v-if="cert.quiz_score !== null && cert.quiz_score !== undefined"> · Quiz {{ cert.quiz_score }}%</template>
                 </span>
                 <span class="certificate-card__id">{{ cert.certificate_id }}</span>
               </router-link>
@@ -1168,7 +1168,7 @@ const currentBorderHex = computed(() => currentColorOption.value.hex)
 const currentColorLabel = computed(() => currentColorOption.value.label)
 const currentStyleLabel = computed(() => currentStyleOption.value.label)
 const currentBorderLabel = computed(
-  () => `${currentStyleLabel.value} Â· ${currentColorLabel.value}`
+  () => `${currentStyleLabel.value} · ${currentColorLabel.value}`
 )
 
 const closeBorderMenu = (returnFocus = false) => {
@@ -1553,7 +1553,7 @@ async function downloadTranscript() {
 }
 
 const formatDateOnly = (dateStr) => {
-  if (!dateStr) return 'â€”'
+  if (!dateStr) return '—'
   const value = dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z'
   return new Date(value).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
@@ -1561,7 +1561,7 @@ const formatDateOnly = (dateStr) => {
 }
 
 const formatCompletionDate = (dateStr) => {
-  if (!dateStr) return 'â€”'
+  if (!dateStr) return '—'
   return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
   })

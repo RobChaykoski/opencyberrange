@@ -1,5 +1,5 @@
 ﻿"""
-RangeBox routes â€” browser-based Kali attack desktop via noVNC.
+RangeBox routes — browser-based Kali attack desktop via noVNC.
 
 Provides WebSocket proxy between the browser's noVNC client and the
 RangeBox container's websockify server. Authentication is handled here
@@ -493,7 +493,7 @@ async def rangebox_vnc_proxy(
             async with http_session.ws_connect(
                 rangebox_ws_url,
                 protocols=["binary"],
-                max_msg_size=16 * 1024 * 1024,  # 16MB â€” VNC can send large frames
+                max_msg_size=16 * 1024 * 1024,  # 16MB — VNC can send large frames
             ) as upstream:
                 # â”€â”€ 5. Bidirectional relay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 

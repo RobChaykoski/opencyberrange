@@ -103,7 +103,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 
 The following remain on their current bases in this programme:
 
-- `platform/labs/**` â€” including ~148 Ubuntu 22.04 images, Alpine 3.18/3.19,
+- `platform/labs/**` — including ~148 Ubuntu 22.04 images, Alpine 3.18/3.19,
   PHP 8.1, MySQL 8.0, and Python 3.11 mock services.
 - `RangeBox/**`, `UbuntuBox/**`, `RemnuxBox/**`.
 

@@ -491,7 +491,7 @@ def _growth(completions: list[LabCompletion]) -> list[dict]:
             round(time_latest, 2) if time_latest is not None else None,
             time_status,
             "Median time as a fraction of the exercise estimate. Lower is more efficient.",
-            "Ã— estimate",
+            "× estimate",
         ),
         {
             "label": "Persistence",

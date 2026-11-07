@@ -174,7 +174,7 @@ const isAdminViewer = computed(() => !!props.adminTargetUserId)
 const labCompleted = computed(() => flagAccepted.value || !!props.labContext?.completed)
 
 const toolbarLabel = computed(() => {
-  if (isAdminViewer.value) return `Admin View â€” Student ${props.adminTargetUserId}`
+  if (isAdminViewer.value) return `Admin View — Student ${props.adminTargetUserId}`
   return imageDisplayName.value ? `RangeBox - ${imageDisplayName.value}` : 'RangeBox'
 })
 
@@ -207,7 +207,7 @@ const fetchTimeRemaining = async () => {
       timeRemaining.value = data.time_remaining
     }
   } catch {
-    // Silently ignore â€” timer is a nice-to-have
+    // Silently ignore — timer is a nice-to-have
   }
 }
 
@@ -217,7 +217,7 @@ const startTimer = () => {
     if (timeRemaining.value !== null) {
       timeRemaining.value = Math.max(0, timeRemaining.value - 1)
       if (timeRemaining.value <= 0) {
-        // Session expired â€” disconnect
+        // Session expired — disconnect
         connectionState.value = 'disconnected'
         if (rfb) {
           try { rfb.disconnect() } catch {}
@@ -271,9 +271,9 @@ const getWsUrl = async () => {
     const { data } = await axios.post('/rangebox/ws-ticket')
     credential = data.ticket
   } catch {
-    // Do NOT fall back to raw JWT â€” it would leak into URLs, logs, and browser history.
+    // Do NOT fall back to raw JWT — it would leak into URLs, logs, and browser history.
     // Force the user to retry instead.
-    console.warn('Failed to obtain WebSocket ticket â€” connection will not be established.')
+    console.warn('Failed to obtain WebSocket ticket — connection will not be established.')
     return null
   }
   return `${proto}//${window.location.host}/api/rangebox/${path}?token=${encodeURIComponent(credential)}`
@@ -435,7 +435,7 @@ const sendClipboard = async () => {
 }
 
 const receiveClipboard = () => {
-  // Request clipboard from VNC â€” the 'clipboard' event handler above will catch it
+  // Request clipboard from VNC — the 'clipboard' event handler above will catch it
   if (rfb) {
     rfb.focus()
   }
@@ -683,7 +683,7 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   min-height: 0;
 }
 
-/* noVNC handles canvas sizing via scaleViewport â€” do NOT override
+/* noVNC handles canvas sizing via scaleViewport — do NOT override
    width/height here or mouse coordinates will be offset. */
 
 /* Lab dock: target IPs and flag entry inside the RangeBox window */

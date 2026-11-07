@@ -100,7 +100,7 @@
           </div>
           <div class="stat-card__content">
             <span class="stat-card__value">{{ stats.vpn_registered }}</span>
-            <span class="stat-card__label">VPN Peers<InfoTip text="Configured WireGuard peers â€” students with VPN access to the lab network." /></span>
+            <span class="stat-card__label">VPN Peers<InfoTip text="Configured WireGuard peers — students with VPN access to the lab network." /></span>
           </div>
         </div>
       </div>
@@ -621,7 +621,7 @@
                         </td>
                         <td>
                           <span class="track-badge" :style="{ background: (adminTrackColorMap[lab.track_name] || '#3b82f6') + '1a', color: adminTrackColorMap[lab.track_name] || '#3b82f6' }">
-                            {{ lab.track_name || 'â€”' }}
+                            {{ lab.track_name || '—' }}
                           </span>
                           <div v-if="lab.level_name" class="lab-desc">{{ lab.level_name }}</div>
                         </td>
@@ -629,7 +629,7 @@
                           <span v-if="lab.difficulty" :class="['difficulty-badge', 'difficulty-' + lab.difficulty]">{{ lab.difficulty }}</span>
                           <span v-else class="lab-desc">&mdash;</span>
                         </td>
-                        <td>{{ lab.duration_minutes ? lab.duration_minutes + ' min' : 'â€”' }}</td>
+                        <td>{{ lab.duration_minutes ? lab.duration_minutes + ' min' : '—' }}</td>
                         <td>
                           <select
                             class="exercise-vis-select"
@@ -969,7 +969,7 @@
                     <line x1="12" y1="9" x2="12" y2="13"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                   </svg>
-                  <span>Stale session â€” DB shows running but no containers exist</span>
+                  <span>Stale session — DB shows running but no containers exist</span>
                 </div>
 
                 <div class="containers-section">
@@ -1019,7 +1019,7 @@
             <div v-if="viewingLogsSessionId" class="modal-overlay" @click.self="closeSessionLogs">
               <div class="modal" style="max-width: 900px; max-height: 80vh; overflow: auto;">
                 <div class="modal-header">
-                  <h3 class="modal-title">Container Logs â€” Session #{{ viewingLogsSessionId }}</h3>
+                  <h3 class="modal-title">Container Logs — Session #{{ viewingLogsSessionId }}</h3>
                   <button @click="closeSessionLogs" class="modal-close">&times;</button>
                 </div>
                 <div v-if="sessionLogsLoading" class="empty-state">Loading logs...</div>
@@ -1220,7 +1220,7 @@
                           <span class="transfer-down">â†“ {{ peer.transfer_rx || '0 B' }}</span>
                           <span class="transfer-up">â†‘ {{ peer.transfer_tx || '0 B' }}</span>
                         </template>
-                        <span v-else class="cell-muted">â€”</span>
+                        <span v-else class="cell-muted">—</span>
                       </td>
                       <td>
                         <template v-if="!peer.is_labs_server">
@@ -1357,8 +1357,8 @@
                         <span class="event-badge" :class="isDiagnosticEvent(event) ? 'event-badge--diagnostic' : 'event-badge--' + event.event_type">{{ event.label }}</span>
                         <span v-if="isDiagnosticEvent(event)" class="diagnostic-tag">Diagnostics</span>
                       </td>
-                      <td>{{ event.actor_name || 'â€”' }}</td>
-                      <td>{{ event.target_label || 'â€”' }}</td>
+                      <td>{{ event.actor_name || '—' }}</td>
+                      <td>{{ event.target_label || '—' }}</td>
                       <td class="cell-muted" style="max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ formatActivityDetail(event.detail) }}</td>
                     </tr>
                   </tbody>
@@ -1477,7 +1477,7 @@
                   <td class="cell-primary">{{ course.name }}</td>
                   <td>{{ course.code }}</td>
                   <td>{{ course.semester }}</td>
-                  <td>{{ course.instructor_name || 'â€”' }}</td>
+                  <td>{{ course.instructor_name || '—' }}</td>
                   <td>{{ course.student_count }}</td>
                   <td>{{ course.lab_count }}</td>
                   <td>
@@ -1728,7 +1728,7 @@
                     <div class="setting-input-group">
                       <input
                         v-model="settingsEdits[key]"
-                        :type="value === 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢' ? 'password' : 'text'"
+                        :type="value === '••••••••' ? 'password' : 'text'"
                         :placeholder="settingPlaceholder(key)"
                         class="form-input form-input--sm"
                       />
@@ -2198,13 +2198,13 @@
                   Total: <strong>{{ stressResults.total_calls }}</strong> calls in <strong>{{ stressResults.duration_seconds }}s</strong>
                 </div>
                 <div :style="{ background: stressResults.error_rate_passed ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.error_rate_passed ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
-                  {{ stressResults.error_rate_passed ? 'PASS' : 'FAIL' }} â€” Error rate: <strong>{{ stressResults.error_rate }}%</strong> (threshold: 5%)
+                  {{ stressResults.error_rate_passed ? 'PASS' : 'FAIL' }} — Error rate: <strong>{{ stressResults.error_rate }}%</strong> (threshold: 5%)
                 </div>
                 <div :style="{ background: stressResults.all_thresholds_passed ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.all_thresholds_passed ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
-                  {{ stressResults.all_thresholds_passed ? 'PASS' : 'FAIL' }} â€” {{ stressResults.all_thresholds_passed ? 'All endpoints within thresholds' : 'Some endpoints exceeded thresholds' }}
+                  {{ stressResults.all_thresholds_passed ? 'PASS' : 'FAIL' }} — {{ stressResults.all_thresholds_passed ? 'All endpoints within thresholds' : 'Some endpoints exceeded thresholds' }}
                 </div>
                 <div v-if="stressResults.prespawn_total" :style="{ background: stressResults.prespawn_pass ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.prespawn_pass ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
-                  {{ stressResults.prespawn_pass ? 'PASS' : 'FAIL' }} â€” Pre-spawn: <strong>{{ stressResults.prespawn_succeeded }}/{{ stressResults.prespawn_total }}</strong> {{ stressResults.level === 4 ? 'RangeBoxes' : 'labs' }}
+                  {{ stressResults.prespawn_pass ? 'PASS' : 'FAIL' }} — Pre-spawn: <strong>{{ stressResults.prespawn_succeeded }}/{{ stressResults.prespawn_total }}</strong> {{ stressResults.level === 4 ? 'RangeBoxes' : 'labs' }}
                   <span v-if="stressResults.prespawn_failed > 0" style="color: #eab308;"> ({{ stressResults.prespawn_failed }} failed)</span>
                 </div>
                 <div v-if="stressResults.host_cpu_pct != null" style="background: rgba(30,41,59,0.5); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.8rem;">
@@ -4383,7 +4383,7 @@ const testerResults = ref({})  // slug â†’ { status, date, labName, categor
 const testerRunId = ref(null)
 const quickTestSlug = ref(null)
 const quickTestTerminalRef = ref(null)
-// (testerAbortController removed â€” polling-based now, no fetch to abort)
+// (testerAbortController removed — polling-based now, no fetch to abort)
 
 // Progress tracking
 const testerProgressCurrent = ref(0)   // labs completed so far
@@ -4513,7 +4513,7 @@ const saveSettings = async () => {
   try {
     const payload = {}
     for (const [key, val] of Object.entries(settingsEdits)) {
-      if (val !== 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢') payload[key] = val
+      if (val !== '••••••••') payload[key] = val
     }
     await axios.put('/settings/', { settings: payload })
     showAlert('Settings saved')
@@ -5081,7 +5081,7 @@ const checkActiveStressTest = async () => {
       _startStressPolling(res.data.run_id)
       return
     }
-    // No active test â€” try to restore last completed results
+    // No active test — try to restore last completed results
     if (!stressResults.value) {
       const last = await axios.get('/admin/stress-test/last-result')
       if (last.data.results) {
@@ -5137,7 +5137,7 @@ const closeVmTerminal = (vmName) => {
 
 // â”€â”€ Provision event streaming (SSE) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Uses Server-Sent Events for real-time event delivery from the backend.
-// The backend pushes events as they happen â€” no polling, no timers, no race conditions.
+// The backend pushes events as they happen — no polling, no timers, no race conditions.
 let _provisionEventSource = null
 
 // â”€â”€ VM Definition CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -5509,7 +5509,7 @@ const checkImpersonationStatus = async () => {
       if (match) impersonatingSessionId.value = match.session_id
     }
   } catch {
-    // Ignore â€” not critical
+    // Ignore — not critical
   }
 }
 
@@ -5709,7 +5709,7 @@ const parseLabYaml = () => {
   yamlParseError.value = ''
   if (!createLabForm.lab_yaml.trim()) return
   try {
-    // Simple YAML parser for lab.yaml â€” handles the key fields we need
+    // Simple YAML parser for lab.yaml — handles the key fields we need
     const text = createLabForm.lab_yaml
     const parsed = {}
     // Extract simple key: value fields
@@ -5781,7 +5781,7 @@ const showAlert = (message, type = 'success') => showToast(message, type, 5000)
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  // Backend stores naive UTC â€” append 'Z' so JS knows it's UTC, then display in CST
+  // Backend stores naive UTC — append 'Z' so JS knows it's UTC, then display in CST
   const d = new Date(dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z')
   return d.toLocaleString('en-US', { timeZone: getUserTimeZone() })
 }
@@ -5814,7 +5814,7 @@ const formatActivityDetail = (detail) => {
       if (['time_to_solve_seconds', 'attempts', 'hints_used', 'hint_number', 'source'].includes(k)) continue
       parts.push(`${k.replace(/_/g, ' ')}: ${v}`)
     }
-    return parts.join(' Â· ')
+    return parts.join(' · ')
   } catch {
     return detail
   }
@@ -5849,7 +5849,7 @@ const fetchAll = async () => {
   } catch (e) {
     showAlert('Failed to load data', 'error')
   }
-  // Load session health in background â€” it queries Docker per-session and can take 30s+
+  // Load session health in background — it queries Docker per-session and can take 30s+
   axios.get('/admin/sessions/health').then(res => {
     sessionsHealth.value = res.data
     checkImpersonationStatus()
@@ -6884,7 +6884,7 @@ const terminateSession = async (id) => {
     }
     fetchAll()
   } catch (e) {
-    // If 400, session was already stopped â€” just remove it from UI
+    // If 400, session was already stopped — just remove it from UI
     if (e.response?.status === 400) {
       showAlert('Session already stopped')
       if (sessionsHealth.value.sessions) {
@@ -7348,7 +7348,7 @@ const archiveCourse = async (course) => {
 const unarchiveCourse = async (course) => {
   try {
     await axios.post(`/courses/${course.id}/unarchive`)
-    showAlert('Course unarchived (still inactive â€” activate manually)')
+    showAlert('Course unarchived (still inactive — activate manually)')
     fetchAdminCourses()
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to unarchive', 'error')
