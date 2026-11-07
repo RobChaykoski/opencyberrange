@@ -4,7 +4,7 @@ Before you install SWOCTS Cyber Range you size the host, open the right ports, a
 
 ## Operating system
 
-Use **Ubuntu 24.04 LTS** for a new 2.1 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.1. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](../../docs/OS-SUPPORT.md) and the [24.04 migration plan](../../docs/V2-UBUNTU-24.04-MIGRATION.md).
+Use **Ubuntu 24.04 LTS** for a new 2.1 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.1. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
 
 ## Platform versions
 
@@ -21,7 +21,7 @@ The current supported stack for the 2.1.4 release line is:
 | nginx | stable Alpine | Frontend runtime image |
 | Docker Engine | 24 or newer | With the Compose v2 plugin |
 
-[`versions.yaml`](../../versions.yaml) is the source of truth for exact dependency
+[`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml) is the source of truth for exact dependency
 and image pins. Python 3.13, Node.js 24, and PostgreSQL 17 are tracked there as
 future targets; they are not part of the current single-host installation.
 

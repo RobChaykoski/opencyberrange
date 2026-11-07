@@ -92,6 +92,11 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   only where that feature is enabled.
 - Removed new CodeQL findings from the career-profile seed and test fixtures.
 
+### Reliability
+- Fixed the instructor and admin dashboard Pulse chart on PostgreSQL. The
+  `date_trunc` bucket expression is now identical in `SELECT` and `GROUP BY`,
+  so PostgreSQL no longer raises a grouping error for `/api/dashboard/instructor/pulse`.
+
 ### Operations
 - Added `scripts/status-dashboard.py`, a small API-based dev/prod status
   dashboard. It checks `/api/version`, `/api/setup/status`, and the SPA index,

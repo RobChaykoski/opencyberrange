@@ -23,7 +23,7 @@ For the guided installer, see [Local Deployment](02_Local_Deployment.md) or
 | `backend` | `ocr-backend` | `127.0.0.1:8000` | FastAPI API and lab orchestration |
 | `frontend` | `ocr-frontend` | `80`, `443` | Vue app, API proxy, HTTPS |
 
-Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `redis:7-alpine`. The exact pins are in [`versions.yaml`](../../versions.yaml).
+Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `redis:7-alpine`. The exact pins are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml).
 
 Persistent volumes:
 
@@ -37,7 +37,7 @@ backend as `/labs`.
 
 ## 1. Prerequisites
 
-- Ubuntu 24.04 LTS for 2.1; Ubuntu 22.04 LTS remains supported for Community / Academic profile and as a 2.1 upgrade source; see [Host OS support](../../docs/OS-SUPPORT.md)
+- Ubuntu 24.04 LTS for 2.1; Ubuntu 22.04 LTS remains supported for Community / Academic profile and as a 2.1 upgrade source; see [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md)
 - Docker Engine 24+ with the Compose v2 plugin
 - Git
 - Current platform versions are listed under [Platform versions](01_Prerequisites.md#platform-versions)

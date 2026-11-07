@@ -13,7 +13,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import Response
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func
+from sqlalchemy import func, literal_column
 
 from app.database import get_db
 from app.models import (
@@ -272,9 +272,16 @@ async def instructor_pulse(
     # Scope to visible students (respects course_id / user_id filters)
     student_ids = _resolve_student_scope(db, current_user, course_id, user_id)
 
-    # Query activity_events grouped by bucket
+    # Query activity_events grouped by bucket.
+    # The truncation unit is rendered as a SQL literal so the SELECT and
+    # GROUP BY expressions match exactly on PostgreSQL; separate bind
+    # parameters make PostgreSQL reject the grouped query.
+    bucket_expr = func.date_trunc(
+        literal_column(f"'{trunc_unit}'"),
+        ActivityEvent.created_at,
+    ).label('bucket')
     q = db.query(
-        func.date_trunc(trunc_unit, ActivityEvent.created_at).label('bucket'),
+        bucket_expr,
         ActivityEvent.event_type,
         func.count(ActivityEvent.id).label('cnt'),
     ).filter(
@@ -284,10 +291,7 @@ async def instructor_pulse(
     q = _exclude_diagnostic(q, ActivityEvent.actor_id, db)
     if student_ids is not None:
         q = q.filter(ActivityEvent.actor_id.in_(student_ids)) if student_ids else q.filter(False)
-    rows = q.group_by(
-        func.date_trunc(trunc_unit, ActivityEvent.created_at),
-        ActivityEvent.event_type,
-    ).all()
+    rows = q.group_by(bucket_expr, ActivityEvent.event_type).all()
 
     # Build bucket keys
     bucket_data = {}
@@ -587,8 +591,12 @@ async def instructor_report(
     use_days = total_hours > 48
     trunc_unit = 'day' if use_days else 'hour'
 
+    bucket_expr = func.date_trunc(
+        literal_column(f"'{trunc_unit}'"),
+        ActivityEvent.created_at,
+    ).label('bucket')
     pq = db.query(
-        func.date_trunc(trunc_unit, ActivityEvent.created_at).label('bucket'),
+        bucket_expr,
         ActivityEvent.event_type,
         func.count(ActivityEvent.id).label('cnt'),
     ).filter(
@@ -596,10 +604,7 @@ async def instructor_report(
         ActivityEvent.created_at <= range_end,
     )
     pq = _scope(pq, ActivityEvent.actor_id)
-    pulse_rows = pq.group_by(
-        func.date_trunc(trunc_unit, ActivityEvent.created_at),
-        ActivityEvent.event_type,
-    ).all()
+    pulse_rows = pq.group_by(bucket_expr, ActivityEvent.event_type).all()
 
     bucket_data = {}
     if use_days:

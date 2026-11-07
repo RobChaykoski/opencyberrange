@@ -75,7 +75,7 @@ negative label.
 The **Career alignment** card maps your current class to a certification path
 using the same track guidance as the certification panel. The roadmap link opens
 Paul Jerimy's Security Certification Roadmap. Treat it as guidance, not an
-official mapping. The [Career and certification resources](../../docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
+official mapping. The [Career and certification resources](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
 page lists additional external practice and learning references. Those links are
 references only; their content is not copied into the platform.
 

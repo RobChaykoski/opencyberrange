@@ -28,7 +28,7 @@ opening it does not change the tab you last used in `/admin`.
     The **Surveys** link in the Instructor section opens the survey builder and
     response history. Reporting and survey results are separate pages but share
     the same consent and privacy rules. See
-    [Survey privacy](../../docs/SURVEY-PRIVACY.md) if you distribute surveys.
+    [Survey privacy](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SURVEY-PRIVACY.md) if you distribute surveys.
 
 ## Read the summary cards
 
@@ -144,5 +144,5 @@ reuse another person's reason; the audit entry is tied to the signed-in account.
 - [Admin Panel Overview](01_Admin_Panel_Overview.md)
 - [Monitoring Active Sessions](13_Monitoring_Active_Sessions.md)
 - [Generating PDF Reports](../03_Instructor_Guide/12_Generating_PDF_Reports.md)
-- [Learning analytics design](../../docs/V2-LEARNING-ANALYTICS.md)
-- [Programme reports](../../docs/PROGRAMME-REPORTS.md)
+- [Learning analytics design](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-LEARNING-ANALYTICS.md)
+- [Programme reports](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/PROGRAMME-REPORTS.md)
