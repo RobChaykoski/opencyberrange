@@ -832,9 +832,21 @@ cd platform && docker compose up -d frontend
 
 After installation, log in as admin and navigate to **Admin Panel > System Health**. The health check verifies Docker, the database, disk space, and the Peer Manager VPN service (if installed). All indicators should show green. The page footer shows the running platform version, and `GET /api/version` returns the same value for support reports.
 
+For a small API-based deployment dashboard, run:
+
+```bash
+python scripts/status-dashboard.py
+```
+
+This writes `docs/status-dashboard.html`, `docs/status-dashboard.md`, and (with
+`--json docs/status-dashboard.json`) a machine-readable snapshot. It checks
+`/api/version`, `/api/setup/status`, and the SPA index only; it does not log in
+or read learner records. Docker host and container state still need
+`docker compose ps` on each host.
+
 ## Requirements
 
-- **OS:** Ubuntu 24.04 LTS for new 2.0 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
+- **OS:** Ubuntu 24.04 LTS for new 2.1 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
 - **Platform stack:** SWOCTS Cyber Range 2.1.4 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).

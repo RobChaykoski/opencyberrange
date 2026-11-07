@@ -77,6 +77,12 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Reconciled `versions.yaml` and `docs/SUPPORTED-VERSIONS.md` with the installed
   backend and frontend dependency set.
 
+### Operations
+- Added `scripts/status-dashboard.py`, a small API-based dev/prod status
+  dashboard. It checks `/api/version`, `/api/setup/status`, and the SPA index,
+  writes HTML/Markdown/JSON snapshots, and never logs in or reads learner data.
+- Added generated deployment status snapshots under `docs/`.
+
 ### Reporting and navigation
 - Restored **Reports & analytics** to the sidebar after the link was dropped in
   the Skill DNA navigation change. Administrators see it in the **Admin**
