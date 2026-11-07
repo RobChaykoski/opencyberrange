@@ -1,8 +1,8 @@
 # Career and certification resources
 
 Status: **Active curriculum guidance**
-Edition: **Community / Academic 1.1** (inherited by Professional 2.1.4 and
-Enterprise 3.0)
+Edition: **Community / Academic profile** (inherited by Professional 2.1.4 and
+Enterprise preview)
 Owner: Curriculum
 
 This page records the external references that shape career guidance in the

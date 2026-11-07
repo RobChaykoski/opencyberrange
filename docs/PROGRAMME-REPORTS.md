@@ -1,6 +1,6 @@
 # Programme reports
 
-Status: **Professional 2.0 and Enterprise 3.0**
+Status: **Professional 2.1.4 and Enterprise preview**
 Audience: programme leads, instructors, accreditation reviewers, approved
 researchers
 

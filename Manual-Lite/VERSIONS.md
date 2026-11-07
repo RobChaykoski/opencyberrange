@@ -1,7 +1,8 @@
 # Manual editions
 
 The core manual in this folder describes the workflows shared by the
-**Community / Academic 1.1** and **Professional 2.1.4** platforms. Professional
+**Community / Academic profile** (1.1.3 maintenance) and **Professional 2.1.4**
+platforms. Professional
 and Enterprise are cumulative: every page here still applies, and each edition
 adds the pages in its own supplement.
 

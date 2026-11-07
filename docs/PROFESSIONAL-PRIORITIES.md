@@ -1,8 +1,8 @@
 # Professional and Enterprise priorities
 
 Status: **Active scope**
-Applies to: **Professional 2.0** and **Enterprise 3.0 only**
-Not in: Community / Academic 1.1
+Applies to: **Professional 2.1.4** and **Enterprise preview only**
+Not in: Community / Academic profile
 
 These five capabilities are the top priorities for the Professional edition and
 are inherited by Enterprise. They are the product answer to the five reporting
@@ -139,7 +139,7 @@ instructor decides. The learner can see their own evidence and correct errors.
 Each priority needs a written plan, acceptance tests, privacy review, and a
 release gate before it is marked delivered.
 
-## Not in Community / Academic 1.1
+## Not in Community / Academic profile
 
 Community / Academic continues to receive lab and workbook improvements,
 exercise authoring, bug fixes, maintenance, and security updates. It does not

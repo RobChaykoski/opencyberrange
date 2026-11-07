@@ -1,13 +1,13 @@
-# SWOCTS Cyber Range Professional 2.1
+# SWOCTS Cyber Range Professional 2.1.4
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
-Edition: **Professional** — Community / Academic 1.1 plus analytics, reporting,
+Edition: **Professional** — Community / Academic profile plus analytics, reporting,
 cohort analysis, competency evidence, accreditation support, and research
 exports.
-Status: release. This is the final 2.1 build.
+Status: release. This is the current 2.1.4 platform release.
 
-Enterprise 3.0 is the separate HA, SSO, enterprise reporting, multi-tenant,
+Enterprise preview is the separate HA, SSO, enterprise reporting, multi-tenant,
 LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
 
 The five Professional priorities are Competency Framework Engine, Student
@@ -41,20 +41,21 @@ see `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
   timestamp.
 - **Reporting exports:** cross-course Reports can be downloaded as CSV or PDF,
   including learning hours and aggregate exercise feedback.
-- **Competition event marks:** optional validated competition logos appear on
-  event cards and detail headers.
-- **Security baseline:** the v2 interface, data, and delivery process now use
+- **Event marks:** optional validated event logos appear on event cards and
+  detail headers.
+- **Security baseline:** the 2.1.4 interface, data, and delivery process use
   the OWASP Top 10 as a merge and release requirement. See
   `docs/V2-SECURITY-OWASP-TOP-10.md`.
 
 ## Release status
 
-Analytics and reporting are delivered and running on the 24.04 preview host.
-2.0 GA remains blocked by the 24.04 network/lab/recovery gates described in
-`docs/V2-PROGRAM-CHARTER.md`. Multi-host HA moved to v3 and is not a 2.0 release
-gate; see `docs/V3-HA-LAB-POOL.md`.
+Analytics and reporting are delivered and running on the 24.04 deployment.
+Platform health, login, course, event, and profile checks pass. The full lab
+matrix and restore drill remain production-acceptance work; see
+`docs/V2-PROGRAM-CHARTER.md`. Enterprise HA remains a preview profile and is not
+part of the 2.1.4 release gate; see `docs/V3-HA-LAB-POOL.md`.
 
-## Upgrade notes for the development line
+## Upgrade notes
 
 1. Take a database snapshot before upgrading.
 2. Pull the current `main` commit.

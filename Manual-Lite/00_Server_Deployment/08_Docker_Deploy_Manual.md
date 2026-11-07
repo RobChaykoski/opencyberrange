@@ -37,7 +37,7 @@ backend as `/labs`.
 
 ## 1. Prerequisites
 
-- Ubuntu 24.04 LTS for 2.1; Ubuntu 22.04 LTS remains supported for Community / Academic 1.1 and as a 2.1 upgrade source; see [Host OS support](../../docs/OS-SUPPORT.md)
+- Ubuntu 24.04 LTS for 2.1; Ubuntu 22.04 LTS remains supported for Community / Academic profile and as a 2.1 upgrade source; see [Host OS support](../../docs/OS-SUPPORT.md)
 - Docker Engine 24+ with the Compose v2 plugin
 - Git
 - Current platform versions are listed under [Platform versions](01_Prerequisites.md#platform-versions)

@@ -1,12 +1,14 @@
-# Enterprise 3.0 Multi-Host Lab Pool and HA Deployment Plan
+# Enterprise preview multi-host lab pool and HA deployment plan
 
-Status: **Enterprise 3.0 — control-plane HA reference implemented and locally
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.1.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+
+Status: **Enterprise preview — control-plane HA reference implemented and locally
 drilled; lab-pool and full multi-host validation not implemented**
 Program link: [`docs/V3-PARKING-LOT.md`](V3-PARKING-LOT.md)
 Design skill: `.opencode/skills/opencyberrange-ha-architecture/SKILL.md`
 
-> Enterprise 3.0 adds high availability and multi-host lab pools on top of
-> Professional 2.0. The Professional analytics and reporting workstreams do not
+> Enterprise preview adds high availability and multi-host lab pools on top of
+> Professional 2.1.4. The Professional analytics and reporting workstreams do not
 > depend on this plan.
 
 ## Purpose

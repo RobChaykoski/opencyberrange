@@ -1,7 +1,7 @@
 # Reverse proxy and Nginx Proxy Manager
 
 Status: **Operator guidance**
-Applies to: Community / Academic 1.1, Professional 2.0, Enterprise 3.0
+Applies to: Community / Academic profile, Professional 2.1.4, Enterprise preview
 
 The platform is designed to run behind a TLS-terminating reverse proxy. This
 page records the settings that matter and the edge controls that complement

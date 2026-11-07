@@ -1,5 +1,7 @@
 # SWOCTS Cyber Range: V2 security evidence record
 
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.1.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+
 This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
 **Status:** Active. This is the release evidence companion to
@@ -54,9 +56,9 @@ build passed. Existing restore-drill and dependency-audit evidence from the
 - Full lab matrix: multi-container, capture, shared-container, RangeBox,
   UbuntuBox, and REMnuxBox exercises.
 - WireGuard client tunnel and reboot-persistence check.
-HA failover acceptance tests are part of the v3 workstream in
-[`V3-HA-LAB-POOL.md`](V3-HA-LAB-POOL.md), not a 2.0 release gate.
+HA failover acceptance tests are part of the Enterprise preview workstream in
+[`V3-HA-LAB-POOL.md`](V3-HA-LAB-POOL.md), not a 2.1.4 release gate.
 
-The lab-matrix and WireGuard items above are release blockers for 2.0 GA, not
+The lab-matrix and WireGuard items above are release blockers for 2.1.4 GA, not
 claims that the current preview is insecure. Any accepted exception needs an
 owner, expiry, and follow-up issue.

@@ -1,5 +1,7 @@
 # V2 Learning Analytics and Research Dashboard
 
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.1.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+
 Status: Phase 1 implemented in this development tree; Phase 2 and Phase 3 planned
 
 ## Purpose

@@ -1,7 +1,7 @@
 # Exercise and RangeBox design review
 
 Status: **Review complete; selected fixes implemented**
-Scope: Community / Academic 1.1 and Professional 2.1
+Scope: Community / Academic profile and Professional 2.1.4
 Owner: Design and Product
 
 This review checks the exercise page, the active-lab panel, and the RangeBox

@@ -23,7 +23,7 @@ The five Professional priorities are defined in
 ## What Professional is not
 
 Professional is not the HA, SSO, multi-tenant, LMS, or compliance-reporting
-edition. Those are Enterprise 3.0. Professional also keeps the Community /
+profile. That is the Enterprise preview profile. Professional also keeps the Community /
 Academic privacy stance: analytics are descriptive, aggregate views show totals
 rather than learner names, and the platform does not rank or predict learners.
 
