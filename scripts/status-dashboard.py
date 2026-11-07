@@ -46,8 +46,8 @@ DEFAULT_HOSTS = [
         "label": "Prod",
         "role": "production",
         "url": "https://172.16.16.41",
-        "expected_version": "1.1.3",
-        "line": "Community / Academic maintenance line",
+        "expected_version": "2.1.4",
+        "line": "Production platform release",
     },
     {
         "label": "Dev",

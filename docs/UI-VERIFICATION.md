@@ -1,7 +1,9 @@
 # UI verification
 
-Last run: **2026-11-07** against the development deployment at
-`https://172.16.16.44` (`2.1.4`).
+Last run: **2026-11-07** against both deployments:
+
+- development `https://172.16.16.44` (`2.1.4`)
+- production `https://172.16.16.41` (`2.1.4`)
 
 Tool: Playwright with Microsoft Edge, using short-lived test tokens for an
 administrator and the three career-discovery profiles. No learner records were
@@ -18,7 +20,8 @@ modified by the checks.
 
 ## Result
 
-- **101 checks, 0 failed**
+- Development: **101 checks, 0 failed**
+- Production admin: **25 checks, 0 failed**
 - Admin and student routes loaded without page errors.
 - `/events` loaded for every profile.
 - Admin sidebar exposed **Reports & analytics** and **Events**.
@@ -46,5 +49,6 @@ modified by the checks.
 - A full interactive lab launch and VPN connection were not part of this run.
 - Docker host state was not read by the browser test; use
   `docker compose ps` on each deployment host for that check.
-- Production `172.16.16.41` remains on the Community / Academic `1.1.3`
-  maintenance line and was not upgraded in this run.
+- Production `172.16.16.41` was upgraded to `2.1.4`; its admin surface,
+  reports, events, profile tabs, skill tree, and mobile layout were verified.
+
