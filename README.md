@@ -842,7 +842,8 @@ This writes `docs/status-dashboard.html`, `docs/status-dashboard.md`, and (with
 `--json docs/status-dashboard.json`) a machine-readable snapshot. It checks
 `/api/version`, `/api/setup/status`, and the SPA index only; it does not log in
 or read learner records. Docker host and container state still need
-`docker compose ps` on each host.
+`docker compose ps` on each host. The latest browser verification is recorded in
+[UI verification](docs/UI-VERIFICATION.md).
 
 ## Requirements
 
