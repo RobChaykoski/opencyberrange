@@ -94,7 +94,8 @@ def test_career_markdown_contains_privacy_note_and_resources():
     markdown = render_markdown(_dossier())
     assert "# Career profile: Test Learner" in markdown
     assert "Not for hiring or ranking." in markdown
-    assert "https://example.invalid/" in markdown
+    assert "[Example](" in markdown
+    assert "Reference only." in markdown
 
 
 def test_career_export_filename_is_sanitised():

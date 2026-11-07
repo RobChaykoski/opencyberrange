@@ -21,6 +21,7 @@ import os
 import secrets
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from sqlalchemy.orm import joinedload
 
@@ -441,8 +442,16 @@ def seed(output_dir: str):
 
         db.commit()
         print("Career demo profiles seeded.")
-        for user in created:
-            print(f"  {user.username} / {DEMO_PASSWORD}")
+        credential_path = Path(output_dir).parent / "career_demo_credentials.txt"
+        credential_path.parent.mkdir(parents=True, exist_ok=True)
+        credential_path.write_text(
+            "Development-only career demo credentials\n"
+            + "\n".join(f"{user.username} / {DEMO_PASSWORD}" for user in created)
+            + "\n",
+            encoding="utf-8",
+        )
+        os.chmod(credential_path, 0o600)
+        print(f"Demo credentials written to {credential_path} (mode 0600).")
 
         written = export_career_profiles(db, output_dir)
         print("Career dossiers exported:")

@@ -17,6 +17,11 @@ permissions:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
+    # Code scanning needs GitHub Advanced Security on private repositories.
+    # The canonical repository is public and runs this workflow; private
+    # development mirrors skip the upload-only failure instead of reporting a
+    # broken security gate.
+    if: github.event.repository.private == false
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:

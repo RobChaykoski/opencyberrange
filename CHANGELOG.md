@@ -84,6 +84,14 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Reconciled `versions.yaml` and `docs/SUPPORTED-VERSIONS.md` with the installed
   backend and frontend dependency set.
 
+### CI and security scanning
+- CodeQL skips analysis on private development mirrors, where code scanning is
+  unavailable without GitHub Advanced Security. The public canonical repository
+  continues to run it.
+- Trivy always runs and uploads a SARIF artifact, but uploads to code scanning
+  only where that feature is enabled.
+- Removed new CodeQL findings from the career-profile seed and test fixtures.
+
 ### Operations
 - Added `scripts/status-dashboard.py`, a small API-based dev/prod status
   dashboard. It checks `/api/version`, `/api/setup/status`, and the SPA index,
