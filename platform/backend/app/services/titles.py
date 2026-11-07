@@ -9,15 +9,12 @@ shows the current Skill DNA class instead.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 from sqlalchemy.orm import Session
 
 from app.models import Achievement, User
 from app.services.achievements import (
     ACHIEVEMENT_DESCRIPTIONS,
-    ACHIEVEMENT_LABELS,
-    COMPETITION_BADGE_INFO,
     competition_achievement_parts,
 )
 
@@ -237,7 +234,7 @@ TITLE_CATALOG: tuple[TitleDef, ...] = (
     ),
     TitleDef(
         "competitor",
-        "Competitor",
+        "Event Participant",
         "Joined a time-boxed event leaderboard.",
         "common",
         competition_codes=("c",),

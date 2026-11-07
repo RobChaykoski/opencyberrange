@@ -136,7 +136,7 @@ DIMENSIONS: tuple[DimensionSpec, ...] = (
         "Commander",
         "general",
         "Security leadership, governance, and programme delivery",
-        "Join a competition or take part in a course cohort.",
+        "Join an event or take part in a course cohort.",
     ),
 )
 
@@ -171,7 +171,7 @@ AFFINITIES: tuple[AffinitySpec, ...] = (
     AffinitySpec(
         "leadership",
         "Security Leadership / Education",
-        "Competitions, courses, advanced work, and teaching practice.",
+        "Events, courses, advanced work, and teaching practice.",
         ("Security lead", "Security educator", "Programme coordinator"),
         "Add a communication, risk-register, or mentoring exercise to the technical work.",
     ),
@@ -414,7 +414,7 @@ def _evidence(spec: DimensionSpec, signals: dict, score: int) -> str:
             f"{len(signals['investigator_tracks'])} tracks"
         )
     return (
-        f"{signals['competitions']} competitions · "
+        f"{signals['competitions']} events · "
         f"{signals['courses']} courses · "
         f"{signals['achievements']} badges"
     )
@@ -468,7 +468,7 @@ def _affinity_evidence(spec: AffinitySpec, signals: dict) -> str:
             f"{len(signals['investigator_tracks'])} tracks"
         )
     return (
-        f"{signals['competitions']} competitions · "
+        f"{signals['competitions']} events · "
         f"{signals['courses']} courses · "
         f"{signals['instructed_courses']} courses taught · "
         f"{signals['advanced_labs']} advanced labs"
