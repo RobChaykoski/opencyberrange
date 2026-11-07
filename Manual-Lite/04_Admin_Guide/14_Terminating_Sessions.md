@@ -9,7 +9,7 @@ You stop a single running lab session, clear a session that lost its containers,
 
 ## Steps
 
-1. In the left sidebar, click **Monitoring** to open `/admin?tab=monitoring` on the **Sessions** sub-tab.
+1. In the left sidebar, click **Live activity** to open `/admin?tab=monitoring` on the **Sessions** sub-tab.
 2. Locate the session card you want to act on.
 3. Stop one session: click **Force Stop** on its card. The action tears down the session's containers and stops it.
 4. Clear a stale session: when a card shows the stale warning, click **Reset Stale**. A confirmation explains that the session is marked stopped so the student can start a new lab.

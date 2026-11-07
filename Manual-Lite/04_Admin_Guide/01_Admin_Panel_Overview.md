@@ -11,9 +11,9 @@ The Admin Panel is the operator console for the platform. You open it to approve
 
 ## Where the Admin Panel lives
 
-The Admin Panel is reached at `/admin`. Sign in as an admin, then open the **Admin** section of the left sidebar. The sidebar exposes seven admin links: **Users**, **Courses**, **Exercises**, **Monitoring**, **Reports & analytics**, **System**, and **Settings**, plus an external **Wiki** link. There is no top navigation bar; you move between areas from the sidebar.
+The Admin Panel is reached at `/admin`. Sign in as an admin, then open the **Admin** section of the left sidebar. The sidebar exposes seven admin links: **Users**, **Courses**, **Exercises**, **Live activity**, **Reports & analytics**, **System**, and **Settings**, plus an external **Wiki** link. There is no top navigation bar; you move between areas from the sidebar.
 
-The whole Admin Panel is one screen. Each admin tab link sets a `?tab=` value on the `/admin` route and swaps the main area, so Users is `/admin?tab=users`, Monitoring is `/admin?tab=monitoring`, and so on. The manual pages in this guide are task oriented, so several of them describe controls that live under the same tab.
+The whole Admin Panel is one screen. Each admin tab link sets a `?tab=` value on the `/admin` route and swaps the main area, so Users is `/admin?tab=users`, Live activity is `/admin?tab=monitoring`, and so on. The manual pages in this guide are task oriented, so several of them describe controls that live under the same tab.
 
 **Reports & analytics** is the exception: it opens the separate `/reports` page rather than a tab inside `/admin`. The Admin Panel keeps its current tab while you review reporting, and the Report link is highlighted in the sidebar. See [Reporting and Analytics](28_Reporting_And_Analytics.md).
 
@@ -33,8 +33,8 @@ The top of the panel shows stat cards that summarize platform state:
 | System / Firewall / Security | Health rollup; reads "Checking..." until health loads | Opens System Health |
 | Pending | Count of accounts awaiting approval | Opens the Pending list |
 | Locked | Count of locked accounts | Opens the Users tab |
-| Active Exercises | Count of running lab sessions | Opens Monitoring |
-| VPN Peers | Count of registered WireGuard peers | Opens Monitoring |
+| Active Exercises | Count of running lab sessions | Opens Live activity |
+| VPN Peers | Count of registered WireGuard peers | Opens Live activity |
 
 The Pending card is the only way to reach the pending list; there is no separate sidebar link for it. See [Approving New Users](02_Approving_New_Users.md).
 
@@ -47,7 +47,7 @@ flowchart TD
   A[Admin Panel /admin] --> U[Users tab]
   A --> P[Pending list]
   A --> E[Exercises tab]
-  A --> M[Monitoring tab]
+  A --> M[Live activity tab]
   A --> C[Courses tab]
   A --> SET[Settings tab]
   A --> SYS[System tab]
@@ -144,9 +144,9 @@ Older bookmarks still resolve. The following query values redirect to the curren
 
 | Old link | Resolves to |
 | --- | --- |
-| `?tab=sessions` | Monitoring, Sessions sub-tab |
-| `?tab=vpn` | Monitoring, VPN Peers sub-tab |
-| `?tab=activity` | Monitoring, Activity Log sub-tab |
+| `?tab=sessions` | Live activity, Sessions sub-tab |
+| `?tab=vpn` | Live activity, VPN Peers sub-tab |
+| `?tab=activity` | Live activity, Activity Log sub-tab |
 | `?tab=labs` | Exercises, manage view |
 | `?tab=curriculum` | Exercises, Tracks and Levels view |
 

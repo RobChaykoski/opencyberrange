@@ -27,7 +27,7 @@ A healthy session has a database row that points at running containers. An orpha
 
 Two paths reduce orphaned and unused container resources from the Admin Panel:
 
-1. Open the **Sessions** view under **Monitoring** and check for cards with the stale warning. For a session whose row exists but has lost its containers, use **Reset Stale**. For a session whose containers must be torn down, use **Force Stop**. See [Terminating Sessions](14_Terminating_Sessions.md).
+1. Open the **Sessions** view under **Live activity** and check for cards with the stale warning. For a session whose row exists but has lost its containers, use **Reset Stale**. For a session whose containers must be torn down, use **Force Stop**. See [Terminating Sessions](14_Terminating_Sessions.md).
 2. Open the **Exercises** tab and click **Disk Management** in the panel header. Use **Prune Unused Images** and **Prune Build Cache** to reclaim space held by containers and images that no session references. See [Disk Management](24_Disk_Management.md).
 
 **What you should see:** The stale or stuck cards clear from the Sessions view, and the Disk Management modal reports freed space after a prune.

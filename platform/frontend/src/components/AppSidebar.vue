@@ -145,7 +145,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
-          <span v-show="!collapsed" class="nav-item__label">Monitoring</span>
+          <span v-show="!collapsed" class="nav-item__label">Live activity</span>
         </router-link>
         <router-link to="/reports" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">

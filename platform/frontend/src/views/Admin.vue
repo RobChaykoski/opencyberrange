@@ -868,10 +868,10 @@
           </div><!-- end .catalog-layout -->
         </div>
 
-        <!-- Monitoring Tab (consolidated Sessions + VPN + Activity) -->
+        <!-- Live activity tab (consolidated Sessions + VPN + Activity) -->
         <div v-if="activeTab === 'monitoring'" class="panel">
           <div class="panel-header">
-            <h2 class="panel-title">Monitoring</h2>
+            <h2 class="panel-title">Live activity</h2>
           </div>
           <div class="sub-tabs">
             <button @click="monitoringSubTab = 'sessions'" :class="['sub-tab', { active: monitoringSubTab === 'sessions' }]">Sessions</button>

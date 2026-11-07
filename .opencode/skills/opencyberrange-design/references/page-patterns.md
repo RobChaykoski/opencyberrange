@@ -76,7 +76,7 @@ Profile rules:
 ## Admin
 
 - Dense, scannable, and conservative.
-- Use tabs or sections for Users, Courses, Exercises, Monitoring, System, Settings.
+- Use tabs or sections for Users, Courses, Exercises, Live activity, System, Settings.
 - Destructive controls (delete user, reset lab, stop container, reset password) require confirmation and should not sit beside low-risk actions.
 - Status rows should include labels and timestamps, not just coloured dots.
 - Tables should support filtering and horizontal scroll on narrow screens.

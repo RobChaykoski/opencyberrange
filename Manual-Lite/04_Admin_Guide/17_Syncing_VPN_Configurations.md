@@ -8,7 +8,7 @@ Syncing reconciles the live WireGuard peer manager against the platform database
 
 ## Sync all peers
 
-1. In the left sidebar, click **Monitoring** to open `/admin?tab=monitoring`.
+1. In the left sidebar, click **Live activity** to open `/admin?tab=monitoring`.
 2. Click the **VPN Peers** sub-tab.
 3. In the panel header, click **Sync All Peers**. The button shows a spinner and reads **Syncing...** while it runs.
 4. When the sync finishes, review the Active VPN Peers table and the registered count.
@@ -26,7 +26,7 @@ Syncing reconciles the live WireGuard peer manager against the platform database
 
 For a single student whose VPN has a config but is not connected, you do not need a full sync:
 
-1. Open the **Sessions** sub-tab under **Monitoring**.
+1. Open the **Sessions** sub-tab under **Live activity**.
 2. Find the student's session card. When the VPN badge reads Disconnected and a config exists, the card shows a **Re-sync VPN** button.
 3. Click **Re-sync VPN**. The platform re-registers that student's peer.
 

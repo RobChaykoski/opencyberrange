@@ -8,7 +8,7 @@ The Sessions view shows every running lab session on the platform in real time, 
 
 ## Steps
 
-1. In the left sidebar, click **Monitoring**. The panel opens at `/admin?tab=monitoring` with the **Sessions** sub-tab selected by default.
+1. In the left sidebar, click **Live activity**. The panel opens at `/admin?tab=monitoring` with the **Sessions** sub-tab selected by default.
 2. Read the **Active Sessions** count in the panel header. Each running session renders as a card.
 3. Inspect a session card. It shows the student, the exercise name, the time remaining, a **VPN** badge (Connected, Disconnected, Not Registered, or No Config), the container list, and CPU and RAM usage.
 4. Click **Refresh** in the header to pull the latest health snapshot at any time.
@@ -18,7 +18,7 @@ The Sessions view shows every running lab session on the platform in real time, 
 
 <figure markdown>
 
-![Monitoring Sessions sub-tab showing session health cards](img/admin-monitoring-sessions.png)
+![Sessions sub-tab in Live activity showing session health cards](img/admin-monitoring-sessions.png)
 
 <figcaption>The Sessions sub-tab lists each running session with VPN, container, and resource status, plus a recent-history table.</figcaption>
 </figure>
@@ -42,4 +42,4 @@ Per-session cards expose these actions:
 !!! tip "Privacy mode masks names"
     With privacy mode on, the User column shows masked names so you can monitor safely even when real students are active.
 
-The Sessions, VPN Peers, and Activity Log views are sub-tabs of Monitoring. An old `?tab=sessions` link still resolves to this view. For VPN, see [Managing VPN Peers](16_Managing_VPN_Peers.md).
+The Sessions, VPN Peers, and Activity Log views are sub-tabs of Live activity. An old `?tab=sessions` link still resolves to this view. For VPN, see [Managing VPN Peers](16_Managing_VPN_Peers.md).

@@ -8,7 +8,7 @@ The VPN Peers view shows every WireGuard peer the platform knows about, which us
 
 ## Steps
 
-1. In the left sidebar, click **Monitoring** to open `/admin?tab=monitoring`.
+1. In the left sidebar, click **Live activity** to open `/admin?tab=monitoring`.
 2. Click the **VPN Peers** sub-tab. The **VPN Peer Management** panel loads.
 3. Read the two stat cards: **Registered on VPN Server** and **Not Registered**.
 4. Register a missing peer: in the **Unregistered Users** list, click **Register** next to a user. The platform registers that user's peer.
@@ -42,4 +42,4 @@ The health badge tells you what is wrong with a peer:
 !!! note "Duplicate IPs come from the address allocator"
     A Duplicate badge means two peers were assigned the same address. Repair clears the conflict and re-registers the affected user from the database.
 
-The VPN Peers view is a sub-tab of Monitoring; an old `?tab=vpn` link still resolves here. To reconcile the whole peer set at once, see [Syncing VPN Configurations](17_Syncing_VPN_Configurations.md). For student-side connection problems, see [VPN Connection Problems](../07_Troubleshooting/04_VPN_Connection_Problems.md).
+The VPN Peers view is a sub-tab of Live activity; an old `?tab=vpn` link still resolves here. To reconcile the whole peer set at once, see [Syncing VPN Configurations](17_Syncing_VPN_Configurations.md). For student-side connection problems, see [VPN Connection Problems](../07_Troubleshooting/04_VPN_Connection_Problems.md).

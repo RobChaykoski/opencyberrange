@@ -58,6 +58,11 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   Cisco Networking Academy, and LabShock for IoT/OT training. Links are
   references only; third-party content is not copied or reproduced.
 
+### Admin navigation
+- Renamed the admin **Monitoring** tab to **Live activity** in the sidebar and
+  panel heading. The tab still holds Sessions, VPN Peers, and the Activity Log,
+  and `/admin?tab=monitoring` and the legacy sub-tab links are unchanged.
+
 ### Events rename
 - Renamed the user-facing **Competitions** area to **Events** across the
   sidebar, list, detail, registration, profile, and manuals.

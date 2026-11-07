@@ -29,9 +29,9 @@ flowchart TD
 | --- | --- | --- |
 | What it does | Renders the platform UI as that student | Connects your RangeBox to the student's lab network |
 | Mutations | Blocked: launching labs, submitting flags, and edits return an error | Full network access to the student's running targets |
-| Visible cue | App-wide banner reading VIEWING AS | A bridged session in Monitoring |
+| Visible cue | App-wide banner reading VIEWING AS | A bridged session in Live activity |
 | How you leave | Exit Preview button in the banner | Disconnect |
-| Where you start it | User and course contexts | Monitoring tab: Launch As Student, or a session card's Impersonate button |
+| Where you start it | User and course contexts | Live activity tab: Launch As Student, or a session card's Impersonate button |
 
 ## Steps: View As (read-only)
 
@@ -49,7 +49,7 @@ flowchart TD
 
 ## Steps: Launch As (session bridge)
 
-1. Open the **Monitoring** tab from the sidebar.
+1. Open the **Live activity** tab from the sidebar.
 2. Click **Launch As Student**, choose a student and a lab, then click **Launch**. The resulting session is tagged as admin-initiated.
 3. To bridge onto a session that is already running, click **Impersonate** on that session's card. Your RangeBox joins the student's lab network.
 4. Use **Disconnect** to drop the bridge when you are done.

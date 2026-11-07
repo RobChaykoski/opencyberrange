@@ -17,7 +17,7 @@ teaching review or accreditation file.
 
 Open **Reports & analytics** in the left sidebar:
 
-- An administrator finds it in the **Admin** section, between **Monitoring** and
+- An administrator finds it in the **Admin** section, between **Live activity** and
   **System**.
 - An instructor finds it in the **Instructor** section, below **Exercises**.
 

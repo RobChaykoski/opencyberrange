@@ -40,7 +40,7 @@ The sidebar groups links into sections. You see only the sections your role allo
 | Academy | Courses, Exercises, and Activities when that module is enabled | Everyone |
 | Team Challenges | Optional module links, each shown only when an admin enables that module | Everyone, when a module is enabled |
 | Instructor | My Courses, Exercises, Surveys, and Reports & analytics (instructors only) | Instructors and admins |
-| Admin | Users, Courses, Exercises, Monitoring, Reports & analytics, System, Settings, Workbook | Admins only |
+| Admin | Users, Courses, Exercises, Live activity, Reports & analytics, System, Settings, Workbook | Admins only |
 
 **Reports & analytics** opens at `/reports` and is not an Admin Panel tab. Admins see it in the Admin section; instructors see it in the Instructor section. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
 
