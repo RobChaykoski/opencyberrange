@@ -26,7 +26,7 @@ flowchart TD
 
 ## Create an assignment
 
-1. In the left sidebar, select **Instructor Panel**.
+1. In the left sidebar, select **My Courses**.
 2. On the **My Courses** tab, click the course.
 3. Click the **Assignments** sub-tab.
 4. Click **+ New Assignment**.

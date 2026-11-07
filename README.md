@@ -17,8 +17,8 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Release](https://img.shields.io/badge/release-1.1.0%20supported-blue)](RELEASE_NOTES.md)
-[![Next](https://img.shields.io/badge/next-2.0%20development-8b5cf6)](docs/V2-LEARNING-ANALYTICS.md)
+[![Release](https://img.shields.io/badge/release-1.1.x%20supported-blue)](RELEASE_NOTES.md)
+[![Professional](https://img.shields.io/badge/professional-2.1.4%20release-8b5cf6)](docs/V2-LEARNING-ANALYTICS.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
@@ -40,14 +40,16 @@ sites. Keep the upstream OpenCyberRange attribution and licence notices intact.
 
 ## Editions
 
-SWOCTS Cyber Range uses three cumulative deployment editions. The edition names
-describe scope and operational shape, not three separate codebases.
+SWOCTS Cyber Range uses one platform release number (`2.1.4`) with three
+cumulative edition profiles. The edition names describe scope, entitlement, and
+operational shape, not three separate codebases or three separate version lines.
+See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 
-| Edition | Version | State | Host OS | Purpose |
+| Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Community / Academic** | `1.1.x` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `2.1.x` (`2.1.4`) | **Release** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `3.0.x` | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
+| **Community / Academic** | `2.1.4` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `2.1.4` | **Release** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `2.1.4` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
 Community / Academic 1.1 remains the reference behaviour and the fallback.
 Professional is additive: the Community / Academic curriculum, learner
@@ -111,8 +113,14 @@ The first 2.0 slice is implemented in this tree and documented in
 - **Course Analytics tab:** assigned vs started vs completed, time over
   estimate, hint-free and first-attempt rates, abandonment, and per-exercise
   drill-down.
-- **Reports page:** a cross-course teaching view with red/amber/green signals
-  and the reason behind each signal, plus CSV export.
+- **Reports & analytics page:** a cross-course teaching view with
+  red/amber/green signals and the reason behind each signal, skill-tree coverage,
+  trending topics, and CSV/PDF export. Open it from the **Admin** section for
+  administrators or the **Instructor** section for instructors; it lives at
+  `/reports`.
+- **Cyber DNA practice affinities:** positive, evidence-based role families for
+  offensive security, defensive operations, DFIR/investigation, and security
+  leadership. They are conversation aids, not job labels or predictions.
 - **Pulse and course surveys:** a short optional pulse after completion, custom
   instructor surveys, and consent-gated responses. Survey consent stays separate
   from analytics use and can be withdrawn.
@@ -157,8 +165,10 @@ These are current, checkable counts from this repository and metrics the platfor
 | [`opencyberrange`](https://github.com/RobChaykoski/opencyberrange) | Production and development (canonical) | `main`, CI green |
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
-This repository is the only development tree. `main` carries the 2.0
-development line, while the `v1.1.0` tag is the supported production release.
+This repository is the only development tree. `main` carries platform release
+**2.1.4** with Community / Academic, Professional, and Enterprise preview
+profiles. The Community / Academic 1.1 line remains the supported single-host
+teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
 into `main`. The tree contains all history from the pre-cutover tree plus the
 upgrade scaffold and dependency waves. See
@@ -369,6 +379,22 @@ The script creates an opt-in **Windsor-Essex DevFest 2026** event and prints the
 new-participant sign-up link. Existing learners can use the competition page's
 **Join event** button; new accounts created through the sign-up link are marked
 as **New sign-up** on the organizer dashboard.
+
+### Career discovery demo profiles
+
+For demonstrations of Cyber DNA and career conversations, seed three profiles:
+
+```bash
+docker compose exec backend python -m app.scripts.seed_career_profiles \
+  --output-dir /app/data/career_profiles
+```
+
+This creates a well-versed learner, a learner who is just starting, and a
+career-changer profile, then exports JSON, Markdown, and printable HTML dossiers.
+The dossiers combine Cyber DNA, learning evidence, course participation,
+reflection questions, and external career references. They are development-only
+and do not alter real learner records. See
+[Career and certification resources](docs/CAREER-AND-CERTIFICATION-RESOURCES.md).
 
 ## VPN, MFA, and secret handling
 

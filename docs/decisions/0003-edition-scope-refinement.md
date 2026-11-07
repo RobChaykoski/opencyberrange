@@ -1,6 +1,7 @@
 # ADR 0003: Edition naming and Professional/Enterprise scope
 
-Status: **Accepted**
+Status: **Accepted; separate edition version lines superseded by
+[ADR 0004](0004-single-platform-release-version.md)**
 Date: 2026-11-04
 Supersedes: naming and scope in ADR 0002
 

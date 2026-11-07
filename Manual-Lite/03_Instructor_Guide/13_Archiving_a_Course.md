@@ -8,7 +8,7 @@ Archiving a course deactivates it and moves it out of your active list at the en
 
 ## Course states
 
-A course moves through three states that you control from the Instructor Panel.
+A course moves through three states that you control from the My Courses page.
 
 The diagram below shows how a course moves between active, inactive, and archived, and where deletion ends the line.
 
@@ -28,7 +28,7 @@ stateDiagram-v2
 
 ## Archive a course
 
-1. In the left sidebar, select **Instructor Panel**.
+1. In the left sidebar, select **My Courses**.
 2. On the **My Courses** tab, find the course card.
 3. Click the **Archive** icon in the card's actions row.
 

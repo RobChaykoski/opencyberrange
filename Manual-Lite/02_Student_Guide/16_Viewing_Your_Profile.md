@@ -13,14 +13,34 @@ Click **Profile** in the sidebar. The page opens with your profile card: avatar,
 <figcaption>The profile page shows your avatar and completion summary, your certificates and track progress, your account fields, enrolled courses, and the change password section.</figcaption>
 </figure>
 
+## Profile tabs
+
+The profile is split into five tabs so the page stays scannable:
+
+| Tab | What it holds |
+|---|---|
+| **Overview** | Four signals: your next practice step, learning evidence, Cyber DNA class, and recent recognition. |
+| **Skill tree** | The five-branch skill tree, Cyber DNA traits, practice affinities, career alignment, and title collection. |
+| **Learning record** | Course achievements, certificates, track progress, and completion details. |
+| **Account** | Personal information, account status, Exercise Studio (when available), and course enrolment. |
+| **Security & privacy** | MFA, password change, survey consent, data export, and account deletion. |
+
+The selected tab is kept in the page URL, so you can bookmark or share a link to
+a specific tab without exposing any private data.
+
 ## Profile photo
 
 Use **Add photo** under your avatar to upload a profile picture. The browser resizes the image before saving it, so ordinary phone photos work. PNG, JPEG, and WebP images are accepted, up to 10 MB before resizing. Use **Change photo** to replace it or **Remove** to go back to your initials.
 
-## Cyber DNA and titles
+## Skill tree, Cyber DNA, and titles
 
-The **Cyber DNA** section is your learner character sheet. It shows five traits
-built from your range activity:
+Open the **Skill tree** tab to see the visual skill tree and your learner
+character sheet. The tree has one branch for each Cyber DNA trait, built from
+your completed exercises, course participation, and feedback. It shows what you
+have practised; it is not a ranking. The branch cards below it repeat the same
+evidence in a readable list, with a practical next step for each branch.
+
+The five traits are:
 
 <figure markdown>
 
@@ -42,10 +62,22 @@ Seeker, or Commander. Each trait has a score from 0 to 100 and a tier from
 Initiate to Master. The numbers describe what you have practised; they are not a
 grade or a ranking.
 
+Below the traits, **Practice affinities** shows where your completed labs point
+next. It covers Offensive Security / Penetration Testing, Defensive Security /
+SOC, DFIR / Investigation, and Security Leadership / Education. Each card shows
+the evidence behind the match and a practical next step. For example, a learner
+with several web, exploitation, privilege-escalation, and post-exploitation labs
+sees an offensive-security affinity with the evidence listed. This is positive
+practice evidence, not a job label, a certification, or permission to test any
+system. A learner with no offensive labs sees "No direct evidence yet", not a
+negative label.
+
 The **Career alignment** card maps your current class to a certification path
 using the same track guidance as the certification panel. The roadmap link opens
 Paul Jerimy's Security Certification Roadmap. Treat it as guidance, not an
-official mapping.
+official mapping. The [Career and certification resources](../../docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
+page lists additional external practice and learning references. Those links are
+references only; their content is not copied into the platform.
 
 Achievements also unlock cosmetic **titles**. Open **Title collection**, choose
 an unlocked title, and select **Equip**. Select **Clear** to return to your class

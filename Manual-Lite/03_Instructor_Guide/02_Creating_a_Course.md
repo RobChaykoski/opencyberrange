@@ -9,7 +9,7 @@ Course creation on the platform is an administrator action. As an instructor you
 
 ## Why instructors do not create courses
 
-The **Instructor Panel** (the **Instructor** entry in the left sidebar) lists only the courses already assigned to you. When you have none, the panel reads "No courses assigned yet. Contact your administrator to create a course." There is no create-course button in the instructor workspace by design: the create and bulk-enroll actions are reserved for administrators.
+The **My Courses** page (the **My Courses** entry in the **Instructor** section of the left sidebar) lists only the courses already assigned to you. When you have none, the panel reads "No courses assigned yet. Contact your administrator to create a course." There is no create-course button in the instructor workspace by design: the create and bulk-enroll actions are reserved for administrators.
 
 ## What to give your administrator
 
@@ -21,7 +21,7 @@ Provide the administrator with the details below so the course is set up correct
 | Course code | A short identifier, for example CYB-3350. |
 | Semester | Used for organizing and reporting. |
 | Start date and end date | The end date must be after the start date. |
-| Instructor owner | Name yourself (or another instructor) as the owner so the course appears in that person's Instructor Panel. |
+| Instructor owner | Name yourself (or another instructor) as the owner so the course appears on that person's My Courses page. |
 
 The administrator creates the course from the Admin panel. See the Admin Guide for the administrator-side steps.
 

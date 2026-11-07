@@ -38,10 +38,12 @@ flowchart LR
 
 ## Manual editions
 
-This is the **Community / Academic 1.1** core manual. Professional 2.1 and
-Enterprise 3.0 are cumulative, so this manual still applies to them. Their
-extra pages live in the [Professional supplement](09_Professional/index.md)
-and the [Enterprise supplement](10_Enterprise/index.md). See
+This is the shared core manual for platform release **2.1.4**. Community /
+Academic, Professional, and Enterprise are cumulative edition profiles on that
+release; Community / Academic 1.1.x remains a maintenance line for existing
+installs. Edition-specific pages live in the
+[Professional supplement](09_Professional/index.md) and the
+[Enterprise supplement](10_Enterprise/index.md). See
 [Manual editions](VERSIONS.md) for the feature matrix.
 
 ## Where to start

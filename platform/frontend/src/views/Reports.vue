@@ -225,6 +225,10 @@
 
       <div v-else class="reports-table-wrap">
         <table class="reports-table">
+          <caption class="sr-only">
+            Cross-course learning report with each course's signal, learners,
+            completion, abandonment, learning, feedback, confidence, and pulse counts.
+          </caption>
           <thead>
             <tr>
               <th scope="col">Course</th>

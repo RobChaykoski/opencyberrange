@@ -22,7 +22,7 @@ A lab with no level falls into the **Course Assessments** group, labeled with th
 
 ## Move a lab into or out of Course Assessments
 
-1. In the left sidebar, select **Instructor Panel**.
+1. In the left sidebar, select **My Courses**.
 2. Open the **Exercises** tab.
 3. Find the lab and open its **Categorize Exercise** action.
 4. Choose a destination:

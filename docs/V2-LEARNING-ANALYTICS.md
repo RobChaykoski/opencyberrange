@@ -220,7 +220,11 @@ Students see available course surveys on their dashboard only after opting in un
 
 ## Reporting page
 
-A dedicated **Reports** page gives instructors and administrators a cross-course view:
+A dedicated **Reports & analytics** page gives instructors and administrators a
+cross-course view. It opens at `/reports` from the sidebar: admins find it in the
+**Admin** section, instructors find it in the **Instructor** section. It is a
+separate route rather than an Admin Panel tab, so reviewing reports does not
+change the Admin tab you were using.
 
 - Course-level RAG status and reason.
 - Completion, abandonment, learning reported, confidence gain, and pulse counts.

@@ -4,9 +4,22 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
-**Professional 2.1 (2.1.4)**, **Enterprise 3.1 (3.1.2)**. See
-[Editions](EDITIONS.md). Platform development version: **2.1.4**.
+Last reviewed: **2026-11-07**. Current **platform release: 2.1.4** for this
+tree. **Community / Academic**, **Professional**, and **Enterprise** are edition
+profiles on that release, not separate platform version lines. **Community /
+Academic 1.1.3** remains a supported maintenance line for existing single-host
+installations. See [Editions](EDITIONS.md) and
+[ADR 0004](decisions/0004-single-platform-release-version.md).
+
+The separate HA control-plane repository has its own version and is described by
+compatibility with platform 2.1.4. Enterprise remains a preview profile until
+HA, SSO, multi-tenancy, LMS, and compliance reporting are shipped and verified.
+
+Dependency audit on **2026-11-07**: `npm audit` reported **0 vulnerabilities**
+and `pip-audit -r platform/backend/requirements.txt` reported **no known
+vulnerabilities**. Patch updates were applied within the declared ranges; the
+remaining `npm outdated` entries are major upgrades (ESLint 10,
+`eslint-plugin-vue` 10, Vue Router 5) and are deliberately deferred.
 
 ## Policy
 
@@ -25,7 +38,7 @@ Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
 
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
-| Host OS | Community / Academic 1.1: Ubuntu 22.04 and 24.04 LTS; Professional 2.1 and Enterprise 3.0: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise | Validation in progress | Community / Academic supports both LTS releases; Professional host/platform deployed and KVM ready, network/VPN and recovery gates remain; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
+| Host OS | Community / Academic profile: Ubuntu 22.04 and 24.04 LTS; Professional and Enterprise profiles: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise profiles | Validation in progress | Community / Academic supports both LTS releases; the Professional profile is deployed and KVM ready, with network/VPN and recovery gates remaining; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
@@ -51,7 +64,7 @@ Last reviewed: **2026-11-05**. Current editions: **Community / Academic 1.1**,
 | psycopg (v3) | 3.3.6 | Wave C (done) | SQLAlchemy 2.1 defaults to psycopg3 |
 | docker SDK | 7.2.0 | Wave C (done) | |
 | aiohttp / requests | 3.14.5 / 2.34.2 | Wave A (done) | |
-| APScheduler | 3.10.4 | 4 | Stay on 3.x unless 4.x is justified |
+| APScheduler | 3.11.3 | 4 | Stay on 3.x unless 4.x is justified |
 | fpdf2 / matplotlib / qrcode | 2.9.0 / >=3.10 / 8.2 | Wave A/C (done) | Transcript, charts, QR |
 
 ## Frontend dependencies
@@ -61,18 +74,18 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 
 | Component | Locked | Planned wave | Notes |
 |---|---|---|---|
-| Vue | 3.5.44 | Locked | |
-| Vue Router | 4.6.4 | 5 | |
+| Vue | 3.5.45 | 3.5 patch line | |
+| Vue Router | 4.6.4 | 5 | Major upgrade deferred |
 | Axios | 1.21.0 | Wave A (done) | |
-| Chart.js / vue-chartjs | 4.5.1 / 5.3.3 | 5 | |
-| marked | 18.1.2 | Wave A (done) | |
+| Chart.js / vue-chartjs | 4.6.1 / 5.3.4 | 5 | |
+| marked | 18.1.3 | Wave A (done) | |
 | DOMPurify | 3.4.17 | Wave A (done) | Keep sanitisation tests |
 | noVNC | 1.7.0 | Wave C (done) | Required for Vite 8 (Rolldown) |
 | sortablejs | 1.15.7 | 5 | |
-| Vite | 8.3.5 | Wave C (done) | Rolldown; Node 22+ |
+| Vite | 8.3.6 | Wave C (done) | Rolldown; Node 22+ |
 | @vitejs/plugin-vue | 6.0.10 | Wave C (done) | Pairs with Vite 8 |
-| ESLint / plugin-vue | 9.39.5 / 9.33.0 | 1 | ESLint 9 flat config |
-| globals | 15.15.0 | 1 | |
+| ESLint / plugin-vue | 9.39.5 / 9.33.0 | 1 | ESLint 9 flat config; 10 deferred |
+| globals | 17.14.0 | 1 | |
 
 ## Infrastructure, docs, and CI
 

@@ -9,9 +9,9 @@ The course scoreboard ranks enrolled students by total score and labs completed,
 
 ## Open the scoreboard
 
-The scoreboard lives in the course detail view, not in the Instructor Panel.
+The scoreboard lives in the course detail view, not on the My Courses page.
 
-1. In the left sidebar, select **Instructor Panel**.
+1. In the left sidebar, select **My Courses**.
 2. On the **My Courses** tab, click the course title to open its detail page.
 3. Select the **Scoreboard** tab.
 

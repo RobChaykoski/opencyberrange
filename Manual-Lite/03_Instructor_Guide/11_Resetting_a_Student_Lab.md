@@ -10,7 +10,7 @@ Resetting a student lab clears a completion so the student can attempt the exerc
 
 ## Reset one lab for one student
 
-1. In the left sidebar, select **Instructor Panel**.
+1. In the left sidebar, select **My Courses**.
 2. On the **My Courses** tab, click the course.
 3. Click the **Students** sub-tab.
 4. In the student's row, click **View Exercises** to expand the per-lab table.

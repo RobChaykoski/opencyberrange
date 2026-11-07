@@ -8,7 +8,7 @@ Reordering sets the sequence in which labs appear to students in a course. You c
 
 ## Where reordering lives
 
-Course-lab reordering is in the **course detail view**, not the Instructor Panel. Open the course (the course detail page) and select the **manage-labs** tab. Each lab row has up and down controls.
+Course-lab reordering is in the **course detail view**, not the My Courses page. Open the course (the course detail page) and select the **manage-labs** tab. Each lab row has up and down controls.
 
 <figure markdown>
 
@@ -32,7 +32,7 @@ The platform orders course labs and assignments separately. The table keeps them
 | What you reorder | Where | How |
 |------------------|-------|-----|
 | Course labs | Course detail view, manage-labs tab | Up and down controls per lab |
-| Assignments | Instructor Panel, course Assignments sub-tab | Drag and drop the assignment cards |
+| Assignments | My Courses page, course Assignments sub-tab | Drag and drop the assignment cards |
 
 ```mermaid
 flowchart LR
@@ -43,7 +43,7 @@ flowchart LR
 ```
 
 !!! note
-    Course-lab order uses up and down controls in the course detail view. Assignment order uses drag and drop in the Instructor Panel. The two are separate; reordering one does not change the other.
+    Course-lab order uses up and down controls in the course detail view. Assignment order uses drag and drop on the My Courses page. The two are separate; reordering one does not change the other.
 
 !!! tip
     If you want students to work through content week by week, group labs into assignments and order the assignment cards by dragging them. See [Creating and Managing Assignments](15_Creating_and_Managing_Assignments.md).

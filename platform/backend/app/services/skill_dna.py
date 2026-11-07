@@ -58,6 +58,25 @@ DEFENDER_TRACKS = {"forensics", "malware", "ot", "network"}
 INVESTIGATOR_CATEGORIES = {"osint", "reconnaissance", "network-analysis", "forensics"}
 INVESTIGATOR_TRACKS = {"osint", "forensics", "malware", "network"}
 
+# Offensive practice is counted separately from the five trait scores. A
+# learner can be a strong Builder without ever touching exploitation content;
+# the affinity model only reports offensive evidence when the learner has
+# actually completed offensive labs.
+OFFENSIVE_CORE_CATEGORIES = {
+    "web",
+    "exploitation",
+    "privilege-escalation",
+    "post-exploitation",
+    "credential-attacks",
+}
+OFFENSIVE_SUPPORT_CATEGORIES = {
+    "network",
+    "authentication",
+    "enumeration",
+    "reconnaissance",
+}
+OFFENSIVE_CATEGORIES = OFFENSIVE_CORE_CATEGORIES | OFFENSIVE_SUPPORT_CATEGORIES
+
 
 @dataclass(frozen=True)
 class DimensionSpec:
@@ -66,6 +85,15 @@ class DimensionSpec:
     class_name: str
     certification_key: str
     certification_focus: str
+    next_step: str
+
+
+@dataclass(frozen=True)
+class AffinitySpec:
+    key: str
+    label: str
+    summary: str
+    roles: tuple[str, ...]
     next_step: str
 
 
@@ -114,6 +142,45 @@ DIMENSIONS: tuple[DimensionSpec, ...] = (
 
 DIMENSION_BY_KEY = {spec.key: spec for spec in DIMENSIONS}
 
+# Practice affinities are positive, evidence-based role families. They update
+# from the same activity records as the five traits but are deliberately not
+# another rank: they answer "what kind of work have I practised most?" and
+# "what should I try next?".
+AFFINITIES: tuple[AffinitySpec, ...] = (
+    AffinitySpec(
+        "offensive",
+        "Offensive Security / Penetration Testing",
+        "Exploitation, web testing, credential work, and post-exploitation practice.",
+        ("Penetration tester", "Red team operator", "Security consultant"),
+        "Pair the technical work with a scoping, rules-of-engagement, and reporting exercise.",
+    ),
+    AffinitySpec(
+        "defensive",
+        "Defensive Security / SOC",
+        "Detection, network analysis, forensics, and OT defence practice.",
+        ("SOC analyst", "Detection engineer", "Network security analyst"),
+        "Add a detection-engineering or incident-response lab to turn alerts into a repeatable process.",
+    ),
+    AffinitySpec(
+        "investigative",
+        "DFIR / Investigation",
+        "OSINT, forensics, malware, and evidence-handling practice.",
+        ("DFIR analyst", "Forensic examiner", "Threat intelligence analyst"),
+        "Practise a timeline or evidence-handling exercise and write a short finding for a non-specialist.",
+    ),
+    AffinitySpec(
+        "leadership",
+        "Security Leadership / Education",
+        "Competitions, courses, advanced work, and teaching practice.",
+        ("Security lead", "Security educator", "Programme coordinator"),
+        "Add a communication, risk-register, or mentoring exercise to the technical work.",
+    ),
+)
+
+AFFINITY_BY_KEY = {spec.key: spec for spec in AFFINITIES}
+AFFINITY_LEVELS = ("no_evidence", "early", "growing", "strong")
+AFFINITY_LEVEL_RANK = {level: index for index, level in enumerate(AFFINITY_LEVELS)}
+
 
 def _track_slug(track: Track | None) -> str:
     if track is None:
@@ -159,8 +226,12 @@ def _signals(db: Session, user_id: int) -> dict:
     defender_labs = 0
     investigator_labs = 0
     builder_labs = 0
+    offensive_labs = 0
+    offensive_core_labs = 0
+    offensive_no_hint_labs = 0
     defender_tracks: set[str] = set()
     investigator_tracks: set[str] = set()
+    offensive_categories: set[str] = set()
     total_minutes = 0
     no_hint = 0
     perfect = 0
@@ -187,6 +258,14 @@ def _signals(db: Session, user_id: int) -> dict:
                 investigator_tracks.add(track_slug)
         if category in BUILDER_CATEGORIES:
             builder_labs += 1
+
+        if category in OFFENSIVE_CATEGORIES:
+            offensive_labs += 1
+            offensive_categories.add(category)
+            if category in OFFENSIVE_CORE_CATEGORIES:
+                offensive_core_labs += 1
+            if (row.hints_used or 0) == 0:
+                offensive_no_hint_labs += 1
 
         total_minutes += row.time_spent_minutes or 0
         if (row.hints_used or 0) == 0:
@@ -252,6 +331,10 @@ def _signals(db: Session, user_id: int) -> dict:
         "investigator_labs": investigator_labs,
         "investigator_tracks": sorted(investigator_tracks),
         "builder_labs": builder_labs,
+        "offensive_labs": offensive_labs,
+        "offensive_core_labs": offensive_core_labs,
+        "offensive_no_hint_labs": offensive_no_hint_labs,
+        "offensive_categories": sorted(offensive_categories),
         "total_minutes": total_minutes,
         "no_hint_labs": no_hint,
         "perfect_labs": perfect,
@@ -337,6 +420,93 @@ def _evidence(spec: DimensionSpec, signals: dict, score: int) -> str:
     )
 
 
+def _affinity_level(count: int) -> str:
+    if count <= 0:
+        return "no_evidence"
+    if count < 3:
+        return "early"
+    if count < 6:
+        return "growing"
+    return "strong"
+
+
+def _affinity_counts(signals: dict) -> dict[str, int]:
+    return {
+        "offensive": signals["offensive_core_labs"],
+        "defensive": signals["defender_labs"],
+        "investigative": signals["investigator_labs"],
+        "leadership": (
+            signals["competitions"]
+            + signals["courses"]
+            + signals["instructed_courses"]
+            + signals["advanced_labs"]
+        ),
+    }
+
+
+def _affinity_evidence(spec: AffinitySpec, signals: dict) -> str:
+    if spec.key == "offensive":
+        parts = [
+            f"{signals['offensive_core_labs']} core offensive labs",
+            f"{signals['offensive_labs']} offensive labs total",
+        ]
+        if signals["offensive_no_hint_labs"]:
+            parts.append(f"{signals['offensive_no_hint_labs']} clean solves")
+        if signals["offensive_categories"]:
+            parts.append(
+                f"{len(signals['offensive_categories'])} offensive categories"
+            )
+        return " · ".join(parts)
+    if spec.key == "defensive":
+        return (
+            f"{signals['defender_labs']} defensive labs · "
+            f"{len(signals['defender_tracks'])} tracks"
+        )
+    if spec.key == "investigative":
+        return (
+            f"{signals['investigator_labs']} analysis labs · "
+            f"{len(signals['investigator_tracks'])} tracks"
+        )
+    return (
+        f"{signals['competitions']} competitions · "
+        f"{signals['courses']} courses · "
+        f"{signals['instructed_courses']} courses taught · "
+        f"{signals['advanced_labs']} advanced labs"
+    )
+
+
+def _affinities(signals: dict) -> list[dict]:
+    counts = _affinity_counts(signals)
+    rows = []
+    for spec in AFFINITIES:
+        count = counts[spec.key]
+        level = _affinity_level(count)
+        rows.append({
+            "key": spec.key,
+            "label": spec.label,
+            "summary": spec.summary,
+            "roles": list(spec.roles),
+            "evidence_level": level,
+            "evidence": _affinity_evidence(spec, signals),
+            "next_step": spec.next_step,
+            "recommended": False,
+            "_count": count,
+        })
+
+    rows.sort(
+        key=lambda row: (
+            -AFFINITY_LEVEL_RANK[row["evidence_level"]],
+            -row["_count"],
+            row["key"],
+        )
+    )
+    if rows and rows[0]["_count"] > 0:
+        rows[0]["recommended"] = True
+    for row in rows:
+        row.pop("_count", None)
+    return rows
+
+
 def build_skill_dna(db: Session, user: User) -> dict:
     signals = _signals(db, user.id)
     scores = _scores(signals)
@@ -393,6 +563,7 @@ def build_skill_dna(db: Session, user: User) -> dict:
         "tier": tier_for(overall),
         "class": top_class,
         "dimensions": dimensions,
+        "affinities": _affinities(signals),
         "titles": titles,
         "signals": signals,
     }

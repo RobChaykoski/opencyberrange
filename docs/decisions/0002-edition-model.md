@@ -1,7 +1,8 @@
 # ADR 0002: Base, Pro, and Enterprise editions
 
 Status: **Accepted; naming and scope refined by
-[ADR 0003](0003-edition-scope-refinement.md)**
+[ADR 0003](0003-edition-scope-refinement.md); separate edition version lines
+superseded by [ADR 0004](0004-single-platform-release-version.md)**
 Date: 2026-11-04
 
 ## Context

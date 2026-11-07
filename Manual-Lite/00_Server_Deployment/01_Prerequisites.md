@@ -4,16 +4,16 @@ Before you install SWOCTS Cyber Range you size the host, open the right ports, a
 
 ## Operating system
 
-Use **Ubuntu 24.04 LTS** for a new 2.0 deployment. The **1.0 maintenance line stays on Ubuntu 22.04 LTS**; bug fixes for 1.0 are not rebased onto 24.04. **Ubuntu 22.04** remains the upgrade source for 2.0 during the validation window. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](../../docs/OS-SUPPORT.md) and the [24.04 migration plan](../../docs/V2-UBUNTU-24.04-MIGRATION.md).
+Use **Ubuntu 24.04 LTS** for a new 2.1 deployment. **Community / Academic 1.1** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.1. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](../../docs/OS-SUPPORT.md) and the [24.04 migration plan](../../docs/V2-UBUNTU-24.04-MIGRATION.md).
 
 ## Platform versions
 
-The current supported stack for the 2.0.0 development line is:
+The current supported stack for the 2.1.4 release line is:
 
 | Component | Version | Notes |
 |---|---|---|
-| Host OS | Ubuntu 24.04 LTS for 2.0 | 1.0 maintenance stays on Ubuntu 22.04 LTS |
-| SWOCTS Cyber Range | `2.0.0-dev` | Shown in the page footer and returned by `GET /api/version` |
+| Host OS | Ubuntu 24.04 LTS for 2.1 | Community / Academic 1.1 supports 22.04 and 24.04 LTS |
+| SWOCTS Cyber Range | `2.1.4` | Shown in the page footer and returned by `GET /api/version` |
 | Python | 3.11 | Backend image: `python:3.11-slim` |
 | Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
 | PostgreSQL | 15 | Database image: `postgres:15-alpine` |

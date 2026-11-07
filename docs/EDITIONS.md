@@ -8,17 +8,23 @@ OpenCyberRange has three cumulative editions. The edition names describe scope
 and operational shape, not three separate codebases. Each edition builds on the
 previous one.
 
-| Edition | Version line | Shape | Primary user |
-|---|---|---|---|
-| **Community / Academic** | 1.1.x | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
-| **Professional** | 2.1.x | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
-| **Enterprise** | 3.0.x | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
+One platform release number covers this tree. Edition names select scope and
+entitlement; they are not separate version lines. See
+[ADR 0004](decisions/0004-single-platform-release-version.md).
+
+| Edition profile | Platform release | Status | Shape | Primary user |
+|---|---|---|---|---|
+| **Community / Academic** | 2.1.4 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
+| **Professional** | 2.1.4 | Release profile | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Enterprise** | 2.1.4 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
 
-### Community / Academic â€” 1.1
+### Community / Academic profile
 
-Community / Academic is the supported, stable teaching platform:
+Community / Academic is the supported teaching platform profile. The 1.1.3
+maintenance line remains available for existing installs; new installs use the
+2.1.4 tree with this profile.
 
 - courses, exercises, tracks, labs, RangeBox, flags, hints, and achievements;
 - lab improvements and workbook improvements;
@@ -31,10 +37,10 @@ Community / Academic is the supported, stable teaching platform:
 Community / Academic is the reference behaviour. Professional and Enterprise
 must not regress it.
 
-### Professional â€” 2.0
+### Professional profile
 
 Professional adds the teaching intelligence and evidence layer on the same
-single-host deployment. The Professional and Enterprise priority set is:
+single-host deployment and 2.1.4 platform release. The Professional and Enterprise priority set is:
 
 1. **Competency Framework Engine** â€” explicit competency definitions, mappings,
    evidence rules, and progression levels.
@@ -63,9 +69,10 @@ Professional is not a multi-host or identity-federation product. It remains a
 single Docker host and does not add SSO, multi-tenancy, LMS integration, or
 distributed scheduling.
 
-### Enterprise â€” 3.0
+### Enterprise profile (preview)
 
-Enterprise adds the deployment, identity, and institutional layer:
+Enterprise is a preview profile on 2.1.4 until the HA workstream ships. It adds
+the deployment, identity, and institutional layer:
 
 - multi-host lab pool with capacity-aware placement;
 - central session `/24` allocation and VPN gateway route reconciliation;
@@ -83,7 +90,7 @@ which remains the default and fallback.
 
 ## Feature matrix
 
-| Capability | Community / Academic 1.1 | Professional 2.0 | Enterprise 3.0 |
+| Capability | Community / Academic profile | Professional profile | Enterprise preview |
 |---|---:|---:|---:|
 | Courses, labs, RangeBox, flags, hints | Yes | Yes | Yes |
 | Lab and workbook improvements | Yes | Yes | Yes |
@@ -117,28 +124,30 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 
 | Item | State |
 |---|---|
-| Community / Academic 1.1 core platform | Delivered and supported |
-| Professional 2.0 analytics and course reporting | Delivered on the 24.04 preview |
-| Professional 2.0 Competency Framework Engine | Planned |
-| Professional 2.0 Student Feedback Engine | Planned |
-| Professional 2.0 Radar / Spider Web Reporting | Partially delivered: course and all-course skill-tree radar in Learning reports; learner/cohort competency radar planned |
-| Professional 2.0 Exercise Health Analytics | Planned |
-| Professional 2.0 Instructor Intervention Dashboard | Planned |
-| Professional 2.0 cohort analysis | Planned |
-| Professional 2.0 accreditation support | Planned |
-| Professional 2.0 research exports | Partially delivered (cross-course CSV/PDF and survey package) |
-| Enterprise 3.0 HA | Design complete in the private HA repository; not deployed |
-| Enterprise 3.0 SSO | Settings-only on the `v3` branch; login flows not implemented |
-| Enterprise 3.0 enterprise reporting, multi-tenancy, LMS, compliance reporting | Planned |
+| Community / Academic profile on 2.1.4 | Delivered and supported |
+| Community / Academic 1.1.3 maintenance line | Supported for existing installs |
+| Professional analytics and course reporting | Delivered |
+| Professional Competency Framework Engine | Planned |
+| Professional Student Feedback Engine | Planned |
+| Professional Radar / Spider Web Reporting | Partially delivered: course and all-course skill-tree radar in Learning reports; learner/cohort competency radar planned |
+| Professional Exercise Health Analytics | Planned |
+| Professional Instructor Intervention Dashboard | Planned |
+| Professional cohort analysis | Planned |
+| Professional accreditation support | Planned |
+| Professional research exports | Partially delivered (cross-course CSV/PDF and survey package) |
+| Enterprise preview HA | Design complete in the private HA repository; not deployed |
+| Enterprise preview SSO | Settings-only on the `v3` branch; login flows not implemented |
+| Enterprise preview reporting, multi-tenancy, LMS, compliance reporting | Planned |
 
 ## Upgrade path
 
 ```text
-Community / Academic 1.1  ->  Professional 2.0  ->  Enterprise 3.0
+Community / Academic profile  ->  Professional profile  ->  Enterprise preview
+                 all on platform release 2.1.4
 ```
 
 1. **Community / Academic to Professional:** back up, move to Ubuntu 24.04,
-   deploy the 2.0 Professional line, run the Professional migration and
+   deploy the 2.1.4 Professional profile, run the Professional migration and
    acceptance checks. Data is preserved.
 2. **Professional to Enterprise:** keep the Professional control plane and
    data, add the Enterprise topology: shared storage, replicated API/frontend,
@@ -151,13 +160,13 @@ Community / Academic 1.1  ->  Professional 2.0  ->  Enterprise 3.0
 
 ## Support policy
 
-- **Community / Academic 1.1** is the maintenance line. Security and
-  correctness fixes land here first and merge forward.
-- **Professional 2.0** is the current feature line for teaching analytics,
-  reporting, cohort analysis, accreditation support, and research exports.
-- **Enterprise 3.0** is the HA, identity, multi-tenancy, LMS, and compliance
-  line. It carries the Professional feature set plus enterprise deployment
-  controls.
+- **Community / Academic 1.1.3** is the maintenance line for existing installs.
+  Security and correctness fixes land here first and merge forward.
+- **Community / Academic, Professional, and Enterprise** are profiles on platform
+  release **2.1.4**. Release tags identify the platform release, not an edition.
+- **Enterprise is a preview profile** until HA, SSO, multi-tenancy, LMS, and
+  compliance reporting are shipped and verified. The separate HA repository has
+  its own version and a compatibility statement, not a platform version.
 - A fix does not create a separate fork. It lands on the earliest affected
   edition and merges forward.
 
@@ -173,8 +182,10 @@ commercial offering without that licence.
 ## Decision records
 
 The edition model is recorded in
-[`decisions/0002-edition-model.md`](decisions/0002-edition-model.md). The
-naming and scope refinement is recorded in
-[`decisions/0003-edition-scope-refinement.md`](decisions/0003-edition-scope-refinement.md).
+[`decisions/0002-edition-model.md`](decisions/0002-edition-model.md), the
+naming and scope refinement in
+[`decisions/0003-edition-scope-refinement.md`](decisions/0003-edition-scope-refinement.md),
+and the single-release-number decision in
+[`decisions/0004-single-platform-release-version.md`](decisions/0004-single-platform-release-version.md).
 Any change to the boundaries needs a written update to this page and the
 affected charter.

@@ -1043,7 +1043,15 @@ async def audit_report_export(
         admin_user_id=current_user.id,
         admin_username=current_user.username,
         target_type="report",
-        details={"format": payload.format, "reason": reason},
+        details={
+            "format": payload.format,
+            "reason": reason,
+            "scope": (
+                "all_active_courses"
+                if current_user.role == "admin"
+                else "owned_courses"
+            ),
+        },
         ip_address=request.client.host if request.client else None,
     )
     return {"ok": True}
@@ -1066,7 +1074,16 @@ async def reports_export_pdf(
         admin_user_id=current_user.id,
         admin_username=current_user.username,
         target_type="report",
-        details={"format": "pdf", "reason": reason},
+        details={
+            "format": "pdf",
+            "reason": reason,
+            "scope": (
+                "all_active_courses"
+                if current_user.role == "admin"
+                else "owned_courses"
+            ),
+            "course_count": len(payload.get("courses", [])),
+        },
         ip_address=request.client.host if request.client else None,
     )
     return StreamingResponse(

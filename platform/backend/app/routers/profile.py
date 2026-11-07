@@ -41,6 +41,11 @@ from app.services.achievements import (
     resolve_achievement_icon,
     resolve_achievement_label,
 )
+from app.services.career_profile import (
+    build_career_dossier,
+    render_html as render_career_html,
+    render_markdown as render_career_markdown,
+)
 from app.services.profile_report import generate_profile_transcript
 from app.services.skill_dna import build_skill_dna
 from app.services.titles import equip_title
@@ -312,10 +317,93 @@ async def get_skill_dna(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    """Return the learner's five traits, class, and title collection."""
+    """Return the learner's five traits, class, affinities, and titles."""
     return JSONResponse(
         content=build_skill_dna(db, current_user),
         headers={"Cache-Control": "no-store"},
+    )
+
+
+def _safe_export_name(username: str) -> str:
+    """Keep usernames inside a download filename without header surprises."""
+    cleaned = "".join(
+        char for char in (username or "learner")
+        if char.isalnum() or char in {"-", "_", "."}
+    )
+    return cleaned[:60] or "learner"
+
+
+def _log_career_export(request: Request, current_user: User, export_format: str):
+    log_admin_action(
+        action=AuditActions.USER_DATA_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="career_dossier",
+        target_id=current_user.id,
+        details={
+            "format": export_format,
+            "reason": "Self-service career profile request",
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+
+
+@router.get("/career-dossier", summary="Career-profile dossier (JSON)")
+@limiter.limit("30/minute")
+async def get_career_dossier(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the learner's career-discovery dossier as JSON."""
+    dossier = build_career_dossier(db, current_user)
+    _log_career_export(request, current_user, "json")
+    return JSONResponse(content=dossier, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/career-dossier.md", summary="Career-profile dossier (Markdown)")
+@limiter.limit("20/minute")
+async def get_career_dossier_markdown(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Download the learner's career-discovery dossier as Markdown."""
+    dossier = build_career_dossier(db, current_user)
+    _log_career_export(request, current_user, "markdown")
+    return Response(
+        content=render_career_markdown(dossier),
+        media_type="text/markdown; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                "attachment; filename="
+                f'"career-profile-{_safe_export_name(current_user.username)}.md"'
+            ),
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get("/career-dossier.html", summary="Career-profile dossier (HTML)")
+@limiter.limit("20/minute")
+async def get_career_dossier_html(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """View or print the learner's career-discovery dossier as HTML."""
+    dossier = build_career_dossier(db, current_user)
+    _log_career_export(request, current_user, "html")
+    return Response(
+        content=render_career_html(dossier),
+        media_type="text/html; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                "inline; filename="
+                f'"career-profile-{_safe_export_name(current_user.username)}.html"'
+            ),
+            "Cache-Control": "no-store",
+        },
     )
 
 

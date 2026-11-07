@@ -1,14 +1,14 @@
-# SWOCTS Cyber Range Enterprise 3.0 - manual supplement
+# SWOCTS Cyber Range Enterprise preview - manual supplement
 
-Enterprise 3.0 is **Professional 2.1 plus HA, SSO, enterprise reporting,
-multi-tenant support, LMS/SIS integration, and compliance reporting**. Read the
-[core manual](../index.md) and the
+Enterprise is a **preview profile on platform release 2.1.4** and adds HA, SSO,
+enterprise reporting, multi-tenant support, LMS/SIS integration, and compliance
+reporting. Read the [core manual](../index.md) and the
 [Professional supplement](../09_Professional/index.md) first. Enterprise is
 cumulative too.
 
 ## Delivery status
 
-| Capability | State in the 3.0 tree |
+| Capability | State in the preview |
 |---|---|
 | Professional analytics and reporting | Inherited |
 | SSO / LDAP / OIDC / SAML settings | Settings-only; login federation is in the HA workstream |

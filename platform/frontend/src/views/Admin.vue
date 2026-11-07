@@ -3,8 +3,13 @@
     <div class="admin-container">
       <!-- Header -->
       <div class="admin-header">
-        <h1 class="page-title">Admin Panel</h1>
-        <p class="page-subtitle">Manage users, exercises, sessions, VPN peers, curriculum, and settings</p>
+        <div>
+          <h1 class="page-title">Admin Panel</h1>
+          <p class="page-subtitle">Manage users, exercises, sessions, VPN peers, curriculum, settings, and reporting</p>
+        </div>
+        <router-link to="/reports" class="btn btn--secondary btn--sm">
+          Reports &amp; analytics
+        </router-link>
       </div>
 
       <!-- Alert messages render through the shared global toast -->
@@ -1550,7 +1555,7 @@
               <span>Invite: <code class="invite-code-admin" @click="copyToClipboard(managingCourse.invite_code)" style="cursor: pointer;">{{ managingCourse.invite_code }}</code></span>
             </div>
             <p style="color: #64748b; font-size: 0.8125rem; margin: 0;">
-              Use <strong>Open Course</strong> to manage students, exercises, assignments, and reports.
+              Use <strong>Open Course</strong> to manage students, exercises, assignments, analytics, and reports.
             </p>
           </div>
         </div>
@@ -7462,6 +7467,11 @@ watch(activeTab, (tab) => {
 
 /* Header */
 .admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 

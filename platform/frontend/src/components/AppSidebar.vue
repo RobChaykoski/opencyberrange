@@ -101,6 +101,21 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Exercises</span>
         </router-link>
+        <router-link v-if="!showAdmin" to="/reports" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M3 3v18h18"/>
+            <path d="M7 15l4-4 3 3 5-6"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Reports &amp; analytics</span>
+        </router-link>
+        <router-link to="/surveys" class="nav-item" :class="{ 'nav-item--active': isActive('/surveys') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="M9 12h6M9 16h4"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Surveys</span>
+        </router-link>
       </div>
 
       <!-- ADMIN (admin only) -->
@@ -131,6 +146,13 @@
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Monitoring</span>
+        </router-link>
+        <router-link to="/reports" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M3 3v18h18"/>
+            <path d="M7 15l4-4 3 3 5-6"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Reports &amp; analytics</span>
         </router-link>
         <router-link to="/admin?tab=system" class="nav-item" :class="{ 'nav-item--active': isAdminTab('system') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">

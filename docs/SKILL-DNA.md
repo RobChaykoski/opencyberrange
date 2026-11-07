@@ -1,13 +1,13 @@
 # Skill DNA
 
-Status: **Released in 1.1.3, 2.1.3, and 3.0.3** across Community / Academic,
+Status: **Released in 1.1.3, 2.1.4, and 3.0.3** across Community / Academic,
 Professional, and Enterprise.
 
 Skill DNA is a learner character sheet. It summarises what a learner has
-practised in the range across five traits, gives the learner a class, and points
-to a certification path. It is **descriptive, not predictive**: it is not a
-grade, a ranking, a prediction of job performance, or a claim about a learner's
-ability.
+practised in the range across five traits, gives the learner a class, points to
+a certification path, and shows **practice affinities** built from the same
+activity. It is **descriptive, not predictive**: it is not a grade, a ranking, a
+prediction of job performance, or a claim about a learner's ability.
 
 ## The five traits
 
@@ -22,6 +22,43 @@ ability.
 The class is the highest-scoring trait. Ties break in the order Explorer,
 Builder, Defender, Investigator, Leader. A learner with no activity is a
 **Recruit**.
+
+## Practice affinities
+
+The five traits answer "what have I practised?" The affinity panel answers a
+different, still positive question: "which kind of security work does my
+practice point toward next?" Affinities are not a sixth trait, a job label, or a
+second score. They use the same completed-exercise records and are shown beside
+the traits.
+
+| Affinity | Evidence used | Example roles |
+|---|---|---|
+| Offensive Security / Penetration Testing | Web, exploitation, privilege-escalation, post-exploitation, credential-attack, and supporting reconnaissance or enumeration labs | Penetration tester, red team operator, security consultant |
+| Defensive Security / SOC | Forensics, network-analysis, and OT labs | SOC analyst, detection engineer, network security analyst |
+| DFIR / Investigation | OSINT, forensics, malware, and evidence-handling labs | DFIR analyst, forensic examiner, threat intelligence analyst |
+| Security Leadership / Education | Competitions, courses, advanced work, and teaching | Security lead, security educator, programme coordinator |
+
+Each affinity reports an evidence level (`no_evidence`, `early`, `growing`,
+`strong`) and the raw evidence behind it. The strongest positive affinity is
+marked `recommended`. A learner with no offensive labs sees "No direct evidence
+yet" for penetration testing, not a negative label.
+
+### Recognising a penetration-testing direction positively
+
+A learner is recognised for **Offensive Security / Penetration Testing** when
+they have completed enough offensive core labs. The model looks for:
+
+- completed web, exploitation, privilege-escalation, post-exploitation, or
+  credential-attack exercises;
+- supporting reconnaissance, enumeration, network, or authentication practice;
+- clean solves, plus additional evidence across offensive categories.
+
+The label is deliberately framed as practice: "your completed labs point
+toward offensive security", not "you are a penetration tester". It is not
+authorisation to test any system, a certification, or a prediction that the
+learner will pass an exam. The next step pairs the technical work with scoping,
+rules of engagement, and reporting so the learner builds the full professional
+practice, not just exploitation technique.
 
 ## Reporting
 
@@ -138,14 +175,25 @@ Certification Roadmap, with attribution.
 - `course_enrollments` and `courses` — cohort and teaching activity.
 - `exercise_reactions` — community likes given.
 
-No new activity tracking is added. The feature reads existing records.
+No new activity tracking is added. The feature reads existing records. Affinity
+evidence also exposes `offensive_labs`, `offensive_core_labs`,
+`offensive_no_hint_labs`, and `offensive_categories` in the API signals so the
+UI and exports use the same numbers.
+
+The JSON profile includes an `affinities` array. Each item has `key`, `label`,
+`summary`, `roles`, `evidence_level`, `evidence`, `next_step`, and
+`recommended`. The array is ordered by evidence strength, then count, so the first
+positive match is the recommended next direction.
 
 ## Privacy and limits
 
 - The profile is private to the learner and staff who already have user-detail
   access.
-- Scores are descriptive. Do not use them for admissions, hiring, ranking, or
-  high-stakes decisions.
+- Scores and affinities are descriptive. Do not use them for admissions, hiring,
+  ranking, or high-stakes decisions.
+- Affinity evidence is positive: it reports what the learner has practised. It
+  never asserts that a learner is authorised to test, is job-ready, or has a
+  particular title.
 - A new learner starts at Recruit; the empty state explains how to begin.
 - The model can change as the curriculum grows. Record the formula version in
   the API response and the release notes.
@@ -156,7 +204,13 @@ No new activity tracking is added. The feature reads existing records.
 
 - The UI is a restrained character sheet, not a fantasy game: tokens, text
   labels, and operational density from the OpenCyberRange design system.
-- Each bar exposes a text score and `role="progressbar"` values.
+- The profile uses tabs so the page does not become one long scroll. **Skill
+  tree** is its own tab; Overview, Learning record, Account, and Security &
+  privacy hold the other tasks.
+- The skill tree is a five-branch radar with a text legend and branch cards.
+  It never relies on colour alone.
+- Each bar exposes a text score and `role="progressbar"` values. The SVG tree
+  exposes an accessible label with every branch score.
 - The title collection is collapsed by default so the profile stays scannable.
-- At narrow widths the class card and trait list stack; the title grid reflows
-  to one column.
+- At narrow widths the class card and trait list stack; the tree legend moves
+  below the chart and the title grid reflows to one column.

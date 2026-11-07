@@ -270,6 +270,21 @@ if (typeof window !== 'undefined') {
   box-sizing: border-box;
 }
 
+/* Screen-reader-only text: keep labels available to assistive technology
+   without showing them in the visual layout. */
+.sr-only,
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg-primary);

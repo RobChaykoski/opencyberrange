@@ -11,9 +11,11 @@ The Admin Panel is the operator console for the platform. You open it to approve
 
 ## Where the Admin Panel lives
 
-The Admin Panel is reached at `/admin`. Sign in as an admin, then open the **Admin** section of the left sidebar. The sidebar exposes six admin links: **Users**, **Courses**, **Exercises**, **Monitoring**, **System**, and **Settings**, plus an external **Wiki** link. There is no top navigation bar; you move between areas from the sidebar.
+The Admin Panel is reached at `/admin`. Sign in as an admin, then open the **Admin** section of the left sidebar. The sidebar exposes seven admin links: **Users**, **Courses**, **Exercises**, **Monitoring**, **Reports & analytics**, **System**, and **Settings**, plus an external **Wiki** link. There is no top navigation bar; you move between areas from the sidebar.
 
-The whole Admin Panel is one screen. Each sidebar link sets a `?tab=` value on the `/admin` route and swaps the main area, so Users is `/admin?tab=users`, Monitoring is `/admin?tab=monitoring`, and so on. The manual pages in this guide are task oriented, so several of them describe controls that live under the same tab.
+The whole Admin Panel is one screen. Each admin tab link sets a `?tab=` value on the `/admin` route and swaps the main area, so Users is `/admin?tab=users`, Monitoring is `/admin?tab=monitoring`, and so on. The manual pages in this guide are task oriented, so several of them describe controls that live under the same tab.
+
+**Reports & analytics** is the exception: it opens the separate `/reports` page rather than a tab inside `/admin`. The Admin Panel keeps its current tab while you review reporting, and the Report link is highlighted in the sidebar. See [Reporting and Analytics](28_Reporting_And_Analytics.md).
 
 <figure markdown>
 
@@ -49,6 +51,7 @@ flowchart TD
   A --> C[Courses tab]
   A --> SET[Settings tab]
   A --> SYS[System tab]
+  A --> R[Reports & analytics page]
 
   U --> U1[Create, edit, unlock, disable, delete users]
   U --> U2[Import / Export users]
@@ -62,7 +65,29 @@ flowchart TD
   M --> M3[Activity Log]
   SET --> S1[General, Security, Labs, VPN]
   SYS --> SY1[Health, snapshots, restore from another system]
+  R --> R1[Cross-course signals and exports]
+  R1 --> R2[Open a course Analytics tab]
 ```
+
+## Reports and analytics
+
+The **Reports & analytics** page gives you the cross-course view of teaching
+health. It sits outside the Admin Panel tabs and opens at `/reports`.
+
+- Summary cards: courses, learners, learning hours, pulse responses, exercise
+  feedback, and red/amber/green signal counts.
+- A course table with completion, abandonment, learning, feedback, confidence,
+  pulse, and signal reason per course.
+- A skill-tree radar for exercise coverage across the five Skill DNA branches,
+  with an all-courses or single-course scope selector.
+- Trending topics from optional pulse surveys.
+- CSV and PDF export, each requiring a reason of at least five characters. The
+  reason is written to the audit log.
+
+Administrators see every active course. Instructors see only the courses they
+own. The page is a teaching signal, not a learner ranking. Follow a course link
+to the **Analytics** tab for the per-exercise evidence. See
+[Reporting and Analytics](28_Reporting_And_Analytics.md) for the full walkthrough.
 
 ## Users tab at a glance
 

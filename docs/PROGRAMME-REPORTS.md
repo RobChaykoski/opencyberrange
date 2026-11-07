@@ -21,11 +21,11 @@ and tests share one meaning. The capabilities that deliver them are described in
 
 | Report | Where |
 |---|---|
-| Course learning summary and RAG | Reports → Learning reports → course row |
+| Course learning summary and RAG | Sidebar → Reports & analytics → course row |
 | Course exercise health | Course → Analytics → Exercises |
 | Course trend and feedback | Course → Analytics → Overview |
 | Learner growth and domain profile | Learner analytics / Profile |
-| Cross-course CSV/PDF | Reports → Export CSV / Export PDF |
+| Cross-course CSV/PDF | Reports & analytics → Export CSV / Export PDF |
 | Survey and pulse results | Instructor survey page |
 
 The programme reports below add the missing cross-course, cross-cohort, and

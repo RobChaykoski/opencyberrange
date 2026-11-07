@@ -1,17 +1,17 @@
-# SWOCTS Cyber Range Professional 2.1 - manual supplement
+# SWOCTS Cyber Range Professional profile - manual supplement
 
-Professional 2.1 is **Community / Academic 1.1 plus learning analytics,
-reporting, cohort analysis, competency evidence, and research exports**. Read
-the [core manual](../index.md) first. Everything in it still applies
-to Professional.
+Professional is the **Community / Academic profile plus learning analytics,
+reporting, cohort analysis, competency evidence, and research exports** on
+platform release **2.1.4**. Read the [core manual](../index.md) first.
+Everything in it still applies to Professional.
 
 ## What is different in Professional
 
 | Area | What you get | Where |
 |---|---|---|
-| Learner analytics | Private learning analytics for each learner: completion, hints, first-attempt rate, time, growth indicators, and domain evidence | **Learning analytics** |
+| Learner analytics | Private learning analytics for each learner: completion, hints, first-attempt rate, time, growth indicators, domain evidence, Cyber DNA, and positive practice affinities | **Learning analytics** and **Cyber DNA** |
 | Course analytics | Course overview, exercise drill-down, pulse feedback, learning hours, and aggregate reactions | **Course -> Analytics** |
-| Cross-course reports | Red/amber/green teaching signals, completion and abandonment, learning hours, feedback, CSV and PDF exports | **Reports** |
+| Cross-course reports | Red/amber/green teaching signals, completion and abandonment, learning hours, feedback, skill-tree coverage, and CSV/PDF exports | **Reports & analytics** |
 | Competency evidence | Six-domain competency profile with evidence levels (`no evidence`, `early`, `growing`, `strong`) | Learner profile and course analytics |
 | Feedback | Exercise like/dislike and opt-in pulse surveys with aggregate reporting | Active exercise and course analytics |
 | Research exports | Cross-course CSV/PDF and the survey package for approved studies | Reports and the REB survey package in `docs/research/REB-SURVEY-PACKAGE.md` |
@@ -24,8 +24,8 @@ The five Professional priorities are defined in
 
 Professional is not the HA, SSO, multi-tenant, LMS, or compliance-reporting
 edition. Those are Enterprise 3.0. Professional also keeps the Community /
-Academic privacy stance: analytics are descriptive, aggregate views suppress
-small groups, and the platform does not rank or predict learners.
+Academic privacy stance: analytics are descriptive, aggregate views show totals
+rather than learner names, and the platform does not rank or predict learners.
 
 ## Learner quick start
 
@@ -39,14 +39,17 @@ small groups, and the platform does not rank or predict learners.
 1. Open a course and choose **Analytics**.
 2. Use **Overview** for the cohort signal and **Exercises** for lab-level
    friction.
-3. Open **Reports** for the cross-course view and export CSV or PDF.
+3. Open **Reports & analytics** in the **Admin** section (administrators) or
+   **Instructor** section (instructors) for the cross-course view. Export CSV or
+   PDF from there. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
 4. Treat red and amber signals as review prompts, never as learner labels.
 
 ## Administrator notes
 
 - Reports and analytics are instructor- or administrator-only.
 - Learner-level exports are logged. Aggregate views do not show learner names.
-- Small cohorts are suppressed where the configuration requires it.
+- Course access is scoped: administrators see every active course, and
+  instructors see the courses they own.
 - Survey participation is opt-in and separate from normal platform access.
 
 !!! warning "Do not import Community / Academic data backwards"

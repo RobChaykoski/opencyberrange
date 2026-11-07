@@ -148,7 +148,7 @@
                       Reset
                     </button>
                     <span class="avatar-border-menu__status" aria-live="polite">
-                      {{ borderSaving ? 'Saving…' : (borderMessage || 'Changes save automatically') }}
+                      {{ borderSaving ? 'Savingâ€¦' : (borderMessage || 'Changes save automatically') }}
                     </span>
                   </div>
                 </div>
@@ -165,7 +165,7 @@
             <h1 class="profile-hero__name">{{ displayName }}</h1>
             <p class="profile-hero__handle">
               <span>@{{ user.username }}</span>
-              <span class="profile-hero__dot">·</span>
+              <span class="profile-hero__dot">Â·</span>
               <span>{{ user.email }}</span>
             </p>
             <p v-if="user.organization" class="profile-hero__org">{{ user.organization }}</p>
@@ -204,40 +204,165 @@
 
           <div class="profile-stats">
             <div class="profile-stat">
-              <span class="profile-stat__value">{{ summary ? summary.totals.certificates : '—' }}</span>
+              <span class="profile-stat__value">{{ summary ? summary.totals.certificates : 'â€”' }}</span>
               <span class="profile-stat__label">Certificates</span>
             </div>
             <div class="profile-stat">
               <span class="profile-stat__value">
-                {{ summary ? summary.totals.labs_completed : '—' }}<small v-if="summary">/{{ summary.totals.labs_total }}</small>
+                {{ summary ? summary.totals.labs_completed : 'â€”' }}<small v-if="summary">/{{ summary.totals.labs_total }}</small>
               </span>
               <span class="profile-stat__label">Exercises</span>
             </div>
             <div class="profile-stat">
-              <span class="profile-stat__value">{{ summary ? summary.totals.progress_percent : '—' }}<small v-if="summary">%</small></span>
+              <span class="profile-stat__value">{{ summary ? summary.totals.progress_percent : 'â€”' }}<small v-if="summary">%</small></span>
               <span class="profile-stat__label">Complete</span>
             </div>
             <div class="profile-stat">
-              <span class="profile-stat__value">{{ summary ? summary.totals.achievements : '—' }}</span>
+              <span class="profile-stat__value">{{ summary ? summary.totals.achievements : 'â€”' }}</span>
               <span class="profile-stat__label">Badges</span>
             </div>
           </div>
         </section>
 
-        <SkillDnaProfile
-          v-if="summary?.skill_dna"
-          :dna="summary.skill_dna"
-          :busy="titleSaving"
-          @equip-title="equipTitle"
-        />
-        <p
-          v-if="titleMessage"
-          :class="titleError ? 'error-message' : 'success-message'"
-          class="dna-title-message"
-        >
-          {{ titleMessage }}
-        </p>
+        <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+          <button
+            v-for="tab in profileTabs"
+            :key="tab.key"
+            :id="`profile-tab-${tab.key}`"
+            type="button"
+            role="tab"
+            class="profile-tab"
+            :class="{ 'profile-tab--active': activeTab === tab.key }"
+            :aria-selected="activeTab === tab.key"
+            :aria-controls="`profile-panel-${tab.key}`"
+            :tabindex="activeTab === tab.key ? 0 : -1"
+            @click="setTab(tab.key)"
+            @keydown.left.prevent="moveTab(-1)"
+            @keydown.right.prevent="moveTab(1)"
+            @keydown.home.prevent="moveTabTo('overview')"
+            @keydown.end.prevent="moveTabTo('security')"
+          >
+            {{ tab.label }}
+            <span v-if="tab.count !== undefined" class="profile-tab__count">{{ tab.count }}</span>
+          </button>
+        </nav>
 
+        <p v-if="summaryLoading && !summary" class="help-text">Loading your profile signals...</p>
+        <p v-if="summaryError" class="error-message">{{ summaryError }}</p>
+
+        <div
+          v-show="activeTab === 'overview'"
+          id="profile-panel-overview"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-overview"
+        >
+          <section class="profile-section overview-section" aria-labelledby="overview-title">
+            <div class="overview-section__head">
+              <div>
+                <p class="profile-hero__eyebrow">At a glance</p>
+                <h2 id="overview-title" class="section-title">Your profile in four signals</h2>
+                <p class="help-text">
+                  A short read of where your practice is pointing. Open a tab for the
+                  evidence behind it.
+                </p>
+              </div>
+            </div>
+
+            <div class="overview-grid">
+              <article class="overview-card overview-card--accent">
+                <p class="overview-card__eyebrow">Next practice step</p>
+                <h3>{{ topAffinity?.label || 'Start your first exercise' }}</h3>
+                <p>{{ topAffinity?.next_step || 'Complete one exercise to give your skill tree its first branch.' }}</p>
+                <p v-if="topAffinity?.evidence" class="overview-card__evidence">{{ topAffinity.evidence }}</p>
+                <button type="button" class="btn btn--secondary btn--sm" @click="setTab('skill-tree')">
+                  Open skill tree
+                </button>
+              </article>
+
+              <article class="overview-card">
+                <p class="overview-card__eyebrow">Learning evidence</p>
+                <div class="overview-stat-row">
+                  <div><strong>{{ learningHours }}</strong><span>hours</span></div>
+                  <div><strong>{{ cleanSolves }}</strong><span>clean solves</span></div>
+                  <div><strong>{{ advancedCompletions }}</strong><span>advanced</span></div>
+                </div>
+                <p>
+                  Clean solves are exercises completed with no hints and one attempt.
+                  Advanced exercises are marked advanced or expert.
+                </p>
+              </article>
+
+              <article class="overview-card">
+                <p class="overview-card__eyebrow">Cyber DNA</p>
+                <div class="overview-dna">
+                  <strong>{{ summary?.skill_dna?.class?.class_name || 'Recruit' }}</strong>
+                  <span>{{ summary?.skill_dna?.class?.label || 'No class yet' }}</span>
+                </div>
+                <p v-if="summary?.skill_dna">
+                  {{ summary.skill_dna.overall }} / 100 overall, {{ summary.skill_dna.tier }}.
+                  Your highest branch is {{ summary.skill_dna.class.label }}.
+                </p>
+                <p v-else>Complete exercises to build your five branches.</p>
+              </article>
+
+              <article class="overview-card">
+                <p class="overview-card__eyebrow">Recent recognition</p>
+                <div v-if="recentAchievements.length" class="overview-badges">
+                  <span v-for="badge in recentAchievements" :key="badge.type + badge.label" class="overview-badge">
+                    <span aria-hidden="true">{{ badge.icon }}</span>{{ badge.label }}
+                  </span>
+                </div>
+                <p v-else>No badges yet. Your first completed exercise starts the collection.</p>
+                <button type="button" class="btn btn--secondary btn--sm" @click="setTab('learning')">
+                  See learning record
+                </button>
+              </article>
+            </div>
+          </section>
+        </div>
+
+        <div
+          v-show="activeTab === 'skill-tree'"
+          id="profile-panel-skill-tree"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-skill-tree"
+        >
+          <div class="profile-panel__actions">
+            <button type="button" class="btn btn--secondary btn--sm" :disabled="careerExporting" @click="downloadCareerProfile('md')">
+              Download career profile (.md)
+            </button>
+            <button type="button" class="btn btn--secondary btn--sm" :disabled="careerExporting" @click="downloadCareerProfile('html')">
+              Download printable profile (.html)
+            </button>
+          </div>
+          <p v-if="careerExportMessage" :class="careerExportError ? 'error-message' : 'success-message'">
+            {{ careerExportMessage }}
+          </p>
+          <SkillDnaProfile
+            v-if="summary?.skill_dna"
+            :dna="summary.skill_dna"
+            :busy="titleSaving"
+            @equip-title="equipTitle"
+          />
+          <p v-else class="help-text">Complete an exercise to grow your skill tree.</p>
+          <p
+            v-if="titleMessage"
+            :class="titleError ? 'error-message' : 'success-message'"
+            class="dna-title-message"
+          >
+            {{ titleMessage }}
+          </p>
+        </div>
+
+        <div
+          v-show="activeTab === 'learning'"
+          id="profile-panel-learning"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-learning"
+        >
         <!-- Course achievements: grouped by course so the profile is a summary,
              not a raw badge feed. -->
         <section
@@ -293,7 +418,7 @@
                 >
                   <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
                   <span>{{ badge.label }}</span>
-                  <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
+                  <span v-if="badge.count > 1" class="course-achievement-badge__count">Ã—{{ badge.count }}</span>
                 </span>
               </div>
               <footer class="course-achievement-card__foot">
@@ -322,7 +447,7 @@
                 >
                   <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
                   <span>{{ badge.label }}</span>
-                  <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
+                  <span v-if="badge.count > 1" class="course-achievement-badge__count">Ã—{{ badge.count }}</span>
                 </span>
               </div>
               <footer class="course-achievement-card__foot">
@@ -354,7 +479,6 @@
           </div>
 
           <p v-if="pdfMessage" :class="pdfError ? 'error-message' : 'success-message'" class="transcript-message">{{ pdfMessage }}</p>
-          <p v-if="summaryError" class="error-message transcript-message">{{ summaryError }}</p>
           <p v-if="summaryLoading && !summary" class="help-text">Loading your completion record...</p>
 
           <template v-if="summary">
@@ -374,8 +498,8 @@
                 <span class="certificate-card__track" :style="{ color: cert.track_color || 'var(--accent)' }">{{ cert.track_name }}</span>
                 <span class="certificate-card__title">Level {{ cert.level_number }}: {{ cert.level_name }}</span>
                 <span class="certificate-card__meta">
-                  Awarded {{ cert.issued_display }} · {{ cert.exercises_completed }} exercises
-                  <template v-if="cert.quiz_score !== null && cert.quiz_score !== undefined"> · Quiz {{ cert.quiz_score }}%</template>
+                  Awarded {{ cert.issued_display }} Â· {{ cert.exercises_completed }} exercises
+                  <template v-if="cert.quiz_score !== null && cert.quiz_score !== undefined"> Â· Quiz {{ cert.quiz_score }}%</template>
                 </span>
                 <span class="certificate-card__id">{{ cert.certificate_id }}</span>
               </router-link>
@@ -458,6 +582,15 @@
             </details>
           </template>
         </section>
+        </div>
+
+        <div
+          v-show="activeTab === 'account'"
+          id="profile-panel-account"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-account"
+        >
         <div class="profile-section">
           <h2 class="section-title">Personal Information</h2>
           <p class="help-text" style="margin: -0.5rem 0 1rem;">
@@ -681,7 +814,15 @@
           </div>
           <p v-else class="empty-courses">Not enrolled in any courses yet.</p>
         </div>
+        </div>
 
+        <div
+          v-show="activeTab === 'security'"
+          id="profile-panel-security"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-security"
+        >
         <!-- Two-Factor Authentication (TOTP) -->
         <div class="profile-section">
           <h2 class="section-title">Two-Factor Authentication (TOTP)</h2>
@@ -862,6 +1003,7 @@
 
         <SurveyConsentPanel />
         <PrivacyDataPanel :mfa-enabled="!!user.mfa_enabled" />
+        </div>
       </div>
 
       <div v-else class="error-message">Failed to load profile information</div>
@@ -870,7 +1012,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { useVpnStatus } from '../composables/useVpnStatus'
@@ -908,6 +1050,37 @@ const loading = ref(true)
 // and transcript sections. Loaded separately from /auth/me so the account
 // forms render immediately even when that aggregate query is slow.
 const summary = ref(null)
+const PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
+const activeTab = ref(
+  PROFILE_TABS.includes(String(route.query.tab || '')) ? String(route.query.tab) : 'overview'
+)
+
+const setTab = (tab) => {
+  if (!PROFILE_TABS.includes(tab)) return
+  activeTab.value = tab
+  const query = { ...route.query, tab }
+  if (tab === 'overview') delete query.tab
+  router.replace({ query })
+}
+
+const moveTabTo = (tab) => {
+  setTab(tab)
+  nextTick(() => document.getElementById(`profile-tab-${tab}`)?.focus())
+}
+
+const moveTab = (direction) => {
+  const index = PROFILE_TABS.indexOf(activeTab.value)
+  const next = PROFILE_TABS[(index + direction + PROFILE_TABS.length) % PROFILE_TABS.length]
+  moveTabTo(next)
+}
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    const next = PROFILE_TABS.includes(String(tab || '')) ? String(tab) : 'overview'
+    if (next !== activeTab.value) activeTab.value = next
+  }
+)
 const summaryLoading = ref(true)
 const summaryError = ref('')
 const titleSaving = ref(false)
@@ -916,6 +1089,38 @@ const titleError = ref(false)
 const downloadingPdf = ref(false)
 const pdfMessage = ref('')
 const pdfError = ref(false)
+const careerExporting = ref(false)
+const careerExportMessage = ref('')
+const careerExportError = ref(false)
+
+async function downloadCareerProfile(format) {
+  if (!['md', 'html'].includes(format) || careerExporting.value) return
+  careerExporting.value = true
+  careerExportMessage.value = ''
+  careerExportError.value = false
+  try {
+    const response = await axios.get(`/profile/career-dossier.${format}`, {
+      responseType: 'blob',
+    })
+    const type = format === 'html' ? 'text/html;charset=utf-8' : 'text/markdown;charset=utf-8'
+    const blob = new Blob([response.data], { type })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `career-profile-${user.value?.username || 'learner'}.${format}`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    careerExportMessage.value = 'Career profile downloaded.'
+  } catch (error) {
+    careerExportError.value = true
+    careerExportMessage.value =
+      error.response?.data?.detail || 'Could not prepare the career profile. Please try again.'
+  } finally {
+    careerExporting.value = false
+  }
+}
 
 // Profile avatar. Images are resized in the browser and stored on the user row
 // as a data URL by /auth/settings, so no upload volume is required.
@@ -963,7 +1168,7 @@ const currentBorderHex = computed(() => currentColorOption.value.hex)
 const currentColorLabel = computed(() => currentColorOption.value.label)
 const currentStyleLabel = computed(() => currentStyleOption.value.label)
 const currentBorderLabel = computed(
-  () => `${currentStyleLabel.value} · ${currentColorLabel.value}`
+  () => `${currentStyleLabel.value} Â· ${currentColorLabel.value}`
 )
 
 const closeBorderMenu = (returnFocus = false) => {
@@ -1075,6 +1280,37 @@ const tracks = computed(() => summary.value?.tracks || [])
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
 const courseAchievements = computed(() => summary.value?.course_achievements || [])
+
+const profileTabs = computed(() => [
+  { key: 'overview', label: 'Overview' },
+  { key: 'skill-tree', label: 'Skill tree' },
+  { key: 'learning', label: 'Learning record', count: achievements.value.length || undefined },
+  { key: 'account', label: 'Account' },
+  { key: 'security', label: 'Security & privacy' },
+])
+
+const learningMinutes = computed(() =>
+  completions.value.reduce((total, item) => total + (Number(item.time_spent_minutes) || 0), 0)
+)
+const learningHours = computed(() => {
+  const hours = learningMinutes.value / 60
+  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1)
+})
+const cleanSolves = computed(() =>
+  completions.value.filter(
+    (item) => (item.hints_used || 0) === 0 && (item.attempts || 1) <= 1
+  ).length
+)
+const advancedCompletions = computed(() =>
+  completions.value.filter((item) =>
+    ['advanced', 'expert'].includes(String(item.difficulty || '').toLowerCase())
+  ).length
+)
+const topAffinity = computed(() => {
+  const affinities = summary.value?.skill_dna?.affinities || []
+  return affinities.find((item) => item.recommended) || affinities[0] || null
+})
+const recentAchievements = computed(() => achievements.value.slice(0, 4))
 const showHiddenAchievements = computed(
   () => !!user.value?.show_hidden_achievements
 )
@@ -1317,7 +1553,7 @@ async function downloadTranscript() {
 }
 
 const formatDateOnly = (dateStr) => {
-  if (!dateStr) return '—'
+  if (!dateStr) return 'â€”'
   const value = dateStr.endsWith('Z') || dateStr.includes('+') ? dateStr : dateStr + 'Z'
   return new Date(value).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
@@ -1325,7 +1561,7 @@ const formatDateOnly = (dateStr) => {
 }
 
 const formatCompletionDate = (dateStr) => {
-  if (!dateStr) return '—'
+  if (!dateStr) return 'â€”'
   return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
   })
@@ -1712,6 +1948,187 @@ watch(() => route.path, (newPath) => {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0 0.25rem;
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.profile-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.85rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.profile-tab:hover {
+  color: var(--text-primary);
+  background: var(--hover-bg);
+}
+
+.profile-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.profile-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.profile-tab__count {
+  min-width: 1.35rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.6875rem;
+  text-align: center;
+}
+
+.profile-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.overview-section__head {
+  margin-bottom: 1rem;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.85rem;
+}
+
+.overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.overview-card--accent {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.overview-card__eyebrow {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.overview-card h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.overview-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.overview-card__evidence {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.overview-card .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.overview-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.overview-stat-row div {
+  min-width: 0;
+  padding: 0.55rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.overview-stat-row strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.overview-stat-row span {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.overview-dna {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.overview-dna strong {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.overview-dna span {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.overview-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.overview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
 }
 
 .profile-section {
@@ -3307,6 +3724,18 @@ watch(() => route.path, (newPath) => {
 
   .transcript-download {
     width: 100%;
+  }
+
+  .profile-tabs {
+    margin: 0 -0.25rem;
+  }
+
+  .profile-tab {
+    padding: 0.6rem 0.65rem;
+  }
+
+  .overview-stat-row {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -37,6 +37,61 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Kept internal package names, API paths, data formats, environment variables,
   and upstream attribution unchanged for compatibility and licensing.
 
+### Learner profile and career discovery
+- Split the profile into five focused tabs: **Overview**, **Skill tree**,
+  **Learning record**, **Account**, and **Security & privacy**. The selected tab
+  is kept in the URL.
+- Added a visual **skill tree** to the Skill tree tab, built from the five Cyber
+  DNA trait scores, with branch scores, evidence cards, and next steps.
+- Added **Practice affinities** to Cyber DNA: positive, evidence-based role
+  families for Offensive Security / Penetration Testing, Defensive Security /
+  SOC, DFIR / Investigation, and Security Leadership / Education.
+- An offensive-security affinity is recognised from completed web, exploitation,
+  privilege-escalation, post-exploitation, and credential-attack labs, with
+  supporting reconnaissance and enumeration evidence. It is framed as practice,
+  not a job label, certification, or testing authorisation.
+- Added development-only **career discovery profiles** and a dossier exporter.
+  `seed_career_profiles.py` creates a well-versed learner, a starting learner,
+  and a career-changer, then exports JSON, Markdown, and printable HTML with
+  Cyber DNA, learning evidence, reflection questions, and external resources.
+- Added external references for MalOps, Hack The Box Academy, PacketLabs, and
+  Cisco Networking Academy. Links are references only; third-party content is
+  not copied or reproduced.
+
+### Version policy
+- Adopted **one platform release number, 2.1.4**, for this tree. Community /
+  Academic, Professional, and Enterprise are edition profiles, not three
+  separate version lines. See `docs/decisions/0004-single-platform-release-version.md`.
+- Kept Community / Academic 1.1.3 as the supported maintenance line for existing
+  single-host installs.
+- Described Enterprise as a **preview profile on 2.1.4** until the HA workstream
+  ships; the separate HA repository has its own version and compatibility
+  statement.
+
+### Dependencies and maintenance
+- Applied safe patch updates within declared ranges: Vue 3.5.45, Chart.js 4.6.1,
+  marked 18.1.3, Vite 8.3.6, and globals 17.14.0.
+- Confirmed `npm audit` reports 0 vulnerabilities and `pip-audit` reports no known
+  vulnerabilities. ESLint 10, `eslint-plugin-vue` 10, and Vue Router 5 remain
+  deliberately deferred as breaking majors.
+- Reconciled `versions.yaml` and `docs/SUPPORTED-VERSIONS.md` with the installed
+  backend and frontend dependency set.
+
+### Reporting and navigation
+- Restored **Reports & analytics** to the sidebar after the link was dropped in
+  the Skill DNA navigation change. Administrators see it in the **Admin**
+  section; instructors see it in the **Instructor** section. It opens `/reports`
+  as a separate route, so the Admin tab is preserved.
+- Restored the **Surveys** link for instructors and administrators. Both routes
+  existed but had no visible navigation entry.
+- Updated the admin guide, navigation guide, instructor report guide, README,
+  and analytics documentation for the reporting entry point.
+- Added reusable screen-reader-only styles and a caption for the reports table,
+  so visually hidden labels stay hidden and table structure is announced by
+  assistive technology.
+- Report export audit records now include the export scope, and PDF exports also
+  record the course count.
+
 ### Administration
 - Added **Admin → Users → Import / Export Users**: portable user JSON export,
   preview-before-import, optional update of matching usernames, and optional

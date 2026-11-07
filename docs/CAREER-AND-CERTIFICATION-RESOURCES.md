@@ -1,7 +1,7 @@
 # Career and certification resources
 
 Status: **Active curriculum guidance**
-Edition: **Community / Academic 1.1** (inherited by Professional 2.0 and
+Edition: **Community / Academic 1.1** (inherited by Professional 2.1.4 and
 Enterprise 3.0)
 Owner: Curriculum
 
@@ -16,9 +16,47 @@ learner will pass a certification or get a role.
 | **Security Certification Roadmap** by Paul Jerimy | Vendor certification families, entry-to-advanced progression, and role paths | <https://pauljerimy.com/security-certification-roadmap/> |
 | **CISO MindMap 2026** by Rafeeq Rehman | The breadth of a security leadership role: operations, IAM, governance, risk, architecture, cloud, AI, OT, data, and team management | <https://rafeeqrehman.com/wp-content/uploads/2026/04/CISO-MindMap-2026.pdf> |
 | **SWOCTS Resources** | Free training platforms, certification programs, community, and academic resources | <https://swocts.com/resources> |
+| **MalOps Peaky Blinders challenge** | An external malware-analysis practice reference and a different platform's challenge format. Useful for showing a route from broader security practice into malware analysis. | <https://malops.io/challenges/peakyblinders> |
+| **Hack The Box Academy** | External hands-on labs and structured learning paths for offensive, defensive, and general security practice. | <https://academy.hackthebox.com/> |
+| **PacketLabs** | External penetration-testing and security-research reference material. | <https://www.packetlabs.net/> |
+| **Cisco Networking Academy** | External networking and cybersecurity courses, useful for learners building foundations. | <https://www.netacad.com/> |
 
-These are third-party works. Link to them; do not copy the full charts into the
-platform. Attribute the author and keep the link current.
+These are third-party works. Link to them; do not copy their content, charts,
+challenge text, or course material into the platform. Attribute the author and
+keep the link current. The platform links are references for exploration only.
+
+## Development career profiles
+
+The development seed creates three demonstration learners and exports a
+readable dossier for each:
+
+- `demo_career_ready` — fairly well versed across offensive, defensive, and
+  investigative exercises.
+- `demo_career_starting` — just starting, with a small number of beginner
+  completions.
+- `demo_career_changer` — changing career direction, with evidence gathering in
+  OSINT, forensics, network analysis, and adjacent offensive work.
+
+Run inside the backend container:
+
+```bash
+python -m app.scripts.seed_career_profiles --output-dir /app/data/career_profiles
+python -m app.scripts.export_career_profiles --output-dir /app/data/career_profiles
+```
+
+The seed is development-only, idempotent for its own demo users, and leaves real
+learner records alone. It generates a one-time demo password and prints it at the
+end; set `CAREER_DEMO_PASSWORD` before seeding if you need a known workshop
+password. Each export contains a JSON dossier, a Markdown dossier,
+and a self-contained printable HTML page. The dossier combines Cyber DNA,
+learning evidence, course participation, reflection questions, and the external
+references above. It is a conversation aid, not a job prediction or ranking.
+
+The signed-in learner can also request the same dossier through the authenticated
+`/api/profile/career-dossier`, `/api/profile/career-dossier.md`, and
+`/api/profile/career-dossier.html` endpoints. They return only that learner's own
+data, send `Cache-Control: no-store`, HTML-escape all values, and write an audit
+record. They do not expose staff-only fields or another learner's activity.
 
 ## How the references are used
 

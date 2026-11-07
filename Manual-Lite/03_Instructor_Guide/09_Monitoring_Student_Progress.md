@@ -9,7 +9,7 @@ The Students sub-tab inside a course shows your roster and, for each student, a 
 
 ## Open the roster
 
-1. In the left sidebar, select **Instructor Panel**.
+1. In the left sidebar, select **My Courses**.
 2. On the **My Courses** tab, click the course you want to inspect.
 3. Click the **Students** sub-tab.
 

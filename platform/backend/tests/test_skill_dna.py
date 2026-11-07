@@ -238,6 +238,45 @@ def test_skill_dna_scores_and_class(db_session, test_user):
         assert row["next_step"]
         assert row["certification_key"]
 
+    affinities = {row["key"]: row for row in dna["affinities"]}
+    assert set(affinities) == {"offensive", "defensive", "investigative", "leadership"}
+    assert any(row["recommended"] for row in dna["affinities"])
+    assert all(
+        row["evidence_level"] in {"no_evidence", "early", "growing", "strong"}
+        for row in dna["affinities"]
+    )
+
+
+def test_offensive_affinity_recognises_pentest_practice(db_session, test_user):
+    web = _track(db_session, "Web Application Security", "web")
+    for index, category in enumerate(
+        [
+            "reconnaissance",
+            "exploitation",
+            "privilege-escalation",
+            "post-exploitation",
+            "credential-attacks",
+        ]
+    ):
+        lab = _lab(
+            db_session,
+            web,
+            name=f"Offensive Practice {index}",
+            category=category,
+        )
+        _complete(db_session, test_user, lab, hints=0, attempts=1, minutes=30)
+
+    dna = build_skill_dna(db_session, test_user)
+    offensive = next(
+        row for row in dna["affinities"] if row["key"] == "offensive"
+    )
+
+    assert offensive["evidence_level"] in {"growing", "strong"}
+    assert offensive["recommended"] is True
+    assert "core offensive labs" in offensive["evidence"]
+    assert "Penetration tester" in offensive["roles"]
+    assert offensive["next_step"]
+
 
 def test_titles_unlock_and_equip(db_session, test_user):
     _seed_activity(db_session, test_user)
@@ -272,8 +311,36 @@ def test_profile_summary_includes_skill_dna(client, auth_headers, db_session, te
     body = resp.json()
     assert body["skill_dna"]["overall"] > 0
     assert len(body["skill_dna"]["dimensions"]) == 5
+    assert len(body["skill_dna"]["affinities"]) == 4
     assert body["skill_dna"]["titles"]["titles"]
     assert body["user"]["equipped_title"]["key"] in {"class", "first_blood"}
+
+
+def test_career_dossier_api_and_exports(client, auth_headers, db_session, test_user):
+    _seed_activity(db_session, test_user)
+
+    resp = client.get("/api/profile/career-dossier", headers=auth_headers)
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["identity"]["username"] == test_user.username
+    assert len(body["cyber_dna"]["affinities"]) == 4
+    assert body["learning"]["completed_exercises"] >= 1
+    assert body["recommended_next_steps"]
+    assert any(
+        "hackthebox" in resource["url"].lower()
+        for resource in body["external_resources"]
+    )
+
+    markdown = client.get("/api/profile/career-dossier.md", headers=auth_headers)
+    assert markdown.status_code == 200, markdown.text
+    assert "Career profile:" in markdown.text
+    assert markdown.headers["cache-control"] == "no-store"
+
+    html = client.get("/api/profile/career-dossier.html", headers=auth_headers)
+    assert html.status_code == 200, html.text
+    assert "text/html" in html.headers["content-type"]
+    assert "Practice affinities" in html.text
+    assert html.headers["cache-control"] == "no-store"
 
 
 def test_title_api_equips_and_rejects_locked(client, auth_headers, db_session, test_user):
