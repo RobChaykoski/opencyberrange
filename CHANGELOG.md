@@ -54,9 +54,9 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   `seed_career_profiles.py` creates a well-versed learner, a starting learner,
   and a career-changer, then exports JSON, Markdown, and printable HTML with
   Cyber DNA, learning evidence, reflection questions, and external resources.
-- Added external references for MalOps, Hack The Box Academy, PacketLabs, and
-  Cisco Networking Academy. Links are references only; third-party content is
-  not copied or reproduced.
+- Added external references for MalOps, Hack The Box Academy, PacketLabs,
+  Cisco Networking Academy, and LabShock for IoT/OT training. Links are
+  references only; third-party content is not copied or reproduced.
 
 ### Events rename
 - Renamed the user-facing **Competitions** area to **Events** across the

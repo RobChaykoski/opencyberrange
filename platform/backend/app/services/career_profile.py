@@ -58,6 +58,11 @@ EXTERNAL_RESOURCES = (
         "url": "https://www.netacad.com/",
         "use": "External networking and cybersecurity courses. Linked for exploration only.",
     },
+    {
+        "label": "LabShock",
+        "url": "https://labshock.io/",
+        "use": "External IoT and OT/ICS cybersecurity training reference. Linked for exploration only; content is not copied.",
+    },
 )
 
 

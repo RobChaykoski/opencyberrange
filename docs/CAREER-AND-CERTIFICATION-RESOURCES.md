@@ -20,6 +20,7 @@ learner will pass a certification or get a role.
 | **Hack The Box Academy** | External hands-on labs and structured learning paths for offensive, defensive, and general security practice. | <https://academy.hackthebox.com/> |
 | **PacketLabs** | External penetration-testing and security-research reference material. | <https://www.packetlabs.net/> |
 | **Cisco Networking Academy** | External networking and cybersecurity courses, useful for learners building foundations. | <https://www.netacad.com/> |
+| **LabShock** | External IoT and OT/ICS cybersecurity training reference for learners moving into industrial and connected-device security. | <https://labshock.io/> |
 
 These are third-party works. Link to them; do not copy their content, charts,
 challenge text, or course material into the platform. Attribute the author and
