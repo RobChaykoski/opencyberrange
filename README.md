@@ -17,7 +17,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Platform](https://img.shields.io/badge/platform-2.5.0%20release-8b5cf6)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-2.5.1%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
@@ -32,24 +32,28 @@ Students also get a profile with completion statistics, certificates, achievemen
 ## Branding
 
 **SWOCTS Cyber Range** is the product name, title, and visual identity. The
-SWOCTS crest is the primary mark; the OpenCyberRange shield and name are used for
-the **Powered by OpenCyberRange** attribution. Brand assets live in
-`platform/frontend/public/` (`swocts-cyber-range-mark*.png`, `favicon.*`) and are
-mirrored into `Workbook/assets/` and `Manual-Lite/assets/` for the documentation
-sites. Keep the upstream OpenCyberRange attribution and licence notices intact.
+SWOCTS name and crest are owned by **SWOCTS**; the crest was created and designed
+by **Avery Chaykoski**. They are brand assets, not software, and are not covered
+by the PolyForm software licence. See [BRANDING.md](BRANDING.md).
+
+The OpenCyberRange shield and name are used for the **Powered by OpenCyberRange**
+attribution. Brand assets live in `platform/frontend/public/`
+(`swocts-cyber-range-mark*.png`, `favicon.*`) and are mirrored into
+`Workbook/assets/` and `Manual-Lite/assets/` for the documentation sites. Keep
+the upstream OpenCyberRange attribution and licence notices intact.
 
 ## Editions
 
-SWOCTS Cyber Range uses one platform release number (`2.5.0`) with three
+SWOCTS Cyber Range uses one platform release number (`2.5.1`) with three
 cumulative edition profiles. The edition names describe scope, entitlement, and
 operational shape, not three separate codebases or three separate version lines.
 See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Community / Academic** | `2.5.0` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `2.5.0` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `2.5.0` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
+| **Community / Academic** | `2.5.1` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `2.5.1` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `2.5.1` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
 The Community / Academic profile (1.1.3 maintenance) remains the reference
 behaviour and the fallback.
@@ -65,7 +69,7 @@ Instructor Intervention Dashboard — are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on the Community / Academic 1.1.3
-maintenance line and merge forward into the 2.5.0 profiles**, so a fix does not
+maintenance line and merge forward into the 2.5.1 profiles**, so a fix does not
 wait for a feature release. There is no separate fork to maintain. See
 [Editions](docs/EDITIONS.md) and
 [ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
@@ -94,7 +98,7 @@ allowed. New scoring models, enterprise integrations, multi-tenancy, SSO,
 compliance reporting, and multi-host HA are Enterprise preview work.
 
 - [Edition model](docs/EDITIONS.md)
-- [Professional 2.5.0 program charter](docs/V2-PROGRAM-CHARTER.md)
+- [Professional 2.5.1 program charter](docs/V2-PROGRAM-CHARTER.md)
 - [Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md)
 - [Programme reports](docs/PROGRAMME-REPORTS.md)
 - [Community / Academic backlog](docs/COMMUNITY-ACADEMIC-BACKLOG.md)
@@ -177,7 +181,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. `main` carries platform release
-**2.5.0** with Community / Academic, Professional, and Enterprise preview
+**2.5.1** with Community / Academic, Professional, and Enterprise preview
 profiles. The Community / Academic 1.1.3 line remains the supported single-host
 teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
@@ -197,10 +201,33 @@ in production.
 
 See [BUILD_NOTICE.md](BUILD_NOTICE.md#ai-assistance-disclosure) for the
 build-specific disclosure and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
-for the open-source attribution inventory.
+for the third-party attribution inventory.
 
 ![The Ops Center dashboard](docs/img/dashboard.png)
 
+
+## Licensing and third-party notices
+
+The platform source and original content are licensed under the **PolyForm
+Noncommercial License 1.0.0** (see [LICENSE](LICENSE) and
+[LICENSING.md](LICENSING.md)). It is source-available, not OSI open source.
+
+Third-party software and data keep their own licences. The full inventory,
+source offers, and notice-sensitive components are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), with licence texts in
+[THIRD_PARTY_LICENSES/](THIRD_PARTY_LICENSES/). In particular:
+
+- **Redis is pinned to 7.2**, which is BSD-3-Clause. Redis 7.4 and later are
+  RSALv2/SSPLv1; do not change the image tag without a licence review.
+- The build-time PCAP generators that import Scapy are **GPL-2.0-only**. They
+  carry SPDX headers and are listed in the notice inventory.
+- The RangeBox image includes separate **AGPL-3.0** tools (Hydra, Masscan) and
+  GPL tools. Keep them unmodified and provide source when distributing the
+  image.
+- Do not add PyMuPDF (`fitz`/`pymupdf`) to the runtime; it is AGPL-3.0 or
+  commercially licensed and is not shipped.
+
+This is a compliance inventory, not legal advice.
 
 ## What it looks like
 
@@ -474,7 +501,7 @@ Validation on **8 November 2026**:
 
 | Check | Result |
 |---|---|
-| Development database quality (2.5.0) | **0 critical, 0 warning, 2 info** |
+| Development database quality (2.5.1) | **0 critical, 0 warning, 2 info** |
 | Production database quality (2.4.1) | **0 critical, 0 warning, 3 info** |
 | Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
 | Development change ledger | Chain OK; a deliberate manual `labs.UPDATE` was detected as `unattributed` |
@@ -485,7 +512,7 @@ The two development info findings are a known session-coverage gap and seeded
 labs with no creator. Production adds two intentional hint placeholders. None
 are data loss or a broken reference.
 
-The 2.5.0 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.5.1 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
 process. The current verification pass is recorded in
@@ -773,7 +800,7 @@ For production deployments or custom configurations, see the [Server Deployment 
 | Frontend | Vue.js 3.5.44 + Vite 8.3.5, served by nginx | `ocr-frontend` (port 80/443) |
 | Backend | Python 3.11 + FastAPI 0.162.2 | `ocr-backend` (port 8000, localhost only) |
 | Database | PostgreSQL 15 | `ocr-db` (port 5432, internal only) |
-| Cache and rate limits | Redis 7 | `ocr-redis` (port 6379, internal only) |
+| Cache and rate limits | Redis 7.2 | `ocr-redis` (port 6379, internal only) |
 | VPN | WireGuard + Peer Manager API | Host systemd services (port 51820/UDP) |
 
 The running version is available from `GET /api/version` and is shown in the
@@ -799,7 +826,7 @@ health, and shared state rather than in the curriculum.
 
 Multi-host Docker and Kubernetes are **not supported deployment targets**.
 The setup script and Compose files stay single-host. Multi-host HA is an
-Enterprise preview workstream and is not part of the 2.5.0 release gate.
+Enterprise preview workstream and is not part of the 2.5.1 release gate.
 
 ## Repository Structure
 
@@ -832,7 +859,8 @@ opencyberrange/
 ├── versions.yaml         # Runtime, dependency, and image pins
 ├── wikis.yaml            # Workbook wiki registry
 ├── BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
-├── THIRD_PARTY_NOTICES.md # Open-source licence inventory and attribution checklist
+├── BRANDING.md           # SWOCTS/OpenCyberRange marks and ownership
+├── THIRD_PARTY_NOTICES.md # Third-party licence inventory and attribution checklist
 ├── THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
 ├── RELEASE_NOTES.md      # Current release notes
 ├── CHANGELOG.md          # Release and change history
@@ -846,9 +874,9 @@ opencyberrange/
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
 | [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
 | [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the 24.04 validation checklist |
-| [2.5.0 program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in 2.5.0 |
-| [Enterprise preview parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding 2.5.0 |
-| [2.5.0 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.5.0 to 24.04 while 1.1.3 supports 22.04 and 24.04 |
+| [2.5.1 program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in 2.5.1 |
+| [Enterprise preview parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding 2.5.1 |
+| [2.5.1 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.5.1 to 24.04 while 1.1.3 supports 22.04 and 24.04 |
 | [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment |
 | [Enterprise preview HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the Enterprise preview multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
@@ -861,12 +889,14 @@ opencyberrange/
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
 | [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
 | [Learning framework](docs/LEARNING-FRAMEWORK.md) | Instructors and curriculum designers mapping tracks, levels, labs, and evidence |
-| [Release 2.5.0 analytics plan](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
+| [Release 2.5.1 analytics plan](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
 | [NICE mapping matrix](docs/NICE-MAPPING.md) | Programme reviewers mapping tracks to NICE categories and work roles |
 | [Survey privacy and consent](docs/SURVEY-PRIVACY.md) | Privacy officers and survey operators |
 | [REB-ready survey package](docs/research/REB-SURVEY-PACKAGE.md) | Researchers and REB reviewers preparing a survey protocol |
 | [Build Notice](BUILD_NOTICE.md) | Upstream attribution, AI-assistance disclosure, and changes in this updated build |
-| [Third-Party Notices](THIRD_PARTY_NOTICES.md) | Open-source dependencies, licence families, and attribution checklist |
+| [Third-Party Notices](THIRD_PARTY_NOTICES.md) | Third-party dependencies, licence families, and attribution checklist |
+| [Branding](BRANDING.md) | SWOCTS mark ownership, design credit, and upstream attribution |
+| [About area](docs/ABOUT-AREA.md) | In-app version, component, licence, and SBOM inventory |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contributors submitting labs or platform changes |
 
 ## HTTPS
@@ -901,7 +931,7 @@ or read learner records. Docker host and container state still need
 
 - **OS:** Ubuntu 24.04 LTS for new 2.1 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range 2.5.0 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range 2.5.1 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7.2, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

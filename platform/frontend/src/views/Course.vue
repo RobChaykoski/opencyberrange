@@ -30,22 +30,10 @@
           Overview
         </button>
         <button
-          @click="setTab('labs')"
-          :class="['tab', { active: activeTab === 'labs' }]"
-        >
-          Content ({{ labs.length }})
-        </button>
-        <button
           @click="setTab('feedback')"
           :class="['tab', { active: activeTab === 'feedback' }]"
         >
           Feedback
-        </button>
-        <button
-          @click="setTab('achievements')"
-          :class="['tab', { active: activeTab === 'achievements' }]"
-        >
-          Achievements
         </button>
         <button
           v-if="viewerIsInstructor"
@@ -66,133 +54,6 @@
           @open-feedback="setTab('feedback')"
           @open-lab="openLab"
         />
-      </div>
-
-      <!-- Labs Tab -->
-      <div v-if="activeTab === 'labs'" class="tab-content">
-        <div v-if="labs.length === 0" class="empty-tab">No exercises assigned to this course yet.</div>
-        <div v-else class="labs-list">
-          <div v-for="lab in labs" :key="lab.id"
-            :class="['lab-row', lab.locked ? 'lab-row--locked' : 'lab-row--clickable']"
-            @click="lab.locked ? null : openLab(lab)">
-            <div class="lab-status-icon">
-              <svg v-if="lab.locked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="opacity:0.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span v-else-if="lab.is_completed" class="status-bar status-bar--completed"></span>
-              <span v-else class="status-circle"></span>
-            </div>
-            <div class="lab-info">
-              <div :class="['lab-name', { 'lab-name--locked': lab.locked }]">{{ lab.name }}</div>
-              <div class="lab-meta">
-                <span v-if="lab.slug && lab.slug.match(/^pentest-D\d/)" class="drill-badge">Drill</span>
-                <span :class="['difficulty-badge', `difficulty-${lab.difficulty}`]">
-                  {{ lab.difficulty }}
-                </span>
-                <span class="lab-duration">{{ lab.duration_minutes }} min</span>
-                <span v-if="lab.locked" class="locked-badge">Locked</span>
-                <span v-else-if="lab.is_course_exclusive" class="exclusive-badge">Course Only</span>
-              </div>
-            </div>
-            <svg v-if="!lab.locked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lab-row-arrow">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- Assignments Tab -->
-      <div v-if="activeTab === 'assignments'" class="tab-content">
-        <div v-if="courseAssignments.length === 0" class="empty-tab">No assignments for this course yet.</div>
-        <div v-else class="assignment-grid">
-          <template v-for="asn in courseAssignments" :key="asn.id">
-            <div
-              class="asn-card"
-              :class="{ 'asn-card--active': expandedAsn === asn.id, 'asn-card--locked': asn.locked || asn.not_yet_open }"
-              @click="toggleAsn(asn)"
-            >
-              <div class="asn-card__header">
-                <span class="asn-card__name">{{ asn.name }}</span>
-                <span v-if="asn.not_yet_open" class="asn-due asn-due--locked">{{ asnStartText(asn.start_date) }}</span>
-                <span v-else-if="asn.locked" class="asn-due asn-due--locked">Locked</span>
-                <span v-else :class="['asn-due', asnDueClass(asn.due_date)]">{{ asnDueText(asn.due_date) }}</span>
-              </div>
-              <p v-if="asn.description" class="asn-card__desc">{{ asn.description }}</p>
-              <div class="asn-card__stats">
-                <span class="asn-stat">{{ asn.lab_count }} exercises</span>
-              </div>
-              <template v-if="asn.locked || asn.not_yet_open">
-                <div class="asn-card__locked-msg">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <span v-if="asn.not_yet_open">Available {{ asnStartText(asn.start_date).toLowerCase() }}</span>
-                  <span v-else>This assignment is locked by your instructor</span>
-                </div>
-              </template>
-              <template v-else>
-                <div class="asn-card__stats">
-                  <span class="asn-stat">{{ asn.completed_count }}/{{ asn.lab_count }} completed</span>
-                  <span class="asn-stat">{{ asn.lab_count }} exercises</span>
-                </div>
-                <div class="asn-card__progress">
-                  <div class="asn-progress-bar">
-                    <div class="asn-progress-fill" :style="{ width: asn.lab_count ? (asn.completed_count / asn.lab_count * 100) + '%' : '0%' }"></div>
-                  </div>
-                </div>
-              </template>
-            </div>
-
-            <!-- Inline expanded detail (spans full grid row, directly below this card) -->
-            <div
-              v-if="expandedAsn === asn.id"
-              :id="'asn-detail-' + asn.id"
-              class="asn-detail asn-detail--inline"
-            >
-              <h3 class="asn-detail__title">{{ asn.name }}</h3>
-              <div class="labs-list">
-                <div v-for="lab in asn.labs" :key="lab.id" class="lab-row lab-row--clickable" @click.stop="openLab(lab)">
-                  <div class="lab-status-icon">
-                    <span v-if="lab.is_completed" class="status-bar status-bar--completed"></span>
-                    <span v-else class="status-circle"></span>
-                  </div>
-                  <div class="lab-info">
-                    <div class="lab-name">{{ lab.name }}</div>
-                    <div class="lab-meta">
-                      <span v-if="lab.slug && lab.slug.match(/^pentest-D\d/)" class="drill-badge">Drill</span>
-                      <span :class="['difficulty-badge', `difficulty-${lab.difficulty}`]">{{ lab.difficulty }}</span>
-                      <span class="lab-duration">{{ lab.duration_minutes }} min</span>
-                    </div>
-                  </div>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="lab-row-arrow">
-                    <polyline points="9 18 15 12 9 6"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-
-      <!-- Achievements guide -->
-      <div v-if="activeTab === 'achievements'" class="scoring-guide-toggle">
-        <button @click="showScoringGuide = !showScoringGuide" class="guide-toggle-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          {{ showScoringGuide ? 'Hide' : 'Show' }} Achievement Guide
-        </button>
-        <transition name="slide">
-          <div v-if="showScoringGuide" class="scoring-guide">
-            <div class="guide-section">
-              <h4>Achievements</h4>
-              <div class="guide-grid guide-grid--achievements">
-                <div class="guide-ach"><span class="guide-ach-icon">&#x1F3AF;</span><strong>First Blood</strong><br>First to complete an exercise in this course</div>
-                <div class="guide-ach"><span class="guide-ach-icon">&#x1F9E0;</span><strong>Self-Reliant</strong><br>Completed an exercise without using any hints</div>
-                <div class="guide-ach"><span class="guide-ach-icon">&#x2B50;</span><strong>Perfectionist</strong><br>Completed an exercise on the first flag attempt</div>
-                <div class="guide-ach"><span class="guide-ach-icon">&#x26A1;</span><strong>Speed Demon</strong><br>Completed in under half the estimated time</div>
-                <div class="guide-ach"><span class="guide-ach-icon">&#x1F3C6;</span><strong>Clean Sweep</strong><br>Completed all assigned exercises in the course</div>
-                <div class="guide-ach"><span class="guide-ach-icon">&#x1F525;</span><strong>On a Roll</strong><br>3+ exercises in a row with no hints &amp; first attempt</div>
-              </div>
-            </div>
-          </div>
-        </transition>
       </div>
 
       <!-- Scoreboard Tab (compact expandable rows) -->
@@ -226,7 +87,7 @@
                     <span v-else class="rank-num">{{ entry.rank }}</span>
                   </td>
                   <td class="col-student">
-                    <div class="student-name">{{ maskUsername(entry.username) || 'Deleted learner' }}</div>
+                    <div class="student-name"><PrivacyText :value="entry.username" fallback="Deleted learner" /></div>
                     <div v-if="entry.student_id" class="student-id">{{ entry.student_id }}</div>
                   </td>
                   <td class="col-progress">
@@ -295,27 +156,6 @@
         <CourseFeedbackPanel :course-id="courseId" :is-instructor="viewerIsInstructor" />
       </div>
 
-      <!-- Achievements Tab -->
-      <div v-if="activeTab === 'achievements'" class="tab-content">
-        <div v-if="loadingAchievements" class="empty-tab">Loading achievements...</div>
-        <div v-else-if="achievements.length === 0" class="empty-tab">
-          No achievements earned yet in this course.
-        </div>
-        <div v-else class="achievements-list">
-          <div v-for="ach in achievements" :key="ach.id" class="achievement-row">
-            <span class="ach-icon">{{ achievementIcon(ach.achievement_type) }}</span>
-            <div class="ach-info">
-              <span class="ach-label">{{ ach.label }}</span>
-              <span class="ach-detail">
-                {{ maskUsername(ach.username) || 'Deleted learner' }}
-                <span v-if="ach.lab_name"> &mdash; {{ ach.lab_name }}</span>
-              </span>
-            </div>
-            <span class="ach-date">{{ formatDate(ach.awarded_at) }}</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Analytics Tab -->
       <div v-if="activeTab === 'analytics'" class="tab-content">
         <CourseAnalytics :course-id="courseId" />
@@ -331,10 +171,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
-import { usePrivacy } from '../composables/usePrivacy'
+import PrivacyText from '../components/PrivacyText.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import CourseAnalytics from '../components/CourseAnalytics.vue'
@@ -342,7 +182,6 @@ import CourseFeedbackPanel from '../components/CourseFeedbackPanel.vue'
 import CourseHealthOverview from '../components/CourseHealthOverview.vue'
 
 const route = useRoute()
-const { maskUsername, maskEmail } = usePrivacy()
 const router = useRouter()
 const courseId = computed(() => route.params.id)
 
@@ -351,40 +190,22 @@ const labs = ref([])
 const isInstructor = ref(false)
 const viewerIsInstructor = ref(false)
 const loading = ref(true)
-const showScoringGuide = ref(false)
 const expandedScoreboardRow = ref(null)
 
 const tabFromRoute = () => {
   const tab = route.query.tab
   if (tab === 'scoreboard') return 'feedback'
-  return (tab && ['overview', 'labs', 'assignments', 'feedback', 'achievements', 'analytics', 'manage-labs', 'students', 'settings'].includes(tab))
+  return (tab && ['overview', 'feedback', 'analytics', 'manage-labs', 'students', 'settings'].includes(tab))
     ? tab
     : 'overview'
 }
 const activeTab = ref(tabFromRoute())
-
-// Assignments tab
-const courseAssignments = ref([])
-const expandedAsn = ref(null)
-
-function toggleAsn(asn) {
-  if (asn.locked || asn.not_yet_open) return
-  const wasOpen = expandedAsn.value === asn.id
-  expandedAsn.value = wasOpen ? null : asn.id
-  if (!wasOpen) {
-    nextTick(() => {
-      const el = document.getElementById('asn-detail-' + asn.id)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    })
-  }
-}
 
 // Manage Labs tab
 const availableLabs = ref([])
 const loadingAvailableLabs = ref(false)
 const selectedLabIds = ref([])
 const expandedAssignCategories = ref({})
-const expandedAssignedCategories = ref({})
 const addLabsSearch = ref('')
 const removingLabId = ref(null)
 const savingOrder = ref(false)
@@ -422,10 +243,6 @@ const regeneratingInvite = ref(false)
 const scoreboard = ref([])
 const scoreboardLabs = ref([])
 const loadingScoreboard = ref(false)
-
-// Achievements
-const achievements = ref([])
-const loadingAchievements = ref(false)
 
 // Report
 const downloadingReport = ref(false)
@@ -472,11 +289,6 @@ function formatDate(dt) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
-function truncate(str, len) {
-  if (!str) return ''
-  return str.length > len ? str.slice(0, len - 2) + '..' : str
-}
-
 const ACHIEVEMENT_MAP = {
   first_blood: { label: 'First Blood', icon: '\u{1F3AF}' },
   no_hints: { label: 'Self-Reliant', icon: '\u{1F9E0}' },
@@ -520,40 +332,6 @@ function setTab(tab) {
 
 const assignedLabIds = computed(() => new Set(labs.value.map(l => l.id)))
 
-const assignedLabsByCategory = computed(() => {
-  const grouped = {}
-  labs.value.forEach((lab, index) => {
-    const track = lab.track_name || 'Uncategorized'
-    const level = lab.level_name || 'General'
-    const key = `${track} \u203A ${level}`
-    if (!grouped[key]) grouped[key] = []
-    grouped[key].push({ ...lab, _index: index })
-  })
-  return grouped
-})
-
-const assignedCategoryKeys = computed(() => Object.keys(assignedLabsByCategory.value).sort())
-
-const allAssignedExpanded = computed(() => {
-  const keys = assignedCategoryKeys.value
-  return keys.length > 0 && keys.every(k => expandedAssignedCategories.value[k])
-})
-
-function toggleAssignedCategory(key) {
-  expandedAssignedCategories.value = {
-    ...expandedAssignedCategories.value,
-    [key]: !expandedAssignedCategories.value[key],
-  }
-}
-
-function toggleAllAssignedCategories() {
-  const keys = assignedCategoryKeys.value
-  const next = !allAssignedExpanded.value
-  const state = {}
-  keys.forEach(k => { state[k] = next })
-  expandedAssignedCategories.value = state
-}
-
 const assignLabsByTrackLevel = computed(() => {
   const assigned = assignedLabIds.value
   const q = addLabsSearch.value.trim().toLowerCase()
@@ -571,12 +349,6 @@ const assignLabsByTrackLevel = computed(() => {
 })
 
 const assignLevelKeys = computed(() => Object.keys(assignLabsByTrackLevel.value).sort())
-
-const allAssignExpanded = computed(() => {
-  const keys = assignLevelKeys.value
-  if (!keys.length) return false
-  return keys.every(k => expandedAssignCategories.value[k])
-})
 
 function toggleAssignCategory(levelKey) {
   expandedAssignCategories.value = {
@@ -662,7 +434,6 @@ async function saveRenameLab(lab) {
     renamingLabId.value = null
     renameLabValue.value = ''
     await fetchCourse()
-    await fetchAssignments()
   } catch (e) {
     console.error('Failed to rename exercise', e)
   }
@@ -941,58 +712,11 @@ async function fetchCourse() {
     // Instructor management is handled in InstructorPanel.vue, not here
     isInstructor.value = false
     syncSettingsForm()
-    fetchAssignments()
   } catch (e) {
     console.error('Failed to fetch course', e)
   } finally {
     loading.value = false
   }
-}
-
-async function fetchAssignments() {
-  try {
-    const res = await axios.get(`/courses/${courseId.value}/assignments`)
-    courseAssignments.value = res.data.assignments || []
-  } catch (e) {
-    console.error('Failed to fetch assignments', e)
-  }
-}
-
-function asnDueClass(dueDate) {
-  if (!dueDate) return 'asn-due--none'
-  const now = new Date()
-  const due = new Date(dueDate)
-  const diffDays = (due - now) / (1000 * 60 * 60 * 24)
-  if (diffDays < 0) return 'asn-due--ended'
-  if (diffDays <= 3) return 'asn-due--soon'
-  return 'asn-due--ok'
-}
-
-function asnDueText(dueDate) {
-  if (!dueDate) return 'No due date'
-  const due = new Date(dueDate)
-  const now = new Date()
-  const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate())
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const diffDays = Math.round((dueDay - today) / (1000 * 60 * 60 * 24))
-  if (diffDays < 0) return `Ended`
-  if (diffDays === 0) return 'Due today'
-  if (diffDays === 1) return 'Due tomorrow'
-  if (diffDays <= 7) return `Due in ${diffDays} days`
-  return `Due ${due.toLocaleDateString()}`
-}
-
-function asnStartText(startDate) {
-  if (!startDate) return ''
-  const start = new Date(startDate)
-  const now = new Date()
-  const startDay = new Date(start.getFullYear(), start.getMonth(), start.getDate())
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const diffDays = Math.round((startDay - today) / (1000 * 60 * 60 * 24))
-  if (diffDays <= 0) return 'Available now'
-  if (diffDays === 1) return 'Opens tomorrow'
-  if (diffDays <= 7) return `Opens in ${diffDays} days`
-  return `Opens ${start.toLocaleDateString()}`
 }
 
 async function fetchScoreboard() {
@@ -1005,19 +729,6 @@ async function fetchScoreboard() {
     console.error('Failed to fetch scoreboard', e)
   } finally {
     loadingScoreboard.value = false
-  }
-}
-
-async function fetchAchievements() {
-  loadingAchievements.value = true
-  try {
-    const res = await axios.get(`/courses/${courseId.value}/achievements`)
-    achievements.value = res.data.achievements
-    customAchievementMap.value = res.data.custom_achievements || {}
-  } catch (e) {
-    console.error('Failed to fetch achievements', e)
-  } finally {
-    loadingAchievements.value = false
   }
 }
 
@@ -1051,8 +762,6 @@ watch(() => route.query.tab, () => {
 // Fetch tab data on tab switch
 watch(activeTab, (tab) => {
   if (tab === 'scoreboard' && scoreboard.value.length === 0) fetchScoreboard()
-  if (tab === 'achievements' && achievements.value.length === 0) fetchAchievements()
-  if (tab === 'assignments' && courseAssignments.value.length === 0) fetchAssignments()
   if (tab === 'manage-labs' && isInstructor.value && availableLabs.value.length === 0) fetchAvailableLabs()
   if (tab === 'students' && isInstructor.value) {
     fetchCourseStudents()
@@ -1064,7 +773,6 @@ watch(activeTab, (tab) => {
 onMounted(() => {
   fetchCourse().then(() => {
     const tab = tabFromRoute()
-    if (tab === 'assignments') fetchAssignments()
     if (tab === 'manage-labs' && isInstructor.value) fetchAvailableLabs()
     if (tab === 'students' && isInstructor.value) {
       fetchCourseStudents()

@@ -177,6 +177,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/about',
+    name: 'About',
+    component: () => import('../views/About.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/rangebox',
     name: 'RangeBox',
     component: () => import('../views/RangeBoxView.vue'),

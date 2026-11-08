@@ -140,6 +140,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { applyPrivacyDefaultForRole } from '../composables/usePrivacy'
 
 const router = useRouter()
 
@@ -253,6 +254,7 @@ const completeSetup = async () => {
     // Store token and user for immediate login
     localStorage.setItem('token', data.access_token)
     localStorage.setItem('user', JSON.stringify(data.user))
+    applyPrivacyDefaultForRole(data.user?.role)
 
     // Update auth state if available
     if (window.__updateAuthState) {

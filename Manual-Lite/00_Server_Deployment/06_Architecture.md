@@ -18,7 +18,7 @@ flowchart TB
         FE[ocr-frontend nginx 80 443]
         BE[ocr-backend uvicorn FastAPI 127.0.0.1 8000]
         DB[ocr-db PostgreSQL 15 5432]
-        RD[ocr-redis Redis 7 6379]
+        RD[ocr-redis Redis 7.2 6379]
     end
 
     Sock[/var/run/docker.sock/]
@@ -46,7 +46,7 @@ flowchart TB
 | `ocr-frontend` | nginx | 80 and 443 | Serves the SPA and the `wiki_data` volume, proxies the API |
 | `ocr-backend` | Python + uvicorn / FastAPI | 127.0.0.1:8000 | API, lab orchestration, firewall apply |
 | `ocr-db` | PostgreSQL 15 | internal 5432 | PostgreSQL, `max_connections=300` |
-| `ocr-redis` | Redis 7 | internal 6379 | Shared rate-limit counters |
+| `ocr-redis` | Redis 7.2 | internal 6379 | Shared rate-limit counters |
 
 !!! note "Pinned images are recorded separately"
     The diagram and table name each service by role, not by base image. Exact

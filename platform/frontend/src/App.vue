@@ -120,6 +120,7 @@
         <span>OpenCyberRange</span>
       </a>
       <router-link to="/verify" class="app-footer__verify">Verify a certificate</router-link>
+      <router-link to="/about" class="app-footer__verify">About</router-link>
       <span v-if="appVersion" class="app-footer__version" :title="appRelease">v{{ appVersion }}</span>
     </footer>
   </div>
@@ -133,6 +134,7 @@ import GuidedTour from './components/GuidedTour.vue'
 import ImpersonationBanner from './components/ImpersonationBanner.vue'
 import MobileTabBar from './components/MobileTabBar.vue'
 import { useTheme } from './composables/useTheme'
+import { usePrivacy } from './composables/usePrivacy'
 import { useModules } from './composables/useModules'
 import { useMobileView } from './composables/useMobileView'
 import { setWikiAuthCookie } from './utils/wikiAuth'
@@ -140,6 +142,7 @@ import { useImpersonation } from './composables/useImpersonation'
 import api from './api/axios'
 
 const router = useRouter()
+const { applyPrivacyDefaultForRole } = usePrivacy()
 const { isDark, toggleTheme } = useTheme()
 const { fetchModules, isModuleEnabled, resetModules } = useModules()
 const { isImpersonating } = useImpersonation()
@@ -244,6 +247,10 @@ onMounted(() => {
   window.addEventListener('keydown', onGlobalKeydown)
   // Initial update
   updateAuthState()
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    applyPrivacyDefaultForRole(user.role)
+  } catch { /* private mode or malformed session */ }
   refreshWikiAuthCookie()
   loadAppVersion()
   // Fetch module status if authenticated

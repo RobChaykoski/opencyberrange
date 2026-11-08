@@ -205,8 +205,8 @@
                 <tbody>
                   <template v-for="s in courseStudents" :key="s.id">
                     <tr>
-                      <td class="cell-primary">{{ maskUsername(s.username) || 'Deleted learner' }}</td>
-                      <td>{{ maskEmail(s.email) }}</td>
+                      <td class="cell-primary"><PrivacyText :value="s.username" fallback="Deleted learner" /></td>
+                      <td><PrivacyText :value="s.email" type="email" /></td>
                       <td class="cell-muted">{{ formatDateShort(s.enrolled_at) }}</td>
                       <td class="cell-actions">
                         <button @click="toggleStudentLabs(s)" class="action-btn action-btn--view" title="View Exercises">
@@ -1083,13 +1083,12 @@ services:
 import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
-import { usePrivacy } from '../composables/usePrivacy'
+import PrivacyText from '../components/PrivacyText.vue'
 import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 
-const { maskUsername, maskEmail } = usePrivacy()
 const { startImpersonation } = useImpersonation()
 const { exerciseAuthoring, exerciseTester, fetchModules } = useModules()
 

@@ -581,7 +581,9 @@ services:
       retries: 5
 
   redis:
-    image: redis:7-alpine
+    # Redis 7.2 is BSD-3-Clause. Redis 7.4 and later are RSALv2/SSPLv1;
+    # do not change this tag without a licence review and a notice update.
+    image: redis:7.2-alpine
     container_name: ocr-redis
     command: ["redis-server", "--save", "", "--appendonly", "no"]
     restart: unless-stopped

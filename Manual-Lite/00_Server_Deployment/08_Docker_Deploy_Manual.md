@@ -23,7 +23,7 @@ For the guided installer, see [Local Deployment](02_Local_Deployment.md) or
 | `backend` | `ocr-backend` | `127.0.0.1:8000` | FastAPI API and lab orchestration |
 | `frontend` | `ocr-frontend` | `80`, `443` | Vue app, API proxy, HTTPS |
 
-Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `redis:7-alpine`. The exact pins are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml).
+Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `redis:7.2-alpine`. The exact pins are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml).
 
 Persistent volumes:
 

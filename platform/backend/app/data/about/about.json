@@ -1,0 +1,573 @@
+{
+  "generated_for_release": "2.5.1",
+  "release_date": "2026-11-08",
+  "platform": {
+    "name": "SWOCTS Cyber Range",
+    "version": "2.5.1",
+    "status": "release",
+    "edition": "Community / Academic",
+    "python": "3.11",
+    "node": "22",
+    "postgres": "15",
+    "redis": "7.2"
+  },
+  "branding": {
+    "product": "SWOCTS Cyber Range",
+    "owner": "SWOCTS",
+    "logo_designer": "Avery Chaykoski",
+    "upstream": "OpenCyberRange",
+    "software_licence": "PolyForm Noncommercial 1.0.0",
+    "brand_note": "The SWOCTS name and logo are owned by SWOCTS and were created and designed by Avery Chaykoski. They are brand assets, not software, and are not licensed under the PolyForm Noncommercial License 1.0.0."
+  },
+  "privacy": {
+    "admin_default": true,
+    "masked_fields": [
+      "username",
+      "email",
+      "display name",
+      "student ID"
+    ],
+    "reveal": "Hover or focus a masked value to reveal it.",
+    "toggle": "The Privacy mode control in the sidebar.",
+    "scope": [
+      "Admin users table",
+      "Pending approvals",
+      "Active sessions",
+      "Unregistered users",
+      "VPN peers",
+      "User details dialog",
+      "Edit account dialog",
+      "Instructor learner tables",
+      "Activity actor names"
+    ],
+    "note": "Privacy mode is a visual control for screen sharing and shoulder-surfing. An authorised admin's API responses still contain the real values."
+  },
+  "components": {
+    "backend": [
+      {
+        "name": "fastapi",
+        "version": "0.162.2",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "uvicorn",
+        "version": "0.54.0",
+        "licence": "BSD-3-Clause",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "sqlalchemy",
+        "version": "2.1.8",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "psycopg",
+        "version": "3.3.8",
+        "licence": "LGPL-3.0-only",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pyjwt",
+        "version": "2.15.1",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pwdlib",
+        "version": "0.3.1",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "bcrypt",
+        "version": "5.0.0",
+        "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "python-multipart",
+        "version": "0.0.33",
+        "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pydantic",
+        "version": "2.14.3",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pydantic-settings",
+        "version": "2.16.2",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "email-validator",
+        "version": "2.3.0",
+        "licence": "Unlicense / CC0-1.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pyyaml",
+        "version": "6.0.3",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "docker",
+        "version": "7.2.0",
+        "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "apscheduler",
+        "version": "3.11.3",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "cryptography",
+        "version": "50.0.2",
+        "licence": "Apache-2.0 OR BSD-3-Clause",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "requests",
+        "version": "2.34.2",
+        "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "slowapi",
+        "version": "0.1.10",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "fpdf2",
+        "version": "2.9.0",
+        "licence": "LGPL-3.0-only",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "matplotlib",
+        "version": "3.10",
+        "licence": "PSF-based",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "aiohttp",
+        "version": "3.14.5",
+        "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "websocket-client",
+        "version": "1.9.2",
+        "licence": "Apache-2.0",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pywinrm",
+        "version": "0.4.3",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "alembic",
+        "version": "1.20.1",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "pyotp",
+        "version": "2.10.0",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "redis",
+        "version": "8.1.0",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "qrcode",
+        "version": "8.2",
+        "licence": "BSD",
+        "scope": "backend runtime"
+      }
+    ],
+    "frontend": [
+      {
+        "name": "@novnc/novnc",
+        "version": "1.7.0",
+        "licence": "MPL-2.0",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "axios",
+        "version": "1.21.0",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "chart.js",
+        "version": "4.6.1",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "dompurify",
+        "version": "3.4.17",
+        "licence": "(MPL-2.0 OR Apache-2.0)",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "marked",
+        "version": "18.1.3",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "sortablejs",
+        "version": "1.15.7",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "vue",
+        "version": "3.5.45",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "vue-chartjs",
+        "version": "5.3.4",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "vue-eslint-parser",
+        "version": "10.4.2",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      },
+      {
+        "name": "vue-router",
+        "version": "5.4.0",
+        "licence": "MIT",
+        "scope": "frontend runtime"
+      }
+    ],
+    "images": [
+      {
+        "name": "python:3.11-slim",
+        "version": "",
+        "licence": "PSF plus Debian packages",
+        "scope": "container image"
+      },
+      {
+        "name": "node:22-alpine",
+        "version": "",
+        "licence": "Node.js MIT plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "nginx:alpine",
+        "version": "",
+        "licence": "BSD-2-Clause plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "postgres:15-alpine",
+        "version": "",
+        "licence": "PostgreSQL Licence plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "redis:7.2-alpine",
+        "version": "",
+        "licence": "BSD-3-Clause plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "mysql:8.0",
+        "version": "",
+        "licence": "GPL-2.0",
+        "scope": "container image"
+      },
+      {
+        "name": "php:8.1-apache",
+        "version": "",
+        "licence": "PHP Licence 3.01 plus Apache-2.0",
+        "scope": "container image"
+      },
+      {
+        "name": "nginxinc/nginx-unprivileged:alpine",
+        "version": "",
+        "licence": "BSD-2-Clause plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "python:3.12-alpine",
+        "version": "",
+        "licence": "PSF plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "alpine:3.19",
+        "version": "",
+        "licence": "Alpine package licences",
+        "scope": "container image"
+      },
+      {
+        "name": "ubuntu:22.04",
+        "version": "",
+        "licence": "Ubuntu/Debian package licences",
+        "scope": "container image"
+      },
+      {
+        "name": "kalilinux/kali-rolling",
+        "version": "",
+        "licence": "Kali/Debian package licences",
+        "scope": "container image"
+      },
+      {
+        "name": "remnux/remnux-distro:noble",
+        "version": "",
+        "licence": "REMnux/Debian package licences",
+        "scope": "container image"
+      },
+      {
+        "name": "0x4d4c/inetsim@sha256:01fdf65489db7b9a77a33cc336ba1d5ddf23aded35eeb23f2c6455290ca595e8",
+        "version": "",
+        "licence": "INetSim GPL-2.0 plus Debian packages",
+        "scope": "container image"
+      },
+      {
+        "name": "axllent/mailpit",
+        "version": "",
+        "licence": "MIT",
+        "scope": "container image"
+      }
+    ],
+    "lab_toolchains": [
+      {
+        "name": "Nmap",
+        "version": "",
+        "licence": "GPL-2.0 / Nmap Public Source Licence terms",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "SQLMap",
+        "version": "",
+        "licence": "GPL-2.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Wireshark / tshark",
+        "version": "",
+        "licence": "GPL-2.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Suricata",
+        "version": "",
+        "licence": "GPL-2.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "John the Ripper",
+        "version": "",
+        "licence": "GPL-2.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Hydra",
+        "version": "",
+        "licence": "AGPL-3.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Masscan",
+        "version": "",
+        "licence": "AGPL-3.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Metasploit Framework",
+        "version": "",
+        "licence": "BSD-3-Clause",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Impacket",
+        "version": "",
+        "licence": "Apache-2.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Hashcat",
+        "version": "",
+        "licence": "MIT",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Volatility 3",
+        "version": "",
+        "licence": "Volatility Software License 1.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "INetSim",
+        "version": "",
+        "licence": "GPL-2.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Snap7 / libsnap7",
+        "version": "",
+        "licence": "LGPL-3.0",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "asyncua",
+        "version": "",
+        "licence": "LGPL-3.0-or-later",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Scapy (build-time generators)",
+        "version": "",
+        "licence": "GPL-2.0-only",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "PyMySQL",
+        "version": "",
+        "licence": "MIT",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "Flask",
+        "version": "",
+        "licence": "BSD-3-Clause",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "pymodbus",
+        "version": "",
+        "licence": "BSD-3-Clause",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "paramiko",
+        "version": "",
+        "licence": "LGPL-2.1",
+        "scope": "lab toolchain"
+      },
+      {
+        "name": "PyCryptodome",
+        "version": "",
+        "licence": "Public domain / BSD-2-Clause",
+        "scope": "lab toolchain"
+      }
+    ]
+  },
+  "licences": [
+    {
+      "label": "Project licence (PolyForm Noncommercial 1.0.0)",
+      "file": "LICENSE"
+    },
+    {
+      "label": "Copyright and required notice",
+      "file": "NOTICE"
+    },
+    {
+      "label": "Licensing summary",
+      "file": "LICENSING.md"
+    },
+    {
+      "label": "Branding and marks",
+      "file": "BRANDING.md"
+    },
+    {
+      "label": "Build provenance",
+      "file": "BUILD_NOTICE.md"
+    },
+    {
+      "label": "Third-party notices",
+      "file": "THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "label": "certifi-MPL-2.0",
+      "file": "certifi-MPL-2.0.txt"
+    },
+    {
+      "label": "dompurify-MPL-2.0-OR-Apache-2.0",
+      "file": "dompurify-MPL-2.0-OR-Apache-2.0.txt"
+    },
+    {
+      "label": "feather-MIT",
+      "file": "feather-MIT.txt"
+    },
+    {
+      "label": "fpdf2-LGPL-3.0",
+      "file": "fpdf2-LGPL-3.0.txt"
+    },
+    {
+      "label": "GPL-2.0",
+      "file": "GPL-2.0.txt"
+    },
+    {
+      "label": "LGPL-2.1",
+      "file": "LGPL-2.1.txt"
+    },
+    {
+      "label": "LGPL-3.0",
+      "file": "LGPL-3.0.txt"
+    },
+    {
+      "label": "lucide-ISC",
+      "file": "lucide-ISC.txt"
+    },
+    {
+      "label": "novnc-MPL-2.0",
+      "file": "novnc-MPL-2.0.txt"
+    },
+    {
+      "label": "pathspec-MPL-2.0",
+      "file": "pathspec-MPL-2.0.txt"
+    },
+    {
+      "label": "psycopg3-LGPL-3.0",
+      "file": "psycopg3-LGPL-3.0.txt"
+    },
+    {
+      "label": "redis-BSD-3-Clause",
+      "file": "redis-BSD-3-Clause.txt"
+    },
+    {
+      "label": "wstunnel-BSD-3-Clause",
+      "file": "wstunnel-BSD-3-Clause.txt"
+    }
+  ],
+  "sbom": [
+    {
+      "name": "backend.cdx.json",
+      "label": "Backend CycloneDX SBOM",
+      "bytes": 139513,
+      "sha256": "e9e6c11f2a7ab7f88620908b4820926dccce31bada976f970687a4bb7564d87b"
+    },
+    {
+      "name": "frontend.cdx.json",
+      "label": "Frontend CycloneDX SBOM",
+      "bytes": 92147,
+      "sha256": "c195133d498fa5c60c6b16039882dbcd28065e64e1f559d939a29a3a2c7a8e4d"
+    }
+  ]
+}

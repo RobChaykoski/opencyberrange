@@ -39,6 +39,9 @@ jobs:
       - name: Verify supply-chain lock
         run: python scripts/supply_chain.py --check
 
+      - name: Check licence compliance
+        run: python scripts/check-licences.py
+
       - name: Report unpinned base images
         continue-on-error: true
         run: python scripts/supply_chain.py --check-pins

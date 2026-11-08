@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0-only
+# This build-time generator imports Scapy (GPL-2.0-only), so it is
+# distributed under GPL-2.0-only. Its generated PCAP output is data and is
+# not a derivative work of Scapy.
 """
 Generate a realistic packet capture for the Avalon Biotech traffic analysis lab.
 

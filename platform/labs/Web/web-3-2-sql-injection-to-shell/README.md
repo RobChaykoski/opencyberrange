@@ -134,7 +134,7 @@ OCR{sql1_un10n_3xtr4ct}
 
 ## Technical Details
 
-- **Web Server:** Python Flask running on port 80 with MySQLdb connector
+- **Web Server:** Python Flask running on port 80 with the MIT-licensed PyMySQL connector
 - **Database:** MySQL 8.0 with two application users (vtx_app for limited access, vtx_admin for broader read access)
 - **Vulnerability:** UNION-based SQL injection via string formatting in login query
 - **Vulnerability Chain:** Information disclosure (robots.txt) → SQL injection (authentication bypass) → credential leakage (dashboard config) → database access (token extraction)

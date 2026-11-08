@@ -40,7 +40,45 @@ uses the software to deliver a paid service, you need a commercial license.
 Every copy of the software must carry the `Required Notice:` line found at
 the end of `LICENSE`, per the Notices section of the license. Third-party
 software bundled with the platform carries its own notices; see
-[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and the licence texts in
+[`THIRD_PARTY_LICENSES/`](THIRD_PARTY_LICENSES/).
+
+## Mixed-licence components
+
+Most of the repository is PolyForm Noncommercial 1.0.0. A small number of
+build-time lab generators are **GPL-2.0-only** because they import Scapy, which
+is GPL-2.0-only. They carry an `SPDX-License-Identifier: GPL-2.0-only` header
+and are listed in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md). Their
+generated `.pcap` output is data and is not a derivative work of Scapy.
+
+Third-party container images, lab tools, and development skills keep their own
+licences. The PolyForm grant does not relicense them, and their notices must be
+kept with any distribution. In particular:
+
+- Redis is pinned to **7.2**, which is BSD-3-Clause. Redis 7.4 and later are
+  RSALv2/SSPLv1 and must not be substituted without a licence review.
+- Hydra and Masscan in the RangeBox image are **AGPL-3.0**; they are separate
+  executables, not linked into the platform. Keep them unmodified and provide
+  their source.
+- Volatility 3 uses the **Volatility Software License 1.0**, not an OSI
+  licence.
+- `fpdf2` and `psycopg` are **LGPL-3.0-only**; their licence texts and source
+  information are included.
+
+## Branding
+
+The upstream **OpenCyberRange** name, copyright notice, and `Required Notice:`
+line must remain. **SWOCTS Cyber Range** is the name of this deployment and does
+not replace the upstream mark.
+
+The **SWOCTS** name and logo/crest are owned by **SWOCTS** and were created and
+designed by **Avery Chaykoski**. They are brand assets, not software, and are not
+licensed under the PolyForm Noncommercial License 1.0.0. The software licence
+does not grant a trademark, brand, or logo licence. See
+[`BRANDING.md`](BRANDING.md).
+
+If you distribute this build under a different name or brand, confirm that you
+have permission from the relevant rights holder.
 
 ## Trademarks
 

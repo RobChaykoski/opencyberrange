@@ -1,6 +1,6 @@
 # Host OS Support and Ubuntu 24.04 Decision
 
-Status: **1.1 supports Ubuntu 22.04 LTS and Ubuntu 24.04 LTS. 2.5.0 targets
+Status: **1.1 supports Ubuntu 22.04 LTS and Ubuntu 24.04 LTS. 2.5.1 targets
 Ubuntu 24.04 LTS and is certified on it: WireGuard, firewall persistence, the
 lab matrix, KVM, and the restore drill passed on 8 November 2026.**
 
@@ -11,21 +11,21 @@ The host OS follows the release line:
 | Release line | Host OS | State |
 |---|---|---|
 | `1.1.x` maintenance | **Ubuntu 22.04 / 24.04 LTS** | Supported on both LTS baselines. 22.04 remains the documented baseline; 24.04 is validated in production. |
-| `2.5.0` release | **Ubuntu 24.04 LTS target** | Certified. Existing 22.04 deployments may upgrade during the release window. |
+| `2.5.1` release | **Ubuntu 24.04 LTS target** | Certified. Existing 22.04 deployments may upgrade during the release window. |
 
-For new 2.5.0 installs, use:
+For new 2.5.1 installs, use:
 
 | Host OS | State | Guidance |
 |---|---|---|
 | Ubuntu 24.04 LTS (Noble) | **Certified** | Host, platform, KVM, VPN, firewall persistence, and the lab matrix passed on 8 November 2026 |
-| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1.3-to-2.5.0 upgrades, not the long-term 2.5.0 target |
+| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1.3-to-2.5.1 upgrades, not the long-term 2.5.1 target |
 | Debian 12/13 | Best effort | Not part of the tested server matrix |
 | Other Debian-based distributions | Unsupported | Package names, firewall backends, and systemd behaviour may differ |
 
 Ubuntu 22.04 standard support ends in June 2027; Ubuntu 24.04 standard support
 runs to June 2029. Keeping 1.1 on 22.04 avoids re-validating the maintenance
-line. Moving 2.5.0 to 24.04 gives a new release a host OS that remains supported
-for the life of the 2.5.0 line.
+line. Moving 2.5.1 to 24.04 gives a new release a host OS that remains supported
+for the life of the 2.5.1 line.
 
 The full migration plan is in
 [V2 Ubuntu 24.04 Migration Plan](V2-UBUNTU-24.04-MIGRATION.md).
@@ -33,11 +33,11 @@ The full migration plan is in
 This decision is about the **host OS only**. It does not change:
 
 - the platform containers, which use `python:3.11-slim`, `node:22-alpine`,
-  `nginx:alpine`, `postgres:15-alpine`, and `redis:7-alpine`;
+  `nginx:alpine`, `postgres:15-alpine`, and `redis:7.2-alpine`;
 - the exercise containers under `platform/labs/`, which stay on their pinned
   bases for reproducible labs;
 - the Kali-based RangeBox, which follows `kalilinux/kali-rolling`;
-- the UbuntuBox image, which stays on `ubuntu:22.04` for the 2.5.0 release.
+- the UbuntuBox image, which stays on `ubuntu:22.04` for the 2.5.1 release.
 
 ## Why 24.04 for new installs
 
@@ -90,7 +90,7 @@ Before calling 24.04 fully supported, run this checklist on a clean 24.04 host:
    `systemd-resolved` on 24.04.
 9. **Backup and restore** — collect a snapshot, restore it, and re-apply the
    erasure suppression ledger.
-10. **Upgrade path** - upgrade an existing 22.04 deployment to 2.5.0, then perform
+10. **Upgrade path** - upgrade an existing 22.04 deployment to 2.5.1, then perform
     a separate 22.04-to-24.04 host upgrade drill and repeat the checks above.
 
 Record the result in the release notes before changing the support table. The
@@ -101,7 +101,7 @@ now certified and the support table reflects that.
 
 | Gate | Result |
 |---|---|
-| Installer, Docker, and Compose | Pass (existing 2.4.1 deployment rebooted cleanly; inherited by 2.5.0) |
+| Installer, Docker, and Compose | Pass (existing 2.4.1 deployment rebooted cleanly; inherited by 2.5.1) |
 | WireGuard | Pass: handshake, ICMP, and TCP/22 to a lab target |
 | Firewall persistence | Pass: `DOCKER-USER`, `raw PREROUTING`, NAT, and UFW rules survived a reboot |
 | nftables backend | Pass: iptables and nft views agree |

@@ -98,13 +98,13 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     && chmod +x /usr/share/doc/python3-impacket/examples/mssqlclient.py
 
 # ── Layer 4: Wordlists ────────────────────────────────────────────────
+# SecLists is MIT. No breach-derived wordlists are downloaded or baked in
+# here; use Kali's local wordlists under your own policy.
 RUN mkdir -p /usr/share/seclists && \
     curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt \
         -o /usr/share/seclists/common.txt && \
     curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt \
-        -o /usr/share/seclists/directory-list-2.3-medium.txt && \
-    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Leaked-Databases/rockyou-75.txt \
-        -o /usr/share/seclists/rockyou-75.txt || true
+        -o /usr/share/seclists/directory-list-2.3-medium.txt
 
 # ── Layer 5: System configuration ─────────────────────────────────────
 

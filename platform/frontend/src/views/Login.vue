@@ -308,6 +308,7 @@ import { ref, nextTick, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for login (no token needed)
 import { setWikiAuthCookie } from '../utils/wikiAuth'
+import { applyPrivacyDefaultForRole } from '../composables/usePrivacy'
 
 const router = useRouter()
 
@@ -380,6 +381,7 @@ const handleLogin = async () => {
 
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
+    applyPrivacyDefaultForRole(response.data.user?.role)
 
     // Sync the wiki_auth cookie now, in THIS tab. App.vue only refreshes it on
     // mount (token was null then) and on cross-tab storage events (which do not

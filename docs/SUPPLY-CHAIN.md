@@ -13,6 +13,9 @@ is about to be built, tested, or deployed.
 - platform container and proxy inputs (Dockerfiles, Compose files, nginx
   configuration, entrypoint, SPA index);
 - deployment and verification scripts;
+- the licence inventory and pinned container images. Redis is pinned to 7.2
+  because 7.4 and later are RSALv2/SSPLv1; see
+  [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md);
 - GitHub Actions workflows that build, scan, or smoke-test the release;
 - every lab directory, including `lab.yaml`, `README.md`, `quiz.yaml`, and build
   contexts.

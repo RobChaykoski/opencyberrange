@@ -1,13 +1,48 @@
-# SWOCTS Cyber Range 2.5.0
+# SWOCTS Cyber Range 2.5.1
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Edition: **Professional** — Community / Academic plus analytics, reporting,
 cohort analysis, competency evidence, accreditation support, and research
 exports.
-Status: **minor release**. 2.5.0 adds organizational course health, the
-two-way feedback engine, optional exercise knowledge checks, certificate
-sharing, and the EXIF metadata lab.
+Status: **patch release**. 2.5.1 is the licence-compliance, About/build-info,
+privacy-control, and course-workspace cleanup release over 2.5.0.
+
+## Licence compliance
+
+- Redis is pinned to `7.2-alpine` (BSD-3-Clause); Redis 7.4+ is RSALv2/SSPLv1.
+- The web labs use MIT-licensed PyMySQL instead of GPL-2.0 `mysqlclient`.
+- The Scapy-based PCAP generators carry GPL-2.0-only headers and a documented
+  mixed-licence exception.
+- The Microsoft symbol table is generated at image-build time, not vendored.
+- The third-party image and toolchain notices were rebuilt, and
+  `scripts/check-licences.py` now guards the release in CI.
+
+## About and build information
+
+- A new authenticated **About** page shows the release, platform components,
+  branding, licence documents, SBOM downloads, and privacy controls.
+- CycloneDX SBOMs for the backend and frontend are generated for the release.
+- The SWOCTS mark is recorded as owned by SWOCTS and designed by Avery
+  Chaykoski.
+
+## Privacy controls
+
+- Admin accounts default to privacy mode on when no explicit preference exists.
+- Usernames, emails, display names, and student IDs are masked across admin
+  tables and dialogs.
+- Hover or focus a masked value to reveal it. The About page shows the current
+  state and a toggle.
+
+## Course workspace cleanup
+
+- Removed the Content, Achievements, and hidden Assignments panes from the
+  course workspace.
+- Overview, Feedback, and the instructor Analytics tab remain.
+- Exercise back-links now return to the course Overview.
+
+## Previous release: 2.5.0
+
 
 Enterprise preview remains the separate HA, SSO, enterprise reporting,
 multi-tenant, LMS, and compliance-reporting profile. See `docs/EDITIONS.md`.

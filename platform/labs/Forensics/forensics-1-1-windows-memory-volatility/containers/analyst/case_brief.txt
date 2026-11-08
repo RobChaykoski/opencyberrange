@@ -31,3 +31,5 @@ NOTES
 ATTRIBUTION
   Memory image: Sam Bowne, samsclass.info (Windows Server 2008 memory
   analysis exercise). Used here for isolated classroom training.
+  Symbol table: generated at image-build time from Microsoft's public symbol
+  server. It is not redistributed in the OpenCyberRange repository.

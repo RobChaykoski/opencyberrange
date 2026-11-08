@@ -16,10 +16,14 @@ line remain in force and are not replaced by this notice.
 
 **SWOCTS Cyber Range** is the product name and visual identity used by this
 deployment. The underlying platform, code, and upstream project remain
-**OpenCyberRange**. The SWOCTS crest is used as the primary platform mark; the
-OpenCyberRange name and shield mark are used for the "Powered by OpenCyberRange"
-attribution. This branding does not change the licence, copyright, or upstream
-attribution in this notice.
+**OpenCyberRange**. The SWOCTS name and crest are owned by **SWOCTS**; the crest
+was created and designed by **Avery Chaykoski**. They are brand assets, not
+software, and are not licensed under the PolyForm Noncommercial License 1.0.0.
+See [`BRANDING.md`](BRANDING.md).
+
+The OpenCyberRange name and shield mark are used for the "Powered by
+OpenCyberRange" attribution. This branding does not change the licence,
+copyright, or upstream attribution in this notice.
 
 ## Licensing
 
@@ -47,6 +51,19 @@ Do not treat AI-generated content in this repository as a security guarantee or
 as legal advice. Verify commands, lab instructions, licensing obligations, and
 security controls before production use. The project-specific design and
 authoring skills under `.opencode/skills/` are also AI-assisted tooling.
+
+## Privacy controls (2.5.1)
+
+Admin accounts start with **privacy mode on**. The setting masks usernames,
+emails, display names, and student IDs in the admin and instructor surfaces,
+including the users table, pending approvals, sessions, unregistered users, VPN
+peers, the user-details dialog, the edit-account dialog, learner tables, and
+activity actor names. Hover over or focus a masked value to reveal it. The
+preference is stored per browser and is also shown in the in-app **About** page.
+
+Privacy mode is a visual control for screen sharing and shoulder-surfing; it is
+not an authorization boundary. An authorised admin's API responses still
+contain the real values.
 
 ## What this build changes
 

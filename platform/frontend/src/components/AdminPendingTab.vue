@@ -10,8 +10,8 @@
     <div v-else class="pending-list">
       <div v-for="user in users" :key="user.id" class="pending-item">
         <div class="pending-info">
-          <p class="pending-name">{{ maskUsername(user.username) }}</p>
-          <p class="pending-details">{{ maskEmail(user.email) }}</p>
+          <p class="pending-name"><PrivacyText :value="user.username" /></p>
+          <p class="pending-details"><PrivacyText :value="user.email" type="email" /></p>
         </div>
         <div class="pending-actions">
           <button @click="$emit('approve', user.id)" class="btn btn--success btn--sm">Approve</button>
@@ -27,16 +27,14 @@
 // for decomposing the admin panel into per-tab components. The pattern:
 // the parent keeps ownership of data and mutations (users list, approve and
 // reject handlers), the tab receives data via props and asks for actions via
-// emits, and cross-cutting helpers (privacy masking) come from composables.
-import { usePrivacy } from '../composables/usePrivacy'
+// emits, and cross-cutting helpers (privacy reveal) come from components.
+import PrivacyText from './PrivacyText.vue'
 
 defineProps({
   users: { type: Array, required: true }
 })
 
 defineEmits(['approve', 'reject'])
-
-const { maskUsername, maskEmail } = usePrivacy()
 </script>
 
 <style scoped>

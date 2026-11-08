@@ -114,7 +114,7 @@ taxonomies because they do not describe threat intelligence.
 | Course | An instructor-created collection of labs, students, assignments, and due dates. |
 | Academy | The course area of the platform. Students see their courses; staff see the programme and course workspaces. |
 | Programme | An optional institutional grouping of courses and semester goals. A course can exist without a programme. |
-| Course workspace | The course page with Overview, Content, Feedback, Achievements, and Analytics. |
+| Course workspace | The course page with Overview, Feedback, and Analytics (staff). |
 | Flag | The token a student submits to prove completion. It is a training marker, not an IOC. |
 | Hint | A staged clue that unlocks after a configured time or condition. |
 | RangeBox | The browser-based Kali, Ubuntu, or REMnux desktop used to work on a lab. |

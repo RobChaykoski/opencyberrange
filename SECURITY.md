@@ -5,15 +5,15 @@ SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **2.5.0**, with security fixes also maintained on the **1.1.3**
+release is **2.5.1**, with security fixes also maintained on the **1.1.3**
 Community / Academic maintenance line where the same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v2.5.0` / `main` | Yes |
-| `v2.4.1` | Security fixes only - upgrade to `v2.5.0` |
-| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.5.0` |
-| `v1.1.x` | Maintenance fixes only - upgrade to `v2.5.0` for the current feature line |
+| `v2.5.1` / `main` | Yes |
+| `v2.4.1` | Security fixes only - upgrade to `v2.5.1` |
+| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.5.1` |
+| `v1.1.x` | Maintenance fixes only - upgrade to `v2.5.1` for the current feature line |
 | Pre-1.0 builds | No - upgrade to a supported release |
 
 ## Password storage
@@ -162,14 +162,14 @@ synthetic reproduction.
 
 ## Dependency posture
 
-`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.5.0` the dependency
+`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.5.1` the dependency
 audit remains a release gate; a finding that cannot be fixed immediately is
 recorded with an owner and an expiry in the release notes rather than ignored
 silently. The supply-chain lock adds a drift check for the same inputs.
 
 ## OWASP Top 10 baseline
 
-The 2.5.0 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.5.1 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It covers the web interface, platform data,
 and delivery process, and it names the tests or evidence expected for each
 category. Exceptions must be recorded with an owner and expiry; an expired
@@ -186,7 +186,7 @@ client-side secrets, and upstream supply-chain compromise.
 
 | Check | Result |
 |---|---|
-| Development database quality (2.5.0) | **0 critical, 0 warning, 2 info** |
+| Development database quality (2.5.1) | **0 critical, 0 warning, 2 info** |
 | Production database quality (2.4.1) | **0 critical, 0 warning, 3 info** |
 | Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
 | Change ledger | Chain OK; an authenticated celebration entry and a deliberate manual `labs.UPDATE` were recorded; the manual write was flagged `unattributed` |
@@ -209,4 +209,4 @@ Known gaps:
   database host. `application_name` is a fallback label, not a security
   boundary; review unattributed writes.
 - **Production ledger:** production is still on 2.4.1, so the ledger is not
-  installed there until the 2.5.0 deployment.
+  installed there until the 2.5.1 deployment.

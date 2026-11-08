@@ -10,7 +10,7 @@
       "sha256": "101ad3be755cd0a8bdd44cbc76a1fb19e46c29aa8cf1e520f0f005dc24240a89"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "a89900d5af70933f797f07cdd90c58684081c1bd4d769bfa454da8be2fec27e5"
+      "sha256": "fabd9b92a28146e87fd9189a80be95537d6b44c4b8e5b7efe7bce59fd8a2b2d8"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "e78d062e465052271362ec38e3d747cd09a39f2c8bdabae02a67d0b18ab52e1b"
@@ -22,10 +22,10 @@
       "sha256": "f8ff17bf7c5059b0c1df02fb708dd51b72d1ad8130fdaf9a52e24aebe79ea1f3"
     },
     "platform/backend/app/version.py": {
-      "sha256": "01bdf63e5dc30260141b96999075061826d42765490e785d99e17ce1289a9135"
+      "sha256": "78786b94032fc27516579fb7d66f55c0f4dc63202bc3a3c8e342a84a71082e10"
     },
     "platform/backend/pyproject.toml": {
-      "sha256": "b5fe68e4757e53a4cbe06add2b84f31cda52e6b5effde23752785c6434129903"
+      "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
     },
     "platform/backend/requirements-dev.txt": {
       "sha256": "12339000e6cf642ecbb32e4cd1433f37e8eadcdbfd0edc152f72fa342273ecec"
@@ -34,10 +34,16 @@
       "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "360ea019e439ced69ae65251ed8435cbf4fc1eafdda13cd32d05194ac42345b4"
+      "sha256": "55140fcccce6dad866cf14f5b63c27d5f9ad9818e004a893b0b5c6fb2b4c718c"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "c4a5805a60cb180b39fa55cb77260880e2702cfff431918faac5f1dee4579b16"
+    },
+    "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
+      "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
+    },
+    "platform/frontend/binaries/wstunnel_10.5.2_linux_arm64.tar.gz": {
+      "sha256": "ce6438391db8a83e22f204ae6cdcc87f96451409b90e76858997bb1a9cd85088"
     },
     "platform/frontend/docker-entrypoint.sh": {
       "sha256": "f8d3f1f456a0ef73e93505255e3557f930dbc6f3340eefbbf42387a3069e7fe0"
@@ -52,22 +58,28 @@
       "sha256": "5d087199080e3d68920c438599214f093a65382a13a00e643e4b0a2221ea7c56"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "29721bebb89f0634f31e13cf1f94bd606b427c028b810fa28d2829b78943c459"
+      "sha256": "90b904661a0461331f897ac3c4202175f2db544b5de78623572900851d398b81"
     },
     "platform/frontend/package.json": {
-      "sha256": "ff03ba13a2582abb4c9642340160157e465dbd8354e5bcb276f1b7f75ffed25c"
+      "sha256": "86d6cac7be21b0019c3e1c0d9d02a81daedd50c682cd8777ab21b746491e7a73"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "1c5e9db683ecf59688cb77abf00f8174991777d822f194ac87a317017a380dc0"
+    },
+    "scripts/check-licences.py": {
+      "sha256": "a5e0515e09a416682d769a000cefcbe7f730748d07a428cad8b74ee1408bcfc3"
     },
     "scripts/database_integrity.py": {
       "sha256": "9377a3ad84617e01e6656e2f4c83d1be4244352ce319671abe25aca8b83b2806"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "8ad2073bc337eda93d80bb09870c4dba261af02ca009a8b074c5e4fdbdfb60bc"
+      "sha256": "26ba71c50fa8f0a1ecbd45b793c77cdec86af5d7f6fa3d14d8ff5c69f54daacb"
+    },
+    "scripts/generate-about.py": {
+      "sha256": "ad9e0abacbdf8b0666bad4967c0474b1f84db3f05c98f3a79948b80580999774"
     },
     "scripts/install-platform.sh": {
-      "sha256": "f5f62107cd66381af9be5f65ed9b14f92160480d5ce22b2daf36c73a500e27f0"
+      "sha256": "31db2213c8fefd082ef16015e3786c235658a83f8013a70c489c4e025f4a4eea"
     },
     "scripts/lab_build_hash.py": {
       "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
@@ -76,10 +88,10 @@
       "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
     },
     "scripts/status-dashboard.py": {
-      "sha256": "aabc166ae649df7900690558daeb563112543d45c0034d3ccc662bcec0f7fea3"
+      "sha256": "b1946e065fba80dbd71620d40ef6348f03fbbb8d8daf50d8d3a5f4f2a074d50c"
     },
     "scripts/supply_chain.py": {
-      "sha256": "0079c6ad3498a4a7ceb94dbc9e1d70c22a2e32a810a038d8e8583e4f296b981f"
+      "sha256": "ff3a0b73053fff80d28b98602a002b7f458245b30365597866f998e796c5fd1e"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "5235c5d828bf5c34d41ef2677986ab2be9ea7732ea535a0cd464117c4b5b5668"
@@ -88,7 +100,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "5ea5677db284cf6179ff277bb37584a3c7f3b9072443cded33b7800f3a056700"
+      "sha256": "d96722697d958216a9bca8d7b2b508d0147e8a3b5bff879c0494a62d3e39894f"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -112,13 +124,13 @@
       ]
     },
     "forensics-1-1-windows-memory-volatility": {
-      "content_hash": "4ef0e07dfe214825cb9b183186c4bacfe71f52ab0dd6baab06b2f5991cd3baee",
+      "content_hash": "f654d76070693c73c08a44687fa3a78fbc5bdb1182c3332f6d8ab7674accd380",
       "services": [
         "analyst"
       ]
     },
     "forensics-2-1-voip-call-reconstruction": {
-      "content_hash": "62297f9f5a1cd6bd4c8777668ae9155aa99b115fc84a2cb194379a9095566f0c",
+      "content_hash": "0fc840f148006efa59d4e8363d67a94edfec628c63f06964874d22f4c7720a75",
       "services": [
         "evidence"
       ]
@@ -345,7 +357,7 @@
       ]
     },
     "linux-5-7-black-box-ctf": {
-      "content_hash": "d94a3eba1475091064809e05f0cff615064b8df0d732e333f4736698af48270d",
+      "content_hash": "9eeec0fe4a7cd5b8d34f7286eb79c5446e8bf4c42fa160835b6476e333ea86ec",
       "services": [
         "server-alpha",
         "server-bravo",
@@ -426,7 +438,7 @@
       ]
     },
     "malware-1-5-inetsim-c2-detection": {
-      "content_hash": "565ca6bafc220984e76937e252250d5889966a591a5a2a08ae48c81c6bfd6bd3",
+      "content_hash": "03c41a0bb12190c7de7f164088ac36468d91fde6693ad069d476fb52b4fa1e6b",
       "services": [
         "inetsim",
         "victim"
@@ -439,7 +451,7 @@
       ]
     },
     "malware-1-7-embedded-js-worddoc-inetsim": {
-      "content_hash": "fe2847b12cd96ac79884be3fe1cf211ab6c369e81cb942fa0c1e3799d4446fb7",
+      "content_hash": "cf8fdddf073d3fdb05933aa04a54a6e83369bfd69fa979ef7896ef0c48a245d6",
       "services": [
         "evidence",
         "inetsim",
@@ -471,7 +483,7 @@
       ]
     },
     "network-1-1-packet-capture-analysis": {
-      "content_hash": "faacdecdb06ee212cdf79d8436b90541f37942539a53d7950e26cfb69ebf4ec5",
+      "content_hash": "c1ba72883d57e91d639f4088e22557b561bb990dd10a1ac527b45e1d93bf5ca1",
       "services": [
         "analyst"
       ]
@@ -483,13 +495,13 @@
       ]
     },
     "network-1-2-http-traffic-analysis": {
-      "content_hash": "60112dcead7ba60688908f9a785754fa10b703b8166fc9999a69ba4ff7fe8cd1",
+      "content_hash": "47da02a345e367434dca3c80efa55dfb543dc7ffcfbea5e8f3d6097da2bdb43d",
       "services": [
         "target"
       ]
     },
     "network-1-2-log-correlation": {
-      "content_hash": "cab5ccd5236aca3a87235ec6d1c5c73c4b1220a5afb1f896c967ad4f8efd1807",
+      "content_hash": "9d49e75058698df35efe5df7ec2b376e1af90c153f4010f4bd309c2890ebec4f",
       "services": [
         "analyst"
       ]
@@ -523,31 +535,31 @@
       ]
     },
     "network-2-1-ftp-credential-extraction": {
-      "content_hash": "8ee9b51a65a759e88802a84a40f3e70716ab70d755a414d7d559d34ae88b414a",
+      "content_hash": "cfe14df46761452ef6c97f814efcc4c2415ea83788ddda44eae0695e0cb07a34",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-2-smtp-email-analysis": {
-      "content_hash": "1dd5bd25b0e6c58fbef2276af79ce589286a9aaccc31616e0fe5d409ee30684d",
+      "content_hash": "a91db048d3e45a56d023ff83587006d85d08ab177a136d8b8df700e316fed99d",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-3-http-session-hijacking": {
-      "content_hash": "3e146b2ad6855ae2dba40f4653ca789c8bd7f9249ef0e5f7ec7b99e8edb05c88",
+      "content_hash": "de0b1cf6e5329713a8db73c09e93bc3878266ff058e6690e4854693e4c12eebc",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-4-dns-exfiltration": {
-      "content_hash": "c149a1ac3e2542f2ec629a92c611b009467bf44d0d15c2a4870724996ca3e953",
+      "content_hash": "fa9e45cf360679403edda3a1d073b1f895a3d120090c18b80b4004a2b46a5e5a",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-5-attack-chain-analysis": {
-      "content_hash": "d0e0e3f20ae48d407210be17f8def18cf60ad11382c2ca160ba635e713c1e491",
+      "content_hash": "603b042b2da9f33468e7c72afec1da87e719d8a1b889c6318cb7719589125bb2",
       "services": [
         "network-2-5"
       ]
@@ -690,14 +702,14 @@
       ]
     },
     "web-3-2-sql-injection-to-shell": {
-      "content_hash": "453f7dc79a431767df78ca3f72b7971a8c060668368d2a67d59dda8436bfdfae",
+      "content_hash": "bb9685bd4e0b35e98559f432f58af23f656280b465c97aea8a046262b6b5dfb1",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-3-full-web-to-root": {
-      "content_hash": "919ee1ebfcd4636ba6de510efb62ce843f5914c2d1d5b1cb97d4292bd2c2820f",
+      "content_hash": "d9290c7511987ab8de67394a392b7e5650cecc47870efec86955651db93be7d9",
       "services": [
         "dbserver",
         "internal",
@@ -1029,6 +1041,6 @@
       ]
     }
   },
-  "release": "2.5.0",
+  "release": "2.5.1",
   "schema": 1
 }

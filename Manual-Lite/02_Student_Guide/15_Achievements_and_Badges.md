@@ -8,25 +8,17 @@ Earn achievements for how you solve labs inside a course and how far you explore
 
 ## Where achievements appear
 
-Achievements show in three places:
+Achievements show in two places:
 
-- The **Achievements** tab, which lists each earned achievement with an icon and label.
 - On your **Profile**, where earned course achievements appear with your certificates and completion record.
 - On the **Celebration Wall**, when you choose to be listed. The wall shows public wins from across the range; it is not a ranking.
 
-## Opening the Achievements tab
+## Finding your achievements
 
-1. Open the course from **Courses**.
-2. Click the **Achievements** tab.
+1. Open **Profile**.
+2. Find the **Course achievements** section.
 
-**What you should see:** a list of achievements you have earned in the course, each with an icon and a short label. Before you earn any, the tab reads "No achievements earned yet in this course."
-
-<figure markdown>
-
-![Course Achievements tab listing earned achievements with icons and labels](img/course-achievements.png)
-
-<figcaption>The Achievements tab lists the achievements you have earned in the course; an empty course shows a no achievements message.</figcaption>
-</figure>
+**What you should see:** a list of achievements you have earned, each with an icon and a short label. Course-scoped achievements appear alongside your certificates and completion record.
 
 ## Built-in achievements
 
@@ -121,7 +113,7 @@ Celebrations are voluntary and private:
 See [Celebration Wall](20_Celebration_Wall.md).
 
 !!! note "Awarding can lag"
-    The platform checks for new achievements right after you submit a correct flag. The check runs in the background, so a badge can take a moment to appear on the tab.
+    The platform checks for new achievements right after you submit a correct flag. The check runs in the background, so a badge can take a moment to appear on your profile.
 
 !!! tip "Protect your bonuses"
     Self-Reliant and the points bonus for no hints both depend on solving without help. Requesting a hint forfeits them for that lab. See [Using Hints](08_Using_Hints.md).

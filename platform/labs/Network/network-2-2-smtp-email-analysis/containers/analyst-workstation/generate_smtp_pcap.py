@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0-only
+# This build-time generator imports Scapy (GPL-2.0-only), so it is
+# distributed under GPL-2.0-only. Its generated PCAP output is data and is
+# not a derivative work of Scapy.
 """
 Generate realistic PCAP file with SMTP email traffic including data exfiltration.
 Includes 3-4 hours of network traffic with multiple emails and distractors.

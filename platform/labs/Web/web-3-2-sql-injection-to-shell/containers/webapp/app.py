@@ -7,7 +7,7 @@ making it vulnerable to UNION-based SQL injection.
 """
 
 import time
-import MySQLdb
+import pymysql as MySQLdb  # PyMySQL is MIT; keeps the MySQLdb-compatible API.
 from flask import Flask, request, redirect, make_response
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def get_db():
     for attempt in range(30):
         try:
             conn = MySQLdb.connect(
-                host=DB_HOST, user=DB_USER, passwd=DB_PASS, db=DB_NAME
+                host=DB_HOST, user=DB_USER, password=DB_PASS, database=DB_NAME
             )
             return conn
         except MySQLdb.OperationalError:

@@ -1,4 +1,4 @@
-ï»¿# SWOCTS Cyber Range editions
+# SWOCTS Cyber Range editions
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
@@ -14,9 +14,9 @@ entitlement; they are not separate version lines. See
 
 | Edition profile | Platform release | Status | Shape | Primary user |
 |---|---|---|---|---|
-| **Community / Academic** | 2.5.0 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
-| **Professional** | 2.5.0 | Release profile â€” analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
-| **Enterprise** | 2.5.0 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
+| **Community / Academic** | 2.5.1 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
+| **Professional** | 2.5.1 | Release profile — analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Enterprise** | 2.5.1 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
 
@@ -24,7 +24,7 @@ entitlement; they are not separate version lines. See
 
 Community / Academic is the supported teaching platform profile. The 1.1.3
 maintenance line remains available for existing installs; new installs use the
-2.5.0 tree with this profile.
+2.5.1 tree with this profile.
 
 - courses, exercises, tracks, labs, RangeBox, flags, hints, and achievements;
 - lab improvements and workbook improvements;
@@ -40,17 +40,17 @@ must not regress it.
 ### Professional profile
 
 Professional adds the teaching intelligence and evidence layer on the same
-single-host deployment and 2.5.0 platform release. The Professional and Enterprise priority set is:
+single-host deployment and 2.5.1 platform release. The Professional and Enterprise priority set is:
 
-1. **Competency Framework Engine** â€” explicit competency definitions, mappings,
+1. **Competency Framework Engine** — explicit competency definitions, mappings,
    evidence rules, and progression levels.
-2. **Student Feedback Engine** â€” structured, consent-aware feedback tied to
+2. **Student Feedback Engine** — structured, consent-aware feedback tied to
    exercises, tracks, and competencies.
-3. **Radar / Spider Web Reporting** â€” competency profiles for learners, cohorts,
+3. **Radar / Spider Web Reporting** — competency profiles for learners, cohorts,
    and programmes.
-4. **Exercise Health Analytics** â€” which labs are failing, where learners
+4. **Exercise Health Analytics** — which labs are failing, where learners
    abandon, and which exercises need authoring attention.
-5. **Instructor Intervention Dashboard** â€” early, explainable support signals
+5. **Instructor Intervention Dashboard** — early, explainable support signals
    for instructors.
 
 Professional also carries:
@@ -71,7 +71,7 @@ distributed scheduling.
 
 ### Enterprise profile (preview)
 
-Enterprise is a preview profile on 2.5.0 until the HA workstream ships. It adds
+Enterprise is a preview profile on 2.5.1 until the HA workstream ships. It adds
 the deployment, identity, and institutional layer:
 
 - multi-host lab pool with capacity-aware placement;
@@ -126,7 +126,7 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 
 | Item | State |
 |---|---|
-| Community / Academic profile on 2.5.0 | Delivered and supported |
+| Community / Academic profile on 2.5.1 | Delivered and supported |
 | Community / Academic 1.1.3 maintenance line | Supported for existing installs |
 | Professional analytics and course reporting | Delivered |
 | Professional Competency Framework Engine | Planned |
@@ -145,11 +145,11 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 
 ```text
 Community / Academic profile  ->  Professional profile  ->  Enterprise preview
-                 all on platform release 2.5.0
+                 all on platform release 2.5.1
 ```
 
 1. **Community / Academic to Professional:** back up, move to Ubuntu 24.04,
-   deploy the 2.5.0 Professional profile, run the Professional migration and
+   deploy the 2.5.1 Professional profile, run the Professional migration and
    acceptance checks. Data is preserved.
 2. **Professional to Enterprise:** keep the Professional control plane and
    data, add the Enterprise topology: shared storage, replicated API/frontend,
@@ -165,7 +165,7 @@ Community / Academic profile  ->  Professional profile  ->  Enterprise preview
 - **Community / Academic 1.1.3** is the maintenance line for existing installs.
   Security and correctness fixes land here first and merge forward.
 - **Community / Academic, Professional, and Enterprise** are profiles on platform
-  release **2.5.0**. Release tags identify the platform release, not an edition.
+  release **2.5.1**. Release tags identify the platform release, not an edition.
 - **Enterprise is a preview profile** until HA, SSO, multi-tenancy, LMS, and
   compliance reporting are shipped and verified. The separate HA repository has
   its own version and a compatibility statement, not a platform version.

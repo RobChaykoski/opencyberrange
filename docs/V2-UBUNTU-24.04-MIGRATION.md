@@ -25,7 +25,7 @@ The split is deliberate:
 This migration does **not** change:
 
 - the platform container bases (`python:3.11-slim`, `node:22-alpine`,
-  `nginx:alpine`, `postgres:15-alpine`, `redis:7-alpine`);
+  `nginx:alpine`, `postgres:15-alpine`, `redis:7.2-alpine`);
 - the ~148 exercise images on `ubuntu:22.04`;
 - the UbuntuBox desktop image, which stays on `ubuntu:22.04` for 2.1.4.0;
 - the Kali-based RangeBox, which follows `kali-rolling`;

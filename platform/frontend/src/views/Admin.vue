@@ -384,7 +384,7 @@
                       ></span>
                       <div class="user-identity__body">
                         <div class="user-identity__name">
-                          {{ maskUsername(user.username) || 'Deleted user' }}
+                          <PrivacyText :value="user.username" fallback="Deleted user" />
                           <span
                             v-if="user.must_change_password"
                             class="password-change-badge"
@@ -400,7 +400,7 @@
                       </div>
                     </div>
                   </td>
-                  <td class="masked-email" data-label="Email" :title="'Click user profile to view full email'">{{ maskEmail(user.email) }}</td>
+                  <td class="masked-email" data-label="Email"><PrivacyText :value="user.email" type="email" /></td>
                   <td data-label="Role">
                     <span class="status-badge" :class="roleBadgeClass(user.role)">
                       {{ roleLabel(user.role) }}
@@ -917,8 +917,8 @@
               >
                 <div class="session-health-header">
                   <div class="session-user-info">
-                    <span class="session-username">{{ maskUsername(session.username) || 'Deleted user' }}</span>
-                    <span v-if="session.impersonated_by" class="admin-session-tag">Admin ({{ session.impersonated_by.admin_username }})</span>
+                    <span class="session-username"><PrivacyText :value="session.username" fallback="Deleted user" /></span>
+                    <span v-if="session.impersonated_by" class="admin-session-tag">Admin (<PrivacyText :value="session.impersonated_by.admin_username" />)</span>
                     <span v-if="session.is_diagnostic" class="diagnostic-tag">Diagnostics</span>
                     <span class="session-lab">{{ session.lab_name }}</span>
                   </div>
@@ -1082,7 +1082,7 @@
                         <td colspan="4" class="empty-row">No sessions in selected time range</td>
                       </tr>
                       <tr v-for="session in sessionHistory" :key="session.id" :class="{ 'activity-row--diagnostic': session.is_diagnostic }">
-                        <td>{{ maskUsername(session.username) || 'Deleted user' }}</td>
+                        <td><PrivacyText :value="session.username" fallback="Deleted user" /></td>
                         <td>{{ session.lab_name }}</td>
                         <td>
                           <span class="event-badge" :class="session.is_diagnostic ? 'event-badge--diagnostic' : `event-badge--session-${session.status}`">
@@ -1159,7 +1159,7 @@
               <div class="unregistered-list">
                 <div v-for="user in vpnStatus.unregistered" :key="user.user_id" class="unregistered-item">
                   <div class="unregistered-info">
-                    <span class="unregistered-name">{{ maskUsername(user.username) || 'Deleted user' }}</span>
+                    <span class="unregistered-name"><PrivacyText :value="user.username" fallback="Deleted user" /></span>
                     <span class="unregistered-ip">{{ user.client_ip }}</span>
                   </div>
                   <button @click="registerPeer(user.user_id)" class="btn btn--success btn--sm">Register</button>
@@ -1186,7 +1186,7 @@
                     <tr v-for="peer in paginatedVpnPeers" :key="peer.public_key">
                       <td class="cell-primary">
                         <span v-if="peer.is_labs_server" class="server-badge">Labs Server</span>
-                        <span v-else-if="peer.user">{{ maskUsername(peer.user.username) || 'Deleted user' }}</span>
+                        <span v-else-if="peer.user"><PrivacyText :value="peer.user.username" fallback="Deleted user" /></span>
                         <span v-else class="cell-muted">Unknown</span>
                       </td>
                       <td class="cell-mono">{{ peer.allowed_ips }}</td>
@@ -1414,7 +1414,7 @@
                 <select aria-label="Assign Instructor" v-model="newCourseForm.instructor_id" class="form-input">
                   <option value="">Me (current admin)</option>
                   <option v-for="u in instructorUsers" :key="u.id" :value="u.id">
-                    {{ u.username }} ({{ u.role }})
+                    <PrivacyText :value="u.username" /> ({{ u.role }})
                   </option>
                 </select>
               </div>
@@ -1545,7 +1545,7 @@
               <label class="assign-instructor-label">Assigned instructor:</label>
               <select aria-label="Assigned instructor:" class="form-input assign-instructor-select" :value="managingCourse.instructor_id" @change="updateCourseInstructor($event.target.value)">
                 <option v-for="u in instructorUsers" :key="u.id" :value="u.id">
-                  {{ u.username }} ({{ u.role }})
+                  <PrivacyText :value="u.username" /> ({{ u.role }})
                 </option>
               </select>
             </div>
@@ -2691,10 +2691,10 @@ test:
                 <span class="user-avatar user-avatar--sm" aria-hidden="true">{{ userInitials(editUser) }}</span>
                 <div class="user-modal__identity-text">
                   <p class="user-modal__eyebrow">Edit account</p>
-                  <h3 id="edit-user-title" class="user-modal__title">{{ displayName(editUser) }}</h3>
+                  <h3 id="edit-user-title" class="user-modal__title"><PrivacyText :value="displayName(editUser)" /></h3>
                   <p class="user-modal__handle">
-                    @{{ editUser?.username || 'user' }}
-                    <span v-if="editUser?.email"> · {{ editUser.email }}</span>
+                    @<PrivacyText :value="editUser?.username || ''" fallback="user" />
+                    <span v-if="editUser?.email"> · <PrivacyText :value="editUser.email" type="email" /></span>
                   </p>
                 </div>
               </div>
@@ -2870,7 +2870,7 @@ test:
                     <div class="user-form-grid">
                       <div class="form-group">
                         <label for="reset-confirm-username">
-                          Type <strong>{{ editUser?.username }}</strong> to confirm
+                          Type <strong><PrivacyText :value="editUser?.username || ''" /></strong> to confirm
                         </label>
                         <input
                           id="reset-confirm-username"
@@ -3036,10 +3036,10 @@ test:
                 <span class="user-avatar" aria-hidden="true">{{ userInitials(userDetails) }}</span>
                 <div class="user-modal__identity-text">
                   <p class="user-modal__eyebrow">Account record</p>
-                  <h3 id="user-details-title" class="user-modal__title">{{ displayName(userDetails) }}</h3>
+                  <h3 id="user-details-title" class="user-modal__title"><PrivacyText :value="displayName(userDetails)" /></h3>
                   <p class="user-modal__handle">
-                    @{{ userDetails?.username || 'loading' }}
-                    <span v-if="userDetails?.email"> · {{ userDetails.email }}</span>
+                    @<PrivacyText :value="userDetails?.username || ''" fallback="loading" />
+                    <span v-if="userDetails?.email"> · <PrivacyText :value="userDetails.email" type="email" /></span>
                   </p>
                   <div v-if="userDetails" class="user-modal__badges">
                     <span class="status-badge" :class="userRoleBadgeClass(userDetails)">
@@ -3165,19 +3165,19 @@ test:
                   <dl class="user-facts">
                     <div class="user-fact">
                       <dt>Username</dt>
-                      <dd>{{ userDetails.username }}</dd>
+                      <dd><PrivacyText :value="userDetails.username" /></dd>
                     </div>
                     <div v-if="userDetails.first_name || userDetails.last_name" class="user-fact">
                       <dt>Name</dt>
-                      <dd>{{ [userDetails.first_name, userDetails.last_name].filter(Boolean).join(' ') }}</dd>
+                      <dd><PrivacyText :value="[userDetails.first_name, userDetails.last_name].filter(Boolean).join(' ')" /></dd>
                     </div>
                     <div class="user-fact">
                       <dt>Email</dt>
-                      <dd class="user-fact__wrap">{{ userDetails.email }}</dd>
+                      <dd class="user-fact__wrap"><PrivacyText :value="userDetails.email" type="email" /></dd>
                     </div>
                     <div v-if="userDetails.student_id" class="user-fact">
                       <dt>Student ID</dt>
-                      <dd>{{ userDetails.student_id }}</dd>
+                      <dd><PrivacyText :value="userDetails.student_id" /></dd>
                     </div>
                     <div class="user-fact">
                       <dt>Role</dt>
@@ -3328,7 +3328,7 @@ test:
                   v-for="u in launchAsStudentList"
                   :key="u.id"
                   :value="u.id"
-                >{{ u.username }} ({{ u.email }})</option>
+                >{{ maskUsername(u.username) }} ({{ maskEmail(u.email) }})</option>
               </select>
             </div>
 
@@ -3370,17 +3370,17 @@ test:
 import InfoTip from '../components/InfoTip.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import AdminPendingTab from '../components/AdminPendingTab.vue'
+import PrivacyText from '../components/PrivacyText.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 import { useModules } from '../composables/useModules'
 import { usePrivacy } from '../composables/usePrivacy'
 
 const route = useRoute()
-const router = useRouter()
-const { privacyMode, maskUsername, maskEmail } = usePrivacy()
+const { maskUsername, maskEmail } = usePrivacy()
 
 const legacyTabMap = { sessions: 'monitoring', vpn: 'monitoring', activity: 'monitoring', labs: 'exercises', curriculum: 'exercises', tester: 'system' }
 const legacySubTabMap = { sessions: 'sessions', vpn: 'vpn', activity: 'activity', labs: 'manage', curriculum: 'tracks' }

@@ -206,7 +206,7 @@
               <td colspan="4" class="empty-row">No activity events yet</td>
             </tr>
             <tr v-for="event in studentFeed" :key="event.id">
-              <td class="user-cell">{{ event.actor_username ? maskUsername(event.actor_username) : 'System' }}</td>
+              <td class="user-cell"><PrivacyText v-if="event.actor_username" :value="event.actor_username" /><span v-else>System</span></td>
               <td>
                 <span class="event-badge" :class="'event-badge--' + event.event_type">
                   {{ event.event_label }}
@@ -276,7 +276,7 @@ import {
 } from 'chart.js'
 import axios from '../api/axios'
 import ProgrammeOverview from '../components/ProgrammeOverview.vue'
-import { usePrivacy } from '../composables/usePrivacy'
+import PrivacyText from '../components/PrivacyText.vue'
 import { usePoll } from '../composables/usePoll'
 import { isAdmin } from '../utils/roles'
 import { requireExportReason } from '../utils/exportReason'
@@ -284,7 +284,6 @@ import { requireExportReason } from '../utils/exportReason'
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip, Legend)
 
 const router = useRouter()
-const { maskUsername } = usePrivacy()
 const showHealthCard = isAdmin()
 
 const stats = ref({

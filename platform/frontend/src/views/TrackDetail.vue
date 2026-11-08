@@ -761,9 +761,8 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { hasRole } from '../utils/roles'
-import { usePoll } from '../composables/usePoll'
 import { useClipboard } from '../composables/useClipboard'
 import { useMobileView } from '../composables/useMobileView'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
@@ -955,10 +954,10 @@ const retryLaunch = async () => {
   await launchWithImage(null)
 }
 
-// Course context. Everything that leaves an exercise returns to the course's
-// Exercises tab, not to whichever tab happened to be remembered last.
+// Course context. Everything that leaves an exercise returns to the course
+// overview, which is the only course landing view.
 const courseExercisesLink = computed(() =>
-  activeCourseId.value ? `/courses/${activeCourseId.value}?tab=assignments` : null
+  activeCourseId.value ? `/courses/${activeCourseId.value}` : null
 )
 
 // Breadcrumb target: when this track was opened from a course (course_id in the
@@ -1465,7 +1464,7 @@ const stopLab = async () => {
   try {
     await axios.post('/labs/stop')
     activeLab.value = null
-    // If launched from a course, navigate back to its Exercises tab
+    // If launched from a course, navigate back to its overview
     if (courseExercisesLink.value) {
       router.push(courseExercisesLink.value)
       return
@@ -1839,7 +1838,7 @@ onMounted(async () => {
   if (labId) {
     await openActiveLab({ id: Number(labId) })
     // Keep the course context on the URL so a refresh or a shared link still
-    // knows which course Exercises tab to return to. The one-shot labId is
+    // knows which course overview to return to. The one-shot labId is
     // dropped so reloading the track does not reopen a stale panel.
     const carried = {}
     if (route.query.courseId) carried.courseId = route.query.courseId

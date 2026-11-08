@@ -152,7 +152,7 @@ operator can review them.
 
 | Environment | Release | Quality result | Notes |
 |---|---|---|---|
-| Development | 2.5.0 | **0 critical, 0 warning, 2 info** | 36 real completions without a session; 149 seeded labs without a creator |
+| Development | 2.5.1 | **0 critical, 0 warning, 2 info** | 36 real completions without a session; 149 seeded labs without a creator |
 | Production | 2.4.1 | **0 critical, 0 warning, 3 info** | 116 real completions without a session; 149 seeded labs without a creator; 2 hint placeholders (intentional) |
 
 Development database fingerprint:
@@ -170,7 +170,7 @@ Ledger check on development:
 The manual update was detected. That is the intended behaviour: an application
 write is attributed; a direct SQL write is visible and reviewable.
 
-Production does not yet have the ledger because it is still on 2.4.1. The 2.5.0
+Production does not yet have the ledger because it is still on 2.4.1. The 2.5.1
 deployment installs it.
 
 ## Known gaps
@@ -200,6 +200,6 @@ deployment installs it.
 3. **On a mismatch:** stop, preserve the database and ledger, compare the
    fingerprint with the release manifest, review unattributed entries, and do
    not re-baseline until the cause is explained.
-4. **On the first install of 2.5.0:** the ledger starts empty; the first
+4. **On the first install of 2.5.1:** the ledger starts empty; the first
    application writes populate it. Existing data is covered by the checksum
    manifest.

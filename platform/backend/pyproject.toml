@@ -1,4 +1,5 @@
 # Lint configuration for the OCR backend (app/ package).
+# Project licence: PolyForm Noncommercial 1.0.0 - see ../../LICENSE.
 # Baseline is intentionally lenient: the codebase predates the linter,
 # so rules that would flood on legacy code are ignored here. Tighten
 # rule by rule as violations get cleaned up. Do not run `ruff --fix`

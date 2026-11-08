@@ -38,7 +38,9 @@ services:
       start_period: 30s
 
   redis:
-    image: redis:7-alpine
+    # Redis 7.2 is BSD-3-Clause. Redis 7.4 and later are RSALv2/SSPLv1;
+    # do not change this tag without a licence review and a notice update.
+    image: redis:7.2-alpine
     container_name: ocr-redis
     # Rate-limit counters are ephemeral: no RDB snapshots, no AOF. A restart
     # only resets the current windows.

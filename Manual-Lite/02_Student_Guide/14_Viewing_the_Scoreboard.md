@@ -1,9 +1,9 @@
 # Course Progress and Feedback
 
-The course workspace shows your progress, your next exercise, private feedback,
-and your achievements. It does **not** publish a course scoreboard, rank, or
-points table. The scoreboard tab was removed in 2.5.0; course metrics are
-private and descriptive.
+The course workspace shows your progress, your next exercise, and private
+feedback. It does **not** publish a course scoreboard, rank, or points table.
+The scoreboard tab was removed in 2.5.0; course metrics are private and
+descriptive.
 
 ## Prerequisites
 
@@ -20,9 +20,7 @@ private and descriptive.
 | Tab | What it shows |
 |---|---|
 | **Overview** | Your progress, the next assigned exercise, and your feedback status. Instructors and administrators see a course-health view instead. |
-| **Content** | The exercises assigned to the course, in order. |
 | **Feedback** | The course check-in, the aggregate student voice, and instructor coaching notes addressed to you. |
-| **Achievements** | The achievements earned in this course. |
 | **Analytics** | Instructors and administrators only: completion, hints, attempts, time, and exercise signals. |
 
 Students do not see a leaderboard, rank, or another student's progress.
@@ -54,10 +52,10 @@ sees the aggregate and the cohort, not your name beside an anonymous comment.
 
 ## Achievements and celebrations
 
-Course achievements appear on the **Achievements** tab and on your profile. The
-Celebration Wall lets other signed-in users celebrate a public win anonymously.
-See [Achievements and Badges](15_Achievements_and_Badges.md) and
-[Celebration Wall](20_Celebration_Wall.md).
+Course achievements appear on your **Profile**, not inside the course
+workspace. The Celebration Wall lets other signed-in users celebrate a public
+win anonymously. See [Achievements and Badges](15_Achievements_and_Badges.md)
+and [Celebration Wall](20_Celebration_Wall.md).
 
 ## Related pages
 

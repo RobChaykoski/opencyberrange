@@ -1,11 +1,19 @@
 OpenCyberRange
 Copyright (c) 2026 Lewis Heuermann. All rights reserved.
+Portions Copyright (c) 2026 Robert Chaykoski.
 
 Required Notice: Copyright 2026 Lewis Heuermann (OpenCyberRange)
 
 The free edition (OCR-Lite) is distributed under the PolyForm Noncommercial
 License 1.0.0 (see LICENSE). Commercial editions, content packs, and hosting
 are licensed separately by the copyright holder.
+
+Third-party software and data carry their own notices; see
+THIRD_PARTY_NOTICES.md and THIRD_PARTY_LICENSES/.
+
+The SWOCTS name and logo are owned by SWOCTS and were created and designed by
+Avery Chaykoski. They are brand assets, not software, and are not licensed under
+the PolyForm Noncommercial License 1.0.0. See BRANDING.md.
 
 "OpenCyberRange" and the platform's content universes are trademarks and
 creative works of the copyright holder. No trademark license is granted by the

@@ -21,10 +21,11 @@ points table, or student league table.
 | Tab | What it shows |
 |---|---|
 | **Overview** | Course health: overall feedback, satisfaction, instructor engagement, response rate, knowledge checks, student voice, and the next action. |
-| **Content** | The assigned modules and exercises. |
 | **Feedback** | Student check-ins, aggregate clarity and challenge, anonymous comments, and the coaching list. |
-| **Achievements** | Course-scoped achievements and celebrations. |
 | **Analytics** | Completion, hints, attempts, time, abandonment, exercise signals, and the skill-tree coverage radar. |
+
+Achievements are shown on each student's **Profile**, not as a course tab. The
+Celebration Wall shows voluntary, anonymous celebrations of public wins.
 
 ## Read course health
 

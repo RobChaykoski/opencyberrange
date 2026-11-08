@@ -9,26 +9,26 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "2.5.0"
+  version: "2.5.1"
   status: "release"
   date: "2026-11-08"
 
 editions:
   community_academic:
     name: "Community / Academic"
-    version: "2.5.0"
+    version: "2.5.1"
     status: "profile"
     shape: "single-host"
     focus: "teaching platform, lab and workbook improvements, exercise authoring, maintenance, and security"
   professional:
     name: "Professional"
-    version: "2.5.0"
+    version: "2.5.1"
     status: "release profile"
     shape: "single-host"
     focus: "analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports"
   enterprise:
     name: "Enterprise"
-    version: "2.5.0"
+    version: "2.5.1"
     status: "preview profile"
     shape: "multi-host HA"
     focus: "HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting"
@@ -37,15 +37,15 @@ maintenance_lines:
   community_academic_1_1:
     version: "1.1.3"
     status: "supported"
-    note: "Existing single-host teaching installs; new installs use the 2.5.0 tree with the Community / Academic profile."
+    note: "Existing single-host teaching installs; new installs use the 2.5.1 tree with the Community / Academic profile."
 
 release:
-  version: "2.5.0"
+  version: "2.5.1"
   status: "release"
   date: "2026-11-08"
 
 development:
-  version: "2.5.0"
+  version: "2.5.1"
   focus: "analytics and reporting"
 
 policy:
@@ -84,8 +84,9 @@ runtime:
     target: "17"
     status: "planned-major-upgrade"
   redis:
-    current: "7"
+    current: "7.2"
     status: "supported"
+    licence: "BSD-3-Clause (Redis 7.4+ is RSALv2/SSPLv1; do not bump without a licence review)"
 
 backend:
   fastapi: "0.162.2"
@@ -155,6 +156,7 @@ infrastructure:
   frontend_builder: "node:22-alpine"
   frontend_server: "nginx:alpine"
   postgres_image: "postgres:15-alpine"
+  redis_image: "redis:7.2-alpine"
   ci_checkout: "actions/checkout@v7"
   ci_codeql: "github/codeql-action@v4"
   ci_trivy: "aquasecurity/trivy-action@0.36.0"

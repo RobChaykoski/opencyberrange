@@ -6,6 +6,7 @@
  */
 
 import { ref, computed } from 'vue'
+import { applyPrivacyDefaultForRole } from './usePrivacy'
 
 const ORIGINAL_SESSION_KEY = 'ocr_original_session'
 const IMPERSONATION_KEY = 'ocr_impersonating'
@@ -83,6 +84,7 @@ export function useImpersonation() {
         const data = await res.json()
         localStorage.setItem('token', data.access_token)
         localStorage.setItem('user', JSON.stringify(data.user))
+        applyPrivacyDefaultForRole(data.user?.role)
       } else {
         // Fallback: restore from saved session
         _restoreFromSaved()
@@ -120,6 +122,9 @@ export function useImpersonation() {
     }
     if (saved.user) {
       localStorage.setItem('user', saved.user)
+      try {
+        applyPrivacyDefaultForRole(JSON.parse(saved.user).role)
+      } catch { /* keep the existing preference */ }
     }
   }
 

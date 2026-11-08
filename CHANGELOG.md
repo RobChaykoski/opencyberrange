@@ -28,6 +28,45 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 No changes yet.
 
+## [2.5.1] - 2026-11-08
+
+### Licence compliance
+- Pinned Redis to `7.2-alpine` (BSD-3-Clause). Redis 7.4+ is RSALv2/SSPLv1 and
+  is not a drop-in replacement without a licence review.
+- Replaced `mysqlclient` (GPL-2.0) with MIT-licensed PyMySQL in the two web
+  labs, and added SPDX GPL-2.0 headers to the Scapy-based PCAP generators with a
+  documented mixed-licence exception.
+- Removed the vendored Microsoft symbol table; the memory lab now generates it
+  at image-build time from Microsoft's public symbol server.
+- Pinned the third-party INetSim image to a reviewed digest and removed the
+  breach-derived RockYou download from RangeBox.
+- Rebuilt `THIRD_PARTY_NOTICES.md` and `THIRD_PARTY_LICENSES/`, corrected the
+  psycopg and fpdf2 entries, and added the missing container, toolchain,
+  vendored-binary, icon, and skill notices.
+- Added `scripts/check-licences.py` and wired it into the quality workflow.
+
+### About and build information
+- Added an authenticated `/about` page with release, platform, branding,
+  component, licence, and SBOM inventory plus a privacy-controls panel.
+- Added the generated `app/data/about` inventory, CycloneDX SBOMs, and
+  `scripts/generate-about.py`.
+- Documented the SWOCTS mark ownership and Avery Chaykoski design credit in
+  `BRANDING.md`, the licence notices, and the About page.
+
+### Privacy controls
+- Admin accounts now default to privacy mode on when no explicit preference is
+  stored.
+- Usernames, emails, display names, and student IDs are masked consistently in
+  admin tables, pending approvals, sessions, VPN peers, the user-details and
+  edit-account dialogs, instructor tables, and activity actor names.
+- Hovering or focusing a masked value reveals it; the About page shows the
+  current state and a toggle.
+
+### Course workspace cleanup
+- Removed the Content, Achievements, and hidden Assignments panes from the
+  course workspace. Overview, Feedback, and the instructor Analytics tab remain.
+- Course links from an exercise now return to the course Overview.
+
 ## [2.5.0] - 2026-11-08
 
 ### Organizational course health

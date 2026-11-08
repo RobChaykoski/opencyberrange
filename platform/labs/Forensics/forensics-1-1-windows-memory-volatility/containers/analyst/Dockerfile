@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     p7zip-full \
+    xz-utils \
     python3 \
     python3-pip \
     procps \
@@ -29,9 +30,20 @@ RUN useradd -m -s /bin/bash analyst && \
     printf 'analyst ALL=(ALL) NOPASSWD:ALL\n' > /etc/sudoers.d/90-analyst && \
     chmod 0440 /etc/sudoers.d/90-analyst
 
-# Symbol file for the Windows Server 2008 SP1 x86 kernel in the image.
-RUN mkdir -p /home/analyst/symbols/windows/ntkrpamp.pdb
-COPY symbols/windows/ntkrpamp.pdb/*.json.xz /home/analyst/symbols/windows/ntkrpamp.pdb/
+# Symbol table for the Windows Server 2008 SP1 x86 kernel.
+#
+# The converted Volatility JSON is generated here, at image-build time, from
+# the public Microsoft symbol server. It is deliberately not committed to the
+# repository: Microsoft's symbol terms do not grant redistribution rights.
+# Building this image means the operator accepts those terms. If you publish a
+# prebuilt image, review Microsoft's symbol terms first.
+RUN PDB_CONV=$(python3 -c "import os, volatility3; print(os.path.join(os.path.dirname(volatility3.__file__), 'framework', 'symbols', 'windows', 'pdbconv.py'))") && \
+    mkdir -p /home/analyst/symbols/windows/ntkrpamp.pdb && \
+    python3 "$PDB_CONV" \
+        -g 37D328E3BAE5460F8E662756ED80951D2 \
+        -p ntkrpamp.pdb \
+        -o /home/analyst/symbols/windows/ntkrpamp.pdb/37D328E3BAE5460F8E662756ED80951D-2.json && \
+    xz -9 /home/analyst/symbols/windows/ntkrpamp.pdb/37D328E3BAE5460F8E662756ED80951D-2.json
 
 # Download the training memory image, verify its published MD5, and unpack it.
 # The image is approximately 512 MB after extraction.
