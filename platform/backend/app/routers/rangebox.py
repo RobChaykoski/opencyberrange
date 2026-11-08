@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db, SessionLocal
 from app.auth import get_current_active_user, create_ws_ticket, validate_ws_ticket
 from app.models import User, Lab, LabSession, LabCompletion, CourseEnrollment, CourseLabAssignment
-from app.services.docker_manager import DockerManager, RangeBoxCapacityError
+from app.services.docker_manager import DockerManager, RangeBoxCapacityError, rangebox_spawn_lock
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -105,7 +105,7 @@ async def standalone_rangebox_launch(
 ):
     """Launch a standalone RangeBox (not tied to any lab session)."""
     try:
-        with docker_manager.rangebox_spawn_lock():
+        with rangebox_spawn_lock():
             result = docker_manager.spawn_standalone_rangebox(current_user.id, image=image, username=current_user.username)
     except RangeBoxCapacityError as e:
         raise HTTPException(

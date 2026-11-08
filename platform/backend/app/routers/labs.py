@@ -26,7 +26,7 @@ def _prebuild_progress():
 from app.database import get_db
 from app.auth import get_current_active_user, is_impersonating
 from app.models import User, Lab, LabSession, WireGuardConfig
-from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError
+from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError, rangebox_spawn_lock
 from app.services.wireguard_manager import WireGuardManager
 from app.config import settings
 from app.crypto import encrypt_private_key, decrypt_private_key, is_encrypted
@@ -287,7 +287,7 @@ async def spawn_lab(
                     network_name = f"lab_{user_id}_{lab_slug}"
 
                     def spawn_rangebox_locked():
-                        with docker_manager.rangebox_spawn_lock():
+                        with rangebox_spawn_lock():
                             return docker_manager.spawn_rangebox(
                                 user_id=user_id,
                                 lab_slug=lab_slug,
