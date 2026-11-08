@@ -9,8 +9,8 @@
     {
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
-      "bytes": 92147,
-      "sha256": "8f322b627106c1428695c78e6208710d22256d790ddec5998d4880ad4dd0cfec"
+      "bytes": 88899,
+      "sha256": "51d305fb2b4c53d30ae3d564160740f4f512a7c50b7b142189f45eced2dab3c8"
     }
   ]
 }

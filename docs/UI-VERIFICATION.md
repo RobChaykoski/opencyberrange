@@ -85,7 +85,7 @@ Required repository configuration:
 - secret `UI_SMOKE_TOKEN` — a JWT for a student or admin smoke account, **or**
 - secrets `UI_SMOKE_USERNAME` and `UI_SMOKE_PASSWORD` — a smoke account that logs
   in for a short-lived token
-- optional variable `UI_EXPECTED_VERSION` — for example `2.5.1`
+- optional variable `UI_EXPECTED_VERSION` — for example `2.5.2`
 
 The scheduled workflow is configured for the public production URL
 `https://ctfd.swocts.com` with a dedicated `smoke_tester` student account. It

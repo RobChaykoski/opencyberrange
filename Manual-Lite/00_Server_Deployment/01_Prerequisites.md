@@ -4,16 +4,16 @@ Before you install SWOCTS Cyber Range you size the host, open the right ports, a
 
 ## Operating system
 
-Use **Ubuntu 24.04 LTS** for a new 2.5.1 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.5.1. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
+Use **Ubuntu 24.04 LTS** for a new 2.5.2 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.5.2. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
 
 ## Platform versions
 
-The current supported stack for the 2.5.1 release line is:
+The current supported stack for the 2.5.2 release line is:
 
 | Component | Version | Notes |
 |---|---|---|
-| Host OS | Ubuntu 24.04 LTS for 2.5.1 | Community / Academic profile supports 22.04 and 24.04 LTS |
-| SWOCTS Cyber Range | `2.5.1` | Shown in the page footer and returned by `GET /api/version` |
+| Host OS | Ubuntu 24.04 LTS for 2.5.2 | Community / Academic profile supports 22.04 and 24.04 LTS |
+| SWOCTS Cyber Range | `2.5.2` | Shown in the page footer and returned by `GET /api/version` |
 | Python | 3.11 | Backend image: `python:3.11-slim` |
 | Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
 | PostgreSQL | 15 | Database image: `postgres:15-alpine` |

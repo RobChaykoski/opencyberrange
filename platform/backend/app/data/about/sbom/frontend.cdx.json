@@ -1,11 +1,11 @@
-﻿{
+{
   "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:6a39201c-a224-4615-b873-73c5b718efba",
+  "serialNumber": "urn:uuid:15520140-6aeb-4b36-9a8d-be02bd66ec53",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-08T11:47:30.941Z",
+    "timestamp": "2026-11-08T19:13:57.776Z",
     "lifecycles": [
       {
         "phase": "build"
@@ -19,12 +19,12 @@
       }
     ],
     "component": {
-      "bom-ref": "opencyberrange-frontend@2.5.1",
+      "bom-ref": "opencyberrange-frontend@2.5.2",
       "type": "library",
       "name": "frontend",
-      "version": "2.5.1",
+      "version": "2.5.2",
       "scope": "required",
-      "purl": "pkg:npm/opencyberrange-frontend@2.5.1",
+      "purl": "pkg:npm/opencyberrange-frontend@2.5.2",
       "properties": [
         {
           "name": "cdx:npm:package:private",
@@ -1044,7 +1044,7 @@
       "name": "combined-stream",
       "version": "1.0.8",
       "scope": "required",
-      "author": "Felix Geisend├╢rfer <felix@debuggable.com> (http://debuggable.com/)",
+      "author": "Felix Geisendörfer <felix@debuggable.com> (http://debuggable.com/)",
       "description": "A stream that emits multiple other streams one after another.",
       "purl": "pkg:npm/combined-stream@1.0.8",
       "properties": [],
@@ -1115,7 +1115,7 @@
       "name": "delayed-stream",
       "version": "1.0.0",
       "scope": "required",
-      "author": "Felix Geisend├╢rfer <felix@debuggable.com> (http://debuggable.com/)",
+      "author": "Felix Geisendörfer <felix@debuggable.com> (http://debuggable.com/)",
       "description": "Buffers events from a stream until you are ready to handle them.",
       "purl": "pkg:npm/delayed-stream@1.0.0",
       "properties": [],
@@ -1478,7 +1478,7 @@
       "name": "form-data",
       "version": "4.0.6",
       "scope": "required",
-      "author": "Felix Geisend├╢rfer <felix@debuggable.com> (http://debuggable.com/)",
+      "author": "Felix Geisendörfer <felix@debuggable.com> (http://debuggable.com/)",
       "description": "A library to create readable \"multipart/form-data\" streams. Can be used to submit forms and file uploads to other web applications.",
       "purl": "pkg:npm/form-data@4.0.6",
       "properties": [],
@@ -2798,7 +2798,7 @@
   ],
   "dependencies": [
     {
-      "ref": "opencyberrange-frontend@2.5.1",
+      "ref": "opencyberrange-frontend@2.5.2",
       "dependsOn": [
         "@novnc/novnc@1.7.0",
         "axios@1.21.0",

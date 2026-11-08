@@ -20,9 +20,9 @@ environment variables:
 
     [
       {"label": "Prod", "role": "production", "url": "https://192.168.120.41",
-       "expected_version": "2.5.1"},
+       "expected_version": "2.5.2"},
       {"label": "Dev", "role": "development", "url": "https://192.168.120.44",
-       "expected_version": "2.5.1"}
+       "expected_version": "2.5.2"}
     ]
 
 The `192.168.120.0/24` addresses are documentation placeholders. Replace them
@@ -52,14 +52,14 @@ DEFAULT_HOSTS = [
         "label": "Prod",
         "role": "production",
         "url": os.environ.get("OCR_STATUS_PROD_URL", "https://192.168.120.41"),
-        "expected_version": "2.5.1",
+        "expected_version": "2.5.2",
         "line": "Production platform release",
     },
     {
         "label": "Dev",
         "role": "development",
         "url": os.environ.get("OCR_STATUS_DEV_URL", "https://192.168.120.44"),
-        "expected_version": "2.5.1",
+        "expected_version": "2.5.2",
         "line": "Professional current platform release",
     },
 ]

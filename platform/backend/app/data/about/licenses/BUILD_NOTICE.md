@@ -59,7 +59,9 @@ emails, display names, and student IDs in the admin and instructor surfaces,
 including the users table, pending approvals, sessions, unregistered users, VPN
 peers, the user-details dialog, the edit-account dialog, learner tables, and
 activity actor names. Hover over or focus a masked value to reveal it. The
-preference is stored per browser and is also shown in the in-app **About** page.
+preference is stored per browser. Administrators can turn privacy mode on or off
+for the current browser and set the default for new admin browsers under
+**Admin > Settings > Security**.
 
 Privacy mode is a visual control for screen sharing and shoulder-surfing; it is
 not an authorization boundary. An authorised admin's API responses still

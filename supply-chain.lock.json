@@ -22,7 +22,7 @@
       "sha256": "f8ff17bf7c5059b0c1df02fb708dd51b72d1ad8130fdaf9a52e24aebe79ea1f3"
     },
     "platform/backend/app/version.py": {
-      "sha256": "78786b94032fc27516579fb7d66f55c0f4dc63202bc3a3c8e342a84a71082e10"
+      "sha256": "07772e4ef2c7e11b4223aa5f17917537469d79f81f44925b74d31a4111850808"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -58,10 +58,10 @@
       "sha256": "5d087199080e3d68920c438599214f093a65382a13a00e643e4b0a2221ea7c56"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "90b904661a0461331f897ac3c4202175f2db544b5de78623572900851d398b81"
+      "sha256": "defacba785beebee25650097ac0029e5f1dbd24b7fd46d893d06875e78031430"
     },
     "platform/frontend/package.json": {
-      "sha256": "86d6cac7be21b0019c3e1c0d9d02a81daedd50c682cd8777ab21b746491e7a73"
+      "sha256": "4f6d40bd741c65389a537ba6f92247193786d62b1354caa39215f801ef6507cb"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "1c5e9db683ecf59688cb77abf00f8174991777d822f194ac87a317017a380dc0"
@@ -88,7 +88,7 @@
       "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
     },
     "scripts/status-dashboard.py": {
-      "sha256": "b1946e065fba80dbd71620d40ef6348f03fbbb8d8daf50d8d3a5f4f2a074d50c"
+      "sha256": "bda183904ce9f3b3984cfa8021ec3fb2414a7df2297a0e9849ff47ab16c96289"
     },
     "scripts/supply_chain.py": {
       "sha256": "ff3a0b73053fff80d28b98602a002b7f458245b30365597866f998e796c5fd1e"
@@ -100,7 +100,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "d96722697d958216a9bca8d7b2b508d0147e8a3b5bff879c0494a62d3e39894f"
+      "sha256": "a486ab3c32bcdac6c9ab8ef6a96542742a1a639b0e350f48b6ca8080ad319650"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1041,6 +1041,6 @@
       ]
     }
   },
-  "release": "2.5.1",
+  "release": "2.5.2",
   "schema": 1
 }

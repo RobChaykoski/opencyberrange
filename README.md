@@ -17,7 +17,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Platform](https://img.shields.io/badge/platform-2.5.1%20release-8b5cf6)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-2.5.2%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
@@ -44,16 +44,16 @@ the upstream OpenCyberRange attribution and licence notices intact.
 
 ## Editions
 
-SWOCTS Cyber Range uses one platform release number (`2.5.1`) with three
+SWOCTS Cyber Range uses one platform release number (`2.5.2`) with three
 cumulative edition profiles. The edition names describe scope, entitlement, and
 operational shape, not three separate codebases or three separate version lines.
 See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Community / Academic** | `2.5.1` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `2.5.1` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `2.5.1` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
+| **Community / Academic** | `2.5.2` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `2.5.2` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `2.5.2` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
 The Community / Academic profile (1.1.3 maintenance) remains the reference
 behaviour and the fallback.
@@ -69,7 +69,7 @@ Instructor Intervention Dashboard — are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on the Community / Academic 1.1.3
-maintenance line and merge forward into the 2.5.1 profiles**, so a fix does not
+maintenance line and merge forward into the 2.5.2 profiles**, so a fix does not
 wait for a feature release. There is no separate fork to maintain. See
 [Editions](docs/EDITIONS.md) and
 [ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
@@ -181,7 +181,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. `main` carries platform release
-**2.5.1** with Community / Academic, Professional, and Enterprise preview
+**2.5.2** with Community / Academic, Professional, and Enterprise preview
 profiles. The Community / Academic 1.1.3 line remains the supported single-host
 teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
@@ -512,7 +512,7 @@ The two development info findings are a known session-coverage gap and seeded
 labs with no creator. Production adds two intentional hint placeholders. None
 are data loss or a broken reference.
 
-The 2.5.1 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.5.2 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
 process. The current verification pass is recorded in
@@ -826,7 +826,7 @@ health, and shared state rather than in the curriculum.
 
 Multi-host Docker and Kubernetes are **not supported deployment targets**.
 The setup script and Compose files stay single-host. Multi-host HA is an
-Enterprise preview workstream and is not part of the 2.5.1 release gate.
+Enterprise preview workstream and is not part of the 2.5.2 release gate.
 
 ## Repository Structure
 
@@ -931,7 +931,7 @@ or read learner records. Docker host and container state still need
 
 - **OS:** Ubuntu 24.04 LTS for new 2.1 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range 2.5.1 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7.2, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range 2.5.2 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7.2, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

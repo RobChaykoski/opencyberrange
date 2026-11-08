@@ -1,16 +1,16 @@
 # Manual editions
 
 The core manual in this folder describes the workflows shared by the
-**Community / Academic profile** (1.1.3 maintenance) and **Professional 2.5.1**
+**Community / Academic profile** (1.1.3 maintenance) and **Professional 2.5.2**
 platforms. Professional
 and Enterprise are cumulative: every page here still applies, and each edition
 adds the pages in its own supplement.
 
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|
-| Community / Academic | 2.5.1 profile (1.1.x maintenance) | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
-| Professional | 2.5.1 | [Professional supplement](09_Professional/index.md) | Analytics and reporting preview; competency evidence, feedback, exercise health, and intervention signals are planned |
-| Enterprise | 2.5.1 preview | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, SSO, enterprise reporting, multi-tenancy, LMS/SIS integration, and compliance reporting |
+| Community / Academic | 2.5.2 profile (1.1.x maintenance) | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
+| Professional | 2.5.2 | [Professional supplement](09_Professional/index.md) | Analytics and reporting preview; competency evidence, feedback, exercise health, and intervention signals are planned |
+| Enterprise | 2.5.2 preview | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, SSO, enterprise reporting, multi-tenancy, LMS/SIS integration, and compliance reporting |
 
 ## How to use the manuals
 

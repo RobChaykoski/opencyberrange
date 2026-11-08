@@ -28,6 +28,24 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 No changes yet.
 
+## [2.5.2] - 2026-11-08
+
+### Privacy settings
+- Added a `privacy_default_on` platform setting under **Admin > Settings >
+  Security**. Administrators can now set whether new admin browsers start with
+  privacy mode enabled instead of relying on the hard-coded default.
+- Added the current-browser privacy toggle to the same settings screen. The
+  sidebar toggle remains available.
+- Explicit per-browser choices still win. Legacy auto-written `"on"` values are
+  treated as unset so a changed platform default reaches browsers that never
+  made a choice.
+- Documented the new location in the build notice, admin manual, release notes,
+  and architecture settings table.
+
+### Fixes
+- Updated the analytics report test to expect the current six Skill DNA
+  dimensions (the `leader` branch was added in 2.5.0).
+
 ## [2.5.1] - 2026-11-08
 
 ### Licence compliance

@@ -5,15 +5,16 @@ SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **2.5.1**, with security fixes also maintained on the **1.1.3**
+release is **2.5.2**, with security fixes also maintained on the **1.1.3**
 Community / Academic maintenance line where the same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v2.5.1` / `main` | Yes |
-| `v2.4.1` | Security fixes only - upgrade to `v2.5.1` |
-| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.5.1` |
-| `v1.1.x` | Maintenance fixes only - upgrade to `v2.5.1` for the current feature line |
+| `v2.5.2` / `main` | Yes |
+| `v2.5.1` | Security fixes only - upgrade to `v2.5.2` |
+| `v2.4.1` | Security fixes only - upgrade to `v2.5.2` |
+| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.5.2` |
+| `v1.1.x` | Maintenance fixes only - upgrade to `v2.5.2` for the current feature line |
 | Pre-1.0 builds | No - upgrade to a supported release |
 
 ## Password storage
@@ -162,14 +163,14 @@ synthetic reproduction.
 
 ## Dependency posture
 
-`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.5.1` the dependency
+`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.5.2` the dependency
 audit remains a release gate; a finding that cannot be fixed immediately is
 recorded with an owner and an expiry in the release notes rather than ignored
 silently. The supply-chain lock adds a drift check for the same inputs.
 
 ## OWASP Top 10 baseline
 
-The 2.5.1 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.5.2 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It covers the web interface, platform data,
 and delivery process, and it names the tests or evidence expected for each
 category. Exceptions must be recorded with an owner and expiry; an expired
