@@ -41,18 +41,18 @@ flowchart TB
     LabBox -.->|attached to| Lab
 ```
 
-| Container | Image | Binding | Role |
-|-----------|-------|---------|------|
-| `ocr-frontend` | nginx:alpine | 80 and 443 | Serves the SPA and the `wiki_data` volume, proxies the API |
-| `ocr-backend` | python:3.11-slim + uvicorn / FastAPI | 127.0.0.1:8000 | API, lab orchestration, firewall apply |
-| `ocr-db` | postgres:15-alpine | internal 5432 | PostgreSQL, `max_connections=300` |
-| `ocr-redis` | redis:7-alpine | internal 6379 | Shared rate-limit counters |
+| Container | Runtime | Binding | Role |
+|-----------|---------|---------|------|
+| `ocr-frontend` | nginx | 80 and 443 | Serves the SPA and the `wiki_data` volume, proxies the API |
+| `ocr-backend` | Python + uvicorn / FastAPI | 127.0.0.1:8000 | API, lab orchestration, firewall apply |
+| `ocr-db` | PostgreSQL 15 | internal 5432 | PostgreSQL, `max_connections=300` |
+| `ocr-redis` | Redis 7 | internal 6379 | Shared rate-limit counters |
 
-!!! note "Base images are implementation details"
-    The diagram names each service by role, not by base image. The pinned images
-    are `python:3.11-slim`, `node:22-alpine`, `nginx:alpine`,
-    `postgres:15-alpine`, and `redis:7-alpine`. Check `versions.yaml` for the
-    exact current pins before changing one.
+!!! note "Pinned images are recorded separately"
+    The diagram and table name each service by role, not by base image. Exact
+    image tags and digests are recorded in `versions.yaml` and the supported
+    versions page. This keeps the architecture review stable when a base image is
+    patched.
 
 The backend mounts the Docker socket, the labs directory, the workbook volume, and the Exercise Studio templates.
 
