@@ -1196,18 +1196,18 @@ onMounted(() => {
   letter-spacing: 0.02em;
 }
 
-.event-badge--lab_started { background: rgba(59, 130, 246, 0.15); color: color-mix(in srgb, #60a5fa 55%, var(--text-primary)); }
-.event-badge--lab_stopped { background: rgba(100, 116, 139, 0.2); color: color-mix(in srgb, #94a3b8 55%, var(--text-primary)); }
-.event-badge--lab_completed { background: rgba(34, 197, 94, 0.15); color: color-mix(in srgb, #4ade80 55%, var(--text-primary)); }
-.event-badge--flag_correct { background: rgba(34, 197, 94, 0.15); color: color-mix(in srgb, #4ade80 55%, var(--text-primary)); }
-.event-badge--flag_incorrect { background: rgba(239, 68, 68, 0.15); color: color-mix(in srgb, #f87171 55%, var(--text-primary)); }
-.event-badge--hint_used { background: rgba(245, 158, 11, 0.15); color: color-mix(in srgb, #fbbf24 55%, var(--text-primary)); }
-.event-badge--user_registered { background: rgba(168, 85, 247, 0.15); color: color-mix(in srgb, #c084fc 55%, var(--text-primary)); }
-.event-badge--user_approved { background: rgba(168, 85, 247, 0.15); color: color-mix(in srgb, #c084fc 55%, var(--text-primary)); }
-.event-badge--vpn_downloaded { background: rgba(6, 182, 212, 0.15); color: color-mix(in srgb, #22d3ee 55%, var(--text-primary)); }
-.event-badge--course_enrolled { background: rgba(236, 72, 153, 0.15); color: color-mix(in srgb, #f472b6 55%, var(--text-primary)); }
-.event-badge--achievement_awarded { background: rgba(245, 158, 11, 0.15); color: color-mix(in srgb, #fbbf24 55%, var(--text-primary)); }
-.event-badge--diagnostic { background: rgba(245, 158, 11, 0.15); color: color-mix(in srgb, #fbbf24 55%, var(--text-primary)); }
+.event-badge--lab_started { background: rgba(59, 130, 246, 0.15); color: var(--badge-blue); }
+.event-badge--lab_stopped { background: rgba(100, 116, 139, 0.2); color: var(--badge-slate); }
+.event-badge--lab_completed { background: rgba(34, 197, 94, 0.15); color: var(--badge-green); }
+.event-badge--flag_correct { background: rgba(34, 197, 94, 0.15); color: var(--badge-green); }
+.event-badge--flag_incorrect { background: rgba(239, 68, 68, 0.15); color: var(--badge-red); }
+.event-badge--hint_used { background: rgba(245, 158, 11, 0.15); color: var(--badge-amber); }
+.event-badge--user_registered { background: rgba(168, 85, 247, 0.15); color: var(--badge-purple); }
+.event-badge--user_approved { background: rgba(168, 85, 247, 0.15); color: var(--badge-purple); }
+.event-badge--vpn_downloaded { background: rgba(6, 182, 212, 0.15); color: var(--badge-cyan); }
+.event-badge--course_enrolled { background: rgba(236, 72, 153, 0.15); color: var(--badge-pink); }
+.event-badge--achievement_awarded { background: rgba(245, 158, 11, 0.15); color: var(--badge-amber); }
+.event-badge--diagnostic { background: rgba(245, 158, 11, 0.15); color: var(--badge-amber); }
 
 .diagnostic-tag {
   display: inline-block;

@@ -645,7 +645,7 @@ const userInitial = computed(() => {
   display: flex; align-items: center; gap: 0.6rem; width: 100%;
   padding: 0.5rem 0.75rem; margin-bottom: 0.25rem;
   background: none; border: none; cursor: pointer;
-  color: var(--sidebar-fg-muted, #94a3b8); font-size: 0.82rem; border-radius: 8px;
+  color: var(--text-secondary); font-size: 0.82rem; border-radius: 8px;
 }
 .tour-btn:hover { background: var(--sidebar-hover, rgba(255,255,255,0.06)); color: var(--sidebar-fg, #e2e8f0); }
 .tour-btn__icon { width: 18px; height: 18px; flex-shrink: 0; }
