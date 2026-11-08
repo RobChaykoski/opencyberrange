@@ -60,13 +60,6 @@
       <button class="btn btn--primary no-print" @click="goBack">Return to the track</button>
     </div>
 
-    <div v-else-if="certificate && usingAccountName" class="certificate-name-note no-print">
-      <strong>This certificate uses your account name.</strong>
-      Set the name you want printed in
-      <router-link to="/profile?tab=account">Profile → Personal information</router-link>
-      before sharing or printing.
-    </div>
-
     <article v-else-if="certificate" class="certificate" :class="`certificate--${activeDesign}`" aria-label="Certificate of completion">
       <div class="certificate__frame">
         <div class="certificate__watermark" aria-hidden="true">
@@ -165,6 +158,13 @@
         </footer>
       </div>
     </article>
+
+    <div v-if="certificate && usingAccountName" class="certificate-name-note no-print">
+      <strong>This certificate uses your account name.</strong>
+      Set the name you want printed in
+      <router-link to="/profile?tab=account">Profile → Personal information</router-link>
+      before sharing or printing.
+    </div>
 
     <section v-if="certificate" class="certificate-share no-print">
       <div class="certificate-share__copy">
