@@ -814,23 +814,47 @@ const handleLogin = async () => {
 
 .register-section {
   margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
   text-align: center;
 }
 
 .register-text {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .register-link {
   color: var(--accent);
-  text-decoration: none;
-  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 700;
   margin-left: 0.25rem;
 }
 
 .register-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.login-privacy {
+  max-width: 38ch;
+  margin: 0.65rem auto 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.login-privacy a {
+  color: var(--accent);
+  font-weight: 600;
   text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.login-privacy a:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* Right: platform preview */
