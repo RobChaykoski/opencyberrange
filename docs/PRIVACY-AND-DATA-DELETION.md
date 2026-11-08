@@ -8,6 +8,10 @@ and the backup/restore behaviour that makes erasure durable. It is an
 engineering reference, not legal advice. A privacy notice, records of
 processing, and a retention schedule still need review by counsel or a DPO.
 
+The user-facing PIPEDA-aligned notice is
+[PRIVACY-NOTICE.md](PRIVACY-NOTICE.md). Privacy questions and requests go to
+[privacy@swocts.com](mailto:privacy@swocts.com).
+
 ## What data exists
 
 | Category | Storage | On erasure |

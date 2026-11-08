@@ -883,6 +883,7 @@ opencyberrange/
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation, in the admin UI or CLI |
 | [Privacy, Erasure, and Backups](docs/PRIVACY-AND-DATA-DELETION.md) | Privacy officers, DPOs, and administrators reviewing erasure, exports, and retention |
+| [Privacy notice](docs/PRIVACY-NOTICE.md) | Learners, instructors, and administrators reviewing the PIPEDA-aligned platform notice |
 | [Security policy](SECURITY.md) | Security reporters and reviewers checking scope and export/restore safeguards |
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
 | [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |

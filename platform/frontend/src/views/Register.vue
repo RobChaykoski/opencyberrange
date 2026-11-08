@@ -95,6 +95,12 @@
                 unchecked, no registration email is sent. You can review your data and account
                 controls later under Profile → Privacy and data.
               </p>
+              <p class="help-text">
+                By creating an account you acknowledge the
+                <router-link to="/privacy">Privacy notice</router-link>. Privacy questions
+                can be sent to
+                <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>.
+              </p>
             </div>
 
             <div class="form-group">

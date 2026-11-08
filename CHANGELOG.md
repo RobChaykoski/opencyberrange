@@ -26,7 +26,12 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
-No changes yet.
+### Privacy
+- Added a public PIPEDA-aligned privacy notice at `/privacy`, linked from the
+  footer and registration form. The notice uses `privacy@swocts.com` as the
+  privacy contact and supplements the SWOCTS Privacy Policy.
+- Added `docs/PRIVACY-NOTICE.md` and linked it from the privacy, erasure, and
+  backup documentation and README.
 
 ## [2.5.2] - 2026-11-08
 

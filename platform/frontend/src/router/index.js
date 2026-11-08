@@ -183,6 +183,11 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/privacy',
+    name: 'Privacy',
+    component: () => import('../views/Privacy.vue')
+  },
+  {
     path: '/rangebox',
     name: 'RangeBox',
     component: () => import('../views/RangeBoxView.vue'),

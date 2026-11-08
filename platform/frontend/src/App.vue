@@ -120,6 +120,7 @@
         <span>OpenCyberRange</span>
       </a>
       <router-link to="/verify" class="app-footer__verify">Verify a certificate</router-link>
+      <router-link to="/privacy" class="app-footer__verify">Privacy</router-link>
       <router-link to="/about" class="app-footer__verify">About</router-link>
       <span v-if="appVersion" class="app-footer__version" :title="appRelease">v{{ appVersion }}</span>
     </footer>
