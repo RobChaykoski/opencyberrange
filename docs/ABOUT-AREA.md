@@ -27,8 +27,8 @@ account.
   `THIRD_PARTY_LICENSES/`.
 - **SBOMs** — CycloneDX files with size and SHA-256 checksums.
 
-Privacy controls are documented in [`BUILD_NOTICE.md`](../BUILD_NOTICE.md), not
-on the About page.
+Privacy controls are documented in [`BUILD_NOTICE.md`](../BUILD_NOTICE.md) and
+are managed from **Admin > Settings > Security**, not on the About page.
 
 ## Data sources and generation
 

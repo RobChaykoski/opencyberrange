@@ -59,8 +59,9 @@ No changes yet.
 - Usernames, emails, display names, and student IDs are masked consistently in
   admin tables, pending approvals, sessions, VPN peers, the user-details and
   edit-account dialogs, instructor tables, and activity actor names.
-- Hovering or focusing a masked value reveals it; the About page shows the
-  current state and a toggle.
+- Hovering or focusing a masked value reveals it. Administrators manage the
+  current-browser toggle and the default for new admin browsers under
+  **Admin > Settings > Security**.
 
 ### Course workspace cleanup
 - Removed the Content, Achievements, and hidden Assignments panes from the

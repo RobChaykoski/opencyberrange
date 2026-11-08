@@ -1676,6 +1676,32 @@
                 Configure the SMTP relay used for registration and test email.
                 Save the settings before sending a test.
               </p>
+              <p v-if="activeSettingsCategory === 'security'" class="section-desc">
+                Privacy mode is a visual control for screen sharing and
+                shoulder-surfing. The first row changes this browser now; the
+                default row below applies to administrators who have not chosen
+                a preference yet.
+              </p>
+              <div v-if="activeSettingsCategory === 'security'" class="setting-row">
+                <div class="setting-info">
+                  <span class="setting-key">
+                    Privacy Mode (this browser)
+                    <span class="setting-info-icon" tabindex="0">
+                      i
+                      <span class="setting-tooltip">Masks usernames, emails, display names, and student IDs in admin and instructor views. Hover or focus a masked value to reveal it. This toggle affects only the current browser.</span>
+                    </span>
+                  </span>
+                </div>
+                <div class="setting-control">
+                  <button
+                    class="visibility-toggle"
+                    :class="privacyMode ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'"
+                    @click="togglePrivacy"
+                  >
+                    {{ privacyMode ? 'Enabled' : 'Disabled' }}
+                  </button>
+                </div>
+              </div>
               <div v-for="(value, key) in filteredSettings" :key="key" class="setting-row">
                 <div class="setting-info">
                   <span class="setting-key">
@@ -3380,7 +3406,7 @@ import { useModules } from '../composables/useModules'
 import { usePrivacy } from '../composables/usePrivacy'
 
 const route = useRoute()
-const { privacyMode, maskUsername, maskEmail } = usePrivacy()
+const { privacyMode, maskUsername, maskEmail, togglePrivacy, setAdminPrivacyDefault } = usePrivacy()
 
 const legacyTabMap = { sessions: 'monitoring', vpn: 'monitoring', activity: 'monitoring', labs: 'exercises', curriculum: 'exercises', tester: 'system' }
 const legacySubTabMap = { sessions: 'sessions', vpn: 'vpn', activity: 'activity', labs: 'manage', curriculum: 'tracks' }
@@ -4180,6 +4206,7 @@ const settingMeta = {
   lockout_duration_minutes:  { label: 'Lockout Duration',       desc: 'How long a locked-out account remains inaccessible after exceeding the failed login limit.', unit: 'minutes' },
   require_approval:          { label: 'Require Approval',       desc: 'When enabled, new user registrations must be approved by an admin before the account can log in.' },
   enable_api_docs:           { label: 'API Documentation',      desc: 'Exposes the Swagger UI (/docs) and ReDoc (/redoc) endpoints for the backend API. Disable in production.' },
+  privacy_default_on:        { label: 'Default Privacy Mode',   desc: 'Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views.' },
   default_session_hours:     { label: 'Default Exercise Duration',   desc: 'The default time limit for an exercise session before it is automatically stopped.', unit: 'hours' },
   max_session_hours:         { label: 'Max Exercise Duration',       desc: 'The maximum time a student can extend a single exercise session.', unit: 'hours' },
   container_cpu_limit:       { label: 'CPU Limit per Container', desc: 'Docker CPU allocation per exercise container (e.g. 0.5 = half a core, 1 = one full core).', unit: 'cores' },
@@ -4500,6 +4527,7 @@ const toggleSetting = async (key) => {
   try {
     await axios.put('/settings/', { settings: { [key]: next } })
     if (allSettings.value[key]) allSettings.value[key].value = next
+    if (key === 'privacy_default_on') setAdminPrivacyDefault(next === 'true')
   } catch (e) {
     settingsEdits[key] = previous
     showAlert(e.response?.data?.detail || 'Failed to save setting', 'error')

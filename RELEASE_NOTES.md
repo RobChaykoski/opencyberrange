@@ -31,8 +31,9 @@ privacy-control, and course-workspace cleanup release over 2.5.0.
 - Admin accounts default to privacy mode on when no explicit preference exists.
 - Usernames, emails, display names, and student IDs are masked across admin
   tables and dialogs.
-- Hover or focus a masked value to reveal it. The About page shows the current
-  state and a toggle.
+- Hover or focus a masked value to reveal it. Administrators manage the
+  current-browser toggle and the default for new admin browsers under
+  **Admin > Settings > Security**.
 
 ## Course workspace cleanup
 

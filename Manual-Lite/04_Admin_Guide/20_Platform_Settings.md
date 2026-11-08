@@ -57,6 +57,15 @@ After you click **Save Settings**, the button shows "Saving..." and then returns
 !!! note "Secret values are masked"
     A secret value renders as a row of dots. To change it you type the full new value; the masked placeholder is not the stored secret.
 
+## Privacy mode
+
+The **Security** tab includes the administrator privacy controls. **Privacy Mode
+(this browser)** masks usernames, emails, display names, and student IDs in the
+admin views for the current browser; hover or focus a masked value to reveal it.
+**Default Privacy Mode** sets whether administrators start with masking on when
+they have no saved preference. An explicit per-browser choice always wins. The
+sidebar keeps the same current-browser toggle for quick access.
+
 ## Registration email
 
 The **Email** tab configures the SMTP relay used for registration messages and

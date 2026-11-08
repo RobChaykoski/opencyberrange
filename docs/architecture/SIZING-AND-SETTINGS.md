@@ -122,6 +122,7 @@ included rather than briefly showing as zero.
 | `lockout_duration_minutes` | 30 | Lockout duration |
 | `require_approval` | true | Admin approval for new registrations |
 | `enable_api_docs` | false | Serve Swagger UI / ReDoc |
+| `privacy_default_on` | true | Start admins in privacy mode when no explicit preference is stored |
 
 ## 6. Entitlement / caps
 

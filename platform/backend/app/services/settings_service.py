@@ -69,6 +69,8 @@ DEFAULT_SETTINGS = [
      "description": "Require admin approval for new user registrations"},
     {"key": "enable_api_docs", "value": "false", "category": "security",
      "description": "Enable Swagger UI (/docs) and ReDoc (/redoc) on the backend API"},
+    {"key": "privacy_default_on", "value": "true", "category": "security",
+     "description": "Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views."},
 
     # --- Labs ---
     {"key": "default_session_hours", "value": "2", "category": "labs",
