@@ -1,13 +1,13 @@
 # Deployment status
 
-Generated: `2026-11-08T11:53:24+00:00`
+Generated: `2026-11-08T19:39:34+00:00`
 
 **Overall:** `healthy` - All deployments are up and on the expected version.
 
 | Environment | Role | URL | Up | API | Version | Expected | Users | Setup | Build asset | Response |
 |---|---|---|---:|---:|---|---|---:|---|---|---:|
-| Prod | production | https://192.168.120.41 | yes | yes | `2.5.1` | `2.5.1 (Production platform release)` | yes | yes | `index-BzJVxu2V.js` | 58 ms |
-| Dev | development | https://192.168.120.44 | yes | yes | `2.5.1` | `2.5.1 (Professional current platform release)` | yes | yes | `index-BzJVxu2V.js` | 49 ms |
+| Prod | production | https://192.168.120.41 | yes | yes | `2.5.2` | `2.5.2 (Production platform release)` | yes | yes | `index-BByiXsta.js` | 50 ms |
+| Dev | development | https://192.168.120.44 | yes | yes | `2.5.2` | `2.5.2 (Professional current platform release)` | yes | yes | `index-BByiXsta.js` | 51 ms |
 
 Checks use public endpoints only: `/api/version`, `/api/setup/status`, and `/`.
 No login, learner records, secrets, or private data are read.
