@@ -246,17 +246,38 @@
       </p>
     </div>
 
-    <details class="dna-titles">
+    <details class="dna-titles" open>
       <summary class="dna-titles__summary">
         <span>Title collection</span>
-        <span class="dna-titles__count">{{ dna.titles.unlocked_count }} unlocked</span>
+        <span class="dna-titles__count">
+          {{ dna.titles.unlocked_count }} / {{ sortedTitles.length }} unlocked
+          · {{ dna.titles.rare_count }} rare or better
+        </span>
       </summary>
       <p class="dna-titles__intro">
         Titles are cosmetic. Equip one unlocked title; your class title returns when you clear it.
+        Rarity shows how hard a title is to earn.
       </p>
+      <div class="dna-title-progress" role="img" :aria-label="`${dna.titles.unlocked_count} of ${sortedTitles.length} titles unlocked`">
+        <span :style="{ width: `${titleProgress}%` }"></span>
+      </div>
+      <div class="dna-title-filters" role="group" aria-label="Filter titles by rarity">
+        <button
+          v-for="option in rarityOptions"
+          :key="option.value"
+          type="button"
+          class="dna-title-filter"
+          :class="{ 'dna-title-filter--active': rarityFilter === option.value }"
+          @click="rarityFilter = option.value"
+        >
+          <span v-if="option.value !== 'all'" class="rarity-dot" :class="`rarity-dot--${option.value}`"></span>
+          {{ option.label }}
+          <span class="dna-title-filter__count">{{ option.count }}</span>
+        </button>
+      </div>
       <div class="dna-title-grid">
         <article
-          v-for="title in sortedTitles"
+          v-for="title in filteredTitles"
           :key="title.key"
           class="dna-title"
           :class="{ 'dna-title--locked': !title.unlocked, 'dna-title--equipped': title.equipped }"
@@ -265,7 +286,9 @@
             <span class="title-chip" :class="`title-chip--${title.rarity}`">
               {{ titleLabel(title) }}
             </span>
-            <span v-if="title.rarity !== 'class'" class="dna-title__rarity">{{ title.rarity }}</span>
+            <span v-if="title.rarity !== 'class'" class="dna-title__rarity" :class="`dna-title__rarity--${title.rarity}`">
+              {{ rarityLabel(title.rarity) }}
+            </span>
           </div>
           <p class="dna-title__description">{{ titleDescription(title) }}</p>
           <div class="dna-title__foot">
@@ -299,7 +322,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import {
   CERTIFICATION_PATHS,
   CERTIFICATION_ROADMAP_URL,
@@ -387,6 +410,37 @@ const sortedTitles = computed(() => {
     return (rarityRank[a.rarity] ?? 5) - (rarityRank[b.rarity] ?? 5) ||
       a.label.localeCompare(b.label)
   })
+})
+
+const RARITY_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary']
+const rarityLabels = {
+  common: 'Common',
+  uncommon: 'Uncommon',
+  rare: 'Rare',
+  epic: 'Epic',
+  legendary: 'Legendary',
+}
+const rarityFilter = ref('all')
+const rarityLabel = (rarity) => rarityLabels[rarity] || rarity
+const rarityOptions = computed(() => {
+  const titles = props.dna?.titles?.titles || []
+  return [
+    { value: 'all', label: 'All', count: titles.length },
+    ...RARITY_ORDER.map((rarity) => ({
+      value: rarity,
+      label: rarityLabels[rarity],
+      count: titles.filter((title) => title.rarity === rarity).length,
+    })),
+  ]
+})
+const titleProgress = computed(() => {
+  const total = props.dna?.titles?.titles?.length || 0
+  if (!total) return 0
+  return Math.round(((props.dna?.titles?.unlocked_count || 0) / total) * 100)
+})
+const filteredTitles = computed(() => {
+  if (rarityFilter.value === 'all') return sortedTitles.value
+  return sortedTitles.value.filter((title) => title.rarity === rarityFilter.value)
 })
 
 const AFFINITY_LEVEL_LABELS = {
@@ -997,6 +1051,78 @@ const titleDescription = (title) => {
   font-size: 0.8125rem;
 }
 
+.dna-title-progress {
+  height: 6px;
+  margin: 0 1rem 0.75rem;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.dna-title-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--info, #38bdf8));
+  transition: width 0.3s ease;
+}
+
+.dna-title-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0 1rem 0.85rem;
+}
+
+.dna-title-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dna-title-filter:hover,
+.dna-title-filter:focus-visible {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.dna-title-filter--active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.dna-title-filter__count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.dna-title-filter--active .dna-title-filter__count {
+  color: inherit;
+}
+
+.rarity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.rarity-dot--common { background: #94a3b8; }
+.rarity-dot--uncommon { background: var(--success); }
+.rarity-dot--rare { background: var(--accent); }
+.rarity-dot--epic { background: #8b5cf6; }
+.rarity-dot--legendary { background: var(--warning); }
+
 .dna-title-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
@@ -1025,11 +1151,21 @@ const titleDescription = (title) => {
 }
 
 .dna-title__rarity {
-  color: var(--text-muted);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
   font-size: 0.625rem;
+  font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
 }
+
+.dna-title__rarity--common { background: rgba(148, 163, 184, 0.15); color: var(--text-secondary); }
+.dna-title__rarity--uncommon { background: var(--success-bg); color: var(--success); }
+.dna-title__rarity--rare { background: var(--accent-bg); color: var(--accent); }
+.dna-title__rarity--epic { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
+.dna-title__rarity--legendary { background: var(--warning-bg); color: var(--warning); }
 
 .dna-title__description {
   flex: 1;

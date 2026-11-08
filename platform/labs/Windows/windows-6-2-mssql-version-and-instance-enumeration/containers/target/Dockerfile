@@ -17,6 +17,6 @@ RUN service mysql start && sleep 2 && \
     mysql -e "CREATE DATABASE target_db; USE target_db; CREATE TABLE secrets (id INT AUTO_INCREMENT PRIMARY KEY, content TEXT); INSERT INTO secrets (content) VALUES ('OCR{mssql_v3rs10n}');" && \
     service mysql stop
 
-RUN echo "OCR{mssql_v3rs10n}" > /tmp/flag.txt && chmod 644 /tmp/flag.txt
+RUN printf '%s' "OCR{mssql_v3rs10n}" > /tmp/flag.txt && chmod 644 /tmp/flag.txt
 EXPOSE 3306
 CMD service mysql start && tail -f /dev/null

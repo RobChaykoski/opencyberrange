@@ -106,7 +106,7 @@ The flag is stored in `/tmp/flag.txt` on the database server and in the
 
 ```bash
 mysql --ssl-verify-server-cert=0 -h <target_ip> -u sa -p'password' \
-  -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+  -e "SELECT TRIM(LOAD_FILE('/tmp/flag.txt'));"
 
 # Or read the seeded table:
 mysql --ssl-verify-server-cert=0 -h <target_ip> -u sa -p'password' \
@@ -145,18 +145,18 @@ OCR{mssql_v3rs10n}
 ```
 
 **Verification checklist:**
-- ✅ Starts with `OCR{`
-- ✅ Ends with `}`
-- ✅ Contains only alphanumeric characters and underscores
-- ✅ No extra spaces or characters
+- âœ… Starts with `OCR{`
+- âœ… Ends with `}`
+- âœ… Contains only alphanumeric characters and underscores
+- âœ… No extra spaces or characters
 
 **Success Criteria:**
-- ✅ Verified target IP and network connectivity
-- ✅ Ran nmap version detection on database port (3306 or 1433)
-- ✅ Identified database service version (MySQL 8.0.33 or MS-SQL version)
-- ✅ Analyzed version information and understood database type
-- ✅ Successfully accessed flag in /tmp/flag.txt
-- ✅ Verified flag format is correct: `OCR{...}`
+- âœ… Verified target IP and network connectivity
+- âœ… Ran nmap version detection on database port (3306 or 1433)
+- âœ… Identified database service version (MySQL 8.0.33 or MS-SQL version)
+- âœ… Analyzed version information and understood database type
+- âœ… Successfully accessed flag in /tmp/flag.txt
+- âœ… Verified flag format is correct: `OCR{...}`
 
 **Key Learning Points:**
 - Version detection reveals database software and version

