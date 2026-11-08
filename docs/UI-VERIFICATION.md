@@ -22,6 +22,7 @@ modified by the checks.
 
 - Development: **101 checks, 0 failed**
 - Production admin: **25 checks, 0 failed**
+- Production admin mobile shell: **12 checks, 0 failed** (bottom tabs are student-only)
 - Admin and student routes loaded without page errors.
 - `/events` loaded for every profile.
 - Admin sidebar exposed **Reports & analytics** and **Events**.
@@ -60,6 +61,11 @@ The student shell was checked at `390 × 844` with touch enabled and the
 - The embedded RangeBox viewer is replaced on phones with a desktop-recommended
   notice and an explicit full-screen opt-in.
 - No page errors were raised during the mobile checks.
+
+Production admin mobile shell was also checked at `390 × 844`: the top bar, the
+off-canvas drawer, and the theme control work, with no horizontal overflow.
+The student bottom tab bar is intentionally not shown for admin and instructor
+roles.
 
 ## What this does not prove
 

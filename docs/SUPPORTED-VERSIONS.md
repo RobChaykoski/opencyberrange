@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-07**. Current **platform release: 2.1.4** for this
+Last reviewed: **2026-11-08**. Current **platform release: 2.1.4** for this
 tree. **Community / Academic**, **Professional**, and **Enterprise** are edition
 profiles on that release, not separate platform version lines. **Community /
 Academic 1.1.3** remains a supported maintenance line for existing single-host
@@ -15,10 +15,11 @@ The separate HA control-plane repository has its own version and is described by
 compatibility with platform 2.1.4. Enterprise remains a preview profile until
 HA, SSO, multi-tenancy, LMS, and compliance reporting are shipped and verified.
 
-Dependency audit on **2026-11-07**: `npm audit` reported **0 vulnerabilities**
+Dependency audit on **2026-11-08**: `npm audit` reported **0 vulnerabilities**
 and `pip-audit -r platform/backend/requirements.txt` reported **no known
-vulnerabilities**. Patch updates were applied within the declared ranges; the
-remaining `npm outdated` entries are major upgrades (ESLint 10,
+vulnerabilities**. Safe patch updates were applied: FastAPI 0.162.2,
+SQLAlchemy 2.1.8, Pydantic 2.14.3, and psycopg 3.3.8. The remaining
+`npm outdated` entries are major upgrades (ESLint 10, `@eslint/js` 10,
 `eslint-plugin-vue` 10, Vue Router 5) and are deliberately deferred.
 
 ## Policy
