@@ -33,6 +33,12 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Added `docs/PRIVACY-NOTICE.md` and linked it from the privacy, erasure, and
   backup documentation and README.
 
+### Reviews
+- Added the v2.5.3 maintenance plan with the production analytics
+  reconciliation, findings register, and release-health targets.
+- Added `platform/backend/app/scripts/validate_analytics.py` for repeatable
+  dashboard-to-source reconciliation.
+
 ## [2.5.2] - 2026-11-08
 
 ### Privacy settings
