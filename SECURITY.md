@@ -187,7 +187,7 @@ client-side secrets, and upstream supply-chain compromise.
 | Check | Result |
 |---|---|
 | Development database quality (2.5.1) | **0 critical, 0 warning, 2 info** |
-| Production database quality (2.4.1) | **0 critical, 0 warning, 3 info** |
+| Production database quality (2.5.1) | **0 critical, 0 warning, 3 info** |
 | Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
 | Change ledger | Chain OK; an authenticated celebration entry and a deliberate manual `labs.UPDATE` were recorded; the manual write was flagged `unattributed` |
 | Password hash audit | Every stored hash is Argon2id or legacy bcrypt; no missing, plaintext, or unknown format |
@@ -208,5 +208,6 @@ Known gaps:
   tamper-evident, not tamper-proof. Keep signed manifests and backups off the
   database host. `application_name` is a fallback label, not a security
   boundary; review unattributed writes.
-- **Production ledger:** production is still on 2.4.1, so the ledger is not
-  installed there until the 2.5.1 deployment.
+- **Production ledger:** the ledger is installed on production. The 2.5.1 check
+  reported 0 entries and a valid chain; entries appear as critical-table writes
+  occur.

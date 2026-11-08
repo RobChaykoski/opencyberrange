@@ -153,7 +153,7 @@ operator can review them.
 | Environment | Release | Quality result | Notes |
 |---|---|---|---|
 | Development | 2.5.1 | **0 critical, 0 warning, 2 info** | 36 real completions without a session; 149 seeded labs without a creator |
-| Production | 2.4.1 | **0 critical, 0 warning, 3 info** | 116 real completions without a session; 149 seeded labs without a creator; 2 hint placeholders (intentional) |
+| Production | 2.5.1 | **0 critical, 0 warning, 3 info** | 116 real completions without a session; 149 seeded labs without a creator; 2 hint placeholders (intentional) |
 
 Development database fingerprint:
 
@@ -170,8 +170,9 @@ Ledger check on development:
 The manual update was detected. That is the intended behaviour: an application
 write is attributed; a direct SQL write is visible and reviewable.
 
-Production does not yet have the ledger because it is still on 2.4.1. The 2.5.1
-deployment installs it.
+Production has the ledger installed from the 2.5.0 deployment. The 2.5.1 check
+reported 0 entries and a valid chain; entries appear as critical-table writes
+occur.
 
 ## Known gaps
 

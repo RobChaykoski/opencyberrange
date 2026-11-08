@@ -502,7 +502,7 @@ Validation on **8 November 2026**:
 | Check | Result |
 |---|---|
 | Development database quality (2.5.1) | **0 critical, 0 warning, 2 info** |
-| Production database quality (2.4.1) | **0 critical, 0 warning, 3 info** |
+| Production database quality (2.5.1) | **0 critical, 0 warning, 3 info** |
 | Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
 | Development change ledger | Chain OK; a deliberate manual `labs.UPDATE` was detected as `unattributed` |
 | Password hash audit | All stored hashes are Argon2id or legacy bcrypt; none invalid or reversible |
