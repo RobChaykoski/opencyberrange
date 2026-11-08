@@ -21,6 +21,26 @@
             </option>
           </select>
         </label>
+        <button v-if="certificate" class="btn btn--secondary" :disabled="downloading" @click="downloadPdf">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          {{ downloading ? 'Preparing...' : 'Download PDF' }}
+        </button>
+        <button v-if="certificate" class="btn btn--ghost" @click="copyLink">
+          {{ copied ? 'Link copied' : 'Copy verification link' }}
+        </button>
+        <a
+          v-if="certificate"
+          class="btn btn--ghost"
+          :href="linkedInUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Share on LinkedIn
+        </a>
         <button v-if="certificate" class="btn btn--primary" @click="printCertificate">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 6 2 18 2 18 9"/>
@@ -138,11 +158,33 @@
         </footer>
       </div>
     </article>
+
+    <section v-if="certificate" class="certificate-share no-print">
+      <div class="certificate-share__copy">
+        <h2>Share your achievement</h2>
+        <p>
+          Post the PDF or share the verification link. Employers and instructors
+          can confirm the track, level, award date, and certificate ID instantly.
+        </p>
+      </div>
+      <div class="certificate-share__actions">
+        <button class="btn btn--secondary" :disabled="downloading" @click="downloadPdf">
+          {{ downloading ? 'Preparing...' : 'Download PDF' }}
+        </button>
+        <button class="btn btn--ghost" @click="copyLink">
+          {{ copied ? 'Link copied' : 'Copy verification link' }}
+        </button>
+        <a class="btn btn--ghost" :href="linkedInUrl" target="_blank" rel="noopener noreferrer">
+          Share on LinkedIn
+        </a>
+      </div>
+      <p v-if="actionMessage" class="certificate-share__status" role="status">{{ actionMessage }}</p>
+    </section>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 
@@ -162,6 +204,68 @@ const loading = ref(true)
 const error = ref('')
 const showAchievements = ref(true)
 const activeDesign = ref('classic')
+const downloading = ref(false)
+const copied = ref(false)
+const actionMessage = ref('')
+
+const shareUrl = computed(() => {
+  const value = certificate.value?.verify_url
+  if (!value) return ''
+  try {
+    return new URL(value, window.location.origin).toString()
+  } catch {
+    return value
+  }
+})
+const linkedInUrl = computed(() => {
+  if (!shareUrl.value) return 'https://www.linkedin.com/'
+  return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl.value)}`
+})
+
+const downloadPdf = async () => {
+  if (!certificate.value) return
+  downloading.value = true
+  try {
+    const response = await axios.get(
+      `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate.pdf`,
+      {
+        params: { include_achievements: showAchievements.value },
+        responseType: 'blob',
+      }
+    )
+    const objectUrl = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = objectUrl
+    link.download = `${certificate.value.certificate_id}.pdf`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(objectUrl)
+  } catch (e) {
+    actionMessage.value = 'Could not prepare the PDF. Use Print certificate instead.'
+    setTimeout(() => { actionMessage.value = '' }, 5000)
+  } finally {
+    downloading.value = false
+  }
+}
+
+const copyLink = async () => {
+  if (!shareUrl.value) return
+  try {
+    await navigator.clipboard.writeText(shareUrl.value)
+  } catch {
+    const input = document.createElement('textarea')
+    input.value = shareUrl.value
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    input.remove()
+  }
+  copied.value = true
+  actionMessage.value = 'Verification link copied.'
+  setTimeout(() => { copied.value = false }, 2500)
+  setTimeout(() => { actionMessage.value = '' }, 3500)
+}
 
 const load = async () => {
   loading.value = true
@@ -171,6 +275,7 @@ const load = async () => {
       `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate`
     )
     certificate.value = data
+    document.title = `${data.recipient} — ${data.track_name} Level ${data.level_number} | SWOCTS Cyber Range`
     const stored = localStorage.getItem(designStorageKey)
     const valid = (value) => certificateDesigns.some((design) => design.value === value)
     activeDesign.value = valid(stored)
@@ -276,6 +381,7 @@ onMounted(load)
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.18s ease;
 }
 
@@ -291,6 +397,22 @@ onMounted(load)
 
 .btn--primary:hover {
   background: linear-gradient(135deg, #2563eb, #1e40af);
+}
+
+.btn--secondary {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn--secondary:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .btn--ghost {
@@ -323,6 +445,46 @@ onMounted(load)
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
+}
+
+.certificate-share {
+  width: min(100%, 1040px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.certificate-share__copy h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.certificate-share__copy p {
+  margin: 0;
+  max-width: 58ch;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.certificate-share__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.certificate-share__status {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--success);
+  font-size: 0.8rem;
 }
 
 .certificate__frame {

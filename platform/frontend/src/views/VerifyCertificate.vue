@@ -68,6 +68,22 @@
             </div>
           </dl>
           <p class="verify-result__note">{{ result.message }}</p>
+          <div class="verify-result__actions">
+            <button type="button" class="btn btn--secondary" @click="copyShareLink">
+              {{ copied ? 'Link copied' : 'Copy link' }}
+            </button>
+            <a
+              class="btn btn--secondary"
+              :href="linkedInUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Share on LinkedIn
+            </a>
+            <button type="button" class="btn btn--secondary" @click="shareNative">
+              Share
+            </button>
+          </div>
         </template>
         <template v-else>
           <p class="verify-result__kicker">Not verified</p>
@@ -90,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 
@@ -106,6 +122,74 @@ const loading = ref(false)
 const error = ref('')
 const validationError = ref('')
 const result = ref(null)
+const copied = ref(false)
+
+const shareUrl = computed(() => window.location.href)
+const linkedInUrl = computed(
+  () => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl.value)}`
+)
+
+const setMeta = (key, content, attribute = 'property') => {
+  if (!content) return
+  let element = document.head.querySelector(`meta[${attribute}="${key}"]`)
+  if (!element) {
+    element = document.createElement('meta')
+    element.setAttribute(attribute, key)
+    document.head.appendChild(element)
+  }
+  element.setAttribute('content', content)
+}
+
+const applyResultMeta = (data) => {
+  if (!data?.valid) return
+  const title = `${data.recipient} — ${data.track_name} Level ${data.level_number}`
+  document.title = `${title} | SWOCTS Cyber Range`
+  const description =
+    `${data.recipient} completed Level ${data.level_number}: ${data.level_name} ` +
+    `in ${data.track_name} on the SWOCTS Cyber Range. ` +
+    `${data.exercises_completed} of ${data.exercises_total} exercises completed.`
+  setMeta('og:title', title)
+  setMeta('og:description', description)
+  setMeta('og:type', 'article')
+  setMeta('og:url', window.location.href)
+  setMeta('og:image', `${window.location.origin}/swocts-cyber-range-mark.png`)
+  setMeta('twitter:card', 'summary', 'name')
+  setMeta('twitter:title', title, 'name')
+  setMeta('twitter:description', description, 'name')
+}
+
+const copyShareLink = async () => {
+  try {
+    await navigator.clipboard.writeText(shareUrl.value)
+  } catch {
+    const input = document.createElement('textarea')
+    input.value = shareUrl.value
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    input.remove()
+  }
+  copied.value = true
+  setTimeout(() => { copied.value = false }, 2500)
+}
+
+const shareNative = async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: result.value?.recipient
+          ? `${result.value.recipient} — ${result.value.track_name}`
+          : 'SWOCTS Cyber Range certificate',
+        text: result.value?.message || 'Verified certificate',
+        url: shareUrl.value,
+      })
+      return
+    } catch {
+      // The user cancelled or sharing is unavailable; fall through to copy.
+    }
+  }
+  await copyShareLink()
+}
 
 const normalizeCertificateId = (value) => String(value || '').trim().toUpperCase()
 
@@ -142,6 +226,7 @@ const load = async (rawId) => {
   try {
     const { data } = await axios.get(`/exercises/verify/certificate/${encodeURIComponent(id)}`)
     result.value = data
+    applyResultMeta(data)
   } catch (e) {
     error.value = e.response?.data?.detail || 'Could not check this certificate.'
   } finally {
@@ -165,6 +250,7 @@ const reset = () => {
   error.value = ''
   validationError.value = ''
   certificateId.value = ''
+  document.title = 'Verify a certificate | SWOCTS Cyber Range'
   if (route.params.certificateId) {
     router.push('/verify')
   }
@@ -318,6 +404,17 @@ watch(
 .verify-result__details code {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.8rem;
+}
+
+.verify-result__note {
+  margin-bottom: 0;
+}
+
+.verify-result__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
 }
 
 .verify-card__footer {

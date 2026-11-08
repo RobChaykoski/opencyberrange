@@ -2,7 +2,7 @@
 Exercises routes for learning tracks, progress tracking, and flag submission
 """
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, Response
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, or_
 from datetime import datetime, timezone, timedelta
@@ -713,29 +713,169 @@ def _certificate_base_url(request: Request, db: Session) -> str:
     return ""
 
 
-@router.get(
-    "/tracks/{track_slug}/levels/{level_id}/certificate",
-    summary="Get a printable level-completion certificate",
-    response_description="Certificate metadata for a completed level",
-)
-async def get_level_certificate(
+def _certificate_pdf_bytes(certificate: dict) -> bytes:
+    """Render the certificate as a clean, shareable landscape A4 PDF.
+
+    The web page remains the primary view; this file is for LinkedIn posts,
+    e-portfolios, and printing where a consistent asset is better than a
+    browser print dialog.
+    """
+    import base64
+    import os
+    import tempfile
+
+    from fpdf import FPDF
+
+    pdf = FPDF(orientation="L", unit="mm", format="A4")
+    pdf.add_page()
+    pdf.set_auto_page_break(False)
+
+    gold = (176, 141, 60)
+    ink = (31, 41, 55)
+    muted = (107, 114, 128)
+    paper = (255, 253, 248)
+    pdf.set_fill_color(*paper)
+    pdf.rect(0, 0, 297, 210, style="F")
+
+    pdf.set_draw_color(*gold)
+    pdf.set_line_width(1.2)
+    pdf.rect(8, 8, 281, 194)
+    pdf.set_line_width(0.3)
+    pdf.set_draw_color(216, 192, 138)
+    pdf.rect(12, 12, 273, 186)
+
+    pdf.set_text_color(*gold)
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.set_xy(0, 22)
+    pdf.cell(297, 6, "SWOCTS CYBER RANGE", align="C")
+
+    pdf.set_text_color(*ink)
+    pdf.set_font("Times", "B", 30)
+    pdf.set_xy(0, 31)
+    pdf.cell(297, 14, "Certificate of Completion", align="C")
+
+    pdf.set_draw_color(*gold)
+    pdf.set_line_width(0.6)
+    pdf.line(110, 49, 187, 49)
+
+    pdf.set_font("Helvetica", "", 12)
+    pdf.set_text_color(*muted)
+    pdf.set_xy(0, 57)
+    pdf.cell(297, 7, "This is to certify that", align="C")
+
+    recipient = str(certificate.get("recipient") or "Learner")
+    pdf.set_font("Times", "B", 30)
+    pdf.set_text_color(17, 24, 39)
+    pdf.set_xy(0, 66)
+    pdf.cell(297, 15, recipient, align="C")
+    name_width = max(60.0, pdf.get_string_width(recipient) + 24)
+    pdf.set_draw_color(216, 192, 138)
+    pdf.set_line_width(0.3)
+    pdf.line(148.5 - name_width / 2, 83, 148.5 + name_width / 2, 83)
+
+    pdf.set_font("Helvetica", "", 12)
+    pdf.set_text_color(*muted)
+    pdf.set_xy(0, 89)
+    pdf.cell(297, 7, "has successfully completed", align="C")
+
+    pdf.set_font("Times", "B", 18)
+    pdf.set_text_color(*ink)
+    pdf.set_xy(0, 98)
+    pdf.cell(
+        297, 9,
+        f"Level {certificate['level_number']}: {certificate['level_name']}",
+        align="C",
+    )
+
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.set_text_color(75, 85, 99)
+    pdf.set_xy(0, 108)
+    pdf.cell(297, 7, str(certificate.get("track_name") or ""), align="C")
+
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(*gold)
+    pdf.set_xy(0, 116)
+    pdf.cell(
+        297, 6,
+        f"{certificate['exercises_completed']} of {certificate['exercises_total']} exercises completed",
+        align="C",
+    )
+
+    achievements = certificate.get("achievements") or []
+    if achievements:
+        labels = []
+        for item in achievements[:8]:
+            label = str(item.get("label") or "")
+            count = item.get("count") or 1
+            if label:
+                labels.append(f"{label}{(f' x{count}' if count > 1 else '')}")
+        if labels:
+            pdf.set_font("Helvetica", "", 8)
+            pdf.set_text_color(*muted)
+            pdf.set_xy(20, 128)
+            pdf.multi_cell(257, 4, "Achievements: " + "  ·  ".join(labels), align="C")
+
+    pdf.set_draw_color(216, 192, 138)
+    pdf.set_line_width(0.4)
+    pdf.line(20, 158, 277, 158)
+
+    pdf.set_font("Helvetica", "B", 7)
+    pdf.set_text_color(*muted)
+    pdf.set_xy(24, 164)
+    pdf.cell(70, 4, "DATE AWARDED")
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(*ink)
+    pdf.set_xy(24, 169)
+    pdf.cell(90, 5, str(certificate.get("issued_display") or ""))
+
+    pdf.set_font("Helvetica", "B", 7)
+    pdf.set_text_color(*muted)
+    pdf.set_xy(120, 164)
+    pdf.cell(70, 4, "CERTIFICATE ID")
+    pdf.set_font("Courier", "", 9)
+    pdf.set_text_color(*ink)
+    pdf.set_xy(120, 169)
+    pdf.cell(95, 5, str(certificate.get("certificate_id") or ""))
+
+    pdf.set_font("Helvetica", "B", 7)
+    pdf.set_text_color(*muted)
+    pdf.set_xy(24, 178)
+    pdf.cell(70, 4, "VERIFY")
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(*gold)
+    pdf.set_xy(24, 182)
+    pdf.cell(210, 5, str(certificate.get("verify_url") or ""))
+
+    qr_code = certificate.get("qr_code")
+    qr_path = None
+    if qr_code:
+        try:
+            encoded = qr_code.split(",", 1)[1] if "," in qr_code else qr_code
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as handle:
+                handle.write(base64.b64decode(encoded))
+                qr_path = handle.name
+            pdf.image(qr_path, x=252, y=160, w=26)
+        except Exception as exc:  # pragma: no cover - QR is decorative
+            logger.warning("Certificate PDF QR render failed: %s", exc)
+        finally:
+            if qr_path:
+                try:
+                    os.unlink(qr_path)
+                except OSError:
+                    pass
+
+    return bytes(pdf.output())
+
+
+def _load_level_certificate(
     request: Request,
     track_slug: str,
     level_id: int,
-    include_achievements: bool = Query(
-        True,
-        description="Include achievements earned in courses that contain this level's labs",
-    ),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
-):
-    """Return the data needed to render a printable certificate.
-
-    A certificate is only issued when every lab the student can see in the
-    level has been completed. The certificate ID is deterministic for a
-    (user, track, level) triple so the same certificate can be reissued without
-    changing its identifier.
-    """
+    include_achievements: bool,
+    db: Session,
+    current_user: User,
+) -> dict:
+    """Resolve the track/level and return the certificate payload or raise."""
     track = db.query(Track).options(
         joinedload(Track.levels).joinedload(Level.labs)
     ).filter(
@@ -775,6 +915,59 @@ async def get_level_certificate(
             ),
         )
     return certificate
+
+
+@router.get(
+    "/tracks/{track_slug}/levels/{level_id}/certificate",
+    summary="Get a printable level-completion certificate",
+    response_description="Certificate metadata for a completed level",
+)
+async def get_level_certificate(
+    request: Request,
+    track_slug: str,
+    level_id: int,
+    include_achievements: bool = Query(
+        True,
+        description="Include achievements earned in courses that contain this level's labs",
+    ),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the data needed to render a printable certificate.
+
+    A certificate is only issued when every lab the student can see in the
+    level has been completed. The certificate ID is deterministic for a
+    (user, track, level) triple so the same certificate can be reissued without
+    changing its identifier.
+    """
+    return _load_level_certificate(
+        request, track_slug, level_id, include_achievements, db, current_user
+    )
+
+
+@router.get(
+    "/tracks/{track_slug}/levels/{level_id}/certificate.pdf",
+    summary="Download the certificate as a PDF",
+    response_class=Response,
+)
+async def get_level_certificate_pdf(
+    request: Request,
+    track_slug: str,
+    level_id: int,
+    include_achievements: bool = Query(True),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    certificate = _load_level_certificate(
+        request, track_slug, level_id, include_achievements, db, current_user
+    )
+    pdf_bytes = _certificate_pdf_bytes(certificate)
+    filename = f"{certificate['certificate_id']}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @router.get("/verify/certificate/{certificate_id}")
