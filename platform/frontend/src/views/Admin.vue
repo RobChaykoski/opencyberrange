@@ -2688,7 +2688,7 @@ test:
           >
             <header class="user-modal__head user-modal__head--compact">
               <div class="user-modal__identity">
-                <span class="user-avatar user-avatar--sm" aria-hidden="true">{{ userInitials(editUser) }}</span>
+                <span class="user-avatar user-avatar--sm" aria-hidden="true" :title="privacyMode ? 'Privacy mode on' : ''">{{ privacyMode ? '•' : userInitials(editUser) }}</span>
                 <div class="user-modal__identity-text">
                   <p class="user-modal__eyebrow">Edit account</p>
                   <h3 id="edit-user-title" class="user-modal__title"><PrivacyText :value="displayName(editUser)" /></h3>
@@ -3033,7 +3033,7 @@ test:
           >
             <header class="user-modal__head">
               <div class="user-modal__identity">
-                <span class="user-avatar" aria-hidden="true">{{ userInitials(userDetails) }}</span>
+                <span class="user-avatar" aria-hidden="true" :title="privacyMode ? 'Privacy mode on' : ''">{{ privacyMode ? '•' : userInitials(userDetails) }}</span>
                 <div class="user-modal__identity-text">
                   <p class="user-modal__eyebrow">Account record</p>
                   <h3 id="user-details-title" class="user-modal__title"><PrivacyText :value="displayName(userDetails)" /></h3>
@@ -3380,7 +3380,7 @@ import { useModules } from '../composables/useModules'
 import { usePrivacy } from '../composables/usePrivacy'
 
 const route = useRoute()
-const { maskUsername, maskEmail } = usePrivacy()
+const { privacyMode, maskUsername, maskEmail } = usePrivacy()
 
 const legacyTabMap = { sessions: 'monitoring', vpn: 'monitoring', activity: 'monitoring', labs: 'exercises', curriculum: 'exercises', tester: 'system' }
 const legacySubTabMap = { sessions: 'sessions', vpn: 'vpn', activity: 'activity', labs: 'manage', curriculum: 'tracks' }
