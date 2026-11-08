@@ -16,7 +16,7 @@
       "sha256": "e78d062e465052271362ec38e3d747cd09a39f2c8bdabae02a67d0b18ab52e1b"
     },
     ".github/workflows/ui-smoke.yml": {
-      "sha256": "c2fdb02d333313f0f4f9a49a12d2f87de13f77935b36e7d65e1a7fb3fd511f23"
+      "sha256": "a404fdcdeb5b99ce85e94c500658913d63820d4ad47078dd5a749546c70f43db"
     },
     "platform/backend/Dockerfile": {
       "sha256": "f8ff17bf7c5059b0c1df02fb708dd51b72d1ad8130fdaf9a52e24aebe79ea1f3"
@@ -94,7 +94,7 @@
       "sha256": "ff3a0b73053fff80d28b98602a002b7f458245b30365597866f998e796c5fd1e"
     },
     "scripts/ui-smoke.mjs": {
-      "sha256": "5235c5d828bf5c34d41ef2677986ab2be9ea7732ea535a0cd464117c4b5b5668"
+      "sha256": "728448d9c9cd50793cbde4b62b3c2852dbd896d19fb06ed872a51c301a70027b"
     },
     "scripts/verify-lab-builds.sh": {
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
