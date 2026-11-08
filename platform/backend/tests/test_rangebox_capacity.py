@@ -1,4 +1,6 @@
-"""RangeBox capacity is a stable denominator with a live memory gate."""
+"""RangeBox capacity is a stable denominator with live memory/CPU/disk gates."""
+
+from types import SimpleNamespace
 
 import pytest
 
@@ -7,7 +9,7 @@ from app.services.docker_manager import DockerManager, RangeBoxCapacityError
 GB = 1024 ** 3
 
 
-def _manager(monkeypatch, *, total_gb=32, available_gb=28, running=0):
+def _manager(monkeypatch, *, total_gb=32, available_gb=28, running=0, cpu_count=64):
     # Bypass DockerManager.__init__ so the test does not need a Docker daemon.
     manager = object.__new__(DockerManager)
     monkeypatch.setattr(
@@ -17,6 +19,12 @@ def _manager(monkeypatch, *, total_gb=32, available_gb=28, running=0):
         manager, "_mem_available_bytes", staticmethod(lambda: available_gb * GB)
     )
     monkeypatch.setattr(manager, "_count_running_rangeboxes", lambda: running)
+    # Keep the host's real CPU/disk out of the fixture.
+    monkeypatch.setattr("app.services.docker_manager.os.cpu_count", lambda: cpu_count)
+    monkeypatch.setattr(
+        "app.services.docker_manager.shutil.disk_usage",
+        lambda _path: SimpleNamespace(free=100 * GB),
+    )
     return manager
 
 
@@ -56,3 +64,20 @@ def test_capacity_check_blocks_at_cap_and_on_memory_pressure(monkeypatch):
     low_memory = _manager(monkeypatch, available_gb=9, running=1)
     with pytest.raises(RangeBoxCapacityError):
         low_memory._check_rangebox_capacity()
+
+
+def test_capacity_uses_cpu_limit_on_small_hosts(monkeypatch):
+    manager = _manager(monkeypatch, total_gb=64, available_gb=60, cpu_count=8)
+    # (8 vCPU - 2 reserve) / 0.5 CPU per box = 12; memory would allow 28.
+    assert manager.MAX_CONCURRENT_RANGEBOXES == 12
+
+
+def test_capacity_check_blocks_on_low_disk(monkeypatch):
+    manager = _manager(monkeypatch, available_gb=28, running=1)
+    monkeypatch.setattr(
+        "app.services.docker_manager.shutil.disk_usage",
+        lambda _path: SimpleNamespace(free=5 * GB),
+    )
+    assert manager.has_rangebox_disk_headroom() is False
+    with pytest.raises(RangeBoxCapacityError):
+        manager._check_rangebox_capacity()
