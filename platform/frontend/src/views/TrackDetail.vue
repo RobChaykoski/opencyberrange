@@ -465,10 +465,10 @@
 
         <div class="active-lab-panel__body">
           <nav v-if="isMobile" class="active-lab-jump" aria-label="Exercise sections">
-            <a href="#lab-briefing">Briefing</a>
-            <a href="#lab-targets">Targets</a>
-            <a href="#lab-flag">Flag</a>
-            <a href="#lab-hints">Hints</a>
+            <button type="button" @click="scrollToLabSection('lab-briefing')">Briefing</button>
+            <button type="button" @click="scrollToLabSection('lab-targets')">Targets</button>
+            <button type="button" @click="scrollToLabSection('lab-flag')">Flag</button>
+            <button type="button" @click="scrollToLabSection('lab-hints')">Hints</button>
           </nav>
           <div class="active-lab-grid">
             <!-- Scenario (spans full width of grid) -->
@@ -774,6 +774,11 @@ import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getC
 const route = useRoute()
 const router = useRouter()
 const { isMobile } = useMobileView()
+
+const scrollToLabSection = (id) => {
+  const element = document.getElementById(id)
+  element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
 
 // State
 const track = ref(null)
@@ -2884,29 +2889,37 @@ watch(timeRemaining, (val) => {
     overflow-x: auto;
   }
 
-  .active-lab-jump a {
+  .active-lab-jump button {
     flex: 1 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
     padding: 0.4rem 0.7rem;
+    border: none;
     border-radius: 8px;
     background: var(--bg-primary);
     color: var(--text-secondary);
-    text-decoration: none;
+    font: inherit;
     font-size: 0.78rem;
     font-weight: 600;
     white-space: nowrap;
+    cursor: pointer;
   }
 
-  .active-lab-jump a:active {
+  .active-lab-jump button:active {
     background: var(--accent-bg);
     color: var(--accent);
   }
 
   .active-lab-panel .panel-section[id] {
     scroll-margin-top: 120px;
+  }
+
+  /* Give the last sections enough trailing space to reach the top of the
+     panel when a jump-bar button is used. */
+  .active-lab-panel__body {
+    padding-bottom: 60vh;
   }
 }
 
@@ -3789,7 +3802,7 @@ watch(timeRemaining, (val) => {
   }
 
   .active-lab-panel__body {
-    padding: 1rem;
+    padding: 1rem 1rem 60vh;
   }
 
   .active-lab-grid {
