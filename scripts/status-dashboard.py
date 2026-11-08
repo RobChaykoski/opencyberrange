@@ -15,14 +15,19 @@ operator workstation:
     python scripts/status-dashboard.py --json docs/status-dashboard.json
 
 The default host map is intentionally small and can be overridden with a JSON
-file via ``--config``:
+file via ``--config`` or the ``OCR_STATUS_PROD_URL`` / ``OCR_STATUS_DEV_URL``
+environment variables:
 
     [
-      {"label": "Prod", "role": "production", "url": "https://172.16.16.41",
+      {"label": "Prod", "role": "production", "url": "https://192.168.120.41",
        "expected_version": "2.5.0"},
-      {"label": "Dev", "role": "development", "url": "https://172.16.16.44",
+      {"label": "Dev", "role": "development", "url": "https://192.168.120.44",
        "expected_version": "2.5.0"}
     ]
+
+The `192.168.120.0/24` addresses are documentation placeholders. Replace them
+with your own management addresses before running the dashboard against a real
+deployment.
 
 Local deployments often use self-signed certificates. The script verifies TLS
 when it can but does not fail the dashboard on a self-signed certificate; the
@@ -33,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import ssl
 import time
@@ -45,14 +51,14 @@ DEFAULT_HOSTS = [
     {
         "label": "Prod",
         "role": "production",
-        "url": "https://172.16.16.41",
+        "url": os.environ.get("OCR_STATUS_PROD_URL", "https://192.168.120.41"),
         "expected_version": "2.5.0",
         "line": "Production platform release",
     },
     {
         "label": "Dev",
         "role": "development",
-        "url": "https://172.16.16.44",
+        "url": os.environ.get("OCR_STATUS_DEV_URL", "https://192.168.120.44"),
         "expected_version": "2.5.0",
         "line": "Professional current platform release",
     },

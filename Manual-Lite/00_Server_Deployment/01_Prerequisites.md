@@ -4,7 +4,7 @@ Before you install SWOCTS Cyber Range you size the host, open the right ports, a
 
 ## Operating system
 
-Use **Ubuntu 24.04 LTS** for a new 2.1 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.1. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
+Use **Ubuntu 24.04 LTS** for a new 2.5.0 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.5.0. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
 
 ## Platform versions
 
@@ -12,7 +12,7 @@ The current supported stack for the 2.5.0 release line is:
 
 | Component | Version | Notes |
 |---|---|---|
-| Host OS | Ubuntu 24.04 LTS for 2.1 | Community / Academic profile supports 22.04 and 24.04 LTS |
+| Host OS | Ubuntu 24.04 LTS for 2.5.0 | Community / Academic profile supports 22.04 and 24.04 LTS |
 | SWOCTS Cyber Range | `2.5.0` | Shown in the page footer and returned by `GET /api/version` |
 | Python | 3.11 | Backend image: `python:3.11-slim` |
 | Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
@@ -51,12 +51,24 @@ RAM is the resource that decides how large a class the host can serve at once, a
 | Base platform (backend, database, frontend, VPN manager) | ~3 GB | Always |
 | Each RangeBox desktop | 2 GB hard cap | Per active box |
 
-The platform sizes RangeBox concurrency itself. The RangeBox tab denominator is a stable capacity based on total RAM minus the reserve (8 GB by default), so it does not drift upward as boxes start. A separate live check refuses a new launch when free memory cannot fit another 2 GB box, which protects the platform and the SIEM when they are running. You do not hand-tune a box count. Two environment variables adjust the behavior if you need to:
+The platform sizes RangeBox concurrency itself. The RangeBox tab denominator is a stable capacity based on total RAM minus the reserve (8 GB by default), so it does not drift upward as boxes start. A separate live check refuses a new launch when free memory cannot fit another 2 GB box, which protects the platform and the SIEM when they are running. You do not hand-tune a box count. These environment variables adjust the behavior if you need to:
 
 - `RANGEBOX_MEM_RESERVE_GB` raises or lowers the memory kept free for the platform.
+- `RANGEBOX_CPU_RESERVE_CORES` keeps CPU cores free before a new box is allowed (default `2`).
+- `RANGEBOX_MIN_FREE_DISK_GB` keeps disk headroom before a new box is allowed (default `10`).
 - `MAX_CONCURRENT_RANGEBOXES` pins a fixed cap and disables the automatic sizing.
 
-A rough budget for planning: `RAM = 3 GB base + (peak concurrent RangeBoxes x 2 GB) + 8 GB reserve`. The memory-derived maximum is only an upper bound; VNC responsiveness and CPU contention arrive first. Measured results and recommended class limits are in [RangeBox capacity and stress results](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/RANGEBOX-CAPACITY.md). On a 12 vCPU / 62 GiB host, 20 concurrent boxes is a comfortable class limit; on an 8 vCPU / 30 GiB host, use about 8.
+A rough budget for planning: `RAM = 3 GB base + (peak concurrent RangeBoxes x 2 GB) + 8 GB reserve`. The memory-derived maximum is only an upper bound; VNC responsiveness and CPU contention arrive first. Measured results and recommended class limits are in [RangeBox capacity and stress results](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/RANGEBOX-CAPACITY.md). On a 12 vCPU / 62 GiB host, 20 concurrent boxes is a comfortable class limit; on an 8 vCPU / 30 GiB host, use about 8. To enforce the measured limit:
+
+```bash
+# 12 vCPU / 62 GiB host
+MAX_CONCURRENT_RANGEBOXES=20
+
+# 8 vCPU / 30 GiB host
+MAX_CONCURRENT_RANGEBOXES=8
+```
+
+The measured idle footprint is about 160-180 MB per box and 1-2% CPU, with short spikes while the desktop initialises. Size for the interactive peak, not the idle average.
 
 ## Network ports
 

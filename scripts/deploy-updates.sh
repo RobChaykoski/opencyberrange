@@ -86,7 +86,6 @@ error_exit() {
 # Pre-flight checks
 preflight_checks() {
     log "${BLUE}Running pre-flight checks...${NC}"
-    
     # Check if running on server
     if [ ! -d "$PLATFORM_DIR" ]; then
         error_exit "Platform directory not found: $PLATFORM_DIR\nThis script must be run on the lab platform server."
@@ -114,6 +113,25 @@ preflight_checks() {
     fi
     
     log "${GREEN}✓ Pre-flight checks passed${NC}"
+}
+
+# Verify the reviewed supply-chain lock before copying or rebuilding.
+verify_supply_chain() {
+    if [ ! -f "$REPO_DIR/supply-chain.lock.json" ]; then
+        log "${YELLOW}⚠ supply-chain.lock.json not found; skipping hash verification${NC}"
+        if [ "${SUPPLY_CHAIN_STRICT:-0}" = "1" ]; then
+            error_exit "SUPPLY_CHAIN_STRICT=1 but supply-chain.lock.json is missing"
+        fi
+        return 0
+    fi
+    if ! command -v python3 &> /dev/null; then
+        error_exit "python3 is required to verify supply-chain.lock.json"
+    fi
+    log "${BLUE}Verifying supply-chain hashes...${NC}"
+    if ! (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check); then
+        error_exit "Supply-chain verification failed. Review the drift, then run scripts/supply_chain.py --update only for an intentional change."
+    fi
+    log "${GREEN}✓ Supply-chain hashes match${NC}"
 }
 
 # Create backup
@@ -781,7 +799,10 @@ main() {
     
     git_pull
     log ""
-    
+
+    verify_supply_chain
+    log ""
+
     if [ "$DEPLOY_PLATFORM" = true ]; then
         apply_platform_update
         log ""

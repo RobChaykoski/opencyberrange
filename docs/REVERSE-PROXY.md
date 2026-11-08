@@ -13,7 +13,7 @@ page records the settings that matter and the edge controls that complement
 
 | Field | Value |
 |---|---|
-| Domain names | `labs.example.com` |
+| Domain names | your real public hostname, e.g. `labs.example.com` (placeholder) |
 | Scheme | `http` |
 | Forward hostname / IP | the Docker host running `ocr-frontend` |
 | Forward port | `80` |
@@ -23,6 +23,14 @@ page records the settings that matter and the edge controls that complement
 | Force SSL | On |
 | HTTP/2 support | On |
 | HSTS enabled | On |
+
+!!! warning "Use the real hostname, not the placeholder"
+    `labs.example.com` is documentation shorthand. If you edit an existing
+    proxy host, keep its real public hostname (for example
+    `ctfd.example.edu`) and add any new name as an additional domain. Replacing
+    the live hostname with the placeholder removes the TLS server block for the
+    real name and the edge will reject the handshake with
+    `SSL_ERROR_UNRECOGNIZED_NAME_ALERT` (TLS alert 112).
 
 Point the public DNS at Nginx Proxy Manager, not at the platform host. Restrict
 the platform host's ports `80` and `443` to the proxy's address so the origin
@@ -129,3 +137,59 @@ curl -fsS https://labs.example.com/api/version
 WebSocket requests without a valid ticket are expected to close with an
 authentication error; what matters is that the proxy upgrades the request
 rather than returning `400` or `426`.
+
+## Troubleshooting TLS
+
+### `SSL_ERROR_UNRECOGNIZED_NAME_ALERT` (TLS alert 112)
+
+This alert comes from the **edge**, not the platform. It means the edge has no
+enabled proxy host and certificate for the SNI name the browser sent. Nginx
+Proxy Manager's default `443` server uses `ssl_reject_handshake on;`, so an
+unknown name is rejected before the request reaches the origin.
+
+Confirm the split:
+
+```bash
+# Edge: fails with alert 112
+echo | openssl s_client -connect <edge-ip>:443 \
+  -servername <public-host> -brief
+
+# Origin: should complete with the origin certificate
+echo | openssl s_client -connect <origin-ip>:443 \
+  -servername <public-host> -brief
+```
+
+If the origin succeeds and the edge fails, fix the edge:
+
+1. Open Nginx Proxy Manager (`http://<edge-ip>:81`).
+2. Open **Hosts → Proxy Hosts** and find the entry for the public hostname.
+   If it is missing, recreate it with the same domain, the origin IP, port `80`,
+   WebSockets on, and the existing certificate.
+3. If it exists, confirm it is **Enabled**, the domain matches exactly, and the
+   **SSL** tab has a certificate attached and **Force SSL** is on.
+4. If the certificate is missing or expired, request a new Let's Encrypt
+   certificate for the real hostname or upload a valid certificate. NPM will
+   not serve a name it has no certificate for.
+5. Save and test again:
+
+```bash
+curl -vkI https://<public-host>/
+openssl s_client -connect <edge-ip>:443 -servername <public-host> -brief
+```
+
+Do not point DNS at the origin as a workaround unless the origin has a
+certificate for the public name. The platform certificate is usually
+self-signed for the host IP; browsers will still warn.
+
+### `502` or `504` after TLS succeeds
+
+TLS is healthy but the proxy cannot reach the origin. Check the proxy host's
+forward IP and port (`80` for the platform frontend), then test from the proxy
+host with `curl -I http://<origin-ip>/`. Do not forward to `443` unless the
+origin is intentionally serving TLS.
+
+### WebSocket connects then closes
+
+Check that **Websockets support** is on and that the advanced configuration
+keeps `Upgrade` and `Connection` headers. The backend still requires a valid
+ticket, so an authentication close is expected.

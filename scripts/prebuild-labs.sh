@@ -130,6 +130,17 @@ avail_gb() { df -BG --output=avail "$DOCKER_ROOT" 2>/dev/null | tail -1 | tr -dc
 # Create log directory
 mkdir -p "$LOG_DIR"
 
+# Refuse to build from lab sources that have drifted from the reviewed lock.
+if [ -f "$PROJECT_ROOT/supply-chain.lock.json" ] && [ "${ALLOW_LAB_DRIFT:-0}" != "1" ]; then
+    echo "[*] Verifying lab source against supply-chain.lock.json"
+    if ! python3 "$PROJECT_ROOT/scripts/supply_chain.py" --check --labs-only; then
+        echo "ERROR: lab source has drifted from the reviewed supply-chain lock." >&2
+        echo "Review the change, then run: python3 scripts/supply_chain.py --update" >&2
+        echo "To build an intentional working tree, set ALLOW_LAB_DRIFT=1." >&2
+        exit 1
+    fi
+fi
+
 echo ""
 echo -e "${RED}${BOLD}     ██████╗  ██████╗██████╗ ${NC}"
 echo -e "${RED}${BOLD}    ██╔═══██╗██╔════╝██╔══██╗${NC}"

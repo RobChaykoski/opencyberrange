@@ -240,6 +240,25 @@ preflight_checks() {
     log "${GREEN}✓ Pre-flight checks passed${NC}"
 }
 
+# Verify the reviewed supply-chain lock before copying or rebuilding.
+verify_supply_chain() {
+    if [ ! -f "$REPO_DIR/supply-chain.lock.json" ]; then
+        log "${YELLOW}⚠ supply-chain.lock.json not found; skipping hash verification${NC}"
+        if [ "${SUPPLY_CHAIN_STRICT:-0}" = "1" ]; then
+            error_exit "SUPPLY_CHAIN_STRICT=1 but supply-chain.lock.json is missing"
+        fi
+        return 0
+    fi
+    if ! command -v python3 &> /dev/null; then
+        error_exit "python3 is required to verify supply-chain.lock.json"
+    fi
+    log "${BLUE}Verifying supply-chain hashes...${NC}"
+    if ! (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check); then
+        error_exit "Supply-chain verification failed. Review the drift, then run scripts/supply_chain.py --update only for an intentional change."
+    fi
+    log "${GREEN}✓ Supply-chain hashes match${NC}"
+}
+
 # Generate secure random string
 generate_secret() {
     openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | base64 | tr -d '\n'
@@ -1198,6 +1217,9 @@ show_banner() {
 run_once() {
     # Pre-flight checks
     preflight_checks
+    log ""
+
+    verify_supply_chain
     log ""
 
     # Execute based on mode

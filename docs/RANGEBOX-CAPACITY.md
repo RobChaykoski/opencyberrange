@@ -1,8 +1,12 @@
 # RangeBox capacity and stress results
 
-Last run: **2026-11-08** on the development host (`172.16.16.44`), using the
-built-in **Level 4 RangeBox VNC load test** from the Admin > System > Tester
-panel.
+Last run: **2026-11-08** on the development host, using the built-in
+**Level 4 RangeBox VNC load test** from the Admin > System > Tester panel.
+
+This run is the sizing evidence cited by
+[Sizing and settings](architecture/SIZING-AND-SETTINGS.md). Keep the run output
+with the release record; the deployment smoke test is separate evidence and does
+not measure capacity.
 
 ## Test host
 
@@ -35,20 +39,33 @@ constraint at idle; VNC responsiveness and CPU contention arrive first.
 
 ## Recommended limits
 
-| Host | Computed hard maximum | Recommended class limit | Short burst |
-|---|---:|---:|---:|
-| 12 vCPU / 62 GiB (development) | 27 | **20** | 25 |
-| 8 vCPU / 30 GiB (production) | 11 | **8** | 10 |
+| Host | Computed hard maximum | Recommended class limit | Short burst | Enforce with |
+|---|---:|---:|---:|---|
+| 12 vCPU / 62 GiB (development) | 27 | **20** | 25 | `MAX_CONCURRENT_RANGEBOXES=20` |
+| 8 vCPU / 30 GiB (production) | 11 | **8** | 10 | `MAX_CONCURRENT_RANGEBOXES=8` |
 
-The computed maximum is based on RAM only. The recommended class limit leaves
-headroom for the backend, database, SIEM, browser workloads, and real keyboard
-and mouse interaction rather than idle desktops.
+The computed maximum is the tighter of memory, CPU, and disk headroom. The
+recommended class limit leaves room for the backend, database, SIEM, browser
+workloads, and real keyboard and mouse interaction rather than idle desktops.
 
-To enforce a fixed operational limit, set the environment variable:
+To enforce a fixed operational limit, set the environment variable for the host
+class:
 
 ```bash
+# 12 vCPU / 62 GiB development host
 MAX_CONCURRENT_RANGEBOXES=20
+
+# 8 vCPU / 30 GiB production-class host
+MAX_CONCURRENT_RANGEBOXES=8
 ```
+
+| Setting | Value | Evidence |
+|---|---|---|
+| `RANGEBOX_MEM_LIMIT` | 2 GiB | Hard cap per desktop; idle use measured at 160-180 MiB |
+| `RANGEBOX_CPU_QUOTA` | 50000 (0.5 vCPU) | Keeps a burst desktop from starving the host |
+| `RANGEBOX_MEM_RESERVE_GB` | 8 | Leaves room for the platform and SIEM |
+| `RANGEBOX_CPU_RESERVE_CORES` | 2 | Prevents CPU oversubscription before VNC latency fails |
+| `RANGEBOX_MIN_FREE_DISK_GB` | 10 | Keeps disk headroom for images and logs |
 
 The capacity check now uses a cross-worker lock, so concurrent launches cannot
 overshoot the configured maximum. It also takes the minimum of memory, CPU, and

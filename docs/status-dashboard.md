@@ -6,8 +6,8 @@ Generated: `2026-11-08T09:20:46+00:00`
 
 | Environment | Role | URL | Up | API | Version | Expected | Users | Setup | Build asset | Response |
 |---|---|---|---:|---:|---|---|---:|---|---|---:|
-| Prod | production | https://172.16.16.41 | yes | yes | `2.4.1` | `2.4.1 (Production platform release)` | yes | yes | `index-Zo2KJNKE.js` | 54 ms |
-| Dev | development | https://172.16.16.44 | yes | yes | `2.4.1` | `2.4.1 (Professional current platform release)` | yes | yes | `index-CgLewn0q.js` | 51 ms |
+| Prod | production | https://192.168.120.41 | yes | yes | `2.4.1` | `2.4.1 (Production platform release)` | yes | yes | `index-Zo2KJNKE.js` | 54 ms |
+| Dev | development | https://192.168.120.44 | yes | yes | `2.4.1` | `2.4.1 (Professional current platform release)` | yes | yes | `index-CgLewn0q.js` | 51 ms |
 
 Checks use public endpoints only: `/api/version`, `/api/setup/status`, and `/`.
 No login, learner records, secrets, or private data are read.

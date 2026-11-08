@@ -54,13 +54,12 @@ def load_services(compose_path: str) -> dict:
     return services
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
-        raise SystemExit("usage: lab_build_hash.py <lab-dir>")
-    lab_dir = os.path.abspath(sys.argv[1])
+def build_hash(lab_dir: str) -> dict:
+    """Return the stable build hash and built service names for a lab."""
+    lab_dir = os.path.abspath(lab_dir)
     compose_path = os.path.join(lab_dir, "docker-compose.yml")
     if not os.path.isfile(compose_path):
-        raise SystemExit(f"missing compose file: {compose_path}")
+        raise FileNotFoundError(f"missing compose file: {compose_path}")
 
     services = load_services(compose_path)
 
@@ -95,7 +94,17 @@ def main() -> int:
                     for chunk in iter(lambda: handle.read(65536), b""):
                         digest.update(chunk)
 
-    print(json.dumps({"hash": digest.hexdigest(), "services": sorted(built_services)}))
+    return {"hash": digest.hexdigest(), "services": sorted(built_services)}
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        raise SystemExit("usage: lab_build_hash.py <lab-dir>")
+    try:
+        result = build_hash(sys.argv[1])
+    except (FileNotFoundError, ValueError) as exc:
+        raise SystemExit(str(exc))
+    print(json.dumps(result))
     return 0
 
 

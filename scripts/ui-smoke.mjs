@@ -2,7 +2,7 @@
  * Deployment UI smoke test.
  *
  * Required environment:
- *   UI_BASE_URL          e.g. https://172.16.16.44
+ *   UI_BASE_URL          e.g. https://192.168.120.44
  *   UI_SMOKE_TOKEN       a JWT for a student or admin test account, or
  *   UI_SMOKE_USERNAME / UI_SMOKE_PASSWORD to log in for a short-lived token
  *
@@ -24,6 +24,8 @@ const USERNAME = process.env.UI_SMOKE_USERNAME || ''
 const PASSWORD = process.env.UI_SMOKE_PASSWORD || ''
 const EXPECTED = process.env.UI_EXPECTED_VERSION || ''
 const OUT = process.env.UI_ARTIFACT_DIR || 'ui-smoke-artifacts'
+const STARTED_AT = new Date().toISOString()
+const ARTIFACTS = []
 
 if (!BASE) {
   console.log('UI smoke skipped: UI_BASE_URL is required.')
@@ -105,6 +107,7 @@ check('mobile no horizontal overflow', await mobile.page.evaluate(() =>
 const isStudent = me.role === 'student'
 check('student bottom tabs', !isStudent || await mobile.page.locator('.mobile-tabbar').isVisible())
 await mobile.page.screenshot({ path: path.join(OUT, 'mobile-dashboard.png') })
+ARTIFACTS.push('mobile-dashboard.png')
 await mobile.context.close()
 
 const desktop = await contextFor({ width: 1280, height: 900 })
@@ -118,6 +121,7 @@ await desktop.page.goto(`${BASE}/rangebox`, { waitUntil: 'networkidle', timeout:
 await desktop.page.waitForTimeout(600)
 check('RangeBox tab', (await desktop.page.locator('body').innerText()).toLowerCase().includes('standalone desktop'))
 await desktop.page.screenshot({ path: path.join(OUT, 'desktop-rangebox.png') })
+ARTIFACTS.push('desktop-rangebox.png')
 await desktop.context.close()
 
 check('no page errors', errors.length === 0, errors.slice(0, 3).join(' | '))
@@ -125,5 +129,27 @@ await browser.close()
 
 fs.writeFileSync(path.join(OUT, 'checks.json'), JSON.stringify(checks, null, 2))
 const failed = checks.filter(c => !c.ok)
-console.log(`\nTOTAL ${checks.length} checks, ${failed.length} failed`)
+const evidence = {
+  schema: 'ocr-ui-smoke/1',
+  started_at: STARTED_AT,
+  finished_at: new Date().toISOString(),
+  base_url: BASE,
+  expected_version: EXPECTED || null,
+  version: version.version || null,
+  release: version.release || null,
+  role: me.role || null,
+  username: me.username || null,
+  checks,
+  failed: failed.length,
+  result: failed.length ? 'fail' : 'pass',
+  artifacts: ARTIFACTS,
+  ci: {
+    run_id: process.env.GITHUB_RUN_ID || null,
+    sha: process.env.GITHUB_SHA || null,
+    ref: process.env.GITHUB_REF || null,
+  },
+}
+fs.writeFileSync(path.join(OUT, 'evidence.json'), JSON.stringify(evidence, null, 2))
+console.log(`\nEvidence written to ${path.join(OUT, 'evidence.json')}`)
+console.log(`TOTAL ${checks.length} checks, ${failed.length} failed`)
 process.exit(failed.length ? 1 : 0)

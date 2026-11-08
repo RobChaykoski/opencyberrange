@@ -2,8 +2,11 @@
 
 Last run: **2026-11-08** against both deployments:
 
-- development `https://172.16.16.44` (`2.4.1`)
-- production `https://172.16.16.41` (`2.4.1`)
+- development `https://192.168.120.44` (`2.4.1`)
+- production `https://192.168.120.41` (`2.4.1`)
+
+`192.168.120.0/24` is a placeholder management subnet used throughout the
+documentation. Replace it with your own; the addresses are not real deployments.
 
 Tool: Playwright with Microsoft Edge, using short-lived test tokens for an
 administrator and the three career-discovery profiles. No learner records were
@@ -78,7 +81,7 @@ tabs, Events, the RangeBox tab, version, and page errors.
 
 Required repository configuration:
 
-- variable `UI_BASE_URL` — for example `https://172.16.16.44`
+- variable `UI_BASE_URL` — for example `https://192.168.120.44`
 - secret `UI_SMOKE_TOKEN` — a JWT for a student or admin smoke account, **or**
 - secrets `UI_SMOKE_USERNAME` and `UI_SMOKE_PASSWORD` — a smoke account that logs
   in for a short-lived token
@@ -91,7 +94,7 @@ runs daily at 03:30 UTC and on manual dispatch.
 Run it locally with:
 
 ```bash
-UI_BASE_URL=https://172.16.16.44 \
+UI_BASE_URL=https://192.168.120.44 \
 UI_SMOKE_TOKEN=... \
 node scripts/ui-smoke.mjs
 ```
@@ -99,6 +102,27 @@ node scripts/ui-smoke.mjs
 On a workstation with Edge installed, set `UI_BROWSER_EXECUTABLE` to the Edge
 executable path and skip the Playwright browser download. The CI workflow runs
 `npx playwright install --with-deps chromium` instead.
+
+### Evidence artifacts
+
+Each run writes to `UI_ARTIFACT_DIR` (default `ui-smoke-artifacts/`):
+
+- `evidence.json` — the release evidence: schema version, start and finish
+  timestamps, deployment URL, expected and actual version, release name, role,
+  every check with its result, failure count, screenshot names, and CI run
+  metadata (`GITHUB_RUN_ID`, `GITHUB_SHA`, `GITHUB_REF`) when present.
+- `checks.json` — the check list, kept for compatibility with existing tooling.
+- `mobile-dashboard.png` and `desktop-rangebox.png` — visual evidence.
+
+The evidence file never contains the token, a password, learner records, or
+private deployment addresses. The CI workflow uploads the directory as the
+`ui-smoke-evidence` artifact and keeps it for 30 days. Attach the same artifact
+to the release record.
+
+A green smoke run proves the deployment is reachable, on the expected version,
+and rendering the checked surfaces. It does **not** measure host capacity; the
+RangeBox capacity test in [RangeBox capacity](RANGEBOX-CAPACITY.md) is the
+sizing evidence.
 
 CI runs the same static checks on every push:
 
@@ -111,6 +135,8 @@ CI runs the same static checks on every push:
 - A full interactive lab launch and VPN connection were not part of this run.
 - Docker host state was not read by the browser test; use
   `docker compose ps` on each deployment host for that check.
-- Production `172.16.16.41` was upgraded to `2.4.1`; its admin surface,
+- A smoke run does not measure capacity. Use the
+  [RangeBox capacity test](RANGEBOX-CAPACITY.md) on each host class.
+- Production `192.168.120.41` was upgraded to `2.4.1`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
 

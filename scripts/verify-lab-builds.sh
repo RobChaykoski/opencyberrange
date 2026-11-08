@@ -16,6 +16,13 @@ WARNINGS=0
 fail() { echo "ERROR: $*"; ERRORS=$((ERRORS + 1)); }
 warn() { echo "WARN:  $*"; WARNINGS=$((WARNINGS + 1)); }
 
+if [ -f "$REPO_DIR/supply-chain.lock.json" ]; then
+    echo "[*] checking supply-chain lock"
+    if ! python3 "$REPO_DIR/scripts/supply_chain.py" --check; then
+        fail "supply-chain lock mismatch"
+    fi
+fi
+
 echo "[*] checking lab compose files"
 while IFS= read -r -d '' compose; do
     lab_dir="$(dirname "$compose")"

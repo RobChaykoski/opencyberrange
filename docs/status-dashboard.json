@@ -6,7 +6,7 @@
     {
       "label": "Prod",
       "role": "production",
-      "url": "https://172.16.16.41",
+      "url": "https://192.168.120.41",
       "up": true,
       "api_ok": true,
       "version": "2.4.1",
@@ -32,7 +32,7 @@
     {
       "label": "Dev",
       "role": "development",
-      "url": "https://172.16.16.44",
+      "url": "https://192.168.120.44",
       "up": true,
       "api_ok": true,
       "version": "2.4.1",
