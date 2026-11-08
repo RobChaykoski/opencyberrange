@@ -61,6 +61,9 @@ The student shell was checked at `390 × 844` with touch enabled and the
 - The embedded RangeBox viewer is replaced on phones with a desktop-recommended
   notice and an explicit full-screen opt-in.
 - No page errors were raised during the mobile checks.
+- Breakpoint check at `375`, `768`, `769`, `1024`, and `1440` px: the mobile
+  shell is active at `768` px and below, the desktop shell at `769` px and
+  above, with no page-level horizontal overflow at any width.
 
 Production admin mobile shell was also checked at `390 × 844`: the top bar, the
 off-canvas drawer, and the theme control work, with no horizontal overflow.
