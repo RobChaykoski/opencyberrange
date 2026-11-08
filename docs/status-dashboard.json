@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T05:14:49+00:00",
+  "generated_at": "2026-11-08T06:11:16+00:00",
   "overall": "healthy",
   "message": "All deployments are up and on the expected version.",
   "deployments": [
@@ -17,10 +17,10 @@
       "setup_complete": true,
       "has_users": true,
       "title": "SWOCTS Cyber Range",
-      "main_asset": "index-Cu_mWwWz.js",
+      "main_asset": "index-Dp2MPtTL.js",
       "css_asset": "index-DRaUghg_.css",
       "asset_count": 3,
-      "response_ms": 58,
+      "response_ms": 52,
       "server": "nginx/1.31.8",
       "tls": "self-signed / unverified",
       "errors": [
@@ -43,10 +43,10 @@
       "setup_complete": true,
       "has_users": true,
       "title": "SWOCTS Cyber Range",
-      "main_asset": "index-Cu_mWwWz.js",
+      "main_asset": "index-Dp2MPtTL.js",
       "css_asset": "index-DRaUghg_.css",
       "asset_count": 3,
-      "response_ms": 29,
+      "response_ms": 51,
       "server": "nginx/1.31.8",
       "tls": "self-signed / unverified",
       "errors": [
