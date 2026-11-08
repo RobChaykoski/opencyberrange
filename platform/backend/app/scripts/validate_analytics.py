@@ -18,9 +18,17 @@ from __future__ import annotations
 import json
 import os
 import sys
+from pathlib import Path
 
 import requests
 from sqlalchemy import text
+
+# Allow `python /app/app/scripts/validate_analytics.py` to import the app
+# package regardless of the current working directory.
+try:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+except IndexError:
+    pass
 
 from app.auth import create_access_token
 from app.database import SessionLocal
@@ -227,6 +235,8 @@ def main() -> int:
             )
 
             course_sources[cid] = {
+                "available": False,
+                "state": summary.get("cohort_state", row.get("cohort_state", "available")),
                 "enrolled": enrolled,
                 "assigned": assigned,
                 "started_pairs": started_pairs,
@@ -239,6 +249,41 @@ def main() -> int:
             }
 
             label = f"course {cid}"
+            minimum = int((body.get("totals") or {}).get("minimum_cohort_size") or 0)
+            expected_state = (
+                "no_evidence"
+                if enrolled <= 0
+                else ("suppressed" if minimum and enrolled < minimum else "available")
+            )
+            cohort_state = course_sources[cid]["state"]
+            record(
+                f"{label} cohort state",
+                cohort_state,
+                expected_state,
+                cohort_state == expected_state,
+            )
+            if cohort_state != "available":
+                record(
+                    f"{label} suppressed completion rate is null",
+                    summary.get("completion_rate"),
+                    None,
+                    summary.get("completion_rate") is None,
+                )
+                record(
+                    f"{label} suppressed pulse responses are null",
+                    summary.get("pulse_responses"),
+                    None,
+                    summary.get("pulse_responses") is None,
+                )
+                record(
+                    f"{label} suppressed skill tree is empty",
+                    len(tree.get("dimensions", [])),
+                    0,
+                    not tree.get("dimensions"),
+                )
+                continue
+            course_sources[cid]["available"] = True
+
             record(
                 f"{label} enrolled learners",
                 summary.get("enrolled_learners"),
@@ -350,12 +395,29 @@ def main() -> int:
             )
 
         totals = body.get("totals") or {}
-        total_enrolled = sum(item["enrolled"] for item in course_sources.values())
-        total_assigned = sum(item["assigned"] for item in course_sources.values())
-        total_pulse = sum(item["pulse_responses"] for item in course_sources.values())
-        total_likes = sum(item["likes"] for item in course_sources.values())
-        total_dislikes = sum(item["dislikes"] for item in course_sources.values())
-        total_reactions = sum(item["reactions"] for item in course_sources.values())
+        available_sources = [
+            item for item in course_sources.values() if item["available"]
+        ]
+        total_enrolled = sum(item["enrolled"] for item in available_sources)
+        total_assigned = sum(item["assigned"] for item in available_sources)
+        total_pulse = sum(item["pulse_responses"] for item in available_sources)
+        total_likes = sum(item["likes"] for item in available_sources)
+        total_dislikes = sum(item["dislikes"] for item in available_sources)
+        total_reactions = sum(item["reactions"] for item in available_sources)
+        record(
+            "reports suppressed course count",
+            totals.get("suppressed_courses"),
+            sum(1 for item in course_sources.values() if item["state"] == "suppressed"),
+            totals.get("suppressed_courses")
+            == sum(1 for item in course_sources.values() if item["state"] == "suppressed"),
+        )
+        record(
+            "reports no-evidence course count",
+            totals.get("no_evidence_courses"),
+            sum(1 for item in course_sources.values() if item["state"] == "no_evidence"),
+            totals.get("no_evidence_courses")
+            == sum(1 for item in course_sources.values() if item["state"] == "no_evidence"),
+        )
         record(
             "reports total enrolled learners",
             totals.get("enrolled_learners"),
@@ -395,7 +457,7 @@ def main() -> int:
 
         skill_totals = totals.get("skill_tree") or {}
         total_completed_labs = sum(
-            item["distinct_completed_labs"] for item in course_sources.values()
+            item["distinct_completed_labs"] for item in available_sources
         )
         record(
             "reports skill-tree assigned total",
