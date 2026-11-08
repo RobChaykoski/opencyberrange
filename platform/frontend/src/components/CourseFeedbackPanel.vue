@@ -210,7 +210,7 @@
               <span>{{ formatDate(summary.my_survey_response.submitted_at) }}</span>
             </div>
 
-            <AvailableSurveys :course-id="courseId" />
+            <AvailableSurveys v-if="summary.survey_opt_in" :course-id="courseId" />
 
             <div v-if="summary.instructor_feedback_for_me?.length" class="feedback-coaching">
               <h4>From your instructor</h4>
