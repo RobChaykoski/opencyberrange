@@ -105,7 +105,8 @@ async def standalone_rangebox_launch(
 ):
     """Launch a standalone RangeBox (not tied to any lab session)."""
     try:
-        result = docker_manager.spawn_standalone_rangebox(current_user.id, image=image, username=current_user.username)
+        with docker_manager.rangebox_spawn_lock():
+            result = docker_manager.spawn_standalone_rangebox(current_user.id, image=image, username=current_user.username)
     except RangeBoxCapacityError as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

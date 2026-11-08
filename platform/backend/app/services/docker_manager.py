@@ -12,11 +12,43 @@ import subprocess
 import tempfile
 import time
 import threading
+from contextlib import contextmanager
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta, timezone
 
+try:
+    import fcntl
+except ImportError:  # Windows development hosts: fall back to a thread lock
+    fcntl = None
+
 
 logger = logging.getLogger(__name__)
+
+# Serialise the capacity check and container creation for RangeBoxes. Without
+# this, concurrent launch requests can all observe free capacity before any of
+# them creates a container, and the pool overshoots its maximum. The file lock
+# makes this work across multiple uvicorn workers; the thread lock is the
+# fallback for development hosts without fcntl.
+_RANGEBOX_SPAWN_THREAD_LOCK = threading.Lock()
+_RANGEBOX_SPAWN_LOCK_FILE = os.environ.get(
+    "RANGEBOX_SPAWN_LOCK_FILE",
+    os.path.join(tempfile.gettempdir(), "ocr-rangebox-spawn.lock"),
+)
+
+
+@contextmanager
+def rangebox_spawn_lock():
+    """Cross-worker lock held from the capacity check through container creation."""
+    with _RANGEBOX_SPAWN_THREAD_LOCK:
+        if fcntl is None:
+            yield
+            return
+        with open(_RANGEBOX_SPAWN_LOCK_FILE, "a+", encoding="utf-8") as handle:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 # Backend container name (env-overridable so a renamed/standalone instance
 # attaches ITSELF to lab/rangebox networks for the VNC proxy, not the live one).

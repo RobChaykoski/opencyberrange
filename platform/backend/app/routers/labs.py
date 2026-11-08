@@ -285,15 +285,20 @@ async def spawn_lab(
                 rangebox_spawned = False
                 if rangebox_enabled:
                     network_name = f"lab_{user_id}_{lab_slug}"
-                    try:
-                        rangebox_id = await loop.run_in_executor(
-                            None,
-                            lambda: docker_manager.spawn_rangebox(
+
+                    def spawn_rangebox_locked():
+                        with docker_manager.rangebox_spawn_lock():
+                            return docker_manager.spawn_rangebox(
                                 user_id=user_id,
                                 lab_slug=lab_slug,
                                 network_name=network_name,
                                 image=rangebox_image,
                             )
+
+                    try:
+                        rangebox_id = await loop.run_in_executor(
+                            None,
+                            spawn_rangebox_locked,
                         )
                     except RangeBoxCapacityError as e:
                         # Lab itself is up, so only RangeBox gets disabled
