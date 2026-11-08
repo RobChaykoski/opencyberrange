@@ -529,7 +529,7 @@ onMounted(() => {
 }
 
 .rangebox-card__note a {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 .rangebox-viewer {

@@ -16,7 +16,8 @@ Use semantic variables. Do not hard-code the dark values into components.
 | `--text-secondary` | `#94a3b8` | `#475569` | Supporting copy, labels |
 | `--text-muted` | `#64748b` | `#94a3b8` | Metadata, placeholders |
 | `--border-color` | `#334155` | `#cbd5e1` | Borders, dividers |
-| `--accent` | `#3b82f6` | `#2563eb` | Primary actions, focus, links |
+| `--accent` | `#2563eb` | `#1d4ed8` | Primary actions, fills, focus, borders |
+| `--accent-text` | `#60a5fa` | `#1d4ed8` | Accent-coloured text and links on the page background |
 | `--success` | `#22c55e` | `#16a34a` | Completed, healthy, approved |
 | `--warning` | `#f59e0b` | `#d97706` | Pending, caution, time pressure |
 | `--danger` | `#ef4444` | `#dc2626` | Destructive actions, errors |

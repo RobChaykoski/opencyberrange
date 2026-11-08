@@ -356,7 +356,8 @@ if (typeof window !== 'undefined') {
   --text-secondary: #94a3b8;
   --text-muted: #94a3b8;
   --border-color: #334155;
-  --accent: #3b82f6;
+  --accent: #2563eb;
+  --accent-text: #60a5fa;
   --badge-blue: #60a5fa;
   --badge-slate: #94a3b8;
   --badge-green: #4ade80;
@@ -389,6 +390,7 @@ if (typeof window !== 'undefined') {
   --text-muted: #55657a;
   --border-color: #cbd5e1;
   --accent: #1d4ed8;
+  --accent-text: #1d4ed8;
   --badge-blue: #1d4ed8;
   --badge-slate: #475569;
   --badge-green: #14532d;

@@ -516,7 +516,7 @@ const userInitial = computed(() => {
 }
 
 .nav-item--active {
-  color: var(--accent);
+  color: var(--accent-text);
   background: var(--accent-bg);
   border-left-color: var(--accent);
 }
@@ -725,7 +725,7 @@ const userInitial = computed(() => {
   margin-top: 0.5rem;
 }
 .powered-footer a {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: none;
   display: inline-flex;
   align-items: center;

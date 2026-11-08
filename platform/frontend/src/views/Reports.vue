@@ -972,7 +972,7 @@ onMounted(load)
 
 .reports-table th {
   background: var(--bg-tertiary);
-  color: var(--text-muted);
+  color: var(--text-primary);
   font-size: 0.58rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
