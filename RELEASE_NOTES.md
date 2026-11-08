@@ -80,16 +80,22 @@ completions, achievements, and backups are preserved.
 
 ## Verification
 
-- Backend test suite: 187 passed, 5 skipped.
+- Backend test suite: 193 passed, 5 skipped.
 - Frontend lint and production build pass.
-- Documentation link check: 145 Markdown files, no broken links.
+- Documentation link check: 310 Markdown files, no broken links.
 - Development UI: 101 checks, 0 failed.
 - Development mobile shell: 15 checks, 0 failed.
 - Production desktop: 25 checks, 0 failed.
 - Production admin mobile shell: 12 checks, 0 failed.
 - Production Kali RangeBox: launched, reported ready, VNC connected, and was
   destroyed cleanly.
+- Database restore drill: restored into a temporary database; 35 users,
+  148 labs, and 1,107 activity events verified, then the temporary database was
+  removed.
+- Production reboot drill: `ocr-platform.service` returned active; all four
+  containers were healthy; the deployment reported 2.4.1 after the reboot.
 - GitHub CI on both repositories is green.
+- GitHub release: <https://github.com/RobChaykoski/opencyberrange/releases/tag/v2.4.1>
 
 ## Known limitations
 

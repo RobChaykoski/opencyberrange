@@ -55,6 +55,8 @@ No changes yet.
 
 ### Patch release
 - This patch follows the 2.4.0 feature release and contains the security, mobile, capacity, and documentation remediation above.
+- Verified a database restore into a temporary database and a production reboot
+  with `ocr-platform.service` active and all containers healthy.
 
 ## [2.4.0] - 2026-11-08
 
