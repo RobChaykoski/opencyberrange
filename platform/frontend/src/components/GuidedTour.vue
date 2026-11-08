@@ -176,7 +176,7 @@ onBeforeUnmount(teardownListeners)
   background: #ffffff; color: #0f172a; border-radius: 14px; padding: 18px 18px 14px;
   box-shadow: 0 18px 50px rgba(0,0,0,0.4); z-index: 10001;
 }
-.gt__step { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #3b82f6; }
+.gt__step { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #1d4ed8; }
 .gt__title { margin: 4px 0 6px; font-size: 1.08rem; font-weight: 800; color: #0f172a; text-wrap: balance; }
 .gt__body { margin: 0 0 12px; font-size: 0.9rem; line-height: 1.5; color: #334155; }
 .gt__dots { display: flex; gap: 6px; margin-bottom: 12px; }
@@ -187,8 +187,8 @@ onBeforeUnmount(teardownListeners)
 .gt__skip { background: none; border: none; color: #64748b; font-size: 0.82rem; cursor: pointer; padding: 6px 4px; }
 .gt__skip:hover { color: #334155; text-decoration: underline; }
 .gt__btn { padding: 8px 16px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; cursor: pointer; border: 1px solid transparent; }
-.gt__btn--primary { background: #3b82f6; color: #fff; }
-.gt__btn--primary:hover { background: #2563eb; }
+.gt__btn--primary { background: #1d4ed8; color: #fff; }
+.gt__btn--primary:hover { background: #1e40af; }
 .gt__btn--ghost { background: transparent; color: #334155; border-color: #cbd5e1; }
 .gt__btn--ghost:hover { background: #f1f5f9; }
 

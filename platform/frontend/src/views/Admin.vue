@@ -9823,7 +9823,7 @@ watch(activeTab, (tab) => {
 }
 
 .visibility-toggle--public {
-  color: var(--success);
+  color: var(--badge-green);
   border-color: rgba(34, 197, 94, 0.3);
   background: rgba(34, 197, 94, 0.1);
 }
@@ -9834,7 +9834,7 @@ watch(activeTab, (tab) => {
 }
 
 .visibility-toggle--exclusive {
-  color: #a78bfa;
+  color: var(--badge-purple);
   border-color: rgba(167, 139, 250, 0.3);
   background: rgba(167, 139, 250, 0.1);
 }

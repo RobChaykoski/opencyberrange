@@ -397,7 +397,7 @@ if (typeof window !== 'undefined') {
   --badge-purple: #6b21a8;
   --badge-cyan: #0e7490;
   --badge-pink: #9d174d;
-  --success: #16a34a;
+  --success: #15803d;
   --warning: #d97706;
   --danger: #dc2626;
   --nav-label: #475569;

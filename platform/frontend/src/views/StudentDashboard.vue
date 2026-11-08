@@ -1838,7 +1838,7 @@ onMounted(loadDashboard)
 .matrix-cell--complete .matrix-level-tile__status,
 .matrix-cell--complete .matrix-level-tile__label,
 .matrix-cell--complete .matrix-level-tile__count {
-  color: var(--success);
+  color: var(--badge-green);
 }
 
 .matrix-cell--complete .matrix-level-tile__bar span {
