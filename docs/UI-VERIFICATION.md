@@ -1,6 +1,6 @@
 # UI verification
 
-Last run: **2026-11-07** against both deployments:
+Last run: **2026-11-08** against both deployments:
 
 - development `https://172.16.16.44` (`2.1.4`)
 - production `https://172.16.16.41` (`2.1.4`)
