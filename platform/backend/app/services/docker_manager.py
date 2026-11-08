@@ -2680,9 +2680,8 @@ fi
     def _rangebox_reserve_bytes(self) -> int:
         return int(self.RANGEBOX_MEM_RESERVE_GB * (1024 ** 3))
 
-    @property
-    def MAX_CONCURRENT_RANGEBOXES(self) -> int:
-        """Stable physical concurrency cap for the host.
+    def _computed_rangebox_max(self) -> int:
+        """Physical concurrency ceiling before the headroom percentage.
 
         The denominator is based on MemTotal minus the platform reserve, not on
         the current free memory. Using MemAvailable here made the total grow as
@@ -2690,13 +2689,8 @@ fi
         so the gauge could show 1/9, then 1/10, then 1/11 without any new usage
         being accounted for. The live free-memory check is applied separately in
         ``has_rangebox_memory_headroom`` so a SIEM or Security Onion workload can
-        still block new launches without moving the denominator. An explicit
-        MAX_CONCURRENT_RANGEBOXES env value pins a fixed cap instead."""
-        if self._RANGEBOX_MAX_OVERRIDE:
-            try:
-                return max(0, int(self._RANGEBOX_MAX_OVERRIDE))
-            except ValueError:
-                pass
+        still block new launches without moving the denominator.
+        """
         total = self._mem_total_bytes()
         if total <= 0:
             # /proc/meminfo unreadable: do not authorize growth beyond what runs.
@@ -2712,6 +2706,42 @@ fi
             else self.RANGEBOX_MAX_CEILING
         )
         return max(1, min(self.RANGEBOX_MAX_CEILING, memory_cap, cpu_cap))
+
+    def _rangebox_capacity_percent(self) -> int:
+        """Read the admin-configured percentage of the capacity ceiling."""
+        from app.services import rangebox_capacity
+
+        return rangebox_capacity.get_capacity_percent()
+
+    def _rangebox_stress_max(self) -> int:
+        """Read the measured Level 4 ceiling, or 0 when none is recorded."""
+        from app.services import rangebox_capacity
+
+        return rangebox_capacity.get_capacity_policy()[1]
+
+    @property
+    def MAX_CONCURRENT_RANGEBOXES(self) -> int:
+        """Live concurrency cap: a percentage of the capacity ceiling.
+
+        The ceiling is the measured Level 4 stress-test maximum when one has
+        been recorded, otherwise the computed host maximum. The default 75%
+        leaves headroom for the backend, database, SIEM, and interactive VNC.
+        An explicit MAX_CONCURRENT_RANGEBOXES env value still pins an exact cap
+        and bypasses the percentage, so existing deployments with a hand-set
+        limit keep their behaviour.
+        """
+        if self._RANGEBOX_MAX_OVERRIDE:
+            try:
+                return max(0, int(self._RANGEBOX_MAX_OVERRIDE))
+            except ValueError:
+                pass
+        from app.services.rangebox_capacity import effective_max
+
+        return effective_max(
+            self._computed_rangebox_max(),
+            self._rangebox_capacity_percent(),
+            self._rangebox_stress_max(),
+        )
 
     def has_rangebox_disk_headroom(self) -> bool:
         """True when the host has enough free disk for another desktop."""

@@ -8,7 +8,7 @@ Platform Settings is where you tune platform-wide behavior: general identity val
 
 ## Where it lives
 
-The settings screen is the **Settings** tab of the Admin Panel, reached from the **Settings** link in the left sidebar (or directly at `/admin?tab=settings`). The settings live behind five category tabs: General, Security, Labs, VPN, and Email.
+The settings screen is the **Settings** tab of the Admin Panel, reached from the **Settings** link in the left sidebar (or directly at `/admin?tab=settings`). The settings live behind five category tabs: General, Security, Exercises, VPN, and Email.
 
 The five settings categories and what each one controls.
 
@@ -16,7 +16,7 @@ The five settings categories and what each one controls.
 flowchart LR
   S[Settings tab] --> G[General]
   S --> SE[Security]
-  S --> L[Labs]
+  S --> L[Exercises]
   S --> V[VPN]
   S --> E[Email]
   G --> A[Platform wide values]
@@ -29,7 +29,7 @@ flowchart LR
 ## Steps
 
 1. Open the **Settings** tab from the sidebar.
-2. Click a category tab: **General**, **Security**, **Labs**, **VPN**, or **Email**.
+2. Click a category tab: **General**, **Security**, **Exercises**, **VPN**, or **Email**.
 3. Edit the values in the rows. Each row uses the control that fits its type:
    - A boolean shows an **Enabled** / **Disabled** toggle button.
    - A value whose key contains "color" shows a color picker.
@@ -71,6 +71,30 @@ analytics below that learner count are suppressed rather than shown as zero;
 the interface distinguishes **Suppressed** from **No evidence yet**. Reports and
 exports also exclude suppressed courses from aggregate totals. The default is
 5 learners; set it to 0 only in a trusted test environment.
+
+## RangeBox capacity
+
+The **Exercises** tab includes the **RangeBox capacity** card. The platform
+computes a physical maximum from the host's memory, CPU, and disk headroom. The
+live cap is a percentage of the capacity ceiling, **75% by default**. The ceiling
+is the measured Level 4 stress-test maximum when one has been recorded; until
+then it is the computed maximum. The remaining headroom protects the backend,
+database, SIEM, and interactive VNC.
+
+The card shows the computed maximum, the measured ceiling, the saved live cap,
+and the number of RangeBoxes running now. Change **RangeBox Capacity Percentage**
+to any value between 10 and 100, then click **Save Settings**. The effective cap
+is applied without restarting the platform.
+
+**Run ceiling test** starts a Level 4 RangeBox VNC load test at the computed
+maximum. The test spawns real desktop containers, so run it on an idle host and
+follow progress in **System → Stress Tester**. A run that attempts at least 90%
+of the computed maximum is recorded as the measured ceiling and the live cap is
+recalculated from it. Lower the percentage if the test reports failed first-frame
+latency or host pressure.
+
+An explicit `MAX_CONCURRENT_RANGEBOXES` environment variable pins an exact cap
+and bypasses the percentage. The card says so when that override is active.
 
 ## Registration email
 

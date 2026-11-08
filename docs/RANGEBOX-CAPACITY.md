@@ -37,19 +37,40 @@ Idle containers used about `160–180 MiB` each and roughly `1–2%` CPU per box
 with short spikes while the desktop initialised. Memory is not the first
 constraint at idle; VNC responsiveness and CPU contention arrive first.
 
+## Operational cap
+
+The platform does not run at the computed maximum by default. The live cap is
+**`rangebox_capacity_percent`** of the capacity ceiling, defaulting to **75%**.
+The ceiling is the measured Level 4 stress-test maximum when one has been
+recorded; until then it is the computed maximum. The remaining quarter is
+headroom for the backend, database, SIEM, and interactive VNC. On the 27-box
+development host that gives a live cap of 20; on the 11-box production-class
+host it gives 8.
+
+Change the percentage in **Admin → Settings → Exercises → RangeBox capacity**.
+The card shows the computed maximum, the measured ceiling, the saved live cap,
+and the running count. Use **Run ceiling test** to start a Level 4 test at the
+computed maximum. A run that attempts at least 90% of the computed maximum is
+recorded as the measured ceiling. The test spawns real RangeBoxes, so run it on
+an idle host and follow progress in **System → Stress Tester**.
+
+An explicit `MAX_CONCURRENT_RANGEBOXES` environment variable still pins an exact
+cap and bypasses the percentage. Clear the variable to return control to the
+setting.
+
 ## Recommended limits
 
-| Host | Computed hard maximum | Recommended class limit | Short burst | Enforce with |
+| Host | Computed hard maximum | Live cap at 75% | Short burst | Enforce with |
 |---|---:|---:|---:|---|
-| 12 vCPU / 62 GiB (development) | 27 | **20** | 25 | `MAX_CONCURRENT_RANGEBOXES=20` |
-| 8 vCPU / 30 GiB (production) | 11 | **8** | 10 | `MAX_CONCURRENT_RANGEBOXES=8` |
+| 12 vCPU / 62 GiB (development) | 27 | **20** | 25 | `rangebox_capacity_percent=75` |
+| 8 vCPU / 30 GiB (production) | 11 | **8** | 10 | `rangebox_capacity_percent=75` |
 
-The computed maximum is the tighter of memory, CPU, and disk headroom. The
-recommended class limit leaves room for the backend, database, SIEM, browser
-workloads, and real keyboard and mouse interaction rather than idle desktops.
+The computed maximum is the tighter of memory, CPU, and disk headroom. The live
+cap leaves room for the backend, database, SIEM, browser workloads, and real
+keyboard and mouse interaction rather than idle desktops.
 
-To enforce a fixed operational limit, set the environment variable for the host
-class:
+To pin a fixed operational limit instead, set the environment variable for the
+host class:
 
 ```bash
 # 12 vCPU / 62 GiB development host

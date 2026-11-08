@@ -3705,35 +3705,25 @@ async def system_status(
     return {"items": items, "overall": overall, "edition": entitlement.edition_name()}
 
 
-@router.post("/stress-test")
-async def start_stress_test(
-    body: dict,
-    admin: User = Depends(get_current_admin_user),
-):
-    """
-    Launch a stress test in the background.
-
-    Body:
-        level: 1|2|3
-        users: int (default 45)
-        concurrent_spawns: int (default 5, level 3 only)
-        lab_slug: str|null
-    """
+def _start_stress_test_run(
+    *,
+    level: int,
+    num_users: int,
+    concurrent_spawns: int = 5,
+    lab_slug: str | None = None,
+    admin_id: int | None = None,
+) -> dict:
+    """Validate and launch a stress-test thread, returning its run metadata."""
     # Check if a test is already running
     active_id, _ = _stress_find_active()
     if active_id:
         raise HTTPException(status_code=409, detail="A stress test is already running")
 
-    level = body.get("level", 1)
     if level not in (1, 2, 3, 4):
         raise HTTPException(status_code=400, detail="Level must be 1, 2, 3, or 4")
 
-    num_users = body.get("users", 45)
     if num_users < 1 or num_users > 200:
         raise HTTPException(status_code=400, detail="Users must be between 1 and 200")
-
-    concurrent_spawns = body.get("concurrent_spawns", 5)
-    lab_slug = body.get("lab_slug") or None
 
     run_id = str(_uuid.uuid4())[:8]
 
@@ -3773,7 +3763,7 @@ async def start_stress_test(
         "lab_slug": lab_slug,
         "results": None,
         "started_at": datetime.now(timezone.utc).strftime("%H:%M:%S"),
-        "admin_id": admin.id,
+        "admin_id": admin_id,
     })
 
     def event_callback(event):
@@ -3783,6 +3773,8 @@ async def start_stress_test(
             state["results"] = event.get("results")
             state["status"] = "cancelled" if event.get("results", {}).get("cancelled") else "completed"
             _stress_write_state(run_id, state)
+            if level == 4:
+                _record_capacity_test_result(event.get("results") or {})
 
     def _run_in_thread():
         try:
@@ -3818,6 +3810,29 @@ async def start_stress_test(
     t.start()
 
     return {"run_id": run_id, "level": level, "users": num_users, "status": "running"}
+
+
+@router.post("/stress-test")
+async def start_stress_test(
+    body: dict,
+    admin: User = Depends(get_current_admin_user),
+):
+    """
+    Launch a stress test in the background.
+
+    Body:
+        level: 1|2|3|4
+        users: int (default 45)
+        concurrent_spawns: int (default 5, level 3/4 only)
+        lab_slug: str|null
+    """
+    return _start_stress_test_run(
+        level=body.get("level", 1),
+        num_users=body.get("users", 45),
+        concurrent_spawns=body.get("concurrent_spawns", 5),
+        lab_slug=body.get("lab_slug") or None,
+        admin_id=admin.id,
+    )
 
 
 @router.get("/stress-test/active")
@@ -3926,23 +3941,101 @@ async def get_last_stress_result(
     admin: User = Depends(get_current_admin_user),
 ):
     """Return the most recent completed/cancelled stress test results."""
-    try:
-        for fname in sorted(os.listdir(_STRESS_DIR), reverse=True):
-            if fname.endswith("_state.json"):
-                rid = fname.replace("_state.json", "")
-                state = _stress_read_state(rid)
-                if state.get("status") in ("completed", "cancelled") and state.get("results"):
-                    return {
-                        "run_id": rid,
-                        "status": state["status"],
-                        "level": state.get("level", 1),
-                        "users": state.get("users", 0),
-                        "started_at": state.get("started_at", ""),
-                        "results": state["results"],
-                    }
-    except FileNotFoundError:
-        pass
+    state = _last_completed_stress_state()
+    if state:
+        return {
+            "run_id": state.get("run_id"),
+            "status": state.get("status"),
+            "level": state.get("level", 1),
+            "users": state.get("users", 0),
+            "started_at": state.get("started_at", ""),
+            "results": state.get("results"),
+        }
     return {"run_id": None, "status": "none", "results": None}
+
+
+@router.get("/rangebox-capacity")
+async def get_rangebox_capacity(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Return the RangeBox capacity policy and the last capacity test.
+
+    The live cap is ``rangebox_capacity_percent`` of the host's computed
+    maximum. ``MAX_CONCURRENT_RANGEBOXES`` in the environment still pins an
+    exact cap and takes precedence over the percentage.
+    """
+    from app.services import rangebox_capacity
+
+    computed = docker_manager._computed_rangebox_max()
+    percent, stress_max = rangebox_capacity.get_capacity_policy(db)
+    override = docker_manager._RANGEBOX_MAX_OVERRIDE or None
+    effective = docker_manager.MAX_CONCURRENT_RANGEBOXES
+    running = docker_manager._count_running_rangeboxes()
+    last_state = _last_completed_stress_state()
+    tested_at = None
+    try:
+        from app.services.settings_service import get_setting
+
+        tested_at = get_setting(db, "rangebox_stress_tested_at", "") or None
+    except Exception:
+        pass
+    last_test = None
+    if last_state:
+        results = last_state.get("results") or {}
+        last_test = {
+            "run_id": last_state.get("run_id"),
+            "level": last_state.get("level", 1),
+            "users": last_state.get("users", 0),
+            "started_at": last_state.get("started_at", ""),
+            "spawned": results.get("prespawn_succeeded"),
+            "total": results.get("prespawn_total"),
+            "passed": results.get("all_thresholds_passed"),
+        }
+    return {
+        "computed_max": computed,
+        "stress_max": stress_max,
+        "measured_at": tested_at,
+        "percent": percent,
+        "effective_max": effective,
+        "override": override,
+        "running": running,
+        "available": (
+            running < effective
+            and docker_manager.has_rangebox_memory_headroom()
+            and docker_manager.has_rangebox_disk_headroom()
+        ),
+        "last_test": last_test,
+    }
+
+
+@router.post("/rangebox-capacity/test")
+async def run_rangebox_capacity_test(
+    body: dict | None = None,
+    admin: User = Depends(get_current_admin_user),
+):
+    """Run a Level 4 RangeBox ceiling test.
+
+    The test spawns the host's computed maximum by default so the result can be
+    recorded as the measured ceiling and the live cap is recalculated from it.
+    An administrator can pass a smaller ``users`` value for a quicker check,
+    but that run is not used to lower the production ceiling.
+    """
+    body = body or {}
+    computed = docker_manager._computed_rangebox_max()
+    requested = body.get("users")
+    try:
+        users = int(requested) if requested is not None else computed
+    except (TypeError, ValueError):
+        raise HTTPException(status_code=400, detail="Users must be a whole number")
+    users = max(1, min(users, max(computed, 1)))
+
+    return _start_stress_test_run(
+        level=4,
+        num_users=users,
+        concurrent_spawns=body.get("concurrent_spawns", 5),
+        admin_id=admin.id,
+    )
 
 
 @router.post("/stress-test/cleanup")
@@ -3961,6 +4054,7 @@ async def stress_test_cleanup(
         return {"success": True, "messages": messages}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Cleanup failed: {str(e)}")
+
 
 
 
@@ -4052,3 +4146,48 @@ def _stress_find_active() -> tuple[str | None, dict]:
         if state.get("status") == "running":
             return run_id, state
     return None, {}
+
+
+def _last_completed_stress_state() -> dict | None:
+    """Return the most recent completed or cancelled run with results."""
+    try:
+        names = sorted(os.listdir(_STRESS_DIR), reverse=True)
+    except FileNotFoundError:
+        return None
+    for name in names:
+        if not name.endswith("_state.json"):
+            continue
+        run_id = name[: -len("_state.json")]
+        state = _stress_read_state(run_id)
+        if state.get("status") in ("completed", "cancelled") and state.get("results"):
+            return {"run_id": run_id, **state}
+    return None
+
+
+def _record_capacity_test_result(results: dict) -> None:
+    """Persist a Level 4 run as the measured ceiling when it filled the host.
+
+    A small ad-hoc VNC test should not lower the production ceiling. Only a run
+    that attempted at least 90% of the computed maximum is treated as a
+    capacity calibration.
+    """
+    if results.get("cancelled"):
+        return
+    try:
+        total = int(results.get("prespawn_total") or 0)
+        succeeded = int(results.get("prespawn_succeeded") or 0)
+    except (TypeError, ValueError):
+        return
+    if total <= 0 or succeeded <= 0:
+        return
+
+    computed = docker_manager._computed_rangebox_max()
+    if total < max(1, int(computed * 0.9)):
+        return
+
+    try:
+        from app.services import rangebox_capacity
+
+        rangebox_capacity.record_stress_ceiling(succeeded, computed)
+    except Exception as exc:
+        logger.warning("Could not record the RangeBox stress ceiling: %s", exc)

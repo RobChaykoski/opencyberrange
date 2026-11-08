@@ -83,6 +83,12 @@ DEFAULT_SETTINGS = [
      "description": "Default CPU limit per container (Docker CPUs)"},
     {"key": "container_memory_limit", "value": "512M", "category": "labs",
      "description": "Default memory limit per container"},
+    {"key": "rangebox_capacity_percent", "value": "75", "category": "labs",
+     "description": "Percentage of the host's computed RangeBox maximum used as the live concurrency cap. The remaining headroom protects the backend, database, SIEM, and interactive VNC. Default 75; allowed range 10-100. An explicit MAX_CONCURRENT_RANGEBOXES environment variable overrides this setting."},
+    {"key": "rangebox_stress_max", "value": "0", "category": "labs",
+     "description": "Measured Level 4 RangeBox ceiling from the last capacity test. Zero means no measured ceiling has been recorded, so the computed maximum is used."},
+    {"key": "rangebox_stress_tested_at", "value": "", "category": "labs",
+     "description": "UTC timestamp of the last recorded Level 4 RangeBox ceiling."},
     # --- VPN ---
     {"key": "vpn_enabled", "value": "true", "category": "vpn",
      "description": "Enable WireGuard VPN features"},

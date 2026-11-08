@@ -1702,6 +1702,78 @@
                   </button>
                 </div>
               </div>
+              <div v-if="activeSettingsCategory === 'labs'" class="capacity-card">
+                <div class="capacity-card__header">
+                  <div>
+                    <h3 class="capacity-card__title">RangeBox capacity</h3>
+                    <p class="capacity-card__desc">
+                      The live cap is a percentage of the host's computed memory-and-CPU
+                      maximum. The rest is headroom for the backend, database, SIEM, and
+                      interactive VNC. An explicit <code>MAX_CONCURRENT_RANGEBOXES</code>
+                      environment variable overrides this policy.
+                    </p>
+                  </div>
+                  <button
+                    class="btn btn--secondary btn--sm"
+                    @click="fetchRangeboxCapacity"
+                    :disabled="rangeboxCapacityLoading"
+                  >
+                    {{ rangeboxCapacityLoading ? 'Checking...' : 'Refresh' }}
+                  </button>
+                </div>
+                <div class="capacity-grid">
+                  <div class="capacity-stat">
+                    <span>Computed maximum</span>
+                    <strong>{{ rangeboxCapacity?.computed_max ?? '—' }}</strong>
+                    <small>memory and CPU ceiling</small>
+                  </div>
+                  <div class="capacity-stat">
+                    <span>Measured ceiling</span>
+                    <strong>{{ rangeboxCapacity?.stress_max || '—' }}</strong>
+                    <small>{{ rangeboxCapacity?.measured_at ? 'from the last test' : 'run a test to measure' }}</small>
+                  </div>
+                  <div class="capacity-stat">
+                    <span>Live cap</span>
+                    <strong>{{ rangeboxCapacity?.effective_max ?? '—' }}</strong>
+                    <small>{{ rangeboxCapacity?.percent ?? settingsEdits.rangebox_capacity_percent }}% policy</small>
+                  </div>
+                  <div class="capacity-stat">
+                    <span>Running now</span>
+                    <strong>{{ rangeboxCapacity?.running ?? '—' }}</strong>
+                    <small>{{ rangeboxCapacity?.available ? 'capacity available' : 'at or near capacity' }}</small>
+                  </div>
+                </div>
+                <p v-if="rangeboxCapacity?.override" class="capacity-note">
+                  The deployment pins the cap at <strong>{{ rangeboxCapacity.override }}</strong>
+                  through <code>MAX_CONCURRENT_RANGEBOXES</code>, so the percentage is not
+                  currently applied.
+                </p>
+                <p v-else class="capacity-note">
+                  At <strong>{{ settingsEdits.rangebox_capacity_percent }}%</strong> the live cap
+                  would be <strong>{{ capacityPreviewMax ?? '—' }}</strong> RangeBoxes. The
+                  percentage applies to the measured ceiling when one exists, otherwise to
+                  the computed maximum. Save the setting to apply it.
+                </p>
+                <div class="capacity-actions">
+                  <button
+                    v-if="stressTester"
+                    class="btn btn--primary btn--sm"
+                    @click="runCapacityTest"
+                    :disabled="rangeboxCapacityStarting || savingSettings"
+                  >
+                    {{ rangeboxCapacityStarting ? 'Starting...' : 'Run ceiling test' }}
+                  </button>
+                  <button class="btn btn--outline btn--sm" @click="goToStressTester">
+                    Open Stress Tester
+                  </button>
+                  <span v-if="rangeboxCapacity?.last_test" class="capacity-last">
+                    Last ceiling test:
+                    {{ rangeboxCapacity.last_test.spawned ?? rangeboxCapacity.last_test.users }}
+                    RangeBoxes,
+                    {{ rangeboxCapacity.last_test.passed ? 'passed' : 'needs review' }}
+                  </span>
+                </div>
+              </div>
               <div v-for="(value, key) in filteredSettings" :key="key" class="setting-row">
                 <div class="setting-info">
                   <span class="setting-key">
@@ -1745,6 +1817,20 @@
                         :placeholder="settingPlaceholder(key)"
                         class="form-input form-input--sm"
                       />
+                    </div>
+                  </template>
+                  <template v-else-if="key === 'rangebox_capacity_percent'">
+                    <div class="setting-input-group">
+                      <input
+                        v-model.number="settingsEdits[key]"
+                        type="number"
+                        min="10"
+                        max="100"
+                        step="5"
+                        class="form-input form-input--sm"
+                        aria-label="RangeBox capacity percentage"
+                      />
+                      <span class="setting-unit">%</span>
                     </div>
                   </template>
                   <template v-else-if="key.includes('color')">
@@ -4110,6 +4196,21 @@ const settingsLoading = ref(false)
 const savingSettings = ref(false)
 const sendingTestMail = ref(false)
 
+// --- RangeBox capacity policy ---
+const rangeboxCapacity = ref(null)
+const rangeboxCapacityLoading = ref(false)
+const rangeboxCapacityStarting = ref(false)
+
+const capacityPreviewMax = computed(() => {
+  const computedMax = Number(rangeboxCapacity.value?.computed_max || 0)
+  const measured = Number(rangeboxCapacity.value?.stress_max || 0)
+  const ceiling = measured > 0 ? Math.min(computedMax, measured) : computedMax
+  const raw = Number(settingsEdits.rangebox_capacity_percent)
+  if (!ceiling || !Number.isFinite(raw)) return null
+  const percent = Math.max(10, Math.min(100, raw))
+  return Math.max(1, Math.floor(ceiling * percent / 100))
+})
+
 // --- Custom achievements (settings section) ---
 const customAchievements = ref([])
 const achievementTriggers = ref([])
@@ -4197,6 +4298,7 @@ const deleteCustomAchievement = async (ach) => {
 
 watch(activeSettingsCategory, (category) => {
   if (category === 'achievements') fetchCustomAchievements()
+  if (category === 'labs') fetchRangeboxCapacity()
 })
 
 const settingMeta = {
@@ -4212,6 +4314,7 @@ const settingMeta = {
   max_session_hours:         { label: 'Max Exercise Duration',       desc: 'The maximum time a student can extend a single exercise session.', unit: 'hours' },
   container_cpu_limit:       { label: 'CPU Limit per Container', desc: 'Docker CPU allocation per exercise container (e.g. 0.5 = half a core, 1 = one full core).', unit: 'cores' },
   container_memory_limit:    { label: 'Memory Limit per Container', desc: 'Docker memory limit per exercise container (e.g. 512M, 1G).' },
+  rangebox_capacity_percent: { label: 'RangeBox Capacity Percentage', desc: 'Percentage of the host\'s computed RangeBox maximum used as the live concurrency cap. The remaining headroom protects the backend, database, SIEM, and interactive VNC. An explicit MAX_CONCURRENT_RANGEBOXES environment variable overrides this setting.', unit: '%' },
   vpn_enabled:               { label: 'VPN Enabled',            desc: 'Enables WireGuard VPN connectivity for students to access lab environments.' },
   vpn_endpoint:              { label: 'VPN Endpoint',           desc: 'The public host:port of the WireGuard server that students connect to.', ph: 'vpn.yourdomain.com:51820' },
   vpn_public_key:            { label: 'VPN Server Public Key',  desc: 'The WireGuard server public key included in student config files.', ph: 'xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=' },
@@ -4479,7 +4582,7 @@ const hiddenSettingKeys = computed(() => {
   // Removed dead settings: platform_name (branding is fixed to OCR) and
   // deployment_mode (only ever toggled a cosmetic banner). Hide them if an
   // older DB still carries the rows.
-  const s = new Set(['setup_complete', 'platform_name', 'deployment_mode'])
+  const s = new Set(['setup_complete', 'platform_name', 'deployment_mode', 'rangebox_stress_max', 'rangebox_stress_tested_at'])
   // API docs (Swagger /docs + ReDoc /redoc) is a developer surface and a real
   // exposure if a non-technical admin enables it. Hide the toggle off-dev; it
   // stays settable via the ENABLE_API_DOCS env var for dev/integration.
@@ -4546,11 +4649,84 @@ const saveSettings = async () => {
     }
     await axios.put('/settings/', { settings: payload })
     showAlert('Settings saved')
+    if (activeSettingsCategory.value === 'labs') fetchRangeboxCapacity()
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to save settings', 'error')
   } finally {
     savingSettings.value = false
   }
+}
+
+const fetchRangeboxCapacity = async () => {
+  rangeboxCapacityLoading.value = true
+  try {
+    const { data } = await axios.get('/admin/rangebox-capacity')
+    rangeboxCapacity.value = data
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to load RangeBox capacity', 'error')
+  } finally {
+    rangeboxCapacityLoading.value = false
+  }
+}
+
+const saveCapacityPercent = async () => {
+  const value = Number(settingsEdits.rangebox_capacity_percent)
+  if (!Number.isFinite(value) || value < 10 || value > 100) {
+    showAlert('RangeBox capacity percentage must be between 10 and 100.', 'error')
+    return false
+  }
+  try {
+    await axios.put('/settings/', {
+      settings: { rangebox_capacity_percent: String(Math.round(value)) },
+    })
+    if (allSettings.value.rangebox_capacity_percent) {
+      allSettings.value.rangebox_capacity_percent.value = String(Math.round(value))
+    }
+    settingsEdits.rangebox_capacity_percent = String(Math.round(value))
+    await fetchRangeboxCapacity()
+    return true
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to save the capacity percentage', 'error')
+    return false
+  }
+}
+
+const runCapacityTest = async () => {
+  const ceiling = Number(rangeboxCapacity.value?.computed_max || 0)
+  if (!ceiling) {
+    showAlert('Refresh the capacity information before running a test.', 'error')
+    return
+  }
+  const confirmed = window.confirm(
+    `Run a Level 4 ceiling test with up to ${ceiling} RangeBoxes? ` +
+    'This spawns real desktop containers and may take several minutes. ' +
+    'Run it only on an idle host.'
+  )
+  if (!confirmed) return
+
+  rangeboxCapacityStarting.value = true
+  try {
+    const saved = await saveCapacityPercent()
+    if (!saved) return
+    const { data } = await axios.post('/admin/rangebox-capacity/test', {
+      users: ceiling,
+      concurrent_spawns: 5,
+    })
+    showAlert(
+      `Ceiling test started with ${data.users} RangeBoxes. ` +
+      'Follow progress in System → Stress Tester.'
+    )
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to start the capacity test', 'error')
+  } finally {
+    rangeboxCapacityStarting.value = false
+  }
+}
+
+const goToStressTester = () => {
+  activeTab.value = 'system'
+  systemSubTab.value = 'stress'
+  checkActiveStressTest()
 }
 
 const sendTestMail = async () => {
@@ -5977,6 +6153,7 @@ onMounted(async () => {
   await fetchAll()
   fetchCurriculum()
   fetchDashboardHealth()
+  fetchRangeboxCapacity()
   healthPollTimer = setInterval(fetchDashboardHealth, 5 * 60 * 1000)
   registrationPollTimer = setInterval(pollNewRegistrations, REGISTRATION_POLL_MS)
   document.addEventListener('visibilitychange', onAdminVisibilityChange)
@@ -10417,6 +10594,87 @@ watch(activeTab, (tab) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* RangeBox capacity policy */
+.capacity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--bg-secondary);
+  border-radius: 10px;
+}
+
+.capacity-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.capacity-card__title {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.capacity-card__desc {
+  margin: 0;
+  max-width: 70ch;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.capacity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.6rem;
+}
+
+.capacity-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.capacity-stat span {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.capacity-stat strong {
+  font-size: 1.4rem;
+  color: var(--text-primary);
+}
+
+.capacity-stat small {
+  color: var(--text-secondary);
+}
+
+.capacity-note {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.capacity-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.capacity-last {
+  color: var(--text-muted);
+  font-size: 0.8rem;
 }
 
 /* Custom achievements */

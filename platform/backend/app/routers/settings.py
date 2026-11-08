@@ -15,6 +15,7 @@ from app.schemas import (
     SettingsBulkUpdate, MailTestRequest, CustomAchievementCreate, CustomAchievementUpdate,
 )
 from app.services import mail, settings_service
+from app.services import rangebox_capacity
 from app.services.achievements import CUSTOM_ACHIEVEMENT_TRIGGERS
 from app.services.audit import log_admin_action, AuditActions
 
@@ -290,7 +291,27 @@ async def update_settings(
     if not clean:
         return {"message": "No settings to update", "count": 0}
 
+    if "rangebox_capacity_percent" in clean:
+        try:
+            percent = int(float(clean["rangebox_capacity_percent"]))
+        except (TypeError, ValueError):
+            raise HTTPException(
+                status_code=400,
+                detail="RangeBox capacity percentage must be a number between 10 and 100.",
+            )
+        if percent < rangebox_capacity.MIN_PERCENT or percent > rangebox_capacity.MAX_PERCENT:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "RangeBox capacity percentage must be between "
+                    f"{rangebox_capacity.MIN_PERCENT} and {rangebox_capacity.MAX_PERCENT}."
+                ),
+            )
+        clean["rangebox_capacity_percent"] = str(percent)
+
     count = settings_service.bulk_update_settings(db, clean)
+    if "rangebox_capacity_percent" in clean:
+        rangebox_capacity.invalidate_cache()
 
     log_admin_action(
         action=AuditActions.SETTINGS_UPDATED,

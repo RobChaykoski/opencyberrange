@@ -21,8 +21,11 @@ Proxmox vCPU = sockets x cores. Use 1 socket and put the count in cores
 | Enterprise | Comfortable | 1 | 16 | 16 | 65536 | 64 | 24 |
 
 The computed limit is the tighter of memory, CPU, and the 64-box ceiling. It is
-an upper bound, not a class recommendation. The measured run below shows why:
-VNC responsiveness and CPU contention fail before the memory limit.
+an upper bound, not a class recommendation. The live cap defaults to 75% of the
+measured Level 4 ceiling (or the computed maximum until a ceiling test is
+recorded) through `rangebox_capacity_percent`, leaving headroom for the platform
+and interactive VNC. The measured run below shows why: VNC responsiveness and
+CPU contention fail before the memory limit.
 
 Backend workers stop scaling past 4 cores (worker count = `(2 x cores) + 1`,
 cap 9). Beyond that, cores and RAM go to labs, RangeBoxes, and (Enterprise)
@@ -84,19 +87,25 @@ for a real class.
 | `RANGEBOX_CPU_RESERVE_CORES` | `2` | CPU cores kept free before a new RangeBox is allowed |
 | `RANGEBOX_MIN_FREE_DISK_GB` | `10` | Free disk required before a new RangeBox is allowed |
 | `RANGEBOX_MAX_CEILING` | `64` | Absolute max concurrent RangeBoxes |
-| `MAX_CONCURRENT_RANGEBOXES` | (dynamic) | Pin a fixed cap; unset = computed from memory, CPU, and disk |
+| `MAX_CONCURRENT_RANGEBOXES` | (dynamic) | Pin a fixed cap; unset = `rangebox_capacity_percent` of the computed maximum |
 | `RANGEBOX_SPAWN_LOCK_FILE` | `/tmp/ocr-rangebox-spawn.lock` | Cross-worker spawn lock |
 | uvicorn workers | `(2 x cores) + 1`, cap 9 | Backend processes (auto) |
 | shared VM `ram` | `4G` (4096 MiB) | Per Windows/AD VM (per definition or DB row) |
 | shared VM `cpu_cores` | `2` | Per Windows/AD VM |
 
-To enforce the measured recommendation on each host:
+The live cap defaults to **75% of the measured Level 4 ceiling** (or the
+computed maximum until a ceiling test is recorded), leaving headroom for the
+backend, database, SIEM, and interactive VNC. Adjust the percentage in
+**Admin → Settings → Exercises**. An explicit `MAX_CONCURRENT_RANGEBOXES` value
+still pins an exact cap and bypasses the percentage.
+
+To pin the measured recommendation manually on each host:
 
 ```bash
-# 12 vCPU / 62 GiB development host
+# 12 vCPU / 62 GiB development host: 20 of a 27-box physical maximum
 MAX_CONCURRENT_RANGEBOXES=20
 
-# 8 vCPU / 30 GiB production-class host
+# 8 vCPU / 30 GiB production-class host: 8 of an 11-box physical maximum
 MAX_CONCURRENT_RANGEBOXES=8
 ```
 
@@ -113,6 +122,9 @@ included rather than briefly showing as zero.
 | `max_session_hours` | 8 | Ceiling for extensions |
 | `container_cpu_limit` | 0.5 | Default CPU limit per lab container (Docker CPUs) |
 | `container_memory_limit` | 512M | Default memory limit per lab container |
+| `rangebox_capacity_percent` | 75 | Percentage of the measured or computed RangeBox ceiling used as the live cap; 10-100 |
+| `rangebox_stress_max` | 0 | Measured Level 4 ceiling; 0 means use the computed maximum |
+| `rangebox_stress_tested_at` | (empty) | UTC timestamp of the last recorded ceiling test |
 | `shared_vm_session_hours` | 2 | Shared-VM session length |
 | `shared_vm_max_extensions` | 4 | Max shared-VM extensions |
 | `shared_vm_max_uptime_hours` | 8 | Shared-VM hard uptime cap |
