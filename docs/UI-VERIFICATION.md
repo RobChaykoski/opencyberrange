@@ -90,6 +90,10 @@ UI_SMOKE_TOKEN=... \
 node scripts/ui-smoke.mjs
 ```
 
+On a workstation with Edge installed, set `UI_BROWSER_EXECUTABLE` to the Edge
+executable path and skip the Playwright browser download. The CI workflow runs
+`npx playwright install --with-deps chromium` instead.
+
 CI runs the same static checks on every push:
 
 - `scripts/check-nginx-security-headers.py`

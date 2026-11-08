@@ -44,7 +44,12 @@ await api.dispose()
 
 if (EXPECTED) check('API version', version.version === EXPECTED, `${version.version} (expected ${EXPECTED})`)
 
-const browser = await chromium.launch({ headless: true })
+const browser = await chromium.launch({
+  headless: true,
+  ...(process.env.UI_BROWSER_EXECUTABLE
+    ? { executablePath: process.env.UI_BROWSER_EXECUTABLE }
+    : {}),
+})
 const errors = []
 
 async function contextFor(viewport) {
