@@ -147,16 +147,14 @@ class RegisterRequest(BaseModel):
     def name_valid(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return None
-        cleaned = normalize_text(v, field="name", allow_newlines=False)
-        return cleaned or None
+        return normalize_text(v, field="name", allow_newlines=False)
 
     @field_validator('organization')
     @classmethod
     def organization_valid(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return None
-        cleaned = normalize_text(v, field="organization", allow_newlines=False)
-        return cleaned or None
+        return normalize_text(v, field="organization", allow_newlines=False)
     
     @field_validator('email')
     @classmethod
@@ -482,16 +480,14 @@ class UserSettingsUpdate(BaseModel):
     def name_valid(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return None
-        cleaned = normalize_text(v, field="name", allow_newlines=False)
-        return cleaned or None
+        return normalize_text(v, field="name", allow_newlines=False)
 
     @field_validator("organization")
     @classmethod
     def organization_valid(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return None
-        cleaned = normalize_text(v, field="organization", allow_newlines=False)
-        return cleaned or None
+        return normalize_text(v, field="organization", allow_newlines=False)
 
     @field_validator("timezone")
     @classmethod
