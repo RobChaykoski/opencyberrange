@@ -386,7 +386,7 @@ if (typeof window !== 'undefined') {
   --bg-tertiary: #e2e8f0;
   --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #5b6b7f;
+  --text-muted: #55657a;
   --border-color: #cbd5e1;
   --accent: #1d4ed8;
   --badge-blue: #1d4ed8;

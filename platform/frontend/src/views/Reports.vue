@@ -1010,9 +1010,9 @@ onMounted(load)
   text-transform: uppercase;
 }
 
-.reports-rag--red { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--danger); }
-.reports-rag--amber { background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--warning); }
-.reports-rag--green { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--success); }
+.reports-rag--red { background: color-mix(in srgb, var(--danger) 14%, transparent); color: var(--badge-red); }
+.reports-rag--amber { background: color-mix(in srgb, var(--warning) 16%, transparent); color: var(--badge-amber); }
+.reports-rag--green { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--badge-green); }
 
 .reports-open {
   color: var(--accent);
