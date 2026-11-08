@@ -17,9 +17,13 @@ scenario: |
   misconfigurations. FinanceCorp needs to understand if their database server is 
   using secure versions and configurations.
   
-  Your objective: Enumerate the MS-SQL version and all instances on FinanceCorp's 
-  database server. Document version information and instance details for security 
+  Your objective: Enumerate the MS-SQL version and all instances on FinanceCorp's
+  database server. Document version information and instance details for security
   assessment.
+
+  **Lab note:** this exercise uses MySQL on port 3306 as the MS-SQL stand-in.
+  The enumeration workflow is the same; substitute `mysql-*` NSE scripts for the
+  `ms-sql-*` scripts and use port 3306 instead of 1433.
 
 flag: "OCR{mssql_v3rs10n}"
 
@@ -239,15 +243,24 @@ hints:
       ### Step 6: Retrieve the Flag
 
       After successful enumeration, you need to retrieve the flag from
-      `/tmp/flag.txt` on the target. Consider connecting to the database
-      service directly:
+      `/tmp/flag.txt` on the target. The lab uses the `sa` database account
+      (password `password`); `root` is socket-only and cannot log in remotely.
+      Connect to the database service directly:
 
       ```bash
       # Install MySQL client if needed
       sudo apt install -y default-mysql-client
 
-      # Try connecting and reading the flag
-      mysql --ssl-verify-server-cert=0 -u root -h <target> -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+      # Read the flag file (sa has the FILE privilege)
+      mysql --ssl-verify-server-cert=0 -h <target> -u sa -p'password' \
+        -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+      ```
+
+      You can also read the flag from the seeded table:
+
+      ```bash
+      mysql --ssl-verify-server-cert=0 -h <target> -u sa -p'password' \
+        -e "SELECT content FROM target_db.secrets;"
       ```
 
       ### Step 7: Document Everything
@@ -296,17 +309,22 @@ hints:
 
       ### Command 6: Retrieve the Flag
 
-      Connect to the database and read the flag file:
+      Connect with the `sa` account and read the flag file:
 
       ```bash
-      mysql --ssl-verify-server-cert=0 -u root -h <target> -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+      mysql --ssl-verify-server-cert=0 -u sa -p'password' -h <target> \
+        -e "SELECT LOAD_FILE('/tmp/flag.txt');"
       ```
 
-      If root without a password does not work, try:
+      Or read the seeded table:
 
       ```bash
-      mysql --ssl-verify-server-cert=0 -u root --password="" -h <target> -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+      mysql --ssl-verify-server-cert=0 -u sa -p'password' -h <target> \
+        -e "SELECT content FROM target_db.secrets;"
       ```
+
+      `root` is restricted to local socket authentication, so remote logins
+      as `root` fail by design.
 
       Replace `<target>` with the actual IP address of the database
       server in your lab environment throughout all commands.
@@ -373,7 +391,8 @@ hints:
       ### Step 4: Retrieve the Flag
 
       ```bash
-      mysql --ssl-verify-server-cert=0 -u root -h <target> -e "SELECT LOAD_FILE('/tmp/flag.txt');"
+      mysql --ssl-verify-server-cert=0 -u sa -p'password' -h <target> \
+        -e "SELECT LOAD_FILE('/tmp/flag.txt');"
       ```
 
       **Expected Output:**
@@ -381,9 +400,14 @@ hints:
       +---------------------------------------------------+
       | LOAD_FILE('/tmp/flag.txt')                         |
       +---------------------------------------------------+
-      | OCR{...}                                         |
+      | OCR{...}                                           |
       +---------------------------------------------------+
       ```
+
+      If your client reports `ERROR 1129 ... is blocked because of many
+      connection errors`, the server temporarily blocked your Kali IP after a
+      burst of aborted connections. Stop the lab and launch it again, or in
+      your own environment run `mysqladmin flush-hosts` as an administrator.
 
       ### Key Takeaways
 

