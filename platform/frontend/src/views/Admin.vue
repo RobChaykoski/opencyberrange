@@ -4207,6 +4207,7 @@ const settingMeta = {
   require_approval:          { label: 'Require Approval',       desc: 'When enabled, new user registrations must be approved by an admin before the account can log in.' },
   enable_api_docs:           { label: 'API Documentation',      desc: 'Exposes the Swagger UI (/docs) and ReDoc (/redoc) endpoints for the backend API. Disable in production.' },
   privacy_default_on:        { label: 'Default Privacy Mode',   desc: 'Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views.' },
+  analytics_min_cohort_size: { label: 'Analytics Minimum Cohort', desc: 'Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment.' },
   default_session_hours:     { label: 'Default Exercise Duration',   desc: 'The default time limit for an exercise session before it is automatically stopped.', unit: 'hours' },
   max_session_hours:         { label: 'Max Exercise Duration',       desc: 'The maximum time a student can extend a single exercise session.', unit: 'hours' },
   container_cpu_limit:       { label: 'CPU Limit per Container', desc: 'Docker CPU allocation per exercise container (e.g. 0.5 = half a core, 1 = one full core).', unit: 'cores' },

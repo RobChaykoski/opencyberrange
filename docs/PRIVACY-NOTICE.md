@@ -96,9 +96,11 @@ behaviour.
 
 Safeguards include role-based access control, Argon2id password hashing,
 optional MFA, encrypted transport, isolated lab networks, audit logging,
-restricted administrative access, and encrypted backup handling. No system is
-perfectly secure; report suspected issues to
-[privacy@swocts.com](mailto:privacy@swocts.com).
+restricted administrative access, and encrypted backup handling. Course and
+exercise analytics are suppressed when the cohort is below the configured
+minimum, defaulting to 5 learners; the interface shows "Suppressed" or "No
+evidence" rather than a zero. No system is perfectly secure; report suspected
+issues to [privacy@swocts.com](mailto:privacy@swocts.com).
 
 ## Your rights under PIPEDA
 

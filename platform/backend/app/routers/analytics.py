@@ -24,6 +24,7 @@ from app.database import get_db
 from app.export_reason import require_export_reason
 from app.services.activity import EventTypes, log_activity
 from app.services.audit import log_admin_action, AuditActions
+from app.services import settings_service
 from app.services.learning_time import (
     learning_minutes_by_pair,
     learning_minutes_by_user,
@@ -55,6 +56,147 @@ router = APIRouter()
 
 GROWTH_WINDOW = 3
 MIN_GROWTH_EVIDENCE = GROWTH_WINDOW * 2
+DEFAULT_MIN_COHORT_SIZE = 5
+
+
+def _minimum_cohort_size(db: Session) -> int:
+    """Read the admin-configured suppression threshold.
+
+    A value of 0 disables suppression for a trusted test environment. Invalid
+    values fall back to the default instead of silently disabling the privacy
+    control.
+    """
+    raw = settings_service.get_setting_fresh(
+        db, "analytics_min_cohort_size", str(DEFAULT_MIN_COHORT_SIZE)
+    )
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        value = DEFAULT_MIN_COHORT_SIZE
+    return max(0, min(value, 1000))
+
+
+def _cohort_state(sample_size: int, minimum: int) -> dict:
+    """Distinguish available, suppressed, and no-evidence cohorts.
+
+    Zero is not the same as suppressed. A cohort with no learners has no
+    evidence to report; a cohort between one and the threshold is suppressed to
+    reduce re-identification risk.
+    """
+    if sample_size <= 0:
+        state = "no_evidence"
+        reason = "No learners have activity in this cohort yet."
+    elif minimum > 0 and sample_size < minimum:
+        state = "suppressed"
+        reason = (
+            "Cohort is smaller than the minimum cell size "
+            f"({sample_size} of {minimum} learners)."
+        )
+    else:
+        state = "available"
+        reason = None
+    return {
+        "state": state,
+        "suppressed": state == "suppressed",
+        "minimum_cohort_size": minimum,
+        "sample_size": sample_size,
+        "reason": reason,
+    }
+
+
+def _insufficient_summary(
+    enrolled: int, assigned: int, cohort: dict
+) -> dict:
+    """Summary shape used when a cohort has no evidence or is suppressed."""
+    return {
+        "enrolled_learners": enrolled,
+        "assigned_exercises": assigned,
+        "started_learners": None,
+        "completed_learners": None,
+        "completion_rate": None,
+        "started_rate": None,
+        "abandonment_rate": None,
+        "median_time_minutes": None,
+        "total_learning_minutes": None,
+        "total_learning_hours": None,
+        "learning_learners": None,
+        "median_learning_minutes_per_learner": None,
+        "time_over_estimate_rate": None,
+        "likes": None,
+        "dislikes": None,
+        "reaction_count": None,
+        "positive_rate": None,
+        "hints_per_completion": None,
+        "hint_free_rate": None,
+        "first_attempt_rate": None,
+        "reattempt_rate": None,
+        "median_attempts": None,
+        "pulse_responses": None,
+        "learning_reported": None,
+        "difficulty_reported": None,
+        "confidence_gain": None,
+        "rag": "insufficient_evidence",
+        "rag_reasons": [cohort["reason"]] if cohort.get("reason") else [],
+        "cohort_state": cohort["state"],
+        "suppression": cohort,
+    }
+
+
+def _insufficient_skill_tree(cohort: dict) -> dict:
+    return {
+        "dimensions": [],
+        "assigned_total": 0,
+        "completed_total": 0,
+        "cohort_state": cohort["state"],
+        "suppressed": cohort["suppressed"],
+        "minimum_cohort_size": cohort["minimum_cohort_size"],
+        "sample_size": cohort["sample_size"],
+        "reason": cohort["reason"],
+    }
+
+
+def _insufficient_exercise(lab: Lab, cohort: dict) -> dict:
+    no_evidence = cohort["state"] == "no_evidence"
+    return {
+        "lab_id": lab.id,
+        "lab_name": lab.name,
+        "slug": lab.slug,
+        "difficulty": lab.difficulty,
+        "duration_minutes": lab.duration_minutes,
+        "track_name": (
+            lab.level.track.name
+            if lab.level and lab.level.track else "Uncategorized"
+        ),
+        "level_name": lab.level.name if lab.level else None,
+        "started_learners": 0 if no_evidence else None,
+        "completed_learners": 0 if no_evidence else None,
+        "completion_rate": None,
+        "started_completion_rate": None,
+        "abandonment_rate": None,
+        "median_time_minutes": None,
+        "total_learning_minutes": None,
+        "total_learning_hours": None,
+        "likes": None,
+        "dislikes": None,
+        "reaction_count": None,
+        "positive_rate": None,
+        "median_attempts": None,
+        "hint_pressure_rate": None,
+        "first_attempt_rate": None,
+        "reattempt_recovery_rate": None,
+        "pulse_responses": None,
+        "pulse_response_rate": None,
+        "learning_reported": None,
+        "difficulty_reported": None,
+        "unclear_comments": None,
+        "median_time_to_first_attempt_minutes": None,
+        "median_time_to_completion_minutes": None,
+        "rag": "insufficient_evidence",
+        "rag_reasons": [cohort["reason"]] if cohort.get("reason") else [],
+        "flags": [],
+        "cohort_state": cohort["state"],
+        "suppression": cohort,
+    }
 
 
 def _median(values):
@@ -812,6 +954,25 @@ async def course_overview(
     course = _course_or_403(db, course_id, current_user)
     labs, user_ids, completions, sessions = _course_context(db, course)
 
+    minimum = _minimum_cohort_size(db)
+    cohort = _cohort_state(len(user_ids), minimum)
+    if cohort["state"] != "available":
+        return {
+            "course": {
+                "id": course.id,
+                "code": course.code,
+                "name": course.name,
+                "semester": course.semester,
+            },
+            "summary": _insufficient_summary(len(user_ids), len(labs), cohort),
+            "trending_topics": [],
+            "domains": [],
+            "skill_tree": _insufficient_skill_tree(cohort),
+            "cohort_state": cohort["state"],
+            "suppression": cohort,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
+
     started_users = {row.user_id for row in sessions}
     completed_users = {row.user_id for row in completions}
     learning_pairs = learning_minutes_by_pair(completions, sessions)
@@ -902,6 +1063,8 @@ async def course_overview(
             "confidence_gain": confidence_gain,
             "rag": rag,
             "rag_reasons": rag_reasons,
+            "cohort_state": cohort["state"],
+            "suppression": cohort,
         },
         "learning_impact": {
             "learning_reported": learning_reported,
@@ -911,6 +1074,8 @@ async def course_overview(
         "trending_topics": _trending_topics(pulse_rows),
         "domains": _domain_performance(completions, sessions),
         "skill_tree": skill_branch_mix(labs, completions),
+        "cohort_state": cohort["state"],
+        "suppression": cohort,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -965,11 +1130,17 @@ async def reports_overview(
             "summary": detail["summary"],
             "trending_topics": detail.get("trending_topics", []),
             "skill_tree": detail.get("skill_tree"),
+            "cohort_state": detail.get("cohort_state", "available"),
+            "suppression": detail.get("suppression"),
         })
+
+    visible_rows = [row for row in rows if row["cohort_state"] == "available"]
+    suppressed_rows = [row for row in rows if row["cohort_state"] == "suppressed"]
+    no_evidence_rows = [row for row in rows if row["cohort_state"] == "no_evidence"]
 
     rag_counts = {"red": 0, "amber": 0, "green": 0}
     topic_counts = Counter()
-    for row in rows:
+    for row in visible_rows:
         rag = row["summary"].get("rag")
         if rag in rag_counts:
             rag_counts[rag] += 1
@@ -981,38 +1152,59 @@ async def reports_overview(
         for key, count in topic_counts.most_common()
     ]
 
+    minimum = _minimum_cohort_size(db)
+    if visible_rows:
+        totals_skill_tree = _total_skill_tree(visible_rows)
+    else:
+        state = "suppressed" if suppressed_rows else "no_evidence"
+        totals_skill_tree = _insufficient_skill_tree({
+            "state": state,
+            "suppressed": state == "suppressed",
+            "minimum_cohort_size": minimum,
+            "sample_size": 0,
+            "reason": (
+                "No course has enough learners to report analytics."
+                if state == "suppressed"
+                else "No course has activity yet."
+            ),
+        })
+
     return {
         "courses": rows,
         "trending_topics": trending_topics,
         "totals": {
             "courses": len(rows),
+            "available_courses": len(visible_rows),
+            "suppressed_courses": len(suppressed_rows),
+            "no_evidence_courses": len(no_evidence_rows),
+            "minimum_cohort_size": minimum,
             "enrolled_learners": sum(
-                row["summary"]["enrolled_learners"] for row in rows
+                row["summary"]["enrolled_learners"] for row in visible_rows
             ),
             "assigned_exercises": sum(
-                row["summary"]["assigned_exercises"] for row in rows
+                row["summary"]["assigned_exercises"] for row in visible_rows
             ),
             "pulse_responses": sum(
-                row["summary"]["pulse_responses"] for row in rows
+                row["summary"]["pulse_responses"] for row in visible_rows
             ),
             "total_learning_hours": round(
                 sum(
                     row["summary"]["total_learning_minutes"]
-                    for row in rows
+                    for row in visible_rows
                 ) / 60,
                 1,
             ),
-            "likes": sum(row["summary"]["likes"] for row in rows),
-            "dislikes": sum(row["summary"]["dislikes"] for row in rows),
+            "likes": sum(row["summary"]["likes"] for row in visible_rows),
+            "dislikes": sum(row["summary"]["dislikes"] for row in visible_rows),
             "reaction_count": sum(
-                row["summary"]["reaction_count"] for row in rows
+                row["summary"]["reaction_count"] for row in visible_rows
             ),
             "positive_rate": _rate(
-                sum(row["summary"]["likes"] for row in rows),
-                sum(row["summary"]["reaction_count"] for row in rows),
+                sum(row["summary"]["likes"] for row in visible_rows),
+                sum(row["summary"]["reaction_count"] for row in visible_rows),
             ),
             "rag_counts": rag_counts,
-            "skill_tree": _total_skill_tree(rows),
+            "skill_tree": totals_skill_tree,
         },
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -1107,6 +1299,16 @@ async def course_exercises(
     course = _course_or_403(db, course_id, current_user)
     labs, user_ids, completions, sessions = _course_context(db, course)
     enrolled = len(user_ids)
+    minimum = _minimum_cohort_size(db)
+    course_cohort = _cohort_state(enrolled, minimum)
+    if course_cohort["state"] != "available":
+        return {
+            "course": {"id": course.id, "code": course.code, "name": course.name},
+            "exercises": [],
+            "cohort_state": course_cohort["state"],
+            "suppression": course_cohort,
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+        }
 
     by_lab_completions = {}
     for row in completions:
@@ -1154,6 +1356,12 @@ async def course_exercises(
         )
         completed_users = {row.user_id for row in lab_completions}
         started_users = by_lab_sessions.get(lab.id, set())
+        lab_cohort = _cohort_state(
+            len(completed_users | started_users), minimum
+        )
+        if lab_cohort["state"] != "available":
+            rows.append(_insufficient_exercise(lab, lab_cohort))
+            continue
         attempts = [row.attempts or 0 for row in lab_completions]
         hint_pressure = _rate(
             sum(1 for row in lab_completions if (row.hints_used or 0) > 0),
@@ -1240,12 +1448,21 @@ async def course_exercises(
             "rag": rag,
             "rag_reasons": rag_reasons,
             "flags": flags,
+            "cohort_state": lab_cohort["state"],
+            "suppression": lab_cohort,
         })
 
-    rows.sort(key=lambda row: (-row["started_learners"], row["lab_name"].lower()))
+    rows.sort(
+        key=lambda row: (
+            -(row["started_learners"] or 0),
+            (row["lab_name"] or "").lower(),
+        )
+    )
     return {
         "course": {"id": course.id, "code": course.code, "name": course.name},
         "exercises": rows,
+        "cohort_state": course_cohort["state"],
+        "suppression": course_cohort,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -1257,6 +1474,17 @@ async def course_pulse_comments(
     current_user: User = Depends(get_current_instructor_user),
 ):
     course = _course_or_403(db, course_id, current_user)
+    enrolled = db.query(CourseEnrollment.user_id).filter(
+        CourseEnrollment.course_id == course.id
+    ).distinct().count()
+    cohort = _cohort_state(enrolled, _minimum_cohort_size(db))
+    if cohort["state"] != "available":
+        return {
+            "course": {"id": course.id, "code": course.code, "name": course.name},
+            "comments": [],
+            "cohort_state": cohort["state"],
+            "suppression": cohort,
+        }
     lab_ids = [
         row[0] for row in db.query(CourseLabAssignment.lab_id).filter(
             CourseLabAssignment.course_id == course.id
@@ -1287,6 +1515,8 @@ async def course_pulse_comments(
             }
             for row in rows
         ],
+        "cohort_state": cohort["state"],
+        "suppression": cohort,
     }
 
 

@@ -15,6 +15,7 @@ from app.models import (
     LabCompletion,
     LabSession,
     Level,
+    PlatformSetting,
     Survey,
     SurveyAttachment,
     SurveyResponse,
@@ -79,6 +80,21 @@ def analytics_data(client, db_session):
         last_name="Two",
     )
     db_session.add_all([instructor, outsider, student_one, student_two])
+    db_session.flush()
+
+    cohort_setting = db_session.query(PlatformSetting).filter(
+        PlatformSetting.key == "analytics_min_cohort_size"
+    ).first()
+    if cohort_setting is None:
+        db_session.add(PlatformSetting(
+            key="analytics_min_cohort_size",
+            value="1",
+            category="security",
+            description="Test threshold",
+            is_secret=False,
+        ))
+    else:
+        cohort_setting.value = "1"
     db_session.flush()
 
     track = Track(
@@ -579,3 +595,187 @@ def test_reports_overview_includes_skill_tree(client, analytics_data):
     assert totals["assigned_total"] == 6
     assert totals["completed_total"] == 6
     assert dimensions["explorer"]["assigned"] == 0
+
+
+def _set_min_cohort(db_session, value: int) -> None:
+    setting = db_session.query(PlatformSetting).filter(
+        PlatformSetting.key == "analytics_min_cohort_size"
+    ).first()
+    if setting is None:
+        db_session.add(PlatformSetting(
+            key="analytics_min_cohort_size",
+            value=str(value),
+            category="security",
+            description="Test threshold",
+            is_secret=False,
+        ))
+    else:
+        setting.value = str(value)
+    db_session.commit()
+
+
+def _make_cohort_course(db_session, learners: int, active_learners: int | None = None):
+    suffix = uuid.uuid4().hex[:8]
+    now = datetime.now(timezone.utc)
+    active = learners if active_learners is None else active_learners
+
+    instructor = User(
+        username=f"cohort_instructor_{suffix}",
+        email=f"cohort_instructor_{suffix}@university.edu",
+        hashed_password=get_password_hash(TEST_PASSWORD),
+        is_active=True,
+        is_approved=True,
+        role="instructor",
+    )
+    db_session.add(instructor)
+    db_session.flush()
+
+    track = Track(
+        name=f"Cohort Track {suffix}",
+        slug=f"cohort-{suffix}",
+        is_active=True,
+    )
+    db_session.add(track)
+    db_session.flush()
+    level = Level(track_id=track.id, level_number=1, name="Cohort Level")
+    db_session.add(level)
+    db_session.flush()
+    lab = Lab(
+        name=f"Cohort Lab {suffix}",
+        slug=f"cohort-lab-{suffix}",
+        description="Cohort suppression test lab",
+        compose_file="services: {}\n",
+        is_active=True,
+        visibility="public",
+        level_id=level.id,
+        duration_minutes=60,
+        difficulty="medium",
+    )
+    db_session.add(lab)
+    db_session.flush()
+
+    course = Course(
+        name=f"Cohort Course {suffix}",
+        code=f"CO{suffix[:5].upper()}",
+        semester="Fall",
+        invite_code=f"CO-{suffix}",
+        instructor_id=instructor.id,
+        start_date=now - timedelta(days=20),
+        end_date=now + timedelta(days=20),
+        is_active=True,
+    )
+    db_session.add(course)
+    db_session.flush()
+    db_session.add(CourseLabAssignment(course_id=course.id, lab_id=lab.id))
+
+    for index in range(learners):
+        student = User(
+            username=f"cohort_student_{suffix}_{index}",
+            email=f"cohort_student_{suffix}_{index}@university.edu",
+            hashed_password=get_password_hash(TEST_PASSWORD),
+            is_active=True,
+            is_approved=True,
+            role="student",
+        )
+        db_session.add(student)
+        db_session.flush()
+        db_session.add(CourseEnrollment(
+            course_id=course.id,
+            user_id=student.id,
+            enrolled_at=now - timedelta(days=2),
+        ))
+        if index < active:
+            db_session.add(LabSession(
+                user_id=student.id,
+                lab_id=lab.id,
+                status="stopped",
+                started_at=now - timedelta(days=1),
+                expires_at=now + timedelta(hours=1),
+                stopped_at=now - timedelta(days=1) + timedelta(hours=1),
+            ))
+            db_session.add(LabCompletion(
+                user_id=student.id,
+                lab_id=lab.id,
+                flag_submitted="OCR{cohort}",
+                completed_at=now - timedelta(days=1) + timedelta(minutes=index),
+                attempts=1,
+                hints_used=0,
+                time_spent_minutes=15,
+            ))
+    db_session.commit()
+    return instructor, course, lab
+
+
+@pytest.mark.parametrize(
+    "learners,expected_state",
+    [(0, "no_evidence"), (1, "suppressed"), (4, "suppressed"), (5, "available"), (6, "available")],
+)
+def test_course_overview_cohort_suppression_boundaries(
+    client, db_session, learners, expected_state
+):
+    _set_min_cohort(db_session, 5)
+    instructor, course, _lab = _make_cohort_course(db_session, learners)
+    headers = _login(client, instructor)
+
+    response = client.get(
+        f"/api/analytics/courses/{course.id}/overview", headers=headers
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()
+
+    assert body["cohort_state"] == expected_state
+    assert body["summary"]["cohort_state"] == expected_state
+    assert body["summary"]["suppression"]["sample_size"] == learners
+    if expected_state == "available":
+        assert body["summary"]["suppression"]["suppressed"] is False
+        assert body["summary"]["completion_rate"] is not None
+        assert body["skill_tree"]["dimensions"]
+    else:
+        assert body["summary"]["completion_rate"] is None
+        assert body["summary"]["pulse_responses"] is None
+        assert body["skill_tree"]["dimensions"] == []
+        assert body["summary"]["rag"] == "insufficient_evidence"
+    if expected_state == "suppressed":
+        assert body["summary"]["suppression"]["suppressed"] is True
+    if expected_state == "no_evidence":
+        assert body["summary"]["suppression"]["suppressed"] is False
+
+
+def test_course_exercises_suppresses_small_lab_cohort(client, db_session):
+    _set_min_cohort(db_session, 5)
+    instructor, course, _lab = _make_cohort_course(
+        db_session, learners=5, active_learners=2
+    )
+    headers = _login(client, instructor)
+
+    response = client.get(
+        f"/api/analytics/courses/{course.id}/exercises", headers=headers
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["cohort_state"] == "available"
+    assert len(body["exercises"]) == 1
+    exercise = body["exercises"][0]
+    assert exercise["cohort_state"] == "suppressed"
+    assert exercise["started_learners"] is None
+    assert exercise["completion_rate"] is None
+    assert exercise["rag"] == "insufficient_evidence"
+
+
+def test_course_exercises_distinguishes_no_evidence(client, db_session):
+    _set_min_cohort(db_session, 5)
+    instructor, course, _lab = _make_cohort_course(
+        db_session, learners=5, active_learners=0
+    )
+    headers = _login(client, instructor)
+
+    response = client.get(
+        f"/api/analytics/courses/{course.id}/exercises", headers=headers
+    )
+    assert response.status_code == 200, response.text
+    exercise = response.json()["exercises"][0]
+    assert exercise["cohort_state"] == "no_evidence"
+    assert exercise["started_learners"] == 0
+    assert exercise["completed_learners"] == 0
+    assert exercise["completion_rate"] is None
+    assert exercise["rag"] == "insufficient_evidence"

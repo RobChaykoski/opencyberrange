@@ -154,6 +154,31 @@ reports. They are **not** Community / Academic features.
 Every metric is reported with its sample size. A missing denominator is shown as
 “insufficient evidence”, not zero.
 
+## Small-cohort suppression
+
+Course and exercise analytics use an administrator-configurable minimum cohort
+size, `analytics_min_cohort_size` (default **5**). The setting is available in
+**Admin → Settings → Security**.
+
+The API and UI distinguish three states:
+
+- **available** — the cohort meets the minimum and metrics are shown with `n`.
+- **suppressed** — the cohort is between one and the minimum; counts may remain
+  visible, but percentages, medians, feedback, confidence, and skill-tree
+  activity are hidden.
+- **no_evidence** — the cohort has no activity yet; counts show zero and metrics
+  remain null rather than being reported as measured zeroes.
+
+Suppression applies consistently to the course overview, exercise table,
+pulse-comment access, cross-course reports, CSV export, and PDF export. Reports
+show separate suppressed and no-evidence course counts and exclude those rows
+from aggregate totals.
+
+The thresholds follow the education-data guidance: use a minimum of 5
+observations for a headline percentage, 3 for a peer median, and 10 for a cohort
+trend. Do not compare a learner-based completion rate with the started-pair
+rate. Do not rank learners, instructors, or courses.
+
 The five Professional priority engines that consume these metrics are described
 in [Professional and Enterprise priorities](PROFESSIONAL-PRIORITIES.md). The
 programme-level report definitions are in [Programme reports](PROGRAMME-REPORTS.md).

@@ -123,6 +123,7 @@ included rather than briefly showing as zero.
 | `require_approval` | true | Admin approval for new registrations |
 | `enable_api_docs` | false | Serve Swagger UI / ReDoc |
 | `privacy_default_on` | true | Start admins in privacy mode when no explicit preference is stored |
+| `analytics_min_cohort_size` | 5 | Minimum cohort for course, exercise, and report analytics; smaller groups are suppressed |
 
 ## 6. Entitlement / caps
 

@@ -74,7 +74,24 @@ def generate_reports_pdf(payload: dict) -> bytes:
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_text_color(30, 41, 59)
         pdf.cell(box_width, 9, _sanitize_for_pdf(str(value)), border=1, align="C")
-    pdf.ln(12)
+    pdf.ln(9)
+
+    suppressed_courses = totals.get("suppressed_courses", 0)
+    no_evidence_courses = totals.get("no_evidence_courses", 0)
+    minimum_cohort = totals.get("minimum_cohort_size", 0)
+    if suppressed_courses or no_evidence_courses:
+        pdf.set_font("Helvetica", "", 8)
+        pdf.set_text_color(100, 116, 139)
+        pdf.multi_cell(
+            0,
+            5,
+            _sanitize_for_pdf(
+                f"{suppressed_courses} course(s) suppressed; "
+                f"{no_evidence_courses} course(s) with no evidence. "
+                f"Minimum reporting cohort is {minimum_cohort} learners."
+            ),
+        )
+    pdf.ln(4)
 
     skill_tree = totals.get("skill_tree") or {}
     if skill_tree.get("dimensions"):
@@ -143,25 +160,43 @@ def generate_reports_pdf(payload: dict) -> bytes:
     for index, row in enumerate(rows):
         course = row.get("course", {})
         summary_row = row.get("summary", {})
-        rag = str(summary_row.get("rag") or "none").upper()
-        feedback = summary_row.get("reaction_count", 0)
-        feedback_text = (
-            f"{summary_row.get('positive_rate', 0)}% ({feedback})"
-            if feedback else "-"
-        )
-        confidence = summary_row.get("confidence_gain")
-        values = [
-            f"{course.get('code') or ''} - {course.get('name') or ''}",
-            rag,
-            summary_row.get("enrolled_learners", 0),
-            summary_row.get("total_learning_hours", 0),
-            f"{summary_row.get('completion_rate', 0)}%",
-            f"{summary_row.get('abandonment_rate', 0)}%",
-            summary_row.get("learning_reported") if summary_row.get("learning_reported") is not None else "-",
-            feedback_text,
-            f"{confidence:+.1f}" if isinstance(confidence, (int, float)) else "-",
-            summary_row.get("pulse_responses", 0),
-        ]
+        cohort_state = summary_row.get("cohort_state", "available")
+        if cohort_state != "available":
+            state_label = (
+                "SUPPRESSED" if cohort_state == "suppressed" else "NO EVIDENCE"
+            )
+            values = [
+                f"{course.get('code') or ''} - {course.get('name') or ''}",
+                state_label,
+                summary_row.get("enrolled_learners", 0),
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+            ]
+        else:
+            rag = str(summary_row.get("rag") or "none").upper()
+            feedback = summary_row.get("reaction_count", 0)
+            feedback_text = (
+                f"{summary_row.get('positive_rate', 0)}% ({feedback})"
+                if feedback else "-"
+            )
+            confidence = summary_row.get("confidence_gain")
+            values = [
+                f"{course.get('code') or ''} - {course.get('name') or ''}",
+                rag,
+                summary_row.get("enrolled_learners", 0),
+                summary_row.get("total_learning_hours", 0),
+                f"{summary_row.get('completion_rate', 0)}%",
+                f"{summary_row.get('abandonment_rate', 0)}%",
+                summary_row.get("learning_reported") if summary_row.get("learning_reported") is not None else "-",
+                feedback_text,
+                f"{confidence:+.1f}" if isinstance(confidence, (int, float)) else "-",
+                summary_row.get("pulse_responses", 0),
+            ]
         fill = index % 2 == 0
         if fill:
             pdf.set_fill_color(248, 250, 252)
@@ -177,7 +212,8 @@ def generate_reports_pdf(payload: dict) -> bytes:
         _sanitize_for_pdf(
             "RAG is a teaching signal, not a learner label. Learning is self-reported. "
             "Exercise reactions are optional and shown as totals, never by learner name. "
-            "Confidence gain is a performance-growth proxy, not a psychological score."
+            "Confidence gain is a performance-growth proxy, not a psychological score. "
+            "Courses below the minimum cohort are suppressed rather than shown as zero."
         ),
     )
 

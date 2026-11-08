@@ -71,6 +71,8 @@ DEFAULT_SETTINGS = [
      "description": "Enable Swagger UI (/docs) and ReDoc (/redoc) on the backend API"},
     {"key": "privacy_default_on", "value": "true", "category": "security",
      "description": "Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views."},
+    {"key": "analytics_min_cohort_size", "value": "5", "category": "security",
+     "description": "Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment."},
 
     # --- Labs ---
     {"key": "default_session_hours", "value": "2", "category": "labs",

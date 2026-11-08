@@ -70,6 +70,17 @@
         </article>
       </div>
 
+      <p
+        v-if="totals.suppressed_courses || totals.no_evidence_courses"
+        class="reports-cohort-note"
+      >
+        <strong>Small-cohort protection is active.</strong>
+        {{ totals.suppressed_courses || 0 }} course{{ (totals.suppressed_courses || 0) === 1 ? '' : 's' }}
+        suppressed below the {{ totals.minimum_cohort_size || 5 }}-learner minimum;
+        {{ totals.no_evidence_courses || 0 }} course{{ (totals.no_evidence_courses || 0) === 1 ? '' : 's' }}
+        with no evidence yet.
+      </p>
+
       <div v-if="data.trending_topics?.length" class="trending-panel">
         <div class="trending-panel__head">
           <div>
@@ -259,24 +270,46 @@
               </td>
               <td>{{ row.summary.enrolled_learners }}</td>
               <td>
-                <strong>{{ row.summary.completion_rate }}%</strong>
-                <small>{{ row.summary.completed_learners }} completed</small>
-              </td>
-              <td>{{ row.summary.abandonment_rate }}%</td>
-              <td>
-                {{ row.summary.learning_reported ?? '—' }}<small v-if="row.summary.learning_reported !== null">/5</small>
-              </td>
-              <td>
-                <template v-if="row.summary.reaction_count">
-                  <strong>{{ row.summary.positive_rate }}%</strong>
-                  <small>{{ row.summary.likes }} like{{ row.summary.likes === 1 ? '' : 's' }} · {{ row.summary.dislikes }} dislike{{ row.summary.dislikes === 1 ? '' : 's' }}</small>
+                <template v-if="row.cohort_state === 'available'">
+                  <strong>{{ row.summary.completion_rate }}%</strong>
+                  <small>{{ row.summary.completed_learners }} completed</small>
                 </template>
                 <span v-else>—</span>
               </td>
               <td>
-                {{ row.summary.confidence_gain !== null ? `${row.summary.confidence_gain > 0 ? '+' : ''}${row.summary.confidence_gain}` : '—' }}
+                <template v-if="row.cohort_state === 'available'">
+                  {{ row.summary.abandonment_rate }}%
+                </template>
+                <span v-else>—</span>
               </td>
-              <td>{{ row.summary.pulse_responses }}</td>
+              <td>
+                <template v-if="row.cohort_state === 'available'">
+                  {{ row.summary.learning_reported ?? '—' }}<small v-if="row.summary.learning_reported !== null">/5</small>
+                </template>
+                <span v-else>—</span>
+              </td>
+              <td>
+                <template v-if="row.cohort_state === 'available'">
+                  <template v-if="row.summary.reaction_count">
+                    <strong>{{ row.summary.positive_rate }}%</strong>
+                    <small>{{ row.summary.likes }} like{{ row.summary.likes === 1 ? '' : 's' }} · {{ row.summary.dislikes }} dislike{{ row.summary.dislikes === 1 ? '' : 's' }}</small>
+                  </template>
+                  <span v-else>—</span>
+                </template>
+                <span v-else>—</span>
+              </td>
+              <td>
+                <template v-if="row.cohort_state === 'available'">
+                  {{ row.summary.confidence_gain !== null ? `${row.summary.confidence_gain > 0 ? '+' : ''}${row.summary.confidence_gain}` : '—' }}
+                </template>
+                <span v-else>—</span>
+              </td>
+              <td>
+                <template v-if="row.cohort_state === 'available'">
+                  {{ row.summary.pulse_responses }}
+                </template>
+                <span v-else>—</span>
+              </td>
               <td>
                 <router-link :to="`/courses/${row.course.id}?tab=analytics`" class="reports-open">
                   Open
@@ -309,7 +342,14 @@ const exportReason = ref('')
 const rows = computed(() => data.value?.courses || [])
 const totals = computed(() => data.value?.totals || {})
 
-const ragLabel = (rag) => ({ red: 'Red', amber: 'Amber', green: 'Green' }[rag] || 'No signal')
+const ragLabel = (rag) => ({
+  red: 'Red',
+  amber: 'Amber',
+  green: 'Green',
+  suppressed: 'Suppressed',
+  no_evidence: 'No evidence',
+  insufficient_evidence: 'No evidence',
+}[rag] || 'No signal')
 
 const RADAR_CENTER = { x: 180, y: 155 }
 const RADAR_RADIUS = 112
@@ -449,24 +489,29 @@ const exportCsv = async () => {
     return
   }
 
-  const header = ['Course code', 'Course', 'RAG', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
-  const lines = rows.value.map((row) => [
-    row.course.code,
-    row.course.name,
-    ragLabel(row.summary.rag),
-    row.summary.enrolled_learners,
-    row.summary.total_learning_hours ?? 0,
-    row.summary.completion_rate,
-    row.summary.abandonment_rate,
-    row.summary.learning_reported ?? '',
-    row.summary.likes ?? 0,
-    row.summary.dislikes ?? 0,
-    row.summary.positive_rate ?? 0,
-    row.summary.confidence_gain ?? '',
-    row.summary.pulse_responses,
-    skillMix(row.skill_tree, 'assigned_pct'),
-    skillMix(row.skill_tree, 'completed_pct'),
-  ])
+  const header = ['Course code', 'Course', 'RAG', 'Cohort state', 'Learners', 'Learning hours', 'Completion %', 'Abandonment %', 'Learning reported', 'Likes', 'Dislikes', 'Positive feedback %', 'Confidence gain', 'Pulse responses', 'Skill tree assigned %', 'Skill tree completed %']
+  const lines = rows.value.map((row) => {
+    const available = row.cohort_state === 'available'
+    const metric = (value, fallback = '') => available ? (value ?? fallback) : ''
+    return [
+      row.course.code,
+      row.course.name,
+      ragLabel(row.summary.rag),
+      row.cohort_state,
+      row.summary.enrolled_learners,
+      metric(row.summary.total_learning_hours, 0),
+      metric(row.summary.completion_rate),
+      metric(row.summary.abandonment_rate),
+      metric(row.summary.learning_reported),
+      metric(row.summary.likes, 0),
+      metric(row.summary.dislikes, 0),
+      metric(row.summary.positive_rate, 0),
+      metric(row.summary.confidence_gain),
+      metric(row.summary.pulse_responses),
+      available ? skillMix(row.skill_tree, 'assigned_pct') : '',
+      available ? skillMix(row.skill_tree, 'completed_pct') : '',
+    ]
+  })
   const csv = [header, ...lines]
     .map((line) => line.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(','))
     .join('\n')
@@ -977,6 +1022,24 @@ onMounted(load)
 
 .reports-open:hover {
   text-decoration: underline;
+}
+
+.reports-cohort-note {
+  margin: 0.9rem 0 0;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.reports-rag--suppressed,
+.reports-rag--no_evidence,
+.reports-rag--insufficient_evidence {
+  background: color-mix(in srgb, var(--text-muted) 12%, transparent);
+  color: var(--text-muted);
 }
 
 .reports-note {

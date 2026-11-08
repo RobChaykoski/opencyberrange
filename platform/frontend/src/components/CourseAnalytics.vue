@@ -4,6 +4,19 @@
     <p v-else-if="error" class="empty-tab course-analytics__error" role="alert">{{ error }}</p>
 
     <template v-else-if="overview">
+      <div
+        v-if="overview.cohort_state !== 'available'"
+        class="analytics-suppressed"
+        role="status"
+      >
+        <strong>
+          {{ overview.cohort_state === 'suppressed' ? 'Cohort suppressed' : 'No evidence yet' }}
+        </strong>
+        <p>
+          {{ overview.suppression?.reason || 'Metrics are hidden until there is enough evidence.' }}
+        </p>
+      </div>
+      <template v-else>
       <div class="analytics-summary">
         <article class="analytics-stat analytics-stat--accent">
           <span>Completion</span>
@@ -102,31 +115,37 @@
                 <span class="analytics-exercise">{{ exercise.lab_name }}</span>
                 <small>{{ exercise.track_name }}<template v-if="exercise.level_name"> · {{ exercise.level_name }}</template></small>
               </td>
-              <td>{{ exercise.started_learners }}</td>
-              <td>
-                <span class="analytics-rate">{{ exercise.completion_rate }}%</span>
-                <small>{{ exercise.completed_learners }} learners</small>
-              </td>
-              <td>
-                <span class="analytics-rate">{{ exercise.abandonment_rate }}%</span>
-                <small>abandoned</small>
-              </td>
-              <td>
-                {{ exercise.learning_reported ?? '—' }}<small v-if="exercise.learning_reported !== null">/5 · {{ exercise.pulse_responses }} pulse</small>
-              </td>
-              <td>
-                <template v-if="exercise.reaction_count">
-                  <span class="analytics-rate">{{ exercise.positive_rate }}%</span>
-                  <small>{{ exercise.likes }} like{{ exercise.likes === 1 ? '' : 's' }} · {{ exercise.dislikes }} dislike{{ exercise.dislikes === 1 ? '' : 's' }}</small>
-                </template>
-                <span v-else class="analytics-muted">No feedback yet</span>
-              </td>
-              <td>{{ exercise.median_attempts ?? '—' }}<small>{{ exercise.first_attempt_rate }}% first try</small></td>
-              <td>
-                <span class="analytics-rag" :class="`analytics-rag--${exercise.rag}`">
-                  {{ ragLabel(exercise.rag) }}
-                </span>
-                <small v-if="exercise.rag_reasons?.length">{{ exercise.rag_reasons.join(' · ') }}</small>
+              <template v-if="exercise.cohort_state === 'available'">
+                <td>{{ exercise.started_learners }}</td>
+                <td>
+                  <span class="analytics-rate">{{ exercise.completion_rate }}%</span>
+                  <small>{{ exercise.completed_learners }} learners</small>
+                </td>
+                <td>
+                  <span class="analytics-rate">{{ exercise.abandonment_rate }}%</span>
+                  <small>abandoned</small>
+                </td>
+                <td>
+                  {{ exercise.learning_reported ?? '—' }}<small v-if="exercise.learning_reported !== null">/5 · {{ exercise.pulse_responses }} pulse</small>
+                </td>
+                <td>
+                  <template v-if="exercise.reaction_count">
+                    <span class="analytics-rate">{{ exercise.positive_rate }}%</span>
+                    <small>{{ exercise.likes }} like{{ exercise.likes === 1 ? '' : 's' }} · {{ exercise.dislikes }} dislike{{ exercise.dislikes === 1 ? '' : 's' }}</small>
+                  </template>
+                  <span v-else class="analytics-muted">No feedback yet</span>
+                </td>
+                <td>{{ exercise.median_attempts ?? '—' }}<small>{{ exercise.first_attempt_rate }}% first try</small></td>
+                <td>
+                  <span class="analytics-rag" :class="`analytics-rag--${exercise.rag}`">
+                    {{ ragLabel(exercise.rag) }}
+                  </span>
+                  <small v-if="exercise.rag_reasons?.length">{{ exercise.rag_reasons.join(' · ') }}</small>
+                </td>
+              </template>
+              <td v-else :colspan="7" class="analytics-muted">
+                {{ cohortStateLabel(exercise.cohort_state) }} — metrics hidden until the cohort reaches
+                {{ exercise.suppression?.minimum_cohort_size || 5 }} learners.
               </td>
             </tr>
           </tbody>
@@ -142,6 +161,7 @@
           </div>
         </article>
       </div>
+      </template>
     </template>
   </div>
 </template>
@@ -163,7 +183,16 @@ const ragLabel = (rag) => ({
   red: 'Red',
   amber: 'Amber',
   green: 'Green',
+  suppressed: 'Suppressed',
+  no_evidence: 'No evidence',
+  insufficient_evidence: 'No evidence',
 }[rag] || 'No signal')
+
+const cohortStateLabel = (state) => ({
+  suppressed: 'Suppressed',
+  no_evidence: 'No evidence yet',
+  available: 'Available',
+}[state] || 'No evidence yet')
 
 const teachingSignals = computed(() => {
   const signals = []
@@ -221,6 +250,25 @@ onMounted(load)
 
 .course-analytics__error {
   color: var(--danger);
+}
+
+.analytics-suppressed {
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+  color: var(--text-secondary);
+}
+
+.analytics-suppressed strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.analytics-suppressed p {
+  margin: 0;
+  line-height: 1.55;
 }
 
 .analytics-summary {
@@ -289,6 +337,9 @@ onMounted(load)
 .impact-card--red { --impact-accent: var(--danger); }
 .impact-card--amber { --impact-accent: var(--warning); }
 .impact-card--green { --impact-accent: var(--success); }
+.impact-card--suppressed,
+.impact-card--no_evidence,
+.impact-card--insufficient_evidence { --impact-accent: var(--text-muted); }
 
 .impact-card__label {
   display: block;

@@ -66,6 +66,12 @@ admin views for the current browser; hover or focus a masked value to reveal it.
 they have no saved preference. An explicit per-browser choice always wins. The
 sidebar keeps the same current-browser toggle for quick access.
 
+The same tab includes **Analytics Minimum Cohort**. Course and exercise
+analytics below that learner count are suppressed rather than shown as zero;
+the interface distinguishes **Suppressed** from **No evidence yet**. Reports and
+exports also exclude suppressed courses from aggregate totals. The default is
+5 learners; set it to 0 only in a trusted test environment.
+
 ## Registration email
 
 The **Email** tab configures the SMTP relay used for registration messages and
