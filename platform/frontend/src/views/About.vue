@@ -60,10 +60,10 @@
           <strong>OpenCyberRange</strong> attribution and notices remain in force.
         </p>
 
-        <h3 class="about-subtitle">Licence documents</h3>
+        <h3 class="about-subtitle">Project documents</h3>
         <div class="about-link-grid">
           <button
-            v-for="doc in about.licences"
+            v-for="doc in projectLicences"
             :key="doc.file"
             type="button"
             class="about-link"
@@ -77,6 +77,29 @@
             <span class="about-link__file">{{ doc.file }}</span>
           </button>
         </div>
+
+        <details class="about-group about-licence-group">
+          <summary>
+            <span>Third-party licence texts</span>
+            <span class="about-group__count">{{ thirdPartyLicences.length }}</span>
+          </summary>
+          <div class="about-link-grid about-link-grid--nested">
+            <button
+              v-for="doc in thirdPartyLicences"
+              :key="doc.file"
+              type="button"
+              class="about-link"
+              aria-haspopup="dialog"
+              :disabled="licenceLoading === doc.file"
+              @click="viewLicence(doc)"
+            >
+              <span class="about-link__label">
+                {{ licenceLoading === doc.file ? 'Loading…' : doc.label }}
+              </span>
+              <span class="about-link__file">{{ doc.file }}</span>
+            </button>
+          </div>
+        </details>
       </section>
 
       <section class="panel about-panel">
@@ -199,6 +222,23 @@ const groups = computed(() => {
 
 const componentCount = computed(() =>
   groups.value.reduce((total, group) => total + group.items.length, 0)
+)
+
+const PROJECT_LICENCE_FILES = new Set([
+  'LICENSE',
+  'NOTICE',
+  'LICENSING.md',
+  'BRANDING.md',
+  'BUILD_NOTICE.md',
+  'THIRD_PARTY_NOTICES.md',
+])
+
+const projectLicences = computed(() =>
+  (about.value?.licences || []).filter((doc) => PROJECT_LICENCE_FILES.has(doc.file))
+)
+
+const thirdPartyLicences = computed(() =>
+  (about.value?.licences || []).filter((doc) => !PROJECT_LICENCE_FILES.has(doc.file))
 )
 
 const load = async () => {
@@ -367,7 +407,7 @@ onMounted(load)
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .about-summary__value {
@@ -419,6 +459,14 @@ onMounted(load)
   gap: 0.65rem;
 }
 
+.about-link-grid--nested {
+  margin-top: 0.75rem;
+}
+
+.about-licence-group {
+  margin-top: 1rem;
+}
+
 .about-link {
   display: flex;
   flex-direction: column;
@@ -455,7 +503,7 @@ onMounted(load)
 .about-link__file {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
 
@@ -497,7 +545,7 @@ onMounted(load)
 }
 
 .about-table :deep(th) {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -508,7 +556,7 @@ onMounted(load)
 
 .about-empty {
   margin: 0.5rem 0;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .about-sbom-list {
@@ -541,7 +589,7 @@ onMounted(load)
 .about-sbom__hash {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.72rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   overflow-wrap: anywhere;
 }
 
