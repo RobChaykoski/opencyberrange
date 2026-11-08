@@ -27,15 +27,20 @@ for optional practice that matches the same topic.
 
 ## Available chapters
 
-| Track | Chapters | Exercises |
-|-------|----------|-----------|
-| Windows Penetration Testing | CH01–CH09 | 53 |
-| Linux Fundamentals | CH L1–CH L3 | 37 |
-| Web Application Security | CH W1–CH W2 | 16 |
-| Network Security | CH N0–CH N2, CH NETSY12 | 16 |
-| Malware Analysis | CH M1–CH M2 | 8 |
-| OT/ICS Security | CH OT1 | 1 |
-| AI Hacking | CH AI1 | 3 |
+| Track | Chapters | Labs | Workbook walkthroughs |
+|-------|----------|-----:|---------------------:|
+| Windows Penetration Testing | CH01–CH09 | 53 | 51 |
+| Linux Fundamentals | CH L1–L3 plus extensions | 37 | 30 |
+| Web Application Security | CH W1–W3 | 16 | 16 |
+| Network Security | CH N0–N2, CH NETSY12, plus extension | 16 | 16 |
+| Malware Analysis | CH M1–M2 | 8 | 8 |
+| Forensics | CH FOR1–FOR2 | 2 | 2 |
+| OSINT | CH OSINT1 | 5 | 5 |
+| OT/ICS Security | CH OT1 | 1 | 1 |
+| AI Hacking | CH AI1 | 3 | 3 |
+| Software Security | CH SWSEC | 2 | 2 |
+| High School | CH HS09–HS12 | 6 | 6 |
+| **Total** | | **149** | **140** |
 
 The AI Hacking chapter starts at
 [CH AI1 — AI Security Foundations](CH_AI01_AI_Foundations/00_Introduction.md).

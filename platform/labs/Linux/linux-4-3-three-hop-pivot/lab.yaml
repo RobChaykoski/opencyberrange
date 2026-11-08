@@ -70,6 +70,8 @@ hints:
       tokens in the format: first_second_third to build the flag.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN04_Lateral_Movement/03_Three_Hop_Pivot/"
+
 topology:
   nodes:
     - id: "host-a"

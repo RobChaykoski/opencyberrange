@@ -56,6 +56,8 @@ hints:
       /root/token3.txt. Combine them as OCR{token1_token2_token3}.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/webpt/CH_WEB01B_Advanced_Recon/02_Traversal_Scavenger_Hunt/"
+
 topology:
   nodes:
     - id: "webapp"

@@ -54,6 +54,8 @@ hints:
       Assemble: OCR{token1_token2}
     unlock_after_minutes: 22
 
+workbook: "wiki/range/webpt/CH_WEB02B_API_And_Injection/02_Command_Injection/"
+
 topology:
   nodes:
     - id: "webapp"

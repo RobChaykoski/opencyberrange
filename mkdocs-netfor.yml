@@ -89,4 +89,8 @@ nav:
   - "CH N3 -- Firewalls":
     - "Exercise 3.1 -- Firewall Fundamentals": CH_NETSY12_Firewalls/01_Firewall_Fundamentals.md
     - "Exercise 3.2 -- Firewall Policy Hardening": CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening.md
+  - "Network Level 1 Extension":
+    - Introduction: CH_NET01B_Traffic_And_Logs/00_Introduction.md
+    - "Exercise 1.1 -- Packet Capture Analysis": CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis.md
+    - "Exercise 1.2 -- Log Correlation": CH_NET01B_Traffic_And_Logs/02_Log_Correlation.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

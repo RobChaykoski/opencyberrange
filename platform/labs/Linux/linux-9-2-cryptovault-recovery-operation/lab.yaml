@@ -71,6 +71,8 @@ hints:
       -out audit.txt -pass pass:CryptoVault-EMP-4471-2025
     unlock_after_minutes: 25
 
+workbook: "wiki/range/linpt/CH_LIN09_Assessments/02_CryptoVault_Recovery_Operation/"
+
 topology:
   nodes:
     - id: "workstation"

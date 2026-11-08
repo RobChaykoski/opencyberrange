@@ -53,6 +53,8 @@ hints:
       in the user's home directory.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN02B_SMB_SNMP/04_SNMP_Breadcrumb_Trail/"
+
 topology:
   nodes:
     - id: "target"

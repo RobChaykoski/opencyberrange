@@ -58,6 +58,8 @@ hints:
       OCR{token1_token2}.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/webpt/CH_WEB02B_API_And_Injection/04_Filtered_Injection/"
+
 topology:
   nodes:
     - id: "webapp"

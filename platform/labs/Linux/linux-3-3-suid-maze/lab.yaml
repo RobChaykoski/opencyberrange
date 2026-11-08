@@ -73,6 +73,8 @@ hints:
       the one from /root/flag.txt in the format OCR{token1_token2}.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN03B_Privilege_Hashes/03_SUID_Maze/"
+
 topology:
   nodes:
     - id: "target"

@@ -74,6 +74,8 @@ hints:
       mysql -h <db_ip> -u novatech_app -p'Pr0d_DB_2024#' novatech -e "SELECT * FROM audit_tokens"
     unlock_after_minutes: 30
 
+workbook: "wiki/range/webpt/CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery/"
+
 topology:
   nodes:
     - id: "webapp"

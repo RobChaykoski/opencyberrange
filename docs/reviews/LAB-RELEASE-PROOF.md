@@ -9,14 +9,14 @@ This report checks the nine v2.5.2 release criteria for every lab. `pass` means 
 
 - Labs: **149**
 - Pass: **0**
-- Review: **120**
-- Fail: **29**
+- Review: **149**
+- Fail: **0**
 
 | Criterion | Pass | Review | Gap |
 |---|---:|---:|---:|
 | `objective_measurable` | 149 | 0 | 0 |
 | `flag_demonstrates_objective` | 149 | 0 | 0 |
-| `workbook_matches_environment` | 111 | 9 | 29 |
+| `workbook_matches_environment` | 140 | 9 | 0 |
 | `duration_realistic` | 149 | 0 | 0 |
 | `hints_scaffold` | 145 | 4 | 0 |
 | `technical_failures_distinguishable` | 149 | 0 | 0 |
@@ -45,32 +45,32 @@ This report checks the nine v2.5.2 release criteria for every lab. `pass` means 
 | `linux-1-4-non-standard-port-discovery` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-1-5-nse-script-enumeration` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-1-6-version-vulnerability-identification` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-1-7-network-discovery` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-1-8-service-triage` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-1-7-network-discovery` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-1-8-service-triage` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-2-1-ssh-basic-login` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-2-10-snmp-breadcrumb-trail` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-2-10-snmp-breadcrumb-trail` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-2-2-ssh-user-discovery` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-2-3-ssh-file-discovery` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-2-4-ssh-command-execution` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-2-5-ssh-history-analysis` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-2-6-ssh-privilege-escalation` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-2-7-smb-share-enumeration` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-2-8-snmp-community-strings` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-2-9-smb-credential-hunt` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-3-1-suid-privilege-escalation` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-3-2-password-hash-cracking` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-3-3-suid-maze` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-3-4-hash-relay` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-4-1-credential-pivot-attack` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-4-2-post-exploitation-data-harvest` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-4-3-three-hop-pivot` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-4-4-encrypted-exfiltration` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-5-4-suricata-live-detection` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-2-7-smb-share-enumeration` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-2-8-snmp-community-strings` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-2-9-smb-credential-hunt` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-3-1-suid-privilege-escalation` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-3-2-password-hash-cracking` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-3-3-suid-maze` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-3-4-hash-relay` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-4-1-credential-pivot-attack` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-4-2-post-exploitation-data-harvest` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-4-3-three-hop-pivot` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-4-4-encrypted-exfiltration` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-5-4-suricata-live-detection` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-5-5-capstone-ctf` | Linux | review | workbook_matches_environment: no workbook; confirm this is an instructor-led assessment<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-5-6-brute-force-detection` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-5-6-brute-force-detection` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-5-7-black-box-ctf` | Linux | review | workbook_matches_environment: no workbook; confirm this is an instructor-led assessment<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-9-1-meridian-data-breach-assessment` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `linux-9-2-cryptovault-recovery-operation` | Linux | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-9-1-meridian-data-breach-assessment` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `linux-9-2-cryptovault-recovery-operation` | Linux | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-final-1-branch-office-practice` | Linux | review | workbook_matches_environment: no workbook; confirm this is an instructor-led assessment<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-final-2-clinic-final` | Linux | review | workbook_matches_environment: no workbook; confirm this is an instructor-led assessment<br>hints_scaffold: 0 hints; confirm the assessment needs no more<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `linux-final-3-architecture-mock` | Linux | review | workbook_matches_environment: no workbook; confirm this is an instructor-led assessment<br>hints_scaffold: 0 hints; confirm the assessment needs no more<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
@@ -87,10 +87,10 @@ This report checks the nine v2.5.2 release criteria for every lab. `pass` means 
 | `network-0-1-ping-basics` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-0-2-dns-basics` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-0-3-name-or-network` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `network-1-1-packet-capture-analysis` | Network | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `network-1-1-packet-capture-analysis` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-1-1-port-scan-detection` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-1-2-http-traffic-analysis` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `network-1-2-log-correlation` | Network | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `network-1-2-log-correlation` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-1-3-dns-anomaly-detection` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-1-4-failed-login-analysis` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `network-12-1-firewall-fundamentals` | Network | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
@@ -114,16 +114,16 @@ This report checks the nine v2.5.2 release criteria for every lab. `pass` means 
 | `web-1-4-header-analysis` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `web-1-5-subdomain-discovery` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `web-1-6-comprehensive-web-reconnaissance` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-1-7-directory-traversal` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-1-8-traversal-scavenger-hunt` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-1-7-directory-traversal` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-1-8-traversal-scavenger-hunt` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `web-2-1-basic-sql-injection-get` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-2-2-insecure-api-endpoints` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-2-3-command-injection` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-2-4-api-enumeration-gauntlet` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-2-5-filtered-injection` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-3-1-hidden-login-discovery` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-3-2-sql-injection-to-shell` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
-| `web-3-3-full-web-to-root` | Web | fail | workbook_matches_environment: no workbook linked<br>difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-2-2-insecure-api-endpoints` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-2-3-command-injection` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-2-4-api-enumeration-gauntlet` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-2-5-filtered-injection` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-3-1-hidden-login-discovery` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-3-2-sql-injection-to-shell` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
+| `web-3-3-full-web-to-root` | Web | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `windows-1-1-basic-port-scan` | Windows | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `windows-1-2-multiple-port-discovery` | Windows | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |
 | `windows-1-3-windows-service-version-detection` | Windows | review | difficulty_evidence: difficulty is declared but learner evidence is not recorded |

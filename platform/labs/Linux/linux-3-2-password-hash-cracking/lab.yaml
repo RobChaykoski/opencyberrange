@@ -63,6 +63,8 @@ hints:
       The first part is in the backup directory alongside the shadow file.
     unlock_after_minutes: 26
 
+workbook: "wiki/range/linpt/CH_LIN03B_Privilege_Hashes/02_Password_Hash_Cracking/"
+
 topology:
   nodes:
     - id: "target"

@@ -59,6 +59,8 @@ hints:
       Token 2 is in a file on that share.
     unlock_after_minutes: 22
 
+workbook: "wiki/range/linpt/CH_LIN02B_SMB_SNMP/01_SMB_Share_Enumeration/"
+
 topology:
   nodes:
     - id: "target"

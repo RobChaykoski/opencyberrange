@@ -53,6 +53,8 @@ hints:
       Assemble: OCR{token1_token2}
     unlock_after_minutes: 22
 
+workbook: "wiki/range/webpt/CH_WEB01B_Advanced_Recon/01_Directory_Traversal/"
+
 topology:
   nodes:
     - id: "webapp"

@@ -87,6 +87,8 @@ hints:
       Tokens: dashboard=1nj3ct, DB=d4t4b4s3, SSH home=p1v0t, root=r00t3d
     unlock_after_minutes: 60
 
+workbook: "wiki/range/webpt/CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root/"
+
 topology:
   nodes:
     - id: "webapp"

@@ -56,6 +56,8 @@ hints:
       Extract the token values after "Token:" in each field.
     unlock_after_minutes: 22
 
+workbook: "wiki/range/linpt/CH_LIN02B_SMB_SNMP/02_SNMP_Community_Strings/"
+
 topology:
   nodes:
     - id: "target"

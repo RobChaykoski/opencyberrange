@@ -87,6 +87,8 @@ hints:
       the attacker's User-Agent string contains the final IOC.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN05_Detection/02_Brute_Force_Detection/"
+
 topology:
   nodes:
     - id: "attacker"

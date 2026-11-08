@@ -73,6 +73,8 @@ hints:
       SHOW TABLES, and look for compliance-related tables.
     unlock_after_minutes: 25
 
+workbook: "wiki/range/linpt/CH_LIN09_Assessments/01_Meridian_Data_Breach_Assessment/"
+
 topology:
   nodes:
     - id: "webserver"

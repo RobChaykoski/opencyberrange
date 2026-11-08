@@ -82,6 +82,8 @@ hints:
       Assemble: OCR{token1_token2_token3}
     unlock_after_minutes: 35
 
+workbook: "wiki/range/netfor/CH_NET01B_Traffic_And_Logs/02_Log_Correlation/"
+
 topology:
   nodes:
     - id: "analyst"

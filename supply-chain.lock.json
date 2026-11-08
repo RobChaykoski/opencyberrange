@@ -208,13 +208,13 @@
       ]
     },
     "linux-1-7-network-discovery": {
-      "content_hash": "7392a733a5b1ff58abea80a7889bfab8a43d96e26e7835adc19d28dd00a8bcae",
+      "content_hash": "d8b211e14ed993d7dc503f943b472ab5ad76c857dccdd0078aa7817ab23de865",
       "services": [
         "target"
       ]
     },
     "linux-1-8-service-triage": {
-      "content_hash": "0ce51b6641d01e6fc5be6b7cbbdc2b4de431e8f38270070d3bdfa21fa93127b1",
+      "content_hash": "6a815634d60e79a6d4440f4c3baf2241d12a212a76e728abaf971cac6587c8a3",
       "services": [
         "target-alpha",
         "target-bravo",
@@ -228,7 +228,7 @@
       ]
     },
     "linux-2-10-snmp-breadcrumb-trail": {
-      "content_hash": "43f4a7706e64aae2c7fa458ed7903e739beac53518703c3992c5970c638c2f94",
+      "content_hash": "e95b0b1bcd495e9e91fbbed1bdb677775342710351bec75581e06068d4dea50d",
       "services": [
         "target"
       ]
@@ -264,62 +264,62 @@
       ]
     },
     "linux-2-7-smb-share-enumeration": {
-      "content_hash": "c2c36b46d5bdcb94110de25263974162d13e88507f3c5ea1433714531e074015",
+      "content_hash": "2035992878b43aefd8431a76fb531b4da50a1296b0c718c22fef4a1b625730bb",
       "services": [
         "target"
       ]
     },
     "linux-2-8-snmp-community-strings": {
-      "content_hash": "2e9aaeb63d99f5b717d585c6b6a8e1774a3adb96a7bda24148ffb9897472d630",
+      "content_hash": "e110284048becc1fda8a139d5bf9d3bdd87e47c8df3aa53599c1295751f5dcc2",
       "services": [
         "target"
       ]
     },
     "linux-2-9-smb-credential-hunt": {
-      "content_hash": "4fe55a8fd94914d5e60dc9b89a11f9b69123ea69e3734f0fc6292a8355cc1420",
+      "content_hash": "2bd54902152a0a983a34646fea7d47a8b65a7e5103689c58127d7045b401d12f",
       "services": [
         "target"
       ]
     },
     "linux-3-1-suid-privilege-escalation": {
-      "content_hash": "63f11ea7e9fd88cef2a6ddcd3657173eade195477bb0a23b1be569e181a9939d",
+      "content_hash": "8593e4dce61ff3216cf75aee6b9aa6ff4b0910c57e651d9c5799782337779554",
       "services": [
         "target"
       ]
     },
     "linux-3-2-password-hash-cracking": {
-      "content_hash": "e98645f75b304c2e8560dfbd156adeba18e9fb72aba1211fc883e6eaa54efef7",
+      "content_hash": "9ae08df1dc3307e9b06659431cd6540038c2322df78a5a2346b85cbb5ceb75d0",
       "services": [
         "target"
       ]
     },
     "linux-3-3-suid-maze": {
-      "content_hash": "82f46ffefd03d7932904ba2d336fd8a708e0e5598f7f57110d8237b7da30b3ed",
+      "content_hash": "a5d5ad4a6f253be6e705f2d0f9574ee867f3d14720ef135bab65b5da8c35fab8",
       "services": [
         "target"
       ]
     },
     "linux-3-4-hash-relay": {
-      "content_hash": "ac339c73c2eb424eb515631b849a277ca29c0b6ba32460ea38b853c85c08bae7",
+      "content_hash": "31b3e9f618a2c92a40ebc1847b5a227c7eaa817a6f2d324480bea142505ed0e3",
       "services": [
         "target"
       ]
     },
     "linux-4-1-credential-pivot-attack": {
-      "content_hash": "9722abb2b8479bbc87f39a6176fbf7afbf4f561fea06d7e302f74e64eceff168",
+      "content_hash": "1e753de1734a35b4b5c75cd3dc4de0486a7c308979c68c94c208eaa3e9e0331a",
       "services": [
         "dbserver",
         "webserver"
       ]
     },
     "linux-4-2-post-exploitation-data-harvest": {
-      "content_hash": "5493ced09337fca42e376d6cd13e09b5d48f45e6b5c089203e6a49f531a93f91",
+      "content_hash": "86c14c49eead182bffa0da0c778d5f80d6d3ddb1030b0e56165183c9e30f06f2",
       "services": [
         "target"
       ]
     },
     "linux-4-3-three-hop-pivot": {
-      "content_hash": "d6c0bd04fb2604c8f494bac291a783788dab22ecd5c7e2f2aeddfb82e274aa27",
+      "content_hash": "f189ce22196966c0db9c1044e7beb7545c040d04a30817f263eeb8e4ea0aa873",
       "services": [
         "host-a",
         "host-b",
@@ -327,13 +327,13 @@
       ]
     },
     "linux-4-4-encrypted-exfiltration": {
-      "content_hash": "aa10c1efdc3b50de7673ad7340f038e0fe3fcd5a884922ff350550069119a8d7",
+      "content_hash": "403490e1252f93324aa4264329d2b9ebe79a1c3cf5e70ffa0bd98e1565545a45",
       "services": [
         "target"
       ]
     },
     "linux-5-4-suricata-live-detection": {
-      "content_hash": "2595ed0393d05b04b42e70aa75d4f40f83bce9cdb3a515d1a13423e3cec9ec1d",
+      "content_hash": "fbbccf25adb664ece62c9ef406bd232c540506c5805a114e304fef8aedb2ff4b",
       "services": [
         "analyst",
         "attacker",
@@ -349,7 +349,7 @@
       ]
     },
     "linux-5-6-brute-force-detection": {
-      "content_hash": "4fdae6059faa528cfd4b3d949b541324965b1df567d3bd423d9aa9426b03d4f3",
+      "content_hash": "d36c1a16bebc667a2a8555388bef195a0ec94a4b12781b3a32adf52634de6022",
       "services": [
         "attacker",
         "sensor",
@@ -366,14 +366,14 @@
       ]
     },
     "linux-9-1-meridian-data-breach-assessment": {
-      "content_hash": "3bbb72abd40c3d19d0c7d5deac0ab21d05f6b149d2637cd43900bca682b469ad",
+      "content_hash": "dceeb5bdf53b668eb42afe8f9db0d8f7312d17de1e7baae9787c1f7634ba1ee7",
       "services": [
         "dbserver",
         "webserver"
       ]
     },
     "linux-9-2-cryptovault-recovery-operation": {
-      "content_hash": "a41b946b331b0415c0ac2a166c3e8808a3480908f632201eb6cc40c9058cafba",
+      "content_hash": "d960e625a9b2198ae03ccf7e37c0e750d87ab2f1db5c548ceda41b2a16bc1e33",
       "services": [
         "workstation"
       ]
@@ -483,7 +483,7 @@
       ]
     },
     "network-1-1-packet-capture-analysis": {
-      "content_hash": "c521bbb0a0a4e6c8757fa2d5e8ad858b67d91a794ae5dec8074a8bab26c3b06f",
+      "content_hash": "28550ab7f2cac9ce331add2581b6892143f65b4c220a2af92b0395fd2178e7ae",
       "services": [
         "analyst"
       ]
@@ -501,7 +501,7 @@
       ]
     },
     "network-1-2-log-correlation": {
-      "content_hash": "1c001291c08ea024e6441a0938ecf0ec65812679acbc4bdb8d44c595b3ea183a",
+      "content_hash": "b23f4a790d2bbe7052fec7b2820ea7dd445712c589264dae3eef63844f2aa7e2",
       "services": [
         "analyst"
       ]
@@ -651,13 +651,13 @@
       ]
     },
     "web-1-7-directory-traversal": {
-      "content_hash": "b1b4c2b5947c38fe5f0124ee6073300768cf9ab4335261448f42cd8d035623da",
+      "content_hash": "39c04e72b4bed45222ac23f001941875e31b20b546b442656313a8ba833c3366",
       "services": [
         "webapp"
       ]
     },
     "web-1-8-traversal-scavenger-hunt": {
-      "content_hash": "a0f478ac19e32f9db4db3f09ed5f89ff95092f7b53e79b0f7baf6b6b63105488",
+      "content_hash": "e7a76c22ee32fef9771187527772ba1cca462155299e36cc0db1a939c79585d7",
       "services": [
         "webapp"
       ]
@@ -670,46 +670,46 @@
       ]
     },
     "web-2-2-insecure-api-endpoints": {
-      "content_hash": "78c8f8d22d278d84ac02fc6eefda7278993ec7258b241535199e8c1555682baf",
+      "content_hash": "8411fb683b4affbcc8a4328dad12e04df10c6314ef13734244ea2b5ee2e1be8c",
       "services": [
         "webapp"
       ]
     },
     "web-2-3-command-injection": {
-      "content_hash": "4493be51b2568ba54739447132dad96ead2b0e37231ccf9b111854c1fcb1d4a5",
+      "content_hash": "fefd156bea5e26f4fa818be9e3d41ce6145b6fdef9d2fa954bb29bd173f6443b",
       "services": [
         "webapp"
       ]
     },
     "web-2-4-api-enumeration-gauntlet": {
-      "content_hash": "d3fe7dd2d68ce0aeb49c942b092d1162e9325404f3e1e9cfb426158ec3936164",
+      "content_hash": "f1988f13da04d3adb630238270fad5c41565c34ea75446119dc5460a76ab3d78",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-2-5-filtered-injection": {
-      "content_hash": "3f7507a4ec503f2913bdc627f5473c08bd17e8a7778aa03692f0e52cf863d5ea",
+      "content_hash": "1ec64cff68e7b11b7ec39f98a5f2a4624834804e5b9babb74a639f3cca7b91fc",
       "services": [
         "webapp"
       ]
     },
     "web-3-1-hidden-login-discovery": {
-      "content_hash": "16a7aab62912f442faf2c6ce534d99458c43882f55ddba051f819de93ef096da",
+      "content_hash": "75e49adc80c35e6caa35da2216fba2a3fd9ca309c38acd7f470e9ff154c61571",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-2-sql-injection-to-shell": {
-      "content_hash": "cd985df08cb95c810282c71e34a97a93ac5e8ed085fd1afa5107dae81e5308bf",
+      "content_hash": "2a8d8b26b6c47d9cd12de1c0941d2b772a6cc356429006fc19ab581d4fb5c2db",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-3-full-web-to-root": {
-      "content_hash": "e6163472f7f542f3b492ba7d319f8e85eb3620e6e191a08985f70487e30f2009",
+      "content_hash": "e295dc4de4c9d5e0722b2cba133d2de3f52d8df16845f66b05973264b2cb8c76",
       "services": [
         "dbserver",
         "internal",

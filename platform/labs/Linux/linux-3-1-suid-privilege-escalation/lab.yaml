@@ -70,6 +70,8 @@ hints:
       read /root/flag.txt for the flag.
     unlock_after_minutes: 24
 
+workbook: "wiki/range/linpt/CH_LIN03B_Privilege_Hashes/01_SUID_Privilege_Escalation/"
+
 topology:
   nodes:
     - id: "target"

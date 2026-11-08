@@ -83,6 +83,8 @@ hints:
       access log. The attacker's User-Agent string contains the final IOC.
     unlock_after_minutes: 30
 
+workbook: "wiki/range/linpt/CH_LIN05_Detection/01_Suricata_Live_Detection/"
+
 topology:
   nodes:
     - id: "attacker"

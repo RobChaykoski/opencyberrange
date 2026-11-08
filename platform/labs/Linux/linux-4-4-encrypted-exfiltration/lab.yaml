@@ -64,6 +64,8 @@ hints:
       3. cat /opt/obsidian/.cache/.data_store | xxd -r -p
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN04_Lateral_Movement/04_Encrypted_Exfiltration/"
+
 topology:
   nodes:
     - id: "target"

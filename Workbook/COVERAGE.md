@@ -9,15 +9,15 @@ links.
 | AI | 3 |
 | Forensics | 2 |
 | High School | 6 |
-| Linux | 12 |
+| Linux | 30 |
 | Malware | 8 |
-| Network | 14 |
+| Network | 16 |
 | OSINT | 5 |
 | OT | 1 |
 | Software Security | 2 |
-| Web | 7 |
+| Web | 16 |
 | Windows | 51 |
-| **Total** | **111** |
+| **Total** | **140** |
 
 ## Labs
 
@@ -34,9 +34,25 @@ links.
 | High School | RangeBox First Steps (`high-school-9-1-rangebox-first-steps`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps/` |
 | High School | RangeBox Log Detective (`high-school-11-1-rangebox-log-detective`) | `wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/01_Log_Detective/` |
 | High School | RangeBox Network Basics (`high-school-10-1-rangebox-network-basics`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics/` |
+| Linux | Aegis Security Corp - Brute Force Detection (`linux-5-6-brute-force-detection`) | `wiki/range/linpt/CH_LIN05_Detection/02_Brute_Force_Detection/` |
+| Linux | Blackrock Dynamics - Hash Relay (`linux-3-4-hash-relay`) | `wiki/range/linpt/CH_LIN03B_Privilege_Hashes/04_Hash_Relay/` |
+| Linux | Blackwell & Associates - SMB Share Enumeration (`linux-2-7-smb-share-enumeration`) | `wiki/range/linpt/CH_LIN02B_SMB_SNMP/01_SMB_Share_Enumeration/` |
+| Linux | Cobalt Systems - SUID Maze (`linux-3-3-suid-maze`) | `wiki/range/linpt/CH_LIN03B_Privilege_Hashes/03_SUID_Maze/` |
+| Linux | Crestline Financial - Credential Pivot Attack (`linux-4-1-credential-pivot-attack`) | `wiki/range/linpt/CH_LIN04_Lateral_Movement/01_Credential_Pivot_Attack/` |
+| Linux | CryptoVault: Recovery Operation (`linux-9-2-cryptovault-recovery-operation`) | `wiki/range/linpt/CH_LIN09_Assessments/02_CryptoVault_Recovery_Operation/` |
+| Linux | Greystone Manufacturing - SNMP Community Strings (`linux-2-8-snmp-community-strings`) | `wiki/range/linpt/CH_LIN02B_SMB_SNMP/02_SNMP_Community_Strings/` |
+| Linux | Hargrove Medical Group - SMB Credential Hunt (`linux-2-9-smb-credential-hunt`) | `wiki/range/linpt/CH_LIN02B_SMB_SNMP/03_SMB_Credential_Hunt/` |
+| Linux | Ironforge Systems - Password Hash Cracking (`linux-3-2-password-hash-cracking`) | `wiki/range/linpt/CH_LIN03B_Privilege_Hashes/02_Password_Hash_Cracking/` |
+| Linux | Meridian Data Corp - SUID Privilege Escalation (`linux-3-1-suid-privilege-escalation`) | `wiki/range/linpt/CH_LIN03B_Privilege_Hashes/01_SUID_Privilege_Escalation/` |
+| Linux | Meridian Financial: Data Breach Assessment (`linux-9-1-meridian-data-breach-assessment`) | `wiki/range/linpt/CH_LIN09_Assessments/01_Meridian_Data_Breach_Assessment/` |
+| Linux | Meridian Trust Bank - Three-Hop Pivot (`linux-4-3-three-hop-pivot`) | `wiki/range/linpt/CH_LIN04_Lateral_Movement/03_Three_Hop_Pivot/` |
 | Linux | Multi-Service Discovery (`linux-1-2-multi-service-discovery`) | `wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/02_Multi_Service_Discovery/` |
 | Linux | NSE Script Enumeration (`linux-1-5-nse-script-enumeration`) | `wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/05_NSE_Script_Enumeration/` |
 | Linux | Non-Standard Port Discovery (`linux-1-4-non-standard-port-discovery`) | `wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/04_Non_Standard_Port_Discovery/` |
+| Linux | Obsidian Analytics - Encrypted Exfiltration (`linux-4-4-encrypted-exfiltration`) | `wiki/range/linpt/CH_LIN04_Lateral_Movement/04_Encrypted_Exfiltration/` |
+| Linux | Orion TechWorks - Network Discovery (`linux-1-7-network-discovery`) | `wiki/range/linpt/CH_LIN01B_Network_Discovery/01_Network_Discovery/` |
+| Linux | Redwood Analytics - Post-Exploitation Data Harvest (`linux-4-2-post-exploitation-data-harvest`) | `wiki/range/linpt/CH_LIN04_Lateral_Movement/02_Post_Exploitation_Data_Harvest/` |
+| Linux | Ridgeline Power Systems - SNMP Breadcrumb Trail (`linux-2-10-snmp-breadcrumb-trail`) | `wiki/range/linpt/CH_LIN02B_SMB_SNMP/04_SNMP_Breadcrumb_Trail/` |
 | Linux | SSH Basic Login (`linux-2-1-ssh-basic-login`) | `wiki/range/linpt/CH_LIN02_SSH_Authentication/01_SSH_Basic_Login/` |
 | Linux | SSH Command Execution (`linux-2-4-ssh-command-execution`) | `wiki/range/linpt/CH_LIN03_SSH_Post_Exploitation/01_SSH_Command_Execution/` |
 | Linux | SSH File Discovery (`linux-2-3-ssh-file-discovery`) | `wiki/range/linpt/CH_LIN02_SSH_Authentication/03_SSH_File_Discovery/` |
@@ -44,7 +60,9 @@ links.
 | Linux | SSH Privilege Escalation (`linux-2-6-ssh-privilege-escalation`) | `wiki/range/linpt/CH_LIN03_SSH_Post_Exploitation/03_SSH_Privilege_Escalation/` |
 | Linux | SSH Service Detection (`linux-1-1-ssh-service-detection`) | `wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/01_SSH_Service_Detection/` |
 | Linux | SSH User Discovery (`linux-2-2-ssh-user-discovery`) | `wiki/range/linpt/CH_LIN02_SSH_Authentication/02_SSH_User_Discovery/` |
+| Linux | Sentinel Defense Corp - Live IDS Detection (`linux-5-4-suricata-live-detection`) | `wiki/range/linpt/CH_LIN05_Detection/01_Suricata_Live_Detection/` |
 | Linux | Service Interaction (`linux-1-3-service-interaction`) | `wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/03_Service_Interaction/` |
+| Linux | Vanguard Logistics - Service Triage (`linux-1-8-service-triage`) | `wiki/range/linpt/CH_LIN01B_Network_Discovery/02_Service_Triage/` |
 | Linux | Version-Specific Vulnerability Identification (`linux-1-6-version-vulnerability-identification`) | `wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/06_Version_Vulnerability_Identification/` |
 | Malware | Halcyon Retail Group - Agent Reversing in Ghidra (`malware-1-3-ghidra-static-reversing`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/03_Ghidra_Static_Reversing/` |
 | Malware | Halcyon Retail Group - Beacon Configuration Recovery (`malware-1-2-strings-static-analysis`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/02_Strings_Static_Analysis/` |
@@ -54,6 +72,7 @@ links.
 | Malware | Halcyon Retail Group - Invoice Attachment Triage (`malware-1-6-email-attachment-analysis`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/06_Email_Attachment_Analysis/` |
 | Malware | Halcyon Retail Group - Portable Executable Triage (`malware-2-1-pe-header-analysis`) | `wiki/range/malware/CH_MAL02_Executable_Analysis/01_PE_Header_Analysis/` |
 | Malware | Northwind Health - Suspicious Attachment Triage (`malware-1-1-eicar-triage`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/01_EICAR_Triage/` |
+| Network | Avalon Biotech - Suspicious Traffic Analysis (`network-1-1-packet-capture-analysis`) | `wiki/range/netfor/CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis/` |
 | Network | Can You Reach It? Ping Fundamentals (`network-0-1-ping-basics`) | `wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/` |
 | Network | DNS Data Exfiltration Analysis (`network-2-4-dns-exfiltration`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/04_DNS_Data_Exfiltration/` |
 | Network | DNS Query Anomaly Detection (`network-1-3-dns-anomaly-detection`) | `wiki/range/netfor/CH_NET01_Log_Analysis/03_DNS_Anomaly_Detection/` |
@@ -63,6 +82,7 @@ links.
 | Network | Firewall Policy Hardening - Defense in Depth (`network-12-2-firewall-policy-hardening`) | `wiki/range/netfor/CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening/` |
 | Network | HTTP Session Cookie Extraction (`network-2-3-http-session-hijacking`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/03_HTTP_Session_Hijacking/` |
 | Network | HTTP Traffic Analysis (`network-1-2-http-traffic-analysis`) | `wiki/range/netfor/CH_NET01_Log_Analysis/02_HTTP_Traffic_Analysis/` |
+| Network | Horizon Aerospace - Log Correlation Investigation (`network-1-2-log-correlation`) | `wiki/range/netfor/CH_NET01B_Traffic_And_Logs/02_Log_Correlation/` |
 | Network | Multi-Stage Attack Chain Analysis (`network-2-5-attack-chain-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/05_Attack_Chain_Analysis/` |
 | Network | Name or Network? Troubleshooting a Broken Portal (`network-0-3-name-or-network`) | `wiki/range/netfor/CH_N0_Network_Foundations/03_Name_or_Network/` |
 | Network | SMTP Email Content Analysis (`network-2-2-smtp-email-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/02_SMTP_Email_Analysis/` |
@@ -78,11 +98,20 @@ links.
 | Software Security | Hidden Export Route (`software-security-1-1-hidden-export-route`) | `wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/` |
 | Web | Basic Directory Enumeration (`web-1-1-basic-directory-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/01_Basic_Directory_Enumeration/` |
 | Web | Basic SQL Injection (Login) (`web-2-1-basic-sql-injection-get`) | `wiki/range/webpt/CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection/` |
+| Web | Cascade Digital Media - Traversal Scavenger Hunt (`web-1-8-traversal-scavenger-hunt`) | `wiki/range/webpt/CH_WEB01B_Advanced_Recon/02_Traversal_Scavenger_Hunt/` |
+| Web | CloudPing Diagnostics - Command Injection (`web-2-3-command-injection`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/02_Command_Injection/` |
 | Web | Comprehensive Web Reconnaissance (`web-1-6-comprehensive-web-reconnaissance`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/06_Comprehensive_Web_Reconnaissance/` |
 | Web | HTTP Methods Enumeration (`web-1-3-http-methods-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/03_HTTP_Methods_Enumeration/` |
 | Web | Header Analysis (`web-1-4-header-analysis`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/04_Header_Analysis/` |
+| Web | MedCore Health Systems: Full Web-to-Root Compromise (`web-3-3-full-web-to-root`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root/` |
+| Web | Metro Transit - Insecure API Endpoints (`web-2-2-insecure-api-endpoints`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/01_Insecure_API_Endpoints/` |
+| Web | NovaTech Solutions - Hidden Login Discovery (`web-3-1-hidden-login-discovery`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery/` |
+| Web | Pinnacle Cloud - Directory Traversal (`web-1-7-directory-traversal`) | `wiki/range/webpt/CH_WEB01B_Advanced_Recon/01_Directory_Traversal/` |
+| Web | Stonebridge Capital - API Enumeration Gauntlet (`web-2-4-api-enumeration-gauntlet`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/03_API_Enumeration_Gauntlet/` |
 | Web | Subdomain Discovery (`web-1-5-subdomain-discovery`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/05_Subdomain_Discovery/` |
 | Web | Technology Identification (`web-1-2-technology-identification`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/02_Technology_Identification/` |
+| Web | TrueNorth Hosting - Filtered Injection (`web-2-5-filtered-injection`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/04_Filtered_Injection/` |
+| Web | Vertex Healthcare - SQL Injection to Shell (`web-3-2-sql-injection-to-shell`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell/` |
 | Windows | Basic Windows Port Scan (`windows-1-1-basic-port-scan`) | `wiki/range/winpt/CH01_Enumeration/01_Basic_Port_Scan/` |
 | Windows | CME Credential Reuse Automation (`windows-8-5-cme-credential-reuse-automation`) | `wiki/range/winpt/CH08_Credential_Reuse/05_CME_Credential_Reuse_Automation/` |
 | Windows | Complete Windows Penetration Test (`windows-9-3-complete-windows-penetration-test`) | `wiki/range/winpt/CH09_Assessment/03_Complete_Windows_Penetration_Test/` |

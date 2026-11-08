@@ -65,6 +65,8 @@ hints:
       table. Combine both parts of the flag in OCR{...} format.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/webpt/CH_WEB02B_API_And_Injection/03_API_Enumeration_Gauntlet/"
+
 topology:
   nodes:
     - id: "webapp"

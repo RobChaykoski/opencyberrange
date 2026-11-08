@@ -70,6 +70,8 @@ hints:
       marker. The first flag part is on the webserver in the config directory.
     unlock_after_minutes: 24
 
+workbook: "wiki/range/linpt/CH_LIN04_Lateral_Movement/01_Credential_Pivot_Attack/"
+
 topology:
   nodes:
     - id: "webserver"

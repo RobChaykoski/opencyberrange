@@ -76,6 +76,8 @@ hints:
          Look for the query prefixed with "token_" in evil-c2.net. The value after "token_" is the IOC.
     unlock_after_minutes: 30
 
+workbook: "wiki/range/netfor/CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis/"
+
 topology:
   nodes:
     - id: "analyst"

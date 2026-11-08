@@ -57,6 +57,8 @@ hints:
       via anonymous FTP. Token 3 is in the banner of a service on port 9999.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN01B_Network_Discovery/02_Service_Triage/"
+
 topology:
   nodes:
     - id: "target-alpha"

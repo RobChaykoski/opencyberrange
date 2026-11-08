@@ -73,6 +73,8 @@ hints:
       mysql -h <db_ip> -u vtx_admin -p'Vtx_DB_R00t#' vertex_portal -e "SELECT * FROM audit_flags"
     unlock_after_minutes: 35
 
+workbook: "wiki/range/webpt/CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell/"
+
 topology:
   nodes:
     - id: "webapp"

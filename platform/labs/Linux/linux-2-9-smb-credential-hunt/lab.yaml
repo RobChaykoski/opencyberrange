@@ -63,6 +63,8 @@ hints:
       The second token is in a file on that share.
     unlock_after_minutes: 35
 
+workbook: "wiki/range/linpt/CH_LIN02B_SMB_SNMP/03_SMB_Credential_Hunt/"
+
 topology:
   nodes:
     - id: "target"

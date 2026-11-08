@@ -78,4 +78,19 @@ nav:
     - Introduction: CH_WEB02_Web_Exploitation/00_Introduction.md
     - "Exercise W2.1 -- Basic SQL Injection": CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection.md
     - Chapter Review: CH_WEB02_Web_Exploitation/02_Chapter_Review.md
+  - "Web Level 1 Extension":
+    - Introduction: CH_WEB01B_Advanced_Recon/00_Introduction.md
+    - "Exercise 1.7 -- Directory Traversal": CH_WEB01B_Advanced_Recon/01_Directory_Traversal.md
+    - "Exercise 1.8 -- Traversal Scavenger Hunt": CH_WEB01B_Advanced_Recon/02_Traversal_Scavenger_Hunt.md
+  - "Web Level 2 Extension":
+    - Introduction: CH_WEB02B_API_And_Injection/00_Introduction.md
+    - "Exercise 2.2 -- Insecure API Endpoints": CH_WEB02B_API_And_Injection/01_Insecure_API_Endpoints.md
+    - "Exercise 2.3 -- Command Injection": CH_WEB02B_API_And_Injection/02_Command_Injection.md
+    - "Exercise 2.4 -- API Enumeration Gauntlet": CH_WEB02B_API_And_Injection/03_API_Enumeration_Gauntlet.md
+    - "Exercise 2.5 -- Filtered Injection": CH_WEB02B_API_And_Injection/04_Filtered_Injection.md
+  - "Web Level 3 -- Advanced Exploitation":
+    - Introduction: CH_WEB03_Advanced_Exploitation/00_Introduction.md
+    - "Exercise 3.1 -- Hidden Login Discovery": CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery.md
+    - "Exercise 3.2 -- SQL Injection to Shell": CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell.md
+    - "Exercise 3.3 -- Full Web-to-Root": CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md
