@@ -1,0 +1,71 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General OT-security benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "ot-track-1"
+    prompt: "Which protocol is commonly used for Modbus/TCP?"
+    options: ["TCP 502", "TCP 445", "TCP 1433", "UDP 53"]
+    correct: 0
+    explanation: "Modbus/TCP uses TCP 502. It is a simple request/response protocol without built-in authentication or encryption."
+    reference:
+      label: "Modbus Organization"
+      url: "https://modbus.org/"
+
+  - id: "ot-track-2"
+    prompt: "Why is network segmentation important in OT environments?"
+    options: [
+      "It limits lateral movement and protects safety-critical systems.",
+      "It makes the network faster.",
+      "It removes the need for backups.",
+      "It disables logging."
+    ]
+    correct: 0
+    explanation: "Segmentation separates IT, DMZ, supervisory, and control zones so a compromise in one zone cannot reach safety-critical devices directly."
+    reference:
+      label: "NIST SP 800-82: Guide to OT security"
+      url: "https://csrc.nist.gov/pubs/sp/800/82/r3/final"
+
+  - id: "ot-track-3"
+    prompt: "What is a read-only register in an OT assessment?"
+    options: [
+      "A value that can be queried without changing the process.",
+      "A register that always returns zero.",
+      "A password file.",
+      "A firewall rule."
+    ]
+    correct: 0
+    explanation: "Read-only registers expose status or measurement data. Prefer read operations during assessment to avoid changing a physical process."
+    reference:
+      label: "NIST SP 800-82"
+      url: "https://csrc.nist.gov/pubs/sp/800/82/r3/final"
+
+  - id: "ot-track-4"
+    prompt: "Which is a safety-first rule for OT testing?"
+    options: [
+      "Confirm the process impact and use read-only or non-disruptive checks first.",
+      "Write to every register to see what happens.",
+      "Disable the safety system.",
+      "Test directly on the production controller without approval."
+    ]
+    correct: 0
+    explanation: "OT testing can affect physical safety. Confirm scope and impact, prefer passive/read-only checks, and never disable safety controls."
+    reference:
+      label: "CISA OT security guidance"
+      url: "https://www.cisa.gov/topics/industrial-control-systems"
+
+  - id: "ot-track-5"
+    prompt: "What does the Purdue model describe?"
+    options: [
+      "A layered reference model for industrial control system networks.",
+      "A password hashing algorithm.",
+      "A web application firewall.",
+      "A packet capture format."
+    ]
+    correct: 0
+    explanation: "The Purdue Enterprise Reference Architecture separates enterprise, DMZ, supervisory, control, and field levels to guide segmentation."
+    reference:
+      label: "NIST SP 800-82"
+      url: "https://csrc.nist.gov/pubs/sp/800/82/r3/final"

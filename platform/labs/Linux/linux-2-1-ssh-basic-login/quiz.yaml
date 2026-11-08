@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Linux+"
+  code: "XK0-005"
+  url: "https://www.comptia.org/certifications/linux"
+  scope: "Benchmark practice inspired by Linux+ objectives. Not an actual exam item."
+
+questions:
+  - id: "linuxplus-ssh-1"
+    prompt: "Which TCP port does SSH use by default?"
+    options:
+      - "21"
+      - "22"
+      - "23"
+      - "443"
+    correct: 1
+    explanation: "SSH listens on TCP 22 by default. FTP is 21, Telnet is 23, and HTTPS is 443."
+    reference:
+      label: "OpenSSH manual"
+      url: "https://www.openssh.com/manual.html"
+
+  - id: "linuxplus-ssh-2"
+    prompt: "Which command connects to a remote host as the user analyst?"
+    options:
+      - "ssh analyst@host"
+      - "ssh host analyst"
+      - "ssh -u host analyst"
+      - "ssh --user=host analyst"
+    correct: 0
+    explanation: "The SSH syntax is ssh user@host. The client resolves the host, authenticates the user, and opens an encrypted session."
+    reference:
+      label: "OpenSSH ssh manual"
+      url: "https://www.openssh.com/manual.html"
+
+  - id: "linuxplus-ssh-3"
+    prompt: "Which public-key algorithm is commonly recommended for new SSH keys today?"
+    options:
+      - "DSA"
+      - "RSA with 1024 bits"
+      - "Ed25519"
+      - "MD5"
+    correct: 2
+    explanation: "Ed25519 is a modern elliptic-curve signature algorithm supported by OpenSSH. DSA and 1024-bit RSA are legacy and should be avoided for new keys."
+    reference:
+      label: "OpenSSH manual"
+      url: "https://www.openssh.com/manual.html"
+
+  - id: "linuxplus-ssh-4"
+    prompt: "What does the ssh -p option specify?"
+    options:
+      - "The private key file"
+      - "The remote port"
+      - "The password"
+      - "The proxy command"
+    correct: 1
+    explanation: "-p changes the remote port. The private key is selected with -i, and the proxy is configured with ProxyJump or ProxyCommand."
+    reference:
+      label: "OpenSSH ssh manual"
+      url: "https://www.openssh.com/manual.html"
+
+  - id: "linuxplus-ssh-5"
+    prompt: "Which file stores host keys the client has previously trusted?"
+    options:
+      - "~/.ssh/id_ed25519"
+      - "~/.ssh/authorized_keys"
+      - "~/.ssh/known_hosts"
+      - "/etc/shadow"
+    correct: 2
+    explanation: "The client records trusted host keys in ~/.ssh/known_hosts. A changed key produces a warning because it may indicate a man-in-the-middle or a rebuilt server."
+    reference:
+      label: "OpenSSH manual"
+      url: "https://www.openssh.com/manual.html"
+
+  - id: "linuxplus-ssh-6"
+    prompt: "Why should password authentication usually be disabled on internet-facing SSH servers?"
+    options:
+      - "It prevents the server from using TCP."
+      - "It reduces exposure to password guessing and brute-force attacks."
+      - "It disables encryption."
+      - "It forces every user to share one key."
+    correct: 1
+    explanation: "Password authentication can be brute-forced. Key-based authentication, combined with a passphrase and MFA where possible, removes the shared password as the primary attack surface."
+    reference:
+      label: "CompTIA Linux+ certification"
+      url: "https://www.comptia.org/certifications/linux"

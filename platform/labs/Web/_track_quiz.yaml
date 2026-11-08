@@ -1,0 +1,61 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General web-security benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "web-track-1"
+    prompt: "Which OWASP Top 10 2021 category covers SQL injection and command injection?"
+    options: ["A01: Broken Access Control", "A03: Injection", "A05: Security Misconfiguration", "A09: Logging Failures"]
+    correct: 1
+    explanation: "Injection (A03:2021) covers SQL, NoSQL, OS command, ORM, and other interpreter injection flaws."
+    reference:
+      label: "OWASP Top 10 2021: Injection"
+      url: "https://owasp.org/Top10/A03_2021-Injection/"
+
+  - id: "web-track-2"
+    prompt: "What is the strongest defence against SQL injection?"
+    options: [
+      "Parameterised queries or prepared statements",
+      "Hiding error messages",
+      "Renaming the admin account",
+      "Disabling HTTPS"
+    ]
+    correct: 0
+    explanation: "Parameterised queries keep SQL structure separate from data, so user input cannot change the query. Error hiding is only a defence-in-depth measure."
+    reference:
+      label: "OWASP SQL injection prevention"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+
+  - id: "web-track-3"
+    prompt: "Which finding lets an attacker read files outside the web root?"
+    options: ["Directory traversal", "Cross-site request forgery", "Open redirect", "Clickjacking"]
+    correct: 0
+    explanation: "Directory traversal uses ../ sequences or encoded variants to reach files outside the intended directory. Validate and canonicalise paths before use."
+    reference:
+      label: "OWASP path traversal"
+      url: "https://owasp.org/www-community/attacks/Path_Traversal"
+
+  - id: "web-track-4"
+    prompt: "Which HTTP response header helps limit where scripts can load from?"
+    options: ["Content-Security-Policy", "Content-Length", "Accept-Encoding", "Date"]
+    correct: 0
+    explanation: "Content-Security-Policy restricts script, style, image, and connection sources. It reduces the impact of cross-site scripting and content injection."
+    reference:
+      label: "MDN Content-Security-Policy"
+      url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP"
+
+  - id: "web-track-5"
+    prompt: "What is the safest way to store a user password?"
+    options: [
+      "A slow, salted password hash such as Argon2id or bcrypt",
+      "Plain text in the database",
+      "Reversible AES encryption with a shared key",
+      "A fast unsalted SHA-1 hash"
+    ]
+    correct: 0
+    explanation: "Passwords should be hashed with a slow, salted algorithm designed for password storage, such as Argon2id, bcrypt, or scrypt. Reversible encryption and fast hashes are not appropriate."
+    reference:
+      label: "OWASP password storage cheat sheet"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"

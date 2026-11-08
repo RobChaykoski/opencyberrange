@@ -1,0 +1,84 @@
+certification:
+  name: "OWASP LLM Top 10"
+  code: "LLM01"
+  url: "https://genai.owasp.org/llm-top-10/"
+  scope: "General AI-security benchmark inspired by OWASP LLM01. Not a certification exam item."
+
+questions:
+  - id: "llm01-injection-1"
+    prompt: "What is prompt injection?"
+    options:
+      - "Manipulating a model's instructions or context through crafted input."
+      - "Injecting SQL into a database."
+      - "Installing a rootkit on a server."
+      - "Capturing packets on a network."
+    correct: 0
+    explanation: "Prompt injection tries to make the model follow attacker-controlled instructions instead of the application's intended instructions. It can be direct (user input) or indirect (retrieved content, tools, or documents)."
+    reference:
+      label: "OWASP LLM01: Prompt Injection"
+      url: "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+
+  - id: "llm01-injection-2"
+    prompt: "Which OWASP LLM Top 10 category covers prompt injection?"
+    options:
+      - "LLM01: Prompt Injection"
+      - "LLM05: Improper Output Handling"
+      - "LLM06: Excessive Agency"
+      - "LLM10: Unbounded Consumption"
+    correct: 0
+    explanation: "Prompt injection is LLM01 in the OWASP Top 10 for LLM Applications. It is the top risk because it can undermine the application's instructions and safety controls."
+    reference:
+      label: "OWASP LLM Top 10"
+      url: "https://genai.owasp.org/llm-top-10/"
+
+  - id: "llm01-injection-3"
+    prompt: "Which practice reduces prompt-injection risk in an application?"
+    options:
+      - "Treat model output as untrusted and validate or constrain actions."
+      - "Put a real API key in the system prompt."
+      - "Allow the model to call any tool without limits."
+      - "Assume the model's self-reported safety is an access control."
+    correct: 0
+    explanation: "Model output is untrusted input. Applications should validate it, restrict tool permissions, and keep human confirmation for high-impact actions."
+    reference:
+      label: "OWASP LLM01 mitigations"
+      url: "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+
+  - id: "llm01-injection-4"
+    prompt: "What is indirect prompt injection?"
+    options:
+      - "Malicious instructions embedded in content the model retrieves or processes."
+      - "A user typing a prompt directly."
+      - "A network scan against the model server."
+      - "A password brute-force attack."
+    correct: 0
+    explanation: "Indirect injection hides instructions in documents, web pages, emails, or tool results. The model may treat that content as trusted context and follow it."
+    reference:
+      label: "OWASP LLM01: Prompt Injection"
+      url: "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+
+  - id: "llm01-injection-5"
+    prompt: "Why is a model's self-reported safety not an access-control mechanism?"
+    options:
+      - "The model can be manipulated and does not enforce permissions reliably."
+      - "Models cannot produce text."
+      - "It is always encrypted."
+      - "It only works offline."
+    correct: 0
+    explanation: "A model's claim that an action is safe is not an authorization decision. Access control must be enforced by deterministic application code outside the model."
+    reference:
+      label: "OWASP LLM Top 10"
+      url: "https://genai.owasp.org/llm-top-10/"
+
+  - id: "llm01-injection-6"
+    prompt: "What is the safest environment for practising prompt injection?"
+    options:
+      - "An isolated lab with mock targets and no production secrets."
+      - "A live customer support system."
+      - "A public production API."
+      - "A real email inbox."
+    correct: 0
+    explanation: "Practice belongs in an isolated lab with simulated targets. Never test prompt injection against systems you do not own or have explicit permission to assess."
+    reference:
+      label: "OWASP LLM Top 10"
+      url: "https://genai.owasp.org/llm-top-10/"

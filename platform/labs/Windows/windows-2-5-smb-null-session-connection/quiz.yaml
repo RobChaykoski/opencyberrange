@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Security+"
+  code: "SY0-701"
+  url: "https://www.comptia.org/certifications/security"
+  scope: "Benchmark practice inspired by Security+ objectives. Not an actual exam item."
+
+questions:
+  - id: "secplus-nullsess-1"
+    prompt: "What is an SMB null session?"
+    options:
+      - "A session that uses a blank administrator password."
+      - "An anonymous SMB session established without valid credentials."
+      - "A session encrypted with a null cipher."
+      - "A connection to a share with no files."
+    correct: 1
+    explanation: "A null session is an anonymous SMB connection that does not supply a username or password. Older or misconfigured systems may allow it to enumerate users, groups, and shares."
+    reference:
+      label: "CompTIA Security+ certification"
+      url: "https://www.comptia.org/certifications/security"
+
+  - id: "secplus-nullsess-2"
+    prompt: "Which command uses smbclient to list shares anonymously on a target?"
+    options:
+      - "smbclient -L //target -N"
+      - "smbclient -U admin //target"
+      - "smbclient --delete //target"
+      - "smbclient -p 22 //target"
+    correct: 0
+    explanation: "The -L option lists shares and -N suppresses the password prompt, attempting an anonymous connection. Access still depends on the server's anonymous SMB policy."
+    reference:
+      label: "Samba smbclient documentation"
+      url: "https://www.samba.org/samba/docs/current/man-html/smbclient.1.html"
+
+  - id: "secplus-nullsess-3"
+    prompt: "Which port should a modern SMB enumeration check target first?"
+    options:
+      - "21"
+      - "80"
+      - "445"
+      - "3389"
+    correct: 2
+    explanation: "Modern SMB uses TCP 445. Port 139 is the legacy NetBIOS session service; 21 is FTP, 80 is HTTP, and 3389 is RDP."
+    reference:
+      label: "CompTIA Security+ certification"
+      url: "https://www.comptia.org/certifications/security"
+
+  - id: "secplus-nullsess-4"
+    prompt: "Why is an anonymous SMB session a security concern?"
+    options:
+      - "It automatically grants domain administrator rights."
+      - "It can disclose user, group, share, and policy information useful for later attacks."
+      - "It encrypts all SMB traffic with a null key."
+      - "It disables Windows Defender."
+    correct: 1
+    explanation: "Anonymous sessions usually expose information rather than direct administrative access. That information helps an attacker plan credential attacks and lateral movement."
+    reference:
+      label: "CompTIA Security+ certification"
+      url: "https://www.comptia.org/certifications/security"
+
+  - id: "secplus-nullsess-5"
+    prompt: "Which Windows setting most directly reduces anonymous SMB enumeration?"
+    options:
+      - "Disable IPv6"
+      - "Restrict anonymous access to named pipes and shares"
+      - "Enable Remote Desktop"
+      - "Turn on Network Discovery"
+    correct: 1
+    explanation: "The anonymous-access restrictions (for example RestrictNullSessAccess and the network access policy) limit what an unauthenticated SMB session can enumerate."
+    reference:
+      label: "Microsoft SMB security documentation"
+      url: "https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-security"
+
+  - id: "secplus-nullsess-6"
+    prompt: "Which tool is commonly used to enumerate SMB shares, users, and groups from Linux?"
+    options:
+      - "enum4linux"
+      - "tcpdump"
+      - "exiftool"
+      - "volatility"
+    correct: 0
+    explanation: "enum4linux wraps SMB enumeration tools such as smbclient, rpcclient, and net to collect shares, users, groups, and policy information."
+    reference:
+      label: "Kali Linux enum4linux documentation"
+      url: "https://www.kali.org/tools/enum4linux/"

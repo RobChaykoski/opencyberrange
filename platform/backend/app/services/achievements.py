@@ -4,11 +4,13 @@ Called after successful flag submissions to award micro-credentials.
 """
 
 import logging
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.models import (
     Achievement, CourseEnrollment, CourseLabAssignment,
     CourseCompletionReset, Lab, Level, LabCompletion, CustomAchievement, Track,
     Competition, CompetitionLab, CompetitionParticipant,
+    ExerciseQuizAttempt,
 )
 from app.services.activity import log_activity, EventTypes
 
@@ -34,6 +36,10 @@ SOURCE_SLEUTH = "source_sleuth"
 LOG_DETECTIVE = "log_detective"
 RANGEBOX_RANGER = "rangebox_ranger"
 FORENSICS_PATHFINDER = "forensics_pathfinder"
+QUIZ_ACE = "quiz_ace"
+QUIZ_EXPLORER = "quiz_explorer"
+QUIZ_SCHOLAR = "quiz_scholar"
+QUIZ_COMEBACK = "quiz_comeback"
 # Learning-time and sign-in streak badges are global (course_id NULL).
 HIDDEN_ACHIEVEMENT_TYPES = {
     SHELL_SHOCKED,
@@ -98,6 +104,10 @@ ACHIEVEMENT_LABELS = {
     LOGIN_STREAK_3: "Checking In",
     LOGIN_STREAK_7: "Week Strong",
     LOGIN_STREAK_30: "Month of Momentum",
+    QUIZ_ACE: "Quiz Ace",
+    QUIZ_EXPLORER: "Quiz Explorer",
+    QUIZ_SCHOLAR: "Quiz Scholar",
+    QUIZ_COMEBACK: "Quiz Comeback",
 }
 
 ACHIEVEMENT_DESCRIPTIONS = {
@@ -127,6 +137,10 @@ ACHIEVEMENT_DESCRIPTIONS = {
     LOGIN_STREAK_3: "Signed in on 3 consecutive days",
     LOGIN_STREAK_7: "Signed in on 7 consecutive days",
     LOGIN_STREAK_30: "Signed in on 30 consecutive days",
+    QUIZ_ACE: "Scored 100% on an exercise knowledge check",
+    QUIZ_EXPLORER: "Completed knowledge checks across five exercises",
+    QUIZ_SCHOLAR: "Reached 80% or better on ten exercise knowledge checks",
+    QUIZ_COMEBACK: "Improved a knowledge-check score by 30 points or more",
 }
 
 # The three browser-first DevFest starter exercises. These slugs are stable;
@@ -199,6 +213,10 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     LOGIN_STREAK_3: "\U0001F4C5",
     LOGIN_STREAK_7: "\U0001F5D3\uFE0F",
     LOGIN_STREAK_30: "\U0001F3C5",
+    QUIZ_ACE: "\U0001F3AF",
+    QUIZ_EXPLORER: "\U0001F9ED",
+    QUIZ_SCHOLAR: "\U0001F393",
+    QUIZ_COMEBACK: "\U0001F4C8",
 }
 
 # --- Competition-specific achievements -------------------------------------
@@ -363,6 +381,36 @@ def _award_learning_achievements(db: Session, user_id: int):
 def check_learning_achievements(db: Session, user_id: int):
     """Public entry point for callers that are not completing an exercise."""
     _award_learning_achievements(db, user_id)
+    db.commit()
+
+
+def check_quiz_achievements(
+    db: Session,
+    user_id: int,
+    lab_id: int,
+    score: int,
+    previous_best: int | None,
+):
+    """Award the optional knowledge-check badges.
+
+    Quizzes are a benchmark, not a gate. The badges reward curiosity and
+    improvement; they never affect lab access or certificates.
+    """
+    if score >= 100:
+        _award(db, user_id, None, None, QUIZ_ACE)
+    if previous_best is not None and score - previous_best >= 30:
+        _award(db, user_id, None, None, QUIZ_COMEBACK)
+
+    rows = db.query(
+        ExerciseQuizAttempt.lab_id,
+        func.max(ExerciseQuizAttempt.score),
+    ).filter(
+        ExerciseQuizAttempt.user_id == user_id,
+    ).group_by(ExerciseQuizAttempt.lab_id).all()
+    if len(rows) >= 5:
+        _award(db, user_id, None, None, QUIZ_EXPLORER)
+    if sum(1 for _, best in rows if (best or 0) >= 80) >= 10:
+        _award(db, user_id, None, None, QUIZ_SCHOLAR)
     db.commit()
 
 

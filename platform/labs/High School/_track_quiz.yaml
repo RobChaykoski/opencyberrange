@@ -1,0 +1,76 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General cybersecurity foundations benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "hs-track-1"
+    prompt: "What should you do before clicking a link in an unexpected email?"
+    options: [
+      "Verify the sender and destination without clicking, and report it if suspicious.",
+      "Click it quickly to see what happens.",
+      "Forward it to classmates.",
+      "Reply with your password."
+    ]
+    correct: 0
+    explanation: "Unexpected links can lead to phishing or malware. Check the sender and hover the link, then report it through the approved channel."
+    reference:
+      label: "CISA phishing guidance"
+      url: "https://www.cisa.gov/secure-our-world/recognize-and-report-phishing"
+
+  - id: "hs-track-2"
+    prompt: "Which password is the strongest?"
+    options: [
+      "A long unique passphrase stored in a password manager.",
+      "Your name plus 1234.",
+      "The same password reused on every site.",
+      "A short dictionary word."
+    ]
+    correct: 0
+    explanation: "Long, unique passphrases generated and stored by a password manager are easier to use safely than short reused passwords."
+    reference:
+      label: "CISA password guidance"
+      url: "https://www.cisa.gov/secure-our-world/use-strong-passwords"
+
+  - id: "hs-track-3"
+    prompt: "What does the padlock in a browser address bar mean?"
+    options: [
+      "The connection is encrypted with HTTPS; it does not prove the site is trustworthy.",
+      "The website cannot contain a scam.",
+      "The website is owned by the government.",
+      "The site has no cookies."
+    ]
+    correct: 0
+    explanation: "HTTPS protects data in transit. A padlock does not guarantee that the site is honest or safe; verify the domain and the content."
+    reference:
+      label: "CISA: Secure our world"
+      url: "https://www.cisa.gov/secure-our-world"
+
+  - id: "hs-track-4"
+    prompt: "Why should you use a shared lab environment for practice?"
+    options: [
+      "It keeps real systems and personal data out of the exercise.",
+      "It makes the exercise illegal.",
+      "It removes the need to learn the tools.",
+      "It gives you real customer data."
+    ]
+    correct: 0
+    explanation: "A lab is isolated and safe. Practise there instead of probing real systems or using real personal data."
+    reference:
+      label: "CISA cybersecurity education resources"
+      url: "https://www.cisa.gov/resources-tools/resources/cybersecurity-education-resources"
+
+  - id: "hs-track-5"
+    prompt: "What is the best response if you accidentally find a real secret during a lab?"
+    options: [
+      "Stop, tell your instructor, and do not share or use it.",
+      "Post it online.",
+      "Use it on other systems.",
+      "Email it to friends."
+    ]
+    correct: 0
+    explanation: "Report it privately and avoid copying or sharing it. The safe response protects real people and systems."
+    reference:
+      label: "CISA: Report a cyber issue"
+      url: "https://www.cisa.gov/report"

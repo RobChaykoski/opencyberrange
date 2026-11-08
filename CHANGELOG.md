@@ -152,6 +152,11 @@ No changes yet.
   for a one-minute course check-in, instructors add coaching notes, and the
   summary aggregates check-ins, exercise pulse surveys, reactions, and
   coaching. Existing pulse data feeds the metrics on first load.
+- Added optional exercise knowledge checks: 2–3 randomised questions per
+  attempt, unlimited re-attempts, explanations and primary references, four
+  benchmark achievements, and Cyber DNA evidence. Ten certification-aligned
+  lab banks plus track fallbacks cover every exercise. Post-quiz ratings feed
+  course satisfaction, relevance, usefulness, and ease-of-use metrics.
 - Added an EXIF metadata investigation lab with a safe evidence image, GPS,
   device, author, and free-text metadata, plus a full beginner workbook.
 

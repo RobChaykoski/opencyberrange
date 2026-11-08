@@ -29,6 +29,7 @@ from app.models import (
     CompetitionParticipant,
     Course,
     CourseEnrollment,
+    ExerciseQuizAttempt,
     ExerciseReaction,
     Lab,
     LabCompletion,
@@ -321,6 +322,20 @@ def _signals(db: Session, user_id: int) -> dict:
         or 0
     )
 
+    quiz_rows = (
+        db.query(ExerciseQuizAttempt)
+        .filter(
+            ExerciseQuizAttempt.user_id == user_id,
+            ExerciseQuizAttempt.completed_at.isnot(None),
+        )
+        .all()
+    )
+    quiz_best: dict[int, int] = {}
+    for row in quiz_rows:
+        quiz_best[row.lab_id] = max(quiz_best.get(row.lab_id, 0), row.score or 0)
+    quiz_labs = len(quiz_best)
+    quiz_accuracy = round(sum(quiz_best.values()) / quiz_labs) if quiz_labs else None
+
     return {
         "completed_labs": len(completions),
         "started_labs": int(started_labs),
@@ -344,6 +359,9 @@ def _signals(db: Session, user_id: int) -> dict:
         "courses": int(courses),
         "instructed_courses": int(instructed),
         "likes_given": int(likes_given),
+        "quiz_attempts": len(quiz_rows),
+        "quiz_labs": quiz_labs,
+        "quiz_accuracy": quiz_accuracy,
     }
 
 
@@ -353,6 +371,7 @@ def _scores(signals: dict) -> dict[str, int]:
         + 2 * len(signals["categories"])
         + 1.2 * min(signals["started_labs"], 20)
         + 2 * min(len(signals["tracks"]), 3)
+        + 1.0 * min(signals["quiz_labs"], 10)
     )
     builder = _clamp(
         2.0 * min(signals["completed_labs"], 25)
@@ -360,6 +379,8 @@ def _scores(signals: dict) -> dict[str, int]:
         + 1.0 * min(signals["no_hint_labs"], 10)
         + 0.5 * min(signals["perfect_labs"], 10)
         + 1.0 * min(signals["builder_labs"], 10)
+        + 1.5 * min(signals["quiz_labs"], 10)
+        + 0.15 * (signals["quiz_accuracy"] or 0)
     )
     defender = _clamp(
         9 * min(signals["defender_labs"], 12)
@@ -398,11 +419,17 @@ def _evidence(spec: DimensionSpec, signals: dict, score: int) -> str:
             f"{signals['started_labs']} labs explored"
         )
     if spec.key == "builder":
-        return (
-            f"{signals['completed_labs']} labs completed · "
-            f"{signals['total_minutes']} min hands-on · "
-            f"{signals['no_hint_labs']} no-hint"
-        )
+        parts = [
+            f"{signals['completed_labs']} labs completed",
+            f"{signals['total_minutes']} min hands-on",
+            f"{signals['no_hint_labs']} no-hint",
+        ]
+        if signals["quiz_labs"]:
+            parts.append(
+                f"{signals['quiz_labs']} knowledge checks"
+                + (f" ({signals['quiz_accuracy']}% avg)" if signals["quiz_accuracy"] is not None else "")
+            )
+        return " · ".join(parts)
     if spec.key == "defender":
         return (
             f"{signals['defender_labs']} defensive labs · "
@@ -566,6 +593,11 @@ def build_skill_dna(db: Session, user: User) -> dict:
         "dimensions": dimensions,
         "affinities": _affinities(signals),
         "titles": titles,
+        "quiz": {
+            "attempts": signals["quiz_attempts"],
+            "labs": signals["quiz_labs"],
+            "accuracy": signals["quiz_accuracy"],
+        },
         "signals": signals,
     }
 

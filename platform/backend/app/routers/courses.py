@@ -36,6 +36,7 @@ from app.schemas import (
     CourseFeedbackRequest,
 )
 from app.services.achievements import resolve_achievement_label
+from app.services import exercise_quiz
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
@@ -723,6 +724,7 @@ async def course_feedback_summary(
     reaction_rows = db.query(ExerciseReaction).filter(
         ExerciseReaction.course_id == course_id
     ).all()
+    quiz_metrics = exercise_quiz.course_quiz_metrics(db, course_id)
 
     # Reuse the existing survey engine for the student check-in. Instructors
     # get the default survey created automatically; students only see it once
@@ -784,6 +786,16 @@ async def course_feedback_summary(
     if instructor_rows:
         coached = len({row.subject_user_id for row in instructor_rows})
         components.append((_feedback_pct(coached, enrolled), 0.2))
+    quiz_ratings = [
+        quiz_metrics[key]
+        for key in ("satisfaction", "relevance", "usefulness", "ease_of_use")
+        if quiz_metrics.get(key) is not None
+    ]
+    if quiz_ratings:
+        quiz_experience = round(sum(quiz_ratings) / len(quiz_ratings), 2)
+        components.append(((quiz_experience / 5) * 100, 0.1))
+    else:
+        quiz_experience = None
     overall_score = None
     if components:
         weight = sum(item[1] for item in components)
@@ -798,6 +810,8 @@ async def course_feedback_summary(
         data_sources.append("exercise_reactions")
     if instructor_rows:
         data_sources.append("instructor_coaching")
+    if quiz_metrics["attempts"] or quiz_metrics["feedback_responses"]:
+        data_sources.append("knowledge_checks")
 
     aggregate = {
         "enrolled": enrolled,
@@ -808,6 +822,7 @@ async def course_feedback_summary(
         "engagement": engagement,
         "confidence": confidence,
         "overall_score": overall_score,
+        "quiz_experience": quiz_experience,
         "data_sources": data_sources,
     }
 
@@ -840,6 +855,7 @@ async def course_feedback_summary(
             "notes": len(instructor_rows),
             "students_coached": len({row.subject_user_id for row in instructor_rows}),
         },
+        "quizzes": quiz_metrics,
         "has_data": bool(data_sources),
         "survey_opt_in": survey_opt_in,
         "can_submit_checkin": can_submit_checkin,

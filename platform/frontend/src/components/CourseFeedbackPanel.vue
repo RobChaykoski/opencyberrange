@@ -222,6 +222,39 @@
             <p v-else class="feedback-muted">No instructor coaching notes yet.</p>
           </template>
         </section>
+
+        <section v-if="summary.quizzes" class="feedback-card">
+          <header class="feedback-card__head">
+            <div>
+              <h3>Knowledge checks</h3>
+              <p>Optional benchmark practice. Scores are not grades; ratings feed course experience.</p>
+            </div>
+            <span class="feedback-card__count">{{ summary.quizzes.attempts }} attempts</span>
+          </header>
+          <div class="feedback-bars">
+            <div v-for="bar in quizBars" :key="bar.key" class="feedback-bar">
+              <div class="feedback-bar__head">
+                <span>{{ bar.label }}</span>
+                <strong>{{ displayRating(bar.value) }}</strong>
+              </div>
+              <div class="feedback-bar__track">
+                <span :style="{ width: `${bar.value ? (bar.value / 5) * 100 : 0}%` }"></span>
+              </div>
+            </div>
+          </div>
+          <div class="feedback-split">
+            <div class="feedback-split__item">
+              <span class="feedback-split__label">Accuracy</span>
+              <strong>{{ displayPercent(summary.quizzes.accuracy) }}</strong>
+              <small>{{ summary.quizzes.labs }} exercises benchmarked</small>
+            </div>
+            <div class="feedback-split__item">
+              <span class="feedback-split__label">Responses</span>
+              <strong>{{ summary.quizzes.respondents }}</strong>
+              <small>{{ summary.quizzes.feedback_responses }} experience ratings</small>
+            </div>
+          </div>
+        </section>
       </div>
     </template>
   </section>
@@ -266,6 +299,13 @@ const ratingBars = computed(() => ([
   { key: 'confidence', label: 'Confidence', value: summary.value?.course_checkin.confidence },
 ]))
 
+const quizBars = computed(() => ([
+  { key: 'satisfaction', label: 'Satisfaction', value: summary.value?.quizzes?.satisfaction },
+  { key: 'relevance', label: 'Relevance', value: summary.value?.quizzes?.relevance },
+  { key: 'usefulness', label: 'Usefulness', value: summary.value?.quizzes?.usefulness },
+  { key: 'ease_of_use', label: 'Ease of use', value: summary.value?.quizzes?.ease_of_use },
+]))
+
 const challengeFit = computed(() => {
   const difficulty = summary.value?.pulse.difficulty
   if (difficulty === null || difficulty === undefined) return '—'
@@ -287,6 +327,7 @@ const sourceLabel = (source) => ({
   exercise_pulse: 'Exercise pulse',
   exercise_reactions: 'Reactions',
   instructor_coaching: 'Instructor coaching',
+  knowledge_checks: 'Knowledge checks',
 }[source] || source)
 
 const formatDate = (value) => {

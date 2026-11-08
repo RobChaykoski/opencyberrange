@@ -395,6 +395,21 @@ class CourseJoinRequest(BaseModel):
         return value
 
 
+class ExerciseQuizFeedbackInput(BaseModel):
+    """Optional post-quiz ratings that feed course experience metrics."""
+
+    satisfaction: Optional[int] = Field(None, ge=1, le=5)
+    relevance: Optional[int] = Field(None, ge=1, le=5)
+    usefulness: Optional[int] = Field(None, ge=1, le=5)
+    ease_of_use: Optional[int] = Field(None, ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=2000)
+
+
+class ExerciseQuizSubmitRequest(BaseModel):
+    answers: dict = Field(default_factory=dict)
+    feedback: Optional[ExerciseQuizFeedbackInput] = None
+
+
 class CourseFeedbackRequest(BaseModel):
     """Student course check-in or instructor coaching note.
 

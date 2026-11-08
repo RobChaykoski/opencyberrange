@@ -164,6 +164,25 @@ Rules:
 - Defence is taught alongside attack.
 - The workbook and lab test steps agree.
 
+## Optional knowledge checks
+
+Knowledge checks are benchmark practice, never exam items or gates.
+
+- Attach a small bank to an exercise (`quiz.yaml`), with a track fallback when
+  no specific bank exists.
+- Show 2–3 randomised questions per attempt; allow unlimited re-attempts.
+- Reveal the correct answer, an explanation, and a primary reference after
+  submission.
+- Frame the result as a benchmark, not a grade. It must not affect lab access,
+  completion, certificates, or course ranking.
+- Feed quiz participation and accuracy into Cyber DNA as evidence, not as a
+  prediction.
+- Collect optional post-quiz ratings for satisfaction, relevance, usefulness,
+  and ease of use; aggregate them into the course experience report.
+- Do not copy real exam questions, braindumps, or NDA-protected material.
+- Keep the bank expandable: content lives beside the lab and is validated by
+  `scripts/check-quiz-banks.py`.
+
 ## Safety and privacy
 
 - Do not expose student PII in aggregate views, exports, or URLs.

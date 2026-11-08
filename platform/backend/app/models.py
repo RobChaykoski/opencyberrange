@@ -514,6 +514,69 @@ class CourseFeedback(Base):
     )
 
 
+class ExerciseQuizAttempt(Base):
+    """One attempt at an optional exercise knowledge check.
+
+    The question bank lives in ``quiz.yaml`` beside the lab, so it can grow
+    without a schema change. The attempt stores the selected question keys and
+    answers so results remain reproducible even if the bank is edited later.
+    """
+    __tablename__ = "exercise_quiz_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True, index=True)
+    certification = Column(String(120), nullable=True)
+    question_keys = Column(Text, nullable=False)  # JSON array of bank question ids
+    answers = Column(Text, nullable=False, default="{}")  # JSON object key -> option index
+    score = Column(Integer, default=0)
+    correct = Column(Integer, default=0)
+    total = Column(Integer, default=0)
+    passed = Column(Boolean, default=False, server_default=text("false"))
+    taken_at = Column(DateTime, server_default=func.now())
+    completed_at = Column(DateTime, nullable=True)
+
+    user = relationship("User")
+    lab = relationship("Lab")
+    course = relationship("Course")
+
+    __table_args__ = (
+        Index("ix_exercise_quiz_user_lab", "user_id", "lab_id"),
+        Index("ix_exercise_quiz_course", "course_id"),
+    )
+
+
+class ExerciseQuizFeedback(Base):
+    """Optional post-quiz feedback that feeds course experience metrics.
+
+    One response per learner and exercise, updated in place. The four ratings
+    are the course-level satisfaction, relevance, usefulness, and ease-of-use
+    signals; the free-text comment is optional.
+    """
+    __tablename__ = "exercise_quiz_feedback"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True, index=True)
+    satisfaction = Column(Integer, nullable=True)
+    relevance = Column(Integer, nullable=True)
+    usefulness = Column(Integer, nullable=True)
+    ease_of_use = Column(Integer, nullable=True)
+    comment = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    user = relationship("User")
+    lab = relationship("Lab")
+    course = relationship("Course")
+
+    __table_args__ = (
+        Index("ix_exercise_quiz_feedback_user_lab", "user_id", "lab_id", unique=True),
+    )
+
+
 class FlagAttempt(Base):
     """Log all flag submission attempts"""
     __tablename__ = "flag_attempts"

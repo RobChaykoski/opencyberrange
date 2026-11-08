@@ -1,0 +1,76 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General software-security benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "swsec-track-1"
+    prompt: "Why is client-side validation not a security control?"
+    options: [
+      "The client can be bypassed; the server must validate every request.",
+      "It is always encrypted.",
+      "It runs too slowly.",
+      "It only works in mobile apps."
+    ]
+    correct: 0
+    explanation: "Client-side checks improve usability but can be bypassed with a proxy or custom request. The server must enforce validation and authorization."
+    reference:
+      label: "OWASP Input Validation Cheat Sheet"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html"
+
+  - id: "swsec-track-2"
+    prompt: "What is the safest way to keep a secret out of source control?"
+    options: [
+      "Load it from a secret manager or environment variable and never commit it.",
+      "Base64-encode it in the repository.",
+      "Put it in a comment.",
+      "Commit it, then delete it in a later commit."
+    ]
+    correct: 0
+    explanation: "Secrets belong in a secret manager or environment configuration, not in the repository. Base64 is encoding, not protection, and history keeps old commits."
+    reference:
+      label: "OWASP Secrets Management Cheat Sheet"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
+
+  - id: "swsec-track-3"
+    prompt: "Which flaw allows a user to access another user's record by changing an ID in a request?"
+    options: [
+      "Insecure direct object reference / broken access control",
+      "Cross-site request forgery",
+      "Open redirect",
+      "Clickjacking"
+    ]
+    correct: 0
+    explanation: "Changing an object identifier must not bypass authorization. The server must check that the current user is allowed to access the requested record."
+    reference:
+      label: "OWASP Top 10: Broken Access Control"
+      url: "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+
+  - id: "swsec-track-4"
+    prompt: "Why should dependencies be pinned and scanned?"
+    options: [
+      "Known vulnerable versions can be introduced through transitive dependencies.",
+      "Pinning makes the application slower.",
+      "Scanning replaces authentication.",
+      "Dependencies never contain vulnerabilities."
+    ]
+    correct: 0
+    explanation: "A dependency tree can include vulnerable transitive packages. Pinning, lockfiles, and software composition analysis make the risk visible and reproducible."
+    reference:
+      label: "OWASP Vulnerable Dependency Management"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html"
+
+  - id: "swsec-track-5"
+    prompt: "What is the purpose of a code review focused on security?"
+    options: [
+      "To find unsafe trust boundaries, input handling, and authorization gaps before release.",
+      "To rename variables.",
+      "To increase the line count.",
+      "To replace testing."
+    ]
+    correct: 0
+    explanation: "A security code review looks for trust-boundary mistakes, missing authorization, unsafe input handling, secret exposure, and other design-level risks."
+    reference:
+      label: "OWASP Code Review Guide"
+      url: "https://owasp.org/www-project-code-review-guide/"

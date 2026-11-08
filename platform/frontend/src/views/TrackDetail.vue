@@ -89,7 +89,7 @@
           </section>
         </div>
         <p class="cert-pathways__roles">
-          <strong>Roles this can lead to:</strong> {{ certificationPath.roles.join(' · ') }}
+          <strong>Roles this can lead to:</strong> {{ certificationPath.roles.join(' Â· ') }}
         </p>
         <div class="cert-pathways__footer">
           <div class="cert-pathways__links">
@@ -249,6 +249,15 @@
                   <span v-else-if="lab.is_active" class="lab-status lab-status--active">In progress</span>
                   <span v-else-if="lab.is_current" class="lab-status lab-status--current">Next up</span>
                   <span v-else-if="!lab.is_unlocked" class="lab-status lab-status--locked">Locked</span>
+                  <button
+                    v-if="lab.slug"
+                    type="button"
+                    class="knowledge-check-link"
+                    title="Optional benchmark; most useful after the exercise"
+                    @click.stop="openKnowledgeCheck(lab)"
+                  >
+                    Knowledge check
+                  </button>
                   <span v-for="tool in lab.tools?.slice(0, 3)" :key="tool" class="lab-tool">
                     {{ tool }}
                   </span>
@@ -328,6 +337,13 @@
               class="btn btn--primary btn--sm"
             >
               Open RangeBox
+            </button>
+            <button
+              @click="openKnowledgeCheck(activeLab.lab)"
+              class="btn btn--secondary btn--sm"
+              title="Optional benchmark; most useful after the exercise"
+            >
+              Knowledge check
             </button>
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
@@ -845,7 +861,7 @@ const hintMessage = ref('')
 const hintUnlockSeconds = ref(0)
 let hintTimerInterval = null
 
-// Drill detection — drill slugs contain an uppercase D followed by a digit (e.g. pentest-D5-02-*)
+// Drill detection â€” drill slugs contain an uppercase D followed by a digit (e.g. pentest-D5-02-*)
 function isDrill(lab) {
   return lab.slug && /-D\d+-/.test(lab.slug)
 }
@@ -1309,6 +1325,14 @@ const exitExercise = () => {
   if (courseExercisesLink.value) {
     router.push(courseExercisesLink.value)
   }
+}
+
+const openKnowledgeCheck = (lab) => {
+  if (!lab?.slug) return
+  router.push({
+    name: 'ExerciseQuiz',
+    params: { trackSlug: route.params.trackSlug, labSlug: lab.slug },
+  })
 }
 
 // Keep the learner in this tab: the RangeBox window carries the lab IPs and
@@ -2169,7 +2193,7 @@ watch(timeRemaining, (val) => {
 }
 
 .cert-pathways__grid li::before {
-  content: '·';
+  content: 'Â·';
   margin-right: 0.35rem;
   color: var(--accent);
   font-weight: 800;
@@ -2486,6 +2510,20 @@ watch(timeRemaining, (val) => {
   text-transform: uppercase;
   white-space: nowrap;
 }
+
+.knowledge-check-link {
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.knowledge-check-link:hover { color: var(--text-primary); }
 
 .lab-status--completed {
   border-color: color-mix(in srgb, var(--success) 45%, var(--border-color));
@@ -3429,7 +3467,7 @@ watch(timeRemaining, (val) => {
   font-size: 0.875rem;
 }
 
-/* VM Card — Student Target Machine */
+/* VM Card â€” Student Target Machine */
 .vm-card {
   padding: 0.875rem 1rem;
   background: var(--bg-secondary);

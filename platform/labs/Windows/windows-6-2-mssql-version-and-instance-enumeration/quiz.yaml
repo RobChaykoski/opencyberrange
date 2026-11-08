@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA PenTest+"
+  code: "PT0-002"
+  url: "https://www.comptia.org/certifications/pentest"
+  scope: "Benchmark practice inspired by PenTest+ objectives. Not an actual exam item."
+
+questions:
+  - id: "pentest-mssql-1"
+    prompt: "Which TCP port is the default Microsoft SQL Server port?"
+    options:
+      - "1433"
+      - "1521"
+      - "3306"
+      - "5432"
+    correct: 0
+    explanation: "Microsoft SQL Server listens on TCP 1433 by default. Oracle is 1521, MySQL/MariaDB is 3306, and PostgreSQL is 5432."
+    reference:
+      label: "CompTIA PenTest+ certification"
+      url: "https://www.comptia.org/certifications/pentest"
+
+  - id: "pentest-mssql-2"
+    prompt: "Which Nmap NSE script collects MS-SQL version and instance information?"
+    options:
+      - "ms-sql-info"
+      - "mysql-info"
+      - "smb-os-discovery"
+      - "rdp-enum-encryption"
+    correct: 0
+    explanation: "ms-sql-info queries Microsoft SQL Server for version, instance, and configuration details. mysql-info targets MySQL/MariaDB instead."
+    reference:
+      label: "Nmap NSE ms-sql-info"
+      url: "https://nmap.org/nsedoc/scripts/ms-sql-info.html"
+
+  - id: "pentest-mssql-3"
+    prompt: "Which built-in MS-SQL account is the system administrator account?"
+    options:
+      - "root"
+      - "postgres"
+      - "sa"
+      - "administrator"
+    correct: 2
+    explanation: "The sa (system administrator) login is the built-in MS-SQL administrative account. It should be renamed, disabled, or given a strong password on production systems."
+    reference:
+      label: "Microsoft SQL Server security documentation"
+      url: "https://learn.microsoft.com/en-us/sql/relational-databases/security/authentication-access/server-level-roles"
+
+  - id: "pentest-mssql-4"
+    prompt: "What does SELECT @@version return on Microsoft SQL Server?"
+    options:
+      - "The current database name"
+      - "The server version, edition, and build information"
+      - "The list of logged-in users"
+      - "The contents of the master database"
+    correct: 1
+    explanation: "@@version returns a string with the SQL Server version, edition, and build number. That information helps map the server to patch levels and known vulnerabilities."
+    reference:
+      label: "Microsoft @@VERSION documentation"
+      url: "https://learn.microsoft.com/en-us/sql/t-sql/functions/version-transact-sql-configuration-functions?view=sql-server-ver17"
+
+  - id: "pentest-mssql-5"
+    prompt: "Why is database version enumeration useful during a penetration test?"
+    options:
+      - "It automatically grants access to every database."
+      - "It helps identify known vulnerabilities and the patch level of the target."
+      - "It encrypts the connection."
+      - "It removes the need for credentials."
+    correct: 1
+    explanation: "Version and build information lets an analyst compare the target with known CVEs, vendor advisories, and patch levels before choosing a safe validation path."
+    reference:
+      label: "CompTIA PenTest+ certification"
+      url: "https://www.comptia.org/certifications/pentest"
+
+  - id: "pentest-mssql-6"
+    prompt: "This lab uses MySQL on port 3306 as a stand-in for MS-SQL. Which NSE script is the closest equivalent to ms-sql-info?"
+    options:
+      - "mysql-info"
+      - "mysql-enum"
+      - "ms-sql-config"
+      - "oracle-tns-version"
+    correct: 0
+    explanation: "mysql-info retrieves the MySQL protocol version, server version, thread ID, capabilities, and status. It is the direct MySQL equivalent of the MS-SQL info script."
+    reference:
+      label: "Nmap NSE mysql-info"
+      url: "https://nmap.org/nsedoc/scripts/mysql-info.html"

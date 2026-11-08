@@ -112,6 +112,9 @@ jobs:
       - name: Check generated workbook coverage
         run: python scripts/generate-workbook-coverage.py --check
 
+      - name: Validate exercise knowledge-check banks
+        run: python scripts/check-quiz-banks.py --check
+
       - name: Check documentation links
         run: python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 

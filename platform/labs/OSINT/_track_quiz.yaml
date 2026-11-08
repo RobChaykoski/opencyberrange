@@ -1,0 +1,76 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General OSINT benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "osint-track-1"
+    prompt: "What does EXIF metadata commonly include?"
+    options: [
+      "Camera, timestamp, author, and sometimes GPS fields.",
+      "The source code of the web server.",
+      "The user's password hash.",
+      "The firewall configuration."
+    ]
+    correct: 0
+    explanation: "EXIF can carry the device make and model, capture time, author, software, comments, and GPS coordinates. It travels with the image unless removed."
+    reference:
+      label: "CIPA DC-008 EXIF standard"
+      url: "https://exiftool.org/TagNames/EXIF.html"
+
+  - id: "osint-track-2"
+    prompt: "Which command removes image metadata before publishing?"
+    options: [
+      "exiftool -all= image.jpg",
+      "nmap -sV image.jpg",
+      "sqlmap -u image.jpg",
+      "chmod 777 image.jpg"
+    ]
+    correct: 0
+    explanation: "exiftool -all= strips writable metadata. Add -overwrite_original when you intentionally want to replace the file without a backup."
+    reference:
+      label: "ExifTool FAQ"
+      url: "https://exiftool.org/faq.html"
+
+  - id: "osint-track-3"
+    prompt: "What is the purpose of robots.txt?"
+    options: [
+      "It tells crawlers which paths the site owner prefers not to crawl.",
+      "It encrypts the website.",
+      "It stores user passwords.",
+      "It blocks all HTTP traffic."
+    ]
+    correct: 0
+    explanation: "robots.txt is a crawler hint, not an access control. It can still reveal paths or intent that are useful during reconnaissance."
+    reference:
+      label: "RFC 9309: Robots Exclusion Protocol"
+      url: "https://www.rfc-editor.org/rfc/rfc9309"
+
+  - id: "osint-track-4"
+    prompt: "Why should an OSINT analyst verify a finding with a second source?"
+    options: [
+      "To reduce the chance of publishing a false or misleading conclusion.",
+      "To make the finding harder to read.",
+      "To bypass authorisation.",
+      "To collect more personal data than necessary."
+    ]
+    correct: 0
+    explanation: "Corroboration separates a reliable finding from a guess. Record the source, timestamp, and method so another analyst can reproduce it."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
+
+  - id: "osint-track-5"
+    prompt: "Which action is appropriate when you find a real secret during an authorised assessment?"
+    options: [
+      "Stop, document minimally, and report it privately to the owner.",
+      "Publish it on social media.",
+      "Use it against unrelated systems.",
+      "Share it with other students."
+    ]
+    correct: 0
+    explanation: "Report privately and avoid copying more data than needed to prove the issue. Never publish live secrets or use them outside the authorised scope."
+    reference:
+      label: "OWASP vulnerability disclosure guidance"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"

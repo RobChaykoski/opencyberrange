@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA CySA+"
+  code: "CS0-003"
+  url: "https://www.comptia.org/certifications/cybersecurity-analyst"
+  scope: "Benchmark practice inspired by CySA+ objectives. Not an actual exam item."
+
+questions:
+  - id: "cysa-pcap-1"
+    prompt: "Which tool is designed to capture and inspect network packets?"
+    options:
+      - "Wireshark"
+      - "exiftool"
+      - "volatility"
+      - "nmap"
+    correct: 0
+    explanation: "Wireshark captures and analyses packets with a graphical interface. tcpdump is the common command-line equivalent. Nmap scans ports; it does not provide full packet capture."
+    reference:
+      label: "Wireshark user guide"
+      url: "https://www.wireshark.org/docs/"
+
+  - id: "cysa-pcap-2"
+    prompt: "Which capture filter shows only HTTP traffic on the standard port?"
+    options:
+      - "tcp port 80"
+      - "udp port 53"
+      - "icmp"
+      - "arp"
+    correct: 0
+    explanation: "HTTP uses TCP port 80 by default. The capture filter tcp port 80 selects those packets; DNS is UDP/TCP 53, ICMP is ping, and ARP is address resolution."
+    reference:
+      label: "Wireshark capture filters"
+      url: "https://wiki.wireshark.org/CaptureFilters"
+
+  - id: "cysa-pcap-3"
+    prompt: "What is a PCAP file?"
+    options:
+      - "A packet capture file containing recorded network traffic."
+      - "A PowerShell command."
+      - "A certificate authority policy."
+      - "A type of firewall rule."
+    correct: 0
+    explanation: "PCAP (packet capture) files store captured frames with timestamps and metadata. Analysts open them in Wireshark, tcpdump, or Zeek for offline review."
+    reference:
+      label: "Wireshark file format documentation"
+      url: "https://wiki.wireshark.org/FileFormatReference"
+
+  - id: "cysa-pcap-4"
+    prompt: "Which transport protocol is connection-oriented and uses a three-way handshake?"
+    options:
+      - "UDP"
+      - "ICMP"
+      - "TCP"
+      - "ARP"
+    correct: 2
+    explanation: "TCP establishes a connection with SYN, SYN/ACK, and ACK before data flows. UDP is connectionless, ICMP is used for control messages, and ARP resolves link-layer addresses."
+    reference:
+      label: "CompTIA CySA+ certification"
+      url: "https://www.comptia.org/certifications/cybersecurity-analyst"
+
+  - id: "cysa-pcap-5"
+    prompt: "What does a SYN/ACK packet usually indicate in a TCP capture?"
+    options:
+      - "The client is closing the connection."
+      - "The server is accepting the connection request."
+      - "The packet is encrypted with TLS."
+      - "The DNS lookup failed."
+    correct: 1
+    explanation: "The server replies to a SYN with SYN/ACK to acknowledge the request and synchronise sequence numbers. The client then sends the final ACK."
+    reference:
+      label: "CompTIA CySA+ certification"
+      url: "https://www.comptia.org/certifications/cybersecurity-analyst"
+
+  - id: "cysa-pcap-6"
+    prompt: "Why is a switch span or mirror port used for packet capture?"
+    options:
+      - "It copies selected traffic to a monitoring port without interrupting the live link."
+      - "It blocks all traffic on the monitored link."
+      - "It encrypts every packet."
+      - "It replaces the need for a firewall."
+    correct: 0
+    explanation: "A SPAN/mirror port copies traffic from one or more switch ports to a capture device. It preserves the production path while giving the analyst visibility."
+    reference:
+      label: "Cisco SPAN documentation"
+      url: "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/int_hw/b_179_int_and_hw_9300_cg/configuring_span_and_rspan.html"

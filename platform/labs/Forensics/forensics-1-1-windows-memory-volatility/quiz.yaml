@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA CySA+"
+  code: "CS0-003"
+  url: "https://www.comptia.org/certifications/cybersecurity-analyst"
+  scope: "Benchmark practice inspired by CySA+ objectives. Not an actual exam item."
+
+questions:
+  - id: "cysa-mem-1"
+    prompt: "Which tool is widely used to analyse a Windows memory image?"
+    options:
+      - "Volatility"
+      - "Nmap"
+      - "sqlmap"
+      - "exiftool"
+    correct: 0
+    explanation: "Volatility parses memory images and exposes processes, network connections, loaded modules, and other volatile artefacts through plugins."
+    reference:
+      label: "Volatility documentation"
+      url: "https://volatility3.readthedocs.io/"
+
+  - id: "cysa-mem-2"
+    prompt: "Which Volatility plugin lists running processes?"
+    options:
+      - "pslist"
+      - "netscan"
+      - "malfind"
+      - "hashdump"
+    correct: 0
+    explanation: "pslist walks the process list and shows process names, PIDs, parent PIDs, and start times. netscan focuses on network endpoints, malfind looks for injected memory, and hashdump extracts password hashes."
+    reference:
+      label: "Volatility plugin reference"
+      url: "https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.html"
+
+  - id: "cysa-mem-3"
+    prompt: "What is a memory image?"
+    options:
+      - "A screenshot of the desktop."
+      - "A snapshot of the contents of RAM at a point in time."
+      - "A backup of the hard drive."
+      - "A list of installed applications."
+    correct: 1
+    explanation: "A memory image captures the volatile contents of RAM, including running processes, network connections, encryption keys, and injected code that may not exist on disk."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
+
+  - id: "cysa-mem-4"
+    prompt: "Why is memory considered volatile evidence?"
+    options:
+      - "It is lost when the system loses power."
+      - "It is always encrypted."
+      - "It cannot be copied."
+      - "It only contains deleted files."
+    correct: 0
+    explanation: "RAM loses its contents when power is removed. Investigators capture memory early to preserve running processes and network state that would otherwise disappear."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
+
+  - id: "cysa-mem-5"
+    prompt: "Which Volatility plugin is used to inspect network connections and listening sockets from a memory image?"
+    options:
+      - "netscan"
+      - "pslist"
+      - "filescan"
+      - "svcscan"
+    correct: 0
+    explanation: "netscan extracts network endpoints, connections, and listening sockets from memory. It can reveal command-and-control connections or unusual listeners."
+    reference:
+      label: "Volatility plugin reference"
+      url: "https://volatility3.readthedocs.io/en/latest/volatility3.plugins.windows.html"
+
+  - id: "cysa-mem-6"
+    prompt: "What is chain of custody in digital forensics?"
+    options:
+      - "A documented record of who handled evidence, when, and how."
+      - "A firewall rule that blocks evidence servers."
+      - "A password policy for forensic tools."
+      - "A type of memory dump."
+    correct: 0
+    explanation: "Chain of custody documents every transfer and action on evidence. It supports integrity, reproducibility, and admissibility in an investigation."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"

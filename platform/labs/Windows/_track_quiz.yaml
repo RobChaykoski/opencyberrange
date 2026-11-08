@@ -1,0 +1,56 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General Windows-security benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "win-track-1"
+    prompt: "Which port does modern SMB use directly over TCP?"
+    options: ["139", "443", "445", "3389"]
+    correct: 2
+    explanation: "Modern SMB uses TCP 445. Port 139 is the legacy NetBIOS session service; 443 is HTTPS and 3389 is RDP."
+    reference:
+      label: "Microsoft SMB security"
+      url: "https://learn.microsoft.com/en-us/windows-server/storage/file-server/smb-security"
+
+  - id: "win-track-2"
+    prompt: "Which protocol provides remote PowerShell and command execution over HTTP or HTTPS?"
+    options: ["WinRM", "SNMP", "LDAP", "SMB"]
+    correct: 0
+    explanation: "Windows Remote Management (WinRM) carries PowerShell remoting and command execution over HTTP/HTTPS, commonly on ports 5985 and 5986."
+    reference:
+      label: "Microsoft WinRM documentation"
+      url: "https://learn.microsoft.com/en-us/windows/win32/winrm/portal"
+
+  - id: "win-track-3"
+    prompt: "Which service is the directory service used by Active Directory?"
+    options: ["LDAP", "RDP", "SMB", "DNS"]
+    correct: 0
+    explanation: "Active Directory exposes directory data through LDAP. LDAP is commonly on port 389 and LDAPS on 636."
+    reference:
+      label: "Microsoft Active Directory documentation"
+      url: "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview"
+
+  - id: "win-track-4"
+    prompt: "What is credential reuse?"
+    options: [
+      "Using the same password or hash on more than one system or account.",
+      "Changing a password every day.",
+      "Encrypting a credential file.",
+      "Disabling a user account."
+    ]
+    correct: 0
+    explanation: "Credential reuse means the same password, hash, or token works on multiple systems. It lets an attacker move laterally after one compromise."
+    reference:
+      label: "MITRE ATT&CK: Valid Accounts"
+      url: "https://attack.mitre.org/techniques/T1078/"
+
+  - id: "win-track-5"
+    prompt: "Which RDP port is used by default?"
+    options: ["22", "445", "1433", "3389"]
+    correct: 3
+    explanation: "RDP listens on TCP 3389 by default. SSH is 22, SMB is 445, and MS-SQL is 1433."
+    reference:
+      label: "Microsoft RDP documentation"
+      url: "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/welcome-to-rds"

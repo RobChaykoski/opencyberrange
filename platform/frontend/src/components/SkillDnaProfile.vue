@@ -318,6 +318,20 @@
         </article>
       </div>
     </details>
+
+    <section v-if="dna.quiz?.labs" class="dna-quiz" aria-labelledby="dna-quiz-title">
+      <div>
+        <p class="dna-quiz__eyebrow">Knowledge checks</p>
+        <h3 id="dna-quiz-title">{{ dna.quiz.labs }} exercises benchmarked</h3>
+        <p>
+          {{ dna.quiz.accuracy }}% average best score ·
+          {{ dna.quiz.attempts }} optional {{ dna.quiz.attempts === 1 ? 'attempt' : 'attempts' }}
+        </p>
+      </div>
+      <router-link to="/exercises" class="btn btn--secondary btn--sm">
+        Find a knowledge check
+      </router-link>
+    </section>
   </section>
 </template>
 
@@ -1209,6 +1223,34 @@ const titleDescription = (title) => {
 .title-chip--epic { background: rgba(139, 92, 246, 0.15); color: var(--purple); }
 .title-chip--legendary { background: var(--warning-bg); color: var(--warning); }
 .title-chip--class { background: var(--bg-tertiary); color: var(--text-primary); }
+
+.dna-quiz {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.dna-quiz__eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dna-quiz h3 { margin: 0; color: var(--text-primary); font-size: 0.95rem; }
+.dna-quiz p { margin: 0.2rem 0 0; color: var(--text-muted); font-size: 0.78rem; }
+
+@media (max-width: 600px) {
+  .dna-quiz { flex-direction: column; align-items: flex-start; }
+}
 
 @media (max-width: 900px) {
   .dna-layout { grid-template-columns: 1fr; }

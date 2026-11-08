@@ -1,0 +1,71 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General digital-forensics benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "for-track-1"
+    prompt: "What is chain of custody?"
+    options: [
+      "A documented record of who handled evidence, when, and how.",
+      "A firewall rule for evidence servers.",
+      "A password policy for forensic tools.",
+      "A type of memory dump."
+    ]
+    correct: 0
+    explanation: "Chain of custody documents every transfer and action on evidence. It supports integrity, reproducibility, and admissibility."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
+
+  - id: "for-track-2"
+    prompt: "Why should volatile evidence such as RAM be collected early?"
+    options: [
+      "It is lost when the system loses power.",
+      "It is always encrypted.",
+      "It cannot be copied.",
+      "It only contains deleted files."
+    ]
+    correct: 0
+    explanation: "RAM loses its contents when power is removed. Capturing memory early preserves running processes, network connections, and other volatile artefacts."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
+
+  - id: "for-track-3"
+    prompt: "Which hash is commonly used to verify file integrity?"
+    options: ["SHA-256", "HTML", "JSON", "TCP"]
+    correct: 0
+    explanation: "SHA-256 produces a fixed-length digest. Matching hashes before and after handling supports integrity verification."
+    reference:
+      label: "NIST hash functions"
+      url: "https://csrc.nist.gov/projects/hash-functions"
+
+  - id: "for-track-4"
+    prompt: "What is a forensic timeline used for?"
+    options: [
+      "Ordering events to reconstruct what happened and when.",
+      "Encrypting the evidence drive.",
+      "Blocking network traffic.",
+      "Compressing the case file."
+    ]
+    correct: 0
+    explanation: "A timeline correlates timestamps from logs, files, memory, and network evidence so the investigator can reconstruct the sequence of events."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"
+
+  - id: "for-track-5"
+    prompt: "Why should an investigator work from a copy or image rather than the original drive?"
+    options: [
+      "To preserve the original evidence and avoid altering it.",
+      "To make the evidence unreadable.",
+      "To bypass chain of custody.",
+      "To increase the drive speed."
+    ]
+    correct: 0
+    explanation: "Analysing a verified copy or image preserves the original for later review and reduces the risk of accidental modification."
+    reference:
+      label: "NIST SP 800-86"
+      url: "https://csrc.nist.gov/pubs/sp/800/86/final"

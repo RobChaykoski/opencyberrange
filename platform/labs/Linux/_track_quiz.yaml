@@ -1,0 +1,56 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General Linux-security benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "linux-track-1"
+    prompt: "Which permission bit lets a user run an executable with the file owner's privileges?"
+    options: ["SUID", "SGID", "Sticky bit", "Read"]
+    correct: 0
+    explanation: "The set-user-ID (SUID) bit makes an executable run with the file owner's effective user ID. A root-owned SUID binary can be a privilege-escalation path if it is misconfigured."
+    reference:
+      label: "Linux chmod manual"
+      url: "https://man7.org/linux/man-pages/man1/chmod.1.html"
+
+  - id: "linux-track-2"
+    prompt: "Which file lists users and their password hashes on a traditional Linux system?"
+    options: ["/etc/passwd", "/etc/shadow", "/etc/hosts", "/var/log/auth.log"]
+    correct: 1
+    explanation: "/etc/shadow stores password hashes and aging information, readable only by root. /etc/passwd holds the public account fields."
+    reference:
+      label: "Linux shadow manual"
+      url: "https://man7.org/linux/man-pages/man5/shadow.5.html"
+
+  - id: "linux-track-3"
+    prompt: "Which command shows the processes listening on TCP ports?"
+    options: ["ss -ltnp", "ls -la", "df -h", "uname -a"]
+    correct: 0
+    explanation: "ss -ltnp lists TCP listening sockets with process information. lsof -iTCP -sTCP:LISTEN is another common option."
+    reference:
+      label: "Linux ss manual"
+      url: "https://man7.org/linux/man-pages/man8/ss.8.html"
+
+  - id: "linux-track-4"
+    prompt: "Which log file commonly records SSH authentication events on Debian/Ubuntu?"
+    options: ["/var/log/auth.log", "/var/log/dpkg.log", "/etc/hosts", "/proc/cpuinfo"]
+    correct: 0
+    explanation: "/var/log/auth.log records authentication and authorization events, including SSH logins and sudo use, on Debian-based systems."
+    reference:
+      label: "Ubuntu server logging documentation"
+      url: "https://ubuntu.com/tutorials/viewing-and-monitoring-log-files"
+
+  - id: "linux-track-5"
+    prompt: "Why should SSH password authentication be disabled on an internet-facing server?"
+    options: [
+      "It reduces exposure to password guessing and brute force.",
+      "It disables encryption.",
+      "It prevents the server from using TCP.",
+      "It forces every user to share one account."
+    ]
+    correct: 0
+    explanation: "Key-based authentication removes the shared password as the main attack surface. Password authentication remains vulnerable to guessing and credential stuffing."
+    reference:
+      label: "OpenSSH manual"
+      url: "https://www.openssh.com/manual.html"

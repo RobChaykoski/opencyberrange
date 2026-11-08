@@ -92,6 +92,7 @@ These are Enterprise preview candidates unless the charter is amended:
 | A2 | Course analytics overview and exercise drill-down | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
 | A3 | Metric dictionary and shared definitions | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
 | A4 | Academy course workspace and two-way feedback | In scope — Analytics | Delivered in this change | Product / Design |
+| A5 | Optional exercise knowledge checks | In scope — Analytics | Delivered in this change — 10 certification banks plus track fallbacks | Product |
 | C1 | Competency Framework Engine | In scope — Analytics | Planned | Product |
 | C2 | Student Feedback Engine | In scope — Analytics | Delivered in this change — survey-engine check-in, instructor coaching, private metrics | Product |
 | C3 | Radar / Spider Web Reporting | In scope — Analytics | Planned | Product |
@@ -125,6 +126,8 @@ workspace now leads with **Overview**, **Content**, **Feedback**, and
 - students use the existing survey engine for the course check-in;
 - instructors add private coaching notes and see aggregate student voice;
 - existing pulse surveys and reactions feed the metrics immediately;
+- optional exercise knowledge checks add benchmark evidence and four experience
+  ratings (satisfaction, relevance, usefulness, ease of use);
 - no ranking or public comparison is shown.
 
 ## Change control

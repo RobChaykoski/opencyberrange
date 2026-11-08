@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Security+"
+  code: "SY0-701"
+  url: "https://www.comptia.org/certifications/security"
+  scope: "Benchmark practice inspired by Security+ privacy objectives. Not an actual exam item."
+
+questions:
+  - id: "secplus-exif-1"
+    prompt: "What does EXIF stand for?"
+    options:
+      - "Exchangeable Image File Format"
+      - "Extended Internet File Format"
+      - "Encrypted Image Export Format"
+      - "External Information File"
+    correct: 0
+    explanation: "EXIF is the Exchangeable Image File Format, a metadata standard used by cameras and phones to store settings, timestamps, and sometimes GPS coordinates."
+    reference:
+      label: "CIPA DC-008 EXIF standard"
+      url: "https://exiftool.org/TagNames/EXIF.html"
+
+  - id: "secplus-exif-2"
+    prompt: "Which tool is commonly used to read EXIF metadata from an image?"
+    options:
+      - "exiftool"
+      - "nmap"
+      - "sqlmap"
+      - "kubectl"
+    correct: 0
+    explanation: "ExifTool reads, writes, and removes metadata from images and many other file types. It is the standard command-line tool for this task."
+    reference:
+      label: "ExifTool documentation"
+      url: "https://exiftool.org/"
+
+  - id: "secplus-exif-3"
+    prompt: "Which EXIF fields can reveal where a photo was taken?"
+    options:
+      - "GPSLatitude and GPSLongitude"
+      - "Make and Model"
+      - "Orientation and ResolutionUnit"
+      - "Compression and XResolution"
+    correct: 0
+    explanation: "GPSLatitude and GPSLongitude store the camera position. Make and Model identify the device, but they do not provide the capture location."
+    reference:
+      label: "ExifTool GPS tags"
+      url: "https://exiftool.org/TagNames/GPS.html"
+
+  - id: "secplus-exif-4"
+    prompt: "Which command removes all metadata from an image while keeping the pixels?"
+    options:
+      - "exiftool -all= image.jpg"
+      - "exiftool -ver image.jpg"
+      - "nmap -sV image.jpg"
+      - "chmod 600 image.jpg"
+    correct: 0
+    explanation: "exiftool -all= removes all writable metadata. Add -overwrite_original to avoid creating a backup file when appropriate."
+    reference:
+      label: "ExifTool FAQ: removing metadata"
+      url: "https://exiftool.org/faq.html"
+
+  - id: "secplus-exif-5"
+    prompt: "Why is publishing an original photo with EXIF metadata a privacy risk?"
+    options:
+      - "It can expose the capture device, time, author, and GPS location."
+      - "It automatically encrypts the image."
+      - "It changes the image resolution."
+      - "It deletes the image after download."
+    correct: 0
+    explanation: "Metadata travels with the file. Device details, timestamps, author fields, and GPS coordinates can link an image to a person or location even when the visible content looks harmless."
+    reference:
+      label: "CompTIA Security+ certification"
+      url: "https://www.comptia.org/certifications/security"
+
+  - id: "secplus-exif-6"
+    prompt: "In this exercise, which EXIF field stores the hidden flag?"
+    options:
+      - "UserComment"
+      - "Orientation"
+      - "XResolution"
+      - "ColorSpace"
+    correct: 0
+    explanation: "The flag is stored in the UserComment field. ImageDescription provides context, and the GPS fields provide location; neither contains the flag."
+    reference:
+      label: "ExifTool tag names"
+      url: "https://exiftool.org/TagNames/"

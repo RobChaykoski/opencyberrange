@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Network+"
+  code: "N10-009"
+  url: "https://www.comptia.org/certifications/network"
+  scope: "Benchmark practice inspired by Network+ objectives. Not an actual exam item."
+
+questions:
+  - id: "netplus-portscan-1"
+    prompt: "Which Nmap scan type completes the full TCP three-way handshake?"
+    options:
+      - "TCP SYN scan (-sS)"
+      - "TCP connect scan (-sT)"
+      - "UDP scan (-sU)"
+      - "ACK scan (-sA)"
+    correct: 1
+    explanation: "A TCP connect scan uses the operating system's connect() call, so it completes the three-way handshake. A SYN scan is a half-open scan and does not complete the handshake."
+    reference:
+      label: "Nmap port scanning techniques"
+      url: "https://nmap.org/book/man-port-scanning-techniques.html"
+
+  - id: "netplus-portscan-2"
+    prompt: "Which TCP port is the standard SMB service port on modern Windows hosts?"
+    options:
+      - "139"
+      - "443"
+      - "445"
+      - "3389"
+    correct: 2
+    explanation: "SMB over TCP directly uses port 445. Port 139 is the older NetBIOS session service, 443 is HTTPS, and 3389 is RDP."
+    reference:
+      label: "CompTIA Network+ certification"
+      url: "https://www.comptia.org/certifications/network"
+
+  - id: "netplus-portscan-3"
+    prompt: "What does the Nmap -sV option add to a scan?"
+    options:
+      - "It skips host discovery."
+      - "It probes open ports to identify the service and version."
+      - "It only scans UDP ports."
+      - "It exports the results as XML."
+    correct: 1
+    explanation: "-sV enables service and version detection. Nmap sends probes to open ports and matches the responses against its service fingerprints."
+    reference:
+      label: "Nmap service and version detection"
+      url: "https://nmap.org/book/man-version-detection.html"
+
+  - id: "netplus-portscan-4"
+    prompt: "Why would an analyst use Nmap -Pn?"
+    options:
+      - "To skip host discovery and treat the target as online."
+      - "To perform a ping sweep only."
+      - "To enable IPv6 scanning."
+      - "To scan all 65,535 ports."
+    correct: 0
+    explanation: "-Pn skips the host-discovery phase. It is useful when ICMP or discovery probes are filtered but the target may still be reachable on the scanned ports."
+    reference:
+      label: "Nmap host discovery"
+      url: "https://nmap.org/book/man-host-discovery.html"
+
+  - id: "netplus-portscan-5"
+    prompt: "Which port is the default Microsoft Remote Desktop (RDP) port?"
+    options:
+      - "22"
+      - "445"
+      - "1433"
+      - "3389"
+    correct: 3
+    explanation: "RDP listens on TCP 3389 by default. SSH is 22, SMB is 445, and MS-SQL is 1433."
+    reference:
+      label: "CompTIA Network+ certification"
+      url: "https://www.comptia.org/certifications/network"
+
+  - id: "netplus-portscan-6"
+    prompt: "Which scan is commonly described as half-open because it does not complete the TCP handshake?"
+    options:
+      - "TCP connect scan (-sT)"
+      - "TCP SYN scan (-sS)"
+      - "UDP scan (-sU)"
+      - "Ping sweep (-sn)"
+    correct: 1
+    explanation: "A SYN scan sends a SYN, waits for SYN/ACK, then sends RST instead of the final ACK. The connection is never fully established, so it is called half-open."
+    reference:
+      label: "Nmap port scanning techniques"
+      url: "https://nmap.org/book/man-port-scanning-techniques.html"

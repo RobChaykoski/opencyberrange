@@ -1,0 +1,61 @@
+certification:
+  name: "OpenCyberRange track benchmark"
+  code: ""
+  url: ""
+  scope: "General network-analysis benchmark for this track. Not a certification exam item."
+
+questions:
+  - id: "net-track-1"
+    prompt: "Which protocol is connection-oriented and uses a three-way handshake?"
+    options: ["UDP", "TCP", "ICMP", "ARP"]
+    correct: 1
+    explanation: "TCP establishes a connection with SYN, SYN/ACK, and ACK. UDP is connectionless, ICMP carries control messages, and ARP resolves link-layer addresses."
+    reference:
+      label: "RFC 9293: Transmission Control Protocol"
+      url: "https://www.rfc-editor.org/rfc/rfc9293"
+
+  - id: "net-track-2"
+    prompt: "Which capture filter shows DNS traffic?"
+    options: ["port 53", "port 80", "port 443", "port 22"]
+    correct: 0
+    explanation: "DNS commonly uses UDP and TCP port 53. The capture filter port 53 selects both transports."
+    reference:
+      label: "Wireshark capture filters"
+      url: "https://wiki.wireshark.org/CaptureFilters"
+
+  - id: "net-track-3"
+    prompt: "What does a firewall default-deny policy mean?"
+    options: [
+      "Traffic is blocked unless an explicit rule allows it.",
+      "All traffic is allowed unless a rule blocks it.",
+      "Only inbound traffic is inspected.",
+      "The firewall is disabled."
+    ]
+    correct: 0
+    explanation: "Default deny (default drop) blocks traffic unless a rule permits it. It is the safer baseline for inbound and inter-zone traffic."
+    reference:
+      label: "NIST SP 800-41: Guidelines on firewalls"
+      url: "https://csrc.nist.gov/pubs/sp/800/41/r1/final"
+
+  - id: "net-track-4"
+    prompt: "Which port is HTTPS?"
+    options: ["80", "443", "53", "25"]
+    correct: 1
+    explanation: "HTTPS uses TCP 443 by default. HTTP is 80, DNS is 53, and SMTP is 25."
+    reference:
+      label: "IANA service name and port registry"
+      url: "https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"
+
+  - id: "net-track-5"
+    prompt: "Why is a switch SPAN/mirror port useful for packet analysis?"
+    options: [
+      "It copies production traffic to a monitoring port without interrupting the link.",
+      "It blocks the monitored link.",
+      "It encrypts every packet.",
+      "It replaces the need for a firewall."
+    ]
+    correct: 0
+    explanation: "A SPAN/mirror port provides a copy of selected traffic for an IDS or capture host while the production path keeps working."
+    reference:
+      label: "Cisco SPAN documentation"
+      url: "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-9/configuration_guide/int_hw/b_179_int_and_hw_9300_cg/configuring_span_and_rspan.html"

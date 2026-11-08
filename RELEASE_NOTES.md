@@ -49,6 +49,10 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
   Content, Feedback, and Achievements. The public scoreboard is replaced by a
   private two-way feedback loop that reuses the survey engine and feeds existing
   pulse data into the metrics immediately.
+- **Knowledge checks:** optional exercise benchmarks with 2–3 randomised
+  questions per attempt, unlimited re-attempts, explanations and references,
+  four new achievements, Cyber DNA evidence, and course experience ratings.
+  Ten certification-aligned lab banks plus track fallbacks cover every exercise.
 - **EXIF lab:** a new beginner OSINT exercise teaches EXIF, GPS, device, and
   author metadata analysis with a full workbook.
 

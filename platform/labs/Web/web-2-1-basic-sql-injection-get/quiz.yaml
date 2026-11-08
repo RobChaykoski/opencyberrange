@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Security+"
+  code: "SY0-701"
+  url: "https://www.comptia.org/certifications/security"
+  scope: "Benchmark practice inspired by Security+ objectives. Not an actual exam item."
+
+questions:
+  - id: "secplus-sqli-1"
+    prompt: "Which input is a classic test for a login form vulnerable to SQL injection?"
+    options:
+      - "' OR '1'='1"
+      - "<script>alert(1)</script>"
+      - "../../etc/passwd"
+      - "{{7*7}}"
+    correct: 0
+    explanation: "The payload ' OR '1'='1 attempts to turn the WHERE clause into a true condition, which can bypass a weak login check. The other options are XSS, path traversal, and template injection patterns."
+    reference:
+      label: "OWASP SQL injection"
+      url: "https://owasp.org/www-community/attacks/SQL_Injection"
+
+  - id: "secplus-sqli-2"
+    prompt: "Which OWASP Top 10 2021 category covers SQL injection?"
+    options:
+      - "A01: Broken Access Control"
+      - "A03: Injection"
+      - "A05: Security Misconfiguration"
+      - "A09: Security Logging and Monitoring Failures"
+    correct: 1
+    explanation: "SQL injection is an injection flaw (A03:2021). The category covers SQL, NoSQL, OS command, ORM, and other interpreter injection issues."
+    reference:
+      label: "OWASP Top 10 2021"
+      url: "https://owasp.org/Top10/A03_2021-Injection/"
+
+  - id: "secplus-sqli-3"
+    prompt: "What is the primary defence against SQL injection?"
+    options:
+      - "Hiding the database error messages"
+      - "Using parameterised queries or prepared statements"
+      - "Renaming the admin account"
+      - "Disabling HTTPS"
+    correct: 1
+    explanation: "Parameterised queries keep SQL code separate from data, so user input cannot change the query structure. Error hiding helps reconnaissance but is not a fix."
+    reference:
+      label: "OWASP SQL injection prevention"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+
+  - id: "secplus-sqli-4"
+    prompt: "Which SQL comment sequence is commonly used to truncate the rest of a query in a MySQL injection?"
+    options:
+      - "//"
+      - "--"
+      - "<!--"
+      - "##"
+    correct: 1
+    explanation: "In MySQL, -- followed by whitespace starts a comment to the end of the line. That can remove the remainder of the original query, such as a password check."
+    reference:
+      label: "MySQL comment syntax"
+      url: "https://dev.mysql.com/doc/refman/8.0/en/comments.html"
+
+  - id: "secplus-sqli-5"
+    prompt: "What does a UNION SELECT statement do in a SQL injection context?"
+    options:
+      - "It deletes the original table."
+      - "It combines the results of the injected query with the original result set."
+      - "It encrypts the database connection."
+      - "It creates a new database user."
+    correct: 1
+    explanation: "UNION SELECT appends the results of a second SELECT to the first. Attackers use it to read data from other tables when the column count and types match."
+    reference:
+      label: "OWASP SQL injection"
+      url: "https://owasp.org/www-community/attacks/SQL_Injection"
+
+  - id: "secplus-sqli-6"
+    prompt: "Which tool is commonly used to automate SQL injection detection and exploitation during an authorised test?"
+    options:
+      - "sqlmap"
+      - "exiftool"
+      - "volatility"
+      - "tcpdump"
+    correct: 0
+    explanation: "sqlmap automates detection and exploitation of SQL injection. It must only be used against systems you are authorised to test."
+    reference:
+      label: "sqlmap documentation"
+      url: "https://sqlmap.org/"
