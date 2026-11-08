@@ -67,7 +67,7 @@
       "sha256": "1c5e9db683ecf59688cb77abf00f8174991777d822f194ac87a317017a380dc0"
     },
     "scripts/check-licences.py": {
-      "sha256": "a5e0515e09a416682d769a000cefcbe7f730748d07a428cad8b74ee1408bcfc3"
+      "sha256": "616ecb5ba01bdbeeab0e93e07342b294765b87db1692c27e591cd3255b541f13"
     },
     "scripts/database_integrity.py": {
       "sha256": "9377a3ad84617e01e6656e2f4c83d1be4244352ce319671abe25aca8b83b2806"
@@ -76,7 +76,7 @@
       "sha256": "26ba71c50fa8f0a1ecbd45b793c77cdec86af5d7f6fa3d14d8ff5c69f54daacb"
     },
     "scripts/generate-about.py": {
-      "sha256": "ad9e0abacbdf8b0666bad4967c0474b1f84db3f05c98f3a79948b80580999774"
+      "sha256": "02e5e8066110381de77a3fdacd9ade0fcd573def336d7c4a598d745cecb27756"
     },
     "scripts/install-platform.sh": {
       "sha256": "31db2213c8fefd082ef16015e3786c235658a83f8013a70c489c4e025f4a4eea"
