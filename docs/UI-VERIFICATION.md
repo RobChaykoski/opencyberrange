@@ -84,6 +84,10 @@ Required repository configuration:
   in for a short-lived token
 - optional variable `UI_EXPECTED_VERSION` — for example `2.4.1`
 
+The scheduled workflow is configured for the public production URL
+`https://ctfd.swocts.com` with a dedicated `smoke_tester` student account. It
+runs daily at 03:30 UTC and on manual dispatch.
+
 Run it locally with:
 
 ```bash

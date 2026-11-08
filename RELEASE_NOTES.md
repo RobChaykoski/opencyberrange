@@ -33,6 +33,10 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
 - Added CI regression checks for placeholder secrets, SPA security headers,
   local documentation assets, and RangeBox spawn-lock serialization, plus an
   optional deployment UI smoke workflow.
+- Added a sticky Briefing / Targets / Flag / Hints jump bar to the mobile
+  Active Lab and generated workbook coverage from lab metadata.
+- Configured the scheduled UI smoke workflow against the public production URL
+  with a dedicated smoke account.
 
 ## Highlights in 2.4.0
 

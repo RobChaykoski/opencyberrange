@@ -52,6 +52,12 @@ No changes yet.
 - Added CI regression checks for placeholder secrets, SPA security headers,
   local documentation assets, and RangeBox spawn-lock serialization, plus an
   optional deployment UI smoke workflow.
+- Added a sticky Briefing / Targets / Flag / Hints jump bar to the mobile
+  Active Lab.
+- Added generated `Workbook/COVERAGE.md` from lab metadata and a CI check that
+  it stays current.
+- Configured the scheduled UI smoke workflow against the public production URL
+  with a dedicated smoke account.
 
 ### Patch release
 - This patch follows the 2.4.0 feature release and contains the security, mobile, capacity, and documentation remediation above.
