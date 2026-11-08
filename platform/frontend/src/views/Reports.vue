@@ -3,7 +3,7 @@
     <header class="reports-head">
       <div>
         <p class="reports-head__eyebrow">SWOCTS Cyber Range analytics</p>
-        <h1>Learning reports</h1>
+        <h1>Reports &amp; Analytics</h1>
         <p>Cross-course performance, learning, and confidence signals for teaching review.</p>
       </div>
       <div class="reports-head__actions">
@@ -611,9 +611,11 @@ onMounted(load)
 }
 
 .reports-head h1 {
-  margin: 0;
+  margin: 0 0 0.5rem;
   color: var(--text-primary);
-  font-size: clamp(1.7rem, 4vw, 2.3rem);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
 .reports-head p:last-child {
