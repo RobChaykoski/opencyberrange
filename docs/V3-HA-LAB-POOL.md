@@ -1,6 +1,6 @@
 # Enterprise preview multi-host lab pool and HA deployment plan
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.2.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.4.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 Status: **Enterprise preview — control-plane HA reference implemented and locally
 drilled; lab-pool and full multi-host validation not implemented**

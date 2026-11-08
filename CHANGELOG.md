@@ -28,7 +28,10 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 No changes yet.
 
-## [2.2.0] - 2026-11-08
+## [2.4.0] - 2026-11-08
+
+> **Tag note:** the legacy history already contains published `v2.2.0` through
+> `v2.3.2` tags. This release uses `v2.4.0` so no existing tag is moved.
 
 ### Branding
 - Rebranded the user-facing platform as **SWOCTS Cyber Range** with the SWOCTS
@@ -96,7 +99,7 @@ No changes yet.
   remain unchanged for data compatibility.
 
 ### Version policy
-- Adopted **one platform release number** for this tree on 2.1.4; 2.2.0 continues the same policy. Community /
+- Adopted **one platform release number** for this tree on 2.1.4; 2.4.0 continues the same policy. Community /
   Academic, Professional, and Enterprise are edition profiles, not three
   separate version lines. See `docs/decisions/0004-single-platform-release-version.md`.
 - Kept Community / Academic 1.1.3 as the supported maintenance line for existing

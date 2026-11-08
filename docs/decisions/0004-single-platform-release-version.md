@@ -7,9 +7,12 @@ Supersedes: the separate edition version lines in ADR 0002 and ADR 0003
 ## Amendment (2026-11-08)
 
 The one-platform-release-number decision is unchanged. The current release is
-now **2.2.0**, which adds the mobile student shell and RangeBox workspace. The
+now **2.4.0**, which adds the mobile student shell and RangeBox workspace. The
 `2.1.4` references below describe the release that established this decision;
 edition names remain profiles, not separate version lines.
+
+The legacy history already contains published `v2.2.0` through `v2.3.2` tags,
+so this release uses `v2.4.0` rather than moving an existing tag.
 
 ## Context
 
