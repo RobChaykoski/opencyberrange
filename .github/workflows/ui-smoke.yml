@@ -17,6 +17,8 @@ jobs:
       UI_SMOKE_TOKEN: ${{ secrets.UI_SMOKE_TOKEN }}
       UI_SMOKE_USERNAME: ${{ secrets.UI_SMOKE_USERNAME }}
       UI_SMOKE_PASSWORD: ${{ secrets.UI_SMOKE_PASSWORD }}
+      UI_PRIVACY_USERNAME: ${{ secrets.UI_PRIVACY_USERNAME }}
+      UI_PRIVACY_PASSWORD: ${{ secrets.UI_PRIVACY_PASSWORD }}
       UI_EXPECTED_VERSION: ${{ vars.UI_EXPECTED_VERSION }}
     steps:
       - uses: actions/checkout@v7

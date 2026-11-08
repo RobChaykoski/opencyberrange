@@ -12,6 +12,28 @@ Tool: Playwright with Microsoft Edge, using short-lived test tokens for an
 administrator and the three career-discovery profiles. No learner records were
 modified by the checks.
 
+## 2.5.2 privacy verification
+
+Run **2026-11-08** against the production and development deployments on
+`2.5.2`.
+
+- **14/14 checks passed** on each deployment.
+- A fresh admin browser started with privacy mode matching the platform default.
+- The current-browser toggle flipped masking off and back on.
+- The platform default persisted as off, and a new admin browser inherited it.
+- A legacy auto-written `"on"` value without the explicit marker followed the
+  platform default.
+- An explicit per-browser choice still won.
+- The About inventory reported the same version as `/api/version`.
+- The temporary QA admin was removed and the platform default restored.
+
+The scheduled UI smoke now runs the same privacy checks when
+`UI_PRIVACY_USERNAME` and `UI_PRIVACY_PASSWORD` are configured with an admin
+account. Without those secrets it skips the privacy block and keeps the existing
+deployment checks. See `scripts/ui-smoke.mjs`.
+
+The detailed 2.4.1 results below are the previous broader UI pass.
+
 ## Profiles checked
 
 | Profile | Purpose |
