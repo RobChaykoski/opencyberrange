@@ -303,7 +303,7 @@ onMounted(() => {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: var(--success);
+  background: var(--accent);
   color: #ffffff;
 }
 
@@ -375,7 +375,7 @@ onMounted(() => {
 }
 
 .rangebox-badge--ready {
-  color: var(--success);
+  color: var(--badge-green);
   border-color: color-mix(in srgb, var(--success) 45%, transparent);
   background: color-mix(in srgb, var(--success) 12%, transparent);
 }
@@ -418,7 +418,7 @@ onMounted(() => {
 }
 
 .rangebox-status__value--ready {
-  color: var(--success);
+  color: var(--badge-green);
 }
 
 .rangebox-status__value--pending {
@@ -458,7 +458,7 @@ onMounted(() => {
 }
 
 .rangebox-image-toggle__btn--active {
-  background: var(--success);
+  background: var(--accent);
   color: #ffffff;
 }
 
@@ -475,12 +475,12 @@ onMounted(() => {
 }
 
 .btn--rangebox {
-  background: var(--success);
+  background: var(--accent);
   color: #ffffff;
 }
 
 .btn--rangebox:hover:not(:disabled) {
-  background: #15803d;
+  background: color-mix(in srgb, var(--accent) 82%, black);
   transform: translateY(-1px);
 }
 
