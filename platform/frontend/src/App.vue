@@ -457,10 +457,6 @@ body {
 }
 
 @media (max-width: 768px) {
-  .theme-toggle {
-    display: none;
-  }
-
   .mobile-topbar {
     position: sticky;
     top: 0;
@@ -672,6 +668,14 @@ body {
 .app-footer__powered {
   gap: 0.3rem;
   font-weight: 600;
+}
+
+/* Keep the fixed desktop theme switch out of the mobile top bar; the mobile
+   header carries its own theme control. */
+@media (max-width: 768px) {
+  .theme-toggle {
+    display: none;
+  }
 }
 
 </style>

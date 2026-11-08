@@ -46,6 +46,13 @@ The sidebar groups links into sections. You see only the sections your role allo
 
 Team Challenges links are conditional. The platform shows a Team Challenges link only when an admin has turned on the matching module, so the section may be empty or absent in your deployment.
 
+## On a phone
+
+On a phone-width screen the sidebar becomes a menu drawer and a bottom tab bar
+shows Home, Exercises, RangeBox, Courses, and Profile. See
+[Using a Mobile Device](../02_Student_Guide/19_Using_a_Mobile_Device.md) for what
+works well and what is better on a laptop.
+
 ## Footer controls
 
 At the bottom of the sidebar you find:

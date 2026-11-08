@@ -74,6 +74,15 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   stress test can run, and made its pre-spawn and VNC connect steps wait for the
   desktop to accept connections.
 
+### Mobile student shell
+- Added automatic phone-width detection and a dedicated mobile shell: a compact
+  top bar, an off-canvas navigation drawer, and a bottom tab bar for Home,
+  Exercises, RangeBox, Courses, and Profile.
+- The drawer closes on navigation, the backdrop, or Escape, and the mobile shell
+  keeps page-level horizontal overflow at zero.
+- The embedded RangeBox viewer is replaced on phones with a desktop-recommended
+  notice and an explicit full-screen opt-in.
+
 ### Events rename
 - Renamed the user-facing **Competitions** area to **Events** across the
   sidebar, list, detail, registration, profile, and manuals.

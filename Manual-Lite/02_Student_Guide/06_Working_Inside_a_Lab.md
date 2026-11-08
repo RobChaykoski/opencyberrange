@@ -47,6 +47,11 @@ flowchart LR
 !!! note "Standalone RangeBox"
     The **RangeBox** item in the sidebar opens a standalone practice desktop. It is not attached to a lab, so use it for tool access or connectivity checks. To work an exercise with the lab network and flag dock, launch RangeBox from that exercise instead.
 
+!!! note "Phones and tablets"
+    The in-browser desktop needs a keyboard and mouse for comfortable lab work.
+    On a phone, the platform shows a desktop-recommended notice instead of the
+    embedded viewer. See [Using a Mobile Device](19_Using_a_Mobile_Device.md).
+
 At the bottom of the RangeBox window, the **lab dock** shows the lab name,
 its subnet, and the target IPs when the exercise is built to reveal them. The
 same dock contains a **Flag** field and **Submit flag** button. You can capture

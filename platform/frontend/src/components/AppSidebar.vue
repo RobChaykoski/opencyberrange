@@ -697,6 +697,12 @@ const userInitial = computed(() => {
   .sidebar__nav {
     padding-bottom: 1rem;
   }
+
+  .sidebar .nav-item {
+    min-height: 44px;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

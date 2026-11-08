@@ -44,6 +44,23 @@ modified by the checks.
   escape HTML, and audit the export.
 - Admin and user panels loaded with the current `2.1.4` build.
 
+## Mobile shell
+
+The student shell was checked at `390 × 844` with touch enabled and the
+`demo_career_starting` learner.
+
+- **15 checks, 0 failed** after the final CSS fix.
+- The sidebar starts off-canvas and opens as a drawer from the top-bar menu.
+- The backdrop, close button, and Escape key close the drawer.
+- The bottom tab bar shows Home, Exercises, RangeBox, Courses, and Profile.
+- The desktop theme switch is hidden; the top-bar theme control is shown.
+- No page-level horizontal overflow on the checked student routes.
+- Touch targets in the mobile shell are at least `24 × 24px`.
+- The RangeBox tab is reachable and shows the deployed-box count.
+- The embedded RangeBox viewer is replaced on phones with a desktop-recommended
+  notice and an explicit full-screen opt-in.
+- No page errors were raised during the mobile checks.
+
 ## What this does not prove
 
 - A full interactive lab launch and VPN connection were not part of this run.
