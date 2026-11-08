@@ -19,9 +19,9 @@ HA, SSO, multi-tenancy, LMS, and compliance reporting are shipped and verified.
 Dependency audit on **2026-11-08**: `npm audit` reported **0 vulnerabilities**
 and `pip-audit -r platform/backend/requirements.txt` reported **no known
 vulnerabilities**. Safe patch updates were applied: FastAPI 0.162.2,
-SQLAlchemy 2.1.8, Pydantic 2.14.3, and psycopg 3.3.8. The remaining
-`npm outdated` entries are major upgrades (ESLint 10, `@eslint/js` 10,
-`eslint-plugin-vue` 10, Vue Router 5) and are deliberately deferred.
+SQLAlchemy 2.1.8, Pydantic 2.14.3, and psycopg 3.3.8. The frontend majors were
+then upgraded: Vue Router 5.4.0, ESLint 10.14.0, `@eslint/js` 10.0.1,
+`eslint-plugin-vue` 10.12.0, and `vue-eslint-parser` 10.4.2.
 
 ## Policy
 
@@ -77,7 +77,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 | Component | Locked | Planned wave | Notes |
 |---|---|---|---|
 | Vue | 3.5.45 | 3.5 patch line | |
-| Vue Router | 4.6.4 | 5 | Major upgrade deferred |
+| Vue Router | 5.4.0 | Wave 1 (done) | Applied with the 2.4.1 frontend upgrade |
 | Axios | 1.21.0 | Wave A (done) | |
 | Chart.js / vue-chartjs | 4.6.1 / 5.3.4 | 5 | |
 | marked | 18.1.3 | Wave A (done) | |
@@ -86,7 +86,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 | sortablejs | 1.15.7 | 5 | |
 | Vite | 8.3.6 | Wave C (done) | Rolldown; Node 22+ |
 | @vitejs/plugin-vue | 6.0.10 | Wave C (done) | Pairs with Vite 8 |
-| ESLint / plugin-vue | 9.39.5 / 9.33.0 | 1 | ESLint 9 flat config; 10 deferred |
+| ESLint / plugin-vue | 10.14.0 / 10.12.0 | Wave 1 (done) | ESLint 10 flat config; vue-eslint-parser 10.4.2 |
 | globals | 17.14.0 | 1 | |
 
 ## Infrastructure, docs, and CI

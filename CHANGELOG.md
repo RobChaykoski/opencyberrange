@@ -143,8 +143,9 @@ No changes yet.
   SQLAlchemy 2.1.8, Pydantic 2.14.3, psycopg 3.3.8, Vue 3.5.45, Chart.js 4.6.1,
   marked 18.1.3, Vite 8.3.6, and globals 17.14.0.
 - Confirmed `npm audit` reports 0 vulnerabilities and `pip-audit` reports no known
-  vulnerabilities. ESLint 10, `eslint-plugin-vue` 10, and Vue Router 5 remain
-  deliberately deferred as breaking majors.
+  vulnerabilities. Upgraded the frontend majors: Vue Router 5.4.0, ESLint
+  10.14.0, `@eslint/js` 10.0.1, `eslint-plugin-vue` 10.12.0, and
+  `vue-eslint-parser` 10.4.2.
 - Reconciled `versions.yaml` and `docs/SUPPORTED-VERSIONS.md` with the installed
   backend and frontend dependency set.
 

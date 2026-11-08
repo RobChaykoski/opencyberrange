@@ -54,7 +54,8 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
 - **Accessibility and text:** repaired double-encoded UTF-8 in profile and admin
   text, including the avatar-border label and profile em dashes.
 - **Dependencies:** safe patch updates to FastAPI, SQLAlchemy, Pydantic, and
-  psycopg, plus `websocket-client` for the RangeBox load test.
+  psycopg, plus `websocket-client` for the RangeBox load test. Frontend majors
+  moved to Vue Router 5.4.0 and ESLint 10.14.0 with `eslint-plugin-vue` 10.12.0.
 
 ## RangeBox capacity guidance
 

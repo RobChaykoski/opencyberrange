@@ -894,7 +894,7 @@ const pollSpawnStatus = async (sessionId, { timeoutMs = 8 * 60 * 1000, intervalM
     try {
       ({ data } = await axios.get(`/labs/spawn-status/${sessionId}`))
     } catch (e) {
-      if (Date.now() > deadline) throw new Error('Timed out waiting for the lab to start.')
+      if (Date.now() > deadline) throw new Error('Timed out waiting for the lab to start.', { cause: e })
       await new Promise(r => setTimeout(r, intervalMs))
       continue
     }

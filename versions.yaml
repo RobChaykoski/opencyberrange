@@ -117,7 +117,7 @@ backend:
 frontend:
   declared:
     vue: "^3.3.4"
-    vue-router: "^4.2.5"
+    vue-router: "^5.4.0"
     axios: "^1.21.0"
     chart.js: "^4.4.7"
     vue-chartjs: "^5.3.4"
@@ -127,12 +127,14 @@ frontend:
     sortablejs: "^1.15.7"
     vite: "^8.3.5"
     "@vitejs/plugin-vue": "^6.0.10"
-    eslint: "^9.15.0"
-    eslint-plugin-vue: "^9.31.0"
+    eslint: "^10.14.0"
+    "@eslint/js": "^10.0.1"
+    eslint-plugin-vue: "^10.12.0"
+    vue-eslint-parser: "^10.4.2"
     globals: "^17.13.0"
   locked:
     vue: "3.5.45"
-    vue-router: "4.6.4"
+    vue-router: "5.4.0"
     axios: "1.21.0"
     chart.js: "4.6.1"
     vue-chartjs: "5.3.4"
@@ -142,8 +144,10 @@ frontend:
     sortablejs: "1.15.7"
     vite: "8.3.6"
     "@vitejs/plugin-vue": "6.0.10"
-    eslint: "9.39.5"
-    eslint-plugin-vue: "9.33.0"
+    eslint: "10.14.0"
+    "@eslint/js": "10.0.1"
+    eslint-plugin-vue: "10.12.0"
+    vue-eslint-parser: "10.4.2"
     globals: "17.14.0"
 
 infrastructure:

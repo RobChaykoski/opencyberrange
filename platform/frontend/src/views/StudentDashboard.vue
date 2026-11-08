@@ -714,7 +714,7 @@ const makeConfetti = () =>
 
 const detectNewAchievements = (list) => {
   const ids = list.map((item) => String(item.id)).filter(Boolean)
-  let stored = null
+  let stored
   try {
     stored = localStorage.getItem(SEEN_ACHIEVEMENTS_KEY)
   } catch {
@@ -730,7 +730,7 @@ const detectNewAchievements = (list) => {
     return
   }
 
-  let seen = []
+  let seen
   try {
     seen = JSON.parse(stored)
   } catch {
