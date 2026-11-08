@@ -101,7 +101,8 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   statement.
 
 ### Dependencies and maintenance
-- Applied safe patch updates within declared ranges: Vue 3.5.45, Chart.js 4.6.1,
+- Applied safe patch updates within declared ranges: FastAPI 0.162.2,
+  SQLAlchemy 2.1.8, Pydantic 2.14.3, psycopg 3.3.8, Vue 3.5.45, Chart.js 4.6.1,
   marked 18.1.3, Vite 8.3.6, and globals 17.14.0.
 - Confirmed `npm audit` reports 0 vulnerabilities and `pip-audit` reports no known
   vulnerabilities. ESLint 10, `eslint-plugin-vue` 10, and Vue Router 5 remain

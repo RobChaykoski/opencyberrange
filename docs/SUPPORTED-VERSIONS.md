@@ -51,17 +51,17 @@ remaining `npm outdated` entries are major upgrades (ESLint 10,
 
 | Component | Current | Planned wave | Notes |
 |---|---|---|---|
-| FastAPI | 0.162.0 (Starlette 1.10) | Wave C (done) | |
+| FastAPI | 0.162.2 (Starlette 1.10) | Wave C (done) | |
 | Uvicorn | 0.54.0 | Wave C (done) | |
-| Pydantic | 2.14.2 | Wave C (done) | |
+| Pydantic | 2.14.3 | Wave C (done) | |
 | python-multipart | 0.0.33 | Wave A (done) | |
 | slowapi | 0.1.10 | Wave A (done) | Verified on Starlette 1.x |
 | cryptography | 50.0.2 | Wave A (done) | Fernet and JWT tested |
 | PyJWT | 2.15.1 | Wave B (done) | Replaced python-jose |
 | pwdlib + bcrypt | 0.3.1 + 5.0.0 | Wave B (done) | Argon2id; legacy bcrypt rehashed on login |
-| SQLAlchemy | 2.1.6 | Wave C (done) | |
+| SQLAlchemy | 2.1.8 | Wave C (done) | |
 | Alembic | 1.20.1 | Wave C (done) | |
-| psycopg (v3) | 3.3.6 | Wave C (done) | SQLAlchemy 2.1 defaults to psycopg3 |
+| psycopg (v3) | 3.3.8 | Wave C (done) | SQLAlchemy 2.1 defaults to psycopg3 |
 | docker SDK | 7.2.0 | Wave C (done) | |
 | aiohttp / requests | 3.14.5 / 2.34.2 | Wave A (done) | |
 | APScheduler | 3.11.3 | 4 | Stay on 3.x unless 4.x is justified |

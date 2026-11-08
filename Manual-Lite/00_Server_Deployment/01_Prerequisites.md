@@ -56,7 +56,7 @@ The platform sizes RangeBox concurrency itself. The RangeBox tab denominator is 
 - `RANGEBOX_MEM_RESERVE_GB` raises or lowers the memory kept free for the platform.
 - `MAX_CONCURRENT_RANGEBOXES` pins a fixed cap and disables the automatic sizing.
 
-A rough budget for planning: `RAM = 3 GB base + (peak concurrent RangeBoxes x 2 GB) + 8 GB reserve`. A 25-student class fits comfortably in 64 GB.
+A rough budget for planning: `RAM = 3 GB base + (peak concurrent RangeBoxes x 2 GB) + 8 GB reserve`. The memory-derived maximum is only an upper bound; VNC responsiveness and CPU contention arrive first. Measured results and recommended class limits are in [RangeBox capacity and stress results](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/RANGEBOX-CAPACITY.md). On a 12 vCPU / 62 GiB host, 20 concurrent boxes is a comfortable class limit; on an 8 vCPU / 30 GiB host, use about 8.
 
 ## Network ports
 

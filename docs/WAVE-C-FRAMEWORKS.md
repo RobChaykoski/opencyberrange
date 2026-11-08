@@ -7,13 +7,13 @@ Scope: platform backend and frontend. Lab images untouched.
 
 | Area | From | To |
 |---|---|---|
-| FastAPI | 0.109.1 | **0.162.0** |
+| FastAPI | 0.109.1 | **0.162.2** |
 | Starlette (transitive) | 0.35.1 | **1.x** |
-| Pydantic / settings | 2.5.3 / 2.1.0 | **2.14.2 / 2.16.2** |
+| Pydantic / settings | 2.5.3 / 2.1.0 | **2.14.3 / 2.16.2** |
 | Uvicorn | 0.27.0 | **0.54.0** |
-| SQLAlchemy | 2.0.25 | **2.1.6** |
+| SQLAlchemy | 2.0.25 | **2.1.8** |
 | Alembic | 1.13.1 | **1.20.1** |
-| PostgreSQL driver | psycopg2-binary 2.9.13 | **psycopg 3.3.6** (binary) |
+| PostgreSQL driver | psycopg2-binary 2.9.13 | **psycopg 3.3.8** (binary) |
 | Docker SDK | 6.1.3 | **7.2.0** |
 | qrcode | 7.4.2 | **8.2** |
 | Node (builder + CI) | 18 | **22** |
