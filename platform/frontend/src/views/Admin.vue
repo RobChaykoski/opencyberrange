@@ -1815,6 +1815,7 @@
                         v-model="settingsEdits[key]"
                         type="password"
                         :placeholder="settingPlaceholder(key)"
+                        :aria-label="friendlyLabel(key)"
                         class="form-input form-input--sm"
                       />
                     </div>
@@ -1828,7 +1829,7 @@
                         max="100"
                         step="5"
                         class="form-input form-input--sm"
-                        aria-label="RangeBox capacity percentage"
+                        :aria-label="friendlyLabel(key)"
                       />
                       <span class="setting-unit">%</span>
                     </div>
@@ -1842,6 +1843,7 @@
                         v-model="settingsEdits[key]"
                         :type="value === '••••••••' ? 'password' : 'text'"
                         :placeholder="settingPlaceholder(key)"
+                        :aria-label="friendlyLabel(key)"
                         class="form-input form-input--sm"
                       />
                       <span v-if="settingUnit(key)" class="setting-unit">{{ settingUnit(key) }}</span>

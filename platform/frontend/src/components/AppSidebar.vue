@@ -39,7 +39,7 @@
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
-      <router-link to="/dashboard" class="brand-link" aria-label="SWOCTS Cyber Range home">
+      <router-link to="/dashboard" class="brand-link">
         <img src="/swocts-cyber-range-mark.png" alt="" class="brand-icon" />
         <span v-show="!collapsed" class="brand-text">
           <span class="brand-text__name">SWOCTS</span>

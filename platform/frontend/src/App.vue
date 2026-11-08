@@ -354,7 +354,7 @@ if (typeof window !== 'undefined') {
   --bg-tertiary: #334155;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-muted: #94a3b8;
   --border-color: #334155;
   --accent: #3b82f6;
   --success: #22c55e;
@@ -378,13 +378,13 @@ if (typeof window !== 'undefined') {
   --bg-tertiary: #e2e8f0;
   --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-muted: #64748b;
   --border-color: #cbd5e1;
-  --accent: #2563eb;
+  --accent: #1d4ed8;
   --success: #16a34a;
   --warning: #d97706;
   --danger: #dc2626;
-  --nav-label: #64748b;
+  --nav-label: #475569;
   --hover-bg: rgba(0, 0, 0, 0.05);
   --hover-text: #0f172a;
   --accent-bg: rgba(59, 130, 246, 0.1);

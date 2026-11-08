@@ -38,7 +38,12 @@
         <div class="rich-card__body">
           <span class="rich-card__value">{{ stats.flags_today }}</span>
           <div class="rich-card__sparkline" v-if="stats.flags_sparkline?.length">
-            <svg :viewBox="`0 0 ${stats.flags_sparkline.length * 12} 32`" preserveAspectRatio="none">
+            <svg
+              :viewBox="`0 0 ${stats.flags_sparkline.length * 12} 32`"
+              preserveAspectRatio="none"
+              role="img"
+              :aria-label="`Flag submissions trend: ${stats.flags_sparkline.join(', ')}`"
+            >
               <polyline
                 :points="sparklinePoints(stats.flags_sparkline)"
                 fill="none" stroke="#22c55e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"
@@ -115,6 +120,7 @@
         <select
           v-model="selectedCourse"
           class="filter-select"
+          aria-label="Filter by course"
           @change="onCourseChange"
         >
           <option :value="null">All Courses</option>
@@ -125,6 +131,7 @@
         <select
           v-model="selectedUser"
           class="filter-select"
+          aria-label="Filter by student"
           @change="onUserChange"
         >
           <option :value="null">All Students</option>
@@ -173,10 +180,23 @@
         <h2 class="panel__title">The Pulse</h2>
         <span class="panel__subtitle">{{ filterSubtitle }}</span>
       </div>
-      <div class="chart-container">
+      <div class="chart-container" aria-hidden="true">
         <Line v-if="pulseData.labels.length" :data="pulseData" :options="chartOptions" />
         <div v-else class="chart-empty">No activity data yet</div>
       </div>
+      <table v-if="pulseData.labels.length" class="sr-only">
+        <caption>The Pulse: exercise sessions and flags submitted by time bucket</caption>
+        <thead>
+          <tr><th scope="col">Time</th><th scope="col">Exercise sessions</th><th scope="col">Flags submitted</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="(label, index) in pulseData.labels" :key="label + index">
+            <th scope="row">{{ label }}</th>
+            <td>{{ pulseData.datasets[0]?.data[index] ?? 0 }}</td>
+            <td>{{ pulseData.datasets[1]?.data[index] ?? 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- Live Operations Feed -->
@@ -1176,18 +1196,18 @@ onMounted(() => {
   letter-spacing: 0.02em;
 }
 
-.event-badge--lab_started { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-.event-badge--lab_stopped { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
-.event-badge--lab_completed { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-.event-badge--flag_correct { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-.event-badge--flag_incorrect { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-.event-badge--hint_used { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.event-badge--user_registered { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
-.event-badge--user_approved { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
-.event-badge--vpn_downloaded { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
-.event-badge--course_enrolled { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
-.event-badge--achievement_awarded { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.event-badge--diagnostic { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.event-badge--lab_started { background: rgba(59, 130, 246, 0.15); color: color-mix(in srgb, #60a5fa 55%, var(--text-primary)); }
+.event-badge--lab_stopped { background: rgba(100, 116, 139, 0.2); color: color-mix(in srgb, #94a3b8 55%, var(--text-primary)); }
+.event-badge--lab_completed { background: rgba(34, 197, 94, 0.15); color: color-mix(in srgb, #4ade80 55%, var(--text-primary)); }
+.event-badge--flag_correct { background: rgba(34, 197, 94, 0.15); color: color-mix(in srgb, #4ade80 55%, var(--text-primary)); }
+.event-badge--flag_incorrect { background: rgba(239, 68, 68, 0.15); color: color-mix(in srgb, #f87171 55%, var(--text-primary)); }
+.event-badge--hint_used { background: rgba(245, 158, 11, 0.15); color: color-mix(in srgb, #fbbf24 55%, var(--text-primary)); }
+.event-badge--user_registered { background: rgba(168, 85, 247, 0.15); color: color-mix(in srgb, #c084fc 55%, var(--text-primary)); }
+.event-badge--user_approved { background: rgba(168, 85, 247, 0.15); color: color-mix(in srgb, #c084fc 55%, var(--text-primary)); }
+.event-badge--vpn_downloaded { background: rgba(6, 182, 212, 0.15); color: color-mix(in srgb, #22d3ee 55%, var(--text-primary)); }
+.event-badge--course_enrolled { background: rgba(236, 72, 153, 0.15); color: color-mix(in srgb, #f472b6 55%, var(--text-primary)); }
+.event-badge--achievement_awarded { background: rgba(245, 158, 11, 0.15); color: color-mix(in srgb, #fbbf24 55%, var(--text-primary)); }
+.event-badge--diagnostic { background: rgba(245, 158, 11, 0.15); color: color-mix(in srgb, #fbbf24 55%, var(--text-primary)); }
 
 .diagnostic-tag {
   display: inline-block;
