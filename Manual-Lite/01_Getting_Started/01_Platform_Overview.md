@@ -88,8 +88,8 @@ transcript of the same record.
 
 The certificate and transcript rules are covered in
 [Viewing Your Profile](../02_Student_Guide/16_Viewing_Your_Profile.md). Progress
-appears on the dashboard, Exercises hub, track pages, course scoreboard, and
-profile.
+appears on the dashboard, Exercises hub, track pages, course progress and feedback,
+and profile.
 
 ## VPN and RangeBox
 

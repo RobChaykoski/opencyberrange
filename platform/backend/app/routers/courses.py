@@ -717,6 +717,7 @@ async def course_feedback_summary(
     instructor_rows = db.query(CourseFeedback).filter(
         CourseFeedback.course_id == course_id,
         CourseFeedback.direction == "instructor_student",
+        CourseFeedback.subject_user_id.isnot(None),
     ).all()
     pulse_rows = db.query(ExercisePulseSurvey).filter(
         ExercisePulseSurvey.course_id == course_id

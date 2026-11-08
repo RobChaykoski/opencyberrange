@@ -27,7 +27,7 @@ must agree. If they disagree, fix the definition before adding a chart.
 | Coaching coverage | Students with at least one coaching note / enrolled | `feedback/summary` | Instructor loop | A note is not proof of learning |
 | Knowledge-check participation | Learners with a completed attempt / enrolled | `exercise_quiz_metrics` | Understanding | Optional benchmark |
 | Knowledge-check accuracy | Mean best score | `exercise_quiz_metrics` | Understanding | Best score hides latest |
-| Cyber DNA trait | 0–100 per trait, formula `2026.11` | `skill_dna.py` | Capability practice | Descriptive, capped, versioned |
+| Cyber DNA trait | 0–100 per trait, formula `2026.12` | `skill_dna.py` | Capability practice | Descriptive, capped, versioned |
 | Cyber DNA movement | Trait change between snapshots, same formula version | Skill DNA snapshots | Capability trend | No cross-version comparison |
 | Feeling | Mean check-in clarity, engagement, confidence | `feedback/summary` | Quick conversation prompt | Self-report only |
 | Doing | Completed / assigned | `feedback/summary` students array | Progress | Small cohorts are noisy |
@@ -61,7 +61,7 @@ could identify a person in a small cohort.
 ## Cyber DNA rules
 
 - Read `docs/SKILL-DNA.md` first.
-- Report the five traits, class, and affinities with evidence levels.
+- Report the six traits, class, and affinities with evidence levels.
 - Report movement between two snapshots with the same formula version.
 - Never rank by trait, class, or affinity.
 - Never use Cyber DNA for admissions, hiring, discipline, or high-stakes

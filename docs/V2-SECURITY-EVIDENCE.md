@@ -10,7 +10,28 @@ This evidence record applies to the SWOCTS Cyber Range deployment, powered by Op
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.
 
-## Current pass — 6 November 2026
+## Current pass — 8 November 2026
+
+| Category | Evidence produced | Result |
+|---|---|---|
+| A01 Broken access control | Deleted-user lifecycle review: cascade and `SET NULL` references, course-transfer block, null-safe dashboard labels, orphaned-coaching exclusion | Pass for covered paths |
+| A02 Cryptographic failures | Password storage audit: Argon2id for new hashes, bcrypt legacy verify-and-upgrade, no plaintext or reversible storage, hash-format check | Pass |
+| A08 Integrity failures | Signed table checksums, append-only change ledger with actor attribution, immutable ledger trigger, database quality audit on dev and production | Pass; 0 critical / 0 warning on both |
+| A09 Logging/monitoring failures | Ledger records actor type, actor id, request id, row hash, and chained entry hash; a deliberate manual `labs.UPDATE` was detected as `unattributed` | Pass for covered tables |
+| Supply chain | `supply-chain.lock.json` verified in CI; install, update, and prebuild gates wired | Pass |
+
+Manual evidence:
+
+- Development database fingerprint:
+  `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c`.
+- Development quality: 0 critical, 0 warning, 2 info (36 completions without a
+  session; 149 seeded labs without a creator).
+- Production quality: 0 critical, 0 warning, 3 info (116 completions without a
+  session; 149 seeded labs without a creator; 2 intentional hint placeholders).
+- Frontend build and lint pass; six-trait Cyber DNA, Celebration Wall toggle,
+  dark/light, 390 px and 1440 px checks show no page errors or overflow.
+
+## Previous pass — 6 November 2026
 
 | Category | Evidence produced | Result |
 |---|---|---|

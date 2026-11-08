@@ -384,7 +384,7 @@
                       ></span>
                       <div class="user-identity__body">
                         <div class="user-identity__name">
-                          {{ maskUsername(user.username) }}
+                          {{ maskUsername(user.username) || 'Deleted user' }}
                           <span
                             v-if="user.must_change_password"
                             class="password-change-badge"
@@ -917,7 +917,7 @@
               >
                 <div class="session-health-header">
                   <div class="session-user-info">
-                    <span class="session-username">{{ maskUsername(session.username) }}</span>
+                    <span class="session-username">{{ maskUsername(session.username) || 'Deleted user' }}</span>
                     <span v-if="session.impersonated_by" class="admin-session-tag">Admin ({{ session.impersonated_by.admin_username }})</span>
                     <span v-if="session.is_diagnostic" class="diagnostic-tag">Diagnostics</span>
                     <span class="session-lab">{{ session.lab_name }}</span>
@@ -1082,7 +1082,7 @@
                         <td colspan="4" class="empty-row">No sessions in selected time range</td>
                       </tr>
                       <tr v-for="session in sessionHistory" :key="session.id" :class="{ 'activity-row--diagnostic': session.is_diagnostic }">
-                        <td>{{ maskUsername(session.username) }}</td>
+                        <td>{{ maskUsername(session.username) || 'Deleted user' }}</td>
                         <td>{{ session.lab_name }}</td>
                         <td>
                           <span class="event-badge" :class="session.is_diagnostic ? 'event-badge--diagnostic' : `event-badge--session-${session.status}`">
@@ -1159,7 +1159,7 @@
               <div class="unregistered-list">
                 <div v-for="user in vpnStatus.unregistered" :key="user.user_id" class="unregistered-item">
                   <div class="unregistered-info">
-                    <span class="unregistered-name">{{ maskUsername(user.username) }}</span>
+                    <span class="unregistered-name">{{ maskUsername(user.username) || 'Deleted user' }}</span>
                     <span class="unregistered-ip">{{ user.client_ip }}</span>
                   </div>
                   <button @click="registerPeer(user.user_id)" class="btn btn--success btn--sm">Register</button>
@@ -1186,7 +1186,7 @@
                     <tr v-for="peer in paginatedVpnPeers" :key="peer.public_key">
                       <td class="cell-primary">
                         <span v-if="peer.is_labs_server" class="server-badge">Labs Server</span>
-                        <span v-else-if="peer.user">{{ maskUsername(peer.user.username) }}</span>
+                        <span v-else-if="peer.user">{{ maskUsername(peer.user.username) || 'Deleted user' }}</span>
                         <span v-else class="cell-muted">Unknown</span>
                       </td>
                       <td class="cell-mono">{{ peer.allowed_ips }}</td>

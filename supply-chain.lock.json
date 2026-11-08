@@ -60,6 +60,9 @@
     "platform/frontend/security-headers.conf": {
       "sha256": "1c5e9db683ecf59688cb77abf00f8174991777d822f194ac87a317017a380dc0"
     },
+    "scripts/database_integrity.py": {
+      "sha256": "9377a3ad84617e01e6656e2f4c83d1be4244352ce319671abe25aca8b83b2806"
+    },
     "scripts/deploy-updates.sh": {
       "sha256": "8ad2073bc337eda93d80bb09870c4dba261af02ca009a8b074c5e4fdbdfb60bc"
     },
@@ -76,7 +79,7 @@
       "sha256": "aabc166ae649df7900690558daeb563112543d45c0034d3ccc662bcec0f7fea3"
     },
     "scripts/supply_chain.py": {
-      "sha256": "5e02a0c6d3d944cd73b72ec1ed58d56515caadd0f9e07f167477db2b80c63d5c"
+      "sha256": "0079c6ad3498a4a7ceb94dbc9e1d70c22a2e32a810a038d8e8583e4f296b981f"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "5235c5d828bf5c34d41ef2677986ab2be9ea7732ea535a0cd464117c4b5b5668"

@@ -226,7 +226,7 @@
                     <span v-else class="rank-num">{{ entry.rank }}</span>
                   </td>
                   <td class="col-student">
-                    <div class="student-name">{{ maskUsername(entry.username) }}</div>
+                    <div class="student-name">{{ maskUsername(entry.username) || 'Deleted learner' }}</div>
                     <div v-if="entry.student_id" class="student-id">{{ entry.student_id }}</div>
                   </td>
                   <td class="col-progress">
@@ -307,7 +307,7 @@
             <div class="ach-info">
               <span class="ach-label">{{ ach.label }}</span>
               <span class="ach-detail">
-                {{ maskUsername(ach.username) }}
+                {{ maskUsername(ach.username) || 'Deleted learner' }}
                 <span v-if="ach.lab_name"> &mdash; {{ ach.lab_name }}</span>
               </span>
             </div>

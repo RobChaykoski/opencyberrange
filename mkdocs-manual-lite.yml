@@ -81,8 +81,9 @@ nav:
     - "Tracking Your Progress": 02_Student_Guide/11_Tracking_Your_Progress.md
     - "Joining a Course": 02_Student_Guide/12_Joining_a_Course.md
     - "Course Labs and Assignments": 02_Student_Guide/13_Course_Labs_and_Assignments.md
-    - "Viewing the Scoreboard": 02_Student_Guide/14_Viewing_the_Scoreboard.md
+    - "Course Progress and Feedback": 02_Student_Guide/14_Viewing_the_Scoreboard.md
     - "Achievements and Badges": 02_Student_Guide/15_Achievements_and_Badges.md
+    - "Celebration Wall": 02_Student_Guide/20_Celebration_Wall.md
     - "Viewing Your Profile": 02_Student_Guide/16_Viewing_Your_Profile.md
     - "Changing Your Password": 02_Student_Guide/17_Changing_Your_Password.md
     - "Privacy and Your Data": 02_Student_Guide/18_Privacy_And_Your_Data.md
@@ -122,7 +123,7 @@ nav:
     - "Assigning Labs to a Course": 03_Instructor_Guide/07_Assigning_Labs_to_a_Course.md
     - "Reordering Course Labs": 03_Instructor_Guide/08_Reordering_Course_Labs.md
     - "Monitoring Student Progress": 03_Instructor_Guide/09_Monitoring_Student_Progress.md
-    - "Viewing the Course Scoreboard": 03_Instructor_Guide/10_Viewing_the_Course_Scoreboard.md
+    - "Viewing Course Health and Feedback": 03_Instructor_Guide/10_Viewing_the_Course_Scoreboard.md
     - "Resetting a Student Lab": 03_Instructor_Guide/11_Resetting_a_Student_Lab.md
     - "Generating PDF Reports": 03_Instructor_Guide/12_Generating_PDF_Reports.md
     - "Archiving a Course": 03_Instructor_Guide/13_Archiving_a_Course.md

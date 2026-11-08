@@ -1,6 +1,6 @@
 # Joining a Course
 
-Join a course to access its assigned labs, course wiki, scoreboard, and achievements. You join with an invite code that your instructor shares.
+Join a course to access its assigned labs, course wiki, feedback, and achievements. You join with an invite code that your instructor shares.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ You can join a course from either of two screens, both of which submit the same 
 3. Click **Join**. The button reads "Joining..." while it works.
 4. Read the message below the field. On success it confirms enrollment and the course appears in your course list.
 
-**What you should see:** a success message and a new course card in your list. Open the card to reach the course exercises, scoreboard, and achievements.
+**What you should see:** a success message and a new course card in your list. Open the card to reach the course exercises, feedback, and achievements.
 
 <figure markdown>
 

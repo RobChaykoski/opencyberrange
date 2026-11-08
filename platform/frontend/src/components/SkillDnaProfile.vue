@@ -5,7 +5,7 @@
         <p class="dna-section__eyebrow">Learner character sheet</p>
         <h2 id="dna-title" class="section-title">Cyber DNA</h2>
         <p class="dna-section__intro">
-          Five traits built from your range activity. They describe what you have practised,
+          Six traits built from your range activity. They describe what you have practised,
           not what you are capable of. Pick a title from your achievements and grow the rest.
         </p>
       </div>
@@ -18,7 +18,7 @@
       <div class="dna-tree__head">
         <div>
           <p class="dna-section__eyebrow">Skill tree</p>
-          <h3 id="dna-tree-title" class="dna-tree__title">Five branches, one practice map</h3>
+          <h3 id="dna-tree-title" class="dna-tree__title">Six branches, one practice map</h3>
           <p class="dna-tree__intro">
             Built from your completed exercises, course participation, and feedback.
             The shape shows what you have practised; it is not a ranking.
@@ -358,7 +358,8 @@ const TREE_LABEL_RADIUS = 128
 
 const treeDimensions = computed(() => props.dna?.dimensions || [])
 const treePointAtRadius = (index, radius) => {
-  const angle = -Math.PI / 2 + index * ((2 * Math.PI) / 5)
+  const count = treeDimensions.value.length || 6
+  const angle = -Math.PI / 2 + index * ((2 * Math.PI) / count)
   return {
     x: treeCenter.x + Math.cos(angle) * radius,
     y: treeCenter.y + Math.sin(angle) * radius,
@@ -408,7 +409,7 @@ const treeAriaLabel = computed(() => {
   const branches = treeDimensions.value
     .map((dimension) => `${dimension.label}: ${dimension.score} out of 100`)
     .join('. ')
-  return `Skill tree with five practice branches. ${branches}.`
+  return `Skill tree with six practice branches. ${branches}.`
 })
 
 const certificationPath = computed(() => {

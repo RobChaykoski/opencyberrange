@@ -33,7 +33,7 @@ modified by the checks.
 - All five profile tabs rendered: Overview, Skill tree, Learning record,
   Account, Security & privacy.
 - Keyboard arrow navigation moved between profile tabs.
-- The skill tree SVG rendered with five branches and an accessible label.
+- The skill tree SVG rendered with six branches and an accessible label.
 - Practice affinities rendered for every profile, including the expected
   recommended affinity.
 - Career-profile export buttons rendered.

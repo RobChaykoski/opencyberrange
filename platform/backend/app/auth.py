@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User
 from app.config import settings
+from app.actor import set_actor
 
 logger = logging.getLogger(__name__)
 
@@ -370,6 +371,10 @@ async def get_current_user(
     user._imp_mode = payload.get("imp_mode")
     user._imp_course_id = payload.get("imp_course_id")
     user._imp_read_only = payload.get("imp_read_only", False)
+
+    # Attribute application writes to the authenticated actor. The database
+    # integrity trigger records this on the next flush.
+    set_actor(user)
 
     return user
 

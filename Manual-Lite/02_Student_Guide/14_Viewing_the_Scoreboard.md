@@ -1,45 +1,67 @@
-# Viewing the Scoreboard
+# Course Progress and Feedback
 
-Check the course scoreboard to see your rank against classmates, your points, and the badges you have earned. The scoreboard is per course; it is not a platform wide leaderboard.
+The course workspace shows your progress, your next exercise, private feedback,
+and your achievements. It does **not** publish a course scoreboard, rank, or
+points table. The scoreboard tab was removed in 2.5.0; course metrics are
+private and descriptive.
 
 ## Prerequisites
 
 - Enrollment in a course. See [Joining a Course](12_Joining_a_Course.md).
 
-## Opening the scoreboard
+## Open the course workspace
 
-1. Open the course from **Courses**.
-2. Click the **Scoreboard** tab.
+1. Open **Courses** from the sidebar.
+2. Select a course card.
+3. Use the tabs at the top of the course.
 
-**What you should see:** a ranked table with one row per student showing rank, name, a progress bar reading "X of Y", and a badge count. Expand any row to see per lab scores and achievement icons.
+## What each tab shows
 
-<figure markdown>
+| Tab | What it shows |
+|---|---|
+| **Overview** | Your progress, the next assigned exercise, and your feedback status. Instructors and administrators see a course-health view instead. |
+| **Content** | The exercises assigned to the course, in order. |
+| **Feedback** | The course check-in, the aggregate student voice, and instructor coaching notes addressed to you. |
+| **Achievements** | The achievements earned in this course. |
+| **Analytics** | Instructors and administrators only: completion, hints, attempts, time, and exercise signals. |
 
-![Course scoreboard with ranked rows, progress bars, and badge counts](img/course-scoreboard.png)
+Students do not see a leaderboard, rank, or another student's progress.
 
-<figcaption>The scoreboard ranks every enrolled student by points and shows each student's progress and earned badges.</figcaption>
-</figure>
+## Your progress
 
-## How points are scored
+The Overview tab shows:
 
-A collapsible **Scoring Guide** on the tab explains the points. Your score comes from solved labs plus two bonuses.
+- completed exercises out of the assigned total;
+- the next exercise that is not complete and not locked;
+- whether you have taken the course check-in;
+- any coaching note your instructor has shared with you.
 
-| Source | Points |
-|--------|--------|
-| Each completed lab | 100 |
-| Solved with no hints | 25 |
-| Solved on first attempt | 25 |
+Opening or stopping a lab does not count as completion. A correct flag does. See
+[Tracking Your Progress](11_Tracking_Your_Progress.md).
 
-Expanding your row breaks the total down by lab, so you can see which solves and bonuses contributed.
+## Feedback is private
 
-## Rank versus dashboard
+The Feedback tab uses the platform survey engine for the course check-in. You
+can see:
 
-The scoreboard rank is specific to one course. The Your Rank card on your dashboard reflects your first enrolled active course. To see ranks in other courses, open each course and view its Scoreboard tab.
+- the aggregate clarity, challenge, engagement, and confidence ratings;
+- anonymous comments;
+- your own check-in status;
+- coaching notes addressed to you.
 
-!!! note "Empty scoreboard"
-    Before anyone in the course solves a lab, the scoreboard shows an empty state. Solve an assigned lab to appear on it. See [Course Labs and Assignments](13_Course_Labs_and_Assignments.md).
+You never see another student's identity, comments, or coaching. Your instructor
+sees the aggregate and the cohort, not your name beside an anonymous comment.
 
-!!! tip "Earn the bonuses"
-    Solving without requesting a hint and getting the flag on your first attempt each add 25 points. Requesting a hint forfeits the no hints bonus for that lab. See [Using Hints](08_Using_Hints.md).
+## Achievements and celebrations
 
-The badges in the scoreboard rows are course achievements. See [Achievements and Badges](15_Achievements_and_Badges.md) for what each one means.
+Course achievements appear on the **Achievements** tab and on your profile. The
+Celebration Wall lets other signed-in users celebrate a public win anonymously.
+See [Achievements and Badges](15_Achievements_and_Badges.md) and
+[Celebration Wall](20_Celebration_Wall.md).
+
+## Related pages
+
+- [Course Labs and Assignments](13_Course_Labs_and_Assignments.md)
+- [Achievements and Badges](15_Achievements_and_Badges.md)
+- [Viewing Your Profile](16_Viewing_Your_Profile.md)
+- [Celebration Wall](20_Celebration_Wall.md)

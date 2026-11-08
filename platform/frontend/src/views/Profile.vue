@@ -303,7 +303,7 @@
                   {{ summary.skill_dna.overall }} / 100 overall, {{ summary.skill_dna.tier }}.
                   Your highest branch is {{ summary.skill_dna.class.label }}.
                 </p>
-                <p v-else>Complete exercises to build your five branches.</p>
+                <p v-else>Complete exercises to build your six branches.</p>
               </article>
 
               <article class="overview-card">

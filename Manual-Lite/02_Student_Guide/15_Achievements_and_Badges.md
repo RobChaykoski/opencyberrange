@@ -1,6 +1,6 @@
 # Achievements and Badges
 
-Earn achievements for how you solve labs inside a course and how far you explore: solving first, solving without hints, solving on your first attempt, and reaching learning milestones. Achievements are course scoped; the icons shown as badges on the scoreboard are these same achievements.
+Earn achievements for how you solve labs inside a course and how far you explore: solving first, solving without hints, solving on your first attempt, and reaching learning milestones. Achievements are course scoped; your profile and the Celebration Wall show what you have earned.
 
 ## Prerequisites
 
@@ -11,8 +11,8 @@ Earn achievements for how you solve labs inside a course and how far you explore
 Achievements show in three places:
 
 - The **Achievements** tab, which lists each earned achievement with an icon and label.
-- As badge icons on each row of the **Scoreboard** tab.
 - On your **Profile**, where earned course achievements appear with your certificates and completion record.
+- On the **Celebration Wall**, when you choose to be listed. The wall shows public wins from across the range; it is not a ranking.
 
 ## Opening the Achievements tab
 
@@ -106,10 +106,25 @@ Most achievements are earned inside a course. Solving a lab outside any course
 still awards global badges, but course-scoped badges need a course enrolment.
 Every achievement you earn is collected on your profile. See [Course Labs and Assignments](13_Course_Labs_and_Assignments.md).
 
+## Celebrate a classmate
+
+The Celebration Wall lets signed-in users celebrate a public win anonymously.
+Celebrations are voluntary and private:
+
+- one anonymous tap per person per win;
+- only the count is shown, never the celebrator's name;
+- celebrations do not affect progress, completion, course health, or any
+  learning metric;
+- your own wins show how many people celebrated them;
+- unlisting yourself from the wall stops new celebrations on your wins.
+
+See [Celebration Wall](20_Celebration_Wall.md).
+
 !!! note "Awarding can lag"
     The platform checks for new achievements right after you submit a correct flag. The check runs in the background, so a badge can take a moment to appear on the tab.
 
 !!! tip "Protect your bonuses"
     Self-Reliant and the points bonus for no hints both depend on solving without help. Requesting a hint forfeits them for that lab. See [Using Hints](08_Using_Hints.md).
 
-To see how achievements feed into your standing, open [Viewing the Scoreboard](14_Viewing_the_Scoreboard.md).
+To see how achievements fit into your course progress and feedback, open
+[Course Progress and Feedback](14_Viewing_the_Scoreboard.md).

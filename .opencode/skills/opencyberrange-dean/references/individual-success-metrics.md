@@ -150,7 +150,7 @@ than five responses is an early signal.
 
 Use Cyber DNA exactly as defined in `docs/SKILL-DNA.md`:
 
-- five traits, each 0–100;
+- six traits, each 0–100;
 - class and affinities;
 - movement between two snapshots with the same formula version;
 - breadth (distinct tracks/categories) and depth (advanced/completed cleanly).
@@ -267,7 +267,7 @@ Suggested payload:
   "persistence": {"reattempt_recovery": 59.0, "median_attempts": 2.0},
   "understanding": {"quiz_participation": true, "quiz_best": 67, "quiz_latest": 67, "learning_reported": 3.8},
   "experience": {"clarity": 4.0, "challenge_fit": 88.0, "relevance": 4.0, "usefulness": 4.0, "ease_of_use": 3.5, "n": 3},
-  "capability": {"formula_version": "2026.11", "traits": [{"key": "builder", "score": 42}], "affinities": []},
+  "capability": {"formula_version": "2026.12", "traits": [{"key": "builder", "score": 42}], "affinities": []},
   "support": {"coaching_notes": 1, "last_coaching_at": "...", "checkin_status": "submitted"},
   "next_step": {"type": "exercise", "slug": "...", "reason": "..."},
   "n": 3,

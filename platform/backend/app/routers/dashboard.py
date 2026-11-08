@@ -20,6 +20,7 @@ from app.models import (
     User, Lab, LabSession, LabCompletion, FlagAttempt, WireGuardConfig,
     Course, CourseEnrollment, CourseLabAssignment, ActivityEvent,
     Track, Level, Achievement, CustomAchievement, Competition,
+    AchievementCelebration,
 )
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.export_reason import require_export_reason
@@ -1150,6 +1151,99 @@ def _achievement_display(
     return (achievement_type, "\U0001F3C5", None)
 
 
+def _celebration_counts(db: Session, achievement_ids: list[int]) -> dict[int, int]:
+    """Return achievement_id -> celebration count for a small feed."""
+    if not achievement_ids:
+        return {}
+    rows = (
+        db.query(
+            AchievementCelebration.achievement_id,
+            func.count(AchievementCelebration.id),
+        )
+        .filter(AchievementCelebration.achievement_id.in_(achievement_ids))
+        .group_by(AchievementCelebration.achievement_id)
+        .all()
+    )
+    return {achievement_id: count for achievement_id, count in rows}
+
+
+def _public_achievement_or_404(db: Session, achievement_id: int) -> Achievement:
+    """Return a wall-eligible achievement, or raise 404.
+
+    The same visibility rules as the wall apply: an active, listed, non-admin
+    owner. An unlisted learner can still see their own corner, but their wins
+    are not public and cannot be celebrated.
+    """
+    achievement = (
+        db.query(Achievement)
+        .options(joinedload(Achievement.user))
+        .filter(Achievement.id == achievement_id)
+        .first()
+    )
+    if achievement is None:
+        raise HTTPException(status_code=404, detail="Achievement not found")
+    owner = achievement.user
+    if (
+        owner is None
+        or not owner.is_active
+        or not getattr(owner, "show_on_scoreboard", False)
+        or owner.role == "admin"
+    ):
+        raise HTTPException(status_code=404, detail="Achievement is not on the wall")
+    return achievement
+
+
+@router.post("/celebrations/{achievement_id}/celebrate")
+async def toggle_celebration(
+    achievement_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Toggle one anonymous celebration on a public achievement.
+
+    The celebration is voluntary and anonymous: the wall returns only the
+    count. The actor is stored so one person can celebrate a win once, but the
+    actor's identity is never exposed. This endpoint does not touch analytics,
+    progress, grading, or course-health data.
+    """
+    achievement = _public_achievement_or_404(db, achievement_id)
+    if achievement.user_id == current_user.id:
+        raise HTTPException(
+            status_code=400,
+            detail="You cannot celebrate your own win.",
+        )
+
+    existing = (
+        db.query(AchievementCelebration)
+        .filter(
+            AchievementCelebration.achievement_id == achievement_id,
+            AchievementCelebration.user_id == current_user.id,
+        )
+        .first()
+    )
+    if existing is not None:
+        db.delete(existing)
+        db.commit()
+        celebrated = False
+    else:
+        db.add(
+            AchievementCelebration(
+                achievement_id=achievement_id,
+                user_id=current_user.id,
+            )
+        )
+        db.commit()
+        celebrated = True
+
+    count = (
+        db.query(func.count(AchievementCelebration.id))
+        .filter(AchievementCelebration.achievement_id == achievement_id)
+        .scalar()
+        or 0
+    )
+    return {"celebrated": celebrated, "count": count}
+
+
 @router.get("/celebrations")
 async def celebration_wall(
     limit: int = Query(15, ge=1, le=50, description="Recent wins to return"),
@@ -1216,6 +1310,19 @@ async def celebration_wall(
     )
 
     recent = []
+    recent_ids = [row.id for row in recent_rows]
+    celebration_counts = _celebration_counts(db, recent_ids)
+    my_celebrated = set()
+    if recent_ids:
+        my_celebrated = {
+            achievement_id
+            for (achievement_id,) in db.query(AchievementCelebration.achievement_id)
+            .filter(
+                AchievementCelebration.user_id == current_user.id,
+                AchievementCelebration.achievement_id.in_(recent_ids),
+            )
+            .all()
+        }
     for row in recent_rows:
         label, icon, description = _achievement_display(
             row.achievement_type, custom_defs, competition_defs
@@ -1247,6 +1354,8 @@ async def celebration_wall(
             "course_name": row.course.name if row.course else None,
             "awarded_at": _iso_utc(row.awarded_at),
             "is_mine": row.user_id == current_user.id,
+            "celebration_count": celebration_counts.get(row.id, 0),
+            "celebrated_by_me": row.id in my_celebrated,
         })
 
     # Celebration spotlight: the most recently celebrated people, one row per
@@ -1313,6 +1422,55 @@ async def celebration_wall(
             "latest_at": _iso_utc(row.latest_at),
         })
 
+    # Anonymous celebration totals, grouped by badge type. This is about which
+    # achievements resonate, not which people are most popular.
+    celebration_query = (
+        db.query(
+            Achievement.achievement_type.label("achievement_type"),
+            func.count(AchievementCelebration.id).label("celebrations"),
+            func.count(func.distinct(AchievementCelebration.user_id)).label("celebrants"),
+        )
+        .join(AchievementCelebration, AchievementCelebration.achievement_id == Achievement.id)
+        .join(User, User.id == Achievement.user_id)
+        .filter(
+            User.is_active == True,
+            User.show_on_scoreboard == True,
+        )
+    )
+    if admin_ids:
+        celebration_query = celebration_query.filter(~Achievement.user_id.in_(admin_ids))
+    celebration_rows = (
+        celebration_query
+        .group_by(Achievement.achievement_type)
+        .order_by(func.count(AchievementCelebration.id).desc())
+        .all()
+    )
+    celebration_type_map = {
+        row.achievement_type: {
+            "celebrations": row.celebrations,
+            "celebrants": row.celebrants,
+        }
+        for row in celebration_rows
+    }
+    for badge in badges:
+        stats = celebration_type_map.get(badge["type"], {})
+        badge["celebrations"] = stats.get("celebrations", 0)
+        badge["celebrants"] = stats.get("celebrants", 0)
+
+    celebrated_badges = []
+    for row in celebration_rows[:5]:
+        label, icon, description = _achievement_display(
+            row.achievement_type, custom_defs, competition_defs
+        )
+        celebrated_badges.append({
+            "type": row.achievement_type,
+            "label": label,
+            "icon": icon,
+            "description": description,
+            "celebrations": row.celebrations,
+            "celebrants": row.celebrants,
+        })
+
     # The current user's own corner. Their awards are returned even when they
     # opted out of the public wall; ``listed`` tells the page whether they are
     # part of the shared feed and ranking.
@@ -1338,6 +1496,8 @@ async def celebration_wall(
     )
 
     my_recent = []
+    my_recent_ids = [row.id for row in my_recent_rows]
+    my_recent_celebrations = _celebration_counts(db, my_recent_ids)
     for row in my_recent_rows:
         label, icon, description = _achievement_display(
             row.achievement_type, custom_defs, competition_defs
@@ -1351,6 +1511,7 @@ async def celebration_wall(
             "lab_name": row.lab.name if row.lab else None,
             "course_code": row.course.code if row.course else None,
             "awarded_at": _iso_utc(row.awarded_at),
+            "celebration_count": my_recent_celebrations.get(row.id, 0),
         })
 
     can_list = bool(
@@ -1360,6 +1521,19 @@ async def celebration_wall(
     listed = bool(
         can_list
         and getattr(current_user, "show_on_scoreboard", True)
+    )
+    my_celebrations_received = (
+        db.query(func.count(AchievementCelebration.id))
+        .join(Achievement, Achievement.id == AchievementCelebration.achievement_id)
+        .filter(Achievement.user_id == current_user.id)
+        .scalar()
+        or 0
+    )
+    my_celebrations_given = (
+        db.query(func.count(AchievementCelebration.id))
+        .filter(AchievementCelebration.user_id == current_user.id)
+        .scalar()
+        or 0
     )
 
     return {
@@ -1373,10 +1547,13 @@ async def celebration_wall(
         },
         "recent": recent,
         "spotlight": spotlight,
+        "celebrated_badges": celebrated_badges,
         "badges": badges,
         "me": {
             "badge_count": my_badge_count,
             "unique_badges": my_unique_badges,
+            "celebrations_received": my_celebrations_received,
+            "celebrations_given": my_celebrations_given,
             "listed": listed,
             "can_list": can_list,
             "username": current_user.username,

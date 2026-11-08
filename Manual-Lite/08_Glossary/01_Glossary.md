@@ -112,12 +112,55 @@ taxonomies because they do not describe threat intelligence.
 | Track | A themed collection of labs, such as Network Security or Malware Analysis. |
 | Level | A difficulty grouping inside a track. |
 | Course | An instructor-created collection of labs, students, assignments, and due dates. |
+| Academy | The course area of the platform. Students see their courses; staff see the programme and course workspaces. |
+| Programme | An optional institutional grouping of courses and semester goals. A course can exist without a programme. |
+| Course workspace | The course page with Overview, Content, Feedback, Achievements, and Analytics. |
 | Flag | The token a student submits to prove completion. It is a training marker, not an IOC. |
 | Hint | A staged clue that unlocks after a configured time or condition. |
 | RangeBox | The browser-based Kali, Ubuntu, or REMnux desktop used to work on a lab. |
 | Session | One running instance of a lab assigned to one student. |
 | Attempt | One submission of a flag or one launch of a lab, depending on the context. |
 | Completion | The recorded state after a student submits the correct flag. |
+| Achievement | A badge or micro-credential awarded for a defined piece of practice, progress, or participation. |
+| Certificate | The record issued when a track level is completed. It can be downloaded as a PDF and verified by ID. |
+| Celebration | A voluntary, anonymous signal of appreciation for a public achievement. One person can celebrate a win once; only the count is shown. |
+| Celebration Wall | The cross-course view of public achievements and celebrations. It is not a leaderboard. |
+
+## Programme, learning, and analytics terms
+
+These terms describe the teaching, feedback, and programme layer. They are
+descriptive, not grades or predictions.
+
+| Term | Definition |
+|---|---|
+| Course health | A private, descriptive summary of how a course is landing: completion, student experience, response rate, instructor coaching, and knowledge checks. Shown as Healthy, Watch, or Needs attention. |
+| Overall feedback | The weighted 0–100 summary of the available course feedback. It is not a grade and is not shown publicly. |
+| Response rate | Unique students who gave feedback divided by enrolled students. |
+| Coaching coverage | Students with at least one instructor coaching note divided by enrolled students. |
+| Knowledge check | Optional benchmark practice attached to an exercise. It shows 2–3 randomised questions per attempt, allows unlimited retries, and explains the answer and reference after submission. It is never an exam item or a gate. |
+| Cyber DNA (Skill DNA) | The learner character sheet: six descriptive traits, a class, and practice affinities built from existing activity. It is not a grade, a ranking, or a prediction. |
+| Trait | One of the six Cyber DNA dimensions: Explorer, Builder, Tester, Defender, Investigator, or Leader. Each is scored 0–100. |
+| Affinity | A positive practice direction suggested by completed work, such as offensive security, defensive operations, DFIR, or security leadership. It is not a job label. |
+| Individual success profile | The eight-dimension view used by a student and their instructor: progress, pace, independence, persistence, understanding, experience, capability, and support. It ends with one next step. |
+| Dean | The institutional role that sets semester goals, reviews programme health, supports instructors, and owns the end-of-term evidence. In 2.5.0 it maps to an administrator or programme lead; it is not a separate database role. |
+| Programme lead | The staff role that turns semester goals into a course portfolio and supports instructors. |
+| Executive view | The staff-only Academy view of overall progress: goals, trends, projections, course portfolio, student voice, and risks. |
+| Projection (forecast) | A transparent estimate of where a programme metric may land, using goal pace, run rate, a moving average, or a trend direction. It always includes a method, sample size, and uncertainty band. It is not an individual prediction. |
+| Baseline | The starting value for a goal or course. A projection without a baseline is not a trend. |
+| Feeling vs doing | Two separate signals: self-reported feeling from the check-in, and progress against assigned work. They are shown together to prompt a conversation, never as a grade. |
+| Small cohort | Fewer than five learners in a group. Counts are shown; percentages are treated as an early signal and may be suppressed. |
+| Early signal | A finding based on few responses or few time points. It is not a trend and should not drive a high-stakes decision. |
+| Learning evidence | The record used to support a programme or learner review: completion, practice, feedback, knowledge checks, Cyber DNA movement, and certificates. It is descriptive. |
+
+## Security and supply-chain terms
+
+| Term | Definition |
+|---|---|
+| Trust boundary | A point where data, identity, or permission changes hands, such as the browser to the API, the API to Docker, or a learner to a lab network. |
+| STRIDE | A threat-enumeration method: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, and Elevation of privilege. |
+| DREAD | A threat-prioritisation heuristic: Damage, Reproducibility, Exploitability, Affected users, and Discoverability. |
+| Supply-chain lock | A committed SHA-256 manifest of platform build inputs and lab content. It detects drift; it does not replace dependency audits, SBOMs, or a signed release. |
+| Release evidence | The artefacts that show a release was verified: test and build output, smoke evidence, screenshots, and the supply-chain check. |
 
 ## Preferred usage
 
@@ -137,6 +180,15 @@ Use the standard term in new text. Keep direct quotations as they are.
 | PAP:CLEAR | PAP:WHITE in new text | CLEAR is the current unrestricted PAP label. |
 | analytic confidence: high | probably | Use estimative-language terms and keep confidence separate from likelihood. |
 | source reliability: A | trusted source | The Admiralty scale is explicit and repeatable. |
+| Cyber DNA | Skill DNA, when talking to learners | Cyber DNA is the learner-facing name; Skill DNA is the implementation and API name. |
+| knowledge check | quiz, when describing the optional benchmark | A knowledge check is optional practice, not an exam or a gate. |
+| celebration | like, upvote, or applause ranking | A celebration is anonymous and voluntary; the wall shows a count, not a popularity order. |
+| course health | scoreboard or ranking | Course health is a private, descriptive summary for the teaching team. |
+| programme | department or faculty | A programme is the course-and-goal grouping in this platform. |
+| dean | administrator | The dean is an institutional role; the administrator owns platform operations. |
+| projection | prediction | A projection is a transparent planning estimate with a method, band, and sample size. |
+| early signal | trend | An early signal has too few points or responses to support a trend claim. |
+| small cohort | weak cohort | A small cohort is a sample-size limitation, not a judgement about the learners. |
 
 ## Sources and review
 
@@ -149,5 +201,5 @@ Use the standard term in new text. Keep direct quotations as they are.
 - [Admiralty scale](https://www.misp-project.org/taxonomies.html#_admiralty_scale)
 - [ICD 203 estimative language](https://www.dni.gov/files/documents/ICD/ICD-203.pdf)
 
-Reviewed: 2026-11-02 against the MISP taxonomies repository. Recheck when a
+Reviewed: 2026-11-08 against the MISP taxonomies repository. Recheck when a
 taxonomy version changes or when a new term is added to this glossary.

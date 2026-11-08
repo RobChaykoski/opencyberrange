@@ -15,7 +15,7 @@ After login the platform routes you to `/dashboard` and renders the student view
 
 ![Student dashboard with the Next Objective, My Progress, VPN Status, and Rank cards](img/student-dashboard.png)
 
-<figcaption>The student dashboard shows your next objective, overall progress, VPN status, and your course rank.</figcaption>
+<figcaption>The student dashboard shows your next objective, overall progress, VPN status, and your private course position.</figcaption>
 </figure>
 
 | Card | What it tells you | Action on the card |
@@ -23,7 +23,7 @@ After login the platform routes you to `/dashboard` and renders the student view
 | Next Objective | The track, level, and lab name the platform suggests next. Shows "All labs completed#" when nothing is left. | Resume Training, which opens the Exercises hub |
 | My Progress | A progress bar plus "X / Y labs completed" across the labs available to you | None |
 | VPN Status | A status dot reading "Registered" or "Not Configured", and your assigned client IP when present | Download Config or Setup VPN, which opens the VPN setup page |
-| Your Rank | "#N in {course name}", your place on a course scoreboard | None |
+| Your Rank | "#N in {course name}", your private position in the course cohort | None |
 
 ## Move from the dashboard into training
 
@@ -35,8 +35,8 @@ After login the platform routes you to `/dashboard` and renders the student view
 
 ## When cards do not appear
 
-!!! note "The Rank card is conditional"
-    The **Your Rank** card appears only when you are enrolled in an active course that has assigned labs. If you have not joined a course, or your course has no labs assigned yet, the card stays hidden. See [Joining a Course](12_Joining_a_Course.md).
+!!! note "The rank pill is private"
+    The **Your Rank** pill appears only when you are enrolled in an active course that has assigned labs. It is a private position for your own view, not a public scoreboard. If you have not joined a course, or your course has no labs assigned yet, the pill stays hidden. See [Joining a Course](12_Joining_a_Course.md).
 
 !!! tip "Set up your VPN early"
     A fresh account shows "Not Configured" on the VPN card with a **Setup VPN** button. Lab targets sit on isolated subnets that you reach only through the tunnel, so download your config before your first lab. See [Connecting via VPN](05_Connecting_via_VPN.md).

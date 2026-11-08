@@ -222,14 +222,15 @@ def test_skill_dna_scores_and_class(db_session, test_user):
     dna = build_skill_dna(db_session, test_user)
     scores = {row["key"]: row["score"] for row in dna["dimensions"]}
 
-    assert dna["formula_version"] == "2026.11"
+    assert dna["formula_version"] == "2026.12"
     assert scores["explorer"] > 0
     assert scores["builder"] > 0
+    assert scores["tester"] > 0
     assert scores["defender"] > 0
     assert scores["investigator"] > 0
     assert scores["leader"] > 0
-    assert dna["class"]["key"] in {"explorer", "builder", "defender", "investigator", "leader"}
-    assert dna["class"]["class_name"] in {"Pathfinder", "Artificer", "Warden", "Seeker", "Commander"}
+    assert dna["class"]["key"] in {"explorer", "builder", "tester", "defender", "investigator", "leader"}
+    assert dna["class"]["class_name"] in {"Pathfinder", "Artificer", "Assessor", "Warden", "Seeker", "Commander"}
     assert dna["overall"] > 0
     assert all(0 <= score <= 100 for score in scores.values())
     for row in dna["dimensions"]:
@@ -310,7 +311,7 @@ def test_profile_summary_includes_skill_dna(client, auth_headers, db_session, te
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["skill_dna"]["overall"] > 0
-    assert len(body["skill_dna"]["dimensions"]) == 5
+    assert len(body["skill_dna"]["dimensions"]) == 6
     assert len(body["skill_dna"]["affinities"]) == 4
     assert body["skill_dna"]["titles"]["titles"]
     assert body["user"]["equipped_title"]["key"] in {"class", "first_blood"}
@@ -383,11 +384,13 @@ def test_skill_branch_mapping_and_mix():
         )
 
     assert skill_branch_for_lab(lab("reconnaissance")) == "explorer"
-    assert skill_branch_for_lab(lab("web")) == "builder"
+    assert skill_branch_for_lab(lab("web")) == "tester"
+    assert skill_branch_for_lab(lab("assessment")) == "tester"
     assert skill_branch_for_lab(lab("forensics")) == "investigator"
     assert skill_branch_for_lab(lab("network-analysis")) == "defender"
     assert skill_branch_for_lab(lab("ot")) == "defender"
-    assert skill_branch_for_lab(lab("web", difficulty="advanced")) == "leader"
+    assert skill_branch_for_lab(lab("web", difficulty="advanced")) == "tester"
+    assert skill_branch_for_lab(lab("forensics", difficulty="advanced")) == "leader"
 
     labs = [
         lab("reconnaissance"),
@@ -407,7 +410,8 @@ def test_skill_branch_mapping_and_mix():
     assert mix["assigned_total"] == 5
     assert mix["completed_total"] == 2
     assert mix["completion_pct"] == 40.0
-    assert by_key["builder"]["assigned"] == 1
-    assert by_key["builder"]["completed"] == 1
+    assert by_key["tester"]["assigned"] == 2
+    assert by_key["tester"]["completed"] == 1
+    assert by_key["builder"]["assigned"] == 0
     assert by_key["investigator"]["completed"] == 1
     assert by_key["explorer"]["assigned_pct"] == 20.0

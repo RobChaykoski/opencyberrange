@@ -1,10 +1,10 @@
 """Skill DNA: a transparent, activity-based learner character sheet.
 
-The five traits are deliberately descriptive, not predictive. They summarise
+The six traits are deliberately descriptive, not predictive. They summarise
 what a learner has practised in the range and give a next step. They are not a
 rank, a grade, or a claim about employability.
 
-Formula version 2026.11:
+Formula version 2026.12:
 
 - Explorer   breadth of tracks, categories, and labs opened.
 - Builder    hands-on completion, time, and clean solves.
@@ -40,9 +40,9 @@ from app.models import (
 )
 from app.services.titles import resolve_titles
 
-FORMULA_VERSION = "2026.11"
+FORMULA_VERSION = "2026.12"
 
-DIMENSION_ORDER = ("explorer", "builder", "defender", "investigator", "leader")
+DIMENSION_ORDER = ("explorer", "builder", "tester", "defender", "investigator", "leader")
 
 BUILDER_CATEGORIES = {
     "web",
@@ -75,8 +75,10 @@ OFFENSIVE_SUPPORT_CATEGORIES = {
     "authentication",
     "enumeration",
     "reconnaissance",
+    "assessment",
 }
 OFFENSIVE_CATEGORIES = OFFENSIVE_CORE_CATEGORIES | OFFENSIVE_SUPPORT_CATEGORIES
+TESTER_CATEGORIES = OFFENSIVE_CORE_CATEGORIES | {"assessment"}
 
 
 @dataclass(frozen=True)
@@ -116,6 +118,14 @@ DIMENSIONS: tuple[DimensionSpec, ...] = (
         "Complete a multi-step lab without hints.",
     ),
     DimensionSpec(
+        "tester",
+        "Tester",
+        "Assessor",
+        "web",
+        "Authorised offensive testing, exploitation, and reporting",
+        "Complete an assessment or capstone lab and write a short finding.",
+    ),
+    DimensionSpec(
         "defender",
         "Defender",
         "Warden",
@@ -144,7 +154,7 @@ DIMENSIONS: tuple[DimensionSpec, ...] = (
 DIMENSION_BY_KEY = {spec.key: spec for spec in DIMENSIONS}
 
 # Practice affinities are positive, evidence-based role families. They update
-# from the same activity records as the five traits but are deliberately not
+# from the same activity records as the six traits but are deliberately not
 # another rank: they answer "what kind of work have I practised most?" and
 # "what should I try next?".
 AFFINITIES: tuple[AffinitySpec, ...] = (
@@ -230,6 +240,7 @@ def _signals(db: Session, user_id: int) -> dict:
     offensive_labs = 0
     offensive_core_labs = 0
     offensive_no_hint_labs = 0
+    assessment_labs = 0
     defender_tracks: set[str] = set()
     investigator_tracks: set[str] = set()
     offensive_categories: set[str] = set()
@@ -267,6 +278,8 @@ def _signals(db: Session, user_id: int) -> dict:
                 offensive_core_labs += 1
             if (row.hints_used or 0) == 0:
                 offensive_no_hint_labs += 1
+        if category == "assessment":
+            assessment_labs += 1
 
         total_minutes += row.time_spent_minutes or 0
         if (row.hints_used or 0) == 0:
@@ -350,6 +363,7 @@ def _signals(db: Session, user_id: int) -> dict:
         "offensive_core_labs": offensive_core_labs,
         "offensive_no_hint_labs": offensive_no_hint_labs,
         "offensive_categories": sorted(offensive_categories),
+        "assessment_labs": assessment_labs,
         "total_minutes": total_minutes,
         "no_hint_labs": no_hint,
         "perfect_labs": perfect,
@@ -382,6 +396,13 @@ def _scores(signals: dict) -> dict[str, int]:
         + 1.5 * min(signals["quiz_labs"], 10)
         + 0.15 * (signals["quiz_accuracy"] or 0)
     )
+    tester = _clamp(
+        9 * min(signals["offensive_core_labs"], 12)
+        + 2 * min(signals["offensive_labs"], 20)
+        + 3 * min(len(signals["offensive_categories"]), 4)
+        + 1 * min(signals["offensive_no_hint_labs"], 10)
+        + 3 * min(signals["assessment_labs"], 4)
+    )
     defender = _clamp(
         9 * min(signals["defender_labs"], 12)
         + 3 * min(len(signals["defender_tracks"]), 4)
@@ -403,6 +424,7 @@ def _scores(signals: dict) -> dict[str, int]:
     return {
         "explorer": explorer,
         "builder": builder,
+        "tester": tester,
         "defender": defender,
         "investigator": investigator,
         "leader": leader,
@@ -430,6 +452,12 @@ def _evidence(spec: DimensionSpec, signals: dict, score: int) -> str:
                 + (f" ({signals['quiz_accuracy']}% avg)" if signals["quiz_accuracy"] is not None else "")
             )
         return " · ".join(parts)
+    if spec.key == "tester":
+        return (
+            f"{signals['offensive_core_labs']} offensive labs · "
+            f"{len(signals['offensive_categories'])} offensive categories · "
+            f"{signals['assessment_labs']} assessments"
+        )
     if spec.key == "defender":
         return (
             f"{signals['defender_labs']} defensive labs · "
@@ -459,7 +487,7 @@ def _affinity_level(count: int) -> str:
 
 def _affinity_counts(signals: dict) -> dict[str, int]:
     return {
-        "offensive": signals["offensive_core_labs"],
+        "offensive": signals["offensive_core_labs"] + signals["assessment_labs"],
         "defensive": signals["defender_labs"],
         "investigative": signals["investigator_labs"],
         "leadership": (
@@ -477,6 +505,8 @@ def _affinity_evidence(spec: AffinitySpec, signals: dict) -> str:
             f"{signals['offensive_core_labs']} core offensive labs",
             f"{signals['offensive_labs']} offensive labs total",
         ]
+        if signals["assessment_labs"]:
+            parts.append(f"{signals['assessment_labs']} assessments")
         if signals["offensive_no_hint_labs"]:
             parts.append(f"{signals['offensive_no_hint_labs']} clean solves")
         if signals["offensive_categories"]:
@@ -617,12 +647,13 @@ def skill_branch_for_lab(lab: Lab | None) -> str:
     that sums to 100%. The rules follow the Skill DNA categories, with the
     following tie-breaks:
 
+    * offensive core and assessment exercises count as Tester;
     * advanced/expert exercises count as Leader (capstone/advanced work);
     * OSINT, forensics, and malware analysis count as Investigator;
     * network analysis and OT count as Defender;
     * builder categories count as Builder;
-    * reconnaissance, enumeration, assessment, and the remaining foundations
-      count as Explorer.
+    * reconnaissance, enumeration, and the remaining foundations count as
+      Explorer.
     """
     if lab is None:
         return "explorer"
@@ -632,6 +663,8 @@ def skill_branch_for_lab(lab: Lab | None) -> str:
     track = getattr(level, "track", None) if level else None
     track_slug = _track_slug(track)
 
+    if category in TESTER_CATEGORIES:
+        return "tester"
     if difficulty in {"advanced", "expert"}:
         return "leader"
     if category in {"osint", "forensics"} or track_slug in {

@@ -174,8 +174,8 @@ its source, sample size, and limitation.
 
 Read `docs/SKILL-DNA.md` before using Cyber DNA in a dean report.
 
-- Report the **five traits** (Explorer, Builder, Defender, Investigator, Leader),
-  the class, and the affinities with their evidence level.
+- Report the **six traits** (Explorer, Builder, Tester, Defender, Investigator,
+  Leader), the class, and the affinities with their evidence level.
 - Report **movement** between two points with the same formula version. A single
   snapshot is a character sheet, not an outcome.
 - Never rank learners by trait, class, or affinity. Never use Cyber DNA for

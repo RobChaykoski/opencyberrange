@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
 import os
+import uuid
 
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -24,9 +25,11 @@ from app.routers import settings as settings_router
 from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
+from app.services.db_integrity import ensure_ledger
 from app.config import settings
 from app.version import APP_VERSION, RELEASE_NAME
 from app.ratelimit import create_limiter
+from app.actor import set_request_id, clear_actor
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -520,6 +523,11 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Startup firewall auto-apply: {e}")
 
+    # Append-only change ledger for critical tables. The triggers attribute
+    # application writes to the authenticated actor and flag manual writes as
+    # unattributed. PostgreSQL only; SQLite tests skip it.
+    ensure_ledger(engine)
+
     # Only the advisory-lock leader runs the scheduler; the other workers
     # serve requests but skip the background cleanup loops.
     scheduler_started = _try_acquire_scheduler_leadership()
@@ -562,6 +570,23 @@ app.add_middleware(
 # get_setting falls back to "false", so an internet-facing deploy hides the
 # API docs until an admin flips the setting (or ENABLE_API_DOCS=true is set).
 _DOCS_PATHS = {"/docs", "/redoc", "/openapi.json", "/docs/oauth2-redirect"}
+
+
+@app.middleware("http")
+async def actor_request_context(request: Request, call_next):
+    """Attach a request id and clear the actor context after the response.
+
+    The authenticated actor is set by ``get_current_user``. A system job keeps
+    no actor; the database trigger falls back to ``application_name``.
+    """
+    request_id = request.headers.get("x-request-id") or uuid.uuid4().hex
+    set_request_id(request_id)
+    try:
+        response = await call_next(request)
+        response.headers["X-Request-ID"] = request_id
+        return response
+    finally:
+        clear_actor()
 
 
 @app.middleware("http")

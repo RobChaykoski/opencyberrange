@@ -4,31 +4,32 @@ Status: **Available on platform release 2.5.0** and inherited from the
 Community / Academic 1.1.3 maintenance line.
 
 Skill DNA is a learner character sheet. It summarises what a learner has
-practised in the range across five traits, gives the learner a class, points to
-a certification path, and shows **practice affinities** built from the same
+practised in the range across six traits, gives the learner a class, points to a
+certification path, and shows **practice affinities** built from the same
 activity. It is **descriptive, not predictive**: it is not a grade, a ranking, a
 prediction of job performance, or a claim about a learner's ability.
 
-## The five traits
+## The six traits
 
 | Trait | Class | What it measures | Certification focus |
 |---|---|---|---|
 | Explorer | Pathfinder | Breadth across tracks, categories, and labs opened | OSINT, threat intelligence, reconnaissance |
 | Builder | Artificer | Hands-on completion, time, and clean solves | AppSec, secure development, web testing |
+| Tester | Assessor | Authorised offensive testing: exploitation, privilege escalation, post-exploitation, assessment, and reporting | Web application testing, penetration testing, AppSec |
 | Defender | Warden | Defensive, forensics, network-analysis, and OT practice | SOC, network defence, incident response |
 | Investigator | Seeker | OSINT, reconnaissance, traffic analysis, and forensics practice | DFIR, malware analysis, forensics |
 | Leader | Commander | Events, courses, badges, advanced labs, teaching | Security leadership, governance, programme delivery |
 
 The class is the highest-scoring trait. Ties break in the order Explorer,
-Builder, Defender, Investigator, Leader. A learner with no activity is a
+Builder, Tester, Defender, Investigator, Leader. A learner with no activity is a
 **Recruit**.
 
 ## Practice affinities
 
-The five traits answer "what have I practised?" The affinity panel answers a
+The six traits answer "what have I practised?" The affinity panel answers a
 different, still positive question: "which kind of security work does my
-practice point toward next?" Affinities are not a sixth trait, a job label, or a
-second score. They use the same completed-exercise records and are shown beside
+practice point toward next?" Affinities are not a seventh trait, a job label, or
+a second score. They use the same completed-exercise records and are shown beside
 the traits.
 
 | Affinity | Evidence used | Example roles |
@@ -62,7 +63,7 @@ practice, not just exploitation technique.
 
 ## Reporting
 
-Learning reports use the same five branches for a **skill-tree radar**. The
+Learning reports use the same six branches for a **skill-tree radar**. The
 radar shows the mix of assigned exercises and the mix of completed exercises
 for all visible courses or one selected course. It is a curriculum-coverage
 view, not a learner score. Learner-level and cohort competency radar remain
@@ -71,7 +72,7 @@ planned.
 ## Score model
 
 Each trait is scored from 0 to 100. Scores are capped, so a very active learner
-cannot exceed 100. Formula version: **2026.11**.
+cannot exceed 100. Formula version: **2026.12**.
 
 ```text
 Explorer = 7 × tracks + 2 × categories + 1.2 × min(opened_labs, 20)
@@ -82,6 +83,12 @@ Builder  = 2.0 × min(completed_labs, 25)
            + 1.0 × min(no_hint_labs, 10)
            + 0.5 × min(perfect_labs, 10)
            + 1.0 × min(builder_labs, 10)
+
+Tester   = 9 × min(offensive_core_labs, 12)
+           + 2 × min(offensive_labs, 20)
+           + 3 × min(offensive_categories, 4)
+           + 1 × min(offensive_no_hint_labs, 10)
+           + 3 × min(assessment_labs, 4)
 
 Defender = 9 × min(defender_labs, 12)
            + 3 × min(defender_tracks, 4)
@@ -99,11 +106,20 @@ Leader   = 12 × min(competitions, 5)
            + 1 × min(likes_given, 10)
 ```
 
+The Builder score adds knowledge-check participation and accuracy because
+understanding is part of hands-on practice:
+
+```text
+Builder += 1.5 × min(quiz_labs, 10) + 0.15 × quiz_accuracy
+```
+
 `opened_labs` is the union of labs with a session and labs with a completion.
 `categories` is the number of distinct lab categories touched. `advanced_labs`
 counts completions with difficulty `advanced` or `expert`. `builder_labs`,
 `defender_labs`, and `investigator_labs` use the category and track mapping in
-`platform/backend/app/services/skill_dna.py`.
+`platform/backend/app/services/skill_dna.py`. `offensive_core_labs` covers web,
+exploitation, privilege escalation, post-exploitation, and credential attacks.
+`assessment_labs` covers assessment and capstone-style penetration-test work.
 
 ### Tier thresholds
 
@@ -122,6 +138,10 @@ counts completions with difficulty `advanced` or `expert`. `builder_labs`,
   domains is recognised.
 - Builder rewards completion, time on task, and clean solves; hints and retries
   do not reduce the score, but clean work is rewarded.
+- Tester rewards authorised offensive practice: core exploitation labs,
+  breadth across offensive categories, clean solves, and assessment/reporting
+  work. It is not a licence to test real systems; all practice is inside the
+  platform's isolated labs.
 - Defender and Investigator are deliberately different lenses on overlapping
   content. A forensics lab can feed both, because it is both defensive work and
   investigative work.
@@ -158,6 +178,7 @@ track guidance as `platform/frontend/src/data/certificationPaths.js`:
 |---|---|
 | Pathfinder | OSINT |
 | Artificer | Web |
+| Assessor | Web / offensive security |
 | Warden | Network |
 | Seeker | Forensics |
 | Commander | General foundations |
@@ -193,7 +214,8 @@ positive match is the recommended next direction.
   ranking, or high-stakes decisions.
 - Affinity evidence is positive: it reports what the learner has practised. It
   never asserts that a learner is authorised to test, is job-ready, or has a
-  particular title.
+  particular title. The Tester trait and offensive affinity record isolated-lab
+  practice; they are not a licence or permission to test any real system.
 - A new learner starts at Recruit; the empty state explains how to begin.
 - The model can change as the curriculum grows. Record the formula version in
   the API response and the release notes.
@@ -207,7 +229,7 @@ positive match is the recommended next direction.
 - The profile uses tabs so the page does not become one long scroll. **Skill
   tree** is its own tab; Overview, Learning record, Account, and Security &
   privacy hold the other tasks.
-- The skill tree is a five-branch radar with a text legend and branch cards.
+- The skill tree is a six-branch radar with a text legend and branch cards.
   It never relies on colour alone.
 - Each bar exposes a text score and `role="progressbar"` values. The SVG tree
   exposes an accessible label with every branch score.

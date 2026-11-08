@@ -16,7 +16,7 @@ def _dossier():
         },
         "headline": "A practice snapshot, not a job label.",
         "cyber_dna": {
-            "formula_version": "2026.11",
+            "formula_version": "2026.12",
             "overall": 42,
             "tier": "Apprentice",
             "class": {

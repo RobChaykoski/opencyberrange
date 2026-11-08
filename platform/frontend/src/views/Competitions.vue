@@ -379,7 +379,7 @@
                   >
                     <td>{{ entry.rank }}</td>
                     <td>
-                      {{ entry.display_name || entry.username }}
+                      {{ entry.display_name || entry.username || 'Deleted participant' }}
                       <small v-if="entry.is_me">you</small>
                     </td>
                     <td>{{ entry.score }}</td>

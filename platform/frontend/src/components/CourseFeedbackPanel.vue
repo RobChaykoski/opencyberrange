@@ -157,11 +157,11 @@
                 class="coaching-student"
                 :class="{ 'coaching-student--active': selectedStudent === student.user_id }"
                 :title="quickInsight(student)"
-                :aria-label="`${student.name}. Feeling ${feelingFor(student).label}. Doing ${doingFor(student).label}. ${quickInsight(student)}`"
+                :aria-label="`${student.name || 'Deleted learner'}. Feeling ${feelingFor(student).label}. Doing ${doingFor(student).label}. ${quickInsight(student)}`"
                 @click="selectStudent(student)"
               >
                 <span class="coaching-student__top">
-                  <span class="coaching-student__name">{{ student.name }}</span>
+                  <span class="coaching-student__name">{{ student.name || 'Deleted learner' }}</span>
                   <span v-if="student.coaching" class="coaching-student__state">Coached</span>
                   <span v-else class="coaching-student__state coaching-student__state--open">Open</span>
                 </span>

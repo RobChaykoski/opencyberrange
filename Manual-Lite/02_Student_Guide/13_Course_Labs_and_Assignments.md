@@ -1,6 +1,6 @@
 # Course Labs and Assignments
 
-Work through the labs your instructor assigns inside a course. Solving a lab from the course view credits the course scoreboard and opens the course wiki instead of the public track wiki.
+Work through the labs your instructor assigns inside a course. Solving a lab from the course view counts toward your course progress and opens the course wiki instead of the public track wiki.
 
 ## Prerequisites
 
@@ -10,8 +10,9 @@ Work through the labs your instructor assigns inside a course. Solving a lab fro
 
 Open a course from your Courses list to reach its tabs:
 
-- **Exercises:** the assignments and their labs.
-- **Scoreboard:** the course leaderboard. See [Viewing the Scoreboard](14_Viewing_the_Scoreboard.md).
+- **Content:** the assignments and their labs.
+- **Overview:** your progress, the next exercise, and feedback status. See [Course Progress and Feedback](14_Viewing_the_Scoreboard.md).
+- **Feedback:** the course check-in, aggregate student voice, and coaching notes.
 - **Achievements:** the badges you earn in the course. See [Achievements and Badges](15_Achievements_and_Badges.md).
 
 The Exercises tab groups labs into assignments. Each assignment shows its labs, and the heading shows how many exercises it contains. A locked assignment displays "This assignment is locked by your instructor" until your instructor opens it. Drill labs carry a blue **Drill** badge.
@@ -30,7 +31,7 @@ The Exercises tab groups labs into assignments. Each assignment shows its labs, 
 3. Find an unlocked assignment and click an assigned lab.
 4. Launch the lab and solve it as usual. See [Launching a Lab](04_Launching_a_Lab.md) and [Submitting Flags](07_Submitting_Flags.md).
 
-**What you should see:** the lab opens with the course context attached. When you submit a correct flag, the solve counts toward the course scoreboard and the Open Workbook button points to the course wiki.
+**What you should see:** the lab opens with the course context attached. When you submit a correct flag, the solve counts toward your course progress and the Open Workbook button points to the course wiki.
 
 The path below shows how a course lab gives course credit.
 
@@ -40,7 +41,7 @@ flowchart LR
     B --> C[Open assigned lab]
     C --> D[Launch and solve]
     D --> E[Flag submitted with course context]
-    E --> F[Score and achievements update]
+    E --> F[Progress and achievements update]
 ```
 
 ## Course only labs

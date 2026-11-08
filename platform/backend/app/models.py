@@ -777,6 +777,32 @@ class AchievementCelebration(Base):
     )
 
 
+class DataIntegrityLedger(Base):
+    """Append-only ledger of application writes to critical tables.
+
+    A PostgreSQL trigger writes one row per INSERT, UPDATE, or DELETE. The
+    ``actor_type`` is ``user`` when the application has an authenticated actor,
+    ``system`` for an application job with no user, and ``unattributed`` for a
+    write that bypassed the application (for example, manual SQL).
+
+    The ledger stores row hashes, not row contents. It is evidence of change,
+    not a copy of the data.
+    """
+    __tablename__ = "data_integrity_ledger"
+
+    id = Column(Integer, primary_key=True, index=True)
+    occurred_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    table_name = Column(String(64), nullable=False, index=True)
+    row_pk = Column(String(128), nullable=False)
+    operation = Column(String(8), nullable=False)
+    row_hash = Column(String(64), nullable=False)
+    actor_type = Column(String(16), nullable=False, server_default="unattributed")
+    actor_id = Column(Integer, nullable=True)
+    request_id = Column(String(64), nullable=True)
+    prev_hash = Column(String(64), nullable=False)
+    entry_hash = Column(String(64), nullable=False, index=True)
+
+
 class CustomAchievement(Base):
     """Admin-defined achievement awarded for aggregate progress.
 

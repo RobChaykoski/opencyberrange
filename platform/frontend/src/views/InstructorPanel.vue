@@ -180,7 +180,7 @@
                     @change="toggleEnrollUser(u.id)"
                     class="enroll-checkbox"
                   />
-                  <span class="enroll-user-name">{{ u.username }}</span>
+                  <span class="enroll-user-name">{{ u.username || 'Deleted learner' }}</span>
                   <span class="enroll-user-detail">{{ u.student_id || u.email || '' }}</span>
                 </label>
                 <div v-if="filteredEnrollableUsers.length === 0" class="empty-state">
@@ -205,7 +205,7 @@
                 <tbody>
                   <template v-for="s in courseStudents" :key="s.id">
                     <tr>
-                      <td class="cell-primary">{{ maskUsername(s.username) }}</td>
+                      <td class="cell-primary">{{ maskUsername(s.username) || 'Deleted learner' }}</td>
                       <td>{{ maskEmail(s.email) }}</td>
                       <td class="cell-muted">{{ formatDateShort(s.enrolled_at) }}</td>
                       <td class="cell-actions">

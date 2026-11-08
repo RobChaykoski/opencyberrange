@@ -2,10 +2,18 @@
 Database connection and session management
 """
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from app.config import settings
+from app.actor import get_actor
+
+_connect_args = {}
+if settings.DATABASE_URL.startswith("postgresql"):
+    # The integrity trigger uses application_name as a fallback when no
+    # authenticated actor context is set: ocr-app => system, anything else =>
+    # unattributed (manual client).
+    _connect_args["application_name"] = "ocr-app"
 
 # Create database engine
 engine = create_engine(
@@ -15,6 +23,7 @@ engine = create_engine(
     max_overflow=10,
     pool_recycle=300,
     pool_timeout=30,
+    connect_args=_connect_args,
 )
 
 # SQLite is used by the local test suite. Enforce foreign keys there so
@@ -34,6 +43,34 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for models
 Base = declarative_base()
+
+
+if engine.dialect.name == "postgresql":
+    @event.listens_for(Session, "before_flush")
+    def _stamp_actor_context(session, flush_context, instances):
+        """Set the request actor for the integrity trigger before a flush.
+
+        SET LOCAL is scoped to the current transaction, so it is re-applied on
+        every flush. A system job with no actor falls back to application_name
+        inside the trigger.
+        """
+        if session.bind is None or session.bind.dialect.name != "postgresql":
+            return
+        actor = get_actor()
+        if not (actor.actor_type or actor.actor_id or actor.request_id):
+            return
+        session.connection().execute(
+            text(
+                "SELECT set_config('ocr.actor_type', :actor_type, true), "
+                "set_config('ocr.actor_id', :actor_id, true), "
+                "set_config('ocr.request_id', :request_id, true)"
+            ),
+            {
+                "actor_type": actor.actor_type or "",
+                "actor_id": "" if actor.actor_id is None else str(actor.actor_id),
+                "request_id": actor.request_id or "",
+            },
+        )
 
 
 # Dependency to get database session

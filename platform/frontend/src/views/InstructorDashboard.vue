@@ -246,7 +246,7 @@
           </thead>
           <tbody>
             <tr v-for="event in diagnosticFeed" :key="event.id" class="activity-row--diagnostic">
-              <td class="user-cell">{{ event.actor_username || 'System' }}</td>
+              <td class="user-cell">{{ event.actor_username || 'System / removed user' }}</td>
               <td>
                 <span class="event-badge event-badge--diagnostic">{{ event.event_label }}</span>
               </td>

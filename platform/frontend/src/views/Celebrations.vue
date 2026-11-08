@@ -12,15 +12,6 @@
 
     <template v-else-if="hasData">
       <header class="wall-hero">
-        <div class="wall-hero__confetti" aria-hidden="true">
-          <span
-            v-for="piece in confetti"
-            :key="piece.id"
-            class="wall-confetti"
-            :style="piece.style"
-          ></span>
-        </div>
-
         <div class="wall-hero__main">
           <p class="wall-hero__kicker">
             <TrophyIcon />
@@ -45,10 +36,6 @@
               <strong>{{ stats.awards_this_week || 0 }}</strong>
               <span>this week</span>
             </div>
-            <div class="wall-stat">
-              <strong>{{ stats.first_bloods || 0 }}</strong>
-              <span>first bloods</span>
-            </div>
           </div>
         </div>
 
@@ -58,6 +45,12 @@
             <strong>{{ me.badge_count || 0 }}</strong>
             <span>{{ me.badge_count === 1 ? 'badge' : 'badges' }}</span>
           </div>
+          <p v-if="me.celebrations_received" class="your-corner__celebrated">
+            <span aria-hidden="true">🎉</span>
+            {{ me.celebrations_received }}
+            {{ me.celebrations_received === 1 ? 'celebration' : 'celebrations' }}
+            on your wins
+          </p>
           <p v-if="!me.can_list" class="your-corner__rank your-corner__rank--muted">
             Admin accounts are not listed
           </p>
@@ -81,28 +74,31 @@
             </li>
           </ul>
 
-          <label v-if="me.can_list" class="your-corner__privacy">
-            <input
-              type="checkbox"
-              :checked="me.listed"
-              :disabled="privacySaving"
-              @change="setListing($event)"
-            />
-            <span>{{ privacySaving ? 'Saving...' : 'Show me on the wall' }}</span>
-          </label>
+          <details v-if="me.can_list" class="your-corner__privacy-panel">
+            <summary>Privacy and name</summary>
+            <label class="your-corner__privacy">
+              <input
+                type="checkbox"
+                :checked="me.listed"
+                :disabled="privacySaving"
+                @change="setListing($event)"
+              />
+              <span>{{ privacySaving ? 'Saving...' : 'Show me on the wall' }}</span>
+            </label>
 
-          <label v-if="me.can_list" class="your-corner__name">
-            <span>Name on the wall</span>
-            <select
-              :value="me.name_mode || 'real_name'"
-              :disabled="privacySaving"
-              @change="setNameMode($event)"
-            >
-              <option value="real_name">Real name &mdash; {{ me.display_name }}</option>
-              <option value="username">Username &mdash; @{{ me.username }}</option>
-              <option value="anonymous">Anonymous participant</option>
-            </select>
-          </label>
+            <label class="your-corner__name">
+              <span>Name on the wall</span>
+              <select
+                :value="me.name_mode || 'real_name'"
+                :disabled="privacySaving"
+                @change="setNameMode($event)"
+              >
+                <option value="real_name">Real name &mdash; {{ me.display_name }}</option>
+                <option value="username">Username &mdash; @{{ me.username }}</option>
+                <option value="anonymous">Anonymous participant</option>
+              </select>
+            </label>
+          </details>
 
           <p v-if="privacyMessage" class="your-corner__privacy-msg">{{ privacyMessage }}</p>
 
@@ -119,6 +115,14 @@
             </div>
             <span class="live-pill"><span class="live-dot"></span> Live-ish</span>
           </div>
+
+          <p class="wall-note">
+            Celebrations are anonymous and voluntary. They do not affect progress,
+            completion, or any learning metric.
+          </p>
+          <p v-if="celebrationMessage" class="wall-celebration-msg" role="status">
+            {{ celebrationMessage }}
+          </p>
 
           <ol v-if="recent.length" class="win-list">
             <li
@@ -152,6 +156,26 @@
                   {{ relativeTime(win.awarded_at) }}
                 </span>
               </span>
+              <span v-if="win.is_mine" class="win__celebrate win__celebrate--self">
+                <span aria-hidden="true">🎉</span>
+                {{ win.celebration_count || 0 }}
+                celebrated your win
+              </span>
+              <button
+                v-else
+                type="button"
+                class="win__celebrate"
+                :class="{ 'win__celebrate--on': win.celebrated_by_me }"
+                :disabled="celebrating.has(win.id)"
+                :aria-pressed="win.celebrated_by_me"
+                @click.stop="toggleCelebration(win)"
+              >
+                <span aria-hidden="true">🎉</span>
+                {{ win.celebrated_by_me ? 'Celebrated' : 'Celebrate' }}
+                <span v-if="win.celebration_count" class="win__celebrate-count">
+                  {{ win.celebration_count }}
+                </span>
+              </button>
               <span
                 class="win__icon"
                 :class="toneClass(win.achievement_type)"
@@ -178,42 +202,38 @@
           <section class="card wall-fame">
             <div class="card__header">
               <div>
-                <h2 class="card__title">Spotlight</h2>
-                <p class="card__subtitle">Recently celebrated people, not a ranking</p>
+                <h2 class="card__title">Badges people are celebrating</h2>
+                <p class="card__subtitle">Anonymous applause, not a ranking</p>
               </div>
             </div>
 
-            <ol v-if="spotlight.length" class="fame-list">
-              <li
-                v-for="person in spotlight"
-                :key="person.user_id"
-                class="fame-row"
-                :class="{ 'fame-row--mine': person.is_mine }"
-              >
-                <UserAvatar
-                  :src="person.avatar_data"
-                  :name="person.display_name || person.username"
-                  :border-style="person.avatar_border_style"
-                  :border-color="person.avatar_border_color"
-                  :size="30"
-                />
+            <ol v-if="celebratedBadges.length" class="fame-list">
+              <li v-for="badge in celebratedBadges" :key="badge.type" class="fame-row">
+                <span class="fame-icon" aria-hidden="true">{{ badge.icon }}</span>
                 <span class="fame-name">
-                  {{ person.display_name || person.username }}
-                  <small v-if="person.is_mine">you</small>
-                  <span class="fame-badge">{{ person.latest_icon }} {{ person.latest_label }}</span>
+                  {{ badge.label }}
+                  <span class="fame-meta">
+                    {{ badge.celebrants }}
+                    {{ badge.celebrants === 1 ? 'person' : 'people' }} celebrating
+                  </span>
                 </span>
-                <span class="fame-time">{{ relativeTime(person.awarded_at) }}</span>
+                <span class="fame-time">
+                  <span aria-hidden="true">🎉</span>
+                  {{ badge.celebrations }}
+                </span>
               </li>
             </ol>
-            <p v-else class="empty-state empty-state--compact">The spotlight is ready for its first win.</p>
+            <p v-else class="empty-state empty-state--compact">
+              No celebrations yet. Be the first to applaud a win.
+            </p>
           </section>
 
           <section class="card wall-nudge">
-            <span class="wall-nudge__icon"><FlameIcon /></span>
-            <h2>Keep the streak alive</h2>
+            <span class="wall-nudge__icon" aria-hidden="true">🎉</span>
+            <h2>How celebrations work</h2>
             <p>
-              Finish an exercise without hints, or capture a flag on the first try,
-              and your name lands here next.
+              One anonymous tap per win. Only the count is shown. Celebrations
+              never affect progress, completion, or any learning metric.
             </p>
             <router-link to="/exercises" class="btn btn--primary btn--sm">
               Find your next badge
@@ -245,6 +265,9 @@
               <p class="badge-tile__stats">
                 {{ badge.count }} awarded to
                 {{ badge.earners }} {{ badge.earners === 1 ? 'person' : 'people' }}
+                <template v-if="badge.celebrations">
+                  · {{ badge.celebrations }} {{ badge.celebrations === 1 ? 'celebration' : 'celebrations' }}
+                </template>
               </p>
             </div>
           </article>
@@ -262,13 +285,12 @@ import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import { usePoll } from '../composables/usePoll'
 import TrophyIcon from '../components/icons/TrophyIcon.vue'
-import FlameIcon from '../components/icons/FlameIcon.vue'
 import UserAvatar from '../components/UserAvatar.vue'
 
 const wall = ref({
   stats: {},
   recent: [],
-  spotlight: [],
+  celebrated_badges: [],
   badges: [],
   me: null,
 })
@@ -277,47 +299,54 @@ const loading = ref(true)
 const error = ref('')
 const privacySaving = ref(false)
 const privacyMessage = ref('')
+const celebrationMessage = ref('')
+const celebrating = ref(new Set())
 
 const stats = computed(() => wall.value.stats || {})
 const recent = computed(() => wall.value.recent || [])
-const spotlight = computed(() => wall.value.spotlight || [])
+const celebratedBadges = computed(() => wall.value.celebrated_badges || [])
 const badges = computed(() => wall.value.badges || [])
 const me = computed(() => wall.value.me)
 const hasData = computed(() => Boolean(wall.value.generated_at))
 
-const CONFETTI_COLORS = ['#f59e0b', '#22c55e', '#3b82f6', '#a78bfa', '#06b6d4', '#fb923c']
-const confetti = Array.from({ length: 18 }, (_, index) => ({
-  id: index,
-  style: {
-    left: `${(index * 53) % 96}%`,
-    background: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
-    animationDelay: `${(index % 6) * 0.4}s`,
-    animationDuration: `${4 + (index % 5)}s`,
-  },
-}))
-
-const loadWall = async () => {
+const loadWall = async ({ quiet = false } = {}) => {
+  if (!quiet) loading.value = true
   error.value = ''
   try {
     const response = await axios.get('/dashboard/celebrations')
     wall.value = response.data
   } catch {
-    error.value = 'We could not load the celebration wall. Check your connection and try again.'
+    if (!quiet) {
+      error.value = 'We could not load the celebration wall. Check your connection and try again.'
+    }
   } finally {
-    loading.value = false
+    if (!quiet) loading.value = false
   }
 }
 
 onMounted(loadWall)
 usePoll(() => {
   // Refresh quietly so the wall stays current without a loading flash.
-  axios.get('/dashboard/celebrations')
-    .then((response) => {
-      wall.value = response.data
-      error.value = ''
-    })
-    .catch(() => { /* keep the last good wall */ })
+  loadWall({ quiet: true })
 }, 60000)
+
+const toggleCelebration = async (win) => {
+  if (win.is_mine || celebrating.value.has(win.id)) return
+  celebrating.value = new Set([...celebrating.value, win.id])
+  celebrationMessage.value = ''
+  try {
+    const { data } = await axios.post(`/dashboard/celebrations/${win.id}/celebrate`)
+    win.celebrated_by_me = data.celebrated
+    win.celebration_count = data.count
+    await loadWall({ quiet: true })
+  } catch (e) {
+    celebrationMessage.value = e.response?.data?.detail || 'Could not save that celebration. Please try again.'
+  } finally {
+    const next = new Set(celebrating.value)
+    next.delete(win.id)
+    celebrating.value = next
+  }
+}
 
 const setListing = async (event) => {
   const shown = event.target.checked
@@ -453,7 +482,7 @@ const relativeTime = (iso) => {
 
 .wall-hero__stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.6rem;
 }
 
@@ -483,28 +512,7 @@ const relativeTime = (iso) => {
 }
 
 .wall-hero__confetti {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.wall-confetti {
-  position: absolute;
-  top: -12px;
-  width: 6px;
-  height: 11px;
-  border-radius: 2px;
-  opacity: 0.65;
-  animation-name: confetti-drift;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-@keyframes confetti-drift {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-  12% { opacity: 0.7; }
-  100% { transform: translateY(320px) rotate(360deg); opacity: 0; }
+  display: none;
 }
 
 /* Personal corner */
@@ -558,6 +566,26 @@ const relativeTime = (iso) => {
 .your-corner__rank--muted {
   color: var(--text-muted);
   font-weight: 500;
+}
+
+.your-corner__celebrated {
+  margin: 0.15rem 0 0;
+  color: var(--success);
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.your-corner__privacy-panel {
+  margin-top: 0.55rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.your-corner__privacy-panel summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
 }
 
 .your-corner__recent {
@@ -669,6 +697,19 @@ const relativeTime = (iso) => {
   margin: 0.15rem 0 0;
   font-size: 0.72rem;
   color: var(--text-muted);
+}
+
+.wall-note {
+  margin: 0 0 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.wall-celebration-msg {
+  margin: 0 0 0.5rem;
+  color: var(--danger);
+  font-size: 0.72rem;
 }
 
 .live-pill {
@@ -798,6 +839,51 @@ const relativeTime = (iso) => {
   line-height: 1;
 }
 
+.win__celebrate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  min-height: 28px;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.win__celebrate:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.win__celebrate--on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.win__celebrate:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.win__celebrate--self {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+  cursor: default;
+}
+
+.win__celebrate-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
 .feed-footer {
   display: flex;
   flex-wrap: wrap;
@@ -865,10 +951,35 @@ const relativeTime = (iso) => {
 }
 
 .fame-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
   flex-shrink: 0;
   font-size: 0.64rem;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+.fame-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--bg-primary);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.fame-meta {
+  flex: 1 0 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-weight: 500;
 }
 
 .fame-name small {
@@ -900,7 +1011,7 @@ const relativeTime = (iso) => {
   height: 34px;
   border-radius: 9px;
   background: var(--bg-primary);
-  color: #fb923c;
+  color: var(--warning);
 }
 
 .wall-nudge__icon :deep(svg) {
@@ -994,11 +1105,11 @@ const relativeTime = (iso) => {
 .tone--first-blood { --tone: var(--warning); }
 .tone--no-hints { --tone: var(--success); }
 .tone--perfectionist { --tone: var(--accent); }
-.tone--speed-demon { --tone: #f59e0b; }
-.tone--clean-sweep { --tone: #a78bfa; }
-.tone--streak { --tone: #fb923c; }
-.tone--custom { --tone: #14b8a6; }
-.tone--competition { --tone: #eab308; }
+.tone--speed-demon { --tone: var(--warning); }
+.tone--clean-sweep { --tone: var(--purple); }
+.tone--streak { --tone: var(--warning); }
+.tone--custom { --tone: var(--accent); }
+.tone--competition { --tone: var(--warning); }
 
 /* Loading, empty, and error states */
 .wall-loading {
@@ -1126,19 +1237,26 @@ const relativeTime = (iso) => {
     display: none;
   }
 
+  .win {
+    flex-wrap: wrap;
+  }
+
+  .win__celebrate {
+    margin-left: 2.7rem;
+  }
+
   .win__meta {
+    white-space: normal;
+  }
+
+  .fame-meta {
     white-space: normal;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wall-hero__confetti {
-    display: none;
-  }
-
   .live-dot,
-  .wall-loading__ring,
-  .wall-confetti {
+  .wall-loading__ring {
     animation: none;
   }
 }

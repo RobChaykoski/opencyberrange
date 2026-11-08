@@ -317,7 +317,7 @@ async def get_skill_dna(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
-    """Return the learner's five traits, class, affinities, and titles."""
+    """Return the learner's six traits, class, affinities, and titles."""
     return JSONResponse(
         content=build_skill_dna(db, current_user),
         headers={"Cache-Control": "no-store"},

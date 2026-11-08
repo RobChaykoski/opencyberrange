@@ -42,6 +42,9 @@ line when it is touched, or sooner if a risk is rated high.
 
 - Cohort, course, and learner analytics are scoped by enrollment or instructor
   ownership before aggregation.
+- Deleted-user references are cascaded or nulled; dashboards render explicit
+  deleted-user labels; coaching notes with a null subject are excluded from
+  course-health counts.
 - Research or cross-course views require an explicit role grant.
 - Exports repeat the same authorization checks as the screen that offered them.
 - Administrative user imports never overwrite an existing administrator. The
@@ -76,6 +79,8 @@ note naming the role check.
 **Data**
 
 - Password hashes use Argon2id; legacy hashes are upgraded on successful login.
+- Passwords are one-way only: no plaintext, reversible encryption, or recovery
+  path. The integrity audit rejects a missing or non-Argon2id/bcrypt hash.
 - TOTP secrets, recovery codes, trusted-device tokens, and WireGuard private
   keys are encrypted or hashed at rest.
 - Backups are treated as sensitive data and encrypted at rest where the host
@@ -227,6 +232,12 @@ note naming the role check.
 
 - Lab images and compose files are built from reviewed sources.
 - Database migrations are idempotent and run before traffic is served.
+- Critical tables have a signed SHA-256 checksum manifest and an append-only
+  change ledger with actor attribution. Manual or uninstrumented writes are
+  recorded as `unattributed` and reported.
+- A data-quality audit checks orphans, duplicate keys, invalid enums, null
+  critical fields, invalid JSON, bad quiz/feedback ranges, and password hash
+  format.
 - Backups are verified by a restore drill, not only by file creation.
 - Cross-system snapshot uploads are administrator-only, restricted to plain
   `.sql` files, capped at 512 MB, stored in the backup volume, and applied in a
@@ -253,6 +264,8 @@ note naming the role check.
 
 - Authentication, authorization failures, admin actions, account deletion, and
   mail-setting changes are logged.
+- The integrity ledger records the actor type, actor id, request id, row hash,
+  and chained entry hash for every critical-table write.
 - Every data export records the operator-supplied reason, exporter, format, and
   scope. Self-service exports and transcripts record a fixed purpose instead of
   prompting the learner.

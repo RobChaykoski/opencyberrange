@@ -86,6 +86,7 @@ COVERED_FILES = [
     "scripts/prebuild-labs.sh",
     "scripts/lab_build_hash.py",
     "scripts/supply_chain.py",
+    "scripts/database_integrity.py",
     "scripts/verify-lab-builds.sh",
     "scripts/ui-smoke.mjs",
     "scripts/status-dashboard.py",

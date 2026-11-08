@@ -29,9 +29,15 @@ flowchart LR
 
 Your progress is the count of completed labs divided by the labs visible to you, expressed as a rounded percentage. The Student Dashboard shows your overall progress and recent completions, and each track page shows a Completed count for that track. See [Student Dashboard](../02_Student_Guide/01_Student_Dashboard.md).
 
-## Achievements are course-scoped
+## Achievements are course-scoped and range-wide
 
-Achievements are the closest thing to a score, and they exist only inside a course. After you submit a correct flag in a course, a background check awards any achievements you earned. The achievement types are first blood, no hints, perfectionist, speed demon, and streak.
+Course achievements are the closest thing to a score, and they exist only inside
+a course. After you submit a correct flag in a course, a background check awards
+any achievements you earned. The achievement types are first blood, no hints,
+perfectionist, speed demon, and streak.
+
+Some learning-time and knowledge-check badges are range-wide and appear on your
+profile and the Celebration Wall even when you are between courses.
 
 The flow below shows the achievement check running after a correct flag.
 
@@ -44,13 +50,18 @@ flowchart TD
 ```
 
 !!! warning
-    Achievements require a course. Playing a public track outside any course earns zero achievements, even with a perfect, no-hint run.
+    Course achievements require a course. Playing a public track outside any
+    course still earns range-wide learning badges, but not the course-scoped
+    first-blood, clean-sweep, or streak badges.
 
 !!! note
-    Achievements and badges are the same thing: the course-scoped icons shown on your course view. There is no global badge wall across the platform.
+    Achievements and badges are the same thing. The Celebration Wall shows public
+    wins from across the range; it is not a leaderboard. See
+    [Celebration Wall](../02_Student_Guide/20_Celebration_Wall.md).
 
 ## Related pages
 
 - [Achievements and Badges](../02_Student_Guide/15_Achievements_and_Badges.md)
-- [Viewing the Scoreboard](../02_Student_Guide/14_Viewing_the_Scoreboard.md)
+- [Course Progress and Feedback](../02_Student_Guide/14_Viewing_the_Scoreboard.md)
+- [Celebration Wall](../02_Student_Guide/20_Celebration_Wall.md)
 - [Course Labs and Assignments](../02_Student_Guide/13_Course_Labs_and_Assignments.md)

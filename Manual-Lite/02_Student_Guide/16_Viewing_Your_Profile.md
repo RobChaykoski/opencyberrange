@@ -20,7 +20,7 @@ The profile is split into five tabs so the page stays scannable:
 | Tab | What it holds |
 |---|---|
 | **Overview** | Four signals: your next practice step, learning evidence, Cyber DNA class, and recent recognition. |
-| **Skill tree** | The five-branch skill tree, Cyber DNA traits, practice affinities, career alignment, and title collection. |
+| **Skill tree** | The six-branch skill tree, Cyber DNA traits, practice affinities, career alignment, and title collection. |
 | **Learning record** | Course achievements, certificates, track progress, and completion details. |
 | **Account** | Personal information, account status, Exercise Studio (when available), and course enrolment. |
 | **Security & privacy** | MFA, password change, survey consent, data export, and account deletion. |
@@ -40,27 +40,28 @@ your completed exercises, course participation, and feedback. It shows what you
 have practised; it is not a ranking. The branch cards below it repeat the same
 evidence in a readable list, with a practical next step for each branch.
 
-The five traits are:
+The six traits are:
 
 <figure markdown>
 
-![Cyber DNA section showing the class card, five trait bars, and the equipped title](img/profile-dna.png)
+![Cyber DNA section showing the class card, trait bars, and the equipped title](img/profile-dna.png)
 
-<figcaption>The Cyber DNA section shows your current class, five activity-based traits, and your equipped title.</figcaption>
+<figcaption>The Cyber DNA section shows your current class, activity-based traits, and your equipped title.</figcaption>
 </figure>
 
 | Trait | What it reflects |
 |---|---|
 | Explorer | Breadth across tracks, categories, and labs you have opened |
 | Builder | Hands-on completions, time on task, and clean solves |
+| Tester | Authorised offensive testing, exploitation, assessment, and reporting |
 | Defender | Defensive, forensics, network-analysis, and OT practice |
 | Investigator | OSINT, reconnaissance, traffic analysis, and forensics |
 | Leader | Events, courses, badges, advanced labs, and teaching |
 
-Your highest trait becomes your **class**: Pathfinder, Artificer, Warden,
-Seeker, or Commander. Each trait has a score from 0 to 100 and a tier from
-**Unranked** (no activity yet) through Initiate to Master. The numbers describe
-what you have practised; they are not a grade or a ranking.
+Your highest trait becomes your **class**: Pathfinder, Artificer, Assessor,
+Warden, Seeker, or Commander. Each trait has a score from 0 to 100 and a tier
+from **Unranked** (no activity yet) through Initiate to Master. The numbers
+describe what you have practised; they are not a grade or a ranking.
 
 Below the traits, **Practice affinities** shows where your completed labs point
 next. It covers Offensive Security / Penetration Testing, Defensive Security /

@@ -16,6 +16,78 @@ Community / Academic maintenance line where the same defect applies.
 | `v1.1.x` | Maintenance fixes only - upgrade to `v2.5.0` for the current feature line |
 | Pre-1.0 builds | No - upgrade to a supported release |
 
+## Password storage
+
+- New and changed passwords are hashed with **Argon2id** (`pwdlib`).
+- Legacy **bcrypt** hashes verify and are upgraded to Argon2id on a successful
+  sign-in.
+- The database stores a one-way hash only. There is no plaintext password, no
+  reversible password encryption, and no password recovery.
+- A password reset writes a new hash; it does not reveal the old password.
+- The database integrity audit flags any `users.hashed_password` value that is
+  missing or is not an Argon2id/bcrypt hash.
+- The administrative user export carries one-way hashes for controlled
+  migration. Treat the file as credential material. It contains no plaintext
+  password, MFA secret, recovery code, trusted device, or VPN key.
+
+## Database integrity and change attribution
+
+- `scripts/database_integrity.py` computes a SHA-256 checksum for each critical
+  table and a database fingerprint. A signed manifest is the release evidence
+  for a point-in-time snapshot.
+- An append-only PostgreSQL ledger records each `INSERT`, `UPDATE`, and `DELETE`
+  on a critical table with a row hash, actor type, actor id, request id, and a
+  chained entry hash.
+- Actor types are `user` (authenticated application request), `system`
+  (application job with no user), and `unattributed` (manual SQL or an
+  uninstrumented path). Manual writes are reported for review.
+- The ledger has an immutable trigger and `UPDATE`/`DELETE` are revoked. A
+  broken chain, a changed entry hash, or a row changed without a ledger entry is
+  a finding.
+- The quality audit covers foreign-key orphans, duplicate keys, invalid enums,
+  null critical fields, invalid JSON, bad quiz/feedback ranges, missing settings,
+  and password hash format.
+
+Commands and the full runbook are in
+[Database integrity and change attribution](docs/DATABASE-INTEGRITY.md).
+
+## Deleted and removed users
+
+- Enrollments, completions, sessions, quiz attempts, quiz feedback, course
+  feedback, survey responses, achievements, and celebrations cascade.
+- Optional actor/creator references (`activity_events.actor_id`,
+  `course_feedback.subject_user_id`, `labs.created_by`, `surveys.created_by`,
+  `competitions.created_by`) are set to `NULL`.
+- `courses.instructor_id` is not nullable. Account erasure is blocked until the
+  instructor transfers owned courses, so students never lose a course record.
+- Dashboards and lists render `Deleted user`, `Deleted learner`, or
+  `Deleted participant` instead of a blank or a crash.
+- Instructor coaching notes with a `NULL` subject are excluded from course-health
+  counts.
+- The quality audit reports orphaned coaching notes and `NULL` creators for
+  review.
+
+## Supply chain
+
+- `supply-chain.lock.json` records SHA-256 hashes for dependency, build,
+  deployment, workflow, and lab inputs.
+- CI verifies the lock on every quality run. Install, update, and prebuild stop
+  on drift. `--check-pins` reports base images without a digest.
+- A release lock can be signed with GPG or minisign and verified with
+  `scripts/supply_chain.py --check --signature`.
+- The lock is a drift detector, not a substitute for `pip-audit`, `npm audit`,
+  CodeQL, Trivy, SBOM review, or a signed release tag.
+
+## Recognition and celebration data
+
+- The Celebration Wall is voluntary and anonymous. The wall returns only the
+  celebration count, never the celebrator's identity.
+- One person can celebrate a win once. Self-celebration is rejected.
+- A hidden or unlisted achievement cannot be celebrated.
+- Celebrations are not joined to analytics, completion, Cyber DNA, certificates,
+  course health, grading, or any learning metric.
+- Administrator accounts are excluded from the public wall.
+
 ## Reporting a vulnerability
 
 **Do not open a public issue for a security problem.**
@@ -38,13 +110,16 @@ within ten. Please give a reasonable window for a fix before disclosing.
 
 In scope:
 
-- authentication, session handling, MFA, password reset and account deletion;
+- authentication, session handling, MFA, password storage and reset, and account deletion;
 - authorization between students, instructors and administrators;
+- database integrity, the append-only change ledger, and data-quality checks;
+- deleted-user handling and dashboard resilience;
 - administrative data exports, user imports, and snapshot restore safeguards;
+- the supply-chain lock, release builds, and deployment verification;
 - the platform API, frontend, installer and upgrade scripts;
 - container escape or cross-lab isolation failures;
 - secrets committed to the repository or shipped in an image;
-- the certificate verification and public competition pages.
+- the certificate verification, public competition pages, and Celebration Wall.
 
 Out of scope:
 
@@ -87,9 +162,10 @@ synthetic reproduction.
 
 ## Dependency posture
 
-`pip-audit` and `npm audit --omit=dev` run in CI. At `v1.1.0` both report zero
-known advisories. When an advisory cannot be fixed immediately, it is recorded
-with an owner and an expiry in the release notes rather than ignored silently.
+`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.5.0` the dependency
+audit remains a release gate; a finding that cannot be fixed immediately is
+recorded with an owner and an expiry in the release notes rather than ignored
+silently. The supply-chain lock adds a drift check for the same inputs.
 
 ## OWASP Top 10 baseline
 
@@ -99,3 +175,38 @@ and delivery process, and it names the tests or evidence expected for each
 category. Exceptions must be recorded with an owner and expiry; an expired
 exception is an open finding. The current pass is recorded in
 [V2 security evidence](docs/V2-SECURITY-EVIDENCE.md).
+
+The architecture review in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) scores
+each trust boundary with STRIDE and DREAD, including the new database-integrity
+and supply-chain controls. The highest residual risks remain host/Docker
+compromise, firewall-dependent lab isolation, trusted instructor wiki content,
+client-side secrets, and upstream supply-chain compromise.
+
+## Security review evidence — 8 November 2026
+
+| Check | Result |
+|---|---|
+| Development database quality (2.5.0) | **0 critical, 0 warning, 2 info** |
+| Production database quality (2.4.1) | **0 critical, 0 warning, 3 info** |
+| Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
+| Change ledger | Chain OK; an authenticated celebration entry and a deliberate manual `labs.UPDATE` were recorded; the manual write was flagged `unattributed` |
+| Password hash audit | Every stored hash is Argon2id or legacy bcrypt; no missing, plaintext, or unknown format |
+| Deleted-user paths | Cascade/SET NULL reviewed; null-safe UI fallbacks added; orphaned coaching notes excluded |
+| UI validation | Six-trait Cyber DNA, Celebration Wall toggle, dark/light themes, 390 px and 1440 px; no page errors or overflow |
+| Supply chain | Lock verified in CI; deploy/prebuild gates wired; unpinned base images reported separately |
+
+Known gaps:
+
+- **Session coverage:** 36 development and 116 production completions have no
+  matching non-diagnostic session. Completion, hint, attempt, and time metrics
+  are reliable; `started_rate` is not. Historical rows need a reviewed backfill.
+- **Hint placeholders:** 2 production rows are intentional empty-flag
+  placeholders created when a hint was requested. They are not solved exercises.
+- **Seeded labs:** all 149 seeded labs have `created_by = NULL`; this is expected
+  imported content, not a deleted account.
+- **Ledger limits:** a PostgreSQL superuser can disable triggers. The ledger is
+  tamper-evident, not tamper-proof. Keep signed manifests and backups off the
+  database host. `application_name` is a fallback label, not a security
+  boundary; review unattributed writes.
+- **Production ledger:** production is still on 2.4.1, so the ledger is not
+  installed there until the 2.5.0 deployment.

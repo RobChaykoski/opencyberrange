@@ -17,6 +17,28 @@ Welcome to the SWOCTS Cyber Range student workbook. Each exercise walkthrough gu
     substitute your address in every command. Workbook examples are static and
     may not reflect later changes to the address range.
 
+## Your learning evidence
+
+The workbook is the guided practice; the platform records what you did with it.
+Your evidence is descriptive, not a grade:
+
+- **Progress:** completed exercises, the next exercise, and course progress.
+- **Cyber DNA:** six practice traits (Explorer, Builder, Tester, Defender,
+  Investigator, Leader) and positive practice affinities. The Tester trait
+  records authorised offensive practice in the isolated labs; it is not a
+  licence to test real systems.
+- **Knowledge checks:** optional benchmark practice with explanations and
+  references. Never an exam or a gate.
+- **Achievements:** badges for clean solves, persistence, and learning
+  milestones.
+- **Celebration Wall:** voluntary, anonymous appreciation from other signed-in
+  users. It is not a leaderboard and does not affect any metric.
+- **Privacy:** your profile and survey participation are controlled by you. See
+  the student manual's privacy page.
+
+Use the workbook to build the habit; use the platform evidence to see the
+practice accumulate.
+
 ## Available Tracks
 
 ### Windows Penetration Testing

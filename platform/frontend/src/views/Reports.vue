@@ -101,7 +101,7 @@
             <p class="skill-panel__eyebrow">Skill tree</p>
             <h2 id="skill-tree-title">Exercise coverage by skill branch</h2>
             <p>
-              How {{ skillScopeLabel }} spreads across the five Skill DNA branches.
+              How {{ skillScopeLabel }} spreads across the six Skill DNA branches.
               The outer shape is the assigned curriculum; the inner shape is what
               learners completed.
             </p>

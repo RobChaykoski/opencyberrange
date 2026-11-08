@@ -119,7 +119,7 @@
             </thead>
             <tbody>
               <tr v-for="entry in detail.leaderboard.entries" :key="entry.user_id">
-                <td>{{ entry.display_name || entry.username }}<small v-if="entry.is_me">you</small></td>
+                <td>{{ entry.display_name || entry.username || 'Deleted participant' }}<small v-if="entry.is_me">you</small></td>
                 <td>
                   <span class="source-pill" :class="`source-pill--${entry.source}`">
                     {{ sourceLabel(entry.source) }}
@@ -175,7 +175,7 @@
                   :class="{ 'row--me': entry.is_me }"
                 >
                   <td>{{ entry.rank }}</td>
-                  <td>{{ entry.display_name || entry.username }}<small v-if="entry.is_me">you</small></td>
+                  <td>{{ entry.display_name || entry.username || 'Deleted participant' }}<small v-if="entry.is_me">you</small></td>
                   <td>{{ entry.score }}</td>
                   <td>{{ entry.solved_count }}</td>
                   <td class="leaderboard-badges">

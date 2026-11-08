@@ -100,6 +100,9 @@ compliance reporting, and multi-host HA are Enterprise preview work.
 - [Community / Academic backlog](docs/COMMUNITY-ACADEMIC-BACKLOG.md)
 - [Career and certification resources](docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
 - [Skill DNA metric model](docs/SKILL-DNA.md)
+- [Celebration Wall](docs/CELEBRATION-WALL.md)
+- [Supply-chain verification](docs/SUPPLY-CHAIN.md)
+- [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md)
 - [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
 - [Enterprise preview parking lot](docs/V3-PARKING-LOT.md)
 - [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
@@ -122,9 +125,13 @@ The first 2.4.x analytics slice is implemented in this tree and documented in
   trending topics, and CSV/PDF export. Open it from the **Admin** section for
   administrators or the **Instructor** section for instructors; it lives at
   `/reports`.
-- **Cyber DNA practice affinities:** positive, evidence-based role families for
-  offensive security, defensive operations, DFIR/investigation, and security
-  leadership. They are conversation aids, not job labels or predictions.
+- **Cyber DNA practice traits and affinities:** six practice traits
+  (Explorer, Builder, Tester, Defender, Investigator, Leader) and positive,
+  evidence-based role families for offensive security, defensive operations,
+  DFIR/investigation, and security leadership. The Tester trait records
+  authorised offensive practice in the isolated labs; it is not a licence to
+  test real systems. Affinities are conversation aids, not job labels or
+  predictions.
 - **Pulse and course surveys:** a short optional pulse after completion, custom
   instructor surveys, and consent-gated responses. Survey consent stays separate
   from analytics use and can be withdrawn.
@@ -157,7 +164,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
-| Course delivery | Assignments, completion counts, and scoreboard | Per-student completion, attempt, hint, and time records |
+| Course delivery | Assignments, completion, course health, and feedback | Per-student completion, attempt, hint, time, and private feedback records |
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
@@ -245,7 +252,9 @@ completed exercise, track progress, and course achievements.
 spotlight, not a public leaderboard: individual badge counts and ranks are not
 shown. Learners choose whether their wins show their real name, their username,
 or "Anonymous participant", and can opt out of the public wall at any time while
-still seeing their own private corner.
+still seeing their own private corner. Other signed-in users can celebrate a win
+anonymously; only the count is shown, and celebrations never affect progress,
+completion, course health, or any learning metric.
 
 ![Celebration Wall](docs/img/celebration-wall.png)
 
@@ -438,6 +447,44 @@ it is not part of the default workflow. No scanner is a compliance certificate:
 retention, access control, backups, incident response, and privacy reviews still
 need to be documented separately.
 
+## Security, integrity, and validation
+
+- **One-way passwords.** New and changed passwords use Argon2id; legacy bcrypt
+  hashes verify and are upgraded on a successful sign-in. The database stores a
+  one-way hash only. There is no plaintext password, reversible password
+  encryption, or password recovery.
+- **Database integrity.** Critical tables have a SHA-256 checksum manifest and
+  an append-only PostgreSQL change ledger. Application writes are attributed to
+  a user or a system job; direct SQL writes are recorded as `unattributed` and
+  reported. The ledger has an immutable trigger and a broken-chain check. See
+  [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md).
+- **Deleted-user resilience.** Enrollments, completions, quiz data, feedback,
+  surveys, achievements, and celebrations cascade; optional creator/actor
+  references are nulled. Courses block deletion until ownership is transferred.
+  Dashboards render “Deleted user / learner / participant” instead of breaking,
+  and orphaned coaching notes are excluded from course-health counts.
+- **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
+  deployment, workflow, and lab inputs. CI verifies it, and install, update, and
+  prebuild stop on drift. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
+- **Celebration privacy.** Celebrations are voluntary and anonymous. The wall
+  shows counts only, one celebration per person per win, and celebrations never
+  affect progress, completion, course health, Cyber DNA, or any learning metric.
+
+Validation on **8 November 2026**:
+
+| Check | Result |
+|---|---|
+| Development database quality (2.5.0) | **0 critical, 0 warning, 2 info** |
+| Production database quality (2.4.1) | **0 critical, 0 warning, 3 info** |
+| Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
+| Development change ledger | Chain OK; a deliberate manual `labs.UPDATE` was detected as `unattributed` |
+| Password hash audit | All stored hashes are Argon2id or legacy bcrypt; none invalid or reversible |
+| UI validation | Six-trait Cyber DNA, Celebration Wall toggle, theme and 390/1440 px checks with no page errors or overflow |
+
+The two development info findings are a known session-coverage gap and seeded
+labs with no creator. Production adds two intentional hint placeholders. None
+are data loss or a broken reference.
+
 The 2.5.0 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
@@ -475,14 +522,15 @@ classrooms where not every student has the same hardware:
   `zsteg`, a dependency-free Python extractor, and a browser-based extractor for
   Chromebooks, tablets, and shared computers. RangeBox, UbuntuBox, and RemnuxBox
   ship the supporting tools.
-- **No public ranking.** The Celebration Wall shows recent wins and a
-  non-ranked spotlight. It does not publish individual badge counts or ranks.
+- **No public ranking.** The Celebration Wall shows recent wins and the badges
+  people are celebrating. It does not publish individual badge counts or ranks.
   Learners choose a real-name, username, or anonymous label, and can opt out via
   “Show me on the wall”; opted-out users still see their own private corner.
-  Admin diagnostic accounts are excluded.
+  Other signed-in users can celebrate a win anonymously, one per person; only
+  the count is shown. Admin diagnostic accounts are excluded.
 - **Data minimisation.** The wall exposes only a display name, the latest badge,
-  and a relative timestamp. It does not expose email addresses, student IDs, or
-  avatars.
+  a relative timestamp, and anonymous celebration counts. It does not expose
+  email addresses, student IDs, avatars, or the identity of a celebrator.
 - **Optional surveys, explicit consent.** Platform and usage surveys are
   off by default. Profile → **Surveys** shows the versioned privacy statement
   before consent is recorded, keeps an append-only consent history, and allows

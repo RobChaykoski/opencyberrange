@@ -1,27 +1,42 @@
 # Tracking Your Progress
 
-Track how many exercises you have solved, see which exercise comes next, and check your standing in a course. Progress surfaces appear on your dashboard, on the Exercises hub, and inside each track.
+Track how many exercises you have solved, see which exercise comes next, and
+check your course progress and feedback. Progress appears on your dashboard, the
+Exercises hub, each track, and inside a course. There is no public course
+scoreboard or rank.
 
 ## Where progress shows
 
-Your progress appears in five places:
+Your progress appears in six places:
 
-- **Dashboard cards:** Next Objective, My Progress (a bar plus "X / Y labs completed"), VPN Status, and Your Rank.
-- **Exercises hub:** a three stat summary at the top (Completed, Total Exercises, Overall Progress percent) plus a progress bar on each track card.
-- **Track page:** a per level completion ring and a green "Complete" badge when a level is finished.
-- **Course scoreboard:** your rank and points inside a course. See [Viewing the Scoreboard](14_Viewing_the_Scoreboard.md).
-- **Profile:** completion totals, track and level progress, certificates, the completion table, achievements, and the PDF transcript. See [Viewing Your Profile](16_Viewing_Your_Profile.md).
+- **Dashboard cards:** Next Objective, My Progress (a bar plus "X / Y labs
+  completed"), and VPN Status.
+- **Exercises hub:** a three-stat summary at the top (Completed, Total
+  Exercises, Overall Progress percent) plus a progress bar on each track card.
+- **Track page:** a per-level completion ring and a green "Complete" badge when
+  a level is finished.
+- **Course Overview:** completed exercises, the next assigned exercise, and your
+  feedback status. See
+  [Course Progress and Feedback](14_Viewing_the_Scoreboard.md).
+- **Profile:** completion totals, track and level progress, certificates, the
+  completion table, achievements, Cyber DNA, and the PDF transcript. See
+  [Viewing Your Profile](16_Viewing_Your_Profile.md).
+- **Cyber DNA:** six practice traits built from your completed work. It is
+  descriptive, not a grade.
 
 <figure markdown>
 
-![Student dashboard with Next Objective, My Progress, VPN Status, and Your Rank cards](img/student-dashboard.png)
+![Student dashboard with Next Objective, My Progress, and VPN Status cards](img/student-dashboard.png)
 
-<figcaption>The dashboard shows your next exercise, completed count, VPN state, and course rank when you are enrolled in an active course.</figcaption>
+<figcaption>The dashboard shows your next exercise, completed count, and VPN state. A course adds progress and feedback, not a public rank.</figcaption>
 </figure>
 
 ## What counts as completed
 
-A lab counts as completed only when you submit its correct flag. Opening a lab, working in it, or stopping it does not advance your progress. The platform records a completion when a flag is solved, so your numbers reflect solved exercises, not attempts.
+A lab counts as completed only when you submit its correct flag. Opening a lab,
+working in it, or stopping it does not advance your progress. The platform
+records a completion when a flag is solved, so your numbers reflect solved
+exercises, not attempts.
 
 ## How your dashboard numbers are built
 
@@ -32,8 +47,9 @@ flowchart LR
     A[Submit correct flag] --> B[Completion recorded]
     B --> C[Dashboard count and percent]
     B --> D[Track and level progress bars]
-    B --> E[Course score and rank]
+    B --> E[Course Overview progress]
     B --> F[Profile record and certificates]
+    B --> G[Cyber DNA practice evidence]
 ```
 
 ## Certificates and transcript
@@ -44,20 +60,19 @@ completion count, award date, and certificate ID. Your profile collects every
 certificate you have earned and can generate a PDF transcript of your full
 completion record.
 
-## Course scoring
+## Course progress and feedback
 
-Inside a course, your rank uses a points formula. Each solved lab earns a base score, with bonuses for solving without hints and on your first attempt.
+Inside a course, the **Overview** tab shows your progress, the next assigned
+exercise, and your feedback status. The **Feedback** tab holds the course
+check-in, the aggregate student voice, and any coaching note addressed to you.
+Your progress is private; other students cannot see it.
 
-| Source | Points |
-|--------|--------|
-| Each completed lab | 100 |
-| Solved with no hints | 25 |
-| Solved on first attempt | 25 |
-
-!!! note "Rank card is conditional"
-    The Your Rank card appears only when you are enrolled in an active course that has assigned labs. If you are not enrolled in such a course, the card does not render and your dashboard shows progress without a rank.
+See [Course Progress and Feedback](14_Viewing_the_Scoreboard.md).
 
 !!! tip "All labs completed"
-    When you finish every available exercise, the Next Objective card reads "All labs completed!" instead of pointing to a next lab.
+    When you finish every available exercise, the Next Objective card reads
+    "All labs completed!" instead of pointing to a next lab.
 
-Course exclusive labs count toward your progress only while you are enrolled and the course is active. To see your full account state and enrollment, open [Viewing Your Profile](16_Viewing_Your_Profile.md).
+Course-exclusive labs count toward your progress only while you are enrolled and
+the course is active. To see your full account state and enrollment, open
+[Viewing Your Profile](16_Viewing_Your_Profile.md).

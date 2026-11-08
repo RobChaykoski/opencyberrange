@@ -119,6 +119,7 @@ flowchart TB
 | Internet → frontend | TLS, nginx, API rate limits, CSP/security headers |
 | Frontend → backend | Private Compose network; backend bound to localhost on the host |
 | Backend → Docker | Docker socket; treat the backend host and `docker` group as privileged |
+| Application → database | Parameterized ORM/SQL, least-privilege app role, backup and restore checks, append-only change ledger, signed table checksums; manual SQL is recorded as unattributed |
 | Learner → labs | WireGuard peer; firewall allows only `10.100.0.0/16`; one `/24` per session |
 | Learner → RangeBox | HTTPS browser desktop through the backend WebSocket proxy; standalone boxes use an isolated `10.50.x` bridge |
 | RangeBox → lab | Exercise-box only; attached to that session's bridge and removed on teardown |
@@ -186,7 +187,9 @@ Discoverability. Each factor is scored **1–5**; the score is their mean.
 | T15 | Lab → management LAN | Tampering | A lab container changes host firewall or routing state | 4/2/2/4/2 = 2.8 | Medium | No privileged mode and no host networking; `NET_ADMIN` is scoped to the lab namespace; host firewall state is applied by the Peer Manager and installer. Residual: kernel networking vulnerabilities and operator firewall drift. |
 | T16 | Wiki build → runtime | Tampering | Compromised or careless wiki content injects script into the learner origin | 3/2/3/4/3 = 3.0 | Medium | Pinned MkDocs toolchain, build-time only, output mounted read-only, course-wiki authoring restricted to instructors, and CSP on the served document. Residual: MkDocs does not sanitise every author-supplied HTML fragment; instructor content is trusted. |
 | T17 | Survey consent | Information disclosure / Repudiation | Feedback is linked to a learner or collected without consent | 4/2/3/4/2 = 3.0 | Medium | Explicit opt-in, a versioned statement, append-only consent history, anonymous aggregation, erasure support, and no public scoreboard. Residual: free-text comments can self-identify, and small samples can still reveal a cohort. |
-| T18 | Supply chain | Tampering | A dependency or base image introduces a vulnerability or backdoor | 4/3/2/5/3 = 3.4 | Medium | Pinned versions, `pip-audit`, `npm audit`, CodeQL, Dependabot, prebuilt reviewed images, and release evidence. Residual: a zero-day or a compromised upstream remains possible. |
+| T18 | Supply chain | Tampering | A dependency or base image introduces a vulnerability or backdoor | 4/3/2/5/3 = 3.4 | Medium | Pinned versions, `pip-audit`, `npm audit`, CodeQL, Dependabot, prebuilt reviewed images, a committed SHA-256 supply-chain lock, and release evidence. Residual: a zero-day or a compromised upstream remains possible. |
+| T19 | Application → database | Tampering | Manual SQL or an uninstrumented path changes critical data without a record | 4/3/2/4/2 = 3.0 | Medium | Append-only change ledger with actor attribution, row and chain hashes, an immutable ledger trigger, signed table checksums, and a quality audit. Manual writes are reported as `unattributed`. Residual: a database superuser can disable triggers; the ledger is tamper-evident, not tamper-proof. |
+| T20 | Deleted user lifecycle | Integrity / Availability | A deleted account leaves null references that break a dashboard or inflate a metric | 3/2/2/3/2 = 2.4 | Low | Cascade and `SET NULL` rules, course-transfer block, null-safe UI labels, orphaned-coaching exclusion, and database quality checks. Residual: an uninstrumented table can still need a null fallback. |
 
 ### Highest residual risks
 
@@ -220,6 +223,32 @@ The current control evidence is recorded in
 [`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md) against the
 [`OWASP Top 10 baseline`](V2-SECURITY-OWASP-TOP-10.md).
 
+## Database integrity and change attribution
+
+The database is a trust boundary, not just a store. The platform adds three
+controls:
+
+1. **One-way passwords.** New and changed passwords use Argon2id; legacy bcrypt
+   verifies and upgrades on a successful sign-in. The database stores a one-way
+   hash only; there is no plaintext or reversible password storage.
+2. **Signed table checksums.** `scripts/database_integrity.py` computes SHA-256
+   checksums for critical tables and a database fingerprint. A signed manifest
+   is the release evidence for a point-in-time snapshot.
+3. **Append-only change ledger.** A PostgreSQL trigger records every
+   `INSERT`, `UPDATE`, and `DELETE` on a critical table with a row hash, actor
+   type, actor id, request id, previous hash, and entry hash. Application writes
+   are `user` or `system`; direct SQL writes are `unattributed` and are reported.
+   The ledger has an immutable trigger and rejects `UPDATE`/`DELETE`.
+
+The quality audit covers foreign-key orphans, duplicate keys, invalid enums,
+null critical fields, invalid JSON, bad quiz and feedback ranges, missing
+settings, and password hash format. Deleted users cascade or null their optional
+references; courses block erasure until ownership is transferred; dashboards
+render explicit “Deleted user / learner / participant” labels.
+
+Full design, commands, evidence, and residual limits:
+[Database integrity and change attribution](DATABASE-INTEGRITY.md).
+
 ## Volumes and state
 
 | Volume | Data | Backup |
@@ -232,6 +261,10 @@ The current control evidence is recorded in
 
 - [Learning framework](LEARNING-FRAMEWORK.md)
 - [NICE mapping matrix](NICE-MAPPING.md)
+- [Cyber DNA](SKILL-DNA.md)
+- [Celebration Wall](CELEBRATION-WALL.md)
+- [Supply-chain verification](SUPPLY-CHAIN.md)
+- [Database integrity](DATABASE-INTEGRITY.md)
 - [Survey privacy and consent](SURVEY-PRIVACY.md)
 - [Privacy, erasure, and backups](PRIVACY-AND-DATA-DELETION.md)
 - [Deployment manual](../Manual-Lite/00_Server_Deployment/08_Docker_Deploy_Manual.md)
