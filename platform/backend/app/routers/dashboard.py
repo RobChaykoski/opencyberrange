@@ -38,6 +38,7 @@ from app.services.achievements import (
     resolve_achievement_label,
 )
 from app.services.pdf_report import generate_dashboard_report
+from app.services.spreadsheet_safety import neutralize_row
 
 # Report timestamps render in the requesting instructor's timezone, falling
 # back to UTC for legacy accounts.
@@ -676,33 +677,33 @@ async def instructor_report(
     buf = io.StringIO()
     writer = csv.writer(buf)
     writer.writerow(["# SWOCTS Cyber Range Ops Center Report"])
-    writer.writerow(["# Scope", scope_label])
-    writer.writerow(["# Range", filters["range_label"]])
-    writer.writerow(["# Window (local)", f"{filters['start_local']} to {filters['end_local']}"])
+    writer.writerow(neutralize_row(["# Scope", scope_label]))
+    writer.writerow(neutralize_row(["# Range", filters["range_label"]]))
+    writer.writerow(neutralize_row(["# Window (local)", f"{filters['start_local']} to {filters['end_local']}"]))
     writer.writerow([])
 
     if student_detail:
         writer.writerow(["# Student Details"])
         writer.writerow(["username", "email", "role", "flags_correct", "flags_wrong", "labs_completed", "sessions_started"])
-        writer.writerow([
+        writer.writerow(neutralize_row([
             student_detail["username"], student_detail.get("email") or "",
             student_detail.get("role") or "", student_detail["flags_correct"],
             student_detail["flags_wrong"], student_detail["labs_completed"],
             student_detail["sessions_started"],
-        ])
+        ]))
         writer.writerow([])
     elif students_summary:
         writer.writerow(["# Students in Window"])
         writer.writerow(["username", "flags_correct", "flags_wrong", "labs_completed", "sessions_started"])
         for s in students_summary:
-            writer.writerow([s["username"], s["flags_correct"], s["flags_wrong"],
-                             s["labs_completed"], s["sessions_started"]])
+            writer.writerow(neutralize_row([s["username"], s["flags_correct"], s["flags_wrong"],
+                             s["labs_completed"], s["sessions_started"]]))
         writer.writerow([])
 
     writer.writerow(["# Activity Pulse"])
     writer.writerow(["bucket", "concurrent_labs", "flags_submitted"])
     for p in pulse:
-        writer.writerow([p["hour"], p["concurrent_labs"], p["flags_submitted"]])
+        writer.writerow(neutralize_row([p["hour"], p["concurrent_labs"], p["flags_submitted"]]))
     writer.writerow([])
 
     writer.writerow(["# Activity Log"])
@@ -715,14 +716,14 @@ async def instructor_report(
             ts_str = ts.astimezone(local_tz).strftime("%Y-%m-%d %H:%M:%S")
         else:
             ts_str = str(ts or "")
-        writer.writerow([
+        writer.writerow(neutralize_row([
             ts_str,
             e.get("actor_username") or "System",
             e.get("actor_role") or "",
             e.get("event_label") or e.get("event_type") or "",
             e.get("target_label") or "",
             (e.get("detail") or "").replace("\n", " ") if isinstance(e.get("detail"), str) else (e.get("detail") or ""),
-        ])
+        ]))
 
     csv_bytes = buf.getvalue().encode("utf-8")
     log_admin_action(

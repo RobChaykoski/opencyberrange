@@ -1,4 +1,8 @@
 name: "Atlas Distribution - Final Exam Practice"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Practice the full pentest skill chain you will face on the final exam. Enumerate a forgotten branch office, harvest credentials from SMB shares, exploit a hidden staff portal, and capture three flags. Same skills, same shape, same time pressure as the final."
 
 difficulty: advanced
@@ -105,6 +109,8 @@ topology:
       label: "HTTP:80"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 test:
   steps:
     - name: "SMB port responds"

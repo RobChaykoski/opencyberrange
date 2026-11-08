@@ -1,4 +1,8 @@
 name: Subdomain Discovery
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Expand your TechStart assessment by discovering all subdomains to map the complete attack surface.
 difficulty: beginner
 category: web
@@ -134,6 +138,8 @@ hints:
       The flag lives at `/flag.txt` on the admin host.
     unlock_after_minutes: 25
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
 workbook: "wiki/range/webpt/CH_WEB01_Web_Reconnaissance/05_Subdomain_Discovery/"
 
 test:

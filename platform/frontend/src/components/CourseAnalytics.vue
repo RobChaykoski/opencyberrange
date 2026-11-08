@@ -103,10 +103,13 @@
               <th scope="col">Started</th>
               <th scope="col">Completed</th>
               <th scope="col">Abandoned</th>
+              <th scope="col">Active time</th>
               <th scope="col">Learning</th>
               <th scope="col">Feedback</th>
               <th scope="col">Attempts</th>
-              <th scope="col">Signal</th>
+              <th scope="col">Reliability</th>
+              <th scope="col">Version</th>
+              <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -116,7 +119,9 @@
                 <small>{{ exercise.track_name }}<template v-if="exercise.level_name"> · {{ exercise.level_name }}</template></small>
               </td>
               <template v-if="exercise.cohort_state === 'available'">
-                <td>{{ exercise.started_learners }}</td>
+                <td>
+                  {{ exercise.started_learners }}<small>n={{ exercise.sample_size }}</small>
+                </td>
                 <td>
                   <span class="analytics-rate">{{ exercise.completion_rate }}%</span>
                   <small>{{ exercise.completed_learners }} learners</small>
@@ -126,7 +131,10 @@
                   <small>abandoned</small>
                 </td>
                 <td>
-                  {{ exercise.learning_reported ?? '—' }}<small v-if="exercise.learning_reported !== null">/5 · {{ exercise.pulse_responses }} pulse</small>
+                  {{ exercise.median_learning_minutes ?? '—' }}<small v-if="exercise.median_learning_minutes !== null"> min<template v-if="exercise.learning_minutes_iqr !== null"> · IQR {{ exercise.learning_minutes_iqr }}</template></small>
+                </td>
+                <td>
+                  {{ exercise.learning_value_rating ?? '—' }}<small v-if="exercise.learning_value_rating !== null">/5 · {{ exercise.pulse_responses }} pulse</small>
                 </td>
                 <td>
                   <template v-if="exercise.reaction_count">
@@ -135,15 +143,24 @@
                   </template>
                   <span v-else class="analytics-muted">No feedback yet</span>
                 </td>
-                <td>{{ exercise.median_attempts ?? '—' }}<small>{{ exercise.first_attempt_rate }}% first try</small></td>
                 <td>
-                  <span class="analytics-rag" :class="`analytics-rag--${exercise.rag}`">
-                    {{ ragLabel(exercise.rag) }}
+                  {{ exercise.median_attempts ?? '—' }}<small>{{ exercise.first_attempt_rate }}% first try · {{ exercise.hint_use_rate }}% used hints</small>
+                </td>
+                <td>
+                  {{ exercise.technical_failure_rate !== null ? `${exercise.technical_failure_rate}% tech` : 'No session data' }}
+                  <small>{{ exercise.reset_rate }}% reset</small>
+                </td>
+                <td>
+                  {{ exercise.lab_version }}<small v-if="!exercise.lab_version_available">not recorded</small>
+                </td>
+                <td>
+                  <span class="analytics-rag" :class="`analytics-rag--${exercise.health_status || exercise.rag}`">
+                    {{ healthLabel(exercise.health_status || exercise.rag) }}
                   </span>
-                  <small v-if="exercise.rag_reasons?.length">{{ exercise.rag_reasons.join(' · ') }}</small>
+                  <small v-if="exercise.health_reasons?.length">{{ exercise.health_reasons.join(' · ') }}</small>
                 </td>
               </template>
-              <td v-else :colspan="7" class="analytics-muted">
+              <td v-else :colspan="10" class="analytics-muted">
                 {{ cohortStateLabel(exercise.cohort_state) }} — metrics hidden until the cohort reaches
                 {{ exercise.suppression?.minimum_cohort_size || 5 }} learners.
               </td>
@@ -187,6 +204,16 @@ const ragLabel = (rag) => ({
   no_evidence: 'No evidence',
   insufficient_evidence: 'No evidence',
 }[rag] || 'No signal')
+
+const healthLabel = (status) => ({
+  red: 'Red',
+  amber: 'Amber',
+  green: 'Green',
+  grey: 'Insufficient evidence',
+  suppressed: 'Suppressed',
+  no_evidence: 'No evidence',
+  insufficient_evidence: 'No evidence',
+}[status] || 'Insufficient evidence')
 
 const cohortStateLabel = (state) => ({
   suppressed: 'Suppressed',
@@ -511,6 +538,14 @@ onMounted(load)
 .analytics-rag--green {
   background: color-mix(in srgb, var(--success) 15%, transparent);
   color: var(--success);
+}
+
+.analytics-rag--grey,
+.analytics-rag--suppressed,
+.analytics-rag--no_evidence,
+.analytics-rag--insufficient_evidence {
+  background: color-mix(in srgb, var(--text-muted) 14%, transparent);
+  color: var(--text-secondary);
 }
 
 .analytics-flag--high_hint_pressure {

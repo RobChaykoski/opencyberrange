@@ -1,4 +1,8 @@
 name: "TrueNorth Hosting - Filtered Injection"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "TrueNorth Hosting's DNS lookup tool filters common shell metacharacters but misses newline injection. Bypass the filter using URL-encoded newlines to execute arbitrary commands and recover the flag."
 
 difficulty: intermediate
@@ -70,6 +74,8 @@ topology:
       label: "HTTP:80"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
 test:
   steps:
     - name: "Web application responds"

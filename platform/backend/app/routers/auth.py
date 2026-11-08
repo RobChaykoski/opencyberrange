@@ -17,6 +17,7 @@ import qrcode
 import re
 
 from app.ratelimit import create_limiter
+from app.services.input_safety import normalize_text
 from app.database import get_db
 from app.models import (
     User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
@@ -140,6 +141,22 @@ class RegisterRequest(BaseModel):
         if not re.match(r'^[a-zA-Z][a-zA-Z0-9_-]*$', v):
             raise ValueError('Username must start with a letter and contain only letters, numbers, underscores, and hyphens')
         return v
+
+    @field_validator('first_name', 'last_name')
+    @classmethod
+    def name_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        cleaned = normalize_text(v, field="name", allow_newlines=False)
+        return cleaned or None
+
+    @field_validator('organization')
+    @classmethod
+    def organization_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        cleaned = normalize_text(v, field="organization", allow_newlines=False)
+        return cleaned or None
     
     @field_validator('email')
     @classmethod
@@ -255,22 +272,25 @@ async def login(
     # Check if user is approved
     if not user.is_approved:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account not approved. Please wait for admin approval."
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
     # Check if user is locked (shouldn't happen after authenticate_user, but double-check)
     if user.is_locked:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is locked. Contact an administrator."
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
     
     # Check if is_active exists and is False
     if hasattr(user, 'is_active') and not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is inactive"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
     # Second factor. Only enforced after the password checks out, so the
@@ -456,6 +476,30 @@ class UserSettingsUpdate(BaseModel):
     @classmethod
     def avatar_valid(cls, v: Optional[str]) -> Optional[str]:
         return _validate_avatar_data(v)
+
+    @field_validator("first_name", "last_name")
+    @classmethod
+    def name_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        cleaned = normalize_text(v, field="name", allow_newlines=False)
+        return cleaned or None
+
+    @field_validator("organization")
+    @classmethod
+    def organization_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        cleaned = normalize_text(v, field="organization", allow_newlines=False)
+        return cleaned or None
+
+    @field_validator("timezone")
+    @classmethod
+    def timezone_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        cleaned = normalize_text(v, field="timezone", allow_newlines=False, max_length=64)
+        return cleaned or None
 
 class RecoveryCodeVerifyRequest(BaseModel):
     code: str = Field(..., min_length=6, max_length=32)

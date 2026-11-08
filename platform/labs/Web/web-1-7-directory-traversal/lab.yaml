@@ -1,4 +1,8 @@
 name: "Pinnacle Cloud - Directory Traversal"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Pinnacle Cloud Services has a file download feature with insufficient input validation. Exploit path traversal to read files outside the web root and extract assessment tokens."
 
 difficulty: beginner
@@ -65,6 +69,8 @@ topology:
       label: "HTTP:80"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
 test:
   steps:
     - name: "Web application responds"

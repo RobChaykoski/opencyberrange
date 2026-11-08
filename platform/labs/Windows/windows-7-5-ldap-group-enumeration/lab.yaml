@@ -1,4 +1,8 @@
 name: LDAP Group Enumeration
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Enumerate groups and memberships on FinanceCorp's Active Directory to understand privilege structure.
 difficulty: intermediate
 category: enumeration
@@ -530,6 +534,8 @@ hints:
       > that require authentication before group membership can be queried.
       > Consider using LDAP referral integrity to prevent stale memberships.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
 workbook: "wiki/range/winpt/CH07_LDAP_Enumeration/05_LDAP_Group_Enumeration/"
 
 test:

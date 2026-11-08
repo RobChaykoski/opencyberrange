@@ -1,4 +1,8 @@
 name: SSH Service Detection
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: TechStart Inc needs their Linux infrastructure assessed. Begin by detecting SSH services to understand remote access configuration on their servers.
 difficulty: beginner
 category: reconnaissance
@@ -210,6 +214,8 @@ hints:
       The flag appears in the service banner when using version detection. Look carefully at the VERSION field in nmap output.
     unlock_after_minutes: 25
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 workbook: "wiki/range/linpt/CH_LIN01_Linux_Service_Enumeration/01_SSH_Service_Detection/"
 
 test:

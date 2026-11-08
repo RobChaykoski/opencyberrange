@@ -1,4 +1,8 @@
 name: "Blackrock Dynamics - Hash Relay"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "An exposed shadow backup on a Blackrock Dynamics server lets you crack a weak password hash, pivot through a credential chain, and capture the flag from the final account."
 
 difficulty: intermediate
@@ -81,6 +85,8 @@ topology:
       label: "SSH:22"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 test:
   steps:
     - name: "SSH access as operator"

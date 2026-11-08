@@ -1,4 +1,8 @@
 name: "Name or Network? Troubleshooting a Broken Portal"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "A portal name resolves to a stale address. Use ping and DNS queries to separate a name problem from a network problem, find the current host, and read the maintenance note."
 difficulty: beginner
 category: network
@@ -97,6 +101,8 @@ hints:
       answered ping, and the web service returned the flag.
     unlock_after_minutes: 20
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."
 workbook: "wiki/range/netfor/CH_N0_Network_Foundations/03_Name_or_Network/"
 
 test:

@@ -1,4 +1,8 @@
 name: "Windows Memory Analysis with Volatility"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Work through a Windows Server 2008 memory image with Volatility 3. Identify the operating system, inspect running processes, and extract local account hashes from registry data captured in memory."
 difficulty: intermediate
 category: forensics
@@ -33,6 +37,8 @@ scenario: |
   and remember that a memory image can contain sensitive material. This is a
   fictional training system; the accounts are not real production credentials.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Preserve evidence, contain the affected host, and add the observed indicators to detection."
 workbook: "wiki/range/forensics/CH_FOR01_Memory_Forensics/01_Windows_Memory_Volatility/"
 
 hostnames:

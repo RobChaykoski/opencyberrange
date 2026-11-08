@@ -1,4 +1,8 @@
 name: "Aegis Security Corp - Brute Force Detection"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "A live brute-force attack is targeting Aegis Security Corp's web services. Deploy Suricata rules on the IDS sensor to detect repeated failed login attempts, identify the campaign marker in the successful login, and correlate with the target's access logs to expose the attacker's tooling."
 
 difficulty: intermediate
@@ -119,6 +123,8 @@ topology:
       label: "HTTP:80 (recon)"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 test:
   steps:
     - name: "Verify analyst SSH access to IDS sensor"

@@ -1,4 +1,8 @@
 name: LDAP Anonymous Bind Test
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Test anonymous LDAP bind access to FinanceCorp's Active Directory to identify information disclosure risks.
 difficulty: intermediate
 category: enumeration
@@ -476,6 +480,8 @@ hints:
       > `olcDisallows: bind_anon` in the OpenLDAP configuration, or
       > set appropriate ACLs to restrict anonymous read access.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
 workbook: "wiki/range/winpt/CH07_LDAP_Enumeration/02_LDAP_Anonymous_Bind_Test/"
 
 test:

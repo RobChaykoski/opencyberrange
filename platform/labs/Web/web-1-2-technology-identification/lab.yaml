@@ -1,4 +1,8 @@
 name: Technology Identification
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Continuing your TechStart assessment, you've discovered directories. Now identify the underlying technologies to understand the attack surface.
 difficulty: beginner
 category: web
@@ -126,6 +130,8 @@ hints:
       The flag relates to the identified technology stack. Examine the headers and whatweb output carefully.
     unlock_after_minutes: 25
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
 workbook: "wiki/range/webpt/CH_WEB01_Web_Reconnaissance/02_Technology_Identification/"
 
 test:

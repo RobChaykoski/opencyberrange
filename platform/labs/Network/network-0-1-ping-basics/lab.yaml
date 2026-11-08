@@ -1,4 +1,8 @@
 name: "Can You Reach It? Ping Fundamentals"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "A help-desk ticket says the internal portal is down. Use ICMP echo requests to test reachability, read latency and packet loss, and learn why a reply does not prove the service is working."
 difficulty: beginner
 category: network
@@ -114,6 +118,8 @@ hints:
       running. Neither one proves that every service on the host is healthy.
     unlock_after_minutes: 12
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."
 workbook: "wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/"
 
 test:

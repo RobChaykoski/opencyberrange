@@ -1,4 +1,8 @@
 name: RDP Manual Connection Test
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Test RDP authentication on FinanceCorp's systems using known credentials to assess access controls.
 difficulty: beginner
 category: credential-attacks
@@ -312,6 +316,8 @@ credentials:
     role: "rdp-user"
     description: "RDP admin credentials"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
 workbook: "wiki/range/winpt/CH04_RDP_Exploitation/03_RDP_Manual_Connection_Test/"
 
 test:

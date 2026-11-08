@@ -1,4 +1,8 @@
 name: "Halcyon Industrial - Modbus Register Triage"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "A simulated industrial controller exposes a Modbus TCP service. Enumerate the register map, read the holding registers, and decode the analyst marker stored in the first block."
 difficulty: beginner
 category: ot
@@ -28,6 +32,8 @@ scenario: |
   every register. Your job is to enumerate the device, read the holding
   registers, and recover the analyst marker stored in the first block.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Segment the control network, restrict Modbus access, and monitor register writes for unexpected changes."
 workbook: "wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/"
 
 hostnames:

@@ -1,4 +1,8 @@
 name: LDAP Comprehensive Enumeration
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Complete your FinanceCorp Active Directory assessment by performing comprehensive LDAP enumeration.
 difficulty: intermediate
 category: enumeration
@@ -536,6 +540,8 @@ hints:
       > and disable cleartext LDAP (port 389). (5) Implement network
       > segmentation to restrict LDAP access to authorized subnets.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
 workbook: "wiki/range/winpt/CH07_LDAP_Enumeration/06_LDAP_Comprehensive_Enumeration/"
 
 test:

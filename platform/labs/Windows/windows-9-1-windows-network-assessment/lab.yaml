@@ -1,4 +1,8 @@
 name: Windows Network Assessment
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Final phase of your FinanceCorp assessment. Combine all techniques learned to perform a comprehensive penetration test, demonstrating the full attack chain from initial access to data exfiltration.
 difficulty: intermediate
 category: assessment
@@ -353,6 +357,8 @@ hints:
         credential attacks - the easiest path is often the right one
       - Submit the flag value in the format `OCR{...}`
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
 workbook: "wiki/range/winpt/CH09_Assessment/01_Windows_Network_Assessment/"
 
 test:

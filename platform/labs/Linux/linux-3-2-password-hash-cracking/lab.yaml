@@ -1,4 +1,8 @@
 name: "Ironforge Systems - Password Hash Cracking"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "A misconfigured backup on an Ironforge Systems server exposes password hashes. Crack the weak passwords using john or hashcat, then escalate access to retrieve the assessment flag."
 
 difficulty: intermediate
@@ -75,6 +79,8 @@ topology:
       label: "SSH:22"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 test:
   steps:
     - name: "SSH as technician"

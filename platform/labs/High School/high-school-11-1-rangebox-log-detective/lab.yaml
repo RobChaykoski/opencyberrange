@@ -1,4 +1,8 @@
 name: "RangeBox Log Detective"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Read a small web server access log, spot the probing requests, and recover the training token from the one request that should never have succeeded."
 difficulty: beginner
 category: network
@@ -29,6 +33,8 @@ scenario: |
 
   The service and the log are fictional and isolated.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
 workbook: "wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/01_Log_Detective/"
 
 hostnames:

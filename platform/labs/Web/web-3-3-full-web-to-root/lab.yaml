@@ -1,4 +1,8 @@
 name: "MedCore Health Systems: Full Web-to-Root Compromise"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "MedCore Health Systems runs a clinical data platform with a hidden admin portal, a backend database, and an internal processing server. Chain together directory enumeration, SQL injection, database pivoting, lateral movement, and privilege escalation to prove full compromise across all three systems."
 
 difficulty: advanced
@@ -131,6 +135,8 @@ topology:
       label: "SSH:22"
       access: "internal"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
 test:
   steps:
     - name: "Web application responds on port 80"

@@ -89,8 +89,13 @@ retained for a short documented period. Backups default to 30 days. Account
 deletion removes identity, credential, VPN, learning, survey, and session data,
 anonymises activity events, and keeps a suppression hash so a restore cannot
 resurrect the account. See
-[Privacy, Erasure, and Backups](PRIVACY-AND-DATA-DELETION.md) for the technical
-behaviour.
+[Privacy, Erasure, and Backups](PRIVACY-AND-DATA-DELETION.md) and the
+[Data dictionary](DATA-DICTIONARY.md) for the field-level schedule.
+
+Optional survey and research data follow the consent given at collection. A
+research extract requires ethics approval, a documented purpose, de-identified
+data, and a destruction date. See
+[Analytics governance](ANALYTICS-GOVERNANCE.md).
 
 ## Safeguards
 

@@ -1,4 +1,8 @@
 name: "The Public Footprint"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Kestrel Ridge's intranet exposes a people directory, a kudos wall, and a robots.txt that was never meant to be a secret. Follow the trail from the dashboard to a restricted notes page and recover the flag from its source."
 difficulty: beginner
 category: osint
@@ -28,6 +32,8 @@ scenario: |
   This is a safe, simulated intranet. It has no connection to the real
   internet and no real employee data.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."
 workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint/"
 
 hostnames:

@@ -2,11 +2,13 @@
 Pydantic schemas for request/response validation
 """
 
-from pydantic import BaseModel, EmailStr, Field, field_validator
-from typing import Optional, List
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
+from typing import Optional, List, ClassVar
 from datetime import datetime
 import re
 import unicodedata
+
+from app.services.input_safety import normalize_text
 
 
 def _password_policy_error(v: str) -> Optional[str]:
@@ -38,6 +40,38 @@ def _validate_password(v: str) -> str:
     if error:
         raise ValueError(error)
     return v
+
+
+class SafeTextModel(BaseModel):
+    """Base model that normalises declared human-text fields.
+
+    Subclasses list fields in ``__safe_text_fields__`` with ``"short"`` for
+    single-line values and ``"multiline"`` for descriptions and comments.
+    Passwords, slugs, flags, code/YAML, and other machine values are not listed
+    and are therefore never normalised here.
+    """
+
+    __safe_text_fields__: ClassVar[dict[str, str]] = {}
+
+    @model_validator(mode="before")
+    @classmethod
+    def _normalize_safe_text_fields(cls, data):
+        fields = cls.__safe_text_fields__
+        if not fields or not isinstance(data, dict):
+            return data
+        cleaned = dict(data)
+        for name, mode in fields.items():
+            if name not in cleaned:
+                continue
+            value = cleaned[name]
+            if value is None or not isinstance(value, str):
+                continue
+            cleaned[name] = normalize_text(
+                value,
+                field=name.replace("_", " "),
+                allow_newlines=(mode == "multiline"),
+            )
+        return cleaned
 
 
 # ==================== User Schemas ====================
@@ -153,7 +187,7 @@ class FlagSubmitRequest(BaseModel):
     flag: str = Field(..., min_length=1, max_length=100)
 
 
-class CreateUserRequest(BaseModel):
+class CreateUserRequest(SafeTextModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
     student_id: Optional[str] = None
@@ -163,6 +197,11 @@ class CreateUserRequest(BaseModel):
     is_approved: bool = False
     is_admin: bool = False
     role: Optional[str] = "student"
+
+    __safe_text_fields__ = {
+        "first_name": "short",
+        "last_name": "short",
+    }
 
     @field_validator('password')
     @classmethod
@@ -177,7 +216,7 @@ class CreateUserRequest(BaseModel):
         return v
 
 
-class UpdateUserRequest(BaseModel):
+class UpdateUserRequest(SafeTextModel):
     username: Optional[str] = Field(None, min_length=3, max_length=50)
     email: Optional[EmailStr] = None
     password: Optional[str] = Field(None, min_length=8, max_length=128)
@@ -189,6 +228,12 @@ class UpdateUserRequest(BaseModel):
     is_admin: Optional[bool] = None
     role: Optional[str] = None
     must_change_password: Optional[bool] = None
+
+    __safe_text_fields__ = {
+        "first_name": "short",
+        "last_name": "short",
+        "organization": "short",
+    }
 
     @field_validator('role')
     @classmethod
@@ -258,7 +303,7 @@ class LabResponse(BaseModel):
         from_attributes = True
 
 
-class UpdateLabRequest(BaseModel):
+class UpdateLabRequest(SafeTextModel):
     name: Optional[str] = None
     description: Optional[str] = None
     difficulty: Optional[str] = None
@@ -269,6 +314,13 @@ class UpdateLabRequest(BaseModel):
     is_course_available: Optional[bool] = None  # Deprecated — use visibility
     visibility: Optional[str] = None  # draft | course | pending_public | public
     level_id: Optional[int] = None  # Send explicit null to clear (uncategorize); omit key to leave unchanged
+
+    __safe_text_fields__ = {
+        "name": "short",
+        "description": "multiline",
+        "difficulty": "short",
+        "category": "short",
+    }
 
     @field_validator('visibility')
     @classmethod
@@ -331,7 +383,7 @@ class TokenResponse(BaseModel):
 
 # ==================== Course Schemas ====================
 
-class CourseCreate(BaseModel):
+class CourseCreate(SafeTextModel):
     name: str = Field(..., min_length=3, max_length=150)
     code: str = Field(..., min_length=2, max_length=20)
     semester: str = Field(..., min_length=3, max_length=20)
@@ -341,8 +393,15 @@ class CourseCreate(BaseModel):
     instructor_id: Optional[int] = None
     wiki_theme_color: Optional[str] = None
 
+    __safe_text_fields__ = {
+        "name": "short",
+        "code": "short",
+        "semester": "short",
+        "description": "multiline",
+    }
 
-class CourseUpdate(BaseModel):
+
+class CourseUpdate(SafeTextModel):
     name: Optional[str] = Field(None, min_length=3, max_length=150)
     code: Optional[str] = Field(None, min_length=2, max_length=20)
     semester: Optional[str] = None
@@ -353,6 +412,13 @@ class CourseUpdate(BaseModel):
     is_archived: Optional[bool] = None
     instructor_id: Optional[int] = None
     wiki_theme_color: Optional[str] = None
+
+    __safe_text_fields__ = {
+        "name": "short",
+        "code": "short",
+        "semester": "short",
+        "description": "multiline",
+    }
 
 
 class CourseResponse(BaseModel):
@@ -395,7 +461,7 @@ class CourseJoinRequest(BaseModel):
         return value
 
 
-class ExerciseQuizFeedbackInput(BaseModel):
+class ExerciseQuizFeedbackInput(SafeTextModel):
     """Optional post-quiz ratings that feed course experience metrics."""
 
     satisfaction: Optional[int] = Field(None, ge=1, le=5)
@@ -404,13 +470,15 @@ class ExerciseQuizFeedbackInput(BaseModel):
     ease_of_use: Optional[int] = Field(None, ge=1, le=5)
     comment: Optional[str] = Field(None, max_length=2000)
 
+    __safe_text_fields__ = {"comment": "multiline"}
+
 
 class ExerciseQuizSubmitRequest(BaseModel):
     answers: dict = Field(default_factory=dict)
     feedback: Optional[ExerciseQuizFeedbackInput] = None
 
 
-class CourseFeedbackRequest(BaseModel):
+class CourseFeedbackRequest(SafeTextModel):
     """Student course check-in or instructor coaching note.
 
     Ratings are 1-5. Students send no ``subject_user_id``; instructors must
@@ -422,6 +490,8 @@ class CourseFeedbackRequest(BaseModel):
     confidence: Optional[int] = Field(None, ge=1, le=5)
     comment: Optional[str] = Field(None, max_length=2000)
     subject_user_id: Optional[int] = None
+
+    __safe_text_fields__ = {"comment": "multiline"}
 
 
 class CourseLabAssignRequest(BaseModel):
@@ -440,8 +510,10 @@ class AssignmentReorderRequest(BaseModel):
     assignment_order: List[dict]
 
 
-class CourseLabUpdateRequest(BaseModel):
+class CourseLabUpdateRequest(SafeTextModel):
     display_name: Optional[str] = Field(None, max_length=255)
+
+    __safe_text_fields__ = {"display_name": "short"}
 
 
 class BulkEnrollRequest(BaseModel):
@@ -480,20 +552,24 @@ class AchievementResponse(BaseModel):
 
 # ==================== Assignment Schemas ====================
 
-class AssignmentCreate(BaseModel):
+class AssignmentCreate(SafeTextModel):
     name: str = Field(..., min_length=1, max_length=150)
     description: Optional[str] = None
     due_date: Optional[datetime] = None
     start_date: Optional[datetime] = None
     locked: Optional[bool] = False
 
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
-class AssignmentUpdate(BaseModel):
+
+class AssignmentUpdate(SafeTextModel):
     name: Optional[str] = Field(None, min_length=1, max_length=150)
     description: Optional[str] = None
     due_date: Optional[datetime] = None
     start_date: Optional[datetime] = None
     locked: Optional[bool] = None
+
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
 
 class AssignmentLabsRequest(BaseModel):
@@ -556,7 +632,7 @@ class MailTestRequest(BaseModel):
     to: Optional[EmailStr] = None
 
 
-class CustomAchievementCreate(BaseModel):
+class CustomAchievementCreate(SafeTextModel):
     """Admin-defined achievement definition."""
     name: str = Field(..., min_length=2, max_length=80)
     description: str | None = Field(None, max_length=500)
@@ -565,8 +641,10 @@ class CustomAchievementCreate(BaseModel):
     threshold: int = Field(1, ge=1, le=10000)
     is_active: bool = True
 
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
-class CustomAchievementUpdate(BaseModel):
+
+class CustomAchievementUpdate(SafeTextModel):
     name: str | None = Field(None, min_length=2, max_length=80)
     description: str | None = Field(None, max_length=500)
     icon: str | None = Field(None, max_length=16)
@@ -574,15 +652,19 @@ class CustomAchievementUpdate(BaseModel):
     threshold: int | None = Field(None, ge=1, le=10000)
     is_active: bool | None = None
 
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
+
 
 # ==================== Curriculum Admin Schemas ====================
 
-class TrackCreate(BaseModel):
+class TrackCreate(SafeTextModel):
     name: str = Field(..., min_length=2, max_length=100)
     slug: str = Field(..., min_length=2, max_length=50)
     description: Optional[str] = None
     icon: Optional[str] = "web"
     color: Optional[str] = "#3b82f6"
+
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
     @field_validator('slug')
     @classmethod
@@ -592,22 +674,28 @@ class TrackCreate(BaseModel):
         return v
 
 
-class TrackUpdate(BaseModel):
+class TrackUpdate(SafeTextModel):
     name: Optional[str] = Field(None, min_length=2, max_length=100)
     description: Optional[str] = None
     icon: Optional[str] = None
     color: Optional[str] = None
     is_active: Optional[bool] = None
 
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
-class LevelCreate(BaseModel):
+
+class LevelCreate(SafeTextModel):
     name: str = Field(..., min_length=2, max_length=100)
     description: Optional[str] = None
 
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
-class LevelUpdate(BaseModel):
+
+class LevelUpdate(SafeTextModel):
     name: Optional[str] = Field(None, min_length=2, max_length=100)
     description: Optional[str] = None
+
+    __safe_text_fields__ = {"name": "short", "description": "multiline"}
 
 
 class ReorderRequest(BaseModel):
@@ -616,7 +704,7 @@ class ReorderRequest(BaseModel):
 
 # ==================== Lab Creation & Flag Schemas ====================
 
-class LabCreate(BaseModel):
+class LabCreate(SafeTextModel):
     name: str = Field(..., min_length=2, max_length=100)
     slug: str = Field(..., min_length=2, max_length=50)
     description: Optional[str] = None
@@ -633,6 +721,18 @@ class LabCreate(BaseModel):
     flag: Optional[str] = None
     visibility: Optional[str] = None
     lab_yaml: Optional[str] = None
+
+    __safe_text_fields__ = {
+        "name": "short",
+        "description": "multiline",
+        "scenario": "multiline",
+        "objectives": "multiline",
+        "hints": "multiline",
+        "tools": "multiline",
+        "hostnames": "multiline",
+        "difficulty": "short",
+        "category": "short",
+    }
     @field_validator('slug')
     @classmethod
     def slug_valid(cls, v: str) -> str:
@@ -641,7 +741,7 @@ class LabCreate(BaseModel):
         return v
 
 
-class SetupRequest(BaseModel):
+class SetupRequest(SafeTextModel):
     admin_username: str = Field(..., min_length=3, max_length=50)
     admin_email: EmailStr
     admin_password: str = Field(..., min_length=8, max_length=128)
@@ -652,6 +752,12 @@ class SetupRequest(BaseModel):
     # One-time install token; required only when the server sets SETUP_TOKEN
     # (see /setup/complete). Blank on isolated installs that don't set it.
     setup_token: Optional[str] = None
+
+    __safe_text_fields__ = {
+        "first_name": "short",
+        "last_name": "short",
+        "organization": "short",
+    }
 
     @field_validator('admin_password')
     @classmethod

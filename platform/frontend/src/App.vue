@@ -646,7 +646,7 @@ body {
   gap: 0.4rem;
   padding: 0.5rem;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   border-top: 1px solid var(--border-color);
 }
 
@@ -666,7 +666,7 @@ body {
   margin-left: 0.75rem;
   padding-left: 0.75rem;
   border-left: 1px solid var(--border-color);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -675,6 +675,8 @@ body {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  min-height: 24px;
+  padding: 2px 0;
 }
 .app-footer a:hover {
   opacity: 0.8;
@@ -700,7 +702,7 @@ body {
 }
 
 .app-footer__powered-label {
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .app-footer__powered {

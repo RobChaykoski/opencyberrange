@@ -46,11 +46,11 @@
             Your account and personal data have been deleted.
           </div>
 
-          <div v-if="errorMessage" class="error-message" role="alert">
+          <div v-if="errorMessage" class="error-message" role="alert" aria-live="assertive">
             {{ errorMessage }}
           </div>
 
-          <form @submit.prevent="handleLogin" class="login-form">
+          <form @submit.prevent="handleLogin" class="login-form" :aria-busy="loading">
             <div class="form-group">
               <label for="username" class="form-label">Username</label>
               <input
@@ -61,18 +61,31 @@
                 :class="{ 'form-input--error': errorMessage }"
                 placeholder="Enter your username"
                 required
+                minlength="3"
+                maxlength="50"
                 autocomplete="username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                enterkeyhint="next"
+                :disabled="loading"
               />
               <button
                 type="button"
                 class="forgot-username-link"
+                aria-controls="forgot-username-panel"
+                :aria-expanded="showUsernameHelp ? 'true' : 'false'"
                 @click="toggleUsernameHelp"
               >
                 Forgot username?
               </button>
             </div>
 
-            <div v-if="showUsernameHelp" class="forgot-username-panel">
+            <div
+              v-if="showUsernameHelp"
+              id="forgot-username-panel"
+              class="forgot-username-panel"
+            >
               <p class="forgot-username-help">
                 Enter the email address on your account. We will send your
                 username to that address only.
@@ -85,6 +98,13 @@
                   class="form-input"
                   placeholder="you@example.edu"
                   autocomplete="email"
+                  inputmode="email"
+                  autocapitalize="none"
+                  autocorrect="off"
+                  spellcheck="false"
+                  maxlength="100"
+                  aria-label="Email address for username reminder"
+                  :disabled="reminderLoading"
                   @keyup.enter="requestUsername"
                 />
                 <button
@@ -117,12 +137,18 @@
                   :class="{ 'form-input--error': errorMessage }"
                   placeholder="Enter your password"
                   required
+                  minlength="8"
+                  maxlength="128"
                   autocomplete="current-password"
+                  enterkeyhint="go"
+                  :disabled="loading"
                 />
                 <button
                   type="button"
                   class="password-toggle"
                   :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                  :aria-pressed="showPassword ? 'true' : 'false'"
+                  :disabled="loading"
                   @click="showPassword = !showPassword"
                 >
                   {{ showPassword ? 'Hide' : 'Show' }}
@@ -140,7 +166,13 @@
                 :class="{ 'form-input--error': errorMessage }"
                 placeholder="6-digit or recovery code"
                 autocomplete="one-time-code"
+                inputmode="text"
+                autocapitalize="characters"
+                autocorrect="off"
+                spellcheck="false"
+                maxlength="32"
                 required
+                :disabled="loading"
               />
               <p class="mfa-help">
                 Enter the code from your authenticator app, or one of your recovery codes.
@@ -166,6 +198,12 @@
             <p class="register-text">
               Don't have an account?
               <router-link to="/register" class="register-link">Register here</router-link>
+            </p>
+            <p class="login-privacy">
+              By signing in you acknowledge the
+              <router-link to="/privacy">Privacy notice</router-link>.
+              Privacy questions:
+              <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>.
             </p>
           </div>
         </div>

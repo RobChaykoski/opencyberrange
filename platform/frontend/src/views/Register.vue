@@ -35,12 +35,12 @@
           </div>
 
           <!-- Error Message -->
-          <div v-if="errorMessage" class="error-message">
+          <div v-if="errorMessage" class="error-message" role="alert" aria-live="assertive">
             {{ errorMessage }}
           </div>
 
           <!-- Success Message -->
-          <div v-if="successMessage" class="success-message">
+          <div v-if="successMessage" class="success-message" role="status" aria-live="polite">
             {{ successMessage }}
           </div>
 
@@ -55,11 +55,18 @@
                 :class="{ 'form-input--error': errors.username }"
                 placeholder="Enter your username"
                 required
+                minlength="3"
+                maxlength="50"
                 autocomplete="username"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                aria-describedby="username-help"
+                :aria-invalid="errors.username ? 'true' : 'false'"
                 @blur="validateUsername"
               />
-              <p v-if="errors.username" class="error-text">{{ errors.username }}</p>
-              <p v-else-if="form.username && !errors.username" class="help-text">
+              <p v-if="errors.username" id="username-help" class="error-text">{{ errors.username }}</p>
+              <p v-else-if="form.username && !errors.username" id="username-help" class="help-text">
                 Must start with a letter and contain only letters, numbers, underscores, and hyphens (3-50 characters)
               </p>
             </div>
@@ -74,10 +81,17 @@
                 :class="{ 'form-input--error': errors.email }"
                 placeholder="Enter your email"
                 required
+                maxlength="100"
                 autocomplete="email"
+                inputmode="email"
+                autocapitalize="none"
+                autocorrect="off"
+                spellcheck="false"
+                aria-describedby="email-help"
+                :aria-invalid="errors.email ? 'true' : 'false'"
                 @blur="validateEmail"
               />
-              <p v-if="errors.email" class="error-text">{{ errors.email }}</p>
+              <p v-if="errors.email" id="email-help" class="error-text">{{ errors.email }}</p>
             </div>
 
             <div class="form-group">
@@ -141,7 +155,12 @@
                   :class="{ 'form-input--error': errors.password }"
                   placeholder="Enter your password"
                   required
+                  minlength="8"
+                  maxlength="128"
                   autocomplete="new-password"
+                  spellcheck="false"
+                  aria-describedby="password-help password-checklist"
+                  :aria-invalid="errors.password ? 'true' : 'false'"
                   @blur="validatePassword"
                 />
                 <button
@@ -159,10 +178,33 @@
                   </svg>
                 </button>
               </div>
-              <p v-if="errors.password" class="error-text">{{ errors.password }}</p>
-              <p v-else-if="form.password && !errors.password" class="help-text">
-                Must be at least 8 characters and contain uppercase, lowercase, and a number
+              <p v-if="errors.password" id="password-help" class="error-text">{{ errors.password }}</p>
+              <p v-else-if="form.password && !errors.password" id="password-help" class="help-text">
+                At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
               </p>
+              <ul
+                v-if="form.password"
+                id="password-checklist"
+                class="password-checklist"
+                aria-live="polite"
+              >
+                <li :class="{ 'password-checklist__item--met': passwordChecks.length }">
+                  <span aria-hidden="true">{{ passwordChecks.length ? '✓' : '○' }}</span>
+                  At least 8 characters
+                </li>
+                <li :class="{ 'password-checklist__item--met': passwordChecks.upper }">
+                  <span aria-hidden="true">{{ passwordChecks.upper ? '✓' : '○' }}</span>
+                  An uppercase letter
+                </li>
+                <li :class="{ 'password-checklist__item--met': passwordChecks.lower }">
+                  <span aria-hidden="true">{{ passwordChecks.lower ? '✓' : '○' }}</span>
+                  A lowercase letter
+                </li>
+                <li :class="{ 'password-checklist__item--met': passwordChecks.number }">
+                  <span aria-hidden="true">{{ passwordChecks.number ? '✓' : '○' }}</span>
+                  A number
+                </li>
+              </ul>
             </div>
 
             <div class="form-group">
@@ -176,7 +218,12 @@
                   :class="{ 'form-input--error': errors.confirmPassword }"
                   placeholder="Confirm your password"
                   required
+                  minlength="8"
+                  maxlength="128"
                   autocomplete="new-password"
+                  spellcheck="false"
+                  aria-describedby="confirm-password-help"
+                  :aria-invalid="errors.confirmPassword ? 'true' : 'false'"
                   @blur="validateConfirmPassword"
                 />
                 <button
@@ -194,7 +241,7 @@
                   </svg>
                 </button>
               </div>
-              <p v-if="errors.confirmPassword" class="error-text">{{ errors.confirmPassword }}</p>
+              <p v-if="errors.confirmPassword" id="confirm-password-help" class="error-text">{{ errors.confirmPassword }}</p>
             </div>
 
             <div v-if="inviteRequired" class="form-group">
@@ -207,10 +254,17 @@
                 :class="{ 'form-input--error': errors.inviteCode }"
                 placeholder="Enter the code you were given"
                 autocomplete="one-time-code"
+                autocapitalize="characters"
+                autocorrect="off"
+                spellcheck="false"
+                minlength="4"
+                maxlength="64"
+                aria-describedby="invite-help"
+                :aria-invalid="errors.inviteCode ? 'true' : 'false'"
                 @blur="validateInviteCode"
               />
-              <p v-if="errors.inviteCode" class="error-text">{{ errors.inviteCode }}</p>
-              <p v-else class="help-text">
+              <p v-if="errors.inviteCode" id="invite-help" class="error-text">{{ errors.inviteCode }}</p>
+              <p v-else class="help-text" id="invite-help">
                 Registration on this site is limited to people who were given a code. Your instructor issues it.
               </p>
             </div>
@@ -238,7 +292,7 @@
       <div class="register-hero-panel">
         <div class="hero-content">
           <!-- CSS Terminal Illustration -->
-          <div class="terminal">
+          <div class="terminal" aria-hidden="true">
             <div class="terminal__titlebar">
               <span class="terminal__dot terminal__dot--red"></span>
               <span class="terminal__dot terminal__dot--yellow"></span>
@@ -285,7 +339,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
+import { computed, onMounted, ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for registration (no token needed)
 
@@ -350,10 +404,20 @@ const errorMessage = ref('')
 const successMessage = ref('')
 const loading = ref(false)
 
+const passwordChecks = computed(() => ({
+  length: form.password.length >= 8,
+  upper: /\p{Lu}/u.test(form.password),
+  lower: /\p{Ll}/u.test(form.password),
+  number: /\p{Nd}/u.test(form.password),
+}))
+
 
 const validateUsername = () => {
   errors.username = ''
-  if (!form.username) return
+  if (!form.username) {
+    errors.username = 'Username is required'
+    return
+  }
 
   if (form.username.length < 3 || form.username.length > 50) {
     errors.username = 'Username must be between 3 and 50 characters'
@@ -370,7 +434,10 @@ const validateUsername = () => {
 
 const validateEmail = () => {
   errors.email = ''
-  if (!form.email) return
+  if (!form.email) {
+    errors.email = 'Email is required'
+    return
+  }
 
   const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
   if (!emailRegex.test(form.email)) {
@@ -380,28 +447,34 @@ const validateEmail = () => {
 
 const validatePassword = () => {
   errors.password = ''
-  if (!form.password) return
+  if (!form.password) {
+    errors.password = 'Password is required'
+    return
+  }
 
-  if (form.password.length < 8) {
+  if (!passwordChecks.value.length) {
     errors.password = 'Password must be at least 8 characters'
     return
   }
-  if (!/[A-Z]/.test(form.password)) {
+  if (!passwordChecks.value.upper) {
     errors.password = 'Password must contain at least one uppercase letter'
     return
   }
-  if (!/[a-z]/.test(form.password)) {
+  if (!passwordChecks.value.lower) {
     errors.password = 'Password must contain at least one lowercase letter'
     return
   }
-  if (!/[0-9]/.test(form.password)) {
+  if (!passwordChecks.value.number) {
     errors.password = 'Password must contain at least one number'
   }
 }
 
 const validateConfirmPassword = () => {
   errors.confirmPassword = ''
-  if (!form.confirmPassword) return
+  if (!form.confirmPassword) {
+    errors.confirmPassword = 'Please confirm your password'
+    return
+  }
 
   if (form.password !== form.confirmPassword) {
     errors.confirmPassword = 'Passwords do not match'
@@ -461,9 +534,12 @@ const handleRegister = async () => {
       payload.competition_id = competitionId.value
     }
 
-    await axios.post('/api/auth/register', payload)
+    const response = await axios.post('/api/auth/register', payload)
 
-    successMessage.value = 'Account created successfully! Your account is pending administrator approval. You will be able to log in once approved.'
+    const approved = response.data?.is_approved === true
+    successMessage.value = approved
+      ? 'Account created. You can sign in now.'
+      : 'Account created successfully! Your account is pending administrator approval. You will be able to log in once approved.'
 
     // Clear form
     form.username = ''
@@ -738,6 +814,36 @@ const handleRegister = async () => {
   color: #f87171;
 }
 
+.password-checklist {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.25rem 0.75rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.password-checklist__item--met {
+  color: var(--success);
+}
+
+.form-input:focus-visible,
+.register-button:focus-visible,
+.password-toggle:focus-visible,
+.login-link:focus-visible,
+.form-check input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .register-button {
   width: 100%;
   padding: 0.875rem 1.5rem;
@@ -931,7 +1037,7 @@ const handleRegister = async () => {
 /* ── Responsive ── */
 @media (max-width: 960px) {
   .register-split {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 
   .register-hero-panel {
@@ -963,6 +1069,21 @@ const handleRegister = async () => {
 
   .terminal {
     font-size: 0.75rem;
+  }
+
+  .password-checklist {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-input,
+  .register-button,
+  .password-toggle,
+  .login-link,
+  .terminal__cursor {
+    transition: none;
+    animation: none;
   }
 }
 </style>

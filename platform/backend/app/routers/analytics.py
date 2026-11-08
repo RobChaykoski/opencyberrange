@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections import Counter
 from datetime import datetime, timezone
-from statistics import median
+from statistics import median, quantiles
 from typing import Optional
 import io
 import json
@@ -170,10 +170,18 @@ def _insufficient_exercise(lab: Lab, cohort: dict) -> dict:
         "level_name": lab.level.name if lab.level else None,
         "started_learners": 0 if no_evidence else None,
         "completed_learners": 0 if no_evidence else None,
+        "sample_size": cohort["sample_size"],
         "completion_rate": None,
         "started_completion_rate": None,
         "abandonment_rate": None,
         "median_time_minutes": None,
+        "time_minutes_iqr": None,
+        "time_minutes_q1": None,
+        "time_minutes_q3": None,
+        "median_learning_minutes": None,
+        "learning_minutes_iqr": None,
+        "learning_minutes_q1": None,
+        "learning_minutes_q3": None,
         "total_learning_minutes": None,
         "total_learning_hours": None,
         "likes": None,
@@ -182,15 +190,47 @@ def _insufficient_exercise(lab: Lab, cohort: dict) -> dict:
         "positive_rate": None,
         "median_attempts": None,
         "hint_pressure_rate": None,
+        "hint_use_rate": None,
         "first_attempt_rate": None,
         "reattempt_recovery_rate": None,
+        "reset_count": None,
+        "reset_rate": None,
+        "technical_failures": None,
+        "technical_failure_rate": None,
         "pulse_responses": None,
         "pulse_response_rate": None,
         "learning_reported": None,
+        "learning_value_rating": None,
         "difficulty_reported": None,
+        "clarity_reported": None,
+        "free_text_comment_count": None,
+        "free_text_themes": None,
+        "free_text_themes_available": False,
         "unclear_comments": None,
         "median_time_to_first_attempt_minutes": None,
+        "median_time_to_first_hint_minutes": None,
+        "hint_timing_available": False,
         "median_time_to_completion_minutes": None,
+        "abandonment_point": None,
+        "abandonment_point_available": False,
+        "abandonment_point_reason": (
+            "Suppressed until the cohort reaches the minimum sample size."
+        ),
+        "lab_version": getattr(lab, "content_version", None) or "unversioned",
+        "lab_version_available": bool(getattr(lab, "content_version", None)),
+        "health_status": "grey",
+        "health_reasons": [cohort["reason"]] if cohort.get("reason") else [
+            "Insufficient evidence"
+        ],
+        "component_status": {
+            "technical": "grey",
+            "completion": "grey",
+            "learning": "grey",
+            "clarity": "grey",
+            "difficulty": "grey",
+            "hints": "grey",
+            "attempts": "grey",
+        },
         "rag": "insufficient_evidence",
         "rag_reasons": [cohort["reason"]] if cohort.get("reason") else [],
         "flags": [],
@@ -202,6 +242,18 @@ def _insufficient_exercise(lab: Lab, cohort: dict) -> dict:
 def _median(values):
     cleaned = [value for value in values if value is not None]
     return round(float(median(cleaned)), 1) if cleaned else None
+
+
+def _quartiles(values) -> tuple[Optional[float], Optional[float]]:
+    """Return (Q1, Q3) using the inclusive method, or (None, None)."""
+    cleaned = sorted(value for value in values if value is not None)
+    if not cleaned:
+        return None, None
+    if len(cleaned) == 1:
+        value = round(float(cleaned[0]), 1)
+        return value, value
+    q1, _q2, q3 = quantiles(cleaned, n=4, method="inclusive")
+    return round(float(q1), 1), round(float(q3), 1)
 
 
 def _rate(part: int, total: int) -> float:
@@ -299,6 +351,114 @@ def _rag_status(
     if learning_reported is not None and learning_reported < 3:
         reasons.append("Learning reported is low")
     return "amber", reasons
+
+
+def _health_status(
+    *,
+    sample_size: int,
+    minimum: int,
+    completion_rate: float,
+    abandonment_rate: float,
+    median_attempts: Optional[float],
+    learning_reported: Optional[float],
+    difficulty_reported: Optional[float],
+    clarity_reported: Optional[float],
+    technical_failure_rate: Optional[float],
+    hint_pressure_rate: float,
+) -> tuple[str, list[str], dict[str, str]]:
+    """Return the component health status, not one opaque score.
+
+    Grey means insufficient evidence. Red means a component is failing. Amber
+    means mixed or strained evidence. Green means every available component is
+    healthy. Each component is also returned separately so one strong metric
+    cannot hide a weak one.
+    """
+    if sample_size < minimum:
+        return (
+            "grey",
+            ["Insufficient evidence"],
+            {
+                "technical": "grey",
+                "completion": "grey",
+                "learning": "grey",
+                "clarity": "grey",
+                "difficulty": "grey",
+                "hints": "grey",
+                "attempts": "grey",
+            },
+        )
+
+    reasons: list[str] = []
+    components: dict[str, str] = {}
+
+    def mark(name: str, level: str, reason: str) -> None:
+        components[name] = level
+        if reason and reason not in reasons:
+            reasons.append(reason)
+
+    if technical_failure_rate is None:
+        mark("technical", "grey", "")
+    elif technical_failure_rate >= 25:
+        mark("technical", "red", "High technical failure rate")
+    elif technical_failure_rate >= 10:
+        mark("technical", "amber", "Some technical failures")
+    else:
+        mark("technical", "green", "")
+
+    if clarity_reported is None:
+        mark("clarity", "grey", "")
+    elif clarity_reported <= 2:
+        mark("clarity", "red", "Instructions reported as unclear")
+    elif clarity_reported < 4:
+        mark("clarity", "amber", "Instruction clarity could improve")
+    else:
+        mark("clarity", "green", "")
+
+    if abandonment_rate >= 50 or completion_rate < 50:
+        mark("completion", "red", "Low completion or high abandonment")
+    elif abandonment_rate >= 30 or completion_rate < 70:
+        mark("completion", "amber", "Mixed completion evidence")
+    else:
+        mark("completion", "green", "")
+
+    if learning_reported is None:
+        mark("learning", "grey", "")
+    elif learning_reported <= 2:
+        mark("learning", "red", "Low learning value reported")
+    elif learning_reported < 3.5:
+        mark("learning", "amber", "Learning value is mixed")
+    else:
+        mark("learning", "green", "")
+
+    if difficulty_reported is None:
+        mark("difficulty", "grey", "")
+    elif difficulty_reported >= 4.5:
+        mark("difficulty", "red", "Reported as too difficult")
+    elif difficulty_reported >= 4:
+        mark("difficulty", "amber", "Reported as difficult")
+    else:
+        mark("difficulty", "green", "")
+
+    if hint_pressure_rate >= 70:
+        mark("hints", "amber", "High hint-use rate")
+    else:
+        mark("hints", "green", "")
+
+    if median_attempts is None:
+        mark("attempts", "grey", "")
+    elif median_attempts >= 5:
+        mark("attempts", "red", "High attempt burden")
+    elif median_attempts >= 3:
+        mark("attempts", "amber", "Elevated attempt burden")
+    else:
+        mark("attempts", "green", "")
+
+    levels = set(components.values())
+    if "red" in levels:
+        return "red", reasons, components
+    if "amber" in levels:
+        return "amber", reasons, components
+    return "green", ["Technically reliable, clear, and learning-positive"], components
 
 
 def _completion_rows(db: Session, user_ids: set, lab_ids: set):
@@ -1314,8 +1474,17 @@ async def course_exercises(
     for row in completions:
         by_lab_completions.setdefault(row.lab_id, []).append(row)
     by_lab_sessions = {}
+    by_lab_session_rows = {}
     for row in sessions:
         by_lab_sessions.setdefault(row.lab_id, set()).add(row.user_id)
+        by_lab_session_rows.setdefault(row.lab_id, []).append(row)
+    reset_rows = db.query(
+        CourseCompletionReset.lab_id,
+        func.count(CourseCompletionReset.id),
+    ).filter(
+        CourseCompletionReset.course_id == course.id,
+    ).group_by(CourseCompletionReset.lab_id).all()
+    reset_map = {lab_id: count for lab_id, count in reset_rows}
     session_start_map = {}
     for row in sessions:
         if row.started_at is None:
@@ -1376,6 +1545,39 @@ async def course_exercises(
         median_attempts = _median(attempts)
         learning_reported = _average([row.learning for row in lab_pulse])
         difficulty_reported = _average([row.difficulty for row in lab_pulse])
+        # Per-exercise instruction-clarity ratings are not collected yet; the
+        # course check-in captures clarity at course level only. Keep the field
+        # explicit rather than borrowing the course value into a lab claim.
+        clarity_reported = None
+        lab_session_rows = by_lab_session_rows.get(lab.id, [])
+        technical_failures = sum(
+            1 for row in lab_session_rows if row.status == "error"
+        )
+        technical_failure_rate = (
+            _rate(technical_failures, len(lab_session_rows))
+            if lab_session_rows else None
+        )
+        time_values = [row.time_spent_minutes for row in lab_completions]
+        learning_values = [
+            value for (_uid, lab_id), value in learning_pairs.items()
+            if lab_id == lab.id
+        ]
+        time_q1, time_q3 = _quartiles(time_values)
+        learning_q1, learning_q3 = _quartiles(learning_values)
+        reset_count = int(reset_map.get(lab.id, 0) or 0)
+        sample_size = len(completed_users | started_users)
+        health_status, health_reasons, component_status = _health_status(
+            sample_size=sample_size,
+            minimum=minimum,
+            completion_rate=completion_rate,
+            abandonment_rate=abandonment_rate,
+            median_attempts=median_attempts,
+            learning_reported=learning_reported,
+            difficulty_reported=difficulty_reported,
+            clarity_reported=clarity_reported,
+            technical_failure_rate=technical_failure_rate,
+            hint_pressure_rate=hint_pressure,
+        )
         first_attempt_gaps = []
         for (uid, lid), attempted_at in first_attempt_map.items():
             if lid != lab.id or attempted_at is None:
@@ -1419,17 +1621,30 @@ async def course_exercises(
             "level_name": lab.level.name if lab.level else None,
             "started_learners": len(started_users),
             "completed_learners": len(completed_users),
+            "sample_size": sample_size,
             "completion_rate": completion_rate,
             "started_completion_rate": started_completion,
             "abandonment_rate": abandonment_rate,
-            "median_time_minutes": _median(
-                [row.time_spent_minutes for row in lab_completions]
+            "median_time_minutes": _median(time_values),
+            "time_minutes_iqr": (
+                round(time_q3 - time_q1, 1)
+                if time_q1 is not None and time_q3 is not None else None
             ),
+            "time_minutes_q1": time_q1,
+            "time_minutes_q3": time_q3,
+            "median_learning_minutes": _median(learning_values),
+            "learning_minutes_iqr": (
+                round(learning_q3 - learning_q1, 1)
+                if learning_q1 is not None and learning_q3 is not None else None
+            ),
+            "learning_minutes_q1": learning_q1,
+            "learning_minutes_q3": learning_q3,
             "total_learning_minutes": int(lab_learning_minutes),
             "total_learning_hours": round(lab_learning_minutes / 60, 1),
             **lab_reaction_summary,
             "median_attempts": median_attempts,
             "hint_pressure_rate": hint_pressure,
+            "hint_use_rate": hint_pressure,
             "first_attempt_rate": _rate(
                 sum(1 for row in lab_completions if (row.attempts or 0) == 1),
                 len(lab_completions),
@@ -1438,13 +1653,39 @@ async def course_exercises(
                 sum(1 for row in lab_completions if (row.attempts or 0) > 1),
                 len(lab_completions),
             ),
+            "reset_count": reset_count,
+            "reset_rate": _rate(reset_count, sample_size),
+            "technical_failures": technical_failures,
+            "technical_failure_rate": technical_failure_rate,
             "pulse_responses": len(lab_pulse),
             "pulse_response_rate": _rate(len(lab_pulse), len(lab_completions)),
             "learning_reported": learning_reported,
+            "learning_value_rating": learning_reported,
             "difficulty_reported": difficulty_reported,
+            "clarity_reported": clarity_reported,
+            "free_text_comment_count": sum(
+                1 for row in lab_pulse if row.unclear
+            ),
+            "free_text_themes": None,
+            "free_text_themes_available": False,
             "unclear_comments": sum(1 for row in lab_pulse if row.unclear),
             "median_time_to_first_attempt_minutes": _median(first_attempt_gaps),
+            "median_time_to_first_hint_minutes": None,
+            "hint_timing_available": False,
             "median_time_to_completion_minutes": _median(completion_gaps),
+            "abandonment_point": None,
+            "abandonment_point_available": False,
+            "abandonment_point_reason": (
+                "Step-level abandonment events are not collected; use the "
+                "course workbook and session logs for a manual review."
+            ),
+            "lab_version": getattr(lab, "content_version", None) or "unversioned",
+            "lab_version_available": bool(
+                getattr(lab, "content_version", None)
+            ),
+            "health_status": health_status,
+            "health_reasons": health_reasons,
+            "component_status": component_status,
             "rag": rag,
             "rag_reasons": rag_reasons,
             "flags": flags,

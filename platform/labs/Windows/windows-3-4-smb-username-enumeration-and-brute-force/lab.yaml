@@ -1,4 +1,8 @@
 name: SMB Username Enumeration and Brute Force
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Combine username enumeration with brute force attacks to test FinanceCorp's authentication security comprehensively.
 difficulty: intermediate
 category: credential-attacks
@@ -228,6 +232,8 @@ hints:
 
       The flag is accessible after successfully completing both enumeration and brute force phases. Enumerate users first, then brute force passwords against the discovered accounts.
     unlock_after_minutes: 25
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Require MFA and least privilege on the exposed service, monitor authentication and lateral-movement events, and remove anonymous or default access."
 workbook: "wiki/range/winpt/CH03_SMB_Credential_Attacks/04_Username_Enumeration_and_Brute_Force/"
 
 credentials:

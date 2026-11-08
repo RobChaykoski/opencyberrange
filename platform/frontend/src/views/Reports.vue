@@ -332,6 +332,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
+import { csvRow } from '../utils/csv'
 
 const data = ref(null)
 const loading = ref(true)
@@ -513,7 +514,7 @@ const exportCsv = async () => {
     ]
   })
   const csv = [header, ...lines]
-    .map((line) => line.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(','))
+    .map((line) => csvRow(line))
     .join('\n')
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
   const url = URL.createObjectURL(blob)

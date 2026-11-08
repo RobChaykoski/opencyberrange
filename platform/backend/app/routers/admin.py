@@ -57,6 +57,7 @@ from app.services.achievements import resolve_achievement_label
 from app.services.backups import backup_directory, create_database_backup
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.file_lock import open_locked
+from app.services.spreadsheet_safety import neutralize_cell
 from app.services.lab_naming import parse_lab_slug
 from app.services.user_transfer import (
     export_users as build_user_export,
@@ -3076,7 +3077,9 @@ async def export_activity_log(
         writer = csv.DictWriter(buffer, fieldnames=fields)
         writer.writeheader()
         for row in rows:
-            writer.writerow({key: row.get(key) for key in fields})
+            writer.writerow({
+                key: neutralize_cell(row.get(key)) for key in fields
+            })
         content = buffer.getvalue()
         media_type = "text/csv"
         filename = f"activity-log-{stamp}.csv"

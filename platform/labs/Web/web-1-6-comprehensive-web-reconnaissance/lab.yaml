@@ -1,4 +1,8 @@
 name: Comprehensive Web Reconnaissance
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: Finalize your TechStart assessment by combining all reconnaissance techniques into a comprehensive security evaluation.
 difficulty: beginner
 category: web
@@ -138,6 +142,8 @@ hints:
       The flag can be found by thoroughly applying all reconnaissance techniques to the target. It may be in a hidden directory, revealed through a specific HTTP method, or disclosed in headers.
     unlock_after_minutes: 25
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Validate and encode input at the server, enforce authorization on every object, and monitor unusual request patterns."
 workbook: "wiki/range/webpt/CH_WEB01_Web_Reconnaissance/06_Comprehensive_Web_Reconnaissance/"
 
 test:

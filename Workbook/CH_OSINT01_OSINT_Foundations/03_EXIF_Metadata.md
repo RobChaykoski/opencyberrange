@@ -93,7 +93,7 @@ Make                : Canon
 Model               : EOS R6
 DateTimeOriginal    : 2026:10:24 14:32:11
 ImageDescription    : Loading bay camera 3, frame 0042...
-UserComment         : OCR{ex1f_m3tadata_l34ks}
+UserComment         : OCR{...}
 GPSLatitude         : 42 deg 18' 53.00" N
 GPSLongitude        : 83 deg 2' 11.00" W
 ```
@@ -123,13 +123,16 @@ innocuous.
 
 ### Step 4: Recover and submit the flag
 
-The flag is the value in `UserComment`:
+The flag is the value in `UserComment`. Run the command against your own lab
+target, record what you see here, and then paste it into the **Submit Flag**
+form on the platform:
 
-```
-OCR{ex1f_m3tadata_l34ks}
-```
+> &nbsp;
+>
+> &nbsp;
 
-Paste it into the **Submit Flag** form on the platform and submit.
+The sample output above deliberately redacts the value. Do not copy the sample;
+your lab instance contains the real flag.
 
 ## What Just Happened?
 
@@ -196,6 +199,7 @@ anonymised photo by linking it back to a person or location.
 ## Further Reading
 
 - [ExifTool tag names](https://exiftool.org/TagNames/)
-- [CIPA DC-008 EXIF standard](https://www.cipa.jp/std/documents/e/DC-008-2012_E.pdf)
+- [ExifTool EXIF tag reference](https://exiftool.org/TagNames/EXIF.html) and the
+  [CIPA DC-008 EXIF standard](https://www.cipa.jp/e/std/std-sec.html)
 - [OWASP Mobile Top 10: Insecure data storage](https://owasp.org/www-project-mobile-top-10/)
 - [NIST SP 800-86: Guide to Integrating Forensic Techniques into Incident Response](https://csrc.nist.gov/pubs/sp/800/86/final)

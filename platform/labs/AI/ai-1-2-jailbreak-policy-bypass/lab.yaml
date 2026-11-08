@@ -1,4 +1,8 @@
 name: "Jailbreak Policy Bypass"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "SafeChat rejects direct requests for restricted records with a keyword filter. Use role-play and an authority claim to move past the filter and recover the access record."
 difficulty: beginner
 category: ai
@@ -29,6 +33,8 @@ scenario: |
   This is a safe, simulated target. It does not call a real model or reach the
   internet.
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Treat model output as untrusted input, constrain tools and data access, and log policy violations."
 workbook: "wiki/range/ai/CH_AI01_AI_Foundations/02_Jailbreak_Policy_Bypass/"
 
 hostnames:

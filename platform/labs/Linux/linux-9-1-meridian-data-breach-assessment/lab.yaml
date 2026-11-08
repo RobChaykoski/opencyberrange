@@ -1,4 +1,8 @@
 name: "Meridian Financial: Data Breach Assessment"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Meridian Financial Group's intranet may have exposed sensitive data through misconfigured backup storage. Investigate the web application and backend database to determine the scope of the breach and locate the compliance finding."
 
 difficulty: intermediate
@@ -101,6 +105,8 @@ topology:
       label: "MySQL:3306"
       access: "internal"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 test:
   steps:
     - name: "Intranet web server responds"

@@ -46,6 +46,13 @@ V2 should add a small number of analytics-specific structures if needed:
 
 ## Core metric definitions
 
+The authoritative metric contract, consent boundaries, retention schedule,
+research governance, and export schemas live in
+[Analytics governance](ANALYTICS-GOVERNANCE.md). The minimum event envelope and
+Exercise Health fields are in
+[Analytics event schema](ANALYTICS-EVENT-SCHEMA.md). This section keeps the
+short definitions used by the dashboard.
+
 ### Completion
 
 - **Assigned completion rate:** completed assigned exercises / assigned exercises.

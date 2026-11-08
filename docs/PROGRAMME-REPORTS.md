@@ -178,6 +178,8 @@ performance, used to offer stretch work and peer-support opportunities.
   averages alone.
 - **Filters persist:** course, cohort, date range, track, and competency survive
   drill-down and export.
+- **Retention and consent:** follow [Analytics governance](ANALYTICS-GOVERNANCE.md)
+  and the [Data dictionary](DATA-DICTIONARY.md).
 - **Exports:** CSV and PDF preserve the on-screen definitions and filters.
 - **Empty states:** explain whether there is no data, insufficient evidence, or
   a filter that excludes everything.

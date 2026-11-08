@@ -1,4 +1,8 @@
 name: "Kestrel Architecture Studio - Mock Final"
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.2"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
 description: "Live-fire review for the final exam. A small architecture studio asked you to assess two internet-facing systems left over from their previous IT generalist. Three flags. No workbook, no hints, 180 minutes. Same skill chain as the final, reordered."
 
 difficulty: advanced
@@ -72,6 +76,8 @@ topology:
       label: "SMB:445 / SNMP:161"
       access: "direct"
 
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Disable unused services, enforce key-based SSH with least privilege, and alert on unexpected authentication or command execution."
 test:
   steps:
     - name: "Portal homepage responds"
