@@ -905,7 +905,7 @@ onMounted(load)
 .skill-legend b { color: var(--text-primary); }
 .skill-legend small { color: var(--text-muted); }
 
-.skill-table-wrap { min-width: 0; }
+.skill-table-wrap { min-width: 0; max-width: 100%; overflow-x: auto; }
 
 .skill-table {
   width: 100%;

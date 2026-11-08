@@ -415,7 +415,7 @@ onMounted(() => {
 }
 
 .status-active {
-  color: var(--success);
+  color: var(--badge-green);
   background: rgba(34, 197, 94, 0.1);
 }
 

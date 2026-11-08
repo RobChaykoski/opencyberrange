@@ -8111,6 +8111,9 @@ watch(activeTab, (tab) => {
 
 /* Tables */
 .table-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
 }
 
