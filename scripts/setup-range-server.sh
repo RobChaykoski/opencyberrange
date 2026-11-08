@@ -1019,10 +1019,14 @@ phase_6_firewall_ports() {
     echo "  - 22/tcp           (SSH — for management)"
     echo ""
 
-    # If ufw is active, add rules. Port 5000 is deliberately NOT opened: the
-    # Peer Manager API is an internal service reached by the backend container
-    # through host.docker.internal. It must never be exposed to the internet.
+    # If ufw is active, add rules. Port 5000 is deliberately NOT opened to the
+    # internet: the Peer Manager API is an internal service reached by the
+    # backend container through host.docker.internal. It still needs to be
+    # reachable from the Docker bridge pool, otherwise the backend cannot apply
+    # VPN/firewall rules after a reboot.
     if command -v ufw &>/dev/null && ufw status | grep -q "active"; then
+        ufw allow from 172.16.0.0/12 to any port "${PEER_MANAGER_PORT}" proto tcp \
+            comment "OCR Peer Manager from Docker" 2>/dev/null || true
         ufw allow "${VPN_LISTEN_PORT}/udp" comment "WireGuard VPN" 2>/dev/null || true
         ufw allow 80/tcp comment "HTTP" 2>/dev/null || true
         ufw allow 443/tcp comment "HTTPS" 2>/dev/null || true

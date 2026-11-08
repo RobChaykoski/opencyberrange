@@ -150,6 +150,8 @@ No changes yet.
 - Fixed VPN forwarding on hosts where Docker's per-network `DOCKER-FORWARD`
   drops shadowed the `FORWARD` ACCEPT rules. The accepts now live at the top of
   `DOCKER-USER`, and duplicate copies from concurrent startup workers collapse.
+- Allowed the Docker bridge pool to reach the Peer Manager on TCP/5000 so the
+  backend can re-apply VPN rules on UFW-enabled hosts after a reboot.
 - Added the missing `ocr-network-tap` build context and wired it into the
   installer. Capture labs no longer spawn without a tap, and the tap and GRETAP
   mirrors share one TC filter so both receive traffic.

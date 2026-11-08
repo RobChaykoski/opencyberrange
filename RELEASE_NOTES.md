@@ -41,6 +41,8 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
   the full lab matrix passed on 24.04.5.
 - **VPN forwarding fix:** lab traffic now uses `DOCKER-USER` ACCEPTs so Docker's
   per-network drops cannot shadow them after a new network is created.
+- **Peer Manager access:** UFW-enabled hosts now allow the Docker bridge pool to
+  reach TCP/5000, so VPN rules re-apply after a reboot.
 - **Capture labs fixed:** added the missing `ocr-network-tap` image build and
   combined the tap and GRETAP TC mirrors so both receive lab traffic.
 
