@@ -689,7 +689,7 @@ body {
   white-space: nowrap;
 }
 .app-footer a {
-  color: var(--accent);
+  color: var(--accent-text);
   text-decoration: none;
   display: inline-flex;
   align-items: center;

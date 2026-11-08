@@ -603,7 +603,7 @@ onMounted(load)
 
 .reports-head__eyebrow {
   margin: 0 0 0.2rem;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.14em;
@@ -990,7 +990,7 @@ onMounted(load)
 }
 
 .reports-course strong {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.7rem;
 }
 
@@ -1020,7 +1020,7 @@ onMounted(load)
 .reports-rag--green { background: color-mix(in srgb, var(--success) 14%, transparent); color: var(--badge-green); }
 
 .reports-open {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.65rem;
   font-weight: 700;
   text-decoration: none;
