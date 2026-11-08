@@ -30,6 +30,9 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
   and removed scope tokens from logs.
 - Refreshed manual screenshots, sizing guidance, VPN guidance, workbook index,
   and architecture diagrams.
+- Added CI regression checks for placeholder secrets, SPA security headers,
+  local documentation assets, and RangeBox spawn-lock serialization, plus an
+  optional deployment UI smoke workflow.
 
 ## Highlights in 2.4.0
 

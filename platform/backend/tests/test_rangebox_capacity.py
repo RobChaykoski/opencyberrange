@@ -81,3 +81,32 @@ def test_capacity_check_blocks_on_low_disk(monkeypatch):
     assert manager.has_rangebox_disk_headroom() is False
     with pytest.raises(RangeBoxCapacityError):
         manager._check_rangebox_capacity()
+
+
+def test_spawn_lock_serializes_concurrent_launches():
+    import threading
+    import time
+
+    from app.services.docker_manager import rangebox_spawn_lock
+
+    active = 0
+    maximum = 0
+    guard = threading.Lock()
+
+    def worker():
+        nonlocal active, maximum
+        with rangebox_spawn_lock():
+            with guard:
+                active += 1
+                maximum = max(maximum, active)
+            time.sleep(0.05)
+            with guard:
+                active -= 1
+
+    threads = [threading.Thread(target=worker) for _ in range(6)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    assert maximum == 1

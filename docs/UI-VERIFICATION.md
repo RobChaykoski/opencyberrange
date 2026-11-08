@@ -70,6 +70,32 @@ off-canvas drawer, and the theme control work, with no horizontal overflow.
 The student bottom tab bar is intentionally not shown for admin and instructor
 roles.
 
+## Repeatable deployment smoke
+
+`scripts/ui-smoke.mjs` is the deployment smoke suite used by the optional
+`.github/workflows/ui-smoke.yml` workflow. It checks the mobile shell, profile
+tabs, Events, the RangeBox tab, version, and page errors.
+
+Required repository configuration:
+
+- variable `UI_BASE_URL` — for example `https://172.16.16.44`
+- secret `UI_SMOKE_TOKEN` — a JWT for a student or admin smoke account
+- optional variable `UI_EXPECTED_VERSION` — for example `2.4.1`
+
+Run it locally with:
+
+```bash
+UI_BASE_URL=https://172.16.16.44 \
+UI_SMOKE_TOKEN=... \
+node scripts/ui-smoke.mjs
+```
+
+CI runs the same static checks on every push:
+
+- `scripts/check-nginx-security-headers.py`
+- `scripts/check-doc-assets.py`
+- `scripts/check-links.py Manual-Lite docs Workbook --mkdocs`
+
 ## What this does not prove
 
 - A full interactive lab launch and VPN connection were not part of this run.

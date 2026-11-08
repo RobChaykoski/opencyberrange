@@ -90,6 +90,25 @@ jobs:
         working-directory: platform/frontend
         run: npm run build
 
+  regression:
+    name: docs and security regression
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Check SPA security headers
+        run: python scripts/check-nginx-security-headers.py
+
+      - name: Check local documentation assets
+        run: python scripts/check-doc-assets.py
+
+      - name: Check documentation links
+        run: python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
+
   compose:
     name: compose config and images
     runs-on: ubuntu-latest

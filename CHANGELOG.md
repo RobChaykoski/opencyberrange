@@ -49,6 +49,9 @@ No changes yet.
 - Removed scope tokens from logs.
 - Refreshed manual screenshots, publication labels, sizing guidance, VPN key
   guidance, and the architecture diagrams.
+- Added CI regression checks for placeholder secrets, SPA security headers,
+  local documentation assets, and RangeBox spawn-lock serialization, plus an
+  optional deployment UI smoke workflow.
 
 ### Patch release
 - This patch follows the 2.4.0 feature release and contains the security, mobile, capacity, and documentation remediation above.
