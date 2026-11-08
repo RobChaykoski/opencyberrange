@@ -304,7 +304,7 @@ onMounted(() => {
   place-items: center;
   border-radius: 14px;
   background: var(--success);
-  color: #052e16;
+  color: #ffffff;
 }
 
 .rangebox-home__mark svg {
@@ -459,7 +459,7 @@ onMounted(() => {
 
 .rangebox-image-toggle__btn--active {
   background: var(--success);
-  color: #052e16;
+  color: #ffffff;
 }
 
 .rangebox-card__actions {
@@ -476,11 +476,11 @@ onMounted(() => {
 
 .btn--rangebox {
   background: var(--success);
-  color: #052e16;
+  color: #ffffff;
 }
 
 .btn--rangebox:hover:not(:disabled) {
-  background: #16a34a;
+  background: #15803d;
   transform: translateY(-1px);
 }
 
