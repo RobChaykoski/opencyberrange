@@ -1,7 +1,7 @@
 # Professional and Enterprise priorities
 
 Status: **Active scope**
-Applies to: **Professional 2.4.0** and **Enterprise preview only**
+Applies to: **Professional 2.4.1** and **Enterprise preview only**
 Not in: Community / Academic profile
 
 These five capabilities are the top priorities for the Professional edition and
@@ -76,7 +76,7 @@ web security but weak in forensics.
 - Confidence/evidence labels for every axis.
 - Accessible table fallback for the chart.
 
-**Delivered in 2.4.0:** the course and all-course skill-tree radar in Learning
+**Delivered in 2.4.x:** the course and all-course skill-tree radar in Learning
 reports, using the five Skill DNA branches. Learner-level and cohort
 competency radar remain.
 

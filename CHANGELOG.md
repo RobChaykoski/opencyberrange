@@ -28,10 +28,7 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 No changes yet.
 
-## [2.4.0] - 2026-11-08
-
-> **Tag note:** the legacy history already contains published `v2.2.0` through
-> `v2.3.2` tags. This release uses `v2.4.0` so no existing tag is moved.
+## [2.4.1] - 2026-11-08
 
 ### Review remediation
 - Rejected placeholder `JWT_SECRET` and `SETUP_TOKEN` values at startup.
@@ -52,6 +49,14 @@ No changes yet.
 - Removed scope tokens from logs.
 - Refreshed manual screenshots, publication labels, sizing guidance, VPN key
   guidance, and the architecture diagrams.
+
+### Patch release
+- This patch follows the 2.4.0 feature release and contains the security, mobile, capacity, and documentation remediation above.
+
+## [2.4.0] - 2026-11-08
+
+> **Tag note:** the legacy history already contains published `v2.2.0` through
+> `v2.3.2` tags. This release uses `v2.4.0` so no existing tag is moved.
 
 ### Branding
 - Rebranded the user-facing platform as **SWOCTS Cyber Range** with the SWOCTS

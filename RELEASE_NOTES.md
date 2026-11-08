@@ -1,17 +1,35 @@
-# SWOCTS Cyber Range 2.4.0
+# SWOCTS Cyber Range 2.4.1
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Edition: **Professional** - Community / Academic profile plus analytics,
 reporting, cohort analysis, competency evidence, accreditation support, and
 research exports.
-Status: release. This is the current 2.4.0 platform release.
+Status: patch release. The 2.4.0 release contains the feature set; 2.4.1
+contains the security and UX remediation.
 
 > **Tag note:** the legacy history already contains published `v2.2.0` through
-> `v2.3.2` tags. This release uses `v2.4.0` so no existing tag is moved.
+> `v2.3.2` tags. This release uses `v2.4.1` so no existing tag is moved.
 
 Enterprise preview is the separate HA, SSO, enterprise reporting, multi-tenant,
 LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
+
+## Remediation in 2.4.1
+
+- Rejected placeholder `JWT_SECRET` and `SETUP_TOKEN` values at startup.
+- Delivered CSP, HSTS, frame, MIME, referrer, permissions, and robots headers on
+  the SPA document and deep-link fallback.
+- Made host isolation fail closed and aligned the installer with the production
+  Compose stack and systemd project name.
+- Added the desktop-recommended notice to exercise-attached RangeBox, a Close
+  action, `100dvh`, and safe-area padding.
+- Added the mobile drawer focus trap, skip link, contrast-safe navigation
+  tokens, and a guest theme control.
+- Moved RangeBoxHome onto the shared palette and added a stop confirmation.
+- Fixed the zero-evidence career recommendation, added CPU/disk capacity gates,
+  and removed scope tokens from logs.
+- Refreshed manual screenshots, sizing guidance, VPN guidance, workbook index,
+  and architecture diagrams.
 
 ## Highlights in 2.4.0
 
@@ -45,9 +63,9 @@ comfortable at 20 concurrent boxes, and an 8 vCPU / 30 GiB host at about 8.
 ## Upgrade notes
 
 1. Take a database snapshot before upgrading.
-2. Pull the current `main` commit or the `v2.4.0` tag.
+2. Pull the current `main` commit or the `v2.4.1` tag.
 3. Rebuild the backend and frontend images.
-4. Start the stack and confirm `/health` and `/api/version` report `2.4.0`.
+4. Start the stack and confirm `/health` and `/api/version` report `2.4.1`.
 5. Confirm the RangeBox tab shows the deployed count and that an existing lab
    still launches.
 6. Rebuild the workbook wiki and user manual after pulling the documentation.

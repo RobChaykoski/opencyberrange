@@ -19,9 +19,9 @@ file via ``--config``:
 
     [
       {"label": "Prod", "role": "production", "url": "https://172.16.16.41",
-       "expected_version": "2.4.0"},
+       "expected_version": "2.4.1"},
       {"label": "Dev", "role": "development", "url": "https://172.16.16.44",
-       "expected_version": "2.4.0"}
+       "expected_version": "2.4.1"}
     ]
 
 Local deployments often use self-signed certificates. The script verifies TLS
@@ -46,14 +46,14 @@ DEFAULT_HOSTS = [
         "label": "Prod",
         "role": "production",
         "url": "https://172.16.16.41",
-        "expected_version": "2.4.0",
+        "expected_version": "2.4.1",
         "line": "Production platform release",
     },
     {
         "label": "Dev",
         "role": "development",
         "url": "https://172.16.16.44",
-        "expected_version": "2.4.0",
+        "expected_version": "2.4.1",
         "line": "Professional current platform release",
     },
 ]
