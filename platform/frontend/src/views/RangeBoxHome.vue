@@ -85,12 +85,23 @@
         </p>
       </section>
 
-      <section v-if="showViewer && status === 'running'" class="rangebox-viewer" aria-label="RangeBox desktop">
+      <section v-if="showViewer && status === 'running' && !isMobile" class="rangebox-viewer" aria-label="RangeBox desktop">
         <RangeBox
           :standalone="true"
           :image-name="image"
           :status-data="statusData"
         />
+      </section>
+
+      <section v-else-if="showViewer && status === 'running' && isMobile" class="rangebox-mobile-note">
+        <h2>Desktop recommended</h2>
+        <p>
+          The interactive RangeBox desktop is built for a laptop or desktop with a keyboard
+          and mouse. On a phone, the small screen and touch keyboard make lab work unreliable.
+        </p>
+        <router-link :to="{ path: '/rangebox', query: { standalone: 'true' } }" class="rangebox-mobile-note__link">
+          Open the full-screen desktop anyway
+        </router-link>
       </section>
     </div>
   </div>
@@ -100,7 +111,10 @@
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import RangeBox from '../components/RangeBox.vue'
+import { useMobileView } from '../composables/useMobileView'
 import { usePoll } from '../composables/usePoll'
+
+const { isMobile } = useMobileView()
 
 const imageOptions = [
   { value: 'kali', label: 'Kali' },
@@ -521,6 +535,45 @@ onMounted(() => {
   border: 1px solid var(--border-color);
   border-radius: 14px;
   overflow: hidden;
+}
+
+.rangebox-mobile-note {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.rangebox-mobile-note h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.rangebox-mobile-note p {
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.rangebox-mobile-note__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.rangebox-mobile-note__link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 @media (max-width: 720px) {

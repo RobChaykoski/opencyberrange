@@ -1,8 +1,18 @@
 <template>
-  <aside class="sidebar" :class="{ 'sidebar--collapsed': collapsed }">
+  <aside
+    id="primary-sidebar"
+    class="sidebar"
+    :class="{
+      'sidebar--collapsed': collapsed && !isMobile,
+      'sidebar--mobile-open': mobileOpen,
+    }"
+    :inert="isMobile && !mobileOpen"
+    :aria-hidden="isMobile && !mobileOpen ? 'true' : undefined"
+  >
     <!-- Brand -->
     <div class="sidebar__brand">
       <button
+      v-if="!isMobile"
       @click="$emit('toggle')"
       class="collapse-btn"
       :title="collapsed ? 'Expand' : 'Collapse'"
@@ -12,6 +22,18 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline v-if="collapsed" points="9 18 15 12 9 6"/>
           <polyline v-else points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <button
+        v-if="isMobile"
+        type="button"
+        class="mobile-close-btn"
+        aria-label="Close navigation"
+        @click="$emit('close')"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
       <router-link to="/dashboard" class="brand-link" aria-label="SWOCTS Cyber Range home">
@@ -250,6 +272,8 @@ import { setWikiAuthCookie } from '../utils/wikiAuth'
 
 const props = defineProps({
   collapsed: Boolean,
+  mobileOpen: Boolean,
+  isMobile: Boolean,
   userRole: {
     type: String,
     default: 'student'
@@ -257,7 +281,7 @@ const props = defineProps({
   username: String,
 })
 
-defineEmits(['toggle', 'logout'])
+defineEmits(['toggle', 'logout', 'close'])
 
 const route = useRoute()
 const { privacyMode, togglePrivacy } = usePrivacy()
@@ -398,6 +422,33 @@ const userInitial = computed(() => {
 .collapse-btn svg {
   width: 18px;
   height: 18px;
+}
+
+.mobile-close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.mobile-close-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.mobile-close-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .sidebar--collapsed .sidebar__brand {
@@ -615,18 +666,42 @@ const userInitial = computed(() => {
   color: var(--danger);
 }
 
-/* Responsive - mobile overlay */
+/* Responsive - off-canvas drawer on phones */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
     left: 0;
     top: 0;
+    width: min(86vw, 320px);
+    min-width: min(86vw, 320px);
+    height: 100dvh;
     transform: translateX(-100%);
-    z-index: 100;
+    transition: transform 0.2s ease;
+    z-index: 300;
+    box-shadow: 18px 0 40px rgba(2, 6, 23, 0.35);
   }
 
-  .sidebar:not(.sidebar--collapsed) {
+  .sidebar--mobile-open {
     transform: translateX(0);
+  }
+
+  .sidebar--collapsed {
+    width: min(86vw, 320px);
+    min-width: min(86vw, 320px);
+  }
+
+  .sidebar__brand {
+    padding-top: 1rem;
+  }
+
+  .sidebar__nav {
+    padding-bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
   }
 }
 .powered-footer {

@@ -5,6 +5,7 @@
     :class="{
       'app-root--impersonating': isImpersonating,
       'app-root--sidebar-collapsed': sidebarCollapsed,
+      'app-root--nav-open': mobileNavOpen,
     }"
   >
     <!-- Impersonation Banner -->
@@ -23,14 +24,72 @@
     <!-- Sidebar Layout (authenticated) -->
     <template v-if="isAuthenticated">
       <AppSidebar
-        :collapsed="sidebarCollapsed"
+        :collapsed="isMobile ? false : sidebarCollapsed"
+        :mobile-open="mobileNavOpen"
+        :is-mobile="isMobile"
         :user-role="userRole"
         :username="username"
         @toggle="sidebarCollapsed = !sidebarCollapsed"
         @logout="logout"
+        @close="closeMobileNav"
       />
-      <main class="main-content">
+      <div
+        v-if="isMobile && mobileNavOpen"
+        class="mobile-backdrop"
+        aria-hidden="true"
+        @click="closeMobileNav"
+      ></div>
+      <main
+        class="main-content"
+        :class="{
+          'main-content--mobile': isMobile,
+          'main-content--with-tabbar': isMobile && isStudent,
+        }"
+      >
+        <header v-if="isMobile" class="mobile-topbar">
+          <button
+            ref="mobileMenuButton"
+            type="button"
+            class="mobile-topbar__button"
+            aria-label="Open navigation"
+            :aria-expanded="mobileNavOpen"
+            aria-controls="primary-sidebar"
+            @click="openMobileNav"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <router-link to="/dashboard" class="mobile-topbar__brand" aria-label="SWOCTS Cyber Range home">
+            <img src="/swocts-cyber-range-mark.png" alt="" />
+            <span>SWOCTS</span>
+          </router-link>
+          <button
+            type="button"
+            class="mobile-topbar__button"
+            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="toggleTheme"
+          >
+            <svg v-if="isDark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </header>
         <router-view :key="authState.token || 'guest'" />
+        <MobileTabBar v-if="isMobile && isStudent" />
       </main>
       <GuidedTour v-model="showTour" :steps="tourSteps" @finish="onTourFinish" />
     </template>
@@ -62,13 +121,15 @@
 </template>
 
 <script setup>
-import { computed, ref, watch, onMounted, onUnmounted, provide } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted, provide, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
 import GuidedTour from './components/GuidedTour.vue'
 import ImpersonationBanner from './components/ImpersonationBanner.vue'
+import MobileTabBar from './components/MobileTabBar.vue'
 import { useTheme } from './composables/useTheme'
 import { useModules } from './composables/useModules'
+import { useMobileView } from './composables/useMobileView'
 import { setWikiAuthCookie } from './utils/wikiAuth'
 import { useImpersonation } from './composables/useImpersonation'
 import api from './api/axios'
@@ -77,10 +138,39 @@ const router = useRouter()
 const { isDark, toggleTheme } = useTheme()
 const { fetchModules, isModuleEnabled, resetModules } = useModules()
 const { isImpersonating } = useImpersonation()
+const { isMobile } = useMobileView()
 
 const sidebarCollapsed = ref(false)
+const mobileNavOpen = ref(false)
+const mobileMenuButton = ref(null)
 const appVersion = ref('')
 const appRelease = ref('')
+
+const openMobileNav = () => {
+  mobileNavOpen.value = true
+  nextTick(() => {
+    document.querySelector('.sidebar .nav-item')?.focus()
+  })
+}
+
+const closeMobileNav = () => {
+  mobileNavOpen.value = false
+  nextTick(() => {
+    mobileMenuButton.value?.focus()
+  })
+}
+
+const onGlobalKeydown = (event) => {
+  if (event.key === 'Escape' && mobileNavOpen.value) closeMobileNav()
+}
+
+watch(() => router.currentRoute.value.fullPath, () => {
+  mobileNavOpen.value = false
+})
+
+watch(isMobile, (value) => {
+  if (!value) mobileNavOpen.value = false
+})
 
 // Reactive state to track auth changes - this ensures Vue reactivity works
 const authState = ref({
@@ -121,6 +211,7 @@ const loadAppVersion = async () => {
 onMounted(() => {
   storageListener = () => { updateAuthState(); refreshWikiAuthCookie() }
   window.addEventListener('storage', storageListener)
+  window.addEventListener('keydown', onGlobalKeydown)
   // Initial update
   updateAuthState()
   refreshWikiAuthCookie()
@@ -136,6 +227,7 @@ onUnmounted(() => {
   if (storageListener) {
     window.removeEventListener('storage', storageListener)
   }
+  window.removeEventListener('keydown', onGlobalKeydown)
 })
 
 const isAuthenticated = computed(() => {
@@ -150,6 +242,8 @@ const userRole = computed(() => {
     return 'student'
   }
 })
+
+const isStudent = computed(() => userRole.value === 'student')
 
 const username = computed(() => {
   try {
@@ -350,6 +444,103 @@ body {
 
 .main-content--guest {
   width: 100%;
+}
+
+/* Mobile application shell. The sidebar becomes an off-canvas drawer and a
+   compact top bar owns the menu and theme controls. */
+.mobile-topbar {
+  display: none;
+}
+
+.mobile-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .theme-toggle {
+    display: none;
+  }
+
+  .mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 56px;
+    padding: 0.35rem 0.65rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .mobile-topbar__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .mobile-topbar__button:hover {
+    color: var(--text-primary);
+    background: var(--hover-bg);
+  }
+
+  .mobile-topbar__button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .mobile-topbar__button svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mobile-topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+  }
+
+  .mobile-topbar__brand img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    display: block;
+    background: rgba(2, 6, 23, 0.58);
+  }
+
+  .main-content--with-tabbar {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+
+  .app-footer {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+
+  .app-root--nav-open .main-content {
+    overflow: hidden;
+  }
 }
 
 /* Theme toggle */
