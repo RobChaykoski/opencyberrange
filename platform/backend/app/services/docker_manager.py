@@ -1877,13 +1877,14 @@ fi
         # The tap captures all bridge traffic and streams PCAP over TCP 9999
         # as a fallback for students who can't use the GRETAP tunnel.
         if compose_data.get("x-ocr-network-tap"):
-            self._spawn_network_tap(user_id, lab_slug, network, network_name,
-                                    second_octet, third_octet, project_name)
+            tap_veth_idx = self._spawn_network_tap(user_id, lab_slug, network, network_name,
+                                                   second_octet, third_octet, project_name)
             # Create a GRETAP tunnel bridged to the lab network so VPN
             # students can passively sniff with tcpdump -i lab0.  The
             # client side is set up automatically by a PostUp hook in
-            # the student's WireGuard config.
-            self._setup_gretap_mirror(user_id, network_name)
+            # the student's WireGuard config.  The same TC filter also
+            # mirrors traffic to the tap container.
+            self._setup_gretap_mirror(user_id, network_name, tap_veth_idx)
 
         return {
             "network_id": network.id,
@@ -1943,107 +1944,29 @@ fi
                             aliases=["network-tap"])
             logger.info(f"Network tap spawned at {tap_ip} for {lab_slug} (user {user_id})")
 
-            # Set up TC mirred rules so the tap can see all unicast traffic
-            # between containers on the lab bridge.
-            self._setup_tc_mirror_for_tap(project_name, network_name, container)
+            # Resolve the host-side veth for the tap's lab interface.  The
+            # gretap setup mirrors every lab veth to both the GRETAP and this
+            # tap veth in a single TC filter (two separate terminal filters do
+            # not both run).
+            try:
+                tap_out = container.exec_run("cat /sys/class/net/eth1/iflink").output
+                tap_veth_idx = tap_out.decode().strip() if isinstance(tap_out, bytes) else str(tap_out).strip()
+            except Exception:
+                tap_veth_idx = None
+            return tap_veth_idx or None
 
         except Exception as e:
             # Non-fatal — the lab works without the tap, students just can't
             # do remote packet capture.
             logger.warning(f"Failed to spawn network tap for {lab_slug}: {e}")
-
-    def _setup_tc_mirror_for_tap(self, project_name, network_name, tap_container):
-        """Configure TC ingress mirrors on lab container veths → tap veth.
-
-        Each lab container's host-side veth gets an ingress qdisc with a
-        mirred filter that copies every frame to the tap container's veth.
-        This runs inside a short-lived privileged container with host
-        networking so it can manipulate host-level TC rules.
-        """
-        try:
-            # Identify the tap container's host-side veth name
-            tap_container.reload()
-            tap_iflink = tap_container.exec_run(
-                "cat /sys/class/net/eth1/iflink", demux=True
-            )
-            tap_veth_idx = tap_iflink.output[0].decode().strip() if tap_iflink.output[0] else None
-            if not tap_veth_idx:
-                logger.warning("Could not determine tap container veth index")
-                return
-
-            # Find all container veths on the lab bridge using `bridge link show`.
-            # This approach finds ALL veths regardless of whether the container
-            # has a visible IP via `ip addr` (e.g. customer-laptop gets its IP
-            # from Docker but it's not visible inside the container).
-            try:
-                network = self.client.networks.get(network_name)
-                bridge_name = f"br-{network.id[:12]}"
-            except Exception:
-                logger.warning(f"Could not resolve bridge name for {network_name}")
-                return
-
-            veth_indices = []
-            try:
-                bridge_result = subprocess.run(
-                    ["docker", "run", "--rm", "--privileged", "--net=host",
-                     "alpine:3.19", "sh", "-c",
-                     "apk add --no-cache iproute2 bridge-utils >/dev/null 2>&1; bridge link show"],
-                    capture_output=True, text=True, timeout=15
-                )
-                for line in bridge_result.stdout.splitlines():
-                    if bridge_name not in line:
-                        continue
-                    parts = line.strip().split(":")
-                    if parts and parts[0].strip().isdigit():
-                        idx = parts[0].strip()
-                        # Skip the tap container's own veth
-                        if idx == tap_veth_idx:
-                            continue
-                        veth_indices.append(idx)
-            except Exception as e:
-                logger.warning(f"Failed to list bridge ports for tap mirror: {e}")
-
-            if not veth_indices:
-                logger.warning("No lab container veths found for TC mirror")
-                return
-
-            # Build a shell script that:
-            # 1. Maps veth indices to names
-            # 2. Sets up ingress qdisc + mirred filter on each
-            mirror_cmds = []
-            for idx in veth_indices:
-                mirror_cmds.append(
-                    f'VETH=$(ip -o link show | awk -v i={idx} \'$1 ~ "^"i":" {{split($2,a,"@"); print a[1]}}\')'
-                    f' && tc qdisc add dev $VETH ingress 2>/dev/null;'
-                    f' tc filter add dev $VETH parent ffff: protocol all u32 match u32 0 0'
-                    f' action mirred egress mirror dev $TAP_VETH 2>/dev/null'
-                )
-            script = (
-                f'apk add --no-cache iproute2 >/dev/null 2>&1\n'
-                f'TAP_VETH=$(ip -o link show | awk -v i={tap_veth_idx} \'$1 ~ "^"i":" {{split($2,a,"@"); print a[1]}}\')\n'
-                f'echo "Tap veth: $TAP_VETH"\n'
-                + "\n".join(mirror_cmds)
-                + '\necho "TC mirrors configured"'
-            )
-
-            result = subprocess.run(
-                ["docker", "run", "--rm", "--privileged", "--net=host",
-                 "alpine:3.19", "sh", "-c", script],
-                capture_output=True, text=True, timeout=30
-            )
-            if result.returncode == 0:
-                logger.info(f"TC mirrors configured for {len(veth_indices)} container veths")
-            else:
-                logger.warning(f"TC mirror setup returned {result.returncode}: {result.stderr}")
-
-        except Exception as e:
-            logger.warning(f"TC mirror setup failed: {e}")
+            return None
 
     # ------------------------------------------------------------------
     # GRETAP mirror — Layer 2 tunnel for VPN passive sniffing
     # ------------------------------------------------------------------
 
-    def _setup_gretap_mirror(self, user_id: int, network_name: str):
+    def _setup_gretap_mirror(self, user_id: int, network_name: str,
+                             tap_veth_idx: str = None):
         """Create a GRETAP tunnel bridged to the lab network, with TC mirrors.
 
         This gives VPN-connected students a Layer 2 interface (``lab0``)
@@ -2131,7 +2054,12 @@ fi
                     # Extract the veth index (first number before ":")
                     parts = line.strip().split(":")
                     if parts and parts[0].strip().isdigit():
-                        veth_indices.append(parts[0].strip())
+                        idx = parts[0].strip()
+                        # Skip the tap container's own veth.  Mirroring it to
+                        # itself creates a capture feedback loop.
+                        if tap_veth_idx and idx == tap_veth_idx:
+                            continue
+                        veth_indices.append(idx)
             except Exception as e:
                 logger.warning(f"Failed to list bridge ports: {e}")
 
@@ -2140,15 +2068,31 @@ fi
                 return
 
             mirror_cmds = []
+            tap_setup = ""
+            mirror_actions = f"action mirred egress mirror dev {gre_name}"
+            if tap_veth_idx:
+                # u32 filters are terminal, so two separate filters on the same
+                # veth do not both run. Put the tap and GRETAP mirrors in one
+                # filter with two actions instead.
+                tap_setup = (
+                    f'TAP_VETH=$(ip -o link show | awk -v i={tap_veth_idx} '
+                    f'\'$1 ~ "^"i":" {{split($2,a,"@"); print a[1]}}\')\n'
+                )
+                mirror_actions = (
+                    "action mirred egress mirror dev $TAP_VETH "
+                    f"action mirred egress mirror dev {gre_name}"
+                )
             for idx in veth_indices:
                 mirror_cmds.append(
                     f'VETH=$(ip -o link show | awk -v i={idx} \'$1 ~ "^"i":" {{split($2,a,"@"); print a[1]}}\')'
-                    f' && tc qdisc add dev $VETH ingress 2>/dev/null;'
+                    f' && tc qdisc del dev $VETH ingress 2>/dev/null;'
+                    f' tc qdisc add dev $VETH ingress 2>/dev/null;'
                     f' tc filter add dev $VETH parent ffff: protocol all u32 match u32 0 0'
-                    f' action mirred egress mirror dev {gre_name} 2>/dev/null'
+                    f' {mirror_actions} 2>/dev/null'
                 )
             tc_script = (
                 'apk add --no-cache iproute2 >/dev/null 2>&1\n'
+                + tap_setup
                 + "\n".join(mirror_cmds)
                 + f'\necho "TC mirrors to {gre_name} configured for {len(veth_indices)} veths"'
             )

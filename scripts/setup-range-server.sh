@@ -393,9 +393,12 @@ PrivateKey = ${SERVER_PRIVKEY}
 Address = ${VPN_SERVER_ADDRESS}
 ListenPort = ${VPN_LISTEN_PORT}
 
-# iptables rules: allow only VPN <-> lab traffic, block everything else
-PostUp   = iptables -I FORWARD 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -I FORWARD 1 -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -I POSTROUTING 1 -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -I PREROUTING 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -A FORWARD -i %i -j DROP
-PostDown = iptables -D FORWARD -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D FORWARD -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -D POSTROUTING -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -D PREROUTING -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D FORWARD -i %i -j DROP
+# iptables rules: allow only VPN <-> lab traffic, block everything else.
+# The ACCEPT rules live in DOCKER-USER because Docker re-inserts its FORWARD
+# jumps on every network creation, which hides FORWARD ACCEPTs behind
+# DOCKER-FORWARD and its per-network DROP.
+PostUp   = iptables -I DOCKER-USER 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -I DOCKER-USER 1 -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -I POSTROUTING 1 -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -I PREROUTING 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -A FORWARD -i %i -j DROP
+PostDown = iptables -D DOCKER-USER -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D DOCKER-USER -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -D POSTROUTING -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -D PREROUTING -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D FORWARD -i %i -j DROP
 
 # ── Student Peers ─────────────────────────────────────────────────────────────
 # Student peers are managed dynamically by the Peer Manager API.
@@ -634,14 +637,20 @@ def ensure_firewall():
         {"check": ["-t", "raw", "-C", "PREROUTING", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
          "add":   ["-t", "raw", "-I", "PREROUTING", "1", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
          "desc":  f"raw PREROUTING ACCEPT {vpn_iface} -> {lab_cidr}"},
-        # FORWARD inbound: VPN -> lab containers
-        {"check": ["-C", "FORWARD", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
-         "add":   ["-I", "FORWARD", "1", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
-         "desc":  f"FORWARD ACCEPT {vpn_iface} -> {lab_cidr}"},
-        # FORWARD outbound: lab containers -> VPN (return traffic)
-        {"check": ["-C", "FORWARD", "-o", vpn_iface, "-s", lab_cidr, "-j", "ACCEPT"],
-         "add":   ["-I", "FORWARD", "1", "-o", vpn_iface, "-s", lab_cidr, "-j", "ACCEPT"],
-         "desc":  f"FORWARD ACCEPT {lab_cidr} -> {vpn_iface}"},
+        # DOCKER-USER inbound: VPN -> lab containers.  These rules must live
+        # in DOCKER-USER, not FORWARD: Docker re-inserts its
+        # "-j DOCKER-USER"/"-j DOCKER-FORWARD" jumps whenever a network is
+        # created, which pushes FORWARD ACCEPT rules behind DOCKER-FORWARD.
+        # Docker's per-network DROP in the filter DOCKER chain then swallows
+        # VPN traffic headed into lab bridges.  DOCKER-USER is evaluated
+        # first and Docker never reorders its contents.
+        {"check": ["-C", "DOCKER-USER", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
+         "add":   ["-I", "DOCKER-USER", "1", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
+         "desc":  f"DOCKER-USER ACCEPT {vpn_iface} -> {lab_cidr}"},
+        # DOCKER-USER outbound: lab containers -> VPN (return traffic)
+        {"check": ["-C", "DOCKER-USER", "-o", vpn_iface, "-s", lab_cidr, "-j", "ACCEPT"],
+         "add":   ["-I", "DOCKER-USER", "1", "-o", vpn_iface, "-s", lab_cidr, "-j", "ACCEPT"],
+         "desc":  f"DOCKER-USER ACCEPT {lab_cidr} -> {vpn_iface}"},
         # nat POSTROUTING: prevent Docker auto-MASQUERADE from rewriting
         # container source IPs on return traffic through VPN
         {"check": ["-t", "nat", "-C", "POSTROUTING", "-s", lab_cidr, "-o", vpn_iface, "-j", "RETURN"],
@@ -655,6 +664,23 @@ def ensure_firewall():
 
     for rule in rules:
         try:
+            # DOCKER-USER rules are applied by every backend worker at
+            # startup. Collapse duplicates from concurrent workers, then
+            # leave exactly one copy at the top of the chain.
+            if rule["add"][:2] == ["-I", "DOCKER-USER"]:
+                stale = ["-D", "DOCKER-USER"] + rule["add"][3:]
+                while subprocess.run(["iptables"] + stale, capture_output=True,
+                                     text=True, timeout=5).returncode == 0:
+                    pass
+                add = subprocess.run(["iptables"] + rule["add"],
+                                     capture_output=True, text=True, timeout=5)
+                if add.returncode == 0:
+                    results.append({"rule": rule["desc"], "action": "added"})
+                else:
+                    log.warning("Failed to add rule %s: %s", rule["desc"], add.stderr.strip())
+                    results.append({"rule": rule["desc"], "action": "failed", "error": add.stderr.strip()})
+                continue
+
             check = subprocess.run(["iptables"] + rule["check"],
                                    capture_output=True, text=True, timeout=5)
             if check.returncode != 0:
@@ -670,6 +696,21 @@ def ensure_firewall():
                 results.append({"rule": rule["desc"], "action": "exists"})
         except Exception as e:
             results.append({"rule": rule["desc"], "action": "error", "error": str(e)})
+
+    # Remove ACCEPT rules left behind by older installs.  They are unreachable
+    # once Docker moves its FORWARD jumps ahead of them, and keeping both
+    # copies makes firewall audits confusing.
+    for stale in (
+        ["-D", "FORWARD", "-i", vpn_iface, "-d", lab_cidr, "-j", "ACCEPT"],
+        ["-D", "FORWARD", "-o", vpn_iface, "-s", lab_cidr, "-j", "ACCEPT"],
+    ):
+        try:
+            removed = subprocess.run(["iptables"] + stale, capture_output=True,
+                                     text=True, timeout=5)
+            if removed.returncode == 0:
+                log.info("Removed superseded iptables rule: %s", " ".join(stale))
+        except Exception as e:
+            log.warning("Could not remove superseded rule %s: %s", " ".join(stale), e)
 
     return jsonify({"status": "ok", "rules": results})
 
@@ -884,21 +925,28 @@ phase_5_firewall_rules() {
             info "raw PREROUTING rule already present"
         fi
 
-        # FORWARD inbound: VPN → lab containers
-        if ! iptables -C FORWARD -i "$iface" -d "$cidr" -j ACCEPT 2>/dev/null; then
-            iptables -I FORWARD 1 -i "$iface" -d "$cidr" -j ACCEPT
-            log "FORWARD ACCEPT: ${iface} → ${cidr}"
+        # DOCKER-USER inbound: VPN → lab containers.  Must live in
+        # DOCKER-USER: Docker re-inserts its FORWARD jumps on every network
+        # creation, which pushes FORWARD ACCEPT rules behind DOCKER-FORWARD
+        # where the filter DOCKER chain's per-network DROP catches them.
+        if ! iptables -C DOCKER-USER -i "$iface" -d "$cidr" -j ACCEPT 2>/dev/null; then
+            iptables -I DOCKER-USER 1 -i "$iface" -d "$cidr" -j ACCEPT
+            log "DOCKER-USER ACCEPT: ${iface} → ${cidr}"
         else
-            info "FORWARD inbound rule already present"
+            info "DOCKER-USER inbound rule already present"
         fi
 
-        # FORWARD outbound: lab containers → VPN (return traffic)
-        if ! iptables -C FORWARD -o "$iface" -s "$cidr" -j ACCEPT 2>/dev/null; then
-            iptables -I FORWARD 1 -o "$iface" -s "$cidr" -j ACCEPT
-            log "FORWARD ACCEPT: ${cidr} → ${iface}"
+        # DOCKER-USER outbound: lab containers → VPN (return traffic)
+        if ! iptables -C DOCKER-USER -o "$iface" -s "$cidr" -j ACCEPT 2>/dev/null; then
+            iptables -I DOCKER-USER 1 -o "$iface" -s "$cidr" -j ACCEPT
+            log "DOCKER-USER ACCEPT: ${cidr} → ${iface}"
         else
-            info "FORWARD outbound rule already present"
+            info "DOCKER-USER outbound rule already present"
         fi
+
+        # Drop stale FORWARD accepts from older installs.
+        iptables -D FORWARD -i "$iface" -d "$cidr" -j ACCEPT 2>/dev/null || true
+        iptables -D FORWARD -o "$iface" -s "$cidr" -j ACCEPT 2>/dev/null || true
 
         # NAT POSTROUTING — prevent Docker's auto-MASQUERADE from rewriting
         # source IPs on return traffic going back through the VPN tunnel.
@@ -940,10 +988,12 @@ RemainAfterExit=yes
 ExecStart=/bin/bash -c ' \\
     iptables -t raw -C PREROUTING -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT 2>/dev/null || \\
         iptables -t raw -I PREROUTING 1 -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT; \\
-    iptables -C FORWARD -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT 2>/dev/null || \\
-        iptables -I FORWARD 1 -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT; \\
-    iptables -C FORWARD -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT 2>/dev/null || \\
-        iptables -I FORWARD 1 -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT; \\
+    iptables -C DOCKER-USER -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT 2>/dev/null || \\
+        iptables -I DOCKER-USER 1 -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT; \\
+    iptables -C DOCKER-USER -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT 2>/dev/null || \\
+        iptables -I DOCKER-USER 1 -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT; \\
+    iptables -D FORWARD -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT 2>/dev/null || true; \\
+    iptables -D FORWARD -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT 2>/dev/null || true; \\
     iptables -t nat -C POSTROUTING -s ${LAB_CIDR} -o ${VPN_INTERFACE} -j RETURN 2>/dev/null || \\
         iptables -t nat -I POSTROUTING 1 -s ${LAB_CIDR} -o ${VPN_INTERFACE} -j RETURN; \\
     iptables -C FORWARD -i ${VPN_INTERFACE} -j DROP 2>/dev/null || \\
@@ -1322,8 +1372,8 @@ phase_8_verification() {
         check "Server keys exist"                    "[ -f /etc/wireguard/server_public.key ]"
         check "VPN firewall service enabled"         "systemctl is-enabled ocr-vpn-firewall"
         check "iptables raw PREROUTING rule"         "iptables -t raw -C PREROUTING -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT"
-        check "iptables FORWARD inbound rule"        "iptables -C FORWARD -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT"
-        check "iptables FORWARD outbound rule"       "iptables -C FORWARD -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT"
+        check "iptables DOCKER-USER inbound rule"    "iptables -C DOCKER-USER -i ${VPN_INTERFACE} -d ${LAB_CIDR} -j ACCEPT"
+        check "iptables DOCKER-USER outbound rule"   "iptables -C DOCKER-USER -o ${VPN_INTERFACE} -s ${LAB_CIDR} -j ACCEPT"
         check "iptables NAT skip-MASQUERADE rule"    "iptables -t nat -C POSTROUTING -s ${LAB_CIDR} -o ${VPN_INTERFACE} -j RETURN"
         check "iptables VPN non-lab DROP rule"      "iptables -C FORWARD -i ${VPN_INTERFACE} -j DROP"
     else

@@ -1,9 +1,8 @@
 # Host OS Support and Ubuntu 24.04 Decision
 
 Status: **1.1 supports Ubuntu 22.04 LTS and Ubuntu 24.04 LTS. 2.4.1 targets
-Ubuntu 24.04 LTS. A 24.04 host is deployed and healthy, and KVM is available;
-network/VPN, lab, and recovery gates remain before 2.4.1 is marked fully
-supported.**
+Ubuntu 24.04 LTS and is certified on it: WireGuard, firewall persistence, the
+lab matrix, KVM, and the restore drill passed on 8 November 2026.**
 
 ## Decision
 
@@ -12,14 +11,14 @@ The host OS follows the release line:
 | Release line | Host OS | State |
 |---|---|---|
 | `1.1.x` maintenance | **Ubuntu 22.04 / 24.04 LTS** | Supported on both LTS baselines. 22.04 remains the documented baseline; 24.04 is validated in production. |
-| `2.4.1` release | **Ubuntu 24.04 LTS target** | Migration in progress. 22.04 remains the supported source for upgrades during the 2.4.1 validation window. |
+| `2.4.1` release | **Ubuntu 24.04 LTS target** | Certified. Existing 22.04 deployments may upgrade during the release window. |
 
 For new 2.4.1 installs, use:
 
 | Host OS | State | Guidance |
 |---|---|---|
-| Ubuntu 24.04 LTS (Noble) | **Validation in progress** | Host, platform, and KVM readiness pass; network/VPN and lab-recovery gates remain |
-| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1.3-to-2.4.1 upgrades and the 2.4.1 validation window, not the long-term 2.4.1 target |
+| Ubuntu 24.04 LTS (Noble) | **Certified** | Host, platform, KVM, VPN, firewall persistence, and the lab matrix passed on 8 November 2026 |
+| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1.3-to-2.4.1 upgrades, not the long-term 2.4.1 target |
 | Debian 12/13 | Best effort | Not part of the tested server matrix |
 | Other Debian-based distributions | Unsupported | Package names, firewall backends, and systemd behaviour may differ |
 
@@ -94,8 +93,23 @@ Before calling 24.04 fully supported, run this checklist on a clean 24.04 host:
 10. **Upgrade path** - upgrade an existing 22.04 deployment to 2.4.1, then perform
     a separate 22.04-to-24.04 host upgrade drill and repeat the checks above.
 
-Record the result in the release notes before changing the support table. Until
-then, treat 24.04 as the recommended target, not a fully certified host.
+Record the result in the release notes before changing the support table. The
+2.4.1 run on 8 November 2026 passed every gate above on Ubuntu 24.04.5; 24.04 is
+now certified and the support table reflects that.
+
+### Validation result — 8 November 2026
+
+| Gate | Result |
+|---|---|
+| Installer, Docker, and Compose | Pass (existing 2.4.1 deployment rebooted cleanly) |
+| WireGuard | Pass: handshake, ICMP, and TCP/22 to a lab target |
+| Firewall persistence | Pass: `DOCKER-USER`, `raw PREROUTING`, NAT, and UFW rules survived a reboot |
+| nftables backend | Pass: iptables and nft views agree |
+| Lab spawn and isolation | Pass: single-container, four-container, network-tap, shared-build-context, and RangeBox labs |
+| AppArmor and user namespaces | Pass: RangeBox images start and become healthy |
+| VPN and DNS | Pass: lab name resolution and C2 DNS traffic visible through the tunnel |
+| Backup and restore | Pass: 35 users, 148 labs, and 1,107 activity events restored into a temporary database |
+| Upgrade path | Deferred to the maintenance line; not part of this certification |
 
 ## Known 24.04 risks to watch
 

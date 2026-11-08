@@ -37,6 +37,12 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
   Active Lab and generated workbook coverage from lab metadata.
 - Configured the scheduled UI smoke workflow against the public production URL
   with a dedicated smoke account.
+- **Ubuntu 24.04 certified:** WireGuard, firewall persistence, KVM, restore, and
+  the full lab matrix passed on 24.04.5.
+- **VPN forwarding fix:** lab traffic now uses `DOCKER-USER` ACCEPTs so Docker's
+  per-network drops cannot shadow them after a new network is created.
+- **Capture labs fixed:** added the missing `ocr-network-tap` image build and
+  combined the tap and GRETAP TC mirrors so both receive lab traffic.
 
 ## Highlights in 2.4.0
 

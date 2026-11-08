@@ -16,6 +16,11 @@ The separate HA control-plane repository has its own version and is described by
 compatibility with platform 2.4.1. Enterprise remains a preview profile until
 HA, SSO, multi-tenancy, LMS, and compliance reporting are shipped and verified.
 
+Host baseline: **Ubuntu 24.04 LTS is certified for 2.4.1** as of 2026-11-08.
+See [OS-SUPPORT.md](OS-SUPPORT.md) and
+[V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
+compatibility path for existing 1.1.x deployments.
+
 Dependency audit on **2026-11-08**: `npm audit` reported **0 vulnerabilities**
 and `pip-audit -r platform/backend/requirements.txt` reported **no known
 vulnerabilities**. Safe patch updates were applied: FastAPI 0.162.2,

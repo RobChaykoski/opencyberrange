@@ -796,6 +796,17 @@ build_and_start() {
     log "Starting containers..."
     docker compose up -d --wait || error_exit "Docker compose up failed"
 
+    # Build the passive packet-capture sidecar used by network-tap labs.  The
+    # backend spawns it directly by image name, so it is not a compose service
+    # and `docker compose build` never produces it.
+    if [ -d "$REPO_DIR/platform/network-tap" ]; then
+        log "Building network-tap capture image..."
+        docker build -t ocr-network-tap:latest "$REPO_DIR/platform/network-tap" || \
+            warn "network-tap build failed - capture labs will spawn without a tap"
+    else
+        warn "platform/network-tap not found - capture labs will spawn without a tap"
+    fi
+
     # Build RangeBox images (browser-based desktops). RangeBox/ and UbuntuBox/
     # sit at the repo root next to platform/, so resolve them from REPO_DIR --
     # PLATFORM_DIR/../RangeBox pointed at ~/RangeBox in the documented layout and

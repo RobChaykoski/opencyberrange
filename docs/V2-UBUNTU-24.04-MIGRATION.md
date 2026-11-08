@@ -2,7 +2,7 @@
 
 > **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.4.1**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
-Status: **In progress — host/platform deployed, network and lab gates pending**
+Status: **Complete — Ubuntu 24.04 LTS certified for 2.4.1 on 8 November 2026**
 
 Execution checklist: [`V2-24.04-BUILD-OUT.md`](V2-24.04-BUILD-OUT.md)
 

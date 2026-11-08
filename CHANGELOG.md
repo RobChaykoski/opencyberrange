@@ -144,6 +144,16 @@ No changes yet.
   ships; the separate HA repository has its own version and compatibility
   statement.
 
+### Host OS validation
+- Certified Ubuntu 24.04 LTS for 2.4.1 after WireGuard, firewall persistence,
+  KVM, restore, and the full lab matrix passed on 24.04.5.
+- Fixed VPN forwarding on hosts where Docker's per-network `DOCKER-FORWARD`
+  drops shadowed the `FORWARD` ACCEPT rules. The accepts now live at the top of
+  `DOCKER-USER`, and duplicate copies from concurrent startup workers collapse.
+- Added the missing `ocr-network-tap` build context and wired it into the
+  installer. Capture labs no longer spawn without a tap, and the tap and GRETAP
+  mirrors share one TC filter so both receive traffic.
+
 ### Dependencies and maintenance
 - Applied safe patch updates within declared ranges: FastAPI 0.162.2,
   SQLAlchemy 2.1.8, Pydantic 2.14.3, psycopg 3.3.8, Vue 3.5.45, Chart.js 4.6.1,
