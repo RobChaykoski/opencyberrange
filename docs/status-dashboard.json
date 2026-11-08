@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T06:11:16+00:00",
+  "generated_at": "2026-11-08T07:27:27+00:00",
   "overall": "healthy",
   "message": "All deployments are up and on the expected version.",
   "deployments": [
@@ -20,7 +20,7 @@
       "main_asset": "index-Dp2MPtTL.js",
       "css_asset": "index-DRaUghg_.css",
       "asset_count": 3,
-      "response_ms": 52,
+      "response_ms": 47,
       "server": "nginx/1.31.8",
       "tls": "self-signed / unverified",
       "errors": [
@@ -46,7 +46,7 @@
       "main_asset": "index-Dp2MPtTL.js",
       "css_asset": "index-DRaUghg_.css",
       "asset_count": 3,
-      "response_ms": 51,
+      "response_ms": 36,
       "server": "nginx/1.31.8",
       "tls": "self-signed / unverified",
       "errors": [
