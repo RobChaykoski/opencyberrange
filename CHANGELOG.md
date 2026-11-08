@@ -67,7 +67,8 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Moved the standalone RangeBox launcher and viewer from the student dashboard
   to its own **RangeBox** tab in the sidebar.
 - The tab shows the number of deployed boxes and refreshes it immediately after
-  launch or stop.
+  launch or stop. A box is counted from container creation, so the meter does
+  not briefly read zero while the desktop is starting.
 - RangeBox status now waits for the VNC port before reporting ready, and the
   desktop retries the first connection if websockify is still starting.
 - Added `websocket-client` to the backend requirements so the Level 4 RangeBox

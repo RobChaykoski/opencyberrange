@@ -2658,15 +2658,29 @@ fi
             return False
 
     def _count_running_rangeboxes(self) -> int:
-        """Count all running RangeBox containers (lab-based and standalone)."""
+        """Count deployed RangeBox containers (lab-based and standalone).
+
+        A box is counted from the moment Docker creates it, not only once it is
+        running. That keeps the deployed meter honest while Xvfb/websockify are
+        still starting, and prevents concurrent launches from treating a
+        starting container as free capacity.
+        """
         if not self.client:
             return 0
+        deployed_states = {"created", "running", "restarting", "paused"}
         try:
             containers = self.client.containers.list(
-                filters={"label": "ocr.role", "status": "running"}
+                all=True,
+                filters={"label": "ocr.role"},
             )
-            return sum(1 for c in containers if "rangebox" in c.labels.get("ocr.role", ""))
-        except Exception:
+            return sum(
+                1
+                for c in containers
+                if "rangebox" in c.labels.get("ocr.role", "")
+                and c.status in deployed_states
+            )
+        except Exception as e:
+            logger.warning("Could not count deployed RangeBox containers: %s", e)
             return 0
 
     @staticmethod

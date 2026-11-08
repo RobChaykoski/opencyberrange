@@ -52,7 +52,9 @@ MAX_CONCURRENT_RANGEBOXES=20
 
 The capacity check now uses a cross-worker lock, so concurrent launches cannot
 overshoot the configured maximum. Use the RangeBox tab's **Deployed** count to
-confirm the live number.
+confirm the live number. A container is counted from the moment Docker creates
+it, so a desktop that is still starting is already included rather than briefly
+showing as zero.
 
 ## Reproducing
 
