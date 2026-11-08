@@ -1,6 +1,6 @@
 ﻿# SWOCTS Cyber Range Professional 2.1.4 Program Charter
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.1.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.2.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 Status: **Active scope guard**
 Edition: **Professional** — Community / Academic profile plus analytics, reporting,

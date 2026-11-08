@@ -2,8 +2,8 @@
 
 Last run: **2026-11-08** against both deployments:
 
-- development `https://172.16.16.44` (`2.1.4`)
-- production `https://172.16.16.41` (`2.1.4`)
+- development `https://172.16.16.44` (`2.2.0`)
+- production `https://172.16.16.41` (`2.2.0`)
 
 Tool: Playwright with Microsoft Edge, using short-lived test tokens for an
 administrator and the three career-discovery profiles. No learner records were
@@ -43,7 +43,7 @@ modified by the checks.
 - Every dossier contained four affinities.
 - Dossier endpoints require authentication, send `Cache-Control: no-store`,
   escape HTML, and audit the export.
-- Admin and user panels loaded with the current `2.1.4` build.
+- Admin and user panels loaded with the current `2.2.0` build.
 
 ## Mobile shell
 
@@ -75,6 +75,6 @@ roles.
 - A full interactive lab launch and VPN connection were not part of this run.
 - Docker host state was not read by the browser test; use
   `docker compose ps` on each deployment host for that check.
-- Production `172.16.16.41` was upgraded to `2.1.4`; its admin surface,
+- Production `172.16.16.41` was upgraded to `2.2.0`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
 

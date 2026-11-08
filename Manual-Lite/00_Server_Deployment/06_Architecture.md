@@ -4,27 +4,41 @@ The architecture page describes how SWOCTS Cyber Range runs: the container stack
 
 ## Container stack
 
-The platform runs four core containers defined in `docker-compose.prod.yml`. The backend mounts the Docker socket so it can spawn lab containers on demand.
+The platform runs four core containers defined in `docker-compose.prod.yml`. The backend mounts the Docker socket so it can spawn lab containers and RangeBox desktops on demand.
 
-The diagram shows the core services, their ports, and the key mounts.
+The diagram shows the core services, their logical roles, and the key mounts. Base-image details are in the table below rather than the diagram, so a base-image bump does not make the architecture look stale.
 
 ```mermaid
 flowchart TB
+    Desktop[Desktop browser]
+    Mobile[Mobile browser]
+    VPNClient[WireGuard client]
+
     subgraph Core[Core containers]
         FE[ocr-frontend nginx 80 443]
         BE[ocr-backend uvicorn FastAPI 127.0.0.1 8000]
-        DB[ocr-db postgres 15 alpine 5432]
-        RD[ocr-redis redis 7 alpine 6379]
+        DB[ocr-db PostgreSQL 15 5432]
+        RD[ocr-redis Redis 7 6379]
     end
+
     Sock[/var/run/docker.sock/]
     LabsDir[Labs directory mount]
-    Lab[Spawned lab container 10.100.x]
+    Lab[Lab containers 10.100.x]
+    Standalone[Standalone RangeBox 10.50.x]
+    LabBox[Exercise RangeBox]
+
+    Desktop -->|HTTPS| FE
+    Mobile -->|HTTPS mobile shell| FE
+    VPNClient -->|VPN| Lab
     FE -->|proxy| BE
     BE --> DB
     BE --> RD
     BE -->|mounts| Sock
     BE -->|mounts| LabsDir
     BE -->|spawns via socket| Lab
+    BE -->|spawns via socket| Standalone
+    BE -->|spawns via socket| LabBox
+    LabBox -.->|attached to| Lab
 ```
 
 | Container | Image | Binding | Role |
@@ -34,6 +48,12 @@ flowchart TB
 | `ocr-db` | postgres:15-alpine | internal 5432 | PostgreSQL, `max_connections=300` |
 | `ocr-redis` | redis:7-alpine | internal 6379 | Shared rate-limit counters |
 
+!!! note "Base images are implementation details"
+    The diagram names each service by role, not by base image. The pinned images
+    are `python:3.11-slim`, `node:22-alpine`, `nginx:alpine`,
+    `postgres:15-alpine`, and `redis:7-alpine`. Check `versions.yaml` for the
+    exact current pins before changing one.
+
 The backend mounts the Docker socket, the labs directory, the workbook volume, and the Exercise Studio templates.
 
 !!! note "Worker count is dynamic"
@@ -41,6 +61,27 @@ The backend mounts the Docker socket, the labs directory, the workbook volume, a
 
 !!! warning "In-memory state is not shared across workers"
     With multiple workers running, a Python dictionary held at module level in one worker is invisible to the others. A value written on one request can read back empty on the next. Any state that must survive across requests uses file-based storage under `/tmp`, not a module-level variable. Keep this in mind when you debug intermittent empty responses.
+
+## Student access and mobile shell
+
+Students reach the range in one of three ways:
+
+- a desktop browser over HTTPS, using the Vue SPA;
+- a phone-width browser, which receives the compact mobile shell with an
+  off-canvas navigation drawer and a five-tab bottom bar;
+- a WireGuard client, which reaches lab targets under `10.100.0.0/16`.
+
+RangeBox is a browser desktop that runs as a container. An exercise-attached
+RangeBox joins the exercise network and carries the flag dock. A standalone
+RangeBox runs on its own `10.50.x` network from the **RangeBox** tab. The
+backend waits for the VNC port before reporting the desktop ready, and the
+deployed count includes containers from creation so the meter is accurate while
+a box is starting.
+
+On phones, the embedded RangeBox viewer is intentionally not rendered. The
+RangeBox tab shows launch/status controls and a desktop-recommended notice with
+an explicit full-screen opt-in. This keeps a small touch screen from presenting
+a desktop UI that cannot be operated reliably.
 
 ## Network and IP scheme
 
@@ -60,6 +101,7 @@ flowchart LR
 | Range | Purpose |
 |-------|---------|
 | `10.0.0.x` | VPN clients (WireGuard) |
+| `10.50.0.0/16` | Standalone RangeBox networks, one `10.50.x` subnet per user |
 | `10.100.0.0/16` | Lab networks, one `10.100.x` subnet per session |
 
 ## Firewall model
@@ -85,7 +127,7 @@ Because the rules apply on backend start, a reboot self-heals the firewall with 
 
 ## Lab spawn flow
 
-When a student launches a lab, the backend uses the Docker socket to create a per-session container on a fresh `10.100.x` subnet.
+When a student launches a lab, the backend uses the Docker socket to create a per-session container on a fresh `10.100.x` subnet. If the student chooses RangeBox, the backend also creates a desktop container, attaches it to the exercise network, and waits for the VNC proxy port before reporting it ready.
 
 ```mermaid
 sequenceDiagram
@@ -93,10 +135,16 @@ sequenceDiagram
     participant BE as Backend
     participant D as Docker socket
     participant L as Lab container
-    S->>BE: Launch lab
-    BE->>D: Create network and container
+    participant R as RangeBox desktop
+    S->>BE: Launch lab (VPN or RangeBox)
+    BE->>D: Create network and lab container
     D->>L: Start on 10.100.x
-    BE-->>S: Session running, target IP shown
+    opt Browser desktop requested
+        BE->>D: Create RangeBox container
+        D->>R: Start on lab network
+        BE->>R: Wait for VNC port 6080
+    end
+    BE-->>S: Session running, targets and RangeBox ready
 ```
 
 For the full session lifecycle see [Lab Lifecycle Overview](../06_Lab_Workflow_Reference/01_Lab_Lifecycle_Overview.md).
@@ -107,9 +155,9 @@ The frontend Dockerfile is a multi-stage build: a Node 22 stage builds the SPA, 
 
 ```mermaid
 flowchart LR
-    Src[Frontend source] --> Node[node:22-alpine build stage]
+    Src[Frontend source] --> Node[Node 22 build stage]
     Node --> Dist[dist SPA]
-    Dist --> Nginx[nginx:alpine image]
+    Dist --> Nginx[nginx runtime]
     Docs[Workbook and Manual-Lite source] --> Builder[wiki-builder]
     Builder --> Volume[(wiki_data volume)]
     Volume --> Nginx

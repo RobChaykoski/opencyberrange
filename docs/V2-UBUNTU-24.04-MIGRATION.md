@@ -1,6 +1,6 @@
 # V2 Ubuntu 24.04 Migration Plan
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.1.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.2.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 Status: **In progress — host/platform deployed, network and lab gates pending**
 

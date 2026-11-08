@@ -9,7 +9,8 @@ the deploy-time asset builders.
 ```mermaid
 flowchart TB
     subgraph Clients["Learner / instructor clients"]
-        B["Browser<br/>Vue SPA"]
+        B["Desktop browser<br/>Vue SPA"]
+        M["Mobile browser<br/>compact shell"]
         V["WireGuard client<br/>10.0.0.0/16"]
     end
 
@@ -36,7 +37,10 @@ flowchart TB
     subgraph LabRuntime["Lab runtime"]
         DOCKER["Docker Engine"]
         NET["Per-session bridge<br/>10.100.x.0/24"]
-        LABS["Lab containers<br/>targets, evidence, RangeBox"]
+        LABS["Lab containers<br/>targets and evidence"]
+        LBOX["Exercise RangeBox<br/>attached to lab network"]
+        RBNET["Standalone bridge<br/>10.50.x.0/24"]
+        RB["Standalone RangeBox<br/>RangeBox tab"]
     end
 
     subgraph VPN["VPN control plane"]
@@ -50,6 +54,7 @@ flowchart TB
     end
 
     B -->|HTTPS| N
+    M -->|HTTPS mobile shell| N
     N -->|/api| API
     N -->|/wiki| WV
     WV --> WIKIV
@@ -64,7 +69,10 @@ flowchart TB
 
     ORCH -->|Docker socket| DOCKER
     DOCKER --> NET
+    DOCKER --> RBNET
     NET --> LABS
+    NET --> LBOX
+    RBNET --> RB
     ORCH -->|firewall + peer rules| PM
     PM --> WG
     V --> WG
@@ -78,7 +86,9 @@ flowchart TB
 ## Request and data flow
 
 1. A learner signs in through nginx. The SPA calls `/api`, which nginx proxies
-   to the FastAPI backend over the private Compose network.
+   to the FastAPI backend over the private Compose network. At phone widths the
+   same SPA switches to the mobile shell with an off-canvas drawer and a student
+   bottom tab bar.
 2. The backend authenticates the JWT, checks the role, and reads or writes
    PostgreSQL. Redis holds shared rate-limit counters so every worker enforces
    the same limit.
@@ -86,14 +96,19 @@ flowchart TB
    The backend uses the Docker socket to start the lab from a prebuilt
    `ocr-lab/<slug>-<service>:latest` image. Session networks are isolated from
    each other and from the management LAN.
-4. WireGuard clients reach only the lab networks under `10.100.0.0/16`. The
+4. If the learner chooses RangeBox, the backend also creates a desktop
+   container. An exercise-attached RangeBox joins the session network at
+   `10.100.x`; a standalone RangeBox from the RangeBox tab runs on its own
+   `10.50.x` bridge. The backend waits for VNC port `6080` before reporting the
+   desktop ready, and the deployed count includes containers from creation.
+5. WireGuard clients reach only the lab networks under `10.100.0.0/16`. The
    Peer Manager applies and persists the firewall rules.
-5. The frontend serves the SPA and the prebuilt workbook wiki. The wiki is a
+6. The frontend serves the SPA and the prebuilt workbook wiki. The wiki is a
    build artifact in the `wiki_data` volume, not part of the frontend image.
-6. The `wiki-builder` container runs MkDocs with a pinned toolchain and
+7. The `wiki-builder` container runs MkDocs with a pinned toolchain and
    publishes tracks, the reference manual, and any course wikis into
    `wiki_data`. The frontend mounts that volume read-only.
-7. Lab images are built ahead of time and tagged with stable names. The spawn
+8. Lab images are built ahead of time and tagged with stable names. The spawn
    path never builds an image in production; a missing image fails with a clear
    prebuild instruction.
 
@@ -105,6 +120,8 @@ flowchart TB
 | Frontend → backend | Private Compose network; backend bound to localhost on the host |
 | Backend → Docker | Docker socket; treat the backend host and `docker` group as privileged |
 | Learner → labs | WireGuard peer; firewall allows only `10.100.0.0/16`; one `/24` per session |
+| Learner → RangeBox | HTTPS browser desktop through the backend WebSocket proxy; standalone boxes use an isolated `10.50.x` bridge |
+| RangeBox → lab | Exercise-box only; attached to that session's bridge and removed on teardown |
 | Lab → lab | Separate per-session bridge networks; no cross-session routing |
 | Lab → management LAN | Firewall drops lab and RangeBox subnets from external interfaces |
 | Wiki build → runtime | Builder writes to a volume; frontend mounts it read-only |

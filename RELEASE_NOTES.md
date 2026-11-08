@@ -1,72 +1,81 @@
-# SWOCTS Cyber Range Professional 2.1.4
+# SWOCTS Cyber Range 2.2.0
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
-Edition: **Professional** — Community / Academic profile plus analytics, reporting,
-cohort analysis, competency evidence, accreditation support, and research
-exports.
-Status: release. This is the current 2.1.4 platform release.
+Edition: **Professional** - Community / Academic profile plus analytics,
+reporting, cohort analysis, competency evidence, accreditation support, and
+research exports.
+Status: release. This is the current 2.2.0 platform release.
 
 Enterprise preview is the separate HA, SSO, enterprise reporting, multi-tenant,
 LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
 
-The five Professional priorities are Competency Framework Engine, Student
-Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
-Instructor Intervention Dashboard. They are Professional and Enterprise only;
-see `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
+## Highlights in 2.2.0
 
-## Added in this build
+- **Mobile student shell:** phone-width detection, a compact top bar, an
+  off-canvas navigation drawer, and a five-tab student bottom bar (Home,
+  Exercises, RangeBox, Courses, Profile).
+- **RangeBox workspace:** the standalone launcher and viewer now live in their
+  own sidebar tab. The dashboard card was removed, and the tab shows the live
+  deployed count.
+- **RangeBox reliability:** the deployed meter counts boxes from creation, waits
+  for the VNC port before reporting ready, retries the first desktop connection,
+  and prevents concurrent launches from overshooting the capacity.
+- **Events:** the user-facing Competitions area is now **Events**, with canonical
+  `/events` routes and compatibility redirects.
+- **Learner profile:** five focused tabs, a visual skill tree, practice
+  affinities, and career-profile dossiers with Markdown and printable HTML.
+- **Admin navigation:** **Monitoring** is now **Live activity**, covering
+  Sessions, VPN Peers, and the Activity Log.
+- **Accessibility and text:** repaired double-encoded UTF-8 in profile and admin
+  text, including the avatar-border label and profile em dashes.
+- **Dependencies:** safe patch updates to FastAPI, SQLAlchemy, Pydantic, and
+  psycopg, plus `websocket-client` for the RangeBox load test.
 
-- **Admin user record:** a clearer account preview with learning summary,
-  searchable completion evidence, active sessions, and an in-context edit
-  action.
-- **Admin password reset:** a separate privileged action with admin
-  re-authentication, token revocation, forced password change, and audit
-  logging. The general profile update no longer accepts password changes.
-- **Exercise feedback:** the like/dislike control is now visible at the top of
-  the active exercise instead of below the scenario and flag form.
-- **Career guidance:** each track shows certification pathways, role direction,
-  and links to the Security Certification Roadmap, the CISO MindMap 2026, and
-  SWOCTS resources.
-- **Learning hours:** tracked time on completed exercises, plus bounded session
-  time for started exercises without a completion, shown privately to learners
-  and as course and cross-course aggregates.
-- **Exercise reactions:** a one-tap Like/Dislike control while an exercise is
-  open, reported as aggregate likes, dislikes, and positive rate. Learner names
-  are not shown in the reports.
-- **Engagement badges:** global achievements for 1, 5, 15, and 30 tracked
-  learning hours, and for 3, 7, and 30 consecutive sign-in days.
-- **Profile email consent:** a Privacy and data control for optional account
-  email, with PIPEDA withdrawal language and an auditable consent version and
-  timestamp.
-- **Reporting exports:** cross-course Reports can be downloaded as CSV or PDF,
-  including learning hours and aggregate exercise feedback.
-- **Event marks:** optional validated event logos appear on event cards and
-  detail headers.
-- **Security baseline:** the 2.1.4 interface, data, and delivery process use
-  the OWASP Top 10 as a merge and release requirement. See
-  `docs/V2-SECURITY-OWASP-TOP-10.md`.
+## RangeBox capacity guidance
 
-## Release status
-
-Analytics and reporting are delivered and running on the 24.04 deployment.
-Platform health, login, course, event, and profile checks pass. The full lab
-matrix and restore drill remain production-acceptance work; see
-`docs/V2-PROGRAM-CHARTER.md`. Enterprise HA remains a preview profile and is not
-part of the 2.1.4 release gate; see `docs/V3-HA-LAB-POOL.md`.
+Measured results and recommended class limits are in
+`docs/RANGEBOX-CAPACITY.md`. The memory-derived maximum is an upper bound; VNC
+responsiveness and CPU contention arrive first. A 12 vCPU / 62 GiB host is
+comfortable at 20 concurrent boxes, and an 8 vCPU / 30 GiB host at about 8.
 
 ## Upgrade notes
 
 1. Take a database snapshot before upgrading.
-2. Pull the current `main` commit.
+2. Pull the current `main` commit or the `v2.2.0` tag.
 3. Rebuild the backend and frontend images.
-4. Start the stack and confirm `/health` and `/api/version` respond.
-5. Verify the new `exercise_reactions` table and the `users` login-streak and
-   email-consent columns exist.
+4. Start the stack and confirm `/health` and `/api/version` report `2.2.0`.
+5. Confirm the RangeBox tab shows the deployed count and that an existing lab
+   still launches.
+6. Rebuild the workbook wiki and user manual after pulling the documentation.
+7. On a host that offers Kali RangeBoxes, confirm
+   `docker images opencyberrange/rangebox:lite` is present.
 
-The backend startup migration is idempotent and creates the new table and
-columns automatically. Existing users, courses, completions, and achievements
-are preserved.
+The backend startup migration is idempotent. Existing users, courses, sessions,
+completions, achievements, and backups are preserved.
+
+## Verification
+
+- Backend test suite: 187 passed, 5 skipped.
+- Frontend lint and production build pass.
+- Documentation link check: 145 Markdown files, no broken links.
+- Development UI: 101 checks, 0 failed.
+- Development mobile shell: 15 checks, 0 failed.
+- Production desktop: 25 checks, 0 failed.
+- Production admin mobile shell: 12 checks, 0 failed.
+- Production Kali RangeBox: launched, reported ready, VNC connected, and was
+  destroyed cleanly.
+- GitHub CI on both repositories is green.
+
+## Known limitations
+
+- The embedded RangeBox desktop is replaced on phones with a desktop-recommended
+  notice and an optional full-screen link. A laptop is the better choice for
+  hands-on lab work.
+- Instructor and admin operational screens are reachable on a phone but are not
+  optimised for one.
+- The production `ocr-platform.service` unit still needs a host-side project-name
+  correction; the Compose stack itself is healthy.
 
 # SWOCTS Cyber Range 1.0.0 (powered by OpenCyberRange)
 

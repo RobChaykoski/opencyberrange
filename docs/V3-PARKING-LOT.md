@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range Enterprise preview parking lot
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.1.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.2.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This file holds real ideas that are deliberately **not** in the Professional
 2.1.4 programme. Keeping them here prevents scope drift without losing them.

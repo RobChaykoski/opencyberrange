@@ -1,7 +1,7 @@
 # Community / Academic backlog
 
 Status: **Active**
-Edition: **Community / Academic profile** (inherited by Professional 2.1.4 and
+Edition: **Community / Academic profile** (inherited by Professional 2.2.0 and
 Enterprise preview)
 Owner: Product
 
@@ -22,8 +22,8 @@ they are not Enterprise deployment features.
 | ID | Item | Problem | Classification | State |
 |---|---|---|---|---|
 | CA-L1 | Exercise brief tab inside the lab workspace, with pop-out | Learners must leave RangeBox and open the exercise in another window to reread the scenario, objectives, hints, or workbook link | Community / Academic lab improvement | Proposed |
-| CA-L2 | Keep the exercise like/dislike control visible at the top of the active exercise | The control existed but sat below the scenario and flag form, so learners did not find it | Bug fix / usability fix | Implemented on the 2.1.4 line; merge to 1.1 |
-| CA-L3 | Certification pathway panel on each track | Learners can see entry, core, and advanced vendor certifications and the roles a track can lead toward | Community / Academic curriculum guidance | Implemented on the 2.1.4 line; port to 1.1 |
+| CA-L2 | Keep the exercise like/dislike control visible at the top of the active exercise | The control existed but sat below the scenario and flag form, so learners did not find it | Bug fix / usability fix | Implemented on the 2.2.0 line; merge to 1.1 |
+| CA-L3 | Certification pathway panel on each track | Learners can see entry, core, and advanced vendor certifications and the roles a track can lead toward | Community / Academic curriculum guidance | Implemented on the 2.2.0 line; port to 1.1 |
 | CA-L4 | CISO MindMap-informed career breadth | The curriculum should show the wider leadership and governance system around technical work, not only first-job skills | Community / Academic curriculum guidance | Proposed |
 
 ## CA-L1 design note

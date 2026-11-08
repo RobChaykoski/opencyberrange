@@ -26,6 +26,10 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+No changes yet.
+
+## [2.2.0] - 2026-11-08
+
 ### Branding
 - Rebranded the user-facing platform as **SWOCTS Cyber Range** with the SWOCTS
   crest as the primary mark and title.
@@ -92,12 +96,12 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   remain unchanged for data compatibility.
 
 ### Version policy
-- Adopted **one platform release number, 2.1.4**, for this tree. Community /
+- Adopted **one platform release number** for this tree on 2.1.4; 2.2.0 continues the same policy. Community /
   Academic, Professional, and Enterprise are edition profiles, not three
   separate version lines. See `docs/decisions/0004-single-platform-release-version.md`.
 - Kept Community / Academic 1.1.3 as the supported maintenance line for existing
   single-host installs.
-- Described Enterprise as a **preview profile on 2.1.4** until the HA workstream
+- Described Enterprise as a **preview profile on the current release** until the HA workstream
   ships; the separate HA repository has its own version and compatibility
   statement.
 

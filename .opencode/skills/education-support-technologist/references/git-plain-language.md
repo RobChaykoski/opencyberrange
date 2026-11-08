@@ -15,7 +15,7 @@ and lets you return to a known version.
 | **Push** | Send your committed changes to the remote. |
 | **Merge** | Combine two lines of work. |
 | **Conflict** | Git cannot choose between two changes and needs a person. |
-| **Tag** | A permanent label for a release, such as `v2.1.4`. |
+| **Tag** | A permanent label for a release, such as `v2.2.0`. |
 | **Clone** | Make a new local copy of a remote repository. |
 
 ## The safe daily sequence

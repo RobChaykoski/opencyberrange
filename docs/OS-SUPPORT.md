@@ -1,8 +1,8 @@
 # Host OS Support and Ubuntu 24.04 Decision
 
-Status: **1.1 supports Ubuntu 22.04 LTS and Ubuntu 24.04 LTS. 2.1.4 targets
+Status: **1.1 supports Ubuntu 22.04 LTS and Ubuntu 24.04 LTS. 2.2.0 targets
 Ubuntu 24.04 LTS. A 24.04 host is deployed and healthy, and KVM is available;
-network/VPN, lab, and recovery gates remain before 2.1.4 is marked fully
+network/VPN, lab, and recovery gates remain before 2.2.0 is marked fully
 supported.**
 
 ## Decision
@@ -12,21 +12,21 @@ The host OS follows the release line:
 | Release line | Host OS | State |
 |---|---|---|
 | `1.1.x` maintenance | **Ubuntu 22.04 / 24.04 LTS** | Supported on both LTS baselines. 22.04 remains the documented baseline; 24.04 is validated in production. |
-| `2.1.4` release | **Ubuntu 24.04 LTS target** | Migration in progress. 22.04 remains the supported source for upgrades during the 2.1.4 validation window. |
+| `2.2.0` release | **Ubuntu 24.04 LTS target** | Migration in progress. 22.04 remains the supported source for upgrades during the 2.2.0 validation window. |
 
-For new 2.1.4 installs, use:
+For new 2.2.0 installs, use:
 
 | Host OS | State | Guidance |
 |---|---|---|
 | Ubuntu 24.04 LTS (Noble) | **Validation in progress** | Host, platform, and KVM readiness pass; network/VPN and lab-recovery gates remain |
-| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1.3-to-2.1.4 upgrades and the 2.1.4 validation window, not the long-term 2.1.4 target |
+| Ubuntu 22.04 LTS (Jammy) | **Compatibility path** | Allowed for existing 1.1.3-to-2.2.0 upgrades and the 2.2.0 validation window, not the long-term 2.2.0 target |
 | Debian 12/13 | Best effort | Not part of the tested server matrix |
 | Other Debian-based distributions | Unsupported | Package names, firewall backends, and systemd behaviour may differ |
 
 Ubuntu 22.04 standard support ends in June 2027; Ubuntu 24.04 standard support
 runs to June 2029. Keeping 1.1 on 22.04 avoids re-validating the maintenance
-line. Moving 2.1.4 to 24.04 gives a new release a host OS that remains supported
-for the life of the 2.1.4 line.
+line. Moving 2.2.0 to 24.04 gives a new release a host OS that remains supported
+for the life of the 2.2.0 line.
 
 The full migration plan is in
 [V2 Ubuntu 24.04 Migration Plan](V2-UBUNTU-24.04-MIGRATION.md).
@@ -38,7 +38,7 @@ This decision is about the **host OS only**. It does not change:
 - the exercise containers under `platform/labs/`, which stay on their pinned
   bases for reproducible labs;
 - the Kali-based RangeBox, which follows `kalilinux/kali-rolling`;
-- the UbuntuBox image, which stays on `ubuntu:22.04` for the 2.1.4 release.
+- the UbuntuBox image, which stays on `ubuntu:22.04` for the 2.2.0 release.
 
 ## Why 24.04 for new installs
 
@@ -91,7 +91,7 @@ Before calling 24.04 fully supported, run this checklist on a clean 24.04 host:
    `systemd-resolved` on 24.04.
 9. **Backup and restore** — collect a snapshot, restore it, and re-apply the
    erasure suppression ledger.
-10. **Upgrade path** - upgrade an existing 22.04 deployment to 2.1.4, then perform
+10. **Upgrade path** - upgrade an existing 22.04 deployment to 2.2.0, then perform
     a separate 22.04-to-24.04 host upgrade drill and repeat the checks above.
 
 Record the result in the release notes before changing the support table. Until

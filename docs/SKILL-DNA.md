@@ -1,6 +1,6 @@
 # Skill DNA
 
-Status: **Available on platform release 2.1.4** and inherited from the
+Status: **Available on platform release 2.2.0** and inherited from the
 Community / Academic 1.1.3 maintenance line.
 
 Skill DNA is a learner character sheet. It summarises what a learner has

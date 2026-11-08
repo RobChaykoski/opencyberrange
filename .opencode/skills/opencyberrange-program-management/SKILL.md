@@ -1,6 +1,6 @@
 ---
 name: OpenCyberRange Program Management
-description: Use when planning, scoping, reviewing, or accepting work for OpenCyberRange releases. Guards the 2.1.4 scope to analytics and reporting; treats multi-host HA as a v3 workstream; classifies every request as in-scope, bug fix/update only, or v3; and requires a change decision before new feature work starts.
+description: Use when planning, scoping, reviewing, or accepting work for OpenCyberRange releases. Guards the 2.2.0 scope to analytics, reporting, the mobile student shell, and the RangeBox workspace; treats multi-host HA as a v3 workstream; classifies every request as in-scope, bug fix/update only, or v3; and requires a change decision before new feature work starts.
 ---
 
 # OpenCyberRange Program Management
@@ -19,7 +19,7 @@ OpenCyberRange uses three cumulative editions:
 
 1. **Community / Academic profile** — supported single-host teaching platform,
    lab/workbook improvements, exercise authoring, maintenance, and security.
-2. **Professional 2.1.4** — Community / Academic plus analytics, reporting,
+2. **Professional 2.2.0** — Community / Academic plus analytics, reporting,
    cohort analysis, competency evidence, accreditation support, and research
    exports.
 3. **Enterprise preview** — Professional plus HA, SSO, enterprise reporting,
@@ -30,15 +30,20 @@ Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
 Instructor Intervention Dashboard. They are Professional and Enterprise only,
 not Community / Academic.
 
-For Professional 2.1.4 the declared feature set is:
+For the 2.2.0 release the declared feature set is:
 
 1. **Analytics** — learner, course, cohort, competency, and programme insight.
 2. **Reporting and evidence** — reports, accreditation support, research
    exports, and teaching-review surfaces.
+3. **Mobile student shell** — phone-width detection, off-canvas navigation, and
+   a student bottom tab bar.
+4. **RangeBox workspace** — a dedicated tab, deployed-box count, readiness
+   checks, and capacity enforcement.
 
-Multi-host HA, SSO, enterprise reporting, multi-tenancy, LMS integration, and
-compliance reporting are Enterprise preview work. No third Professional workstream
-is added without a written scope change.
+The mobile student shell and RangeBox workspace are Community / Academic
+features. Multi-host HA, SSO, enterprise reporting, multi-tenancy, LMS
+integration, and compliance reporting are Enterprise preview work. No additional
+workstream is added without a written scope change.
 
 ## Classification workflow
 
@@ -46,10 +51,10 @@ Every request gets exactly one classification before work starts:
 
 | Classification | Meaning | Action |
 |---|---|---|
-| **In scope** | Directly advances Professional analytics, reporting, competency evidence, or instructor support | Add to the active workstream |
+| **In scope** | Directly advances analytics, reporting, competency evidence, instructor support, the mobile student shell, or the RangeBox workspace | Add to the active workstream |
 | **Bug fix** | Restores intended behaviour, security, correctness, or compatibility | Allowed; keep it small and add a regression test |
 | **Update** | Dependency, version, OS, documentation, or operational correction with no new product surface | Allowed; record it in the maintenance log |
-| **Carry-forward** | Already shipped on the 1.x maintenance line and inherited by 2.1.4 | Do not count as a 2.1.4 feature commitment |
+| **Carry-forward** | Already shipped on the 1.x maintenance line and inherited by 2.2.0 | Do not count as a 2.2.0 feature commitment |
 | **Enterprise candidate** | New product capability, workflow, integration, tenancy, SSO, or major model change | Write it in the Enterprise parking lot; do not implement |
 | **Reject** | Conflicts with privacy, safety, or the charter | Record the reason |
 
@@ -89,7 +94,7 @@ Maintain these three living records:
 1. `docs/V2-PROGRAM-CHARTER.md` — scope, success measures, guardrails, cadence.
 2. The scope register inside that charter — every active item and its
    classification.
-3. `docs/V3-PARKING-LOT.md` — ideas that are real but not for 2.1.4.
+3. `docs/V3-PARKING-LOT.md` — ideas that are real but not for 2.2.0.
 
 Every change request adds one row to the register and, if needed, one row to the
 v3 parking lot. The register is the source of truth, not a chat message.
@@ -129,7 +134,7 @@ Escalate to a written scope change if you hear:
 - A new dashboard, integration, role, scoring rule, or service appearing without
   a register row.
 
-## Definition of done for a 2.1.4 item
+## Definition of done for a 2.2.0 item
 
 - It maps to one scope row.
 - It has a test or a validation check.
