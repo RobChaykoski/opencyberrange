@@ -5,13 +5,19 @@
       <div class="courses-header">
         <div>
           <p class="header-eyebrow">Academy</p>
-          <h1>Course workspace</h1>
-          <p class="header-subtitle">Your courses, content, and feedback in one place</p>
+          <h1>{{ isStaff ? 'Programme progress' : 'Course workspace' }}</h1>
+          <p class="header-subtitle">
+            {{ isStaff
+              ? 'Semester goals, course health, and the next action'
+              : 'Your courses, content, and feedback in one place' }}
+          </p>
         </div>
       </div>
 
-      <!-- Workspace summary -->
-      <div v-if="courses.length" class="workspace-summary">
+      <ProgrammeOverview v-if="isStaff && !loading" :courses="courses" />
+
+      <!-- Student workspace summary -->
+      <div v-if="!isStaff && courses.length" class="workspace-summary">
         <div class="workspace-summary__stat">
           <strong>{{ activeCourses }}</strong>
           <span>active {{ activeCourses === 1 ? 'course' : 'courses' }}</span>
@@ -30,7 +36,7 @@
       </div>
 
       <!-- Join Course -->
-      <div class="join-section">
+      <div v-if="!isStaff" class="join-section">
         <div class="join-card">
           <h3>Join a Course</h3>
           <p>Enter the invite code provided by your instructor</p>
@@ -62,11 +68,13 @@
 
       <!-- Empty state -->
       <div v-else-if="courses.length === 0" class="empty-state">
-        <p>You are not enrolled in any courses. Enter an invite code above to join.</p>
+        <p v-if="isStaff">No courses are available yet. Create a course from the instructor workspace.</p>
+        <p v-else>You are not enrolled in any courses. Enter an invite code above to join.</p>
       </div>
 
-      <!-- Course Cards -->
-      <div v-else class="course-grid">
+      <!-- Course Cards (student view) -->
+      <template v-else>
+        <div v-if="!isStaff" class="course-grid">
         <div
           v-for="course in courses"
           :key="course.id"
@@ -95,6 +103,7 @@
           </div>
         </div>
       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -102,6 +111,15 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import axios from '../api/axios'
+import ProgrammeOverview from '../components/ProgrammeOverview.vue'
+
+const currentUser = ref({})
+try {
+  currentUser.value = JSON.parse(localStorage.getItem('user') || '{}')
+} catch {
+  currentUser.value = {}
+}
+const isStaff = computed(() => ['admin', 'instructor'].includes(currentUser.value.role))
 
 const courses = ref([])
 const loading = ref(true)
@@ -143,6 +161,15 @@ async function fetchCourses() {
   }
 }
 
+async function fetchMe() {
+  try {
+    const { data } = await axios.get('/auth/me')
+    currentUser.value = data
+  } catch {
+    // Keep the localStorage role as a fallback.
+  }
+}
+
 async function joinCourse() {
   const code = inviteCode.value.trim()
   if (!code) return
@@ -168,7 +195,10 @@ async function joinCourse() {
 }
 
 
-onMounted(fetchCourses)
+onMounted(() => {
+  fetchMe()
+  fetchCourses()
+})
 </script>
 
 <style scoped>

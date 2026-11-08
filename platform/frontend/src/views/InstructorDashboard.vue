@@ -3,10 +3,17 @@
     <div class="dashboard-header">
       <img src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="dashboard-logo" />
       <div class="dashboard-header__text">
-        <h1 class="page-title">Ops Center</h1>
-        <p class="page-subtitle">Real-time platform overview</p>
+        <h1 class="page-title">Teaching &amp; operations</h1>
+        <p class="page-subtitle">Course health, coaching, and real-time platform activity</p>
       </div>
     </div>
+
+    <ProgrammeOverview
+      mode="teaching"
+      :compact="true"
+      :courses="filterCourses"
+      class="teaching-snapshot"
+    />
 
     <!-- System Health (admin only) -->
     <div v-if="showHealthCard" class="health-bar" :class="dashboardHealthClass ? `health-bar--${dashboardHealthClass}` : ''" @click="goToSystemHealth">
@@ -268,6 +275,7 @@ import {
   Legend
 } from 'chart.js'
 import axios from '../api/axios'
+import ProgrammeOverview from '../components/ProgrammeOverview.vue'
 import { usePrivacy } from '../composables/usePrivacy'
 import { usePoll } from '../composables/usePoll'
 import { isAdmin } from '../utils/roles'
@@ -747,6 +755,10 @@ onMounted(() => {
   margin-bottom: 2rem;
 }
 
+.teaching-snapshot {
+  margin-bottom: 1.5rem;
+}
+
 .dashboard-logo {
   width: 72px;
   height: 72px;
@@ -1071,8 +1083,7 @@ onMounted(() => {
   font-size: 0.9375rem;
 }
 
-/* Feed Table */
-.feed-table-wrapper {
+/* Feed Table */.feed-table-wrapper {
   overflow-x: auto;
 }
 

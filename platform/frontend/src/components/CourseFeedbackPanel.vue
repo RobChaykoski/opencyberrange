@@ -116,10 +116,10 @@
             </div>
           </div>
 
-          <div v-if="summary.recent_comments?.length" class="feedback-comments">
+          <div v-if="recentComments.length" class="feedback-comments">
             <h4>Recent comments</h4>
             <ul>
-              <li v-for="(comment, index) in summary.recent_comments" :key="index">
+              <li v-for="(comment, index) in recentComments" :key="index">
                 <p>{{ comment.comment }}</p>
                 <span>{{ comment.anonymous_label }} · {{ sourceLabel(comment.source) }}</span>
               </li>
@@ -144,6 +144,11 @@
           </header>
 
           <template v-if="isInstructor">
+            <p class="coaching-legend" role="note">
+              <span aria-hidden="true">🙂 😐 🙁</span>
+              Feeling is self-reported. Per-student feeling uses named check-ins;
+              anonymous check-ins stay aggregate. Neither is a grade.
+            </p>
             <div v-if="summary.students?.length" class="coaching-list">
               <button
                 v-for="student in summary.students"
@@ -151,15 +156,25 @@
                 type="button"
                 class="coaching-student"
                 :class="{ 'coaching-student--active': selectedStudent === student.user_id }"
+                :title="quickInsight(student)"
+                :aria-label="`${student.name}. Feeling ${feelingFor(student).label}. Doing ${doingFor(student).label}. ${quickInsight(student)}`"
                 @click="selectStudent(student)"
               >
-                <span class="coaching-student__name">{{ student.name }}</span>
-                <span class="coaching-student__meta">
-                  {{ student.completed_labs }}/{{ student.total_labs }} labs ·
-                  {{ student.pulse_responses }} pulse
+                <span class="coaching-student__top">
+                  <span class="coaching-student__name">{{ student.name }}</span>
+                  <span v-if="student.coaching" class="coaching-student__state">Coached</span>
+                  <span v-else class="coaching-student__state coaching-student__state--open">Open</span>
                 </span>
-                <span v-if="student.coaching" class="coaching-student__state">Coached</span>
-                <span v-else class="coaching-student__state coaching-student__state--open">Open</span>
+                <span class="coaching-student__bottom">
+                  <span class="coaching-student__feeling" :class="`feeling--${feelingFor(student).tone}`">
+                    <span aria-hidden="true">{{ feelingFor(student).emoji }}</span>
+                    {{ feelingFor(student).label }}
+                  </span>
+                  <span class="coaching-student__meta">
+                    {{ doingFor(student).label }} · {{ student.completed_labs }}/{{ student.total_labs }} labs ·
+                    {{ student.pulse_responses }} pulse
+                  </span>
+                </span>
               </button>
             </div>
             <p v-else class="feedback-muted">No students are enrolled yet.</p>
@@ -292,6 +307,56 @@ const coaching = reactive({
   comment: '',
 })
 
+// Feeling is explicit self-report from the check-in. Never infer it from
+// activity, hints, or completion. Doing is progress against assigned work.
+const feelingFor = (student) => {
+  const checkin = student.checkin || {}
+  const values = [checkin.clarity, checkin.engagement, checkin.confidence]
+    .filter((value) => typeof value === 'number')
+  if (!values.length) {
+    return {
+      key: 'unknown',
+      emoji: '○',
+      label: student.survey_responded ? 'Anonymous check-in' : 'No check-in',
+      tone: 'muted',
+    }
+  }
+  const average = values.reduce((sum, value) => sum + value, 0) / values.length
+  if (average >= 4) return { key: 'positive', emoji: '🙂', label: 'Positive', tone: 'positive', average }
+  if (average >= 3) return { key: 'mixed', emoji: '😐', label: 'Mixed', tone: 'watch', average }
+  return { key: 'low', emoji: '🙁', label: 'Low', tone: 'attention', average }
+}
+
+const doingFor = (student) => {
+  const total = Number(student.total_labs || 0)
+  const done = Number(student.completed_labs || 0)
+  const pct = total ? Math.round((done / total) * 100) : 0
+  if (!total) return { key: 'none', label: 'No assignments', pct }
+  if (pct >= 70) return { key: 'on-track', label: 'On track', pct }
+  if (pct >= 30) return { key: 'building', label: 'Building', pct }
+  return { key: 'needs-step', label: 'Needs a step', pct }
+}
+
+const quickInsight = (student) => {
+  const feeling = feelingFor(student)
+  const doing = doingFor(student)
+  if (doing.key === 'none') return 'No assigned work yet.'
+  if (feeling.key === 'unknown') {
+    if (student.survey_responded) return 'Checked in anonymously; ask how it feels in person.'
+    return doing.key === 'on-track'
+      ? 'Doing well; ask how the course feels.'
+      : 'Ask what is blocking the next step.'
+  }
+  if (doing.key === 'on-track' && feeling.key === 'positive') return 'Thriving; keep the challenge.'
+  if (doing.key === 'on-track' && feeling.key === 'low') return 'Doing well but feeling low; check in privately.'
+  if (doing.key === 'on-track') return 'Doing well; ask what feels unclear.'
+  if (doing.key === 'building' && feeling.key === 'positive') return 'Motivated; keep the next step small.'
+  if (doing.key === 'building' && feeling.key === 'low') return 'Needs support; reduce scope and check in.'
+  if (doing.key === 'needs-step' && feeling.key === 'positive') return 'Motivated but not moving; remove one blocker.'
+  if (doing.key === 'needs-step' && feeling.key === 'low') return 'Needs support; choose one small next step.'
+  return 'Mixed signal; ask one open question.'
+}
+
 const ratingBars = computed(() => ([
   { key: 'clarity', label: 'Clarity', value: summary.value?.course_checkin.clarity },
   { key: 'challenge', label: 'Challenge', value: summary.value?.course_checkin.challenge },
@@ -316,6 +381,16 @@ const engagementPercent = computed(() => {
   const reactions = summary.value?.reactions
   if (!reactions || reactions.like_ratio === null) return null
   return reactions.like_ratio * 100
+})
+
+const recentComments = computed(() => {
+  const seen = new Set()
+  return (summary.value?.recent_comments || []).filter((comment) => {
+    const text = (comment.comment || '').trim()
+    if (!text || seen.has(text)) return false
+    seen.add(text)
+    return true
+  })
 })
 
 const displayRating = (value) => (value === null || value === undefined ? '—' : `${value} / 5`)
@@ -439,11 +514,19 @@ onMounted(load)
 .feedback-comments p { margin: 0; color: var(--text-secondary); font-size: 0.8rem; line-height: 1.45; }
 .feedback-comments span { color: var(--text-muted); font-size: 0.67rem; }
 .feedback-muted { margin: 0; color: var(--text-muted); font-size: 0.8rem; }
-.coaching-list { display: grid; gap: 0.35rem; max-height: 16rem; overflow-y: auto; }
-.coaching-student { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 0.5rem; align-items: center; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); text-align: left; cursor: pointer; }
+.coaching-legend { margin: 0 0 0.4rem; color: var(--text-muted); font-size: 0.68rem; line-height: 1.45; }
+.coaching-legend span { margin-right: 0.25rem; letter-spacing: 0.1em; }
+.coaching-list { display: grid; gap: 0.35rem; max-height: 18rem; overflow-y: auto; }
+.coaching-student { display: grid; gap: 0.3rem; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); text-align: left; cursor: pointer; }
 .coaching-student--active { border-color: var(--accent); background: var(--accent-bg); }
+.coaching-student__top, .coaching-student__bottom { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; min-width: 0; }
 .coaching-student__name { font-size: 0.8rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.coaching-student__meta { color: var(--text-muted); font-size: 0.68rem; white-space: nowrap; }
+.coaching-student__meta { color: var(--text-muted); font-size: 0.68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.coaching-student__feeling { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.1rem 0.4rem; border-radius: 999px; font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
+.feeling--positive { background: var(--success-bg); color: var(--success); }
+.feeling--watch { background: var(--warning-bg); color: var(--warning); }
+.feeling--attention { background: var(--danger-bg); color: var(--danger); }
+.feeling--muted { background: var(--bg-secondary); color: var(--text-muted); }
 .coaching-student__state { padding: 0.1rem 0.4rem; border-radius: 999px; background: var(--success-bg); color: var(--success); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; }
 .coaching-student__state--open { background: var(--warning-bg); color: var(--warning); }
 .feedback-form { display: grid; gap: 0.7rem; }

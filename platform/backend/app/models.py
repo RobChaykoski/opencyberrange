@@ -739,6 +739,44 @@ class Achievement(Base):
     )
 
 
+class AchievementCelebration(Base):
+    """One voluntary, anonymous celebration of a public achievement.
+
+    The ``user_id`` exists only to enforce one celebration per person and to
+    prevent duplicate rows. The celebration wall never returns the celebrator's
+    identity; it exposes the count only. Celebrations are not learning metrics
+    and are never joined to analytics, progress, or grading.
+    """
+    __tablename__ = "achievement_celebrations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    achievement_id = Column(
+        Integer,
+        ForeignKey("achievements.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    created_at = Column(DateTime, server_default=func.now())
+
+    achievement = relationship("Achievement")
+    user = relationship("User")
+
+    __table_args__ = (
+        Index(
+            "ix_achievement_celebration_unique",
+            "achievement_id",
+            "user_id",
+            unique=True,
+        ),
+    )
+
+
 class CustomAchievement(Base):
     """Admin-defined achievement awarded for aggregate progress.
 
