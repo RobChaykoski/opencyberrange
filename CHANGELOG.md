@@ -144,6 +144,17 @@ No changes yet.
   ships; the separate HA repository has its own version and compatibility
   statement.
 
+### Course workspace and feedback
+- Redesigned the Academy course page around **Overview**, **Content**,
+  **Feedback**, and **Achievements**. The public scoreboard is no longer
+  presented; scoring data remains available to private reports.
+- Added a private two-way feedback loop: students use the existing survey engine
+  for a one-minute course check-in, instructors add coaching notes, and the
+  summary aggregates check-ins, exercise pulse surveys, reactions, and
+  coaching. Existing pulse data feeds the metrics on first load.
+- Added an EXIF metadata investigation lab with a safe evidence image, GPS,
+  device, author, and free-text metadata, plus a full beginner workbook.
+
 ### Host OS validation
 - Certified Ubuntu 24.04 LTS for 2.4.1 after WireGuard, firewall persistence,
   KVM, restore, and the full lab matrix passed on 24.04.5.

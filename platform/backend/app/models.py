@@ -475,6 +475,40 @@ class SurveyResponse(Base):
     )
 
 
+class CourseFeedback(Base):
+    """Two-way course feedback.
+
+    ``student_course`` rows are the learner's private check-in on the course
+    and instructor. ``instructor_student`` rows are coaching notes addressed to
+    one enrolled student. Student rows keep the author id for duplicate
+    prevention and the student's own view, but instructor summaries aggregate
+    them and never expose the author.
+    """
+    __tablename__ = "course_feedback"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
+    author_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    subject_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
+    direction = Column(String(24), nullable=False)  # student_course | instructor_student
+    clarity = Column(Integer, nullable=True)
+    challenge = Column(Integer, nullable=True)
+    engagement = Column(Integer, nullable=True)
+    confidence = Column(Integer, nullable=True)
+    comment = Column(Text, nullable=True)
+    is_anonymous = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    course = relationship("Course")
+    author = relationship("User", foreign_keys=[author_id])
+    subject = relationship("User", foreign_keys=[subject_user_id])
+
+    __table_args__ = (
+        Index("ix_course_feedback_course_direction", "course_id", "direction"),
+    )
+
+
 class FlagAttempt(Base):
     """Log all flag submission attempts"""
     __tablename__ = "flag_attempts"

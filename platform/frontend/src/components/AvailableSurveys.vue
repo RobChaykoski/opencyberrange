@@ -5,7 +5,7 @@
         <h2 id="available-surveys-title">Course surveys</h2>
         <p v-if="optInRequired">
           Survey participation is off. Turn it on under
-          <router-link to="/profile">Privacy and data</router-link> to take course surveys.
+          <router-link to="/profile?tab=security">Privacy and data</router-link> to take course surveys.
         </p>
         <p v-else>Short surveys from your instructors. Responses are used for course improvement.</p>
       </div>
@@ -34,7 +34,10 @@
 
         <form v-if="openId === survey.id" class="available-survey__form" @submit.prevent="submit(survey)">
           <div v-for="(question, index) in survey.questions" :key="index" class="available-question">
-            <p class="available-question__prompt">{{ index + 1 }}. {{ question.prompt }}</p>
+            <p class="available-question__prompt">
+              {{ index + 1 }}. {{ question.prompt }}
+              <span v-if="question.required === false" class="available-question__optional">optional</span>
+            </p>
             <div v-if="question.type === 'scale'" class="available-scale">
               <button
                 v-for="value in [1, 2, 3, 4, 5]"
@@ -80,6 +83,10 @@
 import { onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
 
+const props = defineProps({
+  courseId: { type: [Number, String], default: null },
+})
+
 const surveys = ref([])
 const optInRequired = ref(false)
 const openId = ref(null)
@@ -94,7 +101,10 @@ const load = async () => {
   try {
     const { data } = await axios.get('/analytics/surveys/available')
     optInRequired.value = data.reason === 'opt_in_required'
-    surveys.value = data.surveys || []
+    const all = data.surveys || []
+    surveys.value = props.courseId
+      ? all.filter((survey) => String(survey.course?.id) === String(props.courseId))
+      : all
     visible.value = optInRequired.value || surveys.value.length > 0
   } catch {
     visible.value = false
@@ -124,9 +134,12 @@ const submit = async (survey) => {
   error.value = ''
   message.value = ''
   const payload = {}
-  for (const [index, value] of Object.entries(answers[survey.id] || {})) {
+  for (let index = 0; index < survey.questions.length; index += 1) {
+    const question = survey.questions[index]
+    const value = answers[survey.id]?.[index]
     if (value === '' || value === null || value === undefined) {
-      error.value = 'Answer every question before submitting.'
+      if (question.required === false) continue
+      error.value = 'Answer every required question before submitting.'
       savingId.value = null
       return
     }
@@ -254,6 +267,14 @@ onMounted(load)
   color: var(--text-primary);
   font-size: 0.7rem;
   font-weight: 600;
+}
+
+.available-question__optional {
+  margin-left: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-transform: lowercase;
 }
 
 .available-scale {

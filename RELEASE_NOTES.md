@@ -45,6 +45,12 @@ LMS, and compliance-reporting edition. See `docs/EDITIONS.md`.
   reach TCP/5000, so VPN rules re-apply after a reboot.
 - **Capture labs fixed:** added the missing `ocr-network-tap` image build and
   combined the tap and GRETAP TC mirrors so both receive lab traffic.
+- **Course workspace:** the Academy course page now leads with Overview,
+  Content, Feedback, and Achievements. The public scoreboard is replaced by a
+  private two-way feedback loop that reuses the survey engine and feeds existing
+  pulse data into the metrics immediately.
+- **EXIF lab:** a new beginner OSINT exercise teaches EXIF, GPS, device, and
+  author metadata analysis with a full workbook.
 
 ## Highlights in 2.4.0
 

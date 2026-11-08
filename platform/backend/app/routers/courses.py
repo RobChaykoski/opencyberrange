@@ -22,6 +22,8 @@ from app.models import (
     User, Lab, LabCompletion, Course, CourseEnrollment,
     CourseLabAssignment, Achievement, CourseCompletionReset,
     Assignment, AssignmentLab, FlagAttempt, CustomAchievement,
+    CourseFeedback, ExercisePulseSurvey, ExerciseReaction,
+    Survey, SurveyAttachment, SurveyResponse,
 )
 from app.auth import get_current_active_user, get_current_instructor_user, get_current_admin_user
 from app import entitlement
@@ -31,6 +33,7 @@ from app.schemas import (
     BulkEnrollRequest,
     ScoreboardEntry, ScoreboardResponse, AchievementResponse,
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
+    CourseFeedbackRequest,
 )
 from app.services.achievements import resolve_achievement_label
 from app.export_reason import require_export_reason
@@ -486,6 +489,519 @@ async def get_course(
         "is_instructor": is_instructor,
         "is_enrolled": is_enrolled,
         "is_ended": is_ended,
+    }
+
+
+# ==================== Two-way course feedback ====================
+
+def _feedback_avg(values):
+    clean = [float(value) for value in values if value is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 2)
+
+
+def _feedback_pct(part, whole):
+    if not whole:
+        return 0.0
+    return round((part / whole) * 100, 1)
+
+
+def _feedback_payload(row: CourseFeedback) -> dict:
+    return {
+        "id": row.id,
+        "direction": row.direction,
+        "clarity": row.clarity,
+        "challenge": row.challenge,
+        "engagement": row.engagement,
+        "confidence": row.confidence,
+        "comment": row.comment,
+        "subject_user_id": row.subject_user_id,
+        "created_at": row.created_at.isoformat() if row.created_at else None,
+        "updated_at": row.updated_at.isoformat() if row.updated_at else None,
+    }
+
+
+def _feedback_access(db: Session, course: Course, user: User) -> tuple[bool, bool]:
+    is_instructor = user.role == "admin" or course.instructor_id == user.id
+    is_enrolled = db.query(CourseEnrollment).filter(
+        CourseEnrollment.course_id == course.id,
+        CourseEnrollment.user_id == user.id,
+    ).first() is not None
+    return is_instructor, is_enrolled
+
+
+CHECKIN_TITLE_PREFIX = "Course check-in - "
+CHECKIN_QUESTIONS = [
+    {
+        "prompt": "How clear were the instructions and expectations?",
+        "type": "scale",
+        "options": [],
+        "required": True,
+    },
+    {
+        "prompt": "How well did the challenge level fit you?",
+        "type": "scale",
+        "options": [],
+        "required": True,
+    },
+    {
+        "prompt": "How engaging was the course so far?",
+        "type": "scale",
+        "options": [],
+        "required": True,
+    },
+    {
+        "prompt": "How confident do you feel applying the skills?",
+        "type": "scale",
+        "options": [],
+        "required": True,
+    },
+    {
+        "prompt": "What would make this course clearer?",
+        "type": "text",
+        "options": [],
+        "required": False,
+    },
+]
+
+
+def _course_checkin_survey(db: Session, course: Course) -> Optional[Survey]:
+    """Find the auto-created course check-in survey for this course."""
+    return (
+        db.query(Survey)
+        .join(SurveyAttachment, SurveyAttachment.survey_id == Survey.id)
+        .filter(
+            SurveyAttachment.course_id == course.id,
+            Survey.title == f"{CHECKIN_TITLE_PREFIX}{course.code}",
+        )
+        .first()
+    )
+
+
+def _ensure_course_checkin_survey(db: Session, course: Course) -> Survey:
+    """Create the default one-minute check-in through the survey engine.
+
+    The survey is a normal ``Survey`` attached to the course, so instructors
+    can reuse the existing survey builder, response view, and consent rules.
+    """
+    survey = _course_checkin_survey(db, course)
+    if survey:
+        return survey
+    survey = Survey(
+        title=f"{CHECKIN_TITLE_PREFIX}{course.code}",
+        description=(
+            "A one-minute course check-in. Responses feed the private feedback "
+            "analysis and are not shown as a public ranking."
+        ),
+        questions=json.dumps(CHECKIN_QUESTIONS),
+        created_by=course.instructor_id,
+        is_active=True,
+    )
+    db.add(survey)
+    db.flush()
+    db.add(SurveyAttachment(survey_id=survey.id, course_id=course.id))
+    db.commit()
+    db.refresh(survey)
+    return survey
+
+
+def _survey_answer_int(row: SurveyResponse, index: int) -> Optional[int]:
+    try:
+        answers = json.loads(row.answers or "{}")
+        value = answers.get(str(index))
+        return int(value) if value is not None else None
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return None
+
+
+def _survey_answer_text(row: SurveyResponse, index: int) -> Optional[str]:
+    try:
+        answers = json.loads(row.answers or "{}")
+        value = answers.get(str(index))
+        return str(value).strip() if value else None
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return None
+
+
+@router.post("/{course_id}/feedback", status_code=201)
+async def submit_course_feedback(
+    course_id: int,
+    body: CourseFeedbackRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Submit a student course check-in or an instructor coaching note.
+
+    Students update their own single check-in. Instructors address one enrolled
+    student per note and may update it. Student rows keep the author internally
+    for duplicate prevention but are aggregated anonymously for instructors.
+    """
+    course = _get_course_or_404(db, course_id)
+    is_instructor, is_enrolled = _feedback_access(db, course, current_user)
+    if not is_instructor and not is_enrolled:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+
+    if not any((body.clarity, body.challenge, body.engagement, body.confidence, body.comment)):
+        raise HTTPException(status_code=400, detail="Add a rating or a comment")
+
+    if is_instructor:
+        if not body.subject_user_id:
+            raise HTTPException(status_code=400, detail="Choose a student to coach")
+        enrollment = db.query(CourseEnrollment).filter(
+            CourseEnrollment.course_id == course_id,
+            CourseEnrollment.user_id == body.subject_user_id,
+        ).first()
+        if not enrollment:
+            raise HTTPException(status_code=404, detail="Student is not enrolled")
+        direction = "instructor_student"
+        subject_user_id = body.subject_user_id
+    else:
+        direction = "student_course"
+        subject_user_id = None
+
+    query = db.query(CourseFeedback).filter(
+        CourseFeedback.course_id == course_id,
+        CourseFeedback.author_id == current_user.id,
+        CourseFeedback.direction == direction,
+    )
+    if subject_user_id is not None:
+        query = query.filter(CourseFeedback.subject_user_id == subject_user_id)
+    else:
+        query = query.filter(CourseFeedback.subject_user_id.is_(None))
+
+    row = query.first()
+    if row is None:
+        row = CourseFeedback(
+            course_id=course_id,
+            author_id=current_user.id,
+            subject_user_id=subject_user_id,
+            direction=direction,
+        )
+        db.add(row)
+    row.clarity = body.clarity
+    row.challenge = body.challenge
+    row.engagement = body.engagement
+    row.confidence = body.confidence
+    row.comment = (body.comment or "").strip() or None
+    db.commit()
+    db.refresh(row)
+    return {"status": "ok", "feedback": _feedback_payload(row)}
+
+
+@router.get("/{course_id}/feedback/summary")
+async def course_feedback_summary(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the private two-way feedback analysis for a course.
+
+    Existing exercise pulse surveys and reactions are included immediately, so
+    the dashboard is useful before anyone submits a new course check-in.
+    """
+    course = _get_course_or_404(db, course_id)
+    is_instructor, is_enrolled = _feedback_access(db, course, current_user)
+    if not is_instructor and not is_enrolled:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+
+    enrolled = db.query(CourseEnrollment).filter(
+        CourseEnrollment.course_id == course_id
+    ).count()
+
+    student_rows = db.query(CourseFeedback).filter(
+        CourseFeedback.course_id == course_id,
+        CourseFeedback.direction == "student_course",
+    ).all()
+    instructor_rows = db.query(CourseFeedback).filter(
+        CourseFeedback.course_id == course_id,
+        CourseFeedback.direction == "instructor_student",
+    ).all()
+    pulse_rows = db.query(ExercisePulseSurvey).filter(
+        ExercisePulseSurvey.course_id == course_id
+    ).all()
+    reaction_rows = db.query(ExerciseReaction).filter(
+        ExerciseReaction.course_id == course_id
+    ).all()
+
+    # Reuse the existing survey engine for the student check-in. Instructors
+    # get the default survey created automatically; students only see it once
+    # it exists and they have opted in to surveys.
+    checkin_survey = _course_checkin_survey(db, course)
+    if is_instructor and checkin_survey is None:
+        checkin_survey = _ensure_course_checkin_survey(db, course)
+    survey_opt_in = bool(getattr(current_user, "survey_opt_in", False))
+    can_submit_checkin = bool(
+        is_enrolled and survey_opt_in and checkin_survey and checkin_survey.is_active
+    )
+    survey_responses = []
+    if checkin_survey:
+        survey_responses = db.query(SurveyResponse).filter(
+            SurveyResponse.survey_id == checkin_survey.id,
+            SurveyResponse.course_id == course_id,
+        ).all()
+
+    survey_clarity = _feedback_avg([_survey_answer_int(row, 0) for row in survey_responses])
+    survey_challenge = _feedback_avg([_survey_answer_int(row, 1) for row in survey_responses])
+    survey_engagement = _feedback_avg([_survey_answer_int(row, 2) for row in survey_responses])
+    survey_confidence = _feedback_avg([_survey_answer_int(row, 3) for row in survey_responses])
+
+    clarity = survey_clarity if survey_clarity is not None else _feedback_avg([row.clarity for row in student_rows])
+    challenge = survey_challenge if survey_challenge is not None else _feedback_avg([row.challenge for row in student_rows])
+    engagement = survey_engagement if survey_engagement is not None else _feedback_avg([row.engagement for row in student_rows])
+    confidence = survey_confidence if survey_confidence is not None else _feedback_avg([row.confidence for row in student_rows])
+    pulse_difficulty = _feedback_avg([row.difficulty for row in pulse_rows])
+    pulse_learning = _feedback_avg([row.learning for row in pulse_rows])
+    likes = sum(1 for row in reaction_rows if row.reaction == "like")
+    dislikes = sum(1 for row in reaction_rows if row.reaction == "dislike")
+    like_ratio = round(likes / (likes + dislikes), 3) if (likes + dislikes) else None
+
+    checkin_respondents = (
+        {row.user_id for row in survey_responses}
+        | {row.author_id for row in student_rows}
+    )
+    respondents = (
+        checkin_respondents
+        | {row.user_id for row in pulse_rows}
+        | {row.user_id for row in reaction_rows}
+    )
+    response_rate = _feedback_pct(len(respondents), enrolled)
+
+    # A weighted 0-100 summary. Components with no evidence are omitted and the
+    # remaining weights are renormalised, so a new course is not punished for
+    # data it has not collected yet.
+    components = []
+    if clarity is not None:
+        components.append(((clarity / 5) * 100, 0.4))
+    elif pulse_learning is not None:
+        components.append(((pulse_learning / 5) * 100, 0.4))
+    if pulse_difficulty is not None:
+        components.append((max(0.0, 100 - abs(pulse_difficulty - 3) * 25), 0.2))
+    if like_ratio is not None:
+        components.append((like_ratio * 100, 0.2))
+    elif response_rate:
+        components.append((response_rate, 0.2))
+    if instructor_rows:
+        coached = len({row.subject_user_id for row in instructor_rows})
+        components.append((_feedback_pct(coached, enrolled), 0.2))
+    overall_score = None
+    if components:
+        weight = sum(item[1] for item in components)
+        overall_score = round(sum(value * w for value, w in components) / weight, 1)
+
+    data_sources = []
+    if survey_responses or student_rows:
+        data_sources.append("course_checkin")
+    if pulse_rows:
+        data_sources.append("exercise_pulse")
+    if reaction_rows:
+        data_sources.append("exercise_reactions")
+    if instructor_rows:
+        data_sources.append("instructor_coaching")
+
+    aggregate = {
+        "enrolled": enrolled,
+        "respondents": len(respondents),
+        "response_rate": response_rate,
+        "clarity": clarity,
+        "challenge": challenge,
+        "engagement": engagement,
+        "confidence": confidence,
+        "overall_score": overall_score,
+        "data_sources": data_sources,
+    }
+
+    payload = {
+        "course_id": course_id,
+        "is_instructor": is_instructor,
+        "enrolled": enrolled,
+        "aggregate": aggregate,
+        "pulse": {
+            "responses": len(pulse_rows),
+            "difficulty": pulse_difficulty,
+            "learning": pulse_learning,
+            "unclear": sum(1 for row in pulse_rows if (row.unclear or "").strip()),
+        },
+        "reactions": {
+            "likes": likes,
+            "dislikes": dislikes,
+            "like_ratio": like_ratio,
+        },
+        "course_checkin": {
+            "responses": len(checkin_respondents),
+            "clarity": clarity,
+            "challenge": challenge,
+            "engagement": engagement,
+            "confidence": confidence,
+            "survey_id": checkin_survey.id if checkin_survey else None,
+            "survey_title": checkin_survey.title if checkin_survey else None,
+        },
+        "instructor_coaching": {
+            "notes": len(instructor_rows),
+            "students_coached": len({row.subject_user_id for row in instructor_rows}),
+        },
+        "has_data": bool(data_sources),
+        "survey_opt_in": survey_opt_in,
+        "can_submit_checkin": can_submit_checkin,
+        "survey": (
+            {
+                "id": checkin_survey.id,
+                "title": checkin_survey.title,
+                "is_active": bool(checkin_survey.is_active),
+                "questions": json.loads(checkin_survey.questions or "[]"),
+            }
+            if checkin_survey else None
+        ),
+        "prompt": (
+            None if data_sources else
+            "No feedback yet. A one-minute check-in starts the loop and feeds "
+            "the course metrics immediately."
+        ),
+    }
+
+    if is_instructor:
+        pulse_by_user = {}
+        for row in pulse_rows:
+            pulse_by_user.setdefault(row.user_id, []).append(row)
+        reactions_by_user = {row.user_id: row for row in reaction_rows}
+        checkin_by_user = {row.author_id: row for row in student_rows}
+        coaching_by_user = {}
+        for row in instructor_rows:
+            coaching_by_user.setdefault(row.subject_user_id, []).append(row)
+
+        lab_ids = {
+            row.lab_id for row in db.query(CourseLabAssignment.lab_id).filter(
+                CourseLabAssignment.course_id == course_id
+            ).all()
+        }
+        students = []
+        for enrollment in db.query(CourseEnrollment).filter(
+            CourseEnrollment.course_id == course_id
+        ).all():
+            student = enrollment.user
+            if not student:
+                continue
+            completed = get_course_completed_lab_ids(
+                db, student.id, course_id, lab_ids
+            )
+            latest_coaching = sorted(
+                coaching_by_user.get(student.id, []),
+                key=lambda row: row.updated_at or row.created_at or datetime.min,
+                reverse=True,
+            )
+            students.append({
+                "user_id": student.id,
+                "name": student.display_name,
+                "username": student.username,
+                "enrolled_at": enrollment.enrolled_at.isoformat() if enrollment.enrolled_at else None,
+                "completed_labs": len(completed),
+                "total_labs": len(lab_ids),
+                "pulse_responses": len(pulse_by_user.get(student.id, [])),
+                "reaction": reactions_by_user.get(student.id).reaction if reactions_by_user.get(student.id) else None,
+                "survey_responded": any(row.user_id == student.id for row in survey_responses),
+                "checkin": _feedback_payload(checkin_by_user[student.id]) if student.id in checkin_by_user else None,
+                "coaching": _feedback_payload(latest_coaching[0]) if latest_coaching else None,
+            })
+        payload["students"] = students
+        payload["survey_opt_in_count"] = db.query(CourseEnrollment).join(
+            User, User.id == CourseEnrollment.user_id
+        ).filter(
+            CourseEnrollment.course_id == course_id,
+            User.survey_opt_in == True,
+        ).count()
+
+        comments = []
+        for row in survey_responses:
+            text = _survey_answer_text(row, 4)
+            if text:
+                comments.append({
+                    "source": "course_checkin",
+                    "anonymous_label": "Anonymous student",
+                    "comment": text,
+                    "created_at": row.submitted_at.isoformat() if row.submitted_at else None,
+                })
+        for row in student_rows:
+            if (row.comment or "").strip():
+                comments.append({
+                    "source": "course_checkin",
+                    "anonymous_label": "Anonymous student",
+                    "comment": row.comment.strip(),
+                    "created_at": row.updated_at.isoformat() if row.updated_at else None,
+                })
+        for row in pulse_rows:
+            if (row.unclear or "").strip():
+                comments.append({
+                    "source": "exercise_pulse",
+                    "anonymous_label": "Anonymous student",
+                    "comment": row.unclear.strip(),
+                    "created_at": row.updated_at.isoformat() if row.updated_at else None,
+                })
+        comments.sort(key=lambda item: item.get("created_at") or "", reverse=True)
+        payload["recent_comments"] = comments[:12]
+    else:
+        own = db.query(CourseFeedback).filter(
+            CourseFeedback.course_id == course_id,
+            CourseFeedback.author_id == current_user.id,
+            CourseFeedback.direction == "student_course",
+        ).first()
+        own_coaching = db.query(CourseFeedback).filter(
+            CourseFeedback.course_id == course_id,
+            CourseFeedback.subject_user_id == current_user.id,
+            CourseFeedback.direction == "instructor_student",
+        ).order_by(CourseFeedback.updated_at.desc()).all()
+        payload["my_feedback"] = _feedback_payload(own) if own else None
+        own_survey = next(
+            (row for row in survey_responses if row.user_id == current_user.id),
+            None,
+        )
+        payload["my_survey_response"] = (
+            {
+                "answers": json.loads(own_survey.answers or "{}"),
+                "submitted_at": own_survey.submitted_at.isoformat() if own_survey.submitted_at else None,
+            }
+            if own_survey else None
+        )
+        payload["instructor_feedback_for_me"] = [
+            {
+                **_feedback_payload(row),
+                "instructor": row.author.display_name if row.author else "Instructor",
+            }
+            for row in own_coaching
+        ]
+
+    return payload
+
+
+@router.get("/{course_id}/feedback/me")
+async def my_course_feedback(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the current user's own check-in and coaching notes."""
+    course = _get_course_or_404(db, course_id)
+    _, is_enrolled = _feedback_access(db, course, current_user)
+    if not is_enrolled and current_user.role != "admin" and course.instructor_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not enrolled in this course")
+    own = db.query(CourseFeedback).filter(
+        CourseFeedback.course_id == course_id,
+        CourseFeedback.author_id == current_user.id,
+        CourseFeedback.direction == "student_course",
+    ).first()
+    coaching = db.query(CourseFeedback).filter(
+        CourseFeedback.course_id == course_id,
+        CourseFeedback.subject_user_id == current_user.id,
+        CourseFeedback.direction == "instructor_student",
+    ).order_by(CourseFeedback.updated_at.desc()).all()
+    return {
+        "my_feedback": _feedback_payload(own) if own else None,
+        "instructor_feedback_for_me": [
+            {
+                **_feedback_payload(row),
+                "instructor": row.author.display_name if row.author else "Instructor",
+            }
+            for row in coaching
+        ],
     }
 
 

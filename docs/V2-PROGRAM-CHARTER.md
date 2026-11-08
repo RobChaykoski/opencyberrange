@@ -6,7 +6,7 @@ Status: **Active scope guard**
 Edition: **Professional** — Community / Academic profile plus analytics, reporting,
 cohort analysis, competency evidence, and research exports
 Owner: Robert Chaykoski
-Last reviewed: 2026-11-07
+Last reviewed: 2026-11-08
 
 See [Editions](EDITIONS.md) for the Community / Academic, Professional, and
 Enterprise boundary, and [ADR 0003](decisions/0003-edition-scope-refinement.md)
@@ -91,17 +91,18 @@ These are Enterprise preview candidates unless the charter is amended:
 | A1 | Student learning analytics view | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
 | A2 | Course analytics overview and exercise drill-down | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
 | A3 | Metric dictionary and shared definitions | In scope — Analytics | Delivered; deployed on the 24.04 preview | Product |
+| A4 | Academy course workspace and two-way feedback | In scope — Analytics | Delivered in this change | Product / Design |
 | C1 | Competency Framework Engine | In scope — Analytics | Planned | Product |
-| C2 | Student Feedback Engine | In scope — Analytics | Planned | Product |
+| C2 | Student Feedback Engine | In scope — Analytics | Delivered in this change — survey-engine check-in, instructor coaching, private metrics | Product |
 | C3 | Radar / Spider Web Reporting | In scope — Analytics | Planned | Product |
 | C4 | Exercise Health Analytics | In scope — Analytics | Planned | Product |
-| C5 | Instructor Intervention Dashboard | In scope — Analytics | Planned | Product |
+| C5 | Instructor Intervention Dashboard | In scope — Analytics | Partial — coaching notes and private student metrics; intervention queue deferred | Product |
 | R1 | Cross-course Reports page with RAG signals | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
 | R2 | Pulse surveys and course survey reporting | In scope — Reporting | Delivered; deployed on the 24.04 preview | Product |
 | R3 | CSV/PDF export for teaching review | In scope — Reporting | Shipped — CSV and PDF | Product |
 | R4 | Cohort analysis and accreditation support | In scope — Reporting | Planned | Product |
 | R5 | Research exports for approved studies | In scope — Reporting | Partial — cross-course CSV/PDF and survey package | Research |
-| H1 | Ubuntu 24.04 target for 2.1.4 | Update — required platform path | Partial — host/platform pass; network/lab/recovery gates pending | Platform |
+| H1 | Ubuntu 24.04 target for 2.1.4 | Update — required platform path | Delivered — 24.04 certified 2026-11-08 | Platform |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
 | M3 | Version identity endpoint and footer | Update - operational | Shipped | Platform |
@@ -113,6 +114,18 @@ These are Enterprise preview candidates unless the charter is amended:
 | V3-3 | LMS/SIS integration | Enterprise candidate | Parking lot | Product |
 | V3-4 | Multi-tenant support | Enterprise candidate | Parking lot | Platform |
 | V3-5 | Enterprise and compliance reporting | Enterprise candidate | Parking lot | Product |
+
+### Course feedback workspace decision — 2026-11-08
+
+The course page no longer presents a public scoreboard. Scoring data remains
+available to the platform and to private reports, but the student-facing course
+workspace now leads with **Overview**, **Content**, **Feedback**, and
+**Achievements**. The Feedback tab is a private, descriptive two-way loop:
+
+- students use the existing survey engine for the course check-in;
+- instructors add private coaching notes and see aggregate student voice;
+- existing pulse surveys and reactions feed the metrics immediately;
+- no ranking or public comparison is shown.
 
 ## Change control
 

@@ -395,6 +395,20 @@ class CourseJoinRequest(BaseModel):
         return value
 
 
+class CourseFeedbackRequest(BaseModel):
+    """Student course check-in or instructor coaching note.
+
+    Ratings are 1-5. Students send no ``subject_user_id``; instructors must
+    send the enrolled student they are coaching.
+    """
+    clarity: Optional[int] = Field(None, ge=1, le=5)
+    challenge: Optional[int] = Field(None, ge=1, le=5)
+    engagement: Optional[int] = Field(None, ge=1, le=5)
+    confidence: Optional[int] = Field(None, ge=1, le=5)
+    comment: Optional[str] = Field(None, max_length=2000)
+    subject_user_id: Optional[int] = None
+
+
 class CourseLabAssignRequest(BaseModel):
     lab_ids: List[int]
 

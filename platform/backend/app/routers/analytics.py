@@ -250,6 +250,7 @@ class SurveyQuestionInput(BaseModel):
     prompt: str = Field(..., min_length=1, max_length=500)
     type: str = Field(..., pattern="^(scale|choice|text)$")
     options: list[str] = Field(default_factory=list, max_length=12)
+    required: bool = True
 
     def normalized(self):
         options = [item.strip() for item in self.options if item.strip()]
@@ -259,6 +260,7 @@ class SurveyQuestionInput(BaseModel):
             "prompt": self.prompt.strip(),
             "type": self.type,
             "options": options if self.type == "choice" else [],
+            "required": bool(self.required),
         }
 
 
@@ -1663,7 +1665,10 @@ async def submit_survey_response(
     for index, question in enumerate(questions):
         key = str(index)
         value = payload.answers.get(key)
+        required = question.get("required", True)
         if value is None or value == "":
+            if not required:
+                continue
             raise HTTPException(
                 status_code=400,
                 detail=f"Question {index + 1} requires an answer",

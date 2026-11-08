@@ -4,9 +4,29 @@
       <!-- Header -->
       <div class="courses-header">
         <div>
-          <h1>Courses</h1>
-          <p class="header-subtitle">Your enrolled courses and classrooms</p>
+          <p class="header-eyebrow">Academy</p>
+          <h1>Course workspace</h1>
+          <p class="header-subtitle">Your courses, content, and feedback in one place</p>
         </div>
+      </div>
+
+      <!-- Workspace summary -->
+      <div v-if="courses.length" class="workspace-summary">
+        <div class="workspace-summary__stat">
+          <strong>{{ activeCourses }}</strong>
+          <span>active {{ activeCourses === 1 ? 'course' : 'courses' }}</span>
+        </div>
+        <div class="workspace-summary__stat">
+          <strong>{{ totalLabs }}</strong>
+          <span>assigned exercises</span>
+        </div>
+        <div class="workspace-summary__stat">
+          <strong>{{ totalStudents }}</strong>
+          <span>classmates</span>
+        </div>
+        <p class="workspace-summary__note">
+          Feedback is private. Open a course to see the aggregate and add your check-in.
+        </p>
       </div>
 
       <!-- Join Course -->
@@ -66,6 +86,13 @@
             <span class="stat">{{ course.student_count }} students</span>
             <span class="stat">{{ course.lab_count }} exercises</span>
           </div>
+          <div class="course-card__action">
+            Open workspace
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import axios from '../api/axios'
 
 const courses = ref([])
@@ -82,6 +109,16 @@ const inviteCode = ref('')
 const joining = ref(false)
 const joinMessage = ref('')
 const joinError = ref(false)
+
+const activeCourses = computed(
+  () => courses.value.filter((course) => courseStatus(course).text === 'Active').length
+)
+const totalLabs = computed(
+  () => courses.value.reduce((sum, course) => sum + (course.lab_count || 0), 0)
+)
+const totalStudents = computed(
+  () => courses.value.reduce((sum, course) => sum + (course.student_count || 0), 0)
+)
 
 function courseStatus(course) {
   const now = new Date()
@@ -160,6 +197,54 @@ onMounted(fetchCourses)
   color: var(--text-secondary);
   margin-top: 0.25rem;
   font-size: 0.9rem;
+}
+
+.header-eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.workspace-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.workspace-summary__stat {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 90px;
+}
+
+.workspace-summary__stat strong {
+  color: var(--text-primary);
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+.workspace-summary__stat span {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.workspace-summary__note {
+  flex: 1 1 240px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
 }
 
 /* Join Section */
@@ -346,6 +431,16 @@ onMounted(fetchCourses)
   display: flex;
   gap: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.course-card__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 
 .stat {
