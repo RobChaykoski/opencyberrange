@@ -68,3 +68,4 @@ nav:
   - "CH OT1 -- Modbus Fundamentals":
     - Introduction: CH_OT01_Modbus_Fundamentals/00_Introduction.md
     - "Exercise 1.1 -- Modbus Register Analysis": CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis.md
+  - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

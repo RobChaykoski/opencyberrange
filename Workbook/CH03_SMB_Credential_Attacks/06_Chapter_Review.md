@@ -110,3 +110,15 @@ You can now discover credentials for SMB; the Windows file-sharing protocol. But
 **6.** Enumeration eliminates guesswork. Testing known usernames with a password list is far more efficient than guessing both. It also ensures you do not miss accounts like service accounts (svc_*) that may have elevated privileges.
 
 **7.** (1) Service discovery, (2) Share enumeration, (3) Anonymous access testing, (4) Null session enumeration, (5) Username extraction, (6) Credential attack, (7) Authenticated access and data retrieval.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **TryHackMe** — beginner-friendly rooms for Windows and Active Directory practice: <https://tryhackme.com/>
+- **KC7 Cyber** — free threat-hunting cases using KQL and log analysis: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

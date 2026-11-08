@@ -11,8 +11,13 @@ The User Manual explains how the platform works. The Workbook walks you through 
 
 Each chapter covers one level of a track. The Windows track is used as the
 example below, but the same chapter pattern applies to Linux, Web, Network,
-Malware, OT/ICS, and AI Hacking. Inside each chapter, every lab is presented as
-a self-contained walkthrough with:
+Malware, Forensics, OSINT, OT/ICS, AI Hacking, Software Security, and High
+School. Inside each chapter, every lab is presented as a self-contained
+walkthrough with:
+
+When a chapter is finished, see
+[Free training and certification next steps](FREE-TRAINING-AND-CERTIFICATIONS.md)
+for optional practice that matches the same topic.
 
 - **Background** explaining the protocol, service, or technique you are about to use; written for someone encountering it for the first time
 - **Tool Primer** covering the specific tool commands you will run, what each flag does, and how to read the output

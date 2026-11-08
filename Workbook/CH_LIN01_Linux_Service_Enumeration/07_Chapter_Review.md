@@ -125,3 +125,15 @@ Consider reviewing the commands in the cheat sheet above until you can recall ea
 **7.** Nmap reads only enough of the banner to match a service signature, then disconnects. Multi-line custom messages and administrative notes are discarded during version matching.
 
 **8.** searchsploit searches a local copy of the Exploit Database (ExploitDB) from the command line.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **OverTheWire Bandit** — command-line wargames for Linux fundamentals: <https://overthewire.org/wargames/bandit/>
+- **Linux Foundation training** — free Linux and open-source courses: <https://training.linuxfoundation.org/resources/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

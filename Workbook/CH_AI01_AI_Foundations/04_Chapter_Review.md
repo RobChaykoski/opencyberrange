@@ -119,3 +119,15 @@ Level 2 moves from single-message attacks to instruction hierarchy, encoded
 payloads, and multi-turn injection. Later levels cover RAG data exposure, agent
 tool abuse, model supply chains, and an AI-assisted security operations
 capstone.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **IBM SkillsBuild** — free AI and cybersecurity learning paths: <https://skillsbuild.org/learning-catalog>
+- **Linux Foundation training** — free open-source and AI courses: <https://training.linuxfoundation.org/resources/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

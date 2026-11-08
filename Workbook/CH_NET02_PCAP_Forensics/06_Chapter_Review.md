@@ -149,3 +149,16 @@ The next tracks in the Open Cyber Range build on this network foundation. You wi
 6. Normal workstations do not initiate FTP connections to external servers. Outbound FTP from a desktop is anomalous behavior that indicates data exfiltration or unauthorized file transfer. A firewall rule blocking outbound FTP from workstation subnets would have prevented this, and an alert on such traffic would have detected it early.
 
 7. `tshark -r file.pcap -q -z follow,tcp,ascii,5`: this reconstructs the full TCP conversation for stream index 5 and displays it in ASCII. You identify the stream number from earlier analysis using conversation statistics or display filters.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **Cisco NetAcad** — free networking and cybersecurity courses: <https://www.netacad.com/>
+- **Splunk training** — free SIEM and log-analysis courses: <https://www.splunk.com/en_us/training/course-catalog.html?sort=Newest&filters=filterGroup1FreeCourses>
+- **KC7 Cyber** — free threat-hunting cases using logs and KQL: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

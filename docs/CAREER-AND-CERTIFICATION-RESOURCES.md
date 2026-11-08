@@ -15,7 +15,7 @@ learner will pass a certification or get a role.
 |---|---|---|
 | **Security Certification Roadmap** by Paul Jerimy | Vendor certification families, entry-to-advanced progression, and role paths | <https://pauljerimy.com/security-certification-roadmap/> |
 | **CISO MindMap 2026** by Rafeeq Rehman | The breadth of a security leadership role: operations, IAM, governance, risk, architecture, cloud, AI, OT, data, and team management | <https://rafeeqrehman.com/wp-content/uploads/2026/04/CISO-MindMap-2026.pdf> |
-| **SWOCTS Resources** | Free training platforms, certification programs, community, and academic resources | <https://swocts.com/resources> |
+| **SWOCTS Resources** | Free training platforms, certification programs, community, and academic resources | <https://www.swocts.com/resources> |
 | **MalOps Peaky Blinders challenge** | An external malware-analysis practice reference and a different platform's challenge format. Useful for showing a route from broader security practice into malware analysis. | <https://malops.io/challenges/peakyblinders> |
 | **Hack The Box Academy** | External hands-on labs and structured learning paths for offensive, defensive, and general security practice. | <https://academy.hackthebox.com/> |
 | **PacketLabs** | External penetration-testing and security-research reference material. | <https://www.packetlabs.net/> |
@@ -98,19 +98,43 @@ aware of the wider system their technical work sits inside.
 
 ### SWOCTS resources
 
+Source: [SWOCTS Resources](https://www.swocts.com/resources), reviewed
+**2026-11-08**.
+
 The SWOCTS resources page provides free training and community entry points that
 complement the platform:
 
-- free training from The Linux Foundation, Cisco NetAcad, Fortinet, Splunk,
-  PortSwigger, TryHackMe, KC7 Cyber, CyLab Security Academy, and OverTheWire;
-- certification programs including ISC2 Certified in Cybersecurity, IBM
-  SkillsBuild, Cato Networks SASE, Palo Alto Networks Beacon, and Professor
-  Messer's Security+ course;
-- community and academic resources from the Canadian Cyber Security Centre and
-  the SWOCTS LinkedIn community.
+- **Free training platforms:** The Linux Foundation, Cisco NetAcad, Fortinet,
+  Splunk, PortSwigger Web Security Academy, TryHackMe, KC7 Cyber, CyLab Security
+  Academy (formerly picoCTF), and OverTheWire.
+- **Certification programs:** ISC2 Certified in Cybersecurity (CC), IBM
+  SkillsBuild, Cato Networks SASE Expert Level 1, Palo Alto Networks Beacon, and
+  Professor Messer's CompTIA Security+ course.
+- **Community and academic resources:** Canadian Cyber Security Centre,
+  CSEC Learning Hub, and the SWOCTS LinkedIn community.
 
 Use these as **next-step** links, not as replacements for the platform's own
-labs. The platform remains the guided practice environment.
+labs. The platform remains the guided practice environment. Do not post flags,
+learner data, or platform screenshots on third-party sites.
+
+#### Track-to-resource map
+
+| Track | Free practice | Certification / training |
+|---|---|---|
+| Windows | TryHackMe, KC7 Cyber | ISC2 CC, Professor Messer Security+ |
+| Linux | OverTheWire Bandit, TryHackMe | Linux Foundation, ISC2 CC |
+| Web | PortSwigger Academy, TryHackMe | ISC2 CC, IBM SkillsBuild |
+| Network | Cisco NetAcad, Splunk, KC7 Cyber | ISC2 CC, Palo Alto Beacon |
+| Malware | TryHackMe, KC7 Cyber | ISC2 CC, IBM SkillsBuild |
+| Forensics | KC7 Cyber, Splunk | ISC2 CC |
+| OSINT | TryHackMe, KC7 Cyber | IBM SkillsBuild, ISC2 CC |
+| OT/ICS | Fortinet, Palo Alto Beacon | ISC2 CC, Cisco NetAcad |
+| AI | IBM SkillsBuild, Linux Foundation | ISC2 CC |
+| Software Security | PortSwigger Academy, Linux Foundation | ISC2 CC |
+| High School | Cisco NetAcad, TryHackMe, CyLab | ISC2 CC, IBM SkillsBuild |
+
+The student-facing version is in
+[Free training and certification next steps](../Workbook/FREE-TRAINING-AND-CERTIFICATIONS.md).
 
 ## Design implications for future labs
 

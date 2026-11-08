@@ -86,3 +86,4 @@ nav:
     - "Exercise L3.2 -- SSH History Analysis": CH_LIN03_SSH_Post_Exploitation/02_SSH_History_Analysis.md
     - "Exercise L3.3 -- SSH Privilege Escalation": CH_LIN03_SSH_Post_Exploitation/03_SSH_Privilege_Escalation.md
     - Chapter Review: CH_LIN03_SSH_Post_Exploitation/04_Chapter_Review.md
+  - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

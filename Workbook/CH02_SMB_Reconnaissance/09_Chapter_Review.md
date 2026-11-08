@@ -132,3 +132,15 @@ You now know what shares exist, what files they contain, and; critically; what u
 **7.** `enum4linux -a` runs a full enumeration that combines user listing, share listing, group listing, OS detection, and password policy extraction into one automated pass.
 
 **8.** Because valid usernames are half of the credential puzzle. With a list of real usernames, an attacker can attempt targeted password attacks (Chapter 3) instead of guessing both the username and password.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **TryHackMe** — beginner-friendly rooms for Windows and Active Directory practice: <https://tryhackme.com/>
+- **KC7 Cyber** — free threat-hunting cases using KQL and log analysis: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

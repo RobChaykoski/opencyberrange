@@ -159,3 +159,15 @@ The progression looks like the following: LDAP gave you the "who"; Chapter 8 fin
 **7.** Domain Admins have unrestricted control over the entire domain. Compromising one Domain Admin account grants the ability to create accounts, modify access, extract credentials for all users, and access every resource. Identifying these accounts lets an attacker focus credential attacks on the highest-value targets.
 
 **8.** The `ldap-rootdse` Nmap script queries the Root DSE and returns the server's namingContexts, supported LDAP versions, and other metadata. Run it with `nmap -p 389 --script=ldap-rootdse <target>`.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **TryHackMe** — beginner-friendly rooms for Windows and Active Directory practice: <https://tryhackme.com/>
+- **KC7 Cyber** — free threat-hunting cases using KQL and log analysis: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

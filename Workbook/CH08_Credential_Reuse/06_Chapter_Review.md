@@ -112,3 +112,15 @@ Chapter 9 puts these skills to the test in assessment scenarios. You will face n
 **5.** The chain followed four steps: LDAP enumeration revealed usernames, those usernames led to valid SMB credentials on a share, the SMB share contained RDP connection details, and the RDP session exposed SSH credentials. Each service acted as a stepping stone to the next. Interconnected services create attack paths.
 
 **6.** Effective defenses include unique passwords per service and per host (eliminating reuse), account lockout policies after a set number of failed attempts, multi-factor authentication (MFA) on remote access protocols, centralized logging and alerting for rapid authentication attempts across multiple hosts, and network segmentation that limits lateral movement between services.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **TryHackMe** — beginner-friendly rooms for Windows and Active Directory practice: <https://tryhackme.com/>
+- **KC7 Cyber** — free threat-hunting cases using KQL and log analysis: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

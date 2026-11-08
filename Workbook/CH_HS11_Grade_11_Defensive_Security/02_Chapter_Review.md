@@ -44,3 +44,16 @@ addresses, usernames, or personal information?
 Grade 12 applies these investigation habits to a browser-only community event
 challenge. You will inspect a fictional conference portal, check where a file came
 from, and protect the people whose information appears in it.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **Cisco NetAcad** — free networking and cybersecurity foundations: <https://www.netacad.com/>
+- **TryHackMe** — beginner-friendly guided rooms: <https://tryhackme.com/>
+- **CyLab Security Academy** — free CTF-style cybersecurity learning: <https://learn.cylabacademy.org/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

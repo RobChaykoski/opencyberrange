@@ -56,3 +56,15 @@ Rate each statement from 1 (not yet) to 5 (confident):
 If you are joining the DevFest competition, you can attempt the challenges in
 any order. The leaderboard uses the same flag and scoring rules as the rest of
 the platform.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **PortSwigger Web Security Academy** — free secure-coding and web-security labs: <https://portswigger.net/web-security>
+- **Linux Foundation training** — free open-source security courses: <https://training.linuxfoundation.org/resources/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

@@ -48,3 +48,15 @@ If this were a real assessment:
 - Use `zsteg` on a harmless test image that you created yourself.
 - Read the source of a small open-source web app and list every asset it
   loads. Ask which of those assets could leak information.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **TryHackMe** — guided OSINT and reconnaissance rooms: <https://tryhackme.com/>
+- **KC7 Cyber** — free investigation cases: <https://kc7cyber.com/>
+- **IBM SkillsBuild** — free courses and job-role learning paths: <https://skillsbuild.org/learning-catalog>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

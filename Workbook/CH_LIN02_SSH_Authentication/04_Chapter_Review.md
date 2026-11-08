@@ -109,3 +109,15 @@ You now know how to authenticate, enumerate users, and discover files. Chapter L
 **7.** The private key can authenticate to any system where the corresponding public key is stored in `authorized_keys`. Combined with `known_hosts` entries that reveal previously connected servers, the attacker can move to other systems without needing additional passwords.
 
 **8.** The flags `-r` (recursive) and `-i` (case-insensitive) enable a broad search: `grep -ri "password" /path/`.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **OverTheWire Bandit** — command-line wargames for Linux fundamentals: <https://overthewire.org/wargames/bandit/>
+- **Linux Foundation training** — free Linux and open-source courses: <https://training.linuxfoundation.org/resources/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

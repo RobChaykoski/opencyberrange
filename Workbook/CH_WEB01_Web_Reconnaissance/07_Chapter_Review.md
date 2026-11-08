@@ -124,3 +124,15 @@ Consider reviewing the commands in the cheat sheet above until you can recall ea
 **7.** The `X-Powered-By` header typically reveals the backend programming language or framework (e.g., `PHP/8.1.2`, `Express`, `ASP.NET`).
 
 **8.** TRACE echoes the full HTTP request back to the client, including all headers. An attacker can use cross-site tracing (XST) to steal authentication cookies via XSS when TRACE is enabled.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **PortSwigger Web Security Academy** — free web-security labs and learning paths: <https://portswigger.net/web-security>
+- **TryHackMe** — guided web exploitation rooms: <https://tryhackme.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

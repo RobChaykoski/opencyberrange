@@ -76,3 +76,16 @@ Chapter N1 taught you to analyze logs after the fact; reading firewall logs, pac
 5. "Failed password for admin" means the username "admin" exists on the system but the password was wrong. "Failed password for invalid user admin" means the username "admin" does not exist at all. The distinction between the two messages tells the attacker which usernames are valid.
 
 6. Check whether any login from that IP succeeded (`grep "SUSPICIOUS_IP" auth.log | grep "Accepted"`). If you find an accepted login, the attacker gained access and the incident is far more serious than a failed brute-force attempt.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **Cisco NetAcad** — free networking and cybersecurity courses: <https://www.netacad.com/>
+- **Splunk training** — free SIEM and log-analysis courses: <https://www.splunk.com/en_us/training/course-catalog.html?sort=Newest&filters=filterGroup1FreeCourses>
+- **KC7 Cyber** — free threat-hunting cases using logs and KQL: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

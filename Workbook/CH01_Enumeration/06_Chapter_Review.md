@@ -113,3 +113,15 @@ You now know what services are running on the target and what software versions 
 **5.** `-A` enables OS detection, version detection, script scanning, and traceroute in a single pass. Use it when you want a thorough scan of a single target and do not mind the extra time. For large networks, running individual flags selectively is more efficient.
 
 **6.** Search for known vulnerabilities specific to IIS 10.0, check whether the version is out of date (missing patches), and use that information to choose targeted exploitation techniques in later chapters.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **TryHackMe** — beginner-friendly rooms for Windows and Active Directory practice: <https://tryhackme.com/>
+- **KC7 Cyber** — free threat-hunting cases using KQL and log analysis: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.

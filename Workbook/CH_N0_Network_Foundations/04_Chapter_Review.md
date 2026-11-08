@@ -73,3 +73,16 @@ Write two or three sentences answering:
 
 **CH N1 -- Log Analysis** shows how the events you generated in these labs appear
 in firewall and DNS logs.
+
+## Free practice and certification next steps
+
+These optional free resources match this chapter. They do not replace the
+lab or this workbook.
+
+- **Cisco NetAcad** — free networking and cybersecurity courses: <https://www.netacad.com/>
+- **Splunk training** — free SIEM and log-analysis courses: <https://www.splunk.com/en_us/training/course-catalog.html?sort=Newest&filters=filterGroup1FreeCourses>
+- **KC7 Cyber** — free threat-hunting cases using logs and KQL: <https://kc7cyber.com/>
+- **ISC2 Certified in Cybersecurity** — free entry-level training and exam pathway: <https://www.isc2.org/landing/1mcc>
+
+See [Free training and certifications](../FREE-TRAINING-AND-CERTIFICATIONS.md)
+for the full map and the privacy note.
