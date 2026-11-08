@@ -566,10 +566,11 @@ def test_reports_overview_includes_skill_tree(client, analytics_data):
         item for item in body["courses"] if item["course"]["id"] == course_id
     )
     tree = row["skill_tree"]
-    assert len(tree["dimensions"]) == 5
+    assert len(tree["dimensions"]) == 6
     assert tree["assigned_total"] == 6
     assert tree["completed_total"] == 6
     dimensions = {item["key"]: item for item in tree["dimensions"]}
+    assert "leader" in dimensions
     assert dimensions["builder"]["assigned"] == 6
     assert dimensions["builder"]["completed"] == 6
     assert dimensions["builder"]["assigned_pct"] == 100.0
