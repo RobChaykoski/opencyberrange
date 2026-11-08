@@ -1,6 +1,8 @@
 <template>
   <div class="about-page">
-    <div v-if="loading" class="about-state" role="status" aria-live="polite">Loading installation details...</div>
+    <div v-if="loading" class="about-state" role="status" aria-live="polite">
+      Loading installation details...
+    </div>
     <div v-else-if="error" class="about-state about-state--error" role="alert">
       <p>{{ error }}</p>
       <button type="button" class="btn btn--secondary btn--sm" @click="load">Try again</button>
@@ -10,8 +12,8 @@
       <header class="about-hero">
         <img src="/swocts-cyber-range-mark.png" alt="" class="about-hero__mark" />
         <div class="about-hero__copy">
-          <p class="about-hero__kicker">About</p>
-          <h1>SWOCTS Cyber Range</h1>
+          <p class="about-hero__eyebrow">About this installation</p>
+          <h1>{{ about.platform.name }}</h1>
           <p class="about-hero__release">{{ about.release }}</p>
           <p class="about-hero__note">
             Powered by OpenCyberRange. Source-available under the PolyForm
@@ -20,26 +22,26 @@
         </div>
       </header>
 
-      <section class="about-grid" aria-label="Platform summary">
-        <article class="about-card">
-          <span class="about-card__label">Platform</span>
-          <strong class="about-card__value">{{ about.platform.version }}</strong>
-          <span class="about-card__detail">{{ about.platform.edition }}</span>
+      <section class="about-summary" aria-label="Platform summary">
+        <article class="about-summary__item">
+          <span class="about-summary__label">Platform</span>
+          <strong class="about-summary__value">{{ about.platform.version }}</strong>
+          <span class="about-summary__detail">{{ about.platform.edition }}</span>
         </article>
-        <article class="about-card">
-          <span class="about-card__label">Runtime</span>
-          <strong class="about-card__value">Python {{ about.platform.python }}</strong>
-          <span class="about-card__detail">Node {{ about.platform.node }}</span>
+        <article class="about-summary__item">
+          <span class="about-summary__label">Runtime</span>
+          <strong class="about-summary__value">Python {{ about.platform.python }}</strong>
+          <span class="about-summary__detail">Node {{ about.platform.node }}</span>
         </article>
-        <article class="about-card">
-          <span class="about-card__label">Database</span>
-          <strong class="about-card__value">PostgreSQL {{ about.platform.postgres }}</strong>
-          <span class="about-card__detail">Redis {{ about.platform.redis }}</span>
+        <article class="about-summary__item">
+          <span class="about-summary__label">Data</span>
+          <strong class="about-summary__value">PostgreSQL {{ about.platform.postgres }}</strong>
+          <span class="about-summary__detail">Redis {{ about.platform.redis }}</span>
         </article>
-        <article class="about-card">
-          <span class="about-card__label">Inventory</span>
-          <strong class="about-card__value">{{ componentCount }} components</strong>
-          <span class="about-card__detail">{{ about.sbom.length }} SBOM files</span>
+        <article class="about-summary__item">
+          <span class="about-summary__label">Inventory</span>
+          <strong class="about-summary__value">{{ componentCount }} components</strong>
+          <span class="about-summary__detail">{{ about.sbom.length }} SBOM files</span>
         </article>
       </section>
 
@@ -65,34 +67,16 @@
             :key="doc.file"
             type="button"
             class="about-link"
+            aria-haspopup="dialog"
+            :disabled="licenceLoading === doc.file"
             @click="viewLicence(doc)"
           >
-            <span class="about-link__label">{{ doc.label }}</span>
+            <span class="about-link__label">
+              {{ licenceLoading === doc.file ? 'Loading…' : doc.label }}
+            </span>
             <span class="about-link__file">{{ doc.file }}</span>
           </button>
         </div>
-      </section>
-
-      <section class="panel about-panel">
-        <h2 class="panel-title">Privacy controls</h2>
-        <p class="about-text">
-          {{ about.privacy.reveal }} {{ about.privacy.note }}
-        </p>
-        <div class="about-privacy-row">
-          <span class="about-privacy-state" :class="{ 'about-privacy-state--on': privacyMode }">
-            Privacy mode {{ privacyMode ? 'on' : 'off' }}
-          </span>
-          <button type="button" class="btn btn--secondary btn--sm" @click="togglePrivacy">
-            {{ privacyMode ? 'Turn off' : 'Turn on' }}
-          </button>
-        </div>
-        <p class="about-text">
-          <strong>Masked fields:</strong> {{ about.privacy.masked_fields.join(', ') }}.
-        </p>
-        <p class="about-text"><strong>Applies to:</strong></p>
-        <ul class="about-privacy-scope">
-          <li v-for="item in about.privacy.scope" :key="item">{{ item }}</li>
-        </ul>
       </section>
 
       <section class="panel about-panel">
@@ -107,8 +91,9 @@
             <span>{{ group.label }}</span>
             <span class="about-group__count">{{ group.items.length }}</span>
           </summary>
-          <div class="table-container">
+          <div v-if="group.items.length" class="table-container about-table">
             <table class="data-table data-table--compact">
+              <caption class="sr-only">{{ group.label }} components</caption>
               <thead>
                 <tr>
                   <th scope="col">Component</th>
@@ -125,6 +110,7 @@
               </tbody>
             </table>
           </div>
+          <p v-else class="about-empty">No components recorded in this group.</p>
         </details>
       </section>
 
@@ -134,27 +120,52 @@
           CycloneDX SBOMs generated for this release. Each download includes a
           SHA-256 checksum so you can verify the file you received.
         </p>
-        <ul class="about-sbom-list">
+        <ul v-if="about.sbom.length" class="about-sbom-list">
           <li v-for="file in about.sbom" :key="file.name" class="about-sbom">
             <div class="about-sbom__meta">
               <strong>{{ file.label }}</strong>
               <span class="cell-muted">{{ file.name }} · {{ formatBytes(file.bytes) }}</span>
-              <code class="about-sbom__hash" :title="file.sha256">sha256:{{ file.sha256.slice(0, 16) }}…</code>
+              <code class="about-sbom__hash" :title="file.sha256">
+                sha256:{{ file.sha256.slice(0, 16) }}…
+              </code>
             </div>
-            <button type="button" class="btn btn--secondary btn--sm" @click="downloadSbom(file)">
-              Download
+            <button
+              type="button"
+              class="btn btn--secondary btn--sm"
+              :disabled="sbomLoading === file.name"
+              :aria-label="`Download ${file.label}`"
+              @click="downloadSbom(file)"
+            >
+              {{ sbomLoading === file.name ? 'Downloading…' : 'Download' }}
             </button>
           </li>
         </ul>
+        <p v-else class="about-empty">No SBOM files are available for this build.</p>
       </section>
 
-      <div v-if="licenceModal.open" class="about-modal" role="dialog" aria-modal="true" :aria-label="licenceModal.title">
-        <div class="about-modal__card">
+      <div
+        v-if="licenceModal.open"
+        class="about-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="about-modal-title"
+        @click.self="closeLicence"
+        @keydown.esc="closeLicence"
+        @keydown="trapFocus"
+      >
+        <div ref="modalCard" class="about-modal__card">
           <div class="about-modal__header">
-            <h2>{{ licenceModal.title }}</h2>
-            <button type="button" class="btn btn--secondary btn--sm" @click="closeLicence">Close</button>
+            <h2 id="about-modal-title">{{ licenceModal.title }}</h2>
+            <button
+              ref="closeButton"
+              type="button"
+              class="btn btn--secondary btn--sm"
+              @click="closeLicence"
+            >
+              Close
+            </button>
           </div>
-          <pre class="about-modal__body">{{ licenceModal.text }}</pre>
+          <pre ref="modalBody" class="about-modal__body" tabindex="0">{{ licenceModal.text }}</pre>
         </div>
       </div>
     </template>
@@ -162,15 +173,19 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import api from '../api/axios'
-import { usePrivacy } from '../composables/usePrivacy'
 
 const about = ref(null)
 const loading = ref(true)
 const error = ref('')
 const licenceModal = ref({ open: false, title: '', text: '' })
-const { privacyMode, togglePrivacy } = usePrivacy()
+const licenceLoading = ref('')
+const sbomLoading = ref('')
+const licenceTrigger = ref(null)
+const modalCard = ref(null)
+const closeButton = ref(null)
+const modalBody = ref(null)
 
 const groups = computed(() => {
   const components = about.value?.components || {}
@@ -212,19 +227,42 @@ const fetchBlob = async (kind, name, type) => {
 }
 
 const viewLicence = async (doc) => {
+  licenceTrigger.value = document.activeElement
+  licenceLoading.value = doc.file
   try {
     const text = await fetchBlob('licences', doc.file, 'text')
     licenceModal.value = { open: true, title: doc.label, text }
+    await nextTick()
+    closeButton.value?.focus()
   } catch {
     error.value = 'Could not load that licence document.'
+  } finally {
+    licenceLoading.value = ''
   }
 }
 
 const closeLicence = () => {
   licenceModal.value = { open: false, title: '', text: '' }
+  nextTick(() => licenceTrigger.value?.focus())
+}
+
+const trapFocus = (event) => {
+  if (event.key !== 'Tab') return
+  const focusable = [closeButton.value, modalBody.value].filter(Boolean)
+  if (!focusable.length) return
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
 }
 
 const downloadSbom = async (file) => {
+  sbomLoading.value = file.name
   try {
     const blob = await fetchBlob('sbom', file.name, 'blob')
     const url = URL.createObjectURL(blob)
@@ -235,6 +273,8 @@ const downloadSbom = async (file) => {
     URL.revokeObjectURL(url)
   } catch {
     error.value = 'Could not download that SBOM.'
+  } finally {
+    sbomLoading.value = ''
   }
 }
 
@@ -243,118 +283,140 @@ onMounted(load)
 
 <style scoped>
 .about-page {
-  max-width: 1120px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .about-state {
   padding: 3rem 1rem;
   text-align: center;
-  color: var(--text-muted, #64748b);
+  color: var(--text-secondary);
 }
 
 .about-state--error {
-  color: var(--danger, #b91c1c);
+  color: var(--danger);
 }
 
 .about-hero {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.75rem;
-  margin-bottom: 1.25rem;
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 1rem;
-  background: var(--card-bg, #fff);
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
 }
 
 .about-hero__mark {
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   flex: 0 0 auto;
 }
 
-.about-hero__kicker {
+.about-hero__eyebrow {
   margin: 0 0 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
 .about-hero h1 {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: 2rem;
   line-height: 1.2;
+  color: var(--text-primary);
 }
 
 .about-hero__release {
   margin: 0.35rem 0 0;
   font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .about-hero__note {
   margin: 0.5rem 0 0;
-  color: var(--text-muted, #64748b);
-  max-width: 60ch;
+  max-width: 68ch;
+  color: var(--text-secondary);
 }
 
-.about-grid {
+.about-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.85rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.about-card {
+.about-summary__item {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
   padding: 1rem;
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 0.85rem;
-  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  min-width: 0;
 }
 
-.about-card__label {
-  font-size: 0.72rem;
-  font-weight: 700;
+.about-summary__label {
+  font-size: 0.7rem;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
 }
 
-.about-card__value {
-  font-size: 1.15rem;
+.about-summary__value {
+  font-size: 1.05rem;
+  color: var(--text-primary);
 }
 
-.about-card__detail {
+.about-summary__detail {
   font-size: 0.85rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-secondary);
 }
 
 .about-panel {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.about-panel .panel-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  line-height: 1.3;
+  color: var(--text-primary);
 }
 
 .about-text {
   margin: 0.5rem 0 1rem;
   max-width: 80ch;
   line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.about-text strong {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .about-subtitle {
   margin: 1.25rem 0 0.65rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: var(--text-primary);
 }
 
 .about-link-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.6rem;
+  gap: 0.65rem;
 }
 
 .about-link {
@@ -362,15 +424,28 @@ onMounted(load)
   flex-direction: column;
   gap: 0.15rem;
   padding: 0.7rem 0.8rem;
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 0.65rem;
-  background: var(--surface-2, #f8fafc);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   text-align: left;
   cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
 }
 
-.about-link:hover {
-  border-color: var(--primary, #8b5cf6);
+.about-link:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--bg-secondary);
+}
+
+.about-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.about-link:disabled {
+  cursor: progress;
+  opacity: 0.75;
 }
 
 .about-link__label {
@@ -378,15 +453,15 @@ onMounted(load)
 }
 
 .about-link__file {
-  font-family: monospace;
-  font-size: 0.75rem;
-  color: var(--text-muted, #64748b);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
   overflow-wrap: anywhere;
 }
 
 .about-group {
-  border-top: 1px solid var(--border, #e5e7eb);
-  padding: 0.65rem 0;
+  border-top: 1px solid var(--border-color);
+  padding: 0.6rem 0;
 }
 
 .about-group summary {
@@ -394,19 +469,46 @@ onMounted(load)
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  padding: 0.35rem 0;
   cursor: pointer;
   font-weight: 600;
-  padding: 0.35rem 0;
+  color: var(--text-primary);
+}
+
+.about-group summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .about-group__count {
   min-width: 2rem;
   padding: 0.1rem 0.45rem;
+  border: 1px solid var(--border-color);
   border-radius: 999px;
-  background: var(--surface-2, #f1f5f9);
-  color: var(--text-muted, #64748b);
-  font-size: 0.75rem;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
   text-align: center;
+}
+
+.about-table {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+}
+
+.about-table :deep(th) {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.about-table :deep(td) {
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.about-empty {
+  margin: 0.5rem 0;
+  color: var(--text-muted);
 }
 
 .about-sbom-list {
@@ -418,46 +520,15 @@ onMounted(load)
   gap: 0.65rem;
 }
 
-.about-privacy-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin: 0.5rem 0 0.75rem;
-}
-
-.about-privacy-state {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.6rem;
-  border-radius: 999px;
-  background: var(--surface-2, #f1f5f9);
-  color: var(--text-muted, #64748b);
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.about-privacy-state--on {
-  background: rgba(34, 197, 94, 0.14);
-  color: var(--success, #15803d);
-}
-
-.about-privacy-scope {
-  margin: 0.25rem 0 0.5rem;
-  padding-left: 1.2rem;
-  color: var(--text-muted, #64748b);
-  line-height: 1.6;
-}
-
 .about-sbom {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 0.75rem;
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 0.65rem;
-  background: var(--surface-2, #f8fafc);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
 }
 
 .about-sbom__meta {
@@ -468,8 +539,9 @@ onMounted(load)
 }
 
 .about-sbom__hash {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: 0.72rem;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   overflow-wrap: anywhere;
 }
 
@@ -481,7 +553,7 @@ onMounted(load)
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(2, 6, 23, 0.6);
 }
 
 .about-modal__card {
@@ -489,8 +561,9 @@ onMounted(load)
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  border-radius: 0.85rem;
-  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--panel-bg);
   overflow: hidden;
 }
 
@@ -500,12 +573,13 @@ onMounted(load)
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem;
-  border-bottom: 1px solid var(--border, #e5e7eb);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .about-modal__header h2 {
   margin: 0;
   font-size: 1.1rem;
+  color: var(--text-primary);
 }
 
 .about-modal__body {
@@ -513,8 +587,32 @@ onMounted(load)
   padding: 1rem;
   overflow: auto;
   white-space: pre-wrap;
+  color: var(--text-secondary);
   font-size: 0.8rem;
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.about-modal__body:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 900px) {
+  .about-page {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 640px) {
@@ -522,9 +620,18 @@ onMounted(load)
     padding: 1rem;
   }
 
+  .about-panel {
+    padding: 1rem;
+  }
+
   .about-hero {
     flex-direction: column;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .about-summary {
+    grid-template-columns: 1fr;
   }
 
   .about-sbom {

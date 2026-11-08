@@ -27,18 +27,8 @@ account.
   `THIRD_PARTY_LICENSES/`.
 - **SBOMs** — CycloneDX files with size and SHA-256 checksums.
 
-## Privacy controls
-
-- Admin accounts default to privacy mode **on** when no explicit preference is
-  stored.
-- Masked fields: username, email, display name, and student ID.
-- Masked surfaces: admin users table, pending approvals, active sessions,
-  unregistered users, VPN peers, user-details dialog, edit-account dialog,
-  instructor learner tables, and activity actor names.
-- Hover over or focus a masked value to reveal it.
-- The **About** page shows the current privacy state, a toggle, and the scope.
-- Privacy mode is a visual control, not an authorization boundary; an
-  authorised admin's API responses still contain the real values.
+Privacy controls are documented in [`BUILD_NOTICE.md`](../BUILD_NOTICE.md), not
+on the About page.
 
 ## Data sources and generation
 

@@ -228,28 +228,6 @@ def main() -> int:
                 "and are not licensed under the PolyForm Noncommercial License 1.0.0."
             ),
         },
-        "privacy": {
-            "admin_default": True,
-            "masked_fields": ["username", "email", "display name", "student ID"],
-            "reveal": "Hover or focus a masked value to reveal it.",
-            "toggle": "The Privacy mode control in the sidebar.",
-            "scope": [
-                "Admin users table",
-                "Pending approvals",
-                "Active sessions",
-                "Unregistered users",
-                "VPN peers",
-                "User details dialog",
-                "Edit account dialog",
-                "Instructor learner tables",
-                "Activity actor names",
-            ],
-            "note": (
-                "Privacy mode is a visual control for screen sharing and "
-                "shoulder-surfing. An authorised admin's API responses still "
-                "contain the real values."
-            ),
-        },
         "components": {
             "backend": backend_components(),
             "frontend": frontend_components(),

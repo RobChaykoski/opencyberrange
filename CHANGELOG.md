@@ -47,7 +47,7 @@ No changes yet.
 
 ### About and build information
 - Added an authenticated `/about` page with release, platform, branding,
-  component, licence, and SBOM inventory plus a privacy-controls panel.
+  component, licence, and SBOM inventory.
 - Added the generated `app/data/about` inventory, CycloneDX SBOMs, and
   `scripts/generate-about.py`.
 - Documented the SWOCTS mark ownership and Avery Chaykoski design credit in

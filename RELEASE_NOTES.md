@@ -21,7 +21,7 @@ privacy-control, and course-workspace cleanup release over 2.5.0.
 ## About and build information
 
 - A new authenticated **About** page shows the release, platform components,
-  branding, licence documents, SBOM downloads, and privacy controls.
+  branding, licence documents, and SBOM downloads.
 - CycloneDX SBOMs for the backend and frontend are generated for the release.
 - The SWOCTS mark is recorded as owned by SWOCTS and designed by Avery
   Chaykoski.

@@ -65,8 +65,6 @@ else:
         fail("About inventory does not record SWOCTS as the brand owner")
     if branding.get("logo_designer") != "Avery Chaykoski":
         fail("About inventory does not credit Avery Chaykoski for the logo")
-    if (about.get("privacy") or {}).get("admin_default") is not True:
-        fail("About inventory does not record the admin privacy default")
     if not about.get("sbom"):
         fail("About inventory has no SBOM entries")
     for doc in about.get("licences") or []:

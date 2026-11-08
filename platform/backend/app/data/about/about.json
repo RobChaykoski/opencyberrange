@@ -19,29 +19,6 @@
     "software_licence": "PolyForm Noncommercial 1.0.0",
     "brand_note": "The SWOCTS name and logo are owned by SWOCTS and were created and designed by Avery Chaykoski. They are brand assets, not software, and are not licensed under the PolyForm Noncommercial License 1.0.0."
   },
-  "privacy": {
-    "admin_default": true,
-    "masked_fields": [
-      "username",
-      "email",
-      "display name",
-      "student ID"
-    ],
-    "reveal": "Hover or focus a masked value to reveal it.",
-    "toggle": "The Privacy mode control in the sidebar.",
-    "scope": [
-      "Admin users table",
-      "Pending approvals",
-      "Active sessions",
-      "Unregistered users",
-      "VPN peers",
-      "User details dialog",
-      "Edit account dialog",
-      "Instructor learner tables",
-      "Activity actor names"
-    ],
-    "note": "Privacy mode is a visual control for screen sharing and shoulder-surfing. An authorised admin's API responses still contain the real values."
-  },
   "components": {
     "backend": [
       {
@@ -567,7 +544,7 @@
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
       "bytes": 92147,
-      "sha256": "c195133d498fa5c60c6b16039882dbcd28065e64e1f559d939a29a3a2c7a8e4d"
+      "sha256": "8f322b627106c1428695c78e6208710d22256d790ddec5998d4880ad4dd0cfec"
     }
   ]
 }
