@@ -354,6 +354,13 @@ patch_wiki_courses_volume() {
         return 0
     fi
 
+    # The current production stack uses a single wiki_data volume and a
+    # wiki-builder profile. Do not add the legacy wiki_courses/wiki_html scheme.
+    if grep -q "wiki_data" "$compose_file" 2>/dev/null; then
+        log "${GREEN}✓ docker-compose.yml already uses the wiki_data volume${NC}"
+        return 0
+    fi
+
     # Skip if already patched
     if grep -q "wiki_courses" "$compose_file" 2>/dev/null; then
         log "${GREEN}✓ docker-compose.yml already has wiki_courses volume${NC}"

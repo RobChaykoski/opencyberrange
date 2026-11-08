@@ -90,7 +90,7 @@ const isActive = (item) => {
     gap: 0.15rem;
     padding: 0.3rem 0.2rem;
     border-radius: 10px;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     text-decoration: none;
     font-size: 0.68rem;
     font-weight: 600;

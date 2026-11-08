@@ -1,9 +1,17 @@
 # Using a Mobile Device
 
 The platform detects a phone-width screen and switches to a compact student
-shell. The desktop layout is still used on tablets and laptops.
+shell. The desktop layout is still used on laptops and larger tablets; a tablet
+in portrait at `768px` or below gets the mobile shell.
 
 ## What changes on a phone
+
+<figure markdown>
+
+![Mobile student shell showing the top bar, dashboard card, and bottom tab bar](img/mobile-navigation.png)
+
+<figcaption>The mobile shell replaces the sidebar with a menu button, a compact top bar, and a five-tab student bottom bar.</figcaption>
+</figure>
 
 - A top bar carries the **menu** and **theme** controls.
 - The sidebar becomes an off-canvas drawer. Open it with the menu button, close
@@ -16,7 +24,7 @@ shell. The desktop layout is still used on tablets and laptops.
 
 ## What works well
 
-- Viewing the dashboard, announcements, and progress.
+- Viewing the dashboard and progress.
 - Browsing tracks, exercises, courses, events, and the celebration wall.
 - Reading exercise briefings and launching a lab.
 - Checking RangeBox status and launching a standalone desktop.

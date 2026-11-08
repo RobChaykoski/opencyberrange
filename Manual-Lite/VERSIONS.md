@@ -9,7 +9,7 @@ adds the pages in its own supplement.
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|
 | Community / Academic | 2.4.0 profile (1.1.x maintenance) | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
-| Professional | 2.4.0 | [Professional supplement](09_Professional/index.md) | Learning analytics, cross-course reports, competency evidence, feedback, radar reporting, exercise health, and intervention signals |
+| Professional | 2.4.0 | [Professional supplement](09_Professional/index.md) | Analytics and reporting preview; competency evidence, feedback, exercise health, and intervention signals are planned |
 | Enterprise | 2.4.0 preview | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, SSO, enterprise reporting, multi-tenancy, LMS/SIS integration, and compliance reporting |
 
 ## How to use the manuals

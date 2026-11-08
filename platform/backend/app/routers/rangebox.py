@@ -93,7 +93,9 @@ async def rangebox_capacity(
         "running": running,
         "max": maximum,
         "available": (
-            running < maximum and docker_manager.has_rangebox_memory_headroom()
+            running < maximum
+            and docker_manager.has_rangebox_memory_headroom()
+            and docker_manager.has_rangebox_disk_headroom()
         ),
     }
 

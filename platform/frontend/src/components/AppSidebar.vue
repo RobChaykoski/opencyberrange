@@ -8,6 +8,9 @@
     }"
     :inert="isMobile && !mobileOpen"
     :aria-hidden="isMobile && !mobileOpen ? 'true' : undefined"
+    :role="isMobile && mobileOpen ? 'dialog' : undefined"
+    :aria-modal="isMobile && mobileOpen ? 'true' : undefined"
+    :aria-label="isMobile && mobileOpen ? 'Navigation' : undefined"
   >
     <!-- Brand -->
     <div class="sidebar__brand">

@@ -7,9 +7,8 @@ to download separately and no cloud account to create.
 
 The operator (you) is both the instructor and the administrator. Lite allows one
 privileged account, up to five active courses, and an unlimited number of
-students. It ships **121 exercises across four tracks** (Windows, Linux, Web, and
-Network), all of which run as Docker containers with no KVM or hardware
-virtualization required.
+students. It ships **148 exercises across 11 tracks**, all of which run as
+Docker containers with no KVM or hardware virtualization required.
 
 A local install is the verified path. A cloud install has not been verified end
 to end; expect to adjust firewall rules and the VPN endpoint to suit your
@@ -28,7 +27,9 @@ provider.
 
 - A clean Ubuntu 24.04 LTS host (recommended) or Ubuntu 22.04 LTS with sudo access.
 - Docker and Docker Compose (the installer installs them if missing).
-- At least 4 CPU cores, 8 GB RAM, and 40 GB free disk for a small class.
+- At least 4 CPU cores. Use **8 GB RAM** to kick the tires without RangeBox,
+  **16 GB RAM and 100 GB disk** for a small class, and **32 GB RAM / 500 GB
+  disk** for a production classroom with prebuilt images.
 - Outbound internet access for the first install (to pull base images).
 
 See [Prerequisites and Sizing](../../Manual-Lite/00_Server_Deployment/01_Prerequisites.md)

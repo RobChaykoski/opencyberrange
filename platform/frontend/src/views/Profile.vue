@@ -331,10 +331,10 @@
         >
           <div class="profile-panel__actions">
             <button type="button" class="btn btn--secondary btn--sm" :disabled="careerExporting" @click="downloadCareerProfile('md')">
-              Download career profile (.md)
+              Download career profile (Markdown)
             </button>
             <button type="button" class="btn btn--secondary btn--sm" :disabled="careerExporting" @click="downloadCareerProfile('html')">
-              Download printable profile (.html)
+              Download career profile (printable HTML)
             </button>
           </div>
           <p v-if="careerExportMessage" :class="careerExportError ? 'error-message' : 'success-message'">
@@ -1061,6 +1061,13 @@ const setTab = (tab) => {
   const query = { ...route.query, tab }
   if (tab === 'overview') delete query.tab
   router.replace({ query })
+  nextTick(() => {
+    document.getElementById(`profile-tab-${tab}`)?.scrollIntoView({
+      inline: 'nearest',
+      block: 'nearest',
+      behavior: 'smooth',
+    })
+  })
 }
 
 const moveTabTo = (tab) => {
@@ -1892,6 +1899,12 @@ onMounted(() => {
   fetchUserInfo()
   fetchSummary()
   fetchEnrolledCourses()
+  nextTick(() => {
+    document.getElementById(`profile-tab-${activeTab.value}`)?.scrollIntoView({
+      inline: 'nearest',
+      block: 'nearest',
+    })
+  })
 
   // Window focus covers clicking back into the browser from another app,
   // which does not fire visibilitychange (the tab was never hidden).
@@ -3731,6 +3744,7 @@ watch(() => route.path, (newPath) => {
   }
 
   .profile-tab {
+    min-height: 44px;
     padding: 0.6rem 0.65rem;
   }
 

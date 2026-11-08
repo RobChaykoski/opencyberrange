@@ -4,7 +4,7 @@ To reach a lab target from your own machine, you connect through a WireGuard VPN
 
 ## Two ways to reach a lab
 
-Every lab runs on an isolated network that is not exposed to the public internet. You bridge into that network in one of two ways: the VPN, or the standalone RangeBox tab.
+Every lab runs on an isolated network that is not exposed to the public internet. You bridge into that network in one of two ways: the VPN, or RangeBox launched from inside the exercise.
 
 <figure markdown>
 
@@ -15,7 +15,7 @@ Every lab runs on an isolated network that is not exposed to the public internet
 
 The VPN Configuration card lets you download a WireGuard configuration file, install WireGuard locally, and bring up the tunnel. Your own terminal, browser, and tools then reach the lab targets directly. You need local administrator or sudo rights to install WireGuard and raise the interface.
 
-The **RangeBox** tab in the sidebar launches a Kali, Ubuntu, or REMnux desktop that runs in the platform and appears in your browser tab. No VPN, no installs, and no admin rights on your own machine. RangeBox is capacity limited: the tab shows deployed boxes against the maximum, and the launch button is disabled when the pool is full.
+The **RangeBox** tab in the sidebar launches a standalone Kali, Ubuntu, or REMnux desktop for practice and tool access. It is not attached to a lab. To work an exercise with the lab network and flag dock, launch RangeBox from that exercise. No VPN, installs, or admin rights are needed either way. RangeBox is capacity limited: the tab shows deployed boxes against the maximum, and the launch button is disabled when the pool is full.
 
 ## VPN data path
 

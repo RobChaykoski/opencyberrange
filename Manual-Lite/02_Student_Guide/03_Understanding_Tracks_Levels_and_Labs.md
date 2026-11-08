@@ -8,7 +8,7 @@ The platform organizes every exercise into three tiers: tracks, levels, and labs
 
 ## The three tiers
 
-A **track** is a full subject path, such as Windows, Linux, AI Hacking, Networking, Bean & Byte, or Network Security. Each track has its own color and icon and contains an ordered set of levels.
+A **track** is a full subject path, such as Windows, Linux, AI Hacking, Networking, Software Security, or Network Security. Each track has its own color and icon and contains an ordered set of levels.
 
 A **level** is a stage inside a track, numbered in order. Each level holds an ordered set of labs and reports its own completion count.
 

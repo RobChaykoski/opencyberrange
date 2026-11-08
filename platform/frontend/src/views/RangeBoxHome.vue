@@ -26,7 +26,7 @@
               Launch a desktop for practice, tool access, or checking connectivity.
             </p>
           </div>
-          <span class="rangebox-badge" :class="statusBadgeClass">{{ statusLabel }}</span>
+          <span class="rangebox-badge" :class="statusBadgeClass" aria-live="polite">{{ statusLabel }}</span>
         </div>
 
         <div class="rangebox-status">
@@ -192,6 +192,9 @@ const launch = async () => {
 }
 
 const stop = async () => {
+  if (!window.confirm('Stop this RangeBox? Any unsaved work in the desktop will be lost.')) {
+    return
+  }
   loading.value = true
   errorMessage.value = ''
   status.value = 'stopping'
@@ -300,8 +303,8 @@ onMounted(() => {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #fff;
+  background: var(--success);
+  color: #052e16;
 }
 
 .rangebox-home__mark svg {
@@ -328,7 +331,7 @@ onMounted(() => {
 .rangebox-home__subtitle {
   margin: 0;
   max-width: 62ch;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .rangebox-card {
@@ -356,7 +359,7 @@ onMounted(() => {
 
 .rangebox-card__description {
   margin: 0;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -366,7 +369,7 @@ onMounted(() => {
   border-radius: 999px;
   border: 1px solid var(--border-color);
   background: var(--bg-primary);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 600;
 }
@@ -405,7 +408,7 @@ onMounted(() => {
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .rangebox-status__value {
@@ -437,7 +440,7 @@ onMounted(() => {
   padding: 0.3rem 0.75rem;
   border: none;
   background: var(--bg-primary);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -455,8 +458,8 @@ onMounted(() => {
 }
 
 .rangebox-image-toggle__btn--active {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #fff;
+  background: var(--success);
+  color: #052e16;
 }
 
 .rangebox-card__actions {
@@ -472,28 +475,28 @@ onMounted(() => {
 }
 
 .btn--rangebox {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #fff;
+  background: var(--success);
+  color: #052e16;
 }
 
 .btn--rangebox:hover:not(:disabled) {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: #16a34a;
   transform: translateY(-1px);
 }
 
 .btn--stop {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: #b91c1c;
   color: #fff;
 }
 
 .btn--stop:hover:not(:disabled) {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: #991b1b;
   transform: translateY(-1px);
 }
 
 .btn--disabled {
   background: var(--bg-tertiary);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   cursor: not-allowed;
 }
 
@@ -520,7 +523,7 @@ onMounted(() => {
   margin: 0;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.875rem;
   line-height: 1.55;
 }
@@ -553,7 +556,7 @@ onMounted(() => {
 
 .rangebox-mobile-note p {
   margin: 0 0 1rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.55;
 }

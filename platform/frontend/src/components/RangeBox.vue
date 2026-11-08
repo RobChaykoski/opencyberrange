@@ -38,6 +38,15 @@
         <button @click="toggleFullscreen" class="rangebox__btn" :title="isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'">
           {{ isFullscreen ? 'Exit FS' : 'Fullscreen' }}
         </button>
+        <button
+          v-if="showClose"
+          @click="closeViewer"
+          class="rangebox__btn rangebox__btn--close"
+          title="Close RangeBox"
+          aria-label="Close RangeBox"
+        >
+          Close
+        </button>
       </div>
     </div>
 
@@ -115,6 +124,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { isAdmin } from '../utils/roles'
 import { usePoll } from '../composables/usePoll'
@@ -127,7 +137,10 @@ const props = defineProps({
   statusData: { type: Object, default: null },
   // Lab metadata for the in-window flag/IP dock (exercise RangeBox only).
   labContext: { type: Object, default: null },
+  showClose: { type: Boolean, default: false },
 })
+
+const router = useRouter()
 
 // State
 const vncContainer = ref(null)
@@ -380,6 +393,14 @@ const toggleCollapse = () => {
 
 const toggleClipboard = () => {
   showClipboard.value = !showClipboard.value
+}
+
+const closeViewer = () => {
+  if (window.history.length > 1) {
+    router.back()
+  } else {
+    router.push('/exercises')
+  }
 }
 
 const submitFlag = async () => {
@@ -830,6 +851,29 @@ watch(() => props.sessionId, (newVal, oldVal) => {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.rangebox__btn--close {
+  margin-left: 0.35rem;
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  color: var(--danger);
+}
+
+.rangebox__btn--close:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rangebox__spinner,
+  .rangebox__status--connecting .rangebox__status-dot,
+  .rangebox__impersonate-badge,
+  .rangebox__timer--warning {
+    animation: none;
+  }
+  .rangebox__btn {
+    transition: none;
+  }
 }
 </style>
 

@@ -637,7 +637,7 @@ async def join_course(
     db.flush()  # so _ensure_scope_token can see the row
     _ensure_scope_token(db, enrollment)
     db.commit()
-    logger.info(f"User {current_user.username} enrolled in {course.code} (scope_token={enrollment.scope_token})")
+    logger.info(f"User {current_user.username} enrolled in {course.code}")
 
     log_activity(db, EventTypes.COURSE_ENROLLED,
                   actor_id=current_user.id, target_type="course",

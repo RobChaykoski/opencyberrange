@@ -157,9 +157,10 @@ def build_career_dossier(db: Session, user: User) -> dict:
         1 for row in completed
         if str(row["difficulty"]).lower() in {"advanced", "expert"}
     )
-    recommended = [row for row in dna["affinities"] if row["recommended"]]
-    if not recommended:
-        recommended = dna["affinities"][:1]
+    recommended = [
+        row for row in dna["affinities"]
+        if row["recommended"] and row.get("evidence_count", 0) > 0
+    ]
 
     next_steps = []
     for affinity in recommended[:2]:

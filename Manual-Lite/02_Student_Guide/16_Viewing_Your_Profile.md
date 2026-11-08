@@ -59,8 +59,8 @@ The five traits are:
 
 Your highest trait becomes your **class**: Pathfinder, Artificer, Warden,
 Seeker, or Commander. Each trait has a score from 0 to 100 and a tier from
-Initiate to Master. The numbers describe what you have practised; they are not a
-grade or a ranking.
+**Unranked** (no activity yet) through Initiate to Master. The numbers describe
+what you have practised; they are not a grade or a ranking.
 
 Below the traits, **Practice affinities** shows where your completed labs point
 next. It covers Offensive Security / Penetration Testing, Defensive Security /
@@ -82,6 +82,19 @@ references only; their content is not copied into the platform.
 Achievements also unlock cosmetic **titles**. Open **Title collection**, choose
 an unlocked title, and select **Equip**. Select **Clear** to return to your class
 title. Hidden titles show as **Secret title** until you unlock them.
+
+## Career profile exports
+
+The Skill tree tab offers two career-profile downloads:
+
+- **Download career profile (Markdown)** for a portable text summary.
+- **Download career profile (printable HTML)** for a print-ready copy.
+
+Both contain your Cyber DNA, learning evidence, reflection questions, and
+external resource links. They are separate from the **Download PDF** transcript
+on the Learning record tab. Career profiles are conversation aids, not job
+labels or certifications. The export is logged for accountability and is not
+shared with anyone automatically.
 
 Your DNA updates as you complete labs and earn badges. A new account starts as a
 Recruit; open an exercise to begin.

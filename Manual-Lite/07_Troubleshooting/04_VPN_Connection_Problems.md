@@ -16,14 +16,17 @@ The VPN page lives at `/vpn-setup`. You download a `.conf` file and bring the tu
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| Tunnel comes up but no recent handshake | The relay or a firewall is blocking the path | Bring the tunnel down and up again; if it persists, re-download the config so your peer is re-registered |
+| Tunnel comes up but no recent handshake | The relay or a firewall is blocking the path | Bring the tunnel down and up again. Re-downloading returns the same peer config; if the handshake still fails, ask an administrator to **Sync VPN** |
 | Tunnel will not start at all | Another active VPN is hijacking your routing | Disconnect any other VPN, then bring this tunnel up |
 | Connected but cannot reach any target | The lab is not in the running status, so there is nothing to reach | Launch the lab and confirm it shows running, then retry. See [Cannot Reach Lab Target](05_Cannot_Reach_Lab_Target.md) |
-| Worked earlier, fails after re-download | Re-registering the peer rotates keys, so an old config is stale | Use the freshly downloaded config and reconnect |
+| Worked earlier, fails after re-download | The peer was re-registered, so the old file no longer matches | Use the latest downloaded config and reconnect. Re-downloading alone does not rotate keys |
 | Status shows no peer after a long gap | Your peer needs a re-sync | An administrator can re-register your peer with **Sync VPN**, which also refreshes firewall rules |
 
 !!! tip
-    Re-downloading the config and reconnecting fixes most stuck tunnels, because each download re-registers your peer and rotates the keys the relay expects.
+    Reconnect first. Re-downloading the config returns the same peer key and IP unless an administrator has re-registered the peer or the peer is missing. If the tunnel still fails, use the VPN troubleshooting page or switch to RangeBox from inside the exercise.
+
+!!! note "USB/443 fallback is Linux-only"
+    The `wstunnel` fallback on port 443 is included only in the Linux command-line setup. The Windows and macOS WireGuard apps do not start it automatically; on a network that blocks UDP, use RangeBox from inside the exercise instead.
 
 !!! warning
     Two active VPN tunnels fight over the routing table. Disconnect every other VPN before bringing the platform tunnel up.

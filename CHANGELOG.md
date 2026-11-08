@@ -33,6 +33,26 @@ No changes yet.
 > **Tag note:** the legacy history already contains published `v2.2.0` through
 > `v2.3.2` tags. This release uses `v2.4.0` so no existing tag is moved.
 
+### Review remediation
+- Rejected placeholder `JWT_SECRET` and `SETUP_TOKEN` values at startup.
+- Added a shared security-headers snippet to the SPA entry point and deep-link
+  fallback, including CSP, HSTS, frame, MIME, referrer, permissions, and robots
+  controls.
+- Made the installer copy the checked-in production Compose stack, aligned the
+  systemd project name, and raised the start timeout.
+- Made host isolation fail closed when firewall rules cannot be verified.
+- Added the mobile notice/opt-in to exercise-attached RangeBox, a Close action,
+  `100dvh`, and safe-area padding.
+- Added a mobile drawer focus trap, skip link, contrast-safe navigation tokens,
+  and a guest theme control.
+- Moved RangeBoxHome onto the shared token palette and added a stop confirmation.
+- Fixed the zero-evidence career recommendation and added evidence counts to
+  practice affinities.
+- Added CPU and disk headroom to RangeBox admission.
+- Removed scope tokens from logs.
+- Refreshed manual screenshots, publication labels, sizing guidance, VPN key
+  guidance, and the architecture diagrams.
+
 ### Branding
 - Rebranded the user-facing platform as **SWOCTS Cyber Range** with the SWOCTS
   crest as the primary mark and title.

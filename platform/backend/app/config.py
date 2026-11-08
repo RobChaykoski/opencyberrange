@@ -2,7 +2,6 @@
 Application configuration
 """
 
-import os
 from pydantic_settings import BaseSettings
 
 
@@ -12,6 +11,7 @@ class Settings(BaseSettings):
     
     # JWT - MUST be set via environment variable (generate with: python3 -c "import secrets; print(secrets.token_urlsafe(64))")
     JWT_SECRET: str = ""
+    SETUP_TOKEN: str = ""
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
     
@@ -56,6 +56,22 @@ class Settings(BaseSettings):
 settings = Settings()
 
 
+_PLACEHOLDER_SECRET_MARKERS = (
+    "change_me",
+    "change-me",
+    "change-in-production",
+    "your-super-secret",
+    "placeholder",
+    "example",
+)
+
+
+def _is_placeholder_secret(value: str) -> bool:
+    """True when a secret still contains an obvious template marker."""
+    lowered = str(value or "").strip().lower()
+    return any(marker in lowered for marker in _PLACEHOLDER_SECRET_MARKERS)
+
+
 def validate_settings():
     """
     Validate critical security settings on startup.
@@ -84,12 +100,20 @@ def validate_settings():
             "Generate with: python3 -c \"import secrets; print(secrets.token_urlsafe(64))\""
         )
     elif len(settings.JWT_SECRET) < 32:
-        warnings.append(
-            "JWT_SECRET should be at least 32 characters for security."
+        errors.append(
+            "JWT_SECRET must be at least 32 characters for security."
         )
-    elif "change-in-production" in settings.JWT_SECRET.lower() or settings.JWT_SECRET == "your-super-secret-jwt-key":
-        warnings.append(
-            "JWT_SECRET contains a default/placeholder value. Set a secure random secret for production."
+    elif _is_placeholder_secret(settings.JWT_SECRET):
+        errors.append(
+            "JWT_SECRET contains a default/placeholder value. "
+            "Generate a unique random secret before starting the platform."
+        )
+
+    # Validate SETUP_TOKEN when the operator chose to gate first-run setup.
+    if settings.SETUP_TOKEN and _is_placeholder_secret(settings.SETUP_TOKEN):
+        errors.append(
+            "SETUP_TOKEN contains a default/placeholder value. "
+            "Generate a unique random token before starting the platform."
         )
     
     # Validate LABS_HOST_PATH

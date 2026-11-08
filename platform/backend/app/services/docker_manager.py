@@ -7,6 +7,7 @@ import docker
 import yaml
 import logging
 import os
+import shutil
 import socket
 import subprocess
 import tempfile
@@ -2604,6 +2605,8 @@ fi
     }
     RANGEBOX_MEM_LIMIT = os.environ.get("RANGEBOX_MEM_LIMIT", "2g")
     RANGEBOX_CPU_QUOTA = int(os.environ.get("RANGEBOX_CPU_QUOTA", "50000"))  # 0.5 CPU
+    RANGEBOX_CPU_RESERVE_CORES = float(os.environ.get("RANGEBOX_CPU_RESERVE_CORES", "2"))
+    RANGEBOX_MIN_FREE_DISK_GB = float(os.environ.get("RANGEBOX_MIN_FREE_DISK_GB", "10"))
     RANGEBOX_NOVNC_PORT = 6080  # websockify port inside the container
     # RangeBox concurrency is computed live from free memory (see the
     # MAX_CONCURRENT_RANGEBOXES property) so the meter can never authorize more
@@ -2753,9 +2756,26 @@ fi
         total = self._mem_total_bytes()
         if total <= 0:
             # /proc/meminfo unreadable: do not authorize growth beyond what runs.
-            return max(self._count_running_rangeboxes(), 1)
-        usable = max(0, total - self._rangebox_reserve_bytes)
-        return max(1, min(self.RANGEBOX_MAX_CEILING, int(usable // self._rangebox_per_box_bytes)))
+            memory_cap = max(self._count_running_rangeboxes(), 1)
+        else:
+            usable = max(0, total - self._rangebox_reserve_bytes)
+            memory_cap = max(1, int(usable // self._rangebox_per_box_bytes))
+        cpu_count = os.cpu_count() or 0
+        cores_per_box = max(0.1, self.RANGEBOX_CPU_QUOTA / 100000)
+        cpu_cap = (
+            max(1, int(max(0, cpu_count - self.RANGEBOX_CPU_RESERVE_CORES) / cores_per_box))
+            if cpu_count
+            else self.RANGEBOX_MAX_CEILING
+        )
+        return max(1, min(self.RANGEBOX_MAX_CEILING, memory_cap, cpu_cap))
+
+    def has_rangebox_disk_headroom(self) -> bool:
+        """True when the host has enough free disk for another desktop."""
+        try:
+            free = shutil.disk_usage(tempfile.gettempdir()).free
+        except OSError:
+            return True
+        return free >= int(self.RANGEBOX_MIN_FREE_DISK_GB * (1024 ** 3))
 
     def has_rangebox_memory_headroom(self) -> bool:
         """True when live free memory can fit one more RangeBox.
@@ -2782,6 +2802,29 @@ fi
             raise RangeBoxCapacityError(
                 "Server is low on free memory; stop another RangeBox or workload "
                 "before launching a new one"
+            )
+        if not self.has_rangebox_disk_headroom():
+            raise RangeBoxCapacityError(
+                "Server is low on free disk; free space before launching another RangeBox"
+            )
+
+    def _ensure_spawn_isolation(self):
+        """Fail closed when host isolation rules cannot be verified.
+
+        A RangeBox or lab must never start on a host whose DOCKER-USER rules
+        could not be installed. Logging a warning and continuing would allow
+        the new containers to reach the management LAN.
+        """
+        results = self.ensure_lab_network_isolation() + self.ensure_inbound_isolation()
+        failed = [r for r in results if r.get("action") == "failed"]
+        if failed:
+            detail = "; ".join(
+                f"{r.get('rule', 'unknown')}: {r.get('error', 'failed')}" for r in failed[:4]
+            )
+            logger.error("Host isolation could not be verified: %s", detail)
+            raise RuntimeError(
+                "Host isolation could not be verified. Refusing to spawn a lab "
+                "container until the firewall rules can be applied."
             )
 
     def _resolve_rangebox_image(self, image: Optional[str] = None) -> str:
@@ -2907,8 +2950,9 @@ fi
                 if row and row[0]:
                     env["OCR_SCOPE_TOKEN"] = row[0].strip()
                     logger.info(
-                        f"Injecting OCR_SCOPE_TOKEN={env['OCR_SCOPE_TOKEN']} "
-                        f"into RangeBox for user {user_id} / lab {lab_slug}"
+                        "Injecting OCR_SCOPE_TOKEN (prefix %s…) "
+                        "into RangeBox for user %s / lab %s",
+                        env["OCR_SCOPE_TOKEN"][:2], user_id, lab_slug,
                     )
         except Exception as e:
             logger.warning(f"Could not look up scope_token for user={user_id} lab={lab_slug}: {e}")
@@ -2930,8 +2974,7 @@ fi
 
         self._check_rangebox_capacity()
 
-        self.ensure_lab_network_isolation()
-        self.ensure_inbound_isolation()
+        self._ensure_spawn_isolation()
 
         container_name = self._rangebox_container_name(user_id, lab_slug)
 
@@ -3482,8 +3525,7 @@ fi
             return None
 
         self._check_rangebox_capacity()
-        self.ensure_lab_network_isolation()
-        self.ensure_inbound_isolation()
+        self._ensure_spawn_isolation()
 
         container_name = f"rangebox_{user_id}_standalone"
 

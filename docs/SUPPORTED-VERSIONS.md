@@ -8,7 +8,8 @@ Last reviewed: **2026-11-08**. Current **platform release: 2.4.0** for this
 tree. **Community / Academic**, **Professional**, and **Enterprise** are edition
 profiles on that release, not separate platform version lines. **Community /
 Academic 1.1.3** remains a supported maintenance line for existing single-host
-installations. See [Editions](EDITIONS.md) and
+installations. See [Editions](EDITIONS.md),
+[Release tags](RELEASES.md), and
 [ADR 0004](decisions/0004-single-platform-release-version.md).
 
 The separate HA control-plane repository has its own version and is described by

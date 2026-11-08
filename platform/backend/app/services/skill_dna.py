@@ -491,6 +491,7 @@ def _affinities(signals: dict) -> list[dict]:
             "next_step": spec.next_step,
             "recommended": False,
             "_count": count,
+            "evidence_count": count,
         })
 
     rows.sort(

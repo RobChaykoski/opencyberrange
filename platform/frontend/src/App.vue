@@ -6,8 +6,10 @@
       'app-root--impersonating': isImpersonating,
       'app-root--sidebar-collapsed': sidebarCollapsed,
       'app-root--nav-open': mobileNavOpen,
+      'app-root--authenticated': isAuthenticated,
     }"
   >
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Impersonation Banner -->
     <ImpersonationBanner />
 
@@ -40,11 +42,14 @@
         @click="closeMobileNav"
       ></div>
       <main
+        id="main-content"
+        tabindex="-1"
         class="main-content"
         :class="{
           'main-content--mobile': isMobile,
           'main-content--with-tabbar': isMobile && isStudent,
         }"
+        :inert="isMobile && mobileNavOpen"
       >
         <header v-if="isMobile" class="mobile-topbar">
           <button
@@ -161,11 +166,36 @@ const closeMobileNav = () => {
 }
 
 const onGlobalKeydown = (event) => {
-  if (event.key === 'Escape' && mobileNavOpen.value) closeMobileNav()
+  if (!mobileNavOpen.value) return
+  if (event.key === 'Escape') {
+    closeMobileNav()
+    return
+  }
+  if (event.key !== 'Tab' || !isMobile.value) return
+
+  const sidebar = document.querySelector('.sidebar')
+  if (!sidebar) return
+  const focusable = [...sidebar.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )].filter((el) => el.offsetParent !== null)
+  if (!focusable.length) return
+
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
 }
 
 watch(() => router.currentRoute.value.fullPath, () => {
   mobileNavOpen.value = false
+  nextTick(() => {
+    document.getElementById('main-content')?.focus({ preventScroll: true })
+  })
 })
 
 watch(isMobile, (value) => {
@@ -322,7 +352,7 @@ if (typeof window !== 'undefined') {
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --nav-label: #475569;
+  --nav-label: #94a3b8;
   --hover-bg: rgba(51, 65, 85, 0.5);
   --hover-text: #f1f5f9;
   --accent-bg: rgba(59, 130, 246, 0.1);
@@ -346,7 +376,7 @@ if (typeof window !== 'undefined') {
   --success: #16a34a;
   --warning: #d97706;
   --danger: #dc2626;
-  --nav-label: #94a3b8;
+  --nav-label: #64748b;
   --hover-bg: rgba(0, 0, 0, 0.05);
   --hover-text: #0f172a;
   --accent-bg: rgba(59, 130, 246, 0.1);
@@ -671,10 +701,40 @@ body {
 }
 
 /* Keep the fixed desktop theme switch out of the mobile top bar; the mobile
-   header carries its own theme control. */
+   header carries its own theme control. Guest pages have no mobile header, so
+   they keep the fixed switch. */
 @media (max-width: 768px) {
-  .theme-toggle {
+  .app-root--authenticated .theme-toggle {
     display: none;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0.75rem;
+  z-index: 1000;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

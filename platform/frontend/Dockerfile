@@ -41,6 +41,7 @@ COPY binaries/ /usr/share/nginx/downloads/
 # Copy nginx configuration (HTTP default + SSL variant)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY nginx-ssl.conf /etc/nginx/conf.d/nginx-ssl.conf
+COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
 
 # Entrypoint auto-detects TLS certs and swaps config
 COPY docker-entrypoint.sh /docker-entrypoint.sh

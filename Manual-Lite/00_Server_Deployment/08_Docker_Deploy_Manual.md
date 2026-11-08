@@ -42,6 +42,7 @@ backend as `/labs`.
 - Git
 - Current platform versions are listed under [Platform versions](01_Prerequisites.md#platform-versions)
 - 4+ CPU cores, 32 GB RAM minimum, 500 GB disk for a production classroom
+  (16 GB / 100 GB for a small class with RangeBox disabled)
 - Ports `80/tcp` and `443/tcp` open
 - Port `51820/udp` open only if students will use the built-in WireGuard VPN
 - A DNS name or static IP students can reach

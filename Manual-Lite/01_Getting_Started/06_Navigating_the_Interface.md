@@ -8,7 +8,7 @@ The interface is a left sidebar plus a main content area, and nearly everything 
 
 ## Layout
 
-The platform places all navigation in a left sidebar. There is no top navigation bar. The only other global elements are a floating theme toggle in the top-right corner and, when an admin is viewing the platform as another user, an impersonation banner across the top.
+The platform places primary navigation in a left sidebar on desktop. There is no desktop top navigation bar. The only other global elements are a floating theme toggle in the top-right corner and, when an admin is viewing the platform as another user, an impersonation banner across the top. On a phone-width screen the sidebar becomes an off-canvas menu drawer, and a compact top bar carries the menu and theme controls plus a student bottom tab bar.
 
 <figure markdown>
 
@@ -24,6 +24,7 @@ flowchart TB
   App[App layout] --> Banner[Impersonation banner]
   App --> Theme[Theme toggle]
   App --> Sidebar[Left sidebar]
+  App --> Mobile[Mobile top bar and tabs]
   App --> Main[Main content area]
   Main --> DR{Role}
   DR -->|student| SD[Student dashboard]
@@ -36,11 +37,11 @@ The sidebar groups links into sections. You see only the sections your role allo
 
 | Section | Links | Who sees it |
 | --- | --- | --- |
-| Ops Center | Dashboard, RangeBox, VPN Setup | Everyone |
+| Ops Center | Dashboard, RangeBox, Celebration Wall, Events, VPN Setup | Everyone |
 | Academy | Courses, Exercises, and Activities when that module is enabled | Everyone |
 | Team Challenges | Optional module links, each shown only when an admin enables that module | Everyone, when a module is enabled |
 | Instructor | My Courses, Exercises, Surveys, and Reports & analytics (instructors only) | Instructors and admins |
-| Admin | Users, Courses, Exercises, Live activity, Reports & analytics, System, Settings, Workbook | Admins only |
+| Admin | Users, Courses, Exercises, Live activity, Reports & analytics, System, Settings, Workbooks, User Manual | Admins only |
 
 **Reports & analytics** opens at `/reports` and is not an Admin Panel tab. Admins see it in the Admin section; instructors see it in the Instructor section. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
 

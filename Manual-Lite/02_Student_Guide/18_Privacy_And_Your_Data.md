@@ -1,11 +1,11 @@
 # Privacy and Your Data
 
 You can download a copy of your account data or delete your account from
-**Profile → Privacy and data**.
+**Profile > Security & privacy > Privacy and data**.
 
 ## Download your data
 
-1. Open your profile.
+1. Open your profile and select the **Security & privacy** tab.
 2. Scroll to **Privacy and data**.
 3. Click **Download my data**.
 
@@ -20,7 +20,7 @@ access request".
 
 Deletion is immediate and cannot be undone.
 
-1. Open **Profile → Privacy and data**.
+1. Open **Profile > Security & privacy > Privacy and data**.
 2. Click **Delete my account**.
 3. Enter your current password.
 4. If MFA is enabled, enter an authenticator or recovery code.

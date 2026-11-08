@@ -51,10 +51,12 @@ MAX_CONCURRENT_RANGEBOXES=20
 ```
 
 The capacity check now uses a cross-worker lock, so concurrent launches cannot
-overshoot the configured maximum. Use the RangeBox tab's **Deployed** count to
-confirm the live number. A container is counted from the moment Docker creates
-it, so a desktop that is still starting is already included rather than briefly
-showing as zero.
+overshoot the configured maximum. It also takes the minimum of memory, CPU, and
+disk headroom: `RANGEBOX_CPU_RESERVE_CORES` (default `2`) and
+`RANGEBOX_MIN_FREE_DISK_GB` (default `10`) prevent a host from being filled by
+desktops alone. Use the RangeBox tab's **Deployed** count to confirm the live
+number. A container is counted from the moment Docker creates it, so a desktop
+that is still starting is already included rather than briefly showing as zero.
 
 ## Reproducing
 

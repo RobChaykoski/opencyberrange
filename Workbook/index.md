@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range Workbook
 
-SWOCTS Cyber Range is powered by SWOCTS Cyber Range.
+SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Welcome to the SWOCTS Cyber Range student workbook. Each exercise walkthrough guides you step by step, explains the underlying concepts, and prompts you to record and interpret your findings.
 
@@ -32,7 +32,6 @@ Welcome to the SWOCTS Cyber Range student workbook. Each exercise walkthrough gu
 | CH07; LDAP Enumeration | Service detection, anonymous bind, users, groups, full dump | 6 exercises |
 | CH08; Credential Reuse | Cross-service credential discovery and lateral movement | 5 exercises |
 | CH09; Complete Assessment | Multi-service exploitation and full penetration test | 3 exercises |
-| CH10; Midterm Assessment | Network enumeration and midterm assessment | 2 exercises |
 
 ### Linux Penetration Testing
 
@@ -93,6 +92,16 @@ Start the OSINT stream at
 
 Start the software-security stream at
 [CH SWSEC — Software Security](CH_SWSEC_Software_Security/00_Introduction.md).
+
+### Web Application Security
+
+| Chapter | Focus | Exercises |
+|---------|-------|-----------|
+| CH WEB1; Web Reconnaissance | Directory enumeration, technology identification, HTTP methods, headers, and subdomain discovery | 7 exercises |
+| CH WEB2; Web Exploitation | SQL injection and guided web exploitation | 2 exercises |
+
+Start the web stream at
+[CH WEB1 — Web Reconnaissance](CH_WEB01_Web_Reconnaissance/00_Introduction.md).
 
 ### Digital Forensics
 

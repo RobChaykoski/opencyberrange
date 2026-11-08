@@ -48,7 +48,7 @@ See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
 | **Community / Academic** | `2.4.0` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `2.4.0` | **Release** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Professional** | `2.4.0` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
 | **Enterprise** | `2.4.0` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
 The Community / Academic profile (1.1.3 maintenance) remains the reference

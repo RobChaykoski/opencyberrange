@@ -525,7 +525,16 @@ EOF
 # Create docker-compose.yml for platform
 create_docker_compose() {
     log "${BLUE}Creating docker-compose.yml...${NC}"
-    
+
+    # Use the checked-in production stack so the installer, deploy-updates, and
+    # the documented Compose file cannot drift apart. The fallback heredoc below
+    # exists only for a partial checkout that is missing the production file.
+    if [ -f "$PLATFORM_DIR/docker-compose.prod.yml" ]; then
+        cp "$PLATFORM_DIR/docker-compose.prod.yml" "$PLATFORM_DIR/docker-compose.yml"
+        log "${GREEN}✓ docker-compose.yml created from docker-compose.prod.yml${NC}"
+        return 0
+    fi
+
     cat > "$PLATFORM_DIR/docker-compose.yml" << 'EOF'
 services:
   db:
@@ -865,10 +874,10 @@ RemainAfterExit=yes
 WorkingDirectory=${PLATFORM_DIR}
 
 ExecStartPre=/bin/bash -c 'for i in \$(seq 1 30); do docker info >/dev/null 2>&1 && exit 0; sleep 1; done; echo "Docker daemon not ready after 30s" >&2; exit 1'
-ExecStart=/usr/bin/docker compose --project-directory ${PLATFORM_DIR} up -d --wait
-ExecStop=/usr/bin/docker compose --project-directory ${PLATFORM_DIR} down
+ExecStart=/usr/bin/docker compose --project-directory ${PLATFORM_DIR} --project-name opencyberrange up -d --wait
+ExecStop=/usr/bin/docker compose --project-directory ${PLATFORM_DIR} --project-name opencyberrange down
 
-TimeoutStartSec=120
+TimeoutStartSec=300
 TimeoutStopSec=60
 
 [Install]

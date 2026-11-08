@@ -15,7 +15,7 @@ entitlement; they are not separate version lines. See
 | Edition profile | Platform release | Status | Shape | Primary user |
 |---|---|---|---|---|
 | **Community / Academic** | 2.4.0 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
-| **Professional** | 2.4.0 | Release profile | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Professional** | 2.4.0 | Release profile — analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
 | **Enterprise** | 2.4.0 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
@@ -90,6 +90,8 @@ which remains the default and fallback.
 
 ## Feature matrix
 
+The matrix shows current delivery status by profile: **Delivered**, **Partial**, or **Planned**. Scope boundaries are described above.
+
 | Capability | Community / Academic profile | Professional profile | Enterprise preview |
 |---|---:|---:|---:|
 | Courses, labs, RangeBox, flags, hints | Yes | Yes | Yes |
@@ -100,23 +102,23 @@ which remains the default and fallback.
 | Single-host Docker Compose | Yes | Yes | Yes |
 | Ubuntu 22.04 support | Yes | Maintenance reference | No |
 | Ubuntu 24.04 support | Yes | Yes | Yes |
-| Educational analytics | No | Yes | Yes |
-| Reporting and instructor dashboards | No | Yes | Yes |
-| Cohort analysis | No | Yes | Yes |
-| Competency Framework Engine | No | Yes | Yes |
-| Student Feedback Engine | No | Yes | Yes |
-| Radar / Spider Web Reporting | No | Yes | Yes |
-| Exercise Health Analytics | No | Yes | Yes |
-| Instructor Intervention Dashboard | No | Yes | Yes |
-| Accreditation support | No | Yes | Yes |
-| Research exports | No | Yes | Yes |
-| Multi-host lab pool and control-plane HA | No | No | Yes |
-| Gateway failover | No | No | Yes |
-| LDAP / OIDC / SAML single sign-on | No | No | Yes |
-| Enterprise reporting | No | No | Yes |
-| Multi-tenant support | No | No | Yes |
-| LMS integration | No | No | Yes |
-| Regulatory and compliance reporting | No | No | Yes |
+| Educational analytics | No | Partial | Partial |
+| Reporting and instructor dashboards | No | Delivered | Delivered |
+| Cohort analysis | No | Planned | Planned |
+| Competency Framework Engine | No | Planned | Planned |
+| Student Feedback Engine | No | Planned | Planned |
+| Radar / Spider Web Reporting | No | Partial | Partial |
+| Exercise Health Analytics | No | Planned | Planned |
+| Instructor Intervention Dashboard | No | Planned | Planned |
+| Accreditation support | No | Planned | Planned |
+| Research exports | No | Partial | Partial |
+| Multi-host lab pool and control-plane HA | No | No | Planned |
+| Gateway failover | No | No | Planned |
+| LDAP / OIDC / SAML single sign-on | No | No | Partial |
+| Enterprise reporting | No | No | Planned |
+| Multi-tenant support | No | No | Planned |
+| LMS integration | No | No | Planned |
+| Regulatory and compliance reporting | No | No | Planned |
 
 ## Delivery status
 
