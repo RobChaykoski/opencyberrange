@@ -36,6 +36,13 @@ jobs:
             mkdocs-material==9.8.0 \
             pymdown-extensions==11.0.1
 
+      - name: Verify supply-chain lock
+        run: python scripts/supply_chain.py --check
+
+      - name: Report unpinned base images
+        continue-on-error: true
+        run: python scripts/supply_chain.py --check-pins
+
       - name: Validate every lab
         run: python scripts/validate-lab.py --all
 
