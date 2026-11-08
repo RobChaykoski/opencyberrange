@@ -2578,6 +2578,7 @@ async def create_lab(
         visibility=visibility,
         is_active=True,
         sort_order=next_order,
+        content_version=lab_data.get("content_version"),
     )
     db.add(lab)
     db.commit()
@@ -2856,6 +2857,7 @@ async def discover_labs(
                 # Keep the workbook field in step with lab.yaml. If the source
                 # removed it, clear the stale link instead of leaving a 404.
                 existing.workbook = lab_data.get('workbook') or None
+                existing.content_version = lab_data.get('content_version') or None
                 updated += 1
             else:
                 new_lab = Lab(
@@ -2879,6 +2881,7 @@ async def discover_labs(
                     visibility=lab_data.get('visibility', 'public') if lab_data.get('visibility') in ('draft', 'course', 'public') else 'public',
                     created_by=None,
                     workbook=lab_data.get('workbook'),
+                    content_version=lab_data.get('content_version'),
                 )
                 db.add(new_lab)
                 created += 1

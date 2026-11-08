@@ -245,6 +245,9 @@ class Lab(Base):
     validation_status = Column(String(20), nullable=True)  # ok | warning | error
     validation_errors = Column(Text, nullable=True)  # JSON array of {name, passed, message, severity}
     validated_at = Column(DateTime, nullable=True)
+    # Content version from lab.yaml. Analytics groups by this so feedback and
+    # completion from an old lab revision do not contaminate a revised lab.
+    content_version = Column(String(32), nullable=True)
     # ICS attack-coverage tags from lab.yaml ics_techniques: JSON array of
     # {tactic, technique_id, technique_name, note}. Powers the coverage matrix
     # generator and per-lab technique display.

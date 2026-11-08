@@ -174,6 +174,11 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added is_course_available column to labs table")
 
+        if 'content_version' not in labs_columns:
+            conn.execute(text("ALTER TABLE labs ADD COLUMN content_version VARCHAR(32)"))
+            conn.commit()
+            logger.info("Added content_version column to labs table")
+
         # --- Role-based access: add 'role' column to users ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'role' not in users_columns:
