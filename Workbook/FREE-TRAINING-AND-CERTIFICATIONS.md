@@ -10,8 +10,7 @@ Source: [SWOCTS Resources](https://www.swocts.com/resources), reviewed
 !!! warning "Keep learner data private"
     Do not post flags, learner names, screenshots of the platform, or course
     data on a third-party site. Use a personal account and the provider's own
-    privacy settings. The platform's
-    [privacy notice](../docs/PRIVACY-NOTICE.md) explains what stays here.
+    privacy settings. The platform's own privacy page explains what stays here.
 
 ## Match a workbook track to free practice
 
@@ -55,6 +54,6 @@ Source: [SWOCTS Resources](https://www.swocts.com/resources), reviewed
 The resources are third-party services. Link to them; do not copy their course
 content or branding into the platform. The SWOCTS page and provider terms can
 change. A free course does not guarantee a free exam, and a certificate does not
-guarantee a role. See
-[Career and certification resources](../docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
-for the curriculum mapping and review schedule.
+guarantee a role. See the
+[SWOCTS resources page](https://www.swocts.com/resources) for the current
+list.
