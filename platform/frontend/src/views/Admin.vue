@@ -8304,7 +8304,7 @@ watch(activeTab, (tab) => {
 
 .status-badge--approved {
   background: rgba(34, 197, 94, 0.15);
-  color: var(--success);
+  color: var(--badge-green);
 }
 
 .status-badge--pending {

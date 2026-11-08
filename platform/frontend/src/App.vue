@@ -391,7 +391,7 @@ if (typeof window !== 'undefined') {
   --accent: #1d4ed8;
   --badge-blue: #1d4ed8;
   --badge-slate: #475569;
-  --badge-green: #15803d;
+  --badge-green: #14532d;
   --badge-red: #b91c1c;
   --badge-amber: #92400e;
   --badge-purple: #6b21a8;
