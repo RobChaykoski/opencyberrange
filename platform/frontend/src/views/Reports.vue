@@ -201,7 +201,7 @@
             </div>
           </div>
 
-          <div class="skill-table-wrap">
+          <div class="skill-table-wrap" tabindex="0" role="region" aria-label="Skill branch evidence table">
             <table class="skill-table">
               <thead>
                 <tr>
@@ -234,7 +234,7 @@
         No active courses yet. Create a course to start collecting analytics.
       </div>
 
-      <div v-else class="reports-table-wrap">
+      <div v-else class="reports-table-wrap" tabindex="0" role="region" aria-label="Course reports table">
         <table class="reports-table">
           <caption class="sr-only">
             Cross-course learning report with each course's signal, learners,
@@ -766,6 +766,8 @@ onMounted(load)
   border: 1px solid var(--border-color);
   border-radius: 12px;
   background: var(--bg-secondary);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .skill-panel__head {
@@ -830,6 +832,7 @@ onMounted(load)
   gap: 1.25rem;
   align-items: center;
   margin-top: 0.8rem;
+  min-width: 0;
 }
 
 .skill-chart {

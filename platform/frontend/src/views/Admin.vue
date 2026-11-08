@@ -342,7 +342,7 @@
           </div>
 
           <!-- Users Table -->
-          <div class="table-container user-table-container">
+          <div class="table-container user-table-container" tabindex="0" role="region" aria-label="Users table">
             <table class="data-table user-table">
               <caption class="visually-hidden">Users with role, account status, last sign-in, and VPN registration</caption>
               <thead>
