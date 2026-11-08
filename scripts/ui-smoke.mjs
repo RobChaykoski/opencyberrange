@@ -7,7 +7,7 @@
  *   UI_SMOKE_USERNAME / UI_SMOKE_PASSWORD to log in for a short-lived token
  *
  * Optional:
- *   UI_EXPECTED_VERSION  e.g. 2.4.1
+ *   UI_EXPECTED_VERSION  e.g. 2.5.0
  *   UI_ARTIFACT_DIR      screenshot directory (default ui-smoke-artifacts)
  *   UI_BROWSER_EXECUTABLE  use a system Chromium/Edge instead of Playwright's
  *

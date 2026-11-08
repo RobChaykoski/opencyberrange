@@ -1,7 +1,7 @@
 # Career and certification resources
 
 Status: **Active curriculum guidance**
-Edition: **Community / Academic profile** (inherited by Professional 2.4.1 and
+Edition: **Community / Academic profile** (inherited by Professional 2.5.0 and
 Enterprise preview)
 Owner: Curriculum
 

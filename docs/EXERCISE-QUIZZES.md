@@ -1,6 +1,6 @@
 # Exercise Knowledge Checks
 
-Status: **Optional benchmark feature, 2.4.1**
+Status: **Optional benchmark feature, 2.5.0**
 
 Exercise knowledge checks are short, optional quizzes attached to an exercise.
 They are **benchmark practice, not exam items**. They do not affect lab access,

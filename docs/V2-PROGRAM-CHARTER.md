@@ -1,6 +1,6 @@
-﻿# SWOCTS Cyber Range Professional 2.1.4 Program Charter
+﻿# SWOCTS Cyber Range Professional 2.5.0 Program Charter
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.4.1**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 Status: **Active scope guard**
 Edition: **Professional** — Community / Academic profile plus analytics, reporting,
@@ -24,13 +24,13 @@ They are described in
 [Professional and Enterprise priorities](PROFESSIONAL-PRIORITIES.md) and are
 **Professional and Enterprise only**. They are not Community / Academic work.
 
-This charter is the source of truth for what 2.1.4 is allowed to become. If a
+This charter is the source of truth for what 2.5.0 is allowed to become. If a
 request, branch, or release note disagrees with this page, the page wins until a
 written scope change is accepted.
 
 ## Program objective
 
-Ship the **Professional 2.1.4** edition: the Community / Academic profile teaching
+Ship the **Professional 2.5.0** edition: the Community / Academic profile teaching
 platform plus the capability to **understand learning**, **evidence
 competency**, and **report on it**, while running reliably on the validated
 24.04 baseline, without turning the release into a general platform expansion.
@@ -38,9 +38,9 @@ competency**, and **report on it**, while running reliably on the validated
 Professional is not the HA, SSO, multi-tenant, LMS, or compliance-reporting
 edition. Those are **Enterprise preview**.
 
-## The 2.1.4 feature set
+## The 2.5.0 feature set
 
-Only these two workstreams may add product capability in 2.1.4:
+Only these two workstreams may add product capability in 2.5.0:
 
 | Workstream | Commitment | Evidence of success |
 |---|---|---|
@@ -48,7 +48,7 @@ Only these two workstreams may add product capability in 2.1.4:
 | **Reporting and evidence** | Cross-course reports, accreditation support, teaching-review signals, and research exports | An instructor, programme lead, or approved researcher can review a course or cohort and export the evidence |
 
 The five priority capabilities sit inside these two workstreams. Nothing else is
-a Professional 2.1.4 feature commitment. High availability, SSO, enterprise
+a Professional 2.5.0 feature commitment. High availability, SSO, enterprise
 reporting, multi-tenant support, LMS integration, and regulatory/compliance
 reporting are **Enterprise preview**; see
 [`V3-PARKING-LOT.md`](V3-PARKING-LOT.md) and [`EDITIONS.md`](EDITIONS.md).
@@ -63,13 +63,13 @@ itself. They do not become feature marketing.
 - Compatibility updates for the host OS, runtime, database, and build toolchain.
 - Documentation corrections, release notes, and operational runbooks.
 - Small accessibility or usability fixes on an existing in-scope surface.
-- Carrying forward a 1.x maintenance feature so 2.1.4 is not a functional
+- Carrying forward a 1.x maintenance feature so 2.5.0 is not a functional
   regression.
 
-A carry-forward is **not** counted as a 2.1.4 feature. The SMTP/registration email
-work shipped on 1.1 and is inherited by 2.1.4 for that reason.
+A carry-forward is **not** counted as a 2.5.0 feature. The SMTP/registration email
+work shipped on 1.1 and is inherited by 2.5.0 for that reason.
 
-## Out of scope for 2.1.4
+## Out of scope for 2.5.0
 
 These are Enterprise preview candidates unless the charter is amended:
 
@@ -103,7 +103,7 @@ These are Enterprise preview candidates unless the charter is amended:
 | R3 | CSV/PDF export for teaching review | In scope — Reporting | Shipped — CSV and PDF | Product |
 | R4 | Cohort analysis and accreditation support | In scope — Reporting | Planned | Product |
 | R5 | Research exports for approved studies | In scope — Reporting | Partial — cross-course CSV/PDF and survey package | Research |
-| H1 | Ubuntu 24.04 target for 2.1.4 | Update — required platform path | Delivered — 24.04 certified 2026-11-08 | Platform |
+| H1 | Ubuntu 24.04 target for 2.5.0 | Update — required platform path | Delivered — 24.04 certified 2026-11-08 | Platform |
 | M1 | 1.1 registration email / SMTP settings | Carry-forward from 1.1 | Inherited | Maintenance |
 | M2 | Certificate input hardening | Bug fix | Shipped | Security |
 | M3 | Version identity endpoint and footer | Update - operational | Shipped | Platform |
@@ -132,9 +132,9 @@ workspace now leads with **Overview**, **Content**, **Feedback**, and
 
 ## Change control
 
-### Adding a feature to 2.1.4
+### Adding a feature to 2.5.0
 
-A new 2.1.4 feature needs a written change request with:
+A new 2.5.0 feature needs a written change request with:
 
 1. The user and the behaviour it changes.
 2. The workstream: analytics or reporting.
@@ -162,7 +162,7 @@ workflow, it is a feature and returns to change control.
 Add it to `docs/V3-PARKING-LOT.md` with:
 
 - the problem it solves;
-- why it is not needed for 2.1.4;
+- why it is not needed for 2.5.0;
 - what would have to be true to schedule it;
 - the risk of waiting.
 
@@ -177,7 +177,7 @@ Add it to `docs/V3-PARKING-LOT.md` with:
 
 ## Release gate
 
-A 2.1.4 release is ready only when:
+A 2.5.0 release is ready only when:
 
 - every shipped feature maps to A, R, or H;
 - no unregistered feature shipped;
@@ -186,6 +186,6 @@ A 2.1.4 release is ready only when:
 - the README, release notes, and register agree;
 - H1 (24.04) is frozen and recorded in the support matrix.
 
-**Current status:** analytics and reporting are delivered and running on the
-24.04 preview host. 2.1.4 GA is blocked only by H1 (network/lab/recovery gates).
-HA is an Enterprise preview workstream and is not a 2.1.4 release gate.
+**Current status:** analytics, reporting, the course workspace, and the
+feedback engine are delivered on the certified Ubuntu 24.04 host. H1 is complete.
+HA is an Enterprise preview workstream and is not a 2.5.0 release gate.

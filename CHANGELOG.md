@@ -28,6 +28,49 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 No changes yet.
 
+## [2.5.0] - 2026-11-08
+
+### Organizational course health
+- Redesigned Academy → Courses around organizational course health: student
+  satisfaction, instructor engagement, response rate, knowledge-check
+  participation, and a prioritized action list.
+- Added a private two-way feedback loop: students use the existing survey engine
+  for a course check-in, instructors add coaching notes, and the summary
+  aggregates check-ins, exercise pulse surveys, reactions, and coaching.
+- Removed the public scoreboard from the course workspace. Detailed metrics
+  remain private and descriptive; no ranking is shown.
+- Added minimum-sample and data-source labels so a small response set is not
+  presented as a trend.
+
+### Optional knowledge checks
+- Added optional exercise benchmarks with 2–3 randomized questions per attempt,
+  unlimited re-attempts, explanations, and primary references.
+- Added 10 certification-aligned lab banks and 11 track fallback banks, covering
+  every exercise without making the check a gate.
+- Added four benchmark achievements: Quiz Ace, Quiz Explorer, Quiz Scholar, and
+  Quiz Comeback.
+- Added quiz evidence to Cyber DNA (Builder and Explorer) and a Knowledge checks
+  card on the profile.
+- Added post-quiz experience ratings for satisfaction, relevance, usefulness,
+  and ease of use; these feed the course health report.
+- Added a CI validator for question banks and a documented expansion format.
+
+### Certificates
+- Added a server-rendered certificate PDF, copy-verification-link and LinkedIn
+  share actions, a share panel, and Open Graph/Twitter metadata.
+- Added a warning when a certificate still uses the login handle, with a link to
+  set the printed name.
+- Preserved earned certificates when bonus labs are added by excluding
+  non-certificate labs from the level requirement.
+
+### Labs and host validation
+- Added the EXIF Metadata Investigation lab and beginner workbook.
+- Certified Ubuntu 24.04 LTS for 2.4.1; 2.5.0 inherits the certified baseline.
+- Fixed VPN forwarding by moving the VPN accepts into `DOCKER-USER`, added the
+  missing Docker bridge UFW rule, and added the `ocr-network-tap` image.
+- Raised the MS-SQL lab `max_connect_errors` threshold, corrected the remote
+  credentials, and removed the trailing newline from the flag file.
+
 ## [2.4.1] - 2026-11-08
 
 ### Review remediation

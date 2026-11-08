@@ -3,8 +3,8 @@
     <div class="course-container" v-if="course">
       <!-- Course Header -->
       <div class="course-header">
-        <router-link :to="isInstructor ? '/instructor?tab=courses' : '/courses'" class="back-link">
-          &larr; {{ isInstructor ? 'My Courses' : 'All Courses' }}
+        <router-link :to="viewerIsInstructor ? '/instructor?tab=courses' : '/courses'" class="back-link">
+          &larr; {{ viewerIsInstructor ? 'My Courses' : 'All Courses' }}
         </router-link>
         <div class="header-row">
           <div>
@@ -30,10 +30,10 @@
           Overview
         </button>
         <button
-          @click="setTab('assignments')"
-          :class="['tab', { active: activeTab === 'assignments' }]"
+          @click="setTab('labs')"
+          :class="['tab', { active: activeTab === 'labs' }]"
         >
-          Content ({{ courseAssignments.length }})
+          Content ({{ labs.length }})
         </button>
         <button
           @click="setTab('feedback')"
@@ -48,7 +48,7 @@
           Achievements
         </button>
         <button
-          v-if="isInstructor"
+          v-if="viewerIsInstructor"
           @click="setTab('analytics')"
           :class="['tab', { active: activeTab === 'analytics' }]"
         >
@@ -58,55 +58,14 @@
 
       <!-- Overview tab -->
       <div v-if="activeTab === 'overview'" class="tab-content">
-        <div class="overview-grid">
-          <section class="overview-card overview-card--wide">
-            <p class="overview-eyebrow">Course workspace</p>
-            <h2>{{ course.name }}</h2>
-            <p class="overview-description">
-              {{ course.description || 'No description has been added yet.' }}
-            </p>
-            <div class="overview-meta">
-              <span><strong>{{ course.code }}</strong> code</span>
-              <span><strong>{{ course.semester }}</strong> term</span>
-              <span><strong>{{ course.student_count || 0 }}</strong> students</span>
-              <span><strong>{{ completedLabCount }}/{{ labs.length }}</strong> exercises complete</span>
-            </div>
-          </section>
-
-          <section class="overview-card">
-            <p class="overview-eyebrow">Next action</p>
-            <template v-if="nextLab">
-              <h3>{{ nextLab.name }}</h3>
-              <p>{{ nextLab.difficulty }} · {{ nextLab.duration_minutes }} min · {{ nextLab.track_name }}</p>
-              <button class="btn btn--primary btn--sm" @click="openLab(nextLab)">Open exercise</button>
-            </template>
-            <template v-else>
-              <h3>Everything is complete</h3>
-              <p>Open Achievements to review what you earned, or check the feedback tab.</p>
-            </template>
-          </section>
-
-          <section class="overview-card">
-            <p class="overview-eyebrow">Feedback loop</p>
-            <h3>Student voice and instructor coaching</h3>
-            <p>
-              A private, descriptive view of how the course is landing. Use the
-              Feedback tab to add a check-in or review the aggregate.
-            </p>
-            <button class="btn btn--secondary btn--sm" @click="setTab('feedback')">Open feedback</button>
-          </section>
-
-          <section class="overview-card">
-            <p class="overview-eyebrow">Progress</p>
-            <div class="overview-progress">
-              <div class="overview-progress__bar">
-                <span :style="{ width: `${overallProgress}%` }"></span>
-              </div>
-              <strong>{{ overallProgress }}%</strong>
-            </div>
-            <p>{{ completedLabCount }} of {{ labs.length }} assigned exercises completed.</p>
-          </section>
-        </div>
+        <CourseHealthOverview
+          :course="course"
+          :labs="labs"
+          :course-id="courseId"
+          :is-instructor="viewerIsInstructor"
+          @open-feedback="setTab('feedback')"
+          @open-lab="openLab"
+        />
       </div>
 
       <!-- Labs Tab -->
@@ -380,6 +339,7 @@ import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import CourseAnalytics from '../components/CourseAnalytics.vue'
 import CourseFeedbackPanel from '../components/CourseFeedbackPanel.vue'
+import CourseHealthOverview from '../components/CourseHealthOverview.vue'
 
 const route = useRoute()
 const { maskUsername, maskEmail } = usePrivacy()
@@ -397,17 +357,11 @@ const expandedScoreboardRow = ref(null)
 const tabFromRoute = () => {
   const tab = route.query.tab
   if (tab === 'scoreboard') return 'feedback'
-  return (tab && ['overview', 'assignments', 'feedback', 'achievements', 'analytics', 'manage-labs', 'students', 'settings'].includes(tab))
+  return (tab && ['overview', 'labs', 'assignments', 'feedback', 'achievements', 'analytics', 'manage-labs', 'students', 'settings'].includes(tab))
     ? tab
     : 'overview'
 }
 const activeTab = ref(tabFromRoute())
-
-const completedLabCount = computed(() => labs.value.filter((lab) => lab.is_completed).length)
-const overallProgress = computed(() => (
-  labs.value.length ? Math.round((completedLabCount.value / labs.value.length) * 100) : 0
-))
-const nextLab = computed(() => labs.value.find((lab) => !lab.is_completed && !lab.locked) || null)
 
 // Assignments tab
 const courseAssignments = ref([])
@@ -1236,53 +1190,6 @@ onMounted(() => {
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-color);
 }
-
-.overview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 0.85rem;
-}
-
-.overview-card {
-  display: grid;
-  gap: 0.5rem;
-  align-content: start;
-  padding: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  background: var(--bg-secondary);
-}
-
-.overview-card--wide {
-  grid-column: 1 / -1;
-}
-
-.overview-eyebrow {
-  margin: 0;
-  color: var(--accent);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.overview-card h2,
-.overview-card h3 {
-  margin: 0;
-  color: var(--text-primary);
-}
-
-.overview-card h2 { font-size: 1.3rem; }
-.overview-card h3 { font-size: 1rem; }
-.overview-card p { margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; }
-.overview-description { max-width: 75ch; }
-.overview-meta { display: flex; flex-wrap: wrap; gap: 0.55rem 1.1rem; margin-top: 0.25rem; }
-.overview-meta span { color: var(--text-muted); font-size: 0.76rem; }
-.overview-meta strong { color: var(--text-primary); }
-.overview-progress { display: flex; align-items: center; gap: 0.6rem; }
-.overview-progress__bar { flex: 1; height: 8px; border-radius: 999px; background: var(--bg-tertiary); overflow: hidden; }
-.overview-progress__bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--info, #38bdf8)); }
-.overview-progress strong { color: var(--text-primary); }
 
 .tab {
   background: none;

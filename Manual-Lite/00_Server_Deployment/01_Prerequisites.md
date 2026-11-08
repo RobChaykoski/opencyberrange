@@ -8,12 +8,12 @@ Use **Ubuntu 24.04 LTS** for a new 2.1 deployment. **Community / Academic profil
 
 ## Platform versions
 
-The current supported stack for the 2.4.1 release line is:
+The current supported stack for the 2.5.0 release line is:
 
 | Component | Version | Notes |
 |---|---|---|
 | Host OS | Ubuntu 24.04 LTS for 2.1 | Community / Academic profile supports 22.04 and 24.04 LTS |
-| SWOCTS Cyber Range | `2.4.1` | Shown in the page footer and returned by `GET /api/version` |
+| SWOCTS Cyber Range | `2.5.0` | Shown in the page footer and returned by `GET /api/version` |
 | Python | 3.11 | Backend image: `python:3.11-slim` |
 | Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
 | PostgreSQL | 15 | Database image: `postgres:15-alpine` |

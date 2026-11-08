@@ -1,7 +1,7 @@
 # Professional and Enterprise priorities
 
 Status: **Active scope**
-Applies to: **Professional 2.4.1** and **Enterprise preview only**
+Applies to: **Professional 2.5.0** and **Enterprise preview only**
 Not in: Community / Academic profile
 
 These five capabilities are the top priorities for the Professional edition and
