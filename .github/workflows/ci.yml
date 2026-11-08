@@ -106,6 +106,9 @@ jobs:
       - name: Check local documentation assets
         run: python scripts/check-doc-assets.py
 
+      - name: Install documentation link checker dependency
+        run: pip install pyyaml==6.0.3
+
       - name: Check documentation links
         run: python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 
