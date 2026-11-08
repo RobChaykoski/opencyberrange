@@ -79,7 +79,9 @@ tabs, Events, the RangeBox tab, version, and page errors.
 Required repository configuration:
 
 - variable `UI_BASE_URL` — for example `https://172.16.16.44`
-- secret `UI_SMOKE_TOKEN` — a JWT for a student or admin smoke account
+- secret `UI_SMOKE_TOKEN` — a JWT for a student or admin smoke account, **or**
+- secrets `UI_SMOKE_USERNAME` and `UI_SMOKE_PASSWORD` — a smoke account that logs
+  in for a short-lived token
 - optional variable `UI_EXPECTED_VERSION` — for example `2.4.1`
 
 Run it locally with:

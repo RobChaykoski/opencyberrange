@@ -2,27 +2,48 @@
  * Deployment UI smoke test.
  *
  * Required environment:
- *   UI_BASE_URL       e.g. https://172.16.16.44
- *   UI_SMOKE_TOKEN    a JWT for a student or admin test account
+ *   UI_BASE_URL          e.g. https://172.16.16.44
+ *   UI_SMOKE_TOKEN       a JWT for a student or admin test account, or
+ *   UI_SMOKE_USERNAME / UI_SMOKE_PASSWORD to log in for a short-lived token
  *
  * Optional:
  *   UI_EXPECTED_VERSION  e.g. 2.4.1
  *   UI_ARTIFACT_DIR      screenshot directory (default ui-smoke-artifacts)
+ *   UI_BROWSER_EXECUTABLE  use a system Chromium/Edge instead of Playwright's
  *
- * The script is safe to run against a live deployment: it only performs GETs
- * and screenshot captures.
+ * The script is safe to run against a live deployment: it only performs GETs,
+ * one optional login, and screenshot captures.
  */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium, request } from 'playwright'
 
 const BASE = (process.env.UI_BASE_URL || '').replace(/\/$/, '')
-const TOKEN = process.env.UI_SMOKE_TOKEN || ''
+let TOKEN = process.env.UI_SMOKE_TOKEN || ''
+const USERNAME = process.env.UI_SMOKE_USERNAME || ''
+const PASSWORD = process.env.UI_SMOKE_PASSWORD || ''
 const EXPECTED = process.env.UI_EXPECTED_VERSION || ''
 const OUT = process.env.UI_ARTIFACT_DIR || 'ui-smoke-artifacts'
 
-if (!BASE || !TOKEN) {
-  console.log('UI smoke skipped: UI_BASE_URL and UI_SMOKE_TOKEN are required.')
+if (!BASE) {
+  console.log('UI smoke skipped: UI_BASE_URL is required.')
+  process.exit(0)
+}
+
+if (!TOKEN && USERNAME && PASSWORD) {
+  const loginApi = await request.newContext({ baseURL: BASE, ignoreHTTPSErrors: true })
+  const login = await loginApi.post('/api/auth/login', {
+    form: { username: USERNAME, password: PASSWORD },
+  })
+  if (login.ok()) {
+    const body = await login.json()
+    TOKEN = body.access_token || body.token || ''
+  }
+  await loginApi.dispose()
+}
+
+if (!TOKEN) {
+  console.log('UI smoke skipped: set UI_SMOKE_TOKEN or UI_SMOKE_USERNAME / UI_SMOKE_PASSWORD.')
   process.exit(0)
 }
 

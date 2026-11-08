@@ -109,6 +109,9 @@ jobs:
       - name: Install documentation link checker dependency
         run: pip install pyyaml==6.0.3
 
+      - name: Check generated workbook coverage
+        run: python scripts/generate-workbook-coverage.py --check
+
       - name: Check documentation links
         run: python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 

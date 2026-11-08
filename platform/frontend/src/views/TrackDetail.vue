@@ -464,9 +464,15 @@
         </div>
 
         <div class="active-lab-panel__body">
+          <nav v-if="isMobile" class="active-lab-jump" aria-label="Exercise sections">
+            <a href="#lab-briefing">Briefing</a>
+            <a href="#lab-targets">Targets</a>
+            <a href="#lab-flag">Flag</a>
+            <a href="#lab-hints">Hints</a>
+          </nav>
           <div class="active-lab-grid">
             <!-- Scenario (spans full width of grid) -->
-            <div v-if="activeLab.lab.scenario" class="panel-section panel-section--full panel-section--scenario">
+            <div v-if="activeLab.lab.scenario" id="lab-briefing" class="panel-section panel-section--full panel-section--scenario">
               <h3 class="section-title">
                 <TargetIcon />
                 Scenario
@@ -510,7 +516,7 @@
             </div>
 
             <!-- Lab Network (only shown when exercise is running) -->
-            <div v-if="activeLab.session" class="panel-section">
+            <div v-if="activeLab.session" id="lab-targets" class="panel-section">
               <h3 class="section-title">
                 <ServerIcon />
                 Exercise Network
@@ -590,7 +596,7 @@
             </div>
 
             <!-- Flag Submission (hidden for in-app triage exercises, which are scored, not flag-based) -->
-            <div class="panel-section panel-section--full">
+            <div class="panel-section panel-section--full" id="lab-flag">
               <h3 class="section-title">
                 <FlagIcon />
                 Submit Flag
@@ -630,7 +636,7 @@
             </div>
 
             <!-- Hints -->
-            <div class="panel-section panel-section--full">
+            <div class="panel-section panel-section--full" id="lab-hints">
               <h3 class="section-title">
                 <LightbulbIcon />
                 Hints
@@ -738,6 +744,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { hasRole } from '../utils/roles'
 import { usePoll } from '../composables/usePoll'
 import { useClipboard } from '../composables/useClipboard'
+import { useMobileView } from '../composables/useMobileView'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
 import axios from '../api/axios'
 import { marked } from 'marked'
@@ -766,6 +773,7 @@ import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getC
 
 const route = useRoute()
 const router = useRouter()
+const { isMobile } = useMobileView()
 
 // State
 const track = ref(null)
@@ -2856,6 +2864,50 @@ watch(timeRemaining, (val) => {
 
 .active-lab-panel__body {
   padding: 1.5rem;
+}
+
+.active-lab-jump {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .active-lab-jump {
+    position: sticky;
+    top: 52px;
+    z-index: 40;
+    display: flex;
+    gap: 0.35rem;
+    margin: -1.5rem -1.5rem 1rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    overflow-x: auto;
+  }
+
+  .active-lab-jump a {
+    flex: 1 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .active-lab-jump a:active {
+    background: var(--accent-bg);
+    color: var(--accent);
+  }
+
+  .active-lab-panel .panel-section[id] {
+    scroll-margin-top: 120px;
+  }
 }
 
 .active-lab-grid {

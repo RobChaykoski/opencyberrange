@@ -127,6 +127,9 @@ Start the high-school pathway at
 
 ## How to Use This Workbook
 
+See [Workbook coverage](COVERAGE.md) for the generated list of labs that expose
+a workbook and the current count per track.
+
 1. **Launch an exercise** in the SWOCTS Cyber Range platform
 2. **Click the Workbook button** to open the walkthrough for that exercise
 3. **Follow the steps** in the walkthrough while working in your terminal
