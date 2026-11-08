@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FinanceCorp Evidence Archive</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 0%, #123055, #08111f 55%, #050a12);
+      color: #e5edf7;
+      display: grid;
+      place-items: center;
+      padding: 2rem 1rem;
+    }
+    main {
+      width: min(100%, 760px);
+      background: rgba(10, 22, 38, 0.92);
+      border: 1px solid #2b4564;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+    .eyebrow { color: #b08d3c; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+    h1 { margin: 0.4rem 0 0.5rem; font-size: clamp(1.5rem, 4vw, 2rem); }
+    p { color: #b9c9dc; line-height: 1.6; }
+    .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin: 1.5rem 0; }
+    .meta div { background: #0d1b2e; border: 1px solid #263f5d; border-radius: 10px; padding: 0.7rem 0.85rem; }
+    .meta span { display: block; color: #7f97b3; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .meta strong { display: block; margin-top: 0.2rem; font-size: 0.9rem; }
+    .download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 0.5rem; padding: 0.7rem 1.1rem;
+      border-radius: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: #fff; font-weight: 700; text-decoration: none;
+    }
+    .note { margin-top: 1.4rem; padding: 0.9rem 1rem; border-left: 3px solid #b08d3c; background: #101f33; color: #c8d6e6; font-size: 0.85rem; }
+    code { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; color: #f0c674; }
+    footer { margin-top: 1.5rem; color: #6f88a5; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">FinanceCorp | Physical Security</p>
+    <h1>Evidence Archive</h1>
+    <p>
+      Incident <strong>IR-2026-104</strong>: loading bay camera 3. The image below
+      was exported for the public incident update. Download the original file;
+      the archive preserves the metadata that came from the source device.
+    </p>
+
+    <div class="meta">
+      <div><span>Evidence ID</span><strong>IR-2026-104 / F-0042</strong></div>
+      <div><span>Source</span><strong>Dock Camera 3</strong></div>
+      <div><span>Captured</span><strong>2026-10-24 14:32:11</strong></div>
+      <div><span>Format</span><strong>JPEG, original export</strong></div>
+    </div>
+
+    <a class="download" href="/evidence.jpg" download="evidence.jpg">
+      Download evidence.jpg
+    </a>
+
+    <p class="note">
+      Do not open and re-save the file in an image editor before analysing it.
+      Some editors rewrite the metadata. Use <code>curl -O</code>,
+      <code>exiftool</code>, or <code>exiv2</code> on the original download.
+    </p>
+
+    <footer>FinanceCorp Internal Use Only | Evidence Export 2.1</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,24 @@
+services:
+  archive:
+    mem_limit: 64m
+    cpus: 0.1
+    build:
+      context: ./containers/target
+      dockerfile: Dockerfile
+    hostname: archive
+    labels:
+      ip_offset: "84"
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:size=16m
+      - /var/run:size=1m
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
+    restart: unless-stopped

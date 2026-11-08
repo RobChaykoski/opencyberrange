@@ -6,6 +6,7 @@
 - Using `robots.txt` as a discovery hint
 - Reading HTML and JavaScript source instead of only rendered pages
 - Inspecting image metadata and extracting an LSB payload
+- Reading EXIF, GPS, device, and author metadata from a published image
 - Searching public code for leaked staging material
 - Reading a live public homepage's metadata and head section
 
@@ -27,6 +28,8 @@
 4. What would you remove from Kestrel Connect before making it public?
 5. How would you prove the public-repository flag is real without copying
    the secret into your report?
+6. An image passes a visual review but still leaks its location. Which metadata
+   fields would you check, and where would you add the stripping step?
 
 ## Responsible Disclosure
 

@@ -29,7 +29,7 @@ scenario: |
   http://connect.lab:8080 for offline practice and validation. Use the live
   site when you can, then confirm the same technique against the mirror.
 
-workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Public_Homepage/"
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/05_The_Public_Homepage/"
 
 hostnames:
   - ip_offset: "83"

@@ -12,12 +12,12 @@ links.
 | Linux | 12 |
 | Malware | 8 |
 | Network | 14 |
-| OSINT | 4 |
+| OSINT | 5 |
 | OT | 1 |
 | Software Security | 2 |
 | Web | 7 |
 | Windows | 51 |
-| **Total** | **110** |
+| **Total** | **111** |
 
 ## Labs
 
@@ -69,9 +69,10 @@ links.
 | Network | Suspicious Port Scan Detection (`network-1-1-port-scan-detection`) | `wiki/range/netfor/CH_NET01_Log_Analysis/01_Port_Scan_Detection/` |
 | Network | The Internet's Phone Book: DNS Records (`network-0-2-dns-basics`) | `wiki/range/netfor/CH_N0_Network_Foundations/02_DNS_Basics/` |
 | OSINT | Badge Photo Intelligence (`osint-1-2-image-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence/` |
-| OSINT | The Developer's Trail (`osint-2-1-source-code-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_The_Developers_Trail/` |
+| OSINT | EXIF Metadata Investigation (`osint-1-3-exif-metadata`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_EXIF_Metadata/` |
+| OSINT | The Developer's Trail (`osint-2-1-source-code-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Developers_Trail/` |
 | OSINT | The Public Footprint (`osint-1-1-public-footprint`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint/` |
-| OSINT | The Public Homepage (`osint-2-2-public-homepage`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Public_Homepage/` |
+| OSINT | The Public Homepage (`osint-2-2-public-homepage`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/05_The_Public_Homepage/` |
 | OT | Halcyon Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | Software Security | Diagnostics Command Injection (`software-security-2-1-diagnostics-command-injection`) | `wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/` |
 | Software Security | Hidden Export Route (`software-security-1-1-hidden-export-route`) | `wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/` |

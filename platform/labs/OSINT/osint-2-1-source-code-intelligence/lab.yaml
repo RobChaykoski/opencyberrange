@@ -30,7 +30,7 @@ scenario: |
   Search for Kestrel Ridge or the badge ID KR-0421 to find the staging note.
   That flag is not required to complete this exercise.
 
-workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_The_Developers_Trail/"
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Developers_Trail/"
 
 hostnames:
   - ip_offset: "82"

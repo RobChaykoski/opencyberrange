@@ -1,0 +1,109 @@
+name: "EXIF Metadata Investigation"
+description: "A published evidence photo still carries its camera, timestamp, GPS coordinates, and an internal note. Recover the flag from the file metadata and document the privacy leak."
+difficulty: beginner
+category: osint
+duration_minutes: 35
+visibility: public
+flag: "OCR{ex1f_m3tadata_l34ks}"
+
+tools:
+  - browser
+  - curl
+  - exiftool
+  - exiv2
+  - python3
+
+objectives:
+  - Download a published image without re-encoding it
+  - Read EXIF, GPS, and device metadata from the original file
+  - Explain how metadata can expose location and internal context
+  - Capture the flag
+
+scenario: |
+  FinanceCorp published an incident update with a photo from the loading bay.
+  The image looks harmless, but it was exported from the physical security
+  archive without stripping metadata.
+
+  Your task is to recover the capture details, the GPS coordinates, and the
+  internal note that was never meant to leave the archive. This is a safe,
+  simulated image. It contains no real person and no real credentials.
+
+workbook: "wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_EXIF_Metadata/"
+
+hostnames:
+  - ip_offset: "84"
+    hostname: "archive.lab"
+    description: "FinanceCorp evidence archive (HTTP 80)"
+
+topology:
+  nodes:
+    - id: "archive"
+      label: "FinanceCorp Evidence Archive"
+      type: "server"
+      ip_offset: "84"
+      ports: [80]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open http://archive.lab/ and download `evidence.jpg` with curl. Do not
+      open and re-save the file in an image editor first: some editors rewrite
+      the metadata.
+
+      ```bash
+      curl -s http://archive.lab/evidence.jpg -o evidence.jpg
+      ```
+    unlock_after_minutes: 5
+
+  - text: |
+      Read every metadata group, not just the camera make and model:
+
+      ```bash
+      exiftool -a -G1 -s evidence.jpg
+      exiftool -UserComment -ImageDescription -GPSLatitude -GPSLongitude evidence.jpg
+      ```
+
+      `exiv2` and `identify -verbose` expose the same fields if you prefer a
+      different tool.
+    unlock_after_minutes: 12
+
+  - text: |
+      The flag is stored in the `UserComment` field. The GPS coordinates are
+      42°18'53"N, 83°2'11"W. Convert them to decimal with `exiftool -c "%.6f"`
+      and explain why publishing the original file leaks the camera location.
+    unlock_after_minutes: 20
+
+  - text: |
+      Defensive habit: strip metadata before publishing an image.
+
+      ```bash
+      exiftool -all= -overwrite_original evidence.jpg
+      ```
+
+      Re-run `exiftool evidence.jpg` and confirm the identifying fields are
+      gone. Keep the original evidence copy in a controlled archive.
+    unlock_after_minutes: 28
+
+test:
+  steps:
+    - name: "Evidence archive responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.archive}/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Evidence image is served as a JPEG"
+      command: "curl -s http://{target.archive}/evidence.jpg | head -c 2 | od -An -tx1 | tr -d ' \\n'"
+      expect: "ffd8"
+      timeout: 20
+
+    - name: "Camera metadata is present"
+      command: "curl -s http://{target.archive}/evidence.jpg -o /tmp/evidence.jpg && grep -a -c 'Canon' /tmp/evidence.jpg"
+      expect: "1"
+      timeout: 20
+
+    - name: "Metadata exposes the flag"
+      command: "curl -s http://{target.archive}/evidence.jpg -o /tmp/evidence.jpg && grep -a -o 'OCR{[^}]*}' /tmp/evidence.jpg"
+      expect: "OCR{ex1f_m3tadata_l34ks}"
+      timeout: 20
