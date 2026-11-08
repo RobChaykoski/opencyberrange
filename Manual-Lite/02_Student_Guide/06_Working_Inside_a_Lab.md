@@ -44,6 +44,9 @@ flowchart LR
 
 **RangeBox** is a Kali, Ubuntu, or REMnux desktop that runs in your browser, already on the lab network. Pick the image you need before you launch: Kali for general pentesting, Ubuntu for a plain Linux environment, and REMnux for malware analysis and reverse engineering. When a running exercise has RangeBox enabled, the Active Lab panel shows **Open RangeBox**. It opens the desktop in the same tab, so your exercise does not split across two windows. Its toolbar offers Reconnect, Clipboard send and get, Minimize, and Fullscreen. You need no VPN for RangeBox.
 
+!!! note "Standalone RangeBox"
+    The **RangeBox** item in the sidebar opens a standalone practice desktop. It is not attached to a lab, so use it for tool access or connectivity checks. To work an exercise with the lab network and flag dock, launch RangeBox from that exercise instead.
+
 At the bottom of the RangeBox window, the **lab dock** shows the lab name,
 its subnet, and the target IPs when the exercise is built to reveal them. The
 same dock contains a **Flag** field and **Submit flag** button. You can capture

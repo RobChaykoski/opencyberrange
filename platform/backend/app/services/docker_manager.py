@@ -7,6 +7,7 @@ import docker
 import yaml
 import logging
 import os
+import socket
 import subprocess
 import tempfile
 import time
@@ -2607,6 +2608,23 @@ fi
     def _rangebox_container_name(self, user_id: int, lab_slug: str) -> str:
         return f"rangebox_{user_id}_{lab_slug}"
 
+    @staticmethod
+    def _tcp_port_open(host: Optional[str], port: int, timeout: float = 1.0) -> bool:
+        """Return True when host:port accepts a TCP connection.
+
+        RangeBox containers are marked running by Docker before Xvfb, x11vnc,
+        and websockify have finished starting. Checking the VNC proxy port lets
+        the UI and the stress test wait for a usable desktop instead of showing
+        "running" while the first WebSocket connection is refused.
+        """
+        if not host:
+            return False
+        try:
+            with socket.create_connection((host, int(port)), timeout=timeout):
+                return True
+        except OSError:
+            return False
+
     def _count_running_rangeboxes(self) -> int:
         """Count all running RangeBox containers (lab-based and standalone)."""
         if not self.client:
@@ -3045,10 +3063,13 @@ fi
         container_name = self._rangebox_container_name(user_id, lab_slug)
         try:
             container = self.client.containers.get(container_name)
+            ip = self.get_rangebox_ip(user_id, lab_slug)
             info = {
                 "status": container.status,
+                "ready": container.status == "running"
+                         and self._tcp_port_open(ip, self.RANGEBOX_NOVNC_PORT),
                 "container_id": container.short_id,
-                "ip": self.get_rangebox_ip(user_id, lab_slug),
+                "ip": ip,
                 "novnc_port": self.RANGEBOX_NOVNC_PORT,
             }
 
@@ -3608,6 +3629,11 @@ fi
 
             info = {
                 "status": container.status,
+                "ready": container.status == "running"
+                         and self._tcp_port_open(
+                             self.get_standalone_rangebox_ip(user_id),
+                             self.RANGEBOX_NOVNC_PORT,
+                         ),
                 "container_id": container.short_id,
                 "ip": self.get_standalone_rangebox_ip(user_id),
                 "novnc_port": self.RANGEBOX_NOVNC_PORT,
@@ -3778,7 +3804,17 @@ fi
             return {"error": "Docker client not available"}
 
         try:
-            result = self.client.images.prune(filters={"dangling": False})
+            # Pruning every unused image on a host with a large lab catalog can
+            # take longer than the Docker client's default 60s timeout.
+            api = getattr(self.client, "api", None)
+            previous_timeout = getattr(api, "timeout", None)
+            try:
+                if api is not None:
+                    api.timeout = max(previous_timeout or 0, 300)
+                result = self.client.images.prune(filters={"dangling": False})
+            finally:
+                if api is not None and previous_timeout is not None:
+                    api.timeout = previous_timeout
             deleted = result.get("ImagesDeleted") or []
             space = result.get("SpaceReclaimed", 0)
             return {

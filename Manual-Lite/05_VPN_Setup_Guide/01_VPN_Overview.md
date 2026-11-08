@@ -1,21 +1,21 @@
 # VPN Overview
 
-To reach a lab target from your own machine, you connect through a WireGuard VPN tunnel. The VPN setup page also offers RangeBox, a browser-based Linux desktop that needs no VPN and no local tools. Read this page to decide which access path fits your situation before you launch a lab.
+To reach a lab target from your own machine, you connect through a WireGuard VPN tunnel. The platform also offers RangeBox, a browser-based Linux desktop that needs no VPN and no local tools. Read this page to decide which access path fits your situation before you launch a lab.
 
 ## Two ways to reach a lab
 
-Every lab runs on an isolated network that is not exposed to the public internet. You bridge into that network in one of two ways, both presented side by side on the VPN setup page.
+Every lab runs on an isolated network that is not exposed to the public internet. You bridge into that network in one of two ways: the VPN, or the standalone RangeBox tab.
 
 <figure markdown>
 
-![The VPN setup page showing the VPN Configuration card and the RangeBox card](img/vpn-overview.png)
+![The VPN setup page showing the VPN Configuration card](img/vpn-overview.png)
 
-<figcaption>The VPN setup page presents the VPN Configuration card and the RangeBox alternative side by side.</figcaption>
+<figcaption>The VPN setup page carries the VPN configuration and install instructions.</figcaption>
 </figure>
 
 The VPN Configuration card lets you download a WireGuard configuration file, install WireGuard locally, and bring up the tunnel. Your own terminal, browser, and tools then reach the lab targets directly. You need local administrator or sudo rights to install WireGuard and raise the interface.
 
-The RangeBox card launches a Kali, Ubuntu, or REMnux desktop that runs in the platform and appears in your browser tab. No VPN, no installs, and no admin rights on your own machine. RangeBox is capacity limited: the card shows running sessions against the maximum, and the launch button is disabled when the pool is full.
+The **RangeBox** tab in the sidebar launches a Kali, Ubuntu, or REMnux desktop that runs in the platform and appears in your browser tab. No VPN, no installs, and no admin rights on your own machine. RangeBox is capacity limited: the tab shows deployed boxes against the maximum, and the launch button is disabled when the pool is full.
 
 ## VPN data path
 
@@ -54,7 +54,7 @@ flowchart TD
     If you cannot install software on your machine, are on a locked-down or guest network, or want to start quickly, use RangeBox. The VPN gives you your own tools and full control but needs local setup.
 
 !!! note
-    RangeBox capacity is shared. When the card reads Unavailable or the pool is full, wait and retry, or switch to the VPN.
+    RangeBox capacity is shared. When the RangeBox tab reads Unavailable or the pool is full, wait and retry, or switch to the VPN.
 
 ## Next steps
 

@@ -63,6 +63,17 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   panel heading. The tab still holds Sessions, VPN Peers, and the Activity Log,
   and `/admin?tab=monitoring` and the legacy sub-tab links are unchanged.
 
+### RangeBox
+- Moved the standalone RangeBox launcher and viewer from the student dashboard
+  to its own **RangeBox** tab in the sidebar.
+- The tab shows the number of deployed boxes and refreshes it immediately after
+  launch or stop.
+- RangeBox status now waits for the VNC port before reporting ready, and the
+  desktop retries the first connection if websockify is still starting.
+- Added `websocket-client` to the backend requirements so the Level 4 RangeBox
+  stress test can run, and made its pre-spawn and VNC connect steps wait for the
+  desktop to accept connections.
+
 ### Events rename
 - Renamed the user-facing **Competitions** area to **Events** across the
   sidebar, list, detail, registration, profile, and manuals.

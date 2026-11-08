@@ -36,7 +36,7 @@ The sidebar groups links into sections. You see only the sections your role allo
 
 | Section | Links | Who sees it |
 | --- | --- | --- |
-| Ops Center | Dashboard, VPN Setup | Everyone |
+| Ops Center | Dashboard, RangeBox, VPN Setup | Everyone |
 | Academy | Courses, Exercises, and Activities when that module is enabled | Everyone |
 | Team Challenges | Optional module links, each shown only when an admin enables that module | Everyone, when a module is enabled |
 | Instructor | My Courses, Exercises, Surveys, and Reports & analytics (instructors only) | Instructors and admins |

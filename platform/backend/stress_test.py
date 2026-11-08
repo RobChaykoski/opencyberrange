@@ -808,18 +808,25 @@ def _vnc_connect_and_measure(session, username, token_info, metrics,
     ws_url = f"ws://{rangebox_ip}:6080/websockify"
 
     t_ws_start = time.monotonic()
-    try:
-        ws = ws_client.create_connection(
-            ws_url,
-            subprotocols=["binary"],
-            timeout=15,
-        )
-        connect_time = time.monotonic() - t_ws_start
-        metrics.record("WS connect (VNC)", connect_time, 200)
-    except Exception as e:
+    ws = None
+    last_error = None
+    for attempt in range(10):
+        try:
+            ws = ws_client.create_connection(
+                ws_url,
+                subprotocols=["binary"],
+                timeout=3,
+            )
+            break
+        except Exception as e:
+            last_error = e
+            time.sleep(min(1 + attempt * 0.5, 3))
+    if ws is None:
         metrics.record("WS connect (VNC)", time.monotonic() - t_ws_start, 0,
-                       f"WebSocket connect failed: {str(e)[:100]}")
+                       f"WebSocket connect failed: {str(last_error)[:100]}")
         return
+    connect_time = time.monotonic() - t_ws_start
+    metrics.record("WS connect (VNC)", connect_time, 200)
 
     # 3. Complete RFB handshake then measure frame throughput
     frames_received = 0
@@ -978,7 +985,9 @@ def prespawn_rangeboxes(user_tokens, concurrent_spawns, emit, cancel_flag):
                     r = session.get(f"{BASE_URL}/rangebox/standalone/status", timeout=10)
                     if r.status_code == 200:
                         data = r.json()
-                        if data.get("status") == "running":
+                        # Docker marks the container running before websockify
+                        # is listening. Wait for the VNC port check too.
+                        if data.get("status") == "running" and data.get("ready", True):
                             break
                 except Exception:
                     pass

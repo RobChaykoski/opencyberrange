@@ -1,17 +1,13 @@
 <template>
-  <div class="rangebox-page">
+  <RangeBoxHome v-if="!ready" />
+  <div v-else class="rangebox-page">
     <RangeBox
-      v-if="ready"
       :session-id="sessionId"
       :standalone="isStandalone"
       :image-name="imageName"
       :admin-target-user-id="adminTargetUserId"
       :lab-context="labContext"
     />
-    <div v-else class="rangebox-page__error">
-      <p>Missing session or standalone parameter.</p>
-      <p class="rangebox-page__hint">This page is opened from an active exercise or the dashboard.</p>
-    </div>
   </div>
 </template>
 
@@ -20,6 +16,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 import RangeBox from '../components/RangeBox.vue'
+import RangeBoxHome from './RangeBoxHome.vue'
 
 const route = useRoute()
 
@@ -83,21 +80,5 @@ watch([sessionId, isStandalone, adminTargetUserId], loadLabContext, { immediate:
 .rangebox-page :deep(.rangebox__viewport) {
   min-height: 0;
   flex: 1;
-}
-
-.rangebox-page__error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  color: #a0a0c0;
-  font-size: 1.1rem;
-}
-
-.rangebox-page__hint {
-  font-size: 0.85rem;
-  color: #606080;
-  margin-top: 0.5rem;
 }
 </style>

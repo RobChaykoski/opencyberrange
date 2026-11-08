@@ -358,6 +358,13 @@ const connect = async () => {
   } catch (e) {
     console.error('RangeBox connection failed:', e)
     connectionState.value = 'disconnected'
+    // The container can be "running" before websockify accepts connections.
+    // Retry a few times rather than leaving the user on a dead desktop.
+    if (!unmounted && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+      reconnectAttempts++
+      const delay = Math.min(2000 * reconnectAttempts, 10000)
+      reconnectTimer = setTimeout(connect, delay)
+    }
   }
 }
 

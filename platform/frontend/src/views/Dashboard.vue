@@ -96,88 +96,7 @@
           </div>
         </div>
 
-        <!-- RangeBox Card -->
-        <div class="vpn-card rangebox-card">
-          <div class="vpn-card__header">
-            <div class="vpn-card__icon rangebox-card__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-            </div>
-            <div class="vpn-card__title-group">
-              <h2 class="vpn-card__title">RangeBox</h2>
-              <p class="vpn-card__description">Browser-based Linux desktop, no VPN or local tools required</p>
-            </div>
-          </div>
-
-          <div class="vpn-card__content">
-            <div class="vpn-status">
-              <div class="vpn-status__item">
-                <span class="vpn-status__label">Status</span>
-                <span class="vpn-status__value" :class="statusDisplayClass">
-                  {{ statusDisplayLabel }}
-                </span>
-              </div>
-              <div class="vpn-status__item">
-                <span class="vpn-status__label">Capacity</span>
-                <span class="vpn-status__value" :class="capacityClass">
-                  {{ rangeboxCapacity.running }}/{{ rangeboxCapacity.max }}
-                </span>
-              </div>
-              <div v-if="rangeboxStatus !== 'running'" class="vpn-status__item">
-                <span class="vpn-status__label">Image</span>
-                <div class="image-toggle">
-                  <button
-                    class="image-toggle__btn"
-                    :class="{ 'image-toggle__btn--active': rangeboxImage === 'kali' }"
-                    @click="rangeboxImage = 'kali'"
-                  >Kali</button>
-                  <button
-                    class="image-toggle__btn"
-                    :class="{ 'image-toggle__btn--active': rangeboxImage === 'ubuntu' }"
-                    @click="rangeboxImage = 'ubuntu'"
-                  >Ubuntu</button>
-                  <button
-                    class="image-toggle__btn"
-                    :class="{ 'image-toggle__btn--active': rangeboxImage === 'remnux' }"
-                    @click="rangeboxImage = 'remnux'"
-                  >REMnux</button>
-                </div>
-              </div>
-            </div>
-
-            <button
-              @click="onPrimaryLaunch()"
-              :disabled="primaryDisabled"
-              class="btn btn--lg"
-              :class="primaryButtonClass"
-            >
-              <svg v-if="primaryLoading" class="btn-icon rangebox-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-              </svg>
-              <svg v-else-if="primaryIsStop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
-                <rect x="6" y="6" width="12" height="12" rx="1"/>
-              </svg>
-              <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-              {{ primaryButtonLabel }}
-            </button>
-          </div>
-        </div>
       </div>
-
-      <!-- RangeBox Viewer (full width, below cards) -->
-      <transition name="slide">
-        <div v-if="showRangebox && rangeboxStatus === 'running'" class="rangebox-viewer-panel">
-          <RangeBox :standalone="true" :image-name="rangeboxImage" :status-data="rangeboxStatusData" />
-        </div>
-      </transition>
-
 
       <!-- VPN Setup Instructions (Expandable, per-OS) -->
       <div class="instructions-card">
@@ -346,7 +265,7 @@
                 </div>
                 <div class="step-content">
                   <h3 class="step-title">Can't install software?</h3>
-                  <p class="step-description">If your machine is locked down (no admin rights, managed laptop), launch a <strong>RangeBox</strong> from the card above instead. It runs entirely in the browser and already sits on the lab network, so no VPN is needed.</p>
+                  <p class="step-description">If your machine is locked down (no admin rights, managed laptop), launch a <strong>RangeBox</strong> from the RangeBox tab instead. It runs entirely in the browser and already sits on the lab network, so no VPN is needed.</p>
                 </div>
               </div>
             </template>
@@ -393,7 +312,7 @@
                 </div>
                 <div class="step-content">
                   <h3 class="step-title">Can't install software?</h3>
-                  <p class="step-description">If your machine is locked down (managed laptop, no App Store access), launch a <strong>RangeBox</strong> from the card above instead. It runs entirely in the browser and already sits on the lab network, so no VPN is needed.</p>
+                  <p class="step-description">If your machine is locked down (managed laptop, no App Store access), launch a <strong>RangeBox</strong> from the RangeBox tab instead. It runs entirely in the browser and already sits on the lab network, so no VPN is needed.</p>
                 </div>
               </div>
             </template>
@@ -489,7 +408,6 @@ import axios from '../api/axios'
 import { useVpnStatus } from '../composables/useVpnStatus'
 import { usePoll } from '../composables/usePoll'
 import { useClipboard } from '../composables/useClipboard'
-import RangeBox from '../components/RangeBox.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 
 // The composable's getters are connected-aware: "Connected" needs a live
@@ -595,75 +513,6 @@ const username = computed(() => {
   }
 })
 
-// RangeBox state
-const rangeboxStatus = ref('not_found')
-// Full /rangebox/standalone/status payload, handed to <RangeBox> so it does
-// not re-fetch the same endpoint for its session timer.
-const rangeboxStatusData = ref(null)
-const rangeboxLoading = ref(false)
-const showRangebox = ref(false)
-const rangeboxImage = ref('kali')
-const rangeboxCapacity = ref({ running: 0, max: 0, available: true })
-
-const fetchRangeboxCapacity = async () => {
-  try {
-    const { data } = await axios.get('/rangebox/capacity')
-    rangeboxCapacity.value = data
-  } catch {
-    // Keep previous values on error
-  }
-}
-
-const fetchRangeboxStatus = async () => {
-  try {
-    const response = await axios.get('/rangebox/standalone/status')
-    rangeboxStatusData.value = response.data || null
-    rangeboxStatus.value = response.data?.status || 'not_found'
-    if (rangeboxStatus.value === 'running') {
-      showRangebox.value = true
-    }
-  } catch (error) {
-    rangeboxStatus.value = 'not_found'
-  }
-}
-
-const launchRangebox = async () => {
-  rangeboxLoading.value = true
-  rangeboxStatus.value = 'starting'
-  try {
-    await axios.post(`/rangebox/standalone/launch?image=${rangeboxImage.value}`)
-    let attempts = 0
-    const poll = setInterval(async () => {
-      attempts++
-      await fetchRangeboxStatus()
-      if (rangeboxStatus.value === 'running' || attempts > 15) {
-        clearInterval(poll)
-        rangeboxLoading.value = false
-        showRangebox.value = true
-      }
-    }, 2000)
-  } catch (error) {
-    console.error('Failed to launch RangeBox:', error)
-    rangeboxStatus.value = 'not_found'
-    rangeboxLoading.value = false
-  }
-}
-
-const stopRangebox = async () => {
-  rangeboxLoading.value = true
-  rangeboxStatus.value = 'stopping'
-  showRangebox.value = false
-  try {
-    await axios.delete('/rangebox/standalone/destroy')
-    rangeboxStatus.value = 'not_found'
-  } catch (error) {
-    console.error('Failed to stop RangeBox:', error)
-    await fetchRangeboxStatus()
-  } finally {
-    rangeboxLoading.value = false
-  }
-}
-
 // Background lab pre-build: dismissible "still preparing" banner while images
 // finish building after a fresh install.
 const prebuild = ref({ active: false, total: 0, done: 0 })
@@ -674,71 +523,6 @@ const fetchPrebuildStatus = async () => {
     prebuild.value = data
   } catch { /* endpoint absent -> ignore */ }
 }
-
-// Tearing down frees the student's slot (matches the RangeBox Stop semantics).
-
-const rangeboxButtonLabel = computed(() => {
-  switch (rangeboxStatus.value) {
-    case 'running': return 'Stop RangeBox'
-    case 'starting': return 'Starting...'
-    case 'stopping': return 'Stopping...'
-    default:
-      return rangeboxCapacity.value.available ? 'Launch RangeBox' : 'Unavailable'
-  }
-})
-
-const primaryLoading = computed(() => rangeboxLoading.value)
-const primaryIsStop = computed(() => rangeboxStatus.value === 'running')
-const primaryDisabled = computed(() =>
-  rangeboxLoading.value || (!rangeboxCapacity.value.available && rangeboxStatus.value !== 'running')
-)
-const primaryButtonClass = computed(() => {
-  if (rangeboxStatus.value === 'running') return 'btn--danger'
-  return rangeboxCapacity.value.available ? 'btn--rangebox' : 'btn--disabled'
-})
-const primaryButtonLabel = computed(() => {
-  if (primaryLoading.value) return 'Starting...'
-  if (primaryIsStop.value) return 'Stop RangeBox'
-  if (!rangeboxCapacity.value.available) return 'Unavailable'
-  return 'Launch RangeBox'
-})
-const onPrimaryLaunch = () => {
-  rangeboxStatus.value === 'running' ? stopRangebox() : launchRangebox()
-}
-
-const rangeboxStatusLabel = computed(() => {
-  switch (rangeboxStatus.value) {
-    case 'running': return 'Running'
-    case 'starting': return 'Starting'
-    case 'stopping': return 'Stopping'
-    default:
-      return rangeboxCapacity.value.available ? 'Not Running' : 'Unavailable'
-  }
-})
-
-const rangeboxStatusClass = computed(() => {
-  switch (rangeboxStatus.value) {
-    case 'running': return 'vpn-status__value--ready'
-    case 'starting':
-    case 'stopping': return 'vpn-status__value--pending'
-    default:
-      return rangeboxCapacity.value.available ? '' : 'vpn-status__value--danger'
-  }
-})
-
-const statusDisplayLabel = computed(() => {
-  return rangeboxStatusLabel.value
-})
-const statusDisplayClass = computed(() => {
-  return rangeboxStatusClass.value
-})
-
-const capacityClass = computed(() => {
-  const { running, max } = rangeboxCapacity.value
-  if (running >= max) return 'vpn-status__value--danger'
-  if (running >= max * 0.8) return 'vpn-status__value--pending'
-  return 'vpn-status__value--ready'
-})
 
 // fetchVpnStatus is now provided by useVpnStatus composable
 
@@ -766,15 +550,13 @@ const downloadVpnConfig = async () => {
   }
 }
 
-// Refresh VPN status every 10 seconds; capacity every 15. Both pause while the
-// tab is hidden and refresh immediately when it becomes visible again.
+// Refresh VPN status every 10 seconds and the pre-build banner every 15.
+// Both pause while the tab is hidden and refresh when it becomes visible.
 usePoll(fetchVpnStatus, 10000)
-usePoll(() => { fetchRangeboxCapacity(); fetchPrebuildStatus() }, 15000)
+usePoll(fetchPrebuildStatus, 15000)
 
 onMounted(() => {
   fetchVpnStatus()
-  fetchRangeboxStatus()
-  fetchRangeboxCapacity()
   fetchPrebuildStatus()
 })
 </script>
@@ -846,7 +628,7 @@ onMounted(() => {
 /* Cards Row */
 .cards-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -898,45 +680,13 @@ onMounted(() => {
   margin: 0;
 }
 
-/* RangeBox Card */
-.rangebox-card__icon {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
+/* Card content */
 .vpn-card__content {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   justify-content: space-between;
-}
-
-.rangebox-viewer-panel {
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-}
-
-.btn--rangebox {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
-}
-
-.btn--rangebox:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transform: translateY(-1px);
-}
-
-.btn--danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-}
-
-.btn--danger:hover {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  transform: translateY(-1px);
 }
 
 .image-toggle {
@@ -969,14 +719,6 @@ onMounted(() => {
 .image-toggle__btn:hover:not(.image-toggle__btn--active) {
   background: var(--bg-tertiary);
   color: var(--text-primary);
-}
-
-.rangebox-spinner {
-  animation: rangebox-spin 1s linear infinite;
-}
-
-@keyframes rangebox-spin {
-  to { transform: rotate(360deg); }
 }
 
 /* VPN Status */
