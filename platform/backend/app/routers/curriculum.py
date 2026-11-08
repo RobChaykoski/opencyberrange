@@ -597,13 +597,17 @@ def build_level_certificate(
     two views can never disagree about when a certificate exists or what its
     deterministic ID is.
     """
-    completed_labs = [lab for lab in visible_labs if lab.id in completed_ids]
-    if not visible_labs or len(completed_labs) < len(visible_labs):
+    required_labs = [
+        lab for lab in visible_labs
+        if getattr(lab, "counts_toward_certificate", True)
+    ]
+    completed_required = [lab for lab in required_labs if lab.id in completed_ids]
+    if not required_labs or len(completed_required) < len(required_labs):
         return None
 
     completion_rows = db.query(LabCompletion.completed_at).filter(
         LabCompletion.user_id == current_user.id,
-        LabCompletion.lab_id.in_([lab.id for lab in visible_labs]),
+        LabCompletion.lab_id.in_([lab.id for lab in required_labs]),
         LabCompletion.flag_submitted.isnot(None),
         LabCompletion.flag_submitted != "",
     ).all()
@@ -676,8 +680,8 @@ def build_level_certificate(
         "level_number": level.level_number,
         "level_name": level.name,
         "level_description": level.description,
-        "exercises_completed": len(completed_labs),
-        "exercises_total": len(visible_labs),
+        "exercises_completed": len(completed_required),
+        "exercises_total": len(required_labs),
         "quiz_score": quiz_score,
         "quiz_passed": quiz_passed,
         "issued_on": issued_at.date().isoformat(),
@@ -1175,26 +1179,30 @@ async def get_track(
                 "is_lab_active": lab.is_active,  # Lab's active status (different from session active)
                 "workbook": lab.workbook,
                 "requires_kvm": bool(getattr(lab, 'requires_kvm', False)),
+                "counts_toward_certificate": bool(getattr(lab, 'counts_toward_certificate', True)),
             })
         
         # Only include levels that have at least one lab (after filtering inactive labs)
         if len(labs_data) == 0:
             continue
 
-        level_completed = sum(1 for l in labs_data if l["is_completed"])
+        required_labs_data = [
+            lab for lab in labs_data if lab.get("counts_toward_certificate", True)
+        ]
+        level_completed = sum(1 for lab in required_labs_data if lab["is_completed"])
         levels_data.append({
             "id": level.id,
             "level_number": level.level_number,
             "name": level.name,
             "description": level.description,
-            "total_labs": len(labs_data),
+            "total_labs": len(required_labs_data),
             "completed_labs": level_completed,
-            "is_complete": level_completed == len(labs_data),
+            "is_complete": bool(required_labs_data) and level_completed == len(required_labs_data),
             "labs": labs_data,
         })
     
-    # Count only active labs from the filtered labs_data (or all for admins)
-    total_labs = sum(len(level_data["labs"]) for level_data in levels_data)
+    # Count only active, certificate-required labs from the filtered data.
+    total_labs = sum(level_data["total_labs"] for level_data in levels_data)
     completed_labs = sum(
         level_data["completed_labs"] for level_data in levels_data
     )

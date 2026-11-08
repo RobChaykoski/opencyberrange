@@ -282,6 +282,16 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added requires_kvm column to labs table")
 
+        # --- Bonus labs: add 'counts_toward_certificate' to labs ---
+        if 'counts_toward_certificate' not in labs_columns:
+            conn.execute(text(
+                "ALTER TABLE labs ADD COLUMN counts_toward_certificate "
+                "BOOLEAN DEFAULT TRUE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added counts_toward_certificate column to labs table")
+        labs_columns = [c['name'] for c in inspector.get_columns('labs')]
+
         # --- ws_tickets: single-use WebSocket auth tickets (RangeBox VNC etc.) ---
         # Used by auth.py via raw SQL; there is no ORM model, so create it here
         # so fresh installs have it (previously hand-created only on the dev host).

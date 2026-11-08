@@ -226,6 +226,11 @@
                   <span v-else>{{ lab.name }}</span>
                   <span v-if="isDrill(lab)" class="drill-badge">Drill</span>
                   <span
+                    v-if="lab.counts_toward_certificate === false"
+                    class="bonus-badge"
+                    title="Optional for the level certificate"
+                  >Bonus</span>
+                  <span
                     v-if="lab.requires_kvm && !kvmAvailable"
                     class="kvm-badge"
                     title="Uses a shared Windows VM; this server has no KVM hardware virtualization"
@@ -2535,6 +2540,20 @@ watch(timeRemaining, (val) => {
 .lab-row__content {
   flex: 1;
   min-width: 0;
+}
+
+.bonus-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  margin-left: 0.5rem;
+  vertical-align: middle;
 }
 
 .lab-row__title {

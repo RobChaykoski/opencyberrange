@@ -6,6 +6,11 @@
 - [ ] You can reach `http://archive.lab/`
 - [ ] You have a shell with `curl` and either `exiftool`, `exiv2`, or `grep -a`
 
+!!! note "Bonus exercise"
+    This is an optional Level 1 bonus exercise. It teaches the metadata workflow
+    without changing the Level 1 certificate requirement, so students who
+    already earned the certificate keep it.
+
 ## Scenario
 
 FinanceCorp published an incident update with a photo from the loading bay.

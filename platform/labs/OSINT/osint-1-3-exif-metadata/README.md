@@ -7,6 +7,9 @@
 - Explain how metadata can expose location and internal context
 - Capture the flag
 
+> **Bonus exercise:** this lab is optional for the Level 1 certificate. It does
+> not change the certificate requirement, so existing awards stay valid.
+
 ## Scenario
 
 FinanceCorp published an incident update with a photo from the loading bay.

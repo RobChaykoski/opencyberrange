@@ -223,6 +223,11 @@ class Lab(Base):
     topology_nodes = Column(Text, nullable=True)
     # Lab depends on a VM the host runs under KVM, so it needs /dev/kvm
     requires_kvm = Column(Boolean, default=False)
+    # Bonus labs are part of the level but do not block the level certificate.
+    # This keeps existing awards valid when a new optional exercise is added.
+    counts_toward_certificate = Column(
+        Boolean, default=True, server_default=text("true"), nullable=False
+    )
     # Course-exclusive: only visible to students enrolled in a course that assigns this lab
     is_course_exclusive = Column(Boolean, default=False)  # Deprecated — use visibility
     # Course-available: lab is designated for course assignments

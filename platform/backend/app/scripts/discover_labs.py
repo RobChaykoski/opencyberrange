@@ -205,6 +205,7 @@ def discover_labs():
             ("validation_errors", "TEXT"),
             ("validated_at", "TIMESTAMP"),
             ("requires_kvm", "BOOLEAN DEFAULT FALSE"),
+            ("counts_toward_certificate", "BOOLEAN DEFAULT TRUE NOT NULL"),
         ]:
             try:
                 db.execute(text(f"ALTER TABLE labs ADD COLUMN {col} {coltype}"))  # sql-safe: DDL; col/coltype from the constant allowlist above (identifiers can't be bound params)
@@ -316,6 +317,9 @@ def discover_labs():
                         requires_kvm = bool(_comp.get('x-ocr-shared-containers'))
                     except Exception:
                         requires_kvm = False
+                counts_toward_certificate = bool(
+                    lab_data.get('counts_toward_certificate', True)
+                )
                 
                 # Prepare lab data
                 lab_slug = lab_dirname
@@ -404,6 +408,7 @@ def discover_labs():
                         "topology_nodes": topology_nodes,
                         "ics_techniques": ics_techniques,
                         "requires_kvm": requires_kvm,
+                        "counts_toward_certificate": counts_toward_certificate,
                         "validation_status": val_status,
                         "validation_errors": val_errors,
                         "validated_at": val_at,
@@ -434,6 +439,7 @@ def discover_labs():
                                 topology_nodes = :topology_nodes,
                                 ics_techniques = :ics_techniques,
                                 requires_kvm = :requires_kvm,
+                                counts_toward_certificate = :counts_toward_certificate,
                                 validation_status = :validation_status,
                                 validation_errors = :validation_errors,
                                 validated_at = :validated_at
@@ -464,6 +470,7 @@ def discover_labs():
                                 topology_nodes = :topology_nodes,
                                 ics_techniques = :ics_techniques,
                                 requires_kvm = :requires_kvm,
+                                counts_toward_certificate = :counts_toward_certificate,
                                 validation_status = :validation_status,
                                 validation_errors = :validation_errors,
                                 validated_at = :validated_at
@@ -474,7 +481,7 @@ def discover_labs():
                         text(update_sql),
                         update_params
                     )
-                    print(f"  ✓ Updated: {lab_name}")
+                    print(f"  âœ“ Updated: {lab_name}")
                     labs_updated += 1
                 else:
                     # Insert new lab
@@ -487,6 +494,7 @@ def discover_labs():
                                 flag_hash, compose_file, level_id, sort_order, is_active,
                                 visibility, workbook, week, show_target_ips, topology_nodes,
                                 ics_techniques, requires_kvm,
+                                counts_toward_certificate,
                                 validation_status, validation_errors, validated_at
                             ) VALUES (
                                 :name, :slug, :description, :scenario, :scenario_brief,
@@ -495,6 +503,7 @@ def discover_labs():
                                 :flag_hash, :compose_file, :level_id, :sort_order, TRUE,
                                 :visibility, :workbook, :week, :show_target_ips, :topology_nodes,
                                 :ics_techniques, :requires_kvm,
+                                :counts_toward_certificate,
                                 :validation_status, :validation_errors, :validated_at
                             )
                         """),
@@ -522,12 +531,13 @@ def discover_labs():
                             "topology_nodes": topology_nodes,
                                 "ics_techniques": ics_techniques,
                             "requires_kvm": requires_kvm,
+                            "counts_toward_certificate": counts_toward_certificate,
                             "validation_status": val_status,
                             "validation_errors": val_errors,
                             "validated_at": val_at,
                         }
                     )
-                    print(f"  ✓ Created: {lab_name}")
+                    print(f"  âœ“ Created: {lab_name}")
                     labs_created += 1
         
         db.commit()
@@ -566,7 +576,7 @@ def sync_course_week_assignments():
     2. For each unique week number, ensure an Assignment named 'Week N' exists.
     3. Link each lab to its week assignment via AssignmentLab.
 
-    This is idempotent — running it multiple times won't duplicate data.
+    This is idempotent â€” running it multiple times won't duplicate data.
     """
     db = SessionLocal()
     try:
@@ -576,7 +586,7 @@ def sync_course_week_assignments():
         ).fetchall()
 
         if not courses:
-            print("\nNo active courses — skipping week assignment sync.")
+            print("\nNo active courses â€” skipping week assignment sync.")
             return
 
         for course_id, course_name in courses:
@@ -593,7 +603,7 @@ def sync_course_week_assignments():
                 {"course_id": course_id}
             ).scalar()
             if manual:
-                print(f"\nSkipping course '{course_name}' — has {manual} manually-created assignment(s)")
+                print(f"\nSkipping course '{course_name}' â€” has {manual} manually-created assignment(s)")
                 continue
 
             # Get all labs assigned to this course that have a week value
@@ -676,7 +686,7 @@ def sync_course_week_assignments():
                     )
                     existing_assignment_labs.add((assignment_id, lab_id))
                     labs_linked += 1
-                    print(f"    → Linked '{lab_name}' to {assignment_name}")
+                    print(f"    â†’ Linked '{lab_name}' to {assignment_name}")
 
             if assignments_created or labs_linked:
                 print(f"  Summary: {assignments_created} assignments created, {labs_linked} labs linked")

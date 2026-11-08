@@ -5,6 +5,9 @@ category: osint
 duration_minutes: 35
 visibility: public
 flag: "OCR{ex1f_m3tadata_l34ks}"
+# Bonus lab: it sits in Level 1 but does not block the Level 1 certificate,
+# so adding it cannot invalidate certificates students already earned.
+counts_toward_certificate: false
 
 tools:
   - browser
