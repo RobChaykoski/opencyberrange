@@ -60,6 +60,13 @@
       <button class="btn btn--primary no-print" @click="goBack">Return to the track</button>
     </div>
 
+    <div v-else-if="certificate && usingAccountName" class="certificate-name-note no-print">
+      <strong>This certificate uses your account name.</strong>
+      Set the name you want printed in
+      <router-link to="/profile?tab=account">Profile → Personal information</router-link>
+      before sharing or printing.
+    </div>
+
     <article v-else-if="certificate" class="certificate" :class="`certificate--${activeDesign}`" aria-label="Certificate of completion">
       <div class="certificate__frame">
         <div class="certificate__watermark" aria-hidden="true">
@@ -207,6 +214,12 @@ const activeDesign = ref('classic')
 const downloading = ref(false)
 const copied = ref(false)
 const actionMessage = ref('')
+const accountUsername = ref('')
+
+const usingAccountName = computed(() => (
+  Boolean(certificate.value?.recipient && accountUsername.value)
+  && certificate.value.recipient.toLowerCase() === accountUsername.value.toLowerCase()
+))
 
 const shareUrl = computed(() => {
   const value = certificate.value?.verify_url
@@ -307,7 +320,15 @@ const goBack = () => {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  try {
+    const storedUser = JSON.parse(localStorage.getItem('user') || 'null')
+    accountUsername.value = storedUser?.username || ''
+  } catch {
+    accountUsername.value = ''
+  }
+  load()
+})
 </script>
 
 <style scoped>
@@ -431,6 +452,20 @@ onMounted(load)
   color: var(--text-secondary);
   text-align: center;
 }
+
+.certificate-name-note {
+  width: min(100%, 1040px);
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--warning);
+  border-radius: 10px;
+  background: var(--warning-bg);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.certificate-name-note strong { color: var(--text-primary); }
+.certificate-name-note a { color: var(--accent); }
 
 .certificate-state--error h2 {
   color: var(--text-primary);
