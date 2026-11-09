@@ -45,6 +45,13 @@ def generate_reports_pdf(payload: dict) -> bytes:
         generated_label = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
 
     pdf = LearningReportPDF()
+    pdf.set_title("SWOCTS Cyber Range - learning reports")
+    pdf.set_author("SWOCTS Cyber Range")
+    pdf.set_subject("Cross-course learning report")
+    pdf.set_creator("SWOCTS Cyber Range")
+    pdf.set_keywords("SWOCTS, cyber range, learning reports, accessibility")
+    if hasattr(pdf, "set_lang"):
+        pdf.set_lang("en")
     pdf.add_page()
 
     pdf.set_font("Helvetica", "B", 18)

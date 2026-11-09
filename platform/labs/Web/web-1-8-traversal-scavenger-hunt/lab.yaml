@@ -1,6 +1,6 @@
 name: "Cascade Digital Media - Traversal Scavenger Hunt"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Cascade Digital Media runs a content platform with multiple file download endpoints. Each endpoint is vulnerable to directory traversal. Find all three hidden tokens, decode the fragments, and assemble the final flag."
@@ -56,6 +56,11 @@ hints:
       /root/token3.txt. Combine them as OCR{token1_token2_token3}.
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB01B_Advanced_Recon/02_Traversal_Scavenger_Hunt/"
 
 topology:

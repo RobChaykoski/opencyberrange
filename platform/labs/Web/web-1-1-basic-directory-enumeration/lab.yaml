@@ -1,6 +1,6 @@
 name: Basic Directory Enumeration
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: You're conducting a penetration test for TechStart Inc. Your initial scan has identified a web server. Begin reconnaissance to map the attack surface.
@@ -30,6 +30,11 @@ scenario: |
   Note: This is the first phase of your assessment. Information gathered here will 
   be crucial for subsequent phases of the engagement.
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 hostnames:
   - ip_offset: "17"
     hostname: "recon.lab"

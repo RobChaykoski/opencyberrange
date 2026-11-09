@@ -1,6 +1,6 @@
 name: "Meridian Trust Bank - Three-Hop Pivot"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Starting from a compromised teller workstation, pivot through three internal hosts at Meridian Trust Bank. Extract credentials from config files on each hop to reach the core API server and retrieve the assessment flag."
@@ -70,6 +70,11 @@ hints:
       tokens in the format: first_second_third to build the flag.
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN04_Lateral_Movement/03_Three_Hop_Pivot/"
 
 topology:

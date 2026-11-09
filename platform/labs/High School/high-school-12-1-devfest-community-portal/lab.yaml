@@ -1,6 +1,6 @@
 name: "DevFest Community Portal"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A gentle, browser-only OSINT challenge for the Windsor-Essex DevFest community. Explore a fictional conference portal, open a speaker's slide export, and read the metadata to recover the flag. No prior experience needed."
@@ -36,6 +36,11 @@ scenario: |
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Verify the account or device with a trusted adult, report suspicious activity, and keep software updated."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/"
 
 hostnames:

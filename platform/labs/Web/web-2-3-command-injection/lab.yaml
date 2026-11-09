@@ -1,6 +1,6 @@
 name: "CloudPing Diagnostics - Command Injection"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "CloudPing's network diagnostic tool passes user input directly to a system command. Exploit OS command injection to execute arbitrary commands and extract assessment tokens."
@@ -54,6 +54,11 @@ hints:
       Assemble: OCR{token1_token2}
     unlock_after_minutes: 22
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB02B_API_And_Injection/02_Command_Injection/"
 
 topology:

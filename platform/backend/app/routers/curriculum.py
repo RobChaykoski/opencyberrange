@@ -32,6 +32,7 @@ from app.models import (
     CompetitionLab,
 )
 from app.auth import get_current_active_user
+from app.services.competency_model import mapping_for_lab
 from app.services.docker_manager import DockerManager
 from app.services.lab_text import render_lab_text
 from app.services.activity import log_activity, EventTypes
@@ -731,6 +732,13 @@ def _certificate_pdf_bytes(certificate: dict) -> bytes:
     from fpdf import FPDF
 
     pdf = FPDF(orientation="L", unit="mm", format="A4")
+    pdf.set_title("SWOCTS Cyber Range certificate")
+    pdf.set_author("SWOCTS Cyber Range")
+    pdf.set_subject("Certificate of completion")
+    pdf.set_creator("SWOCTS Cyber Range")
+    pdf.set_keywords("SWOCTS, cyber range, certificate, accessibility")
+    if hasattr(pdf, "set_lang"):
+        pdf.set_lang("en")
     pdf.add_page()
     pdf.set_auto_page_break(False)
 
@@ -1546,6 +1554,7 @@ async def submit_flag(
             existing_completion.completed_at = datetime.now(timezone.utc)
         else:
             # Create new completion
+            _mapping = mapping_for_lab(lab)
             completion = LabCompletion(
                 user_id=current_user.id,
                 lab_id=lab_id,
@@ -1555,7 +1564,10 @@ async def submit_flag(
                 time_spent_minutes=time_spent,
                 # Record it, so the number above can be checked rather than
                 # trusted. It was NULL on 73 of 79 completions.
-                started_at=started_at_value
+                started_at=started_at_value,
+                competency_model_version=_mapping["model_version"],
+                competency_mapping=json.dumps(_mapping, sort_keys=True),
+                lab_difficulty_snapshot=lab.difficulty if lab else None,
             )
             db.add(completion)
         db.commit()
@@ -1742,12 +1754,16 @@ async def get_hint(
 
             # Create or update LabCompletion record with started_at
             if not lab_completion:
+                _mapping = mapping_for_lab(lab)
                 lab_completion = LabCompletion(
                     user_id=current_user.id,
                     lab_id=lab_id,
                     started_at=lab_started_at,
                     attempts=0,
-                    hints_used=0
+                    hints_used=0,
+                    competency_model_version=_mapping["model_version"],
+                    competency_mapping=json.dumps(_mapping, sort_keys=True),
+                    lab_difficulty_snapshot=lab.difficulty if lab else None,
                 )
                 db.add(lab_completion)
             else:

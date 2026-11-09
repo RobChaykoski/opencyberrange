@@ -1,6 +1,6 @@
 name: "Aegis Security Corp - Brute Force Detection"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A live brute-force attack is targeting Aegis Security Corp's web services. Deploy Suricata rules on the IDS sensor to detect repeated failed login attempts, identify the campaign marker in the successful login, and correlate with the target's access logs to expose the attacker's tooling."
@@ -87,6 +87,11 @@ hints:
       the attacker's User-Agent string contains the final IOC.
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN05_Detection/02_Brute_Force_Detection/"
 
 topology:

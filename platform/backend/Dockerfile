@@ -1,5 +1,15 @@
 FROM python:3.11-slim
 
+ARG PLATFORM_VERSION=2.5.3
+ARG BUILD_REVISION=unknown
+
+LABEL org.opencontainers.image.title="SWOCTS Cyber Range backend" \
+      org.opencontainers.image.description="SWOCTS Cyber Range API and lab orchestration service" \
+      org.opencontainers.image.version="${PLATFORM_VERSION}" \
+      org.opencontainers.image.revision="${BUILD_REVISION}" \
+      org.opencontainers.image.source="https://github.com/RobChaykoski/opencyberrange" \
+      org.opencontainers.image.licenses="LicenseRef-PolyForm-Noncommercial-1.0.0"
+
 WORKDIR /app
 
 # Enforce UTC timezone for consistent datetime handling

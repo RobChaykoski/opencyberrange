@@ -1,6 +1,6 @@
 name: "Diagnostics Command Injection"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A browser-only command-injection starter for the DevFest software-security track. A small network diagnostics page passes a hostname to a shell. Find the injection point and read the flag, then explain how to remove the shell safely."
@@ -34,6 +34,11 @@ scenario: |
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Remove dangerous execution paths, validate input at the trust boundary, and add a regression test."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/"
 
 hostnames:

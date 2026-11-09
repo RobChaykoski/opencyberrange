@@ -1,6 +1,6 @@
 name: "Can You Reach It? Ping Fundamentals"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A help-desk ticket says the internal portal is down. Use ICMP echo requests to test reachability, read latency and packet loss, and learn why a reply does not prove the service is working."
@@ -29,6 +29,11 @@ scenario: |
   A reply proves the host is reachable. It does not prove the service is up.
   Keep that distinction in mind when you write your answer.
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 hostnames:
   - ip_offset: "10"
     hostname: "intranet-portal"

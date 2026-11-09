@@ -1,6 +1,6 @@
 name: "MedCore Health Systems: Full Web-to-Root Compromise"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "MedCore Health Systems runs a clinical data platform with a hidden admin portal, a backend database, and an internal processing server. Chain together directory enumeration, SQL injection, database pivoting, lateral movement, and privilege escalation to prove full compromise across all three systems."
@@ -87,6 +87,11 @@ hints:
       Tokens: dashboard=1nj3ct, DB=d4t4b4s3, SSH home=p1v0t, root=r00t3d
     unlock_after_minutes: 60
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'advanced' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root/"
 
 topology:

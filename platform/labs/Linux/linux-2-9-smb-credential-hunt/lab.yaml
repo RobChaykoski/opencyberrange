@@ -1,6 +1,6 @@
 name: "Hargrove Medical Group - SMB Credential Hunt"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A medical group's Samba server has multiple shares with varying access levels. Enumerate shares, discover credentials through information disclosure, and pivot to restricted clinical data."
@@ -63,6 +63,11 @@ hints:
       The second token is in a file on that share.
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN02B_SMB_SNMP/03_SMB_Credential_Hunt/"
 
 topology:

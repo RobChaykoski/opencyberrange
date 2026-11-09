@@ -4314,6 +4314,7 @@ const settingMeta = {
   analytics_min_cohort_size: { label: 'Analytics Minimum Cohort', desc: 'Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment.' },
   default_session_hours:     { label: 'Default Exercise Duration',   desc: 'The default time limit for an exercise session before it is automatically stopped.', unit: 'hours' },
   max_session_hours:         { label: 'Max Exercise Duration',       desc: 'The maximum time a student can extend a single exercise session.', unit: 'hours' },
+  session_accommodation_percent: { label: 'Timed Exercise Accommodation', desc: 'Extra time for timed exercises as a percentage of the normal session length. 100 = no change; 150 = 50% extra time. Allowed 100-300.', unit: '%' },
   container_cpu_limit:       { label: 'CPU Limit per Container', desc: 'Docker CPU allocation per exercise container (e.g. 0.5 = half a core, 1 = one full core).', unit: 'cores' },
   container_memory_limit:    { label: 'Memory Limit per Container', desc: 'Docker memory limit per exercise container (e.g. 512M, 1G).' },
   rangebox_capacity_percent: { label: 'RangeBox Capacity Percentage', desc: 'Percentage of the host\'s computed RangeBox maximum used as the live concurrency cap. The remaining headroom protects the backend, database, SIEM, and interactive VNC. An explicit MAX_CONCURRENT_RANGEBOXES environment variable overrides this setting.', unit: '%' },

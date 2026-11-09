@@ -25,6 +25,7 @@ from app.export_reason import require_export_reason
 from app.services.activity import EventTypes, log_activity
 from app.services.audit import log_admin_action, AuditActions
 from app.services import settings_service
+from app.services.competency_radar import build_cohort_radar, build_individual_radar
 from app.services.learning_time import (
     learning_minutes_by_pair,
     learning_minutes_by_user,
@@ -1095,6 +1096,7 @@ async def student_analytics(
         "growth": growth,
         "domains": _domain_performance(completions, sessions),
         "ai_prompts": _ai_prompts(summary, growth, recent),
+        "competency_radar": build_individual_radar(db, current_user.id),
         "learning_impact": {
             "learning_reported": learning_reported,
             "completion_rate": summary["completion_rate"],
@@ -1706,6 +1708,24 @@ async def course_exercises(
         "suppression": course_cohort,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@router.get("/courses/{course_id}/competency")
+async def course_competency(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Cohort competency radar with median, IQR, target, and drill-down."""
+    course = _course_or_403(db, course_id, current_user)
+    learner_ids = [
+        row[0] for row in db.query(CourseEnrollment.user_id).filter(
+            CourseEnrollment.course_id == course.id
+        ).distinct().all()
+    ]
+    return build_cohort_radar(
+        db, course, learner_ids, _minimum_cohort_size(db)
+    )
 
 
 @router.get("/courses/{course_id}/pulse-comments")

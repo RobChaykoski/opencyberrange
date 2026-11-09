@@ -358,6 +358,10 @@ class LabCompletion(Base):
     hints_used = Column(Integer, default=0)
     time_spent_minutes = Column(Integer, nullable=True)
     started_at = Column(DateTime, nullable=True)  # Track when user started working on lab for time-based hints
+    # Versioned competency snapshot captured when the completion was created.
+    competency_model_version = Column(String(32), nullable=True)
+    competency_mapping = Column(Text, nullable=True)  # JSON: model/mapping version + axis weights
+    lab_difficulty_snapshot = Column(String(20), nullable=True)
     
     # Relationships
     user = relationship("User", back_populates="completions")

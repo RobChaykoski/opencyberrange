@@ -79,6 +79,8 @@ DEFAULT_SETTINGS = [
      "description": "Default exercise session duration in hours"},
     {"key": "max_session_hours", "value": "8", "category": "labs",
      "description": "Maximum exercise session duration in hours"},
+    {"key": "session_accommodation_percent", "value": "100", "category": "labs",
+     "description": "Extra time for timed exercises as a percentage of the normal session length. 100 = no change, 150 = 50% extra time. Allowed 100-300."},
     {"key": "container_cpu_limit", "value": "0.5", "category": "labs",
      "description": "Default CPU limit per container (Docker CPUs)"},
     {"key": "container_memory_limit", "value": "512M", "category": "labs",

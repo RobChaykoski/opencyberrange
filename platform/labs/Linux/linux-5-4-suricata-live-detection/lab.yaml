@@ -1,6 +1,6 @@
 name: "Sentinel Defense Corp - Live IDS Detection"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An active cyberattack is underway against Sentinel Defense Corp's DMZ. Deploy custom Suricata rules on the IDS sensor to detect the attack vectors, capture payloads, and extract indicators of compromise."
@@ -83,6 +83,11 @@ hints:
       access log. The attacker's User-Agent string contains the final IOC.
     unlock_after_minutes: 30
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN05_Detection/01_Suricata_Live_Detection/"
 
 topology:

@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range Enterprise preview - manual supplement
 
-Enterprise is a **preview profile on platform release 2.5.2** and adds HA, SSO,
+Enterprise is a **preview profile on platform release 2.5.3** and adds HA, SSO,
 enterprise reporting, multi-tenant support, LMS/SIS integration, and compliance
 reporting. Read the [core manual](../index.md) and the
 [Professional supplement](../09_Professional/index.md) first. Enterprise is

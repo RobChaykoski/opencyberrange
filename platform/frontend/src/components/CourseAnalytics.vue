@@ -87,6 +87,8 @@
         >{{ topic.label }} <b>{{ topic.count }}</b></span>
       </div>
 
+      <CompetencyRadar v-if="competency" :data="competency" />
+
       <div class="analytics-section-head">
         <div>
           <h3>Exercise signals</h3>
@@ -95,7 +97,7 @@
         <span class="analytics-muted">Descriptive only &middot; not a grade</span>
       </div>
 
-      <div class="analytics-table-wrap">
+      <div class="analytics-table-wrap" role="region" aria-label="Exercise signals table" tabindex="0">
         <table class="analytics-table">
           <thead>
             <tr>
@@ -186,6 +188,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
+import CompetencyRadar from './CompetencyRadar.vue'
 
 const props = defineProps({
   courseId: { type: [Number, String], required: true },
@@ -195,6 +198,7 @@ const loading = ref(true)
 const error = ref('')
 const overview = ref(null)
 const exercises = ref([])
+const competency = ref(null)
 
 const ragLabel = (rag) => ({
   red: 'Red',
@@ -252,12 +256,14 @@ const load = async () => {
   loading.value = true
   error.value = ''
   try {
-    const [overviewRes, exercisesRes] = await Promise.all([
+    const [overviewRes, exercisesRes, competencyRes] = await Promise.all([
       axios.get(`/analytics/courses/${props.courseId}/overview`),
       axios.get(`/analytics/courses/${props.courseId}/exercises`),
+      axios.get(`/analytics/courses/${props.courseId}/competency`),
     ])
     overview.value = overviewRes.data
     exercises.value = exercisesRes.data.exercises || []
+    competency.value = competencyRes.data
   } catch (e) {
     error.value = e.response?.data?.detail || 'Could not load course analytics.'
   } finally {
@@ -527,17 +533,17 @@ onMounted(load)
 
 .analytics-rag--red {
   background: color-mix(in srgb, var(--danger) 15%, transparent);
-  color: var(--danger);
+  color: var(--badge-red);
 }
 
 .analytics-rag--amber {
   background: color-mix(in srgb, var(--warning) 16%, transparent);
-  color: var(--warning);
+  color: var(--badge-amber);
 }
 
 .analytics-rag--green {
   background: color-mix(in srgb, var(--success) 15%, transparent);
-  color: var(--success);
+  color: var(--badge-green);
 }
 
 .analytics-rag--grey,

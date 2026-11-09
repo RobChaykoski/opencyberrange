@@ -1,6 +1,6 @@
 name: "Vertex Healthcare - SQL Injection to Shell"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Vertex Healthcare runs a patient portal behind a hidden login form. Discover it via robots.txt, exploit a UNION-based SQL injection to bypass authentication, then pivot to the backend database to extract the final assessment token."
@@ -73,6 +73,11 @@ hints:
       mysql -h <db_ip> -u vtx_admin -p'Vtx_DB_R00t#' vertex_portal -e "SELECT * FROM audit_flags"
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell/"
 
 topology:

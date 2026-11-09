@@ -72,6 +72,11 @@ the interface distinguishes **Suppressed** from **No evidence yet**. Reports and
 exports also exclude suppressed courses from aggregate totals. The default is
 5 learners; set it to 0 only in a trusted test environment.
 
+**Timed Exercise Accommodation** adds extra time to lab sessions and session
+extensions. `100%` is the normal length; `150%` gives 50% extra time; the
+maximum is `300%`. Record the accommodation decision outside the platform and
+use the smallest percentage that meets the learner's approved plan.
+
 ## RangeBox capacity
 
 The **Exercises** tab includes the **RangeBox capacity** card. The platform

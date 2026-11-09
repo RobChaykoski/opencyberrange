@@ -1,6 +1,6 @@
 name: "The Internet's Phone Book: DNS Records"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An internal service was deployed without documentation. Query the lab DNS server, read the common record types, and find the TXT record that holds the deployment note."
@@ -28,6 +28,11 @@ scenario: |
   Remember: the DNS server is the authority for this zone. Public resolvers will
   not know these names.
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 hostnames:
   - ip_offset: "10"
     hostname: "internal-dns"

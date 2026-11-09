@@ -1,6 +1,6 @@
 name: "Cobalt Systems - SUID Maze"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A hardened server at Cobalt Systems has five SUID binaries. Three are standard system utilities, one is a harmless decoy, and one is a dangerous misconfiguration. Identify the exploitable binary, escalate to root, and assemble the flag."
@@ -73,6 +73,11 @@ hints:
       the one from /root/flag.txt in the format OCR{token1_token2}.
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN03B_Privilege_Hashes/03_SUID_Maze/"
 
 topology:

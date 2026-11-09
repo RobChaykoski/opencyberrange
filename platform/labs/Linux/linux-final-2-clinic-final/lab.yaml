@@ -1,6 +1,6 @@
 name: "Pinecrest Family Practice - Final Exam"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "The final exam for the course. A small healthcare clinic has asked you to assess two internet-facing systems left over from a prior IT contractor. Three tokens are planted across the in-scope systems; recover all three and submit the assembled flag. No workbook. No hints. 120 minutes."
@@ -45,6 +45,13 @@ credentials: []
 
 hints: []
 
+difficulty_evidence: "Instructor-led assessment design review; live cohort run not recorded; declared difficulty 'advanced' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
+assessment_workbook_exemption: "Instructor-led assessment; no student workbook is required."
+assessment_hint_exemption: "No hints by design; the instructor provides support on request."
 topology:
   nodes:
     - id: "clinic-fs"

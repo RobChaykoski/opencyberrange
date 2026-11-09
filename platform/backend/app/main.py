@@ -179,6 +179,20 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added content_version column to labs table")
 
+        completion_columns = {c['name'] for c in inspector.get_columns('lab_completions')}
+        if 'competency_model_version' not in completion_columns:
+            conn.execute(text("ALTER TABLE lab_completions ADD COLUMN competency_model_version VARCHAR(32)"))
+            conn.commit()
+            logger.info("Added competency_model_version column to lab_completions table")
+        if 'competency_mapping' not in completion_columns:
+            conn.execute(text("ALTER TABLE lab_completions ADD COLUMN competency_mapping TEXT"))
+            conn.commit()
+            logger.info("Added competency_mapping column to lab_completions table")
+        if 'lab_difficulty_snapshot' not in completion_columns:
+            conn.execute(text("ALTER TABLE lab_completions ADD COLUMN lab_difficulty_snapshot VARCHAR(20)"))
+            conn.commit()
+            logger.info("Added lab_difficulty_snapshot column to lab_completions table")
+
         # --- Role-based access: add 'role' column to users ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'role' not in users_columns:
@@ -456,6 +470,25 @@ async def lifespan(app: FastAPI):
 
 
         # --- Shared VM lifecycle tables ---
+
+    # Backfill competency mapping snapshots for completions created before the
+    # versioned model existed. The suffix makes the backfill explicit.
+    try:
+        from app.database import SessionLocal as _BackfillSession
+        from app.services.competency_model import backfill_completion_mappings
+
+        _backfill_db = _BackfillSession()
+        try:
+            _backfilled = backfill_completion_mappings(_backfill_db)
+            if _backfilled:
+                logger.info(
+                    "Backfilled competency mappings for %d lab completions",
+                    _backfilled,
+                )
+        finally:
+            _backfill_db.close()
+    except Exception as _exc:
+        logger.warning("Competency mapping backfill skipped: %s", _exc)
 
     # Seed default platform settings
     from app.services.settings_service import seed_defaults

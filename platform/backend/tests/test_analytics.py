@@ -418,6 +418,10 @@ def test_reports_pdf_export(client, analytics_data):
     assert resp.status_code == 200, resp.text
     assert resp.headers["content-type"] == "application/pdf"
     assert resp.content.startswith(b"%PDF")
+    # Accessibility metadata: title, author, and document language are set.
+    assert b"/Title" in resp.content
+    assert b"/Author" in resp.content
+    assert b"/Lang" in resp.content
 
 
 def test_pulse_survey_is_completion_gated_and_upserts(

@@ -26,6 +26,41 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+## [2.5.3] - 2026-11-08
+
+### Competency radar
+- Added a versioned eight-axis competency model and per-completion mapping
+  snapshots.
+- Added individual Baseline / Current / Target radar overlays and cohort
+  median / interquartile / target overlays.
+- Added per-axis evidence drill-down, separate self-confidence, provisional
+  labels, mapping versions, and small-cohort suppression.
+- Added the 50% assessment / 25% independent / 15% retained / 10% instructor
+  scoring model with explicit weight coverage.
+
+### Analytics privacy
+- Added `analytics_min_cohort_size` and explicit available, suppressed, and
+  no-evidence states to course and exercise analytics.
+- Suppressed small cohorts in course feedback summaries and survey responses
+  without exposing learner identities.
+
+### Labs
+- Recorded difficulty evidence for all 149 labs using platform analytics when
+  `n>=5` and a labelled provisional static review otherwise.
+- Added workbook and hint exemptions for instructor-led assessments.
+- Added ADR 0005 accepting the lab bridge egress risk for 2.5.3.
+
+### Accessibility
+- Added PDF title, author, subject, keyword, and language metadata.
+- Added the `session_accommodation_percent` timed-exercise accommodation.
+- Fixed contrast defects in the skill matrix and analytics RAG badges and made
+  activity and analytics table regions keyboard-focusable.
+- Verified the competency radar with axe WCAG 2.2 AA at desktop and 320px.
+
+### Supply chain
+- Added OCI image version and revision labels.
+- Refreshed and signed the supply-chain lock and signed the release tag.
+
 ### Privacy
 - Added a public PIPEDA-aligned privacy notice at `/privacy`, linked from the
   footer and registration form. The notice uses `privacy@swocts.com` as the

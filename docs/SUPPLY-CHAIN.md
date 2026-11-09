@@ -55,6 +55,24 @@ python scripts/supply_chain.py --check \
   --signature supply-chain.lock.json.asc
 ```
 
+Release 2.5.3 is signed with:
+
+- Key: `SWOCTS Cyber Range Release <release@swocts.com>`
+- Fingerprint: `8636 08A2 EAD7 850D DD51 95A0 C788 625B AFA7 22CE`
+- Public key: [`../supply-chain-release-key.asc`](../supply-chain-release-key.asc)
+- Signature: `supply-chain.lock.json.asc`
+
+Import the public key before verifying:
+
+```bash
+gpg --import supply-chain-release-key.asc
+python scripts/supply_chain.py --check \
+  --signature supply-chain.lock.json.asc
+```
+
+The private key stays with the release owner and is not committed. Rotate the
+key and publish the new fingerprint if the release owner changes.
+
 `minisign` is also supported with `--public-key`. If neither verifier is
 installed, the signature check fails.
 

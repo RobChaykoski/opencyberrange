@@ -1,6 +1,6 @@
 name: "Orion TechWorks - Network Discovery"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Orion TechWorks has a server on the network with multiple running services. Perform a comprehensive port scan to discover all services and extract intelligence from each one."
@@ -55,6 +55,11 @@ hints:
       Token 3 is in the banner of a service on port 8888 - use: nc <ip> 8888
     unlock_after_minutes: 18
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN01B_Network_Discovery/01_Network_Discovery/"
 
 topology:

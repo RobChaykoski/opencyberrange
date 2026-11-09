@@ -1,6 +1,6 @@
 name: "Pinnacle Cloud - Directory Traversal"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Pinnacle Cloud Services has a file download feature with insufficient input validation. Exploit path traversal to read files outside the web root and extract assessment tokens."
@@ -53,6 +53,11 @@ hints:
       Assemble: OCR{token1_token2}
     unlock_after_minutes: 22
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB01B_Advanced_Recon/01_Directory_Traversal/"
 
 topology:

@@ -34,6 +34,34 @@ from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
 
 
+def _accommodation_percent(db) -> int:
+    """Extra time for timed exercises, bounded to the supported range."""
+    try:
+        value = int(
+            settings_service.get_setting(
+                db, "session_accommodation_percent", "100"
+            )
+        )
+    except (TypeError, ValueError):
+        value = 100
+    return max(100, min(300, value))
+
+
+def _session_duration(db) -> timedelta:
+    """Normal session length scaled by the timed-exercise accommodation."""
+    try:
+        hours = int(settings_service.get_setting(db, "default_session_hours", "2"))
+    except (TypeError, ValueError):
+        hours = 2
+    minutes = int(hours * 60 * _accommodation_percent(db) / 100)
+    return timedelta(minutes=minutes)
+
+
+def _session_extension(db) -> timedelta:
+    """One-hour extension scaled by the timed-exercise accommodation."""
+    return timedelta(minutes=int(60 * _accommodation_percent(db) / 100))
+
+
 def get_vpn_client_ip(user_id: int, base: str = "10.0.0") -> str:
     """
     Calculate a unique VPN client IP from user_id.
@@ -203,10 +231,8 @@ async def spawn_lab(
     wait_for_ready = bool(body.get("wait", False))
 
     # Session length comes from the operator-tunable setting (was hardcoded 2h)
-    try:
-        session_hours = int(settings_service.get_setting(db, "default_session_hours", "2"))
-    except (TypeError, ValueError):
-        session_hours = 2
+    # and is scaled by the timed-exercise accommodation percentage.
+    session_delta = _session_duration(db)
 
     # Create session record
     is_diagnostic = current_user.diagnostic_until and current_user.diagnostic_until > datetime.now(timezone.utc).replace(tzinfo=None)
@@ -217,7 +243,7 @@ async def spawn_lab(
         is_diagnostic=bool(is_diagnostic),
         rangebox_enabled=bool(rangebox_enabled),
         started_at=datetime.now(timezone.utc),
-        expires_at=datetime.now(timezone.utc) + timedelta(hours=session_hours)
+        expires_at=datetime.now(timezone.utc) + session_delta
     )
     db.add(session)
     db.commit()
@@ -541,14 +567,15 @@ async def extend_lab_session(
             detail="No active lab session found"
         )
     
-    # Extend by 1 hour
+    # Extend by 1 hour, scaled by the accommodation percentage.
+    extension = _session_extension(db)
     if session.expires_at:
         expires_at = session.expires_at
         if expires_at.tzinfo is None:
             expires_at = expires_at.replace(tzinfo=timezone.utc)
-        session.expires_at = expires_at + timedelta(hours=1)
+        session.expires_at = expires_at + extension
     else:
-        session.expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
+        session.expires_at = datetime.now(timezone.utc) + extension
     
     db.commit()
     

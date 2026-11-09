@@ -1,6 +1,6 @@
 name: "Titan Global Industries - Black Box CTF"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Conduct a black box penetration test against Titan Global Industries. No scenario brief - find all flags across four servers using SQL injection, credential pivoting, privilege escalation, and traffic analysis."
@@ -59,6 +59,13 @@ hints:
       server-delta: Use tshark or strings on the PCAP to find the token.
     unlock_after_minutes: 70
 
+difficulty_evidence: "Instructor-led assessment design review; live cohort run not recorded; declared difficulty 'advanced' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
+assessment_workbook_exemption: "Instructor-led assessment; no student workbook is required."
+assessment_hint_exemption: "No hints by design; the instructor provides support on request."
 topology:
   nodes:
     - id: "server-alpha"

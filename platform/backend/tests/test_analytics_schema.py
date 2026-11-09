@@ -1,4 +1,4 @@
-"""The analytics event and Exercise Health contracts stay explicit."""
+﻿"""The analytics event and Exercise Health contracts stay explicit."""
 
 from datetime import datetime, timezone
 
@@ -24,7 +24,7 @@ def _event(**overrides):
         "attempt_id": "attempt-1",
         "event_type": "exercise_completed",
         "result": "completed",
-        "platform_version": "2.5.2",
+        "platform_version": "2.5.3",
         "source": "learner",
         "privacy_classification": "pseudonymous",
     }

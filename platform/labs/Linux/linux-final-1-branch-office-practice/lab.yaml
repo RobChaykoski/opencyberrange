@@ -1,6 +1,6 @@
 name: "Atlas Distribution - Final Exam Practice"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Practice the full pentest skill chain you will face on the final exam. Enumerate a forgotten branch office, harvest credentials from SMB shares, exploit a hidden staff portal, and capture three flags. Same skills, same shape, same time pressure as the final."
@@ -81,6 +81,13 @@ hints:
         OCR{token1_token2_token3}
     unlock_after_minutes: 120
 
+difficulty_evidence: "Instructor-led assessment design review; live cohort run not recorded; declared difficulty 'advanced' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
+assessment_workbook_exemption: "Instructor-led assessment; no student workbook is required."
+assessment_hint_exemption: "No hints by design; the instructor provides support on request."
 topology:
   nodes:
     - id: "branch-fs"

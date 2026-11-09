@@ -1853,7 +1853,7 @@ onMounted(loadDashboard)
 .matrix-cell--partial .matrix-level-tile__status,
 .matrix-cell--partial .matrix-level-tile__label,
 .matrix-cell--partial .matrix-level-tile__count {
-  color: var(--warning);
+  color: var(--badge-amber);
 }
 
 .matrix-cell--partial .matrix-level-tile__bar span {

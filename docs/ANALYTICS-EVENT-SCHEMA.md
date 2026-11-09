@@ -1,6 +1,6 @@
 # Analytics event schema and Exercise Health
 
-Status: **v2.5.2 contract; event table planned for v2.5.3**
+Status: **v2.5.3 contract; normalized event table still deferred**
 Code contract: `platform/backend/app/services/analytics_schema.py`
 Related: [Analytics governance](ANALYTICS-GOVERNANCE.md),
 [Data dictionary](DATA-DICTIONARY.md),

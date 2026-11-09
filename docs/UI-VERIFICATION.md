@@ -2,8 +2,8 @@
 
 Last run: **2026-11-08** against both deployments:
 
-- development `https://192.168.120.44` (`2.4.1`)
-- production `https://192.168.120.41` (`2.4.1`)
+- development `https://192.168.120.44` (`2.5.3`)
+- production `https://192.168.120.41` (`2.5.3`)
 
 `192.168.120.0/24` is a placeholder management subnet used throughout the
 documentation. Replace it with your own; the addresses are not real deployments.
@@ -11,6 +11,24 @@ documentation. Replace it with your own; the addresses are not real deployments.
 Tool: Playwright with Microsoft Edge, using short-lived test tokens for an
 administrator and the three career-discovery profiles. No learner records were
 modified by the checks.
+
+## 2.5.3 competency radar accessibility
+
+Run **2026-11-08** against the development deployment on `2.5.3`:
+
+- student `/dashboard` (individual radar) at 1280×900 and 320×800;
+- instructor `/courses/10?tab=analytics` (cohort radar) at 1280×900 and 320×800;
+- instructor `/reports` at 1280×900 and 320×800.
+
+Result: **0 axe WCAG 2.2 AA violations** on every radar route and viewport.
+Both radar charts expose a `role="img"` text alternative and an eight-row
+screen-reader table. At 200% text, the radar routes have no page-level
+horizontal overflow; the `/reports` data tables scroll horizontally, which
+WCAG 1.4.10 permits for two-dimensional data. The run also fixed two contrast
+defects in the skill matrix and analytics RAG badges and made the activity and
+analytics table regions keyboard-focusable.
+
+Evidence: `docs/reviews/V2.5.3-RELEASE-EVIDENCE.md`.
 
 ## 2.5.2 privacy verification
 
@@ -107,7 +125,7 @@ Required repository configuration:
 - secret `UI_SMOKE_TOKEN` — a JWT for a student or admin smoke account, **or**
 - secrets `UI_SMOKE_USERNAME` and `UI_SMOKE_PASSWORD` — a smoke account that logs
   in for a short-lived token
-- optional variable `UI_EXPECTED_VERSION` — for example `2.5.2`
+- optional variable `UI_EXPECTED_VERSION` — for example `2.5.3`
 
 The scheduled workflow is configured for the public production URL
 `https://ctfd.swocts.com` with a dedicated `smoke_tester` student account. It

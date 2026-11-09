@@ -119,6 +119,11 @@
         </div>
       </div>
 
+      <CompetencyRadar
+        v-if="data.competency_radar"
+        :data="data.competency_radar"
+      />
+
       <div v-if="data.ai_prompts?.length" class="ai-prompts">
         <div class="growth-head">
           <h3>AI practice prompts</h3>
@@ -157,6 +162,7 @@
 import { onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import { useClipboard } from '../composables/useClipboard'
+import CompetencyRadar from './CompetencyRadar.vue'
 
 const { copied, copyText } = useClipboard()
 const data = ref(null)

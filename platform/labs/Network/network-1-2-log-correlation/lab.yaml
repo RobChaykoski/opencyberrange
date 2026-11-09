@@ -1,6 +1,6 @@
 name: "Horizon Aerospace - Log Correlation Investigation"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Correlate evidence across a PCAP capture, authentication logs, and web server access logs to trace an attacker's lateral movement, identify the compromised account, and determine what was exfiltrated."
@@ -82,6 +82,11 @@ hints:
       Assemble: OCR{token1_token2_token3}
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/netfor/CH_NET01B_Traffic_And_Logs/02_Log_Correlation/"
 
 topology:

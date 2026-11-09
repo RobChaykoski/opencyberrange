@@ -1,6 +1,6 @@
 name: HTTP Methods Enumeration
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Your TechStart assessment has identified an API endpoint. Test HTTP methods to identify potential vulnerabilities and misconfigurations.
@@ -29,6 +29,11 @@ scenario: |
   identify any potentially dangerous methods that could be exploited. Document 
   your findings for TechStart's development team.
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 hostnames:
   - ip_offset: "47"
     hostname: "api.lab"

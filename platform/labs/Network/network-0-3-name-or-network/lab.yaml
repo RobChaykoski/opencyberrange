@@ -1,6 +1,6 @@
 name: "Name or Network? Troubleshooting a Broken Portal"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A portal name resolves to a stale address. Use ping and DNS queries to separate a name problem from a network problem, find the current host, and read the maintenance note."
@@ -28,6 +28,11 @@ scenario: |
   Resolve the current name, confirm the host with ping, then read the
   maintenance note at `http://<current-ip>/`.
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 hostnames:
   - ip_offset: "10"
     hostname: "internal-dns-portal"

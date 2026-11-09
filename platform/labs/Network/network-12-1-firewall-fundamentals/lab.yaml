@@ -1,6 +1,6 @@
 name: "Firewall Fundamentals - Controlling Inbound Traffic"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A third-party contractor's development server is sending suspicious traffic to your internal web server. SSH into the firewall, observe live traffic, and write iptables rules to allow only legitimate HTTP/HTTPS while blocking everything else."
@@ -12,6 +12,11 @@ visibility: course
 week: 12
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Segment the network, deny unnecessary egress, and alert on scanning, credential failures, and unusual data flows."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/netfor/CH_NETSY12_Firewalls/01_Firewall_Fundamentals/"
 
 flag: "OCR{tr4ff1c_c0ntr0ll3d}"

@@ -1,6 +1,6 @@
 name: "TrueNorth Hosting - Filtered Injection"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "TrueNorth Hosting's DNS lookup tool filters common shell metacharacters but misses newline injection. Bypass the filter using URL-encoded newlines to execute arbitrary commands and recover the flag."
@@ -58,6 +58,11 @@ hints:
       OCR{token1_token2}.
     unlock_after_minutes: 35
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB02B_API_And_Injection/04_Filtered_Injection/"
 
 topology:

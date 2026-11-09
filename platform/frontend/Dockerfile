@@ -17,6 +17,16 @@ RUN npm run build
 # Production stage - serve with nginx
 FROM nginx:alpine
 
+ARG PLATFORM_VERSION=2.5.3
+ARG BUILD_REVISION=unknown
+
+LABEL org.opencontainers.image.title="SWOCTS Cyber Range frontend" \
+      org.opencontainers.image.description="SWOCTS Cyber Range web interface" \
+      org.opencontainers.image.version="${PLATFORM_VERSION}" \
+      org.opencontainers.image.revision="${BUILD_REVISION}" \
+      org.opencontainers.image.source="https://github.com/RobChaykoski/opencyberrange" \
+      org.opencontainers.image.licenses="LicenseRef-PolyForm-Noncommercial-1.0.0"
+
 # Used by the compose healthcheck; nginx:alpine does not guarantee curl across
 # base-image updates.
 RUN apk add --no-cache curl

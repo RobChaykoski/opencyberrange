@@ -211,7 +211,7 @@
           </svg>
         </button>
       </div>
-      <div class="feed-table-wrapper">
+      <div class="feed-table-wrapper" role="region" aria-label="Recent learner activity table" tabindex="0">
         <table class="data-table">
           <thead>
             <tr>
@@ -254,7 +254,7 @@
         </h2>
         <span class="panel__subtitle feed-count">{{ diagnosticFeed.length }} events</span>
       </div>
-      <div v-if="showDiagnosticLog" class="feed-table-wrapper">
+      <div v-if="showDiagnosticLog" class="feed-table-wrapper" role="region" aria-label="Diagnostic event table" tabindex="0">
         <table class="data-table">
           <thead>
             <tr>

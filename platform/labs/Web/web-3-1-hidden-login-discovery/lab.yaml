@@ -1,6 +1,6 @@
 name: "NovaTech Solutions - Hidden Login Discovery"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "NovaTech Solutions appears to run a simple corporate website, but hidden administrative interfaces and an exposed database tell a different story. Enumerate, authenticate, and extract."
@@ -74,6 +74,11 @@ hints:
       mysql -h <db_ip> -u novatech_app -p'Pr0d_DB_2024#' novatech -e "SELECT * FROM audit_tokens"
     unlock_after_minutes: 30
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/webpt/CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery/"
 
 topology:

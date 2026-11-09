@@ -10,6 +10,17 @@ from typing import List
 from app.timezones import resolve_timezone
 
 
+def _configure_pdf(pdf: FPDF, title: str, subject: str = "Learning report") -> None:
+    """Set document metadata and language for assistive technology."""
+    pdf.set_title(_sanitize_for_pdf(title))
+    pdf.set_author("SWOCTS Cyber Range")
+    pdf.set_subject(_sanitize_for_pdf(subject))
+    pdf.set_creator("SWOCTS Cyber Range")
+    pdf.set_keywords("SWOCTS, cyber range, learning report, accessibility")
+    if hasattr(pdf, "set_lang"):
+        pdf.set_lang("en")
+
+
 def _sanitize_for_pdf(text: str) -> str:
     """Replace Unicode characters that Helvetica can't render (latin-1 only)."""
     text = (
@@ -72,6 +83,7 @@ def generate_student_report(
         _sanitize_for_pdf(str(course["name"])),
         _sanitize_for_pdf(str(course["code"])),
     )
+    _configure_pdf(pdf, f"{course['name']} - student learning report")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=20)
     _add_student_page(
@@ -99,6 +111,7 @@ def generate_class_report(
         _sanitize_for_pdf(str(course["name"])),
         _sanitize_for_pdf(str(course["code"])),
     )
+    _configure_pdf(pdf, f"{course['name']} - class learning report")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=20)
 
@@ -329,6 +342,7 @@ def generate_dashboard_report(
     title = _sanitize_for_pdf(filters.get("range_label", "Dashboard Report"))
     local_tz = resolve_timezone(timezone_name)
     pdf = DashboardReportPDF(title)
+    _configure_pdf(pdf, title, "Operations center learning report")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=20)
     pdf.add_page()

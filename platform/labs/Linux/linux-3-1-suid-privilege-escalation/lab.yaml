@@ -1,6 +1,6 @@
 name: "Meridian Data Corp - SUID Privilege Escalation"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A development server at Meridian Data Corp has misconfigured file permissions. Discover and exploit SUID binaries to escalate from a low-privilege developer account to root."
@@ -70,6 +70,11 @@ hints:
       read /root/flag.txt for the flag.
     unlock_after_minutes: 24
 
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/linpt/CH_LIN03B_Privilege_Hashes/01_SUID_Privilege_Escalation/"
 
 topology:

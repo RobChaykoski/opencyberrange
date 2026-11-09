@@ -1,10 +1,11 @@
 # Lab container isolation audit
 
-Status: **v2.5.2 release evidence**
+Status: **v2.5.3 release evidence**
 Scope: all 149 lab definitions, lab compose files, Dockerfiles, and the running
 development deployment
 Gate script: `scripts/audit-lab-isolation.py`
 Related: [Lab release proof](LAB-RELEASE-PROOF.md),
+[Lab egress decision](../decisions/0005-lab-network-egress.md),
 [RangeBox capacity](../RANGEBOX-CAPACITY.md),
 [Security evidence](../V2-SECURITY-EVIDENCE.md)
 
@@ -111,8 +112,11 @@ lab-to-management-LAN traffic, but it does not default-deny outbound internet
 egress from lab containers. A compromised lab container could therefore attempt
 outbound connections to the internet.
 
-This is **not** a host or control-plane Critical finding under the stated gate,
-but it is a release risk that should be closed or explicitly accepted:
+This is **not** a host or control-plane Critical finding under the stated gate.
+For v2.5.3 the risk is **explicitly accepted** in
+[ADR 0005](../decisions/0005-lab-network-egress.md), with the existing
+management-plane controls as compensation. Per-lab allowlisting and default
+internal networks are deferred to the next release:
 
 - Prefer `internal=True` on the per-lab Docker network when the lab does not
   need internet access.
@@ -135,7 +139,7 @@ A release may ship only when:
       `SYS_ADMIN`.
 - [ ] The runtime `DOCKER-USER` audit reports all rules present.
 - [ ] The egress decision is recorded: default-deny, allowlist, or accepted
-      risk with a reason.
+      risk with a reason. **v2.5.3: accepted risk, ADR 0005.**
 - [ ] A negative test from a student container to the host management address,
       the backend, the database, and another learner's subnet is blocked.
 

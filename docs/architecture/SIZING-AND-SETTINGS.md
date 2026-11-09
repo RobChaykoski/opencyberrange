@@ -120,6 +120,7 @@ included rather than briefly showing as zero.
 |---|---|---|
 | `default_session_hours` | 2 | Lab session length before expiry |
 | `max_session_hours` | 8 | Ceiling for extensions |
+| `session_accommodation_percent` | 100 | Extra time for timed exercises; 100 = no change, 150 = 50% extra time, maximum 300 |
 | `container_cpu_limit` | 0.5 | Default CPU limit per lab container (Docker CPUs) |
 | `container_memory_limit` | 512M | Default memory limit per lab container |
 | `rangebox_capacity_percent` | 75 | Percentage of the measured or computed RangeBox ceiling used as the live cap; 10-100 |

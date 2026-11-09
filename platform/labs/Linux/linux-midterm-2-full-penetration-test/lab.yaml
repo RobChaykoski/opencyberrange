@@ -1,6 +1,6 @@
 name: "Nexus Dynamics - Full Penetration Test (Midterm)"
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.2"
+content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Conduct a full penetration test against Nexus Dynamics' infrastructure. Chain together web exploitation, credential discovery, and privilege escalation across two servers to prove complete compromise."
@@ -62,6 +62,13 @@ hints:
       Marker 2: /home/deploy/marker2.txt, Marker 3: /root/marker3.txt
     unlock_after_minutes: 50
 
+difficulty_evidence: "Instructor-led assessment design review; live cohort run not recorded; declared difficulty 'advanced' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-08"
+assessment_workbook_exemption: "Instructor-led assessment; no student workbook is required."
+assessment_hint_exemption: "No hints by design; the instructor provides support on request."
 topology:
   nodes:
     - id: "perimeter"

@@ -9,8 +9,9 @@ process, calls the internal analytics API, compares the response with raw
 database counts, and exits non-zero for any failed check. It does not create or
 modify users, courses, completions, or settings.
 
-The small-group suppression check is intentionally reported separately: the
-2.5.x course overview does not yet expose a suppression signal.
+The small-group suppression check verifies that the reports payload carries a
+suppression or minimum-cohort signal, so a suppressed course is distinguishable
+from a course with zero activity.
 """
 
 from __future__ import annotations

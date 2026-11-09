@@ -56,6 +56,16 @@ def test_public_certificate_verification(client, auth_headers, test_user, test_l
         assert certificate["recipient"]
         assert certificate["certificate_id"].startswith("OCR-")
 
+        pdf = client.get(
+            f"/api/exercises/tracks/{track.slug}/levels/{level.id}/certificate.pdf",
+            headers=auth_headers,
+        )
+        assert pdf.status_code == 200, pdf.text
+        assert pdf.content.startswith(b"%PDF")
+        assert b"/Title" in pdf.content
+        assert b"/Author" in pdf.content
+        assert b"/Lang" in pdf.content
+
         verified = client.get(
             f"/api/exercises/verify/certificate/{certificate['certificate_id']}"
         )
