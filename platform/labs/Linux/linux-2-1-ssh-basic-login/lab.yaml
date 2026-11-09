@@ -11,11 +11,12 @@ prerequisites:
   - linux-1-6-version-vulnerability-identification
   - linux-1-7-network-discovery
   - linux-1-8-service-triage
+# By completion students will be able to:
 learning_outcomes:
-  - Understand SSH authentication basics
-  - Successfully authenticate to SSH service
+  - Explain SSH authentication basics
+  - Authenticate to SSH service
   - Read and analyze MOTD (Message of the Day)
-  - Understand post-authentication information disclosure
+  - Explain post-authentication information disclosure
 mapped_skills:
   - network_systems
   - identity_access

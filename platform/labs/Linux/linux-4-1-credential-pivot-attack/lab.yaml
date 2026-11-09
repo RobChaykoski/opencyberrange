@@ -7,6 +7,7 @@ prerequisites:
   - linux-3-2-password-hash-cracking
   - linux-3-3-suid-maze
   - linux-3-4-hash-relay
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate a compromised web server for stored credentials and configuration files
   - Identify hardcoded database credentials in application configuration

@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 40
 prerequisites:
   - linux-2-8-snmp-community-strings
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate SMB shares available on the target using anonymous access
   - Access public shares and identify embedded assessment tokens

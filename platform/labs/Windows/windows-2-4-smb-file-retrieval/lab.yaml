@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-2-3-smb-anonymous-share-access
+# By completion students will be able to:
 learning_outcomes:
   - Download file from anonymous smb share
-  - Understand SMB enumeration techniques
+  - Explain SMB enumeration techniques
+  - List SMB shares anonymously
 mapped_skills:
   - identity_access
   - network_systems

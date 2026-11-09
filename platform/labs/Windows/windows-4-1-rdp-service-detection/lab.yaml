@@ -8,9 +8,11 @@ prerequisites:
   - windows-3-3-smb-single-user-brute-force
   - windows-3-4-smb-username-enumeration-and-brute-force
   - windows-3-5-smb-full-credential-attack
+# By completion students will be able to:
 learning_outcomes:
   - Identify rdp service on target
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Detect RDP service on port 3389
 mapped_skills:
   - identity_access
   - network_systems

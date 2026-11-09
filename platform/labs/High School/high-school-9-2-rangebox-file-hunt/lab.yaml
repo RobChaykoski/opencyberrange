@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 25
 prerequisites:
   - high-school-9-1-rangebox-first-steps
+# By completion students will be able to:
 learning_outcomes:
   - Download a file with curl
   - Unpack a ZIP archive with unzip

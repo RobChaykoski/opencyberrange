@@ -4,14 +4,13 @@ difficulty: intermediate
 estimated_time: 75
 prerequisites:
   - linux-5-5-capstone-ctf
+# By completion students will be able to:
 learning_outcomes:
   - Observe live brute-force HTTP POST login attempts on the IDS sensor
   - Identify the attack pattern (repeated failed logins with different credentials)
   - Write custom Suricata rules to detect brute-force POST requests containing password fields
   - Write a Suricata rule to detect the successful login attempt with a campaign marker
   - Extract indicators of compromise from Suricata alert payloads
-  - Investigate the target web server's nginx access log for attacker tool signatures
-  - Assemble the flag from three extracted tokens
 mapped_skills:
   - incident_forensics
   - network_systems

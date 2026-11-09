@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-5-3-winrm-manual-authentication
+# By completion students will be able to:
 learning_outcomes:
   - Brute force winrm credentials
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate with brute-forced credentials via SSH
 mapped_skills:
   - identity_access
   - network_systems

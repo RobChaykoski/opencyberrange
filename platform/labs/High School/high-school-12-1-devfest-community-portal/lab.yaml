@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 25
 prerequisites:
   - high-school-11-1-rangebox-log-detective
+# By completion students will be able to:
 learning_outcomes:
   - Explore a conference portal without using a terminal
   - Open a speaker profile and download a shared file

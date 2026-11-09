@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 25
 prerequisites:
   - osint-2-1-source-code-intelligence
+# By completion students will be able to:
 learning_outcomes:
   - Treat a public homepage as an OSINT source
   - Fetch the page source instead of only reading the rendered page

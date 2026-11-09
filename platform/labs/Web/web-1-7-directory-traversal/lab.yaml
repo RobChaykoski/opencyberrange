@@ -4,11 +4,12 @@ difficulty: beginner
 estimated_time: 35
 prerequisites:
   - web-1-6-comprehensive-web-reconnaissance
+# By completion students will be able to:
 learning_outcomes:
   - Identify a file download feature vulnerable to path traversal
   - Craft directory traversal payloads using ../ sequences
   - Read system files outside the web application root
-  - Understand the impact of insufficient path validation
+  - Explain the impact of insufficient path validation
 mapped_skills:
   - web_api
 assessment_criteria:

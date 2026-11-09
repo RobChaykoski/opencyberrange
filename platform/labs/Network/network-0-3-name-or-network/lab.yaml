@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 30
 prerequisites:
   - network-0-2-dns-basics
+# By completion students will be able to:
 learning_outcomes:
   - Separate a name-resolution problem from a reachability problem
   - Use DNS TXT records to find operational notes

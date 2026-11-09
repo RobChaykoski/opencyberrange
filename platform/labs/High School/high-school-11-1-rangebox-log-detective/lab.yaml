@@ -5,6 +5,7 @@ estimated_time: 20
 prerequisites:
   - high-school-10-1-rangebox-network-basics
   - high-school-10-2-rangebox-browser-and-source
+# By completion students will be able to:
 learning_outcomes:
   - Read a web server access log
   - Compare successful and failed requests

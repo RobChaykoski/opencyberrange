@@ -3,6 +3,7 @@ category: general
 difficulty: beginner
 estimated_time: 20
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Launch a RangeBox desktop and open a terminal
   - Run pwd, ls, whoami, and curl

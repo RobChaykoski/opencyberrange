@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - web-1-3-http-methods-enumeration
+# By completion students will be able to:
 learning_outcomes:
-  - Understand HTTP headers and their security implications
+  - Explain HTTP headers and their security implications
   - Identify security headers (CSP, HSTS, X-Frame-Options)
   - Detect information disclosure in headers
   - Analyze missing security headers

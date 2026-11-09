@@ -9,9 +9,11 @@ prerequisites:
   - windows-4-4-rdp-credential-guessing
   - windows-4-5-rdp-brute-force-attack
   - windows-4-6-rdp-session-access-and-flag-retrieval
+# By completion students will be able to:
 learning_outcomes:
   - Identify winrm service on target
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Enumerate the exposed service and its version
 mapped_skills:
   - identity_access
   - network_systems

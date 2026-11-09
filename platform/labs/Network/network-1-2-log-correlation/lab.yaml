@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 60
 prerequisites:
   - network-1-2-http-traffic-analysis
+# By completion students will be able to:
 learning_outcomes:
   - Correlate timestamps between a PCAP and server log files to reconstruct an attack timeline
   - Identify the attacker's IP address by cross-referencing network and host evidence

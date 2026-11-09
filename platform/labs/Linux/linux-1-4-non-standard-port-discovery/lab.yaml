@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - linux-1-3-service-interaction
+# By completion students will be able to:
 learning_outcomes:
-  - Understand that services can run on any port
+  - Explain that services can run on any port
   - Perform comprehensive port range scanning
   - Identify services on non-standard ports
   - Use efficient port scanning strategies

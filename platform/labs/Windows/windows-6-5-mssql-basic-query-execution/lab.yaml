@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-6-4-mssql-credential-brute-force
+# By completion students will be able to:
 learning_outcomes:
   - Execute sql queries via authenticated session
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate and list databases
 mapped_skills:
   - identity_access
   - web_api

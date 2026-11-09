@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - linux-2-1-ssh-basic-login
+# By completion students will be able to:
 learning_outcomes:
-  - Understand user context after SSH login
+  - Explain user context after SSH login
   - Enumerate current user information
   - Explore user home directory
   - Identify user-specific files and configurations

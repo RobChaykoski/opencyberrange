@@ -8,6 +8,7 @@ prerequisites:
   - web-2-3-command-injection
   - web-2-4-api-enumeration-gauntlet
   - web-2-5-filtered-injection
+# By completion students will be able to:
 learning_outcomes:
   - Perform directory enumeration against the web application to discover hidden endpoints
   - Analyze discovered pages for sensitive information and credentials

@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 40
 prerequisites:
   - web-2-2-insecure-api-endpoints
+# By completion students will be able to:
 learning_outcomes:
   - Identify a web application feature that interacts with the operating system
   - Test for OS command injection using shell metacharacters

@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-6-3-mssql-manual-authentication
+# By completion students will be able to:
 learning_outcomes:
   - Brute force ms-sql credentials
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate to MySQL with brute-forced credentials
 mapped_skills:
   - identity_access
   - web_api

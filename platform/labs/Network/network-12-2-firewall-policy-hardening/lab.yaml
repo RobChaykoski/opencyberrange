@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 75
 prerequisites:
   - network-12-1-firewall-fundamentals
+# By completion students will be able to:
 learning_outcomes:
   - Write source-specific iptables rules to block traffic from a known hostile IP
   - Explain why source-specific blocking alone is insufficient (defense in depth)

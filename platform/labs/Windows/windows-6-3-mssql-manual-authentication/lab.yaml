@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-6-2-mssql-version-and-instance-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Connect to ms-sql with known credentials
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate to MySQL with sa credentials
 mapped_skills:
   - identity_access
   - web_api

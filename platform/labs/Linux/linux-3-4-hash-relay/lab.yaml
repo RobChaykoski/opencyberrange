@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 50
 prerequisites:
   - linux-3-3-suid-maze
+# By completion students will be able to:
 learning_outcomes:
   - Discover an exposed shadow backup file through filesystem enumeration
   - Crack the MD5-based password hash for the engineer account

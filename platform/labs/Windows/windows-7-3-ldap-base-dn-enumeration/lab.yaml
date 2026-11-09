@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-7-2-ldap-anonymous-bind-test
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate base dn and root dse
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Enumerate Base DN via Root DSE
 mapped_skills:
   - identity_access
   - network_systems

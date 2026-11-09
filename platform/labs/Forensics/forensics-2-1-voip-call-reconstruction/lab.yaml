@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 45
 prerequisites:
   - forensics-1-1-windows-memory-volatility
+# By completion students will be able to:
 learning_outcomes:
   - Identify SIP signalling and RTP media in a packet capture
   - Read the SDP offer to find the negotiated codec and RTP port

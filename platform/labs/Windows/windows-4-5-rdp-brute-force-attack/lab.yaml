@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-4-4-rdp-credential-guessing
+# By completion students will be able to:
 learning_outcomes:
   - Brute force rdp credentials
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Detect RDP service on port 3389
 mapped_skills:
   - identity_access
   - network_systems

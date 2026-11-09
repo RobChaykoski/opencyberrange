@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 50
 prerequisites:
   - linux-4-3-three-hop-pivot
+# By completion students will be able to:
 learning_outcomes:
   - Locate and decode a base64-encoded export file on the compromised server
   - Discover GPG decryption credentials from shell history artifacts

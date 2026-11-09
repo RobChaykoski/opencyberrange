@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-10-1-network-enumeration-assessment
+# By completion students will be able to:
 learning_outcomes:
   - Discover all live hosts on your assigned subnet using discovery scanning
   - Identify each machine by its running services (client portal, document server, case management)

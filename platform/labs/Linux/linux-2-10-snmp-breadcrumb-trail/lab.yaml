@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 45
 prerequisites:
   - linux-2-9-smb-credential-hunt
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate SNMP using the default "public" community string
   - Discover a non-default community string hidden in system information

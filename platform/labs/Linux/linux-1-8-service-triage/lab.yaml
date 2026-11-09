@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 40
 prerequisites:
   - linux-1-7-network-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Scan multiple hosts to enumerate running services and versions
   - Differentiate decoy hosts from real targets using banner and content analysis

@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 15
 prerequisites:
   - software-security-1-1-hidden-export-route
+# By completion students will be able to:
 learning_outcomes:
   - Identify untrusted input flowing into a shell
   - Run a benign lookup and observe the command output

@@ -12,9 +12,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-2-5-smb-null-session-connection
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate SMB shares over a null session
   - Identify shares that expose more data than authenticated access
+  - Explain the defensive control that prevents anonymous enumeration
 mapped_skills:
   - identity_access
   - network_systems
@@ -32,13 +34,39 @@ assessment_criteria:
 | `difficulty` | string | `beginner`, `intermediate`, or `advanced` |
 | `estimated_time` | integer | estimated learner minutes, greater than zero |
 | `prerequisites` | list of strings | lab slugs from this catalog; may be empty |
-| `learning_outcomes` | list of strings | measurable outcomes, non-empty |
+| `learning_outcomes` | list of strings | 3-5 measurable outcomes, each introduced by `# By completion students will be able to:` |
 | `mapped_skills` | list of strings | competency keys, non-empty |
 | `assessment_criteria` | list of strings | how the lab is graded, non-empty |
 
 Legacy keys `name`, `duration_minutes`, `objectives`, and
 `learning_objectives` are no longer used. The loader still accepts them during a
 transition, but repository labs and uploads should emit the canonical keys.
+
+## Learning outcomes
+
+Every lab introduces its outcomes with the fixed line:
+
+```yaml
+# By completion students will be able to:
+learning_outcomes:
+  - Configure a Linux firewall
+  - Analyze web server logs
+  - Detect brute-force authentication attempts
+  - Identify malicious processes
+```
+
+Rules:
+
+- exactly 3 to 5 outcomes;
+- each outcome starts with an observable action (for example `Configure`,
+  `Analyze`, `Detect`, `Identify`, `Enumerate`, `Exploit`, `Document`);
+- avoid vague verbs such as `Understand`, `Learn`, `Know`, or `Appreciate`;
+- do not list flag capture as a learning outcome; that belongs under
+  `assessment_criteria`.
+
+The standardizer rewrites vague openers (`Understand` to `Explain`, `Learn` to
+`Explain`, `Know` to `Identify`), fills short lists from concrete tester steps or
+a category fallback, and trims long lists to five.
 
 ## Prerequisites
 

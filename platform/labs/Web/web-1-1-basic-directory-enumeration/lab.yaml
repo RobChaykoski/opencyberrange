@@ -3,8 +3,9 @@ category: web
 difficulty: beginner
 estimated_time: 120
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
-  - Understand directory enumeration concepts
+  - Explain directory enumeration concepts
   - Use gobuster to discover hidden directories
   - Identify common web directories
 mapped_skills:

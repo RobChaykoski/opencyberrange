@@ -3,6 +3,7 @@ category: ot
 difficulty: beginner
 estimated_time: 40
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Discover the Modbus TCP service on the controller
   - Read the holding register map

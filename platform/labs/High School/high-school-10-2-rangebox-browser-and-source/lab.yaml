@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 20
 prerequisites:
   - high-school-10-1-rangebox-network-basics
+# By completion students will be able to:
 learning_outcomes:
   - Open a page in the RangeBox browser
   - View the page source

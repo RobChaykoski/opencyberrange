@@ -5,6 +5,7 @@ estimated_time: 25
 prerequisites:
   - high-school-9-1-rangebox-first-steps
   - high-school-9-2-rangebox-file-hunt
+# By completion students will be able to:
 learning_outcomes:
   - Explain the difference between a hostname and an IP address
   - Request a URL with curl and read the status line

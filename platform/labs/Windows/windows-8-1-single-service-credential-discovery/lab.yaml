@@ -9,9 +9,11 @@ prerequisites:
   - windows-7-4-ldap-user-enumeration
   - windows-7-5-ldap-group-enumeration
   - windows-7-6-ldap-comprehensive-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Find credentials on one service, test on same service type
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - List SMB shares with credentials
 mapped_skills:
   - identity_access
   - network_systems

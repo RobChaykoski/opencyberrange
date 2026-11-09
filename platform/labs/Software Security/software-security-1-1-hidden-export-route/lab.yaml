@@ -3,6 +3,7 @@ category: web
 difficulty: beginner
 estimated_time: 15
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Inspect the portal's shipped JavaScript in the browser
   - Identify a hidden route and a client-side token

@@ -6,6 +6,7 @@ prerequisites:
   - osint-1-1-public-footprint
   - osint-1-2-image-intelligence
   - osint-1-3-exif-metadata
+# By completion students will be able to:
 learning_outcomes:
   - Inspect a site's static assets instead of only its rendered pages
   - Read JavaScript comments and build metadata

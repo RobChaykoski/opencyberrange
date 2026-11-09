@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-6-6-mssql-xp-cmdshell-activation
+# By completion students will be able to:
 learning_outcomes:
   - Use xp_cmdshell to read flag file
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Verify LOAD_FILE works (read /etc/hostname)
 mapped_skills:
   - identity_access
   - web_api

@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - web-1-5-subdomain-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Perform complete web reconnaissance workflow
   - Combine multiple enumeration techniques

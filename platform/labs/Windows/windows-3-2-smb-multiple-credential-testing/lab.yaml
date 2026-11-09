@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-3-1-smb-manual-credential-test
+# By completion students will be able to:
 learning_outcomes:
   - Test multiple password combinations
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate to SMB with valid credentials
 mapped_skills:
   - identity_access
   - network_systems

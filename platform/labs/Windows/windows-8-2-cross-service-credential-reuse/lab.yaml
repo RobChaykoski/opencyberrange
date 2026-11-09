@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-8-1-single-service-credential-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Use smb credentials on rdp
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Verify SMB and RDP services are running
 mapped_skills:
   - identity_access
   - network_systems

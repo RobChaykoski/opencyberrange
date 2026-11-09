@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 60
 prerequisites:
   - linux-9-1-meridian-data-breach-assessment
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate the analyst workstation and departed employee's files
   - Identify the encryption method used from shell history artifacts

@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 40
 prerequisites:
   - web-2-1-basic-sql-injection-get
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate API endpoints through documentation and fuzzing
   - Identify broken access control vulnerabilities in REST APIs

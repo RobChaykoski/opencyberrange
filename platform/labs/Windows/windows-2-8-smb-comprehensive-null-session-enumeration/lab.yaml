@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-2-7-smb-user-enumeration-via-null-session
+# By completion students will be able to:
 learning_outcomes:
   - Perform complete enumeration via null session
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Enumerate shares via null session
 mapped_skills:
   - identity_access
   - network_systems

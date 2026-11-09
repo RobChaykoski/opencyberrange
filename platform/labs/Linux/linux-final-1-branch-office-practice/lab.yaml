@@ -4,6 +4,7 @@ difficulty: advanced
 estimated_time: 180
 prerequisites:
   - linux-midterm-3-blind-penetration-test
+# By completion students will be able to:
 learning_outcomes:
   - Discover all in-scope hosts on the branch subnet and identify their services
   - Recover token 1 from SNMP enumeration of the file server

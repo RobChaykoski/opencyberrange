@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - linux-1-1-ssh-service-detection
+# By completion students will be able to:
 learning_outcomes:
   - Scan multiple common ports simultaneously
   - Identify multiple services on a single host

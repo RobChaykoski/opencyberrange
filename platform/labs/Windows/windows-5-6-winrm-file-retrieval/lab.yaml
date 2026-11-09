@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-5-5-winrm-command-execution
+# By completion students will be able to:
 learning_outcomes:
   - Retrieve flag file via winrm
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Identify the exploitable service or input
 mapped_skills:
   - identity_access
   - network_systems

@@ -9,12 +9,13 @@ prerequisites:
   - network-1-2-log-correlation
   - network-1-3-dns-anomaly-detection
   - network-1-4-failed-login-analysis
+# By completion students will be able to:
 learning_outcomes:
   - SSH into network analyst workstation
   - Download and analyze packet capture files
   - Filter FTP traffic in Wireshark
   - Extract cleartext FTP credentials
-  - Understand FTP protocol security weaknesses
+  - Explain FTP protocol security weaknesses
 mapped_skills:
   - network_systems
   - incident_forensics

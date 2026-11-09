@@ -4,10 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-1-2-multiple-port-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Use nmap version detection (-sV) to identify service versions
   - Interpret version information from nmap output
-  - Understand importance of version detection in enumeration
+  - Explain importance of version detection in enumeration
 mapped_skills:
   - network_systems
 assessment_criteria:

@@ -4,6 +4,7 @@ difficulty: advanced
 estimated_time: 120
 prerequisites:
   - linux-5-4-suricata-live-detection
+# By completion students will be able to:
 learning_outcomes:
   - Perform comprehensive reconnaissance across multiple target systems
   - Exploit a web application vulnerability to gain initial access

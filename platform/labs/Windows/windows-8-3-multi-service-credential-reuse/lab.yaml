@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-8-2-cross-service-credential-reuse
+# By completion students will be able to:
 learning_outcomes:
   - Use one set of credentials on multiple services
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Verify SMB, RDP, and SSH services are running
 mapped_skills:
   - identity_access
   - network_systems

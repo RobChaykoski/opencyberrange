@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 25
 prerequisites:
   - network-0-1-ping-basics
+# By completion students will be able to:
 learning_outcomes:
   - Explain the difference between a domain name and an IP address
   - Query A, CNAME, MX, and TXT records

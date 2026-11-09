@@ -4,12 +4,13 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-8-4-credential-discovery-and-reuse-chain
+# By completion students will be able to:
 learning_outcomes:
-  - Understand what CrackMapExec is and when to use it
+  - Explain what CrackMapExec is and when to use it
   - Compare manual credential testing vs CME automation
   - Use CME to test credentials across multiple protocols (SMB, RDP, WinRM)
   - Use CME to test credentials across multiple targets
-  - Understand CME's credential database feature
+  - Explain CME's credential database feature
 mapped_skills:
   - identity_access
   - network_systems

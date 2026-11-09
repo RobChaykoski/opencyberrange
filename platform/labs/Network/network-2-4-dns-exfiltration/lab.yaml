@@ -4,8 +4,9 @@ difficulty: intermediate
 estimated_time: 60
 prerequisites:
   - network-2-3-http-session-hijacking
+# By completion students will be able to:
 learning_outcomes:
-  - Understand DNS tunneling and how it's used for data exfiltration
+  - Explain DNS tunneling and how it's used for data exfiltration
   - Identify suspicious DNS query patterns in network traffic
   - Use Wireshark to analyze DNS traffic and detect anomalies
   - Extract and decode data hidden in DNS queries

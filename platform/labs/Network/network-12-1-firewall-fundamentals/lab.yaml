@@ -8,6 +8,7 @@ prerequisites:
   - network-2-3-http-session-hijacking
   - network-2-4-dns-exfiltration
   - network-2-5-attack-chain-analysis
+# By completion students will be able to:
 learning_outcomes:
   - Explain what a firewall does and why it is placed between network segments
   - Identify the components of an iptables rule (chain, protocol, port, source, action)

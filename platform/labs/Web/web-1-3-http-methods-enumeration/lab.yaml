@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - web-1-2-technology-identification
+# By completion students will be able to:
 learning_outcomes:
-  - Understand HTTP methods and their purposes
+  - Explain HTTP methods and their purposes
   - Use OPTIONS method to enumerate allowed methods
   - Test various HTTP methods for potential vulnerabilities
   - Identify dangerous methods (PUT, DELETE, TRACE)

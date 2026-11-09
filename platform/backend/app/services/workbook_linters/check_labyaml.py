@@ -49,6 +49,7 @@ REQUIRED_METADATA = (
     "assessment_criteria",
 )
 LEGACY_METADATA = ("name", "duration_minutes", "objectives", "learning_objectives")
+OUTCOME_INTRO = "By completion students will be able to:"
 LEGACY_REPLACEMENT = {
     "name": "title",
     "duration_minutes": "estimated_time",
@@ -133,6 +134,8 @@ def scan(path):
     for key in REQUIRED_METADATA:
         if key not in top_keys:
             findings.append((path, 0, "metadata-key-missing", key))
+    if f"# {OUTCOME_INTRO}\nlearning_outcomes:" not in text:
+        findings.append((path, 0, "outcome-intro-missing", OUTCOME_INTRO))
     return findings
 
 

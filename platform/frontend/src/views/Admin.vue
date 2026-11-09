@@ -2688,8 +2688,11 @@ category: enumeration
 difficulty: beginner
 estimated_time: 60
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
-  - First measurable outcome
+  - Configure a Linux firewall
+  - Analyze web server logs
+  - Detect brute-force authentication attempts
 mapped_skills:
   - network_systems
 assessment_criteria:

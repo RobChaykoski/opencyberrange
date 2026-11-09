@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-4-2-rdp-version-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Attempt rdp connection with known credentials
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Detect RDP service on port 3389
 mapped_skills:
   - identity_access
   - network_systems

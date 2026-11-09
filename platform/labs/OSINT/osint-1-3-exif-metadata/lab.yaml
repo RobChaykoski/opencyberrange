@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 35
 prerequisites:
   - osint-1-2-image-intelligence
+# By completion students will be able to:
 learning_outcomes:
   - Download a published image without re-encoding it
   - Read EXIF, GPS, and device metadata from the original file

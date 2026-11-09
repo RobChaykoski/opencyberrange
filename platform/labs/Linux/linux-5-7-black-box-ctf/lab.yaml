@@ -4,13 +4,13 @@ difficulty: advanced
 estimated_time: 120
 prerequisites:
   - linux-5-6-brute-force-detection
+# By completion students will be able to:
 learning_outcomes:
   - Discover and exploit a SQL injection vulnerability to extract sensitive data
   - Enumerate web content for hidden credentials
   - Pivot between systems using discovered credentials
   - Escalate privileges via SUID binary exploitation
   - Analyze network traffic captures to extract tokens
-  - Assemble all flag fragments into the final flag
 mapped_skills:
   - incident_forensics
   - network_systems

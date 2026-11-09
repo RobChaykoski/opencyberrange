@@ -4,6 +4,7 @@ difficulty: advanced
 estimated_time: 180
 prerequisites:
   - linux-final-2-clinic-final
+# By completion students will be able to:
 learning_outcomes:
   - Identify all hosts and services exposed on the studio subnet
   - Demonstrate access to each exposed system and recover the engagement token planted on it

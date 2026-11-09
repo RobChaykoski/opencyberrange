@@ -3,6 +3,7 @@ category: network
 difficulty: beginner
 estimated_time: 20
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Explain what an ICMP echo request and echo reply are
   - Use ping to test whether a host is reachable

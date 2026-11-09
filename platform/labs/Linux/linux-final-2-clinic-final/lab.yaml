@@ -4,6 +4,7 @@ difficulty: advanced
 estimated_time: 120
 prerequisites:
   - linux-final-1-branch-office-practice
+# By completion students will be able to:
 learning_outcomes:
   - Discover all in-scope hosts on the clinic subnet and identify exposed services
   - Recover the three planted tokens (labeled Token 1, Token 2, and Token 3) from the in-scope systems

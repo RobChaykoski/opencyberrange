@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 45
 prerequisites:
   - web-2-4-api-enumeration-gauntlet
+# By completion students will be able to:
 learning_outcomes:
   - Identify a web application that filters user input before passing it to a system command
   - Discover which shell metacharacters are blocked and which are not

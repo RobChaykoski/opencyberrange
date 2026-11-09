@@ -4,16 +4,13 @@ difficulty: advanced
 estimated_time: 90
 prerequisites:
   - web-3-2-sql-injection-to-shell
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate the web application and discover hidden administrative endpoints
   - Identify and exploit a SQL injection vulnerability to bypass authentication
   - Extract database credentials from the authenticated dashboard
   - Connect to the backend MySQL database and retrieve assessment tokens
   - Discover SSH credentials stored in the database
-  - Pivot laterally to the internal server via SSH
-  - Escalate privileges on the internal server using a SUID binary
-  - Collect all four assessment markers and assemble the complete flag
-  - 'Flag format: OCR{SQLi_Database_SSH_PrivEscalation}'
 mapped_skills:
   - web_api
 assessment_criteria:

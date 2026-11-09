@@ -11,8 +11,9 @@ prerequisites:
   - web-1-6-comprehensive-web-reconnaissance
   - web-1-7-directory-traversal
   - web-1-8-traversal-scavenger-hunt
+# By completion students will be able to:
 learning_outcomes:
-  - Understand SQL injection vulnerabilities in authentication
+  - Explain SQL injection vulnerabilities in authentication
   - Identify SQL injection in login forms
   - Exploit basic SQL injection to bypass authentication
   - Access user dashboard and extract sensitive information

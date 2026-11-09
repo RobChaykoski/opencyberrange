@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 35
 prerequisites:
   - ai-1-1-prompt-injection-basics
+# By completion students will be able to:
 learning_outcomes:
-  - Understand why keyword filtering is not a policy boundary
+  - Explain why keyword filtering is not a policy boundary
   - Recognise role-play and authority-spoofing jailbreak patterns
   - Bypass a refusal without using any blocked keywords
 mapped_skills:

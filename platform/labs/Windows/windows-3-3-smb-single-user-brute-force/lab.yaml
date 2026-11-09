@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-3-2-smb-multiple-credential-testing
+# By completion students will be able to:
 learning_outcomes:
   - Brute force password for known username
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate to SMB with brute-forced credentials
 mapped_skills:
   - identity_access
   - network_systems

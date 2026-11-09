@@ -3,6 +3,7 @@ category: network-analysis
 difficulty: intermediate
 estimated_time: 60
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Analyze a network packet capture using command-line tools (tcpdump, tshark)
   - Identify suspicious HTTP traffic and extract leaked credentials from POST requests

@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 45
 prerequisites:
   - network-1-2-log-correlation
+# By completion students will be able to:
 learning_outcomes:
-  - Understand DNS fundamentals and why attackers abuse DNS
+  - Explain DNS fundamentals and why attackers abuse DNS
   - Analyze DNS query logs for suspicious patterns
   - Identify characteristics of malware C2 domains
   - Differentiate normal DNS traffic from data exfiltration

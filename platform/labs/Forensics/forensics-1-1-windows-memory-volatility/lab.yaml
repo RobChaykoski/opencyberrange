@@ -3,6 +3,7 @@ category: forensics
 difficulty: intermediate
 estimated_time: 50
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Connect to an isolated analyst workstation over SSH
   - Identify a Windows memory image with the Volatility info plugin

@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-8-3-multi-service-credential-reuse
+# By completion students will be able to:
 learning_outcomes:
   - Find credentials via enumeration and reuse
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Verify SMB, RDP, and LDAP services are running
 mapped_skills:
   - identity_access
   - network_systems

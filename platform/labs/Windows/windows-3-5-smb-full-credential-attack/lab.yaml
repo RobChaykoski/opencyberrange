@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-3-4-smb-username-enumeration-and-brute-force
+# By completion students will be able to:
 learning_outcomes:
   - Complete smb attack chain
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate to SMB with discovered credentials
 mapped_skills:
   - identity_access
   - network_systems

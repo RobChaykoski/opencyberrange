@@ -4,6 +4,7 @@ difficulty: advanced
 estimated_time: 90
 prerequisites:
   - linux-9-2-cryptovault-recovery-operation
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate services across multiple target systems
   - Identify and exploit a web application vulnerability for initial access

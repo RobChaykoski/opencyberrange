@@ -4,8 +4,9 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - linux-1-4-non-standard-port-discovery
+# By completion students will be able to:
 learning_outcomes:
-  - Understand nmap NSE (Nmap Scripting Engine)
+  - Explain nmap NSE (Nmap Scripting Engine)
   - Use service-specific enumeration scripts
   - Gather detailed SSH configuration information
   - Leverage advanced nmap capabilities

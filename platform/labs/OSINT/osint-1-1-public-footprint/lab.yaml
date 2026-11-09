@@ -3,6 +3,7 @@ category: osint
 difficulty: beginner
 estimated_time: 35
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Map the visible pages of the Kestrel Connect intranet
   - Read robots.txt for paths the site owner tried to hide

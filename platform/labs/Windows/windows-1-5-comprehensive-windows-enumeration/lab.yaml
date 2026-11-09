@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-1-4-windows-os-detection
+# By completion students will be able to:
 learning_outcomes:
   - Perform comprehensive enumeration combining port scan, version detection, and OS detection
   - Identify all Windows services (SMB, RDP, WinRM, MS-SQL, LDAP)

@@ -9,9 +9,11 @@ prerequisites:
   - windows-5-4-winrm-credential-brute-force
   - windows-5-5-winrm-command-execution
   - windows-5-6-winrm-file-retrieval
+# By completion students will be able to:
 learning_outcomes:
   - Identify ms-sql service on target
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Detect MySQL service version
 mapped_skills:
   - identity_access
   - web_api

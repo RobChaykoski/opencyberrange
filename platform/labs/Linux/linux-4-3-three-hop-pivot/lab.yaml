@@ -4,13 +4,13 @@ difficulty: intermediate
 estimated_time: 55
 prerequisites:
   - linux-4-2-post-exploitation-data-harvest
+# By completion students will be able to:
 learning_outcomes:
   - SSH into the teller workstation using provided credentials
   - Discover database credentials stored in a banking application config file
   - Pivot laterally to an internal application server using discovered credentials
   - Extract an API key from the application server's gateway configuration
   - Authenticate to the core API service and retrieve the final assessment token
-  - Assemble the flag from tokens collected across all three hosts
 mapped_skills:
   - identity_access
   - network_systems

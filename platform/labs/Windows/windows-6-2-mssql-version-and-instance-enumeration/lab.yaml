@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-6-1-mssql-service-detection
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate ms-sql version and instances
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Detect MySQL service version with NSE scripts
 mapped_skills:
   - identity_access
   - web_api

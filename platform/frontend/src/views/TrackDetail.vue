@@ -500,11 +500,11 @@
               </h3>
               <div class="scenario-content" v-html="renderScenario(activeLab.lab.scenario)"></div>
             </div>
-            <!-- Objectives -->
+            <!-- Learning outcomes -->
             <div class="panel-section">
               <h3 class="section-title">
                 <TargetIcon />
-                Objectives
+                By completion students will be able to:
               </h3>
               <ul class="objectives-list">
                 <li v-for="(obj, idx) in activeLab.lab.objectives" :key="idx">

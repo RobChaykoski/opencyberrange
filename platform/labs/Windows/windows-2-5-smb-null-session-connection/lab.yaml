@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-2-4-smb-file-retrieval
+# By completion students will be able to:
 learning_outcomes:
   - Connect to smb using null session
-  - Understand SMB enumeration techniques
+  - Explain SMB enumeration techniques
+  - Test null session connection via smbclient
 mapped_skills:
   - identity_access
   - network_systems

@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 30
 prerequisites:
   - linux-1-6-version-vulnerability-identification
+# By completion students will be able to:
 learning_outcomes:
   - Use nmap to perform TCP port scanning against a target host
   - Identify all running services and their version information

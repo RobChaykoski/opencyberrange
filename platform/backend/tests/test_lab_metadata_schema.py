@@ -6,7 +6,9 @@ import yaml
 from app.scripts.standardize_lab_metadata import (
     AXIS_KEYS,
     LEGACY_KEYS,
+    OUTCOME_INTRO,
     REQUIRED_KEYS,
+    VAGUE_OUTCOME_RE,
     _validate,
 )
 from app.services.competency_model import mapping_for_lab
@@ -29,7 +31,11 @@ def test_every_lab_has_the_canonical_metadata_header():
 
     for path in files:
         with open(path, encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
+            text = fh.read()
+        data = yaml.safe_load(text) or {}
+
+        if f"# {OUTCOME_INTRO}\nlearning_outcomes:" not in text:
+            problems.append(f"{path}: missing the '{OUTCOME_INTRO}' heading")
 
         missing = [key for key in REQUIRED_KEYS if key not in data]
         legacy = [key for key in LEGACY_KEYS if key in data]
@@ -39,6 +45,17 @@ def test_every_lab_has_the_canonical_metadata_header():
             problems.append(f"{path}: legacy keys {', '.join(legacy)}")
         if missing:
             continue
+
+        outcomes = data.get("learning_outcomes") or []
+        if not 3 <= len(outcomes) <= 5:
+            problems.append(
+                f"{path}: expected 3-5 learning outcomes, found {len(outcomes)}"
+            )
+        for outcome in outcomes:
+            if VAGUE_OUTCOME_RE.match(outcome):
+                problems.append(f"{path}: vague learning outcome {outcome!r}")
+            if len(str(outcome).split()) < 3:
+                problems.append(f"{path}: learning outcome too short {outcome!r}")
 
         metadata = {key: data[key] for key in REQUIRED_KEYS}
         for error in _validate(metadata):

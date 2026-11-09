@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 40
 prerequisites:
   - ai-1-2-jailbreak-policy-bypass
+# By completion students will be able to:
 learning_outcomes:
   - Explain how indirect prompt injection differs from direct injection
   - Identify instructions embedded in untrusted content

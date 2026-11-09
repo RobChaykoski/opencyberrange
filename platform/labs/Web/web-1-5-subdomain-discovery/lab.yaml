@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - web-1-4-header-analysis
+# By completion students will be able to:
 learning_outcomes:
-  - Understand subdomain enumeration concepts
+  - Explain subdomain enumeration concepts
   - Sweep a subnet to find all live web servers
   - Map discovered hosts to hostnames in /etc/hosts
   - Identify which host serves the admin panel

@@ -4,10 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-1-1-basic-port-scan
+# By completion students will be able to:
 learning_outcomes:
   - Perform full port scan on Windows host
   - Identify multiple open ports (SMB 445, RDP 3389, HTTP 80)
-  - Understand service identification in nmap output
+  - Explain service identification in nmap output
 mapped_skills:
   - network_systems
 assessment_criteria:

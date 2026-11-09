@@ -4,11 +4,12 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - linux-2-3-ssh-file-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Execute commands via SSH interactive session
   - Run system enumeration commands
   - Execute commands to reveal hidden information
-  - Understand command output analysis
+  - Explain command output analysis
 mapped_skills:
   - network_systems
   - identity_access

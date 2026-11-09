@@ -4,8 +4,9 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - linux-2-4-ssh-command-execution
+# By completion students will be able to:
 learning_outcomes:
-  - Understand bash history file structure
+  - Explain bash history file structure
   - Analyze command history for sensitive information
   - Identify credentials in command history
   - Discover internal network information

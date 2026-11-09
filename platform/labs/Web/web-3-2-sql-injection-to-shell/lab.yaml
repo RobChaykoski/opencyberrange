@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 60
 prerequisites:
   - web-3-1-hidden-login-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate the web application and discover hidden paths via robots.txt
   - Identify a login form vulnerable to SQL injection

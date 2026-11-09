@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 45
 prerequisites:
   - network-1-3-dns-anomaly-detection
+# By completion students will be able to:
 learning_outcomes:
   - Analyze SSH authentication logs for attack patterns
   - Identify brute-force login attempts

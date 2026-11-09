@@ -3,6 +3,7 @@ category: ai
 difficulty: beginner
 estimated_time: 35
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Identify where an LLM assistant keeps its hidden instructions
   - Recognise a direct prompt-injection attempt

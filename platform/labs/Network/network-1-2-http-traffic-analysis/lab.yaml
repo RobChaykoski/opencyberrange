@@ -4,12 +4,13 @@ difficulty: beginner
 estimated_time: 45
 prerequisites:
   - network-1-1-port-scan-detection
+# By completion students will be able to:
 learning_outcomes:
   - Download and open PCAP files in Wireshark
   - Apply display filters to isolate HTTP traffic
   - Analyze HTTP POST requests for form data
   - Extract cleartext credentials from unencrypted traffic
-  - Understand why HTTPS is critical for sensitive data
+  - Explain why HTTPS is critical for sensitive data
 mapped_skills:
   - network_systems
   - incident_forensics

@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-5-2-winrm-version-and-configuration-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Authenticate to winrm with known credentials
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate and verify access via SSH
 mapped_skills:
   - identity_access
   - network_systems

@@ -4,8 +4,9 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - linux-2-5-ssh-history-analysis
+# By completion students will be able to:
 learning_outcomes:
-  - Understand sudo privileges and configuration
+  - Explain sudo privileges and configuration
   - Check user sudo permissions
   - Identify privilege escalation vectors
   - Execute privileged commands

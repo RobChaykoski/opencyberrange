@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-7-1-ldap-service-detection
+# By completion students will be able to:
 learning_outcomes:
   - Test anonymous ldap bind
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Test anonymous bind via Root DSE query
 mapped_skills:
   - identity_access
   - network_systems

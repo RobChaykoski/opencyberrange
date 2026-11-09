@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-7-3-ldap-base-dn-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate users via anonymous ldap
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Enumerate users via anonymous LDAP bind
 mapped_skills:
   - identity_access
   - network_systems

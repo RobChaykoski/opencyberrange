@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 50
 prerequisites:
   - linux-3-2-password-hash-cracking
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate SUID binaries on the target system
   - Distinguish between standard, decoy, and exploitable SUID binaries

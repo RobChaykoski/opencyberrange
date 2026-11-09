@@ -4,15 +4,13 @@ difficulty: intermediate
 estimated_time: 90
 prerequisites:
   - network-2-4-dns-exfiltration
+# By completion students will be able to:
 learning_outcomes:
-  - Understand the cyber attack kill chain and how attacks progress through stages
+  - Explain the cyber attack kill chain and how attacks progress through stages
   - Identify initial access vectors in network traffic
   - Detect command and control (C2) communication patterns
   - Track lateral movement between systems using SMB and RDP
   - Recognize data exfiltration indicators in network traffic
-  - Extract indicators of compromise (IOCs) for threat intelligence
-  - Map attacks to the MITRE ATT&CK framework
-  - Create comprehensive attack timelines for incident response
 mapped_skills:
   - network_systems
   - incident_forensics

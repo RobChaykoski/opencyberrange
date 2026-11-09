@@ -7,6 +7,7 @@ prerequisites:
   - linux-5-5-capstone-ctf
   - linux-5-6-brute-force-detection
   - linux-5-7-black-box-ctf
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate the corporate intranet to discover all available pages and directories
   - Identify exposed backup files containing sensitive data

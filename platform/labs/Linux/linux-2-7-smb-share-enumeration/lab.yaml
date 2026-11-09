@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 35
 prerequisites:
   - linux-2-6-ssh-privilege-escalation
+# By completion students will be able to:
 learning_outcomes:
   - Use SMB enumeration tools to discover available network shares
   - Access public shares and identify sensitive information

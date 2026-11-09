@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-6-5-mssql-basic-query-execution
+# By completion students will be able to:
 learning_outcomes:
   - Enable and use xp_cmdshell for command execution
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate and verify FILE privilege
 mapped_skills:
   - identity_access
   - web_api

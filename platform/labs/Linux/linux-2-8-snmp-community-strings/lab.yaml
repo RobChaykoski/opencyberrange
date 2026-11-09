@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 35
 prerequisites:
   - linux-2-7-smb-share-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Discover SNMP services using UDP port scanning
   - Enumerate system information using standard SNMP community strings

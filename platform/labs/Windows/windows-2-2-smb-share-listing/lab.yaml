@@ -4,9 +4,10 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-2-1-smb-connection-test
+# By completion students will be able to:
 learning_outcomes:
   - List SMB shares using smbclient -L
-  - Understand share enumeration techniques
+  - Explain share enumeration techniques
   - Identify available shares on target
 mapped_skills:
   - identity_access

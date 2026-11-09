@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - web-1-1-basic-directory-enumeration
+# By completion students will be able to:
 learning_outcomes:
-  - Understand technology identification concepts
+  - Explain technology identification concepts
   - Use Wappalyzer and browser DevTools to identify technologies
   - Analyze HTTP headers for server information
   - Identify web frameworks and CMS platforms

@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - linux-2-2-ssh-user-discovery
+# By completion students will be able to:
 learning_outcomes:
   - Navigate Linux file system after authentication
   - Search for files using find command

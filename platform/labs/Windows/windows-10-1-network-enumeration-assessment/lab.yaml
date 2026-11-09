@@ -6,6 +6,7 @@ prerequisites:
   - windows-9-1-windows-network-assessment
   - windows-9-2-multi-service-exploitation
   - windows-9-3-complete-windows-penetration-test
+# By completion students will be able to:
 learning_outcomes:
   - Discover all live hosts on your assigned subnet using discovery scanning
   - Identify each machine by its running services (web portal, file server, domain controller)

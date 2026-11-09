@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 45
 prerequisites:
   - web-2-3-command-injection
+# By completion students will be able to:
 learning_outcomes:
   - Identify that the documented v1 API requires authentication
   - Discover the undocumented v2 API that lacks access controls

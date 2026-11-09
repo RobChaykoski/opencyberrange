@@ -4,8 +4,9 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - linux-1-2-multi-service-discovery
+# By completion students will be able to:
 learning_outcomes:
-  - Understand limitations of port scanning
+  - Explain limitations of port scanning
   - Connect directly to services for deeper enumeration
   - Use FTP client for service interaction
   - Gather information beyond nmap banners

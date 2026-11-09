@@ -4,9 +4,11 @@ difficulty: beginner
 estimated_time: 120
 prerequisites:
   - windows-5-1-winrm-service-detection
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate winrm version and authentication
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Enumerate WinRM HTTP headers
 mapped_skills:
   - identity_access
   - network_systems

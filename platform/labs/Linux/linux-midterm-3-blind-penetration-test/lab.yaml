@@ -4,15 +4,13 @@ difficulty: advanced
 estimated_time: 90
 prerequisites:
   - linux-midterm-2-full-penetration-test
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate services across multiple target systems
   - Identify and exploit a directory traversal vulnerability in the web application
   - Discover sensitive configuration files containing backend credentials
   - Retrieve the first assessment marker from the web server
   - Pivot to the backend server using discovered SSH credentials
-  - Retrieve the second assessment marker from the backend server
-  - Escalate privileges on the backend server to achieve root access
-  - Retrieve the third assessment marker and assemble the complete flag
 mapped_skills:
   - incident_forensics
   - network_systems

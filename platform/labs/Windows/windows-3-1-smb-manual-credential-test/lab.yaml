@@ -11,9 +11,11 @@ prerequisites:
   - windows-2-6-smb-null-session-share-enumeration
   - windows-2-7-smb-user-enumeration-via-null-session
   - windows-2-8-smb-comprehensive-null-session-enumeration
+# By completion students will be able to:
 learning_outcomes:
   - Manually test one username/password combination
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Authenticate to SMB with valid credentials
 mapped_skills:
   - identity_access
   - network_systems

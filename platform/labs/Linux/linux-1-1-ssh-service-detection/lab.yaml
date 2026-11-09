@@ -3,10 +3,11 @@ category: reconnaissance
 difficulty: beginner
 estimated_time: 120
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Detect SSH service using nmap
   - Identify SSH version information
-  - Understand basic port scanning
+  - Explain basic port scanning
 mapped_skills:
   - network_systems
   - identity_access

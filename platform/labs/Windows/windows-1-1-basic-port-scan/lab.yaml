@@ -3,10 +3,11 @@ category: reconnaissance
 difficulty: beginner
 estimated_time: 120
 prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
   - Perform basic nmap port scan on target
   - Identify SMB service on port 445
-  - Understand basic nmap syntax for Windows scanning
+  - Explain basic nmap syntax for Windows scanning
 mapped_skills:
   - network_systems
 assessment_criteria:

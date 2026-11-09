@@ -1057,8 +1057,11 @@ category: reconnaissance           # e.g. web, network, forensics
 difficulty: beginner               # beginner | intermediate | advanced
 estimated_time: 60                 # minutes
 prerequisites: []                  # lab slugs this exercise depends on
+# By completion students will be able to:
 learning_outcomes:
-  - "Enumerate services on the target"
+  - "Configure a Linux firewall"
+  - "Analyze web server logs"
+  - "Detect brute-force authentication attempts"
 mapped_skills:
   - network_systems
 assessment_criteria:

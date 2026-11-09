@@ -4,12 +4,13 @@ difficulty: intermediate
 estimated_time: 60
 prerequisites:
   - network-2-1-ftp-credential-extraction
+# By completion students will be able to:
 learning_outcomes:
   - SSH into network analyst workstation
   - Analyze SMTP protocol traffic in Wireshark
   - Reconstruct email messages from packet captures
   - Extract email attachments and content
-  - Understand email protocol security risks
+  - Explain email protocol security risks
 mapped_skills:
   - network_systems
   - incident_forensics

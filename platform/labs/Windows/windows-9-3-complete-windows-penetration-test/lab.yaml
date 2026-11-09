@@ -4,9 +4,11 @@ difficulty: intermediate
 estimated_time: 120
 prerequisites:
   - windows-9-2-multi-service-exploitation
+# By completion students will be able to:
 learning_outcomes:
   - Full penetration test with all techniques
-  - Understand Windows penetration testing techniques
+  - Explain Windows penetration testing techniques
+  - Verify SMB, RDP, and SSH services are running
 mapped_skills:
   - identity_access
   - network_systems

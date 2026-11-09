@@ -30,6 +30,9 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Standardized every lab manifest on the canonical `title`, `category`,
   `difficulty`, `estimated_time`, `prerequisites`, `learning_outcomes`,
   `mapped_skills`, and `assessment_criteria` header.
+- Every lab now opens its outcomes with
+  `# By completion students will be able to:` and lists 3-5 measurable
+  outcomes with vague verbs such as "understand" and "learn" rewritten.
 - Added a repeatable standardizer and static schema test, plus prerequisite,
   mapped-skill, and assessment-criteria storage in discovery and the API.
 - Competency mapping now uses authored `mapped_skills`, with the old

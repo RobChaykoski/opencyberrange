@@ -13,6 +13,7 @@ prerequisites:
   - linux-2-8-snmp-community-strings
   - linux-2-9-smb-credential-hunt
   - linux-2-10-snmp-breadcrumb-trail
+# By completion students will be able to:
 learning_outcomes:
   - Enumerate the target system for privilege escalation vectors
   - Identify SUID binaries using standard Linux enumeration techniques
