@@ -3585,9 +3585,21 @@ function buildElapsed(name) {
 watch(() => soImport.value.building, (b) => {
   if (b && !buildStartedAt['so-import']) buildStartedAt['so-import'] = Date.now()
   if (!b) delete buildStartedAt['so-import']
+  // Only tick while a build is actually running; an always-on 1s timer on the
+  // already-large Admin chunk is wasted work when nothing is building.
+  if (b && !_buildTicker) {
+    _buildTicker = setInterval(() => { nowTick.value = Date.now() }, 1000)
+  } else if (!b && _buildTicker) {
+    clearInterval(_buildTicker)
+    _buildTicker = null
+  }
 })
-onMounted(() => { _buildTicker = setInterval(() => { nowTick.value = Date.now() }, 1000) })
-onUnmounted(() => { if (_buildTicker) clearInterval(_buildTicker) })
+onUnmounted(() => {
+  if (_buildTicker) {
+    clearInterval(_buildTicker)
+    _buildTicker = null
+  }
+})
 
 // VM Definition CRUD state
 const vmDefinitions = ref([])

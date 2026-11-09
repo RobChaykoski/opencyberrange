@@ -145,8 +145,8 @@
             <p class="certificate__meta-label">Date awarded</p>
             <p class="certificate__meta-value">{{ certificate.issued_display }}</p>
             <p class="certificate__meta-id">Certificate ID {{ certificate.certificate_id }}</p>
-            <p v-if="certificate.verify_url" class="certificate__verify">
-              <a :href="certificate.verify_url" target="_blank" rel="noopener">
+            <p v-if="safeHttpUrl(certificate.verify_url)" class="certificate__verify">
+              <a :href="safeHttpUrl(certificate.verify_url)" target="_blank" rel="noopener noreferrer">
                 Verify this certificate
               </a>
             </p>
@@ -194,6 +194,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
+import { safeHttpUrl } from '../utils/url'
 
 const route = useRoute()
 const router = useRouter()
@@ -222,13 +223,7 @@ const usingAccountName = computed(() => (
 ))
 
 const shareUrl = computed(() => {
-  const value = certificate.value?.verify_url
-  if (!value) return ''
-  try {
-    return new URL(value, window.location.origin).toString()
-  } catch {
-    return value
-  }
+  return safeHttpUrl(certificate.value?.verify_url)
 })
 const linkedInUrl = computed(() => {
   if (!shareUrl.value) return 'https://www.linkedin.com/'

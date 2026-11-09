@@ -24,8 +24,8 @@
             {{ sponsor.description }}
           </p>
           <a
-            v-if="sponsor.website_url"
-            :href="sponsor.website_url"
+            v-if="safeHttpUrl(sponsor.website_url)"
+            :href="safeHttpUrl(sponsor.website_url)"
             target="_blank"
             rel="noopener noreferrer"
             class="sponsor-card__link"
@@ -40,6 +40,8 @@
 </template>
 
 <script setup>
+import { safeHttpUrl } from '../utils/url'
+
 defineProps({
   sponsors: { type: Array, default: () => [] },
 })

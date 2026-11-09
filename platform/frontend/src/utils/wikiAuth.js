@@ -19,7 +19,9 @@ export function setWikiAuthCookie() {
   // Bind to the app's own host (covers only this instance's subdomains).
   const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
     ? `; Domain=${host}` : ''
-  document.cookie = `wiki_auth=${token}; path=/; SameSite=Lax; max-age=86400${domainAttr}`
+  // Never allow the JWT cookie to travel over plain HTTP in a real deployment.
+  const secureAttr = (!isIp && host !== 'localhost') ? '; Secure' : ''
+  document.cookie = `wiki_auth=${token}; path=/; SameSite=Lax; max-age=86400${secureAttr}${domainAttr}`
 }
 
 // Remove the wiki auth cookie on logout or account deletion. Clear both the
@@ -30,6 +32,7 @@ export function clearWikiAuthCookie() {
   const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host)
   const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
     ? `; Domain=${host}` : ''
-  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${domainAttr}`
-  document.cookie = 'wiki_auth=; path=/; SameSite=Lax; max-age=0'
+  const secureAttr = (!isIp && host !== 'localhost') ? '; Secure' : ''
+  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${secureAttr}${domainAttr}`
+  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${secureAttr}`
 }

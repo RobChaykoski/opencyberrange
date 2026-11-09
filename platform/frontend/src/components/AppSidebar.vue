@@ -208,7 +208,7 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Workbooks</span>
         </router-link>
-        <a href="/wiki/reference/manual/" target="_blank" class="nav-item" @click="setWikiAuthCookie">
+        <a href="/wiki/reference/manual/" target="_blank" rel="noopener" class="nav-item" @click="setWikiAuthCookie">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>

@@ -49,6 +49,7 @@ import { ref, onMounted, nextTick, onUnmounted } from 'vue'
 import api from '../api/axios'
 import Sortable from 'sortablejs'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
+import { safeHttpUrl } from '../utils/url'
 
 const workbooks = ref([])
 const loading = ref(true)
@@ -66,12 +67,14 @@ const canReorder = (() => {
 
 
 function open(wb) {
+  const url = safeHttpUrl(wb.url)
+  if (!url) return
   setWikiAuthCookie()
   api.post('/analytics/events/workbook-open', {
     title: wb.name,
-    url: wb.url,
+    url,
   }).catch(() => { /* analytics is best-effort */ })
-  window.open(wb.url, '_blank')
+  window.open(url, '_blank', 'noopener')
 }
 
 function initSortable() {

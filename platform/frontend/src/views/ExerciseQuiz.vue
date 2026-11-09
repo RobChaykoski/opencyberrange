@@ -26,8 +26,8 @@
             </div>
           </div>
           <a
-            v-if="summary.certification?.url"
-            :href="summary.certification.url"
+            v-if="safeHttpUrl(summary.certification?.url)"
+            :href="safeHttpUrl(summary.certification.url)"
             target="_blank"
             rel="noopener noreferrer"
             class="cert-link"
@@ -169,8 +169,8 @@
               </p>
               <p class="quiz-result__explanation">{{ result.explanation }}</p>
               <a
-                v-if="result.reference?.url"
-                :href="result.reference.url"
+                v-if="safeHttpUrl(result.reference?.url)"
+                :href="safeHttpUrl(result.reference.url)"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="quiz-result__reference"
@@ -225,6 +225,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
+import { safeHttpUrl } from '../utils/url'
 
 const route = useRoute()
 const router = useRouter()

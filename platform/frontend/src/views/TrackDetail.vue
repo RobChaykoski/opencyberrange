@@ -1130,7 +1130,7 @@ const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
     setWikiAuthCookie()
-    window.open(url, '_blank')
+    window.open(url, '_blank', 'noopener')
   }
 }
 
@@ -1138,7 +1138,7 @@ const openWorkbookForLab = (lab) => {
   const url = lab.workbook && workbookUrl(lab.workbook)
   if (url) {
     setWikiAuthCookie()
-    window.open(url, '_blank')
+    window.open(url, '_blank', 'noopener')
   }
 }
 
@@ -1800,7 +1800,7 @@ const renderScenario = (text) => {
     .split(/\n\s*\n/)
     .map(para => para.replace(/\n/g, ' '))
     .join('\n\n')
-  return marked.parse(escapePlaceholders(unwrapped))
+  return DOMPurify.sanitize(marked.parse(escapePlaceholders(unwrapped)))
 }
 
 // Lifecycle
