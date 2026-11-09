@@ -60,6 +60,12 @@ line when it is touched, or sooner if a risk is rated high.
 - Add a positive and a negative authorization test for each new endpoint.
 - Keep the existing permission tests for analytics, competitions, certificates,
   profile, and account deletion green.
+- Report and export endpoints repeat the same ownership checks as their screens.
+  Cover course reports, per-student and per-assignment reports, per-student flag
+  attempts, dashboard CSV/PDF, analytics PDF, and admin exports with negative
+  outsider/student tests. See `tests/test_authorization_matrix.py`.
+- Public certificate verification returns only the fields needed to verify the
+  award, never account identifiers. See `tests/test_certificate_verify.py`.
 - Review new query parameters that accept IDs or filters for tenant/cohort
   leakage.
 
@@ -122,6 +128,10 @@ note naming the role check.
 - Add an XSS regression test for any new rich-text or markdown surface.
 - Keep CodeQL enabled for Python and JavaScript/TypeScript.
 - Validate lab content with `scripts/validate-lab.py` before publishing.
+- CSV and spreadsheet exports pass every dynamic cell through
+  `app.services.spreadsheet_safety`; test formula-leading cells (`=`, `+`, `-`,
+  `@`, tab, CR/LF) and full-width compatibility forms. See
+  `tests/test_spreadsheet_safety.py` and `tests/test_activity_admin.py`.
 
 **Evidence:** sanitizer call, parameterized query, or test output.
 

@@ -78,6 +78,9 @@ def test_public_certificate_verification(client, auth_headers, test_user, test_l
         assert payload["level_name"] == level.name
         assert payload["exercises_completed"] == 1
         assert payload["exercises_total"] == 1
+        # Verification is public; it must not turn into an account lookup.
+        for identifier in ("username", "email", "student_id", "user_id"):
+            assert identifier not in payload
     finally:
         db_session.query(type(test_lab)).filter(type(test_lab).id == test_lab.id).update(
             {"level_id": None}

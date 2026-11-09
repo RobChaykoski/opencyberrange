@@ -10,7 +10,25 @@ This evidence record applies to the SWOCTS Cyber Range deployment, powered by Op
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.
 
-## Current pass — 8 November 2026
+## Current pass — 9 November 2026
+
+| Category | Evidence produced | Result |
+|---|---|---|
+| A01 Broken access control | Report/export authorization matrix: course PDF reports, per-student and per-assignment reports, per-student flag attempts, instructor dashboard CSV/PDF, analytics PDF, and admin user/activity/backup exports. An outsider instructor and a student both receive `403`; owner/admin positives pass. `tests/test_authorization_matrix.py` | Pass for covered paths |
+| A01/A02 | Public certificate verification returns only recipient, track/level, completion counts, dates, and issuer fields. `username`, `email`, `student_id`, and `user_id` are asserted absent; malformed and oversized IDs are rejected before database work. `tests/test_certificate_verify.py`, `tests/test_certificate_verify_input.py` | Pass |
+| A03 Injection | CSV formula injection: every dynamic cell in dashboard and admin activity CSV exports passes through `neutralize_cell`/`neutralize_row`. Leading `=`, `+`, `-`, `@`, tab, CR/LF, and full-width forms are prefixed with an apostrophe. `tests/test_spreadsheet_safety.py`, `tests/test_activity_admin.py` | Pass |
+| A01/A05 | Exercise Tester is a dev-only module (`kind=devtool`), stripped from shipped editions by the build manifests and only mounted for the explicit dev-tool prefixes. Confirm the module is disabled in production profiles; it is not an end-user surface. | Reviewed; production profiles omit the module |
+
+The new authorization, CSV, and certificate assertions are DB-gated and run in CI with `TEST_DATABASE_URL`; the spreadsheet-safety unit tests also run without a database.
+
+Residual privacy note: certificate verification is intentionally public and
+deterministic. It is rate-limited to 30 requests/minute and returns no account
+identifiers, but the recipient name is necessarily public to make the
+certificate verifiable. If recipient-name unlinkability becomes a requirement,
+issue longer random verification tokens instead of the current deterministic
+certificate ID.
+
+## Previous pass — 8 November 2026
 
 | Category | Evidence produced | Result |
 |---|---|---|

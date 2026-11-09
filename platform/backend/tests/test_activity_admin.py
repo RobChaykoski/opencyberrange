@@ -31,6 +31,35 @@ def _make_admin(client, db_session):
     return admin, {"Authorization": f"Bearer {resp.json()['access_token']}"}
 
 
+def test_activity_csv_export_neutralises_formula_cells(client, db_session):
+    """A learner-controlled label must not become an Excel formula."""
+    admin, headers = _make_admin(client, db_session)
+    event = ActivityEvent(
+        event_type="lab_started",
+        actor_id=admin.id,
+        target_type="lab",
+        target_label='=HYPERLINK("https://example.invalid","x")',
+        detail="+cmd|' /C calc'!A0",
+    )
+    db_session.add(event)
+    db_session.commit()
+    try:
+        exported = client.get(
+            "/api/admin/activity/export?format=csv&reason=csv-formula-test",
+            headers=headers,
+        )
+        assert exported.status_code == 200, exported.text
+        text = exported.text
+        assert "'=HYPERLINK" in text
+        assert "'+cmd" in text
+        assert "\n=HYPERLINK" not in text
+        assert "\n+cmd" not in text
+    finally:
+        db_session.query(ActivityEvent).filter(ActivityEvent.id == event.id).delete()
+        db_session.query(User).filter(User.id == admin.id).delete()
+        db_session.commit()
+
+
 def test_activity_export_and_clear(client, db_session):
     admin, headers = _make_admin(client, db_session)
     old_event = None
