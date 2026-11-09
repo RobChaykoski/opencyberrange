@@ -36,7 +36,7 @@ from app.schemas import (
     CourseFeedbackRequest,
 )
 from app.services.achievements import resolve_achievement_label
-from app.services import exercise_quiz
+from app.services import exercise_quiz, settings_service
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
 from app.services.activity import log_activity, EventTypes
@@ -737,6 +737,72 @@ async def course_feedback_summary(
     can_submit_checkin = bool(
         is_enrolled and survey_opt_in and checkin_survey and checkin_survey.is_active
     )
+
+    minimum = int(settings_service.get_setting(db, "analytics_min_cohort_size", "5") or 5)
+    if enrolled <= 0:
+        cohort_state = "no_evidence"
+    elif enrolled < minimum:
+        cohort_state = "suppressed"
+    else:
+        cohort_state = "available"
+    if cohort_state != "available":
+        suppression = {
+            "state": cohort_state,
+            "suppressed": cohort_state == "suppressed",
+            "minimum_cohort_size": minimum,
+            "sample_size": enrolled,
+            "reason": (
+                "No enrolled learners yet."
+                if cohort_state == "no_evidence"
+                else f"Cohort is smaller than the minimum cell size ({enrolled} of {minimum} learners)."
+            ),
+        }
+        return {
+            "course_id": course_id,
+            "is_instructor": is_instructor,
+            "enrolled": enrolled,
+            "cohort_state": cohort_state,
+            "suppression": suppression,
+            "aggregate": {
+                "enrolled": enrolled,
+                "respondents": None,
+                "response_rate": None,
+                "clarity": None,
+                "challenge": None,
+                "engagement": None,
+                "confidence": None,
+                "overall_score": None,
+                "quiz_experience": None,
+                "data_sources": [],
+            },
+            "pulse": {"responses": None, "difficulty": None, "learning": None, "unclear": None},
+            "reactions": {"likes": None, "dislikes": None, "like_ratio": None},
+            "course_checkin": {
+                "responses": None,
+                "clarity": None,
+                "challenge": None,
+                "engagement": None,
+                "confidence": None,
+                "survey_id": checkin_survey.id if checkin_survey else None,
+                "survey_title": checkin_survey.title if checkin_survey else None,
+            },
+            "instructor_coaching": {"notes": None, "students_coached": None},
+            "quizzes": {},
+            "has_data": False,
+            "survey_opt_in": survey_opt_in,
+            "can_submit_checkin": can_submit_checkin,
+            "survey": (
+                {
+                    "id": checkin_survey.id,
+                    "title": checkin_survey.title,
+                    "is_active": bool(checkin_survey.is_active),
+                    "questions": json.loads(checkin_survey.questions or "[]"),
+                }
+                if checkin_survey else None
+            ),
+            "prompt": suppression["reason"],
+        }
+
     survey_responses = []
     if checkin_survey:
         survey_responses = db.query(SurveyResponse).filter(
@@ -831,6 +897,14 @@ async def course_feedback_summary(
         "course_id": course_id,
         "is_instructor": is_instructor,
         "enrolled": enrolled,
+        "cohort_state": "available",
+        "suppression": {
+            "state": "available",
+            "suppressed": False,
+            "minimum_cohort_size": minimum,
+            "sample_size": enrolled,
+            "reason": None,
+        },
         "aggregate": aggregate,
         "pulse": {
             "responses": len(pulse_rows),

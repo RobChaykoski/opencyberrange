@@ -2189,6 +2189,7 @@ async def survey_responses(
 ):
     survey = _survey_owner_or_403(db, survey_id, current_user)
     questions = _survey_questions(survey)
+    minimum = _minimum_cohort_size(db)
     rows = db.query(SurveyResponse).options(
         joinedload(SurveyResponse.user),
         joinedload(SurveyResponse.course),
@@ -2196,9 +2197,30 @@ async def survey_responses(
         SurveyResponse.submitted_at.desc()
     ).all()
 
+    by_course = {}
+    for row in rows:
+        by_course.setdefault(row.course_id, []).append(row)
+
+    suppressed_courses = []
+    visible_rows = []
+    for course_id, group in by_course.items():
+        if len(group) < minimum:
+            course = group[0].course
+            suppressed_courses.append({
+                "course_id": course_id,
+                "course_code": course.code if course else None,
+                "response_count": len(group),
+                "reason": (
+                    f"Survey responses are suppressed below the minimum cell "
+                    f"size ({len(group)} of {minimum})."
+                ),
+            })
+            continue
+        visible_rows.extend(group)
+
     responses = []
     summary = {}
-    for row in rows:
+    for row in visible_rows:
         try:
             answers = json.loads(row.answers or "{}")
         except (TypeError, ValueError):
@@ -2228,9 +2250,11 @@ async def survey_responses(
                 entry["counts"][str(value)] = entry["counts"].get(str(value), 0) + 1
 
     return {
-        "survey": _survey_payload(db, survey, len(rows)),
+        "survey": _survey_payload(db, survey, len(visible_rows)),
         "summary": summary,
         "responses": responses,
+        "suppressed_courses": suppressed_courses,
+        "minimum_cohort_size": minimum,
     }
 
 
