@@ -47,6 +47,7 @@ REQUIRED_METADATA = (
     "learning_outcomes",
     "mapped_skills",
     "assessment_criteria",
+    "mitre_attack",
 )
 LEGACY_METADATA = ("name", "duration_minutes", "objectives", "learning_objectives")
 OUTCOME_INTRO = "By completion students will be able to:"

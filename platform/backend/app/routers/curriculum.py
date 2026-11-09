@@ -1165,6 +1165,7 @@ async def get_track(
             prerequisites = _json_list(getattr(lab, "prerequisites", None))
             mapped_skills = _json_list(getattr(lab, "mapped_skills", None))
             assessment_criteria = _json_list(getattr(lab, "assessment_criteria", None))
+            mitre_attack = _json_list(getattr(lab, "mitre_attack", None))
             
             try:
                 tools = json.loads(lab.tools) if lab.tools else []
@@ -1196,6 +1197,7 @@ async def get_track(
                 "prerequisites": prerequisites,
                 "mapped_skills": mapped_skills,
                 "assessment_criteria": assessment_criteria,
+                "mitre_attack": mitre_attack,
                 "tools": tools,
                 "is_completed": is_completed,
                 "is_unlocked": is_unlocked,

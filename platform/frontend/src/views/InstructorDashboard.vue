@@ -24,6 +24,83 @@
       <span v-else class="health-bar__label">Checking...</span>
     </div>
 
+    <!-- Learning metrics (last 7 days) -->
+    <div class="learning-metrics">
+      <div class="learning-metrics__head">
+        <h2 class="panel__title">Learning this week</h2>
+        <span class="panel__subtitle">Last {{ stats.metrics_window_days || 7 }} days</span>
+      </div>
+      <div class="stats-grid learning-grid">
+        <div class="rich-card">
+          <div class="rich-card__header">
+            <svg class="rich-card__icon rich-card__icon--active" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span class="rich-card__label">Students Active</span>
+          </div>
+          <div class="rich-card__body">
+            <span class="rich-card__value">{{ stats.students_active ?? 0 }}</span>
+          </div>
+          <div class="rich-card__footer">
+            <span class="rich-card__detail rich-card__detail--muted">sessions, submissions, or completions</span>
+          </div>
+        </div>
+
+        <div class="rich-card">
+          <div class="rich-card__header">
+            <svg class="rich-card__icon rich-card__icon--flags" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+              <line x1="4" y1="22" x2="4" y2="15"/>
+            </svg>
+            <span class="rich-card__label">Labs Completed</span>
+          </div>
+          <div class="rich-card__body">
+            <span class="rich-card__value">{{ stats.labs_completed ?? 0 }}</span>
+          </div>
+          <div class="rich-card__footer">
+            <span class="rich-card__detail rich-card__detail--muted">passing completions</span>
+          </div>
+        </div>
+
+        <div class="rich-card">
+          <div class="rich-card__header">
+            <svg class="rich-card__icon rich-card__icon--time" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3v18h18"/>
+              <path d="m7 14 4-4 4 4 5-6"/>
+            </svg>
+            <span class="rich-card__label">Average Score</span>
+          </div>
+          <div class="rich-card__body">
+            <span class="rich-card__value">{{ stats.average_score != null ? stats.average_score + '%' : '-' }}</span>
+          </div>
+          <div class="rich-card__footer">
+            <span class="rich-card__detail rich-card__detail--muted">first-attempt and hint adjusted</span>
+          </div>
+        </div>
+
+        <div class="rich-card" :class="{ 'rich-card--attention': stats.struggling_students > 0 }">
+          <div class="rich-card__header">
+            <svg class="rich-card__icon rich-card__icon--warning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span class="rich-card__label">Struggling Students</span>
+          </div>
+          <div class="rich-card__body">
+            <span class="rich-card__value">{{ stats.struggling_students ?? 0 }}</span>
+          </div>
+          <div class="rich-card__footer">
+            <span v-if="stats.struggling_students" class="rich-card__detail">review Teaching focus and recent wins</span>
+            <span v-else class="rich-card__detail rich-card__detail--muted">no risk signals this week</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Stat Cards -->
     <div class="stats-grid">
       <!-- Flags Today -->
@@ -358,6 +435,8 @@ const stats = ref({
   flags_today: 0, flags_yesterday: null, flag_students_today: 0, flags_sparkline: [],
   active_count: 0, active_users: [],
   avg_completion_min: null, avg_completion_typical: null,
+  students_active: 0, labs_completed: 0, average_score: null,
+  struggling_students: 0, metrics_window_days: 7,
   near_certificate: [], near_certificate_count: 0,
   inactive_students: [], inactive_students_count: 0,
   recent_completions: [], recent_completions_count: 0,
@@ -915,6 +994,33 @@ onMounted(() => {
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
+}
+
+/* Learning metrics */
+.learning-metrics {
+  margin-bottom: 1.25rem;
+}
+
+.learning-metrics__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.learning-grid {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 0;
+}
+
+.rich-card--attention {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--border-color));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warning) 20%, transparent);
+}
+
+.rich-card__icon--warning {
+  color: var(--warning);
 }
 
 /* Rich Cards */
@@ -1544,8 +1650,15 @@ onMounted(() => {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+  .learning-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
-  .stats-grid {
+  .stats-grid,
+  .learning-grid {
     grid-template-columns: 1fr;
   }
 

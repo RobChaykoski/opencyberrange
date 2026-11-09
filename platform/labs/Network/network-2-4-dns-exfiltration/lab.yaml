@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Exfiltration
+    technique: T1048.003
+    technique_name: Exfiltration Over Unencrypted Non-C2 Protocol
+    detection: Monitor outbound non-standard protocols for data volume anomalies.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

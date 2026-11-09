@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Exfiltration
+    technique: T1041
+    technique_name: Exfiltration Over C2 Channel
+    detection: Correlate egress volume with known C2 channels and blocked destinations.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

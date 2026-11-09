@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1596
+    technique_name: Search Open Technical Databases
+    detection: Scan code repositories and public datasets for leaked credentials or infrastructure.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

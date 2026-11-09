@@ -15,6 +15,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1083
+    technique_name: File and Directory Discovery
+    detection: Audit file and directory access telemetry for unusual enumeration.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -20,6 +20,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1110
+    technique_name: Brute Force
+    detection: Alert on repeated authentication failures and account lockout events.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

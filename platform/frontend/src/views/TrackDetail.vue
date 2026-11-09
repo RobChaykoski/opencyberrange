@@ -513,6 +513,31 @@
               </ul>
             </div>
 
+            <!-- MITRE ATT&CK mapping -->
+            <div v-if="activeLab.lab.mitre_attack?.length" class="panel-section">
+              <h3 class="section-title">
+                <TargetIcon />
+                MITRE ATT&amp;CK
+              </h3>
+              <div class="mitre-list">
+                <div
+                  v-for="(mapping, idx) in activeLab.lab.mitre_attack"
+                  :key="`${mapping.technique || 'technique'}-${idx}`"
+                  class="mitre-item"
+                >
+                  <div class="mitre-item__head">
+                    <span class="mitre-tactic">{{ mapping.tactic }}</span>
+                    <span class="mitre-technique">
+                      {{ mapping.technique }}<template v-if="mapping.technique_name"> &middot; {{ mapping.technique_name }}</template>
+                    </span>
+                  </div>
+                  <p v-if="mapping.detection" class="mitre-detection">
+                    <strong>Detection opportunity:</strong> {{ mapping.detection }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <!-- ICS Techniques (ATT&CK for ICS) -->
             <div v-if="activeLab.lab.ics_techniques && activeLab.lab.ics_techniques.length" class="panel-section">
               <h3 class="section-title">
@@ -3276,6 +3301,52 @@ watch(timeRemaining, (val) => {
 }
 
 /* ICS Techniques (ATT&CK for ICS) */
+.mitre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mitre-item {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-tertiary, rgba(148, 163, 184, 0.06));
+}
+
+.mitre-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.6rem;
+}
+
+.mitre-tactic {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.mitre-technique {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mitre-detection {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.mitre-detection strong {
+  color: var(--text-primary);
+}
+
 .ics-tech-list {
   display: flex;
   flex-wrap: wrap;

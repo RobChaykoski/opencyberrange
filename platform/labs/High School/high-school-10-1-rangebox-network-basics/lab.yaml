@@ -18,6 +18,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1016
+    technique_name: System Network Configuration Discovery
+    detection: Review host network-configuration and interface changes.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

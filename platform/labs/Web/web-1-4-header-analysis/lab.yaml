@@ -15,6 +15,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1592
+    technique_name: Gather Victim Host Information
+    detection: Review service banners and host-identification telemetry for unusual fingerprinting.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

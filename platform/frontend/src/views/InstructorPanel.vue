@@ -1067,6 +1067,11 @@ mapped_skills:
 assessment_criteria:
   - "Submit the correct flag."
   - "Pass every automated test step in the lab manifest."
+mitre_attack:
+  - tactic: Discovery
+    technique: T1046
+    technique_name: Network Service Discovery
+    detection: "Monitor IDS/flow logs for service and port scanning."
 description: "One-line summary"
 scenario: |
   Narrative backstory shown to students...

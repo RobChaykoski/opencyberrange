@@ -45,6 +45,14 @@ except Exception:  # pragma: no cover - allows running without PYTHONPATH
         "ai_security",
     )
 
+try:
+    from app.services.mitre_mapping import mapping_for_lab, validate_mapping
+except Exception:  # pragma: no cover
+    from pathlib import Path
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from app.services.mitre_mapping import mapping_for_lab, validate_mapping
+
 DEFAULT_LABS_ROOT = os.path.join("platform", "labs")
 REQUIRED_KEYS = (
     "title",
@@ -55,6 +63,7 @@ REQUIRED_KEYS = (
     "learning_outcomes",
     "mapped_skills",
     "assessment_criteria",
+    "mitre_attack",
 )
 LEGACY_KEYS = (
     "name",
@@ -400,6 +409,9 @@ def _metadata_for(item, prerequisites):
 
     skills = _mapped_skills(item["track"], item["level"], category)
     criteria = list(DEFAULT_ASSESSMENT)
+    mitre_attack = data.get("mitre_attack") or mapping_for_lab(
+        item["track"], item["level"], category, item["slug"],
+    )
 
     return {
         "title": title,
@@ -410,17 +422,24 @@ def _metadata_for(item, prerequisites):
         "learning_outcomes": learning_outcomes,
         "mapped_skills": skills,
         "assessment_criteria": criteria,
+        "mitre_attack": mitre_attack,
     }
 
 
 def _indent_sequence_lines(dumped: str) -> str:
     """Render nested sequences with the repository's two-space indent."""
     lines = []
+    in_item = False
     for line in dumped.splitlines():
         if line.startswith("- "):
             lines.append("  " + line)
+            in_item = True
+        elif in_item and line.startswith("  "):
+            # Continuation lines of a list-of-mappings item.
+            lines.append("  " + line)
         else:
             lines.append(line)
+            in_item = False
     return "\n".join(lines) + "\n"
 
 
@@ -504,6 +523,12 @@ def _validate(metadata: dict) -> list[str]:
         errors.append(
             "mapped_skills must use competency keys: " + ", ".join(AXIS_KEYS)
         )
+    mitre = metadata.get("mitre_attack")
+    if not isinstance(mitre, list) or not mitre:
+        errors.append("mitre_attack must contain at least one mapping")
+    else:
+        for entry in mitre:
+            errors.extend(validate_mapping(entry))
     return errors
 
 

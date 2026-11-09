@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1557
+    technique_name: Adversary-in-the-Middle
+    detection: Correlate authentication relay and man-in-the-middle network anomalies.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

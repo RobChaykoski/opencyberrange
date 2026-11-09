@@ -15,6 +15,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Collection
+    technique: T1039
+    technique_name: Data from Network Shared Drive
+    detection: Audit network-share file access and transfer volume.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

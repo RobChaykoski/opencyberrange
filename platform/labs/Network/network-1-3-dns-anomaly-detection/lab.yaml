@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Command and Control
+    technique: T1071.004
+    technique_name: DNS
+    detection: Alert on DNS query volume, entropy, and unusual record types.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -15,6 +15,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Execution
+    technique: T1021.006
+    technique_name: Windows Remote Management
+    detection: Review WinRM authentication and command logs.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -21,6 +21,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1087
+    technique_name: Account Discovery
+    detection: Review directory, SAMR, and authentication logs for account enumeration.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

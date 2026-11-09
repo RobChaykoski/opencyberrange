@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Privilege Escalation
+    technique: T1548.001
+    technique_name: Setuid and Setgid
+    detection: Audit SUID/SGID binaries and execve telemetry for unexpected escalation.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

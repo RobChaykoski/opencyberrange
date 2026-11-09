@@ -14,6 +14,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1018
+    technique_name: Remote System Discovery
+    detection: Monitor host-discovery and ICMP sweep patterns.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

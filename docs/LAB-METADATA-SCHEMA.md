@@ -23,6 +23,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1003
+    technique_name: OS Credential Dumping
+    detection: Monitor credential-store access and LSASS or memory-analysis activity.
 ```
 
 ## Required fields
@@ -37,6 +42,7 @@ assessment_criteria:
 | `learning_outcomes` | list of strings | 3-5 measurable outcomes, each introduced by `# By completion students will be able to:` |
 | `mapped_skills` | list of strings | competency keys, non-empty |
 | `assessment_criteria` | list of strings | how the lab is graded, non-empty |
+| `mitre_attack` | list of mappings | at least one `tactic`, `technique`, and `detection` |
 
 Legacy keys `name`, `duration_minutes`, `objectives`, and
 `learning_objectives` are no longer used. The loader still accepts them during a
@@ -67,6 +73,30 @@ Rules:
 The standardizer rewrites vague openers (`Understand` to `Explain`, `Learn` to
 `Explain`, `Know` to `Identify`), fills short lists from concrete tester steps or
 a category fallback, and trims long lists to five.
+
+## MITRE ATT&CK mapping
+
+Every offensive and defensive exercise declares at least one mapping:
+
+```yaml
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1003
+    technique_name: OS Credential Dumping
+    detection: Monitor credential-store access and LSASS or memory-analysis activity.
+```
+
+Rules:
+
+- `tactic` uses the MITRE ATT&CK tactic name, such as `Credential Access`;
+- `technique` uses an Enterprise or ICS technique ID, such as `T1003`,
+  `T1021.001`, or `T0846`;
+- `technique_name` is the human-readable technique name;
+- `detection` states the log source or control that would reveal the activity;
+- multiple mappings are allowed for multi-stage labs.
+
+The mapping is stored in `labs.mitre_attack` and returned by the curriculum API
+so reports, learner briefs, and future coverage views use the same taxonomy.
 
 ## Prerequisites
 

@@ -369,6 +369,97 @@ def _instructor_teaching_focus(
     }
 
 
+def _instructor_learning_metrics(
+    db: Session,
+    now: datetime,
+    admin_ids: set[int],
+    student_ids: Optional[set[int]],
+) -> dict:
+    """Basic learning metrics for the last 7 days.
+
+    Uses the same cohort scope as the rest of the ops dashboard. The score is a
+    transparent 0-100 participation score, not the course scoreboard total:
+    start at 100, subtract 10 per retry and 5 per hint, then clamp at zero.
+    """
+    cutoff = now - timedelta(days=7)
+
+    def scoped(query, column):
+        if student_ids is not None:
+            query = query.filter(column.in_(student_ids)) if student_ids else query.filter(False)
+        if admin_ids:
+            query = query.filter(~column.in_(admin_ids))
+        return query
+
+    active_users: set[int] = set()
+    session_rows = scoped(
+        db.query(LabSession.user_id, LabSession.lab_id).filter(
+            (LabSession.started_at >= cutoff) | (LabSession.stopped_at >= cutoff),
+        ),
+        LabSession.user_id,
+    ).all()
+    active_users.update(row[0] for row in session_rows)
+
+    completion_rows = scoped(
+        db.query(
+            LabCompletion.user_id,
+            LabCompletion.lab_id,
+            LabCompletion.attempts,
+            LabCompletion.hints_used,
+        ).filter(LabCompletion.completed_at >= cutoff),
+        LabCompletion.user_id,
+    ).all()
+    active_users.update(row[0] for row in completion_rows)
+
+    attempt_users = scoped(
+        db.query(FlagAttempt.user_id).filter(FlagAttempt.attempted_at >= cutoff),
+        FlagAttempt.user_id,
+    ).distinct().all()
+    active_users.update(row[0] for row in attempt_users)
+
+    scores = []
+    struggling: set[int] = set()
+    completed_pairs = set()
+    for user_id, lab_id, attempts, hints in completion_rows:
+        completed_pairs.add((user_id, lab_id))
+        retries = max(0, (attempts or 1) - 1)
+        score = 100 - retries * 10 - min(25, (hints or 0) * 5)
+        score = max(0, min(100, score))
+        scores.append(score)
+        if score < 70 or (attempts or 1) >= 3:
+            struggling.add(user_id)
+
+    # Started but not finished during the window.
+    for user_id, lab_id in session_rows:
+        if (user_id, lab_id) not in completed_pairs:
+            struggling.add(user_id)
+
+    # Repeated incorrect submissions without a completion in the window.
+    incorrect_rows = scoped(
+        db.query(
+            FlagAttempt.user_id,
+            func.count(FlagAttempt.id).label("attempts"),
+        ).filter(
+            FlagAttempt.is_correct == False,
+            FlagAttempt.attempted_at >= cutoff,
+        ),
+        FlagAttempt.user_id,
+    ).group_by(FlagAttempt.user_id).having(
+        func.count(FlagAttempt.id) >= 5
+    ).all()
+    completed_users = {user_id for user_id, _lab_id, _attempts, _hints in completion_rows}
+    for user_id, _attempts in incorrect_rows:
+        if user_id not in completed_users:
+            struggling.add(user_id)
+
+    return {
+        "students_active": len(active_users),
+        "labs_completed": len(completion_rows),
+        "average_score": round(sum(scores) / len(scores), 1) if scores else None,
+        "struggling_students": len(struggling),
+        "metrics_window_days": 7,
+    }
+
+
 # ==================== Instructor Endpoints ====================
 
 @router.get("/instructor/stats")
@@ -479,6 +570,7 @@ async def instructor_stats(
     avg_time_typical = _scoped(q, LabCompletion.user_id).scalar()
 
     focus = _instructor_teaching_focus(db, current_user, now, admin_ids)
+    learning = _instructor_learning_metrics(db, now, admin_ids, student_ids)
     return {
         "flags_today": flags_today,
         "flags_yesterday": flags_yesterday,
@@ -488,6 +580,7 @@ async def instructor_stats(
         "active_users": active_users,
         "avg_completion_min": round(avg_time_today) if avg_time_today else None,
         "avg_completion_typical": round(avg_time_typical) if avg_time_typical else None,
+        **learning,
         **focus,
     }
 

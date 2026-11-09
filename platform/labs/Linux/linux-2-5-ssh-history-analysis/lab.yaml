@@ -16,6 +16,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1552.003
+    technique_name: Bash History
+    detection: Audit access to shell history files and command-line secrets.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -12,6 +12,7 @@ from app.scripts.standardize_lab_metadata import (
     _validate,
 )
 from app.services.competency_model import mapping_for_lab
+from app.services.mitre_mapping import validate_mapping
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 LABS_ROOT = REPO_ROOT / "platform" / "labs"
@@ -60,6 +61,13 @@ def test_every_lab_has_the_canonical_metadata_header():
         metadata = {key: data[key] for key in REQUIRED_KEYS}
         for error in _validate(metadata):
             problems.append(f"{path}: {error}")
+
+        mappings = data.get("mitre_attack") or []
+        if not mappings:
+            problems.append(f"{path}: mitre_attack must contain at least one mapping")
+        for mapping in mappings:
+            for error in validate_mapping(mapping):
+                problems.append(f"{path}: {error}")
 
         unknown = set(metadata["mapped_skills"]) - set(AXIS_KEYS)
         if unknown:

@@ -16,6 +16,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1110.002
+    technique_name: Password Cracking
+    detection: Monitor password-hash access and offline cracking indicators.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -37,6 +37,10 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   mapped-skill, and assessment-criteria storage in discovery and the API.
 - Competency mapping now uses authored `mapped_skills`, with the old
   track/category heuristic retained as a fallback for legacy records.
+- Added MITRE ATT&CK tactic, technique, and detection mappings to every lab and
+  exposed them in the exercise brief.
+- Added a seven-day instructor learning snapshot: active students, labs
+  completed, average score, and struggling students.
 
 ## [2.5.3] - 2026-11-08
 

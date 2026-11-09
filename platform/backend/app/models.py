@@ -258,6 +258,10 @@ class Lab(Base):
     # {tactic, technique_id, technique_name, note}. Powers the coverage matrix
     # generator and per-lab technique display.
     ics_techniques = Column(Text, nullable=True)
+    # MITRE ATT&CK mappings from lab.yaml mitre_attack: JSON array of
+    # {tactic, technique, technique_name, detection}. Applies to every track,
+    # not only ICS.
+    mitre_attack = Column(Text, nullable=True)
 
     # Relationships
     level = relationship("Level", back_populates="labs")

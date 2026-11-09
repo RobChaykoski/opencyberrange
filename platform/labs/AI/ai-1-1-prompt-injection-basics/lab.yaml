@@ -13,6 +13,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Initial Access
+    technique: T1190
+    technique_name: Exploit Public-Facing Application
+    detection: Monitor web/WAF logs for exploit payloads and abnormal application errors.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

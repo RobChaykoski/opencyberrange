@@ -18,6 +18,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1593
+    technique_name: Search Open Websites/Domains
+    detection: Monitor public content, DNS, and certificate-transparency sources for exposure.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

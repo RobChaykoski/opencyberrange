@@ -22,6 +22,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1040
+    technique_name: Network Sniffing
+    detection: Inspect cleartext protocol traffic and span/mirror telemetry for sensitive data.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -17,6 +17,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Command and Control
+    technique: T1071
+    technique_name: Application Layer Protocol
+    detection: Detect beaconing and application-layer C2 in network flow data.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

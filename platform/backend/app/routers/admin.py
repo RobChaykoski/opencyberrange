@@ -932,6 +932,8 @@ async def update_lab(
         lab.mapped_skills = request.mapped_skills
     if request.assessment_criteria is not None:
         lab.assessment_criteria = request.assessment_criteria
+    if request.mitre_attack is not None:
+        lab.mitre_attack = request.mitre_attack
     if request.is_active is not None:
         lab.is_active = request.is_active
     if request.is_course_exclusive is not None:
@@ -2557,6 +2559,10 @@ async def create_lab(
         json.dumps(lab_data.get('assessment_criteria', []))
         if lab_data.get('assessment_criteria') else None
     )
+    mitre_attack_val = payload.mitre_attack or (
+        json.dumps(lab_data.get('mitre_attack', []))
+        if lab_data.get('mitre_attack') else None
+    )
     hints = payload.hints or (json.dumps(lab_data['hints']) if lab_data.get('hints') else None)
     tools = payload.tools or (json.dumps(lab_data['tools']) if lab_data.get('tools') else None)
     hostnames_val = payload.hostnames or (json.dumps(lab_data['hostnames']) if lab_data.get('hostnames') else None)
@@ -2599,6 +2605,7 @@ async def create_lab(
         prerequisites=prerequisites_val,
         mapped_skills=mapped_skills_val,
         assessment_criteria=assessment_criteria_val,
+        mitre_attack=mitre_attack_val,
         hints=hints,
         tools=tools,
         hostnames=hostnames_val,
@@ -2883,6 +2890,9 @@ async def discover_labs(
                 existing.assessment_criteria = json.dumps(
                     lab_data.get('assessment_criteria', []) or []
                 )
+                existing.mitre_attack = json.dumps(
+                    lab_data.get('mitre_attack', []) or []
+                )
                 existing.hints = json.dumps(lab_data.get('hints', []))
                 existing.tools = json.dumps(lab_data.get('tools', []))
                 existing.hostnames = json.dumps(lab_data.get('hostnames', []))
@@ -2915,6 +2925,9 @@ async def discover_labs(
                     mapped_skills=json.dumps(lab_data.get('mapped_skills', []) or []),
                     assessment_criteria=json.dumps(
                         lab_data.get('assessment_criteria', []) or []
+                    ),
+                    mitre_attack=json.dumps(
+                        lab_data.get('mitre_attack', []) or []
                     ),
                     hints=json.dumps(lab_data.get('hints', [])),
                     tools=json.dumps(lab_data.get('tools', [])),

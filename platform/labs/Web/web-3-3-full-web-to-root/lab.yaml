@@ -16,6 +16,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Privilege Escalation
+    technique: T1068
+    technique_name: Exploitation for Privilege Escalation
+    detection: Correlate exploit attempts with privilege changes and EDR alerts.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

@@ -317,6 +317,7 @@ class UpdateLabRequest(SafeTextModel):
     prerequisites: Optional[str] = None
     mapped_skills: Optional[str] = None
     assessment_criteria: Optional[str] = None
+    mitre_attack: Optional[str] = None
 
     __safe_text_fields__ = {
         "name": "short",
@@ -326,6 +327,7 @@ class UpdateLabRequest(SafeTextModel):
         "prerequisites": "multiline",
         "mapped_skills": "multiline",
         "assessment_criteria": "multiline",
+        "mitre_attack": "multiline",
     }
 
     @field_validator('visibility')
@@ -724,6 +726,7 @@ class LabCreate(SafeTextModel):
     prerequisites: Optional[str] = None
     mapped_skills: Optional[str] = None
     assessment_criteria: Optional[str] = None
+    mitre_attack: Optional[str] = None
     hints: Optional[str] = None
     tools: Optional[str] = None
     hostnames: Optional[str] = None

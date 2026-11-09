@@ -352,6 +352,7 @@ def discover_labs():
                 ]) if topo_raw else None
                 # ICS attack-coverage tags (list of {tactic, technique_id, technique_name, note})
                 ics_techniques = json.dumps(lab_data.get('ics_techniques', [])) if lab_data.get('ics_techniques') else None
+                mitre_attack = json.dumps(lab_data.get('mitre_attack', []) or [])
                 week = lab_data.get('week', None) or lab_data.get('phase', None)
                 if week is not None:
                     try:
@@ -410,6 +411,7 @@ def discover_labs():
                         "show_target_ips": show_target_ips,
                         "topology_nodes": topology_nodes,
                         "ics_techniques": ics_techniques,
+                        "mitre_attack": mitre_attack,
                         "prerequisites": prerequisites,
                         "mapped_skills": mapped_skills,
                         "assessment_criteria": assessment_criteria,
@@ -444,6 +446,7 @@ def discover_labs():
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
                                 ics_techniques = :ics_techniques,
+                                mitre_attack = :mitre_attack,
                                 prerequisites = :prerequisites,
                                 mapped_skills = :mapped_skills,
                                 assessment_criteria = :assessment_criteria,
@@ -478,6 +481,7 @@ def discover_labs():
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
                                 ics_techniques = :ics_techniques,
+                                mitre_attack = :mitre_attack,
                                 prerequisites = :prerequisites,
                                 mapped_skills = :mapped_skills,
                                 assessment_criteria = :assessment_criteria,
@@ -505,7 +509,7 @@ def discover_labs():
                                 hints, tools, hostnames,
                                 flag_hash, compose_file, level_id, sort_order, is_active,
                                 visibility, workbook, week, show_target_ips, topology_nodes,
-                                ics_techniques, prerequisites, mapped_skills,
+                                ics_techniques, mitre_attack, prerequisites, mapped_skills,
                                 assessment_criteria, requires_kvm,
                                 counts_toward_certificate,
                                 validation_status, validation_errors, validated_at
@@ -515,7 +519,7 @@ def discover_labs():
                                 :hints, :tools, :hostnames,
                                 :flag_hash, :compose_file, :level_id, :sort_order, TRUE,
                                 :visibility, :workbook, :week, :show_target_ips, :topology_nodes,
-                                :ics_techniques, :prerequisites, :mapped_skills,
+                                :ics_techniques, :mitre_attack, :prerequisites, :mapped_skills,
                                 :assessment_criteria, :requires_kvm,
                                 :counts_toward_certificate,
                                 :validation_status, :validation_errors, :validated_at
@@ -544,6 +548,7 @@ def discover_labs():
                             "show_target_ips": show_target_ips,
                             "topology_nodes": topology_nodes,
                             "ics_techniques": ics_techniques,
+                            "mitre_attack": mitre_attack,
                             "prerequisites": prerequisites,
                             "mapped_skills": mapped_skills,
                             "assessment_criteria": assessment_criteria,

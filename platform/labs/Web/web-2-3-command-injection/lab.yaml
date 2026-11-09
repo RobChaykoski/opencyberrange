@@ -15,6 +15,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Execution
+    technique: T1059
+    technique_name: Command and Scripting Interpreter
+    detection: Log process creation and command-line arguments for unexpected interpreters.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

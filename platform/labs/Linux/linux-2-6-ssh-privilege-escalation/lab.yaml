@@ -16,6 +16,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Privilege Escalation
+    technique: T1548
+    technique_name: Abuse Elevation Control Mechanism
+    detection: Alert on privilege changes, sudo use, and elevated process creation.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

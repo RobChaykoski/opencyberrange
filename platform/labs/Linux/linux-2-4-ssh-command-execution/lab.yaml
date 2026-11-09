@@ -16,6 +16,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Execution
+    technique: T1059.004
+    technique_name: Unix Shell
+    detection: Audit shell command history and process-execution telemetry.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"

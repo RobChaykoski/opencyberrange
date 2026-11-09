@@ -15,6 +15,11 @@ mapped_skills:
 assessment_criteria:
   - Submit the correct flag.
   - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Lateral Movement
+    technique: T1021
+    technique_name: Remote Services
+    detection: Correlate remote logons across hosts and protocols.
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
