@@ -20,7 +20,7 @@ from app.models import (
     User, Lab, LabSession, LabCompletion, FlagAttempt, WireGuardConfig,
     Course, CourseEnrollment, CourseLabAssignment, ActivityEvent,
     Track, Level, Achievement, CustomAchievement, Competition,
-    AchievementCelebration,
+    AchievementCelebration, CourseCompletionReset,
 )
 from app.auth import get_current_active_user, get_current_instructor_user
 from app.export_reason import require_export_reason
@@ -114,6 +114,259 @@ def _resolve_student_scope(db: Session, current_user: User,
             raise HTTPException(status_code=403, detail="User not in scope")
 
     return student_ids
+
+
+def _aware(value):
+    """Compare database timestamps safely when some are naive."""
+    if value is None:
+        return None
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value
+
+
+def _instructor_teaching_focus(
+    db: Session,
+    current_user: User,
+    now: datetime,
+    admin_ids: set[int],
+) -> dict:
+    """Small, actionable aggregates for the teaching dashboard.
+
+    Deliberately scoped to active courses the instructor owns (all active
+    courses for an admin). The certificate signal is per track/level, matching
+    how certificates are actually issued; it is a prompt, not an award.
+    """
+    empty = {
+        "near_certificate": [],
+        "near_certificate_count": 0,
+        "inactive_students": [],
+        "inactive_students_count": 0,
+        "recent_completions": [],
+        "recent_completions_count": 0,
+        "recent_certificates": [],
+        "recent_certificates_count": 0,
+    }
+
+    course_query = db.query(Course).filter(Course.is_active == True)
+    if current_user.role != 'admin':
+        course_query = course_query.filter(Course.instructor_id == current_user.id)
+    courses = course_query.all()
+    course_ids = [course.id for course in courses]
+    if not course_ids:
+        return empty
+
+    courses_by_id = {course.id: course for course in courses}
+    enrollments = db.query(
+        CourseEnrollment.course_id,
+        CourseEnrollment.user_id,
+        CourseEnrollment.enrolled_at,
+    ).filter(CourseEnrollment.course_id.in_(course_ids)).all()
+    course_students = {}
+    enrolled_at = {}
+    student_ids = set()
+    for course_id, user_id, joined_at in enrollments:
+        if user_id in admin_ids:
+            continue
+        course_students.setdefault(course_id, set()).add(user_id)
+        enrolled_at[(course_id, user_id)] = joined_at
+        student_ids.add(user_id)
+    if not student_ids:
+        return empty
+
+    assignment_rows = db.query(
+        CourseLabAssignment.course_id,
+        Lab.id,
+        Level.id,
+        Level.level_number,
+        Level.name,
+        Track.id,
+        Track.name,
+        Track.slug,
+    ).join(
+        Lab, Lab.id == CourseLabAssignment.lab_id,
+    ).join(
+        Level, Level.id == Lab.level_id,
+    ).join(
+        Track, Track.id == Level.track_id,
+    ).filter(CourseLabAssignment.course_id.in_(course_ids)).all()
+
+    groups = {}
+    for course_id, lab_id, level_id, level_number, level_name, track_id, track_name, track_slug in assignment_rows:
+        key = (course_id, level_id)
+        group = groups.setdefault(key, {
+            "course": courses_by_id[course_id],
+            "level_id": level_id,
+            "level_number": level_number,
+            "level_name": level_name,
+            "track_id": track_id,
+            "track_name": track_name,
+            "track_slug": track_slug,
+            "lab_ids": set(),
+        })
+        group["lab_ids"].add(lab_id)
+
+    all_lab_ids = set()
+    for group in groups.values():
+        all_lab_ids.update(group["lab_ids"])
+    if not all_lab_ids:
+        return empty
+
+    completion_rows = db.query(
+        LabCompletion.user_id,
+        LabCompletion.lab_id,
+        LabCompletion.completed_at,
+    ).filter(
+        LabCompletion.user_id.in_(student_ids),
+        LabCompletion.lab_id.in_(all_lab_ids),
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).all()
+    completion_times = {}
+    for user_id, lab_id, when in completion_rows:
+        when_aware = _aware(when)
+        if when_aware is None:
+            continue
+        completion_times.setdefault((user_id, lab_id), []).append(when_aware)
+
+    reset_rows = db.query(
+        CourseCompletionReset.course_id,
+        CourseCompletionReset.user_id,
+        CourseCompletionReset.lab_id,
+        CourseCompletionReset.reset_at,
+    ).filter(
+        CourseCompletionReset.course_id.in_(course_ids),
+        CourseCompletionReset.user_id.in_(student_ids),
+    ).all()
+    reset_at = {}
+    for course_id, user_id, lab_id, when in reset_rows:
+        when_aware = _aware(when)
+        if when_aware is None:
+            continue
+        key = (course_id, user_id, lab_id)
+        previous = reset_at.get(key)
+        if previous is None or when_aware > previous:
+            reset_at[key] = when_aware
+
+    def _completed_in_course(course_id, user_id, lab_id):
+        """A lab counts only if earned after enrollment and after any reset."""
+        joined = _aware(enrolled_at.get((course_id, user_id)))
+        if joined is None:
+            return False
+        latest_reset = reset_at.get((course_id, user_id, lab_id))
+        for when in completion_times.get((user_id, lab_id), ()):
+            if when < joined:
+                continue
+            if latest_reset and when <= latest_reset:
+                continue
+            return True
+        return False
+
+    users = db.query(User).filter(User.id.in_(student_ids)).all()
+    users_by_id = {user.id: user for user in users}
+    course_codes = {}
+    for course_id, members in course_students.items():
+        for user_id in members:
+            course_codes.setdefault(user_id, []).append(courses_by_id[course_id].code)
+
+    near = {}
+    recent_certificates = {}
+    valid_completion_pairs = set()
+    cutoff = now - timedelta(days=7)
+    for (course_id, level_id), group in groups.items():
+        total = len(group["lab_ids"])
+        if total < 2:
+            continue
+        for user_id in course_students.get(course_id, set()):
+            completed = [
+                lab_id for lab_id in group["lab_ids"]
+                if _completed_in_course(course_id, user_id, lab_id)
+            ]
+            for lab_id in completed:
+                valid_completion_pairs.add((user_id, lab_id))
+            remaining = total - len(completed)
+            if remaining == 1:
+                key = (user_id, group["track_id"], level_id)
+                near.setdefault(key, {
+                    "user_id": user_id,
+                    "username": users_by_id[user_id].username if user_id in users_by_id else "Deleted user",
+                    "course_code": group["course"].code,
+                    "track_name": group["track_name"],
+                    "level_name": group["level_name"],
+                    "level_number": group["level_number"],
+                    "completed": len(completed),
+                    "total": total,
+                })
+            elif remaining == 0:
+                latest = max(
+                    (
+                        max(completion_times.get((user_id, lab_id), [None]))
+                        for lab_id in completed
+                    ),
+                    default=None,
+                )
+                if latest is not None and latest >= cutoff:
+                    key = (user_id, group["track_id"], level_id)
+                    recent_certificates.setdefault(key, {
+                        "user_id": user_id,
+                        "username": users_by_id[user_id].username if user_id in users_by_id else "Deleted user",
+                        "course_code": group["course"].code,
+                        "track_name": group["track_name"],
+                        "level_name": group["level_name"],
+                        "level_number": group["level_number"],
+                        "awarded_at": latest.isoformat(),
+                    })
+
+    inactive = []
+    for user in users:
+        last_login = _aware(user.last_login_at)
+        if last_login is None or last_login < cutoff:
+            inactive.append({
+                "user_id": user.id,
+                "username": user.username,
+                "last_login_at": last_login.isoformat() if last_login else None,
+                "course_codes": sorted(set(course_codes.get(user.id, []))),
+            })
+    inactive.sort(key=lambda item: item["last_login_at"] or "")
+
+    recent_completion_rows = db.query(
+        LabCompletion, User.username, Lab.name,
+    ).join(
+        User, User.id == LabCompletion.user_id,
+    ).join(
+        Lab, Lab.id == LabCompletion.lab_id,
+    ).filter(
+        LabCompletion.user_id.in_(student_ids),
+        LabCompletion.lab_id.in_(all_lab_ids),
+        LabCompletion.completed_at >= cutoff,
+        LabCompletion.flag_submitted.isnot(None),
+        LabCompletion.flag_submitted != "",
+    ).order_by(LabCompletion.completed_at.desc()).all()
+    recent_completion_items = [
+        {
+            "user_id": completion.user_id,
+            "username": username,
+            "lab_name": lab_name,
+            "completed_at": completion.completed_at.isoformat() if completion.completed_at else None,
+        }
+        for completion, username, lab_name in recent_completion_rows
+        if (completion.user_id, completion.lab_id) in valid_completion_pairs
+    ]
+    recent_completions = recent_completion_items[:8]
+    recent_completion_count = len(recent_completion_items)
+
+    near_items = sorted(near.values(), key=lambda item: (item["course_code"], item["username"]))
+    certificate_items = sorted(
+        recent_certificates.values(), key=lambda item: item["awarded_at"], reverse=True,
+    )
+    return {
+        "near_certificate": near_items[:6],
+        "near_certificate_count": len(near_items),
+        "inactive_students": inactive[:6],
+        "inactive_students_count": len(inactive),
+        "recent_completions": recent_completions,
+        "recent_completions_count": recent_completion_count,
+        "recent_certificates": certificate_items[:6],
+        "recent_certificates_count": len(certificate_items),
+    }
 
 
 # ==================== Instructor Endpoints ====================
@@ -225,6 +478,7 @@ async def instructor_stats(
     )
     avg_time_typical = _scoped(q, LabCompletion.user_id).scalar()
 
+    focus = _instructor_teaching_focus(db, current_user, now, admin_ids)
     return {
         "flags_today": flags_today,
         "flags_yesterday": flags_yesterday,
@@ -234,6 +488,7 @@ async def instructor_stats(
         "active_users": active_users,
         "avg_completion_min": round(avg_time_today) if avg_time_today else None,
         "avg_completion_typical": round(avg_time_typical) if avg_time_typical else None,
+        **focus,
     }
 
 

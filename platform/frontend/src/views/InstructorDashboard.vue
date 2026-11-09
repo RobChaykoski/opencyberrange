@@ -174,6 +174,54 @@
       </div>
     </div>
 
+    <!-- Teaching focus: a short list of actions, not another dashboard of counts -->
+    <div class="panel teaching-focus">
+      <div class="panel__header">
+        <h2 class="panel__title">Teaching focus</h2>
+        <span class="panel__subtitle">The next actions that move a cohort forward</span>
+      </div>
+      <div class="focus-grid">
+        <article class="focus-card">
+          <span class="focus-card__count">{{ stats.near_certificate_count || 0 }}</span>
+          <h3 class="focus-card__title">One lab from a certificate</h3>
+          <ul v-if="stats.near_certificate?.length" class="focus-list">
+            <li v-for="item in stats.near_certificate" :key="`${item.user_id}-${item.track_name}-${item.level_name}`">
+              <strong>{{ item.username }}</strong>
+              <span>{{ item.track_name }} · {{ item.level_name }} · {{ item.completed }}/{{ item.total }}</span>
+            </li>
+          </ul>
+          <p v-else class="focus-card__empty">No learner is one lab away right now.</p>
+        </article>
+
+        <article class="focus-card">
+          <span class="focus-card__count">{{ stats.inactive_students_count || 0 }}</span>
+          <h3 class="focus-card__title">Inactive 7+ days</h3>
+          <ul v-if="stats.inactive_students?.length" class="focus-list">
+            <li v-for="item in stats.inactive_students" :key="item.user_id">
+              <strong>{{ item.username }}</strong>
+              <span>
+                {{ formatAgo(item.last_login_at) }}
+                <template v-if="item.course_codes?.length"> · {{ item.course_codes.join(', ') }}</template>
+              </span>
+            </li>
+          </ul>
+          <p v-else class="focus-card__empty">Everyone has been active in the last 7 days.</p>
+        </article>
+
+        <article class="focus-card">
+          <span class="focus-card__count">{{ (stats.recent_completions_count || 0) + (stats.recent_certificates_count || 0) }}</span>
+          <h3 class="focus-card__title">Recent wins</h3>
+          <ul v-if="recentWins.length" class="focus-list">
+            <li v-for="win in recentWins" :key="win.key">
+              <strong>{{ win.username }}</strong>
+              <span>{{ win.kind }} · {{ win.label }} · {{ formatAgo(win.when) }}</span>
+            </li>
+          </ul>
+          <p v-else class="focus-card__empty">No completions or milestones yet this week.</p>
+        </article>
+      </div>
+    </div>
+
     <!-- The Pulse Chart -->
     <div class="panel">
       <div class="panel__header">
@@ -310,7 +358,41 @@ const stats = ref({
   flags_today: 0, flags_yesterday: null, flag_students_today: 0, flags_sparkline: [],
   active_count: 0, active_users: [],
   avg_completion_min: null, avg_completion_typical: null,
+  near_certificate: [], near_certificate_count: 0,
+  inactive_students: [], inactive_students_count: 0,
+  recent_completions: [], recent_completions_count: 0,
+  recent_certificates: [], recent_certificates_count: 0,
 })
+
+const recentWins = computed(() => {
+  const certificates = (stats.value.recent_certificates || []).map((item) => ({
+    key: `cert-${item.user_id}-${item.track_name}-${item.level_name}`,
+    username: item.username,
+    label: `${item.track_name} · ${item.level_name}`,
+    kind: 'Certificate milestone',
+    when: item.awarded_at,
+  }))
+  const completions = (stats.value.recent_completions || []).map((item) => ({
+    key: `completion-${item.user_id}-${item.lab_name}-${item.completed_at}`,
+    username: item.username,
+    label: item.lab_name,
+    kind: 'Exercise completed',
+    when: item.completed_at,
+  }))
+  return [...certificates, ...completions]
+    .sort((a, b) => String(b.when || '').localeCompare(String(a.when || '')))
+    .slice(0, 5)
+})
+
+const formatAgo = (value) => {
+  if (!value) return 'never signed in'
+  const then = new Date(value)
+  if (Number.isNaN(then.getTime())) return 'unknown'
+  const days = Math.max(0, Math.floor((Date.now() - then.getTime()) / 86400000))
+  if (days === 0) return 'today'
+  if (days === 1) return 'yesterday'
+  return `${days} days ago`
+}
 
 const flagsTrend = computed(() => {
   const today = stats.value.flags_today || 0
@@ -1043,6 +1125,78 @@ onMounted(() => {
   color: var(--text-muted);
   font-size: 0.875rem;
   margin: 0.5rem 0 0 0;
+}
+
+/* Teaching focus: three actionable cohorts, not a wall of metrics */
+.teaching-focus {
+  border-left: 3px solid var(--accent);
+}
+
+.focus-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.focus-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-tertiary, rgba(148, 163, 184, 0.06));
+}
+
+.focus-card__count {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.focus-card__title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.focus-list {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.focus-list li {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.focus-list strong {
+  color: var(--text-primary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.focus-list span {
+  color: var(--text-muted);
+}
+
+.focus-card__empty {
+  margin: 0.35rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.76rem;
 }
 
 .badge--coming-soon {

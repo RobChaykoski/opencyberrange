@@ -12,7 +12,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
@@ -28,10 +28,9 @@ from app.models import (
 from app.auth import get_current_active_user, get_current_instructor_user, get_current_admin_user
 from app import entitlement
 from app.schemas import (
-    CourseCreate, CourseUpdate, CourseResponse, CourseJoinRequest,
+    CourseCreate, CourseUpdate, CourseJoinRequest,
     CourseLabAssignRequest, CourseLabBulkRemoveRequest, CourseLabReorderRequest, CourseLabUpdateRequest, AssignmentReorderRequest,
     BulkEnrollRequest,
-    ScoreboardEntry, ScoreboardResponse, AchievementResponse,
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
     CourseFeedbackRequest,
 )
@@ -95,14 +94,38 @@ def _auto_assign_theme_color(db: Session) -> str:
     return WIKI_THEME_PALETTE[count % len(WIKI_THEME_PALETTE)]
 
 
-def _course_response(course: Course, db: Session) -> dict:
-    """Build a CourseResponse dict from a Course model."""
+def _course_response(
+    course: Course,
+    db: Session,
+    user_id: Optional[int] = None,
+) -> dict:
+    """Build a CourseResponse dict from a Course model.
+
+    ``user_id`` is supplied when the caller is the learner viewing their own
+    courses, so the card can show their course-aware completion progress.
+    Staff responses leave ``completed_labs``/``progress_percent`` as ``None``
+    because there is no single learner whose progress they represent.
+    """
     student_count = db.query(func.count(CourseEnrollment.id)).filter(
         CourseEnrollment.course_id == course.id
     ).scalar()
     lab_count = db.query(func.count(CourseLabAssignment.id)).filter(
         CourseLabAssignment.course_id == course.id
     ).scalar()
+    completed_labs = None
+    progress_percent = None
+    if user_id is not None:
+        assigned_lab_ids = {
+            row[0] for row in db.query(CourseLabAssignment.lab_id).filter(
+                CourseLabAssignment.course_id == course.id
+            ).all()
+        }
+        completed_labs = len(get_course_completed_lab_ids(
+            db, user_id, course.id, assigned_lab_ids,
+        ))
+        progress_percent = (
+            round(completed_labs * 100 / lab_count) if lab_count else 0
+        )
     return {
         "id": course.id,
         "name": course.name,
@@ -121,6 +144,8 @@ def _course_response(course: Course, db: Session) -> dict:
         "created_at": course.created_at,
         "student_count": student_count,
         "lab_count": lab_count,
+        "completed_labs": completed_labs,
+        "progress_percent": progress_percent,
     }
 
 
@@ -383,7 +408,8 @@ async def list_courses(
             Course.is_active == True,
         ).order_by(Course.created_at.desc()).all()
 
-    return {"courses": [_course_response(c, db) for c in courses]}
+    viewer_id = current_user.id if current_user.role not in ('admin', 'instructor') else None
+    return {"courses": [_course_response(c, db, viewer_id) for c in courses]}
 
 
 @router.get("/{course_id}")

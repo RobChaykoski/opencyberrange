@@ -27,6 +27,10 @@
           <span>assigned exercises</span>
         </div>
         <div class="workspace-summary__stat">
+          <strong>{{ totalCompleted }}<span class="workspace-summary__of">/{{ totalLabs }}</span></strong>
+          <span>exercises complete</span>
+        </div>
+        <div class="workspace-summary__stat">
           <strong>{{ totalStudents }}</strong>
           <span>classmates</span>
         </div>
@@ -95,6 +99,26 @@
             <span class="stat">{{ course.student_count }} students</span>
             <span class="stat">{{ course.lab_count }} exercises</span>
           </div>
+          <div
+            v-if="course.progress_percent != null"
+            class="course-progress"
+            role="progressbar"
+            :aria-valuenow="course.progress_percent"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            :aria-label="`${course.name} progress`"
+          >
+            <div class="course-progress__label">
+              <span>Your progress</span>
+              <strong>{{ course.completed_labs }}/{{ course.lab_count }} · {{ course.progress_percent }}%</strong>
+            </div>
+            <div class="course-progress__track">
+              <span
+                :class="{ 'course-progress__fill--complete': course.progress_percent === 100 }"
+                :style="{ width: course.progress_percent + '%' }"
+              ></span>
+            </div>
+          </div>
           <div class="course-card__action">
             Open workspace
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
@@ -134,6 +158,9 @@ const activeCourses = computed(
 )
 const totalLabs = computed(
   () => courses.value.reduce((sum, course) => sum + (course.lab_count || 0), 0)
+)
+const totalCompleted = computed(
+  () => courses.value.reduce((sum, course) => sum + (course.completed_labs || 0), 0)
 )
 const totalStudents = computed(
   () => courses.value.reduce((sum, course) => sum + (course.student_count || 0), 0)
@@ -470,6 +497,50 @@ onMounted(() => {
   display: flex;
   gap: 1rem;
   margin-bottom: 0.5rem;
+}
+
+.course-progress {
+  margin: 0.15rem 0 0.6rem;
+}
+
+.course-progress__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.course-progress__label strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.course-progress__track {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--bg-tertiary, rgba(148, 163, 184, 0.2));
+  overflow: hidden;
+}
+
+.course-progress__track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.course-progress__track > .course-progress__fill--complete {
+  background: var(--success);
+}
+
+.workspace-summary__of {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.8em;
 }
 
 .course-card__action {
