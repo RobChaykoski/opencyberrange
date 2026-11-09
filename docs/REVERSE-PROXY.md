@@ -120,6 +120,90 @@ HTTP and WebSocket traffic.
 | `X-Forwarded-For $remote_addr` | The app records client IPs for audit and rate limiting; do not trust a client-supplied chain. |
 | Crawler `403` | The platform is private; search and AI crawlers have no legitimate reason to fetch it. |
 
+## Capacity tuning (Nginx Proxy Manager 2.16+)
+
+Nginx Proxy Manager leaves its `events` block empty, so nginx uses the built-in
+`worker_connections` value of 512 per worker. That is fine for a small class,
+but not for a room full of noVNC/WebSocket sessions and SSE streams: every
+proxied browser session consumes a client socket and an upstream socket, so the
+connection ceiling is reached long before CPU or memory is.
+
+Set the limits through NPM's custom include points, not by editing generated
+host files.
+
+`/data/nginx/custom/root_top.conf`:
+
+```nginx
+worker_rlimit_nofile 65535;
+```
+
+`/data/nginx/custom/events.conf`:
+
+```nginx
+worker_connections 16384;
+multi_accept on;
+```
+
+Size `worker_connections` for at least **twice the peak number of proxied
+sessions per worker**, plus headroom for ordinary requests. With
+`worker_processes auto`, the total ceiling is `worker_connections x workers`,
+but the per-worker file-descriptor limit must be raised as well. A WebSocket
+uses two descriptors (browser and backend); listening sockets, logs, and cache
+files need descriptors too.
+
+Do not put `worker_connections` in an `http` block; it belongs in `events`.
+Apply custom event settings with a reload rather than a restart:
+
+```bash
+docker exec <npm-container> nginx -t
+docker exec <npm-container> nginx -T | grep -E 'worker_connections|worker_rlimit_nofile'
+docker exec <npm-container> nginx -s reload
+```
+
+### Where per-host settings land
+
+NPM writes a proxy host's **Advanced** text at **server** level, then includes
+`conf.d/include/proxy.conf` inside `location /`. That include sets `Host`,
+`X-Forwarded-*`, and `X-Real-IP`, so a `proxy_set_header` added in Advanced does
+not override those values; header changes belong in NPM's host/forwarding
+settings or a location-level custom include.
+
+The server-level directives below are inherited by `location /` and are the
+ones that matter for interactive traffic:
+
+```nginx
+# Long-lived WebSocket and SSE sessions
+proxy_connect_timeout 60s;
+proxy_read_timeout 3600s;
+proxy_send_timeout 3600s;
+
+# Stream SSE and uploads instead of buffering them
+proxy_buffering off;
+proxy_request_buffering off;
+proxy_socket_keepalive on;
+
+# Workbook ZIPs are capped at 50 MB in the app; leave headroom
+client_max_body_size 64m;
+```
+
+Keep timeouts and buffering scoped to the interactive host rather than global.
+A static or download-heavy host can use buffering and shorter timeouts, while
+an interactive host needs long-lived streams. A large `client_max_body_size` on
+every host also removes a useful upload limit.
+
+NPM regenerates `/data/nginx/proxy_host/*.conf` from its database when a host is
+saved, so edit hosts through the UI or API; hand edits to those generated files
+are replaced on the next save. Files under `/data/nginx/custom/` are not
+regenerated.
+
+### Restart and certificate note
+
+Prefer `nginx -s reload` for configuration changes. A full container restart
+also runs NPM's certificate renewal pass at startup; on a busy edge, repeated
+restarts can trigger a burst of forced renewals and hit Let's Encrypt rate
+limits. Restart only when the image, database settings, or startup wiring
+actually changes.
+
 ## Verification
 
 ```bash
