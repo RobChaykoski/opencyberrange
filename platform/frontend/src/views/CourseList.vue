@@ -75,11 +75,12 @@
       <!-- Course Cards (student view) -->
       <template v-else>
         <div v-if="!isStaff" class="course-grid">
-        <div
+        <router-link
           v-for="course in courses"
           :key="course.id"
+          :to="`/courses/${course.id}`"
           class="course-card"
-          @click="$router.push(`/courses/${course.id}`)"
+          :aria-label="`Open ${course.name} workspace`"
         >
           <div class="course-card__header">
             <span class="course-code">{{ course.code }}</span>
@@ -101,7 +102,7 @@
               <polyline points="12 5 19 12 12 19"/>
             </svg>
           </div>
-        </div>
+        </router-link>
       </div>
       </template>
     </div>
@@ -378,6 +379,9 @@ onMounted(() => {
 }
 
 .course-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -389,6 +393,11 @@ onMounted(() => {
 .course-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
+}
+
+.course-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .course-card__header {

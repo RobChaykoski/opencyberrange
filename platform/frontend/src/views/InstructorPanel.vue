@@ -62,7 +62,12 @@
             :key="course.id"
             class="course-card"
             :class="{ 'course-card--active': managingCourse && managingCourse.id === course.id }"
+            role="button"
+            tabindex="0"
+            :aria-label="`Manage ${course.name}`"
             @click="openCourseManager(course)"
+            @keydown.enter.prevent="openCourseManager(course)"
+            @keydown.space.prevent="openCourseManager(course)"
           >
             <div class="course-card__header">
               <span class="course-code">{{ course.code }}</span>
@@ -131,6 +136,62 @@
           <div class="manage-header">
             <h3 class="manage-title">Managing: {{ managingCourse.name }} ({{ managingCourse.code }})</h3>
             <button @click="managingCourse = null" class="btn btn--secondary btn--sm">Close</button>
+          </div>
+
+          <div
+            class="course-readiness"
+            :class="{ 'course-readiness--ready': courseReadiness.ready }"
+            role="status"
+          >
+            <div class="course-readiness__icon" aria-hidden="true">
+              <svg v-if="courseReadiness.ready" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>
+              </svg>
+              <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <div class="course-readiness__body">
+              <strong>{{ courseReadiness.ready ? 'Ready to teach' : 'Finish setting up this course' }}</strong>
+              <p>
+                <span :class="{ 'course-readiness__done': courseReadiness.students }">{{ courseReadiness.students }} student{{ courseReadiness.students === 1 ? '' : 's' }}</span>
+                <span aria-hidden="true"> · </span>
+                <span :class="{ 'course-readiness__done': courseReadiness.exercises }">{{ courseReadiness.exercises }} exercise{{ courseReadiness.exercises === 1 ? '' : 's' }}</span>
+                <span aria-hidden="true"> · </span>
+                <span :class="{ 'course-readiness__done': courseReadiness.assignments }">{{ courseReadiness.assignments }} assignment{{ courseReadiness.assignments === 1 ? '' : 's' }}</span>
+              </p>
+            </div>
+            <div class="course-readiness__actions">
+              <button
+                v-if="!courseReadiness.students"
+                class="btn btn--secondary btn--sm"
+                @click="copyToClipboard(managingCourse.invite_code)"
+              >
+                Share invite code
+              </button>
+              <button
+                v-else-if="!courseReadiness.exercises"
+                class="btn btn--secondary btn--sm"
+                @click="courseManageTab = 'exercises'"
+              >
+                Assign exercises
+              </button>
+              <button
+                v-else-if="!courseReadiness.assignments"
+                class="btn btn--secondary btn--sm"
+                @click="switchToAssignments"
+              >
+                Create an assignment
+              </button>
+              <button
+                v-else
+                class="btn btn--secondary btn--sm"
+                @click="courseManageTab = 'students'"
+              >
+                Open roster
+              </button>
+            </div>
           </div>
 
           <div class="sub-tabs">
@@ -1259,6 +1320,18 @@ const editingAssignment = ref(null)
 const editAssignmentData = ref({ name: '', description: '', due_date: '', start_date: '' })
 const assignmentLabSelection = ref([])
 const asnPickerExpanded = ref({})
+
+const courseReadiness = computed(() => {
+  const students = courseStudents.value.length
+  const exercises = courseLabs.value.length
+  const assignments = courseAssignments.value.length
+  return {
+    students,
+    exercises,
+    assignments,
+    ready: students > 0 && exercises > 0 && assignments > 0,
+  }
+})
 
 // Course settings state
 const settingsForm = ref({ name: '', code: '', semester: '', description: '', start_date: '', end_date: '' })
@@ -2810,6 +2883,73 @@ onUnmounted(() => {
   color: var(--text-primary);
 }
 
+.course-readiness {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--border-color));
+  border-left: 3px solid var(--warning);
+  border-radius: 9px;
+  background: var(--warning-bg);
+}
+
+.course-readiness--ready {
+  border-color: color-mix(in srgb, var(--success) 35%, var(--border-color));
+  border-left-color: var(--success);
+  background: var(--success-bg);
+}
+
+.course-readiness__icon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--warning);
+}
+
+.course-readiness--ready .course-readiness__icon svg {
+  color: var(--success);
+}
+
+.course-readiness__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.course-readiness__body strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.course-readiness__body p {
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.course-readiness__done {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.course-readiness__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .course-readiness {
+    flex-direction: column;
+  }
+
+  .course-readiness__actions {
+    margin-left: 0;
+  }
+}
+
 /* Sub-tabs */
 .sub-tabs {
   display: flex;
@@ -3450,6 +3590,11 @@ onUnmounted(() => {
 .course-card:hover {
   border-color: var(--accent);
   transform: translateY(-2px);
+}
+
+.course-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .course-card--active {
