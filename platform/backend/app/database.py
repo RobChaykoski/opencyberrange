@@ -2,11 +2,22 @@
 Database connection and session management
 """
 
+import os
+
 from sqlalchemy import create_engine, event, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from app.config import settings
 from app.actor import get_actor
+
+# Per-process pool sizing. The total connection ceiling is
+# (DB_POOL_SIZE + DB_MAX_OVERFLOW) * uvicorn workers. Keep that below the
+# PostgreSQL max_connections minus reserved slots: a 9-worker deployment with
+# the old 5 + 10 defaults could ask for 135 connections against a 100 limit.
+# The 4 + 4 defaults put 9 workers at 72 connections, leaving room for the
+# scheduler, migrations, and an operator session.
+_pool_size = max(1, int(os.environ.get("DB_POOL_SIZE", "4")))
+_max_overflow = max(0, int(os.environ.get("DB_MAX_OVERFLOW", "4")))
 
 _connect_args = {}
 if settings.DATABASE_URL.startswith("postgresql"):
@@ -19,8 +30,8 @@ if settings.DATABASE_URL.startswith("postgresql"):
 engine = create_engine(
     settings.DATABASE_URL,
     pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
+    pool_size=_pool_size,
+    max_overflow=_max_overflow,
     pool_recycle=300,
     pool_timeout=30,
     # Reuse the hottest connection first. Under bursty request patterns this

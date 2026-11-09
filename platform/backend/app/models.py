@@ -301,7 +301,7 @@ class QuizAttempt(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    quiz_id = Column(Integer, ForeignKey("level_quizzes.id", ondelete="CASCADE"), nullable=False)
+    quiz_id = Column(Integer, ForeignKey("level_quizzes.id", ondelete="CASCADE"), nullable=False, index=True)
     score = Column(Integer, nullable=False)  # percentage 0-100
     total = Column(Integer, nullable=False)
     correct = Column(Integer, nullable=False)
@@ -319,7 +319,7 @@ class LabSession(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
     network_id = Column(String(100))
     network_subnet = Column(String(20))
     status = Column(String(20), default="starting")  # starting, running, stopped, expired, error
@@ -352,7 +352,7 @@ class LabCompletion(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
     completed_at = Column(DateTime, server_default=func.now())
     flag_submitted = Column(String(100))
     attempts = Column(Integer, default=1)
@@ -475,7 +475,7 @@ class SurveyResponse(Base):
     id = Column(Integer, primary_key=True, index=True)
     survey_id = Column(Integer, ForeignKey("surveys.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
     answers = Column(Text, nullable=False)
     submitted_at = Column(DateTime, server_default=func.now())
 
@@ -590,7 +590,7 @@ class FlagAttempt(Base):
     __tablename__ = "flag_attempts"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
     flag_submitted = Column(String(100))
     is_correct = Column(Boolean, default=False)
     attempted_at = Column(DateTime, server_default=func.now())
@@ -680,7 +680,7 @@ class CourseEnrollment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     enrolled_at = Column(DateTime, server_default=func.now())
     # Per-student scope token for tracks that scope AD objects per student
     # (e.g. ADPT: svc_kerb_<token>). Auto-assigned on enrollment, NULL for
@@ -707,7 +707,7 @@ class CourseLabAssignment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
-    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
     sort_order = Column(Integer, default=0)
     display_name = Column(String(255), nullable=True)
     assigned_at = Column(DateTime, server_default=func.now())
@@ -732,8 +732,8 @@ class Achievement(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=True)
-    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=True)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=True, index=True)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=True, index=True)
     achievement_type = Column(String(30), nullable=False)
     awarded_at = Column(DateTime, server_default=func.now())
 
@@ -800,7 +800,7 @@ class DataIntegrityLedger(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     occurred_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    table_name = Column(String(64), nullable=False, index=True)
+    table_name = Column(String(64), nullable=False)
     row_pk = Column(String(128), nullable=False)
     operation = Column(String(8), nullable=False)
     row_hash = Column(String(64), nullable=False)
@@ -808,7 +808,7 @@ class DataIntegrityLedger(Base):
     actor_id = Column(Integer, nullable=True)
     request_id = Column(String(64), nullable=True)
     prev_hash = Column(String(64), nullable=False)
-    entry_hash = Column(String(64), nullable=False, index=True)
+    entry_hash = Column(String(64), nullable=False)
 
 
 class CustomAchievement(Base):
@@ -913,7 +913,7 @@ class CompetitionParticipant(Base):
         Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
     )
     user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     joined_at = Column(DateTime, server_default=func.now())
     # "new_user" when the account was created through a competition sign-up
@@ -1003,7 +1003,7 @@ class ActivityEvent(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     event_type = Column(String(50), nullable=False, index=True)
-    actor_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    actor_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     target_type = Column(String(30), nullable=True)
     target_id = Column(Integer, nullable=True)
     target_label = Column(String(200), nullable=True)
