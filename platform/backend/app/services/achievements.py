@@ -12,6 +12,7 @@ from app.models import (
     Competition, CompetitionLab, CompetitionParticipant,
     ExerciseQuizAttempt,
 )
+from app.database import retry_on_deadlock
 from app.services.activity import log_activity, EventTypes
 
 logger = logging.getLogger(__name__)
@@ -378,12 +379,14 @@ def _award_learning_achievements(db: Session, user_id: int):
             _award(db, user_id, None, None, achievement_type)
 
 
+@retry_on_deadlock
 def check_learning_achievements(db: Session, user_id: int):
     """Public entry point for callers that are not completing an exercise."""
     _award_learning_achievements(db, user_id)
     db.commit()
 
 
+@retry_on_deadlock
 def check_quiz_achievements(
     db: Session,
     user_id: int,
@@ -611,6 +614,7 @@ def award_competition_placements(
         )
 
 
+@retry_on_deadlock
 def check_achievements(db: Session, user_id: int, lab_id: int):
     """Award course-scoped and global achievements for a completed lab.
 

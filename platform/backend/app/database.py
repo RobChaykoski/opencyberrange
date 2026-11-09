@@ -2,13 +2,19 @@
 Database connection and session management
 """
 
+import logging
 import os
+import time
+from functools import wraps
 
 from sqlalchemy import create_engine, event, text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from app.config import settings
 from app.actor import get_actor
+
+logger = logging.getLogger(__name__)
 
 # Per-process pool sizing. The total connection ceiling is
 # (DB_POOL_SIZE + DB_MAX_OVERFLOW) * uvicorn workers. Keep that below the
@@ -86,6 +92,52 @@ if engine.dialect.name == "postgresql":
                 "request_id": actor.request_id or "",
             },
         )
+
+
+def _deadlock_code(exc: OperationalError) -> str | None:
+    """PostgreSQL SQLSTATE for a deadlock or serialization failure."""
+    orig = getattr(exc, "orig", None)
+    return (
+        getattr(orig, "pgcode", None)
+        or getattr(getattr(orig, "diag", None), "sqlstate", None)
+    )
+
+
+def retry_on_deadlock(func):
+    """Retry a transaction-owning service function on PostgreSQL 40P01/40001.
+
+    The wrapped function must own its transaction (it commits before it
+    returns). A deadlock aborts the transaction, so the session is rolled back
+    before the retry. Do not apply this to a function that runs inside a larger
+    transaction: rolling back would discard the caller's pending writes.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        db = kwargs.get("db")
+        if db is None:
+            for arg in args:
+                if isinstance(arg, Session):
+                    db = arg
+                    break
+
+        for attempt in range(3):
+            try:
+                return func(*args, **kwargs)
+            except OperationalError as exc:
+                code = _deadlock_code(exc)
+                if code not in ("40P01", "40001") or attempt == 2:
+                    raise
+                logger.warning(
+                    "Retrying %s after database deadlock (%s), attempt %d/3",
+                    func.__name__, code, attempt + 1,
+                )
+                if db is not None:
+                    try:
+                        db.rollback()
+                    except Exception:
+                        pass
+                time.sleep(0.05 * (2 ** attempt))
+    return wrapper
 
 
 # Dependency to get database session
