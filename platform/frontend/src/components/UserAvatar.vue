@@ -35,13 +35,17 @@ const COLORS = {
 }
 
 const STYLES = new Set(['none', 'solid', 'dashed', 'double', 'glow', 'gradient'])
+const HEX_COLOR = /^#[0-9a-f]{6}$/i
 
 const safeStyle = computed(() => (
   STYLES.has(props.borderStyle) ? props.borderStyle : 'solid'
 ))
 
 const styleVars = computed(() => {
-  const color = COLORS[props.borderColor] || COLORS.blue
+  // New borders store #RRGGBB; older rows still hold a named token.
+  const color = HEX_COLOR.test(props.borderColor)
+    ? props.borderColor
+    : (COLORS[props.borderColor] || COLORS.blue)
   const size = Math.min(Math.max(props.size, 20), 160)
   return {
     '--avatar-size': `${size}px`,

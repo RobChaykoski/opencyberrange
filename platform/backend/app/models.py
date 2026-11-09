@@ -23,7 +23,8 @@ class User(Base):
     # upload volume; the browser downsizes images before upload.
     avatar_data = Column(Text, nullable=True)
     # Cosmetic ring around the avatar, used on the profile and celebration wall.
-    # Values are short tokens validated by the settings endpoint, not raw CSS.
+    # Values are #RRGGBB hex colours (or an original named token from an older
+    # profile), validated by the settings endpoint before they reach the row.
     avatar_border_style = Column(
         String(20), default="solid", server_default=text("'solid'"), nullable=False
     )

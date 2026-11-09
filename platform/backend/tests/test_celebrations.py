@@ -315,3 +315,23 @@ def test_avatar_border_settings_round_trip(client, auth_headers):
         headers=auth_headers,
     )
     assert invalid.status_code == 422, invalid.text
+
+
+def test_avatar_border_accepts_hex_colour(client, auth_headers):
+    updated = client.put(
+        "/api/auth/settings",
+        json={"avatar_border_color": "#22C55E"},
+        headers=auth_headers,
+    )
+    assert updated.status_code == 200, updated.text
+
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200, settings.text
+    assert settings.json()["avatar_border_color"] == "#22c55e"
+
+    malformed = client.put(
+        "/api/auth/settings",
+        json={"avatar_border_color": "#12345"},
+        headers=auth_headers,
+    )
+    assert malformed.status_code == 422, malformed.text

@@ -450,6 +450,21 @@ def _validate_avatar_data(value: Optional[str]) -> Optional[str]:
 
 EMAIL_CONSENT_VERSION = "2026-11-04"
 
+# Avatar border colours are chosen with a hue slider, so new values are plain
+# #RRGGBB hex. The original eight named tokens are still accepted so existing
+# profiles keep working until their owner next saves the border.
+_AVATAR_BORDER_HEX = re.compile(r"^#[0-9a-f]{6}$")
+_LEGACY_AVATAR_BORDER_COLORS = {
+    "blue": "#3b82f6",
+    "violet": "#8b5cf6",
+    "emerald": "#10b981",
+    "amber": "#f59e0b",
+    "rose": "#f43f5e",
+    "cyan": "#06b6d4",
+    "slate": "#64748b",
+    "gold": "#d4a017",
+}
+
 
 class UserSettingsUpdate(BaseModel):
     first_name: Optional[str] = Field(None, max_length=80)
@@ -459,9 +474,7 @@ class UserSettingsUpdate(BaseModel):
     avatar_border_style: Optional[Literal[
         "none", "solid", "dashed", "double", "glow", "gradient"
     ]] = None
-    avatar_border_color: Optional[Literal[
-        "blue", "violet", "emerald", "amber", "rose", "cyan", "slate", "gold"
-    ]] = None
+    avatar_border_color: Optional[str] = Field(None, max_length=7)
     timezone: Optional[str] = Field(None, max_length=64)
     show_on_scoreboard: Optional[bool] = None
     scoreboard_name_mode: Optional[Literal["real_name", "username", "anonymous"]] = None
@@ -474,6 +487,16 @@ class UserSettingsUpdate(BaseModel):
     @classmethod
     def avatar_valid(cls, v: Optional[str]) -> Optional[str]:
         return _validate_avatar_data(v)
+
+    @field_validator("avatar_border_color")
+    @classmethod
+    def avatar_border_color_valid(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return None
+        value = v.strip().lower()
+        if value in _LEGACY_AVATAR_BORDER_COLORS or _AVATAR_BORDER_HEX.match(value):
+            return value
+        raise ValueError("avatar border colour must be a #RRGGBB hex value")
 
     @field_validator("first_name", "last_name")
     @classmethod

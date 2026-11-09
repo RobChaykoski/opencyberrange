@@ -116,30 +116,25 @@
                       <span>Colour</span>
                       <span>{{ currentColorLabel }}</span>
                     </div>
-                    <div class="avatar-border-colors" role="radiogroup" aria-label="Avatar border colour">
-                      <label
-                        v-for="option in borderColorOptions"
-                        :key="option.value"
-                        class="avatar-border-color"
-                        :class="{ 'avatar-border-color--active': avatarBorderColor === option.value }"
-                      >
-                        <input
-                          v-model="avatarBorderColor"
-                          type="radio"
-                          name="avatar-border-colour"
-                          :value="option.value"
-                          :disabled="borderSaving"
-                          @change="saveAvatarBorder"
-                        />
-                        <span
-                          class="avatar-border-color__swatch"
-                          :style="{ '--swatch': option.hex }"
-                          aria-hidden="true"
-                        >
-                          <CheckIcon v-if="avatarBorderColor === option.value" />
-                        </span>
-                        <span class="avatar-border-color__label">{{ option.label }}</span>
-                      </label>
+                    <div class="avatar-border-slider">
+                      <input
+                        class="avatar-border-slider__input"
+                        type="range"
+                        min="0"
+                        max="359"
+                        step="1"
+                        :value="borderHue"
+                        :disabled="borderSaving"
+                        aria-label="Avatar border colour hue"
+                        :aria-valuetext="currentColorLabel"
+                        @input="handleBorderHueInput"
+                        @change="saveAvatarBorder"
+                      />
+                      <span
+                        class="avatar-border-slider__swatch"
+                        :style="{ '--swatch': currentBorderHex }"
+                        aria-hidden="true"
+                      ></span>
                     </div>
                   </div>
 
@@ -1135,8 +1130,63 @@ const avatarInput = ref(null)
 const avatarSaving = ref(false)
 const avatarMessage = ref('')
 const avatarError = ref(false)
+const DEFAULT_BORDER_HEX = '#3b82f6'
+// Old profiles stored one of these named tokens. Resolve them to hex so the
+// slider starts at the right hue; the backend still accepts the names too.
+const LEGACY_BORDER_COLORS = {
+  blue: '#3b82f6',
+  violet: '#8b5cf6',
+  emerald: '#10b981',
+  amber: '#f59e0b',
+  rose: '#f43f5e',
+  cyan: '#06b6d4',
+  slate: '#64748b',
+  gold: '#d4a017',
+}
+
+function normalizeBorderColor(value) {
+  const raw = String(value || '').trim().toLowerCase()
+  if (/^#[0-9a-f]{6}$/.test(raw)) return raw
+  return LEGACY_BORDER_COLORS[raw] || DEFAULT_BORDER_HEX
+}
+
+function hexToHue(hex) {
+  const value = normalizeBorderColor(hex).slice(1)
+  const r = parseInt(value.slice(0, 2), 16) / 255
+  const g = parseInt(value.slice(2, 4), 16) / 255
+  const b = parseInt(value.slice(4, 6), 16) / 255
+  const max = Math.max(r, g, b)
+  const delta = max - Math.min(r, g, b)
+  if (!delta) return 0
+  let hue
+  if (max === r) hue = ((g - b) / delta) % 6
+  else if (max === g) hue = (b - r) / delta + 2
+  else hue = (r - g) / delta + 4
+  return Math.round((hue * 60 + 360) % 360)
+}
+
+function hueToHex(hue, saturation = 72, lightness = 55) {
+  const h = ((Number(hue) % 360) + 360) % 360
+  const s = saturation / 100
+  const l = lightness / 100
+  const chroma = (1 - Math.abs(2 * l - 1)) * s
+  const x = chroma * (1 - Math.abs(((h / 60) % 2) - 1))
+  const m = l - chroma / 2
+  let rgb
+  if (h < 60) rgb = [chroma, x, 0]
+  else if (h < 120) rgb = [x, chroma, 0]
+  else if (h < 180) rgb = [0, chroma, x]
+  else if (h < 240) rgb = [0, x, chroma]
+  else if (h < 300) rgb = [x, 0, chroma]
+  else rgb = [chroma, 0, x]
+  return `#${rgb
+    .map((channel) => Math.round((channel + m) * 255).toString(16).padStart(2, '0'))
+    .join('')}`
+}
+
 const avatarBorderStyle = ref('solid')
-const avatarBorderColor = ref('blue')
+const avatarBorderColor = ref(DEFAULT_BORDER_HEX)
+const borderHue = ref(hexToHue(DEFAULT_BORDER_HEX))
 const borderSaving = ref(false)
 const borderMessage = ref('')
 const borderMenuOpen = ref(false)
@@ -1152,31 +1202,21 @@ const borderStyleOptions = [
   { value: 'gradient', label: 'Gradient' },
 ]
 
-const borderColorOptions = [
-  { value: 'blue', label: 'Blue', hex: '#3b82f6' },
-  { value: 'violet', label: 'Violet', hex: '#8b5cf6' },
-  { value: 'emerald', label: 'Emerald', hex: '#10b981' },
-  { value: 'amber', label: 'Amber', hex: '#f59e0b' },
-  { value: 'rose', label: 'Rose', hex: '#f43f5e' },
-  { value: 'cyan', label: 'Cyan', hex: '#06b6d4' },
-  { value: 'slate', label: 'Slate', hex: '#64748b' },
-  { value: 'gold', label: 'Gold', hex: '#d4a017' },
-]
-
-const currentColorOption = computed(
-  () => borderColorOptions.find((option) => option.value === avatarBorderColor.value)
-    || borderColorOptions[0]
-)
 const currentStyleOption = computed(
   () => borderStyleOptions.find((option) => option.value === avatarBorderStyle.value)
     || borderStyleOptions[1]
 )
-const currentBorderHex = computed(() => currentColorOption.value.hex)
-const currentColorLabel = computed(() => currentColorOption.value.label)
+const currentBorderHex = computed(() => avatarBorderColor.value)
+const currentColorLabel = computed(() => avatarBorderColor.value.toUpperCase())
 const currentStyleLabel = computed(() => currentStyleOption.value.label)
 const currentBorderLabel = computed(
   () => `${currentStyleLabel.value} · ${currentColorLabel.value}`
 )
+
+function handleBorderHueInput(event) {
+  borderHue.value = Number(event.target.value)
+  avatarBorderColor.value = hueToHex(borderHue.value)
+}
 
 const closeBorderMenu = (returnFocus = false) => {
   borderMenuOpen.value = false
@@ -1206,7 +1246,8 @@ const handleBorderMenuKeydown = (event) => {
 const syncAvatarBorder = (source) => {
   if (!source) return
   avatarBorderStyle.value = source.avatar_border_style || 'solid'
-  avatarBorderColor.value = source.avatar_border_color || 'blue'
+  avatarBorderColor.value = normalizeBorderColor(source.avatar_border_color)
+  borderHue.value = hexToHue(avatarBorderColor.value)
 }
 
 async function saveAvatarBorder() {
@@ -1237,7 +1278,8 @@ async function saveAvatarBorder() {
 
 function resetAvatarBorder() {
   avatarBorderStyle.value = 'solid'
-  avatarBorderColor.value = 'blue'
+  avatarBorderColor.value = DEFAULT_BORDER_HEX
+  borderHue.value = hexToHue(DEFAULT_BORDER_HEX)
   saveAvatarBorder()
 }
 
@@ -2841,68 +2883,71 @@ watch(() => route.path, (newPath) => {
   color: var(--accent);
 }
 
-.avatar-border-colors {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.35rem;
-}
-
-.avatar-border-color {
-  position: relative;
+.avatar-border-slider {
   display: flex;
   align-items: center;
-  gap: 0.32rem;
-  padding: 0.28rem 0.35rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-primary);
+  gap: 0.6rem;
+}
+
+.avatar-border-slider__input {
+  flex: 1;
+  min-width: 0;
+  height: 10px;
+  margin: 0;
+  border-radius: 999px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: linear-gradient(
+    to right,
+    hsl(0 72% 55%),
+    hsl(60 72% 55%),
+    hsl(120 72% 55%),
+    hsl(180 72% 55%),
+    hsl(240 72% 55%),
+    hsl(300 72% 55%),
+    hsl(360 72% 55%)
+  );
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.avatar-border-color:hover {
-  border-color: color-mix(in srgb, var(--accent) 55%, var(--border-color));
+.avatar-border-slider__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
-.avatar-border-color--active {
-  border-color: var(--accent);
-  background: var(--accent-bg);
+.avatar-border-slider__input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-.avatar-border-color input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.avatar-border-color__swatch {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
+.avatar-border-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
   width: 18px;
   height: 18px;
+  border: 2px solid rgba(15, 23, 42, 0.35);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.avatar-border-slider__input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(15, 23, 42, 0.35);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.avatar-border-slider__swatch {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--swatch);
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-}
-
-.avatar-border-color__swatch svg {
-  width: 10px;
-  height: 10px;
-}
-
-.avatar-border-color__label {
-  overflow: hidden;
-  color: var(--text-secondary);
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-overflow: ellipsis;
-}
-
-.avatar-border-color--active .avatar-border-color__label {
-  color: var(--text-primary);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .avatar-border-menu__foot {
