@@ -228,9 +228,13 @@ apply_platform_update() {
     if [ -d "$REPO_DIR/platform/backend" ]; then
         log "Copying backend files..."
         if command -v rsync &> /dev/null; then
-            rsync -rlpt --delete --exclude='__pycache__' "$REPO_DIR/platform/backend/" "$PLATFORM_DIR/backend/"
+            # backups/ and data/ are runtime state owned by the container user.
+            # Never delete them during a code sync.
+            rsync -rlpt --delete --exclude='__pycache__' --exclude='backups' --exclude='data' "$REPO_DIR/platform/backend/" "$PLATFORM_DIR/backend/"
         else
-            find "$REPO_DIR/platform/backend" -mindepth 1 -maxdepth 1 -exec cp -r {} "$PLATFORM_DIR/backend/" \;
+            find "$REPO_DIR/platform/backend" -mindepth 1 -maxdepth 1 \
+                \( -name backups -o -name data \) -prune -o \
+                -exec cp -r {} "$PLATFORM_DIR/backend/" \;
         fi
         if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then
             chown -R "$SUDO_USER:$SUDO_USER" "$PLATFORM_DIR/backend/"
