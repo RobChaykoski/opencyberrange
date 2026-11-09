@@ -1,4 +1,4 @@
-﻿"""The analytics event and Exercise Health contracts stay explicit."""
+"""The analytics event and Exercise Health contracts stay explicit."""
 
 from datetime import datetime, timezone
 

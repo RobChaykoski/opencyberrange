@@ -1,4 +1,4 @@
-﻿"""Learning analytics for students, instructors, and administrators.
+"""Learning analytics for students, instructors, and administrators.
 
 V2 Phase 1 keeps analytics descriptive and explanatory. It never ranks
 learners, predicts grades, or exposes small groups. Course access is limited to

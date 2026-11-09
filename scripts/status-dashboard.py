@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Build a small live status dashboard for the dev and prod deployments.
 
 The dashboard reads only public, non-sensitive API endpoints:

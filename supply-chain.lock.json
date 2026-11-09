@@ -22,7 +22,7 @@
       "sha256": "1383a2557cb50b2e5b2501694d61395a9b8774e1085be47d45054fa651c83c39"
     },
     "platform/backend/app/version.py": {
-      "sha256": "ff484b133185bd71293ce270a20dd2e9aba6b37819384c7d5f01623d876f3d56"
+      "sha256": "ffbba1380d291b2dadc9458580ff495b49cbd6825bc29ba42b2bfec98bcd7204"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -58,10 +58,10 @@
       "sha256": "5d087199080e3d68920c438599214f093a65382a13a00e643e4b0a2221ea7c56"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "fefa6681e6b614b06150d6b6306744858e332aa38f37bc08a9c4d0a70a00429e"
+      "sha256": "2be233f3c636dcf63361bcfc62e1bc9d69f7db51afea0100be4c469645a8624c"
     },
     "platform/frontend/package.json": {
-      "sha256": "8099b3ebd4d9c597635aad8da3325b6a61f8c030895abf2d33a8f79054b6998a"
+      "sha256": "43ca044b4fa1aca9d20b5a2681ce42812697b6951f33b5030ba9e16291a55ca0"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "1c5e9db683ecf59688cb77abf00f8174991777d822f194ac87a317017a380dc0"
@@ -88,7 +88,7 @@
       "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
     },
     "scripts/status-dashboard.py": {
-      "sha256": "2e66c32a17e8094ad06d83e02015307d0a084ce3dfac70fcff0c3754dfa09de3"
+      "sha256": "6f6282f67f9eebaec0e103c9e1c0ac5fce0a3d3f203dff03468283909df1f938"
     },
     "scripts/supply_chain.py": {
       "sha256": "ff3a0b73053fff80d28b98602a002b7f458245b30365597866f998e796c5fd1e"
@@ -100,7 +100,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "1200c6f6a77f0aae69f1c4f978120e6f8412142d9495ef26f80e474ef4fc7588"
+      "sha256": "f5a9adedaec112ebf8fca782513d45957b31a28866aa0cd7a938fea0aed5faac"
     }
   },
   "generator": "scripts/supply_chain.py",
