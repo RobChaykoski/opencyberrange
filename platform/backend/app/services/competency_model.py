@@ -132,7 +132,7 @@ def parse_mapping(raw: Optional[str], lab) -> dict:
 
 def backfill_completion_mappings(db, batch_size: int = 500) -> int:
     from sqlalchemy.orm import joinedload
-    from app.models import LabCompletion, Level
+    from app.models import Lab, LabCompletion, Level
 
     rows = (
         db.query(LabCompletion)

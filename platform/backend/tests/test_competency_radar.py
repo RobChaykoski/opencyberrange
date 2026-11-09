@@ -191,6 +191,36 @@ def test_radar_marks_missing_components_as_provisional(db_session):
     assert web["components"]["instructor"] is None
 
 
+def test_backfill_records_mapping_snapshot_for_legacy_completion(db_session):
+    instructor = _user(db_session, "radar_instructor", "instructor")
+    course = _course(db_session, instructor)
+    lab = _lab(db_session, uuid.uuid4().hex[:6])
+    student = _user(db_session, "radar_legacy_completion")
+    db_session.add(CourseEnrollment(course_id=course.id, user_id=student.id))
+    now = datetime.now(timezone.utc)
+    legacy = LabCompletion(
+        user_id=student.id,
+        lab_id=lab.id,
+        flag_submitted="OCR{legacy}",
+        attempts=1,
+        hints_used=0,
+        completed_at=now,
+    )
+    db_session.add(legacy)
+    db_session.commit()
+    assert legacy.competency_mapping is None
+
+    from app.services.competency_model import backfill_completion_mappings
+
+    changed = backfill_completion_mappings(db_session)
+    db_session.refresh(legacy)
+    assert changed >= 1
+    assert legacy.competency_mapping is not None
+    assert legacy.competency_model_version.endswith("-backfill")
+    assert legacy.lab_difficulty_snapshot == "beginner"
+    assert json.loads(legacy.competency_mapping)["weights"]
+
+
 def test_cohort_radar_suppresses_below_minimum_and_allows_at_minimum(db_session):
     instructor = _user(db_session, "radar_instructor", "instructor")
     course = _course(db_session, instructor)
