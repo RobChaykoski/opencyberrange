@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import PlainTextResponse, Response
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone, timedelta
+import asyncio
 import logging
 import os
 import json
@@ -136,6 +137,28 @@ wireguard_manager = WireGuardManager(
     api_key=settings.WG_API_KEY
 )
 
+# Spawn/stop work continues after the HTTP response. asyncio keeps only a weak
+# reference to a task, so an unreferenced task can be garbage-collected mid-run;
+# hold a strong reference until it finishes and surface any exception instead of
+# leaving an "exception was never retrieved" warning.
+_background_tasks = set()
+
+
+def _track_background_task(coro):
+    task = asyncio.create_task(coro)
+    _background_tasks.add(task)
+
+    def _on_done(finished):
+        _background_tasks.discard(finished)
+        if finished.cancelled():
+            return
+        exc = finished.exception()
+        if exc is not None:
+            logger.error("Background lab task failed", exc_info=exc)
+
+    task.add_done_callback(_on_done)
+    return task
+
 
 @router.get("/")
 async def get_labs(
@@ -253,7 +276,6 @@ async def spawn_lab(
     # and the request-scoped DB session are not safe to touch after the
     # response is returned, so the task reloads the session row in its own
     # SessionLocal and works from plain captured values.
-    import asyncio
     from app.database import SessionLocal
 
     loop = asyncio.get_event_loop()
@@ -390,7 +412,7 @@ async def spawn_lab(
     # Default path: kick the bring-up off in the background and return at once.
     # The frontend polls GET /api/labs/spawn-status/{session_id} until the
     # status field leaves "starting".
-    asyncio.create_task(bring_up_lab())
+    _track_background_task(bring_up_lab())
 
     return {
         "message": "Lab environment starting",
@@ -480,7 +502,6 @@ async def stop_lab(
     db.refresh(session)
     
     # Run cleanup in background to avoid blocking
-    import asyncio
     from concurrent.futures import ThreadPoolExecutor
     from app.database import SessionLocal
 
@@ -534,7 +555,7 @@ async def stop_lab(
             bg_db.close()
 
     # Start cleanup in background (fire and forget)
-    asyncio.create_task(cleanup_lab())
+    _track_background_task(cleanup_lab())
 
     client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or request.client.host if request.client else None
     is_diagnostic = current_user.diagnostic_until and current_user.diagnostic_until > datetime.now(timezone.utc).replace(tzinfo=None)

@@ -109,6 +109,7 @@ def host_kvm_available() -> bool:
     """
     global _host_kvm_available
     if _host_kvm_available is None:
+        client = None
         try:
             client = docker.from_env()
             client.containers.run(
@@ -118,6 +119,14 @@ def host_kvm_available() -> bool:
             _host_kvm_available = True
         except Exception:
             _host_kvm_available = False
+        finally:
+            # One-shot probe: do not leave a Docker client (and its socket
+            # pool) open for the rest of the process.
+            if client is not None:
+                try:
+                    client.close()
+                except Exception:
+                    pass
     return _host_kvm_available
 
 
@@ -230,6 +239,22 @@ class DockerManager:
             logger.error(f"Failed to initialize Docker client: {e}")
             self.client = None
 
+    def close(self) -> None:
+        """Close the Docker client and release its socket/connection pool.
+
+        Module-level managers live for the process lifetime, but short-lived
+        managers (startup firewall pass, account erasure) should close
+        explicitly instead of waiting for garbage collection.
+        """
+        client = getattr(self, "client", None)
+        if client is None:
+            return
+        try:
+            client.close()
+        except Exception:
+            pass
+        self.client = None
+
     # Lab subnets that need isolation from the host management LAN.
     # 10.50.0.0/16 covers standalone RangeBox subnets (10.50.{x}.0/24).
     # 10.100.0.0-10.254.0.0 covers lab subnets (user_ids > 250 use 10.101+).
@@ -319,10 +344,9 @@ class DockerManager:
             while time.time() < deadline:
                 try:
                     import socket
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.settimeout(3)
-                    result = sock.connect_ex((native_ip, 5985))
-                    sock.close()
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                        sock.settimeout(3)
+                        result = sock.connect_ex((native_ip, 5985))
                     if result == 0:
                         logger.info(f"Shared container {container_name} guest OS is ready")
                         return True
@@ -432,10 +456,9 @@ class DockerManager:
                 if qemu_booted and native_ip:
                     import socket
                     try:
-                        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                        sock.settimeout(0.5)
-                        rdp_open = sock.connect_ex((native_ip, 3389)) == 0
-                        sock.close()
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                            sock.settimeout(0.5)
+                            rdp_open = sock.connect_ex((native_ip, 3389)) == 0
                     except Exception:
                         rdp_open = False
                     result["guest_status"] = "ready" if rdp_open else "booting"

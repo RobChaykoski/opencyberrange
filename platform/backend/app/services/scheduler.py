@@ -195,8 +195,13 @@ def start_scheduler():
             logger.info("Started module tick: %s", label)
 
 
-def shutdown_scheduler():
-    """Stop all background scheduler tasks"""
+async def shutdown_scheduler():
+    """Cancel and await all background scheduler tasks.
+
+    This runs from the lifespan shutdown while the event loop is already
+    running, so awaiting the cancellations is the only safe option.
+    ``run_until_complete`` would raise "event loop is already running".
+    """
     global _session_cleanup_task, _backup_task
 
     logger.info("Shutting down background scheduler...")
@@ -210,10 +215,10 @@ def shutdown_scheduler():
 
     for t in tasks:
         t.cancel()
-        try:
-            asyncio.get_event_loop().run_until_complete(t)
-        except asyncio.CancelledError:
-            pass
+    if tasks:
+        # Wait for cancellation cleanups (DB sessions, Docker calls in
+        # to_thread) to finish instead of abandoning the tasks.
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     _session_cleanup_task = None
     _backup_task = None

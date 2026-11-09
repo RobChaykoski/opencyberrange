@@ -267,6 +267,9 @@ def _external_cleanup(
             logger.warning("Erasure could not destroy lab %s for user %s: %s", slug, user_id, exc)
             external["lab_errors"].append(f"{slug}: {exc}")
 
+    if docker is not None:
+        docker.close()
+
     if public_key:
         try:
             from app.services.wireguard_manager import WireGuardManager

@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import axios from '../api/axios'
 import RangeBox from '../components/RangeBox.vue'
 import { useMobileView } from '../composables/useMobileView'
@@ -130,6 +130,9 @@ const boxReady = ref(false)
 const image = ref('kali')
 const capacity = ref({ running: 0, max: 0, available: true })
 const errorMessage = ref('')
+// Set only while a launch is being confirmed, so leaving the page cannot
+// leave a 2-second status poll running against an unmounted component.
+let launchPoll = null
 
 const fetchCapacity = async () => {
   try {
@@ -169,11 +172,13 @@ const launch = async () => {
   try {
     await axios.post(`/rangebox/standalone/launch?image=${image.value}`)
     let attempts = 0
-    const poll = setInterval(async () => {
+    if (launchPoll) clearInterval(launchPoll)
+    launchPoll = setInterval(async () => {
       attempts += 1
       await fetchStatus()
       if (status.value === 'running' || attempts > 30) {
-        clearInterval(poll)
+        clearInterval(launchPoll)
+        launchPoll = null
         loading.value = false
         showViewer.value = status.value === 'running'
         if (status.value === 'running') {
@@ -274,6 +279,13 @@ usePoll(() => {
 onMounted(() => {
   fetchCapacity()
   fetchStatus()
+})
+
+onUnmounted(() => {
+  if (launchPoll) {
+    clearInterval(launchPoll)
+    launchPoll = null
+  }
 })
 </script>
 

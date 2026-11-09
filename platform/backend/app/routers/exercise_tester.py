@@ -164,23 +164,31 @@ def _run_append_event(run_id: str, event: dict) -> None:
 
 
 def _run_read_events(run_id: str, after: int = 0):
-    """Return (events_slice, total_count). Only newline-terminated lines count,
+    """Return (new_events, total_count). Only newline-terminated lines count,
     so a partial final line written by a concurrent append is ignored until the
-    next poll (keeps `after` offsets index-aligned)."""
+    next poll (keeps `after` offsets index-aligned).
+
+    The journal is read line by line and only lines after ``after`` are parsed.
+    Reading the whole file and json-decoding every old event on every poll made
+    each cursor request allocate the complete run history again.
+    """
     try:
         with open(_run_events_path(run_id), "r") as f:
-            raw = f.readlines()
+            line_no = 0
+            events = []
+            for line in f:
+                if not line.endswith("\n"):
+                    break   # partial final line mid-append; pick it up next poll
+                line_no += 1
+                if line_no <= after:
+                    continue
+                try:
+                    events.append(json.loads(line))
+                except json.JSONDecodeError:
+                    return events, line_no - 1
+            return events, line_no
     except FileNotFoundError:
         return [], 0
-    parsed = []
-    for line in raw:
-        if not line.endswith("\n"):
-            break   # partial final line mid-append; pick it up next poll
-        try:
-            parsed.append(json.loads(line))
-        except json.JSONDecodeError:
-            break
-    return parsed[after:], len(parsed)
 
 
 def _run_is_cancelled(run_id: str) -> bool:
@@ -493,6 +501,11 @@ async def run_exercise_test(
 
     admin_id = admin.id
 
+    # The run opens its own DB session. Keep the handle in an outer holder so
+    # _background_task can close it even if the generator is cancelled or
+    # raises mid-run; otherwise that pooled connection is never returned.
+    run_db_holder = {"db": None}
+
     async def generate():
         import docker as docker_lib
         from app.database import SessionLocal
@@ -505,6 +518,7 @@ async def run_exercise_test(
 
         # Background task uses its own DB session (request session is gone)
         db = SessionLocal()
+        run_db_holder["db"] = db
 
         started = datetime.now(LOCAL_TZ)
         yield _ev({"type": "started", "started_at": _ts(), "total_labs": len(lab_data), "run_id": run_id})
@@ -517,6 +531,7 @@ async def run_exercise_test(
                         "completed_at": _ts(),
                         "duration_seconds": 0, "summary": {}})
             db.close()
+            run_db_holder["db"] = None
             return
 
         overall_results: Dict[str, str] = {}  # slug → status
@@ -1567,6 +1582,7 @@ async def run_exercise_test(
             },
         })
         db.close()
+        run_db_holder["db"] = None
 
     # ── Launch as background task instead of streaming response ─────────
     run_id = str(uuid.uuid4())[:8]
@@ -1636,6 +1652,13 @@ async def run_exercise_test(
         except Exception as exc:
             logger.error("Background test runner error for run %s: %s", run_id, exc)
         finally:
+            run_db = run_db_holder.get("db")
+            if run_db is not None:
+                try:
+                    run_db.close()
+                except Exception:
+                    pass
+                run_db_holder["db"] = None
             state = _run_read_state(run_id) or {}
             if state.get("status") == "running":
                 state["status"] = "completed"
@@ -1643,8 +1666,23 @@ async def run_exercise_test(
             _cancel_events.pop(run_id, None)
             _active_runs.pop(run_id, None)
 
-    # Hold the task reference on this worker so it isn't garbage-collected mid-run.
-    _active_runs[run_id] = {"_task": asyncio.create_task(_background_task())}
+    # Hold the task reference on this worker so it isn't garbage-collected
+    # mid-run. The done callback is a second safety net: if the task is
+    # cancelled before its coroutine body ever starts, its own finally block
+    # does not run, so the registry entries would otherwise stay behind.
+    task = asyncio.create_task(_background_task())
+    _active_runs[run_id] = {"_task": task}
+
+    def _cleanup_run_task(finished):
+        _active_runs.pop(run_id, None)
+        _cancel_events.pop(run_id, None)
+        if finished.cancelled():
+            return
+        exc = finished.exception()
+        if exc is not None:
+            logger.error("Exercise test run %s failed", run_id, exc_info=exc)
+
+    task.add_done_callback(_cleanup_run_task)
 
     return {"run_id": run_id, "total_labs": len(labs), "status": "running"}
 
@@ -1657,6 +1695,10 @@ async def get_active_test_run(
 ):
     """Return the currently active test run (if any). Reads file-based state so
     it works regardless of which worker handled the original POST."""
+    # The Admin UI polls this while a run is visible. Prune here as well as on
+    # start, so abandoned run journals are removed even during a long idle
+    # period with no new run.
+    _prune_old_runs()
     try:
         names = os.listdir(_RUN_DIR)
     except FileNotFoundError:

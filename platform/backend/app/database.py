@@ -23,6 +23,10 @@ engine = create_engine(
     max_overflow=10,
     pool_recycle=300,
     pool_timeout=30,
+    # Reuse the hottest connection first. Under bursty request patterns this
+    # lets the colder half of the pool age out via pool_recycle instead of
+    # every worker keeping all 15 slots open to PostgreSQL.
+    pool_use_lifo=True,
     connect_args=_connect_args,
 )
 

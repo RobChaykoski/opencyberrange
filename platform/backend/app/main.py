@@ -91,8 +91,9 @@ def _try_acquire_scheduler_leadership() -> bool:
     if got:
         # Detach so the pool never recycles this connection (recycling would
         # silently drop the session lock) and pool capacity is not reduced.
-        conn.detach()
-        _scheduler_leader_conn = conn
+        # Keep the raw DBAPI connection: the detached SQLAlchemy Connection is
+        # unusable, and the raw one is what releases the lock when closed.
+        _scheduler_leader_conn = conn.detach()
         return True
     conn.close()
     return False
@@ -530,6 +531,7 @@ async def lifespan(app: FastAPI):
 
     # Auto-apply firewall rules on startup so the server is secure after reboot
     # (same rules the admin "Fix Rules" button applies, but automatic)
+    _dm = None
     try:
         import requests as req_lib
         from app.config import settings
@@ -561,6 +563,12 @@ async def lifespan(app: FastAPI):
             logger.info("Startup firewall: all rules already in place")
     except Exception as e:
         logger.warning(f"Startup firewall auto-apply: {e}")
+    finally:
+        # This client is only needed for the one-shot rule pass. Closing it
+        # releases its socket/connection pool instead of keeping it for the
+        # whole process lifetime.
+        if _dm is not None:
+            _dm.close()
 
     # Append-only change ledger for critical tables. The triggers attribute
     # application writes to the authenticated actor and flag manual writes as
@@ -579,7 +587,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     logger.info("Shutting down...")
     if scheduler_started:
-        shutdown_scheduler()
+        await shutdown_scheduler()
     _release_scheduler_leadership()
 
 
