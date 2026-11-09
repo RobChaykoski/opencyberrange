@@ -89,11 +89,18 @@ def _try_acquire_scheduler_leadership() -> bool:
             "running scheduler in this worker anyway", e)
         return True
     if got:
+        # Close the transaction opened by the lock probe. pg_try_advisory_lock
+        # is session-scoped, so the lock survives the commit; leaving the
+        # session idle-in-transaction would hold a snapshot for the process
+        # lifetime and block autovacuum from reclaiming dead tuples.
+        conn.commit()
         # Detach so the pool never recycles this connection (recycling would
         # silently drop the session lock) and pool capacity is not reduced.
-        # Keep the raw DBAPI connection: the detached SQLAlchemy Connection is
-        # unusable, and the raw one is what releases the lock when closed.
-        _scheduler_leader_conn = conn.detach()
+        # Keep the Connection object itself: detach() returns None in this
+        # SQLAlchemy version, and letting the object be garbage-collected would
+        # close the DBAPI session and release the advisory lock.
+        conn.detach()
+        _scheduler_leader_conn = conn
         return True
     conn.close()
     return False
