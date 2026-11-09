@@ -131,10 +131,22 @@ def test_instructor_cannot_reach_admin_surfaces(client, db_session):
         "/api/admin/users/export?reason=matrix-test",
         "/api/admin/activity/export?format=json&reason=matrix-test",
         "/api/admin/system/backups",
-        "/api/analytics/reports/export.pdf?reason=matrix-test",
     ):
         response = client.get(path, headers=headers)
         assert response.status_code == 403, (path, response.status_code, response.text)
+
+
+def test_instructor_can_export_owned_course_report(client, db_session):
+    """Instructor reports are scoped to owned courses, not admin-wide data."""
+    instructor = _make_user(db_session, "instructor")
+    headers = _headers(client, instructor)
+
+    response = client.get(
+        "/api/analytics/reports/export.pdf?reason=matrix-test",
+        headers=headers,
+    )
+    assert response.status_code == 200, response.text
+    assert response.content.startswith(b"%PDF")
 
 
 def test_instructor_only_sees_own_course_analytics(client, db_session):

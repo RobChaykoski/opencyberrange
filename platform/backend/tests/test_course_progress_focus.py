@@ -93,15 +93,21 @@ def _make_course(db, instructor, lab_count, suffix):
 
 
 def _complete(db, user, lab, when, flag="OCR{focus}"):
-    db.add(LabCompletion(
-        user_id=user.id,
-        lab_id=lab.id,
-        flag_submitted=flag,
-        completed_at=when,
-        attempts=1,
-        hints_used=0,
-        time_spent_minutes=10,
-    ))
+    completion = db.query(LabCompletion).filter(
+        LabCompletion.user_id == user.id,
+        LabCompletion.lab_id == lab.id,
+    ).first()
+    if completion is None:
+        completion = LabCompletion(
+            user_id=user.id,
+            lab_id=lab.id,
+            attempts=1,
+            hints_used=0,
+            time_spent_minutes=10,
+        )
+        db.add(completion)
+    completion.flag_submitted = flag
+    completion.completed_at = when
     db.flush()
 
 
