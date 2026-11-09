@@ -1,12 +1,24 @@
-name: "EXIF Metadata Investigation"
+title: EXIF Metadata Investigation
+category: osint
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - osint-1-2-image-intelligence
+learning_outcomes:
+  - Download a published image without re-encoding it
+  - Read EXIF, GPS, and device metadata from the original file
+  - Explain how metadata can expose location and internal context
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A published evidence photo still carries its camera, timestamp, GPS coordinates, and an internal note. Recover the flag from the file metadata and document the privacy leak."
-difficulty: beginner
-category: osint
-duration_minutes: 35
 visibility: public
 flag: "OCR{ex1f_m3tadata_l34ks}"
 # Bonus lab: it sits in Level 1 but does not block the Level 1 certificate,
@@ -19,12 +31,6 @@ tools:
   - exiftool
   - exiv2
   - python3
-
-objectives:
-  - Download a published image without re-encoding it
-  - Read EXIF, GPS, and device metadata from the original file
-  - Explain how metadata can expose location and internal context
-  - Capture the flag
 
 scenario: |
   FinanceCorp published an incident update with a photo from the loading bay.

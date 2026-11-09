@@ -1,17 +1,24 @@
-name: Credential Discovery and Reuse Chain
+title: Credential Discovery and Reuse Chain
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-8-3-multi-service-credential-reuse
+learning_outcomes:
+  - Find credentials via enumeration and reuse
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Execute the complete credential discovery and reuse chain on FinanceCorp's infrastructure to demonstrate the attack path.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - find credentials via enumeration and reuse
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your credential reuse testing for FinanceCorp has demonstrated significant lateral 
   movement capabilities. James Mitchell wants to see the complete attack chain: from 

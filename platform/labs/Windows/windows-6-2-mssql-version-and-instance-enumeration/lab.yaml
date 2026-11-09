@@ -1,17 +1,25 @@
-name: MS-SQL Version and Instance Enumeration
+title: MS-SQL Version and Instance Enumeration
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-6-1-mssql-service-detection
+learning_outcomes:
+  - Enumerate ms-sql version and instances
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Enumerate MS-SQL version and instances on FinanceCorp's database server to assess security posture.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - enumerate ms-sql version and instances
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your detection of FinanceCorp's MS-SQL server has confirmed its presence. James 
   Mitchell wants detailed information about the SQL Server version and instances, as 

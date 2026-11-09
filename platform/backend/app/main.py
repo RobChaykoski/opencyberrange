@@ -187,6 +187,12 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added content_version column to labs table")
 
+        for column in ("prerequisites", "mapped_skills", "assessment_criteria"):
+            if column not in labs_columns:
+                conn.execute(text(f"ALTER TABLE labs ADD COLUMN {column} TEXT"))
+                conn.commit()
+                logger.info("Added %s column to labs table", column)
+
         completion_columns = {c['name'] for c in inspector.get_columns('lab_completions')}
         if 'competency_model_version' not in completion_columns:
             conn.execute(text("ALTER TABLE lab_completions ADD COLUMN competency_model_version VARCHAR(32)"))

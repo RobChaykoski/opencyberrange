@@ -1,24 +1,31 @@
-name: "TrueNorth Hosting - Filtered Injection"
+title: TrueNorth Hosting - Filtered Injection
+category: web
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - web-2-4-api-enumeration-gauntlet
+learning_outcomes:
+  - Identify a web application that filters user input before passing it to a system command
+  - Discover which shell metacharacters are blocked and which are not
+  - Bypass the input filter using newline injection via URL encoding (%0a)
+  - Execute arbitrary commands to locate hidden files on the server
+  - Assemble both tokens to capture the flag
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "TrueNorth Hosting's DNS lookup tool filters common shell metacharacters but misses newline injection. Bypass the filter using URL-encoded newlines to execute arbitrary commands and recover the flag."
 
-difficulty: intermediate
-category: web
-duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 6
 flag: "OCR{f1lt3r_byp4ss_pwn3d}"
-
-objectives:
-  - Identify a web application that filters user input before passing it to a system command
-  - Discover which shell metacharacters are blocked and which are not
-  - Bypass the input filter using newline injection via URL encoding (%0a)
-  - Execute arbitrary commands to locate hidden files on the server
-  - Assemble both tokens to capture the flag
 
 scenario: |
   TrueNorth Hosting provides managed DNS and hosting services for small businesses.

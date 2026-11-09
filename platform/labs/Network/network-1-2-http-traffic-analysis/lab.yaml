@@ -1,19 +1,27 @@
-name: HTTP Traffic Analysis
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: MediCare Regional Hospital captured suspicious network traffic showing cleartext HTTP authentication. Analyze the packet capture in Wireshark to find credentials transmitted insecurely.
-difficulty: beginner
+title: HTTP Traffic Analysis
 category: network-analysis
-duration_minutes: 45
-objectives:
+difficulty: beginner
+estimated_time: 45
+prerequisites:
+  - network-1-1-port-scan-detection
+learning_outcomes:
   - Download and open PCAP files in Wireshark
   - Apply display filters to isolate HTTP traffic
   - Analyze HTTP POST requests for form data
   - Extract cleartext credentials from unencrypted traffic
   - Understand why HTTPS is critical for sensitive data
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
 
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: MediCare Regional Hospital captured suspicious network traffic showing cleartext HTTP authentication. Analyze the packet capture in Wireshark to find credentials transmitted insecurely.
 scenario: |
   You're a junior security analyst at MediCare Regional Hospital's Security Operations Center (SOC).
   Marcus Thompson, the CISO, has escalated a concerning incident to you. During a routine

@@ -1,19 +1,26 @@
-name: SSH History Analysis
+title: SSH History Analysis
+category: post-exploitation
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - linux-2-4-ssh-command-execution
+learning_outcomes:
+  - Understand bash history file structure
+  - Analyze command history for sensitive information
+  - Identify credentials in command history
+  - Discover internal network information
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp requires investigation of user command history. Analyze bash history files to discover previously executed commands, credentials, and system activity patterns.
-difficulty: intermediate
-category: post-exploitation
-duration_minutes: 120
-objectives:
-  - Understand bash history file structure
-  - Analyze command history for sensitive information
-  - Identify credentials in command history
-  - Discover internal network information
-  - Capture the flag
-
 scenario: |
   Your FinanceCorp penetration test continues with command history analysis. James
   Mitchell wants you to demonstrate the security risks of sensitive information

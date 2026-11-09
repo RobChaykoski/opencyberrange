@@ -1,17 +1,24 @@
-name: LDAP Base DN Enumeration
+title: LDAP Base DN Enumeration
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-7-2-ldap-anonymous-bind-test
+learning_outcomes:
+  - Enumerate base dn and root dse
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Enumerate base DN and root DSE on FinanceCorp's Active Directory to understand domain structure.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - enumerate base dn and root dse
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your anonymous LDAP bind testing for FinanceCorp has been successful. James Mitchell 
   wants to understand the domain structure by enumerating the base Distinguished Name 

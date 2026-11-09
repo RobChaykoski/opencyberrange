@@ -81,6 +81,14 @@ def parse_certificate_id(certificate_id: str):
     return _CERTIFICATE_ID_RE.fullmatch(certificate_id)
 
 
+def _json_list(raw):
+    try:
+        value = json.loads(raw) if raw else []
+        return value if isinstance(value, list) else []
+    except Exception:
+        return []
+
+
 def get_user_completions(db: Session, user_id: int) -> set:
     """Get set of completed lab IDs for user (only counts actual flag submissions)"""
     completions = db.query(LabCompletion.lab_id).filter(
@@ -1153,6 +1161,10 @@ async def get_track(
                 objectives = json.loads(lab.objectives) if lab.objectives else []
             except Exception:
                 objectives = []
+
+            prerequisites = _json_list(getattr(lab, "prerequisites", None))
+            mapped_skills = _json_list(getattr(lab, "mapped_skills", None))
+            assessment_criteria = _json_list(getattr(lab, "assessment_criteria", None))
             
             try:
                 tools = json.loads(lab.tools) if lab.tools else []
@@ -1178,7 +1190,12 @@ async def get_track(
                 # Unavailable".
                 "category": lab.category,
                 "duration_minutes": lab.duration_minutes,
+                "estimated_time": lab.duration_minutes,
                 "objectives": objectives,
+                "learning_outcomes": objectives,
+                "prerequisites": prerequisites,
+                "mapped_skills": mapped_skills,
+                "assessment_criteria": assessment_criteria,
                 "tools": tools,
                 "is_completed": is_completed,
                 "is_unlocked": is_unlocked,

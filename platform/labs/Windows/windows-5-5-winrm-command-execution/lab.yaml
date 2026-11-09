@@ -1,17 +1,24 @@
-name: WinRM Command Execution
+title: WinRM Command Execution
+category: exploitation
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-5-4-winrm-credential-brute-force
+learning_outcomes:
+  - Execute commands via winrm session
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Demonstrate the security impact of WinRM access by executing commands on FinanceCorp's systems.
-difficulty: intermediate
-category: exploitation
-duration_minutes: 120
-objectives:
-  - execute commands via winrm session
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your authentication testing against FinanceCorp's WinRM service has been successful. 
   James Mitchell wants to understand the full security impact of WinRM access by 

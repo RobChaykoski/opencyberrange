@@ -1,19 +1,26 @@
-name: Service Interaction
+title: Service Interaction
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-1-2-multi-service-discovery
+learning_outcomes:
+  - Understand limitations of port scanning
+  - Connect directly to services for deeper enumeration
+  - Use FTP client for service interaction
+  - Gather information beyond nmap banners
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: TechStart's enumeration reveals services that require direct interaction. Port scanning alone isn't enough-you must connect to services to gather complete information.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Understand limitations of port scanning
-  - Connect directly to services for deeper enumeration
-  - Use FTP client for service interaction
-  - Gather information beyond nmap banners
-  - Capture the flag
-
 scenario: |
   Your TechStart penetration test has revealed that some services don't expose all
   information through port scans alone. Sarah Chen wants you to demonstrate

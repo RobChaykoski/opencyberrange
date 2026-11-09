@@ -926,6 +926,12 @@ async def update_lab(
         lab.category = request.category
     if request.duration_minutes is not None:
         lab.duration_minutes = request.duration_minutes
+    if request.prerequisites is not None:
+        lab.prerequisites = request.prerequisites
+    if request.mapped_skills is not None:
+        lab.mapped_skills = request.mapped_skills
+    if request.assessment_criteria is not None:
+        lab.assessment_criteria = request.assessment_criteria
     if request.is_active is not None:
         lab.is_active = request.is_active
     if request.is_course_exclusive is not None:
@@ -2507,10 +2513,10 @@ async def create_lab(
             raise HTTPException(status_code=400, detail=f"Invalid Lab YAML: {e}")
 
     # Form fields override parsed YAML values (if both provided, form wins)
-    name = payload.name or lab_data.get('name', '')
+    name = payload.name or lab_data.get('title') or lab_data.get('name', '')
     slug = payload.slug or lab_data.get('slug', '')
     if not name or not slug:
-        raise HTTPException(status_code=400, detail="Name and slug are required")
+        raise HTTPException(status_code=400, detail="Title/name and slug are required")
 
     existing = db.query(Lab).filter(Lab.slug == slug).first()
     if existing:
@@ -2520,7 +2526,9 @@ async def create_lab(
     scenario = payload.scenario or lab_data.get('scenario')
     difficulty = lab_data.get('difficulty', payload.difficulty) if lab_data else payload.difficulty
     category = lab_data.get('category', payload.category) if lab_data else payload.category
-    duration_minutes = lab_data.get('duration_minutes', payload.duration_minutes) if lab_data else payload.duration_minutes
+    duration_minutes = lab_data.get(
+        'estimated_time', lab_data.get('duration_minutes', payload.duration_minutes)
+    ) if lab_data else payload.duration_minutes
     compose_file = payload.compose_file
 
     # Validate compose YAML if provided
@@ -2531,7 +2539,24 @@ async def create_lab(
             raise HTTPException(status_code=400, detail=f"Invalid compose YAML: {e}")
 
     # JSON-encode array fields (from YAML or form)
-    objectives = payload.objectives or (json.dumps(lab_data['objectives']) if lab_data.get('objectives') else None)
+    learning_outcomes = (
+        lab_data.get('learning_outcomes') or lab_data.get('objectives')
+    )
+    objectives = payload.objectives or (
+        json.dumps(learning_outcomes) if learning_outcomes else None
+    )
+    prerequisites_val = payload.prerequisites or (
+        json.dumps(lab_data.get('prerequisites', []))
+        if lab_data.get('prerequisites') else None
+    )
+    mapped_skills_val = payload.mapped_skills or (
+        json.dumps(lab_data.get('mapped_skills', []))
+        if lab_data.get('mapped_skills') else None
+    )
+    assessment_criteria_val = payload.assessment_criteria or (
+        json.dumps(lab_data.get('assessment_criteria', []))
+        if lab_data.get('assessment_criteria') else None
+    )
     hints = payload.hints or (json.dumps(lab_data['hints']) if lab_data.get('hints') else None)
     tools = payload.tools or (json.dumps(lab_data['tools']) if lab_data.get('tools') else None)
     hostnames_val = payload.hostnames or (json.dumps(lab_data['hostnames']) if lab_data.get('hostnames') else None)
@@ -2571,6 +2596,9 @@ async def create_lab(
         level_id=payload.level_id,
         compose_file=compose_file,
         objectives=objectives,
+        prerequisites=prerequisites_val,
+        mapped_skills=mapped_skills_val,
+        assessment_criteria=assessment_criteria_val,
         hints=hints,
         tools=tools,
         hostnames=hostnames_val,
@@ -2838,14 +2866,23 @@ async def discover_labs(
             if existing:
                 # NOTE: Do NOT overwrite visibility or created_by on existing labs.
                 # Those are admin-managed fields, not derived from the filesystem.
-                existing.name = lab_data.get('name', lab_dirname)
+                existing.name = lab_data.get('title') or lab_data.get('name', lab_dirname)
                 existing.description = lab_data.get('description', '')
                 existing.scenario = scenario
                 existing.scenario_brief = scenario_brief
                 existing.difficulty = lab_data.get('difficulty', 'beginner')
                 existing.category = lab_data.get('category', 'general')
-                existing.duration_minutes = lab_data.get('duration_minutes', 60)
-                existing.objectives = json.dumps(lab_data.get('objectives', []))
+                existing.duration_minutes = lab_data.get(
+                    'estimated_time', lab_data.get('duration_minutes', 60)
+                )
+                existing.objectives = json.dumps(
+                    lab_data.get('learning_outcomes', lab_data.get('objectives', []))
+                )
+                existing.prerequisites = json.dumps(lab_data.get('prerequisites', []) or [])
+                existing.mapped_skills = json.dumps(lab_data.get('mapped_skills', []) or [])
+                existing.assessment_criteria = json.dumps(
+                    lab_data.get('assessment_criteria', []) or []
+                )
                 existing.hints = json.dumps(lab_data.get('hints', []))
                 existing.tools = json.dumps(lab_data.get('tools', []))
                 existing.hostnames = json.dumps(lab_data.get('hostnames', []))
@@ -2861,15 +2898,24 @@ async def discover_labs(
                 updated += 1
             else:
                 new_lab = Lab(
-                    name=lab_data.get('name', lab_dirname),
+                    name=lab_data.get('title') or lab_data.get('name', lab_dirname),
                     slug=lab_dirname,
                     description=lab_data.get('description', ''),
                     scenario=scenario,
                     scenario_brief=scenario_brief,
                     difficulty=lab_data.get('difficulty', 'beginner'),
                     category=lab_data.get('category', 'general'),
-                    duration_minutes=lab_data.get('duration_minutes', 60),
-                    objectives=json.dumps(lab_data.get('objectives', [])),
+                    duration_minutes=lab_data.get(
+                        'estimated_time', lab_data.get('duration_minutes', 60)
+                    ),
+                    objectives=json.dumps(
+                        lab_data.get('learning_outcomes', lab_data.get('objectives', []))
+                    ),
+                    prerequisites=json.dumps(lab_data.get('prerequisites', []) or []),
+                    mapped_skills=json.dumps(lab_data.get('mapped_skills', []) or []),
+                    assessment_criteria=json.dumps(
+                        lab_data.get('assessment_criteria', []) or []
+                    ),
                     hints=json.dumps(lab_data.get('hints', [])),
                     tools=json.dumps(lab_data.get('tools', [])),
                     hostnames=json.dumps(lab_data.get('hostnames', [])),

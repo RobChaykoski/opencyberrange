@@ -1,17 +1,29 @@
-name: WinRM Service Detection
+title: WinRM Service Detection
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-4-1-rdp-service-detection
+  - windows-4-2-rdp-version-enumeration
+  - windows-4-3-rdp-manual-connection-test
+  - windows-4-4-rdp-credential-guessing
+  - windows-4-5-rdp-brute-force-attack
+  - windows-4-6-rdp-session-access-and-flag-retrieval
+learning_outcomes:
+  - Identify winrm service on target
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp uses WinRM for remote management. Assess the security of their WinRM configuration and test for unauthorized access.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - identify winrm service on target
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your penetration test for FinanceCorp has identified Windows Remote Management 
   (WinRM) services on their infrastructure. James Mitchell is concerned about WinRM 

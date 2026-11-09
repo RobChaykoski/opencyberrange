@@ -1,17 +1,24 @@
-name: LDAP Anonymous Bind Test
+title: LDAP Anonymous Bind Test
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-7-1-ldap-service-detection
+learning_outcomes:
+  - Test anonymous ldap bind
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test anonymous LDAP bind access to FinanceCorp's Active Directory to identify information disclosure risks.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - test anonymous ldap bind
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your detection of FinanceCorp's LDAP services has confirmed their presence. James 
   Mitchell wants to test if anonymous LDAP access is permitted, as this could expose 

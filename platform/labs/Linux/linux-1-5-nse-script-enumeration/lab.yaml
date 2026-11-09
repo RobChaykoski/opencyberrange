@@ -1,19 +1,26 @@
-name: NSE Script Enumeration
+title: NSE Script Enumeration
+category: reconnaissance
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - linux-1-4-non-standard-port-discovery
+learning_outcomes:
+  - Understand nmap NSE (Nmap Scripting Engine)
+  - Use service-specific enumeration scripts
+  - Gather detailed SSH configuration information
+  - Leverage advanced nmap capabilities
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: TechStart's deep enumeration requires advanced techniques. Use nmap's NSE scripts to gather detailed service information beyond basic version detection.
-difficulty: intermediate
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Understand nmap NSE (Nmap Scripting Engine)
-  - Use service-specific enumeration scripts
-  - Gather detailed SSH configuration information
-  - Leverage advanced nmap capabilities
-  - Capture the flag
-
 scenario: |
   Your TechStart penetration test requires deeper enumeration than basic version
   detection provides. Sarah Chen wants comprehensive intelligence on SSH

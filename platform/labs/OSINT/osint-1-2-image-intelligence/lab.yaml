@@ -1,12 +1,25 @@
-name: "Badge Photo Intelligence"
+title: Badge Photo Intelligence
+category: osint
+difficulty: beginner
+estimated_time: 45
+prerequisites:
+  - osint-1-1-public-footprint
+learning_outcomes:
+  - Download an image from a public profile without altering it
+  - Inspect EXIF and PNG text metadata for context
+  - Recognise least-significant-bit steganography
+  - Extract the hidden payload and recover the flag
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A Kestrel Ridge employee badge photo is public. The metadata looks ordinary, but the pixels carry more than they should. Extract the hidden payload and recover the flag."
-difficulty: beginner
-category: osint
-duration_minutes: 45
 visibility: public
 flag: "OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}"
 
@@ -16,12 +29,6 @@ tools:
   - exiftool
   - python3
   - zsteg
-
-objectives:
-  - Download an image from a public profile without altering it
-  - Inspect EXIF and PNG text metadata for context
-  - Recognise least-significant-bit steganography
-  - Extract the hidden payload and recover the flag
 
 scenario: |
   People Security refreshed the staff badge photos last week. Dana

@@ -1,24 +1,30 @@
-name: "Metro Transit - Insecure API Endpoints"
+title: Metro Transit - Insecure API Endpoints
+category: web
+difficulty: intermediate
+estimated_time: 40
+prerequisites:
+  - web-2-1-basic-sql-injection-get
+learning_outcomes:
+  - Enumerate API endpoints through documentation and fuzzing
+  - Identify broken access control vulnerabilities in REST APIs
+  - Access administrative endpoints that should require authentication
+  - Extract sensitive data from unprotected debug/admin interfaces
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Metro Transit Authority's public API has broken access controls. Discover hidden endpoints, bypass authorization checks, and extract sensitive data from unprotected administrative APIs."
 
-difficulty: intermediate
-category: web
-duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 5
 flag: "OCR{4p1_br0k3n_acc3ss}"
-
-objectives:
-  - Enumerate API endpoints through documentation and fuzzing
-  - Identify broken access control vulnerabilities in REST APIs
-  - Access administrative endpoints that should require authentication
-  - Extract sensitive data from unprotected debug/admin interfaces
-  - Capture the flag
 
 scenario: |
   Metro Transit Authority (MTA) in Seattle has launched a public-facing REST

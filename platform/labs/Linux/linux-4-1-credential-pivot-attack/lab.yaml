@@ -1,24 +1,34 @@
-name: "Crestline Financial - Credential Pivot Attack"
+title: Crestline Financial - Credential Pivot Attack
+category: post-exploitation
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - linux-3-1-suid-privilege-escalation
+  - linux-3-2-password-hash-cracking
+  - linux-3-3-suid-maze
+  - linux-3-4-hash-relay
+learning_outcomes:
+  - Enumerate a compromised web server for stored credentials and configuration files
+  - Identify hardcoded database credentials in application configuration
+  - Use discovered credentials to pivot laterally to an internal server
+  - Extract evidence from the database server to complete the assessment
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A web server at Crestline Financial leaks database credentials through misconfigured application files. Discover the credentials and pivot laterally to the internal database server."
 
-difficulty: intermediate
-category: post-exploitation
-duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 11
 flag: "OCR{cr3d_p1v0t}"
-
-objectives:
-  - Enumerate a compromised web server for stored credentials and configuration files
-  - Identify hardcoded database credentials in application configuration
-  - Use discovered credentials to pivot laterally to an internal server
-  - Extract evidence from the database server to complete the assessment
-  - Capture the flag
 
 scenario: |
   Crestline Financial Services, a regional investment firm based in Charlotte,

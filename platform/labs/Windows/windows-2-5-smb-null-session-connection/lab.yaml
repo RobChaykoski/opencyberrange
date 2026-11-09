@@ -1,17 +1,24 @@
-name: SMB Null Session Connection
+title: SMB Null Session Connection
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-4-smb-file-retrieval
+learning_outcomes:
+  - Connect to smb using null session
+  - Understand SMB enumeration techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test null session connections to FinanceCorp's SMB service to identify additional enumeration vectors.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - connect to smb using null session
-  - Understand SMB enumeration techniques
-  - Capture the flag
-
 scenario: |
   Your assessment of FinanceCorp's SMB service has revealed anonymous access 
   capabilities. James Mitchell wants you to test for null session connections, which 

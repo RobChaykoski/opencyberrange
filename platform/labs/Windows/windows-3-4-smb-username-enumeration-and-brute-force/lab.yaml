@@ -1,17 +1,24 @@
-name: SMB Username Enumeration and Brute Force
+title: SMB Username Enumeration and Brute Force
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-3-3-smb-single-user-brute-force
+learning_outcomes:
+  - Enumerate username then brute force password
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Combine username enumeration with brute force attacks to test FinanceCorp's authentication security comprehensively.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - enumerate username then brute force password
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your assessment of FinanceCorp's SMB authentication has revealed both enumeration 
   opportunities and credential testing vectors. James Mitchell wants a comprehensive 

@@ -1,19 +1,26 @@
-name: Non-Standard Port Discovery
+title: Non-Standard Port Discovery
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-1-3-service-interaction
+learning_outcomes:
+  - Understand that services can run on any port
+  - Perform comprehensive port range scanning
+  - Identify services on non-standard ports
+  - Use efficient port scanning strategies
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: TechStart has configured services on non-standard ports for security. Perform comprehensive port scanning to discover hidden services.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Understand that services can run on any port
-  - Perform comprehensive port range scanning
-  - Identify services on non-standard ports
-  - Use efficient port scanning strategies
-  - Capture the flag
-
 scenario: |
   Your TechStart penetration test has revealed an interesting security configuration.
   Sarah Chen informs you that some administrators configure services on non-standard

@@ -1,17 +1,29 @@
-name: Single Service Credential Discovery
+title: Single Service Credential Discovery
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-7-1-ldap-service-detection
+  - windows-7-2-ldap-anonymous-bind-test
+  - windows-7-3-ldap-base-dn-enumeration
+  - windows-7-4-ldap-user-enumeration
+  - windows-7-5-ldap-group-enumeration
+  - windows-7-6-ldap-comprehensive-enumeration
+learning_outcomes:
+  - Find credentials on one service, test on same service type
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: You've discovered credentials during your FinanceCorp assessment. Test credential reuse across multiple services to demonstrate lateral movement risks.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - find credentials on one service, test on same service type
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your penetration test for FinanceCorp has successfully discovered credentials through 
   various enumeration and brute force techniques. James Mitchell is particularly 

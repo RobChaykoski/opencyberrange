@@ -1,19 +1,33 @@
-name: SSH Basic Login
+title: SSH Basic Login
+category: authentication
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-1-1-ssh-service-detection
+  - linux-1-2-multi-service-discovery
+  - linux-1-3-service-interaction
+  - linux-1-4-non-standard-port-discovery
+  - linux-1-5-nse-script-enumeration
+  - linux-1-6-version-vulnerability-identification
+  - linux-1-7-network-discovery
+  - linux-1-8-service-triage
+learning_outcomes:
+  - Understand SSH authentication basics
+  - Successfully authenticate to SSH service
+  - Read and analyze MOTD (Message of the Day)
+  - Understand post-authentication information disclosure
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp requires testing SSH authentication. Successfully authenticate to the Linux server and observe the login welcome message.
-difficulty: beginner
-category: authentication
-duration_minutes: 120
-objectives:
-  - Understand SSH authentication basics
-  - Successfully authenticate to SSH service
-  - Read and analyze MOTD (Message of the Day)
-  - Understand post-authentication information disclosure
-  - Capture the flag
-
 scenario: |
   Your FinanceCorp penetration test has identified SSH services running on Linux
   servers. James Mitchell has provided test credentials for authentication testing,

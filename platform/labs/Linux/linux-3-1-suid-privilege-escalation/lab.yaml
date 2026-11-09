@@ -1,24 +1,40 @@
-name: "Meridian Data Corp - SUID Privilege Escalation"
+title: Meridian Data Corp - SUID Privilege Escalation
+category: privilege-escalation
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - linux-2-1-ssh-basic-login
+  - linux-2-2-ssh-user-discovery
+  - linux-2-3-ssh-file-discovery
+  - linux-2-4-ssh-command-execution
+  - linux-2-5-ssh-history-analysis
+  - linux-2-6-ssh-privilege-escalation
+  - linux-2-7-smb-share-enumeration
+  - linux-2-8-snmp-community-strings
+  - linux-2-9-smb-credential-hunt
+  - linux-2-10-snmp-breadcrumb-trail
+learning_outcomes:
+  - Enumerate the target system for privilege escalation vectors
+  - Identify SUID binaries using standard Linux enumeration techniques
+  - Distinguish between normal and misconfigured SUID permissions
+  - Exploit a SUID misconfiguration to escalate privileges to root
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A development server at Meridian Data Corp has misconfigured file permissions. Discover and exploit SUID binaries to escalate from a low-privilege developer account to root."
 
-difficulty: intermediate
-category: privilege-escalation
-duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 7
 flag: "OCR{su1d_pr1v3sc_r00t3d}"
-
-objectives:
-  - Enumerate the target system for privilege escalation vectors
-  - Identify SUID binaries using standard Linux enumeration techniques
-  - Distinguish between normal and misconfigured SUID permissions
-  - Exploit a SUID misconfiguration to escalate privileges to root
-  - Capture the flag
 
 scenario: |
   Meridian Data Corp, a data analytics firm in Portland, Oregon, contracted your

@@ -1,12 +1,25 @@
-name: "The Public Homepage"
+title: The Public Homepage
+category: osint
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - osint-2-1-source-code-intelligence
+learning_outcomes:
+  - Treat a public homepage as an OSINT source
+  - Fetch the page source instead of only reading the rendered page
+  - Search metadata and comments for a hidden marker
+  - Record the exact URL and source location of the finding
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A real community site is part of the target surface. Inspect the source of www.swocts.com, find the flag left in its metadata, and explain why source-code clues are still OSINT."
-difficulty: beginner
-category: osint
-duration_minutes: 25
 visibility: public
 flag: "OCR{swocts_v13w_s0urc3}"
 
@@ -14,12 +27,6 @@ tools:
   - browser
   - curl
   - grep
-
-objectives:
-  - Treat a public homepage as an OSINT source
-  - Fetch the page source instead of only reading the rendered page
-  - Search metadata and comments for a hidden marker
-  - Record the exact URL and source location of the finding
 
 scenario: |
   SWOCTS Hub is the public home of the Southwestern Ontario Cybersecurity

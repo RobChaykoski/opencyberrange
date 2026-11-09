@@ -1,23 +1,33 @@
-name: "DevFest Community Portal"
+title: DevFest Community Portal
+category: osint
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - high-school-11-1-rangebox-log-detective
+learning_outcomes:
+  - Explore a conference portal without using a terminal
+  - Open a speaker profile and download a shared file
+  - Read PNG text metadata in the browser
+  - Recover the flag and explain why metadata is public content
+mapped_skills:
+  - web_api
+  - identity_access
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A gentle, browser-only OSINT challenge for the Windsor-Essex DevFest community. Explore a fictional conference portal, open a speaker's slide export, and read the metadata to recover the flag. No prior experience needed."
-difficulty: beginner
-category: osint
-duration_minutes: 25
 visibility: public
 flag: "OCR{d3vf3st_c0mmun1ty_p0rtal}"
 
 tools:
   - browser
-
-objectives:
-  - Explore a conference portal without using a terminal
-  - Open a speaker profile and download a shared file
-  - Read PNG text metadata in the browser
-  - Recover the flag and explain why metadata is public content
 
 scenario: |
   DevFest Windsor-Essex is a community developer conference. The volunteer

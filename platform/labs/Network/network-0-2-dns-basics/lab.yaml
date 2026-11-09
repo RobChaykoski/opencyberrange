@@ -1,21 +1,26 @@
-name: "The Internet's Phone Book: DNS Records"
+title: 'The Internet''s Phone Book: DNS Records'
+category: network
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - network-0-1-ping-basics
+learning_outcomes:
+  - Explain the difference between a domain name and an IP address
+  - Query A, CNAME, MX, and TXT records
+  - Read TTL and explain caching at a high level
+  - Explain why DNS is a trust boundary and is not encrypted by default
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An internal service was deployed without documentation. Query the lab DNS server, read the common record types, and find the TXT record that holds the deployment note."
-difficulty: beginner
-category: network
-duration_minutes: 25
-
 visibility: public
-
-objectives:
-  - Explain the difference between a domain name and an IP address
-  - Query A, CNAME, MX, and TXT records
-  - Read TTL and explain caching at a high level
-  - Explain why DNS is a trust boundary and is not encrypted by default
-  - Capture the flag
 
 scenario: |
   The internal DNS server at `{target.target}` serves the zone `range.local`.

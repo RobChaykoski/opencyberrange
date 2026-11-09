@@ -1,18 +1,25 @@
-name: SMB Share Listing
+title: SMB Share Listing
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-1-smb-connection-test
+learning_outcomes:
+  - List SMB shares using smbclient -L
+  - Understand share enumeration techniques
+  - Identify available shares on target
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Continuing your FinanceCorp SMB assessment, enumerate all available shares to identify exposed resources.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - List SMB shares using smbclient -L
-  - Understand share enumeration techniques
-  - Identify available shares on target
-  - Capture the flag
-
 scenario: |
   Your connection test to FinanceCorp's SMB service was successful. James Mitchell 
   wants to know what shares are available and whether any sensitive information might 

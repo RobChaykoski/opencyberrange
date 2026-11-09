@@ -1,23 +1,31 @@
-name: "Vanguard Logistics - Service Triage"
+title: Vanguard Logistics - Service Triage
+category: reconnaissance
+difficulty: beginner
+estimated_time: 40
+prerequisites:
+  - linux-1-7-network-discovery
+learning_outcomes:
+  - Scan multiple hosts to enumerate running services and versions
+  - Differentiate decoy hosts from real targets using banner and content analysis
+  - Interact with HTTP, FTP, and custom services to extract tokens
+  - Assemble a composite flag from three separate tokens
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Three hosts sit on the Vanguard Logistics DMZ. Two are decoys running generic services. Scan all three, correlate version banners and content, identify the real target, and extract a three-part composite flag from its services."
 
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 1
 flag: "OCR{tr14g3_r34l_t4rg3t}"
-
-objectives:
-  - Scan multiple hosts to enumerate running services and versions
-  - Differentiate decoy hosts from real targets using banner and content analysis
-  - Interact with HTTP, FTP, and custom services to extract tokens
-  - Assemble a composite flag from three separate tokens
 
 scenario: |
   Vanguard Logistics, a mid-size freight and warehousing company based in

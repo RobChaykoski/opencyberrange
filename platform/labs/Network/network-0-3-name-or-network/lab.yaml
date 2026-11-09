@@ -1,20 +1,26 @@
-name: "Name or Network? Troubleshooting a Broken Portal"
+title: Name or Network? Troubleshooting a Broken Portal
+category: network
+difficulty: beginner
+estimated_time: 30
+prerequisites:
+  - network-0-2-dns-basics
+learning_outcomes:
+  - Separate a name-resolution problem from a reachability problem
+  - Use DNS TXT records to find operational notes
+  - Confirm the corrected name with ping
+  - Read the service page and capture the flag
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A portal name resolves to a stale address. Use ping and DNS queries to separate a name problem from a network problem, find the current host, and read the maintenance note."
-difficulty: beginner
-category: network
-duration_minutes: 30
-
 visibility: public
-
-objectives:
-  - Separate a name-resolution problem from a reachability problem
-  - Use DNS TXT records to find operational notes
-  - Confirm the corrected name with ping
-  - Read the service page and capture the flag
 
 scenario: |
   The help desk ticket says: "The portal is down. I can't reach

@@ -1,21 +1,25 @@
-name: "Can You Reach It? Ping Fundamentals"
+title: Can You Reach It? Ping Fundamentals
+category: network
+difficulty: beginner
+estimated_time: 20
+prerequisites: []
+learning_outcomes:
+  - Explain what an ICMP echo request and echo reply are
+  - Use ping to test whether a host is reachable
+  - Read round-trip time, TTL, and packet loss
+  - Explain why a successful ping does not prove a service is working
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A help-desk ticket says the internal portal is down. Use ICMP echo requests to test reachability, read latency and packet loss, and learn why a reply does not prove the service is working."
-difficulty: beginner
-category: network
-duration_minutes: 20
-
 visibility: public
-
-objectives:
-  - Explain what an ICMP echo request and echo reply are
-  - Use ping to test whether a host is reachable
-  - Read round-trip time, TTL, and packet loss
-  - Explain why a successful ping does not prove a service is working
-  - Capture the flag
 
 scenario: |
   You are on the help desk at Northwind School Board. A teacher reports that the

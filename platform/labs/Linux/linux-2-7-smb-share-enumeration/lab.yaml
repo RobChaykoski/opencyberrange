@@ -1,24 +1,31 @@
-name: "Blackwell & Associates - SMB Share Enumeration"
+title: Blackwell & Associates - SMB Share Enumeration
+category: enumeration
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - linux-2-6-ssh-privilege-escalation
+learning_outcomes:
+  - Use SMB enumeration tools to discover available network shares
+  - Access public shares and identify sensitive information
+  - Discover credentials through information disclosure
+  - Access restricted shares using discovered credentials
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A law firm's file server has misconfigured Samba shares. Enumerate the available shares, access public files, discover credentials, and pivot to restricted shares."
 
-difficulty: beginner
-category: enumeration
-duration_minutes: 35
 randomize_ip_offsets: true
 visibility: course
 week: 2
 flag: "OCR{3num_sh4r3d}"
-
-objectives:
-  - Use SMB enumeration tools to discover available network shares
-  - Access public shares and identify sensitive information
-  - Discover credentials through information disclosure
-  - Access restricted shares using discovered credentials
-  - Capture the flag
 
 scenario: |
   Blackwell & Associates is a mid-size law firm in Richmond, Virginia. They

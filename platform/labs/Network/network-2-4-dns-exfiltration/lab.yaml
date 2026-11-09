@@ -1,4 +1,22 @@
-name: "DNS Data Exfiltration Analysis"
+title: DNS Data Exfiltration Analysis
+category: network-analysis
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - network-2-3-http-session-hijacking
+learning_outcomes:
+  - Understand DNS tunneling and how it's used for data exfiltration
+  - Identify suspicious DNS query patterns in network traffic
+  - Use Wireshark to analyze DNS traffic and detect anomalies
+  - Extract and decode data hidden in DNS queries
+  - Recognize the importance of DNS monitoring in security operations
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
@@ -28,16 +46,6 @@ scenario: |
   - Username: analyst
   - Password: MediCare2024#
   - PCAP Location: /home/analyst/captures/dns-tunnel.pcap
-
-objectives:
-  - SSH into network analyst workstation
-  - Analyze DNS traffic capture using Wireshark or tshark
-  - Identify suspicious DNS query patterns indicating tunneling
-  - Extract DNS query subdomains containing exfiltrated data
-  - Decode hexadecimal-encoded data from DNS queries
-  - Recover the exfiltrated information and evidence
-  - Understand how DNS tunneling bypasses security controls
-  - Capture the flag
 
 flag: "OCR{dns_tunn3l_d3t3ct3d}"
 
@@ -193,10 +201,6 @@ hints:
       - Set rate limits on DNS queries per host
     unlock_after_minutes: 20
 
-difficulty: intermediate
-category: network-analysis
-duration_minutes: 60
-
 connection:
   type: ssh
   credentials:
@@ -207,13 +211,6 @@ connection:
 files:
   - path: /home/analyst/captures/dns-tunnel.pcap
     description: Network capture showing DNS activity from billing workstation
-
-learning_objectives:
-  - Understand DNS tunneling and how it's used for data exfiltration
-  - Identify suspicious DNS query patterns in network traffic
-  - Use Wireshark to analyze DNS traffic and detect anomalies
-  - Extract and decode data hidden in DNS queries
-  - Recognize the importance of DNS monitoring in security operations
 
 tags:
   - dns

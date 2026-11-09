@@ -1,23 +1,31 @@
-name: "Kestrel Architecture Studio - Mock Final"
+title: Kestrel Architecture Studio - Mock Final
+category: assessment
+difficulty: advanced
+estimated_time: 180
+prerequisites:
+  - linux-final-2-clinic-final
+learning_outcomes:
+  - Identify all hosts and services exposed on the studio subnet
+  - Demonstrate access to each exposed system and recover the engagement token planted on it
+  - Assemble the three tokens in the order recovered into the OCR{token1_token2_token3} format and submit within the 180 minute window
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Live-fire review for the final exam. A small architecture studio asked you to assess two internet-facing systems left over from their previous IT generalist. Three flags. No workbook, no hints, 180 minutes. Same skill chain as the final, reordered."
 
-difficulty: advanced
-category: assessment
-duration_minutes: 180
 randomize_ip_offsets: true
 visibility: course
 week: 15
 
 flag: "OCR{dr4ft_bluepr1nt_t4lon}"
-
-objectives:
-  - Identify all hosts and services exposed on the studio subnet
-  - Demonstrate access to each exposed system and recover the engagement token planted on it
-  - Assemble the three tokens in the order recovered into the OCR{token1_token2_token3} format and submit within the 180 minute window
 
 scenario: |
   Kestrel Architecture Studio is a twelve-person architecture firm in

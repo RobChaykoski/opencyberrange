@@ -1,17 +1,24 @@
-name: Complete Windows Penetration Test
+title: Complete Windows Penetration Test
+category: assessment
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-9-2-multi-service-exploitation
+learning_outcomes:
+  - Full penetration test with all techniques
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Final phase of your FinanceCorp engagement. Combine all techniques learned to perform a complete penetration test, demonstrating the full attack chain from initial access to data exfiltration.
-difficulty: intermediate
-category: assessment
-duration_minutes: 120
-objectives:
-  - full penetration test with all techniques
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   You're completing the final phase of your penetration test for FinanceCorp. James 
   Mitchell has requested a comprehensive demonstration that combines all techniques 

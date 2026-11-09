@@ -1,24 +1,30 @@
-name: "Pinnacle Cloud - Directory Traversal"
+title: Pinnacle Cloud - Directory Traversal
+category: web
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - web-1-6-comprehensive-web-reconnaissance
+learning_outcomes:
+  - Identify a file download feature vulnerable to path traversal
+  - Craft directory traversal payloads using ../ sequences
+  - Read system files outside the web application root
+  - Understand the impact of insufficient path validation
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Pinnacle Cloud Services has a file download feature with insufficient input validation. Exploit path traversal to read files outside the web root and extract assessment tokens."
 
-difficulty: beginner
-category: web
-duration_minutes: 35
 randomize_ip_offsets: true
 visibility: course
 week: 4
 flag: "OCR{p4th_tr4v3rs3d}"
-
-objectives:
-  - Identify a file download feature vulnerable to path traversal
-  - Craft directory traversal payloads using ../ sequences
-  - Read system files outside the web application root
-  - Understand the impact of insufficient path validation
-  - Capture the flag
 
 scenario: |
   Pinnacle Cloud Services runs a customer documentation portal where clients

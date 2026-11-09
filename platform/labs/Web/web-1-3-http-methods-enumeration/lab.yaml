@@ -1,19 +1,25 @@
-name: HTTP Methods Enumeration
+title: HTTP Methods Enumeration
+category: web
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - web-1-2-technology-identification
+learning_outcomes:
+  - Understand HTTP methods and their purposes
+  - Use OPTIONS method to enumerate allowed methods
+  - Test various HTTP methods for potential vulnerabilities
+  - Identify dangerous methods (PUT, DELETE, TRACE)
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Your TechStart assessment has identified an API endpoint. Test HTTP methods to identify potential vulnerabilities and misconfigurations.
-difficulty: beginner
-category: web
-duration_minutes: 120
-objectives:
-  - Understand HTTP methods and their purposes
-  - Use OPTIONS method to enumerate allowed methods
-  - Test various HTTP methods for potential vulnerabilities
-  - Identify dangerous methods (PUT, DELETE, TRACE)
-  - Capture the flag
-
 scenario: |
   Your reconnaissance of TechStart Inc.'s infrastructure has revealed an API endpoint 
   at api.lab. Sarah Chen is particularly concerned about API security, as their 

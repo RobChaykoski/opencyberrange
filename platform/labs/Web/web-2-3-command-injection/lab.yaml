@@ -1,24 +1,30 @@
-name: "CloudPing Diagnostics - Command Injection"
+title: CloudPing Diagnostics - Command Injection
+category: web
+difficulty: intermediate
+estimated_time: 40
+prerequisites:
+  - web-2-2-insecure-api-endpoints
+learning_outcomes:
+  - Identify a web application feature that interacts with the operating system
+  - Test for OS command injection using shell metacharacters
+  - Exploit command injection to execute arbitrary commands on the server
+  - Read restricted files through injected commands
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "CloudPing's network diagnostic tool passes user input directly to a system command. Exploit OS command injection to execute arbitrary commands and extract assessment tokens."
 
-difficulty: intermediate
-category: web
-duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 6
 flag: "OCR{cmd_1nj3ct3d}"
-
-objectives:
-  - Identify a web application feature that interacts with the operating system
-  - Test for OS command injection using shell metacharacters
-  - Exploit command injection to execute arbitrary commands on the server
-  - Read restricted files through injected commands
-  - Capture the flag
 
 scenario: |
   CloudPing Diagnostics offers a web-based network diagnostic tool that

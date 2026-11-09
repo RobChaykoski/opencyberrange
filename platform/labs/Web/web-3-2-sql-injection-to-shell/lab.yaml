@@ -1,24 +1,31 @@
-name: "Vertex Healthcare - SQL Injection to Shell"
+title: Vertex Healthcare - SQL Injection to Shell
+category: web
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - web-3-1-hidden-login-discovery
+learning_outcomes:
+  - Enumerate the web application and discover hidden paths via robots.txt
+  - Identify a login form vulnerable to SQL injection
+  - Craft a UNION-based SQL injection payload to bypass authentication
+  - Extract database credentials from the authenticated dashboard
+  - Connect directly to the backend MySQL database and retrieve the assessment flag
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Vertex Healthcare runs a patient portal behind a hidden login form. Discover it via robots.txt, exploit a UNION-based SQL injection to bypass authentication, then pivot to the backend database to extract the final assessment token."
 
-difficulty: intermediate
-category: web
-duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 10
 flag: "OCR{sql1_un10n_3xtr4ct}"
-
-objectives:
-  - Enumerate the web application and discover hidden paths via robots.txt
-  - Identify a login form vulnerable to SQL injection
-  - Craft a UNION-based SQL injection payload to bypass authentication
-  - Extract database credentials from the authenticated dashboard
-  - Connect directly to the backend MySQL database and retrieve the assessment flag
 
 scenario: |
   Vertex Healthcare is a regional healthcare technology company headquartered in

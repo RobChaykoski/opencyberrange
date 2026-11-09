@@ -1,12 +1,27 @@
-name: "RangeBox Log Detective"
+title: RangeBox Log Detective
+category: network
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - high-school-10-1-rangebox-network-basics
+  - high-school-10-2-rangebox-browser-and-source
+learning_outcomes:
+  - Read a web server access log
+  - Compare successful and failed requests
+  - Spot a repeated source address probing for admin pages
+  - Recover the training token and explain the evidence
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Read a small web server access log, spot the probing requests, and recover the training token from the one request that should never have succeeded."
-difficulty: beginner
-category: network
-duration_minutes: 20
 visibility: public
 flag: "OCR{l0gs_t3ll_th3_st0ry}"
 
@@ -14,12 +29,6 @@ tools:
   - rangebox
   - browser
   - terminal
-
-objectives:
-  - Read a web server access log
-  - Compare successful and failed requests
-  - Spot a repeated source address probing for admin pages
-  - Recover the training token and explain the evidence
 
 scenario: |
   A classroom web service keeps a short access log. Most of the entries are

@@ -1,17 +1,25 @@
-name: MS-SQL Manual Authentication
+title: MS-SQL Manual Authentication
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-6-2-mssql-version-and-instance-enumeration
+learning_outcomes:
+  - Connect to ms-sql with known credentials
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test MS-SQL authentication on FinanceCorp's database server using known credentials to assess access controls.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - connect to ms-sql with known credentials
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your enumeration of FinanceCorp's MS-SQL server has provided version and instance 
   information. James Mitchell wants to test authentication security by attempting 

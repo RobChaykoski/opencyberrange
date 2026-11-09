@@ -1,17 +1,25 @@
-name: MS-SQL xp_cmdshell Activation (MySQL LOAD_FILE equivalent)
+title: MS-SQL xp_cmdshell Activation (MySQL LOAD_FILE equivalent)
+category: exploitation
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-6-5-mssql-basic-query-execution
+learning_outcomes:
+  - Enable and use xp_cmdshell for command execution
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test for command-execution and file-read capability on FinanceCorp's database server. The service is MySQL 8.0, so the lab uses MySQL's LOAD_FILE() as the equivalent of MS-SQL's xp_cmdshell.
-difficulty: intermediate
-category: exploitation
-duration_minutes: 120
-objectives:
-  - enable and use xp_cmdshell for command execution
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your database access testing for FinanceCorp has revealed SQL query execution 
   capabilities. James Mitchell is particularly concerned about command execution 

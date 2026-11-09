@@ -1,17 +1,24 @@
-name: SMB Null Session Share Enumeration
+title: SMB Null Session Share Enumeration
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-5-smb-null-session-connection
+learning_outcomes:
+  - Enumerate shares using null session
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Use null session connections to enumerate FinanceCorp SMB shares and identify exposed resources.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - enumerate shares using null session
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your null session connection to FinanceCorp's SMB service was successful. James 
   Mitchell wants to understand what information can be enumerated through null 

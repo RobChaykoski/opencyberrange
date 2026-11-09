@@ -1,18 +1,23 @@
-name: Basic Windows Port Scan
+title: Basic Windows Port Scan
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites: []
+learning_outcomes:
+  - Perform basic nmap port scan on target
+  - Identify SMB service on port 445
+  - Understand basic nmap syntax for Windows scanning
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: You're conducting an external penetration test for FinanceCorp. Your initial scan has identified a Windows server on their network. Begin reconnaissance to map the attack surface.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Perform basic nmap port scan on target
-  - Identify SMB service on port 445
-  - Understand basic nmap syntax for Windows scanning
-  - Capture the flag
-
 scenario: |
   You're conducting an external penetration test for FinanceCorp, a mid-sized financial 
   services company. Your initial network scan has identified a Windows server on their 

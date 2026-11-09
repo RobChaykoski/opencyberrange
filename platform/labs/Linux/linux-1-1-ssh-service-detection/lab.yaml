@@ -1,18 +1,24 @@
-name: SSH Service Detection
+title: SSH Service Detection
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites: []
+learning_outcomes:
+  - Detect SSH service using nmap
+  - Identify SSH version information
+  - Understand basic port scanning
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: TechStart Inc needs their Linux infrastructure assessed. Begin by detecting SSH services to understand remote access configuration on their servers.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Detect SSH service using nmap
-  - Identify SSH version information
-  - Understand basic port scanning
-  - Capture the flag
-
 scenario: |
   You've been hired by TechStart Inc, a rapidly growing SaaS startup that runs their
   entire infrastructure on Linux. Sarah Chen, their CTO, is concerned about remote

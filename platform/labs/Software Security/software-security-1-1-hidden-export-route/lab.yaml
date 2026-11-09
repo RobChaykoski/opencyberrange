@@ -1,23 +1,30 @@
-name: "Hidden Export Route"
+title: Hidden Export Route
+category: web
+difficulty: beginner
+estimated_time: 15
+prerequisites: []
+learning_outcomes:
+  - Inspect the portal's shipped JavaScript in the browser
+  - Identify a hidden route and a client-side token
+  - Request the route and recover the flag
+  - Explain why a client-side secret is not access control
+mapped_skills:
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A browser-only source review for the DevFest software-security starter. The volunteer portal ships its JavaScript to every visitor; a temporary export route and token are still in the bundle. Find the route and recover the flag without using a terminal."
-difficulty: beginner
-category: web
-duration_minutes: 15
 visibility: public
 flag: "OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}"
 
 tools:
   - browser
-
-objectives:
-  - Inspect the portal's shipped JavaScript in the browser
-  - Identify a hidden route and a client-side token
-  - Request the route and recover the flag
-  - Explain why a client-side secret is not access control
 
 scenario: |
   DevFest Windsor-Essex runs a small volunteer portal for speaker handoffs and

@@ -1,17 +1,30 @@
-name: LDAP Service Detection
+title: LDAP Service Detection
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-6-1-mssql-service-detection
+  - windows-6-2-mssql-version-and-instance-enumeration
+  - windows-6-3-mssql-manual-authentication
+  - windows-6-4-mssql-credential-brute-force
+  - windows-6-5-mssql-basic-query-execution
+  - windows-6-6-mssql-xp-cmdshell-activation
+  - windows-6-7-mssql-file-system-access-via-xp-cmdshell
+learning_outcomes:
+  - Identify ldap service on target
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp's Active Directory infrastructure is in scope. Enumerate LDAP to understand their domain structure, users, and groups.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - identify ldap service on target
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your penetration test for FinanceCorp has identified Lightweight Directory Access 
   Protocol (LDAP) services, indicating Active Directory infrastructure. James Mitchell 

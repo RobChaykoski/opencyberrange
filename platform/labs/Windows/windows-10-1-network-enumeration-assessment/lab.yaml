@@ -1,21 +1,30 @@
-name: FinanceCorp Network Enumeration Assessment
+title: FinanceCorp Network Enumeration Assessment
+category: assessment
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-9-1-windows-network-assessment
+  - windows-9-2-multi-service-exploitation
+  - windows-9-3-complete-windows-penetration-test
+learning_outcomes:
+  - Discover all live hosts on your assigned subnet using discovery scanning
+  - Identify each machine by its running services (web portal, file server, domain controller)
+  - Apply passive and active enumeration techniques to extract information from each host
+  - Collect all three flag parts from the three machines and assemble the complete flag
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Midterm assessment covering passive and active scanning across a multi-host network. Discover all targets on your subnet and collect three flag parts to form the complete flag.
-difficulty: intermediate
-category: assessment
-duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
-
-objectives:
-  - Discover all live hosts on your assigned subnet using discovery scanning
-  - Identify each machine by its running services (web portal, file server, domain controller)
-  - Apply passive and active enumeration techniques to extract information from each host
-  - Collect all three flag parts from the three machines and assemble the complete flag
-  - Capture the flag
 
 scenario: |
   FinanceCorp, a mid-size financial services company, has engaged your security

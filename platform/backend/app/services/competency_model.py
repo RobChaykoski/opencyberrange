@@ -55,30 +55,42 @@ def mapping_for_lab(lab) -> dict:
 
     if track == "windows":
         if level <= 1:
-            _bump(weights, "network_systems", 0.7); _bump(weights, "identity_access", 0.3)
+            _bump(weights, "network_systems", 0.7)
+            _bump(weights, "identity_access", 0.3)
         elif level in (2, 3):
-            _bump(weights, "identity_access", 0.55); _bump(weights, "network_systems", 0.45)
+            _bump(weights, "identity_access", 0.55)
+            _bump(weights, "network_systems", 0.45)
         elif level == 6:
-            _bump(weights, "identity_access", 0.5); _bump(weights, "web_api", 0.3); _bump(weights, "network_systems", 0.2)
+            _bump(weights, "identity_access", 0.5)
+            _bump(weights, "web_api", 0.3)
+            _bump(weights, "network_systems", 0.2)
         elif level == 7:
-            _bump(weights, "identity_access", 0.8); _bump(weights, "network_systems", 0.2)
+            _bump(weights, "identity_access", 0.8)
+            _bump(weights, "network_systems", 0.2)
         elif level >= 8:
-            _bump(weights, "identity_access", 0.6); _bump(weights, "network_systems", 0.4)
+            _bump(weights, "identity_access", 0.6)
+            _bump(weights, "network_systems", 0.4)
         else:
-            _bump(weights, "identity_access", 0.5); _bump(weights, "network_systems", 0.5)
+            _bump(weights, "identity_access", 0.5)
+            _bump(weights, "network_systems", 0.5)
     elif track == "linux":
         if level >= 5:
-            _bump(weights, "incident_forensics", 0.7); _bump(weights, "network_systems", 0.3)
+            _bump(weights, "incident_forensics", 0.7)
+            _bump(weights, "network_systems", 0.3)
         elif level >= 3:
-            _bump(weights, "identity_access", 0.6); _bump(weights, "network_systems", 0.4)
+            _bump(weights, "identity_access", 0.6)
+            _bump(weights, "network_systems", 0.4)
         else:
-            _bump(weights, "network_systems", 0.7); _bump(weights, "identity_access", 0.3)
+            _bump(weights, "network_systems", 0.7)
+            _bump(weights, "identity_access", 0.3)
     elif track == "web":
         _bump(weights, "web_api", 1.0)
     elif track == "software-security":
-        _bump(weights, "web_api", 0.7); _bump(weights, "network_systems", 0.3)
+        _bump(weights, "web_api", 0.7)
+        _bump(weights, "network_systems", 0.3)
     elif track == "forensics":
-        _bump(weights, "incident_forensics", 0.8); _bump(weights, "malware", 0.2)
+        _bump(weights, "incident_forensics", 0.8)
+        _bump(weights, "malware", 0.2)
     elif track == "osint":
         _bump(weights, "osint", 1.0)
     elif track == "malware":
@@ -89,13 +101,22 @@ def mapping_for_lab(lab) -> dict:
         _bump(weights, "ai_security", 1.0)
     elif track == "high-school":
         if level >= 12:
-            _bump(weights, "web_api", 0.4); _bump(weights, "identity_access", 0.2); _bump(weights, "network_systems", 0.2); _bump(weights, "incident_forensics", 0.2)
+            _bump(weights, "web_api", 0.4)
+            _bump(weights, "identity_access", 0.2)
+            _bump(weights, "network_systems", 0.2)
+            _bump(weights, "incident_forensics", 0.2)
         elif level >= 11:
-            _bump(weights, "incident_forensics", 0.6); _bump(weights, "network_systems", 0.2); _bump(weights, "identity_access", 0.2)
+            _bump(weights, "incident_forensics", 0.6)
+            _bump(weights, "network_systems", 0.2)
+            _bump(weights, "identity_access", 0.2)
         else:
-            _bump(weights, "network_systems", 0.5); _bump(weights, "identity_access", 0.2); _bump(weights, "web_api", 0.2); _bump(weights, "incident_forensics", 0.1)
+            _bump(weights, "network_systems", 0.5)
+            _bump(weights, "identity_access", 0.2)
+            _bump(weights, "web_api", 0.2)
+            _bump(weights, "incident_forensics", 0.1)
     elif "forensic" in category or "incident" in category:
-        _bump(weights, "incident_forensics", 0.8); _bump(weights, "network_systems", 0.2)
+        _bump(weights, "incident_forensics", 0.8)
+        _bump(weights, "network_systems", 0.2)
     elif "web" in category or "api" in category:
         _bump(weights, "web_api", 1.0)
     elif "osint" in category:
@@ -107,9 +128,23 @@ def mapping_for_lab(lab) -> dict:
     elif "ai" in category or "prompt" in name:
         _bump(weights, "ai_security", 1.0)
     elif "identity" in category or "credential" in category:
-        _bump(weights, "identity_access", 0.7); _bump(weights, "network_systems", 0.3)
+        _bump(weights, "identity_access", 0.7)
+        _bump(weights, "network_systems", 0.3)
     else:
         _bump(weights, "network_systems", 1.0)
+
+    # Authored lab metadata wins over the track/category heuristic. This makes
+    # the competency radar, analytics, and recommendations follow lab.yaml.
+    raw_skills = getattr(lab, "mapped_skills", None)
+    if raw_skills:
+        try:
+            skills = json.loads(raw_skills)
+        except (TypeError, ValueError):
+            skills = []
+        if isinstance(skills, list):
+            explicit = {key: 1.0 for key in skills if key in AXIS_BY_KEY}
+            if explicit:
+                weights = explicit
 
     return {
         "model_version": COMPETENCY_MODEL_VERSION,

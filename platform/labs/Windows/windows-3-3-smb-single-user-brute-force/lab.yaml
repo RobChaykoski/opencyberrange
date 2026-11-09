@@ -1,17 +1,24 @@
-name: SMB Single User Brute Force
+title: SMB Single User Brute Force
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-3-2-smb-multiple-credential-testing
+learning_outcomes:
+  - Brute force password for known username
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Use automated brute force techniques against FinanceCorp SMB to test password strength for known usernames.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - brute force password for known username
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your credential testing for FinanceCorp has identified several valid usernames. 
   James Mitchell wants to understand if automated brute force attacks could compromise 

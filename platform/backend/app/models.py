@@ -205,7 +205,7 @@ class Lab(Base):
     scenario_brief = Column(Text, nullable=True)  # Short version for lab list view (optional)
     difficulty = Column(String(20), default="beginner")
     category = Column(String(50), default="general")
-    objectives = Column(Text)  # JSON array stored as text
+    objectives = Column(Text)  # JSON array of learning outcomes stored as text
     compose_file = Column(Text, nullable=False)
     duration_minutes = Column(Integer, default=60)
     is_active = Column(Boolean, default=True)
@@ -249,6 +249,11 @@ class Lab(Base):
     # Content version from lab.yaml. Analytics groups by this so feedback and
     # completion from an old lab revision do not contaminate a revised lab.
     content_version = Column(String(32), nullable=True)
+    # Canonical lab metadata from lab.yaml. JSON arrays keep the catalog and
+    # competency model driven by the authored manifest instead of heuristics.
+    prerequisites = Column(Text, nullable=True)  # JSON array of lab slugs
+    mapped_skills = Column(Text, nullable=True)  # JSON array of competency keys
+    assessment_criteria = Column(Text, nullable=True)  # JSON array of criteria
     # ICS attack-coverage tags from lab.yaml ics_techniques: JSON array of
     # {tactic, technique_id, technique_name, note}. Powers the coverage matrix
     # generator and per-lab technique display.

@@ -24,7 +24,18 @@ tags:
 structural:
   difficulty: "beginner"
   category: "network"
-  duration_minutes: 60
+  estimated_time: 60
+  prerequisites:
+    - "network-2-1-ftp-credential-extraction"
+    - "network-2-2-smtp-email-analysis"
+    - "network-2-3-http-session-hijacking"
+    - "network-2-4-dns-exfiltration"
+    - "network-2-5-attack-chain-analysis"
+  mapped_skills:
+    - "network_systems"
+  assessment_criteria:
+    - "Submit the correct flag."
+    - "Pass every automated test step in the lab manifest."
 
   # Track placement so the rendered slug parses in discover_labs:
   #   {track}-{level}-{lab_num}-{base_slug} => network-12-1-firewall-fundamentals

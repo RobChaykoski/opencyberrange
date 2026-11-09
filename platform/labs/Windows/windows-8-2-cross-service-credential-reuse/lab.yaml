@@ -1,17 +1,24 @@
-name: Cross-Service Credential Reuse
+title: Cross-Service Credential Reuse
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-8-1-single-service-credential-discovery
+learning_outcomes:
+  - Use smb credentials on rdp
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test FinanceCorp credentials discovered on one service (SMB) against other services (RDP) to demonstrate cross-service credential reuse.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - use smb credentials on rdp
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your credential testing for FinanceCorp has revealed successful authentications on 
   SMB services. James Mitchell wants to understand if these same credentials work on 

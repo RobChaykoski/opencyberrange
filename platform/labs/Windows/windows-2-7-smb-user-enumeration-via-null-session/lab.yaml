@@ -1,17 +1,24 @@
-name: SMB User Enumeration via Null Session
+title: SMB User Enumeration via Null Session
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-6-smb-null-session-share-enumeration
+learning_outcomes:
+  - Enumerate users using null session
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Enumerate FinanceCorp user accounts through null session connections to identify potential targets.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - enumerate users using null session
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your null session enumeration of FinanceCorp's SMB service has revealed significant 
   information disclosure. James Mitchell is particularly concerned about user 

@@ -1,19 +1,26 @@
-name: SSH User Discovery
+title: SSH User Discovery
+category: authentication
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-2-1-ssh-basic-login
+learning_outcomes:
+  - Understand user context after SSH login
+  - Enumerate current user information
+  - Explore user home directory
+  - Identify user-specific files and configurations
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp requires investigation of user account configurations. After SSH authentication, enumerate user-specific information and home directory contents.
-difficulty: beginner
-category: authentication
-duration_minutes: 120
-objectives:
-  - Understand user context after SSH login
-  - Enumerate current user information
-  - Explore user home directory
-  - Identify user-specific files and configurations
-  - Capture the flag
-
 scenario: |
   Your FinanceCorp penetration test continues with deeper investigation of user
   accounts. James Mitchell wants you to demonstrate the risks of weak user account

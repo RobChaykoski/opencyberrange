@@ -1,19 +1,26 @@
-name: SSH Command Execution
+title: SSH Command Execution
+category: post-exploitation
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-2-3-ssh-file-discovery
+learning_outcomes:
+  - Execute commands via SSH interactive session
+  - Run system enumeration commands
+  - Execute commands to reveal hidden information
+  - Understand command output analysis
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp requires testing command execution capabilities. Execute specific commands after SSH authentication to gather system intelligence and discover hidden information.
-difficulty: beginner
-category: post-exploitation
-duration_minutes: 120
-objectives:
-  - Execute commands via SSH interactive session
-  - Run system enumeration commands
-  - Execute commands to reveal hidden information
-  - Understand command output analysis
-  - Capture the flag
-
 scenario: |
   Your FinanceCorp penetration test continues with active system enumeration through
   command execution. James Mitchell wants you to demonstrate what information can be

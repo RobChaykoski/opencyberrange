@@ -1,20 +1,32 @@
-name: FTP Credential Extraction
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: As a network analyst at MediCare, analyze captured traffic to extract FTP credentials used by an unauthorized user to access sensitive patient records.
-difficulty: intermediate
+title: FTP Credential Extraction
 category: network-analysis
-duration_minutes: 60
-objectives:
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - network-1-1-packet-capture-analysis
+  - network-1-1-port-scan-detection
+  - network-1-2-http-traffic-analysis
+  - network-1-2-log-correlation
+  - network-1-3-dns-anomaly-detection
+  - network-1-4-failed-login-analysis
+learning_outcomes:
   - SSH into network analyst workstation
   - Download and analyze packet capture files
   - Filter FTP traffic in Wireshark
   - Extract cleartext FTP credentials
   - Understand FTP protocol security weaknesses
-  - Capture the flag
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
 
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: As a network analyst at MediCare, analyze captured traffic to extract FTP credentials used by an unauthorized user to access sensitive patient records.
 scenario: |
   You're a network security analyst at MediCare Regional Hospital's Security Operations Center.
   Marcus Thompson, the CISO, has escalated a potential data breach to your team. Last night,

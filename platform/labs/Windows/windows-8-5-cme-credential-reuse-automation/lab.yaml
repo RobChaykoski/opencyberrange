@@ -1,20 +1,27 @@
-name: CME Credential Reuse Automation
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: Use CrackMapExec to automate credential testing across FinanceCorp's infrastructure, demonstrating efficient lateral movement techniques.
-difficulty: intermediate
+title: CME Credential Reuse Automation
 category: credential-attacks
-duration_minutes: 120
-objectives:
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-8-4-credential-discovery-and-reuse-chain
+learning_outcomes:
   - Understand what CrackMapExec is and when to use it
   - Compare manual credential testing vs CME automation
   - Use CME to test credentials across multiple protocols (SMB, RDP, WinRM)
   - Use CME to test credentials across multiple targets
   - Understand CME's credential database feature
-  - Capture the flag
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
 
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: Use CrackMapExec to automate credential testing across FinanceCorp's infrastructure, demonstrating efficient lateral movement techniques.
 scenario: |
   Your manual credential reuse testing for FinanceCorp has revealed extensive lateral 
   movement opportunities. James Mitchell wants to understand how attackers use 

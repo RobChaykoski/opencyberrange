@@ -1,24 +1,29 @@
-name: "Prompt Injection Basics"
+title: Prompt Injection Basics
+category: ai
+difficulty: beginner
+estimated_time: 35
+prerequisites: []
+learning_outcomes:
+  - Identify where an LLM assistant keeps its hidden instructions
+  - Recognise a direct prompt-injection attempt
+  - Use instruction override language to expose the confidential note
+mapped_skills:
+  - ai_security
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A simulated LLM support assistant keeps a confidential operator note in its system prompt. Convince it to expose the note without ever asking for the flag directly."
-difficulty: beginner
-category: ai
-duration_minutes: 35
 visibility: public
 flag: "OCR{pr0mpt_1nj3ct10n_syst3m_l34k}"
 
 tools:
   - browser
   - curl
-
-objectives:
-  - Identify where an LLM assistant keeps its hidden instructions
-  - Recognise a direct prompt-injection attempt
-  - Use instruction override language to expose the confidential note
-  - Capture the flag from the assistant response
 
 scenario: |
   Asteria Cloud has deployed Nova, an internal support assistant built on a

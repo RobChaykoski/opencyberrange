@@ -1,18 +1,24 @@
-name: Windows Service Version Detection
+title: Windows Service Version Detection
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-1-2-multiple-port-discovery
+learning_outcomes:
+  - Use nmap version detection (-sV) to identify service versions
+  - Interpret version information from nmap output
+  - Understand importance of version detection in enumeration
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Your FinanceCorp assessment requires identifying service versions to assess for known vulnerabilities.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Use nmap version detection (-sV) to identify service versions
-  - Interpret version information from nmap output
-  - Understand importance of version detection in enumeration
-  - Capture the flag
-
 scenario: |
   Your reconnaissance of FinanceCorp's Windows server has identified multiple open 
   services. James Mitchell wants to know the specific versions of each service, as 

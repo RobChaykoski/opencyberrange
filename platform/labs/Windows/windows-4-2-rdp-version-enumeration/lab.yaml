@@ -1,17 +1,24 @@
-name: RDP Version Enumeration
+title: RDP Version Enumeration
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-4-1-rdp-service-detection
+learning_outcomes:
+  - Identify rdp version and capabilities
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Enumerate RDP version and capabilities on FinanceCorp's infrastructure to assess security posture.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - identify rdp version and capabilities
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your detection of FinanceCorp's RDP services has confirmed their presence. James 
   Mitchell wants detailed information about the RDP version and capabilities, as 

@@ -1,12 +1,28 @@
-name: "RangeBox Network Basics"
+title: RangeBox Network Basics
+category: network
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - high-school-9-1-rangebox-first-steps
+  - high-school-9-2-rangebox-file-hunt
+learning_outcomes:
+  - Explain the difference between a hostname and an IP address
+  - Request a URL with curl and read the status line
+  - Inspect HTTP response headers
+  - Describe why response metadata matters in investigations
+mapped_skills:
+  - network_systems
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Use the RangeBox terminal to talk to a small web service. Read a status code, inspect response headers, and find the training token that never appears in the page body."
-difficulty: beginner
-category: network
-duration_minutes: 25
 visibility: public
 flag: "OCR{h34d3rs_t3ll_st0r13s}"
 
@@ -14,12 +30,6 @@ tools:
   - rangebox
   - terminal
   - browser
-
-objectives:
-  - Explain the difference between a hostname and an IP address
-  - Request a URL with curl and read the status line
-  - Inspect HTTP response headers
-  - Describe why response metadata matters in investigations
 
 scenario: |
   A small classroom service reports whether it is healthy. The page says very

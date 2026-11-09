@@ -1,18 +1,24 @@
-name: Comprehensive Windows Enumeration
+title: Comprehensive Windows Enumeration
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-1-4-windows-os-detection
+learning_outcomes:
+  - Perform comprehensive enumeration combining port scan, version detection, and OS detection
+  - Identify all Windows services (SMB, RDP, WinRM, MS-SQL, LDAP)
+  - Apply complete enumeration workflow
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Finalize your FinanceCorp reconnaissance by combining all enumeration techniques into a complete assessment.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Perform comprehensive enumeration combining port scan, version detection, and OS detection
-  - Identify all Windows services (SMB, RDP, WinRM, MS-SQL, LDAP)
-  - Apply complete enumeration workflow
-  - Capture the flag
-
 scenario: |
   You're completing the reconnaissance phase of your penetration test for FinanceCorp. 
   James Mitchell has requested a comprehensive enumeration report that combines all 

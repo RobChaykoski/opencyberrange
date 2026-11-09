@@ -1,17 +1,24 @@
-name: SMB File Retrieval
+title: SMB File Retrieval
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-3-smb-anonymous-share-access
+learning_outcomes:
+  - Download file from anonymous smb share
+  - Understand SMB enumeration techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Demonstrate the impact of anonymous SMB access by retrieving files from FinanceCorp's exposed shares.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - download file from anonymous smb share
-  - Understand SMB enumeration techniques
-  - Capture the flag
-
 scenario: |
   Your assessment of FinanceCorp's SMB shares has confirmed that anonymous access is 
   permitted. James Mitchell wants to understand the full impact of this misconfiguration 

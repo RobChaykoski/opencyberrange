@@ -1,25 +1,33 @@
-name: "Atlas Distribution - Final Exam Practice"
+title: Atlas Distribution - Final Exam Practice
+category: assessment
+difficulty: advanced
+estimated_time: 180
+prerequisites:
+  - linux-midterm-3-blind-penetration-test
+learning_outcomes:
+  - Discover all in-scope hosts on the branch subnet and identify their services
+  - Recover token 1 from SNMP enumeration of the file server
+  - Enumerate SMB shares, escalate from anonymous access to credentialed access, and recover token 2
+  - Discover the hidden staff portal, exploit a SQL injection vulnerability, and recover token 3
+  - Assemble the three tokens into the final flag in the OCR{token1_token2_token3} format and submit it within the 180 minute window
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Practice the full pentest skill chain you will face on the final exam. Enumerate a forgotten branch office, harvest credentials from SMB shares, exploit a hidden staff portal, and capture three flags. Same skills, same shape, same time pressure as the final."
 
-difficulty: advanced
-category: assessment
-duration_minutes: 180
 randomize_ip_offsets: true
 visibility: course
 week: 15
 
 flag: "OCR{atl4s_h4rv3st_3xc3l}"
-
-objectives:
-  - Discover all in-scope hosts on the branch subnet and identify their services
-  - Recover token 1 from SNMP enumeration of the file server
-  - Enumerate SMB shares, escalate from anonymous access to credentialed access, and recover token 2
-  - Discover the hidden staff portal, exploit a SQL injection vulnerability, and recover token 3
-  - Assemble the three tokens into the final flag in the OCR{token1_token2_token3} format and submit it within the 180 minute window
 
 scenario: |
   Atlas Distribution is a mid-size logistics company with twelve regional branches.

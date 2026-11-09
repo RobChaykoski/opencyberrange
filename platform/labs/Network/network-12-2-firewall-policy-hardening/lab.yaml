@@ -1,13 +1,27 @@
-name: "Firewall Policy Hardening - Defense in Depth"
+title: Firewall Policy Hardening - Defense in Depth
+category: network
+difficulty: intermediate
+estimated_time: 75
+prerequisites:
+  - network-12-1-firewall-fundamentals
+learning_outcomes:
+  - Write source-specific iptables rules to block traffic from a known hostile IP
+  - Explain why source-specific blocking alone is insufficient (defense in depth)
+  - Build a general default-deny FORWARD policy that protects against any source
+  - Demonstrate understanding of first-match-wins rule processing order
+  - Diagnose and fix a misconfigured ruleset where rule order defeats the intended policy
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "The Apex contractor situation has escalated. Write source-specific blocks, then build a comprehensive default-deny firewall policy that protects the web server from any source, not just the known bad actor. Learn why rule order determines whether your policy actually works."
 
-difficulty: intermediate
-category: network
-duration_minutes: 75
 visibility: course
 week: 12
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
@@ -20,14 +34,6 @@ difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/netfor/CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening/"
 
 flag: "OCR{d3f4ult_d3ny_m4st3r}"
-
-objectives:
-  - Write source-specific iptables rules to block traffic from a known hostile IP
-  - Explain why source-specific blocking alone is insufficient (defense in depth)
-  - Build a general default-deny FORWARD policy that protects against any source
-  - Demonstrate understanding of first-match-wins rule processing order
-  - Diagnose and fix a misconfigured ruleset where rule order defeats the intended policy
-  - Capture the flag
 
 scenario: |
   Two weeks after you locked down the Meridian Health Partners firewall to block

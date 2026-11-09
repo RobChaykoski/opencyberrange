@@ -1,17 +1,25 @@
-name: MS-SQL File System Access via LOAD_FILE (MySQL xp_cmdshell equivalent)
+title: MS-SQL File System Access via LOAD_FILE (MySQL xp_cmdshell equivalent)
+category: exploitation
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-6-6-mssql-xp-cmdshell-activation
+learning_outcomes:
+  - Use xp_cmdshell to read flag file
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Complete your FinanceCorp database assessment by demonstrating file-system access. The service is MySQL 8.0, so file reads use MySQL's LOAD_FILE() function rather than MS-SQL's xp_cmdshell.
-difficulty: intermediate
-category: exploitation
-duration_minutes: 120
-objectives:
-  - use xp_cmdshell to read flag file
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   You're completing the MS-SQL assessment phase of your FinanceCorp penetration test. 
   Your testing has confirmed xp_cmdshell functionality. James Mitchell has requested 

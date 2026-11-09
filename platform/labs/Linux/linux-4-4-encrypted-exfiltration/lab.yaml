@@ -1,24 +1,32 @@
-name: "Obsidian Analytics - Encrypted Exfiltration"
+title: Obsidian Analytics - Encrypted Exfiltration
+category: post-exploitation
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - linux-4-3-three-hop-pivot
+learning_outcomes:
+  - Locate and decode a base64-encoded export file on the compromised server
+  - Discover GPG decryption credentials from shell history artifacts
+  - Decrypt a GPG-encrypted archive to extract concealed data
+  - Reverse hex-encoded content from a hidden dotfile
+  - Assemble all three tokens into the final flag
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "You have operator access to an Obsidian Analytics server. Sensitive data has been concealed using multiple encoding and encryption techniques. Locate and decode base64-encoded exports, decrypt GPG-protected archives, and reverse hex-encoded hidden files to prove full data exfiltration capability."
 
-difficulty: intermediate
-category: post-exploitation
-duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 12
 flag: "OCR{3ncrypt_d3c0d3_3xf1l}"
-
-objectives:
-  - Locate and decode a base64-encoded export file on the compromised server
-  - Discover GPG decryption credentials from shell history artifacts
-  - Decrypt a GPG-encrypted archive to extract concealed data
-  - Reverse hex-encoded content from a hidden dotfile
-  - Assemble all three tokens into the final flag
 
 scenario: |
   Obsidian Analytics, a threat intelligence firm based in Denver, has been

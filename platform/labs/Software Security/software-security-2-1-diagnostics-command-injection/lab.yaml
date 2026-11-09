@@ -1,23 +1,31 @@
-name: "Diagnostics Command Injection"
+title: Diagnostics Command Injection
+category: exploitation
+difficulty: beginner
+estimated_time: 15
+prerequisites:
+  - software-security-1-1-hidden-export-route
+learning_outcomes:
+  - Identify untrusted input flowing into a shell
+  - Run a benign lookup and observe the command output
+  - Use a shell separator to read the flag file
+  - Explain how to fix the bug with argument arrays and allowlisting
+mapped_skills:
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A browser-only command-injection starter for the DevFest software-security track. A small network diagnostics page passes a hostname to a shell. Find the injection point and read the flag, then explain how to remove the shell safely."
-difficulty: beginner
-category: exploitation
-duration_minutes: 15
 visibility: public
 flag: "OCR{sh3ll_1nj3ct10n_1s_4_bug}"
 
 tools:
   - browser
-
-objectives:
-  - Identify untrusted input flowing into a shell
-  - Run a benign lookup and observe the command output
-  - Use a shell separator to read the flag file
-  - Explain how to fix the bug with argument arrays and allowlisting
 
 scenario: |
   The DevFest volunteer team added a small diagnostics page to check that

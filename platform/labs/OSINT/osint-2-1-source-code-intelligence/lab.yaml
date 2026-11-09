@@ -1,12 +1,27 @@
-name: "The Developer's Trail"
+title: The Developer's Trail
+category: osint
+difficulty: intermediate
+estimated_time: 35
+prerequisites:
+  - osint-1-1-public-footprint
+  - osint-1-2-image-intelligence
+  - osint-1-3-exif-metadata
+learning_outcomes:
+  - Inspect a site's static assets instead of only its rendered pages
+  - Read JavaScript comments and build metadata
+  - Recognise why secrets do not belong in client-side code
+  - Recover the staging token and the bonus public-repository flag
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "The Kestrel Connect front end ships a small JavaScript bundle. A leftover developer comment still carries a staging token. Review the code like an outside researcher and recover the flag."
-difficulty: intermediate
-category: osint
-duration_minutes: 35
 visibility: public
 flag: "OCR{c0d3_c0mm3nts_l34k_s3cr3ts}"
 
@@ -14,12 +29,6 @@ tools:
   - browser
   - curl
   - grep
-
-objectives:
-  - Inspect a site's static assets instead of only its rendered pages
-  - Read JavaScript comments and build metadata
-  - Recognise why secrets do not belong in client-side code
-  - Recover the staging token and the bonus public-repository flag
 
 scenario: |
   Kestrel Connect's dashboard is built from a handful of static files. The

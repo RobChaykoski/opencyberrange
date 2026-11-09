@@ -1,19 +1,25 @@
-name: Comprehensive Web Reconnaissance
+title: Comprehensive Web Reconnaissance
+category: web
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - web-1-5-subdomain-discovery
+learning_outcomes:
+  - Perform complete web reconnaissance workflow
+  - Combine multiple enumeration techniques
+  - Document findings systematically
+  - Identify all attack surfaces
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Finalize your TechStart assessment by combining all reconnaissance techniques into a comprehensive security evaluation.
-difficulty: beginner
-category: web
-duration_minutes: 120
-objectives:
-  - Perform complete web reconnaissance workflow
-  - Combine multiple enumeration techniques
-  - Document findings systematically
-  - Identify all attack surfaces
-  - Capture the flag
-
 scenario: |
   You're completing the reconnaissance phase of your penetration test for TechStart Inc. 
   Sarah Chen has requested a comprehensive security assessment report that combines 

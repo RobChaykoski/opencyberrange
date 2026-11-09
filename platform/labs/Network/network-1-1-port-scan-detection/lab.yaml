@@ -1,19 +1,26 @@
-name: Suspicious Port Scan Detection
+title: Suspicious Port Scan Detection
+category: network-analysis
+difficulty: beginner
+estimated_time: 45
+prerequisites:
+  - network-1-1-packet-capture-analysis
+learning_outcomes:
+  - Analyze firewall logs for suspicious patterns
+  - Identify port scanning behavior
+  - Differentiate normal traffic from reconnaissance
+  - Extract attacker information
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: MediCare Regional Hospital's firewall is logging unusual connection attempts. As a junior SOC analyst, identify the port scanning activity and determine the attacker's pattern.
-difficulty: beginner
-category: network-analysis
-duration_minutes: 45
-objectives:
-  - Analyze firewall logs for suspicious patterns
-  - Identify port scanning behavior
-  - Differentiate normal traffic from reconnaissance
-  - Extract attacker information
-  - Capture the flag
-
 scenario: |
   You're a junior analyst at MediCare Regional Hospital's Security Operations Center (SOC).
   Marcus Thompson, the CISO, has asked you to investigate some unusual firewall logs from

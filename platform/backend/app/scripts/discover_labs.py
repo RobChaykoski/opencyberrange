@@ -64,7 +64,6 @@ def hash_flag(flag):
 
 
 
-import re
 
 # Characters that cause shell quoting failures through the tester exec chain
 _DANGEROUS_PW_CHARS = set('!`$\\"')
@@ -150,7 +149,7 @@ def _validate_lab_quick(lab_path, lab_data):
                 })
 
     # 4. MySQL auth plugin check
-    for root, dirs, files in os.walk(lab_path):
+    for root, _dirs, files in os.walk(lab_path):
         for f in files:
             fpath = os.path.join(root, f)
             _, ext = os.path.splitext(f)
@@ -323,7 +322,7 @@ def discover_labs():
                 
                 # Prepare lab data
                 lab_slug = lab_dirname
-                lab_name = lab_data.get('name', lab_dirname)
+                lab_name = lab_data.get('title') or lab_data.get('name', lab_dirname)
                 description = lab_data.get('description', '')
                 scenario = lab_data.get('scenario', '')
                 scenario_brief = lab_data.get('scenario_brief', '')
@@ -332,9 +331,13 @@ def discover_labs():
                 
                 difficulty = lab_data.get('difficulty', 'beginner')
                 category = lab_data.get('category', 'general')
-                duration = lab_data.get('duration_minutes', 60)
+                duration = lab_data.get('estimated_time', lab_data.get('duration_minutes', 60))
                 
-                objectives = json.dumps(lab_data.get('objectives', []))
+                learning_outcomes = lab_data.get('learning_outcomes', lab_data.get('objectives', []))
+                objectives = json.dumps(learning_outcomes)
+                prerequisites = json.dumps(lab_data.get('prerequisites', []) or [])
+                mapped_skills = json.dumps(lab_data.get('mapped_skills', []) or [])
+                assessment_criteria = json.dumps(lab_data.get('assessment_criteria', []) or [])
                 hints_raw = lab_data.get('hints', [])
                 hints = json.dumps(hints_raw)
                 tools = json.dumps(lab_data.get('tools', []))
@@ -407,6 +410,9 @@ def discover_labs():
                         "show_target_ips": show_target_ips,
                         "topology_nodes": topology_nodes,
                         "ics_techniques": ics_techniques,
+                        "prerequisites": prerequisites,
+                        "mapped_skills": mapped_skills,
+                        "assessment_criteria": assessment_criteria,
                         "requires_kvm": requires_kvm,
                         "counts_toward_certificate": counts_toward_certificate,
                         "validation_status": val_status,
@@ -438,6 +444,9 @@ def discover_labs():
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
                                 ics_techniques = :ics_techniques,
+                                prerequisites = :prerequisites,
+                                mapped_skills = :mapped_skills,
+                                assessment_criteria = :assessment_criteria,
                                 requires_kvm = :requires_kvm,
                                 counts_toward_certificate = :counts_toward_certificate,
                                 validation_status = :validation_status,
@@ -469,6 +478,9 @@ def discover_labs():
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
                                 ics_techniques = :ics_techniques,
+                                prerequisites = :prerequisites,
+                                mapped_skills = :mapped_skills,
+                                assessment_criteria = :assessment_criteria,
                                 requires_kvm = :requires_kvm,
                                 counts_toward_certificate = :counts_toward_certificate,
                                 validation_status = :validation_status,
@@ -493,7 +505,8 @@ def discover_labs():
                                 hints, tools, hostnames,
                                 flag_hash, compose_file, level_id, sort_order, is_active,
                                 visibility, workbook, week, show_target_ips, topology_nodes,
-                                ics_techniques, requires_kvm,
+                                ics_techniques, prerequisites, mapped_skills,
+                                assessment_criteria, requires_kvm,
                                 counts_toward_certificate,
                                 validation_status, validation_errors, validated_at
                             ) VALUES (
@@ -502,7 +515,8 @@ def discover_labs():
                                 :hints, :tools, :hostnames,
                                 :flag_hash, :compose_file, :level_id, :sort_order, TRUE,
                                 :visibility, :workbook, :week, :show_target_ips, :topology_nodes,
-                                :ics_techniques, :requires_kvm,
+                                :ics_techniques, :prerequisites, :mapped_skills,
+                                :assessment_criteria, :requires_kvm,
                                 :counts_toward_certificate,
                                 :validation_status, :validation_errors, :validated_at
                             )
@@ -529,7 +543,10 @@ def discover_labs():
                             "week": week,
                             "show_target_ips": show_target_ips,
                             "topology_nodes": topology_nodes,
-                                "ics_techniques": ics_techniques,
+                            "ics_techniques": ics_techniques,
+                            "prerequisites": prerequisites,
+                            "mapped_skills": mapped_skills,
+                            "assessment_criteria": assessment_criteria,
                             "requires_kvm": requires_kvm,
                             "counts_toward_certificate": counts_toward_certificate,
                             "validation_status": val_status,
@@ -548,15 +565,15 @@ def discover_labs():
         ).fetchall()
         val_summary = {row[0]: row[1] for row in val_rows}
 
-        print(f"\n========================================")
-        print(f"Lab discovery complete!")
+        print("\n========================================")
+        print("Lab discovery complete!")
         print(f"  Created: {labs_created}")
         print(f"  Updated: {labs_updated}")
         if val_summary:
             print(f"  Validation: {val_summary.get('ok', 0)} ok, "
                   f"{val_summary.get('warning', 0)} warnings, "
                   f"{val_summary.get('error', 0)} errors")
-        print(f"========================================")
+        print("========================================")
         
     except Exception as e:
         db.rollback()

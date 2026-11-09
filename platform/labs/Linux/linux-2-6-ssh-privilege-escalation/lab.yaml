@@ -1,19 +1,26 @@
-name: SSH Privilege Escalation
+title: SSH Privilege Escalation
+category: privilege-escalation
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - linux-2-5-ssh-history-analysis
+learning_outcomes:
+  - Understand sudo privileges and configuration
+  - Check user sudo permissions
+  - Identify privilege escalation vectors
+  - Execute privileged commands
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp requires assessment of privilege escalation risks. Check sudo permissions and identify privilege escalation opportunities after SSH authentication.
-difficulty: intermediate
-category: privilege-escalation
-duration_minutes: 120
-objectives:
-  - Understand sudo privileges and configuration
-  - Check user sudo permissions
-  - Identify privilege escalation vectors
-  - Execute privileged commands
-  - Capture the flag
-
 scenario: |
   Your FinanceCorp penetration test reaches the privilege escalation phase. James
   Mitchell wants you to demonstrate how standard user accounts can escalate to

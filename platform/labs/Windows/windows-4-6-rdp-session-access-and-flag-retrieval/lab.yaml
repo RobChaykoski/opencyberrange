@@ -1,17 +1,24 @@
-name: RDP Session Access and Flag Retrieval
+title: RDP Session Access and Flag Retrieval
+category: credential-attacks
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-4-5-rdp-brute-force-attack
+learning_outcomes:
+  - Connect via rdp and find flag
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Complete your FinanceCorp RDP assessment by successfully accessing a remote session and demonstrating the security impact.
-difficulty: beginner
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - connect via rdp and find flag
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   You're completing the RDP assessment phase of your FinanceCorp penetration test. 
   James Mitchell has requested a demonstration of successful RDP access to understand 

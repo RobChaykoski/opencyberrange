@@ -1,24 +1,31 @@
-name: "Cascade Digital Media - Traversal Scavenger Hunt"
+title: Cascade Digital Media - Traversal Scavenger Hunt
+category: web
+difficulty: intermediate
+estimated_time: 40
+prerequisites:
+  - web-1-7-directory-traversal
+learning_outcomes:
+  - Identify multiple file download endpoints across a web application
+  - Exploit directory traversal vulnerabilities with varying directory depths
+  - Discover hidden token files placed in non-standard filesystem locations
+  - Combine multiple fragments to assemble a complete flag
+  - Understand how path traversal depth varies depending on the application root
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Cascade Digital Media runs a content platform with multiple file download endpoints. Each endpoint is vulnerable to directory traversal. Find all three hidden tokens, decode the fragments, and assemble the final flag."
 
-difficulty: intermediate
-category: web
-duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 4
 flag: "OCR{sc4v3ng3_p4th_pwn}"
-
-objectives:
-  - Identify multiple file download endpoints across a web application
-  - Exploit directory traversal vulnerabilities with varying directory depths
-  - Discover hidden token files placed in non-standard filesystem locations
-  - Combine multiple fragments to assemble a complete flag
-  - Understand how path traversal depth varies depending on the application root
 
 scenario: |
   Cascade Digital Media operates a content management platform used by their

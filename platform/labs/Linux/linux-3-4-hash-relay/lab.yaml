@@ -1,24 +1,32 @@
-name: "Blackrock Dynamics - Hash Relay"
+title: Blackrock Dynamics - Hash Relay
+category: privilege-escalation
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - linux-3-3-suid-maze
+learning_outcomes:
+  - Discover an exposed shadow backup file through filesystem enumeration
+  - Crack the MD5-based password hash for the engineer account
+  - Pivot laterally using credentials found in the engineer's home directory
+  - Access the devops account and capture the flag
+  - Demonstrate a full credential relay chain from initial access to objective
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An exposed shadow backup on a Blackrock Dynamics server lets you crack a weak password hash, pivot through a credential chain, and capture the flag from the final account."
 
-difficulty: intermediate
-category: privilege-escalation
-duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 8
 flag: "OCR{h4sh_r3l4y_ch41n}"
-
-objectives:
-  - Discover an exposed shadow backup file through filesystem enumeration
-  - Crack the MD5-based password hash for the engineer account
-  - Pivot laterally using credentials found in the engineer's home directory
-  - Access the devops account and capture the flag
-  - Demonstrate a full credential relay chain from initial access to objective
 
 scenario: |
   Blackrock Dynamics, a defense contractor in Arlington, Virginia, hired your

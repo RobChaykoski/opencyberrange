@@ -1,4 +1,22 @@
-name: "HTTP Session Cookie Extraction"
+title: HTTP Session Cookie Extraction
+category: network-analysis
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - network-2-2-smtp-email-analysis
+learning_outcomes:
+  - Understand HTTP cookie-based session management
+  - Identify session hijacking attacks in network traffic
+  - Extract and analyze session cookies from HTTP headers
+  - Recognize the security risks of unencrypted HTTP traffic
+  - Learn security best practices for session management
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
@@ -27,16 +45,6 @@ scenario: |
   - Username: analyst
   - Password: MediCare2024#
   - PCAP Location: /home/analyst/captures/session-hijack.pcap
-
-objectives:
-  - SSH into network analyst workstation
-  - Analyze packet capture files directly on the server using tshark
-  - Filter HTTP traffic using tshark display filters
-  - Identify session cookie establishment (Set-Cookie headers)
-  - Detect session hijacking by finding reused cookies from different IP addresses
-  - Extract the stolen session cookie value using command-line tools
-  - Understand the security risks of unencrypted HTTP session management
-  - Capture the flag
 
 flag: "OCR{s3ss10n_c00k13_st0l3n}"
 
@@ -205,10 +213,6 @@ hints:
       - Implement CSRF protection
     unlock_after_minutes: 20
 
-difficulty: intermediate
-category: network-analysis
-duration_minutes: 60
-
 connection:
   type: ssh
   credentials:
@@ -219,13 +223,6 @@ connection:
 files:
   - path: /home/analyst/captures/session-hijack.pcap
     description: Network capture from MediCare patient portal server
-
-learning_objectives:
-  - Understand HTTP cookie-based session management
-  - Identify session hijacking attacks in network traffic
-  - Extract and analyze session cookies from HTTP headers
-  - Recognize the security risks of unencrypted HTTP traffic
-  - Learn security best practices for session management
 
 tags:
   - http

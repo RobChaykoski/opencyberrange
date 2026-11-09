@@ -2683,13 +2683,20 @@
                 <div class="create-lab-yaml-col">
                   <div class="form-group">
                     <label>Lab YAML <span class="label-hint">Paste your complete lab.yaml</span></label>
-                    <textarea v-model="createLabForm.lab_yaml" @blur="parseLabYaml" class="form-input compose-textarea" rows="16" placeholder="name: Exercise Name
-description: ...
-difficulty: beginner
+                    <textarea v-model="createLabForm.lab_yaml" @blur="parseLabYaml" class="form-input compose-textarea" rows="16" placeholder="title: Exercise Name
 category: enumeration
+difficulty: beginner
+estimated_time: 60
+prerequisites: []
+learning_outcomes:
+  - First measurable outcome
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+description: ...
 flag: &quot;OCR{...}&quot;
-objectives:
-  - First objective
 scenario: |
   Your scenario text...
 hints:
@@ -2724,13 +2731,15 @@ test:
               <div v-if="yamlParsed" class="yaml-preview">
                 <div class="yaml-preview__title">Parsed from YAML</div>
                 <div class="yaml-preview__grid">
-                  <span v-if="yamlParsed.name" class="yaml-preview__tag">{{ yamlParsed.name }}</span>
+                  <span v-if="yamlParsed.title || yamlParsed.name" class="yaml-preview__tag">{{ yamlParsed.title || yamlParsed.name }}</span>
                   <span v-if="yamlParsed.difficulty" class="yaml-preview__tag">{{ yamlParsed.difficulty }}</span>
                   <span v-if="yamlParsed.category" class="yaml-preview__tag">{{ yamlParsed.category }}</span>
-                  <span v-if="yamlParsed.duration_minutes" class="yaml-preview__tag">{{ yamlParsed.duration_minutes }} min</span>
+                  <span v-if="yamlParsed.estimated_time || yamlParsed.duration_minutes" class="yaml-preview__tag">{{ yamlParsed.estimated_time || yamlParsed.duration_minutes }} min</span>
                   <span v-if="yamlParsed.flag" class="yaml-preview__tag yaml-preview__tag--flag">Flag detected</span>
                   <span v-if="yamlParsed.visibility" class="yaml-preview__tag">{{ yamlParsed.visibility }}</span>
-                  <span v-if="yamlParsed.objectives_count" class="yaml-preview__tag">{{ yamlParsed.objectives_count }} objectives</span>
+                  <span v-if="yamlParsed.outcomes_count" class="yaml-preview__tag">{{ yamlParsed.outcomes_count }} outcomes</span>
+                  <span v-if="yamlParsed.skills_count" class="yaml-preview__tag">{{ yamlParsed.skills_count }} skills</span>
+                  <span v-if="yamlParsed.prerequisites_count" class="yaml-preview__tag">{{ yamlParsed.prerequisites_count }} prerequisites</span>
                   <span v-if="yamlParsed.hints_count" class="yaml-preview__tag">{{ yamlParsed.hints_count }} hints</span>
                   <span v-if="yamlParsed.test_steps_count" class="yaml-preview__tag yaml-preview__tag--test">{{ yamlParsed.test_steps_count }} test steps</span>
                   <span v-if="yamlParsed.scenario" class="yaml-preview__tag">Scenario included</span>
@@ -6179,7 +6188,7 @@ const parseLabYaml = () => {
     const text = createLabForm.lab_yaml
     const parsed = {}
     // Extract simple key: value fields
-    const simpleFields = ['name', 'description', 'difficulty', 'category', 'duration_minutes', 'flag', 'visibility']
+    const simpleFields = ['title', 'name', 'description', 'difficulty', 'category', 'estimated_time', 'duration_minutes', 'flag', 'visibility']
     for (const field of simpleFields) {
       const match = text.match(new RegExp(`^${field}:\\s*(?:"([^"]*?)"|'([^']*?)'|(.+?))\\s*$`, 'm'))
       if (match) parsed[field] = (match[1] ?? match[2] ?? match[3]).trim()
@@ -6187,11 +6196,23 @@ const parseLabYaml = () => {
     // Extract scenario (multiline block after "scenario: |")
     const scenarioMatch = text.match(/^scenario:\s*\|\s*\n((?:[ \t]+.+\n?)+)/m)
     if (scenarioMatch) parsed.scenario = scenarioMatch[1].replace(/^ {2}/gm, '').trim()
-    // Extract objectives count
-    const objMatches = text.match(/^objectives:\s*\n((?:\s*-\s*.+\n?)+)/m)
+    // Extract learning outcome count (canonical key, legacy objectives fallback)
+    const objMatches = text.match(/^(?:learning_outcomes|objectives):\s*\n((?:\s*-\s*.+\n?)+)/m)
     if (objMatches) {
       const items = objMatches[1].match(/^\s*-\s*(.+)/gm)
-      parsed.objectives_count = items ? items.length : 0
+      parsed.outcomes_count = items ? items.length : 0
+    }
+    // Extract mapped skills count
+    const skillMatches = text.match(/^mapped_skills:\s*\n((?:\s*-\s*.+\n?)+)/m)
+    if (skillMatches) {
+      const items = skillMatches[1].match(/^\s*-\s*(.+)/gm)
+      parsed.skills_count = items ? items.length : 0
+    }
+    // Extract prerequisites count
+    const prereqMatches = text.match(/^prerequisites:\s*\n((?:\s*-\s*.+\n?)+)/m)
+    if (prereqMatches) {
+      const items = prereqMatches[1].match(/^\s*-\s*(.+)/gm)
+      parsed.prerequisites_count = items ? items.length : 0
     }
     // Extract hints count
     const hintMatches = text.match(/^hints:\s*\n((?:\s+.+\n?)+)/m)
@@ -6207,10 +6228,10 @@ const parseLabYaml = () => {
     }
     yamlParsed.value = parsed
     // Auto-fill form fields from parsed YAML
-    if (parsed.name) createLabForm.name = parsed.name
+    if (parsed.title || parsed.name) createLabForm.name = parsed.title || parsed.name
     if (parsed.difficulty) createLabForm.difficulty = parsed.difficulty
     if (parsed.category) createLabForm.category = parsed.category
-    if (parsed.duration_minutes) createLabForm.duration_minutes = parseInt(parsed.duration_minutes) || 60
+    if (parsed.estimated_time || parsed.duration_minutes) createLabForm.duration_minutes = parseInt(parsed.estimated_time || parsed.duration_minutes) || 60
     if (parsed.flag) createLabForm.flag = parsed.flag
     if (parsed.visibility) createLabForm.visibility = parsed.visibility
     if (parsed.description) createLabForm.description = parsed.description

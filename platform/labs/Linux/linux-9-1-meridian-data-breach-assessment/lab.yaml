@@ -1,26 +1,36 @@
-name: "Meridian Financial: Data Breach Assessment"
+title: 'Meridian Financial: Data Breach Assessment'
+category: forensics
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - linux-5-4-suricata-live-detection
+  - linux-5-5-capstone-ctf
+  - linux-5-6-brute-force-detection
+  - linux-5-7-black-box-ctf
+learning_outcomes:
+  - Enumerate the corporate intranet to discover all available pages and directories
+  - Identify exposed backup files containing sensitive data
+  - Extract database credentials from backup artifacts
+  - Connect to the backend database and enumerate schemas and tables
+  - Locate the compliance finding that documents the data breach
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Meridian Financial Group's intranet may have exposed sensitive data through misconfigured backup storage. Investigate the web application and backend database to determine the scope of the breach and locate the compliance finding."
 
-difficulty: intermediate
-category: forensics
-duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 9
 
 flag: "OCR{d4ta_br34ch_3xp0s3d}"
-
-objectives:
-  - Enumerate the corporate intranet to discover all available pages and directories
-  - Identify exposed backup files containing sensitive data
-  - Extract database credentials from backup artifacts
-  - Connect to the backend database and enumerate schemas and tables
-  - Locate the compliance finding that documents the data breach
-  - Capture the flag
 
 scenario: |
   Meridian Financial Group, a mid-size investment advisory firm headquartered in

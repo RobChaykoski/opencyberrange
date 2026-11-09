@@ -1,24 +1,31 @@
-name: "Greystone Manufacturing - SNMP Community Strings"
+title: Greystone Manufacturing - SNMP Community Strings
+category: enumeration
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - linux-2-7-smb-share-enumeration
+learning_outcomes:
+  - Discover SNMP services using UDP port scanning
+  - Enumerate system information using standard SNMP community strings
+  - Perform comprehensive SNMP walks to extract detailed system data
+  - Identify sensitive information exposed through SNMP MIB trees
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An industrial control system gateway at Greystone Manufacturing exposes SNMP with weak community strings. Enumerate system information and discover sensitive data through SNMP walks."
 
-difficulty: beginner
-category: enumeration
-duration_minutes: 35
 randomize_ip_offsets: true
 visibility: course
 week: 3
 flag: "OCR{snmp_w4lk_c0mmun1ty}"
-
-objectives:
-  - Discover SNMP services using UDP port scanning
-  - Enumerate system information using standard SNMP community strings
-  - Perform comprehensive SNMP walks to extract detailed system data
-  - Identify sensitive information exposed through SNMP MIB trees
-  - Capture the flag
 
 scenario: |
   Greystone Manufacturing operates a production facility in Pittsburgh,

@@ -1,17 +1,24 @@
-name: SMB Multiple Credential Testing
+title: SMB Multiple Credential Testing
+category: credential-attacks
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-3-1-smb-manual-credential-test
+learning_outcomes:
+  - Test multiple password combinations
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Expand your FinanceCorp credential testing by systematically testing multiple password combinations.
-difficulty: beginner
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - test multiple password combinations
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your initial credential testing against FinanceCorp's SMB service has provided 
   valuable insights. James Mitchell wants a more comprehensive assessment of their 

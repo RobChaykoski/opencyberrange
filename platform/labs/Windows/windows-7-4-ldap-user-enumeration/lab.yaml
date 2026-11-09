@@ -1,17 +1,24 @@
-name: LDAP User Enumeration
+title: LDAP User Enumeration
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-7-3-ldap-base-dn-enumeration
+learning_outcomes:
+  - Enumerate users via anonymous ldap
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Enumerate user accounts through FinanceCorp's LDAP service to identify potential targets for credential attacks.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - enumerate users via anonymous ldap
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your enumeration of FinanceCorp's Active Directory structure has provided base DN 
   information. James Mitchell is particularly concerned about user enumeration, as this 

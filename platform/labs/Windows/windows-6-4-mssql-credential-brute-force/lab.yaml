@@ -1,17 +1,25 @@
-name: MS-SQL Credential Brute Force
+title: MS-SQL Credential Brute Force
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-6-3-mssql-manual-authentication
+learning_outcomes:
+  - Brute force ms-sql credentials
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Perform automated brute force attacks against FinanceCorp's MS-SQL server to test password strength.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - brute force ms-sql credentials
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your credential testing against FinanceCorp's MS-SQL server has revealed potential 
   authentication weaknesses. James Mitchell wants to understand if automated brute 

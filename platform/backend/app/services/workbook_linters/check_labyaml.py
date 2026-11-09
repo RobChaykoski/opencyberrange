@@ -38,6 +38,24 @@ TOP_KEY = re.compile(r"^([A-Za-z_][\w]*):")
 # blocks that legitimately hold the literal flag; every other block is prose
 FLAG_OK_BLOCKS = {"flag", "test"}
 
+REQUIRED_METADATA = (
+    "title",
+    "category",
+    "difficulty",
+    "estimated_time",
+    "prerequisites",
+    "learning_outcomes",
+    "mapped_skills",
+    "assessment_criteria",
+)
+LEGACY_METADATA = ("name", "duration_minutes", "objectives", "learning_objectives")
+LEGACY_REPLACEMENT = {
+    "name": "title",
+    "duration_minutes": "estimated_time",
+    "objectives": "learning_outcomes",
+    "learning_objectives": "learning_outcomes",
+}
+
 
 def resolve_workbook_dir(value):
     """Return True if the workbook path resolves to an existing directory."""
@@ -75,10 +93,15 @@ def scan(path):
             flag_value = fm.group(1)
             break
     cur_block = None
+    top_keys = set()
     for i, line in enumerate(text.splitlines(), 1):
         km = TOP_KEY.match(line)
         if km:
             cur_block = km.group(1)
+            top_keys.add(cur_block)
+            if cur_block in LEGACY_METADATA:
+                findings.append((path, i, "legacy-metadata-key",
+                                f"{cur_block}: use {LEGACY_REPLACEMENT[cur_block]}"))
         if flag_value and flag_value in line and cur_block not in FLAG_OK_BLOCKS:
             findings.append((path, i, "flag-in-prose", line.strip()[:90]))
         if DASH.search(line):
@@ -107,6 +130,9 @@ def scan(path):
             if re.search(r"^\s*-\s*\.", line):
                 findings.append((path, i, "relative-bind-mount",
                                 line.strip()[:90]))
+    for key in REQUIRED_METADATA:
+        if key not in top_keys:
+            findings.append((path, 0, "metadata-key-missing", key))
     return findings
 
 

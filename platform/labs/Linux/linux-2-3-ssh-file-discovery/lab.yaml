@@ -1,19 +1,26 @@
-name: SSH File Discovery
+title: SSH File Discovery
+category: post-exploitation
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-2-2-ssh-user-discovery
+learning_outcomes:
+  - Navigate Linux file system after authentication
+  - Search for files using find command
+  - Explore directories beyond home directory
+  - Identify readable sensitive files
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: FinanceCorp requires thorough investigation of accessible files. Navigate directories, search for specific files, and discover information beyond the home directory.
-difficulty: beginner
-category: post-exploitation
-duration_minutes: 120
-objectives:
-  - Navigate Linux file system after authentication
-  - Search for files using find command
-  - Explore directories beyond home directory
-  - Identify readable sensitive files
-  - Capture the flag
-
 scenario: |
   Your FinanceCorp penetration test continues with file system exploration. James
   Mitchell wants you to demonstrate the risks of improper file permissions and

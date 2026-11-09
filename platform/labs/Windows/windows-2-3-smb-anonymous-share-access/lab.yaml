@@ -1,17 +1,24 @@
-name: SMB Anonymous Share Access
+title: SMB Anonymous Share Access
+category: enumeration
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-2-smb-share-listing
+learning_outcomes:
+  - Access anonymous share and list files
+  - Understand SMB enumeration techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test anonymous access to FinanceCorp SMB shares to identify information disclosure risks.
-difficulty: beginner
-category: enumeration
-duration_minutes: 120
-objectives:
-  - access anonymous share and list files
-  - Understand SMB enumeration techniques
-  - Capture the flag
-
 scenario: |
   Your enumeration of FinanceCorp's SMB shares has revealed several available shares. 
   James Mitchell is concerned that some shares might be accessible without authentication, 

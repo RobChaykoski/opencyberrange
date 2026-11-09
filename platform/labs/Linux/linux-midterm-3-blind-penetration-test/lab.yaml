@@ -1,19 +1,10 @@
-name: "Apex Meridian Group - Blind Penetration Test"
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: "Execute a full penetration test against Apex Meridian Group's infrastructure with zero guidance. Discover and exploit a web application vulnerability, pivot to an internal server, and escalate privileges to prove complete compromise."
-
-difficulty: advanced
+title: Apex Meridian Group - Blind Penetration Test
 category: assessment
-duration_minutes: 90
-randomize_ip_offsets: true
-visibility: course
-week: 9
-flag: "OCR{bl1nd_p1v0t_r00t3d}"
-
-objectives:
+difficulty: advanced
+estimated_time: 90
+prerequisites:
+  - linux-midterm-2-full-penetration-test
+learning_outcomes:
   - Enumerate services across multiple target systems
   - Identify and exploit a directory traversal vulnerability in the web application
   - Discover sensitive configuration files containing backend credentials
@@ -22,6 +13,23 @@ objectives:
   - Retrieve the second assessment marker from the backend server
   - Escalate privileges on the backend server to achieve root access
   - Retrieve the third assessment marker and assemble the complete flag
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: "Execute a full penetration test against Apex Meridian Group's infrastructure with zero guidance. Discover and exploit a web application vulnerability, pivot to an internal server, and escalate privileges to prove complete compromise."
+
+randomize_ip_offsets: true
+visibility: course
+week: 9
+flag: "OCR{bl1nd_p1v0t_r00t3d}"
 
 scenario: |
   Apex Meridian Group is a mid-size management consulting firm headquartered in

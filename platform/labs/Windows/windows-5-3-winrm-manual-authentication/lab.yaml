@@ -1,17 +1,24 @@
-name: WinRM Manual Authentication
+title: WinRM Manual Authentication
+category: credential-attacks
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-5-2-winrm-version-and-configuration-enumeration
+learning_outcomes:
+  - Authenticate to winrm with known credentials
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test WinRM authentication on FinanceCorp's systems using known credentials to assess access controls.
-difficulty: beginner
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - authenticate to winrm with known credentials
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your enumeration of FinanceCorp's WinRM services has provided configuration 
   information. James Mitchell wants to test authentication security by attempting 

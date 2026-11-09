@@ -1,18 +1,24 @@
-name: Windows OS Detection
+title: Windows OS Detection
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-1-3-windows-service-version-detection
+learning_outcomes:
+  - Use nmap OS detection (-O) to identify operating system
+  - Interpret OS detection results
+  - Understand OS fingerprinting concepts
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Complete your FinanceCorp reconnaissance by identifying the Windows operating system version and build.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Use nmap OS detection (-O) to identify operating system
-  - Interpret OS detection results
-  - Understand OS fingerprinting concepts
-  - Capture the flag
-
 scenario: |
   Your assessment of FinanceCorp's Windows infrastructure is progressing well. James 
   Mitchell has requested information about the operating system version, as this 

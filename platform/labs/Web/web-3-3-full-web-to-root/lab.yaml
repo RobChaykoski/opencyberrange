@@ -1,20 +1,10 @@
-name: "MedCore Health Systems: Full Web-to-Root Compromise"
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: "MedCore Health Systems runs a clinical data platform with a hidden admin portal, a backend database, and an internal processing server. Chain together directory enumeration, SQL injection, database pivoting, lateral movement, and privilege escalation to prove full compromise across all three systems."
-
-difficulty: advanced
+title: 'MedCore Health Systems: Full Web-to-Root Compromise'
 category: web
-duration_minutes: 90
-randomize_ip_offsets: true
-visibility: course
-week: 10
-
-flag: "OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}"
-
-objectives:
+difficulty: advanced
+estimated_time: 90
+prerequisites:
+  - web-3-2-sql-injection-to-shell
+learning_outcomes:
   - Enumerate the web application and discover hidden administrative endpoints
   - Identify and exploit a SQL injection vulnerability to bypass authentication
   - Extract database credentials from the authenticated dashboard
@@ -23,7 +13,24 @@ objectives:
   - Pivot laterally to the internal server via SSH
   - Escalate privileges on the internal server using a SUID binary
   - Collect all four assessment markers and assemble the complete flag
-  - "Flag format: OCR{SQLi_Database_SSH_PrivEscalation}"
+  - 'Flag format: OCR{SQLi_Database_SSH_PrivEscalation}'
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: "MedCore Health Systems runs a clinical data platform with a hidden admin portal, a backend database, and an internal processing server. Chain together directory enumeration, SQL injection, database pivoting, lateral movement, and privilege escalation to prove full compromise across all three systems."
+
+randomize_ip_offsets: true
+visibility: course
+week: 10
+
+flag: "OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}"
 
 scenario: |
   MedCore Health Systems is a healthcare IT company based in Portland, Oregon.

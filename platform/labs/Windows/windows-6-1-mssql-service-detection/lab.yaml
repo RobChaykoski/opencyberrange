@@ -1,17 +1,30 @@
-name: MS-SQL Service Detection
+title: MS-SQL Service Detection
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-5-1-winrm-service-detection
+  - windows-5-2-winrm-version-and-configuration-enumeration
+  - windows-5-3-winrm-manual-authentication
+  - windows-5-4-winrm-credential-brute-force
+  - windows-5-5-winrm-command-execution
+  - windows-5-6-winrm-file-retrieval
+learning_outcomes:
+  - Identify ms-sql service on target
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - web_api
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: A database server has been identified in FinanceCorp's network. Test MS-SQL security, authentication, and potential for command execution.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - identify ms-sql service on target
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your penetration test for FinanceCorp has identified a Microsoft SQL Server database 
   on their network. James Mitchell is particularly concerned about database security, 

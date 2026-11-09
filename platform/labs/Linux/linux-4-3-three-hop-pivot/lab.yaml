@@ -1,26 +1,33 @@
-name: "Meridian Trust Bank - Three-Hop Pivot"
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: "Starting from a compromised teller workstation, pivot through three internal hosts at Meridian Trust Bank. Extract credentials from config files on each hop to reach the core API server and retrieve the assessment flag."
-
-difficulty: intermediate
+title: Meridian Trust Bank - Three-Hop Pivot
 category: post-exploitation
-duration_minutes: 55
-randomize_ip_offsets: true
-visibility: course
-week: 11
-flag: "OCR{thr33_h0p_l4t3r4l}"
-
-objectives:
+difficulty: intermediate
+estimated_time: 55
+prerequisites:
+  - linux-4-2-post-exploitation-data-harvest
+learning_outcomes:
   - SSH into the teller workstation using provided credentials
   - Discover database credentials stored in a banking application config file
   - Pivot laterally to an internal application server using discovered credentials
   - Extract an API key from the application server's gateway configuration
   - Authenticate to the core API service and retrieve the final assessment token
   - Assemble the flag from tokens collected across all three hosts
-  - Capture the flag
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: "Starting from a compromised teller workstation, pivot through three internal hosts at Meridian Trust Bank. Extract credentials from config files on each hop to reach the core API server and retrieve the assessment flag."
+
+randomize_ip_offsets: true
+visibility: course
+week: 11
+flag: "OCR{thr33_h0p_l4t3r4l}"
 
 scenario: |
   Meridian Trust Bank, a mid-size commercial bank headquartered in Denver, has

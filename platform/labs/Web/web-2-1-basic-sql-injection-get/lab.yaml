@@ -1,19 +1,32 @@
-name: Basic SQL Injection (Login)
+title: Basic SQL Injection (Login)
+category: web
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - web-1-1-basic-directory-enumeration
+  - web-1-2-technology-identification
+  - web-1-3-http-methods-enumeration
+  - web-1-4-header-analysis
+  - web-1-5-subdomain-discovery
+  - web-1-6-comprehensive-web-reconnaissance
+  - web-1-7-directory-traversal
+  - web-1-8-traversal-scavenger-hunt
+learning_outcomes:
+  - Understand SQL injection vulnerabilities in authentication
+  - Identify SQL injection in login forms
+  - Exploit basic SQL injection to bypass authentication
+  - Access user dashboard and extract sensitive information
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: ShopSecure has hired you to test their employee portal login system. Investigate the authentication mechanism for SQL injection vulnerabilities.
-difficulty: beginner
-category: web
-duration_minutes: 120
-objectives:
-  - Understand SQL injection vulnerabilities in authentication
-  - Identify SQL injection in login forms
-  - Exploit basic SQL injection to bypass authentication
-  - Access user dashboard and extract sensitive information
-  - Capture the flag
-
 scenario: |
   ShopSecure, a local e-commerce startup, has hired you as a security consultant to 
   perform a penetration test on their employee portal. The company's CTO, Michael 

@@ -1,24 +1,33 @@
-name: "RangeBox File Hunt"
+title: RangeBox File Hunt
+category: general
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - high-school-9-1-rangebox-first-steps
+learning_outcomes:
+  - Download a file with curl
+  - Unpack a ZIP archive with unzip
+  - Use find to list files and grep to search their contents
+  - Explain why filenames alone are not evidence
+mapped_skills:
+  - network_systems
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Practice the file commands you need in every later lab. Download a small evidence archive, unpack it, and use find and grep to pick the real token out of the decoys."
-difficulty: beginner
-category: general
-duration_minutes: 25
 visibility: public
 flag: "OCR{f1nd_th3_r34l_f1l3}"
 
 tools:
   - rangebox
   - terminal
-
-objectives:
-  - Download a file with curl
-  - Unpack a ZIP archive with unzip
-  - Use find to list files and grep to search their contents
-  - Explain why filenames alone are not evidence
 
 scenario: |
   A class shared folder was exported before a cleanup. The archive is full of

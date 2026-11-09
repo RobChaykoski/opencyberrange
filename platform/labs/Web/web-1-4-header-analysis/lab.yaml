@@ -1,19 +1,25 @@
-name: Header Analysis
+title: Header Analysis
+category: web
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - web-1-3-http-methods-enumeration
+learning_outcomes:
+  - Understand HTTP headers and their security implications
+  - Identify security headers (CSP, HSTS, X-Frame-Options)
+  - Detect information disclosure in headers
+  - Analyze missing security headers
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: As part of your TechStart assessment, analyze HTTP headers for security misconfigurations and information disclosure.
-difficulty: beginner
-category: web
-duration_minutes: 120
-objectives:
-  - Understand HTTP headers and their security implications
-  - Identify security headers (CSP, HSTS, X-Frame-Options)
-  - Detect information disclosure in headers
-  - Analyze missing security headers
-  - Capture the flag
-
 scenario: |
   Continuing your security assessment for TechStart Inc., you've been examining 
   their web application at secure.lab. Sarah Chen mentioned that their security 

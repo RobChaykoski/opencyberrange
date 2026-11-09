@@ -1,12 +1,24 @@
-name: "Halcyon Industrial - Modbus Register Triage"
+title: Halcyon Industrial - Modbus Register Triage
+category: ot
+difficulty: beginner
+estimated_time: 40
+prerequisites: []
+learning_outcomes:
+  - Discover the Modbus TCP service on the controller
+  - Read the holding register map
+  - Decode the ASCII marker stored in consecutive registers
+  - Record the device identity and register layout
+mapped_skills:
+  - ot_ics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A simulated industrial controller exposes a Modbus TCP service. Enumerate the register map, read the holding registers, and decode the analyst marker stored in the first block."
-difficulty: beginner
-category: ot
-duration_minutes: 40
 visibility: public
 flag: "OCR{m0dbu5_r3g15t3r5_r3v34l3d}"
 
@@ -14,12 +26,6 @@ tools:
   - python3
   - nmap
   - mbpoll
-
-objectives:
-  - Discover the Modbus TCP service on the controller
-  - Read the holding register map
-  - Decode the ASCII marker stored in consecutive registers
-  - Record the device identity and register layout
 
 scenario: |
   Halcyon Industrial Controls operates a small process line. An analyst

@@ -1052,16 +1052,22 @@ my-exercise/
       (scripts, configs, flag files, etc.)
 
 --- lab.yaml fields ---
-name: "My Exercise Name"         # REQUIRED
+title: "My Exercise Name"          # REQUIRED
+category: reconnaissance           # e.g. web, network, forensics
+difficulty: beginner               # beginner | intermediate | advanced
+estimated_time: 60                 # minutes
+prerequisites: []                  # lab slugs this exercise depends on
+learning_outcomes:
+  - "Enumerate services on the target"
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - "Submit the correct flag."
+  - "Pass every automated test step in the lab manifest."
 description: "One-line summary"
-difficulty: beginner             # beginner | intermediate | advanced
-category: reconnaissance         # e.g. web, network, forensics
-duration_minutes: 60
 scenario: |
   Narrative backstory shown to students...
 flag: "OCR{my_secret_flag}"      # Flag students submit
-objectives:
-  - "Learn to enumerate services"
 hints:
   - text: "Try scanning common ports"
     unlock_after_minutes: 5

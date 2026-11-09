@@ -1,17 +1,24 @@
-name: Multi-Service Credential Reuse
+title: Multi-Service Credential Reuse
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-8-2-cross-service-credential-reuse
+learning_outcomes:
+  - Use one set of credentials on multiple services
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Test FinanceCorp credentials across multiple services (SMB, RDP, WinRM) to demonstrate comprehensive credential reuse risks.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - use one set of credentials on multiple services
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your cross-service credential testing for FinanceCorp has revealed that credentials 
   work across multiple services. James Mitchell wants a comprehensive assessment of 

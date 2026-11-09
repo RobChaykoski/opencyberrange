@@ -1,19 +1,25 @@
-name: Subdomain Discovery
+title: Subdomain Discovery
+category: web
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - web-1-4-header-analysis
+learning_outcomes:
+  - Understand subdomain enumeration concepts
+  - Sweep a subnet to find all live web servers
+  - Map discovered hosts to hostnames in /etc/hosts
+  - Identify which host serves the admin panel
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Expand your TechStart assessment by discovering all subdomains to map the complete attack surface.
-difficulty: beginner
-category: web
-duration_minutes: 120
-objectives:
-  - Understand subdomain enumeration concepts
-  - Sweep a subnet to find all live web servers
-  - Map discovered hosts to hostnames in /etc/hosts
-  - Identify which host serves the admin panel
-  - Capture the flag
-
 scenario: |
   Your assessment of TechStart Inc. has revealed multiple components of their 
   infrastructure. Sarah Chen wants a complete picture of all publicly accessible 

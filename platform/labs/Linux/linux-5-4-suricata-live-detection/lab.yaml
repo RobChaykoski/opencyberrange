@@ -1,25 +1,35 @@
-name: "Sentinel Defense Corp - Live IDS Detection"
+title: Sentinel Defense Corp - Live IDS Detection
+category: network-analysis
+difficulty: intermediate
+estimated_time: 75
+prerequisites:
+  - linux-4-1-credential-pivot-attack
+  - linux-4-2-post-exploitation-data-harvest
+  - linux-4-3-three-hop-pivot
+  - linux-4-4-encrypted-exfiltration
+learning_outcomes:
+  - Observe live attack traffic on the IDS sensor using packet capture tools
+  - Identify distinct attack signatures in the traffic (SQL injection, command injection)
+  - Write custom Suricata IDS rules to detect each attack vector
+  - Extract indicators of compromise from Suricata alert payloads
+  - Investigate the target web server's logs for additional forensic evidence
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An active cyberattack is underway against Sentinel Defense Corp's DMZ. Deploy custom Suricata rules on the IDS sensor to detect the attack vectors, capture payloads, and extract indicators of compromise."
 
-difficulty: intermediate
-category: network-analysis
-duration_minutes: 75
 randomize_ip_offsets: true
 visibility: course
 week: 14
 flag: "OCR{d3t3ct_rul3_wr1t3r}"
-
-objectives:
-  - Observe live attack traffic on the IDS sensor using packet capture tools
-  - Identify distinct attack signatures in the traffic (SQL injection, command injection)
-  - Write custom Suricata IDS rules to detect each attack vector
-  - Extract indicators of compromise from Suricata alert payloads
-  - Investigate the target web server's logs for additional forensic evidence
-  - Capture the flag
 
 scenario: |
   Sentinel Defense Corp, a boutique cybersecurity consulting firm based in Arlington,

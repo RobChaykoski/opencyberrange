@@ -466,12 +466,24 @@ def render_lab_yaml(manifest, values, flag_value, credentials):
     topology = structural.get("topology", {}) or {}
 
     lab = {
-        "name": manifest.get("name", manifest.get("template_id", "Lab")),
-        "description": (values.get("scenario") or manifest.get("description") or "").strip()[:300],
-        "difficulty": values.get("difficulty") or structural.get("difficulty", "beginner"),
+        "title": manifest.get("title") or manifest.get("name", manifest.get("template_id", "Lab")),
         "category": structural.get("category", "general"),
-        "duration_minutes": structural.get("duration_minutes", 60),
-        "objectives": values.get("objectives") or [],
+        "difficulty": values.get("difficulty") or structural.get("difficulty", "beginner"),
+        "estimated_time": structural.get(
+            "estimated_time", structural.get("duration_minutes", 60)
+        ),
+        "prerequisites": structural.get("prerequisites", []),
+        "learning_outcomes": values.get("objectives")
+        or structural.get("learning_outcomes", []),
+        "mapped_skills": structural.get("mapped_skills", []),
+        "assessment_criteria": structural.get(
+            "assessment_criteria",
+            [
+                "Submit the correct flag.",
+                "Pass every automated test step in the lab manifest.",
+            ],
+        ),
+        "description": (values.get("scenario") or manifest.get("description") or "").strip()[:300],
         "scenario": values.get("scenario", "").strip(),
         "flag": flag_value,
         "credentials": credentials,
@@ -480,9 +492,6 @@ def render_lab_yaml(manifest, values, flag_value, credentials):
         "visibility": "draft",
         "test": _render_test_steps(manifest, flag_value),
     }
-    # Drop empty optional keys so the rendered file stays clean.
-    if not lab["objectives"]:
-        del lab["objectives"]
     return lab
 
 

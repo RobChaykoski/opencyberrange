@@ -1,24 +1,30 @@
-name: "Jailbreak Policy Bypass"
+title: Jailbreak Policy Bypass
+category: ai
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - ai-1-1-prompt-injection-basics
+learning_outcomes:
+  - Understand why keyword filtering is not a policy boundary
+  - Recognise role-play and authority-spoofing jailbreak patterns
+  - Bypass a refusal without using any blocked keywords
+mapped_skills:
+  - ai_security
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "SafeChat rejects direct requests for restricted records with a keyword filter. Use role-play and an authority claim to move past the filter and recover the access record."
-difficulty: beginner
-category: ai
-duration_minutes: 35
 visibility: public
 flag: "OCR{j41lbr34k_p0l1cy_byp4ss}"
 
 tools:
   - browser
   - curl
-
-objectives:
-  - Understand why keyword filtering is not a policy boundary
-  - Recognise role-play and authority-spoofing jailbreak patterns
-  - Bypass a refusal without using any blocked keywords
-  - Capture the flag from the assistant response
 
 scenario: |
   SafeChat is a customer-support assistant with a simple guardrail: it refuses

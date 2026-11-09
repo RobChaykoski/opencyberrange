@@ -1,23 +1,31 @@
-name: "Pinecrest Family Practice - Final Exam"
+title: Pinecrest Family Practice - Final Exam
+category: assessment
+difficulty: advanced
+estimated_time: 120
+prerequisites:
+  - linux-final-1-branch-office-practice
+learning_outcomes:
+  - Discover all in-scope hosts on the clinic subnet and identify exposed services
+  - Recover the three planted tokens (labeled Token 1, Token 2, and Token 3) from the in-scope systems
+  - Assemble the tokens into the OCR{token1_token2_token3} flag and submit it within the 120 minute window
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "The final exam for the course. A small healthcare clinic has asked you to assess two internet-facing systems left over from a prior IT contractor. Three tokens are planted across the in-scope systems; recover all three and submit the assembled flag. No workbook. No hints. 120 minutes."
 
-difficulty: advanced
-category: assessment
-duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
 week: 16
 
 flag: "OCR{p1n3cr3st_l34k_0wn3d}"
-
-objectives:
-  - Discover all in-scope hosts on the clinic subnet and identify exposed services
-  - Recover the three planted tokens (labeled Token 1, Token 2, and Token 3) from the in-scope systems
-  - Assemble the tokens into the OCR{token1_token2_token3} flag and submit it within the 120 minute window
 
 scenario: |
   Pinecrest Family Practice is a six-provider primary care clinic in

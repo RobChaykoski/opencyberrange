@@ -1,17 +1,24 @@
-name: RDP Brute Force Attack
+title: RDP Brute Force Attack
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-4-4-rdp-credential-guessing
+learning_outcomes:
+  - Brute force rdp credentials
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Perform automated brute force attacks against FinanceCorp's RDP service to test password strength.
-difficulty: intermediate
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - brute force rdp credentials
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your credential testing against FinanceCorp's RDP service has revealed potential 
   authentication weaknesses. James Mitchell wants to understand if automated brute 

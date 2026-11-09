@@ -11,10 +11,9 @@ import logging
 import os
 import re
 import shutil
-from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile, File, Form
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File, Form
 from pydantic import BaseModel
 from sqlalchemy.orm import Session, joinedload
 
@@ -376,7 +375,9 @@ async def upload_lab_zip(
     # 2) Generate slug
     # 3) Extract to disk
 
-    import io, zipfile, yaml as yaml_lib
+    import io
+    import zipfile
+    import yaml as yaml_lib
 
     # Quick pre-parse to get lab name for slug generation
     try:
@@ -404,9 +405,9 @@ async def upload_lab_zip(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid lab.yaml: {e}")
 
-    lab_name = lab_data_preview.get("name", "")
+    lab_name = lab_data_preview.get("title") or lab_data_preview.get("name", "")
     if not lab_name:
-        raise HTTPException(status_code=400, detail="lab.yaml must have a 'name' field")
+        raise HTTPException(status_code=400, detail="lab.yaml must have a 'title' field (legacy 'name' is accepted)")
 
     # A lab's directory name is its slug, and discovery reads the level and lab
     # number from that name. Requiring a level here keeps uploads rediscoverable
@@ -474,17 +475,26 @@ async def upload_lab_zip(
 
     # Create Lab record
     lab = Lab(
-        name=lab_data.get("name", slug),
+        name=lab_data.get("title") or lab_data.get("name", slug),
         slug=slug,
         description=lab_data.get("description", ""),
         scenario=scenario,
         scenario_brief=scenario_brief,
         difficulty=lab_data.get("difficulty", "beginner"),
         category=lab_data.get("category", "general"),
-        duration_minutes=lab_data.get("duration_minutes", 60),
+        duration_minutes=lab_data.get(
+            "estimated_time", lab_data.get("duration_minutes", 60)
+        ),
         level_id=level_id,
         compose_file=compose_content,
-        objectives=json.dumps(lab_data.get("objectives", [])),
+        objectives=json.dumps(
+            lab_data.get("learning_outcomes", lab_data.get("objectives", []))
+        ),
+        prerequisites=json.dumps(lab_data.get("prerequisites", []) or []),
+        mapped_skills=json.dumps(lab_data.get("mapped_skills", []) or []),
+        assessment_criteria=json.dumps(
+            lab_data.get("assessment_criteria", []) or []
+        ),
         hints=json.dumps(lab_data.get("hints", [])),
         tools=json.dumps(lab_data.get("tools", [])),
         hostnames=json.dumps(lab_data.get("hostnames", [])),
@@ -535,7 +545,6 @@ async def upload_lab_zip(
             chapter_dir = f"CH_{track.upper()}_{chapter_suffix}"
 
             # Extract walkthrough markdown files into the workbook docs dir
-            import tempfile as _tempfile
             docs_target = os.path.join(workbook_builder.DOCS_DIR, chapter_dir)
             os.makedirs(docs_target, exist_ok=True)
             wt_extracted = []

@@ -1,17 +1,28 @@
-name: Windows Network Assessment
+title: Windows Network Assessment
+category: assessment
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-8-1-single-service-credential-discovery
+  - windows-8-2-cross-service-credential-reuse
+  - windows-8-3-multi-service-credential-reuse
+  - windows-8-4-credential-discovery-and-reuse-chain
+  - windows-8-5-cme-credential-reuse-automation
+learning_outcomes:
+  - Complete enumeration of windows network
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Final phase of your FinanceCorp assessment. Combine all techniques learned to perform a comprehensive penetration test, demonstrating the full attack chain from initial access to data exfiltration.
-difficulty: intermediate
-category: assessment
-duration_minutes: 120
-objectives:
-  - complete enumeration of windows network
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   You're entering the final phase of your penetration test for FinanceCorp. James 
   Mitchell has requested a comprehensive network assessment that combines all the 

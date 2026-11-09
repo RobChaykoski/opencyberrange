@@ -10,7 +10,6 @@ import io
 import os
 import re
 import shutil
-import stat
 import zipfile
 from typing import Optional
 
@@ -271,9 +270,27 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
     except yaml.YAMLError as e:
         raise ZipValidationError(f"Invalid lab.yaml syntax: {e}")
 
-    if not lab_data.get("name"):
+    if not (lab_data.get("title") or lab_data.get("name")):
         raise ZipValidationError(
-            "lab.yaml must have a 'name' field."
+            "lab.yaml must have a 'title' field (legacy 'name' is accepted)."
+        )
+
+    metadata_fields = (
+        "title",
+        "category",
+        "difficulty",
+        "estimated_time",
+        "prerequisites",
+        "learning_outcomes",
+        "mapped_skills",
+        "assessment_criteria",
+    )
+    missing_metadata = [key for key in metadata_fields if key not in lab_data]
+    if missing_metadata:
+        warnings.append(
+            "Lab metadata is incomplete (missing: "
+            + ", ".join(missing_metadata)
+            + "). See docs/LAB-METADATA-SCHEMA.md for the canonical schema."
         )
 
     if not lab_data.get("flag"):
@@ -334,8 +351,8 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
     # --- Extract to disk ---
     if os.path.exists(target_dir):
         raise ZipValidationError(
-            f"Lab directory already exists on disk. "
-            f"If re-uploading, delete the existing exercise first."
+            "Lab directory already exists on disk. "
+            "If re-uploading, delete the existing exercise first."
         )
 
     os.makedirs(target_dir, mode=0o755)

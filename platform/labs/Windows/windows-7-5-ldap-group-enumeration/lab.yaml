@@ -1,17 +1,24 @@
-name: LDAP Group Enumeration
+title: LDAP Group Enumeration
+category: enumeration
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - windows-7-4-ldap-user-enumeration
+learning_outcomes:
+  - Enumerate groups and memberships
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Enumerate groups and memberships on FinanceCorp's Active Directory to understand privilege structure.
-difficulty: intermediate
-category: enumeration
-duration_minutes: 120
-objectives:
-  - enumerate groups and memberships
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Your user enumeration of FinanceCorp's Active Directory has revealed numerous user 
   accounts. James Mitchell wants to understand the group structure and memberships, 

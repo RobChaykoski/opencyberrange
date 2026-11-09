@@ -1,19 +1,26 @@
-name: Multi-Service Discovery
+title: Multi-Service Discovery
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - linux-1-1-ssh-service-detection
+learning_outcomes:
+  - Scan multiple common ports simultaneously
+  - Identify multiple services on a single host
+  - Interact with discovered services (FTP, HTTP)
+  - Combine information from different sources
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: TechStart's Linux servers run multiple services. Perform comprehensive enumeration to identify all accessible services and interact with them to gather complete information.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Scan multiple common ports simultaneously
-  - Identify multiple services on a single host
-  - Interact with discovered services (FTP, HTTP)
-  - Combine information from different sources
-  - Capture the flag
-
 scenario: |
   Your Linux enumeration of TechStart's infrastructure continues. Sarah Chen has
   informed you that their Linux servers typically run multiple services for different

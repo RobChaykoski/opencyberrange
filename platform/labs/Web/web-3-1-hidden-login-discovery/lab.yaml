@@ -1,24 +1,34 @@
-name: "NovaTech Solutions - Hidden Login Discovery"
+title: NovaTech Solutions - Hidden Login Discovery
+category: web
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - web-2-1-basic-sql-injection-get
+  - web-2-2-insecure-api-endpoints
+  - web-2-3-command-injection
+  - web-2-4-api-enumeration-gauntlet
+  - web-2-5-filtered-injection
+learning_outcomes:
+  - Perform directory enumeration against the web application to discover hidden endpoints
+  - Analyze discovered pages for sensitive information and credentials
+  - Authenticate to a hidden staff portal using discovered default credentials
+  - Identify and connect to a backend database using leaked connection details
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "NovaTech Solutions appears to run a simple corporate website, but hidden administrative interfaces and an exposed database tell a different story. Enumerate, authenticate, and extract."
 
-difficulty: intermediate
-category: web
-duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 10
 flag: "OCR{h1dd3n_d3f4ult_3xp0s3d}"
-
-objectives:
-  - Perform directory enumeration against the web application to discover hidden endpoints
-  - Analyze discovered pages for sensitive information and credentials
-  - Authenticate to a hidden staff portal using discovered default credentials
-  - Identify and connect to a backend database using leaked connection details
-  - Capture the flag
 
 scenario: |
   NovaTech Solutions is a mid-size software development consultancy based in Austin,

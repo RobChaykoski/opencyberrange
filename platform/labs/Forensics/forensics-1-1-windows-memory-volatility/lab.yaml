@@ -1,12 +1,25 @@
-name: "Windows Memory Analysis with Volatility"
+title: Windows Memory Analysis with Volatility
+category: forensics
+difficulty: intermediate
+estimated_time: 50
+prerequisites: []
+learning_outcomes:
+  - Connect to an isolated analyst workstation over SSH
+  - Identify a Windows memory image with the Volatility info plugin
+  - List processes and explain what a process list can show an investigator
+  - Extract local account hashes from registry hives in memory
+  - Explain why memory can contain credentials that disk evidence does not
+mapped_skills:
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Work through a Windows Server 2008 memory image with Volatility 3. Identify the operating system, inspect running processes, and extract local account hashes from registry data captured in memory."
-difficulty: intermediate
-category: forensics
-duration_minutes: 50
 visibility: public
 flag: "OCR{e19ccf75}"
 
@@ -15,13 +28,6 @@ tools:
   - ssh
   - terminal
   - rangebox
-
-objectives:
-  - Connect to an isolated analyst workstation over SSH
-  - Identify a Windows memory image with the Volatility info plugin
-  - List processes and explain what a process list can show an investigator
-  - Extract local account hashes from registry hives in memory
-  - Explain why memory can contain credentials that disk evidence does not
 
 scenario: |
   A Windows Server 2008 training VM was captured before the machine was

@@ -25,7 +25,15 @@ tags:
 structural:
   difficulty: "beginner"
   category: "post-exploitation"
-  duration_minutes: 120
+  estimated_time: 120
+  prerequisites:
+    - "linux-2-2-ssh-user-discovery"
+  mapped_skills:
+    - "network_systems"
+    - "identity_access"
+  assessment_criteria:
+    - "Submit the correct flag."
+    - "Pass every automated test step in the lab manifest."
 
   # Track placement so the rendered slug parses in discover_labs:
   #   {track}-{level}-{lab_num}-{base_slug} => linux-2-3-ssh-file-discovery

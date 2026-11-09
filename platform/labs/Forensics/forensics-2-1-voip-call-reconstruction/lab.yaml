@@ -1,12 +1,26 @@
-name: "VoIP Call Reconstruction"
+title: VoIP Call Reconstruction
+category: forensics
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - forensics-1-1-windows-memory-volatility
+learning_outcomes:
+  - Identify SIP signalling and RTP media in a packet capture
+  - Read the SDP offer to find the negotiated codec and RTP port
+  - Extract the RTP payload and rebuild a playable WAV file
+  - Review SIP headers for call metadata
+  - Explain why voice traffic needs the same evidence handling as other data
+mapped_skills:
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A help desk call was captured as SIP signalling and RTP media. Reconstruct the G.711 audio, listen to the message, and review the call metadata to recover the training token."
-difficulty: intermediate
-category: forensics
-duration_minutes: 45
 visibility: public
 flag: "OCR{v01c3_c4ll_r3c0n}"
 
@@ -16,13 +30,6 @@ tools:
   - python3
   - rangebox
   - terminal
-
-objectives:
-  - Identify SIP signalling and RTP media in a packet capture
-  - Read the SDP offer to find the negotiated codec and RTP port
-  - Extract the RTP payload and rebuild a playable WAV file
-  - Review SIP headers for call metadata
-  - Explain why voice traffic needs the same evidence handling as other data
 
 scenario: |
   The help desk received a suspicious call. The network team captured the SIP

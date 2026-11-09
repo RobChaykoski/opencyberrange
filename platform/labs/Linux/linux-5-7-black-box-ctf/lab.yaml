@@ -1,25 +1,33 @@
-name: "Titan Global Industries - Black Box CTF"
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: "Conduct a black box penetration test against Titan Global Industries. No scenario brief - find all flags across four servers using SQL injection, credential pivoting, privilege escalation, and traffic analysis."
-
-difficulty: advanced
+title: Titan Global Industries - Black Box CTF
 category: assessment
-duration_minutes: 120
-randomize_ip_offsets: true
-visibility: course
-week: 15
-flag: "OCR{t1t4n_bl4ck_b0x_pwn}"
-
-objectives:
+difficulty: advanced
+estimated_time: 120
+prerequisites:
+  - linux-5-6-brute-force-detection
+learning_outcomes:
   - Discover and exploit a SQL injection vulnerability to extract sensitive data
   - Enumerate web content for hidden credentials
   - Pivot between systems using discovered credentials
   - Escalate privileges via SUID binary exploitation
   - Analyze network traffic captures to extract tokens
   - Assemble all flag fragments into the final flag
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: "Conduct a black box penetration test against Titan Global Industries. No scenario brief - find all flags across four servers using SQL injection, credential pivoting, privilege escalation, and traffic analysis."
+
+randomize_ip_offsets: true
+visibility: course
+week: 15
+flag: "OCR{t1t4n_bl4ck_b0x_pwn}"
 
 scenario: |
   Titan Global Industries has contracted your red team for a black box assessment

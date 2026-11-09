@@ -1,24 +1,31 @@
-name: "Ironforge Systems - Password Hash Cracking"
+title: Ironforge Systems - Password Hash Cracking
+category: privilege-escalation
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - linux-3-1-suid-privilege-escalation
+learning_outcomes:
+  - Discover exposed password hash files through filesystem enumeration
+  - Identify hash types and select appropriate cracking tools
+  - Use john the ripper or hashcat to crack weak password hashes
+  - Escalate privileges using cracked credentials
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A misconfigured backup on an Ironforge Systems server exposes password hashes. Crack the weak passwords using john or hashcat, then escalate access to retrieve the assessment flag."
 
-difficulty: intermediate
-category: privilege-escalation
-duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 8
 flag: "OCR{cr4ck3d_h4sh3s}"
-
-objectives:
-  - Discover exposed password hash files through filesystem enumeration
-  - Identify hash types and select appropriate cracking tools
-  - Use john the ripper or hashcat to crack weak password hashes
-  - Escalate privileges using cracked credentials
-  - Capture the flag
 
 scenario: |
   Ironforge Systems, a managed hosting provider in Denver, has a server that

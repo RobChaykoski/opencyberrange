@@ -1,20 +1,27 @@
-name: DNS Query Anomaly Detection
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: MediCare Regional Hospital suspects malware on a workstation based on unusual network behavior. As a SOC analyst, analyze DNS query logs to identify suspicious domain lookups that indicate command-and-control (C2) communication.
-difficulty: beginner
+title: DNS Query Anomaly Detection
 category: network-analysis
-duration_minutes: 45
-objectives:
+difficulty: beginner
+estimated_time: 45
+prerequisites:
+  - network-1-2-log-correlation
+learning_outcomes:
   - Understand DNS fundamentals and why attackers abuse DNS
   - Analyze DNS query logs for suspicious patterns
   - Identify characteristics of malware C2 domains
   - Differentiate normal DNS traffic from data exfiltration
   - Extract attacker infrastructure information
-  - Capture the flag
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
 
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: MediCare Regional Hospital suspects malware on a workstation based on unusual network behavior. As a SOC analyst, analyze DNS query logs to identify suspicious domain lookups that indicate command-and-control (C2) communication.
 scenario: |
   You're a junior analyst at MediCare Regional Hospital's Security Operations Center (SOC).
   Marcus Thompson, the CISO, has noticed unusual network behavior from a workstation in the

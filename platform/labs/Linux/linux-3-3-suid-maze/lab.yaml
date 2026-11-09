@@ -1,24 +1,32 @@
-name: "Cobalt Systems - SUID Maze"
+title: Cobalt Systems - SUID Maze
+category: privilege-escalation
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - linux-3-2-password-hash-cracking
+learning_outcomes:
+  - Enumerate SUID binaries on the target system
+  - Distinguish between standard, decoy, and exploitable SUID binaries
+  - Research exploitation techniques for the identified binary
+  - Exploit the SUID misconfiguration to escalate privileges
+  - Assemble the complete flag from two tokens
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A hardened server at Cobalt Systems has five SUID binaries. Three are standard system utilities, one is a harmless decoy, and one is a dangerous misconfiguration. Identify the exploitable binary, escalate to root, and assemble the flag."
 
-difficulty: intermediate
-category: privilege-escalation
-duration_minutes: 50
 randomize_ip_offsets: true
 visibility: course
 week: 7
 flag: "OCR{su1d_m4z3_p01s0n}"
-
-objectives:
-  - Enumerate SUID binaries on the target system
-  - Distinguish between standard, decoy, and exploitable SUID binaries
-  - Research exploitation techniques for the identified binary
-  - Exploit the SUID misconfiguration to escalate privileges
-  - Assemble the complete flag from two tokens
 
 scenario: |
   Cobalt Systems, a defense contractor headquartered in Arlington, Virginia, has

@@ -1,25 +1,32 @@
-name: "Zenith Global - Capstone CTF"
+title: Zenith Global - Capstone CTF
+category: assessment
+difficulty: advanced
+estimated_time: 120
+prerequisites:
+  - linux-5-4-suricata-live-detection
+learning_outcomes:
+  - Perform comprehensive reconnaissance across multiple target systems
+  - Exploit a web application vulnerability to gain initial access
+  - Escalate privileges on a compromised server
+  - Move laterally to additional internal systems using discovered credentials
+  - Extract data from a backend database to prove full compromise
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Conduct a full red team engagement against Zenith Global Corp. Chain web exploitation, privilege escalation, and lateral movement across three servers to achieve complete infrastructure compromise."
 
-difficulty: advanced
-category: assessment
-duration_minutes: 120
 randomize_ip_offsets: true
 visibility: course
 week: 15
 flag: "OCR{z3n1th_pwn3d_v1ct0ry}"
-
-objectives:
-  - Perform comprehensive reconnaissance across multiple target systems
-  - Exploit a web application vulnerability to gain initial access
-  - Escalate privileges on a compromised server
-  - Move laterally to additional internal systems using discovered credentials
-  - Extract data from a backend database to prove full compromise
-  - Capture the flag
 
 scenario: |
   Zenith Global Corp is a multinational logistics company headquartered in

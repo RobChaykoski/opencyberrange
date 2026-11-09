@@ -1,24 +1,31 @@
-name: "Ridgeline Power Systems - SNMP Breadcrumb Trail"
+title: Ridgeline Power Systems - SNMP Breadcrumb Trail
+category: enumeration
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - linux-2-9-smb-credential-hunt
+learning_outcomes:
+  - Enumerate SNMP using the default "public" community string
+  - Discover a non-default community string hidden in system information
+  - Use the discovered community string to extract SSH credentials
+  - Log in via SSH with the discovered credentials
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "An ICS gateway at Ridgeline Power Systems exposes SNMP with multiple community strings. Chain together SNMP enumeration to discover hidden credentials and gain SSH access."
 
-difficulty: intermediate
-category: enumeration
-duration_minutes: 45
 randomize_ip_offsets: true
 visibility: course
 week: 3
 flag: "OCR{snmp_ch41n_l0g1n}"
-
-objectives:
-  - Enumerate SNMP using the default "public" community string
-  - Discover a non-default community string hidden in system information
-  - Use the discovered community string to extract SSH credentials
-  - Log in via SSH with the discovered credentials
-  - Capture the flag
 
 scenario: |
   Ridgeline Power Systems operates a hydroelectric monitoring facility in

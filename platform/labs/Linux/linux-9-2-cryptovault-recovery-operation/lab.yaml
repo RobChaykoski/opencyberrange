@@ -1,26 +1,33 @@
-name: "CryptoVault: Recovery Operation"
+title: 'CryptoVault: Recovery Operation'
+category: forensics
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - linux-9-1-meridian-data-breach-assessment
+learning_outcomes:
+  - Enumerate the analyst workstation and departed employee's files
+  - Identify the encryption method used from shell history artifacts
+  - Locate and interpret the company password recovery policy
+  - Reconstruct the passphrase from policy format and employee records
+  - Decrypt the correct archive and retrieve the assessment finding
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A departed employee at CryptoVault Solutions left behind encrypted backups containing critical business data. Investigate the workstation, identify the encryption method, reconstruct the recovery passphrase from company policy, and decrypt the target archive."
 
-difficulty: intermediate
-category: forensics
-duration_minutes: 60
 randomize_ip_offsets: true
 visibility: course
 week: 9
 
 flag: "OCR{r3c0v3ry_pr0c3dur3_f0ll0w3d}"
-
-objectives:
-  - Enumerate the analyst workstation and departed employee's files
-  - Identify the encryption method used from shell history artifacts
-  - Locate and interpret the company password recovery policy
-  - Reconstruct the passphrase from policy format and employee records
-  - Decrypt the correct archive and retrieve the assessment finding
-  - Capture the flag
 
 scenario: |
   CryptoVault Solutions is a cybersecurity consulting firm based in Austin, Texas.

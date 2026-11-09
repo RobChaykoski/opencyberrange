@@ -1,24 +1,32 @@
-name: "Hargrove Medical Group - SMB Credential Hunt"
+title: Hargrove Medical Group - SMB Credential Hunt
+category: enumeration
+difficulty: intermediate
+estimated_time: 40
+prerequisites:
+  - linux-2-8-snmp-community-strings
+learning_outcomes:
+  - Enumerate SMB shares available on the target using anonymous access
+  - Access public shares and identify embedded assessment tokens
+  - Discover service account credentials through misconfigured file shares
+  - Authenticate to a restricted share using discovered credentials
+  - Assemble the complete flag from tokens found across multiple shares
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A medical group's Samba server has multiple shares with varying access levels. Enumerate shares, discover credentials through information disclosure, and pivot to restricted clinical data."
 
-difficulty: intermediate
-category: enumeration
-duration_minutes: 40
 randomize_ip_offsets: true
 visibility: course
 week: 2
 flag: "OCR{smb_hunt_cr3ds}"
-
-objectives:
-  - Enumerate SMB shares available on the target using anonymous access
-  - Access public shares and identify embedded assessment tokens
-  - Discover service account credentials through misconfigured file shares
-  - Authenticate to a restricted share using discovered credentials
-  - Assemble the complete flag from tokens found across multiple shares
 
 scenario: |
   Hargrove Medical Group is a multi-location healthcare practice based in

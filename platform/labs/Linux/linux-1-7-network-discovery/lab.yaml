@@ -1,24 +1,31 @@
-name: "Orion TechWorks - Network Discovery"
+title: Orion TechWorks - Network Discovery
+category: reconnaissance
+difficulty: beginner
+estimated_time: 30
+prerequisites:
+  - linux-1-6-version-vulnerability-identification
+learning_outcomes:
+  - Use nmap to perform TCP port scanning against a target host
+  - Identify all running services and their version information
+  - Interact with discovered services to extract information
+  - Discover services running on non-standard ports
+mapped_skills:
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Orion TechWorks has a server on the network with multiple running services. Perform a comprehensive port scan to discover all services and extract intelligence from each one."
 
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 30
 randomize_ip_offsets: true
 visibility: course
 week: 1
 flag: "OCR{sc4nn3d_4n0n_h1dd3n}"
-
-objectives:
-  - Use nmap to perform TCP port scanning against a target host
-  - Identify all running services and their version information
-  - Interact with discovered services to extract information
-  - Discover services running on non-standard ports
-  - Capture the flag
 
 scenario: |
   Orion TechWorks, a small IT managed services provider in Boise, Idaho, has

@@ -1,12 +1,27 @@
-name: "RangeBox Browser and Source"
+title: RangeBox Browser and Source
+category: web
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - high-school-10-1-rangebox-network-basics
+learning_outcomes:
+  - Open a page in the RangeBox browser
+  - View the page source
+  - Recognise an HTML comment
+  - Explain why source comments can leak information
+mapped_skills:
+  - network_systems
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Open a page in the RangeBox browser, then look at the HTML the browser received. Find the training token in a source comment and learn why comments should be reviewed before publishing."
-difficulty: beginner
-category: web
-duration_minutes: 20
 visibility: public
 flag: "OCR{v13w_th3_s0urc3}"
 
@@ -14,12 +29,6 @@ tools:
   - rangebox
   - browser
   - terminal
-
-objectives:
-  - Open a page in the RangeBox browser
-  - View the page source
-  - Recognise an HTML comment
-  - Explain why source comments can leak information
 
 scenario: |
   A staff notes page looks almost empty. The visible page is not the whole

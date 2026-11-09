@@ -1,19 +1,25 @@
-name: Technology Identification
+title: Technology Identification
+category: web
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - web-1-1-basic-directory-enumeration
+learning_outcomes:
+  - Understand technology identification concepts
+  - Use Wappalyzer and browser DevTools to identify technologies
+  - Analyze HTTP headers for server information
+  - Identify web frameworks and CMS platforms
+mapped_skills:
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Continuing your TechStart assessment, you've discovered directories. Now identify the underlying technologies to understand the attack surface.
-difficulty: beginner
-category: web
-duration_minutes: 120
-objectives:
-  - Understand technology identification concepts
-  - Use Wappalyzer and browser DevTools to identify technologies
-  - Analyze HTTP headers for server information
-  - Identify web frameworks and CMS platforms
-  - Capture the flag
-
 scenario: |
   Continuing your assessment of TechStart Inc.'s web application, you've successfully 
   discovered several directories and files. Sarah Chen wants to understand what 

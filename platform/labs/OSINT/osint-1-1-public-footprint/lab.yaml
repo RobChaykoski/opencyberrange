@@ -1,24 +1,30 @@
-name: "The Public Footprint"
+title: The Public Footprint
+category: osint
+difficulty: beginner
+estimated_time: 35
+prerequisites: []
+learning_outcomes:
+  - Map the visible pages of the Kestrel Connect intranet
+  - Read robots.txt for paths the site owner tried to hide
+  - Inspect page source for comments, metadata, and stale review notes
+  - Recover the flag from the restricted notes page
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Kestrel Ridge's intranet exposes a people directory, a kudos wall, and a robots.txt that was never meant to be a secret. Follow the trail from the dashboard to a restricted notes page and recover the flag from its source."
-difficulty: beginner
-category: osint
-duration_minutes: 35
 visibility: public
 flag: "OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}"
 
 tools:
   - browser
   - curl
-
-objectives:
-  - Map the visible pages of the Kestrel Connect intranet
-  - Read robots.txt for paths the site owner tried to hide
-  - Inspect page source for comments, metadata, and stale review notes
-  - Recover the flag from the restricted notes page
 
 scenario: |
   Kestrel Ridge runs an internal "Connect" site for staff: a dashboard, a

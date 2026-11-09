@@ -1,17 +1,31 @@
-name: SMB Manual Credential Test
+title: SMB Manual Credential Test
+category: credential-attacks
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-2-1-smb-connection-test
+  - windows-2-2-smb-share-listing
+  - windows-2-3-smb-anonymous-share-access
+  - windows-2-4-smb-file-retrieval
+  - windows-2-5-smb-null-session-connection
+  - windows-2-6-smb-null-session-share-enumeration
+  - windows-2-7-smb-user-enumeration-via-null-session
+  - windows-2-8-smb-comprehensive-null-session-enumeration
+learning_outcomes:
+  - Manually test one username/password combination
+  - Understand Windows penetration testing techniques
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Continuing your FinanceCorp assessment, you've found SMB services requiring authentication. Test credential attacks to gain access to protected shares.
-difficulty: beginner
-category: credential-attacks
-duration_minutes: 120
-objectives:
-  - manually test one username/password combination
-  - Understand Windows penetration testing techniques
-  - Capture the flag
-
 scenario: |
   Continuing your penetration test for FinanceCorp, your SMB enumeration has revealed 
   that some shares require authentication. James Mitchell wants to understand if weak 

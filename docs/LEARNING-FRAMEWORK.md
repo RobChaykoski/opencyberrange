@@ -117,6 +117,7 @@ publicly or make high-stakes decisions.
 
 ## Related documents
 
+- [Lab metadata schema](LAB-METADATA-SCHEMA.md)
 - [System architecture](ARCHITECTURE.md)
 - [NICE mapping matrix](NICE-MAPPING.md)
 - [Survey privacy and consent](SURVEY-PRIVACY.md)

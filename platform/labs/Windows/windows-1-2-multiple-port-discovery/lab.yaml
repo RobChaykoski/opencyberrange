@@ -1,18 +1,24 @@
-name: Multiple Port Discovery
+title: Multiple Port Discovery
+category: reconnaissance
+difficulty: beginner
+estimated_time: 120
+prerequisites:
+  - windows-1-1-basic-port-scan
+learning_outcomes:
+  - Perform full port scan on Windows host
+  - Identify multiple open ports (SMB 445, RDP 3389, HTTP 80)
+  - Understand service identification in nmap output
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: Continuing your FinanceCorp assessment, expand your port scanning to discover all services running on the Windows server.
-difficulty: beginner
-category: reconnaissance
-duration_minutes: 120
-objectives:
-  - Perform full port scan on Windows host
-  - Identify multiple open ports (SMB 445, RDP 3389, HTTP 80)
-  - Understand service identification in nmap output
-  - Capture the flag
-
 scenario: |
   Continuing your penetration test for FinanceCorp, your initial port scan revealed 
   that the Windows server is running multiple services. James Mitchell wants a 

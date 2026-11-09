@@ -1,25 +1,32 @@
-name: "Nexus Dynamics - Full Penetration Test (Midterm)"
+title: Nexus Dynamics - Full Penetration Test (Midterm)
+category: assessment
+difficulty: advanced
+estimated_time: 90
+prerequisites:
+  - linux-9-2-cryptovault-recovery-operation
+learning_outcomes:
+  - Enumerate services across multiple target systems
+  - Identify and exploit a web application vulnerability for initial access
+  - Discover credentials stored in application files
+  - Pivot laterally to an internal server using discovered credentials
+  - Escalate privileges on the internal server to achieve root access
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Conduct a full penetration test against Nexus Dynamics' infrastructure. Chain together web exploitation, credential discovery, and privilege escalation across two servers to prove complete compromise."
 
-difficulty: advanced
-category: assessment
-duration_minutes: 90
 randomize_ip_offsets: true
 visibility: course
 week: 9
 flag: "OCR{br34ch_3sc4l4t3_0wn3d}"
-
-objectives:
-  - Enumerate services across multiple target systems
-  - Identify and exploit a web application vulnerability for initial access
-  - Discover credentials stored in application files
-  - Pivot laterally to an internal server using discovered credentials
-  - Escalate privileges on the internal server to achieve root access
-  - Capture the flag
 
 scenario: |
   Nexus Dynamics is a growing SaaS company based in Atlanta, Georgia. They've

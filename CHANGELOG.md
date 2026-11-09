@@ -26,6 +26,15 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+### Lab metadata
+- Standardized every lab manifest on the canonical `title`, `category`,
+  `difficulty`, `estimated_time`, `prerequisites`, `learning_outcomes`,
+  `mapped_skills`, and `assessment_criteria` header.
+- Added a repeatable standardizer and static schema test, plus prerequisite,
+  mapped-skill, and assessment-criteria storage in discovery and the API.
+- Competency mapping now uses authored `mapped_skills`, with the old
+  track/category heuristic retained as a fallback for legacy records.
+
 ## [2.5.3] - 2026-11-08
 
 ### Competency radar

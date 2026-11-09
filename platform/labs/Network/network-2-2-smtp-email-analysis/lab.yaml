@@ -1,20 +1,27 @@
-name: SMTP Email Content Analysis
-owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
-review_status: "automated static proof; live walkthrough pending"
-description: Investigate a data exfiltration incident by analyzing email traffic captured from MediCare's network. Extract sensitive information sent via unencrypted SMTP.
-difficulty: intermediate
+title: SMTP Email Content Analysis
 category: network-analysis
-duration_minutes: 60
-objectives:
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - network-2-1-ftp-credential-extraction
+learning_outcomes:
   - SSH into network analyst workstation
   - Analyze SMTP protocol traffic in Wireshark
   - Reconstruct email messages from packet captures
   - Extract email attachments and content
   - Understand email protocol security risks
-  - Capture the flag
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
 
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-08"
+review_status: "automated static proof; live walkthrough pending"
+description: Investigate a data exfiltration incident by analyzing email traffic captured from MediCare's network. Extract sensitive information sent via unencrypted SMTP.
 scenario: |
   You're investigating a potential data breach at MediCare Regional Hospital. The Data Loss
   Prevention (DLP) system flagged an outbound email containing suspicious keywords related

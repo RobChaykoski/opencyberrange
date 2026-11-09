@@ -1,4 +1,25 @@
-name: "Multi-Stage Attack Chain Analysis"
+title: Multi-Stage Attack Chain Analysis
+category: network-analysis
+difficulty: intermediate
+estimated_time: 90
+prerequisites:
+  - network-2-4-dns-exfiltration
+learning_outcomes:
+  - Understand the cyber attack kill chain and how attacks progress through stages
+  - Identify initial access vectors in network traffic
+  - Detect command and control (C2) communication patterns
+  - Track lateral movement between systems using SMB and RDP
+  - Recognize data exfiltration indicators in network traffic
+  - Extract indicators of compromise (IOCs) for threat intelligence
+  - Map attacks to the MITRE ATT&CK framework
+  - Create comprehensive attack timelines for incident response
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
@@ -6,13 +27,6 @@ review_status: "automated static proof; live walkthrough pending"
 description: |
   Analyze a complete cyber attack showing initial access, lateral movement, and data exfiltration.
   Learn to identify attack stages, extract indicators of compromise, and reconstruct attack timelines.
-
-objectives:
-  - Identify all stages of the attack from initial access through exfiltration
-  - Reconstruct a timeline of attacker activity
-  - Extract indicators of compromise from the captured traffic
-  - Map the observed activity to MITRE ATT&CK techniques
-  - Document evidence for the incident response team
 
 scenario: |
   Marcus Thompson, MediCare Health Systems' Security Analyst, has been called in to
@@ -197,10 +211,6 @@ hints:
 
       OR look at FTP commands for flag in filename or metadata.
 
-difficulty: intermediate
-category: network-analysis
-duration_minutes: 90
-
 connection:
   type: ssh
   credentials:
@@ -211,16 +221,6 @@ connection:
 files:
   - path: /home/analyst/captures/full-attack.pcap
     description: 5-hour network capture showing complete multi-stage attack
-
-learning_objectives:
-  - Understand the cyber attack kill chain and how attacks progress through stages
-  - Identify initial access vectors in network traffic
-  - Detect command and control (C2) communication patterns
-  - Track lateral movement between systems using SMB and RDP
-  - Recognize data exfiltration indicators in network traffic
-  - Extract indicators of compromise (IOCs) for threat intelligence
-  - Map attacks to the MITRE ATT&CK framework
-  - Create comprehensive attack timelines for incident response
 
 tags:
   - attack-chain

@@ -1,24 +1,30 @@
-name: "Indirect Prompt Injection"
+title: Indirect Prompt Injection
+category: ai
+difficulty: beginner
+estimated_time: 40
+prerequisites:
+  - ai-1-2-jailbreak-policy-bypass
+learning_outcomes:
+  - Explain how indirect prompt injection differs from direct injection
+  - Identify instructions embedded in untrusted content
+  - Trigger a summariser to act on attacker-controlled text
+mapped_skills:
+  - ai_security
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A ticket summariser trusts the text it is asked to read. A forwarded customer email contains hidden instructions that make the assistant disclose an internal escalation note."
-difficulty: beginner
-category: ai
-duration_minutes: 40
 visibility: public
 flag: "OCR{1nd1r3ct_pr0mpt_1nj3ct10n}"
 
 tools:
   - browser
   - curl
-
-objectives:
-  - Explain how indirect prompt injection differs from direct injection
-  - Identify instructions embedded in untrusted content
-  - Trigger a summariser to act on attacker-controlled text
-  - Capture the flag from the assistant response
 
 scenario: |
   TicketBot summarises inbound support tickets for a busy service desk. It is

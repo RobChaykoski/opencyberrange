@@ -1,13 +1,31 @@
-name: "Firewall Fundamentals - Controlling Inbound Traffic"
+title: Firewall Fundamentals - Controlling Inbound Traffic
+category: network
+difficulty: beginner
+estimated_time: 60
+prerequisites:
+  - network-2-1-ftp-credential-extraction
+  - network-2-2-smtp-email-analysis
+  - network-2-3-http-session-hijacking
+  - network-2-4-dns-exfiltration
+  - network-2-5-attack-chain-analysis
+learning_outcomes:
+  - Explain what a firewall does and why it is placed between network segments
+  - Identify the components of an iptables rule (chain, protocol, port, source, action)
+  - Observe live network traffic flowing through a firewall using a monitoring tool
+  - Write iptables FORWARD chain rules to allow specific traffic and block unwanted connections
+  - Verify firewall effectiveness by comparing traffic flow before and after rule application
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
 owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A third-party contractor's development server is sending suspicious traffic to your internal web server. SSH into the firewall, observe live traffic, and write iptables rules to allow only legitimate HTTP/HTTPS while blocking everything else."
 
-difficulty: beginner
-category: network
-duration_minutes: 60
 visibility: course
 week: 12
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
@@ -20,14 +38,6 @@ difficulty_evidence_reviewed_at: "2026-11-08"
 workbook: "wiki/range/netfor/CH_NETSY12_Firewalls/01_Firewall_Fundamentals/"
 
 flag: "OCR{tr4ff1c_c0ntr0ll3d}"
-
-objectives:
-  - Explain what a firewall does and why it is placed between network segments
-  - Identify the components of an iptables rule (chain, protocol, port, source, action)
-  - Observe live network traffic flowing through a firewall using a monitoring tool
-  - Write iptables FORWARD chain rules to allow specific traffic and block unwanted connections
-  - Verify firewall effectiveness by comparing traffic flow before and after rule application
-  - Capture the flag
 
 scenario: |
   Meridian Health Partners, a healthcare consulting firm in Dallas, hired Apex

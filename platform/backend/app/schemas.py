@@ -314,12 +314,18 @@ class UpdateLabRequest(SafeTextModel):
     is_course_available: Optional[bool] = None  # Deprecated — use visibility
     visibility: Optional[str] = None  # draft | course | pending_public | public
     level_id: Optional[int] = None  # Send explicit null to clear (uncategorize); omit key to leave unchanged
+    prerequisites: Optional[str] = None
+    mapped_skills: Optional[str] = None
+    assessment_criteria: Optional[str] = None
 
     __safe_text_fields__ = {
         "name": "short",
         "description": "multiline",
         "difficulty": "short",
         "category": "short",
+        "prerequisites": "multiline",
+        "mapped_skills": "multiline",
+        "assessment_criteria": "multiline",
     }
 
     @field_validator('visibility')
@@ -715,6 +721,9 @@ class LabCreate(SafeTextModel):
     level_id: Optional[int] = None
     compose_file: str = ""
     objectives: Optional[str] = None
+    prerequisites: Optional[str] = None
+    mapped_skills: Optional[str] = None
+    assessment_criteria: Optional[str] = None
     hints: Optional[str] = None
     tools: Optional[str] = None
     hostnames: Optional[str] = None
