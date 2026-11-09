@@ -15,6 +15,7 @@
             maxlength="500"
             placeholder="e.g. end-of-term teaching review"
           />
+          <small class="reports-reason__hint">Recorded in the audit log with the export.</small>
         </label>
         <button
           type="button"
@@ -68,6 +69,12 @@
             <b class="rag-dot rag-dot--green">{{ totals.rag_counts?.green || 0 }}</b>
           </div>
         </article>
+      </div>
+
+      <div class="rag-legend" aria-label="Cohort signal legend">
+        <span><i class="rag-swatch rag-swatch--red" aria-hidden="true"></i>Needs attention</span>
+        <span><i class="rag-swatch rag-swatch--amber" aria-hidden="true"></i>Watch</span>
+        <span><i class="rag-swatch rag-swatch--green" aria-hidden="true"></i>On track</span>
       </div>
 
       <p
@@ -644,6 +651,39 @@ onMounted(load)
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.6rem;
   margin-bottom: 1rem;
+}
+
+.rag-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin: -0.25rem 0 1.1rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.rag-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.rag-swatch {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.rag-swatch--red { background: var(--danger); }
+.rag-swatch--amber { background: var(--warning); }
+.rag-swatch--green { background: var(--success); }
+
+.reports-reason__hint {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
 }
 
 .reports-stat {

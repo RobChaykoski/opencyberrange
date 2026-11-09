@@ -4,13 +4,28 @@
       <!-- Header -->
       <div class="admin-header">
         <div>
-          <h1 class="page-title">Admin Panel</h1>
-          <p class="page-subtitle">Manage users, exercises, sessions, VPN peers, curriculum, settings, and reporting</p>
+          <h1 class="page-title">Administration</h1>
+          <p class="page-subtitle">{{ adminSummary }}</p>
         </div>
         <router-link to="/reports" class="btn btn--secondary btn--sm">
           Reports &amp; analytics
         </router-link>
       </div>
+
+      <nav class="admin-section-nav" aria-label="Admin sections">
+        <button
+          v-for="tab in adminTabs"
+          :key="tab.key"
+          type="button"
+          class="admin-section-nav__item"
+          :class="{ 'admin-section-nav__item--active': activeTab === tab.key }"
+          :aria-current="activeTab === tab.key ? 'page' : undefined"
+          @click="selectAdminTab(tab.key)"
+        >
+          {{ tab.label }}
+          <span v-if="tab.count" class="admin-section-nav__count">{{ tab.count }}</span>
+        </button>
+      </nav>
 
       <!-- Alert messages render through the shared global toast -->
       <Toast />
@@ -34,7 +49,16 @@
 
       <!-- Stats Cards -->
       <div class="stats-grid">
-        <div class="stat-card stat-card--health" :class="dashboardHealthClass ? `stat-card--health-${dashboardHealthClass}` : ''" @click="activeTab = 'system'; systemSubTab = 'health'" style="cursor: pointer;">
+        <div
+          class="stat-card stat-card--health"
+          :class="dashboardHealthClass ? `stat-card--health-${dashboardHealthClass}` : ''"
+          role="button"
+          tabindex="0"
+          :aria-label="`System health: ${dashboardHealthLabel}`"
+          @click="openHealth"
+          @keydown.enter.prevent="openHealth"
+          @keydown.space.prevent="openHealth"
+        >
           <div class="stat-card__icon stat-card__icon--health" :class="`stat-card__icon--health-${dashboardHealthClass || 'loading'}`">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -44,7 +68,11 @@
             <div class="health-card-indicators">
               <div class="health-card-row">
                 <span class="health-dot" :class="`health-dot--${dashboardHealthStatus === 'ok' ? 'green' : dashboardHealthStatus === 'warning' ? 'amber' : 'red'}`"></span>
-                <span class="health-card-label">System<InfoTip :text="dashboardHealthTip" /></span>
+                <span class="health-card-label">
+                  System
+                  <strong class="health-card-status" :class="dashboardHealthClass">{{ dashboardHealthLabel }}</strong>
+                  <InfoTip :text="dashboardHealthTip" />
+                </span>
               </div>
             </div>
           </div>
@@ -53,7 +81,17 @@
           </div>
         </div>
 
-        <div class="stat-card" :class="{ 'stat-card--alert': stats.pending_users > 0 }" @click="activeTab = 'pending'" style="cursor: pointer;" title="View pending approvals">
+        <div
+          class="stat-card"
+          :class="{ 'stat-card--alert': stats.pending_users > 0 }"
+          role="button"
+          tabindex="0"
+          aria-label="Review pending approvals"
+          title="View pending approvals"
+          @click="openPending"
+          @keydown.enter.prevent="openPending"
+          @keydown.space.prevent="openPending"
+        >
           <div class="stat-card__icon stat-card__icon--pending">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10"/>
@@ -67,7 +105,16 @@
           <span v-if="stats.pending_users > 0" class="stat-card__badge">{{ stats.pending_users }}</span>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card"
+          role="button"
+          tabindex="0"
+          aria-label="View locked accounts"
+          title="View locked accounts"
+          @click="openLockedUsers"
+          @keydown.enter.prevent="openLockedUsers"
+          @keydown.space.prevent="openLockedUsers"
+        >
           <div class="stat-card__icon stat-card__icon--locked">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -80,7 +127,16 @@
           </div>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card"
+          role="button"
+          tabindex="0"
+          aria-label="View active sessions"
+          title="View active sessions"
+          @click="openActiveLabs"
+          @keydown.enter.prevent="openActiveLabs"
+          @keydown.space.prevent="openActiveLabs"
+        >
           <div class="stat-card__icon stat-card__icon--active">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="5 3 19 12 5 21 5 3"/>
@@ -92,7 +148,16 @@
           </div>
         </div>
 
-        <div class="stat-card">
+        <div
+          class="stat-card"
+          role="button"
+          tabindex="0"
+          aria-label="View VPN peers"
+          title="View VPN peers"
+          @click="openVpnPeers"
+          @keydown.enter.prevent="openVpnPeers"
+          @keydown.space.prevent="openVpnPeers"
+        >
           <div class="stat-card__icon stat-card__icon--vpn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2L3 7V12C3 16.97 7.02 21.45 12 22C16.98 21.45 21 16.97 21 12V7L12 2Z"/>
@@ -102,6 +167,42 @@
             <span class="stat-card__value">{{ stats.vpn_registered }}</span>
             <span class="stat-card__label">VPN Peers<InfoTip text="Configured WireGuard peers — students with VPN access to the lab network." /></span>
           </div>
+        </div>
+      </div>
+
+      <div
+        v-if="statsLoaded"
+        class="admin-attention"
+        :class="{ 'admin-attention--clear': !attentionItems.length }"
+        role="status"
+      >
+        <div class="admin-attention__icon" aria-hidden="true">
+          <svg v-if="attentionItems.length" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>
+          </svg>
+        </div>
+        <div class="admin-attention__body">
+          <strong>
+            {{ attentionItems.length ? 'Needs attention' : (dashboardHealthLoaded ? 'You’re all caught up' : 'Checking system health') }}
+          </strong>
+          <p v-if="attentionItems.length">{{ attentionItems.map(item => item.label).join(' · ') }}</p>
+          <p v-else-if="!dashboardHealthLoaded">Waiting for the platform health check to finish.</p>
+          <p v-else>No pending approvals, locked accounts, or system warnings right now.</p>
+        </div>
+        <div v-if="attentionItems.length" class="admin-attention__actions">
+          <button
+            v-for="item in attentionItems"
+            :key="item.key"
+            type="button"
+            class="btn btn--secondary btn--sm"
+            @click="item.action"
+          >
+            {{ item.actionLabel }}
+          </button>
         </div>
       </div>
 
@@ -1572,8 +1673,17 @@
               :class="{ 'lab-tab--active': activeSettingsCategory === cat }"
             >
               {{ categoryLabel(cat) }}
+              <span
+                v-if="settingsDirtyByCategory[cat]"
+                class="lab-tab__dirty"
+                aria-label="Unsaved changes"
+                title="Unsaved changes"
+              ></span>
             </button>
           </div>
+          <p class="settings-scope">
+            These settings apply to this entire deployment. Categories with unsaved edits show a dot; the footer keeps Save and Discard visible.
+          </p>
           <!-- Custom Modules panel with save buttons -->
           <div v-if="activeSettingsCategory === 'modules'" class="settings-form">
             <div v-if="settingsLoading" class="empty-state">Loading settings...</div>
@@ -1855,7 +1965,7 @@
                 No settings in this category.
               </div>
             </template>
-            <div class="form-actions" style="margin-top: 1rem;">
+            <div class="form-actions form-actions--sticky">
               <button
                 v-if="activeSettingsCategory === 'email'"
                 type="button"
@@ -1865,8 +1975,23 @@
               >
                 {{ sendingTestMail ? 'Sending...' : 'Send test email' }}
               </button>
-              <button @click="saveSettings" class="btn btn--success" :disabled="savingSettings">
-                {{ savingSettings ? 'Saving...' : 'Save Settings' }}
+              <span class="settings-dirty-label" aria-live="polite">
+                {{ settingsDirty ? 'Unsaved changes' : 'No unsaved changes' }}
+              </span>
+              <button
+                type="button"
+                class="btn btn--outline"
+                :disabled="savingSettings || !settingsDirty"
+                @click="discardSettings"
+              >
+                Discard
+              </button>
+              <button
+                @click="saveSettings"
+                class="btn btn--success"
+                :disabled="savingSettings || !settingsDirty"
+              >
+                {{ savingSettings ? 'Saving...' : 'Save changes' }}
               </button>
             </div>
           </div>
@@ -3488,12 +3613,13 @@ import PrivacyText from '../components/PrivacyText.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import { useModules } from '../composables/useModules'
 import { usePrivacy } from '../composables/usePrivacy'
 
 const route = useRoute()
+const router = useRouter()
 const { privacyMode, maskUsername, maskEmail, togglePrivacy, setAdminPrivacyDefault } = usePrivacy()
 
 const legacyTabMap = { sessions: 'monitoring', vpn: 'monitoring', activity: 'monitoring', labs: 'exercises', curriculum: 'exercises', tester: 'system' }
@@ -3745,6 +3871,48 @@ watch(() => route.query.tab, (newTab) => {
   }
 })
 const stats = ref({ total_users: 0, pending_users: 0, locked_users: 0, active_labs: 0, vpn_registered: 0 })
+const statsLoaded = ref(false)
+
+const adminTabs = computed(() => [
+  { key: 'users', label: 'Users', count: stats.value.total_users || null },
+  { key: 'pending', label: 'Pending', count: stats.value.pending_users || null },
+  { key: 'courses', label: 'Courses', count: adminCourses.value.length || null },
+  { key: 'exercises', label: 'Exercises' },
+  { key: 'monitoring', label: 'Live activity', count: stats.value.active_labs || null },
+  { key: 'system', label: 'System' },
+  { key: 'settings', label: 'Settings' },
+])
+
+function selectAdminTab(tab) {
+  activeTab.value = tab
+  if (route.query.tab !== tab) {
+    router.replace({ query: { ...route.query, tab } })
+  }
+}
+
+function openHealth() {
+  selectAdminTab('system')
+  systemSubTab.value = 'health'
+}
+
+function openPending() {
+  selectAdminTab('pending')
+}
+
+function openLockedUsers() {
+  userStatusFilter.value = 'locked'
+  selectAdminTab('users')
+}
+
+function openActiveLabs() {
+  selectAdminTab('monitoring')
+  monitoringSubTab.value = 'sessions'
+}
+
+function openVpnPeers() {
+  selectAdminTab('monitoring')
+  monitoringSubTab.value = 'vpn'
+}
 const users = ref([])
 const pendingUsers = ref([])
 const userSearch = ref('')
@@ -4655,6 +4823,28 @@ const toggleSetting = async (key) => {
   }
 }
 
+const settingsDirty = computed(() =>
+  Object.entries(allSettings.value).some(([key, val]) =>
+    String(settingsEdits[key] ?? '') !== String(val.value ?? '')
+  )
+)
+
+const settingsDirtyByCategory = computed(() => {
+  const dirty = {}
+  for (const [key, val] of Object.entries(allSettings.value)) {
+    if (String(settingsEdits[key] ?? '') !== String(val.value ?? '')) {
+      dirty[val.category] = true
+    }
+  }
+  return dirty
+})
+
+const discardSettings = () => {
+  for (const [key, val] of Object.entries(allSettings.value)) {
+    settingsEdits[key] = val.value
+  }
+}
+
 const saveSettings = async () => {
   savingSettings.value = true
   try {
@@ -4663,6 +4853,9 @@ const saveSettings = async () => {
       if (val !== '••••••••') payload[key] = val
     }
     await axios.put('/settings/', { settings: payload })
+    for (const [key, val] of Object.entries(payload)) {
+      if (allSettings.value[key]) allSettings.value[key].value = val
+    }
     showAlert('Settings saved')
     if (activeSettingsCategory.value === 'labs') fetchRangeboxCapacity()
   } catch (e) {
@@ -4903,6 +5096,59 @@ const fetchDashboardHealth = async () => {
 const dashboardHealthClass = computed(() =>
   dashboardHealthStatus.value === 'ok' ? 'healthy' : dashboardHealthStatus.value
 )
+
+const dashboardHealthLabel = computed(() => {
+  if (!dashboardHealthLoaded.value) return 'Checking'
+  if (dashboardHealthStatus.value === 'ok') return 'Healthy'
+  if (dashboardHealthStatus.value === 'warning') return 'Warning'
+  return 'Critical'
+})
+
+const adminSummary = computed(() => {
+  if (!statsLoaded.value) return 'Loading today’s platform status…'
+  const parts = []
+  if (stats.value.pending_users) {
+    parts.push(`${stats.value.pending_users} approval${stats.value.pending_users === 1 ? '' : 's'} waiting`)
+  }
+  if (stats.value.locked_users) {
+    parts.push(`${stats.value.locked_users} locked account${stats.value.locked_users === 1 ? '' : 's'}`)
+  }
+  if (stats.value.active_labs) {
+    parts.push(`${stats.value.active_labs} active exercise${stats.value.active_labs === 1 ? '' : 's'}`)
+  }
+  return parts.length
+    ? parts.join(' · ')
+    : 'No pending approvals or locked accounts need attention right now.'
+})
+
+const attentionItems = computed(() => {
+  const items = []
+  if (stats.value.pending_users) {
+    items.push({
+      key: 'pending',
+      label: `${stats.value.pending_users} pending approval${stats.value.pending_users === 1 ? '' : 's'}`,
+      actionLabel: 'Review approvals',
+      action: openPending,
+    })
+  }
+  if (stats.value.locked_users) {
+    items.push({
+      key: 'locked',
+      label: `${stats.value.locked_users} locked account${stats.value.locked_users === 1 ? '' : 's'}`,
+      actionLabel: 'View locked',
+      action: openLockedUsers,
+    })
+  }
+  if (dashboardHealthLoaded.value && dashboardHealthStatus.value && dashboardHealthStatus.value !== 'ok') {
+    items.push({
+      key: 'health',
+      label: `System health: ${dashboardHealthLabel.value}`,
+      actionLabel: 'Check health',
+      action: openHealth,
+    })
+  }
+  return items
+})
 
 // Tooltip mirrors the live checks: when anything is amber or red it names the
 // exact item and its plain-language detail, so the dot never alarms without
@@ -6053,6 +6299,7 @@ const fetchAll = async () => {
       axios.get('/admin/vpn/status').catch(() => ({ data: { registered_count: 0, unregistered_count: 0, registered: [], unregistered: [] } }))
     ])
     stats.value = statsRes.data
+    statsLoaded.value = true
     users.value = usersRes.data
     syncNewRegistrationsFromUsers()
     pendingUsers.value = sortPendingUsers(pendingRes.data)
@@ -6106,6 +6353,7 @@ const pollNewRegistrations = async () => {
     const pendingIncreased = (nextStats.pending_users || 0) > (stats.value.pending_users || 0)
     if (!totalIncreased && !pendingIncreased) {
       stats.value = nextStats
+      statsLoaded.value = true
       return
     }
 
@@ -6118,6 +6366,7 @@ const pollNewRegistrations = async () => {
     users.value = usersRes.data
     pendingUsers.value = sortPendingUsers(pendingRes.data)
     stats.value = nextStats
+    statsLoaded.value = true
 
     syncNewRegistrationsFromUsers()
 
@@ -7709,6 +7958,116 @@ watch(activeTab, (tab) => {
   margin: 0;
 }
 
+/* Persistent section navigation: the sidebar is global; this keeps the
+   current admin job visible when the sidebar is collapsed or mobile. */
+.admin-section-nav {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  margin: 0 0 1.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-primary);
+}
+
+.admin-section-nav__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  padding: 0.6rem 0.8rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.admin-section-nav__item:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.admin-section-nav__item--active {
+  color: var(--accent-text);
+  border-bottom-color: var(--accent);
+}
+
+.admin-section-nav__item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.admin-section-nav__count {
+  min-width: 1.25rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.admin-attention {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--border-color));
+  border-left: 3px solid var(--warning);
+  border-radius: 10px;
+  background: var(--warning-bg);
+}
+
+.admin-attention--clear {
+  border-color: color-mix(in srgb, var(--success) 35%, var(--border-color));
+  border-left-color: var(--success);
+  background: var(--success-bg);
+}
+
+.admin-attention__icon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--warning);
+}
+
+.admin-attention--clear .admin-attention__icon svg {
+  color: var(--success);
+}
+
+.admin-attention__body {
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-attention__body strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.admin-attention__body p {
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.admin-attention__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
 /* Scan Warnings */
 .scan-warnings {
   background: rgba(234, 179, 8, 0.1);
@@ -7817,11 +8176,36 @@ watch(activeTab, (tab) => {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+.stat-card[role="button"] {
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.stat-card[role="button"]:hover {
+  border-color: var(--accent);
+}
+
+.stat-card[role="button"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .stat-card--alert {
   border-color: #f59e0b;
   box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3);
   animation: pending-pulse 2s ease-in-out infinite;
 }
+
+.health-card-status {
+  margin-left: 0.25rem;
+  font-weight: 700;
+}
+
+.health-card-status.healthy { color: var(--success); }
+.health-card-status.warning { color: var(--warning); }
+.health-card-status.error { color: var(--danger); }
 
 .stat-card--alert:hover {
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5);
@@ -8107,6 +8491,52 @@ watch(activeTab, (tab) => {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.form-actions--sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 0.85rem 0 0;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.settings-dirty-label {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.settings-scope {
+  max-width: 70ch;
+  margin: -0.75rem 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .admin-section-nav {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-attention {
+    flex-direction: column;
+  }
+
+  .admin-attention__actions {
+    margin-left: 0;
+  }
+
+  .settings-dirty-label {
+    width: 100%;
+    margin-left: 0;
+  }
 }
 
 .checkbox-label {
@@ -8450,6 +8880,7 @@ watch(activeTab, (tab) => {
 }
 
 .lab-tab {
+  position: relative;
   padding: 0.75rem 1.5rem;
   background: transparent;
   border: none;
@@ -8469,6 +8900,16 @@ watch(activeTab, (tab) => {
 .lab-tab--active {
   color: var(--primary);
   border-bottom-color: var(--primary);
+}
+
+.lab-tab__dirty {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--warning);
 }
 
 .labs-toolbar {

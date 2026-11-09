@@ -53,7 +53,7 @@
       <!-- OPS CENTER -->
       <div class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Ops Center</span>
-        <router-link to="/dashboard" class="nav-item" :class="{ 'nav-item--active': isActive('/dashboard') }">
+        <router-link to="/dashboard" aria-label="Dashboard" title="Dashboard" class="nav-item" :class="{ 'nav-item--active': isActive('/dashboard') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <rect x="3" y="3" width="7" height="7"/>
             <rect x="14" y="3" width="7" height="7"/>
@@ -62,7 +62,7 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Dashboard</span>
         </router-link>
-        <router-link to="/rangebox" class="nav-item" :class="{ 'nav-item--active': isActive('/rangebox') }">
+        <router-link to="/rangebox" aria-label="RangeBox" title="RangeBox" class="nav-item" :class="{ 'nav-item--active': isActive('/rangebox') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
             <line x1="8" y1="21" x2="16" y2="21"/>
@@ -70,7 +70,7 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">RangeBox</span>
         </router-link>
-        <router-link to="/celebrations" class="nav-item" :class="{ 'nav-item--active': isActive('/celebrations') }">
+        <router-link to="/celebrations" aria-label="Celebration Wall" title="Celebration Wall" class="nav-item" :class="{ 'nav-item--active': isActive('/celebrations') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M8 21h8"/>
             <path d="M12 17v4"/>
@@ -80,7 +80,7 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Celebration Wall</span>
         </router-link>
-        <router-link to="/events" class="nav-item" :class="{ 'nav-item--active': isActive('/events') || isActive('/competitions') }">
+        <router-link to="/events" aria-label="Events" title="Events" class="nav-item" :class="{ 'nav-item--active': isActive('/events') || isActive('/competitions') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M8 21h8"/>
             <path d="M12 17v4"/>
@@ -90,7 +90,7 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Events</span>
         </router-link>
-        <router-link to="/vpn-setup" data-tour="nav-vpn" class="nav-item" :class="{ 'nav-item--active': isActive('/vpn-setup') }">
+        <router-link to="/vpn-setup" aria-label="VPN Setup" title="VPN Setup" data-tour="nav-vpn" class="nav-item" :class="{ 'nav-item--active': isActive('/vpn-setup') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M12 2L3 7V12C3 16.97 7.02 21.45 12 22C16.98 21.45 21 16.97 21 12V7L12 2Z"/>
           </svg>
@@ -101,14 +101,14 @@
       <!-- ACADEMY -->
       <div class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Academy</span>
-        <router-link to="/courses" class="nav-item" :class="{ 'nav-item--active': isActive('/courses') }">
+        <router-link to="/courses" aria-label="Courses" title="Courses" class="nav-item" :class="{ 'nav-item--active': isActive('/courses') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Courses</span>
         </router-link>
-        <router-link to="/exercises" data-tour="nav-exercises" class="nav-item" :class="{ 'nav-item--active': isActive('/exercises') }">
+        <router-link to="/exercises" aria-label="Exercises" title="Exercises" data-tour="nav-exercises" class="nav-item" :class="{ 'nav-item--active': isActive('/exercises') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20V22H6.5A2.5 2.5 0 0 1 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2Z"/>
@@ -121,27 +121,27 @@
       <!-- INSTRUCTOR (instructor + admin) -->
       <div v-if="showInstructor" class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Instructor</span>
-        <router-link to="/instructor?tab=courses" class="nav-item" :class="{ 'nav-item--active': isInstructorTab('courses') }">
+        <router-link to="/instructor?tab=courses" aria-label="My Courses" title="My Courses" class="nav-item" :class="{ 'nav-item--active': isInstructorTab('courses') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">My Courses</span>
         </router-link>
-        <router-link to="/instructor?tab=labs" class="nav-item" :class="{ 'nav-item--active': isInstructorTab('labs') }">
+        <router-link to="/instructor?tab=labs" aria-label="My Exercises" title="My Exercises" class="nav-item" :class="{ 'nav-item--active': isInstructorTab('labs') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
           </svg>
-          <span v-show="!collapsed" class="nav-item__label">Exercises</span>
+          <span v-show="!collapsed" class="nav-item__label">My Exercises</span>
         </router-link>
-        <router-link v-if="!showAdmin" to="/reports" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
+        <router-link v-if="!showAdmin" to="/reports" aria-label="Reports and analytics" title="Reports and analytics" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M3 3v18h18"/>
             <path d="M7 15l4-4 3 3 5-6"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Reports &amp; analytics</span>
         </router-link>
-        <router-link to="/surveys" class="nav-item" :class="{ 'nav-item--active': isActive('/surveys') }">
+        <router-link to="/surveys" aria-label="Surveys" title="Surveys" class="nav-item" :class="{ 'nav-item--active': isActive('/surveys') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
             <rect x="9" y="3" width="6" height="4" rx="1"/>
@@ -154,61 +154,65 @@
       <!-- ADMIN (admin only) -->
       <div v-if="showAdmin" class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Admin</span>
-        <router-link to="/admin?tab=users" class="nav-item" :class="{ 'nav-item--active': isAdminTab('users') || isAdminTab('pending') }">
+        <router-link to="/admin?tab=users" aria-label="Users" title="Users" class="nav-item" :class="{ 'nav-item--active': isAdminTab('users') || isAdminTab('pending') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M17 21V19C17 17.9 16.1 17 15 17H9C7.9 17 7 17.9 7 19V21"/>
             <circle cx="12" cy="11" r="4"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Users</span>
         </router-link>
-        <router-link to="/admin?tab=courses" class="nav-item" :class="{ 'nav-item--active': isAdminTab('courses') }">
+        <router-link to="/admin?tab=courses" aria-label="All courses" title="All courses" class="nav-item" :class="{ 'nav-item--active': isAdminTab('courses') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
           </svg>
-          <span v-show="!collapsed" class="nav-item__label">Courses</span>
+          <span v-show="!collapsed" class="nav-item__label">All courses</span>
         </router-link>
-        <router-link to="/admin?tab=exercises" class="nav-item" :class="{ 'nav-item--active': isAdminTab('exercises') }">
+        <router-link to="/admin?tab=exercises" aria-label="All exercises" title="All exercises" class="nav-item" :class="{ 'nav-item--active': isAdminTab('exercises') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
           </svg>
-          <span v-show="!collapsed" class="nav-item__label">Exercises</span>
+          <span v-show="!collapsed" class="nav-item__label">All exercises</span>
         </router-link>
-        <router-link to="/admin?tab=monitoring" class="nav-item" :class="{ 'nav-item--active': isAdminTab('monitoring') }">
+        <router-link to="/admin?tab=monitoring" aria-label="Live activity" title="Live activity" class="nav-item" :class="{ 'nav-item--active': isAdminTab('monitoring') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Live activity</span>
         </router-link>
-        <router-link to="/reports" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
+        <router-link to="/reports" aria-label="Reports and analytics" title="Reports and analytics" class="nav-item" :class="{ 'nav-item--active': isActive('/reports') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M3 3v18h18"/>
             <path d="M7 15l4-4 3 3 5-6"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Reports &amp; analytics</span>
         </router-link>
-        <router-link to="/admin?tab=system" class="nav-item" :class="{ 'nav-item--active': isAdminTab('system') }">
+        <router-link to="/admin?tab=system" aria-label="System" title="System" class="nav-item" :class="{ 'nav-item--active': isAdminTab('system') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <rect x="2" y="3" width="20" height="14" rx="2"/>
             <path d="M8 21h8M12 17v4"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">System</span>
         </router-link>
-        <router-link to="/admin?tab=settings" class="nav-item" :class="{ 'nav-item--active': isAdminTab('settings') }">
+        <router-link to="/admin?tab=settings" aria-label="Settings" title="Settings" class="nav-item" :class="{ 'nav-item--active': isAdminTab('settings') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Settings</span>
         </router-link>
-        <router-link to="/workbooks" class="nav-item">
+      </div>
+
+      <div v-if="showAdmin" class="nav-section">
+        <span v-show="!collapsed" class="nav-section__label">Resources</span>
+        <router-link to="/workbooks" aria-label="Workbooks" title="Workbooks" class="nav-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Workbooks</span>
         </router-link>
-        <a href="/wiki/reference/manual/" target="_blank" rel="noopener" class="nav-item" @click="setWikiAuthCookie">
+        <a href="/wiki/reference/manual/" aria-label="User Manual" title="User Manual" target="_blank" rel="noopener" class="nav-item" @click="setWikiAuthCookie">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
@@ -246,7 +250,7 @@
         </svg>
         <span class="tour-btn__label">Take the tour</span>
       </button>
-      <router-link to="/profile" class="nav-item nav-item--user" :class="{ 'nav-item--active': isActive('/profile') }">
+      <router-link to="/profile" aria-label="Profile" title="Profile" class="nav-item nav-item--user" :class="{ 'nav-item--active': isActive('/profile') }">
         <div class="user-avatar">{{ userInitial }}</div>
         <span v-show="!collapsed" class="nav-item__label">{{ formattedUsername }}</span>
       </router-link>

@@ -134,8 +134,8 @@
           </div>
 
           <div class="sub-tabs">
-            <button @click="courseManageTab = 'students'" :class="['sub-tab', { active: courseManageTab === 'students' }]">Students</button>
-            <button @click="courseManageTab = 'exercises'" :class="['sub-tab', { active: courseManageTab === 'exercises' }]">Exercises</button>
+            <button @click="courseManageTab = 'students'" :class="['sub-tab', { active: courseManageTab === 'students' }]">Students ({{ courseStudents.length }})</button>
+            <button @click="courseManageTab = 'exercises'" :class="['sub-tab', { active: courseManageTab === 'exercises' }]">Exercises ({{ courseLabs.length }})</button>
             <button @click="switchToAssignments" :class="['sub-tab', { active: courseManageTab === 'assignments' }]">Assignments ({{ courseAssignments.length }})</button>
             <button @click="courseManageTab = 'reports'" :class="['sub-tab', { active: courseManageTab === 'reports' }]">Reports</button>
             <button @click="courseManageTab = 'settings'" :class="['sub-tab', { active: courseManageTab === 'settings' }]">Settings</button>
