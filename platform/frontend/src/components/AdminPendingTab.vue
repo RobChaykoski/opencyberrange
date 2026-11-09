@@ -5,7 +5,8 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="empty-icon">
         <polyline points="20 6 9 17 4 12"/>
       </svg>
-      <p>No pending users</p>
+      <p><strong>You’re all caught up</strong></p>
+      <p>No registrations are waiting for approval.</p>
     </div>
     <div v-else class="pending-list">
       <div v-for="user in users" :key="user.id" class="pending-item">
