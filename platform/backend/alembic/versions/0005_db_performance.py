@@ -56,23 +56,12 @@ def _table_names() -> set[str]:
     return set(sa.inspect(op.get_bind()).get_table_names())
 
 
-def _create_index(name: str, table: str, column: str, postgres: bool) -> None:
-    statement = (
-        f"CREATE INDEX IF NOT EXISTS {name} ON {table} ({column})"
-    )
-    if not postgres:
-        op.execute(statement)
-        return
-    # CREATE INDEX CONCURRENTLY avoids blocking writes on a live database.
-    # Autocommit is required because PostgreSQL forbids it inside a transaction.
-    with op.get_context().autocommit_block():
-        op.execute(
-            statement.replace(
-                "CREATE INDEX IF NOT EXISTS",
-                "CREATE INDEX CONCURRENTLY IF NOT EXISTS",
-                1,
-            )
-        )
+def _create_index(name: str, table: str, column: str) -> None:
+    # The platform tables are small enough that a transactional index build is
+    # brief. If this migration is ever applied to a much larger deployment,
+    # build the indexes manually with CREATE INDEX CONCURRENTLY first; the
+    # IF NOT EXISTS clause will then skip them here.
+    op.execute(f"CREATE INDEX IF NOT EXISTS {name} ON {table} ({column})")
 
 
 def upgrade() -> None:
@@ -87,7 +76,7 @@ def upgrade() -> None:
 
     for name, table, column in _INDEXES:
         if table in tables:
-            _create_index(name, table, column, postgres)
+            _create_index(name, table, column)
 
     if postgres:
         for table in _AUTOVACUUM_TABLES:

@@ -11,7 +11,7 @@ from app.database import Base
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     student_id = Column(String(20), unique=True, index=True, nullable=True)
@@ -159,7 +159,7 @@ class Track(Base):
     """Learning tracks (Windows, Linux, Web, Network)"""
     __tablename__ = "tracks"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     slug = Column(String(150), unique=True, index=True, nullable=False)
     description = Column(Text)
@@ -178,7 +178,7 @@ class Level(Base):
     """Levels within tracks"""
     __tablename__ = "levels"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     track_id = Column(Integer, ForeignKey("tracks.id"), nullable=False)
     level_number = Column(Integer, nullable=False)
     name = Column(String(100), nullable=False)
@@ -197,7 +197,7 @@ class Level(Base):
 class Lab(Base):
     __tablename__ = "labs"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     slug = Column(String(150), unique=True, index=True, nullable=False)
     description = Column(Text)
@@ -267,7 +267,7 @@ class LevelQuiz(Base):
     """Optional 20-question quiz attached to a level."""
     __tablename__ = "level_quizzes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     level_id = Column(Integer, ForeignKey("levels.id", ondelete="CASCADE"), nullable=False, unique=True)
     title = Column(String(120), nullable=False, default="Level Quiz")
     passing_score = Column(Integer, nullable=False, default=70)
@@ -282,7 +282,7 @@ class QuizQuestion(Base):
     """A single multiple-choice question for a level quiz."""
     __tablename__ = "quiz_questions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     quiz_id = Column(Integer, ForeignKey("level_quizzes.id", ondelete="CASCADE"), nullable=False)
     sort_order = Column(Integer, default=0)
     question = Column(Text, nullable=False)
@@ -299,7 +299,7 @@ class QuizAttempt(Base):
     """A student's attempt at a level quiz."""
     __tablename__ = "quiz_attempts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     quiz_id = Column(Integer, ForeignKey("level_quizzes.id", ondelete="CASCADE"), nullable=False, index=True)
     score = Column(Integer, nullable=False)  # percentage 0-100
@@ -317,7 +317,7 @@ class QuizAttempt(Base):
 class LabSession(Base):
     __tablename__ = "lab_sessions"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
     network_id = Column(String(100))
@@ -350,7 +350,7 @@ class LabCompletion(Base):
     """Track user lab completions"""
     __tablename__ = "lab_completions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
     completed_at = Column(DateTime, server_default=func.now())
@@ -382,7 +382,7 @@ class ExercisePulseSurvey(Base):
     """
     __tablename__ = "exercise_pulse_surveys"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=True)
@@ -415,7 +415,7 @@ class ExerciseReaction(Base):
     """
     __tablename__ = "exercise_reactions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True)
@@ -437,7 +437,7 @@ class Survey(Base):
     """Instructor-created survey attached to one or more courses."""
     __tablename__ = "surveys"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
     # JSON array of {prompt, type, options} question definitions.
@@ -456,7 +456,7 @@ class Survey(Base):
 class SurveyAttachment(Base):
     __tablename__ = "survey_attachments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     survey_id = Column(Integer, ForeignKey("surveys.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
@@ -472,7 +472,7 @@ class SurveyAttachment(Base):
 class SurveyResponse(Base):
     __tablename__ = "survey_responses"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     survey_id = Column(Integer, ForeignKey("surveys.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
@@ -499,7 +499,7 @@ class CourseFeedback(Base):
     """
     __tablename__ = "course_feedback"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
     author_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     subject_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
@@ -531,7 +531,7 @@ class ExerciseQuizAttempt(Base):
     """
     __tablename__ = "exercise_quiz_attempts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True, index=True)
@@ -564,7 +564,7 @@ class ExerciseQuizFeedback(Base):
     """
     __tablename__ = "exercise_quiz_feedback"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True, index=True)
@@ -588,7 +588,7 @@ class ExerciseQuizFeedback(Base):
 class FlagAttempt(Base):
     """Log all flag submission attempts"""
     __tablename__ = "flag_attempts"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
     flag_submitted = Column(String(100))
@@ -607,7 +607,7 @@ class FlagAttempt(Base):
 class WireGuardConfig(Base):
     __tablename__ = "wireguard_configs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
     private_key = Column(String(256), nullable=False)  # Fernet-encrypted keys can be ~128 chars
     public_key = Column(String(100), nullable=False)
@@ -651,7 +651,7 @@ class Course(Base):
     """A class/course offering with assigned labs and enrolled students"""
     __tablename__ = "courses"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(150), nullable=False)
     code = Column(String(20), nullable=False)
     semester = Column(String(20), nullable=False)
@@ -678,7 +678,7 @@ class CourseEnrollment(Base):
     """Links students to courses"""
     __tablename__ = "course_enrollments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     enrolled_at = Column(DateTime, server_default=func.now())
@@ -705,7 +705,7 @@ class CourseLabAssignment(Base):
     """Labs assigned to a course"""
     __tablename__ = "course_lab_assignments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True)
     sort_order = Column(Integer, default=0)
@@ -730,7 +730,7 @@ class Achievement(Base):
     """
     __tablename__ = "achievements"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=True, index=True)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=True, index=True)
@@ -757,7 +757,7 @@ class AchievementCelebration(Base):
     """
     __tablename__ = "achievement_celebrations"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     achievement_id = Column(
         Integer,
         ForeignKey("achievements.id", ondelete="CASCADE"),
@@ -798,7 +798,7 @@ class DataIntegrityLedger(Base):
     """
     __tablename__ = "data_integrity_ledger"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     occurred_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     table_name = Column(String(64), nullable=False)
     row_pk = Column(String(128), nullable=False)
@@ -820,7 +820,7 @@ class CustomAchievement(Base):
     """
     __tablename__ = "custom_achievements"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(80), nullable=False)
     description = Column(Text, nullable=True)
     icon = Column(String(16), nullable=False, default="\U0001F3C5")
@@ -834,7 +834,7 @@ class Competition(Base):
     """An opt-in, time-boxed special event using a selected set of labs."""
     __tablename__ = "competitions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
     # Optional event mark shown on the competition list and detail header.
@@ -867,7 +867,7 @@ class CompetitionSponsor(Base):
     """A Gold, Silver, or Bronze sponsor shown with a competition."""
     __tablename__ = "competition_sponsors"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     competition_id = Column(
         Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
     )
@@ -889,7 +889,7 @@ class CompetitionLab(Base):
     """A lab included in a competition."""
     __tablename__ = "competition_labs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     competition_id = Column(
         Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
     )
@@ -908,7 +908,7 @@ class CompetitionParticipant(Base):
     """Explicit opt-in for a competition leaderboard."""
     __tablename__ = "competition_participants"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     competition_id = Column(
         Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False
     )
@@ -936,7 +936,7 @@ class CourseCompletionReset(Base):
     Does NOT delete LabCompletion — just marks it stale for this course."""
     __tablename__ = "course_completion_resets"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
@@ -952,7 +952,7 @@ class Assignment(Base):
     """Named grouping of labs within a course, with optional due date"""
     __tablename__ = "assignments"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
@@ -970,7 +970,7 @@ class AssignmentLab(Base):
     """Links labs to assignments (labs must also be assigned to the course)"""
     __tablename__ = "assignment_labs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     assignment_id = Column(Integer, ForeignKey("assignments.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False)
     sort_order = Column(Integer, default=0)
@@ -988,7 +988,7 @@ class PlatformSetting(Base):
     Replaces hardcoded .env values with web-editable configuration."""
     __tablename__ = "platform_settings"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     key = Column(String(100), unique=True, index=True, nullable=False)
     value = Column(Text, nullable=True)
     category = Column(String(50), default="general")  # general, security, vpn, labs, appearance
@@ -1001,7 +1001,7 @@ class ActivityEvent(Base):
     """Polymorphic event log for dashboard feeds and analytics."""
     __tablename__ = "activity_events"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     event_type = Column(String(50), nullable=False, index=True)
     actor_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     target_type = Column(String(30), nullable=True)
@@ -1018,7 +1018,7 @@ class ExerciseTestResult(Base):
     """Persisted exercise-test result — one row per lab_slug (latest replaces older)."""
     __tablename__ = "exercise_test_results"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     lab_slug = Column(String(100), unique=True, nullable=False, index=True)
     lab_name = Column(String(200), nullable=False)
     track = Column(String(100), nullable=True)
@@ -1065,7 +1065,7 @@ class ExerciseTemplate(Base):
     """
     __tablename__ = "exercise_templates"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     slug = Column(String(150), unique=True, index=True, nullable=False)
     name = Column(String(200), nullable=False)
     klass = Column(String(20), nullable=False)        # ephemeral
@@ -1109,7 +1109,7 @@ class TemplateInstance(Base):
     """
     __tablename__ = "template_instances"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     template_id = Column(Integer, ForeignKey("exercise_templates.id"), nullable=False)
     template_version = Column(Integer, nullable=False)  # which template version was cloned
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)  # nullable for standalone
@@ -1155,7 +1155,7 @@ class StudioPendingReview(Base):
     """
     __tablename__ = "studio_pending_review"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     instance_id = Column(Integer, ForeignKey("template_instances.id"), nullable=False, unique=True)
     instructor_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)
@@ -1220,7 +1220,7 @@ class InstructorApiKey(Base):
     """
     __tablename__ = "instructor_api_keys"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     instructor_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     provider = Column(String(30), default="custom", nullable=False)  # a custom or self-hosted provider
     label = Column(String(120), nullable=True)
@@ -1242,7 +1242,7 @@ class ExerciseGenJob(Base):
     """
     __tablename__ = "exercise_gen_jobs"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     instructor_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)
     input_syllabus = Column(Text, nullable=True)
@@ -1279,7 +1279,7 @@ class ExerciseGenItem(Base):
     """
     __tablename__ = "exercise_gen_items"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     job_id = Column(Integer, ForeignKey("exercise_gen_jobs.id", ondelete="CASCADE"), nullable=False)
     title = Column(String(200), nullable=True)
     technique = Column(String(255), nullable=True)
@@ -1318,7 +1318,7 @@ class SurveyConsentEvent(Base):
 
     __tablename__ = "survey_consent_events"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer,
         ForeignKey("users.id", ondelete="CASCADE"),
