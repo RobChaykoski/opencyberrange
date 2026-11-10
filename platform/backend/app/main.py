@@ -303,7 +303,7 @@ async def lifespan(app: FastAPI):
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'certificates_public' not in users_columns:
             conn.execute(text(
-                "ALTER TABLE users ADD COLUMN certificates_public "
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates_public "
                 "BOOLEAN DEFAULT TRUE NOT NULL"
             ))
             conn.commit()
@@ -312,7 +312,7 @@ async def lifespan(app: FastAPI):
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'is_minor' not in users_columns:
             conn.execute(text(
-                "ALTER TABLE users ADD COLUMN is_minor "
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_minor "
                 "BOOLEAN DEFAULT FALSE NOT NULL"
             ))
             conn.commit()
