@@ -13,7 +13,7 @@
           and is written to align with Canada's Personal Information Protection
           and Electronic Documents Act (PIPEDA).
         </p>
-        <p class="privacy-card__meta">Effective 8 November 2026</p>
+        <p class="privacy-card__meta">Effective 10 November 2026</p>
       </header>
 
       <section>
@@ -94,6 +94,92 @@
           advertising, and we do not use optional survey or research data for
           purposes that were not disclosed when consent was collected.
         </p>
+      </section>
+
+      <section>
+        <h2>Our privacy practices</h2>
+        <p>We apply these practices across the platform:</p>
+        <ul>
+          <li>
+            <strong>Privacy by design and by default.</strong> Optional
+            feedback, surveys, and research are off until the learner opts in.
+            Course and exercise analytics are suppressed below the configured
+            minimum cohort (default 5 learners), and the interface shows
+            "Suppressed" or "No evidence" instead of a misleading zero. Public
+            rankings are not used, and celebrations are voluntary and anonymous.
+          </li>
+          <li>
+            <strong>Data minimisation and purpose limitation.</strong> We collect
+            the account, learning, security, VPN, and support data needed to run
+            the training service. We do not collect keystrokes, screen
+            recordings, or browsing history outside the platform. We do not sell
+            personal information or use it for advertising, and optional data is
+            used only for the purpose disclosed at collection.
+          </li>
+          <li>
+            <strong>Least-privilege access.</strong> Learners see their own
+            records. Instructors see the courses they own or are authorised to
+            support. Administrative access is restricted and audited, and
+            exports require a recorded reason.
+          </li>
+          <li>
+            <strong>Separate identity from analytics.</strong> Class-level
+            analytics and reports use counts, medians, and minimum-cohort
+            suppression. Individual records are available only to the learner
+            and authorised instructors, and reports are designed for a stated
+            teaching decision rather than ranking.
+          </li>
+          <li>
+            <strong>Retention and deletion.</strong> Account deletion removes
+            identity, credential, VPN, learning, survey, and session data,
+            anonymises activity events, and keeps a keyed suppression hash so a
+            restore cannot resurrect the account. Backups default to 30 days,
+            and audit and activity records are kept for a short documented
+            period. Instructor deletion is blocked until owned courses are
+            transferred.
+          </li>
+          <li>
+            <strong>Security safeguards.</strong> We use Argon2id password
+            hashing, optional MFA, session revocation, role-based authorization,
+            encrypted transport, encrypted WireGuard key storage, isolated
+            per-lab networks, audit logging, restricted administrative access,
+            and access-controlled backup handling. No system is perfectly
+            secure.
+          </li>
+          <li>
+            <strong>Operational logging.</strong> We record sign-in, security,
+            export, and administrative events, including IP addresses and
+            account identifiers where needed for security and audit. We do not
+            use advertising trackers or third-party behavioural analytics. Logs
+            are restricted and retained for a documented period.
+          </li>
+          <li>
+            <strong>Vendors and transfers.</strong> Hosting, network, and
+            support providers process personal information only under
+            confidentiality and security obligations. Where information is
+            processed outside Canada, we take reasonable steps to provide
+            comparable protection. Operators should document their hosting
+            location and subprocessors.
+          </li>
+          <li>
+            <strong>Requests and complaints.</strong> Learners can export or
+            delete their account from
+            <strong>Profile &rarr; Privacy and data</strong>. Access,
+            correction, consent withdrawal, and other requests go to
+            <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>. We verify
+            identity, respond within a reasonable time, and escalate unresolved
+            concerns to the Office of the Privacy Commissioner of Canada where
+            required.
+          </li>
+          <li>
+            <strong>Accountability and assessment.</strong> The SWOCTS Privacy
+            Officer is accountable for these practices. Staff with access receive
+            privacy and security guidance. Institutional operators should
+            complete a privacy impact assessment, document the lawful basis, and
+            review retention, consent, and minors' requirements before
+            deployment.
+          </li>
+        </ul>
       </section>
 
       <section>
@@ -187,6 +273,29 @@
           statement, not legal advice. Operators should review it with their
           privacy office and adjust retention, consent, and contact details to
           match the deployment.
+        </p>
+      </section>
+
+      <section>
+        <h2>Learners under 18</h2>
+        <p>
+          Where the platform is used in a high-school or youth programme, the
+          institution or programme operator is responsible for obtaining any
+          required parent or guardian consent and for limiting collection to what
+          the programme needs. Learners under 18 should not be included in
+          optional research, public showcases, or external reporting without the
+          required consent.
+        </p>
+      </section>
+
+      <section>
+        <h2>Suspected privacy incidents</h2>
+        <p>
+          Report suspected privacy or security incidents to
+          <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>. We will
+          contain and assess the incident, preserve the relevant evidence,
+          notify the institution and affected individuals, and notify regulators
+          where required by law.
         </p>
       </section>
 

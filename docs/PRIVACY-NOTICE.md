@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range privacy notice
 
-**Effective 8 November 2026**
+**Effective 10 November 2026**
 
 This notice explains how the SWOCTS Cyber Range handles personal information.
 It supplements the [SWOCTS Privacy Policy](https://www.swocts.com/privacy) and
@@ -62,6 +62,59 @@ We collect only the information needed for the purposes below.
 We do not sell personal information. We do not use learner data for advertising,
 and we do not use optional survey or research data for purposes that were not
 disclosed when consent was collected.
+
+## Our privacy practices
+
+We apply these practices across the platform:
+
+- **Privacy by design and by default.** Optional feedback, surveys, and research
+  are off until the learner opts in. Course and exercise analytics are
+  suppressed below the configured minimum cohort (default 5 learners), and the
+  interface shows "Suppressed" or "No evidence" instead of a misleading zero.
+  Public rankings are not used, and celebrations are voluntary and anonymous.
+- **Data minimisation and purpose limitation.** We collect the account,
+  learning, security, VPN, and support data needed to run the training service.
+  We do not collect keystrokes, screen recordings, or browsing history outside
+  the platform. We do not sell personal information or use it for advertising,
+  and optional data is used only for the purpose disclosed at collection.
+- **Least-privilege access.** Learners see their own records. Instructors see
+  the courses they own or are authorised to support. Administrative access is
+  restricted and audited, and exports require a recorded reason.
+- **Separate identity from analytics.** Class-level analytics and reports use
+  counts, medians, and minimum-cohort suppression. Individual records are
+  available only to the learner and authorised instructors, and reports are
+  designed for a stated teaching decision rather than ranking.
+- **Retention and deletion.** Account deletion removes identity, credential,
+  VPN, learning, survey, and session data, anonymises activity events, and keeps
+  a keyed suppression hash so a restore cannot resurrect the account. Backups
+  default to 30 days, and audit and activity records are kept for a short
+  documented period. Instructor deletion is blocked until owned courses are
+  transferred.
+- **Security safeguards.** We use Argon2id password hashing, optional MFA,
+  session revocation, role-based authorization, encrypted transport, encrypted
+  WireGuard key storage, isolated per-lab networks, audit logging, restricted
+  administrative access, and access-controlled backup handling. No system is
+  perfectly secure.
+- **Operational logging.** We record sign-in, security, export, and
+  administrative events, including IP addresses and account identifiers where
+  needed for security and audit. We do not use advertising trackers or
+  third-party behavioural analytics. Logs are restricted and retained for a
+  documented period.
+- **Vendors and transfers.** Hosting, network, and support providers process
+  personal information only under confidentiality and security obligations.
+  Where information is processed outside Canada, we take reasonable steps to
+  provide comparable protection. Operators should document their hosting
+  location and subprocessors.
+- **Requests and complaints.** Learners can export or delete their account from
+  **Profile → Privacy and data**. Access, correction, consent withdrawal, and
+  other requests go to [privacy@swocts.com](mailto:privacy@swocts.com). We
+  verify identity, respond within a reasonable time, and escalate unresolved
+  concerns to the Office of the Privacy Commissioner of Canada where required.
+- **Accountability and assessment.** The SWOCTS Privacy Officer is accountable
+  for these practices. Staff with access receive privacy and security guidance.
+  Institutional operators should complete a privacy impact assessment,
+  document the lawful basis, and review retention, consent, and minors'
+  requirements before deployment.
 
 ## Consent and withdrawal
 
@@ -136,6 +189,21 @@ FIPPA or MFIPPA, institutional privacy policies, and research ethics
 requirements may also apply. Operators should review this notice with their
 privacy office and adjust retention, consent, and contact details to match the
 deployment.
+
+## Learners under 18
+
+Where the platform is used in a high-school or youth programme, the institution
+or programme operator is responsible for obtaining any required parent or
+guardian consent and for limiting collection to what the programme needs.
+Learners under 18 should not be included in optional research, public
+showcases, or external reporting without the required consent.
+
+## Suspected privacy incidents
+
+Report suspected privacy or security incidents to
+[privacy@swocts.com](mailto:privacy@swocts.com). We will contain and assess the
+incident, preserve the relevant evidence, notify the institution and affected
+individuals, and notify regulators where required by law.
 
 ## Changes
 
