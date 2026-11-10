@@ -21,6 +21,11 @@ certification completed on 2026-11-08.** See [OS-SUPPORT.md](OS-SUPPORT.md) and
 [V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
 compatibility path for existing 1.1.x deployments.
 
+Test candidates are **not supported** until they pass their promotion gates:
+Ubuntu 26.04 LTS and Valkey 9.1.3. Production remains Ubuntu 24.04 LTS and
+Redis 7.2. See the
+[Ubuntu 26.04 Valkey vs Redis test plan](UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
+
 Dependency audit on **2026-11-08**: `npm audit` reported **0 vulnerabilities**
 and `pip-audit -r platform/backend/requirements.txt` reported **no known
 vulnerabilities**. Safe patch updates were applied: FastAPI 0.162.2,

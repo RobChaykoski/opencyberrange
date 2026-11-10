@@ -5,16 +5,18 @@ SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **2.5.2**, with security fixes also maintained on the **1.1.3**
+release is **2.6.0**, with security fixes also maintained on the **1.1.3**
 Community / Academic maintenance line where the same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v2.5.2` / `main` | Yes |
-| `v2.5.1` | Security fixes only - upgrade to `v2.5.2` |
-| `v2.4.1` | Security fixes only - upgrade to `v2.5.2` |
-| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.5.2` |
-| `v1.1.x` | Maintenance fixes only - upgrade to `v2.5.2` for the current feature line |
+| `v2.6.0` / `main` | Yes |
+| `v2.5.5` | Security fixes only - upgrade to `v2.6.0` |
+| `v2.5.4` | Security fixes only - upgrade to `v2.6.0` |
+| `v2.5.1`–`v2.5.3` | Security fixes only - upgrade to `v2.6.0` |
+| `v2.4.1` | Security fixes only - upgrade to `v2.6.0` |
+| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.6.0` |
+| `v1.1.x` | Maintenance fixes only - upgrade to `v2.6.0` for the current feature line |
 | Pre-1.0 builds | No - upgrade to a supported release |
 
 ## Password storage
@@ -89,6 +91,30 @@ Commands and the full runbook are in
   course health, grading, or any learning metric.
 - Administrator accounts are excluded from the public wall.
 
+## Event certificates
+
+- Event certificates are issued only to approved accounts that explicitly
+  joined the event, and only after the event's `end_at`.
+- Participation is available to every eligible participant. First, second,
+  third, First Blood, Clean Sweep, and Perfect Event certificates require the
+  matching `comp_<competition_id>_<code>` achievement, so a learner cannot claim
+  an award they did not earn.
+- Certificate IDs are deterministic: `OCR-EVT-<event>-<user>-<award>-<digest>`,
+  where the digest is the first ten hex characters of a SHA-256 hash over the
+  event, user, and award. Public verification recomputes the digest and rejects
+  tampered IDs.
+- Public verification returns the event, award, recipient display name, event
+  dates, issue date, and certificate ID. It never returns scores, usernames,
+  email addresses, student IDs, or account identifiers.
+- The certificate holder can disable public verification. When disabled, the
+  public verifier returns the generic invalid result and the certificate payload
+  omits the verification URL and QR code.
+- Event and sponsor logos are accepted only as validated data URLs. The PDF
+  renderer decodes them locally, converts WebP and transparency to PNG, and
+  never fetches a remote URL. PDF responses use `Cache-Control: no-store`.
+- Event certificates are credentials, not learning metrics. They do not affect
+  Cyber DNA, course grades, completion, or analytics.
+
 ## Reporting a vulnerability
 
 **Do not open a public issue for a security problem.**
@@ -120,7 +146,8 @@ In scope:
 - the platform API, frontend, installer and upgrade scripts;
 - container escape or cross-lab isolation failures;
 - secrets committed to the repository or shipped in an image;
-- the certificate verification, public competition pages, and Celebration Wall.
+- event certificate issuance, event and sponsor logo handling, public
+  certificate verification, public competition pages, and the Celebration Wall.
 
 Out of scope:
 
@@ -163,14 +190,14 @@ synthetic reproduction.
 
 ## Dependency posture
 
-`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.5.2` the dependency
+`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.6.0` the dependency
 audit remains a release gate; a finding that cannot be fixed immediately is
 recorded with an owner and an expiry in the release notes rather than ignored
 silently. The supply-chain lock adds a drift check for the same inputs.
 
 ## OWASP Top 10 baseline
 
-The 2.5.2 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.6.0 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It covers the web interface, platform data,
 and delivery process, and it names the tests or evidence expected for each
 category. Exceptions must be recorded with an owner and expiry; an expired
@@ -182,6 +209,25 @@ each trust boundary with STRIDE and DREAD, including the new database-integrity
 and supply-chain controls. The highest residual risks remain host/Docker
 compromise, firewall-dependent lab isolation, trusted instructor wiki content,
 client-side secrets, and upstream supply-chain compromise.
+
+## Security review evidence — 10 November 2026
+
+| Check | Result |
+|---|---|
+| CI, CodeQL, Quality, and Trivy on `aadf25b1` | **All green** |
+| Lab validation | **162 labs, 0 errors, 0 warnings** |
+| Quiz banks | **24 valid** (13 certification, 11 general) |
+| Supply-chain lock | **42 files and 162 lab hashes** match release `2.6.0` |
+| Event certificate tests | Participation, placement, and trophy listings; JSON and PDF; public verification; tampered IDs; opt-out; `409` before the event ends; `403` for a non-participant |
+| Event route smoke | Unauthenticated certificate list returns `401`; unknown `OCR-EVT-` ID returns the generic invalid result |
+| Deployment smoke | Dev `172.16.16.44` and prod `172.16.16.41` / `https://ocr.swocts.com` on `2.6.0`; healthy; 162 labs discovered; no backend errors |
+| VPN route verifier | All active labs passed after the `/32` and own-`/24` route change |
+| Release tag | `v2.6.0` is an annotated, unsigned tag; the supply-chain lock is signed by the release key |
+
+The release tag signature is the only release-engineering exception. The tag
+was created without the private release key, which is held outside the
+repository. Sign the tag on the release workstation if a signed tag is
+required; the lock signature remains valid independently.
 
 ## Security review evidence — 8 November 2026
 

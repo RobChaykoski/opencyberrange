@@ -30,6 +30,17 @@ for the life of the 2.6.0 line.
 The full migration plan is in
 [V2 Ubuntu 24.04 Migration Plan](V2-UBUNTU-24.04-MIGRATION.md).
 
+## Next candidate: Ubuntu 26.04 LTS
+
+Ubuntu 26.04 LTS is the next test candidate and is **not certified** for
+production. The requested "26.06" label maps to 26.04; Ubuntu publishes LTS
+releases in April, so there is no Ubuntu 26.06 LTS. The host and Valkey/Redis
+validation plan is in
+[Ubuntu 26.04 Valkey vs Redis test plan](UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
+
+Do not promote 26.04 until the plan's host gates pass and this page marks it
+**Certified**. Ubuntu 24.04 LTS remains the supported production baseline.
+
 This decision is about the **host OS only**. It does not change:
 
 - the platform containers, which use `python:3.11-slim`, `node:22-alpine`,

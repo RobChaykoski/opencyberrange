@@ -19,8 +19,8 @@
 
 [![Platform](https://img.shields.io/badge/platform-2.6.0%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
-[![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-162-blue)](platform/labs/)
+[![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
 [![AI-assisted](https://img.shields.io/badge/AI-assisted%20build-8b5cf6)](#ai-assistance-disclosure)
@@ -74,9 +74,9 @@ wait for a feature release. There is no separate fork to maintain. See
 [Editions](docs/EDITIONS.md) and
 [ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
 
-### Release 2.4.x goals
+### Release goals
 
-The 2.4.x feature set covers four workstreams:
+The current feature set covers four workstreams:
 
 | Workstream | What it changes | Status |
 |---|---|---|
@@ -98,7 +98,7 @@ allowed. New scoring models, enterprise integrations, multi-tenancy, SSO,
 compliance reporting, and multi-host HA are Enterprise preview work.
 
 - [Edition model](docs/EDITIONS.md)
-- [Professional 2.5.1 program charter](docs/V2-PROGRAM-CHARTER.md)
+- [Professional program charter](docs/V2-PROGRAM-CHARTER.md)
 - [Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md)
 - [Programme reports](docs/PROGRAMME-REPORTS.md)
 - [Community / Academic backlog](docs/COMMUNITY-ACADEMIC-BACKLOG.md)
@@ -115,7 +115,7 @@ compliance reporting, and multi-host HA are Enterprise preview work.
 
 ### Reporting and analytics (development preview)
 
-The first 2.4.x analytics slice is implemented in this tree and documented in
+The current analytics slice is implemented in this tree and documented in
 [V2 Learning Analytics and Research Dashboard](docs/V2-LEARNING-ANALYTICS.md):
 
 - **Learner view:** completion and weekly progress, median time against the
@@ -151,8 +151,8 @@ privacy rules, and open decisions.
 
 ### Deployment goals
 
-The 1.x installer remains a single-host Docker Compose deployment. The 2.4.x line
-adds scale-out targets for multiple Docker hosts ("pods") and Kubernetes while
+The 1.x installer remains a single-host Docker Compose deployment. The current
+line adds scale-out targets for multiple Docker hosts ("pods") and Kubernetes while
 keeping the same platform images, lab definitions, WireGuard access, and student
 workflow. See [Deployment topologies](#deployment-topologies) for the supported
 and planned states.
@@ -163,7 +163,7 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **148 exercises** across **11 tracks** and **51 levels** |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **162 exercises** across **12 tracks** and **53 levels** |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **164 workbook pages**, **111 analysis sections**, **407 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
@@ -271,9 +271,14 @@ and a downloadable PDF transcript.
 issues a certificate with a deterministic ID, a verification QR code, and a
 print/PDF action. Certificates can be rendered in **Classic**, **Executive**,
 **Modern**, or **Minimal** designs. Choose one from the certificate page, or set
-the platform default in Admin â†’ Settings â†’ General â†’ Certificate Design. The
+the platform default in **Admin → Settings → General → Certificate Design**. The
 same profile view generates a PDF transcript containing certificates, every
 completed exercise, track progress, and course achievements.
+
+Event participants also receive participation, placement, and trophy-challenge
+certificates after an event ends. These carry the event logo and sponsor marks,
+use the same public verification page, and respect the account's certificate
+privacy setting. See [Event certificates](docs/EVENT-CERTIFICATES.md).
 
 ![Earned certificates on the profile](docs/img/profile-certificates.png)
 
@@ -302,6 +307,14 @@ Learners can **practise without joining**, and joining only affects the event
 leaderboard. Organizers get a dedicated event dashboard with total
 participants, new sign-ups, existing opt-ins, and a copyable sign-up link.
 
+After an event ends, opted-in participants can issue **participation**,
+**placement** (1st, 2nd, 3rd), and **trophy-challenge** (First Blood, Clean
+Sweep, Perfect Event) certificates. Certificates carry the event logo and
+sponsor marks in the app and PDF, use deterministic `OCR-EVT-` IDs, and verify
+publicly without exposing scores or account details. Placement and trophy
+awards require the matching event achievement. See
+[Event certificates](docs/EVENT-CERTIFICATES.md).
+
 ## Included tracks
 
 | Track | Labs | Focus |
@@ -313,11 +326,12 @@ participants, new sign-ups, existing opt-ins, and a copyable sign-up link.
 | Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
 | AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
-| OSINT | 4 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
-| **High School Cybersecurity** | **6** | Browser-first Grades 9â€“12 pathway; RangeBox basics, defensive logs, and the Grade 12 DevFest community portal |
+| OSINT | 5 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
+| **High School Cybersecurity** | **16** | Browser-first Grades 9–12 pathway; RangeBox basics, digital safety, email metadata, MFA recovery, media provenance, and a crypto rug-pull investigation |
 | Software Security | 2 | Source review, hidden routes, command injection, and remediation |
 | Digital Forensics | 2 | Memory analysis and VoIP network evidence reconstruction |
-| **Total** | **148** | **11 tracks Â· 51 levels** |
+| **Identity & Access** | **3** | Secure authentication, OAuth/OIDC trust, and joiner/mover/leaver access review |
+| **Total** | **162** | **12 tracks · 53 levels** |
 
 ## Network Foundations stream
 
@@ -495,21 +509,30 @@ need to be documented separately.
 - **Deleted-user resilience.** Enrollments, completions, quiz data, feedback,
   surveys, achievements, and celebrations cascade; optional creator/actor
   references are nulled. Courses block deletion until ownership is transferred.
-  Dashboards render â€œDeleted user / learner / participantâ€ instead of breaking,
+  Dashboards render “Deleted user / learner / participant” instead of breaking,
   and orphaned coaching notes are excluded from course-health counts.
 - **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
   deployment, workflow, and lab inputs. CI verifies it, and install, update, and
-  prebuild stop on drift. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
+  prebuild stop on drift. The `v2.6.0` tag is annotated but unsigned; the lock is
+  signed by the release key. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
 - **Celebration privacy.** Celebrations are voluntary and anonymous. The wall
   shows counts only, one celebration per person per win, and celebrations never
   affect progress, completion, course health, Cyber DNA, or any learning metric.
+- **Event certificate controls.** Participation, placement, and trophy
+  certificates are issued only after the event ends to approved, opted-in
+  participants. Placement and trophy awards require the matching event
+  achievement. Public verification respects the certificate privacy opt-out and
+  returns event/award metadata only, never scores or account details. See
+  [Event certificates](docs/EVENT-CERTIFICATES.md).
 
 Validation history:
 
 | Check | Result |
 |---|---|
-| 2.5.5 code scanning (10 November 2026) | **0 open alerts** after remediation; CI, CodeQL, Trivy, and Quality checks green |
-| 2.5.5 data integrity | **Admin → System → Integrity** live ledger summary; daily timer units in `deploy/systemd/` |
+| 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
+| 2.6.0 data integrity | **Admin → System → Integrity** live ledger summary; daily timer units in `deploy/systemd/` |
+| 2.6.0 event certificates | Participation, placement, and trophy certificates; JSON and PDF; public verification, opt-out, `409`, and `403` tests pass |
+| 2.6.0 deployment smoke | Dev and prod on `2.6.0`, healthy, 162 labs discovered, event route present, no backend errors |
 | Development database quality (2.5.1) | **0 critical, 0 warning, 2 info** |
 | Production database quality (2.5.1) | **0 critical, 0 warning, 3 info** |
 | Development database fingerprint | `ea4f9acb1cd8fa17f28c66841dba7620abcac76f099862c810bbf60cdc3c4c9c` |
@@ -521,7 +544,7 @@ The two development info findings are a known session-coverage gap and seeded
 labs with no creator. Production adds two intentional hint placeholders. None
 are data loss or a broken reference.
 
-The 2.5.5 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.6.0 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
 process. The current verification pass is recorded in
@@ -826,6 +849,11 @@ For production deployments or custom configurations, see the [Server Deployment 
 | Cache and rate limits | Redis 7.2 | `ocr-redis` (port 6379, internal only) |
 | VPN | WireGuard + Peer Manager API | Host systemd services (port 51820/UDP) |
 
+Redis 7.2 remains the production pin. **Valkey 9.1.3** is being evaluated as a
+BSD-3-Clause drop-in for the Ubuntu 26.04 candidate; see the
+[Ubuntu 26.04 Valkey vs Redis test plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
+Do not change the production store until that plan's decision gate passes.
+
 The running version is available from `GET /api/version` and is shown in the
 footer of every page. `platform/backend/app/version.py` is the single source of
 truth for the platform version; runtime and dependency pins live in
@@ -833,7 +861,7 @@ truth for the platform version; runtime and dependency pins live in
 
 ## Deployment topologies
 
-The 1.x installer is a **single-host Docker Compose** deployment. The 2.4.x line
+The 1.x installer is a **single-host Docker Compose** deployment. The 2.6.x line
 keeps that path as the only supported production topology.
 
 | Topology | State | Notes |
@@ -896,10 +924,11 @@ opencyberrange/
 |-------|----------|
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
 | [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
-| [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the 24.04 validation checklist |
-| [2.5.1 program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in 2.5.1 |
-| [Enterprise preview parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding 2.5.1 |
-| [2.5.1 Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving 2.5.1 to 24.04 while 1.1.3 supports 22.04 and 24.04 |
+| [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the Ubuntu 26.04 candidate plan |
+| [Program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in the current release |
+| [Enterprise preview parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding the current release |
+| [Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving the current release to 24.04 while 1.1.3 supports 22.04 and 24.04 |
+| [Ubuntu 26.04 Valkey vs Redis plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md) | Release engineers evaluating the next host baseline and rate-limit store |
 | [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment |
 | [Enterprise preview HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the Enterprise preview multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
@@ -913,7 +942,7 @@ opencyberrange/
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
 | [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
 | [Learning framework](docs/LEARNING-FRAMEWORK.md) | Instructors and curriculum designers mapping tracks, levels, labs, and evidence |
-| [Release 2.5.1 analytics plan](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
+| [Release analytics plan](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
 | [NICE mapping matrix](docs/NICE-MAPPING.md) | Programme reviewers mapping tracks to NICE categories and work roles |
 | [Survey privacy and consent](docs/SURVEY-PRIVACY.md) | Privacy officers and survey operators |
 | [REB-ready survey package](docs/research/REB-SURVEY-PACKAGE.md) | Researchers and REB reviewers preparing a survey protocol |

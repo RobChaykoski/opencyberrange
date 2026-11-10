@@ -39,6 +39,9 @@ commercial terms.
   reuse the existing `fpdf2`, Pillow, and `qrcode` packages.
 - The Grade 10-12 CyberChef lab exercises link to CyberChef, an external
   Apache-2.0 browser tool, not bundled or redistributed by this repository.
+- Valkey is not bundled in 2.6.0. It is under evaluation as a BSD-3-Clause
+  replacement for the Redis 7.2 rate-limit store; if adopted, its notice and
+  pin will be added to this file and the supply-chain lock.
 - The `GDG-Deploy` script uses the operator's Google Cloud CLI and does not
   redistribute it.
 - GitHub Actions workflows use third-party actions; their licences remain with

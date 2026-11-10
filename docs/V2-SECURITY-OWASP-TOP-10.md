@@ -4,7 +4,7 @@
 
 This baseline applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.5.5 line. Applies to the web interface, platform data,
+**Status:** Active for the 2.6.0 line. Applies to the web interface, platform data,
 and the project delivery process. The 1.1 line keeps its existing maintenance
 policy; fixes that apply there are merged forward.
 
@@ -354,6 +354,26 @@ The full evidence record is in
 code-scanning set (595 alerts) and adds the live **Admin → System → Integrity**
 ledger status, the daily host check, and weekly signed manifests. The 2.5.4
 controls above remain in force; no dependency or image pins changed.
+
+### 2.6.0 update
+
+2.6.0 adds event participation, placement, and trophy-challenge certificates,
+the Grade 10-12 Digital Frontier labs, the WireGuard `/32` route correction, and
+Cyber DNA `2026.13`.
+
+- Event certificates are issued only after the event ends to approved, opted-in
+  participants. Placement and trophy awards require the matching event badge.
+- Public verification recomputes the deterministic `OCR-EVT-` digest and
+  respects the account certificate opt-out. It returns event and award metadata
+  only, never scores or account identifiers.
+- Event and sponsor logos are validated data URLs. The PDF renderer decodes them
+  locally, never fetches a remote URL, and returns `Cache-Control: no-store`.
+- Event certificates do not affect Cyber DNA, grades, completion, or analytics.
+  Raw event participation is no longer scored by Cyber DNA.
+- No new runtime dependency was added; `fpdf2`, Pillow, and `qrcode` were
+  already present.
+- The `v2.6.0` tag is annotated but unsigned. The supply-chain lock is signed by
+  the release key; sign the tag on the release workstation if required.
 
 ## Security testing matrix
 

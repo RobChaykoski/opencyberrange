@@ -112,6 +112,8 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   blood, clean sweep, perfect event, placement) still count through
   achievements. Event participation certificates are credentials, not Cyber DNA
   signals.
+- Recorded the `v2.6.0` release tag as annotated but unsigned; the supply-chain
+  lock remains signed by the release key.
 
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party

@@ -4,18 +4,50 @@
 
 This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.5.x line. This is the release evidence companion to
+**Status:** Active for the 2.6.0 line. This is the release evidence companion to
 [`V2-SECURITY-OWASP-TOP-10.md`](V2-SECURITY-OWASP-TOP-10.md).
 
-> **2.5.5 note:** 2.5.5 is a patch release on the 2.5.4 line. It carries the
-> 2.5.4 evidence below plus the code-scanning remediation and the new
-> **Admin → System → Integrity** status. The 2.5.4 pass remains the historical
-> baseline.
+> **2.6.0 note:** 2.6.0 adds event certificates, the Grade 10-12 Digital
+> Frontier labs, the WireGuard `/32` route correction, and Cyber DNA `2026.13`.
+> The 2.5.4/2.5.5 pass below remains the historical baseline.
 
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.
 
-## Current pass — 10 November 2026 (2.5.4)
+## Current pass — 10 November 2026 (2.6.0)
+
+| Category | Evidence produced | Result |
+|---|---|---|
+| A01 Broken access control | Event certificates require an approved, opted-in participant and an ended event. Placement and trophy awards require the matching `comp_<id>_<code>` achievement. `tests/test_event_certificates.py` covers `403` non-participant, `409` before the event ends, and `404` for an unearned award. Authorization matrix and certificate verification suites remain green. | Pass for covered paths |
+| A02 Cryptographic failures | Event certificate IDs use a deterministic SHA-256 digest over event, user, and award; public verification recomputes it and rejects tampered IDs. The supply-chain lock is signed by the release key. The `v2.6.0` tag is annotated but unsigned (documented release exception); no secret material is committed. | Pass with documented tag-signature exception |
+| A03 Injection | Event and sponsor logos are validated data URLs only. The PDF renderer decodes them locally, converts WebP/transparency to PNG, and does not fetch remote URLs. Certificate body text is escaped by the renderer. `tests/test_event_certificates.py` exercises JSON and PDF output with a sponsor logo. | Pass for covered surfaces |
+| A04 Insecure design | Certificates are issued only after `end_at`; participation is available to eligible participants, while placement and trophy awards require earned badges. Cyber DNA `2026.13` removes raw event participation from Leader while event lab completions and success badges still count. `tests/test_skill_dna.py`, `tests/test_event_certificates.py` | Pass |
+| A05 Security misconfiguration | Event PDF responses use `Cache-Control: no-store`. Public verification returns event/award metadata only and respects `certificates_public`. Nginx CSP, HSTS, frame, content-type, referrer, and permissions headers are unchanged. Deployment smoke on both hosts shows `2.6.0`, healthy, event route present, and no backend errors. | Pass for covered paths |
+| A06 Vulnerable components | Trivy filesystem/secret/config and CodeQL are green on `aadf25b1`. No new runtime dependency was added; event certificates reuse `fpdf2`, Pillow, and `qrcode`. Dependency pins are unchanged from the 8 November audit. | Pass for scanned inputs; dependency audit not rerun in this pass |
+| A07 Authentication failures | Event certificate listing and download reuse the authenticated active-user dependency and add approved/participant checks. Login, MFA, token revocation, profile, and authorization suites remain green. Full backend suite: **352 passed**. | Pass for covered paths |
+| A08 Integrity failures | Supply-chain lock covers **42 files and 162 labs** at release `2.6.0` and verifies. Event certificates reuse the existing competition and achievement tables; no destructive schema migration ships. The database integrity ledger and daily host checks are unchanged. | Pass |
+| A09 Logging/monitoring failures | Certificate issuance and download use existing authenticated request logging and do not log event or sponsor logo payloads. The release signature exception is recorded in the release notes, licensing, and supply-chain documentation. | Pass for covered paths |
+| A10 SSRF | No server-side fetch of event logos, sponsor logos, or verification URLs was added. Only validated data URLs are decoded, and the PDF renderer has no remote-image path. | Pass |
+| Supply chain | `supply-chain.lock.json` regenerated for `2.6.0`; **42 files and 162 lab hashes** match. The lock is signed by the release key. The Git tag is unsigned and documented. | Pass with documented tag-signature exception |
+
+Manual evidence:
+
+- CI, Quality checks, CodeQL, and Trivy are green on `aadf25b1`.
+- Full backend suite: **352 passed**.
+- Event certificate suite: **3 passed**; related competition, certificate, achievement, and Cyber DNA suites: **53 passed**.
+- Lab validation: **162 labs, 0 errors, 0 warnings**.
+- Quiz banks: **24 valid**.
+- Supply-chain check: **42 files, 162 labs**, release `2.6.0`.
+- Deployment smoke: dev `172.16.16.44` and prod `172.16.16.41` / `https://ocr.swocts.com` report `2.6.0`, healthy, 162 labs discovered, event route present, and no backend errors.
+- VPN route verifier: all active labs passed after the `/32` and own-`/24` route change.
+- Release tag: `v2.6.0` is annotated and unsigned; sign it on the release workstation if a signed tag is required.
+
+Residual notes:
+
+- Event certificate logos and sponsor artwork were exercised with synthetic images, not live sponsor artwork. A browser check of the event certificate page and A4 PDF layout remains outstanding.
+- The `v2.6.0` tag is not GPG-signed. The lock signature remains valid independently.
+
+## Historical pass — 10 November 2026 (2.5.4)
 
 | Category | Evidence produced | Result |
 |---|---|---|

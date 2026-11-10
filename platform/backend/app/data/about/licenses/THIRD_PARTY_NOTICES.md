@@ -48,6 +48,9 @@ their own licences; the project licence does not override them.
 - The Grade 10-12 CyberChef lab exercises link to CyberChef, an Apache-2.0
   external browser tool linked from the platform menu; it is not bundled or
   redistributed. Its notice and licence text are included here.
+- Valkey is not bundled in 2.6.0. It is under evaluation as a BSD-3-Clause
+  replacement for the Redis 7.2 rate-limit store; if adopted, its notice and pin
+  will be added here and to the supply-chain lock.
 - `scripts/GDG-Deploy.sh` uses the operator's Google Cloud CLI; the CLI is not
   redistributed with OpenCyberRange.
 - GitHub Actions workflows use third-party actions; their licence terms remain

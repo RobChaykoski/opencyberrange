@@ -71,6 +71,13 @@ migration; the old address is retired.
   signal.
 - Participation certificates are credentials, not Cyber DNA evidence.
 
+## Release artefact
+
+- `v2.6.0` is an annotated Git tag. It is **not GPG-signed** in this workspace.
+- The supply-chain lock is signed by the SWOCTS Cyber Range release key.
+- Sign the tag on the release workstation if a signed tag is required. The lock
+  signature remains valid independently.
+
 ## Upgrade
 
 1. Pull `v2.6.0` or the current `main`.
@@ -88,7 +95,7 @@ migration; the old address is retired.
 6. After an event ends, open the event page and verify the certificate JSON, PDF,
    and public verification link with a test participant.
 
-Existing 2.5.5 databases upgrade in place. The VPN migration reallocates existing
+Existing 2.5.x databases upgrade in place. The VPN migration reallocates existing
 peers; event certificates reuse the existing competition and achievement tables,
 so no destructive schema change ships with this release.
 
