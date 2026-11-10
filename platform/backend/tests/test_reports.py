@@ -495,6 +495,30 @@ def test_report_generation_requires_a_reason(client, report_data):
     assert resp.status_code == 422
 
 
+def test_under_18_learner_is_excluded_from_reports(client, report_data, db_session):
+    minor = report_data["student_three"]
+    minor.is_minor = True
+    db_session.commit()
+
+    instructor = _login(client, report_data["instructor"])
+    course_id = report_data["course"].id
+
+    queue = client.get(
+        f"/api/courses/{course_id}/reports/coaching-queue.csv",
+        params={"reason": "privacy check"},
+        headers=instructor,
+    )
+    assert queue.status_code == 200, queue.text
+    assert minor.username not in queue.content.decode("utf-8-sig")
+
+    individual = client.get(
+        f"/api/courses/{course_id}/report/{minor.id}",
+        params={"reason": "privacy check"},
+        headers=instructor,
+    )
+    assert individual.status_code == 403
+
+
 def test_schema_initialization_is_idempotent(db_schema):
     from app.main import _initialize_schema
 

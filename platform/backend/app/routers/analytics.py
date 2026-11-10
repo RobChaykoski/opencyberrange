@@ -869,6 +869,18 @@ def _course_context(db: Session, course: Course):
         CourseEnrollment.course_id == course.id
     ).all()
     user_ids = {row.user_id for row in enrollments}
+    if user_ids:
+        # Under-18 accounts are excluded from instructor-facing reporting and
+        # course analytics by their privacy choice. Their own dashboard still
+        # uses their record; this context is only for course-level reporting.
+        minor_ids = {
+            row[0]
+            for row in db.query(User.id).filter(
+                User.id.in_(user_ids),
+                User.is_minor == True,
+            ).all()
+        }
+        user_ids -= minor_ids
     enrolled_at = {row.user_id: row.enrolled_at for row in enrollments}
 
     assignments = db.query(CourseLabAssignment).options(

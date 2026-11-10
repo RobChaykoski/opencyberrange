@@ -198,6 +198,15 @@ guardian consent and for limiting collection to what the programme needs.
 Learners under 18 should not be included in optional research, public
 showcases, or external reporting without the required consent.
 
+A learner can mark their account as under 18 on the registration form or later
+in **Profile → Security & privacy**. When this setting is on, the platform
+excludes that learner's individual activity from instructor reports, course
+analytics, coaching queues, public leaderboards, and competition scoreboards.
+The learner's own dashboard and progress remain available to them. The setting
+is a privacy declaration by the account holder; it does not verify age. The
+institution remains responsible for any consent or age-verification requirement
+that applies to its programme.
+
 ## Suspected privacy incidents
 
 Report suspected privacy or security incidents to

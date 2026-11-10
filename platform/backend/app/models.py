@@ -56,6 +56,11 @@ class User(Base):
     show_hidden_achievements = Column(
         Boolean, default=False, server_default=text("false"), nullable=False
     )
+    # Opt-in privacy flag for learners under 18. Reporting and analytics
+    # endpoints exclude these accounts; the learner still sees their own work.
+    is_minor = Column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     # Allow the public certificate verification page to confirm this account's
     # certificates. Off means the account holder has opted out; their own
     # certificate view and PDF still work.
@@ -144,6 +149,8 @@ class User(Base):
         anonymous label. Unknown/legacy values fall back to the real name so a
         missing migration cannot hide everyone.
         """
+        if getattr(self, "is_minor", False):
+            return "Anonymous participant"
         mode = getattr(self, "scoreboard_name_mode", None) or "real_name"
         if mode == "anonymous":
             return "Anonymous participant"

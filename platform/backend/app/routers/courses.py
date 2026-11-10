@@ -1938,6 +1938,14 @@ async def student_report(
     student = db.query(User).filter(User.id == user_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="User not found")
+    if getattr(student, "is_minor", False):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "This learner is excluded from reporting by an under-18 "
+                "privacy setting."
+            ),
+        )
 
     from app.services.pdf_report import generate_student_report
 
@@ -2059,6 +2067,8 @@ def _build_all_students_data(db: Session, course: Course) -> list:
     students_data = []
     for e in enrollments:
         student = e.user
+        if student is None or getattr(student, "is_minor", False):
+            continue
         lab_scores, achievements = _build_student_scores(db, course, student)
         students_data.append({
             "student": {
@@ -2501,6 +2511,14 @@ async def assignment_student_report(
     student = db.query(User).filter(User.id == user_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="User not found")
+    if getattr(student, "is_minor", False):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "This learner is excluded from reporting by an under-18 "
+                "privacy setting."
+            ),
+        )
 
     assignment_lab_ids = {al.lab_id for al in db.query(AssignmentLab).filter(
         AssignmentLab.assignment_id == assignment_id

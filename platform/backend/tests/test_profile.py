@@ -558,3 +558,60 @@ def test_admin_can_edit_user_names(client, admin_auth):
     assert cleared.status_code == 200, cleared.text
     assert not cleared.json()["first_name"]
     assert not cleared.json()["last_name"]
+
+
+def test_under_18_setting_enforces_reporting_privacy(client, auth_headers, test_user):
+    resp = client.put(
+        "/api/auth/settings",
+        json={"is_minor": True},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200
+    assert settings.json()["is_minor"] is True
+    assert settings.json()["show_on_scoreboard"] is False
+    assert settings.json()["scoreboard_name_mode"] == "anonymous"
+
+    blocked = client.put(
+        "/api/auth/settings",
+        json={"show_on_scoreboard": True},
+        headers=auth_headers,
+    )
+    assert blocked.status_code == 400
+
+    cleared = client.put(
+        "/api/auth/settings",
+        json={"is_minor": False},
+        headers=auth_headers,
+    )
+    assert cleared.status_code == 200, cleared.text
+    assert client.get("/api/auth/settings", headers=auth_headers).json()["is_minor"] is False
+
+
+def test_under_18_registration_sets_privacy_defaults(client, db_session):
+    suffix = uuid.uuid4().hex[:10]
+    username = f"minor_{suffix}"
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "username": username,
+            "email": f"{username}@university.edu",
+            "password": "Correct#Horse7Battery",
+            "send_registration_email": False,
+            "is_minor": True,
+        },
+    )
+    assert resp.status_code in (200, 201), resp.text
+
+    user = db_session.query(User).filter(User.username == username).first()
+    try:
+        assert user is not None
+        assert user.is_minor is True
+        assert user.show_on_scoreboard is False
+        assert user.scoreboard_name == "Anonymous participant"
+    finally:
+        if user is not None:
+            db_session.delete(user)
+            db_session.commit()

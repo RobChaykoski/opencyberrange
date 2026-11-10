@@ -16,9 +16,6 @@ from app.models import (
     LabSession,
     Level,
     PlatformSetting,
-    Survey,
-    SurveyAttachment,
-    SurveyResponse,
     Track,
     User,
 )
@@ -343,6 +340,31 @@ def test_course_overview_and_exercises(client, analytics_data):
     )
     assert comments.status_code == 200, comments.text
     assert comments.json()["comments"][0]["unclear"] == "The final hint could be clearer."
+
+
+def test_course_analytics_excludes_under_18_learners(client, analytics_data, db_session):
+    minor = analytics_data["student_one"]
+    minor.is_minor = True
+    db_session.commit()
+
+    headers = _login(client, analytics_data["instructor"])
+    course_id = analytics_data["course"].id
+
+    overview = client.get(
+        f"/api/analytics/courses/{course_id}/overview", headers=headers
+    )
+    assert overview.status_code == 200, overview.text
+    summary = overview.json()["summary"]
+    assert summary["enrolled_learners"] == 1
+    assert summary["completed_learners"] == 1
+
+    exercises = client.get(
+        f"/api/analytics/courses/{course_id}/exercises", headers=headers
+    )
+    assert exercises.status_code == 200, exercises.text
+    rows = exercises.json()["exercises"]
+    assert rows
+    assert all(row["sample_size"] <= 1 for row in rows)
 
 
 def test_exercise_reaction_is_reported_and_can_be_cleared(client, analytics_data):

@@ -298,8 +298,11 @@ async def instructor_stats(
     # Total enrolled students across instructor's courses
     total_students = 0
     if course_ids:
-        total_students = db.query(CourseEnrollment).filter(
-            CourseEnrollment.course_id.in_(course_ids)
+        total_students = db.query(CourseEnrollment).join(
+            User, User.id == CourseEnrollment.user_id,
+        ).filter(
+            CourseEnrollment.course_id.in_(course_ids),
+            User.is_minor == False,
         ).count()
 
     # Completion rate across assigned labs
@@ -312,8 +315,11 @@ async def instructor_stats(
         total_assigned = len(assignments)
 
         for assignment in assignments:
-            enrollments = db.query(CourseEnrollment).filter(
-                CourseEnrollment.course_id == assignment.course_id
+            enrollments = db.query(CourseEnrollment).join(
+                User, User.id == CourseEnrollment.user_id,
+            ).filter(
+                CourseEnrollment.course_id == assignment.course_id,
+                User.is_minor == False,
             ).all()
             for enrollment in enrollments:
                 completion = db.query(LabCompletion).filter(

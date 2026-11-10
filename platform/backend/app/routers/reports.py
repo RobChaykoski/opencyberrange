@@ -53,7 +53,7 @@ def _report_catalog(course: Course) -> list[dict]:
             "title": "Course health brief",
             "description": "A one-to-two page brief with cohort completion, hint and attempt pressure, time, RAG reasons, an exercise watchlist, and one next step.",
             "use_when": "You need to decide what the teaching team should address next.",
-            "privacy": "Aggregated; small cohorts are suppressed. No learner names.",
+            "privacy": "Aggregated; small cohorts are suppressed. No learner names. Learners who identify as under 18 are excluded.",
             "formats": [
                 {"id": "pdf", "label": "PDF", "path": f"{base}/course-health.pdf"}
             ],
@@ -64,7 +64,7 @@ def _report_catalog(course: Course) -> list[dict]:
             "title": "Exercise diagnostics",
             "description": "Per-exercise completion, abandonment, hint pressure, attempt burden, time, RAG, and flags for content and scaffolding review, with cohort time and hint baselines.",
             "use_when": "A course or exercise is underperforming and you need the likely cause, or you need to spot completions that are far outside the cohort baseline.",
-            "privacy": "Aggregated by exercise; small cells are suppressed. No learner names.",
+            "privacy": "Aggregated by exercise; small cells are suppressed. No learner names. Learners who identify as under 18 are excluded.",
             "formats": [
                 {"id": "pdf", "label": "PDF", "path": f"{base}/exercise-diagnostics.pdf"},
                 {"id": "csv", "label": "CSV", "path": f"{base}/exercise-diagnostics.csv"},
@@ -76,7 +76,7 @@ def _report_catalog(course: Course) -> list[dict]:
             "title": "Coaching queue",
             "description": "A private queue with one suggested next step and review date per learner: no activity, hint pressure, silent struggle, unusually fast hint-free completion, completion without quiz accuracy, or no coaching note.",
             "use_when": "You have limited time and need the next teaching actions for individual learners.",
-            "privacy": "Individual learner identifiers; instructor-only. Not a ranking or a misconduct finding.",
+            "privacy": "Individual learner identifiers; instructor-only. Not a ranking or a misconduct finding. Learners who identify as under 18 are excluded.",
             "formats": [
                 {"id": "csv", "label": "CSV", "path": f"{base}/coaching-queue.csv"},
                 {"id": "pdf", "label": "PDF", "path": f"{base}/coaching-queue.pdf"},
@@ -88,7 +88,7 @@ def _report_catalog(course: Course) -> list[dict]:
             "title": "Full student record pack",
             "description": "One page per learner with scores, attempt counts, hints, time, and achievements.",
             "use_when": "You need an individual record for a meeting, file, or appeal. Use the course health brief for class decisions.",
-            "privacy": "Contains learner identity; instructor-only.",
+            "privacy": "Contains learner identity; instructor-only. Learners who identify as under 18 are excluded.",
             "formats": [
                 {
                     "id": "pdf",

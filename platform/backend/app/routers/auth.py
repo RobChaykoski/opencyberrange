@@ -133,6 +133,9 @@ class RegisterRequest(BaseModel):
     # opt in; an explicit false suppresses the message without affecting the
     # account or approval state.
     send_registration_email: bool = True
+    # Privacy control for learners under 18. When true, reporting and analytics
+    # endpoints exclude this account from instructor-facing datasets.
+    is_minor: bool = False
 
     @field_validator('username')
     @classmethod
@@ -483,6 +486,7 @@ class UserSettingsUpdate(BaseModel):
     notification_prefs: Optional[dict] = None
     show_hidden_achievements: Optional[bool] = None
     certificates_public: Optional[bool] = None
+    is_minor: Optional[bool] = None
 
     @field_validator("avatar_data")
     @classmethod
@@ -564,6 +568,7 @@ async def get_user_settings(
         "certificates_public": bool(
             getattr(current_user, "certificates_public", True)
         ),
+        "is_minor": bool(getattr(current_user, "is_minor", False)),
         "data_exported_at": getattr(current_user, "data_exported_at", None),
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
         "recovery_codes_remaining": recovery_count,
@@ -592,9 +597,24 @@ async def update_user_settings(
     if payload.timezone is not None:
         current_user.timezone = payload.timezone
     if payload.show_on_scoreboard is not None:
+        if payload.show_on_scoreboard and getattr(current_user, "is_minor", False):
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Learners under 18 cannot be listed on public scoreboards. "
+                    "Clear the under-18 setting first if that is no longer accurate."
+                ),
+            )
         current_user.show_on_scoreboard = payload.show_on_scoreboard
     if payload.scoreboard_name_mode is not None:
         current_user.scoreboard_name_mode = payload.scoreboard_name_mode
+    if payload.is_minor is not None:
+        current_user.is_minor = payload.is_minor
+        if payload.is_minor:
+            # Enforce the privacy rule immediately, even for an account that
+            # previously opted into the scoreboard.
+            current_user.show_on_scoreboard = False
+            current_user.scoreboard_name_mode = "anonymous"
     if payload.login_notifications is not None:
         current_user.login_notifications = payload.login_notifications
     if payload.email_notifications is not None:
@@ -901,6 +921,7 @@ async def export_user_data(
             "last_login_ip": redact_ip(current_user.last_login_ip),
             "timezone": current_user.timezone,
             "show_on_scoreboard": current_user.show_on_scoreboard,
+            "is_minor": bool(getattr(current_user, "is_minor", False)),
             "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
             "login_notifications": current_user.login_notifications,
             "email_notifications": getattr(current_user, "email_notifications", True),
@@ -1284,6 +1305,10 @@ async def register(
     new_user.email_notifications = bool(user_data.send_registration_email)
     new_user.email_consent_version = EMAIL_CONSENT_VERSION
     new_user.email_consent_updated_at = datetime.now(timezone.utc)
+    new_user.is_minor = bool(user_data.is_minor)
+    if new_user.is_minor:
+        new_user.show_on_scoreboard = False
+        new_user.scoreboard_name_mode = "anonymous"
 
     db.commit()
     db.refresh(new_user)
@@ -1389,6 +1414,7 @@ async def get_current_user_info(
         "mfa_enabled": bool(getattr(current_user, "mfa_enabled", False)),
         "timezone": getattr(current_user, 'timezone', None),
         "show_on_scoreboard": getattr(current_user, "show_on_scoreboard", True),
+        "is_minor": bool(getattr(current_user, "is_minor", False)),
         "scoreboard_name_mode": getattr(current_user, "scoreboard_name_mode", None) or "real_name",
         "show_hidden_achievements": bool(
             getattr(current_user, "show_hidden_achievements", False)

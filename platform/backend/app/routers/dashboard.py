@@ -69,14 +69,30 @@ def _resolve_student_scope(db: Session, current_user: User,
     """Return a set of student IDs the current user is allowed to see,
     optionally narrowed by course_id and/or user_id.
 
-    Returns None when no filtering should be applied (admin, no filters).
-    Returns an empty set when the filter matches nobody (results in no data).
+    Under-18 accounts are excluded from instructor reporting by privacy rule,
+    even when an administrator asks for them explicitly. Returns an empty set
+    when the scope matches nobody.
     """
     is_admin = current_user.role == 'admin'
 
+    if user_id:
+        target = db.query(User).filter(User.id == user_id).first()
+        if target is not None and getattr(target, "is_minor", False):
+            raise HTTPException(
+                status_code=403,
+                detail=(
+                    "This learner is excluded from reporting by an under-18 "
+                    "privacy setting."
+                ),
+            )
+
     # Build base query for visible student IDs
     if is_admin and not course_id and not user_id:
-        return None  # admin with no filters = everything
+        rows = db.query(User.id).filter(
+            User.role == "student",
+            User.is_minor == False,
+        ).all()
+        return {r[0] for r in rows}
 
     if course_id:
         # Validate instructor owns this course (skip for admin)
@@ -92,7 +108,11 @@ def _resolve_student_scope(db: Session, current_user: User,
         ).distinct().all()
         student_ids = {r[0] for r in enrolled}
     elif is_admin:
-        student_ids = None  # admin without course filter
+        rows = db.query(User.id).filter(
+            User.role == "student",
+            User.is_minor == False,
+        ).all()
+        student_ids = {r[0] for r in rows}
     else:
         # Instructor without course filter: all their students
         rows = db.query(CourseEnrollment.user_id).join(
@@ -102,6 +122,16 @@ def _resolve_student_scope(db: Session, current_user: User,
             Course.is_active == True,
         ).distinct().all()
         student_ids = {r[0] for r in rows}
+
+    if student_ids:
+        minor_ids = {
+            row[0]
+            for row in db.query(User.id).filter(
+                User.id.in_(student_ids),
+                User.is_minor == True,
+            ).all()
+        }
+        student_ids -= minor_ids
 
     # Narrow to specific user
     if user_id:
@@ -159,7 +189,12 @@ def _instructor_teaching_focus(
         CourseEnrollment.course_id,
         CourseEnrollment.user_id,
         CourseEnrollment.enrolled_at,
-    ).filter(CourseEnrollment.course_id.in_(course_ids)).all()
+    ).join(
+        User, User.id == CourseEnrollment.user_id,
+    ).filter(
+        CourseEnrollment.course_id.in_(course_ids),
+        User.is_minor == False,
+    ).all()
     course_students = {}
     enrolled_at = {}
     student_ids = set()
@@ -481,15 +516,24 @@ async def instructor_stats(
     yesterday_start = today_start - timedelta(days=1)
 
     # ── Scope: which student IDs does this user see? ─────────
-    # Admins see everyone; instructors see their enrolled students.
-    student_ids = None  # None means "no filter"
+    # Admins see all non-minor students; instructors see their enrolled
+    # non-minor students. Under-18 accounts are excluded from reporting.
     if current_user.role != 'admin':
         rows = db.query(CourseEnrollment.user_id).join(
             Course, Course.id == CourseEnrollment.course_id,
+        ).join(
+            User, User.id == CourseEnrollment.user_id,
         ).filter(
             Course.instructor_id == current_user.id,
             Course.is_active == True,
+            User.is_minor == False,
         ).distinct().all()
+        student_ids = {r[0] for r in rows}
+    else:
+        rows = db.query(User.id).filter(
+            User.role == "student",
+            User.is_minor == False,
+        ).all()
         student_ids = {r[0] for r in rows}
 
     admin_ids = _admin_user_ids(db)
@@ -773,9 +817,13 @@ async def instructor_filter_options(
         ).filter(
             CourseEnrollment.course_id == course_id,
             User.role == 'student',
+            User.is_minor == False,
         ).order_by(User.username)
     elif is_admin:
-        students_q = db.query(User).filter(User.role == 'student').order_by(User.username)
+        students_q = db.query(User).filter(
+            User.role == 'student',
+            User.is_minor == False,
+        ).order_by(User.username)
     else:
         students_q = db.query(User).join(
             CourseEnrollment, CourseEnrollment.user_id == User.id
@@ -785,6 +833,7 @@ async def instructor_filter_options(
             Course.instructor_id == current_user.id,
             Course.is_active == True,
             User.role == 'student',
+            User.is_minor == False,
         ).distinct().order_by(User.username)
 
     students = students_q.all()
@@ -1536,6 +1585,7 @@ def _public_achievement_or_404(db: Session, achievement_id: int) -> Achievement:
         owner is None
         or not owner.is_active
         or not getattr(owner, "show_on_scoreboard", False)
+        or getattr(owner, "is_minor", False)
         or owner.role == "admin"
     ):
         raise HTTPException(status_code=404, detail="Achievement is not on the wall")
@@ -1618,6 +1668,7 @@ async def celebration_wall(
         ).filter(
             User.is_active == True,
             User.show_on_scoreboard == True,
+            User.is_minor == False,
         )
         if admin_ids:
             q = q.filter(~Achievement.user_id.in_(admin_ids))
@@ -1784,6 +1835,7 @@ async def celebration_wall(
         .filter(
             User.is_active == True,
             User.show_on_scoreboard == True,
+            User.is_minor == False,
         )
     )
     if admin_ids:
@@ -1866,6 +1918,7 @@ async def celebration_wall(
     can_list = bool(
         current_user.is_active
         and current_user.id not in admin_ids
+        and not getattr(current_user, "is_minor", False)
     )
     listed = bool(
         can_list

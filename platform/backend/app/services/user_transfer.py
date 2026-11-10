@@ -40,6 +40,8 @@ EXPORT_FIELDS = (
     "created_at",
     "show_on_scoreboard",
     "scoreboard_name_mode",
+    "is_minor",
+    "certificates_public",
     "avatar_border_style",
     "avatar_border_color",
     "show_hidden_achievements",

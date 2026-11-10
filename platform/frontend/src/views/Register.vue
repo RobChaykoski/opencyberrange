@@ -315,6 +315,24 @@
             </div>
 
             <div class="form-group">
+              <label class="form-check" for="isMinor">
+                <input
+                  id="isMinor"
+                  v-model="form.isMinor"
+                  name="is_minor"
+                  type="checkbox"
+                  aria-describedby="minor-help"
+                />
+                <span>I am under 18</span>
+              </label>
+              <p id="minor-help" class="help-text">
+                If selected, your individual activity is excluded from instructor
+                reports and course analytics. Your own progress remains visible to
+                you. You can change this later in Profile → Security &amp; privacy.
+              </p>
+            </div>
+
+            <div class="form-group">
               <label class="form-check" for="privacyAcknowledged">
                 <input
                   id="privacyAcknowledged"
@@ -455,7 +473,8 @@ const form = reactive({
   confirmPassword: '',
   inviteCode: '',
   sendRegistrationEmail: false,
-  privacyAcknowledged: false
+  privacyAcknowledged: false,
+  isMinor: false
 })
 
 const errors = reactive({
@@ -648,7 +667,8 @@ const handleRegister = async () => {
       username: form.username.trim(),
       email: form.email.trim(),
       password: form.password,
-      send_registration_email: form.sendRegistrationEmail
+      send_registration_email: form.sendRegistrationEmail,
+      is_minor: form.isMinor
     }
     if (form.firstName.trim()) payload.first_name = form.firstName.trim()
     if (form.lastName.trim()) payload.last_name = form.lastName.trim()
@@ -676,6 +696,7 @@ const handleRegister = async () => {
     form.confirmPassword = ''
     form.inviteCode = ''
     form.privacyAcknowledged = false
+    form.isMinor = false
     form.sendRegistrationEmail = false
 
     await nextTick()

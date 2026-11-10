@@ -373,6 +373,10 @@ def _leaderboard(
 
     entries = []
     for participant in participants:
+        user = participant.user
+        if getattr(user, "is_minor", False):
+            # Under-18 accounts are excluded from public leaderboards.
+            continue
         score = 0
         solved = 0
         last_solved = None

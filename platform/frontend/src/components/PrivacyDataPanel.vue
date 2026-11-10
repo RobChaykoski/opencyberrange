@@ -29,6 +29,28 @@
       </p>
     </section>
 
+    <section class="privacy-panel__email" aria-labelledby="minor-pref-title">
+      <h3 id="minor-pref-title">Under-18 reporting privacy</h3>
+      <p class="privacy-panel__email-help">
+        If you are under 18, select this option. Your individual activity is then
+        excluded from instructor reports, course analytics, coaching queues, and
+        public leaderboards. Your own dashboard and progress remain available to
+        you. You can clear this setting when it no longer applies.
+      </p>
+      <label class="privacy-panel__email-toggle">
+        <input
+          v-model="isMinor"
+          type="checkbox"
+          :disabled="minorSaving"
+          @change="saveMinorPreference"
+        />
+        <span>I am under 18</span>
+      </label>
+      <p v-if="minorMessage" :class="minorError ? 'error-message' : 'success-message'" role="status">
+        {{ minorMessage }}
+      </p>
+    </section>
+
     <section class="privacy-panel__email" aria-labelledby="email-pref-title">
       <div class="privacy-panel__email-head">
         <div>
@@ -220,6 +242,10 @@ const certificatesPublic = ref(true)
 const certificateSaving = ref(false)
 const certificateMessage = ref('')
 const certificateError = ref(false)
+const isMinor = ref(false)
+const minorSaving = ref(false)
+const minorMessage = ref('')
+const minorError = ref(false)
 
 const formatExportDate = (value) => {
   if (!value) return ''
@@ -240,6 +266,7 @@ const fetchExportStatus = async () => {
     emailConsentVersion.value = data.email_consent_version || ''
     emailConsentUpdatedAt.value = data.email_consent_updated_at || ''
     certificatesPublic.value = data.certificates_public !== false
+    isMinor.value = data.is_minor === true
   } catch {
     lastExportedAt.value = null
   } finally {
@@ -289,6 +316,27 @@ const saveCertificatePreference = async () => {
     certificateMessage.value = 'Could not save the certificate preference. Please try again.'
   } finally {
     certificateSaving.value = false
+  }
+}
+
+const saveMinorPreference = async () => {
+  minorSaving.value = true
+  minorMessage.value = ''
+  minorError.value = false
+  const previous = !isMinor.value
+  try {
+    await axios.put('/auth/settings', { is_minor: isMinor.value })
+    await fetchExportStatus()
+    minorMessage.value = isMinor.value
+      ? 'Under-18 privacy is on. Your individual activity is excluded from reporting and public leaderboards.'
+      : 'Under-18 privacy is off. Reporting visibility follows your other privacy settings.'
+  } catch (e) {
+    isMinor.value = previous
+    minorError.value = true
+    minorMessage.value =
+      e.response?.data?.detail || 'Could not save the under-18 preference. Please try again.'
+  } finally {
+    minorSaving.value = false
   }
 }
 

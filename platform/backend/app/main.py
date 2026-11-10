@@ -309,6 +309,15 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added certificates_public column to users table")
 
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'is_minor' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN is_minor "
+                "BOOLEAN DEFAULT FALSE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added is_minor column to users table")
+
         # --- Optional survey consent (platform/usage surveys only) ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         survey_columns = {
