@@ -23,6 +23,17 @@ compilation, not a live browser session:
 - Browser checks still outstanding: event logo and sponsor rendering with real
   artwork, the PDF layout on A4, and mobile verification form behaviour.
 
+Deployment smoke on **2026-11-10**:
+
+- Development (`172.16.16.44`) and production (`172.16.16.41`,
+  `https://ocr.swocts.com`) both report `2.6.0`.
+- `/health` is healthy, lab discovery reports 162 labs with 0 errors, and both
+  frontends serve `index-Dx733NF9.js`.
+- `GET /api/competitions/1/certificates` without a token returns `401`, so the
+  event-certificate route is present; public `OCR-EVT-` verification returns the
+  generic invalid result for an unknown ID.
+- No backend errors were logged in the final 200 lines on either host.
+
 ## Post-2.5.5 UI additions
 
 Checked on **2026-11-10** against the development and production deployments:
