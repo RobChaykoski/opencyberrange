@@ -16,8 +16,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import shutil
+import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
@@ -197,6 +200,40 @@ def sbom_manifest() -> list[dict[str, object]]:
     return rows
 
 
+def _git_revision() -> str:
+    override = os.environ.get("BUILD_REVISION", "").strip()
+    if override and override.lower() != "unknown":
+        return override
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return "unknown"
+
+
+def build_metadata(platform: dict, runtime: dict) -> dict:
+    """Build-time facts baked beside the inventory.
+
+    Runtime values such as the live Python or PostgreSQL version are resolved
+    by the About API. This file records what the release build was created from.
+    """
+    return {
+        "version": platform.get("version", ""),
+        "git_sha": _git_revision(),
+        "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "release_date": platform.get("date", ""),
+        "status": platform.get("status", ""),
+        "python": str((runtime.get("python") or {}).get("current", "")),
+        "node": str((runtime.get("node") or {}).get("current", "")),
+        "postgres": str((runtime.get("postgres") or {}).get("current", "")),
+        "redis": str((runtime.get("redis") or {}).get("current", "")),
+    }
+
+
 def main() -> int:
     versions = yaml.safe_load((ROOT / "versions.yaml").read_text(encoding="utf-8"))
     platform = versions.get("platform") or {}
@@ -246,11 +283,19 @@ def main() -> int:
     (ABOUT_DIR / "about.json").write_text(
         json.dumps(about, indent=2) + "\n", encoding="utf-8"
     )
+    build = build_metadata(platform, runtime)
+    (ABOUT_DIR / "build.json").write_text(
+        json.dumps(build, indent=2) + "\n", encoding="utf-8"
+    )
     print(
         f"Wrote {ABOUT_DIR / 'about.json'} "
         f"({len(about['components']['backend'])} backend, "
         f"{len(about['components']['frontend'])} frontend, "
         f"{len(about['licences'])} licence files, {len(about['sbom'])} SBOM files)"
+    )
+    print(
+        f"Wrote {ABOUT_DIR / 'build.json'} "
+        f"({build['version']}, {build['git_sha']})"
     )
     return 0
 

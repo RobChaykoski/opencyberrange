@@ -46,6 +46,107 @@
       </section>
 
       <section class="panel about-panel">
+        <div class="about-panel__header">
+          <div>
+            <h2 class="panel-title">Build and runtime</h2>
+            <p class="about-text about-text--tight">
+              Build facts come from the release; runtime values are read from
+              this installation.
+            </p>
+          </div>
+          <button type="button" class="btn btn--secondary btn--sm" @click="copyDiagnostics">
+            {{ copyLabel }}
+          </button>
+        </div>
+
+        <dl class="about-facts">
+          <div class="about-fact">
+            <dt>Release</dt>
+            <dd>{{ about.platform.version }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Commit</dt>
+            <dd class="cell-mono">{{ about.build?.git_sha || 'unknown' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Built</dt>
+            <dd>{{ formatTimestamp(about.build?.built_at) }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Schema revision</dt>
+            <dd class="cell-mono">{{ about.runtime?.schema_revision || 'unknown' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Backend image</dt>
+            <dd class="cell-mono" :title="about.build?.image_digests?.backend || 'unknown'">
+              {{ shortDigest(about.build?.image_digests?.backend) }}
+            </dd>
+          </div>
+          <div class="about-fact">
+            <dt>Frontend image</dt>
+            <dd class="cell-mono" :title="about.build?.image_digests?.frontend || 'unknown'">
+              {{ shortDigest(about.build?.image_digests?.frontend) }}
+            </dd>
+          </div>
+          <div class="about-fact">
+            <dt>Python / Node</dt>
+            <dd>{{ about.runtime?.python || '—' }} / {{ about.runtime?.node || '—' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>PostgreSQL / Redis</dt>
+            <dd>{{ about.runtime?.postgres || '—' }} / {{ about.runtime?.redis || '—' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Edition</dt>
+            <dd>{{ about.runtime?.edition || about.platform.edition }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Runtime checked</dt>
+            <dd>{{ formatTimestamp(about.runtime?.checked_at) }}</dd>
+          </div>
+        </dl>
+        <p class="about-copy-status" role="status" aria-live="polite">{{ copyStatus }}</p>
+      </section>
+
+      <section class="panel about-panel">
+        <h2 class="panel-title">Content and integrity</h2>
+        <dl class="about-facts about-facts--compact">
+          <div class="about-fact">
+            <dt>Labs</dt>
+            <dd>{{ about.content?.labs ?? '—' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Tracks</dt>
+            <dd>{{ about.content?.tracks ?? '—' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Levels</dt>
+            <dd>{{ about.content?.levels ?? '—' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Change ledger</dt>
+            <dd>
+              <span class="about-integrity" :class="`about-integrity--${integrityStatus}`">
+                {{ integrityLabel }}
+              </span>
+            </dd>
+          </div>
+          <div class="about-fact">
+            <dt>Ledger entries</dt>
+            <dd>{{ about.integrity?.entries ?? '—' }}</dd>
+          </div>
+          <div class="about-fact">
+            <dt>Unattributed, 7 days</dt>
+            <dd>{{ about.integrity?.unattributed_7d ?? '—' }}</dd>
+          </div>
+        </dl>
+        <p class="about-text about-text--tight">
+          The full chain, checksum, and data-quality checks run from
+          <strong>Admin → System → Integrity</strong> and the host schedule.
+        </p>
+      </section>
+
+      <section class="panel about-panel">
         <h2 class="panel-title">Branding and licence</h2>
         <p class="about-text">
           The <strong>SWOCTS</strong> name and logo are owned by SWOCTS. The logo
@@ -223,6 +324,64 @@ const groups = computed(() => {
 const componentCount = computed(() =>
   groups.value.reduce((total, group) => total + group.items.length, 0)
 )
+
+const copyState = ref('')
+const copyStatus = ref('')
+
+const copyLabel = computed(() =>
+  copyState.value === 'copied' ? 'Copied' : 'Copy diagnostics'
+)
+
+const integrityStatus = computed(() => about.value?.integrity?.status || 'unknown')
+
+const integrityLabel = computed(() => {
+  const labels = {
+    ok: 'Active, no unattributed writes',
+    warning: 'Active, review unattributed writes',
+    error: 'Not installed',
+    unavailable: 'Not available',
+    unknown: 'Unknown',
+  }
+  return labels[integrityStatus.value] || 'Unknown'
+})
+
+const diagnostics = computed(() => ({
+  release: about.value?.version,
+  platform: about.value?.platform,
+  build: about.value?.build,
+  runtime: about.value?.runtime,
+  content: about.value?.content,
+  integrity: about.value?.integrity,
+  client: { user_agent: navigator.userAgent },
+}))
+
+const copyDiagnostics = async () => {
+  try {
+    await navigator.clipboard.writeText(JSON.stringify(diagnostics.value, null, 2))
+    copyState.value = 'copied'
+    copyStatus.value = 'Diagnostics copied to the clipboard.'
+  } catch {
+    copyState.value = 'error'
+    copyStatus.value = 'Could not copy diagnostics. Copy the build facts manually.'
+  }
+  window.setTimeout(() => {
+    copyState.value = ''
+    copyStatus.value = ''
+  }, 3000)
+}
+
+const shortDigest = (value) => {
+  if (!value) return 'unknown'
+  const text = String(value)
+  return text.length > 19 ? `${text.slice(0, 19)}…` : text
+}
+
+const formatTimestamp = (value) => {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+  return date.toLocaleString()
+}
 
 const PROJECT_LICENCE_FILES = new Set([
   'LICENSE',
@@ -445,6 +604,66 @@ onMounted(load)
 .about-text strong {
   color: var(--text-primary);
   font-weight: 600;
+}
+
+.about-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.about-text--tight {
+  margin: 0.25rem 0 1rem;
+}
+
+.about-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.25rem 1.25rem;
+  margin: 0.5rem 0 0;
+}
+
+.about-fact {
+  min-width: 0;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.about-fact dt {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.about-fact dd {
+  margin: 0.2rem 0 0;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.about-facts--compact {
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.about-integrity {
+  font-weight: 600;
+}
+
+.about-integrity--ok { color: var(--success); }
+.about-integrity--warning { color: var(--warning); }
+.about-integrity--error { color: var(--danger); }
+.about-integrity--unavailable,
+.about-integrity--unknown { color: var(--text-muted); }
+
+.about-copy-status {
+  min-height: 1.2rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-muted);
 }
 
 .about-subtitle {

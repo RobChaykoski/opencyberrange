@@ -3,6 +3,8 @@ FROM python:3.11-slim
 ARG PLATFORM_VERSION=2.5.5
 ARG BUILD_REVISION=unknown
 
+ENV OCR_BUILD_REVISION=${BUILD_REVISION}
+
 LABEL org.opencontainers.image.title="SWOCTS Cyber Range backend" \
       org.opencontainers.image.description="SWOCTS Cyber Range API and lab orchestration service" \
       org.opencontainers.image.version="${PLATFORM_VERSION}" \

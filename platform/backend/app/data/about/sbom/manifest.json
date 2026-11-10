@@ -3,14 +3,14 @@
     {
       "name": "backend.cdx.json",
       "label": "Backend CycloneDX SBOM",
-      "bytes": 139513,
-      "sha256": "e9e6c11f2a7ab7f88620908b4820926dccce31bada976f970687a4bb7564d87b"
+      "bytes": 144972,
+      "sha256": "cd18d224de293c5bda5b992bdd3ec1410a93bbe146d619b13ba2660b63b0cb0c"
     },
     {
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
-      "bytes": 88899,
-      "sha256": "51d305fb2b4c53d30ae3d564160740f4f512a7c50b7b142189f45eced2dab3c8"
+      "bytes": 184266,
+      "sha256": "a3f4fb508e60ac78fb34b70d21db153ee88bbac9281c18e70e9209a4314cfaf3"
     }
   ]
 }

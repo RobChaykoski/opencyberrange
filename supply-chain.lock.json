@@ -37,7 +37,7 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "15cfc4471cdf3b4bdd0e15e1bbc5e1092974544416b92a52265dad0c3af941bf"
+      "sha256": "176551a453d2623fbf1e113460bbb76c3158172f1823aa144a9f74b269db8043"
     },
     "platform/backend/app/version.py": {
       "sha256": "8743c52384e2d8ef739ba0ef8df3ddd4bc691cea227143c8d7cdd8a1eeb049f7"
@@ -100,7 +100,7 @@
       "sha256": "d696005b3022938e57160aba1b1097adc48ab470f3f3a9e3563ccbcb0695490e"
     },
     "scripts/generate-about.py": {
-      "sha256": "02e5e8066110381de77a3fdacd9ade0fcd573def336d7c4a598d745cecb27756"
+      "sha256": "e63a7f336d48824310bc7014b3270f299efb34f630cd349fe6ea19be78016184"
     },
     "scripts/install-platform.sh": {
       "sha256": "31db2213c8fefd082ef16015e3786c235658a83f8013a70c489c4e025f4a4eea"

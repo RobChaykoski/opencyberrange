@@ -4,6 +4,8 @@ This directory is copied into the backend image and served by the authenticated
 `/api/about` endpoints.
 
 - `about.json` — generated component, licence, branding, and SBOM inventory.
+- `build.json` — generated build identity: release, git revision, build time, and
+  pinned runtime versions.
 - `licenses/` — copies of the project and third-party licence documents.
 - `sbom/` — CycloneDX SBOMs and their checksum manifest.
 

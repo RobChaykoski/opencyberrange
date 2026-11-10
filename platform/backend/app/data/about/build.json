@@ -1,0 +1,11 @@
+{
+  "version": "2.5.5",
+  "git_sha": "452b96a3",
+  "built_at": "2026-11-10T04:13:57+00:00",
+  "release_date": "2026-11-10",
+  "status": "release",
+  "python": "3.11",
+  "node": "22",
+  "postgres": "15",
+  "redis": "7.2"
+}

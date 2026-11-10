@@ -16,7 +16,12 @@ account.
 
 ## What it shows
 
+- **Build and runtime** — release, commit, build date, schema revision, backend
+  and frontend image digests, Python, Node, PostgreSQL, Redis, edition, and the
+  runtime check timestamp.
 - **Platform summary** — release, edition, Python, Node, PostgreSQL, Redis.
+- **Content and integrity** — lab, track, and level counts plus the append-only
+  ledger summary.
 - **Branding** — the SWOCTS name/logo are owned by SWOCTS and were created and
   designed by Avery Chaykoski. The OpenCyberRange attribution remains.
 - **Project licence** — PolyForm Noncommercial 1.0.0.
@@ -26,6 +31,8 @@ account.
   `BUILD_NOTICE.md`, `THIRD_PARTY_NOTICES.md`, and every text in
   `THIRD_PARTY_LICENSES/`.
 - **SBOMs** — CycloneDX files with size and SHA-256 checksums.
+- **Copy diagnostics** — a redacted JSON summary for support. It contains no
+  secrets, usernames, hostnames, database DSNs, container IDs, or paths.
 
 Privacy controls are documented in [`BUILD_NOTICE.md`](../BUILD_NOTICE.md) and
 are managed from **Admin > Settings > Security**, not on the About page.
@@ -41,6 +48,20 @@ from the release manifests by `scripts/generate-about.py`:
   components and licence identifiers;
 - `THIRD_PARTY_NOTICES.md` and `THIRD_PARTY_LICENSES/` for the notice inventory;
 - `BRANDING.md` for the SWOCTS/OpenCyberRange attribution.
+
+`GET /api/about` overlays live values on that inventory:
+
+- `APP_VERSION` and the release name;
+- the running Python version;
+- PostgreSQL `server_version` and the Alembic schema revision;
+- the live edition profile;
+- lab, track, and level counts;
+- the append-only ledger summary;
+- backend and frontend image IDs when the Docker socket is available.
+
+Build identity comes from `app/data/about/build.json`, which the generator writes
+with the release, git revision, build timestamp, and pinned runtime versions.
+`OCR_BUILD_REVISION` overrides the recorded git revision at container runtime.
 
 The generator copies the licence documents into `app/data/about/licenses/` and
 writes `sbom/manifest.json` with the SBOM sizes and hashes. It does not create
