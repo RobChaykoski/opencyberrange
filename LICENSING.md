@@ -30,8 +30,9 @@ commercial terms.
 ## 2.6.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
-- Release artefact: `v2.6.0` is a signed annotated tag; the supply-chain lock is
-  signed by the same release key.
+- Release artefact: `v2.6.0` is an annotated tag. The supply-chain lock is
+  signed by the release key; the tag itself is unsigned and should be signed on
+  the release workstation if a signed tag is required.
 - Third-party inventory: `scripts/check-licences.py` reports **OK** for the
   2.6.0 tree.
 - No new third-party runtime dependencies ship in 2.6.0. Event certificates

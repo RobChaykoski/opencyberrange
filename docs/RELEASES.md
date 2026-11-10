@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `main` (`v2.6.0` tag pending) | SWOCTS Cyber Range 2.6.0 | Current supported platform release |
+| `v2.6.0` | SWOCTS Cyber Range 2.6.0 | Current supported platform release (unsigned annotated tag) |
 | `v2.5.5` | SWOCTS Cyber Range 2.5.5 | Previous release; upgrade to 2.6.0 |
 | `v2.5.4` | SWOCTS Cyber Range 2.5.4 | Previous release; upgrade to 2.6.0 |
 | `v2.5.3` | SWOCTS Cyber Range 2.5.3 | Previous release; upgrade to 2.6.0 |
@@ -17,6 +17,10 @@ represent. It exists because the history contains several naming eras.
 | `v2.4.0` | SWOCTS Cyber Range 2.4.0 | Feature release before the 2.4.1 remediation; upgrade to 2.6.0 |
 | `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to 2.6.0 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
+
+`v2.6.0` is an annotated tag without a GPG signature. The release key documented
+in `docs/SUPPLY-CHAIN.md` still signs the supply-chain lock and can sign the tag
+on the release workstation if a signed tag is required.
 
 ## Legacy wave tags
 
