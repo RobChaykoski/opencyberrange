@@ -35,6 +35,16 @@ It runs manually and weekly on `ubuntu-26.04` and checks:
 - production Compose rendering;
 - backend and frontend image builds.
 
+## Rate-limit store evaluation
+
+The 26.04 candidate also evaluates **Valkey 9.1.3** as a drop-in replacement
+for the current `redis:7.2-alpine` rate-limit store. Valkey is BSD-3-Clause and
+RESP-compatible; Redis 7.4 and later are RSALv2/SSPLv1. The test matrix,
+functional checks, CI design, and promotion gates are in
+[Ubuntu 26.04 Valkey vs Redis test plan](UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
+
+Do not change the production Redis pin until the plan's decision gate passes.
+
 ## What still requires a real host
 
 The GitHub runner validates the build and script layer, not the full network
