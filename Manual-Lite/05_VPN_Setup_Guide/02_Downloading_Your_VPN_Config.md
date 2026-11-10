@@ -2,6 +2,12 @@
 
 Your WireGuard configuration file holds the keys and routes your machine needs to join the lab network. You download it once from the VPN setup page; the platform generates it on first request, registers your peer automatically, and reuses the same file on every later download. Do this before you install WireGuard or connect.
 
+!!! warning "VPN address update"
+    VPN configs now use a `/32` address and route only your own lab `/24`.
+    If your tunnel worked before and now does not, download a fresh config,
+    remove the old tunnel, and import the new file. Old configs used a `/16`
+    address and a much larger route, which could overlap a home network.
+
 ## Prerequisites
 
 - A platform account and an active session. See [../01_Getting_Started/05_Logging_In.md](../01_Getting_Started/05_Logging_In.md).

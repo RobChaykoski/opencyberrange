@@ -88,6 +88,22 @@ def get_vpn_client_ip(user_id: int, base: str = "10.0.0") -> str:
         return f"{base}.{third_octet}.{fourth_octet}"
 
 
+def vpn_lab_subnet(user_id: int) -> str:
+    """Return the student's stable lab /24 in 10.x.y.0/24 form."""
+    second_octet, third_octet = get_subnet_id(user_id)
+    return f"10.{second_octet}.{third_octet}.0/24"
+
+
+def vpn_allowed_ips(user_id: int) -> str:
+    """Route only the student's own lab /24 through WireGuard.
+
+    The previous broad routes (10.100.0.0/14, 10.104.0.0/13, 10.112.0.0/12,
+    10.128.0.0/9) covered every possible lab subnet and hijacked home networks
+    in 10.100-10.255. A student only needs their own /24.
+    """
+    return vpn_lab_subnet(user_id)
+
+
 def _acquire_vpn_allocator_lock(db: Session) -> None:
     """Serialize VPN IP allocation across uvicorn workers.
 
@@ -662,7 +678,7 @@ async def get_vpn_config(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Get or generate WireGuard VPN configuration - routes ALL lab networks"""
+    """Get or generate WireGuard VPN configuration - routes the student's lab /24"""
     # An admin who turns VPN off expects it off, so refuse here rather than only
     # hiding the button: this endpoint provisions a real peer and hands back a
     # working credential, and it is reachable directly.
@@ -761,8 +777,11 @@ async def get_vpn_config(
                 detail="Failed to generate VPN configuration"
             )
     
-    # Route lab networks (10.100/14, 10.104/13, 10.112/12, 10.128/9) through the
-    # VPN tunnel. 10.128/9 covers the 10.200.x lab range.
+    # Route only the student's own stable lab /24. The previous broad routes
+    # (10.100/14, 10.104/13, 10.112/12, 10.128/9) covered every possible lab
+    # subnet and hijacked home networks in 10.100-10.255. A shared container is
+    # attached to the session network during a lab, so it remains reachable
+    # through the same /24.
     # 10.50.0.0/16 (standalone RangeBox pool) is intentionally NOT routed: the
     # RangeBox is browser/noVNC only (proxied via the backend), never reached
     # from a VPN peer, so pushing it would only hijack a student's home LAN if
@@ -786,7 +805,7 @@ async def get_vpn_config(
         client_ip=wg_config.client_ip,
         server_public_key=vpn_pubkey,
         server_endpoint=vpn_endpoint,
-        allowed_ips="10.100.0.0/14,10.104.0.0/13,10.112.0.0/12,10.128.0.0/9",
+        allowed_ips=vpn_allowed_ips(current_user.id),
         wstunnel_url=wstunnel_url if wstunnel_url else None,
         platform_base_url=platform_base_url
     )

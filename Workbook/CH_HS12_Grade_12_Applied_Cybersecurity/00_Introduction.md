@@ -56,6 +56,10 @@ or a RangeBox, you can use it, but it is not required.
 4. **Explain** what it means and what you would do next.
 5. **Protect** the people whose information is involved.
 
-## Grade 12 Activity
+## Grade 12 Activities
 
-Start with [DevFest Community Portal](01_DevFest_Community_Portal.md).
+1. [DevFest Community Portal](01_DevFest_Community_Portal.md) — a browser-only
+   OSINT and metadata challenge.
+2. [Crypto Rug Pull](02_Crypto_Rug_Pull.md) — trace a simulated token ledger,
+   identify the drained wallet, and explain the scam anatomy.
+3. [Chapter Review](03_Chapter_Review.md) — consolidate the applied lessons.

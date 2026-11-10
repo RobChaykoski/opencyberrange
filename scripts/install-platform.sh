@@ -330,7 +330,7 @@ prompt_wireguard_config() {
         WG_API_KEY="${detected_api_key:-}"
         WG_API_URL="${detected_api_url:-http://host.docker.internal:5000}"
         WG_NETWORK_BASE="10.100"
-        WG_CLIENT_BASE="10.0.0"
+        WG_CLIENT_BASE="10.255"
 
         # Server public hostname (skippable via SERVER_PUBLIC_HOST env var)
         if [ -z "${SERVER_PUBLIC_HOST:-}" ]; then
@@ -395,7 +395,7 @@ prompt_wireguard_config() {
 
     # Network settings — use safe defaults (no prompt needed)
     WG_NETWORK_BASE="10.100"
-    WG_CLIENT_BASE="10.0.0"
+    WG_CLIENT_BASE="10.255"
 
     # Server hostname — default to IP from endpoint if available
     local default_host="${WG_ENDPOINT%%:*}"
@@ -615,7 +615,7 @@ services:
       WG_API_KEY: ${WG_API_KEY}
       WG_ENCRYPTION_KEY: ${WG_ENCRYPTION_KEY}
       WG_NETWORK_BASE: ${WG_NETWORK_BASE:-10.100}
-      WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.0.0}
+      WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.255}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@example.org}

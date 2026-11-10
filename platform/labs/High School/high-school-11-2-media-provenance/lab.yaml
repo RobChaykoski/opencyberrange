@@ -1,0 +1,121 @@
+title: "Media Provenance: Is It Real?"
+category: osint
+difficulty: intermediate
+estimated_time: 35
+prerequisites:
+  - high-school-10-4-mfa-lost-phone
+# By completion students will be able to:
+learning_outcomes:
+  - Check source and provenance before visual clues
+  - Explain what image metadata can and cannot prove
+  - Compare independent corroboration with a single anonymous upload
+  - Write an evidence statement that names its limits
+mapped_skills:
+  - osint
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - State one thing the evidence does not prove.
+mitre_attack:
+  - tactic: Defense Evasion
+    technique: T1036
+    technique_name: Masquerading
+    detection: Alert when published media has no original source, no independent corroboration, and metadata that disagrees with the claimed capture device or timeline.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community newsroom has two images from the same weekend. One has a verifiable source and independent corroboration; the other arrived anonymously with synthetic-media metadata. Compare provenance, metadata, hashes, and corroboration, then request a verification token for the supported item."
+visibility: public
+flag: "OCR{provenance_beats_visual_tells}"
+
+tools:
+  - browser
+  - terminal
+
+scenario: |
+  You are volunteering at a community newsroom. Two images were submitted for
+  the same weekend: a staff photo from a river cleanup and an anonymous lantern
+  festival picture with a dramatic caption.
+
+  The editor wants a decision, not a vibe. Check the source, the provenance
+  record, the metadata, and whether anything independent supports the claim.
+  Then request a verification token for the item you can support.
+
+  The images, people, and events are fictional. Do not upload a real person's
+  image or a lab file to a third-party service.
+
+troubleshooting: "If the archive images do not render, open the media URL directly. If a verification request returns 403, the item is synthetic; return to the provenance record and compare source and corroboration. Do not use a real reverse-image service with a real person's image."
+defensive_takeaways: "Source and independent corroboration are stronger than a single metadata field or a visual artefact. Metadata is often stripped or editable. State what the evidence supports and what it does not prove, and never publish a synthetic image of a real person without consent and legal review."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, archive, and workbook; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must compare several evidence lines."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance/"
+
+hostnames:
+  - ip_offset: "88"
+    hostname: "provenance.lab"
+    description: "Newsroom provenance archive (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community newsroom archive"
+      type: "server"
+      ip_offset: "88"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the archive and compare the source note for each item. One came from
+      a staff page; the other arrived anonymously.
+    unlock_after_minutes: 0
+
+  - text: |
+      Read `/provenance.json`. Look at the software, camera, GPS, and
+      corroboration fields. One record names a synthetic-media tool.
+    unlock_after_minutes: 7
+
+  - text: |
+      A visual clue is not proof. Check whether an independent record, a second
+      photographer, or a venue log supports the claim.
+    unlock_after_minutes: 13
+
+  - text: |
+      Request `/verify?id=river-cleanup` for the supported item. The anonymous
+      item returns 403 because it has no independent provenance.
+    unlock_after_minutes: 18
+
+test:
+  steps:
+    - name: "Verification desk responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Archive lists both submissions"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/archive"
+      expect: "200"
+      timeout: 20
+
+    - name: "Provenance data identifies the synthetic tool"
+      command: "curl -s http://{target.portal}:8080/provenance.json | grep -c 'synthetic-media-studio'"
+      expect: "1"
+      timeout: 20
+
+    - name: "The synthetic item has no verification token"
+      command: "curl -s -o /dev/null -w '%{http_code}' 'http://{target.portal}:8080/verify?id=lantern-festival'"
+      expect: "403"
+      timeout: 20
+
+    - name: "The supported item reveals the training token"
+      command: "curl -s 'http://{target.portal}:8080/verify?id=river-cleanup' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{provenance_beats_visual_tells}"
+      timeout: 20

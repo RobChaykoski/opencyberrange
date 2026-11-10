@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA CySA+"
+  code: "CS0-003"
+  url: "https://www.comptia.org/certifications/cybersecurity-analyst"
+  scope: "Benchmark practice inspired by CySA+ evidence-handling objectives. Not an actual exam item."
+
+questions:
+  - id: "provenance-1"
+    prompt: "What should you check first when deciding whether a published image is trustworthy?"
+    options:
+      - "The original source and its provenance"
+      - "The number of likes on the post"
+      - "Whether the colours look realistic"
+      - "The file extension"
+    correct: 0
+    explanation: "Source and provenance are stronger than appearance. A polished image can be synthetic, and a real image can look strange after editing or compression."
+    reference:
+      label: "C2PA: Content provenance"
+      url: "https://c2pa.org/"
+
+  - id: "provenance-2"
+    prompt: "What can image metadata usually prove?"
+    options:
+      - "Limited details that may be stripped or edited, so it is supporting evidence"
+      - "That the image is definitely real"
+      - "That the image is definitely synthetic"
+      - "The identity and intent of the uploader"
+    correct: 0
+    explanation: "Most platforms strip metadata, and fields can be edited. Metadata can support a conclusion but should not be the only evidence."
+    reference:
+      label: "ExifTool: Metadata documentation"
+      url: "https://exiftool.org/"
+
+  - id: "provenance-3"
+    prompt: "What counts as independent corroboration for a media claim?"
+    options:
+      - "A separate source, record, or witness that supports the same claim"
+      - "The same account reposting the image"
+      - "A larger version of the same file"
+      - "A comment that agrees with the caption"
+    correct: 0
+    explanation: "Corroboration must be independent of the original upload. A repost, a resize, or a comment is not independent evidence."
+    reference:
+      label: "C2PA: Content provenance"
+      url: "https://c2pa.org/"
+
+  - id: "provenance-4"
+    prompt: "Why are visual artefacts such as odd hands or lighting not proof of a synthetic image?"
+    options:
+      - "Compression, editing, and ordinary capture conditions can produce them"
+      - "They only appear in real photographs"
+      - "They are always removed by social platforms"
+      - "They prove the image was taken with a specific camera"
+    correct: 0
+    explanation: "Visual clues are prompts to investigate, not verdicts. They can have ordinary causes, and modern synthetic media is increasingly free of them."
+    reference:
+      label: "NIST AI Risk Management Framework"
+      url: "https://www.nist.gov/itl/ai-risk-management-framework"
+
+  - id: "provenance-5"
+    prompt: "What should a good media evidence brief include?"
+    options:
+      - "What the evidence supports and what it does not prove"
+      - "Only a confident guess"
+      - "The number of shares"
+      - "The uploader's personal details"
+    correct: 0
+    explanation: "An evidence brief should name the checks, the conclusion, the confidence level, and the limits. Saying what the evidence cannot prove is part of the analysis."
+    reference:
+      label: "C2PA: Content provenance"
+      url: "https://c2pa.org/"
+
+  - id: "provenance-6"
+    prompt: "Which combination is the strongest support for a media claim?"
+    options:
+      - "A known original source, a matching hash, and independent corroboration"
+      - "A single anonymous upload with a dramatic caption"
+      - "One visual artefact and many likes"
+      - "A screenshot of the image in a chat"
+    correct: 0
+    explanation: "Independent source and corroboration are stronger than popularity or a single visual clue. A hash helps confirm the file has not changed."
+    reference:
+      label: "C2PA: Content provenance"
+      url: "https://c2pa.org/"

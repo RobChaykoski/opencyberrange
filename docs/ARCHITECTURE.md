@@ -11,7 +11,7 @@ flowchart TB
     subgraph Clients["Learner / instructor clients"]
         B["Desktop browser<br/>Vue SPA"]
         M["Mobile browser<br/>compact shell"]
-        V["WireGuard client<br/>10.0.0.0/16"]
+        V["WireGuard client<br/>10.255.x.y/32"]
     end
 
     subgraph Edge["Frontend container: ocr-frontend"]
@@ -76,7 +76,7 @@ flowchart TB
     ORCH -->|firewall + peer rules| PM
     PM --> WG
     V --> WG
-    WG -.->|only 10.100.0.0/16| LABS
+    WG -.->|only the student's lab /24| LABS
 
     BUILDER -->|writes| WIKIV
     PREBUILD -->|publishes images| DOCKER
@@ -101,8 +101,11 @@ flowchart TB
    `10.100.x`; a standalone RangeBox from the RangeBox tab runs on its own
    `10.50.x` bridge. The backend waits for VNC port `6080` before reporting the
    desktop ready, and the deployed count includes containers from creation.
-5. WireGuard clients reach only the lab networks under `10.100.0.0/16`. The
-   Peer Manager applies and persists the firewall rules.
+5. WireGuard clients use a `/32` address in the `10.255.x.y` range and route
+   only their own stable lab `/24` (allocated from `10.100.0.0/16`). The client
+   no longer claims a `/16` or routes the whole `10.100-10.255` space, which
+   avoids overlapping common home networks. The Peer Manager applies and
+   persists the firewall rules.
 6. The frontend serves the SPA and the prebuilt workbook wiki. The wiki is a
    build artifact in the `wiki_data` volume, not part of the frontend image.
 7. The `wiki-builder` container runs MkDocs with a pinned toolchain and
@@ -120,7 +123,7 @@ flowchart TB
 | Frontend → backend | Private Compose network; backend bound to localhost on the host |
 | Backend → Docker | Docker socket; treat the backend host and `docker` group as privileged |
 | Application → database | Parameterized ORM/SQL, least-privilege app role, backup and restore checks, append-only change ledger, signed table checksums; manual SQL is recorded as unattributed |
-| Learner → labs | WireGuard peer; firewall allows only `10.100.0.0/16`; one `/24` per session |
+| Learner → labs | WireGuard peer with a `/32` client address; the client routes only its own `/24`; firewall allows only `10.100.0.0/16` |
 | Learner → RangeBox | HTTPS browser desktop through the backend WebSocket proxy; standalone boxes use an isolated `10.50.x` bridge |
 | RangeBox → lab | Exercise-box only; attached to that session's bridge and removed on teardown |
 | Lab → lab | Separate per-session bridge networks; no cross-session routing |
@@ -182,7 +185,7 @@ Discoverability. Each factor is scored **1–5**; the score is their mean.
 | T10 | Backend → Docker | Tampering | One session's lab attacks another session or the management network | 4/2/2/4/2 = 2.8 | Medium | One bridge and one `/24` per session; no cross-session routing; firewall rules drop lab and RangeBox subnets from external interfaces. Residual: a host-level network misconfiguration could bridge sessions, so firewall state is part of the release check. |
 | T11 | Backend → Docker | Denial of service | A lab or RangeBox consumes all CPU, memory, or disk | 3/4/2/4/3 = 3.2 | Medium | RangeBox capacity gates, container limits where set, scheduler expiry and cleanup, and a prebuild disk guard. Residual: not every lab has a hard CPU quota; host monitoring and capacity planning are required. |
 | T12 | Learner → labs (VPN) | Spoofing | A stolen WireGuard key joins the lab network | 4/3/3/3/2 = 3.0 | Medium | Per-user peer keys, Peer Manager provisioning and revocation, firewall access limited to `10.100.0.0/16`, and peer removal on teardown. Residual: key material on a compromised client; offline revocation is not instantaneous. |
-| T13 | Learner → labs (VPN) | Information disclosure | A learner sniffs another learner's lab traffic or reaches the management LAN | 4/2/3/4/2 = 3.0 | Medium | Per-session `/24`, the WireGuard firewall, the `DOCKER-USER` accepts, the UFW bridge rule, and external-interface drops. Residual: a host kernel or firewall misconfiguration can break isolation. |
+| T13 | Learner → labs (VPN) | Information disclosure | A learner sniffs another learner's lab traffic or reaches the management LAN | 4/2/3/4/2 = 3.0 | Medium | Per-session `/24`, a `/32` client address, client-side routing limited to the learner's own `/24`, the WireGuard firewall, the `DOCKER-USER` accepts, the UFW bridge rule, and external-interface drops. Residual: a host kernel or firewall misconfiguration can break isolation. |
 | T14 | Learner → RangeBox | Elevation of privilege | The browser desktop escapes its container or reaches the lab or host | 4/2/3/3/3 = 3.0 | Medium | VNC is never exposed directly; it is proxied behind authentication. Standalone boxes use an isolated `10.50.x` bridge, exercise boxes attach only to their session, and teardown removes both. Residual: the desktop attack surface and the learner's browser remain exposure points. |
 | T15 | Lab → management LAN | Tampering | A lab container changes host firewall or routing state | 4/2/2/4/2 = 2.8 | Medium | No privileged mode and no host networking; `NET_ADMIN` is scoped to the lab namespace; host firewall state is applied by the Peer Manager and installer. Residual: kernel networking vulnerabilities and operator firewall drift. |
 | T16 | Wiki build → runtime | Tampering | Compromised or careless wiki content injects script into the learner origin | 3/2/3/4/3 = 3.0 | Medium | Pinned MkDocs toolchain, build-time only, output mounted read-only, course-wiki authoring restricted to instructors, and CSP on the served document. Residual: MkDocs does not sanitise every author-supplied HTML fragment; instructor content is trusted. |

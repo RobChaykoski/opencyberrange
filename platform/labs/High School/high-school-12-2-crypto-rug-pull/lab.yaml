@@ -1,0 +1,122 @@
+title: "Crypto Rug Pull: Follow the Liquidity"
+category: osint
+difficulty: intermediate
+estimated_time: 35
+prerequisites:
+  - high-school-11-2-media-provenance
+# By completion students will be able to:
+learning_outcomes:
+  - Apply a red-flag framework to a token offer
+  - Trace a simulated transaction ledger
+  - Identify the wallet that received and moved the community liquidity
+  - Explain the recovery-agent second-layer scam
+mapped_skills:
+  - osint
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Name two red flags and the drained wallet.
+mitre_attack:
+  - tactic: Impact
+    technique: T1657
+    technique_name: Financial Theft
+    detection: Alert on sudden liquidity removal, treasury-to-external-wallet transfers, and recovery-agent messages that ask for an upfront fee.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community token promises guaranteed returns and asks supporters to connect a wallet. Trace the simulated ledger, identify the wallet that removed the liquidity, and recover the case token. Defensive education only: no real token, wallet, or money."
+visibility: public
+flag: "OCR{follow_the_liquidity_not_the_hype}"
+
+tools:
+  - browser
+  - terminal
+
+scenario: |
+  A community centre is considering a sponsorship from a token project called
+  $MILK. The site promises guaranteed weekly returns, a countdown, and a free
+  airdrop if supporters connect a wallet. The team is anonymous and the audit
+  is "pending".
+
+  The centre's coordinator asks you to look at the public ledger before anyone
+  signs anything. Trace the money, identify the wallet that removed the
+  liquidity, and recover the case token.
+
+  This is a simulation. There is no real token, wallet, or money. Never connect
+  a real wallet to an unknown site or share a seed phrase.
+
+troubleshooting: "If the case endpoint returns 404, you have the wrong wallet. Trace the ledger from the community wallet to the wallet that received the liquidity and forwarded it externally. Do not use a real wallet address or a real trading platform."
+defensive_takeaways: "Guaranteed returns, urgency, anonymous teams, and wallet-connect airdrops are common scam patterns. Follow the ledger, not the marketing. Crypto transfers are usually irreversible, and a recovery agent who asks for an upfront fee is often a second-layer scam."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, token page, ledger, and workbook; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must trace several ledger rows."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull/"
+
+hostnames:
+  - ip_offset: "89"
+    hostname: "crypto.lab"
+    description: "Simulated token dashboard and ledger (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Simulated token dashboard"
+      type: "server"
+      ip_offset: "89"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Read the token page for red flags. Guaranteed returns, urgency, an
+      anonymous team, and a wallet-connect airdrop are all warning signs.
+    unlock_after_minutes: 0
+
+  - text: |
+      Open `/ledger.json`. Find the community wallet, then follow the largest
+      outgoing transfer to the wallet that received the liquidity.
+    unlock_after_minutes: 7
+
+  - text: |
+      The drained wallet forwarded almost everything to an external wallet. That
+      is the exit. The small remainder was swapped.
+    unlock_after_minutes: 13
+
+  - text: |
+      Request `/case?wallet=<the wallet that received the liquidity>`. A wrong
+      wallet returns 404; the right one returns the case token.
+    unlock_after_minutes: 18
+
+test:
+  steps:
+    - name: "Token page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Ledger is available"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/ledger.json"
+      expect: "200"
+      timeout: 20
+
+    - name: "Ledger contains the drained wallet"
+      command: "curl -s http://{target.portal}:8080/ledger.json | grep -c '0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f'"
+      expect: "1"
+      timeout: 20
+
+    - name: "A wrong wallet has no case file"
+      command: "curl -s -o /dev/null -w '%{http_code}' 'http://{target.portal}:8080/case?wallet=0x7a1c3e5b9d2f4a6c8e0b1d3f5a7c9e2b4d6f8a0c'"
+      expect: "404"
+      timeout: 20
+
+    - name: "The drained wallet reveals the case token"
+      command: "curl -s 'http://{target.portal}:8080/case?wallet=0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{follow_the_liquidity_not_the_hype}"
+      timeout: 20

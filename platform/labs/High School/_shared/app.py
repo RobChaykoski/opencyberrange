@@ -12,17 +12,21 @@ Each lab selects a mode with LAB_MODE and supplies its own FLAG:
     filetype  - a shared folder where one file's extension is wrong
     capstone  - a forwarded notice that combines link and file checks
     emailmeta - a raw email with routing, authentication, and custom headers
+    mfa_recovery - a staff portal with MFA and a weak recovery question
+    provenance   - a newsroom archive with synthetic-media provenance records
+    rugpull      - a simulated token dashboard and transaction ledger
 
 Nothing here reaches the internet, calls a real service, or stores state.
 """
 import base64
 import codecs
+import hashlib
 import html
 import io
 import json
 import os
 import zipfile
-from urllib.parse import quote
+from urllib.parse import parse_qs, quote
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 MODE = os.environ.get("LAB_MODE", "welcome")
@@ -624,6 +628,509 @@ less email.eml</pre>
     """
 
 
+MFA_USER = "amara"
+MFA_PASSWORD = "Library2026!"
+MFA_ANSWER = "The Lantern Keeper"
+
+
+def mfa_home_body() -> str:
+    return f"""
+      <span class="pill">Identity</span>
+      <h1>MFA and the lost phone</h1>
+      <p class="lede">A community centre volunteer lost their phone. The account
+      is protected by a password and an authenticator app. The volunteer needs
+      to get back in before the Tuesday reading circle.</p>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Sign in, see what the MFA prompt asks for, and find the recovery path.
+        Recover the training token and explain why the recovery path was weaker
+        than the second factor.</p>
+        <p><a class="button" href="/login">Open the staff sign-in</a></p>
+      </div>
+      <div class="card">
+        <h2>Also available</h2>
+        <p><a href="/staff">Staff directory</a> &mdash; public profiles for the
+        community centre team.</p>
+      </div>
+      <div class="card note">
+        <h2>Stay safe</h2>
+        <p>This is a fictional account. Never use a real password, recovery
+        answer, or authenticator code in a training lab.</p>
+      </div>
+    """
+
+
+def mfa_login_body(error: str = "") -> str:
+    message = f'<p class="danger">{html.escape(error)}</p>' if error else ""
+    return f"""
+      <span class="pill">Sign in</span>
+      <h1>Staff sign-in</h1>
+      {message}
+      <div class="card">
+        <form method="post" action="/login">
+          <div class="form-row">
+            <label for="user">Username</label>
+            <input id="user" name="user" autocomplete="username" required>
+          </div>
+          <div class="form-row">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password"
+                   autocomplete="current-password" required>
+          </div>
+          <button class="button" type="submit">Sign in</button>
+        </form>
+        <p class="note" style="margin-top:1rem">Demo staff account:
+        <code>{MFA_USER}</code> / <code>{MFA_PASSWORD}</code>. The account also
+        requires an authenticator code.</p>
+        <p><a href="/recover">Lost your phone?</a></p>
+      </div>
+      <p><a href="/">Back to the portal</a></p>
+    """
+
+
+def mfa_mfa_body() -> str:
+    return f"""
+      <span class="pill">Second factor</span>
+      <h1>Enter your authenticator code</h1>
+      <div class="card">
+        <h2>MFA required</h2>
+        <p>The password was correct. The account now asks for a six-digit code
+        from the authenticator app on the volunteer's phone.</p>
+        <p>The phone is lost. There is no code to enter here.</p>
+        <p><a class="button" href="/recover">Use account recovery</a></p>
+      </div>
+      <div class="card note">
+        <h2>Think like a defender</h2>
+        <p>MFA is only as strong as its recovery path. A recovery question that
+        anyone can answer from a public profile turns the second factor into a
+        formality.</p>
+      </div>
+      <p><a href="/">Back to the portal</a></p>
+    """
+
+
+def mfa_staff_body() -> str:
+    return f"""
+      <span class="pill">Directory</span>
+      <h1>Community centre staff</h1>
+      <p class="lede">These public profiles help visitors put a name to a role.
+      They are not meant to be a source of account-recovery answers.</p>
+      <div class="card">
+        <ul>
+          <li><a href="/staff/amara">Amara &mdash; volunteer coordinator</a></li>
+          <li><a href="/staff/rowan">Rowan &mdash; communications volunteer</a></li>
+        </ul>
+      </div>
+      <p><a href="/">Back to the portal</a></p>
+    """
+
+
+def mfa_profile_body(name: str, role: str, book: str, bio: str) -> str:
+    return f"""
+      <span class="pill">Staff profile</span>
+      <h1>{html.escape(name)}</h1>
+      <div class="card">
+        <h2>{html.escape(role)}</h2>
+        <p>{html.escape(bio)}</p>
+        <p><strong>Favourite book:</strong> {html.escape(book)}</p>
+      </div>
+      <p><a href="/staff">Back to the directory</a></p>
+    """
+
+
+def mfa_recover_body(error: str = "") -> str:
+    message = f'<p class="danger">{html.escape(error)}</p>' if error else ""
+    return f"""
+      <span class="pill">Recovery</span>
+      <h1>Recover the account</h1>
+      {message}
+      <div class="card">
+        <p>The recovery flow asks one security question. It does not require the
+        authenticator code.</p>
+        <form method="post" action="/recover">
+          <div class="form-row">
+            <label for="user">Username</label>
+            <input id="user" name="user" autocomplete="username" required>
+          </div>
+          <div class="form-row">
+            <label for="answer">What is your favourite book?</label>
+            <input id="answer" name="answer" autocomplete="off" required>
+          </div>
+          <button class="button" type="submit">Recover account</button>
+        </form>
+      </div>
+      <p><a href="/login">Back to sign-in</a></p>
+    """
+
+
+def mfa_success_body() -> str:
+    return f"""
+      <span class="pill">Recovered</span>
+      <h1>Recovery complete</h1>
+      <div class="card">
+        <h2>Account access restored</h2>
+        <p>The MFA requirement was reset by answering a question whose answer is
+        published on the staff directory.</p>
+        <p>Training token: <code>{html.escape(FLAG)}</code></p>
+      </div>
+      <div class="card note">
+        <h2>The fix</h2>
+        <p>Use pre-generated recovery codes or a second enrolled authenticator,
+        store them offline, and never use a fact that is public or guessable.
+        Rotate recovery codes after use and notify the account owner.</p>
+      </div>
+      <p><a href="/">Back to the portal</a></p>
+    """
+
+
+PROVENANCE_ITEMS = {
+    "river-cleanup": {
+        "title": "River cleanup volunteers",
+        "caption": "Staff photo from the riverside cleanup.",
+        "source": "Community centre staff page",
+        "source_url": "/sources/river-cleanup",
+        "uploaded_at": "2026-11-09 16:10",
+        "camera": "Pixel 8",
+        "software": "Camera 9.2",
+        "gps": "42.31, -83.02",
+        "corroboration": "Venue log and a second photographer",
+        "claim": "The cleanup happened on 9 November.",
+        "synthetic": False,
+    },
+    "lantern-festival": {
+        "title": "Lantern festival at the park",
+        "caption": "A lantern festival photo submitted anonymously.",
+        "source": "Anonymous upload",
+        "source_url": "/sources/lantern-festival",
+        "uploaded_at": "2026-11-09 18:42",
+        "camera": "Not recorded",
+        "software": "synthetic-media-studio 2.1",
+        "gps": "Not recorded",
+        "corroboration": "None found",
+        "claim": "The festival happened on 9 November.",
+        "synthetic": True,
+    },
+}
+
+PROVENANCE_SVGS = {
+    "river-cleanup": """<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+<rect width="640" height="360" fill="#dbeafe"/>
+<circle cx="540" cy="70" r="34" fill="#fde68a"/>
+<rect y="230" width="640" height="130" fill="#3b82f6"/>
+<path d="M0 230 Q160 190 320 230 T640 230 L640 260 Q480 220 320 260 T0 260 Z" fill="#22c55e"/>
+<rect x="70" y="150" width="18" height="90" fill="#92400e"/>
+<circle cx="79" cy="145" r="38" fill="#15803d"/>
+<rect x="150" y="165" width="14" height="75" fill="#92400e"/>
+<circle cx="157" cy="160" r="30" fill="#166534"/>
+<rect x="470" y="245" width="110" height="46" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="3"/>
+<text x="525" y="274" font-family="sans-serif" font-size="15" text-anchor="middle" fill="#0f172a">RIVER CLEANUP</text>
+<text x="320" y="338" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#e0f2fe">Staff photo · 9 November</text>
+</svg>""",
+    "lantern-festival": """<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+<rect width="640" height="360" fill="#0f172a"/>
+<circle cx="90" cy="60" r="24" fill="#fef3c7" opacity="0.8"/>
+<circle cx="560" cy="90" r="18" fill="#fef3c7" opacity="0.6"/>
+<rect x="250" y="70" width="34" height="46" rx="8" fill="#f59e0b"/>
+<rect x="430" y="110" width="34" height="46" rx="8" fill="#f59e0b"/>
+<rect x="160" y="160" width="34" height="46" rx="8" fill="#f59e0b"/>
+<rect x="300" y="210" width="34" height="46" rx="8" fill="#fbbf24"/>
+<path d="M267 116 L267 150" stroke="#fde68a" stroke-width="3"/>
+<path d="M447 156 L447 190" stroke="#fde68a" stroke-width="3"/>
+<path d="M177 206 L177 240" stroke="#fde68a" stroke-width="3"/>
+<text x="320" y="320" font-family="sans-serif" font-size="16" text-anchor="middle" fill="#fef3c7">LANTERN FESTIVAL</text>
+<text x="400" y="286" font-family="sans-serif" font-size="11" fill="#94a3b8">submitted anonymously</text>
+</svg>""",
+}
+
+PROVENANCE_REAL_ID = "river-cleanup"
+PROVENANCE_SYNTHETIC_ID = "lantern-festival"
+
+
+def provenance_records() -> list[dict]:
+    records = []
+    for item_id, item in PROVENANCE_ITEMS.items():
+        record = dict(item)
+        record["id"] = item_id
+        record["media_url"] = f"/media/{item_id}"
+        record["sha256"] = hashlib.sha256(
+            PROVENANCE_SVGS[item_id].encode("utf-8")
+        ).hexdigest()
+        records.append(record)
+    return records
+
+
+def provenance_home_body() -> str:
+    return """
+      <span class="pill">Verification desk</span>
+      <h1>Community newsroom verification desk</h1>
+      <p class="lede">Two images were submitted for the same weekend. One is a
+      staff photo. The other arrived anonymously with a dramatic caption.</p>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Use the archive, provenance records, and source notes to decide which
+        item is supported by independent evidence. Then request a verification
+        token for that item.</p>
+        <p><a class="button" href="/archive">Open the archive</a></p>
+      </div>
+      <div class="card note">
+        <h2>Check in order</h2>
+        <p>Source, provenance, corroboration, clues. Metadata is often stripped
+        on upload, and a visual artefact is not proof on its own.</p>
+      </div>
+    """
+
+
+def provenance_archive_body() -> str:
+    cards = "".join(
+        f"""
+        <div class="card">
+          <h2>{html.escape(item['title'])}</h2>
+          <img src="{html.escape(item['media_url'])}"
+               alt="{html.escape(item['caption'])}"
+               style="width:100%;max-width:640px;border-radius:10px;border:1px solid var(--line)">
+          <p>{html.escape(item['caption'])}</p>
+          <p><a href="/provenance/{html.escape(item['id'])}">Provenance record</a>
+          &middot; <a href="{html.escape(item['source_url'])}">Source note</a></p>
+        </div>
+        """
+        for item in provenance_records()
+    )
+    return f"""
+      <span class="pill">Archive</span>
+      <h1>Two submissions</h1>
+      <p class="lede">The newsroom has not published either item. Compare the
+      provenance before you trust the claim.</p>
+      {cards}
+      <p><a href="/provenance.json">Raw provenance data</a></p>
+      <p><a href="/">Back to the verification desk</a></p>
+    """
+
+
+def provenance_detail_body(item: dict) -> str:
+    return f"""
+      <span class="pill">Provenance</span>
+      <h1>{html.escape(item['title'])}</h1>
+      <div class="card">
+        <img src="{html.escape(item['media_url'])}"
+             alt="{html.escape(item['caption'])}"
+             style="width:100%;max-width:640px;border-radius:10px;border:1px solid var(--line)">
+      </div>
+      <table>
+        <tr><th>Claim</th><td>{html.escape(item['claim'])}</td></tr>
+        <tr><th>Source</th><td>{html.escape(item['source'])}</td></tr>
+        <tr><th>Uploaded</th><td>{html.escape(item['uploaded_at'])}</td></tr>
+        <tr><th>Camera</th><td>{html.escape(item['camera'])}</td></tr>
+        <tr><th>Software</th><td>{html.escape(item['software'])}</td></tr>
+        <tr><th>GPS</th><td>{html.escape(item['gps'])}</td></tr>
+        <tr><th>Corroboration</th><td>{html.escape(item['corroboration'])}</td></tr>
+        <tr><th>SHA-256</th><td><code>{html.escape(item['sha256'])}</code></td></tr>
+      </table>
+      <div class="card note">
+        <h2>Metadata is not a verdict</h2>
+        <p>Camera and GPS fields can be edited or stripped. The source and
+        independent corroboration carry more weight than one metadata field.</p>
+      </div>
+      <p><a href="/archive">Back to the archive</a></p>
+    """
+
+
+def provenance_source_body(item: dict) -> str:
+    if item["synthetic"]:
+        note = (
+            "First seen on an anonymous repost account. No original upload, no "
+            "camera record, and no independent report of the event. The only "
+            "source is the account that posted it."
+        )
+    else:
+        note = (
+            "First seen on the community centre staff page. A venue log records "
+            "the cleanup, and a second photographer submitted a matching frame "
+            "from a different angle."
+        )
+    return f"""
+      <span class="pill">Source note</span>
+      <h1>{html.escape(item['title'])}</h1>
+      <div class="card">
+        <p>{html.escape(note)}</p>
+        <p><strong>Source:</strong> {html.escape(item['source'])}</p>
+        <p><strong>Corroboration:</strong> {html.escape(item['corroboration'])}</p>
+      </div>
+      <p><a href="/archive">Back to the archive</a></p>
+    """
+
+
+def provenance_success_body() -> str:
+    return f"""
+      <span class="pill">Verified</span>
+      <h1>Provenance check passed</h1>
+      <div class="card">
+        <h2>The staff photo is supported</h2>
+        <p>The source, venue log, second photographer, and metadata are
+        consistent. The anonymous lantern image has no independent support.</p>
+        <p>Training token: <code>{html.escape(FLAG)}</code></p>
+      </div>
+      <div class="card note">
+        <h2>What the evidence does not prove</h2>
+        <p>It does not prove that every detail in the staff photo is true. It
+        supports the specific claim that the cleanup happened and that this
+        image came from a known photographer.</p>
+      </div>
+      <p><a href="/">Back to the verification desk</a></p>
+    """
+
+
+RUGPULL_TREASURY = "0x4b8e2d6f1a3c5e7b9d0f2a4c6e8b1d3f5a7c9e2b"
+RUGPULL_COMMUNITY = "0x7a1c3e5b9d2f4a6c8e0b1d3f5a7c9e2b4d6f8a0c"
+RUGPULL_DRAINED = "0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f"
+RUGPULL_OFFSHORE = "0x3d6e9c2f4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6"
+RUGPULL_EXCHANGE = "0x5a7c9e2b4d6f8a0c1e3b5d7f9a2c4e6b8d0f1a3c"
+
+
+def rugpull_ledger() -> list[dict]:
+    return [
+        {
+            "id": "tx-001",
+            "from": RUGPULL_TREASURY,
+            "to": RUGPULL_COMMUNITY,
+            "amount": 1000000,
+            "asset": "MILK",
+            "memo": "initial liquidity",
+        },
+        {
+            "id": "tx-002",
+            "from": RUGPULL_COMMUNITY,
+            "to": RUGPULL_DRAINED,
+            "amount": 950000,
+            "asset": "MILK",
+            "memo": "liquidity removal",
+        },
+        {
+            "id": "tx-003",
+            "from": RUGPULL_DRAINED,
+            "to": RUGPULL_OFFSHORE,
+            "amount": 940000,
+            "asset": "MILK",
+            "memo": "bridge to external wallet",
+        },
+        {
+            "id": "tx-004",
+            "from": RUGPULL_DRAINED,
+            "to": RUGPULL_EXCHANGE,
+            "amount": 10000,
+            "asset": "MILK",
+            "memo": "swap",
+        },
+    ]
+
+
+def rugpull_home_body() -> str:
+    return """
+      <span class="pill">Money</span>
+      <h1>$MILK: the community token</h1>
+      <p class="lede">A polished token site says it will fund youth programmes.
+      The offer has a countdown, a guaranteed return, and an anonymous team.</p>
+      <div class="card">
+        <h2>Guaranteed 12% weekly returns</h2>
+        <p>Airdrop ends in <strong>00:14:59</strong>. Connect your wallet to
+        claim your share of the community pool.</p>
+        <p><a class="button" href="/claim">Connect wallet</a></p>
+      </div>
+      <div class="card">
+        <h2>Built by the community</h2>
+        <p>Team: <code>@milkdev</code> and <code>@anon_ops</code>. Audit
+        pending. Whitepaper coming soon.</p>
+        <p>Influencer quote: &ldquo;I put my community's savings in $MILK.&rdquo;</p>
+      </div>
+      <div class="card">
+        <h2>Investigate</h2>
+        <p><a href="/ledger.json">View the public ledger</a> &middot;
+        <a href="/team">Team page</a> &middot;
+        <a href="/report">Report a scam</a></p>
+      </div>
+      <div class="card note">
+        <h2>Defensive only</h2>
+        <p>This is a simulation. There is no real token, wallet, or money. Never
+        connect a real wallet to an unknown site, and never share a seed phrase.</p>
+      </div>
+    """
+
+
+def rugpull_team_body() -> str:
+    return """
+      <span class="pill">Team</span>
+      <h1>The $MILK team</h1>
+      <div class="card">
+        <p><code>@milkdev</code> &mdash; anonymous founder</p>
+        <p><code>@anon_ops</code> &mdash; anonymous operations</p>
+        <p>No company name, no registered address, no independent audit, and no
+        named advisors.</p>
+      </div>
+      <p><a href="/">Back to the token page</a></p>
+    """
+
+
+def rugpull_claim_body() -> str:
+    return """
+      <span class="pill">Simulation</span>
+      <h1>Wallet connection is disabled</h1>
+      <div class="card">
+        <p>This training page never connects to a wallet. The real red flag is
+        the request: a &ldquo;free airdrop&rdquo; that asks you to connect a
+        wallet can drain the wallet's approvals.</p>
+        <p>Never enter a seed phrase on a website. A legitimate airdrop does not
+        need it.</p>
+      </div>
+      <p><a href="/">Back to the token page</a></p>
+    """
+
+
+def rugpull_report_body() -> str:
+    return """
+      <span class="pill">Report</span>
+      <h1>What to do next</h1>
+      <div class="card">
+        <h2>Red-flag card</h2>
+        <ul>
+          <li>Guaranteed returns</li>
+          <li>Urgency or a countdown timer</li>
+          <li>&ldquo;Free airdrop&rdquo; that asks you to connect a wallet</li>
+          <li>Anonymous team and no audit</li>
+          <li>Credibility from one influencer only</li>
+          <li>No paper trail or regulatory protection</li>
+        </ul>
+        <p>Any two of these is a reason to walk away.</p>
+      </div>
+      <div class="card note">
+        <h2>If money is already gone</h2>
+        <p>Stop paying. Do not use a &ldquo;recovery agent&rdquo; who asks for a
+        fee; that is often a second-layer scam. Report to a trusted adult, your
+        bank, and the appropriate consumer-protection or police channel.</p>
+      </div>
+      <p><a href="/">Back to the token page</a></p>
+    """
+
+
+def rugpull_case_body() -> str:
+    return f"""
+      <span class="pill">Case file</span>
+      <h1>The liquidity trail</h1>
+      <div class="card">
+        <h2>Drained wallet identified</h2>
+        <p>The wallet <code>{html.escape(RUGPULL_DRAINED)}</code> received the
+        community liquidity and forwarded almost all of it to an external
+        wallet. The small remainder was swapped.</p>
+        <p>Training token: <code>{html.escape(FLAG)}</code></p>
+      </div>
+      <div class="card note">
+        <h2>Scam anatomy</h2>
+        <p>Hook, trust builders, the ask, the exit, and who profited. The
+        &ldquo;recovery agent&rdquo; offer is the second layer: it targets people
+        who have already lost money.</p>
+      </div>
+      <p><a href="/">Back to the token page</a></p>
+    """
+
+
 def access_log() -> str:
     lines = [
         '10.0.40.15 - - [18/Mar/2026:09:01:12 +0000] "GET / HTTP/1.1" 200 512 "-" "Mozilla/5.0"',
@@ -681,8 +1188,9 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
         self.send_header(
             "Content-Security-Policy",
-            "default-src 'none'; style-src 'unsafe-inline'; img-src data:; "
-            "base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+            "default-src 'none'; style-src 'unsafe-inline'; "
+            "img-src 'self' data:; base-uri 'none'; form-action 'self'; "
+            "frame-ancestors 'none'",
         )
         if MODE == "network":
             self.send_header("X-OCR-Token", FLAG)
@@ -692,6 +1200,41 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         if not getattr(self, "_head_only", False):
             self.wfile.write(data)
+
+    def _read_body(self) -> str:
+        length = int(self.headers.get("Content-Length", "0") or 0)
+        if length <= 0:
+            return ""
+        return self.rfile.read(length).decode("utf-8", "replace")
+
+    def do_POST(self):
+        path = self.path.split("?", 1)[0]
+        if MODE == "mfa_recovery" and path in ("/login", "/recover"):
+            form = parse_qs(self._read_body())
+            user = (form.get("user") or [""])[0].strip()
+            if path == "/login":
+                password = (form.get("password") or [""])[0]
+                if user == MFA_USER and password == MFA_PASSWORD:
+                    self._send(200, page("MFA required", mfa_mfa_body()))
+                else:
+                    self._send(
+                        401,
+                        page("Sign in", mfa_login_body("Invalid username or password.")),
+                    )
+                return
+            answer = (form.get("answer") or [""])[0].strip()
+            if user == MFA_USER and answer == MFA_ANSWER:
+                self._send(200, page("Recovered", mfa_success_body()))
+            else:
+                self._send(
+                    403,
+                    page(
+                        "Recovery failed",
+                        mfa_recover_body("That answer did not match the account."),
+                    ),
+                )
+            return
+        self._send(405, page("Method not allowed", "<h1>Method not allowed</h1>"))
 
     def do_HEAD(self):
         self._head_only = True
@@ -845,6 +1388,146 @@ class Handler(BaseHTTPRequestHandler):
                     {"Content-Disposition": 'attachment; filename="reported-email.eml"'},
                 )
                 return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "mfa_recovery":
+            if path in ("/", "/index.html"):
+                body = page("MFA recovery", mfa_home_body())
+            elif path == "/login":
+                body = page("Staff sign-in", mfa_login_body())
+            elif path == "/mfa":
+                body = page("MFA required", mfa_mfa_body())
+            elif path == "/staff":
+                body = page("Staff directory", mfa_staff_body())
+            elif path == "/staff/amara":
+                body = page(
+                    "Amara",
+                    mfa_profile_body(
+                        "Amara",
+                        "Volunteer coordinator",
+                        "The Lantern Keeper",
+                        "Amara runs the Tuesday reading circle and the summer "
+                        "book drive.",
+                    ),
+                )
+            elif path == "/staff/rowan":
+                body = page(
+                    "Rowan",
+                    mfa_profile_body(
+                        "Rowan",
+                        "Communications volunteer",
+                        "North of the River",
+                        "Rowan looks after the newsletter and the community "
+                        "calendar.",
+                    ),
+                )
+            elif path == "/recover":
+                body = page("Recover the account", mfa_recover_body())
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "provenance":
+            if path in ("/", "/index.html"):
+                body = page("Verification desk", provenance_home_body())
+            elif path == "/archive":
+                body = page("Archive", provenance_archive_body())
+            elif path == "/provenance.json":
+                self._send(
+                    200,
+                    json.dumps(provenance_records(), indent=2),
+                    "application/json",
+                )
+                return
+            elif path.startswith("/provenance/"):
+                item_id = path[len("/provenance/"):]
+                item = PROVENANCE_ITEMS.get(item_id)
+                if not item:
+                    self._send(404, page("Not found", "<h1>Not found</h1>"))
+                    return
+                record = next(
+                    r for r in provenance_records() if r["id"] == item_id
+                )
+                body = page("Provenance record", provenance_detail_body(record))
+            elif path.startswith("/sources/"):
+                item_id = path[len("/sources/"):]
+                item = PROVENANCE_ITEMS.get(item_id)
+                if not item:
+                    self._send(404, page("Not found", "<h1>Not found</h1>"))
+                    return
+                body = page("Source note", provenance_source_body(item))
+            elif path.startswith("/media/"):
+                item_id = path[len("/media/"):]
+                svg = PROVENANCE_SVGS.get(item_id)
+                if not svg:
+                    self._send(404, page("Not found", "<h1>Not found</h1>"))
+                    return
+                self._send(200, svg, "image/svg+xml")
+                return
+            elif path == "/verify":
+                query = self.path.split("?", 1)[1] if "?" in self.path else ""
+                params = parse_qs(query)
+                item_id = (params.get("id") or [""])[0]
+                if item_id == PROVENANCE_REAL_ID:
+                    body = page("Verified", provenance_success_body())
+                elif item_id == PROVENANCE_SYNTHETIC_ID:
+                    self._send(
+                        403,
+                        page(
+                            "Synthetic media",
+                            "<h1>Verification declined</h1>"
+                            "<p>This item is synthetic. It has no independent "
+                            "provenance token.</p>"
+                            "<p><a href='/archive'>Back to the archive</a></p>",
+                        ),
+                    )
+                    return
+                else:
+                    self._send(
+                        404,
+                        page("Not found", "<h1>Unknown media item</h1>"),
+                    )
+                    return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "rugpull":
+            if path in ("/", "/index.html"):
+                body = page("$MILK", rugpull_home_body())
+            elif path == "/ledger.json":
+                self._send(
+                    200,
+                    json.dumps(rugpull_ledger(), indent=2),
+                    "application/json",
+                )
+                return
+            elif path == "/team":
+                body = page("Team", rugpull_team_body())
+            elif path == "/claim":
+                body = page("Wallet connection", rugpull_claim_body())
+            elif path == "/report":
+                body = page("Report a scam", rugpull_report_body())
+            elif path == "/case":
+                query = self.path.split("?", 1)[1] if "?" in self.path else ""
+                params = parse_qs(query)
+                wallet = (params.get("wallet") or [""])[0].strip().lower()
+                if wallet == RUGPULL_DRAINED.lower():
+                    body = page("Case file", rugpull_case_body())
+                else:
+                    self._send(
+                        404,
+                        page(
+                            "No case file",
+                            "<h1>No case file for that wallet</h1>"
+                            "<p>Trace the ledger and use the wallet that "
+                            "received the community liquidity.</p>"
+                            "<p><a href='/ledger.json'>Open the ledger</a></p>",
+                        ),
+                    )
+                    return
             else:
                 self._send(404, page("Not found", "<h1>Not found</h1>"))
                 return

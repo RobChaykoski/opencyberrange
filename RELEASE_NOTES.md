@@ -25,6 +25,17 @@ These changes are on `main` after the `v2.5.5` tag and are not part of the
   terminals and CI.
 - Startup schema initialization serialized across workers.
 
+## VPN configuration update
+
+VPN clients now use a `/32` address in the `10.255.x.y` range and route only
+the learner's own lab `/24`. This removes the old overlap with common home
+networks caused by a `/16` client address and a `10.100.0.0/10`-sized route.
+
+**Existing VPN configs must be re-downloaded.** If your tunnel stopped working,
+open **Dashboard → VPN Configuration**, download a fresh config, remove the old
+tunnel, and import the new one. The server-side peer is re-registered by the
+migration; the old address is retired.
+
 See `CHANGELOG.md` for the itemised list.
 
 Status: **patch release**. 2.5.5 closes the open code-scanning set and adds a

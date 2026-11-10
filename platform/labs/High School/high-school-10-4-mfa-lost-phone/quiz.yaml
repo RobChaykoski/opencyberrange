@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Security+"
+  code: "SY0-701"
+  url: "https://www.comptia.org/certifications/security"
+  scope: "Benchmark practice inspired by Security+ identity and access objectives. Not an actual exam item."
+
+questions:
+  - id: "mfa-recovery-1"
+    prompt: "Which authentication method is generally the strongest against phishing and SIM-swap attacks?"
+    options:
+      - "A hardware security key or passkey"
+      - "A six-digit SMS code"
+      - "A security question"
+      - "A password reused across accounts"
+    correct: 0
+    explanation: "Hardware keys and passkeys are bound to the site's origin, so a lookalike site cannot use them. SMS codes can be intercepted or stolen through SIM swap."
+    reference:
+      label: "CISA: More than a password"
+      url: "https://www.cisa.gov/MFA"
+
+  - id: "mfa-recovery-2"
+    prompt: "Why is a security question such as 'What is your favourite book?' a weak recovery method?"
+    options:
+      - "The answer may be public, guessable, or stable for life"
+      - "It is always encrypted with AES"
+      - "It requires a hardware key"
+      - "It cannot be changed after enrollment"
+    correct: 0
+    explanation: "A recovery answer is only a secret if it is not published or easily guessed. A public staff profile can defeat the entire second factor."
+    reference:
+      label: "NIST SP 800-63B: Authenticator and verifier requirements"
+      url: "https://pages.nist.gov/800-63-4/sp800-63b.html"
+
+  - id: "mfa-recovery-3"
+    prompt: "Where should backup recovery codes be stored?"
+    options:
+      - "Offline or in a protected password manager, separate from the account"
+      - "In a public note on the account profile"
+      - "In the same email inbox the account uses"
+      - "In a screenshot posted to a team chat"
+    correct: 0
+    explanation: "Recovery codes are credentials. Store them offline or in a protected manager, and do not keep them in the same account they recover."
+    reference:
+      label: "CISA: Multifactor authentication"
+      url: "https://www.cisa.gov/MFA"
+
+  - id: "mfa-recovery-4"
+    prompt: "What should happen first after a phone with an authenticator app is lost?"
+    options:
+      - "Revoke old sessions and re-enroll MFA on a trusted device"
+      - "Disable MFA permanently"
+      - "Share the backup codes in a group chat"
+      - "Reuse the old password on a new account"
+    correct: 0
+    explanation: "Revoke sessions, re-enroll the factor, and check for unusual sign-ins. Do not weaken the account by turning MFA off."
+    reference:
+      label: "NIST SP 800-63B: Account recovery"
+      url: "https://pages.nist.gov/800-63-4/sp800-63b.html"
+
+  - id: "mfa-recovery-5"
+    prompt: "What does MFA protect, and what does it not automatically protect?"
+    options:
+      - "It protects a sign-in event; recovery and session design need separate controls"
+      - "It protects every password reset and recovery path automatically"
+      - "It protects the account from all malware"
+      - "It replaces the need for authorization checks"
+    correct: 0
+    explanation: "MFA raises the cost of a sign-in, but a weak recovery path or a forgeable session can bypass it. Recovery and session management are part of the identity design."
+    reference:
+      label: "CISA: Multifactor authentication"
+      url: "https://www.cisa.gov/MFA"
+
+  - id: "mfa-recovery-6"
+    prompt: "Why are SMS codes considered weaker than authenticator apps?"
+    options:
+      - "Phone numbers can be hijacked through SIM swap or interception"
+      - "SMS messages are always encrypted end to end"
+      - "Authenticator apps require a monthly fee"
+      - "SMS codes never expire"
+    correct: 0
+    explanation: "SMS delivery depends on the carrier and the phone number. SIM swap and interception can give an attacker the code. Authenticator apps generate codes locally."
+    reference:
+      label: "NIST SP 800-63B: Out-of-band authenticators"
+      url: "https://pages.nist.gov/800-63-4/sp800-63b.html"

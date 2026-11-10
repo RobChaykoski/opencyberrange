@@ -1,0 +1,84 @@
+certification:
+  name: "CompTIA Security+"
+  code: "SY0-701"
+  url: "https://www.comptia.org/certifications/security"
+  scope: "Benchmark practice inspired by Security+ social-engineering and fraud objectives. Not an actual exam item."
+
+questions:
+  - id: "rugpull-1"
+    prompt: "What is a rug pull in a token project?"
+    options:
+      - "The team removes liquidity and disappears with the funds"
+      - "A legitimate audit finds no issues"
+      - "A token is listed on a major exchange"
+      - "A wallet is backed up to a hardware device"
+    correct: 0
+    explanation: "A rug pull is an exit scam: the operators remove the liquidity that supported the token and leave holders unable to sell."
+    reference:
+      label: "FTC: What to know about cryptocurrency scams"
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams"
+
+  - id: "rugpull-2"
+    prompt: "Why is a 'free airdrop' that asks you to connect a wallet dangerous?"
+    options:
+      - "The site may use wallet approvals to drain funds"
+      - "It always requires a seed phrase"
+      - "It is illegal to receive free tokens"
+      - "It automatically installs a wallet"
+    correct: 0
+    explanation: "A malicious site can request approvals that let it move tokens later. Connecting a wallet to an unknown site is the risk; a legitimate airdrop does not need your seed phrase."
+    reference:
+      label: "FTC: Cryptocurrency scams"
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams"
+
+  - id: "rugpull-3"
+    prompt: "Which is a red flag in a token offer?"
+    options:
+      - "Guaranteed weekly returns"
+      - "A named team and a published audit"
+      - "A clear explanation of the risks"
+      - "A public ledger"
+    correct: 0
+    explanation: "Guaranteed returns are a classic fraud signal. Legitimate investments do not guarantee returns, and crypto is volatile."
+    reference:
+      label: "FTC: Cryptocurrency scams"
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams"
+
+  - id: "rugpull-4"
+    prompt: "What is a recovery-agent scam?"
+    options:
+      - "A second-layer scam that asks for a fee to recover money already lost"
+      - "A bank's official chargeback process"
+      - "A blockchain audit"
+      - "A wallet backup service"
+    correct: 0
+    explanation: "Recovery agents often target victims and ask for an upfront fee. They rarely recover anything and may steal more."
+    reference:
+      label: "FTC: What to know about cryptocurrency scams"
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams"
+
+  - id: "rugpull-5"
+    prompt: "How can you trace a suspected rug pull in a public ledger?"
+    options:
+      - "Follow the largest transfers from the community wallet to the wallet that moved funds externally"
+      - "Count the number of social media followers"
+      - "Read the token's slogan"
+      - "Check the website's colour scheme"
+    correct: 0
+    explanation: "The ledger records the movement of funds. Follow the liquidity from the community wallet to the wallet that received and forwarded it."
+    reference:
+      label: "FTC: Cryptocurrency scams"
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams"
+
+  - id: "rugpull-6"
+    prompt: "Why is prevention more important than recovery in crypto fraud?"
+    options:
+      - "Transfers are usually irreversible and there is little consumer protection"
+      - "All crypto transactions can be reversed by the bank"
+      - "The police can always recover the funds"
+      - "The blockchain deletes old transactions"
+    correct: 0
+    explanation: "Crypto transfers are generally irreversible. Consumer protection is limited, so avoiding the scam is the main control."
+    reference:
+      label: "FTC: Cryptocurrency scams"
+      url: "https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams"

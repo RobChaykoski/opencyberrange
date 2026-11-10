@@ -1,0 +1,116 @@
+title: "MFA and the Lost Phone"
+category: authentication
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - high-school-10-3-email-metadata
+# By completion students will be able to:
+learning_outcomes:
+  - Explain the difference between SMS, authenticator-app, and hardware-key MFA
+  - Identify the recovery path as part of the MFA design
+  - Recover a fictional account through a weak security question
+  - Write a safer lost-phone and recovery plan
+mapped_skills:
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Name the recovery weakness and one safer alternative.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1556
+    technique_name: Modify Authentication Process
+    detection: Alert on MFA resets, recovery-question changes, and new authenticator enrollment from an unusual device or network.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community centre volunteer lost their phone. The account uses a password and an authenticator app, but the recovery question can be answered from the public staff directory. Find the answer, recover the account, and explain why recovery is part of MFA."
+visibility: public
+flag: "OCR{recovery_is_part_of_mfa}"
+
+tools:
+  - browser
+  - terminal
+
+scenario: |
+  You are helping at a community centre. A volunteer lost their phone on the
+  way to the Tuesday reading circle. The staff account is protected by a strong
+  password and an authenticator app, so the password alone is not enough.
+
+  The volunteer needs to get back in today. The portal offers a recovery
+  question. Your job is to follow the recovery path, recover the training token,
+  and explain why the second factor did not protect the account.
+
+  The account, staff profiles, and recovery answer are fictional. Never use a
+  real recovery answer or authenticator code in a lab.
+
+troubleshooting: "If the sign-in form does not lead to the MFA prompt, check the demo username and password exactly as shown. If recovery fails, read the public staff profile carefully; the answer is a book title. Do not guess real personal facts or use a real password."
+defensive_takeaways: "Recovery is part of MFA. Prefer pre-generated recovery codes or a second enrolled authenticator, store them offline, and rotate them after use. Avoid security questions whose answers are public, guessable, or stable for life. Alert the account owner and revoke sessions after a recovery event."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, portal, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the path is short and guided."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone/"
+
+hostnames:
+  - ip_offset: "87"
+    hostname: "mfa.lab"
+    description: "Staff portal MFA recovery target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community centre staff portal"
+      type: "server"
+      ip_offset: "87"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Sign in with the demo staff account. The portal asks for an authenticator
+      code that the volunteer cannot provide because the phone is lost.
+    unlock_after_minutes: 0
+
+  - text: |
+      Look for a recovery option on the MFA screen. It asks a security question
+      instead of asking for the second factor.
+    unlock_after_minutes: 5
+
+  - text: |
+      The staff directory publishes a favourite book for each volunteer. Find
+      the profile for the account you are recovering.
+    unlock_after_minutes: 9
+
+  - text: |
+      The fix is not a harder security question. Use recovery codes or a second
+      authenticator stored offline, and rotate them after use.
+    unlock_after_minutes: 14
+
+test:
+  steps:
+    - name: "Staff portal responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Public staff profile contains the recovery answer"
+      command: "curl -s http://{target.portal}:8080/staff/amara | grep -c 'The Lantern Keeper'"
+      expect: "1"
+      timeout: 20
+
+    - name: "A wrong recovery answer is rejected"
+      command: "curl -s -o /dev/null -w '%{http_code}' -X POST -d 'user=amara&answer=Wrong' http://{target.portal}:8080/recover"
+      expect: "403"
+      timeout: 20
+
+    - name: "The public answer recovers the account and the token"
+      command: "curl -s -X POST -d 'user=amara&answer=The+Lantern+Keeper' http://{target.portal}:8080/recover | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{recovery_is_part_of_mfa}"
+      timeout: 20

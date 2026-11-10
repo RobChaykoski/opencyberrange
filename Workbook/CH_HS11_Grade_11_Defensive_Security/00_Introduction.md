@@ -36,10 +36,14 @@ One failed request is usually noise. A burst of failures from one source,
 followed by a successful request that should not exist, is a pattern worth
 explaining.
 
-## Your Activity
+## Activities
 
-[Log Detective](01_Log_Detective.md) — read a short access log, separate normal
-traffic from probing, and recover the training token.
+1. [Log Detective](01_Log_Detective.md) — read a short access log, separate
+   normal traffic from probing, and recover the training token.
+2. [Media Provenance](02_Media_Provenance.md) — compare two images using source,
+   provenance, metadata, and independent corroboration, then state what the
+   evidence does not prove.
+3. [Chapter Review](03_Chapter_Review.md) — consolidate the defensive loop.
 
 ## How to Work Safely
 

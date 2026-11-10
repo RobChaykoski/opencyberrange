@@ -2,6 +2,12 @@
 
 Lab targets live on isolated subnets with no path in from the public internet. A WireGuard VPN tunnel is how you reach them from your own machine. Set the tunnel up once, and you connect to any lab you launch. The full platform-wide VPN guide covers each operating system in detail; this page is the student-side summary.
 
+!!! warning "VPN address update"
+    VPN configs now use a `/32` address and route only your own lab `/24`.
+    If your tunnel worked before and now does not, download a fresh config,
+    remove the old tunnel, and import the new file. Old configs used a `/16`
+    address and a much larger route, which could overlap a home network.
+
 ## Prerequisites
 
 - A logged-in, approved account. See [Logging In](../01_Getting_Started/05_Logging_In.md).

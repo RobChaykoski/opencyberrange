@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     # (e.g. "10.0.0") would cap the pool at one /24 (~245). Keep it /16 so the
     # peer count is never the constraint. The server + client configs use a
     # matching /16 mask (setup-vpn.sh, wireguard_manager.py).
-    WG_CLIENT_BASE: str = "10.0"
+    WG_CLIENT_BASE: str = "10.255"
     
     # Labs host path — absolute path on the HOST to the labs/ directory.
     # The backend needs this to mount lab volumes when spawning containers.

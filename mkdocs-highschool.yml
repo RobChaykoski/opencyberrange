@@ -80,12 +80,15 @@ nav:
     - "Network Basics": CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics.md
     - "Browser and Source": CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source.md
     - "Dissect an Email": CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata.md
+    - "MFA and the Lost Phone": CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone.md
   - "CH HS11 -- Grade 11 Defensive Security":
     - Introduction: CH_HS11_Grade_11_Defensive_Security/00_Introduction.md
     - "Log Detective": CH_HS11_Grade_11_Defensive_Security/01_Log_Detective.md
-    - "Chapter Review": CH_HS11_Grade_11_Defensive_Security/02_Chapter_Review.md
+    - "Media Provenance": CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance.md
+    - "Chapter Review": CH_HS11_Grade_11_Defensive_Security/03_Chapter_Review.md
   - "CH HS12 -- Grade 12 Applied Cybersecurity":
     - Introduction: CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md
     - "DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
-    - Chapter Review: CH_HS12_Grade_12_Applied_Cybersecurity/02_Chapter_Review.md
+    - "Crypto Rug Pull": CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull.md
+    - Chapter Review: CH_HS12_Grade_12_Applied_Cybersecurity/03_Chapter_Review.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

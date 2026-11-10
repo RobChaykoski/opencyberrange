@@ -37,6 +37,10 @@ SOURCE_SLEUTH = "source_sleuth"
 LOG_DETECTIVE = "log_detective"
 RANGEBOX_RANGER = "rangebox_ranger"
 FORENSICS_PATHFINDER = "forensics_pathfinder"
+MFA_RECOVERY_ACE = "mfa_recovery_ace"
+PROVENANCE_ANALYST = "provenance_analyst"
+LIQUIDITY_TRACKER = "liquidity_tracker"
+DIGITAL_FRONTIER = "digital_frontier"
 QUIZ_ACE = "quiz_ace"
 QUIZ_EXPLORER = "quiz_explorer"
 QUIZ_SCHOLAR = "quiz_scholar"
@@ -56,6 +60,10 @@ HIDDEN_ACHIEVEMENT_TYPES = {
     LOG_DETECTIVE,
     RANGEBOX_RANGER,
     FORENSICS_PATHFINDER,
+    MFA_RECOVERY_ACE,
+    PROVENANCE_ANALYST,
+    LIQUIDITY_TRACKER,
+    DIGITAL_FRONTIER,
 }
 
 LEARNING_1H = "learning_hours_1"
@@ -98,6 +106,10 @@ ACHIEVEMENT_LABELS = {
     LOG_DETECTIVE: "Log Detective",
     RANGEBOX_RANGER: "RangeBox Ranger",
     FORENSICS_PATHFINDER: "Forensics Pathfinder",
+    MFA_RECOVERY_ACE: "Recovery Architect",
+    PROVENANCE_ANALYST: "Provenance Analyst",
+    LIQUIDITY_TRACKER: "Liquidity Tracker",
+    DIGITAL_FRONTIER: "Digital Frontier",
     LEARNING_1H: "Curious Mind",
     LEARNING_5H: "Deep Dive",
     LEARNING_15H: "Dedicated Learner",
@@ -131,6 +143,10 @@ ACHIEVEMENT_DESCRIPTIONS = {
     LOG_DETECTIVE: "Read the access log and captured the flag",
     RANGEBOX_RANGER: "Completed all four RangeBox basics exercises",
     FORENSICS_PATHFINDER: "Completed both Digital Forensics exercises",
+    MFA_RECOVERY_ACE: "Recovered an MFA-protected account through a public recovery answer",
+    PROVENANCE_ANALYST: "Identified synthetic media from provenance evidence rather than visual clues",
+    LIQUIDITY_TRACKER: "Traced a simulated rug pull to the drained wallet",
+    DIGITAL_FRONTIER: "Completed the MFA, media provenance, and crypto rug-pull labs",
     LEARNING_1H: "Spent at least 1 hour learning on exercises",
     LEARNING_5H: "Spent at least 5 hours learning on exercises",
     LEARNING_15H: "Spent at least 15 hours learning on exercises",
@@ -165,6 +181,13 @@ RANGEBOX_BASIC_LAB_SLUGS = (
 FORENSICS_LAB_SLUGS = (
     "forensics-1-1-windows-memory-volatility",
     "forensics-2-1-voip-call-reconstruction",
+)
+
+# Grade 10-12 Digital Frontier collection. Each lab also awards its own badge.
+DIGITAL_FRONTIER_LAB_SLUGS = (
+    "high-school-10-4-mfa-lost-phone",
+    "high-school-11-2-media-provenance",
+    "high-school-12-2-crypto-rug-pull",
 )
 
 # Triggers available to admin-defined achievements. The value is what the
@@ -207,6 +230,10 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     LOG_DETECTIVE: "\U0001F4DC",
     RANGEBOX_RANGER: "\U0001F3D5\uFE0F",
     FORENSICS_PATHFINDER: "\U0001F9ED",
+    MFA_RECOVERY_ACE: "\U0001F511",
+    PROVENANCE_ANALYST: "\U0001F50E",
+    LIQUIDITY_TRACKER: "\U0001F4B8",
+    DIGITAL_FRONTIER: "\U0001F9ED",
     LEARNING_1H: "\U0001F331",
     LEARNING_5H: "\U0001F50D",
     LEARNING_15H: "\U0001F4DA",
@@ -451,6 +478,12 @@ def _check_lab_badges(
         _award(db, user_id, course_id, lab.id, SOURCE_SLEUTH)
     elif lab.slug == "high-school-11-1-rangebox-log-detective":
         _award(db, user_id, course_id, lab.id, LOG_DETECTIVE)
+    elif lab.slug == "high-school-10-4-mfa-lost-phone":
+        _award(db, user_id, course_id, lab.id, MFA_RECOVERY_ACE)
+    elif lab.slug == "high-school-11-2-media-provenance":
+        _award(db, user_id, course_id, lab.id, PROVENANCE_ANALYST)
+    elif lab.slug == "high-school-12-2-crypto-rug-pull":
+        _award(db, user_id, course_id, lab.id, LIQUIDITY_TRACKER)
 
     # Existing hidden software-security badges.
     if (lab.slug == "software-security-2-1-diagnostics-command-injection"
@@ -486,6 +519,10 @@ def _check_collection_achievements(db: Session, user_id: int):
     forensics_ids = _lab_ids(FORENSICS_LAB_SLUGS)
     if forensics_ids and forensics_ids.issubset(completed):
         _award(db, user_id, None, None, FORENSICS_PATHFINDER)
+
+    frontier_ids = _lab_ids(DIGITAL_FRONTIER_LAB_SLUGS)
+    if frontier_ids and frontier_ids.issubset(completed):
+        _award(db, user_id, None, None, DIGITAL_FRONTIER)
 
 
 def _check_competition_achievements(

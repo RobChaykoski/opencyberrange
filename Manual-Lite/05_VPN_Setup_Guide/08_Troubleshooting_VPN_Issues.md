@@ -16,6 +16,7 @@ Most VPN problems fall into a short list of symptoms with known fixes, and the s
 | No handshake appears | Outbound traffic is blocked | Allow outbound HTTPS on port 443 on your network |
 | No route to 10.100.x.x | Routes did not apply | Restart the tunnel: `sudo wg-quick down ocr-vpn && sudo wg-quick up ocr-vpn` |
 | Connected but no lab traffic | No lab is running | Start a lab from Exercises, then scan with `nmap` |
+| Tunnel worked before, now no lab route | The config predates the VPN address update | Download a fresh config from Dashboard → VPN Configuration, remove the old tunnel, and import the new file |
 
 ## Why allowing port 443 fixes a missing handshake
 

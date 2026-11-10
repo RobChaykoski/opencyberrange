@@ -148,6 +148,38 @@ exploitation, privilege escalation, post-exploitation, and credential attacks.
 - Leader rewards community and cohort participation, events, advanced
   work, and teaching. It is not a measure of seniority.
 
+## Content additions and score validity
+
+Reviewed **2026-11-10** after adding the Grade 10-12 Digital Frontier labs.
+
+The new content maps as follows:
+
+| Lab | Category | Branch | Effect |
+|---|---|---|---|
+| MFA and the Lost Phone | `authentication` | Builder | +1 builder lab, completion, time, quiz |
+| Media Provenance | `osint` | Investigator | +1 investigator lab, completion, time, quiz |
+| Crypto Rug Pull | `osint` | Investigator | +1 investigator lab, completion, time, quiz |
+
+Two validity points are worth watching:
+
+1. **Leader is a participation/leadership trait, not a lab-badge counter.**
+   The three per-lab badges and the Digital Frontier collection add up to +8
+   Leader through `2 × min(achievements, 20)`. A learner who completes only
+   these labs could look more "leadership" active than they are. The recommended
+   next step is to separate **lab-skill badges** from **leadership badges**
+   (courses, events, teaching, advanced work) before changing the weight. That
+   is a formula-version change with a before/after sample, not a silent edit.
+2. **Category breadth is shared by Defender and Investigator.**
+   An OSINT lab can increase the shared `categories` term and therefore add to
+   both branches, even when no defensive lab was completed. The overlap is
+   intentional, but if cohort reports start to look inflated, use
+   domain-specific category sets rather than the shared count.
+
+Do not change the weights, caps, or six-branch model without a formula-version
+bump and a validation sample. Keep reporting the limitations: optional quizzes,
+provisional timings, and small cohorts mean the score is a practice summary, not
+a measure of ability.
+
 ## Titles
 
 Achievements unlock cosmetic titles. Titles are stored as a key on the user

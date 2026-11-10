@@ -39,6 +39,13 @@ tests, not a live browser session:
 - **Identity & Access** track: secure authentication, OAuth/OIDC, and identity
   lifecycle labs, with the track, levels, workbook pages, and certification
   guidance present in the catalogue.
+- **Grade 10–12 Digital Frontier** labs: MFA recovery, media provenance, and a
+  simulated crypto rug pull, with workbook pages, six-question knowledge checks,
+  three per-lab badges, and the Digital Frontier collection badge.
+- **VPN configuration update:** the Dashboard VPN card now tells learners whose
+  tunnel stopped working to download a fresh config. The client uses a `/32`
+  address and routes only the learner's own lab `/24`; old `/16` configs must be
+  re-imported.
 - The student workbook wiki rebuilt with the new chapters; the track card uses
   the existing web icon and the violet track colour.
 - Deployment, seed, and discovery scripts now emit ASCII status markers, so

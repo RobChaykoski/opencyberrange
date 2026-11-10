@@ -34,8 +34,8 @@ check understanding, guide the next study step, and add evidence to Cyber DNA.
 
 The current tree has:
 
-- **10 lab-specific certification banks** for high-value exercises across
-  Windows, Linux, Web, Network, Forensics, OSINT, Malware, and AI.
+- **13 lab-specific certification banks** for high-value exercises across
+  Windows, Linux, Web, Network, Forensics, OSINT, Malware, AI, and High School.
 - **11 track fallback banks**, so every exercise in every track has a check even
   when no lab-specific certification bank exists yet.
 
@@ -116,3 +116,6 @@ only when the exercise has no `quiz.yaml` of its own.
 | OSINT | EXIF Metadata Investigation | CompTIA Security+ |
 | Malware | EICAR Triage | CompTIA CySA+ |
 | AI | Prompt Injection Basics | OWASP LLM Top 10 |
+| High School | MFA and the Lost Phone | CompTIA Security+ |
+| High School | Media Provenance | CompTIA CySA+ |
+| High School | Crypto Rug Pull | CompTIA Security+ |

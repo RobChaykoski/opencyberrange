@@ -144,7 +144,7 @@ class WireGuardManager:
 
             config = f"""[Interface]
 PrivateKey = {private_key}
-Address = {client_ip}/16
+Address = {client_ip}/32
 PreUp = {preup}
 PostUp = {gretap_postup}
 PostDown = {postdown}
@@ -172,7 +172,7 @@ PersistentKeepalive = 25
 
             config = f"""[Interface]
 PrivateKey = {private_key}
-Address = {client_ip}/16
+Address = {client_ip}/32
 PostUp = {gretap_postup}
 PostDown = {gretap_postdown}
 

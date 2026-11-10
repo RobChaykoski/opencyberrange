@@ -132,7 +132,7 @@ learner data, or platform screenshots on third-party sites.
 | AI | IBM SkillsBuild, Linux Foundation | ISC2 CC |
 | Software Security | PortSwigger Academy, Linux Foundation | ISC2 CC |
 | Identity & Access | PortSwigger Academy (authentication), Microsoft Learn | ISC2 CC, CompTIA Security+ |
-| High School | Cisco NetAcad, TryHackMe, CyLab | ISC2 CC, IBM SkillsBuild |
+| High School | Cisco NetAcad, MediaSmarts, Cybertip.ca | ISC2 CC, IBM SkillsBuild, Microsoft Learn |
 
 The student-facing version is in
 [Free training and certification next steps](../Workbook/FREE-TRAINING-AND-CERTIFICATIONS.md).

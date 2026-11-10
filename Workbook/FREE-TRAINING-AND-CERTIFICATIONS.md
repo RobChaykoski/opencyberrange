@@ -26,7 +26,7 @@ Source: [SWOCTS Resources](https://www.swocts.com/resources), reviewed
 | OT/ICS (CH OT01) | [Fortinet Training](https://www.fortinet.com/training/cybersecurity-professionals) | [Palo Alto Networks Beacon](https://learn.paloaltonetworks.com/) | [ISC2 CC](https://www.isc2.org/landing/1mcc), [Cisco NetAcad](https://www.netacad.com/) |
 | AI (CH AI01) | [IBM SkillsBuild](https://skillsbuild.org/learning-catalog) | [Linux Foundation](https://training.linuxfoundation.org/resources/) | [ISC2 CC](https://www.isc2.org/landing/1mcc) |
 | Software Security (CH SWSEC) | [PortSwigger Web Security Academy](https://portswigger.net/web-security) | [Linux Foundation](https://training.linuxfoundation.org/resources/) | [ISC2 CC](https://www.isc2.org/landing/1mcc) |
-| High School (CH HS09–HS12) | [Cisco NetAcad](https://www.netacad.com/) | [TryHackMe](https://tryhackme.com/), [CyLab Security Academy](https://learn.cylabacademy.org/) | [ISC2 CC](https://www.isc2.org/landing/1mcc), [IBM SkillsBuild](https://skillsbuild.org/learning-catalog) |
+| High School (CH HS09-HS12) | [Cisco NetAcad](https://www.netacad.com/), [MediaSmarts](https://mediasmarts.ca/) | [TryHackMe](https://tryhackme.com/), [CyLab Security Academy](https://learn.cylabacademy.org/), [FTC crypto scams](https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams) | [ISC2 CC](https://www.isc2.org/landing/1mcc), [IBM SkillsBuild](https://skillsbuild.org/learning-catalog), [Microsoft Learn SC-900](https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/) |
 
 ## Free certification programs on the SWOCTS page
 

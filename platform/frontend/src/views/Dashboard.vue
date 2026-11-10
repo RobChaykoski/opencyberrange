@@ -32,6 +32,7 @@
             <div class="vpn-card__title-group">
               <h2 class="vpn-card__title">VPN Configuration</h2>
               <p class="vpn-card__description">Download your WireGuard config to connect from your own machine</p>
+              <p class="vpn-card__notice">VPN configuration updated: if your tunnel stopped working, download a fresh config and re-import it. Old configs use the previous address range.</p>
             </div>
           </div>
 
@@ -678,6 +679,13 @@ onMounted(() => {
   font-size: 0.875rem;
   color: var(--text-muted);
   margin: 0;
+}
+
+.vpn-card__notice {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--warning);
 }
 
 /* Card content */

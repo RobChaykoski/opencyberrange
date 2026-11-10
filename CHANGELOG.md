@@ -81,6 +81,10 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 ### Operations
 - Deployment, curriculum-seed, discovery, and installer scripts now emit ASCII
   status markers so logs render correctly in Windows terminals and CI.
+- Shrunk the WireGuard client footprint: the interface address is `/32`, the
+  client routes only its own lab `/24`, and the client pool moved to
+  `10.255.x.y`. Existing VPN configs must be re-downloaded; a reallocation
+  script and route verifier are included.
 
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party

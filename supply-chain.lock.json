@@ -52,7 +52,7 @@
       "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "578b1d088133c50f8a3a6ab29e8abe91cd889159ef444577e7ba1ce9f8b865c3"
+      "sha256": "92e1265d99a3c06dc72c6ccb600ec1f32c07a0f67b0541819242b23f92967102"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "59d539c2dc89a06a78de9e55f075d11e5cc82dba5fbb2b2ee15d960738ca8244"
@@ -103,7 +103,7 @@
       "sha256": "2e6b9815d08414be3c550bb2f7eb0b4b87e46b5f786b694768340221937e533f"
     },
     "scripts/install-platform.sh": {
-      "sha256": "a78aa68126c26f95ca6d55623f6efc697c60bc5d94c8988187033f7657abef97"
+      "sha256": "ad317a61922cbeceb2837edb92bb65d0d71367038fac085abe5e512b2bac5deb"
     },
     "scripts/lab_build_hash.py": {
       "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
@@ -177,14 +177,32 @@
         "portal"
       ]
     },
+    "high-school-10-4-mfa-lost-phone": {
+      "content_hash": "653157aee7d8addf1f6934517b6a3f483155b1b78079be53ec98fad41c250933",
+      "services": [
+        "portal"
+      ]
+    },
     "high-school-11-1-rangebox-log-detective": {
       "content_hash": "e573dc0190da01e69a152690e0e7c7b8b14a575d2a4c943e6f719224f79d1948",
       "services": [
         "logs"
       ]
     },
+    "high-school-11-2-media-provenance": {
+      "content_hash": "29a873946d5ccacbaa7e78b6055055d824deff6c69681485d9efd23d99ed7d3b",
+      "services": [
+        "portal"
+      ]
+    },
     "high-school-12-1-devfest-community-portal": {
       "content_hash": "c672fd9c6a48731a39a54e48950aa99309791a803740f8bd34946e6014095c64",
+      "services": [
+        "portal"
+      ]
+    },
+    "high-school-12-2-crypto-rug-pull": {
+      "content_hash": "c18252b698f3b84d279e160d5481ed2f924e50c85e1616063631997a9b3cbc61",
       "services": [
         "portal"
       ]

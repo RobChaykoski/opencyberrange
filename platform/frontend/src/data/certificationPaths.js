@@ -94,11 +94,11 @@ export const CERTIFICATION_PATHS = {
     roles: ['IAM engineer', 'Identity and access administrator', 'Security architect'],
   },
   'high-school': {
-    summary: 'Entry-level cybersecurity foundations and career exploration.',
-    entry: ['CompTIA ITF+', 'CompTIA Security+'],
-    core: ['ISC2 CC', 'Cisco CyberOps Associate'],
-    advanced: ['CompTIA CySA+', 'CompTIA PenTest+'],
-    roles: ['IT support', 'SOC analyst (entry)', 'Cybersecurity apprentice'],
+    summary: 'Digital safety, identity, evidence, and applied cybersecurity foundations for Grades 9-12.',
+    entry: ['CompTIA ITF+', 'ISC2 CC'],
+    core: ['CompTIA Security+', 'Microsoft SC-900', 'CompTIA CySA+'],
+    advanced: ['CompTIA PenTest+', 'CompTIA SecurityX (CASP+)', 'ISC2 CISSP'],
+    roles: ['Cybersecurity apprentice', 'SOC analyst (entry)', 'Digital literacy coordinator', 'Identity support analyst'],
   },
 }
 
