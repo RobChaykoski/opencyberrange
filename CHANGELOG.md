@@ -26,21 +26,80 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
-### Lab metadata
-- Standardized every lab manifest on the canonical `title`, `category`,
+## [2.5.4] - 2026-11-10
+
+### Lab metadata and curriculum
+- Standardized all 149 lab manifests on the canonical `title`, `category`,
   `difficulty`, `estimated_time`, `prerequisites`, `learning_outcomes`,
-  `mapped_skills`, and `assessment_criteria` header.
+  `mapped_skills`, `assessment_criteria`, and `mitre_attack` header.
+- Replaced legacy `name`, `duration_minutes`, `objectives`, and
+  `learning_objectives` keys with canonical keys while keeping legacy loading
+  fallbacks for existing uploads and records.
+- Generated `prerequisites` from the sequential unlock graph and added
+  `mapped_skills` using the eight competency axes.
+- Added a repeatable standardizer and static schema test for the full catalog.
+
+### Learning outcomes
 - Every lab now opens its outcomes with
   `# By completion students will be able to:` and lists 3-5 measurable
-  outcomes with vague verbs such as "understand" and "learn" rewritten.
-- Added a repeatable standardizer and static schema test, plus prerequisite,
-  mapped-skill, and assessment-criteria storage in discovery and the API.
-- Competency mapping now uses authored `mapped_skills`, with the old
-  track/category heuristic retained as a fallback for legacy records.
-- Added MITRE ATT&CK tactic, technique, and detection mappings to every lab and
-  exposed them in the exercise brief.
+  outcomes.
+- Rewrote vague openers such as `understand` and `learn` to observable actions;
+  removed flag capture from learning outcomes and placed it under assessment.
+- The learner exercise brief uses the same heading.
+
+### MITRE ATT&CK
+- Added at least one `tactic`, `technique`, `technique_name`, and `detection`
+  mapping to every lab.
+- Added an ATT&CK panel to the learner brief and exposed the mapping through
+  the curriculum API.
+- Added validation, a mapping service, and Alembic migration
+  `0008_mitre_attack`.
+
+### Instructor and student dashboards
+- Added an instructor **Teaching focus** panel for learners one lab from a
+  certificate, learners inactive 7+ days, and recent wins.
 - Added a seven-day instructor learning snapshot: active students, labs
   completed, average score, and struggling students.
+- Added per-course completion progress to student course cards and a workspace
+  completion summary.
+- Added a course readiness panel with a single next action for invite,
+  exercises, assignments, or roster.
+- Made student course cards real links with keyboard focus and accessible
+  labels.
+
+### Basic learning analytics
+- Documented the five minimum metrics: lab started, lab completed, completion
+  time, pass/fail, and retry count.
+- Defined the instructor score as a transparent 0-100 participation score,
+  adjusted for retries and hints.
+- Reused existing session, completion, flag-attempt, and activity data rather
+  than adding new learner tracking.
+
+### Security and privacy
+- Sanitized scenario markdown and validated external URLs to prevent stored
+  XSS and unsafe link targets.
+- Hardened report and certificate export privacy tests, CSV formula handling,
+  and scoped instructor report exports.
+- Closed leaked DB sessions, background tasks, and sockets during shutdown.
+- Retried achievement writes after deadlocks and preserved the scheduler
+  advisory lock without leaving an idle transaction.
+
+### Reliability and performance
+- Sized DB pools for worker count, added hot-path indexes, and dropped redundant
+  primary-key indexes.
+- Fixed the scheduler leader lock so background jobs do not run twice.
+- Excluded runtime backend backups from deployment sync.
+- Stripped byte-order marks from JSON and YAML release inputs.
+- Added deployment performance guidance for the edge proxy.
+- On the CTFd-hosted OCR stack at `.41`: increased the backend pool from 4+4 to
+  6+6, tuned PostgreSQL planner settings, ran `VACUUM (ANALYZE)`, and reclaimed
+  Docker build-cache and dangling-image space.
+
+### Versions and migrations
+- Platform, backend image, `/api/version`, and frontend package version:
+  **2.5.4**.
+- Alembic: `0007_lab_metadata`, `0008_mitre_attack`.
+- Runtime pins remain Python 3.11, Node 22 build, PostgreSQL 15, Redis 7.2.
 
 ## [2.5.3] - 2026-11-08
 

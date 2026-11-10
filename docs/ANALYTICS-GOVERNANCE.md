@@ -1,6 +1,6 @@
 # Analytics governance
 
-Status: **v2.5.3 release contract**
+Status: **v2.5.4 release contract**
 Owner: Curriculum / Privacy
 Applies to: Community, Academic, Professional, and Enterprise profiles
 Related: [Data dictionary](DATA-DICTIONARY.md),

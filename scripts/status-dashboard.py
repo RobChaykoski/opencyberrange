@@ -19,10 +19,10 @@ file via ``--config`` or the ``OCR_STATUS_PROD_URL`` / ``OCR_STATUS_DEV_URL``
 environment variables:
 
     [
-      {"label": "Prod", "role": "production", "url": "https://192.168.120.41",
-       "expected_version": "2.5.3"},
-      {"label": "Dev", "role": "development", "url": "https://192.168.120.44",
-       "expected_version": "2.5.3"}
+      {"label": "OCR", "role": "production", "url": "https://ocr.swocts.com",
+       "expected_version": "2.5.4"},
+      {"label": "CTFd host OCR", "role": "internal", "url": "https://172.16.16.41",
+       "expected_version": "2.5.4"}
     ]
 
 The `192.168.120.0/24` addresses are documentation placeholders. Replace them
@@ -49,18 +49,18 @@ from pathlib import Path
 
 DEFAULT_HOSTS = [
     {
-        "label": "Prod",
+        "label": "OCR",
         "role": "production",
-        "url": os.environ.get("OCR_STATUS_PROD_URL", "https://192.168.120.41"),
-        "expected_version": "2.5.3",
-        "line": "Production platform release",
+        "url": os.environ.get("OCR_STATUS_PROD_URL", "https://ocr.swocts.com"),
+        "expected_version": "2.5.4",
+        "line": "OCR public deployment",
     },
     {
-        "label": "Dev",
-        "role": "development",
-        "url": os.environ.get("OCR_STATUS_DEV_URL", "https://192.168.120.44"),
-        "expected_version": "2.5.3",
-        "line": "Professional current platform release",
+        "label": "CTFd host OCR",
+        "role": "internal",
+        "url": os.environ.get("OCR_STATUS_DEV_URL", "https://172.16.16.41"),
+        "expected_version": "2.5.4",
+        "line": "OCR stack on the CTFd host",
     },
 ]
 

@@ -17,7 +17,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Platform](https://img.shields.io/badge/platform-2.5.3%20release-8b5cf6)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-2.5.4%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
 [![Labs](https://img.shields.io/badge/labs-148-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-11-green)](platform/labs/)
@@ -44,16 +44,16 @@ the upstream OpenCyberRange attribution and licence notices intact.
 
 ## Editions
 
-SWOCTS Cyber Range uses one platform release number (`2.5.3`) with three
+SWOCTS Cyber Range uses one platform release number (`2.5.4`) with three
 cumulative edition profiles. The edition names describe scope, entitlement, and
 operational shape, not three separate codebases or three separate version lines.
 See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Community / Academic** | `2.5.3` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `2.5.3` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `2.5.3` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
+| **Community / Academic** | `2.5.4` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `2.5.4` | **Release profile â€” analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `2.5.4` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
 
 The Community / Academic profile (1.1.3 maintenance) remains the reference
 behaviour and the fallback.
@@ -63,13 +63,13 @@ Enterprise is additive again: it adds the lab pool, control-plane HA, gateway
 failover, identity federation, multi-tenancy, LMS integration, and compliance
 reporting without removing the single-host path.
 
-The five Professional priorities — Competency Framework Engine, Student
+The five Professional priorities â€” Competency Framework Engine, Student
 Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
-Instructor Intervention Dashboard — are **Professional and Enterprise only**.
+Instructor Intervention Dashboard â€” are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on the Community / Academic 1.1.3
-maintenance line and merge forward into the 2.5.3 profiles**, so a fix does not
+maintenance line and merge forward into the 2.5.4 profiles**, so a fix does not
 wait for a feature release. There is no separate fork to maintain. See
 [Editions](docs/EDITIONS.md) and
 [ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
@@ -181,7 +181,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. `main` carries platform release
-**2.5.3** with Community / Academic, Professional, and Enterprise preview
+**2.5.4** with Community / Academic, Professional, and Enterprise preview
 profiles. The Community / Academic 1.1.3 line remains the supported single-host
 teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
@@ -248,7 +248,7 @@ finished what.
 
 **Administration.** Users, sessions, VPN peers and platform settings in one
 panel. The Users tab includes a portable **Import / Export Users** workflow for
-moving accounts between installations, and the System → Backups tab can create,
+moving accounts between installations, and the System â†’ Backups tab can create,
 download, upload, and restore snapshots, including a plain SQL snapshot from
 another installation. Every export requires a reason that is written to the
 audit log.
@@ -267,7 +267,7 @@ and a downloadable PDF transcript.
 issues a certificate with a deterministic ID, a verification QR code, and a
 print/PDF action. Certificates can be rendered in **Classic**, **Executive**,
 **Modern**, or **Minimal** designs. Choose one from the certificate page, or set
-the platform default in Admin → Settings → General → Certificate Design. The
+the platform default in Admin â†’ Settings â†’ General â†’ Certificate Design. The
 same profile view generates a PDF transcript containing certificates, every
 completed exercise, track progress, and course achievements.
 
@@ -310,21 +310,21 @@ participants, new sign-ups, existing opt-ins, and a copyable sign-up link.
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
 | AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
 | OSINT | 4 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
-| **High School Cybersecurity** | **6** | Browser-first Grades 9–12 pathway; RangeBox basics, defensive logs, and the Grade 12 DevFest community portal |
+| **High School Cybersecurity** | **6** | Browser-first Grades 9â€“12 pathway; RangeBox basics, defensive logs, and the Grade 12 DevFest community portal |
 | Software Security | 2 | Source review, hidden routes, command injection, and remediation |
 | Digital Forensics | 2 | Memory analysis and VoIP network evidence reconstruction |
-| **Total** | **148** | **11 tracks · 51 levels** |
+| **Total** | **148** | **11 tracks Â· 51 levels** |
 
 ## Network Foundations stream
 
 The **Network Security** track opens with a beginner **Network Foundations**
 level for students who have never used a terminal:
 
-- **Ping Basics** — reachability, latency, packet loss, and why a reply is not a
+- **Ping Basics** â€” reachability, latency, packet loss, and why a reply is not a
   service check.
-- **DNS Basics** — A, CNAME, MX, and TXT records, queried directly against an
+- **DNS Basics** â€” A, CNAME, MX, and TXT records, queried directly against an
   authoritative lab server.
-- **Name or Network?** — a troubleshooting capstone that separates a stale name
+- **Name or Network?** â€” a troubleshooting capstone that separates a stale name
   from a dead host and a stopped service.
 
 The matching workbook chapter is **CH N0 -- Network Foundations**.
@@ -334,16 +334,16 @@ The matching workbook chapter is **CH N0 -- Network Foundations**.
 The **AI Hacking** track starts with a beginner module, **AI Security
 Foundations**, containing three labs:
 
-- **Prompt Injection Basics** — override a mock assistant's hidden instructions.
-- **Jailbreak Policy Bypass** — move past a keyword filter with role-play and
+- **Prompt Injection Basics** â€” override a mock assistant's hidden instructions.
+- **Jailbreak Policy Bypass** â€” move past a keyword filter with role-play and
   authority framing.
-- **Indirect Prompt Injection** — plant instructions in a support ticket that a
+- **Indirect Prompt Injection** â€” plant instructions in a support ticket that a
   summariser reads.
 
 Each lab uses a deterministic, dependency-free mock assistant inside the lab
 network. No external model, API key, or internet access is required. The next
-levels — instruction hierarchy, RAG/data exposure, agent tool abuse, model
-supply chain, and an AI-assisted capstone — are defined in the curriculum and
+levels â€” instruction hierarchy, RAG/data exposure, agent tool abuse, model
+supply chain, and an AI-assisted capstone â€” are defined in the curriculum and
 will appear as their labs are published.
 
 ## OSINT stream
@@ -352,16 +352,16 @@ The **OSINT** track teaches students to work from the outside in. The target is
 **Kestrel Ridge**, a fictional company with a simulated intranet, a public
 employee badge, and a public code trail:
 
-- **The Public Footprint** — map a staff intranet, read `robots.txt`, and find a
+- **The Public Footprint** â€” map a staff intranet, read `robots.txt`, and find a
   flag in a review page's HTML source.
-- **Badge Photo Intelligence** — inspect PNG metadata, then extract a flag from
+- **Badge Photo Intelligence** â€” inspect PNG metadata, then extract a flag from
   the least-significant bits of the blue channel. The exercise ships with a
   dependency-free Python extractor, a browser-based extractor for shared or
   low-tooling devices, and also works with `zsteg`.
-- **The Developer's Trail** — fetch a static JavaScript asset and recover a
+- **The Developer's Trail** â€” fetch a static JavaScript asset and recover a
   staging token left in a developer comment. This exercise also includes a
   bonus flag hidden in the public OpenCyberRange repository.
-- **The Public Homepage** — treat a live public site (`www.swocts.com`) as an
+- **The Public Homepage** â€” treat a live public site (`www.swocts.com`) as an
   OSINT source, search its document metadata, and find the flag left in the
   page head. A local mirror is available for offline practice.
 
@@ -385,7 +385,7 @@ existing learning ladder: **Signal in the Noise**, **Digital Footprint**,
 **First-Pass Analyst**. They are course-scoped, so a student earns them in any
 course that assigns the OSINT exercises.
 
-## High School pathway · Grades 9–12
+## High School pathway Â· Grades 9â€“12
 
 The **High School Cybersecurity** track is a browser-first pathway for students
 who are curious but may be new to the field:
@@ -455,10 +455,10 @@ and do not alter real learner records. See
 The repository includes GitHub-native checks that need no third-party account
 or repository secret:
 
-- **Dependabot** — weekly dependency and Docker base-image update PRs.
-- **CodeQL** — Python and JavaScript/TypeScript static analysis.
-- **Trivy** — filesystem vulnerability, secret, and configuration scanning.
-- **Dependency audit** — `pip-audit` and `npm audit --omit=dev` on every pull
+- **Dependabot** â€” weekly dependency and Docker base-image update PRs.
+- **CodeQL** â€” Python and JavaScript/TypeScript static analysis.
+- **Trivy** â€” filesystem vulnerability, secret, and configuration scanning.
+- **Dependency audit** â€” `pip-audit` and `npm audit --omit=dev` on every pull
   request and weekly.
 
 Current status on `main`: `pip-audit` reports **0 packages with advisories**
@@ -488,7 +488,7 @@ need to be documented separately.
 - **Deleted-user resilience.** Enrollments, completions, quiz data, feedback,
   surveys, achievements, and celebrations cascade; optional creator/actor
   references are nulled. Courses block deletion until ownership is transferred.
-  Dashboards render “Deleted user / learner / participant” instead of breaking,
+  Dashboards render â€œDeleted user / learner / participantâ€ instead of breaking,
   and orphaned coaching notes are excluded from course-health counts.
 - **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
   deployment, workflow, and lab inputs. CI verifies it, and install, update, and
@@ -512,7 +512,7 @@ The two development info findings are a known session-coverage gap and seeded
 labs with no creator. Production adds two intentional hint placeholders. None
 are data loss or a broken reference.
 
-The 2.5.3 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The 2.5.4 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
 process. The current verification pass is recorded in
@@ -552,19 +552,19 @@ classrooms where not every student has the same hardware:
 - **No public ranking.** The Celebration Wall shows recent wins and the badges
   people are celebrating. It does not publish individual badge counts or ranks.
   Learners choose a real-name, username, or anonymous label, and can opt out via
-  “Show me on the wall”; opted-out users still see their own private corner.
+  â€œShow me on the wallâ€; opted-out users still see their own private corner.
   Other signed-in users can celebrate a win anonymously, one per person; only
   the count is shown. Admin diagnostic accounts are excluded.
 - **Data minimisation.** The wall exposes only a display name, the latest badge,
   a relative timestamp, and anonymous celebration counts. It does not expose
   email addresses, student IDs, avatars, or the identity of a celebrator.
 - **Optional surveys, explicit consent.** Platform and usage surveys are
-  off by default. Profile → **Surveys** shows the versioned privacy statement
+  off by default. Profile â†’ **Surveys** shows the versioned privacy statement
   before consent is recorded, keeps an append-only consent history, and allows
   withdrawal at any time. Survey consent covers platform feedback only; it does
   not permit collection of passwords, grades, lab flags, or sensitive personal
   data. See [Survey privacy and consent](docs/SURVEY-PRIVACY.md).
-- **Email consent and withdrawal.** Profile → **Privacy and data** explains why
+- **Email consent and withdrawal.** Profile â†’ **Privacy and data** explains why
   account email is collected, states that it is not marketing, and lets the
   learner withdraw consent to optional account email under PIPEDA. The consent
   version and update time are recorded. Essential security and service messages
@@ -639,12 +639,12 @@ building during a student spawn.
 - The default retention is **30 days**. `upgrade-from-backup.sh` copies the
   ledger into each backup and prunes older completed backups; use
   `--backup-retention-days N` to change the window or `0` to disable pruning.
-- **Cross-system restore.** Admin → System → Backups → **Restore from another
+- **Cross-system restore.** Admin â†’ System â†’ Backups â†’ **Restore from another
   system** accepts a plain `.sql` snapshot from another installation. A full
   restore replaces every account and record, including the signed-in
   administrator; take a local snapshot first. Use the portable user import to
   merge accounts without replacing the local administrators.
-- **Portable user migration.** Admin → Users → **Import / Export Users** writes
+- **Portable user migration.** Admin â†’ Users â†’ **Import / Export Users** writes
   a JSON export and imports it with a preview. Password hashes travel so users
   keep their passwords; MFA, trusted devices, VPN keys, sessions, and learning
   progress are excluded. Existing administrator accounts are never overwritten
@@ -690,10 +690,10 @@ building during a student spawn.
 
 ### Data deletion process
 
-- **Self-service:** Profile → **Privacy and data** → **Delete my account**.
+- **Self-service:** Profile â†’ **Privacy and data** â†’ **Delete my account**.
   The request requires the current password, a live TOTP or recovery code when
   MFA is enabled, and typing `DELETE`.
-- **Administrator:** Admin → Users → Delete requires typing the username and
+- **Administrator:** Admin â†’ Users â†’ Delete requires typing the username and
   uses the same erasure service.
 - Deletion removes identity and credential data, the WireGuard peer and keys,
   enrolments, completions, flag and quiz attempts, achievements, event
@@ -826,45 +826,45 @@ health, and shared state rather than in the curriculum.
 
 Multi-host Docker and Kubernetes are **not supported deployment targets**.
 The setup script and Compose files stay single-host. Multi-host HA is an
-Enterprise preview workstream and is not part of the 2.5.3 release gate.
+Enterprise preview workstream and is not part of the 2.5.4 release gate.
 
 ## Repository Structure
 
 ```
 opencyberrange/
-├── platform/
-│   ├── backend/          # FastAPI app, migrations, curriculum and lab scripts
-│   ├── frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
-│   ├── db/               # PostgreSQL init and password bootstrap
-│   ├── labs/             # Exercise library (organized by track)
-│   ├── rangebox/         # RangeBox container build
-│   ├── templates/        # Exercise Studio template catalog
-│   ├── tester/           # Exercise tester module
-│   ├── wiki-builder/     # MkDocs builder image for the wiki_data volume
-│   ├── certs/            # Local TLS certificates (not committed)
-│   ├── docker-compose.prod.yml
-│   └── .env.example      # Environment variable template
-├── docs/                 # Architecture, analytics, privacy, research, release docs
-├── Manual-Lite/          # Deployment, student, instructor, and admin guides
-├── Workbook/             # Student walkthroughs (MkDocs source)
-├── RangeBox/             # Kali in-browser desktop image source
-├── UbuntuBox/            # Ubuntu in-browser desktop image source
-├── RemnuxBox/            # REMnux in-browser desktop image source
-├── scripts/              # Setup, deployment, backup, and lab validation tools
-├── tools/                # Wiki generation and maintenance tools
-├── wiki-overrides/       # MkDocs theme overrides
-├── .github/              # CI, CodeQL, Dependabot, and Trivy workflows
-├── .opencode/            # Project-local design and authoring skills
-├── mkdocs-*.yml          # Per-track workbook build configuration
-├── versions.yaml         # Runtime, dependency, and image pins
-├── wikis.yaml            # Workbook wiki registry
-├── BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
-├── BRANDING.md           # SWOCTS/OpenCyberRange marks and ownership
-├── THIRD_PARTY_NOTICES.md # Third-party licence inventory and attribution checklist
-├── THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
-├── RELEASE_NOTES.md      # Current release notes
-├── CHANGELOG.md          # Release and change history
-└── CONTRIBUTING.md       # Contributor guidelines
+â”œâ”€â”€ platform/
+â”‚   â”œâ”€â”€ backend/          # FastAPI app, migrations, curriculum and lab scripts
+â”‚   â”œâ”€â”€ frontend/         # Vue 3 SPA and nginx; wiki served from wiki_data
+â”‚   â”œâ”€â”€ db/               # PostgreSQL init and password bootstrap
+â”‚   â”œâ”€â”€ labs/             # Exercise library (organized by track)
+â”‚   â”œâ”€â”€ rangebox/         # RangeBox container build
+â”‚   â”œâ”€â”€ templates/        # Exercise Studio template catalog
+â”‚   â”œâ”€â”€ tester/           # Exercise tester module
+â”‚   â”œâ”€â”€ wiki-builder/     # MkDocs builder image for the wiki_data volume
+â”‚   â”œâ”€â”€ certs/            # Local TLS certificates (not committed)
+â”‚   â”œâ”€â”€ docker-compose.prod.yml
+â”‚   â””â”€â”€ .env.example      # Environment variable template
+â”œâ”€â”€ docs/                 # Architecture, analytics, privacy, research, release docs
+â”œâ”€â”€ Manual-Lite/          # Deployment, student, instructor, and admin guides
+â”œâ”€â”€ Workbook/             # Student walkthroughs (MkDocs source)
+â”œâ”€â”€ RangeBox/             # Kali in-browser desktop image source
+â”œâ”€â”€ UbuntuBox/            # Ubuntu in-browser desktop image source
+â”œâ”€â”€ RemnuxBox/            # REMnux in-browser desktop image source
+â”œâ”€â”€ scripts/              # Setup, deployment, backup, and lab validation tools
+â”œâ”€â”€ tools/                # Wiki generation and maintenance tools
+â”œâ”€â”€ wiki-overrides/       # MkDocs theme overrides
+â”œâ”€â”€ .github/              # CI, CodeQL, Dependabot, and Trivy workflows
+â”œâ”€â”€ .opencode/            # Project-local design and authoring skills
+â”œâ”€â”€ mkdocs-*.yml          # Per-track workbook build configuration
+â”œâ”€â”€ versions.yaml         # Runtime, dependency, and image pins
+â”œâ”€â”€ wikis.yaml            # Workbook wiki registry
+â”œâ”€â”€ BUILD_NOTICE.md       # Updated-build provenance, attribution, and AI disclosure
+â”œâ”€â”€ BRANDING.md           # SWOCTS/OpenCyberRange marks and ownership
+â”œâ”€â”€ THIRD_PARTY_NOTICES.md # Third-party licence inventory and attribution checklist
+â”œâ”€â”€ THIRD_PARTY_LICENSES/  # Notice-sensitive licence texts
+â”œâ”€â”€ RELEASE_NOTES.md      # Current release notes
+â”œâ”€â”€ CHANGELOG.md          # Release and change history
+â””â”€â”€ CONTRIBUTING.md       # Contributor guidelines
 ```
 
 ## Documentation
@@ -932,7 +932,7 @@ or read learner records. Docker host and container state still need
 
 - **OS:** Ubuntu 24.04 LTS for new 2.1 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range 2.5.3 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7.2, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range 2.5.4 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7.2, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

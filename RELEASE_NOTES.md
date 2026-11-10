@@ -1,3 +1,76 @@
+# SWOCTS Cyber Range 2.5.4
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
+
+Edition: **Professional** — Community / Academic plus analytics, reporting,
+cohort analysis, competency evidence, accreditation support, and research
+exports.
+Status: **patch release**. 2.5.4 makes lab metadata machine-readable, makes
+learning outcomes measurable, adds MITRE ATT&CK alignment, and gives instructors
+a seven-day learning snapshot. It also includes the security, reliability, and
+database-pool fixes shipped after 2.5.3.
+
+## Highlights
+
+- All **149 labs** use the canonical metadata header: title, category,
+  difficulty, estimated time, prerequisites, learning outcomes, mapped skills,
+  assessment criteria, and MITRE ATT&CK.
+- Every lab lists **3-5 measurable outcomes** under the heading
+  **“By completion students will be able to:”**.
+- Every lab declares a **MITRE ATT&CK tactic, technique, and detection
+  opportunity**, shown in the learner brief.
+- Instructor dashboard now shows **Students Active**, **Labs Completed**,
+  **Average Score**, and **Struggling Students** for the last seven days.
+- Student course cards show the learner’s own completion progress.
+- Instructor **Teaching focus** surfaces near-certificate learners, inactive
+  learners, and recent wins.
+
+## Labs and metadata
+
+- Added `title`, `estimated_time`, `learning_outcomes`, `prerequisites`,
+  `mapped_skills`, `assessment_criteria`, and `mitre_attack` to every lab.
+- Prerequisites mirror the sequential unlock graph, including previous-level
+  labs and the previous lab in the same level.
+- Competency mapping now uses authored `mapped_skills`; the old
+  track/category heuristic remains as a fallback.
+- Added a repeatable standardizer and a static catalog schema test.
+
+## Analytics
+
+- Documented the five minimum metrics: lab started, lab completed, completion
+  time, pass/fail, and retry count.
+- Added the seven-day instructor learning snapshot and struggling-student
+  signal.
+- Reused existing session, completion, flag-attempt, and activity data.
+
+## Security and reliability
+
+- Sanitized scenario markdown and validated external URLs.
+- Hardened report and certificate privacy tests and CSV formula handling.
+- Closed leaked DB sessions, background tasks, and sockets.
+- Fixed scheduler leader locking and achievement-write deadlock retries.
+- Sized DB pools for worker count, added hot-path indexes, and dropped redundant
+  primary-key indexes.
+- Tuned the CTFd-hosted OCR stack at `.41` with a 6+6 pool, PostgreSQL planner
+  settings, vacuum/analyze, and Docker space cleanup.
+
+## Version and migration notes
+
+- Platform version: **2.5.4**
+- Alembic migrations: **`0007_lab_metadata`**, **`0008_mitre_attack`**
+- Runtime pins: Python 3.11, Node 22 build, PostgreSQL 15, Redis 7.2
+- Existing 2.5.3 databases upgrade in place; no destructive data migration.
+
+## Verification
+
+- Backend suite: **176 passed** (non-DB), plus DB-backed metadata, dashboard,
+  competency, analytics, and authorization tests.
+- Lab metadata schema: **149/149 valid**.
+- Frontend ESLint and production build: passed.
+- Dev and production OCR stacks: healthy, API and exercise routes return 200.
+
+---
+
 # SWOCTS Cyber Range 2.5.3
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
