@@ -123,7 +123,10 @@ def _image_digests() -> dict[str, str]:
         digests: dict[str, str] = {}
         for label, name in names.items():
             try:
-                image_id = client.containers.get(name).image.id
+                container = client.containers.get(name)
+                image_id = container.attrs.get("Image")
+                if not image_id:
+                    image_id = container.image.id
                 if image_id:
                     digests[label] = image_id
             except Exception:
