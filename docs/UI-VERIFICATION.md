@@ -1,8 +1,20 @@
 # UI verification
 
-> **Historical record.** This page records the 2.5.3 UI verification runs and
-> keeps the placeholder management subnet used at the time. For current host
-> status and build assets, see [Deployment status](status-dashboard.md).
+> **Historical record.** The 2.5.3 sections below keep the placeholder
+> management subnet used at the time. Current host status and build assets are
+> in [Deployment status](status-dashboard.md).
+
+## 2.5.4 deployment smoke
+
+Run **2026-11-10** against the public OCR deployment at
+`https://ocr.swocts.com` on **2.5.4**:
+
+- Workflow: **UI smoke** (`42741914124`)
+- Result: **success**
+- Expected version: `2.5.4`
+- Checks include API version, authenticated dashboard access, About inventory
+  version parity, desktop and mobile dashboard rendering, and the privacy
+  settings round-trip.
 
 Last run: **2026-11-08** against both deployments:
 
