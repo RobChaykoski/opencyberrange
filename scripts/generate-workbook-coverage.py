@@ -28,7 +28,7 @@ for lab_yaml in sorted(LABS.rglob("lab.yaml")):
     if not workbook:
         continue
     track = lab_yaml.parent.parent.name
-    lab_name = str(data.get("name") or lab_yaml.parent.name).strip()
+    lab_name = str(data.get("title") or data.get("name") or lab_yaml.parent.name).strip()
     rows.append((track, lab_name, lab_yaml.parent.name, workbook))
 
 by_track = defaultdict(list)

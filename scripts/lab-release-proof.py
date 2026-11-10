@@ -76,7 +76,7 @@ def _workbook_text(lab: dict) -> str:
 
 
 def _objectives_measurable(lab: dict) -> tuple[bool, str]:
-    objectives = lab.get("objectives") or []
+    objectives = lab.get("learning_outcomes") or lab.get("objectives") or []
     if not isinstance(objectives, list) or not objectives:
         return False, "no objectives list"
     measurable = 0
@@ -96,7 +96,9 @@ def _flag_demonstrates(lab: dict) -> tuple[bool, str]:
     flag = str(lab.get("flag") or "")
     if not FLAG_RE.match(flag):
         return False, "flag is missing or not OCR{...}"
-    objectives = " ".join(str(o) for o in (lab.get("objectives") or [])).lower()
+    objectives = " ".join(
+        str(o) for o in (lab.get("learning_outcomes") or lab.get("objectives") or [])
+    ).lower()
     test_steps = (lab.get("test") or {}).get("steps") or []
     flag_step = any("OCR{" in str(step.get("expect", "")) for step in test_steps)
     objective_flag = "flag" in objectives
@@ -131,9 +133,9 @@ def _workbook_matches(lab: dict, workbook: str) -> tuple[str, str]:
 
 def _duration_realistic(lab: dict, track_medians: dict[str, float]) -> tuple[bool, str]:
     try:
-        duration = int(lab.get("duration_minutes") or 0)
+        duration = int(lab.get("estimated_time") or lab.get("duration_minutes") or 0)
     except (TypeError, ValueError):
-        return False, "duration_minutes is not an integer"
+        return False, "estimated_time is not an integer"
     if duration < 10 or duration > 300:
         return False, f"duration {duration} is outside 10-300 minutes"
     track = lab.get("__track__", "")
@@ -253,10 +255,10 @@ def audit_lab(lab_dir: Path, track_medians: dict[str, float]) -> dict:
 
     return {
         "slug": lab_dir.name,
-        "name": lab.get("name", lab_dir.name),
+        "name": lab.get("title") or lab.get("name", lab_dir.name),
         "track": lab["__track__"],
         "difficulty": lab.get("difficulty"),
-        "duration_minutes": lab.get("duration_minutes"),
+        "duration_minutes": lab.get("estimated_time") or lab.get("duration_minutes"),
         "workbook": lab.get("workbook"),
         "owner": lab.get("owner"),
         "content_version": lab.get("content_version"),
@@ -278,7 +280,7 @@ def main() -> int:
         lab = _load_yaml(lab_dir / "lab.yaml")
         track = lab_dir.relative_to(LABS).parts[0]
         try:
-            durations.setdefault(track, []).append(int(lab.get("duration_minutes") or 0))
+            durations.setdefault(track, []).append(int(lab.get("estimated_time") or lab.get("duration_minutes") or 0))
         except (TypeError, ValueError):
             pass
     medians = {

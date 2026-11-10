@@ -36,7 +36,7 @@ VALID_CATEGORIES = {
 # Track prefix may be multi-word (e.g., windows-server).
 SLUG_PATTERN = re.compile(r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+|final-\d+)-[a-z0-9-]+$")
 FLAG_PATTERN = re.compile(r"^OCR\{.+\}$")
-REQUIRED_YAML_FIELDS = ["name", "description", "difficulty", "flag"]
+REQUIRED_YAML_FIELDS = ["title", "description", "difficulty", "flag"]
 KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "ot", "ai", "osint", "high-school", "software-security", "capitalflow", "forensics", "refinery", "windows-server"}
 DANGEROUS_PASSWORD_CHARS = set('!`$\\"')
 DANGEROUS_PASSWORD_CHARS_DISPLAY = "! ` $ \\ \""
@@ -107,6 +107,16 @@ def check_yaml_valid(lab_dir):
 
     results = [CheckResult("lab.yaml parseable", True)]
 
+    # Accept legacy manifests while the canonical schema becomes universal.
+    if not data.get("title") and data.get("name"):
+        data["title"] = data["name"]
+    if not data.get("learning_outcomes"):
+        data["learning_outcomes"] = (
+            data.get("learning_objectives") or data.get("objectives") or []
+        )
+    if data.get("estimated_time") is None and data.get("duration_minutes") is not None:
+        data["estimated_time"] = data["duration_minutes"]
+
     # Check required fields
     missing = [f for f in REQUIRED_YAML_FIELDS if f not in data or not data[f]]
     results.append(CheckResult(
@@ -143,17 +153,17 @@ def check_yaml_valid(lab_dir):
             f"Got '{flag}', expected format: OCR{{description}}" if not FLAG_PATTERN.match(flag) else ""
         ))
 
-    # Objectives (accept either 'objectives' or 'learning_objectives')
-    objectives = data.get("objectives") or data.get("learning_objectives", [])
+    # Learning outcomes (accept canonical or legacy keys)
+    objectives = data.get("learning_outcomes") or []
     results.append(CheckResult(
-        "Has objectives",
+        "Has learning outcomes",
         isinstance(objectives, list) and len(objectives) > 0,
-        "No objectives defined (use 'objectives' or 'learning_objectives')" if not objectives else "",
+        "No learning outcomes defined (use 'learning_outcomes')" if not objectives else "",
         severity="warning"
     ))
 
     # Duration
-    duration = data.get("duration_minutes")
+    duration = data.get("estimated_time")
     if duration is not None:
         results.append(CheckResult(
             "Duration is reasonable",

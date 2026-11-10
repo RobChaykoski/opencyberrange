@@ -131,20 +131,36 @@ def print_curriculum(tracks, labs_dir):
 def lab_yaml(name, description, difficulty, category, duration, visibility,
              flag, hostname, ip_offset):
     return f"""\
-name: {json.dumps(name)}
-description: {json.dumps(description)}
-difficulty: {difficulty}
+title: {json.dumps(name)}
 category: {category}
-duration_minutes: {duration}
+difficulty: {difficulty}
+estimated_time: {duration}
+prerequisites: []
 
 # draft keeps the lab out of the student curriculum until you are ready.
 # Change to 'public' (or 'course') when the exercise is finished.
 visibility: {visibility}
 
-objectives:
-  - Replace this objective with what the student actually has to do
-  - Capture the flag
+# By completion students will be able to:
+learning_outcomes:
+  - Replace this with an observable action the student performs
+  - Identify the evidence or weakness the exercise exposes
+  - Explain the defensive control that addresses the finding
 
+mapped_skills:
+  - network_systems
+
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+
+mitre_attack:
+  - tactic: Discovery
+    technique: T1046
+    technique_name: Network Service Discovery
+    detection: Monitor IDS/flow logs for service and port scanning.
+
+description: {json.dumps(description)}
 scenario: |
   Replace this with the scenario: who the student is, what system they are
   looking at, and why it matters. Keep concrete hostnames and IPs in the
