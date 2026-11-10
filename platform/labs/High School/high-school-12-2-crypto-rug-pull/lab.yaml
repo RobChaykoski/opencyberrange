@@ -106,8 +106,8 @@ test:
       expect: "200"
       timeout: 20
 
-    - name: "Ledger contains the drained wallet"
-      command: "curl -s http://{target.portal}:8080/ledger.json | grep -c '0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f'"
+    - name: "Ledger contains the outgoing transfer to the drained wallet"
+      command: "curl -s http://{target.portal}:8080/ledger.json | grep -c 'to.*0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f'"
       expect: "1"
       timeout: 20
 
