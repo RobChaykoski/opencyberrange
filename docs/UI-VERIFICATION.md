@@ -26,6 +26,28 @@ Not verified in a real browser at that time: a live RangeBox desktop session,
 mobile drawer rendering of the new Tools item, and a live learner walkthrough of
 the CyberChef labs.
 
+## Post-2.5.5 lab additions
+
+Checked on **2026-11-10** through static lab validation and deployment smoke
+tests, not a live browser session:
+
+- Grade 9 digital-safety labs: **Read the Link**, **Know the File**, and the
+  **Forwarded Message** capstone. The targets are isolated and the workbook
+  links resolve.
+- Grade 10 **Dissect an Email** lab: raw-message download, header table, and
+  workbook page resolve.
+- **Identity & Access** track: secure authentication, OAuth/OIDC, and identity
+  lifecycle labs, with the track, levels, workbook pages, and certification
+  guidance present in the catalogue.
+- The student workbook wiki rebuilt with the new chapters; the track card uses
+  the existing web icon and the violet track colour.
+- Deployment, seed, and discovery scripts now emit ASCII status markers, so
+  logs render correctly in Windows terminals and CI.
+
+Not verified in a real browser: the new track cards, level unlock sequence,
+workbook rendering for the new chapters, and RangeBox access to the new target
+hostnames. Timings for the new labs remain provisional.
+
 ## 2.5.4 deployment smoke
 
 Run **2026-11-10** against the public OCR deployment at

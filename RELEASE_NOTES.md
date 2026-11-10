@@ -21,6 +21,8 @@ These changes are on `main` after the `v2.5.5` tag and are not part of the
   custom headers.
 - Identity & Access track covering secure sessions and MFA, OAuth/OIDC redirect
   and token trust, and joiner/mover/leaver access review.
+- Deployment scripts use ASCII status markers for clean logs in Windows
+  terminals and CI.
 - Startup schema initialization serialized across workers.
 
 See `CHANGELOG.md` for the itemised list.

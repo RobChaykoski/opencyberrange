@@ -207,6 +207,22 @@ Production has the ledger installed from the 2.5.0 deployment. The 2.5.1 check
 reported 0 entries and a valid chain; entries appear as critical-table writes
 occur.
 
+### Accepted informational findings (current tree)
+
+The 8 November 2026 run above is retained as historical evidence. The current
+tree (159 labs) carries the same informational classes, reviewed and accepted:
+
+- **Session coverage gap.** Some completions have no matching non-diagnostic
+  session. This is a known coverage gap, not data loss; completion, hint,
+  attempt, and time signals remain reliable.
+- **No creator on seeded labs.** Seeded and discovered labs have
+  `created_by = NULL` by design; this is not a deleted account.
+- **Production hint placeholders.** Two hint placeholders are intentional
+  authoring placeholders, not missing content.
+
+None is a broken reference, data-loss condition, or reason to block a release.
+No backfill or reference repair is required.
+
 ## Known gaps
 
 - **Session coverage.** 36 dev and 116 production completions have no matching

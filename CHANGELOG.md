@@ -78,6 +78,10 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Redesigned the public certificate verification page with clearer trust,
   privacy, and ID-location guidance.
 
+### Operations
+- Deployment, curriculum-seed, discovery, and installer scripts now emit ASCII
+  status markers so logs render correctly in Windows terminals and CI.
+
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party
   notices, About lab toolchains, and licence bundle.
