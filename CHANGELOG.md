@@ -26,6 +26,51 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+### Reporting
+- Added a decision-led instructor report library: course health brief, exercise
+  diagnostics, coaching queue, and the full student record pack.
+- Reports carry a report ID, SHA-256 checksum, and HMAC-SHA256 manifest
+  signature; PDFs print the ID and CSV files include it.
+- Added cohort mean/median solve-time and hint-use baselines, plus an
+  engagement signal for unusually fast, hint-free completion. The signal is a
+  support prompt, not an AI accusation or ranking.
+
+### Privacy
+- Added under-18 reporting privacy. When enabled, the learner is excluded from
+  instructor reports, course analytics, coaching queues, public leaderboards,
+  and competition scoreboards; their own dashboard still works.
+- Added public certificate verification opt-out. When disabled, the public
+  verifier returns the generic invalid result and the certificate payload omits
+  the verification URL and QR code.
+- Added public `/about` for first-time visitors; detailed installation inventory
+  moved to `/about/installation`.
+- Added `Cache-Control: no-store` to `/api/about` so a stale release version is
+  not cached after deployment.
+
+### Labs and tools
+- Added CyberChef to the student Tools menu and the active-lab panel.
+- Added three entry-level High School Grade 9 CyberChef labs: Base64 decode,
+  Caesar shift/ROT13, and a two-layer Base64 + ROT13 message, with workbook
+  pages.
+- Added a student-tester and inclusive-curriculum review at
+  `docs/reviews/CYBERCHEF-LABS-REVIEW.md`.
+
+### Integrity and access
+- Added an audited review workflow for unattributed integrity-ledger writes.
+  Reviews require an administrator, a decision, a note, and confirmation; the
+  review is written to the audit log and append-only ledger.
+- Serialized startup schema initialization across workers and made the new
+  privacy columns idempotent.
+- Refreshed the login/registration pages for AODA: skip links, focus
+  management, Caps Lock warnings, password-strength text, target sizes, contrast,
+  reduced motion, and explicit privacy/under-18 acknowledgment.
+- Redesigned the public certificate verification page with clearer trust,
+  privacy, and ID-location guidance.
+
+### Licensing
+- Added CyberChef attribution (Apache-2.0, external tool) to the third-party
+  notices, About lab toolchains, and licence bundle.
+
 ## [2.5.5] - 2026-11-10
 
 ### Security

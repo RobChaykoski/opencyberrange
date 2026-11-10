@@ -27,10 +27,46 @@ and tests share one meaning. The capabilities that deliver them are described in
 | Learner growth and domain profile | Learner analytics / Profile |
 | Cross-course CSV/PDF | Reports & analytics → Export CSV / Export PDF |
 | Survey and pulse results | Instructor survey page |
+| Decision-led report library | Course → Reports |
 
-The programme reports below add the missing cross-course, cross-cohort, and
-competency views. Until they ship, use the existing course drill-down plus the
-CSV export.
+## Decision-led report library
+
+The course **Reports** tab is the instructor-facing report library. It is
+designed around the next teaching decision, not a record dump:
+
+| Report | Use it when | Formats |
+|---|---|---|
+| Course health brief | The teaching team needs one page on completion, hint/attempt pressure, time, RAG reasons, an exercise watchlist, and one next step. | PDF |
+| Exercise diagnostics | A course or exercise is underperforming and the team needs per-exercise completion, abandonment, attempts, hints, and cohort time/hint baselines. | PDF, CSV |
+| Coaching queue | Time is limited and the instructor needs one suggested next step and review date per learner. Signals are descriptive, not a ranking. | CSV, PDF |
+| Full student record pack | An individual record is needed for a meeting, file, or appeal. Use the course health brief for class decisions. | PDF |
+
+Every generated report is recorded in `report_exports` with a report ID, SHA-256
+file checksum, and HMAC-SHA256 signature. PDFs print the report ID in the footer;
+CSV files include a `report_id` column and the report ID in the filename. The
+report library has a **Verify a generated report** form that calls the
+authenticated `/api/reports/verify` endpoint; it returns only report metadata,
+not learner data.
+
+### Baselines and engagement signals
+
+Exercise diagnostics report the cohort mean and median solve time and hint use.
+The coaching queue compares each learner's completions with those baselines. A
+learner who completes unusually quickly with no hints may be:
+- already skilled and ready for a stretch exercise;
+- using outside help or AI to get through;
+- disengaging from the programme.
+
+The signal is a prompt for a supportive conversation about interest, goals, and
+understanding. It is not proof of AI use, misconduct, or a ranking. Suggested
+actions include a short teach-back, a stretch exercise, or an alternative path.
+
+### Privacy exclusions
+
+Learners who identify as under 18 are excluded from instructor reports, course
+analytics, coaching queues, public scoreboards, and competition leaderboards
+until they clear the setting. The reports still work for the rest of the cohort;
+the exclusion is automatic and cannot be overridden from the report page.
 
 ## Report 1: Which labs are failing?
 

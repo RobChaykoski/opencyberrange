@@ -40,10 +40,13 @@ The project source and its original content are licensed under the
 [`BUILD_NOTICE.md`](BUILD_NOTICE.md). Third-party components remain under
 their own licences; the project licence does not override them.
 
-## 2.5.4 update
+## 2.5.5 update
 
-- No new third-party runtime dependencies are shipped in 2.5.4.
-- `scripts/check-licences.py` reports **OK** for the 2.5.4 tree.
+- No new third-party runtime dependencies are shipped in 2.5.5.
+- `scripts/check-licences.py` reports **OK** for the 2.5.5 tree.
+- Post-2.5.5 changes add three CyberChef lab exercises. CyberChef is an
+  Apache-2.0 external browser tool linked from the platform menu; it is not
+  bundled or redistributed. Its notice and licence text are included here.
 - `scripts/GDG-Deploy.sh` uses the operator's Google Cloud CLI; the CLI is not
   redistributed with OpenCyberRange.
 - GitHub Actions workflows use third-party actions; their licence terms remain
@@ -234,6 +237,7 @@ Each lab may install its own packages. The main notice-sensitive toolchains are:
 | asyncua | LGPL-3.0-or-later | Tester sidecar |
 | Firefox ESR / Firefox | MPL-2.0 | RangeBox, UbuntuBox, RemnuxBox |
 | XFCE / Xfce terminal | GPL/LGPL family | Desktop boxes |
+| CyberChef | Apache-2.0 | External browser tool linked from the student Tools menu and active-lab panel; not bundled or redistributed by this repository |
 
 Apache, pymodbus, PyMySQL, Flask, and the Python standard library carry
 permissive licences; the GPL/AGPL/LGPL/VSL components above need their licence

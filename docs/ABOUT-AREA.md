@@ -6,13 +6,15 @@ made of. It is deliberately split from the public version endpoint:
 | Surface | Audience | Contents |
 |---|---|---|
 | `GET /api/version` | Public | Release name and version only |
-| `/about` (signed-in) | All authenticated users | Release, platform summary, branding, project licence, component inventory, licence documents, SBOM downloads |
-| `/api/about` (signed-in) | All authenticated users | The same inventory as JSON |
+| `/about` | Public | Simple first-visit About page: what the platform is, who it is for, access, privacy/security summary, links to register, sign in, and certificate verification |
+| `/about/installation` | All authenticated users | Release, platform summary, branding, project licence, component inventory, licence documents, SBOM downloads |
+| `/api/about` | All authenticated users | The installation inventory as JSON, with `Cache-Control: no-store` |
 
-The page is linked from the global footer. It does not expose secrets, student
-data, or database contents. It does expose exact dependency versions and SBOMs;
-those are already part of the source release, and access requires a signed-in
-account.
+The public `/about` page is linked from the login and registration pages and is
+safe to share before sign-in. The installation page is linked from the global
+footer and does not expose secrets, student data, or database contents. It does
+expose exact dependency versions and SBOMs; those are already part of the source
+release, and access requires a signed-in account.
 
 ## What it shows
 
@@ -71,9 +73,12 @@ the SBOM JSON files; those are generated with the commands in
 ## Access and safety
 
 - `/api/about` and its file endpoints require a signed-in user.
+- The public `/about` page is static and has no API dependency.
+- `/api/about` sets `Cache-Control: no-store` so a browser or intermediary
+  cannot keep an older release version after a deployment.
 - File names are allowlisted by exact basename; path traversal is rejected.
 - No database writes and no student data are involved.
-- The page uses the existing theme tokens and responsive layout, so it works in
+- The pages use the existing theme tokens and responsive layout, so they work in
   dark/light mode and on mobile.
 
 ## Update checklist

@@ -27,14 +27,16 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
-## 2.5.4 release status
+## 2.5.5 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
-- Release artefact: `v2.5.4` is a signed annotated tag; the supply-chain lock is
+- Release artefact: `v2.5.5` is a signed annotated tag; the supply-chain lock is
   signed by the same release key.
 - Third-party inventory: `scripts/check-licences.py` reports **OK** for the
-  2.5.4 tree.
-- No new third-party runtime dependencies ship in 2.5.4.
+  2.5.5 tree.
+- No new third-party runtime dependencies ship in 2.5.5.
+- Post-2.5.5 changes add three CyberChef lab exercises. CyberChef is an external
+  Apache-2.0 browser tool, not bundled or redistributed by this repository.
 - The `GDG-Deploy` script uses the operator's Google Cloud CLI and does not
   redistribute it.
 - GitHub Actions workflows use third-party actions; their licences remain with
@@ -55,6 +57,12 @@ the end of `LICENSE`, per the Notices section of the license. Third-party
 software bundled with the platform carries its own notices; see
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and the licence texts in
 [`THIRD_PARTY_LICENSES/`](THIRD_PARTY_LICENSES/).
+
+CyberChef is linked as an external browser tool from the student Tools menu and
+the three Grade 9 CyberChef labs. It is licensed under Apache-2.0, is not
+bundled or redistributed by this repository, and is attributed in
+`THIRD_PARTY_NOTICES.md` with the licence text in
+`THIRD_PARTY_LICENSES/Apache-2.0.txt`.
 
 ## Mixed-licence components
 

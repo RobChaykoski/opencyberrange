@@ -100,7 +100,7 @@
       "sha256": "d696005b3022938e57160aba1b1097adc48ab470f3f3a9e3563ccbcb0695490e"
     },
     "scripts/generate-about.py": {
-      "sha256": "e63a7f336d48824310bc7014b3270f299efb34f630cd349fe6ea19be78016184"
+      "sha256": "2e6b9815d08414be3c550bb2f7eb0b4b87e46b5f786b694768340221937e533f"
     },
     "scripts/install-platform.sh": {
       "sha256": "31db2213c8fefd082ef16015e3786c235658a83f8013a70c489c4e025f4a4eea"

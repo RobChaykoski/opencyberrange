@@ -101,6 +101,7 @@ LAB_LICENCES = [
     ("pymodbus", "BSD-3-Clause"),
     ("paramiko", "LGPL-2.1"),
     ("PyCryptodome", "Public domain / BSD-2-Clause"),
+    ("CyberChef", "Apache-2.0; external browser tool, not redistributed"),
 ]
 
 

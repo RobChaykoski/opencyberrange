@@ -452,6 +452,12 @@
         "version": "",
         "licence": "Public domain / BSD-2-Clause",
         "scope": "lab toolchain"
+      },
+      {
+        "name": "CyberChef",
+        "version": "",
+        "licence": "Apache-2.0; external browser tool, not redistributed",
+        "scope": "lab toolchain"
       }
     ]
   },
@@ -479,6 +485,10 @@
     {
       "label": "Third-party notices",
       "file": "THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "label": "Apache-2.0",
+      "file": "Apache-2.0.txt"
     },
     {
       "label": "certifi-MPL-2.0",
@@ -544,7 +554,7 @@
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
       "bytes": 184266,
-      "sha256": "a3f4fb508e60ac78fb34b70d21db153ee88bbac9281c18e70e9209a4314cfaf3"
+      "sha256": "07eaafd3664dabe6942acf67188e6cdfd8c79bc800391eefc94ef3ae804cd098"
     }
   ]
 }

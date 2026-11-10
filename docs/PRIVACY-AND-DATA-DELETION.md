@@ -22,6 +22,9 @@ The user-facing PIPEDA-aligned notice is
 | Learning: enrolments, completions, flag attempts, quiz attempts, achievements, competition entries, completion resets | User-linked tables | Deleted |
 | Lab sessions and containers | `lab_sessions` + Docker | All sessions destroyed and rows deleted |
 | Survey consent state and history | `users.survey_*`, `survey_consent_events` | Deleted (cascades with the account) |
+| Privacy preferences: under-18 reporting flag, public certificate verification | `users.is_minor`, `users.certificates_public` | Deleted with the account |
+| Report manifests: report ID, filename, SHA-256, HMAC signature, type, course, generator | `report_exports` | Deleted when the course is deleted; a deleted generator is set to `NULL` |
+| Integrity reviews: reviewer username snapshot, decision, note, timestamp | `data_integrity_reviews` | Retained as security evidence; not linked by foreign key, so deleting a reviewer does not rewrite the review |
 | WebSocket tickets | `ws_tickets` | Deleted |
 | Activity feed | `activity_events` | Anonymised: actor, target, label, detail and IP removed |
 | Invite addresses | `invite_codes.email` | Scrubbed |
@@ -33,6 +36,25 @@ The user-facing PIPEDA-aligned notice is
 Downloaded certificate or transcript PDFs are generated on demand and are not
 stored by the platform. Once a user downloads one, the platform cannot revoke
 that copy.
+
+## Reporting privacy
+
+Two account settings limit where a learner's information can appear:
+
+- **Under-18 reporting privacy** (`users.is_minor`). When enabled, the learner's
+  individual activity is excluded from instructor reports, course analytics,
+  coaching queues, public leaderboards, celebration walls, and competition
+  scoreboards. Their own dashboard and progress remain available. The setting is
+  a privacy declaration, not age verification.
+- **Public certificate verification** (`users.certificates_public`). When
+  disabled, the public verification page returns the same generic invalid result
+  as an unknown certificate, and the certificate payload omits the verification
+  URL and QR code. The learner's own certificate and PDF still work.
+
+Both settings are controlled from **Profile → Security & privacy**. Reports also
+exclude under-18 learners by default; an instructor cannot override that from
+the report page. The report manifest records the report ID, file checksum, and
+server signature, not learner data.
 
 ## User-initiated erasure
 

@@ -2,6 +2,23 @@
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
+## Post-2.5.5 changes on `main`
+
+These changes are on `main` after the `v2.5.5` tag and are not part of the
+2.5.5 release artefact:
+
+- Decision-led instructor report library with signed manifests, checksums, and
+  cohort time/hint baselines.
+- Under-18 reporting privacy and public certificate verification opt-out.
+- Audited review workflow for unattributed integrity-ledger writes.
+- Public `/about` page, redesigned certificate verification page, and AODA
+  login/registration refresh.
+- CyberChef tool link and three entry-level High School Grade 9 decoding labs
+  with workbook pages.
+- Startup schema initialization serialized across workers.
+
+See `CHANGELOG.md` for the itemised list.
+
 Status: **patch release**. 2.5.5 closes the open code-scanning set and adds a
 live database-integrity status to the admin portal, with a scheduled host check
 for quality, ledger, and signed checksum evidence.

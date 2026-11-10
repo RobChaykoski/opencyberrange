@@ -4,6 +4,28 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## Post-2.5.5 UI additions
+
+Checked on **2026-11-10** against the development and production deployments:
+
+- Public `/about` loads without sign-in and links to register, sign in,
+  certificate verification, and the privacy notice.
+- `/about/installation` remains authenticated and reads the live release
+  inventory with `Cache-Control: no-store`.
+- Certificate verification page has a public layout, ID guidance, privacy
+  explanation, and role-aware navigation.
+- Login and registration use skip links, visible focus, Caps Lock warnings,
+  password-strength text, reduced-motion handling, and explicit privacy/under-18
+  acknowledgment.
+- The student sidebar shows a **CyberChef** item in **Tools**; the active-lab
+  panel has a CyberChef button.
+- The three new High School Grade 9 CyberChef labs pass `validate-lab.py` and
+  their target decode paths were smoke-tested.
+
+Not verified in a real browser at that time: a live RangeBox desktop session,
+mobile drawer rendering of the new Tools item, and a live learner walkthrough of
+the CyberChef labs.
+
 ## 2.5.4 deployment smoke
 
 Run **2026-11-10** against the public OCR deployment at
