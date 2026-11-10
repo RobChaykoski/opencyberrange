@@ -55,17 +55,17 @@ python scripts/supply_chain.py --check \
   --signature supply-chain.lock.json.asc
 ```
 
-Release 2.5.3 is signed with:
+Release 2.5.3 remains signed with the previous key:
+
+- Fingerprint: `8636 08A2 EAD7 850D DD51 95A0 C788 625B AFA7 22CE`
+
+Release 2.5.4 rotates the release key:
 
 - Key: `SWOCTS Cyber Range Release <release@swocts.com>`
-- Fingerprint: `8636 08A2 EAD7 850D DD51 95A0 C788 625B AFA7 22CE`
+- Fingerprint: `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`
 - Public key: [`../supply-chain-release-key.asc`](../supply-chain-release-key.asc)
 - Signature: `supply-chain.lock.json.asc`
-
-Release 2.5.4 regenerated `supply-chain.lock.json` for the new lab and version
-inputs. The detached signature must be refreshed with the same release key
-before publishing signed 2.5.4 artefacts. CI verifies the lock contents on every
-push; the signature check remains a release-owner step.
+- Private key: held by the release owner outside the repository
 
 Import the public key before verifying:
 
