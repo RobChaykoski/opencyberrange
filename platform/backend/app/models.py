@@ -851,6 +851,34 @@ class DataIntegrityLedger(Base):
     entry_hash = Column(String(64), nullable=False)
 
 
+class DataIntegrityReview(Base):
+    """Administrator review of an unattributed integrity-ledger write.
+
+    The ledger is append-only, so a review never edits or hides the original
+    evidence. It records who reviewed the table/operation, the decision, and
+    the reason. Rows are immutable and are themselves covered by the ledger.
+    """
+    __tablename__ = "data_integrity_reviews"
+
+    id = Column(Integer, primary_key=True)
+    table_name = Column(String(64), nullable=False, index=True)
+    operation = Column(String(8), nullable=False)
+    window_start = Column(DateTime(timezone=True), nullable=False)
+    window_end = Column(DateTime(timezone=True), nullable=False)
+    write_count = Column(Integer, nullable=False, default=0)
+    decision = Column(String(24), nullable=False)
+    note = Column(Text, nullable=False)
+    reviewed_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    reviewed_by_username = Column(String(64), nullable=False)
+    reviewed_at = Column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    reviewer = relationship("User", foreign_keys=[reviewed_by_id])
+
+
 class CustomAchievement(Base):
     """Admin-defined achievement awarded for aggregate progress.
 

@@ -12,9 +12,11 @@ This module owns the DDL. The read-only verification lives in
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
+from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,14 @@ LEDGER_TABLES = (
     "course_feedback",
     "survey_responses",
     "platform_settings",
+    "data_integrity_reviews",
 )
+
+REVIEW_DECISIONS = {
+    "expected": "Expected — traced to an approved change",
+    "investigated": "Investigated — no further action",
+    "escalated": "Escalated — security review requested",
+}
 
 _LEDGER_DDL = """
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -135,6 +144,22 @@ CREATE TRIGGER ocr_integrity_ledger_no_update
 REVOKE UPDATE, DELETE ON data_integrity_ledger FROM PUBLIC;
 """
 
+_REVIEW_IMMUTABLE_DDL = """
+CREATE OR REPLACE FUNCTION ocr_integrity_reviews_immutable()
+RETURNS trigger AS $$
+BEGIN
+    RAISE EXCEPTION 'data_integrity_reviews is append-only';
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS ocr_integrity_reviews_no_update ON data_integrity_reviews;
+CREATE TRIGGER ocr_integrity_reviews_no_update
+    BEFORE UPDATE OR DELETE ON data_integrity_reviews
+    FOR EACH ROW EXECUTE FUNCTION ocr_integrity_reviews_immutable();
+
+REVOKE UPDATE, DELETE ON data_integrity_reviews FROM PUBLIC;
+"""
+
 
 def ledger_summary(engine: Engine) -> dict:
     """Return a fast, read-only summary of the append-only ledger.
@@ -150,7 +175,9 @@ def ledger_summary(engine: Engine) -> dict:
         "entries": 0,
         "last_entry_at": None,
         "unattributed_7d": 0,
+        "unreviewed_7d": 0,
         "unattributed": [],
+        "reviews": [],
         "coverage_tables": len(LEDGER_TABLES),
     }
     if engine.dialect.name != "postgresql":
@@ -186,21 +213,77 @@ def ledger_summary(engine: Engine) -> dict:
                 )
             ).mappings().all()
 
+            reviews_installed = conn.execute(
+                text(
+                    "SELECT to_regclass('public.data_integrity_reviews') IS NOT NULL"
+                )
+            ).scalar()
+            review_rows = []
+            if reviews_installed:
+                review_rows = conn.execute(
+                    text(
+                        "SELECT DISTINCT ON (table_name, operation) "
+                        "table_name, operation, decision, note, "
+                        "reviewed_by_username, reviewed_at, write_count, "
+                        "window_start, window_end "
+                        "FROM data_integrity_reviews "
+                        "WHERE reviewed_at >= now() - interval '7 days' "
+                        "ORDER BY table_name, operation, reviewed_at DESC"
+                    )
+                ).mappings().all()
+
+            review_map = {
+                (item["table_name"], item["operation"]): {
+                    "table": item["table_name"],
+                    "operation": item["operation"],
+                    "decision": item["decision"],
+                    "note": item["note"],
+                    "reviewed_by": item["reviewed_by_username"],
+                    "reviewed_at": (
+                        item["reviewed_at"].isoformat()
+                        if item["reviewed_at"] else None
+                    ),
+                    "write_count": int(item["write_count"] or 0),
+                    "window_start": (
+                        item["window_start"].isoformat()
+                        if item["window_start"] else None
+                    ),
+                    "window_end": (
+                        item["window_end"].isoformat()
+                        if item["window_end"] else None
+                    ),
+                }
+                for item in review_rows
+            }
+
+            unattributed_rows = []
+            unreviewed = 0
+            for item in unattributed:
+                count = int(item["write_count"])
+                review = review_map.get((item["table_name"], item["operation"]))
+                if review is None:
+                    unreviewed += count
+                unattributed_rows.append(
+                    {
+                        "table": item["table_name"],
+                        "operation": item["operation"],
+                        "count": count,
+                        "review": review,
+                    }
+                )
+
             summary.update(
                 {
                     "available": True,
                     "installed": True,
                     "entries": int(row["entries"] or 0),
                     "last_entry_at": last.isoformat() if last else None,
-                    "unattributed_7d": sum(int(item["write_count"]) for item in unattributed),
-                    "unattributed": [
-                        {
-                            "table": item["table_name"],
-                            "operation": item["operation"],
-                            "count": int(item["write_count"]),
-                        }
-                        for item in unattributed
-                    ],
+                    "unattributed_7d": sum(
+                        int(item["write_count"]) for item in unattributed
+                    ),
+                    "unreviewed_7d": unreviewed,
+                    "unattributed": unattributed_rows,
+                    "reviews": list(review_map.values()),
                 }
             )
             return summary
@@ -244,7 +327,53 @@ def ensure_ledger(engine: Engine) -> None:
                     "FOR EACH ROW EXECUTE FUNCTION ocr_integrity_trigger()"
                 )
             )
+        if conn.execute(
+            text("SELECT to_regclass('public.data_integrity_reviews') IS NOT NULL")
+        ).scalar():
+            conn.execute(text(_REVIEW_IMMUTABLE_DDL))
     logger.info(
         "Database integrity ledger ready (%d critical tables)",
         len(LEDGER_TABLES),
     )
+
+
+def record_review(
+    db: Session,
+    *,
+    table_name: str,
+    operation: str,
+    write_count: int,
+    decision: str,
+    note: str,
+    reviewed_by_id: int | None,
+    reviewed_by_username: str,
+) -> dict:
+    """Record an administrator review without changing the ledger evidence."""
+    from app.models import DataIntegrityReview
+
+    now = datetime.now(timezone.utc)
+    row = DataIntegrityReview(
+        table_name=table_name,
+        operation=operation,
+        window_start=now - timedelta(days=7),
+        window_end=now,
+        write_count=write_count,
+        decision=decision,
+        note=note,
+        reviewed_by_id=reviewed_by_id,
+        reviewed_by_username=reviewed_by_username,
+        reviewed_at=now,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return {
+        "id": row.id,
+        "table": row.table_name,
+        "operation": row.operation,
+        "decision": row.decision,
+        "note": row.note,
+        "reviewed_by": row.reviewed_by_username,
+        "reviewed_at": row.reviewed_at.isoformat() if row.reviewed_at else None,
+        "write_count": int(row.write_count or 0),
+    }

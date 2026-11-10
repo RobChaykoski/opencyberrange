@@ -16,7 +16,8 @@ Critical tables:
 `users`, `courses`, `course_enrollments`, `course_lab_assignments`, `labs`,
 `levels`, `tracks`, `lab_completions`, `lab_sessions`, `achievements`,
 `achievement_celebrations`, `exercise_quiz_attempts`, `exercise_quiz_feedback`,
-`course_feedback`, `survey_responses`, `platform_settings`.
+`course_feedback`, `survey_responses`, `platform_settings`,
+`data_integrity_reviews`.
 
 The ledger stores row hashes, not row contents. It never stores a password hash,
 a flag, a VPN key, or a free-text comment.
@@ -94,6 +95,34 @@ docker exec -w /app ocr-backend python /tmp/database_integrity.py --ledger
 The command reports the entry count, chain status, and a count of unattributed
 writes by table and operation. It does not silently fail on an unattributed
 write; the operator must review it.
+
+### Resolving an unattributed write
+
+An unattributed write is evidence that a change bypassed the application's actor
+context. Common causes are:
+
+- a manual `psql` session or database console;
+- a maintenance, migration, or import script run outside the application;
+- a backup restore or data transfer;
+- a host-side tool or integration that writes directly to PostgreSQL.
+
+Before accepting one, match its time to a deployment, migration, restore, or
+maintenance window; check database and host access logs; and confirm the table
+and operation are expected.
+
+An administrator records the resolution from **Admin → System → Integrity**.
+The review stores:
+
+- the table and operation;
+- the reviewer's username and the review timestamp;
+- a decision: **Expected**, **Investigated**, or **Escalated**;
+- a required note explaining what was checked.
+
+Reviews are written to `data_integrity_reviews`, the admin audit log, and the
+append-only ledger. The original ledger entries are never edited or deleted.
+`data_integrity_reviews` has its own immutable trigger, so a review cannot be
+quietly changed after the fact. If the write is not explained, choose
+**Escalated** and follow the operator's security-incident process.
 
 ## Data-quality audit
 
@@ -218,14 +247,19 @@ prunes evidence older than 90 days.
 
 - ledger installed and number of entries;
 - last recorded write;
-- unattributed writes in the last seven days, grouped by table and operation;
+- unattributed and unreviewed writes in the last seven days, grouped by table
+  and operation;
+- the reviewer, decision, and note for any reviewed write;
 - number of covered critical tables;
 - the status check timestamp.
 
-The portal deliberately does not run the full chain or quality audit in a web
-request. Those run from the host schedule, and the signed manifests and JSON
-output are kept outside the database. The existing **System → Health** area also
-shows a one-line **Data integrity** item.
+An administrator can record a review for each unattributed table/operation. The
+form requires a decision and a note, and the action is written to the admin audit
+log and the append-only ledger. The portal deliberately does not run the full
+chain or quality audit in a web request. Those run from the host schedule, and
+the signed manifests and JSON output are kept outside the database. The existing
+**System → Health** area also shows a one-line **Data integrity** item with an
+**Open Integrity** action.
 
 ## Runbook
 

@@ -16,7 +16,7 @@ from fastapi import (
 )
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
-from typing import List
+from typing import List, Literal
 from datetime import datetime, timezone, timedelta
 import csv
 import io
@@ -28,7 +28,7 @@ import tempfile
 import threading
 import uuid as _uuid
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.ratelimit import create_limiter
 
@@ -3799,13 +3799,24 @@ def _integrity_status(summary: dict) -> tuple[str, str, str]:
 
     entries = int(summary.get("entries") or 0)
     unattributed = int(summary.get("unattributed_7d") or 0)
-    if unattributed:
+    unreviewed = int(summary.get("unreviewed_7d") or 0)
+    if unreviewed:
         return (
             "warning",
             "Review needed",
+            f"{unreviewed} unreviewed write"
+            f"{'s' if unreviewed != 1 else ''} in the last 7 days. "
+            "Open Admin, then System, then Integrity to review the table, "
+            "operation, and decision.",
+        )
+    if unattributed:
+        return (
+            "ok",
+            "Reviewed",
             f"{unattributed} unattributed write"
-            f"{'s' if unattributed != 1 else ''} in the last 7 days. "
-            "Open Admin, then System, then Integrity to review the table and operation.",
+            f"{'s' if unattributed != 1 else ''} in the last 7 days "
+            "have a recorded administrator review. The original ledger "
+            "entries remain unchanged.",
         )
     if entries == 0:
         return (
@@ -3844,6 +3855,95 @@ async def get_data_integrity_status(
         "message": message,
         "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
+
+
+class IntegrityReviewRequest(BaseModel):
+    table: str = Field(..., min_length=1, max_length=64)
+    operation: str = Field(..., min_length=1, max_length=8)
+    decision: Literal["expected", "investigated", "escalated"]
+    note: str = Field(..., min_length=10, max_length=2000)
+
+
+@router.post("/system/data-integrity/review")
+@limiter.limit("10/minute")
+async def review_data_integrity_write(
+    request: Request,
+    payload: IntegrityReviewRequest,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Record an administrator review of an unattributed ledger write.
+
+    The ledger itself is append-only. This endpoint only adds a signed-in
+    reviewer's decision and reason; it never edits or removes evidence.
+    """
+    from app.services.db_integrity import (
+        LEDGER_TABLES,
+        REVIEW_DECISIONS,
+        ledger_summary,
+        record_review,
+    )
+
+    operation = payload.operation.strip().upper()
+    if payload.table not in LEDGER_TABLES:
+        raise HTTPException(status_code=400, detail="Unknown ledger table")
+    if operation not in {"INSERT", "UPDATE", "DELETE"}:
+        raise HTTPException(status_code=400, detail="Unknown ledger operation")
+    if payload.decision not in REVIEW_DECISIONS:
+        raise HTTPException(status_code=400, detail="Unknown review decision")
+    note = payload.note.strip()
+    if len(note) < 10:
+        raise HTTPException(
+            status_code=400,
+            detail="Add a review note of at least 10 characters so the decision can be audited.",
+        )
+
+    summary = ledger_summary(engine)
+    match = next(
+        (
+            row
+            for row in summary.get("unattributed", [])
+            if row.get("table") == payload.table
+            and row.get("operation") == operation
+        ),
+        None,
+    )
+    if match is None:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "No current unattributed write matches that table and operation. "
+                "Refresh the integrity status and try again."
+            ),
+        )
+
+    review = record_review(
+        db,
+        table_name=payload.table,
+        operation=operation,
+        write_count=int(match.get("count") or 0),
+        decision=payload.decision,
+        note=note,
+        reviewed_by_id=admin.id,
+        reviewed_by_username=admin.username,
+    )
+    log_admin_action(
+        action=AuditActions.DATA_INTEGRITY_REVIEWED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="data_integrity_review",
+        target_id=review["id"],
+        target_identifier=f"{payload.table}:{operation}",
+        details={
+            "table": payload.table,
+            "operation": operation,
+            "decision": payload.decision,
+            "write_count": review["write_count"],
+            "note": note,
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+    return {"message": "Review recorded", "review": review}
 
 
 def _start_stress_test_run(

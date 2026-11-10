@@ -106,14 +106,20 @@ def _integrity_summary() -> dict:
         status = "unavailable"
     elif not summary.get("installed"):
         status = "error"
-    elif int(summary.get("unattributed_7d") or 0):
+    elif int(summary.get("unreviewed_7d") or 0):
         status = "warning"
     else:
         status = "ok"
+    unattributed = int(summary.get("unattributed_7d") or 0)
+    unreviewed_raw = summary.get("unreviewed_7d")
+    unreviewed = int(
+        unattributed if unreviewed_raw is None else unreviewed_raw
+    )
     return {
         "status": status,
         "entries": int(summary.get("entries") or 0),
-        "unattributed_7d": int(summary.get("unattributed_7d") or 0),
+        "unattributed_7d": unattributed,
+        "unreviewed_7d": unreviewed,
     }
 
 

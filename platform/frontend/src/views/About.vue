@@ -139,11 +139,16 @@
             <dt>Unattributed, 7 days</dt>
             <dd>{{ about.integrity?.unattributed_7d ?? '—' }}</dd>
           </div>
+          <div class="about-fact">
+            <dt>Unreviewed, 7 days</dt>
+            <dd>{{ about.integrity?.unreviewed_7d ?? '—' }}</dd>
+          </div>
         </dl>
         <p class="about-text about-text--tight">
-          Operators can review the live ledger summary in
-          <strong>Admin → System → Integrity</strong>; full chain, checksum, and
-          data-quality checks run from the host schedule.
+          Operators review unattributed writes in
+          <strong>Admin → System → Integrity</strong>; each review records the
+          reviewer, decision, and note in the audit log and ledger. Full chain,
+          checksum, and data-quality checks run from the host schedule.
         </p>
       </section>
 

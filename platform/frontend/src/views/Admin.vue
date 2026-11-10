@@ -2064,6 +2064,24 @@
               quality and chain checks run from the host schedule; weekly
               signed checksum manifests are kept outside the database.
             </p>
+            <p class="section-desc">
+              An <strong>unattributed</strong> write means the database recorded
+              a change without an authenticated application actor. It can come
+              from a manual <code>psql</code> session, a maintenance or migration
+              script, a backup restore, or a host-side tool. It is not
+              automatically a security incident, but it should be traced before
+              it is accepted.
+            </p>
+            <div class="integrity-authority">
+              <strong>Review authority</strong>
+              <p>
+                Only administrators can record a review. The review stores the
+                reviewer, decision, and note in the admin audit log and the
+                append-only ledger. It never edits or deletes the original
+                evidence; the write stays visible until it ages out of the
+                seven-day window.
+              </p>
+            </div>
 
             <div v-if="dataIntegrityLoading && !dataIntegrity" class="empty-state">
               Checking the integrity ledger...
@@ -2105,7 +2123,12 @@
                 <div class="integrity-metric">
                   <span class="integrity-metric__label">Unattributed writes</span>
                   <span class="integrity-metric__value">{{ Number(dataIntegrity.unattributed_7d || 0).toLocaleString() }}</span>
-                  <span class="integrity-metric__hint">Last 7 days; review if non-zero</span>
+                  <span class="integrity-metric__hint">Last 7 days</span>
+                </div>
+                <div class="integrity-metric">
+                  <span class="integrity-metric__label">Open reviews</span>
+                  <span class="integrity-metric__value">{{ Number(dataIntegrity.unreviewed_7d || 0).toLocaleString() }}</span>
+                  <span class="integrity-metric__hint">No administrator review recorded</span>
                 </div>
                 <div class="integrity-metric">
                   <span class="integrity-metric__label">Covered tables</span>
@@ -2117,9 +2140,12 @@
               <div v-if="dataIntegrity.unattributed?.length" class="integrity-unattributed">
                 <h4 class="integrity-subtitle">Unattributed writes in the last 7 days</h4>
                 <p class="section-desc">
-                  These rows were written without the application's actor
-                  context, for example through a manual SQL session. Review the
-                  table and operation before treating them as expected.
+                  Trace the write before recording a decision. Match its time to
+                  a deployment, migration, restore, or maintenance window; check
+                  database access and host logs; and confirm the table and
+                  operation are expected. If they are not, choose
+                  <strong>Escalated</strong> and follow your security incident
+                  process.
                 </p>
                 <div class="integrity-table-wrap">
                   <table class="integrity-table">
@@ -2128,6 +2154,7 @@
                         <th scope="col">Table</th>
                         <th scope="col">Operation</th>
                         <th scope="col">Count</th>
+                        <th scope="col">Review</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2135,10 +2162,70 @@
                         <td class="integrity-table__mono">{{ row.table }}</td>
                         <td>{{ row.operation }}</td>
                         <td>{{ row.count }}</td>
+                        <td class="integrity-review-cell">
+                          <template v-if="row.review">
+                            <span
+                              class="integrity-badge"
+                              :class="`integrity-badge--${row.review.decision}`"
+                            >
+                              {{ integrityDecisionLabel(row.review.decision) }}
+                            </span>
+                            <div class="integrity-review-meta">
+                              Reviewed by <strong>{{ row.review.reviewed_by }}</strong>
+                              on {{ formatDate(row.review.reviewed_at) }}
+                            </div>
+                            <p class="integrity-review-note">{{ row.review.note }}</p>
+                          </template>
+                          <form v-else-if="reviewForm(row)" class="integrity-review-form" @submit.prevent="submitIntegrityReview(row)">
+                            <label :for="`integrity-decision-${row.table}-${row.operation}`">
+                              Decision
+                            </label>
+                            <select
+                              :id="`integrity-decision-${row.table}-${row.operation}`"
+                              v-model="reviewForm(row).decision"
+                              class="form-input form-input--sm"
+                            >
+                              <option
+                                v-for="option in integrityDecisions"
+                                :key="option.value"
+                                :value="option.value"
+                              >
+                                {{ option.label }}
+                              </option>
+                            </select>
+                            <label :for="`integrity-note-${row.table}-${row.operation}`">
+                              Review note
+                            </label>
+                            <textarea
+                              :id="`integrity-note-${row.table}-${row.operation}`"
+                              v-model="reviewForm(row).note"
+                              class="form-input form-input--sm"
+                              rows="2"
+                              maxlength="2000"
+                              placeholder="What did you check, and why is this expected or escalated?"
+                            ></textarea>
+                            <label class="integrity-confirm">
+                              <input
+                                v-model="reviewForm(row).confirmed"
+                                type="checkbox"
+                              />
+                              <span>I confirm this review is accurate and within my authority.</span>
+                            </label>
+                            <button
+                              type="submit"
+                              class="btn btn--secondary btn--xs"
+                              :disabled="reviewSaving === reviewKey(row)"
+                            >
+                              {{ reviewSaving === reviewKey(row) ? 'Recording...' : 'Record review' }}
+                            </button>
+                          </form>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+                <p v-if="reviewMessage" class="success-message" role="status">{{ reviewMessage }}</p>
+                <p v-if="reviewError" class="error-message" role="alert">{{ reviewError }}</p>
               </div>
 
               <div class="integrity-schedule">
@@ -4792,6 +4879,72 @@ const systemStatusLoading = ref(false)
 const dataIntegrity = ref(null)
 const dataIntegrityLoading = ref(false)
 const dataIntegrityError = ref('')
+const reviewForms = reactive({})
+const reviewSaving = ref('')
+const reviewMessage = ref('')
+const reviewError = ref('')
+const integrityDecisions = [
+  { value: 'expected', label: 'Expected — traced to an approved change', short: 'Expected' },
+  { value: 'investigated', label: 'Investigated — no further action', short: 'Investigated' },
+  { value: 'escalated', label: 'Escalated — security review requested', short: 'Escalated' },
+]
+
+const reviewKey = (row) => `${row.table}-${row.operation}`
+
+const reviewForm = (row) => reviewForms[reviewKey(row)]
+
+const syncReviewForms = () => {
+  const next = {}
+  for (const row of dataIntegrity.value?.unattributed || []) {
+    if (row.review) continue
+    const key = reviewKey(row)
+    next[key] = reviewForms[key] || {
+      decision: 'expected',
+      note: '',
+      confirmed: false,
+    }
+  }
+  for (const key of Object.keys(reviewForms)) {
+    if (!next[key]) delete reviewForms[key]
+  }
+  Object.assign(reviewForms, next)
+}
+
+const integrityDecisionLabel = (value) =>
+  integrityDecisions.find((item) => item.value === value)?.short || value
+
+async function submitIntegrityReview(row) {
+  const form = reviewForm(row)
+  const key = reviewKey(row)
+  reviewMessage.value = ''
+  reviewError.value = ''
+  if (!form) return
+  if (!form.confirmed) {
+    reviewError.value = 'Confirm that you are authorized to record this review.'
+    return
+  }
+  if (form.note.trim().length < 10) {
+    reviewError.value = 'Add a review note of at least 10 characters.'
+    return
+  }
+  reviewSaving.value = key
+  try {
+    const { data } = await axios.post('/admin/system/data-integrity/review', {
+      table: row.table,
+      operation: row.operation,
+      decision: form.decision,
+      note: form.note.trim(),
+    })
+    reviewMessage.value = data?.message || 'Review recorded.'
+    delete reviewForms[key]
+    await fetchDataIntegrity()
+  } catch (e) {
+    reviewError.value =
+      e.response?.data?.detail || 'Could not record the review. Refresh and try again.'
+  } finally {
+    reviewSaving.value = ''
+  }
+}
 const backups = ref([])
 const backupsLoading = ref(false)
 const creatingBackup = ref(false)
@@ -5232,6 +5385,7 @@ const fetchDataIntegrity = async () => {
   try {
     const { data } = await axios.get('/admin/system/data-integrity')
     dataIntegrity.value = data
+    syncReviewForms()
   } catch (e) {
     dataIntegrityError.value =
       e.response?.data?.detail || 'Could not load the data-integrity status.'
@@ -12076,6 +12230,108 @@ watch(activeTab, (tab) => {
 .integrity-table__mono {
   font-family: "JetBrains Mono", ui-monospace, monospace;
   overflow-wrap: anywhere;
+}
+
+.integrity-authority {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 0.5rem;
+  background: var(--bg-secondary);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.integrity-authority strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--text-primary);
+}
+
+.integrity-authority p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.integrity-review-cell {
+  min-width: 260px;
+  vertical-align: top;
+}
+
+.integrity-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.integrity-badge--expected {
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.integrity-badge--investigated {
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.integrity-badge--escalated {
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.integrity-review-meta {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.integrity-review-note {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.integrity-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 240px;
+}
+
+.integrity-review-form label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.integrity-review-form .form-input {
+  width: 100%;
+}
+
+.integrity-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  font-size: 0.72rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4;
+  color: var(--text-secondary) !important;
+}
+
+.integrity-confirm input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
 }
 
 .integrity-schedule {
