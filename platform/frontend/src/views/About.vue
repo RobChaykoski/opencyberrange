@@ -69,7 +69,7 @@
             <dd class="cell-mono">{{ about.build?.git_sha || 'unknown' }}</dd>
           </div>
           <div class="about-fact">
-            <dt>Built</dt>
+            <dt>Inventory built</dt>
             <dd>{{ formatTimestamp(about.build?.built_at) }}</dd>
           </div>
           <div class="about-fact">
@@ -141,8 +141,9 @@
           </div>
         </dl>
         <p class="about-text about-text--tight">
-          The full chain, checksum, and data-quality checks run from
-          <strong>Admin → System → Integrity</strong> and the host schedule.
+          Operators can review the live ledger summary in
+          <strong>Admin → System → Integrity</strong>; full chain, checksum, and
+          data-quality checks run from the host schedule.
         </p>
       </section>
 
