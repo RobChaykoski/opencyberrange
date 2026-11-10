@@ -24,6 +24,5 @@ RUN python3 -c "import paramiko; key = paramiko.RSAKey.generate(2048); key.write
 # Create flag file
 RUN echo "OCR{ssh_d3t3ct3d}" > /root/flag.txt
 
-EXPOSE 22
 
 CMD ["python3", "-u", "/opt/ssh-server/ssh_server.py"]

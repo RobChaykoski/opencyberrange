@@ -66,6 +66,6 @@ while True:\n\
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 21 22 80 8888
+EXPOSE 21 80 8888
 
 CMD ["/start.sh"]

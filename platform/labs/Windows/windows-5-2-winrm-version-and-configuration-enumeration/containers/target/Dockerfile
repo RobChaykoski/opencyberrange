@@ -15,5 +15,5 @@ RUN chmod +x /usr/local/bin/winrm-simulator.py
 COPY start-services.sh /start-services.sh
 RUN chmod +x /start-services.sh
 
-EXPOSE 22 5985 5986
+EXPOSE 5985 5986
 CMD ["/start-services.sh"]

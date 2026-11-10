@@ -68,5 +68,4 @@ exit\n' > /home/operator/.bash_history && \
     chown operator:operator /home/operator/.bash_history && \
     chmod 600 /home/operator/.bash_history
 
-EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

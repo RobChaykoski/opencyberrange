@@ -38,6 +38,5 @@ RUN echo "PermitRootLogin no" >> /etc/ssh/sshd_config && \
 # Create flag file
 RUN echo "OCR{ftp_us3r_p4ssw0rd_l34k}" > /root/flag.txt
 
-EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]

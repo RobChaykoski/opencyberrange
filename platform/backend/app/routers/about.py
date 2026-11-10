@@ -25,13 +25,21 @@ SBOM_DIR = ABOUT_DIR / "sbom"
 
 
 def _safe_file(directory: Path, name: str) -> Path:
-    """Resolve a file inside *directory*, rejecting traversal and missing files."""
-    if not name or Path(name).name != name:
+    """Return an existing file in *directory* by exact name.
+
+    The path comes from a directory listing, so a caller-supplied value is
+    never used to construct a filesystem path. This keeps traversal attempts
+    and symlink tricks out of the file-serving routes.
+    """
+    if not name:
         raise HTTPException(status_code=404, detail="Not found")
-    path = (directory / name).resolve()
-    if directory.resolve() not in path.parents or not path.is_file():
-        raise HTTPException(status_code=404, detail="Not found")
-    return path
+    try:
+        for entry in directory.iterdir():
+            if entry.name == name and entry.is_file():
+                return entry
+    except OSError:
+        pass
+    raise HTTPException(status_code=404, detail="Not found")
 
 
 @router.get("")

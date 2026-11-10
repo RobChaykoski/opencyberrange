@@ -23,5 +23,4 @@ RUN chmod u+s /usr/bin/find
 # Marker 3. requires root (via SUID find)
 RUN printf 'r00t3d\n' > /root/flag.txt && chmod 600 /root/flag.txt
 
-EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

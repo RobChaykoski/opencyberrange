@@ -65,6 +65,5 @@ RUN echo 'developer ALL=(ALL) NOPASSWD: /usr/local/bin/statuscheck' >> /etc/sudo
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22
 
 CMD ["/start.sh"]

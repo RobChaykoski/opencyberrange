@@ -24,5 +24,4 @@ RUN mkdir -p /opt/zenith && \
     printf 'DB_HOST=zenith-db\nDB_PORT=3306\nDB_NAME=zenith\nDB_USER=zenith_app\nDB_PASS=Z3n_DB_Pr0d#\n' > /opt/zenith/db.conf && \
     chmod 600 /opt/zenith/db.conf
 
-EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

@@ -39,6 +39,5 @@ RUN chmod +x /usr/local/bin/check-rules
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22
 
 CMD ["/start.sh"]

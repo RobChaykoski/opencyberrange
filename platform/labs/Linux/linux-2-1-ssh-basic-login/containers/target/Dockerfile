@@ -22,7 +22,6 @@ RUN echo 'Welcome to FinanceCorp Server\nSecurity Assessment Flag: OCR{m0td_1nf0
 RUN echo 'OCR{m0td_1nf0}' > /home/financecorp/flag.txt && \
     chown financecorp:financecorp /home/financecorp/flag.txt
 
-EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

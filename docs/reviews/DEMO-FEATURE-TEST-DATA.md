@@ -53,7 +53,8 @@ those records.
 Inside the development backend container:
 
 ```bash
-docker exec -e OCR_DEMO_SEED_ALLOWED=1 -e PYTHONPATH=/app ocr-backend \
+docker exec -e OCR_DEMO_SEED_ALLOWED=1 -e PYTHONPATH=/app \
+  -e DEMO_FEATURE_PASSWORD='<development password>' ocr-backend \
   python -m app.scripts.seed_feature_test_data --dev --yes
 ```
 
@@ -64,8 +65,8 @@ docker exec -e OCR_DEMO_SEED_ALLOWED=1 -e PYTHONPATH=/app ocr-backend \
   python -m app.scripts.seed_feature_test_data --dev --cleanup --yes
 ```
 
-The password is generated unless `DEMO_FEATURE_PASSWORD` is set. The default in
-a controlled development seed is printed once by the script.
+`DEMO_FEATURE_PASSWORD` is required for a seed run. The script never prints or
+writes the password to disk.
 
 ## Verification performed on development
 

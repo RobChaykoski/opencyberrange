@@ -20,6 +20,6 @@ COPY index.html /var/www/html/index.html
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 80 443 22 3306 4444 8080
+EXPOSE 80 443 3306 4444 8080
 
 CMD ["/start.sh"]

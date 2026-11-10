@@ -1,0 +1,17 @@
+name: OpenCyberRange CodeQL configuration
+
+# Lab target applications intentionally contain exploitable vulnerabilities:
+# command injection, SQL injection, path traversal, reflected XSS, and
+# hard-coded weak credentials are the learning objective. Scanning them would
+# report the lab design as defects and bury real findings in the platform code.
+# Lab structure and content are validated separately by scripts/validate-lab.py
+# and scripts/lab-release-proof.py.
+paths-ignore:
+  - platform/labs
+  - platform/templates
+
+# Generated wiki output and third-party build trees are not authored source.
+  - platform/frontend/wiki
+  - platform/frontend/node_modules
+  - platform/frontend/dist
+  - platform/backend/.venv

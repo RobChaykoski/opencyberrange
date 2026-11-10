@@ -17,7 +17,7 @@ RUN npm run build
 # Production stage - serve with nginx
 FROM nginx:alpine
 
-ARG PLATFORM_VERSION=2.5.3
+ARG PLATFORM_VERSION=2.5.4
 ARG BUILD_REVISION=unknown
 
 LABEL org.opencontainers.image.title="SWOCTS Cyber Range frontend" \
@@ -58,6 +58,9 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80 443
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=5 \
+    CMD curl -fsS -o /dev/null http://127.0.0.1/ || exit 1
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 

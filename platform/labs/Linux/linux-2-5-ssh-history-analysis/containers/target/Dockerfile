@@ -22,7 +22,6 @@ RUN mkdir -p /home/developer && \
     echo 'ls -la\ncd /opt/app\ncat config.yml\ncurl -H "Authorization: Bearer OCR{h1st0ry_l34k}" https://api.internal/status\npython3 deploy.py\nexit' > /home/developer/.bash_history && \
     chown developer:developer /home/developer/.bash_history
 
-EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

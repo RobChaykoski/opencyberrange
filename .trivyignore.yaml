@@ -1,0 +1,69 @@
+# Trivy misconfiguration suppressions.
+#
+# These entries are intentional and reviewed. The scan still reports every
+# other Dockerfile finding. YAML ignore files must be referenced explicitly:
+# the workflow passes this file through the `trivyignores` input.
+misconfigurations:
+  # Lab target containers intentionally run as root: the exercises emulate
+  # vulnerable SSH, SMB, LDAP, RDP, and database services that create users,
+  # bind privileged ports, and start daemons. Dropping privileges would break
+  # the lab content, and the containers are isolated on per-lab networks.
+  - id: DS-0002
+    paths:
+      - "platform/labs/**"
+      - "platform/templates/**"
+    statement: Intentional - lab targets emulate privileged vulnerable services.
+
+  # Platform components that need host-level privileges or a writable shared
+  # volume. The backend needs the Docker socket and the labs tree; nginx binds
+  # ports 80/443 before dropping to worker processes; the tap needs raw sockets;
+  # the tester and wiki builder run inside Docker-managed volumes.
+  - id: DS-0002
+    paths:
+      - "platform/backend/Dockerfile"
+      - "platform/frontend/Dockerfile"
+      - "platform/network-tap/Dockerfile"
+      - "platform/tester/Dockerfile"
+      - "platform/wiki-builder/Dockerfile"
+    statement: Intentional - component needs host privileges or a shared writable volume.
+
+  # HEALTHCHECK is defined in Compose for the platform services. Lab targets and
+  # one-shot/sidecar images have no meaningful long-running HTTP probe, so a
+  # Dockerfile healthcheck would only add noise or false failures.
+  - id: DS-0026
+    paths:
+      - "platform/labs/**"
+      - "platform/templates/**"
+      - "platform/rangebox/Dockerfile"
+      - "platform/network-tap/Dockerfile"
+      - "platform/tester/Dockerfile"
+      - "platform/wiki-builder/Dockerfile"
+    statement: Intentional - no long-running HTTP service; Compose owns service health.
+
+  # Lab images install the distro's recommended packages because the simulated
+  # services depend on them (for example xrdp needs xorgxrdp, and Samba needs
+  # its VFS modules). Suppressing the size hint keeps lab behaviour stable.
+  - id: DS-0029
+    paths:
+      - "platform/labs/**"
+      - "platform/templates/**"
+      - "RangeBox/Dockerfile"
+      - "RemnuxBox/Dockerfile"
+      - "UbuntuBox/Dockerfile"
+      - "platform/UbuntuBox/Dockerfile"
+    statement: Intentional - lab images need recommended packages for their simulated services.
+
+  # Lab database containers carry the weak, documented credentials that the
+  # exercise asks the learner to find and exploit.
+  - id: DS-0031
+    paths:
+      - "platform/labs/**"
+    statement: Intentional - weak credentials are the vulnerable lab content.
+
+  # Kali rolling is a rolling base with no versioned tag. Lab images are
+  # rebuilt deliberately and verified by the supply-chain lock.
+  - id: DS-0001
+    paths:
+      - "RangeBox/Dockerfile"
+      - "platform/labs/Linux/linux-3-2-password-hash-cracking/containers/target/Dockerfile"
+    statement: Intentional - rolling Kali base has no fixed version tag.

@@ -41,6 +41,5 @@ RUN sed -i 's/#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && \
     sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
     echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 
-EXPOSE 22
 
 CMD ["/bin/bash", "-c", "ssh-keygen -A && /usr/sbin/sshd -D"]

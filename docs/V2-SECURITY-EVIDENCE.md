@@ -21,7 +21,7 @@ the evidence was produced for the build being released.
 | A05 Security misconfiguration | Nginx CSP, HSTS, frame, content-type, referrer, and permissions headers remain enforced. External probes to ports 5000 and 8000 remain blocked. NPM Force SSL is intentionally off because Cloudflare/OPNsense already terminate and enforce TLS. UI smoke against `https://ocr.swocts.com` passed (`42741914124`). `scripts/check-nginx-security-headers.py`, `/api/admin/system/status` | Pass |
 | A06 Vulnerable components | Trivy filesystem/secret/config scan and CodeQL are green on the 2.5.4 commits. The 8 November dependency audit reported no known Python or production npm vulnerabilities; no dependency pins changed in this pass. | Pass for scanned inputs; dependency audit not rerun in this pass |
 | A07 Authentication failures | Login, MFA, lockout, token revocation, profile, and admin re-authentication/session-revocation tests remain green in the backend suite. No authentication contract changed in 2.5.4. `tests/test_auth.py`, `tests/test_mfa.py`, `tests/test_token_revocation.py`, `tests/test_profile.py` | Pass for covered paths |
-| A08 Integrity failures | Alembic migrations `0007_lab_metadata` and `0008_mitre_attack` are additive and applied on both OCR stacks. Supply-chain lock covers 35 files and 149 labs and verifies with the rotated release key. The database integrity ledger remains active. | Pass |
+| A08 Integrity failures | Alembic migrations `0007_lab_metadata` and `0008_mitre_attack` are additive and applied on both OCR stacks. Supply-chain lock covers 37 files and 149 labs and verifies with the rotated release key. The database integrity ledger remains active. | Pass |
 | A09 Logging/monitoring failures | Report/export reason logging, activity events, and admin audit actions are unchanged and included in the authorization matrix. The key rotation is recorded in the release evidence and supply-chain docs; no secret material is committed. | Pass for covered paths |
 | A10 SSRF | External URL handling rejects unsafe schemes and private targets; no new server-side fetch was added. Peer Manager remains internal and port 5000 is not externally exposed. `tests/test_input_safety.py` | Pass |
 | Supply chain | `supply-chain.lock.json` regenerated for 2.5.4 and signed with the rotated key. Public key committed; private key remains outside the repository under a release-owner-controlled path. | Pass |
@@ -34,7 +34,7 @@ Manual evidence:
 - DB-backed metadata, instructor-metrics, course-focus, analytics, competency, and authorization tests passed against disposable PostgreSQL.
 - Lab validation: **149 labs, 0 errors, 0 warnings**.
 - Lab release proof: **149 pass, 0 review, 0 fail**.
-- Supply-chain check: **35 files, 149 labs**, signature verified.
+- Supply-chain check: **37 files, 149 labs**, signature verified.
 - Public OCR and CTFd-host OCR both report `/api/version` **2.5.4** and healthy containers.
 
 Residual notes:
@@ -44,6 +44,63 @@ Residual notes:
 - NPM Force SSL remains intentionally off; TLS enforcement is at Cloudflare/OPNsense.
 - The CTFd host `.41` also runs an OCR stack; 2.5.4 does not change CTFd.
 - A full axe/WCAG pass for the new dashboard and MITRE panel remains a follow-up; the UI smoke passed.
+
+## Code-scanning remediation — 10 November 2026
+
+The open alert set on `main` was **595** (69 CodeQL, 526 Trivy). The earlier
+100-alert count was a single page of the paginated API, not the repository
+total.
+
+Platform CodeQL fixes:
+
+- About licence/SBOM downloads, stress-test event reads, exercise-test run
+  state, and workbook chapter deletion now select an existing path from a
+  directory listing instead of joining a request value.
+- Lab ZIP uploads rebuild the target and each entry from single basename
+  components, reject `.`/`..`, and verify containment with `os.path.commonpath`.
+- Lab relocation and workbook extraction rebuild paths from sanitized
+  components.
+- Stack traces and daemon/exception details are no longer returned from RangeBox
+  status, Docker disk usage, image cleanup, lab discovery, workbook upload and
+  build, or bundled-walkthrough processing.
+- Seed scripts require `DEMO_FEATURE_PASSWORD`,
+  `DEMO_ANALYTICS_PASSWORD`, `CAREER_DEMO_PASSWORD`,
+  `DEMO_INSTRUCTOR_PASSWORD`, and `DEMO_STUDENT_PASSWORD` from the environment;
+  they no longer print or write those values. Audit details redact
+  password/secret/token/key fields.
+- `admin-vnc.html` builds DOM nodes with `textContent` instead of interpolating
+  the query-string value into `innerHTML`.
+- The `py/bad-tag-filter` finding on the requirements-specifier regex is a
+  documented false positive and is suppressed inline.
+- Lab and template target applications are excluded from CodeQL because their
+  command injection, SQL injection, path traversal, and reflected XSS are the
+  exercise content. Lab structure remains gated by `scripts/validate-lab.py` and
+  `scripts/lab-release-proof.py`.
+
+Trivy fixes and policy:
+
+- Removed the informational `EXPOSE 22` from lab/template images; Compose owns
+  published ports.
+- Removed `RUN cd` from two lab builds.
+- Replaced fake Stripe, Plaid, SendGrid, internal-API, and JWT values with
+  explicit `FAKE_*_DO_NOT_USE` markers, including generated wiki HTML/JSON.
+- Added [`.trivyignore.yaml`](../.trivyignore.yaml) with path-scoped, documented
+  suppressions for intentional lab root users, missing container healthchecks,
+  recommended-package installs needed by simulated services, weak lab database
+  credentials, and the privileged platform components that need the Docker
+  socket, privileged ports, or raw sockets. The Trivy workflow passes the file
+  through `trivyignores`.
+- Added Dockerfile healthchecks to the backend and frontend images to match
+  their Compose probes.
+
+Local verification:
+
+- `trivy fs --scanners misconfig,secret --ignorefile .trivyignore.yaml` reports
+  **0** findings.
+- `scripts/validate-lab.py --all`: **149 labs, 0 errors, 0 warnings**.
+- `scripts/lab-release-proof.py`: **149 pass, 0 review, 0 fail**.
+- Backend targeted suites: **47 passed, 3 DB-backed skipped**.
+- Frontend lint: **0 errors**; production build succeeded.
 
 ## Previous pass — 9 November 2026
 

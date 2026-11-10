@@ -40,5 +40,5 @@ wait -n\n\
 exit $?\n\
 ' > /start-services.sh && chmod +x /start-services.sh
 
-EXPOSE 22 5985 5986
+EXPOSE 5985 5986
 CMD ["/start-services.sh"]

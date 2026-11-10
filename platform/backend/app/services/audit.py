@@ -7,6 +7,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 import json
+import re
 
 # Configure audit logger
 logger = logging.getLogger("audit")
@@ -23,6 +24,24 @@ if not logger.handlers:
         '%(asctime)s - AUDIT - %(message)s'
     ))
     logger.addHandler(console_handler)
+
+
+_SENSITIVE_KEY = re.compile(
+    r"(?:pass(?:word|wd)?|secret|token|api[_-]?key|credential|private[_-]?key)",
+    re.IGNORECASE,
+)
+
+
+def _redact(value: Any) -> Any:
+    """Recursively replace values under sensitive keys before audit logging."""
+    if isinstance(value, dict):
+        return {
+            key: ("[redacted]" if _SENSITIVE_KEY.search(str(key)) else _redact(item))
+            for key, item in value.items()
+        }
+    if isinstance(value, (list, tuple)):
+        return [_redact(item) for item in value]
+    return value
 
 
 def log_admin_action(
@@ -61,7 +80,7 @@ def log_admin_action(
             "identifier": target_identifier
         },
         "ip_address": ip_address,
-        "details": details or {}
+        "details": _redact(details or {})
     }
     
     # Log structured JSON for easy parsing

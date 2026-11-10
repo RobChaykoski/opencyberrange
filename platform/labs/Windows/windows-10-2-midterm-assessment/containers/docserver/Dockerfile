@@ -63,6 +63,6 @@ RUN mkdir -p /var/run/sshd && \
 RUN printf 'PINNACLE LEGAL GROUP - IT NOTICE\n================================\n\nTo: Document Server Users\nFrom: Sarah Robinson, IT Administrator\nDate: February 22, 2026\n\nReminder: Archived case files from 2025 have been moved off this server\nto the legacy FTP archive service. The FTP service is running on port\n2121 with anonymous read-only access enabled.\n\nIf you need to retrieve archived files, connect to the FTP service on\nthis host using port 2121. No credentials are required.\n\nThe archived files also contain credentials for the case management\nserver if you need access to case records.\n\n- Sarah\n' > /home/paralegal/archive-notice.txt && \
     chown paralegal:paralegal /home/paralegal/archive-notice.txt
 
-EXPOSE 22 445 2121
+EXPOSE 445 2121
 
 CMD vsftpd /etc/vsftpd.conf & smbd -F --no-process-group & /usr/sbin/sshd -D

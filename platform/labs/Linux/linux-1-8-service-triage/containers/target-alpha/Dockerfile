@@ -37,6 +37,6 @@ RUN printf '<!DOCTYPE html>\n\
 </body>\n\
 </html>\n' > /var/www/html/index.html
 
-EXPOSE 22 80
+EXPOSE 80
 
 CMD service ssh start && nginx -g 'daemon off;'

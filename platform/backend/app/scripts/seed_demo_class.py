@@ -3,11 +3,13 @@
 Demo Class Seed Script  [DEVELOPMENT ONLY — do not run in production]
 Creates a demo instructor, 6 demo students with varied statistics,
 a demo course, and enrolls everyone — showcasing all platform features.
-Generates demo credentials at runtime (or reads the DEMO_* environment
-overrides) and prints them once so no working password is committed.
+Requires DEMO_INSTRUCTOR_PASSWORD and DEMO_STUDENT_PASSWORD in the
+environment and never prints or writes those values.
 
 Run inside Docker:
-  docker compose exec backend python /app/app/scripts/seed_demo_class.py
+  docker compose exec -e DEMO_INSTRUCTOR_PASSWORD=... \
+    -e DEMO_STUDENT_PASSWORD=... backend \
+    python /app/app/scripts/seed_demo_class.py
 """
 
 import os
@@ -45,15 +47,10 @@ NOW = datetime.now(timezone.utc)
 # DEMO ACCOUNTS
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-# Never commit a working demo password. A facilitator can set these env vars
-# to a memorable value for a workshop; otherwise each run generates one and
-# prints it at the end.
-INSTRUCTOR_PASSWORD = (
-    os.environ.get("DEMO_INSTRUCTOR_PASSWORD") or secrets.token_urlsafe(12)
-)
-STUDENT_PASSWORD = (
-    os.environ.get("DEMO_STUDENT_PASSWORD") or secrets.token_urlsafe(12)
-)
+# Never commit a working demo password. The facilitator supplies both values
+# in the environment; the script never prints or writes them to disk.
+INSTRUCTOR_PASSWORD = os.environ.get("DEMO_INSTRUCTOR_PASSWORD", "")
+STUDENT_PASSWORD = os.environ.get("DEMO_STUDENT_PASSWORD", "")
 
 INSTRUCTOR = {
     "username": "dr_martinez",
@@ -266,6 +263,13 @@ def award_achievement(db, user_id, course_id, lab_id, achievement_type, awarded_
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def seed_demo_class():
+    if not INSTRUCTOR_PASSWORD or not STUDENT_PASSWORD:
+        print(
+            "Set DEMO_INSTRUCTOR_PASSWORD and DEMO_STUDENT_PASSWORD before "
+            "seeding. The values are never printed or written to disk.",
+            file=sys.stderr,
+        )
+        sys.exit(2)
     db = SessionLocal()
     try:
         _run(db)
@@ -653,9 +657,9 @@ def _run(db):
     print("=" * 60)
     print(f"\n  Instructor Account:")
     print(f"    Username: {INSTRUCTOR['username']}")
-    print(f"    Password: {INSTRUCTOR['password']}")
+    print(f"    Password: supplied via DEMO_INSTRUCTOR_PASSWORD")
     print(f"    Role:     instructor")
-    print(f"\n  Student Accounts (password for all: {PASSWORD}):")
+    print(f"\n  Student Accounts (password: DEMO_STUDENT_PASSWORD):")
     for s in STUDENTS:
         uid = student_ids[s["username"]]["id"]
         print(f"    {s['username']:20s} ({s['personality']:10s}) id={uid}")

@@ -86,5 +86,4 @@ RUN echo 'h0p' > /home/appuser/marker.txt && \
 # Set permissions
 RUN chown -R appuser:appuser /opt/meridian /home/appuser
 
-EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

@@ -3180,7 +3180,9 @@ fi
             return {"status": "not_found"}
         except Exception as e:
             logger.warning(f"Error getting RangeBox status: {e}")
-            return {"status": "error", "detail": str(e)}
+            # Do not return exception detail to the client; it can disclose
+            # host paths, container names, or daemon internals.
+            return {"status": "error"}
 
     # ==================== Standalone RangeBox ====================
 
@@ -3748,7 +3750,8 @@ fi
             return {"status": "not_found"}
         except Exception as e:
             logger.warning(f"Error getting standalone RangeBox status: {e}")
-            return {"status": "error", "detail": str(e)}
+            # Do not return exception detail to the client.
+            return {"status": "error"}
 
     # ==================== Docker Disk Management ====================
 
@@ -3816,7 +3819,7 @@ fi
             }
         except Exception as e:
             logger.error(f"Failed to get Docker disk usage: {e}")
-            return {"error": str(e)}
+            return {"error": "Docker disk usage is unavailable"}
 
     def get_lab_images(self, lab_slug: str) -> list:
         """Find all Docker images associated with a lab slug.
@@ -3871,9 +3874,11 @@ fi
                 removed += 1
                 bytes_freed += img_info["size_bytes"]
             except docker.errors.APIError as e:
-                errors.append(f"{tag}: {e}")
+                logger.warning("Could not remove image %s: %s", tag, e)
+                errors.append(tag)
             except Exception as e:
-                errors.append(f"{img_info['id']}: {e}")
+                logger.warning("Could not remove image %s: %s", img_info["id"], e)
+                errors.append(img_info["id"])
 
         result = {"removed": removed, "bytes_freed": bytes_freed}
         if errors:

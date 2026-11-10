@@ -42,6 +42,5 @@ RUN sed -i 's/#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config && \
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22
 
 CMD ["/start.sh"]

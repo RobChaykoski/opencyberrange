@@ -9,19 +9,19 @@ Development/test only. The script creates:
 It then exports one career dossier per learner (JSON, Markdown, and printable
 HTML). Run inside the backend container:
 
-    python -m app.scripts.seed_career_profiles --output-dir /app/data/career_profiles
+    CAREER_DEMO_PASSWORD='<dev password>' \
+      python -m app.scripts.seed_career_profiles --output-dir /app/data/career_profiles
 
-The script is idempotent for its own demo users, course, and synthetic labs. It
-does not change real learner records.
+The password is supplied by the operator and is never printed or written to
+disk. The script is idempotent for its own demo users, course, and synthetic
+labs. It does not change real learner records.
 """
 from __future__ import annotations
 
 import argparse
 import os
-import secrets
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
 from sqlalchemy.orm import joinedload
 
@@ -43,7 +43,7 @@ from app.models import (
 )
 from app.scripts.export_career_profiles import DEMO_USERNAMES, export_career_profiles
 
-DEMO_PASSWORD = os.environ.get("CAREER_DEMO_PASSWORD") or secrets.token_urlsafe(12)
+DEMO_PASSWORD = os.environ.get("CAREER_DEMO_PASSWORD", "")
 DEMO_COURSE_CODE = "DEMO-CAREER"
 DEMO_TRACK_SLUG = "career-demo"
 DEMO_LAB_PREFIX = "career-demo-"
@@ -381,6 +381,11 @@ def _activity(db, user: User, course: Course, spec: dict, labs: list[Lab]):
 
 
 def seed(output_dir: str):
+    if not DEMO_PASSWORD:
+        raise SystemExit(
+            "Set CAREER_DEMO_PASSWORD to the password for the demo profiles. "
+            "The value is not printed or written to disk."
+        )
     db = SessionLocal()
     try:
         _cleanup(db)
@@ -416,7 +421,6 @@ def seed(output_dir: str):
                 sort_order=order,
             ))
 
-        created = []
         for spec in PROFILE_SPECS:
             user = User(
                 username=spec["username"],
@@ -438,20 +442,10 @@ def seed(output_dir: str):
                 enrolled_at=now - timedelta(days=65),
             ))
             _activity(db, user, course, spec, _profile_labs(pool, spec))
-            created.append(user)
 
         db.commit()
         print("Career demo profiles seeded.")
-        credential_path = Path(output_dir).parent / "career_demo_credentials.txt"
-        credential_path.parent.mkdir(parents=True, exist_ok=True)
-        credential_path.write_text(
-            "Development-only career demo credentials\n"
-            + "\n".join(f"{user.username} / {DEMO_PASSWORD}" for user in created)
-            + "\n",
-            encoding="utf-8",
-        )
-        os.chmod(credential_path, 0o600)
-        print(f"Demo credentials written to {credential_path} (mode 0600).")
+        print("Accounts use the password supplied in CAREER_DEMO_PASSWORD.")
 
         written = export_career_profiles(db, output_dir)
         print("Career dossiers exported:")

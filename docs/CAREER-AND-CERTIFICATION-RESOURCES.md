@@ -41,14 +41,14 @@ readable dossier for each:
 Run inside the backend container:
 
 ```bash
+export CAREER_DEMO_PASSWORD='<development password>'
 python -m app.scripts.seed_career_profiles --output-dir /app/data/career_profiles
 python -m app.scripts.export_career_profiles --output-dir /app/data/career_profiles
 ```
 
 The seed is development-only, idempotent for its own demo users, and leaves real
-learner records alone. It generates a one-time demo password and writes it to
-`career_demo_credentials.txt` with mode `0600` beside the export directory; set
-`CAREER_DEMO_PASSWORD` before seeding if you need a known workshop password.
+learner records alone. `CAREER_DEMO_PASSWORD` is required; the seed never prints
+the password or writes it to disk.
 Each export contains a JSON dossier, a Markdown dossier,
 and a self-contained printable HTML page. The dossier combines Cyber DNA,
 learning evidence, course participation, reflection questions, and the external

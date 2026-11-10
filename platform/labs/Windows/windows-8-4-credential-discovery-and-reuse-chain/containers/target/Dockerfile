@@ -14,5 +14,5 @@ RUN echo "[global]" > /etc/samba/smb.conf && \
 RUN printf 'password123\npassword123\n' | smbpasswd -a -s admin
 RUN mkdir -p /tmp/private && echo "OCR{cr3d_ch41n}" > /tmp/private/flag.txt
 RUN mkdir -p /var/run/sshd
-EXPOSE 445 3389 389 22
+EXPOSE 445 3389 389
 CMD service ssh start && service smbd start && service xrdp start && slapd -d 0 -h "ldap:///" && tail -f /dev/null

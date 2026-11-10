@@ -59,7 +59,7 @@ async def upload_chapter(
         result = workbook_builder.extract_upload(contents, chapter_dir)
     except Exception as e:
         logger.error("Upload extraction failed: %s", e)
-        raise HTTPException(status_code=400, detail=f"Extraction failed: {e}")
+        raise HTTPException(status_code=400, detail="The workbook archive could not be extracted.")
 
     if not result["files_extracted"]:
         raise HTTPException(status_code=400, detail="No .md files found in the ZIP")
@@ -74,7 +74,10 @@ async def upload_chapter(
             result["build"] = build_result
         except Exception as e:
             logger.warning("Auto-build failed (files were extracted): %s", e)
-            result["build_warning"] = str(e)
+            result["build_warning"] = (
+                "Files were extracted, but the wiki rebuild failed. "
+                "See the server log for details."
+            )
 
     # Rebuild any course wikis that reference labs in the uploaded chapter
     try:
@@ -102,7 +105,7 @@ async def trigger_build(
         return workbook_builder.build_wiki()
     except Exception as e:
         logger.error("Build failed: %s", e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="The wiki build failed. See the server log.")
 
 
 @router.post("/build-all-course-wikis")
@@ -135,8 +138,19 @@ async def delete_chapter(
     import os
     import shutil
 
-    target = os.path.join(workbook_builder.DOCS_DIR, chapter_dir)
-    if not os.path.isdir(target):
+    # Select the directory from the docs listing instead of joining the
+    # caller-supplied name, so ".." and separators cannot escape DOCS_DIR.
+    target = None
+    try:
+        for entry in os.listdir(workbook_builder.DOCS_DIR):
+            if entry == chapter_dir:
+                candidate = os.path.join(workbook_builder.DOCS_DIR, entry)
+                if os.path.isdir(candidate):
+                    target = candidate
+                break
+    except OSError:
+        target = None
+    if target is None:
         raise HTTPException(status_code=404, detail=f"Chapter not found: {chapter_dir}")
 
     shutil.rmtree(target)
@@ -150,4 +164,9 @@ async def delete_chapter(
         rebuild_affected_course_wikis(db, chapter_dir)
         return {"deleted": chapter_dir, "build": build_result}
     except Exception as e:
-        return {"deleted": chapter_dir, "build_warning": str(e)}
+        logger.warning("Course wiki rebuild after chapter delete failed: %s", e)
+        return {
+            "deleted": chapter_dir,
+            "build_warning": "The chapter was deleted, but the wiki rebuild failed. "
+                             "See the server log for details.",
+        }

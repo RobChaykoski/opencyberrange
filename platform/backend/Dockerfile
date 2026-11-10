@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-ARG PLATFORM_VERSION=2.5.3
+ARG PLATFORM_VERSION=2.5.4
 ARG BUILD_REVISION=unknown
 
 LABEL org.opencontainers.image.title="SWOCTS Cyber Range backend" \
@@ -42,6 +42,10 @@ COPY . /app/
 
 # Expose port
 EXPOSE 8000
+
+# Readiness probe: /health checks the database, matching the Compose healthcheck.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD curl -fsS http://127.0.0.1:8000/health || exit 1
 
 # Run the application
 # Workers auto-scale: (2 × CPU cores) + 1, capped at 9 to leave headroom for lab containers

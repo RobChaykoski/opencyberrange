@@ -21,7 +21,6 @@ RUN useradd -m -s /bin/bash sysadmin && \
 RUN echo 'export SECURITY_ASSESSMENT_FLAG="OCR{cmd_3x3c}"' >> /home/sysadmin/.bashrc && \
     echo 'export SECURITY_ASSESSMENT_FLAG="OCR{cmd_3x3c}"' >> /etc/environment
 
-EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

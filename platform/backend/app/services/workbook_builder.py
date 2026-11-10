@@ -142,7 +142,12 @@ def extract_upload(zip_bytes: bytes, chapter_dir: str) -> dict:
         dict with keys: chapter_dir, files_extracted, warnings
     """
     _ensure_dirs()
-    target = os.path.join(DOCS_DIR, chapter_dir)
+    # The chapter name is a single directory component. Reject separators and
+    # traversal instead of silently collapsing them.
+    chapter_name = os.path.basename(chapter_dir)
+    if chapter_name != chapter_dir or chapter_name in ("", ".", ".."):
+        raise ValueError("Invalid chapter directory name")
+    target = os.path.join(DOCS_DIR, chapter_name)
     os.makedirs(target, exist_ok=True)
 
     warnings = []

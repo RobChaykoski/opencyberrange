@@ -23,5 +23,4 @@ RUN chmod u+s /usr/bin/find
 # Marker 3. requires root (via SUID find)
 RUN printf '0wn3d\n' > /root/marker3.txt && chmod 600 /root/marker3.txt
 
-EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

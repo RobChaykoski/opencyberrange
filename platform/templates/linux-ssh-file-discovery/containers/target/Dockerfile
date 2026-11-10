@@ -23,7 +23,6 @@ RUN useradd -m -s /bin/bash webadmin && \
 RUN mkdir -p /var/www/html/backups && \
     echo '<html><body>Corporate Web Portal</body></html>' > /var/www/html/index.html
 
-EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

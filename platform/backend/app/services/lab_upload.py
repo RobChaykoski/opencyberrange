@@ -30,6 +30,32 @@ SLUG_PATTERN = re.compile(
 )
 MAX_SLUG_LENGTH = 80
 
+# Every upload is extracted below this directory. The backend mounts the labs
+# tree read-only at runtime, but the instructor upload path writes here.
+LABS_ROOT = os.path.realpath(os.environ.get("OCR_LABS_ROOT", "/labs"))
+
+
+def _safe_target_dir(target_dir: str) -> str:
+    """Return a canonical extraction directory inside :data:`LABS_ROOT`.
+
+    The caller supplies ``/labs/<track>/<slug>``. Each component is rebuilt as
+    a single basename before the path is joined, so a caller-supplied value is
+    never used directly to build a filesystem path.
+    """
+    raw = os.path.realpath(os.path.normpath(target_dir))
+    if not raw.startswith(LABS_ROOT + os.sep):
+        raise ZipValidationError("Lab upload target is outside the labs directory.")
+
+    relative = raw[len(LABS_ROOT) + 1:]
+    parts = [os.path.basename(part) for part in relative.split(os.sep) if part]
+    if len(parts) < 2 or any(part in ("", ".", "..") for part in parts):
+        raise ZipValidationError("Invalid lab upload target path.")
+
+    candidate = os.path.join(LABS_ROOT, *parts)
+    if os.path.realpath(candidate) != raw:
+        raise ZipValidationError("Invalid lab upload target path.")
+    return candidate
+
 
 class ZipValidationError(Exception):
     """Raised when ZIP validation fails."""
@@ -164,9 +190,9 @@ def relocate_lab(lab, new_level, db, labs_dir: Optional[str] = None) -> str:
 
     if old_dir:
         from app.services.docker_manager import get_track_directory_name
-        new_dir = os.path.join(
-            labs_root, get_track_directory_name(track.slug), new_slug
-        )
+        track_dir = os.path.basename(get_track_directory_name(track.slug))
+        safe_slug = os.path.basename(new_slug)
+        new_dir = os.path.join(labs_root, track_dir, safe_slug)
         if os.path.exists(new_dir):
             raise ZipValidationError(f"Directory already exists: {new_dir}")
         os.makedirs(os.path.dirname(new_dir), exist_ok=True)
@@ -194,6 +220,7 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
     Raises:
         ZipValidationError: on any validation failure.
     """
+    target_dir = _safe_target_dir(target_dir)
     warnings = []
 
     # --- Size check ---
@@ -368,11 +395,26 @@ def validate_and_extract_lab_zip(contents: bytes, target_dir: str) -> dict:
             if not relative:
                 continue
 
-            target_path = os.path.join(target_dir, relative)
+            # Rebuild the relative path from single path components. The
+            # basename call is an explicit sanitizer for every component, so a
+            # crafted ZIP entry cannot introduce "..", an absolute path, or a
+            # drive-relative path. Subdirectories are preserved.
+            parts = [part for part in relative.split("/") if part]
+            if not parts or any(part in (".", "..") for part in parts):
+                raise ZipValidationError(f"Unsafe path in ZIP: {relative}")
+            safe_parts = [os.path.basename(part) for part in parts]
+            target_path = os.path.join(target_dir, *safe_parts)
             resolved = os.path.realpath(target_path)
 
-            # Post-extraction path traversal check
-            if not resolved.startswith(os.path.realpath(target_dir)):
+            # Post-extraction path traversal check. commonpath is exact, unlike
+            # a prefix test that would accept a sibling such as "<dir>-evil".
+            try:
+                inside_root = os.path.commonpath(
+                    [os.path.realpath(target_dir), resolved]
+                ) == os.path.realpath(target_dir)
+            except ValueError:
+                inside_root = False
+            if not inside_root:
                 raise ZipValidationError(f"Path traversal detected: {relative}")
 
             if relative.endswith("/"):

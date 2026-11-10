@@ -71,6 +71,6 @@ RUN echo '#!/bin/bash' > /start.sh && \
     echo 'apache2ctl -D FOREGROUND' >> /start.sh && \
     chmod +x /start.sh
 
-EXPOSE 21 22 80 40000-40100
+EXPOSE 21 80 40000-40100
 
 CMD ["/start.sh"]

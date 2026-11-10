@@ -1,14 +1,17 @@
 """Seed a realistic multi-course analytics demo.
 
 Run only in a development or test environment:
-    python -m app.scripts.seed_analytics_demo
 
-The script is idempotent for its own demo accounts, courses, labs, and survey.
-It deliberately leaves shared track records in place.
+    DEMO_ANALYTICS_PASSWORD='<dev password>' python -m app.scripts.seed_analytics_demo
+
+The password is supplied by the operator and is never printed or written to
+disk. The script is idempotent for its own demo accounts, courses, labs, and
+survey. It deliberately leaves shared track records in place.
 """
 from __future__ import annotations
 
 import json
+import os
 import random
 from datetime import datetime, timedelta, timezone
 
@@ -32,7 +35,7 @@ from app.models import (
     User,
 )
 
-DEMO_PASSWORD = "Demo#Pass123"
+DEMO_PASSWORD = os.environ.get("DEMO_ANALYTICS_PASSWORD", "")
 DEMO_COURSES = ("DEMO-WEB", "DEMO-OSINT", "DEMO-ADV")
 DEMO_LAB_PREFIX = "demo-analytics-"
 DEMO_SURVEY_TITLE = "Demo course reflection"
@@ -178,6 +181,11 @@ def _track_for(db, slug):
 
 
 def seed():
+    if not DEMO_PASSWORD:
+        raise SystemExit(
+            "Set DEMO_ANALYTICS_PASSWORD to the password for the demo accounts. "
+            "The value is not printed or written to disk."
+        )
     db = SessionLocal()
     try:
         _cleanup(db)
@@ -366,8 +374,9 @@ def seed():
 
         db.commit()
         print("Demo analytics data seeded.")
-        print(f"Instructor: demo_instructor / {DEMO_PASSWORD}")
-        print(f"Students:   demo_student_01 .. demo_student_12 / {DEMO_PASSWORD}")
+        print("Accounts use the password supplied in DEMO_ANALYTICS_PASSWORD.")
+        print("Instructor: demo_instructor")
+        print("Students:   demo_student_01 .. demo_student_12")
     finally:
         db.close()
 

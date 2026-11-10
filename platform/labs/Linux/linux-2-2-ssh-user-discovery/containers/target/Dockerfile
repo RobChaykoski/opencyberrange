@@ -27,7 +27,6 @@ RUN useradd -m -s /bin/bash jmitchell && \
 RUN echo 'FinanceCorp User Directory\nFlag: OCR{us3r_d1sc0v3ry}' > /home/jmitchell/user_info.txt && \
     chown jmitchell:jmitchell /home/jmitchell/user_info.txt
 
-EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

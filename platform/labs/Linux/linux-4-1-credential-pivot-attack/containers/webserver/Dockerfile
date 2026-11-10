@@ -50,10 +50,10 @@ RUN printf '# Crestline Financial. API Key Configuration\n\
 # Generated: 2024-07-15\n\
 # Contact: nathan.cole@crestline-financial.com\n\
 \n\
-stripe_key=sk_live_4eC39HqLyjWDarjtT1zdp7dc\n\
-plaid_key=pk_live_2bP8vQ7wT5yA1jF6uH0iD4oS\n\
+stripe_key=FAKE_STRIPE_SECRET_KEY_DO_NOT_USE\n\
+plaid_key=FAKE_PLAID_KEY_DO_NOT_USE\n\
 assessment_token=cr3d\n\
-internal_api_key=cfl_prod_a8f2e1b9c4d7\n' > /var/www/crestline-portal/config/api_keys.bak
+internal_api_key=FAKE_INTERNAL_API_KEY_DO_NOT_USE\n' > /var/www/crestline-portal/config/api_keys.bak
 
 RUN printf '# Database connection pool settings\n\
 max_connections=25\n\
@@ -78,6 +78,6 @@ RUN chown -R webdev:webdev /var/www/crestline-portal
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22 80
+EXPOSE 80
 
 CMD ["/start.sh"]

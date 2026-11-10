@@ -11,8 +11,8 @@ Safety:
     * Refuses when OCR_ENV/DEPLOYMENT_MODE says production.
     * Every record uses a ``demotest_``/``DEMOTEST-`` prefix.
     * ``--cleanup`` removes only those records.
-    * Passwords are generated unless DEMO_FEATURE_PASSWORD is set, and printed
-      once.
+    * ``DEMO_FEATURE_PASSWORD`` must be supplied; it is never printed or
+      written to disk.
 
 Run inside the development backend container:
 
@@ -73,7 +73,7 @@ TRACK_SLUG_PREFIX = "demotest-"
 LAB_SLUG_PREFIX = "demotest-"
 SURVEY_TITLE = "DemoTest course reflection"
 COMPETITION_NAME = "DemoTest Practice Sprint"
-PASSWORD = os.environ.get("DEMO_FEATURE_PASSWORD") or "Demo#Test252"
+PASSWORD = os.environ.get("DEMO_FEATURE_PASSWORD", "")
 RNG = random.Random(252)
 
 NOW = datetime.now(timezone.utc)
@@ -622,7 +622,7 @@ def seed(db) -> None:
     db.commit()
 
     print("DemoTest feature data seeded.")
-    print(f"Password for all DemoTest accounts: {PASSWORD}")
+    print("Accounts use the password supplied in DEMO_FEATURE_PASSWORD.")
     print("Instructors: demotest_instructor_01 .. demotest_instructor_03")
     print("Students:    demotest_student_01 .. demotest_student_60")
     print("Courses:     DEMOTEST-A (25), B (5), C (3), D (0), E (12), F (8)")
@@ -651,6 +651,11 @@ def main() -> int:
             return 0
         if not args.yes:
             raise SystemExit("Refusing without --yes.")
+        if not PASSWORD:
+            raise SystemExit(
+                "Set DEMO_FEATURE_PASSWORD to the password for the demo accounts. "
+                "The value is not printed or written to disk."
+            )
         seed(db)
         return 0
     finally:

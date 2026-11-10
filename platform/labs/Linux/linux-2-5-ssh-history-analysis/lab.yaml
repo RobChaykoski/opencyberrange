@@ -134,7 +134,7 @@ hints:
 
       **4. API keys and tokens:**
       ```bash
-      curl -H "Authorization: Bearer sk_live_abc123xyz" api.example.com
+      curl -H "Authorization: Bearer FAKE_API_KEY_DO_NOT_USE" api.example.com
       export API_KEY=abc123xyz789
       git clone https://token@github.com/private/repo.git
       ```
@@ -309,7 +309,7 @@ hints:
       ```bash
       $ cat ~/.python_history
       import requests
-      api_key = "sk_live_abc123xyz789"
+      api_key = "FAKE_API_KEY_DO_NOT_USE"
       requests.get(url, headers={"Authorization": f"Bearer {api_key}"})
       ```
 
@@ -385,13 +385,13 @@ hints:
       **Step 6: Look for API keys**
       ```bash
       $ grep -E 'api|token|key' ~/.bash_history
-      export API_KEY=fc_api_sk_live_abc123xyz
-      curl -H "Authorization: Bearer token_xyz789" api.financecorp.local
+      export API_KEY=FAKE_API_KEY_DO_NOT_USE
+      curl -H "Authorization: Bearer FAKE_TOKEN_DO_NOT_USE" api.financecorp.local
       ```
 
       **Analysis:**
-      - API key: fc_api_sk_live_abc123xyz
-      - Bearer token: token_xyz789
+      - API key: FAKE_API_KEY_DO_NOT_USE
+      - Bearer token: FAKE_TOKEN_DO_NOT_USE
       - API endpoint: api.financecorp.local
 
       **Step 7: Identify file operations**
@@ -448,7 +448,7 @@ hints:
       ```
       Credentials Found:
       - MySQL: admin:AdminP@ss123 @ 10.10.10.100
-      - API Key: fc_api_sk_live_abc123xyz
+      - API Key: FAKE_API_KEY_DO_NOT_USE
       - Admin Panel: admin:password @ admin-panel.local
 
       Network Topology:
@@ -673,8 +673,8 @@ hints:
       cd ~/projects/financecorp-app
       npm install
       npm run dev
-      export API_KEY=fc_dev_api_sk_test_xyz789abc123
-      curl -H "Authorization: Bearer fc_dev_api_sk_test_xyz789abc123" https://api-dev.financecorp.local/health
+      export API_KEY=FAKE_DEV_API_KEY_DO_NOT_USE
+      curl -H "Authorization: Bearer FAKE_DEV_API_KEY_DO_NOT_USE" https://api-dev.financecorp.local/health
       psql -h 10.10.10.100 -U developer -d financecorp_dev
       ssh -i ~/.ssh/id_rsa admin@10.10.10.100
       cat /var/www/html/config.php
@@ -733,7 +733,7 @@ hints:
 
       developer@fin-dev-01:~$ cat ~/.python_history
       import requests
-      api_key = "fc_dev_api_sk_test_xyz789abc123"
+      api_key = "FAKE_DEV_API_KEY_DO_NOT_USE"
       headers = {"Authorization": f"Bearer {api_key}"}
       response = requests.get("https://api-dev.financecorp.local/users", headers=headers)
       print(response.json())
@@ -779,8 +779,8 @@ hints:
 
       **2. API keys exposed (CRITICAL):**
       ```bash
-      export API_KEY=fc_dev_api_sk_test_xyz789abc123
-      curl -H "Authorization: Bearer fc_dev_api_sk_test_xyz789abc123" ...
+      export API_KEY=FAKE_DEV_API_KEY_DO_NOT_USE
+      curl -H "Authorization: Bearer FAKE_DEV_API_KEY_DO_NOT_USE" ...
       ```
       - Development API key revealed
       - Used for API authentication
@@ -878,7 +878,7 @@ hints:
 
       **Step 2: API exploitation**
       ```bash
-      curl -H "Authorization: Bearer fc_dev_api_sk_test_xyz789abc123" \
+      curl -H "Authorization: Bearer FAKE_DEV_API_KEY_DO_NOT_USE" \
            https://api-dev.financecorp.local/admin/users
       ```
 
@@ -912,7 +912,7 @@ hints:
 
       **FINDING: API Keys in Command History**
       - Severity: CRITICAL
-      - Key: fc_dev_api_sk_test_xyz789abc123
+      - Key: FAKE_DEV_API_KEY_DO_NOT_USE
       - Impact: Unauthorized API access
       - Recommendation: Use environment files, secrets management, rotate API key
 

@@ -98,9 +98,11 @@ COVERED_FILES = [
     ".github/workflows/ci.yml",
     ".github/workflows/quality.yml",
     ".github/workflows/codeql.yml",
+    ".github/codeql/codeql-config.yml",
     ".github/workflows/dependency-audit.yml",
     ".github/workflows/trivy.yml",
     ".github/workflows/ui-smoke.yml",
+    ".trivyignore.yaml",
 ]
 
 LAB_EXCLUDE_DIRS = {

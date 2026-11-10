@@ -334,6 +334,13 @@ note naming the role check.
   CTFd or weakening isolation.
 - UI smoke passed against `https://ocr.swocts.com` on 2.5.4.
 - CI, Quality, CodeQL, and Trivy are green on the release commits.
+- The 10 November code-scanning pass resolved the full paginated alert set
+  (595 alerts: 69 CodeQL, 526 Trivy). Platform path handling, stack-trace
+  responses, seed-password handling, audit redaction, and the admin VNC page
+  were fixed; lab target applications are excluded from CodeQL as intentional
+  exercise content; Trivy suppressions are path-scoped and documented in
+  `.trivyignore.yaml`. See
+  [`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md).
 
 The full evidence record is in
 [`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md).

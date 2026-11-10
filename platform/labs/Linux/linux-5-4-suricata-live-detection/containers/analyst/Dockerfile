@@ -48,6 +48,6 @@ RUN chmod +x /usr/local/bin/validate-flag
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22 80
+EXPOSE 80
 
 CMD ["/start.sh"]

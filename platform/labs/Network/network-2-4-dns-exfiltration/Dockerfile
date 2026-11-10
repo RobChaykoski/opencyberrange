@@ -48,7 +48,6 @@ RUN python3 /tmp/generate_dns_pcap.py /home/analyst/captures/dns-tunnel.pcap && 
 RUN groupadd -f wireshark && usermod -a -G wireshark analyst
 
 # Expose SSH port
-EXPOSE 22
 
 # Start SSH service
 CMD ["/usr/sbin/sshd", "-D"]

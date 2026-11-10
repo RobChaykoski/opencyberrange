@@ -545,7 +545,8 @@ async def upload_lab_zip(
             chapter_dir = f"CH_{track.upper()}_{chapter_suffix}"
 
             # Extract walkthrough markdown files into the workbook docs dir
-            docs_target = os.path.join(workbook_builder.DOCS_DIR, chapter_dir)
+            chapter_name = os.path.basename(chapter_dir)
+            docs_target = os.path.join(workbook_builder.DOCS_DIR, chapter_name)
             os.makedirs(docs_target, exist_ok=True)
             wt_extracted = []
             for wt_path in walkthrough_files:
@@ -577,7 +578,10 @@ async def upload_lab_zip(
             "Walkthrough processing failed for '%s' (exercise uploaded OK): %s",
             slug, exc, exc_info=True,
         )
-        walkthrough_result = {"error": str(exc)}
+        walkthrough_result = {
+            "error": "The bundled walkthrough could not be processed. "
+                     "The exercise was uploaded; see the server log for details."
+        }
 
     response = {
         "message": f"Exercise '{lab.name}' uploaded successfully",

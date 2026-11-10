@@ -82,17 +82,36 @@
       // For now, show instructions to use the direct Dockur VNC.
       // A full noVNC integration would require bundling the noVNC JS client.
       // Instead, we'll create a simple iframe pointing to the container's built-in noVNC.
-      msgEl.innerHTML = `
-        <p style="margin-bottom: 1rem;">Connecting to <strong>${name}</strong> via WebSocket proxy...</p>
-        <p style="font-size: 0.75rem; color: #64748b;">
-          The full noVNC client requires additional JavaScript libraries.<br>
-          For now, use the direct VNC approach described in the setup documentation,<br>
-          or access port 8006 on the container's native IP via your browser.
-        </p>
-        <p style="margin-top: 1rem;">
-          <button onclick="window.close()" style="padding: 0.5rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.8rem;">Close</button>
-        </p>
-      `
+      msgEl.replaceChildren()
+
+      const connectLine = document.createElement('p')
+      connectLine.style.marginBottom = '1rem'
+      connectLine.append('Connecting to ')
+      const vmName = document.createElement('strong')
+      // textContent keeps the query-string value out of the HTML parser.
+      vmName.textContent = name
+      connectLine.append(vmName, ' via WebSocket proxy...')
+
+      const note = document.createElement('p')
+      note.style.fontSize = '0.75rem'
+      note.style.color = '#64748b'
+      note.append(
+        'The full noVNC client requires additional JavaScript libraries.',
+        document.createElement('br'),
+        'For now, use the direct VNC approach described in the setup documentation,',
+        document.createElement('br'),
+        "or access port 8006 on the container's native IP via your browser."
+      )
+
+      const actions = document.createElement('p')
+      actions.style.marginTop = '1rem'
+      const closeButton = document.createElement('button')
+      closeButton.textContent = 'Close'
+      closeButton.style.cssText = 'padding: 0.5rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 0.375rem; cursor: pointer; font-size: 0.8rem;'
+      closeButton.addEventListener('click', () => window.close())
+      actions.append(closeButton)
+
+      msgEl.append(connectLine, note, actions)
       statusEl.textContent = 'Info'
       statusEl.className = 'status status--connecting'
     }

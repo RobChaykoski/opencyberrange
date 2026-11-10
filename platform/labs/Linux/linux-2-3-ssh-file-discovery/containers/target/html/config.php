@@ -10,7 +10,7 @@ $db_name = "financecorp_portal";
 
 // API Configuration
 $api_endpoint = "https://api.financecorp.local";
-$api_key = "fc_api_sk_live_xK9mN2pQ4rT6vW8yZ";
+$api_key = "FAKE_API_KEY_DO_NOT_USE";
 
 // Application Settings
 $app_debug = true;

@@ -2311,7 +2311,7 @@ async def get_docker_disk_usage(
     """Return Docker disk usage broken down by images, containers, build cache, and volumes."""
     result = docker_manager.get_disk_usage()
     if "error" in result:
-        raise HTTPException(status_code=500, detail=result["error"])
+        raise HTTPException(status_code=500, detail="Docker disk usage is unavailable.")
     return result
 
 
@@ -2847,7 +2847,8 @@ async def discover_labs(
                 with open(yaml_path, 'r') as f:
                     lab_data = yaml.safe_load(f)
             except Exception as e:
-                errors.append(f"YAML error in {lab_dirname}: {str(e)}")
+                logger.warning("YAML parse failed for %s: %s", lab_dirname, e)
+                errors.append(f"YAML error in {lab_dirname}")
                 continue
 
             # Read docker-compose.yml
@@ -3954,7 +3955,13 @@ async def cancel_stress_test(
         flag.set()
         return {"cancelled": True, "run_id": run_id}
     # If not found locally, write a cancel sentinel file for the other worker
-    cancel_path = os.path.join(_STRESS_DIR, f"{run_id}_cancel")
+    state_path = _stress_existing_file(run_id, "state.json")
+    if state_path is None:
+        return {"cancelled": False, "message": "Run not found or already completed"}
+    cancel_path = os.path.join(
+        os.path.dirname(state_path),
+        os.path.basename(state_path)[: -len("state.json")] + "cancel",
+    )
     try:
         os.makedirs(_STRESS_DIR, exist_ok=True)
         with open(cancel_path, "w") as f:
@@ -4142,8 +4149,28 @@ def _stress_path(run_id: str, suffix: str) -> str:
     return os.path.join(_STRESS_DIR, f"{run_id}_{suffix}")
 
 
+def _stress_existing_file(run_id: str, suffix: str) -> str | None:
+    """Return an existing run file without building a path from *run_id*.
+
+    Read endpoints accept a run identifier from the client. The path is taken
+    from the directory listing instead of being joined with that value, so a
+    crafted identifier cannot escape ``_STRESS_DIR``.
+    """
+    try:
+        names = os.listdir(_STRESS_DIR)
+    except OSError:
+        return None
+    wanted = f"{run_id}_{suffix}"
+    for name in names:
+        if name == wanted:
+            return os.path.join(_STRESS_DIR, name)
+    return None
+
+
 def _stress_read_state(run_id: str) -> dict:
-    path = _stress_path(run_id, "state.json")
+    path = _stress_existing_file(run_id, "state.json")
+    if path is None:
+        return {}
     try:
         with open(path, "r", encoding="utf-8") as handle:
             data = json.load(handle)
@@ -4170,7 +4197,9 @@ def _stress_append_event(run_id: str, event: dict) -> None:
 
 
 def _stress_read_events(run_id: str, after: int = 0) -> list[dict]:
-    path = _stress_path(run_id, "events.jsonl")
+    path = _stress_existing_file(run_id, "events.jsonl")
+    if path is None:
+        return []
     events = []
     try:
         with open(path, "r", encoding="utf-8") as handle:
@@ -4190,7 +4219,9 @@ def _stress_read_events(run_id: str, after: int = 0) -> list[dict]:
 
 
 def _stress_count_events(run_id: str) -> int:
-    path = _stress_path(run_id, "events.jsonl")
+    path = _stress_existing_file(run_id, "events.jsonl")
+    if path is None:
+        return 0
     try:
         with open(path, "r", encoding="utf-8") as handle:
             return sum(1 for line in handle if line.strip())

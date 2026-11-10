@@ -344,7 +344,7 @@ hints:
       $db_user = "webapp_user";
       $db_pass = "SecretP@ssw0rd";
       $db_name = "financecorp_db";
-      $api_key = "sk_live_abc123xyz789";
+      $api_key = "FAKE_API_KEY_DO_NOT_USE";
       ?>
       ```
 
@@ -700,7 +700,7 @@ hints:
 
       // API Configuration
       $api_endpoint = "https://api.financecorp.local";
-      $api_key = "fc_api_sk_live_xK9mN2pQ4rT6vW8yZ";
+      $api_key = "FAKE_API_KEY_DO_NOT_USE";
 
       // Application Settings
       $app_debug = true;
@@ -827,7 +827,7 @@ hints:
 
       **2. API keys exposed:**
       ```php
-      $api_key = "fc_api_sk_live_xK9mN2pQ4rT6vW8yZ";
+      $api_key = "FAKE_API_KEY_DO_NOT_USE";
       ```
       - Production API key in source code
       - Enables unauthorized API access
@@ -885,7 +885,7 @@ hints:
       **Step 5: API exploitation**
       ```bash
       # Use stolen API key
-      curl -H "Authorization: Bearer fc_api_sk_live_xK9mN2pQ4rT6vW8yZ" \
+      curl -H "Authorization: Bearer FAKE_API_KEY_DO_NOT_USE" \
            https://api.financecorp.local/customers
       ```
 
@@ -909,7 +909,7 @@ hints:
       **FINDING: API Key Exposure**
       - Severity: CRITICAL
       - File: config.php
-      - Key: fc_api_sk_live_xK9mN2pQ4rT6vW8yZ
+      - Key: FAKE_API_KEY_DO_NOT_USE
       - Impact: Unauthorized API access, potential financial loss
       - Recommendation: Use environment variables, rotate API key immediately
 

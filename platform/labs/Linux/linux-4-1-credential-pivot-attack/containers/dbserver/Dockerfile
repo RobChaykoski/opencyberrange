@@ -40,6 +40,5 @@ RUN chown -R dbadmin:dbadmin /home/dbadmin
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 22
 
 CMD ["/start.sh"]

@@ -33,7 +33,6 @@ RUN echo 'backup ALL=(ALL) NOPASSWD: /usr/bin/cat' > /etc/sudoers.d/backup && \
 RUN echo 'OCR{sud0_3sc}' > /root/flag.txt && \
     chmod 600 /root/flag.txt
 
-EXPOSE 22
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

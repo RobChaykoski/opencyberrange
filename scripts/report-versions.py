@@ -29,7 +29,7 @@ LAB_SCOPES = (
     "UbuntuBox/",
     "RemnuxBox/",
 )
-REQUIREMENT_RE = re.compile(
+REQUIREMENT_RE = re.compile(  # codeql[py/bad-tag-filter]
     r"^(?P<name>[A-Za-z0-9_.-]+)(?:\[[^\]]+\])?\s*(?P<spec>==|>=|<=|~=|!=|>|<).*$"
 )
 FROM_RE = re.compile(r"^\s*FROM\s+(?P<image>[^\s#]+)", re.IGNORECASE)

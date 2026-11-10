@@ -207,7 +207,7 @@ def admin_users():
             {"id": 2, "username": "jnguyen", "role": "operator", "email": "james.nguyen@metro-transit.gov",
              "last_login": "2024-09-15T06:45:00Z"},
             {"id": 3, "username": "api_readonly", "role": "service", "email": "noreply@metro-transit.gov",
-             "api_key": "mta_pk_live_8f2a1b9c4d7e3f6a"},
+             "api_key": "FAKE_TRANSIT_KEY_DO_NOT_USE"},
             {"id": 4, "username": "kthompson", "role": "analyst", "email": "karen.thompson@metro-transit.gov",
              "last_login": "2024-09-14T16:30:00Z"},
         ]

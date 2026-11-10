@@ -140,6 +140,24 @@ def _run_cancel_path(run_id: str) -> str:
     return os.path.join(_RUN_DIR, f"{run_id}_cancel")
 
 
+def _run_existing_file(run_id: str, suffix: str) -> str | None:
+    """Return an existing run file without building a path from *run_id*.
+
+    Polling and cancel endpoints accept a run identifier from the client. The
+    path is selected from the directory listing instead of being joined with
+    that value, so a crafted identifier cannot escape ``_RUN_DIR``.
+    """
+    try:
+        names = os.listdir(_RUN_DIR)
+    except OSError:
+        return None
+    wanted = f"{run_id}_{suffix}"
+    for name in names:
+        if name == wanted:
+            return os.path.join(_RUN_DIR, name)
+    return None
+
+
 def _run_write_state(run_id: str, state: dict) -> None:
     os.makedirs(_RUN_DIR, exist_ok=True)
     path = _run_state_path(run_id)
@@ -150,8 +168,11 @@ def _run_write_state(run_id: str, state: dict) -> None:
 
 
 def _run_read_state(run_id: str):
+    path = _run_existing_file(run_id, "state.json")
+    if path is None:
+        return None
     try:
-        with open(_run_state_path(run_id), "r") as f:
+        with open(path, "r") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return None
@@ -172,8 +193,11 @@ def _run_read_events(run_id: str, after: int = 0):
     Reading the whole file and json-decoding every old event on every poll made
     each cursor request allocate the complete run history again.
     """
+    path = _run_existing_file(run_id, "events.jsonl")
+    if path is None:
+        return [], 0
     try:
-        with open(_run_events_path(run_id), "r") as f:
+        with open(path, "r") as f:
             line_no = 0
             events = []
             for line in f:
@@ -196,10 +220,15 @@ def _run_is_cancelled(run_id: str) -> bool:
 
 
 def _run_request_cancel(run_id: str) -> bool:
-    if _run_read_state(run_id) is None:
+    state_path = _run_existing_file(run_id, "state.json")
+    if state_path is None:
         return False
     os.makedirs(_RUN_DIR, exist_ok=True)
-    open(_run_cancel_path(run_id), "w").close()
+    cancel_path = os.path.join(
+        os.path.dirname(state_path),
+        os.path.basename(state_path)[: -len("state.json")] + "cancel",
+    )
+    open(cancel_path, "w").close()
     return True
 
 
@@ -308,6 +337,19 @@ def _resolve_template(
         command = command.replace(f"{{cred.{role}.user}}", cred.get("username", ""))
         command = command.replace(f"{{cred.{role}.pass}}", cred.get("password", ""))
     return command
+
+
+_CRED_PASS_PLACEHOLDER_RE = re.compile(r"\{cred\.[^.}]+\.[Pp][Aa][Ss][Ss]\}")
+
+
+def _redact_command_template(command: str) -> str:
+    """Return a display copy of a test command with password placeholders masked.
+
+    Resolved commands contain real lab credentials and are passed to the
+    tester container only. Streaming or journalling those values would write
+    them to disk, so operator-facing output uses this redacted template.
+    """
+    return _CRED_PASS_PLACEHOLDER_RE.sub("{cred.<role>.pass:redacted}", command)
 
 
 def _call_submit_flag_api(lab_id: int, flag: str, token: str) -> dict:
@@ -1255,8 +1297,9 @@ async def run_exercise_test(
                         step_timeout = step.get("timeout", EXEC_TIMEOUT)
                         expect = step.get("expect", "")
 
+                        display_cmd = _redact_command_template(step_raw)
                         yield _emit({"type": "line", "test_key": f"{slug}_solve", "timestamp": _ts(),
-                                    "level": "info", "message": f"$ {step_cmd}"})
+                                    "level": "info", "message": f"$ {display_cmd}"})
                         r = await _exec_in_tester(tester_container, step_cmd, step_timeout
                         )
                         last_output = r.stdout

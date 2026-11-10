@@ -8,9 +8,9 @@ RUN apk add --no-cache build-base p7zip curl
 WORKDIR /build
 RUN curl -fsSL -o snap7.7z \
       "https://sourceforge.net/projects/snap7/files/1.4.2/snap7-full-1.4.2.7z/download" \
- && 7z x -y snap7.7z >/dev/null \
- && cd snap7-full-1.4.2/build/unix \
- && make -f x86_64_linux.mk all \
+ && 7z x -y snap7.7z >/dev/null
+WORKDIR /build/snap7-full-1.4.2/build/unix
+RUN make -f x86_64_linux.mk all \
  && cp ../bin/x86_64-linux/libsnap7.so /build/libsnap7.so
 
 # ── Stage 2: tester sidecar runtime ───────────────────────────────────────

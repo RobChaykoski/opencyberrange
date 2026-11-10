@@ -73,7 +73,6 @@ fi' > /home/analyst/.bashrc && \
     chown analyst:analyst /home/analyst/.bashrc
 
 # Expose SSH port
-EXPOSE 22
 
 # Start SSH service
 CMD ["/usr/sbin/sshd", "-D"]

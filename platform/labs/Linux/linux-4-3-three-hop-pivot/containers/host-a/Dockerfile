@@ -50,5 +50,4 @@ RUN echo 'thr33' > /home/teller/assessment_token.txt && \
 # Set permissions. teller can read app files
 RUN chown -R teller:teller /var/www/banking-app
 
-EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

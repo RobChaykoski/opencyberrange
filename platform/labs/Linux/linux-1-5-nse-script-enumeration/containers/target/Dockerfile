@@ -30,6 +30,5 @@ RUN echo "OCR{nse_scr1pt}" > /home/student/flag.txt && chown student:student /ho
 # nmap -p 22 --script="ssh*" <target>
 # The banner is shown by the ssh2-enum-algos or banner NSE scripts
 
-EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]
