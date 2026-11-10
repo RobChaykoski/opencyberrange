@@ -67,6 +67,13 @@ runtime:
       target: "ubuntu-24.04"
       upgrade_source: "ubuntu-22.04"
       status: "24.04-certified-2026-11-08"
+    next_candidate:
+      requested_label: "ubuntu-26.06"
+      target: "ubuntu-26.04"
+      status: "test-candidate"
+      workflow: ".github/workflows/ubuntu-next.yml"
+      docs: "docs/UBUNTU-NEXT-UPGRADE-CANDIDATE.md"
+      note: "Ubuntu 26.06 is not an upstream release; the next LTS is 26.04. The GitHub runner test uses ubuntu-26.04."
     plans:
       migration: "docs/V2-UBUNTU-24.04-MIGRATION.md"
       ha: "docs/V3-HA-LAB-POOL.md"

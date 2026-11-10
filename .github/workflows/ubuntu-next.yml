@@ -1,0 +1,117 @@
+name: Ubuntu next upgrade candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner:
+        description: GitHub runner label
+        required: true
+        default: ubuntu-26.04
+      ubuntu_label:
+        description: Ubuntu version label for the report
+        required: true
+        default: "26.04"
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    name: Ubuntu ${{ inputs.ubuntu_label || '26.04' }} compatibility
+    runs-on: ${{ inputs.runner || 'ubuntu-26.04' }}
+    timeout-minutes: 30
+    env:
+      UBUNTU_LABEL: ${{ inputs.ubuntu_label || '26.04' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Host identity
+        run: |
+          set -euo pipefail
+          cat /etc/os-release
+          uname -a
+          docker --version
+          docker compose version
+          python3 --version
+          node --version
+
+      - name: Install validation dependencies
+        run: |
+          set -euo pipefail
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install PyYAML==6.0.3
+
+      - name: Shell syntax and installer help
+        run: |
+          set -euo pipefail
+          for script in \
+            scripts/setup-range-server.sh \
+            scripts/install-platform.sh \
+            scripts/deploy-updates.sh \
+            scripts/upgrade-from-backup.sh \
+            scripts/post-install-check.sh; do
+            bash -n "$script"
+          done
+          sudo bash scripts/setup-range-server.sh --help
+          bash scripts/install-platform.sh --help
+
+      - name: Catalog and docs checks
+        run: |
+          set -euo pipefail
+          . .venv/bin/activate
+          python scripts/generate-workbook-coverage.py --check
+          python scripts/check-quiz-banks.py --check
+          python scripts/supply_chain.py --check
+          python scripts/validate-lab.py --all
+          python scripts/lab-release-proof.py
+
+      - name: Compose config
+        working-directory: platform
+        env:
+          POSTGRES_USER: labuser
+          POSTGRES_PASSWORD: ci-only
+          POSTGRES_DB: labdb
+          DATABASE_URL: postgresql://labuser:ci-only@db:5432/labdb
+          JWT_SECRET: ci-only-jwt-secret-not-for-production
+          JWT_ALGORITHM: HS256
+          JWT_EXPIRATION_HOURS: "24"
+          SETUP_TOKEN: ci-only-setup-token
+          WG_SERVER_ENDPOINT: ci.invalid:51820
+          WG_SERVER_PUBLIC_KEY: ci-only-public-key
+          WG_API_URL: http://host.docker.internal:5000
+          WG_API_KEY: ci-only-api-key
+          WG_ENCRYPTION_KEY: ci-only-fernet-key
+          WG_NETWORK_BASE: "10.100"
+          WG_CLIENT_BASE: "10.0.0"
+          SERVER_PUBLIC_HOST: ci.invalid
+          CORS_ORIGINS: https://ci.invalid
+          LABS_HOST_PATH: ${{ github.workspace }}/platform/labs
+        run: docker compose -f docker-compose.prod.yml config >/dev/null
+
+      - name: Build backend image
+        run: docker build -t ocr-backend:ubuntu-next platform/backend
+
+      - name: Build frontend image
+        run: docker build -t ocr-frontend:ubuntu-next platform/frontend
+
+      - name: Summary
+        run: |
+          set -euo pipefail
+          {
+            echo "## Ubuntu next upgrade candidate"
+            echo ""
+            echo "- Requested label: \`$UBUNTU_LABEL\`"
+            echo "- Runner image: \`$RUNNER_OS\`"
+            echo "- Host: \`$(. /etc/os-release && echo "$PRETTY_NAME")\`"
+            echo "- Docker: \`$(docker --version)\`"
+            echo "- Compose: \`$(docker compose version --short)\`"
+            echo "- Shell syntax and installer help: passed"
+            echo "- Lab validation, workbook coverage, quiz banks, supply chain: passed"
+            echo "- Backend and frontend image builds: passed"
+            echo ""
+            echo "KVM, WireGuard, firewall persistence, and restore drills still require a real host."
+          } >> "$GITHUB_STEP_SUMMARY"
