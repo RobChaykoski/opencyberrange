@@ -7,19 +7,20 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v2.5.4` / `main` | SWOCTS Cyber Range 2.5.4 | Current supported platform release |
-| `v2.5.3` | SWOCTS Cyber Range 2.5.3 | Previous release; upgrade to 2.5.4 |
-| `v2.5.2` | SWOCTS Cyber Range 2.5.2 | Previous release; upgrade to 2.5.3 |
-| `v2.5.1` | SWOCTS Cyber Range 2.5.1 | Previous release; upgrade to 2.5.3 |
-| `v2.4.1` | SWOCTS Cyber Range 2.4.1 | Previous release; upgrade to 2.5.3 |
+| `main` (`v2.5.5` tag pending) | SWOCTS Cyber Range 2.5.5 | Current supported platform release |
+| `v2.5.4` | SWOCTS Cyber Range 2.5.4 | Previous release; upgrade to 2.5.5 |
+| `v2.5.3` | SWOCTS Cyber Range 2.5.3 | Previous release; upgrade to 2.5.5 |
+| `v2.5.2` | SWOCTS Cyber Range 2.5.2 | Previous release; upgrade to 2.5.5 |
+| `v2.5.1` | SWOCTS Cyber Range 2.5.1 | Previous release; upgrade to 2.5.5 |
+| `v2.4.1` | SWOCTS Cyber Range 2.4.1 | Previous release; upgrade to 2.5.5 |
 | `v2.4.0` | SWOCTS Cyber Range 2.4.0 | Feature release before the 2.4.1 remediation; upgrade to 2.5.3 |
-| `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to 2.5.3 |
+| `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to 2.5.5 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
 ## Legacy wave tags
 
 Tags `v2.1.5` through `v2.3.2` are historical wave/build tags from before the
-current single-platform release model. They are not newer than `2.5.4` and
+current single-platform release model. They are not newer than `2.5.5` and
 should not be used to choose a deployment. The current release number is
 recorded in `versions.yaml` and returned by `/api/version`.
 
@@ -27,7 +28,7 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch.
 They are **not** part of the supported single-host release in this tree. The
-Enterprise profile on 2.5.4 is a preview; HA, SSO, multi-tenancy, LMS, and
+Enterprise profile on 2.5.5 is a preview; HA, SSO, multi-tenancy, LMS, and
 compliance reporting are not shipped in the supported deployment.
 
 ## Choosing a version

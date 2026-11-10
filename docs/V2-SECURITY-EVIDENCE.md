@@ -1,11 +1,16 @@
 # SWOCTS Cyber Range: V2 security evidence record
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.5**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.5.4 line. This is the release evidence companion to
+**Status:** Active for the 2.5.x line. This is the release evidence companion to
 [`V2-SECURITY-OWASP-TOP-10.md`](V2-SECURITY-OWASP-TOP-10.md).
+
+> **2.5.5 note:** 2.5.5 is a patch release on the 2.5.4 line. It carries the
+> 2.5.4 evidence below plus the code-scanning remediation and the new
+> **Admin → System → Integrity** status. The 2.5.4 pass remains the historical
+> baseline.
 
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.

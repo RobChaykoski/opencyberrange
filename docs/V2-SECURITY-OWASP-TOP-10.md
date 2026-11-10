@@ -1,10 +1,10 @@
 # SWOCTS Cyber Range: V2 security baseline (OWASP Top 10)
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.5**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This baseline applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.5.4 line. Applies to the web interface, platform data,
+**Status:** Active for the 2.5.5 line. Applies to the web interface, platform data,
 and the project delivery process. The 1.1 line keeps its existing maintenance
 policy; fixes that apply there are merged forward.
 
@@ -347,6 +347,13 @@ note naming the role check.
 
 The full evidence record is in
 [`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md).
+
+### 2.5.5 patch update
+
+2.5.5 is a patch release on the 2.5.4 line. It closes the full open
+code-scanning set (595 alerts) and adds the live **Admin → System → Integrity**
+ledger status, the daily host check, and weekly signed manifests. The 2.5.4
+controls above remain in force; no dependency or image pins changed.
 
 ## Security testing matrix
 

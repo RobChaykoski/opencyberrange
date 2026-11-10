@@ -1,3 +1,76 @@
+# SWOCTS Cyber Range 2.5.5
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
+
+Status: **patch release**. 2.5.5 closes the open code-scanning set and adds a
+live database-integrity status to the admin portal, with a scheduled host check
+for quality, ledger, and signed checksum evidence.
+
+## Highlights
+
+- **Security remediation.** The full open code-scanning set was reviewed:
+  595 alerts (69 CodeQL, 526 Trivy). Platform path handling, stack-trace
+  responses, seed-password handling, audit redaction, and the Admin VNC page are
+  fixed. Intentionally vulnerable lab targets are excluded from CodeQL, and
+  Trivy suppressions are path-scoped and documented in `.trivyignore.yaml`.
+- **Data integrity status.** **Admin → System → Integrity** shows ledger
+  entries, the last recorded write, unattributed writes in the last seven days,
+  and the 16 covered critical tables. The existing System health grid also shows
+  a **Data integrity** item.
+- **Scheduled verification.** `scripts/db-integrity-check.sh` and
+  `deploy/systemd/` run daily quality, ledger, and checksum checks and write a
+  weekly signed manifest outside the database.
+
+## Security
+
+- About licence/SBOM downloads, stress-test state, exercise-test state, and
+  workbook chapter deletion select existing paths from directory listings.
+- Lab uploads rebuild the extraction target and ZIP entries from single path
+  components and verify containment with `os.path.commonpath`.
+- Stack traces and daemon details are no longer returned from RangeBox status,
+  Docker disk usage, image cleanup, lab discovery, workbook upload/build, or
+  walkthrough processing.
+- Development seeds require `DEMO_FEATURE_PASSWORD`,
+  `DEMO_ANALYTICS_PASSWORD`, `CAREER_DEMO_PASSWORD`,
+  `DEMO_INSTRUCTOR_PASSWORD`, and `DEMO_STUDENT_PASSWORD`; they never print or
+  write those values.
+- Audit details redact password, secret, token, and key fields before logging.
+- Lab and template target applications are excluded from CodeQL because their
+  command injection, SQL injection, path traversal, and reflected XSS are the
+  exercise content.
+- Two CodeQL false positives were dismissed with recorded reasons: the
+  requirements-specifier regex and the audit action/boolean flags.
+
+## Data integrity
+
+- The admin status is read-only and does not run the full chain or quality audit
+  inside a web request. Full verification runs from the host schedule.
+- `scripts/db-integrity-check.sh` uses `flock`, writes JSON evidence under
+  `/var/lib/ocr-integrity` by default, and prunes after 90 days.
+- `deploy/systemd/ocr-db-integrity.timer` runs daily at 02:30 UTC with a
+  randomized delay. `ocr-db-integrity-alert@.service` records failures.
+- Signed manifests require `DB_INTEGRITY_KEY` in
+  `/etc/opencyberrange/integrity.env` (root-only). Keep the key and evidence
+  off the database host for tamper evidence.
+
+## Upgrade
+
+1. Pull `v2.5.5` or the current `main`.
+2. Back up the database and the erasure ledger.
+3. Rebuild the backend and frontend:
+
+   ```bash
+   cd ~/opencyberrange/platform
+   docker compose -f docker-compose.prod.yml up -d --build backend frontend
+   ```
+
+4. Confirm `/health` and `/api/version` report `2.5.5`.
+5. Open **Admin → System → Integrity** and confirm the ledger is active.
+6. Install the daily timer from `deploy/systemd/` if it is not already present.
+
+Existing 2.5.4 databases upgrade in place. No destructive migration and no
+dependency or image-pin changes ship in this release.
+
 # SWOCTS Cyber Range 2.5.4
 
 SWOCTS Cyber Range is powered by OpenCyberRange.

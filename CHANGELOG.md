@@ -26,6 +26,35 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+## [2.5.5] - 2026-11-10
+
+### Security
+- Resolved the full open code-scanning set (595 alerts: 69 CodeQL, 526 Trivy).
+- Fixed platform path handling in About, stress-test state, exercise testing,
+  workbook chapters, and lab uploads; stack traces and daemon details are no
+  longer returned to clients.
+- Seed scripts now require their development passwords from the environment and
+  never print or write them. Audit details redact password, secret, token, and
+  key fields.
+- Replaced the Admin VNC page's `innerHTML` interpolation with DOM/text nodes.
+- Excluded intentionally vulnerable lab target applications from CodeQL; lab
+  structure remains gated by `validate-lab.py` and `lab-release-proof.py`.
+- Added path-scoped, documented Trivy suppressions for privileged lab images and
+  the platform components that need root, privileged ports, or raw sockets.
+- Removed `EXPOSE 22` and `RUN cd` from lab builds and replaced fake Stripe,
+  Plaid, SendGrid, internal-API, and JWT values with explicit `FAKE_*` markers.
+
+### Data integrity
+- Added **Admin → System → Integrity** with a live ledger summary: entries,
+  last write, unattributed writes in the last seven days, and covered tables.
+- Added `scripts/db-integrity-check.sh` and `deploy/systemd/` units for daily
+  quality, ledger, and checksum evidence and weekly signed manifests.
+- Added an `occurred_at` index for the ledger status query.
+
+### Upgrade
+- Existing 2.5.4 databases upgrade in place. No destructive migration.
+- No dependency or image pins changed in this release.
+
 ## [2.5.4] - 2026-11-10
 
 ### Lab metadata and curriculum

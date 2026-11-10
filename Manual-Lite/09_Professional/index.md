@@ -2,7 +2,7 @@
 
 Professional is the **Community / Academic profile plus learning analytics,
 reporting, cohort analysis, competency evidence, and research exports** on
-platform release **2.5.3**. Read the [core manual](../index.md) first.
+platform release **2.5.5**. Read the [core manual](../index.md) first.
 Everything in it still applies to Professional.
 
 ## What is different in Professional

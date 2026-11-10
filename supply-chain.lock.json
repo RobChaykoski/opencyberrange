@@ -37,10 +37,10 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "71e3deec8155ca37b40dd4908d43c8e45634439c1821be4fa145b0a8f7cd607e"
+      "sha256": "15cfc4471cdf3b4bdd0e15e1bbc5e1092974544416b92a52265dad0c3af941bf"
     },
     "platform/backend/app/version.py": {
-      "sha256": "299ec8ae3ec9b15a19945cc647cf82b30f6d2ecc38ea560e69c2ac57dc53571b"
+      "sha256": "8743c52384e2d8ef739ba0ef8df3ddd4bc691cea227143c8d7cdd8a1eeb049f7"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -52,10 +52,10 @@
       "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "385a0aa4b6864e3216fb761bb7ce1ac4a4ca01597b70c3ef9ff75486761b7756"
+      "sha256": "2de5c02ad3423198bbef2f0b532c7f51ddd7b196376494081ff2b24e12fa54cb"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "5a2958897c6bcd5352b10d8dec76b6c43efe7fdea82f5179bd3d010e50e61d42"
+      "sha256": "59d539c2dc89a06a78de9e55f075d11e5cc82dba5fbb2b2ee15d960738ca8244"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -76,10 +76,10 @@
       "sha256": "9a375d39eccad532d4c41a2246612996cd30c7fd4782235e72f86b6b44671d6c"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "a9def612dd34c40d039c0a200ead1c916195c695732113b879ce74962ec1bff3"
+      "sha256": "74973b0a9a2653ad3253d2b79ac704336e39e4f4382f11e80e3553473265b702"
     },
     "platform/frontend/package.json": {
-      "sha256": "3d53fcd601a17a98fc09ccfe3f26d4e48c7ffcb3625c39f76a5f5fedb8718307"
+      "sha256": "1e343b86955c4f9bab56066089ee04dd040057851098b7f20ac4db03b53aa724"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "a4b457c0ed092a1273cd88268d526984314f8cb9a4a3d1590d8b557a05c5aff6"
@@ -112,7 +112,7 @@
       "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
     },
     "scripts/status-dashboard.py": {
-      "sha256": "47772da6b64696f3fca9acd846a32b14dc197897e5164de23b453289daeb009f"
+      "sha256": "10c7cbd38b45a248351a9ee72f896a6e0d571cb4ae93874910cc51dfcf257402"
     },
     "scripts/supply_chain.py": {
       "sha256": "80a4482d053252d18d3f2374843e1bdf51889c399aacd7a92d8e4b71a3652d41"
@@ -124,7 +124,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "c9a5fffd0e84922ede7de4c08b739983f52972a12f0d26fda37d094fa9ef14c9"
+      "sha256": "7757e0791c6b4e386769bc84ff901c9c20e3d4a642a63bad1cac99dde6311b28"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1065,6 +1065,6 @@
       ]
     }
   },
-  "release": "2.5.4",
+  "release": "2.5.5",
   "schema": 1
 }

@@ -20,9 +20,9 @@ environment variables:
 
     [
       {"label": "OCR", "role": "production", "url": "https://ocr.swocts.com",
-       "expected_version": "2.5.4"},
+       "expected_version": "2.5.5"},
       {"label": "CTFd host OCR", "role": "internal", "url": "https://172.16.16.41",
-       "expected_version": "2.5.4"}
+       "expected_version": "2.5.5"}
     ]
 
 The `192.168.120.0/24` addresses are documentation placeholders. Replace them
@@ -52,14 +52,14 @@ DEFAULT_HOSTS = [
         "label": "OCR",
         "role": "production",
         "url": os.environ.get("OCR_STATUS_PROD_URL", "https://ocr.swocts.com"),
-        "expected_version": "2.5.4",
+        "expected_version": "2.5.5",
         "line": "OCR public deployment",
     },
     {
         "label": "CTFd host OCR",
         "role": "internal",
         "url": os.environ.get("OCR_STATUS_DEV_URL", "https://172.16.16.41"),
-        "expected_version": "2.5.4",
+        "expected_version": "2.5.5",
         "line": "OCR stack on the CTFd host",
     },
 ]

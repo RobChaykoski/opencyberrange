@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-ARG PLATFORM_VERSION=2.5.4
+ARG PLATFORM_VERSION=2.5.5
 ARG BUILD_REVISION=unknown
 
 LABEL org.opencontainers.image.title="SWOCTS Cyber Range backend" \
