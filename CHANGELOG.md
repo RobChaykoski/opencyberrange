@@ -85,6 +85,11 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   client routes only its own lab `/24`, and the client pool moved to
   `10.255.x.y`. Existing VPN configs must be re-downloaded; a reallocation
   script and route verifier are included.
+- Updated Cyber DNA to formula `2026.13`: raw event joins no longer add Leader.
+  Event exercises still count as normal labs, and event success badges (first
+  blood, clean sweep, perfect event, placement) still count through
+  achievements. Event participation certificates are credentials, not Cyber DNA
+  signals.
 
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party

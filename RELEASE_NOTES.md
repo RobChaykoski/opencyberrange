@@ -23,6 +23,9 @@ These changes are on `main` after the `v2.5.5` tag and are not part of the
   and token trust, and joiner/mover/leaver access review.
 - Deployment scripts use ASCII status markers for clean logs in Windows
   terminals and CI.
+- Cyber DNA `2026.13` no longer scores raw event participation. Event success
+  badges and event lab completions still count; participation certificates are
+  credentials, not Cyber DNA signals.
 - Startup schema initialization serialized across workers.
 
 ## VPN configuration update

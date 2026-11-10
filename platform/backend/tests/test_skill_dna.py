@@ -216,13 +216,48 @@ def test_empty_profile_starts_at_recruit(db_session, test_user):
     assert dna["titles"]["titles"][0]["unlocked"] is True
 
 
+def test_event_participation_is_not_scored_until_event_success(db_session, test_user):
+    now = datetime.now(timezone.utc)
+    competition = Competition(
+        name="Skill DNA Cup",
+        start_at=now - timedelta(days=1),
+        end_at=now + timedelta(days=1),
+        is_active=True,
+    )
+    db_session.add(competition)
+    db_session.commit()
+    db_session.refresh(competition)
+    db_session.add(
+        CompetitionParticipant(competition_id=competition.id, user_id=test_user.id)
+    )
+    db_session.commit()
+
+    dna = build_skill_dna(db_session, test_user)
+    leader = next(row for row in dna["dimensions"] if row["key"] == "leader")
+    assert leader["score"] == 0, "joining an event alone should not add Cyber DNA"
+
+    db_session.add(
+        Achievement(
+            user_id=test_user.id,
+            achievement_type=f"comp_{competition.id}_ch",
+            awarded_at=now,
+        )
+    )
+    db_session.commit()
+
+    dna = build_skill_dna(db_session, test_user)
+    leader = next(row for row in dna["dimensions"] if row["key"] == "leader")
+    assert leader["score"] > 0, "event success should be visible as achievement evidence"
+    assert "event awards" in leader["evidence"]
+
+
 def test_skill_dna_scores_and_class(db_session, test_user):
     _seed_activity(db_session, test_user)
 
     dna = build_skill_dna(db_session, test_user)
     scores = {row["key"]: row["score"] for row in dna["dimensions"]}
 
-    assert dna["formula_version"] == "2026.12"
+    assert dna["formula_version"] == "2026.13"
     assert scores["explorer"] > 0
     assert scores["builder"] > 0
     assert scores["tester"] > 0

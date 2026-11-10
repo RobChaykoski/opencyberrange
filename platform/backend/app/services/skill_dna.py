@@ -26,7 +26,6 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models import (
     Achievement,
-    CompetitionParticipant,
     Course,
     CourseEnrollment,
     ExerciseQuizAttempt,
@@ -40,7 +39,7 @@ from app.models import (
 )
 from app.services.titles import resolve_titles
 
-FORMULA_VERSION = "2026.12"
+FORMULA_VERSION = "2026.13"
 
 DIMENSION_ORDER = ("explorer", "builder", "tester", "defender", "investigator", "leader")
 
@@ -307,9 +306,15 @@ def _signals(db: Session, user_id: int) -> dict:
         .scalar()
         or 0
     )
-    competitions = (
-        db.query(func.count(CompetitionParticipant.id))
-        .filter(CompetitionParticipant.user_id == user_id)
+    # Event participation is context, not a trait score. Event success is
+    # captured by the comp_* achievement badges (first blood, clean sweep,
+    # perfect event, placement), and the event exercises count as normal labs.
+    event_achievements = (
+        db.query(func.count(Achievement.id))
+        .filter(
+            Achievement.user_id == user_id,
+            Achievement.achievement_type.like("comp_%"),
+        )
         .scalar()
         or 0
     )
@@ -369,7 +374,7 @@ def _signals(db: Session, user_id: int) -> dict:
         "perfect_labs": perfect,
         "advanced_labs": advanced,
         "achievements": int(achievements),
-        "competitions": int(competitions),
+        "event_achievements": int(event_achievements),
         "courses": int(courses),
         "instructed_courses": int(instructed),
         "likes_given": int(likes_given),
@@ -414,8 +419,7 @@ def _scores(signals: dict) -> dict[str, int]:
         + 2 * min(len(signals["categories"]), 5)
     )
     leader = _clamp(
-        12 * min(signals["competitions"], 5)
-        + 6 * min(signals["courses"], 5)
+        6 * min(signals["courses"], 5)
         + 2 * min(signals["achievements"], 20)
         + 4 * min(signals["advanced_labs"], 10)
         + 8 * min(signals["instructed_courses"], 3)
@@ -469,7 +473,7 @@ def _evidence(spec: DimensionSpec, signals: dict, score: int) -> str:
             f"{len(signals['investigator_tracks'])} tracks"
         )
     return (
-        f"{signals['competitions']} events · "
+        f"{signals['event_achievements']} event awards · "
         f"{signals['courses']} courses · "
         f"{signals['achievements']} badges"
     )
@@ -491,7 +495,7 @@ def _affinity_counts(signals: dict) -> dict[str, int]:
         "defensive": signals["defender_labs"],
         "investigative": signals["investigator_labs"],
         "leadership": (
-            signals["competitions"]
+            signals["event_achievements"]
             + signals["courses"]
             + signals["instructed_courses"]
             + signals["advanced_labs"]
@@ -525,7 +529,7 @@ def _affinity_evidence(spec: AffinitySpec, signals: dict) -> str:
             f"{len(signals['investigator_tracks'])} tracks"
         )
     return (
-        f"{signals['competitions']} events · "
+        f"{signals['event_achievements']} event awards · "
         f"{signals['courses']} courses · "
         f"{signals['instructed_courses']} courses taught · "
         f"{signals['advanced_labs']} advanced labs"

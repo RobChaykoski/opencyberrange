@@ -18,7 +18,7 @@ prediction of job performance, or a claim about a learner's ability.
 | Tester | Assessor | Authorised offensive testing: exploitation, privilege escalation, post-exploitation, assessment, and reporting | Web application testing, penetration testing, AppSec |
 | Defender | Warden | Defensive, forensics, network-analysis, and OT practice | SOC, network defence, incident response |
 | Investigator | Seeker | OSINT, reconnaissance, traffic analysis, and forensics practice | DFIR, malware analysis, forensics |
-| Leader | Commander | Events, courses, badges, advanced labs, teaching | Security leadership, governance, programme delivery |
+| Leader | Commander | Event success, courses, badges, advanced labs, teaching | Security leadership, governance, programme delivery |
 
 The class is the highest-scoring trait. Ties break in the order Explorer,
 Builder, Tester, Defender, Investigator, Leader. A learner with no activity is a
@@ -37,7 +37,7 @@ the traits.
 | Offensive Security / Penetration Testing | Web, exploitation, privilege-escalation, post-exploitation, credential-attack, and supporting reconnaissance or enumeration labs | Penetration tester, red team operator, security consultant |
 | Defensive Security / SOC | Forensics, network-analysis, and OT labs | SOC analyst, detection engineer, network security analyst |
 | DFIR / Investigation | OSINT, forensics, malware, and evidence-handling labs | DFIR analyst, forensic examiner, threat intelligence analyst |
-| Security Leadership / Education | Events, courses, advanced work, and teaching | Security lead, security educator, programme coordinator |
+| Security Leadership / Education | Event success, courses, advanced work, and teaching | Security lead, security educator, programme coordinator |
 
 Each affinity reports an evidence level (`no_evidence`, `early`, `growing`,
 `strong`) and the raw evidence behind it. The strongest positive affinity is
@@ -72,7 +72,7 @@ planned.
 ## Score model
 
 Each trait is scored from 0 to 100. Scores are capped, so a very active learner
-cannot exceed 100. Formula version: **2026.12**.
+cannot exceed 100. Formula version: **2026.13**.
 
 ```text
 Explorer = 7 × tracks + 2 × categories + 1.2 × min(opened_labs, 20)
@@ -98,8 +98,7 @@ Investigator = 9 × min(investigator_labs, 12)
                + 3 × min(investigator_tracks, 4)
                + 2 × min(categories, 5)
 
-Leader   = 12 × min(competitions, 5)
-           + 6 × min(courses, 5)
+Leader   = 6 × min(courses, 5)
            + 2 × min(achievements, 20)
            + 4 × min(advanced_labs, 10)
            + 8 × min(instructed_courses, 3)
@@ -145,8 +144,9 @@ exploitation, privilege escalation, post-exploitation, and credential attacks.
 - Defender and Investigator are deliberately different lenses on overlapping
   content. A forensics lab can feed both, because it is both defensive work and
   investigative work.
-- Leader rewards community and cohort participation, events, advanced
-  work, and teaching. It is not a measure of seniority.
+- Leader rewards courses, event success, advanced work, and teaching. Joining an
+  event is not scored; event exercises count as normal labs and event success
+  badges count as achievements. It is not a measure of seniority.
 
 ## Content additions and score validity
 
@@ -162,13 +162,13 @@ The new content maps as follows:
 
 Two validity points are worth watching:
 
-1. **Leader is a participation/leadership trait, not a lab-badge counter.**
-   The three per-lab badges and the Digital Frontier collection add up to +8
-   Leader through `2 × min(achievements, 20)`. A learner who completes only
-   these labs could look more "leadership" active than they are. The recommended
-   next step is to separate **lab-skill badges** from **leadership badges**
-   (courses, events, teaching, advanced work) before changing the weight. That
-   is a formula-version change with a before/after sample, not a silent edit.
+1. **Event participation is context, not a trait score.**
+   The raw `competitions` join count was removed from Leader in 2026.13. Event
+   exercises count as normal labs through completion and time, while event
+   success badges (first blood, clean sweep, perfect event, placement) count
+   through `achievements`. Joining an event without solving anything does not
+   raise Leader. A participation certificate is a credential, not a Cyber DNA
+   signal; it is not counted in the formula.
 2. **Category breadth is shared by Defender and Investigator.**
    An OSINT lab can increase the shared `categories` term and therefore add to
    both branches, even when no defensive lab was completed. The overlap is
@@ -223,8 +223,10 @@ Certification Roadmap, with attribution.
 
 - `lab_completions` — completed labs, attempts, hints, time.
 - `lab_sessions` — labs opened, including unfinished labs.
-- `achievements` — badges and competition awards.
-- `competition_participants` — event participation.
+- `achievements` — badges, including event success badges (first blood, clean
+  sweep, perfect event, placement).
+- `competition_participants` — event context; used to show participation but not
+  scored in Cyber DNA.
 - `course_enrollments` and `courses` — cohort and teaching activity.
 - `exercise_reactions` — community likes given.
 
