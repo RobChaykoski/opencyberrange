@@ -58,32 +58,38 @@ def _read_build() -> dict:
         return {}
 
 
+def _safe_scalar(db: Session, sql: str):
+    try:
+        with db.begin_nested():
+            return db.execute(text(sql)).scalar()
+    except Exception:
+        return None
+
+
 def _database_runtime(db: Session) -> dict[str, str]:
     runtime: dict[str, str] = {}
-    try:
-        version = db.execute(text("SHOW server_version")).scalar()
-        if version:
-            runtime["postgres"] = str(version).split()[0]
-    except Exception:
-        pass
-    try:
-        revision = db.execute(text("SELECT version_num FROM alembic_version")).scalar()
+    version = _safe_scalar(db, "SHOW server_version")
+    if version:
+        runtime["postgres"] = str(version).split()[0]
+    if _safe_scalar(db, "SELECT to_regclass('public.alembic_version') IS NOT NULL"):
+        revision = _safe_scalar(db, "SELECT version_num FROM alembic_version")
         runtime["schema_revision"] = str(revision or "unknown")
-    except Exception:
+    else:
         runtime["schema_revision"] = "unknown"
     return runtime
 
 
 def _content_counts(db: Session) -> dict[str, int]:
     try:
-        row = db.execute(
-            text(
-                "SELECT "
-                "(SELECT COUNT(*) FROM labs) AS labs, "
-                "(SELECT COUNT(*) FROM tracks) AS tracks, "
-                "(SELECT COUNT(*) FROM levels) AS levels"
-            )
-        ).mappings().one()
+        with db.begin_nested():
+            row = db.execute(
+                text(
+                    "SELECT "
+                    "(SELECT COUNT(*) FROM labs) AS labs, "
+                    "(SELECT COUNT(*) FROM tracks) AS tracks, "
+                    "(SELECT COUNT(*) FROM levels) AS levels"
+                )
+            ).mappings().one()
         return {key: int(row[key] or 0) for key in ("labs", "tracks", "levels")}
     except Exception:
         return {}
