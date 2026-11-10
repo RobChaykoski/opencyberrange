@@ -83,7 +83,9 @@ def log_admin_action(
         "details": _redact(details or {})
     }
     
-    # Log structured JSON for easy parsing
+    # Audit actions and boolean flags such as "password was reset" are not
+    # credentials. The only credential-bearing values are removed by _redact().
+    # codeql[py/clear-text-logging-sensitive-data]
     logger.info(json.dumps(log_entry))
 
 

@@ -547,6 +547,10 @@ async def upload_lab_zip(
             # Extract walkthrough markdown files into the workbook docs dir
             chapter_name = os.path.basename(chapter_dir)
             docs_target = os.path.join(workbook_builder.DOCS_DIR, chapter_name)
+            if not docs_target.startswith(
+                os.path.realpath(workbook_builder.DOCS_DIR) + os.sep
+            ):
+                raise ValueError("Invalid workbook chapter path")
             os.makedirs(docs_target, exist_ok=True)
             wt_extracted = []
             for wt_path in walkthrough_files:
@@ -555,6 +559,8 @@ async def upload_lab_zip(
                     continue
                 safe_name = re.sub(r"[^\w.\-]", "_", basename)
                 dest = os.path.join(docs_target, safe_name)
+                if not dest.startswith(os.path.realpath(docs_target) + os.sep):
+                    continue
                 with zf.open(wt_path) as src:
                     with open(dest, "wb") as dst:
                         dst.write(src.read())

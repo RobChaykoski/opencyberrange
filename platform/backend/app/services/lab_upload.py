@@ -190,9 +190,13 @@ def relocate_lab(lab, new_level, db, labs_dir: Optional[str] = None) -> str:
 
     if old_dir:
         from app.services.docker_manager import get_track_directory_name
-        track_dir = os.path.basename(get_track_directory_name(track.slug))
-        safe_slug = os.path.basename(new_slug)
-        new_dir = os.path.join(labs_root, track_dir, safe_slug)
+        new_dir = os.path.join(
+            labs_root,
+            os.path.basename(get_track_directory_name(track.slug)),
+            os.path.basename(new_slug),
+        )
+        if not new_dir.startswith(os.path.realpath(labs_root) + os.sep):
+            raise ZipValidationError("New lab directory is outside the labs root")
         if os.path.exists(new_dir):
             raise ZipValidationError(f"Directory already exists: {new_dir}")
         os.makedirs(os.path.dirname(new_dir), exist_ok=True)

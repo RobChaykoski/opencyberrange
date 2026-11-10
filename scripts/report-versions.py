@@ -29,7 +29,9 @@ LAB_SCOPES = (
     "UbuntuBox/",
     "RemnuxBox/",
 )
-REQUIREMENT_RE = re.compile(  # codeql[py/bad-tag-filter]
+# This pattern parses Python requirement specifiers, not HTML comments.
+# codeql[py/bad-tag-filter]
+REQUIREMENT_RE = re.compile(
     r"^(?P<name>[A-Za-z0-9_.-]+)(?:\[[^\]]+\])?\s*(?P<spec>==|>=|<=|~=|!=|>|<).*$"
 )
 FROM_RE = re.compile(r"^\s*FROM\s+(?P<image>[^\s#]+)", re.IGNORECASE)
