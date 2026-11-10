@@ -113,11 +113,9 @@ def _integrity_summary() -> dict:
 
 def _image_digests() -> dict[str, str]:
     try:
-        from app.services import docker_manager
+        import docker
 
-        client = docker_manager.client
-        if client is None:
-            return {}
+        client = docker.from_env()
         names = {
             "backend": os.environ.get("OCR_BACKEND_CONTAINER", "ocr-backend"),
             "frontend": os.environ.get("OCR_FRONTEND_CONTAINER", "ocr-frontend"),
@@ -135,6 +133,15 @@ def _image_digests() -> dict[str, str]:
         return {}
 
 
+def _edition_label(value: str) -> str:
+    return {
+        "lite": "Community / Academic",
+        "community": "Community / Academic",
+        "professional": "Professional",
+        "enterprise": "Enterprise",
+    }.get(str(value).lower(), str(value))
+
+
 def _live_overlay(data: dict, db: Session) -> dict:
     build = _read_build()
     platform_data = data.setdefault("platform", {})
@@ -148,7 +155,7 @@ def _live_overlay(data: dict, db: Session) -> dict:
     try:
         from app import entitlement
 
-        runtime["edition"] = entitlement.edition_name()
+        runtime["edition"] = _edition_label(entitlement.edition_name())
     except Exception:
         runtime["edition"] = str(
             build.get("edition") or platform_data.get("edition") or ""
