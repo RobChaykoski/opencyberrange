@@ -179,6 +179,11 @@ const routes = [
   {
     path: '/about',
     name: 'About',
+    component: () => import('../views/PublicAbout.vue')
+  },
+  {
+    path: '/about/installation',
+    name: 'InstallationAbout',
     component: () => import('../views/About.vue'),
     meta: { requiresAuth: true }
   },

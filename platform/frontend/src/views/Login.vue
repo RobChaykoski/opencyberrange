@@ -220,6 +220,9 @@
               Privacy questions:
               <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>.
             </p>
+            <p class="login-about">
+              New here? <router-link to="/about">About this site</router-link>
+            </p>
           </div>
         </div>
       </main>
@@ -942,6 +945,19 @@ const handleLogin = async () => {
 
 .login-privacy a:hover {
   text-decoration-thickness: 2px;
+}
+
+.login-about {
+  margin: 0.55rem auto 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.login-about a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .login-form a:focus-visible,

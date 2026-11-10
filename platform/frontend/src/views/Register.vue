@@ -355,6 +355,10 @@
               Already have an account?
               <router-link to="/login" class="login-link">Sign in here</router-link>
             </p>
+            <p class="login-text login-text--about">
+              First time here?
+              <router-link to="/about" class="login-link">About this site</router-link>
+            </p>
           </div>
         </div>
       </main>
@@ -1094,6 +1098,10 @@ const handleRegister = async () => {
 .login-text {
   color: var(--text-secondary);
   font-size: 0.875rem;
+}
+
+.login-text--about {
+  margin-top: 0.4rem;
 }
 
 .login-link {

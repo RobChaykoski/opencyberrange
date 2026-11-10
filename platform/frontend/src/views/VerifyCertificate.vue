@@ -1,107 +1,171 @@
 <template>
   <div class="verify-page">
-    <main class="verify-card">
-      <header class="verify-card__header">
-        <p class="verify-card__eyebrow">SWOCTS Cyber Range</p>
-        <h1>Verify a certificate</h1>
-        <p class="verify-card__lead">
-          Enter the certificate ID printed on the certificate, or scan its QR
-          code. Verification confirms the track, level, completion count, and
-          award date. It does not expose account details.
-        </p>
-      </header>
+    <header class="verify-nav">
+      <router-link to="/" class="verify-brand" aria-label="SWOCTS Cyber Range home">
+        <img src="/swocts-cyber-range-mark.png" alt="" />
+        <span>SWOCTS Cyber Range</span>
+      </router-link>
+      <nav class="verify-nav__links" aria-label="Public links">
+        <router-link to="/about">About</router-link>
+        <router-link v-if="signedIn" to="/dashboard">Dashboard</router-link>
+        <router-link v-if="signedIn && role === 'admin'" to="/admin">Admin</router-link>
+        <router-link v-if="!signedIn" to="/login">Sign in</router-link>
+      </nav>
+    </header>
 
-      <form v-if="!result && !loading" class="verify-form" @submit.prevent="submit">
-        <label for="certificate-id">Certificate ID</label>
-        <div class="verify-form__row">
-          <input
-            id="certificate-id"
-            v-model="certificateId"
-            type="text"
-            class="form-input"
-            placeholder="OCR-TRACK-L01-0123456789"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-            :aria-invalid="validationError ? 'true' : 'false'"
-            aria-describedby="certificate-id-error"
-            required
-            @input="clearValidationError"
-          />
-          <button type="submit" class="btn btn--primary" :disabled="!certificateId">
-            Verify
-          </button>
-        </div>
-        <p v-if="validationError" id="certificate-id-error" class="verify-form__error" role="alert">
-          {{ validationError }}
-        </p>
-      </form>
-
-      <p v-if="loading" class="verify-state" role="status">Checking the certificate...</p>
-
-      <p v-if="error" class="verify-form__error" role="alert">{{ error }}</p>
-
-      <section v-if="result" class="verify-result" :class="result.valid ? 'verify-result--valid' : 'verify-result--invalid'" aria-live="polite">
-        <template v-if="result.valid">
-          <p class="verify-result__kicker">Certificate verified</p>
-          <h2>{{ result.recipient }}</h2>
-          <p class="verify-result__subtitle">
-            completed <strong>Level {{ result.level_number }}: {{ result.level_name }}</strong>
-            in <strong>{{ result.track_name }}</strong>.
+    <main class="verify-layout">
+      <section class="verify-card">
+        <header class="verify-card__header">
+          <p class="verify-card__eyebrow">Certificate verification</p>
+          <h1>Verify a certificate</h1>
+          <p class="verify-card__lead">
+            Enter the certificate ID printed on the certificate, or scan its QR
+            code. Verification confirms the track, level, completion count, and
+            award date. It does not expose account details.
           </p>
-          <dl class="verify-result__details">
-            <div>
-              <dt>Exercises</dt>
-              <dd>{{ result.exercises_completed }} / {{ result.exercises_total }}</dd>
-            </div>
-            <div>
-              <dt>Awarded</dt>
-              <dd>{{ result.issued_display }}</dd>
-            </div>
-            <div>
-              <dt>Issuer</dt>
-              <dd>{{ result.issuer }}</dd>
-            </div>
-            <div>
-              <dt>Certificate ID</dt>
-              <dd><code>{{ result.certificate_id }}</code></dd>
-            </div>
-          </dl>
-          <p class="verify-result__note">{{ result.message }}</p>
-          <div class="verify-result__actions">
-            <button type="button" class="btn btn--secondary" @click="copyShareLink">
-              {{ copied ? 'Link copied' : 'Copy link' }}
-            </button>
-            <a
-              class="btn btn--secondary"
-              :href="linkedInUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Share on LinkedIn
-            </a>
-            <button type="button" class="btn btn--secondary" @click="shareNative">
-              Share
+        </header>
+
+        <form v-if="!result && !loading" class="verify-form" @submit.prevent="submit">
+          <label for="certificate-id">Certificate ID</label>
+          <div class="verify-form__row">
+            <input
+              id="certificate-id"
+              v-model="certificateId"
+              type="text"
+              class="form-input"
+              placeholder="OCR-TRACK-L01-0123456789"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              :aria-invalid="validationError ? 'true' : 'false'"
+              aria-describedby="certificate-id-error"
+              required
+              @input="clearValidationError"
+            />
+            <button type="submit" class="btn btn--primary" :disabled="!certificateId">
+              Verify
             </button>
           </div>
-        </template>
-        <template v-else>
-          <p class="verify-result__kicker">Not verified</p>
-          <h2>We could not confirm this certificate.</h2>
-          <p class="verify-result__subtitle">{{ result.reason }}</p>
-          <p class="verify-result__note">
-            Check the ID for typos. If it still fails, contact the issuer.
+          <p v-if="validationError" id="certificate-id-error" class="verify-form__error" role="alert">
+            {{ validationError }}
           </p>
-        </template>
-        <button type="button" class="btn btn--secondary" @click="reset">
-          Check another certificate
-        </button>
+          <p class="verify-form__hint">
+            The ID is printed near the bottom of the certificate and starts with
+            <code>OCR-</code>.
+          </p>
+        </form>
+
+        <p v-if="loading" class="verify-state" role="status">Checking the certificate...</p>
+
+        <p v-if="error" class="verify-form__error" role="alert">{{ error }}</p>
+
+        <section v-if="result" class="verify-result" :class="result.valid ? 'verify-result--valid' : 'verify-result--invalid'" aria-live="polite">
+          <template v-if="result.valid">
+            <p class="verify-result__kicker">Certificate verified</p>
+            <h2>{{ result.recipient }}</h2>
+            <p class="verify-result__subtitle">
+              completed <strong>Level {{ result.level_number }}: {{ result.level_name }}</strong>
+              in <strong>{{ result.track_name }}</strong>.
+            </p>
+            <dl class="verify-result__details">
+              <div>
+                <dt>Exercises</dt>
+                <dd>{{ result.exercises_completed }} / {{ result.exercises_total }}</dd>
+              </div>
+              <div>
+                <dt>Awarded</dt>
+                <dd>{{ result.issued_display }}</dd>
+              </div>
+              <div>
+                <dt>Issuer</dt>
+                <dd>{{ result.issuer }}</dd>
+              </div>
+              <div>
+                <dt>Certificate ID</dt>
+                <dd><code>{{ result.certificate_id }}</code></dd>
+              </div>
+            </dl>
+            <p class="verify-result__note">{{ result.message }}</p>
+            <div class="verify-result__actions">
+              <button type="button" class="btn btn--secondary" @click="copyShareLink">
+                {{ copied ? 'Link copied' : 'Copy link' }}
+              </button>
+              <a
+                class="btn btn--secondary"
+                :href="linkedInUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Share on LinkedIn
+              </a>
+              <button type="button" class="btn btn--secondary" @click="shareNative">
+                Share
+              </button>
+            </div>
+          </template>
+          <template v-else>
+            <p class="verify-result__kicker">Not verified</p>
+            <h2>We could not confirm this certificate.</h2>
+            <p class="verify-result__subtitle">{{ result.reason }}</p>
+            <p class="verify-result__note">
+              Check the ID for typos. If it still fails, contact the issuer.
+            </p>
+          </template>
+          <button type="button" class="btn btn--secondary" @click="reset">
+            Check another certificate
+          </button>
+        </section>
+
+        <p class="verify-card__footer">
+          <router-link to="/">SWOCTS Cyber Range</router-link>
+          <span aria-hidden="true"> · </span>
+          <router-link to="/about">About this site</router-link>
+        </p>
       </section>
 
-      <p class="verify-card__footer">
-        <router-link to="/">SWOCTS Cyber Range</router-link>
-      </p>
+      <aside class="verify-side" aria-label="Verification help">
+        <article class="verify-side__card">
+          <h2>What this confirms</h2>
+          <ul>
+            <li>Track and level completed</li>
+            <li>Exercises completed</li>
+            <li>Award date</li>
+            <li>Issuer and certificate ID</li>
+          </ul>
+        </article>
+
+        <article class="verify-side__card">
+          <h2>Where to find the ID</h2>
+          <p>
+            The certificate ID is printed near the bottom of the PDF or printed
+            certificate. You can also scan the QR code on the certificate.
+          </p>
+          <code class="verify-example">OCR-WEB-L01-0123456789</code>
+        </article>
+
+        <article class="verify-side__card verify-side__card--privacy">
+          <h2>Privacy</h2>
+          <p>
+            Verification returns only public certificate fields. It does not show
+            a username, email address, or other account details. Read the
+            <router-link to="/privacy">Privacy notice</router-link>.
+          </p>
+        </article>
+
+        <div class="verify-side__cta">
+          <p>Viewing the platform for the first time?</p>
+          <router-link to="/about" class="btn btn--secondary btn--sm">About this site</router-link>
+        </div>
+      </aside>
     </main>
+
+    <footer class="verify-footer">
+      <span>Powered by OpenCyberRange.</span>
+      <nav aria-label="Footer links">
+        <router-link to="/privacy">Privacy</router-link>
+        <router-link to="/about">About</router-link>
+      </nav>
+    </footer>
   </div>
 </template>
 
@@ -123,6 +187,9 @@ const error = ref('')
 const validationError = ref('')
 const result = ref(null)
 const copied = ref(false)
+const user = JSON.parse(localStorage.getItem('user') || '{}')
+const signedIn = Boolean(localStorage.getItem('token'))
+const role = user.role || 'student'
 
 const shareUrl = computed(() => window.location.href)
 const linkedInUrl = computed(
@@ -445,4 +512,207 @@ watch(
     grid-template-columns: 1fr;
   }
 }
+
+/* Public verification layout */
+.verify-page {
+  display: flex;
+  flex-direction: column;
+  place-items: initial;
+  padding: 0;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.14), transparent 40%),
+    radial-gradient(circle at 90% 25%, rgba(139, 92, 246, 0.12), transparent 44%),
+    var(--bg-primary);
+}
+
+.verify-nav {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 1rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.verify-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.verify-brand img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.verify-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.85rem;
+}
+
+.verify-nav__links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.verify-nav__links a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.verify-layout {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.85fr);
+  gap: 1.25rem;
+  align-items: start;
+  padding: 1.5rem 0 2rem;
+}
+
+.verify-card {
+  width: 100%;
+  padding: 2rem;
+}
+
+.verify-card__header {
+  max-width: 62ch;
+}
+
+.verify-form__hint {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.verify-form__hint code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  color: var(--text-secondary);
+}
+
+.verify-side {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.verify-side__card {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.verify-side__card h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.verify-side__card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.verify-side__card ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.verify-side__card--privacy {
+  border-left: 3px solid var(--accent);
+}
+
+.verify-example {
+  display: block;
+  margin-top: 0.55rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.76rem;
+  overflow-wrap: anywhere;
+}
+
+.verify-side__cta {
+  padding: 1rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.verify-side__cta p {
+  margin: 0 0 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+}
+
+.verify-footer {
+  width: min(100% - 2rem, 1100px);
+  margin: 0 auto;
+  padding: 1rem 0 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.verify-footer nav {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.verify-footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.verify-footer a:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.verify-page a:focus-visible,
+.verify-page button:focus-visible,
+.verify-page input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .verify-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .verify-nav {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .verify-layout {
+    padding-top: 0.75rem;
+  }
+}
+
 </style>
