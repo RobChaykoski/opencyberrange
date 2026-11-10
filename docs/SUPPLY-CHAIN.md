@@ -62,6 +62,11 @@ Release 2.5.3 is signed with:
 - Public key: [`../supply-chain-release-key.asc`](../supply-chain-release-key.asc)
 - Signature: `supply-chain.lock.json.asc`
 
+Release 2.5.4 regenerated `supply-chain.lock.json` for the new lab and version
+inputs. The detached signature must be refreshed with the same release key
+before publishing signed 2.5.4 artefacts. CI verifies the lock contents on every
+push; the signature check remains a release-owner step.
+
 Import the public key before verifying:
 
 ```bash
