@@ -546,7 +546,9 @@ async def upload_lab_zip(
 
             # Extract walkthrough markdown files into the workbook docs dir
             chapter_name = os.path.basename(chapter_dir)
-            docs_target = os.path.join(workbook_builder.DOCS_DIR, chapter_name)
+            docs_target = os.path.realpath(
+                os.path.join(workbook_builder.DOCS_DIR, chapter_name)
+            )
             if not docs_target.startswith(
                 os.path.realpath(workbook_builder.DOCS_DIR) + os.sep
             ):
@@ -558,7 +560,7 @@ async def upload_lab_zip(
                 if not basename:
                     continue
                 safe_name = re.sub(r"[^\w.\-]", "_", basename)
-                dest = os.path.join(docs_target, safe_name)
+                dest = os.path.realpath(os.path.join(docs_target, safe_name))
                 if not dest.startswith(os.path.realpath(docs_target) + os.sep):
                     continue
                 with zf.open(wt_path) as src:

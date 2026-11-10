@@ -147,7 +147,7 @@ def extract_upload(zip_bytes: bytes, chapter_dir: str) -> dict:
     chapter_name = os.path.basename(chapter_dir)
     if chapter_name != chapter_dir or chapter_name in ("", ".", ".."):
         raise ValueError("Invalid chapter directory name")
-    target = os.path.join(DOCS_DIR, chapter_name)
+    target = os.path.realpath(os.path.join(DOCS_DIR, chapter_name))
     docs_root = os.path.realpath(DOCS_DIR)
     if not target.startswith(docs_root + os.sep):
         raise ValueError("Invalid chapter directory name")
@@ -184,7 +184,7 @@ def extract_upload(zip_bytes: bytes, chapter_dir: str) -> dict:
                     continue
                 # Sanitize filename
                 safe_name = re.sub(r"[^\w.\-]", "_", basename)
-                dest = os.path.join(target, safe_name)
+                dest = os.path.realpath(os.path.join(target, safe_name))
                 if not dest.startswith(os.path.realpath(target) + os.sep):
                     raise ValueError("Invalid markdown file name")
                 # Bounded read: defends against a zip entry whose header understates
