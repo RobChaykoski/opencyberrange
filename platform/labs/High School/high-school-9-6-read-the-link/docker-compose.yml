@@ -1,0 +1,31 @@
+services:
+  portal:
+    mem_limit: 128m
+    cpus: 0.15
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: linkcheck
+    labels:
+      ip_offset: "96"
+    environment:
+      LAB_MODE: "linkcheck"
+      FLAG: "OCR{read_the_host_not_the_wrapper}"
+      TITLE: "Read the Link Before You Click"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

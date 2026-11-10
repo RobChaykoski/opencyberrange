@@ -52,8 +52,16 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Added three entry-level High School Grade 9 CyberChef labs: Base64 decode,
   Caesar shift/ROT13, and a two-layer Base64 + ROT13 message, with workbook
   pages.
-- Added a student-tester and inclusive-curriculum review at
-  `docs/reviews/CYBERCHEF-LABS-REVIEW.md`.
+- Added three Grade 9 digital-safety labs: read a lookalike link without
+  clicking it, identify a disguised file before opening it, and a capstone that
+  combines both, with workbook pages.
+- Added a Grade 10 email-metadata lab covering envelope and display headers,
+  `Received` chains, SPF/DKIM/DMARC results, and custom `X-` headers.
+- Hardened the shared High School target with a restrictive CSP, `nosniff`,
+  `no-referrer`, frame denial, and a permissions policy.
+- Added student-tester and inclusive-curriculum reviews at
+  `docs/reviews/CYBERCHEF-LABS-REVIEW.md` and
+  `docs/reviews/DIGITAL-SAFETY-LABS-REVIEW.md`.
 
 ### Integrity and access
 - Added an audited review workflow for unattributed integrity-ledger writes.

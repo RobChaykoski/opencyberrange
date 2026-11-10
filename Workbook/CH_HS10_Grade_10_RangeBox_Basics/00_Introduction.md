@@ -15,7 +15,7 @@ the lab browser is available as a fallback.
 - The exercise panel open in SWOCTS Cyber Range
 - A RangeBox desktop, or the lab browser as a fallback
 
-## Three Ideas to Carry Forward
+## Four Ideas to Carry Forward
 
 ### 1. A hostname is a name
 
@@ -45,10 +45,18 @@ A web response includes:
 The body is what the page shows. The headers are the part people often forget
 to read.
 
+### 4. A message is more than its body
+
+An email carries routing and authentication headers that a mail app hides. The
+raw message records where it came from, which servers relayed it, and what the
+receiver's checks said. Reading those headers is the same skill as reading an
+HTTP response, applied to a message.
+
 ## Activities
 
 1. [RangeBox Network Basics](01_Network_Basics.md)
 2. [RangeBox Browser and Source](02_Browser_and_Source.md)
+3. [Dissect an Email](03_Email_Metadata.md)
 
 ## Safety Reminder
 

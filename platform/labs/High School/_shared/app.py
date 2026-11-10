@@ -3,11 +3,15 @@
 
 Each lab selects a mode with LAB_MODE and supplies its own FLAG:
 
-    welcome  - a welcome page and a downloadable text file
-    filehunt - a small evidence archive with one flag file among decoys
-    network  - a status endpoint and a token in the response headers
-    browser  - a page whose HTML source contains the flag
-    logs     - a synthetic web access log with a suspicious request
+    welcome   - a welcome page and a downloadable text file
+    filehunt  - a small evidence archive with one flag file among decoys
+    network   - a status endpoint and a token in the response headers
+    browser   - a page whose HTML source contains the flag
+    logs      - a synthetic web access log with a suspicious request
+    linkcheck - a message with a lookalike link and an encoded token
+    filetype  - a shared folder where one file's extension is wrong
+    capstone  - a forwarded notice that combines link and file checks
+    emailmeta - a raw email with routing, authentication, and custom headers
 
 Nothing here reaches the internet, calls a real service, or stores state.
 """
@@ -18,6 +22,7 @@ import io
 import json
 import os
 import zipfile
+from urllib.parse import quote
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 MODE = os.environ.get("LAB_MODE", "welcome")
@@ -335,6 +340,290 @@ def _cyberchef_message(kind: str) -> str:
     return base64.b64encode(codecs.encode(plain, "rot_13").encode("utf-8")).decode("ascii")
 
 
+def _linkcheck_message() -> str:
+    """A fictional message whose link hides the real host and an encoded token."""
+    encoded_flag = quote(FLAG, safe="")
+    return (
+        "From: Windsor Community Library <updates@windsorlibrary.example>\n"
+        "Subject: Your library account needs one quick check\n\n"
+        "Hello,\n\n"
+        "We are updating our catalogue. Please confirm your account within 24 hours:\n\n"
+        "https://windsorlibrary.example@windosrlibrary-secure.example/verify"
+        f"?next=%2Faccount%2Ftoken%2F{encoded_flag}\n\n"
+        "If you did not request this, ignore this message.\n\n"
+        "Thank you,\n"
+        "Library Services\n\n"
+        "Practice note: the .example domain is reserved for training.\n"
+        "Do not click the link. Copy it as text.\n"
+    )
+
+
+def linkcheck_body() -> str:
+    message = html.escape(_linkcheck_message())
+    return f"""
+      <span class="pill">Digital safety</span>
+      <h1>Read the link before you click</h1>
+      <p class="lede">A patron at the community library received this message.
+      The link looks close to the library's real address, but close is not the
+      same as correct. You do not need to open it to find out where it goes.</p>
+      <div class="card">
+        <h2>The message</h2>
+        <pre>{message}</pre>
+      </div>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Do not click the link. Copy it into CyberChef, decode the
+        <code>next</code> value, and recover the training token.</p>
+        <a class="button" href="/message.txt">Open message.txt</a>
+      </div>
+      <div class="card">
+        <h2>How to read a URL</h2>
+        <p>Read from the scheme to the right:</p>
+        <pre>scheme://userinfo@host:port/path?query#fragment</pre>
+        <p>The <strong>host</strong> is the part after the <code>@</code> and
+        before the next <code>/</code>. Text before the <code>@</code> is a
+        username, not the site. Percent-encoding such as <code>%2F</code> hides
+        characters until you decode them.</p>
+      </div>
+      <div class="card note">
+        <h2>Stay safe</h2>
+        <p>The link uses reserved <code>.example</code> domains and a fictional
+        practice target, so it cannot reach a real service. Never click a
+        suspicious link in real life, even to "see what happens".</p>
+      </div>
+    """
+
+
+FILE_DECOYS = {
+    "budget.pdf": (
+        "Community centre budget (draft)\n"
+        "Event supplies: $240\n"
+        "Room booking: $0 (donated)\n"
+        f"Training token: {DECOY_FLAG}\n"
+    ),
+    "agenda.txt": (
+        "Volunteer event agenda\n"
+        "09:00 Welcome\n"
+        "09:30 Accessibility walkthrough\n"
+        "11:00 Lunch\n"
+        "12:00 Close\n"
+    ),
+    "README.txt": (
+        "Community centre shared folder\n"
+        "==============================\n"
+        "event-photo.png  Group photo from the volunteer event\n"
+        "budget.pdf       Approved budget for the event\n"
+        "agenda.txt       Event agenda\n\n"
+        "If a file does not open the way you expect, do not force it.\n"
+        "Ask the coordinator for a fresh copy.\n"
+    ),
+}
+
+FILE_NAMES = ["event-photo.png", "budget.pdf", "agenda.txt", "README.txt"]
+
+
+def _disguised_zip(token: str, note: str) -> bytes:
+    """Return a ZIP archive that is deliberately served under a misleading name."""
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        archive.writestr("token.txt", f"Training token: {token}\n")
+        archive.writestr("notes.txt", note + "\n")
+    return buffer.getvalue()
+
+
+def filetype_body() -> str:
+    return """
+      <span class="pill">Digital safety</span>
+      <h1>Know the file before you open it</h1>
+      <p class="lede">A community centre volunteer downloaded files from a
+      shared event folder. One of them is not what its name says. A file
+      extension is a label, not proof of what is inside.</p>
+      <div class="card">
+        <h2>The shared folder</h2>
+        <ul>
+          <li><a href="/downloads/event-photo.png">event-photo.png</a> &mdash; group photo</li>
+          <li><a href="/downloads/budget.pdf">budget.pdf</a> &mdash; approved budget</li>
+          <li><a href="/downloads/agenda.txt">agenda.txt</a> &mdash; event agenda</li>
+          <li><a href="/downloads/README.txt">README.txt</a> &mdash; folder notes</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Download the files, identify their real types, and recover the
+        training token. Do not double-click or execute an unknown file.</p>
+        <pre>curl -O http://filesafe.lab:8080/downloads/event-photo.png
+curl -O http://filesafe.lab:8080/downloads/budget.pdf
+file event-photo.png budget.pdf</pre>
+      </div>
+      <div class="card">
+        <h2>What to notice</h2>
+        <p><code>file</code> reads the first bytes of a file and reports what
+        they indicate. It does not open or run the file. A ZIP archive starts
+        with the letters <code>PK</code>. A text file usually reports
+        <code>ASCII text</code> or <code>Unicode text</code>.</p>
+      </div>
+      <div class="card note">
+        <h2>If you are not sure</h2>
+        <p>Stop and ask. A suspicious file can be reported without opening it.
+        Never disable a security warning just to see what a file does.</p>
+      </div>
+    """
+
+
+def filetype_listing() -> str:
+    items = "".join(
+        f'<li><a href="/downloads/{html.escape(name)}">{html.escape(name)}</a></li>'
+        for name in FILE_NAMES
+    )
+    return f"""
+      <span class="pill">Shared folder</span>
+      <h1>Community centre downloads</h1>
+      <p class="lede">These are the files from the volunteer event folder.</p>
+      <ul>{items}</ul>
+      <p><a href="/">Back to the exercise</a></p>
+    """
+
+
+def _capstone_notice() -> str:
+    encoded_path = quote("/files/grant-pack.png", safe="")
+    return (
+        "From: Community Grants Office <grants@communitycentre.example>\n"
+        "Subject: Grant application review - action required\n\n"
+        "Your application has moved to review. Open the shared folder to confirm\n"
+        "the documents:\n\n"
+        "https://communitycentre.example@grant-portal-secure.example/review"
+        f"?next={encoded_path}\n\n"
+        "The practice mirror is at http://capstone.lab:8080. Decode the link to\n"
+        "find the file path, then request that path on the mirror.\n\n"
+        "Thank you,\n"
+        "Grants Office\n\n"
+        "Practice note: the .example domain is reserved for training.\n"
+        "Do not click the link. Copy it as text.\n"
+    )
+
+
+def capstone_body() -> str:
+    notice = html.escape(_capstone_notice())
+    return f"""
+      <span class="pill">Capstone</span>
+      <h1>Put the evidence together</h1>
+      <p class="lede">A volunteer forwarded a grant notice. The link looks
+      official, and the attachment is not the file it claims to be. Use the link
+      and file skills from the last two exercises to decide what to trust.</p>
+      <div class="card">
+        <h2>The forwarded notice</h2>
+        <pre>{notice}</pre>
+      </div>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Decode the link, find the file path, request that path from the
+        practice mirror, identify the real file type, and recover the training
+        token.</p>
+      </div>
+      <div class="card">
+        <h2>Work in order</h2>
+        <ol class="steps">
+          <li>Do not click the link. Copy it into CyberChef.</li>
+          <li>Use <strong>URL Decode</strong> to read the <code>next</code> value.</li>
+          <li>Request the decoded path on <code>http://capstone.lab:8080</code>.</li>
+          <li>Check the downloaded file&rsquo;s real type before opening it.</li>
+          <li>Extract the archive and submit the token.</li>
+        </ol>
+      </div>
+      <div class="card note">
+        <h2>Explain your decision</h2>
+        <p>The flag is only part of the task. Be ready to say which evidence
+        made the message suspicious and what you would tell the volunteer to do
+        next.</p>
+      </div>
+    """
+
+
+def _email_message() -> str:
+    """A fictional raw email with realistic routing and authentication metadata."""
+    return (
+        "Return-Path: <bounce@mailer-relay.example>\n"
+        "Received: from mx.communitycentre.example (mx.communitycentre.example [198.51.100.25])\n"
+        "        by inbox.communitycentre.example (Postfix) with ESMTPS id 4Xy7Q2\n"
+        "        for <volunteer@communitycentre.example>; Tue, 10 Nov 2026 13:15:07 +0000\n"
+        "Received: from smtp.mailer-relay.example (smtp.mailer-relay.example [203.0.113.66])\n"
+        "        by mx.communitycentre.example (Postfix) with ESMTP id 3Ab9K1\n"
+        "        for <volunteer@communitycentre.example>; Tue, 10 Nov 2026 13:15:05 +0000\n"
+        "Received: from grant-portal-secure.example (grant-portal-secure.example [203.0.113.66])\n"
+        "        by smtp.mailer-relay.example (Exim 4.96) with ESMTPS id 1Qz4M8\n"
+        "        for <volunteer@communitycentre.example>; Tue, 10 Nov 2026 13:15:04 +0000\n"
+        "Authentication-Results: mx.communitycentre.example;\n"
+        "        spf=fail (sender IP is 203.0.113.66) smtp.mailfrom=mailer-relay.example;\n"
+        "        dkim=none (message not signed) header.d=none;\n"
+        "        dmarc=fail action=none header.from=communitycentre.example\n"
+        "Received-SPF: fail (domain of transitioning bounce@mailer-relay.example does not\n"
+        "        designate 203.0.113.66 as a permitted sender)\n"
+        "X-Originating-IP: [203.0.113.66]\n"
+        "X-Mailer: PHPMailer 6.8.1 (https://github.com/PHPMailer/PHPMailer)\n"
+        "X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,HTML_MESSAGE\n"
+        f"X-OCR-Case-Token: {FLAG}\n"
+        'From: "Community Grants Office" <grants@communitycentre.example>\n'
+        "Reply-To: grants-review@communitycentre-support.example\n"
+        "To: volunteer@communitycentre.example\n"
+        "Subject: Grant application review - action required\n"
+        "Date: Tue, 10 Nov 2026 09:15:02 -0400\n"
+        "Message-ID: <20261110131502.4f2a1c@mailer-relay.example>\n"
+        "MIME-Version: 1.0\n"
+        'Content-Type: text/plain; charset="utf-8"\n'
+        "Content-Transfer-Encoding: 7bit\n"
+        "\n"
+        "Hello,\n\n"
+        "Your grant application has moved to review. Please confirm the documents by\n"
+        "opening the shared folder:\n\n"
+        "https://communitycentre.example@grant-portal-secure.example/review"
+        "?next=%2Ffiles%2Fgrant-pack.png\n\n"
+        f"Reference: {DECOY_FLAG}\n\n"
+        "Thank you,\n"
+        "Grants Office\n\n"
+        "---\n"
+        "This is a fictional training message produced for the OpenCyberRange lab.\n"
+        "Do not click the link.\n"
+    )
+
+
+def emailmeta_body() -> str:
+    return """
+      <span class="pill">Email metadata</span>
+      <h1>Dissect the reported email</h1>
+      <p class="lede">A volunteer forwarded a grant review message. The rendered
+      message looks ordinary, but the raw headers tell a different story.</p>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Download the raw email, read its headers, and recover the training
+        token from the case metadata. Do not click any link in the message.</p>
+        <a class="button" href="/email.eml">Download reported-email.eml</a>
+      </div>
+      <div class="card">
+        <h2>Read it as text</h2>
+        <pre>curl -O http://emailmeta.lab:8080/email.eml
+less email.eml</pre>
+        <p>If <code>less</code> is unfamiliar, use <code>cat</code> or open the
+        file in a text editor. The headers are above the blank line; the body is
+        below it.</p>
+      </div>
+      <div class="card">
+        <h2>What to look for</h2>
+        <ul>
+          <li>Who the message claims to be from, and who it actually came from</li>
+          <li>The <code>Received</code> chain and the originating address</li>
+          <li><code>Authentication-Results</code> for SPF, DKIM, and DMARC</li>
+          <li>Custom <code>X-</code> headers that carry routing or case identifiers</li>
+        </ul>
+      </div>
+      <div class="card note">
+        <h2>Stay safe</h2>
+        <p>The addresses use reserved <code>.example</code> domains and the
+        links are not real. Never open an unexpected attachment or click a link
+        to test it.</p>
+      </div>
+    """
+
+
 def access_log() -> str:
     lines = [
         '10.0.40.15 - - [18/Mar/2026:09:01:12 +0000] "GET / HTTP/1.1" 200 512 "-" "Mozilla/5.0"',
@@ -386,6 +675,15 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'none'; style-src 'unsafe-inline'; img-src data:; "
+            "base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+        )
         if MODE == "network":
             self.send_header("X-OCR-Token", FLAG)
         self.send_header("Cache-Control", "no-store")
@@ -455,6 +753,96 @@ class Handler(BaseHTTPRequestHandler):
                     200,
                     _cyberchef_message(MODE) + "\n",
                     "text/plain; charset=utf-8",
+                )
+                return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "linkcheck":
+            if path in ("/", "/index.html"):
+                body = page("Read the link", linkcheck_body())
+            elif path == "/message.txt":
+                self._send(200, _linkcheck_message(), "text/plain; charset=utf-8")
+                return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "filetype":
+            if path in ("/", "/index.html"):
+                body = page("File safety", filetype_body())
+            elif path == "/downloads/":
+                self._send(200, page("Shared folder", filetype_listing()))
+                return
+            elif path == "/downloads/event-photo.png":
+                self._send(
+                    200,
+                    _disguised_zip(
+                        FLAG,
+                        "This archive was renamed to look like a photo. "
+                        "The extension is a label, not evidence.",
+                    ),
+                    "application/octet-stream",
+                    {"Content-Disposition": 'attachment; filename="event-photo.png"'},
+                )
+                return
+            elif path.startswith("/downloads/"):
+                name = path[len("/downloads/"):]
+                content = FILE_DECOYS.get(name)
+                if content is None:
+                    self._send(404, page("Not found", "<h1>Not found</h1>"))
+                    return
+                self._send(
+                    200,
+                    content,
+                    "text/plain; charset=utf-8",
+                    {"Content-Disposition": f'attachment; filename="{name}"'},
+                )
+                return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "capstone":
+            if path in ("/", "/index.html"):
+                body = page("Forwarded message", capstone_body())
+            elif path == "/notice.txt":
+                self._send(200, _capstone_notice(), "text/plain; charset=utf-8")
+                return
+            elif path == "/files/grant-pack.png":
+                self._send(
+                    200,
+                    _disguised_zip(
+                        FLAG,
+                        "The grant pack was renamed to look like a PNG image. "
+                        "Check the real file type before opening it.",
+                    ),
+                    "application/octet-stream",
+                    {"Content-Disposition": 'attachment; filename="grant-pack.png"'},
+                )
+                return
+            elif path == "/files/README.txt":
+                self._send(
+                    200,
+                    "Practice mirror for the grant review exercise.\n"
+                    "Use the decoded file path from the forwarded notice.\n",
+                    "text/plain; charset=utf-8",
+                )
+                return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE == "emailmeta":
+            if path in ("/", "/index.html"):
+                body = page("Email metadata", emailmeta_body())
+            elif path == "/email.eml":
+                self._send(
+                    200,
+                    _email_message(),
+                    "message/rfc822; charset=utf-8",
+                    {"Content-Disposition": 'attachment; filename="reported-email.eml"'},
                 )
                 return
             else:

@@ -171,6 +171,12 @@
         "web"
       ]
     },
+    "high-school-10-3-email-metadata": {
+      "content_hash": "3aedb8dfc201a7f301a062f6a7532f2f4fce543fa960ce5a438852ce2aa2aafd",
+      "services": [
+        "portal"
+      ]
+    },
     "high-school-11-1-rangebox-log-detective": {
       "content_hash": "e573dc0190da01e69a152690e0e7c7b8b14a575d2a4c943e6f719224f79d1948",
       "services": [
@@ -209,6 +215,24 @@
     },
     "high-school-9-5-cyberchef-layered-message": {
       "content_hash": "e3e556fd78f402f4a895f113d681107ed32caab11309fde6ce7102188043eecb",
+      "services": [
+        "portal"
+      ]
+    },
+    "high-school-9-6-read-the-link": {
+      "content_hash": "dcc2f949dc24baa04dd9d0cd37a33c6ebf7479bd5c9c81979e5afc787eafe404",
+      "services": [
+        "portal"
+      ]
+    },
+    "high-school-9-7-know-the-file": {
+      "content_hash": "6e3b061952e8f4a12f96fbbc7c3d8cfe520eccbac188e375b946576dc3bbf28b",
+      "services": [
+        "portal"
+      ]
+    },
+    "high-school-9-8-forwarded-message": {
+      "content_hash": "83b103452de15a61a9bf60ff19b0bf72280b040a599bf6cf705332760a86178a",
       "services": [
         "portal"
       ]

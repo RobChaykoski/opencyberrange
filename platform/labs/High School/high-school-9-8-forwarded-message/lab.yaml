@@ -1,0 +1,139 @@
+title: "Capstone: The Forwarded Message"
+category: general
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - high-school-9-7-know-the-file
+# By completion students will be able to:
+learning_outcomes:
+  - Decode a link and separate the real host from the userinfo text
+  - Find a file path hidden in an encoded redirect parameter
+  - Check a downloaded file's real type before opening it
+  - Combine link and file evidence into a short safety decision
+mapped_skills:
+  - web_api
+  - incident_forensics
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - State which evidence made the message suspicious.
+mitre_attack:
+  - tactic: Initial Access
+    technique: T1566
+    technique_name: Phishing
+    detection: Alert on lookalike sender domains and encoded redirect paths; route reported messages to a review queue instead of opening them.
+  - tactic: Defense Evasion
+    technique: T1036
+    technique_name: Masquerading
+    detection: Alert when a downloaded file's magic bytes disagree with its extension, especially for files reached from an email link.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A volunteer forwards a grant review notice with a polished message, a lookalike link, and a file that is not what it claims to be. Decode the link, request the mirrored file, check its real type, and recover the training token. This capstone combines the link and file safety exercises."
+visibility: public
+flag: "OCR{decode_then_verify_then_open}"
+
+tools:
+  - cyberchef
+  - terminal
+  - browser
+
+scenario: |
+  You are helping at a community centre. A volunteer forwards a grant review
+  notice and asks whether it is safe to open the attachment. The message is
+  polite, the link looks official, and the file name sounds ordinary.
+
+  This is a capstone. Use the link-reading skill from the previous exercise to
+  find the real host and the hidden path, then use the file-checking skill to
+  identify what the download really is. Recover the training token and be ready
+  to explain your decision.
+
+  The message, the link, and the practice mirror are fictional. The link uses
+  reserved .example domains, so it cannot reach a real service. Never click a
+  suspicious link or open an unexpected attachment in real life.
+
+troubleshooting: "If the target does not resolve, use the hostname shown in the exercise panel and confirm the lab is running. The notice contains the mirror address; request only the decoded path from it. If the archive will not extract, check that you downloaded the file instead of an HTML error page, then use python3 -m zipfile -e."
+defensive_takeaways: "Verify a message through a second channel before acting on it. Decode and read the real host, not the display text. Check the actual file type before opening an attachment, and report the message without forwarding the link or the file."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target notice, download, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional because it combines two earlier labs."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message/"
+
+hostnames:
+  - ip_offset: "98"
+    hostname: "capstone.lab"
+    description: "Grant review practice mirror (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Grant review practice mirror"
+      type: "server"
+      ip_offset: "98"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Read the notice but do not click the link. Copy it into CyberChef and use
+      **URL Decode** on the whole message.
+    unlock_after_minutes: 0
+
+  - text: |
+      The decoded `next` value is a path, not a full URL. The notice gives the
+      practice mirror address. Put the decoded path after the mirror address.
+    unlock_after_minutes: 5
+
+  - text: |
+      Download the file and run `file` on it before opening it. If it reports a
+      Zip archive, the name is misleading.
+    unlock_after_minutes: 10
+
+  - text: |
+      Extract the archive and read `token.txt`. Then write one sentence naming
+      the two pieces of evidence that made the message suspicious.
+    unlock_after_minutes: 15
+
+test:
+  steps:
+    - name: "Practice mirror responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Forwarded notice is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/notice.txt"
+      expect: "200"
+      timeout: 20
+
+    - name: "Notice does not expose the token in plain text"
+      command: "curl -s http://{target.portal}:8080/notice.txt | grep -o 'OCR{' | wc -l | tr -d ' '"
+      expect: "0"
+      timeout: 20
+
+    - name: "Notice uses the lookalike host and userinfo trick"
+      command: "curl -s http://{target.portal}:8080/notice.txt | grep -c 'communitycentre.example@grant-portal-secure.example'"
+      expect: "1"
+      timeout: 20
+
+    - name: "URL decoding reveals the mirrored file path"
+      command: "curl -s http://{target.portal}:8080/notice.txt | python3 -c 'import sys,urllib.parse; print(urllib.parse.unquote(sys.stdin.read()))' | grep -c '/files/grant-pack.png'"
+      expect: "1"
+      timeout: 20
+
+    - name: "The grant pack is actually a ZIP archive"
+      command: "curl -s http://{target.portal}:8080/files/grant-pack.png | python3 -c 'import sys; print(sys.stdin.buffer.read(2))'"
+      expect: "b'PK'"
+      timeout: 20
+
+    - name: "Extracting the grant pack reveals the token"
+      command: "curl -s http://{target.portal}:8080/files/grant-pack.png | python3 -c 'import sys,io,zipfile; print(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read(\"token.txt\").decode())' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{decode_then_verify_then_open}"
+      timeout: 25

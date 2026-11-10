@@ -50,6 +50,11 @@ You do not have to memorise these. Use this table as a reference.
 - If a command produces an error, read the error before trying again. Errors are
   information, not failure.
 
+The last three activities form a digital-safety unit. You will read a link
+without clicking it, check what a file really is before opening it, and combine
+both habits in a short capstone. The goal is a decision you can explain, not
+just a flag.
+
 ## Activities
 
 1. [RangeBox First Steps](01_First_Steps.md)
@@ -57,3 +62,6 @@ You do not have to memorise these. Use this table as a reference.
 3. [CyberChef: Decode a Base64 Message](03_CyberChef_Base64.md)
 4. [CyberChef: Read a Caesar Shift](04_CyberChef_Caesar.md)
 5. [CyberChef: Peel Back Two Layers](05_CyberChef_Layers.md)
+6. [Read the Link Before You Click](06_Read_The_Link.md)
+7. [Know the File Before You Open It](07_Know_The_File.md)
+8. [Capstone: The Forwarded Message](08_Forwarded_Message.md)

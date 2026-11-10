@@ -8,7 +8,7 @@ links.
 |---|---:|
 | AI | 3 |
 | Forensics | 2 |
-| High School | 9 |
+| High School | 13 |
 | Linux | 30 |
 | Malware | 8 |
 | Network | 16 |
@@ -17,7 +17,7 @@ links.
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 51 |
-| **Total** | **143** |
+| **Total** | **147** |
 
 ## Labs
 
@@ -28,15 +28,19 @@ links.
 | AI | Prompt Injection Basics (`ai-1-1-prompt-injection-basics`) | `wiki/range/ai/CH_AI01_AI_Foundations/01_Prompt_Injection_Basics/` |
 | Forensics | VoIP Call Reconstruction (`forensics-2-1-voip-call-reconstruction`) | `wiki/range/forensics/CH_FOR02_Network_Forensics/01_VoIP_Call_Reconstruction/` |
 | Forensics | Windows Memory Analysis with Volatility (`forensics-1-1-windows-memory-volatility`) | `wiki/range/forensics/CH_FOR01_Memory_Forensics/01_Windows_Memory_Volatility/` |
+| High School | Capstone: The Forwarded Message (`high-school-9-8-forwarded-message`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message/` |
 | High School | CyberChef: Decode a Base64 Message (`high-school-9-3-cyberchef-base64-basics`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64/` |
 | High School | CyberChef: Peel Back Two Layers (`high-school-9-5-cyberchef-layered-message`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/05_CyberChef_Layers/` |
 | High School | CyberChef: Read a Caesar Shift (`high-school-9-4-cyberchef-caesar-shift`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar/` |
 | High School | DevFest Community Portal (`high-school-12-1-devfest-community-portal`) | `wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/` |
+| High School | Dissect an Email (`high-school-10-3-email-metadata`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata/` |
+| High School | Know the File Before You Open It (`high-school-9-7-know-the-file`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/07_Know_The_File/` |
 | High School | RangeBox Browser and Source (`high-school-10-2-rangebox-browser-and-source`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source/` |
 | High School | RangeBox File Hunt (`high-school-9-2-rangebox-file-hunt`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt/` |
 | High School | RangeBox First Steps (`high-school-9-1-rangebox-first-steps`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps/` |
 | High School | RangeBox Log Detective (`high-school-11-1-rangebox-log-detective`) | `wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/01_Log_Detective/` |
 | High School | RangeBox Network Basics (`high-school-10-1-rangebox-network-basics`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics/` |
+| High School | Read the Link Before You Click (`high-school-9-6-read-the-link`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link/` |
 | Linux | Aegis Security Corp - Brute Force Detection (`linux-5-6-brute-force-detection`) | `wiki/range/linpt/CH_LIN05_Detection/02_Brute_Force_Detection/` |
 | Linux | Blackrock Dynamics - Hash Relay (`linux-3-4-hash-relay`) | `wiki/range/linpt/CH_LIN03B_Privilege_Hashes/04_Hash_Relay/` |
 | Linux | Blackwell & Associates - SMB Share Enumeration (`linux-2-7-smb-share-enumeration`) | `wiki/range/linpt/CH_LIN02B_SMB_SNMP/01_SMB_Share_Enumeration/` |

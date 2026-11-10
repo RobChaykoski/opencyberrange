@@ -1,0 +1,137 @@
+title: "Dissect an Email"
+category: network
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - high-school-10-2-rangebox-browser-and-source
+# By completion students will be able to:
+learning_outcomes:
+  - Distinguish display headers from the envelope and routing headers
+  - Read a Received chain from the bottom up to find the originating host
+  - Explain what SPF, DKIM, and DMARC results say about a message
+  - Find custom X- headers that carry case or routing metadata
+  - Write a short verdict based on header evidence
+mapped_skills:
+  - network_systems
+  - identity_access
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - State one header that supports the verdict.
+mitre_attack:
+  - tactic: Initial Access
+    technique: T1566
+    technique_name: Phishing
+    detection: Alert on SPF, DKIM, or DMARC failures combined with a From/Return-Path mismatch; preserve the full raw message for review before deleting it.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A volunteer forwards a suspicious grant review email. Download the raw message and read the headers: envelope sender, reply path, Received chain, authentication results, mailer, and custom case metadata. Recover the training token without clicking anything."
+visibility: public
+flag: "OCR{headers_tell_the_real_story}"
+
+tools:
+  - rangebox
+  - terminal
+  - browser
+
+scenario: |
+  A volunteer at a community centre forwards a grant review email and asks
+  whether it is real. The message looks ordinary in the mail app. You have the
+  raw message file, which preserves every header the mail servers added.
+
+  In this exercise you will read the message as data: who claims to have sent
+  it, who actually relayed it, what the authentication checks said, and what
+  custom metadata the sender left behind. The training token is in the case
+  metadata, not in the body.
+
+  The message is fictional and uses reserved .example domains. Do not click any
+  link in it.
+
+troubleshooting: "If the target does not resolve, use the hostname shown in the exercise panel and confirm the lab is running. If the raw message opens in a mail client, save it as a .eml file and open it in a text editor instead. Header order and spacing can vary between mail systems; read the header names, not the line positions."
+defensive_takeaways: "Preserve the full raw message before deleting or forwarding it. Treat a From/Return-Path mismatch and failed SPF, DKIM, or DMARC as evidence to investigate, not proof by itself. Verify unexpected requests through a second channel and report the message through your organisation's process."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, raw message, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the authentication terms are scaffolded."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata/"
+
+hostnames:
+  - ip_offset: "99"
+    hostname: "emailmeta.lab"
+    description: "Reported-email evidence target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "mail"
+      label: "Reported-email evidence server"
+      type: "server"
+      ip_offset: "99"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Download the raw message and open it in a text editor. Do not use the
+      rendered mail view: it hides most of the headers.
+    unlock_after_minutes: 0
+
+  - text: |
+      Compare `From`, `Return-Path`, and `Reply-To`. They should describe the
+      same sender and domain. Read the `Received` headers from the bottom up:
+      the lowest one is the earliest hop.
+    unlock_after_minutes: 5
+
+  - text: |
+      Find `Authentication-Results` and `Received-SPF`. SPF checks the sending
+      IP, DKIM checks the signature, and DMARC combines them with the From
+      domain. All three results are in the headers.
+    unlock_after_minutes: 10
+
+  - text: |
+      Custom `X-` headers often carry case identifiers or routing tags. Find
+      `X-OCR-Case-Token`. The `Reference:` line in the body is a decoy.
+    unlock_after_minutes: 15
+
+test:
+  steps:
+    - name: "Practice page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.mail}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Raw email is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.mail}:8080/email.eml"
+      expect: "200"
+      timeout: 20
+
+    - name: "Message has authentication results"
+      command: "curl -s http://{target.mail}:8080/email.eml | grep -c 'Authentication-Results:'"
+      expect: "1"
+      timeout: 20
+
+    - name: "SPF result is a failure"
+      command: "curl -s http://{target.mail}:8080/email.eml | grep -c 'spf=fail'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Message has three routing hops"
+      command: "curl -s http://{target.mail}:8080/email.eml | grep -c '^Received:'"
+      expect: "3"
+      timeout: 20
+
+    - name: "Custom case metadata is present"
+      command: "curl -s http://{target.mail}:8080/email.eml | grep -c '^X-OCR-Case-Token:'"
+      expect: "1"
+      timeout: 20
+
+    - name: "Case metadata reveals the training token"
+      command: "curl -s http://{target.mail}:8080/email.eml | grep '^X-OCR-Case-Token:' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{headers_tell_the_real_story}"
+      timeout: 20

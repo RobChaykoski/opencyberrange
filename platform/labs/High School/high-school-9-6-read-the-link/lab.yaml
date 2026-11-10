@@ -1,0 +1,128 @@
+title: "Read the Link Before You Click"
+category: general
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - high-school-9-5-cyberchef-layered-message
+# By completion students will be able to:
+learning_outcomes:
+  - Read a URL from the scheme to the query string
+  - Explain why text before @ in a URL is not the host
+  - Decode percent-encoded text with CyberChef
+  - Choose not to click a lookalike link and verify it another way
+mapped_skills:
+  - web_api
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Initial Access
+    technique: T1566
+    technique_name: Phishing
+    detection: Alert on lookalike domains, userinfo tricks, and encoded redirect parameters; rewrite or detonate links at the mail gateway and make user reporting easy.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community library patron receives an account notice with a link that looks almost right. Inspect the URL without clicking it, decode the hidden path with CyberChef, and recover the training token. Builds directly on the three CyberChef decoding exercises."
+visibility: public
+flag: "OCR{read_the_host_not_the_wrapper}"
+
+tools:
+  - cyberchef
+  - browser
+  - terminal
+
+scenario: |
+  You are volunteering at a community library's digital skills desk. A patron
+  received an email about a library account check and asks whether the link is
+  safe. The address looks close to the library's real site, but the patron is
+  not sure.
+
+  You do not need to open the link. A URL is text, and text can be read. In this
+  exercise you will inspect the parts of the link, decode the hidden redirect
+  value with CyberChef, and recover the training token without visiting the
+  lookalike site.
+
+  The message and the practice target are fictional. The link uses reserved
+  .example domains, so it cannot reach a real service. Never click a suspicious
+  link in real life, even to see what happens.
+
+troubleshooting: "If the target does not resolve, use the hostname shown in the exercise panel and confirm the lab is running. If CyberChef is unavailable, decode the message with python3 -c \"import urllib.parse; print(urllib.parse.unquote(open('message.txt').read()))\". Do not click the link to test it; copy the text instead."
+defensive_takeaways: "Read the registrable domain from the right and ignore text before @. HTTPS encrypts the connection but does not prove the site is honest. Verify unexpected account messages through a second channel, and report the message without forwarding the link."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target message, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link/"
+
+hostnames:
+  - ip_offset: "96"
+    hostname: "linkcheck.lab"
+    description: "Link inspection practice target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community library message server"
+      type: "server"
+      ip_offset: "96"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Do not click the link. Copy the whole message into CyberChef and read the
+      URL from the scheme to the right. The part that decides where a browser
+      goes is the host, not the words near the start.
+    unlock_after_minutes: 0
+
+  - text: |
+      In CyberChef, add **URL Decode** and paste the message. The `%2F` and
+      `%7B` sequences become ordinary characters. Then add **Parse URI** and
+      look at the **host** field.
+    unlock_after_minutes: 4
+
+  - text: |
+      Everything before the `@` is a username, not the site. The real host
+      starts after the `@`. Compare it letter by letter with
+      `windsorlibrary.example`: one letter is out of order.
+    unlock_after_minutes: 8
+
+  - text: |
+      After decoding, the `next` value is a path. The training token is the
+      last part of that path. Copy the value inside `OCR{...}` into the flag
+      box.
+    unlock_after_minutes: 12
+
+test:
+  steps:
+    - name: "Practice page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Message is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/message.txt"
+      expect: "200"
+      timeout: 20
+
+    - name: "Message does not expose the token in plain text"
+      command: "curl -s http://{target.portal}:8080/message.txt | grep -o 'OCR{' | wc -l | tr -d ' '"
+      expect: "0"
+      timeout: 20
+
+    - name: "Message uses the lookalike host and userinfo trick"
+      command: "curl -s http://{target.portal}:8080/message.txt | grep -c 'windsorlibrary.example@windosrlibrary-secure.example'"
+      expect: "1"
+      timeout: 20
+
+    - name: "URL decoding reveals the training token"
+      command: "curl -s http://{target.portal}:8080/message.txt | python3 -c 'import sys,urllib.parse; print(urllib.parse.unquote(sys.stdin.read()))' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{read_the_host_not_the_wrapper}"
+      timeout: 20

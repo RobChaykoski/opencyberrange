@@ -1,0 +1,127 @@
+title: "Know the File Before You Open It"
+category: general
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - high-school-9-6-read-the-link
+# By completion students will be able to:
+learning_outcomes:
+  - Use file to identify a file's real type from its first bytes
+  - Explain why a filename extension is a label, not evidence
+  - Extract a ZIP archive that has a misleading extension
+  - Choose a safe next step when a file is not what it claims to be
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Defense Evasion
+    technique: T1036
+    technique_name: Masquerading
+    detection: Alert when a downloaded file's magic bytes disagree with its extension, and treat double extensions or renamed archives as suspicious until verified.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community centre shared folder contains a file whose name does not match its contents. Check the real file type, extract the disguised archive, and recover the training token. No prior file-analysis experience needed."
+visibility: public
+flag: "OCR{extensions_are_labels_not_evidence}"
+
+tools:
+  - terminal
+  - browser
+  - cyberchef
+
+scenario: |
+  You are helping at a community centre's volunteer desk. A coordinator
+  downloaded four files from a shared event folder and one of them does not
+  open the way its name suggests. They ask you to check the files before anyone
+  opens them.
+
+  A filename ending in .png or .pdf is only a label. The first bytes of a file
+  tell you what it really is. In this exercise you will check the real type,
+  find the disguised archive, and recover the training token without running
+  anything.
+
+  The files are fictional and safe. Do not open an unknown file by
+  double-clicking it; use the commands in the walkthrough instead.
+
+troubleshooting: "If the target does not resolve, use the hostname shown in the exercise panel and confirm the lab is running. If unzip is unavailable, extract the archive with python3 -m zipfile -e event-photo.png extracted/. If a file still does not open, stop and report it rather than forcing it."
+defensive_takeaways: "A filename extension is a label, not proof of content. Check the real type before opening an unexpected file. Do not disable a security warning to inspect an attachment, and report a suspicious file instead of forwarding it."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target files, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/07_Know_The_File/"
+
+hostnames:
+  - ip_offset: "97"
+    hostname: "filesafe.lab"
+    description: "Shared-folder file safety target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community centre shared folder"
+      type: "server"
+      ip_offset: "97"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Download the files with curl. Do not double-click them. Start by asking
+      what each file really is, not what its name says.
+    unlock_after_minutes: 0
+
+  - text: |
+      Run `file` on each download:
+
+      file event-photo.png budget.pdf agenda.txt
+
+      The output describes the first bytes of each file.
+    unlock_after_minutes: 4
+
+  - text: |
+      One file is reported as a Zip archive even though it is named .png. A ZIP
+      archive starts with the letters `PK`. Extract it with `unzip` or
+      `python3 -m zipfile -e`.
+    unlock_after_minutes: 8
+
+  - text: |
+      The archive contains `token.txt`. The budget file is a decoy: its token
+      is not the answer. Read `token.txt` and submit the token inside `OCR{...}`.
+    unlock_after_minutes: 12
+
+test:
+  steps:
+    - name: "Practice page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Shared folder listing responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/downloads/"
+      expect: "200"
+      timeout: 20
+
+    - name: "The photo is actually a ZIP archive"
+      command: "curl -s http://{target.portal}:8080/downloads/event-photo.png | python3 -c 'import sys; print(sys.stdin.buffer.read(2))'"
+      expect: "b'PK'"
+      timeout: 20
+
+    - name: "The budget file is plain text with a decoy token"
+      command: "curl -s http://{target.portal}:8080/downloads/budget.pdf | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{d3c0y_n0t_th3_r34l_fl4g}"
+      timeout: 20
+
+    - name: "Extracting the archive reveals the real token"
+      command: "curl -s http://{target.portal}:8080/downloads/event-photo.png | python3 -c 'import sys,io,zipfile; print(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read(\"token.txt\").decode())' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{extensions_are_labels_not_evidence}"
+      timeout: 20
