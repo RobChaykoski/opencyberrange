@@ -15,7 +15,7 @@ import platform as platform_module
 from datetime import datetime, timezone
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import FileResponse
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -209,6 +209,7 @@ def _live_overlay(data: dict, db: Session) -> dict:
 
 @router.get("")
 async def get_about(
+    response: Response,
     db: Session = Depends(get_db),
     _user: User = Depends(get_current_user),
 ):
@@ -217,6 +218,9 @@ async def get_about(
     if not path.is_file():
         raise HTTPException(status_code=503, detail="About inventory is not available")
     data = json.loads(path.read_text(encoding="utf-8"))
+    # This payload changes when the backend is upgraded. Do not let a browser
+    # or intermediary keep an older release version after a deployment.
+    response.headers["Cache-Control"] = "no-store"
     return _live_overlay(data, db)
 
 

@@ -2037,6 +2037,14 @@
                     <span class="security-check-name">{{ item.name }}</span>
                   </div>
                   <div class="security-check-detail">{{ item.detail }}</div>
+                  <button
+                    v-if="item.name === 'Data integrity'"
+                    type="button"
+                    class="btn btn--secondary btn--xs security-check-action"
+                    @click="openIntegrity"
+                  >
+                    Open Integrity
+                  </button>
                 </div>
               </div>
             </div>
@@ -4023,6 +4031,12 @@ function selectAdminTab(tab) {
 function openHealth() {
   selectAdminTab('system')
   systemSubTab.value = 'health'
+}
+
+function openIntegrity() {
+  selectAdminTab('system')
+  systemSubTab.value = 'integrity'
+  fetchDataIntegrity()
 }
 
 function openPending() {
@@ -11810,6 +11824,10 @@ watch(activeTab, (tab) => {
   font-size: 0.8125rem;
   color: var(--text-secondary);
   line-height: 1.4;
+}
+
+.security-check-action {
+  margin-top: 0.6rem;
 }
 
 .security-note {

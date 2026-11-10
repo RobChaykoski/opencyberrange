@@ -3805,7 +3805,7 @@ def _integrity_status(summary: dict) -> tuple[str, str, str]:
             "Review needed",
             f"{unattributed} unattributed write"
             f"{'s' if unattributed != 1 else ''} in the last 7 days. "
-            "Open the Integrity tab to review the table and operation.",
+            "Open Admin, then System, then Integrity to review the table and operation.",
         )
     if entries == 0:
         return (
