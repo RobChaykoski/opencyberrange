@@ -8,7 +8,7 @@ links.
 |---|---:|
 | AI | 3 |
 | Forensics | 2 |
-| High School | 6 |
+| High School | 9 |
 | Linux | 30 |
 | Malware | 8 |
 | Network | 16 |
@@ -17,7 +17,7 @@ links.
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 51 |
-| **Total** | **140** |
+| **Total** | **143** |
 
 ## Labs
 
@@ -28,6 +28,9 @@ links.
 | AI | Prompt Injection Basics (`ai-1-1-prompt-injection-basics`) | `wiki/range/ai/CH_AI01_AI_Foundations/01_Prompt_Injection_Basics/` |
 | Forensics | VoIP Call Reconstruction (`forensics-2-1-voip-call-reconstruction`) | `wiki/range/forensics/CH_FOR02_Network_Forensics/01_VoIP_Call_Reconstruction/` |
 | Forensics | Windows Memory Analysis with Volatility (`forensics-1-1-windows-memory-volatility`) | `wiki/range/forensics/CH_FOR01_Memory_Forensics/01_Windows_Memory_Volatility/` |
+| High School | CyberChef: Decode a Base64 Message (`high-school-9-3-cyberchef-base64-basics`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64/` |
+| High School | CyberChef: Peel Back Two Layers (`high-school-9-5-cyberchef-layered-message`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/05_CyberChef_Layers/` |
+| High School | CyberChef: Read a Caesar Shift (`high-school-9-4-cyberchef-caesar-shift`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar/` |
 | High School | DevFest Community Portal (`high-school-12-1-devfest-community-portal`) | `wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/` |
 | High School | RangeBox Browser and Source (`high-school-10-2-rangebox-browser-and-source`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source/` |
 | High School | RangeBox File Hunt (`high-school-9-2-rangebox-file-hunt`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt/` |

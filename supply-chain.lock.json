@@ -195,6 +195,24 @@
         "files"
       ]
     },
+    "high-school-9-3-cyberchef-base64-basics": {
+      "content_hash": "98962fb29c571cb47af87bbed0613397201687ef91834daa586f3377eb2ab4ca",
+      "services": [
+        "portal"
+      ]
+    },
+    "high-school-9-4-cyberchef-caesar-shift": {
+      "content_hash": "c0ca798ba16e0e466aaf0374337563ba94efb4577e120e2642149ba8895f105c",
+      "services": [
+        "portal"
+      ]
+    },
+    "high-school-9-5-cyberchef-layered-message": {
+      "content_hash": "e3e556fd78f402f4a895f113d681107ed32caab11309fde6ce7102188043eecb",
+      "services": [
+        "portal"
+      ]
+    },
     "linux-1-1-ssh-service-detection": {
       "content_hash": "f618d494f692d60d918b55c522b2cb0dfd59481b583b03b6d028b8d0e0b0ad2d",
       "services": [

@@ -11,6 +11,8 @@ Each lab selects a mode with LAB_MODE and supplies its own FLAG:
 
 Nothing here reaches the internet, calls a real service, or stores state.
 """
+import base64
+import codecs
 import html
 import io
 import json
@@ -254,6 +256,85 @@ grep "OCR{" access.log</pre>
     """
 
 
+def cyberchef_body(kind: str) -> str:
+    """Instructions for a beginner-friendly CyberChef decoding exercise."""
+    if kind == "cyberchef_b64":
+        lesson = (
+            "The message is <strong>Base64 encoded</strong>. Base64 is an encoding, "
+            "not encryption: it changes how text is represented so it can travel "
+            "safely through systems that expect plain text. It does not keep a "
+            "secret."
+        )
+        recipe = (
+            "Open <strong>CyberChef</strong> from the platform menu, drag "
+            "<strong>From Base64</strong> into the Recipe column, paste the message "
+            "into the Input column, and read the Output."
+        )
+    elif kind == "cyberchef_caesar":
+        lesson = (
+            "The message uses a <strong>Caesar shift</strong>, a simple cipher that "
+            "moves each letter a fixed number of places through the alphabet. "
+            "ROT13 is a shift of 13 and is its own inverse."
+        )
+        recipe = (
+            "Open <strong>CyberChef</strong> from the platform menu, drag "
+            "<strong>ROT13</strong> (or <strong>Caesar Brute Force</strong>) into "
+            "the Recipe column, paste the message, and read the Output."
+        )
+    else:
+        lesson = (
+            "This message has <strong>two layers</strong>: a Base64 layer and a "
+            "Caesar shift. Decode the outer layer first, then look at what remains."
+        )
+        recipe = (
+            "Open <strong>CyberChef</strong> from the platform menu. Add "
+            "<strong>From Base64</strong>, then add <strong>ROT13</strong>, paste "
+            "the message, and read the Output."
+        )
+    return f"""
+      <span class="pill">CyberChef practice</span>
+      <h1>Read the message without guessing</h1>
+      <p class="lede">A community library received a short note from a partner
+      organisation. The note is encoded, and the librarian needs the training token
+      inside it. You will use CyberChef to turn the encoded message back into
+      readable text.</p>
+      <div class="card">
+        <h2>Your goal</h2>
+        <p>Download the message, decode it with CyberChef, and submit the
+        <code>OCR{...}</code> training token as the flag.</p>
+        <a class="button" href="/message.txt">Open message.txt</a>
+      </div>
+      <div class="card">
+        <h2>What you are looking at</h2>
+        <p>{lesson}</p>
+      </div>
+      <div class="card">
+        <h2>Use CyberChef</h2>
+        <p>{recipe}</p>
+        <p class="note">CyberChef is a free, client-side tool from GCHQ. Use only the
+        fictional message in this lab. Do not paste real passwords, personal data,
+        or anything from a real system.</p>
+      </div>
+      <div class="card note">
+        <h2>If you get stuck</h2>
+        <p>Check that you used the right operation direction: <strong>From Base64</strong>,
+        not <strong>To Base64</strong>. For the shift cipher, try ROT13 first. If the
+        output still looks unreadable, read the hints panel and try one operation at a
+        time.</p>
+      </div>
+    """
+
+
+def _cyberchef_message(kind: str) -> str:
+    """Return the encoded practice message for a CyberChef lab."""
+    plain = f"Training token: {FLAG}\n"
+    if kind == "cyberchef_b64":
+        return base64.b64encode(plain.encode("utf-8")).decode("ascii")
+    if kind == "cyberchef_caesar":
+        return codecs.encode(plain, "rot_13")
+    return base64.b64encode(codecs.encode(plain, "rot_13").encode("utf-8")).decode("ascii")
+
+
 def access_log() -> str:
     lines = [
         '10.0.40.15 - - [18/Mar/2026:09:01:12 +0000] "GET / HTTP/1.1" 200 512 "-" "Mozilla/5.0"',
@@ -361,6 +442,20 @@ class Handler(BaseHTTPRequestHandler):
                 body = page("Log detective", logs_body())
             elif path == "/access.log":
                 self._send(200, access_log(), "text/plain; charset=utf-8")
+                return
+            else:
+                self._send(404, page("Not found", "<h1>Not found</h1>"))
+                return
+
+        elif MODE in ("cyberchef_b64", "cyberchef_caesar", "cyberchef_layers"):
+            if path in ("/", "/index.html"):
+                body = page("CyberChef practice", cyberchef_body(MODE))
+            elif path == "/message.txt":
+                self._send(
+                    200,
+                    _cyberchef_message(MODE) + "\n",
+                    "text/plain; charset=utf-8",
+                )
                 return
             else:
                 self._send(404, page("Not found", "<h1>Not found</h1>"))

@@ -1,0 +1,102 @@
+title: "CyberChef: Peel Back Two Layers"
+category: crypto
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - high-school-9-4-cyberchef-caesar-shift
+# By completion students will be able to:
+learning_outcomes:
+  - Break a small decoding task into ordered operations
+  - Combine Base64 and ROT13 operations in CyberChef
+  - Recover a training token from a message with two layers
+  - Explain why layered encoding is not the same as layered security
+mapped_skills:
+  - web_api
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Defense Evasion
+    technique: T1140
+    technique_name: Deobfuscate/Decode Files or Information
+    detection: Review multi-layer encoded content with a trusted decoder and record the operation order used to recover the plain text.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A short layered-decoding challenge for beginners. A fictional library message has both a Base64 layer and a Caesar shift. Use CyberChef in the right order, recover the training token, and explain why layered encoding is not security."
+visibility: public
+flag: "OCR{l4y3r5_ar3_not_s3curity}"
+
+tools:
+  - cyberchef
+  - browser
+
+scenario: |
+  The library's partner has now sent a note that looks even less readable than
+  the last one. It has two layers: the text was shifted, then the shifted text
+  was Base64-encoded. Each layer is simple, but the order matters.
+
+  Use CyberChef to reverse the process one step at a time. Read the output after
+  each operation so you can see what changed. The note is fictional and safe to
+  explore.
+
+troubleshooting: "Decode the outer Base64 layer first, then apply ROT13 to the result. If the output still looks unreadable, remove the operations and add them again in that order. Confirm you copied the complete message. Do not paste real secrets or personal data into CyberChef."
+defensive_takeaways: "Layered encoding can make a message look mysterious, but it is reversible and does not protect a secret. Use a trusted decoder, verify the sender, and never send credentials or personal data through an untrusted tool or channel."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target messages, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/05_CyberChef_Layers/"
+
+hostnames:
+  - ip_offset: "95"
+    hostname: "cyberchef-layers.lab"
+    description: "CyberChef layered-message practice target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Library partner-note server"
+      type: "server"
+      ip_offset: "95"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open **CyberChef** from the platform menu and copy the message from
+      `/message.txt` into the Input column.
+    unlock_after_minutes: 0
+
+  - text: |
+      Start with **From Base64**. The output should look like ordinary letters,
+      but the words will still be scrambled. That is the second layer.
+    unlock_after_minutes: 4
+
+  - text: |
+      Add **ROT13** after From Base64. Read the final Output column for the line
+      that starts "Training token:". Copy the `OCR{...}` value into the flag box.
+    unlock_after_minutes: 8
+
+test:
+  steps:
+    - name: "Practice target responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Message file is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/message.txt"
+      expect: "200"
+      timeout: 20
+
+    - name: "Layered message decodes in the taught order"
+      command: "curl -s http://{target.portal}:8080/message.txt | base64 -d | tr 'A-Za-z' 'N-ZA-Mn-za-m' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{l4y3r5_ar3_not_s3curity}"
+      timeout: 20

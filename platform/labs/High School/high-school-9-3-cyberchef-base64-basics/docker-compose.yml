@@ -1,0 +1,31 @@
+services:
+  portal:
+    mem_limit: 128m
+    cpus: 0.15
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: cyberchef-b64
+    labels:
+      ip_offset: "93"
+    environment:
+      LAB_MODE: "cyberchef_b64"
+      FLAG: "OCR{b4s364_is_encoding_not_encryption}"
+      TITLE: "CyberChef Base64 Basics"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

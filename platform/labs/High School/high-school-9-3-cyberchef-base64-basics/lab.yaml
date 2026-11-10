@@ -1,0 +1,107 @@
+title: "CyberChef: Decode a Base64 Message"
+category: crypto
+difficulty: beginner
+estimated_time: 15
+prerequisites:
+  - high-school-9-2-rangebox-file-hunt
+# By completion students will be able to:
+learning_outcomes:
+  - Open CyberChef from the platform menu and add a decoding operation
+  - Explain the difference between Base64 encoding and encryption
+  - Decode a short Base64 message and recover a training token
+  - Describe one safe way to handle an unexpected encoded attachment
+mapped_skills:
+  - web_api
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Defense Evasion
+    technique: T1140
+    technique_name: Deobfuscate/Decode Files or Information
+    detection: Alert on unexpected encoded strings in email, chat, or uploaded files, and review the content with a trusted decoder.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A gentle introduction to CyberChef. A community library received a Base64-encoded partner note. Open CyberChef from the platform menu, decode the message, and recover the training token. No prior CyberChef experience needed."
+visibility: public
+flag: "OCR{b4s364_is_encoding_not_encryption}"
+
+tools:
+  - cyberchef
+  - browser
+
+scenario: |
+  You are helping at a community library's digital skills desk. A partner
+  organisation sent a short note about a joint reading program, but the message
+  arrived as a long string of letters and numbers. The librarian needs the
+  training token inside the note to confirm the booking.
+
+  Base64 is a common way to represent text. It is not a secret code. In this
+  exercise you will use CyberChef, a free browser-based decoding tool, to turn the
+  message back into readable text.
+
+  The note is fictional and the target is isolated. You can use hints at any time.
+
+troubleshooting: "If the platform menu does not open CyberChef, copy the CyberChef address from the menu link into a new browser tab. If the output is still unreadable, confirm you added From Base64, not To Base64, and that you pasted the whole message. Never paste real passwords or personal data into any web tool."
+defensive_takeaways: "Base64 changes how text is represented; it does not protect a secret. Treat encoded content as readable, verify the sender through a second channel, and never paste real credentials or personal data into a public web tool."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target messages, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64/"
+
+hostnames:
+  - ip_offset: "93"
+    hostname: "cyberchef-b64.lab"
+    description: "CyberChef Base64 practice target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Library partner-note server"
+      type: "server"
+      ip_offset: "93"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the platform menu and choose **CyberChef**. It opens in a new browser
+      tab. Keep this exercise tab open so you can copy the message.
+    unlock_after_minutes: 0
+
+  - text: |
+      In CyberChef, find **From Base64** in the Operations list. Drag it into the
+      Recipe column. Copy the whole message from `/message.txt` into the Input
+      column.
+    unlock_after_minutes: 3
+
+  - text: |
+      Read the Output column. It should contain a line that starts with
+      "Training token:". Copy the `OCR{...}` value into the flag box, without the
+      word "Training token".
+    unlock_after_minutes: 6
+
+test:
+  steps:
+    - name: "Practice target responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Message file is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/message.txt"
+      expect: "200"
+      timeout: 20
+
+    - name: "Base64 message decodes to the training token"
+      command: "curl -s http://{target.portal}:8080/message.txt | base64 -d | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{b4s364_is_encoding_not_encryption}"
+      timeout: 20

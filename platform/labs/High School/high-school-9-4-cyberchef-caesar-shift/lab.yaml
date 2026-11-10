@@ -1,0 +1,104 @@
+title: "CyberChef: Read a Caesar Shift"
+category: crypto
+difficulty: beginner
+estimated_time: 15
+prerequisites:
+  - high-school-9-3-cyberchef-base64-basics
+# By completion students will be able to:
+learning_outcomes:
+  - Explain what a Caesar shift changes and what it leaves unchanged
+  - Use CyberChef ROT13 or Caesar Brute Force to read a shifted message
+  - Recover a training token from a simple cipher
+  - Describe why a letter shift is not suitable for protecting real secrets
+mapped_skills:
+  - web_api
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Defense Evasion
+    technique: T1140
+    technique_name: Deobfuscate/Decode Files or Information
+    detection: Review unexpected shifted or encoded text in messages and attachments with a trusted decoding tool before acting on it.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A beginner CyberChef exercise with a simple Caesar shift. Read a short shifted note from a fictional community partner, use ROT13 or Caesar Brute Force, and recover the training token. Builds on the Base64 lab."
+visibility: public
+flag: "OCR{r0t13_is_not_s3cur3}"
+
+tools:
+  - cyberchef
+  - browser
+
+scenario: |
+  The community library's partner sent another short note. This time the letters
+  have been shifted through the alphabet instead of encoded with Base64. A
+  Caesar shift is one of the oldest simple ciphers: every letter moves the same
+  number of places.
+
+  The librarian needs the training token to confirm the next booking. Use
+  CyberChef to try the shift and read the original message. The note is
+  fictional, and you can use hints at any time.
+
+troubleshooting: "If ROT13 does not produce readable text, try Caesar Brute Force in CyberChef and read the candidate outputs. Confirm you copied the whole message. Do not use a real secret or personal data in the tool."
+defensive_takeaways: "A Caesar shift is easy to try exhaustively, so it does not protect a secret. If a message uses simple obfuscation, decode it with a trusted tool and verify the sender through a second channel."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target messages, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar/"
+
+hostnames:
+  - ip_offset: "94"
+    hostname: "cyberchef-rot.lab"
+    description: "CyberChef Caesar practice target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Library partner-note server"
+      type: "server"
+      ip_offset: "94"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open **CyberChef** from the platform menu and copy the message from
+      `/message.txt` into the Input column.
+    unlock_after_minutes: 0
+
+  - text: |
+      Add **ROT13** to the Recipe column. ROT13 is a Caesar shift of 13 places.
+      Read the Output column.
+    unlock_after_minutes: 3
+
+  - text: |
+      If the output is still not readable, remove ROT13 and add
+      **Caesar Brute Force**. Look for the candidate that contains an ordinary
+      sentence and a line beginning "Training token:".
+    unlock_after_minutes: 6
+
+test:
+  steps:
+    - name: "Practice target responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Message file is served"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/message.txt"
+      expect: "200"
+      timeout: 20
+
+    - name: "ROT13 message decodes to the training token"
+      command: "curl -s http://{target.portal}:8080/message.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{r0t13_is_not_s3cur3}"
+      timeout: 20

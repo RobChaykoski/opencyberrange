@@ -345,6 +345,15 @@
             >
               Knowledge check
             </button>
+            <a
+              href="https://gchq.github.io/CyberChef/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn--secondary btn--sm"
+              title="Open CyberChef in a new tab for encoding and decoding practice"
+            >
+              CyberChef
+            </a>
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
               <div class="launch-buttons">

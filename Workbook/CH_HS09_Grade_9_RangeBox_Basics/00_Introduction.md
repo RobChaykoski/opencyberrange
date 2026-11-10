@@ -54,3 +54,6 @@ You do not have to memorise these. Use this table as a reference.
 
 1. [RangeBox First Steps](01_First_Steps.md)
 2. [RangeBox File Hunt](02_File_Hunt.md)
+3. [CyberChef: Decode a Base64 Message](03_CyberChef_Base64.md)
+4. [CyberChef: Read a Caesar Shift](04_CyberChef_Caesar.md)
+5. [CyberChef: Peel Back Two Layers](05_CyberChef_Layers.md)

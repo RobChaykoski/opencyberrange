@@ -117,6 +117,28 @@
         </router-link>
       </div>
 
+      <!-- TOOLS -->
+      <div class="nav-section">
+        <span v-show="!collapsed" class="nav-section__label">Tools</span>
+        <a
+          href="https://gchq.github.io/CyberChef/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="CyberChef (opens in a new tab)"
+          title="CyberChef — decode and inspect data"
+          class="nav-item"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
+            <path d="M4 7h16"/>
+            <path d="M4 12h10"/>
+            <path d="M4 17h7"/>
+            <circle cx="18" cy="12" r="2"/>
+            <path d="m18 14v3"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">CyberChef</span>
+        </a>
+      </div>
+
 
       <!-- INSTRUCTOR (instructor + admin) -->
       <div v-if="showInstructor" class="nav-section">
