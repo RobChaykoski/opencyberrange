@@ -94,6 +94,7 @@ def test_unauthenticated_calls_are_rejected(client):
     for path in (
         "/api/auth/me",
         "/api/admin/users",
+        "/api/admin/system/data-integrity",
         "/api/settings/",
         "/api/instructor/courses",
     ):
@@ -114,6 +115,7 @@ def test_student_cannot_reach_staff_or_admin_surfaces(client, db_session):
         "/api/admin/users/export?reason=matrix-test",
         "/api/admin/activity/export?format=json&reason=matrix-test",
         "/api/admin/system/backups",
+        "/api/admin/system/data-integrity",
         "/api/analytics/reports/export.pdf?reason=matrix-test",
     ):
         response = client.get(path, headers=headers)
@@ -131,6 +133,7 @@ def test_instructor_cannot_reach_admin_surfaces(client, db_session):
         "/api/admin/users/export?reason=matrix-test",
         "/api/admin/activity/export?format=json&reason=matrix-test",
         "/api/admin/system/backups",
+        "/api/admin/system/data-integrity",
     ):
         response = client.get(path, headers=headers)
         assert response.status_code == 403, (path, response.status_code, response.text)

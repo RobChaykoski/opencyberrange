@@ -24,6 +24,18 @@
     ".trivyignore.yaml": {
       "sha256": "a95238a63e8bb0514ac76ecbd7cb89259babce4c466adf73c815f8bf0f42a1ad"
     },
+    "deploy/systemd/README.md": {
+      "sha256": "89ea818bd91e7f0d53b2567cebc3472c56fe71c4507c9827fdb54cd0fa0de66c"
+    },
+    "deploy/systemd/ocr-db-integrity-alert@.service": {
+      "sha256": "07b3aae67642cd01ecd564228f41d2add157ceedae41cfcc19fef210aca73c58"
+    },
+    "deploy/systemd/ocr-db-integrity.service": {
+      "sha256": "db6fd80046ce7a3da9ae649418181db28a65421a073d6e14f345e2863e012348"
+    },
+    "deploy/systemd/ocr-db-integrity.timer": {
+      "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
+    },
     "platform/backend/Dockerfile": {
       "sha256": "71e3deec8155ca37b40dd4908d43c8e45634439c1821be4fa145b0a8f7cd607e"
     },
@@ -81,6 +93,9 @@
     "scripts/database_integrity.py": {
       "sha256": "9377a3ad84617e01e6656e2f4c83d1be4244352ce319671abe25aca8b83b2806"
     },
+    "scripts/db-integrity-check.sh": {
+      "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
+    },
     "scripts/deploy-updates.sh": {
       "sha256": "d696005b3022938e57160aba1b1097adc48ab470f3f3a9e3563ccbcb0695490e"
     },
@@ -100,7 +115,7 @@
       "sha256": "47772da6b64696f3fca9acd846a32b14dc197897e5164de23b453289daeb009f"
     },
     "scripts/supply_chain.py": {
-      "sha256": "a5c708d65c2f8e858ccbc03ad4139491c81147c185a8c15f539d54b2c9e3066c"
+      "sha256": "80a4482d053252d18d3f2374843e1bdf51889c399aacd7a92d8e4b71a3652d41"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "728448d9c9cd50793cbde4b62b3c2852dbd896d19fb06ed872a51c301a70027b"

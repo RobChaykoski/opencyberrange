@@ -1,0 +1,17 @@
+[Unit]
+Description=OpenCyberRange database integrity check
+Documentation=file:/home/ocr/opencyberrange/docs/DATABASE-INTEGRITY.md
+After=docker.service
+Requires=docker.service
+OnFailure=ocr-db-integrity-alert@%n.service
+
+[Service]
+Type=oneshot
+User=root
+EnvironmentFile=-/etc/opencyberrange/integrity.env
+# Change this path if the checkout is not /home/ocr/opencyberrange.
+ExecStart=/bin/bash /home/ocr/opencyberrange/scripts/db-integrity-check.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+TimeoutStartSec=15min

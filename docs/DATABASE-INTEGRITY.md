@@ -27,24 +27,28 @@ a flag, a VPN key, or a free-text comment.
 table and a database fingerprint over the table checksums.
 
 ```bash
-# Run inside the backend container
-docker exec -w /app ocr-backend python /tmp/database_integrity.py --checksum
-docker exec -w /app ocr-backend python /tmp/database_integrity.py --quality
-docker exec -w /app ocr-backend python /tmp/database_integrity.py --ledger
+# Run inside the backend container, from the deployment checkout
+docker exec -i ocr-backend python - --checksum < scripts/database_integrity.py
+docker exec -i ocr-backend python - --quality  < scripts/database_integrity.py
+docker exec -i ocr-backend python - --ledger   < scripts/database_integrity.py
 ```
 
 Write a signed manifest with `DB_INTEGRITY_KEY` set:
 
 ```bash
-DB_INTEGRITY_KEY=... python scripts/database_integrity.py \
-  --write-manifest /secure/evidence/db-manifest.json
+set -a; . /etc/opencyberrange/integrity.env; set +a
+docker exec -i -e DB_INTEGRITY_KEY ocr-backend python - \
+  --write-manifest /tmp/db-manifest.json < scripts/database_integrity.py
+docker cp ocr-backend:/tmp/db-manifest.json ./db-manifest.json
+docker exec ocr-backend rm -f /tmp/db-manifest.json
 ```
 
-Verify a later snapshot:
+Verify a later snapshot by copying the manifest into the container:
 
 ```bash
-DB_INTEGRITY_KEY=... python scripts/database_integrity.py \
-  --verify /secure/evidence/db-manifest.json
+docker cp ./db-manifest.json ocr-backend:/tmp/db-manifest.json
+docker exec -i -e DB_INTEGRITY_KEY ocr-backend python - \
+  --verify /tmp/db-manifest.json < scripts/database_integrity.py
 ```
 
 The manifest is point-in-time evidence. Store it outside the database, with the
@@ -192,12 +196,44 @@ occur.
   to `ocr-app`. The actor context is the stronger signal; review unattributed
   writes, not just the label.
 
+## Scheduled verification
+
+The repository ships a host-side wrapper and systemd units:
+
+- `scripts/db-integrity-check.sh` runs quality, ledger, and checksum checks and
+  writes JSON evidence under `/var/lib/ocr-integrity` by default.
+- `deploy/systemd/ocr-db-integrity.service` and `.timer` run it daily at
+  02:30 UTC with a randomized delay.
+- `deploy/systemd/ocr-db-integrity-alert@.service` records a failed run; point
+  it at your monitoring webhook if you have one.
+
+Install steps and overrides are in
+[`../deploy/systemd/README.md`](../deploy/systemd/README.md). The wrapper keeps a
+single-run lock, skips a missing `DB_INTEGRITY_KEY` for the weekly manifest, and
+prunes evidence older than 90 days.
+
+## Admin portal status
+
+**Admin → System → Integrity** shows a live, read-only ledger summary:
+
+- ledger installed and number of entries;
+- last recorded write;
+- unattributed writes in the last seven days, grouped by table and operation;
+- number of covered critical tables;
+- the status check timestamp.
+
+The portal deliberately does not run the full chain or quality audit in a web
+request. Those run from the host schedule, and the signed manifests and JSON
+output are kept outside the database. The existing **System → Health** area also
+shows a one-line **Data integrity** item.
+
 ## Runbook
 
 1. **Before a release:** take a database backup, run `--quality`, record the
    fingerprint, and write a signed manifest.
 2. **After deployment:** run `--quality` and `--ledger`; confirm the ledger is
-   present and the chain is OK.
+   present and the chain is OK. Check **Admin → System → Integrity** for the
+   live ledger summary.
 3. **On a mismatch:** stop, preserve the database and ledger, compare the
    fingerprint with the release manifest, review unattributed entries, and do
    not re-baseline until the cause is explained.

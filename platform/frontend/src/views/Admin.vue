@@ -2002,6 +2002,7 @@
           <h2 class="panel-title" style="margin-bottom: 1rem;">System</h2>
           <div class="sub-tabs">
             <button @click="systemSubTab = 'health'" :class="['sub-tab', { active: systemSubTab === 'health' }]">Health</button>
+            <button @click="systemSubTab = 'integrity'; fetchDataIntegrity()" :class="['sub-tab', { active: systemSubTab === 'integrity' }]">Integrity</button>
             <button @click="systemSubTab = 'backups'" :class="['sub-tab', { active: systemSubTab === 'backups' }]">Backups</button>
             <button v-if="exerciseTester" @click="systemSubTab = 'tester'" :class="['sub-tab', { active: systemSubTab === 'tester' }]">Exercise Tester</button>
             <button v-if="stressTester" @click="systemSubTab = 'stress'; checkActiveStressTest()" :class="['sub-tab', { active: systemSubTab === 'stress' }]">Stress Tester</button>
@@ -2039,6 +2040,118 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Integrity Sub-tab -->
+          <div v-if="systemSubTab === 'integrity'">
+            <div class="panel-header">
+              <h3 class="section-title">Data integrity</h3>
+              <button @click="fetchDataIntegrity" :disabled="dataIntegrityLoading" class="btn btn--secondary btn--sm">
+                {{ dataIntegrityLoading ? 'Checking...' : 'Refresh' }}
+              </button>
+            </div>
+            <p class="section-desc">
+              The append-only ledger records application writes to
+              {{ dataIntegrity?.coverage_tables || 16 }} critical tables. Daily
+              quality and chain checks run from the host schedule; weekly
+              signed checksum manifests are kept outside the database.
+            </p>
+
+            <div v-if="dataIntegrityLoading && !dataIntegrity" class="empty-state">
+              Checking the integrity ledger...
+            </div>
+            <div v-else-if="dataIntegrityError" class="empty-state empty-state--error" role="alert">
+              {{ dataIntegrityError }}
+            </div>
+            <template v-else-if="dataIntegrity">
+              <div
+                class="integrity-summary"
+                :class="`integrity-summary--${dataIntegrity.status}`"
+                role="status"
+                aria-live="polite"
+              >
+                <span class="integrity-summary__icon" aria-hidden="true">
+                  <template v-if="dataIntegrity.status === 'ok'">&#10003;</template>
+                  <template v-else-if="dataIntegrity.status === 'warning'">&#9888;</template>
+                  <template v-else>&#10007;</template>
+                </span>
+                <div>
+                  <strong class="integrity-summary__title">{{ dataIntegrity.label }}</strong>
+                  <p class="integrity-summary__text">{{ dataIntegrity.message }}</p>
+                </div>
+              </div>
+
+              <div class="integrity-metrics">
+                <div class="integrity-metric">
+                  <span class="integrity-metric__label">Ledger entries</span>
+                  <span class="integrity-metric__value">{{ Number(dataIntegrity.entries || 0).toLocaleString() }}</span>
+                  <span class="integrity-metric__hint">Append-only change records</span>
+                </div>
+                <div class="integrity-metric">
+                  <span class="integrity-metric__label">Last recorded write</span>
+                  <span class="integrity-metric__value">
+                    {{ dataIntegrity.last_entry_at ? formatDate(dataIntegrity.last_entry_at) : 'No writes yet' }}
+                  </span>
+                  <span class="integrity-metric__hint">Most recent ledger entry</span>
+                </div>
+                <div class="integrity-metric">
+                  <span class="integrity-metric__label">Unattributed writes</span>
+                  <span class="integrity-metric__value">{{ Number(dataIntegrity.unattributed_7d || 0).toLocaleString() }}</span>
+                  <span class="integrity-metric__hint">Last 7 days; review if non-zero</span>
+                </div>
+                <div class="integrity-metric">
+                  <span class="integrity-metric__label">Covered tables</span>
+                  <span class="integrity-metric__value">{{ dataIntegrity.coverage_tables }}</span>
+                  <span class="integrity-metric__hint">Critical data tables</span>
+                </div>
+              </div>
+
+              <div v-if="dataIntegrity.unattributed?.length" class="integrity-unattributed">
+                <h4 class="integrity-subtitle">Unattributed writes in the last 7 days</h4>
+                <p class="section-desc">
+                  These rows were written without the application's actor
+                  context, for example through a manual SQL session. Review the
+                  table and operation before treating them as expected.
+                </p>
+                <div class="integrity-table-wrap">
+                  <table class="integrity-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Table</th>
+                        <th scope="col">Operation</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="row in dataIntegrity.unattributed" :key="`${row.table}-${row.operation}`">
+                        <td class="integrity-table__mono">{{ row.table }}</td>
+                        <td>{{ row.operation }}</td>
+                        <td>{{ row.count }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="integrity-schedule">
+                <h4 class="integrity-subtitle">How this is verified</h4>
+                <ul class="integrity-schedule__list">
+                  <li><strong>Daily:</strong> data-quality and ledger-chain checks.</li>
+                  <li><strong>Weekly:</strong> a signed SHA-256 checksum manifest.</li>
+                  <li><strong>Quarterly:</strong> a restore drill against the latest backup.</li>
+                </ul>
+                <p class="integrity-note">
+                  This view reports live ledger activity. Full chain, checksum,
+                  and quality verification runs on the host schedule, not in
+                  this request. Keep the signed manifests and check output on a
+                  separate host or backup target.
+                </p>
+              </div>
+
+              <p class="integrity-note">
+                Status checked {{ formatDate(dataIntegrity.checked_at) }}.
+              </p>
+            </template>
           </div>
 
           <!-- Backups Sub-tab -->
@@ -4662,6 +4775,9 @@ const eventTypeLabel = (et) => {
 // System status state
 const systemStatus = ref({})
 const systemStatusLoading = ref(false)
+const dataIntegrity = ref(null)
+const dataIntegrityLoading = ref(false)
+const dataIntegrityError = ref('')
 const backups = ref([])
 const backupsLoading = ref(false)
 const creatingBackup = ref(false)
@@ -5096,6 +5212,20 @@ const fetchSystemStatus = async () => {
 }
 
 // Header system-health dot -- driven by the minimal, install-aware status.
+const fetchDataIntegrity = async () => {
+  dataIntegrityLoading.value = true
+  dataIntegrityError.value = ''
+  try {
+    const { data } = await axios.get('/admin/system/data-integrity')
+    dataIntegrity.value = data
+  } catch (e) {
+    dataIntegrityError.value =
+      e.response?.data?.detail || 'Could not load the data-integrity status.'
+  } finally {
+    dataIntegrityLoading.value = false
+  }
+}
+
 const fetchDashboardHealth = async () => {
   try {
     const { data } = await axios.get('/admin/system/status')
@@ -10485,6 +10615,10 @@ watch(activeTab, (tab) => {
   font-size: 0.9rem;
 }
 
+.empty-state--error {
+  color: var(--danger);
+}
+
 /* === Exercises Catalog Layout (sidebar + table) === */
 .catalog-layout { display: flex; gap: 1rem; }
 
@@ -11784,6 +11918,179 @@ watch(activeTab, (tab) => {
 .btn--warning:hover {
   background: rgba(251, 191, 36, 0.25);
   border-color: #fbbf24;
+}
+
+.integrity-summary {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.integrity-summary--ok {
+  border-left-color: var(--success);
+  background: var(--success-bg);
+}
+
+.integrity-summary--warning {
+  border-left-color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.integrity-summary--error {
+  border-left-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.integrity-summary__icon {
+  font-size: 1rem;
+  line-height: 1.4;
+  width: 1.25rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.integrity-summary--ok .integrity-summary__icon { color: var(--success); }
+.integrity-summary--warning .integrity-summary__icon { color: var(--warning); }
+.integrity-summary--error .integrity-summary__icon { color: var(--danger); }
+
+.integrity-summary__title {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.integrity-summary__text {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.integrity-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.integrity-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.9rem 1rem;
+  min-width: 0;
+}
+
+.integrity-metric__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.integrity-metric__value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.integrity-metric__hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.integrity-subtitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.35rem;
+}
+
+.integrity-unattributed {
+  margin-bottom: 1.25rem;
+}
+
+.integrity-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.integrity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.integrity-table th,
+.integrity-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.integrity-table th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-primary);
+}
+
+.integrity-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.integrity-table__mono {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  overflow-wrap: anywhere;
+}
+
+.integrity-schedule {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.integrity-schedule__list {
+  margin: 0.25rem 0 0.5rem;
+  padding-left: 1.15rem;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.integrity-schedule__list strong {
+  color: var(--text-primary);
+}
+
+.integrity-note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .integrity-metrics {
+    grid-template-columns: 1fr;
+  }
 }
 
 .section-desc {

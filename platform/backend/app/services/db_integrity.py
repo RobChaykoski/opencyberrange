@@ -57,6 +57,8 @@ CREATE INDEX IF NOT EXISTS ix_data_integrity_ledger_table
     ON data_integrity_ledger (table_name);
 CREATE INDEX IF NOT EXISTS ix_data_integrity_ledger_entry
     ON data_integrity_ledger (entry_hash);
+CREATE INDEX IF NOT EXISTS ix_data_integrity_ledger_occurred
+    ON data_integrity_ledger (occurred_at);
 
 CREATE OR REPLACE FUNCTION ocr_integrity_trigger()
 RETURNS trigger AS $$
@@ -132,6 +134,80 @@ CREATE TRIGGER ocr_integrity_ledger_no_update
 
 REVOKE UPDATE, DELETE ON data_integrity_ledger FROM PUBLIC;
 """
+
+
+def ledger_summary(engine: Engine) -> dict:
+    """Return a fast, read-only summary of the append-only ledger.
+
+    The result is intentionally lighter than the host integrity script: it
+    reports ledger presence, write volume, the most recent entry, and
+    unattributed writes from the last seven days. Full chain verification,
+    checksum manifests, and data-quality checks stay on the host schedule.
+    """
+    summary = {
+        "available": False,
+        "installed": False,
+        "entries": 0,
+        "last_entry_at": None,
+        "unattributed_7d": 0,
+        "unattributed": [],
+        "coverage_tables": len(LEDGER_TABLES),
+    }
+    if engine.dialect.name != "postgresql":
+        summary["reason"] = "postgresql_required"
+        return summary
+
+    try:
+        with engine.connect() as conn:
+            installed = conn.execute(
+                text("SELECT to_regclass('public.data_integrity_ledger') IS NOT NULL")
+            ).scalar()
+            if not installed:
+                summary["available"] = True
+                return summary
+
+            row = conn.execute(
+                text(
+                    "SELECT COUNT(*) AS entries, MAX(occurred_at) AS last_entry_at "
+                    "FROM data_integrity_ledger"
+                )
+            ).mappings().one()
+            last = row["last_entry_at"]
+
+            unattributed = conn.execute(
+                text(
+                    "SELECT table_name, operation, COUNT(*) AS write_count "
+                    "FROM data_integrity_ledger "
+                    "WHERE actor_type = 'unattributed' "
+                    "AND occurred_at >= now() - interval '7 days' "
+                    "GROUP BY table_name, operation "
+                    "ORDER BY write_count DESC, table_name, operation "
+                    "LIMIT 8"
+                )
+            ).mappings().all()
+
+            summary.update(
+                {
+                    "available": True,
+                    "installed": True,
+                    "entries": int(row["entries"] or 0),
+                    "last_entry_at": last.isoformat() if last else None,
+                    "unattributed_7d": sum(int(item["write_count"]) for item in unattributed),
+                    "unattributed": [
+                        {
+                            "table": item["table_name"],
+                            "operation": item["operation"],
+                            "count": int(item["write_count"]),
+                        }
+                        for item in unattributed
+                    ],
+                }
+            )
+            return summary
+    except Exception as exc:
+        logger.warning("Could not read the data-integrity ledger: %s", exc)
+        summary["reason"] = "unavailable"
+        return summary
 
 
 def ensure_ledger(engine: Engine) -> None:

@@ -341,6 +341,9 @@ note naming the role check.
   exercise content; Trivy suppressions are path-scoped and documented in
   `.trivyignore.yaml`. See
   [`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md).
+- Database integrity now has a live admin summary at **System → Integrity**,
+  plus `scripts/db-integrity-check.sh` and systemd units for daily quality,
+  ledger, and checksum evidence and weekly signed manifests.
 
 The full evidence record is in
 [`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md).

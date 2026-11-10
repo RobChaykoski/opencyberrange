@@ -21,7 +21,7 @@ the evidence was produced for the build being released.
 | A05 Security misconfiguration | Nginx CSP, HSTS, frame, content-type, referrer, and permissions headers remain enforced. External probes to ports 5000 and 8000 remain blocked. NPM Force SSL is intentionally off because Cloudflare/OPNsense already terminate and enforce TLS. UI smoke against `https://ocr.swocts.com` passed (`42741914124`). `scripts/check-nginx-security-headers.py`, `/api/admin/system/status` | Pass |
 | A06 Vulnerable components | Trivy filesystem/secret/config scan and CodeQL are green on the 2.5.4 commits. The 8 November dependency audit reported no known Python or production npm vulnerabilities; no dependency pins changed in this pass. | Pass for scanned inputs; dependency audit not rerun in this pass |
 | A07 Authentication failures | Login, MFA, lockout, token revocation, profile, and admin re-authentication/session-revocation tests remain green in the backend suite. No authentication contract changed in 2.5.4. `tests/test_auth.py`, `tests/test_mfa.py`, `tests/test_token_revocation.py`, `tests/test_profile.py` | Pass for covered paths |
-| A08 Integrity failures | Alembic migrations `0007_lab_metadata` and `0008_mitre_attack` are additive and applied on both OCR stacks. Supply-chain lock covers 37 files and 149 labs and verifies with the rotated release key. The database integrity ledger remains active. | Pass |
+| A08 Integrity failures | Alembic migrations `0007_lab_metadata` and `0008_mitre_attack` are additive and applied on both OCR stacks. Supply-chain lock covers 42 files and 149 labs and verifies with the rotated release key. The database integrity ledger is summarised in **Admin → System → Integrity**; `scripts/db-integrity-check.sh` and `deploy/systemd/` provide the daily host check and signed weekly manifests. | Pass |
 | A09 Logging/monitoring failures | Report/export reason logging, activity events, and admin audit actions are unchanged and included in the authorization matrix. The key rotation is recorded in the release evidence and supply-chain docs; no secret material is committed. | Pass for covered paths |
 | A10 SSRF | External URL handling rejects unsafe schemes and private targets; no new server-side fetch was added. Peer Manager remains internal and port 5000 is not externally exposed. `tests/test_input_safety.py` | Pass |
 | Supply chain | `supply-chain.lock.json` regenerated for 2.5.4 and signed with the rotated key. Public key committed; private key remains outside the repository under a release-owner-controlled path. | Pass |
@@ -34,7 +34,7 @@ Manual evidence:
 - DB-backed metadata, instructor-metrics, course-focus, analytics, competency, and authorization tests passed against disposable PostgreSQL.
 - Lab validation: **149 labs, 0 errors, 0 warnings**.
 - Lab release proof: **149 pass, 0 review, 0 fail**.
-- Supply-chain check: **37 files, 149 labs**, signature verified.
+- Supply-chain check: **42 files, 149 labs**, signature verified.
 - Public OCR and CTFd-host OCR both report `/api/version` **2.5.4** and healthy containers.
 
 Residual notes:

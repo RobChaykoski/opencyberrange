@@ -32,7 +32,7 @@ from pydantic import BaseModel
 
 from app.ratelimit import create_limiter
 
-from app.database import get_db
+from app.database import engine, get_db
 from app.models import (
     User, Lab, LabSession, WireGuardConfig, LabCompletion, FlagAttempt, Level, Track, ActivityEvent,
 )
@@ -3750,7 +3750,18 @@ async def system_status(
     except Exception:
         add("Backups", "warning", "Could not check backups.")
 
-    # 6. Core secrets (rolled up; VPN/operator items live in Advanced)
+    # 6. Data-integrity ledger (live summary; full chain and quality checks run
+    #    from the host schedule).
+    try:
+        from app.services.db_integrity import ledger_summary
+
+        summary = ledger_summary(engine)
+        status, label, detail = _integrity_status(summary)
+        add("Data integrity", status, f"{label}. {detail}")
+    except Exception:
+        add("Data integrity", "warning", "Could not read the integrity ledger.")
+
+    # 7. Core secrets (rolled up; VPN/operator items live in Advanced)
     try:
         jwt = settings.JWT_SECRET or ""
         db_url = settings.DATABASE_URL or ""
@@ -3769,6 +3780,70 @@ async def system_status(
     statuses = [i["status"] for i in items]
     overall = "error" if "error" in statuses else ("warning" if "warning" in statuses else "ok")
     return {"items": items, "overall": overall, "edition": entitlement.edition_name()}
+
+
+def _integrity_status(summary: dict) -> tuple[str, str, str]:
+    """Map a ledger summary to the portal's status, label, and detail."""
+    if not summary.get("available"):
+        return (
+            "warning",
+            "Integrity check unavailable",
+            "The append-only ledger requires PostgreSQL.",
+        )
+    if not summary.get("installed"):
+        return (
+            "error",
+            "Ledger not installed",
+            "Restart the backend so the ledger migration can run, then check again.",
+        )
+
+    entries = int(summary.get("entries") or 0)
+    unattributed = int(summary.get("unattributed_7d") or 0)
+    if unattributed:
+        return (
+            "warning",
+            "Review needed",
+            f"{unattributed} unattributed write"
+            f"{'s' if unattributed != 1 else ''} in the last 7 days. "
+            "Open the Integrity tab to review the table and operation.",
+        )
+    if entries == 0:
+        return (
+            "ok",
+            "Ledger active",
+            "The ledger is installed and has no recorded writes yet.",
+        )
+    return (
+        "ok",
+        "Ledger active",
+        f"{entries} append-only entr{'ies' if entries != 1 else 'y'}; "
+        "no unattributed writes in the last 7 days.",
+    )
+
+
+@router.get("/system/data-integrity")
+async def get_data_integrity_status(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Live, read-only summary of the append-only integrity ledger.
+
+    Full chain verification, data-quality checks, and signed checksum manifests
+    run from the host schedule so they do not compete with request traffic.
+    """
+    from datetime import datetime, timezone
+
+    from app.services.db_integrity import ledger_summary
+
+    summary = ledger_summary(engine)
+    status, label, message = _integrity_status(summary)
+    return {
+        **summary,
+        "status": status,
+        "label": label,
+        "message": message,
+        "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    }
 
 
 def _start_stress_test_run(

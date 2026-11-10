@@ -1,0 +1,8 @@
+[Unit]
+Description=Alert for a failed OpenCyberRange integrity check (%i)
+
+[Service]
+Type=oneshot
+# Replace logger with your monitoring webhook if you have one. The unit name
+# passed by OnFailure identifies the failed check.
+ExecStart=/usr/bin/logger -t ocr-integrity "OpenCyberRange integrity check failed: %i"
