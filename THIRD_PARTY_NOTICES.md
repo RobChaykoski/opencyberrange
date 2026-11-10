@@ -40,6 +40,18 @@ The project source and its original content are licensed under the
 [`BUILD_NOTICE.md`](BUILD_NOTICE.md). Third-party components remain under
 their own licences; the project licence does not override them.
 
+## 2.5.4 update
+
+- No new third-party runtime dependencies are shipped in 2.5.4.
+- `scripts/check-licences.py` reports **OK** for the 2.5.4 tree.
+- `scripts/GDG-Deploy.sh` uses the operator's Google Cloud CLI; the CLI is not
+  redistributed with OpenCyberRange.
+- GitHub Actions workflows use third-party actions; their licence terms remain
+  with the action authors.
+- Release signing uses GnuPG; it is not redistributed with the platform.
+- The active release key fingerprint is
+  `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`.
+
 ## Brand assets
 
 The **SWOCTS** name and logo/crest are owned by **SWOCTS** and were created and

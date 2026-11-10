@@ -27,6 +27,19 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
+## 2.5.4 release status
+
+- Platform source and content: **PolyForm Noncommercial License 1.0.0**.
+- Release artefact: `v2.5.4` is a signed annotated tag; the supply-chain lock is
+  signed by the same release key.
+- Third-party inventory: `scripts/check-licences.py` reports **OK** for the
+  2.5.4 tree.
+- No new third-party runtime dependencies ship in 2.5.4.
+- The `GDG-Deploy` script uses the operator's Google Cloud CLI and does not
+  redistribute it.
+- GitHub Actions workflows use third-party actions; their licences remain with
+  the action authors.
+
 ## What the noncommercial grant covers
 
 Per PolyForm Noncommercial, permitted purposes include use by educational

@@ -1,10 +1,10 @@
 # SWOCTS Cyber Range: V2 security baseline (OWASP Top 10)
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This baseline applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.1.4 line. Applies to the web interface, platform data,
+**Status:** Active for the 2.5.4 line. Applies to the web interface, platform data,
 and the project delivery process. The 1.1 line keeps its existing maintenance
 policy; fixes that apply there are merged forward.
 
@@ -102,6 +102,8 @@ note naming the role check.
 - Do not commit secrets; Trivy secret scanning and review remain required.
 - Verify export/erasure coverage when a model stores personal data.
 - Confirm no secret value is written to application logs.
+- Sign release artefacts: `supply-chain.lock.json` and `v*` tags. Record key
+  rotations and the active fingerprint in `docs/SUPPLY-CHAIN.md`.
 
 **Evidence:** migration or model note, export/erasure test, scanner result.
 
@@ -126,6 +128,9 @@ note naming the role check.
 **Project and tests**
 
 - Add an XSS regression test for any new rich-text or markdown surface.
+- Scenario markdown is sanitized with DOMPurify and external links are
+  validated before rendering; keep the regression tests in
+  `tests/test_input_safety.py` green.
 - Keep CodeQL enabled for Python and JavaScript/TypeScript.
 - Validate lab content with `scripts/validate-lab.py` before publishing.
 - CSV and spreadsheet exports pass every dynamic cell through
@@ -312,6 +317,27 @@ note naming the role check.
 
 **Evidence:** URL validation test or integration boundary note.
 
+## 2.5.4 release control update
+
+2.5.4 adds the following security-relevant changes and evidence:
+
+- Release signing key rotated. `v2.5.4` is a signed annotated tag and the
+  supply-chain lock is signed by the same key. Active fingerprint:
+  `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`.
+- The first candidate key was discarded before use; no release artefact was
+  signed with it.
+- Scenario markdown and external URL handling are sanitized and validated, with
+  regression coverage in `tests/test_input_safety.py`.
+- Report and certificate privacy tests, CSV formula neutralization, and
+  instructor-scoped report exports remain covered.
+- The CTFd-hosted OCR stack at `.41` was performance-tuned without changing
+  CTFd or weakening isolation.
+- UI smoke passed against `https://ocr.swocts.com` on 2.5.4.
+- CI, Quality, CodeQL, and Trivy are green on the release commits.
+
+The full evidence record is in
+[`V2-SECURITY-EVIDENCE.md`](V2-SECURITY-EVIDENCE.md).
+
 ## Security testing matrix
 
 | Layer | Required check | When |
@@ -322,7 +348,9 @@ note naming the role check.
 | Static analysis | CodeQL for Python and JavaScript/TypeScript | Every PR and scheduled |
 | Dependencies | `pip-audit`, `npm audit --omit=dev` | Every PR and weekly |
 | Containers/config | Trivy filesystem, secret, and config scan | Every PR and scheduled |
-| Lab content | `scripts/validate-lab.py` | Every lab change |
+| Lab content | `scripts/validate-lab.py` and `scripts/lab-release-proof.py` | Every lab change |
+| Release signing | `git tag -v`, `supply_chain.py --check --signature` | Every release |
+| UI smoke | `scripts/ui-smoke.mjs` against the deployed base URL | Every release and schedule |
 | Manual | Exercise the changed screen or endpoint | Every change |
 | Release | Backup, migration, health check, rollback note | Every production release |
 

@@ -212,6 +212,10 @@ The platform source and original content are licensed under the **PolyForm
 Noncommercial License 1.0.0** (see [LICENSE](LICENSE) and
 [LICENSING.md](LICENSING.md)). It is source-available, not OSI open source.
 
+GitHub's automatic licence detector may show **Other** because PolyForm
+Noncommercial is not OSI-approved or a recognised SPDX license. The committed
+[`LICENSE`](LICENSE) file is authoritative.
+
 Third-party software and data keep their own licences. The full inventory,
 source offers, and notice-sensitive components are in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), with licence texts in

@@ -1,16 +1,51 @@
 # SWOCTS Cyber Range: V2 security evidence record
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.4**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active. This is the release evidence companion to
+**Status:** Active for the 2.5.4 line. This is the release evidence companion to
 [`V2-SECURITY-OWASP-TOP-10.md`](V2-SECURITY-OWASP-TOP-10.md).
 
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.
 
-## Current pass — 9 November 2026
+## Current pass — 10 November 2026 (2.5.4)
+
+| Category | Evidence produced | Result |
+|---|---|---|
+| A01 Broken access control | Authorization matrix covers report/export routes, certificate verification, admin surfaces, course analytics, and the new instructor learning snapshot. Instructor PDF export is explicitly scoped to owned courses; outsider and student identities receive `403`. `tests/test_authorization_matrix.py`, `tests/test_certificate_verify.py`, `tests/test_certificate_verify_input.py` | Pass for covered paths |
+| A02 Cryptographic failures | Release signing key rotated for 2.5.4. `v2.5.4` is a signed annotated tag and `supply-chain.lock.json.asc` verifies with the committed public key. Active fingerprint: `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`. The first candidate key was discarded before use and no artifact was signed with it. JWT and database secrets are non-default in the status check. TLS termination remains at Cloudflare/OPNsense; NPM Force SSL is intentionally off. | Pass |
+| A03 Injection | Scenario markdown is sanitized and external links are validated before rendering. CSV exports neutralize formula-leading cells. Lab metadata is schema-validated, and CodeQL is green for Python and JavaScript/TypeScript. `tests/test_input_safety.py`, `tests/test_spreadsheet_safety.py`, `tests/test_activity_admin.py`, `tests/test_lab_metadata_schema.py`, `scripts/validate-lab.py --all` | Pass for covered surfaces |
+| A04 Insecure design | Analytics remains aggregate-only with minimum-cohort suppression and no public learner ranking. The new instructor learning snapshot reuses scoped session/completion/attempt data and returns counts/medians, not learner answers. `tests/test_analytics.py`, `tests/test_competency_radar.py`, `tests/test_instructor_learning_metrics.py` | Pass |
+| A05 Security misconfiguration | Nginx CSP, HSTS, frame, content-type, referrer, and permissions headers remain enforced. External probes to ports 5000 and 8000 remain blocked. NPM Force SSL is intentionally off because Cloudflare/OPNsense already terminate and enforce TLS. UI smoke against `https://ocr.swocts.com` passed (`42741914124`). `scripts/check-nginx-security-headers.py`, `/api/admin/system/status` | Pass |
+| A06 Vulnerable components | Trivy filesystem/secret/config scan and CodeQL are green on the 2.5.4 commits. The 8 November dependency audit reported no known Python or production npm vulnerabilities; no dependency pins changed in this pass. | Pass for scanned inputs; dependency audit not rerun in this pass |
+| A07 Authentication failures | Login, MFA, lockout, token revocation, profile, and admin re-authentication/session-revocation tests remain green in the backend suite. No authentication contract changed in 2.5.4. `tests/test_auth.py`, `tests/test_mfa.py`, `tests/test_token_revocation.py`, `tests/test_profile.py` | Pass for covered paths |
+| A08 Integrity failures | Alembic migrations `0007_lab_metadata` and `0008_mitre_attack` are additive and applied on both OCR stacks. Supply-chain lock covers 35 files and 149 labs and verifies with the rotated release key. The database integrity ledger remains active. | Pass |
+| A09 Logging/monitoring failures | Report/export reason logging, activity events, and admin audit actions are unchanged and included in the authorization matrix. The key rotation is recorded in the release evidence and supply-chain docs; no secret material is committed. | Pass for covered paths |
+| A10 SSRF | External URL handling rejects unsafe schemes and private targets; no new server-side fetch was added. Peer Manager remains internal and port 5000 is not externally exposed. `tests/test_input_safety.py` | Pass |
+| Supply chain | `supply-chain.lock.json` regenerated for 2.5.4 and signed with the rotated key. Public key committed; private key remains outside the repository under a release-owner-controlled path. | Pass |
+
+Manual evidence:
+
+- CI, Quality checks, CodeQL, and Trivy are green on the 2.5.4 release commits.
+- UI smoke: run `42741914124`, success against `https://ocr.swocts.com` on `2.5.4`.
+- Backend non-DB suite: **176 passed**.
+- DB-backed metadata, instructor-metrics, course-focus, analytics, competency, and authorization tests passed against disposable PostgreSQL.
+- Lab validation: **149 labs, 0 errors, 0 warnings**.
+- Lab release proof: **149 pass, 0 review, 0 fail**.
+- Supply-chain check: **35 files, 149 labs**, signature verified.
+- Public OCR and CTFd-host OCR both report `/api/version` **2.5.4** and healthy containers.
+
+Residual notes:
+
+- Full lab-matrix, KVM, WireGuard, firewall-persistence, and restore drills remain real-host certification gates.
+- Public certificate verification necessarily exposes the recipient name; it returns no account identifiers.
+- NPM Force SSL remains intentionally off; TLS enforcement is at Cloudflare/OPNsense.
+- The CTFd host `.41` also runs an OCR stack; 2.5.4 does not change CTFd.
+- A full axe/WCAG pass for the new dashboard and MITRE panel remains a follow-up; the UI smoke passed.
+
+## Previous pass — 9 November 2026
 
 | Category | Evidence produced | Result |
 |---|---|---|
