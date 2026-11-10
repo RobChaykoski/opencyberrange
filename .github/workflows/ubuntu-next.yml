@@ -53,11 +53,13 @@ jobs:
             scripts/install-platform.sh \
             scripts/deploy-updates.sh \
             scripts/upgrade-from-backup.sh \
-            scripts/post-install-check.sh; do
+            scripts/post-install-check.sh \
+            scripts/GDG-Deploy.sh; do
             bash -n "$script"
           done
           sudo bash scripts/setup-range-server.sh --help
           bash scripts/install-platform.sh --help
+          bash scripts/GDG-Deploy.sh --help
 
       - name: Catalog and docs checks
         run: |

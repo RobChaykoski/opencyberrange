@@ -85,6 +85,7 @@ COVERED_FILES = [
     "docker-compose.prod.yml",
     "scripts/install-platform.sh",
     "scripts/deploy-updates.sh",
+    "scripts/GDG-Deploy.sh",
     "scripts/prebuild-labs.sh",
     "scripts/lab_build_hash.py",
     "scripts/supply_chain.py",

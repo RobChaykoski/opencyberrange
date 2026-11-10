@@ -66,6 +66,9 @@
     "platform/frontend/security-headers.conf": {
       "sha256": "a4b457c0ed092a1273cd88268d526984314f8cb9a4a3d1590d8b557a05c5aff6"
     },
+    "scripts/GDG-Deploy.sh": {
+      "sha256": "e67951fb780a56f7085b0d23456a7a5869355e8d380bc3fbbccd5a05596829fe"
+    },
     "scripts/check-licences.py": {
       "sha256": "616ecb5ba01bdbeeab0e93e07342b294765b87db1692c27e591cd3255b541f13"
     },
@@ -91,7 +94,7 @@
       "sha256": "47772da6b64696f3fca9acd846a32b14dc197897e5164de23b453289daeb009f"
     },
     "scripts/supply_chain.py": {
-      "sha256": "ff3a0b73053fff80d28b98602a002b7f458245b30365597866f998e796c5fd1e"
+      "sha256": "4b3d58751447f4645f72c4472a69664f08b5344a0ee0714b82d3668e076704b5"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "728448d9c9cd50793cbde4b62b3c2852dbd896d19fb06ed872a51c301a70027b"
@@ -100,7 +103,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "19d88da848fed57539670e22b69beff2141dde1766ef605c8070bafc3465b202"
+      "sha256": "c9a5fffd0e84922ede7de4c08b739983f52972a12f0d26fda37d094fa9ef14c9"
     }
   },
   "generator": "scripts/supply_chain.py",

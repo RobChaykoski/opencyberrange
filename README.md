@@ -723,6 +723,20 @@ Prefer to run Docker Compose yourself? See the
 [Docker Compose Deployment Manual](Manual-Lite/00_Server_Deployment/08_Docker_Deploy_Manual.md)
 for a command-by-command deployment.
 
+### Google Cloud (GDG-Deploy)
+
+For a short-lived Google Cloud demo, `scripts/GDG-Deploy.sh` provisions a
+Compute Engine VM, opens the required ports, clones the repository, and runs the
+normal installer:
+
+```bash
+bash scripts/GDG-Deploy.sh --dry-run
+bash scripts/GDG-Deploy.sh
+```
+
+The VM is billable. Use `bash scripts/GDG-Deploy.sh --delete` to remove it. See
+[GDG-Deploy](docs/GCP-GDG-DEPLOY.md) for variables, security notes, and limits.
+
 The first prompt in the setup script asks how students will reach the server:
 
 ```
