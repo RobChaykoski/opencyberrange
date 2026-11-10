@@ -126,6 +126,25 @@ def test_scoreboard_name_mode_rejects_unknown_values(client, auth_headers, test_
     assert resp.status_code == 422
 
 
+def test_certificate_public_verification_preference_round_trip(
+    client, auth_headers, test_user
+):
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200
+    assert settings.json()["certificates_public"] is True
+
+    resp = client.put(
+        "/api/auth/settings",
+        json={"certificates_public": False},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200, resp.text
+
+    settings = client.get("/api/auth/settings", headers=auth_headers)
+    assert settings.status_code == 200
+    assert settings.json()["certificates_public"] is False
+
+
 def test_profile_names_are_saved_and_returned(client, auth_headers, test_user):
     resp = client.put(
         "/api/auth/settings",

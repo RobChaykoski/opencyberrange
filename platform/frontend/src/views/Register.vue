@@ -1,8 +1,9 @@
 <template>
   <div class="register-page">
+    <a class="skip-link" href="#register-form">Skip to registration form</a>
     <div class="register-split">
       <!-- Left: Form Panel -->
-      <div class="register-form-panel">
+      <main class="register-form-panel" id="register-form">
         <div class="form-panel-inner">
           <!-- Brand -->
           <div class="brand">
@@ -13,7 +14,7 @@
             </div>
           </div>
 
-          <p class="form-subtext">Join the cybersecurity training platform</p>
+          <p class="form-subtext">Build hands-on skills you can prove</p>
 
           <div v-if="competition" class="competition-callout">
             <p class="competition-callout__kicker">Event registration</p>
@@ -35,21 +36,23 @@
           </div>
 
           <!-- Error Message -->
-          <div v-if="errorMessage" class="error-message" role="alert" aria-live="assertive">
+          <div v-if="errorMessage" ref="errorBanner" tabindex="-1" class="error-message" role="alert" aria-live="assertive" aria-atomic="true">
             {{ errorMessage }}
           </div>
 
           <!-- Success Message -->
-          <div v-if="successMessage" class="success-message" role="status" aria-live="polite">
+          <div v-if="successMessage" ref="successBanner" tabindex="-1" class="success-message" role="status" aria-live="polite">
             {{ successMessage }}
           </div>
 
-          <form @submit.prevent="handleRegister" class="register-form">
+          <form @submit.prevent="handleRegister" class="register-form" :aria-busy="loading" novalidate>
             <div class="form-group">
               <label for="username" class="form-label">Username</label>
               <input
                 id="username"
+                ref="usernameInput"
                 v-model="form.username"
+                name="username"
                 type="text"
                 class="form-input"
                 :class="{ 'form-input--error': errors.username }"
@@ -66,7 +69,7 @@
                 @blur="validateUsername"
               />
               <p v-if="errors.username" id="username-help" class="error-text">{{ errors.username }}</p>
-              <p v-else-if="form.username && !errors.username" id="username-help" class="help-text">
+              <p v-else id="username-help" class="help-text">
                 Must start with a letter and contain only letters, numbers, underscores, and hyphens (3-50 characters)
               </p>
             </div>
@@ -75,7 +78,9 @@
               <label for="email" class="form-label">Email</label>
               <input
                 id="email"
+                ref="emailInput"
                 v-model="form.email"
+                name="email"
                 type="email"
                 class="form-input"
                 :class="{ 'form-input--error': errors.email }"
@@ -92,6 +97,9 @@
                 @blur="validateEmail"
               />
               <p v-if="errors.email" id="email-help" class="error-text">{{ errors.email }}</p>
+              <p v-else id="email-help" class="help-text">
+                We use your email for sign-in and essential security notices. It is not marketing.
+              </p>
             </div>
 
             <div class="form-group">
@@ -122,6 +130,7 @@
               <input
                 id="firstName"
                 v-model="form.firstName"
+                name="given-name"
                 type="text"
                 class="form-input"
                 maxlength="80"
@@ -135,6 +144,7 @@
               <input
                 id="lastName"
                 v-model="form.lastName"
+                name="family-name"
                 type="text"
                 class="form-input"
                 maxlength="80"
@@ -149,7 +159,9 @@
               <div class="input-wrapper">
                 <input
                   id="password"
+                  ref="passwordInput"
                   v-model="form.password"
+                  name="new-password"
                   :type="showPassword ? 'text' : 'password'"
                   class="form-input"
                   :class="{ 'form-input--error': errors.password }"
@@ -159,28 +171,37 @@
                   maxlength="128"
                   autocomplete="new-password"
                   spellcheck="false"
-                  aria-describedby="password-help password-checklist"
+                  :aria-describedby="passwordCapsLock
+                    ? 'password-help password-checklist password-strength password-caps-warning'
+                    : 'password-help password-checklist password-strength'"
                   :aria-invalid="errors.password ? 'true' : 'false'"
-                  @blur="validatePassword"
+                  @blur="validatePassword(); passwordCapsLock = false"
+                  @keydown="checkPasswordCapsLock"
+                  @keyup="checkPasswordCapsLock"
                 />
                 <button
                   type="button"
                   @click="showPassword = !showPassword"
                   class="password-toggle"
+                  :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                  :aria-pressed="showPassword ? 'true' : 'false'"
                 >
-                  <svg v-if="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg v-if="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                     <line x1="1" y1="1" x2="23" y2="23"/>
                   </svg>
-                  <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                     <circle cx="12" cy="12" r="3"/>
                   </svg>
                 </button>
               </div>
               <p v-if="errors.password" id="password-help" class="error-text">{{ errors.password }}</p>
-              <p v-else-if="form.password && !errors.password" id="password-help" class="help-text">
+              <p v-else id="password-help" class="help-text">
                 At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
+              </p>
+              <p v-if="passwordCapsLock" id="password-caps-warning" class="caps-warning" role="status">
+                Caps Lock is on.
               </p>
               <ul
                 v-if="form.password"
@@ -205,6 +226,18 @@
                   A number
                 </li>
               </ul>
+              <div v-if="form.password" class="password-strength" aria-live="polite">
+                <div class="password-strength__bar" aria-hidden="true">
+                  <span
+                    class="password-strength__fill"
+                    :class="`password-strength__fill--${passwordStrength.level}`"
+                    :style="{ width: `${passwordStrength.percent}%` }"
+                  ></span>
+                </div>
+                <p id="password-strength" class="password-strength__label">
+                  Password strength: <strong>{{ passwordStrength.label }}</strong>
+                </p>
+              </div>
             </div>
 
             <div class="form-group">
@@ -212,7 +245,9 @@
               <div class="input-wrapper">
                 <input
                   id="confirmPassword"
+                  ref="confirmPasswordInput"
                   v-model="form.confirmPassword"
+                  name="confirm-password"
                   :type="showConfirmPassword ? 'text' : 'password'"
                   class="form-input"
                   :class="{ 'form-input--error': errors.confirmPassword }"
@@ -222,26 +257,36 @@
                   maxlength="128"
                   autocomplete="new-password"
                   spellcheck="false"
-                  aria-describedby="confirm-password-help"
+                  :aria-describedby="confirmCapsLock
+                    ? 'confirm-password-help confirm-caps-warning'
+                    : 'confirm-password-help'"
                   :aria-invalid="errors.confirmPassword ? 'true' : 'false'"
-                  @blur="validateConfirmPassword"
+                  @blur="validateConfirmPassword(); confirmCapsLock = false"
+                  @keydown="checkConfirmCapsLock"
+                  @keyup="checkConfirmCapsLock"
                 />
                 <button
                   type="button"
                   @click="showConfirmPassword = !showConfirmPassword"
                   class="password-toggle"
+                  :aria-label="showConfirmPassword ? 'Hide password confirmation' : 'Show password confirmation'"
+                  :aria-pressed="showConfirmPassword ? 'true' : 'false'"
                 >
-                  <svg v-if="showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg v-if="showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
                     <line x1="1" y1="1" x2="23" y2="23"/>
                   </svg>
-                  <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                     <circle cx="12" cy="12" r="3"/>
                   </svg>
                 </button>
               </div>
               <p v-if="errors.confirmPassword" id="confirm-password-help" class="error-text">{{ errors.confirmPassword }}</p>
+              <p v-else id="confirm-password-help" class="help-text">Re-enter the same password to avoid typos.</p>
+              <p v-if="confirmCapsLock" id="confirm-caps-warning" class="caps-warning" role="status">
+                Caps Lock is on.
+              </p>
             </div>
 
             <div v-if="inviteRequired" class="form-group">
@@ -269,10 +314,36 @@
               </p>
             </div>
 
+            <div class="form-group">
+              <label class="form-check" for="privacyAcknowledged">
+                <input
+                  id="privacyAcknowledged"
+                  v-model="form.privacyAcknowledged"
+                  name="privacy_acknowledged"
+                  type="checkbox"
+                  :aria-invalid="errors.privacyAcknowledged ? 'true' : 'false'"
+                  aria-describedby="privacy-help"
+                  @change="validatePrivacyAcknowledged"
+                />
+                <span>
+                  I acknowledge the Privacy notice. If I am under 18, I have permission
+                  from a parent or guardian to use this account.
+                </span>
+              </label>
+              <p id="privacy-help" class="help-text">
+                Read the <router-link to="/privacy">Privacy notice</router-link>.
+                Privacy questions: <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>.
+              </p>
+              <p v-if="errors.privacyAcknowledged" class="error-text">
+                {{ errors.privacyAcknowledged }}
+              </p>
+            </div>
+
             <button
               type="submit"
               class="register-button"
               :disabled="loading"
+              :aria-disabled="loading ? 'true' : 'false'"
             >
               <span v-if="!loading">Create Account</span>
               <span v-else>Creating Account...</span>
@@ -286,10 +357,10 @@
             </p>
           </div>
         </div>
-      </div>
+      </main>
 
       <!-- Right: Illustration Panel -->
-      <div class="register-hero-panel">
+      <aside class="register-hero-panel" aria-label="Platform preview">
         <div class="hero-content">
           <!-- CSS Terminal Illustration -->
           <div class="terminal" aria-hidden="true">
@@ -327,19 +398,19 @@
           </div>
 
           <div class="hero-text">
-            <h2 class="hero-title">Start Your Journey</h2>
+            <h2 class="hero-title">Build skills you can prove</h2>
             <p class="hero-subtitle">
-              Network security, pen testing, web exploitation, and more.
+              Hands-on labs, feedback, and verifiable certificates that show what you can do.
             </p>
           </div>
         </div>
-      </div>
+      </aside>
     </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, reactive } from 'vue'
+import { computed, nextTick, onMounted, ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for registration (no token needed)
 
@@ -379,7 +450,8 @@ const form = reactive({
   password: '',
   confirmPassword: '',
   inviteCode: '',
-  sendRegistrationEmail: true
+  sendRegistrationEmail: false,
+  privacyAcknowledged: false
 })
 
 const errors = reactive({
@@ -387,7 +459,8 @@ const errors = reactive({
   email: '',
   password: '',
   confirmPassword: '',
-  inviteCode: ''
+  inviteCode: '',
+  privacyAcknowledged: ''
 })
 
 // Invite codes are off by default and a class can turn them on. Rather than
@@ -403,6 +476,14 @@ const showConfirmPassword = ref(false)
 const errorMessage = ref('')
 const successMessage = ref('')
 const loading = ref(false)
+const errorBanner = ref(null)
+const successBanner = ref(null)
+const usernameInput = ref(null)
+const emailInput = ref(null)
+const passwordInput = ref(null)
+const confirmPasswordInput = ref(null)
+const passwordCapsLock = ref(false)
+const confirmCapsLock = ref(false)
 
 const passwordChecks = computed(() => ({
   length: form.password.length >= 8,
@@ -410,6 +491,29 @@ const passwordChecks = computed(() => ({
   lower: /\p{Ll}/u.test(form.password),
   number: /\p{Nd}/u.test(form.password),
 }))
+
+const passwordStrength = computed(() => {
+  const checks = passwordChecks.value
+  let score = 0
+  if (checks.length) score += 1
+  if (checks.upper) score += 1
+  if (checks.lower) score += 1
+  if (checks.number) score += 1
+  if (form.password.length >= 12) score += 1
+  if (/[^\p{L}\p{Nd}]/u.test(form.password)) score += 1
+  if (score <= 2) return { level: 'weak', label: 'Weak', percent: 25 }
+  if (score <= 4) return { level: 'fair', label: 'Fair', percent: 50 }
+  if (score <= 5) return { level: 'good', label: 'Good', percent: 75 }
+  return { level: 'strong', label: 'Strong', percent: 100 }
+})
+
+const checkPasswordCapsLock = (event) => {
+  passwordCapsLock.value = Boolean(event?.getModifierState?.('CapsLock'))
+}
+
+const checkConfirmCapsLock = (event) => {
+  confirmCapsLock.value = Boolean(event?.getModifierState?.('CapsLock'))
+}
 
 
 const validateUsername = () => {
@@ -494,6 +598,21 @@ const validateInviteCode = () => {
   }
 }
 
+const validatePrivacyAcknowledged = () => {
+  errors.privacyAcknowledged = form.privacyAcknowledged
+    ? ''
+    : 'Please acknowledge the Privacy notice before creating an account.'
+}
+
+const focusFirstInvalidField = async () => {
+  await nextTick()
+  if (errors.username) usernameInput.value?.focus()
+  else if (errors.email) emailInput.value?.focus()
+  else if (errors.password) passwordInput.value?.focus()
+  else if (errors.confirmPassword) confirmPasswordInput.value?.focus()
+  else errorBanner.value?.focus()
+}
+
 const handleRegister = async () => {
   errorMessage.value = ''
   successMessage.value = ''
@@ -504,14 +623,17 @@ const handleRegister = async () => {
   validatePassword()
   validateConfirmPassword()
   validateInviteCode()
+  validatePrivacyAcknowledged()
 
-  if (errors.username || errors.email || errors.password || errors.confirmPassword || errors.inviteCode) {
+  if (errors.username || errors.email || errors.password || errors.confirmPassword || errors.inviteCode || errors.privacyAcknowledged) {
     errorMessage.value = 'Please fix the highlighted fields before creating your account.'
+    await focusFirstInvalidField()
     return
   }
 
   if (form.password !== form.confirmPassword) {
     errors.confirmPassword = 'Passwords do not match'
+    await focusFirstInvalidField()
     return
   }
 
@@ -519,8 +641,8 @@ const handleRegister = async () => {
 
   try {
     const payload = {
-      username: form.username,
-      email: form.email,
+      username: form.username.trim(),
+      email: form.email.trim(),
       password: form.password,
       send_registration_email: form.sendRegistrationEmail
     }
@@ -549,7 +671,11 @@ const handleRegister = async () => {
     form.password = ''
     form.confirmPassword = ''
     form.inviteCode = ''
-    form.sendRegistrationEmail = true
+    form.privacyAcknowledged = false
+    form.sendRegistrationEmail = false
+
+    await nextTick()
+    successBanner.value?.focus()
 
     // Redirect to login after 5 seconds
     setTimeout(() => {
@@ -560,15 +686,17 @@ const handleRegister = async () => {
     if (typeof detail === 'string' && /invite code is required/i.test(detail)) {
       inviteRequired.value = true
       errorMessage.value = 'Registration here needs an invite code. Enter the code you were given and submit again.'
-      return
-    }
-    if (Array.isArray(detail)) {
+    } else if (error.response?.status === 429) {
+      errorMessage.value = 'Too many registration attempts. Wait a minute and try again.'
+    } else if (Array.isArray(detail)) {
       errorMessage.value = detail.map(err => err.msg || JSON.stringify(err)).join('. ')
     } else if (detail) {
       errorMessage.value = detail
     } else {
       errorMessage.value = 'Registration failed. Please check your information and try again.'
     }
+    await nextTick()
+    errorBanner.value?.focus()
   } finally {
     loading.value = false
   }
@@ -576,6 +704,25 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 10;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: #c2410c;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
 .register-page {
   min-height: 100vh;
   background: var(--bg-primary);
@@ -694,6 +841,8 @@ const handleRegister = async () => {
 
 .form-check input {
   margin-top: 0.15rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
   accent-color: var(--accent);
 }
 
@@ -701,11 +850,27 @@ const handleRegister = async () => {
 .error-message {
   background: var(--danger-bg);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #fca5a5;
+  color: var(--text-primary);
   padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1.25rem;
   font-size: 0.875rem;
+}
+
+.error-message:focus-visible {
+  outline: 3px solid var(--danger);
+  outline-offset: 2px;
+}
+
+.success-message:focus-visible {
+  outline: 3px solid var(--success);
+  outline-offset: 2px;
+}
+
+.caps-warning {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--warning);
 }
 
 .success-message {
@@ -739,7 +904,7 @@ const handleRegister = async () => {
 
 .label-optional {
   font-weight: 400;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .input-wrapper {
@@ -768,7 +933,7 @@ const handleRegister = async () => {
 }
 
 .form-input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .form-input--error {
@@ -782,16 +947,20 @@ const handleRegister = async () => {
 
 .password-toggle {
   position: absolute;
-  right: 0.75rem;
+  right: 0.35rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0.25rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.35rem;
   display: flex;
   align-items: center;
+  justify-content: center;
+  border-radius: 6px;
   transition: color 0.2s ease;
 }
 
@@ -805,13 +974,16 @@ const handleRegister = async () => {
 }
 
 .help-text {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
 
 .error-text {
   font-size: 0.8125rem;
-  color: #f87171;
+  color: #fca5a5;
+  font-weight: 600;
+  line-height: 1.45;
 }
 
 .password-checklist {
@@ -835,19 +1007,54 @@ const handleRegister = async () => {
   color: var(--success);
 }
 
+.password-strength {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.2rem;
+}
+
+.password-strength__bar {
+  height: 0.4rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.password-strength__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.2s ease;
+}
+
+.password-strength__fill--weak { background: var(--danger); }
+.password-strength__fill--fair { background: var(--warning); }
+.password-strength__fill--good { background: #38bdf8; }
+.password-strength__fill--strong { background: var(--success); }
+
+.password-strength__label {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
 .form-input:focus-visible,
 .register-button:focus-visible,
 .password-toggle:focus-visible,
 .login-link:focus-visible,
-.form-check input:focus-visible {
-  outline: 2px solid var(--accent);
+.form-check input:focus-visible,
+.register-form a:focus-visible {
+  outline: 3px solid #fb923c;
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .register-button {
   width: 100%;
+  min-height: 2.875rem;
   padding: 0.875rem 1.5rem;
-  background: linear-gradient(135deg, #f97316, #ea580c);
+  background: linear-gradient(135deg, #c2410c, #9a3412);
   color: white;
   border: none;
   border-radius: 8px;
@@ -859,9 +1066,9 @@ const handleRegister = async () => {
 }
 
 .register-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #fb923c, #f97316);
+  background: linear-gradient(135deg, #9a3412, #7c2d12);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 12px rgba(154, 52, 18, 0.35);
 }
 
 .register-button:active:not(:disabled) {
@@ -885,16 +1092,17 @@ const handleRegister = async () => {
 }
 
 .login-link {
-  color: #f97316;
-  text-decoration: none;
-  font-weight: 500;
+  color: #fb923c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
   margin-left: 0.25rem;
   transition: color 0.2s ease;
 }
 
 .login-link:hover {
-  color: #fb923c;
-  text-decoration: underline;
+  color: #fdba74;
+  text-decoration-thickness: 2px;
 }
 
 /* ── Right: Hero / Illustration Panel ── */
@@ -904,7 +1112,7 @@ const handleRegister = async () => {
   align-items: center;
   justify-content: center;
   padding: 3rem;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 40%, #c2410c 100%);
+  background: linear-gradient(135deg, #9a3412 0%, #7c2d12 45%, #5c210b 100%);
   position: relative;
   overflow: hidden;
 }
@@ -1081,9 +1289,14 @@ const handleRegister = async () => {
   .register-button,
   .password-toggle,
   .login-link,
-  .terminal__cursor {
+  .terminal__cursor,
+  .password-strength__fill {
     transition: none;
     animation: none;
+  }
+
+  .register-button:hover:not(:disabled) {
+    transform: none;
   }
 }
 </style>

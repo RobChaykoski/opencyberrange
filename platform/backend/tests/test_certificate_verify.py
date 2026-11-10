@@ -3,7 +3,7 @@ import uuid
 
 import pytest
 
-from app.models import Level, Track
+from app.models import Level, Track, User
 
 pytestmark = pytest.mark.db
 
@@ -81,6 +81,29 @@ def test_public_certificate_verification(client, auth_headers, test_user, test_l
         # Verification is public; it must not turn into an account lookup.
         for identifier in ("username", "email", "student_id", "user_id"):
             assert identifier not in payload
+
+        # The holder can opt out of public verification. Their own certificate
+        # still renders, but the public verify endpoint stops confirming it and
+        # the payload no longer carries a verification URL.
+        db_session.query(User).filter(User.id == test_user.id).update(
+            {"certificates_public": False}
+        )
+        db_session.commit()
+
+        withdrawn = client.get(
+            f"/api/exercises/verify/certificate/{certificate['certificate_id']}"
+        )
+        assert withdrawn.status_code == 200
+        assert withdrawn.json()["valid"] is False
+
+        private_certificate = client.get(
+            f"/api/exercises/tracks/{track.slug}/levels/{level.id}/certificate",
+            headers=auth_headers,
+        )
+        assert private_certificate.status_code == 200, private_certificate.text
+        assert private_certificate.json()["public_verification"] is False
+        assert private_certificate.json()["verify_url"] is None
+        assert private_certificate.json()["qr_code"] is None
     finally:
         db_session.query(type(test_lab)).filter(type(test_lab).id == test_lab.id).update(
             {"level_id": None}

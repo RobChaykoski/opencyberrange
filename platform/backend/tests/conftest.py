@@ -43,14 +43,15 @@ from app.auth import get_password_hash  # noqa: E402
 from app.models import FlagAttempt, Lab, LabCompletion, User  # noqa: E402
 from app.routers import admin as admin_router_module  # noqa: E402
 from app.routers import auth as auth_router_module  # noqa: E402
-from app.routers import curriculum as curriculum_module  # noqa: E402
+from app.routers import curriculum as curriculum_module
+from app.routers import reports as reports_router_module  # noqa: E402
 
 app = main_module.app
 
 # slowapi keeps per-IP counters in process memory. Every request in the suite
 # arrives from the same test client address, so the login and flag limits
 # would couple otherwise independent tests. Disable each module's limiter.
-for _mod in (main_module, admin_router_module, auth_router_module, curriculum_module):
+for _mod in (main_module, admin_router_module, auth_router_module, curriculum_module, reports_router_module):
     _limiter = getattr(_mod, "limiter", None)
     if _limiter is not None:
         _limiter.enabled = False

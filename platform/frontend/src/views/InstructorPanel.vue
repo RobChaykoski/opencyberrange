@@ -198,7 +198,7 @@
             <button @click="courseManageTab = 'students'" :class="['sub-tab', { active: courseManageTab === 'students' }]">Students ({{ courseStudents.length }})</button>
             <button @click="courseManageTab = 'exercises'" :class="['sub-tab', { active: courseManageTab === 'exercises' }]">Exercises ({{ courseLabs.length }})</button>
             <button @click="switchToAssignments" :class="['sub-tab', { active: courseManageTab === 'assignments' }]">Assignments ({{ courseAssignments.length }})</button>
-            <button @click="courseManageTab = 'reports'" :class="['sub-tab', { active: courseManageTab === 'reports' }]">Reports</button>
+            <button @click="openReportsTab" :class="['sub-tab', { active: courseManageTab === 'reports' }]">Reports</button>
             <button @click="courseManageTab = 'settings'" :class="['sub-tab', { active: courseManageTab === 'settings' }]">Settings</button>
           </div>
 
@@ -675,14 +675,91 @@
 
           <!-- Reports sub-tab -->
           <div v-if="courseManageTab === 'reports'" class="sub-tab-content">
-            <div class="report-actions">
-              <button @click="downloadClassReport" :disabled="downloadingReport" class="btn btn--primary">
-                {{ downloadingReport ? 'Generating...' : 'Download Full Class Report (PDF)' }}
-              </button>
+            <div v-if="reportCatalogLoading" class="empty-state">Loading the report library...</div>
+            <div v-else-if="reportCatalogError" class="empty-state empty-state--error" role="alert">
+              {{ reportCatalogError }}
             </div>
-            <p class="report-description">
-              Generates a PDF with one page per student, including scores, attempt counts, hints used, time spent, and achievements.
-            </p>
+            <template v-else>
+              <section v-for="group in reportGroups" :key="group.name" class="report-group">
+                <h4 class="report-group__title">{{ group.name }}</h4>
+                <div class="report-library">
+                  <article v-for="report in group.reports" :key="report.id" class="report-card">
+                    <h5 class="report-card__title">{{ report.title }}</h5>
+                    <p class="report-card__description">{{ report.description }}</p>
+                    <p class="report-card__meta"><strong>Use when:</strong> {{ report.use_when }}</p>
+                    <p class="report-card__privacy">{{ report.privacy }}</p>
+                    <div class="report-card__actions">
+                      <button
+                        v-for="format in report.formats"
+                        :key="format.id"
+                        type="button"
+                        class="btn btn--secondary btn--sm"
+                        :disabled="downloadingReportId === `${report.id}-${format.id}`"
+                        @click="downloadReport(report, format)"
+                      >
+                        {{ downloadingReportId === `${report.id}-${format.id}`
+                          ? 'Generating...'
+                          : `Download ${format.label}` }}
+                      </button>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <div v-if="lastReport && lastReport.id" class="report-verification-note">
+                <strong>Last generated report</strong>
+                <p class="report-verification-note__line">
+                  <span>File</span>
+                  <code>{{ lastReport.filename }}</code>
+                </p>
+                <p class="report-verification-note__line">
+                  <span>Report ID</span>
+                  <code>{{ lastReport.id }}</code>
+                  <button type="button" class="btn btn--xs btn--outline" @click="copyReportValue(lastReport.id)">Copy</button>
+                </p>
+                <p class="report-verification-note__line">
+                  <span>SHA-256</span>
+                  <code class="report-verification-note__hash">{{ lastReport.sha256 }}</code>
+                  <button type="button" class="btn btn--xs btn--outline" @click="copyReportValue(lastReport.sha256)">Copy</button>
+                </p>
+              </div>
+
+              <details class="report-verify">
+                <summary>Verify a generated report</summary>
+                <p class="report-verify__help">
+                  Upload a report and enter its report ID. Verification confirms
+                  the file matches the platform manifest and has not been edited.
+                  A fabricated PDF or CSV will not validate.
+                </p>
+                <label class="report-verify__field">
+                  <span>Report ID</span>
+                  <input v-model="verifyReportId" type="text" class="form-input" placeholder="Report ID from the PDF footer or filename" />
+                </label>
+                <label class="report-verify__field">
+                  <span>Report file</span>
+                  <input type="file" class="form-input" accept=".pdf,.csv" @change="onVerifyFile" />
+                </label>
+                <button type="button" class="btn btn--secondary btn--sm" :disabled="verifyingReport || !verifyReportId.trim() || !verifyFile" @click="verifyReport">
+                  {{ verifyingReport ? 'Verifying...' : 'Verify report' }}
+                </button>
+                <div v-if="verifyResult" class="report-verify__result" :class="verifyResult.valid ? 'report-verify__result--ok' : 'report-verify__result--bad'" role="status">
+                  <strong>{{ verifyResult.valid ? 'Valid platform-generated report' : 'Not verified' }}</strong>
+                  <p v-if="verifyResult.valid">
+                    {{ verifyResult.report_type }} · {{ verifyResult.course_code || 'course' }} ·
+                    generated {{ verifyResult.generated_at }}
+                  </p>
+                  <p v-else>
+                    {{ verifyResult.reason === 'checksum_mismatch'
+                      ? 'The file was modified after generation.'
+                      : verifyResult.reason === 'not_found'
+                        ? 'No platform manifest exists for that report ID.'
+                        : verifyResult.reason === 'manifest_signature_invalid'
+                          ? 'The stored manifest failed its integrity check.'
+                          : verifyResult.reason || 'The report could not be verified.' }}
+                  </p>
+                </div>
+              </details>
+            </template>
           </div>
 
           <!-- Settings sub-tab -->
@@ -1257,7 +1334,28 @@ const expandedAssignedCategories = ref({})
 const studentLabDetails = ref({})
 const resettingCourseLab = ref(null)
 const downloadingReportUserId = ref(null)
-const downloadingReport = ref(false)
+const reportCatalog = ref([])
+const reportCatalogLoading = ref(false)
+const reportCatalogError = ref('')
+const downloadingReportId = ref('')
+const lastReport = ref(null)
+const verifyReportId = ref('')
+const verifyFile = ref(null)
+const verifyResult = ref(null)
+const verifyingReport = ref(false)
+
+const reportGroups = computed(() => {
+  const groups = []
+  for (const report of reportCatalog.value) {
+    let group = groups.find((entry) => entry.name === report.group)
+    if (!group) {
+      group = { name: report.group, reports: [] }
+      groups.push(group)
+    }
+    group.reports.push(report)
+  }
+  return groups
+})
 
 // Lab rename state
 const renamingLabId = ref(null)
@@ -1745,6 +1843,7 @@ async function openCourseManager(course) {
   }
   managingCourse.value = course
   courseManageTab.value = 'students'
+  resetReportState()
   courseStudents.value = []
   courseLabs.value = []
   courseAssignments.value = []
@@ -1760,6 +1859,7 @@ async function openCourseManager(course) {
 async function openCourseManagerTab(course, tab) {
   managingCourse.value = course
   courseManageTab.value = tab
+  resetReportState()
   syncSettingsForm()
   courseStudents.value = []
   courseLabs.value = []
@@ -1769,6 +1869,7 @@ async function openCourseManagerTab(course, tab) {
   expandedAssignment.value = null
   selectedEnrollIds.value = new Set()
   enrollSearch.value = ''
+  if (tab === 'reports') fetchReportCatalog()
   await Promise.all([fetchCourseStudents(), fetchCourseLabs(), fetchAvailableLabs(), fetchAssignments(), isAdmin ? fetchEnrollableUsers() : Promise.resolve()])
 }
 
@@ -1969,26 +2070,101 @@ async function downloadStudentReport(student) {
   }
 }
 
-async function downloadClassReport() {
-  const reason = requireExportReason('Why are you exporting the class report?')
-  if (!reason) return
-  downloadingReport.value = true
+function openReportsTab() {
+  courseManageTab.value = 'reports'
+  fetchReportCatalog()
+}
+
+function resetReportState() {
+  reportCatalog.value = []
+  reportCatalogError.value = ''
+  reportCatalogLoading.value = false
+  lastReport.value = null
+  verifyReportId.value = ''
+  verifyFile.value = null
+  verifyResult.value = null
+}
+
+async function fetchReportCatalog() {
+  if (!managingCourse.value) return
+  reportCatalogLoading.value = true
+  reportCatalogError.value = ''
   try {
-    const res = await axios.get(`/courses/${managingCourse.value.id}/report`, {
+    const { data } = await axios.get(`/courses/${managingCourse.value.id}/reports`)
+    reportCatalog.value = data.reports || []
+  } catch (e) {
+    reportCatalogError.value =
+      e.response?.data?.detail || 'Could not load the report library.'
+    reportCatalog.value = []
+  } finally {
+    reportCatalogLoading.value = false
+  }
+}
+
+async function downloadReport(report, format) {
+  if (!managingCourse.value) return
+  const reason = requireExportReason(`Why are you exporting the ${report.title}?`)
+  if (!reason) return
+  const key = `${report.id}-${format.id}`
+  downloadingReportId.value = key
+  try {
+    const response = await axios.get(format.path, {
       params: { reason },
       responseType: 'blob',
     })
-    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `report_${managingCourse.value.code}_class.pdf`
-    a.click()
+    const filename =
+      response.headers['x-report-filename'] ||
+      `report_${managingCourse.value.code}_${report.id}.${format.id}`
+    lastReport.value = {
+      id: response.headers['x-report-id'] || '',
+      sha256: response.headers['x-report-sha256'] || '',
+      filename,
+    }
+    const mime = format.id === 'pdf' ? 'application/pdf' : 'text/csv'
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: mime }))
+    const anchor = document.createElement('a')
+    anchor.href = url
+    anchor.download = filename
+    anchor.click()
     window.URL.revokeObjectURL(url)
   } catch (e) {
-    showAlert('Failed to download report', 'error')
+    showAlert(e.response?.data?.detail || 'Failed to generate the report', 'error')
   } finally {
-    downloadingReport.value = false
+    downloadingReportId.value = ''
   }
+}
+
+function onVerifyFile(event) {
+  verifyFile.value = event.target.files?.[0] || null
+  verifyResult.value = null
+}
+
+async function verifyReport() {
+  if (!verifyReportId.value.trim() || !verifyFile.value) return
+  verifyingReport.value = true
+  verifyResult.value = null
+  try {
+    const form = new FormData()
+    form.append('report_id', verifyReportId.value.trim())
+    form.append('file', verifyFile.value)
+    const { data } = await axios.post('/reports/verify', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    verifyResult.value = data
+  } catch (e) {
+    verifyResult.value = {
+      valid: false,
+      reason: e.response?.data?.detail || 'Verification failed',
+    }
+  } finally {
+    verifyingReport.value = false
+  }
+}
+
+function copyReportValue(value) {
+  if (!value) return
+  navigator.clipboard.writeText(value)
+  showAlert('Copied to clipboard')
 }
 
 // ---- Assignments ----
@@ -3207,12 +3383,167 @@ onUnmounted(() => {
 }
 .assign-group__remove-all:hover { background: rgba(239, 68, 68, 0.1) !important; }
 
-/* Report */
+/* Report library */
 .report-actions { margin-bottom: 0.75rem; }
 
 .report-description {
   font-size: 0.85rem;
   color: var(--text-muted);
+}
+
+.report-group {
+  margin-bottom: 1.25rem;
+}
+
+.report-group__title {
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.report-library {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.9rem;
+}
+
+.report-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.report-card__title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.report-card__description {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+.report-card__meta {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.report-card__privacy {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.report-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.report-verification-note {
+  margin: 1rem 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  font-size: 0.82rem;
+}
+
+.report-verification-note__line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.35rem 0 0;
+}
+
+.report-verification-note__line > span {
+  min-width: 5.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.report-verification-note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: var(--bg-primary);
+  user-select: all;
+  word-break: break-all;
+}
+
+.report-verify {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.report-verify summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.report-verify__help {
+  margin: 0.5rem 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.report-verify__field {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.report-verify__field span {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.report-verify__field .form-input {
+  width: 100%;
+}
+
+.report-verify__result {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.report-verify__result p {
+  margin: 0.25rem 0 0;
+}
+
+.report-verify__result--ok {
+  border-color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.report-verify__result--bad {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 /* Catalog Layout (My Exercises tab) */

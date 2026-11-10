@@ -166,22 +166,39 @@
       before sharing or printing.
     </div>
 
+    <div v-if="certificate && certificate.public_verification === false" class="certificate-name-note no-print">
+      <strong>Public verification is off for your account.</strong>
+      Your certificate still works for you. To let employers or instructors verify it
+      from the certificate ID, turn on public verification in
+      <router-link to="/profile?tab=privacy">Profile → Security &amp; privacy</router-link>.
+    </div>
+
     <section v-if="certificate" class="certificate-share no-print">
       <div class="certificate-share__copy">
         <h2>Share your achievement</h2>
-        <p>
+        <p v-if="shareUrl">
           Post the PDF or share the verification link. Employers and instructors
           can confirm the track, level, award date, and certificate ID instantly.
+        </p>
+        <p v-else>
+          Public verification is off, so the verification link is not available.
+          You can still download or print the PDF and share it directly.
         </p>
       </div>
       <div class="certificate-share__actions">
         <button class="btn btn--secondary" :disabled="downloading" @click="downloadPdf">
           {{ downloading ? 'Preparing...' : 'Download PDF' }}
         </button>
-        <button class="btn btn--ghost" @click="copyLink">
+        <button v-if="shareUrl" class="btn btn--ghost" @click="copyLink">
           {{ copied ? 'Link copied' : 'Copy verification link' }}
         </button>
-        <a class="btn btn--ghost" :href="linkedInUrl" target="_blank" rel="noopener noreferrer">
+        <a
+          v-if="shareUrl"
+          class="btn btn--ghost"
+          :href="linkedInUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Share on LinkedIn
         </a>
       </div>

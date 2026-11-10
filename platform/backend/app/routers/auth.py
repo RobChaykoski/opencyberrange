@@ -482,6 +482,7 @@ class UserSettingsUpdate(BaseModel):
     email_notifications: Optional[bool] = None
     notification_prefs: Optional[dict] = None
     show_hidden_achievements: Optional[bool] = None
+    certificates_public: Optional[bool] = None
 
     @field_validator("avatar_data")
     @classmethod
@@ -560,6 +561,9 @@ async def get_user_settings(
         ),
         "survey_opt_in": bool(getattr(current_user, "survey_opt_in", False)),
         "survey_consent_version": getattr(current_user, "survey_consent_version", None),
+        "certificates_public": bool(
+            getattr(current_user, "certificates_public", True)
+        ),
         "data_exported_at": getattr(current_user, "data_exported_at", None),
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
         "recovery_codes_remaining": recovery_count,
@@ -601,6 +605,8 @@ async def update_user_settings(
         current_user.notification_prefs = _json.dumps(payload.notification_prefs)
     if payload.show_hidden_achievements is not None:
         current_user.show_hidden_achievements = payload.show_hidden_achievements
+    if payload.certificates_public is not None:
+        current_user.certificates_public = payload.certificates_public
     db.commit()
     db.refresh(current_user)
     return {"message": "Settings updated"}

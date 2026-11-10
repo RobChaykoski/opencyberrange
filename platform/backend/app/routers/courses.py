@@ -9,6 +9,7 @@ import os
 import re
 import secrets
 import logging
+import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -38,6 +39,7 @@ from app.services.achievements import resolve_achievement_label
 from app.services import exercise_quiz, settings_service
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
+from app.services.report_integrity import record_report
 from app.services.activity import log_activity, EventTypes
 from app.services.course_wiki import rebuild_course_wiki
 
@@ -1861,21 +1863,53 @@ async def class_report(
     course_dict = _build_course_dict(course)
     students_data = _build_all_students_data(db, course)
 
-    pdf_bytes = generate_class_report(course_dict, students_data, current_user.timezone)
+    report_id = str(uuid.uuid4())
+    pdf_bytes = generate_class_report(
+        course_dict,
+        students_data,
+        current_user.timezone,
+        report_id=report_id,
+    )
+    safe_code = re.sub(r"[^A-Za-z0-9_.-]", "_", course.code or "course")[:80]
+    filename = f"report_{safe_code}_student-record-pack_{report_id}.pdf"
+    manifest = record_report(
+        db,
+        report_id=report_id,
+        course_id=course_id,
+        report_type="student-record-pack",
+        file_format="pdf",
+        filename=filename,
+        data=bytes(pdf_bytes),
+        generated_by=current_user.id,
+    )
     log_admin_action(
         action=AuditActions.REPORT_EXPORTED,
         admin_user_id=current_user.id,
         admin_username=current_user.username,
         target_type="course_report",
         target_id=course_id,
-        details={"format": "pdf", "scope": "class", "reason": reason},
+        details={
+            "format": "pdf",
+            "scope": "class",
+            "report": "student-record-pack",
+            "report_id": report_id,
+            "sha256": manifest.sha256,
+            "reason": reason,
+        },
         ip_address=request.client.host if request.client else None,
     )
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f"attachment; filename=report_{course.code}_class.pdf"
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Cache-Control": "no-store",
+            "X-Report-Id": report_id,
+            "X-Report-Sha256": manifest.sha256,
+            "X-Report-Filename": filename,
+            "Access-Control-Expose-Headers": (
+                "Content-Disposition, X-Report-Id, X-Report-Sha256, X-Report-Filename"
+            ),
         },
     )
 

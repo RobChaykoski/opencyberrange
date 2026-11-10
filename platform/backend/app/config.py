@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     SETUP_TOKEN: str = ""
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
+
+    # Dedicated key for report manifests. Empty falls back to JWT_SECRET with
+    # domain separation. Keep it stable so old reports remain verifiable.
+    REPORT_SIGNING_KEY: str = ""
     
     # CORS - set via environment variable to match your domain
     CORS_ORIGINS: str = "https://localhost"

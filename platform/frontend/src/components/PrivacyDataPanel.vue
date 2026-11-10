@@ -6,6 +6,29 @@
       account. Deletion is immediate and cannot be undone.
     </p>
 
+    <section class="privacy-panel__email" aria-labelledby="certificate-pref-title">
+      <h3 id="certificate-pref-title">Public certificate verification</h3>
+      <p class="privacy-panel__email-help">
+        When this is on, anyone with your certificate ID or verification link can
+        confirm the track, level, award date, and certificate ID. When it is off,
+        the public verification page will not confirm your certificate. Your own
+        certificate view, PDF, and profile still work, and you can share the PDF
+        directly if you choose.
+      </p>
+      <label class="privacy-panel__email-toggle">
+        <input
+          v-model="certificatesPublic"
+          type="checkbox"
+          :disabled="certificateSaving"
+          @change="saveCertificatePreference"
+        />
+        <span>Allow public verification of my certificates</span>
+      </label>
+      <p v-if="certificateMessage" :class="certificateError ? 'error-message' : 'success-message'" role="status">
+        {{ certificateMessage }}
+      </p>
+    </section>
+
     <section class="privacy-panel__email" aria-labelledby="email-pref-title">
       <div class="privacy-panel__email-head">
         <div>
@@ -193,6 +216,10 @@ const emailConsentUpdatedAt = ref('')
 const emailSaving = ref(false)
 const emailMessage = ref('')
 const emailError = ref(false)
+const certificatesPublic = ref(true)
+const certificateSaving = ref(false)
+const certificateMessage = ref('')
+const certificateError = ref(false)
 
 const formatExportDate = (value) => {
   if (!value) return ''
@@ -212,6 +239,7 @@ const fetchExportStatus = async () => {
     emailNotifications.value = data.email_notifications !== false
     emailConsentVersion.value = data.email_consent_version || ''
     emailConsentUpdatedAt.value = data.email_consent_updated_at || ''
+    certificatesPublic.value = data.certificates_public !== false
   } catch {
     lastExportedAt.value = null
   } finally {
@@ -240,6 +268,27 @@ const saveEmailPreference = async () => {
     emailMessage.value = 'Could not save your email preference. Please try again.'
   } finally {
     emailSaving.value = false
+  }
+}
+
+const saveCertificatePreference = async () => {
+  certificateSaving.value = true
+  certificateMessage.value = ''
+  certificateError.value = false
+  const previous = !certificatesPublic.value
+  try {
+    await axios.put('/auth/settings', {
+      certificates_public: certificatesPublic.value,
+    })
+    certificateMessage.value = certificatesPublic.value
+      ? 'Public certificate verification is on.'
+      : 'Public certificate verification is off. Your own certificate still works.'
+  } catch {
+    certificatesPublic.value = previous
+    certificateError.value = true
+    certificateMessage.value = 'Could not save the certificate preference. Please try again.'
+  } finally {
+    certificateSaving.value = false
   }
 }
 

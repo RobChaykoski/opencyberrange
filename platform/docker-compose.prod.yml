@@ -74,6 +74,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       JWT_EXPIRATION_HOURS: ${JWT_EXPIRATION_HOURS:-24}
+      REPORT_SIGNING_KEY: ${REPORT_SIGNING_KEY:-}
       # First-run admin creation is token-gated when this is set. Generate one
       # for internet-facing installs so a stranger cannot claim the admin
       # account between startup and the operator opening the setup wizard.

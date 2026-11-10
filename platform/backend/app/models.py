@@ -56,6 +56,12 @@ class User(Base):
     show_hidden_achievements = Column(
         Boolean, default=False, server_default=text("false"), nullable=False
     )
+    # Allow the public certificate verification page to confirm this account's
+    # certificates. Off means the account holder has opted out; their own
+    # certificate view and PDF still work.
+    certificates_public = Column(
+        Boolean, default=True, server_default=text("true"), nullable=False
+    )
     # Equipped achievement title (key from app.services.titles). Null shows the
     # learner's current Skill DNA class instead.
     equipped_title = Column(String(64), nullable=True)
@@ -681,6 +687,31 @@ class Course(Base):
     lab_assignments = relationship("CourseLabAssignment", back_populates="course", cascade="all, delete-orphan")
     achievements = relationship("Achievement", back_populates="course", cascade="all, delete-orphan")
     assignments = relationship("Assignment", back_populates="course", cascade="all, delete-orphan", order_by="Assignment.sort_order")
+
+
+class ReportExport(Base):
+    """Immutable manifest for a generated instructor report.
+
+    The report carries its report id in the footer or filename. Verification
+    recomputes the file checksum and the keyed signature stored here, so a
+    fabricated or edited report cannot be made to look platform-generated.
+    """
+    __tablename__ = "report_exports"
+
+    id = Column(Integer, primary_key=True)
+    report_id = Column(String(36), unique=True, index=True, nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True)
+    report_type = Column(String(40), nullable=False)
+    format = Column(String(10), nullable=False)
+    filename = Column(String(255), nullable=False)
+    sha256 = Column(String(64), nullable=False)
+    signature = Column(String(64), nullable=False)
+    generated_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    generated_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=True)
+
+    course = relationship("Course")
+    generator = relationship("User")
 
 
 class CourseEnrollment(Base):

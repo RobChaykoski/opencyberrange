@@ -1,5 +1,6 @@
 <template>
   <div class="login-page">
+    <a class="skip-link" href="#signin-form">Skip to sign-in form</a>
     <nav class="login-powered" aria-label="Powered by OpenCyberRange">
       <a
         class="login-powered__brand"
@@ -30,7 +31,7 @@
 
     <div class="login-split">
       <!-- Left: form panel -->
-      <div class="login-form-panel">
+      <main class="login-form-panel" id="signin-form">
         <div class="form-panel-inner">
           <div class="brand">
             <img src="/swocts-cyber-range-mark.png" alt="" class="brand-icon" />
@@ -46,19 +47,19 @@
             Your account and personal data have been deleted.
           </div>
 
-          <div v-if="errorMessage" class="error-message" role="alert" aria-live="assertive">
+          <div v-if="errorMessage" ref="errorBanner" tabindex="-1" class="error-message" role="alert" aria-live="assertive" aria-atomic="true">
             {{ errorMessage }}
           </div>
 
-          <form @submit.prevent="handleLogin" class="login-form" :aria-busy="loading">
+          <form @submit.prevent="handleLogin" class="login-form" :aria-busy="loading" novalidate>
             <div class="form-group">
               <label for="username" class="form-label">Username</label>
               <input
                 id="username"
                 v-model="username"
+                name="username"
                 type="text"
                 class="form-input"
-                :class="{ 'form-input--error': errorMessage }"
                 placeholder="Enter your username"
                 required
                 minlength="3"
@@ -132,16 +133,20 @@
                 <input
                   id="password"
                   v-model="password"
+                  name="password"
                   :type="showPassword ? 'text' : 'password'"
                   class="form-input"
-                  :class="{ 'form-input--error': errorMessage }"
                   placeholder="Enter your password"
                   required
                   minlength="8"
                   maxlength="128"
                   autocomplete="current-password"
                   enterkeyhint="go"
+                  :aria-describedby="capsLockOn ? 'password-help caps-warning' : 'password-help'"
                   :disabled="loading"
+                  @keydown="checkCapsLock"
+                  @keyup="checkCapsLock"
+                  @blur="capsLockOn = false"
                 />
                 <button
                   type="button"
@@ -154,16 +159,23 @@
                   {{ showPassword ? 'Hide' : 'Show' }}
                 </button>
               </div>
+              <p v-if="capsLockOn" id="caps-warning" class="caps-warning" role="status">
+                Caps Lock is on.
+              </p>
+              <p id="password-help" class="field-help">
+                Use a unique password you do not use on another site. Never share it.
+              </p>
             </div>
 
             <div v-if="mfaRequired" class="form-group">
               <label for="mfa-code" class="form-label">Authenticator or recovery code</label>
               <input
                 id="mfa-code"
+                ref="mfaInput"
                 v-model="mfaCode"
+                name="totp_code"
                 type="text"
                 class="form-input"
-                :class="{ 'form-input--error': errorMessage }"
                 placeholder="6-digit or recovery code"
                 autocomplete="one-time-code"
                 inputmode="text"
@@ -172,10 +184,13 @@
                 spellcheck="false"
                 maxlength="32"
                 required
+                :aria-describedby="'mfa-help'"
                 :disabled="loading"
               />
-              <p class="mfa-help">
+              <p id="mfa-help" class="mfa-help">
                 Enter the code from your authenticator app, or one of your recovery codes.
+                If you have lost your authenticator and your recovery codes, contact your
+                instructor or administrator.
               </p>
             </div>
 
@@ -207,10 +222,10 @@
             </p>
           </div>
         </div>
-      </div>
+      </main>
 
       <!-- Right: platform preview -->
-      <div class="login-hero-panel">
+      <aside class="login-hero-panel" aria-label="Platform preview">
         <div class="hero-content">
           <div class="hero-head">
             <span class="hero-kicker">Platform preview</span>
@@ -336,7 +351,7 @@
             Sample preview. Your real progress stays private and is never publicly ranked.
           </p>
         </div>
-      </div>
+      </aside>
     </div>
   </div>
 </template>
@@ -357,6 +372,9 @@ const mfaRequired = ref(false)
 const mfaCode = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
+const capsLockOn = ref(false)
+const errorBanner = ref(null)
+const mfaInput = ref(null)
 
 // "Forgot username" flow: email the username to the address on the account.
 const showUsernameHelp = ref(false)
@@ -369,6 +387,10 @@ const toggleUsernameHelp = () => {
   showUsernameHelp.value = !showUsernameHelp.value
   reminderMessage.value = ''
   reminderError.value = false
+}
+
+const checkCapsLock = (event) => {
+  capsLockOn.value = Boolean(event?.getModifierState?.('CapsLock'))
 }
 
 const requestUsername = async () => {
@@ -400,12 +422,19 @@ const requestUsername = async () => {
 
 const handleLogin = async () => {
   errorMessage.value = ''
+  const loginName = username.value.trim()
+  if (!loginName || !password.value) {
+    errorMessage.value = 'Enter your username and password to continue.'
+    await nextTick()
+    errorBanner.value?.focus()
+    return
+  }
   loading.value = true
 
   try {
     // Use URLSearchParams for OAuth2 password flow (application/x-www-form-urlencoded)
     const params = new URLSearchParams()
-    params.append('username', username.value)
+    params.append('username', loginName)
     params.append('password', password.value)
     if (mfaRequired.value && mfaCode.value.trim()) {
       params.append('totp_code', mfaCode.value.trim())
@@ -420,6 +449,7 @@ const handleLogin = async () => {
     localStorage.setItem('token', response.data.access_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
     applyPrivacyDefaultForRole(response.data.user?.role)
+    capsLockOn.value = false
 
     // Sync the wiki_auth cookie now, in THIS tab. App.vue only refreshes it on
     // mount (token was null then) and on cross-tab storage events (which do not
@@ -444,14 +474,21 @@ const handleLogin = async () => {
       errorMessage.value = mfaCode.value.trim()
         ? 'That authenticator code was not accepted. Try the current code or a recovery code.'
         : 'Enter the code from your authenticator app to finish signing in.'
+      await nextTick()
+      mfaInput.value?.focus()
     } else {
       mfaRequired.value = false
       mfaCode.value = ''
-      if (error.response?.data?.detail) {
+      capsLockOn.value = false
+      if (error.response?.status === 429) {
+        errorMessage.value = 'Too many sign-in attempts. Wait a minute and try again.'
+      } else if (error.response?.data?.detail) {
         errorMessage.value = error.response.data.detail
       } else {
         errorMessage.value = 'Login failed. Please check your credentials and try again.'
       }
+      await nextTick()
+      errorBanner.value?.focus()
     }
   } finally {
     loading.value = false
@@ -460,6 +497,25 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 10;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #08111f;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 1rem;
+  outline: 3px solid #f8fafc;
+  outline-offset: 2px;
+}
+
 .login-page {
   position: relative;
   min-height: 100vh;
@@ -615,7 +671,26 @@ const handleLogin = async () => {
 .error-message {
   background: var(--danger-bg);
   border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
-  color: var(--danger);
+  color: var(--text-primary);
+}
+
+.error-message:focus-visible {
+  outline: 3px solid var(--danger);
+  outline-offset: 2px;
+}
+
+.caps-warning {
+  margin: 0;
+  color: var(--warning);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.field-help {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
 }
 
 .login-form {
@@ -676,6 +751,7 @@ const handleLogin = async () => {
 
 .forgot-username-submit {
   flex-shrink: 0;
+  min-height: 2.5rem;
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--accent);
   border-radius: 6px;
@@ -719,7 +795,7 @@ const handleLogin = async () => {
 }
 
 .form-input::placeholder {
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .form-input--error {
@@ -736,14 +812,19 @@ const handleLogin = async () => {
 }
 
 .password-wrap .form-input {
-  padding-right: 4.5rem;
+  padding-right: 4.75rem;
 }
 
 .password-toggle {
   position: absolute;
   top: 50%;
-  right: 0.5rem;
+  right: 0.25rem;
   transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: 0.35rem 0.5rem;
   border: 0;
   border-radius: 6px;
@@ -763,13 +844,14 @@ const handleLogin = async () => {
 
 .mfa-help {
   margin: 0;
-  color: var(--text-muted);
-  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
   line-height: 1.45;
 }
 
 .login-button {
   width: 100%;
+  min-height: 2.875rem;
   padding: 0.875rem 1.5rem;
   background: linear-gradient(135deg, var(--accent), var(--purple));
   color: white;
@@ -803,8 +885,8 @@ const handleLogin = async () => {
   justify-content: center;
   gap: 0.35rem;
   margin: 1rem 0 0;
-  color: var(--text-muted);
-  font-size: 0.72rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
 }
 
 .login-security svg {
@@ -855,6 +937,16 @@ const handleLogin = async () => {
 
 .login-privacy a:hover {
   text-decoration-thickness: 2px;
+}
+
+.login-form a:focus-visible,
+.login-form button:focus-visible,
+.login-privacy a:focus-visible,
+.register-link:focus-visible,
+.forgot-username-link:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* Right: platform preview */
@@ -1278,6 +1370,14 @@ const handleLogin = async () => {
     padding: 2rem 1rem;
   }
 
+  .forgot-username-row {
+    flex-wrap: wrap;
+  }
+
+  .forgot-username-submit {
+    width: 100%;
+  }
+
   .login-hero-panel {
     padding: 1.75rem 1rem;
   }
@@ -1305,6 +1405,10 @@ const handleLogin = async () => {
   .preview-certificate__site,
   .preview-certificate__social {
     transition: none;
+  }
+
+  .login-button:hover:not(:disabled) {
+    transform: none;
   }
 }
 </style>

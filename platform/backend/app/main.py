@@ -25,6 +25,7 @@ from app.routers import settings as settings_router
 from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
+from app.routers import reports as reports_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.services.db_integrity import ensure_ledger
 from app.config import settings
@@ -751,6 +752,7 @@ app.include_router(instructor.router, prefix="/api/instructor", tags=["Instructo
 app.include_router(modules_router.router, prefix="/api/modules", tags=["Modules"])
 app.include_router(rangebox_router.router, prefix="/api/rangebox", tags=["RangeBox"])
 app.include_router(about_router.router, prefix="/api/about", tags=["About"])
+app.include_router(reports_router.router, prefix="/api", tags=["Reports"])
 
 # Optional module routers, discovered from app/modules/. Mounted AFTER the core
 # routers so a module that extends a shared prefix (e.g. the exercise tester on

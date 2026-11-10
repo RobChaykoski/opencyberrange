@@ -659,10 +659,15 @@ def build_level_certificate(
             base_url = public_host.rstrip("/")
     verify_path = f"/verify/certificate/{certificate_id}"
     verify_url = (base_url + verify_path) if base_url else verify_path
+    public_verification = bool(
+        getattr(current_user, "certificates_public", True)
+    )
+    if not public_verification:
+        verify_url = None
 
     # Generate QR code (base64 PNG) for the verify URL.
     qr_code = None
-    if include_qr:
+    if include_qr and public_verification:
         try:
             import base64 as _b64
             import io
@@ -697,6 +702,7 @@ def build_level_certificate(
         "issued_display": issued_at.strftime("%d %B %Y"),
         "issuer": "SWOCTS",
         "verify_url": verify_url,
+        "public_verification": public_verification,
         "qr_code": qr_code,
         "achievements": (
             _certificate_achievements(
@@ -860,11 +866,18 @@ def _certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_font("Helvetica", "B", 7)
     pdf.set_text_color(*muted)
     pdf.set_xy(24, 178)
-    pdf.cell(70, 4, "VERIFY")
+    pdf.cell(70, 4, "VERIFY" if certificate.get("public_verification", True) else "PUBLIC VERIFICATION")
     pdf.set_font("Helvetica", "", 8)
     pdf.set_text_color(*gold)
     pdf.set_xy(24, 182)
-    pdf.cell(210, 5, str(certificate.get("verify_url") or ""))
+    pdf.cell(
+        210,
+        5,
+        str(
+            certificate.get("verify_url")
+            or "Off by account holder"
+        ),
+    )
 
     qr_code = certificate.get("qr_code")
     qr_path = None
@@ -1053,6 +1066,8 @@ async def verify_certificate(
             user = db.query(User).filter(User.id == user_id).first()
             if not user:
                 continue
+            if not getattr(user, "certificates_public", True):
+                return invalid
 
             accessible = get_accessible_exclusive_lab_ids(db, user_id)
             visible_labs = [

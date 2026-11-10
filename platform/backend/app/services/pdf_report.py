@@ -42,10 +42,16 @@ def _sanitize_for_pdf(text: str) -> str:
 class GradeReportPDF(FPDF):
     """Custom PDF class with header/footer for grade reports."""
 
-    def __init__(self, course_name: str, course_code: str):
+    def __init__(
+        self,
+        course_name: str,
+        course_code: str,
+        report_id: str = "",
+    ):
         super().__init__()
         self.course_name = course_name
         self.course_code = course_code
+        self.report_id = report_id
 
     def header(self):
         self.set_font("Helvetica", "B", 10)
@@ -57,7 +63,13 @@ class GradeReportPDF(FPDF):
         self.set_y(-15)
         self.set_font("Helvetica", "I", 8)
         self.set_text_color(130, 130, 130)
-        self.cell(0, 10, f"Page {self.page_no()}/{{nb}}", align="C")
+        identifier = f"Report {self.report_id} | " if self.report_id else ""
+        self.cell(
+            0,
+            10,
+            f"{identifier}Page {self.page_no()}/{{nb}}",
+            align="C",
+        )
 
 
 def generate_student_report(
@@ -97,12 +109,15 @@ def generate_class_report(
     course: dict,
     students_data: List[dict],
     timezone_name: str | None = None,
+    report_id: str = "",
 ) -> bytes:
     """Generate a PDF with one page per student.
 
     Args:
         course: {name, code, semester, instructor_name, start_date, end_date}
         students_data: [{student, lab_scores, achievements}]
+        timezone_name: Learner-facing timezone for the generated timestamp.
+        report_id: Manifest id printed in the footer for later verification.
 
     Returns:
         PDF file bytes.
@@ -110,6 +125,7 @@ def generate_class_report(
     pdf = GradeReportPDF(
         _sanitize_for_pdf(str(course["name"])),
         _sanitize_for_pdf(str(course["code"])),
+        report_id=report_id,
     )
     _configure_pdf(pdf, f"{course['name']} - class learning report")
     pdf.alias_nb_pages()
