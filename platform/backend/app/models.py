@@ -868,15 +868,13 @@ class DataIntegrityReview(Base):
     write_count = Column(Integer, nullable=False, default=0)
     decision = Column(String(24), nullable=False)
     note = Column(Text, nullable=False)
-    reviewed_by_id = Column(
-        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
-    )
+    # Snapshot the reviewer's identity. Do not use a foreign key here: deleting
+    # a user must not rewrite an immutable review row.
+    reviewed_by_id = Column(Integer, nullable=True)
     reviewed_by_username = Column(String(64), nullable=False)
     reviewed_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
-
-    reviewer = relationship("User", foreign_keys=[reviewed_by_id])
 
 
 class CustomAchievement(Base):

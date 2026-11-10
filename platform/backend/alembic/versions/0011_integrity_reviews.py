@@ -35,7 +35,6 @@ def upgrade() -> None:
         sa.Column(
             "reviewed_by_id",
             sa.Integer(),
-            sa.ForeignKey("users.id", ondelete="SET NULL"),
             nullable=True,
         ),
         sa.Column("reviewed_by_username", sa.String(length=64), nullable=False),
