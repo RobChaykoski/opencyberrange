@@ -93,7 +93,7 @@ PLATFORM_DIR="${OCR_PLATFORM_DIR:-$REAL_HOME/opencyberrange}"
 # ── Helpers ───────────────────────────────────────────────────────────────────
 log()   { echo -e "${GREEN}[+]${NC} $1"; }
 warn()  { echo -e "${YELLOW}[!]${NC} $1"; }
-err()   { echo -e "${RED}[✗]${NC} $1"; }
+err()   { echo -e "${RED}[[fail]]${NC} $1"; }
 info()  { echo -e "${BLUE}[·]${NC} $1"; }
 header(){ echo -e "\n${CYAN}═══ $1 ═══${NC}\n"; }
 
@@ -1218,7 +1218,7 @@ phase_7b_load_labs() {
 
         if [ "$script_found" = true ]; then
             echo "$script_output"
-            log "${GREEN}✓ Lab discovery complete${NC}"
+            log "${GREEN}[ok] Lab discovery complete${NC}"
         else
             warn "discover_labs.py not found in container."
             warn "You can discover labs from the admin UI instead: Admin → Labs → Scan for Labs"
@@ -1240,7 +1240,7 @@ phase_7b_load_labs() {
             chmod +x "$prebuild_script"
             info "Building lab images (this will take a while)..."
             if bash "$prebuild_script"; then
-                log "${GREEN}✓ All lab images pre-built successfully${NC}"
+                log "${GREEN}[ok] All lab images pre-built successfully${NC}"
             else
                 warn "Some lab images failed to build — see output above."
                 warn "Students may experience slower first spawns for those labs."

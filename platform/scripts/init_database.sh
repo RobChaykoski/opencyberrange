@@ -48,8 +48,8 @@ if [ -f "$PLATFORM_DIR/.env" ]; then
     if [ -n "$DB_PASS" ]; then
         docker compose exec -T db psql -U labuser -d labdb -tAc \
             "ALTER USER labuser WITH PASSWORD '${DB_PASS}';" >/dev/null 2>&1 && \
-            echo "✓ Database password synced" || \
-            echo "⚠ Could not sync password (non-fatal, entrypoint wrapper will handle it)"
+            echo "[ok] Database password synced" || \
+            echo "[warn] Could not sync password (non-fatal, entrypoint wrapper will handle it)"
     fi
 fi
 echo ""
@@ -268,9 +268,9 @@ ALTER TABLE lab_sessions ADD COLUMN IF NOT EXISTS kali_activity_heartbeat TIMEST
 EOSQL
 
 if [ $? -eq 0 ]; then
-    echo "✓ Database schema initialized successfully"
+    echo "[ok] Database schema initialized successfully"
 else
-    echo "✗ Failed to initialize database schema"
+    echo "[fail] Failed to initialize database schema"
     exit 1
 fi
 

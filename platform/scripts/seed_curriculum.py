@@ -251,7 +251,7 @@ def seed_curriculum():
                     """),
                     {**track_data, "slug": track_slug}
                 )
-                print(f"✓ Updated track: {track_data['name']} (id={track_id})")
+                print(f"[ok] Updated track: {track_data['name']} (id={track_id})")
                 tracks_updated += 1
             else:
                 # Insert new track
@@ -264,7 +264,7 @@ def seed_curriculum():
                     {**track_data, "slug": track_slug}
                 )
                 track_id = result.fetchone()[0]
-                print(f"✓ Created track: {track_data['name']} (id={track_id})")
+                print(f"[ok] Created track: {track_data['name']} (id={track_id})")
                 tracks_created += 1
             
             # Process levels for this track
@@ -299,7 +299,7 @@ def seed_curriculum():
                             "sort_order": level_data["level_number"]
                         }
                     )
-                    print(f"  ✓ Updated level {level_data['level_number']}: {level_data['name']}")
+                    print(f"  [ok] Updated level {level_data['level_number']}: {level_data['name']}")
                     levels_updated += 1
                 else:
                     # Insert new level
@@ -316,7 +316,7 @@ def seed_curriculum():
                             "sort_order": level_data["level_number"]
                         }
                     )
-                    print(f"  ✓ Created level {level_data['level_number']}: {level_data['name']}")
+                    print(f"  [ok] Created level {level_data['level_number']}: {level_data['name']}")
                     levels_created += 1
         
         # Process extra levels (e.g., midterm assessments at non-sequential positions)
@@ -326,7 +326,7 @@ def seed_curriculum():
                 {"slug": extra["track_slug"]}
             ).fetchone()
             if not track_id:
-                print(f"  ⚠ Skipping extra level: track '{extra['track_slug']}' not found")
+                print(f"  [warn] Skipping extra level: track '{extra['track_slug']}' not found")
                 continue
             track_id = track_id[0]
 
@@ -340,24 +340,24 @@ def seed_curriculum():
                     text("UPDATE levels SET name = :name, description = :desc, sort_order = :so WHERE id = :id"),
                     {"name": extra["name"], "desc": extra["description"], "so": 0, "id": existing[0]}
                 )
-                print(f"  ✓ Updated extra level {extra['track_slug']}/{extra['level_number']}: {extra['name']}")
+                print(f"  [ok] Updated extra level {extra['track_slug']}/{extra['level_number']}: {extra['name']}")
                 levels_updated += 1
             else:
                 db.execute(
                     text("INSERT INTO levels (track_id, level_number, name, description, sort_order) VALUES (:tid, :ln, :name, :desc, :so)"),
                     {"tid": track_id, "ln": extra["level_number"], "name": extra["name"], "desc": extra["description"], "so": 0}
                 )
-                print(f"  ✓ Created extra level {extra['track_slug']}/{extra['level_number']}: {extra['name']}")
+                print(f"  [ok] Created extra level {extra['track_slug']}/{extra['level_number']}: {extra['name']}")
                 levels_created += 1
 
         db.commit()
-        print(f"\n✓ Curriculum seeding complete!")
+        print(f"\n[ok] Curriculum seeding complete!")
         print(f"  Tracks: {tracks_created} created, {tracks_updated} updated")
         print(f"  Levels: {levels_created} created, {levels_updated} updated")
         
     except Exception as e:
         db.rollback()
-        print(f"✗ Error seeding curriculum: {e}")
+        print(f"[fail] Error seeding curriculum: {e}")
         raise
     finally:
         db.close()

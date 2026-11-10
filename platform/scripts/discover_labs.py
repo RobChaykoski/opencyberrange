@@ -309,7 +309,7 @@ def discover_labs():
                         text(update_sql),
                         update_params
                     )
-                    print(f"  ✓ Updated: {lab_name}")
+                    print(f"  [ok] Updated: {lab_name}")
                     labs_updated += 1
                 else:
                     # Insert new lab
@@ -350,7 +350,7 @@ def discover_labs():
                             "workbook": workbook
                         }
                     )
-                    print(f"  ✓ Created: {lab_name}")
+                    print(f"  [ok] Created: {lab_name}")
                     labs_created += 1
         
         db.commit()

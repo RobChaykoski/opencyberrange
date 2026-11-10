@@ -502,7 +502,7 @@ RANGEBOX_STATUS="rebuilt"
 
 cat <<EOF
 
-[✓] Upgrade complete
+[[ok]] Upgrade complete
     Previous commit: $OLD_COMMIT
     Current commit:  $NEW_COMMIT
     Backup:          $BACKUP_DIR

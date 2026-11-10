@@ -497,7 +497,7 @@ def discover_labs():
                         text(update_sql),
                         update_params
                     )
-                    print(f"  âœ“ Updated: {lab_name}")
+                    print(f"  [ok] Updated: {lab_name}")
                     labs_updated += 1
                 else:
                     # Insert new lab
@@ -559,7 +559,7 @@ def discover_labs():
                             "validated_at": val_at,
                         }
                     )
-                    print(f"  âœ“ Created: {lab_name}")
+                    print(f"  [ok] Created: {lab_name}")
                     labs_created += 1
         
         db.commit()
@@ -598,7 +598,7 @@ def sync_course_week_assignments():
     2. For each unique week number, ensure an Assignment named 'Week N' exists.
     3. Link each lab to its week assignment via AssignmentLab.
 
-    This is idempotent â€” running it multiple times won't duplicate data.
+    This is idempotent - running it multiple times won't duplicate data.
     """
     db = SessionLocal()
     try:
@@ -608,7 +608,7 @@ def sync_course_week_assignments():
         ).fetchall()
 
         if not courses:
-            print("\nNo active courses â€” skipping week assignment sync.")
+            print("\nNo active courses - skipping week assignment sync.")
             return
 
         for course_id, course_name in courses:
@@ -625,7 +625,7 @@ def sync_course_week_assignments():
                 {"course_id": course_id}
             ).scalar()
             if manual:
-                print(f"\nSkipping course '{course_name}' â€” has {manual} manually-created assignment(s)")
+                print(f"\nSkipping course '{course_name}' - has {manual} manually-created assignment(s)")
                 continue
 
             # Get all labs assigned to this course that have a week value
@@ -708,7 +708,7 @@ def sync_course_week_assignments():
                     )
                     existing_assignment_labs.add((assignment_id, lab_id))
                     labs_linked += 1
-                    print(f"    â†’ Linked '{lab_name}' to {assignment_name}")
+                    print(f"    -> Linked '{lab_name}' to {assignment_name}")
 
             if assignments_created or labs_linked:
                 print(f"  Summary: {assignments_created} assignments created, {labs_linked} labs linked")

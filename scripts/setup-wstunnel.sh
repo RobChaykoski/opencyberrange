@@ -56,20 +56,20 @@ fi
 if ! ss -ulnp | grep -q ":${WIREGUARD_PORT}"; then
     error_exit "WireGuard is not listening on UDP port ${WIREGUARD_PORT}. Start WireGuard first."
 fi
-log "${GREEN}✓ WireGuard running on UDP ${WIREGUARD_PORT}${NC}"
+log "${GREEN}[ok] WireGuard running on UDP ${WIREGUARD_PORT}${NC}"
 
 # Check cloudflared is running
 if ! systemctl is-active --quiet cloudflared; then
     error_exit "cloudflared service is not running. Start it first."
 fi
-log "${GREEN}✓ cloudflared service is active${NC}"
+log "${GREEN}[ok] cloudflared service is active${NC}"
 
 # Check cloudflared config exists
 CLOUDFLARED_CONFIG="/etc/cloudflared/config.yml"
 if [ ! -f "$CLOUDFLARED_CONFIG" ]; then
     error_exit "Cloudflare tunnel config not found at $CLOUDFLARED_CONFIG"
 fi
-log "${GREEN}✓ cloudflared config found${NC}"
+log "${GREEN}[ok] cloudflared config found${NC}"
 
 # ── Step 1: Install wstunnel binary ───────────────────────────────────────────
 
@@ -87,7 +87,7 @@ esac
 if command -v wstunnel &> /dev/null; then
     CURRENT_VERSION=$(wstunnel --version 2>&1 | grep -oP '[\d.]+' || echo "unknown")
     if [ "$CURRENT_VERSION" = "$WSTUNNEL_VERSION" ]; then
-        log "${GREEN}✓ wstunnel v${WSTUNNEL_VERSION} already installed${NC}"
+        log "${GREEN}[ok] wstunnel v${WSTUNNEL_VERSION} already installed${NC}"
     else
         log "${YELLOW}Upgrading wstunnel from v${CURRENT_VERSION} to v${WSTUNNEL_VERSION}${NC}"
     fi
@@ -115,7 +115,7 @@ if ! command -v wstunnel &> /dev/null || [ "$CURRENT_VERSION" != "$WSTUNNEL_VERS
     chmod +x "$INSTALL_DIR/wstunnel"
     rm -rf "$TMP_DIR"
 
-    log "${GREEN}✓ wstunnel installed to ${INSTALL_DIR}/wstunnel${NC}"
+    log "${GREEN}[ok] wstunnel installed to ${INSTALL_DIR}/wstunnel${NC}"
 fi
 
 # Verify
@@ -155,7 +155,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 EOF
 
-log "${GREEN}✓ Service file created: /etc/systemd/system/${SERVICE_NAME}.service${NC}"
+log "${GREEN}[ok] Service file created: /etc/systemd/system/${SERVICE_NAME}.service${NC}"
 
 # ── Step 3: Update Cloudflare tunnel config ───────────────────────────────────
 
@@ -178,11 +178,11 @@ log "VPN hostname will be: ${VPN_HOSTNAME}"
 
 # Check if VPN ingress already exists
 if grep -q "$VPN_HOSTNAME" "$CLOUDFLARED_CONFIG"; then
-    log "${YELLOW}⚠ VPN hostname already in cloudflared config — skipping${NC}"
+    log "${YELLOW}[warn] VPN hostname already in cloudflared config — skipping${NC}"
 else
     # Backup config
     cp "$CLOUDFLARED_CONFIG" "${CLOUDFLARED_CONFIG}.bak.$(date +%Y%m%d_%H%M%S)"
-    log "✓ Config backed up"
+    log "[ok] Config backed up"
 
     # Insert the VPN ingress rule BEFORE the catch-all rule
     # The catch-all rule (- service: http_status:404) must remain last
@@ -219,7 +219,7 @@ with open(config_path, 'w') as f:
 print("VPN ingress rule added successfully")
 PYEOF
 
-    log "${GREEN}✓ Cloudflare tunnel config updated${NC}"
+    log "${GREEN}[ok] Cloudflare tunnel config updated${NC}"
 fi
 
 # ── Step 4: Enable and start services ─────────────────────────────────────────
@@ -234,9 +234,9 @@ systemctl start "${SERVICE_NAME}"
 # Verify wstunnel is running
 sleep 2
 if systemctl is-active --quiet "${SERVICE_NAME}"; then
-    log "${GREEN}✓ ${SERVICE_NAME} service is running${NC}"
+    log "${GREEN}[ok] ${SERVICE_NAME} service is running${NC}"
 else
-    log "${RED}✗ ${SERVICE_NAME} failed to start. Check: journalctl -u ${SERVICE_NAME}${NC}"
+    log "${RED}[fail] ${SERVICE_NAME} failed to start. Check: journalctl -u ${SERVICE_NAME}${NC}"
     exit 1
 fi
 
@@ -246,9 +246,9 @@ systemctl restart cloudflared
 
 sleep 3
 if systemctl is-active --quiet cloudflared; then
-    log "${GREEN}✓ cloudflared restarted successfully${NC}"
+    log "${GREEN}[ok] cloudflared restarted successfully${NC}"
 else
-    log "${RED}✗ cloudflared failed to restart. Check: journalctl -u cloudflared${NC}"
+    log "${RED}[fail] cloudflared failed to restart. Check: journalctl -u cloudflared${NC}"
     log "${YELLOW}Restoring backup config...${NC}"
     LATEST_BACKUP=$(ls -t ${CLOUDFLARED_CONFIG}.bak.* 2>/dev/null | head -1)
     if [ -n "$LATEST_BACKUP" ]; then
@@ -265,23 +265,23 @@ log "${BLUE}Step 5: Verifying setup...${NC}"
 
 # Check wstunnel is listening
 if ss -tlnp | grep -q ":${WSTUNNEL_PORT}"; then
-    log "${GREEN}✓ wstunnel listening on ${WSTUNNEL_BIND}:${WSTUNNEL_PORT}${NC}"
+    log "${GREEN}[ok] wstunnel listening on ${WSTUNNEL_BIND}:${WSTUNNEL_PORT}${NC}"
 else
-    log "${RED}✗ wstunnel is NOT listening on port ${WSTUNNEL_PORT}${NC}"
+    log "${RED}[fail] wstunnel is NOT listening on port ${WSTUNNEL_PORT}${NC}"
 fi
 
 # Check WireGuard is still running
 if ss -ulnp | grep -q ":${WIREGUARD_PORT}"; then
-    log "${GREEN}✓ WireGuard listening on UDP ${WIREGUARD_PORT}${NC}"
+    log "${GREEN}[ok] WireGuard listening on UDP ${WIREGUARD_PORT}${NC}"
 else
-    log "${RED}✗ WireGuard is NOT listening${NC}"
+    log "${RED}[fail] WireGuard is NOT listening${NC}"
 fi
 
 # Check cloudflared
 if systemctl is-active --quiet cloudflared; then
-    log "${GREEN}✓ cloudflared is running${NC}"
+    log "${GREEN}[ok] cloudflared is running${NC}"
 else
-    log "${RED}✗ cloudflared is NOT running${NC}"
+    log "${RED}[fail] cloudflared is NOT running${NC}"
 fi
 
 # ── Summary ───────────────────────────────────────────────────────────────────

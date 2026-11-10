@@ -133,7 +133,7 @@ EOF
         error_exit "Failed to verify password update"
     fi
     
-    log "${GREEN}✓ Password reset successfully for user: $username${NC}"
+    log "${GREEN}[ok] Password reset successfully for user: $username${NC}"
     log "${YELLOW}New password: $new_password${NC}"
     
     # Test password verification (only if backend is running)
@@ -161,13 +161,13 @@ PYTHON_SCRIPT
 )
         
         if [[ "$verify_result" == *"OK"* ]]; then
-            log "${GREEN}✓ Password verification successful${NC}"
+            log "${GREEN}[ok] Password verification successful${NC}"
         else
-            log "${YELLOW}⚠ Note: Password verification unavailable (backend may be restarting)${NC}"
+            log "${YELLOW}[warn] Note: Password verification unavailable (backend may be restarting)${NC}"
             log "${YELLOW}The password was reset successfully. Try logging in to confirm.${NC}"
         fi
     else
-        log "${YELLOW}⚠ Note: Backend container not running - skipping verification${NC}"
+        log "${YELLOW}[warn] Note: Backend container not running - skipping verification${NC}"
         log "${YELLOW}The password was reset successfully. Start backend and try logging in to confirm.${NC}"
     fi
 }
@@ -236,7 +236,7 @@ change_role() {
     local updated=$(docker compose exec -T db psql -U labuser -d labdb -t -c "SELECT COUNT(*) FROM users WHERE username = '$username';" | tr -d ' ')
 
     if [ "$updated" = "1" ]; then
-        log "${GREEN}✓ Role updated successfully for user: $username${NC}"
+        log "${GREEN}[ok] Role updated successfully for user: $username${NC}"
     else
         error_exit "User not found: $username"
     fi
@@ -262,7 +262,7 @@ WHERE username = '$username';
 EOF
     
     if [ $? -eq 0 ]; then
-        log "${GREEN}✓ User account unlocked: $username${NC}"
+        log "${GREEN}[ok] User account unlocked: $username${NC}"
     else
         error_exit "Failed to unlock user account"
     fi
@@ -336,12 +336,12 @@ PYTHON_SCRIPT
 )
     
     if [[ "$verify_result" == *"OK"* ]]; then
-        log "${GREEN}✓ User fixed successfully: $username${NC}"
-        log "${GREEN}✓ Password reset, account unlocked, and user approved${NC}"
-        log "${GREEN}✓ Password verification successful${NC}"
+        log "${GREEN}[ok] User fixed successfully: $username${NC}"
+        log "${GREEN}[ok] Password reset, account unlocked, and user approved${NC}"
+        log "${GREEN}[ok] Password verification successful${NC}"
         log "${YELLOW}New password: $new_password${NC}"
     else
-        log "${RED}⚠ Warning: Password verification failed${NC}"
+        log "${RED}[warn] Warning: Password verification failed${NC}"
         log "${YELLOW}Note: The user was updated, but verification had issues. Try logging in to confirm.${NC}"
     fi
 }
@@ -405,7 +405,7 @@ EOF
     local created=$(docker compose exec -T db psql -U labuser -d labdb -t -c "SELECT COUNT(*) FROM users WHERE username = '$username';" 2>/dev/null | tr -d ' ')
     
     if [ "$created" = "1" ]; then
-        log "${GREEN}✓ User created successfully: $username${NC}"
+        log "${GREEN}[ok] User created successfully: $username${NC}"
         
         # Verify password hash
         log "${BLUE}Verifying password hash...${NC}"
@@ -433,9 +433,9 @@ PYTHON_SCRIPT
 )
         
         if [[ "$verify_result" == *"OK"* ]]; then
-            log "${GREEN}✓ Password verification successful${NC}"
+            log "${GREEN}[ok] Password verification successful${NC}"
         else
-            log "${RED}⚠ Warning: Password verification failed${NC}"
+            log "${RED}[warn] Warning: Password verification failed${NC}"
             log "${YELLOW}Note: The user was created, but verification had issues. Try logging in to confirm.${NC}"
         fi
     else

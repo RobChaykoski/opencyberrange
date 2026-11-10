@@ -125,7 +125,7 @@ def seed_example_course():
                 ).fetchone()
 
                 if not lab:
-                    print(f"  ⚠ Lab not found: {slug} (run discover_labs.py first)")
+                    print(f"  [warn] Lab not found: {slug} (run discover_labs.py first)")
                     labs_missing += 1
                     continue
 
@@ -145,11 +145,11 @@ def seed_example_course():
                         text("INSERT INTO course_lab_assignments (course_id, lab_id, sort_order) VALUES (:cid, :lid, :so)"),
                         {"cid": course_id, "lid": lab[0], "so": sort_order}
                     )
-                    print(f"  ✓ Added [{sort_order:2d}]: {lab[1]}")
+                    print(f"  [ok] Added [{sort_order:2d}]: {lab[1]}")
                     labs_added += 1
 
             db.commit()
-            print(f"\n✓ Sync complete! Added: {labs_added}, Updated: {labs_updated}")
+            print(f"\n[ok] Sync complete! Added: {labs_added}, Updated: {labs_updated}")
             if labs_missing:
                 print(f"  Labs missing: {labs_missing} (run discover_labs.py to populate)")
             return
@@ -185,7 +185,7 @@ def seed_example_course():
             }
         )
         course_id = result.fetchone()[0]
-        print(f"✓ Created course: {COURSE['name']} ({COURSE['code']}) [id={course_id}]")
+        print(f"[ok] Created course: {COURSE['name']} ({COURSE['code']}) [id={course_id}]")
         print(f"  Invite code: {invite_code}")
 
         # Assign labs to course
@@ -198,7 +198,7 @@ def seed_example_course():
             ).fetchone()
 
             if not lab:
-                print(f"  ⚠ Lab not found: {slug} (run discover_labs.py first)")
+                print(f"  [warn] Lab not found: {slug} (run discover_labs.py first)")
                 labs_missing += 1
                 continue
 
@@ -209,18 +209,18 @@ def seed_example_course():
                 """),
                 {"course_id": course_id, "lab_id": lab[0], "sort_order": sort_order}
             )
-            print(f"  ✓ Assigned [{sort_order:2d}]: {lab[1]}")
+            print(f"  [ok] Assigned [{sort_order:2d}]: {lab[1]}")
             labs_assigned += 1
 
         db.commit()
-        print(f"\n✓ Example course seeding complete!")
+        print(f"\n[ok] Example course seeding complete!")
         print(f"  Labs assigned: {labs_assigned}")
         if labs_missing:
             print(f"  Labs missing:  {labs_missing} (run discover_labs.py to populate)")
 
     except Exception as e:
         db.rollback()
-        print(f"✗ Error seeding example course: {e}")
+        print(f"[fail] Error seeding example course: {e}")
         import traceback
         traceback.print_exc()
         raise

@@ -197,10 +197,10 @@ preflight_checks() {
     # Check if git repo (optional - ZIP downloads work for both installs and updates)
     if [ ! -d "$REPO_DIR/.git" ]; then
         if [ "$UPDATE_MODE" = true ]; then
-            log "${YELLOW}⚠ Not a git repository - assuming ZIP download${NC}"
+            log "${YELLOW}[warn] Not a git repository - assuming ZIP download${NC}"
             log "${YELLOW}  Make sure you've extracted the latest ZIP before running updates${NC}"
         else
-            log "${YELLOW}⚠ Not a git repository (this is OK for ZIP downloads)${NC}"
+            log "${YELLOW}[warn] Not a git repository (this is OK for ZIP downloads)${NC}"
             log "${YELLOW}  For future updates, you can either:${NC}"
             log "${YELLOW}    1. Download a new ZIP and extract it, then run this script again${NC}"
             log "${YELLOW}    2. Clone the repository: git clone https://github.com/RobChaykoski/opencyberrange.git${NC}"
@@ -214,9 +214,9 @@ preflight_checks() {
         sudo apt-get install -y docker.io
         sudo systemctl enable --now docker
         sudo usermod -aG docker "$USER"
-        log "${GREEN}✓ Docker installed${NC}"
+        log "${GREEN}[ok] Docker installed${NC}"
     else
-        log "${GREEN}✓ Docker installed ($(docker --version))${NC}"
+        log "${GREEN}[ok] Docker installed ($(docker --version))${NC}"
     fi
 
     # Install Docker Compose if missing
@@ -227,9 +227,9 @@ preflight_checks() {
             sudo apt-get install -y docker-compose-v2 2>/dev/null || \
             install_compose_binary || \
             error_exit "Could not install Docker Compose v2. Please install it manually."
-        log "${GREEN}✓ Docker Compose installed${NC}"
+        log "${GREEN}[ok] Docker Compose installed${NC}"
     else
-        log "${GREEN}✓ Docker Compose available${NC}"
+        log "${GREEN}[ok] Docker Compose available${NC}"
     fi
 
     # Check if user can run docker
@@ -237,13 +237,13 @@ preflight_checks() {
         error_exit "Cannot access Docker. You may need to:\n  sudo usermod -aG docker $USER\n  (then log out and back in)"
     fi
 
-    log "${GREEN}✓ Pre-flight checks passed${NC}"
+    log "${GREEN}[ok] Pre-flight checks passed${NC}"
 }
 
 # Verify the reviewed supply-chain lock before copying or rebuilding.
 verify_supply_chain() {
     if [ ! -f "$REPO_DIR/supply-chain.lock.json" ]; then
-        log "${YELLOW}⚠ supply-chain.lock.json not found; skipping hash verification${NC}"
+        log "${YELLOW}[warn] supply-chain.lock.json not found; skipping hash verification${NC}"
         if [ "${SUPPLY_CHAIN_STRICT:-0}" = "1" ]; then
             error_exit "SUPPLY_CHAIN_STRICT=1 but supply-chain.lock.json is missing"
         fi
@@ -256,7 +256,7 @@ verify_supply_chain() {
     if ! (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check); then
         error_exit "Supply-chain verification failed. Review the drift, then run scripts/supply_chain.py --update only for an intentional change."
     fi
-    log "${GREEN}✓ Supply-chain hashes match${NC}"
+    log "${GREEN}[ok] Supply-chain hashes match${NC}"
 }
 
 # Generate secure random string
@@ -320,10 +320,10 @@ prompt_wireguard_config() {
 
     # ── If all critical values were detected, skip prompts ──────────────────
     if [ -n "$detected_pubkey" ] && [ -n "$detected_endpoint" ]; then
-        log "${GREEN}✓ WireGuard public key : ${detected_pubkey}${NC}"
-        log "${GREEN}✓ Server endpoint      : ${detected_endpoint}${NC}"
-        [ -n "$detected_api_key" ] && log "${GREEN}✓ Peer Manager API key : (detected)${NC}"
-        [ -n "$detected_api_url" ] && log "${GREEN}✓ Peer Manager API URL : ${detected_api_url}${NC}"
+        log "${GREEN}[ok] WireGuard public key : ${detected_pubkey}${NC}"
+        log "${GREEN}[ok] Server endpoint      : ${detected_endpoint}${NC}"
+        [ -n "$detected_api_key" ] && log "${GREEN}[ok] Peer Manager API key : (detected)${NC}"
+        [ -n "$detected_api_url" ] && log "${GREEN}[ok] Peer Manager API URL : ${detected_api_url}${NC}"
 
         WG_PUBLIC_KEY="$detected_pubkey"
         WG_ENDPOINT="$detected_endpoint"
@@ -343,7 +343,7 @@ prompt_wireguard_config() {
             read -p "  Server hostname [${default_host}]: " SERVER_PUBLIC_HOST
             SERVER_PUBLIC_HOST=${SERVER_PUBLIC_HOST:-"$default_host"}
         else
-            log "${GREEN}✓ Server hostname      : ${SERVER_PUBLIC_HOST}${NC}"
+            log "${GREEN}[ok] Server hostname      : ${SERVER_PUBLIC_HOST}${NC}"
         fi
         return
     fi
@@ -351,13 +351,13 @@ prompt_wireguard_config() {
     # ── Interactive fallback — prompt for anything we couldn't detect ───────
     log ""
     if [ -n "$detected_pubkey" ]; then
-        log "${GREEN}✓ Auto-detected WireGuard public key${NC}"
+        log "${GREEN}[ok] Auto-detected WireGuard public key${NC}"
     fi
     if [ -n "$detected_endpoint" ]; then
-        log "${GREEN}✓ Auto-detected server endpoint: ${detected_endpoint}${NC}"
+        log "${GREEN}[ok] Auto-detected server endpoint: ${detected_endpoint}${NC}"
     fi
     if [ -n "$detected_api_key" ]; then
-        log "${GREEN}✓ Auto-detected Peer Manager API key${NC}"
+        log "${GREEN}[ok] Auto-detected Peer Manager API key${NC}"
     fi
     log ""
 
@@ -383,7 +383,7 @@ prompt_wireguard_config() {
     WG_API_URL="${detected_api_url:-http://host.docker.internal:5000}"
 
     if [ -n "$detected_api_key" ]; then
-        log "${GREEN}✓ Auto-detected Peer Manager API key${NC}"
+        log "${GREEN}[ok] Auto-detected Peer Manager API key${NC}"
         WG_API_KEY="$detected_api_key"
     else
         log "${YELLOW}Could not auto-detect Peer Manager API key.${NC}"
@@ -413,30 +413,30 @@ prompt_wireguard_config() {
     _looks_like_endpoint() { [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+$ ]]; }
 
     if _looks_like_wg_key "$WG_ENDPOINT" && _looks_like_endpoint "$WG_PUBLIC_KEY"; then
-        log "${YELLOW}⚠ Endpoint and public key appear swapped — correcting${NC}"
+        log "${YELLOW}[warn] Endpoint and public key appear swapped — correcting${NC}"
         local tmp="$WG_ENDPOINT"
         WG_ENDPOINT="$WG_PUBLIC_KEY"
         WG_PUBLIC_KEY="$tmp"
     fi
 
     if [ -n "$WG_ENDPOINT" ] && ! _looks_like_endpoint "$WG_ENDPOINT"; then
-        log "${RED}⚠ WARNING: Server endpoint doesn't look like IP:port — got: ${WG_ENDPOINT}${NC}"
+        log "${RED}[warn] WARNING: Server endpoint doesn't look like IP:port — got: ${WG_ENDPOINT}${NC}"
         log "${RED}  Expected format: 203.0.113.45:51820${NC}"
         log "${RED}  You can fix this later in: $PLATFORM_DIR/.env (WG_SERVER_ENDPOINT)${NC}"
     fi
     if [ -n "$WG_PUBLIC_KEY" ] && ! _looks_like_wg_key "$WG_PUBLIC_KEY"; then
-        log "${RED}⚠ WARNING: Public key doesn't look like a WireGuard key — got: ${WG_PUBLIC_KEY}${NC}"
+        log "${RED}[warn] WARNING: Public key doesn't look like a WireGuard key — got: ${WG_PUBLIC_KEY}${NC}"
         log "${RED}  WireGuard keys are 44-character base64 strings ending in =${NC}"
         log "${RED}  You can fix this later in: $PLATFORM_DIR/.env (WG_SERVER_PUBLIC_KEY)${NC}"
     fi
     if [ -z "$WG_ENDPOINT" ]; then
-        log "${RED}⚠ WARNING: WireGuard Server Endpoint is empty!${NC}"
+        log "${RED}[warn] WARNING: WireGuard Server Endpoint is empty!${NC}"
         log "${RED}  Students won't be able to download VPN configs until this is set.${NC}"
         log "${RED}  Fix: Edit $PLATFORM_DIR/.env and set WG_SERVER_ENDPOINT=YOUR_IP:51820${NC}"
         log "${RED}  Then restart: docker compose -f $PLATFORM_DIR/docker-compose.yml restart backend${NC}"
     fi
     if [ -z "$WG_PUBLIC_KEY" ]; then
-        log "${RED}⚠ WARNING: WireGuard Server Public Key is empty!${NC}"
+        log "${RED}[warn] WARNING: WireGuard Server Public Key is empty!${NC}"
         log "${RED}  Students won't be able to download VPN configs until this is set.${NC}"
         log "${RED}  Fix: Edit $PLATFORM_DIR/.env and set WG_SERVER_PUBLIC_KEY=<your key>${NC}"
         log "${RED}  Find it: sudo cat /etc/wireguard/server_public.key${NC}"
@@ -538,7 +538,7 @@ EOF
     # setup token. Keep it unreadable to other local users.
     chmod 600 "$PLATFORM_DIR/.env"
 
-    log "${GREEN}✓ .env file created (all secrets auto-generated)${NC}"
+    log "${GREEN}[ok] .env file created (all secrets auto-generated)${NC}"
 }
 
 # Create docker-compose.yml for platform
@@ -550,7 +550,7 @@ create_docker_compose() {
     # exists only for a partial checkout that is missing the production file.
     if [ -f "$PLATFORM_DIR/docker-compose.prod.yml" ]; then
         cp "$PLATFORM_DIR/docker-compose.prod.yml" "$PLATFORM_DIR/docker-compose.yml"
-        log "${GREEN}✓ docker-compose.yml created from docker-compose.prod.yml${NC}"
+        log "${GREEN}[ok] docker-compose.yml created from docker-compose.prod.yml${NC}"
         return 0
     fi
 
@@ -676,7 +676,7 @@ volumes:
   workbook_data:
 EOF
     
-    log "${GREEN}✓ docker-compose.yml created${NC}"
+    log "${GREEN}[ok] docker-compose.yml created${NC}"
 }
 
 # Create directory structure
@@ -688,7 +688,7 @@ create_directory_structure() {
     mkdir -p "$PLATFORM_DIR/labs"
     mkdir -p "$PLATFORM_DIR/.backups"
     
-    log "${GREEN}✓ Directory structure created${NC}"
+    log "${GREEN}[ok] Directory structure created${NC}"
 }
 
 # Copy platform files
@@ -744,13 +744,13 @@ copy_platform_files() {
         fi
     fi
     
-    log "${GREEN}✓ Platform files copied${NC}"
+    log "${GREEN}[ok] Platform files copied${NC}"
 }
 
 # Copy VPN update files (deprecated - VPN is now integrated into main platform)
 copy_vpn_files() {
     log "${GREEN}VPN features are now integrated into the main platform.${NC}"
-    log "${GREEN}✓ VPN files included in platform (no separate copy needed)${NC}"
+    log "${GREEN}[ok] VPN files included in platform (no separate copy needed)${NC}"
 }
 
 # Run database migrations
@@ -773,7 +773,7 @@ run_migrations() {
     # VPN schema is now included in the main database initialization
     # No separate VPN migration needed
     
-    log "${GREEN}✓ Migrations completed${NC}"
+    log "${GREEN}[ok] Migrations completed${NC}"
 }
 
 # Seed database
@@ -795,7 +795,7 @@ seed_database() {
         log "${YELLOW}Warning: backend seed script not found; skipping curriculum seed${NC}"
     fi
 
-    log "${GREEN}✓ Database seeding completed${NC}"
+    log "${GREEN}[ok] Database seeding completed${NC}"
 }
 
 
@@ -835,7 +835,7 @@ build_and_start() {
     if [ -d "$REPO_DIR/RangeBox" ]; then
         log "Building RangeBox image (Kali desktop)..."
         if docker build -t opencyberrange/rangebox:lite --target lite "$REPO_DIR/RangeBox/"; then
-            log "${GREEN}✓ RangeBox image built${NC}"
+            log "${GREEN}[ok] RangeBox image built${NC}"
         else
             warn "RangeBox build FAILED — the in-browser attack desktop will not start. Students without a VPN cannot reach labs until this is rebuilt."
         fi
@@ -853,7 +853,7 @@ build_and_start() {
             warn "RemnuxBox build failed - this is optional"
     fi
 
-    log "${GREEN}✓ Containers built and started${NC}"
+    log "${GREEN}[ok] Containers built and started${NC}"
 }
 
 # Verify installation
@@ -867,7 +867,7 @@ verify_installation() {
     
     # Check containers
     if docker compose ps | grep -q "Up"; then
-        log "${GREEN}✓ Containers are running${NC}"
+        log "${GREEN}[ok] Containers are running${NC}"
     else
         log "${YELLOW}Warning: Some containers may not be running${NC}"
         docker compose ps
@@ -875,14 +875,14 @@ verify_installation() {
     
     # Check health endpoint
     if curl -f http://localhost:8000/health &>/dev/null || curl -f http://localhost:8000/api/health &>/dev/null; then
-        log "${GREEN}✓ Backend health check passed${NC}"
+        log "${GREEN}[ok] Backend health check passed${NC}"
     else
         log "${YELLOW}Warning: Backend health check failed (may still be starting)${NC}"
     fi
     
     # Check frontend
     if curl -f http://localhost/ &>/dev/null || curl -f http://localhost:80/ &>/dev/null; then
-        log "${GREEN}✓ Frontend is accessible${NC}"
+        log "${GREEN}[ok] Frontend is accessible${NC}"
     else
         log "${YELLOW}Warning: Frontend may not be accessible yet${NC}"
     fi
@@ -918,7 +918,7 @@ SVCEOF
 
     systemctl daemon-reload
     systemctl enable ocr-platform.service
-    log "${GREEN}✓ ocr-platform.service installed and enabled — platform will auto-start on boot${NC}"
+    log "${GREEN}[ok] ocr-platform.service installed and enabled — platform will auto-start on boot${NC}"
 }
 
 # Remove existing installation (for fresh install)
@@ -945,7 +945,7 @@ cleanup_old_installation() {
 
         # Remove directory
         rm -rf "$PLATFORM_DIR"
-        log "${GREEN}✓ Old installation removed${NC}"
+        log "${GREEN}[ok] Old installation removed${NC}"
     fi
 }
 
@@ -988,7 +988,7 @@ migrate_wireguard_keys() {
         log "Running key encryption migration..."
         if docker compose exec -T backend python3 /app/scripts/migrate_wg_keys.py 2>/dev/null || \
            docker compose exec -T backend python3 /app/app/scripts/migrate_wg_keys.py 2>/dev/null; then
-            log "${GREEN}✓ WireGuard key migration completed${NC}"
+            log "${GREEN}[ok] WireGuard key migration completed${NC}"
         else
             log "${YELLOW}Note: Key migration completed (no existing keys to migrate on fresh install)${NC}"
         fi
@@ -1085,33 +1085,33 @@ create_upgrade_backup() {
     log "Backing up configuration files..."
     if [ -f "$PLATFORM_DIR/.env" ]; then
         cp "$PLATFORM_DIR/.env" "$backup_path/.env"
-        log "  ✓ .env"
+        log "  [ok] .env"
     fi
     
     if [ -f "$PLATFORM_DIR/docker-compose.yml" ]; then
         cp "$PLATFORM_DIR/docker-compose.yml" "$backup_path/docker-compose.yml"
-        log "  ✓ docker-compose.yml"
+        log "  [ok] docker-compose.yml"
     fi
     
     # Backup backend directory
     if [ -d "$PLATFORM_DIR/backend" ]; then
         log "Backing up backend directory..."
         cp -r "$PLATFORM_DIR/backend" "$backup_path/backend"
-        log "  ✓ backend/ (full directory)"
+        log "  [ok] backend/ (full directory)"
     fi
     
     # Backup frontend directory
     if [ -d "$PLATFORM_DIR/frontend" ]; then
         log "Backing up frontend directory..."
         cp -r "$PLATFORM_DIR/frontend" "$backup_path/frontend"
-        log "  ✓ frontend/ (full directory)"
+        log "  [ok] frontend/ (full directory)"
     fi
     
     # Backup any custom scripts or configs
     if [ -d "$PLATFORM_DIR/scripts" ]; then
         log "Backing up custom scripts..."
         cp -r "$PLATFORM_DIR/scripts" "$backup_path/scripts" 2>/dev/null || true
-        log "  ✓ scripts/ (if exists)"
+        log "  [ok] scripts/ (if exists)"
     fi
     
     # Backup database dump (if containers are running)
@@ -1119,12 +1119,12 @@ create_upgrade_backup() {
         log "Backing up database..."
         mkdir -p "$backup_path/database"
         if docker compose -f "$PLATFORM_DIR/docker-compose.yml" exec -T db pg_dump -U labuser labdb > "$backup_path/database/labdb.sql" 2>/dev/null; then
-            log "  ✓ database/labdb.sql"
+            log "  [ok] database/labdb.sql"
         else
-            log "  ${YELLOW}⚠ Database backup failed (database may not be accessible)${NC}"
+            log "  ${YELLOW}[warn] Database backup failed (database may not be accessible)${NC}"
         fi
     else
-        log "  ${YELLOW}⚠ Database container not running, skipping database backup${NC}"
+        log "  ${YELLOW}[warn] Database container not running, skipping database backup${NC}"
     fi
 
     # Back up the erasure suppression ledger. It lives on the /workbook volume,
@@ -1132,7 +1132,7 @@ create_upgrade_backup() {
     if docker compose -f "$PLATFORM_DIR/docker-compose.yml" ps backend 2>/dev/null | grep -q "Up"; then
         if docker compose -f "$PLATFORM_DIR/docker-compose.yml" cp \
             backend:/workbook/erasure-ledger.jsonl "$backup_path/erasure-ledger.jsonl" 2>/dev/null; then
-            log "  ✓ erasure-ledger.jsonl"
+            log "  [ok] erasure-ledger.jsonl"
         fi
     fi
     
@@ -1164,7 +1164,7 @@ To restore from this backup:
 
 EOF
     
-    log "${GREEN}✓ Comprehensive backup created${NC}"
+    log "${GREEN}[ok] Comprehensive backup created${NC}"
     log "${CYAN}Backup location: $backup_path${NC}"
     echo "$backup_path"
 }

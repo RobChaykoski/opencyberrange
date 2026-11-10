@@ -93,7 +93,7 @@ preflight_checks() {
     
     # Check if git repo (optional - ZIP downloads work too)
     if [ ! -d "$REPO_DIR/.git" ]; then
-        log "${YELLOW}⚠ Not a git repository - assuming ZIP download${NC}"
+        log "${YELLOW}[warn] Not a git repository - assuming ZIP download${NC}"
         log "${YELLOW}  Make sure you've extracted the latest ZIP before running updates${NC}"
     fi
     
@@ -112,13 +112,13 @@ preflight_checks() {
         error_exit "docker-compose.yml not found in $PLATFORM_DIR"
     fi
     
-    log "${GREEN}✓ Pre-flight checks passed${NC}"
+    log "${GREEN}[ok] Pre-flight checks passed${NC}"
 }
 
 # Verify the reviewed supply-chain lock before copying or rebuilding.
 verify_supply_chain() {
     if [ ! -f "$REPO_DIR/supply-chain.lock.json" ]; then
-        log "${YELLOW}⚠ supply-chain.lock.json not found; skipping hash verification${NC}"
+        log "${YELLOW}[warn] supply-chain.lock.json not found; skipping hash verification${NC}"
         if [ "${SUPPLY_CHAIN_STRICT:-0}" = "1" ]; then
             error_exit "SUPPLY_CHAIN_STRICT=1 but supply-chain.lock.json is missing"
         fi
@@ -131,7 +131,7 @@ verify_supply_chain() {
     if ! (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check); then
         error_exit "Supply-chain verification failed. Review the drift, then run scripts/supply_chain.py --update only for an intentional change."
     fi
-    log "${GREEN}✓ Supply-chain hashes match${NC}"
+    log "${GREEN}[ok] Supply-chain hashes match${NC}"
 }
 
 # Create backup
@@ -169,7 +169,7 @@ create_backup() {
             "$backup_path/erasure-ledger.jsonl" 2>/dev/null || true
     fi
     
-    log "${GREEN}✓ Backup created${NC}"
+    log "${GREEN}[ok] Backup created${NC}"
     echo "$backup_path"
 }
 
@@ -177,7 +177,7 @@ create_backup() {
 git_pull() {
     # Skip git pull if not a git repository (ZIP download)
     if [ ! -d "$REPO_DIR/.git" ]; then
-        log "${YELLOW}⚠ Skipping git pull (not a git repository)${NC}"
+        log "${YELLOW}[warn] Skipping git pull (not a git repository)${NC}"
         log "${YELLOW}  Assuming you've already extracted the latest ZIP${NC}"
         return 0
     fi
@@ -206,11 +206,11 @@ git_pull() {
     if [ "$git_ok" -ne 1 ]; then
         # A private or unreachable remote must not abort the whole update. The
         # local tree is a valid source: rebuild and restart from what is here.
-        log "${YELLOW}⚠ Git pull failed (remote unreachable or private) — continuing with the local tree.${NC}"
+        log "${YELLOW}[warn] Git pull failed (remote unreachable or private) — continuing with the local tree.${NC}"
         return 0
     fi
     
-    log "${GREEN}✓ Git pull successful${NC}"
+    log "${GREEN}[ok] Git pull successful${NC}"
 }
 
 # Apply platform update
@@ -297,7 +297,7 @@ apply_platform_update() {
         chown -R "$SUDO_USER:$SUDO_USER" "$PLATFORM_DIR/backend/app/scripts" 2>/dev/null || true
     fi
     
-    log "${GREEN}✓ Platform update applied${NC}"
+    log "${GREEN}[ok] Platform update applied${NC}"
 }
 
 
@@ -312,7 +312,7 @@ patch_docker_compose() {
 
     # Skip if already patched
     if grep -q "ensure-db-password.sh" "$compose_file" 2>/dev/null; then
-        log "${GREEN}✓ docker-compose.yml already has password sync entrypoint${NC}"
+        log "${GREEN}[ok] docker-compose.yml already has password sync entrypoint${NC}"
         return 0
     fi
 
@@ -329,7 +329,7 @@ patch_docker_compose() {
     # Add volume mount for the entrypoint script after the postgres_data volume line
     sed -i '/postgres_data:\/var\/lib\/postgresql\/data/a\      - ./db/ensure-db-password.sh:/usr/local/bin/ensure-db-password.sh:ro' "$compose_file"
 
-    log "${GREEN}✓ docker-compose.yml patched with password sync entrypoint${NC}"
+    log "${GREEN}[ok] docker-compose.yml patched with password sync entrypoint${NC}"
 }
 
 # Patch docker-compose.yml to add workbook/wiki shared volumes.
@@ -343,7 +343,7 @@ patch_workbook_volumes() {
 
     # Skip if already patched
     if grep -q "workbook_data" "$compose_file" 2>/dev/null; then
-        log "${GREEN}✓ docker-compose.yml already has workbook volumes${NC}"
+        log "${GREEN}[ok] docker-compose.yml already has workbook volumes${NC}"
         return 0
     fi
 
@@ -363,7 +363,7 @@ patch_workbook_volumes() {
     # Add named volumes at the end (after postgres_data:)
     sed -i '/postgres_data:/a\  workbook_data:\n  wiki_html:' "$compose_file"
 
-    log "${GREEN}✓ docker-compose.yml patched with workbook/wiki volumes${NC}"
+    log "${GREEN}[ok] docker-compose.yml patched with workbook/wiki volumes${NC}"
 }
 
 # Patch docker-compose.yml to add the wiki_courses shared volume.
@@ -379,13 +379,13 @@ patch_wiki_courses_volume() {
     # The current production stack uses a single wiki_data volume and a
     # wiki-builder profile. Do not add the legacy wiki_courses/wiki_html scheme.
     if grep -q "wiki_data" "$compose_file" 2>/dev/null; then
-        log "${GREEN}✓ docker-compose.yml already uses the wiki_data volume${NC}"
+        log "${GREEN}[ok] docker-compose.yml already uses the wiki_data volume${NC}"
         return 0
     fi
 
     # Skip if already patched
     if grep -q "wiki_courses" "$compose_file" 2>/dev/null; then
-        log "${GREEN}✓ docker-compose.yml already has wiki_courses volume${NC}"
+        log "${GREEN}[ok] docker-compose.yml already has wiki_courses volume${NC}"
         return 0
     fi
 
@@ -405,7 +405,7 @@ patch_wiki_courses_volume() {
     # Add named volume at the end (after wiki_html:)
     sed -i '/^  wiki_html:$/a\  wiki_courses:' "$compose_file"
 
-    log "${GREEN}✓ docker-compose.yml patched with wiki_courses volume${NC}"
+    log "${GREEN}[ok] docker-compose.yml patched with wiki_courses volume${NC}"
 }
 
 # Ensure existing deployments get the shared Redis rate-limit service without
@@ -420,17 +420,17 @@ patch_redis_service() {
     fi
 
     if grep -q '^  redis:' "$compose_file" 2>/dev/null; then
-        log "${GREEN}✓ docker-compose.yml already has Redis${NC}"
+        log "${GREEN}[ok] docker-compose.yml already has Redis${NC}"
         return 0
     fi
 
     if [ -f "$override_file" ] && grep -q '^  redis:' "$override_file" 2>/dev/null; then
-        log "${GREEN}✓ docker-compose.override.yml already has Redis${NC}"
+        log "${GREEN}[ok] docker-compose.override.yml already has Redis${NC}"
         return 0
     fi
 
     if [ -f "$override_file" ]; then
-        log "${YELLOW}⚠ docker-compose.override.yml exists without a Redis service; add it manually${NC}"
+        log "${YELLOW}[warn] docker-compose.override.yml exists without a Redis service; add it manually${NC}"
         return 0
     fi
 
@@ -467,7 +467,7 @@ services:
 YAML
 
     chmod 644 "$override_file"
-    log "${GREEN}✓ docker-compose.override.yml created with Redis${NC}"
+    log "${GREEN}[ok] docker-compose.override.yml created with Redis${NC}"
 }
 
 # Seed the workbook volume with source files and build all wikis.
@@ -494,9 +494,9 @@ seed_workbook() {
         done
         # Use tar to copy directory contents into the volume
         tar -cf - -C "$REPO_DIR" Workbook | docker compose exec -T backend tar -xf - -C /workbook/ 2>/dev/null || true
-        log "${GREEN}✓ Workbook source copied${NC}"
+        log "${GREEN}[ok] Workbook source copied${NC}"
     else
-        log "${YELLOW}⚠ Workbook/ or mkdocs.yml not found in repo — skipping seed${NC}"
+        log "${YELLOW}[warn] Workbook/ or mkdocs.yml not found in repo — skipping seed${NC}"
         return 0
     fi
 
@@ -536,9 +536,9 @@ for r in result['results']:
     if not r['success']:
         print(f\"         {r['output'][:200]}\")
 " 2>&1; then
-        log "${GREEN}✓ All wikis built successfully${NC}"
+        log "${GREEN}[ok] All wikis built successfully${NC}"
     else
-        log "${YELLOW}⚠ Wiki build had issues (some pages may still work)${NC}"
+        log "${YELLOW}[warn] Wiki build had issues (some pages may still work)${NC}"
     fi
 }
 
@@ -577,7 +577,7 @@ SVCEOF
 
     systemctl daemon-reload
     systemctl enable ocr-platform.service 2>/dev/null || true
-    log "${GREEN}✓ ocr-platform.service installed and enabled${NC}"
+    log "${GREEN}[ok] ocr-platform.service installed and enabled${NC}"
 }
 
 # Rebuild and restart containers
@@ -602,13 +602,13 @@ rebuild_containers() {
         error_exit "Docker compose up failed"
     fi
     
-    log "${GREEN}✓ Containers rebuilt and restarted${NC}"
+    log "${GREEN}[ok] Containers rebuilt and restarted${NC}"
 
     # Re-apply VPN firewall rules (Docker restart can clobber iptables)
     if systemctl is-enabled ocr-vpn-firewall.service &>/dev/null; then
         systemctl restart ocr-vpn-firewall.service 2>/dev/null && \
-            log "${GREEN}✓ VPN firewall rules re-applied${NC}" || \
-            log "${YELLOW}⚠ Could not restart VPN firewall service${NC}"
+            log "${GREEN}[ok] VPN firewall rules re-applied${NC}" || \
+            log "${YELLOW}[warn] Could not restart VPN firewall service${NC}"
     fi
 }
 
@@ -683,7 +683,7 @@ run_database_scripts() {
         if [ -n "$script_output" ]; then
             echo "$script_output"
         fi
-        log "${GREEN}✓ Lab discovery completed${NC}"
+        log "${GREEN}[ok] Lab discovery completed${NC}"
     else
         log "${YELLOW}Warning: discover_labs.py script not found in container${NC}"
         log "${YELLOW}  Host location: $PLATFORM_DIR/backend/app/scripts/discover_labs.py${NC}"
@@ -707,13 +707,13 @@ prebuild_lab_images() {
         chmod +x "$prebuild_script"
         # Run prebuild - don't fail deployment if some labs fail to build
         if bash "$prebuild_script"; then
-            log "${GREEN}✓ All lab images pre-built successfully${NC}"
+            log "${GREEN}[ok] All lab images pre-built successfully${NC}"
         else
-            log "${YELLOW}⚠ Some lab images failed to build (see logs above)${NC}"
+            log "${YELLOW}[warn] Some lab images failed to build (see logs above)${NC}"
             log "${YELLOW}  Students may experience slower spawns for those labs${NC}"
         fi
     else
-        log "${YELLOW}⚠ prebuild-labs.sh not found, skipping image pre-build${NC}"
+        log "${YELLOW}[warn] prebuild-labs.sh not found, skipping image pre-build${NC}"
     fi
 }
 
@@ -732,13 +732,13 @@ verify_deployment() {
     if ! docker compose ps | grep -q "Up"; then
         log "${YELLOW}Warning: Some containers may not be running${NC}"
     else
-        log "${GREEN}✓ Containers are running${NC}"
+        log "${GREEN}[ok] Containers are running${NC}"
     fi
     
     # Check health endpoint if available
     sleep 5  # Give containers time to start
     if curl -f http://localhost:8000/health &>/dev/null || curl -f http://localhost:8000/api/health &>/dev/null; then
-        log "${GREEN}✓ Health check passed${NC}"
+        log "${GREEN}[ok] Health check passed${NC}"
     else
         log "${YELLOW}Warning: Health check endpoint not responding (containers may still be starting)${NC}"
     fi
@@ -769,7 +769,7 @@ update_state() {
     "backup_path": "$BACKUP_DIR"
 }
 EOF
-        log "${GREEN}✓ State file updated${NC}"
+        log "${GREEN}[ok] State file updated${NC}"
     else
         log "${YELLOW}Note: Could not write state file (permission issue)${NC}"
     fi

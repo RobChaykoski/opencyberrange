@@ -50,7 +50,7 @@ def upsert_quiz(db, track_slug, level_number, title, questions):
             explanation=q.get("expl", ""),
         ))
     db.commit()
-    print(f"  ✓ {track_slug} L{level_number}: {len(questions)} questions")
+    print(f"  [ok] {track_slug} L{level_number}: {len(questions)} questions")
 
 
 # ---------------- M1: Malware Fundamentals ----------------
