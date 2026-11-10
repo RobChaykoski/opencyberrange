@@ -3,7 +3,7 @@
     <a class="skip-link" href="#register-form">Skip to registration form</a>
     <div class="register-split">
       <!-- Left: Form Panel -->
-      <main class="register-form-panel" id="register-form">
+      <main class="register-form-panel" id="register-form" tabindex="-1">
         <div class="form-panel-inner">
           <!-- Brand -->
           <div class="brand">
@@ -726,6 +726,11 @@ const handleRegister = async () => {
 .register-page {
   min-height: 100vh;
   background: var(--bg-primary);
+}
+
+.register-form-panel:focus-visible {
+  outline: 3px solid #fb923c;
+  outline-offset: -3px;
 }
 
 .register-split {

@@ -31,7 +31,7 @@
 
     <div class="login-split">
       <!-- Left: form panel -->
-      <main class="login-form-panel" id="signin-form">
+      <main class="login-form-panel" id="signin-form" tabindex="-1">
         <div class="form-panel-inner">
           <div class="brand">
             <img src="/swocts-cyber-range-mark.png" alt="" class="brand-icon" />
@@ -520,6 +520,11 @@ const handleLogin = async () => {
   position: relative;
   min-height: 100vh;
   background: var(--bg-primary);
+}
+
+.login-form-panel:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
 }
 
 .login-powered {
