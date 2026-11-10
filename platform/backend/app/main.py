@@ -10,6 +10,9 @@ import logging
 import os
 import uuid
 
+from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
+
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
@@ -118,6 +121,43 @@ def _release_scheduler_leadership() -> None:
         _scheduler_leader_conn = None
 
 
+_SCHEMA_LOCK_KEY = 20261110
+
+
+def _initialize_schema() -> None:
+    """Create missing tables once, even when several workers start together.
+
+    ``Base.metadata.create_all`` uses checkfirst, which is not atomic: two
+    workers can both see a missing table and race to create it, producing
+    DuplicateTable/UniqueViolation startup failures. A PostgreSQL advisory lock
+    serializes schema initialization across workers and replicas.
+    """
+    with engine.connect() as conn:
+        is_postgres = conn.dialect.name == "postgresql"
+        if is_postgres:
+            conn.execute(
+                text("SELECT pg_advisory_lock(:key)"),
+                {"key": _SCHEMA_LOCK_KEY},
+            )
+            conn.commit()
+        try:
+            Base.metadata.create_all(bind=conn)
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            if is_postgres:
+                try:
+                    conn.execute(
+                        text("SELECT pg_advisory_unlock(:key)"),
+                        {"key": _SCHEMA_LOCK_KEY},
+                    )
+                    conn.commit()
+                except Exception:
+                    conn.rollback()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan events"""
@@ -127,13 +167,12 @@ async def lifespan(app: FastAPI):
     # Wait for database to become available (handles Docker restart race condition
     # where backend starts before PostgreSQL is accepting connections)
     import asyncio as _asyncio
-    from sqlalchemy.exc import OperationalError
 
     max_retries = 30
     retry_delay = 2  # seconds
     for attempt in range(1, max_retries + 1):
         try:
-            Base.metadata.create_all(bind=engine)
+            _initialize_schema()
             logger.info("Database schema initialized successfully.")
             break
         except OperationalError as e:
@@ -148,9 +187,24 @@ async def lifespan(app: FastAPI):
                 attempt, max_retries, str(e).split('\n')[0], retry_delay,
             )
             await _asyncio.sleep(retry_delay)
+        except (IntegrityError, ProgrammingError) as e:
+            # Multiple uvicorn workers can race on first startup. The advisory
+            # lock should prevent this, but retry once if the database reports
+            # a concurrent DDL winner.
+            if attempt == max_retries:
+                logger.error(
+                    "Schema initialization failed after %d attempts: %s",
+                    max_retries, str(e).split('\n')[0],
+                )
+                raise
+            logger.warning(
+                "Concurrent schema initialization (attempt %d/%d): %s -- retrying in %ds...",
+                attempt, max_retries, str(e).split('\n')[0], retry_delay,
+            )
+            await _asyncio.sleep(retry_delay)
 
     # Add missing columns to existing tables (safe idempotent migration)
-    from sqlalchemy import text, inspect as sa_inspect
+    from sqlalchemy import inspect as sa_inspect
     with engine.connect() as conn:
         inspector = sa_inspect(engine)
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]
@@ -245,6 +299,15 @@ async def lifespan(app: FastAPI):
             ))
             conn.commit()
             logger.info("Added scoreboard_name_mode column to users table")
+
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'certificates_public' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN certificates_public "
+                "BOOLEAN DEFAULT TRUE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added certificates_public column to users table")
 
         # --- Optional survey consent (platform/usage surveys only) ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]

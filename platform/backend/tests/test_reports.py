@@ -493,3 +493,10 @@ def test_report_generation_requires_a_reason(client, report_data):
         headers=instructor,
     )
     assert resp.status_code == 422
+
+
+def test_schema_initialization_is_idempotent(db_schema):
+    from app.main import _initialize_schema
+
+    _initialize_schema()
+    _initialize_schema()
