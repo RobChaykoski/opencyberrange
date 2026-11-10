@@ -97,13 +97,13 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "d696005b3022938e57160aba1b1097adc48ab470f3f3a9e3563ccbcb0695490e"
+      "sha256": "3b8632da9441dae2d40cb22f1c5ea65f6b4c1a8df1781c8e1949ba98ff81731a"
     },
     "scripts/generate-about.py": {
       "sha256": "2e6b9815d08414be3c550bb2f7eb0b4b87e46b5f786b694768340221937e533f"
     },
     "scripts/install-platform.sh": {
-      "sha256": "31db2213c8fefd082ef16015e3786c235658a83f8013a70c489c4e025f4a4eea"
+      "sha256": "a78aa68126c26f95ca6d55623f6efc697c60bc5d94c8988187033f7657abef97"
     },
     "scripts/lab_build_hash.py": {
       "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
