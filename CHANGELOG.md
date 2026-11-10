@@ -57,6 +57,9 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   combines both, with workbook pages.
 - Added a Grade 10 email-metadata lab covering envelope and display headers,
   `Received` chains, SPF/DKIM/DMARC results, and custom `X-` headers.
+- Added the Identity & Access track with three labs: secure authentication and
+  session forgery, OAuth/OIDC redirect and token trust, and joiner/mover/leaver
+  lifecycle and access review.
 - Hardened the shared High School target with a restrictive CSP, `nosniff`,
   `no-referrer`, frame denial, and a permissions policy.
 - Added student-tester and inclusive-curriculum reviews at

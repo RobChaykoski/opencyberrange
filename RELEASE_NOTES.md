@@ -19,6 +19,8 @@ These changes are on `main` after the `v2.5.5` tag and are not part of the
   capstone that combines both.
 - Grade 10 email-metadata lab covering envelope, routing, authentication, and
   custom headers.
+- Identity & Access track covering secure sessions and MFA, OAuth/OIDC redirect
+  and token trust, and joiner/mover/leaver access review.
 - Startup schema initialization serialized across workers.
 
 See `CHANGELOG.md` for the itemised list.

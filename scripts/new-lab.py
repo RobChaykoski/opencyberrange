@@ -44,6 +44,7 @@ TRACK_DIRS = {
     "osint": "OSINT",
     "high-school": "High School",
     "software-security": "Software Security",
+    "identity": "Identity",
     "capitalflow": "Capital Flow",
     "forensics": "Forensics",
     "refinery": "Refinery",

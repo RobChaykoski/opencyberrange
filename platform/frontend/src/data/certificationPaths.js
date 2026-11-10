@@ -86,6 +86,13 @@ export const CERTIFICATION_PATHS = {
     advanced: ['OSWE', 'GIAC GWEB', 'ISACA CISA'],
     roles: ['AppSec engineer', 'Secure SDLC lead', 'Software assurance auditor'],
   },
+  identity: {
+    summary: 'Authentication, federation, and identity lifecycle for people and services.',
+    entry: ['CompTIA Security+', 'Microsoft SC-900'],
+    core: ['Microsoft SC-300', 'Okta Certified Professional', 'CompTIA CySA+'],
+    advanced: ['Microsoft SC-100', 'ISC2 CISSP', 'Okta Certified Administrator'],
+    roles: ['IAM engineer', 'Identity and access administrator', 'Security architect'],
+  },
   'high-school': {
     summary: 'Entry-level cybersecurity foundations and career exploration.',
     entry: ['CompTIA ITF+', 'CompTIA Security+'],
@@ -109,6 +116,7 @@ export function getCertificationPath(track) {
 
   const aliases = [
     ['software-security', ['software', 'appsec', 'application security']],
+    ['identity', ['identity', 'iam', 'access']],
     ['network', ['network', 'networking']],
     ['windows', ['windows', 'active directory']],
     ['linux', ['linux', 'unix']],

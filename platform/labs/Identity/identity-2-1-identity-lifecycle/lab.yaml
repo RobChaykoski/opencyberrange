@@ -1,0 +1,123 @@
+title: "Identity Lifecycle: Joiners, Movers, and Leavers"
+category: authentication
+difficulty: beginner
+estimated_time: 40
+prerequisites:
+  - identity-1-2-oauth-oidc-sso
+# By completion students will be able to:
+learning_outcomes:
+  - Review accounts for status, last login, role, and token scope
+  - Identify a leaver account that was never disabled
+  - Test an API token and recognize a least-privilege failure
+  - Write the offboarding and access-review fixes
+mapped_skills:
+  - identity_access
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Name the account that should have been disabled and the token to revoke.
+mitre_attack:
+  - tactic: Initial Access
+    technique: T1078
+    technique_name: Valid Accounts
+    detection: Alert on sign-ins from dormant accounts, tokens used after an account is marked as a leaver, and privileged API calls from accounts without a current owner.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community centre is overdue for its quarterly access review. A volunteer coordinator left 14 months ago, but the account is still active and holds an overprivileged reporting token. Review the directory, test the token, recover the training token, and write the offboarding fixes."
+visibility: public
+flag: "OCR{leavers_keep_access_until_you_revoke_it}"
+
+tools:
+  - browser
+  - curl
+  - terminal
+
+scenario: |
+  You are helping a community centre with its quarterly access review. The
+  volunteer coordinator left 14 months ago. The account was never disabled and
+  the API token was never revoked.
+
+  The directory shows current accounts, roles, last login dates, tokens, and
+  scopes. Your job is to find the account that should have been removed, test
+  its access, recover the training token, and write the offboarding fixes.
+
+  The directory and accounts are fictional. The target is isolated. Do not test
+  tokens from a real system.
+
+troubleshooting: "If the reports endpoint returns 401, check that you copied the full token. If it returns 403, the token has read-only scope; the export endpoint requires reports:admin. Use the form on the access-review page or the token query parameter for a browser-only path."
+defensive_takeaways: "Disable accounts on the last day, revoke tokens and sessions, transfer files and ownership, remove shared-drive access, and record the review. Run access reviews on a schedule, give service accounts named owners and minimal scopes, and rotate credentials when someone leaves."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, directory, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the task is evidence reading plus one token test."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/identity/CH_IAM01_Identity_And_Access/03_Identity_Lifecycle/"
+
+hostnames:
+  - ip_offset: "93"
+    hostname: "identity-life.lab"
+    description: "Access-review target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community centre access review"
+      type: "server"
+      ip_offset: "93"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the directory and compare `status` with `last_login`. One account has
+      been active for more than a year without signing in.
+    unlock_after_minutes: 0
+
+  - text: |
+      The token column is the account's API credential. Try the stale account's
+      token on the reports endpoint, using the form on the review page or
+      `/api/reports?token=...`.
+    unlock_after_minutes: 6
+
+  - text: |
+      The export endpoint requires the `reports:admin` scope. The staff and
+      service-account tokens are read-only and return 403.
+    unlock_after_minutes: 12
+
+  - text: |
+      Fix the lifecycle, not just the token: disable on the last day, revoke
+      tokens and sessions, transfer ownership, and review access on a schedule.
+    unlock_after_minutes: 18
+
+test:
+  steps:
+    - name: "Access-review page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Directory is available"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/directory"
+      expect: "200"
+      timeout: 20
+
+    - name: "Reports endpoint rejects an anonymous request"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/api/reports"
+      expect: "401"
+      timeout: 20
+
+    - name: "A read-only token is denied the export"
+      command: "curl -s -o /dev/null -w '%{http_code}' 'http://{target.portal}:8080/api/reports?token=tok_amara_staff_2b7c'"
+      expect: "403"
+      timeout: 20
+
+    - name: "The stale admin token reveals the training token"
+      command: "curl -s 'http://{target.portal}:8080/api/reports?token=tok_rowan_9f2c' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{leavers_keep_access_until_you_revoke_it}"
+      timeout: 20

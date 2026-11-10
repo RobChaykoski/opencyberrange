@@ -131,6 +131,7 @@ learner data, or platform screenshots on third-party sites.
 | OT/ICS | Fortinet, Palo Alto Beacon | ISC2 CC, Cisco NetAcad |
 | AI | IBM SkillsBuild, Linux Foundation | ISC2 CC |
 | Software Security | PortSwigger Academy, Linux Foundation | ISC2 CC |
+| Identity & Access | PortSwigger Academy (authentication), Microsoft Learn | ISC2 CC, CompTIA Security+ |
 | High School | Cisco NetAcad, TryHackMe, CyLab | ISC2 CC, IBM SkillsBuild |
 
 The student-facing version is in

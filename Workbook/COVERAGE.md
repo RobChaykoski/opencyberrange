@@ -9,6 +9,7 @@ links.
 | AI | 3 |
 | Forensics | 2 |
 | High School | 13 |
+| Identity | 3 |
 | Linux | 30 |
 | Malware | 8 |
 | Network | 16 |
@@ -17,7 +18,7 @@ links.
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 51 |
-| **Total** | **147** |
+| **Total** | **150** |
 
 ## Labs
 
@@ -41,6 +42,9 @@ links.
 | High School | RangeBox Log Detective (`high-school-11-1-rangebox-log-detective`) | `wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/01_Log_Detective/` |
 | High School | RangeBox Network Basics (`high-school-10-1-rangebox-network-basics`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics/` |
 | High School | Read the Link Before You Click (`high-school-9-6-read-the-link`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link/` |
+| Identity | Identity Lifecycle: Joiners, Movers, and Leavers (`identity-2-1-identity-lifecycle`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/03_Identity_Lifecycle/` |
+| Identity | OAuth/OIDC: Redirects, State, and Token Trust (`identity-1-2-oauth-oidc-sso`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/02_OAuth_OIDC/` |
+| Identity | Secure Authentication: Sessions, MFA, and Password Storage (`identity-1-1-secure-authentication`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/01_Secure_Authentication/` |
 | Linux | Aegis Security Corp - Brute Force Detection (`linux-5-6-brute-force-detection`) | `wiki/range/linpt/CH_LIN05_Detection/02_Brute_Force_Detection/` |
 | Linux | Blackrock Dynamics - Hash Relay (`linux-3-4-hash-relay`) | `wiki/range/linpt/CH_LIN03B_Privilege_Hashes/04_Hash_Relay/` |
 | Linux | Blackwell & Associates - SMB Share Enumeration (`linux-2-7-smb-share-enumeration`) | `wiki/range/linpt/CH_LIN02B_SMB_SNMP/01_SMB_Share_Enumeration/` |

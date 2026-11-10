@@ -237,6 +237,24 @@
         "portal"
       ]
     },
+    "identity-1-1-secure-authentication": {
+      "content_hash": "d8bbe4d8aabd2c52ffb52774d98ff44b80accf0c99ae2232491b37d6ad828a46",
+      "services": [
+        "portal"
+      ]
+    },
+    "identity-1-2-oauth-oidc-sso": {
+      "content_hash": "b0d96ca3dbe0eba18ba04749c19e2f2d027af8520821dba85206e972c34c6f4c",
+      "services": [
+        "portal"
+      ]
+    },
+    "identity-2-1-identity-lifecycle": {
+      "content_hash": "9c570eca0ee329dd3759eb0968e43d4b93274cca9248c3a43e07498f9e1fa162",
+      "services": [
+        "portal"
+      ]
+    },
     "linux-1-1-ssh-service-detection": {
       "content_hash": "f618d494f692d60d918b55c522b2cb0dfd59481b583b03b6d028b8d0e0b0ad2d",
       "services": [

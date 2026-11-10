@@ -267,7 +267,22 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                           'description': 'Memory images, processes, and volatile evidence'},
                       {   'level_number': 2,
                           'name': 'Network Forensics',
-                          'description': 'Packet captures, voice traffic, and protocol reconstruction'}]}]
+                          'description': 'Packet captures, voice traffic, and protocol reconstruction'}]},
+    {   'name': 'Identity & Access',
+        'slug': 'identity',
+        'description': 'Authentication, federation, and the lifecycle of '
+                       'accounts, sessions, and tokens.',
+        'icon': 'web',
+        'color': '#8B5CF6',
+        'sort_order': 12,
+        'levels': [   {   'level_number': 1,
+                          'name': 'Authentication and Federation',
+                          'description': 'Sessions, MFA, OAuth/OIDC, and token '
+                                         'trust'},
+                      {   'level_number': 2,
+                          'name': 'Identity Lifecycle',
+                          'description': 'Joiners, movers, leavers, access '
+                                         'reviews, and service accounts'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)

@@ -1,0 +1,125 @@
+title: "Secure Authentication: Sessions, MFA, and Password Storage"
+category: authentication
+difficulty: beginner
+estimated_time: 45
+prerequisites: []
+# By completion students will be able to:
+learning_outcomes:
+  - Read a session cookie and decode its structure
+  - Explain why a client-side role claim is not authorization
+  - Forge a session to reach an administrator function
+  - Explain the server-side session, cookie attribute, MFA, and password-hashing fixes
+mapped_skills:
+  - identity_access
+  - web_api
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+  - Explain why MFA at login did not protect the admin console.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1539
+    technique_name: Steal Web Session Cookie
+    detection: Alert on session cookies presented from a new device or network, role changes inside a session, and sessions that cannot be correlated with a server-side record.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.5"
+reviewed_at: "2026-11-10"
+review_status: "static student walkthrough; live lab run pending"
+description: "A community centre staff portal trusts a client-side session cookie and stores passwords with a fast hash. Sign in with the demo staff account, decode the cookie, forge an administrator session, and recover the training token. Then explain the session, MFA, and password-storage fixes."
+visibility: public
+flag: "OCR{forged_sessions_bypass_mfa}"
+
+tools:
+  - browser
+  - curl
+  - terminal
+
+scenario: |
+  You are helping a community centre review its new staff portal. The portal
+  lets volunteers check schedules and reports. The developer shipped a debug
+  session format and enabled MFA only for the administrator account.
+
+  A staff member can sign in, but the server trusts the role written in the
+  session cookie. Your job is to see whether that trust is enough to reach the
+  admin console, recover the training token, and explain why MFA at login did
+  not protect the admin function.
+
+  The portal and all accounts are fictional. The target is isolated. Never test
+  a real session or account outside this lab.
+
+troubleshooting: "If the login form fails, use the demo account shown on the page exactly as written. If you break the cookie, sign in again to get a fresh one. In the browser, open developer tools and edit the cookie value under Application or Storage; with curl, use the Cookie header. If you are stuck, read the page source for the debug note."
+defensive_takeaways: "Use a random, opaque session identifier stored server-side, rotate it at sign-in, and set HttpOnly, Secure, and SameSite. Check authorization on every request instead of trusting a role in the cookie. Bind MFA to the session and require it again for sensitive actions. Store passwords with a slow, salted hash such as Argon2id, bcrypt, or scrypt."
+difficulty_evidence: "Static student-tester walkthrough of the lab definition, target, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional because the exploit is a short cookie edit."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-10"
+workbook: "wiki/range/identity/CH_IAM01_Identity_And_Access/01_Secure_Authentication/"
+
+hostnames:
+  - ip_offset: "91"
+    hostname: "identity-auth.lab"
+    description: "Staff portal authentication target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Community centre staff portal"
+      type: "server"
+      ip_offset: "91"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Sign in with the demo staff account. Open the browser developer tools and
+      find the `session` cookie under Application or Storage. With curl, send
+      the login request and read the `Set-Cookie` header.
+    unlock_after_minutes: 0
+
+  - text: |
+      Decode the cookie value from Base64. It is the text `user:role`. Change
+      the role from `staff` to `admin`, encode it again, and replace the cookie
+      in your browser or curl request.
+    unlock_after_minutes: 6
+
+  - text: |
+      Open `/admin` with the forged cookie. The portal checks the role in the
+      cookie and does not look up a server-side session record.
+    unlock_after_minutes: 12
+
+  - text: |
+      The fix is not a better cookie format. Use a random server-side session
+      ID, check the role on the server, set HttpOnly/Secure/SameSite, and bind
+      MFA to the authenticated session.
+    unlock_after_minutes: 18
+
+test:
+  steps:
+    - name: "Staff portal responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Admin console rejects an anonymous request"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/admin"
+      expect: "401"
+      timeout: 20
+
+    - name: "Demo login sets a session cookie"
+      command: "curl -s -i -X POST -d 'user=amara&password=Library2026!' http://{target.portal}:8080/login | grep -c 'Set-Cookie: session='"
+      expect: "1"
+      timeout: 20
+
+    - name: "A staff session is denied the admin console"
+      command: "curl -s -o /dev/null -w '%{http_code}' -H 'Cookie: session=YW1hcmE6c3RhZmY=' http://{target.portal}:8080/admin"
+      expect: "403"
+      timeout: 20
+
+    - name: "A forged admin session reveals the training token"
+      command: "curl -s -H 'Cookie: session=YWRtaW46YWRtaW4=' http://{target.portal}:8080/admin | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{forged_sessions_bypass_mfa}"
+      timeout: 20

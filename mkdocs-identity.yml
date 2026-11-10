@@ -1,0 +1,74 @@
+site_name: "SWOCTS Cyber Range - Identity & Access"
+site_description: "Authentication, federation, and identity lifecycle foundations for SWOCTS Cyber Range"
+site_url: ""
+docs_dir: Workbook
+site_dir: _site_identity
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
+
+theme:
+  name: material
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+  font:
+    text: Inter
+    code: JetBrains Mono
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css?v=4
+
+extra_javascript:
+  - javascripts/mermaid-fix.js?v=4
+  - javascripts/pdf-export.js?v=2
+  - https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
+
+nav:
+  - Home: index.md
+  - "CH IAM01 — Identity & Access":
+    - Introduction: CH_IAM01_Identity_And_Access/00_Introduction.md
+    - "Secure Authentication": CH_IAM01_Identity_And_Access/01_Secure_Authentication.md
+    - "OAuth and OIDC": CH_IAM01_Identity_And_Access/02_OAuth_OIDC.md
+    - "Identity Lifecycle": CH_IAM01_Identity_And_Access/03_Identity_Lifecycle.md
+    - Chapter Review: CH_IAM01_Identity_And_Access/04_Chapter_Review.md
+  - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

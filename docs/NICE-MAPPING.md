@@ -33,16 +33,17 @@ using this in a programme review, grant application, or REB submission.
 | **OSINT** | Collect and Operate (CO); Analyze (AN) | Exploitation Analyst; Cyber Operations Planner | Public-surface mapping, image metadata and steganography, source-code and public-repository leaks, responsible collection | 5 labs, OSINT workbook, synthetic personas, flags |
 | **High School Cybersecurity** | Operate and Maintain (OM); Protect and Defend (PR) | Network Operations Specialist; Cyber Defense Analyst (entry) | Digital safety, link and file inspection, email metadata, networking foundations, browser and source inspection, defensive log reading, guided RangeBox practice | 13 labs across Grades 9–12, browser-first targets, workbook pages, certificates |
 | **Software Security** | Securely Provision (SP); Protect and Defend (PR) | Secure Software Assessor; Vulnerability Assessment Analyst | Source review, hidden export routes, command injection, secure coding and remediation | 2 labs, source-review targets, flags, workbook exercises |
+| **Identity & Access** | Securely Provision (SP); Protect and Defend (PR); Operate and Maintain (OM) | Security Architect; Systems Administrator; Cyber Defense Analyst | Sessions, MFA, OAuth/OIDC, SSO, token trust, joiner/mover/leaver, access reviews, service accounts | 3 labs, browser and terminal targets, workbook exercises, flags |
 | **Digital Forensics** | Investigate (IN); Analyze (AN) | Cyber Defense Forensics Analyst; Cyber Defense Incident Responder | Memory analysis, VoIP call reconstruction, evidence handling, timeline and artefact interpretation | 2 labs, evidence workstations, PCAPs, workbook walkthroughs, certificates |
 
 ## Coverage by NICE category
 
 | NICE category | Tracks that contribute | Coverage note |
 |---|---|---|
-| **Securely Provision (SP)** | Web Application Security; Software Security; AI Hacking | Secure design and code review are covered; this is not a full secure-development lifecycle programme |
-| **Operate and Maintain (OM)** | Linux Fundamentals; Network Security; High School Cybersecurity | Service administration, network operations, and defensive foundations |
+| **Securely Provision (SP)** | Web Application Security; Software Security; Identity & Access; AI Hacking | Secure design, authentication, federation, and code review are covered; this is not a full secure-development lifecycle programme |
+| **Operate and Maintain (OM)** | Linux Fundamentals; Network Security; Identity & Access; High School Cybersecurity | Service administration, network operations, identity lifecycle, and defensive foundations |
 | **Oversee and Govern (OV)** | Instructor and administrator workflows; privacy and consent modules | Governance content is platform-operational, not a dedicated GRC track |
-| **Protect and Defend (PR)** | Windows; Linux; Web; Network; Malware; OT/ICS; High School; Software Security | The largest coverage area: prevention, detection, response, and assessment |
+| **Protect and Defend (PR)** | Windows; Linux; Web; Network; Malware; OT/ICS; High School; Software Security; Identity & Access | The largest coverage area: prevention, detection, response, and assessment |
 | **Analyze (AN)** | Windows; Linux; Web; Network; Malware; AI; OSINT; Forensics | Evidence interpretation, exploitation analysis, and assessment |
 | **Collect and Operate (CO)** | OSINT | Collection planning and responsible public-source work |
 | **Investigate (IN)** | Digital Forensics; Malware Analysis | Forensic artefact handling and incident reconstruction |
