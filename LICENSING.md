@@ -27,15 +27,16 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
-## 2.5.5 release status
+## 2.6.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
-- Release artefact: `v2.5.5` is a signed annotated tag; the supply-chain lock is
+- Release artefact: `v2.6.0` is a signed annotated tag; the supply-chain lock is
   signed by the same release key.
 - Third-party inventory: `scripts/check-licences.py` reports **OK** for the
-  2.5.5 tree.
-- No new third-party runtime dependencies ship in 2.5.5.
-- Post-2.5.5 changes add three CyberChef lab exercises. CyberChef is an external
+  2.6.0 tree.
+- No new third-party runtime dependencies ship in 2.6.0. Event certificates
+  reuse the existing `fpdf2`, Pillow, and `qrcode` packages.
+- The Grade 10-12 CyberChef lab exercises link to CyberChef, an external
   Apache-2.0 browser tool, not bundled or redistributed by this repository.
 - The `GDG-Deploy` script uses the operator's Google Cloud CLI and does not
   redistribute it.

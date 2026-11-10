@@ -26,7 +26,7 @@ mitre_attack:
     detection: Alert on SPF, DKIM, or DMARC failures combined with a From/Return-Path mismatch; preserve the full raw message for review before deleting it.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A volunteer forwards a suspicious grant review email. Download the raw message and read the headers: envelope sender, reply path, Received chain, authentication results, mailer, and custom case metadata. Recover the training token without clicking anything."

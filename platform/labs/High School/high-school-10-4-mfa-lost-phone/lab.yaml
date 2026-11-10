@@ -24,7 +24,7 @@ mitre_attack:
     detection: Alert on MFA resets, recovery-question changes, and new authenticator enrollment from an unusual device or network.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community centre volunteer lost their phone. The account uses a password and an authenticator app, but the recovery question can be answered from the public staff directory. Find the answer, recover the account, and explain why recovery is part of MFA."

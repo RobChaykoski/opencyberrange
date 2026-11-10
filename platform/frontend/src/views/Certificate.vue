@@ -9,11 +9,11 @@
         Back
       </button>
       <div class="certificate-actions__right">
-        <label v-if="certificate?.achievements?.length" class="certificate-toggle">
+        <label v-if="!isEvent && certificate?.achievements?.length" class="certificate-toggle">
           <input v-model="showAchievements" type="checkbox" />
           Include achievements
         </label>
-        <label v-if="certificate" class="certificate-design">
+        <label v-if="certificate && !isEvent" class="certificate-design">
           <span>Design</span>
           <select v-model="activeDesign" class="form-input form-input--sm">
             <option v-for="design in certificateDesigns" :key="design.value" :value="design.value">
@@ -57,10 +57,12 @@
     <div v-else-if="error" class="certificate-state certificate-state--error">
       <h2>Certificate unavailable</h2>
       <p>{{ error }}</p>
-      <button class="btn btn--primary no-print" @click="goBack">Return to the track</button>
+      <button class="btn btn--primary no-print" @click="goBack">
+        {{ isEvent ? 'Return to the event' : 'Return to the track' }}
+      </button>
     </div>
 
-    <article v-else-if="certificate" class="certificate" :class="`certificate--${activeDesign}`" aria-label="Certificate of completion">
+    <article v-else-if="certificate" class="certificate" :class="[`certificate--${activeDesign}`, { 'certificate--event': isEvent }]" :aria-label="isEvent ? 'Event certificate' : 'Certificate of completion'">
       <div class="certificate__frame">
         <div class="certificate__watermark" aria-hidden="true">
           <img src="/swocts-cyber-range-mark.png" alt="" />
@@ -76,10 +78,16 @@
         <div class="certificate__corner certificate__corner--br"></div>
 
         <header class="certificate__header">
-          <img src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="certificate__logo" />
+          <img
+            v-if="isEvent && certificate.event_logo"
+            :src="certificate.event_logo"
+            alt=""
+            class="certificate__event-logo"
+          />
+          <img v-else src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="certificate__logo" />
           <div class="certificate__heading">
             <p class="certificate__eyebrow">SWOCTS Cyber Range</p>
-            <h1 class="certificate__title">Certificate of Completion</h1>
+            <h1 class="certificate__title">{{ certificate.title || 'Certificate of Completion' }}</h1>
             <div class="certificate__rule"></div>
           </div>
         </header>
@@ -87,16 +95,24 @@
         <section class="certificate__body">
           <p class="certificate__lead">This is to certify that</p>
           <p class="certificate__recipient">{{ certificate.recipient }}</p>
-          <p class="certificate__lead">has successfully completed</p>
-          <p class="certificate__level">Level {{ certificate.level_number }}: {{ certificate.level_name }}</p>
-          <p class="certificate__track">{{ certificate.track_name }}</p>
-          <p class="certificate__detail">
-            {{ certificate.exercises_completed }} of {{ certificate.exercises_total }}
-            exercises completed
-          </p>
+          <template v-if="isEvent">
+            <p class="certificate__lead">{{ certificate.body_line }}</p>
+            <p class="certificate__level">{{ certificate.event_name }}</p>
+            <p class="certificate__track">{{ certificate.event_dates }}</p>
+            <p class="certificate__detail">{{ certificate.award_description }}</p>
+          </template>
+          <template v-else>
+            <p class="certificate__lead">has successfully completed</p>
+            <p class="certificate__level">Level {{ certificate.level_number }}: {{ certificate.level_name }}</p>
+            <p class="certificate__track">{{ certificate.track_name }}</p>
+            <p class="certificate__detail">
+              {{ certificate.exercises_completed }} of {{ certificate.exercises_total }}
+              exercises completed
+            </p>
+          </template>
 
           <section
-            v-if="showAchievements && certificate.achievements?.length"
+            v-if="!isEvent && showAchievements && certificate.achievements?.length"
             class="certificate__achievements"
             aria-labelledby="certificate-achievements-title"
           >
@@ -117,6 +133,30 @@
               </li>
             </ul>
           </section>
+        </section>
+
+        <section
+          v-if="isEvent && certificate.sponsors?.length"
+          class="certificate__sponsors"
+          aria-label="Event sponsors"
+        >
+          <p class="certificate__sponsors-title">Supported by</p>
+          <div class="certificate__sponsors-grid">
+            <div
+              v-for="sponsor in certificate.sponsors"
+              :key="sponsor.name"
+              class="certificate__sponsor"
+            >
+              <img
+                v-if="sponsor.logo_data"
+                :src="sponsor.logo_data"
+                :alt="`${sponsor.name} logo`"
+                class="certificate__sponsor-logo"
+              />
+              <span class="certificate__sponsor-name">{{ sponsor.name }}</span>
+              <small class="certificate__sponsor-tier">{{ sponsor.tier }}</small>
+            </div>
+          </div>
         </section>
 
         <footer class="certificate__footer">
@@ -175,10 +215,16 @@
 
     <section v-if="certificate" class="certificate-share no-print">
       <div class="certificate-share__copy">
-        <h2>Share your achievement</h2>
+        <h2>{{ isEvent ? 'Share your event award' : 'Share your achievement' }}</h2>
         <p v-if="shareUrl">
-          Post the PDF or share the verification link. Employers and instructors
-          can confirm the track, level, award date, and certificate ID instantly.
+          <template v-if="isEvent">
+            Post the PDF or share the verification link. Instructors can confirm
+            the event, award, date, and certificate ID instantly.
+          </template>
+          <template v-else>
+            Post the PDF or share the verification link. Employers and instructors
+            can confirm the track, level, award date, and certificate ID instantly.
+          </template>
         </p>
         <p v-else>
           Public verification is off, so the verification link is not available.
@@ -224,6 +270,8 @@ const certificateDesigns = [
 ]
 const designStorageKey = 'ocr_certificate_design'
 
+const isEvent = computed(() => Boolean(route.params.eventId))
+const eventAward = computed(() => route.params.award || 'participation')
 const certificate = ref(null)
 const loading = ref(true)
 const error = ref('')
@@ -251,13 +299,18 @@ const downloadPdf = async () => {
   if (!certificate.value) return
   downloading.value = true
   try {
-    const response = await axios.get(
-      `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate.pdf`,
-      {
-        params: { include_achievements: showAchievements.value },
-        responseType: 'blob',
-      }
-    )
+    const response = isEvent.value
+      ? await axios.get(
+        `/competitions/${route.params.eventId}/certificate/${eventAward.value}`,
+        { params: { format: 'pdf' }, responseType: 'blob' }
+      )
+      : await axios.get(
+        `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate.pdf`,
+        {
+          params: { include_achievements: showAchievements.value },
+          responseType: 'blob',
+        }
+      )
     const objectUrl = URL.createObjectURL(response.data)
     const link = document.createElement('a')
     link.href = objectUrl
@@ -296,11 +349,17 @@ const load = async () => {
   loading.value = true
   error.value = ''
   try {
-    const { data } = await axios.get(
-      `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate`
-    )
+    const { data } = isEvent.value
+      ? await axios.get(
+        `/competitions/${route.params.eventId}/certificate/${eventAward.value}`
+      )
+      : await axios.get(
+        `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate`
+      )
     certificate.value = data
-    document.title = `${data.recipient} — ${data.track_name} Level ${data.level_number} | SWOCTS Cyber Range`
+    document.title = isEvent.value
+      ? `${data.recipient} — ${data.event_name} (${data.award_label}) | SWOCTS Cyber Range`
+      : `${data.recipient} — ${data.track_name} Level ${data.level_number} | SWOCTS Cyber Range`
     const stored = localStorage.getItem(designStorageKey)
     const valid = (value) => certificateDesigns.some((design) => design.value === value)
     activeDesign.value = valid(stored)
@@ -308,7 +367,9 @@ const load = async () => {
       : (valid(data.design) ? data.design : 'classic')
   } catch (e) {
     error.value = e?.response?.data?.detail
-      || 'We could not issue a certificate for this level yet.'
+      || (isEvent.value
+        ? 'We could not issue this event certificate yet.'
+        : 'We could not issue a certificate for this level yet.')
   } finally {
     loading.value = false
   }
@@ -325,7 +386,9 @@ watch(activeDesign, (value) => {
 const printCertificate = () => window.print()
 
 const goBack = () => {
-  if (route.params.trackSlug) {
+  if (isEvent.value) {
+    router.push(`/events/${route.params.eventId}`)
+  } else if (route.params.trackSlug) {
     router.push(`/exercises/${route.params.trackSlug}`)
   } else {
     router.push('/exercises')
@@ -611,6 +674,15 @@ onMounted(() => {
   display: block;
 }
 
+.certificate__event-logo {
+  width: auto;
+  max-width: 180px;
+  max-height: 64px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+
 .certificate__logo {
   width: 64px;
   height: 64px;
@@ -737,6 +809,57 @@ onMounted(() => {
 .certificate__achievement-count {
   color: #8a6d2f;
   font-weight: 700;
+}
+
+.certificate__sponsors {
+  position: relative;
+  z-index: 1;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.certificate__sponsors-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.certificate__sponsors-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.9rem 1.5rem;
+}
+
+.certificate__sponsor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  max-width: 120px;
+  gap: 0.2rem;
+}
+
+.certificate__sponsor-logo {
+  max-width: 100px;
+  max-height: 32px;
+  object-fit: contain;
+}
+
+.certificate__sponsor-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.certificate__sponsor-tier {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 .certificate__footer {

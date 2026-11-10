@@ -43,6 +43,7 @@ from app.services.achievements import (
     resolve_achievement_icon,
     resolve_achievement_label,
 )
+from app.services.event_certificates import verify_event_certificate
 from app.schemas import FlagSubmitRequest
 
 
@@ -60,7 +61,7 @@ docker_manager = DockerManager()
 # [0-9] plus re.ASCII keeps Unicode digits (Arabic-Indic, Devanagari, etc.)
 # from being parsed as a level number, while emoji, kanji, fullwidth letters,
 # whitespace, and punctuation are rejected before any database lookup.
-_CERTIFICATE_ID_MAX_LENGTH = 27
+_CERTIFICATE_ID_MAX_LENGTH = 40
 _CERTIFICATE_ID_RE = re.compile(
     r"^OCR-([A-Z0-9-]{1,8})-L([0-9]{2})-([A-F0-9]{10})$",
     re.ASCII,
@@ -1017,6 +1018,13 @@ async def verify_certificate(
     level is still complete. Only public certificate fields are returned; no
     username, email, or account details are exposed.
     """
+    if certificate_id.upper().startswith("OCR-EVT-"):
+        return verify_event_certificate(
+            db,
+            certificate_id,
+            base_url=_certificate_base_url(request, db),
+        )
+
     m = parse_certificate_id(certificate_id)
     if not m:
         raise HTTPException(status_code=400, detail="Invalid certificate ID format")

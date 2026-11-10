@@ -67,7 +67,7 @@ Release 2.5.4 rotates the release key:
 - Signature: `supply-chain.lock.json.asc`
 - Private key: held by the release owner outside the repository
 
-Release 2.5.5 uses the same release key and signs the regenerated lock.
+Release 2.6.0 uses the same release key and signs the regenerated lock.
 
 Import the public key before verifying:
 

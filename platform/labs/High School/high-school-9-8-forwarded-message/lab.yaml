@@ -29,7 +29,7 @@ mitre_attack:
     detection: Alert when a downloaded file's magic bytes disagree with its extension, especially for files reached from an email link.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A volunteer forwards a grant review notice with a polished message, a lookalike link, and a file that is not what it claims to be. Decode the link, request the mirrored file, check its real type, and recover the training token. This capstone combines the link and file safety exercises."

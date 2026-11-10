@@ -24,7 +24,7 @@ mitre_attack:
     detection: Alert on sign-ins from dormant accounts, tokens used after an account is marked as a leaver, and privileged API calls from accounts without a current owner.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community centre is overdue for its quarterly access review. A volunteer coordinator left 14 months ago, but the account is still active and holds an overprivileged reporting token. Review the directory, test the token, recover the training token, and write the offboarding fixes."

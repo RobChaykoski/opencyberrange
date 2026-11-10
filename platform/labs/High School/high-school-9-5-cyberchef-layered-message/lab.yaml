@@ -23,7 +23,7 @@ mitre_attack:
     detection: Review multi-layer encoded content with a trusted decoder and record the operation order used to recover the plain text.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A short layered-decoding challenge for beginners. A fictional library message has both a Base64 layer and a Caesar shift. Use CyberChef in the right order, recover the training token, and explain why layered encoding is not security."

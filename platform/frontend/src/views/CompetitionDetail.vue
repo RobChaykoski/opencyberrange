@@ -61,6 +61,24 @@
         {{ detail.competition.description }}
       </p>
       <SponsorShowcase :sponsors="detail.competition.sponsors || []" />
+
+      <section v-if="certificates.length" class="event-certificates">
+        <h2>Your event certificates</h2>
+        <p>
+          Participation, placement, and trophy-challenge certificates are available
+          after the event ends. Each certificate includes the event logo and sponsors.
+        </p>
+        <div class="event-certificates__grid">
+          <router-link
+            v-for="cert in certificates"
+            :key="cert.award"
+            :to="cert.url"
+            class="btn btn--outline btn--sm"
+          >
+            {{ cert.label }} certificate
+          </router-link>
+        </div>
+      </section>
       <p class="privacy-note">
         Joining is optional. You can practise the exercises without joining and
         nothing is published until you choose to join. This event uses the name
@@ -233,6 +251,7 @@ import SponsorShowcase from '../components/SponsorShowcase.vue'
 
 const route = useRoute()
 const detail = ref(null)
+const certificates = ref([])
 const loading = ref(true)
 const refreshing = ref(false)
 const joining = ref(false)
@@ -282,6 +301,27 @@ const statusLabel = (status) => ({
 
 const sourceLabel = (source) => source === 'new_user' ? 'New sign-up' : 'Existing opt-in'
 
+const eventEnded = computed(() => {
+  const competition = detail.value?.competition
+  if (!competition) return false
+  if (['ended', 'archived'].includes(competition.status)) return true
+  const end = new Date(competition.end_at).getTime()
+  return Number.isFinite(end) && Date.now() >= end
+})
+
+const loadCertificates = async () => {
+  certificates.value = []
+  if (!detail.value?.competition?.joined || !eventEnded.value) return
+  try {
+    const { data } = await axios.get(
+      `/competitions/${route.params.id}/certificates`
+    )
+    certificates.value = data.certificates || []
+  } catch {
+    certificates.value = []
+  }
+}
+
 const formatDate = (iso) => {
   if (!iso) return ''
   const date = new Date(iso)
@@ -300,6 +340,7 @@ const loadDetail = async () => {
   try {
     const { data } = await axios.get(`/competitions/${route.params.id}`)
     detail.value = data
+    await loadCertificates()
   } catch (err) {
     error.value = err.response?.data?.detail || 'We could not load this event.'
   } finally {
@@ -420,6 +461,33 @@ onMounted(loadDetail)
   margin: 0.8rem 0 0;
   color: var(--text-secondary);
   font-size: 0.86rem;
+}
+
+.event-certificates {
+  margin-top: 1rem;
+  padding: 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+}
+
+.event-certificates h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.event-certificates p {
+  margin: 0 0 0.8rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.event-certificates__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .privacy-note {

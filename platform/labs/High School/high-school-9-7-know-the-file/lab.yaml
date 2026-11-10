@@ -23,7 +23,7 @@ mitre_attack:
     detection: Alert when a downloaded file's magic bytes disagree with its extension, and treat double extensions or renamed archives as suspicious until verified.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community centre shared folder contains a file whose name does not match its contents. Check the real file type, extract the disguised archive, and recover the training token. No prior file-analysis experience needed."

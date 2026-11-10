@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "2.5.5",
+  "generated_for_release": "2.6.0",
   "release_date": "2026-11-10",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "2.5.5",
+    "version": "2.6.0",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.11",
@@ -554,7 +554,7 @@
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
       "bytes": 184266,
-      "sha256": "07eaafd3664dabe6942acf67188e6cdfd8c79bc800391eefc94ef3ae804cd098"
+      "sha256": "140a9980a2830f3170bd035d3577bea86af2840399c868becdb236adb56389fb"
     }
   ]
 }

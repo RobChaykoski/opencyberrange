@@ -23,7 +23,7 @@ mitre_attack:
     detection: Review unexpected shifted or encoded text in messages and attachments with a trusted decoding tool before acting on it.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A beginner CyberChef exercise with a simple Caesar shift. Read a short shifted note from a fictional community partner, use ROT13 or Caesar Brute Force, and recover the training token. Builds on the Base64 lab."

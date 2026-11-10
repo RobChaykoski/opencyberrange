@@ -24,7 +24,26 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
-## [Unreleased]
+## [2.6.0] - 2026-11-10
+
+### Events and certificates
+- Added event certificates for participation, placement (1st, 2nd, 3rd), and
+  trophy challenges (First Blood, Clean Sweep, Perfect Event).
+- Certificates render the event logo and gold/silver/bronze sponsor marks in the
+  app and in the PDF, and use deterministic `OCR-EVT-` IDs with a SHA-256
+  digest.
+- Added `/api/competitions/{id}/certificates` and
+  `/api/competitions/{id}/certificate/{award}?format=json|pdf`; certificates are
+  issued only after the event ends to approved, opted-in participants, and
+  placement/trophy awards require the matching event achievement.
+- Public verification now accepts event IDs and returns event/award metadata
+  without scores or account identifiers. The verification form validates both
+  track and event ID formats before enabling submission.
+- Added certificate links to the competition detail page and an event mode to
+  the certificate view. Certificate opt-out also hides the event verification
+  URL and QR code.
+- Documented the award model, ID format, API, privacy rules, and tests in
+  `docs/EVENT-CERTIFICATES.md`.
 
 ### Reporting
 - Added a decision-led instructor report library: course health brief, exercise
@@ -57,6 +76,9 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   combines both, with workbook pages.
 - Added a Grade 10 email-metadata lab covering envelope and display headers,
   `Received` chains, SPF/DKIM/DMARC results, and custom `X-` headers.
+- Added three Grade 10-12 Digital Frontier labs: lost-phone MFA recovery, media
+  provenance verification, and a crypto rug-pull investigation, with workbook
+  pages, quizzes, badges, titles, certification pathways, and NICE mappings.
 - Added the Identity & Access track with three labs: secure authentication and
   session forgery, OAuth/OIDC redirect and token trust, and joiner/mover/leaver
   lifecycle and access review.

@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range: V2 security evidence record
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.5.5**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.6.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 

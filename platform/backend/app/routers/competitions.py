@@ -12,7 +12,7 @@ import binascii
 import io
 import re
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
@@ -36,6 +36,14 @@ from app.services.achievements import (
     award_competition_placements,
     competition_achievement_display,
     competition_achievement_parts,
+)
+from app.services.event_certificates import (
+    available_event_certificates,
+    build_event_certificate,
+    certificate_base_url,
+    event_award_keys_for_user,
+    event_certificate_pdf_bytes,
+    event_ended,
 )
 
 router = APIRouter()
@@ -608,6 +616,113 @@ async def get_competition(
         "labs": [_lab_payload(row) for row in lab_rows],
         "leaderboard": _leaderboard(db, competition, current_user),
     }
+
+
+def _event_request_base(request: Request) -> str:
+    proto = request.headers.get("x-forwarded-proto") or request.url.scheme
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+    if host:
+        return f"{proto}://{host}".rstrip("/")
+    return str(request.base_url).rstrip("/")
+
+
+def _event_certificate_competition(
+    db: Session, competition_id: int, current_user: User
+) -> Competition:
+    competition = (
+        db.query(Competition)
+        .options(joinedload(Competition.sponsors))
+        .filter(Competition.id == competition_id)
+        .first()
+    )
+    if not competition:
+        raise HTTPException(status_code=404, detail="Competition not found")
+    participant = (
+        db.query(CompetitionParticipant)
+        .filter(
+            CompetitionParticipant.competition_id == competition_id,
+            CompetitionParticipant.user_id == current_user.id,
+        )
+        .first()
+    )
+    if not participant:
+        raise HTTPException(
+            status_code=403,
+            detail="Join the event before requesting a certificate.",
+        )
+    if not current_user.is_approved:
+        raise HTTPException(status_code=403, detail="Account is not approved.")
+    if not event_ended(competition):
+        raise HTTPException(
+            status_code=409,
+            detail="Event certificates are available after the event ends.",
+        )
+    return competition
+
+
+@router.get("/{competition_id}/certificates")
+async def list_event_certificates(
+    competition_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """List the participation, placement, and trophy certificates a learner earned."""
+    competition = _event_certificate_competition(db, competition_id, current_user)
+    base_url = certificate_base_url(db, _event_request_base(request))
+    return {
+        "competition": {
+            "id": competition.id,
+            "name": competition.name,
+            "start_at": _iso(competition.start_at),
+            "end_at": _iso(competition.end_at),
+        },
+        "certificates": available_event_certificates(
+            db, current_user, competition, base_url=base_url
+        ),
+    }
+
+
+@router.get("/{competition_id}/certificate/{award}")
+async def get_event_certificate(
+    competition_id: int,
+    award: str,
+    request: Request,
+    format: Literal["json", "pdf"] = "json",
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return one event certificate as JSON or a downloadable PDF."""
+    competition = _event_certificate_competition(db, competition_id, current_user)
+    award_key = award.strip().lower()
+    if award_key not in event_award_keys_for_user(
+        db, current_user.id, competition_id
+    ):
+        raise HTTPException(
+            status_code=404, detail="That event certificate is not available."
+        )
+    base_url = certificate_base_url(db, _event_request_base(request))
+    certificate = build_event_certificate(
+        db,
+        current_user,
+        competition,
+        award_key,
+        include_qr=True,
+        base_url=base_url,
+    )
+    if format == "pdf":
+        pdf_bytes = event_certificate_pdf_bytes(certificate)
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": (
+                    f'attachment; filename="{certificate["certificate_id"]}.pdf"'
+                ),
+                "Cache-Control": "no-store",
+            },
+        )
+    return certificate
 
 
 @router.post("", status_code=201)

@@ -23,7 +23,7 @@ mitre_attack:
     detection: Alert on session cookies presented from a new device or network, role changes inside a session, and sessions that cannot be correlated with a server-side record.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community centre staff portal trusts a client-side session cookie and stores passwords with a fast hash. Sign in with the demo staff account, decode the cookie, forge an administrator session, and recover the training token. Then explain the session, MFA, and password-storage fixes."

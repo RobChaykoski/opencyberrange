@@ -24,7 +24,7 @@ mitre_attack:
     detection: Alert on sudden liquidity removal, treasury-to-external-wallet transfers, and recovery-agent messages that ask for an upfront fee.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community token promises guaranteed returns and asks supporters to connect a wallet. Trace the simulated ledger, identify the wallet that removed the liquidity, and recover the case token. Defensive education only: no real token, wallet, or money."

@@ -37,21 +37,29 @@
               autocomplete="off"
               autocapitalize="characters"
               spellcheck="false"
-              :aria-invalid="validationError ? 'true' : 'false'"
+              :aria-invalid="formatError ? 'true' : 'false'"
               aria-describedby="certificate-id-error"
               required
-              @input="clearValidationError"
+              @input="touched = false"
+              @blur="touched = true"
             />
-            <button type="submit" class="btn btn--primary" :disabled="!certificateId">
+            <button type="submit" class="btn btn--primary" :disabled="!canSubmit">
               Verify
             </button>
           </div>
-          <p v-if="validationError" id="certificate-id-error" class="verify-form__error" role="alert">
-            {{ validationError }}
+          <p
+            v-if="formatError"
+            id="certificate-id-error"
+            class="verify-form__error"
+            role="alert"
+          >
+            {{ formatError }}
           </p>
           <p class="verify-form__hint">
             The ID is printed near the bottom of the certificate and starts with
-            <code>OCR-</code>.
+            <code>OCR-</code>. Track IDs look like
+            <code>OCR-WEB-L01-0123456789</code>; event IDs look like
+            <code>OCR-EVT-12-34-p-0123456789</code>.
           </p>
         </form>
 
@@ -61,31 +69,69 @@
 
         <section v-if="result" class="verify-result" :class="result.valid ? 'verify-result--valid' : 'verify-result--invalid'" aria-live="polite">
           <template v-if="result.valid">
-            <p class="verify-result__kicker">Certificate verified</p>
-            <h2>{{ result.recipient }}</h2>
-            <p class="verify-result__subtitle">
-              completed <strong>Level {{ result.level_number }}: {{ result.level_name }}</strong>
-              in <strong>{{ result.track_name }}</strong>.
-            </p>
-            <dl class="verify-result__details">
-              <div>
-                <dt>Exercises</dt>
-                <dd>{{ result.exercises_completed }} / {{ result.exercises_total }}</dd>
-              </div>
-              <div>
-                <dt>Awarded</dt>
-                <dd>{{ result.issued_display }}</dd>
-              </div>
-              <div>
-                <dt>Issuer</dt>
-                <dd>{{ result.issuer }}</dd>
-              </div>
-              <div>
-                <dt>Certificate ID</dt>
-                <dd><code>{{ result.certificate_id }}</code></dd>
-              </div>
-            </dl>
-            <p class="verify-result__note">{{ result.message }}</p>
+            <template v-if="result.kind === 'event'">
+              <p class="verify-result__kicker">Certificate verified</p>
+              <h2>{{ result.recipient }}</h2>
+              <p class="verify-result__subtitle">
+                received <strong>{{ result.award_label }}</strong>
+                in <strong>{{ result.event_name }}</strong>.
+              </p>
+              <dl class="verify-result__details">
+                <div>
+                  <dt>Award</dt>
+                  <dd>{{ result.award_label }}</dd>
+                </div>
+                <div>
+                  <dt>Event</dt>
+                  <dd>{{ result.event_name }}</dd>
+                </div>
+                <div>
+                  <dt>Event dates</dt>
+                  <dd>{{ result.event_dates || 'Not recorded' }}</dd>
+                </div>
+                <div>
+                  <dt>Awarded</dt>
+                  <dd>{{ result.issued_display }}</dd>
+                </div>
+                <div>
+                  <dt>Issuer</dt>
+                  <dd>{{ result.issuer }}</dd>
+                </div>
+                <div>
+                  <dt>Certificate ID</dt>
+                  <dd><code>{{ result.certificate_id }}</code></dd>
+                </div>
+              </dl>
+              <p class="verify-result__note">{{ result.award_description }}</p>
+              <p class="verify-result__note">{{ result.message }}</p>
+            </template>
+            <template v-else>
+              <p class="verify-result__kicker">Certificate verified</p>
+              <h2>{{ result.recipient }}</h2>
+              <p class="verify-result__subtitle">
+                completed <strong>Level {{ result.level_number }}: {{ result.level_name }}</strong>
+                in <strong>{{ result.track_name }}</strong>.
+              </p>
+              <dl class="verify-result__details">
+                <div>
+                  <dt>Exercises</dt>
+                  <dd>{{ result.exercises_completed }} / {{ result.exercises_total }}</dd>
+                </div>
+                <div>
+                  <dt>Awarded</dt>
+                  <dd>{{ result.issued_display }}</dd>
+                </div>
+                <div>
+                  <dt>Issuer</dt>
+                  <dd>{{ result.issuer }}</dd>
+                </div>
+                <div>
+                  <dt>Certificate ID</dt>
+                  <dd><code>{{ result.certificate_id }}</code></dd>
+                </div>
+              </dl>
+              <p class="verify-result__note">{{ result.message }}</p>
+            </template>
             <div class="verify-result__actions">
               <button type="button" class="btn btn--secondary" @click="copyShareLink">
                 {{ copied ? 'Link copied' : 'Copy link' }}
@@ -127,8 +173,8 @@
         <article class="verify-side__card">
           <h2>What this confirms</h2>
           <ul>
-            <li>Track and level completed</li>
-            <li>Exercises completed</li>
+            <li>Track and level completed, or event award</li>
+            <li>Exercises completed or event placement</li>
             <li>Award date</li>
             <li>Issuer and certificate ID</li>
           </ul>
@@ -174,17 +220,20 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 
-// Certificate IDs are ASCII-only: OCR-<track prefix>-L<level>-<hex digest>.
-// Keep this in step with _CERTIFICATE_ID_RE in the backend curriculum router.
-const CERTIFICATE_ID_RE = /^OCR-[A-Z0-9-]{1,8}-L[0-9]{2}-[A-F0-9]{10}$/
-const CERTIFICATE_ID_MAX_LENGTH = 27
+// Certificate IDs are ASCII-only and have two shapes:
+//   track: OCR-<track prefix>-L<level>-<hex digest>
+//   event: OCR-EVT-<competition>-<user>-<award code>-<hex digest>
+// Keep these in step with the backend curriculum and event verification routers.
+const TRACK_CERTIFICATE_RE = /^OCR-[A-Z0-9]{1,8}-L[0-9]{2}-[A-F0-9]{10}$/
+const EVENT_CERTIFICATE_RE = /^OCR-EVT-[0-9]{1,10}-[0-9]{1,10}-(?:P|[123]|FB|CS|PR)-[A-F0-9]{10}$/
+const CERTIFICATE_ID_MAX_LENGTH = 43
 
 const route = useRoute()
 const router = useRouter()
 const certificateId = ref(route.params.certificateId || '')
 const loading = ref(false)
 const error = ref('')
-const validationError = ref('')
+const touched = ref(false)
 const result = ref(null)
 const copied = ref(false)
 const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -209,6 +258,22 @@ const setMeta = (key, content, attribute = 'property') => {
 
 const applyResultMeta = (data) => {
   if (!data?.valid) return
+  if (data.kind === 'event') {
+    const title = `${data.recipient} — ${data.event_name} (${data.award_label})`
+    document.title = `${title} | SWOCTS Cyber Range`
+    const description =
+      `${data.recipient} received ${data.award_label} in ${data.event_name} ` +
+      `on the SWOCTS Cyber Range.`
+    setMeta('og:title', title)
+    setMeta('og:description', description)
+    setMeta('og:type', 'article')
+    setMeta('og:url', window.location.href)
+    setMeta('og:image', `${window.location.origin}/swocts-cyber-range-mark.png`)
+    setMeta('twitter:card', 'summary', 'name')
+    setMeta('twitter:title', title, 'name')
+    setMeta('twitter:description', description, 'name')
+    return
+  }
   const title = `${data.recipient} — ${data.track_name} Level ${data.level_number}`
   document.title = `${title} | SWOCTS Cyber Range`
   const description =
@@ -245,7 +310,9 @@ const shareNative = async () => {
     try {
       await navigator.share({
         title: result.value?.recipient
-          ? `${result.value.recipient} — ${result.value.track_name}`
+          ? (result.value.kind === 'event'
+            ? `${result.value.recipient} — ${result.value.event_name}`
+            : `${result.value.recipient} — ${result.value.track_name}`)
           : 'SWOCTS Cyber Range certificate',
         text: result.value?.message || 'Verified certificate',
         url: shareUrl.value,
@@ -260,28 +327,29 @@ const shareNative = async () => {
 
 const normalizeCertificateId = (value) => String(value || '').trim().toUpperCase()
 
-const validateCertificateId = (value) => {
+const isValidCertificateId = (value) => {
   const id = normalizeCertificateId(value)
-  if (!id) {
-    validationError.value = 'Enter a certificate ID.'
-    return null
-  }
-  if (id.length > CERTIFICATE_ID_MAX_LENGTH || !CERTIFICATE_ID_RE.test(id)) {
-    validationError.value =
-      'Certificate IDs use letters, numbers, and hyphens only, for example OCR-WEB-L01-0123456789.'
-    return null
-  }
-  validationError.value = ''
-  return id
+  if (!id || id.length > CERTIFICATE_ID_MAX_LENGTH) return false
+  return TRACK_CERTIFICATE_RE.test(id) || EVENT_CERTIFICATE_RE.test(id)
 }
 
-const clearValidationError = () => {
-  validationError.value = ''
-}
+const canSubmit = computed(() => isValidCertificateId(certificateId.value))
+
+const formatError = computed(() => {
+  if (!touched.value) return ''
+  const id = normalizeCertificateId(certificateId.value)
+  if (!id || isValidCertificateId(id)) return ''
+  return (
+    'Certificate IDs use letters, numbers, and hyphens only. Track IDs look ' +
+    'like OCR-WEB-L01-0123456789 and event IDs look like ' +
+    'OCR-EVT-12-34-p-0123456789.'
+  )
+})
 
 const load = async (rawId) => {
-  const id = validateCertificateId(rawId)
-  if (!id) {
+  const id = normalizeCertificateId(rawId)
+  if (!isValidCertificateId(id)) {
+    touched.value = true
     result.value = null
     loading.value = false
     return
@@ -302,8 +370,9 @@ const load = async (rawId) => {
 }
 
 const submit = () => {
-  const id = validateCertificateId(certificateId.value)
-  if (!id) return
+  touched.value = true
+  const id = normalizeCertificateId(certificateId.value)
+  if (!isValidCertificateId(id)) return
   certificateId.value = id
   if (route.params.certificateId) {
     load(id)
@@ -315,7 +384,7 @@ const submit = () => {
 const reset = () => {
   result.value = null
   error.value = ''
-  validationError.value = ''
+  touched.value = false
   certificateId.value = ''
   document.title = 'Verify a certificate | SWOCTS Cyber Range'
   if (route.params.certificateId) {

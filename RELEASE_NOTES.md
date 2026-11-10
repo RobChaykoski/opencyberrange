@@ -1,32 +1,56 @@
-# SWOCTS Cyber Range 2.5.5
+# SWOCTS Cyber Range 2.6.0
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
-## Post-2.5.5 changes on `main`
+Edition: **Professional** — Community / Academic plus analytics, reporting,
+cohort analysis, competency evidence, accreditation support, and research
+exports.
 
-These changes are on `main` after the `v2.5.5` tag and are not part of the
-2.5.5 release artefact:
+Status: **feature release**. 2.6.0 adds Grade 10-12 Digital Frontier labs, event
+certificates, the WireGuard route correction, and the Cyber DNA `2026.13`
+event-participation correction. APIs and existing certificate formats remain
+compatible; existing VPN configs must be re-downloaded.
 
-- Decision-led instructor report library with signed manifests, checksums, and
-  cohort time/hint baselines.
-- Under-18 reporting privacy and public certificate verification opt-out.
-- Audited review workflow for unattributed integrity-ledger writes.
-- Public `/about` page, redesigned certificate verification page, and AODA
-  login/registration refresh.
-- CyberChef tool link and three entry-level High School Grade 9 decoding labs
-  with workbook pages.
-- Grade 9 digital-safety labs for link inspection and file-type checks, with a
-  capstone that combines both.
-- Grade 10 email-metadata lab covering envelope, routing, authentication, and
-  custom headers.
-- Identity & Access track covering secure sessions and MFA, OAuth/OIDC redirect
-  and token trust, and joiner/mover/leaver access review.
-- Deployment scripts use ASCII status markers for clean logs in Windows
-  terminals and CI.
-- Cyber DNA `2026.13` no longer scores raw event participation. Event success
-  badges and event lab completions still count; participation certificates are
-  credentials, not Cyber DNA signals.
-- Startup schema initialization serialized across workers.
+## Highlights
+
+- **Grade 10-12 labs.** Lost-phone MFA recovery, media provenance, and a crypto
+  rug-pull investigation join the K-12 pathway, with workbooks, quizzes, badges,
+  titles, certification/learning pathways, and NICE mappings.
+- **Event certificates.** Participation, placement, and trophy-challenge
+  certificates carry the event logo and sponsor marks, work as JSON or PDF, and
+  verify publicly with an `OCR-EVT-` ID. Existing credential privacy settings
+  apply.
+- **VPN route correction.** Clients use a `/32` address in `10.255.x.y` and
+  route only their own lab `/24`, removing overlap with common home networks.
+- **Cyber DNA 2026.13.** Raw event joins no longer add Leader; event lab
+  completions and success badges still count.
+
+## Event certificates
+
+- Awards: participation, 1st/2nd/3rd place, First Blood, Clean Sweep, and Perfect
+  Event.
+- Certificates use deterministic
+  `OCR-EVT-<competition>-<user>-<award>-<digest>` IDs and include the event logo
+  and up to six sponsor marks in the PDF.
+- Participation is available to every approved, opted-in participant after the
+  event ends. Placement and trophy awards require the matching event achievement.
+- Public verification returns event and award metadata only, never scores or
+  account details. The certificate opt-out disables public verification and
+  hides the QR code.
+- The competition page lists earned certificates, and the certificate and
+  verification pages handle event IDs alongside track certificates. The public
+  form validates track and event ID formats before submission.
+- See `docs/EVENT-CERTIFICATES.md` and `docs/SKILL-DNA.md`.
+
+## New labs
+
+- Grade 10: recover an account after a lost phone and a stale MFA method.
+- Grade 11: verify the provenance and edit history of a media file.
+- Grade 12: investigate a crypto token rug-pull using on-chain and community
+  evidence.
+
+Sensitive sextortion and legal content remains instructor-led and is not
+self-paced.
 
 ## VPN configuration update
 
@@ -39,7 +63,40 @@ open **Dashboard → VPN Configuration**, download a fresh config, remove the ol
 tunnel, and import the new one. The server-side peer is re-registered by the
 migration; the old address is retired.
 
+## Cyber DNA 2026.13
+
+- Removed raw event participation from Leader.
+- Event lab completions continue to count as normal lab work.
+- Placement and trophy achievements still contribute through the achievement
+  signal.
+- Participation certificates are credentials, not Cyber DNA evidence.
+
+## Upgrade
+
+1. Pull `v2.6.0` or the current `main`.
+2. Back up the database and the erasure ledger.
+3. Rebuild the backend and frontend:
+
+   ```bash
+   cd ~/opencyberrange/platform
+   docker compose -f docker-compose.prod.yml up -d --build backend frontend
+   ```
+
+4. Confirm `/health` and `/api/version` report `2.6.0`.
+5. Re-download VPN configs from **Dashboard → VPN Configuration** and verify the
+   tunnel opens a lab.
+6. After an event ends, open the event page and verify the certificate JSON, PDF,
+   and public verification link with a test participant.
+
+Existing 2.5.5 databases upgrade in place. The VPN migration reallocates existing
+peers; event certificates reuse the existing competition and achievement tables,
+so no destructive schema change ships with this release.
+
 See `CHANGELOG.md` for the itemised list.
+
+# SWOCTS Cyber Range 2.5.5
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
 
 Status: **patch release**. 2.5.5 closes the open code-scanning set and adds a
 live database-integrity status to the admin portal, with a scheduled host check

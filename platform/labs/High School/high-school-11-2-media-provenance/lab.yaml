@@ -24,7 +24,7 @@ mitre_attack:
     detection: Alert when published media has no original source, no independent corroboration, and metadata that disagrees with the claimed capture device or timeline.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community newsroom has two images from the same weekend. One has a verifiable source and independent corroboration; the other arrived anonymously with synthetic-media metadata. Compare provenance, metadata, hashes, and corroboration, then request a verification token for the supported item."

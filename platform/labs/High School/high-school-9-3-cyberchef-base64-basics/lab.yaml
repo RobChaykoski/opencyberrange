@@ -23,7 +23,7 @@ mitre_attack:
     detection: Alert on unexpected encoded strings in email, chat, or uploaded files, and review the content with a trusted decoder.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A gentle introduction to CyberChef. A community library received a Base64-encoded partner note. Open CyberChef from the platform menu, decode the message, and recover the training token. No prior CyberChef experience needed."

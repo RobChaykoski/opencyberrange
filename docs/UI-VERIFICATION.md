@@ -4,6 +4,25 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## 2.6.0 event certificate additions
+
+Checked on **2026-11-10** through the production frontend build and backend
+compilation, not a live browser session:
+
+- Competition detail page shows **Your event certificates** only after the event
+  ends and lists participation, placement, and trophy awards the learner earned.
+- Certificate page switches to event mode at `/certificate/event/:eventId/:award`,
+  shows the event logo, award wording, event dates, and a **Supported by**
+  sponsor strip, and downloads the PDF from the event endpoint.
+- Public verification renders event award metadata for `OCR-EVT-` IDs and keeps
+  the track certificate result layout for existing IDs.
+- The verification input validates both ID shapes before enabling **Verify**:
+  `OCR-<track>-L<level>-<digest>` and
+  `OCR-EVT-<competition>-<user>-<award>-<digest>`.
+- `npm run build` and `python -m py_compile` pass for the changed files.
+- Browser checks still outstanding: event logo and sponsor rendering with real
+  artwork, the PDF layout on A4, and mobile verification form behaviour.
+
 ## Post-2.5.5 UI additions
 
 Checked on **2026-11-10** against the development and production deployments:

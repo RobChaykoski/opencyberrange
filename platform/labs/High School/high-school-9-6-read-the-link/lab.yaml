@@ -23,7 +23,7 @@ mitre_attack:
     detection: Alert on lookalike domains, userinfo tricks, and encoded redirect parameters; rewrite or detonate links at the mail gateway and make user reporting easy.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community library patron receives an account notice with a link that looks almost right. Inspect the URL without clicking it, decode the hidden path with CyberChef, and recover the training token. Builds directly on the three CyberChef decoding exercises."

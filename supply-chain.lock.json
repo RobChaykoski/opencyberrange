@@ -40,7 +40,7 @@
       "sha256": "176551a453d2623fbf1e113460bbb76c3158172f1823aa144a9f74b269db8043"
     },
     "platform/backend/app/version.py": {
-      "sha256": "8743c52384e2d8ef739ba0ef8df3ddd4bc691cea227143c8d7cdd8a1eeb049f7"
+      "sha256": "da8aac1ca062a0450b762cce7d54d5eb545d694f8d04b5ed47dc1942eaa6d3f6"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -52,7 +52,7 @@
       "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "92e1265d99a3c06dc72c6ccb600ec1f32c07a0f67b0541819242b23f92967102"
+      "sha256": "49a4757dd6013bd1a5376c481101130443022bce20de12f38274822db2d5d51b"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "59d539c2dc89a06a78de9e55f075d11e5cc82dba5fbb2b2ee15d960738ca8244"
@@ -76,10 +76,10 @@
       "sha256": "9a375d39eccad532d4c41a2246612996cd30c7fd4782235e72f86b6b44671d6c"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "74973b0a9a2653ad3253d2b79ac704336e39e4f4382f11e80e3553473265b702"
+      "sha256": "215a0a9ae7da21185dd55e1cf8d35a24709f2e108e710b11e655ada257e18fcb"
     },
     "platform/frontend/package.json": {
-      "sha256": "1e343b86955c4f9bab56066089ee04dd040057851098b7f20ac4db03b53aa724"
+      "sha256": "a83afb62580bef6d88472f17b80537f1a82c96f05ce44c52ea9ee2c1213eafc8"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "a4b457c0ed092a1273cd88268d526984314f8cb9a4a3d1590d8b557a05c5aff6"
@@ -112,7 +112,7 @@
       "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
     },
     "scripts/status-dashboard.py": {
-      "sha256": "10c7cbd38b45a248351a9ee72f896a6e0d571cb4ae93874910cc51dfcf257402"
+      "sha256": "b33ca92b8d635de8626ad2f3a85d65129531e69320fd4a651a6ca548b5bebb2c"
     },
     "scripts/supply_chain.py": {
       "sha256": "80a4482d053252d18d3f2374843e1bdf51889c399aacd7a92d8e4b71a3652d41"
@@ -124,7 +124,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "7757e0791c6b4e386769bc84ff901c9c20e3d4a642a63bad1cac99dde6311b28"
+      "sha256": "1f504acfc70606b00e154a3b2b8d8b60a5d486cd9c105b92dc78ed7d03cf3029"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -172,13 +172,13 @@
       ]
     },
     "high-school-10-3-email-metadata": {
-      "content_hash": "3aedb8dfc201a7f301a062f6a7532f2f4fce543fa960ce5a438852ce2aa2aafd",
+      "content_hash": "37c78ad67dcf3734308931d1686a421cfb6d3fb6bf4c5e81b78dc628b144f695",
       "services": [
         "portal"
       ]
     },
     "high-school-10-4-mfa-lost-phone": {
-      "content_hash": "653157aee7d8addf1f6934517b6a3f483155b1b78079be53ec98fad41c250933",
+      "content_hash": "d646387bd465c39648465eeec0eb76a8bf028f5731dd804a587582e949bafafb",
       "services": [
         "portal"
       ]
@@ -190,7 +190,7 @@
       ]
     },
     "high-school-11-2-media-provenance": {
-      "content_hash": "29a873946d5ccacbaa7e78b6055055d824deff6c69681485d9efd23d99ed7d3b",
+      "content_hash": "d45a27befc51fc12eee3ce42a1276a0b9b2817b264a5f65942f9125aa2b9d5f9",
       "services": [
         "portal"
       ]
@@ -202,7 +202,7 @@
       ]
     },
     "high-school-12-2-crypto-rug-pull": {
-      "content_hash": "cec39adb460ab1e19e10d93f77fad126243e1a400a17e37d7d7c28f2d0e2f3c9",
+      "content_hash": "fd2dd68b5eab38a1614c5968fd953638c4865a361943bae895a911cbbdcfc748",
       "services": [
         "portal"
       ]
@@ -220,55 +220,55 @@
       ]
     },
     "high-school-9-3-cyberchef-base64-basics": {
-      "content_hash": "98962fb29c571cb47af87bbed0613397201687ef91834daa586f3377eb2ab4ca",
+      "content_hash": "4eeffc8c0262ed04c5c1f5adc9f0c55d5442ab566d53855ba2d0080a5758e962",
       "services": [
         "portal"
       ]
     },
     "high-school-9-4-cyberchef-caesar-shift": {
-      "content_hash": "c0ca798ba16e0e466aaf0374337563ba94efb4577e120e2642149ba8895f105c",
+      "content_hash": "c2640651d7d5e063ce630cb0769015baaa57087400f7df3f305a41ee6654dad1",
       "services": [
         "portal"
       ]
     },
     "high-school-9-5-cyberchef-layered-message": {
-      "content_hash": "e3e556fd78f402f4a895f113d681107ed32caab11309fde6ce7102188043eecb",
+      "content_hash": "7fee986c61fba4a4e97ab956958b78d129d55380a0d22f45600d3c3ed898780e",
       "services": [
         "portal"
       ]
     },
     "high-school-9-6-read-the-link": {
-      "content_hash": "dcc2f949dc24baa04dd9d0cd37a33c6ebf7479bd5c9c81979e5afc787eafe404",
+      "content_hash": "c3a591de2112bb072d96fe54e1c0d19eff68522efd12a17fa966cbcd9901a610",
       "services": [
         "portal"
       ]
     },
     "high-school-9-7-know-the-file": {
-      "content_hash": "6e3b061952e8f4a12f96fbbc7c3d8cfe520eccbac188e375b946576dc3bbf28b",
+      "content_hash": "f7958d7a5142accbb6500a86272d1f1ddf26c520c5863b3796f0a95682ffd90c",
       "services": [
         "portal"
       ]
     },
     "high-school-9-8-forwarded-message": {
-      "content_hash": "83b103452de15a61a9bf60ff19b0bf72280b040a599bf6cf705332760a86178a",
+      "content_hash": "10fefa64ed2e112687978040dacb11bf50140a18a322de54a904c6c467a3312a",
       "services": [
         "portal"
       ]
     },
     "identity-1-1-secure-authentication": {
-      "content_hash": "d8bbe4d8aabd2c52ffb52774d98ff44b80accf0c99ae2232491b37d6ad828a46",
+      "content_hash": "d8275e73fcbfd404e111f6c9bdc3e89c6e719029bf424dac3ef2ee8223edbc7c",
       "services": [
         "portal"
       ]
     },
     "identity-1-2-oauth-oidc-sso": {
-      "content_hash": "b0d96ca3dbe0eba18ba04749c19e2f2d027af8520821dba85206e972c34c6f4c",
+      "content_hash": "24be75c2beaf94f15ca94b6107f8f5051321f1c78e45ea510bb1a3d462db4b55",
       "services": [
         "portal"
       ]
     },
     "identity-2-1-identity-lifecycle": {
-      "content_hash": "9c570eca0ee329dd3759eb0968e43d4b93274cca9248c3a43e07498f9e1fa162",
+      "content_hash": "9857fe4ad882691561be9655e8be79b0d4a94b58e5fe2b315e45ffd3c9e119ed",
       "services": [
         "portal"
       ]
@@ -1143,6 +1143,6 @@
       ]
     }
   },
-  "release": "2.5.5",
+  "release": "2.6.0",
   "schema": 1
 }

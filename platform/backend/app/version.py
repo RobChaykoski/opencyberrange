@@ -1,4 +1,4 @@
 """Single source of truth for the SWOCTS Cyber Range release version."""
 
-APP_VERSION = "2.5.5"
-RELEASE_NAME = "SWOCTS Cyber Range 2.5.5 (Powered by OpenCyberRange)"
+APP_VERSION = "2.6.0"
+RELEASE_NAME = "SWOCTS Cyber Range 2.6.0 (Powered by OpenCyberRange)"

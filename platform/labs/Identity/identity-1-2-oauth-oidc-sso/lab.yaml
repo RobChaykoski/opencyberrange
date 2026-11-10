@@ -25,7 +25,7 @@ mitre_attack:
     detection: Alert on authorization codes redeemed from an unexpected client or network, repeated code redemption, and token use without a matching client session.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.5"
+content_version: "2.6.0"
 reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community portal uses a mock OpenID Connect provider. The client accepts any redirect URI and does not use state or PKCE. Send the authorization code to an attacker-controlled callback, exchange it for an access token, and read the victim profile. Then explain the exact redirect allowlist, state, PKCE, and token-validation fixes."
