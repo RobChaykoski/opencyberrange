@@ -1,5 +1,9 @@
 # UI verification
 
+> **Historical record.** This page records the 2.5.3 UI verification runs and
+> keeps the placeholder management subnet used at the time. For current host
+> status and build assets, see [Deployment status](status-dashboard.md).
+
 Last run: **2026-11-08** against both deployments:
 
 - development `https://192.168.120.44` (`2.5.3`)
