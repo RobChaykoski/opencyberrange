@@ -44,9 +44,10 @@ designed around the next teaching decision, not a record dump:
 Every generated report is recorded in `report_exports` with a report ID, SHA-256
 file checksum, and HMAC-SHA256 signature. PDFs print the report ID in the footer;
 CSV files include a `report_id` column and the report ID in the filename. The
-report library has a **Verify a generated report** form that calls the
-authenticated `/api/reports/verify` endpoint; it returns only report metadata,
-not learner data.
+report library has a **Verify a generated report** form that calls the public
+`/api/reports/verify` endpoint. The endpoint requires both the unguessable report
+ID and the file, is rate-limited, and returns only report metadata, not learner
+data.
 
 ### Baselines and engagement signals
 
