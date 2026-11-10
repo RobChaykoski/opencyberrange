@@ -201,9 +201,13 @@ def _lab_baselines(completions) -> dict[int, dict]:
         hints = [row.hints_used for row in rows if row.hints_used is not None]
         baselines[lab_id] = {
             "baseline_completions": len(rows),
-            "baseline_median_time_minutes": round(median(times), 1) if times else None,
+            "baseline_median_time_minutes": (
+                round(float(median(times)), 1) if times else None
+            ),
             "baseline_mean_time_minutes": round(mean(times), 1) if times else None,
-            "baseline_median_hints": round(median(hints), 1) if hints else None,
+            "baseline_median_hints": (
+                round(float(median(hints)), 1) if hints else None
+            ),
             "baseline_mean_hints": round(mean(hints), 2) if hints else None,
             "baseline_hint_free_rate": (
                 round(

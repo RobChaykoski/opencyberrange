@@ -82,6 +82,7 @@ def _heading(pdf: FPDF, text: str, size: float = 14) -> None:
     pdf.set_font("Helvetica", "B", size)
     pdf.set_text_color(30, 41, 59)
     pdf.multi_cell(0, 7, _sanitize_for_pdf(text))
+    pdf.set_x(pdf.l_margin)
     pdf.ln(2)
 
 
@@ -89,6 +90,7 @@ def _body(pdf: FPDF, text: str, size: float = 10) -> None:
     pdf.set_font("Helvetica", "", size)
     pdf.set_text_color(51, 65, 85)
     pdf.multi_cell(0, 5, _sanitize_for_pdf(text))
+    pdf.set_x(pdf.l_margin)
     pdf.ln(1)
 
 
@@ -97,6 +99,7 @@ def _bullets(pdf: FPDF, items: list[str], size: float = 9.5) -> None:
     pdf.set_text_color(51, 65, 85)
     for item in items:
         pdf.multi_cell(0, 5, _sanitize_for_pdf(f"- {item}"))
+        pdf.set_x(pdf.l_margin)
     pdf.ln(1)
 
 
@@ -242,7 +245,7 @@ def generate_course_health_pdf(
         _table(
             pdf,
             ["Exercise", "n", "Completion", "Hints", "Attempts", "RAG", "Flags"],
-            [55, 10, 30, 24, 18, 15, 34],
+            [55, 10, 30, 24, 18, 15, 33],
             table_rows,
             font_size=7.5,
             line_height=5,
@@ -344,7 +347,7 @@ def generate_exercise_diagnostics_pdf(
                 "RAG",
                 "Flags",
             ],
-            [48, 34, 8, 12, 14, 16, 15, 18, 18, 13, 12, 14, 11, 40],
+            [48, 34, 8, 12, 14, 16, 15, 18, 18, 13, 12, 14, 11, 39],
             rows,
             font_size=6.8,
             line_height=4.4,
