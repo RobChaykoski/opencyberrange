@@ -71,8 +71,20 @@ compilation, not a live browser session:
   `OCR-<track>-L<level>-<digest>` and
   `OCR-EVT-<competition>-<user>-<award>-<digest>`.
 - `npm run build` and `python -m py_compile` pass for the changed files.
-- Browser checks still outstanding: event logo and sponsor rendering with real
-  artwork, the PDF layout on A4, and mobile verification form behaviour.
+- A4 PDF layout and embedded artwork now have regression coverage.
+  `platform/backend/tests/test_event_certificate_pdf_layout.py` renders a
+  certificate with an event logo, gold/silver/bronze sponsor logos, and a QR
+  code, then asserts the A4 landscape page size (841.89 x 595.28 pt) and at
+  least five embedded images. Result: **1 passed**.
+- Mobile and desktop verification form behaviour was checked in a browser on
+  **11 November 2026** against production (`https://ctfd.swocts.com`) and
+  development (`https://172.16.16.44`). `scripts/ui-verify-public.mjs` passed
+  **60/60 checks**: the page loads without sign-in, malformed IDs are rejected
+  before submit, a well-formed unknown ID returns the generic invalid result
+  without account details, there is no horizontal overflow at 390 px, and no
+  page or console errors were raised.
+- Still outstanding: a visual review of a live event certificate with real
+  sponsor artwork.
 
 Deployment smoke on **2026-11-10**:
 
@@ -266,6 +278,15 @@ roles.
 `scripts/ui-smoke.mjs` is the deployment smoke suite used by the optional
 `.github/workflows/ui-smoke.yml` workflow. It checks the mobile shell, profile
 tabs, Events, the RangeBox tab, version, and page errors.
+
+`scripts/ui-verify-public.mjs` checks the public certificate verification page
+at desktop and 390 px mobile widths. It needs no account or token and writes
+`ui-verify-artifacts/verify-public.json` plus screenshots:
+
+```bash
+UI_VERIFY_URLS=https://ctfd.swocts.com,https://172.16.16.44 \
+node scripts/ui-verify-public.mjs
+```
 
 Required repository configuration:
 
