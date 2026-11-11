@@ -234,17 +234,49 @@ repeated here.
 | Browser | The application used to visit websites, such as Chrome, Edge, Firefox, or Safari. |
 | Browser tab | One page area inside a web browser. Keep the exercise tab open while working. |
 | Student device | The laptop, desktop, or tablet in front of the learner. It is not the RangeBox desktop or the target. |
+| Local device | The laptop, desktop, or tablet in front of the learner. Same as student device. |
+| Browser controls | The parts of a web browser, such as the address bar, tabs, back and forward buttons, refresh button, and browser window buttons. |
+| Address bar | The field at the top of a web browser that shows the page address. |
 | OpenCyberRange page | The website where a learner signs in, opens exercises, and launches RangeBox. |
 | Sign in | Enter a username and password to start a session on the platform. |
+| Session | The time a learner is signed in to the platform. |
+| Dashboard | The first page after sign-in, with shortcuts to the learner's work. |
 | Workspace | The page or desktop where an activity is performed. |
 | Verification code | A short code from an authenticator app or teacher, used when an account asks for a second sign-in step. |
 | Pop-up | A new browser window or tab that a browser may block. |
 | Training token | A code in a practice file that helps the learner find the activity flag. It is not a real secret. |
 | Desktop | The screen with windows, icons, and open apps. |
+| Remote workspace | The RangeBox desktop running on the platform and shown inside the learner's browser. |
+| Panel | The bar on a desktop that shows open applications and shortcuts. Also called a taskbar. |
+| Application | A program that runs on a desktop, such as File Manager or Terminal. |
+| Approved application | An application the activity says is safe to open. |
+| Window | A framed area that holds an application. It usually has a title bar, content area, and window controls. |
+| Title bar | The top bar of a window. It shows the window title and controls. |
+| Minimize | Hide a window without closing it. The application keeps running. |
+| Maximize | Make a window fill the desktop. |
+| Restore | Return a maximized window to its previous size. |
+| Close | Close an application window. Closing an application does not stop the lab. |
+| RangeBox controls | The toolbar in the RangeBox viewer, including Clipboard, Minimize, Fullscreen, and Close when the viewer is opened as its own page. |
+| Fullscreen | A RangeBox viewer control that expands the remote desktop. It is different from browser fullscreen. |
+| Disconnect | Lose or close the remote viewer connection. The lab may keep running. |
+| Stop | End the lab or RangeBox session. Unsaved work in the desktop may be lost. |
 | Terminal | A text window where a learner types commands. |
+| Shell | The program inside a terminal that reads a command, runs it, and prints the result. |
+| Prompt | The text at the start of a terminal line that shows the shell is ready. Same as command prompt. |
 | Command | An instruction typed into a terminal. |
+| Option | A setting that changes how a command works. It often starts with a hyphen, such as `-l`. |
+| Argument | Extra information a command acts on, such as a file name or folder name. |
+| Output | The text a command prints after the learner presses Enter. |
+| Cursor | The blinking line or block that shows where typing will appear. |
+| Enter key | The key pressed to run a command. |
+| Case sensitivity | Treating uppercase and lowercase letters as different. Linux command names are usually lowercase. |
+| Replaceable value | A word in capitals, such as `FILE` or `FOLDER`, that is replaced with a real name. |
+| Command not found | A message that means the shell could not find a command with that exact spelling. |
+| Directory | Another word for a folder. |
+| Continuation prompt | A prompt such as `>` that shows the shell is waiting for the rest of a command. Press `Ctrl` + `C` to cancel and return to the normal prompt. |
 | Command prompt | The place in a terminal where text is typed. It often shows the account and current folder. |
 | Account | A learner's login for OpenCyberRange. The password must remain private. |
+| RangeBox account | The temporary Linux account inside the RangeBox desktop. It is not the OpenCyberRange login. |
 | Authorized activity | Work a teacher or the platform asks a learner to do inside OpenCyberRange. If unsure, stop and ask first. |
 | Linux | A type of operating system used by the practice desktop. Prior Linux experience is not required. |
 | Server | A computer that provides something to other computers, such as a web page. |

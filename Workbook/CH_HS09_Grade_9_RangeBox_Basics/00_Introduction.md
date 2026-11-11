@@ -7,9 +7,10 @@ is written for students who use a computer every day but have not studied this
 subject before. You do not need any special technical knowledge or software
 installation.
 
-The chapter has eight short activities. You will open a practice desktop, use the
-on-screen tools, decode a few messages, and practise checking a link or file
-before you click or open it. You can work at your own pace.
+The chapter has eight core activities and two extra-practice pages. You will open
+a practice desktop, use the on-screen tools, decode a few messages, and practise
+checking a link or file before you click or open it. You can work at your own
+pace.
 
 ## Words to Know
 
@@ -244,5 +245,18 @@ teacher or revisit the activity before moving on.
    digital-safety habits in one decision. A capstone is a final activity that
    brings the earlier skills together.
 
-Start with [RangeBox First Steps](01_First_Steps.md). Take it one command at a
-time, and ask for help when you need it.
+### Extra Practice
+
+These two pages are optional. They help you get comfortable with the desktop and
+the terminal before you open File Hunt. They do not replace the eight core
+activities.
+
+- [RangeBox Desktop and Window Basics](02_RangeBox_Desktop_and_Window_Basics.md)
+  — label the browser and RangeBox controls, then open, switch, resize, and
+  safely close two approved applications.
+- [Terminal Foundations](03_Terminal_Foundations.md) — learn what the terminal,
+  shell, prompt, command, option, argument, and output are, then run four safe
+  commands one at a time.
+
+Start with [Signing In and Opening RangeBox](01_First_Steps.md). Take it one
+command at a time, and ask for help when you need it.

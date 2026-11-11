@@ -68,6 +68,8 @@ nav:
   - "CH HS09 -- Grade 9 RangeBox Basics":
     - Introduction: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
     - "Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
+    - "Desktop and Window Basics": CH_HS09_Grade_9_RangeBox_Basics/02_RangeBox_Desktop_and_Window_Basics.md
+    - "Terminal Foundations": CH_HS09_Grade_9_RangeBox_Basics/03_Terminal_Foundations.md
     - "File Hunt": CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt.md
     - "CyberChef: Base64": CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64.md
     - "CyberChef: Caesar Shift": CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar.md
