@@ -137,6 +137,14 @@ values. Terms that already appear in another section are not repeated here.
 | Dynamic or ephemeral port | A port in the 49152–65535 range, commonly used for temporary client connections. |
 | IANA | Internet Assigned Numbers Authority: the organisation that maintains port-number and protocol registries. |
 | Version detection | Asking an open service to reveal its software product and version. Nmap's `-sV` option performs this. |
+| Service name | Nmap's label for the protocol or service, often based on the port or a protocol signature. It is a label, not a guarantee of the underlying product. |
+| Product | The software family or application name reported by version detection, such as nginx, Samba, or xrdp. |
+| Version | The specific release string reported by a service or inferred by a scanner. It may be missing, partial, or inaccurate. |
+| Banner | The text or protocol response a service returns when probed. Scanners use banners and other responses to infer product and version. A banner may be missing, masked, or misleading. |
+| Signature | A pattern a scanner matches against a service response to identify a product or protocol. |
+| Observation | A factual record of what a tool or service returned, kept separate from interpretation. |
+| Conclusion | An interpretation supported by observations. A conclusion should state its uncertainty and must not claim more than the evidence supports. |
+| `tcpwrapped` | An Nmap state or service label meaning the service accepted a connection but did not reveal enough information to identify itself. |
 | OS fingerprinting | Inferring a host's operating system from how it responds to network probes. Nmap's `-O` option performs this. |
 | Enumeration | The systematic discovery of hosts, ports, services, versions, and operating-system details. |
 | Scope | The set of systems, ports, and actions an assessment is authorized to test. In the workbook, scope is the target shown in the exercise. |
@@ -148,6 +156,10 @@ values. Terms that already appear in another section are not repeated here.
 | OS | Operating system, such as Linux or Windows. |
 | OS confidence | Nmap's estimate of how closely a fingerprint matches a known operating system. A low value means the guess is weak. |
 | CPE | Common Platform Enumeration: a standardized identifier for a product and version, used when looking up vulnerabilities. |
+| CVE | Common Vulnerabilities and Exposures: a standardized identifier for a publicly known vulnerability, such as `CVE-2024-12345`. |
+| NVD | National Vulnerability Database: the NIST database that enriches CVE records with severity, weakness, and product information. |
+| Exploitability | Whether a weakness can actually be exploited in a specific configuration. A version match alone does not establish exploitability. |
+| Backport | Applying a security fix to an older software version without changing its version number. A version string may therefore be older than the patch level suggests. |
 | Security auditing | Checking systems for unintended exposure, configuration weaknesses, or policy drift. |
 | Raw packet | A hand-crafted network packet that bypasses the normal networking stack and requires privileged access. |
 | Exploitation (general) | Using a discovered weakness to gain access or control. The kill chain also has a phase named Exploitation; that phase is narrower. |
