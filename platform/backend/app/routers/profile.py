@@ -47,6 +47,7 @@ from app.services.career_profile import (
     render_markdown as render_career_markdown,
 )
 from app.services.profile_report import generate_profile_transcript
+from app.services.curriculum_manifest import chapter_label
 from app.services.skill_dna import build_skill_dna
 from app.services.titles import equip_title
 
@@ -134,6 +135,9 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
                     "track_slug": track.slug,
                     "level_number": level.level_number,
                     "level_name": level.name,
+                    "chapter_id": lab.chapter_id,
+                    "chapter_name": lab.chapter_name,
+                    "chapter_label": chapter_label(lab.chapter_id),
                     "completed_at": _iso(row.completed_at),
                     "attempts": row.attempts or 0,
                     "hints_used": row.hints_used or 0,

@@ -25,6 +25,7 @@ from app.export_reason import require_export_reason
 from app.services.activity import EventTypes, log_activity
 from app.services.audit import log_admin_action, AuditActions
 from app.services import settings_service
+from app.services.curriculum_manifest import chapter_label
 from app.services.competency_radar import build_cohort_radar, build_individual_radar
 from app.services.learning_time import (
     learning_minutes_by_pair,
@@ -169,6 +170,9 @@ def _insufficient_exercise(lab: Lab, cohort: dict) -> dict:
             if lab.level and lab.level.track else "Uncategorized"
         ),
         "level_name": lab.level.name if lab.level else None,
+        "chapter_id": lab.chapter_id,
+        "chapter_name": lab.chapter_name,
+        "chapter_label": chapter_label(lab.chapter_id),
         "started_learners": 0 if no_evidence else None,
         "completed_learners": 0 if no_evidence else None,
         "sample_size": cohort["sample_size"],
@@ -1633,6 +1637,9 @@ async def course_exercises(
                 if lab.level and lab.level.track else "Uncategorized"
             ),
             "level_name": lab.level.name if lab.level else None,
+            "chapter_id": lab.chapter_id,
+            "chapter_name": lab.chapter_name,
+            "chapter_label": chapter_label(lab.chapter_id),
             "started_learners": len(started_users),
             "completed_learners": len(completed_users),
             "sample_size": sample_size,

@@ -238,6 +238,7 @@
                 </h4>
                 <p v-if="lab.scenario_brief" class="lab-row__scenario-brief">{{ lab.scenario_brief }}</p>
                 <div class="lab-row__meta">
+                  <span v-if="lab.chapter_label" class="lab-chapter">{{ lab.chapter_label }}</span>
                   <span class="lab-difficulty" :class="`lab-difficulty--${lab.difficulty}`">
                     {{ lab.difficulty }}
                   </span>
@@ -2789,6 +2790,13 @@ watch(timeRemaining, (val) => {
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
   font-weight: 500;
+}
+
+.lab-chapter {
+  font-size: 0.75rem;
+  color: var(--muted, #94a3b8);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .lab-difficulty--beginner { background: #166534; color: #bbf7d0; }

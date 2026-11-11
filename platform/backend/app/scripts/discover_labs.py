@@ -344,6 +344,8 @@ def discover_labs():
                 tools = json.dumps(lab_data.get('tools', []))
                 hostnames = json.dumps(lab_data.get('hostnames', []))
                 workbook = lab_data.get('workbook', None)
+                from app.services.curriculum_manifest import chapter_id_for_workbook
+                chapter_id = chapter_id_for_workbook(workbook)
                 show_target_ips = bool(lab_data.get('show_target_ips', False))
                 # Extract topology nodes (id, label, ip_offset) for target IP display
                 topo_raw = lab_data.get('topology', {}).get('nodes', [])
@@ -409,6 +411,7 @@ def discover_labs():
                         "sort_order": lab_num,
                         "slug": lab_slug,
                         "workbook": workbook,
+                        "chapter_id": chapter_id,
                         "week": week,
                         "show_target_ips": show_target_ips,
                         "topology_nodes": topology_nodes,
@@ -445,6 +448,7 @@ def discover_labs():
                                 level_id = :level_id,
                                 sort_order = :sort_order,
                                 workbook = :workbook,
+                                chapter_id = :chapter_id,
                                 week = :week,
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
@@ -481,6 +485,7 @@ def discover_labs():
                                 level_id = :level_id,
                                 sort_order = :sort_order,
                                 workbook = :workbook,
+                                chapter_id = :chapter_id,
                                 week = :week,
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
@@ -512,7 +517,7 @@ def discover_labs():
                                 difficulty, category, duration_minutes, content_version, objectives,
                                 hints, tools, hostnames,
                                 flag_hash, compose_file, level_id, sort_order, is_active,
-                                visibility, workbook, week, show_target_ips, topology_nodes,
+                                visibility, workbook, chapter_id, week, show_target_ips, topology_nodes,
                                 ics_techniques, mitre_attack, prerequisites, mapped_skills,
                                 assessment_criteria, requires_kvm,
                                 counts_toward_certificate,
@@ -522,7 +527,7 @@ def discover_labs():
                                 :difficulty, :category, :duration, :content_version, :objectives,
                                 :hints, :tools, :hostnames,
                                 :flag_hash, :compose_file, :level_id, :sort_order, TRUE,
-                                :visibility, :workbook, :week, :show_target_ips, :topology_nodes,
+                                :visibility, :workbook, :chapter_id, :week, :show_target_ips, :topology_nodes,
                                 :ics_techniques, :mitre_attack, :prerequisites, :mapped_skills,
                                 :assessment_criteria, :requires_kvm,
                                 :counts_toward_certificate,
@@ -549,6 +554,7 @@ def discover_labs():
                             "sort_order": lab_num,
                             "visibility": yaml_visibility,
                             "workbook": workbook,
+                            "chapter_id": chapter_id,
                             "week": week,
                             "show_target_ips": show_target_ips,
                             "topology_nodes": topology_nodes,

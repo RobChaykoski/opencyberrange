@@ -84,7 +84,7 @@ def generate_student_report(
     Args:
         student: {username, student_id, email}
         course: {name, code, semester, instructor_name, start_date, end_date}
-        lab_scores: [{lab_name, score, max_score, attempts, hints_used,
+        lab_scores: [{lab_name, chapter_label, score, max_score, attempts, hints_used,
                       time_minutes, completed_at}]
         achievements: [{type, label, lab_name}]
 
@@ -235,8 +235,8 @@ def _add_student_page(
     pdf.ln(3)
 
     # Table header
-    col_widths = [62, 20, 22, 20, 22, 44]
-    headers = ["Lab", "Score", "Attempts", "Hints", "Time", f"Completed ({local_tz.key})"]
+    col_widths = [30, 52, 18, 18, 14, 16, 42]
+    headers = ["Chapter", "Lab", "Score", "Attempts", "Hints", "Time", f"Completed ({local_tz.key})"]
     pdf.set_font("Helvetica", "B", 9)
     pdf.set_fill_color(59, 130, 246)
     pdf.set_text_color(255, 255, 255)
@@ -253,17 +253,24 @@ def _add_student_page(
             pdf.set_fill_color(255, 255, 255)
         pdf.set_text_color(51, 65, 85)
 
+        chapter = _sanitize_for_pdf(
+            str(lab_score.get("chapter_label") or lab_score.get("chapter_id") or "-")
+        )
+        if len(chapter) > 15:
+            chapter = chapter[:13] + ".."
+        pdf.cell(col_widths[0], 6, chapter, border=0, fill=True)
+
         name = _sanitize_for_pdf(str(lab_score["lab_name"]))
-        if len(name) > 32:
-            name = name[:30] + ".."
-        pdf.cell(col_widths[0], 6, name, border=0, fill=True)
-        pdf.cell(col_widths[1], 6, str(lab_score.get("score", "-")), border=0, fill=True, align="C")
-        pdf.cell(col_widths[2], 6, str(lab_score.get("attempts", 0)), border=0, fill=True, align="C")
-        pdf.cell(col_widths[3], 6, str(lab_score.get("hints_used", 0)), border=0, fill=True, align="C")
+        if len(name) > 28:
+            name = name[:26] + ".."
+        pdf.cell(col_widths[1], 6, name, border=0, fill=True)
+        pdf.cell(col_widths[2], 6, str(lab_score.get("score", "-")), border=0, fill=True, align="C")
+        pdf.cell(col_widths[3], 6, str(lab_score.get("attempts", 0)), border=0, fill=True, align="C")
+        pdf.cell(col_widths[4], 6, str(lab_score.get("hints_used", 0)), border=0, fill=True, align="C")
 
         time_val = lab_score.get("time_minutes")
         time_str = f"{time_val}m" if time_val else "-"
-        pdf.cell(col_widths[4], 6, time_str, border=0, fill=True, align="C")
+        pdf.cell(col_widths[5], 6, time_str, border=0, fill=True, align="C")
 
         completed = lab_score.get("completed_at")
         if completed:
@@ -271,10 +278,10 @@ def _add_student_page(
                 if completed.tzinfo is None:
                     completed = completed.replace(tzinfo=timezone.utc)
                 completed = completed.astimezone(local_tz).strftime("%Y-%m-%d %H:%M")
-            pdf.cell(col_widths[5], 6, str(completed), border=0, fill=True, align="C")
+            pdf.cell(col_widths[6], 6, str(completed), border=0, fill=True, align="C")
         else:
             pdf.set_text_color(180, 180, 180)
-            pdf.cell(col_widths[5], 6, "Incomplete", border=0, fill=True, align="C")
+            pdf.cell(col_widths[6], 6, "Incomplete", border=0, fill=True, align="C")
             pdf.set_text_color(51, 65, 85)
         pdf.ln()
 

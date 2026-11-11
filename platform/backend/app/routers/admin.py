@@ -60,6 +60,7 @@ from app.services.erasure import erase_user, ErasureBlocked
 from app.services.file_lock import open_locked
 from app.services.spreadsheet_safety import neutralize_cell
 from app.services.lab_naming import parse_lab_slug
+from app.services.curriculum_manifest import chapter_id_for_workbook
 from app.services.user_transfer import (
     export_users as build_user_export,
     import_users as apply_user_import,
@@ -278,6 +279,8 @@ async def get_user_details(
             lab_slug=lab.slug,
             track_name=track_name,
             level_number=level_number,
+            chapter_id=lab.chapter_id,
+            chapter_name=lab.chapter_name,
             completed_at=completion.completed_at,
             attempts=completion.attempts,
             hints_used=completion.hints_used,
@@ -2626,6 +2629,7 @@ async def create_lab(
         is_active=True,
         sort_order=next_order,
         content_version=lab_data.get("content_version"),
+        chapter_id=chapter_id_for_workbook(lab_data.get("workbook")),
     )
     db.add(lab)
     db.commit()
@@ -2917,6 +2921,7 @@ async def discover_labs(
                 # Keep the workbook field in step with lab.yaml. If the source
                 # removed it, clear the stale link instead of leaving a 404.
                 existing.workbook = lab_data.get('workbook') or None
+                existing.chapter_id = chapter_id_for_workbook(lab_data.get('workbook'))
                 existing.content_version = lab_data.get('content_version') or None
                 updated += 1
             else:
@@ -2953,6 +2958,7 @@ async def discover_labs(
                     visibility=lab_data.get('visibility', 'public') if lab_data.get('visibility') in ('draft', 'course', 'public') else 'public',
                     created_by=None,
                     workbook=lab_data.get('workbook'),
+                    chapter_id=chapter_id_for_workbook(lab_data.get('workbook')),
                     content_version=lab_data.get('content_version'),
                 )
                 db.add(new_lab)

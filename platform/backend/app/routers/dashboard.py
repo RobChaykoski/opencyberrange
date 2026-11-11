@@ -38,6 +38,7 @@ from app.services.achievements import (
     resolve_achievement_label,
 )
 from app.services.pdf_report import generate_dashboard_report
+from app.services.curriculum_manifest import chapter_label
 from app.services.spreadsheet_safety import neutralize_row
 
 # Report timestamps render in the requesting instructor's timezone, falling
@@ -1447,7 +1448,8 @@ async def student_dashboard(
             level = lab.level
             if not level:
                 continue
-            key = f"L{level.id}"
+            chapter_id = lab.chapter_id
+            key = chapter_id or f"L{level.id}"
             track_name = level.track.name if level.track else "Uncategorized"
             matrix_columns.setdefault(key, {
                 "key": key,
@@ -1455,6 +1457,9 @@ async def student_dashboard(
                 "track_slug": level.track.slug if level.track else None,
                 "level_number": level.level_number,
                 "level_name": level.name,
+                "chapter_id": chapter_id,
+                "chapter_name": lab.chapter_name,
+                "chapter_label": chapter_label(chapter_id),
             })
             cell = cells.setdefault(key, {"completed": 0, "total": 0})
             cell["total"] += 1
@@ -1478,7 +1483,11 @@ async def student_dashboard(
 
     ordered_columns = sorted(
         matrix_columns.values(),
-        key=lambda c: (c["track_name"].lower(), c["level_number"]),
+        key=lambda c: (
+            c["track_name"].lower(),
+            c["level_number"],
+            (c.get("chapter_label") or "").lower(),
+        ),
     )
     completion_matrix = {
         "columns": ordered_columns,

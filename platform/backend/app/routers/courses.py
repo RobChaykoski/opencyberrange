@@ -36,6 +36,7 @@ from app.schemas import (
     CourseFeedbackRequest,
 )
 from app.services.achievements import resolve_achievement_label
+from app.services.curriculum_manifest import chapter_label
 from app.services import exercise_quiz, settings_service
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
@@ -501,6 +502,9 @@ async def get_course(
             "track_name": track_name,
             "track_slug": track_slug,
             "level_name": level_name,
+            "chapter_id": lab.chapter_id,
+            "chapter_name": lab.chapter_name,
+            "chapter_label": chapter_label(lab.chapter_id),
             "display_name": a.display_name,
             "locked": is_lab_locked,
             "workbook": lab.workbook,
@@ -2029,6 +2033,9 @@ def _build_student_scores(
         lab_scores.append({
             "lab_id": lab.id,
             "lab_name": a.display_name or lab.name,
+            "chapter_id": lab.chapter_id,
+            "chapter_name": lab.chapter_name,
+            "chapter_label": chapter_label(lab.chapter_id),
             "score": score,
             "max_score": 250,
             "attempts": completion.attempts if has_flag else 0,
@@ -2141,6 +2148,9 @@ async def list_assignments(
                 "track_slug": lab.level.track.slug if lab.level and lab.level.track else None,
                 "track_name": lab.level.track.name if lab.level and lab.level.track else "Course Assessments",
                 "level_name": lab.level.name if lab.level else "Assessments",
+                "chapter_id": lab.chapter_id,
+                "chapter_name": lab.chapter_name,
+                "chapter_label": chapter_label(lab.chapter_id),
             })
         # Determine if assignment is locked:
         #   1. Manually locked by instructor (asn.locked field), OR

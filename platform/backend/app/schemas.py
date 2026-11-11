@@ -298,6 +298,8 @@ class LabCompletionDetail(BaseModel):
     lab_slug: str
     track_name: Optional[str] = None
     level_number: Optional[int] = None
+    chapter_id: Optional[str] = None
+    chapter_name: Optional[str] = None
     completed_at: datetime
     attempts: int
     hints_used: int
@@ -477,6 +479,8 @@ class LabResponse(BaseModel):
     is_active: Optional[bool] = True
     level_id: Optional[int] = None
     sort_order: int
+    chapter_id: Optional[str] = None
+    chapter_name: Optional[str] = None
     
     class Config:
         from_attributes = True

@@ -564,7 +564,7 @@
                     <tr v-for="item in completions" :key="item.lab_id">
                       <td>
                         <span class="completion-table__lab">{{ item.lab_name }}</span>
-                        <span class="completion-table__level">Level {{ item.level_number }}: {{ item.level_name }}</span>
+                        <span class="completion-table__level">{{ item.chapter_label || `Level ${item.level_number}: ${item.level_name}` }}</span>
                       </td>
                       <td>{{ item.track_name }}</td>
                       <td>{{ formatCompletionDate(item.completed_at) }}</td>

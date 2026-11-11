@@ -250,6 +250,13 @@ class Lab(Base):
     visibility = Column(String(20), default="public", nullable=False)
     # Wiki page path for workbook deep-link (e.g. "CH01_Enumeration/01_Basic_Port_Scan/")
     workbook = Column(String(255), nullable=True)
+    # Display chapter identifier from curriculum-manifest.yaml (e.g. "WIN01").
+    chapter_id = Column(String(32), nullable=True)
+
+    @property
+    def chapter_name(self):
+        from app.services.curriculum_manifest import chapter_name
+        return chapter_name(self.chapter_id)
     # Curriculum week number for auto-assignment grouping (e.g. week: 3 → "Week 3" assignment)
     week = Column(Integer, nullable=True)
     # Who created this lab (NULL for system-discovered labs)

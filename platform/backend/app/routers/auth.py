@@ -965,6 +965,8 @@ async def export_user_data(
                 "lab_id": c.lab_id,
                 "lab_name": lab_by_id[c.lab_id].name if c.lab_id in lab_by_id else None,
                 "lab_slug": lab_by_id[c.lab_id].slug if c.lab_id in lab_by_id else None,
+                "chapter_id": lab_by_id[c.lab_id].chapter_id if c.lab_id in lab_by_id else None,
+                "chapter_name": lab_by_id[c.lab_id].chapter_name if c.lab_id in lab_by_id else None,
                 "completed_at": c.completed_at,
                 "attempts": c.attempts,
                 "hints_used": c.hints_used,

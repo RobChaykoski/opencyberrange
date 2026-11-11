@@ -35,6 +35,7 @@ from app.auth import get_current_active_user
 from app.services.competency_model import mapping_for_lab
 from app.services.docker_manager import DockerManager
 from app.services.lab_text import render_lab_text
+from app.services.curriculum_manifest import chapter_label
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
 from app.config import settings
@@ -1228,6 +1229,9 @@ async def get_track(
                 "is_active": is_active,
                 "is_lab_active": lab.is_active,  # Lab's active status (different from session active)
                 "workbook": lab.workbook,
+                "chapter_id": lab.chapter_id,
+                "chapter_name": lab.chapter_name,
+                "chapter_label": chapter_label(lab.chapter_id),
                 "requires_kvm": bool(getattr(lab, 'requires_kvm', False)),
                 "counts_toward_certificate": bool(getattr(lab, 'counts_toward_certificate', True)),
             })
@@ -2174,6 +2178,9 @@ async def get_lab_details(
             "requested_hints": requested_hints,  # All previously requested hints
             "is_completed": lab.id in completed_ids,
             "workbook": lab.workbook,
+            "chapter_id": lab.chapter_id,
+            "chapter_name": lab.chapter_name,
+            "chapter_label": chapter_label(lab.chapter_id),
             "ics_techniques": json.loads(lab.ics_techniques) if getattr(lab, 'ics_techniques', None) else []
         },
         "track": {

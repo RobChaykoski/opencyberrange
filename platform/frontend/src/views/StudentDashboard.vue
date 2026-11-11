@@ -335,7 +335,7 @@
                 <span class="matrix-level-tile__status">{{ cellStatus(level) }}</span>
               </div>
               <span class="matrix-level-tile__name">
-                Level {{ level.level_number }} · {{ level.level_name }}
+                {{ level.chapter_label || `Level ${level.level_number} · ${level.level_name}` }}
               </span>
               <div class="matrix-level-tile__foot">
                 <span class="matrix-level-tile__count">{{ level.completed }}/{{ level.total }}</span>

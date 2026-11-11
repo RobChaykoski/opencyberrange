@@ -378,6 +378,13 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added workbook column to labs table")
 
+        # --- Curriculum chapter display ID: add 'chapter_id' to labs ---
+        labs_columns = [c['name'] for c in inspector.get_columns('labs')]
+        if 'chapter_id' not in labs_columns:
+            conn.execute(text("ALTER TABLE labs ADD COLUMN chapter_id VARCHAR(32)"))
+            conn.commit()
+            logger.info("Added chapter_id column to labs table")
+
         # --- Week number: add 'week' column to labs for auto-assignment grouping ---
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]
         if 'week' not in labs_columns:
