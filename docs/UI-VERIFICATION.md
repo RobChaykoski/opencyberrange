@@ -208,10 +208,19 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
 - The Base64 message was downloaded over the tunnel, decoded to
   `OCR{b4s364_is_encoding_not_encryption}`, and submitted through the UI. The
   lab completed and the next CyberChef lab unlocked.
-- Evidence: `ui-workspace-artifacts/journey-20261111/signup.json`,
-  `account-security.json`, `cyberchef-lab.json`, and the matching screenshots.
-  The runtime route was added to the development host for the test and is not
-  yet persisted there.
+- **Stage 1 completed end to end.** The remaining CyberChef and digital-safety
+  labs were launched VPN-only and their targets read over WireGuard: ROT13
+  (Caesar), Base64 then ROT13 (two layers), URL decoding (lookalike link), a
+  disguised ZIP (file type), and the capstone notice then disguised ZIP. All
+  eight Stage 1 flags were accepted, and **RangeBox Network Basics** in Stage 2
+  unlocked.
+- UI verification: **6/6 checks**. Stage 1 showed **8/8 completed** and the
+  first Stage 2 lab had a Launch action. Evidence:
+  `ui-workspace-artifacts/journey-20261111/stage1-complete.png` and
+  `stage1-complete.json`.
+- Evidence for the earlier parts: `signup.json`, `account-security.json`,
+  `cyberchef-lab.json`, and the matching screenshots. The runtime route was
+  added to the development host for the test and is not yet persisted there.
 
 ## Post-2.5.5 UI additions
 
