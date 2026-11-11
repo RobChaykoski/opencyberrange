@@ -215,6 +215,15 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
 - Applied to both hosts on **11 November 2026**: the runtime route is active on
   development (`172.16.16.44`) and production (`172.16.16.41`), and persisted in
   each host's `/etc/wireguard/wg0.conf` (backup `wg0.conf.bak-20261111`).
+- Deployed the target-IP change to production on **11 November 2026**: the
+  backend was rebuilt and restarted healthy. A VPN-only Web lab panel passed
+  **9/9 checks** and showed the subnet, `10.100.48.17`, `recon.lab`, and the
+  hosts-file mapping, with no page or console errors. Evidence:
+  `prod-target-ip-panel.png` and `prod-target-ip-panel.json`.
+- Production finding: the new beginner labs are in the catalogue but not all of
+  their images are prebuilt. Spawning CyberChef Base64 failed with “not prepared
+  on this server; on-demand builds are disabled.” Run
+  `scripts/prebuild-labs.sh --lab <slug>` on the host before using those labs.
 - Other existing hosts can apply the same fix with
   `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
   backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.
