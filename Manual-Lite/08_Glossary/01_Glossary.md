@@ -154,7 +154,19 @@ values. Terms that already appear in another section are not repeated here.
 | Nmap | Network Mapper: a free, open-source network discovery and security-auditing tool. |
 | NSE | Nmap Scripting Engine: the part of Nmap that runs scripts against discovered services for deeper enumeration. |
 | OS | Operating system, such as Linux or Windows. |
+| OS family | A broad platform group, such as Windows, Linux, or Unix. |
+| OS version | A specific release within an operating-system family, when it can be inferred. |
 | OS confidence | Nmap's estimate of how closely a fingerprint matches a known operating system. A low value means the guess is weak. |
+| Fingerprint | The pattern of network responses a scanner compares with a database to infer an operating system or service. Fingerprinting is inference, not direct access. |
+| TTL | Time To Live: a packet field that limits how many network hops a packet can traverse. Different systems use different defaults. |
+| TCP window size | A TCP flow-control value that can differ between operating-system implementations. |
+| DF (Don't Fragment) | A flag in the IP header that controls whether a packet may be fragmented. Its behaviour can contribute to an OS fingerprint. |
+| TCP options | Optional fields in a TCP header. Their order and presence can differ between operating-system implementations. |
+| Network distance | The number of network hops between the scanner and the target. |
+| Aggressive OS guess | A lower-confidence operating-system candidate that Nmap lists when it cannot make an exact match. It is a guess, not a confirmed result. |
+| sudo | A command that runs another command with elevated privileges, usually as the administrative `root` user. |
+| Root | The administrative account on Linux and Unix systems, with broad permission to change the system. |
+| Privilege | The level of access a user or process has. Elevated privilege means more power to read or change the system. |
 | CPE | Common Platform Enumeration: a standardized identifier for a product and version, used when looking up vulnerabilities. |
 | CVE | Common Vulnerabilities and Exposures: a standardized identifier for a publicly known vulnerability, such as `CVE-2024-12345`. |
 | NVD | National Vulnerability Database: the NIST database that enriches CVE records with severity, weakness, and product information. |
