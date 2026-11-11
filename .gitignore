@@ -68,6 +68,7 @@ _site-*/
 # UI artifact directories
 ui-smoke-artifacts/
 ui-workspace-artifacts/
+ui-verify-artifacts/
 
 # The workbook wiki and generated routing metadata are build artifacts. They
 # are produced by platform/wiki-builder into the wiki_data volume; never commit
