@@ -145,6 +145,33 @@ Deployment smoke on **2026-11-10**:
   generic invalid result for an unknown ID.
 - No backend errors were logged in the final 200 lines on either host.
 
+## 2.6.0 fresh student journey
+
+Run on **11 November 2026** against development (`https://172.16.16.44`) with a
+temporary approved student account. The account was created for the run and
+deleted afterwards, so no seeded demo or learner data was changed.
+
+- **59/59 checks passed** through the real sign-in form: dashboard, Exercises,
+  Workbooks, all five Profile tabs (Overview, Skill tree, Learning record,
+  Account, Security & privacy), Events, Competitions, Celebrations, VPN setup,
+  RangeBox, About, Privacy, and public certificate verification.
+- Completed **RangeBox First Steps** end to end: RangeBox VNC connected in 17 s,
+  the desktop read `http://rangebox.lab:8080/welcome.txt`, the flag was
+  submitted, the flag celebration appeared, the lab stopped, the completion
+  appeared in the learning record, and the next lab unlocked.
+- Completed **RangeBox File Hunt**: RangeBox VNC connected in 19 s, the desktop
+  downloaded and unpacked `evidence.zip`, and read the real token from
+  `evidence/archive/old/flag.txt`. The archive contains an intentional decoy
+  token; the automated harness first matched the decoy with `grep`, and the
+  documented path returned the real flag. The UI accepted the flag, the lab
+  stopped, and the third lab unlocked.
+- Progression stopped at the third lab (`CyberChef: Decode a Base64 Message`)
+  because it is not a RangeBox lab and needs the VPN / CyberChef path.
+- No page errors, console errors, or unexpected network responses were recorded.
+- Evidence: `ui-workspace-artifacts/journey-20261111/` (`user-journey.json`,
+  `second-lab.json`, and screenshots `01-dashboard.png` through
+  `22-profile-two-completions.png`).
+
 ## Post-2.5.5 UI additions
 
 Checked on **2026-11-10** against the development and production deployments:
