@@ -1,4 +1,11 @@
-# Chapter 9: Network Assessment
+# WIN09: Complete Network Assessment
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN09` — Complete Network Assessment
+    **Prerequisites:** `WIN08` — Credential Reuse and Lateral Movement
+    **Recommended next:** `LIN01` — Linux Service Enumeration
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## What Is Network Assessment?
 

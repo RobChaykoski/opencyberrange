@@ -1,0 +1,563 @@
+schema_version: 1
+last_reviewed: "2026-11-11"
+notes: >
+  This file is the single source of truth for the learner-facing curriculum.
+  Directory names are stable identifiers; display IDs are the labels shown in
+  chapter titles, navigation, curriculum maps, prerequisite blocks, PDFs,
+  progress analytics, and assessment reports. Do not rename a directory to
+  change its display ID.
+
+tracks:
+  - id: winpt
+    pathway_order: 11
+    display_name: "Windows Penetration Testing"
+    audience: "Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience."
+    difficulty: "intermediate"
+    prerequisites: ["BEG04", "NET00"]
+    required_environment: "RangeBox with terminal, browser, and Windows lab targets"
+    recommended_next: "linpt"
+    role_alignment: ["Penetration Tester", "Red Team Operator", "SOC Analyst"]
+    status: "published"
+    chapters:
+      - id: WIN01
+        directory: CH01_Enumeration
+        display_name: "Enumeration"
+        difficulty: "beginner"
+        prerequisites: []
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: WIN02
+        status: published
+        intro: CH01_Enumeration/00_Introduction.md
+      - id: WIN02
+        directory: CH02_SMB_Reconnaissance
+        display_name: "SMB Reconnaissance"
+        difficulty: "beginner"
+        prerequisites: [WIN01]
+        exercises: 8
+        estimated_minutes: 960
+        recommended_next: WIN03
+        status: published
+        intro: CH02_SMB_Reconnaissance/00_Introduction.md
+      - id: WIN03
+        directory: CH03_SMB_Credential_Attacks
+        display_name: "SMB Credential Attacks"
+        difficulty: "intermediate"
+        prerequisites: [WIN02]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: WIN04
+        status: published
+        intro: CH03_SMB_Credential_Attacks/00_Introduction.md
+      - id: WIN04
+        directory: CH04_RDP_Exploitation
+        display_name: "RDP Exploitation"
+        difficulty: "intermediate"
+        prerequisites: [WIN03]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: WIN05
+        status: published
+        intro: CH04_RDP_Exploitation/00_Introduction.md
+      - id: WIN05
+        directory: CH05_WinRM_Exploitation
+        display_name: "WinRM Exploitation"
+        difficulty: "intermediate"
+        prerequisites: [WIN04]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: WIN06
+        status: published
+        intro: CH05_WinRM_Exploitation/00_Introduction.md
+      - id: WIN06
+        directory: CH06_MSSQL_Exploitation
+        display_name: "MSSQL Exploitation"
+        difficulty: "intermediate"
+        prerequisites: [WIN05]
+        exercises: 7
+        estimated_minutes: 840
+        recommended_next: WIN07
+        status: published
+        intro: CH06_MSSQL_Exploitation/00_Introduction.md
+      - id: WIN07
+        directory: CH07_LDAP_Enumeration
+        display_name: "LDAP Enumeration"
+        difficulty: "intermediate"
+        prerequisites: [WIN06]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: WIN08
+        status: published
+        intro: CH07_LDAP_Enumeration/00_Introduction.md
+      - id: WIN08
+        directory: CH08_Credential_Reuse
+        display_name: "Credential Reuse and Lateral Movement"
+        difficulty: "intermediate"
+        prerequisites: [WIN07]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: WIN09
+        status: published
+        intro: CH08_Credential_Reuse/00_Introduction.md
+      - id: WIN09
+        directory: CH09_Assessment
+        display_name: "Complete Network Assessment"
+        difficulty: "intermediate"
+        prerequisites: [WIN08]
+        exercises: 3
+        estimated_minutes: 360
+        recommended_next: LIN01
+        status: published
+        intro: CH09_Assessment/00_Introduction.md
+
+  - id: linpt
+    pathway_order: 12
+    display_name: "Linux Fundamentals"
+    audience: "Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills."
+    difficulty: "intermediate"
+    prerequisites: ["WIN09"]
+    required_environment: "RangeBox with terminal and Linux lab targets"
+    recommended_next: "webpt"
+    role_alignment: ["Penetration Tester", "Linux Administrator", "Incident Responder"]
+    status: "published"
+    chapters:
+      - id: LIN01
+        directory: CH_LIN01_Linux_Service_Enumeration
+        display_name: "Linux Service Enumeration"
+        difficulty: "beginner"
+        prerequisites: [WIN01]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: LIN01B
+        status: published
+        intro: CH_LIN01_Linux_Service_Enumeration/00_Introduction.md
+      - id: LIN01B
+        directory: CH_LIN01B_Network_Discovery
+        display_name: "Network Discovery"
+        difficulty: "beginner"
+        prerequisites: [LIN01]
+        exercises: 2
+        estimated_minutes: 70
+        recommended_next: LIN02
+        status: published
+        intro: CH_LIN01B_Network_Discovery/00_Introduction.md
+      - id: LIN02
+        directory: CH_LIN02_SSH_Authentication
+        display_name: "SSH Authentication and Discovery"
+        difficulty: "intermediate"
+        prerequisites: [LIN01B]
+        exercises: 3
+        estimated_minutes: 360
+        recommended_next: LIN02B
+        status: published
+        intro: CH_LIN02_SSH_Authentication/00_Introduction.md
+      - id: LIN02B
+        directory: CH_LIN02B_SMB_SNMP
+        display_name: "SMB and SNMP Enumeration"
+        difficulty: "intermediate"
+        prerequisites: [LIN02]
+        exercises: 4
+        estimated_minutes: 155
+        recommended_next: LIN03
+        status: published
+        intro: CH_LIN02B_SMB_SNMP/00_Introduction.md
+      - id: LIN03
+        directory: CH_LIN03_SSH_Post_Exploitation
+        display_name: "SSH Post-Exploitation and Privilege Escalation"
+        difficulty: "intermediate"
+        prerequisites: [LIN02B]
+        exercises: 3
+        estimated_minutes: 360
+        recommended_next: LIN03B
+        status: published
+        intro: CH_LIN03_SSH_Post_Exploitation/00_Introduction.md
+      - id: LIN03B
+        directory: CH_LIN03B_Privilege_Hashes
+        display_name: "Privilege Escalation and Password Hashes"
+        difficulty: "intermediate"
+        prerequisites: [LIN03]
+        exercises: 4
+        estimated_minutes: 190
+        recommended_next: LIN04
+        status: published
+        intro: CH_LIN03B_Privilege_Hashes/00_Introduction.md
+      - id: LIN04
+        directory: CH_LIN04_Lateral_Movement
+        display_name: "Lateral Movement"
+        difficulty: "intermediate"
+        prerequisites: [LIN03B]
+        exercises: 4
+        estimated_minutes: 200
+        recommended_next: LIN05
+        status: published
+        intro: CH_LIN04_Lateral_Movement/00_Introduction.md
+      - id: LIN05
+        directory: CH_LIN05_Detection
+        display_name: "Detection and Response"
+        difficulty: "intermediate"
+        prerequisites: [LIN04]
+        exercises: 2
+        estimated_minutes: 150
+        recommended_next: LIN09
+        status: published
+        intro: CH_LIN05_Detection/00_Introduction.md
+      - id: LIN09
+        directory: CH_LIN09_Assessments
+        display_name: "Capstone Assessments"
+        difficulty: "intermediate"
+        prerequisites: [LIN05]
+        exercises: 2
+        estimated_minutes: 120
+        recommended_next: WEB01
+        status: published
+        intro: CH_LIN09_Assessments/00_Introduction.md
+
+  - id: netfor
+    pathway_order: 2
+    display_name: "Network Security"
+    audience: "Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence."
+    difficulty: "beginner"
+    prerequisites: ["BEG04"]
+    required_environment: "RangeBox with terminal, browser, and network lab targets"
+    recommended_next: "webpt"
+    role_alignment: ["Network Defender", "SOC Analyst", "Network Engineer"]
+    status: "published"
+    chapters:
+      - id: NET00
+        directory: CH_N0_Network_Foundations
+        display_name: "Network Foundations"
+        difficulty: "beginner"
+        prerequisites: []
+        exercises: 3
+        estimated_minutes: 75
+        recommended_next: NET01
+        status: published
+        intro: CH_N0_Network_Foundations/00_Introduction.md
+      - id: NET01
+        directory: CH_NET01_Log_Analysis
+        display_name: "Log Analysis"
+        difficulty: "beginner"
+        prerequisites: [NET00]
+        exercises: 4
+        estimated_minutes: 180
+        recommended_next: NET01B
+        status: published
+        intro: CH_NET01_Log_Analysis/00_Introduction.md
+      - id: NET01B
+        directory: CH_NET01B_Traffic_And_Logs
+        display_name: "Traffic and Log Correlation"
+        difficulty: "beginner"
+        prerequisites: [NET01]
+        exercises: 2
+        estimated_minutes: 120
+        recommended_next: NET02
+        status: published
+        intro: CH_NET01B_Traffic_And_Logs/00_Introduction.md
+      - id: NET02
+        directory: CH_NET02_PCAP_Forensics
+        display_name: "PCAP Forensics"
+        difficulty: "intermediate"
+        prerequisites: [NET01B]
+        exercises: 5
+        estimated_minutes: 330
+        recommended_next: NET03
+        status: published
+        intro: CH_NET02_PCAP_Forensics/00_Introduction.md
+      - id: NET03
+        directory: CH_NETSY12_Firewalls
+        display_name: "Firewalls and Network Policy"
+        difficulty: "intermediate"
+        prerequisites: [NET02]
+        exercises: 2
+        estimated_minutes: 135
+        recommended_next: WEB01
+        status: published
+        intro: CH_NETSY12_Firewalls/00_Introduction.md
+
+  - id: webpt
+    pathway_order: 3
+    display_name: "Web Application Security"
+    audience: "Intermediate learners who can use a terminal and understand HTTP basics."
+    difficulty: "intermediate"
+    prerequisites: ["NET00", "NET01"]
+    required_environment: "RangeBox with browser, terminal, and web lab targets"
+    recommended_next: "software-security"
+    role_alignment: ["Application Security Tester", "Penetration Tester", "Secure Developer"]
+    status: "published"
+    chapters:
+      - id: WEB01
+        directory: CH_WEB01_Web_Reconnaissance
+        display_name: "Web Reconnaissance"
+        difficulty: "beginner"
+        prerequisites: [NET00]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: WEB01B
+        status: published
+        intro: CH_WEB01_Web_Reconnaissance/00_Introduction.md
+      - id: WEB01B
+        directory: CH_WEB01B_Advanced_Recon
+        display_name: "Advanced Recon and Traversal"
+        difficulty: "intermediate"
+        prerequisites: [WEB01]
+        exercises: 2
+        estimated_minutes: 75
+        recommended_next: WEB02
+        status: published
+        intro: CH_WEB01B_Advanced_Recon/00_Introduction.md
+      - id: WEB02
+        directory: CH_WEB02_Web_Exploitation
+        display_name: "SQL Injection and Web Exploitation"
+        difficulty: "intermediate"
+        prerequisites: [WEB01B]
+        exercises: 1
+        estimated_minutes: 120
+        recommended_next: WEB02B
+        status: published
+        intro: CH_WEB02_Web_Exploitation/00_Introduction.md
+      - id: WEB02B
+        directory: CH_WEB02B_API_And_Injection
+        display_name: "API and Injection"
+        difficulty: "intermediate"
+        prerequisites: [WEB02]
+        exercises: 4
+        estimated_minutes: 170
+        recommended_next: WEB03
+        status: published
+        intro: CH_WEB02B_API_And_Injection/00_Introduction.md
+      - id: WEB03
+        directory: CH_WEB03_Advanced_Exploitation
+        display_name: "Advanced Web Exploitation"
+        difficulty: "intermediate"
+        prerequisites: [WEB02B]
+        exercises: 3
+        estimated_minutes: 210
+        recommended_next: SWSEC01
+        status: published
+        intro: CH_WEB03_Advanced_Exploitation/00_Introduction.md
+
+  - id: malware
+    pathway_order: 5
+    display_name: "Malware Analysis"
+    audience: "Intermediate learners with networking and forensic evidence experience."
+    difficulty: "intermediate"
+    prerequisites: ["NET02", "FOR01"]
+    required_environment: "RangeBox with terminal and isolated malware-analysis targets"
+    recommended_next: "forensics"
+    role_alignment: ["Malware Analyst", "Incident Responder", "Threat Intelligence Analyst"]
+    status: "published"
+    chapters:
+      - id: MAL01
+        directory: CH_MAL01_Malware_Fundamentals
+        display_name: "Malware Fundamentals"
+        difficulty: "intermediate"
+        prerequisites: [NET02]
+        exercises: 7
+        estimated_minutes: 325
+        recommended_next: MAL02
+        status: published
+        intro: CH_MAL01_Malware_Fundamentals/00_Introduction.md
+      - id: MAL02
+        directory: CH_MAL02_Executable_Analysis
+        display_name: "Executable Analysis"
+        difficulty: "intermediate"
+        prerequisites: [MAL01]
+        exercises: 1
+        estimated_minutes: 50
+        recommended_next: FOR01
+        status: published
+        intro: CH_MAL02_Executable_Analysis/00_Introduction.md
+
+  - id: ot
+    pathway_order: 9
+    display_name: "OT/ICS Security"
+    audience: "Intermediate learners interested in industrial control systems and Modbus."
+    difficulty: "intermediate"
+    prerequisites: ["NET00"]
+    required_environment: "RangeBox with terminal and Modbus lab target"
+    recommended_next: "ai"
+    role_alignment: ["OT Security Analyst", "ICS Engineer", "SOC Analyst"]
+    status: "published"
+    chapters:
+      - id: OT01
+        directory: CH_OT01_Modbus_Fundamentals
+        display_name: "Modbus Fundamentals"
+        difficulty: "intermediate"
+        prerequisites: [NET00]
+        exercises: 1
+        estimated_minutes: 40
+        recommended_next: AI01
+        status: published
+        intro: CH_OT01_Modbus_Fundamentals/00_Introduction.md
+
+  - id: ai
+    pathway_order: 10
+    display_name: "AI Hacking"
+    audience: "Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security."
+    difficulty: "intermediate"
+    prerequisites: ["WEB02"]
+    required_environment: "RangeBox with browser and mock AI lab target"
+    recommended_next: "winpt"
+    role_alignment: ["AI Security Analyst", "Red Team Operator", "Secure AI Developer"]
+    status: "published"
+    chapters:
+      - id: AI01
+        directory: CH_AI01_AI_Foundations
+        display_name: "AI Security Foundations"
+        difficulty: "intermediate"
+        prerequisites: [WEB02]
+        exercises: 3
+        estimated_minutes: 110
+        recommended_next: WIN01
+        status: published
+        intro: CH_AI01_AI_Foundations/00_Introduction.md
+
+  - id: osint
+    pathway_order: 7
+    display_name: "OSINT"
+    audience: "Beginner-to-intermediate learners who want public-source investigation skills."
+    difficulty: "beginner"
+    prerequisites: ["NET00"]
+    required_environment: "Browser and RangeBox; public-source simulation"
+    recommended_next: "identity"
+    role_alignment: ["OSINT Analyst", "Threat Intelligence Analyst", "Investigator"]
+    status: "published"
+    chapters:
+      - id: OSINT01
+        directory: CH_OSINT01_OSINT_Foundations
+        display_name: "OSINT Foundations"
+        difficulty: "beginner"
+        prerequisites: [NET00]
+        exercises: 5
+        estimated_minutes: 175
+        recommended_next: IAM01
+        status: published
+        intro: CH_OSINT01_OSINT_Foundations/00_Introduction.md
+
+  - id: high-school
+    pathway_order: 1
+    display_name: "Beginner Cybersecurity"
+    audience: "New learners with everyday computer experience and no assumed cybersecurity background."
+    difficulty: "beginner"
+    prerequisites: []
+    required_environment: "RangeBox with browser, terminal, and beginner lab targets"
+    recommended_next: "netfor"
+    role_alignment: ["Entry-level Cyber Defense Analyst", "IT Support", "SOC Analyst (entry)"]
+    status: "published"
+    chapters:
+      - id: BEG01
+        directory: CH_HS09_Grade_9_RangeBox_Basics
+        display_name: "RangeBox Foundations"
+        difficulty: "beginner"
+        prerequisites: []
+        exercises: 8
+        estimated_minutes: 160
+        recommended_next: BEG02
+        status: published
+        intro: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
+      - id: BEG02
+        directory: CH_HS10_Grade_10_RangeBox_Basics
+        display_name: "Command Line, Files, and Networks"
+        difficulty: "beginner"
+        prerequisites: [BEG01]
+        exercises: 6
+        estimated_minutes: 145
+        recommended_next: BEG03
+        status: published
+        intro: CH_HS10_Grade_10_RangeBox_Basics/00_Introduction.md
+      - id: BEG03
+        directory: CH_HS11_Grade_11_Defensive_Security
+        display_name: "Defensive Evidence"
+        difficulty: "beginner"
+        prerequisites: [BEG02]
+        exercises: 2
+        estimated_minutes: 55
+        recommended_next: BEG04
+        status: published
+        intro: CH_HS11_Grade_11_Defensive_Security/00_Introduction.md
+      - id: BEG04
+        directory: CH_HS12_Grade_12_Applied_Cybersecurity
+        display_name: "Applied Challenges"
+        difficulty: "beginner"
+        prerequisites: [BEG03]
+        exercises: 2
+        estimated_minutes: 60
+        recommended_next: NET00
+        status: published
+        intro: CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md
+
+  - id: software-security
+    pathway_order: 4
+    display_name: "Software Security"
+    audience: "Intermediate learners who can read code and understand web requests."
+    difficulty: "intermediate"
+    prerequisites: ["WEB02"]
+    required_environment: "RangeBox with browser and software-security lab targets"
+    recommended_next: "malware"
+    role_alignment: ["Secure Developer", "Application Security Engineer", "Penetration Tester"]
+    status: "published"
+    chapters:
+      - id: SWSEC01
+        directory: CH_SWSEC_Software_Security
+        display_name: "Software Security Foundations"
+        difficulty: "intermediate"
+        prerequisites: [WEB02]
+        exercises: 2
+        estimated_minutes: 30
+        recommended_next: MAL01
+        status: published
+        intro: CH_SWSEC_Software_Security/00_Introduction.md
+
+  - id: identity
+    pathway_order: 8
+    display_name: "Identity & Access"
+    audience: "Intermediate learners interested in authentication, federation, and account lifecycle."
+    difficulty: "intermediate"
+    prerequisites: ["NET00"]
+    required_environment: "RangeBox with browser and identity lab targets"
+    recommended_next: "forensics"
+    role_alignment: ["IAM Analyst", "SOC Analyst", "Identity Engineer"]
+    status: "published"
+    chapters:
+      - id: IAM01
+        directory: CH_IAM01_Identity_And_Access
+        display_name: "Identity and Access Foundations"
+        difficulty: "intermediate"
+        prerequisites: [NET00]
+        exercises: 3
+        estimated_minutes: 135
+        recommended_next: FOR01
+        status: published
+        intro: CH_IAM01_Identity_And_Access/00_Introduction.md
+
+  - id: forensics
+    pathway_order: 6
+    display_name: "Digital Forensics"
+    audience: "Intermediate learners who want to investigate memory and network evidence."
+    difficulty: "intermediate"
+    prerequisites: ["NET02"]
+    required_environment: "RangeBox with forensic evidence images and PCAPs"
+    recommended_next: "osint"
+    role_alignment: ["Digital Forensics Examiner", "Incident Responder", "Threat Intelligence Analyst"]
+    status: "published"
+    chapters:
+      - id: FOR01
+        directory: CH_FOR01_Memory_Forensics
+        display_name: "Memory Forensics"
+        difficulty: "intermediate"
+        prerequisites: [NET02]
+        exercises: 1
+        estimated_minutes: 50
+        recommended_next: FOR02
+        status: published
+        intro: CH_FOR01_Memory_Forensics/00_Introduction.md
+      - id: FOR02
+        directory: CH_FOR02_Network_Forensics
+        display_name: "Network Forensics"
+        difficulty: "intermediate"
+        prerequisites: [FOR01]
+        exercises: 1
+        estimated_minutes: 45
+        recommended_next: OSINT01
+        status: published
+        intro: CH_FOR02_Network_Forensics/00_Introduction.md

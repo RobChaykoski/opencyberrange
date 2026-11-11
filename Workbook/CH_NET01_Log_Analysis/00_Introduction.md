@@ -1,4 +1,11 @@
-# Chapter N1: Log Analysis
+# NET01: Log Analysis
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `NET01` — Log Analysis
+    **Prerequisites:** `NET00` — Network Foundations
+    **Recommended next:** `NET01B` — Traffic and Log Correlation
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why Log Analysis Matters
 

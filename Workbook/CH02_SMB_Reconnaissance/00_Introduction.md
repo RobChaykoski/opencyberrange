@@ -1,4 +1,11 @@
-# Chapter 2: SMB Reconnaissance
+# WIN02: SMB Reconnaissance
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN02` — SMB Reconnaissance
+    **Prerequisites:** `WIN01` — Enumeration
+    **Recommended next:** `WIN03` — SMB Credential Attacks
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why SMB Reconnaissance Matters
 

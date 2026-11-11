@@ -1,4 +1,11 @@
-# Chapter M2: Executable Analysis
+# MAL02: Executable Analysis
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `MAL02` — Executable Analysis
+    **Prerequisites:** `MAL01` — Malware Fundamentals
+    **Recommended next:** `FOR01` — Memory Forensics
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## From Documents to Binaries
 

@@ -1,4 +1,11 @@
-# Linux Level 2 Extension: Linux extension
+# LIN02B: SMB and SNMP Enumeration
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN02B` — SMB and SNMP Enumeration
+    **Prerequisites:** `LIN02` — SSH Authentication and Discovery
+    **Recommended next:** `LIN03` — SSH Post-Exploitation and Privilege Escalation
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the linux exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

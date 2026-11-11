@@ -1,4 +1,11 @@
-# Digital Forensics — Memory Forensics
+# FOR01: Memory Forensics
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `FOR01` — Memory Forensics
+    **Prerequisites:** `NET02` — PCAP Forensics
+    **Recommended next:** `FOR02` — Network Forensics
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
 

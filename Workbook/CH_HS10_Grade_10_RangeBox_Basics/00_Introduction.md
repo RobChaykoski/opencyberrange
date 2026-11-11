@@ -1,4 +1,11 @@
-# Beginner Cybersecurity — Stage 2: Command Line, Files, and Networks
+# BEG02: Command Line, Files, and Networks
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `BEG02` — Command Line, Files, and Networks
+    **Prerequisites:** `BEG01` — RangeBox Foundations
+    **Recommended next:** `BEG03` — Defensive Evidence
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
 

@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH01 -- Enumeration":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "WIN01: Enumeration":
     - Introduction: CH01_Enumeration/00_Introduction.md
     - "Exercise 1.1 -- Basic Port Scan": CH01_Enumeration/01_Basic_Port_Scan.md
     - "Exercise 1.2 -- Multiple Port Discovery": CH01_Enumeration/02_Multiple_Port_Discovery.md
@@ -73,7 +75,7 @@ nav:
     - "Exercise 1.4 -- OS Detection": CH01_Enumeration/04_OS_Detection.md
     - "Exercise 1.5 -- Comprehensive Enumeration": CH01_Enumeration/05_Comprehensive_Enumeration.md
     - Chapter Review: CH01_Enumeration/06_Chapter_Review.md
-  - "CH02 -- SMB Reconnaissance":
+  - "WIN02: SMB Reconnaissance":
     - Introduction: CH02_SMB_Reconnaissance/00_Introduction.md
     - "Exercise 2.1 -- Connection Test": CH02_SMB_Reconnaissance/01_Connection_Test.md
     - "Exercise 2.2 -- Share Listing": CH02_SMB_Reconnaissance/02_Share_Listing.md
@@ -84,7 +86,7 @@ nav:
     - "Exercise 2.7 -- User Enumeration via Null Session": CH02_SMB_Reconnaissance/07_User_Enumeration_via_Null_Session.md
     - "Exercise 2.8 -- Comprehensive Null Session Enumeration": CH02_SMB_Reconnaissance/08_Comprehensive_Null_Session_Enumeration.md
     - Chapter Review: CH02_SMB_Reconnaissance/09_Chapter_Review.md
-  - "CH03 -- SMB Credential Attacks":
+  - "WIN03: SMB Credential Attacks":
     - Introduction: CH03_SMB_Credential_Attacks/00_Introduction.md
     - "Exercise 3.1 -- Manual Credential Test": CH03_SMB_Credential_Attacks/01_Manual_Credential_Test.md
     - "Exercise 3.2 -- Multiple Credential Testing": CH03_SMB_Credential_Attacks/02_Multiple_Credential_Testing.md
@@ -92,7 +94,7 @@ nav:
     - "Exercise 3.4 -- Username Enumeration and Brute Force": CH03_SMB_Credential_Attacks/04_Username_Enumeration_and_Brute_Force.md
     - "Exercise 3.5 -- Full Credential Attack": CH03_SMB_Credential_Attacks/05_Full_Credential_Attack.md
     - Chapter Review: CH03_SMB_Credential_Attacks/06_Chapter_Review.md
-  - "CH04 -- RDP Exploitation":
+  - "WIN04: RDP Exploitation":
     - Introduction: CH04_RDP_Exploitation/00_Introduction.md
     - "Exercise 4.1 -- RDP Service Detection": CH04_RDP_Exploitation/01_RDP_Service_Detection.md
     - "Exercise 4.2 -- RDP Version Enumeration": CH04_RDP_Exploitation/02_RDP_Version_Enumeration.md
@@ -101,7 +103,7 @@ nav:
     - "Exercise 4.5 -- RDP Brute Force Attack": CH04_RDP_Exploitation/05_RDP_Brute_Force_Attack.md
     - "Exercise 4.6 -- RDP Session Access and Flag Retrieval": CH04_RDP_Exploitation/06_RDP_Session_Access_and_Flag_Retrieval.md
     - Chapter Review: CH04_RDP_Exploitation/07_Chapter_Review.md
-  - "CH05 -- WinRM Exploitation":
+  - "WIN05: WinRM Exploitation":
     - Introduction: CH05_WinRM_Exploitation/00_Introduction.md
     - "Exercise 5.1 -- WinRM Service Detection": CH05_WinRM_Exploitation/01_WinRM_Service_Detection.md
     - "Exercise 5.2 -- WinRM Version and Configuration Enumeration": CH05_WinRM_Exploitation/02_WinRM_Version_Configuration_Enumeration.md
@@ -110,7 +112,7 @@ nav:
     - "Exercise 5.5 -- WinRM Command Execution": CH05_WinRM_Exploitation/05_WinRM_Command_Execution.md
     - "Exercise 5.6 -- WinRM File Retrieval": CH05_WinRM_Exploitation/06_WinRM_File_Retrieval.md
     - Chapter Review: CH05_WinRM_Exploitation/07_Chapter_Review.md
-  - "CH06 -- MSSQL Exploitation":
+  - "WIN06: MSSQL Exploitation":
     - Introduction: CH06_MSSQL_Exploitation/00_Introduction.md
     - "Exercise 6.1 -- MS-SQL Service Detection": CH06_MSSQL_Exploitation/01_MSSQL_Service_Detection.md
     - "Exercise 6.2 -- MS-SQL Version and Instance Enumeration": CH06_MSSQL_Exploitation/02_MSSQL_Version_Enumeration.md
@@ -120,7 +122,7 @@ nav:
     - "Exercise 6.6 -- MS-SQL xp_cmdshell Activation": CH06_MSSQL_Exploitation/06_MSSQL_xp_cmdshell_Activation.md
     - "Exercise 6.7 -- MS-SQL File System Access": CH06_MSSQL_Exploitation/07_MSSQL_File_System_Access.md
     - Chapter Review: CH06_MSSQL_Exploitation/08_Chapter_Review.md
-  - "CH07 -- LDAP Enumeration":
+  - "WIN07: LDAP Enumeration":
     - Introduction: CH07_LDAP_Enumeration/00_Introduction.md
     - "Exercise 7.1 -- LDAP Service Detection": CH07_LDAP_Enumeration/01_LDAP_Service_Detection.md
     - "Exercise 7.2 -- LDAP Anonymous Bind Test": CH07_LDAP_Enumeration/02_LDAP_Anonymous_Bind_Test.md
@@ -129,7 +131,7 @@ nav:
     - "Exercise 7.5 -- LDAP Group Enumeration": CH07_LDAP_Enumeration/05_LDAP_Group_Enumeration.md
     - "Exercise 7.6 -- LDAP Comprehensive Enumeration": CH07_LDAP_Enumeration/06_LDAP_Comprehensive_Enumeration.md
     - Chapter Review: CH07_LDAP_Enumeration/07_Chapter_Review.md
-  - "CH08 -- Credential Reuse":
+  - "WIN08: Credential Reuse and Lateral Movement":
     - Introduction: CH08_Credential_Reuse/00_Introduction.md
     - "Exercise 8.1 -- Single Service Credential Discovery": CH08_Credential_Reuse/01_Single_Service_Credential_Discovery.md
     - "Exercise 8.2 -- Cross-Service Credential Reuse": CH08_Credential_Reuse/02_Cross_Service_Credential_Reuse.md
@@ -137,7 +139,7 @@ nav:
     - "Exercise 8.4 -- Credential Discovery and Reuse Chain": CH08_Credential_Reuse/04_Credential_Discovery_and_Reuse_Chain.md
     - "Exercise 8.5 -- CME Credential Reuse Automation": CH08_Credential_Reuse/05_CME_Credential_Reuse_Automation.md
     - Chapter Review: CH08_Credential_Reuse/06_Chapter_Review.md
-  - "CH09 -- Assessment":
+  - "WIN09: Complete Network Assessment":
     - Introduction: CH09_Assessment/00_Introduction.md
     - "Exercise 9.1 -- Windows Network Assessment": CH09_Assessment/01_Windows_Network_Assessment.md
     - "Exercise 9.2 -- Multi-Service Exploitation": CH09_Assessment/02_Multi_Service_Exploitation.md

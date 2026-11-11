@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "Beginner Stage 1 -- RangeBox Foundations":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "BEG01: RangeBox Foundations":
     - Introduction: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
     - "Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
     - "Desktop and Window Basics": CH_HS09_Grade_9_RangeBox_Basics/02_RangeBox_Desktop_and_Window_Basics.md
@@ -84,7 +86,7 @@ nav:
     - "Capstone: Forwarded Message": CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message.md
     - "Troubleshooting and Safe Exit": CH_HS09_Grade_9_RangeBox_Basics/09_RangeBox_Troubleshooting_and_Safe_Exit.md
     - "Chapter Review": CH_HS09_Grade_9_RangeBox_Basics/10_Chapter_Review.md
-  - "Beginner Stage 2 -- Command Line, Files, and Networks":
+  - "BEG02: Command Line, Files, and Networks":
     - Introduction: CH_HS10_Grade_10_RangeBox_Basics/00_Introduction.md
     - "RangeBox Review and Preflight": CH_HS10_Grade_10_RangeBox_Basics/01_RangeBox_Review_and_Preflight.md
     - "Command Line Fluency": CH_HS10_Grade_10_RangeBox_Basics/02_Command_Line_Fluency.md
@@ -102,12 +104,12 @@ nav:
       - "Browser and Source": CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source.md
       - "Dissect an Email": CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata.md
       - "MFA and the Lost Phone": CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone.md
-  - "Beginner Stage 3 -- Defensive Evidence":
+  - "BEG03: Defensive Evidence":
     - Introduction: CH_HS11_Grade_11_Defensive_Security/00_Introduction.md
     - "Log Detective": CH_HS11_Grade_11_Defensive_Security/01_Log_Detective.md
     - "Media Provenance": CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance.md
     - "Chapter Review": CH_HS11_Grade_11_Defensive_Security/03_Chapter_Review.md
-  - "Beginner Stage 4 -- Applied Challenges":
+  - "BEG04: Applied Challenges":
     - Introduction: CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md
     - "DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
     - "Crypto Rug Pull": CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull.md

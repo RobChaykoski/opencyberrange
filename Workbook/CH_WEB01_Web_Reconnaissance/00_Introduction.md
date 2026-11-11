@@ -1,4 +1,11 @@
-# Chapter W1: Web Reconnaissance
+# WEB01: Web Reconnaissance
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WEB01` — Web Reconnaissance
+    **Prerequisites:** `NET00` — Network Foundations
+    **Recommended next:** `WEB01B` — Advanced Recon and Traversal
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why Web Reconnaissance Comes First
 

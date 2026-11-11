@@ -1,4 +1,11 @@
-# Linux Level 4: Linux extension
+# LIN04: Lateral Movement
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN04` — Lateral Movement
+    **Prerequisites:** `LIN03B` — Privilege Escalation and Password Hashes
+    **Recommended next:** `LIN05` — Detection and Response
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the linux exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

@@ -1,4 +1,11 @@
-# OSINT Foundations
+# OSINT01: OSINT Foundations
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `OSINT01` — OSINT Foundations
+    **Prerequisites:** `NET00` — Network Foundations
+    **Recommended next:** `IAM01` — Identity and Access Foundations
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## What Is OSINT?
 

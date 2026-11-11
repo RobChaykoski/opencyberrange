@@ -1,4 +1,11 @@
-# Linux Level 5: Linux extension
+# LIN05: Detection and Response
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN05` — Detection and Response
+    **Prerequisites:** `LIN04` — Lateral Movement
+    **Recommended next:** `LIN09` — Capstone Assessments
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the linux exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

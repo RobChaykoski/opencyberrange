@@ -1,4 +1,11 @@
-# Beginner Cybersecurity — Stage 1: RangeBox Foundations
+# BEG01: RangeBox Foundations
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `BEG01` — RangeBox Foundations
+    **Prerequisites:** None
+    **Recommended next:** `BEG02` — Command Line, Files, and Networks
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
 

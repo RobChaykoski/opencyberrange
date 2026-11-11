@@ -1,4 +1,11 @@
-# Chapter 3: SMB Credential Attacks
+# WIN03: SMB Credential Attacks
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN03` — SMB Credential Attacks
+    **Prerequisites:** `WIN02` — SMB Reconnaissance
+    **Recommended next:** `WIN04` — RDP Exploitation
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## From Reconnaissance to Attack
 

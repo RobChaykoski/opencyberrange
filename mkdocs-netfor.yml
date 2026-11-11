@@ -65,20 +65,22 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH N0 -- Network Foundations":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "NET00: Network Foundations":
     - Introduction: CH_N0_Network_Foundations/00_Introduction.md
     - "Exercise 0.1 -- Ping Basics": CH_N0_Network_Foundations/01_Ping_Basics.md
     - "Exercise 0.2 -- DNS Basics": CH_N0_Network_Foundations/02_DNS_Basics.md
     - "Exercise 0.3 -- Name or Network?": CH_N0_Network_Foundations/03_Name_or_Network.md
     - Chapter Review: CH_N0_Network_Foundations/04_Chapter_Review.md
-  - "CH N1 -- Log Analysis":
+  - "NET01: Log Analysis":
     - Introduction: CH_NET01_Log_Analysis/00_Introduction.md
     - "Exercise 1.1 -- Port Scan Detection": CH_NET01_Log_Analysis/01_Port_Scan_Detection.md
     - "Exercise 1.2 -- HTTP Traffic Analysis": CH_NET01_Log_Analysis/02_HTTP_Traffic_Analysis.md
     - "Exercise 1.3 -- DNS Anomaly Detection": CH_NET01_Log_Analysis/03_DNS_Anomaly_Detection.md
     - "Exercise 1.4 -- Failed Login Analysis": CH_NET01_Log_Analysis/04_Failed_Login_Analysis.md
     - Chapter Review: CH_NET01_Log_Analysis/05_Chapter_Review.md
-  - "CH N2 -- PCAP Forensics":
+  - "NET02: PCAP Forensics":
     - Introduction: CH_NET02_PCAP_Forensics/00_Introduction.md
     - "Exercise 2.1 -- FTP Credential Extraction": CH_NET02_PCAP_Forensics/01_FTP_Credential_Extraction.md
     - "Exercise 2.2 -- SMTP Email Analysis": CH_NET02_PCAP_Forensics/02_SMTP_Email_Analysis.md
@@ -86,10 +88,11 @@ nav:
     - "Exercise 2.4 -- DNS Data Exfiltration": CH_NET02_PCAP_Forensics/04_DNS_Data_Exfiltration.md
     - "Exercise 2.5 -- Attack Chain Analysis": CH_NET02_PCAP_Forensics/05_Attack_Chain_Analysis.md
     - Chapter Review: CH_NET02_PCAP_Forensics/06_Chapter_Review.md
-  - "CH N3 -- Firewalls":
+  - "NET03: Firewalls and Network Policy":
+    - Introduction: CH_NETSY12_Firewalls/00_Introduction.md
     - "Exercise 3.1 -- Firewall Fundamentals": CH_NETSY12_Firewalls/01_Firewall_Fundamentals.md
     - "Exercise 3.2 -- Firewall Policy Hardening": CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening.md
-  - "Network Level 1 Extension":
+  - "NET01B: Traffic and Log Correlation":
     - Introduction: CH_NET01B_Traffic_And_Logs/00_Introduction.md
     - "Exercise 1.1 -- Packet Capture Analysis": CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis.md
     - "Exercise 1.2 -- Log Correlation": CH_NET01B_Traffic_And_Logs/02_Log_Correlation.md

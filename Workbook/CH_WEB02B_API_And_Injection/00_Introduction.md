@@ -1,4 +1,11 @@
-# Web Level 2 Extension: Web extension
+# WEB02B: API and Injection
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WEB02B` — API and Injection
+    **Prerequisites:** `WEB02` — SQL Injection and Web Exploitation
+    **Recommended next:** `WEB03` — Advanced Web Exploitation
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the web exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

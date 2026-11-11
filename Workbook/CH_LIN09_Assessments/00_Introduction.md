@@ -1,4 +1,11 @@
-# Linux Level 9: Linux extension
+# LIN09: Capstone Assessments
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN09` — Capstone Assessments
+    **Prerequisites:** `LIN05` — Detection and Response
+    **Recommended next:** `WEB01` — Web Reconnaissance
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the linux exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

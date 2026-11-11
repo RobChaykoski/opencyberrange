@@ -1,4 +1,11 @@
-# Network Level 1 Extension: Network extension
+# NET01B: Traffic and Log Correlation
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `NET01B` — Traffic and Log Correlation
+    **Prerequisites:** `NET01` — Log Analysis
+    **Recommended next:** `NET02` — PCAP Forensics
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the network exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

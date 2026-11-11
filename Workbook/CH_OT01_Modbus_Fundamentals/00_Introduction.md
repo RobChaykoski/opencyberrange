@@ -1,4 +1,11 @@
-# Chapter OT1: Modbus Fundamentals
+# OT01: Modbus Fundamentals
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `OT01` — Modbus Fundamentals
+    **Prerequisites:** `NET00` — Network Foundations
+    **Recommended next:** `AI01` — AI Security Foundations
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Industrial Protocols and the Analyst
 

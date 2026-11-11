@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH W1 -- Web Reconnaissance":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "WEB01: Web Reconnaissance":
     - Introduction: CH_WEB01_Web_Reconnaissance/00_Introduction.md
     - "Exercise W1.1 -- Basic Directory Enumeration": CH_WEB01_Web_Reconnaissance/01_Basic_Directory_Enumeration.md
     - "Exercise W1.2 -- Technology Identification": CH_WEB01_Web_Reconnaissance/02_Technology_Identification.md
@@ -74,21 +76,21 @@ nav:
     - "Exercise W1.5 -- Subdomain Discovery": CH_WEB01_Web_Reconnaissance/05_Subdomain_Discovery.md
     - "Exercise W1.6 -- Comprehensive Web Reconnaissance": CH_WEB01_Web_Reconnaissance/06_Comprehensive_Web_Reconnaissance.md
     - Chapter Review: CH_WEB01_Web_Reconnaissance/07_Chapter_Review.md
-  - "CH W2 -- Web Exploitation":
+  - "WEB02: SQL Injection and Web Exploitation":
     - Introduction: CH_WEB02_Web_Exploitation/00_Introduction.md
     - "Exercise W2.1 -- Basic SQL Injection": CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection.md
     - Chapter Review: CH_WEB02_Web_Exploitation/02_Chapter_Review.md
-  - "Web Level 1 Extension":
+  - "WEB01B: Advanced Recon and Traversal":
     - Introduction: CH_WEB01B_Advanced_Recon/00_Introduction.md
     - "Exercise 1.7 -- Directory Traversal": CH_WEB01B_Advanced_Recon/01_Directory_Traversal.md
     - "Exercise 1.8 -- Traversal Scavenger Hunt": CH_WEB01B_Advanced_Recon/02_Traversal_Scavenger_Hunt.md
-  - "Web Level 2 Extension":
+  - "WEB02B: API and Injection":
     - Introduction: CH_WEB02B_API_And_Injection/00_Introduction.md
     - "Exercise 2.2 -- Insecure API Endpoints": CH_WEB02B_API_And_Injection/01_Insecure_API_Endpoints.md
     - "Exercise 2.3 -- Command Injection": CH_WEB02B_API_And_Injection/02_Command_Injection.md
     - "Exercise 2.4 -- API Enumeration Gauntlet": CH_WEB02B_API_And_Injection/03_API_Enumeration_Gauntlet.md
     - "Exercise 2.5 -- Filtered Injection": CH_WEB02B_API_And_Injection/04_Filtered_Injection.md
-  - "Web Level 3 -- Advanced Exploitation":
+  - "WEB03: Advanced Web Exploitation":
     - Introduction: CH_WEB03_Advanced_Exploitation/00_Introduction.md
     - "Exercise 3.1 -- Hidden Login Discovery": CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery.md
     - "Exercise 3.2 -- SQL Injection to Shell": CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell.md

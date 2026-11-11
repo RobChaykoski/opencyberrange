@@ -1,4 +1,11 @@
-# Digital Forensics — Network Forensics
+# FOR02: Network Forensics
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `FOR02` — Network Forensics
+    **Prerequisites:** `FOR01` — Memory Forensics
+    **Recommended next:** `OSINT01` — OSINT Foundations
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
 

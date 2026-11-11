@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH L1 -- Linux Service Enumeration":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "LIN01: Linux Service Enumeration":
     - Introduction: CH_LIN01_Linux_Service_Enumeration/00_Introduction.md
     - "Exercise L1.1 -- SSH Service Detection": CH_LIN01_Linux_Service_Enumeration/01_SSH_Service_Detection.md
     - "Exercise L1.2 -- Multi-Service Discovery": CH_LIN01_Linux_Service_Enumeration/02_Multi_Service_Discovery.md
@@ -74,45 +76,45 @@ nav:
     - "Exercise L1.5 -- NSE Script Enumeration": CH_LIN01_Linux_Service_Enumeration/05_NSE_Script_Enumeration.md
     - "Exercise L1.6 -- Version Vulnerability Identification": CH_LIN01_Linux_Service_Enumeration/06_Version_Vulnerability_Identification.md
     - Chapter Review: CH_LIN01_Linux_Service_Enumeration/07_Chapter_Review.md
-  - "CH L2 -- SSH Authentication":
+  - "LIN02: SSH Authentication and Discovery":
     - Introduction: CH_LIN02_SSH_Authentication/00_Introduction.md
     - "Exercise L2.1 -- SSH Basic Login": CH_LIN02_SSH_Authentication/01_SSH_Basic_Login.md
     - "Exercise L2.2 -- SSH User Discovery": CH_LIN02_SSH_Authentication/02_SSH_User_Discovery.md
     - "Exercise L2.3 -- SSH File Discovery": CH_LIN02_SSH_Authentication/03_SSH_File_Discovery.md
     - Chapter Review: CH_LIN02_SSH_Authentication/04_Chapter_Review.md
-  - "CH L3 -- SSH Post-Exploitation":
+  - "LIN03: SSH Post-Exploitation and Privilege Escalation":
     - Introduction: CH_LIN03_SSH_Post_Exploitation/00_Introduction.md
     - "Exercise L3.1 -- SSH Command Execution": CH_LIN03_SSH_Post_Exploitation/01_SSH_Command_Execution.md
     - "Exercise L3.2 -- SSH History Analysis": CH_LIN03_SSH_Post_Exploitation/02_SSH_History_Analysis.md
     - "Exercise L3.3 -- SSH Privilege Escalation": CH_LIN03_SSH_Post_Exploitation/03_SSH_Privilege_Escalation.md
     - Chapter Review: CH_LIN03_SSH_Post_Exploitation/04_Chapter_Review.md
-  - "Linux Level 1 Extension":
+  - "LIN01B: Network Discovery":
     - Introduction: CH_LIN01B_Network_Discovery/00_Introduction.md
     - "Exercise 1.7 -- Network Discovery": CH_LIN01B_Network_Discovery/01_Network_Discovery.md
     - "Exercise 1.8 -- Service Triage": CH_LIN01B_Network_Discovery/02_Service_Triage.md
-  - "Linux Level 2 Extension":
+  - "LIN02B: SMB and SNMP Enumeration":
     - Introduction: CH_LIN02B_SMB_SNMP/00_Introduction.md
     - "Exercise 2.7 -- SMB Share Enumeration": CH_LIN02B_SMB_SNMP/01_SMB_Share_Enumeration.md
     - "Exercise 2.8 -- SNMP Community Strings": CH_LIN02B_SMB_SNMP/02_SNMP_Community_Strings.md
     - "Exercise 2.9 -- SMB Credential Hunt": CH_LIN02B_SMB_SNMP/03_SMB_Credential_Hunt.md
     - "Exercise 2.10 -- SNMP Breadcrumb Trail": CH_LIN02B_SMB_SNMP/04_SNMP_Breadcrumb_Trail.md
-  - "Linux Level 3 Extension":
+  - "LIN03B: Privilege Escalation and Password Hashes":
     - Introduction: CH_LIN03B_Privilege_Hashes/00_Introduction.md
     - "Exercise 3.1 -- SUID Privilege Escalation": CH_LIN03B_Privilege_Hashes/01_SUID_Privilege_Escalation.md
     - "Exercise 3.2 -- Password Hash Cracking": CH_LIN03B_Privilege_Hashes/02_Password_Hash_Cracking.md
     - "Exercise 3.3 -- SUID Maze": CH_LIN03B_Privilege_Hashes/03_SUID_Maze.md
     - "Exercise 3.4 -- Hash Relay": CH_LIN03B_Privilege_Hashes/04_Hash_Relay.md
-  - "Linux Level 4 -- Lateral Movement":
+  - "LIN04: Lateral Movement":
     - Introduction: CH_LIN04_Lateral_Movement/00_Introduction.md
     - "Exercise 4.1 -- Credential Pivot Attack": CH_LIN04_Lateral_Movement/01_Credential_Pivot_Attack.md
     - "Exercise 4.2 -- Post-Exploitation Data Harvest": CH_LIN04_Lateral_Movement/02_Post_Exploitation_Data_Harvest.md
     - "Exercise 4.3 -- Three-Hop Pivot": CH_LIN04_Lateral_Movement/03_Three_Hop_Pivot.md
     - "Exercise 4.4 -- Encrypted Exfiltration": CH_LIN04_Lateral_Movement/04_Encrypted_Exfiltration.md
-  - "Linux Level 5 -- Detection":
+  - "LIN05: Detection and Response":
     - Introduction: CH_LIN05_Detection/00_Introduction.md
     - "Exercise 5.4 -- Suricata Live Detection": CH_LIN05_Detection/01_Suricata_Live_Detection.md
     - "Exercise 5.6 -- Brute Force Detection": CH_LIN05_Detection/02_Brute_Force_Detection.md
-  - "Linux Level 9 -- Assessments":
+  - "LIN09: Capstone Assessments":
     - Introduction: CH_LIN09_Assessments/00_Introduction.md
     - "Assessment 9.1 -- Meridian Data Breach": CH_LIN09_Assessments/01_Meridian_Data_Breach_Assessment.md
     - "Assessment 9.2 -- CryptoVault Recovery": CH_LIN09_Assessments/02_CryptoVault_Recovery_Operation.md

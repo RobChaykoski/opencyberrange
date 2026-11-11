@@ -1,4 +1,11 @@
-# Beginner Cybersecurity — Stage 3: Defensive Evidence
+# BEG03: Defensive Evidence
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `BEG03` — Defensive Evidence
+    **Prerequisites:** `BEG02` — Command Line, Files, and Networks
+    **Recommended next:** `BEG04` — Applied Challenges
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
 

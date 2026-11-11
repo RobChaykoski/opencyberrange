@@ -1,4 +1,11 @@
-# Identity & Access — Introduction
+# IAM01: Identity and Access Foundations
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `IAM01` — Identity and Access Foundations
+    **Prerequisites:** `NET00` — Network Foundations
+    **Recommended next:** `FOR01` — Memory Forensics
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## What this course is
 

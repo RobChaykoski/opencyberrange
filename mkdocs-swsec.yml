@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH SWSEC — Software Security":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "SWSEC01: Software Security Foundations":
     - Introduction: CH_SWSEC_Software_Security/00_Introduction.md
     - "Hidden Export Route": CH_SWSEC_Software_Security/01_Hidden_Export_Route.md
     - "Diagnostics Command Injection": CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection.md

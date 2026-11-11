@@ -1,4 +1,11 @@
-# Chapter L2: SSH Authentication & Discovery
+# LIN02: SSH Authentication and Discovery
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN02` — SSH Authentication and Discovery
+    **Prerequisites:** `LIN01B` — Network Discovery
+    **Recommended next:** `LIN02B` — SMB and SNMP Enumeration
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why SSH Authentication Matters
 

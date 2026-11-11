@@ -1,4 +1,11 @@
-# Chapter AI1: AI Security Foundations
+# AI01: AI Security Foundations
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `AI01` — AI Security Foundations
+    **Prerequisites:** `WEB02` — SQL Injection and Web Exploitation
+    **Recommended next:** `WIN01` — Enumeration
+<!-- END GENERATED CHAPTER POSITION -->
 
 !!! note "AI-assisted content"
     This chapter and its lab walkthroughs were drafted with AI assistance and

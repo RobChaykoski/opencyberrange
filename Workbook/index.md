@@ -41,111 +41,38 @@ practice accumulate.
 
 ## Available Tracks
 
-### Windows Penetration Testing
+<!-- BEGIN GENERATED WORKBOOK CURRICULUM -->
+The workbook curriculum is generated from `curriculum-manifest.yaml`.
+Every published chapter has a stable display ID, a physical directory, a
+prerequisite chain, an exercise count, an estimated duration, and a
+recommended next step.
 
-| Chapter | Focus | Exercises |
-|---------|-------|------|
-| CH01; Enumeration | Port scanning, service detection, OS fingerprinting | 5 exercises |
-| CH02; SMB Reconnaissance | Anonymous shares, null sessions, user enumeration | 8 exercises |
-| CH03; SMB Credential Attacks | Manual auth, brute force, credential chains | 5 exercises |
-| CH04; RDP Exploitation | Service detection, enumeration, brute force, session access | 6 exercises |
-| CH05; WinRM Exploitation | Service detection, authentication, command execution, file retrieval | 6 exercises |
-| CH06; MSSQL Exploitation | Service detection, authentication, queries, file system access | 7 exercises |
-| CH07; LDAP Enumeration | Service detection, anonymous bind, users, groups, full dump | 6 exercises |
-| CH08; Credential Reuse | Cross-service credential discovery and lateral movement | 5 exercises |
-| CH09; Complete Assessment | Multi-service exploitation and full penetration test | 3 exercises |
+Exercise counts are labs that expose a workbook page. The platform also
+contains labs without a workbook page; see [Workbook coverage](COVERAGE.md).
 
-### Linux Penetration Testing
+| Track ID | Display name | Audience | Difficulty | Prerequisites | Exercises | Duration | Status |
+|---|---|---|---|---|---:|---|---|
+| `high-school` | Beginner Cybersecurity | New learners with everyday computer experience and no assumed cybersecurity background. | beginner | None | 18 | 7h 00m | published |
+| `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 16 | 14h 00m | published |
+| `webpt` | Web Application Security | Intermediate learners who can use a terminal and understand HTTP basics. | intermediate | NET00, NET01 | 16 | 21h 35m | published |
+| `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 2 | 30m | published |
+| `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | published |
+| `forensics` | Digital Forensics | Intermediate learners who want to investigate memory and network evidence. | intermediate | NET02 | 2 | 1h 35m | published |
+| `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 5 | 2h 55m | published |
+| `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | published |
+| `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 1 | 40m | published |
+| `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security. | intermediate | WEB02 | 3 | 1h 50m | published |
+| `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
+| `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-| Chapter | Focus | Exercises |
-|---------|-------|------|
-| CH L1; Linux Service Enumeration | SSH detection, multi-service discovery, NSE scripts, vulnerability ID | 6 exercises |
-| CH L2; SSH Authentication | Basic login, user discovery, file discovery | 3 exercises |
-| CH L3; SSH Post-Exploitation | Command execution, history analysis, privilege escalation | 3 exercises |
+**Total:** 155 exercises across 12 tracks and 41 chapters.
 
-### Network Security
+See the [full curriculum map](CURRICULUM.md) and the [cross-curriculum terminology](TERMINOLOGY.md).
 
-| Chapter | Focus | Exercises |
-|---------|-------|------|
-| CH N0; Network Foundations | IP addresses, ping, DNS, name-resolution troubleshooting | 3 exercises |
-| CH N1; Log Analysis | Firewall logs, DNS logs, SSH auth logs, HTTP PCAP | 4 exercises |
-| CH N2; PCAP Forensics | FTP, SMTP, HTTP sessions, DNS tunneling, attack chains | 5 exercises |
+Recommended pathway:
 
-Start the Network Foundations chapter at
-[CH N0 — Network Foundations](CH_N0_Network_Foundations/00_Introduction.md).
-
-### Malware Analysis
-
-| Chapter | Focus | Exercises |
-|---------|-------|------|
-| CH M1; Malware Fundamentals | Safe handling, strings triage, Ghidra reversing, C2 PCAP, live INetSim detection, email attachment and embedded-document analysis | 7 exercises |
-| CH M2; Executable Analysis | PE headers, sections, imports, static triage of Windows binaries | 1 exercise |
-
-### OT/ICS Security
-
-| Chapter | Focus | Exercises |
-|---------|-------|------|
-| CH OT1; Modbus Fundamentals | Modbus TCP enumeration and register decoding | 1 exercise |
-
-### AI Hacking
-
-| Chapter | Focus | Exercises |
-|---------|-------|------|
-| CH AI1; AI Security Foundations | Prompt injection, jailbreak policy bypass, indirect prompt injection | 3 exercises |
-
-Start the AI Hacking stream at
-[CH AI1 — AI Security Foundations](CH_AI01_AI_Foundations/00_Introduction.md).
-
-### OSINT
-
-| Chapter | Focus | Exercises |
-|---------|-------|-----------|
-| CH OSINT1; Digital Footprint Foundations | Public profiles, `robots.txt`, source comments, image steganography | 2 exercises |
-| CH OSINT2; Code and Sources | Static JavaScript, source-code comments, public metadata, public-repository leaks | 2 exercises |
-
-Start the OSINT stream at
-[CH OSINT1 — Digital Footprint Foundations](CH_OSINT01_OSINT_Foundations/00_Introduction.md).
-
-### Software Security
-
-| Chapter | Focus | Exercises |
-|---------|-------|-----------|
-| CH SWSEC; Software Security | Reading shipped code, hidden routes, client-side secrets, command injection, and remediation | 2 exercises |
-
-Start the software-security stream at
-[CH SWSEC — Software Security](CH_SWSEC_Software_Security/00_Introduction.md).
-
-### Web Application Security
-
-| Chapter | Focus | Exercises |
-|---------|-------|-----------|
-| CH WEB1; Web Reconnaissance | Directory enumeration, technology identification, HTTP methods, headers, and subdomain discovery | 7 exercises |
-| CH WEB2; Web Exploitation | SQL injection and guided web exploitation | 2 exercises |
-
-Start the web stream at
-[CH WEB1 — Web Reconnaissance](CH_WEB01_Web_Reconnaissance/00_Introduction.md).
-
-### Digital Forensics
-
-| Chapter | Focus | Exercises |
-|---------|-------|-----------|
-| CH FOR01; Memory Forensics | Memory images, processes, registry data, and Volatility 3 | 1 exercise |
-| CH FOR02; Network Forensics | Packet captures, SIP/RTP, and voice reconstruction | 1 exercise |
-
-Start the forensics pathway at
-[CH FOR01 - Memory Forensics](CH_FOR01_Memory_Forensics/00_Introduction.md).
-
-### Beginner Cybersecurity
-
-| Chapter | Focus | Exercises |
-|---------|-------|-----------|
-| Beginner Stage 1; RangeBox Foundations | Launching RangeBox, terminal basics, files, digital safety | 8 exercises |
-| Beginner Stage 2; Command Line, Files, and Networks | Commands, permissions, processes, HTTP, service observation, logs, evidence | 6 exercises |
-| Beginner Stage 3; Defensive Evidence | Web server logs, suspicious requests, evidence and response | 2 exercises |
-| Beginner Stage 4; Applied Challenges | Browser-only OSINT, file metadata, privacy, and community event challenges | 2 exercises |
-
-Start the beginner pathway at
-[Beginner Stage 1 - RangeBox Foundations](CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md).
+`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `IAM01` → `OT01` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
+<!-- END GENERATED WORKBOOK CURRICULUM -->
 
 ## How to Use This Workbook
 

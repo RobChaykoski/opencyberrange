@@ -1,4 +1,11 @@
-# Chapter 7: LDAP Enumeration
+# WIN07: LDAP Enumeration
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN07` — LDAP Enumeration
+    **Prerequisites:** `WIN06` — MSSQL Exploitation
+    **Recommended next:** `WIN08` — Credential Reuse and Lateral Movement
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why LDAP Matters
 

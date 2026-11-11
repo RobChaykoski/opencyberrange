@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH IAM01 — Identity & Access":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "IAM01: Identity and Access Foundations":
     - Introduction: CH_IAM01_Identity_And_Access/00_Introduction.md
     - "Secure Authentication": CH_IAM01_Identity_And_Access/01_Secure_Authentication.md
     - "OAuth and OIDC": CH_IAM01_Identity_And_Access/02_OAuth_OIDC.md

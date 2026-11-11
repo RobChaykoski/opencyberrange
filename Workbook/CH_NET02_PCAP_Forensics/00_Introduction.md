@@ -1,4 +1,11 @@
-# Chapter N2: PCAP Forensics
+# NET02: PCAP Forensics
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `NET02` — PCAP Forensics
+    **Prerequisites:** `NET01B` — Traffic and Log Correlation
+    **Recommended next:** `NET03` — Firewalls and Network Policy
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why PCAP Forensics Matters
 

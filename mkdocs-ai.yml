@@ -65,7 +65,9 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH AI1 -- AI Security Foundations":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "AI01: AI Security Foundations":
     - Introduction: CH_AI01_AI_Foundations/00_Introduction.md
     - "Exercise 1.1 -- Prompt Injection Basics": CH_AI01_AI_Foundations/01_Prompt_Injection_Basics.md
     - "Exercise 1.2 -- Jailbreak Policy Bypass": CH_AI01_AI_Foundations/02_Jailbreak_Policy_Bypass.md

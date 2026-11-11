@@ -1,4 +1,11 @@
-# Linux Level 1 Extension: Linux extension
+# LIN01B: Network Discovery
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN01B` — Network Discovery
+    **Prerequisites:** `LIN01` — Linux Service Enumeration
+    **Recommended next:** `LIN02` — SSH Authentication and Discovery
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the linux exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

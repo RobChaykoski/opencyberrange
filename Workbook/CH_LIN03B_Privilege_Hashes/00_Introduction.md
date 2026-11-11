@@ -1,4 +1,11 @@
-# Linux Level 3 Extension: Linux extension
+# LIN03B: Privilege Escalation and Password Hashes
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN03B` — Privilege Escalation and Password Hashes
+    **Prerequisites:** `LIN03` — SSH Post-Exploitation and Privilege Escalation
+    **Recommended next:** `LIN04` — Lateral Movement
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the linux exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

@@ -1,4 +1,11 @@
-# Chapter 8: Credential Reuse
+# WIN08: Credential Reuse and Lateral Movement
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN08` — Credential Reuse and Lateral Movement
+    **Prerequisites:** `WIN07` — LDAP Enumeration
+    **Recommended next:** `WIN09` — Complete Network Assessment
+<!-- END GENERATED CHAPTER POSITION -->
 
 !!! note "Example IP addresses"
     The examples in this chapter use `10.100.13.0/24`, the subnet in the

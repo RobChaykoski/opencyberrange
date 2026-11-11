@@ -1,4 +1,11 @@
-# Chapter L1: Linux Service Enumeration
+# LIN01: Linux Service Enumeration
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `LIN01` — Linux Service Enumeration
+    **Prerequisites:** `WIN01` — Enumeration
+    **Recommended next:** `LIN01B` — Network Discovery
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Why Linux Enumeration Comes First
 

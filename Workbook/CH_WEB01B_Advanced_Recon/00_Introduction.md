@@ -1,4 +1,11 @@
-# Web Level 1 Extension: Web extension
+# WEB01B: Advanced Recon and Traversal
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WEB01B` — Advanced Recon and Traversal
+    **Prerequisites:** `WEB01` — Web Reconnaissance
+    **Recommended next:** `WEB02` — SQL Injection and Web Exploitation
+<!-- END GENERATED CHAPTER POSITION -->
 
 This chapter collects the web exercises that extend the
 core workbook. Each exercise is a self-contained walkthrough with a scenario,

@@ -1,4 +1,11 @@
-# CH N0 -- Network Foundations
+# NET00: Network Foundations
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `NET00` — Network Foundations
+    **Prerequisites:** None
+    **Recommended next:** `NET01` — Log Analysis
+<!-- END GENERATED CHAPTER POSITION -->
 
 !!! note "AI-assisted content"
     This chapter was drafted with AI assistance and reviewed by a human

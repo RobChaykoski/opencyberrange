@@ -1,4 +1,11 @@
-# Beginner Cybersecurity — Stage 4: Applied Challenges
+# BEG04: Applied Challenges
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `BEG04` — Applied Challenges
+    **Prerequisites:** `BEG03` — Defensive Evidence
+    **Recommended next:** `NET00` — Network Foundations
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## Welcome
 

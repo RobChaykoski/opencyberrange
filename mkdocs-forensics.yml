@@ -65,10 +65,12 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH FOR01 -- Memory Forensics":
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - "FOR01: Memory Forensics":
     - Introduction: CH_FOR01_Memory_Forensics/00_Introduction.md
     - "Windows Memory Analysis with Volatility": CH_FOR01_Memory_Forensics/01_Windows_Memory_Volatility.md
-  - "CH FOR02 -- Network Forensics":
+  - "FOR02: Network Forensics":
     - Introduction: CH_FOR02_Network_Forensics/00_Introduction.md
     - "VoIP Call Reconstruction": CH_FOR02_Network_Forensics/01_VoIP_Call_Reconstruction.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

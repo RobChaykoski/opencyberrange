@@ -1,4 +1,11 @@
-# Chapter 1: Enumeration
+# WIN01: Enumeration
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `WIN01` — Enumeration
+    **Prerequisites:** None
+    **Recommended next:** `WIN02` — SMB Reconnaissance
+<!-- END GENERATED CHAPTER POSITION -->
 
 !!! note "Example IP addresses"
     The examples in this chapter use `10.100.13.0/24`, the subnet in the

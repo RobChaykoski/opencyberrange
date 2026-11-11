@@ -1,0 +1,77 @@
+schema_version: 1
+last_reviewed: "2026-11-11"
+notes: >
+  Single source of truth for cross-curriculum terminology. These definitions
+  take precedence in learner-facing prose, workbook evidence notes, analytics,
+  assessment reports, and PDF output. Track-specific glossaries may add context
+  but must not contradict these meanings.
+
+terms:
+  - term: Exercise
+    definition: "A single task inside a lab or workbook. An exercise has instructions and, when the platform requires it, one flag."
+  - term: Lab
+    definition: "A self-contained practice environment with one or more targets, services, and exercises. A lab is launched from the exercise panel."
+  - term: Chapter
+    definition: "A curated group of exercises and labs around one topic. A chapter has a stable display identifier such as WIN01 or NET02."
+  - term: Track
+    definition: "A themed pathway made of chapters, levels, exercises, and labs, such as Windows Penetration Testing or OSINT."
+  - term: RangeBox
+    definition: "The browser-delivered Linux practice desktop provided by the platform. It is the workstation where terminal and browser activities run."
+  - term: Target
+    definition: "The specific host, service, or asset assigned to an exercise. Only the target shown in that exercise is authorized."
+  - term: Host
+    definition: "A device, container, or virtual machine on a network with an address."
+  - term: Service
+    definition: "A program that provides a function, often by listening on a port. A service is not automatically a vulnerability."
+  - term: Asset
+    definition: "A host, service, data set, identity, or process with value in a scenario. An asset is what the activity is trying to protect or understand."
+  - term: Evidence
+    definition: "An artifact or record that supports a statement, such as command output, a log line, a packet capture, or a screenshot. Collect the minimum needed and handle it safely."
+  - term: Observation
+    definition: "A statement directly present in output or evidence, without interpretation."
+  - term: Interpretation
+    definition: "A reasonable meaning assigned to evidence. An interpretation requires verification before it becomes a finding."
+  - term: Hypothesis
+    definition: "A testable explanation for an observation. It can be confirmed or refuted by an approved check."
+  - term: Finding
+    definition: "A conclusion supported by evidence, with a stated confidence and, where relevant, an impact. A finding is stronger than an interpretation and weaker than a validated impact."
+  - term: Vulnerability
+    definition: "A weakness that could be used by a threat actor to affect a system or its data. A version match or an open port alone does not establish a vulnerability."
+  - term: Exposure
+    definition: "A condition where an asset, service, or data set is accessible beyond its intended scope. Exposure may be caused by a vulnerability or a misconfiguration, but the terms are not interchangeable."
+  - term: Misconfiguration
+    definition: "A setting that differs from the intended or secure baseline. A misconfiguration may create exposure but is not automatically a vulnerability."
+  - term: Exploit
+    definition: "An action, tool, or technique that uses a weakness to affect a target. Exploitation is allowed only inside an explicitly authorized lab."
+  - term: Impact
+    definition: "A demonstrated effect on confidentiality, integrity, availability, identity, or process state."
+  - term: Confidence
+    definition: "How strongly the evidence supports a conclusion, expressed as low, medium, or high with a reason."
+  - term: Remediation
+    definition: "A change that addresses the root cause and reduces risk. Remediation is not the same as hiding the symptom."
+  - term: Rollback
+    definition: "Reversing a change to restore the previous state. A rollback is used when a change is unsafe, ineffective, or no longer needed."
+  - term: Cleanup
+    definition: "Removing disposable files, credentials, sessions, and other artifacts after an activity so the next learner starts clean."
+  - term: Flag
+    definition: "A training completion token in OCR{...} format. A flag confirms completion; it is not an IOC, a vulnerability, or proof of impact."
+
+evidence_ladder:
+  - level: 1
+    name: Observed
+    definition: "Directly present in output or evidence."
+  - level: 2
+    name: Inferred
+    definition: "A reasonable interpretation that still requires more verification."
+  - level: 3
+    name: Validated
+    definition: "Confirmed through an approved controlled test."
+  - level: 4
+    name: Impacted
+    definition: "A demonstrated effect on confidentiality, integrity, availability, identity, or process state."
+  - level: 5
+    name: Remediated
+    definition: "The root cause has been changed."
+  - level: 6
+    name: Verified
+    definition: "A regression test confirms the correction."

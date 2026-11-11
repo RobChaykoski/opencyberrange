@@ -1,4 +1,11 @@
-# Software Security — Introduction
+# SWSEC01: Software Security Foundations
+
+<!-- BEGIN GENERATED CHAPTER POSITION -->
+!!! note "Curriculum position"
+    **Chapter:** `SWSEC01` — Software Security Foundations
+    **Prerequisites:** `WEB02` — SQL Injection and Web Exploitation
+    **Recommended next:** `MAL01` — Malware Fundamentals
+<!-- END GENERATED CHAPTER POSITION -->
 
 ## What this course is
 

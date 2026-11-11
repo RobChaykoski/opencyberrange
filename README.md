@@ -163,7 +163,7 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **162 exercises** across **12 tracks** and **53 levels** |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **164 labs** across **12 tracks** and **53 levels**; **155** expose a workbook page |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **164 workbook pages**, **111 analysis sections**, **407 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
@@ -317,21 +317,39 @@ awards require the matching event achievement. See
 
 ## Included tracks
 
-| Track | Labs | Focus |
-|-------|------|-------|
-| Windows Penetration Testing | 53 | Enumeration, SMB, RDP, WinRM, MSSQL, LDAP, credential reuse |
-| Linux Fundamentals | 37 | Service enumeration, SSH, privilege escalation, pivoting, detection |
-| Web Application Security | 16 | Reconnaissance, injection, traversal, API and authentication testing |
-| Network Security | 16 | Network foundations (ping, DNS), traffic analysis, protocol attacks, firewalls, exfiltration |
-| Malware Analysis | 8 | Static triage, reversing, C2 traffic, document and attachment analysis |
-| OT/ICS Security | 1 | Modbus enumeration and register analysis |
-| AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
-| OSINT | 5 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
-| **Beginner Cybersecurity** | **18** | Beginner-only staged pathway; RangeBox foundations, command line, permissions, processes, networks, service observation, logs, evidence, and applied challenges |
-| Software Security | 2 | Source review, hidden routes, command injection, and remediation |
-| Digital Forensics | 2 | Memory analysis and VoIP network evidence reconstruction |
-| **Identity & Access** | **3** | Secure authentication, OAuth/OIDC trust, and joiner/mover/leaver access review |
-| **Total** | **164** | **12 tracks · 53 levels** |
+<!-- BEGIN GENERATED CURRICULUM INVENTORY -->
+The curriculum is generated from `curriculum-manifest.yaml`. The table
+below is the learner-facing inventory; the full chapter map, prerequisites,
+environments, role alignment, and recommended next steps are in
+[`Workbook/CURRICULUM.md`](Workbook/CURRICULUM.md).
+
+Exercise counts are labs that expose a workbook page. The platform also
+contains labs without a workbook page; see `Workbook/COVERAGE.md`.
+
+Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
+`--check` to detect drift.
+
+| Track ID | Display name | Audience | Difficulty | Prerequisites | Exercises | Duration | Status |
+|---|---|---|---|---|---:|---|---|
+| `high-school` | Beginner Cybersecurity | New learners with everyday computer experience and no assumed cybersecurity background. | beginner | None | 18 | 7h 00m | published |
+| `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 16 | 14h 00m | published |
+| `webpt` | Web Application Security | Intermediate learners who can use a terminal and understand HTTP basics. | intermediate | NET00, NET01 | 16 | 21h 35m | published |
+| `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 2 | 30m | published |
+| `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | published |
+| `forensics` | Digital Forensics | Intermediate learners who want to investigate memory and network evidence. | intermediate | NET02 | 2 | 1h 35m | published |
+| `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 5 | 2h 55m | published |
+| `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | published |
+| `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 1 | 40m | published |
+| `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security. | intermediate | WEB02 | 3 | 1h 50m | published |
+| `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
+| `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
+
+**Total:** 155 exercises across 12 tracks and 41 chapters.
+
+Recommended pathway:
+
+`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `IAM01` → `OT01` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
+<!-- END GENERATED CURRICULUM INVENTORY -->
 
 ## Network Foundations stream
 
