@@ -237,31 +237,27 @@ teacher or revisit the activity before moving on.
 
 ## Activities
 
-1. [Signing In and Opening RangeBox](01_First_Steps.md) — sign in, open the
-   desktop, and try simple terminal commands.
-2. [RangeBox File Hunt](02_File_Hunt.md) — find a file in the practice desktop.
-3. [CyberChef: Decode a Base64 Message](03_CyberChef_Base64.md) — use CyberChef
-   (a browser tool for decoding data) to decode Base64 (a common way to change
-   text into another form; it does not keep the text secret).
-4. [CyberChef: Read a Caesar Shift](04_CyberChef_Caesar.md) — read a Caesar shift
-   (a simple secret-code method that moves each letter by a fixed number of
-   places).
-5. [CyberChef: Peel Back Two Layers](05_CyberChef_Layers.md) — combine two
+1. [Exercise 1.1 -- Signing In and Opening RangeBox](01_First_Steps.md) — sign in,
+   open the desktop, and try simple terminal commands.
+2. [Exercise 1.2 -- RangeBox File Hunt](02_File_Hunt.md) — find a file in the
+   practice desktop.
+3. [Exercise 1.3 -- CyberChef: Base64](03_CyberChef_Base64.md) — decode a
+   message with a browser tool.
+4. [Exercise 1.4 -- CyberChef: Caesar Shift](04_CyberChef_Caesar.md) — read a
+   simple letter-shift cipher.
+5. [Exercise 1.5 -- CyberChef: Two Layers](05_CyberChef_Layers.md) — combine two
    decoding steps.
-6. [Read the Link Before You Click](06_Read_The_Link.md) — inspect a link before
+6. [Exercise 1.6 -- Read the Link](06_Read_The_Link.md) — inspect a link before
    opening it.
-7. [Know the File Before You Open It](07_Know_The_File.md) — check what a file is
+7. [Exercise 1.7 -- Know the File](07_Know_The_File.md) — check what a file is
    before opening it.
-8. [Capstone: The Forwarded Message](08_Forwarded_Message.md) — combine the
-   digital-safety habits in one decision. A capstone is a final activity that
-   brings the earlier skills together.
+8. [Exercise 1.8 -- Capstone: The Forwarded Message](08_Forwarded_Message.md) —
+   combine the digital-safety habits in one decision.
 
 ### Extra Practice
 
-These seven pages are optional. They help you get comfortable with the desktop,
-the terminal, files, basic networking, safe command sequences, and responsible
-decisions before you open File Hunt. They do not replace the eight core
-activities.
+These pages are optional. Use them for extra practice before, during, or after
+the core exercises. They do not replace the eight exercises.
 
 - [RangeBox Desktop and Window Basics](02_RangeBox_Desktop_and_Window_Basics.md)
   — label the browser and RangeBox controls, then open, switch, resize, and
@@ -298,5 +294,5 @@ chapter. It includes matching, sequencing, a text-described screenshot, short
 scenarios, a one-page beginner reference, a confidence reflection, and links
 back to each activity for practice.
 
-Start with [Signing In and Opening RangeBox](01_First_Steps.md). Take it one
-command at a time, and ask for help when you need it.
+Start with [Exercise 1.1 -- Signing In and Opening RangeBox](01_First_Steps.md).
+Take it one command at a time, and ask for help when you need it.

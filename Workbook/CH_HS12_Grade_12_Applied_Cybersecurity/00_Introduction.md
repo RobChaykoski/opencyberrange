@@ -64,8 +64,8 @@ or a RangeBox, you can use it, but it is not required.
 
 ## Stage 4 Activities
 
-1. [DevFest Community Portal](01_DevFest_Community_Portal.md) — a browser-only
-   OSINT and metadata challenge.
-2. [Crypto Rug Pull](02_Crypto_Rug_Pull.md) — trace a simulated token ledger,
-   identify the drained wallet, and explain the scam anatomy.
+1. [Exercise 4.1 -- DevFest Community Portal](01_DevFest_Community_Portal.md) — a
+   browser-only OSINT and metadata challenge.
+2. [Exercise 4.2 -- Crypto Rug Pull](02_Crypto_Rug_Pull.md) — trace a simulated
+   token ledger, identify the drained wallet, and explain the scam anatomy.
 3. [Chapter Review](03_Chapter_Review.md) — consolidate the applied lessons.

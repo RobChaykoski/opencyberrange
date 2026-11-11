@@ -1,4 +1,4 @@
-# Crypto Rug Pull: Follow the Liquidity
+# Exercise 4.2: Crypto Rug Pull: Follow the Liquidity
 
 ## Before You Begin
 

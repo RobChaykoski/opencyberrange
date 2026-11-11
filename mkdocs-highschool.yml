@@ -68,51 +68,53 @@ nav:
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
   - Frameworks: FRAMEWORKS.md
-  - "BEG01: RangeBox Foundations":
+  - "BEG01 -- RangeBox Foundations":
     - Introduction: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
-    - "Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
-    - "Desktop and Window Basics": CH_HS09_Grade_9_RangeBox_Basics/02_RangeBox_Desktop_and_Window_Basics.md
-    - "Terminal Foundations": CH_HS09_Grade_9_RangeBox_Basics/03_Terminal_Foundations.md
-    - "Files, Folders, and Paths": CH_HS09_Grade_9_RangeBox_Basics/04_Files_Folders_and_Paths.md
-    - "Internet and Network Basics": CH_HS09_Grade_9_RangeBox_Basics/05_Internet_and_Network_Basics.md
-    - "Target and Connectivity Check": CH_HS09_Grade_9_RangeBox_Basics/06_Target_and_Connectivity_Check.md
-    - "Basic Command Practice": CH_HS09_Grade_9_RangeBox_Basics/07_Basic_Command_Practice.md
-    - "Cyber Ethics, Privacy, and Digital Citizenship": CH_HS09_Grade_9_RangeBox_Basics/08_Cyber_Ethics_Privacy_and_Digital_Citizenship.md
-    - "File Hunt": CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt.md
-    - "CyberChef: Base64": CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64.md
-    - "CyberChef: Caesar Shift": CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar.md
-    - "CyberChef: Two Layers": CH_HS09_Grade_9_RangeBox_Basics/05_CyberChef_Layers.md
-    - "Read the Link": CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link.md
-    - "Know the File": CH_HS09_Grade_9_RangeBox_Basics/07_Know_The_File.md
-    - "Capstone: Forwarded Message": CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message.md
-    - "Troubleshooting and Safe Exit": CH_HS09_Grade_9_RangeBox_Basics/09_RangeBox_Troubleshooting_and_Safe_Exit.md
+    - "Exercise 1.1 -- Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
+    - "Exercise 1.2 -- File Hunt": CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt.md
+    - "Exercise 1.3 -- CyberChef: Base64": CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64.md
+    - "Exercise 1.4 -- CyberChef: Caesar Shift": CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar.md
+    - "Exercise 1.5 -- CyberChef: Two Layers": CH_HS09_Grade_9_RangeBox_Basics/05_CyberChef_Layers.md
+    - "Exercise 1.6 -- Read the Link": CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link.md
+    - "Exercise 1.7 -- Know the File": CH_HS09_Grade_9_RangeBox_Basics/07_Know_The_File.md
+    - "Exercise 1.8 -- Capstone: The Forwarded Message": CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message.md
+    - "Extra Practice":
+      - "Desktop and Window Basics": CH_HS09_Grade_9_RangeBox_Basics/02_RangeBox_Desktop_and_Window_Basics.md
+      - "Terminal Foundations": CH_HS09_Grade_9_RangeBox_Basics/03_Terminal_Foundations.md
+      - "Files, Folders, and Paths": CH_HS09_Grade_9_RangeBox_Basics/04_Files_Folders_and_Paths.md
+      - "Internet and Network Basics": CH_HS09_Grade_9_RangeBox_Basics/05_Internet_and_Network_Basics.md
+      - "Target and Connectivity Check": CH_HS09_Grade_9_RangeBox_Basics/06_Target_and_Connectivity_Check.md
+      - "Basic Command Practice": CH_HS09_Grade_9_RangeBox_Basics/07_Basic_Command_Practice.md
+      - "Cyber Ethics, Privacy, and Digital Citizenship": CH_HS09_Grade_9_RangeBox_Basics/08_Cyber_Ethics_Privacy_and_Digital_Citizenship.md
+    - "Reference":
+      - "Troubleshooting and Safe Exit": CH_HS09_Grade_9_RangeBox_Basics/09_RangeBox_Troubleshooting_and_Safe_Exit.md
     - "Chapter Review": CH_HS09_Grade_9_RangeBox_Basics/10_Chapter_Review.md
-  - "BEG02: Command Line, Files, and Networks":
+  - "BEG02 -- Command Line, Files, and Networks":
     - Introduction: CH_HS10_Grade_10_RangeBox_Basics/00_Introduction.md
-    - "RangeBox Review and Preflight": CH_HS10_Grade_10_RangeBox_Basics/01_RangeBox_Review_and_Preflight.md
-    - "Command Line Fluency": CH_HS10_Grade_10_RangeBox_Basics/02_Command_Line_Fluency.md
-    - "Files, Permissions, and Ownership": CH_HS10_Grade_10_RangeBox_Basics/03_Files_Permissions_and_Ownership.md
-    - "Processes, Services, and Applications": CH_HS10_Grade_10_RangeBox_Basics/04_Processes_Services_and_Applications.md
-    - "Network Communication and Ports": CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports.md
-    - "Introductory Service Enumeration": CH_HS10_Grade_10_RangeBox_Basics/06_Introductory_Service_Enumeration.md
-    - "Logs and Event Review": CH_HS10_Grade_10_RangeBox_Basics/07_Logs_and_Event_Review.md
-    - "Evidence Notes and Technical Communication": CH_HS10_Grade_10_RangeBox_Basics/08_Evidence_Notes_and_Technical_Communication.md
-    - "Guided Cybersecurity Challenge": CH_HS10_Grade_10_RangeBox_Basics/09_Guided_Cybersecurity_Challenge.md
-    - "Troubleshooting, Reset, and Safe Exit": CH_HS10_Grade_10_RangeBox_Basics/10_Troubleshooting_Reset_and_Safe_Exit.md
+    - "Exercise 2.1 -- Network Communication and Ports": CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports.md
+    - "Exercise 2.2 -- Browser and Source": CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source.md
+    - "Exercise 2.3 -- Dissect an Email": CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata.md
+    - "Exercise 2.4 -- MFA and the Lost Phone": CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone.md
+    - "Exercise 2.5 -- Logs and Event Review": CH_HS10_Grade_10_RangeBox_Basics/07_Logs_and_Event_Review.md
+    - "Exercise 2.6 -- Guided Cybersecurity Challenge": CH_HS10_Grade_10_RangeBox_Basics/09_Guided_Cybersecurity_Challenge.md
+    - "Extra Practice":
+      - "RangeBox Review and Preflight": CH_HS10_Grade_10_RangeBox_Basics/01_RangeBox_Review_and_Preflight.md
+      - "Command Line Fluency": CH_HS10_Grade_10_RangeBox_Basics/02_Command_Line_Fluency.md
+      - "Files, Permissions, and Ownership": CH_HS10_Grade_10_RangeBox_Basics/03_Files_Permissions_and_Ownership.md
+      - "Processes, Services, and Applications": CH_HS10_Grade_10_RangeBox_Basics/04_Processes_Services_and_Applications.md
+      - "Introductory Service Enumeration": CH_HS10_Grade_10_RangeBox_Basics/06_Introductory_Service_Enumeration.md
+      - "Evidence Notes and Technical Communication": CH_HS10_Grade_10_RangeBox_Basics/08_Evidence_Notes_and_Technical_Communication.md
+    - "Reference":
+      - "Troubleshooting, Reset, and Safe Exit": CH_HS10_Grade_10_RangeBox_Basics/10_Troubleshooting_Reset_and_Safe_Exit.md
     - "Chapter Review": CH_HS10_Grade_10_RangeBox_Basics/11_Chapter_Review.md
-    - "Applied Labs":
-      - "Network Basics": CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics.md
-      - "Browser and Source": CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source.md
-      - "Dissect an Email": CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata.md
-      - "MFA and the Lost Phone": CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone.md
-  - "BEG03: Defensive Evidence":
+  - "BEG03 -- Defensive Evidence":
     - Introduction: CH_HS11_Grade_11_Defensive_Security/00_Introduction.md
-    - "Log Detective": CH_HS11_Grade_11_Defensive_Security/01_Log_Detective.md
-    - "Media Provenance": CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance.md
+    - "Exercise 3.1 -- Log Detective": CH_HS11_Grade_11_Defensive_Security/01_Log_Detective.md
+    - "Exercise 3.2 -- Media Provenance": CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance.md
     - "Chapter Review": CH_HS11_Grade_11_Defensive_Security/03_Chapter_Review.md
-  - "BEG04: Applied Challenges":
+  - "BEG04 -- Applied Challenges":
     - Introduction: CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md
-    - "DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
-    - "Crypto Rug Pull": CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull.md
-    - Chapter Review: CH_HS12_Grade_12_Applied_Cybersecurity/03_Chapter_Review.md
+    - "Exercise 4.1 -- DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
+    - "Exercise 4.2 -- Crypto Rug Pull": CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull.md
+    - "Chapter Review": CH_HS12_Grade_12_Applied_Cybersecurity/03_Chapter_Review.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

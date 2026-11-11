@@ -1,4 +1,4 @@
-# RangeBox File Hunt
+# Exercise 1.2: RangeBox File Hunt
 
 ## Before You Begin
 

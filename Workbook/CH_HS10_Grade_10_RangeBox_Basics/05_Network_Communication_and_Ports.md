@@ -1,4 +1,4 @@
-# Network Communication and Ports
+# Exercise 2.1: Network Communication and Ports
 
 This activity explains how a client and server communicate. You will read a
 labelled connection example, make one safe request to the **RangeBox Network

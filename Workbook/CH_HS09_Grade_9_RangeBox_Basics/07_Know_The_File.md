@@ -1,4 +1,4 @@
-# Know the File Before You Open It
+# Exercise 1.7: Know the File Before You Open It
 
 ## Before You Begin
 

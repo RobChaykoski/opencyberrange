@@ -1,4 +1,4 @@
-# Signing In and Opening RangeBox
+# Exercise 1.1: Signing In and Opening RangeBox
 
 This first activity has two parts. First you sign in and open the correct
 workspace. Then you run four simple commands inside RangeBox.

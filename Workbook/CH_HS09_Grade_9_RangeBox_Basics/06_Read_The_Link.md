@@ -1,4 +1,4 @@
-# Read the Link Before You Click
+# Exercise 1.6: Read the Link Before You Click
 
 ## Before You Begin
 

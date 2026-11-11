@@ -1,4 +1,4 @@
-# MFA and the Lost Phone
+# Exercise 2.4: MFA and the Lost Phone
 
 ## Before You Begin
 

@@ -1,4 +1,4 @@
-# Logs and Event Review
+# Exercise 2.5: Logs and Event Review
 
 This activity uses a small synthetic web access log. You will identify **who,
 what, when, where, and result**, separate observation from interpretation, and

@@ -1,4 +1,4 @@
-# Guided Cybersecurity Challenge
+# Exercise 2.6: Guided Cybersecurity Challenge
 
 This is a bounded beginner challenge. You will combine the stage skills:
 

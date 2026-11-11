@@ -1,4 +1,4 @@
-# RangeBox Browser and Source
+# Exercise 2.2: RangeBox Browser and Source
 
 ## Before You Begin
 

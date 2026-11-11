@@ -1,4 +1,4 @@
-# Exercise 11.1 -- Log Detective
+# Exercise 3.1: Log Detective
 
 !!! note "Lab"
     Launch **RangeBox Log Detective** in the platform before starting. You can use

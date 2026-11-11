@@ -1,4 +1,4 @@
-# Media Provenance: Is It Real?
+# Exercise 3.2: Media Provenance: Is It Real?
 
 ## Before You Begin
 

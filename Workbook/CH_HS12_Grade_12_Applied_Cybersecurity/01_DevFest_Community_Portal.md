@@ -1,4 +1,4 @@
-# Stage 4 Activity: DevFest Community Portal
+# Exercise 4.1: DevFest Community Portal
 
 ## Before You Begin
 

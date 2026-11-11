@@ -245,41 +245,41 @@ understand what you did.
 
 ## Activities
 
-1. [RangeBox Review and Preflight](01_RangeBox_Review_and_Preflight.md) — confirm
-   the workspace, identity, files, network, and target before you act.
-2. [Command Line Fluency](02_Command_Line_Fluency.md) — build confidence with
-   commands, options, arguments, pipes, redirection, and output.
-3. [Files, Permissions, and Ownership](03_Files_Permissions_and_Ownership.md) —
-   understand who can read, change, and run files.
-4. [Processes, Services, and Applications](04_Processes_Services_and_Applications.md)
-   — connect running programs to network services.
-5. [Network Communication and Ports](05_Network_Communication_and_Ports.md) —
-   explain client-server connections and connection states.
-6. [Introductory Service Enumeration](06_Introductory_Service_Enumeration.md) —
-   observe one assigned service safely and record the evidence.
-7. [Logs and Event Review](07_Logs_and_Event_Review.md) — read basic system and
-   application events.
-8. [Evidence Notes and Technical Communication](08_Evidence_Notes_and_Technical_Communication.md)
-   — record reproducible steps and explain findings clearly.
-9. [Guided Cybersecurity Challenge](09_Guided_Cybersecurity_Challenge.md) — apply
-   the stage skills in a bounded beginner scenario.
-10. [Troubleshooting, Reset, and Safe Exit](10_Troubleshooting_Reset_and_Safe_Exit.md)
-    — recover independently and leave the lab clean.
-11. [Chapter Review](11_Chapter_Review.md) — check your skills, reflect, and
-    decide what to practise next.
+1. [Exercise 2.1 -- Network Communication and Ports](05_Network_Communication_and_Ports.md)
+   — explain client-server connections and connection states.
+2. [Exercise 2.2 -- Browser and Source](02_Browser_and_Source.md) — inspect the
+   HTML a browser receives.
+3. [Exercise 2.3 -- Dissect an Email](03_Email_Metadata.md) — read raw email
+   headers.
+4. [Exercise 2.4 -- MFA and the Lost Phone](04_MFA_Lost_Phone.md) — trace an
+   account recovery path.
+5. [Exercise 2.5 -- Logs and Event Review](07_Logs_and_Event_Review.md) — read
+   basic system and application events.
+6. [Exercise 2.6 -- Guided Cybersecurity Challenge](09_Guided_Cybersecurity_Challenge.md)
+   — apply the stage skills in a bounded beginner scenario.
 
-## Applied Labs
+### Extra Practice
 
-These existing labs give you extra practice with the stage skills. Use the target
-shown in each exercise.
+These pages are optional. Use them before or alongside the exercises when you
+need more command-line, filesystem, or evidence practice.
 
-- [RangeBox Network Basics](01_Network_Basics.md) — read a status code and
-  response headers.
-- [RangeBox Browser and Source](02_Browser_and_Source.md) — inspect the HTML a
-  browser receives.
-- [Dissect an Email](03_Email_Metadata.md) — read raw email headers.
-- [MFA and the Lost Phone](04_MFA_Lost_Phone.md) — trace an account recovery
-  path.
+- [RangeBox Review and Preflight](01_RangeBox_Review_and_Preflight.md) — confirm
+  the workspace, identity, files, network, and target before you act.
+- [Command Line Fluency](02_Command_Line_Fluency.md) — build confidence with
+  commands, options, arguments, pipes, redirection, and output.
+- [Files, Permissions, and Ownership](03_Files_Permissions_and_Ownership.md) —
+  understand who can read, change, and run files.
+- [Processes, Services, and Applications](04_Processes_Services_and_Applications.md)
+  — connect running programs to network services.
+- [Introductory Service Enumeration](06_Introductory_Service_Enumeration.md) —
+  observe one assigned service safely and record the evidence.
+- [Evidence Notes and Technical Communication](08_Evidence_Notes_and_Technical_Communication.md)
+  — record reproducible steps and explain findings clearly.
 
-Start with [RangeBox Review and Preflight](01_RangeBox_Review_and_Preflight.md).
+### Reference
+
+- [Troubleshooting, Reset, and Safe Exit](10_Troubleshooting_Reset_and_Safe_Exit.md)
+  — recover independently and leave the lab clean.
+
+Start with [Exercise 2.1 -- Network Communication and Ports](05_Network_Communication_and_Ports.md).
 Take it one check at a time, and ask for help when you need it.

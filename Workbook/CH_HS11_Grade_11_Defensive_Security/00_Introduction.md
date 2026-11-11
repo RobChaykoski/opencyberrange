@@ -45,11 +45,11 @@ explaining.
 
 ## Activities
 
-1. [Log Detective](01_Log_Detective.md) — read a short access log, separate
-   normal traffic from probing, and recover the training token.
-2. [Media Provenance](02_Media_Provenance.md) — compare two images using source,
-   provenance, metadata, and independent corroboration, then state what the
-   evidence does not prove.
+1. [Exercise 3.1 -- Log Detective](01_Log_Detective.md) — read a short access log,
+   separate normal traffic from probing, and recover the training token.
+2. [Exercise 3.2 -- Media Provenance](02_Media_Provenance.md) — compare two images
+   using source, provenance, metadata, and independent corroboration, then state
+   what the evidence does not prove.
 3. [Chapter Review](03_Chapter_Review.md) — consolidate the defensive loop.
 
 ## How to Work Safely
