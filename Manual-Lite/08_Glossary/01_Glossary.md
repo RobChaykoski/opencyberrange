@@ -108,6 +108,7 @@ values. Terms that already appear in another section are not repeated here.
 | Term | Definition |
 |---|---|
 | Host | A device on a network with an IP address, such as a server, workstation, or lab container. |
+| Hostname | A human-readable name that resolves to an IP address. |
 | Target | The specific host assigned to an exercise. Only the target shown in the exercise is in scope. |
 | IP address | Internet Protocol address: a numeric address that identifies a host on a network. |
 | Subnet | A block of IP addresses on the same network. The platform assigns each student session its own subnet. |
@@ -128,10 +129,14 @@ values. Terms that already appear in another section are not repeated here.
 | Nmap | Network Mapper: a free, open-source network discovery and security-auditing tool. |
 | NSE | Nmap Scripting Engine: the part of Nmap that runs scripts against discovered services for deeper enumeration. |
 | OS | Operating system, such as Linux or Windows. |
+| OS confidence | Nmap's estimate of how closely a fingerprint matches a known operating system. A low value means the guess is weak. |
 | CPE | Common Platform Enumeration: a standardized identifier for a product and version, used when looking up vulnerabilities. |
+| Security auditing | Checking systems for unintended exposure, configuration weaknesses, or policy drift. |
+| Raw packet | A hand-crafted network packet that bypasses the normal networking stack and requires privileged access. |
 | Exploitation (general) | Using a discovered weakness to gain access or control. The kill chain also has a phase named Exploitation; that phase is narrower. |
 | Penetration test | An authorized security assessment that mimics an attacker's discovery and exploitation steps to find weaknesses before a real attacker does. |
 | VPN | Virtual Private Network: an encrypted tunnel that places a remote machine on the lab network. |
+| Kali Linux | A Linux distribution that ships with security and penetration-testing tools. |
 
 ### Common service acronyms
 
