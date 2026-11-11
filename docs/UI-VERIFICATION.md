@@ -220,10 +220,13 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   **9/9 checks** and showed the subnet, `10.100.48.17`, `recon.lab`, and the
   hosts-file mapping, with no page or console errors. Evidence:
   `prod-target-ip-panel.png` and `prod-target-ip-panel.json`.
-- Production finding: the new beginner labs are in the catalogue but not all of
-  their images are prebuilt. Spawning CyberChef Base64 failed with “not prepared
-  on this server; on-demand builds are disabled.” Run
-  `scripts/prebuild-labs.sh --lab <slug>` on the host before using those labs.
+- The new beginner labs were in the production catalogue but seven of their
+  images were not prebuilt. Spawning CyberChef Base64 initially failed with “not
+  prepared on this server; on-demand builds are disabled.” The seven images were
+  then built on production, and all 18 Beginner lab images are now present.
+  CyberChef Base64 and Caesar completed end-to-end (target read, flag accepted,
+  next lab unlocked). Disk remained at 24G free, which is below the 60G prebuild
+  recommendation; monitor capacity before adding more lab images.
 - Other existing hosts can apply the same fix with
   `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
   backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.
