@@ -203,6 +203,23 @@ def is_lab_unlocked(
     return True
 
 
+def should_reveal_target_ips(lab, session) -> bool:
+    """Show target IPs for labs that opt in, and for VPN-only sessions.
+
+    A VPN-only student reaches the lab over WireGuard, where Docker network
+    aliases such as ``web.lab`` are not resolvable. Expose the computed target
+    IPs for that session so the panel can show a hosts-file mapping. RangeBox
+    sessions already resolve hostnames inside the desktop, so they keep the
+    discovery flow unless the lab explicitly sets ``show_target_ips``.
+    """
+    if not session or not getattr(session, "network_subnet", None):
+        return False
+    return bool(
+        getattr(lab, "show_target_ips", False)
+        or not getattr(session, "rangebox_enabled", False)
+    )
+
+
 def get_current_lab(
     db: Session,
     user_id: int,
@@ -2046,7 +2063,7 @@ async def get_lab_details(
     try:
         hostnames_raw = json.loads(lab.hostnames) if lab.hostnames else []
         if session and hostnames_raw:
-            reveal_ips = bool(getattr(lab, 'show_target_ips', False) and session.network_subnet)
+            reveal_ips = should_reveal_target_ips(lab, session)
             subnet_base = ".".join(session.network_subnet.split("/")[0].split(".")[:3]) if reveal_ips else None
             for hostname_entry in hostnames_raw:
                 hostname = hostname_entry.get('hostname', '')
@@ -2143,9 +2160,9 @@ async def get_lab_details(
         except Exception as e:
             logger.warning(f"Failed to reconstruct requested hints: {e}")
     
-    # Compute target IPs when show_target_ips is set and session is active
+    # Compute target IPs for opted-in labs and VPN-only sessions.
     target_ips = []
-    if getattr(lab, 'show_target_ips', False) and session and session.network_subnet:
+    if should_reveal_target_ips(lab, session):
         try:
             topo_nodes_raw = json.loads(lab.topology_nodes) if lab.topology_nodes else []
             # Parse subnet base: "10.100.6.0/24" -> "10.100.6"

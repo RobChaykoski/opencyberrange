@@ -203,8 +203,18 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
 - The client config does not set `DNS`, so `cyberchef-b64.lab` does not resolve
   over the tunnel. The lab panel shows the lab subnet (`10.100.218.0/24`) and
   instructs the learner to scan, and the target was reached at
-  `10.100.218.93:8080`. Adding DNS to the client config or showing target IPs in
-  the panel/workbook would remove the workbook/hostname mismatch.
+  `10.100.218.93:8080`.
+- Fixed the VPN-only hostname gap in
+  `platform/backend/app/routers/curriculum.py`: when the active session is
+  VPN-only, the lab detail response includes the computed target IPs and a
+  hosts-file mapping. RangeBox sessions keep IPs hidden unless the lab sets
+  `show_target_ips`, so the discovery flow is unchanged there. Unit tests:
+  **4 passed**; live API check: a VPN-only session returned
+  `10.100.223.93` for `cyberchef-b64.lab`, while a RangeBox session returned no
+  IPs.
+- Existing hosts can apply the WireGuard route fix with
+  `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
+  backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.
 - The Base64 message was downloaded over the tunnel, decoded to
   `OCR{b4s364_is_encoding_not_encryption}`, and submitted through the UI. The
   lab completed and the next CyberChef lab unlocked.
