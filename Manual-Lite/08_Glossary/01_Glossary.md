@@ -100,6 +100,53 @@ workflow:state="complete"
 | Process list | The set of processes that were running when a memory image was captured. | No taxonomy value |
 | Injected code | Code placed into another process's memory, often to hide execution or evade detection. | Describe with an ATT&CK technique; no single taxonomy value |
 
+## Network and enumeration terms
+
+These are teaching terms used in the workbook. They are not MISP taxonomy
+values. Terms that already appear in another section are not repeated here.
+
+| Term | Definition |
+|---|---|
+| Host | A device on a network with an IP address, such as a server, workstation, or lab container. |
+| Target | The specific host assigned to an exercise. Only the target shown in the exercise is in scope. |
+| IP address | Internet Protocol address: a numeric address that identifies a host on a network. |
+| Subnet | A block of IP addresses on the same network. The platform assigns each student session its own subnet. |
+| Loopback / localhost | The local host address `127.0.0.1`. A service bound only to loopback is reachable only from that host. |
+| Port | A numbered logical endpoint on a host, from `0` to `65535`. The operating system uses the port number to decide which program receives a connection. |
+| Protocol | The rules two systems use to communicate. TCP and UDP are transport protocols. |
+| TCP | Transmission Control Protocol: a reliable, connection-based transport protocol used by most services in Chapter 1. |
+| UDP | User Datagram Protocol: a connectionless transport protocol. UDP scanning is outside Chapter 1. |
+| Service | A program that listens on a port and responds to connections, such as a web server, SSH server, file-sharing service, or database. |
+| Port scan | Probing a host's ports to learn which are open, closed, or filtered. |
+| Version detection | Asking an open service to reveal its software product and version. Nmap's `-sV` option performs this. |
+| OS fingerprinting | Inferring a host's operating system from how it responds to network probes. Nmap's `-O` option performs this. |
+| Enumeration | The systematic discovery of hosts, ports, services, versions, and operating-system details. |
+| Scope | The set of systems, ports, and actions an assessment is authorized to test. In the workbook, scope is the target shown in the exercise. |
+| Open port | A port where a service is listening and accepting connections. |
+| Closed port | A port on a reachable host where nothing is listening. |
+| Filtered port | A port where a firewall or network control is silently dropping probes. The scan cannot tell whether a service is behind it. |
+| Nmap | Network Mapper: a free, open-source network discovery and security-auditing tool. |
+| NSE | Nmap Scripting Engine: the part of Nmap that runs scripts against discovered services for deeper enumeration. |
+| OS | Operating system, such as Linux or Windows. |
+| CPE | Common Platform Enumeration: a standardized identifier for a product and version, used when looking up vulnerabilities. |
+| Exploitation (general) | Using a discovered weakness to gain access or control. The kill chain also has a phase named Exploitation; that phase is narrower. |
+| Penetration test | An authorized security assessment that mimics an attacker's discovery and exploitation steps to find weaknesses before a real attacker does. |
+| VPN | Virtual Private Network: an encrypted tunnel that places a remote machine on the lab network. |
+
+### Common service acronyms
+
+| Acronym | Expansion | Typical port |
+|---|---|---|
+| SSH | Secure Shell | 22 |
+| HTTP | Hypertext Transfer Protocol | 80 |
+| HTTPS | HTTP Secure | 443 |
+| MSRPC | Microsoft Remote Procedure Call | 135 |
+| NetBIOS | Network Basic Input/Output System | 139 |
+| SMB | Server Message Block | 445 |
+| MSSQL | Microsoft SQL Server | 1433 |
+| RDP | Remote Desktop Protocol | 3389 |
+| WinRM | Windows Remote Management | 5985 (HTTP), 5986 (HTTPS) |
+
 ## SWOCTS Cyber Range platform terms
 
 These are training-platform terms. They are deliberately not mapped to MISP
@@ -115,7 +162,7 @@ taxonomies because they do not describe threat intelligence.
 | Academy | The course area of the platform. Students see their courses; staff see the programme and course workspaces. |
 | Programme | An optional institutional grouping of courses and semester goals. A course can exist without a programme. |
 | Course workspace | The course page with Overview, Feedback, and Analytics (staff). |
-| Flag | The token a student submits to prove completion. It is a training marker, not an IOC. |
+| Flag | The token a student submits to prove completion, usually in `OCR{...}` format. It is a training marker, not an IOC. |
 | Hint | A staged clue that unlocks after a configured time or condition. |
 | RangeBox | The browser-based Kali, Ubuntu, or REMnux desktop used to work on a lab. |
 | Session | One running instance of a lab assigned to one student. |
