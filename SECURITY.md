@@ -133,7 +133,7 @@ session.
 
 | Check | Result |
 |---|---|
-| Deployment baseline | Prod `172.16.16.41` and dev `172.16.16.44` on `eac74283`; frontend assets contain the combined exercise workspace |
+| Deployment baseline | Prod `172.16.16.41` and dev `172.16.16.44` on `2835303b`; frontend assets contain the combined exercise workspace and the WEB01 wiki pages are published |
 | Browser walkthrough | Dedicated test student and instructor accounts launched `RangeBox First Steps`; **44/44 checks passed** for the workspace layout, VNC connection, Expand/Restore, both new-tab controls, hint request, invalid-flag handling, Stop, and the mobile fallback |
 | Workspace fix | **Open in new tab** now opens `/rangebox?...` in a new tab instead of navigating the exercise tab |
 | Stop/relaunch race | Cleanup for an old session defers to a newer starting/running session for the same lab, so a rapid relaunch keeps its network and RangeBox instead of silently launching VPN-only |

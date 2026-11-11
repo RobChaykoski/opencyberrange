@@ -39,6 +39,19 @@ session could remove the network and RangeBox created by a newer session for the
 same lab, which silently launched the new lab VPN-only. Cleanup now checks for a
 newer starting/running session and leaves the live environment alone.
 
+Deployment on **11 November 2026**:
+
+- Production `172.16.16.41` / `https://ctfd.swocts.com` and development
+  `172.16.16.44` are on `2835303b`; both report `2.6.0` and are healthy.
+- The wiki builder published 13 sites. The WEB01 page
+  `01_Web_Target_and_Scope_Preflight` and the `W1.11` navigation entry are
+  present.
+- The wiki CSP serves the Material for MkDocs font stylesheet from
+  `fonts.googleapis.com` and font files from `fonts.gstatic.com`; the SPA policy
+  remains self-only.
+- The temporary test student and instructor accounts and their sessions were
+  removed after the run.
+
 ## 2.6.0 event certificate additions
 
 Checked on **2026-11-10** through the production frontend build and backend
