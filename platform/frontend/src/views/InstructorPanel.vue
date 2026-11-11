@@ -933,7 +933,8 @@
                     <span
                       class="track-badge"
                       :style="{ background: lab.track_color + '1a', color: lab.track_color }"
-                    >{{ lab.track_name }}</span>
+                    >{{ lab.chapter_label || lab.track_name }}</span>
+                    <div v-if="lab.chapter_label" class="lab-desc">{{ lab.track_name }}</div>
                   </td>
                   <td>
                     <span :class="['difficulty-badge', `difficulty-${lab.difficulty}`]">{{ lab.difficulty }}</span>

@@ -118,7 +118,7 @@
             <tr v-for="exercise in exercises" :key="exercise.lab_id">
               <td>
                 <span class="analytics-exercise">{{ exercise.lab_name }}</span>
-                <small>{{ exercise.track_name }}<template v-if="exercise.level_name"> · {{ exercise.level_name }}</template></small>
+                <small>{{ exercise.chapter_label || exercise.track_name }}<template v-if="exercise.level_name"> · {{ exercise.level_name }}</template></small>
               </td>
               <template v-if="exercise.cohort_state === 'available'">
                 <td>
