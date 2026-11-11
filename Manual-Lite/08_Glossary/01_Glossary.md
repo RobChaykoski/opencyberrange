@@ -117,6 +117,11 @@ values. Terms that already appear in another section are not repeated here.
 | Protocol | The rules two systems use to communicate. TCP and UDP are transport protocols. |
 | TCP | Transmission Control Protocol: a reliable, connection-based transport protocol used by most services in Chapter 1. |
 | UDP | User Datagram Protocol: a connectionless transport protocol. UDP scanning is outside Chapter 1. |
+| SYN | The first packet in a TCP connection. A port scan sends SYN probes to test whether a port accepts connections. |
+| SYN-ACK | The target's acceptance response to a SYN. It indicates that a service is listening on the port. |
+| RST | A reset response. It indicates that the target refused the connection because nothing is listening on the port. |
+| ICMP | Internet Control Message Protocol: the protocol used by tools such as `ping`. A target may block ICMP while still accepting TCP connections. |
+| Share | A folder or resource exposed over SMB. An anonymous share allows access without credentials. |
 | Service | A program that listens on a port and responds to connections, such as a web server, SSH server, file-sharing service, or database. |
 | Port scan | Probing a host's ports to learn which are open, closed, or filtered. |
 | Version detection | Asking an open service to reveal its software product and version. Nmap's `-sV` option performs this. |
