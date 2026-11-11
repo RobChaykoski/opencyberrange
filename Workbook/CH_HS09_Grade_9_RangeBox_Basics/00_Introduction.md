@@ -7,10 +7,10 @@ is written for students who use a computer every day but have not studied this
 subject before. You do not need any special technical knowledge or software
 installation.
 
-The chapter has eight core activities and seven extra-practice pages. You will
-open a practice desktop, use the on-screen tools, decode a few messages, and
-practise checking a link or file before you click or open it. You can work at
-your own pace.
+The chapter has eight core activities, seven extra-practice pages, one
+troubleshooting reference, and one chapter review. You will open a practice
+desktop, use the on-screen tools, decode a few messages, and practise checking a
+link or file before you click or open it. You can work at your own pace.
 
 ## Words to Know
 
@@ -276,6 +276,20 @@ activities.
 - [Cyber Ethics, Privacy, and Digital Citizenship](08_Cyber_Ethics_Privacy_and_Digital_Citizenship.md)
   — use fictional school scenarios to practise authorization, privacy,
   responsible reporting, and a calm stop-and-report process.
+
+## Troubleshooting and Safe Exit
+
+Use [RangeBox Troubleshooting and Safe Exit](09_RangeBox_Troubleshooting_and_Safe_Exit.md)
+whenever something goes wrong, and again at the end of the chapter. It covers a
+blank screen, loading delay, unresponsive window, wrong prompt, command error,
+lost target, disconnected session, unsaved notes, and safe cleanup.
+
+## Chapter Review
+
+When you are ready, use [Chapter Review](10_Chapter_Review.md) to check the whole
+chapter. It includes matching, sequencing, a text-described screenshot, short
+scenarios, a one-page beginner reference, a confidence reflection, and links
+back to each activity for practice.
 
 Start with [Signing In and Opening RangeBox](01_First_Steps.md). Take it one
 command at a time, and ask for help when you need it.

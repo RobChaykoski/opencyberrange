@@ -320,7 +320,22 @@ repeated here.
 | Login | Sending a username and password, or opening an authenticated session. A connectivity check does not log in. |
 | Identity | The account a learner is using inside RangeBox. `whoami` prints it. |
 | Workspace folder | A small folder used for one activity, such as `command-practice`. |
-| Reset | Returning an activity to a known starting point without deleting unknown files or stopping the whole environment. |
+| Reset | Returning an activity to a known starting point. A small reset may clear one step; a lab reset stops and relaunches the exercise. |
+| Exit | Leave the exercise panel. The lab keeps running. |
+| Save | Write notes or work to a place that survives the lab, such as a notes file. |
+| Logout | End the OpenCyberRange login session using the Logout button in the platform sidebar. |
+| Lab reset | Stop the exercise and launch it again to get a fresh environment. Unsaved work may be lost. |
+| Unsaved work | Work that exists only in the temporary lab or an open window and may be lost if the lab resets. |
+| Session expired | The platform has ended a signed-in session, often after inactivity. Sign in again. |
+| Cleanup | Removing or securing practice files, credentials, personal information, and open sessions at the end of an activity. |
+| Symptom | What a learner sees or experiences when something is wrong, such as a blank screen or an error message. |
+| Recovery | The steps taken to return to a safe, working state, starting with the least disruptive check. |
+| Matching | An activity where a term is connected to its meaning. |
+| Sequencing | An activity where steps are put in a safe order. |
+| Scenario | A short situation used to practise a decision. |
+| Remediation | The activity to revisit when a skill is not ready yet. |
+| Readiness gate | A checklist that confirms a learner can explain and use the skills. It is not a score. |
+| Confidence reflection | An ungraded self-check where a learner marks Not yet, Almost, or Yes. |
 | File | A named piece of data, such as a document, picture, or text file. |
 | Folder | A container that holds files or other folders. |
 | Path | The route to a file or folder, written with `/` between folder names. |
