@@ -109,6 +109,38 @@ From the operator workstation, refresh the documented status page:
 python scripts/status-dashboard.py --config docs/status-hosts.json
 ```
 
+## Regression checks
+
+Run these from the operator workstation against a deployment. Each writes JSON
+and screenshots to `UI_ARTIFACT_DIR` (default names vary by script).
+
+| Check | Script | Needs |
+|---|---|---|
+| Deployment smoke | `scripts/ui-smoke.mjs` | `UI_BASE_URL`, `UI_SMOKE_TOKEN` or `UI_SMOKE_USERNAME`/`UI_SMOKE_PASSWORD` |
+| Learning gating | `scripts/ui-learning-smoke.mjs` | `UI_BASE_URL`, `UI_USERNAME`, `UI_PASSWORD` |
+| Exercise workspace | `scripts/ui-workspace-regression.mjs` | `UI_BASE_URL`, student and instructor credentials |
+| Public verification | `scripts/ui-verify-public.mjs` | `UI_VERIFY_URLS` (public certificate URLs) |
+
+`UI_PLAYWRIGHT_PATH` accepts a package name, a package path, or a `file://` URL.
+On a workstation with Edge installed, set `UI_BROWSER_EXECUTABLE` to the Edge
+executable and skip the Playwright browser download.
+
+Backend unit tests for the release fixes:
+
+```bash
+cd platform/backend
+python -m pytest tests/test_target_ip_reveal.py tests/test_lab_network_cleanup.py \
+  tests/test_event_certificate_pdf_layout.py
+```
+
+Static checks used by CI:
+
+```bash
+python scripts/check-nginx-security-headers.py
+python scripts/check-doc-assets.py
+python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
+```
+
 ## Release evidence
 
 Record verification results in `docs/UI-VERIFICATION.md`. The repeatable

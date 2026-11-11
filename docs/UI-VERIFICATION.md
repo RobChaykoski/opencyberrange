@@ -227,8 +227,10 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   full **18/18 Beginner track was completed end-to-end on production** with a
   temporary student: every target was read, every flag accepted, and each next
   lab unlocked. Disk cleanup removed three old backend tags and reclaimed about
-  2G; 26G remains free, with 40.1G still reclaimable from unused prebuilt lab
-  images. Do not run `docker image prune -a` on this host.
+  2G; a later pass removed **100 stale `ocr-lab` hash tags** and left about
+  **35 GB free** on the production volume. `docker system df` still reports
+  roughly 32 GB reclaimable because the current `:latest` and current hash tags
+  are live. Do not run `docker image prune -a` on this host.
 - Other existing hosts can apply the same fix with
   `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
   backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.

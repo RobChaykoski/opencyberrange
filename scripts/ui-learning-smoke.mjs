@@ -21,18 +21,35 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createRequire } from 'node:module'
 
 const require = createRequire(import.meta.url)
 const PLAYWRIGHT = process.env.UI_PLAYWRIGHT_PATH || 'playwright'
+
+// Accept a bare package name, a package path, or a file URL. A local package
+// path has to become a file URL for dynamic import; a bare name may resolve
+// through the normal module lookup.
+function playwrightTarget(spec) {
+  if (spec.startsWith('file:')) return spec
+  if (spec.startsWith('.') || spec.startsWith('/') || /^[A-Za-z]:[\\/]/.test(spec)) {
+    return pathToFileURL(path.resolve(spec)).href
+  }
+  return spec
+}
+
 let chromium
 try {
-  ;({ chromium } = require(PLAYWRIGHT))
-} catch (err) {
-  console.error(`Cannot load Playwright from ${PLAYWRIGHT}.`)
-  console.error(String(err.message || err))
-  process.exit(2)
+  ;({ chromium } = await import(playwrightTarget(PLAYWRIGHT)))
+} catch (importError) {
+  try {
+    ;({ chromium } = require(PLAYWRIGHT))
+  } catch (requireError) {
+    console.error(`Cannot load Playwright from ${PLAYWRIGHT}.`)
+    console.error(String(importError.message || importError))
+    console.error(String(requireError.message || requireError))
+    process.exit(2)
+  }
 }
 
 const BASE = (process.env.UI_BASE_URL || '').replace(/\/$/, '')
