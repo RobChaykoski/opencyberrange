@@ -219,6 +219,46 @@ taxonomies because they do not describe threat intelligence.
 | Celebration | A voluntary, anonymous signal of appreciation for a public achievement. One person can celebrate a win once; only the count is shown. |
 | Celebration Wall | The cross-course view of public achievements and celebrations. It is not a leaderboard. |
 
+## Orientation and safety terms
+
+These are introductory terms for new learners. They are teaching language, not
+MISP taxonomy values. Terms that already appear in another section are not
+repeated here.
+
+| Term | Definition |
+|---|---|
+| Cybersecurity | Keeping computers, accounts, and information safe. It includes defence and careful investigation. |
+| Cyber range | A safe, separate practice space for cybersecurity. The computers inside are for practice, not real-world targets. |
+| OpenCyberRange | The training platform used to open exercises and the practice desktop. |
+| Virtual machine | A computer that runs inside another computer. A lab desktop provided through the web is not installed on the learner's device. |
+| Browser | The application used to visit websites, such as Chrome, Edge, Firefox, or Safari. |
+| Browser tab | One page area inside a web browser. Keep the exercise tab open while working. |
+| Desktop | The screen with windows, icons, and open apps. |
+| Terminal | A text window where a learner types commands. |
+| Command | An instruction typed into a terminal. |
+| Command prompt | The place in a terminal where text is typed. It often shows the account and current folder. |
+| Account | A learner's login for OpenCyberRange. The password must remain private. |
+| Authorized activity | Work a teacher or the platform asks a learner to do inside OpenCyberRange. If unsure, stop and ask first. |
+| Linux | A type of operating system used by the practice desktop. Prior Linux experience is not required. |
+| Server | A computer that provides something to other computers, such as a web page. |
+| File | A named piece of data, such as a document, picture, or text file. |
+| Folder | A container that holds files. |
+| Link | Clickable text or an image that opens a page in a browser. |
+| URL | A web address, such as the address of a page or file. |
+| Taskbar | The bar on a desktop that shows open apps and shortcuts. |
+| Application menu | The menu used to open programs on a desktop. |
+| Digital safety | Habits that protect a learner online, such as checking a link or file before clicking or opening it. |
+| CyberChef | A browser tool for encoding, decoding, and transforming data. |
+| Decode | Change encoded or scrambled data back into a form that can be read. |
+| Encode | Change data into another form. Encoding does not keep data secret. |
+| Encoding | Changing data into another representation. Encoding is not encryption and does not protect data by itself. |
+| Base64 | A common encoding that represents data using letters, numbers, and symbols. It does not protect data. |
+| Caesar shift | A simple cipher that moves each letter by a fixed number of places. |
+| Capstone | A final activity that brings earlier skills together. |
+| Accessibility options | Ways to make an activity easier to use, such as zoom, keyboard navigation, less motion, or extra time. |
+| Reduced motion | A device setting that reduces animation and motion effects. |
+| Clipboard | A temporary place for copied text. RangeBox has a Clipboard button for moving text between the browser and the desktop. |
+
 ## Programme, learning, and analytics terms
 
 These terms describe the teaching, feedback, and programme layer. They are
