@@ -281,7 +281,18 @@ repeated here.
 | Linux | A type of operating system used by the practice desktop. Prior Linux experience is not required. |
 | Server | A computer that provides something to other computers, such as a web page. |
 | File | A named piece of data, such as a document, picture, or text file. |
-| Folder | A container that holds files. |
+| Folder | A container that holds files or other folders. |
+| Path | The route to a file or folder, written with `/` between folder names. |
+| Home folder | The folder that belongs to a learner's RangeBox account, such as `/home/kali`. The shorthand `~` also means the home folder. |
+| Current directory | The folder a learner is working in now. Also called the working directory. `pwd` prints it. |
+| Parent directory | The folder one level above the current directory. The shorthand `..` means the parent directory. |
+| Absolute path | A path that starts at the root with `/` and works from any folder, such as `/home/kali/practice-files/welcome.txt`. |
+| Relative path | A path that starts from the current directory and does not start with `/`, such as `notes/welcome.txt`. |
+| File extension | The part after the last dot in a file name, such as `.txt`. It suggests the file type but does not prove what is inside or that the file is safe. |
+| Sandbox folder | A disposable folder used for practice, such as `~/practice-files`. |
+| Hidden file | A file whose name starts with `.`, such as `.notes`. A plain `ls` does not show it. |
+| Wildcard | The `*` symbol, which can match many names. A wildcard can match more than expected, so beginners should avoid it in file removal commands. |
+| Root directory | The top of the Linux filesystem, written as `/`. |
 | Link | Clickable text or an image that opens a page in a browser. |
 | URL | A web address, such as the address of a page or file. |
 | Taskbar | The bar on a desktop that shows open apps and shortcuts. |

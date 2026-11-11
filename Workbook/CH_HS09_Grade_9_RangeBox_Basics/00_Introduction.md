@@ -7,10 +7,10 @@ is written for students who use a computer every day but have not studied this
 subject before. You do not need any special technical knowledge or software
 installation.
 
-The chapter has eight core activities and two extra-practice pages. You will open
-a practice desktop, use the on-screen tools, decode a few messages, and practise
-checking a link or file before you click or open it. You can work at your own
-pace.
+The chapter has eight core activities and three extra-practice pages. You will
+open a practice desktop, use the on-screen tools, decode a few messages, and
+practise checking a link or file before you click or open it. You can work at
+your own pace.
 
 ## Words to Know
 
@@ -247,8 +247,8 @@ teacher or revisit the activity before moving on.
 
 ### Extra Practice
 
-These two pages are optional. They help you get comfortable with the desktop and
-the terminal before you open File Hunt. They do not replace the eight core
+These three pages are optional. They help you get comfortable with the desktop
+and the terminal before you open File Hunt. They do not replace the eight core
 activities.
 
 - [RangeBox Desktop and Window Basics](02_RangeBox_Desktop_and_Window_Basics.md)
@@ -257,6 +257,8 @@ activities.
 - [Terminal Foundations](03_Terminal_Foundations.md) — learn what the terminal,
   shell, prompt, command, option, argument, and output are, then run four safe
   commands one at a time.
+- [Files, Folders, and Paths](04_Files_Folders_and_Paths.md) — practise listing,
+  reading, moving, copying, and removing disposable files in a sandbox folder.
 
 Start with [Signing In and Opening RangeBox](01_First_Steps.md). Take it one
 command at a time, and ask for help when you need it.
