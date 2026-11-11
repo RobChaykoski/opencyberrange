@@ -124,7 +124,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "1f504acfc70606b00e154a3b2b8d8b60a5d486cd9c105b92dc78ed7d03cf3029"
+      "sha256": "6f9520777d61c1031f8f5c34ba778aff749dd8095ff0cb2bd20ff99646401694"
     }
   },
   "generator": "scripts/supply_chain.py",
