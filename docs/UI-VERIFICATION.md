@@ -69,6 +69,27 @@ Development rerun on **11 November 2026** against `https://172.16.16.44`
 - The demo accounts' password hashes were temporarily replaced for the run and
   restored afterwards. No learner accounts or completions were changed, and no
   lab containers remained running.
+- Curriculum card and lock-sequence check: **40/40 checks** on desktop and at
+  390 px. The new **Beginner Cybersecurity**, **Identity & Access**, and
+  **Software Security** cards render with the expected current level and
+  exercise counts. Beginner Cybersecurity shows all four stages and 18 labs,
+  with **1 unlocked / 17 locked**; Identity & Access shows **1/3 unlocked** and
+  Software Security **1/2**. The DOM lock state matched the API
+  `is_unlocked` value for every lab, including the Level 10 first lab staying
+  locked until Level 9 is complete.
+- RangeBox target access and timings: four Stage 2/3 labs were launched with a
+  Kali RangeBox, and the target was reached from inside the desktop. DNS
+  resolved and HTTP returned **200** in every case:
+
+  | Lab | Target | Spawn | RangeBox ready | HTTP | Stop / cleanup |
+  |---|---|---:|---:|---:|---:|
+  | RangeBox Network Basics | `network.lab` | 9.5 s | 21.0 s | 200 / 2.4 ms | 42.6 s |
+  | RangeBox Browser and Source | `web.lab` | 11.6 s | 23.0 s | 200 / 2.3 ms | 42.6 s |
+  | Dissect an Email | `emailmeta.lab` | 11.6 s | 23.0 s | 200 / 4.0 ms | 42.6 s |
+  | RangeBox Log Detective | `logs.lab` | 10.4 s | 21.9 s | 200 / 2.6 ms | 43.7 s |
+
+  These are single-lab timings on the development host, not a capacity result;
+  use [RangeBox capacity](RANGEBOX-CAPACITY.md) for sizing.
 - Evidence: `ui-workspace-artifacts/dev-20261111/` and
   `ui-smoke-artifacts/dev-20261111/` on the operator workstation.
 
@@ -100,8 +121,18 @@ compilation, not a live browser session:
   before submit, a well-formed unknown ID returns the generic invalid result
   without account details, there is no horizontal overflow at 390 px, and no
   page or console errors were raised.
-- Still outstanding: a visual review of a live event certificate with real
-  sponsor artwork.
+- Visual review on **11 November 2026** used a temporary ended development event
+  with a 960 x 300 event logo and gold/silver/bronze sponsor logos. The event
+  detail page, certificate page, mobile certificate, and public verification
+  passed **25/25 checks**. Every event and sponsor image loaded at its natural
+  size, the five award certificates were listed, and the public result exposed
+  the award and event but no account details. The PDF rendered at A4 landscape
+  (841.89 x 595.28 pt) with five embedded images: event logo, three sponsor
+  logos, and the QR code. Evidence:
+  `ui-workspace-artifacts/dev-20261111/certificate-event-desktop.png`,
+  `certificate-event-mobile.png`, `certificate-verify-desktop.png`,
+  `certificate-first.pdf`, and `certificate-first.png`. The temporary event and
+  its awards were removed and the demo account hashes restored after the run.
 
 Deployment smoke on **2026-11-10**:
 
@@ -358,7 +389,9 @@ CI runs the same static checks on every push:
 
 ## What this does not prove
 
-- A full interactive lab launch and VPN connection were not part of this run.
+- A full interactive lab launch and RangeBox desktop were covered by the
+  workspace regression and target-host checks above. A WireGuard VPN client
+  connection was not part of those browser runs.
 - Docker host state was not read by the browser test; use
   `docker compose ps` on each deployment host for that check.
 - A smoke run does not measure capacity. Use the
