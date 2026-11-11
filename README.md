@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-2.7.0%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-162-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-164-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -564,6 +564,8 @@ Validation history:
 
 | Check | Result |
 |---|---|
+| 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
+| 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
 | 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.6.0 data integrity | **Admin → System → Integrity** live ledger summary; daily timer units in `deploy/systemd/` |
 | 2.6.0 event certificates | Participation, placement, and trophy certificates; JSON and PDF; public verification, opt-out, `409`, and `403` tests pass |

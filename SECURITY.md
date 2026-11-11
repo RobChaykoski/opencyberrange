@@ -240,7 +240,20 @@ and supply-chain controls. The highest residual risks remain host/Docker
 compromise, firewall-dependent lab isolation, trusted instructor wiki content,
 client-side secrets, and upstream supply-chain compromise.
 
-## Security review evidence — 10 November 2026
+## 2.7.0 release evidence - 11 November 2026
+
+| Check | Result |
+|---|---|
+| Deployment | Dev `172.16.16.44` and prod `172.16.16.41` / `https://ctfd.swocts.com` on `ce7c25bb`, version `2.7.0`, healthy, WireGuard client route present |
+| Quiz banks | Four Beginner banks seeded (5/5/4/4 questions, pass 70); `has_quiz=true` on all four levels; Stage 2 submission **100% (5/5)** on both hosts |
+| Learning smoke | `scripts/ui-learning-smoke.mjs` **13/13** on completed and fresh accounts on both hosts |
+| Target reveal | VPN-only labs expose the computed IP; RangeBox sessions keep `hostnames` without an IP, on both hosts |
+| Non-Beginner lab | Malware `malware-1-1-eicar-triage` spawned, flag accepted, and the next lab unlocked on development |
+| Supply-chain lock | **42 files and 164 lab hashes** match release `2.7.0` |
+| CI | CI, Quality checks, CodeQL, and Trivy green on `ce7c25bb` |
+| Release tag | `v2.7.0` is an annotated, unsigned tag on `ce7c25bb`; sign it on the release workstation if required |
+
+## Security review evidence - 10 November 2026
 
 | Check | Result |
 |---|---|

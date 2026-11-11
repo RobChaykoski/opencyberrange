@@ -4,6 +4,39 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## 2.7.0 release verification
+
+Released and deployed on **11 November 2026**. Tag `v2.7.0` points at
+`ce7c25bb` and the same commit runs on development (`172.16.16.44`) and
+production (`172.16.16.41` / `https://ctfd.swocts.com`).
+
+- **Version and health:** both hosts report `2.7.0` with
+  `{"status":"healthy","database":"up"}`, the frontend and backend containers
+  are healthy, and the WireGuard route `10.255.0.0/16 dev wg0` is present.
+- **Quiz banks:** both databases hold the four Beginner banks (5/5/4/4
+  questions, pass 70). The track API reports `has_quiz=true` for all four
+  levels, and a Stage 2 submission returned **100% (5/5)** with explanations on
+  both hosts.
+- **Learning smoke:** `scripts/ui-learning-smoke.mjs` passed **13/13** on a
+  completed (18/18) account and **13/13** on a fresh account, on development and
+  production. The fresh account correctly showed no Quiz or Certificate button.
+  Evidence: `ui-workspace-artifacts/release-270/{dev,prod}-{complete,fresh}/learning-smoke.json`.
+- **VPN-only target reveal:** a VPN-only Web lab showed the computed address
+  (`10.100.232.17` on development, `10.100.54.17` on production) and the hosts
+  mapping. The RangeBox versions of the same lab kept `hostnames` without an
+  `ip` on both hosts.
+- **Non-Beginner lab:** Malware `malware-1-1-eicar-triage` spawned VPN-only on
+  development, the EICAR sample was retrieved from the evidence server, and the
+  flag was accepted; `malware-1-2-strings-static-analysis` unlocked.
+- **CI:** CI, Quality checks, CodeQL, and Trivy are green on `ce7c25bb` in the
+  public repository. The private v2 mirror keeps Actions disabled.
+- **Disk:** development has about **189 GB** free; production has about
+  **34 GB** free, above the 10 GB per-launch threshold and the current prebuilt
+  image set.
+- **Cleanup:** the four temporary QA accounts and their completions were
+  deleted, no lab containers or lab networks remain on either host, and the
+  status dashboard reports `healthy` on `2.7.0` for both deployments.
+
 ## 2.6.0 combined exercise workspace
 
 Checked on **11 November 2026** with a dedicated test student and test

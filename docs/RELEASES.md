@@ -19,10 +19,10 @@ represent. It exists because the history contains several naming eras.
 | `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to 2.7.0 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
-`v2.7.0` is an annotated tag without a GPG signature. It points at the
-`release: 2.7.0` commit deployed on 11 November 2026. `v2.6.0` points at
-`2835303b`, the commit deployed to production (`172.16.16.41` /
-`https://ctfd.swocts.com`) and development (`172.16.16.44`) on 11 November 2026.
+`v2.7.0` is an annotated tag without a GPG signature. It points at `ce7c25bb`,
+the commit deployed on 11 November 2026. `v2.6.0` points at `2835303b`, the
+commit deployed to production (`172.16.16.41` / `https://ctfd.swocts.com`) and
+development (`172.16.16.44`) on 11 November 2026.
 The release key documented in `docs/SUPPLY-CHAIN.md` still signs the
 supply-chain lock and can sign the tag on the release workstation if a signed
 tag is required.
