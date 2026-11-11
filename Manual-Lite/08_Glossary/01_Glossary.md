@@ -279,7 +279,24 @@ repeated here.
 | RangeBox account | The temporary Linux account inside the RangeBox desktop. It is not the OpenCyberRange login. |
 | Authorized activity | Work a teacher or the platform asks a learner to do inside OpenCyberRange. If unsure, stop and ask first. |
 | Linux | A type of operating system used by the practice desktop. Prior Linux experience is not required. |
-| Server | A computer that provides something to other computers, such as a web page. |
+| Server | A computer or program that provides data or a service to other computers, such as a web page. |
+| Network | Two or more devices that can send data to each other. |
+| Host | Any device on a network with an address. A host can act as a client, a server, or both. |
+| Client | A device or program that asks for data or a service. |
+| Service | A program on a server that provides something, such as a web page. |
+| IP address | A number-based address of a host on a network. The examples used in teaching are not real targets. |
+| Hostname | A human-readable name that maps to an IP address, such as `rangebox.lab`. |
+| DNS | Domain Name System: the naming system that maps a hostname to an IP address. |
+| Protocol | An agreed set of rules for communication. |
+| HTTP | The protocol for requesting and sending ordinary web pages. It is not encrypted. |
+| HTTPS | The protected version of HTTP, where the data is encrypted. |
+| Port | A number that identifies which service on a host should receive a request. It is not a physical opening. |
+| Request | The message a client sends to ask for something. |
+| Response | The message a server sends back. |
+| Localhost | A special hostname that means "this computer". Web developers often use it for a local test server. |
+| Public internet | Real websites and services outside the practice lab. It is out of scope in introductory labs. |
+| Trust boundary | The line between the systems and actions a learner is allowed to use and those that are out of scope. |
+| Status code | A number in an HTTP response that summarises the result, such as `200` for success or `404` for not found. |
 | File | A named piece of data, such as a document, picture, or text file. |
 | Folder | A container that holds files or other folders. |
 | Path | The route to a file or folder, written with `/` between folder names. |
