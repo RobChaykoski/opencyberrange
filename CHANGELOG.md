@@ -24,6 +24,33 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
+## [Unreleased]
+
+### Learning
+- Added `has_quiz` to each track level and show the level **Quiz** button only
+  when the level is complete and an active quiz bank exists.
+- Seeded the Beginner level quiz banks: 5 questions for Stage 1, 5 for Stage 2,
+  4 for Stage 3, and 4 for Stage 4, with a passing score of 70. The seed script
+  is `platform/backend/app/scripts/seed_level_quizzes.py`.
+- Added `scripts/ui-learning-smoke.mjs`, which compares the rendered Quiz and
+  Certificate buttons with the track API for every level.
+
+### Labs and network
+- VPN-only sessions now reveal target IP addresses and the hosts-file mapping;
+  RangeBox sessions keep addresses hidden unless `show_target_ips` is set.
+- Installed and persisted the WireGuard client-pool route
+  `10.255.0.0/16 dev wg0` in `scripts/setup-range-server.sh`, with
+  `scripts/fix-wireguard-client-route.sh` for existing hosts.
+- Lab cleanup now preserves networks owned by a session that is still
+  `starting` or `running`, so a stop/relaunch no longer removes the live
+  environment.
+
+### Operations
+- Added `docs/DEPLOYMENT-RUNBOOK.md` with pull, rebuild, prebuild, quiz-seed,
+  and health commands for development and production.
+- The status dashboard reads its host map from `docs/status-hosts.json`.
+- Added the public verification smoke and event-certificate PDF layout test.
+
 ## [2.6.0] - 2026-11-10
 
 ### Events and certificates

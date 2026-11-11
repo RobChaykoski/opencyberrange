@@ -46,7 +46,7 @@ release:
 
 development:
   version: "2.6.0"
-  focus: "learning analytics, lab metadata, and performance"
+  focus: "level quizzes, release verification, and deployment hygiene"
 
 policy:
   name: latest-supported-ga
