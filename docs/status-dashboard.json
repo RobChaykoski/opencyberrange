@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-11T15:21:15+00:00",
+  "generated_at": "2026-11-11T15:33:41+00:00",
   "overall": "healthy",
   "message": "All deployments are up and on the expected version.",
   "deployments": [
@@ -20,7 +20,7 @@
       "main_asset": "index-DvPLVnHV.js",
       "css_asset": "index-BSIaHjUr.css",
       "asset_count": 3,
-      "response_ms": 68,
+      "response_ms": 60,
       "server": "openresty",
       "tls": "self-signed / unverified",
       "errors": [
@@ -46,7 +46,7 @@
       "main_asset": "index-DvPLVnHV.js",
       "css_asset": "index-BSIaHjUr.css",
       "asset_count": 3,
-      "response_ms": 25,
+      "response_ms": 37,
       "server": "nginx/1.31.8",
       "tls": "self-signed / unverified",
       "errors": [

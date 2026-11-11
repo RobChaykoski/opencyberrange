@@ -1005,11 +1005,13 @@ After installation, log in as admin and navigate to **Admin Panel > System Healt
 For a small API-based deployment dashboard, run:
 
 ```bash
-python scripts/status-dashboard.py
+python scripts/status-dashboard.py --config docs/status-hosts.json
 ```
 
-This writes `docs/status-dashboard.html`, `docs/status-dashboard.md`, and (with
-`--json docs/status-dashboard.json`) a machine-readable snapshot. It checks
+The host map for this deployment is in `docs/status-hosts.json`; edit that file
+for another environment. Without `--config` the script uses its built-in sample
+map. The run writes `docs/status-dashboard.html`, `docs/status-dashboard.md`,
+and (with `--json docs/status-dashboard.json`) a machine-readable snapshot. It checks
 `/api/version`, `/api/setup/status`, and the SPA index only; it does not log in
 or read learner records. Docker host and container state still need
 `docker compose ps` on each host. The latest browser verification is recorded in
