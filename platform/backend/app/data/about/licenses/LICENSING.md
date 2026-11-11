@@ -27,6 +27,21 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
+## 2.7.0 release status
+
+- Platform source and content: **PolyForm Noncommercial License 1.0.0**.
+- Release artefact: `v2.7.0` is an annotated tag. The supply-chain lock is
+  signed by the release key; the tag itself is unsigned and should be signed on
+  the release workstation if a signed tag is required.
+- Third-party inventory: `scripts/check-licences.py` reports **OK** for the
+  2.7.0 tree.
+- No new third-party runtime dependencies ship in 2.7.0. Level quizzes reuse
+  the existing backend models and routers.
+- Valkey is not bundled in 2.7.0. It remains under evaluation as a BSD-3-Clause
+  replacement for the Redis 7.2 rate-limit store.
+- GitHub Actions workflows use third-party actions; their licences remain with
+  the action authors.
+
 ## 2.6.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.

@@ -24,7 +24,7 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
-## [Unreleased]
+## [2.7.0] - 2026-11-11
 
 ### Learning
 - Added `has_quiz` to each track level and show the level **Quiz** button only

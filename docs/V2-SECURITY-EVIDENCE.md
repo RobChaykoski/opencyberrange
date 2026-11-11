@@ -1,15 +1,17 @@
 # SWOCTS Cyber Range: V2 security evidence record
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.6.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.7.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This evidence record applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.6.0 line. This is the release evidence companion to
+**Status:** Active for the 2.7.0 line. This is the release evidence companion to
 [`V2-SECURITY-OWASP-TOP-10.md`](V2-SECURITY-OWASP-TOP-10.md).
 
-> **2.6.0 note:** 2.6.0 adds event certificates, the Grade 10-12 Digital
-> Frontier labs, the WireGuard `/32` route correction, and Cyber DNA `2026.13`.
-> The 2.5.4/2.5.5 pass below remains the historical baseline.
+> **2.7.0 note:** 2.7.0 adds level quizzes and VPN-only target-IP guidance,
+> with no schema change and no new runtime dependency. The 2.6.0 pass below
+> remains the historical baseline; the 2.7.0 verification is recorded in
+> [`UI-VERIFICATION.md`](UI-VERIFICATION.md) and
+> [`2.7.0-PLAN.md`](2.7.0-PLAN.md).
 
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.

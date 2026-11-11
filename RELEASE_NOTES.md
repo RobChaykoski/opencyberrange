@@ -1,3 +1,93 @@
+# SWOCTS Cyber Range 2.7.0
+
+SWOCTS Cyber Range is powered by OpenCyberRange.
+
+Edition: **Professional** — Community / Academic plus analytics, reporting,
+cohort analysis, competency evidence, accreditation support, and research
+exports.
+
+Status: **feature release**. 2.7.0 adds optional level quizzes with Beginner
+question banks, target-IP guidance for VPN-only labs, and two reliability fixes
+for WireGuard routing and lab cleanup. No database schema change is required.
+
+## Highlights
+
+- **Level quizzes.** Completed levels show a Quiz action only when an active
+  quiz bank exists. The Beginner track ships with checks for all four stages.
+- **VPN-only target guidance.** When a lab is launched without RangeBox, the
+  panel now shows the computed target IP and the hosts-file mapping. RangeBox
+  sessions keep addresses hidden unless `show_target_ips` is set.
+- **Reliability.** WireGuard clients receive the `10.255.0.0/16` route on the
+  VPN server, and lab creation no longer removes the network of a session that
+  is still starting or running.
+
+## Level quizzes
+
+- The track API reports `has_quiz` per level. The frontend renders the Quiz
+  button only for a completed level with an active bank, so an empty modal is
+  no longer possible.
+- Beginner banks: Stage 1 has 5 questions, Stage 2 has 5, Stage 3 has 4, and
+  Stage 4 has 4. The passing score is 70.
+- A submission returns the score, the correct count, per-question
+  explanations, and the pass/fail result. Attempts are stored per learner.
+- Seed or update the banks after deploying:
+
+  ```bash
+  docker exec -e PYTHONPATH=/app ocr-backend \
+    python -m app.scripts.seed_level_quizzes
+  ```
+
+  The seed script is idempotent. It replaces the questions for each level and
+  leaves existing attempts intact.
+
+## VPN-only target guidance
+
+- A VPN-only session exposes `hostname`, the computed `ip`, and the
+  hosts-file mapping in the exercise panel.
+- A RangeBox session keeps the same fields hidden unless the lab sets
+  `show_target_ips`, because the desktop already provides in-browser access.
+- The reveal is computed from the session's lab network; it does not expose
+  other learners or the host management network.
+
+## Reliability
+
+- `scripts/setup-range-server.sh` installs `10.255.0.0/16 dev wg0` in
+  `PostUp`/`PostDown`. Existing hosts can run
+  `sudo bash scripts/fix-wireguard-client-route.sh`.
+- Lab cleanup checks for a newer `starting`/`running` session for the same user
+  and lab before removing a network, so a stop/relaunch no longer turns the new
+  lab into a VPN-only session by accident.
+
+## Release artefact
+
+- `v2.7.0` is an annotated Git tag. It is **not GPG-signed** in this workspace.
+- The supply-chain lock is signed by the SWOCTS Cyber Range release key.
+- Sign the tag on the release workstation if a signed tag is required.
+
+## Upgrade
+
+1. Pull `v2.7.0` or the current `main`.
+2. Back up the database and the erasure ledger.
+3. Rebuild the backend and frontend:
+
+   ```bash
+   cd ~/opencyberrange/platform
+   docker compose -f docker-compose.prod.yml up -d --build backend frontend
+   ```
+
+4. Confirm `/health` and `/api/version` report `2.7.0`.
+5. Seed the level quiz banks with the command above.
+6. Open a completed level and confirm the Quiz button appears; complete a
+   fresh account's level and confirm it does not appear before completion.
+7. Launch one VPN-only lab and confirm the target IP and hosts mapping render.
+
+Existing 2.6.0 databases upgrade in place. The quiz tables already exist in the
+2.6.0 schema, so this release adds data, not migrations. If you re-seed a bank,
+avoid reordering its options after learners have attempted it, because stored
+answers reference option indices.
+
+See `CHANGELOG.md` for the itemised list.
+
 # SWOCTS Cyber Range 2.6.0
 
 SWOCTS Cyber Range is powered by OpenCyberRange.

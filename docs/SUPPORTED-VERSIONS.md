@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-10**. Current **platform release: 2.6.0** for this
+Last reviewed: **2026-11-11**. Current **platform release: 2.7.0** for this
 tree. **Community / Academic**, **Professional**, and **Enterprise** are edition
 profiles on that release, not separate platform version lines. **Community /
 Academic 1.1.3** remains a supported maintenance line for existing single-host
@@ -13,10 +13,10 @@ installations. See [Editions](EDITIONS.md),
 [ADR 0004](decisions/0004-single-platform-release-version.md).
 
 The separate HA control-plane repository has its own version and is described by
-compatibility with platform 2.6.0. Enterprise remains a preview profile until
+compatibility with platform 2.7.0. Enterprise remains a preview profile until
 HA, SSO, multi-tenancy, LMS, and compliance reporting are shipped and verified.
 
-Host baseline: **Ubuntu 24.04 LTS is certified; 2.6.0 inherits the 2.4.1
+Host baseline: **Ubuntu 24.04 LTS is certified; 2.7.0 inherits the 2.4.1
 certification completed on 2026-11-08.** See [OS-SUPPORT.md](OS-SUPPORT.md) and
 [V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
 compatibility path for existing 1.1.x deployments.

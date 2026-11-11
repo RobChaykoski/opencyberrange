@@ -67,8 +67,8 @@ Release 2.5.4 rotates the release key:
 - Signature: `supply-chain.lock.json.asc`
 - Private key: held by the release owner outside the repository
 
-Release 2.6.0 uses the same release key and signs the regenerated lock. The
-`v2.6.0` Git tag is annotated but **unsigned**; sign it on the release
+Release 2.6.0 and 2.7.0 use the same release key and sign the regenerated lock.
+The `v2.7.0` Git tag is annotated but **unsigned**; sign it on the release
 workstation if a signed tag is required. The lock signature is independent of
 the tag signature.
 

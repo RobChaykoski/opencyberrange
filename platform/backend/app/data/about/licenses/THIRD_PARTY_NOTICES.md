@@ -40,6 +40,15 @@ The project source and its original content are licensed under the
 [`BUILD_NOTICE.md`](BUILD_NOTICE.md). Third-party components remain under
 their own licences; the project licence does not override them.
 
+## 2.7.0 update
+
+- No new third-party runtime dependencies are shipped in 2.7.0. Level quizzes
+  reuse the existing backend stack.
+- `scripts/check-licences.py` reports **OK** for the 2.7.0 tree.
+- Valkey is not bundled in 2.7.0. It remains under evaluation as a BSD-3-Clause
+  replacement for the Redis 7.2 rate-limit store.
+- Release signing uses GnuPG; it is not redistributed with the platform.
+
 ## 2.6.0 update
 
 - No new third-party runtime dependencies are shipped in 2.6.0. Event

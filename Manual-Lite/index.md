@@ -40,7 +40,7 @@ flowchart LR
 
 ## Manual editions
 
-This is the shared core manual for platform release **2.6.0**. Community /
+This is the shared core manual for platform release **2.7.0**. Community /
 Academic, Professional, and Enterprise are cumulative edition profiles on that
 release; Community / Academic 1.1.3 remains a maintenance line for existing
 installs. Edition-specific pages live in the

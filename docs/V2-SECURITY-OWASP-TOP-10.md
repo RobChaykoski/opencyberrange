@@ -1,10 +1,10 @@
 # SWOCTS Cyber Range: V2 security baseline (OWASP Top 10)
 
-> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.6.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
+> **Version note:** This document keeps its historical V2/V3 filename. The current platform release is **2.7.0**; Community / Academic, Professional, and Enterprise are edition profiles on that release.
 
 This baseline applies to the SWOCTS Cyber Range deployment, powered by OpenCyberRange.
 
-**Status:** Active for the 2.6.0 line. Applies to the web interface, platform data,
+**Status:** Active for the 2.7.0 line. Applies to the web interface, platform data,
 and the project delivery process. The 1.1 line keeps its existing maintenance
 policy; fixes that apply there are merged forward.
 

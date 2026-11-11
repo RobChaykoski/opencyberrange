@@ -14,9 +14,9 @@ entitlement; they are not separate version lines. See
 
 | Edition profile | Platform release | Status | Shape | Primary user |
 |---|---|---|---|---|
-| **Community / Academic** | 2.6.0 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
-| **Professional** | 2.6.0 | Release profile � analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
-| **Enterprise** | 2.6.0 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
+| **Community / Academic** | 2.7.0 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
+| **Professional** | 2.7.0 | Release profile � analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Enterprise** | 2.7.0 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
 
@@ -24,7 +24,7 @@ entitlement; they are not separate version lines. See
 
 Community / Academic is the supported teaching platform profile. The 1.1.3
 maintenance line remains available for existing installs; new installs use the
-2.6.0 tree with this profile.
+2.7.0 tree with this profile.
 
 - courses, exercises, tracks, labs, RangeBox, flags, hints, and achievements;
 - lab improvements and workbook improvements;
@@ -40,7 +40,7 @@ must not regress it.
 ### Professional profile
 
 Professional adds the teaching intelligence and evidence layer on the same
-single-host deployment and 2.6.0 platform release. The Professional and Enterprise priority set is:
+single-host deployment and 2.7.0 platform release. The Professional and Enterprise priority set is:
 
 1. **Competency Framework Engine** � explicit competency definitions, mappings,
    evidence rules, and progression levels.
@@ -71,7 +71,7 @@ distributed scheduling.
 
 ### Enterprise profile (preview)
 
-Enterprise is a preview profile on 2.6.0 until the HA workstream ships. It adds
+Enterprise is a preview profile on 2.7.0 until the HA workstream ships. It adds
 the deployment, identity, and institutional layer:
 
 - multi-host lab pool with capacity-aware placement;
@@ -126,7 +126,7 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 
 | Item | State |
 |---|---|
-| Community / Academic profile on 2.6.0 | Delivered and supported |
+| Community / Academic profile on 2.7.0 | Delivered and supported |
 | Community / Academic 1.1.3 maintenance line | Supported for existing installs |
 | Professional analytics and course reporting | Delivered |
 | Professional Competency Framework Engine | Planned |
@@ -145,11 +145,11 @@ The matrix describes edition scope, not shipped capability. Current delivery:
 
 ```text
 Community / Academic profile  ->  Professional profile  ->  Enterprise preview
-                 all on platform release 2.6.0
+                 all on platform release 2.7.0
 ```
 
 1. **Community / Academic to Professional:** back up, move to Ubuntu 24.04,
-   deploy the 2.6.0 Professional profile, run the Professional migration and
+   deploy the 2.7.0 Professional profile, run the Professional migration and
    acceptance checks. Data is preserved.
 2. **Professional to Enterprise:** keep the Professional control plane and
    data, add the Enterprise topology: shared storage, replicated API/frontend,
@@ -165,7 +165,7 @@ Community / Academic profile  ->  Professional profile  ->  Enterprise preview
 - **Community / Academic 1.1.3** is the maintenance line for existing installs.
   Security and correctness fixes land here first and merge forward.
 - **Community / Academic, Professional, and Enterprise** are profiles on platform
-  release **2.6.0**. Release tags identify the platform release, not an edition.
+  release **2.7.0**. Release tags identify the platform release, not an edition.
 - **Enterprise is a preview profile** until HA, SSO, multi-tenancy, LMS, and
   compliance reporting are shipped and verified. The separate HA repository has
   its own version and a compatibility statement, not a platform version.
