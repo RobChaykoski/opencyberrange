@@ -8,7 +8,7 @@ links.
 |---|---:|
 | AI | 3 |
 | Forensics | 2 |
-| High School | 16 |
+| High School | 18 |
 | Identity | 3 |
 | Linux | 30 |
 | Malware | 8 |
@@ -18,7 +18,7 @@ links.
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 51 |
-| **Total** | **153** |
+| **Total** | **155** |
 
 ## Labs
 
@@ -39,11 +39,13 @@ links.
 | High School | Know the File Before You Open It (`high-school-9-7-know-the-file`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/07_Know_The_File/` |
 | High School | MFA and the Lost Phone (`high-school-10-4-mfa-lost-phone`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone/` |
 | High School | Media Provenance: Is It Real? (`high-school-11-2-media-provenance`) | `wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance/` |
+| High School | RangeBox Beginner Challenge (`high-school-10-6-rangebox-beginner-challenge`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/09_Guided_Cybersecurity_Challenge/` |
 | High School | RangeBox Browser and Source (`high-school-10-2-rangebox-browser-and-source`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source/` |
 | High School | RangeBox File Hunt (`high-school-9-2-rangebox-file-hunt`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt/` |
 | High School | RangeBox First Steps (`high-school-9-1-rangebox-first-steps`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps/` |
 | High School | RangeBox Log Detective (`high-school-11-1-rangebox-log-detective`) | `wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/01_Log_Detective/` |
-| High School | RangeBox Network Basics (`high-school-10-1-rangebox-network-basics`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics/` |
+| High School | RangeBox Log Review (`high-school-10-5-rangebox-log-review`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/07_Logs_and_Event_Review/` |
+| High School | RangeBox Network Basics (`high-school-10-1-rangebox-network-basics`) | `wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports/` |
 | High School | Read the Link Before You Click (`high-school-9-6-read-the-link`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/06_Read_The_Link/` |
 | Identity | Identity Lifecycle: Joiners, Movers, and Leavers (`identity-2-1-identity-lifecycle`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/03_Identity_Lifecycle/` |
 | Identity | OAuth/OIDC: Redirects, State, and Token Trust (`identity-1-2-oauth-oidc-sso`) | `wiki/range/identity/CH_IAM01_Identity_And_Access/02_OAuth_OIDC/` |
