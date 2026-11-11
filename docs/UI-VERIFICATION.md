@@ -42,7 +42,9 @@ newer starting/running session and leaves the live environment alone.
 Deployment on **11 November 2026**:
 
 - Production `172.16.16.41` / `https://ctfd.swocts.com` and development
-  `172.16.16.44` are on `2835303b`; both report `2.6.0` and are healthy.
+  `172.16.16.44` run `2.6.0` and are healthy. Production is on `2835303b`; the
+  development checkout advanced to `f3234e80`, which contains documentation and
+  test additions only.
 - The wiki builder published 13 sites. The WEB01 page
   `01_Web_Target_and_Scope_Preflight` and the `W1.11` navigation entry are
   present.
@@ -54,6 +56,21 @@ Deployment on **11 November 2026**:
 - The broader deployment UI smoke (`scripts/ui-smoke.mjs`) also passed **9/9**
   checks against the student account: API version, mobile shell, profile tabs,
   events, RangeBox tab, and no page errors.
+
+Development rerun on **11 November 2026** against `https://172.16.16.44`
+(`f3234e80` checkout, app reports `2.6.0`):
+
+- `scripts/ui-workspace-regression.mjs` passed **44/44 checks** for the seeded
+  development demo student and instructor accounts: combined workspace, RangeBox
+  VNC, workbook iframe, Expand/Restore, both new-tab controls, hint, invalid
+  flag, Stop, and the 390 px mobile fallback.
+- `scripts/ui-smoke.mjs` passed **9/9 checks**: API version, mobile shell,
+  profile tabs, events, RangeBox tab, and no page errors.
+- The demo accounts' password hashes were temporarily replaced for the run and
+  restored afterwards. No learner accounts or completions were changed, and no
+  lab containers remained running.
+- Evidence: `ui-workspace-artifacts/dev-20261111/` and
+  `ui-smoke-artifacts/dev-20261111/` on the operator workstation.
 
 ## 2.6.0 event certificate additions
 
