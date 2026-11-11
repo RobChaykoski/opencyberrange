@@ -156,6 +156,21 @@ async function labRow(page) {
 }
 
 async function launchLab(page) {
+  // A previous run may have left the test account's lab running. Reuse an
+  // already-rendered workspace instead of clicking through the lab list.
+  if (await page.locator('.active-lab-panel--workspace').count()) {
+    await page.locator('.panel-section--rangebox').waitFor({ state: 'visible', timeout: 30000 })
+    await page.waitForTimeout(1000)
+    return
+  }
+  // A VPN-only or stale session still blocks the row; close it first and wait
+  // for the background cleanup before starting a new environment.
+  if (await page.locator('.active-lab-panel').count()) {
+    await stopLab(page, 'pre-cleanup')
+    await page.waitForTimeout(3000)
+    await page.reload({ waitUntil: 'networkidle', timeout: 60000 })
+    await page.locator('.lab-row').first().waitFor({ state: 'visible', timeout: 30000 })
+  }
   const row = await labRow(page)
   const continueButton = row.getByRole('button', { name: 'Continue' })
   if (await continueButton.count()) {
@@ -262,36 +277,38 @@ async function studentWalkthrough() {
   check('student login', true, session.user.role)
 
   const { context, page } = await contextFor({ width: 1440, height: 1000 }, session)
-  await openTrack(page)
-  await launchLab(page)
-  await assertWorkspace(page, 'student')
+  try {
+    await openTrack(page)
+    await launchLab(page)
+    await assertWorkspace(page, 'student')
 
-  // Light theme screenshot and contrast check.
-  const beforeTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'))
-  await page.locator('.theme-toggle:visible').first().click()
-  await page.waitForTimeout(400)
-  const afterTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'))
-  await screenshot(page, 'workspace-student-light.png')
-  check('student: theme toggle changes theme', Boolean(afterTheme) && afterTheme !== beforeTheme, `${beforeTheme} -> ${afterTheme}`)
+    // Light theme screenshot and contrast check.
+    const beforeTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'))
+    await page.locator('.theme-toggle:visible').first().click()
+    await page.waitForTimeout(400)
+    const afterTheme = await page.evaluate(() => document.documentElement.getAttribute('data-theme'))
+    await screenshot(page, 'workspace-student-light.png')
+    check('student: theme toggle changes theme', Boolean(afterTheme) && afterTheme !== beforeTheme, `${beforeTheme} -> ${afterTheme}`)
 
-  await exerciseControls(page, 'student')
-  await requestHint(page, 'student')
+    await exerciseControls(page, 'student')
+    await requestHint(page, 'student')
 
-  // Mobile fallback: the workspace must not appear below 768 px.
-  const mobile = await contextFor({ width: 390, height: 844 }, session)
-  await openTrack(mobile.page)
-  const row = await labRow(mobile.page)
-  const continueButton = row.getByRole('button', { name: 'Continue' })
-  if (await continueButton.count()) await continueButton.click()
-  await mobile.page.locator('.active-lab-panel').waitFor({ state: 'visible', timeout: 60000 })
-  check('student mobile: workspace disabled', (await mobile.page.locator('.active-lab-panel--workspace').count()) === 0)
-  check('student mobile: section jump bar visible', await mobile.page.locator('.active-lab-jump').isVisible())
-  check('student mobile: no horizontal overflow', !(await hasOverflow(mobile.page)))
-  await screenshot(mobile.page, 'workspace-student-mobile.png')
-  await mobile.context.close()
-
-  await stopLab(page, 'student')
-  await context.close()
+    // Mobile fallback: the workspace must not appear below 768 px.
+    const mobile = await contextFor({ width: 390, height: 844 }, session)
+    await openTrack(mobile.page)
+    const row = await labRow(mobile.page)
+    const continueButton = row.getByRole('button', { name: 'Continue' })
+    if (await continueButton.count()) await continueButton.click()
+    await mobile.page.locator('.active-lab-panel').waitFor({ state: 'visible', timeout: 60000 })
+    check('student mobile: workspace disabled', (await mobile.page.locator('.active-lab-panel--workspace').count()) === 0)
+    check('student mobile: section jump bar visible', await mobile.page.locator('.active-lab-jump').isVisible())
+    check('student mobile: no horizontal overflow', !(await hasOverflow(mobile.page)))
+    await screenshot(mobile.page, 'workspace-student-mobile.png')
+    await mobile.context.close()
+  } finally {
+    await stopLab(page, 'student').catch(() => {})
+    await context.close()
+  }
 }
 
 async function instructorWalkthrough() {
@@ -308,13 +325,16 @@ async function instructorWalkthrough() {
   check('instructor login', true, session.user.role)
 
   const { context, page } = await contextFor({ width: 1440, height: 1000 }, session)
-  await openTrack(page)
-  check('instructor: Instructor navigation visible', await page.locator('.nav-section', { hasText: 'Instructor' }).count() > 0)
-  await launchLab(page)
-  await assertWorkspace(page, 'instructor')
-  await exerciseControls(page, 'instructor')
-  await stopLab(page, 'instructor')
-  await context.close()
+  try {
+    await openTrack(page)
+    check('instructor: Instructor navigation visible', await page.locator('.nav-section', { hasText: 'Instructor' }).count() > 0)
+    await launchLab(page)
+    await assertWorkspace(page, 'instructor')
+    await exerciseControls(page, 'instructor')
+  } finally {
+    await stopLab(page, 'instructor').catch(() => {})
+    await context.close()
+  }
 }
 
 try {

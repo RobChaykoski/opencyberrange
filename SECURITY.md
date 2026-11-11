@@ -136,6 +136,7 @@ session.
 | Deployment baseline | Prod `172.16.16.41` and dev `172.16.16.44` on `eac74283`; frontend assets contain the combined exercise workspace |
 | Browser walkthrough | Dedicated test student and instructor accounts launched `RangeBox First Steps`; RangeBox, details, flag, and framed workbook rendered; Expand/Restore, invalid-flag handling, hint request, and Stop were exercised |
 | Workspace fix | **Open in new tab** now opens `/rangebox?...` in a new tab instead of navigating the exercise tab |
+| Stop/relaunch race | Cleanup for an old session defers to a newer starting/running session for the same lab, so a rapid relaunch keeps its network and RangeBox instead of silently launching VPN-only |
 | Workbook CSP | Wiki locations allow the Material for MkDocs Google Fonts stylesheet and font files; the SPA policy remains strict |
 | Lab validation | **162 labs, 0 errors, 0 warnings** |
 | Automated regression | `scripts/ui-workspace-regression.mjs` records pass/fail checks and screenshots in `ui-workspace-artifacts/` |

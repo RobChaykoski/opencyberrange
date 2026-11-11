@@ -533,6 +533,28 @@ async def stop_lab(
                 logger.warning(f"Session {session.id} not found in background cleanup")
                 return
 
+            # A rapid stop-then-relaunch can create a newer session for the
+            # same lab before this cleanup runs. The newer session owns the
+            # network and RangeBox, so tearing them down here would remove the
+            # environment that just started and silently downgrade it to
+            # VPN-only. Mark the old row stopped and leave the live
+            # environment alone.
+            newer_session = bg_db.query(LabSession).filter(
+                LabSession.user_id == current_user.id,
+                LabSession.lab_id == session.lab_id,
+                LabSession.id > session.id,
+                LabSession.status.in_(["starting", "running"]),
+            ).first()
+            if newer_session:
+                logger.info(
+                    "Skipping teardown for session %s because session %s owns the environment",
+                    session.id,
+                    newer_session.id,
+                )
+                bg_session.status = "stopped"
+                bg_db.commit()
+                return
+
             # Run the blocking Docker cleanup in a thread pool
             loop = asyncio.get_event_loop()
             with ThreadPoolExecutor() as executor:

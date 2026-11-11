@@ -154,6 +154,10 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   dedicated test student and test instructor, exercises Expand/Restore, both
   new-tab controls, hint request, invalid-flag handling, and Stop, and records
   JSON evidence plus screenshots.
+- Fixed a stop/relaunch race: background cleanup for an old session could remove
+  the network and RangeBox created by a newer session for the same lab, which
+  silently launched the new lab VPN-only. Cleanup now defers to a newer
+  starting/running session and only marks the old row stopped.
 
 ### Curriculum and documentation
 - Reorganized **WEB01 Web Reconnaissance** into a 12-page beginner-readiness
