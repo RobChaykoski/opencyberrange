@@ -25,10 +25,11 @@ mitre_attack:
 
 owner: "OpenCyberRange Curriculum"
 content_version: "2.6.0"
-reviewed_at: "2026-11-10"
+reviewed_at: "2026-11-11"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community centre volunteer lost their phone. The account uses a password and an authenticator app, but the recovery question can be answered from the public staff directory. Find the answer, recover the account, and explain why recovery is part of MFA."
 visibility: public
+counts_toward_certificate: true
 flag: "OCR{recovery_is_part_of_mfa}"
 
 tools:
@@ -53,7 +54,7 @@ difficulty_evidence: "Static student-tester walkthrough of the lab definition, p
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"
-difficulty_evidence_reviewed_at: "2026-11-10"
+difficulty_evidence_reviewed_at: "2026-11-11"
 workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone/"
 
 hostnames:

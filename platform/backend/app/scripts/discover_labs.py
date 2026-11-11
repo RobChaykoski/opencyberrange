@@ -332,6 +332,7 @@ def discover_labs():
                 difficulty = lab_data.get('difficulty', 'beginner')
                 category = lab_data.get('category', 'general')
                 duration = lab_data.get('estimated_time', lab_data.get('duration_minutes', 60))
+                content_version = str(lab_data.get('content_version') or '').strip() or None
                 
                 learning_outcomes = lab_data.get('learning_outcomes', lab_data.get('objectives', []))
                 objectives = json.dumps(learning_outcomes)
@@ -398,6 +399,7 @@ def discover_labs():
                         "difficulty": difficulty,
                         "category": category,
                         "duration": duration,
+                        "content_version": content_version,
                         "objectives": objectives,
                         "hints": hints,
                         "tools": tools,
@@ -433,6 +435,7 @@ def discover_labs():
                                 difficulty = :difficulty,
                                 category = :category,
                                 duration_minutes = :duration,
+                                content_version = :content_version,
                                 objectives = :objectives,
                                 hints = :hints,
                                 tools = :tools,
@@ -469,6 +472,7 @@ def discover_labs():
                                 difficulty = :difficulty,
                                 category = :category,
                                 duration_minutes = :duration,
+                                content_version = :content_version,
                                 objectives = :objectives,
                                 hints = :hints,
                                 tools = :tools,
@@ -505,7 +509,7 @@ def discover_labs():
                         text("""
                             INSERT INTO labs (
                                 name, slug, description, scenario, scenario_brief,
-                                difficulty, category, duration_minutes, objectives,
+                                difficulty, category, duration_minutes, content_version, objectives,
                                 hints, tools, hostnames,
                                 flag_hash, compose_file, level_id, sort_order, is_active,
                                 visibility, workbook, week, show_target_ips, topology_nodes,
@@ -515,7 +519,7 @@ def discover_labs():
                                 validation_status, validation_errors, validated_at
                             ) VALUES (
                                 :name, :slug, :description, :scenario, :scenario_brief,
-                                :difficulty, :category, :duration, :objectives,
+                                :difficulty, :category, :duration, :content_version, :objectives,
                                 :hints, :tools, :hostnames,
                                 :flag_hash, :compose_file, :level_id, :sort_order, TRUE,
                                 :visibility, :workbook, :week, :show_target_ips, :topology_nodes,
@@ -534,6 +538,7 @@ def discover_labs():
                             "difficulty": difficulty,
                             "category": category,
                             "duration": duration,
+                            "content_version": content_version,
                             "objectives": objectives,
                             "hints": hints,
                             "tools": tools,

@@ -1108,6 +1108,9 @@ const relativeTime = (iso) => {
 .tone--speed-demon { --tone: var(--warning); }
 .tone--clean-sweep { --tone: var(--purple); }
 .tone--streak { --tone: var(--warning); }
+.tone--log-reviewer { --tone: var(--accent); }
+.tone--evidence-explorer { --tone: var(--success); }
+.tone--stage2-explorer { --tone: var(--purple); }
 .tone--custom { --tone: var(--accent); }
 .tone--competition { --tone: var(--warning); }
 

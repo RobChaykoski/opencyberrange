@@ -26,11 +26,12 @@ mitre_attack:
     detection: Review web logs for repeated failed requests followed by a successful request.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
+content_version: "2.6.0"
 reviewed_at: "2026-11-11"
-review_status: "automated static proof; live walkthrough pending"
+review_status: "automated static proof; live smoke test passed; student walkthrough pending"
 description: "A bounded beginner challenge: verify the target, confirm the service answers, read a synthetic log, record evidence, and explain what the log does and does not prove."
 visibility: public
+counts_toward_certificate: true
 flag: "OCR{3v1d3nc3_b3f0r3_act10n}"
 
 tools:

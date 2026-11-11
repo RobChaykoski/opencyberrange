@@ -388,6 +388,8 @@ def test_global_achievement_without_course(
         ("high-school-9-2-rangebox-file-hunt", {"file_hunter"}),
         ("high-school-10-1-rangebox-network-basics", {"header_hunter"}),
         ("high-school-10-2-rangebox-browser-and-source", {"source_sleuth"}),
+        ("high-school-10-5-rangebox-log-review", {"log_reviewer"}),
+        ("high-school-10-6-rangebox-beginner-challenge", {"evidence_explorer"}),
         ("high-school-11-1-rangebox-log-detective", {"log_detective"}),
     ],
 )
@@ -435,7 +437,17 @@ def test_collection_badges_for_new_tracks(
         "forensics-1-1-windows-memory-volatility",
         "forensics-2-1-voip-call-reconstruction",
     )
-    extra_slugs = rangebox_slugs[1:] + forensics_slugs
+    stage2_slugs = (
+        "high-school-10-1-rangebox-network-basics",
+        "high-school-10-2-rangebox-browser-and-source",
+        "high-school-10-3-email-metadata",
+        "high-school-10-4-mfa-lost-phone",
+        "high-school-10-5-rangebox-log-review",
+        "high-school-10-6-rangebox-beginner-challenge",
+    )
+    extra_slugs = list(dict.fromkeys(
+        rangebox_slugs[1:] + forensics_slugs + stage2_slugs
+    ))
 
     test_lab.slug = rangebox_slugs[0]
     flag_hash = hashlib.sha256(test_flag.encode()).hexdigest()
@@ -465,12 +477,13 @@ def test_collection_badges_for_new_tracks(
             for row in db_session.query(Achievement).filter(
                 Achievement.user_id == test_user.id,
                 Achievement.achievement_type.in_(
-                    ("rangebox_ranger", "forensics_pathfinder")
+                    ("rangebox_ranger", "forensics_pathfinder", "stage2_explorer")
                 ),
             ).all()
         }
         assert "rangebox_ranger" in awarded
         assert "forensics_pathfinder" in awarded
+        assert "stage2_explorer" in awarded
     finally:
         ids = [lab.id for lab in extra_labs]
         if ids:

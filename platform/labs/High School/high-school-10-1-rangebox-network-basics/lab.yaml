@@ -10,6 +10,7 @@ learning_outcomes:
   - Explain the difference between a hostname and an IP address
   - Request a URL with curl and read the status line
   - Inspect HTTP response headers
+  - Run one bounded service observation against the assigned port
   - Describe why response metadata matters in investigations
 mapped_skills:
   - network_systems
@@ -25,17 +26,19 @@ mitre_attack:
     detection: Review host network-configuration and interface changes.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
-reviewed_at: "2026-11-08"
+content_version: "2.6.0"
+reviewed_at: "2026-11-11"
 review_status: "automated static proof; live walkthrough pending"
 description: "Use the RangeBox terminal to talk to a small web service. Read a status code, inspect response headers, and find the training token that never appears in the page body."
 visibility: public
+counts_toward_certificate: true
 flag: "OCR{h34d3rs_t3ll_st0r13s}"
 
 tools:
   - rangebox
   - terminal
   - browser
+  - nmap
 
 scenario: |
   A small classroom service reports whether it is healthy. The page says very
@@ -54,7 +57,7 @@ difficulty_evidence: "Static student-tester walkthrough of the workbook and lab 
 difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"
-difficulty_evidence_reviewed_at: "2026-11-08"
+difficulty_evidence_reviewed_at: "2026-11-11"
 workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports/"
 
 hostnames:

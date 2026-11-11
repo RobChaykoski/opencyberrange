@@ -24,11 +24,12 @@ mitre_attack:
     detection: Monitor web logs for repeated failed requests to administrative paths.
 
 owner: "OpenCyberRange Curriculum"
-content_version: "2.5.3"
+content_version: "2.6.0"
 reviewed_at: "2026-11-11"
-review_status: "automated static proof; live walkthrough pending"
+review_status: "automated static proof; live smoke test passed; student walkthrough pending"
 description: "Read a small synthetic web access log, find the repeated failed requests and the one unusual success, and recover the training token without treating one event as an attack."
 visibility: public
+counts_toward_certificate: true
 flag: "OCR{l0gs_ar3_3v1d3nc3}"
 
 tools:

@@ -35,6 +35,9 @@ FILE_HUNTER = "file_hunter"
 HEADER_HUNTER = "header_hunter"
 SOURCE_SLEUTH = "source_sleuth"
 LOG_DETECTIVE = "log_detective"
+LOG_REVIEWER = "log_reviewer"
+EVIDENCE_EXPLORER = "evidence_explorer"
+STAGE2_EXPLORER = "stage2_explorer"
 RANGEBOX_RANGER = "rangebox_ranger"
 FORENSICS_PATHFINDER = "forensics_pathfinder"
 MFA_RECOVERY_ACE = "mfa_recovery_ace"
@@ -58,6 +61,9 @@ HIDDEN_ACHIEVEMENT_TYPES = {
     HEADER_HUNTER,
     SOURCE_SLEUTH,
     LOG_DETECTIVE,
+    LOG_REVIEWER,
+    EVIDENCE_EXPLORER,
+    STAGE2_EXPLORER,
     RANGEBOX_RANGER,
     FORENSICS_PATHFINDER,
     MFA_RECOVERY_ACE,
@@ -104,6 +110,9 @@ ACHIEVEMENT_LABELS = {
     HEADER_HUNTER: "Header Hunter",
     SOURCE_SLEUTH: "Source Sleuth",
     LOG_DETECTIVE: "Log Detective",
+    LOG_REVIEWER: "Log Reviewer",
+    EVIDENCE_EXPLORER: "Evidence Explorer",
+    STAGE2_EXPLORER: "Stage 2 Explorer",
     RANGEBOX_RANGER: "RangeBox Ranger",
     FORENSICS_PATHFINDER: "Forensics Pathfinder",
     MFA_RECOVERY_ACE: "Recovery Architect",
@@ -141,6 +150,9 @@ ACHIEVEMENT_DESCRIPTIONS = {
     HEADER_HUNTER: "Completed the RangeBox network basics lab",
     SOURCE_SLEUTH: "Completed the RangeBox browser and source lab",
     LOG_DETECTIVE: "Read the access log and captured the flag",
+    LOG_REVIEWER: "Completed the beginner log review and recorded the evidence",
+    EVIDENCE_EXPLORER: "Completed the beginner challenge with evidence, confidence, and an alternative explanation",
+    STAGE2_EXPLORER: "Completed all six Stage 2 beginner command-line, network, log, and evidence labs",
     RANGEBOX_RANGER: "Completed all four RangeBox basics exercises",
     FORENSICS_PATHFINDER: "Completed both Digital Forensics exercises",
     MFA_RECOVERY_ACE: "Recovered an MFA-protected account through a public recovery answer",
@@ -176,6 +188,17 @@ RANGEBOX_BASIC_LAB_SLUGS = (
     "high-school-9-2-rangebox-file-hunt",
     "high-school-10-1-rangebox-network-basics",
     "high-school-10-2-rangebox-browser-and-source",
+)
+
+# The six Stage 2 beginner labs form the first full command-line, network,
+# log, and evidence sequence. The collection badge is global.
+STAGE2_LAB_SLUGS = (
+    "high-school-10-1-rangebox-network-basics",
+    "high-school-10-2-rangebox-browser-and-source",
+    "high-school-10-3-email-metadata",
+    "high-school-10-4-mfa-lost-phone",
+    "high-school-10-5-rangebox-log-review",
+    "high-school-10-6-rangebox-beginner-challenge",
 )
 
 FORENSICS_LAB_SLUGS = (
@@ -228,6 +251,9 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     HEADER_HUNTER: "\U0001F4E1",
     SOURCE_SLEUTH: "\U0001F50E",
     LOG_DETECTIVE: "\U0001F4DC",
+    LOG_REVIEWER: "\U0001F4C4",
+    EVIDENCE_EXPLORER: "\U0001F9ED",
+    STAGE2_EXPLORER: "\U0001F680",
     RANGEBOX_RANGER: "\U0001F3D5\uFE0F",
     FORENSICS_PATHFINDER: "\U0001F9ED",
     MFA_RECOVERY_ACE: "\U0001F511",
@@ -478,6 +504,10 @@ def _check_lab_badges(
         _award(db, user_id, course_id, lab.id, SOURCE_SLEUTH)
     elif lab.slug == "high-school-11-1-rangebox-log-detective":
         _award(db, user_id, course_id, lab.id, LOG_DETECTIVE)
+    elif lab.slug == "high-school-10-5-rangebox-log-review":
+        _award(db, user_id, course_id, lab.id, LOG_REVIEWER)
+    elif lab.slug == "high-school-10-6-rangebox-beginner-challenge":
+        _award(db, user_id, course_id, lab.id, EVIDENCE_EXPLORER)
     elif lab.slug == "high-school-10-4-mfa-lost-phone":
         _award(db, user_id, course_id, lab.id, MFA_RECOVERY_ACE)
     elif lab.slug == "high-school-11-2-media-provenance":
@@ -515,6 +545,10 @@ def _check_collection_achievements(db: Session, user_id: int):
     rangebox_ids = _lab_ids(RANGEBOX_BASIC_LAB_SLUGS)
     if rangebox_ids and rangebox_ids.issubset(completed):
         _award(db, user_id, None, None, RANGEBOX_RANGER)
+
+    stage2_ids = _lab_ids(STAGE2_LAB_SLUGS)
+    if stage2_ids and stage2_ids.issubset(completed):
+        _award(db, user_id, None, None, STAGE2_EXPLORER)
 
     forensics_ids = _lab_ids(FORENSICS_LAB_SLUGS)
     if forensics_ids and forensics_ids.issubset(completed):
