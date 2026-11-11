@@ -269,13 +269,21 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   opened an empty modal because
   `/api/exercises/tracks/high-school/levels/{41,42,43}/quiz` returns `404` “No
   quiz available for this level.” The track response now includes `has_quiz` per
-  level and the UI hides the Quiz button when no active level quiz exists, so
-  the High School Stage 2-4 buttons are hidden until quiz banks are added.
-  Verified on dev: **6/6 checks**, no Quiz buttons on completed levels, four
-  Certificate buttons still present, and `has_quiz=false` for every level. The
-  `level_quizzes` table is empty, so all level Quiz buttons are hidden until the
-  quiz engine and banks are created. Deployed to dev and prod; the production
-  API also reports `has_quiz=false` for all four Beginner levels.
+  level and the UI hides the Quiz button when no active level quiz exists.
+- The Beginner quiz banks are now seeded from
+  `platform/backend/app/scripts/seed_level_quizzes.py`: Stage 1 and Stage 2 have
+  5 questions each, Stage 3 and Stage 4 have 4, and the passing score is 70.
+  The Quiz button appears only for a completed level with an active bank.
+  Verified on dev: **10/10 checks**, four Quiz buttons, Stage 2 submitted
+  **100% (5/5)** with per-question explanations, and the Stage 3/4 banks loaded
+  with the expected question counts. On production the API reports
+  `has_quiz=true` for all four levels and the Stage 2 submission returned
+  **100% (5/5)**.
+- Repeatable learning smoke: `scripts/ui-learning-smoke.mjs` compares the Quiz
+  and Certificate buttons against the track API for every level. It passed
+  **13/13** on a completed (18/18) development account and **13/13** on a fresh
+  account, where both buttons correctly stayed hidden. Evidence:
+  `ui-workspace-artifacts/journey-20261111/learning-smoke.json`.
 - Cleanup-race guard added: `create_lab_environment` now preserves networks
   owned by a session that is still `starting`/`running` and removes only stale
   lab networks for that user. Unit tests: **4 passed**.
