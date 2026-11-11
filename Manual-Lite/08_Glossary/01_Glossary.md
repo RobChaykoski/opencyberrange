@@ -278,6 +278,17 @@ repeated here.
 | Account | A learner's login for OpenCyberRange. The password must remain private. |
 | RangeBox account | The temporary Linux account inside the RangeBox desktop. It is not the OpenCyberRange login. |
 | Authorized activity | Work a teacher or the platform asks a learner to do inside OpenCyberRange. If unsure, stop and ask first. |
+| Authorization | Permission to do a specific action on a specific system, from the person responsible. It is not the same as being able to do it. |
+| Consent | A clear agreement from a person for their information or actions. Consent can be withdrawn. |
+| Privacy | A person's control over who can see and use their information. |
+| Personal information | Data that can identify a person, alone or combined, such as a name, photo, email address, phone number, location, or account handle. |
+| Credential | A secret that proves identity and allows access, such as a password, PIN, token, or key. |
+| Evidence | Information that shows what happened, such as a note or screenshot. Collect the minimum needed and share it only with a trusted adult through an approved channel. |
+| Responsible disclosure | Reporting a problem privately to the right person so it can be fixed, without exploiting it or sharing it widely. |
+| Digital citizenship | Using technology safely, respectfully, legally, and with care for other people. |
+| Redact | Hide or remove sensitive details from a description or screenshot. |
+| Security incident | An event that may harm systems or people, such as exposed data or unauthorized access. |
+| Trusted adult | A teacher, counselor, principal, guardian, or other adult whose job is to help. |
 | Linux | A type of operating system used by the practice desktop. Prior Linux experience is not required. |
 | Server | A computer or program that provides data or a service to other computers, such as a web page. |
 | Network | Two or more devices that can send data to each other. |

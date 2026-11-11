@@ -7,7 +7,7 @@ is written for students who use a computer every day but have not studied this
 subject before. You do not need any special technical knowledge or software
 installation.
 
-The chapter has eight core activities and six extra-practice pages. You will
+The chapter has eight core activities and seven extra-practice pages. You will
 open a practice desktop, use the on-screen tools, decode a few messages, and
 practise checking a link or file before you click or open it. You can work at
 your own pace.
@@ -64,6 +64,10 @@ By the end of this chapter, you will be able to:
 - use hints and ask for help without guessing;
 - stop and relaunch the lab if something is not working;
 - check a link or file before you click or open it;
+- explain authorization, privacy, and responsible reporting;
+- describe a concern without copying or sharing sensitive data;
+- distinguish a mistake from intentional harm and know when to stop and ask for
+  help;
 - explain a decision you made, not just report a flag.
 
 ## What You Need
@@ -247,9 +251,10 @@ teacher or revisit the activity before moving on.
 
 ### Extra Practice
 
-These six pages are optional. They help you get comfortable with the desktop,
-the terminal, files, basic networking, and safe command sequences before you open
-File Hunt. They do not replace the eight core activities.
+These seven pages are optional. They help you get comfortable with the desktop,
+the terminal, files, basic networking, safe command sequences, and responsible
+decisions before you open File Hunt. They do not replace the eight core
+activities.
 
 - [RangeBox Desktop and Window Basics](02_RangeBox_Desktop_and_Window_Basics.md)
   — label the browser and RangeBox controls, then open, switch, resize, and
@@ -268,6 +273,9 @@ File Hunt. They do not replace the eight core activities.
 - [Basic Command Practice](07_Basic_Command_Practice.md) — combine identity,
   location, folder, note, target, and connectivity checks in one short guided
   sequence.
+- [Cyber Ethics, Privacy, and Digital Citizenship](08_Cyber_Ethics_Privacy_and_Digital_Citizenship.md)
+  — use fictional school scenarios to practise authorization, privacy,
+  responsible reporting, and a calm stop-and-report process.
 
 Start with [Signing In and Opening RangeBox](01_First_Steps.md). Take it one
 command at a time, and ask for help when you need it.
