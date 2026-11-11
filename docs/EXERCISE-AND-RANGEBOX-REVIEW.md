@@ -39,6 +39,11 @@ accounts and `scripts/ui-workspace-regression.mjs`:
   resolved `/rangebox?...` URL.
 - The workbook CSP now allows the Material for MkDocs Google Fonts stylesheet
   and font files; the SPA policy remains strict.
+- The walkthrough also exposed a stop/relaunch race: the old session's background
+  cleanup could remove the network and RangeBox created by a newer session for
+  the same lab. Cleanup now defers to a newer starting/running session.
+- Final rerun: **44/44 checks passed**, 0 failures, for the test student and test
+  instructor.
 
 Screenshots: `docs/img/exercise-workspace.png` (desktop) and
 `docs/img/exercise-workspace-mobile.png` (phone fallback). The regression

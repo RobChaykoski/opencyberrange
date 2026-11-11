@@ -153,7 +153,7 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Added `scripts/ui-workspace-regression.mjs`, which walks the workspace as a
   dedicated test student and test instructor, exercises Expand/Restore, both
   new-tab controls, hint request, invalid-flag handling, and Stop, and records
-  JSON evidence plus screenshots.
+  JSON evidence plus screenshots. Final run: **44/44 checks passed**.
 - Fixed a stop/relaunch race: background cleanup for an old session could remove
   the network and RangeBox created by a newer session for the same lab, which
   silently launched the new lab VPN-only. Cleanup now defers to a newer

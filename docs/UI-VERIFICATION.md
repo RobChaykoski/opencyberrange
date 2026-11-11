@@ -27,8 +27,17 @@ instructor account against production (`https://ctfd.swocts.com`):
 
 Evidence: `scripts/ui-workspace-regression.mjs` writes
 `ui-workspace-artifacts/workspace-regression.json` plus desktop dark, desktop
-light, and mobile screenshots. The rerun result after the fixes is recorded in
-the deployment note at the end of this section.
+light, and mobile screenshots. The rerun after the fixes passed **44/44 checks**
+(0 failures) for the test student and test instructor, including RangeBox VNC
+connected, both new-tab controls, Expand/Restore, Request Hint, invalid-flag
+handling, Stop, and the mobile fallback. Screenshots:
+`docs/img/exercise-workspace.png` (desktop) and
+`docs/img/exercise-workspace-mobile.png` (phone fallback).
+
+The same walkthrough exposed a stop/relaunch race: background cleanup for an old
+session could remove the network and RangeBox created by a newer session for the
+same lab, which silently launched the new lab VPN-only. Cleanup now checks for a
+newer starting/running session and leaves the live environment alone.
 
 ## 2.6.0 event certificate additions
 

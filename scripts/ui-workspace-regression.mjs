@@ -242,7 +242,7 @@ async function exerciseControls(page, role) {
 
   // A wrong flag must produce an error, not a completion.
   await page.locator('#lab-flag-input').fill('OCR{workspace_regression_invalid}')
-  await page.getByRole('button', { name: /Submit Flag/i }).click()
+  await page.getByRole('button', { name: 'Submit', exact: true }).click()
   await page.locator('.flag-message--error').waitFor({ state: 'visible', timeout: 20000 }).catch(() => {})
   check(`${role}: invalid flag shows an error`, await page.locator('.flag-message--error').count() > 0)
 }
