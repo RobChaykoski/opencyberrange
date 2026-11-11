@@ -225,8 +225,8 @@ teacher or revisit the activity before moving on.
 
 ## Activities
 
-1. [RangeBox First Steps](01_First_Steps.md) — open the desktop and try simple
-   terminal commands.
+1. [Signing In and Opening RangeBox](01_First_Steps.md) — sign in, open the
+   desktop, and try simple terminal commands.
 2. [RangeBox File Hunt](02_File_Hunt.md) — find a file in the practice desktop.
 3. [CyberChef: Decode a Base64 Message](03_CyberChef_Base64.md) — use CyberChef
    (a browser tool for decoding data) to decode Base64 (a common way to change

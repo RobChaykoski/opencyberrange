@@ -67,7 +67,7 @@ nav:
   - Home: index.md
   - "CH HS09 -- Grade 9 RangeBox Basics":
     - Introduction: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
-    - "First Steps": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
+    - "Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
     - "File Hunt": CH_HS09_Grade_9_RangeBox_Basics/02_File_Hunt.md
     - "CyberChef: Base64": CH_HS09_Grade_9_RangeBox_Basics/03_CyberChef_Base64.md
     - "CyberChef: Caesar Shift": CH_HS09_Grade_9_RangeBox_Basics/04_CyberChef_Caesar.md

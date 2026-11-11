@@ -233,6 +233,13 @@ repeated here.
 | Virtual machine | A computer that runs inside another computer. A lab desktop provided through the web is not installed on the learner's device. |
 | Browser | The application used to visit websites, such as Chrome, Edge, Firefox, or Safari. |
 | Browser tab | One page area inside a web browser. Keep the exercise tab open while working. |
+| Student device | The laptop, desktop, or tablet in front of the learner. It is not the RangeBox desktop or the target. |
+| OpenCyberRange page | The website where a learner signs in, opens exercises, and launches RangeBox. |
+| Sign in | Enter a username and password to start a session on the platform. |
+| Workspace | The page or desktop where an activity is performed. |
+| Verification code | A short code from an authenticator app or teacher, used when an account asks for a second sign-in step. |
+| Pop-up | A new browser window or tab that a browser may block. |
+| Training token | A code in a practice file that helps the learner find the activity flag. It is not a real secret. |
 | Desktop | The screen with windows, icons, and open apps. |
 | Terminal | A text window where a learner types commands. |
 | Command | An instruction typed into a terminal. |
