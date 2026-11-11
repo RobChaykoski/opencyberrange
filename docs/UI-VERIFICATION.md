@@ -265,12 +265,12 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   `/certificate/high-school/40` and renders “8 of 8 exercises completed”.
   Evidence: `beginner-complete.png`, `beginner-complete-card.png`,
   `beginner-certificate.png`, and `beginner-complete.json`.
-- Stage 2-4 certificates passed **3/3**. The level **Quiz** buttons open an
-  empty modal because
+- Stage 2-4 certificates passed **3/3**. The level **Quiz** buttons previously
+  opened an empty modal because
   `/api/exercises/tracks/high-school/levels/{41,42,43}/quiz` returns `404` “No
-  quiz available for this level.” The quiz-bank check still passes 24 banks
-  across 164 labs, so this is a level-endpoint content gap: hide the Quiz button
-  when no level bank exists, or add high-school stage quiz banks.
+  quiz available for this level.” The track response now includes `has_quiz` per
+  level and the UI hides the Quiz button when no active level quiz exists, so
+  the High School Stage 2-4 buttons are hidden until quiz banks are added.
 - Cleanup-race guard added: `create_lab_environment` now preserves networks
   owned by a session that is still `starting`/`running` and removes only stale
   lab networks for that user. Unit tests: **4 passed**.

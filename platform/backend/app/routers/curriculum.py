@@ -1181,6 +1181,8 @@ async def get_track(
         LabSession.status == "running"
     ).first()
 
+    from app.models import LevelQuiz
+
     levels_data = []
     for level in sorted(track.levels, key=lambda l: l.level_number):
         labs_data = []
@@ -1264,6 +1266,10 @@ async def get_track(
             lab for lab in labs_data if lab.get("counts_toward_certificate", True)
         ]
         level_completed = sum(1 for lab in required_labs_data if lab["is_completed"])
+        has_quiz = db.query(LevelQuiz.id).filter(
+            LevelQuiz.level_id == level.id,
+            LevelQuiz.is_active == True,
+        ).first() is not None
         levels_data.append({
             "id": level.id,
             "level_number": level.level_number,
@@ -1272,6 +1278,7 @@ async def get_track(
             "total_labs": len(required_labs_data),
             "completed_labs": level_completed,
             "is_complete": bool(required_labs_data) and level_completed == len(required_labs_data),
+            "has_quiz": has_quiz,
             "labs": labs_data,
         })
     

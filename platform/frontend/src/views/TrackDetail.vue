@@ -141,7 +141,7 @@
           </div>
           <div class="level-header__right">
             <button
-              v-if="level.is_complete"
+              v-if="level.is_complete && level.has_quiz"
               class="level-certificate-btn"
               title="Take the optional level quiz"
               @click.stop="openQuiz(level)"
