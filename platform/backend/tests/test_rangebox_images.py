@@ -57,3 +57,14 @@ def test_unavailable_image_error_names_the_image_and_shorthand():
     assert error.image == "opencyberrange/remnuxbox:noble"
     assert error.shorthand == "remnux"
     assert "not installed" in str(error)
+
+
+def test_rangebox_proxy_ip_is_not_the_docker_gateway():
+    manager = DockerManager.__new__(DockerManager)
+
+    # Docker reserves .1 as the gateway on the proxy subnet. The desktop must
+    # be reachable at a real container address, not the gateway.
+    proxy_ip = manager.get_rangebox_ip(214, "high-school-9-1-rangebox-first-steps")
+
+    assert proxy_ip.endswith(".2"), proxy_ip
+    assert not proxy_ip.endswith(".1"), proxy_ip

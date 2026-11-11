@@ -325,14 +325,14 @@
 
     <!-- Active Lab Panel -->
     <transition name="slide-up">
-      <div v-if="activeLab" class="active-lab-panel">
+      <div v-if="activeLab" class="active-lab-panel" :class="{ 'active-lab-panel--workspace': workspaceMode }">
         <div class="active-lab-panel__header" :style="{ '--track-color': track?.color }">
           <div class="active-lab-panel__title-group">
             <h2>{{ activeLab.lab.name }}</h2>
             <span v-if="activeLab.session" class="active-badge">Active</span>
             <span v-else-if="activeLab.lab.is_completed" class="completed-badge">Completed</span>
             <button
-              v-if="isRangeBoxActive"
+              v-if="isRangeBoxActive && !workspaceMode"
               @click="openRangeBox"
               class="btn btn--primary btn--sm"
             >
@@ -357,7 +357,7 @@
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
               <div class="launch-buttons">
-                <button @click="launchWithImage(null)" class="btn btn--primary btn--sm" :disabled="launchingLab">
+                <button @click="startExercise" class="btn btn--primary btn--sm" :disabled="launchingLab">
                   {{ launchingLab && !launchingImage ? 'Starting...' : 'Start Exercise' }}
                 </button>
               </div>
@@ -493,14 +493,52 @@
           </div>
         </div>
 
-        <div class="active-lab-panel__body">
+        <div class="active-lab-panel__body" :class="{ 'active-lab-panel__body--workspace': workspaceMode }">
           <nav v-if="isMobile" class="active-lab-jump" aria-label="Exercise sections">
             <button type="button" @click="scrollToLabSection('lab-briefing')">Briefing</button>
             <button type="button" @click="scrollToLabSection('lab-targets')">Targets</button>
             <button type="button" @click="scrollToLabSection('lab-flag')">Flag</button>
             <button type="button" @click="scrollToLabSection('lab-hints')">Hints</button>
           </nav>
-          <div class="active-lab-grid">
+          <div
+            class="active-lab-grid"
+            :class="{
+              'active-lab-grid--workspace': workspaceMode,
+              'active-lab-grid--workbook-expanded': workspaceMode && workbookExpanded,
+            }"
+          >
+            <!-- RangeBox workspace frame (desktop only) -->
+            <section
+              v-if="workspaceMode"
+              class="panel-section panel-section--rangebox"
+              aria-label="RangeBox desktop"
+            >
+              <div class="workspace-frame__head">
+                <h3 class="section-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                  </svg>
+                  RangeBox
+                </h3>
+                <div class="workspace-frame__actions">
+                  <span class="workspace-frame__hint">Work here. Copy flags into the panel on the right.</span>
+                  <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBox">
+                    Open in new tab
+                  </button>
+                </div>
+              </div>
+              <div class="workspace-rangebox">
+                <RangeBox
+                  :session-id="rangeboxSessionId"
+                  :image-name="activeRangeboxImage"
+                  :show-timer="false"
+                />
+              </div>
+            </section>
+
+            <div class="lab-details" :class="{ 'lab-details--workspace': workspaceMode }">
             <!-- Scenario (spans full width of grid) -->
             <div v-if="activeLab.lab.scenario" id="lab-briefing" class="panel-section panel-section--full panel-section--scenario">
               <h3 class="section-title">
@@ -619,7 +657,7 @@
             </div>
 
             <!-- Workbook -->
-            <div v-if="activeLab.lab.workbook" class="panel-section">
+            <div v-if="activeLab.lab.workbook && !workspaceMode" class="panel-section">
               <h3 class="section-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
                   <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
@@ -660,8 +698,12 @@
                 <input
                   v-model="flagInput"
                   type="text"
+                  id="lab-flag-input"
+                  aria-label="Flag"
                   placeholder="OCR{your_flag_here}"
                   class="flag-input"
+                  autocomplete="off"
+                  spellcheck="false"
                   :class="{ 'flag-input--error': flagError, 'flag-input--success': flagSuccess }"
                   @keyup.enter="submitFlag"
                 />
@@ -674,13 +716,10 @@
                 </button>
               </div>
               <p class="flag-guidance">
-                Flags follow the exact format <code>OCR{example_text}</code> and are case sensitive.
-                Submit the whole value, including <code>OCR{</code> and <code>}</code>.
+                Format <code>OCR{example_text}</code>, case sensitive. Submit the whole value.
               </p>
               <p v-if="activeLab.session" class="flag-autostop-warning">
-                A correct flag completes the exercise and automatically shuts down your lab
-                environment a few seconds later. Save any notes or command output from the lab
-                machines before you submit.
+                A correct flag stops the lab a few seconds later. Save your notes first.
               </p>
               <p v-if="flagMessage" :class="['flag-message', flagSuccess ? 'flag-message--success' : 'flag-message--error']">
                 {{ flagMessage }}
@@ -712,6 +751,54 @@
               </button>
               <p v-else-if="receivedHints.length === 0 && !hintMessage" class="no-hints">No hints available for this exercise</p>
             </div>
+            </div>
+
+            <!-- Workbook workspace frame (desktop only) -->
+            <section
+              v-if="workspaceMode"
+              class="panel-section panel-section--workbook"
+              aria-label="Exercise workbook"
+            >
+              <div class="workspace-frame__head">
+                <h3 class="section-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                  Workbook
+                </h3>
+                <div class="workspace-frame__actions">
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    @click="workbookExpanded = !workbookExpanded"
+                  >
+                    {{ workbookExpanded ? 'Restore' : 'Expand' }}
+                  </button>
+                  <button
+                    v-if="activeWorkbookUrl"
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    @click="openWorkbook"
+                  >
+                    Open in new tab
+                  </button>
+                </div>
+              </div>
+              <div v-if="activeWorkbookUrl" class="workspace-workbook">
+                <iframe
+                  :key="activeWorkbookUrl"
+                  :src="activeWorkbookUrl"
+                  title="Exercise workbook"
+                  loading="lazy"
+                  referrerpolicy="same-origin"
+                ></iframe>
+              </div>
+              <div v-else class="workspace-empty">
+                This exercise's walkthrough lives in a course workbook. Open the
+                exercise from the course to read it.
+              </div>
+            </section>
           </div>
         </div>
       </div>
@@ -822,6 +909,7 @@ import LightbulbIcon from '../components/icons/LightbulbIcon.vue'
 import ArrowLeftIcon from '../components/icons/ArrowLeftIcon.vue'
 import FlagCelebration from '../components/FlagCelebration.vue'
 import PulseSurveyModal from '../components/PulseSurveyModal.vue'
+import RangeBox from '../components/RangeBox.vue'
 import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getCertificationPath } from '../data/certificationPaths'
 // RangeBox opens in a dedicated /rangebox tab (not embedded)
 
@@ -965,7 +1053,7 @@ const pollSpawnStatus = async (sessionId, { timeoutMs = 8 * 60 * 1000, intervalM
 
 const relaunchExpiredSession = () => {
   sessionExpired.value = false
-  launchWithImage(null)
+  launchWithImage(rangeboxImageForLab(activeLab.value?.lab))
 }
 
 const retryLaunch = async () => {
@@ -985,7 +1073,7 @@ const retryLaunch = async () => {
       return
     }
   }
-  await launchWithImage(null)
+  await launchWithImage(rangeboxImageForLab(activeLab.value?.lab))
 }
 
 // Course context. Everything that leaves an exercise returns to the course
@@ -1069,6 +1157,11 @@ const rangeboxSessionId = computed(() => {
 const isRangeBoxActive = computed(() => {
   return activeLab.value?.session?.rangebox_enabled && rangeboxSessionId.value
 })
+
+// Desktop exercise workspace: RangeBox top-left, details/flag on the right,
+// workbook along the bottom. VPN-only labs and phones keep the stacked panel.
+const workspaceMode = computed(() => Boolean(isRangeBoxActive.value && !isMobile.value))
+const workbookExpanded = ref(false)
 
 // Icon mapping
 
@@ -1160,6 +1253,11 @@ const workbookUrl = (wb, quiet = false) => {
 // Quiet, because the template calls this on every render.
 const workbookOpenable = (wb) => !!workbookUrl(wb, true)
 
+// Same-origin workbook URL for the framed bottom pane in the workspace.
+const activeWorkbookUrl = computed(() =>
+  workbookUrl(activeLab.value?.lab?.workbook, true)
+)
+
 const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
@@ -1241,7 +1339,12 @@ const openActiveLab = async (lab) => {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
     })
     activeLab.value = data
+    workbookExpanded.value = false
     loadReaction(data.lab?.id || lab.id)
+
+    // The framed workbook pane loads a same-origin MkDocs page; make sure the
+    // wiki auth cookie is present before the iframe requests it.
+    if (data.lab?.workbook) setWikiAuthCookie()
 
     if (data.session) {
       if (data.session.time_remaining_seconds !== undefined) {
@@ -1325,6 +1428,7 @@ const setReaction = async (value) => {
 
 const closeActiveLab = () => {
   activeLab.value = null
+  workbookExpanded.value = false
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
@@ -1395,6 +1499,7 @@ const RANGEBOX_IMAGE_BY_TOOL = {
   remnux: 'remnux',
   volatility: 'remnux',
   kali: 'kali',
+  rangebox: 'kali',
 }
 
 const rangeboxImageForLab = (lab) => {
@@ -1405,6 +1510,11 @@ const rangeboxImageForLab = (lab) => {
   }
   return null
 }
+
+// Starting from the open panel must honour the lab's expected desktop image;
+// otherwise a RangeBox lab starts VPN-only and the workbook's desktop steps
+// cannot be followed.
+const startExercise = () => launchWithImage(rangeboxImageForLab(activeLab.value?.lab))
 
 const launchLab = async (lab) => {
   const running = findActiveTrackLab()
@@ -1425,6 +1535,7 @@ const launchLab = async (lab) => {
     const spawnBody = rangeboxImage
       ? { rangebox: true, rangebox_image: rangeboxImage }
       : { rangebox: false }
+    if (rangeboxImage) activeRangeboxImage.value = rangeboxImage
     const { data: sp } = await axios.post(`/labs/spawn/${lab.slug}`, spawnBody)
     // Async spawn: wait for the session to actually reach running before opening
     // the panel, otherwise it shows a not-ready lab and never updates.
@@ -3019,6 +3130,208 @@ watch(timeRemaining, (val) => {
   gap: 1.5rem;
 }
 
+/* Desktop exercise workspace: the lab is the main surface, details and the
+   flag stay beside it, and the workbook is a full-width pane underneath. */
+.active-lab-panel--workspace {
+  top: 0;
+  bottom: 0;
+  height: 100dvh;
+  max-height: none;
+  border-radius: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.active-lab-panel--workspace .active-lab-panel__header {
+  flex: 0 0 auto;
+}
+
+.active-lab-panel__body--workspace {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.active-lab-grid--workspace {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(200px, 30vh);
+  grid-template-areas:
+    "rangebox details"
+    "workbook workbook";
+  gap: 1rem;
+  min-height: 0;
+}
+
+.active-lab-grid--workspace.active-lab-grid--workbook-expanded {
+  grid-template-rows: minmax(0, 1fr) minmax(300px, 46vh);
+}
+
+.lab-details {
+  display: contents;
+}
+
+.lab-details--workspace {
+  grid-area: details;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Keep the flag visible without hiding the details above it. The flag is
+   visually last; hints sit before it, and both scroll with the details. */
+.lab-details--workspace #lab-hints {
+  order: 98;
+}
+
+.lab-details--workspace #lab-flag {
+  order: 99;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 -8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.lab-details--workspace #lab-flag .section-title {
+  margin-bottom: 0.5rem;
+}
+
+.lab-details--workspace #lab-flag .flag-guidance {
+  display: none;
+}
+
+.lab-details--workspace #lab-flag .flag-autostop-warning {
+  margin-top: 0.45rem;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.panel-section--rangebox,
+.panel-section--workbook {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.panel-section--rangebox {
+  grid-area: rangebox;
+}
+
+.panel-section--workbook {
+  grid-area: workbook;
+}
+
+.workspace-frame__head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.workspace-frame__head .section-title {
+  margin: 0;
+  min-width: 0;
+}
+
+.workspace-frame__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  min-width: 0;
+}
+
+.workspace-frame__hint {
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.workspace-rangebox {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0.35rem;
+  background: #0a0a1a;
+}
+
+.workspace-rangebox :deep(.rangebox) {
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.workspace-rangebox :deep(.rangebox__viewport) {
+  min-height: 0;
+}
+
+.workspace-workbook {
+  flex: 1 1 auto;
+  min-height: 0;
+  background: var(--bg-primary);
+}
+
+.workspace-workbook iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.workspace-empty {
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 1100px) {
+  .active-lab-grid--workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(300px, 48vh) minmax(280px, auto) minmax(190px, 34vh);
+    grid-template-areas:
+      "rangebox"
+      "details"
+      "workbook";
+    overflow-y: auto;
+  }
+
+  .lab-details--workspace {
+    overflow: visible;
+  }
+
+  .lab-details--workspace #lab-flag {
+    position: static;
+    box-shadow: none;
+  }
+
+  .workspace-frame__hint {
+    display: none;
+  }
+}
+
+@media (max-height: 720px) {
+  .active-lab-grid--workspace {
+    grid-template-rows: minmax(0, 1fr) minmax(150px, 28vh);
+  }
+}
+
 .panel-section {
   background: var(--bg-primary);
   border-radius: 8px;
@@ -3026,7 +3339,7 @@ watch(timeRemaining, (val) => {
 }
 
 .panel-section--full {
-  grid-column: 1 / span 2;
+  grid-column: 1 / -1;
 }
 
 .section-title {

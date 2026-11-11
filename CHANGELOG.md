@@ -130,6 +130,23 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   as in browser storage. It no longer reappears after a change of hostname or
   port, cleared site data, or a second tab racing the first.
 
+### Exercise workspace
+- Desktop RangeBox exercises now open in a combined workspace: RangeBox
+  top-left, scenario/details and the flag panel on the right, and the workbook
+  as a framed pane along the bottom. Phones keep the existing stacked panel.
+- The workbook pane has an Expand/Restore control and an open-in-new-tab
+  fallback; the flag panel stays visible while the details scroll.
+- Launching from the exercise panel now honours the lab's desktop image, and a
+  lab whose tools list says `rangebox` launches a Kali desktop instead of
+  starting VPN-only.
+- Fixed lab-attached RangeBox VNC: the proxy network used the Docker gateway
+  address (`.1` on a `/30`) for the desktop, so the viewer stayed on
+  "Connecting". It now uses a `/29` with the desktop at `.2` and the backend at
+  `.3`, and replaces legacy `/30` networks.
+- Student-tested on the High School RangeBox First Steps lab: desktop connected,
+  workbook loaded, flag completed the exercise, and the mobile view remained
+  single-column without horizontal overflow.
+
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party
   notices, About lab toolchains, and licence bundle.

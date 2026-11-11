@@ -11,7 +11,7 @@
         <span v-if="impersonation" class="rangebox__impersonate-badge">
           IMPERSONATING {{ impersonation.username }}
         </span>
-        <span v-if="timeRemaining !== null" class="rangebox__timer" :class="{ 'rangebox__timer--warning': timeRemaining < 300 }">
+        <span v-if="showTimer && timeRemaining !== null" class="rangebox__timer" :class="{ 'rangebox__timer--warning': timeRemaining < 300 }">
           {{ formattedTime }}
         </span>
       </div>
@@ -138,6 +138,7 @@ const props = defineProps({
   // Lab metadata for the in-window flag/IP dock (exercise RangeBox only).
   labContext: { type: Object, default: null },
   showClose: { type: Boolean, default: false },
+  showTimer: { type: Boolean, default: true },
 })
 
 const router = useRouter()
@@ -202,6 +203,7 @@ const formattedTime = computed(() => {
 })
 
 const fetchTimeRemaining = async () => {
+  if (!props.showTimer) return
   if (isAdminViewer.value) return  // No per-session timer for an admin watching a student
   if (props.standalone && props.statusData) {
     // Parent already fetched /rangebox/standalone/status; reuse it.
@@ -344,9 +346,11 @@ const connect = async () => {
         }
       }, 200)
       // Fetch session time remaining and start countdown
-      fetchTimeRemaining().then(() => {
-        if (timeRemaining.value !== null) startTimer()
-      })
+      if (props.showTimer) {
+        fetchTimeRemaining().then(() => {
+          if (timeRemaining.value !== null) startTimer()
+        })
+      }
     })
 
     rfb.addEventListener('disconnect', (e) => {

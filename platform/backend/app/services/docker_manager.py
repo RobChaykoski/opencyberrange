@@ -269,7 +269,7 @@ class DockerManager:
     # Lab subnets that need isolation from the host management LAN.
     # 10.50.0.0/16 covers standalone RangeBox subnets (10.50.{x}.0/24).
     # 10.100.0.0-10.254.0.0 covers lab subnets (user_ids > 250 use 10.101+).
-    # 10.200.0.0/16 covers RangeBox proxy subnets (10.200.x.0/30).
+    # 10.200.0.0/16 covers RangeBox proxy subnets (10.200.x.0/29).
     _LAB_SUBNETS = [
         "10.100.0.0/14",   # 10.100-10.103 (user_ids 1-1265)
         "10.104.0.0/13",   # 10.104-10.111 (user_ids 1266-3795)
@@ -3090,13 +3090,38 @@ fi
             # Create a dedicated proxy network so the backend can reach
             # the RangeBox for VNC proxying WITHOUT joining the lab network.
             # This prevents students from seeing the backend via nmap.
+            #
+            # Docker reserves the first address in a subnet as the gateway, so
+            # a /30 cannot hold both peers: .1 is the gateway, leaving only .2.
+            # Use a /29 with the RangeBox at .2 and the backend at .3.
             proxy_network_name = f"ocr-proxy-{user_id}-{lab_slug}"
-            proxy_subnet = f"10.200.{third_octet}.0/30"
-            proxy_rangebox_ip = f"10.200.{third_octet}.1"
-            proxy_backend_ip = f"10.200.{third_octet}.2"
+            proxy_subnet = f"10.200.{third_octet}.0/29"
+            proxy_rangebox_ip = f"10.200.{third_octet}.2"
+            proxy_backend_ip = f"10.200.{third_octet}.3"
             try:
                 try:
                     proxy_net = self.client.networks.get(proxy_network_name)
+                    configs = proxy_net.attrs.get("IPAM", {}).get("Config", [])
+                    if any((c.get("Subnet") or "").endswith("/30") for c in configs):
+                        # Replace a legacy /30 network whose .1 address was the
+                        # Docker gateway, which made the VNC proxy unreachable.
+                        logger.info(
+                            "Replacing legacy /30 RangeBox proxy network %s",
+                            proxy_network_name,
+                        )
+                        for container_id in list(
+                            (proxy_net.attrs.get("Containers") or {}).keys()
+                        ):
+                            try:
+                                attached = self.client.containers.get(container_id)
+                                proxy_net.disconnect(attached, force=True)
+                            except Exception as e:
+                                logger.debug(
+                                    "Could not detach %s from legacy proxy network: %s",
+                                    container_id, e,
+                                )
+                        proxy_net.remove()
+                        raise docker.errors.NotFound(proxy_network_name)
                 except docker.errors.NotFound:
                     proxy_net = self.client.networks.create(
                         proxy_network_name,
@@ -3174,7 +3199,7 @@ fi
         """Return the RangeBox IP on the proxy network (reachable by backend).
         The proxy network isolates backend-to-RangeBox traffic from the lab network."""
         _, third_octet = get_subnet_id(user_id, lab_slug)
-        return f"10.200.{third_octet}.1"
+        return f"10.200.{third_octet}.2"
 
     def get_rangebox_status(self, user_id: int, lab_slug: str, include_stats: bool = True) -> dict:
         """Get RangeBox container status and resource usage."""
