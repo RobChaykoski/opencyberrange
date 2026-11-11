@@ -51,6 +51,9 @@ Deployment on **11 November 2026**:
   remains self-only.
 - The temporary test student and instructor accounts and their sessions were
   removed after the run.
+- The broader deployment UI smoke (`scripts/ui-smoke.mjs`) also passed **9/9**
+  checks against the student account: API version, mobile shell, profile tabs,
+  events, RangeBox tab, and no page errors.
 
 ## 2.6.0 event certificate additions
 
