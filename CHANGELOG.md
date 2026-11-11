@@ -126,6 +126,9 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - RangeBox launch failures now report the actual cause. A missing desktop image
   returns a specific `409` response instead of a generic server error, and the
   launcher disables images that are not installed on the host.
+- The orientation tour now stores its "seen" state on the user account as well
+  as in browser storage. It no longer reappears after a change of hostname or
+  port, cleared site data, or a second tab racing the first.
 
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party

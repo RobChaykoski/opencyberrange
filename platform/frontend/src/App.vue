@@ -303,6 +303,7 @@ const tourUser = computed(() => {
   }
 })
 const tourKey = computed(() => 'ocr_orientation_seen_v1_' + tourUser.value)
+let tourCheckedForToken = null
 const tourSteps = [
   { title: 'Welcome to the range', body: 'Here is a quick tour to get you from zero to your first running lab. It takes under a minute.', placement: 'center' },
   { title: '1. Connect over the VPN', body: 'Most labs run on an isolated network you reach over a VPN. Open VPN Setup to download your config and connect. You only do this once.', selector: '[data-tour="nav-vpn"]' },
@@ -311,20 +312,58 @@ const tourSteps = [
   { title: '4. Start your first lab', body: 'Open a track, pick an exercise, and click Launch or Start Exercise. Choose the VPN or a RangeBox when it starts, and your step-by-step workbook opens right alongside.', route: '/exercises', selector: '.track-grid .track-card' },
   { title: 'You are set', body: 'That is the whole loop: connect, launch, follow the workbook. You can replay this tour anytime from the sidebar menu. Have fun.', placement: 'center', route: '/exercises' },
 ]
-function maybeStartTour() {
+
+// Browser storage is the fast path, but it is origin-scoped and can be
+// cleared. Persist the same preference on the account so a student does not
+// see the tour again from another browser, hostname, or private window.
+async function tourSeenOnServer() {
+  try {
+    const { data } = await api.get('/auth/settings')
+    return Boolean(data?.notification_prefs?.orientation_seen_v1)
+  } catch {
+    return false
+  }
+}
+
+async function persistTourSeenOnServer() {
+  try {
+    const { data } = await api.get('/auth/settings')
+    const prefs = { ...(data?.notification_prefs || {}), orientation_seen_v1: true }
+    await api.put('/auth/settings', { notification_prefs: prefs })
+  } catch {
+    // Best effort. The localStorage key still suppresses the common case.
+  }
+}
+
+async function maybeStartTour() {
   if (!authState.value.token || userRole.value !== 'student') return
+  if (tourUser.value === 'anon') return
   if (localStorage.getItem(tourKey.value)) return
+  // Avoid duplicate settings calls when mount and the token watcher both fire.
+  if (tourCheckedForToken === authState.value.token) return
+  tourCheckedForToken = authState.value.token
+
+  if (await tourSeenOnServer()) {
+    try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
+    return
+  }
+
   setTimeout(() => {
     if (!isAuthenticated.value || userRole.value !== 'student') return
+    // Re-check inside the timeout: another tab may have opened the tour while
+    // this tab was waiting.
+    if (localStorage.getItem(tourKey.value)) return
     // Persist as soon as it opens. Otherwise closing the tab, navigating away,
     // or reloading before pressing Skip/Finish makes it reappear on the next
     // login. The sidebar still offers "Take the tour" for a deliberate replay.
     try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
     showTour.value = true
+    void persistTourSeenOnServer()
   }, 900)
 }
 function onTourFinish() {
   try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
+  void persistTourSeenOnServer()
   showTour.value = false
 }
 function startTour() { showTour.value = true }
