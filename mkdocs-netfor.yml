@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "NET00: Network Foundations":
     - Introduction: CH_N0_Network_Foundations/00_Introduction.md
     - "Exercise 0.1 -- Ping Basics": CH_N0_Network_Foundations/01_Ping_Basics.md

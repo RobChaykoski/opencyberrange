@@ -61,6 +61,7 @@ from app.services.file_lock import open_locked
 from app.services.spreadsheet_safety import neutralize_cell
 from app.services.lab_naming import parse_lab_slug
 from app.services.curriculum_manifest import chapter_id_for_workbook
+from app.services.framework_map import resolve as resolve_framework
 from app.services.user_transfer import (
     export_users as build_user_export,
     import_users as apply_user_import,
@@ -2605,6 +2606,9 @@ async def create_lab(
     ).scalar()
     next_order = (max_order if max_order is not None else 0) + 1
 
+    chapter_id = chapter_id_for_workbook(lab_data.get("workbook"))
+    framework = resolve_framework(slug, chapter_id, lab_data)
+
     lab = Lab(
         name=name,
         slug=slug,
@@ -2629,7 +2633,10 @@ async def create_lab(
         is_active=True,
         sort_order=next_order,
         content_version=lab_data.get("content_version"),
-        chapter_id=chapter_id_for_workbook(lab_data.get("workbook")),
+        chapter_id=chapter_id,
+        primary_competency=framework["primary_competency"],
+        framework_refs=json.dumps(framework["framework_refs"]),
+        measurable_outcome=framework["measurable_outcome"],
     )
     db.add(lab)
     db.commit()
@@ -2922,6 +2929,10 @@ async def discover_labs(
                 # removed it, clear the stale link instead of leaving a 404.
                 existing.workbook = lab_data.get('workbook') or None
                 existing.chapter_id = chapter_id_for_workbook(lab_data.get('workbook'))
+                framework = resolve_framework(existing.slug, existing.chapter_id, lab_data)
+                existing.primary_competency = framework["primary_competency"]
+                existing.framework_refs = json.dumps(framework["framework_refs"])
+                existing.measurable_outcome = framework["measurable_outcome"]
                 existing.content_version = lab_data.get('content_version') or None
                 updated += 1
             else:
@@ -2959,6 +2970,9 @@ async def discover_labs(
                     created_by=None,
                     workbook=lab_data.get('workbook'),
                     chapter_id=chapter_id_for_workbook(lab_data.get('workbook')),
+                    primary_competency=(resolve_framework(lab_dirname, chapter_id_for_workbook(lab_data.get('workbook')), lab_data)["primary_competency"]),
+                    framework_refs=json.dumps(resolve_framework(lab_dirname, chapter_id_for_workbook(lab_data.get('workbook')), lab_data)["framework_refs"]),
+                    measurable_outcome=(resolve_framework(lab_dirname, chapter_id_for_workbook(lab_data.get('workbook')), lab_data)["measurable_outcome"]),
                     content_version=lab_data.get('content_version'),
                 )
                 db.add(new_lab)

@@ -481,6 +481,9 @@ class LabResponse(BaseModel):
     sort_order: int
     chapter_id: Optional[str] = None
     chapter_name: Optional[str] = None
+    primary_competency: Optional[str] = None
+    framework_refs: List[str] = Field(default_factory=list, validation_alias="framework_refs_list")
+    measurable_outcome: Optional[str] = None
     
     class Config:
         from_attributes = True

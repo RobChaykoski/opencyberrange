@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "BEG01: RangeBox Foundations":
     - Introduction: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
     - "Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md

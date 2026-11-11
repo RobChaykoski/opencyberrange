@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "FOR01: Memory Forensics":
     - Introduction: CH_FOR01_Memory_Forensics/00_Introduction.md
     - "Windows Memory Analysis with Volatility": CH_FOR01_Memory_Forensics/01_Windows_Memory_Volatility.md

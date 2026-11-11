@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "LIN01: Linux Service Enumeration":
     - Introduction: CH_LIN01_Linux_Service_Enumeration/00_Introduction.md
     - "Exercise L1.1 -- SSH Service Detection": CH_LIN01_Linux_Service_Enumeration/01_SSH_Service_Detection.md

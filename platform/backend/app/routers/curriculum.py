@@ -1232,6 +1232,9 @@ async def get_track(
                 "chapter_id": lab.chapter_id,
                 "chapter_name": lab.chapter_name,
                 "chapter_label": chapter_label(lab.chapter_id),
+                "primary_competency": lab.primary_competency,
+                "framework_refs": lab.framework_refs_list,
+                "measurable_outcome": lab.measurable_outcome,
                 "requires_kvm": bool(getattr(lab, 'requires_kvm', False)),
                 "counts_toward_certificate": bool(getattr(lab, 'counts_toward_certificate', True)),
             })
@@ -2181,6 +2184,9 @@ async def get_lab_details(
             "chapter_id": lab.chapter_id,
             "chapter_name": lab.chapter_name,
             "chapter_label": chapter_label(lab.chapter_id),
+            "primary_competency": lab.primary_competency,
+            "framework_refs": lab.framework_refs_list,
+            "measurable_outcome": lab.measurable_outcome,
             "ics_techniques": json.loads(lab.ics_techniques) if getattr(lab, 'ics_techniques', None) else []
         },
         "track": {

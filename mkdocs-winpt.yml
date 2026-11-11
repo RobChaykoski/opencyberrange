@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "WIN01: Enumeration":
     - Introduction: CH01_Enumeration/00_Introduction.md
     - "Exercise 1.1 -- Basic Port Scan": CH01_Enumeration/01_Basic_Port_Scan.md

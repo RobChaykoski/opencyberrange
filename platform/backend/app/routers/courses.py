@@ -505,6 +505,9 @@ async def get_course(
             "chapter_id": lab.chapter_id,
             "chapter_name": lab.chapter_name,
             "chapter_label": chapter_label(lab.chapter_id),
+            "primary_competency": lab.primary_competency,
+            "framework_refs": lab.framework_refs_list,
+            "measurable_outcome": lab.measurable_outcome,
             "display_name": a.display_name,
             "locked": is_lab_locked,
             "workbook": lab.workbook,
@@ -2036,6 +2039,9 @@ def _build_student_scores(
             "chapter_id": lab.chapter_id,
             "chapter_name": lab.chapter_name,
             "chapter_label": chapter_label(lab.chapter_id),
+            "primary_competency": lab.primary_competency,
+            "framework_refs": lab.framework_refs_list,
+            "measurable_outcome": lab.measurable_outcome,
             "score": score,
             "max_score": 250,
             "attempts": completion.attempts if has_flag else 0,
@@ -2151,6 +2157,9 @@ async def list_assignments(
                 "chapter_id": lab.chapter_id,
                 "chapter_name": lab.chapter_name,
                 "chapter_label": chapter_label(lab.chapter_id),
+                "primary_competency": lab.primary_competency,
+                "framework_refs": lab.framework_refs_list,
+                "measurable_outcome": lab.measurable_outcome,
             })
         # Determine if assignment is locked:
         #   1. Manually locked by instructor (asn.locked field), OR

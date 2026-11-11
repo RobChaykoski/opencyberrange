@@ -50,6 +50,8 @@ recommended next step.
 Exercise counts are labs that expose a workbook page. The platform also
 contains labs without a workbook page; see [Workbook coverage](COVERAGE.md).
 
+See the [framework alignment](FRAMEWORKS.md) for the selective mapping.
+
 | Track ID | Display name | Audience | Difficulty | Prerequisites | Exercises | Duration | Status |
 |---|---|---|---|---|---:|---|---|
 | `high-school` | Beginner Cybersecurity | New learners with everyday computer experience and no assumed cybersecurity background. | beginner | None | 18 | 7h 00m | published |

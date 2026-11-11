@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "WEB01: Web Reconnaissance":
     - Introduction: CH_WEB01_Web_Reconnaissance/00_Introduction.md
     - "Exercise W1.1 -- Basic Directory Enumeration": CH_WEB01_Web_Reconnaissance/01_Basic_Directory_Enumeration.md

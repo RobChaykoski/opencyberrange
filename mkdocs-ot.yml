@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "OT01: Modbus Fundamentals":
     - Introduction: CH_OT01_Modbus_Fundamentals/00_Introduction.md
     - "Exercise 1.1 -- Modbus Register Analysis": CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis.md

@@ -346,6 +346,11 @@ def discover_labs():
                 workbook = lab_data.get('workbook', None)
                 from app.services.curriculum_manifest import chapter_id_for_workbook
                 chapter_id = chapter_id_for_workbook(workbook)
+                from app.services.framework_map import resolve as resolve_framework
+                framework = resolve_framework(lab_slug, chapter_id, lab_data)
+                primary_competency = framework["primary_competency"]
+                framework_refs = json.dumps(framework["framework_refs"])
+                measurable_outcome = framework["measurable_outcome"]
                 show_target_ips = bool(lab_data.get('show_target_ips', False))
                 # Extract topology nodes (id, label, ip_offset) for target IP display
                 topo_raw = lab_data.get('topology', {}).get('nodes', [])
@@ -412,6 +417,9 @@ def discover_labs():
                         "slug": lab_slug,
                         "workbook": workbook,
                         "chapter_id": chapter_id,
+                        "primary_competency": primary_competency,
+                        "framework_refs": framework_refs,
+                        "measurable_outcome": measurable_outcome,
                         "week": week,
                         "show_target_ips": show_target_ips,
                         "topology_nodes": topology_nodes,
@@ -449,6 +457,9 @@ def discover_labs():
                                 sort_order = :sort_order,
                                 workbook = :workbook,
                                 chapter_id = :chapter_id,
+                                primary_competency = :primary_competency,
+                                framework_refs = :framework_refs,
+                                measurable_outcome = :measurable_outcome,
                                 week = :week,
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
@@ -486,6 +497,9 @@ def discover_labs():
                                 sort_order = :sort_order,
                                 workbook = :workbook,
                                 chapter_id = :chapter_id,
+                                primary_competency = :primary_competency,
+                                framework_refs = :framework_refs,
+                                measurable_outcome = :measurable_outcome,
                                 week = :week,
                                 show_target_ips = :show_target_ips,
                                 topology_nodes = :topology_nodes,
@@ -517,7 +531,9 @@ def discover_labs():
                                 difficulty, category, duration_minutes, content_version, objectives,
                                 hints, tools, hostnames,
                                 flag_hash, compose_file, level_id, sort_order, is_active,
-                                visibility, workbook, chapter_id, week, show_target_ips, topology_nodes,
+                                visibility, workbook, chapter_id,
+                                primary_competency, framework_refs, measurable_outcome,
+                                week, show_target_ips, topology_nodes,
                                 ics_techniques, mitre_attack, prerequisites, mapped_skills,
                                 assessment_criteria, requires_kvm,
                                 counts_toward_certificate,
@@ -527,7 +543,9 @@ def discover_labs():
                                 :difficulty, :category, :duration, :content_version, :objectives,
                                 :hints, :tools, :hostnames,
                                 :flag_hash, :compose_file, :level_id, :sort_order, TRUE,
-                                :visibility, :workbook, :chapter_id, :week, :show_target_ips, :topology_nodes,
+                                :visibility, :workbook, :chapter_id,
+                                :primary_competency, :framework_refs, :measurable_outcome,
+                                :week, :show_target_ips, :topology_nodes,
                                 :ics_techniques, :mitre_attack, :prerequisites, :mapped_skills,
                                 :assessment_criteria, :requires_kvm,
                                 :counts_toward_certificate,
@@ -555,6 +573,9 @@ def discover_labs():
                             "visibility": yaml_visibility,
                             "workbook": workbook,
                             "chapter_id": chapter_id,
+                            "primary_competency": primary_competency,
+                            "framework_refs": framework_refs,
+                            "measurable_outcome": measurable_outcome,
                             "week": week,
                             "show_target_ips": show_target_ips,
                             "topology_nodes": topology_nodes,

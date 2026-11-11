@@ -1,0 +1,202 @@
+schema_version: 1
+last_reviewed: "2026-11-11"
+rule: >
+  Each exercise resolves to exactly one primary competency, one or two framework
+  references, and one measurable outcome. Framework references are selective:
+  use the framework that actually governs the work, not every framework that
+  could be mentioned. Explicit lab.yaml values override chapter defaults.
+
+frameworks:
+  - id: NICE
+    name: "NICE Workforce Framework for Cybersecurity"
+    version: "NIST SP 800-181 Rev. 1"
+    purpose: "Cybersecurity roles and work tasks"
+    url: "https://www.nist.gov/itl/applied-cybersecurity/nice"
+  - id: NIST_CSF
+    name: "NIST Cybersecurity Framework 2.0"
+    version: "2.0"
+    purpose: "General cyber capability and risk management"
+    url: "https://www.nist.gov/cyberframework"
+  - id: NIST_SSDF
+    name: "NIST Secure Software Development Framework"
+    version: "SP 800-218"
+    purpose: "Secure development practices"
+    url: "https://csrc.nist.gov/pubs/sp/800/218/final"
+  - id: CWE
+    name: "Common Weakness Enumeration"
+    version: "Current CWE list"
+    purpose: "Software weakness classification"
+    url: "https://cwe.mitre.org/"
+  - id: OWASP_TOP10
+    name: "OWASP Top 10"
+    version: "Current web risk categories"
+    purpose: "Web risk categories"
+    url: "https://owasp.org/www-project-top-ten/"
+  - id: OWASP_ASVS
+    name: "OWASP Application Security Verification Standard"
+    version: "Current ASVS"
+    purpose: "Web verification requirements"
+    url: "https://owasp.org/www-project-application-security-verification-standard/"
+  - id: NIST_AI_RMF
+    name: "NIST AI Risk Management Framework"
+    version: "AI RMF 1.0"
+    purpose: "AI risk management"
+    url: "https://www.nist.gov/itl/ai-risk-management-framework"
+  - id: OWASP_LLM
+    name: "OWASP Top 10 for LLM Applications"
+    version: "Current LLM Top 10"
+    purpose: "AI application risks"
+    url: "https://owasp.org/www-project-top-10-for-large-language-model-applications/"
+  - id: MITRE_ATTACK
+    name: "MITRE ATT&CK"
+    version: "Current enterprise matrix"
+    purpose: "Adversary behaviour"
+    url: "https://attack.mitre.org/"
+  - id: MITRE_ATLAS
+    name: "MITRE ATLAS"
+    version: "Current ATLAS matrix"
+    purpose: "AI adversary behaviour"
+    url: "https://atlas.mitre.org/"
+  - id: NIST_800_82
+    name: "NIST SP 800-82 Rev. 3"
+    version: "Rev. 3"
+    purpose: "OT/ICS security practices"
+    url: "https://csrc.nist.gov/pubs/sp/800/82/r3/final"
+  - id: IEC_62443
+    name: "IEC 62443"
+    version: "Current industrial automation and control systems series"
+    purpose: "OT/ICS security practices"
+    url: "https://www.iec.ch/blog/understanding-iec-62443"
+  - id: CYCLONEDX
+    name: "CycloneDX"
+    version: "Current specification"
+    purpose: "SBOM formats"
+    url: "https://cyclonedx.org/"
+  - id: SPDX
+    name: "SPDX"
+    version: "Current specification"
+    purpose: "SBOM formats"
+    url: "https://spdx.dev/"
+
+competencies:
+  - id: network_systems
+    name: "Network Systems"
+    description: "Network foundations, service discovery, traffic, and protocol behaviour."
+  - id: identity_access
+    name: "Identity and Access"
+    description: "Authentication, credentials, sessions, accounts, and access boundaries."
+  - id: web_api
+    name: "Web and API Security"
+    description: "Web reconnaissance, request handling, injection, and application verification."
+  - id: incident_forensics
+    name: "Incident Forensics"
+    description: "Logs, packet captures, memory evidence, timelines, and defensive explanation."
+  - id: malware
+    name: "Malware Analysis"
+    description: "Static and dynamic analysis of malicious files and command-and-control traffic."
+  - id: osint
+    name: "Open-Source Intelligence"
+    description: "Public-source collection, metadata, provenance, and responsible reporting."
+  - id: ot_ics
+    name: "OT/ICS Security"
+    description: "Industrial protocols, control-system assets, and operational risk."
+  - id: ai_security
+    name: "AI Security"
+    description: "Prompt injection, model policy, AI application risk, and AI adversary behaviour."
+  - id: secure_development
+    name: "Secure Development"
+    description: "Code review, weakness classification, secure design, and remediation."
+  - id: digital_safety
+    name: "Digital Safety"
+    description: "Account safety, privacy, link and file checks, and responsible reporting."
+  - id: system_administration
+    name: "System Administration"
+    description: "Terminal use, files, permissions, processes, and safe local system practice."
+
+chapter_defaults:
+  WIN01: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN02: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN03: {primary_competency: identity_access, framework_refs: [NICE, CWE]}
+  WIN04: {primary_competency: identity_access, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN05: {primary_competency: identity_access, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN06: {primary_competency: network_systems, framework_refs: [NICE, CWE]}
+  WIN07: {primary_competency: identity_access, framework_refs: [NICE, CWE]}
+  WIN08: {primary_competency: identity_access, framework_refs: [NICE, MITRE_ATTACK]}
+  WIN09: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+
+  LIN01: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  LIN01B: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  LIN02: {primary_competency: identity_access, framework_refs: [NICE, CWE]}
+  LIN02B: {primary_competency: network_systems, framework_refs: [NICE, CWE]}
+  LIN03: {primary_competency: system_administration, framework_refs: [NICE, MITRE_ATTACK]}
+  LIN03B: {primary_competency: identity_access, framework_refs: [NICE, CWE]}
+  LIN04: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  LIN05: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  LIN09: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+
+  NET00: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NET01: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  NET01B: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  NET02: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  NET03: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+
+  WEB01: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
+  WEB01B: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
+  WEB02: {primary_competency: web_api, framework_refs: [OWASP_TOP10, CWE]}
+  WEB02B: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
+  WEB03: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
+
+  MAL01: {primary_competency: malware, framework_refs: [NICE, MITRE_ATTACK]}
+  MAL02: {primary_competency: malware, framework_refs: [NICE, MITRE_ATTACK]}
+
+  OT01: {primary_competency: ot_ics, framework_refs: [NIST_800_82, IEC_62443]}
+  AI01: {primary_competency: ai_security, framework_refs: [NIST_AI_RMF, OWASP_LLM]}
+  OSINT01: {primary_competency: osint, framework_refs: [NICE, MITRE_ATTACK]}
+
+  BEG01: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  BEG02: {primary_competency: system_administration, framework_refs: [NICE, NIST_CSF]}
+  BEG03: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  BEG04: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+
+  SWSEC01: {primary_competency: secure_development, framework_refs: [NIST_SSDF, CWE]}
+  IAM01: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  FOR01: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  FOR02: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+
+lab_overrides:
+  # Selective additions where the governing framework is more specific than the
+  # chapter default. Keep this list short and justified.
+  ai-1-3-indirect-prompt-injection:
+    framework_refs: [NIST_AI_RMF, MITRE_ATLAS]
+  software-security-1-1-hidden-export-route:
+    framework_refs: [NIST_SSDF, CWE]
+  software-security-2-1-diagnostics-command-injection:
+    framework_refs: [NIST_SSDF, CWE]
+  # Beginner-stage labs cross several chapter themes. Keep the primary
+  # competency specific to the exercise rather than the whole stage.
+  high-school-9-3-cyberchef-base64-basics: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+  high-school-9-4-cyberchef-caesar-shift: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+  high-school-9-5-cyberchef-layered-message: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+  high-school-9-6-read-the-link: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+  high-school-9-7-know-the-file: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+  high-school-9-8-forwarded-message: {primary_competency: digital_safety, framework_refs: [NICE, NIST_CSF]}
+  high-school-10-1-rangebox-network-basics: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  high-school-10-2-rangebox-browser-and-source: {primary_competency: web_api, framework_refs: [NICE, OWASP_TOP10]}
+  high-school-10-3-email-metadata: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  high-school-10-4-mfa-lost-phone: {primary_competency: identity_access, framework_refs: [NICE, NIST_CSF]}
+  high-school-10-5-rangebox-log-review: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  high-school-10-6-rangebox-beginner-challenge: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
+  high-school-11-2-media-provenance: {primary_competency: osint, framework_refs: [NICE, NIST_CSF]}
+  high-school-12-1-devfest-community-portal: {primary_competency: osint, framework_refs: [NICE, NIST_CSF]}
+  high-school-12-2-crypto-rug-pull: {primary_competency: osint, framework_refs: [NICE, NIST_CSF]}
+  # Capstone, midterm, and black-box assessments do not have a single workbook
+  # chapter. They still receive a selective mapping.
+  linux-5-5-capstone-ctf: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  linux-5-7-black-box-ctf: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  linux-final-1-branch-office-practice: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  linux-final-2-clinic-final: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  linux-final-3-architecture-mock: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  linux-midterm-2-full-penetration-test: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  linux-midterm-3-blind-penetration-test: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  windows-10-1-network-enumeration-assessment: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}
+  windows-10-2-midterm-assessment: {primary_competency: network_systems, framework_refs: [NICE, MITRE_ATTACK]}

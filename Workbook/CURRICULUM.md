@@ -7,6 +7,8 @@ titles, navigation, prerequisite blocks, PDFs, analytics, and reports.
 Exercise counts are labs that expose a workbook page. The platform also
 contains labs without a workbook page; see [Workbook coverage](COVERAGE.md).
 
+Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
+
 ## Track overview
 
 | Track ID | Display name | Audience | Difficulty | Prerequisites | Exercises | Duration | Required environment | Recommended next | Role alignment | Status |

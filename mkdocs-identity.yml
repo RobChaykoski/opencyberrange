@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "IAM01: Identity and Access Foundations":
     - Introduction: CH_IAM01_Identity_And_Access/00_Introduction.md
     - "Secure Authentication": CH_IAM01_Identity_And_Access/01_Secure_Authentication.md

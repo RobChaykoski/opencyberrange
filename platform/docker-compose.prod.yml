@@ -116,6 +116,7 @@ services:
       # Curriculum manifest is the source of truth for chapter display IDs
       # used by progress analytics and assessment reports.
       - ../curriculum-manifest.yaml:/app/curriculum-manifest.yaml:ro
+      - ../curriculum-frameworks.yaml:/app/curriculum-frameworks.yaml:ro
     depends_on:
       db:
         condition: service_healthy

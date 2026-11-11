@@ -257,6 +257,21 @@ class Lab(Base):
     def chapter_name(self):
         from app.services.curriculum_manifest import chapter_name
         return chapter_name(self.chapter_id)
+
+    # Selective framework alignment: exactly one primary competency, one or two
+    # framework references, and one measurable outcome per lab.
+    primary_competency = Column(String(64), nullable=True)
+    framework_refs = Column(Text, nullable=True)  # JSON array of framework IDs
+    measurable_outcome = Column(Text, nullable=True)
+
+    @property
+    def framework_refs_list(self):
+        import json
+        try:
+            value = json.loads(self.framework_refs or "[]")
+            return value if isinstance(value, list) else []
+        except Exception:
+            return []
     # Curriculum week number for auto-assignment grouping (e.g. week: 3 → "Week 3" assignment)
     week = Column(Integer, nullable=True)
     # Who created this lab (NULL for system-discovered labs)

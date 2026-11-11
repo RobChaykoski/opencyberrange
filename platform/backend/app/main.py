@@ -385,6 +385,18 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added chapter_id column to labs table")
 
+        # --- Framework alignment: competency, refs, measurable outcome ---
+        labs_columns = [c['name'] for c in inspector.get_columns('labs')]
+        for column, ddl in (
+            ("primary_competency", "VARCHAR(64)"),
+            ("framework_refs", "TEXT"),
+            ("measurable_outcome", "TEXT"),
+        ):
+            if column not in labs_columns:
+                conn.execute(text(f"ALTER TABLE labs ADD COLUMN {column} {ddl}"))
+                conn.commit()
+                logger.info("Added %s column to labs table", column)
+
         # --- Week number: add 'week' column to labs for auto-assignment grouping ---
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]
         if 'week' not in labs_columns:

@@ -326,6 +326,9 @@ environments, role alignment, and recommended next steps are in
 Exercise counts are labs that expose a workbook page. The platform also
 contains labs without a workbook page; see `Workbook/COVERAGE.md`.
 
+Framework alignment is selective and documented in
+[`Workbook/FRAMEWORKS.md`](Workbook/FRAMEWORKS.md).
+
 Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 `--check` to detect drift.
 

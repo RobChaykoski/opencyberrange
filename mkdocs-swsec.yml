@@ -67,6 +67,7 @@ nav:
   - Home: index.md
   - "Curriculum map": CURRICULUM.md
   - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
   - "SWSEC01: Software Security Foundations":
     - Introduction: CH_SWSEC_Software_Security/00_Introduction.md
     - "Hidden Export Route": CH_SWSEC_Software_Security/01_Hidden_Export_Route.md
