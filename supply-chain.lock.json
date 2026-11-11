@@ -52,7 +52,7 @@
       "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "49a4757dd6013bd1a5376c481101130443022bce20de12f38274822db2d5d51b"
+      "sha256": "39abb7e0c960ddf8e4c14d2f7c411ccbf8c29d8aa73a4a029cd9e3afe2033072"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "59d539c2dc89a06a78de9e55f075d11e5cc82dba5fbb2b2ee15d960738ca8244"
@@ -160,27 +160,39 @@
       ]
     },
     "high-school-10-1-rangebox-network-basics": {
-      "content_hash": "1060763df367d95f132766dc8925c722e6e142f852dde0ceace32741c95fa5bd",
+      "content_hash": "63cdaba0241c4204d499777cba0d763b56c7b034a154fffb7a7439cfa17e48ce",
       "services": [
         "network"
       ]
     },
     "high-school-10-2-rangebox-browser-and-source": {
-      "content_hash": "a0d1b9e2cc51868b8d1d41fd67e26a23a7b5746fa4a5e417080adbffeaefe1ce",
+      "content_hash": "0421e305ebc2b0b2e9ef166ca425a30728f91155381b1d0cebcda2b50217bbec",
       "services": [
         "web"
       ]
     },
     "high-school-10-3-email-metadata": {
-      "content_hash": "37c78ad67dcf3734308931d1686a421cfb6d3fb6bf4c5e81b78dc628b144f695",
+      "content_hash": "63d255ff555a65dacc3aaa90e075be6d7ebe301a6b8c0773ae13a9b255a93e69",
       "services": [
         "portal"
       ]
     },
     "high-school-10-4-mfa-lost-phone": {
-      "content_hash": "d646387bd465c39648465eeec0eb76a8bf028f5731dd804a587582e949bafafb",
+      "content_hash": "292c66b03d29919a75dd17329c7a8abc03d31b985a164f1c2c32080ddce94ead",
       "services": [
         "portal"
+      ]
+    },
+    "high-school-10-5-rangebox-log-review": {
+      "content_hash": "e462c20f5023ed5adcc291148defe194945e505d9e8e811c92dde5e60a24a83b",
+      "services": [
+        "events"
+      ]
+    },
+    "high-school-10-6-rangebox-beginner-challenge": {
+      "content_hash": "f8795b2ade2bf874a540b22d12584d5d21bcbd5159d8db36378f0e505bbbc90d",
+      "services": [
+        "challenge"
       ]
     },
     "high-school-11-1-rangebox-log-detective": {
@@ -190,7 +202,7 @@
       ]
     },
     "high-school-11-2-media-provenance": {
-      "content_hash": "d45a27befc51fc12eee3ce42a1276a0b9b2817b264a5f65942f9125aa2b9d5f9",
+      "content_hash": "478bb9990aeadccb0095f4e831be04633937e756a4fb40a3131a8d40117b754d",
       "services": [
         "portal"
       ]
@@ -202,7 +214,7 @@
       ]
     },
     "high-school-12-2-crypto-rug-pull": {
-      "content_hash": "fd2dd68b5eab38a1614c5968fd953638c4865a361943bae895a911cbbdcfc748",
+      "content_hash": "97a6b902a99ff7dce07f208e5279e0bf2d0448fa8df47f0deb7d42cdfea1becd",
       "services": [
         "portal"
       ]
