@@ -212,7 +212,10 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   **4 passed**; live API check: a VPN-only session returned
   `10.100.223.93` for `cyberchef-b64.lab`, while a RangeBox session returned no
   IPs.
-- Existing hosts can apply the WireGuard route fix with
+- Applied to both hosts on **11 November 2026**: the runtime route is active on
+  development (`172.16.16.44`) and production (`172.16.16.41`), and persisted in
+  each host's `/etc/wireguard/wg0.conf` (backup `wg0.conf.bak-20261111`).
+- Other existing hosts can apply the same fix with
   `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
   backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.
 - The Base64 message was downloaded over the tunnel, decoded to
@@ -255,8 +258,7 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   still needs a cleanup guard (cleanup should target the exact network/session
   it created, not just the lab slug).
 - Evidence for the earlier parts: `signup.json`, `account-security.json`,
-  `cyberchef-lab.json`, and the matching screenshots. The runtime route was
-  added to the development host for the test and is not yet persisted there.
+  `cyberchef-lab.json`, and the matching screenshots.
 
 ## Post-2.5.5 UI additions
 
