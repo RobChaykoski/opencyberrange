@@ -218,6 +218,16 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   first Stage 2 lab had a Launch action. Evidence:
   `ui-workspace-artifacts/journey-20261111/stage1-complete.png` and
   `stage1-complete.json`.
+- Stage 2 was exercised with a second student account: **RangeBox Network
+  Basics**, **RangeBox Browser and Source**, **Dissect an Email**, and **MFA and
+  the Lost Phone** completed (4/6). The MFA recovery flow was driven over the
+  VPN; the remaining Stage 2 lab, RangeBox Log Review, is unlocked.
+- A rapid stop/relaunch cycle exposed a lab-cleanup race: one session reported
+  `running` while its Docker network had already been removed, leaving an
+  orphaned target container. Normal user pacing did not hit this. The existing
+  fix covers a newer session for the same lab; the rapid cross-lab case still
+  needs a cleanup guard (cleanup should target the exact network/session it
+  created, not just the lab slug).
 - Evidence for the earlier parts: `signup.json`, `account-security.json`,
   `cyberchef-lab.json`, and the matching screenshots. The runtime route was
   added to the development host for the test and is not yet persisted there.
