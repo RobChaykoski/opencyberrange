@@ -31,7 +31,9 @@ not measure capacity.
 
 At 27 boxes the VNC first-frame p95 crossed the test's 2 s threshold. The hard
 maximum was then enforced correctly: the three requests beyond 27 were rejected
-rather than creating a 28th box.
+rather than creating a 28th box. That run's 27-box ceiling is memory-derived;
+the current backend also applies the CPU reserve, which lowers the deployed
+computed maximum to 20 (see [Operational cap](#operational-cap)).
 
 Idle containers used about `160–180 MiB` each and roughly `1–2%` CPU per box,
 with short spikes while the desktop initialised. Memory is not the first
@@ -43,9 +45,15 @@ The platform does not run at the computed maximum by default. The live cap is
 **`rangebox_capacity_percent`** of the capacity ceiling, defaulting to **75%**.
 The ceiling is the measured Level 4 stress-test maximum when one has been
 recorded; until then it is the computed maximum. The remaining quarter is
-headroom for the backend, database, SIEM, and interactive VNC. On the 27-box
-development host that gives a live cap of 20; on the 11-box production-class
-host it gives 8.
+headroom for the backend, database, SIEM, and interactive VNC.
+
+On **11 November 2026** both deployed hosts reported a computed maximum of
+**20** and a live cap of **15** at the default 75%. Memory allows 27 boxes on
+these 62 GiB hosts, but the two-core CPU reserve with a 0.5-core quota allows
+20, so CPU is the binding constraint. The production host
+(`172.16.16.41`) has about **35 GB free** on `/var/lib/docker`; a launch needs
+10 GB free, so desktop headroom is fine, but new image prebuilds should be
+planned against that limit.
 
 Change the percentage in **Admin → Settings → Exercises → RangeBox capacity**.
 The card shows the computed maximum, the measured ceiling, the saved live cap,
@@ -62,8 +70,9 @@ setting.
 
 | Host | Computed hard maximum | Live cap at 75% | Short burst | Enforce with |
 |---|---:|---:|---:|---|
-| 12 vCPU / 62 GiB (development) | 27 | **20** | 25 | `rangebox_capacity_percent=75` |
-| 8 vCPU / 30 GiB (production) | 11 | **8** | 10 | `rangebox_capacity_percent=75` |
+| 12 vCPU / 62 GiB (development, `172.16.16.44`) | 20 | **15** | 20 | `rangebox_capacity_percent=75` |
+| 12 vCPU / 61 GiB (production, `172.16.16.41`) | 20 | **15** | 20 | `rangebox_capacity_percent=75` |
+| 8 vCPU / 30 GiB (reference small host) | 11 | **8** | 11 | `rangebox_capacity_percent=75` |
 
 The computed maximum is the tighter of memory, CPU, and disk headroom. The live
 cap leaves room for the backend, database, SIEM, browser workloads, and real
@@ -73,10 +82,10 @@ To pin a fixed operational limit instead, set the environment variable for the
 host class:
 
 ```bash
-# 12 vCPU / 62 GiB development host
-MAX_CONCURRENT_RANGEBOXES=20
+# 12 vCPU / 62 GiB development host, matching the 75% live cap
+MAX_CONCURRENT_RANGEBOXES=15
 
-# 8 vCPU / 30 GiB production-class host
+# 8 vCPU / 30 GiB reference small host
 MAX_CONCURRENT_RANGEBOXES=8
 ```
 
