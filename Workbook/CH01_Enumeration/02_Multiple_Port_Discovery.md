@@ -2,190 +2,375 @@
 
 ## Before You Begin
 
-In Exercise 1.1, you ran a basic Nmap scan that checked the 1,000 most common ports. That scan likely found a few open ports, but it only looked at a fraction of the total range. Services sometimes run on unusual port numbers; either intentionally (to avoid detection) or because the administrator chose a non-standard configuration. Exercise 1.2 teaches you to scan the full port range so nothing slips past.
+In Exercise 1.1, you ran Nmap's default scan against the 1,000 most common
+ports. That is a useful baseline, but it is not the whole port space. Services
+can run on non-standard ports, either because an administrator moved them or
+because an application chose a different number.
+
+This exercise introduces **one new decision**: which ports to scan. You will
+compare a single port, a comma-separated list, a range, and a broader scan, then
+run the broader scan against the assigned target.
+
+### Where the commands run
+
+Run every command inside the **RangeBox** terminal (the browser-based lab
+desktop) or your own **VPN** (Virtual Private Network)-connected Kali Linux VM.
+Do not run them in the OpenCyberRange web page, on the platform server, or on
+the target itself.
+
+### What you need
+
+- [ ] The Chapter 1 Introduction and Exercise 1.1 completed.
+- [ ] The lab started and its status shown as **Running**.
+- [ ] The target IP copied from the **Active Lab View** or **Exercise Network**
+      panel.
+- [ ] A terminal in the RangeBox or your VPN-connected Kali VM.
+- [ ] A notes file for predictions, commands, and output.
+
+### Estimated time
+
+About **25–35 minutes**. The broad scan may take longer than the default scan;
+the estimate includes reading and interpreting the output.
+
+### Scope
+
+!!! warning "Authorized target only"
+    Scan only the target IP shown in this exercise. Do not scan the platform,
+    your RangeBox, other students, your school or employer network, or the
+    internet. If the panel does not show a target, stop and ask your instructor;
+    do not scan addresses at random.
+
+### What you will be able to do
+
+By the end of this exercise, you will be able to:
+
+- explain the difference between a single port, a comma-separated list, a port
+  range, and a broader scan;
+- choose a scan breadth that matches the question you are asking;
+- explain how breadth affects time, network noise, and interpretation;
+- predict what a broader scan may find before running it;
+- compare a default scan with a broader scan and explain whether the extra
+  coverage was worth the extra time;
+- retrieve and submit the flag.
 
 ## Scenario
 
-The target machine has been reconfigured. Intelligence suggests that additional services may be running on non-standard ports; ports that a default Nmap scan would miss entirely. Your job is to perform a full port scan that covers every possible port and identify all exposed services.
+The target machine has been reconfigured. Intelligence suggests that additional
+services may be running on non-standard ports; ports that a default Nmap scan
+would miss entirely. Your job is to perform a full port scan that covers every
+possible port and identify all exposed services.
 
 ## Your Objectives
 
-- Scan all 65,535 TCP ports on the target
-- Identify every open port, including any on non-standard numbers
-- Compare the results to your Exercise 1.1 findings
-- Find and submit the flag
+- Compare single-port, list, range, and broader scan syntax.
+- Predict what the broader scan may find.
+- Run a default scan as a baseline, then scan all 65,535 TCP ports.
+- Identify any open port outside the default set.
+- Compare the results and decide whether the broader scan was justified.
+- Find and submit the flag.
 
----
+## Background: Selecting More Than One Port
 
-## Background: Why Scan All Ports?
+Nmap's `-p` option selects which ports to scan. The value after `-p` can take
+several forms. This exercise uses only that option; other Nmap options are
+introduced in later exercises.
 
-The first 1,024 ports (called "well-known ports") are assigned to specific services by convention. Ports 1,024 through 49,151 are "registered ports" used by common applications. Ports 49,152 through 65,535 are "dynamic" or "ephemeral" ports.
+### The four choices
 
-A default Nmap scan only checks the 1,000 most commonly seen ports. That means:
+| Selection | Syntax | Example | When it is appropriate | Trade-off |
+|---|---|---|---|---|
+| **Single port** | `-p <port>` | `-p 80` | You already know the one service you need to check. | Fastest and least noisy, but blind to everything else. |
+| **Comma-separated list** | `-p <port>,<port>,...` | `-p 22,80,443` | You have a short list of known services to verify. | Fast, but it cannot find a service you did not list. |
+| **Range** | `-p <start>-<end>` | `-p 1-1023` | You want to investigate a known band, such as the well-known ports. | Broader than a list, but still bounded. |
+| **Broader scan** | `-p <start>-<end>` or `-p-` | `-p 1-65535` or `-p-` | You need a complete inventory of TCP ports on one authorized target. | Slowest and noisiest; it produces the most results to interpret. |
 
-- **64,535 ports go unchecked** in a default scan
-- An administrator who moves SSH from port 22 to port 2222 (a common hardening tactic) would be invisible to the default scan
-- Backdoors, custom applications, and misconfigured services frequently bind to high-numbered ports
-- A penetration tester who only runs the default scan may miss critical entry points
+`-p-` is Nmap shorthand for “scan every TCP port.” `-p 1-65535` is the explicit
+form of the same range. Do not put spaces around the comma or the hyphen:
+`-p 22,80,443` and `-p 1-65535` are valid; `-p 22, 80, 443` and
+`-p 1 - 65535` are not the syntax you want.
+
+### Port ranges
+
+| Range | Name | Typical use |
+|---|---|---|
+| 0–1023 | Well-known ports | Standard services such as SSH, HTTP, and HTTPS. Often described as the first 1,024 ports. |
+| 1024–49151 | Registered ports | Applications and services registered with IANA (Internet Assigned Numbers Authority), plus many custom services. |
+| 49152–65535 | Dynamic or ephemeral ports | Temporary client ports, and sometimes services that administrators or applications place there. |
+
+Port numbers are conventions, not guarantees. A service can listen on any port.
+A full scan checks the whole TCP space; it does not tell you that every open port
+is important or vulnerable.
+
+### More ports is not automatically better
+
+**Scan breadth** is how many ports or hosts a scan covers. **Scan noise** is the
+traffic, log entries, and alert volume the scan creates.
+
+A broader scan is not automatically a better scan. It gives you more coverage,
+but it also:
+
+- takes longer;
+- sends more probes and creates more noise;
+- produces more output to interpret;
+- may be unnecessary when you already know which service you need to check.
+
+Choose the smallest scan that answers your question. Use a broader scan when
+you need discovery, not by default.
+
+### What the default scan leaves out
+
+By default, Nmap scans the **1,000 most common ports** out of 65,535 TCP ports.
+That leaves **64,535 ports** unchecked in a default scan.
 
 ```mermaid
 graph LR
-    A["65,535<br/>total ports"] --> B["1,000 scanned<br/>by default"]
-    A --> C["64,535<br/>not scanned"]
+    A["65,535<br/>TCP ports"] --> B["1,000 scanned<br/>by default"]
+    A --> C["64,535<br/>not scanned by default"]
 
     style B fill:#6aaa64,color:#fff
     style C fill:#d9534f,color:#fff
 ```
 
-The tradeoff is time. Scanning 1,000 ports takes a few seconds. Scanning all 65,535 takes significantly longer; anywhere from 30 seconds to several minutes depending on network conditions and the target's response speed.
+A service moved to a port outside the default 1,000 would be invisible to a
+default scan. A custom application on a high-numbered port could be missed too.
+The broader scan exists to answer the question: **what else is listening?**
 
-## Tool Primer: Full-Range Scanning
+A full-range scan may take anywhere from tens of seconds to several minutes,
+depending on the network, the target, and how it responds. The time is part of
+the trade-off, not a reason to skip interpretation.
 
-!!! kali "Scan the full 65,535-port range"
-    To tell Nmap to scan every port instead of just the top 1,000, you use the `-p` flag followed by a port range:
+## Prediction: Before You Scan
 
-    ```bash
-    nmap -p 1-65535 <target_ip>
-    ```
+Before running the broader scan, write down your prediction in your notes:
 
-    A common shorthand that does exactly the same thing:
+1. Which services or ports do you expect the default scan to miss?
+2. How much longer do you expect the broader scan to take than the default scan?
+3. What result would make the extra time and noise worth it?
+4. What result would tell you the broader scan was unnecessary for this target?
 
-    ```bash
-    nmap -p- <target_ip>
-    ```
-
-    The `-p-` notation is Nmap shorthand for "start at port 1, end at port 65535." Both forms produce the same result; use whichever you find easier to remember.
-
-**Speeding things up:**
-
-!!! kali "Add a timing template to speed up the scan"
-    Full-range scans take longer, but you can speed them up with timing flags. Nmap has timing templates from `-T0` (slowest, stealthiest) to `-T5` (fastest, noisiest):
-
-    ```bash
-    nmap -p- -T4 <target_ip>
-    ```
-
-    `-T4` is commonly used in lab environments where stealth does not matter. It increases the number of packets Nmap sends in parallel, cutting scan time considerably.
-
----
+You will compare your prediction with the actual result.
 
 ## Walkthrough
 
-### Step 1: Launch the Exercise
+### Step 1: Launch the exercise
 
-Start the exercise environment on the platform.
+1. Navigate to **Exercises** and open the **Windows** track.
+2. Open **Level 1**.
+3. Click **Launch** on **Multiple Port Discovery**.
+4. Wait for the status to change to **Running**.
+5. Copy the **target IP** from the **Active Lab View** or **Exercise Network**
+   panel into your notes.
 
-- Navigate to **Exercises** → **Windows** → **Level 1**
-- Click **Launch** on "Multiple Port Discovery"
-- Wait for the status to change to **Running**
-- Note the **target IP**
+Every command uses the placeholder `<target_ip>`. Replace it with the IP from
+your exercise panel. Do not copy an example IP from the introduction or another
+student's screen. The active target is the only system in scope.
 
-### Step 2: Run a Default Scan First
+### Step 2: Run a default scan as a baseline
 
-!!! kali "Run a default scan as a baseline"
-    Before scanning all ports, run the default scan to establish a baseline:
+!!! kali "Run the default scan"
+    In the RangeBox terminal or your VPN-connected Kali VM, run:
 
     ```bash
     nmap <target_ip>
     ```
 
-    Record the open ports it finds; you will compare them against the full-range scan in the next step.
+| Part | Example | Literal or replaceable | Meaning |
+|---|---|---|---|
+| Executable | `nmap` | Literal | The Nmap program. |
+| Options | none | — | The default TCP scan of the 1,000 most common ports. |
+| Target | `<target_ip>` | Replace | The IP from your exercise panel. |
 
----
+Record the open ports in your notes. This is your baseline. You are not trying
+to find the flag yet; you are establishing what the default view sees.
 
-### Record Your Findings: Default Scan
+**Success indicator for this step:** Nmap reports `Host is up` and prints a
+port table. Your baseline may contain several open ports, one, or none that you
+recognize.
 
-> **Open ports from the default (top 1,000) scan:**
->
-> | Port | Service |
-> |------|---------|
-> |      |         |
-> |      |         |
+### Step 3: Run the broader scan
 
----
-
-### Step 3: Run the Full-Range Scan
-
-!!! kali "Run the full-range scan"
-    Now scan every port:
+!!! kali "Scan all TCP ports"
+    Now scan the complete TCP port space:
 
     ```bash
-    nmap -p- -T4 <target_ip>
+    nmap -p- <target_ip>
     ```
 
-    The scan will take longer than the default. Watch the progress percentage in your terminal; Nmap shows how far along it is during longer scans.
+    The explicit equivalent is:
 
----
+    ```bash
+    nmap -p 1-65535 <target_ip>
+    ```
 
-### Record Your Findings: Full-Range Scan
+| Part | Example | Literal or replaceable | Meaning |
+|---|---|---|---|
+| Executable | `nmap` | Literal | The Nmap program. |
+| Option | `-p-` | Literal | Select every TCP port from 1 through 65,535. |
+| Option | `-p 1-65535` | Literal | The explicit range form of `-p-`. |
+| Target | `<target_ip>` | Replace | The IP from your exercise panel. |
 
-> **Open ports from the full-range scan:**
->
-> | Port | Service |
-> |------|---------|
-> |      |         |
-> |      |         |
-> |      |         |
-> |      |         |
->
-> **New ports found that the default scan missed:**
->
-> | Port | Service | Why the default scan missed it |
-> |------|---------|-------------------------------|
-> |      |         |                               |
+Use one of the two forms. Do not add timing options or other Nmap features in
+this exercise; the goal is to understand **which ports** you selected, not how
+fast the scan runs.
 
----
+**Success indicator for this step:** The scan completes, reports `Host is up`,
+and prints a port table that includes everything from your baseline plus any
+additional open ports the broader range found. A result with no additional ports
+is still a valid result; it means the default scan was sufficient for this
+target.
 
-### Step 4: Compare the Two Scans
+**Normal uncertainty:** a port may be `filtered`, a service label may be a guess,
+or the scan may take longer than expected. Record what happened instead of
+assuming a missing result means the service is absent.
 
-Look at your two sets of results side by side. The full-range scan should have found everything the default scan found, plus additional ports that were outside the top 1,000 list.
+### Interpret your result
 
-For each new port you discovered:
+After the broader scan, answer these questions in your notes:
 
-- Note the port number; is it in the well-known range (1-1024), the registered range (1025-49151), or the dynamic range (49152-65535)?
-- Look at the service name Nmap guessed; does it look like a standard service running on a non-standard port, or something unusual?
-- Consider why an administrator might put a service on that port number
+- Which open ports appeared in the broader scan that were not in the baseline?
+- Which port ranges did those new ports fall into?
+- Did the broader scan change your understanding of the target?
+- Was the extra time and noise justified for this target? Why or why not?
 
-### Step 5: Find and Submit the Flag
+This comparison is the point of the exercise. A broader scan that finds nothing
+new is not a failed scan; it is evidence that the baseline was adequate for this
+target.
+
+### Step 4: Find and submit the flag
+
+The exercise serves the flag from its HTTP service. Use this command:
 
 !!! kali "Retrieve the flag from the web server"
-    One of the services you discovered is an HTTP server on port 80. Use curl to retrieve the flag from the web server:
-
     ```bash
     curl http://<target_ip>/flag.txt
     ```
 
-    The response contains the flag in `OCR{...}` format. Submit the flag on the platform when you find it.
+| Part | Example | Literal or replaceable | Meaning |
+|---|---|---|---|
+| Executable | `curl` | Literal | The HTTP client used to request the file. |
+| URL | `http://<target_ip>/flag.txt` | Replace the IP; keep `http://` and `/flag.txt` | Request `flag.txt` from the target's HTTP service. |
+
+The response contains the flag in `OCR{...}` format (`OCR` is the platform's flag
+prefix). Copy the whole value, paste it into the **Submit Flag** form on the
+platform, and click **Submit**.
+
+If your scan shows the HTTP service on a different port, use the port from your
+scan in the URL and note the difference. Do not guess a port or a flag.
+
+### Completion evidence
+
+Before you submit the flag, make sure you have:
+
+- your prediction from before the scan;
+- the exact baseline command and its open ports;
+- the exact broader command and its open ports;
+- one sentence identifying a port the baseline missed, or explaining why no
+  additional port was found;
+- one sentence on whether the broader scan was worth its extra time and noise;
+- the `curl` command and output that produced the flag.
 
 ---
+
+## What Just Happened?
+
+You selected a broader port set with `-p-` (or `-p 1-65535`) and compared it with
+Nmap's default scan. The broader scan gave you a more complete inventory of TCP
+services on one authorized target. It did not prove that every open port is
+vulnerable, and it did not make the services safe or unsafe by itself.
+
+The useful result is the comparison: what the default scan saw, what the broader
+scan added, and whether the extra coverage answered your question.
 
 ## Analysis Questions
 
-**1. Your default scan found some open ports. Your full scan may have found more. What would have happened if you stopped after the default scan?**
+**1. When would you use a comma-separated list instead of a range?**
 
 ??? note "Reveal Answer"
 
-    You might have missed services entirely. In a real penetration test, those overlooked services might be the weakest points on the machine. A web application running on port 8080 instead of port 80, for example, might be a development server with no authentication; but you would never know if you did not scan for it.
+    A list is best when you know the small set of services you need to verify,
+    such as `22,80,443`. A range is better when you want to investigate a band
+    of ports, such as the well-known ports, or when you do not know which port a
+    service uses.
 
-**2. The full scan took much longer than the default scan. On a real engagement with hundreds of targets, how would you balance speed versus thoroughness?**
-
-??? note "Reveal Answer"
-
-    A common approach is to run the default scan first against all targets (fast, broad), identify the most interesting machines, and then run full-range scans against those specific targets (slower, deep). Penetration testers often run full-range scans overnight against the complete target list so results are ready in the morning.
-
-**3. An administrator moves SSH from port 22 to port 54321 "for security." Does that actually make the machine safer?**
+**2. Why is a full-range scan not automatically better than a default scan?**
 
 ??? note "Reveal Answer"
 
-    Moving a service to a non-standard port is called "security through obscurity." It stops automated scanners that only check default ports, but it does not stop a penetration tester who runs `-p-`. The service itself is no more secure on port 54321 than it was on port 22; the same vulnerabilities apply regardless of port number. Real security comes from strong authentication, patching, and access controls; not from hiding.
+    A full-range scan covers more ports, but it takes longer, creates more
+    traffic and log noise, and produces more output to interpret. It is the
+    right choice for discovery on an authorized target, not a default for every
+    scan. Choose the smallest scan that answers your question.
 
----
+**3. An administrator moves SSH from port 22 to port 54321 “for security.” Does
+that make the machine safer?**
+
+??? note "Reveal Answer"
+
+    Moving a service to a non-standard port is “security through obscurity”
+    (relying on a hidden port or detail instead of real access control). It may
+    stop scanners that only check default ports, but it does not stop a broader
+    scan, and the service itself is no more secure on port 54321 than it was on
+    port 22. Real security comes from strong authentication, patching, and access
+    controls, not from hiding the port number.
+
+**4. Your broader scan found no additional ports. What did you learn?**
+
+??? note "Reveal Answer"
+
+    You learned that, for this target at this time, the default scan was
+    sufficient to inventory the TCP services. That is a valid result, not a
+    failure. It also tells you that the extra time and noise did not add
+    coverage for this particular target.
+
+**5. What did your broader scan add that the baseline missed, and was the extra
+time justified?**
+
+??? note "Reveal Answer"
+
+    Answers will vary with the target. A good answer names the specific port or
+    ports, explains why the default scan missed them, and makes a judgment about
+    whether the extra coverage was worth the slower, noisier scan. “It depends on
+    the question” is acceptable when you explain which question the broader scan
+    answered.
+
+## Defensive Takeaways
+
+- Minimise exposed ports. Every listening service is reachable surface, even if
+  it is not currently vulnerable.
+- Do not treat a non-standard port as a security control. Use authentication,
+  patching, and network access rules.
+- Restrict management and file-sharing ports to authorized networks.
+- Monitor for broad port scans and sudden increases in connection attempts.
+- Know which ports are expected on each host; unexpected open ports are worth
+  investigating.
+
+## If You Get Stuck
+
+| Symptom | Likely cause | What to do |
+|---|---|---|
+| `Failed to resolve` or `Name or service not known` | The IP or hostname was typed incorrectly. | Re-copy the target from the exercise panel. Do not use an example IP. |
+| The scan times out or all ports are filtered | VPN not connected, target not ready, or a firewall is blocking the path. | Check the platform's VPN status, confirm the lab is **Running**, and try again. If using RangeBox, confirm the desktop is connected. |
+| `Host seems down` | Nmap's discovery probes were blocked, or the target is not ready. | Verify the target IP and VPN/RangeBox first. Do not assume the host is down. Do not add flags by guessing; follow the course guidance for the target. |
+| `-p 1 - 65535` does not behave as expected | Spaces split the range value. | Use `-p 1-65535` or `-p-` with no spaces. |
+| `-p 1,65535` scans only two ports | A comma creates a list, not a range. | Use a hyphen for a range: `-p 1-65535`. |
+| `-p-` is mistyped as `-p -` | The option and value are separated incorrectly. | Use `-p-` as a single token. |
+| The broad scan finds no new ports | The target may not expose anything outside the default set. | Record it as a valid result and compare with your baseline. Do not scan other hosts. |
+| The flag is rejected | The value was copied incorrectly, or the wrong case/format was submitted. | Copy the whole `OCR{...}` value exactly. Do not guess or alter the flag. |
+
+## Further Reading
+
+- [Nmap port scanning basics](https://nmap.org/book/man-port-scanning-basics.html)
+- [Nmap port specification](https://nmap.org/book/man-port-specification.html)
+- [Nmap reference guide](https://nmap.org/book/man.html)
 
 ## Key Takeaways
 
-- The default Nmap scan checks only **1,000 of 65,535 ports**: always run a full scan when thoroughness matters
-- Use **`-p-`** or **`-p 1-65535`** to scan the complete range
-- Use **`-T4`** in lab environments to speed up full-range scans
-- Services on non-standard ports are common and easy to miss; never assume the default scan found everything
-- The **comparison** between a default scan and a full scan is itself a valuable finding: it tells you what is hidden from casual observation
-- In real engagements, combine a fast default scan (breadth) with targeted full scans (depth)
+- `-p` selects ports; the value can be a single port, a comma-separated list, a
+  range, or the full range with `-p-`.
+- Use a single port or list when you know what you need to check. Use a range or
+  broader scan when you need discovery.
+- Broader scans cost more time, create more noise, and produce more output. They
+  are not automatically better.
+- A default scan covers 1,000 common ports; 64,535 TCP ports remain unchecked.
+- Compare the baseline and broader result. The comparison is the finding, not
+  just the command output.

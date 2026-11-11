@@ -114,6 +114,12 @@ values. Terms that already appear in another section are not repeated here.
 | Subnet | A block of IP addresses on the same network. The platform assigns each student session its own subnet. |
 | Loopback / localhost | The local host address `127.0.0.1`. A service bound only to loopback is reachable only from that host. |
 | Port | A numbered logical endpoint on a host, from `0` to `65535`. The operating system uses the port number to decide which program receives a connection. |
+| Port list | A comma-separated set of ports selected with `-p`, such as `-p 22,80,443`. A list does not include ports that are not named. |
+| Port range | A start-to-end port selection, such as `-p 1-65535`. A range includes every port between the endpoints. |
+| Baseline | A first scan result kept as a comparison point for a later, broader scan. |
+| Non-standard port | A port number other than the service's conventional port, such as SSH on a port other than 22. |
+| Probe | A test packet or request sent to a port so its response can be observed. |
+| Security through obscurity | Relying on a hidden port, name, or detail instead of real access control. |
 | Protocol | The rules two systems use to communicate. TCP and UDP are transport protocols. |
 | TCP | Transmission Control Protocol: a reliable, connection-based transport protocol used by most services in Chapter 1. |
 | UDP | User Datagram Protocol: a connectionless transport protocol. UDP scanning is outside Chapter 1. |
@@ -124,6 +130,12 @@ values. Terms that already appear in another section are not repeated here.
 | Share | A folder or resource exposed over SMB. An anonymous share allows access without credentials. |
 | Service | A program that listens on a port and responds to connections, such as a web server, SSH server, file-sharing service, or database. |
 | Port scan | Probing a host's ports to learn which are open, closed, or filtered. |
+| Scan breadth | The number of ports or hosts a scan covers. Broader scans provide more coverage but take longer and create more noise. |
+| Scan noise | The traffic, log entries, and alert volume a scan creates. Broader scans generally create more noise. |
+| Well-known port | A port in the 0–1023 range, conventionally assigned to standard services such as SSH, HTTP, and HTTPS. |
+| Registered port | A port in the 1024–49151 range, used by registered applications and custom services. |
+| Dynamic or ephemeral port | A port in the 49152–65535 range, commonly used for temporary client connections. |
+| IANA | Internet Assigned Numbers Authority: the organisation that maintains port-number and protocol registries. |
 | Version detection | Asking an open service to reveal its software product and version. Nmap's `-sV` option performs this. |
 | OS fingerprinting | Inferring a host's operating system from how it responds to network probes. Nmap's `-O` option performs this. |
 | Enumeration | The systematic discovery of hosts, ports, services, versions, and operating-system details. |
