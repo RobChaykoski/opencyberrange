@@ -1,0 +1,32 @@
+services:
+  challenge:
+    mem_limit: 128m
+    cpus: 0.15
+    deploy:
+      resources:
+        limits:
+          cpus: '0.15'
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 64M
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: rangebox-challenge
+    labels:
+      ip_offset: "101"
+    environment:
+      LAB_MODE: "logs"
+      FLAG: "OCR{3v1d3nc3_b3f0r3_act10n}"
+      TITLE: "RangeBox Beginner Challenge"
+      TARGET_HOST: "challenge.lab"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=8m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

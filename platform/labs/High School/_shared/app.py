@@ -33,6 +33,7 @@ MODE = os.environ.get("LAB_MODE", "welcome")
 FLAG = os.environ.get("FLAG", "OCR{rangebox_flag_not_set}")
 TITLE = os.environ.get("TITLE", "RangeBox Basics")
 PORT = int(os.environ.get("PORT", "8080"))
+TARGET_HOST = os.environ.get("TARGET_HOST", "logs.lab")
 
 DECOY_FLAG = "OCR{d3c0y_n0t_th3_r34l_fl4g}"
 
@@ -239,7 +240,7 @@ def browser_body() -> str:
 
 
 def logs_body() -> str:
-    return """
+    return f"""
       <span class="pill">Defensive security</span>
       <h1>Read the web server log</h1>
       <p class="lede">A log is a record of what a service saw. Most lines are
@@ -252,9 +253,9 @@ def logs_body() -> str:
       </div>
       <div class="card">
         <h2>Try the terminal too</h2>
-        <pre>curl http://logs.lab:8080/access.log
+        <pre>curl http://{TARGET_HOST}:{PORT}/access.log
 grep " 404 " access.log
-grep "OCR{" access.log</pre>
+grep "OCR{{" access.log</pre>
       </div>
       <div class="card note">
         <h2>Think like a defender</h2>

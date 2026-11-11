@@ -55,7 +55,7 @@ difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"
 difficulty_evidence_reviewed_at: "2026-11-08"
-workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics/"
+workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports/"
 
 hostnames:
   - ip_offset: "93"

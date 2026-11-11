@@ -1,0 +1,109 @@
+title: RangeBox Log Review
+category: network
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - high-school-10-1-rangebox-network-basics
+# By completion students will be able to:
+learning_outcomes:
+  - Read a small web access log
+  - Identify who, what, when, where, and result
+  - Separate observation from interpretation
+  - Explain why one failed event does not prove an attack
+  - Recover the training token and record confidence
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1046
+    technique_name: Network Service Discovery
+    detection: Monitor web logs for repeated failed requests to administrative paths.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-11"
+review_status: "automated static proof; live walkthrough pending"
+description: "Read a small synthetic web access log, find the repeated failed requests and the one unusual success, and recover the training token without treating one event as an attack."
+visibility: public
+flag: "OCR{l0gs_ar3_3v1d3nc3}"
+
+tools:
+  - rangebox
+  - terminal
+  - browser
+
+scenario: |
+  A community centre runs a small practice web service. The service keeps a
+  short access log. Most requests are ordinary page views. One source made
+  several failed requests, then one request that should not have succeeded.
+
+  You will read the log, identify the source, the requests, the timestamps, and
+  the results. You will separate what the log shows from what you think it means.
+  This is defensive observation, not an attack.
+
+  The service and the log are fictional and isolated.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use events.lab:8080. If the log is empty, check the target and lab status. Do not scan other hosts or ports."
+defensive_takeaways: "Read the status code and the requested path first. Repeated failures may be probing, a broken link, or a retry. One event is not a conclusion."
+difficulty_evidence: "Beginner scaffold: one target, one log endpoint, read-only curl and grep, and a guided evidence table."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-11"
+workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/07_Logs_and_Event_Review/"
+
+hostnames:
+  - ip_offset: "100"
+    hostname: "events.lab"
+    description: "Beginner log-review target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "events"
+      label: "Beginner log-review target"
+      type: "server"
+      ip_offset: "100"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Confirm the target is events.lab:8080, then fetch the log:
+
+      curl http://events.lab:8080/access.log -o access.log
+      ls -l access.log
+    unlock_after_minutes: 0
+
+  - text: |
+      Read the log before filtering it. Then count the status codes:
+
+      grep -c " 200 " access.log
+      grep -c " 404 " access.log
+
+      A 404 means the path was not found.
+    unlock_after_minutes: 6
+
+  - text: |
+      Look for the repeated failures, then the unusual success. The training
+      token is in the one request with an OCR{...} value:
+
+      grep "OCR{" access.log
+    unlock_after_minutes: 12
+
+test:
+  steps:
+    - name: "Log endpoint responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.events}:8080/access.log"
+      expect: "200"
+      timeout: 20
+
+    - name: "Log contains the training flag"
+      command: "curl -s http://{target.events}:8080/access.log | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{l0gs_ar3_3v1d3nc3}"
+      timeout: 20

@@ -1,0 +1,122 @@
+title: RangeBox Beginner Challenge
+category: network
+difficulty: beginner
+estimated_time: 30
+prerequisites:
+  - high-school-10-1-rangebox-network-basics
+  - high-school-10-5-rangebox-log-review
+# By completion students will be able to:
+learning_outcomes:
+  - Complete a target preflight before acting
+  - Observe one service without exploiting it
+  - Find one log clue and separate observation from interpretation
+  - Record reproducible evidence with confidence
+  - Write a short conclusion with an alternative explanation
+mapped_skills:
+  - incident_forensics
+  - network_systems
+  - identity_access
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1046
+    technique_name: Network Service Discovery
+    detection: Review web logs for repeated failed requests followed by a successful request.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-11"
+review_status: "automated static proof; live walkthrough pending"
+description: "A bounded beginner challenge: verify the target, confirm the service answers, read a synthetic log, record evidence, and explain what the log does and does not prove."
+visibility: public
+flag: "OCR{3v1d3nc3_b3f0r3_act10n}"
+
+tools:
+  - rangebox
+  - terminal
+  - browser
+
+scenario: |
+  A community centre practice service keeps a short access log. Most requests
+  are ordinary. One source made several failed requests, then one request that
+  should not have succeeded.
+
+  Your job is to confirm the target, observe the service, read the log, record
+  reproducible evidence, and write a short conclusion. You will not exploit,
+  log in, or scan other ports.
+
+  The service and the log are fictional and isolated.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use challenge.lab:8080. If the log is empty or the flag is missing, check the target and lab status. Do not scan other hosts or ports."
+defensive_takeaways: "Preflight first. A service answering is not a vulnerability. Separate observation from interpretation, state confidence, and give an alternative explanation."
+difficulty_evidence: "Beginner capstone: one target, approved curl/grep/cat commands, staged hints, and an evidence template."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-11"
+workbook: "wiki/range/high-school/CH_HS10_Grade_10_RangeBox_Basics/09_Guided_Cybersecurity_Challenge/"
+
+hostnames:
+  - ip_offset: "101"
+    hostname: "challenge.lab"
+    description: "Beginner challenge target (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "challenge"
+      label: "Beginner challenge target"
+      type: "server"
+      ip_offset: "101"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Confirm the target is challenge.lab:8080. If the exercise panel shows a
+      different hostname or port, stop and ask. Do not scan.
+    unlock_after_minutes: 0
+
+  - text: |
+      Confirm the service answers before downloading the log:
+
+      curl -I http://challenge.lab:8080/access.log
+    unlock_after_minutes: 5
+
+  - text: |
+      Download the log and read it before filtering:
+
+      curl http://challenge.lab:8080/access.log -o challenge.log
+      cat challenge.log
+    unlock_after_minutes: 10
+
+  - text: |
+      Count the status codes and look for the repeated failures:
+
+      grep " 404 " challenge.log
+      grep " 200 " challenge.log
+    unlock_after_minutes: 15
+
+  - text: |
+      Search for the training token:
+
+      grep "OCR{" challenge.log
+
+      Then write observation, interpretation, confidence, and one alternative
+      explanation.
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Log endpoint responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.challenge}:8080/access.log"
+      expect: "200"
+      timeout: 20
+
+    - name: "Log contains the challenge flag"
+      command: "curl -s http://{target.challenge}:8080/access.log | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{3v1d3nc3_b3f0r3_act10n}"
+      timeout: 20
