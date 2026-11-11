@@ -172,6 +172,47 @@ deleted afterwards, so no seeded demo or learner data was changed.
   `second-lab.json`, and screenshots `01-dashboard.png` through
   `22-profile-two-completions.png`).
 
+## 2.6.0 account security and VPN verification
+
+Run on **11 November 2026** against development (`https://172.16.16.44`).
+
+### Registration and account security
+
+- Registration through the public form: **8/8 checks**. The new account showed
+  the pending-administrator message and could not sign in before approval. After
+  approval, sign-in worked.
+- Password change: the old password was rejected and the new password accepted.
+  The success message is shown for 1.5 s before the forced re-login. During that
+  window the browser logs expected 401s from profile and course fetches while the
+  invalid token is being dropped; the user-facing flow completes normally.
+- MFA: enrollment, TOTP sign-in, ten recovery codes, single use, and reuse
+  rejection all passed.
+- The temporary account was deleted after the run.
+
+### VPN and VPN-only lab
+
+- `/api/labs/vpn-config` generated a config (`10.255.0.227/32`, endpoint
+  `172.16.16.44:51820`, route `10.100.218.0/24`) and registered the peer.
+  The WireGuard handshake succeeded from a client.
+- Initial target access failed because the server had no route to the
+  `10.255.0.0/16` client pool, so return traffic went to the LAN gateway.
+  Adding `ip route add 10.255.0.0/16 dev wg0` on the server fixed it. The
+  installer now writes this route in `PostUp`/`PostDown`
+  (`scripts/setup-range-server.sh`); existing hosts need the route added or
+  their `wg0.conf` updated.
+- The client config does not set `DNS`, so `cyberchef-b64.lab` does not resolve
+  over the tunnel. The lab panel shows the lab subnet (`10.100.218.0/24`) and
+  instructs the learner to scan, and the target was reached at
+  `10.100.218.93:8080`. Adding DNS to the client config or showing target IPs in
+  the panel/workbook would remove the workbook/hostname mismatch.
+- The Base64 message was downloaded over the tunnel, decoded to
+  `OCR{b4s364_is_encoding_not_encryption}`, and submitted through the UI. The
+  lab completed and the next CyberChef lab unlocked.
+- Evidence: `ui-workspace-artifacts/journey-20261111/signup.json`,
+  `account-security.json`, `cyberchef-lab.json`, and the matching screenshots.
+  The runtime route was added to the development host for the test and is not
+  yet persisted there.
+
 ## Post-2.5.5 UI additions
 
 Checked on **2026-11-10** against the development and production deployments:

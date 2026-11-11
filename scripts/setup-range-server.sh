@@ -52,6 +52,11 @@ VPN_INTERFACE="${VPN_INTERFACE:-wg0}"
 # default for the first ~1,265 users. Larger deployments should widen this
 # (see _LAB_SUBNETS in app/services/docker_manager.py).
 LAB_CIDR="${LAB_CIDR:-10.100.0.0/14}"
+# Client pool used by the backend (WG_CLIENT_BASE=10.255 by default). The
+# server needs a route to this pool; adding peers with `wg set` updates the
+# cryptokey routing table but does not add a system route for peers that
+# appear after wg-quick brought the interface up.
+WG_CLIENT_CIDR="${WG_CLIENT_CIDR:-10.255.0.0/16}"
 
 PEER_MANAGER_PORT="${PEER_MANAGER_PORT:-5000}"
 PEER_MANAGER_BIND="${PEER_MANAGER_BIND:-0.0.0.0}"
@@ -397,8 +402,8 @@ ListenPort = ${VPN_LISTEN_PORT}
 # The ACCEPT rules live in DOCKER-USER because Docker re-inserts its FORWARD
 # jumps on every network creation, which hides FORWARD ACCEPTs behind
 # DOCKER-FORWARD and its per-network DROP.
-PostUp   = iptables -I DOCKER-USER 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -I DOCKER-USER 1 -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -I POSTROUTING 1 -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -I PREROUTING 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -A FORWARD -i %i -j DROP
-PostDown = iptables -D DOCKER-USER -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D DOCKER-USER -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -D POSTROUTING -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -D PREROUTING -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D FORWARD -i %i -j DROP
+PostUp   = ip route replace ${WG_CLIENT_CIDR} dev %i; iptables -I DOCKER-USER 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -I DOCKER-USER 1 -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -I POSTROUTING 1 -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -I PREROUTING 1 -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -A FORWARD -i %i -j DROP
+PostDown = ip route del ${WG_CLIENT_CIDR} dev %i 2>/dev/null || true; iptables -D DOCKER-USER -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D DOCKER-USER -o %i -s ${LAB_CIDR} -j ACCEPT; iptables -t nat -D POSTROUTING -s ${LAB_CIDR} -o %i -j RETURN; iptables -t raw -D PREROUTING -i %i -d ${LAB_CIDR} -j ACCEPT; iptables -D FORWARD -i %i -j DROP
 
 # ── Student Peers ─────────────────────────────────────────────────────────────
 # Student peers are managed dynamically by the Peer Manager API.
