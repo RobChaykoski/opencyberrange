@@ -297,6 +297,16 @@ repeated here.
 | Public internet | Real websites and services outside the practice lab. It is out of scope in introductory labs. |
 | Trust boundary | The line between the systems and actions a learner is allowed to use and those that are out of scope. |
 | Status code | A number in an HTTP response that summarises the result, such as `200` for success or `404` for not found. |
+| Connectivity check | One read-only request to one known host, port, and path to see whether the service answers. |
+| Target label | The human-readable name shown next to a target in the exercise panel. |
+| Target Card | A labelled note that records the target label, hostname, IP address, port, and path before a network command is used. |
+| Name resolution | The process of turning a hostname into an IP address. DNS performs name resolution. |
+| Timeout | A failure where a command waits for a response and does not receive one in time. |
+| Unreachable | A failure where a host cannot be reached at all, often because there is no route to it. |
+| Connection refused | A failure where the host is reached but the service on that port refuses the connection. |
+| HEAD request | An HTTP request that asks for response headers only, not the file body. |
+| Network scan | Trying many hosts, ports, or services to discover what exists. A scan is not a connectivity check. |
+| Login | Sending a username and password, or opening an authenticated session. A connectivity check does not log in. |
 | File | A named piece of data, such as a document, picture, or text file. |
 | Folder | A container that holds files or other folders. |
 | Path | The route to a file or folder, written with `/` between folder names. |
