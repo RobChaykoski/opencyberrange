@@ -1,4 +1,4 @@
-# Grade 12 Activity: DevFest Community Portal
+# Stage 4 Activity: DevFest Community Portal
 
 ## Before You Begin
 

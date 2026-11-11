@@ -119,5 +119,5 @@ Copy the full token, including `OCR{` and `}`, and submit it in the platform.
 
 ## Next Step
 
-Continue to **Grade 12 Applied Cybersecurity** to use browser-only investigation
+Continue to **Stage 4: Applied Challenges** to use browser-only investigation
 skills in a community event scenario.

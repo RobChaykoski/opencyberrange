@@ -1,5 +1,5 @@
-site_name: "SWOCTS Cyber Range - High School Cybersecurity"
-site_description: "A browser-first cybersecurity pathway for grades 9-12 in the SWOCTS Cyber Range"
+site_name: "SWOCTS Cyber Range - Beginner Cybersecurity"
+site_description: "A beginner-only cybersecurity pathway with staged RangeBox, command-line, network, and defensive-evidence skills in the SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
 site_dir: _site_highschool
@@ -65,7 +65,7 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - "CH HS09 -- Grade 9 RangeBox Basics":
+  - "Beginner Stage 1 -- RangeBox Foundations":
     - Introduction: CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md
     - "Signing In and Opening RangeBox": CH_HS09_Grade_9_RangeBox_Basics/01_First_Steps.md
     - "Desktop and Window Basics": CH_HS09_Grade_9_RangeBox_Basics/02_RangeBox_Desktop_and_Window_Basics.md
@@ -84,18 +84,30 @@ nav:
     - "Capstone: Forwarded Message": CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message.md
     - "Troubleshooting and Safe Exit": CH_HS09_Grade_9_RangeBox_Basics/09_RangeBox_Troubleshooting_and_Safe_Exit.md
     - "Chapter Review": CH_HS09_Grade_9_RangeBox_Basics/10_Chapter_Review.md
-  - "CH HS10 -- Grade 10 RangeBox Basics":
+  - "Beginner Stage 2 -- Command Line, Files, and Networks":
     - Introduction: CH_HS10_Grade_10_RangeBox_Basics/00_Introduction.md
-    - "Network Basics": CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics.md
-    - "Browser and Source": CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source.md
-    - "Dissect an Email": CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata.md
-    - "MFA and the Lost Phone": CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone.md
-  - "CH HS11 -- Grade 11 Defensive Security":
+    - "RangeBox Review and Preflight": CH_HS10_Grade_10_RangeBox_Basics/01_RangeBox_Review_and_Preflight.md
+    - "Command Line Fluency": CH_HS10_Grade_10_RangeBox_Basics/02_Command_Line_Fluency.md
+    - "Files, Permissions, and Ownership": CH_HS10_Grade_10_RangeBox_Basics/03_Files_Permissions_and_Ownership.md
+    - "Processes, Services, and Applications": CH_HS10_Grade_10_RangeBox_Basics/04_Processes_Services_and_Applications.md
+    - "Network Communication and Ports": CH_HS10_Grade_10_RangeBox_Basics/05_Network_Communication_and_Ports.md
+    - "Introductory Service Enumeration": CH_HS10_Grade_10_RangeBox_Basics/06_Introductory_Service_Enumeration.md
+    - "Logs and Event Review": CH_HS10_Grade_10_RangeBox_Basics/07_Logs_and_Event_Review.md
+    - "Evidence Notes and Technical Communication": CH_HS10_Grade_10_RangeBox_Basics/08_Evidence_Notes_and_Technical_Communication.md
+    - "Guided Cybersecurity Challenge": CH_HS10_Grade_10_RangeBox_Basics/09_Guided_Cybersecurity_Challenge.md
+    - "Troubleshooting, Reset, and Safe Exit": CH_HS10_Grade_10_RangeBox_Basics/10_Troubleshooting_Reset_and_Safe_Exit.md
+    - "Chapter Review": CH_HS10_Grade_10_RangeBox_Basics/11_Chapter_Review.md
+    - "Applied Labs":
+      - "Network Basics": CH_HS10_Grade_10_RangeBox_Basics/01_Network_Basics.md
+      - "Browser and Source": CH_HS10_Grade_10_RangeBox_Basics/02_Browser_and_Source.md
+      - "Dissect an Email": CH_HS10_Grade_10_RangeBox_Basics/03_Email_Metadata.md
+      - "MFA and the Lost Phone": CH_HS10_Grade_10_RangeBox_Basics/04_MFA_Lost_Phone.md
+  - "Beginner Stage 3 -- Defensive Evidence":
     - Introduction: CH_HS11_Grade_11_Defensive_Security/00_Introduction.md
     - "Log Detective": CH_HS11_Grade_11_Defensive_Security/01_Log_Detective.md
     - "Media Provenance": CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance.md
     - "Chapter Review": CH_HS11_Grade_11_Defensive_Security/03_Chapter_Review.md
-  - "CH HS12 -- Grade 12 Applied Cybersecurity":
+  - "Beginner Stage 4 -- Applied Challenges":
     - Introduction: CH_HS12_Grade_12_Applied_Cybersecurity/00_Introduction.md
     - "DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
     - "Crypto Rug Pull": CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull.md

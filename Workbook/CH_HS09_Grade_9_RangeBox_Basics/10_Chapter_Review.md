@@ -1,6 +1,6 @@
 # Chapter Review
 
-This is the final review for the Grade 9 RangeBox Basics chapter. It is a
+This is the final review for the **Stage 1: RangeBox Foundations** chapter. It is a
 **readiness gate**, not a speed test and not a grade. It checks whether you can
 work safely, explain your choices, and recover from common problems.
 

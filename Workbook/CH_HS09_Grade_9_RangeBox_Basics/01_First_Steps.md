@@ -67,7 +67,7 @@ the desktop starts.
 By the end of this activity, you will be able to:
 
 - sign in safely and recognise the OpenCyberRange page;
-- open the Grade 9 exercise and launch RangeBox;
+- open the Stage 1 exercise and launch RangeBox;
 - tell the difference between your device, the browser, the OpenCyberRange page,
   the RangeBox desktop, and the RangeBox terminal;
 - run `pwd`, `whoami`, `ls`, and `curl` in the RangeBox terminal;
@@ -144,18 +144,18 @@ Find **Exercises** in the page or sidebar and click it.
 
 **You should see:** the exercise tracks or the Exercises page.
 
-### Step 9: Open the High School exercises
+### Step 9: Open the Beginner Cybersecurity exercises
 
-Choose **High School**.
+Choose **Beginner Cybersecurity**.
 
-**You should see:** the Grade 9, Grade 10, Grade 11, and Grade 12 levels, or the
-levels your teacher has made available.
+**You should see:** the Beginner Stage 1, Stage 2, Stage 3, and Stage 4 levels,
+or the levels your teacher has made available.
 
-### Step 10: Open Grade 9
+### Step 10: Open Stage 1
 
-Choose the **Grade 9** level.
+Choose the **Beginner Stage 1 · RangeBox Foundations** level.
 
-**You should see:** the list of Grade 9 activities, including **RangeBox First
+**You should see:** the list of Stage 1 activities, including **RangeBox First
 Steps**.
 
 ### Step 11: Open RangeBox First Steps

@@ -1,4 +1,4 @@
-# Chapter Review -- Grade 11 Defensive Security
+# Chapter Review — Stage 3: Defensive Evidence
 
 ## What You Practised
 
@@ -41,7 +41,7 @@ addresses, usernames, or personal information?
 
 ## Where Next?
 
-Grade 12 applies these investigation habits to a browser-only community event
+Stage 4 applies these investigation habits to a browser-only community event
 challenge. You will inspect a fictional conference portal, check where a file came
 from, and protect the people whose information appears in it.
 

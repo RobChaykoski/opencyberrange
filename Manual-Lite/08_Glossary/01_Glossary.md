@@ -365,6 +365,49 @@ repeated here.
 | Reduced motion | A device setting that reduces animation and motion effects. |
 | Clipboard | A temporary place for copied text. RangeBox has a Clipboard button for moving text between the browser and the desktop. |
 
+## Beginner Stage 2 terms
+
+These terms support the beginner command-line, permissions, process, network,
+log, and evidence activities.
+
+| Term | Definition |
+|---|---|
+| Executable | The program a command name starts, such as `ls` or `curl`. |
+| Standard input (stdin) | Data a command reads, often from the keyboard or another command. |
+| Standard output (stdout) | The normal result a command prints. |
+| Standard error (stderr) | Error messages a command prints. |
+| Exit status | A number a command returns to the shell. `0` usually means success; nonzero usually means failure. |
+| Pipe | The `|` symbol, which sends one command's standard output into another command's standard input. |
+| Redirection | Sending output to a file or reading input from a file, using symbols such as `>` and `>>`. |
+| Command history | The shell's record of commands a learner has run. |
+| Owner | The user who owns a file or folder. |
+| Group | A named set of users that can be given permissions. |
+| Other | Everyone who is not the owner and not in the group. |
+| Execute permission | For a file, permission to run it as a program. For a folder, permission to enter or traverse it. |
+| Directory traversal | Passing through a folder to reach something inside it. It requires execute permission on the folder. |
+| Permission string | The ten-character permission code from `ls -l`, such as `-rw-------`. |
+| Numeric mode | A three-digit permission code such as `600`, made from read = 4, write = 2, execute = 1. |
+| Program | A file on disk that contains instructions. |
+| Process | A running instance of a program. |
+| Process ID (PID) | The number the operating system uses to identify a process. |
+| Parent process | The process that started another process. |
+| Daemon | A background service process that usually has no terminal window. |
+| Listener | A network socket waiting for incoming connections, usually shown as `LISTEN`. |
+| Client connection | A connection from a client process to a service, usually with a local and remote address. |
+| Connection state | What the network stack reports about a socket, such as `LISTEN`, `ESTABLISHED`, `CLOSED`, or `FILTERED`. |
+| Enumeration (beginner) | Systematically observing what a service exposes, such as a port and service name. It is not exploitation. |
+| Log | A record of events written by a system or application. |
+| Log event | One thing recorded in a log, such as a request or login attempt. |
+| Timestamp | The date and time recorded for an event. |
+| Severity | How serious an event is labelled, such as info, warning, or error. |
+| False positive (beginner) | Something that looks suspicious but has a benign explanation. |
+| Observation | What a learner directly saw, such as a line of output. |
+| Interpretation | What a learner thinks the evidence means. |
+| Confidence (beginner) | How strongly the evidence supports an interpretation: low, medium, or high, with a reason. |
+| Screenshot | An image of a screen or window. It can expose more information than intended. |
+| Command output | Text a command printed. Copy text when possible; use a screenshot only when necessary. |
+| Redaction | Hiding or removing sensitive details from a note, image, or description. |
+
 ## Programme, learning, and analytics terms
 
 These terms describe the teaching, feedback, and programme layer. They are

@@ -1,16 +1,15 @@
-# High School Cybersecurity · Grade 12
+# Beginner Cybersecurity — Stage 4: Applied Challenges
 
 ## Welcome
 
-This pathway is built for students in grades 9–12 who are curious about
-cybersecurity but may not feel confident yet. That is a completely normal place
-to start.
+This pathway is built for beginner learners who are curious about cybersecurity
+but may not feel confident yet. That is a completely normal place to start.
 
 You do **not** need to know how to code. You do not need a terminal. You cannot
 break anything in this lab, and you can stop at any time. The activities are
 designed to be tried one small step at a time.
 
-The Grade 12 level focuses on **applied cybersecurity**: reading a public
+The Stage 4 level focuses on **applied cybersecurity**: reading a public
 website carefully, checking where a file came from, and explaining what you
 found without exposing anyone's personal information.
 
@@ -56,7 +55,7 @@ or a RangeBox, you can use it, but it is not required.
 4. **Explain** what it means and what you would do next.
 5. **Protect** the people whose information is involved.
 
-## Grade 12 Activities
+## Stage 4 Activities
 
 1. [DevFest Community Portal](01_DevFest_Community_Portal.md) — a browser-only
    OSINT and metadata challenge.

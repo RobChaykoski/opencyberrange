@@ -1,4 +1,4 @@
-# High School Cybersecurity — Grade 9 RangeBox Basics
+# Beginner Cybersecurity — Stage 1: RangeBox Foundations
 
 ## Welcome
 
@@ -89,7 +89,7 @@ estimate, not a deadline.
 
 ## How to Launch RangeBox
 
-1. Open one of the High School exercises.
+1. Open one of the Beginner Cybersecurity exercises.
 2. Choose **Launch RangeBox**.
 3. Pick the **Kali** desktop.
 4. Wait for the desktop to finish loading.

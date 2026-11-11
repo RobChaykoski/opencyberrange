@@ -1,11 +1,11 @@
-# High School Cybersecurity — Grade 11 Defensive Security
+# Beginner Cybersecurity — Stage 3: Defensive Evidence
 
 ## Welcome
 
-In Grade 9 you learned to move around the RangeBox desktop and find files. In
-Grade 10 you looked at how names, addresses, and web responses fit together. In
-Grade 11 you switch to the defender's side: reading the records a service leaves
-behind and explaining what happened.
+In Stage 1 you learned to move around the RangeBox desktop and find files. In
+Stage 2 you looked at how names, addresses, commands, and web responses fit
+together. In Stage 3 you switch to the defender's side: reading the records a
+service leaves behind and explaining what happened.
 
 You do not need to install anything. The activity works in RangeBox or the lab
 browser, and hints are always allowed.

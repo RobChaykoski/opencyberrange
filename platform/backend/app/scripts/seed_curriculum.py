@@ -206,26 +206,25 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                           'name': 'Code and Sources',
                           'description': 'Static assets, JavaScript comments, and leaked '
                                          'public repository material'}]},
-    {   'name': 'High School Cybersecurity',
+    {   'name': 'Beginner Cybersecurity',
         'slug': 'high-school',
-        'description': 'A browser-first pathway for grades 9-12. Start with RangeBox '
-                       'basics, move into networks and browser source, practise '
-                       'defensive log reading in Grade 11, then apply those skills in '
-                       'Grade 12.',
+        'description': 'A beginner-only pathway for new learners. Start with RangeBox '
+                       'basics, build command-line and networking confidence, practise '
+                       'defensive evidence, then apply those skills in bounded challenges.',
         'icon': 'brain',
         'color': '#8B5CF6',
         'sort_order': 9,
         'levels': [   {   'level_number': 9,
-                          'name': 'Grade 9 · RangeBox Basics',
+                          'name': 'Beginner Stage 1 · RangeBox Foundations',
                           'description': 'Launching the practice desktop, terminal basics, and file discovery'},
                       {   'level_number': 10,
-                          'name': 'Grade 10 · Networks and the Web',
-                          'description': 'Hostnames, HTTP responses, and browser source'},
+                          'name': 'Beginner Stage 2 · Command Line, Files, and Networks',
+                          'description': 'Terminal fluency, permissions, processes, HTTP, service observation, logs, and evidence'},
                       {   'level_number': 11,
-                          'name': 'Grade 11 · Defensive Security',
+                          'name': 'Beginner Stage 3 · Defensive Evidence',
                           'description': 'Reading logs, spotting suspicious requests, and explaining evidence'},
                       {   'level_number': 12,
-                          'name': 'Grade 12 · Applied Cybersecurity',
+                          'name': 'Beginner Stage 4 · Applied Challenges',
                           'description': 'Community event challenges, metadata, and '
                                          'browser-only investigations'}]},
     {   'name': 'Software Security',

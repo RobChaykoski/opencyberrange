@@ -135,17 +135,17 @@ Start the web stream at
 Start the forensics pathway at
 [CH FOR01 - Memory Forensics](CH_FOR01_Memory_Forensics/00_Introduction.md).
 
-### High School Cybersecurity
+### Beginner Cybersecurity
 
 | Chapter | Focus | Exercises |
 |---------|-------|-----------|
-| CH HS09; Grade 9 RangeBox Basics | Launching RangeBox, terminal basics, file search | 2 exercises |
-| CH HS10; Grade 10 RangeBox Basics | Hostnames, HTTP responses, browser source | 2 exercises |
-| CH HS11; Grade 11 Defensive Security | Web server logs, suspicious requests, evidence and response | 1 exercise |
-| CH HS12; Grade 12 Applied Cybersecurity | Browser-only OSINT, file metadata, privacy, and community event challenges | 1 exercise |
+| Beginner Stage 1; RangeBox Foundations | Launching RangeBox, terminal basics, files, digital safety | 8 exercises |
+| Beginner Stage 2; Command Line, Files, and Networks | Commands, permissions, processes, HTTP, service observation, logs, evidence | 6 exercises |
+| Beginner Stage 3; Defensive Evidence | Web server logs, suspicious requests, evidence and response | 2 exercises |
+| Beginner Stage 4; Applied Challenges | Browser-only OSINT, file metadata, privacy, and community event challenges | 2 exercises |
 
-Start the high-school pathway at
-[CH HS09 - Grade 9 RangeBox Basics](CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md).
+Start the beginner pathway at
+[Beginner Stage 1 - RangeBox Foundations](CH_HS09_Grade_9_RangeBox_Basics/00_Introduction.md).
 
 ## How to Use This Workbook
 

@@ -327,11 +327,11 @@ awards require the matching event achievement. See
 | OT/ICS Security | 1 | Modbus enumeration and register analysis |
 | AI Hacking | 3 | Prompt injection, jailbreak policy bypass, indirect prompt injection |
 | OSINT | 5 | Public-surface mapping, metadata, image steganography, source-code and public-repository leaks |
-| **High School Cybersecurity** | **16** | Browser-first Grades 9–12 pathway; RangeBox basics, digital safety, email metadata, MFA recovery, media provenance, and a crypto rug-pull investigation |
+| **Beginner Cybersecurity** | **18** | Beginner-only staged pathway; RangeBox foundations, command line, permissions, processes, networks, service observation, logs, evidence, and applied challenges |
 | Software Security | 2 | Source review, hidden routes, command injection, and remediation |
 | Digital Forensics | 2 | Memory analysis and VoIP network evidence reconstruction |
 | **Identity & Access** | **3** | Secure authentication, OAuth/OIDC trust, and joiner/mover/leaver access review |
-| **Total** | **162** | **12 tracks · 53 levels** |
+| **Total** | **164** | **12 tracks · 53 levels** |
 
 ## Network Foundations stream
 
@@ -403,24 +403,24 @@ existing learning ladder: **Signal in the Noise**, **Digital Footprint**,
 **First-Pass Analyst**. They are course-scoped, so a student earns them in any
 course that assigns the OSINT exercises.
 
-## High School pathway Â· Grades 9â€“12
+## Beginner pathway - Stages 1-4
 
-The **High School Cybersecurity** track is a browser-first pathway for students
-who are curious but may be new to the field:
+The **Beginner Cybersecurity** track is a beginner-only pathway for students who
+are curious but may be new to the field:
 
-| Grade | Focus |
+| Stage | Focus |
 |---|---|
-| 9 | RangeBox basics and file discovery |
-| 10 | Networks, HTTP responses, and browser source |
-| 11 | Defensive security: logs, suspicious requests, and evidence |
-| 12 | Applied cybersecurity and community event challenges |
+| 1 | RangeBox foundations, terminal basics, files, and digital safety |
+| 2 | Command line, permissions, processes, networks, service observation, logs, and evidence |
+| 3 | Defensive evidence: logs, suspicious requests, and explanation |
+| 4 | Applied challenges and community event investigations |
 
-The Grade 11 **RangeBox Log Detective** exercise introduces defensive security:
+The Stage 3 **RangeBox Log Detective** exercise introduces defensive security:
 students read a short web access log, identify repeated probing from one source,
 and explain the evidence before submitting a training token. It uses the same
-browser-first RangeBox target as the Grade 9 and 10 exercises.
+browser-first RangeBox target as the Stage 1 and Stage 2 exercises.
 
-The Grade 12 **DevFest Community Portal** exercise is a gentle OSINT challenge
+The Stage 4 **DevFest Community Portal** exercise is a gentle OSINT challenge
 themed around [DevFest Windsor-Essex 2026](https://wedevfest.com) on
 November 21, 2026. SWOCTS is a community partner. Students open a fictional
 DevFest speaker profile, download a slide export, and read the PNG metadata in

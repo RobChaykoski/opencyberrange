@@ -1,4 +1,4 @@
-# Grade 12 Chapter Review
+# Chapter Review — Stage 4: Applied Challenges
 
 ## What You Practised
 
@@ -7,14 +7,14 @@
 - Using a browser-only tool on a shared device
 - Explaining a privacy issue without repeating personal data
 
-## The Grade 9–12 Pathway
+## The Beginner Pathway
 
-| Grade | Focus | Example skill |
+| Stage | Focus | Example skill |
 |---|---|---|
-| 9 | Digital safety foundations | Recognise a phishing message and protect an account |
-| 10 | Systems and networks | Explain addresses, DNS, and how a web request travels |
-| 11 | Defensive security | Read a log and describe what happened |
-| 12 | Applied cybersecurity | Investigate a public artifact and report the risk |
+| 1 | RangeBox foundations | Recognise a phishing message and protect an account |
+| 2 | Command line, files, and networks | Explain addresses, paths, processes, and how a web request travels |
+| 3 | Defensive evidence | Read a log and describe what happened |
+| 4 | Applied challenges | Investigate a public artifact and report the risk |
 
 ## Reflection
 
