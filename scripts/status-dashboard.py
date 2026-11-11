@@ -19,9 +19,9 @@ file via ``--config`` or the ``OCR_STATUS_PROD_URL`` / ``OCR_STATUS_DEV_URL``
 environment variables:
 
     [
-      {"label": "OCR", "role": "production", "url": "https://ocr.swocts.com",
+      {"label": "OCR", "role": "production", "url": "https://ctfd.swocts.com",
        "expected_version": "2.6.0"},
-      {"label": "CTFd host OCR", "role": "internal", "url": "https://172.16.16.41",
+      {"label": "OCR dev", "role": "development", "url": "https://172.16.16.44",
        "expected_version": "2.6.0"}
     ]
 
@@ -51,16 +51,16 @@ DEFAULT_HOSTS = [
     {
         "label": "OCR",
         "role": "production",
-        "url": os.environ.get("OCR_STATUS_PROD_URL", "https://ocr.swocts.com"),
+        "url": os.environ.get("OCR_STATUS_PROD_URL", "https://ctfd.swocts.com"),
         "expected_version": "2.6.0",
-        "line": "OCR public deployment",
+        "line": "OCR production deployment",
     },
     {
-        "label": "CTFd host OCR",
-        "role": "internal",
-        "url": os.environ.get("OCR_STATUS_DEV_URL", "https://172.16.16.41"),
+        "label": "OCR dev",
+        "role": "development",
+        "url": os.environ.get("OCR_STATUS_DEV_URL", "https://172.16.16.44"),
         "expected_version": "2.6.0",
-        "line": "OCR stack on the CTFd host",
+        "line": "OCR development deployment",
     },
 ]
 

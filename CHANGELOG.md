@@ -112,8 +112,9 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   blood, clean sweep, perfect event, placement) still count through
   achievements. Event participation certificates are credentials, not Cyber DNA
   signals.
-- Recorded the `v2.6.0` release tag as annotated but unsigned; the supply-chain
-  lock remains signed by the release key.
+- Recorded the `v2.6.0` release tag as annotated but unsigned; it points at
+  `2835303b`, the commit deployed to production and development on
+  11 November 2026. The supply-chain lock remains signed by the release key.
 
 ### Security
 - Strengthened the shared password policy for registration, password changes,
