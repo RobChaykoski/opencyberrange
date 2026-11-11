@@ -307,6 +307,9 @@ repeated here.
 | HEAD request | An HTTP request that asks for response headers only, not the file body. |
 | Network scan | Trying many hosts, ports, or services to discover what exists. A scan is not a connectivity check. |
 | Login | Sending a username and password, or opening an authenticated session. A connectivity check does not log in. |
+| Identity | The account a learner is using inside RangeBox. `whoami` prints it. |
+| Workspace folder | A small folder used for one activity, such as `command-practice`. |
+| Reset | Returning an activity to a known starting point without deleting unknown files or stopping the whole environment. |
 | File | A named piece of data, such as a document, picture, or text file. |
 | Folder | A container that holds files or other folders. |
 | Path | The route to a file or folder, written with `/` between folder names. |

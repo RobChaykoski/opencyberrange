@@ -7,7 +7,7 @@ is written for students who use a computer every day but have not studied this
 subject before. You do not need any special technical knowledge or software
 installation.
 
-The chapter has eight core activities and five extra-practice pages. You will
+The chapter has eight core activities and six extra-practice pages. You will
 open a practice desktop, use the on-screen tools, decode a few messages, and
 practise checking a link or file before you click or open it. You can work at
 your own pace.
@@ -247,9 +247,9 @@ teacher or revisit the activity before moving on.
 
 ### Extra Practice
 
-These five pages are optional. They help you get comfortable with the desktop,
-the terminal, files, basic networking, and target checks before you open File
-Hunt. They do not replace the eight core activities.
+These six pages are optional. They help you get comfortable with the desktop,
+the terminal, files, basic networking, and safe command sequences before you open
+File Hunt. They do not replace the eight core activities.
 
 - [RangeBox Desktop and Window Basics](02_RangeBox_Desktop_and_Window_Basics.md)
   — label the browser and RangeBox controls, then open, switch, resize, and
@@ -265,6 +265,9 @@ Hunt. They do not replace the eight core activities.
 - [Target and Connectivity Check](06_Target_and_Connectivity_Check.md) — find the
   assigned target, copy it into a labelled note, and confirm that one service
   answers before you continue.
+- [Basic Command Practice](07_Basic_Command_Practice.md) — combine identity,
+  location, folder, note, target, and connectivity checks in one short guided
+  sequence.
 
 Start with [Signing In and Opening RangeBox](01_First_Steps.md). Take it one
 command at a time, and ask for help when you need it.
