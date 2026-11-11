@@ -83,7 +83,7 @@ The current feature set covers four workstreams:
 | Reporting and evidence | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, **skill-tree radar coverage**, CSV/PDF export, accreditation support, and research exports. | Development preview in this tree |
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses, plus the Competency Framework Engine, Student Feedback Engine, skill-tree radar, exercise health, and the instructor intervention dashboard. | Skill-tree radar delivered; learner/cohort radar, exercise health, and the intervention dashboard remain planned |
 | Mobile student shell | Automatic phone-width detection, an off-canvas navigation drawer, a student bottom tab bar, and explicit fallback behaviour for the embedded RangeBox desktop. | Delivered |
-| RangeBox workspace | A dedicated **RangeBox** tab with a live deployed count, VNC readiness checks, capacity enforcement across workers, and a clear split between standalone practice and exercise-attached desktops. | Delivered |
+| RangeBox workspace | A dedicated **RangeBox** tab for standalone practice, plus a combined desktop exercise workspace: RangeBox on the left, scenario/details and flag on the right, and the workbook in a framed bottom pane. Phones and VPN-only labs keep the stacked panel. | Delivered |
 
 The five priority capabilities are defined in
 [Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md). The
@@ -108,6 +108,9 @@ compliance reporting, and multi-host HA are Enterprise preview work.
 - [Supply-chain verification](docs/SUPPLY-CHAIN.md)
 - [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md)
 - [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
+- [Educational material provenance](docs/EDUCATIONAL-PROVENANCE.md)
+- [Learning framework](docs/LEARNING-FRAMEWORK.md)
+- [Lab metadata schema](docs/LAB-METADATA-SCHEMA.md)
 - [Enterprise preview parking lot](docs/V3-PARKING-LOT.md)
 - [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
 - [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md)
@@ -163,7 +166,7 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **164 labs** across **12 tracks** and **53 levels**; **155** expose a workbook page |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **162 active labs** across **12 tracks** and **53 levels**; **155** expose a workbook page |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **164 workbook pages**, **111 analysis sections**, **407 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
@@ -244,6 +247,13 @@ the one before it is completed.
 objectives, a link to the workbook, and the box that takes the flag.
 
 ![An exercise open](docs/img/exercise.png)
+
+**Working a RangeBox exercise.** On a laptop or desktop, a RangeBox-enabled lab
+opens in a combined workspace: the desktop on the left, the brief and flag on
+the right, and the workbook in a framed pane below. Phones and VPN-only labs keep
+the stacked panel.
+
+![Combined RangeBox exercise workspace](docs/img/exercise-workspace.png)
 
 **Courses.** Assign exercises to a class, set the weeks, and track who has
 finished what.
@@ -440,6 +450,10 @@ The Stage 3 **RangeBox Log Detective** exercise introduces defensive security:
 students read a short web access log, identify repeated probing from one source,
 and explain the evidence before submitting a training token. It uses the same
 browser-first RangeBox target as the Stage 1 and Stage 2 exercises.
+
+Stage 2 also includes **RangeBox Log Review** and the **RangeBox Beginner
+Challenge**, which consolidate command-line, log-reading, and evidence skills
+before the Stage 3 defensive work.
 
 The Stage 4 **DevFest Community Portal** exercise is a gentle OSINT challenge
 themed around [DevFest Windsor-Essex 2026](https://wedevfest.com) on

@@ -112,20 +112,20 @@ links.
 | OT | Halcyon Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | Software Security | Diagnostics Command Injection (`software-security-2-1-diagnostics-command-injection`) | `wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/` |
 | Software Security | Hidden Export Route (`software-security-1-1-hidden-export-route`) | `wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/` |
-| Web | Basic Directory Enumeration (`web-1-1-basic-directory-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/01_Basic_Directory_Enumeration/` |
+| Web | Basic Directory Enumeration (`web-1-1-basic-directory-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/05_Content_Directory_and_File_Discovery/` |
 | Web | Basic SQL Injection (Login) (`web-2-1-basic-sql-injection-get`) | `wiki/range/webpt/CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection/` |
 | Web | Cascade Digital Media - Traversal Scavenger Hunt (`web-1-8-traversal-scavenger-hunt`) | `wiki/range/webpt/CH_WEB01B_Advanced_Recon/02_Traversal_Scavenger_Hunt/` |
 | Web | CloudPing Diagnostics - Command Injection (`web-2-3-command-injection`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/02_Command_Injection/` |
-| Web | Comprehensive Web Reconnaissance (`web-1-6-comprehensive-web-reconnaissance`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/06_Comprehensive_Web_Reconnaissance/` |
-| Web | HTTP Methods Enumeration (`web-1-3-http-methods-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/03_HTTP_Methods_Enumeration/` |
-| Web | Header Analysis (`web-1-4-header-analysis`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/04_Header_Analysis/` |
+| Web | Comprehensive Web Reconnaissance (`web-1-6-comprehensive-web-reconnaissance`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/11_Comprehensive_Web_Reconnaissance/` |
+| Web | HTTP Methods Enumeration (`web-1-3-http-methods-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/08_Forms_Parameters_APIs_and_Session_Observation/` |
+| Web | Header Analysis (`web-1-4-header-analysis`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/09_TLS_Cookies_and_Security_Headers/` |
 | Web | MedCore Health Systems: Full Web-to-Root Compromise (`web-3-3-full-web-to-root`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root/` |
 | Web | Metro Transit - Insecure API Endpoints (`web-2-2-insecure-api-endpoints`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/01_Insecure_API_Endpoints/` |
 | Web | NovaTech Solutions - Hidden Login Discovery (`web-3-1-hidden-login-discovery`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery/` |
 | Web | Pinnacle Cloud - Directory Traversal (`web-1-7-directory-traversal`) | `wiki/range/webpt/CH_WEB01B_Advanced_Recon/01_Directory_Traversal/` |
 | Web | Stonebridge Capital - API Enumeration Gauntlet (`web-2-4-api-enumeration-gauntlet`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/03_API_Enumeration_Gauntlet/` |
-| Web | Subdomain Discovery (`web-1-5-subdomain-discovery`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/05_Subdomain_Discovery/` |
-| Web | Technology Identification (`web-1-2-technology-identification`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/02_Technology_Identification/` |
+| Web | Subdomain Discovery (`web-1-5-subdomain-discovery`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/06_Virtual_Host_and_Subdomain_Discovery/` |
+| Web | Technology Identification (`web-1-2-technology-identification`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/04_Technology_Fingerprinting/` |
 | Web | TrueNorth Hosting - Filtered Injection (`web-2-5-filtered-injection`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/04_Filtered_Injection/` |
 | Web | Vertex Healthcare - SQL Injection to Shell (`web-3-2-sql-injection-to-shell`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell/` |
 | Windows | Basic Windows Port Scan (`windows-1-1-basic-port-scan`) | `wiki/range/winpt/CH01_Enumeration/01_Basic_Port_Scan/` |

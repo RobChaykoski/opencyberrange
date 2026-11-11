@@ -101,6 +101,17 @@ Lab targets live on private networks you cannot reach directly. You have two way
 !!! tip
     If you cannot install software on your machine, RangeBox lets you work a lab from any browser without setting up WireGuard.
 
+## Exercise workspace
+
+When a RangeBox-enabled lab starts on a laptop or desktop, the exercise opens in
+a combined workspace: the RangeBox desktop on the left, the scenario, targets,
+and flag form on the right, and the workbook in a framed pane along the bottom.
+Use **Expand** to give the workbook more room, or **Open in new tab** to move the
+RangeBox or workbook into its own tab.
+
+Phones and VPN-only labs keep the stacked exercise panel. On a phone, use the
+section jump bar to move between the briefing, targets, flag, and hints.
+
 ## What comes next
 
 - Confirm your machine can run the platform: [System Requirements](02_System_Requirements.md).

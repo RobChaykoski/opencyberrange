@@ -1473,12 +1473,12 @@ const openKnowledgeCheck = (lab) => {
   })
 }
 
-// Keep the learner in this tab: the RangeBox window carries the lab IPs and
-// the flag form in its own dock, so there is no reason to split the workflow
-// across two windows.
+// Open the full-screen RangeBox in a new tab. The workspace already keeps the
+// desktop, details, and workbook together; this is the fallback for a second
+// monitor or a browser that performs better in a dedicated tab.
 const openRangeBox = () => {
   if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
-  router.push({
+  const target = router.resolve({
     path: '/rangebox',
     query: {
       session: String(rangeboxSessionId.value),
@@ -1487,6 +1487,7 @@ const openRangeBox = () => {
       course: activeCourseId.value ? String(activeCourseId.value) : undefined,
     },
   })
+  window.open(target.href, '_blank', 'noopener')
 }
 
 const viewLab = async (lab) => {

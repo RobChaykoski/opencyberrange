@@ -20,7 +20,7 @@ The user-facing PIPEDA-aligned notice is
 | Credentials and security: password hash, TOTP secret, recovery codes, trusted devices, last-login IP | `users` | Deleted |
 | VPN: private/public keys and client IP | `wireguard_configs` | Deleted and peer removed |
 | Learning: enrolments, completions, flag attempts, quiz attempts, achievements, competition entries, completion resets | User-linked tables | Deleted |
-| Lab sessions and containers | `lab_sessions` + Docker | All sessions destroyed and rows deleted |
+| Lab sessions and containers | `lab_sessions` + Docker, including `rangebox_enabled`, desktop container ID, VNC port, and heartbeat | All sessions destroyed and rows deleted |
 | Survey consent state and history | `users.survey_*`, `survey_consent_events` | Deleted (cascades with the account) |
 | Privacy preferences: under-18 reporting flag, public certificate verification | `users.is_minor`, `users.certificates_public` | Deleted with the account |
 | Report manifests: report ID, filename, SHA-256, HMAC signature, type, course, generator | `report_exports` | Deleted when the course is deleted; a deleted generator is set to `NULL` |
@@ -217,8 +217,10 @@ them at rest where possible, and delete them once the retention period ends.
 - [ ] Record the lawful basis for each processing purpose (contract for the
       account, legitimate interest for security logs).
 - [ ] Maintain a retention schedule for activity, audit, logs, and backups.
-- [ ] Define the high-school/minor consent process (parental consent rules vary
-      by member state).
+- [ ] Define and document the high-school/minor consent process (parental
+      consent rules vary by member state). The platform provides the under-18
+      reporting flag; the institution must still collect any required consent
+      and verify age for its programme.
 - [ ] Keep `ERASURE_LEDGER_KEY` stable and backed up separately from the DB.
 - [ ] Run a restore drill and confirm `purge_erased_accounts.py` works.
 - [ ] Review export reasons in the audit log as part of the access review.

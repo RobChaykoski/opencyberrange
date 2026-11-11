@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range privacy notice
 
-**Effective 10 November 2026**
+**Effective 11 November 2026**
 
 This notice explains how the SWOCTS Cyber Range handles personal information.
 It supplements the [SWOCTS Privacy Policy](https://www.swocts.com/privacy) and
@@ -43,6 +43,10 @@ Commissioner of Canada.
   in.
 - **VPN and lab access data:** WireGuard public keys, assigned client addresses,
   and session records needed to operate isolated exercises.
+- **RangeBox session metadata:** the desktop image name, container identifier,
+  local VNC port, session start and stop times, and heartbeat needed to keep the
+  desktop alive and clean it up. The platform does not record the desktop screen
+  or the learner's terminal session by default.
 - **Support and operational records:** messages sent to administrators, audit
   events, backups, and diagnostic logs.
 
@@ -159,6 +163,27 @@ exercise analytics are suppressed when the cohort is below the configured
 minimum, defaulting to 5 learners; the interface shows "Suppressed" or "No
 evidence" rather than a zero. No system is perfectly secure; report suspected
 issues to [privacy@swocts.com](mailto:privacy@swocts.com).
+
+## RangeBox and the exercise workspace
+
+The combined exercise workspace shows the learner's RangeBox desktop, the
+exercise brief and targets, the flag form, and the workbook in one page. It does
+not add third-party analytics, advertising, or behavioural tracking.
+
+- The RangeBox desktop runs in an isolated container attached to the learner's
+  own lab network. Session metadata is used for operation, capacity, and
+  cleanup.
+- Instructors and administrators can see session status and progress. A
+  privileged support view of a learner's desktop or account is role-gated and
+  recorded in the audit log; it is not part of normal course monitoring.
+- Screenshots, notes, or exported evidence that a learner creates are under the
+  learner's control. They may contain lab tokens, cookies, or synthetic personal
+  data and should be redacted before sharing.
+- The workbook is served from the same platform origin and is available only to
+  an authenticated account with access to the exercise.
+- Automated deployment tests use dedicated synthetic student and instructor
+  accounts; their screenshots and records are not learner records and are
+  removed after the check.
 
 ## Your rights under PIPEDA
 

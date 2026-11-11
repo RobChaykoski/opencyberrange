@@ -146,6 +146,29 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Student-tested on the High School RangeBox First Steps lab: desktop connected,
   workbook loaded, flag completed the exercise, and the mobile view remained
   single-column without horizontal overflow.
+- **Open in new tab** now opens the resolved `/rangebox?...` URL in a new tab.
+  It previously routed the exercise tab in place, despite the button label.
+- The workbook CSP now allows the Material for MkDocs Google Fonts stylesheet
+  and font files. The SPA policy stays strict.
+- Added `scripts/ui-workspace-regression.mjs`, which walks the workspace as a
+  dedicated test student and test instructor, exercises Expand/Restore, both
+  new-tab controls, hint request, invalid-flag handling, and Stop, and records
+  JSON evidence plus screenshots.
+
+### Curriculum and documentation
+- Reorganized **WEB01 Web Reconnaissance** into a 12-page beginner-readiness
+  chapter: scope preflight, HTTP orientation, browser observation, technology
+  fingerprinting, bounded discovery, virtual hosts, public metadata, inputs and
+  sessions, TLS and headers, findings, comprehensive reconnaissance, and review.
+  The six existing labs keep their targets, flags, and behaviour; their
+  `workbook:` paths now point at the new pages.
+- Added **Educational material provenance** (`docs/EDUCATIONAL-PROVENANCE.md`)
+  covering ownership, source-of-truth files, review status, framework references,
+  synthetic content, AI assistance disclosure, licensing, and change control.
+- Updated the README, Lite quickstart, platform overview, interface guide,
+  exercise and RangeBox review, UI verification, privacy notice, and data
+  deletion runbook for the combined workspace and the beginner track.
+- Added desktop, light-theme, and mobile workspace screenshots to the docs.
 
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party

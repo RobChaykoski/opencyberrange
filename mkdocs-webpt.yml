@@ -70,13 +70,18 @@ nav:
   - Frameworks: FRAMEWORKS.md
   - "WEB01: Web Reconnaissance":
     - Introduction: CH_WEB01_Web_Reconnaissance/00_Introduction.md
-    - "Exercise W1.1 -- Basic Directory Enumeration": CH_WEB01_Web_Reconnaissance/01_Basic_Directory_Enumeration.md
-    - "Exercise W1.2 -- Technology Identification": CH_WEB01_Web_Reconnaissance/02_Technology_Identification.md
-    - "Exercise W1.3 -- HTTP Methods Enumeration": CH_WEB01_Web_Reconnaissance/03_HTTP_Methods_Enumeration.md
-    - "Exercise W1.4 -- Header Analysis": CH_WEB01_Web_Reconnaissance/04_Header_Analysis.md
-    - "Exercise W1.5 -- Subdomain Discovery": CH_WEB01_Web_Reconnaissance/05_Subdomain_Discovery.md
-    - "Exercise W1.6 -- Comprehensive Web Reconnaissance": CH_WEB01_Web_Reconnaissance/06_Comprehensive_Web_Reconnaissance.md
-    - Chapter Review: CH_WEB01_Web_Reconnaissance/07_Chapter_Review.md
+    - "Exercise W1.1 -- Web Target and Scope Preflight": CH_WEB01_Web_Reconnaissance/01_Web_Target_and_Scope_Preflight.md
+    - "Exercise W1.2 -- HTTP Request and Response Orientation": CH_WEB01_Web_Reconnaissance/02_HTTP_Request_and_Response_Orientation.md
+    - "Exercise W1.3 -- Browser Developer Tools Observation": CH_WEB01_Web_Reconnaissance/03_Browser_Developer_Tools_Observation.md
+    - "Exercise W1.4 -- Technology Fingerprinting": CH_WEB01_Web_Reconnaissance/04_Technology_Fingerprinting.md
+    - "Exercise W1.5 -- Content, Directory, and File Discovery": CH_WEB01_Web_Reconnaissance/05_Content_Directory_and_File_Discovery.md
+    - "Exercise W1.6 -- Virtual Host and Subdomain Discovery": CH_WEB01_Web_Reconnaissance/06_Virtual_Host_and_Subdomain_Discovery.md
+    - "Exercise W1.7 -- Robots, Sitemaps, JavaScript, and Metadata": CH_WEB01_Web_Reconnaissance/07_Robots_Sitemaps_JavaScript_and_Metadata.md
+    - "Exercise W1.8 -- Forms, Parameters, APIs, and Session Observation": CH_WEB01_Web_Reconnaissance/08_Forms_Parameters_APIs_and_Session_Observation.md
+    - "Exercise W1.9 -- TLS, Cookies, and Security Headers": CH_WEB01_Web_Reconnaissance/09_TLS_Cookies_and_Security_Headers.md
+    - "Exercise W1.10 -- Reconnaissance Findings and Attack-Surface Map": CH_WEB01_Web_Reconnaissance/10_Reconnaissance_Findings_and_Attack_Surface_Map.md
+    - "Exercise W1.11 -- Comprehensive Web Reconnaissance": CH_WEB01_Web_Reconnaissance/11_Comprehensive_Web_Reconnaissance.md
+    - Chapter Review: CH_WEB01_Web_Reconnaissance/12_Chapter_Review.md
   - "WEB02: SQL Injection and Web Exploitation":
     - Introduction: CH_WEB02_Web_Exploitation/00_Introduction.md
     - "Exercise W2.1 -- Basic SQL Injection": CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection.md

@@ -7,98 +7,129 @@
     **Recommended next:** `WEB01B` — Advanced Recon and Traversal
 <!-- END GENERATED CHAPTER POSITION -->
 
-## Why Web Reconnaissance Comes First
+## Welcome
 
-Every web application penetration test begins with the same question: what is the target exposing? Before you can test for SQL injection, cross-site scripting, or authentication flaws, you need a map of the application's attack surface. Web reconnaissance builds that map, directory by directory, header by header, subdomain by subdomain.
+Web reconnaissance is the authorised mapping of a web application and its
+exposed interfaces. It is **observation and bounded discovery**, not exploitation.
 
-Reconnaissance is not a single scan. A directory enumeration reveals hidden paths. Technology identification tells you what software powers the application. HTTP method testing uncovers API misconfigurations. Header analysis exposes information leaks and missing security controls. Subdomain discovery reveals forgotten services that no one remembered to lock down. Across six labs, you will build from a single gobuster scan to a complete reconnaissance methodology, learning why each layer of investigation matters.
+You will learn to:
 
-In a real engagement, incomplete reconnaissance leads to missed vulnerabilities. An admin panel hidden behind an unlinked directory will not appear in a casual browse. A staging subdomain with debug mode enabled will not show up unless you enumerate it. The progression in this chapter ensures you never stop at the surface.
+- confirm the exact application identity and scope;
+- read HTTP requests and responses precisely;
+- use browser developer tools passively;
+- fingerprint technologies with corroboration;
+- discover content and virtual hosts within explicit limits;
+- review public metadata, inputs, sessions, TLS, cookies, and security headers;
+- turn observations into an attack-surface map and a defensible report.
 
-## What You Will Learn
+This chapter is for learners from software development or general IT. HTTP,
+APIs, frameworks, routes, and deployment environments should feel familiar. You
+do not need prior penetration-testing experience.
 
-The six labs in this chapter progress from targeted to comprehensive:
+## Words to Know
 
-- **Enumerate** hidden directories and files using wordlist-based brute forcing
-- **Identify** the technology stack powering a web application through headers and fingerprinting
-- **Test** HTTP methods to find dangerous API misconfigurations
-- **Analyze** HTTP headers for security weaknesses and information disclosure
-- **Discover** subdomains to map the full attack surface beyond the main application
-- **Combine** all techniques into a complete reconnaissance workflow
+| Term | Meaning |
+|---|---|
+| **Web application** | Software delivered through a browser and an HTTP server. |
+| **Client** | The browser or tool that sends a request. |
+| **Server** | The system that accepts the request and returns a response. |
+| **Reverse proxy** | A server in front of an application that forwards requests and may hide the origin. |
+| **Route** | The application rule that maps a method and path to behaviour. |
+| **Endpoint** | A specific method-and-path target, such as `GET /api/status`. |
+| **Hostname** | A name that resolves to an address, such as `target.lab`. |
+| **Virtual host** | A website selected by the HTTP `Host` header on a shared server. |
+| **Reconnaissance** | Authorised collection of information about an application and its exposed interfaces. |
+| **Enumeration** | Systematic listing of resources, names, or services within scope. |
+| **Attack surface** | The set of reachable hosts, routes, inputs, identities, and data that an application exposes. |
 
-By the end of this chapter, you will have a repeatable methodology for assessing any web application, from the first directory scan to a comprehensive attack surface report.
+## Scope for This Chapter
 
-## What Is Web Reconnaissance?
+This chapter uses several isolated practice targets. **Each exercise names its own target.** Use only the target shown in that exercise.
 
-Web reconnaissance (also called web enumeration or web footprinting) is the process of gathering information about a web application and its infrastructure. Unlike network scanning, which focuses on open ports and services, web reconnaissance targets the application layer: the directories, technologies, headers, and domains that define what an attacker can reach.
+| Exercise | Target | Port | Purpose |
+|---|---|---:|---|
+| W1.4 Technology Fingerprinting | `target.lab` | 80 | Technology evidence |
+| W1.5 Content Discovery | `recon.lab` | 80 | Directory and file discovery |
+| W1.6 Virtual Hosts | `main.lab`, `admin.lab`, `api.lab` | 80 | Virtual-host identity |
+| W1.8 HTTP/API Inputs | `api.lab` | 80 | Method and input mapping |
+| W1.9 Headers | `secure.lab` | 80 | Cookies and security headers |
+| W1.11 Comprehensive | `target.lab` | 80 | Full bounded workflow |
 
-The table below lists the reconnaissance techniques you will use in this chapter.
+Rules:
 
-| Technique              | What It Reveals                                  | Primary Tool   |
-|------------------------|--------------------------------------------------|----------------|
-| Directory enumeration  | Hidden paths, admin panels, backup files         | gobuster       |
-| Technology ID          | Web server, framework, CMS, language versions    | curl, whatweb   |
-| HTTP method testing    | Allowed methods, dangerous API configurations    | curl            |
-| Header analysis        | Security headers, information disclosure         | curl            |
-| Subdomain discovery    | Additional hosts, staging environments, APIs     | gobuster (DNS)  |
-| Combined assessment    | Complete attack surface map                      | All tools       |
+- Use **HTTP** and the hostname shown in the exercise. Do not substitute an IP,
+  a public domain, or an adjacent lab.
+- No credentials are required for these labs. Do not enter real credentials or
+  personal information.
+- Use only the wordlist, candidate names, methods, and request limits named in
+  each exercise.
+- Do not use exploit payloads, credential attacks, access-control bypasses, or
+  mass parameter discovery.
+- Do not test a name just because it resolves. A resolving or reachable name is
+  not automatically authorised.
+- Stop on a target mismatch, unexpected redirect, certificate mismatch,
+  rate-limiting warning, unstable service, sensitive data, or an out-of-scope
+  name.
 
-Each technique answers a different question about the target. Together, they produce the complete picture that later testing phases (authentication attacks, injection testing, and exploitation) depend on.
+## Chapter Roadmap
 
-## What Is Gobuster?
+1. **Scope preflight** — URL, host, port, base path, virtual host, redirect boundary.
+2. **HTTP orientation** — methods, status, headers, bodies, cookies, redirects.
+3. **Browser developer tools** — passive observation of requests and storage.
+4. **Technology fingerprinting** — evidence, corroboration, confidence.
+5. **Content discovery** — bounded wordlists, validation, false positives.
+6. **Virtual hosts and subdomains** — DNS, Host header, SNI, certificate names.
+7. **Public metadata** — robots, sitemaps, JavaScript, comments, source maps.
+8. **Forms, parameters, APIs, sessions** — benign input mapping.
+9. **TLS, cookies, security headers** — controls, context, limitations.
+10. **Findings and attack-surface map** — defensible evidence.
+11. **Comprehensive reconnaissance** — repeatable bounded workflow.
+12. **Chapter review** — knowledge check and readiness gate.
 
-Gobuster is an open-source tool for brute-forcing URIs (directories and files), DNS subdomains, and virtual host names. It works by testing entries from a wordlist against a target, reporting which entries return valid responses.
+## Estimated Time
 
-Gobuster operates in two modes relevant to this chapter:
+Plan for about **4–6 hours** across the chapter. Each conceptual page is about
+**15–25 minutes**; each lab is about **25–40 minutes**. This is an estimate,
+not a deadline.
 
-- **Directory mode (`dir`)**: tests directory and file names against a web server
-- **DNS mode (`dns`)**: tests subdomain names against a domain's DNS records
+## What You Need
 
-Gobuster is fast, multi-threaded, and widely used in penetration testing. Combined with curl for header inspection and whatweb for technology fingerprinting, it forms the core toolkit for web reconnaissance.
+- RangeBox with a browser and terminal.
+- The exercise panel open in the **Web Application Security** track.
+- A notes file for requests, responses, and redacted evidence.
+- A text editor or screenshot tool for redacted evidence.
 
-Gobuster is pre-installed on Kali Linux. You can verify your installation at any time:
+## Evidence Standard
 
-```bash
-gobuster --help
-```
+Record, for each observation:
 
-## The Reconnaissance Workflow
+- exact URL and method;
+- target hostname, port, and base path;
+- request headers/body only where relevant;
+- status code and relevant response headers;
+- timestamp;
+- what you observed;
+- what you inferred;
+- confidence and one alternative explanation;
+- what the evidence does **not** prove;
+- redactions applied.
 
-Each lab builds on the previous one, adding a new reconnaissance capability:
+Use the evidence ladder: **Observed → Inferred → Validated → Impacted → Remediated → Verified**.
 
-```mermaid
-graph LR
-    A[W1.1 Directories]
-    B[W1.2 Technologies]
-    C[W1.3 HTTP Methods]
-    D[W1.4 Headers]
-    E[W1.5 Subdomains]
-    F[W1.6 Combined]
-    A --> B --> C --> D --> E --> F
-```
+Never paste passwords, session cookies, tokens, personal data, or proprietary
+source into shared notes. Redact them.
 
-| Lab  | Core Technique               | What It Adds                         |
-|------|------------------------------|--------------------------------------|
-| W1.1 | `gobuster dir`               | Directory and file discovery         |
-| W1.2 | `curl -I`, `whatweb`         | Technology stack identification      |
-| W1.3 | `curl -X OPTIONS`            | HTTP method enumeration              |
-| W1.4 | `curl -v`                    | Security header analysis             |
-| W1.5 | `gobuster dns`               | Subdomain enumeration                |
-| W1.6 | All tools combined           | Complete reconnaissance workflow     |
+## Completion Criteria
 
-Notice the progression: each lab asks a different question about the same type of target. By the final lab, you will chain every technique into a systematic assessment that covers the full attack surface.
+You are ready to continue when you can:
 
-## Before You Start
+- state where commands run and which target is authorised;
+- explain the difference between observation, discovery, reachability,
+  authentication, authorisation, exposure, misconfiguration, and confirmed
+  vulnerability;
+- show a baseline request and a bounded discovery result;
+- validate at least one automated result manually;
+- produce a redacted attack-surface summary with confidence and limitations;
+- explain one safe next step and one stop condition.
 
-Confirm the following before launching your first lab:
-
-- [ ] VPN connection to the lab environment is active
-- [ ] Terminal open and ready for commands
-- [ ] Gobuster installed and accessible (type `gobuster --help` to confirm)
-- [ ] curl installed and accessible (type `curl --version` to confirm)
-- [ ] whatweb installed and accessible (type `whatweb --version` to confirm)
-- [ ] Web browser available for inspecting pages and source code
-- [ ] Notebook or text editor ready for recording findings
-- [ ] Access to the OCR platform at the provided URL
-
-Each lab takes approximately 20 to 40 minutes. Work through them in order: later labs assume familiarity with the tools and techniques from earlier ones.
+Start with [WEB01 Exercise W1.1 -- Web Target and Scope Preflight](01_Web_Target_and_Scope_Preflight.md).

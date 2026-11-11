@@ -115,6 +115,31 @@ Commands and the full runbook are in
 - Event certificates are credentials, not learning metrics. They do not affect
   Cyber DNA, course grades, completion, or analytics.
 
+## Authorized testing
+
+Use a dedicated test student and test instructor account for deployment
+verification. Do not test with a real learner account or a shared administrator
+account. The repository's `scripts/ui-workspace-regression.mjs` expects
+`UI_STUDENT_USERNAME` / `UI_STUDENT_PASSWORD` and, optionally,
+`UI_INSTRUCTOR_USERNAME` / `UI_INSTRUCTOR_PASSWORD`; it launches one isolated
+lab per role, submits only an invalid flag, and stops the lab when it finishes.
+Remove temporary accounts and their sessions after the run.
+
+Testing must stay inside the lab network. Do not send enumeration, injection, or
+credential traffic to a real host, a public domain, or another learner's
+session.
+
+## Security review evidence - 11 November 2026
+
+| Check | Result |
+|---|---|
+| Deployment baseline | Prod `172.16.16.41` and dev `172.16.16.44` on `eac74283`; frontend assets contain the combined exercise workspace |
+| Browser walkthrough | Dedicated test student and instructor accounts launched `RangeBox First Steps`; RangeBox, details, flag, and framed workbook rendered; Expand/Restore, invalid-flag handling, hint request, and Stop were exercised |
+| Workspace fix | **Open in new tab** now opens `/rangebox?...` in a new tab instead of navigating the exercise tab |
+| Workbook CSP | Wiki locations allow the Material for MkDocs Google Fonts stylesheet and font files; the SPA policy remains strict |
+| Lab validation | **162 labs, 0 errors, 0 warnings** |
+| Automated regression | `scripts/ui-workspace-regression.mjs` records pass/fail checks and screenshots in `ui-workspace-artifacts/` |
+
 ## Reporting a vulnerability
 
 **Do not open a public issue for a security problem.**
@@ -144,6 +169,9 @@ In scope:
 - administrative data exports, user imports, and snapshot restore safeguards;
 - the supply-chain lock, release builds, and deployment verification;
 - the platform API, frontend, installer and upgrade scripts;
+- the exercise workspace: workbook iframe authorization, RangeBox session
+  query handling, student/instructor role separation, and lab stop/relaunch
+  controls;
 - container escape or cross-lab isolation failures;
 - secrets committed to the repository or shipped in an image;
 - event certificate issuance, event and sponsor logo handling, public

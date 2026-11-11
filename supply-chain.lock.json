@@ -70,10 +70,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "b9576be3389de13089752611b078790b945d5f2d1863e3c6fdce97d1740499cd"
+      "sha256": "95ff624f5f7abdb31e45655307f37cb6a4e309aa464b359af6caf03c17b509a3"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "9a375d39eccad532d4c41a2246612996cd30c7fd4782235e72f86b6b44671d6c"
+      "sha256": "01f1383f15b5ee8e6bc90611d004b6c240b8f3a0ce4c023117409d7413c58219"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "215a0a9ae7da21185dd55e1cf8d35a24709f2e108e710b11e655ada257e18fcb"
@@ -727,31 +727,31 @@
       ]
     },
     "web-1-1-basic-directory-enumeration": {
-      "content_hash": "17d79c9f6cc0fe8eee7e33ef065be3be47b26013887980a928efe8b199a2a484",
+      "content_hash": "13554b77a985ecad324e214d25612b89cfff4569090de1e7ba39352b91519a53",
       "services": [
         "webserver"
       ]
     },
     "web-1-2-technology-identification": {
-      "content_hash": "72c691c0504971696f0d1431a958eaf072c3d4be89948382b734360ee368645c",
+      "content_hash": "9ccc9ee90cb3db7f2fb35faaf9d410da8693611558274b695625da7215bca779",
       "services": [
         "webserver"
       ]
     },
     "web-1-3-http-methods-enumeration": {
-      "content_hash": "62b66e9427d7f36673b94da5e0e6041dce4f79918c174eb6d0587a3ffb8f19b4",
+      "content_hash": "f89b98e5b294a7194901c6eb30b8841f665d659d94f039751eb781ddad3315f2",
       "services": [
         "webserver"
       ]
     },
     "web-1-4-header-analysis": {
-      "content_hash": "4092a75346c86cf32857d670b8ace9389d0f7fa2295c6e9dff094d5a587ac402",
+      "content_hash": "8c9b6ae3f47c747882e0e16c4bd4abefb6e4e7d0d11761e3a1fac01b7ce5ee27",
       "services": [
         "webserver"
       ]
     },
     "web-1-5-subdomain-discovery": {
-      "content_hash": "832fe23b96fec870dcd4f2622a0ead50d4eb1ab9933c30196858d9270b4118c3",
+      "content_hash": "a3d4a7d168a8b01b7342c1e107ea6d9da366ae6cfe79aac0d367dfc8abd06e0c",
       "services": [
         "admin",
         "api",
@@ -759,7 +759,7 @@
       ]
     },
     "web-1-6-comprehensive-web-reconnaissance": {
-      "content_hash": "19a63779f5c9bf3cf69e6f4f1d7b8d10b672926b0bd2677b325a67183a20a5a9",
+      "content_hash": "2048feeba992dacdb5ba6ea29d52da1151b5720e14ab43304bc6b58a22c5d666",
       "services": [
         "webserver"
       ]

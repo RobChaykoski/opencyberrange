@@ -4,6 +4,32 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## 2.6.0 combined exercise workspace
+
+Checked on **11 November 2026** with a dedicated test student and test
+instructor account against production (`https://ctfd.swocts.com`):
+
+- Desktop RangeBox exercise (`RangeBox First Steps`) rendered the combined
+  workspace: RangeBox top-left, scenario/details and flag form on the right, and
+  the workbook in a framed bottom pane.
+- The workbook iframe resolved to the correct chapter under
+  `/wiki/range/high-school/`.
+- **Expand/Restore** resized the workbook pane.
+- **Request Hint** returned a hint without completing the exercise.
+- An invalid flag produced an error message and did not complete the lab.
+- **Stop Exercise** accepted the confirmation and closed the panel.
+- The mobile viewport (390 px) kept the stacked panel and section jump bar, with
+  no horizontal overflow.
+- The initial walkthrough found one button bug: **Open in new tab** used in-page
+  routing. It now opens the resolved `/rangebox?...` URL in a new tab. It also
+  found that the workbook CSP blocked the Material for MkDocs Google Fonts
+  stylesheet; the wiki locations now allow the font stylesheet and font files.
+
+Evidence: `scripts/ui-workspace-regression.mjs` writes
+`ui-workspace-artifacts/workspace-regression.json` plus desktop dark, desktop
+light, and mobile screenshots. The rerun result after the fixes is recorded in
+the deployment note at the end of this section.
+
 ## 2.6.0 event certificate additions
 
 Checked on **2026-11-10** through the production frontend build and backend

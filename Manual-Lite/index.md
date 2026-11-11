@@ -17,7 +17,9 @@ jump to the section that matches your role.
     build was created with AI assistance and reviewed by a human maintainer. See
     `BUILD_NOTICE.md` in the repository root for attribution, the AI-assistance
     disclosure, and the list of changes. The original copyright and PolyForm
-    Noncommercial licence remain in force.
+    Noncommercial licence remain in force. Curriculum ownership, review status,
+    framework references, and synthetic-content rules are recorded in
+    [Educational material provenance](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/EDUCATIONAL-PROVENANCE.md).
 
 ## How the platform fits together
 
@@ -25,7 +27,7 @@ A browser talks to an nginx frontend that serves the single-page application and
 proxies the API. A FastAPI backend handles authentication, lab orchestration, and
 course logic against a PostgreSQL database, and it drives Docker to start and stop
 the lab containers each student works in. Students reach those lab containers over
-a WireGuard VPN tunnel.
+a WireGuard VPN tunnel or from the in-browser RangeBox desktop.
 
 ```mermaid
 flowchart LR
@@ -38,7 +40,7 @@ flowchart LR
 
 ## Manual editions
 
-This is the shared core manual for platform release **2.5.2**. Community /
+This is the shared core manual for platform release **2.6.0**. Community /
 Academic, Professional, and Enterprise are cumulative edition profiles on that
 release; Community / Academic 1.1.3 remains a maintenance line for existing
 installs. Edition-specific pages live in the

@@ -65,6 +65,10 @@ platform/certs/
 _site/
 _site_*/
 _site-*/
+# UI artifact directories
+ui-smoke-artifacts/
+ui-workspace-artifacts/
+
 # The workbook wiki and generated routing metadata are build artifacts. They
 # are produced by platform/wiki-builder into the wiki_data volume; never commit
 # a stale snapshot. /wiki/ covers stray top-level staging dirs.

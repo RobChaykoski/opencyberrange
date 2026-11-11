@@ -72,6 +72,11 @@ Use the chevron button at the top of the sidebar to collapse it to a narrow stri
 !!! note
     The Admin "Workbook" link opens the workbook wiki in a new browser tab. The other links navigate within the same tab.
 
+!!! tip
+    In a RangeBox-enabled exercise, the **Open in new tab** controls open the
+    RangeBox desktop or the workbook in a separate tab. The exercise panel stays
+    open in the original tab.
+
 ## Where to go next
 
 - Students: start at [Browsing Exercises](../02_Student_Guide/02_Browsing_Exercises.md) or [Student Dashboard](../02_Student_Guide/01_Student_Dashboard.md).

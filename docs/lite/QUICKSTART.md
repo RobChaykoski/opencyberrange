@@ -10,6 +10,11 @@ privileged account, up to five active courses, and an unlimited number of
 students. It ships **148 exercises across 11 tracks**, all of which run as
 Docker containers with no KVM or hardware virtualization required.
 
+RangeBox-enabled exercises open in a combined desktop workspace: the RangeBox
+desktop on the left, the brief and flag form on the right, and the workbook in a
+framed pane below. Labs that do not need a desktop stay VPN-only and keep the
+stacked exercise panel.
+
 A local install is the verified path. A cloud install has not been verified end
 to end; expect to adjust firewall rules and the VPN endpoint to suit your
 provider.

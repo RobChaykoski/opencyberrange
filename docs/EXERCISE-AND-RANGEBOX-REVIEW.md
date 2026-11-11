@@ -1,12 +1,48 @@
 # Exercise and RangeBox design review
 
-Status: **Review complete; selected fixes implemented**
-Scope: Community / Academic profile and Professional 2.5.0
+Status: **Review complete; combined workspace implemented and verified for 2.6.0**
+Scope: Community / Academic profile and Professional 2.6.0
 Owner: Design and Product
 
 This review checks the exercise page, the active-lab panel, and the RangeBox
 workspace for layout, hierarchy, and functionality. It records what changed now
 and what is deliberately deferred.
+
+## 2.6.0 combined workspace
+
+The active exercise now has a desktop workspace for RangeBox-enabled labs:
+
+- RangeBox occupies the top-left pane.
+- The scenario, targets, hints, and flag form occupy the right column.
+- The workbook is framed along the bottom, with **Expand/Restore** and
+  **Open in new tab**.
+- The session timer and **Stop Exercise** remain in the panel header.
+- Phones (768 px and below) and VPN-only labs keep the stacked panel, so a
+  learner on a narrow screen still gets the section jump bar.
+
+The workspace is gated on `session.rangebox_enabled` and a desktop-width
+viewport. A lab whose `tools` list includes `rangebox` launches a Kali desktop;
+an empty tools list stays VPN-only.
+
+Verification on **11 November 2026** used dedicated test student and instructor
+accounts and `scripts/ui-workspace-regression.mjs`:
+
+- The workspace, RangeBox pane, flag input, timer, and workbook frame rendered
+  for both roles.
+- The workbook iframe resolved to the correct wiki chapter.
+- **Expand/Restore**, **Open in new tab** for RangeBox, **Open in new tab** for
+  the workbook, **Request Hint**, invalid-flag error handling, and
+  **Stop Exercise** were exercised.
+- The mobile viewport kept the stacked panel and the section jump bar.
+- The walkthrough found and fixed one button bug: **Open in new tab** used
+  in-page routing instead of opening a tab. It now uses `window.open` with the
+  resolved `/rangebox?...` URL.
+- The workbook CSP now allows the Material for MkDocs Google Fonts stylesheet
+  and font files; the SPA policy remains strict.
+
+Screenshots: `docs/img/exercise-workspace.png` (desktop) and
+`docs/img/exercise-workspace-mobile.png` (phone fallback). The regression
+evidence is written to `ui-workspace-artifacts/workspace-regression.json`.
 
 ## Method
 
@@ -29,33 +65,27 @@ and what is deliberately deferred.
 
 ## Findings
 
-### 1. The active-lab panel is one long scroll — high
+### 1. The active-lab panel is one long scroll — addressed in 2.6.0
 
-The panel currently renders, in order: scenario, objectives, ICS techniques,
-exercise network, target hostnames, workbook, flag submission, and hints. On a
-laptop this puts the flag and hints several screens below the top.
+The old panel rendered, in order: scenario, objectives, ICS techniques, exercise
+network, target hostnames, workbook, flag submission, and hints. On a laptop this
+put the flag and hints several screens below the top.
 
-**Recommendation:** split the panel into tabs or a sticky section nav:
-**Briefing** (scenario, objectives, workbook), **Targets** (network, hostnames),
-**Hints**, and **Flag**. Keep the reaction bar above the tabs. This is recorded
-as CA-L1 (in-workspace brief) and a follow-up layout item.
+**Decision:** the combined workspace moves the flag, targets, hints, and scenario
+into the right column and frames the workbook below. VPN-only labs keep the
+stacked panel, where the mobile jump bar and section anchors provide the same
+navigation. The full tab refactor is no longer required for RangeBox labs.
 
-**Decision:** defer the full tab refactor to the Community / Academic lab
-improvement line. Do not mix it into a reporting release.
+### 2. RangeBox has no exercise context — addressed in 2.6.0
 
-### 2. RangeBox has no exercise context — high
+The standalone RangeBox view is a full-screen VNC surface with a toolbar for
+status, clipboard, minimize, and fullscreen. The combined exercise workspace now
+puts that desktop beside the scenario, targets, hints, and flag form, so the
+learner does not have to switch windows to read the brief. The **Open in new
+tab** fallback remains for a second monitor.
 
-RangeBox is a full-screen VNC view with a toolbar for status, clipboard,
-minimize, and fullscreen. It does not show the exercise brief, objectives, or
-hints, and it has no explicit "Back to exercise" action when opened from a lab.
-
-**Recommendation:** add **Briefing** and **Hints** tabs inside the RangeBox
-workspace and a **Pop out** action for a read-only briefing window. Add a
-visible **Back to exercise** action when the workspace was opened from a lab.
-This is CA-L1.
-
-**Decision:** design is recorded; implementation is deferred and scoped as a
-Community / Academic lab improvement.
+**Decision:** delivered for RangeBox-enabled labs. A dedicated in-desktop
+briefing tab is not required while the exercise workspace is available.
 
 ### 3. Flag submission auto-stops the lab — working as intended
 
@@ -68,10 +98,10 @@ warning.
 Hints are useful while working, but they sit after the flag form. In a tabbed
 brief, Hints should be its own tab so learners can reach it without scrolling.
 
-### 5. Workbook link is buried — medium
+### 5. Workbook link is buried — addressed in 2.6.0
 
-The workbook button is one card among many. In the tabbed brief it belongs in
-the Briefing tab next to the scenario and objectives.
+The workbook is now a framed pane in the workspace with **Expand/Restore** and
+**Open in new tab**, instead of one card among many.
 
 ### 6. Mobile RangeBox is cramped — medium
 
@@ -89,21 +119,22 @@ toolbar controls at 44 px targets. Do not try to reflow the remote desktop.
 
 ## Prioritized follow-up
 
-| Priority | Item | Classification |
+| Priority | Item | Status |
 |---|---|---|
-| 1 | Active-lab tabs / sticky section nav | Community / Academic lab improvement |
-| 2 | RangeBox Briefing and Hints tabs with pop-out | CA-L1 |
-| 3 | Back to exercise action in RangeBox | Community / Academic usability fix |
-| 4 | Move workbook and hints into the Briefing flow | Community / Academic lab improvement |
-| 5 | Mobile orientation hint and 44 px toolbar targets | Community / Academic accessibility fix |
+| 1 | Active-lab tabs / sticky section nav | Resolved by the combined workspace for RangeBox labs; VPN-only labs keep the mobile jump bar |
+| 2 | RangeBox Briefing and Hints beside the desktop | Resolved by the combined workspace |
+| 3 | Back to exercise action in RangeBox | Resolved by the combined workspace; the standalone tab keeps Close |
+| 4 | Move workbook and hints into the working flow | Resolved: workbook pane, Expand/Restore, and right-column hints |
+| 5 | Mobile orientation hint and 44 px toolbar targets | Mobile fallback retained; toolbar targets remain a design check |
 
 ## Project management record
 
-- **In scope now:** the like/dislike visibility fix (bug fix), certification
-  guidance (CA-L3), admin record usability (M4), password reset hardening (M5).
-- **Deferred:** the tabbed active-lab layout and RangeBox briefing tabs (CA-L1).
+- **In scope now:** the combined RangeBox workspace, the new-tab fix, the
+  workbook CSP correction, and the regression walkthrough.
+- **Deferred:** a fully tabbed panel for VPN-only labs; the stacked panel and
+  jump bar are sufficient at current content depth.
 - **Not Enterprise:** these are not HA, SSO, multi-tenancy, LMS, or compliance
   features.
-- **Evidence:** build and lint pass; manual browser verification was not
-  available in this environment, so theme and viewport checks remain a release
-  QA task.
+- **Evidence:** frontend build and lint pass; the browser walkthrough passed for
+  a test student and test instructor; screenshots and the JSON evidence file are
+  attached.
