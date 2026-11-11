@@ -66,7 +66,7 @@
           </div>
           <p v-if="errors.newPassword" class="error-message">{{ errors.newPassword }}</p>
           <p v-else-if="form.newPassword && !errors.newPassword" class="help-text">
-            Password must be at least 8 characters and contain uppercase, lowercase, and a number.
+            At least 8 characters with uppercase, lowercase, and a number. Avoid common words, names, and simple patterns.
           </p>
         </div>
 
@@ -117,8 +117,17 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from '../api/axios'
+import { passwordPolicyError } from '../utils/passwordPolicy'
 
 const router = useRouter()
+
+const storedUser = (() => {
+  try {
+    return JSON.parse(localStorage.getItem('user') || '{}')
+  } catch {
+    return {}
+  }
+})()
 
 const form = reactive({
   currentPassword: '',
@@ -157,6 +166,16 @@ const validateNewPassword = () => {
   if (!/[0-9]/.test(form.newPassword)) {
     errors.newPassword = 'Password must contain at least one number'
     return
+  }
+
+  const policyError = passwordPolicyError(form.newPassword, {
+    username: storedUser.username,
+    email: storedUser.email,
+    firstName: storedUser.first_name,
+    lastName: storedUser.last_name,
+  })
+  if (policyError) {
+    errors.newPassword = policyError
   }
 }
 

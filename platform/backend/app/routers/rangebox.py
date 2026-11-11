@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db, SessionLocal
 from app.auth import get_current_active_user, create_ws_ticket, validate_ws_ticket
 from app.models import User, Lab, LabSession, LabCompletion, CourseEnrollment, CourseLabAssignment
-from app.services.docker_manager import DockerManager, RangeBoxCapacityError, rangebox_spawn_lock
+from app.services.docker_manager import DockerManager, RangeBoxCapacityError, RangeBoxImageUnavailableError, rangebox_spawn_lock
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -97,6 +97,9 @@ async def rangebox_capacity(
             and docker_manager.has_rangebox_memory_headroom()
             and docker_manager.has_rangebox_disk_headroom()
         ),
+        # Which desktop images are actually installed. A false entry lets the
+        # UI disable that option instead of offering a launch that must fail.
+        "images": docker_manager.rangebox_image_availability(),
     }
 
 
@@ -113,6 +116,14 @@ async def standalone_rangebox_launch(
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(e),
+        )
+    except RangeBoxImageUnavailableError as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=(
+                f"{e}. An administrator must build it on this server before "
+                "it can be used."
+            ),
         )
     if result is None:
         raise HTTPException(

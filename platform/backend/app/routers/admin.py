@@ -46,6 +46,7 @@ from app.schemas import (
     ResetPasswordRequest,
     UpdateLabRequest,
     LabCreate,
+    _password_policy_error,
 )
 from app.auth import get_current_admin_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens, verify_password
 from app import entitlement
@@ -753,7 +754,18 @@ async def reset_password(
             detail="Your admin password is incorrect",
         )
 
-    # Stricter password policy when the target account is privileged
+    # Stricter password policy when the target account is privileged, and an
+    # account-context check for every reset so a temporary password cannot be
+    # the user's own name plus a year.
+    policy_error = _password_policy_error(
+        password_data.new_password,
+        username=user.username,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name,
+    )
+    if policy_error:
+        raise HTTPException(status_code=400, detail=policy_error)
     if user.role in ('instructor', 'admin'):
         policy_error = validate_privileged_password(password_data.new_password)
         if policy_error:

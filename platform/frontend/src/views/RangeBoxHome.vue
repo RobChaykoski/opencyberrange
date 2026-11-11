@@ -46,6 +46,8 @@
                 class="rangebox-image-toggle__btn"
                 :class="{ 'rangebox-image-toggle__btn--active': image === option.value }"
                 :aria-pressed="image === option.value"
+                :disabled="!imageAvailable(option.value)"
+                :title="imageAvailable(option.value) ? option.label : `${option.label} is not installed on this server`"
                 @click="image = option.value"
               >
                 {{ option.label }}
@@ -53,6 +55,10 @@
             </div>
           </div>
         </div>
+
+        <p v-if="!selectedImageAvailable" class="rangebox-error" role="alert">
+          {{ selectedImageLabel }} is not installed on this server. Choose Kali or Ubuntu, or ask an administrator to build the image.
+        </p>
 
         <div class="rangebox-card__actions">
           <button
@@ -128,11 +134,17 @@ const loading = ref(false)
 const showViewer = ref(false)
 const boxReady = ref(false)
 const image = ref('kali')
-const capacity = ref({ running: 0, max: 0, available: true })
+const capacity = ref({ running: 0, max: 0, available: true, images: {} })
 const errorMessage = ref('')
 // Set only while a launch is being confirmed, so leaving the page cannot
 // leave a 2-second status poll running against an unmounted component.
 let launchPoll = null
+
+const imageAvailable = (value) => capacity.value.images?.[value] !== false
+const selectedImageAvailable = computed(() => imageAvailable(image.value))
+const selectedImageLabel = computed(
+  () => imageOptions.find((option) => option.value === image.value)?.label || image.value,
+)
 
 const fetchCapacity = async () => {
   try {
@@ -192,7 +204,10 @@ const launch = async () => {
     console.error('Failed to launch RangeBox:', error)
     status.value = 'not_found'
     loading.value = false
-    errorMessage.value = 'Could not launch RangeBox. The pool may be full; try again shortly.'
+    // Show the server's actual reason. The old generic "pool may be full"
+    // text hid missing images and other configuration faults.
+    errorMessage.value = error.response?.data?.detail
+      || 'Could not launch RangeBox. Try again or ask an administrator to check the server.'
   }
 }
 
@@ -256,10 +271,12 @@ const primaryDisabled = computed(() =>
   loading.value
   || status.value === 'starting'
   || (!capacity.value.available && status.value !== 'running')
+  || (!selectedImageAvailable.value && status.value !== 'running')
 )
 
 const primaryButtonClass = computed(() => {
   if (status.value === 'running') return 'btn--stop'
+  if (!selectedImageAvailable.value) return 'btn--disabled'
   return capacity.value.available ? 'btn--rangebox' : 'btn--disabled'
 })
 
@@ -267,6 +284,7 @@ const primaryButtonLabel = computed(() => {
   if (loading.value) return status.value === 'running' ? 'Stopping...' : 'Starting...'
   if (status.value === 'starting') return 'Starting...'
   if (status.value === 'running') return 'Stop RangeBox'
+  if (!selectedImageAvailable.value) return 'Image not installed'
   if (!capacity.value.available) return 'Unavailable'
   return 'Launch RangeBox'
 })
@@ -467,6 +485,11 @@ onUnmounted(() => {
 .rangebox-image-toggle__btn:hover:not(.rangebox-image-toggle__btn--active) {
   background: var(--bg-tertiary);
   color: var(--text-primary);
+}
+
+.rangebox-image-toggle__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .rangebox-image-toggle__btn--active {

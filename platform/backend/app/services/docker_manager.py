@@ -97,6 +97,17 @@ class RangeBoxCapacityError(Exception):
     pass
 
 
+class RangeBoxImageUnavailableError(Exception):
+    """Raised when a requested RangeBox image is not installed on the host."""
+
+    def __init__(self, image: str, shorthand: Optional[str] = None):
+        self.image = image
+        self.shorthand = shorthand or image
+        super().__init__(
+            f"RangeBox image '{image}' is not installed on this server"
+        )
+
+
 _host_kvm_available: Optional[bool] = None
 
 
@@ -2830,6 +2841,30 @@ fi
             return self.RANGEBOX_IMAGES[image]
         return image or self.RANGEBOX_IMAGE
 
+    def rangebox_image_availability(self) -> Dict[str, bool]:
+        """Return which RangeBox shorthands have a locally installed image.
+
+        The UI uses this to disable an image that the operator has not built
+        instead of letting a student select it and receive a generic launch
+        failure. A missing image is an operator/configuration problem, not a
+        capacity problem.
+        """
+        availability = {name: False for name in self.RANGEBOX_IMAGES}
+        if not self.client:
+            return availability
+        for shorthand, image in self.RANGEBOX_IMAGES.items():
+            try:
+                self.client.images.get(image)
+                availability[shorthand] = True
+            except docker.errors.ImageNotFound:
+                availability[shorthand] = False
+            except Exception as e:
+                logger.warning(
+                    "Could not check RangeBox image %s: %s", image, e
+                )
+                availability[shorthand] = False
+        return availability
+
     @staticmethod
     def _rangebox_image_shorthand(image: Optional[str]) -> str:
         """Map a RangeBox shorthand or image name to its display shorthand.
@@ -3517,7 +3552,8 @@ fi
             username: Platform username to display in shell prompt (e.g. "instructor@ocr").
 
         One per user. Returns the container ID on success, or None.
-        Raises RangeBoxCapacityError if the server is at capacity.
+        Raises RangeBoxCapacityError if the server is at capacity and
+        RangeBoxImageUnavailableError when the requested image is not built.
         """
         if not self.client:
             logger.error("Docker client not available — cannot spawn standalone RangeBox")
@@ -3543,14 +3579,22 @@ fi
             logger.warning(f"Error checking existing standalone RangeBox {container_name}: {e}")
 
         try:
+            resolved_image = self._resolve_rangebox_image(image)
+            # Check before creating the per-user network so a missing image
+            # cannot leave an orphan network behind.
+            self.client.images.get(resolved_image)
+        except docker.errors.ImageNotFound as e:
+            raise RangeBoxImageUnavailableError(
+                resolved_image, self._rangebox_image_shorthand(image)
+            ) from e
+
+        try:
             network_name = self.ensure_standalone_rangebox_network(user_id)
         except Exception as e:
             logger.error(f"Failed to ensure standalone RangeBox network: {e}")
             return None
 
         rangebox_ip = self._standalone_rangebox_ip(user_id)
-
-        resolved_image = self._resolve_rangebox_image(image)
 
         try:
             # Security note: no-new-privileges is intentionally NOT set.

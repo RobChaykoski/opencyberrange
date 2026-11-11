@@ -85,7 +85,11 @@ def validate_privileged_password(password: str) -> Optional[str]:
             "Instructor/admin passwords need at least three of: lowercase, "
             "uppercase, digit, symbol"
         )
-    return None
+    # Length and character classes are not enough: "Password123456!" still
+    # fails here because the base is a common word.
+    from app.schemas import _password_policy_error
+
+    return _password_policy_error(password)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

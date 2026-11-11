@@ -7,7 +7,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, 
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 from typing import Literal, Optional
 import base64
 import binascii
@@ -179,8 +179,15 @@ class RegisterRequest(BaseModel):
     
     @field_validator('password')
     @classmethod
-    def password_strong(cls, v: str) -> str:
-        return _validate_password(v)
+    def password_strong(cls, v: str, info: ValidationInfo) -> str:
+        data = info.data
+        return _validate_password(
+            v,
+            username=data.get('username'),
+            email=data.get('email'),
+            first_name=data.get('first_name'),
+            last_name=data.get('last_name'),
+        )
 
 
 class UsernameReminderRequest(BaseModel):
@@ -1765,8 +1772,15 @@ async def change_password(
         )
     
     # Validate new password meets requirements. The shared helper uses
-    # Unicode-aware letter/digit classes and rejects control characters.
-    basic_policy_error = _password_policy_error(password_data.new_password)
+    # Unicode-aware letter/digit classes, rejects control characters, and
+    # rejects common bases, account-specific words, repeats, and sequences.
+    basic_policy_error = _password_policy_error(
+        password_data.new_password,
+        username=current_user.username,
+        email=current_user.email,
+        first_name=current_user.first_name,
+        last_name=current_user.last_name,
+    )
     if basic_policy_error:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

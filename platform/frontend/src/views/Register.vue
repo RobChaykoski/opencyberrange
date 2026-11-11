@@ -198,7 +198,7 @@
               </div>
               <p v-if="errors.password" id="password-help" class="error-text">{{ errors.password }}</p>
               <p v-else id="password-help" class="help-text">
-                At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
+                At least 8 characters, with uppercase, lowercase, and a number. Avoid common words, names, and simple patterns.
               </p>
               <p v-if="passwordCapsLock" id="password-caps-warning" class="caps-warning" role="status">
                 Caps Lock is on.
@@ -224,6 +224,10 @@
                 <li :class="{ 'password-checklist__item--met': passwordChecks.number }">
                   <span aria-hidden="true">{{ passwordChecks.number ? '✓' : '○' }}</span>
                   A number
+                </li>
+                <li :class="{ 'password-checklist__item--met': passwordChecks.policy }">
+                  <span aria-hidden="true">{{ passwordChecks.policy ? '✓' : '○' }}</span>
+                  Not a common word, name, or simple pattern
                 </li>
               </ul>
               <div v-if="form.password" class="password-strength" aria-live="polite">
@@ -435,6 +439,7 @@
 import { computed, nextTick, onMounted, ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for registration (no token needed)
+import { passwordPolicyError } from '../utils/passwordPolicy'
 
 const router = useRouter()
 const route = useRoute()
@@ -513,10 +518,22 @@ const passwordChecks = computed(() => ({
   upper: /\p{Lu}/u.test(form.password),
   lower: /\p{Ll}/u.test(form.password),
   number: /\p{Nd}/u.test(form.password),
+  policy: form.password
+    ? !passwordPolicyError(form.password, {
+      username: form.username,
+      email: form.email,
+      firstName: form.firstName,
+      lastName: form.lastName,
+    })
+    : false,
 }))
 
 const passwordStrength = computed(() => {
   const checks = passwordChecks.value
+  // A common word with a digit/symbol appended is weak regardless of length.
+  if (form.password && !checks.policy) {
+    return { level: 'weak', label: 'Weak', percent: 25 }
+  }
   let score = 0
   if (checks.length) score += 1
   if (checks.upper) score += 1
@@ -593,6 +610,17 @@ const validatePassword = () => {
   }
   if (!passwordChecks.value.number) {
     errors.password = 'Password must contain at least one number'
+    return
+  }
+
+  const policyError = passwordPolicyError(form.password, {
+    username: form.username,
+    email: form.email,
+    firstName: form.firstName,
+    lastName: form.lastName,
+  })
+  if (policyError) {
+    errors.password = policyError
   }
 }
 

@@ -115,6 +115,18 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 - Recorded the `v2.6.0` release tag as annotated but unsigned; the supply-chain
   lock remains signed by the release key.
 
+### Security
+- Strengthened the shared password policy for registration, password changes,
+  and admin resets. It now rejects common bases with a number or symbol appended
+  (`Password1!`, `P@ssw0rd2026!`), account-specific words (username, email local
+  part, first/last name), repeated patterns, and simple sequences. The
+  registration and change-password fields mirror the same checks before submit.
+- Added password-policy regression tests covering common-password shortcuts,
+  context words, repeats, sequences, and strong passphrases.
+- RangeBox launch failures now report the actual cause. A missing desktop image
+  returns a specific `409` response instead of a generic server error, and the
+  launcher disables images that are not installed on the host.
+
 ### Licensing
 - Added CyberChef attribution (Apache-2.0, external tool) to the third-party
   notices, About lab toolchains, and licence bundle.
