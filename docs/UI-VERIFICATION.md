@@ -271,6 +271,11 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   quiz available for this level.” The track response now includes `has_quiz` per
   level and the UI hides the Quiz button when no active level quiz exists, so
   the High School Stage 2-4 buttons are hidden until quiz banks are added.
+  Verified on dev: **6/6 checks**, no Quiz buttons on completed levels, four
+  Certificate buttons still present, and `has_quiz=false` for every level. The
+  `level_quizzes` table is empty, so all level Quiz buttons are hidden until the
+  quiz engine and banks are created. Deployed to dev and prod; the production
+  API also reports `has_quiz=false` for all four Beginner levels.
 - Cleanup-race guard added: `create_lab_environment` now preserves networks
   owned by a session that is still `starting`/`running` and removes only stale
   lab networks for that user. Unit tests: **4 passed**.
