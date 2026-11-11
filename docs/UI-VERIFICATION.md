@@ -223,10 +223,12 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
 - The new beginner labs were in the production catalogue but seven of their
   images were not prebuilt. Spawning CyberChef Base64 initially failed with “not
   prepared on this server; on-demand builds are disabled.” The seven images were
-  then built on production, and all 18 Beginner lab images are now present.
-  CyberChef Base64 and Caesar completed end-to-end (target read, flag accepted,
-  next lab unlocked). Disk remained at 24G free, which is below the 60G prebuild
-  recommendation; monitor capacity before adding more lab images.
+  then built on production, and all 18 Beginner lab images are now present. The
+  full **18/18 Beginner track was completed end-to-end on production** with a
+  temporary student: every target was read, every flag accepted, and each next
+  lab unlocked. Disk cleanup removed three old backend tags and reclaimed about
+  2G; 26G remains free, with 40.1G still reclaimable from unused prebuilt lab
+  images. Do not run `docker image prune -a` on this host.
 - Other existing hosts can apply the same fix with
   `sudo bash scripts/fix-wireguard-client-route.sh`. It adds the runtime route,
   backs up `wg0.conf`, and persists the route in `PostUp`/`PostDown`.
@@ -263,12 +265,19 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   `/certificate/high-school/40` and renders “8 of 8 exercises completed”.
   Evidence: `beginner-complete.png`, `beginner-complete-card.png`,
   `beginner-certificate.png`, and `beginner-complete.json`.
-- A rapid stop/relaunch cycle earlier exposed a lab-cleanup race: one session
-  reported `running` while its Docker network had already been removed, leaving
-  an orphaned target container. It did not reproduce with normal pacing. The
-  existing fix covers a newer session for the same lab; the rapid cross-lab case
-  still needs a cleanup guard (cleanup should target the exact network/session
-  it created, not just the lab slug).
+- Stage 2-4 certificates passed **3/3**. The level **Quiz** buttons open an
+  empty modal because
+  `/api/exercises/tracks/high-school/levels/{41,42,43}/quiz` returns `404` “No
+  quiz available for this level.” The quiz-bank check still passes 24 banks
+  across 164 labs, so this is a level-endpoint content gap: hide the Quiz button
+  when no level bank exists, or add high-school stage quiz banks.
+- Cleanup-race guard added: `create_lab_environment` now preserves networks
+  owned by a session that is still `starting`/`running` and removes only stale
+  lab networks for that user. Unit tests: **4 passed**.
+- Broader smoke beyond Beginner: Malware `malware-1-1-eicar-triage` (VPN-only,
+  target `evidence` at `10.100.225.40`) and Linux
+  `linux-2-1-ssh-basic-login` both spawned and reached `running` on development;
+  Web `web-1-1-basic-directory-enumeration` was verified on production.
 - Evidence for the earlier parts: `signup.json`, `account-security.json`,
   `cyberchef-lab.json`, and the matching screenshots.
 

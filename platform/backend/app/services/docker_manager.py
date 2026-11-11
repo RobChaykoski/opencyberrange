@@ -84,6 +84,18 @@ def _lab_hostnames_by_offset(hostname_entries) -> Dict[str, List[str]]:
             aliases.append(hostname)
     return grouped
 
+
+def _is_stale_user_lab_network(network_name: str, user_id: int, active_network_names: set) -> bool:
+    """Return True for this user's lab network when no live session owns it.
+
+    A new spawn removes the user's old lab networks before creating its own. If
+    a session is already starting or running, its network must be preserved;
+    otherwise a rapid cross-lab spawn can tear down the live environment.
+    """
+    prefix = f"lab_{user_id}_"
+    return network_name.startswith(prefix) and network_name not in active_network_names
+
+
 # ── Shared container status cache ───────────────────────────────────
 # Prevents multiple concurrent polls from each doing slow socket checks.
 # TTL of 5 seconds — stale data is acceptable for a status indicator.
@@ -1401,12 +1413,45 @@ fi
         # This prevents conflicts when switching between labs quickly
         import time
         try:
+            # Preserve networks owned by a session that is still starting or
+            # running. Only remove this user's stale lab networks.
+            active_network_names = set()
+            try:
+                from app.database import SessionLocal
+                from app.models import LabSession
+
+                active_db = SessionLocal()
+                try:
+                    active_sessions = active_db.query(LabSession).filter(
+                        LabSession.user_id == user_id,
+                        LabSession.status.in_(["starting", "running"]),
+                    ).all()
+                    active_network_names = {
+                        f"lab_{row.user_id}_{row.lab.slug}"
+                        for row in active_sessions
+                        if row.lab
+                    }
+                finally:
+                    active_db.close()
+            except Exception as active_error:
+                logger.warning(
+                    "Could not resolve active lab networks for user %s: %s",
+                    user_id,
+                    active_error,
+                )
+
             all_networks = self.client.networks.list()
             user_networks_removed = 0
             for net in all_networks:
                 net_name = net.name
-                # Remove any network belonging to this user (regardless of lab_slug)
-                if not net_name.startswith(f"lab_{user_id}_"):
+                # Remove only stale networks belonging to this user.
+                if not _is_stale_user_lab_network(net_name, user_id, active_network_names):
+                    if net_name in active_network_names:
+                        logger.info(
+                            "Preserving active lab network %s for user %s",
+                            net_name,
+                            user_id,
+                        )
                     continue
                 try:
                     logger.info(f"Removing existing network {net_name} for user {user_id} before creating new lab")
