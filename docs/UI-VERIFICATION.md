@@ -227,6 +227,17 @@ Run on **11 November 2026** against development (`https://172.16.16.44`).
   first lab, RangeBox Log Detective, is unlocked. Evidence:
   `ui-workspace-artifacts/journey-20261111/stage2-complete.png` and
   `stage2-complete.json`.
+- Stage 3 and Stage 4 were completed over the VPN: **RangeBox Log Detective**
+  (real token in the `admin?token=` log request), **Media Provenance**
+  (`/verify?id=river-cleanup`), **DevFest Community Portal** (flag in the
+  exported PNG text metadata), and **Crypto Rug Pull** (ledger, drained wallet,
+  then case file). The full Beginner Cybersecurity track is now **18/18
+  completed, 100%**, with no locked labs.
+- Final UI verification: **12/12 checks**. The track card shows 18/18 and
+  **Complete**; the Stage 1 certificate opens at
+  `/certificate/high-school/40` and renders “8 of 8 exercises completed”.
+  Evidence: `beginner-complete.png`, `beginner-complete-card.png`,
+  `beginner-certificate.png`, and `beginner-complete.json`.
 - A rapid stop/relaunch cycle earlier exposed a lab-cleanup race: one session
   reported `running` while its Docker network had already been removed, leaving
   an orphaned target container. It did not reproduce with normal pacing. The
