@@ -1,5 +1,10 @@
 <template>
   <div class="instructor-dashboard">
+    <MobileEfficiencyNotice
+      title="Instructor workspace"
+      message="Cohort tables, charts, and reports are easier to read on a wider screen. Use a desktop for grading and report exports."
+      storage-key="ocr.notice.instructor-dashboard"
+    />
     <div class="dashboard-header">
       <img src="/swocts-cyber-range-mark.png" alt="SWOCTS Cyber Range" class="dashboard-logo" />
       <div class="dashboard-header__text">
@@ -407,6 +412,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { useRouter } from 'vue-router'
 import { Line } from 'vue-chartjs'
 import {

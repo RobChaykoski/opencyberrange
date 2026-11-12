@@ -1,6 +1,11 @@
 <template>
   <div class="rangebox-home">
     <div class="rangebox-home__container">
+      <MobileEfficiencyNotice
+        title="RangeBox desktop"
+        message="The in-browser desktop needs a keyboard and a wide screen. Launching and using it from a phone is slow; use a laptop or desktop for lab work."
+        storage-key="ocr.notice.rangebox"
+      />
       <header class="rangebox-home__hero">
         <div class="rangebox-home__mark" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -117,6 +122,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import axios from '../api/axios'
 import RangeBox from '../components/RangeBox.vue'
+import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { useMobileView } from '../composables/useMobileView'
 import { usePoll } from '../composables/usePoll'
 

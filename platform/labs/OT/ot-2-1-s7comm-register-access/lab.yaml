@@ -1,0 +1,99 @@
+title: Halcyon Industrial - S7comm Data Block Read
+category: ot
+difficulty: intermediate
+estimated_time: 45
+prerequisites:
+  - ot-1-1-modbus-register-analysis
+# By completion students will be able to:
+learning_outcomes:
+  - Identify an S7comm service on TCP 102
+  - Connect to a Siemens-style PLC with a protocol client
+  - Read a data block (DB) and locate the analyst marker
+  - Explain why S7comm exposes process data without authentication
+mapped_skills:
+  - ot_ics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Collection
+    technique: T0801
+    technique_name: Monitor Process State
+    detection: Monitor S7comm connection attempts and data-block reads from hosts outside the control network.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.7.0"
+reviewed_at: "2026-11-12"
+review_status: "automated static proof; live walkthrough pending"
+description: "A Siemens-style controller exposes S7comm on TCP 102. Connect with a protocol client, read the process data block, and recover the analyst marker from the byte offset the audit note points at."
+visibility: public
+flag: "OCR{s7c0mm_db_r34d_3xp0s3d}"
+
+tools:
+  - python3
+  - nmap
+  - snap7
+
+scenario: |
+  Halcyon Industrial Controls added a second process line with a Siemens-style
+  controller. The vendor left the engineering port open on the control network
+  and the process data block holds more than setpoints.
+
+  S7comm, like Modbus, has no built-in authentication. Anyone who can reach TCP
+  102 can enumerate the controller and read its data blocks. Your job is to
+  confirm the service, read DB1, and recover the audit marker stored at byte
+  offset 32.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If the client cannot connect, confirm TCP 102 is open and that you passed rack 0 and slot 1. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Segment the control network, block TCP 102 at the boundary, and monitor S7comm reads from engineering and student subnets. Prefer S7+ or a VPN appliance for remote engineering access."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-12"
+workbook: "wiki/range/ot/CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read/"
+
+hostnames:
+  - ip_offset: "61"
+    hostname: "plc"
+    description: "HIC-S7 process controller (S7comm on TCP 102)"
+
+topology:
+  nodes:
+    - id: "plc"
+      label: "HIC-S7 PLC"
+      type: "server"
+      ip_offset: "61"
+      ports: [102]
+      services: ["s7comm"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Confirm the service before writing a client:
+      nmap -sV -p 102 <plc_ip>
+      S7comm usually appears as "s7comm" or "iso-tsap" on TCP 102.
+    unlock_after_minutes: 5
+  - text: |
+      The tester and RangeBox ship python-snap7. Connect with rack 0, slot 1:
+
+      python3 -c "import snap7; c=snap7.client.Client(); c.connect('<plc_ip>', 0, 1); print('connected')"
+    unlock_after_minutes: 12
+  - text: |
+      Read DB1 and inspect the bytes from offset 32. The marker is ASCII:
+
+      python3 -c "import snap7; c=snap7.client.Client(); c.connect('<plc_ip>', 0, 1); d=c.db_read(1, 0, 96); print(d[32:].split(bytes([0]))[0].decode())"
+    unlock_after_minutes: 22
+
+test:
+  steps:
+    - name: "S7comm port is reachable"
+      command: "python3 -c \"import socket;s=socket.create_connection(('{target.plc}',102),5);s.close();print('ok')\""
+      expect: "ok"
+      timeout: 20
+
+    - name: "DB1 contains the analyst marker"
+      command: "python3 -c \"import snap7;c=snap7.client.Client();c.connect('{target.plc}',0,1);d=c.db_read(1,0,96);print(d[32:].split(bytes([0]))[0].decode())\""
+      expect: "OCR{s7c0mm_db_r34d_3xp0s3d}"
+      timeout: 30

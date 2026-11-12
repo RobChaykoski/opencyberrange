@@ -10,6 +10,19 @@ The interface is a left sidebar plus a main content area, and nearly everything 
 
 The platform places primary navigation in a left sidebar on desktop. There is no desktop top navigation bar. The only other global elements are a floating theme toggle in the top-right corner and, when an admin is viewing the platform as another user, an impersonation banner across the top. On a phone-width screen the sidebar becomes an off-canvas menu drawer, and a compact top bar carries the menu and theme controls plus a student bottom tab bar.
 
+### Display and contrast
+
+The theme button cycles through three settings:
+
+1. **Dark** (default) - slate surfaces for lab and evening work.
+2. **Light** - white surfaces for bright rooms and printing.
+3. **High contrast** - a black canvas, white text, white borders, and a cyan
+   accent. Use it when a projector, a low-quality monitor, or a vision
+   condition makes the standard themes hard to read.
+
+The choice is stored in your browser, so it follows you between pages on the
+same device. It does not change permissions, progress, or any learning data.
+
 <figure markdown>
 
 ![The student dashboard with the left navigation sidebar expanded](img/navigation-sidebar.png)

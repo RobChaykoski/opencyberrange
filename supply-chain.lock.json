@@ -739,6 +739,12 @@
         "plc"
       ]
     },
+    "ot-2-1-s7comm-register-access": {
+      "content_hash": "abe66f1bdca7403b3038467089b6ebc3ec09332cb6c641a959ed3d0cda70dbad",
+      "services": [
+        "plc"
+      ]
+    },
     "software-security-1-1-hidden-export-route": {
       "content_hash": "93c066862f1c7bd51afceeb9a4e4c26e2a37294fe6eb127e91e76f5d77360a9f",
       "services": [

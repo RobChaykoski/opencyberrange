@@ -402,7 +402,7 @@ repeated here.
 | Taskbar | The bar on a desktop that shows open apps and shortcuts. |
 | Application menu | The menu used to open programs on a desktop. |
 | Digital safety | Habits that protect a learner online, such as checking a link or file before clicking or opening it. |
-| CyberChef | A browser tool for encoding, decoding, and transforming data. |
+| CyberChef | A browser tool for encoding, decoding, and transforming data. It is served by the platform, so it works without internet access. |
 | Decode | Change encoded or scrambled data back into a form that can be read. |
 | Encode | Change data into another form. Encoding does not keep data secret. |
 | Encoding | Changing data into another representation. Encoding is not encryption and does not protect data by itself. |

@@ -71,4 +71,8 @@ nav:
   - "OT01: Modbus Fundamentals":
     - Introduction: CH_OT01_Modbus_Fundamentals/00_Introduction.md
     - "Exercise 1.1 -- Modbus Register Analysis": CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis.md
+  - "OT02: S7comm and PLC Data Blocks":
+    - Introduction: CH_OT02_S7comm_Data_Blocks/00_Introduction.md
+    - "Exercise 2.1 -- S7comm Data Block Read": CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read.md
+    - Chapter Review: CH_OT02_S7comm_Data_Blocks/02_Chapter_Review.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

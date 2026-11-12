@@ -386,9 +386,19 @@ tracks:
         prerequisites: [NET00]
         exercises: 1
         estimated_minutes: 40
-        recommended_next: AI01
+        recommended_next: OT02
         status: published
         intro: CH_OT01_Modbus_Fundamentals/00_Introduction.md
+      - id: OT02
+        directory: CH_OT02_S7comm_Data_Blocks
+        display_name: "S7comm and PLC Data Blocks"
+        difficulty: "intermediate"
+        prerequisites: [OT01]
+        exercises: 1
+        estimated_minutes: 45
+        recommended_next: AI01
+        status: published
+        intro: CH_OT02_S7comm_Data_Blocks/00_Introduction.md
 
   - id: ai
     pathway_order: 10

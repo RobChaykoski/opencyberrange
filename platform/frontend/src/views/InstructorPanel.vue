@@ -1,5 +1,10 @@
 <template>
   <div class="instructor-panel">
+    <MobileEfficiencyNotice
+      title="Instructor panel"
+      message="Course management and exercise tables work best on a desktop. On a phone, expect more scrolling and fewer columns."
+      storage-key="ocr.notice.instructor-panel"
+    />
     <header class="panel-header">
       <h1>Instructor Panel</h1>
       <p class="panel-subtitle">Manage your courses and browse available exercises</p>
@@ -1237,6 +1242,7 @@ import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import PrivacyText from '../components/PrivacyText.vue'
+import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
 import { getUserTimeZone } from '../utils/timezone'

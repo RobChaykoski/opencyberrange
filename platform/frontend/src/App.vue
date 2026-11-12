@@ -13,13 +13,22 @@
     <!-- Impersonation Banner -->
     <ImpersonationBanner />
 
-    <!-- Theme Toggle (global) -->
-    <button @click="toggleTheme" class="theme-toggle" :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
-      <svg v-if="isDark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <!-- Theme Toggle (global): dark -> light -> high contrast -->
+    <button
+      @click="toggleTheme"
+      class="theme-toggle"
+      :title="`Switch to ${nextThemeLabel} mode`"
+      :aria-label="`Switch to ${nextThemeLabel} mode`"
+    >
+      <svg v-if="theme === 'dark'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
       </svg>
-      <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <svg v-else-if="theme === 'light'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/>
       </svg>
     </button>
 
@@ -74,10 +83,11 @@
           <button
             type="button"
             class="mobile-topbar__button"
-            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            :aria-label="`Switch to ${nextThemeLabel} mode`"
+            :title="`Switch to ${nextThemeLabel} mode`"
             @click="toggleTheme"
           >
-            <svg v-if="isDark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg v-if="theme === 'dark'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <circle cx="12" cy="12" r="5" />
               <line x1="12" y1="1" x2="12" y2="3" />
               <line x1="12" y1="21" x2="12" y2="23" />
@@ -88,8 +98,12 @@
               <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
               <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
             </svg>
-            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg v-else-if="theme === 'light'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+            <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" />
             </svg>
           </button>
         </header>
@@ -147,7 +161,7 @@ import api from './api/axios'
 
 const router = useRouter()
 const { applyPrivacyDefaultForRole } = usePrivacy()
-const { isDark, toggleTheme } = useTheme()
+const { theme, nextThemeLabel, toggleTheme } = useTheme()
 const { fetchModules, isModuleEnabled, resetModules } = useModules()
 const { isImpersonating } = useImpersonation()
 const { isMobile } = useMobileView()
@@ -391,6 +405,7 @@ if (typeof window !== 'undefined') {
 <style>
 /* Global CSS Variables - Dark (default) */
 :root {
+  color-scheme: dark;
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
@@ -424,6 +439,7 @@ if (typeof window !== 'undefined') {
 
 /* Light theme overrides */
 [data-theme="light"] {
+  color-scheme: light;
   --bg-primary: #ffffff;
   --bg-secondary: #f1f5f9;
   --bg-tertiary: #e2e8f0;
@@ -453,6 +469,46 @@ if (typeof window !== 'undefined') {
   --success-bg: rgba(22, 163, 74, 0.12);
   --warning-bg: rgba(217, 119, 6, 0.12);
   --panel-bg: #ffffff;
+}
+
+/* High-contrast theme: black canvas, white text, strong borders. Accent is
+   cyan with black button text; status colours stay distinct and are always
+   paired with a text label in the components that use them. */
+[data-theme="contrast"] {
+  color-scheme: dark;
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #f5f5f5;
+  --text-muted: #e5e5e5;
+  --border-color: #ffffff;
+  --accent: #22d3ee;
+  --accent-text: #67e8f9;
+  --badge-blue: #67e8f9;
+  --badge-slate: #e5e5e5;
+  --badge-green: #4ade80;
+  --badge-red: #f87171;
+  --badge-amber: #fbbf24;
+  --badge-purple: #d8b4fe;
+  --badge-cyan: #67e8f9;
+  --badge-pink: #f9a8d4;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --nav-label: #e5e5e5;
+  --hover-bg: #1f1f1f;
+  --hover-text: #ffffff;
+  --accent-bg: rgba(34, 211, 238, 0.2);
+  --danger-bg: rgba(248, 113, 113, 0.2);
+  --purple: #d8b4fe;
+  --success-bg: rgba(74, 222, 128, 0.2);
+  --warning-bg: rgba(251, 191, 36, 0.2);
+  --panel-bg: #0a0a0a;
+}
+
+[data-theme="contrast"] .btn--primary {
+  color: #000000;
 }
 
 /* Global Styles */

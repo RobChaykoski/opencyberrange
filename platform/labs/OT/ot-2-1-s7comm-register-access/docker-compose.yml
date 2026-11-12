@@ -1,0 +1,11 @@
+services:
+  plc:
+    mem_limit: 256m
+    cpus: 0.25
+    build:
+      context: ./containers/plc
+      dockerfile: Dockerfile
+    hostname: plc
+    labels:
+      ip_offset: "61"
+    restart: unless-stopped

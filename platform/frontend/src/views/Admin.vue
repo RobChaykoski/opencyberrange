@@ -1,6 +1,11 @@
 <template>
   <div class="admin-page">
     <div class="admin-container">
+      <MobileEfficiencyNotice
+        title="Admin workspace"
+        message="Tables, bulk actions, and settings forms are designed for a wide screen. Reviewing is fine here; use a desktop for edits and bulk changes."
+        storage-key="ocr.notice.admin"
+      />
       <!-- Header -->
       <div class="admin-header">
         <div>
@@ -3803,6 +3808,7 @@ import AdminPendingTab from '../components/AdminPendingTab.vue'
 import AchievementStudio from '../components/AchievementStudio.vue'
 import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
+import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'

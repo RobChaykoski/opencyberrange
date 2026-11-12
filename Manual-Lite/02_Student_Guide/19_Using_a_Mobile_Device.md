@@ -21,6 +21,12 @@ in portrait at `768px` or below gets the mobile shell.
 - Wide tables and cards scroll inside their own container instead of widening
   the page.
 - The fixed desktop theme switch is hidden; the top bar theme button replaces it.
+- The theme button cycles **dark**, **light**, and **high contrast**. High
+  contrast is the best choice for bright outdoor light or a low-quality phone
+  screen.
+- Pages that are much easier on a larger screen show a dismissible notice. It
+  explains what will be awkward before you start; dismissing it hides it for the
+  rest of the browser session.
 
 ## What works well
 

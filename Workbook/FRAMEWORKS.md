@@ -82,6 +82,7 @@ Frameworks registered but not mapped yet are shown as **Not yet**. They remain i
 | `MAL01` | Malware Fundamentals | Malware Analysis | `malware` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `MAL02` | Executable Analysis | Malware Analysis | `malware` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `OT01` | Modbus Fundamentals | OT/ICS Security | `ot_ics` | `NIST_800_82` (NIST SP 800-82 Rev. 3), `IEC_62443` (IEC 62443) |
+| `OT02` | S7comm and PLC Data Blocks | OT/ICS Security | `—` | — |
 | `AI01` | AI Security Foundations | AI Hacking | `ai_security` | `NIST_AI_RMF` (NIST AI Risk Management Framework), `OWASP_LLM` (OWASP Top 10 for LLM Applications) |
 | `OSINT01` | OSINT Foundations | OSINT | `osint` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
 | `OSINT02` | Mobile OSINT | OSINT | `—` | — |

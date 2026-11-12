@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-2.7.0%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-168-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-169-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -166,8 +166,8 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **159** labs expose a workbook page and appear in the generated curriculum table below |
-| Guided lab instruction | Workbook walkthroughs and analysis questions | **165 workbook pages**, **112 analysis sections**, **410 analysis questions** |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **160** labs expose a workbook page and appear in the generated curriculum table below |
+| Guided lab instruction | Workbook walkthroughs and analysis questions | **168 workbook pages**, **113 analysis sections**, **413 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
@@ -176,9 +176,9 @@ These are current, checkable counts from this repository and metrics the platfor
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
-The badge counts every `lab.yaml` under `platform/labs` (**168** today). A
+The badge counts every `lab.yaml` under `platform/labs` (**169** today). A
 running deployment seeds only the labs that map to a track and level, and the
-generated table below lists the **159** that have a workbook page.
+generated table below lists the **160** that have a workbook page.
 
 ### Release and repositories
 
@@ -356,16 +356,16 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `forensics` | Digital Forensics | Intermediate learners who want to investigate memory and network evidence. | intermediate | NET02 | 2 | 1h 35m | published |
 | `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 8 | 4h 05m | published |
 | `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | published |
-| `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 1 | 40m | published |
+| `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 2 | 1h 25m | published |
 | `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security. | intermediate | WEB02 | 3 | 1h 50m | published |
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-**Total:** 159 exercises across 12 tracks and 42 chapters.
+**Total:** 160 exercises across 12 tracks and 43 chapters.
 
 Recommended pathway:
 
-`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `OSINT02` → `IAM01` → `OT01` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
+`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `OSINT02` → `IAM01` → `OT01` → `OT02` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
 <!-- END GENERATED CURRICULUM INVENTORY -->
 
 ## Network Foundations stream
