@@ -3478,7 +3478,7 @@ watch(() => route.path, (newPath) => {
 .gps-card {
   position: relative;
   margin: 1rem 0;
-  padding: 0.9rem 1rem 0.8rem;
+  padding: 1rem 1.1rem 0.9rem;
   border: 1px solid var(--border-color);
   border-radius: 14px;
   background:
@@ -3527,31 +3527,34 @@ watch(() => route.path, (newPath) => {
 }
 
 .gps-card__question {
-  margin: 0.45rem 0 0.65rem;
+  margin: 0.55rem 0 0.75rem;
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .gps-card__options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .gps-card__option {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.6rem;
+  align-items: flex-start;
+  gap: 0.55rem;
+  min-height: 42px;
+  padding: 0.55rem 0.7rem;
   border: 1px solid var(--border-color);
   border-radius: 9px;
   background: var(--bg-primary);
   color: var(--text-primary);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
   text-align: left;
+  overflow-wrap: anywhere;
   cursor: pointer;
 }
 
@@ -3570,6 +3573,7 @@ watch(() => route.path, (newPath) => {
   flex: 0 0 auto;
   width: 10px;
   height: 10px;
+  margin-top: 0.25rem;
   border: 2px solid var(--accent);
   border-radius: 50%;
 }
@@ -3580,14 +3584,16 @@ watch(() => route.path, (newPath) => {
 
 .gps-card__foot {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-  padding-top: 0.55rem;
-  border-top: 1px dashed var(--border-color);
+  gap: 0.5rem 0.75rem;
+  margin-top: 0.85rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
 }
 
 .gps-card__link {
