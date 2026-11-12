@@ -47,7 +47,6 @@ async def get_modules_status(
             "label": meta["label"],
             "description": meta["description"],
         }
-    from app import entitlement
     import os
     # Admin tools that are stripped from shipped editions; hide their tabs when
     # the code is absent. Where the code is still present (e.g. a dev bind-mount

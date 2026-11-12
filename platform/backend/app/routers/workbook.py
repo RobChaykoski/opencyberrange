@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_instructor_user
 from app.database import get_db
-from app.models import User, Course, CourseLabAssignment, Lab
+from app.models import User, Course
 from app.services import workbook_builder
 from app.services.course_wiki import rebuild_affected_course_wikis, rebuild_course_wiki
 

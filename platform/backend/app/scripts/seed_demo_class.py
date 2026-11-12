@@ -33,7 +33,7 @@ if _missing:
 
 sys.path.insert(0, '/app')
 
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from app.auth import get_password_hash
 
@@ -418,9 +418,6 @@ def _run(db):
     # ── 6. Seed Lab Data Per Student ─────────────────────────
     print("\n[6/6] Seeding lab completions, attempts, and achievements...")
 
-    # Track who got first_blood on each lab (first to complete)
-    first_blood_tracker = {}  # lab_id -> (user_id, completed_at)
-
     # Collect all student completion data first to determine first_blood
     all_completions = []
 
@@ -587,7 +584,7 @@ def _run(db):
 
     # Determine first_blood per lab (earliest completion)
     first_blood_map = {}
-    for uid, lab_id, completed_at, att, hints, tr, lab in all_completions:
+    for uid, lab_id, completed_at, _att, _hints, _tr, _lab in all_completions:
         if lab_id not in first_blood_map or completed_at < first_blood_map[lab_id][1]:
             first_blood_map[lab_id] = (uid, completed_at)
 
@@ -655,19 +652,19 @@ def _run(db):
     print("\n" + "=" * 60)
     print("  DEMO CLASS SEEDED SUCCESSFULLY")
     print("=" * 60)
-    print(f"\n  Instructor Account:")
+    print("\n  Instructor Account:")
     print(f"    Username: {INSTRUCTOR['username']}")
-    print(f"    Password: supplied via DEMO_INSTRUCTOR_PASSWORD")
-    print(f"    Role:     instructor")
-    print(f"\n  Student Accounts (password: DEMO_STUDENT_PASSWORD):")
+    print("    Password: supplied via DEMO_INSTRUCTOR_PASSWORD")
+    print("    Role:     instructor")
+    print("\n  Student Accounts (password: DEMO_STUDENT_PASSWORD):")
     for s in STUDENTS:
         uid = student_ids[s["username"]]["id"]
         print(f"    {s['username']:20s} ({s['personality']:10s}) id={uid}")
-    print(f"\n  Course: Cyber Security Fundamentals (CYB-3350)")
+    print("\n  Course: Cyber Security Fundamentals (CYB-3350)")
     print(f"    Course ID:   {course_id}")
     print(f"    Labs:        {len(labs)}")
     print(f"    Students:    {len(STUDENTS)}")
-    print(f"    Invite Code: (check database)")
+    print("    Invite Code: (check database)")
     print()
 
 

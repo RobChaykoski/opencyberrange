@@ -8,7 +8,6 @@ from statistics import median, quantiles
 from sqlalchemy.orm import joinedload
 
 from app.models import (
-    CourseEnrollment,
     CourseFeedback,
     ExercisePulseSurvey,
     ExerciseQuizAttempt,
@@ -18,7 +17,6 @@ from app.models import (
 )
 from app.services.competency_model import (
     AXES,
-    AXIS_KEYS,
     COMPETENCY_MODEL_VERSION,
     SCORE_WEIGHTS,
     TARGET_SCORE,

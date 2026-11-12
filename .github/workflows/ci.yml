@@ -51,9 +51,8 @@ jobs:
         working-directory: platform/backend
         run: pip install -r requirements-dev.txt
 
-      - name: Lint (baseline; non-blocking until legacy cleanup)
+      - name: Lint
         working-directory: platform/backend
-        continue-on-error: true
         run: ruff check app
 
       - name: Test

@@ -21,7 +21,7 @@ sys.path.insert(0, "/app")
 from app.config import settings
 from app.database import SessionLocal
 from app.models import Lab, WireGuardConfig
-from app.routers.labs import get_subnet_id, vpn_allowed_ips, vpn_lab_subnet
+from app.routers.labs import get_subnet_id, vpn_allowed_ips
 from app.services.wireguard_manager import WireGuardManager
 
 OLD_CLIENT_POOL = ipaddress.ip_network("10.0.0.0/16")

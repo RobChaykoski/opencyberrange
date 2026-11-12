@@ -213,7 +213,7 @@ def seed_example_course():
             labs_assigned += 1
 
         db.commit()
-        print(f"\n[ok] Example course seeding complete!")
+        print("\n[ok] Example course seeding complete!")
         print(f"  Labs assigned: {labs_assigned}")
         if labs_missing:
             print(f"  Labs missing:  {labs_missing} (run discover_labs.py to populate)")

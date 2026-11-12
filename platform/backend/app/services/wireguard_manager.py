@@ -263,7 +263,6 @@ PersistentKeepalive = 25
         if last_handshake:
             try:
                 from datetime import datetime, timezone
-                import time
                 
                 # Parse handshake time (could be timestamp or ISO string)
                 if isinstance(last_handshake, (int, float)):

@@ -3,7 +3,10 @@
 Usage (in container):
   python /app/app/scripts/simulate_student.py <username>
 """
-import os, sys, json, hashlib, yaml, glob
+import os
+import sys
+import yaml
+import glob
 sys.path.insert(0, "/app")
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://labuser:labpass@db:5432/labdb")
@@ -12,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-from app.models import User, Lab, LabCompletion, FlagAttempt, LevelQuiz, QuizAttempt, Course, CourseEnrollment
+from app.models import User, Lab, LabCompletion, FlagAttempt, LevelQuiz, QuizAttempt, CourseEnrollment
 from app.services.achievements import check_achievements
 from datetime import datetime, timezone
 

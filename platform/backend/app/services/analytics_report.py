@@ -70,7 +70,7 @@ def generate_reports_pdf(payload: dict) -> bytes:
         ("Exercise feedback", f"{totals.get('positive_rate', 0)}% positive"),
     ]
     box_width = 48
-    for label, value in summary:
+    for label, _value in summary:
         pdf.set_fill_color(241, 245, 249)
         pdf.set_draw_color(203, 213, 225)
         pdf.set_font("Helvetica", "B", 8)
@@ -137,7 +137,7 @@ def generate_reports_pdf(payload: dict) -> bytes:
             fill = index % 2 == 0
             if fill:
                 pdf.set_fill_color(248, 250, 252)
-            for value, (_title, width) in zip(values, skill_headers):
+            for value, (_title, width) in zip(values, skill_headers, strict=False):
                 _cell(
                     pdf,
                     width,
@@ -207,7 +207,7 @@ def generate_reports_pdf(payload: dict) -> bytes:
         fill = index % 2 == 0
         if fill:
             pdf.set_fill_color(248, 250, 252)
-        for value, (_title, width) in zip(values, headers):
+        for value, (_title, width) in zip(values, headers, strict=False):
             _cell(pdf, width, value, align="C" if width <= 28 else "L", fill=fill)
         pdf.ln(7)
 

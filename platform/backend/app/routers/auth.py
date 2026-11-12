@@ -10,7 +10,6 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 from typing import Literal, Optional
 import base64
-import binascii
 import io
 import logging
 import qrcode

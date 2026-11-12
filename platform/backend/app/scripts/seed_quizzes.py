@@ -15,7 +15,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://labuser:labpass@db:5
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-from app.models import Track, Level, LevelQuiz, QuizQuestion
+from app.models import Track, LevelQuiz, QuizQuestion
 
 
 def upsert_quiz(db, track_slug, level_number, title, questions):

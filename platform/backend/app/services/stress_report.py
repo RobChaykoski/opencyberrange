@@ -227,7 +227,7 @@ def _create_p95_bar_chart(endpoints):
     bars = ax.barh(range(len(names)), p95s, color=colors, height=0.6, edgecolor="none")
 
     # Add value labels
-    for bar, val in zip(bars, p95s):
+    for bar, val in zip(bars, p95s, strict=False):
         ax.text(bar.get_width() + 0.01, bar.get_y() + bar.get_height() / 2,
                 f"{val:.3f}s", va="center", ha="left", fontsize=8, color=MPL_TEXT)
 
@@ -281,7 +281,6 @@ def _create_percentile_comparison(endpoints, users=0):
     h = 0.25
 
     # Calculate approximate user counts for each bucket
-    typical_n = max(1, round(users * 0.50)) if users else ""
     slow_n = max(1, round(users * 0.05)) if users else ""
     worst_n = max(1, round(users * 0.01)) if users else ""
 
@@ -496,7 +495,7 @@ def generate_stress_report(data: dict) -> bytes:
         pdf.cell(8, 5, str(concurrent_spawns))
         pdf.set_font("Helvetica", "", 7)
         pdf.set_text_color(*TEXT_MUTED)
-        pdf.cell(0, 5, f"(max labs created in parallel during setup)")
+        pdf.cell(0, 5, "(max labs created in parallel during setup)")
         sy += 7
 
         # Row 4: Pre-spawn results
@@ -723,7 +722,6 @@ def generate_stress_report(data: dict) -> bytes:
     pdf.ln(10)
 
     # Column legend with user counts
-    typical_n = max(1, round(users * 0.50)) if users else "50%"
     slow_n = max(1, round(users * 0.05)) if users else "5%"
     worst_n = max(1, round(users * 0.01)) if users else "1%"
     pdf.set_font("Helvetica", "I", 7)

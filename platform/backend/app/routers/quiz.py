@@ -9,9 +9,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
-from app.auth import get_current_active_user, get_current_admin_user
-from app.models import User, Track, Level, LevelQuiz, QuizQuestion, QuizAttempt, Lab, LabCompletion
-from app.services.achievements import _award
+from app.auth import get_current_active_user
+from app.models import User, Track, LevelQuiz, QuizAttempt, LabCompletion
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

@@ -23,7 +23,7 @@ import uuid
 import yaml
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
@@ -33,11 +33,10 @@ from sqlalchemy.orm import Session
 
 import requests as http_requests
 
-from app.auth import get_current_admin_user, get_current_instructor_user, create_access_token
+from app.auth import get_current_instructor_user, create_access_token
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
 from app.timezones import resolve_timezone
-from app.config import settings
 from app.database import get_db
 from app.models import Lab, LabSession, User, FlagAttempt, LabCompletion, ExerciseTestResult, Course, CourseLabAssignment
 from app.services.docker_manager import DockerManager, get_subnet_id, get_track_directory_name
@@ -521,7 +520,6 @@ async def run_exercise_test(
     """
     lab_slugs_raw = body.get("lab_slugs", [])
     user_id = body.get("user_id") or TESTER_USER_ID
-    per_lab_timeout = body.get("timeout") or DEFAULT_TIMEOUT
 
     # Resolve lab list (include inactive labs — tester validates before activation)
     if not lab_slugs_raw or lab_slugs_raw == ["all"]:
@@ -1287,8 +1285,7 @@ async def run_exercise_test(
                 if tester_container and test_steps:
                     yield _emit({"type": "section_start", "name": "Solve Steps", "test_key": f"{slug}_solve"})
                     solve_status = "ok"
-                    last_output = ""
-                    for step_idx, step in enumerate(test_steps):
+                    for _step_idx, step in enumerate(test_steps):
                         step_name = step.get("name", "unnamed")
                         step_raw = step["command"]
                         step_cmd = _resolve_template(
@@ -1302,7 +1299,6 @@ async def run_exercise_test(
                                     "level": "info", "message": f"$ {display_cmd}"})
                         r = await _exec_in_tester(tester_container, step_cmd, step_timeout
                         )
-                        last_output = r.stdout
                         # Show first few lines of output
                         for line in r.stdout.strip().splitlines()[:10]:
                             yield _emit({"type": "line", "test_key": f"{slug}_solve", "timestamp": _ts(),
@@ -2039,7 +2035,6 @@ def _generate_exercise_test_pdf(data: dict) -> bytes:
         if lines:
             pdf.set_fill_color(248, 250, 252)
             pdf.set_draw_color(226, 232, 240)
-            lines_y = pdf.get_y()
 
             pdf.set_font("Courier", "", 7)
             for idx, line in enumerate(lines):

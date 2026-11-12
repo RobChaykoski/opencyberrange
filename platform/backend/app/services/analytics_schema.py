@@ -10,7 +10,7 @@ drift from the documentation.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Iterable
+from typing import Any
 
 ANALYTICS_SCHEMA_VERSION = "2.5.3"
 
