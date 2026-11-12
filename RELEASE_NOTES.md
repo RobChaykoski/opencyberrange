@@ -1,4 +1,4 @@
-# SWOCTS Cyber Range 2.7.0
+# SWOCTS Cyber Range Release 3
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
@@ -6,20 +6,30 @@ Edition: **Professional** — Community / Academic plus analytics, reporting,
 cohort analysis, competency evidence, accreditation support, and research
 exports.
 
-Status: **feature release**. 2.7.0 adds optional level quizzes with Beginner
-question banks, target-IP guidance for VPN-only labs, and two reliability fixes
-for WireGuard routing and lab cleanup. No database schema change is required.
+Status: **major feature release**. Release 3 adds Cyber DNA 2026.14, the Cyber GPS
+active/fading signal, the RangeBox workspace refinements, a community events
+calendar under Events, and production hardening. No database schema change is
+required beyond the existing `0014_performance_indexes` head.
 
-!!! note "Development build: Cyber DNA 2026.14 and RangeBox refinements"
-    The development branch adds Cyber DNA formula **2026.14** (scores capped at
-    99, per-branch decay, a 40-hour continuing-education target, a 30-day trend,
-    and evidence-strength point sizing), the Cyber GPS active/fading signal, and
-    the RangeBox workspace refinements (quality presets, Ctrl+Alt+Del, native
-    fullscreen, flag capture, text-only file guard, pop-out window, and the
-    embedded workbook reader). See the changelog and the user manual's
-    **Navigating your Cyber DNA** section.
+## Release 3 highlights
 
-## Highlights
+- **Cyber DNA 2026.14.** Scores are capped at 99, each branch decays from its
+  own last practice date, the profile reports a 40-hour continuing-education
+  target and a 30-day trend, and spider-chart points grow with evidence
+  strength.
+- **Cyber GPS signal.** The GPS shows an active or fading practice signal and
+  names quiet domains as fading interest signals.
+- **RangeBox workspace.** Stream-quality presets, Ctrl+Alt+Del, native
+  fullscreen, flag capture, a text-only file guard, a pop-out window, and an
+  independently scrolling workbook reader.
+- **Community events.** The Events tab keeps platform events and adds an
+  Around the area calendar for SWOCTS Hub and Cyber Hive YXU meetups.
+- **Production hardening.** Valkey 9.1.3, the Docker socket proxy, backup
+  volume ownership, the runtime integrity manifest, and the signed release key.
+
+## Previous release: 2.7.0
+
+## 2.7.0 highlights
 
 - **Level quizzes.** Completed levels show a Quiz action only when an active
   quiz bank exists. The Beginner track ships with checks for all four stages.

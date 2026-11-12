@@ -7,25 +7,24 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Current supported platform release (unsigned annotated tag; documented exception) |
-| `v2.6.0` | SWOCTS Cyber Range 2.6.0 | Previous release; upgrade to 2.7.0 |
-| `v2.5.5` | SWOCTS Cyber Range 2.5.5 | Previous release; upgrade to 2.7.0 |
-| `v2.5.4` | SWOCTS Cyber Range 2.5.4 | Previous release; upgrade to 2.7.0 |
-| `v2.5.3` | SWOCTS Cyber Range 2.5.3 | Previous release; upgrade to 2.7.0 |
-| `v2.5.2` | SWOCTS Cyber Range 2.5.2 | Previous release; upgrade to 2.7.0 |
-| `v2.5.1` | SWOCTS Cyber Range 2.5.1 | Previous release; upgrade to 2.7.0 |
-| `v2.4.1` | SWOCTS Cyber Range 2.4.1 | Previous release; upgrade to 2.7.0 |
-| `v2.4.0` | SWOCTS Cyber Range 2.4.0 | Feature release before the 2.4.1 remediation; upgrade to 2.7.0 |
-| `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to 2.7.0 |
+| `v3` | SWOCTS Cyber Range Release 3 | Current supported platform release (signed annotated tag) |
+| `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Previous release; upgrade to Release 3 (unsigned tag; documented exception) |
+| `v2.6.0` | SWOCTS Cyber Range 2.6.0 | Previous release; upgrade to Release 3 |
+| `v2.5.5` | SWOCTS Cyber Range 2.5.5 | Previous release; upgrade to Release 3 |
+| `v2.5.4` | SWOCTS Cyber Range 2.5.4 | Previous release; upgrade to Release 3 |
+| `v2.5.3` | SWOCTS Cyber Range 2.5.3 | Previous release; upgrade to Release 3 |
+| `v2.5.2` | SWOCTS Cyber Range 2.5.2 | Previous release; upgrade to Release 3 |
+| `v2.5.1` | SWOCTS Cyber Range 2.5.1 | Previous release; upgrade to Release 3 |
+| `v2.4.1` | SWOCTS Cyber Range 2.4.1 | Previous release; upgrade to Release 3 |
+| `v2.4.0` | SWOCTS Cyber Range 2.4.0 | Feature release before the 2.4.1 remediation; upgrade to Release 3 |
+| `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to Release 3 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
-`v2.7.0` is an annotated tag without a GPG signature. It points at `ce7c25bb`,
-the commit deployed on 11 November 2026. `v2.6.0` points at `2835303b`, the
-commit deployed to production (`172.16.16.41` / `https://ctfd.swocts.com`) and
-development (`172.16.16.44`) on 11 November 2026.
-The release key documented in `docs/SUPPLY-CHAIN.md` signs the supply-chain lock.
-New release tags must be signed with that key; `v2.7.0` is the documented
-unsigned exception from before the signing gate.
+`v3` is signed with the release key
+`8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`. The public key is
+`docs/release-signing-key.asc`. `v2.7.0` is the last unsigned annotated tag,
+points at `ce7c25bb`, and remains a documented exception from before the
+signing gate.
 
 ## Release tag checklist
 
@@ -48,9 +47,10 @@ recorded in `versions.yaml` and returned by `/api/version`.
 ## Enterprise branch tags
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch.
-They are **not** part of the supported single-host release in this tree. The
-Enterprise profile on 2.6.0 is a preview; HA, SSO, multi-tenancy, LMS, and
-compliance reporting are not shipped in the supported deployment.
+They are **not** the supported single-host platform release. The platform
+release `v3` is a separate signed tag on the current tree. HA, SSO,
+multi-tenancy, LMS, and compliance reporting are not shipped in the supported
+deployment.
 
 ## Choosing a version
 

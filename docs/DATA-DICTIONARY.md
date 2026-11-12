@@ -1,6 +1,6 @@
 # Data dictionary
 
-Status: **v2.7.0 + career, achievement, and question-bank preview**
+Status: ****Release 3** + career, achievement, and question-bank preview**
 Owner: Platform / Privacy
 Review cadence: each release and at least annually
 Related: [Privacy notice](PRIVACY-NOTICE.md),

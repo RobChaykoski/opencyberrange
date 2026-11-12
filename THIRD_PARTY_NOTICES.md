@@ -67,7 +67,7 @@ their own licences; the project licence does not override them.
   with the action authors.
 - Release signing uses GnuPG; it is not redistributed with the platform.
 - The active release key fingerprint is
-  `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`.
+  `8E81 B5F3 FDC5 F5A6 2B0C 2587 91FD 6FBC 4ADA FDA2`.
 
 ## Brand assets
 

@@ -24,7 +24,7 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
-## [Unreleased]
+## [Release 3] - 2026-11-12
 
 ### Cyber DNA 2026.14
 - Branch and overall scores are capped at **99**, never 100.
@@ -57,6 +57,14 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   rejected. No files leave or enter the desktop.
 - The user manual adds **Navigating your Cyber DNA** with dev screenshots; the
   admin guide adds **Cyber DNA and RangeBox Operations**.
+
+### Community events
+- The **Events** tab keeps platform events at the top and adds an **Around the
+  area** calendar underneath.
+- The calendar combines internal platform events with community events and
+  lists upcoming entries, with source links for SWOCTS Hub and Cyber Hive YXU.
+- Community events are explicitly outside Cyber DNA, course credit, and platform
+  scoring. The user manual adds **Community Events**.
 
 ### Tools
 - CyberChef 11.5.0 is now a pinned, SHA256-verified static build served from

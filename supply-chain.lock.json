@@ -37,10 +37,10 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "5ebf9233c28e91fbaa97ab3d3f6c2795cc2c9dbcf9ced3e0e84719da15dfe658"
+      "sha256": "af1fadbb1426b8b668e7b1c6a8a1404d93c7cb66ca2db9c380b4c952962a7a3c"
     },
     "platform/backend/app/version.py": {
-      "sha256": "c3d4a96eeb5460cb4bd8dd39f6fe3e3f06454d2aa79f6f0eb49b857a3001c9b0"
+      "sha256": "68594d92f43c5363782485464919baceaa82ec90f3be497d699a1b20a68150c2"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -52,10 +52,10 @@
       "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "c63dc366c516a3649bfd2cbbfcfecc647961c25f2a45f121afb6af3a7ff8fb63"
+      "sha256": "29c9ad752b41f73c4bea42d2ba26be48e79939a70e4cf8073e7405b53de6bab7"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "87cbd243f7dcd427b3925c11377f249b4971101a9997f8039200445f9443d1ad"
+      "sha256": "5c10501b23f914b7918c611f825b1c25f18174057cde2f4ef294cf5387d78849"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -76,10 +76,10 @@
       "sha256": "bc3934db3dcd67f6f4be47d37aab4bbd728efb3b9609ad214edeb43bef1ec0b8"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "476fe9fc0392f59d948d32bd70d4e98b7dd5a5ed0cfa5af7caa7e20dd27ea566"
+      "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
     },
     "platform/frontend/package.json": {
-      "sha256": "ce224894a2e7c83cf703820988bce98dd6806b5213b75a1e2d24dba0b54f25ff"
+      "sha256": "8a76539e35f6bf523dd1d0148ae88e29d4c1838d51acfed33ada2c1b997f4c4f"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "9e5b545f5b2c8d1f9b500323113f0411120548650e0284beaed8088645ec0cfa"
@@ -124,7 +124,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "655a3cdaa9e64d698f2d9278df66a845e8a3e1ccea808f91093101f264c097ac"
+      "sha256": "b6ab6ff7b9e0cd31807c26ab963bde52fef700ffe8b1d99f76c3cbadc277b416"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1186,6 +1186,6 @@
       ]
     }
   },
-  "release": "2.7.0",
+  "release": "3",
   "schema": 1
 }

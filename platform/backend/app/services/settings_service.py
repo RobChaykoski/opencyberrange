@@ -74,6 +74,8 @@ DEFAULT_SETTINGS = [
      "description": "Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views."},
     {"key": "analytics_min_cohort_size", "value": "5", "category": "security",
      "description": "Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment."},
+    {"key": "max_privileged_accounts", "value": "1", "category": "security",
+     "description": "Maximum instructor and administrator accounts on this install. Set to 0 for unlimited, or raise it to add more instructors and admins. The edition default is 1."},
 
     # --- Labs ---
     {"key": "default_session_hours", "value": "2", "category": "labs",

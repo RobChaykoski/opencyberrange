@@ -171,7 +171,7 @@
     "windows-9-2-multi-service-exploitation": "26eb01bca4408b0bef4dcdbe4542906cd02d2f4c7e12b99dd9c0756abaf4162b",
     "windows-9-3-complete-windows-penetration-test": "a7267f4dc93846dd833ceb86456bf76367c3c8d2d72a9868b44e051fb01a847d"
   },
-  "release": "2.7.0",
+  "release": "3",
   "schema": 1,
   "source_lock": "supply-chain.lock.json"
 }

@@ -3,7 +3,11 @@
 The Admin Panel is the operator console for the platform. You open it to approve accounts, manage exercises, monitor live lab sessions, manage VPN peers, and change platform settings. Open it whenever you administer the range rather than play as a student.
 
 !!! note "Edition limits"
-    SWOCTS Cyber Range Community/Academic runs with one privileged account, the administrator who also owns and manages courses, and up to five active courses at a time. Student accounts are unlimited. Archive a course to free a course slot.
+    The edition default is one privileged account, the administrator who also
+    owns and manages courses, and up to five active courses at a time. To add
+    more instructors or administrators, raise **Maximum Privileged Accounts** in
+    **Admin -> Settings -> Security**; set it to 0 for unlimited. Student
+    accounts are unlimited. Archive a course to free a course slot.
 
 ## Prerequisites
 

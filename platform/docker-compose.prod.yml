@@ -95,7 +95,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       args:
-        PLATFORM_VERSION: ${PLATFORM_VERSION:-2.7.0}
+        PLATFORM_VERSION: ${PLATFORM_VERSION:-3}
         BUILD_REVISION: ${BUILD_REVISION:-unknown}
     container_name: ocr-backend
     ports:
@@ -190,7 +190,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        PLATFORM_VERSION: ${PLATFORM_VERSION:-2.7.0}
+        PLATFORM_VERSION: ${PLATFORM_VERSION:-3}
         BUILD_REVISION: ${BUILD_REVISION:-unknown}
     image: ocr-frontend:latest
     container_name: ocr-frontend
