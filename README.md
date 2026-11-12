@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-2.7.0%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-164-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-167-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -166,7 +166,7 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **162 active labs** across **12 tracks** and **53 levels**; **158** expose a workbook page |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **158** labs expose a workbook page and appear in the generated curriculum table below |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **164 workbook pages**, **111 analysis sections**, **407 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
@@ -176,9 +176,9 @@ These are current, checkable counts from this repository and metrics the platfor
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
-The lab-count metrics are distinct: the badge counts every lab directory under
-`platform/labs`; **162** are active in the catalogue; **158** have a workbook
-page and appear in the generated curriculum table below.
+The badge counts every `lab.yaml` under `platform/labs` (**167** today). A
+running deployment seeds only the labs that map to a track and level, and the
+generated table below lists the **158** that have a workbook page.
 
 ### Release and repositories
 

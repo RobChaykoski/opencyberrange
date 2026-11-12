@@ -1981,9 +1981,8 @@ fi
                            second_octet, third_octet, project_name):
         """Spawn a lightweight network-tap container on the lab bridge.
 
-        The container captures all traffic in promiscuous mode and serves
-        a live PCAP stream on TCP 9999.  VPN-connected students connect
-        with:  nc <tap-ip> 9999 | tcpdump -r - -A 'port 80'
+        The container serves a live PCAP stream on TCP 9999.  VPN-connected
+        students connect with:  nc <tap-ip> 9999 | tcpdump -r - -A 'port 80'
 
         Because Docker bridge switches unicast frames only to destination
         ports, promiscuous mode alone is not enough.  We also set up Linux

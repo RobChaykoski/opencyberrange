@@ -19,6 +19,11 @@ fi
 # -u keeps the stream unidirectional: a client that half-closes its write
 # side (busybox nc does) would otherwise make socat exit and kill tcpdump
 # after the 24-byte pcap header.
+#
+# Exclude port 9999 from the capture.  The client's own connection to this
+# service is mirrored into the tap like any other lab traffic, so without the
+# filter every capture would contain itself (and the student's tcpdump would
+# display the pcap stream as noise).
 exec socat -u \
-    "SYSTEM:tcpdump -i ${IFACE} -U -n -w - 2>/dev/null" \
+    "SYSTEM:tcpdump -i ${IFACE} -U -n -w - 'not port 9999' 2>/dev/null" \
     TCP-LISTEN:9999,reuseaddr,fork
