@@ -96,7 +96,9 @@ arbitrary next hop that is not directly connected.
 - Maximum 12 nodes and 24 links.
 - Link subnets are `/29`, allocated from `10.128.0.0/9`, never `10.200.0.0/16`.
 - The node image is reviewed and built by `scripts/prebuild-labs.sh`; it is not
-  built at spawn time in production.
+  built at spawn time in production. Its Dockerfile and entrypoint are covered by
+  the signed supply-chain lock, and a CycloneDX SBOM is committed at
+  `platform/backend/app/data/about/sbom/topology-node.cdx.json`.
 - Nodes run as root inside their container because `sshd`, `chpasswd`, and
   interface changes require it. They have no host mounts, no Docker socket, no
   host network, and only `NET_ADMIN`/`NET_RAW`.

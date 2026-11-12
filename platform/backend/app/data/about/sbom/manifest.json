@@ -11,6 +11,12 @@
       "label": "Frontend CycloneDX SBOM",
       "bytes": 250183,
       "sha256": "18df4fd79b28984b8123ecda446cfdffc10f12d99c51ff0f0140a42e20d837da"
+    },
+    {
+      "name": "topology-node.cdx.json",
+      "label": "Topology node image CycloneDX SBOM",
+      "bytes": 91063,
+      "sha256": "6f986540382f9b198f02e1ac6e193075ceaaa96318b6019a5fe198b734908ffb"
     }
   ]
 }

@@ -56,7 +56,7 @@ DEFAULT_ROOT = SCRIPT_DIR.parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from lab_build_hash import build_hash  # noqa: E402
+from lab_build_hash import build_hash
 
 LOCK_NAME = "supply-chain.lock.json"
 SCHEMA = 1
@@ -70,6 +70,8 @@ COVERED_FILES = [
     "platform/backend/requirements-dev.txt",
     "platform/backend/pyproject.toml",
     "platform/backend/Dockerfile",
+    "platform/topology-node/Dockerfile",
+    "platform/topology-node/entrypoint.py",
     "platform/frontend/package.json",
     "platform/frontend/package-lock.json",
     "platform/frontend/Dockerfile",
@@ -97,6 +99,8 @@ COVERED_FILES = [
     "deploy/systemd/README.md",
     "scripts/check-licences.py",
     "scripts/generate-about.py",
+    "scripts/validate-lab.py",
+    "scripts/security-delta-review.py",
     "scripts/verify-lab-builds.sh",
     "scripts/ui-smoke.mjs",
     "scripts/status-dashboard.py",
@@ -255,10 +259,9 @@ def image_refs(root: Path) -> list[str]:
 def is_local_image(ref: str) -> bool:
     lowered = ref.lower()
     return (
-        lowered.startswith("ocr-")
-        or lowered.startswith("opencyberrange/")
-        or lowered.startswith(".")
-        or lowered.startswith("docker.io/opencyberrange/")
+        lowered.startswith(
+            ("ocr-", "opencyberrange/", ".", "docker.io/opencyberrange/")
+        )
     )
 
 
@@ -269,6 +272,7 @@ def image_record(ref: str) -> dict:
         ["docker", "image", "inspect", "--format", "{{.Id}}", ref],
         capture_output=True,
         text=True,
+        check=False,
     )
     if inspect.returncode != 0:
         return {"present": False, "error": "image not present locally"}
@@ -276,6 +280,7 @@ def image_record(ref: str) -> dict:
         ["docker", "image", "inspect", "--format", "{{json .RepoDigests}}", ref],
         capture_output=True,
         text=True,
+        check=False,
     )
     repo_digests = []
     if digests.returncode == 0 and digests.stdout.strip():
@@ -378,6 +383,7 @@ def verify_signature(lock_path: Path, signature: Path, public_key: str | None) -
             ["minisign", "-Vm", str(lock_path), "-x", str(signature), "-P", public_key],
             capture_output=True,
             text=True,
+            check=False,
         )
         if result.returncode != 0:
             return [f"BAD signature: {result.stderr.strip() or result.stdout.strip()}"]
@@ -387,6 +393,7 @@ def verify_signature(lock_path: Path, signature: Path, public_key: str | None) -
             ["gpg", "--verify", str(signature), str(lock_path)],
             capture_output=True,
             text=True,
+            check=False,
         )
         if result.returncode != 0:
             return [f"BAD signature: {result.stderr.strip() or result.stdout.strip()}"]

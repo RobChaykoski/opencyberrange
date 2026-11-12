@@ -43,6 +43,21 @@ Status: **deployed to development `.44`; production unchanged.** Platform
   default route via `r1`; `r1` reported `ip_forward=1` and both connected
   `/29` links; `h1` fetched `OCR{t0p0l0gy_r0ut3d}` from the service link
   address.
+- **Topology progression:** 12.2 → 12.3 → 12.4 → 12.5 unlocked and completed in
+  order. 12.3 forwarded across two routers; 12.4 dropped TCP 8080 and still
+  returned the flag on 80; 12.5 reported three links and reached both services.
+  All four flags were accepted by the API.
+- **Role E2E:** admin endpoints returned `200` for admin and `403` for a student;
+  instructor courses returned `200` for an instructor and `403` for a student;
+  profile summary returned `200` for the student.
+- **Quiz:** a real high-school level quiz returned `200`, answered 5/5, scored
+  `100`, and passed.
+- **RangeBox:** `high-school-9-1-rangebox-first-steps` spawned with
+  `rangebox_enabled=true` and reached `running`.
+- **VPN:** `/api/labs/vpn-config` returned `200` for both a routed lab and the
+  RangeBox lab.
+- **Inventory:** 173 labs validate; the topology node image has a committed
+  CycloneDX SBOM and its build context is in the signed supply-chain lock.
 
 ### Known gaps
 

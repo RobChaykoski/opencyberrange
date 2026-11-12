@@ -84,6 +84,12 @@
     "platform/frontend/security-headers.conf": {
       "sha256": "9e5b545f5b2c8d1f9b500323113f0411120548650e0284beaed8088645ec0cfa"
     },
+    "platform/topology-node/Dockerfile": {
+      "sha256": "c25d2ec9cd32a29c10a7de010d057b639a2c0a800a610abcd5b000b18527e981"
+    },
+    "platform/topology-node/entrypoint.py": {
+      "sha256": "2dd3110270a0f1b72c86fe071ba225fb96e8c5e268caf1931cc46b1caca0f28b"
+    },
     "scripts/GDG-Deploy.sh": {
       "sha256": "7857237da1b405ebd672caf74cc7ef292313e7f847799a8a6d82d09cb718ff7b"
     },
@@ -100,7 +106,7 @@
       "sha256": "f6aee83c29e7bff868804eb8d41d0916901a3d8454eb6608aa6d5715b2419039"
     },
     "scripts/generate-about.py": {
-      "sha256": "23eff06b3a24b0b139cb025f697f72a178cc4327964ec3233fef15e35aa79d29"
+      "sha256": "d1f9df9deecd70e07fcc7e2cd1cd4fbec9a2f155f56fd8ed309481a0b0bfc082"
     },
     "scripts/install-platform.sh": {
       "sha256": "2e689b91b69de0aa56db7bed14551a61133c84e2bdb1ed5d5450dcd43a36118e"
@@ -111,14 +117,20 @@
     "scripts/prebuild-labs.sh": {
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
     },
+    "scripts/security-delta-review.py": {
+      "sha256": "f5b802cdbddc5b293c3f77faed1f47e33e486fff83bc7aea7407caedddbdba5c"
+    },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "80a4482d053252d18d3f2374843e1bdf51889c399aacd7a92d8e4b71a3652d41"
+      "sha256": "18383410f1b5483781bcb0a37d4463b2917f022cb351983dcc7ad9d6f8c1d5f5"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
+    },
+    "scripts/validate-lab.py": {
+      "sha256": "eefecab160802c73aca7ebe8b561b7d08f1c7a062fbea559a6450c5cbd15a09a"
     },
     "scripts/verify-lab-builds.sh": {
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
