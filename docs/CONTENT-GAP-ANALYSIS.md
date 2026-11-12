@@ -123,7 +123,7 @@ Cheapest and most differentiated labs, because the tooling already ships:
 
 | Lab | Reuses | Cost |
 |---|---|---|
-| C2 tunnelling with wstunnel | The wstunnel binary the platform installs | Low |
+| C2 tunnelling with wstunnel | The wstunnel binary the platform installs | Shipped as `network-2-6-wstunnel-c2-tunneling` |
 | Valkey attack surface (unauthenticated `CONFIG SET`, then the hardened fix) | The platform's own rate-limit store | Low |
 | Applied crypto: bcrypt/argon2, salting, MultiFernet key rotation | The platform's `crypto.py` rotation path | Low |
 | Capstone: audit your own range | Supply-chain lock, CSP-hash, and header scripts | Low |
@@ -136,8 +136,9 @@ watch their own traffic on the wire.
 
 ## Sequencing
 
-1. Quick wins: wstunnel tunnelling, Valkey attack surface, applied crypto, and
-   the audit-your-own-range capstone.
+1. Quick wins: Valkey attack surface, applied crypto, and the
+   audit-your-own-range capstone. (The wstunnel tunnelling lab shipped as
+   `network-2-6-wstunnel-c2-tunneling`.)
 2. OT labs: the tester image is ready.
 3. AD labs: the RangeBox toolchain is ready.
 4. Container/CI/CD labs: no new images.
