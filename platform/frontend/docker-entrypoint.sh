@@ -5,8 +5,10 @@
 
 if [ -f /etc/nginx/certs/selfsigned.crt ] && [ -f /etc/nginx/certs/selfsigned.key ]; then
     echo "[entrypoint] TLS certificates found — enabling HTTPS on port 443"
-    cp /etc/nginx/conf.d/nginx-ssl.conf /etc/nginx/conf.d/default.conf
-    rm -f /etc/nginx/conf.d/nginx-ssl.conf
+    if [ -f /etc/nginx/conf.d/nginx-ssl.conf ]; then
+        cp /etc/nginx/conf.d/nginx-ssl.conf /etc/nginx/conf.d/default.conf
+        rm -f /etc/nginx/conf.d/nginx-ssl.conf
+    fi
 else
     echo "[entrypoint] No TLS certificates — serving HTTP only on port 80"
     rm -f /etc/nginx/conf.d/nginx-ssl.conf
