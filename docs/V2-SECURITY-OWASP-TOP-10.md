@@ -359,7 +359,7 @@ controls above remain in force; no dependency or image pins changed.
 
 2.6.0 adds event participation, placement, and trophy-challenge certificates,
 the Grade 10-12 Digital Frontier labs, the WireGuard `/32` route correction, and
-Cyber DNA `2026.13`.
+Cyber DNA `2026.14`.
 
 - Event certificates are issued only after the event ends to approved, opted-in
   participants. Placement and trophy awards require the matching event badge.

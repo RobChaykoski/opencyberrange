@@ -27,7 +27,7 @@ Cyber DNA formula**.
 
 | Layer | Version | What it answers | Changes trait scores? |
 |---|---|---|---|
-| Cyber DNA | `2026.13` | What have I practised? | Yes, by design |
+| Cyber DNA | `2026.14` | What have I practised? | Yes, by design |
 | Momentum | `2026.1` | Where is practice gaining or under friction? | No |
 | Career Atlas | `2026.1` | Which career families and roles does that practice resemble? | No |
 

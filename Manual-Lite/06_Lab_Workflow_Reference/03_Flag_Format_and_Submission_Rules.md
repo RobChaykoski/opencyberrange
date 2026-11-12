@@ -61,6 +61,13 @@ flowchart TD
 !!! tip
     If a flag you believe is correct is rejected, check for a trailing newline or a copied space, then confirm the case. See [Flag Not Accepted](../07_Troubleshooting/06_Flag_Not_Accepted.md).
 
+!!! note "RangeBox paste cleaning"
+    The in-window RangeBox flag field extracts the first `OCR{...}` value from
+    pasted text. A copied log line, shell prompt, or `cat` output therefore does
+    not need manual trimming. The field still trims leading and trailing
+    whitespace before submission, and the platform still matches the flag
+    case-sensitively.
+
 ## Related pages
 
 - [Lab Lifecycle Overview](01_Lab_Lifecycle_Overview.md)

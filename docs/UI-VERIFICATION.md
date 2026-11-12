@@ -30,30 +30,36 @@ Status: **deployed to development; production unchanged.**
 
 ## Advanced DNA Insights preview (development)
 
-Status: **implemented in the development tree; live capture and database-backed
-verification are queued in [Next steps](NEXT-STEPS.md).**
+Status: **implemented in the development tree; deployed to `.44`; live profile
+screenshots captured on 12 November 2026.**
 
 - **Backend:** `skill_momentum.py` and `career_explorer.py` add the derived
-  Momentum and Career Atlas layers without changing Cyber DNA `2026.13`. The
+  Momentum and Career Atlas layers without changing Cyber DNA `2026.14`. The
   surfaces are gated by `advanced_dna_insights_enabled` (default off).
-- **Frontend:** the Profile **Careers** tab, the Career Atlas skill tree, the
+- **Frontend:** the Profile **Careers** tab (Cyber GPS and Career Atlas), the
   Momentum panel, branch progress rings, node unlock states, the Canada/US
   salary lens, and the role ladder.
+- **Live capture:** `Manual-Lite/02_Student_Guide/img/profile-cyber-dna.png`,
+  `profile-dna-tree.png`, `profile-dna-continuing-education.png`,
+  `profile-dna-class.png`, `profile-cyber-gps.png`, and
+  `profile-cyber-gps-signal.png` were captured from the dev profile.
 - **Verified in this tree:** `npm run lint` (0 errors), `npm run build`, the
   Career Atlas and feature-gate unit tests, `check-doc-assets.py`, and the
   Markdown/MkDocs link check.
-- **Not yet verified:** a live screenshot from the development host, the
-  database-backed Momentum tests, and the 375/768/1024/1440 dark/light manual
-  pass. Do not mark the preview production-ready until those are recorded here.
+- **Not yet verified:** the database-backed Momentum tests and the
+  375/768/1024/1440 dark/light manual pass. Do not mark the preview
+  production-ready until those are recorded here.
 
 ### Portfolio, GPS, and curriculum demand (11 November 2026)
 
-Status: **implemented; deployed to development; live capture pending.**
+Status: **implemented; deployed to development; GPS screenshots captured on 12 November 2026.**
 
-- **Profile → Portfolio tab:** Role Readiness (pathway selector, skills held,
+- **Profile -> Careers tab:** the Cybersecurity GPS (optional questions kept in
+  component state and never stored) and the Career Atlas. The GPS shows an
+  active/fading practice signal and names fading interest domains.
+- **Profile -> Portfolio tab:** Role Readiness (pathway selector, skills held,
   gaps, next workbooks with readiness labels, capstone, certifications, employer
-  evidence, and the five-stage pipeline), Cybersecurity GPS (optional questions
-  kept in component state and never stored), the professional portfolio, and the
+  evidence, and the five-stage pipeline), the professional portfolio, and the
   competency taxonomy with five-dimension scores.
 - **Colour indicators:** green/amber/red/grey are always paired with a text
   label and a sample size. No colour-only meaning.
@@ -68,10 +74,10 @@ Status: **implemented; deployed to development; live capture pending.**
   calls against the development database for three learner accounts and an
   administrator; `/api/analytics/reports/curriculum-demand` returned five
   reporting courses and ten prioritised prompts.
-- **Not yet verified:** screenshots for the Portfolio tab, GPS, taxonomy,
-  exercise heatmap, and Curriculum demand at 375/768/1024/1440 in both themes.
-  Capture them on development and replace the preview images before announcing
-  the preview.
+- **Not yet verified:** screenshots for the Portfolio tab, taxonomy, exercise
+  heatmap, and Curriculum demand at 375/768/1024/1440 in both themes. The GPS
+  screenshots are captured. Capture the remaining views on development and
+  replace the preview images before announcing the preview.
 
 ### Achievement studio and question banks (12 November 2026)
 

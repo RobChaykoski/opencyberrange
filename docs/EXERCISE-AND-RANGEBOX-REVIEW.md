@@ -49,6 +49,43 @@ Screenshots: `docs/img/exercise-workspace.png` (desktop) and
 `docs/img/exercise-workspace-mobile.png` (phone fallback). The regression
 evidence is written to `ui-workspace-artifacts/workspace-regression.json`.
 
+## 2026.11 workspace and RangeBox refinements
+
+The workspace received a second pass after the 2.6.0 review:
+
+- The workbook pane now hides the MkDocs header, tabs, sidebars, and footer
+  inside the iframe, widens the article, and scrolls independently. The default
+  pane is taller and **Expand** grows it to 58vh.
+- The RangeBox header has **Pop out**. It opens a resizable desktop window and
+  leaves the briefing, notes, and workbook in the main tab. **Focus RangeBox**
+  and **Bring it back** keep the two windows coordinated.
+- noVNC gained a **stream quality** selector (High quality, Balanced, Low
+  bandwidth), a **Ctrl+Alt+Del** button, native fullscreen with a CSS fallback,
+  and focus on connect.
+- The clipboard panel gained **Read clipboard** and **Use as flag**. The flag
+  field captures `OCR{...}` from the desktop clipboard, cleans pasted text down
+  to the first flag, and has a **Paste** button for browser clipboard access.
+- The RangeBox is text-only. File drops, file pastes, and drag-out are rejected
+  on the RangeBox root and the clipboard panel. The panel states that files
+  cannot leave or enter the RangeBox. No shared folder or host mount should be
+  added without a data-governance review.
+- The connection overlay reports security and credential failures instead of a
+  generic "Connection lost".
+
+Verification on **12 November 2026**:
+
+- Backend tests, Ruff, the frontend build, lab validation, links, external-image
+  checks, and the supply-chain lock passed.
+- The dev deployment at `.44` served the Cyber DNA profile, the Cyber GPS signal
+  and fading-interest panel, and the workbook reading view used for the manual
+  screenshots.
+- The profile summary API returned 200 for a populated admin profile after the
+  public `signals` payload was made JSON-safe.
+
+Screenshots: `Manual-Lite/02_Student_Guide/img/profile-cyber-dna.png`,
+`profile-dna-tree.png`, `profile-cyber-gps.png`, and
+`Workbook/assets/workbook-reading.png`.
+
 ## Method
 
 1. Read the exercise page (`TrackDetail.vue`), the RangeBox workspace

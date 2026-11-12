@@ -36,6 +36,24 @@ Your evidence is descriptive, not a grade:
 - **Privacy:** your profile and survey participation are controlled by you. See
   the student manual's privacy page.
 
+<figure markdown>
+
+![Cyber DNA section showing the class card, six branch cards, spider chart, and continuing education](assets/profile-cyber-dna.png)
+
+<figcaption>Cyber DNA is the learner character sheet. Branches grow with strong practice, decay slowly when a branch goes quiet, and recover when you return.</figcaption>
+</figure>
+
+The **Cyber GPS** on the profile's Careers tab shows whether your practice
+signal is active or fading and names domains you have worked in before as
+fading interest signals. It is a prompt to revisit, not a ranking.
+
+<figure markdown>
+
+![Cyber GPS showing the signal badge, domain evidence, and a fading interest prompt](assets/profile-cyber-gps.png)
+
+<figcaption>The Cyber GPS signal is based on completions in the last 30 days. A fading domain is a subject you have already invested in, not a failure.</figcaption>
+</figure>
+
 Use the workbook to build the habit; use the platform evidence to see the
 practice accumulate.
 
@@ -83,8 +101,42 @@ a workbook and the current count per track.
 
 1. **Launch an exercise** in the SWOCTS Cyber Range platform
 2. **Click the Workbook button** to open the walkthrough for that exercise
-3. **Follow the steps** in the walkthrough while working in your terminal
+3. **Follow the steps** in the walkthrough while working in your terminal or the
+   in-browser RangeBox desktop
 4. **Record your findings** in the spaces provided
 5. **Answer the analysis questions** to deepen your understanding
 
 Each walkthrough includes background concepts, tool primers, guided steps, and analysis questions. The chapter reviews provide self-assessment quizzes and command cheat sheets.
+
+### Reading the workbook in the RangeBox workspace
+
+On a desktop, the exercise page keeps the RangeBox, the briefing, the flag
+panel, and the workbook in one workspace. The workbook is the full-width pane
+under the desktop. It hides the wiki header and sidebars, uses the full width for
+the article, and scrolls on its own, so you can read a step and keep the desktop
+open at the same time.
+
+<figure markdown>
+
+![Workbook reading view with the site header and sidebars removed and the article using the full width](assets/workbook-reading.png)
+
+<figcaption>The workbook pane in the workspace. Use the pane's own scrollbar to move through the walkthrough while the RangeBox stays open.</figcaption>
+</figure>
+
+Use **Expand** to make the workbook pane taller. Use **Open in new tab** if you
+prefer a separate reading tab. Use **Pop out** on the RangeBox to move the
+desktop into its own window; the main tab then keeps the briefing, notes, and
+workbook in view.
+
+### Copying a flag from the desktop
+
+When you find a flag inside the RangeBox, copy it as text. The in-window flag
+field captures an `OCR{...}` value from the desktop clipboard automatically. If
+the guest clipboard does not propagate, use **Paste** in the flag panel or press
+Ctrl+V in the field. The field keeps only the flag value when you paste a whole
+log line or shell prompt.
+
+!!! warning "Text only"
+    Files cannot leave or enter the RangeBox. The clipboard is text-only, and
+    file drops and file pastes are rejected. Record your evidence as text and
+    screenshots outside the desktop, or use the workbook's recording prompts.

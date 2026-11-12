@@ -17,6 +17,11 @@ The whole Admin Panel is one screen. Each admin tab link sets a `?tab=` value on
 
 **Reports & analytics** is the exception: it opens the separate `/reports` page rather than a tab inside `/admin`. The Admin Panel keeps its current tab while you review reporting, and the Report link is highlighted in the sidebar. See [Reporting and Analytics](28_Reporting_And_Analytics.md).
 
+Cyber DNA and the in-browser RangeBox have their own operational reference,
+including the formula version, per-branch decay, continuing education, noVNC
+quality controls, the text-only clipboard guard, and the pop-out workspace. See
+[Cyber DNA and RangeBox Operations](29_Cyber_DNA_And_RangeBox.md).
+
 <figure markdown>
 
 ![Admin Panel Users tab with stat cards across the top and the user table below](img/admin-panel-overview.png)

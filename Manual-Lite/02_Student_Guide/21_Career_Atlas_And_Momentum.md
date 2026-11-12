@@ -12,7 +12,7 @@ positive. They are not grades, rankings, job predictions, or salary promises.
     is not enabled on your deployment. Ask an administrator.
 
 The Cyber DNA formula itself does not change. The six traits still use formula
-**2026.13**. Momentum uses its own version (`2026.1`) and the Career Atlas uses
+**2026.14**. Momentum uses its own version (`2026.1`) and the Career Atlas uses
 its own version (`2026.1`), so a change to the reporting layer cannot silently
 change your trait scores.
 
@@ -21,8 +21,8 @@ change your trait scores.
 1. Open **Profile** in the sidebar.
 2. Choose **Skill tree** to see **Momentum and friction** below the Cyber DNA
    section.
-3. Choose **Careers** to open the Career Atlas. The tab appears only when the
-   feature is enabled.
+3. Choose **Careers** to open the Cyber GPS and the Career Atlas. The tab
+   appears only when the feature is enabled.
 
 <figure markdown>
 
@@ -179,25 +179,56 @@ the Momentum section and the Career Atlas, including the salary source notes.
 The export contains only your own data, is logged for accountability, and is not
 shared automatically. See [Viewing Your Profile](16_Viewing_Your_Profile.md).
 
-## Portfolio tab: readiness, GPS, and the evidence record
+## Portfolio tab: readiness and the evidence record
 
 When the preview is enabled, a **Portfolio** tab sits beside **Careers**. It
 turns the Atlas from a map into an answer:
 
 - **Role readiness** for the pathway you choose, with skills held, next
   workbooks, gaps, capstone, certifications, and employer evidence.
-- **Cybersecurity GPS**, an optional direction finder built from evidence,
-  recent growth, and a few questions you can skip.
 - **Professional portfolio**, the printable record with a portfolio ID.
 - **Competency taxonomy**, the domain-by-domain assessment view.
 
-Readiness is a curriculum-coverage estimate, not a grade or a hiring prediction.
-The platform does not track employment outcomes. See
+The **Careers** tab holds the **Cybersecurity GPS**, an optional direction finder
+built from evidence, recent growth, and a few questions you can skip. Readiness
+is a curriculum-coverage estimate, not a grade or a hiring prediction. The
+platform does not track employment outcomes. See
 [Career readiness and the Cybersecurity GPS](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-READINESS-AND-GPS.md).
+
+## Cyber GPS signal and fading interest
+
+The GPS also shows whether your practice signal is active or fading. The signal
+is based on completions in the last 30 days, not on your answers to the optional
+questions.
+
+<figure markdown>
+
+![Cyber GPS showing the signal active badge, domain evidence, strongest competencies, and a fading interest prompt](img/profile-cyber-gps.png)
+
+<figcaption>The GPS header shows whether the practice signal is active. Domain cards shimmer when they have recent work and fade when a domain has gone quiet.</figcaption>
+</figure>
+
+- **Signal active** means you have at least one completion in the last 30 days.
+  The indicator shimmers and the domain cards with recent work pulse.
+- **Signal fading** means there has been no completion in the last 30 days. The
+  indicator fades and the GPS names the domains you have worked in before as
+  **fading interest signals**.
+
+A fading domain is not a failure. It is a subject you have already invested in,
+and a short exercise can show whether the interest is still there. The GPS never
+turns a fading domain into a deficit label or a ranking.
+
+<figure markdown>
+
+![Cyber GPS signal panel showing a fading interest prompt for a domain with evidence but no recent work](img/profile-cyber-gps-signal.png)
+
+<figcaption>The signal panel keeps the evidence visible while naming a domain that has gone quiet. It is a prompt to revisit, not a negative score.</figcaption>
+</figure>
 
 ## Related pages
 
 - [Viewing Your Profile](16_Viewing_Your_Profile.md)
+- [Navigating your Cyber DNA](22_Navigating_Your_Cyber_DNA.md)
 - [Tracking Your Progress](11_Tracking_Your_Progress.md)
 - [Career and certification resources](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-AND-CERTIFICATION-RESOURCES.md)
 - [Career Atlas and Momentum design](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-ATLAS-AND-MOMENTUM.md)

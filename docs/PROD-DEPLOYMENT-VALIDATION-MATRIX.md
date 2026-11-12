@@ -15,7 +15,7 @@ notes.
 
 | ID | Gate | Required | Status | Evidence |
 |---|---|---|---|---|
-| B1 | Backend unit/integration tests | Yes | PASS | `pytest`: 290 passed, 179 skipped locally; CI runs the DB-backed set on PostgreSQL 17 |
+| B1 | Backend unit/integration tests | Yes | PASS | `pytest`: 290 passed, 182 skipped locally; CI runs the DB-backed set on PostgreSQL 17 |
 | B2 | Frontend lint | Yes | PASS | 0 errors, 132 warnings |
 | B3 | Frontend production build | Yes | PASS | `vite build` succeeds |
 | B4 | Lab validation | Yes | PASS | `validate-lab.py --all`: 169 labs, 0 errors, 0 warnings |
@@ -23,7 +23,7 @@ notes.
 | B6 | Licence compliance | Yes | PASS | `check-licences.py`: OK |
 | B7 | SPA security headers / CSP hash | Yes | PASS | `check-nginx-security-headers.py`, `check-csp-hash.py` |
 | B8 | External images in learner content | Yes | PASS | `check-external-images.py`: none |
-| B9 | Documentation links and assets | Yes | PASS | 577 Markdown files, no broken links; assets PASS |
+| B9 | Documentation links and assets | Yes | PASS | 583 Markdown files, no broken links; assets PASS |
 | B10 | Compose config and image builds | Yes | PASS | Backend and frontend images build; compose config valid |
 | B11 | Alembic head | Yes | PASS | Dev DB at `0014_performance_indexes`; startup upgrade clean |
 | R1 | Health and version on dev | Yes | PASS | `/health` 200, `/api/version` 2.7.0 |
@@ -40,7 +40,7 @@ notes.
 | D2 | Nulls in critical columns | Yes | PASS | users/labs/levels/sessions/completions/settings: 0 |
 | D3 | Duplicate usernames/emails/slugs | Yes | PASS | 0 |
 | D4 | Numeric sanity | Yes | PASS | No negative durations/counters, no future timestamps |
-| D5 | Ledger attribution | No | WARN | 6,928 of 7,785 rows unattributed (seed/CLI/system writes); review queue noisy |
+| D5 | Ledger attribution | No | WARN | 3,927 unattributed vs 4,191 attributed writes in the last 7 days (seed/CLI/system writes); review queue noisy |
 | D6 | Stale lab rows | No | PASS | 178 DB labs = 169 repo + 9 intentional `demotest-*` |
 | P1 | Backup restore drill | Yes | PASS | `pg_dump` + `pg_restore` into a scratch database; counts match exactly (141 users, 178 labs, 230 completions, 158 achievements) |
 | P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | PASS | Scratch DB downgraded 0014 -> 0011 (2.6-era head) and upgraded back to 0014; row counts unchanged (141/178/230) |
@@ -54,6 +54,17 @@ notes.
 | P10 | Dependency/image digest pinning | No | PARTIAL | Base images remain tag-pinned; digests reported at runtime |
 
 ## Result
+
+!!! note "12 November 2026 dev verification"
+    The Cyber DNA 2026.14 update (cap 99, per-branch decay, 40-hour continuing
+    education, 30-day trend, evidence-strength point sizing) and the RangeBox
+    refinements (quality presets, Ctrl+Alt+Del, native fullscreen, flag capture,
+    text-only file guard, pop-out window, workbook embed) were deployed to dev
+    `.44` and verified. Manual screenshots were captured from the dev profile:
+    `Manual-Lite/02_Student_Guide/img/profile-cyber-dna.png`,
+    `profile-dna-tree.png`, `profile-dna-continuing-education.png`,
+    `profile-cyber-gps.png`, and `Workbook/assets/workbook-reading.png`. This
+    note does not change the production gate: P4 and P5 remain NOT RUN.
 
 - Required PASS: 31
 - Required FAIL: 0

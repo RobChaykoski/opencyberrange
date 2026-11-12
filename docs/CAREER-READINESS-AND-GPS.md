@@ -11,7 +11,7 @@ This layer answers three questions on the learner's **Portfolio** tab:
 3. **Where could I go?** An optional Cybersecurity GPS built from evidence,
    recent growth, and answers the learner can skip.
 
-It sits on top of Cyber DNA. The Cyber DNA formula stays **2026.13**. Readiness
+It sits on top of Cyber DNA. The Cyber DNA formula stays **2026.14**. Readiness
 and GPS are separate, versioned reporting layers, so a change here cannot move a
 trait score.
 
@@ -103,6 +103,22 @@ door.
 Questions are optional. Answers are sent in the request body, used for that
 response only, and are **not stored, logged, or shared**. The UI keeps them in
 component state and offers **Clear answers**.
+
+### Signal and fading interest
+
+The GPS header shows a practice-signal badge based on completions in the last 30
+days:
+
+- **Signal active** (at least one recent completion) shimmers, and domain cards
+  with recent work pulse.
+- **Signal fading** (no recent completion) fades, and the GPS names the domains
+  the learner has worked in before as **fading interest signals**.
+
+A fading domain is a subject with prior evidence, not a deficit. The prompt asks
+whether a short exercise would show that the interest is still there. It is not a
+ranking, a grade, or a reason to remove the domain from the learner's record.
+The signal is derived from completion timestamps; it does not persist any new
+data and does not change the GPS fit scores.
 
 ## API
 

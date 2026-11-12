@@ -15,15 +15,24 @@ Malware, Forensics, OSINT, OT/ICS, AI Hacking, Software Security, and High
 School. Inside each chapter, every lab is presented as a self-contained
 walkthrough with:
 
-When a chapter is finished, see
-[Free training and certification next steps](FREE-TRAINING-AND-CERTIFICATIONS.md)
-for optional practice that matches the same topic.
-
 - **Background** explaining the protocol, service, or technique you are about to use; written for someone encountering it for the first time
 - **Tool Primer** covering the specific tool commands you will run, what each flag does, and how to read the output
 - **The Walkthrough** guiding you through the lab step by step, with prompts to record your actual findings along the way
 - **Analysis Questions** asking you to interpret what you found and understand what it means, rather than just copying output
 - **Key Takeaways** summarizing what you learned and how it connects to the next exercise
+
+When a chapter is finished, see
+[Free training and certification next steps](FREE-TRAINING-AND-CERTIFICATIONS.md)
+for optional practice that matches the same topic.
+
+The workbook is also readable inside the exercise workspace. On a desktop, the
+RangeBox desktop, the briefing, the flag panel, and the workbook share one page.
+The workbook pane hides the wiki header and sidebars and scrolls on its own, so
+you can keep the desktop open while you follow a step. Use **Expand** for a
+taller pane, **Open in new tab** for a separate reading tab, or **Pop out** on
+the RangeBox to move the desktop into its own window. See
+[How to Use This Workbook](index.md#how-to-use-this-workbook) for the full
+walkthrough and a screenshot.
 
 ## Available chapters
 

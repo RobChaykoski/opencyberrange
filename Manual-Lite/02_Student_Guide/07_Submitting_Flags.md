@@ -29,6 +29,21 @@ Active Lab panel to submit the flag. The lab dock at the bottom of the RangeBox
 window shows the target IPs and a **Flag** field. Paste the flag there and click
 **Submit flag**. The same format, case, rate-limit, and teardown rules apply.
 
+The RangeBox makes the copy step short:
+
+- Copying an `OCR{...}` value inside the desktop fills the flag field
+  automatically. Check the value and submit.
+- If the guest clipboard does not propagate, click **Paste** to read the browser
+  clipboard, or press Ctrl+V in the field.
+- Pasting a whole log line or shell prompt keeps only the first `OCR{...}`
+  value, so the wrapper around the flag does not cause a rejection.
+- The **Clipboard** panel has **Read clipboard** and **Use as flag** for text
+  already in the RangeBox clipboard.
+
+!!! warning "Text only"
+    Files cannot leave or enter the RangeBox. File drops and file pastes are
+    rejected. Copy the flag as text, not as a file attachment.
+
 ## Flag format and matching rules
 
 The platform matches flags exactly. Keep these rules in mind.

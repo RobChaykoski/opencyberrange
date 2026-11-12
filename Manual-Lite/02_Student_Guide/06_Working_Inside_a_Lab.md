@@ -42,7 +42,15 @@ flowchart LR
     Bridge --> Tgt[Lab targets 10.100.x]
 ```
 
-**RangeBox** is a Kali, Ubuntu, or REMnux desktop that runs in your browser, already on the lab network. Pick the image you need before you launch: Kali for general pentesting, Ubuntu for a plain Linux environment, and REMnux for malware analysis and reverse engineering. When a running exercise has RangeBox enabled, the Active Lab panel shows **Open RangeBox**. It opens the desktop in the same tab, so your exercise does not split across two windows. Its toolbar offers Reconnect, Clipboard send and get, Minimize, and Fullscreen. You need no VPN for RangeBox.
+**RangeBox** is a Kali, Ubuntu, or REMnux desktop that runs in your browser, already on the lab network. Pick the image you need before you launch: Kali for general pentesting, Ubuntu for a plain Linux environment, and REMnux for malware analysis and reverse engineering. When a running exercise has RangeBox enabled, the Active Lab panel shows **Open RangeBox**. On a desktop, the exercise opens the combined workspace: RangeBox on the left, the briefing and flag on the right, and the workbook along the bottom. You need no VPN for RangeBox.
+
+The RangeBox toolbar offers:
+
+- **Stream quality**: High quality, Balanced, or Low bandwidth.
+- **Ctrl+Alt+Del**: send the key combination to the guest.
+- **Clipboard**: text-only send, get, and read.
+- **Minimize** and **Fullscreen** (native fullscreen where the browser allows it).
+- **Pop out**: move the desktop into its own resizable window while the main tab keeps the briefing, notes, and workbook.
 
 !!! note "Standalone RangeBox"
     The **RangeBox** item in the sidebar opens a standalone practice desktop. It is not attached to a lab, so use it for tool access or connectivity checks. To work an exercise with the lab network and flag dock, launch RangeBox from that exercise instead.
@@ -54,15 +62,18 @@ flowchart LR
 
 At the bottom of the RangeBox window, the **lab dock** shows the lab name,
 its subnet, and the target IPs when the exercise is built to reveal them. The
-same dock contains a **Flag** field and **Submit flag** button. You can capture
-the flag in the desktop, submit it without leaving RangeBox, and then close the
-window or return to the exercise. A correct flag shows the usual success message
-and tears the environment down.
+same dock contains a **Flag** field and **Submit flag** button. Copying an
+`OCR{...}` value inside the desktop fills the field automatically; if it does
+not, use **Paste** or Ctrl+V. You can capture the flag in the desktop, submit it
+without leaving RangeBox, and then close the window or return to the exercise. A
+correct flag shows the usual success message and tears the environment down.
 
 !!! tip "Workbook and flags in one place"
-    Open the workbook in a second tab if you like. Keep RangeBox open in the
-    first tab and use the dock to submit the flag as soon as you find it. You do
-    not need to switch back to the Active Lab panel.
+    In the workspace, the workbook is the full-width pane under the desktop. It
+    scrolls on its own and hides the wiki header and sidebars, so you can read a
+    step while the RangeBox stays open. Use **Expand** for a taller pane or
+    **Open in new tab** for a separate reading tab. The **Pop out** button moves
+    the desktop to its own window if you want more room for the workbook.
 
 **Your own machine** reaches the same targets over the WireGuard tunnel. Use this when you prefer your local tools.
 

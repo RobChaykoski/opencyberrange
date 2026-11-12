@@ -90,8 +90,27 @@ data sources, and review checklist.
 
 ## Score model
 
-Each trait is scored from 0 to 100. Scores are capped, so a very active learner
-cannot exceed 100. Formula version: **2026.13**.
+Each trait is scored from **0 to 99**. Scores are capped, so a very active
+learner cannot reach 100: there is always another skill or branch to develop.
+Formula version: **2026.14**.
+
+Each branch also has its own recency factor. A branch that has been quiet for
+more than 14 days is reduced by up to 10% (floor 0.90), and a new completion or
+knowledge check in that branch restores it. The factor is applied per branch, so
+practising one area does not hide a quiet area.
+
+| Days since last work in the branch | Factor |
+|---|---:|
+| 0 to 14 | 1.00 |
+| 15 to 30 | 0.99 |
+| 31 to 60 | 0.97 |
+| 61 to 90 | 0.94 |
+| More than 90 | 0.90 |
+
+The profile also reports a **30-day directional trend**. It is rebuilt from
+completion and quiz timestamps, so no snapshot table is needed. The spider-chart
+point size uses a separate **evidence-strength** value: clean, unaided, advanced,
+assessment, and high-scoring quiz work weighs more than a hinted walkthrough.
 
 ```text
 Explorer = 7 × tracks + 2 × categories + 1.2 × min(opened_labs, 20)
@@ -139,15 +158,22 @@ counts completions with difficulty `advanced` or `expert`. `builder_labs`,
 exploitation, privilege escalation, post-exploitation, and credential attacks.
 `assessment_labs` covers assessment and capstone-style penetration-test work.
 
+### Continuing education
+
+The profile reports hands-on minutes from completions in the trailing 12 months
+against a **40-hour** target, displayed as hours and a 0-100% bar. The target is
+a practice goal, not a certification claim, and it is not used for grading or
+access.
+
 ### Tier thresholds
 
 | Score | Tier |
 |---|---|
-| 90–100 | Master |
-| 75–89 | Specialist |
-| 50–74 | Practitioner |
-| 25–49 | Apprentice |
-| 1–24 | Initiate |
+| 90-99 | Master |
+| 75-89 | Specialist |
+| 50-74 | Practitioner |
+| 25-49 | Apprentice |
+| 1-24 | Initiate |
 | 0 | Unranked |
 
 ### Why these weights
@@ -170,6 +196,10 @@ exploitation, privilege escalation, post-exploitation, and credential attacks.
 ## Content additions and score validity
 
 Reviewed **2026-11-10** after adding the Grade 10-12 Digital Frontier labs.
+Reviewed again **2026-11-12** for formula **2026.14**: branch scores and the
+overall score are capped at 99, each branch decays from its own last practice
+date, the profile reports a 30-day trend and a 40-hour continuing-education
+target, and spider-chart points scale with evidence strength.
 
 The new content maps as follows:
 

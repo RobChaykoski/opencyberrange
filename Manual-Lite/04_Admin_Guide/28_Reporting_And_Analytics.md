@@ -5,6 +5,13 @@ instructors and administrators. Use it to compare course health, spot exercises
 that are causing friction, review learner feedback, and export evidence for a
 teaching review or accreditation file.
 
+!!! note "Cyber DNA reporting"
+    Learner Cyber DNA uses formula **2026.14**. The profile caps every branch and
+    the overall score at 99, decays each branch from its own last practice date,
+    and reports a 30-day trend and a 40-hour continuing-education target. Quote
+    the formula version when a report quotes a Cyber DNA score. See
+    [Cyber DNA and RangeBox Operations](29_Cyber_DNA_And_RangeBox.md).
+
 ## Prerequisites
 
 - You are signed in as an administrator or an instructor.

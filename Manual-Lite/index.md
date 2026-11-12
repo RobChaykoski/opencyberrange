@@ -56,6 +56,9 @@ Edition-specific pages live in the
   and the [VPN Setup Guide](05_VPN_Setup_Guide/01_VPN_Overview.md).
 - Tracking completion, certificates, and your PDF transcript? See
   [Viewing Your Profile](02_Student_Guide/16_Viewing_Your_Profile.md).
+- Want the full guide to the six Cyber DNA branches, decay and repair, the
+  40-hour continuing-education target, and the trend arrows? See
+  [Navigating your Cyber DNA](02_Student_Guide/22_Navigating_Your_Cyber_DNA.md).
 - Exploring where your practice is gaining, what to try next, and how that maps
   to career families and salary context? See
   [Career Atlas and Momentum](02_Student_Guide/21_Career_Atlas_And_Momentum.md)

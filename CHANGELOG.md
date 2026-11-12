@@ -26,6 +26,38 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 
 ## [Unreleased]
 
+### Cyber DNA 2026.14
+- Branch and overall scores are capped at **99**, never 100.
+- Each branch decays from its own last practice date (99% at 15-30 days, 97%
+  at 31-60, 94% at 61-90, 90% after 90) and a new completion in that branch
+  restores it.
+- The profile reports a **40-hour continuing-education** target over the
+  trailing 12 months and a **30-day directional trend** rebuilt from completion
+  and quiz timestamps.
+- Spider-chart points scale with **evidence strength**: clean, unaided,
+  advanced, assessment, and high-scoring quiz work weighs more.
+- The public `signals` payload is JSON-safe, so a populated profile no longer
+  returns 500 on serialization.
+
+### Cyber GPS signal
+- The GPS shows an active or fading practice signal from completions in the last
+  30 days. Active domains shimmer; quiet domains fade and appear as **fading
+  interest signals** with a prompt to revisit.
+
+### RangeBox and workbook
+- The workbook pane hides MkDocs chrome, uses the full width, scrolls
+  independently, and grows to 58vh with **Expand**.
+- The RangeBox can **pop out** into its own resizable window while the main tab
+  keeps the briefing, notes, and workbook.
+- noVNC gains a stream-quality selector, Ctrl+Alt+Del, native fullscreen, focus
+  on connect, and clearer security/credential failure messages.
+- The flag field captures `OCR{...}` from the desktop clipboard, cleans pasted
+  text, and offers **Paste**, **Read clipboard**, and **Use as flag**.
+- The RangeBox is **text-only**: file drops, file pastes, and drag-out are
+  rejected. No files leave or enter the desktop.
+- The user manual adds **Navigating your Cyber DNA** with dev screenshots; the
+  admin guide adds **Cyber DNA and RangeBox Operations**.
+
 ### Tools
 - CyberChef 11.5.0 is now a pinned, SHA256-verified static build served from
   the frontend image at `/tools/cyberchef/`. The Tools panel loads it

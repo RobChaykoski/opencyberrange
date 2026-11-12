@@ -10,6 +10,15 @@ Status: **feature release**. 2.7.0 adds optional level quizzes with Beginner
 question banks, target-IP guidance for VPN-only labs, and two reliability fixes
 for WireGuard routing and lab cleanup. No database schema change is required.
 
+!!! note "Development build: Cyber DNA 2026.14 and RangeBox refinements"
+    The development branch adds Cyber DNA formula **2026.14** (scores capped at
+    99, per-branch decay, a 40-hour continuing-education target, a 30-day trend,
+    and evidence-strength point sizing), the Cyber GPS active/fading signal, and
+    the RangeBox workspace refinements (quality presets, Ctrl+Alt+Del, native
+    fullscreen, flag capture, text-only file guard, pop-out window, and the
+    embedded workbook reader). See the changelog and the user manual's
+    **Navigating your Cyber DNA** section.
+
 ## Highlights
 
 - **Level quizzes.** Completed levels show a Quiz action only when an active

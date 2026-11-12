@@ -23,8 +23,8 @@ insights preview is enabled on the deployment.
 |---|---|
 | **Overview** | Four signals: your next practice step, learning evidence, Cyber DNA class, and recent recognition. |
 | **Skill tree** | The six-branch skill tree, Cyber DNA traits, practice affinities, career alignment, title collection, and the Momentum and friction panel when enabled. |
-| **Careers** | The Career Atlas: practice-linked career families, role ladders, and a Canada/US salary lens. Shown only when Advanced DNA Insights is enabled. |
-| **Portfolio** | Role readiness for a chosen pathway, the optional Cybersecurity GPS, the professional portfolio, and the competency taxonomy. Shown only when Advanced DNA Insights is enabled. |
+| **Careers** | The Cyber GPS and the Career Atlas: practice-linked career families, role ladders, and a Canada/US salary lens. Shown only when Advanced DNA Insights is enabled. |
+| **Portfolio** | Role readiness for a chosen pathway, the professional portfolio, and the competency taxonomy. Shown only when Advanced DNA Insights is enabled. |
 | **Learning record** | Course achievements, certificates, track progress, and completion details. |
 | **Account** | Personal information, account status, Exercise Studio (when available), and course enrolment. |
 | **Security & privacy** | MFA, password change, survey consent, data export, and account deletion. |
@@ -44,28 +44,37 @@ your completed exercises, course participation, and feedback. It shows what you
 have practised; it is not a ranking. The branch cards below it repeat the same
 evidence in a readable list, with a practical next step for each branch.
 
+!!! tip "Full Cyber DNA guide"
+    See [Navigating your Cyber DNA](22_Navigating_Your_Cyber_DNA.md) for the
+    branch-by-branch guide, the decay and repair rules, the 40-hour continuing-
+    education target, the 30-day trend arrows, and how point size reflects the
+    strength of your work.
+
 The six traits are:
 
 <figure markdown>
 
-![Cyber DNA section showing the class card, trait bars, and the equipped title](img/profile-dna.png)
+![Cyber DNA section showing the class card, six branch cards, and the spider chart](img/profile-cyber-dna.png)
 
-<figcaption>The Cyber DNA section shows your current class, activity-based traits, and your equipped title.</figcaption>
+<figcaption>The Cyber DNA section shows your current class, activity-based traits, your spider chart, and your equipped title.</figcaption>
 </figure>
 
 | Trait | What it reflects |
 |---|---|
 | Explorer | Breadth across tracks, categories, and labs you have opened |
-| Builder | Hands-on completions, time on task, and clean solves |
+| Builder | Hands-on completions, time on task, clean solves, and knowledge checks |
 | Tester | Authorised offensive testing, exploitation, assessment, and reporting |
 | Defender | Defensive, forensics, network-analysis, and OT practice |
 | Investigator | OSINT, reconnaissance, traffic analysis, and forensics |
 | Leader | Events, courses, badges, advanced labs, and teaching |
 
 Your highest trait becomes your **class**: Pathfinder, Artificer, Assessor,
-Warden, Seeker, or Commander. Each trait has a score from 0 to 100 and a tier
-from **Unranked** (no activity yet) through Initiate to Master. The numbers
-describe what you have practised; they are not a grade or a ranking.
+Warden, Seeker, or Commander. Each trait has a score from **0 to 99** and a tier
+from **Unranked** (no activity yet) through Initiate to Master. A branch never
+reaches 100: there is always another skill to develop. The numbers describe what
+you have practised; they are not a grade or a ranking. Branches also decay
+slowly when you stop practising them and recover when you return. See
+[Navigating your Cyber DNA](22_Navigating_Your_Cyber_DNA.md).
 
 Below the traits, **Practice affinities** shows where your completed labs point
 next. It covers Offensive Security / Penetration Testing, Defensive Security /
@@ -110,19 +119,22 @@ title. Hidden titles show as **Secret title** until you unlock them.
 ### Portfolio
 
 The **Portfolio** tab answers a specific question: "I want to become a SOC
-Analyst. What do I have, what comes next, and what can I show?" It contains four
+Analyst. What do I have, what comes next, and what can I show?" It contains three
 panels:
 
 - **Role readiness** lets you pick a target pathway. It shows the skills you
   already have, the skills you are building, the gaps, the next workbooks, the
   capstone, aligned certifications, and the evidence an employer can review.
-- **Cybersecurity GPS** combines your practice evidence, recent growth, and a
-  few optional questions to suggest directions. The questions are optional and
-  are never saved.
 - **Professional portfolio** is the printable evidence record with a portfolio ID.
 - **Competency taxonomy** shows every domain, category, and competency, the
   assessment score across five dimensions, and whether a competency is validated
   or provisional.
+
+The **Careers** tab also contains the **Cybersecurity GPS**, which combines your
+practice evidence, recent growth, and a few optional questions to suggest
+directions. The questions are optional and are never saved. The GPS signal badge
+shows whether your practice is active or fading, and names domains you have
+worked in before as fading interest signals.
 
 Readiness is a curriculum-coverage estimate, not a grade or a hiring prediction.
 The platform does not track employment outcomes. Every panel labels missing
