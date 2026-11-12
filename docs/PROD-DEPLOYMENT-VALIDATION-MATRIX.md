@@ -101,6 +101,8 @@ this section records what was actually deployed, not a gate pass.
 | Integrity | 12 tracks, 54 levels, 169 labs, 43 chapters, 1 course; 0 chain breaks |
 | Backup volume | `backups_data` chowned to `10001:10001`; **Create snapshot** produced `ocr_backup_20261112_192620.sql` (2.5 MB) |
 | Software integrity | `software-integrity.json` regenerated from the current lock; **169/169 labs match**, 0 mismatched/missing/extra |
+| Feature flags | `advanced_dna_insights_enabled=true`; production profile verified with Cyber GPS, Career Atlas, Momentum, Cyber DNA 2026.14, CE, and trend lines |
+| Public About | Primary button text contrast verified at **5.17:1** in dark mode |
 
 The first production snapshot attempt failed because the existing `backups_data`
 volume was owned by `root` while the backend runs as UID `10001`. The volume
