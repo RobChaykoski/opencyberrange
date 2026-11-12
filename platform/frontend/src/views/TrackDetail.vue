@@ -346,15 +346,14 @@
             >
               Knowledge check
             </button>
-            <a
-              href="https://gchq.github.io/CyberChef/"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
               class="btn btn--secondary btn--sm"
-              title="Open CyberChef in a new tab for encoding and decoding practice"
+              title="Open CyberChef in a panel for encoding and decoding practice"
+              @click="openTool('cyberchef')"
             >
               CyberChef
-            </a>
+            </button>
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
               <div class="launch-buttons">
@@ -546,6 +545,7 @@
                 <TargetIcon />
                 Scenario
               </h3>
+              <!-- security-delta: allow Vue v-html (DOMPurify.sanitize) -->
               <div class="scenario-content" v-html="renderScenario(activeLab.lab.scenario)"></div>
             </div>
             <!-- Learning outcomes -->
@@ -739,6 +739,7 @@
               </h3>
               <div v-for="(hint, index) in receivedHints" :key="index" class="hint-box">
                 <div class="hint-number">Hint {{ hint.number }}</div>
+                <!-- security-delta: allow Vue v-html (DOMPurify.sanitize) -->
                 <div v-html="renderMarkdown(hint.text)"></div>
               </div>
               <div v-if="hintMessage" class="hint-message">{{ hintMessage }}</div>
@@ -887,6 +888,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { hasRole } from '../utils/roles'
 import { useClipboard } from '../composables/useClipboard'
 import { useMobileView } from '../composables/useMobileView'
+import { useToolPanel } from '../composables/useToolPanel'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
 import axios from '../api/axios'
 import { marked } from 'marked'
@@ -917,6 +919,7 @@ import { CERTIFICATION_ROADMAP_URL, CISO_MINDMAP_URL, SWOCTS_RESOURCES_URL, getC
 const route = useRoute()
 const router = useRouter()
 const { isMobile } = useMobileView()
+const { openTool } = useToolPanel()
 
 const scrollToLabSection = (id) => {
   const element = document.getElementById(id)

@@ -104,6 +104,8 @@
       <router-view :key="'guest'" />
     </main>
 
+    <ToolPanel />
+
     <footer class="app-footer">
       <router-link to="/dashboard" class="app-footer__brand" aria-label="SWOCTS Cyber Range">
         <img src="/swocts-cyber-range-mark.png" alt="" class="app-footer__mark" />
@@ -134,6 +136,7 @@ import AppSidebar from './components/AppSidebar.vue'
 import GuidedTour from './components/GuidedTour.vue'
 import ImpersonationBanner from './components/ImpersonationBanner.vue'
 import MobileTabBar from './components/MobileTabBar.vue'
+import ToolPanel from './components/ToolPanel.vue'
 import { useTheme } from './composables/useTheme'
 import { usePrivacy } from './composables/usePrivacy'
 import { useModules } from './composables/useModules'

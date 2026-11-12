@@ -120,13 +120,12 @@
       <!-- TOOLS -->
       <div class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Tools</span>
-        <a
-          href="https://gchq.github.io/CyberChef/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="CyberChef (opens in a new tab)"
+        <button
+          type="button"
+          aria-label="CyberChef (opens in a panel)"
           title="CyberChef — decode and inspect data"
-          class="nav-item"
+          class="nav-item nav-item--button"
+          @click="openTool('cyberchef')"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
             <path d="M4 7h16"/>
@@ -136,7 +135,7 @@
             <path d="m18 14v3"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">CyberChef</span>
-        </a>
+        </button>
       </div>
 
 
@@ -297,6 +296,7 @@
 import { computed, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePrivacy } from '../composables/usePrivacy'
+import { useToolPanel } from '../composables/useToolPanel'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
 
 const props = defineProps({
@@ -314,6 +314,7 @@ defineEmits(['toggle', 'logout', 'close'])
 
 const route = useRoute()
 const { privacyMode, togglePrivacy } = usePrivacy()
+const { openTool } = useToolPanel()
 const startTour = inject('startTour', null)
 const replayTour = () => { if (startTour) startTour() }
 
@@ -539,6 +540,22 @@ const userInitial = computed(() => {
 .nav-item:hover {
   color: var(--hover-text);
   background: var(--hover-bg);
+}
+
+.nav-item--button {
+  width: 100%;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.nav-item--button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 .nav-item--active {
