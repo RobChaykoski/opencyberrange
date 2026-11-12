@@ -319,91 +319,107 @@ async def spawn_lab(
         (starting -> running or error), which any worker can read, so the
         frontend polls GET /spawn-status/{session_id} regardless of which
         uvicorn worker handled the spawn.
+
+        Database sessions are opened only to read or write the row. A pooled
+        connection must never be held across the Docker work: a slow image pull
+        would pin a connection for minutes and exhaust the pool for every other
+        page in the single-worker deployment.
         """
         bg_db = SessionLocal()
         try:
-            bg_session = bg_db.query(LabSession).filter(LabSession.id == session_id).first()
-            if not bg_session:
+            if not bg_db.query(LabSession).filter(LabSession.id == session_id).first():
                 logger.warning(f"Session {session_id} not found during background spawn of {lab_slug}")
                 return
+        finally:
+            bg_db.close()
 
+        rangebox_spawned = False
+        rangebox_disabled = False
+        try:
+            # All labs (with or without services) go through create_lab_environment.
+            # It creates ONE network per user+lab and connects both the lab's own
+            # Docker services AND any x-ocr-shared-containers to it.
+            result = await loop.run_in_executor(
+                None,
+                lambda: docker_manager.create_lab_environment(
+                    user_id=user_id,
+                    lab_slug=lab_slug,
+                    compose_content=compose_content,
+                    hostname_entries=hostname_entries,
+                ),
+            )
+
+            # Spawn RangeBox container if requested (also in thread pool)
+            if rangebox_enabled:
+                network_name = f"lab_{user_id}_{lab_slug}"
+
+                def spawn_rangebox_locked():
+                    with rangebox_spawn_lock():
+                        return docker_manager.spawn_rangebox(
+                            user_id=user_id,
+                            lab_slug=lab_slug,
+                            network_name=network_name,
+                            image=rangebox_image,
+                        )
+
+                try:
+                    rangebox_id = await loop.run_in_executor(
+                        None,
+                        spawn_rangebox_locked,
+                    )
+                except RangeBoxCapacityError as e:
+                    # Lab itself is up, so only RangeBox gets disabled
+                    logger.warning(f"RangeBox capacity reached for lab {lab_slug}: {e}")
+                    rangebox_id = None
+                rangebox_spawned = rangebox_id is not None
+                if not rangebox_spawned:
+                    logger.warning(f"RangeBox failed to spawn for lab {lab_slug}, continuing without it")
+                    rangebox_disabled = True
+
+        except Exception as e:
+            logger.error(f"Failed to spawn lab {lab_slug}: {e}", exc_info=True)
+            # Tear down whatever partially came up so no orphaned network or
+            # containers block the user's next spawn attempt.
             try:
-                # All labs (with or without services) go through create_lab_environment.
-                # It creates ONE network per user+lab and connects both the lab's own
-                # Docker services AND any x-ocr-shared-containers to it.
-                result = await loop.run_in_executor(
-                    None,
-                    lambda: docker_manager.create_lab_environment(
-                        user_id=user_id,
-                        lab_slug=lab_slug,
-                        compose_content=compose_content,
-                        hostname_entries=hostname_entries,
-                    ),
+                await loop.run_in_executor(
+                    None, docker_manager.destroy_lab_environment, user_id, lab_slug,
                 )
+            except Exception as teardown_err:
+                logger.warning(f"Teardown after failed spawn of {lab_slug} was incomplete: {teardown_err}")
+            bg_db = SessionLocal()
+            try:
+                bg_session = bg_db.query(LabSession).filter(LabSession.id == session_id).first()
+                if bg_session:
+                    bg_session.status = "error"
+                    bg_db.commit()
+            except Exception:
+                pass
+            finally:
+                bg_db.close()
+            return
 
+        bg_db = SessionLocal()
+        try:
+            bg_session = bg_db.query(LabSession).filter(LabSession.id == session_id).first()
+            if bg_session:
                 bg_session.network_id = result.get("network_id", f"lab_{user_id}_{lab_slug}")
                 second_octet, third_octet = get_subnet_id(user_id, lab_slug)
                 bg_session.network_subnet = result.get("subnet", f"10.{second_octet}.{third_octet}.0/24")
-
-                # Spawn RangeBox container if requested (also in thread pool)
-                rangebox_spawned = False
-                if rangebox_enabled:
-                    network_name = f"lab_{user_id}_{lab_slug}"
-
-                    def spawn_rangebox_locked():
-                        with rangebox_spawn_lock():
-                            return docker_manager.spawn_rangebox(
-                                user_id=user_id,
-                                lab_slug=lab_slug,
-                                network_name=network_name,
-                                image=rangebox_image,
-                            )
-
-                    try:
-                        rangebox_id = await loop.run_in_executor(
-                            None,
-                            spawn_rangebox_locked,
-                        )
-                    except RangeBoxCapacityError as e:
-                        # Lab itself is up, so only RangeBox gets disabled
-                        logger.warning(f"RangeBox capacity reached for lab {lab_slug}: {e}")
-                        rangebox_id = None
-                    rangebox_spawned = rangebox_id is not None
-                    if not rangebox_spawned:
-                        logger.warning(f"RangeBox failed to spawn for lab {lab_slug}, continuing without it")
-                        bg_session.rangebox_enabled = False
-
+                if rangebox_disabled:
+                    bg_session.rangebox_enabled = False
                 bg_session.status = "running"
                 bg_db.commit()
 
-                logger.info(f"Lab {lab_slug} spawned for user {user_id} (rangebox={rangebox_spawned})")
-
                 log_activity(bg_db, EventTypes.LAB_STARTED,
-                              actor_id=user_id, target_type="lab",
-                              target_id=lab_id, target_label=lab_name,
-                              detail={"source": "diagnostic", "rangebox": rangebox_spawned} if diagnostic else {"rangebox": rangebox_spawned},
-                              ip_address=req_client_ip)
-
-            except Exception as e:
-                logger.error(f"Failed to spawn lab {lab_slug}: {e}", exc_info=True)
-                # Tear down whatever partially came up so no orphaned network or
-                # containers block the user's next spawn attempt.
-                try:
-                    await loop.run_in_executor(
-                        None, docker_manager.destroy_lab_environment, user_id, lab_slug,
-                    )
-                except Exception as teardown_err:
-                    logger.warning(f"Teardown after failed spawn of {lab_slug} was incomplete: {teardown_err}")
-                try:
-                    bg_db.rollback()
-                    bg_session = bg_db.query(LabSession).filter(LabSession.id == session_id).first()
-                    if bg_session:
-                        bg_session.status = "error"
-                        bg_db.commit()
-                except Exception:
-                    pass
+                             actor_id=user_id, target_type="lab",
+                             target_id=lab_id, target_label=lab_name,
+                             detail={"source": "diagnostic", "rangebox": rangebox_spawned} if diagnostic else {"rangebox": rangebox_spawned},
+                             ip_address=req_client_ip)
+                bg_db.commit()
         finally:
             bg_db.close()
+
+        logger.info(f"Lab {lab_slug} spawned for user {user_id} (rangebox={rangebox_spawned})")
 
     if wait_for_ready:
         # Legacy blocking path: hold the request open until the lab is up
@@ -524,7 +540,9 @@ async def stop_lab(
     uses_shared = False
 
     async def cleanup_lab():
-        # Create new database session for background task
+        # Decide with a short-lived session, then release the pooled connection
+        # before the Docker teardown. Teardown can take a minute; holding the
+        # connection starves every other request in the single-worker process.
         bg_db = SessionLocal()
         try:
             # Reload session in new DB context
@@ -554,7 +572,10 @@ async def stop_lab(
                 bg_session.status = "stopped"
                 bg_db.commit()
                 return
+        finally:
+            bg_db.close()
 
+        try:
             # Run the blocking Docker cleanup in a thread pool
             loop = asyncio.get_event_loop()
             with ThreadPoolExecutor() as executor:
@@ -576,12 +597,19 @@ async def stop_lab(
                     )
 
             # Update session status after cleanup
-            bg_session.status = "stopped"
-            bg_db.commit()
+            bg_db = SessionLocal()
+            try:
+                bg_session = bg_db.query(LabSession).filter(LabSession.id == session.id).first()
+                if bg_session:
+                    bg_session.status = "stopped"
+                    bg_db.commit()
+            finally:
+                bg_db.close()
             logger.info(f"Lab {lab_slug} stopped for user {current_user.id} (shared={uses_shared})")
         except Exception as e:
             logger.error(f"Failed to stop lab {lab_slug}: {e}")
             # Still mark as stopped even if cleanup failed
+            bg_db = SessionLocal()
             try:
                 bg_session = bg_db.query(LabSession).filter(LabSession.id == session.id).first()
                 if bg_session:
@@ -589,8 +617,8 @@ async def stop_lab(
                     bg_db.commit()
             except Exception:
                 pass
-        finally:
-            bg_db.close()
+            finally:
+                bg_db.close()
 
     # Start cleanup in background (fire and forget)
     _track_background_task(cleanup_lab())

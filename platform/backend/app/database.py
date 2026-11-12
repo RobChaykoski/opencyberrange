@@ -20,10 +20,12 @@ logger = logging.getLogger(__name__)
 # (DB_POOL_SIZE + DB_MAX_OVERFLOW) * uvicorn workers. Keep that below the
 # PostgreSQL max_connections minus reserved slots: a 9-worker deployment with
 # the old 5 + 10 defaults could ask for 135 connections against a 100 limit.
-# The 4 + 4 defaults put 9 workers at 72 connections, leaving room for the
-# scheduler, migrations, and an operator session.
-_pool_size = max(1, int(os.environ.get("DB_POOL_SIZE", "4")))
-_max_overflow = max(0, int(os.environ.get("DB_MAX_OVERFLOW", "4")))
+# Single-worker is the supported shape. The SPA fires a burst of dashboard,
+# analytics, and admin requests on one page, so 4 + 4 exhausted the pool and
+# then blocked the event loop; 10 + 10 leaves headroom while staying at 20
+# connections for the supported deployment and 180 for a 9-worker scale-out.
+_pool_size = max(1, int(os.environ.get("DB_POOL_SIZE", "10")))
+_max_overflow = max(0, int(os.environ.get("DB_MAX_OVERFLOW", "10")))
 
 _connect_args = {}
 if settings.DATABASE_URL.startswith("postgresql"):
