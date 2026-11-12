@@ -246,6 +246,21 @@ Next:
    in both themes and record the pass in `docs/UI-VERIFICATION.md`.
 5. Run `python scripts/check-devfest-plan.py` after any plan edit.
 
+### 11. Hardening and refactor follow-ups
+
+The November 2026 hardening pass is deployed to development. See
+[HARDENING-2026-11.md](HARDENING-2026-11.md). Remaining work:
+
+1. Drain the inline `ALTER TABLE` blocks in `main.py` into Alembic revisions, then
+   add the no-inline-migration guard.
+2. Rehearse a PostgreSQL major-version upgrade.
+3. Run a real backup and restore drill from the `backups_data` volume.
+4. Audit the frontend nginx configuration and `ui-*.mjs` smoke suites.
+5. Add the remaining eager-load fixes in `analytics.py`, `dashboard.py`, and
+   `admin.py`, gated by `stress_test.py` query-count diffs.
+6. Decide whether to enable the socket-proxy `BUILD` category; it must stay off
+   unless on-demand lab builds are enabled.
+
 ## Known warnings to ignore
 
 - `RangeBox ... not available after retries - skipping bridge` appeared while

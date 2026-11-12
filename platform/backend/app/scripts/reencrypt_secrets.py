@@ -14,14 +14,20 @@ from __future__ import annotations
 
 import argparse
 
-from app.crypto import decrypt_secret, encrypt_secret, needs_reencryption
+from app.crypto import decrypt_secret, encrypt_secret, is_encrypted, needs_reencryption
 from app.database import SessionLocal
-from app.models import InstructorApiKey, User, WireguardConfig
+from app.models import InstructorApiKey, User, WireGuardConfig
 
 
 def _rewrite(label: str, value: str, *, apply: bool) -> tuple[bool, str | None]:
     """Return (changed, new_value_or_error)."""
-    if not value or not needs_reencryption(value):
+    if not value:
+        return False, None
+    if not is_encrypted(value):
+        # Legacy plaintext row: encrypt it directly instead of trying to
+        # decrypt a value that was never a Fernet token.
+        return True, encrypt_secret(value) if apply else None
+    if not needs_reencryption(value):
         return False, None
     try:
         plaintext = decrypt_secret(value)
@@ -56,7 +62,7 @@ def main() -> int:
                     user.totp_secret = result
                 changed += 1
 
-        for row in db.query(WireguardConfig).all():
+        for row in db.query(WireGuardConfig).all():
             checked += 1
             label = f"wireguard:{row.id}:private_key"
             did_change, result = _rewrite(label, row.private_key, apply=apply)

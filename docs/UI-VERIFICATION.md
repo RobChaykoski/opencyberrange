@@ -4,6 +4,30 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## Hardening deployment (12 November 2026)
+
+Status: **deployed to development; production unchanged.**
+
+- **Runtime:** single-worker default, multi-stage non-root image, Python
+  healthcheck, and no `gcc` in the final layer.
+- **Docker control:** the backend talks to `tecnativa/docker-socket-proxy` on a
+  private `docker_control` network. A full compose lifecycle test through the
+  proxy succeeded: network create, container create/start/logs/stop/remove, and
+  network remove.
+- **Valkey:** `/api/about` reports Valkey 9.1.3; the backend uses
+  `redis://valkey:6379/0`; the old `ocr-redis` container was removed.
+- **Alembic:** the development database reports
+  `0014_performance_indexes`; `0013` and `0014` columns and indexes are present.
+- **Crypto:** a new secret round-trips with the `v1:` envelope; the re-encryption
+  pass moved 2 stored secrets and then reported 0 remaining.
+- **Permissions:** the backend runs as the dev override UID 1000; `/app/backups`
+  and `/workbook` are writable.
+- **Health:** backend and frontend return 200; the backend reports healthy.
+- **Not yet verified:** a full lab launch through the learner API (the Docker
+  proxy compose lifecycle is verified), a production-shaped run with the
+  non-root UID 10001 and named volumes, and a restore drill from the backups
+  volume.
+
 ## Advanced DNA Insights preview (development)
 
 Status: **implemented in the development tree; live capture and database-backed
