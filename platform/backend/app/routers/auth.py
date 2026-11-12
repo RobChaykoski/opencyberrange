@@ -427,35 +427,14 @@ AVATAR_BORDER_COLORS = (
 
 def _validate_avatar_data(value: Optional[str]) -> Optional[str]:
     """Accept only a small, real raster image as a base64 data URL."""
-    if value is None or value == "":
-        return value
-    match = _AVATAR_DATA_URL_RE.match(value)
-    if not match:
-        raise ValueError("Avatar must be a PNG, JPEG, or WebP image.")
-    try:
-        encoded = re.sub(r"\s+", "", match.group(2))
-        raw = base64.b64decode(encoded, validate=True)
-    except (binascii.Error, ValueError):
-        raise ValueError("Avatar image data is not valid base64.")
-    if len(raw) > _MAX_AVATAR_BYTES:
-        raise ValueError("Avatar image must be 512 KB or smaller after upload.")
-    try:
-        from PIL import Image
-        with Image.open(io.BytesIO(raw)) as image:
-            width, height = image.size
-            # Reject decompression bombs before decoding. A small base64 payload
-            # can describe an enormous canvas; real avatars are ~320 px square.
-            if width < 1 or height < 1 or width * height > 4_000_000:
-                raise ValueError("Avatar dimensions are too large.")
-            declared = "jpeg" if match.group(1).lower() == "jpg" else match.group(1).lower()
-            if (image.format or "").lower() != declared:
-                raise ValueError("Avatar content does not match its image type.")
-            image.verify()
-    except ValueError:
-        raise
-    except Exception:
-        raise ValueError("Avatar file is not a readable image.")
-    return value
+    from app.services.image_validation import validate_image_data_url
+
+    return validate_image_data_url(
+        value,
+        label="Avatar",
+        max_bytes=_MAX_AVATAR_BYTES,
+        max_pixels=4_000_000,
+    )
 
 
 EMAIL_CONSENT_VERSION = "2026-11-04"
@@ -584,7 +563,9 @@ async def get_user_settings(
     }
 
 @router.put("/settings")
+@limiter.limit("20/minute")
 async def update_user_settings(
+    request: Request,
     payload: UserSettingsUpdate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),

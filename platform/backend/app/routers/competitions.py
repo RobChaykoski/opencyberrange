@@ -7,9 +7,6 @@ event leaderboard is time-boxed. The score reuses the course scoreboard rules
 """
 from datetime import datetime, timezone
 from typing import List, Optional, Literal
-import base64
-import binascii
-import io
 import re
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
@@ -49,38 +46,24 @@ from app.services import devfest
 
 router = APIRouter()
 
-_SPONSOR_LOGO_RE = re.compile(
-    r"^data:image/(png|jpeg|jpg|webp);base64,([A-Za-z0-9+/=\s]+)$"
-)
 _MAX_SPONSOR_LOGO_BYTES = 256 * 1024
 
 
 def _validate_logo(value: str, label: str = "Logo") -> str:
-    """Accept a small raster image and reject disguised payloads."""
-    match = _SPONSOR_LOGO_RE.match(value)
-    if not match:
-        raise ValueError(f"{label} must be a PNG, JPEG, or WebP image")
-    try:
-        raw = base64.b64decode(re.sub(r"\s+", "", match.group(2)), validate=True)
-    except (binascii.Error, ValueError):
-        raise ValueError(f"{label} data is not valid base64")
-    if len(raw) > _MAX_SPONSOR_LOGO_BYTES:
-        raise ValueError(f"{label} must be 256 KB or smaller")
-    try:
-        from PIL import Image
-        with Image.open(io.BytesIO(raw)) as image:
-            width, height = image.size
-            if width < 1 or height < 1 or width * height > 1_048_576:
-                raise ValueError(f"{label} dimensions are too large")
-            declared = "jpeg" if match.group(1).lower() == "jpg" else match.group(1).lower()
-            if (image.format or "").lower() != declared:
-                raise ValueError(f"{label} content does not match its image type")
-            image.verify()
-    except ValueError:
-        raise
-    except Exception:
-        raise ValueError(f"{label} is not a readable image")
-    return value
+    """Accept a small raster image and store a freshly re-encoded PNG.
+
+    The shared validator checks the data-URL shape, base64, size, file
+    signature, dimensions, and Pillow decode, then rebuilds the image from
+    decoded pixels. Nothing from the uploaded bytes survives except pixels.
+    """
+    from app.services.image_validation import validate_image_data_url
+
+    return validate_image_data_url(
+        value,
+        label=label,
+        max_bytes=_MAX_SPONSOR_LOGO_BYTES,
+        max_pixels=1_048_576,
+    )
 
 
 def _validate_sponsor_logo(value: str) -> str:

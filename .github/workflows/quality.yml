@@ -51,6 +51,9 @@ jobs:
       - name: Verify the inline-script CSP hash
         run: python scripts/check-csp-hash.py
 
+      - name: Reject external images in learner content
+        run: python scripts/check-external-images.py
+
       - name: Report unpinned base images
         continue-on-error: true
         run: python scripts/supply_chain.py --check-pins

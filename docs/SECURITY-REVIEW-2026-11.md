@@ -156,6 +156,20 @@ fail and the non-fatal `|| echo WARNING` paths would hide it.
 - The desktop boxes should standardize on `/etc/sudoers.d/` drop-ins; RangeBox
   and UbuntuBox currently append to `/etc/sudoers` directly.
 
+## Image handling
+
+- **Uploads are raster-only and re-encoded.** Avatars and competition logos
+  accept a PNG, JPEG, or WebP data URL. The backend checks the data-URL shape,
+  base64, byte cap, file signature, dimensions, and Pillow decode, then rebuilds
+  the image from decoded pixels into a fresh PNG. Original bytes, EXIF, trailing
+  data, and polyglot payloads are discarded. SVG and documents are rejected.
+- **Profile updates are rate-limited.** `PUT /api/auth/settings` is limited to
+  20 requests per minute per client.
+- **External images are prohibited in learner content.** Workbook and manual
+  images must be hosted locally; `scripts/check-external-images.py` fails CI on
+  any external image reference so a learner's browser never fetches a
+  third-party image the platform did not validate.
+
 ## Network tap
 
 ### Fixed

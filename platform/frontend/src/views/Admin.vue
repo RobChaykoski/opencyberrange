@@ -1975,6 +1975,7 @@
             <button @click="systemSubTab = 'health'" :class="['sub-tab', { active: systemSubTab === 'health' }]">Health</button>
             <button @click="systemSubTab = 'integrity'; fetchDataIntegrity()" :class="['sub-tab', { active: systemSubTab === 'integrity' }]">Integrity</button>
             <button @click="systemSubTab = 'backups'" :class="['sub-tab', { active: systemSubTab === 'backups' }]">Backups</button>
+            <button @click="systemSubTab = 'software'; fetchSoftwareIntegrity()" :class="['sub-tab', { active: systemSubTab === 'software' }]">Software</button>
             <button v-if="exerciseTester" @click="systemSubTab = 'tester'" :class="['sub-tab', { active: systemSubTab === 'tester' }]">Exercise Tester</button>
             <button v-if="stressTester" @click="systemSubTab = 'stress'; checkActiveStressTest()" :class="['sub-tab', { active: systemSubTab === 'stress' }]">Stress Tester</button>
           </div>
@@ -2376,6 +2377,76 @@
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <!-- ===================== SOFTWARE INTEGRITY SUB-TAB ===================== -->
+          <div v-if="systemSubTab === 'software'">
+            <div class="panel-header">
+              <h3 class="section-title">Software integrity</h3>
+              <button
+                @click="fetchSoftwareIntegrity"
+                :disabled="softwareIntegrityLoading"
+                class="btn btn--secondary btn--sm"
+              >
+                {{ softwareIntegrityLoading ? 'Verifying...' : 'Verify now' }}
+              </button>
+            </div>
+            <p class="section-desc">
+              Compares the lab content mounted on this server with the hashes
+              recorded in the supply-chain lock at build time. A mismatch means
+              the deployed exercises are not the reviewed release.
+            </p>
+            <p v-if="softwareIntegrityError" class="error-message">{{ softwareIntegrityError }}</p>
+            <div v-else-if="softwareIntegrity">
+              <div
+                class="integrity-banner"
+                :class="softwareIntegrity.ok ? 'integrity-banner--ok' : 'integrity-banner--bad'"
+              >
+                <strong>{{ softwareIntegrity.ok ? 'Verified' : 'Mismatch found' }}</strong>
+                <span>
+                  {{ softwareIntegrity.checked }} of {{ softwareIntegrity.expected }} labs
+                  checked against release {{ softwareIntegrity.release }}.
+                </span>
+              </div>
+
+              <dl class="integrity-meta">
+                <div>
+                  <dt>Build revision</dt>
+                  <dd><code>{{ softwareIntegrity.build?.revision || 'unknown' }}</code></dd>
+                </div>
+                <div>
+                  <dt>Running image</dt>
+                  <dd><code>{{ softwareIntegrity.build?.image_id || 'unknown' }}</code></dd>
+                </div>
+                <div>
+                  <dt>Image digest</dt>
+                  <dd><code>{{ integrityDigest }}</code></dd>
+                </div>
+                <div>
+                  <dt>Checked</dt>
+                  <dd>{{ softwareIntegrity.checked_at }}</dd>
+                </div>
+              </dl>
+
+              <table v-if="integrityIssues.length" class="integrity-table">
+                <thead>
+                  <tr><th>Lab</th><th>Problem</th></tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in integrityIssues" :key="`${row.slug}-${row.reason}`">
+                    <td><code>{{ row.slug }}</code></td>
+                    <td>{{ row.reason }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p v-else class="section-desc">
+                Every mounted lab matches the release manifest. Dependency
+                packages are covered by the build-time supply-chain check.
+              </p>
+            </div>
+            <p v-else class="empty-state">
+              Run a verification to compare this deployment with the release manifest.
+            </p>
           </div>
 
           <!-- ===================== TESTER SUB-TAB ===================== -->

@@ -3814,6 +3814,22 @@ async def system_status(
     return {"items": items, "overall": overall, "edition": entitlement.edition_name()}
 
 
+@router.get("/system/software-integrity", summary="Verify deployed lab content against the release manifest")
+async def software_integrity_status(
+    admin: User = Depends(get_current_admin_user),
+):
+    """Recompute the lab content hashes and compare them with the release manifest.
+
+    The manifest is generated from supply-chain.lock.json at build time. This is
+    the runtime half of the supply-chain check: it proves the mounted lab tree
+    still matches the reviewed release and reports the running image digest and
+    build revision for the audit trail.
+    """
+    from app.services import software_integrity
+
+    return software_integrity.verify_cached()
+
+
 def _integrity_status(summary: dict) -> tuple[str, str, str]:
     """Map a ledger summary to the portal's status, label, and detail."""
     if not summary.get("available"):
