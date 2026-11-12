@@ -29,6 +29,22 @@ def clean(text: str) -> str:
     return text.encode("latin-1", "replace").decode("latin-1")
 
 
+def prepare(text: str) -> str:
+    """Wrap very long unbroken tokens so fpdf can lay them out.
+
+    The matrix evidence column can contain long paths and URLs. fpdf's
+    character wrapping can stall on a token wider than the cell, so insert
+    break opportunities before rendering.
+    """
+    parts = []
+    for part in text.split(" "):
+        if len(part) <= 90:
+            parts.append(part)
+        else:
+            parts.extend(part[i:i + 90] for i in range(0, len(part), 90))
+    return clean(" ".join(parts))
+
+
 class ReviewPDF(FPDF):
     def __init__(self, title: str):
         super().__init__(format="A4")
@@ -56,6 +72,17 @@ def render(markdown_path: pathlib.Path, title: str, out_path: pathlib.Path) -> N
     lines = markdown_path.read_text(encoding="utf-8").splitlines()
     in_table = False
 
+    def write_line(text: str, height: float) -> None:
+        text = prepare(text)
+        if not text:
+            pdf.ln(height)
+            return
+        # fpdf can stall when a single token is wider than the cell. Chunking
+        # keeps every cell short enough to render and preserves the text.
+        for start in range(0, len(text), 110):
+            pdf.cell(0, height, text[start:start + 110])
+            pdf.ln(height)
+
     for raw in lines:
         line = raw.rstrip()
         if not line.strip():
@@ -67,12 +94,12 @@ def render(markdown_path: pathlib.Path, title: str, out_path: pathlib.Path) -> N
             continue
 
         if line.startswith("|"):
-            cells = [clean(c.strip()) for c in line.strip("|").split("|")]
+            cells = [c.strip() for c in line.strip("|").split("|")]
             if all(set(c) <= {"-", ":", " "} for c in cells):
                 continue
             in_table = True
             pdf.set_font("Helvetica", "", 7.5)
-            pdf.multi_cell(0, 4.2, " | ".join(cells), wrapmode="CHAR")
+            write_line(" | ".join(c for c in cells if c), 4.2)
             continue
 
         if in_table:
@@ -81,25 +108,25 @@ def render(markdown_path: pathlib.Path, title: str, out_path: pathlib.Path) -> N
 
         if line.startswith("# "):
             pdf.set_font("Helvetica", "B", 18)
-            pdf.multi_cell(0, 9, clean(line[2:]), wrapmode="CHAR")
+            write_line(line[2:], 9)
             pdf.ln(2)
         elif line.startswith("## "):
             pdf.ln(2)
             pdf.set_font("Helvetica", "B", 13)
-            pdf.multi_cell(0, 7, clean(line[3:]), wrapmode="CHAR")
+            write_line(line[3:], 7)
             pdf.ln(1)
         elif line.startswith("### "):
             pdf.set_font("Helvetica", "B", 11)
-            pdf.multi_cell(0, 6, clean(line[4:]), wrapmode="CHAR")
+            write_line(line[4:], 6)
         elif line.startswith("- "):
             pdf.set_font("Helvetica", "", 9.5)
-            pdf.multi_cell(0, 5, clean("  - " + line[2:]), wrapmode="CHAR")
+            write_line("  - " + line[2:], 5)
         elif re.match(r"^\d+\. ", line):
             pdf.set_font("Helvetica", "", 9.5)
-            pdf.multi_cell(0, 5, clean(line), wrapmode="CHAR")
+            write_line(line, 5)
         else:
             pdf.set_font("Helvetica", "", 9.5)
-            pdf.multi_cell(0, 5, clean(line), wrapmode="CHAR")
+            write_line(line, 5)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     pdf.output(str(out_path))
