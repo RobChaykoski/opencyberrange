@@ -3421,8 +3421,8 @@ watch(() => route.path, (newPath) => {
 }
 
 .profile-stats {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.65rem;
 }
 
@@ -3765,7 +3765,6 @@ watch(() => route.path, (newPath) => {
 }
 
 .profile-stat {
-  flex: 1 1 86px;
   min-width: 0;
   padding: 0.7rem 0.8rem;
   border-radius: 12px;
