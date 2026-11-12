@@ -435,6 +435,7 @@ if (typeof window !== 'undefined') {
   --success-bg: rgba(34, 197, 94, 0.15);
   --warning-bg: rgba(245, 158, 11, 0.15);
   --panel-bg: #1e293b;
+  --brand-gradient: linear-gradient(90deg, #2563eb, #8b5cf6 55%, #f59e0b);
 }
 
 /* Light theme overrides */

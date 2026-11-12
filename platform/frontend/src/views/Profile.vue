@@ -3449,6 +3449,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .gps-banner {
+  position: relative;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -3461,6 +3462,15 @@ watch(() => route.path, (newPath) => {
   background:
     linear-gradient(90deg, var(--accent-bg), transparent 65%),
     var(--bg-secondary);
+}
+
+.gps-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 10px 0 0 10px;
+  background: var(--brand-gradient);
 }
 
 .gps-banner__compass {
@@ -3562,11 +3572,23 @@ watch(() => route.path, (newPath) => {
 }
 
 .have-build {
+  position: relative;
+  overflow: hidden;
   margin-top: 1rem;
   padding: 1rem;
   border: 1px solid var(--border-color);
   border-radius: 14px;
   background: var(--bg-secondary);
+}
+
+.have-build::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--brand-gradient);
 }
 
 .have-build__grid {
