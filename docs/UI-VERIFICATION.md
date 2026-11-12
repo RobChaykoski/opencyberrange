@@ -73,6 +73,27 @@ Status: **implemented; deployed to development; live capture pending.**
 - **Not yet verified:** a live browser pass for the studio and question-bank
   tabs at 375/768/1024/1440 in both themes.
 
+### DevFest Cyber Discovery event layer (12 November 2026)
+
+Status: **implemented on the existing event engine; development rehearsal
+pending.**
+
+- **Event engine:** a normal `Competition` with `experience_key = "devfest-2027"`
+  shows the Cyber Discovery panel on `/events/:id`. Participants, labs,
+  leaderboard, sponsors, certificates, and verification are unchanged.
+- **Learner panel:** four morning investigations with completion and lab links,
+  Cyber DNA snapshot, four afternoon pathways with readiness and next workbooks,
+  Career Stories, and the exclusive `DVF-CYBER-2027` certificate.
+- **Instructor panel:** aggregate investigation starts, pathway starts, and
+  certificate availability with the configured small-cohort suppression.
+- **Seed:** `python -m app.scripts.seed_devfest_event --preview` creates or
+  refreshes the event with the eight mapped labs and three sponsors.
+- **Verified in this tree:** `ruff` and `py_compile`; 31 tests across the event,
+  achievement, certification, and career suites; `npm run lint` (0 errors) and
+  `npm run build`.
+- **Not yet verified:** the live event page, the seeded event on development, and
+  the certificate PDF at the four widths and both themes.
+
 ## 2.7.0 release verification
 
 Released and deployed on **11 November 2026**. Tag `v2.7.0` points at

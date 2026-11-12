@@ -99,6 +99,11 @@ GROUPS = [
         "label": "Custom",
         "description": "Admin-defined goals for a course or programme.",
     },
+    {
+        "key": "events",
+        "label": "Events",
+        "description": "Time-boxed event and career-discovery badges.",
+    },
 ]
 
 GROUP_BY_KEY = {group["key"]: group for group in GROUPS}
@@ -150,6 +155,7 @@ BUILTIN_METADATA: dict[str, tuple[str, str, str]] = {
     "quiz_five_streak": ("quiz", "silver", "standard"),
     "quiz_tier_climb": ("quiz", "gold", "advanced"),
     "quiz_polymath": ("quiz", "platinum", "expert"),
+    "devfest_2027_discovery": ("events", "platinum", "advanced"),
 }
 
 QUIZ_TYPES = {

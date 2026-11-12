@@ -947,6 +947,9 @@ class Competition(Base):
     # default list, so a past competition stays readable without cluttering the
     # active ones. Delete remains a separate, explicit action.
     is_archived = Column(Boolean, default=False, server_default=text("false"), nullable=False)
+    # Optional experience template. NULL is a standard competition; a key such
+    # as "devfest-2027" adds the Cyber Discovery panels and certificate.
+    experience_key = Column(String(40), nullable=True, index=True)
     created_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 

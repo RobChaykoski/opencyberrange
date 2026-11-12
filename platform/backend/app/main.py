@@ -356,8 +356,7 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added equipped_title column to users table")
 
-        # --- Achievement studio metadata (group, tier, difficulty, points) ---
-        if 'custom_achievements' in inspector.get_table_names():
+        # --- Achievement studio metadata (group, tier, difficulty, points) ---        if 'custom_achievements' in inspector.get_table_names():
             custom_columns = {
                 c['name'] for c in sa_inspect(engine).get_columns('custom_achievements')
             }
@@ -374,6 +373,18 @@ async def lifespan(app: FastAPI):
                     ))
                     conn.commit()
                     logger.info("Added %s column to custom_achievements table", column)
+
+        # --- Event experience template (Cyber Discovery) ---
+        if 'competitions' in inspector.get_table_names():
+            competition_columns = {
+                c['name'] for c in sa_inspect(engine).get_columns('competitions')
+            }
+            if 'experience_key' not in competition_columns:
+                conn.execute(text(
+                    "ALTER TABLE competitions ADD COLUMN experience_key VARCHAR(40)"
+                ))
+                conn.commit()
+                logger.info("Added experience_key column to competitions table")
 
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations

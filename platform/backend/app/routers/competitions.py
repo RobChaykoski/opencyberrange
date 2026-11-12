@@ -45,6 +45,7 @@ from app.services.event_certificates import (
     event_certificate_pdf_bytes,
     event_ended,
 )
+from app.services import devfest
 
 router = APIRouter()
 
@@ -150,6 +151,7 @@ class CompetitionCreate(BaseModel):
     end_at: datetime
     lab_ids: List[int] = Field(..., min_length=1)
     sponsors: List[CompetitionSponsorInput] = Field(default_factory=list)
+    experience_key: Optional[str] = Field(None, max_length=40)
 
 
 class CompetitionUpdate(BaseModel):
@@ -161,6 +163,7 @@ class CompetitionUpdate(BaseModel):
     lab_ids: Optional[List[int]] = Field(None, min_length=1)
     sponsors: Optional[List[CompetitionSponsorInput]] = None
     is_active: Optional[bool] = None
+    experience_key: Optional[str] = Field(None, max_length=40)
 
 
 SPONSOR_TIER_ORDER = {"gold": 0, "silver": 1, "bronze": 2}
@@ -314,6 +317,7 @@ def _summary(
         "status": _status(competition, now),
         "is_active": competition.is_active,
         "is_archived": bool(getattr(competition, "is_archived", False)),
+        "experience_key": getattr(competition, "experience_key", None),
         "participant_count": participant_count,
         "lab_count": lab_count,
         "joined": joined,
@@ -618,6 +622,49 @@ async def get_competition(
     }
 
 
+@router.get("/{competition_id}/discovery")
+async def get_event_discovery(
+    competition_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the Cyber Discovery layer for an event, if the event has one."""
+    competition = _competition_or_404(db, competition_id)
+    if not competition.is_active and current_user.role not in ("instructor", "admin"):
+        raise HTTPException(status_code=404, detail="Competition not found")
+    plan = devfest.plan_for_experience(competition.experience_key)
+    if plan is None:
+        raise HTTPException(
+            status_code=404,
+            detail="This event does not have a Cyber Discovery experience.",
+        )
+    joined = db.query(CompetitionParticipant).filter(
+        CompetitionParticipant.competition_id == competition_id,
+        CompetitionParticipant.user_id == current_user.id,
+    ).first() is not None
+    return devfest.learner_discovery(
+        db, current_user, competition, plan, joined=joined
+    )
+
+
+@router.get("/{competition_id}/discovery/overview")
+async def get_event_discovery_overview(
+    competition_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Aggregate event participation for the organiser, with suppression."""
+    competition = _competition_or_404(db, competition_id)
+    _require_manage(competition, current_user)
+    plan = devfest.plan_for_experience(competition.experience_key)
+    if plan is None:
+        raise HTTPException(
+            status_code=404,
+            detail="This event does not have a Cyber Discovery experience.",
+        )
+    return devfest.instructor_overview(db, competition, plan)
+
+
 def _event_request_base(request: Request) -> str:
     proto = request.headers.get("x-forwarded-proto") or request.url.scheme
     host = request.headers.get("x-forwarded-host") or request.headers.get("host")
@@ -696,7 +743,7 @@ async def get_event_certificate(
     competition = _event_certificate_competition(db, competition_id, current_user)
     award_key = award.strip().lower()
     if award_key not in event_award_keys_for_user(
-        db, current_user.id, competition_id
+        db, current_user.id, competition_id, competition.experience_key
     ):
         raise HTTPException(
             status_code=404, detail="That event certificate is not available."
@@ -756,6 +803,7 @@ async def create_competition(
         end_at=payload.end_at,
         created_by=current_user.id,
         is_active=True,
+        experience_key=(payload.experience_key or "").strip() or None,
     )
     db.add(competition)
     db.flush()
@@ -807,6 +855,8 @@ async def update_competition(
     competition.end_at = end_at
     if payload.is_active is not None:
         competition.is_active = payload.is_active
+    if payload.experience_key is not None:
+        competition.experience_key = payload.experience_key.strip() or None
 
     if payload.lab_ids is not None:
         requested_ids = list(dict.fromkeys(payload.lab_ids))

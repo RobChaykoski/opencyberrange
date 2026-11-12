@@ -91,10 +91,21 @@ AWARDS = {
         "description": "Solved every event exercise without hints and on the first attempt.",
         "body": "has earned the Perfect Event trophy challenge in",
     },
+    "discovery": {
+        "code": "dv",
+        "label": "Cyber Discovery",
+        "title": "Cyber Discovery Experience Certificate",
+        "role": "Cyber Discovery Participant",
+        "achievement": None,
+        "description": "Completed the Cyber Discovery Experience.",
+        "body": "has completed the Cyber Discovery Experience",
+        "serial_prefix": "DVF-CYBER-2027",
+    },
 }
 
 AWARD_ORDER = (
     "participation",
+    "discovery",
     "first",
     "second",
     "third",
@@ -146,10 +157,14 @@ def certificate_base_url(db: Session, request_base_url: str = "") -> str:
 
 
 def event_award_keys_for_user(
-    db: Session, user_id: int, competition_id: int
+    db: Session, user_id: int, competition_id: int, experience_key: str | None = None
 ) -> list[str]:
     """Return the awards a participant has actually earned."""
     keys = {"participation"}
+    if experience_key:
+        # The Cyber Discovery certificate is event-scoped and available to
+        # every participant after the event, like participation.
+        keys.add("discovery")
     rows = (
         db.query(Achievement.achievement_type)
         .filter(
@@ -190,6 +205,19 @@ def parse_event_certificate_id(
     if not award_key:
         return None
     return int(competition_id), int(user_id), award_key, digest
+
+
+def event_certificate_serial(
+    competition_id: int, user_id: int, award_key: str
+) -> Optional[str]:
+    award = AWARDS[award_key]
+    prefix = award.get("serial_prefix")
+    if not prefix:
+        return None
+    digest = hashlib.sha256(
+        f"{user_id}:event:{competition_id}:{award_key}:serial".encode()
+    ).hexdigest()[:5].upper()
+    return f"{prefix}-{digest}"
 
 
 def _sponsor_payload(competition: Competition) -> list[dict]:
@@ -267,6 +295,9 @@ def build_event_certificate(
     return {
         "kind": "event",
         "certificate_id": certificate_id,
+        "certificate_serial": event_certificate_serial(
+            competition.id, user.id, award_key
+        ),
         "award": award_key,
         "award_label": award["label"],
         "award_description": award["description"],
@@ -298,7 +329,9 @@ def available_event_certificates(
     base_url: str = "",
 ) -> list[dict]:
     rows = []
-    for award_key in event_award_keys_for_user(db, user.id, competition.id):
+    for award_key in event_award_keys_for_user(
+        db, user.id, competition.id, competition.experience_key
+    ):
         award = AWARDS[award_key]
         rows.append(
             {
@@ -349,7 +382,9 @@ def verify_event_certificate(
         return invalid
     if not bool(getattr(user, "certificates_public", True)):
         return invalid
-    if award_key not in event_award_keys_for_user(db, user_id, competition_id):
+    if award_key not in event_award_keys_for_user(
+        db, user_id, competition_id, competition.experience_key
+    ):
         return invalid
     certificate = build_event_certificate(
         db, user, competition, award_key, include_qr=False, base_url=base_url

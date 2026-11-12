@@ -49,6 +49,14 @@
           <span>Description</span>
           <textarea v-model="newCompetition.description" rows="3" placeholder="What should participants know?" />
         </label>
+        <label class="field">
+          <span>Experience</span>
+          <select v-model="newCompetition.experience_key">
+            <option value="">Standard event</option>
+            <option value="devfest-2027">Cyber Discovery (DevFest 2027)</option>
+          </select>
+          <small class="field__hint">Cyber Discovery adds the investigation, Cyber DNA, GPS, and certificate panels.</small>
+        </label>
 
         <div class="event-logo-field">
           <div class="event-logo-field__preview">
@@ -233,6 +241,7 @@
         >
           <span class="comp-card__top">
             <span class="status-pill" :class="`status-pill--${comp.status}`">{{ statusLabel(comp.status) }}</span>
+            <span v-if="comp.experience_key" class="discovery-pill">Cyber Discovery</span>
             <span v-if="comp.joined" class="joined-pill">Joined</span>
           </span>
           <span class="comp-card__identity">
@@ -265,6 +274,7 @@
               <span class="status-pill" :class="`status-pill--${selected.competition.status}`">
                 {{ statusLabel(selected.competition.status) }}
               </span>
+              <span v-if="selected.competition.experience_key" class="discovery-pill">Cyber Discovery</span>
               <h2>{{ selected.competition.name }}</h2>
               <p class="comp-detail__dates">
                 <ClockIcon />
@@ -433,6 +443,7 @@ const newCompetition = reactive({
   end_at: '',
   lab_ids: [],
   sponsors: [],
+  experience_key: '',
 })
 
 const onCompetitionLogoSelected = async (event) => {
@@ -777,6 +788,7 @@ const createCompetition = async () => {
       end_at: new Date(newCompetition.end_at).toISOString(),
       lab_ids: newCompetition.lab_ids,
       sponsors,
+      experience_key: newCompetition.experience_key || null,
     })
     showCreate.value = false
     await loadCompetitions()
@@ -930,6 +942,13 @@ onMounted(async () => {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-secondary);
+}
+
+.field__hint {
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 .field input,
@@ -1510,6 +1529,18 @@ onMounted(async () => {
 .joined-pill {
   background: var(--warning-bg);
   color: var(--warning);
+}
+
+.discovery-pill {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .muted-note {

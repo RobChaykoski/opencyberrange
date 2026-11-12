@@ -230,22 +230,21 @@ Next:
 
 The event plan is captured in
 [DEVFEST-2027-CYBER-DISCOVERY.md](DEVFEST-2027-CYBER-DISCOVERY.md) and
-`platform/backend/app/data/devfest-2027.yaml`. It reuses Cyber DNA, Cyber GPS,
-role readiness, the competency taxonomy, and the certification question banks.
-It is a planning artifact; no event UI is built yet.
+`platform/backend/app/data/devfest-2027.yaml`. The experience now uses the
+existing event engine: a normal event with `experience_key = "devfest-2027"`
+gets the Cyber Discovery panel and the `discovery` certificate. Seed it with
+`python -m app.scripts.seed_devfest_event --preview` on development.
 
 Next:
 
-1. Build the **Career Stories** learner surface and the SOC/DFIR story briefs.
-2. Add an event-scoped profile and the exclusive `DVF-CYBER-2027` certificate.
-3. Adapt the four morning exercises from existing labs; build the synthetic AI
-   escape room last.
-4. Reuse the afternoon pathways from the role-readiness engine.
-5. Add the instructor event view with aggregate pathway interest and competency
-   gaps, using the existing suppression threshold.
-6. Rehearse the full six hours on development and record the result in
-   `docs/UI-VERIFICATION.md`.
-7. Run `python scripts/check-devfest-plan.py` after any plan edit.
+1. Build the four **Career Stories** briefs in [CAREER-STORIES.md](CAREER-STORIES.md).
+   Start with the SOC and DFIR stories.
+2. Add the event labs or workbook chapters for the stories and map them to the
+   competencies in the plan.
+3. Rehearse the full six hours on development with a mixed cohort.
+4. Capture the event detail, discovery panel, and certificate at 375/768/1024/1440
+   in both themes and record the pass in `docs/UI-VERIFICATION.md`.
+5. Run `python scripts/check-devfest-plan.py` after any plan edit.
 
 ## Known warnings to ignore
 

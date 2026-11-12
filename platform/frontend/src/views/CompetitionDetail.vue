@@ -62,6 +62,13 @@
       </p>
       <SponsorShowcase :sponsors="detail.competition.sponsors || []" />
 
+      <CyberDiscoveryPanel
+        v-if="detail.competition.experience_key"
+        :competition-id="detail.competition.id"
+        :joined="detail.competition.joined"
+        :can-manage="detail.competition.can_manage"
+      />
+
       <section v-if="certificates.length" class="event-certificates">
         <h2>Your event certificates</h2>
         <p>
@@ -248,6 +255,7 @@ import { useRoute } from 'vue-router'
 import axios from '../api/axios'
 import ClockIcon from '../components/icons/ClockIcon.vue'
 import SponsorShowcase from '../components/SponsorShowcase.vue'
+import CyberDiscoveryPanel from '../components/CyberDiscoveryPanel.vue'
 
 const route = useRoute()
 const detail = ref(null)

@@ -103,6 +103,39 @@ The plan captures ten community-proven concepts. They are ranked by the
 The murder mystery is the strongest differentiator: no exploitation, only
 evidence analysis, risk management, communication, and executive reporting.
 
+## Using the existing event engine
+
+The experience is a normal **Competition** event with one extra marker:
+`experience_key = "devfest-2027"`. That marker turns on the Cyber Discovery
+panel on the event detail page and the `discovery` certificate award. The event
+engine continues to own:
+
+- participants and opt-in;
+- the event lab list;
+- the leaderboard;
+- sponsors and the event logo;
+- the certificate and public verification.
+
+Seed the event on a host with:
+
+```bash
+docker compose exec -T backend python -m app.scripts.seed_devfest_event --preview
+```
+
+`--preview` ends the event one minute ago so the certificate can be tested on
+development. Omit it for the real 2027 window, or pass `--start` and `--end`.
+The seed is idempotent: rerunning it refreshes the dates, labs, and sponsors.
+
+The discovery panel reads:
+
+- the event's labs, matched to the four morning investigations;
+- the learner's existing completions and competency evidence;
+- the Cyber DNA snapshot and the four afternoon pathway readiness scores;
+- the exclusive `DVF-CYBER-2027` certificate serial.
+
+The instructor overview uses the same event participants and the configured
+minimum cohort size. It never names a learner.
+
 ## Build order
 
 1. **Career Stories shell** — a learner-facing page that lists the four stories,

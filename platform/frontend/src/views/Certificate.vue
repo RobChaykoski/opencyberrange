@@ -185,6 +185,9 @@
             <p class="certificate__meta-label">Date awarded</p>
             <p class="certificate__meta-value">{{ certificate.issued_display }}</p>
             <p class="certificate__meta-id">Certificate ID {{ certificate.certificate_id }}</p>
+            <p v-if="certificate.certificate_serial" class="certificate__meta-id">
+              Event serial {{ certificate.certificate_serial }}
+            </p>
             <p v-if="safeHttpUrl(certificate.verify_url)" class="certificate__verify">
               <a :href="safeHttpUrl(certificate.verify_url)" target="_blank" rel="noopener noreferrer">
                 Verify this certificate

@@ -81,6 +81,7 @@ def test_catalogue_groups_are_declared():
         "tracks",
         "hidden",
         "custom",
+        "events",
     }
 
 

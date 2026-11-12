@@ -54,6 +54,7 @@ sessions:
           A short capture is the only evidence. Work out what happened, who
           connected, and what data moved.
         tools: [Wireshark, Browser]
+        lab_slugs: [network-1-1-packet-capture-analysis]
         competencies: [NET-021, NET-029, NET-030]
         measures: [Observation, Investigation, Pattern recognition]
         career_paths: [soc-analyst, threat-hunter]
@@ -66,6 +67,7 @@ sessions:
           A suspicious workstation is the scene. Find deleted files, user
           activity, and the evidence that explains the timeline.
         tools: [Autopsy or equivalent, Browser]
+        lab_slugs: [forensics-1-1-windows-memory-volatility]
         competencies: [FOR-005, FOR-007, FOR-011]
         measures: [Curiosity, Investigation, Analytical thinking]
         career_paths: [dfir-analyst, incident-responder]
@@ -78,6 +80,7 @@ sessions:
           Use only public, synthetic information to identify an identity,
           organisation, and location clue. Stay inside the ethical rules.
         tools: [Browser, Search engines]
+        lab_slugs: [osint-1-3-exif-metadata, osint-1-1-public-footprint]
         competencies: [OSINT-001, OSINT-005, OSINT-009]
         measures: [Research skill, Persistence, Open-source intelligence]
         career_paths: [threat-hunter, dfir-analyst]
@@ -90,6 +93,7 @@ sessions:
           A fictional chatbot contains hidden instructions and a sensitive
           project note. Safely uncover the weakness and recommend a fix.
         tools: [Browser, Synthetic chatbot]
+        lab_slugs: [ai-1-1-prompt-injection-basics, ai-1-3-indirect-prompt-injection]
         competencies: [AI-003, AI-005, AI-007]
         measures: [Creativity, Problem solving, Security mindset]
         career_paths: [ai-security-analyst, appsec-engineer]
@@ -113,6 +117,7 @@ sessions:
           - Analyze alerts
           - Investigate activity
           - Build a timeline
+        lab_slugs: [high-school-10-1-rangebox-network-basics, high-school-11-1-rangebox-log-detective]
         competencies: [IR-001, SIEM-002, SOC-001]
       - id: threat-hunter
         title: "Threat Hunter"
@@ -122,6 +127,7 @@ sessions:
           - Hunt for indicators
           - Map MITRE ATT&CK behaviours
           - Present findings
+        lab_slugs: [high-school-11-1-rangebox-log-detective, network-1-1-packet-capture-analysis]
         competencies: [TH-001, TH-004, TH-007]
       - id: ot-security-analyst
         title: "OT Security Analyst"
@@ -130,6 +136,7 @@ sessions:
           - Review Modbus traffic
           - Identify suspicious commands
           - Protect critical infrastructure
+        lab_slugs: [ot-1-1-modbus-register-analysis]
         competencies: [OT-001, OT-006, OT-011]
       - id: ai-security-analyst
         title: "AI Security Analyst"
@@ -138,6 +145,7 @@ sessions:
           - Review prompts
           - Investigate leakage
           - Develop mitigations
+        lab_slugs: [ai-1-1-prompt-injection-basics, ai-1-3-indirect-prompt-injection]
         competencies: [AI-005, AI-007, AI-010]
     output:
       cyber_gps_report: true

@@ -57,6 +57,7 @@ QUIZ_HAT_TRICK = "quiz_hat_trick"
 QUIZ_FIVE_STREAK = "quiz_five_streak"
 QUIZ_TIER_CLIMB = "quiz_tier_climb"
 QUIZ_POLYMATH = "quiz_polymath"
+DEVFEST_DISCOVERY = "devfest_2027_discovery"
 # Learning-time and sign-in streak badges are global (course_id NULL).
 HIDDEN_ACHIEVEMENT_TYPES = {
     SHELL_SHOCKED,
@@ -145,6 +146,7 @@ ACHIEVEMENT_LABELS = {
     QUIZ_FIVE_STREAK: "Five in a Row",
     QUIZ_TIER_CLIMB: "Tier Climb",
     QUIZ_POLYMATH: "Quiz Polymath",
+    DEVFEST_DISCOVERY: "DevFest Cyber Discovery",
 }
 
 ACHIEVEMENT_DESCRIPTIONS = {
@@ -191,6 +193,7 @@ ACHIEVEMENT_DESCRIPTIONS = {
     QUIZ_FIVE_STREAK: "Passed five exercise knowledge checks in a row",
     QUIZ_TIER_CLIMB: "Climbed from below 70% to a perfect sampled check",
     QUIZ_POLYMATH: "Earned perfect sampled checks across three different tracks",
+    DEVFEST_DISCOVERY: "Completed the DevFest Cyber Discovery Experience across four disciplines",
 }
 
 # The three browser-first DevFest starter exercises. These slugs are stable;
@@ -298,6 +301,7 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     QUIZ_FIVE_STREAK: "\U0001F525",
     QUIZ_TIER_CLIMB: "\U0001F4C8",
     QUIZ_POLYMATH: "\U0001F9E0",
+    DEVFEST_DISCOVERY: "\U0001F9ED",
 }
 
 # --- Competition-specific achievements -------------------------------------
