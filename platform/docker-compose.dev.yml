@@ -164,10 +164,37 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # --- Optional SSO stack (profile: sso) ---
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ocr-ldap
+    profiles: ["sso"]
+    environment:
+      LDAP_ORGANISATION: "SWOCTS Cyber Range"
+      LDAP_DOMAIN: "example.org"
+      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:-SsoDemoAdmin!2026}
+      LDAP_TLS: "false"
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ${SSO_DIR:-./deploy/sso}/openldap/bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom/50-bootstrap.ldif:ro
+    restart: unless-stopped
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.42.0
+    container_name: ocr-dex
+    profiles: ["sso"]
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    volumes:
+      - ${SSO_DIR:-./deploy/sso}/dex/runtime/config.yaml:/etc/dex/config.yaml:ro
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   workbook_data:
   wiki_data:
+  ldap_data:
+  ldap_config:
 
 networks:
   docker_control:

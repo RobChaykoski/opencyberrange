@@ -91,3 +91,6 @@ scripts/deploy.log
 
 # User migration exports contain password hashes and PII. Never commit them.
 users-export*.json
+
+# Local SSO demo runtime files contain a generated OIDC client secret.
+deploy/sso/dex/runtime/
