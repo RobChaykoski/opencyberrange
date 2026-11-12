@@ -88,7 +88,8 @@ nav:
     - "Exercise 2.3 -- HTTP Session Hijacking": CH_NET02_PCAP_Forensics/03_HTTP_Session_Hijacking.md
     - "Exercise 2.4 -- DNS Data Exfiltration": CH_NET02_PCAP_Forensics/04_DNS_Data_Exfiltration.md
     - "Exercise 2.5 -- Attack Chain Analysis": CH_NET02_PCAP_Forensics/05_Attack_Chain_Analysis.md
-    - Chapter Review: CH_NET02_PCAP_Forensics/06_Chapter_Review.md
+    - "Exercise 2.6 -- WebSocket C2 Tunnel": CH_NET02_PCAP_Forensics/06_WSTunnel_C2_Tunneling.md
+    - Chapter Review: CH_NET02_PCAP_Forensics/07_Chapter_Review.md
   - "NET03: Firewalls and Network Policy":
     - Introduction: CH_NETSY12_Firewalls/00_Introduction.md
     - "Exercise 3.1 -- Firewall Fundamentals": CH_NETSY12_Firewalls/01_Firewall_Fundamentals.md

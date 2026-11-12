@@ -84,6 +84,7 @@ Frameworks registered but not mapped yet are shown as **Not yet**. They remain i
 | `OT01` | Modbus Fundamentals | OT/ICS Security | `ot_ics` | `NIST_800_82` (NIST SP 800-82 Rev. 3), `IEC_62443` (IEC 62443) |
 | `AI01` | AI Security Foundations | AI Hacking | `ai_security` | `NIST_AI_RMF` (NIST AI Risk Management Framework), `OWASP_LLM` (OWASP Top 10 for LLM Applications) |
 | `OSINT01` | OSINT Foundations | OSINT | `osint` | `NICE` (NICE Workforce Framework for Cybersecurity), `MITRE_ATTACK` (MITRE ATT&CK) |
+| `OSINT02` | Mobile OSINT | OSINT | `—` | — |
 | `BEG01` | RangeBox Foundations | Beginner Cybersecurity | `system_administration` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `BEG02` | Command Line, Files, and Networks | Beginner Cybersecurity | `system_administration` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |
 | `BEG03` | Defensive Evidence | Beginner Cybersecurity | `incident_forensics` | `NICE` (NICE Workforce Framework for Cybersecurity), `NIST_CSF` (NIST Cybersecurity Framework 2.0) |

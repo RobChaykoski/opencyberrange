@@ -1,0 +1,6 @@
+{
+  "implant": "northwind-sync",
+  "task_id": "NW-4471",
+  "task": "stage the dispatch manifest and wait for the next collection window",
+  "task_key": "OCR{w3bs0ck3t_c2_tunn3l_d3t3ct3d}"
+}

@@ -1,0 +1,53 @@
+services:
+  c2-relay:
+    mem_limit: 128m
+    cpus: 0.25
+    build:
+      context: ./containers/relay
+      dockerfile: Dockerfile
+    hostname: c2-relay
+    labels:
+      ip_offset: "60"
+    networks:
+      default:
+      internal:
+    depends_on:
+      - beacon
+    restart: unless-stopped
+
+  victim:
+    mem_limit: 128m
+    cpus: 0.25
+    build:
+      context: ./containers/victim
+      dockerfile: Dockerfile
+    hostname: victim
+    labels:
+      ip_offset: "61"
+    depends_on:
+      - c2-relay
+    restart: unless-stopped
+
+  # The real tasking server. It sits on the protected segment and has no
+  # address on the student lab network, so the only route to it is the relay.
+  # ocr_lab_net="false" keeps the platform from attaching it to the lab bridge.
+  beacon:
+    mem_limit: 64m
+    cpus: 0.25
+    image: nginx:alpine
+    hostname: beacon
+    labels:
+      ocr_lab_net: "false"
+    volumes:
+      - ./containers/beacon/tasking.json:/usr/share/nginx/html/tasking.json:ro
+    networks:
+      internal:
+    restart: unless-stopped
+
+networks:
+  internal:
+    internal: true
+
+# The platform spawns ocr-network-tap at .253 and mirrors every lab container's
+# traffic to it. Students read the live PCAP stream on TCP 9999.
+x-ocr-network-tap: true

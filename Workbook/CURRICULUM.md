@@ -14,7 +14,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | Track ID | Display name | Audience | Difficulty | Prerequisites | Exercises | Duration | Required environment | Recommended next | Role alignment | Status |
 |---|---|---|---|---|---:|---|---|---|---|---|
 | `high-school` | Beginner Cybersecurity | New learners with everyday computer experience and no assumed cybersecurity background. | beginner | None | 18 | 7h 00m | RangeBox with browser, terminal, and beginner lab targets | `netfor` | Entry-level Cyber Defense Analyst; IT Support; SOC Analyst (entry) | published |
-| `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 16 | 14h 00m | RangeBox with terminal, browser, and network lab targets | `webpt` | Network Defender; SOC Analyst; Network Engineer | published |
+| `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 17 | 15h 00m | RangeBox with terminal, browser, and network lab targets | `webpt` | Network Defender; SOC Analyst; Network Engineer | published |
 | `webpt` | Web Application Security | Intermediate learners who can use a terminal and understand HTTP basics. | intermediate | NET00, NET01 | 16 | 21h 35m | RangeBox with browser, terminal, and web lab targets | `software-security` | Application Security Tester; Penetration Tester; Secure Developer | published |
 | `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 2 | 30m | RangeBox with browser and software-security lab targets | `malware` | Secure Developer; Application Security Engineer; Penetration Tester | published |
 | `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | RangeBox with terminal and isolated malware-analysis targets | `forensics` | Malware Analyst; Incident Responder; Threat Intelligence Analyst | published |
@@ -37,7 +37,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `NET00` | Network Foundations | `CH_N0_Network_Foundations` | beginner | None | 3 | 1h 15m | `NET01` | published |
 | `NET01` | Log Analysis | `CH_NET01_Log_Analysis` | beginner | NET00 | 4 | 3h 00m | `NET01B` | published |
 | `NET01B` | Traffic and Log Correlation | `CH_NET01B_Traffic_And_Logs` | beginner | NET01 | 2 | 2h 00m | `NET02` | published |
-| `NET02` | PCAP Forensics | `CH_NET02_PCAP_Forensics` | intermediate | NET01B | 5 | 5h 30m | `NET03` | published |
+| `NET02` | PCAP Forensics | `CH_NET02_PCAP_Forensics` | intermediate | NET01B | 6 | 6h 30m | `NET03` | published |
 | `NET03` | Firewalls and Network Policy | `CH_NETSY12_Firewalls` | intermediate | NET02 | 2 | 2h 15m | `WEB01` | published |
 | `WEB01` | Web Reconnaissance | `CH_WEB01_Web_Reconnaissance` | beginner | NET00 | 6 | 12h 00m | `WEB01B` | published |
 | `WEB01B` | Advanced Recon and Traversal | `CH_WEB01B_Advanced_Recon` | intermediate | WEB01 | 2 | 1h 15m | `WEB02` | published |
@@ -99,8 +99,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 - **Audience:** Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence.
 - **Difficulty:** beginner
 - **Track prerequisites:** BEG04
-- **Exercises:** 16
-- **Estimated duration:** 14h 00m
+- **Exercises:** 17
+- **Estimated duration:** 15h 00m
 - **Required environment:** RangeBox with terminal, browser, and network lab targets
 - **Recommended next track:** `webpt`
 - **Role alignment:** Network Defender, SOC Analyst, Network Engineer

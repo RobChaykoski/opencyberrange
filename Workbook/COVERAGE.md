@@ -12,13 +12,13 @@ links.
 | Identity | 3 |
 | Linux | 30 |
 | Malware | 8 |
-| Network | 16 |
+| Network | 17 |
 | OSINT | 8 |
 | OT | 1 |
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 51 |
-| **Total** | **158** |
+| **Total** | **159** |
 
 ## Labs
 
@@ -101,6 +101,7 @@ links.
 | Network | Horizon Aerospace - Log Correlation Investigation (`network-1-2-log-correlation`) | `wiki/range/netfor/CH_NET01B_Traffic_And_Logs/02_Log_Correlation/` |
 | Network | Multi-Stage Attack Chain Analysis (`network-2-5-attack-chain-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/05_Attack_Chain_Analysis/` |
 | Network | Name or Network? Troubleshooting a Broken Portal (`network-0-3-name-or-network`) | `wiki/range/netfor/CH_N0_Network_Foundations/03_Name_or_Network/` |
+| Network | Northwind Freight - WebSocket C2 Tunnel (`network-2-6-wstunnel-c2-tunneling`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/06_WSTunnel_C2_Tunneling/` |
 | Network | SMTP Email Content Analysis (`network-2-2-smtp-email-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/02_SMTP_Email_Analysis/` |
 | Network | Suspicious Port Scan Detection (`network-1-1-port-scan-detection`) | `wiki/range/netfor/CH_NET01_Log_Analysis/01_Port_Scan_Detection/` |
 | Network | The Internet's Phone Book: DNS Records (`network-0-2-dns-basics`) | `wiki/range/netfor/CH_N0_Network_Foundations/02_DNS_Basics/` |

@@ -258,8 +258,8 @@ tracks:
         display_name: "PCAP Forensics"
         difficulty: "intermediate"
         prerequisites: [NET01B]
-        exercises: 5
-        estimated_minutes: 330
+        exercises: 6
+        estimated_minutes: 390
         recommended_next: NET03
         status: published
         intro: CH_NET02_PCAP_Forensics/00_Introduction.md

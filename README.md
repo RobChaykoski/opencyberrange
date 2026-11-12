@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-2.7.0%20release-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-167-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-168-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -166,8 +166,8 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **158** labs expose a workbook page and appear in the generated curriculum table below |
-| Guided lab instruction | Workbook walkthroughs and analysis questions | **164 workbook pages**, **111 analysis sections**, **407 analysis questions** |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **159** labs expose a workbook page and appear in the generated curriculum table below |
+| Guided lab instruction | Workbook walkthroughs and analysis questions | **165 workbook pages**, **112 analysis sections**, **410 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
@@ -176,9 +176,9 @@ These are current, checkable counts from this repository and metrics the platfor
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
-The badge counts every `lab.yaml` under `platform/labs` (**167** today). A
+The badge counts every `lab.yaml` under `platform/labs` (**168** today). A
 running deployment seeds only the labs that map to a track and level, and the
-generated table below lists the **158** that have a workbook page.
+generated table below lists the **159** that have a workbook page.
 
 ### Release and repositories
 
@@ -349,7 +349,7 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | Track ID | Display name | Audience | Difficulty | Prerequisites | Exercises | Duration | Status |
 |---|---|---|---|---|---:|---|---|
 | `high-school` | Beginner Cybersecurity | New learners with everyday computer experience and no assumed cybersecurity background. | beginner | None | 18 | 7h 00m | published |
-| `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 16 | 14h 00m | published |
+| `netfor` | Network Security | Beginner-to-intermediate learners who need network foundations, log analysis, and packet evidence. | beginner | BEG04 | 17 | 15h 00m | published |
 | `webpt` | Web Application Security | Intermediate learners who can use a terminal and understand HTTP basics. | intermediate | NET00, NET01 | 16 | 21h 35m | published |
 | `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 2 | 30m | published |
 | `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | published |
@@ -361,7 +361,7 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-**Total:** 158 exercises across 12 tracks and 42 chapters.
+**Total:** 159 exercises across 12 tracks and 42 chapters.
 
 Recommended pathway:
 

@@ -259,8 +259,24 @@ def check_compose_valid(lab_dir):
             severity="warning"
         ))
 
-    # Warn about network definitions (platform handles networking)
-    if "networks" in data:
+    # Warn about network definitions (platform handles networking).  A lab that
+    # keeps a protected service off the student bridge (ocr_lab_net="false")
+    # needs its own network, so the warning does not apply to it.
+    services = data.get("services", {})
+
+    def _off_lab(svc_config):
+        if not isinstance(svc_config, dict):
+            return False
+        labels = svc_config.get("labels", {})
+        if isinstance(labels, dict):
+            return str(labels.get("ocr_lab_net", "true")).lower() == "false"
+        if isinstance(labels, list):
+            return any(str(l).replace(" ", "") == "ocr_lab_net:false" for l in labels)
+        return False
+
+    has_off_lab_service = any(_off_lab(svc) for svc in services.values())
+
+    if "networks" in data and not has_off_lab_service:
         results.append(CheckResult(
             "No 'networks' section",
             False,
@@ -269,7 +285,6 @@ def check_compose_valid(lab_dir):
         ))
 
     # Check services
-    services = data.get("services", {})
     has_shared = "x-ocr-shared-containers" in data
     if not services:
         if has_shared:
@@ -293,11 +308,20 @@ def check_compose_valid(lab_dir):
         elif isinstance(labels, list):
             has_offset = any("ip_offset" in str(l) for l in labels)
 
-        results.append(CheckResult(
-            f"Service '{svc_name}' has ip_offset label",
-            has_offset,
-            f"Add 'labels: ip_offset: \"10\"' to service '{svc_name}' for network assignment" if not has_offset else ""
-        ))
+        if _off_lab(svc_config):
+            # Protected-LAN services are deliberately kept off the student
+            # bridge, so they must not claim an address on it.
+            results.append(CheckResult(
+                f"Service '{svc_name}' stays off the student lab network",
+                not has_offset,
+                "Remove ip_offset from a service labelled ocr_lab_net: \"false\"" if has_offset else ""
+            ))
+        else:
+            results.append(CheckResult(
+                f"Service '{svc_name}' has ip_offset label",
+                has_offset,
+                f"Add 'labels: ip_offset: \"10\"' to service '{svc_name}' for network assignment" if not has_offset else ""
+            ))
 
         # Check for build context
         build = svc_config.get("build")

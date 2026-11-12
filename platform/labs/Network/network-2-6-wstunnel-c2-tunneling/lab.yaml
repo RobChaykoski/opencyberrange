@@ -1,0 +1,164 @@
+title: Northwind Freight - WebSocket C2 Tunnel
+category: network-analysis
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - network-2-4-dns-exfiltration
+# By completion students will be able to:
+learning_outcomes:
+  - Explain why an attacker wraps C2 traffic in a WebSocket upgrade
+  - Capture lab traffic from the network tap and isolate the tunnel session
+  - Recognise the HTTP upgrade and the binary frames that carry the beacon
+  - Recover the task key from the tunneled payload
+  - Write a detection that flags the upgrade path rather than the payload
+mapped_skills:
+  - network_systems
+  - incident_forensics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Command and Control
+    technique: T1071.001
+    technique_name: "Application Layer Protocol: Web Protocols"
+    detection: Alert on long-lived WebSocket upgrades to non-application paths and on beacon-sized frames at a fixed interval.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.7.0"
+reviewed_at: "2026-11-12"
+review_status: "automated static proof; live walkthrough pending"
+description: "A workstation is beaconing through a WebSocket relay that hides the real command-and-control server on a protected segment. Capture the tunnel from the network tap, prove the traffic is C2, and recover the task key."
+visibility: public
+flag: "OCR{w3bs0ck3t_c2_tunn3l_d3t3ct3d}"
+
+tools:
+  - tcpdump
+  - tshark
+  - wireshark
+  - nc
+  - curl
+  - python3
+
+scenario: |
+  Northwind Freight rebuilt a dispatch workstation after a ransomware scare.
+  The rebuild restored an application profile that still points at a "sync
+  service", and the workstation is beaconing again.
+
+  The difference this time is the transport. The implant does not talk to the
+  internet directly. It opens a WebSocket to a public relay that looks like an
+  ordinary application endpoint, and the relay forwards the session to the real
+  tasking server on a protected segment. The tasking server has no route from
+  the lab network, so the relay is the only visible half of the conversation.
+
+  You are the SOC analyst on shift. Capture the segment from the network tap,
+  prove the WebSocket session is carrying command-and-control, and recover the
+  task key the real server returns.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If the capture is empty, connect to the tap for longer than one beacon interval (the victim checks in every few seconds). Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Treat long-lived WebSocket upgrades to non-application paths as suspicious, baseline beacon intervals, and deny egress from workstations to relays that are not on the approved proxy list."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-12"
+workbook: "wiki/range/netfor/CH_NET02_PCAP_Forensics/06_WSTunnel_C2_Tunneling/"
+
+hostnames:
+  - ip_offset: "60"
+    hostname: "c2-relay"
+    description: "Public WebSocket relay (wstunnel server) on TCP 8080"
+  - ip_offset: "61"
+    hostname: "victim"
+    description: "Synthetic dispatch workstation running the tunnel client"
+  - ip_offset: "253"
+    hostname: "network-tap"
+    description: "Live PCAP stream on TCP 9999"
+
+topology:
+  nodes:
+    - id: "relay"
+      label: "WebSocket Relay"
+      type: "server"
+      ip_offset: "60"
+      ports: [8080]
+      services: ["websocket"]
+      x: 3
+      y: 1
+    - id: "victim"
+      label: "Dispatch Workstation"
+      type: "workstation"
+      ip_offset: "61"
+      ports: []
+      services: []
+      x: 1
+      y: 1
+    - id: "network-tap"
+      label: "Network Tap"
+      type: "sensor"
+      ip_offset: "253"
+      ports: [9999]
+      services: ["pcap-stream"]
+      x: 2
+      y: 2
+  edges:
+    - from: "victim"
+      to: "relay"
+      label: "WebSocket:8080"
+      access: "direct"
+    - from: "victim"
+      to: "network-tap"
+      label: "mirrored traffic"
+      access: "passive"
+
+hints:
+  - text: |
+      Start with the relay. `curl -i http://c2-relay:8080/` answers 400 Bad
+      Request: the listener only speaks the WebSocket upgrade, which is exactly
+      what the implant wants a proxy to believe is normal traffic.
+    unlock_after_minutes: 0
+  - text: |
+      Capture the segment from the tap:
+
+      timeout 30 nc network-tap 9999 > /tmp/tunnel.pcap
+
+      The victim checks in every few seconds, so a 30-second window is enough.
+      If the file is empty, the tap had not attached yet; reconnect and wait.
+    unlock_after_minutes: 8
+  - text: |
+      Find the upgrade in the capture:
+
+      tshark -r /tmp/tunnel.pcap -Y 'http.request' -T fields -e http.request.uri
+
+      The path is `/v1`, the default wstunnel upgrade prefix. The tasking
+      request and response travel as binary WebSocket frames after the upgrade,
+      so the HTTP dissector shows only the handshake.
+    unlock_after_minutes: 18
+  - text: |
+      The payload is not encrypted by the tunnel. Search the capture bytes:
+
+      strings /tmp/tunnel.pcap | grep -o 'OCR{[^}]*}'
+
+      That marker is the task key the real server returned through the relay.
+    unlock_after_minutes: 28
+
+test:
+  steps:
+    - name: "Relay rejects plain HTTP"
+      command: "curl -s -o /dev/null -w '%{http_code}' --max-time 10 http://{target.c2-relay}:8080/"
+      expect: "400"
+      timeout: 25
+
+    - name: "Tasking server is not reachable from the lab network"
+      command: "curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://beacon:80/tasking.json"
+      expect: "000"
+      timeout: 20
+
+    - name: "Live capture contains the WebSocket upgrade"
+      command: "timeout 25 nc {target.network-tap} 9999 > /tmp/ws-tunnel.pcap; python3 -c \"d=open('/tmp/ws-tunnel.pcap','rb').read().lower(); print('websocket' if b'upgrade: websocket' in d else 'missing')\""
+      expect: "websocket"
+      timeout: 60
+
+    - name: "Capture contains the task key"
+      command: "python3 -c \"d=open('/tmp/ws-tunnel.pcap','rb').read(); i=d.find(b'OCR{'); print(d[i:d.find(b'}',i)+1].decode() if i>=0 else 'missing')\""
+      expect: "OCR{w3bs0ck3t_c2_tunn3l_d3t3ct3d}"
+      timeout: 20
