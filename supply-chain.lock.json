@@ -640,6 +640,10 @@
         "web-server"
       ]
     },
+    "network-12-2-device-topology-engine": {
+      "content_hash": "771c04b000e3e57c536e744c372539757ad7948391d03411a74a4e6d55da9260",
+      "services": []
+    },
     "network-12-2-firewall-policy-hardening": {
       "content_hash": "9809e0d8f8162a6c582f6a7a733b7350531d7e70d7d1ae2414ffffd4471aa0d9",
       "services": [

@@ -17,6 +17,8 @@ from contextlib import contextmanager
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta, timezone
 
+from app.services.topology_engine import TopologyError, expand as expand_topology
+
 try:
     import fcntl
 except ImportError:  # Windows development hosts: fall back to a thread lock
@@ -1691,6 +1693,21 @@ fi
 
         if not compose_data:
             raise Exception(f"No compose configuration found for {lab_slug} (no DB content, no file at {compose_file})")
+
+        # Optional network-device topology. The engine validates the lab's
+        # x-ocr-topology block, allocates per-session /29 links, and returns the
+        # networks, static addresses, and node environment. A malformed or
+        # unsafe topology fails the spawn before any container starts.
+        try:
+            topology = expand_topology(
+                compose_data,
+                user_id=user_id,
+                lab_slug=lab_slug,
+                second_octet=second_octet,
+                third_octet=third_octet,
+            )
+        except TopologyError as exc:
+            raise Exception(f"Invalid topology for {lab_slug}: {exc}") from exc
         
         # Set environment variables for docker-compose
         env = os.environ.copy()
@@ -1763,15 +1780,26 @@ fi
             if aliases:
                 net_cfg["aliases"] = aliases
             svc_override["networks"] = {"default": net_cfg}
+            topo_networks = (topology.get("service_networks") or {}).get(svc_name)
+            if topo_networks:
+                svc_override["networks"].update(topo_networks)
             # Per-SERVICE injection: only the service the template's env_contract
             # scoped a var to receives it, so FLAG/creds never leak into peer
             # containers. Empty for every non-template lab -> strict no-op.
             svc_env = instance_env.get(svc_name) if instance_env else None
             if svc_env:
                 svc_override["environment"] = dict(svc_env)
+            topo_env = (topology.get("service_env") or {}).get(svc_name)
+            if topo_env:
+                svc_override.setdefault("environment", {}).update(topo_env)
+            topo_sysctls = (topology.get("service_sysctls") or {}).get(svc_name)
+            if topo_sysctls:
+                svc_override["sysctls"] = dict(topo_sysctls)
             services_override[svc_name] = svc_override
         if services_override:
             override_data["services"] = services_override
+        if topology.get("networks"):
+            override_data["networks"].update(topology["networks"])
 
         override_fd, override_path = tempfile.mkstemp(
             suffix=".yml", prefix=f"lab_{user_id}_override_"

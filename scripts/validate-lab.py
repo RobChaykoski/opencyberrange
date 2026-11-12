@@ -405,6 +405,7 @@ def check_flag_consistency(lab_dir):
     if not dockerfiles:
         # Check if this lab uses shared containers (no local Dockerfiles expected)
         uses_shared = False
+        uses_topology = False
         external_build = []
         if os.path.exists(compose_path):
             try:
@@ -412,6 +413,15 @@ def check_flag_consistency(lab_dir):
                     compose_data = yaml.safe_load(f)
                 uses_shared = isinstance(compose_data, dict) and "x-ocr-shared-containers" in compose_data
                 services = (compose_data or {}).get("services", {}) if isinstance(compose_data, dict) else {}
+                uses_topology = (
+                    isinstance(compose_data, dict)
+                    and "x-ocr-topology" in compose_data
+                    and bool(services)
+                    and all(
+                        str((svc or {}).get("image", "")).startswith("ocr-lab/topology-node")
+                        for svc in services.values()
+                    )
+                )
                 for svc in services.values():
                     build = svc.get("build") if isinstance(svc, dict) else None
                     if not isinstance(build, dict) or not build.get("context"):
@@ -427,6 +437,12 @@ def check_flag_consistency(lab_dir):
                 "Dockerfiles found",
                 True,
                 "No local Dockerfiles - uses shared containers"
+            ))
+        elif uses_topology:
+            results.append(CheckResult(
+                "Dockerfiles found",
+                True,
+                "Uses the reviewed topology node image"
             ))
         elif external_build:
             results.append(CheckResult(

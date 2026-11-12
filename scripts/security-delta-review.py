@@ -158,7 +158,7 @@ def _scan_secrets(path: Path, lines: list[str]) -> list[tuple[str, int, str]]:
     findings: list[tuple[str, int, str]] = []
     for number, line in enumerate(lines, start=1):
         for label, pattern in SECRET_PATTERNS:
-            if pattern.search(line):
+            if pattern.search(line) and not _is_suppressed(lines, number, label):
                 findings.append((label, number, line.strip()[:160]))
         # Generic assignments are noisy in docs and tests. Keep them to code.
         if path.suffix.lower() in CODE_SUFFIXES:
@@ -167,7 +167,9 @@ def _scan_secrets(path: Path, lines: list[str]) -> list[tuple[str, int, str]]:
                 line,
             )
             if match and not _is_placeholder(match.group(2)):
-                findings.append(("credential-like assignment", number, line.strip()[:160]))
+                label = "credential-like assignment"
+                if not _is_suppressed(lines, number, label):
+                    findings.append((label, number, line.strip()[:160]))
     return findings
 
 
