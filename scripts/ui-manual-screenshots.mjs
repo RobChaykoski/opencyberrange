@@ -121,7 +121,7 @@ try {
     await shot(
       dark.page,
       '.dna-section',
-      path.join(STUDENT_IMG, 'profile-dna.png'),
+      path.join(STUDENT_IMG, 'profile-cyber-dna.png'),
       'Cyber DNA section'
     )
     await shot(

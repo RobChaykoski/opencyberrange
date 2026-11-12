@@ -75,9 +75,10 @@ Status: **implemented; deployed to development; GPS screenshots captured on 12 N
   administrator; `/api/analytics/reports/curriculum-demand` returned five
   reporting courses and ten prioritised prompts.
 - **Not yet verified:** screenshots for the Portfolio tab, taxonomy, exercise
-  heatmap, and Curriculum demand at 375/768/1024/1440 in both themes. The GPS
-  screenshots are captured. Capture the remaining views on development and
-  replace the preview images before announcing the preview.
+  heatmap, and Curriculum demand at 375/768/1024/1440 in both themes. Cyber DNA,
+  GPS, Momentum, Career Atlas, Admin Features, and the workbook reading view are
+  live captures. Capture the remaining views on development and replace the
+  preview images before announcing the preview.
 
 ### Achievement studio and question banks (12 November 2026)
 

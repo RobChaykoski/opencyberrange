@@ -18,6 +18,12 @@
       "docs_dir": "Workbook",
       "theme": "deep purple"
     },
+    "identity": {
+      "auth": "student",
+      "config": "mkdocs-identity.yml",
+      "docs_dir": "Workbook",
+      "theme": "deep purple"
+    },
     "linpt": {
       "auth": "student",
       "config": "mkdocs-linpt.yml",

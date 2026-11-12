@@ -1,7 +1,7 @@
 # Next steps after 2.7.0
 
-Status: **paused** on 11 November 2026. Everything below is queued; nothing is
-in progress.
+Status: **in progress**; live manual screenshots refreshed on 12 November 2026.
+Everything below is queued unless marked complete.
 
 ## Baseline
 
@@ -107,19 +107,25 @@ Work items:
 3. **Run the frontend gates:** `npm run lint` and `npm run build` in
    `platform/frontend`.
 4. **Capture the manual screenshots from development** with a real learner and an
-   administrator:
+   administrator. **Completed 12 November 2026** for the Cyber DNA and Cyber GPS
+   views, and refreshed for Momentum, the Career Atlas, and Admin Features:
    ```bash
    UI_BASE_URL=https://172.16.16.44 \
    UI_SMOKE_USERNAME='<learner>' UI_SMOKE_PASSWORD='<password>' \
-   node scripts/ui-manual-screenshots.mjs
+   node platform/frontend/ui-dna-screenshots.mjs
    ```
-   The script writes:
-   - `Manual-Lite/02_Student_Guide/img/profile-dna.png`
+   The live captures are:
+   - `Manual-Lite/02_Student_Guide/img/profile-cyber-dna.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-dna-tree.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-dna-continuing-education.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-dna-class.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-cyber-gps.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-cyber-gps-signal.png`
    - `Manual-Lite/02_Student_Guide/img/profile-momentum.png`
    - `Manual-Lite/02_Student_Guide/img/profile-careers.png`
    - `Manual-Lite/04_Admin_Guide/img/admin-settings-features.png`
-   The committed preview images are design illustrations, not live captures. A
-   real capture must replace them before the preview is announced.
+   - `Workbook/assets/workbook-reading.png`
+   The workbook capture comes from `platform/frontend/ui-workbook-screenshot.mjs`.
 5. **Review the manual pages** after the capture:
    - `Manual-Lite/02_Student_Guide/21_Career_Atlas_And_Momentum.md`
    - `Manual-Lite/02_Student_Guide/16_Viewing_Your_Profile.md`
