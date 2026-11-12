@@ -11,6 +11,7 @@ import base64
 import hashlib
 import logging
 import secrets
+import ssl
 import time
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
@@ -167,6 +168,18 @@ def exchange_code(
     return payload
 
 
+def _jwk_client(document: dict) -> jwt.PyJWKClient:
+    context = ssl.create_default_context()
+    if settings.SSO_ALLOW_INSECURE_HTTP:
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+    return jwt.PyJWKClient(
+        str(document["jwks_uri"]),
+        timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+        ssl_context=context,
+    )
+
+
 def validate_id_token(provider: IdentityProvider, id_token: str, nonce: str) -> dict:
     config = provider_config(provider)
     document = discover(provider)
@@ -174,7 +187,7 @@ def validate_id_token(provider: IdentityProvider, id_token: str, nonce: str) -> 
     client_id = str(config.get("client_id", ""))
     algorithms = document.get("id_token_signing_alg_values_supported") or ["RS256"]
     try:
-        jwk_client = jwt.PyJWKClient(str(document["jwks_uri"]))
+        jwk_client = _jwk_client(document)
         signing_key = jwk_client.get_signing_key_from_jwt(id_token)
         claims = jwt.decode(
             id_token,
