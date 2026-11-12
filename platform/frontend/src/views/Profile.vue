@@ -454,6 +454,7 @@
           role="tabpanel"
           aria-labelledby="profile-tab-careers"
         >
+          <CareerGps />
           <CareerAtlas
             v-if="summary?.skill_dna?.career_atlas"
             :atlas="summary.skill_dna.career_atlas"
@@ -478,9 +479,6 @@
           </p>
           <ExpandableSection title="Career readiness" meta="What your evidence supports today">
             <RoleReadinessPanel />
-          </ExpandableSection>
-          <ExpandableSection title="Cyber GPS" meta="Where your practice could take you">
-            <CareerGps />
           </ExpandableSection>
           <ExpandableSection title="Portfolio evidence" meta="Work you can show an employer">
             <PortfolioPanel />
