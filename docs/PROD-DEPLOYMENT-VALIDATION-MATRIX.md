@@ -60,11 +60,13 @@ notes.
     education, 30-day trend, evidence-strength point sizing) and the RangeBox
     refinements (quality presets, Ctrl+Alt+Del, native fullscreen, flag capture,
     text-only file guard, pop-out window, workbook embed) were deployed to dev
-    `.44` and verified. Manual screenshots were captured from the dev profile:
-    `Manual-Lite/02_Student_Guide/img/profile-cyber-dna.png`,
+    `.44` at `ad659047` and verified. Manual screenshots were captured from the
+    dev profile: `Manual-Lite/02_Student_Guide/img/profile-cyber-dna.png`,
     `profile-dna-tree.png`, `profile-dna-continuing-education.png`,
-    `profile-cyber-gps.png`, and `Workbook/assets/workbook-reading.png`. This
-    note does not change the production gate: P4 and P5 remain NOT RUN.
+    `profile-cyber-gps.png`, and `Workbook/assets/workbook-reading.png`. The
+    rendered manual page `.../22_Navigating_Your_Cyber_DNA/` and the workbook
+    Home both loaded with all images. This note does not change the production
+    gate: P4 and P5 remain NOT RUN.
 
 - Required PASS: 31
 - Required FAIL: 0
