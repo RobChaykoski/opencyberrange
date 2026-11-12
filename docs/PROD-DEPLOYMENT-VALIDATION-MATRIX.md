@@ -43,23 +43,23 @@ notes.
 | D5 | Ledger attribution | No | WARN | 6,928 of 7,785 rows unattributed (seed/CLI/system writes); review queue noisy |
 | D6 | Stale lab rows | No | PASS | 178 DB labs = 169 repo + 9 intentional `demotest-*` |
 | P1 | Backup restore drill | Yes | PASS | `pg_dump` + `pg_restore` into a scratch database; counts match exactly (141 users, 178 labs, 230 completions, 158 achievements) |
-| P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | NOT RUN | Dev was already on 2.7.x |
-| P3 | Rollback rehearsal | Yes | NOT RUN | No documented rollback test this cycle |
-| P4 | Signed release tag | Yes | NOT RUN | `v2.7.0` remains the documented unsigned exception; new tag not cut |
-| P5 | Production-shaped host rehearsal | Yes | NOT RUN | No staging host identical to production |
-| P6 | Email delivery | Yes | NOT RUN | No SMTP transaction tested |
+| P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | PASS | Scratch DB downgraded 0014 -> 0011 (2.6-era head) and upgraded back to 0014; row counts unchanged (141/178/230) |
+| P3 | Rollback rehearsal | Yes | PASS | Full `pg_dump`/`pg_restore` rollback plus the Alembic downgrade path above |
+| P4 | Signed release tag | Yes | NOT RUN | No release signing key is available in this environment; tag signing remains an operator step |
+| P5 | Production-shaped host rehearsal | Yes | NOT RUN | No second production-shaped host; dev uses the dev compose profile |
+| P6 | Email delivery | Yes | PASS | Mailpit sink on the compose network; `/api/settings/mail/test` delivered "SWOCTS Cyber Range mail test" to admin@example.com |
 | P7 | WireGuard / Peer Manager | Yes | PASS | Hardened build on `172.17.0.1:5000`; `/peers` returns 401 without a key and 200 with the backend key; `preshared_key` nulled |
-| P8 | RangeBox desktop launch | Yes | NOT RUN | No interactive desktop session this cycle |
+| P8 | RangeBox desktop launch | Yes | PASS | Spawned session 497 (`high-school-9-1-rangebox-first-steps`): running in 15s, RangeBox and portal containers up, stop initiated |
 | P9 | Exhaustive button/flow E2E | No | PARTIAL | Route-level Playwright smoke passed; not every button |
 | P10 | Dependency/image digest pinning | No | PARTIAL | Base images remain tag-pinned; digests reported at runtime |
 
 ## Result
 
-- Required PASS: 27
+- Required PASS: 31
 - Required FAIL: 0
-- Required NOT RUN: 6 (P2-P6, P8)
+- Required NOT RUN: 2 (P4 signed tag, P5 production-shaped host)
 - Warnings: 1 (D5)
-- Completion: **27 of 33 required gates (82%)**
+- Completion: **31 of 33 required gates (94%)**
 
 **Decision: DO NOT PROMOTE.** The application is healthy on dev, but the
 production-readiness gates for restore, upgrade/rollback rehearsal, signed
@@ -79,5 +79,5 @@ release, and the infrastructure integrations are not complete.
 | Role | Name | Decision | Date |
 |---|---|---|---|
 | Release owner | | | |
-| Data analyst | | Conditional (see D5) | 2026-11-12 |
+| Data analyst | | PASS on P1-P3; D5 conditional | 2026-11-12 |
 | Security reviewer | | PASS on P7; P4/P10 pending | 2026-11-12 |
