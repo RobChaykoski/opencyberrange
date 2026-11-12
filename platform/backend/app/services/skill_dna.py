@@ -873,7 +873,11 @@ def build_skill_dna(db: Session, user: User) -> dict:
             "labs": signals["quiz_labs"],
             "accuracy": signals["quiz_accuracy"],
         },
-        "signals": signals,
+        "signals": {
+            key: value.isoformat() if isinstance(value, datetime) else value
+            for key, value in signals.items()
+            if key != "branch_last_activity"
+        },
     }
 
 
