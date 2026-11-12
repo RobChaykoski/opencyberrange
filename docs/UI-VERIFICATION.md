@@ -28,6 +28,17 @@ Status: **deployed to development; production unchanged.**
   non-root UID 10001 and named volumes, and a restore drill from the backups
   volume.
 
+## Public About contrast (12 November 2026)
+
+The public About page's **Create an account** primary button was unreadable in
+dark mode: `.public-about a` set the link colour to the accent blue and
+overrode the button's white text. The rule is now scoped to
+`.public-about a:not(.btn)`.
+
+Verified with `platform/frontend/ui-about-contrast.mjs` against production
+`172.16.16.41`: white text on `rgb(37, 99, 235)`, contrast **5.17:1** (WCAG AA
+requires 4.5:1 for normal text).
+
 ## Advanced DNA Insights preview (development)
 
 Status: **implemented in the development tree; deployed to `.44`; live profile

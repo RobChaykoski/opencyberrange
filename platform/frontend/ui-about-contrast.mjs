@@ -1,12 +1,18 @@
 import { chromium } from 'playwright'
 
+const BASE = (process.env.UI_BASE_URL || 'http://localhost:4173').replace(/\/$/, '')
+const PATH = process.env.UI_ABOUT_PATH || '/about'
+
 const browser = await chromium.launch({ headless: true })
-const context = await browser.newContext({ viewport: { width: 1280, height: 900 } })
+const context = await browser.newContext({
+  ignoreHTTPSErrors: true,
+  viewport: { width: 1280, height: 900 },
+})
 await context.addInitScript(() => {
   localStorage.setItem('theme', 'dark')
 })
 const page = await context.newPage()
-await page.goto('http://localhost:4173/about', { waitUntil: 'networkidle', timeout: 60000 })
+await page.goto(`${BASE}${PATH}`, { waitUntil: 'networkidle', timeout: 60000 })
 const button = page.locator('.public-about__actions .btn--primary').first()
 await button.waitFor({ state: 'visible', timeout: 15000 })
 const styles = await button.evaluate((node) => {
