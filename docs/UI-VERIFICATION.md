@@ -4,6 +4,48 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## Release 4 QA and dev deployment (12 November 2026)
+
+Status: **deployed to development `.44`; production unchanged.** Platform
+`/api/version` reports `4`.
+
+### Automated checks
+
+| Check | Result |
+|---|---|
+| Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **510 passed, 0 failed** |
+| Backend suite without a database | **293 passed, 217 skipped** |
+| Lab validator (`validate-lab.py --all`) | **169 labs, 0 errors, 0 warnings** |
+| Relative links in README, docs, Manual-Lite, Workbook | **479 files, all resolve** |
+| Frontend build | **Passed** |
+| Frontend lint | **0 errors** (existing warnings only) |
+| Licence guard (`check-licences.py`) | **OK** |
+| Supply-chain lock + signature | **OK, release 4** |
+
+### Deployed smoke tests
+
+- `/api/version` = `4`; `/health` healthy.
+- `/login`, `/sso/callback`, `/exercises`, `/profile`, `/admin` return the SPA.
+- Institution sign-in lists the Dex OIDC and LDAP providers.
+- LDAP student login + ticket exchange = student; instructor = instructor, and
+  the directory role refresh applied on the second login.
+- Full OIDC flow (Dex → LDAP connector → callback → ticket exchange) = student.
+- Admin-only endpoints return `401` without a token.
+- `/docs`, `/redoc`, and `/openapi.json` return `404` on the public origin.
+- `enable_api_docs` toggles `200 → 404` on the direct backend port immediately.
+- `advanced_dna_insights_enabled` removes/adds the career atlas payload.
+- The built SPA contains the new **Practice this branch**, **How this is
+  calculated**, **No evidence yet**, and **Established** strings.
+
+### Known gaps
+
+- The network device topology engine is not part of this deployed build; it
+  remains planned work.
+- Production has not been upgraded to Release 4.
+- SAML single logout and a formal SSO security review remain.
+- LTI, multi-tenancy, per-student accommodations, a signed VPAT, SOC 2, and
+  ISO 27001 are Release 5 (`docs/RELEASE-5-SCOPE.md`).
+
 ## Hardening deployment (12 November 2026)
 
 Status: **deployed to development; production unchanged.**
