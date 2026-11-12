@@ -156,6 +156,28 @@ fail and the non-fatal `|| echo WARNING` paths would hide it.
 - The desktop boxes should standardize on `/etc/sudoers.d/` drop-ins; RangeBox
   and UbuntuBox currently append to `/etc/sudoers` directly.
 
+## Network tap
+
+### Fixed
+
+- **The capture no longer contains itself.** The tap mirrors every lab frame,
+  including a student's own connection to port 9999. The `not port 9999` BPF
+  filter is restored, so captures show lab traffic instead of the pcap stream.
+- **Dead promiscuous-mode copy removed.** `platform/labs/_shared/network-tap/`
+  duplicated the old design that the backend comments call insufficient. The
+  live sidecar is `platform/network-tap/`.
+- **Healthcheck added.** The image probes the 9999 listener, so a failed tap
+  reports unhealthy instead of looking like an empty capture inside a lab.
+
+Verification on development: the rebuilt image listens on 9999, emits a valid
+pcap header (`d4 c3 b2 a1`) through `socat`, and accepts the filter expression.
+`validate-lab.py --all` still reports 167 labs, 0 errors, 0 warnings.
+
+### Follow-up
+
+- Run the tap as a non-root user with `NET_RAW`/`NET_ADMIN` file capabilities
+  (`setcap` on `tcpdump`) to match the backend non-root work.
+
 ## Performance
 
 - Postgres now runs with explicit `shared_buffers`, `effective_cache_size`,
@@ -171,10 +193,11 @@ fail and the non-fatal `|| echo WARNING` paths would hide it.
 ## Remaining backlog
 
 1. Move the SPA token to an HttpOnly cookie and add a refresh flow.
-2. Add the nginx header includes and tighten `connect-src`.
-3. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
-4. Add `vue/no-v-html` and the CSP hash CI check.
-5. Switch RangeBox to supervisord and pin its toolchain.
-6. Add warning-level shellcheck and a disposable-VM installer rehearsal.
+2. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
+3. Switch RangeBox to supervisord and pin its toolchain.
+4. Run the network tap as non-root with file capabilities.
+5. Add warning-level shellcheck and a disposable-VM installer rehearsal;
+   error-level shellcheck already runs in `quality.yml`.
+6. Add a CI regression check for the host `DOCKER-USER` isolation rules.
 7. Archive or delete the stale `opencyberrange-backup` repository after the
    secret scan is accepted; keep the scan evidence with the release notes.

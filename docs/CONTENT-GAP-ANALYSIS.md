@@ -66,6 +66,18 @@ Students use Docker directly (RangeBox). Labs that need no new images:
 - secrets in images;
 - a poisoned CI/CD pipeline (action or artifact).
 
+### 5. Blue-team depth
+
+Offence coverage is strong; defence is thin (Suricata, log correlation, one
+firewall pair). Add:
+
+- a SIEM exercise that queries the platform's own event schema;
+- a threat-hunting exercise that finds the pivot in a provided capture from the
+  network tap;
+- a workbook-format incident-response tabletop;
+- Linux disk forensics with the `sleuthkit`/`foremost` tools already installed,
+  complementing the Windows memory lab.
+
 ## Smaller gaps
 
 - Applied cryptography for adults: hashing, password storage, TLS interception,
@@ -85,13 +97,53 @@ Students use Docker directly (RangeBox). Labs that need no new images:
   ever.
 - Cloud-provider labs: real account and cost risk; revisit only with a sponsor.
 
+## Emulator and routing opportunities
+
+Docker-only options, ranked by fit. None requires KVM or a redistributed vendor
+image:
+
+1. **FRRouting containers.** Real BGP/OSPF/MPLS on plain containers. Route
+   hijack and origin-authentication labs pair directly with the network tap.
+2. **containerlab.** Declares FRR/cEOS/SR Linux topologies as data; needs
+   privileged containers, so borrow its topology format for a compose extension.
+3. **CAN bus (python-can, cantools, ICSim).** A virtual interface makes one
+   container a whole bus; supports spoofing, replay, and IDS labs.
+4. **OpenPLC / pyModbus.** Extends the OT track with a debrief-friendly target.
+5. **Mininet.** SDN/OpenFlow labs; heavier and more niche than the options above.
+6. **FirmAE/Firmadyne.** IoT firmware emulation; needs KVM, so schedule it after
+   the others.
+
+Avoid Cisco Packet Tracer (proprietary, licence-incompatible) and committed
+vendor images (IOS, cEOS). Ship the lab and let instructors supply images
+out-of-band, as the Wordlists policy already does.
+
+## Backlog: teach the platform you built
+
+Cheapest and most differentiated labs, because the tooling already ships:
+
+| Lab | Reuses | Cost |
+|---|---|---|
+| C2 tunnelling with wstunnel | The wstunnel binary the platform installs | Low |
+| Valkey attack surface (unauthenticated `CONFIG SET`, then the hardened fix) | The platform's own rate-limit store | Low |
+| Applied crypto: bcrypt/argon2, salting, MultiFernet key rotation | The platform's `crypto.py` rotation path | Low |
+| Capstone: audit your own range | Supply-chain lock, CSP-hash, and header scripts | Low |
+| BGP route hijack and detection | FRR plus the network tap | Medium |
+| Network forensics with RemnuxBox | The RemnuxBox image | Low |
+| CAN bus spoofing and IDS | python-can virtual bus | Low-Medium |
+
+Every emulator and capture lab should set `x-ocr-network-tap: true` so students
+watch their own traffic on the wire.
+
 ## Sequencing
 
-1. OT labs: the tester image is ready.
-2. AD labs: the RangeBox toolchain is ready.
-3. Container/CI/CD labs: no new images.
-4. Software-security arc.
-5. Blue-team depth.
+1. Quick wins: wstunnel tunnelling, Valkey attack surface, applied crypto, and
+   the audit-your-own-range capstone.
+2. OT labs: the tester image is ready.
+3. AD labs: the RangeBox toolchain is ready.
+4. Container/CI/CD labs: no new images.
+5. BGP route hijack with FRR and the tap.
+6. Network forensics with RemnuxBox, then CAN bus.
+7. Software-security arc and blue-team depth.
 
 Add each new track's `_track_quiz.yaml` and framework mapping in the same PR as
 its labs; `validate-lab.py` and the new-lab scaffolding enforce the metadata.
