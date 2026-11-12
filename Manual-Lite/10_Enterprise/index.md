@@ -111,6 +111,9 @@ claim mapping, and troubleshooting, see
 - **Identity providers:** the settings screen stores LDAP, OIDC, and SAML
   configuration and encrypts bind passwords, client secrets, and private keys.
   OIDC, SAML, and LDAP login are active in Release 4.
+- **API documentation:** `/docs`, `/redoc`, and `/openapi.json` are not proxied
+  on the public origin; nginx returns 404. The backend gate is default-off as
+  defense in depth for direct localhost access.
 - **Secrets:** protect `WG_ENCRYPTION_KEY` and database backups. The identity
   provider secrets use the same Fernet key as WireGuard keys.
 - **Node agents:** never expose the Docker socket or the node-agent port

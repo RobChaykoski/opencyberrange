@@ -30,6 +30,8 @@ the privacy, accessibility, and API-exposure corrections.
 - The API-docs and module gates read their setting fresh on every request, so an
   administrator disabling either takes effect immediately instead of after the
   settings cache expires.
+- nginx returns 404 for `/docs`, `/redoc`, and `/openapi.json` on the public
+  origin; API documentation is never served through the learner-facing host.
 
 ### Privacy
 - Subject-access export now includes external identity links and SSO session

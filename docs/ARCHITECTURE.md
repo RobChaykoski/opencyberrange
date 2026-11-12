@@ -125,7 +125,7 @@ flowchart TB
 
 | Boundary | Control |
 |---|---|
-| Internet → frontend | TLS, nginx, API rate limits, CSP/security headers |
+| Internet → frontend | TLS, nginx, API rate limits, CSP/security headers; `/docs`, `/redoc`, and `/openapi.json` return 404 at nginx |
 | Frontend → backend | Private Compose network; backend bound to localhost on the host |
 | Backend → Docker | Docker socket; treat the backend host and `docker` group as privileged |
 | Application → database | Parameterized ORM/SQL, least-privilege app role, backup and restore checks, append-only change ledger, signed table checksums; manual SQL is recorded as unattributed |
