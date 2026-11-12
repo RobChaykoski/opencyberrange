@@ -1,8 +1,8 @@
 # Production deployment validation matrix - 2.7.x upgrade
 
-Status: **NOT READY FOR PRODUCTION** (see the gate rule).
-Environment: development host `172.16.16.44` (`ocrv2`), release `2.7.0`,
-validated 12 November 2026.
+Status: **DEPLOYED BY EXPLICIT OWNER OVERRIDE; GATE STILL NOT SATISFIED** (P4/P5 NOT RUN).
+Environment: development host `172.16.16.44` (`ocrv2`) and production host
+`172.16.16.41` (`rchaykoski`), release `2.7.0`, deployed 12 November 2026.
 
 ## Gate rule
 
@@ -81,6 +81,25 @@ notes.
 production-readiness gates for restore, upgrade/rollback rehearsal, signed
 release, and the infrastructure integrations are not complete.
 
+## Production deployment evidence (explicit override)
+
+The release owner explicitly overrode the gate on **12 November 2026** and
+deployed production `172.16.16.41` as `rchaykoski`. P4 and P5 remain **NOT RUN**;
+this section records what was actually deployed, not a gate pass.
+
+| Check | Evidence |
+|---|---|
+| Pre-deploy backup | `~/opencyberrange/.backups/prod-pre-deploy-20261112_190547/labdb.dump` (796 KB, `pg_restore -l` valid) |
+| Pre-deploy database | Head `0008_mitre_attack`; 42 users, 164 labs, 124 completions |
+| Post-deploy database | Head `0014_performance_indexes`; 42 users, 169 labs, 124 completions |
+| Migrations | `0008 -> 0009 -> 0010 -> 0011 -> 0012 -> 0013 -> 0014` completed on startup |
+| New lab images | Prebuilt the 5 new labs before discovery; all images present |
+| Curriculum | `seed_curriculum.py` created OT level 2; `discover_labs.py` created 5 labs, 169 validated |
+| Containers | `ocr-frontend`, `ocr-backend`, `ocr-db`, `ocr-valkey`, `ocr-docker-proxy` healthy |
+| Health | `/health` 200; `/api/version` 2.7.0; frontend `/login` 200 |
+| Wiki | Rebuilt 13 sites; `22_Navigating_Your_Cyber_DNA` and the workbook Home present with images |
+| Integrity | 12 tracks, 54 levels, 169 labs, 43 chapters, 1 course; 0 chain breaks |
+
 ## Exit criteria for the next attempt
 
 1. Run P1-P8 on a production-shaped host and record evidence in this file.
@@ -95,5 +114,6 @@ release, and the infrastructure integrations are not complete.
 | Role | Name | Decision | Date |
 |---|---|---|---|
 | Release owner | | | |
+| Release owner override | rchaykoski | Deployed by explicit override; P4/P5 NOT RUN | 2026-11-12 |
 | Data analyst | | PASS on P1-P3; D5 conditional | 2026-11-12 |
 | Security reviewer | | PASS on P7; P4/P10 pending | 2026-11-12 |
