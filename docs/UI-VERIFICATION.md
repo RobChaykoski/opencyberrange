@@ -15,7 +15,9 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 |---|---|
 | Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **510 passed, 0 failed** |
 | Backend suite without a database | **293 passed, 217 skipped** |
-| Lab validator (`validate-lab.py --all`) | **169 labs, 0 errors, 0 warnings** |
+| Lab validator (`validate-lab.py --all`) | **170 labs, 0 errors, 0 warnings** |
+| Topology engine unit tests | **18 passed** |
+
 | Relative links in README, docs, Manual-Lite, Workbook | **479 files, all resolve** |
 | Frontend build | **Passed** |
 | Frontend lint | **0 errors** (existing warnings only) |
@@ -36,6 +38,11 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 - `advanced_dna_insights_enabled` removes/adds the career atlas payload.
 - The built SPA contains the new **Practice this branch**, **How this is
   calculated**, **No evidence yet**, and **Established** strings.
+- **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
+  and `svc`; the node status endpoints reported host/router/service; `h1` had a
+  default route via `r1`; `r1` reported `ip_forward=1` and both connected
+  `/29` links; `h1` fetched `OCR{t0p0l0gy_r0ut3d}` from the service link
+  address.
 
 ### Known gaps
 

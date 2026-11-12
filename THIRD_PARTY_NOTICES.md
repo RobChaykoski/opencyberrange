@@ -49,6 +49,10 @@ their own licences; the project licence does not override them.
 - The optional SSO test stack adds Dex (`ghcr.io/dexidp/dex:v2.42.0`,
   Apache-2.0) and osixia/openldap 1.5.0 (MIT image, OpenLDAP Public License 2.8
   server). The OpenLDAP text is `THIRD_PARTY_LICENSES/OpenLDAP-2.8.txt`.
+- The topology node image (`ocr-lab/topology-node:latest`) is built locally from
+  `platform/topology-node`. It contains Alpine packages, OpenSSH (BSD), iproute2
+  (GPL-2.0), and Python (PSF). The licence texts already in this directory cover
+  GPL-2.0 and BSD-3-Clause; an image SBOM is the reliable package inventory.
 - Both SSO images are profile-gated (`--profile sso`). They are pulled, not
   redistributed, and are not started on a normal install.
 - Release 4 changes are recorded in `CHANGELOG.md`, `versions.yaml`, and the

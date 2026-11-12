@@ -100,7 +100,7 @@
       "sha256": "f6aee83c29e7bff868804eb8d41d0916901a3d8454eb6608aa6d5715b2419039"
     },
     "scripts/generate-about.py": {
-      "sha256": "1b16e8dcc705b261614959dcfd2dab14e9dfc643c22cdacb6374b9b6d41836fc"
+      "sha256": "23eff06b3a24b0b139cb025f697f72a178cc4327964ec3233fef15e35aa79d29"
     },
     "scripts/install-platform.sh": {
       "sha256": "2e689b91b69de0aa56db7bed14551a61133c84e2bdb1ed5d5450dcd43a36118e"
@@ -109,7 +109,7 @@
       "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
     },
     "scripts/prebuild-labs.sh": {
-      "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
+      "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
     },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
@@ -124,7 +124,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "ba3d82aab5313443a8c5d01b1a72a7f157af67ccaba34d235f1d6f0df7759591"
+      "sha256": "e778386226bf9ac06cf677ecd66cfd4f6dc1c65c780ca8f5ed2d4dbf9ac1e77e"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -641,7 +641,7 @@
       ]
     },
     "network-12-2-device-topology-engine": {
-      "content_hash": "771c04b000e3e57c536e744c372539757ad7948391d03411a74a4e6d55da9260",
+      "content_hash": "978edae925a141d84a97eaa23df64f5bdf19f9206b48e00e9b288fe359571025",
       "services": []
     },
     "network-12-2-firewall-policy-hardening": {

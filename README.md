@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Release%204-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-169-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-170-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -84,6 +84,7 @@ The current feature set covers four workstreams:
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses, plus the Competency Framework Engine, Student Feedback Engine, skill-tree radar, exercise health, and the instructor intervention dashboard. | Skill-tree radar delivered; learner/cohort radar, exercise health, and the intervention dashboard remain planned |
 | Mobile student shell | Automatic phone-width detection, an off-canvas navigation drawer, a student bottom tab bar, and explicit fallback behaviour for the embedded RangeBox desktop. | Delivered |
 | RangeBox workspace | A dedicated **RangeBox** tab for standalone practice, plus a combined desktop exercise workspace: RangeBox on the left, scenario/details and flag on the right, and the workbook in a framed bottom pane. Phones and VPN-only labs keep the stacked panel. | Delivered |
+| Network device topology | Labs declare routers, hosts, and flag services as data. The engine allocates per-session `/29` links, enables forwarding, installs routes, and exposes a status endpoint for discovery. | Delivered (routed L3; switch container is Release 5) |
 
 The five priority capabilities are defined in
 [Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md). The
@@ -107,6 +108,7 @@ per-student accommodation engine are Enterprise Release 5 work. Enterprise SSO
 - [Skill DNA metric model](docs/SKILL-DNA.md)
 - [Celebration Wall](docs/CELEBRATION-WALL.md)
 - [Supply-chain verification](docs/SUPPLY-CHAIN.md)
+- [Network device topology engine](docs/DEVICE-TOPOLOGY.md)
 - [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md)
 - [Database schema and Alembic migrations](docs/DATABASE-MIGRATIONS.md)
 - [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
@@ -584,7 +586,7 @@ Validation history:
 
 | Check | Result |
 |---|---|
-| Release 4 automated QA (12 November 2026) | **510 DB-backed tests passed**, 293 local tests, 169 labs with 0 validation errors, 479 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
+| Release 4 automated QA (12 November 2026) | **510 DB-backed tests passed**, 293 local tests, 170 labs with 0 validation errors, 479 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
 | Release 4 dev smoke (`.44`, 12 November 2026) | `/api/version` = 4; LDAP and OIDC end-to-end; instructor role refresh; admin endpoints 401; API docs 404; setting toggles apply immediately; new DNA/GPS UI present |
 | 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
@@ -1054,3 +1056,4 @@ or read learner records. Docker host and container state still need
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used
 - **Network (local):** Server reachable on the classroom/school network
 - **Network (internet/cloud):** Public IP or Cloudflare Tunnel; ports 443/TCP, 51820/UDP, and 5555/TCP (WSTunnel) open in provider firewall
+

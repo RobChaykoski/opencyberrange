@@ -48,6 +48,17 @@ the privacy, accessibility, and API-exposure corrections.
   "How this is calculated" disclosure, and a zero-evidence start card instead of
   an empty radar chart. Career GPS labels each family's evidence band.
 
+### Network device topology
+- Added `x-ocr-topology` to Compose: nodes, roles, and point-to-point links are
+  validated as data, then expanded into per-session `/29` networks with static
+  addresses, forwarding, routes, and node environment.
+- Added the reviewed `ocr-lab/topology-node` image with `router`, `host`, and
+  `service` roles, SSH, a status endpoint, and a flag service.
+- Rejected privileged containers, arbitrary images, host networking, bind
+  mounts, hostile capabilities, and reserved environment keys.
+- Added the routed-path demo lab, workbook, engine unit tests, and image-only
+  topology support in the static validator.
+
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility
   statement, automated-scoring statement, HECVAT answer pack, LTI design

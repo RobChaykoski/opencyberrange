@@ -4,6 +4,7 @@ difficulty: intermediate
 estimated_time: 45
 prerequisites:
   - network-12-1-firewall-fundamentals
+# By completion students will be able to:
 learning_outcomes:
   - Map a three-node topology from the lab metadata and the node status endpoint
   - Explain how a host uses a default route to reach a remote subnet

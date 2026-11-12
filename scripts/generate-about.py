@@ -71,6 +71,7 @@ IMAGE_LICENCES = [
     ("valkey/valkey:9.1.3-alpine", "BSD-3-Clause plus Alpine packages"),
     ("ghcr.io/dexidp/dex:v2.42.0", "Apache-2.0"),
     ("osixia/openldap:1.5.0", "MIT plus OpenLDAP Public License 2.8"),
+    ("ocr-lab/topology-node:latest", "Alpine package licences plus OpenSSH BSD"),
     ("mysql:8.0", "GPL-2.0"),
     ("php:8.1-apache", "PHP Licence 3.01 plus Apache-2.0"),
     ("nginxinc/nginx-unprivileged:alpine", "BSD-2-Clause plus Alpine packages"),

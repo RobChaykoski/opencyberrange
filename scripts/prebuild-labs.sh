@@ -116,6 +116,16 @@ if ! docker compose version &> /dev/null; then
     exit 1
 fi
 
+# The reviewed topology node image backs every x-ocr-topology lab. Build it
+# once, before the lab loop, so a topology spawn never builds on demand.
+if [ "$DRY_RUN" = false ] && [ -d "$PROJECT_ROOT/platform/topology-node" ]; then
+    echo -e "${CYAN}Building reviewed topology node image...${NC}"
+    if ! docker build -t ocr-lab/topology-node:latest "$PROJECT_ROOT/platform/topology-node"; then
+        echo -e "${RED}Error: could not build ocr-lab/topology-node:latest${NC}"
+        exit 1
+    fi
+fi
+
 # --- Disk headroom -----------------------------------------------------------
 # A full prebuild writes tens of GB of images + build cache. When the docker
 # filesystem fills mid-run, image-layer and apt writes truncate, and apt then

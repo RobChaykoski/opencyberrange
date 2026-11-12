@@ -297,6 +297,12 @@
         "scope": "container image"
       },
       {
+        "name": "ocr-lab/topology-node:latest",
+        "version": "",
+        "licence": "Alpine package licences plus OpenSSH BSD",
+        "scope": "container image"
+      },
+      {
         "name": "mysql:8.0",
         "version": "",
         "licence": "GPL-2.0",

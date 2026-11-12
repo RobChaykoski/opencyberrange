@@ -44,6 +44,8 @@ flowchart TB
         DOCKER["Docker Engine"]
         NET["Per-session bridge<br/>10.100.x.0/24"]
         LABS["Lab containers<br/>targets and evidence"]
+        TOPO["Topology links<br/>10.128.x /29"]
+        TNODE["Topology nodes<br/>router / host / service"]
         LBOX["Exercise RangeBox<br/>attached to lab network"]
         RBNET["Standalone bridge<br/>10.50.x.0/24"]
         RB["Standalone RangeBox<br/>RangeBox tab"]
@@ -78,6 +80,9 @@ flowchart TB
     DOCKER --> RBNET
     NET --> LABS
     NET --> LBOX
+    NET --> TNODE
+    DOCKER --> TOPO
+    TOPO --> TNODE
     RBNET --> RB
     ORCH -->|firewall + peer rules| PM
     PM --> WG
@@ -134,6 +139,7 @@ flowchart TB
 | RangeBox → lab | Exercise-box only; attached to that session's bridge and removed on teardown |
 | Lab → lab | Separate per-session bridge networks; no cross-session routing |
 | Lab → management LAN | Firewall drops lab and RangeBox subnets from external interfaces |
+| Topology node → lab | Extra `/29` links inside the protected `10.128.0.0/9` range; no host network, bind mounts, or Docker socket; only `NET_ADMIN`/`NET_RAW` |
 | Wiki build → runtime | Builder writes to a volume; frontend mounts it read-only |
 | Survey consent | Explicit opt-in, versioned statement, append-only consent history |
 

@@ -9,12 +9,11 @@ Usage:
     python3 scripts/validate-lab.py --all --json
 """
 
-import os
-import sys
-import re
-import json
 import argparse
-import hashlib
+import json
+import os
+import re
+import sys
 
 try:
     import yaml
@@ -177,14 +176,13 @@ def check_yaml_valid(lab_dir):
     if hints and isinstance(hints, list):
         # Check if hints use structured format
         for i, hint in enumerate(hints):
-            if isinstance(hint, dict):
-                if "text" not in hint and "content" not in hint:
-                    results.append(CheckResult(
-                        f"Hint {i+1} has text/content",
-                        False,
-                        f"Hint {i+1} is a dict but has no 'text' or 'content' key",
-                        severity="warning"
-                    ))
+            if isinstance(hint, dict) and "text" not in hint and "content" not in hint:
+                results.append(CheckResult(
+                    f"Hint {i+1} has text/content",
+                    False,
+                    f"Hint {i+1} is a dict but has no 'text' or 'content' key",
+                    severity="warning"
+                ))
 
     return results
 
@@ -430,7 +428,7 @@ def check_flag_consistency(lab_dir):
                     dockerfile = build.get("dockerfile", "Dockerfile")
                     if os.path.exists(os.path.join(context, dockerfile)):
                         external_build.append(os.path.relpath(context, lab_dir))
-            except (yaml.YAMLError, IOError):
+            except (OSError, yaml.YAMLError):
                 pass
         if uses_shared:
             results.append(CheckResult(
@@ -467,7 +465,7 @@ def check_flag_consistency(lab_dir):
             if yaml_flag in content:
                 flag_found_in_any = True
                 break
-        except IOError:
+        except OSError:
             pass
 
     results.append(CheckResult(
@@ -491,7 +489,7 @@ def check_flag_consistency(lab_dir):
                     "Ubuntu/Debian images should set ENV DEBIAN_FRONTEND=noninteractive to prevent build hangs",
                     severity="warning"
                 ))
-        except IOError:
+        except OSError:
             pass
 
     return results
@@ -716,7 +714,7 @@ def check_template_resolution(lab_dir):
         try:
             with open(compose_path, "r", encoding="utf-8") as f:
                 compose = yaml.safe_load(f) or {}
-            for svc_name in compose.get("services", {}).keys():
+            for svc_name in compose.get("services", {}):
                 node_ids.add(svc_name)
             # Read x-ocr-shared-containers aliases (shared VM/container references)
             for shared in compose.get("x-ocr-shared-containers", []):
@@ -727,7 +725,7 @@ def check_template_resolution(lab_dir):
                     # Aliases are the names test steps typically reference
                     for alias in shared.get("aliases", []):
                         node_ids.add(alias)
-        except (yaml.YAMLError, IOError):
+        except (OSError, yaml.YAMLError):
             pass
 
     # Collect valid credential roles
@@ -792,7 +790,7 @@ def check_mysql_auth_plugin(lab_dir):
                         content = fh.read()
                     if "mysql:8" in content.lower() or "mysql:latest" in content.lower():
                         mysql8_used = True
-                except IOError:
+                except OSError:
                     pass
 
     if not mysql8_used:
@@ -806,7 +804,7 @@ def check_mysql_auth_plugin(lab_dir):
                 try:
                     with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
-                except IOError:
+                except OSError:
                     continue
 
                 # Find CREATE USER ... IDENTIFIED BY without mysql_native_password
@@ -959,7 +957,7 @@ def check_dockerfile_password_safety(lab_dir):
                 try:
                     with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
-                except IOError:
+                except OSError:
                     continue
 
                 for m in chpasswd_pattern.finditer(content):
@@ -1059,11 +1057,11 @@ def print_results(lab_dir, results, verbose=False):
     pass_count = len(passed)
 
     if errors:
-        status = f"\033[0;31mFAIL\033[0m"
+        status = "\033[0;31mFAIL\033[0m"
     elif warnings:
-        status = f"\033[1;33mWARN\033[0m"
+        status = "\033[1;33mWARN\033[0m"
     else:
-        status = f"\033[0;32mOK\033[0m"
+        status = "\033[0;32mOK\033[0m"
 
     print(f"\n{'─' * 60}")
     print(f"  {slug}  [{status}]  {pass_count}/{total_checks} checks passed")

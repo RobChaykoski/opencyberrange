@@ -34,6 +34,11 @@ existing startup schema step.
 - **Compliance pack.** Added the compliance posture, procurement traceability,
   accessibility statement, automated-scoring statement, HECVAT answer pack, LTI
   design contract, DPA template, and Release 5 scope.
+- **Network device topology.** Labs can declare routers, hosts, and flag
+  services as data. The engine allocates a per-session `/29` for each link,
+  assigns addresses, enables forwarding, installs routes, and exposes a status
+  endpoint. A routed-path demo lab ships with a workbook.
+
 
 ## Release 4 limits
 
@@ -41,8 +46,9 @@ existing startup schema step.
   engine, a signed VPAT/ACR, SOC 2, ISO 27001, and a completed HECVAT are
   Release 5. See `docs/RELEASE-5-SCOPE.md`.
 - SAML single logout remains local. OIDC RP-initiated logout is supported.
-- The network device topology engine is tracked separately in Release 4/5
-  planning; do not advertise it until its lab, image, and tests ship.
+- The topology engine ships routed L3 topologies with Docker bridges as L2
+  segments. A dedicated switch container, FRR/OSPF/BGP, and an nftables node role
+  are not shipped.
 
 ## Previous release: Release 3
 
