@@ -91,8 +91,17 @@ pending.**
 - **Verified in this tree:** `ruff` and `py_compile`; 31 tests across the event,
   achievement, certification, and career suites; `npm run lint` (0 errors) and
   `npm run build`.
-- **Not yet verified:** the live event page, the seeded event on development, and
-  the certificate PDF at the four widths and both themes.
+- **Verified on development (12 November 2026):** migration added
+  `competitions.experience_key`; the seed created event `id=4` with 9 labs and 3
+  sponsors; `/api/competitions/4/discovery` returned 4 blocks, 4 pathways, DNA,
+  and the certificate; `/api/competitions/4/discovery/overview` returned the
+  suppressed state for a one-participant cohort; the learner certificate list
+  included `discovery`; `/api/competitions/4/certificate/discovery` returned the
+  `DVF-CYBER-2027-1223B` serial; `/events/4` and
+  `/certificate/event/4/discovery` served 200.
+- **Not yet verified:** the visual event page, discovery panel, and certificate
+  PDF at 375/768/1024/1440 in both themes, and a full six-hour rehearsal with a
+  mixed cohort.
 
 ## 2.7.0 release verification
 
