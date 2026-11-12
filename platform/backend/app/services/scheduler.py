@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 docker_manager = DockerManager()
 _session_cleanup_task = None
 _backup_task = None
+_revocation_cleanup_task = None
 _module_tasks = {}   # label -> asyncio.Task, one per discovered module tick
 
 
@@ -168,9 +169,29 @@ async def collect_database_snapshots():
         await asyncio.sleep(3600)
 
 
+async def cleanup_revocations():
+    """Prune expired token-revocation rows once an hour.
+
+    Logout should not pay for a DELETE scan; the scheduler owns retention.
+    """
+    while True:
+        try:
+            await asyncio.sleep(3600)
+            from app.auth import prune_expired_revocations
+
+            deleted = prune_expired_revocations()
+            if deleted:
+                logger.info("Cleanup: pruned %d expired token revocation row(s)", deleted)
+        except asyncio.CancelledError:
+            logger.info("Token-revocation cleanup task cancelled")
+            raise
+        except Exception as exc:
+            logger.error("Error in token-revocation cleanup task: %s", exc)
+
+
 def start_scheduler():
     """Start the background scheduler tasks"""
-    global _session_cleanup_task, _backup_task
+    global _session_cleanup_task, _backup_task, _revocation_cleanup_task
 
     logger.info("Starting background scheduler...")
 
@@ -184,6 +205,10 @@ def start_scheduler():
     if _backup_task is None or _backup_task.done():
         _backup_task = asyncio.create_task(collect_database_snapshots())
         logger.info("Started database snapshot collector")
+
+    if _revocation_cleanup_task is None or _revocation_cleanup_task.done():
+        _revocation_cleanup_task = asyncio.create_task(cleanup_revocations())
+        logger.info("Started token-revocation cleanup task")
 
     # Start each present module's background tick. Editions with no
     # optional modules installed have none to start.
@@ -202,7 +227,7 @@ async def shutdown_scheduler():
     running, so awaiting the cancellations is the only safe option.
     ``run_until_complete`` would raise "event loop is already running".
     """
-    global _session_cleanup_task, _backup_task
+    global _session_cleanup_task, _backup_task, _revocation_cleanup_task
 
     logger.info("Shutting down background scheduler...")
 
@@ -211,6 +236,8 @@ async def shutdown_scheduler():
         tasks.append(_session_cleanup_task)
     if _backup_task and not _backup_task.done():
         tasks.append(_backup_task)
+    if _revocation_cleanup_task and not _revocation_cleanup_task.done():
+        tasks.append(_revocation_cleanup_task)
     tasks.extend(t for t in _module_tasks.values() if t and not t.done())
 
     for t in tasks:

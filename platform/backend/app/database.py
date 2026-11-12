@@ -31,6 +31,11 @@ if settings.DATABASE_URL.startswith("postgresql"):
     # authenticated actor context is set: ocr-app => system, anything else =>
     # unattributed (manual client).
     _connect_args["application_name"] = "ocr-app"
+    # A runaway analytics query should not hold a pool slot for minutes.
+    _statement_timeout = max(
+        1000, int(os.environ.get("DB_STATEMENT_TIMEOUT_MS", "30000"))
+    )
+    _connect_args["options"] = f"-c statement_timeout={_statement_timeout}"
 
 # Create database engine
 engine = create_engine(

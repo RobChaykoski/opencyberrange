@@ -14,6 +14,7 @@ import io
 import json
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func
@@ -1509,7 +1510,7 @@ async def reports_export_pdf(
     from app.services.analytics_report import generate_reports_pdf
 
     payload = await reports_overview(db, current_user)
-    pdf_bytes = generate_reports_pdf(payload)
+    pdf_bytes = await run_in_threadpool(generate_reports_pdf, payload)
     log_admin_action(
         action=AuditActions.REPORT_EXPORTED,
         admin_user_id=current_user.id,

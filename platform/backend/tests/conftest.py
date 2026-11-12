@@ -13,7 +13,10 @@ import uuid
 
 import pytest
 
-TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "")
+TEST_DATABASE_URL = (
+    os.environ.get("TEST_DATABASE_URL", "")
+    or os.environ.get("OCR_TEST_DATABASE_URL", "")
+)
 
 # A syntactically valid but unreachable URL keeps module imports working when
 # no test database is provided. SQLAlchemy connects lazily, so nothing dials

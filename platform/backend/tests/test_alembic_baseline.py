@@ -1,0 +1,40 @@
+"""Alembic baseline and revision graph checks."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+from alembic.config import Config
+from alembic.script import ScriptDirectory
+
+BACKEND = Path(__file__).resolve().parents[1]
+
+
+def _script() -> ScriptDirectory:
+    cfg = Config(str(BACKEND / "alembic.ini"))
+    cfg.set_main_option("script_location", str(BACKEND / "alembic"))
+    return ScriptDirectory.from_config(cfg)
+
+
+def test_alembic_head_is_the_metadata_revision():
+    script = _script()
+    heads = script.get_heads()
+    assert heads == ["0014_performance_indexes"]
+
+
+def test_revision_graph_is_linear():
+    script = _script()
+    revisions = list(script.walk_revisions())
+    assert revisions
+    # walk_revisions yields head first; each row's down_revision must match the
+    # next row's revision id.
+    for current, previous in zip(revisions, revisions[1:], strict=False):
+        assert current.down_revision == previous.revision
+
+
+def test_baseline_revision_exists():
+    versions = BACKEND / "alembic" / "versions"
+    names = {path.name for path in versions.glob("*.py")}
+    assert "0001_baseline.py" in names
+    assert "0013_achievement_event_metadata.py" in names
+    assert "0014_performance_indexes.py" in names

@@ -80,6 +80,20 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode against DATABASE_URL."""
+    connection = config.attributes.get("connection")
+    if connection is not None:
+        # The application startup path passes its already-locked connection so
+        # DDL cannot race a sibling worker. Do not create a second engine.
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=True,
+            compare_server_default=True,
+        )
+        with context.begin_transaction():
+            context.run_migrations()
+        return
+
     if not DB_URL:
         raise RuntimeError(
             "DATABASE_URL is not set. Export it before running alembic, "

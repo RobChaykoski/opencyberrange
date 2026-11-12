@@ -38,20 +38,42 @@ services:
       start_period: 30s
 
   redis:
-    # Redis 7.2 is BSD-3-Clause. Redis 7.4 and later are RSALv2/SSPLv1;
-    # do not change this tag without a licence review and a notice update.
-    image: redis:7.2-alpine
-    container_name: ocr-redis
+    # Valkey: BSD-3-Clause fork of Redis 7.2, RESP-compatible. This removes
+    # the RSALv2/SSPLv1 pin that froze the service on redis:7.2-alpine.
+    image: valkey/valkey:9.1.3-alpine
+    container_name: ocr-valkey
     # Rate-limit counters are ephemeral: no RDB snapshots, no AOF. A restart
     # only resets the current windows.
-    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    command: ["valkey-server", "--save", "", "--appendonly", "no"]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "valkey-cli ping"]
       interval: 15s
       timeout: 5s
       retries: 10
       start_period: 10s
+
+  docker-socket-proxy:
+    # The proxy is unauthenticated HTTP on 2375. It lives only on the
+    # docker_control network, which the backend joins and nothing else does.
+    image: tecnativa/docker-socket-proxy:0.3.0
+    container_name: ocr-docker-proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERS: 1
+      IMAGES: 1
+      NETWORKS: 1
+      VOLUMES: 1
+      INFO: 1
+      POST: 1
+      EXEC: 1
+      # Keep BUILD off unless on-demand lab builds are enabled. Image builds
+      # let a compromised backend run arbitrary build-recipe instructions.
+      BUILD: 0
+    networks:
+      - docker_control
+    restart: unless-stopped
 
   backend:
     build:
@@ -71,6 +93,8 @@ services:
       # minus reserved slots. The 4 + 4 defaults put 9 workers at 72.
       DB_POOL_SIZE: ${DB_POOL_SIZE:-4}
       DB_MAX_OVERFLOW: ${DB_MAX_OVERFLOW:-4}
+      # Documented scale-out knob. Raise together with the pool settings above.
+      OCR_UVICORN_WORKERS: ${OCR_UVICORN_WORKERS:-1}
       JWT_SECRET: ${JWT_SECRET}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       JWT_EXPIRATION_HOURS: ${JWT_EXPIRATION_HOURS:-24}
@@ -84,6 +108,9 @@ services:
       WG_API_URL: ${WG_API_URL}
       WG_API_KEY: ${WG_API_KEY}
       WG_ENCRYPTION_KEY: ${WG_ENCRYPTION_KEY}
+      # Optional comma-separated old keys, used only for decryption during
+      # rotation. Remove after the re-encryption pass completes.
+      WG_ENCRYPTION_KEY_PREVIOUS: ${WG_ENCRYPTION_KEY_PREVIOUS:-}
       WG_NETWORK_BASE: ${WG_NETWORK_BASE:-10.100}
       WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.255}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
@@ -95,12 +122,14 @@ services:
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@swocts.com}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://localhost}
       # Shared counter store so every worker enforces the same limits. Keep
-      # the default when running redis; set "memory://" only for single-worker
+      # the default when running Valkey; set "memory://" only for single-worker
       # development.
       RATELIMIT_STORAGE_URI: ${RATELIMIT_STORAGE_URI:-redis://redis:6379/0}
+      # The backend talks to the socket proxy, not the host socket. The proxy
+      # is reachable only on the docker_control network.
+      DOCKER_HOST: tcp://docker-socket-proxy:2375
       TZ: UTC
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - ${LABS_HOST_PATH}:/labs:ro
       # Exercise Studio workbook state. The wiki itself is baked into the
       # frontend image; this volume only holds builder inputs/outputs.
@@ -122,9 +151,17 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+      docker-socket-proxy:
+        condition: service_started
+    networks:
+      - default
+      - docker_control
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/health"]
+      # Use the image's Python rather than curl so the runtime image does not
+      # need a separate HTTP client just for the probe.
+      test: ["CMD", "python", "-c", "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5).status == 200 else 1)"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -180,3 +217,9 @@ volumes:
   workbook_data:
   wiki_data:
   backups_data:
+
+networks:
+  docker_control:
+    # Backend <-> socket proxy only. Nothing student-reachable joins this
+    # network, and internal: true keeps the proxy off the internet.
+    internal: true

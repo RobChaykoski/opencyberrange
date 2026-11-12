@@ -1001,7 +1001,9 @@ async def course_feedback_summary(
             ).all()
         }
         students = []
-        for enrollment in db.query(CourseEnrollment).filter(
+        for enrollment in db.query(CourseEnrollment).options(
+            joinedload(CourseEnrollment.user)
+        ).filter(
             CourseEnrollment.course_id == course_id
         ).all():
             student = enrollment.user

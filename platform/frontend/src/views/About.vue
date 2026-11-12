@@ -36,7 +36,7 @@
         <article class="about-summary__item">
           <span class="about-summary__label">Data</span>
           <strong class="about-summary__value">PostgreSQL {{ about.platform.postgres }}</strong>
-          <span class="about-summary__detail">Redis {{ about.platform.redis }}</span>
+          <span class="about-summary__detail">Valkey {{ about.platform.valkey || about.platform.redis }}</span>
         </article>
         <article class="about-summary__item">
           <span class="about-summary__label">Inventory</span>
@@ -93,8 +93,8 @@
             <dd>{{ about.runtime?.python || '—' }} / {{ about.runtime?.node || '—' }}</dd>
           </div>
           <div class="about-fact">
-            <dt>PostgreSQL / Redis</dt>
-            <dd>{{ about.runtime?.postgres || '—' }} / {{ about.runtime?.redis || '—' }}</dd>
+            <dt>PostgreSQL / Valkey</dt>
+            <dd>{{ about.runtime?.postgres || '-' }} / {{ about.runtime?.valkey || about.runtime?.redis || '-' }}</dd>
           </div>
           <div class="about-fact">
             <dt>Edition</dt>

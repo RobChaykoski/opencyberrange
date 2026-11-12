@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 from statistics import mean, median
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
@@ -459,7 +460,8 @@ async def course_health_report(
     overview = await course_overview(course_id, db, current_user)
     exercises = await course_exercises(course_id, db, current_user)
     report_id = str(uuid.uuid4())
-    data = generate_course_health_pdf(
+    data = await run_in_threadpool(
+        generate_course_health_pdf,
         overview,
         exercises,
         datetime.now(timezone.utc),
@@ -491,7 +493,8 @@ async def exercise_diagnostics_report(
     payload = await course_exercises(course_id, db, current_user)
     payload = _with_exercise_baselines(payload, completions)
     report_id = str(uuid.uuid4())
-    data = generate_exercise_diagnostics_pdf(
+    data = await run_in_threadpool(
+        generate_exercise_diagnostics_pdf,
         payload,
         datetime.now(timezone.utc),
         report_id=report_id,
@@ -651,7 +654,8 @@ async def coaching_queue_pdf(
     course = _course_or_403(db, course_id, current_user)
     rows = _coaching_rows(db, course)
     report_id = str(uuid.uuid4())
-    data = generate_coaching_queue_pdf(
+    data = await run_in_threadpool(
+        generate_coaching_queue_pdf,
         {"code": course.code, "name": course.name},
         rows[:50],
         datetime.now(timezone.utc),

@@ -163,7 +163,20 @@ def _live_overlay(data: dict, db: Session) -> dict:
     runtime = {
         "python": platform_module.python_version(),
         "node": str(build.get("node") or platform_data.get("node") or ""),
-        "redis": str(build.get("redis") or platform_data.get("redis") or ""),
+        "valkey": str(
+            build.get("valkey")
+            or platform_data.get("valkey")
+            or build.get("redis")
+            or platform_data.get("redis")
+            or ""
+        ),
+        "redis": str(
+            build.get("valkey")
+            or platform_data.get("valkey")
+            or build.get("redis")
+            or platform_data.get("redis")
+            or ""
+        ),
         "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     runtime.update(_database_runtime(db))

@@ -64,7 +64,7 @@ IMAGE_LICENCES = [
     ("node:22-alpine", "Node.js MIT plus Alpine packages"),
     ("nginx:alpine", "BSD-2-Clause plus Alpine packages"),
     ("postgres:15-alpine", "PostgreSQL Licence plus Alpine packages"),
-    ("redis:7.2-alpine", "BSD-3-Clause plus Alpine packages"),
+    ("valkey/valkey:9.1.3-alpine", "BSD-3-Clause plus Alpine packages"),
     ("mysql:8.0", "GPL-2.0"),
     ("php:8.1-apache", "PHP Licence 3.01 plus Apache-2.0"),
     ("nginxinc/nginx-unprivileged:alpine", "BSD-2-Clause plus Alpine packages"),
@@ -231,7 +231,9 @@ def build_metadata(platform: dict, runtime: dict) -> dict:
         "python": str((runtime.get("python") or {}).get("current", "")),
         "node": str((runtime.get("node") or {}).get("current", "")),
         "postgres": str((runtime.get("postgres") or {}).get("current", "")),
-        "redis": str((runtime.get("redis") or {}).get("current", "")),
+        "valkey": str((runtime.get("valkey") or {}).get("current", "")),
+        # Keep the old key as an alias for clients that have not updated yet.
+        "redis": str((runtime.get("valkey") or runtime.get("redis") or {}).get("current", "")),
     }
 
 
@@ -252,7 +254,8 @@ def main() -> int:
             "python": str((runtime.get("python") or {}).get("current", "3.11")),
             "node": str((runtime.get("node") or {}).get("current", "22")),
             "postgres": str((runtime.get("postgres") or {}).get("current", "15")),
-            "redis": str((runtime.get("redis") or {}).get("current", "7.2")),
+            "valkey": str((runtime.get("valkey") or {}).get("current", "9.1.3")),
+            "redis": str((runtime.get("valkey") or runtime.get("redis") or {}).get("current", "9.1.3")),
         },
         "branding": {
             "product": "SWOCTS Cyber Range",

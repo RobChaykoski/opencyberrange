@@ -128,15 +128,31 @@ def _revocation_sentinel(username: str) -> str:
     return f"{_REVOKE_ALL_PREFIX}{username}"[:64]
 
 
-def _prune_expired_revocations(db) -> None:
+def _prune_expired_revocations(db) -> int:
     """Delete revocation rows older than the JWT lifetime plus slack."""
     from app.models import RevokedToken
     cutoff = datetime.now(timezone.utc) - timedelta(
         hours=settings.JWT_EXPIRATION_HOURS + 1
     )
-    db.query(RevokedToken).filter(RevokedToken.revoked_at < cutoff).delete(
+    return db.query(RevokedToken).filter(RevokedToken.revoked_at < cutoff).delete(
         synchronize_session=False
     )
+
+
+def prune_expired_revocations() -> int:
+    """Prune expired revocation rows from the scheduler, not the logout path."""
+    from app.database import SessionLocal
+    db = SessionLocal()
+    try:
+        deleted = _prune_expired_revocations(db)
+        db.commit()
+        return deleted
+    except Exception:
+        db.rollback()
+        logger.exception("Failed to prune expired token revocations")
+        return 0
+    finally:
+        db.close()
 
 
 def revoke_token(jti: str, expires_at_epoch: float, user_id: Optional[int] = None) -> None:
@@ -151,7 +167,6 @@ def revoke_token(jti: str, expires_at_epoch: float, user_id: Optional[int] = Non
     from app.models import RevokedToken
     db = SessionLocal()
     try:
-        _prune_expired_revocations(db)
         if db.query(RevokedToken).filter(RevokedToken.jti == jti).first() is None:
             db.add(RevokedToken(
                 jti=jti,

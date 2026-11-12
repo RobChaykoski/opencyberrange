@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     
     # WireGuard key encryption - MUST be set (generate with: python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
     WG_ENCRYPTION_KEY: str = ""
+    # Comma-separated old keys, used only for decryption during rotation.
+    WG_ENCRYPTION_KEY_PREVIOUS: str = ""
     
     # Network bases
     WG_NETWORK_BASE: str = "10.100"

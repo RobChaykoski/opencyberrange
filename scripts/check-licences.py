@@ -8,7 +8,7 @@ conditions the project has decided are not acceptable:
 - a licence text referenced by THIRD_PARTY_NOTICES.md is missing;
 - the core backend requirements add AGPL/GPL libraries that are not part of
   the documented mixed-licence lab generators;
-- Redis is not pinned to the BSD-3-Clause 7.2 line;
+- Valkey is not pinned to the BSD-3-Clause 9.1 line;
 - the INetSim image floats on ``latest``;
 - a Scapy-importing lab generator lacks its GPL-2.0 SPDX header;
 - a production frontend dependency declares GPL/AGPL/SSPL/RSAL;
@@ -92,25 +92,25 @@ for package in ("pymupdf", "mysqlclient", "scapy"):
             "(AGPL/GPL; use a permissive alternative or document a mixed-licence component)"
         )
 
-# 4. Redis must stay on the BSD-3-Clause 7.2 line.
-redis_files = (
+# 4. Valkey must stay on the BSD-3-Clause line (RESP-compatible with Redis 7.2).
+valkey_files = (
     "platform/docker-compose.prod.yml",
     "scripts/install-platform.sh",
     "scripts/deploy-updates.sh",
 )
-for rel in redis_files:
+for rel in valkey_files:
     path = ROOT / rel
     if not path.is_file():
-        fail(f"missing Redis pin file: {rel}")
+        fail(f"missing Valkey pin file: {rel}")
         continue
     text = read(path)
-    if "redis:7.2-alpine" not in text:
-        fail(f"{rel} does not pin redis:7.2-alpine")
+    if "valkey/valkey:9.1.3-alpine" not in text:
+        fail(f"{rel} does not pin valkey/valkey:9.1.3-alpine")
     if re.search(r"redis:7(?!\.2\b)", text):
-        fail(f"{rel} contains a non-7.2 Redis image reference")
+        fail(f"{rel} still contains a non-7.2 Redis image reference")
 versions = read(ROOT / "versions.yaml")
-if not re.search(r"redis:\s*\n\s+current:\s*[\"']?7\.2", versions):
-    fail("versions.yaml does not record Redis 7.2")
+if not re.search(r"valkey:\s*\n\s+current:\s*[\"']?9\.1\.3", versions):
+    fail("versions.yaml does not record Valkey 9.1.3")
 
 # 5. The third-party INetSim image must be digest-pinned.
 for path in ROOT.glob("platform/labs/**/Dockerfile*"):

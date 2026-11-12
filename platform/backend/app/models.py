@@ -3,7 +3,7 @@ Database models
 """
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, Float, ForeignKey, Text, Index, CheckConstraint, text
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, deferred
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -21,7 +21,7 @@ class User(Base):
     # Optional profile avatar as a small base64 data URL (image/png|jpeg|webp).
     # Stored in the row so it survives container rebuilds and needs no shared
     # upload volume; the browser downsizes images before upload.
-    avatar_data = Column(Text, nullable=True)
+    avatar_data = deferred(Column(Text, nullable=True))
     # Cosmetic ring around the avatar, used on the profile and celebration wall.
     # Values are #RRGGBB hex colours (or an original named token from an older
     # profile), validated by the settings endpoint before they reach the row.
@@ -939,7 +939,7 @@ class Competition(Base):
     name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
     # Optional event mark shown on the competition list and detail header.
-    logo_data = Column(Text, nullable=True)
+    logo_data = deferred(Column(Text, nullable=True))
     start_at = Column(DateTime, nullable=False)
     end_at = Column(DateTime, nullable=False)
     is_active = Column(Boolean, default=True, server_default=text("true"), nullable=False)
@@ -977,7 +977,7 @@ class CompetitionSponsor(Base):
     )
     name = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
-    logo_data = Column(Text, nullable=True)
+    logo_data = deferred(Column(Text, nullable=True))
     website_url = Column(String(500), nullable=True)
     tier = Column(String(10), nullable=False, default="gold", server_default="gold")
     sort_order = Column(Integer, default=0)

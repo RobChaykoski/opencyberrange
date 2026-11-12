@@ -581,14 +581,13 @@ services:
       retries: 5
 
   redis:
-    # Redis 7.2 is BSD-3-Clause. Redis 7.4 and later are RSALv2/SSPLv1;
-    # do not change this tag without a licence review and a notice update.
-    image: redis:7.2-alpine
-    container_name: ocr-redis
-    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    # Valkey is the BSD-3-Clause fork of Redis 7.2 and is RESP-compatible.
+    image: valkey/valkey:9.1.3-alpine
+    container_name: ocr-valkey
+    command: ["valkey-server", "--save", "", "--appendonly", "no"]
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "valkey-cli ping"]
       interval: 15s
       timeout: 5s
       retries: 10

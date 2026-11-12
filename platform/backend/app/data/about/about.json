@@ -9,7 +9,8 @@
     "python": "3.11",
     "node": "22",
     "postgres": "15",
-    "redis": "7.2"
+    "valkey": "9.1.3",
+    "redis": "9.1.3"
   },
   "branding": {
     "product": "SWOCTS Cyber Range",
@@ -266,7 +267,7 @@
         "scope": "container image"
       },
       {
-        "name": "redis:7.2-alpine",
+        "name": "valkey/valkey:9.1.3-alpine",
         "version": "",
         "licence": "BSD-3-Clause plus Alpine packages",
         "scope": "container image"
@@ -535,8 +536,8 @@
       "file": "psycopg3-LGPL-3.0.txt"
     },
     {
-      "label": "redis-BSD-3-Clause",
-      "file": "redis-BSD-3-Clause.txt"
+      "label": "valkey-BSD-3-Clause",
+      "file": "valkey-BSD-3-Clause.txt"
     },
     {
       "label": "wstunnel-BSD-3-Clause",

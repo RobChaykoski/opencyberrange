@@ -9,6 +9,7 @@ from contextlib import asynccontextmanager
 import logging
 import os
 import uuid
+from pathlib import Path
 
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
@@ -148,6 +149,61 @@ def _initialize_schema() -> None:
             conn.rollback()
             raise
         finally:
+            if is_postgres:
+                try:
+                    conn.execute(
+                        text("SELECT pg_advisory_unlock(:key)"),
+                        {"key": _SCHEMA_LOCK_KEY},
+                    )
+                    conn.commit()
+                except Exception:
+                    conn.rollback()
+
+
+def _stamp_or_upgrade_alembic() -> None:
+    """Bring an existing database onto Alembic without racing sibling workers.
+
+    The inline migrations in the lifespan have already made the schema current
+    for this release. If the database has no ``alembic_version`` row, stamp it
+    at head; otherwise upgrade any newer revisions. The call shares the schema
+    advisory lock and passes the locked connection to Alembic so DDL cannot
+    race a second worker.
+    """
+    from alembic import command
+    from sqlalchemy import inspect as sa_inspect
+
+    backend_dir = Path(__file__).resolve().parents[1]
+    from alembic.config import Config
+
+    cfg = Config(str(backend_dir / "alembic.ini"))
+    cfg.set_main_option("script_location", str(backend_dir / "alembic"))
+
+    with engine.connect() as conn:
+        is_postgres = conn.dialect.name == "postgresql"
+        if is_postgres:
+            conn.execute(
+                text("SELECT pg_advisory_lock(:key)"),
+                {"key": _SCHEMA_LOCK_KEY},
+            )
+            conn.commit()
+        try:
+            inspector = sa_inspect(engine)
+            current = None
+            if "alembic_version" in inspector.get_table_names():
+                row = conn.execute(
+                    text("SELECT version_num FROM alembic_version LIMIT 1")
+                ).fetchone()
+                current = row[0] if row else None
+            conn.commit()
+            cfg.attributes["connection"] = conn
+            if current is None:
+                command.stamp(cfg, "head")
+                logger.info("Alembic baseline stamped at head.")
+            else:
+                command.upgrade(cfg, "head")
+                logger.info("Alembic upgraded from %s to head.", current)
+        finally:
+            cfg.attributes.pop("connection", None)
             if is_postgres:
                 try:
                     conn.execute(

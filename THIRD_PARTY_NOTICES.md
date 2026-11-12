@@ -45,8 +45,9 @@ their own licences; the project licence does not override them.
 - No new third-party runtime dependencies are shipped in 2.7.0. Level quizzes
   reuse the existing backend stack.
 - `scripts/check-licences.py` reports **OK** for the 2.7.0 tree.
-- Valkey is not bundled in 2.7.0. It remains under evaluation as a BSD-3-Clause
-  replacement for the Redis 7.2 rate-limit store.
+- Valkey (`valkey/valkey:9.1.3-alpine`, BSD-3-Clause) replaces Redis 7.2 as the
+  rate-limit store. The client is RESP-compatible, so the `redis://` URI and
+  `redis-py` dependency are unchanged.
 - Release signing uses GnuPG; it is not redistributed with the platform.
 
 ## 2.6.0 update
@@ -195,7 +196,7 @@ image set is:
 | `nginx:alpine` | BSD-2-Clause plus Alpine packages | Frontend runtime |
 | `nginxinc/nginx-unprivileged:alpine` | BSD-2-Clause plus Alpine packages | VoIP evidence lab |
 | `postgres:15-alpine` | PostgreSQL Licence plus Alpine packages | Platform database |
-| `redis:7.2-alpine` | BSD-3-Clause plus Alpine packages | Rate-limit counters |
+| `valkey/valkey:9.1.3-alpine` | BSD-3-Clause plus Alpine packages | Rate-limit counters |
 | `mysql:8.0` | GPL-2.0 | Web-lab database server |
 | `php:8.1-apache` | PHP Licence 3.01 plus Apache-2.0 | Web-lab web server |
 | `python:3.12-alpine` | PSF plus Alpine packages | Network lab target |
@@ -206,10 +207,9 @@ image set is:
 | `0x4d4c/inetsim@sha256:01fdf65489db7b9a77a33cc336ba1d5ddf23aded35eeb23f2c6455290ca595e8` | INetSim GPL-2.0 plus Debian packages | Third-party image; pinned to the reviewed digest |
 | `axllent/mailpit` | MIT | Development mail catcher only |
 
-**Redis 7.4 and later are not BSD-3-Clause.** They are dual-licensed under the
-Redis Source Available License v2 (RSALv2) or the Server Side Public License v1
-(SSPLv1). This project pins `redis:7.2-alpine` (BSD-3-Clause). Do not change
-that tag without a licence review and a notice update.
+**Valkey is BSD-3-Clause.** It is the Linux Foundation fork of Redis 7.2 and is
+RESP-compatible with the `redis-py` client. The bundled service stores only
+ephemeral rate-limit counters.
 
 If you distribute built images, include the licences for the installed packages
 or provide a clear source/notice path. Do not assume the base image's licence
@@ -342,7 +342,7 @@ source is available from the distribution used to build the image:
 - REMnux: <https://docs.remnux.org/>
 - MySQL: <https://dev.mysql.com/downloads/mysql/>
 - PHP: <https://www.php.net/downloads>
-- Redis 7.2: <https://github.com/redis/redis/tree/7.2>
+- Valkey 9.1: <https://github.com/valkey-io/valkey>
 - INetSim: <https://www.inetsim.org/>
 - Snap7: <https://snap7.sourceforge.net/>
 - Volatility 3: <https://github.com/volatilityfoundation/volatility3>
@@ -370,7 +370,7 @@ THIRD_PARTY_LICENSES/
   certifi-MPL-2.0.txt
   pathspec-MPL-2.0.txt
   wstunnel-BSD-3-Clause.txt
-  redis-BSD-3-Clause.txt
+  valkey-BSD-3-Clause.txt
   GPL-2.0.txt
   LGPL-2.1.txt
   LGPL-3.0.txt

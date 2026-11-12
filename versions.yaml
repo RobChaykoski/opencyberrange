@@ -90,10 +90,10 @@ runtime:
     current: "15"
     target: "17"
     status: "planned-major-upgrade"
-  redis:
-    current: "7.2"
+  valkey:
+    current: "9.1.3"
     status: "supported"
-    licence: "BSD-3-Clause (Redis 7.4+ is RSALv2/SSPLv1; do not bump without a licence review)"
+    licence: "BSD-3-Clause"
 
 backend:
   fastapi: "0.162.2"
@@ -163,7 +163,7 @@ infrastructure:
   frontend_builder: "node:22-alpine"
   frontend_server: "nginx:alpine"
   postgres_image: "postgres:15-alpine"
-  redis_image: "redis:7.2-alpine"
+  valkey_image: "valkey/valkey:9.1.3-alpine"
   ci_checkout: "actions/checkout@v7"
   ci_codeql: "github/codeql-action@v4"
   ci_trivy: "aquasecurity/trivy-action@0.36.0"
