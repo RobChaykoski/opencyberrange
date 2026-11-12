@@ -27,6 +27,9 @@ the privacy, accessibility, and API-exposure corrections.
   loopback and private Docker bridges. Per-IP rate limits and audit rows use the
   real client address instead of the nginx container address.
 - SSO states and tickets remain single-use, provider-bound, and short-lived.
+- The API-docs and module gates read their setting fresh on every request, so an
+  administrator disabling either takes effect immediately instead of after the
+  settings cache expires.
 
 ### Privacy
 - Subject-access export now includes external identity links and SSO session

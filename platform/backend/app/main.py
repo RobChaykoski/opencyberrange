@@ -871,7 +871,7 @@ async def docs_access_control(request: Request, call_next):
         from app.services import settings_service
         db = SessionLocal()
         try:
-            enabled = settings_service.get_setting(db, "enable_api_docs", "false")
+            enabled = settings_service.get_setting_fresh(db, "enable_api_docs", "false")
         finally:
             db.close()
         if enabled.lower() not in ("true", "1", "yes"):
@@ -894,7 +894,7 @@ async def module_access_control(request: Request, call_next):
             from app.services import settings_service
             db = SessionLocal()
             try:
-                enabled = settings_service.get_setting(db, setting_key, "false")
+                enabled = settings_service.get_setting_fresh(db, setting_key, "false")
             finally:
                 db.close()
             if enabled.lower() not in ("true", "1", "yes"):
