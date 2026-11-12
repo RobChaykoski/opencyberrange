@@ -44,3 +44,25 @@ def test_lab_isolation_audit_has_no_unsudoed_rangebox_privilege_finding():
         check=False,
     )
     assert "entrypoint-privilege" not in result.stdout
+
+
+def test_backend_trusts_proxy_headers_only_from_private_bridges():
+    """Per-IP limits and audit rows need the real client address.
+
+    nginx is the only intended client of the backend port. If uvicorn does not
+    trust its X-Forwarded-For, every user shares one rate-limit bucket. The
+    trusted list must not include the 10.x lab ranges, or a lab container could
+    spoof a client address.
+    """
+    text = (ROOT / "platform" / "backend" / "Dockerfile").read_text(encoding="utf-8")
+    assert "--proxy-headers" in text
+    assert "--forwarded-allow-ips" in text
+    assert "FORWARDED_ALLOW_IPS" in text
+    assert "10.0.0.0/8" not in text
+
+
+def test_nginx_sets_forwarded_for_for_api_requests():
+    for name in ("nginx.conf", "nginx-ssl.conf"):
+        text = (ROOT / "platform" / "frontend" / name).read_text(encoding="utf-8")
+        assert "X-Forwarded-For $proxy_add_x_forwarded_for" in text
+        assert "X-Real-IP $remote_addr" in text

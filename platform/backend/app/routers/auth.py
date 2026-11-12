@@ -793,12 +793,15 @@ async def export_user_data(
         CompetitionParticipant,
         Course,
         CourseEnrollment,
+        ExternalIdentity,
         FlagAttempt,
+        IdentityProvider,
         Lab,
         LabCompletion,
         LabSession,
         LevelQuiz,
         QuizAttempt,
+        SsoSession,
         SurveyConsentEvent,
         WireGuardConfig,
     )
@@ -859,6 +862,20 @@ async def export_user_data(
         db.query(SurveyConsentEvent)
         .filter(SurveyConsentEvent.user_id == uid)
         .order_by(SurveyConsentEvent.created_at)
+        .all()
+    )
+    external_identities = (
+        db.query(ExternalIdentity, IdentityProvider)
+        .join(IdentityProvider, IdentityProvider.id == ExternalIdentity.provider_id, isouter=True)
+        .filter(ExternalIdentity.user_id == uid)
+        .order_by(ExternalIdentity.created_at)
+        .all()
+    )
+    sso_sessions = (
+        db.query(SsoSession, IdentityProvider)
+        .join(IdentityProvider, IdentityProvider.id == SsoSession.provider_id, isouter=True)
+        .filter(SsoSession.user_id == uid)
+        .order_by(SsoSession.created_at)
         .all()
     )
 
@@ -929,6 +946,28 @@ async def export_user_data(
             if vpn
             else None
         ),
+        # Identity-federation data: which external account this local account
+        # is linked to. The provider secret and the encrypted ID token are not
+        # personal data about the learner and are deliberately omitted.
+        "external_identities": [
+            {
+                "provider": provider.name if provider else None,
+                "provider_kind": provider.kind if provider else None,
+                "subject": link.subject,
+                "email": link.email,
+                "linked_at": link.created_at,
+                "last_login_at": link.last_login_at,
+            }
+            for link, provider in external_identities
+        ],
+        "sso_sessions": [
+            {
+                "provider": provider.name if provider else None,
+                "created_at": session.created_at,
+                "expires_at": session.expires_at,
+            }
+            for session, provider in sso_sessions
+        ],
         "courses": [
             {
                 "course_id": course.id if course else enrollment.course_id,

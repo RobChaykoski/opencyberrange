@@ -418,6 +418,50 @@ def test_ldap_instructor_group_grants_instructor(client, db_session, monkeypatch
     assert exchanged.json()["user"]["role"] == "instructor"
 
 
+def test_ldap_role_follows_directory_group_changes(client, db_session, monkeypatch):
+    """A directory group change applies on the next login, not only at signup."""
+    headers = _admin(client, db_session)
+    provider = _ldap_provider(client, headers)
+    suffix = _suffix()
+    base = {
+        "subject": f"uid=ldap_role_{suffix},ou=people,dc=example,dc=edu",
+        "email": f"sso_role_{suffix}@example.org",
+        "username_hint": f"sso_role_{suffix}",
+        "first_name": "Role",
+        "last_name": "Test",
+        "name": "Role Test",
+    }
+
+    def login_and_role():
+        login = client.post(
+            f"/api/auth/sso/ldap/{provider['id']}/login",
+            json={"username": "role-test", "password": "secret"},
+        )
+        assert login.status_code == 200, login.text
+        exchanged = client.post(
+            "/api/auth/sso/exchange", json={"ticket": login.json()["ticket"]}
+        )
+        assert exchanged.status_code == 200, exchanged.text
+        return exchanged.json()["user"]["role"]
+
+    monkeypatch.setattr(
+        ldap_auth,
+        "authenticate",
+        lambda *args, **kwargs: ExternalUser(groups=[], **base),
+    )
+    assert login_and_role() == "student"
+
+    monkeypatch.setattr(
+        ldap_auth,
+        "authenticate",
+        lambda *args, **kwargs: ExternalUser(
+            groups=["cn=instructors,ou=groups,dc=example,dc=edu"],
+            **base,
+        ),
+    )
+    assert login_and_role() == "instructor"
+
+
 def test_ldap_links_existing_student_but_never_admin(
     client, db_session, monkeypatch
 ):

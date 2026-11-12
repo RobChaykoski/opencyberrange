@@ -55,8 +55,8 @@
             {{ ssoError }}
           </div>
 
-          <div v-if="ssoProviders.length" class="sso-panel">
-            <p class="sso-panel__label">Institution sign-in</p>
+          <section v-if="ssoProviders.length" class="sso-panel" aria-labelledby="sso-panel-title">
+            <h2 id="sso-panel-title" class="sso-panel__label">Institution sign-in</h2>
             <button
               v-for="provider in redirectProviders"
               :key="provider.id"
@@ -64,6 +64,7 @@
               class="sso-button"
               :class="{ 'sso-button--primary': provider.is_default }"
               :disabled="ssoLoading"
+              :aria-label="`Sign in with ${provider.name}`"
               @click="startSso(provider)"
             >
               <span class="sso-button__mark" aria-hidden="true">{{ provider.name.charAt(0) }}</span>
@@ -76,40 +77,53 @@
               v-for="provider in ldapProviders"
               :key="`ldap-${provider.id}`"
               class="sso-ldap"
+              :aria-busy="ldapState[provider.id].loading"
               @submit.prevent="loginLdap(provider)"
             >
               <p class="sso-ldap__title">Sign in with {{ provider.name }}</p>
+              <label :for="`ldap-user-${provider.id}`" class="sso-ldap__label">
+                Directory username
+              </label>
               <input
+                :id="`ldap-user-${provider.id}`"
                 v-model="ldapState[provider.id].username"
                 type="text"
                 class="form-input"
-                placeholder="Directory username"
+                placeholder="e.g. sso.student"
                 autocomplete="username"
-                aria-label="Directory username"
                 required
               />
+              <label :for="`ldap-pass-${provider.id}`" class="sso-ldap__label">
+                Directory password
+              </label>
               <input
+                :id="`ldap-pass-${provider.id}`"
                 v-model="ldapState[provider.id].password"
                 type="password"
                 class="form-input"
-                placeholder="Directory password"
                 autocomplete="current-password"
-                aria-label="Directory password"
+                :aria-describedby="ldapState[provider.id].error ? `ldap-error-${provider.id}` : undefined"
                 required
               />
-              <p v-if="ldapState[provider.id].error" class="sso-ldap__error" role="alert">
+              <p
+                v-if="ldapState[provider.id].error"
+                :id="`ldap-error-${provider.id}`"
+                class="sso-ldap__error"
+                role="alert"
+              >
                 {{ ldapState[provider.id].error }}
               </p>
               <button
                 type="submit"
                 class="sso-ldap__submit"
                 :disabled="ldapState[provider.id].loading"
+                :aria-label="`Sign in with ${provider.name}`"
               >
                 {{ ldapState[provider.id].loading ? 'Signing in...' : 'Sign in' }}
               </button>
             </form>
             <div class="sso-divider"><span>or use a local account</span></div>
-          </div>
+          </section>
 
           <form @submit.prevent="handleLogin" class="login-form" :aria-busy="loading" novalidate>
             <div class="form-group">
@@ -937,6 +951,18 @@ const handleLogin = async () => {
   color: var(--text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.sso-ldap__label {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sso-button:focus-visible,
+.sso-ldap__submit:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .sso-ldap .form-input {

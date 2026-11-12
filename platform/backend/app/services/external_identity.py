@@ -183,6 +183,21 @@ def provision_or_link_external_user(
             raise SSOError("The linked local account is not approved.")
         link.email = email
         link.last_login_at = utcnow()
+        # SSO-managed accounts follow the directory role mapping on every
+        # login, so a group change takes effect without an admin edit. A local
+        # account that was linked by email keeps its role, and an administrator
+        # is never demoted by a directory claim.
+        if user.password_login_disabled and user.role != "admin":
+            mapped_role = role_for(config, identity.groups)
+            if user.role != mapped_role:
+                logger.info(
+                    "SSO role change for %s on provider %s: %s -> %s",
+                    user.username,
+                    provider.name,
+                    user.role,
+                    mapped_role,
+                )
+                user.role = mapped_role
         db.commit()
         return user, False, False
 

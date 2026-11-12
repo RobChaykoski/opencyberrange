@@ -150,6 +150,9 @@ services:
       # The backend talks to the socket proxy, not the host socket. The proxy
       # is reachable only on the docker_control network.
       DOCKER_HOST: tcp://docker-socket-proxy:2375
+      # Only nginx should be trusted to set X-Forwarded-For. Keep this to the
+      # app bridge so a lab container (10.x) cannot spoof a client address.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,172.16.0.0/12}
       TZ: UTC
     volumes:
       - ${LABS_HOST_PATH}:/labs:ro

@@ -114,6 +114,9 @@ services:
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-30000}
       RATELIMIT_STORAGE_URI: ${RATELIMIT_STORAGE_URI:-redis://valkey:6379/0}
       DOCKER_HOST: tcp://docker-socket-proxy:2375
+      # Only nginx should be trusted to set X-Forwarded-For. Keep this to the
+      # app bridge so a lab container (10.x) cannot spoof a client address.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,172.16.0.0/12}
       TZ: UTC
     volumes:
       - ./backend:/app
