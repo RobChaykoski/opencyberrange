@@ -50,10 +50,12 @@ None.
    smoke-tested locally, but the in-platform CyberChef menu item and RangeBox
    desktop were not exercised in a real browser session. Add a live learner
    walkthrough before calling the timing final.
-2. **External tool dependency.** CyberChef is a public GCHQ site. If a deployment
-   blocks it, the learner needs an approved local copy or an instructor-supplied
-   alternative. The workbook already points to the direct URL and the platform
-   menu item.
+2. ~~**External tool dependency.** CyberChef is a public GCHQ site. If a
+   deployment blocks it, the learner needs an approved local copy or an
+   instructor-supplied alternative.~~ **Resolved in 2.7.0:** CyberChef 11.5.0 is
+   a pinned static build served from the frontend image at `/tools/cyberchef/`,
+   so the panel works without internet access and the workbook no longer points
+   at a public URL.
 
 ### Suggestions
 

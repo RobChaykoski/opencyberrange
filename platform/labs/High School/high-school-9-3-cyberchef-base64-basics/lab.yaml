@@ -46,7 +46,7 @@ scenario: |
 
   The note is fictional and the target is isolated. You can use hints at any time.
 
-troubleshooting: "If the platform menu does not open CyberChef, copy the CyberChef address from the menu link into a new browser tab. If the output is still unreadable, confirm you added From Base64, not To Base64, and that you pasted the whole message. Never paste real passwords or personal data into any web tool."
+troubleshooting: "If the platform menu does not open CyberChef, use the panel's Open in new tab button or ask your instructor for the platform's CyberChef address. If the output is still unreadable, confirm you added From Base64, not To Base64, and that you pasted the whole message. Never paste real passwords or personal data into any web tool."
 defensive_takeaways: "Base64 changes how text is represented; it does not protect a secret. Treat encoded content as readable, verify the sender through a second channel, and never paste real credentials or personal data into a public web tool."
 difficulty_evidence: "Static student-tester walkthrough of the lab definition, target messages, and workbook; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
 difficulty_evidence_source: "reviewer_walkthrough"

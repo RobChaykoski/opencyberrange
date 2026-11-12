@@ -52,8 +52,9 @@ commercial terms.
   2.6.0 tree.
 - No new third-party runtime dependencies ship in 2.6.0. Event certificates
   reuse the existing `fpdf2`, Pillow, and `qrcode` packages.
-- The Grade 10-12 CyberChef lab exercises link to CyberChef, an external
-  Apache-2.0 browser tool, not bundled or redistributed by this repository.
+- CyberChef ships as a pinned static build in the frontend image
+  (`/tools/cyberchef/`, Apache-2.0) so the student Tools panel works without
+  internet access. Its notice and licence text are included here.
 - Valkey is not bundled in 2.6.0. It is under evaluation as a BSD-3-Clause
   replacement for the Redis 7.2 rate-limit store; if adopted, its notice and
   pin will be added to this file and the supply-chain lock.
@@ -78,11 +79,12 @@ software bundled with the platform carries its own notices; see
 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) and the licence texts in
 [`THIRD_PARTY_LICENSES/`](THIRD_PARTY_LICENSES/).
 
-CyberChef is linked as an external browser tool from the student Tools menu and
-the three Grade 9 CyberChef labs. It is licensed under Apache-2.0, is not
-bundled or redistributed by this repository, and is attributed in
+CyberChef is bundled as a pinned static build served from the student Tools
+menu and the active-lab panel at `/tools/cyberchef/`. It is licensed under
+Apache-2.0, is redistributed unmodified, and is attributed in
 `THIRD_PARTY_NOTICES.md` with the licence text in
-`THIRD_PARTY_LICENSES/Apache-2.0.txt`.
+`THIRD_PARTY_LICENSES/Apache-2.0.txt`. The build version and SHA256 are pinned
+in `platform/frontend/Dockerfile`.
 
 ## Mixed-licence components
 

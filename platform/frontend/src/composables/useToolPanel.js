@@ -7,10 +7,10 @@ const TOOLS = Object.freeze({
   cyberchef: {
     key: 'cyberchef',
     title: 'CyberChef',
-    url: 'https://gchq.github.io/CyberChef/',
+    url: '/tools/cyberchef/',
     description: 'Encode, decode, and inspect data without leaving the exercise.',
     attribution:
-      'CyberChef is an Apache-2.0 tool by GCHQ. It runs in a sandboxed cross-origin frame.',
+      'CyberChef is an Apache-2.0 tool by GCHQ. The pinned build is served from this platform, so it works without internet access.',
   },
 })
 

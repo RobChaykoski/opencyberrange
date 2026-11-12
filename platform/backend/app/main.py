@@ -137,6 +137,8 @@ def _initialize_schema() -> None:
     with engine.connect() as conn:
         is_postgres = conn.dialect.name == "postgresql"
         if is_postgres:
+            # Bound the wait: a stale holder must not freeze startup forever.
+            conn.execute(text("SET lock_timeout = '30s'"))
             conn.execute(
                 text("SELECT pg_advisory_lock(:key)"),
                 {"key": _SCHEMA_LOCK_KEY},
@@ -181,6 +183,9 @@ def _stamp_or_upgrade_alembic() -> None:
     with engine.connect() as conn:
         is_postgres = conn.dialect.name == "postgresql"
         if is_postgres:
+            # A stale holder must not block startup forever; the inline schema
+            # is already current, so timing out is safe and logged below.
+            conn.execute(text("SET lock_timeout = '30s'"))
             conn.execute(
                 text("SELECT pg_advisory_lock(:key)"),
                 {"key": _SCHEMA_LOCK_KEY},
@@ -773,8 +778,12 @@ async def lifespan(app: FastAPI):
 
     # Append-only change ledger for critical tables. The triggers attribute
     # application writes to the authenticated actor and flag manual writes as
-    # unattributed. PostgreSQL only; SQLite tests skip it.
-    ensure_ledger(engine)
+    # unattributed. PostgreSQL only; SQLite tests skip it. A lock timeout is
+    # logged rather than taking the whole platform down.
+    try:
+        ensure_ledger(engine)
+    except Exception as exc:
+        logger.warning("Integrity ledger setup skipped: %s", exc)
 
     # Only the advisory-lock leader runs the scheduler; the other workers
     # serve requests but skip the background cleanup loops.

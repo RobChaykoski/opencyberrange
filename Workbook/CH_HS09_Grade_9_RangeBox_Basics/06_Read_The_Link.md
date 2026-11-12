@@ -61,7 +61,8 @@ Read it from the scheme to the right:
 
 ### Step 3: Decode the hidden value
 
-1. Open the platform menu and choose **CyberChef**. It opens in a new tab.
+1. Open the platform menu and choose **CyberChef**. It opens in a panel at the
+   bottom of the platform.
 2. Find **URL Decode** in the Operations list and drag it into the **Recipe**
    column.
 3. Paste the whole message into the **Input** column.
@@ -142,7 +143,8 @@ message is real?**
 
 - Everything in this exercise is text. You can complete it with a keyboard.
 - Copy and paste is allowed. You never need to click the link.
-- If the platform menu is hidden, use the direct CyberChef address from your
-  instructor or the Python command above.
+- If the platform menu is hidden, use the panel's **Open in new tab** button,
+  ask your instructor for the platform's CyberChef address, or use the Python
+  command above.
 - If you use a screen reader, read the URL one part at a time from the scheme
   to the query string.

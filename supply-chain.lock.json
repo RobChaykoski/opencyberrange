@@ -55,7 +55,7 @@
       "sha256": "31d48157fd81a3d61887fc7c411dcbb744640ab901f025ff162b97024279986d"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "7fa8bce94a884d55eef4e9ffb73ef10ac09149a66e7129b2b5bfa20185a396ac"
+      "sha256": "87cbd243f7dcd427b3925c11377f249b4971101a9997f8039200445f9443d1ad"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -70,10 +70,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "b6e4df5144af465805545e398398e343ad4f62383e73037993f60e6a3e13692a"
+      "sha256": "540ea8202ca8d274c9d068d985a025c46e3e4a28927812acb85d7a2d7424da9c"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "ccecd74f6075ff4b799263362861d8ea384e009cdd2a866c9b1810d20fac67a8"
+      "sha256": "922ce0b33913eeb30b5aeb6fe9e3e8f7d51663325708c09e5359cb3ae80975e5"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "476fe9fc0392f59d948d32bd70d4e98b7dd5a5ed0cfa5af7caa7e20dd27ea566"
@@ -100,7 +100,7 @@
       "sha256": "e66919680b19f56931c14ca4101d4938e118b0b14cb5dcdc4ece0b87041f1f58"
     },
     "scripts/generate-about.py": {
-      "sha256": "20206dffb05c792f169b4386d00f9a0dc91b042b303607728eafa6eb0e090e58"
+      "sha256": "d47872f0d31207e5732346b6db89b1bc2b52d20d1d9988a375b0ab652be29b3f"
     },
     "scripts/install-platform.sh": {
       "sha256": "2e689b91b69de0aa56db7bed14551a61133c84e2bdb1ed5d5450dcd43a36118e"
@@ -232,7 +232,7 @@
       ]
     },
     "high-school-9-3-cyberchef-base64-basics": {
-      "content_hash": "4eeffc8c0262ed04c5c1f5adc9f0c55d5442ab566d53855ba2d0080a5758e962",
+      "content_hash": "e72bccd2236d47abc541d17a8578ab606d3d484d1870376f543b6004ea06149c",
       "services": [
         "portal"
       ]

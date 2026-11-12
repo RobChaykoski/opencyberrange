@@ -16,7 +16,10 @@ from alembic import context
 config = context.config
 
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    # disable_existing_loggers=False keeps uvicorn and the app loggers alive.
+    # The default (True) silently silences every log line emitted after this
+    # point, which hid a startup stall during the 2.7.0 hardening work.
+    fileConfig(config.config_file_name, disable_existing_loggers=False)
 
 # Make the backend package importable when alembic is invoked from
 # platform/backend (prepend_sys_path covers the normal case; keep this as a

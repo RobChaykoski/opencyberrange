@@ -35,11 +35,11 @@ button. Copy the whole line of text.
 
 ### Step 2: Open CyberChef
 
-Open the platform menu and choose **CyberChef**. It opens in a new browser tab.
-Keep the exercise tab open so you can copy the message.
+Open the platform menu and choose **CyberChef**. It opens in a panel at the
+bottom of the platform. Keep the exercise tab open so you can copy the message.
 
-If your deployment does not show the menu item, open
-<https://gchq.github.io/CyberChef/> in a new tab.
+If your deployment does not show the menu item, use the panel's **Open in new
+tab** button or ask your instructor for the platform's CyberChef address.
 
 ### Step 3: Add the decoding operation
 

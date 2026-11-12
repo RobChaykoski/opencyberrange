@@ -55,9 +55,9 @@ their own licences; the project licence does not override them.
 - No new third-party runtime dependencies are shipped in 2.6.0. Event
   certificates reuse the existing `fpdf2`, Pillow, and `qrcode` packages.
 - `scripts/check-licences.py` reports **OK** for the 2.6.0 tree.
-- The Grade 10-12 CyberChef lab exercises link to CyberChef, an Apache-2.0
-  external browser tool linked from the platform menu; it is not bundled or
-  redistributed. Its notice and licence text are included here.
+- CyberChef ships as a pinned static build in the frontend image
+  (`/tools/cyberchef/`, Apache-2.0) so the student Tools panel works without
+  internet access. Its notice and licence text are included here.
 - Valkey is not bundled in 2.6.0. It is under evaluation as a BSD-3-Clause
   replacement for the Redis 7.2 rate-limit store; if adopted, its notice and pin
   will be added here and to the supply-chain lock.
@@ -250,7 +250,7 @@ Each lab may install its own packages. The main notice-sensitive toolchains are:
 | asyncua | LGPL-3.0-or-later | Tester sidecar |
 | Firefox ESR / Firefox | MPL-2.0 | RangeBox, UbuntuBox, RemnuxBox |
 | XFCE / Xfce terminal | GPL/LGPL family | Desktop boxes |
-| CyberChef | Apache-2.0 | External browser tool linked from the student Tools menu and active-lab panel; not bundled or redistributed by this repository |
+| CyberChef | Apache-2.0 | Pinned static build bundled in the frontend image and served at `/tools/cyberchef/` |
 
 Apache, pymodbus, PyMySQL, Flask, and the Python standard library carry
 permissive licences; the GPL/AGPL/LGPL/VSL components above need their licence

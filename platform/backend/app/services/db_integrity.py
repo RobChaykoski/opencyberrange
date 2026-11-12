@@ -305,7 +305,9 @@ def ensure_ledger(engine: Engine) -> None:
     with engine.begin() as conn:
         # Uvicorn starts several workers at once. Serialise the ledger DDL so
         # two workers cannot drop/create the same trigger concurrently and
-        # abort one worker's startup.
+        # abort one worker's startup. Bound the wait so a stale holder cannot
+        # freeze startup indefinitely.
+        conn.execute(text("SET LOCAL lock_timeout = '30s'"))
         conn.execute(
             text("SELECT pg_advisory_xact_lock(hashtext('ocr.data_integrity_ledger_ddl'))")
         )

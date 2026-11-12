@@ -457,7 +457,7 @@
       {
         "name": "CyberChef",
         "version": "",
-        "licence": "Apache-2.0; external browser tool, not redistributed",
+        "licence": "Apache-2.0; pinned static build bundled in the frontend image",
         "scope": "lab toolchain"
       }
     ]
