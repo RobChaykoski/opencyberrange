@@ -12,7 +12,7 @@ sys.path.insert(0, "/app")
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://labuser:labpass@db:5432/labdb")
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, connect_args={"application_name": "ocr-app-cli"})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 from app.models import User, Lab, LabCompletion, FlagAttempt, LevelQuiz, QuizAttempt, CourseEnrollment

@@ -27,7 +27,7 @@ def load_defs():
 
 
 def seed(slugs):
-    engine = create_engine(DATABASE_URL)
+    engine = create_engine(DATABASE_URL, connect_args={"application_name": "ocr-app-cli"})
     Session = sessionmaker(bind=engine)
     db = Session()
     defs = load_defs()

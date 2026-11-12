@@ -12,7 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://labuser:labpass@db:5432/labdb")
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, connect_args={"application_name": "ocr-app-cli"})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 from app.models import Track, LevelQuiz, QuizQuestion

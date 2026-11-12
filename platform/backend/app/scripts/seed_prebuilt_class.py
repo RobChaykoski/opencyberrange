@@ -114,7 +114,7 @@ if __name__ == '__main__':
     inst_id = int(sys.argv[1])
 
     DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://labuser:labpass@db:5432/labdb')
-    engine = create_engine(DATABASE_URL)
+    engine = create_engine(DATABASE_URL, connect_args={"application_name": "ocr-app-cli"})
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = SessionLocal()
     try:
