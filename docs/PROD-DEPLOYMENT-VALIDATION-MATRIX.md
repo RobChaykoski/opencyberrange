@@ -99,6 +99,14 @@ this section records what was actually deployed, not a gate pass.
 | Health | `/health` 200; `/api/version` 2.7.0; frontend `/login` 200 |
 | Wiki | Rebuilt 13 sites; `22_Navigating_Your_Cyber_DNA` and the workbook Home present with images |
 | Integrity | 12 tracks, 54 levels, 169 labs, 43 chapters, 1 course; 0 chain breaks |
+| Backup volume | `backups_data` chowned to `10001:10001`; **Create snapshot** produced `ocr_backup_20261112_192620.sql` (2.5 MB) |
+| Software integrity | `software-integrity.json` regenerated from the current lock; **169/169 labs match**, 0 mismatched/missing/extra |
+
+The first production snapshot attempt failed because the existing `backups_data`
+volume was owned by `root` while the backend runs as UID `10001`. The volume
+ownership was corrected and verified. The software-integrity mismatch came from
+a stale `software-integrity.json` after the two lab READMEs were repaired for
+mojibake; the manifest was regenerated and CI now checks it against the lock.
 
 ## Exit criteria for the next attempt
 

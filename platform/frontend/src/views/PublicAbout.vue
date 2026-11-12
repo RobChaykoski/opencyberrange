@@ -334,7 +334,7 @@ const role = user.role || 'student'
   line-height: 1.55;
 }
 
-.public-about a {
+.public-about a:not(.btn) {
   color: var(--accent);
 }
 
