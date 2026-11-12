@@ -433,6 +433,16 @@ tracks:
         recommended_next: IAM01
         status: published
         intro: CH_OSINT01_OSINT_Foundations/00_Introduction.md
+      - id: OSINT02
+        directory: CH_OSINT02_Mobile_OSINT
+        display_name: "Mobile OSINT"
+        difficulty: "beginner"
+        prerequisites: [OSINT01]
+        exercises: 3
+        estimated_minutes: 70
+        recommended_next: IAM01
+        status: published
+        intro: CH_OSINT02_Mobile_OSINT/00_Introduction.md
 
   - id: high-school
     pathway_order: 1

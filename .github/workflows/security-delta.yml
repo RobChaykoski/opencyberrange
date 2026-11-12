@@ -1,0 +1,37 @@
+name: Security delta review
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-delta-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: permissions, inputs, databases, and secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Run the security delta checklist
+        env:
+          SECURITY_DELTA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -n "$SECURITY_DELTA_BASE" ] && [ "$SECURITY_DELTA_BASE" != "0000000000000000000000000000000000000000" ]; then
+            python scripts/security-delta-review.py --base "$SECURITY_DELTA_BASE"
+          else
+            python scripts/security-delta-review.py --base "HEAD~1"
+          fi

@@ -23,6 +23,18 @@ see [`BUILD_NOTICE.md`](BUILD_NOTICE.md) for provenance and
 - Security design: read the [OWASP Top 10 baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
   before changing an interface, data model, authentication path, or integration.
   List the categories the change touches in the pull request.
+- Security delta review: run `python scripts/security-delta-review.py` before
+  every commit. It applies the project software-security skill to the changed
+  files and prints the manual permissions, inputs, database, output, secret, and
+  dependency checklist. CI runs the same script on every pull request. To run it
+  automatically on commit:
+
+  ```bash
+  git config core.hooksPath .githooks
+  ```
+
+  The hook only fails on high-confidence findings. Warnings still need a human
+  decision.
 
 ### Reporting Bugs
 

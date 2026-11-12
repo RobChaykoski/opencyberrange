@@ -15,12 +15,15 @@ Click **Profile** in the sidebar. The page opens with your profile card: avatar,
 
 ## Profile tabs
 
-The profile is split into five tabs so the page stays scannable:
+The profile is split into five tabs so the page stays scannable. A sixth
+**Careers** tab appears when the advanced DNA insights preview is enabled on the
+deployment.
 
 | Tab | What it holds |
 |---|---|
 | **Overview** | Four signals: your next practice step, learning evidence, Cyber DNA class, and recent recognition. |
-| **Skill tree** | The six-branch skill tree, Cyber DNA traits, practice affinities, career alignment, and title collection. |
+| **Skill tree** | The six-branch skill tree, Cyber DNA traits, practice affinities, career alignment, title collection, and the Momentum and friction panel when enabled. |
+| **Careers** | The Career Atlas: practice-linked career families, role ladders, and a Canada/US salary lens. Shown only when Advanced DNA Insights is enabled. |
 | **Learning record** | Course achievements, certificates, track progress, and completion details. |
 | **Account** | Personal information, account status, Exercise Studio (when available), and course enrolment. |
 | **Security & privacy** | MFA, password change, survey consent, data export, and account deletion. |
@@ -73,6 +76,25 @@ practice evidence, not a job label, a certification, or permission to test any
 system. A learner with no offensive labs sees "No direct evidence yet", not a
 negative label.
 
+### Momentum and friction
+
+When Advanced DNA Insights is enabled, **Momentum and friction** appears below
+the traits. It compares the recent half of your completed exercises with the
+earlier half and highlights where practice is gaining or under friction. It uses
+hints, reattempts, time over the exercise estimate, and exercises you started but
+did not finish. It is a private review prompt, not a grade. See
+[Career Atlas and Momentum](21_Career_Atlas_And_Momentum.md).
+
+### Career Atlas
+
+The **Careers** tab maps your six practice branches to career families and the
+roles inside them. Each family is a node on a skill tree: **Unlocked**, **One
+step away**, or **Locked** from your practice evidence. Select a node to read its
+role ladder, next practice step, and salary lens. The Canada/US switch changes
+the salary region only. Salary bands are national planning ranges from public
+labour-market data, not offers or predictions. See
+[Career Atlas and Momentum](21_Career_Atlas_And_Momentum.md).
+
 The **Career alignment** card maps your current class to a certification path
 using the same track guidance as the certification panel. The roadmap link opens
 Paul Jerimy's Security Certification Roadmap. Treat it as guidance, not an
@@ -92,10 +114,12 @@ The Skill tree tab offers two career-profile downloads:
 - **Download career profile (printable HTML)** for a print-ready copy.
 
 Both contain your Cyber DNA, learning evidence, reflection questions, and
-external resource links. They are separate from the **Download PDF** transcript
-on the Learning record tab. Career profiles are conversation aids, not job
-labels or certifications. The export is logged for accountability and is not
-shared with anyone automatically.
+external resource links. When Advanced DNA Insights is enabled, they also include
+the Momentum section, the Career Atlas, the role ladders, and the salary source
+notes. They are separate from the **Download PDF** transcript on the Learning
+record tab. Career profiles are conversation aids, not job labels,
+certifications, or salary promises. The export is logged for accountability and
+is not shared with anyone automatically.
 
 Your DNA updates as you complete labs and earn badges. A new account starts as a
 Recruit; open an exercise to begin.

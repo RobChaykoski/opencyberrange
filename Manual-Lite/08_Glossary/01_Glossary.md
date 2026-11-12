@@ -471,6 +471,11 @@ descriptive, not grades or predictions.
 | Cyber DNA (Skill DNA) | The learner character sheet: six descriptive traits, a class, and practice affinities built from existing activity. It is not a grade, a ranking, or a prediction. |
 | Trait | One of the six Cyber DNA dimensions: Explorer, Builder, Tester, Defender, Investigator, or Leader. Each is scored 0–100. |
 | Affinity | A positive practice direction suggested by completed work, such as offensive security, defensive operations, DFIR, or security leadership. It is not a job label. |
+| Momentum | A development-preview comparison of a learner's recent work with their earlier work. It shows where practice is gaining or under friction using hints, reattempts, time over estimate, and unfinished exercises. It is not a grade. |
+| Friction | A descriptive 0-100 signal in Momentum built from hint use, reattempts, unfinished exercises, and time pressure. It is a review prompt, not a learner label. |
+| Career Atlas | A development-preview skill tree that maps the six Cyber DNA branches to career families, role ladders, and national salary planning ranges. It is a conversation aid, not a job prediction. |
+| Salary lens | The Career Atlas view of a role's national low, median, and high salary planning range for Canada or the United States, with its source and as-of date. It is not an offer. |
+| Advanced DNA Insights | The platform setting (`advanced_dna_insights_enabled`) that gates Momentum, the Careers tab, and the extended career dossier. It is off by default in production. |
 | Individual success profile | The eight-dimension view used by a student and their instructor: progress, pace, independence, persistence, understanding, experience, capability, and support. It ends with one next step. |
 | Dean | The institutional role that sets semester goals, reviews programme health, supports instructors, and owns the end-of-term evidence. In 2.5.0 it maps to an administrator or programme lead; it is not a separate database role. |
 | Programme lead | The staff role that turns semester goals into a course portfolio and supports instructors. |

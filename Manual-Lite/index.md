@@ -40,10 +40,11 @@ flowchart LR
 
 ## Manual editions
 
-This is the shared core manual for platform release **2.7.0**. Community /
-Academic, Professional, and Enterprise are cumulative edition profiles on that
-release; Community / Academic 1.1.3 remains a maintenance line for existing
-installs. Edition-specific pages live in the
+This is the shared core manual for platform release **2.7.0** plus the
+**Advanced DNA Insights development preview**. Community / Academic,
+Professional, and Enterprise are cumulative edition profiles on that release;
+Community / Academic 1.1.3 remains a maintenance line for existing installs.
+Edition-specific pages live in the
 [Professional supplement](09_Professional/index.md) and the
 [Enterprise supplement](10_Enterprise/index.md). See
 [Manual editions](VERSIONS.md) for the feature matrix.
@@ -55,6 +56,10 @@ installs. Edition-specific pages live in the
   and the [VPN Setup Guide](05_VPN_Setup_Guide/01_VPN_Overview.md).
 - Tracking completion, certificates, and your PDF transcript? See
   [Viewing Your Profile](02_Student_Guide/16_Viewing_Your_Profile.md).
+- Exploring where your practice is gaining, what to try next, and how that maps
+  to career families and salary context? See
+  [Career Atlas and Momentum](02_Student_Guide/21_Career_Atlas_And_Momentum.md)
+  (development preview).
 - Need the exact rules for flags, scoring, and lab timing? See the
   [Lab Workflow Reference](06_Lab_Workflow_Reference/01_Lab_Lifecycle_Overview.md).
 - Looking for a term or the MISP-aligned definition? See the

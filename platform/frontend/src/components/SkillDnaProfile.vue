@@ -55,12 +55,24 @@
             <polygon :points="treePolygon" class="dna-tree__area" />
             <circle
               v-for="point in treePoints"
+              :key="`tree-node-${point.key}`"
+              :cx="point.x"
+              :cy="point.y"
+              r="9"
+              class="dna-tree__node"
+              :class="{ 'dna-tree__node--top': point.key === topBranchKey }"
+            />
+            <circle
+              v-for="point in treePoints"
               :key="`tree-point-${point.key}`"
               :cx="point.x"
               :cy="point.y"
               r="4"
               class="dna-tree__dot"
-              :class="`dna-tree__dot--${point.key}`"
+              :class="[
+                `dna-tree__dot--${point.key}`,
+                { 'dna-tree__dot--top': point.key === topBranchKey },
+              ]"
             />
             <circle :cx="treeCenter.x" :cy="treeCenter.y" r="17" class="dna-tree__core" />
             <text
@@ -388,6 +400,11 @@ const treePoints = computed(() =>
     ...treePoint(index, dimension.score),
   }))
 )
+const topBranchKey = computed(() => {
+  const dimensions = treeDimensions.value
+  if (!dimensions.length) return null
+  return [...dimensions].sort((a, b) => b.score - a.score)[0].key
+})
 const treeLabels = computed(() =>
   treeDimensions.value.map((dimension, index) => {
     const point = treePointAtRadius(index, TREE_LABEL_RADIUS)
@@ -600,9 +617,25 @@ const titleDescription = (title) => {
   stroke-width: 2;
 }
 
+.dna-tree__node {
+  fill: var(--bg-primary);
+  stroke: var(--border-color);
+  stroke-width: 2;
+}
+
+.dna-tree__node--top {
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
 .dna-tree__dot {
   fill: var(--accent);
   stroke: var(--bg-primary);
+  stroke-width: 2;
+}
+
+.dna-tree__dot--top {
+  stroke: var(--accent-text);
   stroke-width: 2;
 }
 

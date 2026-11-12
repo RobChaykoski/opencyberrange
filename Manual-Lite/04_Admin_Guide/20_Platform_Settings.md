@@ -8,9 +8,9 @@ Platform Settings is where you tune platform-wide behavior: general identity val
 
 ## Where it lives
 
-The settings screen is the **Settings** tab of the Admin Panel, reached from the **Settings** link in the left sidebar (or directly at `/admin?tab=settings`). The settings live behind five category tabs: General, Security, Exercises, VPN, and Email.
+The settings screen is the **Settings** tab of the Admin Panel, reached from the **Settings** link in the left sidebar (or directly at `/admin?tab=settings`). The settings live behind six category tabs: General, Security, Exercises, VPN, Email, and Features.
 
-The five settings categories and what each one controls.
+The six settings categories and what each one controls.
 
 ```mermaid
 flowchart LR
@@ -19,17 +19,19 @@ flowchart LR
   S --> L[Exercises]
   S --> V[VPN]
   S --> E[Email]
+  S --> F[Features]
   G --> A[Platform wide values]
   SE --> A
   L --> A
   V --> A
   E --> A
+  F --> A
 ```
 
 ## Steps
 
 1. Open the **Settings** tab from the sidebar.
-2. Click a category tab: **General**, **Security**, **Exercises**, **VPN**, or **Email**.
+2. Click a category tab: **General**, **Security**, **Exercises**, **VPN**, **Email**, or **Features**.
 3. Edit the values in the rows. Each row uses the control that fits its type:
    - A boolean shows an **Enabled** / **Disabled** toggle button.
    - A value whose key contains "color" shows a color picker.
@@ -76,6 +78,47 @@ exports also exclude suppressed courses from aggregate totals. The default is
 extensions. `100%` is the normal length; `150%` gives 50% extra time; the
 maximum is `300%`. Record the accommodation decision outside the platform and
 use the smallest percentage that meets the learner's approved plan.
+
+## Advanced DNA Insights (development preview)
+
+The **Features** tab contains **Advanced DNA Insights**
+(`advanced_dna_insights_enabled`). It is **Off by default**. When enabled, it
+adds three learner-facing surfaces:
+
+- **Momentum and friction** below the Cyber DNA skill tree.
+- A **Careers** profile tab with the Career Atlas.
+- Momentum and Career Atlas sections in the career-profile Markdown and
+  printable HTML dossiers.
+
+The Cyber DNA formula does not change. Momentum and the Career Atlas are a
+derived reporting layer with their own version numbers. The Career Atlas links
+salary bands from Canada Job Bank and the U.S. Bureau of Labor Statistics; the
+figures are national planning ranges, not offers or predictions.
+
+<figure markdown>
+
+![Admin Settings Features tab showing the Advanced DNA Insights toggle and development-preview notes](img/admin-settings-features.png)
+
+<figcaption>The Features tab holds the Advanced DNA Insights gate. Production keeps the default Off until the review in docs/CAREER-ATLAS-AND-MOMENTUM.md is signed off.</figcaption>
+</figure>
+
+To enable it on a development host:
+
+1. Open **Admin -> Settings -> Features**.
+2. Set **Advanced DNA Insights** to **Enabled**.
+3. Click **Save Settings**.
+4. Ask the learner to reload the profile. The **Careers** tab appears when the
+   profile API returns the new data.
+
+To disable it, set the same toggle to **Disabled** and save. The surfaces and
+dossier sections disappear immediately; learner completion records are not
+deleted. The setting is audited like any other platform setting.
+
+!!! warning "Development preview only"
+    Keep this setting **Off** on production until the review in
+    `docs/CAREER-ATLAS-AND-MOMENTUM.md` is signed off. The feature is
+    descriptive and private, but salary data and career framing need an
+    institutional review before learner-facing release.
 
 ## RangeBox capacity
 

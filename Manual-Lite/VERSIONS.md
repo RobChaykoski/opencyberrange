@@ -2,9 +2,15 @@
 
 The core manual in this folder describes the workflows shared by the
 **Community / Academic profile** (1.1.3 maintenance) and **Professional 2.7.0**
-platforms. Professional
+platforms, plus the **Advanced DNA Insights development preview**. Professional
 and Enterprise are cumulative: every page here still applies, and each edition
 adds the pages in its own supplement.
+
+!!! note "Development preview"
+    Momentum, the Career Atlas, and the extended career dossier are gated by
+    **Admin -> Settings -> Features -> Advanced DNA Insights**. They are off by
+    default in production. See
+    [Career Atlas and Momentum](02_Student_Guide/21_Career_Atlas_And_Momentum.md).
 
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|

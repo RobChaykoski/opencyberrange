@@ -1,0 +1,119 @@
+title: The Public Banner
+category: osint
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - osint-2-1-source-code-intelligence
+learning_outcomes:
+  - Use a Shodan-style query against a synthetic public-data mirror
+  - Filter by organisation, product, port, and hostname
+  - Read a service banner for exposed metadata
+  - Recover the flag from a verbose banner
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1596.005
+    technique_name: "Search Open Technical Databases: Scan Databases"
+    detection: Review public scan data for your own exposed banners, ports, and product versions.
+  - tactic: Reconnaissance
+    technique: T1590.005
+    technique_name: "Gather Victim Network Information: IP Addresses"
+    detection: Monitor public IP registrations and scan results for unexpected exposure.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-11"
+review_status: "automated static proof; live walkthrough pending"
+description: "A synthetic Shodan-style mirror lists fictional public hosts for Kestrel Ridge. Use your phone to search the mirror, find the build server, and recover the flag from its verbose banner. The mirror never queries the real internet."
+visibility: public
+flag: "OCR{sh0d4n_b4nn3r_l34k}"
+
+tools:
+  - phone
+  - browser
+
+scenario: |
+  Kestrel Ridge has a public build server. A synthetic Shodan-style mirror has
+  indexed the fictional public hosts for this exercise. The build server leaks
+  more than it should in its service banner.
+
+  Use your phone to open the mirror, search for Kestrel Ridge, and find the
+  build host. Read the banner and recover the marker.
+
+  This is a synthetic mirror. It contains no real hosts and never queries the
+  real internet or the real Shodan service.
+
+troubleshooting: "If the mirror shows no matches, use a broader query such as org:\"Kestrel Ridge\" or product:Jenkins. If the phone cannot reach the target, use the address shown in your Active Lab View."
+defensive_takeaways: "Public scan data exposes banners, ports, and product versions. Reduce the banner, remove default pages, and monitor your own public footprint."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-11"
+workbook: "wiki/range/osint/CH_OSINT02_Mobile_OSINT/03_The_Public_Banner/"
+
+hostnames:
+  - ip_offset: "86"
+    hostname: "connect.lab"
+    description: "Synthetic Shodan mirror (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "shodan"
+      label: "Synthetic Shodan Mirror"
+      type: "server"
+      ip_offset: "86"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Start with a broad organisation query:
+
+      org:"Kestrel Ridge"
+
+      The mirror lists three fictional hosts for that organisation.
+    unlock_after_minutes: 5
+
+  - text: |
+      Narrow to the build service:
+
+      product:Jenkins
+
+      or:
+
+      port:8080
+    unlock_after_minutes: 12
+
+  - text: |
+      The build host banner contains an X-Build-Marker header. That value is the
+      flag. Copy it exactly.
+    unlock_after_minutes: 18
+
+test:
+  steps:
+    - name: "Mirror responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.shodan}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Organisation query returns the build host"
+      command: "curl -s 'http://{target.shodan}:8080/?q=org:%22Kestrel%20Ridge%22' | grep -o 'build.kestrel-ridge.example'"
+      expect: "build.kestrel-ridge.example"
+      timeout: 20
+
+    - name: "Product query returns the flag banner"
+      command: "curl -s 'http://{target.shodan}:8080/?q=product:Jenkins' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{sh0d4n_b4nn3r_l34k}"
+      timeout: 20
+
+    - name: "JSON API returns the flag"
+      command: "curl -s 'http://{target.shodan}:8080/api/hosts?q=product:Jenkins' | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{sh0d4n_b4nn3r_l34k}"
+      timeout: 20

@@ -235,7 +235,7 @@
             @keydown.left.prevent="moveTab(-1)"
             @keydown.right.prevent="moveTab(1)"
             @keydown.home.prevent="moveTabTo('overview')"
-            @keydown.end.prevent="moveTabTo('security')"
+            @keydown.end.prevent="moveTabTo(lastProfileTab)"
           >
             {{ tab.label }}
             <span v-if="tab.count !== undefined" class="profile-tab__count">{{ tab.count }}</span>
@@ -335,12 +335,17 @@
           <p v-if="careerExportMessage" :class="careerExportError ? 'error-message' : 'success-message'">
             {{ careerExportMessage }}
           </p>
-          <SkillDnaProfile
-            v-if="summary?.skill_dna"
-            :dna="summary.skill_dna"
-            :busy="titleSaving"
-            @equip-title="equipTitle"
-          />
+          <template v-if="summary?.skill_dna">
+            <SkillDnaProfile
+              :dna="summary.skill_dna"
+              :busy="titleSaving"
+              @equip-title="equipTitle"
+            />
+            <MomentumPanel
+              v-if="summary.skill_dna.momentum"
+              :momentum="summary.skill_dna.momentum"
+            />
+          </template>
           <p v-else class="help-text">Complete an exercise to grow your skill tree.</p>
           <p
             v-if="titleMessage"
@@ -348,6 +353,24 @@
             class="dna-title-message"
           >
             {{ titleMessage }}
+          </p>
+        </div>
+
+        <div
+          v-show="activeTab === 'careers'"
+          id="profile-panel-careers"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-careers"
+        >
+          <CareerAtlas
+            v-if="summary?.skill_dna?.career_atlas"
+            :atlas="summary.skill_dna.career_atlas"
+            :dna="summary.skill_dna"
+          />
+          <p v-else class="help-text">
+            The Career Atlas is not enabled on this deployment. Ask an administrator
+            to enable it in Settings &rarr; Features.
           </p>
         </div>
 
@@ -1016,6 +1039,8 @@ import { useModules } from '../composables/useModules'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import SkillDnaProfile from '../components/SkillDnaProfile.vue'
+import MomentumPanel from '../components/MomentumPanel.vue'
+import CareerAtlas from '../components/CareerAtlas.vue'
 import UserAvatar from '../components/UserAvatar.vue'
 import CheckIcon from '../components/icons/CheckIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
@@ -1045,13 +1070,23 @@ const loading = ref(true)
 // and transcript sections. Loaded separately from /auth/me so the account
 // forms render immediately even when that aggregate query is slow.
 const summary = ref(null)
-const PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
+const BASE_PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
+const ALL_PROFILE_TABS = ['overview', 'skill-tree', 'careers', 'learning', 'account', 'security']
+const hasCareerAtlas = computed(() => !!summary.value?.skill_dna?.career_atlas)
+const profileTabKeys = computed(() =>
+  hasCareerAtlas.value
+    ? ['overview', 'skill-tree', 'careers', 'learning', 'account', 'security']
+    : BASE_PROFILE_TABS
+)
+const lastProfileTab = computed(
+  () => profileTabKeys.value[profileTabKeys.value.length - 1]
+)
 const activeTab = ref(
-  PROFILE_TABS.includes(String(route.query.tab || '')) ? String(route.query.tab) : 'overview'
+  ALL_PROFILE_TABS.includes(String(route.query.tab || '')) ? String(route.query.tab) : 'overview'
 )
 
 const setTab = (tab) => {
-  if (!PROFILE_TABS.includes(tab)) return
+  if (!profileTabKeys.value.includes(tab)) return
   activeTab.value = tab
   const query = { ...route.query, tab }
   if (tab === 'overview') delete query.tab
@@ -1071,18 +1106,31 @@ const moveTabTo = (tab) => {
 }
 
 const moveTab = (direction) => {
-  const index = PROFILE_TABS.indexOf(activeTab.value)
-  const next = PROFILE_TABS[(index + direction + PROFILE_TABS.length) % PROFILE_TABS.length]
+  const keys = profileTabKeys.value
+  const index = keys.indexOf(activeTab.value)
+  const next = keys[(index + direction + keys.length) % keys.length]
   moveTabTo(next)
 }
 
 watch(
   () => route.query.tab,
   (tab) => {
-    const next = PROFILE_TABS.includes(String(tab || '')) ? String(tab) : 'overview'
+    const next = profileTabKeys.value.includes(String(tab || '')) ? String(tab) : 'overview'
     if (next !== activeTab.value) activeTab.value = next
   }
 )
+
+watch(hasCareerAtlas, (enabled) => {
+  if (!enabled && activeTab.value === 'careers') {
+    activeTab.value = 'skill-tree'
+  }
+})
+
+watch(summary, () => {
+  if (!profileTabKeys.value.includes(activeTab.value)) {
+    activeTab.value = 'overview'
+  }
+})
 const summaryLoading = ref(true)
 const summaryError = ref('')
 const titleSaving = ref(false)
@@ -1330,13 +1378,21 @@ const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
 const courseAchievements = computed(() => summary.value?.course_achievements || [])
 
-const profileTabs = computed(() => [
-  { key: 'overview', label: 'Overview' },
-  { key: 'skill-tree', label: 'Skill tree' },
-  { key: 'learning', label: 'Learning record', count: achievements.value.length || undefined },
-  { key: 'account', label: 'Account' },
-  { key: 'security', label: 'Security & privacy' },
-])
+const profileTabs = computed(() => {
+  const tabs = [
+    { key: 'overview', label: 'Overview' },
+    { key: 'skill-tree', label: 'Skill tree' },
+  ]
+  if (hasCareerAtlas.value) {
+    tabs.push({ key: 'careers', label: 'Careers' })
+  }
+  tabs.push(
+    { key: 'learning', label: 'Learning record', count: achievements.value.length || undefined },
+    { key: 'account', label: 'Account' },
+    { key: 'security', label: 'Security & privacy' },
+  )
+  return tabs
+})
 
 const learningMinutes = computed(() =>
   completions.value.reduce((total, item) => total + (Number(item.time_spent_minutes) || 0), 0)

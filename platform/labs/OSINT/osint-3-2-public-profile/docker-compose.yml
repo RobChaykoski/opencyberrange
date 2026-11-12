@@ -1,0 +1,24 @@
+services:
+  intranet:
+    mem_limit: 160m
+    cpus: 0.2
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: connect
+    labels:
+      ip_offset: "85"
+    environment:
+      LAB_MODE: "public_profile_external"
+      FLAG: "OCR{linkedIn_0s1nt_m4st3r_2026}"
+      COMPANY: "Kestrel Ridge"
+      PORT: "8080"
+      PROFILE_URL: "https://www.linkedin.com/in/your-profile/"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

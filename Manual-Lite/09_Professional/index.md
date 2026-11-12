@@ -10,6 +10,7 @@ Everything in it still applies to Professional.
 | Area | What you get | Where |
 |---|---|---|
 | Learner analytics | Private learning analytics for each learner: completion, hints, first-attempt rate, time, growth indicators, domain evidence, Cyber DNA, and positive practice affinities | **Learning analytics** and **Cyber DNA** |
+| Momentum and Career Atlas | Development-preview practice momentum, friction, career families, role ladders, and Canada/US salary planning ranges | **Profile -> Skill tree** and **Profile -> Careers** |
 | Course analytics | Course overview, exercise drill-down, pulse feedback, learning hours, and aggregate reactions | **Course -> Analytics** |
 | Cross-course reports | Red/amber/green teaching signals, completion and abandonment, learning hours, feedback, skill-tree coverage, and CSV/PDF exports | **Reports & analytics** |
 | Competency evidence | Six-domain competency profile with evidence levels (`no evidence`, `early`, `growing`, `strong`) | Learner profile and course analytics |
@@ -33,6 +34,9 @@ rather than learner names, and the platform does not rank or predict learners.
 2. Review completion, hint-free rate, first-attempt rate, time, and growth.
 3. Use the **AI study prompts** as reflection aids. They never reveal a flag.
 4. Open a completed exercise to see its feedback and pulse controls.
+5. When the development preview is enabled, open **Profile -> Skill tree** for
+   Momentum and **Profile -> Careers** for the Career Atlas. See
+   [Career Atlas and Momentum](../02_Student_Guide/21_Career_Atlas_And_Momentum.md).
 
 ## Instructor quick start
 

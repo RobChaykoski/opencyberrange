@@ -19,7 +19,10 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models import Achievement, CourseEnrollment, Lab, LabCompletion, Level, User
 from app.services.achievements import ACHIEVEMENT_LABELS
+from app.services.career_explorer import build_career_atlas
+from app.services.feature_flags import advanced_dna_insights_enabled
 from app.services.skill_dna import build_skill_dna
+from app.services.skill_momentum import build_momentum
 
 
 EXTERNAL_RESOURCES = (
@@ -145,6 +148,18 @@ def _completed_labs(db: Session, user_id: int) -> list[dict]:
 def build_career_dossier(db: Session, user: User) -> dict:
     """Build a positive, evidence-based career snapshot for one learner."""
     dna = build_skill_dna(db, user)
+    advanced = advanced_dna_insights_enabled(db)
+    if advanced:
+        momentum = build_momentum(db, user)
+        next_labs = {
+            row["key"]: row["next_lab"]
+            for row in momentum["branches"]
+            if row.get("next_lab")
+        }
+        atlas = build_career_atlas(dna, next_labs=next_labs)
+    else:
+        momentum = None
+        atlas = None
     completed = _completed_labs(db, user.id)
     completions = (
         db.query(LabCompletion)
@@ -198,6 +213,8 @@ def build_career_dossier(db: Session, user: User) -> dict:
             "affinities": dna["affinities"],
             "equipped_title": dna["titles"]["equipped"]["label"],
         },
+        "momentum": momentum,
+        "career_atlas": atlas,
         "learning": {
             "completed_exercises": len(completions),
             "started_exercises": dna["signals"]["started_labs"],
@@ -229,6 +246,101 @@ def build_career_dossier(db: Session, user: User) -> dict:
             "affinities are practice signals, not predictions."
         ),
     }
+
+
+def _money(value: int, currency: str) -> str:
+    if currency == "CAD":
+        return f"CAD ${value:,}"
+    if currency == "USD":
+        return f"USD ${value:,}"
+    return f"{value:,} {currency}"
+
+
+def _momentum_markdown(dossier: dict) -> list[str]:
+    momentum = dossier.get("momentum")
+    if not momentum:
+        return []
+    lines = [
+        "",
+        "## Momentum and friction",
+        "",
+        momentum["window"],
+        "",
+        f"**Next move:** {momentum['next_move']}",
+        "",
+        "| Branch | Status | Completed | Hint use | First attempt | Friction | Movement |",
+        "|---|---|---:|---:|---:|---:|---|",
+    ]
+    for row in momentum["branches"]:
+        lines.append(
+            f"| {row['label']} | {row['status_label']} | {row['completed']} | "
+            f"{row['hint_rate']:g}% | {row['first_attempt_rate']:g}% | "
+            f"{row['friction_score']} | {row['movement']['label']} |"
+        )
+    if momentum["stuck_points"]:
+        lines.extend(["", "### Where the friction is", ""])
+        for point in momentum["stuck_points"]:
+            lines.append(
+                f"- **{point['lab']}** ({point['branch']}): "
+                f"{point['reason']} — {point['evidence']}"
+            )
+    if momentum["gaining"]:
+        lines.extend(["", "### Where practice is gaining", ""])
+        for row in momentum["gaining"]:
+            lines.append(f"- **{row['branch']}:** {row['evidence']}")
+    lines.extend(["", momentum["disclaimer"]])
+    return lines
+
+
+def _career_atlas_markdown(dossier: dict) -> list[str]:
+    atlas = dossier.get("career_atlas")
+    if not atlas:
+        return []
+    lines = [
+        "",
+        "## Career atlas",
+        "",
+        atlas["disclaimer"],
+        "",
+        f"**Salary note:** {atlas['salary_note']}",
+        "",
+        "| Family | Branch | Unlock | Match | Next step |",
+        "|---|---|---|---:|---|",
+    ]
+    for family in atlas["families"]:
+        lines.append(
+            f"| {family['label']} | {family['branch_label']} | "
+            f"{family['unlock_state'].replace('_', ' ')} | "
+            f"{family['match_score']} | {family['next_step']} |"
+        )
+    lines.extend(["", "### Roles and salary bands", ""])
+    for family in atlas["families"]:
+        lines.append(f"#### {family['label']}")
+        lines.append("")
+        lines.append(family["summary"])
+        lines.append("")
+        lines.append("| Role | Level | Canada (annual) | United States (annual) |")
+        lines.append("|---|---|---|---|")
+        for role in family["roles"]:
+            ca = role["salary"]["ca"]
+            us = role["salary"]["us"]
+            lines.append(
+                f"| {role['title']} | {role['level']} | "
+                f"{_money(ca['low'], ca['currency'])} – "
+                f"{_money(ca['high'], ca['currency'])} "
+                f"(median {_money(ca['median'], ca['currency'])}) | "
+                f"{_money(us['low'], us['currency'])} – "
+                f"{_money(us['high'], us['currency'])} "
+                f"(median {_money(us['median'], us['currency'])}) |"
+            )
+        lines.append("")
+    lines.extend(["", "### Salary sources", ""])
+    for source in atlas["sources"]:
+        lines.append(
+            f"- [{source['label']}]({source['url']}) — {source['detail']} "
+            f"{source['basis']}"
+        )
+    return lines
 
 
 def render_markdown(dossier: dict) -> str:
@@ -273,6 +385,8 @@ def render_markdown(dossier: dict) -> str:
             f"| {row['label']} | {row['evidence']} ({row['evidence_level'].replace('_', ' ')}) | "
             f"{'Yes' if row['recommended'] else 'No'} |"
         )
+    lines.extend(_momentum_markdown(dossier))
+    lines.extend(_career_atlas_markdown(dossier))
     lines.extend([
         "",
         "## Recommended next steps",
@@ -325,6 +439,89 @@ def render_markdown(dossier: dict) -> str:
         "",
     ])
     return "\n".join(lines)
+
+
+def _momentum_html(dossier: dict, esc) -> str:
+    momentum = dossier.get("momentum")
+    if not momentum:
+        return ""
+    rows = "".join(
+        f"<tr><th scope=\"row\">{esc(row['label'])}</th>"
+        f"<td>{esc(row['status_label'])}</td>"
+        f"<td class=\"num\">{row['completed']}</td>"
+        f"<td class=\"num\">{row['hint_rate']:g}%</td>"
+        f"<td class=\"num\">{row['first_attempt_rate']:g}%</td>"
+        f"<td class=\"num\">{row['friction_score']}</td>"
+        f"<td>{esc(row['movement']['label'])}</td></tr>"
+        for row in momentum["branches"]
+    )
+    stuck = "".join(
+        f"<li><strong>{esc(point['lab'])}</strong> ({esc(point['branch'])}): "
+        f"{esc(point['reason'])} — {esc(point['evidence'])}</li>"
+        for point in momentum["stuck_points"]
+    )
+    gaining = "".join(
+        f"<li><strong>{esc(row['branch'])}:</strong> {esc(row['evidence'])}</li>"
+        for row in momentum["gaining"]
+    )
+    return f"""
+  <h2>Momentum and friction</h2>
+  <div class="panel">
+    <p>{esc(momentum['window'])}</p>
+    <p><strong>Next move:</strong> {esc(momentum['next_move'])}</p>
+    <table>
+      <thead><tr><th scope="col">Branch</th><th scope="col">Status</th><th scope="col">Completed</th><th scope="col">Hint use</th><th scope="col">First attempt</th><th scope="col">Friction</th><th scope="col">Movement</th></tr></thead>
+      <tbody>{rows}</tbody>
+    </table>
+  </div>
+  {f'<h3>Where the friction is</h3><ul>{stuck}</ul>' if stuck else ''}
+  {f'<h3>Where practice is gaining</h3><ul>{gaining}</ul>' if gaining else ''}
+  <p class="muted">{esc(momentum['disclaimer'])}</p>
+"""
+
+
+def _career_atlas_html(dossier: dict, esc) -> str:
+    atlas = dossier.get("career_atlas")
+    if not atlas:
+        return ""
+    cards = []
+    for family in atlas["families"]:
+        role_rows = "".join(
+            f"<tr><th scope=\"row\">{esc(role['title'])}</th>"
+            f"<td>{esc(role['level'])}</td>"
+            f"<td class=\"num\">{esc(_money(role['salary']['ca']['low'], role['salary']['ca']['currency']))} – "
+            f"{esc(_money(role['salary']['ca']['high'], role['salary']['ca']['currency']))}<br>"
+            f"<span class=\"muted\">median {esc(_money(role['salary']['ca']['median'], role['salary']['ca']['currency']))}</span></td>"
+            f"<td class=\"num\">{esc(_money(role['salary']['us']['low'], role['salary']['us']['currency']))} – "
+            f"{esc(_money(role['salary']['us']['high'], role['salary']['us']['currency']))}<br>"
+            f"<span class=\"muted\">median {esc(_money(role['salary']['us']['median'], role['salary']['us']['currency']))}</span></td></tr>"
+            for role in family["roles"]
+        )
+        cards.append(
+            f"<article class=\"affinity{' recommended' if family.get('recommended') else ''}\">"
+            f"<div class=\"affinity-head\"><strong>{esc(family['label'])}</strong>"
+            f"<span>{esc(family['unlock_state'].replace('_', ' '))}</span></div>"
+            f"<p>{esc(family['summary'])}</p>"
+            f"<p class=\"evidence\">Branch: {esc(family['branch_label'])} · "
+            f"Match {family['match_score']}/100 · {esc(family['unlock_hint'])}</p>"
+            f"<p><strong>Next:</strong> {esc(family['next_step'])}</p>"
+            f"<table><thead><tr><th scope=\"col\">Role</th><th scope=\"col\">Level</th>"
+            f"<th scope=\"col\">Canada</th><th scope=\"col\">United States</th></tr></thead>"
+            f"<tbody>{role_rows}</tbody></table></article>"
+        )
+    sources = "".join(
+        f"<li><a href=\"{esc(source['url'])}\" rel=\"noopener noreferrer\">{esc(source['label'])}</a>"
+        f"<br><span class=\"muted\">{esc(source['detail'])} {esc(source['basis'])}</span></li>"
+        for source in atlas["sources"]
+    )
+    return f"""
+  <h2>Career atlas</h2>
+  <p class="muted">{esc(atlas['disclaimer'])}</p>
+  <p class="muted">{esc(atlas['salary_note'])}</p>
+  <div class="affinities">{''.join(cards)}</div>
+  <h3>Salary sources</h3>
+  <ul>{sources}</ul>
+"""
 
 
 def render_html(dossier: dict) -> str:
@@ -441,6 +638,9 @@ def render_html(dossier: dict) -> str:
 
   <h2>Practice affinities</h2>
   <div class="affinities">{affinity_rows}</div>
+
+  {_momentum_html(dossier, esc)}
+  {_career_atlas_html(dossier, esc)}
 
   <h2>Recommended next steps</h2>
   <ul>{next_steps}</ul>

@@ -13,12 +13,12 @@ links.
 | Linux | 30 |
 | Malware | 8 |
 | Network | 16 |
-| OSINT | 5 |
+| OSINT | 8 |
 | OT | 1 |
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 51 |
-| **Total** | **155** |
+| **Total** | **158** |
 
 ## Labs
 
@@ -107,8 +107,11 @@ links.
 | OSINT | Badge Photo Intelligence (`osint-1-2-image-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence/` |
 | OSINT | EXIF Metadata Investigation (`osint-1-3-exif-metadata`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_EXIF_Metadata/` |
 | OSINT | The Developer's Trail (`osint-2-1-source-code-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Developers_Trail/` |
+| OSINT | The Mobile Build (`osint-3-1-responsive-leak`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build/` |
+| OSINT | The Public Banner (`osint-3-3-public-banner`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/03_The_Public_Banner/` |
 | OSINT | The Public Footprint (`osint-1-1-public-footprint`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint/` |
 | OSINT | The Public Homepage (`osint-2-2-public-homepage`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/05_The_Public_Homepage/` |
+| OSINT | The Public Profile (`osint-3-2-public-profile`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile/` |
 | OT | Halcyon Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | Software Security | Diagnostics Command Injection (`software-security-2-1-diagnostics-command-injection`) | `wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/` |
 | Software Security | Hidden Export Route (`software-security-1-1-hidden-export-route`) | `wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/` |

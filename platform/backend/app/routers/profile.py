@@ -41,12 +41,15 @@ from app.services.achievements import (
     resolve_achievement_icon,
     resolve_achievement_label,
 )
+from app.services.career_explorer import build_career_atlas
 from app.services.career_profile import (
     build_career_dossier,
     render_html as render_career_html,
     render_markdown as render_career_markdown,
 )
+from app.services.feature_flags import advanced_dna_insights_enabled
 from app.services.profile_report import generate_profile_transcript
+from app.services.skill_momentum import build_momentum
 from app.services.curriculum_manifest import chapter_label
 from app.services.skill_dna import build_skill_dna
 from app.services.titles import equip_title
@@ -266,6 +269,18 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
     } for course, _enrollment in enrollment_rows]
 
     skill_dna = build_skill_dna(db, current_user)
+    if advanced_dna_insights_enabled(db):
+        momentum = build_momentum(db, current_user)
+        next_labs = {
+            row["key"]: row["next_lab"]
+            for row in momentum["branches"]
+            if row.get("next_lab")
+        }
+        skill_dna["momentum"] = momentum
+        skill_dna["career_atlas"] = build_career_atlas(
+            skill_dna,
+            next_labs=next_labs,
+        )
 
     return {
         "user": {
@@ -325,8 +340,18 @@ async def get_skill_dna(
     current_user: User = Depends(get_current_active_user),
 ):
     """Return the learner's six traits, class, affinities, and titles."""
+    dna = build_skill_dna(db, current_user)
+    if advanced_dna_insights_enabled(db):
+        momentum = build_momentum(db, current_user)
+        next_labs = {
+            row["key"]: row["next_lab"]
+            for row in momentum["branches"]
+            if row.get("next_lab")
+        }
+        dna["momentum"] = momentum
+        dna["career_atlas"] = build_career_atlas(dna, next_labs=next_labs)
     return JSONResponse(
-        content=build_skill_dna(db, current_user),
+        content=dna,
         headers={"Cache-Control": "no-store"},
     )
 

@@ -10,20 +10,32 @@ lab selects a mode with LAB_MODE and supplies its own FLAG:
                       least-significant bits.
     code_intel      - /static/app.js contains a leftover developer comment with
                       the flag.
+    responsive_leak - the mobile renderer receives a contact card that the
+                      desktop renderer never sees. The flag is only in the
+                      mobile response.
+    public_profile_external - a training mirror of an instructor-owned public
+                      profile, plus a link to the live profile for the phone.
+    shodan_mirror   - a synthetic Shodan-style search over fictional hosts. The
+                      flag is in one verbose banner.
 
 Nothing here reaches the internet, calls a real service, or stores state.
 """
 import html
 import json
 import os
+import shlex
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 MODE = os.environ.get("LAB_MODE", "public_profile")
 FLAG = os.environ.get("FLAG", "OCR{osint_flag_not_set}")
 COMPANY = os.environ.get("COMPANY", "Kestrel Ridge")
 PORT = int(os.environ.get("PORT", "8080"))
+PROFILE_URL = os.environ.get(
+    "PROFILE_URL",
+    "https://www.linkedin.com/in/your-profile/",
+)
 
 HERE = Path(__file__).resolve().parent
 ASSETS = HERE / "assets"
@@ -1021,8 +1033,16 @@ def _browser_metadata_viewer() -> str:
           return;
         }
         const table = document.createElement("table");
-        table.innerHTML = "<thead><tr><th>Key</th><th>Value</th></tr></thead><tbody></tbody>";
-        const body = table.querySelector("tbody");
+        const head = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        for (const heading of ["Key", "Value"]) {
+          const cell = document.createElement("th");
+          cell.textContent = heading;
+          headRow.appendChild(cell);
+        }
+        head.appendChild(headRow);
+        const body = document.createElement("tbody");
+        table.append(head, body);
         rows.forEach(([key, value]) => {
           const row = document.createElement("tr");
           const keyCell = document.createElement("td");
@@ -1242,6 +1262,258 @@ def _swocts_mirror() -> str:
 </html>"""
 
 
+def _shodan_hosts() -> list[dict]:
+    """Synthetic Shodan-style records. No real hosts or services."""
+    return [
+        {
+            "ip": "203.0.113.10",
+            "port": 443,
+            "product": "nginx",
+            "org": "Kestrel Ridge",
+            "hostname": "portal.kestrel-ridge.example",
+            "country": "Canada",
+            "banner": (
+                "HTTP/1.1 200 OK\r\n"
+                "Server: nginx/1.24.0\r\n"
+                "X-Frame-Options: DENY\r\n"
+                "Content-Type: text/html"
+            ),
+        },
+        {
+            "ip": "203.0.113.24",
+            "port": 8080,
+            "product": "Jenkins",
+            "org": "Kestrel Ridge",
+            "hostname": "build.kestrel-ridge.example",
+            "country": "Canada",
+            "banner": (
+                "HTTP/1.1 200 OK\r\n"
+                "Server: Jetty(10.0.x)\r\n"
+                "X-Jenkins: 2.426\r\n"
+                "X-Build-Marker: " + FLAG + "\r\n"
+                "Content-Type: text/html"
+            ),
+        },
+        {
+            "ip": "203.0.113.31",
+            "port": 22,
+            "product": "OpenSSH",
+            "org": "Kestrel Ridge",
+            "hostname": "bastion.kestrel-ridge.example",
+            "country": "Canada",
+            "banner": "SSH-2.0-OpenSSH_9.6\r\n",
+        },
+        {
+            "ip": "198.51.100.14",
+            "port": 443,
+            "product": "Apache httpd",
+            "org": "Northwind Logistics",
+            "hostname": "vpn.northwind.example",
+            "country": "United States",
+            "banner": "HTTP/1.1 302 Found\r\nServer: Apache/2.4.58\r\nLocation: /login",
+        },
+        {
+            "ip": "198.51.100.42",
+            "port": 3389,
+            "product": "Microsoft RDP",
+            "org": "Northwind Logistics",
+            "hostname": "rdp.northwind.example",
+            "country": "United States",
+            "banner": "RDP service banner (synthetic)\r\n",
+        },
+    ]
+
+
+def _shodan_matches(query: str) -> list[dict]:
+    hosts = _shodan_hosts()
+    if not query.strip():
+        return hosts
+    try:
+        tokens = shlex.split(query)
+    except ValueError:
+        tokens = query.split()
+    results = hosts
+    for token in tokens:
+        if ":" in token:
+            key, value = token.split(":", 1)
+            key = key.strip().lower()
+            value = value.strip().strip('"').lower()
+            if key in {"org", "hostname", "product", "country"}:
+                results = [
+                    host for host in results
+                    if value in str(host[key]).lower()
+                ]
+                continue
+            if key == "port":
+                results = [
+                    host for host in results
+                    if str(host["port"]) == value
+                ]
+                continue
+        needle = token.strip().lower()
+        results = [
+            host for host in results
+            if needle in json.dumps(host).lower()
+        ]
+    return results
+
+
+def _shodan_page(query: str) -> str:
+    matches = _shodan_matches(query)
+    cards = "".join(
+        f"""
+        <section class="card card--wide">
+          <p class="eyebrow">{_esc(host['country'])} · {_esc(host['org'])}</p>
+          <h2>{_esc(host['ip'])}:{host['port']} · {_esc(host['product'])}</h2>
+          <p><strong>Hostname:</strong> {_esc(host['hostname'])}</p>
+          <pre>{_esc(host['banner'])}</pre>
+        </section>
+        """
+        for host in matches
+    ) or """
+        <section class="card card--wide">
+          <p class="eyebrow">No matches</p>
+          <h2>Try a broader query</h2>
+          <p>Start with <code>org:"Kestrel Ridge"</code> or <code>product:Jenkins</code>.</p>
+        </section>
+    """
+    body = f"""
+    <style>
+      .search-form {{ display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }}
+      .search-form label {{ align-self: center; color: var(--muted); font-size: 0.8rem; }}
+      .search-form input {{ flex: 1 1 320px; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font: inherit; }}
+      .search-form button {{ padding: 0.6rem 0.9rem; border: 1px solid var(--accent); border-radius: 8px; background: var(--accent); color: var(--bg); font: inherit; font-weight: 700; cursor: pointer; }}
+      pre {{ white-space: pre-wrap; overflow-wrap: anywhere; padding: 0.75rem; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); color: var(--ink); font: 0.78rem/1.5 "JetBrains Mono", ui-monospace, monospace; }}
+    </style>
+    <p class="eyebrow">Synthetic Shodan mirror · training data only</p>
+    <h1>Public service search</h1>
+    <p class="muted">
+      This mirror uses fictional hosts and banners. It never queries the real
+      internet. Filters: <code>org</code>, <code>hostname</code>,
+      <code>port</code>, <code>product</code>, <code>country</code>.
+    </p>
+    <form method="get" action="/" class="search-form">
+      <label for="q">Search</label>
+      <input id="q" name="q" value="{_esc(query)}" placeholder='org:"Kestrel Ridge"'>
+      <button type="submit">Search</button>
+    </form>
+    <p class="muted">{len(matches)} host{'s' if len(matches) != 1 else ''} matched.</p>
+    <div class="grid">{cards}</div>
+    <p class="muted">
+      Defensive note: public scan data exposes banners, ports, and product
+      versions. Reduce the banner and monitor your own public footprint.
+    </p>
+    """
+    return _shell("Public service search", body, active="")
+
+
+def _responsive_page(mobile: bool) -> str:
+    """Render the same staff profile for two different client classes.
+
+    The desktop response never contains the flag. The mobile response includes a
+    contact card that the desktop template does not render. This is deliberately
+    a server-side renderer difference, not CSS hiding, so the exercise teaches
+    that a client-specific template can leak data that the other client never
+    sees.
+    """
+    build = "Mobile build v2.1" if mobile else "Desktop build v1.4"
+    if mobile:
+        extra = f"""
+      <section class="card card--wide">
+        <p class="eyebrow">Mobile contact card</p>
+        <h2>Field-only contact details</h2>
+        <p>This card is rendered only for mobile clients.</p>
+        <dl>
+          <dt>Direct line</dt><dd>+1 555 0100</dd>
+          <dt>Backup contact</dt><dd>Fusion Center duty desk</dd>
+          <dt>Access marker</dt><dd><code>{_esc(FLAG)}</code></dd>
+        </dl>
+      </section>
+        """
+    else:
+        extra = """
+      <section class="card card--wide">
+        <p class="eyebrow">Renderer note</p>
+        <h2>The mobile build differs</h2>
+        <p>
+          The mobile build renders an additional contact card that this desktop
+          build does not include. Compare the two renderers.
+        </p>
+      </section>
+        """
+
+    body = f"""
+    <p class="eyebrow">Staff portal · {_esc(build)}</p>
+    <h1>Dana Whitfield</h1>
+    <p class="muted">Threat Intelligence Analyst · Fusion Center · Building C / Remote</p>
+    <div class="grid">
+      <section class="card">
+        <p class="eyebrow">About</p>
+        <h2>Profile</h2>
+        <p>
+          Dana correlates vendor advisories, incident notes, and public reporting
+          into the weekly threat picture. She joined Kestrel Ridge after six years
+          in a regional SOC and still keeps a paper notebook.
+        </p>
+      </section>
+      <section class="card">
+        <p class="eyebrow">Contact</p>
+        <h2>Directory record</h2>
+        <p>Email: dana.whitfield@kestrel.example</p>
+        <p>Badge: KR-0421</p>
+        <p>Office: Building C, second floor</p>
+      </section>
+      {extra}
+    </div>
+    <p class="muted" style="margin-top:1rem">
+      This is a fictional training profile. It is not a real person and has no
+      connection to a real intranet.
+    </p>
+    """
+    return _shell("Staff profile", body, active="people")
+
+
+def _public_profile_page() -> str:
+    """Serve a training mirror of an instructor-owned public profile."""
+    body = f"""
+    <p class="eyebrow">Public profile · OSINT</p>
+    <h1>Instructor public profile</h1>
+    <p class="muted">
+      This is a training mirror of the public About section. The live profile is
+      linked for the phone path.
+    </p>
+    <div class="grid">
+      <section class="card">
+        <p class="eyebrow">About</p>
+        <h2>Public bio</h2>
+        <p>
+          Cybersecurity educator and programme builder. I teach public-source
+          investigation, defensive operations, and evidence-based reporting.
+        </p>
+        <p><strong>Research marker:</strong> <code>{_esc(FLAG)}</code></p>
+      </section>
+      <section class="card">
+        <p class="eyebrow">Live path</p>
+        <h2>Open on your phone</h2>
+        <p>
+          Scan the QR code in the workbook or open the live public profile on
+          your phone. Only the instructor-owned profile is in scope.
+        </p>
+        <p>
+          <a href="{_esc(PROFILE_URL)}" rel="noopener noreferrer" target="_blank">
+            Open the public profile
+          </a>
+        </p>
+      </section>
+    </div>
+    <p class="muted">
+      This training mirror is fictional. It does not collect, store, or transmit
+      personal data.
+    </p>
+    """
+    return _shell("Public profile", body, active="people")
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "KestrelConnect/1.0"
 
@@ -1264,6 +1536,114 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = urlparse(self.path).path
+
+        if MODE == "shodan_mirror":
+            if path == "/health":
+                self._send(200, b"ok\n", "text/plain; charset=utf-8")
+            elif path in ("/", "/search"):
+                query = parse_qs(urlparse(self.path).query).get("q", [""])[0]
+                self._html(_shodan_page(query))
+            elif path == "/api/hosts":
+                query = parse_qs(urlparse(self.path).query).get("q", [""])[0]
+                self._json(
+                    {
+                        "query": query,
+                        "matches": _shodan_matches(query),
+                    }
+                )
+            elif path == "/robots.txt":
+                self._send(
+                    200,
+                    b"User-agent: *\nDisallow: /api/hosts\n",
+                    "text/plain; charset=utf-8",
+                )
+            else:
+                self._html(
+                    _shell(
+                        "Not found",
+                        "<p class=\"eyebrow\">404</p><h1>Search page not found.</h1>",
+                    ),
+                    404,
+                )
+            return
+
+        if MODE == "public_profile_external":
+            if path == "/health":
+                self._send(200, b"ok\n", "text/plain; charset=utf-8")
+            elif path in ("/", "/profile"):
+                self._html(_public_profile_page())
+            elif path == "/api/profile":
+                self._json(
+                    {
+                        "name": "Instructor public profile",
+                        "about": (
+                            "Cybersecurity educator and programme builder. "
+                            "Public-source investigation, defensive operations, "
+                            "and evidence-based reporting."
+                        ),
+                        "research_marker": FLAG,
+                        "profile_url": PROFILE_URL,
+                    }
+                )
+            elif path == "/robots.txt":
+                self._send(
+                    200,
+                    b"User-agent: *\nDisallow: /api/profile\n",
+                    "text/plain; charset=utf-8",
+                )
+            else:
+                self._html(
+                    _shell(
+                        "Not found",
+                        "<p class=\"eyebrow\">404</p><h1>Profile page not found.</h1>",
+                    ),
+                    404,
+                )
+            return
+
+        if MODE == "responsive_leak":
+            if path == "/health":
+                self._send(200, b"ok\n", "text/plain; charset=utf-8")
+            elif path in ("/", "/profile"):
+                user_agent = self.headers.get("User-Agent", "").lower()
+                mobile = any(
+                    token in user_agent
+                    for token in ("iphone", "ipad", "android", "mobile")
+                )
+                self._html(_responsive_page(mobile))
+            elif path == "/api/profile":
+                user_agent = self.headers.get("User-Agent", "").lower()
+                mobile = any(
+                    token in user_agent
+                    for token in ("iphone", "ipad", "android", "mobile")
+                )
+                payload = {
+                    "name": "Dana Whitfield",
+                    "role": "Threat Intelligence Analyst",
+                    "renderer": "mobile" if mobile else "desktop",
+                }
+                if mobile:
+                    payload["mobile_contact_card"] = {
+                        "direct_line": "+1 555 0100",
+                        "backup_contact": "Fusion Center duty desk",
+                        "access_marker": FLAG,
+                    }
+                self._json(payload)
+            elif path == "/robots.txt":
+                self._send(
+                    200,
+                    b"User-agent: *\nDisallow: /api/profile\n",
+                    "text/plain; charset=utf-8",
+                )
+            else:
+                self._html(
+                    _shell(
+                        "Not found",
+                        "<p class=\"eyebrow\">404</p><h1>Profile page not found.</h1>",
+                    ),
+                    404,
+                )
+            return
 
         if MODE == "devfest":
             if path == "/health":

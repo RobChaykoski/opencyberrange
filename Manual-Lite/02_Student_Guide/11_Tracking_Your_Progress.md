@@ -23,6 +23,10 @@ Your progress appears in six places:
   [Viewing Your Profile](16_Viewing_Your_Profile.md).
 - **Cyber DNA:** six practice traits built from your completed work. It is
   descriptive, not a grade.
+- **Momentum and Career Atlas:** a development-preview view of where practice is
+  gaining or under friction, and which career families your evidence points
+  toward. See
+  [Career Atlas and Momentum](21_Career_Atlas_And_Momentum.md).
 
 <figure markdown>
 

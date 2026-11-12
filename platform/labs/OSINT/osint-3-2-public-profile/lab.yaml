@@ -1,0 +1,108 @@
+title: The Public Profile
+category: osint
+difficulty: beginner
+estimated_time: 20
+prerequisites:
+  - osint-1-1-public-footprint
+learning_outcomes:
+  - Treat a public professional profile as an OSINT source
+  - Use a phone to open the profile and read the public About section
+  - Explain why a public marker is not a secret
+  - Recover the marker from the instructor-owned profile
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1593.001
+    technique_name: "Search Open Websites/Domains: Social Media"
+    detection: Review public profiles and social posts for intentional and unintentional exposure.
+  - tactic: Reconnaissance
+    technique: T1589.002
+    technique_name: "Gather Victim Identity Information: Email Addresses"
+    detection: Minimise public contact details and review them periodically.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-11"
+review_status: "automated static proof; live walkthrough pending"
+description: "A marker has been placed in the public About section of the instructor-owned profile for this exercise. Use your phone to open the profile, read the public section, and recover the marker. The lab also serves a training mirror for offline practice."
+visibility: public
+flag: "OCR{linkedIn_0s1nt_m4st3r_2026}"
+
+tools:
+  - phone
+  - browser
+
+scenario: |
+  The instructor has placed a research marker in the public About section of
+  their own professional profile. This is an authorised OSINT exercise: the
+  profile owner has consented, and the marker is intentionally public.
+
+  Use your phone to open the profile and find the marker. If you cannot use the
+  live platform, use the training mirror served by this lab. The mirror contains
+  the same public text for offline practice.
+
+  Only the profile linked in this brief is in scope. Do not search another
+  person's profile, send connection requests, or collect personal data.
+
+troubleshooting: "If the live profile is unreachable, use the training mirror at the lab target. If the marker is rejected, copy it exactly as it appears and confirm the uppercase OCR prefix."
+defensive_takeaways: "Public profiles are an OSINT source. Review what you publish, separate personal and professional presence, and treat every public field as permanent."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-11"
+workbook: "wiki/range/osint/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile/"
+
+hostnames:
+  - ip_offset: "85"
+    hostname: "connect.lab"
+    description: "Public profile training mirror (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "profile"
+      label: "Public Profile Mirror"
+      type: "server"
+      ip_offset: "85"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the live profile on your phone. The marker is in the public About
+      section. If the live profile is not available, use the training mirror at
+      the lab target.
+    unlock_after_minutes: 4
+
+  - text: |
+      The training mirror is at http://connect.lab:8080/. Look for the
+      "Research marker" line in the About card.
+    unlock_after_minutes: 10
+
+  - text: |
+      The marker is the flag. Copy it exactly, including the uppercase OCR
+      prefix, and submit it on the exercise page.
+    unlock_after_minutes: 15
+
+test:
+  steps:
+    - name: "Training mirror responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.profile}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Training mirror links to the live profile"
+      command: "curl -s http://{target.profile}:8080/ | grep -o 'linkedin.com/in/'"
+      expect: "linkedin.com/in/"
+      timeout: 20
+
+    - name: "Training mirror contains the marker"
+      command: "curl -s http://{target.profile}:8080/ | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{linkedIn_0s1nt_m4st3r_2026}"
+      timeout: 20

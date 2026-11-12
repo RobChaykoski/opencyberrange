@@ -4577,7 +4577,7 @@ const settingsCategories = computed(() => {
   // Only show a category tab if it has at least one visible setting (so an
   // emptied category -- e.g. General after platform_name/deployment_mode were
   // removed -- doesn't render as a blank tab).
-  const order = ['general', 'security', 'labs', 'vpn', 'email']
+  const order = ['general', 'security', 'labs', 'vpn', 'email', 'features']
   const populated = new Set(
     Object.entries(allSettings.value)
       .filter(([key]) => !hiddenSettingKeys.value.has(key))
@@ -4593,7 +4593,7 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', modules: 'Modules', achievements: 'Achievements' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})

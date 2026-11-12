@@ -69,6 +69,25 @@ for all visible courses or one selected course. It is a curriculum-coverage
 view, not a learner score. Learner-level and cohort competency radar remain
 planned.
 
+## Momentum and Career Atlas
+
+A development-preview reporting layer sits on top of Cyber DNA without changing
+the six trait scores:
+
+- **Momentum** (`2026.1`) compares the recent half of a learner's completed
+  exercises with the earlier half and reports where practice is gaining or under
+  friction. It uses hints, reattempts, time over the exercise estimate, and
+  started-but-unfinished exercises.
+- **Career Atlas** (`2026.1`) maps the six branches to career families, role
+  ladders, and national salary planning ranges from Canada Job Bank and the U.S.
+  Bureau of Labor Statistics.
+
+Both are descriptive and private. They are not grades, rankings, predictions, or
+salary promises. The surfaces are gated by
+`advanced_dna_insights_enabled` and are off by default in production. See
+[Career Atlas and Momentum](CAREER-ATLAS-AND-MOMENTUM.md) for the definitions,
+data sources, and review checklist.
+
 ## Score model
 
 Each trait is scored from 0 to 100. Scores are capped, so a very active learner

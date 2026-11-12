@@ -60,6 +60,31 @@ The signed-in learner can also request the same dossier through the authenticate
 data, send `Cache-Control: no-store`, HTML-escape all values, and write an audit
 record. They do not expose staff-only fields or another learner's activity.
 
+## Career Atlas and salary context
+
+The development-preview **Career Atlas** (`2026.1`) turns the four practice
+affinities into eleven career families, each with an entry, core, and advanced
+role ladder. A family unlocks from completed practice in its branch and the
+strength of the learner's Cyber DNA affinity. It is a conversation aid, not a job
+label or a prediction.
+
+Salary bands are national planning ranges from official public data:
+
+| Region | Source | As of | Basis |
+|---|---|---|---|
+| Canada | [Canada Job Bank](https://www.jobbank.gc.ca/trend-analysis/search-wages) / Statistics Canada Labour Force Survey | 2025-11-19 | National low, median, and high hourly wages for the 2023-2024 reference period, annualised at 2,080 hours. |
+| United States | [U.S. Bureau of Labor Statistics OEWS](https://www.bls.gov/oes/) | 2026-05-15 | National annual 10th, 50th, and 90th percentiles, May 2025 release, via O*NET OnLine. |
+
+The platform links to the sources and shows the occupation, currency, region,
+and as-of date beside each band. It does not copy the source tables. Low is the
+10th percentile, not entry-level pay. Bands are not offers, starting salaries, or
+predictions, and regional and sector differences are large. Verify every figure
+with the source.
+
+The feature is gated by `advanced_dna_insights_enabled` and is off by default in
+production. See [Career Atlas and Momentum](CAREER-ATLAS-AND-MOMENTUM.md) for the
+matching rules, privacy limits, and production review checklist.
+
 ## How the references are used
 
 ### Exercise and track guidance

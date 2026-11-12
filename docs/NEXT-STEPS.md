@@ -89,6 +89,95 @@ Work items:
 Continue the development focus recorded in `versions.yaml`: lab metadata and
 learning analytics. Break this into a written scope before implementation.
 
+### 6. Advanced DNA insights: manual, screenshots, and review
+
+The development preview adds **Momentum**, the **Career Atlas**, and the extended
+career dossier. It is gated by **Admin -> Settings -> Features -> Advanced DNA
+Insights** and is off by default in production. The design and review checklist
+are in `docs/CAREER-ATLAS-AND-MOMENTUM.md`.
+
+Work items:
+
+1. **Deploy the preview to development.** Pull the reviewed tree on
+   `172.16.16.44` as `ocrv2`, build and restart the backend and frontend with the
+   root Compose files, then enable **Advanced DNA Insights** in
+   **Admin -> Settings -> Features** or with `bash scripts/dev-insights.sh on`.
+2. **Run the backend tests** for Momentum, the Career Atlas, and the feature gate:
+   `python -m pytest tests/test_skill_momentum.py tests/test_career_explorer.py -q`.
+3. **Run the frontend gates:** `npm run lint` and `npm run build` in
+   `platform/frontend`.
+4. **Capture the manual screenshots from development** with a real learner and an
+   administrator:
+   ```bash
+   UI_BASE_URL=https://172.16.16.44 \
+   UI_SMOKE_USERNAME='<learner>' UI_SMOKE_PASSWORD='<password>' \
+   node scripts/ui-manual-screenshots.mjs
+   ```
+   The script writes:
+   - `Manual-Lite/02_Student_Guide/img/profile-dna.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-momentum.png`
+   - `Manual-Lite/02_Student_Guide/img/profile-careers.png`
+   - `Manual-Lite/04_Admin_Guide/img/admin-settings-features.png`
+   The committed preview images are design illustrations, not live captures. A
+   real capture must replace them before the preview is announced.
+5. **Review the manual pages** after the capture:
+   - `Manual-Lite/02_Student_Guide/21_Career_Atlas_And_Momentum.md`
+   - `Manual-Lite/02_Student_Guide/16_Viewing_Your_Profile.md`
+   - `Manual-Lite/02_Student_Guide/11_Tracking_Your_Progress.md`
+   - `Manual-Lite/04_Admin_Guide/20_Platform_Settings.md`
+   - `Manual-Lite/04_Admin_Guide/28_Reporting_And_Analytics.md`
+   - `Manual-Lite/08_Glossary/01_Glossary.md`
+6. **Run the documentation gates:**
+   `python scripts/check-doc-assets.py` and
+   `mkdocs build -f mkdocs-manual-lite.yml`.
+7. **Run the security delta review** with the project software-security skill
+   before release:
+   - permissions: only the signed-in learner's data; no staff-wide atlas
+     endpoint;
+   - inputs: no new user-controlled input reaches SQL, a shell, a template, or a
+     file path;
+   - databases: only existing completion and session records, filtered by
+     `user_id`;
+   - output: every learner- or API-controlled value is HTML-escaped in the
+     dossier; the Vue components use interpolation, not `v-html`;
+   - gate: the feature is off by default and read fresh on every request;
+   - secrets: no new secret, token, key, or PII in code, screenshots, or docs.
+8. **Record the review** in `docs/UI-VERIFICATION.md` with the date, widths
+   (375, 768, 1024, 1440), themes, and the name of the reviewer.
+9. **Decide the production release.** Keep the feature off until the
+   institutional review of career framing and salary data is signed off.
+
+### 7. Phone OSINT exercises
+
+The first phone exercise is implemented as
+`platform/labs/OSINT/osint-3-1-responsive-leak` with the workbook chapter
+`Workbook/CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build.md`. The desktop response
+omits the flag; the mobile response includes a contact card with the flag. This
+demonstrates that a client-specific template is not an access control.
+
+Next:
+
+1. Publish and validate the lab on development. Run
+   `python scripts/validate-lab.py platform/labs/OSINT/osint-3-1-responsive-leak`
+   and a live walkthrough on a phone.
+2. Finish the public-profile exercise (`osint-3-2-public-profile`). It is
+   implemented with a training mirror and the uppercase
+   `OCR{linkedIn_0s1nt_m4st3r_2026}` flag. Set the real `PROFILE_URL` in the lab
+   Compose file, regenerate `Workbook/CH_OSINT02_Mobile_OSINT/img/profile-qr.png`
+   with `scripts/generate-osint-qr.py`, and confirm the public LinkedIn About
+   uses the uppercase form. Do not scrape, collect PII, or search another
+   person's profile.
+3. Validate the synthetic Shodan exercise (`osint-3-3-public-banner`). It is
+   implemented with a local mirror in `_shared/app.py`; do not query real Shodan
+   for third-party hosts.
+4. Update the workbook, `mkdocs-osint.yml`, and the manifest after each lab is
+   validated.
+5. Run `python scripts/generate-curriculum-docs.py`,
+   `python scripts/generate-workbook-coverage.py`, and the security delta review.
+
+See [Phone OSINT exercises](PHONE-OSINT-EXERCISES.md) for the design, ATT&CK
+mapping, and safety rules.
+
 ## Known warnings to ignore
 
 - `RangeBox ... not available after retries - skipping bridge` appeared while

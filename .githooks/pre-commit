@@ -1,0 +1,9 @@
+#!/bin/sh
+# OpenCyberRange security delta review.
+#
+# The project software-security skill asks five questions of every change:
+# what the attacker controls, where it goes, what check is missing, the impact,
+# and how to prove it. This hook applies the repeatable static part to the
+# staged delta and prints the manual checklist for the rest.
+set -e
+python scripts/security-delta-review.py --staged

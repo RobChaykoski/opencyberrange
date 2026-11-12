@@ -1,0 +1,23 @@
+services:
+  intranet:
+    mem_limit: 160m
+    cpus: 0.2
+    build:
+      context: ../_shared
+      dockerfile: Dockerfile
+    hostname: connect
+    labels:
+      ip_offset: "84"
+    environment:
+      LAB_MODE: "responsive_leak"
+      FLAG: "OCR{m0b1l3_r3nd3r3r_l34k}"
+      COMPANY: "Kestrel Ridge"
+      PORT: "8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    restart: unless-stopped

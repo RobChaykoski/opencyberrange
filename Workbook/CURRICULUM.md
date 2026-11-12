@@ -19,7 +19,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `software-security` | Software Security | Intermediate learners who can read code and understand web requests. | intermediate | WEB02 | 2 | 30m | RangeBox with browser and software-security lab targets | `malware` | Secure Developer; Application Security Engineer; Penetration Tester | published |
 | `malware` | Malware Analysis | Intermediate learners with networking and forensic evidence experience. | intermediate | NET02, FOR01 | 8 | 6h 15m | RangeBox with terminal and isolated malware-analysis targets | `forensics` | Malware Analyst; Incident Responder; Threat Intelligence Analyst | published |
 | `forensics` | Digital Forensics | Intermediate learners who want to investigate memory and network evidence. | intermediate | NET02 | 2 | 1h 35m | RangeBox with forensic evidence images and PCAPs | `osint` | Digital Forensics Examiner; Incident Responder; Threat Intelligence Analyst | published |
-| `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 5 | 2h 55m | Browser and RangeBox; public-source simulation | `identity` | OSINT Analyst; Threat Intelligence Analyst; Investigator | published |
+| `osint` | OSINT | Beginner-to-intermediate learners who want public-source investigation skills. | beginner | NET00 | 8 | 4h 05m | Browser and RangeBox; public-source simulation | `identity` | OSINT Analyst; Threat Intelligence Analyst; Investigator | published |
 | `identity` | Identity & Access | Intermediate learners interested in authentication, federation, and account lifecycle. | intermediate | NET00 | 3 | 2h 15m | RangeBox with browser and identity lab targets | `forensics` | IAM Analyst; SOC Analyst; Identity Engineer | published |
 | `ot` | OT/ICS Security | Intermediate learners interested in industrial control systems and Modbus. | intermediate | NET00 | 1 | 40m | RangeBox with terminal and Modbus lab target | `ai` | OT Security Analyst; ICS Engineer; SOC Analyst | published |
 | `ai` | AI Hacking | Intermediate learners exploring prompt injection, policy bypass, and AI-assisted security. | intermediate | WEB02 | 3 | 1h 50m | RangeBox with browser and mock AI lab target | `winpt` | AI Security Analyst; Red Team Operator; Secure AI Developer | published |
@@ -50,6 +50,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | `FOR01` | Memory Forensics | `CH_FOR01_Memory_Forensics` | intermediate | NET02 | 1 | 50m | `FOR02` | published |
 | `FOR02` | Network Forensics | `CH_FOR02_Network_Forensics` | intermediate | FOR01 | 1 | 45m | `OSINT01` | published |
 | `OSINT01` | OSINT Foundations | `CH_OSINT01_OSINT_Foundations` | beginner | NET00 | 5 | 2h 55m | `IAM01` | published |
+| `OSINT02` | Mobile OSINT | `CH_OSINT02_Mobile_OSINT` | beginner | OSINT01 | 3 | 1h 10m | `IAM01` | published |
 | `IAM01` | Identity and Access Foundations | `CH_IAM01_Identity_And_Access` | intermediate | NET00 | 3 | 2h 15m | `FOR01` | published |
 | `OT01` | Modbus Fundamentals | `CH_OT01_Modbus_Fundamentals` | intermediate | NET00 | 1 | 40m | `AI01` | published |
 | `AI01` | AI Security Foundations | `CH_AI01_AI_Foundations` | intermediate | WEB02 | 3 | 1h 50m | `WIN01` | published |
@@ -188,8 +189,8 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 - **Audience:** Beginner-to-intermediate learners who want public-source investigation skills.
 - **Difficulty:** beginner
 - **Track prerequisites:** NET00
-- **Exercises:** 5
-- **Estimated duration:** 2h 55m
+- **Exercises:** 8
+- **Estimated duration:** 4h 05m
 - **Required environment:** Browser and RangeBox; public-source simulation
 - **Recommended next track:** `identity`
 - **Role alignment:** OSINT Analyst, Threat Intelligence Analyst, Investigator
@@ -198,6 +199,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 | Chapter | Directory | Prerequisites | Recommended next |
 |---|---|---|---|
 | `OSINT01` — OSINT Foundations | `CH_OSINT01_OSINT_Foundations` | NET00 | `IAM01` |
+| `OSINT02` — Mobile OSINT | `CH_OSINT02_Mobile_OSINT` | OSINT01 | `IAM01` |
 
 ### Identity & Access (`identity`)
 
@@ -297,7 +299,7 @@ Framework alignment is selective. See [Framework alignment](FRAMEWORKS.md).
 
 ## Recommended pathway
 
-`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `IAM01` → `OT01` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
+`BEG01` → `BEG02` → `BEG03` → `BEG04` → `NET00` → `NET01` → `NET01B` → `NET02` → `NET03` → `WEB01` → `WEB01B` → `WEB02` → `WEB02B` → `WEB03` → `SWSEC01` → `MAL01` → `MAL02` → `FOR01` → `FOR02` → `OSINT01` → `OSINT02` → `IAM01` → `OT01` → `AI01` → `WIN01` → `WIN02` → `WIN03` → `WIN04` → `WIN05` → `WIN06` → `WIN07` → `WIN08` → `WIN09` → `LIN01` → `LIN01B` → `LIN02` → `LIN02B` → `LIN03` → `LIN03B` → `LIN04` → `LIN05` → `LIN09`
 
 ## Evidence ladder
 

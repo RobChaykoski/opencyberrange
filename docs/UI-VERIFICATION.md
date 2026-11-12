@@ -4,6 +4,24 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## Advanced DNA Insights preview (development)
+
+Status: **implemented in the development tree; live capture and database-backed
+verification are queued in [Next steps](NEXT-STEPS.md).**
+
+- **Backend:** `skill_momentum.py` and `career_explorer.py` add the derived
+  Momentum and Career Atlas layers without changing Cyber DNA `2026.13`. The
+  surfaces are gated by `advanced_dna_insights_enabled` (default off).
+- **Frontend:** the Profile **Careers** tab, the Career Atlas skill tree, the
+  Momentum panel, branch progress rings, node unlock states, the Canada/US
+  salary lens, and the role ladder.
+- **Verified in this tree:** `npm run lint` (0 errors), `npm run build`, the
+  Career Atlas and feature-gate unit tests, `check-doc-assets.py`, and the
+  Markdown/MkDocs link check.
+- **Not yet verified:** a live screenshot from the development host, the
+  database-backed Momentum tests, and the 375/768/1024/1440 dark/light manual
+  pass. Do not mark the preview production-ready until those are recorded here.
+
 ## 2.7.0 release verification
 
 Released and deployed on **11 November 2026**. Tag `v2.7.0` points at

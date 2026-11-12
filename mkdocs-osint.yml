@@ -76,4 +76,10 @@ nav:
     - "Exercise 2.1 -- The Developer's Trail": CH_OSINT01_OSINT_Foundations/04_The_Developers_Trail.md
     - "Exercise 2.2 -- The Public Homepage": CH_OSINT01_OSINT_Foundations/05_The_Public_Homepage.md
     - Chapter Review: CH_OSINT01_OSINT_Foundations/06_Chapter_Review.md
+  - "OSINT02: Mobile OSINT":
+    - Introduction: CH_OSINT02_Mobile_OSINT/00_Introduction.md
+    - "Exercise 1.1 -- The Mobile Build": CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build.md
+    - "Exercise 2.1 -- The Public Profile": CH_OSINT02_Mobile_OSINT/02_The_Public_Profile.md
+    - "Exercise 3.1 -- The Public Banner": CH_OSINT02_Mobile_OSINT/03_The_Public_Banner.md
+    - Chapter Review: CH_OSINT02_Mobile_OSINT/04_Chapter_Review.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

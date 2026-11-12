@@ -1,0 +1,118 @@
+title: The Mobile Build
+category: osint
+difficulty: beginner
+estimated_time: 25
+prerequisites:
+  - osint-1-1-public-footprint
+learning_outcomes:
+  - Compare the desktop and mobile renderings of the same staff profile
+  - Request the mobile build with a phone or a mobile user agent
+  - Explain why a client-specific template can leak data
+  - Recover the flag from the mobile-only contact card
+mapped_skills:
+  - osint
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Reconnaissance
+    technique: T1593
+    technique_name: Search Open Websites/Domains
+    detection: Compare renderer-specific responses and monitor for unexpected client-class data.
+  - tactic: Reconnaissance
+    technique: T1592.004
+    technique_name: "Gather Victim Host Information: Client Configurations"
+    detection: Compare desktop and mobile responses and alert on fields that only one client class receives.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-11"
+review_status: "automated static proof; live walkthrough pending"
+description: "The Kestrel Ridge staff portal serves a different profile to phones than to desktop browsers. Use your phone to open the mobile build, compare the two renderers, and recover the flag from the contact card that desktop clients never see."
+visibility: public
+flag: "OCR{m0b1l3_r3nd3r3r_l34k}"
+
+tools:
+  - phone
+  - browser
+  - curl
+
+scenario: |
+  Kestrel Ridge has a staff portal with a public profile page. The desktop
+  build and the mobile build are rendered from different templates. The mobile
+  template includes a "mobile contact card" that the desktop template does not
+  render.
+
+  You have been asked to review the portal the way a researcher with a phone
+  would. Open the profile on your phone, compare what the two clients receive,
+  and recover the access marker from the mobile-only card.
+
+  This is a safe, simulated portal. It has no connection to the real internet
+  and no real employee data.
+
+troubleshooting: "If the mobile card does not appear, confirm you are using a phone or a mobile user agent. A desktop browser will receive the desktop build and will not contain the flag."
+defensive_takeaways: "Do not rely on a client-specific template or a mobile-only field to protect data. Authorise every request and return only the fields that client is allowed to see."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-11"
+workbook: "wiki/range/osint/CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build/"
+
+hostnames:
+  - ip_offset: "84"
+    hostname: "connect.lab"
+    description: "Kestrel staff portal (HTTP 8080)"
+
+topology:
+  nodes:
+    - id: "portal"
+      label: "Kestrel Staff Portal"
+      type: "server"
+      ip_offset: "84"
+      ports: [8080]
+      services: ["http"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Open the portal on your phone. The mobile build renders a contact card
+      that the desktop build does not include.
+    unlock_after_minutes: 5
+
+  - text: |
+      If you are working from a laptop, send a mobile user agent:
+
+      curl -s -A "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)" \
+        http://connect.lab:8080/
+
+      Compare that response with the desktop response.
+    unlock_after_minutes: 12
+
+  - text: |
+      The mobile response contains an "Access marker" field in the contact card.
+      It is the flag. The desktop response deliberately omits it.
+    unlock_after_minutes: 18
+
+test:
+  steps:
+    - name: "Portal responds"
+      command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
+      expect: "200"
+      timeout: 20
+
+    - name: "Desktop build omits the flag"
+      command: "curl -s http://{target.portal}:8080/ | grep -o 'OCR{[^}]*}' | wc -l"
+      expect: "0"
+      timeout: 20
+
+    - name: "Mobile build contains the flag"
+      command: "curl -s -A 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)' http://{target.portal}:8080/ | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{m0b1l3_r3nd3r3r_l34k}"
+      timeout: 20
+
+    - name: "Mobile JSON contains the access marker"
+      command: "curl -s -A 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)' http://{target.portal}:8080/api/profile | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{m0b1l3_r3nd3r3r_l34k}"
+      timeout: 20
