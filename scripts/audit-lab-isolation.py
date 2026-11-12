@@ -37,7 +37,7 @@ MANAGEMENT_HINTS = ("172.16.16.", "169.254.169.254", "host.docker.internal", "/v
 def _load_yaml(path: Path):
     try:
         return yaml.safe_load(path.read_text(encoding="utf-8-sig")) or {}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - surface any YAML parse failure
         return {"__parse_error__": str(exc)}
 
 
@@ -87,7 +87,6 @@ def audit_lab(lab_dir: Path) -> list[dict]:
     for service_name, service in (compose.get("services") or {}).items():
         if not isinstance(service, dict):
             continue
-        prefix = f"{compose_path.relative_to(ROOT)}::{service_name}"
 
         if service.get("privileged") is True:
             findings.append({
@@ -256,6 +255,55 @@ def audit_lab(lab_dir: Path) -> list[dict]:
     return findings
 
 
+def audit_rangebox_entrypoint() -> list[dict]:
+    """Catch privileged entrypoint commands that run as the non-root USER.
+
+    The image ends with ``USER kali``. ``cap_add: NET_ADMIN`` grants the
+    capability to the container's root, not to uid 10001, so iptables and
+    /etc/resolv.conf writes must go through ``sudo -n``. A non-fatal
+    ``|| echo WARNING`` path would otherwise hide a permission failure.
+    """
+    dockerfile = ROOT / "RangeBox" / "Dockerfile"
+    entrypoint = ROOT / "RangeBox" / "entrypoint.sh"
+    if not dockerfile.is_file() or not entrypoint.is_file():
+        return []
+
+    users = re.findall(
+        r"(?im)^\s*USER\s+(\S+)", dockerfile.read_text(encoding="utf-8")
+    )
+    final_user = (users[-1] if users else "root").strip().lower()
+    if final_user in {"root", "0"}:
+        return []
+
+    findings: list[dict] = []
+    privileged = re.compile(
+        r"^\s*(?:sudo\s+(?:-n\s+)?)?(?:iptables|dnsmasq)\b"
+        r"|>\s*/etc/resolv\.conf|tee\s+/etc/resolv\.conf",
+        re.IGNORECASE,
+    )
+    for number, line in enumerate(
+        entrypoint.read_text(encoding="utf-8").splitlines(), start=1
+    ):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if not privileged.search(stripped):
+            continue
+        if "sudo" in stripped:
+            continue
+        findings.append({
+            "severity": "high",
+            "service": "rangebox",
+            "check": "entrypoint-privilege",
+            "detail": (
+                f"entrypoint.sh:{number} runs a privileged command as "
+                f"USER {final_user} without sudo: {stripped[:120]}"
+            ),
+            "file": str(entrypoint.relative_to(ROOT)),
+        })
+    return findings
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--json", action="store_true")
@@ -267,6 +315,7 @@ def main() -> int:
     lab_dirs = sorted({path.parent for path in labs_root.rglob("docker-compose.yml")})
     for lab_dir in lab_dirs:
         all_findings.extend(audit_lab(lab_dir))
+    all_findings.extend(audit_rangebox_entrypoint())
 
     critical = [f for f in all_findings if f["severity"] == "critical"]
     high = [f for f in all_findings if f["severity"] == "high"]

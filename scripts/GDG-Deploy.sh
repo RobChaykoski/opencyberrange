@@ -214,7 +214,14 @@ if [[ "$SKIP_INSTALL" == "1" ]]; then
     say "Skipping platform install (--skip-install)"
 else
     say "Installing OpenCyberRange on $INSTANCE"
-    REMOTE_CMD="sudo apt-get update -y && sudo apt-get install -y git ca-certificates curl && sudo rm -rf '$REMOTE_SRC' && sudo git clone --branch '$REPO_REF' '$REPO_URL' '$REMOTE_SRC' && cd '$REMOTE_SRC' && yes '' | sudo env OCR_PLATFORM_DIR='$REMOTE_PLATFORM' DEPLOYMENT_MODE=internet GENERATE_SELF_SIGNED=true bash scripts/setup-range-server.sh --install"
+    IP="$(gcloud compute instances describe "$INSTANCE" \
+        --project="$PROJECT" --zone="$ZONE" \
+        --format='get(networkInterfaces[0].accessConfigs[0].natIP)' 2>/dev/null || true)"
+    if [[ -z "$IP" ]]; then
+        echo "ERROR: no external IP; cannot run a non-interactive internet install." >&2
+        exit 1
+    fi
+    REMOTE_CMD="sudo apt-get update -y && sudo apt-get install -y git ca-certificates curl && sudo rm -rf '$REMOTE_SRC' && sudo git clone --branch '$REPO_REF' '$REPO_URL' '$REMOTE_SRC' && cd '$REMOTE_SRC' && sudo env OCR_PLATFORM_DIR='$REMOTE_PLATFORM' DEPLOYMENT_MODE=internet GENERATE_SELF_SIGNED=true PUBLIC_IP='$IP' bash scripts/setup-range-server.sh --install --non-interactive"
     gcloud compute ssh "$INSTANCE" \
         --project="$PROJECT" --zone="$ZONE" --quiet \
         --command="$REMOTE_CMD"

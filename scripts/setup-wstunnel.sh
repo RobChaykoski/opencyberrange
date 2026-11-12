@@ -20,7 +20,7 @@
 #
 # ==============================================================================
 
-set -e
+set -Eeuo pipefail
 
 # Colors
 RED='\033[0;31m'
@@ -33,6 +33,11 @@ NC='\033[0m'
 
 # Configuration
 WSTUNNEL_VERSION="10.5.2"
+# Official GitHub release digests for v10.5.2. Update these with the release
+# when bumping WSTUNNEL_VERSION; the installer refuses to run a mismatched
+# archive.
+WSTUNNEL_SHA256_AMD64="7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
+WSTUNNEL_SHA256_ARM64="ce6438391db8a83e22f204ae6cdcc87f96451409b90e76858997bb1a9cd85088"
 WSTUNNEL_PORT=8443
 WSTUNNEL_BIND="127.0.0.1"
 WIREGUARD_PORT=51820
@@ -78,12 +83,13 @@ log "${BLUE}Step 1: Installing wstunnel v${WSTUNNEL_VERSION}...${NC}"
 
 ARCH=$(uname -m)
 case "$ARCH" in
-    x86_64)  ARCH_SUFFIX="amd64" ;;
-    aarch64) ARCH_SUFFIX="arm64" ;;
+    x86_64)  ARCH_SUFFIX="amd64"; EXPECTED_SHA256="$WSTUNNEL_SHA256_AMD64" ;;
+    aarch64) ARCH_SUFFIX="arm64"; EXPECTED_SHA256="$WSTUNNEL_SHA256_ARM64" ;;
     *)       error_exit "Unsupported architecture: $ARCH" ;;
 esac
 
 # Check if already installed at correct version
+CURRENT_VERSION=""
 if command -v wstunnel &> /dev/null; then
     CURRENT_VERSION=$(wstunnel --version 2>&1 | grep -oP '[\d.]+' || echo "unknown")
     if [ "$CURRENT_VERSION" = "$WSTUNNEL_VERSION" ]; then
@@ -97,23 +103,24 @@ fi
 if ! command -v wstunnel &> /dev/null || [ "$CURRENT_VERSION" != "$WSTUNNEL_VERSION" ]; then
     DOWNLOAD_URL="https://github.com/erebe/wstunnel/releases/download/v${WSTUNNEL_VERSION}/wstunnel_${WSTUNNEL_VERSION}_linux_${ARCH_SUFFIX}.tar.gz"
     TMP_DIR=$(mktemp -d)
+    cleanup_tmp() { rm -rf "$TMP_DIR"; }
+    trap cleanup_tmp EXIT
 
     log "Downloading from ${DOWNLOAD_URL}..."
-    if ! curl -sL "$DOWNLOAD_URL" -o "$TMP_DIR/wstunnel.tar.gz"; then
-        # Try using pre-downloaded copy
-        if [ -f "/tmp/wstunnel" ]; then
-            log "${YELLOW}Download failed, using pre-downloaded binary${NC}"
-            cp /tmp/wstunnel "$INSTALL_DIR/wstunnel"
-        else
-            error_exit "Failed to download wstunnel"
-        fi
-    else
-        tar -xzf "$TMP_DIR/wstunnel.tar.gz" -C "$TMP_DIR/"
-        cp "$TMP_DIR/wstunnel" "$INSTALL_DIR/wstunnel"
-    fi
+    curl -fsSL --retry 3 --retry-delay 2 "$DOWNLOAD_URL" -o "$TMP_DIR/wstunnel.tar.gz" || \
+        error_exit "Failed to download wstunnel v${WSTUNNEL_VERSION}"
 
-    chmod +x "$INSTALL_DIR/wstunnel"
+    # Verify the official release digest before unpacking or executing.
+    ACTUAL_SHA256=$(sha256sum "$TMP_DIR/wstunnel.tar.gz" | awk '{print $1}')
+    if [ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]; then
+        error_exit "wstunnel checksum mismatch: expected ${EXPECTED_SHA256}, got ${ACTUAL_SHA256}"
+    fi
+    log "${GREEN}[ok] wstunnel archive checksum verified${NC}"
+
+    tar -xzf "$TMP_DIR/wstunnel.tar.gz" -C "$TMP_DIR/"
+    install -m 0755 "$TMP_DIR/wstunnel" "$INSTALL_DIR/wstunnel"
     rm -rf "$TMP_DIR"
+    trap - EXIT
 
     log "${GREEN}[ok] wstunnel installed to ${INSTALL_DIR}/wstunnel${NC}"
 fi

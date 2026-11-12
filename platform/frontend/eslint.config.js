@@ -45,6 +45,20 @@ module.exports = [
       // Legacy code swallows errors with empty catch blocks in 16 places;
       // allow that pattern, still flag other empty blocks.
       'no-empty': ['error', { allowEmptyCatch: true }],
+      // New raw HTML must go through utils/markdown.js (marked + DOMPurify).
+      'vue/no-v-html': 'error',
+    },
+  },
+
+  // The only sanctioned raw-HTML sites: both sanitize with DOMPurify. Keep this
+  // list short and review every addition.
+  {
+    files: [
+      'src/components/TicketPanel.vue',
+      'src/views/TrackDetail.vue',
+    ],
+    rules: {
+      'vue/no-v-html': 'off',
     },
   },
 

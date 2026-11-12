@@ -4,10 +4,12 @@
 # Compile the Snap7 C++ library from source against musl here, then copy the
 # resulting .so into the runtime image.
 FROM alpine:3.19 AS snap7build
+ARG SNAP7_SHA256=1f4270cde8684957770a10a1d311c226e670d9589c69841a9012e818f7b9f80e
 RUN apk add --no-cache build-base p7zip curl
 WORKDIR /build
 RUN curl -fsSL -o snap7.7z \
       "https://sourceforge.net/projects/snap7/files/1.4.2/snap7-full-1.4.2.7z/download" \
+ && echo "${SNAP7_SHA256}  snap7.7z" | sha256sum -c - \
  && 7z x -y snap7.7z >/dev/null
 WORKDIR /build/snap7-full-1.4.2/build/unix
 RUN make -f x86_64_linux.mk all \

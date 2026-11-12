@@ -1,6 +1,11 @@
 #!/bin/bash
 # RangeBox Entrypoint
 # Starts: Xvfb (virtual display) → XFCE4 (desktop) → x11vnc (VNC) → websockify (WebSocket bridge)
+#
+# Privileged network hygiene (gateway DROP rules, dnsmasq, /etc/resolv.conf)
+# runs through `sudo -n` because the image's final USER is `kali`. The image
+# grants kali NOPASSWD sudo, so this is hygiene inside the student's own box,
+# not a security boundary; the host DOCKER-USER policy is the real boundary.
 set -e
 
 RESOLUTION="${RESOLUTION:-1280x800}"
@@ -38,11 +43,17 @@ done
 # Containers have NET_ADMIN; drop outbound to every .1 gateway on 10.x
 # subnets.  A background loop re-applies when new interfaces appear
 # (e.g. when the platform bridges us to a lab network after boot).
+#
+# This is hygiene, not a security boundary: the image grants kali NOPASSWD
+# sudo, so a student can flush these rules inside their own box. The real
+# boundary is the host DOCKER-USER policy in docker_manager.py. This layer
+# only keeps casual nmap scans from seeing the frontend, Peer Manager, or DB.
 block_gateways() {
     if ! command -v iptables &>/dev/null; then
         echo "[rangebox] WARNING: iptables not found, skipping gateway block"
         return 0
     fi
+    local applied=0
     for iface in $(ip -4 addr show | grep 'inet 10\.' | awk '{print $2}'); do
         # OCR lab bridges put the gateway at .254 (docker_manager.py), not .1.
         # Blocking only .1 left the real gateway open, so the attack box could
@@ -51,11 +62,17 @@ block_gateways() {
         net="$(echo "$iface" | sed 's|\.[0-9]*/.*||')"
         for last in 1 254; do
             gw="${net}.${last}"
-            iptables -C OUTPUT -d "$gw" -j DROP 2>/dev/null || \
-                { iptables -A OUTPUT -d "$gw" -j DROP 2>/dev/null && \
-                    echo "[rangebox] Blocked gateway $gw"; }
+            if sudo -n iptables -C OUTPUT -d "$gw" -j DROP 2>/dev/null; then
+                applied=$((applied + 1))
+            elif sudo -n iptables -A OUTPUT -d "$gw" -j DROP 2>/dev/null; then
+                applied=$((applied + 1))
+                echo "[rangebox] Blocked gateway $gw"
+            fi
         done
     done
+    if [ "$applied" -eq 0 ]; then
+        echo "[rangebox] WARNING: no gateway DROP rules applied; check sudo/iptables permissions"
+    fi
 }
 block_gateways || echo "[rangebox] WARNING: gateway blocking failed (non-fatal)"
 
@@ -65,7 +82,7 @@ block_gateways || echo "[rangebox] WARNING: gateway blocking failed (non-fatal)"
 # reads /etc/hosts and serves proper PTR records so reverse lookups
 # return friendly names like plc1.masa.local.
 _reload_dnsmasq() {
-    [ -f /tmp/dnsmasq.pid ] && kill -HUP "$(cat /tmp/dnsmasq.pid)" 2>/dev/null
+    [ -f /tmp/dnsmasq.pid ] && sudo -n kill -HUP "$(cat /tmp/dnsmasq.pid)" 2>/dev/null
 }
 if command -v dnsmasq &>/dev/null; then
     DOCKER_DNS="127.0.0.11"
@@ -83,8 +100,8 @@ no-negcache
 # lookups of lab hosts return nothing rather than the slug.
 bogus-priv
 DNSCONF
-    dnsmasq -C /tmp/dnsmasq.conf --pid-file=/tmp/dnsmasq.pid 2>/dev/null && {
-        echo "nameserver 127.0.0.1" > /etc/resolv.conf
+    sudo -n dnsmasq -C /tmp/dnsmasq.conf --pid-file=/tmp/dnsmasq.pid 2>/dev/null && {
+        echo "nameserver 127.0.0.1" | sudo -n tee /etc/resolv.conf >/dev/null
         echo "[rangebox] dnsmasq started, reverse DNS will use /etc/hosts"
     } || echo "[rangebox] WARNING: dnsmasq failed to start (non-fatal)"
 fi

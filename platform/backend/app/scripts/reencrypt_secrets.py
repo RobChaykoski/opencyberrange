@@ -16,7 +16,7 @@ import argparse
 
 from app.crypto import decrypt_secret, encrypt_secret, is_encrypted, needs_reencryption
 from app.database import SessionLocal
-from app.models import InstructorApiKey, User, WireGuardConfig
+from app.models import InstructorApiKey, PlatformSetting, User, WireGuardConfig
 
 
 def _rewrite(label: str, value: str, *, apply: bool) -> tuple[bool, str | None]:
@@ -86,6 +86,20 @@ def main() -> int:
             elif did_change:
                 if result:
                     row.encrypted_key = result
+                changed += 1
+
+        for row in db.query(PlatformSetting).filter(
+            PlatformSetting.is_secret.is_(True)
+        ).all():
+            checked += 1
+            label = f"platform_setting:{row.key}"
+            did_change, result = _rewrite(label, row.value, apply=apply)
+            if result and result.startswith(f"{label}:"):
+                print(result)
+                failed += 1
+            elif did_change:
+                if result:
+                    row.value = result
                 changed += 1
 
         if apply and changed:

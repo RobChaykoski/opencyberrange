@@ -44,6 +44,8 @@ NC='\033[0m'
 VPN_ENABLED="${VPN_ENABLED:-true}"
 DEPLOYMENT_MODE="${DEPLOYMENT_MODE:-internet}"
 GENERATE_SELF_SIGNED="${GENERATE_SELF_SIGNED:-false}"
+PUBLIC_IP="${PUBLIC_IP:-}"
+NON_INTERACTIVE="${NON_INTERACTIVE:-false}"
 VPN_LISTEN_PORT="${VPN_LISTEN_PORT:-51820}"
 VPN_SERVER_ADDRESS="${VPN_SERVER_ADDRESS:-10.0.0.1/24}"
 VPN_INTERFACE="${VPN_INTERFACE:-wg0}"
@@ -59,7 +61,11 @@ LAB_CIDR="${LAB_CIDR:-10.100.0.0/14}"
 WG_CLIENT_CIDR="${WG_CLIENT_CIDR:-10.255.0.0/16}"
 
 PEER_MANAGER_PORT="${PEER_MANAGER_PORT:-5000}"
-PEER_MANAGER_BIND="${PEER_MANAGER_BIND:-0.0.0.0}"
+# The backend is containerized and reaches the Peer Manager through
+# host.docker.internal. A literal 127.0.0.1 bind is unreachable from a
+# container, so "auto" resolves to the docker0 gateway after Docker is
+# installed. Never bind 0.0.0.0 by default.
+PEER_MANAGER_BIND="${PEER_MANAGER_BIND:-auto}"
 PEER_MANAGER_DIR="${PEER_MANAGER_DIR:-/opt/ocr-peer-manager}"
 
 # Generate a random API key if not provided
@@ -104,6 +110,22 @@ header(){ echo -e "\n${CYAN}═══ $1 ═══${NC}\n"; }
 
 die() { err "$1"; exit 1; }
 
+# Return 0 for yes, 1 for no. In non-interactive mode the caller's default is
+# used without reading stdin, so a piped installer cannot silently answer a
+# future prompt with a blank line.
+prompt_yes_no() {
+    local prompt="$1"
+    local default="$2"
+    local answer=""
+    if [ "$NON_INTERACTIVE" = true ]; then
+        answer="$default"
+    else
+        read -rp "$prompt" answer || answer="$default"
+        answer="${answer:-$default}"
+    fi
+    [[ "$answer" =~ ^[Yy] ]]
+}
+
 # Last-resort Compose v2 install. Some Ubuntu/Debian releases ship neither
 # docker-compose-v2 nor docker-compose-plugin in their apt repositories.
 install_compose_binary() {
@@ -145,13 +167,15 @@ while [[ $# -gt 0 ]]; do
         --platform|-p)  ACTION="platform"; shift ;;
         --fix|-f)       ACTION="fix"; shift ;;
         --status|-s)    ACTION="status"; shift ;;
+        --yes|-y|--non-interactive) NON_INTERACTIVE=true; shift ;;
         --help|-h)
-            echo "Usage: sudo bash $0 [--install|--update|--platform|--fix|--status|--help]"
+            echo "Usage: sudo bash $0 [--install|--update|--platform|--fix|--status|--help] [--non-interactive]"
             echo ""
             echo "  --install, -i    Full server setup (all phases)"
             echo "  --update, -u     Update platform (pull changes, rebuild containers)"
             echo "  --platform, -p   Start / stop / restart platform containers"
             echo "  --fix, -f        Repair/restart specific components"
+            echo "  --non-interactive  Use defaults; require PUBLIC_IP for internet mode"
             echo "  --status, -s     Check system health"
             echo "  --help, -h       Show this help"
             echo "  (no args)        Interactive menu"
@@ -427,6 +451,24 @@ EOF
 phase_4_peer_manager() {
     header "Phase 4 — Peer Manager API"
 
+    # Resolve "auto" now that Docker is installed. The backend container
+    # reaches the host through host.docker.internal, which is the docker0
+    # gateway; binding to that gateway keeps the API off public interfaces.
+    if [ "$PEER_MANAGER_BIND" = "auto" ]; then
+        _docker_gateway=$(ip -4 addr show docker0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1)
+        PEER_MANAGER_BIND="${_docker_gateway:-127.0.0.1}"
+    fi
+    if [ "$PEER_MANAGER_BIND" = "0.0.0.0" ]; then
+        warn "Refusing to bind the Peer Manager to 0.0.0.0."
+        _docker_gateway=$(ip -4 addr show docker0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1)
+        PEER_MANAGER_BIND="${_docker_gateway:-127.0.0.1}"
+        warn "Using ${PEER_MANAGER_BIND} instead. The API is loopback or Docker-bridge only."
+    fi
+    if [ "$PEER_MANAGER_BIND" = "127.0.0.1" ] || [ "$PEER_MANAGER_BIND" = "localhost" ]; then
+        warn "Peer Manager is loopback-only; a containerized backend cannot reach it."
+        warn "Set PEER_MANAGER_BIND to the Docker bridge gateway if the backend runs in Docker."
+    fi
+
     mkdir -p "$PEER_MANAGER_DIR"
 
     # Create Python virtual environment and install Flask
@@ -454,6 +496,8 @@ Endpoints:
 Authentication: X-API-Key header
 """
 
+import hmac
+import ipaddress
 import json
 import os
 import subprocess
@@ -464,8 +508,9 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-API_KEY = os.environ.get("PEER_MANAGER_API_KEY", "")
+API_KEY = os.environ.get("PEER_MANAGER_API_KEY", "").strip()
 WG_INTERFACE = os.environ.get("WG_INTERFACE", "wg0")
+WG_CLIENT_CIDR = os.environ.get("WG_CLIENT_CIDR", "10.255.0.0/16")
 
 logging.basicConfig(
     level=logging.INFO,
@@ -473,16 +518,25 @@ logging.basicConfig(
 )
 log = logging.getLogger("peer-manager")
 
+if not API_KEY:
+    raise SystemExit(
+        "PEER_MANAGER_API_KEY is not set; refusing to start an unauthenticated "
+        "peer-management API."
+    )
+if len(API_KEY) < 32:
+    raise SystemExit("PEER_MANAGER_API_KEY must be at least 32 characters.")
+
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 
 def check_auth():
-    """Verify the X-API-Key header."""
+    """Verify the X-API-Key header with a constant-time comparison."""
     if not API_KEY:
-        return  # No key configured — allow all (dev mode)
-    key = request.headers.get("X-API-Key", "")
-    if key != API_KEY:
         return jsonify({"error": "unauthorized"}), 401
+    key = request.headers.get("X-API-Key", "")
+    if not hmac.compare_digest(key, API_KEY):
+        return jsonify({"error": "unauthorized"}), 401
+    return None
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -510,7 +564,8 @@ def wg_show():
                 continue
             peer = {
                 "public_key": parts[0],
-                "preshared_key": parts[1] if parts[1] != "(none)" else None,
+                # Never return the preshared key to the caller.
+                "preshared_key": None,
                 "endpoint": parts[2] if parts[2] != "(none)" else None,
                 "allowed_ips": parts[3],
                 "last_handshake": int(parts[4]) if parts[4] != "0" else None,
@@ -580,6 +635,30 @@ def list_peers():
     return jsonify({"peers": peers, "count": len(peers)})
 
 
+def _validate_allowed_ips(value: str) -> str:
+    """Accept only CIDRs inside the configured VPN client range."""
+    client_network = ipaddress.ip_network(WG_CLIENT_CIDR, strict=False)
+    networks = []
+    for part in value.split(","):
+        part = part.strip()
+        if not part:
+            continue
+        try:
+            network = ipaddress.ip_network(part, strict=False)
+        except ValueError as exc:
+            raise ValueError(f"invalid allowed_ips entry: {part}") from exc
+        if network.version != client_network.version:
+            raise ValueError("allowed_ips address family does not match the VPN range")
+        if not network.subnet_of(client_network):
+            raise ValueError(
+                f"allowed_ips {part} is outside the VPN client range {WG_CLIENT_CIDR}"
+            )
+        networks.append(str(network))
+    if not networks:
+        raise ValueError("allowed_ips is required")
+    return ", ".join(networks)
+
+
 @app.route("/peers", methods=["POST"])
 def add_peer():
     data = request.get_json(force=True)
@@ -588,6 +667,11 @@ def add_peer():
 
     if not public_key or not allowed_ips:
         return jsonify({"error": "public_key and allowed_ips required"}), 400
+
+    try:
+        allowed_ips = _validate_allowed_ips(allowed_ips)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
     try:
         wg_add_peer(public_key, allowed_ips)
@@ -865,10 +949,21 @@ def health():
 
 
 if __name__ == "__main__":
-    bind = os.environ.get("PEER_MANAGER_BIND", "0.0.0.0")
+    bind = os.environ.get("PEER_MANAGER_BIND", "127.0.0.1")
     port = int(os.environ.get("PEER_MANAGER_PORT", "5000"))
+    if bind in {"0.0.0.0", "::"}:
+        raise SystemExit(
+            "Refusing to bind the Peer Manager to a wildcard address; use "
+            "127.0.0.1 or the Docker bridge gateway."
+        )
+    if bind not in {"127.0.0.1", "localhost", "::1"}:
+        log.warning(
+            "Peer Manager is bound to %s (not loopback). Restrict the port to "
+            "the Docker bridge with the host firewall.",
+            bind,
+        )
     log.info("Peer Manager starting on %s:%d (interface: %s)", bind, port, WG_INTERFACE)
-    app.run(host=bind, port=port)
+    app.run(host=bind, port=port, debug=False)
 PYEOF
 
     chmod 644 "${PEER_MANAGER_DIR}/peer_manager.py"
@@ -880,6 +975,7 @@ PEER_MANAGER_API_KEY=${PEER_MANAGER_API_KEY}
 PEER_MANAGER_BIND=${PEER_MANAGER_BIND}
 PEER_MANAGER_PORT=${PEER_MANAGER_PORT}
 WG_INTERFACE=${VPN_INTERFACE}
+WG_CLIENT_CIDR=${WG_CLIENT_CIDR}
 LAB_CIDR=${LAB_CIDR}
 EOF
     chmod 600 "${PEER_MANAGER_DIR}/peer_manager.env"
@@ -900,7 +996,7 @@ Restart=on-failure
 RestartSec=5
 
 # Security hardening
-NoNewPrivileges=false
+NoNewPrivileges=true
 ProtectSystem=strict
 ReadWritePaths=/etc/wireguard
 
@@ -1079,13 +1175,18 @@ phase_7_platform() {
         export SERVER_PUBLIC_HOST="$lan_ip"
     else
         # ── Internet mode: use public IP as VPN endpoint ─────────────────
-        local public_ip=""
-        public_ip=$(curl -4 -s --connect-timeout 5 ifconfig.me 2>/dev/null || \
-                    curl -4 -s --connect-timeout 5 icanhazip.com 2>/dev/null || \
-                    curl -4 -s --connect-timeout 5 api.ipify.org 2>/dev/null || \
-                    echo "")
+        local public_ip="${PUBLIC_IP:-}"
+        if [ -z "$public_ip" ]; then
+            public_ip=$(curl -4 -s --connect-timeout 5 ifconfig.me 2>/dev/null || \
+                        curl -4 -s --connect-timeout 5 icanhazip.com 2>/dev/null || \
+                        curl -4 -s --connect-timeout 5 api.ipify.org 2>/dev/null || \
+                        echo "")
+        fi
 
         if [ -z "$public_ip" ]; then
+            if [ "$NON_INTERACTIVE" = true ]; then
+                die "PUBLIC_IP must be set for a non-interactive internet install."
+            fi
             warn "Could not auto-detect this server's public IP address."
             echo -e "  ${YELLOW}This usually means the server has no internet access right now.${NC}"
             echo -e "  ${YELLOW}You can find it manually: curl -4 ifconfig.me${NC}"
@@ -1165,8 +1266,7 @@ ensure_platform_running() {
     fi
 
     warn "Platform containers are not running."
-    read -rp "  Start them now? (Y/n): " start_choice
-    if [[ "$start_choice" =~ ^[Nn]$ ]]; then
+    if ! prompt_yes_no "  Start them now? (Y/n): " "Y"; then
         return 2
     fi
 
@@ -1207,8 +1307,7 @@ phase_7b_load_labs() {
     echo -e "  ${DIM}Scans the labs directory and registers them in the database.${NC}"
     echo -e "  ${DIM}This is fast (seconds).${NC}"
     echo ""
-    read -rp "  Discover labs now? (Y/n): " discover_choice
-    if [[ ! "$discover_choice" =~ ^[Nn]$ ]]; then
+    if prompt_yes_no "  Discover labs now? (Y/n): " "Y"; then
         info "Scanning labs directory..."
         local script_output=""
         local script_found=false
@@ -1238,8 +1337,7 @@ phase_7b_load_labs() {
     echo -e "  ${DIM}Builds Docker images for all labs so student spawns are instant.${NC}"
     echo -e "  ${YELLOW}  This can take a long time (10–60+ minutes depending on lab count).${NC}"
     echo ""
-    read -rp "  Pre-build lab images now? (y/N): " prebuild_choice
-    if [[ "$prebuild_choice" =~ ^[Yy]$ ]]; then
+    if prompt_yes_no "  Pre-build lab images now? (y/N): " "N"; then
         local prebuild_script="$REPO_DIR/scripts/prebuild-labs.sh"
         if [ -f "$prebuild_script" ]; then
             chmod +x "$prebuild_script"
@@ -1284,8 +1382,7 @@ phase_7c_wstunnel() {
     echo ""
     echo -e "  ${DIM}Not sure? Choose No — you can set this up later from the main menu.${NC}"
     echo ""
-    read -rp "  Set up wstunnel? (y/N): " wstunnel_choice
-    if [[ "$wstunnel_choice" =~ ^[Yy]$ ]]; then
+    if prompt_yes_no "  Set up wstunnel? (y/N): " "N"; then
         # Verify prerequisites before running
         if ! systemctl is-active --quiet cloudflared 2>/dev/null; then
             warn "cloudflared service is not running."
@@ -1345,7 +1442,10 @@ phase_8_verification() {
     FAIL=0
 
     check() {
-        if eval "$2" &>/dev/null; then
+        # The command strings below are static literals in this script. Run
+        # them in a subshell instead of eval so a check cannot mutate the
+        # installer's shell state.
+        if bash -c "$2" &>/dev/null; then
             log "$1"
             PASS=$((PASS + 1))
         else

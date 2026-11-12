@@ -42,6 +42,15 @@ jobs:
       - name: Check licence compliance
         run: python scripts/check-licences.py
 
+      - name: ShellCheck install and upgrade scripts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          shellcheck --severity=error scripts/*.sh
+
+      - name: Verify the inline-script CSP hash
+        run: python scripts/check-csp-hash.py
+
       - name: Report unpinned base images
         continue-on-error: true
         run: python scripts/supply_chain.py --check-pins

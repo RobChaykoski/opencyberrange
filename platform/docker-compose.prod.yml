@@ -19,7 +19,22 @@ services:
     entrypoint: ["/usr/local/bin/ensure-db-password.sh"]
     # Overriding entrypoint clears the image CMD, so the server argument must
     # come back explicitly or the container exits before PostgreSQL starts.
-    command: ["postgres"]
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=${PG_SHARED_BUFFERS:-2GB}"
+      - "-c"
+      - "effective_cache_size=${PG_EFFECTIVE_CACHE_SIZE:-6GB}"
+      - "-c"
+      - "work_mem=${PG_WORK_MEM:-32MB}"
+      - "-c"
+      - "maintenance_work_mem=${PG_MAINTENANCE_WORK_MEM:-512MB}"
+      - "-c"
+      - "wal_compression=on"
+      - "-c"
+      - "log_min_duration_statement=${PG_LOG_MIN_DURATION_MS:-200}"
+      - "-c"
+      - "idle_in_transaction_session_timeout=${PG_IDLE_TX_TIMEOUT:-60s}"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -121,6 +136,8 @@ services:
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@swocts.com}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://localhost}
+      # Report plots are generated headlessly; never probe for a display.
+      MPLBACKEND: Agg
       # Shared counter store so every worker enforces the same limits. Keep
       # the default when running Valkey; set "memory://" only for single-worker
       # development.

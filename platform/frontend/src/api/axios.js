@@ -30,7 +30,13 @@ api.interceptors.response.use(
       // If impersonating and token expired, restore original session
       const imp = sessionStorage.getItem('ocr_impersonating') === 'true'
       if (imp) {
-        const saved = JSON.parse(sessionStorage.getItem('ocr_original_session') || '{}')
+        let saved = {}
+        try {
+          saved = JSON.parse(sessionStorage.getItem('ocr_original_session') || '{}')
+        } catch {
+          // Malformed impersonation state must not block the redirect; the
+          // empty object above is the safe fallback.
+        }
         if (saved.token) {
           localStorage.setItem('token', saved.token)
           if (saved.user) localStorage.setItem('user', saved.user)

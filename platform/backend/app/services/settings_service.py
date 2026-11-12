@@ -13,6 +13,7 @@ from typing import Optional, Dict, List
 
 from sqlalchemy.orm import Session
 
+from app.crypto import decrypt_secret, encrypt_secret, is_encrypted
 from app.models import PlatformSetting
 
 logger = logging.getLogger(__name__)
@@ -113,6 +114,39 @@ DEFAULT_SETTINGS = [
 
 ]
 
+def _secret_keys() -> set[str]:
+    return {
+        item["key"] for item in DEFAULT_SETTINGS if item.get("is_secret")
+    }
+
+
+_SECRET_KEYS = _secret_keys()
+
+
+def _is_secret(key: str, row: PlatformSetting | None = None) -> bool:
+    if row is not None:
+        return bool(row.is_secret)
+    return key in _SECRET_KEYS
+
+
+def _protect(key: str, value: str, row: PlatformSetting | None = None) -> str:
+    """Encrypt a secret setting on write; leave plaintext and masks alone."""
+    if not value or not _is_secret(key, row) or is_encrypted(value):
+        return value
+    return encrypt_secret(value)
+
+
+def _reveal(key: str, value: str | None, row: PlatformSetting | None = None) -> str | None:
+    """Decrypt a stored secret for the service that needs the real value."""
+    if not value or not _is_secret(key, row) or not is_encrypted(value):
+        return value
+    try:
+        return decrypt_secret(value)
+    except ValueError:
+        logger.warning("Could not decrypt secret setting %s", key)
+        return value
+
+
 def _load_cache(db: Session) -> None:
     """Load all settings into memory cache."""
     global _cache, _cache_loaded, _cache_loaded_at
@@ -140,7 +174,7 @@ def get_setting(db: Session, key: str, default: Optional[str] = None) -> Optiona
     """Get a single setting value (cached with TTL)."""
     if _is_cache_stale():
         _load_cache(db)
-    return _cache.get(key, default)
+    return _reveal(key, _cache.get(key, default))
 
 
 def get_setting_fresh(db: Session, key: str, default: Optional[str] = None) -> Optional[str]:
@@ -156,7 +190,7 @@ def get_setting_fresh(db: Session, key: str, default: Optional[str] = None) -> O
     row = db.query(PlatformSetting).filter(PlatformSetting.key == key).first()
     if row is None:
         return default
-    return row.value
+    return _reveal(key, row.value, row)
 
 
 def get_settings_by_category(db: Session, category: str) -> List[dict]:
@@ -197,9 +231,9 @@ def set_setting(db: Session, key: str, value: str) -> PlatformSetting:
     """Create or update a setting."""
     row = db.query(PlatformSetting).filter(PlatformSetting.key == key).first()
     if row:
-        row.value = value
+        row.value = _protect(key, value, row)
     else:
-        row = PlatformSetting(key=key, value=value)
+        row = PlatformSetting(key=key, value=_protect(key, value))
         db.add(row)
     db.commit()
     db.refresh(row)
@@ -213,10 +247,10 @@ def bulk_update_settings(db: Session, updates: Dict[str, str]) -> int:
     for key, value in updates.items():
         row = db.query(PlatformSetting).filter(PlatformSetting.key == key).first()
         if row:
-            row.value = value
+            row.value = _protect(key, value, row)
             count += 1
         else:
-            db.add(PlatformSetting(key=key, value=value))
+            db.add(PlatformSetting(key=key, value=_protect(key, value)))
             count += 1
     db.commit()
     _invalidate_cache()

@@ -261,6 +261,19 @@ The November 2026 hardening pass is deployed to development. See
 6. Decide whether to enable the socket-proxy `BUILD` category; it must stay off
    unless on-demand lab builds are enabled.
 
+### 12. Security review follow-ups
+
+See [SECURITY-REVIEW-2026-11.md](SECURITY-REVIEW-2026-11.md). The
+high-confidence secret scan found no production credentials; the only matches
+are synthetic lab SSH keys. Remaining work:
+
+1. Move the SPA token to an HttpOnly cookie with a refresh flow.
+2. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
+3. Pin the frontend Dockerfile base image and remove the duplicate healthcheck.
+4. Switch RangeBox to supervisord and pin its toolchain.
+5. Add warning-level shellcheck and rehearse the installer in a disposable VM.
+6. Archive or delete the stale backup repository after accepting the scan.
+
 ## Known warnings to ignore
 
 - `RangeBox ... not available after retries - skipping bridge` appeared while

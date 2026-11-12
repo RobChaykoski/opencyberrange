@@ -6,7 +6,22 @@ services:
     # Overriding entrypoint clears the image CMD, so the server argument
     # must come back explicitly or docker-entrypoint.sh starts nothing
     # and the container exits before a single log line.
-    command: ["postgres"]
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=${PG_SHARED_BUFFERS:-2GB}"
+      - "-c"
+      - "effective_cache_size=${PG_EFFECTIVE_CACHE_SIZE:-6GB}"
+      - "-c"
+      - "work_mem=${PG_WORK_MEM:-32MB}"
+      - "-c"
+      - "maintenance_work_mem=${PG_MAINTENANCE_WORK_MEM:-512MB}"
+      - "-c"
+      - "wal_compression=on"
+      - "-c"
+      - "log_min_duration_statement=${PG_LOG_MIN_DURATION_MS:-200}"
+      - "-c"
+      - "idle_in_transaction_session_timeout=${PG_IDLE_TX_TIMEOUT:-60s}"
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-labuser}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-labpass}
@@ -86,6 +101,8 @@ services:
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@example.org}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,https://localhost}
+      # Report plots are generated headlessly; never probe for a display.
+      MPLBACKEND: Agg
       OCR_UVICORN_WORKERS: ${OCR_UVICORN_WORKERS:-1}
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-30000}
       RATELIMIT_STORAGE_URI: ${RATELIMIT_STORAGE_URI:-redis://valkey:6379/0}

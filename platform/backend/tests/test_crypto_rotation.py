@@ -6,6 +6,7 @@ from cryptography.fernet import Fernet
 
 from app import crypto
 from app.config import settings
+from app.services import settings_service
 
 
 def _use_keys(monkeypatch, primary: str, previous: str = ""):
@@ -71,3 +72,13 @@ def test_aliases_keep_the_wireguard_contract(monkeypatch):
 
     token = crypto.encrypt_private_key("wg-private")
     assert crypto.decrypt_private_key(token) == "wg-private"
+
+
+def test_secret_settings_are_encrypted_at_rest(monkeypatch):
+    key = Fernet.generate_key().decode()
+    _use_keys(monkeypatch, key)
+
+    ciphertext = settings_service._protect("mail_password", "smtp-secret")
+    assert ciphertext.startswith("v1:")
+    assert settings_service._reveal("mail_password", ciphertext) == "smtp-secret"
+    assert settings_service._protect("mail_host", "smtp.example.com") == "smtp.example.com"
