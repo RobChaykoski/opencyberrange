@@ -1,0 +1,230 @@
+version: "1.0"
+status: "planning"
+reviewed_at: "2026-11-12"
+event:
+  name: "GDG Windsor DevFest 2027 Cyber Discovery Experience"
+  tagline: "Discover Your Cyber DNA. Find Your Cyber Path."
+  host: "OpenCyberRange & SWOCTS"
+  duration_hours: 6
+  audience:
+    - High school students
+    - College students
+    - Software developers
+    - IT professionals
+    - Career changers
+    - Technology enthusiasts
+  promise:
+    - Discover how cybersecurity actually works
+    - Experience several cybersecurity disciplines
+    - Generate a Cyber DNA profile
+    - Receive Cyber GPS recommendations
+    - Earn an exclusive DevFest Cyber Discovery certificate
+    - Keep a permanent Career DNA profile in OpenCyberRange
+  certificate:
+    name: "GDG Windsor DevFest Cyber Discovery Experience"
+    id_prefix: "DVF-CYBER-2027"
+    exclusive: true
+    issuer: "OpenCyberRange / SWOCTS / GDG Windsor"
+    signatory: "Robert Chaykoski"
+    text: >
+      This certifies that the participant successfully completed the GDG Windsor
+      DevFest Cyber Discovery Experience powered by OpenCyberRange and SWOCTS.
+      During this event, the participant demonstrated foundational competencies
+      across cyber investigation, digital forensics, network analysis, open
+      source intelligence, AI security, and career discovery. Cyber DNA and
+      Cyber GPS profiles were generated to guide future development within the
+      cybersecurity profession. This certificate is issued exclusively for the
+      2027 GDG Windsor DevFest event and cannot be earned through any other
+      OpenCyberRange activity.
+
+sessions:
+  - id: morning
+    title: "What does it take to become a cyber person?"
+    start: "09:30"
+    end: "12:00"
+    objective: >
+      Expose learners to several cybersecurity disciplines and measure natural
+      strengths through short, story-driven investigations.
+    exercises:
+      - id: packet-detective
+        title: "Packet Detective"
+        inspiration: "OpenCyberRange Networking Foundations"
+        duration_minutes: 30
+        scenario: >
+          A short capture is the only evidence. Work out what happened, who
+          connected, and what data moved.
+        tools: [Wireshark, Browser]
+        competencies: [NET-021, NET-029, NET-030]
+        measures: [Observation, Investigation, Pattern recognition]
+        career_paths: [soc-analyst, threat-hunter]
+        build_state: "adapt existing network capture lab"
+      - id: digital-crime-scene
+        title: "Digital Crime Scene"
+        inspiration: "OpenCyberRange Forensics Track"
+        duration_minutes: 30
+        scenario: >
+          A suspicious workstation is the scene. Find deleted files, user
+          activity, and the evidence that explains the timeline.
+        tools: [Autopsy or equivalent, Browser]
+        competencies: [FOR-005, FOR-007, FOR-011]
+        measures: [Curiosity, Investigation, Analytical thinking]
+        career_paths: [dfir-analyst, incident-responder]
+        build_state: "adapt existing forensics lab"
+      - id: find-the-person
+        title: "Find the Person"
+        inspiration: "OpenCyberRange OSINT Content"
+        duration_minutes: 30
+        scenario: >
+          Use only public, synthetic information to identify an identity,
+          organisation, and location clue. Stay inside the ethical rules.
+        tools: [Browser, Search engines]
+        competencies: [OSINT-001, OSINT-005, OSINT-009]
+        measures: [Research skill, Persistence, Open-source intelligence]
+        career_paths: [threat-hunter, dfir-analyst]
+        build_state: "adapt existing OSINT lab with synthetic targets"
+      - id: ai-escape-room
+        title: "AI Security Escape Room"
+        inspiration: "OpenCyberRange AI Security Pathway"
+        duration_minutes: 30
+        scenario: >
+          A fictional chatbot contains hidden instructions and a sensitive
+          project note. Safely uncover the weakness and recommend a fix.
+        tools: [Browser, Synthetic chatbot]
+        competencies: [AI-003, AI-005, AI-007]
+        measures: [Creativity, Problem solving, Security mindset]
+        career_paths: [ai-security-analyst, appsec-engineer]
+        build_state: "build a synthetic prompt-injection lab"
+    output:
+      cyber_dna_snapshot: true
+      profile_created: true
+
+  - id: afternoon
+    title: "Where can I go next?"
+    start: "13:00"
+    end: "15:30"
+    objective: >
+      Let learners experience real career pathways and connect the morning
+      evidence to a direction, next workbooks, and certifications.
+    pathways:
+      - id: soc-analyst
+        title: "SOC Analyst"
+        scenario: "A healthcare ransomware attack."
+        activities:
+          - Analyze alerts
+          - Investigate activity
+          - Build a timeline
+        competencies: [IR-001, SIEM-002, SOC-001]
+      - id: threat-hunter
+        title: "Threat Hunter"
+        scenario: "An unknown attacker is hiding in the environment."
+        activities:
+          - Form a hypothesis
+          - Hunt for indicators
+          - Map MITRE ATT&CK behaviours
+          - Present findings
+        competencies: [TH-001, TH-004, TH-007]
+      - id: ot-security-analyst
+        title: "OT Security Analyst"
+        scenario: "A water treatment system reports a chemical irregularity."
+        activities:
+          - Review Modbus traffic
+          - Identify suspicious commands
+          - Protect critical infrastructure
+        competencies: [OT-001, OT-006, OT-011]
+      - id: ai-security-analyst
+        title: "AI Security Analyst"
+        scenario: "An AI application is exposing company data."
+        activities:
+          - Review prompts
+          - Investigate leakage
+          - Develop mitigations
+        competencies: [AI-005, AI-007, AI-010]
+    output:
+      cyber_gps_report: true
+      next_workbooks: true
+      certification_suggestions: true
+
+career_stories:
+  description: >
+    A Career Stories exercise asks the learner to become the person, not just
+    find the flag. Each story has a role, a situation, a decision, and an
+    artifact the learner can keep.
+  stories:
+    - id: soc-day
+      title: "Day in the Life of a SOC Analyst"
+      beats: [Triage alerts, Investigate an incident, Brief leadership]
+      artifact: "Incident brief and timeline"
+    - id: ot-day
+      title: "Day in the Life of an OT Security Analyst"
+      beats: [Analyze PLC changes, Review Modbus traffic, Coordinate with operations]
+      artifact: "Operations-safe change note"
+    - id: hunter-day
+      title: "Day in the Life of a Threat Hunter"
+      beats: [Form a hypothesis, Hunt for indicators, Build a detection]
+      artifact: "Detection rule and hunt memo"
+    - id: dfir-day
+      title: "Day in the Life of a Digital Forensics Examiner"
+      beats: [Image a drive, Reconstruct a timeline, Present evidence]
+      artifact: "Forensic timeline and evidence summary"
+
+top_concepts:
+  - id: accidental-ai-insider
+    title: "The Accidental AI Insider"
+    theme: "AI assistant leaks hidden prompts, project data, keys, and internal URLs"
+    competencies: [AI-003, AI-005, AI-007]
+  - id: deleted-startup
+    title: "The Deleted Startup"
+    theme: "Recover code, secrets, infrastructure, and docs from Git remnants and cloud logs"
+    competencies: [FOR-005, FOR-007, IR-001]
+  - id: ransomware-monday
+    title: "Ransomware Monday"
+    theme: "Reconstruct initial infection, lateral movement, and impact from a disrupted Monday"
+    competencies: [IR-001, FOR-007, SOC-001]
+  - id: missing-person-osint
+    title: "The Missing Person OSINT Hunt"
+    theme: "Follow synthetic public clues across social, metadata, photos, DNS, and archives"
+    competencies: [OSINT-001, OSINT-005, OSINT-009]
+  - id: escape-help-desk
+    title: "Escape the Help Desk"
+    theme: "Start with weak credentials and excessive permissions inside a fictional policy"
+    competencies: [SOC-001, IR-001, PROF-001]
+  - id: water-plant
+    title: "Water Plant Under Attack"
+    theme: "Investigate Modbus traffic, PLC changes, operator actions, and engineering logs"
+    competencies: [OT-001, OT-006, OT-011]
+  - id: fake-employee
+    title: "The Fake Employee"
+    theme: "Follow HR, email, MFA, and identity logs to an account takeover"
+    competencies: [SOC-001, IR-001, TH-007]
+  - id: mystery-pcap
+    title: "The Mystery PCAP"
+    theme: "Only a capture file. Find DNS, HTTP, steganography, callbacks, and exfiltration"
+    competencies: [NET-021, NET-029, NET-030]
+  - id: shadow-it
+    title: "Shadow IT"
+    theme: "Find unsanctioned AI, cloud storage, and public repositories and explain the risk"
+    competencies: [PROF-001, AI-005, CLD-006]
+  - id: cyber-murder-mystery
+    title: "The Cybersecurity Murder Mystery"
+    theme: "No exploitation. Reconstruct why a CISO was fired from emails, notes, audits, and reports"
+    competencies: [PROF-001, PROF-003, IR-001]
+
+outputs:
+  learner:
+    - Cyber DNA snapshot
+    - Cyber GPS report with a primary path and next workbooks
+    - Certification suggestions
+    - Exclusive DevFest certificate
+    - Permanent Career DNA profile
+  instructor:
+    - Aggregate pathway interest
+    - Aggregate competency gaps
+    - Event completion and certificate counts
+    - Curriculum demand prompts for the next event
+
+privacy:
+  - Use synthetic people, companies, and infrastructure.
+  - Do not collect or search real personal data.
+  - Do not store GPS answers.
+  - Suppress cohorts below the configured minimum in instructor reports.
+  - Certificates are event-exclusive and verified by the platform.

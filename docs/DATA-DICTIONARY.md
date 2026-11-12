@@ -149,6 +149,7 @@ institution.
 | `derived.curriculum_demand` | Aggregate topic demand, exercise friction, and competency gaps | Instructor planning | Service | Computed on read | Instructor for assigned courses above the minimum cohort; admin | `analytics` aggregate | Recomputed |
 | `certification_question_banks.*` | Admin-curated original questions, options, correct index, explanation, objective, and public reference | Certification-aligned sampled checks | Service / Security | Until the bank is replaced | Admin only; learners receive a sampled prompt without answers | Not exported | Kept as curriculum content |
 | `derived.quiz_platinum` | Perfect score on a three-question sampled check | Recognise short, relevant practice | Service | Computed on award | Self; instructor; admin | `self`, `reports` | Deleted with the achievement |
+| `devfest_2027.*` | Event plan: sessions, exercises, pathways, certificate template | Plan the DevFest experience | Service | Until the event is archived | Admin/instructor | Not personal | Kept as event content |
 
 The GPS answers are the one place where the platform deliberately does **not**
 persist user input. They are accepted in the request body for the current
