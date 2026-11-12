@@ -39,6 +39,11 @@ jobs:
       - name: Verify supply-chain lock
         run: python scripts/supply_chain.py --check
 
+      - name: Verify runtime integrity manifest is current
+        run: |
+          python scripts/generate-integrity-manifest.py
+          git diff --exit-code -- platform/backend/app/data/software-integrity.json
+
       - name: Check licence compliance
         run: python scripts/check-licences.py
 

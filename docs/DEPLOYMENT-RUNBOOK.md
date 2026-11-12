@@ -58,6 +58,24 @@ The development backend code is bind-mounted from `~/opencyberrange/backend`.
 After pulling, copy the changed backend source into that directory before a
 restart. Production bakes the code into the image and always needs a rebuild.
 
+### Backup volume ownership
+
+The `backups_data` volume must be writable by the backend UID `10001`. After a
+fresh volume, a host migration, or a restore that recreates the volume:
+
+```bash
+docker exec -u root ocr-backend chown -R 10001:10001 /app/backups /workbook
+```
+
+Verify with:
+
+```bash
+docker exec ocr-backend sh -c 'touch /app/backups/.perm-test && rm /app/backups/.perm-test'
+```
+
+Without this, **Create snapshot** returns 500 with
+`pg_dump: could not open output file ... Permission denied`.
+
 ## Prebuild lab images
 
 New or changed labs must be built on the host. On-demand builds are disabled.
