@@ -220,7 +220,7 @@
         </section>
 
         <div
-          v-if="gpsPrompts.length && !gpsBannerDismissed"
+          v-if="gpsQuestions.length && !gpsBannerDismissed"
           class="gps-banner"
           role="region"
           aria-label="Optional Cyber GPS questions"
@@ -237,9 +237,20 @@
           </span>
           <span class="gps-banner__tag">Optional</span>
           <Transition name="gps-fade" mode="out-in">
-            <p :key="gpsBannerIndex" class="gps-banner__prompt">
-              {{ gpsPrompts[gpsBannerIndex] }}
-            </p>
+            <div :key="gpsBannerIndex" class="gps-banner__question">
+              <p class="gps-banner__prompt">{{ currentGpsQuestion?.prompt }}</p>
+              <div v-if="currentGpsQuestion?.options?.length" class="gps-banner__options">
+                <button
+                  v-for="option in currentGpsQuestion.options"
+                  :key="option.id"
+                  type="button"
+                  class="gps-banner__option"
+                  @click="chooseGpsAnswer(currentGpsQuestion, option)"
+                >
+                  {{ option.label }}
+                </button>
+              </div>
+            </div>
           </Transition>
           <span class="gps-banner__note">Answer or skip; it never affects your progress.</span>
           <button type="button" class="btn btn--secondary btn--sm" @click="setTab('careers')">
@@ -1142,6 +1153,7 @@ import axios from '../api/axios'
 import { useVpnStatus } from '../composables/useVpnStatus'
 import { usePoll } from '../composables/usePoll'
 import { useModules } from '../composables/useModules'
+import { useGpsAnswers } from '../composables/useGpsAnswers'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import SkillDnaProfile from '../components/SkillDnaProfile.vue'
@@ -1535,17 +1547,25 @@ const buildDimensions = computed(() =>
   (summary.value?.skill_dna?.dimensions || []).filter((dim) => Number(dim.score) < 60)
 )
 
-const gpsPrompts = ref([])
+const gpsQuestions = ref([])
 const gpsBannerIndex = ref(0)
 const gpsBannerDismissed = ref(localStorage.getItem('ocr.gps.banner.dismissed') === '1')
+const { answers: gpsAnswers } = useGpsAnswers()
+const currentGpsQuestion = computed(() => gpsQuestions.value[gpsBannerIndex.value] || null)
 let gpsRotationTimer = null
 let gpsRotationPaused = false
+
+function chooseGpsAnswer(question, option) {
+  if (!question || !option) return
+  gpsAnswers[question.id] = option.id
+  setTab('careers')
+}
 
 async function loadGpsPrompts() {
   if (gpsBannerDismissed.value) return
   try {
     const { data } = await axios.post('/profile/gps', { answers: {} })
-    gpsPrompts.value = (data.questions || []).map((q) => q.prompt).filter(Boolean)
+    gpsQuestions.value = (data.questions || []).filter((q) => q.prompt && q.options?.length)
     startGpsRotation()
   } catch {
     // The GPS may be disabled for this deployment; the banner stays hidden.
@@ -1554,12 +1574,12 @@ async function loadGpsPrompts() {
 
 function startGpsRotation() {
   if (gpsRotationTimer) clearInterval(gpsRotationTimer)
-  if (gpsPrompts.value.length < 2) return
+  if (gpsQuestions.value.length < 2) return
   gpsRotationTimer = window.setInterval(() => {
     if (!gpsRotationPaused) {
-      gpsBannerIndex.value = (gpsBannerIndex.value + 1) % gpsPrompts.value.length
+      gpsBannerIndex.value = (gpsBannerIndex.value + 1) % gpsQuestions.value.length
     }
-  }, 8000)
+  }, 10000)
 }
 
 function pauseGpsRotation() {
@@ -3504,6 +3524,41 @@ watch(() => route.path, (newPath) => {
   color: var(--text-primary);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+.gps-banner__question {
+  display: flex;
+  flex: 1 1 100%;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gps-banner__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.gps-banner__option {
+  padding: 0.22rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.gps-banner__option:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.gps-banner__option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .gps-banner__note {

@@ -210,14 +210,15 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
+import { useGpsAnswers } from '../composables/useGpsAnswers'
 
 const loading = ref(true)
 const submitting = ref(false)
 const error = ref('')
 const data = ref(null)
-const answers = reactive({})
+const { answers } = useGpsAnswers()
 
 const hasAnswers = computed(() => Object.values(answers).some(Boolean))
 
