@@ -100,11 +100,11 @@ but never `admin`. Directory role mapping is refreshed on every SSO login, so a
 group change applies without editing the account.
 
 For a local test IdP, see the
-[Dex + OpenLDAP test stack](../../deploy/sso/README.md). For setup examples,
+[Dex + OpenLDAP test stack](https://github.com/RobChaykoski/opencyberrange/blob/main/deploy/sso/README.md). For setup examples,
 claim mapping, and troubleshooting, see
-[`docs/SSO-OIDC.md`](../../docs/SSO-OIDC.md),
-[`docs/SSO-SAML-LDAP.md`](../../docs/SSO-SAML-LDAP.md), and
-[ADR 0004](../../docs/decisions/0004-sso-ha-contract.md).
+[`docs/SSO-OIDC.md`](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SSO-OIDC.md),
+[`docs/SSO-SAML-LDAP.md`](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SSO-SAML-LDAP.md), and
+[ADR 0004](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/decisions/0004-sso-ha-contract.md).
 
 ## Administrator notes
 

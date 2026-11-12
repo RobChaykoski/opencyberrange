@@ -260,7 +260,7 @@ PUBLIC_BASE_URL="https://<public-origin>" python3 scripts/setup-sso.py
 docker compose --profile sso up -d ldap dex
 ```
 
-See [Local SSO test stack](../../deploy/sso/README.md) and
+See [Local SSO test stack](https://github.com/RobChaykoski/opencyberrange/blob/main/deploy/sso/README.md) and
 [Identity Providers](../04_Admin_Guide/30_Identity_Providers.md). The test stack
 is not a production identity provider.
 

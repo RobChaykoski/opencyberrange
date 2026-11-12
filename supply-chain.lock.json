@@ -124,7 +124,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "18383410f1b5483781bcb0a37d4463b2917f022cb351983dcc7ad9d6f8c1d5f5"
+      "sha256": "9bbcb3b93fc0f9dcdfecbb696c957d5ba35dc0da6b40a70dcc77ce88a0a7d488"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"

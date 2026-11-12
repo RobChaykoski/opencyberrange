@@ -402,7 +402,11 @@ def verify_signature(lock_path: Path, signature: Path, public_key: str | None) -
 
 
 def write_lock(path: Path, lock: dict) -> None:
-    path.write_text(json.dumps(lock, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(lock, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def main() -> int:

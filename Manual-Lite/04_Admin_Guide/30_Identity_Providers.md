@@ -86,7 +86,7 @@ The login page shows a directory form for each enabled LDAP provider.
 ## Test with the local stack
 
 For a lab or pilot, the repository includes a profile-gated Dex + OpenLDAP test
-stack. See [the SSO test stack README](../../deploy/sso/README.md). It is not a
+stack. See [the SSO test stack README](https://github.com/RobChaykoski/opencyberrange/blob/main/deploy/sso/README.md). It is not a
 production identity provider.
 
 ## Troubleshooting
@@ -104,7 +104,7 @@ Do not paste provider secrets or ID tokens into a support ticket.
 
 ## Related
 
-- [OIDC guide](../../docs/SSO-OIDC.md)
-- [SAML and LDAP guide](../../docs/SSO-SAML-LDAP.md)
-- [SSO HA contract](../../docs/decisions/0004-sso-ha-contract.md)
-- [Compliance posture](../../docs/COMPLIANCE.md)
+- [OIDC guide](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SSO-OIDC.md)
+- [SAML and LDAP guide](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/SSO-SAML-LDAP.md)
+- [SSO HA contract](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/decisions/0004-sso-ha-contract.md)
+- [Compliance posture](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/COMPLIANCE.md)

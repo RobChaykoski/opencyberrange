@@ -251,7 +251,7 @@ Schema migrations run automatically when the backend starts: `create_all`, then
 idempotent compatibility ALTERs, then Alembic stamp/upgrade under a PostgreSQL
 advisory lock. Do not run `alembic upgrade head` by hand while the backend is
 serving. There is no supported downgrade; roll back by restoring the pre-upgrade
-dump. See [Database schema and Alembic migrations](../../docs/DATABASE-MIGRATIONS.md).
+dump. See [Database schema and Alembic migrations](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/DATABASE-MIGRATIONS.md).
 
 If the upgrade fails, the script stops at the failed step and prints the backup
 path. The source checkout is already fast-forwarded, so fix the reported problem

@@ -216,7 +216,7 @@ startup path already does it under a lock. Back up before any upgrade. There is
 no supported downgrade: restore the pre-upgrade dump and redeploy the previous
 release. Full detail, including the hybrid inline-plus-Alembic model and
 recovery steps, is in
-[Database schema and Alembic migrations](../../docs/DATABASE-MIGRATIONS.md).
+[Database schema and Alembic migrations](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/DATABASE-MIGRATIONS.md).
 
 !!! note "Profile avatars are database-backed"
     Avatars are stored as small base64 data URLs in `users.avatar_data`. They do
