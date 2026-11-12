@@ -237,7 +237,7 @@
           </span>
           <span class="gps-banner__tag">Optional</span>
           <Transition name="gps-fade" mode="out-in">
-            <p :key="gpsBannerIndex" class="gps-banner__prompt" aria-live="polite">
+            <p :key="gpsBannerIndex" class="gps-banner__prompt">
               {{ gpsPrompts[gpsBannerIndex] }}
             </p>
           </Transition>
@@ -3507,15 +3507,15 @@ watch(() => route.path, (newPath) => {
 }
 
 .gps-banner__note {
-  color: var(--text-muted);
-  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
 }
 
 .gps-banner__close {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border: 1px solid var(--border-color);
   border-radius: 7px;
   background: var(--bg-tertiary);
