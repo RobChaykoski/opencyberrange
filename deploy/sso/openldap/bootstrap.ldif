@@ -25,6 +25,6 @@ mail: sso.instructor@example.org
 userPassword: {SSHA}i+NB7j72zXPBhwC5XTpPvqCFR7oTQeuEB/fCHw==
 
 dn: cn=instructors,ou=groups,dc=example,dc=org
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: instructors
-member: uid=sso.instructor,ou=people,dc=example,dc=org
+uniqueMember: uid=sso.instructor,ou=people,dc=example,dc=org
