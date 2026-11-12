@@ -122,7 +122,7 @@ policy, and topology documentation.
 
 ## Tests
 
-- Unit: `platform/backend/tests/test_topology_engine.py` (18 cases) — allocation,
+- Unit: `platform/backend/tests/test_topology_engine.py` (22 cases) — allocation,
   gateway, role mapping, route resolution, subnet bounds, and every rejected
   unsafe service shape.
 - Static: `scripts/validate-lab.py` accepts image-only topology labs while still
@@ -140,3 +140,4 @@ policy, and topology documentation.
 
 Those are Release 5 candidates; the current engine is a routed L3 topology with
 Docker bridges as L2 segments.
+

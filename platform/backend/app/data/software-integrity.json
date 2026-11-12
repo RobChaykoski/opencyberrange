@@ -82,7 +82,11 @@
     "network-1-3-dns-anomaly-detection": "ce6395dad5f7368402c7c14d94c6c67ab8568dffbd985eb82dbdcd3f428c9d58",
     "network-1-4-failed-login-analysis": "fdbf3ed0e428057a0ef1e21927f9b8403b193224ab4967155e8d5d073e13e63e",
     "network-12-1-firewall-fundamentals": "a382021197a1dc6547275f59bfaf84dbc0ebb192cc1c8f7c317d1b339dfef34c",
+    "network-12-2-device-topology-engine": "435be4d20673f93250866cf4c225ae1e89a411c0424e76a019b5902dca692d08",
     "network-12-2-firewall-policy-hardening": "9809e0d8f8162a6c582f6a7a733b7350531d7e70d7d1ae2414ffffd4471aa0d9",
+    "network-12-3-two-router-transit": "65c55243af91511b628060e194ff00f65fed59c8673edc6ac8ce64bb76c8892e",
+    "network-12-4-firewall-service-path": "022b72754eaaea798bccbfe090dffbb03b5e08a2d0a99cdd46ceddbb197016c0",
+    "network-12-5-multi-service-router": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
     "network-2-1-ftp-credential-extraction": "af279adebd8ec17deaa557bbf21abef954f8e6de49e1a75154b244f5bed75289",
     "network-2-2-smtp-email-analysis": "b1afad13a29e40dfa0ecae79a06e311bdf4110c73854794b22dd4bcbb9bd3f0a",
     "network-2-3-http-session-hijacking": "67643bb54164d0aee813f4e0d1dfce0dd235b7fb229369c7464a71fc279e19f5",
@@ -171,7 +175,7 @@
     "windows-9-2-multi-service-exploitation": "26eb01bca4408b0bef4dcdbe4542906cd02d2f4c7e12b99dd9c0756abaf4162b",
     "windows-9-3-complete-windows-penetration-test": "a7267f4dc93846dd833ceb86456bf76367c3c8d2d72a9868b44e051fb01a847d"
   },
-  "release": "3",
+  "release": "4",
   "schema": 1,
   "source_lock": "supply-chain.lock.json"
 }

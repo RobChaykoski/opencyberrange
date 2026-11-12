@@ -39,6 +39,9 @@
     "platform/backend/Dockerfile": {
       "sha256": "28aa8ebf0a0e20a234fa66b166631f35d434ea666bc61eaa6caf67610c7d20b2"
     },
+    "platform/backend/app/data/software-integrity.json": {
+      "sha256": "39760a74c6494271ea9518dc13f79843269193d206f98aa03cd27528d63c37ac"
+    },
     "platform/backend/app/version.py": {
       "sha256": "d28df52054f1f978f8140929961568ff52a4abd8cbf5e8194ba37d4219944056"
     },
@@ -124,7 +127,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "9bbcb3b93fc0f9dcdfecbb696c957d5ba35dc0da6b40a70dcc77ce88a0a7d488"
+      "sha256": "dfd405ae9696c2b51249ad18b9c53a4ef7d6ed2d9c0b589da183f63660975196"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"

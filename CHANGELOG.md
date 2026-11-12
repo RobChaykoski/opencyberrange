@@ -56,8 +56,9 @@ the privacy, accessibility, and API-exposure corrections.
   `service` roles, SSH, a status endpoint, and a flag service.
 - Rejected privileged containers, arbitrary images, host networking, bind
   mounts, hostile capabilities, and reserved environment keys.
-- Added the routed-path demo lab, workbook, engine unit tests, and image-only
-  topology support in the static validator.
+- Added the routed-path demo lab plus two-router transit, firewall service path,
+  and multi-service router labs, with workbook chapters, engine unit tests, and
+  image-only topology support in the static validator.
 
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility

@@ -72,6 +72,7 @@ COVERED_FILES = [
     "platform/backend/Dockerfile",
     "platform/topology-node/Dockerfile",
     "platform/topology-node/entrypoint.py",
+    "platform/backend/app/data/software-integrity.json",
     "platform/frontend/package.json",
     "platform/frontend/package-lock.json",
     "platform/frontend/Dockerfile",

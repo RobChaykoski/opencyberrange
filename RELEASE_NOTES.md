@@ -37,7 +37,7 @@ existing startup schema step.
 - **Network device topology.** Labs can declare routers, hosts, and flag
   services as data. The engine allocates a per-session `/29` for each link,
   assigns addresses, enables forwarding, installs routes, and exposes a status
-  endpoint. A routed-path demo lab ships with a workbook.
+  endpoint. Four routed labs and a workbook chapter ship with the release.
 
 
 ## Release 4 limits
