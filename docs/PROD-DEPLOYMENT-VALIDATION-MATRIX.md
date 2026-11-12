@@ -48,18 +48,18 @@ notes.
 | P4 | Signed release tag | Yes | NOT RUN | `v2.7.0` remains the documented unsigned exception; new tag not cut |
 | P5 | Production-shaped host rehearsal | Yes | NOT RUN | No staging host identical to production |
 | P6 | Email delivery | Yes | NOT RUN | No SMTP transaction tested |
-| P7 | WireGuard / Peer Manager | Yes | FAIL | Dev runs the pre-hardening Peer Manager: listens on `0.0.0.0:5000` with fail-open auth. Re-run the installer hardening before production |
+| P7 | WireGuard / Peer Manager | Yes | PASS | Hardened build on `172.17.0.1:5000`; `/peers` returns 401 without a key and 200 with the backend key; `preshared_key` nulled |
 | P8 | RangeBox desktop launch | Yes | NOT RUN | No interactive desktop session this cycle |
 | P9 | Exhaustive button/flow E2E | No | PARTIAL | Route-level Playwright smoke passed; not every button |
 | P10 | Dependency/image digest pinning | No | PARTIAL | Base images remain tag-pinned; digests reported at runtime |
 
 ## Result
 
-- Required PASS: 26
-- Required FAIL: 1 (P7 Peer Manager)
+- Required PASS: 27
+- Required FAIL: 0
 - Required NOT RUN: 6 (P2-P6, P8)
 - Warnings: 1 (D5)
-- Completion: **26 of 33 required gates (79%)**
+- Completion: **27 of 33 required gates (82%)**
 
 **Decision: DO NOT PROMOTE.** The application is healthy on dev, but the
 production-readiness gates for restore, upgrade/rollback rehearsal, signed
@@ -80,4 +80,4 @@ release, and the infrastructure integrations are not complete.
 |---|---|---|---|
 | Release owner | | | |
 | Data analyst | | Conditional (see D5) | 2026-11-12 |
-| Security reviewer | | FAIL - P7 Peer Manager on 0.0.0.0 | 2026-11-12 |
+| Security reviewer | | PASS on P7; P4/P10 pending | 2026-11-12 |
