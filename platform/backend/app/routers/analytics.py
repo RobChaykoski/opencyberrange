@@ -27,6 +27,8 @@ from app.services.audit import log_admin_action, AuditActions
 from app.services import settings_service
 from app.services.curriculum_manifest import chapter_label
 from app.services.competency_radar import build_cohort_radar, build_individual_radar
+from app.services.competency_taxonomy import build_cohort_competency_summary
+from app.services.curriculum_demand import build_curriculum_demand
 from app.services.learning_time import (
     learning_minutes_by_pair,
     learning_minutes_by_user,
@@ -1389,6 +1391,70 @@ async def reports_overview(
         },
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+@router.get("/reports/curriculum-demand")
+async def curriculum_demand(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Aggregate telemetry turned into where-to-build-next prompts."""
+    query = db.query(Course).filter(Course.is_active == True)
+    if current_user.role != "admin":
+        query = query.filter(Course.instructor_id == current_user.id)
+    courses = query.order_by(Course.name).all()
+
+    minimum = _minimum_cohort_size(db)
+    course_rows = []
+    exercises = []
+    topic_counts = Counter()
+    learner_ids: set[int] = set()
+
+    for course in courses:
+        detail = await course_overview(course.id, db, current_user)
+        course_rows.append(
+            {
+                "id": course.id,
+                "code": course.code,
+                "name": course.name,
+                "cohort_state": detail.get("cohort_state", "available"),
+                "suppression": detail.get("suppression"),
+            }
+        )
+        if detail.get("cohort_state") != "available":
+            continue
+        _labs, course_learners, _completions, _sessions = _course_context(db, course)
+        learner_ids |= course_learners
+        for topic in detail.get("trending_topics", []):
+            topic_counts[topic["key"]] += topic["count"]
+        exercise_detail = await course_exercises(course.id, db, current_user)
+        for row in exercise_detail.get("exercises", []):
+            if row.get("cohort_state") != "available":
+                continue
+            exercises.append(
+                {
+                    **row,
+                    "course": {
+                        "id": course.id,
+                        "code": course.code,
+                        "name": course.name,
+                    },
+                }
+            )
+
+    topics = [
+        {"key": key, "label": TOPIC_INTERESTS.get(key, key), "count": count}
+        for key, count in topic_counts.most_common()
+    ]
+    competency = build_cohort_competency_summary(db, sorted(learner_ids), minimum)
+    return build_curriculum_demand(
+        courses=course_rows,
+        topics=topics,
+        exercises=exercises,
+        competency=competency,
+        minimum=minimum,
+        generated_at=datetime.now(timezone.utc).isoformat(),
+    )
 
 
 class ReportExportAuditRequest(BaseModel):

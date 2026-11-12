@@ -32,6 +32,7 @@ from app.models import (
     User,
 )
 from app.services.achievements import check_quiz_achievements
+from app.services import certification_quiz
 
 LABS_ROOT = Path(os.environ.get("LABS_DIR", "/labs"))
 PASSING_SCORE = 70
@@ -236,6 +237,7 @@ def _feedback_payload(row: ExerciseQuizFeedback | None) -> Optional[dict]:
 
 def summary(db: Session, user: User, lab: Lab) -> dict:
     quiz = load_quiz(lab.slug)
+    cert_pathway = certification_quiz.public_pathway_for_lab(lab)
     completed = (
         db.query(LabCompletion.id)
         .filter(
@@ -247,7 +249,7 @@ def summary(db: Session, user: User, lab: Lab) -> dict:
         .first()
         is not None
     )
-    if not quiz:
+    if not quiz and not cert_pathway:
         return {
             "available": False,
             "lab": {"slug": lab.slug, "name": lab.name},
@@ -273,15 +275,36 @@ def summary(db: Session, user: User, lab: Lab) -> dict:
         )
         .first()
     )
+    if quiz:
+        source = quiz["source"]
+        certification = quiz["certification"]
+        question_count = len(quiz["questions"])
+        attempt_count = question_sample_count(quiz)
+    elif cert_pathway:
+        source = "certification"
+        certification = {
+            "name": cert_pathway["name"],
+            "code": cert_pathway.get("code") or "",
+            "url": cert_pathway.get("url") or "",
+            "scope": cert_pathway["notice"],
+        }
+        question_count = cert_pathway["question_count"]
+        attempt_count = cert_pathway["sample_size"]
+    else:
+        source = None
+        certification = None
+        question_count = 0
+        attempt_count = 0
     return {
         "available": True,
         "optional": True,
         "lab": {"slug": lab.slug, "name": lab.name},
         "completed": completed,
-        "source": quiz["source"],
-        "certification": quiz["certification"],
-        "question_count": len(quiz["questions"]),
-        "attempt_question_count": question_sample_count(quiz),
+        "source": source,
+        "certification": certification,
+        "pathway": cert_pathway,
+        "question_count": question_count,
+        "attempt_question_count": attempt_count,
         "passing_score": PASSING_SCORE,
         "attempts": len(attempts),
         "best_score": best,
@@ -295,18 +318,36 @@ def summary(db: Session, user: User, lab: Lab) -> dict:
 
 
 def start_attempt(db: Session, user: User, lab: Lab) -> dict:
+    previous = _previous_keys(db, user.id, lab.id)
     quiz = load_quiz(lab.slug)
-    if not quiz:
-        raise ValueError("No knowledge check is available for this exercise")
-    count = question_sample_count(quiz)
-    selected = sample_questions(quiz, _previous_keys(db, user.id, lab.id), count)
+    if quiz:
+        count = question_sample_count(quiz)
+        selected = sample_questions(quiz, previous, count)
+        certification_label = quiz["certification"]["code"] or quiz["certification"]["name"]
+        source = quiz["source"]
+    else:
+        cert_selected = certification_quiz.sample_for_lab(
+            lab,
+            count=certification_quiz.SAMPLE_SIZE,
+            previous_keys=previous,
+        )
+        if not cert_selected:
+            raise ValueError("No knowledge check is available for this exercise")
+        selected = cert_selected
+        pathway = cert_selected[0]["pathway"]
+        certification_label = " ".join(
+            part for part in (pathway.get("name"), pathway.get("code")) if part
+        )
+        source = "certification"
     course_id = course_id_for_lab(db, user.id, lab.id)
     attempt = ExerciseQuizAttempt(
         user_id=user.id,
         lab_id=lab.id,
         course_id=course_id,
-        certification=quiz["certification"]["code"] or quiz["certification"]["name"],
-        question_keys=json.dumps([question["id"] for question in selected]),
+        certification=certification_label,
+        question_keys=json.dumps([
+            question.get("key") or question["id"] for question in selected
+        ]),
         answers="{}",
         total=len(selected),
     )
@@ -315,11 +356,12 @@ def start_attempt(db: Session, user: User, lab: Lab) -> dict:
     db.refresh(attempt)
     return {
         "attempt_id": attempt.id,
+        "source": source,
         "question_count": len(selected),
         "passing_score": PASSING_SCORE,
         "questions": [
             {
-                "id": question["id"],
+                "id": question.get("key") or question["id"],
                 "prompt": question["prompt"],
                 "options": question["options"],
                 "difficulty": question["difficulty"],
@@ -338,8 +380,6 @@ def submit_attempt(
     feedback: dict | None = None,
 ) -> dict:
     quiz = load_quiz(lab.slug)
-    if not quiz:
-        raise ValueError("No knowledge check is available for this exercise")
     attempt = (
         db.query(ExerciseQuizAttempt)
         .filter(
@@ -354,8 +394,22 @@ def submit_attempt(
     if attempt.completed_at is not None:
         raise ValueError("This attempt has already been submitted")
 
-    by_id = {question["id"]: question for question in quiz["questions"]}
     selected_ids = json.loads(attempt.question_keys or "[]")
+    by_id = {}
+    if quiz:
+        by_id.update({question["id"]: question for question in quiz["questions"]})
+    for key in selected_ids:
+        if key.startswith(certification_quiz.CERT_PREFIX):
+            question = certification_quiz.resolve_question(key)
+            if question:
+                by_id[key] = question
+    if not by_id:
+        raise ValueError("No knowledge check is available for this exercise")
+    quiz_source = (
+        "certification"
+        if any(key.startswith(certification_quiz.CERT_PREFIX) for key in selected_ids)
+        else (quiz.get("source") if quiz else None)
+    )
     previous_best = max(_best_scores(db, user.id, lab.id), default=None)
     results = []
     correct_count = 0
@@ -399,7 +453,8 @@ def submit_attempt(
     if feedback:
         _record_feedback(db, user, lab, feedback, attempt.course_id)
     check_quiz_achievements(
-        db, user.id, lab.id, score, previous_best
+        db, user.id, lab.id, score, previous_best,
+        total=total, quiz_source=quiz_source,
     )
     best = max(_best_scores(db, user.id, lab.id), default=score)
     return {

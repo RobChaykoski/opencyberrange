@@ -375,6 +375,19 @@
         </div>
 
         <div
+          v-show="activeTab === 'portfolio'"
+          id="profile-panel-portfolio"
+          class="profile-panel"
+          role="tabpanel"
+          aria-labelledby="profile-tab-portfolio"
+        >
+          <RoleReadinessPanel />
+          <CareerGps />
+          <PortfolioPanel />
+          <CompetencyTaxonomy />
+        </div>
+
+        <div
           v-show="activeTab === 'learning'"
           id="profile-panel-learning"
           class="profile-panel"
@@ -1041,6 +1054,10 @@ import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import SkillDnaProfile from '../components/SkillDnaProfile.vue'
 import MomentumPanel from '../components/MomentumPanel.vue'
 import CareerAtlas from '../components/CareerAtlas.vue'
+import PortfolioPanel from '../components/PortfolioPanel.vue'
+import RoleReadinessPanel from '../components/RoleReadinessPanel.vue'
+import CareerGps from '../components/CareerGps.vue'
+import CompetencyTaxonomy from '../components/CompetencyTaxonomy.vue'
 import UserAvatar from '../components/UserAvatar.vue'
 import CheckIcon from '../components/icons/CheckIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
@@ -1071,11 +1088,11 @@ const loading = ref(true)
 // forms render immediately even when that aggregate query is slow.
 const summary = ref(null)
 const BASE_PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
-const ALL_PROFILE_TABS = ['overview', 'skill-tree', 'careers', 'learning', 'account', 'security']
+const ALL_PROFILE_TABS = ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
 const hasCareerAtlas = computed(() => !!summary.value?.skill_dna?.career_atlas)
 const profileTabKeys = computed(() =>
   hasCareerAtlas.value
-    ? ['overview', 'skill-tree', 'careers', 'learning', 'account', 'security']
+    ? ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
     : BASE_PROFILE_TABS
 )
 const lastProfileTab = computed(
@@ -1385,6 +1402,7 @@ const profileTabs = computed(() => {
   ]
   if (hasCareerAtlas.value) {
     tabs.push({ key: 'careers', label: 'Careers' })
+    tabs.push({ key: 'portfolio', label: 'Portfolio' })
   }
   tabs.push(
     { key: 'learning', label: 'Learning record', count: achievements.value.length || undefined },

@@ -17,6 +17,17 @@ from app.schemas import (
 from app.services import mail, settings_service
 from app.services import rangebox_capacity
 from app.services.achievements import CUSTOM_ACHIEVEMENT_TRIGGERS
+from app.services.achievement_catalogue import (
+    DEFAULT_DIFFICULTY,
+    DEFAULT_GROUP,
+    DEFAULT_TIER,
+    DIFFICULTY_BY_KEY,
+    GROUP_BY_KEY,
+    TIER_BY_KEY,
+    build_catalogue,
+    points_for,
+    serialize_custom_achievement,
+)
 from app.services.audit import log_admin_action, AuditActions
 
 router = APIRouter()
@@ -24,16 +35,7 @@ limiter = create_limiter()
 
 
 def _serialize_custom_achievement(row: CustomAchievement) -> dict:
-    return {
-        "id": row.id,
-        "name": row.name,
-        "description": row.description or "",
-        "icon": row.icon or "\U0001F3C5",
-        "trigger": row.trigger,
-        "threshold": row.threshold,
-        "is_active": row.is_active,
-        "created_at": row.created_at,
-    }
+    return serialize_custom_achievement(row)
 
 
 def _validate_trigger(trigger: str) -> None:
@@ -45,6 +47,46 @@ def _validate_trigger(trigger: str) -> None:
                 + ", ".join(sorted(CUSTOM_ACHIEVEMENT_TRIGGERS))
             ),
         )
+
+
+def _validate_metadata(group_key: str | None, tier: str | None, difficulty: str | None) -> tuple[str, str, str]:
+    group = group_key or DEFAULT_GROUP
+    tier_key = tier or DEFAULT_TIER
+    difficulty_key = difficulty or DEFAULT_DIFFICULTY
+    if group not in GROUP_BY_KEY:
+        raise HTTPException(
+            status_code=400,
+            detail="Unknown group. Choose one of: " + ", ".join(GROUP_BY_KEY),
+        )
+    if tier_key not in TIER_BY_KEY:
+        raise HTTPException(
+            status_code=400,
+            detail="Unknown tier. Choose one of: " + ", ".join(TIER_BY_KEY),
+        )
+    if difficulty_key not in DIFFICULTY_BY_KEY:
+        raise HTTPException(
+            status_code=400,
+            detail="Unknown difficulty. Choose one of: " + ", ".join(DIFFICULTY_BY_KEY),
+        )
+    return group, tier_key, difficulty_key
+
+
+@router.get(
+    "/achievement-catalogue",
+    summary="Grouped achievement catalogue for the studio",
+    response_description="Built-in and custom achievements with group, tier, difficulty, and points",
+)
+async def achievement_catalogue(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Return every achievement in one grouped, filterable payload.
+
+    Built-in achievements are code paths and are read-only. Custom achievements
+    can be edited in the same view. Points are derived from tier and difficulty
+    so a harder badge is worth more.
+    """
+    return build_catalogue(db)
 
 
 @router.get(
@@ -94,6 +136,9 @@ async def create_custom_achievement(
     retroactively; the definition applies from the next correct flag onward.
     """
     _validate_trigger(payload.trigger)
+    group_key, tier, difficulty = _validate_metadata(
+        payload.group_key, payload.tier, payload.difficulty
+    )
 
     row = CustomAchievement(
         name=payload.name.strip(),
@@ -101,6 +146,10 @@ async def create_custom_achievement(
         icon=payload.icon or "\U0001F3C5",
         trigger=payload.trigger,
         threshold=payload.threshold,
+        group_key=group_key,
+        tier=tier,
+        difficulty=difficulty,
+        points=points_for(tier, difficulty),
         is_active=payload.is_active,
     )
     db.add(row)
@@ -114,7 +163,13 @@ async def create_custom_achievement(
         target_type="custom_achievement",
         target_id=row.id,
         target_identifier=row.name,
-        details={"trigger": row.trigger, "threshold": row.threshold},
+        details={
+            "trigger": row.trigger,
+            "threshold": row.threshold,
+            "tier": row.tier,
+            "difficulty": row.difficulty,
+            "points": row.points,
+        },
         ip_address=request.client.host if request.client else None,
     )
     return _serialize_custom_achievement(row)
@@ -150,6 +205,20 @@ async def update_custom_achievement(
         row.icon = payload.icon or "\U0001F3C5"
     if payload.threshold is not None:
         row.threshold = payload.threshold
+    if (
+        payload.group_key is not None
+        or payload.tier is not None
+        or payload.difficulty is not None
+    ):
+        group_key, tier, difficulty = _validate_metadata(
+            payload.group_key or row.group_key,
+            payload.tier or row.tier,
+            payload.difficulty or row.difficulty,
+        )
+        row.group_key = group_key
+        row.tier = tier
+        row.difficulty = difficulty
+        row.points = points_for(tier, difficulty)
     if payload.is_active is not None:
         row.is_active = payload.is_active
 

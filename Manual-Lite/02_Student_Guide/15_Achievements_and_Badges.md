@@ -60,6 +60,36 @@ under **Admin -> Settings -> Achievements**.
     require speed, and they are not a measure of whether someone belongs in
     cybersecurity.
 
+## Tiers, points, and the sampled quiz ladder
+
+Every badge has a **tier** and a **difficulty**, and the two set its point value.
+Bronze is a first step, Silver is solid practice, Gold is sustained or
+higher-difficulty work, and Platinum is a standout achievement. A Platinum badge
+on an expert exercise is worth more than a Bronze badge on a starter exercise.
+
+Knowledge checks are optional, short, and tied to the exercise you just finished.
+Each attempt draws **three questions** from the certification pathway that best
+matches the exercise. The questions are original practice written to public
+certification objectives, not copied exam items. The pathway can be CompTIA
+Security+, CySA+, PenTest+, Network+, Linux+, Microsoft SC-900, ISC2 CC, OWASP
+Top 10, or the OWASP LLM Top 10.
+
+The sampled-quiz ladder is unique to SWOCTS:
+
+| Badge | Tier | How you earn it |
+|---|---|---|
+| Quiz Ace | Silver | Score 100% on any exercise knowledge check |
+| Platinum Check | Platinum | Answer all three sampled questions correctly |
+| Relevance Ace | Platinum | Earn a perfect sampled check on an advanced or expert exercise |
+| Hat Trick | Gold | Earn perfect sampled checks on three different exercises |
+| Five in a Row | Silver | Pass five exercise knowledge checks in a row |
+| Tier Climb | Gold | Climb from below 70% to a perfect sampled check |
+| Quiz Polymath | Platinum | Earn perfect sampled checks across three different tracks |
+
+After you submit, you see the correct answer, the explanation, and a public
+reference for each question. Use the reference to check the source, then try
+another randomised set. The quiz never gates lab access or a certificate.
+
 ## Learning-time badges
 
 Separate from the course ladder, the platform tracks time spent on exercises

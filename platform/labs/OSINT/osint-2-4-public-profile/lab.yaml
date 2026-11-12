@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 20
 prerequisites:
   - osint-1-1-public-footprint
+# By completion students will be able to:
 learning_outcomes:
   - Treat a public professional profile as an OSINT source
   - Use a phone to open the profile and read the public About section

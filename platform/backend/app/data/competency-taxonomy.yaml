@@ -1,0 +1,410 @@
+version: "1.0"
+status: "master framework"
+notes: >
+  OpenCyberRange Competency Taxonomy v1.0. Domains contain categories, and
+  categories contain competencies. Proficiency levels are descriptive practice
+  levels, not grades or hiring predictions. The taxonomy is the shared
+  vocabulary for workbooks, assessments, pathways, badges, readiness, capstones,
+  and employer transcripts.
+
+proficiency_scale:
+  - id: awareness
+    label: Awareness
+    description: Recognises the term and can explain why it matters.
+  - id: foundational
+    label: Foundational
+    description: Can follow a guided procedure and explain the result.
+  - id: practitioner
+    label: Practitioner
+    description: Can apply the competency in a new but familiar exercise.
+  - id: specialist
+    label: Specialist
+    description: Can adapt the competency under friction and explain trade-offs.
+  - id: lead
+    label: Lead
+    description: Can design, review, and teach the competency to others.
+
+domains:
+  - id: NET
+    label: Networking
+    description: Network foundations, protocols, services, and traffic analysis.
+    categories:
+      - id: NET-CORE
+        label: Core Networking
+        competencies:
+          - {id: NET-001, name: OSI Model}
+          - {id: NET-002, name: TCP/IP Model}
+          - {id: NET-003, name: Encapsulation}
+          - {id: NET-004, name: Network Topologies}
+          - {id: NET-005, name: Ethernet Fundamentals}
+          - {id: NET-006, name: MAC Addressing}
+          - {id: NET-007, name: ARP}
+          - {id: NET-008, name: VLAN Concepts}
+          - {id: NET-009, name: Trunking}
+          - {id: NET-010, name: STP Fundamentals}
+      - id: NET-IP
+        label: IP and Routing
+        competencies:
+          - {id: NET-011, name: IPv4 Addressing}
+          - {id: NET-012, name: IPv6 Fundamentals}
+          - {id: NET-013, name: CIDR}
+          - {id: NET-014, name: Subnetting}
+          - {id: NET-015, name: Routing Concepts}
+          - {id: NET-016, name: Static Routing}
+          - {id: NET-017, name: Dynamic Routing}
+          - {id: NET-018, name: NAT}
+          - {id: NET-019, name: PAT}
+          - {id: NET-020, name: DHCP}
+      - id: NET-SERVICES
+        label: Network Services
+        competencies:
+          - {id: NET-021, name: DNS Fundamentals}
+          - {id: NET-022, name: HTTP/HTTPS}
+          - {id: NET-023, name: FTP/SFTP}
+          - {id: NET-024, name: SMTP}
+          - {id: NET-025, name: SNMP}
+          - {id: NET-026, name: NTP}
+          - {id: NET-027, name: LDAP}
+          - {id: NET-028, name: Active Directory Networking}
+      - id: NET-ANALYSIS
+        label: Network Analysis
+        competencies:
+          - {id: NET-029, name: Wireshark Navigation}
+          - {id: NET-030, name: Packet Capture Analysis}
+          - {id: NET-031, name: Protocol Identification}
+          - {id: NET-032, name: Traffic Baseline Analysis}
+          - {id: NET-033, name: Network Troubleshooting}
+          - {id: NET-034, name: Network Documentation}
+          - {id: NET-035, name: Log Correlation}
+
+  - id: LIN
+    label: Linux
+    description: Linux administration, shell work, and defensive investigation.
+    categories:
+      - id: LIN-ADMIN
+        label: Linux Administration
+        competencies:
+          - {id: LIN-001, name: Linux File System Navigation}
+          - {id: LIN-002, name: File Operations}
+          - {id: LIN-003, name: File Permissions}
+          - {id: LIN-004, name: Ownership Management}
+          - {id: LIN-005, name: User Management}
+          - {id: LIN-006, name: Group Management}
+          - {id: LIN-007, name: Package Management}
+          - {id: LIN-008, name: Service Management}
+          - {id: LIN-009, name: Process Management}
+          - {id: LIN-010, name: System Monitoring}
+      - id: LIN-SHELL
+        label: Shell and Text
+        competencies:
+          - {id: LIN-011, name: Bash Fundamentals}
+          - {id: LIN-012, name: Text Processing}
+          - {id: LIN-013, name: Regular Expressions}
+          - {id: LIN-014, name: Pipes and Redirection}
+          - {id: LIN-015, name: Shell Scripting}
+          - {id: LIN-016, name: Environment Variables}
+          - {id: LIN-017, name: Cron Jobs}
+          - {id: LIN-018, name: Log Analysis}
+      - id: LIN-SEC
+        label: Linux Security
+        competencies:
+          - {id: LIN-019, name: Linux Hardening}
+          - {id: LIN-020, name: Sudo Configuration}
+          - {id: LIN-021, name: SSH Security}
+          - {id: LIN-022, name: Audit Logging}
+          - {id: LIN-023, name: Firewall Administration}
+          - {id: LIN-024, name: Incident Investigation}
+          - {id: LIN-025, name: Malware Indicators}
+
+  - id: WIN
+    label: Windows
+    description: Windows administration, Active Directory, and endpoint security.
+    categories:
+      - id: WIN-ADMIN
+        label: Windows Administration
+        competencies:
+          - {id: WIN-001, name: Windows Administration}
+          - {id: WIN-002, name: Local Users and Groups}
+          - {id: WIN-003, name: Services Management}
+          - {id: WIN-004, name: Windows Registry}
+          - {id: WIN-005, name: Event Viewer Analysis}
+          - {id: WIN-006, name: Scheduled Tasks}
+          - {id: WIN-007, name: File Permissions}
+          - {id: WIN-008, name: PowerShell Basics}
+      - id: WIN-AD
+        label: Active Directory
+        competencies:
+          - {id: WIN-009, name: Active Directory Fundamentals}
+          - {id: WIN-010, name: OU Management}
+          - {id: WIN-011, name: Group Policy}
+          - {id: WIN-012, name: Authentication Concepts}
+          - {id: WIN-013, name: Kerberos Fundamentals}
+          - {id: WIN-014, name: Domain Administration}
+          - {id: WIN-015, name: Domain Troubleshooting}
+      - id: WIN-SEC
+        label: Windows Security
+        competencies:
+          - {id: WIN-016, name: Windows Hardening}
+          - {id: WIN-017, name: Security Logging}
+          - {id: WIN-018, name: Endpoint Investigation}
+          - {id: WIN-019, name: Windows Defender}
+          - {id: WIN-020, name: Attack Surface Review}
+          - {id: WIN-021, name: Persistence Detection}
+
+  - id: WEB
+    label: Web Technologies
+    description: Web fundamentals, secure design, and common vulnerability classes.
+    categories:
+      - id: WEB-FUND
+        label: Web Fundamentals
+        competencies:
+          - {id: WEB-001, name: HTML Fundamentals}
+          - {id: WEB-002, name: CSS Fundamentals}
+          - {id: WEB-003, name: JavaScript Basics}
+          - {id: WEB-004, name: Browser Architecture}
+          - {id: WEB-005, name: HTTP Methods}
+          - {id: WEB-006, name: Session Management}
+      - id: WEB-SEC
+        label: Web Security
+        competencies:
+          - {id: WEB-007, name: Authentication Security}
+          - {id: WEB-008, name: Authorization Concepts}
+          - {id: WEB-009, name: Input Validation}
+          - {id: WEB-010, name: Session Security}
+          - {id: WEB-011, name: Secure Cookies}
+          - {id: WEB-012, name: API Security Fundamentals}
+      - id: WEB-VULN
+        label: Web Vulnerabilities
+        competencies:
+          - {id: WEB-013, name: SQL Injection}
+          - {id: WEB-014, name: Cross Site Scripting}
+          - {id: WEB-015, name: CSRF}
+          - {id: WEB-016, name: File Upload Risks}
+          - {id: WEB-017, name: Directory Traversal}
+          - {id: WEB-018, name: Broken Authentication}
+          - {id: WEB-019, name: OWASP Top 10 Mapping}
+
+  - id: OSINT
+    label: OSINT
+    description: Public-source collection, validation, analysis, and reporting.
+    categories:
+      - id: OSINT-COLLECTION
+        label: Collection
+        competencies:
+          - {id: OSINT-001, name: Intelligence Lifecycle}
+          - {id: OSINT-002, name: Search Operator Usage}
+          - {id: OSINT-003, name: Advanced Search Techniques}
+          - {id: OSINT-004, name: Social Media Analysis}
+          - {id: OSINT-005, name: Domain Research}
+          - {id: OSINT-006, name: Metadata Analysis}
+          - {id: OSINT-007, name: Geolocation Fundamentals}
+      - id: OSINT-ANALYSIS
+        label: Analysis and Reporting
+        competencies:
+          - {id: OSINT-008, name: Source Validation}
+          - {id: OSINT-009, name: Data Correlation}
+          - {id: OSINT-010, name: Timeline Construction}
+          - {id: OSINT-011, name: Threat Research}
+          - {id: OSINT-012, name: Intelligence Reporting}
+
+  - id: FOR
+    label: Digital Forensics
+    description: Evidence handling, host and disk artefacts, and memory analysis.
+    categories:
+      - id: FOR-DISK
+        label: Disk Forensics
+        competencies:
+          - {id: FOR-001, name: Evidence Handling}
+          - {id: FOR-002, name: Chain of Custody}
+          - {id: FOR-003, name: Disk Imaging}
+          - {id: FOR-004, name: File Recovery}
+          - {id: FOR-005, name: Timeline Analysis}
+          - {id: FOR-006, name: File Artifact Analysis}
+      - id: FOR-HOST
+        label: Host Forensics
+        competencies:
+          - {id: FOR-007, name: Windows Artifacts}
+          - {id: FOR-008, name: Linux Artifacts}
+          - {id: FOR-009, name: Browser Forensics}
+          - {id: FOR-010, name: Registry Analysis}
+          - {id: FOR-011, name: User Activity Reconstruction}
+      - id: FOR-MEM
+        label: Memory Forensics
+        competencies:
+          - {id: FOR-012, name: Memory Analysis}
+          - {id: FOR-013, name: Process Analysis}
+          - {id: FOR-014, name: Malware Triage}
+          - {id: FOR-015, name: Volatility Usage}
+
+  - id: MAL
+    label: Malware Analysis
+    description: Malware behaviour, static and dynamic analysis, and indicators.
+    categories:
+      - id: MAL-FUND
+        label: Malware Fundamentals
+        competencies:
+          - {id: MAL-001, name: Malware Types}
+          - {id: MAL-002, name: Infection Techniques}
+          - {id: MAL-003, name: Persistence Techniques}
+          - {id: MAL-004, name: Command and Control Concepts}
+      - id: MAL-ANALYSIS
+        label: Malware Analysis
+        competencies:
+          - {id: MAL-005, name: Static Analysis}
+          - {id: MAL-006, name: Dynamic Analysis}
+          - {id: MAL-007, name: Hash Analysis}
+          - {id: MAL-008, name: YARA Fundamentals}
+          - {id: MAL-009, name: Sandbox Analysis}
+          - {id: MAL-010, name: IOC Development}
+
+  - id: TH
+    label: Threat Hunting
+    description: Hypothesis-driven hunting, queries, TTPs, and detection.
+    categories:
+      - id: TH-HUNT
+        label: Hunting
+        competencies:
+          - {id: TH-001, name: Threat Hunting Methodology}
+          - {id: TH-002, name: Hypothesis Development}
+          - {id: TH-003, name: Investigative Queries}
+          - {id: TH-004, name: IOC Analysis}
+          - {id: TH-005, name: TTP Analysis}
+          - {id: TH-006, name: Adversary Emulation}
+      - id: TH-DETECT
+        label: Detection
+        competencies:
+          - {id: TH-007, name: MITRE ATT&CK Mapping}
+          - {id: TH-008, name: Detection Rule Development}
+          - {id: TH-009, name: Behavioral Analytics}
+          - {id: TH-010, name: Threat Intelligence Correlation}
+
+  - id: IR
+    label: Incident Response
+    description: Incident lifecycle, evidence, containment, recovery, and communication.
+    categories:
+      - id: IR-PROC
+        label: Response Process
+        competencies:
+          - {id: IR-001, name: Incident Lifecycle}
+          - {id: IR-002, name: Triage Techniques}
+          - {id: IR-003, name: Evidence Collection}
+          - {id: IR-004, name: Containment Strategies}
+          - {id: IR-005, name: Eradication Planning}
+          - {id: IR-006, name: Recovery Procedures}
+          - {id: IR-007, name: Lessons Learned}
+      - id: IR-COMMS
+        label: Communication
+        competencies:
+          - {id: IR-008, name: Executive Reporting}
+          - {id: IR-009, name: Incident Documentation}
+          - {id: IR-010, name: Stakeholder Communications}
+          - {id: IR-011, name: Risk Communication}
+
+  - id: SOC
+    label: SIEM and SOC Operations
+    description: Alert triage, case management, escalation, and SIEM work.
+    categories:
+      - id: SOC-OPS
+        label: SOC Operations
+        competencies:
+          - {id: SOC-001, name: Alert Triage}
+          - {id: SOC-002, name: Case Management}
+          - {id: SOC-003, name: Escalation Procedures}
+          - {id: SOC-004, name: Threat Intelligence Usage}
+          - {id: SOC-005, name: Runbook Execution}
+      - id: SIEM
+        label: SIEM
+        competencies:
+          - {id: SIEM-001, name: Log Ingestion}
+          - {id: SIEM-002, name: KQL Fundamentals}
+          - {id: SIEM-003, name: Splunk Search Fundamentals}
+          - {id: SIEM-004, name: Correlation Rules}
+          - {id: SIEM-005, name: Dashboard Creation}
+          - {id: SIEM-006, name: Detection Engineering}
+
+  - id: CLD
+    label: Cloud Security
+    description: Cloud identity, logging, controls, monitoring, and response.
+    categories:
+      - id: AZURE
+        label: Azure
+        competencies:
+          - {id: CLD-001, name: Azure Fundamentals}
+          - {id: CLD-002, name: Microsoft Entra ID}
+          - {id: CLD-003, name: Conditional Access}
+          - {id: CLD-004, name: Azure Logging}
+          - {id: CLD-005, name: Azure Security Controls}
+          - {id: CLD-006, name: Microsoft Sentinel Operations}
+      - id: CLOUD-SEC
+        label: Cloud Security
+        competencies:
+          - {id: CLD-007, name: IAM Fundamentals}
+          - {id: CLD-008, name: Cloud Monitoring}
+          - {id: CLD-009, name: Cloud Incident Response}
+          - {id: CLD-010, name: Cloud Threat Detection}
+
+  - id: OT
+    label: ICS/OT Security
+    description: Industrial architecture, protocols, safety, and defence.
+    categories:
+      - id: OT-FUND
+        label: OT Fundamentals
+        competencies:
+          - {id: OT-001, name: ICS Architecture}
+          - {id: OT-002, name: Purdue Model}
+          - {id: OT-003, name: PLC Fundamentals}
+          - {id: OT-004, name: SCADA Fundamentals}
+          - {id: OT-005, name: Safety Systems}
+      - id: OT-PROTOCOLS
+        label: OT Protocols
+        competencies:
+          - {id: OT-006, name: Modbus}
+          - {id: OT-007, name: DNP3}
+          - {id: OT-008, name: OPC-UA}
+          - {id: OT-009, name: Industrial Network Monitoring}
+      - id: OT-SEC
+        label: OT Security
+        competencies:
+          - {id: OT-010, name: ICS Threat Landscape}
+          - {id: OT-011, name: OT Incident Response}
+          - {id: OT-012, name: Network Segmentation}
+          - {id: OT-013, name: Critical Infrastructure Protection}
+
+  - id: AI
+    label: AI Security
+    description: AI concepts, prompt risk, model abuse, governance, and secure development.
+    categories:
+      - id: AI-FUND
+        label: AI Fundamentals
+        competencies:
+          - {id: AI-001, name: AI Concepts}
+          - {id: AI-002, name: Generative AI Fundamentals}
+          - {id: AI-003, name: Prompt Engineering}
+          - {id: AI-004, name: AI Risk Management}
+      - id: AI-SEC
+        label: AI Security
+        competencies:
+          - {id: AI-005, name: Prompt Injection}
+          - {id: AI-006, name: Model Abuse}
+          - {id: AI-007, name: Data Leakage Risks}
+          - {id: AI-008, name: AI Governance}
+          - {id: AI-009, name: Secure AI Development}
+          - {id: AI-010, name: AI Threat Modeling}
+
+  - id: PROF
+    label: Professional Skills
+    description: Communication, research, judgement, and employability behaviours.
+    categories:
+      - id: PROF-CORE
+        label: Professional Practice
+        competencies:
+          - {id: PROF-001, name: Technical Documentation}
+          - {id: PROF-002, name: Research Methodology}
+          - {id: PROF-003, name: Risk Assessment}
+          - {id: PROF-004, name: Critical Thinking}
+          - {id: PROF-005, name: Presentation Skills}
+          - {id: PROF-006, name: Team Collaboration}
+          - {id: PROF-007, name: Time Management}
+          - {id: PROF-008, name: Ethical Decision Making}
+          - {id: PROF-009, name: Executive Communication}
+          - {id: PROF-010, name: Report Writing}

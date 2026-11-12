@@ -31,7 +31,9 @@ flowchart LR
 ## Steps
 
 1. Open the **Settings** tab from the sidebar.
-2. Click a category tab: **General**, **Security**, **Exercises**, **VPN**, **Email**, or **Features**.
+2. Click a category tab: **General**, **Security**, **Exercises**, **VPN**,
+   **Email**, **Features**, **Modules**, **Achievements**, or **Question banks**.
+   The last three appear as their own workspaces rather than key/value rows.
 3. Edit the values in the rows. Each row uses the control that fits its type:
    - A boolean shows an **Enabled** / **Disabled** toggle button.
    - A value whose key contains "color" shows a color picker.
@@ -78,6 +80,31 @@ exports also exclude suppressed courses from aggregate totals. The default is
 extensions. `100%` is the normal length; `150%` gives 50% extra time; the
 maximum is `300%`. Record the accommodation decision outside the platform and
 use the smallest percentage that meets the learner's approved plan.
+
+## Achievement studio
+
+The **Achievements** tab is a grouped, filterable studio for every badge in the
+platform. Built-in badges and your own goals share one catalogue, with summary
+cards, a search box, and filters for group, tier, source, and state.
+
+Each badge has a **tier** (Bronze, Silver, Gold, Platinum) and a **difficulty**
+(Starter, Standard, Advanced, Expert). The point value is derived from both, so a
+Platinum Expert badge is worth more than a Bronze Starter badge. Use the preview
+card while you create or edit a goal to see the value before you save it.
+
+- **Built-in** badges are code paths. They are read-only in the studio.
+- **Custom** badges use a trigger and a threshold. They are evaluated after the
+  built-in checks on the next correct flag.
+- **Hidden** badges stay out of the learner's list until they are earned.
+- Deleting a custom badge keeps awards that learners already earned.
+
+The **Question banks** tab is separate and admin-only. It shows the full
+certification-aligned question data, including answers, explanations, and public
+references. Learners only ever receive a three-question sample and see the
+answer key after they submit. Run **Run validation** after editing a bank; it
+checks ids, correct indexes, explanations, objectives, duplicate prompts, and
+references. References must be public `https://` sources, not the platform
+itself.
 
 ## Advanced DNA Insights (development preview)
 

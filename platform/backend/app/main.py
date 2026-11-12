@@ -29,6 +29,7 @@ from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
 from app.routers import reports as reports_router
+from app.routers import question_bank as question_bank_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.services.db_integrity import ensure_ledger
 from app.config import settings
@@ -354,6 +355,25 @@ async def lifespan(app: FastAPI):
             conn.execute(text("ALTER TABLE users ADD COLUMN equipped_title VARCHAR(64)"))
             conn.commit()
             logger.info("Added equipped_title column to users table")
+
+        # --- Achievement studio metadata (group, tier, difficulty, points) ---
+        if 'custom_achievements' in inspector.get_table_names():
+            custom_columns = {
+                c['name'] for c in sa_inspect(engine).get_columns('custom_achievements')
+            }
+            custom_ddl = {
+                'group_key': "VARCHAR(30) DEFAULT 'custom' NOT NULL",
+                'tier': "VARCHAR(20) DEFAULT 'bronze' NOT NULL",
+                'difficulty': "VARCHAR(20) DEFAULT 'standard' NOT NULL",
+                'points': "INTEGER DEFAULT 10 NOT NULL",
+            }
+            for column, ddl in custom_ddl.items():
+                if column not in custom_columns:
+                    conn.execute(text(
+                        f"ALTER TABLE custom_achievements ADD COLUMN {column} {ddl}"
+                    ))
+                    conn.commit()
+                    logger.info("Added %s column to custom_achievements table", column)
 
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations
@@ -844,6 +864,11 @@ app.include_router(modules_router.router, prefix="/api/modules", tags=["Modules"
 app.include_router(rangebox_router.router, prefix="/api/rangebox", tags=["RangeBox"])
 app.include_router(about_router.router, prefix="/api/about", tags=["About"])
 app.include_router(reports_router.router, prefix="/api", tags=["Reports"])
+app.include_router(
+    question_bank_router.router,
+    prefix="/api/admin",
+    tags=["Question Banks"],
+)
 
 # Optional module routers, discovered from app/modules/. Mounted AFTER the core
 # routers so a module that extends a shared prefix (e.g. the exercise tester on

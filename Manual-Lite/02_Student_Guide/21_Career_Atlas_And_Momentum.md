@@ -179,6 +179,22 @@ the Momentum section and the Career Atlas, including the salary source notes.
 The export contains only your own data, is logged for accountability, and is not
 shared automatically. See [Viewing Your Profile](16_Viewing_Your_Profile.md).
 
+## Portfolio tab: readiness, GPS, and the evidence record
+
+When the preview is enabled, a **Portfolio** tab sits beside **Careers**. It
+turns the Atlas from a map into an answer:
+
+- **Role readiness** for the pathway you choose, with skills held, next
+  workbooks, gaps, capstone, certifications, and employer evidence.
+- **Cybersecurity GPS**, an optional direction finder built from evidence,
+  recent growth, and a few questions you can skip.
+- **Professional portfolio**, the printable record with a portfolio ID.
+- **Competency taxonomy**, the domain-by-domain assessment view.
+
+Readiness is a curriculum-coverage estimate, not a grade or a hiring prediction.
+The platform does not track employment outcomes. See
+[Career readiness and the Cybersecurity GPS](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-READINESS-AND-GPS.md).
+
 ## Related pages
 
 - [Viewing Your Profile](16_Viewing_Your_Profile.md)

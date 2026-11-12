@@ -95,6 +95,23 @@ exercises are distinct exercises with at least one completion.
 from pulse surveys. Use it to plan the next module or guest session. The chart
 shows counts only; it does not show which learner requested a topic.
 
+## Review curriculum demand
+
+Below the trending topics, **Curriculum demand** turns the same telemetry into a
+short list of where to build or rework exercises. It combines three signals:
+
+| Signal | What it uses | How to use it |
+|---|---|---|
+| **Topic demand** | Pulse topic requests compared with the exercises already assigned in that area. | Build one guided and one independent exercise in a high-demand area. |
+| **Exercise friction** | Completion, abandonment, hint pressure, median attempts, and technical failures. | Check the brief and starting state, add a warm-up, or split the exercise. |
+| **Competency gap** | Cohort coverage below 40% for a taxonomy competency. | Add practice for the lowest-coverage competency first. |
+
+Each card shows its sample size, its evidence source, and a suggested action.
+Cards are sorted by priority. The panel uses the same small-cohort suppression as
+the rest of the page: a course below the minimum learner count contributes no
+recommendations. Recommendations are planning prompts, not an evaluation of
+teaching or learners.
+
 ## Drill into a course
 
 1. Select a course name, or choose **Open** in its row.

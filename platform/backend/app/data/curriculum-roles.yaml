@@ -1,0 +1,636 @@
+version: "1.0"
+status: "development preview"
+notes: >
+  Career pathways are curriculum guidance built from the OpenCyberRange
+  Competency Taxonomy v1.0. Readiness is a descriptive coverage estimate, not a
+  prediction of job performance, a hiring decision, or a claim that a learner is
+  ready for a role. Gold, Silver, and Bronze are curriculum targets, not grades.
+
+readiness_model:
+  version: "1.0"
+  components:
+    workbook: 0.30
+    lab_assessment: 0.20
+    independent: 0.20
+    scenario: 0.10
+    capstone: 0.20
+  rating_scale:
+    - {min: 0, max: 59, label: "Not Ready", description: "Build the foundations and start the pathway workbooks."}
+    - {min: 60, max: 69, label: "Emerging", description: "Early evidence across the pathway; keep practising the gaps."}
+    - {min: 70, max: 79, label: "Developing", description: "Broad evidence; the capstone and weaker domains are the next step."}
+    - {min: 80, max: 89, label: "Career Ready", description: "Strong curriculum evidence; prepare the portfolio and interview story."}
+    - {min: 90, max: 100, label: "Highly Prepared", description: "Deep, repeated evidence across the pathway; keep it current."}
+  disclaimer: >
+    "Career Ready" is a curriculum-readiness label, not a guarantee of
+    employment. Employers make their own decisions and must review the evidence.
+
+level_targets:
+  Gold: 75
+  Silver: 60
+  Bronze: 45
+
+pathways:
+  - id: cybersecurity-foundations
+    title: Cybersecurity Foundations
+    family: defensive
+    flagship: true
+    aliases: ["Foundations", "Cybersecurity Foundations", "Entry Pathway"]
+    summary: "A first pathway for high-school students, first-year college learners, career changers, and IT professionals moving into security."
+    career_ready_threshold: 70
+    domain_floor: 60
+    level_requirements:
+      NET: Silver
+      LIN: Silver
+      WIN: Bronze
+      OSINT: Bronze
+      IR: Bronze
+      AI: Bronze
+      PROF: Silver
+    critical_competencies:
+      - NET-001
+      - NET-002
+      - NET-011
+      - NET-013
+      - NET-021
+      - NET-022
+      - LIN-001
+      - LIN-003
+      - LIN-005
+      - LIN-011
+      - LIN-014
+      - LIN-018
+      - WIN-005
+      - OSINT-001
+      - IR-001
+      - AI-001
+      - PROF-001
+    tracks: [high-school, netfor, linpt, identity, osint, ai]
+    categories: [general, network, authentication, osint, ai]
+    capstone:
+      title: "Small Business Cyber Assessment"
+      description: "Evaluate a small business network, endpoints, users, and basic controls, then produce a prioritized remediation plan."
+      deliverables: ["Asset and user summary", "Prioritized findings", "Remediation plan", "Executive summary"]
+      track: high-school
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA ITF+", "ISC2 Certified in Cybersecurity (CC)"]
+      core: ["CompTIA Security+", "Microsoft SC-900", "CompTIA CySA+"]
+      advanced: ["CompTIA SecurityX (CASP+)", "ISC2 CISSP"]
+    evidence:
+      - "A completed network and Linux foundation workbook"
+      - "A small-business assessment capstone"
+      - "A short written finding for a non-specialist"
+
+  - id: soc-analyst
+    title: SOC Analyst
+    family: defensive
+    flagship: true
+    aliases: ["SOC Analyst", "Tier 1 SOC Analyst", "Security Operations Analyst", "Cybersecurity Analyst", "Detection Analyst", "Security Monitoring Analyst"]
+    summary: "Triage alerts, gather evidence, and escalate with a clear record."
+    level_requirements:
+      NET: Gold
+      WIN: Gold
+      LIN: Silver
+      SOC: Gold
+      IR: Silver
+      TH: Silver
+      PROF: Gold
+    critical_competencies:
+      - NET-011
+      - NET-014
+      - NET-021
+      - NET-022
+      - NET-029
+      - NET-030
+      - NET-033
+      - WIN-005
+      - WIN-009
+      - WIN-012
+      - WIN-013
+      - WIN-017
+      - WIN-018
+      - SIEM-001
+      - SIEM-002
+      - SIEM-004
+      - SIEM-005
+      - SOC-001
+      - SOC-002
+      - IR-001
+      - IR-002
+      - TH-001
+      - TH-007
+      - PROF-001
+      - PROF-010
+    tracks: [netfor, winpt, linpt, forensics, identity]
+    categories: [network-analysis, forensics, authentication, network]
+    capstone:
+      title: "Ransomware Investigation"
+      description: "Analyze logs, identify the entry vector, trace attacker movement, and produce an executive report."
+      deliverables: ["Incident timeline", "Entry-vector finding", "Movement map", "Executive report"]
+      track: network
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "ISC2 Certified in Cybersecurity (CC)"]
+      core: ["CompTIA CySA+", "Microsoft SC-200", "Cisco CyberOps Associate"]
+      advanced: ["ISC2 CISSP", "CompTIA SecurityX (CASP+)"]
+    evidence:
+      - "A triage record with signal, hypothesis, evidence, and decision"
+      - "A ransomware investigation capstone"
+      - "A clean-solve work sample with a short write-up"
+
+  - id: incident-responder
+    title: Incident Responder
+    family: defensive
+    flagship: true
+    aliases: ["Incident Responder", "Cybersecurity Specialist", "CSIRT Analyst", "Security Operations Specialist"]
+    summary: "Coordinate containment, eradication, and recovery under pressure."
+    level_requirements:
+      IR: Gold
+      FOR: Gold
+      TH: Silver
+      NET: Silver
+      PROF: Gold
+    critical_competencies:
+      - IR-001
+      - IR-002
+      - IR-003
+      - IR-004
+      - IR-005
+      - IR-006
+      - IR-007
+      - FOR-001
+      - FOR-002
+      - FOR-005
+      - FOR-007
+      - FOR-008
+      - FOR-012
+      - TH-001
+      - TH-004
+      - TH-005
+      - TH-007
+      - NET-030
+      - PROF-001
+      - PROF-009
+      - PROF-010
+    tracks: [forensics, malware, network, winpt]
+    categories: [forensics, network-analysis, malware]
+    capstone:
+      title: "Corporate Breach Response"
+      description: "Investigate initial compromise, lateral movement, and data exfiltration, then deliver a timeline, recovery plan, and executive briefing."
+      deliverables: ["Incident timeline", "Containment and recovery plan", "Executive briefing", "Lessons learned"]
+      track: forensics
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "CompTIA CySA+"]
+      core: ["GIAC GCIH", "GIAC GCFA", "Microsoft SC-200"]
+      advanced: ["GIAC GNFA", "ISC2 CISSP", "GIAC GXPN"]
+    evidence:
+      - "An incident timeline with observed, inferred, and unknown facts"
+      - "A containment or recovery decision record"
+      - "A corporate breach response capstone"
+
+  - id: threat-hunter
+    title: Threat Hunter
+    family: investigative
+    flagship: true
+    aliases: ["Threat Hunter", "Detection Engineer", "Cyber Threat Analyst", "Threat Intelligence Analyst"]
+    summary: "Form hypotheses, hunt through telemetry, and turn adversary behaviour into detections."
+    level_requirements:
+      TH: Gold
+      MAL: Silver
+      OSINT: Silver
+      NET: Silver
+      PROF: Gold
+    critical_competencies:
+      - TH-001
+      - TH-002
+      - TH-003
+      - TH-004
+      - TH-005
+      - TH-006
+      - TH-007
+      - TH-008
+      - TH-009
+      - TH-010
+      - MAL-001
+      - MAL-003
+      - MAL-005
+      - MAL-006
+      - MAL-010
+      - OSINT-008
+      - OSINT-009
+      - OSINT-011
+      - OSINT-012
+      - NET-030
+      - NET-035
+      - PROF-001
+      - PROF-004
+    tracks: [forensics, malware, osint, netfor]
+    categories: [network-analysis, forensics, malware, osint]
+    capstone:
+      title: "Advanced Adversary Hunt"
+      description: "Identify persistence, lateral movement, and defense evasion using only telemetry and intelligence data."
+      deliverables: ["Hunt hypothesis", "Query and evidence log", "TTP map", "Detection recommendation"]
+      track: forensics
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "CompTIA CySA+"]
+      core: ["GIAC GCIH", "GIAC GCIA", "GIAC GCTI"]
+      advanced: ["GIAC GCDA", "GIAC GXPN", "ISC2 CISSP"]
+    evidence:
+      - "A hunt hypothesis with a reproducible query"
+      - "A TTP map with evidence"
+      - "An advanced adversary hunt capstone"
+
+  - id: ot-security-analyst
+    title: OT / ICS Security Analyst
+    family: ot
+    flagship: true
+    aliases: ["OT Security Analyst", "Industrial Security Analyst", "ICS Security Analyst", "Critical Infrastructure Analyst"]
+    summary: "Protect industrial systems where availability and safety come first."
+    level_requirements:
+      OT: Gold
+      NET: Silver
+      IR: Silver
+      PROF: Silver
+    critical_competencies:
+      - OT-001
+      - OT-002
+      - OT-003
+      - OT-004
+      - OT-006
+      - OT-009
+      - OT-011
+      - NET-011
+      - NET-014
+      - NET-015
+      - NET-030
+      - NET-033
+      - IR-001
+      - IR-002
+      - IR-004
+      - PROF-003
+      - PROF-010
+    tracks: [ot, netfor, forensics]
+    categories: [ot, network-analysis, forensics]
+    capstone:
+      title: "Critical Infrastructure Incident"
+      description: "Investigate PLC manipulation, a network anomaly, and a process interruption, then recommend plant-safe controls."
+      deliverables: ["Safety and availability assessment", "Incident timeline", "Plant-safe remediation", "Executive brief"]
+      track: ot
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "Cisco CyberOps Associate"]
+      core: ["GIAC GICSP", "ISA/IEC 62443 certificate program"]
+      advanced: ["GIAC GRID", "GIAC GCIP"]
+    evidence:
+      - "An OT finding that names safety, availability, and security trade-offs"
+      - "A Modbus or network-analysis capstone"
+      - "A plant-safe remediation recommendation"
+
+  # Secondary pathways retained from the broader career atlas.
+  - id: penetration-tester
+    title: Penetration Tester
+    family: offensive
+    flagship: false
+    aliases: ["Penetration Tester", "Junior Penetration Tester", "Security Consultant", "Vulnerability Analyst"]
+    summary: "Plan and deliver authorised assessments with clear evidence."
+    level_requirements:
+      NET: Silver
+      LIN: Gold
+      WEB: Gold
+      PROF: Gold
+    critical_competencies:
+      - NET-011
+      - NET-014
+      - NET-015
+      - NET-021
+      - NET-022
+      - NET-029
+      - LIN-001
+      - LIN-003
+      - LIN-011
+      - LIN-014
+      - LIN-021
+      - WEB-007
+      - WEB-008
+      - WEB-009
+      - WEB-013
+      - WEB-014
+      - WEB-015
+      - WEB-019
+      - PROF-001
+      - PROF-010
+    tracks: [webpt, linpt, winpt, netfor]
+    categories: [web, exploitation, privilege-escalation, post-exploitation, assessment]
+    capstone:
+      title: "Full Web Application Assessment"
+      description: "Assess a web application, rate the risk, and deliver remediation recommendations."
+      deliverables: ["Findings report", "Risk ratings", "Remediation recommendations", "Executive summary"]
+      track: web
+      slug_hint: capstone
+    certifications:
+      entry: ["eJPT", "CompTIA Security+"]
+      core: ["CompTIA PenTest+", "PortSwigger BSCP", "OSWA"]
+      advanced: ["OSCP", "OSWE", "GIAC GPEN"]
+    evidence:
+      - "A scoped assessment report with findings and remediation"
+      - "A full web application assessment capstone"
+      - "A rules-of-engagement and reporting sample"
+
+  - id: dfir-analyst
+    title: Digital Forensics Analyst
+    family: investigative
+    flagship: false
+    aliases: ["Digital Forensics Analyst", "Forensic Examiner", "Investigations Analyst"]
+    summary: "Reconstruct what happened from evidence and defend the finding."
+    level_requirements:
+      FOR: Gold
+      WIN: Gold
+      LIN: Silver
+      IR: Silver
+      PROF: Gold
+    critical_competencies:
+      - FOR-001
+      - FOR-002
+      - FOR-003
+      - FOR-005
+      - FOR-007
+      - FOR-008
+      - FOR-009
+      - FOR-012
+      - FOR-013
+      - FOR-015
+      - WIN-004
+      - WIN-005
+      - WIN-018
+      - LIN-018
+      - LIN-024
+      - IR-003
+      - PROF-010
+    tracks: [forensics, malware, winpt, linpt]
+    categories: [forensics, malware]
+    capstone:
+      title: "Insider Threat Investigation"
+      description: "Reconstruct a timeline and produce an evidence package for an insider-threat scenario."
+      deliverables: ["Evidence log", "Timeline", "Findings", "Evidence package"]
+      track: forensics
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "CompTIA CySA+"]
+      core: ["GIAC GCFE", "GIAC GCFA", "IACIS CFCE"]
+      advanced: ["GIAC GNFA", "GIAC GIME", "IACIS CAWFE"]
+    evidence:
+      - "A forensic timeline with evidence handling notes"
+      - "An insider threat investigation capstone"
+      - "A short finding written for a non-specialist"
+
+  - id: appsec-engineer
+    title: Application Security Engineer
+    family: appsec
+    flagship: false
+    aliases: ["AppSec Engineer", "Product Security Engineer", "Secure Code Reviewer"]
+    summary: "Embed secure design and testing into software delivery."
+    level_requirements:
+      WEB: Gold
+      PROF: Gold
+      NET: Silver
+    critical_competencies:
+      - WEB-003
+      - WEB-007
+      - WEB-008
+      - WEB-009
+      - WEB-010
+      - WEB-011
+      - WEB-012
+      - WEB-013
+      - WEB-014
+      - WEB-017
+      - WEB-019
+      - PROF-001
+      - PROF-010
+    tracks: [webpt, software-security, linpt]
+    categories: [web, authentication, assessment]
+    capstone:
+      title: "Secure Product Review"
+      description: "Review a product feature for trust boundaries, input handling, and test coverage."
+      deliverables: ["Threat model", "Findings", "One-line fixes", "Test plan"]
+      track: software-security
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "PortSwigger BSCP"]
+      core: ["ISC2 CSSLP", "OSWE", "GIAC GWEB"]
+      advanced: ["GIAC GWEB", "ISACA CISA", "ISC2 CISSP"]
+    evidence:
+      - "A secure-design note with trust boundaries and tests"
+      - "A secure product review capstone"
+      - "A code-review finding with a one-line fix"
+
+  - id: cloud-security-analyst
+    title: Cloud Security Analyst
+    family: cloud
+    flagship: false
+    aliases: ["Cloud Security Analyst", "Azure Security Administrator", "Security Operations Cloud Analyst"]
+    summary: "Assess cloud identity, networks, workloads, and data exposure."
+    level_requirements:
+      CLD: Gold
+      SOC: Silver
+      NET: Silver
+      PROF: Silver
+    critical_competencies:
+      - CLD-001
+      - CLD-002
+      - CLD-003
+      - CLD-004
+      - CLD-005
+      - CLD-006
+      - SOC-001
+      - SOC-002
+      - SIEM-002
+      - SIEM-004
+      - NET-011
+      - NET-021
+      - PROF-003
+    tracks: [identity, netfor, linpt]
+    categories: [authentication, network-analysis, web]
+    capstone:
+      title: "Compromised Azure Tenant Investigation"
+      description: "Investigate identity compromise and cloud persistence, then recommend detection improvements."
+      deliverables: ["Identity timeline", "Persistence finding", "Detection improvements", "Executive brief"]
+      track: identity
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "Microsoft SC-900"]
+      core: ["Microsoft SC-200", "AWS Certified Security Specialty", "CCSP"]
+      advanced: ["Microsoft SC-100", "ISC2 CISSP", "GIAC GCLD"]
+    evidence:
+      - "A cloud control map with identity, network, logging, and data evidence"
+      - "A compromised Azure tenant capstone"
+      - "A configuration finding with a remediation step"
+
+  - id: iam-analyst
+    title: Identity and Access Analyst
+    family: identity
+    flagship: false
+    aliases: ["IAM Analyst", "Identity and Access Administrator"]
+    summary: "Run access reviews, federation, MFA, and the identity lifecycle."
+    level_requirements:
+      WIN: Gold
+      CLD: Silver
+      WEB: Silver
+      PROF: Silver
+    critical_competencies:
+      - WIN-009
+      - WIN-010
+      - WIN-012
+      - WIN-013
+      - CLD-002
+      - CLD-003
+      - WEB-007
+      - WEB-010
+      - WEB-011
+      - PROF-003
+    tracks: [identity, winpt, linpt]
+    categories: [authentication, web]
+    capstone:
+      title: "Identity Lifecycle Review"
+      description: "Map joiners, movers, leavers, MFA, and privileged access, then recommend controls."
+      deliverables: ["Identity lifecycle map", "Access review", "Control recommendations", "Executive brief"]
+      track: identity
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "Microsoft SC-900"]
+      core: ["Microsoft SC-300", "Okta Certified Professional", "CompTIA CySA+"]
+      advanced: ["Microsoft SC-100", "ISC2 CISSP", "Okta Certified Administrator"]
+    evidence:
+      - "An identity lifecycle map with evidence"
+      - "An identity lifecycle review capstone"
+      - "A finding about MFA, federation, or privileged access"
+
+  - id: ai-security-analyst
+    title: AI Security Analyst
+    family: ai
+    flagship: false
+    aliases: ["AI Security Analyst", "AI Risk Analyst", "Secure AI Operations Specialist"]
+    summary: "Assess AI systems for prompt, data, tool-use, and governance risk."
+    level_requirements:
+      AI: Gold
+      WEB: Silver
+      OSINT: Silver
+      PROF: Gold
+    critical_competencies:
+      - AI-001
+      - AI-002
+      - AI-003
+      - AI-004
+      - AI-005
+      - AI-006
+      - AI-007
+      - AI-008
+      - AI-009
+      - AI-010
+      - WEB-009
+      - WEB-012
+      - OSINT-008
+      - PROF-001
+      - PROF-003
+      - PROF-009
+    tracks: [ai, webpt, osint]
+    categories: [ai, web, osint]
+    capstone:
+      title: "Secure AI Application Assessment"
+      description: "Review data handling, prompt exposure, and governance controls in an AI feature."
+      deliverables: ["AI threat model", "Prompt and data findings", "Governance review", "Executive brief"]
+      track: ai
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "ISO/IEC 42001 foundation training"]
+      core: ["IAPP AIGP", "GIAC GMLE", "Cloud AI security specialty"]
+      advanced: ["Vendor AI security architect certifications", "GIAC GSE"]
+    evidence:
+      - "A threat model for an AI feature with testable controls"
+      - "A secure AI application assessment capstone"
+      - "An AI governance or evaluation note"
+
+  - id: security-grc-analyst
+    title: Security GRC Analyst
+    family: grc
+    flagship: false
+    aliases: ["GRC Analyst", "Risk and Compliance Analyst", "Security Assurance Analyst"]
+    summary: "Make risk visible and decisions defensible with control evidence."
+    level_requirements:
+      NET: Silver
+      IR: Silver
+      WEB: Bronze
+      PROF: Gold
+    critical_competencies:
+      - NET-001
+      - NET-021
+      - IR-001
+      - IR-007
+      - IR-008
+      - IR-009
+      - IR-011
+      - WEB-019
+      - PROF-001
+      - PROF-003
+      - PROF-008
+      - PROF-009
+      - PROF-010
+    tracks: [identity, forensics, netfor, webpt]
+    categories: [authentication, forensics, network-analysis, web]
+    capstone:
+      title: "Control and Risk Review"
+      description: "Map a control statement to evidence and produce a risk-based recommendation."
+      deliverables: ["Control statement", "Evidence map", "Risk register", "Audit-ready summary"]
+      track: identity
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA Security+", "ISC2 CC"]
+      core: ["ISACA CISA", "ISACA CRISC", "CompTIA CySA+"]
+      advanced: ["ISC2 CISSP", "ISACA CISM", "ISO 27001 Lead Auditor"]
+    evidence:
+      - "A control statement with verifiable evidence"
+      - "A control and risk review capstone"
+      - "A risk register or audit finding"
+
+  - id: security-educator
+    title: Security Educator / Programme Coordinator
+    family: leadership
+    flagship: false
+    aliases: ["Security Educator", "Programme Coordinator", "Security Trainer"]
+    summary: "Turn technical work into teaching, communication, and programme decisions."
+    level_requirements:
+      NET: Silver
+      WEB: Bronze
+      OSINT: Bronze
+      PROF: Gold
+    critical_competencies:
+      - NET-001
+      - NET-021
+      - WEB-001
+      - WEB-005
+      - OSINT-001
+      - OSINT-012
+      - PROF-001
+      - PROF-004
+      - PROF-005
+      - PROF-006
+      - PROF-007
+      - PROF-009
+    tracks: [high-school, netfor, identity, webpt]
+    categories: [general, network, authentication, web]
+    capstone:
+      title: "Teach-Back and Programme Review"
+      description: "Teach one completed lab to a non-specialist and produce a short programme reflection."
+      deliverables: ["Five-minute teach-back", "Learner-facing explainer", "Programme reflection"]
+      track: high-school
+      slug_hint: capstone
+    certifications:
+      entry: ["CompTIA ITF+", "ISC2 CC"]
+      core: ["CompTIA Security+", "Microsoft SC-900", "CompTIA CySA+"]
+      advanced: ["CompTIA SecurityX (CASP+)", "ISC2 CISSP"]
+    evidence:
+      - "A five-minute teach-back of one completed lab"
+      - "A learner-facing explainer or workbook page"
+      - "A programme or cohort reflection"

@@ -1,0 +1,109 @@
+version: "1.0"
+status: "reviewed mapping scaffold"
+notes: >
+  Maps workbook chapters, tracks, and lab categories to OpenCyberRange
+  Competency Taxonomy v1.0 IDs. Chapter mappings win over track mappings; a lab
+  with no explicit mapping falls back to its primary competency axis. Extend the
+  chapter entries as new workbooks are authored.
+
+# Broad fallback used when a lab's chapter is not mapped yet. It lists domains,
+# not individual competencies, so the service expands them from the taxonomy.
+tracks:
+  netfor:
+    domains: [NET, TH, IR, SOC, PROF]
+  webpt:
+    domains: [WEB, TH, IR, PROF]
+  malware:
+    domains: [MAL, FOR, TH, IR]
+  forensics:
+    domains: [FOR, IR, MAL]
+  osint:
+    domains: [OSINT, TH, PROF]
+  identity:
+    domains: [WIN, WEB, CLD, IR, PROF]
+  ot:
+    domains: [OT, NET, IR, PROF]
+  ai:
+    domains: [AI, WEB, PROF]
+  winpt:
+    domains: [WIN, NET, TH, IR, SOC]
+  linpt:
+    domains: [LIN, NET, TH, IR, SOC]
+  software-security:
+    domains: [WEB, PROF]
+  high-school:
+    domains: [NET, LIN, WIN, WEB, OSINT, PROF]
+
+# Chapter-level mapping. IDs follow the workbook chapter display IDs.
+chapters:
+  BEG01: [NET-001, NET-021, LIN-001, LIN-011, WIN-001, WEB-001, PROF-001, PROF-007]
+  BEG02: [LIN-001, LIN-002, LIN-011, LIN-014, NET-001, NET-011, NET-021, WEB-001, WEB-005, PROF-001]
+  BEG03: [NET-029, NET-030, NET-031, FOR-001, FOR-005, FOR-009, IR-001, IR-002, PROF-001]
+  BEG04: [NET-029, NET-031, WEB-013, WEB-017, OSINT-002, OSINT-008, PROF-004, PROF-010]
+
+  NET00: [NET-001, NET-002, NET-003, NET-004, NET-005, NET-011, NET-013, NET-014, NET-015, NET-021]
+  NET01: [NET-035, LIN-018, TH-003, SOC-001, SIEM-001, SIEM-002, PROF-001]
+  NET01B: [NET-029, NET-030, NET-031, NET-032, NET-035, TH-003, IR-003, PROF-001]
+  NET02: [NET-029, NET-030, NET-031, NET-032, FOR-005, FOR-006, IR-002, IR-003, TH-003]
+  NET03: [NET-015, NET-018, NET-019, NET-033, NET-034, IR-004, OT-012, PROF-003]
+
+  WEB01: [WEB-001, WEB-003, WEB-004, WEB-005, WEB-006, OSINT-002, OSINT-005, PROF-002]
+  WEB01B: [WEB-009, WEB-017, WEB-019, NET-022, OSINT-006, PROF-001]
+  WEB02: [WEB-007, WEB-009, WEB-013, WEB-018, WEB-019, PROF-004, PROF-010]
+  WEB02B: [WEB-009, WEB-012, WEB-013, WEB-014, WEB-015, WEB-016, WEB-019, PROF-010]
+  WEB03: [WEB-009, WEB-013, WEB-014, WEB-017, WEB-018, WEB-019, PROF-001, PROF-010]
+
+  SWSEC01: [WEB-003, WEB-007, WEB-008, WEB-009, WEB-010, WEB-011, WEB-012, PROF-001]
+
+  MAL01: [MAL-001, MAL-002, MAL-003, MAL-004, MAL-005, MAL-006, MAL-007, FOR-014]
+  MAL02: [MAL-005, MAL-006, MAL-008, MAL-009, MAL-010, FOR-014, PROF-010]
+
+  FOR01: [FOR-001, FOR-002, FOR-012, FOR-013, FOR-014, FOR-015, IR-003, PROF-010]
+  FOR02: [FOR-001, FOR-005, FOR-006, FOR-009, NET-030, NET-031, IR-003, PROF-010]
+
+  OSINT01: [OSINT-001, OSINT-002, OSINT-003, OSINT-005, OSINT-006, OSINT-008, OSINT-009, PROF-002]
+  OSINT02: [OSINT-003, OSINT-004, OSINT-006, OSINT-008, OSINT-009, OSINT-012, PROF-002, PROF-010]
+
+  IAM01: [WIN-009, WIN-012, WIN-013, WEB-007, WEB-010, WEB-011, CLD-002, CLD-003, PROF-003]
+
+  OT01: [OT-001, OT-002, OT-003, OT-004, OT-006, OT-009, OT-010, PROF-003]
+
+  AI01: [AI-001, AI-002, AI-003, AI-004, AI-005, AI-006, AI-007, AI-008, AI-010, PROF-003]
+
+  WIN01: [WIN-001, WIN-002, WIN-003, NET-021, NET-022, NET-023, NET-027, NET-029, PROF-002]
+  WIN02: [WIN-009, WIN-012, WIN-013, NET-023, NET-027, NET-028, TH-003, PROF-001]
+  WIN03: [WIN-012, WIN-013, WIN-017, WIN-018, TH-004, IR-002, PROF-004]
+  WIN04: [WIN-003, WIN-012, WIN-018, NET-033, IR-002, IR-004, PROF-010]
+  WIN05: [WIN-003, WIN-008, WIN-012, WIN-018, IR-004, PROF-010]
+  WIN06: [WIN-003, WIN-018, WEB-012, IR-004, IR-009, PROF-010]
+  WIN07: [WIN-009, WIN-010, WIN-013, NET-027, NET-028, TH-003, PROF-002]
+  WIN08: [WIN-009, WIN-012, WIN-013, WIN-017, WIN-021, TH-005, IR-004, PROF-003]
+  WIN09: [WIN-016, WIN-017, WIN-018, WIN-020, WIN-021, IR-001, IR-008, IR-009, PROF-010]
+
+  LIN01: [LIN-001, LIN-002, LIN-005, LIN-008, LIN-009, LIN-011, NET-023, NET-033, PROF-002]
+  LIN01B: [LIN-011, LIN-014, NET-011, NET-013, NET-015, NET-021, PROF-002]
+  LIN02: [LIN-005, LIN-006, LIN-011, LIN-021, NET-023, NET-033, PROF-002]
+  LIN02B: [LIN-006, LIN-011, LIN-014, NET-023, NET-025, NET-027, PROF-002]
+  LIN03: [LIN-003, LIN-004, LIN-019, LIN-020, LIN-021, LIN-024, PROF-004]
+  LIN03B: [LIN-003, LIN-004, LIN-019, LIN-020, LIN-025, IR-003, PROF-004]
+  LIN04: [LIN-003, LIN-005, LIN-021, LIN-024, IR-004, PROF-003]
+  LIN05: [LIN-018, LIN-022, LIN-024, LIN-025, IR-002, IR-005, IR-007, PROF-010]
+  LIN09: [LIN-019, LIN-021, LIN-024, IR-001, IR-004, IR-008, IR-009, PROF-010]
+
+# Category fallback for labs whose chapter is not in the table.
+categories:
+  network: [NET-001, NET-011, NET-021, NET-033]
+  network-analysis: [NET-029, NET-030, NET-031, NET-032, NET-035]
+  forensics: [FOR-001, FOR-005, FOR-006, FOR-007, FOR-008, FOR-009]
+  malware: [MAL-001, MAL-005, MAL-006, MAL-010]
+  osint: [OSINT-001, OSINT-002, OSINT-008, OSINT-012]
+  reconnaissance: [OSINT-002, OSINT-005, NET-033]
+  authentication: [WIN-012, WEB-007, WEB-010, CLD-002]
+  web: [WEB-001, WEB-005, WEB-009, WEB-019]
+  exploitation: [WEB-013, WEB-014, WEB-017, WEB-018]
+  privilege-escalation: [LIN-020, WIN-012, WIN-021]
+  post-exploitation: [IR-004, IR-009, PROF-010]
+  assessment: [IR-008, IR-009, PROF-003, PROF-010]
+  ot: [OT-001, OT-002, OT-006, OT-010]
+  ai: [AI-001, AI-005, AI-006, AI-008]
+  general: [PROF-001, PROF-004, PROF-007]

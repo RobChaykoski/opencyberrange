@@ -1,0 +1,108 @@
+version: "1.0"
+status: "optional direction finder"
+notes: >
+  The GPS questions are optional. They are used only for the current view and
+  are not stored. Answers adjust the interest weight; evidence and recent growth
+  remain the primary signals.
+
+questions:
+  - id: work
+    prompt: "Which work would you happily spend a Saturday on?"
+    help: "Pick the one that sounds most like play, not the one that sounds most impressive."
+    options:
+      - id: triage
+        label: "Triage alerts and explain what happened"
+        weights: {soc-analyst: 1.0, incident-responder: 0.8, threat-hunter: 0.5}
+      - id: break-in
+        label: "Break into a lab and document the path"
+        weights: {penetration-tester: 1.0, appsec-engineer: 0.6, threat-hunter: 0.4}
+      - id: evidence
+        label: "Follow evidence and build a timeline"
+        weights: {dfir-analyst: 1.0, incident-responder: 0.8, threat-hunter: 0.6}
+      - id: detect
+        label: "Build a detection or automate a task"
+        weights: {threat-hunter: 1.0, soc-analyst: 0.7, cloud-security-analyst: 0.5}
+      - id: lead
+        label: "Teach, coordinate, or lead a team"
+        weights: {security-educator: 1.0, security-grc-analyst: 0.7}
+      - id: unsure
+        label: "Not sure yet"
+        weights: {}
+
+  - id: environment
+    prompt: "Which environment sounds most like you?"
+    help: "There is no wrong answer. Choose 'Not sure yet' if nothing stands out."
+    options:
+      - id: soc
+        label: "SOC or security operations"
+        weights: {soc-analyst: 1.0, threat-hunter: 0.5}
+      - id: consulting
+        label: "Consulting or assessment work"
+        weights: {penetration-tester: 1.0, appsec-engineer: 0.6, security-grc-analyst: 0.4}
+      - id: lab
+        label: "Forensics lab or investigation"
+        weights: {dfir-analyst: 1.0, incident-responder: 0.6, threat-hunter: 0.5}
+      - id: cloud
+        label: "Cloud or platform engineering"
+        weights: {cloud-security-analyst: 1.0, iam-analyst: 0.6}
+      - id: ot
+        label: "Industrial or critical infrastructure"
+        weights: {ot-security-analyst: 1.0, soc-analyst: 0.4}
+      - id: ai
+        label: "AI or emerging technology"
+        weights: {ai-security-analyst: 1.0, appsec-engineer: 0.5}
+      - id: unsure
+        label: "Not sure yet"
+        weights: {}
+
+  - id: time
+    prompt: "How much time can you invest each week?"
+    help: "This shapes the pace of the recommendation, not the direction."
+    options:
+      - {id: low, label: "Less than 2 hours", weights: {}}
+      - {id: medium, label: "2 to 5 hours", weights: {}}
+      - {id: high, label: "5 to 10 hours", weights: {}}
+      - {id: intense, label: "More than 10 hours", weights: {}}
+
+  - id: evidence
+    prompt: "What kind of evidence would you like to show an employer?"
+    help: "Choose the artifact you would be proud to walk through in an interview."
+    options:
+      - id: incident
+        label: "An incident report or timeline"
+        weights: {soc-analyst: 0.8, incident-responder: 1.0, dfir-analyst: 0.6}
+      - id: pentest
+        label: "A penetration test report"
+        weights: {penetration-tester: 1.0, appsec-engineer: 0.6}
+      - id: forensic
+        label: "A forensic evidence package"
+        weights: {dfir-analyst: 1.0, incident-responder: 0.5}
+      - id: detection
+        label: "A detection rule or query"
+        weights: {threat-hunter: 1.0, soc-analyst: 0.6}
+      - id: control
+        label: "A control or risk assessment"
+        weights: {security-grc-analyst: 1.0, iam-analyst: 0.4}
+      - id: teaching
+        label: "A teaching portfolio or explainer"
+        weights: {security-educator: 1.0, security-grc-analyst: 0.4}
+      - id: unsure
+        label: "Not sure yet"
+        weights: {}
+
+  - id: milestone
+    prompt: "What is your next milestone?"
+    help: "This shapes the first step, not the whole path."
+    options:
+      - {id: certificate, label: "My first certificate", weights: {cybersecurity-foundations: 0.5}}
+      - {id: capstone, label: "My first capstone", weights: {cybersecurity-foundations: 0.3}}
+      - {id: job, label: "A first security job", weights: {soc-analyst: 0.3, incident-responder: 0.2}}
+      - {id: promotion, label: "A promotion or role change", weights: {cloud-security-analyst: 0.2, security-grc-analyst: 0.2}}
+      - {id: explore, label: "Explore before committing", weights: {cybersecurity-foundations: 0.6}}
+      - {id: unsure, label: "Not sure yet", weights: {}}
+
+pace:
+  low: "Choose one short workbook section at a time; do not start a capstone yet."
+  medium: "Aim for one workbook section and one small lab each week."
+  high: "Aim for one workbook chapter plus one independent challenge each week."
+  intense: "You can run a pathway sprint: one chapter, one challenge, and capstone preparation each week."

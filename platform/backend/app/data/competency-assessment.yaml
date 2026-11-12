@@ -1,0 +1,269 @@
+version: "1.0"
+status: "assessment framework"
+notes: >
+  A competency is not awarded because a learner completed a workbook. It is
+  awarded when the learner provides evidence of the required behaviour. The
+  platform currently measures some dimensions with proxies (quizzes, completions,
+  clean solves, workbook links, capstones). Written submissions and live
+  briefings are future evidence types; the API marks those scores provisional.
+
+dimensions:
+  - {key: knowledge, label: Knowledge, weight: 0.20, method: "Quiz or test"}
+  - {key: execution, label: Execution, weight: 0.30, method: "Hands-on lab"}
+  - {key: troubleshooting, label: Troubleshooting, weight: 0.20, method: "Independent challenge"}
+  - {key: documentation, label: Documentation, weight: 0.15, method: "Workbook submission"}
+  - {key: communication, label: Communication, weight: 0.15, method: "Report or briefing"}
+
+proficiency_levels:
+  - {id: awareness, label: "Awareness", min: 0, max: 59, badge: null, description: "Can explain concepts."}
+  - {id: guided, label: "Guided Performance", min: 60, max: 74, badge: "Bronze", description: "Completes tasks with instructions."}
+  - {id: independent, label: "Independent Performance", min: 75, max: 84, badge: "Silver", description: "Completes tasks without guidance."}
+  - {id: applied, label: "Applied Competency", min: 85, max: 94, badge: "Gold", description: "Solves unfamiliar problems."}
+  - {id: professional, label: "Professional Competency", min: 95, max: 100, badge: "Platinum", description: "Demonstrates workplace-level performance."}
+
+evidence_requirements:
+  - {key: screenshots, label: "Screenshots", examples: "Wireshark captures, console output"}
+  - {key: command_output, label: "Command output", examples: "Linux administration, enumeration"}
+  - {key: pcap, label: "PCAP analysis", examples: "Network investigations"}
+  - {key: reports, label: "Reports", examples: "Incident response, findings"}
+  - {key: queries, label: "Queries", examples: "KQL, Splunk, detection rules"}
+  - {key: capstone, label: "Capstone deliverables", examples: "Complete investigations"}
+
+generic_rubric:
+  knowledge:
+    assessment: "A short quiz or knowledge check mapped to the competency."
+    threshold: "70% or the configured quiz pass mark."
+  execution:
+    assessment: "A hands-on lab mapped to the competency."
+    threshold: "Completion with the required steps and a clean or documented solve."
+  troubleshooting:
+    assessment: "An independent challenge or a no-hint completion."
+    threshold: "No hints, one attempt, and a documented decision path."
+  documentation:
+    assessment: "A workbook-linked completion or a written submission."
+    threshold: "Workbook path present and the evidence recorded."
+  communication:
+    assessment: "A capstone, assessment report, or briefing."
+    threshold: "Capstone or assessment completion with a short summary."
+  evidence_requirement: "At least one completion and one supporting artifact."
+
+competencies:
+  NET-014:
+    title: Subnetting
+    knowledge:
+      assessment: "20 questions covering network address, broadcast address, first host, and last host."
+      passing: "18/20 correct"
+    execution:
+      assessment: "Lab exercise: create subnets from requirements and allocate address space."
+      threshold: "90% accuracy"
+    troubleshooting:
+      scenario: "An organisation needs 120 hosts, 50 hosts, and 10 hosts. Design the network."
+      metrics:
+        - {label: "Correct CIDR selection", target: "100%"}
+        - {label: "Correct network allocation", target: "100%"}
+        - {label: "Overlap errors", target: "0"}
+        - {label: "Documentation accuracy", target: "90%+"}
+    documentation:
+      criteria: ["Address plan", "Subnet table", "Assumptions and constraints"]
+    communication:
+      criteria: ["One-paragraph design rationale", "Risk of overlap or wasted space"]
+
+  NET-030:
+    title: Packet Capture Analysis
+    knowledge:
+      assessment: "Identify TCP handshake, DNS query, and HTTP request."
+      threshold: "85%"
+    execution:
+      assessment: "Analyze a PCAP and record source IP, destination IP, protocol, and suspicious activity."
+      threshold: "4/4 findings"
+    troubleshooting:
+      scenario: "Investigate unknown traffic."
+      metrics:
+        - {label: "Critical indicators found", target: ">=90%"}
+        - {label: "False positives", target: "<=2"}
+        - {label: "Time to analysis", target: "<30 min"}
+        - {label: "Findings accuracy", target: ">=85%"}
+    documentation:
+      criteria: ["Capture source", "Filter used", "Finding table"]
+    communication:
+      criteria: ["Short incident note", "Confidence and limitations"]
+
+  LIN-005:
+    title: User Management
+    knowledge:
+      assessment: "Identify user files, password storage, and group hierarchy."
+      threshold: "80%"
+    execution:
+      assessment: "Create and manage a user, assign a group, verify authentication, and document commands."
+      threshold: "All four requirements pass"
+      requirements: ["User created", "Group assigned", "Authentication verified", "Commands documented"]
+    troubleshooting:
+      scenario: "A junior administrator accidentally removed permissions. Diagnose, restore access, and validate security."
+      metrics:
+        - {label: "Root cause identified", target: "Yes"}
+        - {label: "Correct fix", target: "Yes"}
+        - {label: "Security maintained", target: "Yes"}
+        - {label: "Completion time", target: "<20 min"}
+    documentation:
+      criteria: ["Commands used", "Before/after state", "Rollback note"]
+    communication:
+      criteria: ["Plain-language explanation for the junior administrator"]
+
+  WIN-005:
+    title: Event Viewer Analysis
+    knowledge:
+      assessment: "Identify Security, System, and Application logs."
+      threshold: "85%"
+    execution:
+      assessment: "Analyze provided logs and identify failed logons, account lockouts, and service failures."
+      threshold: "100% identification"
+    troubleshooting:
+      scenario: "Simulated compromise. Build a timeline, identify indicators, and explain the root cause."
+      metrics:
+        - {label: "Timeline built correctly", weight: 30}
+        - {label: "Indicators identified", weight: 30}
+        - {label: "Root cause analysis", weight: 20}
+        - {label: "Report quality", weight: 20}
+    documentation:
+      criteria: ["Event IDs", "Timestamps", "Host and account context"]
+    communication:
+      criteria: ["One-page executive summary", "Recommended containment"]
+
+  OSINT-005:
+    title: Domain Research
+    knowledge:
+      assessment: "Identify WHOIS, DNS, MX records, and registration history."
+      threshold: "80%"
+    execution:
+      assessment: "Investigate a domain and collect WHOIS, DNS, MX, and registration history."
+      threshold: "90% completeness"
+    troubleshooting:
+      scenario: "Develop a target profile from public sources."
+      metrics:
+        - {label: "Sources validated", target: "100%"}
+        - {label: "Data accuracy", target: ">90%"}
+        - {label: "Correlation quality", target: ">80%"}
+        - {label: "Report quality", target: ">80%"}
+    documentation:
+      criteria: ["Source list", "Collection date", "Confidence note"]
+    communication:
+      criteria: ["Intelligence summary", "What remains unknown"]
+
+  FOR-005:
+    title: Timeline Analysis
+    knowledge:
+      assessment: "Identify the purpose of a timeline and the difference between observed and inferred events."
+      threshold: "75%"
+    execution:
+      assessment: "Analyze an artifact package and identify initial access, persistence, execution, and cleanup."
+      threshold: "75+"
+    troubleshooting:
+      scenario: "Reconstruct an intrusion from mixed artefacts."
+      metrics:
+        - {label: "Event accuracy", weight: 30}
+        - {label: "Timeline accuracy", weight: 30}
+        - {label: "Evidence identification", weight: 20}
+        - {label: "Documentation", weight: 20}
+    documentation:
+      criteria: ["Evidence table", "Timeline", "Observed vs inferred"]
+    communication:
+      criteria: ["Short finding for a non-specialist"]
+
+  MAL-005:
+    title: Static Analysis
+    knowledge:
+      assessment: "Identify file hash, PE information, suspicious strings, and indicators of compromise."
+      threshold: "80%"
+    execution:
+      assessment: "Analyze a sample and record hash, PE details, strings, and IOCs."
+      threshold: "All required findings"
+    troubleshooting:
+      scenario: "Classify an unknown sample from static evidence."
+      metrics:
+        - {label: "IOC identification", target: ">=90%"}
+        - {label: "Hash accuracy", target: "100%"}
+        - {label: "Classification accuracy", target: ">=80%"}
+        - {label: "Documentation quality", target: ">=80%"}
+    documentation:
+      criteria: ["Hash", "PE metadata", "Strings", "IOC list"]
+    communication:
+      criteria: ["Malware behaviour summary", "Defensive recommendation"]
+
+  TH-007:
+    title: MITRE ATT&CK Mapping
+    knowledge:
+      assessment: "Identify tactics and techniques in an attack chain."
+      threshold: "80%"
+    execution:
+      assessment: "Map an attack chain to ATT&CK tactics and techniques."
+      threshold: "Correct tactics >85%, techniques >80%"
+    troubleshooting:
+      scenario: "Investigate an attack chain and propose detection opportunities."
+      metrics:
+        - {label: "Correct tactics", target: ">85%"}
+        - {label: "Correct techniques", target: ">80%"}
+        - {label: "Detection opportunities", target: ">=5"}
+        - {label: "Reporting quality", target: ">80%"}
+    documentation:
+      criteria: ["Tactic/technique table", "Evidence per mapping", "Confidence"]
+    communication:
+      criteria: ["Detection brief", "Priority recommendation"]
+
+  IR-004:
+    title: Containment Strategies
+    knowledge:
+      assessment: "Identify containment options and their business impact."
+      threshold: "75%"
+    execution:
+      assessment: "Develop a containment plan for an active ransomware outbreak."
+      threshold: "Plan covers isolation, risk, continuity, and communication."
+    troubleshooting:
+      scenario: "Active ransomware outbreak."
+      metrics:
+        - {label: "Correct isolation actions", weight: 30}
+        - {label: "Risk reduction", weight: 25}
+        - {label: "Business continuity consideration", weight: 25}
+        - {label: "Communication plan", weight: 20}
+    documentation:
+      criteria: ["Decision log", "Affected systems", "Rollback or recovery note"]
+    communication:
+      criteria: ["Stakeholder update", "Executive risk statement"]
+
+  PROF-001:
+    title: Technical Documentation
+    knowledge:
+      assessment: "Identify the audience, purpose, and structure of a technical document."
+      threshold: "75%"
+    execution:
+      assessment: "Submit a workbook or lab write-up."
+      threshold: "80%"
+    troubleshooting:
+      scenario: "A reader cannot reproduce the result from the document. Diagnose and fix the gap."
+      metrics:
+        - {label: "Reproduction steps complete", target: "Yes"}
+        - {label: "Ambiguity removed", target: "Yes"}
+    documentation:
+      criteria: ["Accuracy 30%", "Completeness 25%", "Structure 20%", "Grammar 10%", "Technical justification 15%"]
+      passing: "80%"
+    communication:
+      criteria: ["Summary for a non-specialist", "Next step"]
+
+  PROF-009:
+    title: Executive Communication
+    knowledge:
+      assessment: "Identify the audience, decision, and risk in an executive brief."
+      threshold: "75%"
+    execution:
+      assessment: "Prepare a one-page executive summary."
+      threshold: "One page"
+    troubleshooting:
+      scenario: "The brief must support a decision with incomplete evidence."
+      metrics:
+        - {label: "Business relevance", weight: 30}
+        - {label: "Clarity", weight: 25}
+        - {label: "Risk communication", weight: 25}
+        - {label: "Recommendations", weight: 20}
+    documentation:
+      criteria: ["One page", "Decision ask", "Risk and confidence"]
+    communication:
+      criteria: ["Plain language", "No unexplained jargon", "Clear recommendation"]

@@ -1734,48 +1734,14 @@
             </template>
           </div>
 
-          <!-- Custom achievements -->
+          <!-- Achievement studio -->
           <div v-else-if="activeSettingsCategory === 'achievements'" class="settings-form">
-            <p class="section-desc">
-              Define extra achievements that are awarded automatically after a
-              student submits a correct flag. Built-in achievements
-              (First Blood, Self-Reliant, and so on) always run as well.
-            </p>
+            <AchievementStudio />
+          </div>
 
-            <div class="custom-ach-create">
-              <input v-model="newAchievement.icon" class="form-input form-input--sm custom-ach-create__icon" maxlength="4" title="Icon (emoji)" />
-              <input v-model="newAchievement.name" class="form-input form-input--sm" placeholder="Achievement name" />
-              <input v-model="newAchievement.description" class="form-input form-input--sm custom-ach-create__desc" placeholder="Description (optional)" />
-              <select v-model="newAchievement.trigger" class="form-input form-input--sm">
-                <option v-for="t in achievementTriggers" :key="t.value" :value="t.value">{{ t.label }}</option>
-              </select>
-              <input v-model.number="newAchievement.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="['course_completed', 'osint_track_completed', 'all_tracks_completed'].includes(newAchievement.trigger)" title="How many exercises are required" />
-              <button class="btn btn--success btn--sm" :disabled="savingAchievement || !newAchievement.name.trim()" @click="createCustomAchievement">
-                {{ savingAchievement ? 'Adding...' : 'Add achievement' }}
-              </button>
-            </div>
-
-            <div v-if="customAchievements.length === 0" class="empty-state">
-              No custom achievements yet. Built-in achievements are still active.
-            </div>
-            <div v-else class="custom-ach-list">
-              <div v-for="ach in customAchievements" :key="ach.id" class="custom-ach-row" :class="{ 'custom-ach-row--inactive': !ach.is_active }">
-                <input v-model="ach.icon" class="form-input form-input--sm custom-ach-create__icon" maxlength="4" title="Icon (emoji)" />
-                <input v-model="ach.name" class="form-input form-input--sm" />
-                <input v-model="ach.description" class="form-input form-input--sm custom-ach-create__desc" placeholder="Description" />
-                <select v-model="ach.trigger" class="form-input form-input--sm">
-                  <option v-for="t in achievementTriggers" :key="t.value" :value="t.value">{{ t.label }}</option>
-                </select>
-                <input v-model.number="ach.threshold" type="number" min="1" class="form-input form-input--sm custom-ach-create__threshold" :disabled="['course_completed', 'osint_track_completed', 'all_tracks_completed'].includes(ach.trigger)" />
-                <button class="visibility-toggle" :class="ach.is_active ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'" @click="toggleCustomAchievement(ach)">
-                  {{ ach.is_active ? 'Active' : 'Disabled' }}
-                </button>
-                <button class="btn btn--outline btn--xs" :disabled="savingAchievementId === ach.id" @click="saveCustomAchievement(ach)">
-                  {{ savingAchievementId === ach.id ? 'Saving...' : 'Save' }}
-                </button>
-                <button class="btn btn--danger btn--xs" @click="deleteCustomAchievement(ach)">Delete</button>
-              </div>
-            </div>
+          <!-- Admin-only certification question banks -->
+          <div v-else-if="activeSettingsCategory === 'question-banks'" class="settings-form">
+            <QuestionBankAdmin />
           </div>
 
           <!-- Generic settings form for other categories -->
@@ -3834,6 +3800,8 @@ test:
 import InfoTip from '../components/InfoTip.vue'
 import Toast, { showToast } from '../components/Toast.vue'
 import AdminPendingTab from '../components/AdminPendingTab.vue'
+import AchievementStudio from '../components/AchievementStudio.vue'
+import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
@@ -4587,13 +4555,15 @@ const settingsCategories = computed(() => {
   // Custom achievements are managed by their own CRUD endpoints rather than
   // platform_settings rows, so the tab is always available.
   base.push('achievements')
+  // Certification question banks are admin-only data, not a platform setting.
+  base.push('question-banks')
   // The Modules tab (optional-module enable/disable) is a real admin control,
   // not a dev tool: show it whenever the edition ships optional modules, so an
   // operator can turn SOC on/off on a production install.
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
@@ -4624,93 +4594,7 @@ const capacityPreviewMax = computed(() => {
   return Math.max(1, Math.floor(ceiling * percent / 100))
 })
 
-// --- Custom achievements (settings section) ---
-const customAchievements = ref([])
-const achievementTriggers = ref([])
-const savingAchievement = ref(false)
-const savingAchievementId = ref(null)
-const newAchievement = reactive({
-  icon: '\u{1F3C5}',
-  name: '',
-  description: '',
-  trigger: 'labs_completed',
-  threshold: 1,
-})
-
-const fetchCustomAchievements = async () => {
-  try {
-    const { data } = await axios.get('/settings/custom-achievements')
-    customAchievements.value = data.achievements || []
-    achievementTriggers.value = data.triggers || []
-    if (!achievementTriggers.value.some(t => t.value === newAchievement.trigger)) {
-      newAchievement.trigger = achievementTriggers.value[0]?.value || 'labs_completed'
-    }
-  } catch (e) {
-    showAlert('Failed to load custom achievements', 'error')
-  }
-}
-
-const createCustomAchievement = async () => {
-  if (!newAchievement.name.trim()) return
-  savingAchievement.value = true
-  try {
-    await axios.post('/settings/custom-achievements', {
-      icon: newAchievement.icon || '\u{1F3C5}',
-      name: newAchievement.name.trim(),
-      description: newAchievement.description.trim(),
-      trigger: newAchievement.trigger,
-      threshold: newAchievement.threshold || 1,
-      is_active: true,
-    })
-    newAchievement.name = ''
-    newAchievement.description = ''
-    newAchievement.threshold = 1
-    await fetchCustomAchievements()
-    showAlert('Custom achievement created')
-  } catch (e) {
-    showAlert(e.response?.data?.detail || 'Failed to create achievement', 'error')
-  } finally {
-    savingAchievement.value = false
-  }
-}
-
-const saveCustomAchievement = async (ach) => {
-  savingAchievementId.value = ach.id
-  try {
-    await axios.put(`/settings/custom-achievements/${ach.id}`, {
-      icon: ach.icon || '\u{1F3C5}',
-      name: ach.name,
-      description: ach.description,
-      trigger: ach.trigger,
-      threshold: ach.threshold || 1,
-      is_active: ach.is_active,
-    })
-    await fetchCustomAchievements()
-    showAlert('Achievement saved')
-  } catch (e) {
-    showAlert(e.response?.data?.detail || 'Failed to save achievement', 'error')
-  } finally {
-    savingAchievementId.value = null
-  }
-}
-
-const toggleCustomAchievement = (ach) => {
-  ach.is_active = !ach.is_active
-}
-
-const deleteCustomAchievement = async (ach) => {
-  if (!confirm(`Delete the achievement "${ach.name}"? Students keep awards they already earned.`)) return
-  try {
-    await axios.delete(`/settings/custom-achievements/${ach.id}`)
-    await fetchCustomAchievements()
-    showAlert('Achievement deleted')
-  } catch (e) {
-    showAlert(e.response?.data?.detail || 'Failed to delete achievement', 'error')
-  }
-}
-
 watch(activeSettingsCategory, (category) => {
-  if (category === 'achievements') fetchCustomAchievements()
   if (category === 'labs') fetchRangeboxCapacity()
 })
 

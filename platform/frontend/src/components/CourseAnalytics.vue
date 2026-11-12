@@ -89,6 +89,8 @@
 
       <CompetencyRadar v-if="competency" :data="competency" />
 
+      <ExerciseHeatmap :exercises="exercises" />
+
       <div class="analytics-section-head">
         <div>
           <h3>Exercise signals</h3>
@@ -189,6 +191,7 @@
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import CompetencyRadar from './CompetencyRadar.vue'
+import ExerciseHeatmap from './ExerciseHeatmap.vue'
 
 const props = defineProps({
   courseId: { type: [Number, String], required: true },

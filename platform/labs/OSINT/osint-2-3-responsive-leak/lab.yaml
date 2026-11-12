@@ -4,6 +4,7 @@ difficulty: beginner
 estimated_time: 25
 prerequisites:
   - osint-1-1-public-footprint
+# By completion students will be able to:
 learning_outcomes:
   - Compare the desktop and mobile renderings of the same staff profile
   - Request the mobile build with a phone or a mobile user agent

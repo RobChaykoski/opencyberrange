@@ -109,6 +109,8 @@
         </div>
       </div>
 
+      <CurriculumDemand />
+
       <section
         v-if="skillTree && skillTree.dimensions?.length && skillTree.assigned_total"
         class="skill-panel"
@@ -339,6 +341,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
+import CurriculumDemand from '../components/CurriculumDemand.vue'
 import { csvRow } from '../utils/csv'
 
 const data = ref(null)

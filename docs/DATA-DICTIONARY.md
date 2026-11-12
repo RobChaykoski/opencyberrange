@@ -1,6 +1,6 @@
 # Data dictionary
 
-Status: **v2.5.4 release evidence**
+Status: **v2.7.0 + career, achievement, and question-bank preview**
 Owner: Platform / Privacy
 Review cadence: each release and at least annually
 Related: [Privacy notice](PRIVACY-NOTICE.md),
@@ -93,6 +93,8 @@ institution.
 | `quiz_attempts.score`, `correct`, `total`, `passed`, `answers`, `taken_at` | Level quiz results | Knowledge checks and progress | Service | Institution schedule | Self; instructor aggregate; admin | `self`, `reports` | Deleted |
 | `exercise_quiz_attempts.*` | Optional per-exercise quiz results | Formative feedback | Service | Institution schedule | Self; instructor aggregate; admin | `self`, `reports` | Deleted |
 | `achievements.achievement_type`, `awarded_at`, `course_id`, `lab_id` | Micro-credentials | Progress and celebration | Service | Institution schedule | Self; instructor; admin | `self`, `reports` | Deleted |
+| `custom_achievements.*` | Admin-defined achievement definition: name, description, icon, trigger, threshold, group, tier, difficulty, points | Programme-specific goals | Service | Until deleted | Admin | Not learner data | Kept as course/programme content |
+| `derived.achievement_points` | Tier × difficulty point value for each badge | Show value and progress | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
 | `achievement_celebrations.*` | Anonymous celebration count | Community recognition | Consent (public action) | Until withdrawn or deletion | Aggregate only | Never linked to identity | Deleted |
 | `course_completion_resets.*` | Instructor reset events | Reset rate and report accuracy | Service / Security | Course lifetime | Instructor; admin | `reports` | Deleted or anonymised |
 
@@ -116,6 +118,42 @@ institution.
 | `derived.certificate_display_name` | Learner display name | Certificate presentation | Service | Certificate validity period | Certificate holder; verifier | `certificate` | Deleted with account; previously downloaded copies cannot be revoked |
 | `derived.transcript_events` | Completion, quiz, and certificate events | Learner transcript | Service | Institution schedule | Self; admin | `self` (JSON/PDF) | Deleted with account |
 | `certificate verification request` | Certificate ID and timestamp | Abuse monitoring | Security | Short operational window | Security/admin | Not exported | Not linked to the learner beyond the ID |
+
+## Curriculum, competition, and authoring
+
+| Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
+|---|---|---|---|---|---|---|---|
+| `tracks.*`, `levels.*` | Track and level catalogue | Organise exercises | Service | Curriculum lifetime | All signed-in users | Not personal | Kept |
+| `level_quizzes.*`, `quiz_questions.*` | Optional level quiz and question bank | Knowledge checks | Service | Curriculum lifetime | Learners see questions; answers revealed after submit; admin/instructor authoring | `self` (results) | Kept as curriculum content |
+| `survey_attachments.*` | Files attached to an instructor survey | Survey delivery | Consent | Until survey closed | Survey owner; consented respondents | Not exported by default | Deleted with the survey |
+| `invite_codes.code`, `email`, `created_by`, `used_by`, `used_at`, `expires_at` | Single-use registration invite, optionally pinned to an email | Controlled registration | Service / Security | Until used or expired | Admin | Not in learner exports | Deleted or email nulled |
+| `report_exports.*` | Immutable report manifest: report id, requester, format, hash | Export accountability | Security / Legal | Institution audit schedule | Admin; report owner | Not a learner export | Kept; identity link nulled |
+| `data_integrity_reviews.*` | Admin review of an unattributed ledger write | Tamper investigation | Security | Institution audit schedule | Admin; auditor | Not exported | Kept; contains no row contents |
+| `competitions.*`, `competition_sponsors.*`, `competition_labs.*` | Event definition, sponsors, and selected labs | Run optional events | Service | Event lifetime plus archive | Signed-in users; admin | Event results only | Kept as event content |
+| `competition_participants.user_id`, `joined_at`, `source` | Explicit opt-in to a competition leaderboard | Event participation | Consent | Event lifetime plus archive | Self; admin | Event leaderboard | Deleted |
+| `exercise_test_results.*` | Latest test result per lab slug | Exercise QA | Service | Until replaced | Admin/instructor | Not personal | Kept |
+| `exercise_templates.*` | Reusable vetted lab templates | Authoring | Service | Curriculum lifetime | Admin/instructor | Not personal | Kept; author link nulled |
+| `template_instances.*` | Instructor instance of a template with cosmetic overrides | Authoring | Service | Until deleted | Owner; admin | Not personal | Deleted or author link nulled |
+| `studio_pending_review.*` | Admin approval queue for staged instances | Authoring safety | Security | Until reviewed | Admin | Not personal | Deleted or author link nulled |
+| `instructor_api_keys.*` | Encrypted LLM provider profile (key is Fernet-encrypted, never plaintext) | Optional AI authoring | Service / Security | Until removed or instructor deletion | Instructor only; admin cannot read the key | Never | Deleted with the instructor |
+| `exercise_gen_jobs.*`, `exercise_gen_items.*` | AI generation job and planned items | Optional authoring | Service | Until deleted | Owner; admin | Not personal | Deleted with the job |
+
+## Career readiness, competency, and question banks
+
+| Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
+|---|---|---|---|---|---|---|---|
+| `derived.competency_evidence` | Per-competency counts and dimensions from completions, quizzes, and workbook evidence | Show practice coverage and gaps | Service | Computed on read | Self; instructor aggregate; admin | `self` (learner profile), `reports` (aggregate) | Recomputed without deleted learner |
+| `derived.competency_assessment` | Five-dimension score and provisional/validated state | Career-readiness evidence | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` (aggregate) | Recomputed |
+| `derived.role_readiness` | Pathway score, domain readiness, gaps, next workbooks, capstone, certifications | Answer "what do I need for this role?" | Service | Computed on read | Self only | `self` | Recomputed |
+| `derived.career_gps` | Evidence, growth, and optional interest fit by direction | Optional direction finding | Service | Computed on read; answers are **not stored** | Self only | `self` (current view only) | Nothing to delete; answers are transient |
+| `derived.curriculum_demand` | Aggregate topic demand, exercise friction, and competency gaps | Instructor planning | Service | Computed on read | Instructor for assigned courses above the minimum cohort; admin | `analytics` aggregate | Recomputed |
+| `certification_question_banks.*` | Admin-curated original questions, options, correct index, explanation, objective, and public reference | Certification-aligned sampled checks | Service / Security | Until the bank is replaced | Admin only; learners receive a sampled prompt without answers | Not exported | Kept as curriculum content |
+| `derived.quiz_platinum` | Perfect score on a three-question sampled check | Recognise short, relevant practice | Service | Computed on award | Self; instructor; admin | `self`, `reports` | Deleted with the achievement |
+
+The GPS answers are the one place where the platform deliberately does **not**
+persist user input. They are accepted in the request body for the current
+response, used to weight interest, and discarded. The response states this in the
+UI and the API documentation.
 
 ## Operational, audit, and derived analytics
 
@@ -174,5 +212,8 @@ transferred, so another cohort's records are not destroyed by accident. See
 - [ ] New free-text fields are included in the input-safety and export-safety
       tests.
 - [ ] New derived metrics have a written definition and a minimum sample size.
+- [ ] Certification question banks are reviewed against current public
+      objectives, every reference is an external https source, and
+      `python scripts/check-question-banks.py` passes.
 - [ ] The privacy notice and retention schedule are updated in the same release.
 - [ ] The data dictionary is reviewed with the institution's privacy office.

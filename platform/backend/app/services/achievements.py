@@ -5,7 +5,7 @@ Called after successful flag submissions to award micro-credentials.
 
 import logging
 from sqlalchemy import func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models import (
     Achievement, CourseEnrollment, CourseLabAssignment,
     CourseCompletionReset, Lab, Level, LabCompletion, CustomAchievement, Track,
@@ -48,6 +48,15 @@ QUIZ_ACE = "quiz_ace"
 QUIZ_EXPLORER = "quiz_explorer"
 QUIZ_SCHOLAR = "quiz_scholar"
 QUIZ_COMEBACK = "quiz_comeback"
+# SWOCTS-specific sampled-quiz ladder. These reward a short, relevant
+# three-question check rather than a long exam, so a learner can earn a
+# platinum badge from the exercise they just finished.
+QUIZ_PLATINUM = "quiz_platinum"
+QUIZ_RELEVANCE_ACE = "quiz_relevance_ace"
+QUIZ_HAT_TRICK = "quiz_hat_trick"
+QUIZ_FIVE_STREAK = "quiz_five_streak"
+QUIZ_TIER_CLIMB = "quiz_tier_climb"
+QUIZ_POLYMATH = "quiz_polymath"
 # Learning-time and sign-in streak badges are global (course_id NULL).
 HIDDEN_ACHIEVEMENT_TYPES = {
     SHELL_SHOCKED,
@@ -130,6 +139,12 @@ ACHIEVEMENT_LABELS = {
     QUIZ_EXPLORER: "Quiz Explorer",
     QUIZ_SCHOLAR: "Quiz Scholar",
     QUIZ_COMEBACK: "Quiz Comeback",
+    QUIZ_PLATINUM: "Platinum Check",
+    QUIZ_RELEVANCE_ACE: "Relevance Ace",
+    QUIZ_HAT_TRICK: "Hat Trick",
+    QUIZ_FIVE_STREAK: "Five in a Row",
+    QUIZ_TIER_CLIMB: "Tier Climb",
+    QUIZ_POLYMATH: "Quiz Polymath",
 }
 
 ACHIEVEMENT_DESCRIPTIONS = {
@@ -170,6 +185,12 @@ ACHIEVEMENT_DESCRIPTIONS = {
     QUIZ_EXPLORER: "Completed knowledge checks across five exercises",
     QUIZ_SCHOLAR: "Reached 80% or better on ten exercise knowledge checks",
     QUIZ_COMEBACK: "Improved a knowledge-check score by 30 points or more",
+    QUIZ_PLATINUM: "Answered all three sampled questions correctly on an exercise check",
+    QUIZ_RELEVANCE_ACE: "Earned a perfect sampled check on an advanced or expert exercise",
+    QUIZ_HAT_TRICK: "Earned perfect sampled checks on three different exercises",
+    QUIZ_FIVE_STREAK: "Passed five exercise knowledge checks in a row",
+    QUIZ_TIER_CLIMB: "Climbed from below 70% to a perfect sampled check",
+    QUIZ_POLYMATH: "Earned perfect sampled checks across three different tracks",
 }
 
 # The three browser-first DevFest starter exercises. These slugs are stable;
@@ -271,6 +292,12 @@ BUILTIN_ACHIEVEMENT_ICONS = {
     QUIZ_EXPLORER: "\U0001F9ED",
     QUIZ_SCHOLAR: "\U0001F393",
     QUIZ_COMEBACK: "\U0001F4C8",
+    QUIZ_PLATINUM: "\U0001F48E",
+    QUIZ_RELEVANCE_ACE: "\U0001F3C6",
+    QUIZ_HAT_TRICK: "\U0001F3A9",
+    QUIZ_FIVE_STREAK: "\U0001F525",
+    QUIZ_TIER_CLIMB: "\U0001F4C8",
+    QUIZ_POLYMATH: "\U0001F9E0",
 }
 
 # --- Competition-specific achievements -------------------------------------
@@ -446,16 +473,31 @@ def check_quiz_achievements(
     lab_id: int,
     score: int,
     previous_best: int | None,
+    *,
+    total: int | None = None,
+    quiz_source: str | None = None,
 ):
     """Award the optional knowledge-check badges.
 
     Quizzes are a benchmark, not a gate. The badges reward curiosity and
     improvement; they never affect lab access or certificates.
+
+    The sampled-check badges are SWOCTS-specific: a learner can earn a platinum
+    badge from a short three-question check drawn from the exercise's own bank,
+    so the reward is tied to the work they just finished rather than a separate
+    exam. ``total`` and ``quiz_source`` are optional for older callers.
     """
     if score >= 100:
         _award(db, user_id, None, None, QUIZ_ACE)
+        if total and total >= 3 and quiz_source in {"lab", "certification"}:
+            _award(db, user_id, None, None, QUIZ_PLATINUM)
+            lab = db.query(Lab).filter(Lab.id == lab_id).first()
+            if lab and str(lab.difficulty or "").lower() in {"advanced", "expert"}:
+                _award(db, user_id, None, None, QUIZ_RELEVANCE_ACE)
     if previous_best is not None and score - previous_best >= 30:
         _award(db, user_id, None, None, QUIZ_COMEBACK)
+    if previous_best is not None and previous_best < 70 and score >= 100:
+        _award(db, user_id, None, None, QUIZ_TIER_CLIMB)
 
     rows = db.query(
         ExerciseQuizAttempt.lab_id,
@@ -467,6 +509,48 @@ def check_quiz_achievements(
         _award(db, user_id, None, None, QUIZ_EXPLORER)
     if sum(1 for _, best in rows if (best or 0) >= 80) >= 10:
         _award(db, user_id, None, None, QUIZ_SCHOLAR)
+
+    perfect_lab_ids = [
+        row[0]
+        for row in db.query(ExerciseQuizAttempt.lab_id)
+        .filter(
+            ExerciseQuizAttempt.user_id == user_id,
+            ExerciseQuizAttempt.completed_at.isnot(None),
+            ExerciseQuizAttempt.score >= 100,
+            ExerciseQuizAttempt.total >= 3,
+        )
+        .distinct()
+        .all()
+    ]
+    if len(perfect_lab_ids) >= 3:
+        _award(db, user_id, None, None, QUIZ_HAT_TRICK)
+        labs = (
+            db.query(Lab)
+            .options(joinedload(Lab.level).joinedload(Level.track))
+            .filter(Lab.id.in_(perfect_lab_ids))
+            .all()
+        )
+        tracks = {
+            lab.level.track.slug
+            for lab in labs
+            if lab.level and lab.level.track and lab.level.track.slug
+        }
+        if len(tracks) >= 3:
+            _award(db, user_id, None, None, QUIZ_POLYMATH)
+
+    recent = (
+        db.query(ExerciseQuizAttempt.passed)
+        .filter(
+            ExerciseQuizAttempt.user_id == user_id,
+            ExerciseQuizAttempt.completed_at.isnot(None),
+        )
+        .order_by(ExerciseQuizAttempt.id.desc())
+        .limit(5)
+        .all()
+    )
+    if len(recent) == 5 and all(row[0] for row in recent):
+        _award(db, user_id, None, None, QUIZ_FIVE_STREAK)
+
     db.commit()
 
 

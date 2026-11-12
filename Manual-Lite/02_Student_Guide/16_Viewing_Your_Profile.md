@@ -15,15 +15,16 @@ Click **Profile** in the sidebar. The page opens with your profile card: avatar,
 
 ## Profile tabs
 
-The profile is split into five tabs so the page stays scannable. A sixth
-**Careers** tab appears when the advanced DNA insights preview is enabled on the
-deployment.
+The profile is split into six tabs so the page stays scannable. A seventh
+**Careers** tab and an eighth **Portfolio** tab appear when the advanced DNA
+insights preview is enabled on the deployment.
 
 | Tab | What it holds |
 |---|---|
 | **Overview** | Four signals: your next practice step, learning evidence, Cyber DNA class, and recent recognition. |
 | **Skill tree** | The six-branch skill tree, Cyber DNA traits, practice affinities, career alignment, title collection, and the Momentum and friction panel when enabled. |
 | **Careers** | The Career Atlas: practice-linked career families, role ladders, and a Canada/US salary lens. Shown only when Advanced DNA Insights is enabled. |
+| **Portfolio** | Role readiness for a chosen pathway, the optional Cybersecurity GPS, the professional portfolio, and the competency taxonomy. Shown only when Advanced DNA Insights is enabled. |
 | **Learning record** | Course achievements, certificates, track progress, and completion details. |
 | **Account** | Personal information, account status, Exercise Studio (when available), and course enrolment. |
 | **Security & privacy** | MFA, password change, survey consent, data export, and account deletion. |
@@ -105,6 +106,28 @@ references only; their content is not copied into the platform.
 Achievements also unlock cosmetic **titles**. Open **Title collection**, choose
 an unlocked title, and select **Equip**. Select **Clear** to return to your class
 title. Hidden titles show as **Secret title** until you unlock them.
+
+### Portfolio
+
+The **Portfolio** tab answers a specific question: "I want to become a SOC
+Analyst. What do I have, what comes next, and what can I show?" It contains four
+panels:
+
+- **Role readiness** lets you pick a target pathway. It shows the skills you
+  already have, the skills you are building, the gaps, the next workbooks, the
+  capstone, aligned certifications, and the evidence an employer can review.
+- **Cybersecurity GPS** combines your practice evidence, recent growth, and a
+  few optional questions to suggest directions. The questions are optional and
+  are never saved.
+- **Professional portfolio** is the printable evidence record with a portfolio ID.
+- **Competency taxonomy** shows every domain, category, and competency, the
+  assessment score across five dimensions, and whether a competency is validated
+  or provisional.
+
+Readiness is a curriculum-coverage estimate, not a grade or a hiring prediction.
+The platform does not track employment outcomes. Every panel labels missing
+evidence instead of showing a zero. See
+[Career readiness and the Cybersecurity GPS](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/CAREER-READINESS-AND-GPS.md).
 
 ## Career profile exports
 

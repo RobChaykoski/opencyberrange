@@ -12,7 +12,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from app.ratelimit import create_limiter
 from sqlalchemy.orm import Session, joinedload
 
@@ -42,12 +42,20 @@ from app.services.achievements import (
     resolve_achievement_label,
 )
 from app.services.career_explorer import build_career_atlas
+from app.services.competency_assessment import build_competency_assessment_profile
+from app.services.cyber_gps import build_gps
+from app.services.role_readiness import build_role_readiness, roles_catalogue
 from app.services.career_profile import (
     build_career_dossier,
     render_html as render_career_html,
     render_markdown as render_career_markdown,
 )
 from app.services.feature_flags import advanced_dna_insights_enabled
+from app.services.portfolio import (
+    build_portfolio,
+    render_html as render_portfolio_html,
+    render_markdown as render_portfolio_markdown,
+)
 from app.services.profile_report import generate_profile_transcript
 from app.services.skill_momentum import build_momentum
 from app.services.curriculum_manifest import chapter_label
@@ -60,6 +68,12 @@ limiter = create_limiter()
 
 class TitleUpdate(BaseModel):
     title: Optional[str] = None
+
+
+class GpsRequest(BaseModel):
+    """Optional GPS answers. They are used for this response and never stored."""
+
+    answers: dict[str, str] = Field(default_factory=dict)
 
 
 def _iso(value: Optional[datetime]) -> Optional[str]:
@@ -134,6 +148,8 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
                     "lab_name": lab.name,
                     "lab_slug": lab.slug,
                     "difficulty": lab.difficulty,
+                    "category": lab.category,
+                    "workbook": lab.workbook,
                     "track_name": track.name,
                     "track_slug": track.slug,
                     "level_number": level.level_number,
@@ -437,6 +453,157 @@ async def get_career_dossier_html(
             "Cache-Control": "no-store",
         },
     )
+
+
+def _require_portfolio(db: Session):
+    if not advanced_dna_insights_enabled(db):
+        raise HTTPException(
+            status_code=404,
+            detail="The professional portfolio is not enabled on this deployment.",
+        )
+
+
+def _log_portfolio_export(request: Request, current_user: User, export_format: str):
+    log_admin_action(
+        action=AuditActions.USER_DATA_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="professional_portfolio",
+        target_id=current_user.id,
+        details={
+            "format": export_format,
+            "reason": "Self-service professional portfolio request",
+        },
+        ip_address=request.client.host if request.client else None,
+    )
+
+
+@router.get("/portfolio", summary="Professional portfolio (JSON)")
+@limiter.limit("30/minute")
+async def get_portfolio(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the learner's professional portfolio as JSON."""
+    _require_portfolio(db)
+    summary = _build_profile_summary(db, current_user)
+    portfolio = build_portfolio(db, current_user, summary)
+    _log_portfolio_export(request, current_user, "json")
+    return JSONResponse(content=portfolio, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/portfolio.md", summary="Professional portfolio (Markdown)")
+@limiter.limit("20/minute")
+async def get_portfolio_markdown(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Download the learner's professional portfolio as Markdown."""
+    _require_portfolio(db)
+    summary = _build_profile_summary(db, current_user)
+    portfolio = build_portfolio(db, current_user, summary)
+    _log_portfolio_export(request, current_user, "markdown")
+    return Response(
+        content=render_portfolio_markdown(portfolio),
+        media_type="text/markdown; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                "attachment; filename="
+                f'"professional-portfolio-{_safe_export_name(current_user.username)}.md"'
+            ),
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get("/portfolio.html", summary="Professional portfolio (printable HTML)")
+@limiter.limit("20/minute")
+async def get_portfolio_html(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """View or print the learner's professional portfolio as HTML."""
+    _require_portfolio(db)
+    summary = _build_profile_summary(db, current_user)
+    portfolio = build_portfolio(db, current_user, summary)
+    _log_portfolio_export(request, current_user, "html")
+    return Response(
+        content=render_portfolio_html(portfolio),
+        media_type="text/html; charset=utf-8",
+        headers={
+            "Content-Disposition": (
+                "inline; filename="
+                f'"professional-portfolio-{_safe_export_name(current_user.username)}.html"'
+            ),
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.get("/competencies", summary="Learner competency assessment profile")
+@limiter.limit("30/minute")
+async def get_competencies(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the learner's taxonomy evidence and assessment scores."""
+    _require_portfolio(db)
+    profile = build_competency_assessment_profile(db, current_user)
+    return JSONResponse(content=profile, headers={"Cache-Control": "no-store"})
+
+
+@router.get("/roles", summary="Career pathway catalogue")
+@limiter.limit("30/minute")
+async def get_roles(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return the pathway catalogue used by the role readiness selector."""
+    _require_portfolio(db)
+    return JSONResponse(content=roles_catalogue(), headers={"Cache-Control": "no-store"})
+
+
+@router.get("/role-readiness", summary="Role readiness answer")
+@limiter.limit("20/minute")
+async def get_role_readiness(
+    request: Request,
+    role: str = "soc-analyst",
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Answer 'what do I need for this role?' from the learner's evidence."""
+    _require_portfolio(db)
+    summary = _build_profile_summary(db, current_user)
+    try:
+        readiness = build_role_readiness(db, current_user, role, summary=summary)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return JSONResponse(content=readiness, headers={"Cache-Control": "no-store"})
+
+
+@router.post("/gps", summary="Optional cybersecurity GPS direction finder")
+@limiter.limit("20/minute")
+async def post_gps(
+    request: Request,
+    payload: GpsRequest | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Answer 'where could I go?' from evidence, growth, and optional answers.
+
+    Answers are accepted in the request body for this response only. They are
+    not persisted, logged, or shared with the cohort.
+    """
+    _require_portfolio(db)
+    summary = _build_profile_summary(db, current_user)
+    answers = payload.answers if payload else {}
+    gps = build_gps(db, current_user, answers=answers, summary=summary)
+    return JSONResponse(content=gps, headers={"Cache-Control": "no-store"})
 
 
 @router.put("/title", summary="Equip an unlocked achievement title")

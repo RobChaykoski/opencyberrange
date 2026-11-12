@@ -178,6 +178,54 @@ Next:
 See [Phone OSINT exercises](PHONE-OSINT-EXERCISES.md) for the design, ATT&CK
 mapping, and safety rules.
 
+### 8. Career readiness, GPS, and curriculum demand
+
+The development tree adds the learner **Portfolio** tab (role readiness,
+Cybersecurity GPS, professional portfolio, competency taxonomy), the per-course
+exercise heatmap, and the instructor **Curriculum demand** panel. They are behind
+the same **Advanced DNA Insights** gate and are documented in
+[CAREER-READINESS-AND-GPS.md](CAREER-READINESS-AND-GPS.md).
+
+Next:
+
+1. Deploy the reviewed tree to development, keep the gate on there, and confirm
+   `/api/profile/competencies`, `/api/profile/roles`,
+   `/api/profile/role-readiness`, `/api/profile/gps`, and
+   `/api/analytics/reports/curriculum-demand` respond for a learner and an
+   instructor.
+2. Run `python -m pytest tests/test_curriculum_demand.py
+   tests/test_career_readiness.py -q` and the DB-backed profile tests with
+   `TEST_DATABASE_URL`.
+3. Capture the Portfolio tab, GPS, taxonomy, exercise heatmap, and Curriculum
+   demand at 375/768/1024/1440 in both themes. Replace the preview images and
+   record the pass in `docs/UI-VERIFICATION.md`.
+4. Have an instructor review the curriculum-demand prompts against a real course
+   and confirm the wording reads as a planning prompt, not a teacher evaluation.
+5. Keep the gate off in production until the career-framing review is signed off.
+
+### 9. Achievement studio and certification question banks
+
+The development tree adds a grouped, filterable **Achievement studio** and an
+admin-only **Question banks** view. Tier and difficulty set the point value, and
+a perfect three-question sampled check earns the SWOCTS-specific **Platinum
+Check**. The full bank, answers, explanations, and references are never sent to
+learners. See [Certification question banks](CERTIFICATION-QUESTION-BANKS.md).
+
+Next:
+
+1. Deploy to development and open **Admin -> Settings -> Achievements** and
+   **Question banks**. Confirm the studio groups, filters, create/edit, and
+   two-step delete work, and that a non-admin receives 403 from the bank API.
+2. Run `python scripts/check-question-banks.py` and
+   `python -m pytest tests/test_achievement_catalogue.py
+   tests/test_certification_quiz.py -q`.
+3. Have a subject-matter reviewer read each pathway against the current public
+   objectives. Record the review date and update `reviewed_at`.
+4. Capture the studio and question-bank views at 375/768/1024/1440 in both
+   themes and record the pass in `docs/UI-VERIFICATION.md`.
+5. Keep the question bank admin-only. Do not expose answers through a learner
+   route, an export, or a workbook asset.
+
 ## Known warnings to ignore
 
 - `RangeBox ... not available after retries - skipping bridge` appeared while

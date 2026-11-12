@@ -22,6 +22,57 @@ verification are queued in [Next steps](NEXT-STEPS.md).**
   database-backed Momentum tests, and the 375/768/1024/1440 dark/light manual
   pass. Do not mark the preview production-ready until those are recorded here.
 
+### Portfolio, GPS, and curriculum demand (11 November 2026)
+
+Status: **implemented; deployed to development; live capture pending.**
+
+- **Profile → Portfolio tab:** Role Readiness (pathway selector, skills held,
+  gaps, next workbooks with readiness labels, capstone, certifications, employer
+  evidence, and the five-stage pipeline), Cybersecurity GPS (optional questions
+  kept in component state and never stored), the professional portfolio, and the
+  competency taxonomy with five-dimension scores.
+- **Colour indicators:** green/amber/red/grey are always paired with a text
+  label and a sample size. No colour-only meaning.
+- **Course analytics:** the per-exercise heatmap shows completion, first-attempt,
+  hint-free, and abandonment rates with suppressed rows kept explicit.
+- **Reports:** the instructor **Curriculum demand** panel turns pulse topics,
+  exercise friction, and competency coverage into prioritised build prompts with
+  the same small-cohort suppression.
+- **Verified in this tree:** `ruff` and `py_compile` on the new services and
+  routers; `pytest tests/test_curriculum_demand.py tests/test_career_readiness.py`
+  (13 passed); `npm run lint` (0 errors) and `npm run build`; live service
+  calls against the development database for three learner accounts and an
+  administrator; `/api/analytics/reports/curriculum-demand` returned five
+  reporting courses and ten prioritised prompts.
+- **Not yet verified:** screenshots for the Portfolio tab, GPS, taxonomy,
+  exercise heatmap, and Curriculum demand at 375/768/1024/1440 in both themes.
+  Capture them on development and replace the preview images before announcing
+  the preview.
+
+### Achievement studio and question banks (12 November 2026)
+
+Status: **implemented; deployed to development; live capture pending.**
+
+- **Admin → Settings → Achievements:** one grouped, filterable studio for
+  built-in and custom badges. Summary cards, search, group/tier/source/state
+  filters, a create/edit form with a live preview, and a two-step delete.
+- **Values:** tier (Bronze/Silver/Gold/Platinum) and difficulty
+  (Starter/Standard/Advanced/Expert) set the point value. Platinum Expert is
+  worth 200 points; Bronze Starter is worth 8.
+- **Quiz ladder:** a perfect three-question sampled check earns **Platinum
+  Check**; advanced/expert items can earn **Relevance Ace**; three exercises
+  earn **Hat Trick**; three tracks earn **Polymath**; five passes in a row earn
+  **Five in a Row**; a climb from below 70% to 100% earns **Tier Climb**.
+- **Admin → Settings → Question banks:** read-only full bank with answers,
+  explanations, objectives, and public references. Validation runs on demand.
+- **Reliability:** `python scripts/check-question-banks.py` passes for 9
+  pathways and 34 questions; references are external `https://` sources.
+- **Verified in this tree:** `ruff` and `py_compile`; 29 tests across the
+  achievement catalogue, certification banks, curriculum demand, and career
+  readiness; `npm run lint` (0 errors) and `npm run build`.
+- **Not yet verified:** a live browser pass for the studio and question-bank
+  tabs at 375/768/1024/1440 in both themes.
+
 ## 2.7.0 release verification
 
 Released and deployed on **11 November 2026**. Tag `v2.7.0` points at

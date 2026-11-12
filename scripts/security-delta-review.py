@@ -171,15 +171,34 @@ def _scan_secrets(path: Path, lines: list[str]) -> list[tuple[str, int, str]]:
     return findings
 
 
+def _is_suppressed(lines: list[str], number: int, label: str) -> bool:
+    """Allow an explicit, auditable inline exception.
+
+    A comment on the finding line or the two lines above can say
+    ``security-delta: allow <label>`` (or just ``security-delta: allow``).
+    The marker keeps the exception visible in review instead of hiding it in
+    the scanner.
+    """
+    marker = "security-delta: allow"
+    for text in lines[max(0, number - 3):number]:
+        lowered = text.lower()
+        if marker not in lowered:
+            continue
+        rest = lowered.split(marker, 1)[1].strip()
+        if not rest or label.lower() in rest:
+            return True
+    return False
+
+
 def _scan_code(path: Path, lines: list[str]) -> tuple[list[tuple[str, int, str]], list[tuple[str, int, str]]]:
     high: list[tuple[str, int, str]] = []
     warn: list[tuple[str, int, str]] = []
     for number, line in enumerate(lines, start=1):
         for label, pattern in HIGH_CODE_PATTERNS:
-            if pattern.search(line):
+            if pattern.search(line) and not _is_suppressed(lines, number, label):
                 high.append((label, number, line.strip()[:160]))
         for label, pattern in WARN_CODE_PATTERNS:
-            if pattern.search(line):
+            if pattern.search(line) and not _is_suppressed(lines, number, label):
                 warn.append((label, number, line.strip()[:160]))
     return high, warn
 

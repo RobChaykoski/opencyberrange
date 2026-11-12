@@ -833,6 +833,9 @@ class CustomAchievementCreate(SafeTextModel):
     icon: str = Field("\U0001F3C5", max_length=16)
     trigger: str = Field("labs_completed", max_length=30)
     threshold: int = Field(1, ge=1, le=10000)
+    group_key: str = Field("custom", max_length=30)
+    tier: str = Field("bronze", max_length=20)
+    difficulty: str = Field("standard", max_length=20)
     is_active: bool = True
 
     __safe_text_fields__ = {"name": "short", "description": "multiline"}
@@ -844,6 +847,9 @@ class CustomAchievementUpdate(SafeTextModel):
     icon: str | None = Field(None, max_length=16)
     trigger: str | None = Field(None, max_length=30)
     threshold: int | None = Field(None, ge=1, le=10000)
+    group_key: str | None = Field(None, max_length=30)
+    tier: str | None = Field(None, max_length=20)
+    difficulty: str | None = Field(None, max_length=20)
     is_active: bool | None = None
 
     __safe_text_fields__ = {"name": "short", "description": "multiline"}

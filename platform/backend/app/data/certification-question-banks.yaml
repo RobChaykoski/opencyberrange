@@ -1,0 +1,675 @@
+version: "1.0"
+reviewed_at: "2026-11-12"
+status: "admin-curated; original exam-style practice"
+notes: >
+  These are original practice items written to the published objectives of each
+  certification pathway. They are not copied exam questions and are not a
+  certification exam. Every item carries the objective it tests and an
+  authoritative public reference. Questions are sampled by exercise relevance:
+  the engine maps a lab's track and competency to the pathway domains below.
+
+pathways:
+  - id: comptia-security-plus
+    name: "CompTIA Security+"
+    code: "SY0-701"
+    url: "https://www.comptia.org/certifications/security"
+    objectives_url: "https://www.comptia.org/certifications/security#examdetails"
+    tracks: [network, linux, windows, web, osint, forensics, identity, high-school]
+    domains:
+      - {id: "1", name: "General Security Concepts", weight: 12}
+      - {id: "2", name: "Threats, Vulnerabilities, and Mitigations", weight: 22}
+      - {id: "3", name: "Security Architecture", weight: 18}
+      - {id: "4", name: "Security Operations", weight: 28}
+      - {id: "5", name: "Security Program Management and Oversight", weight: 20}
+    questions:
+      - id: "secplus-1-01"
+        domain: "1"
+        objective: "1.2 Compare and contrast security concepts."
+        difficulty: standard
+        style: scenario
+        prompt: "A team wants to reduce the impact of a stolen laptop. Which control BEST limits the usefulness of the data if the disk is removed?"
+        options:
+          - "Full-disk encryption tied to a TPM"
+          - "A screen-lock timeout"
+          - "A cable lock"
+          - "A privacy screen"
+        correct: 0
+        explanation: "Full-disk encryption protects data at rest even if the drive is removed. A screen lock, cable lock, and privacy screen reduce other risks but do not protect the data on the disk."
+        reference:
+          label: "CompTIA Security+ exam objectives"
+          url: "https://www.comptia.org/certifications/security#examdetails"
+      - id: "secplus-2-01"
+        domain: "2"
+        objective: "2.3 Explain various types of vulnerabilities."
+        difficulty: standard
+        style: scenario
+        prompt: "A web application reflects user input into the page without encoding it. Which vulnerability is MOST likely?"
+        options:
+          - "Cross-site scripting"
+          - "SQL injection"
+          - "Directory traversal"
+          - "Race condition"
+        correct: 0
+        explanation: "Reflecting unencoded input into HTML lets an attacker inject script that runs in another user's browser. SQL injection targets the database, directory traversal targets file paths, and a race condition is a timing flaw."
+        reference:
+          label: "OWASP Cross Site Scripting Prevention Cheat Sheet"
+          url: "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+      - id: "secplus-4-01"
+        domain: "4"
+        objective: "4.8 Explain incident response activities."
+        difficulty: standard
+        style: scenario
+        prompt: "An analyst confirms a workstation is infected and isolates it from the network. Which incident response phase is this?"
+        options:
+          - "Containment"
+          - "Preparation"
+          - "Eradication"
+          - "Lessons learned"
+        correct: 0
+        explanation: "Isolation limits spread and is part of containment. Eradication removes the cause, preparation happens before the incident, and lessons learned happens after recovery."
+        reference:
+          label: "NIST SP 800-61: Incident Handling Guide"
+          url: "https://csrc.nist.gov/pubs/sp/800/61/r2/final"
+      - id: "secplus-4-02"
+        domain: "4"
+        objective: "4.6 Use mitigation techniques and controls."
+        difficulty: advanced
+        style: scenario
+        prompt: "A service account needs to read one object store bucket and nothing else. Which control BEST applies least privilege?"
+        options:
+          - "A scoped role limited to that bucket and read actions"
+          - "A shared administrator key stored in the application"
+          - "A network ACL that allows the whole subnet"
+          - "A long-lived access key rotated once a year"
+        correct: 0
+        explanation: "A scoped role grants only the required actions on the required resource. Shared administrator keys, broad network rules, and long-lived keys all exceed the required privilege."
+        reference:
+          label: "NIST SP 800-53: Access Control (AC)"
+          url: "https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_1/home?element=AC"
+
+  - id: comptia-cysa-plus
+    name: "CompTIA CySA+"
+    code: "CS0-003"
+    url: "https://www.comptia.org/certifications/cybersecurity-analyst"
+    objectives_url: "https://www.comptia.org/certifications/cybersecurity-analyst#examdetails"
+    tracks: [forensics, malware, osint, windows, network, ot]
+    domains:
+      - {id: "1", name: "Security Operations", weight: 33}
+      - {id: "2", name: "Vulnerability Management", weight: 30}
+      - {id: "3", name: "Incident Response and Management", weight: 20}
+      - {id: "4", name: "Reporting and Communication", weight: 17}
+    questions:
+      - id: "cysa-1-01"
+        domain: "1"
+        objective: "1.2 Given a scenario, analyze indicators of potentially malicious activity."
+        difficulty: standard
+        style: scenario
+        prompt: "A host suddenly sends large outbound transfers to a new external IP every night at 02:00. Which indicator is MOST relevant?"
+        options:
+          - "A recurring off-hours data transfer to an unfamiliar destination"
+          - "A single failed login during business hours"
+          - "A scheduled operating-system update"
+          - "A full disk on a backup server"
+        correct: 0
+        explanation: "Regular off-hours transfers to a new external destination are a classic exfiltration indicator. A single failed login or a scheduled update is common benign activity, and a full backup disk is an availability issue."
+        reference:
+          label: "MITRE ATT&CK: Exfiltration"
+          url: "https://attack.mitre.org/tactics/TA0010/"
+      - id: "cysa-2-01"
+        domain: "2"
+        objective: "2.1 Given a scenario, implement vulnerability scanning methods and concepts."
+        difficulty: advanced
+        style: scenario
+        prompt: "A scanner reports a critical vulnerability on a production host, but the service is not exposed and the vendor confirms the code path is unreachable. What is the BEST next step?"
+        options:
+          - "Validate the finding with context and document the compensating conditions"
+          - "Ignore every critical finding from that scanner"
+          - "Disable the scanner to reduce noise"
+          - "Patch immediately without a change window"
+        correct: 0
+        explanation: "Vulnerability management requires validation and context. A finding that is not reachable may be a false positive or lower risk, but the decision and compensating controls must be documented. Disabling the scanner or ignoring findings removes evidence."
+        reference:
+          label: "NIST SP 800-40: Enterprise Patch Management"
+          url: "https://csrc.nist.gov/pubs/sp/800/40/r4/final"
+      - id: "cysa-3-01"
+        domain: "3"
+        objective: "3.2 Given a scenario, apply the appropriate incident response procedure."
+        difficulty: standard
+        style: scenario
+        prompt: "During an active ransomware incident, which action should come FIRST?"
+        options:
+          - "Contain affected systems to limit spread"
+          - "Publish a public statement"
+          - "Rebuild every server"
+          - "Close the ticket as resolved"
+        correct: 0
+        explanation: "Containment limits damage and preserves the ability to investigate. Communication and recovery follow, and the incident is not resolved until recovery and lessons learned are complete."
+        reference:
+          label: "CISA: Ransomware Guide"
+          url: "https://www.cisa.gov/stopransomware/ransomware-guide"
+      - id: "cysa-4-01"
+        domain: "4"
+        objective: "4.1 Explain the importance of vulnerability management reporting and communication."
+        difficulty: standard
+        style: scenario
+        prompt: "An executive asks for the business impact of a finding. Which report element is MOST useful?"
+        options:
+          - "The affected asset, likelihood, and potential business consequence"
+          - "The raw scanner plugin ID only"
+          - "A list of every open port"
+          - "The analyst's personal opinion of the vendor"
+        correct: 0
+        explanation: "Executives need risk in business terms: what is affected, how likely exploitation is, and what the consequence would be. Raw plugin IDs and port lists lack context."
+        reference:
+          label: "NIST Cybersecurity Framework 2.0"
+          url: "https://www.nist.gov/cyberframework"
+
+  - id: comptia-pentest-plus
+    name: "CompTIA PenTest+"
+    code: "PT0-003"
+    url: "https://www.comptia.org/certifications/pentest"
+    objectives_url: "https://www.comptia.org/certifications/pentest#examdetails"
+    tracks: [web, software-security, linux, windows, network]
+    domains:
+      - {id: "1", name: "Planning and Scoping", weight: 14}
+      - {id: "2", name: "Information Gathering and Vulnerability Scanning", weight: 22}
+      - {id: "3", name: "Attacks and Exploits", weight: 30}
+      - {id: "4", name: "Reporting and Communication", weight: 18}
+      - {id: "5", name: "Tools and Code Analysis", weight: 16}
+    questions:
+      - id: "pentest-1-01"
+        domain: "1"
+        objective: "1.1 Given a scenario, plan and scope a penetration test."
+        difficulty: standard
+        style: scenario
+        prompt: "Before testing a client's web application, what document MOST clearly defines permitted targets, timing, and escalation contacts?"
+        options:
+          - "Rules of engagement"
+          - "A public blog post"
+          - "A vulnerability scanner licence"
+          - "An internal chat message"
+        correct: 0
+        explanation: "Rules of engagement define scope, authorized targets, timing, constraints, and contacts. The other options do not establish authorization or boundaries."
+        reference:
+          label: "NIST SP 800-115: Technical Guide to Information Security Testing"
+          url: "https://csrc.nist.gov/pubs/sp/800/115/final"
+      - id: "pentest-3-01"
+        domain: "3"
+        objective: "3.1 Given a scenario, research and use attack techniques."
+        difficulty: advanced
+        style: scenario
+        prompt: "A tester finds a web form that builds a shell command from user input. Which test is the SAFEST way to confirm command injection in an authorized lab?"
+        options:
+          - "Send a harmless command that writes a unique marker file"
+          - "Run a destructive recursive delete"
+          - "Launch a denial-of-service against production"
+          - "Exfiltrate real customer data"
+        correct: 0
+        explanation: "A harmless, reversible proof (such as a marker file) confirms the flaw without damaging systems or exposing data. Destructive or availability-impacting tests exceed safe validation."
+        reference:
+          label: "OWASP Testing Guide: Command Injection"
+          url: "https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/12-Testing_for_Command_Injection"
+      - id: "pentest-4-01"
+        domain: "4"
+        objective: "4.2 Given a scenario, analyze and report findings."
+        difficulty: standard
+        style: scenario
+        prompt: "Which finding description is MOST useful to a remediation team?"
+        options:
+          - "Reproduction steps, evidence, impact, and a specific remediation"
+          - "Only a severity score"
+          - "A screenshot with no context"
+          - "The tester's tool version"
+        correct: 0
+        explanation: "A useful finding is reproducible and actionable: steps, evidence, impact, and a concrete fix. A score or screenshot alone does not tell the team what to change."
+        reference:
+          label: "OWASP Vulnerability Disclosure Cheat Sheet"
+          url: "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerability_Disclosure_Cheat_Sheet.html"
+      - id: "pentest-2-01"
+        domain: "2"
+        objective: "2.2 Given a scenario, perform information gathering."
+        difficulty: standard
+        style: scenario
+        prompt: "A tester needs to identify services on an authorized host without triggering a full TCP connect scan. Which approach is MOST appropriate?"
+        options:
+          - "A SYN scan within the agreed scope"
+          - "A scan of the entire internet"
+          - "A password spray against the client's staff"
+          - "A phishing campaign against the client"
+        correct: 0
+        explanation: "A SYN scan is a standard service-discovery technique when it is inside the authorized scope. Scanning unrelated systems or attacking people is out of scope and unethical."
+        reference:
+          label: "Nmap: Port Scanning Techniques"
+          url: "https://nmap.org/book/man-port-scanning-techniques.html"
+
+  - id: comptia-network-plus
+    name: "CompTIA Network+"
+    code: "N10-009"
+    url: "https://www.comptia.org/certifications/network"
+    objectives_url: "https://www.comptia.org/certifications/network#examdetails"
+    tracks: [network]
+    domains:
+      - {id: "1", name: "Networking Concepts", weight: 23}
+      - {id: "2", name: "Network Implementation", weight: 20}
+      - {id: "3", name: "Network Operations", weight: 19}
+      - {id: "4", name: "Network Security", weight: 14}
+      - {id: "5", name: "Network Troubleshooting", weight: 24}
+    questions:
+      - id: "netplus-1-01"
+        domain: "1"
+        objective: "1.1 Explain the OSI model and TCP/IP." 
+        difficulty: starter
+        style: scenario
+        prompt: "Which protocol uses a three-way handshake before sending application data?"
+        options:
+          - "TCP"
+          - "UDP"
+          - "ICMP"
+          - "ARP"
+        correct: 0
+        explanation: "TCP establishes a connection with SYN, SYN/ACK, and ACK. UDP is connectionless, ICMP carries control messages, and ARP resolves link-layer addresses."
+        reference:
+          label: "RFC 9293: Transmission Control Protocol"
+          url: "https://www.rfc-editor.org/rfc/rfc9293"
+      - id: "netplus-3-01"
+        domain: "3"
+        objective: "3.2 Given a scenario, use network monitoring tools."
+        difficulty: standard
+        style: scenario
+        prompt: "A switch port is configured to copy traffic to a monitoring host. What is this feature called?"
+        options:
+          - "Port mirroring / SPAN"
+          - "DHCP snooping"
+          - "VLAN pruning"
+          - "NAT overload"
+        correct: 0
+        explanation: "SPAN or port mirroring copies selected traffic to a monitoring port for capture or IDS. DHCP snooping, VLAN pruning, and NAT overload serve different purposes."
+        reference:
+          label: "Wireshark: Capture setup"
+          url: "https://wiki.wireshark.org/CaptureSetup"
+      - id: "netplus-4-01"
+        domain: "4"
+        objective: "4.1 Explain basic network security concepts."
+        difficulty: standard
+        style: scenario
+        prompt: "A firewall rule set blocks all traffic unless a rule explicitly allows it. Which policy is this?"
+        options:
+          - "Default deny"
+          - "Default allow"
+          - "Implicit permit"
+          - "Open egress"
+        correct: 0
+        explanation: "Default deny blocks traffic unless an explicit rule permits it. It is a safer baseline than default allow."
+        reference:
+          label: "NIST SP 800-41: Guidelines on Firewalls and Firewall Policy"
+          url: "https://csrc.nist.gov/pubs/sp/800/41/r1/final"
+      - id: "netplus-5-01"
+        domain: "5"
+        objective: "5.3 Given a scenario, troubleshoot common network issues."
+        difficulty: standard
+        style: scenario
+        prompt: "Users can reach an IP address but not the hostname. Which service should be checked FIRST?"
+        options:
+          - "DNS resolution"
+          - "The default gateway"
+          - "The switch duplex setting"
+          - "The DHCP lease time"
+        correct: 0
+        explanation: "If the IP works but the name does not, name resolution is the first suspect. Check the resolver configuration and DNS server reachability."
+        reference:
+          label: "RFC 1034: Domain Names - Concepts and Facilities"
+          url: "https://www.rfc-editor.org/rfc/rfc1034"
+
+  - id: comptia-linux-plus
+    name: "CompTIA Linux+"
+    code: "XK0-006"
+    url: "https://www.comptia.org/certifications/linux"
+    objectives_url: "https://www.comptia.org/certifications/linux#examdetails"
+    tracks: [linux]
+    domains:
+      - {id: "1", name: "System Management", weight: 22}
+      - {id: "2", name: "Security", weight: 18}
+      - {id: "3", name: "Scripting, Containers, and Automation", weight: 20}
+      - {id: "4", name: "Troubleshooting", weight: 40}
+    questions:
+      - id: "linuxplus-2-01"
+        domain: "2"
+        objective: "2.1 Given a scenario, manage users and permissions."
+        difficulty: standard
+        style: scenario
+        prompt: "A file must be readable and writable by its owner and readable by everyone else, with no other permissions. Which mode is correct?"
+        options:
+          - "644"
+          - "777"
+          - "600"
+          - "755"
+        correct: 0
+        explanation: "644 gives the owner read/write (6), group read (4), and others read (4). 600 removes group and other access; 755 adds execute; 777 grants everything."
+        reference:
+          label: "Linux man-pages: chmod(1)"
+          url: "https://man7.org/linux/man-pages/man1/chmod.1.html"
+      - id: "linuxplus-1-01"
+        domain: "1"
+        objective: "1.4 Given a scenario, manage services."
+        difficulty: standard
+        style: scenario
+        prompt: "Which command shows the status of a systemd service and its recent log lines?"
+        options:
+          - "systemctl status <service>"
+          - "chmod +x <service>"
+          - "tar -czf <service>"
+          - "useradd <service>"
+        correct: 0
+        explanation: "systemctl status reports the unit state and recent journal lines. The other commands change permissions, archive files, or create users."
+        reference:
+          label: "systemd: systemctl man page"
+          url: "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+      - id: "linuxplus-4-01"
+        domain: "4"
+        objective: "4.2 Given a scenario, troubleshoot storage and resource issues."
+        difficulty: advanced
+        style: scenario
+        prompt: "A server reports no space left on a filesystem, but a large deleted log file is still held open by a process. Which action is SAFEST?"
+        options:
+          - "Restart or reload the process that holds the file, after confirming the impact"
+          - "Delete every file in /var/log immediately"
+          - "Rebuild the server without investigation"
+          - "Disable logging permanently"
+        correct: 0
+        explanation: "A deleted file held open keeps its blocks allocated. Restarting or reloading the owning process releases them. Deleting other logs, rebuilding, or disabling logging are disproportionate or harmful."
+        reference:
+          label: "Linux man-pages: lsof(8)"
+          url: "https://man7.org/linux/man-pages/man8/lsof.8.html"
+
+  - id: microsoft-sc-900
+    name: "Microsoft SC-900"
+    code: "SC-900"
+    url: "https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/"
+    objectives_url: "https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-900"
+    tracks: [identity, windows]
+    domains:
+      - {id: "1", name: "Security, Compliance, and Identity Concepts", weight: 10}
+      - {id: "2", name: "Microsoft Entra", weight: 25}
+      - {id: "3", name: "Microsoft Security Solutions", weight: 35}
+      - {id: "4", name: "Microsoft Compliance Solutions", weight: 30}
+    questions:
+      - id: "sc900-2-01"
+        domain: "2"
+        objective: "2.1 Describe identity concepts."
+        difficulty: starter
+        style: scenario
+        prompt: "A company wants one identity for each user across Microsoft 365 and third-party apps. Which Microsoft cloud service is the primary identity provider?"
+        options:
+          - "Microsoft Entra ID"
+          - "Microsoft Defender for Endpoint"
+          - "Azure Cost Management"
+          - "Microsoft Purview"
+        correct: 0
+        explanation: "Microsoft Entra ID provides identity and access management for users, apps, and devices. Defender, Cost Management, and Purview serve different roles."
+        reference:
+          label: "Microsoft Entra documentation"
+          url: "https://learn.microsoft.com/en-us/entra/"
+      - id: "sc900-3-01"
+        domain: "3"
+        objective: "3.2 Describe Microsoft Defender XDR."
+        difficulty: standard
+        style: scenario
+        prompt: "Which capability BEST describes Microsoft Defender XDR?"
+        options:
+          - "Correlated detection and response across email, endpoints, identity, and cloud apps"
+          - "A spreadsheet for licence renewals"
+          - "A backup service for virtual machines"
+          - "A public DNS resolver"
+        correct: 0
+        explanation: "Defender XDR correlates signals across Microsoft security products to detect and respond to cross-domain attacks. It is not a licensing, backup, or DNS service."
+        reference:
+          label: "Microsoft Defender XDR documentation"
+          url: "https://learn.microsoft.com/en-us/defender-xdr/"
+      - id: "sc900-1-01"
+        domain: "1"
+        objective: "1.1 Describe the Zero Trust model."
+        difficulty: standard
+        style: scenario
+        prompt: "Which principle is central to Zero Trust?"
+        options:
+          - "Verify explicitly and assume breach"
+          - "Trust every device on the corporate network"
+          - "Use one shared administrator password"
+          - "Disable logging to reduce noise"
+        correct: 0
+        explanation: "Zero Trust verifies every request explicitly and assumes breach. Trusting a network location or sharing credentials contradicts the model, and logging is essential."
+        reference:
+          label: "Microsoft: Zero Trust guidance"
+          url: "https://learn.microsoft.com/en-us/security/zero-trust/"
+
+  - id: isc2-cc
+    name: "ISC2 Certified in Cybersecurity"
+    code: "CC"
+    url: "https://www.isc2.org/certifications/cc"
+    objectives_url: "https://www.isc2.org/certifications/cc"
+    tracks: [high-school, network, linux]
+    domains:
+      - {id: "1", name: "Security Principles", weight: 26}
+      - {id: "2", name: "Business Continuity, Disaster Recovery, and Incident Response", weight: 10}
+      - {id: "3", name: "Access Control Concepts", weight: 22}
+      - {id: "4", name: "Network Security", weight: 24}
+      - {id: "5", name: "Security Operations", weight: 18}
+    questions:
+      - id: "cc-1-01"
+        domain: "1"
+        objective: "1.1 Understand the security concepts of information assurance."
+        difficulty: starter
+        style: scenario
+        prompt: "Which trio describes confidentiality, integrity, and availability?"
+        options:
+          - "The CIA triad"
+          - "The OSI model"
+          - "The TCP handshake"
+          - "The SDLC"
+        correct: 0
+        explanation: "Confidentiality, integrity, and availability form the CIA triad, the core model for information security."
+        reference:
+          label: "NIST SP 800-12: An Introduction to Information Security"
+          url: "https://csrc.nist.gov/pubs/sp/800/12/r1/final"
+      - id: "cc-3-01"
+        domain: "3"
+        objective: "3.1 Understand access control concepts."
+        difficulty: standard
+        style: scenario
+        prompt: "A user needs temporary access to a finance folder for a month. Which approach follows least privilege?"
+        options:
+          - "Grant a time-bound role for that folder"
+          - "Add the user to the domain administrators group"
+          - "Share a finance administrator password"
+          - "Give permanent access to every folder"
+        correct: 0
+        explanation: "A time-bound role grants only the access needed for the required period. Administrator rights, shared passwords, and permanent broad access exceed the need."
+        reference:
+          label: "NIST SP 800-53: Access Control (AC)"
+          url: "https://csrc.nist.gov/projects/cprt/catalog#/cprt/framework/version/SP_800_53_5_1_1/home?element=AC"
+      - id: "cc-4-01"
+        domain: "4"
+        objective: "4.1 Understand network security."
+        difficulty: standard
+        style: scenario
+        prompt: "Which device primarily enforces rules between network segments?"
+        options:
+          - "A firewall"
+          - "A keyboard"
+          - "A monitor"
+          - "A UPS"
+        correct: 0
+        explanation: "A firewall enforces traffic rules between segments. A keyboard, monitor, and UPS are not network policy devices."
+        reference:
+          label: "NIST SP 800-41: Guidelines on Firewalls and Firewall Policy"
+          url: "https://csrc.nist.gov/pubs/sp/800/41/r1/final"
+      - id: "cc-5-01"
+        domain: "5"
+        objective: "5.1 Understand security operations."
+        difficulty: standard
+        style: scenario
+        prompt: "What is the primary purpose of logging security events?"
+        options:
+          - "To detect, investigate, and reconstruct activity"
+          - "To make the disk fill faster"
+          - "To replace access control"
+          - "To guarantee no incidents occur"
+        correct: 0
+        explanation: "Logs provide evidence for detection, investigation, and reconstruction. They do not replace access control or guarantee that incidents will not happen."
+        reference:
+          label: "NIST SP 800-92: Guide to Computer Security Log Management"
+          url: "https://csrc.nist.gov/pubs/sp/800/92/final"
+
+  - id: owasp-top-10
+    name: "OWASP Top 10"
+    code: "2021"
+    url: "https://owasp.org/Top10/"
+    objectives_url: "https://owasp.org/Top10/"
+    tracks: [web, software-security]
+    domains:
+      - {id: "A01", name: "Broken Access Control", weight: 0}
+      - {id: "A03", name: "Injection", weight: 0}
+      - {id: "A05", name: "Security Misconfiguration", weight: 0}
+      - {id: "A10", name: "Server-Side Request Forgery", weight: 0}
+    questions:
+      - id: "owasp-a01-01"
+        domain: "A01"
+        objective: "A01:2021 Broken Access Control."
+        difficulty: standard
+        style: scenario
+        prompt: "A user changes the account ID in a URL and sees another customer's invoice. Which category is this?"
+        options:
+          - "Broken access control"
+          - "Cryptographic failure"
+          - "Security misconfiguration"
+          - "Vulnerable component"
+        correct: 0
+        explanation: "Changing an identifier to reach another user's object is an insecure direct object reference, a form of broken access control. Authorization must be checked on the server for every object."
+        reference:
+          label: "OWASP Top 10: A01 Broken Access Control"
+          url: "https://owasp.org/Top10/A01_2021-Broken_Access_Control/"
+      - id: "owasp-a03-01"
+        domain: "A03"
+        objective: "A03:2021 Injection."
+        difficulty: standard
+        style: scenario
+        prompt: "Which control MOST directly prevents SQL injection?"
+        options:
+          - "Parameterized queries"
+          - "A longer password policy"
+          - "A web application firewall only"
+          - "Disabling error messages"
+        correct: 0
+        explanation: "Parameterized queries keep data separate from SQL syntax. A WAF can help but is not a substitute, and password or error-message changes do not fix the flaw."
+        reference:
+          label: "OWASP SQL Injection Prevention Cheat Sheet"
+          url: "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+      - id: "owasp-a10-01"
+        domain: "A10"
+        objective: "A10:2021 Server-Side Request Forgery."
+        difficulty: advanced
+        style: scenario
+        prompt: "An application fetches a URL supplied by the user. Which control BEST reduces SSRF risk?"
+        options:
+          - "Allow-list approved destinations and block internal ranges"
+          - "Trust any URL that starts with https"
+          - "Hide the URL from the browser"
+          - "Increase the request timeout"
+        correct: 0
+        explanation: "An allow-list plus blocking internal/link-local ranges prevents the server from being used to reach protected services. HTTPS alone does not make a destination safe."
+        reference:
+          label: "OWASP: Server-Side Request Forgery Prevention Cheat Sheet"
+          url: "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"
+      - id: "owasp-a05-01"
+        domain: "A05"
+        objective: "A05:2021 Security Misconfiguration."
+        difficulty: starter
+        style: scenario
+        prompt: "A cloud storage bucket is readable by anyone on the internet. Which category does this illustrate?"
+        options:
+          - "Security misconfiguration"
+          - "Injection"
+          - "Broken authentication"
+          - "Software supply-chain failure"
+        correct: 0
+        explanation: "An unintended public permission is a security misconfiguration. The fix is to remove public access and enforce least privilege."
+        reference:
+          label: "OWASP Top 10: A05 Security Misconfiguration"
+          url: "https://owasp.org/Top10/A05_2021-Security_Misconfiguration/"
+
+  - id: owasp-llm-top-10
+    name: "OWASP Top 10 for LLM Applications"
+    code: "2025"
+    url: "https://genai.owasp.org/llm-top-10/"
+    objectives_url: "https://genai.owasp.org/llm-top-10/"
+    tracks: [ai]
+    domains:
+      - {id: "LLM01", name: "Prompt Injection", weight: 0}
+      - {id: "LLM05", name: "Improper Output Handling", weight: 0}
+      - {id: "LLM06", name: "Excessive Agency", weight: 0}
+      - {id: "LLM04", name: "Data and Model Poisoning", weight: 0}
+    questions:
+      - id: "llm-01-01"
+        domain: "LLM01"
+        objective: "LLM01: Prompt Injection."
+        difficulty: standard
+        style: scenario
+        prompt: "A retrieved document contains instructions that tell the model to ignore its system prompt. Which risk is this?"
+        options:
+          - "Indirect prompt injection"
+          - "Improper output handling"
+          - "Model denial of service"
+          - "Supply-chain compromise"
+        correct: 0
+        explanation: "Instructions hidden in retrieved content are indirect prompt injection. The model may treat untrusted content as instructions."
+        reference:
+          label: "OWASP LLM01: Prompt Injection"
+          url: "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+      - id: "llm-05-01"
+        domain: "LLM05"
+        objective: "LLM05: Improper Output Handling."
+        difficulty: standard
+        style: scenario
+        prompt: "Model output is inserted into a web page without encoding. Which risk is MOST direct?"
+        options:
+          - "Cross-site scripting through model output"
+          - "A stronger model"
+          - "Faster inference"
+          - "Lower token cost"
+        correct: 0
+        explanation: "Unencoded model output can carry script into the page. Treat model output as untrusted input and encode or sanitize it for the destination context."
+        reference:
+          label: "OWASP LLM05: Improper Output Handling"
+          url: "https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/"
+      - id: "llm-06-01"
+        domain: "LLM06"
+        objective: "LLM06: Excessive Agency."
+        difficulty: advanced
+        style: scenario
+        prompt: "An agent can call any internal API without approval. Which mitigation BEST reduces excessive agency?"
+        options:
+          - "Limit tools to the minimum required and require confirmation for high-impact actions"
+          - "Give the agent administrator credentials"
+          - "Remove all logging"
+          - "Increase the context window"
+        correct: 0
+        explanation: "Least-privilege tools and human confirmation for destructive actions reduce excessive agency. Broader credentials and less logging increase risk."
+        reference:
+          label: "OWASP LLM06: Excessive Agency"
+          url: "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+      - id: "llm-04-01"
+        domain: "LLM04"
+        objective: "LLM04: Data and Model Poisoning."
+        difficulty: advanced
+        style: scenario
+        prompt: "An attacker adds misleading records to a model's training data. Which risk is this?"
+        options:
+          - "Data poisoning"
+          - "Prompt injection"
+          - "Model theft"
+          - "Denial of service"
+        correct: 0
+        explanation: "Training-data manipulation is data poisoning. It can bias or degrade model behaviour and is different from injecting instructions at inference time."
+        reference:
+          label: "OWASP LLM04: Data and Model Poisoning"
+          url: "https://genai.owasp.org/llmrisk/llm042025-data-and-model-poisoning/"

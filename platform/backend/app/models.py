@@ -921,6 +921,12 @@ class CustomAchievement(Base):
     icon = Column(String(16), nullable=False, default="\U0001F3C5")
     trigger = Column(String(30), nullable=False, default="labs_completed")
     threshold = Column(Integer, nullable=False, default=1)
+    # Presentation and value metadata. ``points`` is derived from tier and
+    # difficulty so a harder badge is worth more without a second scoring table.
+    group_key = Column(String(30), nullable=False, default="custom")
+    tier = Column(String(20), nullable=False, default="bronze")
+    difficulty = Column(String(20), nullable=False, default="standard")
+    points = Column(Integer, nullable=False, default=10)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, server_default=func.now())
 
