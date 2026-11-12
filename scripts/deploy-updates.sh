@@ -734,12 +734,19 @@ verify_deployment() {
         log "${GREEN}[ok] Containers are running${NC}"
     fi
     
-    # Check health endpoint if available
-    sleep 5  # Give containers time to start
-    if curl -f http://localhost:8000/health &>/dev/null || curl -f http://localhost:8000/api/health &>/dev/null; then
-        log "${GREEN}[ok] Health check passed${NC}"
+    # Quick change-table, dimension, metadata, and ledger-chain gate. The full
+    # row-hash verification stays in the daily host job; this catches a missing
+    # trigger, a broken prev_hash link, or a curriculum dimension that vanished
+    # during the update.
+    if docker compose cp "$REPO_DIR/scripts/database_integrity.py" backend:/tmp/database_integrity.py 2>/dev/null; then
+        if docker compose exec -T -w /app -e PYTHONPATH=/app backend python /tmp/database_integrity.py --dimensions; then
+            log "${GREEN}[ok] Dimensions, change tables, and ledger chain passed${NC}"
+        else
+            log "${RED}[fail] Dimensions or change-table validation failed${NC}"
+            return 1
+        fi
     else
-        log "${YELLOW}Warning: Health check endpoint not responding (containers may still be starting)${NC}"
+        log "${YELLOW}[warn] Could not copy database_integrity.py for the dimension check${NC}"
     fi
 }
 

@@ -277,6 +277,206 @@ the signed manifests and JSON output are kept outside the database. The existing
 **System → Health** area also shows a one-line **Data integrity** item with an
 **Open Integrity** action.
 
+## Ledger size and retention
+
+The ledger is append-only, so size is a capacity plan, not a cleanup afterthought.
+Measure it monthly:
+
+```sql
+select pg_size_pretty(pg_total_relation_size('data_integrity_ledger')) as total,
+       count(*) as rows,
+       min(occurred_at) as oldest,
+       max(occurred_at) as newest
+from data_integrity_ledger;
+```
+
+Also record rows per day and bytes per row:
+
+```sql
+select date_trunc('day', occurred_at) as day, count(*)
+from data_integrity_ledger
+group by 1 order by 1 desc limit 30;
+```
+
+### Thresholds
+
+| Signal | Warning | Action |
+|---|---|---|
+| Rows | 5 million or 2 GB | Plan an archive or partition |
+| Rows | 10 million or 5 GB, or >20% of the database | Archive in the next maintenance window |
+| Growth | More than 2x the previous month | Find the write source before archiving |
+| Oldest entry | Older than the retention window | Archive the oldest months |
+
+The default retention window is **24 months**. Keep longer when an incident,
+audit, or legal hold references the rows. Always keep the last 90 days.
+
+### Archive procedure
+
+The ledger's immutable trigger rejects `DELETE`, which is intentional. Archive
+with a controlled maintenance procedure, not an ad-hoc query:
+
+1. Take a database backup and a signed checksum manifest.
+2. Export the rows to be removed:
+   `pg_dump -t data_integrity_ledger --data-only --where="occurred_at < '...'"`.
+3. Record the cutoff, the last retained `entry_hash`, and the archive file's
+   SHA-256 in the release or operations record.
+4. In a maintenance window, as the database owner, disable the immutable
+   trigger on the ledger only, delete in batches, then re-enable it in the same
+   transaction block.
+5. Recompute the chain over the retained window and record the archive boundary
+   as a documented chain start. A verifier must accept a recorded boundary, not
+   silently re-baseline.
+6. Run `VACUUM (ANALYZE) data_integrity_ledger` and re-check table size.
+7. Never delete rows that are under review, within the last 90 days, or part of
+   an open incident.
+
+At more than 10 million rows, switch to a monthly **range partition** on
+`occurred_at` and detach old partitions. That avoids `DELETE`, keeps the
+immutable trigger on each partition, and makes retention a metadata operation.
+The migration is a schema change: schedule it with a release, not during an
+incident.
+
+The signed daily manifests and the off-host checksum evidence are the long-term
+record. The ledger is the working evidence window; it is not the archive.
+
+### Archive tool
+
+`scripts/archive-ledger.py` exports the ledger in date chunks and verifies them:
+
+```bash
+# Dry run: export and hash, no deletion
+docker cp scripts/archive-ledger.py ocr-backend:/tmp/archive-ledger.py
+docker exec -w /app -e PYTHONPATH=/app ocr-backend \
+  python /tmp/archive-ledger.py --before 2024-01-01 --chunk-days 30
+
+# Verify every chunk and the manifest signature
+docker exec -w /app -e PYTHONPATH=/app ocr-backend \
+  python /tmp/archive-ledger.py --verify /tmp/ledger-archive/ledger-archive-2024-01-01.json
+
+# Delete after a reviewed archive
+docker exec -w /app -e PYTHONPATH=/app ocr-backend \
+  python /tmp/archive-ledger.py --before 2024-01-01 --apply --confirm-delete
+```
+
+The tool refuses to archive newer than `--keep-days` (default 90), records each
+chunk's row range, count, first/last entry hash, and gzip SHA-256, and records
+the new chain boundary. Set `DB_INTEGRITY_KEY` to sign the manifest. Verify the
+chunks before deleting; a chunk that fails its hash or row count must be
+re-exported.
+
+### Update validation (quick)
+
+Run this after every upgrade, before accepting the release:
+
+```bash
+docker cp scripts/database_integrity.py ocr-backend:/tmp/database_integrity.py
+docker exec -w /app -e PYTHONPATH=/app ocr-backend \
+  python /tmp/database_integrity.py --dimensions
+```
+
+It validates the change-table triggers, the ledger `prev_hash` chain (quick
+link check), the curriculum dimensions (tracks, levels, labs, chapters,
+courses), lab metadata completeness, and the unattributed ratio. It exits
+non-zero on a missing trigger, a chain break, duplicate lab slugs, labs without
+a level, or an invalid difficulty. `scripts/deploy-updates.sh` runs the same
+check after the containers are healthy.
+
+## When the data is way off
+
+"Way off" is a measurable condition, not a feeling. Treat any of these as a
+stop-the-line finding:
+
+- the checksum fingerprint differs from the release manifest;
+- the ledger chain is broken, or an `entry_hash` changed;
+- the quality audit reports a **critical** finding;
+- unattributed writes spike above the normal daily baseline, or above 20% of a
+  day's writes;
+- counts diverge from the expected shape (for example, completions exceed
+  visible labs, or labs in the database do not match the repository);
+- impossible values appear: negative attempts or time, scores outside 0-100,
+  future timestamps, or a course with no owner.
+
+Triage in this order:
+
+1. **Preserve.** Take a database snapshot, copy the ledger range, and keep the
+   backend and database logs for the window. Do not reset the ledger or the
+   fingerprint.
+2. **Bound the window.** Compare the first bad row or fingerprint time with
+   deployments, migrations, restores, imports, and maintenance access.
+3. **Classify.** Expected (a documented migration or restore), investigated
+   (explained but worth a note), or escalated (unexplained). Record the decision
+   in **Admin -> System -> Integrity**.
+4. **Repair only with a reviewed script.** Prefer a targeted repair and a
+   re-run of `--quality` and `--ledger`. Restore from backup only when data was
+   lost; a restore also rolls back unrelated legitimate writes.
+5. **Re-baseline last.** A new fingerprint or a new ledger chain start is a
+   documented decision with a reviewer, a reason, and a date, never a silent
+   reset.
+6. **Communicate.** Record the affected tables, the time window, the decision,
+   and the evidence location in the incident or release note.
+
+If the cause is not explained, stop the release. A broken chain or a critical
+quality finding is not a cosmetic warning.
+
+## Metadata drag and missing information during upgrades
+
+Metadata lags for four common reasons:
+
+1. **New columns.** Alembic adds a column with a NULL default; old rows stay
+   NULL until a backfill or the next write.
+2. **Discovery does not delete.** `discover_labs.py` updates labs found under
+   `/labs`; a lab removed from the repository remains in the database until an
+   administrator marks it inactive.
+3. **Version fields.** `content_version`, `competency_model_version`, and
+   `lab_difficulty_snapshot` record the version at write time. Old rows keep the
+   old version by design; that is provenance, not corruption.
+4. **Chapter and workbook drift.** A renamed chapter or workbook path leaves old
+   `chapter_id` or `workbook` values until the lab metadata is refreshed.
+
+### Before an upgrade
+
+- Take a backup and a signed checksum manifest.
+- Run `--quality` and `--ledger`; save the output.
+- Export the lab metadata you will compare afterwards:
+  `select slug, content_version, chapter_id, workbook, mitre_attack, mapped_skills from labs order by slug;`
+- Record the repository lab count and the database lab count.
+
+### After an upgrade
+
+1. Confirm `alembic current` is the expected head.
+2. Run `discover_labs.py` to reconcile lab metadata from `lab.yaml`.
+3. Run `--quality` and `--ledger`; compare with the pre-upgrade output.
+4. Check the new columns for unexpected NULLs. NULL is acceptable when the value
+   did not exist at write time (for example, an old completion has no
+   competency snapshot); it is a finding when a current row should have it.
+5. Compare the lab count: repository labs plus intentional demo or hidden rows
+   should equal the database count. Mark removed labs inactive after review;
+   do not delete rows that have completions.
+6. Refresh `chapter_id` and `workbook` for renamed content with a reviewed
+   update, not a blind mass update.
+7. Re-run the checksum and write a new signed manifest.
+
+### Backfill rules
+
+- Back up first, and work on a copy when the change is large.
+- Backfill one field and one reason at a time; record the SQL and the reviewer.
+- Never invent a `competency_mapping` for an old completion. Leave it NULL and
+  label the row as pre-versioned evidence; recompute only if the mapping is
+  deterministic and the source data is intact.
+- Do not mass-update `content_version` to hide drift. It is a provenance field.
+- After a backfill, run `--quality` and `--ledger` again and record the new
+  fingerprint.
+
+### Field sources of truth
+
+| Field | Source |
+|---|---|
+| Lab title, difficulty, time, tools, hints, flag | `platform/labs/<Track>/<lab>/lab.yaml` |
+| Chapter and workbook | `curriculum-manifest.yaml` and the workbook tree |
+| Competency snapshot | `competency-mapping.yaml` at completion time |
+| Content version | The release that authored the lab |
+| Course ownership | `courses.instructor_id` (never NULL) |
+
 ## Runbook
 
 1. **Before a release:** take a database backup, run `--quality`, record the

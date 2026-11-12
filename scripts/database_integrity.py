@@ -6,6 +6,7 @@ available:
 
     docker exec -i ocr-backend python - --checksum
     docker exec -i ocr-backend python - --quality
+    docker exec -i ocr-backend python - --dimensions
     docker exec -i ocr-backend python - --write-manifest /tmp/db.json
     docker exec -i ocr-backend python - --verify /tmp/db.json
 
@@ -655,6 +656,159 @@ def verify_ledger(conn, as_json: bool) -> int:
     return 1 if errors else 0
 
 
+def run_dimensions(conn, as_json: bool = False) -> int:
+    """Validate the change tables, dimensions, metadata, and ledger shape.
+
+    This is the quick update gate: it does not recompute every row hash (use
+    --ledger for the deep chain check). It does verify that every critical table
+    still has its ledger trigger, that the prev_hash links are intact, and that
+    the curriculum dimensions and lab metadata are complete enough to serve.
+    """
+    try:
+        from app.services.db_integrity import LEDGER_TABLES
+        expected_tables = list(LEDGER_TABLES)
+    except Exception:
+        expected_tables = list(CRITICAL_TABLES)
+
+    def scalar(query: str, params: tuple = ()) -> Any:
+        row = conn.execute(query, params).fetchone()
+        return next(iter(row.values())) if row else None
+
+    triggers = {
+        row["relname"]
+        for row in conn.execute(
+            "select c.relname from pg_trigger t "
+            "join pg_class c on c.oid = t.tgrelid "
+            "where not t.tgisinternal and t.tgname like 'ocr_integrity_%'"
+        ).fetchall()
+    }
+    missing_triggers = sorted(set(expected_tables) - triggers)
+
+    dimensions = {
+        "tracks": scalar("select count(*) from tracks"),
+        "levels": scalar("select count(*) from levels"),
+        "labs": scalar("select count(*) from labs"),
+        "chapters": scalar("select count(distinct chapter_id) from labs where chapter_id is not null"),
+        "courses": scalar("select count(*) from courses"),
+        "users": scalar("select count(*) from users"),
+        "completions": scalar("select count(*) from lab_completions"),
+        "sessions": scalar("select count(*) from lab_sessions"),
+        "achievements": scalar("select count(*) from achievements"),
+    }
+
+    metadata = {
+        "labs_missing_content_version": scalar(
+            "select count(*) from labs where content_version is null or content_version = ''"
+        ),
+        "labs_missing_chapter": scalar(
+            "select count(*) from labs where chapter_id is null or chapter_id = ''"
+        ),
+        "labs_missing_workbook": scalar(
+            "select count(*) from labs where workbook is null or workbook = ''"
+        ),
+        "labs_missing_skills": scalar(
+            "select count(*) from labs where mapped_skills is null or mapped_skills = ''"
+        ),
+        "labs_missing_mitre": scalar(
+            "select count(*) from labs where mitre_attack is null or mitre_attack = ''"
+        ),
+        "labs_missing_level": scalar("select count(*) from labs where level_id is null"),
+        "invalid_difficulty": scalar(
+            "select count(*) from labs where difficulty not in "
+            "('beginner','intermediate','advanced','expert')"
+        ),
+        "duplicate_slugs": scalar(
+            "select count(*) from (select slug from labs group by slug having count(*) > 1) d"
+        ),
+    }
+
+    ledger_entries = scalar("select count(*) from data_integrity_ledger") or 0
+    ledger_bytes = scalar("select pg_total_relation_size('data_integrity_ledger')") or 0
+    chain_breaks = scalar(
+        "select count(*) from ("
+        "  select prev_hash, lag(entry_hash) over (order by id) as expected"
+        "  from data_integrity_ledger"
+        ") t where expected is not null and prev_hash <> expected"
+    ) or 0
+    unattributed_7d = scalar(
+        "select count(*) from data_integrity_ledger "
+        "where actor_type = 'unattributed' and occurred_at > now() - interval '7 days'"
+    ) or 0
+    attributed_7d = scalar(
+        "select count(*) from data_integrity_ledger "
+        "where actor_type <> 'unattributed' and occurred_at > now() - interval '7 days'"
+    ) or 0
+    last_entry = scalar("select max(occurred_at) from data_integrity_ledger")
+
+    ledger = {
+        "installed": ledger_entries > 0,
+        "entries": ledger_entries,
+        "size_bytes": ledger_bytes,
+        "last_entry_at": last_entry.isoformat() if last_entry else None,
+        "chain_breaks": chain_breaks,
+        "unattributed_7d": unattributed_7d,
+        "attributed_7d": attributed_7d,
+        "expected_tables": len(expected_tables),
+        "present_triggers": len(triggers),
+        "missing_triggers": missing_triggers,
+    }
+
+    critical = []
+    if missing_triggers:
+        critical.append(f"missing ledger triggers: {', '.join(missing_triggers)}")
+    if chain_breaks:
+        critical.append(f"ledger prev_hash chain breaks: {chain_breaks}")
+    if metadata["duplicate_slugs"]:
+        critical.append(f"duplicate lab slugs: {metadata['duplicate_slugs']}")
+    if metadata["labs_missing_level"]:
+        critical.append(f"labs without a level: {metadata['labs_missing_level']}")
+    if metadata["invalid_difficulty"]:
+        critical.append(f"labs with invalid difficulty: {metadata['invalid_difficulty']}")
+
+    warnings = []
+    for key in (
+        "labs_missing_content_version",
+        "labs_missing_chapter",
+        "labs_missing_workbook",
+        "labs_missing_skills",
+        "labs_missing_mitre",
+    ):
+        if metadata[key]:
+            warnings.append(f"{key}: {metadata[key]}")
+    if unattributed_7d and unattributed_7d > max(50, attributed_7d * 0.2):
+        warnings.append(
+            f"unattributed writes in 7 days: {unattributed_7d} vs attributed {attributed_7d}"
+        )
+
+    result = {
+        "ok": not critical,
+        "critical": critical,
+        "warnings": warnings,
+        "dimensions": dimensions,
+        "metadata": metadata,
+        "ledger": ledger,
+    }
+
+    if as_json:
+        print(json.dumps(result, indent=2, sort_keys=True, default=str))
+    else:
+        print("Dimensions and change-table check")
+        print("=" * 40)
+        print(f"  tracks={dimensions['tracks']} levels={dimensions['levels']} "
+              f"labs={dimensions['labs']} chapters={dimensions['chapters']} "
+              f"courses={dimensions['courses']}")
+        print(f"  ledger: {ledger_entries} entries, {ledger_bytes} bytes, "
+              f"{len(triggers)}/{len(expected_tables)} triggers, "
+              f"chain breaks={chain_breaks}")
+        for item in critical:
+            print(f"  CRITICAL: {item}")
+        for item in warnings:
+            print(f"  WARN: {item}")
+        print("PASS" if not critical else "FAIL")
+
+    return 0 if not critical else 1
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checksum", action="store_true", help="print table checksums and the database fingerprint")
@@ -662,12 +816,13 @@ def main() -> int:
     parser.add_argument("--write-manifest", metavar="PATH", help="write a signed or unsigned manifest")
     parser.add_argument("--verify", metavar="PATH", help="verify the database against a manifest")
     parser.add_argument("--ledger", action="store_true", help="verify the append-only change ledger")
+    parser.add_argument("--dimensions", action="store_true", help="validate change-table coverage, dimensions, metadata, and a quick ledger check")
     parser.add_argument("--allow-unsigned", action="store_true", help="write a manifest without DB_INTEGRITY_KEY")
     parser.add_argument("--json", action="store_true", help="machine-readable output")
     args = parser.parse_args()
 
-    if not any((args.checksum, args.quality, args.write_manifest, args.verify, args.ledger)):
-        parser.error("choose --checksum, --quality, --write-manifest, --verify, or --ledger")
+    if not any((args.checksum, args.quality, args.write_manifest, args.verify, args.ledger, args.dimensions)):
+        parser.error("choose --checksum, --quality, --write-manifest, --verify, --ledger, or --dimensions")
 
     with connect() as conn:
         conn.execute("SET TRANSACTION READ ONLY")
@@ -677,6 +832,8 @@ def main() -> int:
             return run_quality(conn, args.json)
         if args.ledger:
             return verify_ledger(conn, args.json)
+        if args.dimensions:
+            return run_dimensions(conn, args.json)
         if args.write_manifest:
             return write_manifest(conn, args.write_manifest, args.allow_unsigned)
         if args.verify:

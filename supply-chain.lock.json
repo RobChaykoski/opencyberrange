@@ -91,13 +91,13 @@
       "sha256": "11b207a9b1fc54856e82330c39cb3ce498488717c29edb54386c574f3456bbda"
     },
     "scripts/database_integrity.py": {
-      "sha256": "9377a3ad84617e01e6656e2f4c83d1be4244352ce319671abe25aca8b83b2806"
+      "sha256": "cfb3a7b168e0e2d20be783f2a9a9aca3a0a2d7c6b3886cda01c05bc6870c9be0"
     },
     "scripts/db-integrity-check.sh": {
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "e66919680b19f56931c14ca4101d4938e118b0b14cb5dcdc4ece0b87041f1f58"
+      "sha256": "f6aee83c29e7bff868804eb8d41d0916901a3d8454eb6608aa6d5715b2419039"
     },
     "scripts/generate-about.py": {
       "sha256": "d47872f0d31207e5732346b6db89b1bc2b52d20d1d9988a375b0ab652be29b3f"
