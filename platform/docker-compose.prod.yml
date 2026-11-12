@@ -246,10 +246,13 @@ services:
       LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:-SsoDemoAdmin!2026}
       LDAP_TLS: "false"
       LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+      # The image copies this directory into its own bootstrap folder, so the
+      # repository checkout stays read-only and keeps its host ownership.
+      LDAP_SEED_INTERNAL_LDIF_PATH: /seed
     volumes:
       - ldap_data:/var/lib/ldap
       - ldap_config:/etc/ldap/slapd.d
-      - ${SSO_DIR:-../deploy/sso}/openldap:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ${SSO_DIR:-../deploy/sso}/openldap:/seed:ro
     restart: unless-stopped
 
   dex:
