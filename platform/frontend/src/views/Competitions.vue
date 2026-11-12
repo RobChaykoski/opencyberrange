@@ -407,6 +407,12 @@
         </div>
       </section>
     </div>
+
+    <CommunityEventsCalendar
+      :internal-events="calendarInternalEvents"
+      :community-events="COMMUNITY_EVENTS"
+      :sources="COMMUNITY_EVENT_SOURCES"
+    />
   </div>
 </template>
 
@@ -416,6 +422,8 @@ import axios from '../api/axios'
 import TrophyIcon from '../components/icons/TrophyIcon.vue'
 import ClockIcon from '../components/icons/ClockIcon.vue'
 import SponsorShowcase from '../components/SponsorShowcase.vue'
+import CommunityEventsCalendar from '../components/CommunityEventsCalendar.vue'
+import { COMMUNITY_EVENTS, COMMUNITY_EVENT_SOURCES } from '../data/communityEvents'
 import { resizeImageFile } from '../utils/imageResize'
 
 const competitions = ref([])
@@ -542,6 +550,9 @@ const archivedCount = computed(
 const visibleCompetitions = computed(() => (
   sortedCompetitions.value.filter(c => showArchived.value || !c.is_archived)
 ))
+const calendarInternalEvents = computed(
+  () => competitions.value.filter(c => !c.is_archived)
+)
 
 const labTracks = computed(() => {
   const groups = new Map()
