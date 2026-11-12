@@ -11,7 +11,7 @@
         </h2>
         <p class="portfolio-hero__subtitle">
           {{ data?.cyber_dna?.class?.class_name || 'Recruit' }} ·
-          {{ data?.cyber_dna?.overall ?? 0 }}/100 · {{ data?.cyber_dna?.tier || 'Unranked' }}
+          {{ data?.cyber_dna?.overall ?? 0 }}/99 · {{ data?.cyber_dna?.tier || 'Unranked' }}
           <span v-if="data?.generated_at"> · generated {{ formatDate(data.generated_at) }}</span>
         </p>
         <p class="portfolio-hero__headline">{{ data?.headline }}</p>
@@ -140,8 +140,8 @@
                 role="progressbar"
                 :aria-valuenow="dim.score"
                 aria-valuemin="0"
-                aria-valuemax="100"
-                :aria-label="`${dim.label}: ${dim.score} out of 100`"
+                aria-valuemax="99"
+                :aria-label="`${dim.label}: ${dim.score} out of 99`"
               >
                 <span :style="{ width: dim.score + '%' }"></span>
               </div>
@@ -423,7 +423,7 @@ const topBranchKey = computed(() => {
 })
 const dnaAria = computed(() => {
   const branches = treeDimensions.value
-    .map((dimension) => `${dimension.label}: ${dimension.score} out of 100`)
+    .map((dimension) => `${dimension.label}: ${dimension.score} out of 99`)
     .join('. ')
   return `Cyber DNA skill tree. ${branches}.`
 })

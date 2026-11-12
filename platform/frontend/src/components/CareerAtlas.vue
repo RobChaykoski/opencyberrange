@@ -52,6 +52,17 @@
       />
     </div>
 
+    <div v-if="isFirstRun" class="atlas-empty" role="note">
+      <div>
+        <strong>Start the map with one completed lab.</strong>
+        The families below are a preview. Your first completion unlocks a branch,
+        adds evidence, and moves the recommendation.
+      </div>
+      <router-link to="/exercises" class="btn btn--secondary btn--sm">
+        Find an exercise
+      </router-link>
+    </div>
+
     <div v-if="nextUnlock" class="atlas-next-unlock">
       <span class="atlas-next-unlock__eyebrow">Next unlock</span>
       <strong>{{ nextUnlock.label }}</strong>
@@ -66,7 +77,7 @@
         <span class="atlas-core__sigil" aria-hidden="true">{{ classInitial }}</span>
         <div>
           <strong>{{ dna?.class?.class_name || 'Recruit' }}</strong>
-          <span>{{ dna?.overall ?? 0 }}/100 · {{ dna?.tier || 'Unranked' }}</span>
+          <span>{{ dna?.overall ?? 0 }}/99 · {{ dna?.tier || 'Unranked' }}</span>
         </div>
       </div>
 
@@ -165,6 +176,15 @@
           <p class="atlas-detail__evidence">
             {{ selectedFamily.branch_label }} branch · {{ selectedFamily.evidence_count }} labs in
             this branch · {{ selectedFamily.dimension_average }} average branch score
+          </p>
+          <p class="atlas-detail__basis">
+            <span
+              class="atlas-basis"
+              :class="`atlas-basis--${evidenceBand(selectedFamily).key}`"
+            >
+              {{ evidenceBand(selectedFamily).label }}
+            </span>
+            {{ evidenceBand(selectedFamily).note }}
           </p>
         </div>
         <div class="atlas-detail__score">
@@ -346,6 +366,12 @@ const selectedFamily = computed(() => {
   return families.find((family) => family.key === selectedFamilyKey.value) || families[0] || null
 })
 
+const isFirstRun = computed(
+  () =>
+    Number(props.dna?.overall || 0) === 0 &&
+    Number(props.atlas?.summary?.unlocked || 0) === 0,
+)
+
 const nextUnlock = computed(() => {
   const families = props.atlas?.families || []
   return (
@@ -402,7 +428,31 @@ function selectFamily(family) {
 }
 
 function nodeAria(family) {
-  return `${family.label}. ${unlockLabel(family.unlock_state)}. Practice match ${family.match_score} out of 100. ${family.roles.length} roles.`
+  const band = evidenceBand(family)
+  return `${family.label}. ${unlockLabel(family.unlock_state)}. Practice match ${family.match_score} out of 100. Evidence: ${band.label}. ${family.roles.length} roles.`
+}
+
+function evidenceBand(family) {
+  const count = Number(family?.evidence_count || 0)
+  if (count >= 5) {
+    return {
+      key: 'strong',
+      label: 'Established',
+      note: `${count} completed labs in this branch.`,
+    }
+  }
+  if (count > 0) {
+    return {
+      key: 'growing',
+      label: 'Growing',
+      note: `${count} completed ${count === 1 ? 'lab' : 'labs'} in this branch. A few more will stabilise the match.`,
+    }
+  }
+  return {
+    key: 'none',
+    label: 'No evidence yet',
+    note: 'A starting suggestion from your branch profile, not an assessment.',
+  }
 }
 
 function formatMoney(value, currency = null) {
@@ -564,6 +614,26 @@ function formatMoney(value, currency = null) {
   margin-left: auto;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.atlas-empty {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px dashed var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.atlas-empty strong {
+  color: var(--text-primary);
 }
 
 .atlas-next-unlock {
@@ -981,6 +1051,44 @@ function formatMoney(value, currency = null) {
   color: var(--text-muted);
   font-size: 0.68rem;
   letter-spacing: 0.02em;
+}
+
+.atlas-detail__basis {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.atlas-basis {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.atlas-basis--strong {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.atlas-basis--growing {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.atlas-basis--none {
+  border-color: var(--border-color);
+  color: var(--text-muted);
 }
 
 .atlas-detail__score {

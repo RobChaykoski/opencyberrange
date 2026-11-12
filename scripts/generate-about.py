@@ -57,6 +57,10 @@ BACKEND_LICENCES = {
     "pyotp": "MIT",
     "redis": "MIT",
     "qrcode": "BSD",
+    "ldap3": "LGPL-3.0-only",
+    "python3-saml": "MIT",
+    "lxml": "BSD-3-Clause",
+    "xmlsec": "MIT",
 }
 
 IMAGE_LICENCES = [
@@ -65,6 +69,8 @@ IMAGE_LICENCES = [
     ("nginx:alpine", "BSD-2-Clause plus Alpine packages"),
     ("postgres:15-alpine", "PostgreSQL Licence plus Alpine packages"),
     ("valkey/valkey:9.1.3-alpine", "BSD-3-Clause plus Alpine packages"),
+    ("ghcr.io/dexidp/dex:v2.42.0", "Apache-2.0"),
+    ("osixia/openldap:1.5.0", "MIT plus OpenLDAP Public License 2.8"),
     ("mysql:8.0", "GPL-2.0"),
     ("php:8.1-apache", "PHP Licence 3.01 plus Apache-2.0"),
     ("nginxinc/nginx-unprivileged:alpine", "BSD-2-Clause plus Alpine packages"),

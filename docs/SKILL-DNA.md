@@ -9,6 +9,16 @@ certification path, and shows **practice affinities** built from the same
 activity. It is **descriptive, not predictive**: it is not a grade, a ranking, a
 prediction of job performance, or a claim about a learner's ability.
 
+## In the interface
+
+- Every branch score is shown out of **99**, never 100, because 99 is the cap.
+- A **How this is calculated** disclosure states the inputs, the cap, the
+  independent decay, and the privacy position.
+- Each branch has a **Practice this branch** link to the matching track, so the
+  next step is actionable rather than only descriptive.
+- A learner with no completed exercise sees a three-step start card instead of an
+  empty radar chart. The class card, alignment, and title collection remain.
+
 ## The six traits
 
 | Trait | Class | What it measures | Certification focus |

@@ -57,6 +57,19 @@ API reports the coverage percentage. A competency is **validated** only when the
 score is at least 60 **and** the learner has a workbook or capstone evidence
 entry. A completion alone is not an award.
 
+## Evidence bands in the interface
+
+Each career family carries the evidence behind its match:
+
+| Band | Evidence | Meaning |
+|---|---|---|
+| **Established** | 5 or more completed labs in the branch | The match has a stable practice base |
+| **Growing** | 1–4 completed labs | Directionally supported; a few more labs stabilise it |
+| **No evidence yet** | 0 labs | A starting suggestion from the branch profile, not an assessment |
+
+The band appears in the family detail and the screen-reader label. It is not a
+confidence score or a probability.
+
 ## Readiness model
 
 Readiness uses five components:

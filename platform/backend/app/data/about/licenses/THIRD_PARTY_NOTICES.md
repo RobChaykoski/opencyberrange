@@ -40,6 +40,20 @@ The project source and its original content are licensed under the
 [`BUILD_NOTICE.md`](BUILD_NOTICE.md). Third-party components remain under
 their own licences; the project licence does not override them.
 
+## Release 4 update
+
+- Backend adds `ldap3==2.9.1` (LGPL-3.0-only), `python3-saml==1.16.0` (MIT),
+  `lxml` (BSD-3-Clause), and `xmlsec` (MIT) for enterprise directory and SAML
+  sign-in. Licence texts are in `THIRD_PARTY_LICENSES/LGPL-3.0.txt`,
+  `MIT.txt`, and `BSD-3-Clause.txt`.
+- The optional SSO test stack adds Dex (`ghcr.io/dexidp/dex:v2.42.0`,
+  Apache-2.0) and osixia/openldap 1.5.0 (MIT image, OpenLDAP Public License 2.8
+  server). The OpenLDAP text is `THIRD_PARTY_LICENSES/OpenLDAP-2.8.txt`.
+- Both SSO images are profile-gated (`--profile sso`). They are pulled, not
+  redistributed, and are not started on a normal install.
+- Release 4 changes are recorded in `CHANGELOG.md`, `versions.yaml`, and the
+  About inventory (`platform/backend/app/data/about/about.json`).
+
 ## 2.7.0 update
 
 - No new third-party runtime dependencies are shipped in 2.7.0. Level quizzes
@@ -67,7 +81,7 @@ their own licences; the project licence does not override them.
   with the action authors.
 - Release signing uses GnuPG; it is not redistributed with the platform.
 - The active release key fingerprint is
-  `095B D8B5 6802 771D A27E 759E 1BAE 4CD3 1609 A1BF`.
+  `8E81 B5F3 FDC5 F5A6 2B0C 2587 91FD 6FBC 4ADA FDA2`.
 
 ## Brand assets
 
@@ -113,6 +127,10 @@ Apache-2.0, ISC, PSF, and MPL-2.0 components; an SBOM is the reliable inventory.
 | redis (Python client) | MIT | Include copyright notice |
 | qrcode | BSD | Include copyright notice |
 | Pillow | HPND | Include copyright and licence notice |
+| ldap3 | LGPL-3.0-only | Include `LGPL-3.0.txt` and relinking/source information |
+| python3-saml | MIT | Include copyright notice |
+| lxml | BSD-3-Clause | Include copyright notice |
+| xmlsec (python-xmlsec) | MIT | Include copyright notice |
 
 Notable transitive components include `certifi` (MPL-2.0), `pathspec`
 (MPL-2.0), `python-dateutil` (dual BSD/Apache-2.0), `pywin32` (PSF), `numpy`

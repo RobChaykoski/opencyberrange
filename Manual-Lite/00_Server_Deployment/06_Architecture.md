@@ -18,7 +18,14 @@ flowchart TB
         FE[ocr-frontend nginx 80 443]
         BE[ocr-backend uvicorn FastAPI 127.0.0.1 8000]
         DB[ocr-db PostgreSQL 15 5432]
-        RD[ocr-redis Redis 7.2 6379]
+        RD[ocr-valkey Valkey 9.1.3 6379]
+    end
+
+    subgraph IdP[Optional identity plane]
+        IDP[Institution OIDC or SAML IdP]
+        LDAP[LDAP or Active Directory]
+        DEX[ocr-dex local test IdP]
+        OLDAP[ocr-ldap local test directory]
     end
 
     Sock[/var/run/docker.sock/]
@@ -33,6 +40,11 @@ flowchart TB
     FE -->|proxy| BE
     BE --> DB
     BE --> RD
+    BE -->|OIDC / SAML| IDP
+    BE -->|LDAP bind| LDAP
+    FE -->|/idp proxy| DEX
+    DEX --> OLDAP
+    BE -->|OIDC test login| DEX
     BE -->|mounts| Sock
     BE -->|mounts| LabsDir
     BE -->|spawns via socket| Lab
@@ -43,10 +55,12 @@ flowchart TB
 
 | Container | Runtime | Binding | Role |
 |-----------|---------|---------|------|
-| `ocr-frontend` | nginx | 80 and 443 | Serves the SPA and the `wiki_data` volume, proxies the API |
-| `ocr-backend` | Python + uvicorn / FastAPI | 127.0.0.1:8000 | API, lab orchestration, firewall apply |
+| `ocr-frontend` | nginx | 80 and 443 | Serves the SPA and the `wiki_data` volume, proxies the API and `/idp` |
+| `ocr-backend` | Python + uvicorn / FastAPI | 127.0.0.1:8000 | API, SSO, lab orchestration, firewall apply |
 | `ocr-db` | PostgreSQL 15 | internal 5432 | PostgreSQL, `max_connections=300` |
-| `ocr-redis` | Redis 7.2 | internal 6379 | Shared rate-limit counters |
+| `ocr-valkey` | Valkey 9.1.3 | internal 6379 | Shared rate-limit counters |
+| `ocr-dex` (optional) | Dex | internal 5556, behind `/idp` | Local OIDC test IdP |
+| `ocr-ldap` (optional) | OpenLDAP | internal 389 | Local directory for the Dex test stack |
 
 !!! note "Pinned images are recorded separately"
     The diagram and table name each service by role, not by base image. Exact
@@ -188,22 +202,21 @@ An impersonation read-only middleware enforces that an admin viewing a student a
 
 ## Schema changes and migrations
 
-Database tables are created with SQLAlchemy `create_all`. Additive column
-changes for existing databases are applied idempotently at backend startup in
-`platform/backend/app/main.py`, so a normal upgrade does not require manual SQL.
+Database tables are created with SQLAlchemy `create_all` under a PostgreSQL
+advisory lock. Additive compatibility changes for existing databases are applied
+idempotently at startup, then Alembic stamps a fresh database or upgrades an
+existing one to head. A normal upgrade does not require manual SQL.
 
-Tracked schema revisions live in `platform/backend/alembic/versions/`. The
-current head is:
+Tracked revisions live in `platform/backend/alembic/versions/`; the current head
+is **`0014_performance_indexes`**. The earlier avatars change is
+`0004_user_avatar_data`.
 
-| Revision | Change |
-|----------|--------|
-| `0004_user_avatar` | Adds `users.avatar_data` for profile avatars |
-
-For an explicitly managed migration, run `alembic upgrade head` from
-`platform/backend` with the deployment database URL. Back up the database
-before any schema change. The startup checks cover the columns the application
-expects today; they are not a replacement for reviewing and testing a migration
-on a copy of production data.
+Do **not** run `alembic upgrade head` by hand while the backend is serving; the
+startup path already does it under a lock. Back up before any upgrade. There is
+no supported downgrade: restore the pre-upgrade dump and redeploy the previous
+release. Full detail, including the hybrid inline-plus-Alembic model and
+recovery steps, is in
+[Database schema and Alembic migrations](../../docs/DATABASE-MIGRATIONS.md).
 
 !!! note "Profile avatars are database-backed"
     Avatars are stored as small base64 data URLs in `users.avatar_data`. They do

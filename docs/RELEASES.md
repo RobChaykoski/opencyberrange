@@ -7,8 +7,9 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v3` | SWOCTS Cyber Range Release 3 | Current supported platform release (signed annotated tag) |
-| `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Previous release; upgrade to Release 3 (unsigned tag; documented exception) |
+| `v4` | SWOCTS Cyber Range Release 4 | Current supported platform release (signed annotated tag to be created at release) |
+| `v3` | SWOCTS Cyber Range Release 3 | Previous supported release (signed annotated tag) |
+| `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Previous release; upgrade to Release 4 (unsigned tag; documented exception) |
 | `v2.6.0` | SWOCTS Cyber Range 2.6.0 | Previous release; upgrade to Release 3 |
 | `v2.5.5` | SWOCTS Cyber Range 2.5.5 | Previous release; upgrade to Release 3 |
 | `v2.5.4` | SWOCTS Cyber Range 2.5.4 | Previous release; upgrade to Release 3 |
@@ -20,7 +21,7 @@ represent. It exists because the history contains several naming eras.
 | `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to Release 3 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
-`v3` is signed with the release key
+`v4` is signed with the release key
 `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`. The public key is
 `docs/release-signing-key.asc`. `v2.7.0` is the last unsigned annotated tag,
 points at `ce7c25bb`, and remains a documented exception from before the
@@ -46,15 +47,15 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 ## Enterprise branch tags
 
-Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch.
-They are **not** the supported single-host platform release. The platform
-release `v3` is a separate signed tag on the current tree. HA, SSO,
-multi-tenancy, LMS, and compliance reporting are not shipped in the supported
-deployment.
+Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
+and are historical. They are **not** the supported single-host platform
+release. The platform release `v4` is the signed tag on the current tree.
+Release 4 ships OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI, and the
+per-student accommodation engine are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v2.7.x` tag for new installs.
+1. Use `main` or the latest `v4` tag for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.

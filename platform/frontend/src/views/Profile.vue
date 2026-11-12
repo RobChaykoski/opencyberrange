@@ -353,7 +353,7 @@
                   <span>{{ summary?.skill_dna?.class?.label || 'No class yet' }}</span>
                 </div>
                 <p v-if="summary?.skill_dna">
-                  {{ summary.skill_dna.overall }} / 100 overall, {{ summary.skill_dna.tier }}.
+                  {{ summary.skill_dna.overall }} / 99 overall, {{ summary.skill_dna.tier }}.
                   Your highest branch is {{ summary.skill_dna.class.label }}.
                 </p>
                 <p v-else>Complete exercises to build your six branches.</p>
@@ -390,7 +390,7 @@
                   <ul v-if="haveDimensions.length">
                     <li v-for="dim in haveDimensions" :key="`have-${dim.key}`">
                       <span>{{ dim.label }}</span>
-                      <strong>{{ dim.score }}/100</strong>
+                      <strong>{{ dim.score }}/99</strong>
                     </li>
                   </ul>
                   <p v-else class="help-text">
@@ -402,7 +402,7 @@
                   <ul v-if="buildDimensions.length">
                     <li v-for="dim in buildDimensions" :key="`build-${dim.key}`">
                       <span>{{ dim.label }}</span>
-                      <strong>{{ dim.score }}/100</strong>
+                      <strong>{{ dim.score }}/99</strong>
                     </li>
                   </ul>
                   <p v-else class="help-text">

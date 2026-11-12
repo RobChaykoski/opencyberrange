@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 FROM python:3.11-slim
 
-ARG PLATFORM_VERSION=3
+ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
 
 ENV OCR_BUILD_REVISION=${BUILD_REVISION}

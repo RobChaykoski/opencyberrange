@@ -17,7 +17,7 @@ RUN npm run build
 # Production stage - serve with nginx
 FROM nginx:alpine
 
-ARG PLATFORM_VERSION=3
+ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
 
 LABEL org.opencontainers.image.title="SWOCTS Cyber Range frontend" \

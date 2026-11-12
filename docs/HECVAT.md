@@ -45,6 +45,9 @@ model actually sold.
 - Pinned dependencies and a signed supply-chain manifest.
 - Automated dependency and container scanning in CI.
 - Security review of changes; signed release tags.
+- Schema changes are reviewed Alembic revisions plus idempotent compatibility
+  ALTERs; startup applies them under a PostgreSQL advisory lock. See
+  `docs/DATABASE-MIGRATIONS.md`.
 - Internal security review: `docs/SECURITY-REVIEW-2026-11.md`.
 - Third-party penetration test: not held.
 
@@ -90,6 +93,7 @@ model actually sold.
 | Privacy, erasure, backups | `docs/PRIVACY-AND-DATA-DELETION.md` |
 | Analytics governance | `docs/ANALYTICS-GOVERNANCE.md` |
 | Supply chain | `docs/SUPPLY-CHAIN.md` |
+| Database schema and migrations | `docs/DATABASE-MIGRATIONS.md` |
 | Security review | `docs/SECURITY-REVIEW-2026-11.md` |
 | Compliance posture | `docs/COMPLIANCE.md` |
 | Procurement traceability | `docs/PROCUREMENT-REQUIREMENTS.md` |

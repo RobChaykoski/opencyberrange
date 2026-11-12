@@ -2,10 +2,54 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
+## [4] - 2026-11-12
+
+Release 4. Enterprise single sign-on, the optional Dex/OpenLDAP test stack, and
+the privacy, accessibility, and API-exposure corrections.
+
+### Enterprise SSO
+- OIDC authorization-code login with PKCE, state, nonce, discovery, JWKS, and
+  issuer/audience/signature validation.
+- SAML 2.0 SP-initiated login with signed assertion validation and shared
+  RelayState/AuthnRequest state.
+- LDAP/Active Directory sign-in with a service bind, user rebind, filter
+  escaping, StartTLS, and certificate verification.
+- One provisioning/linking service for all adapters: verified-email linking,
+  administrator-link refusal, SSO-only accounts, and instructor group mapping.
+- Directory role mapping is refreshed on every SSO login, so a group change takes
+  effect without an administrator editing the account.
+- Optional `sso` compose profile with Dex (OIDC) and OpenLDAP, a generated Dex
+  config, LDAP bootstrap users, and an `/idp/` nginx proxy for local testing.
+- The local administrator password login remains as break-glass access.
+
+### Security
+- The backend now trusts `X-Forwarded-For`/`X-Forwarded-Proto` only from
+  loopback and private Docker bridges. Per-IP rate limits and audit rows use the
+  real client address instead of the nginx container address.
+- SSO states and tickets remain single-use, provider-bound, and short-lived.
+
+### Privacy
+- Subject-access export now includes external identity links and SSO session
+  metadata, without the encrypted ID token or provider secrets.
+- Account erasure explicitly removes external identities, SSO sessions, and SSO
+  tickets and records the counts in the erasure result.
+- Added identity-federation data to the privacy and procurement documentation.
+
+### Accessibility
+- The institution sign-in panel is a labelled section with a heading, visible
+  directory-field labels, per-provider accessible button names, error
+  associations, `aria-busy` state, and visible focus styles.
+- Cyber DNA and Cyber GPS use one scale (`/99` for DNA), an accessible
+  "How this is calculated" disclosure, and a zero-evidence start card instead of
+  an empty radar chart. Career GPS labels each family's evidence band.
+
+### Documentation
+- Added the compliance posture, procurement traceability, accessibility
+  statement, automated-scoring statement, HECVAT answer pack, LTI design
+  contract, DPA template, and Release 5 scope.
+- Release 4 does not claim LTI, multi-tenancy, a per-student accommodation
+  engine, a TA role, a signed VPAT, SOC 2, or ISO 27001.
+
 ## [3.1.1] - 2026-11-05
 
 Enterprise SSO adapter release.
@@ -48,7 +92,6 @@ Enterprise SSO adapter release.
   IdP-initiated logout path.
 - A formal SSO security review remains.
 
->>>>>>> d3fcd574 (feat(sso): add SAML and LDAP login adapters for Enterprise 3.1.1)
 ## [3.1.0] - 2026-11-05
 
 Enterprise single sign-on release.
@@ -127,7 +170,6 @@ Enterprise release line.
   regulatory reporting remain in the Enterprise programme; see
   `docs/V3-HA-LAB-POOL.md` and `docs/EDITIONS.md`.
 
->>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
 ## Edition model
 
 - **Community / Academic 1.1** — supported single-host teaching platform, lab

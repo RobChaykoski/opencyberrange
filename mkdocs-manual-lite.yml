@@ -167,6 +167,7 @@ nav:
     - "Managing Tracks and Levels": 04_Admin_Guide/18_Managing_Tracks_and_Levels.md
     - "Reordering Tracks and Levels": 04_Admin_Guide/19_Reordering_Tracks_and_Levels.md
     - "Platform Settings": 04_Admin_Guide/20_Platform_Settings.md
+    - "Identity Providers (SSO)": 04_Admin_Guide/30_Identity_Providers.md
     - "Viewing Activity Audit Logs": 04_Admin_Guide/21_Viewing_Activity_Audit_Logs.md
     - "Reporting and Analytics": 04_Admin_Guide/28_Reporting_And_Analytics.md
     - "Cyber DNA and RangeBox Operations": 04_Admin_Guide/29_Cyber_DNA_And_RangeBox.md

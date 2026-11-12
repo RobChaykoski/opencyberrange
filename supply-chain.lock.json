@@ -37,10 +37,10 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "af1fadbb1426b8b668e7b1c6a8a1404d93c7cb66ca2db9c380b4c952962a7a3c"
+      "sha256": "28aa8ebf0a0e20a234fa66b166631f35d434ea666bc61eaa6caf67610c7d20b2"
     },
     "platform/backend/app/version.py": {
-      "sha256": "68594d92f43c5363782485464919baceaa82ec90f3be497d699a1b20a68150c2"
+      "sha256": "d28df52054f1f978f8140929961568ff52a4abd8cbf5e8194ba37d4219944056"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -49,13 +49,13 @@
       "sha256": "12339000e6cf642ecbb32e4cd1433f37e8eadcdbfd0edc152f72fa342273ecec"
     },
     "platform/backend/requirements.txt": {
-      "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
+      "sha256": "ab21e863c4ec98c80486e5efc91332ef79f7b5fcef4828bb39a50515a6d6b10d"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "29c9ad752b41f73c4bea42d2ba26be48e79939a70e4cf8073e7405b53de6bab7"
+      "sha256": "8f19b4747ce1f70737de193afbee2c73c77df389675453248d09219490241bd3"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "5c10501b23f914b7918c611f825b1c25f18174057cde2f4ef294cf5387d78849"
+      "sha256": "ae06581f72beef6faf2c33db8e8e2d8811eb2df13d6dbd73bf400b24dce69aab"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -70,10 +70,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "4909066eb2e78e9e032ae7f81304d129e234c3626f12bd210800b54ce7796c36"
+      "sha256": "b0bbaec1b36b69e17f218ec4f844d4ba31c1061cdd87f4c7e771b022f8ae5bda"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "bc3934db3dcd67f6f4be47d37aab4bbd728efb3b9609ad214edeb43bef1ec0b8"
+      "sha256": "482d56bbb662838ba3ce35499adbf36b8db727bac9b0d82130344d8b6ea21d0d"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
@@ -100,7 +100,7 @@
       "sha256": "f6aee83c29e7bff868804eb8d41d0916901a3d8454eb6608aa6d5715b2419039"
     },
     "scripts/generate-about.py": {
-      "sha256": "d47872f0d31207e5732346b6db89b1bc2b52d20d1d9988a375b0ab652be29b3f"
+      "sha256": "1b16e8dcc705b261614959dcfd2dab14e9dfc643c22cdacb6374b9b6d41836fc"
     },
     "scripts/install-platform.sh": {
       "sha256": "2e689b91b69de0aa56db7bed14551a61133c84e2bdb1ed5d5450dcd43a36118e"
@@ -124,7 +124,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "b6ab6ff7b9e0cd31807c26ab963bde52fef700ffe8b1d99f76c3cbadc277b416"
+      "sha256": "ba3d82aab5313443a8c5d01b1a72a7f157af67ccaba34d235f1d6f0df7759591"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1186,6 +1186,6 @@
       ]
     }
   },
-  "release": "3",
+  "release": "4",
   "schema": 1
 }

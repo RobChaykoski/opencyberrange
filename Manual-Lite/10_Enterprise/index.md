@@ -1,33 +1,25 @@
-<<<<<<< HEAD
-# SWOCTS Cyber Range Enterprise preview - manual supplement
+# SWOCTS Cyber Range Enterprise - manual supplement
 
-Enterprise is a **preview profile on Release 3** and adds HA, SSO,
-enterprise reporting, multi-tenant support, LMS/SIS integration, and compliance
-reporting. Read the [core manual](../index.md) and the
-=======
-# OpenCyberRange Enterprise 3.1 — manual supplement
-
-Enterprise 3.1 is **Professional 2.1 plus HA, SSO, enterprise reporting,
-multi-tenant support, LMS/SIS integration, and compliance reporting**. Read the
-[core manual](../index.md) and the
->>>>>>> 4c80e58a (feat(sso): add OIDC single sign-on for Enterprise 3.1.0)
+Enterprise is a **Release 4 profile** and adds HA, SSO, enterprise reporting,
+and compliance reporting. Multi-tenant support, LMS/SIS integration, and the
+per-student accommodation engine are Release 5. Read the [core manual](../index.md) and the
 [Professional supplement](../09_Professional/index.md) first. Enterprise is
 cumulative too.
 
 ## Delivery status
 
-| Capability | State in the preview |
+| Capability | State in Release 4 |
 |---|---|
 | Professional analytics and reporting | Inherited |
-| SSO / OIDC | **OIDC login implemented and tested across two API replicas** |
-| SSO / LDAP / SAML settings | Stored and encrypted; SAML and LDAP login adapters are next |
+| SSO / OIDC | **Implemented and tested** |
+| SSO / LDAP / SAML | **Implemented and tested** |
 | Multi-host HA lab pool | Reference implementation in the separate HA repository; not a supported production deployment yet |
-| Multi-tenancy | Planned |
-| LMS / SIS integration | Planned |
-| Enterprise and compliance reporting | Planned |
+| Multi-tenancy | Planned for Release 5 |
+| LMS / SIS integration (LTI 1.3 Advantage) | Planned for Release 5 |
+| Enterprise and compliance reporting | Partial; the procurement evidence pack is in `docs/COMPLIANCE.md` and `docs/HECVAT.md` |
 
-OIDC is implemented and HA-tested at the control-plane level. SAML and LDAP
-login adapters, a formal SSO security review, and the full multi-host HA failure
+OIDC, SAML 2.0, and LDAP/Active Directory login are implemented and tested in
+Release 4. A formal SSO security review and the full multi-host HA failure
 matrix remain. See `docs/EDITIONS.md`, `docs/V3-HA-LAB-POOL.md`, and
 `docs/V3-PARKING-LOT.md`.
 
@@ -51,9 +43,9 @@ deployment shape, not a checkbox in the single-host installer.
 
 ## Single sign-on (OIDC, SAML, LDAP)
 
-Enterprise 3.1 adds OIDC, SAML 2.0, and LDAP/Active Directory sign-in on top of
-the HA control plane. The login page shows a button for each enabled OIDC or SAML
-provider, and an institution-account form for each LDAP provider.
+Release 4 adds OIDC, SAML 2.0, and LDAP/Active Directory sign-in. The login page
+shows a button for each enabled OIDC or SAML provider, and an
+institution-account form for each LDAP provider.
 
 ### OIDC
 
@@ -104,9 +96,12 @@ All three adapters share the same account policy. SSO-provisioned accounts
 cannot use the local password form. Existing local accounts keep their password
 unless an administrator changes the flag. Admin accounts are never auto-linked;
 keep a local break-glass administrator. Group mapping can grant `instructor`,
-but never `admin`.
+but never `admin`. Directory role mapping is refreshed on every SSO login, so a
+group change applies without editing the account.
 
-For setup examples, claim mapping, and troubleshooting, see
+For a local test IdP, see the
+[Dex + OpenLDAP test stack](../../deploy/sso/README.md). For setup examples,
+claim mapping, and troubleshooting, see
 [`docs/SSO-OIDC.md`](../../docs/SSO-OIDC.md),
 [`docs/SSO-SAML-LDAP.md`](../../docs/SSO-SAML-LDAP.md), and
 [ADR 0004](../../docs/decisions/0004-sso-ha-contract.md).
@@ -115,7 +110,7 @@ For setup examples, claim mapping, and troubleshooting, see
 
 - **Identity providers:** the settings screen stores LDAP, OIDC, and SAML
   configuration and encrypts bind passwords, client secrets, and private keys.
-  OIDC, SAML, and LDAP login are active in 3.1.1.
+  OIDC, SAML, and LDAP login are active in Release 4.
 - **Secrets:** protect `WG_ENCRYPTION_KEY` and database backups. The identity
   provider secrets use the same Fernet key as WireGuard keys.
 - **Node agents:** never expose the Docker socket or the node-agent port

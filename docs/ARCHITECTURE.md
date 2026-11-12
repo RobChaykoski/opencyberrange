@@ -15,21 +15,27 @@ flowchart TB
     end
 
     subgraph Edge["Frontend container: ocr-frontend"]
-        N["nginx<br/>TLS, SPA, /api proxy, /wiki"]
+        N["nginx<br/>TLS, SPA, /api proxy, /wiki, /idp"]
         WV["wiki_data volume<br/>read-only"]
     end
 
     subgraph App["Backend container: ocr-backend"]
-        API["FastAPI<br/>auth, RBAC, REST API"]
+        API["FastAPI<br/>auth, RBAC, SSO, REST API"]
         SCHED["Scheduler<br/>session expiry, cleanup"]
         ORCH["Lab orchestrator<br/>Docker Compose"]
         SURVEY["Survey consent<br/>versioned statement"]
         WIKI["Wiki publishing<br/>deploy-time builder"]
     end
 
+    subgraph IdP["Institution identity plane (optional)"]
+        OIDC["OIDC / SAML IdP<br/>institution or CAF"]
+        LDAP["LDAP / Active Directory"]
+        DEX["Dex<br/>local OIDC test IdP"]
+    end
+
     subgraph Data["Persistent data"]
-        PG[("PostgreSQL<br/>users, labs, progress,<br/>consent history")]
-        RD[("Redis<br/>rate-limit counters")]
+        PG[("PostgreSQL<br/>users, labs, progress,<br/>consent, SSO state")]
+        RD[("Valkey<br/>rate-limit counters")]
         WB[("workbook_data<br/>Exercise Studio state")]
         WIKIV[("wiki_data<br/>MkDocs output")]
     end
