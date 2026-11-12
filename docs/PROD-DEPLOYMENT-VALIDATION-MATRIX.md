@@ -40,7 +40,7 @@ notes.
 | D2 | Nulls in critical columns | Yes | PASS | users/labs/levels/sessions/completions/settings: 0 |
 | D3 | Duplicate usernames/emails/slugs | Yes | PASS | 0 |
 | D4 | Numeric sanity | Yes | PASS | No negative durations/counters, no future timestamps |
-| D5 | Ledger attribution | No | WARN | 3,927 unattributed vs 4,191 attributed writes in the last 7 days (seed/CLI/system writes); review queue noisy |
+| D5 | Ledger attribution | No | WARN | Historical 3,927 unattributed rows remain in the 7-day window; new CLI/seed writes are system-attributed via `application_name=ocr-app-cli`. Verified: 169 lab-discovery updates recorded as `system`; historical rows age out |
 | D6 | Stale lab rows | No | PASS | 178 DB labs = 169 repo + 9 intentional `demotest-*` |
 | P1 | Backup restore drill | Yes | PASS | `pg_dump` + `pg_restore` into a scratch database; counts match exactly (141 users, 178 labs, 230 completions, 158 achievements) |
 | P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | PASS | Scratch DB downgraded 0014 -> 0011 (2.6-era head) and upgraded back to 0014; row counts unchanged (141/178/230) |
@@ -65,8 +65,11 @@ notes.
     `profile-dna-tree.png`, `profile-dna-continuing-education.png`,
     `profile-cyber-gps.png`, and `Workbook/assets/workbook-reading.png`. The
     rendered manual page `.../22_Navigating_Your_Cyber_DNA/` and the workbook
-    Home both loaded with all images. This note does not change the production
-    gate: P4 and P5 remain NOT RUN.
+    Home both loaded with all images. CLI and seed scripts now set
+    `application_name=ocr-app-cli`, so new writes are attributed to `system`
+    instead of `unattributed`; historical rows in the 7-day window remain until
+    they age out. This note does not change the production gate: P4 and P5
+    remain NOT RUN.
 
 - Required PASS: 31
 - Required FAIL: 0

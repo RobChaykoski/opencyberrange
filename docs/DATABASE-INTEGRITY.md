@@ -72,7 +72,7 @@ Actor attribution:
 | Actor type | Meaning |
 |---|---|
 | `user` | An authenticated application request. `actor_id` is the signed-in account. |
-| `system` | An application job with no user (scheduler, startup, import). The engine sets `application_name=ocr-app`. |
+| `system` | An application job with no user (scheduler, startup, import, CLI/seed script). The application engine sets `application_name=ocr-app`; shipped CLI and seed scripts set `application_name=ocr-app-cli`. |
 | `unattributed` | A write that bypassed the application, such as manual `psql`, or an uninstrumented path. |
 
 The ledger chain is:
@@ -105,6 +105,11 @@ context. Common causes are:
 - a maintenance, migration, or import script run outside the application;
 - a backup restore or data transfer;
 - a host-side tool or integration that writes directly to PostgreSQL.
+
+Shipped CLI and seed scripts set `application_name=ocr-app-cli`, so their writes
+are recorded as `system`. An unattributed write from a script usually means the
+script created its own engine without that setting, or a manual client bypassed
+the application entirely.
 
 Before accepting one, match its time to a deployment, migration, restore, or
 maintenance window; check database and host access logs; and confirm the table
