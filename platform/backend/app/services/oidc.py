@@ -34,6 +34,7 @@ from app.services.sso_flow import (
     create_flow_state,
     frontend_base_url,
     public_base_url,
+    tls_verify,
 )
 
 logger = logging.getLogger(__name__)
@@ -54,6 +55,7 @@ def _http_get_json(url: str) -> dict:
             url,
             timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
             headers={"Accept": "application/json"},
+            verify=tls_verify(),
         )
         response.raise_for_status()
         data = response.json()
@@ -154,6 +156,7 @@ def exchange_code(
             auth=auth,
             timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
             headers={"Accept": "application/json"},
+            verify=tls_verify(),
         )
         response.raise_for_status()
         payload = response.json()
@@ -360,6 +363,7 @@ def test_provider(provider: IdentityProvider) -> dict:
             str(document["jwks_uri"]),
             timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
             headers={"Accept": "application/json"},
+            verify=tls_verify(),
         )
         response.raise_for_status()
         keys = response.json().get("keys", [])

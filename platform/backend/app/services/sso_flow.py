@@ -48,6 +48,15 @@ def frontend_base_url() -> str:
     return configured.rstrip("/") if configured else public_base_url()
 
 
+def tls_verify() -> bool:
+    """TLS verification for outbound IdP calls.
+
+    Verification stays on in production. The opt-in flag exists for local
+    development, where the platform is served behind a self-signed certificate.
+    """
+    return not settings.SSO_ALLOW_INSECURE_HTTP
+
+
 def sanitize_return_to(value: str | None) -> str:
     value = (value or "").strip()
     if not value.startswith("/") or value.startswith("//"):
