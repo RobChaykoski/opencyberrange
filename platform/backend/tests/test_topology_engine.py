@@ -21,6 +21,9 @@ def _node(image="ocr-lab/topology-node:latest", **overrides):
         "labels": {"ip_offset": "21"},
         "cap_add": ["NET_ADMIN"],
         "security_opt": ["no-new-privileges:true"],
+        "mem_limit": "192m",
+        "cpus": 0.2,
+        "pids_limit": 96,
     }
     service.update(overrides)
     return service
@@ -115,6 +118,16 @@ def test_static_route_resolves_a_direct_peer():
     assert routes[0]["via"] == result["service_networks"]["svc"]["topo_1"]["ipv4_address"]
 
 
+def test_route_can_target_a_node_subnet():
+    compose = _compose()
+    compose["x-ocr-topology"]["nodes"]["r1"]["routes"] = [
+        {"to": "node:svc", "via": "svc"}
+    ]
+    result = _expand(compose)
+    route = json.loads(result["service_env"]["r1"]["OCR_ROUTES"])[0]
+    assert route["to"] == result["networks"]["topo_1"]["ipam"]["config"][0]["subnet"]
+
+
 def test_link_subnets_stay_inside_the_protected_range():
     for user_id, second in ((7, 100), (300, 100), (554, 101), (2000, 107)):
         result = _expand(
@@ -142,6 +155,9 @@ def test_link_subnets_stay_inside_the_protected_range():
         {"environment": {"OCR_GATEWAY": "10.0.0.1"}},
         {"labels": {"ocr_lab_net": "false", "ip_offset": "21"}},
         {"labels": {}},
+        {"mem_limit": "1g"},
+        {"cpus": 1.0},
+        {"pids_limit": 512},
     ],
 )
 def test_unsafe_service_is_rejected(override):

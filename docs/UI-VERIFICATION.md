@@ -15,7 +15,7 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 |---|---|
 | Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **510 passed, 0 failed** |
 | Backend suite without a database | **293 passed, 217 skipped** |
-| Lab validator (`validate-lab.py --all`) | **170 labs, 0 errors, 0 warnings** |
+| Lab validator (`validate-lab.py --all`) | **173 labs, 0 errors, 0 warnings** |
 | Topology engine unit tests | **18 passed** |
 
 | Relative links in README, docs, Manual-Lite, Workbook | **479 files, all resolve** |
@@ -772,4 +772,5 @@ CI runs the same static checks on every push:
   [RangeBox capacity test](RANGEBOX-CAPACITY.md) on each host class.
 - Production `192.168.120.41` was upgraded to `2.4.1`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
+
 

@@ -641,7 +641,7 @@
       ]
     },
     "network-12-2-device-topology-engine": {
-      "content_hash": "978edae925a141d84a97eaa23df64f5bdf19f9206b48e00e9b288fe359571025",
+      "content_hash": "435be4d20673f93250866cf4c225ae1e89a411c0424e76a019b5902dca692d08",
       "services": []
     },
     "network-12-2-firewall-policy-hardening": {
@@ -651,6 +651,18 @@
         "traffic-gen",
         "web-server"
       ]
+    },
+    "network-12-3-two-router-transit": {
+      "content_hash": "65c55243af91511b628060e194ff00f65fed59c8673edc6ac8ce64bb76c8892e",
+      "services": []
+    },
+    "network-12-4-firewall-service-path": {
+      "content_hash": "022b72754eaaea798bccbfe090dffbb03b5e08a2d0a99cdd46ceddbb197016c0",
+      "services": []
+    },
+    "network-12-5-multi-service-router": {
+      "content_hash": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
+      "services": []
     },
     "network-2-1-ftp-credential-extraction": {
       "content_hash": "af279adebd8ec17deaa557bbf21abef954f8e6de49e1a75154b244f5bed75289",

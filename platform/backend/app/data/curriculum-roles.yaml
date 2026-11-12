@@ -96,13 +96,17 @@ pathways:
       TH: Silver
       PROF: Gold
     critical_competencies:
+      - NET-004
       - NET-011
       - NET-014
+      - NET-015
+      - NET-016
       - NET-021
       - NET-022
       - NET-029
       - NET-030
       - NET-033
+      - NET-034
       - WIN-005
       - WIN-009
       - WIN-012

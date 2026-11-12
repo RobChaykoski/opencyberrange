@@ -30,6 +30,15 @@ By the end of this chapter you can:
 - Do not change the router's forwarding setting or the link addressing.
 - The flag is on the service node; reach it through the routed path.
 
+## Labs in this chapter
+
+| Lab | Focus | Time |
+|---|---|---|
+| 12.1 Routed Path | host → router → service; default route, forwarding, link evidence | 45 min |
+| 12.2 Two-Router Transit | static routes and return paths across two routers | 60 min |
+| 12.3 Firewall the Service Path | nftables forward policy on a routed segment | 50 min |
+| 12.4 Multi-Service Router | three-link mapping and topology documentation | 70 min |
+
 ## The engine in one paragraph
 
 The platform reads the lab's `x-ocr-topology` block, allocates a private `/29`

@@ -105,17 +105,18 @@ arbitrary next hop that is not directly connected.
 - A switch is a Docker bridge, not a device. The topology is routed (L3), not a
   vendor NOS.
 
-## Demo lab
+## Demo labs
 
-`platform/labs/Network/network-12-2-device-topology-engine/`:
+`platform/labs/Network/`:
 
-- `h1` host — `h1—r1`
-- `r1` router — `r1—svc`
-- `svc` service — flag over HTTP
+- `network-12-2-device-topology-engine` — host → router → service; routed path.
+- `network-12-3-two-router-transit` — two routers, transit and return routes.
+- `network-12-4-firewall-service-path` — nftables forward policy on the router.
+- `network-12-5-multi-service-router` — three-link mapping and documentation.
 
-The workbook at `Workbook/CH_NET12_Device_Topology/` walks the learner through
-the status endpoint, the host default route, router forwarding, and the routed
-path to the flag.
+The workbook at `Workbook/CH_NET12_Device_Topology/` covers all four exercises,
+from the status endpoint and default route through transit routes, forward
+policy, and topology documentation.
 
 ## Tests
 

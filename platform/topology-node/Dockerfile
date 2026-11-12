@@ -4,7 +4,7 @@ FROM alpine:3.20
 # iproute2 for addressing/routing, openssh for the training shell, python3 for
 # the tiny flag/status server. No build toolchain and no shell utilities beyond
 # what the node needs.
-RUN apk add --no-cache iproute2 openssh python3 tini \
+RUN apk add --no-cache iproute2 openssh python3 nftables tini \
     && ssh-keygen -A \
     && mkdir -p /run/sshd /srv
 

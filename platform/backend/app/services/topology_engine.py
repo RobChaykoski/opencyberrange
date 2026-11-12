@@ -103,6 +103,29 @@ def _validate_service(compose_data: dict, service_name: str, node_id: str) -> No
         raise TopologyError(
             f"topology service {service_name!r} may only add NET_ADMIN and NET_RAW"
         )
+    # Performance boundary: a topology node is small and should never inherit
+    # the 1 GB / 1 CPU lab default or starve the host.
+    memory_mb = _memory_mb(service.get("mem_limit"))
+    if memory_mb is None or memory_mb > 512:
+        raise TopologyError(
+            f"topology service {service_name!r} needs mem_limit at or below 512m"
+        )
+    try:
+        cpus = float(service.get("cpus"))
+    except (TypeError, ValueError):
+        cpus = None
+    if cpus is None or cpus > 0.5:
+        raise TopologyError(
+            f"topology service {service_name!r} needs cpus at or below 0.5"
+        )
+    try:
+        pids = int(service.get("pids_limit"))
+    except (TypeError, ValueError):
+        pids = None
+    if pids is None or pids < 32 or pids > 256:
+        raise TopologyError(
+            f"topology service {service_name!r} needs pids_limit between 32 and 256"
+        )
     labels = service.get("labels") or {}
     if str(labels.get("ocr_lab_net", "true")).lower() == "false":
         raise TopologyError(
@@ -117,6 +140,23 @@ def _validate_service(compose_data: dict, service_name: str, node_id: str) -> No
             raise TopologyError(
                 f"topology service {service_name!r} may not set {key}; the engine owns it"
             )
+
+
+def _memory_mb(value) -> int | None:
+    """Parse a Compose memory value such as ``192m`` or ``1g``."""
+    if value is None:
+        return None
+    text = str(value).strip().lower()
+    try:
+        if text.endswith("g"):
+            return int(float(text[:-1]) * 1024)
+        if text.endswith("m"):
+            return int(float(text[:-1]))
+        if text.endswith("k"):
+            return max(1, int(float(text[:-1]) / 1024))
+        return int(float(text) / (1024 * 1024))
+    except (TypeError, ValueError):
+        return None
 
 
 def _link_subnet(second_octet: int, third_octet: int, index: int) -> ipaddress.IPv4Network:
@@ -287,6 +327,25 @@ def expand(
                     raise TopologyError(
                         f"topology route on {node_id!r} needs to and via"
                     )
+                if to.startswith("node:"):
+                    target = to.split(":", 1)[1].strip().lower()
+                    if target not in nodes:
+                        raise TopologyError(
+                            f"topology route on {node_id!r} targets unknown node {target!r}"
+                        )
+                    target_links = node_links[target]
+                    if len(target_links) != 1:
+                        raise TopologyError(
+                            f"topology route on {node_id!r} cannot infer a subnet for {target!r}; use a CIDR"
+                        )
+                    to = target_links[0]["subnet"]
+                else:
+                    try:
+                        to = str(ipaddress.ip_network(to, strict=False))
+                    except ValueError as exc:
+                        raise TopologyError(
+                            f"topology route on {node_id!r} has an invalid subnet {to!r}"
+                        ) from exc
                 if via not in nodes:
                     raise TopologyError(
                         f"topology route on {node_id!r} references unknown node {via!r}"

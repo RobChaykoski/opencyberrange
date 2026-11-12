@@ -981,6 +981,131 @@ def check_dockerfile_password_safety(lab_dir):
 
 # ── Main Validation Runner ────────────────────────────────────────────────
 
+def _topology_memory_mb(value):
+    """Parse a Compose memory value such as 192m or 1g to MiB."""
+    if value is None:
+        return None
+    text = str(value).strip().lower()
+    try:
+        if text.endswith("g"):
+            return int(float(text[:-1]) * 1024)
+        if text.endswith("m"):
+            return int(float(text[:-1]))
+        if text.endswith("k"):
+            return max(1, int(float(text[:-1]) / 1024))
+        return int(float(text) / (1024 * 1024))
+    except (TypeError, ValueError):
+        return None
+
+
+def check_topology_lab(lab_dir):
+    """Static checks for an x-ocr-topology lab.
+
+    The backend engine validates again at spawn. These checks catch authoring
+    mistakes before a release and enforce the performance boundary: small,
+    capped nodes and a bounded total memory footprint.
+    """
+    results = []
+    compose_path = os.path.join(lab_dir, "docker-compose.yml")
+    if not os.path.exists(compose_path):
+        return results
+    try:
+        with open(compose_path, "r", encoding="utf-8") as f:
+            compose = yaml.safe_load(f) or {}
+    except (OSError, yaml.YAMLError):
+        return results
+    if not isinstance(compose, dict) or "x-ocr-topology" not in compose:
+        return results
+
+    spec = compose.get("x-ocr-topology") or {}
+    nodes = spec.get("nodes") or {}
+    links = spec.get("links") or []
+    services = compose.get("services") or {}
+
+    results.append(CheckResult(
+        "Topology node count",
+        1 <= len(nodes) <= 12,
+        "Topology supports 1-12 nodes",
+    ))
+    results.append(CheckResult(
+        "Topology link count",
+        1 <= len(links) <= 24,
+        "Topology supports 1-24 links",
+    ))
+    results.append(CheckResult(
+        "Topology training password",
+        len(str(spec.get("training_password") or "")) >= 10,
+        "Topology needs a training password of at least 10 characters",
+    ))
+
+    total_mb = 0
+    for node_id, node in nodes.items():
+        node = node if isinstance(node, dict) else {}
+        service_name = node.get("service")
+        service = services.get(service_name) if isinstance(services, dict) else None
+        results.append(CheckResult(
+            f"Topology node {node_id} service",
+            isinstance(service, dict),
+            f"Node {node_id} must point at a service",
+        ))
+        if not isinstance(service, dict):
+            continue
+        results.append(CheckResult(
+            f"Topology node {node_id} image",
+            str(service.get("image") or "").startswith("ocr-lab/topology-node"),
+            "Topology services use the reviewed node image",
+        ))
+        caps = set(service.get("cap_add") or [])
+        results.append(CheckResult(
+            f"Topology node {node_id} capabilities",
+            not (caps - {"NET_ADMIN", "NET_RAW"}),
+            "Only NET_ADMIN and NET_RAW are allowed",
+        ))
+        results.append(CheckResult(
+            f"Topology node {node_id} privilege",
+            "no-new-privileges:true" in (service.get("security_opt") or []),
+            "security_opt must keep no-new-privileges",
+        ))
+        for forbidden in ("build", "privileged", "network_mode", "pid", "ipc", "devices", "volumes"):
+            results.append(CheckResult(
+                f"Topology node {node_id} no {forbidden}",
+                not service.get(forbidden),
+                f"Topology services must not set {forbidden}",
+            ))
+        memory = _topology_memory_mb(service.get("mem_limit"))
+        results.append(CheckResult(
+            f"Topology node {node_id} memory",
+            memory is not None and memory <= 512,
+            "Topology nodes need mem_limit at or below 512m",
+        ))
+        total_mb += memory or 0
+        try:
+            cpus = float(service.get("cpus"))
+        except (TypeError, ValueError):
+            cpus = None
+        results.append(CheckResult(
+            f"Topology node {node_id} cpu",
+            cpus is not None and cpus <= 0.5,
+            "Topology nodes need cpus at or below 0.5",
+        ))
+        try:
+            pids = int(service.get("pids_limit"))
+        except (TypeError, ValueError):
+            pids = None
+        results.append(CheckResult(
+            f"Topology node {node_id} pids",
+            pids is not None and 32 <= pids <= 256,
+            "Topology nodes need pids_limit between 32 and 256",
+        ))
+
+    results.append(CheckResult(
+        "Topology total memory",
+        total_mb <= 2048,
+        f"Topology total mem_limit must stay at or below 2048m (found {total_mb}m)",
+    ))
+    return results
+
+
 def validate_lab(lab_dir):
     """Run all checks on a lab directory. Returns list of CheckResults."""
     lab_dir = os.path.normpath(lab_dir)
@@ -1003,6 +1128,7 @@ def validate_lab(lab_dir):
     results.extend(check_template_resolution(lab_dir))
     results.extend(check_mysql_auth_plugin(lab_dir))
     results.extend(check_topology_ip_offset_match(lab_dir))
+    results.extend(check_topology_lab(lab_dir))
     results.extend(check_test_steps_exist(lab_dir))
 
     return results

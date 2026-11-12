@@ -97,6 +97,9 @@ nav:
   - "NET04: Device Topology and Routed Paths":
     - Introduction: CH_NET12_Device_Topology/00_Introduction.md
     - "Exercise 4.1 -- Follow the Routed Path": CH_NET12_Device_Topology/01_Routed_Path.md
+    - "Exercise 4.2 -- Two-Router Transit": CH_NET12_Device_Topology/02_Two_Router_Transit.md
+    - "Exercise 4.3 -- Firewall the Service Path": CH_NET12_Device_Topology/03_Firewall_Service_Path.md
+    - "Exercise 4.4 -- Multi-Service Router": CH_NET12_Device_Topology/04_Multi_Service_Router.md
   - "NET01B: Traffic and Log Correlation":
     - Introduction: CH_NET01B_Traffic_And_Logs/00_Introduction.md
     - "Exercise 1.1 -- Packet Capture Analysis": CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis.md

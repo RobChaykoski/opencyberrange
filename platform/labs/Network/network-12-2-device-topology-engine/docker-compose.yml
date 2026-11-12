@@ -31,6 +31,7 @@ services:
       - no-new-privileges:true
     mem_limit: 256m
     cpus: 0.25
+    pids_limit: 96
     restart: unless-stopped
 
   r1:
@@ -44,6 +45,7 @@ services:
       - no-new-privileges:true
     mem_limit: 256m
     cpus: 0.25
+    pids_limit: 96
     restart: unless-stopped
 
   svc:
@@ -57,6 +59,7 @@ services:
       - no-new-privileges:true
     mem_limit: 256m
     cpus: 0.25
+    pids_limit: 96
     restart: unless-stopped
     environment:
       FLAG: "OCR{t0p0l0gy_r0ut3d}"

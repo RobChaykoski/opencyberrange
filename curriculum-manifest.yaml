@@ -270,9 +270,19 @@ tracks:
         prerequisites: [NET02]
         exercises: 2
         estimated_minutes: 135
-        recommended_next: WEB01
+        recommended_next: NET04
         status: published
         intro: CH_NETSY12_Firewalls/00_Introduction.md
+      - id: NET04
+        directory: CH_NET12_Device_Topology
+        display_name: "Device Topology and Routed Paths"
+        difficulty: "intermediate"
+        prerequisites: [NET03]
+        exercises: 4
+        estimated_minutes: 225
+        recommended_next: WEB01
+        status: published
+        intro: CH_NET12_Device_Topology/00_Introduction.md
 
   - id: webpt
     pathway_order: 3
