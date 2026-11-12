@@ -683,6 +683,9 @@ def run_dimensions(conn, as_json: bool = False) -> int:
         ).fetchall()
     }
     missing_triggers = sorted(set(expected_tables) - triggers)
+    # The ledger's own immutable trigger is expected infrastructure, not a
+    # change-table trigger.
+    extra_triggers = sorted(triggers - set(expected_tables) - {"data_integrity_ledger"})
 
     dimensions = {
         "tracks": scalar("select count(*) from tracks"),
@@ -751,6 +754,7 @@ def run_dimensions(conn, as_json: bool = False) -> int:
         "expected_tables": len(expected_tables),
         "present_triggers": len(triggers),
         "missing_triggers": missing_triggers,
+        "extra_triggers": extra_triggers,
     }
 
     critical = []
@@ -779,6 +783,8 @@ def run_dimensions(conn, as_json: bool = False) -> int:
         warnings.append(
             f"unattributed writes in 7 days: {unattributed_7d} vs attributed {attributed_7d}"
         )
+    if extra_triggers:
+        warnings.append(f"extra ledger triggers: {', '.join(extra_triggers)}")
 
     result = {
         "ok": not critical,
