@@ -24,6 +24,24 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
+## [Unreleased]
+
+### Tools
+- CyberChef 11.5.0 is now a pinned, SHA256-verified static build served from
+  the frontend image at `/tools/cyberchef/`. The Tools panel loads it
+  same-origin, so it works on isolated ranges and no longer depends on
+  `gchq.github.io` or a widened `frame-src` policy. The location carries a
+  tailored CSP with the release's inline-script hashes pinned.
+
+### Reliability
+- The expired-session cleanup pass now runs in a worker thread. It performs
+  synchronous SQLAlchemy and Docker teardown, so running it on the event loop
+  could freeze every request in the single-worker deployment (symptom: every
+  page stuck on "Loading…", `/health` timing out).
+- Startup schema and ledger advisory locks now time out after 30 seconds
+  instead of waiting indefinitely, and Alembic no longer disables existing
+  loggers, which had hidden all startup output after the migration step.
+
 ## [2.7.0] - 2026-11-11
 
 ### Learning
