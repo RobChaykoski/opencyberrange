@@ -2396,7 +2396,10 @@
               recorded in the supply-chain lock at build time. A mismatch means
               the deployed exercises are not the reviewed release.
             </p>
-            <p v-if="softwareIntegrityError" class="error-message">{{ softwareIntegrityError }}</p>
+            <p v-if="softwareIntegrityLoading && !softwareIntegrity" class="empty-state">
+              Verifying the deployed lab content...
+            </p>
+            <p v-else-if="softwareIntegrityError" class="error-message">{{ softwareIntegrityError }}</p>
             <div v-else-if="softwareIntegrity">
               <div
                 class="integrity-banner"
@@ -4837,6 +4840,9 @@ const eventTypeLabel = (et) => {
 // System status state
 const systemStatus = ref({})
 const systemStatusLoading = ref(false)
+const softwareIntegrity = ref(null)
+const softwareIntegrityLoading = ref(false)
+const softwareIntegrityError = ref('')
 const dataIntegrity = ref(null)
 const dataIntegrityLoading = ref(false)
 const dataIntegrityError = ref('')
@@ -4844,6 +4850,44 @@ const reviewForms = reactive({})
 const reviewSaving = ref('')
 const reviewMessage = ref('')
 const reviewError = ref('')
+
+const integrityDigest = computed(() => {
+  const digests = softwareIntegrity.value?.build?.digests
+  return Array.isArray(digests) && digests.length ? digests[0] : 'not reported'
+})
+
+const integrityIssues = computed(() => {
+  const data = softwareIntegrity.value
+  if (!data) return []
+  return [
+    ...(data.mismatched || []).map((row) => ({
+      slug: row.slug,
+      reason: 'content hash does not match the release manifest',
+    })),
+    ...(data.missing || []).map((slug) => ({
+      slug,
+      reason: 'lab is in the release manifest but missing from this server',
+    })),
+    ...(data.extra || []).map((slug) => ({
+      slug,
+      reason: 'lab is on this server but not in the release manifest',
+    })),
+  ]
+})
+
+async function fetchSoftwareIntegrity() {
+  softwareIntegrityLoading.value = true
+  softwareIntegrityError.value = ''
+  try {
+    const { data } = await axios.get('/admin/system/software-integrity')
+    softwareIntegrity.value = data
+  } catch (e) {
+    softwareIntegrityError.value =
+      e.response?.data?.detail || 'Could not verify the deployed software.'
+  } finally {
+    softwareIntegrityLoading.value = false
+  }
+}
 const integrityDecisions = [
   { value: 'expected', label: 'Expected — traced to an approved change', short: 'Expected' },
   { value: 'investigated', label: 'Investigated — no further action', short: 'Investigated' },

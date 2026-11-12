@@ -2,8 +2,8 @@
   <section class="readiness" aria-labelledby="readiness-title">
     <header class="readiness__head">
       <div>
-        <p class="readiness__eyebrow">Career pathway</p>
-        <h2 id="readiness-title" class="readiness__title">I want to become a…</h2>
+        <p class="readiness__eyebrow">Cyber GPS readiness</p>
+        <h2 id="readiness-title" class="readiness__title">I want to become a {{ selectedRoleTitle }}.</h2>
         <p class="readiness__intro">
           Pick a target role. OpenCyberRange will show the skills you already have,
           what to complete next, your readiness score, the capstone to attempt, the
@@ -234,7 +234,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import axios from '../api/axios'
 import { useCareerGoal } from '../composables/useCareerGoal'
 
@@ -243,6 +243,11 @@ const roles = ref([])
 const data = ref(null)
 const loading = ref(true)
 const error = ref('')
+
+const selectedRoleTitle = computed(() => {
+  const role = roles.value.find((item) => item.id === selectedRole.value)
+  return role?.title || data.value?.role?.title || 'target role'
+})
 
 watch(selectedRole, () => {
   loadReadiness()

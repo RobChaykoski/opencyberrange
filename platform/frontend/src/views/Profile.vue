@@ -3688,9 +3688,11 @@ watch(() => route.path, (newPath) => {
   display: block;
   margin-top: 0.2rem;
   color: var(--text-muted);
-  font-size: 0.64rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
 }
 

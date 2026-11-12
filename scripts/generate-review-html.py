@@ -109,7 +109,8 @@ def convert(markdown: str, title: str) -> str:
                 close_list()
                 out.append("<ol>")
                 in_list = "ol"
-            out.append(f"<li>{inline(re.sub(r'^\\d+\\. ', '', line))}</li>")
+            item_text = re.sub(r"^\d+\. ", "", line)
+            out.append(f"<li>{inline(item_text)}</li>")
         else:
             close_list()
             out.append(f"<p>{inline(line)}</p>")
