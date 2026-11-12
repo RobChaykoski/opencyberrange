@@ -2,7 +2,7 @@
   <section v-if="atlas" class="atlas" aria-labelledby="atlas-title">
     <header class="atlas__head">
       <div>
-        <p class="atlas__eyebrow">Career Atlas</p>
+        <p class="atlas__eyebrow">Cyber GPS</p>
         <h2 id="atlas-title" class="atlas__title">Practice evidence, mapped to real work</h2>
         <p class="atlas__intro">
           Six practice branches, eleven career families, and the roles inside them.

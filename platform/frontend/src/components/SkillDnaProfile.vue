@@ -33,15 +33,30 @@
         <div class="dna-tree__chart">
           <svg
             class="dna-tree__svg"
-            viewBox="0 0 360 320"
+            viewBox="0 0 380 340"
             role="img"
             :aria-label="treeAriaLabel"
           >
+            <defs>
+              <linearGradient id="dnaAreaFill" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.38" />
+                <stop offset="100%" stop-color="var(--purple)" stop-opacity="0.14" />
+              </linearGradient>
+              <filter id="dnaGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="2.4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <circle :cx="treeCenter.x" :cy="treeCenter.y" :r="TREE_RADIUS + 8" class="dna-tree__orbit" />
             <polygon
               v-for="(ring, index) in treeRings"
               :key="`tree-ring-${index}`"
               :points="ring"
               class="dna-tree__grid"
+              :class="{ 'dna-tree__grid--outer': index === treeRings.length - 1 }"
             />
             <line
               v-for="(axis, index) in treeAxes"
@@ -52,7 +67,15 @@
               :y2="axis.y"
               class="dna-tree__axis"
             />
-            <polygon :points="treePolygon" class="dna-tree__area" />
+            <circle
+              v-for="(tick, index) in treeTicks"
+              :key="`tree-tick-${index}`"
+              :cx="tick.x"
+              :cy="tick.y"
+              r="2"
+              class="dna-tree__tick"
+            />
+            <polygon :points="treePolygon" class="dna-tree__area" filter="url(#dnaGlow)" />
             <circle
               v-for="point in treePoints"
               :key="`tree-node-${point.key}`"
@@ -74,7 +97,7 @@
                 { 'dna-tree__dot--top': point.key === topBranchKey },
               ]"
             />
-            <circle :cx="treeCenter.x" :cy="treeCenter.y" r="17" class="dna-tree__core" />
+            <circle :cx="treeCenter.x" :cy="treeCenter.y" r="13" class="dna-tree__core" />
             <text
               :x="treeCenter.x"
               :y="treeCenter.y + 4"
@@ -364,9 +387,9 @@ const emit = defineEmits(['equip-title'])
 
 const classInitial = computed(() => (props.dna?.class?.class_name || 'R').charAt(0))
 
-const treeCenter = { x: 180, y: 150 }
-const TREE_RADIUS = 104
-const TREE_LABEL_RADIUS = 128
+const treeCenter = { x: 190, y: 160 }
+const TREE_RADIUS = 112
+const TREE_LABEL_RADIUS = 142
 
 const treeDimensions = computed(() => props.dna?.dimensions || [])
 const treePointAtRadius = (index, radius) => {
@@ -387,6 +410,12 @@ const treeRing = (percent) =>
 const treeRings = computed(() => [25, 50, 75, 100].map(treeRing))
 const treeAxes = computed(() =>
   treeDimensions.value.map((_, index) => treePointAtRadius(index, TREE_RADIUS))
+)
+const treeTicks = computed(() =>
+  treeDimensions.value.flatMap((_, index) => [
+    treePointAtRadius(index, TREE_RADIUS * 0.55),
+    treePointAtRadius(index, TREE_RADIUS * 0.82),
+  ])
 )
 const treePolygon = computed(() =>
   treeDimensions.value
@@ -602,19 +631,50 @@ const titleDescription = (title) => {
   fill: none;
   stroke: var(--border-color);
   stroke-width: 1;
-  opacity: 0.7;
+  stroke-dasharray: 3 7;
+  opacity: 0.55;
+}
+
+.dna-tree__grid--outer {
+  stroke: var(--accent);
+  stroke-dasharray: 2 5;
+  opacity: 0.45;
+}
+
+.dna-tree__orbit {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-dasharray: 2 9;
+  opacity: 0.4;
+  transform-origin: center;
+  animation: dna-orbit 28s linear infinite;
 }
 
 .dna-tree__axis {
   stroke: var(--border-color);
   stroke-width: 1;
-  opacity: 0.65;
+  stroke-dasharray: 1 5;
+  opacity: 0.5;
+}
+
+.dna-tree__tick {
+  fill: var(--accent);
+  opacity: 0.55;
 }
 
 .dna-tree__area {
-  fill: var(--accent-bg);
+  fill: url(#dnaAreaFill);
   stroke: var(--accent);
   stroke-width: 2;
+}
+
+@keyframes dna-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dna-tree__orbit { animation: none; }
 }
 
 .dna-tree__node {

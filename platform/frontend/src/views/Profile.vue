@@ -219,6 +219,44 @@
           </div>
         </section>
 
+        <div
+          v-if="gpsPrompts.length && !gpsBannerDismissed"
+          class="gps-banner"
+          role="region"
+          aria-label="Optional Cyber GPS questions"
+          @mouseenter="pauseGpsRotation"
+          @mouseleave="resumeGpsRotation"
+          @focusin="pauseGpsRotation"
+          @focusout="resumeGpsRotation"
+        >
+          <span class="gps-banner__compass" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9" />
+              <path d="m15.5 8.5-2.2 5.3-5.3 2.2 2.2-5.3z" />
+            </svg>
+          </span>
+          <span class="gps-banner__tag">Optional</span>
+          <Transition name="gps-fade" mode="out-in">
+            <p :key="gpsBannerIndex" class="gps-banner__prompt" aria-live="polite">
+              {{ gpsPrompts[gpsBannerIndex] }}
+            </p>
+          </Transition>
+          <span class="gps-banner__note">Answer or skip; it never affects your progress.</span>
+          <button type="button" class="btn btn--secondary btn--sm" @click="setTab('careers')">
+            Open Cyber GPS
+          </button>
+          <button
+            type="button"
+            class="gps-banner__close"
+            aria-label="Dismiss optional questions"
+            @click="dismissGpsBanner"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
         <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
           <button
             v-for="tab in profileTabs"
@@ -314,6 +352,48 @@
                 </button>
               </article>
             </div>
+
+            <section class="have-build" aria-labelledby="have-build-title">
+              <div class="have-build__head">
+                <div>
+                  <p class="profile-hero__eyebrow">Readiness</p>
+                  <h2 id="have-build-title" class="section-title">What you have and what to build next</h2>
+                  <p class="help-text">
+                    A branch above 60 counts as established evidence. Anything below
+                    is a practical next step.
+                  </p>
+                </div>
+              </div>
+              <div class="have-build__grid">
+                <article class="have-build__card have-build__card--have">
+                  <h3>You have</h3>
+                  <ul v-if="haveDimensions.length">
+                    <li v-for="dim in haveDimensions" :key="`have-${dim.key}`">
+                      <span>{{ dim.label }}</span>
+                      <strong>{{ dim.score }}/100</strong>
+                    </li>
+                  </ul>
+                  <p v-else class="help-text">
+                    Complete a few exercises to establish your first branch.
+                  </p>
+                </article>
+                <article class="have-build__card have-build__card--build">
+                  <h3>Build next</h3>
+                  <ul v-if="buildDimensions.length">
+                    <li v-for="dim in buildDimensions" :key="`build-${dim.key}`">
+                      <span>{{ dim.label }}</span>
+                      <strong>{{ dim.score }}/100</strong>
+                    </li>
+                  </ul>
+                  <p v-else class="help-text">
+                    Every branch is above the 60 mark. Choose a capstone or a new track.
+                  </p>
+                  <router-link to="/exercises" class="btn btn--secondary btn--sm">
+                    Find an exercise
+                  </router-link>
+                </article>
+              </div>
+            </section>
           </section>
         </div>
 
@@ -369,7 +449,7 @@
             :dna="summary.skill_dna"
           />
           <p v-else class="help-text">
-            The Career Atlas is not enabled on this deployment. Ask an administrator
+            The Cyber GPS view is not enabled on this deployment. Ask an administrator
             to enable it in Settings &rarr; Features.
           </p>
         </div>
@@ -381,10 +461,22 @@
           role="tabpanel"
           aria-labelledby="profile-tab-portfolio"
         >
-          <RoleReadinessPanel />
-          <CareerGps />
-          <PortfolioPanel />
-          <CompetencyTaxonomy />
+          <p class="help-text portfolio-intro">
+            Your evidence, readiness, and career direction. Open a section when
+            you need the detail; nothing here changes your progress.
+          </p>
+          <ExpandableSection title="Career readiness" meta="What your evidence supports today">
+            <RoleReadinessPanel />
+          </ExpandableSection>
+          <ExpandableSection title="Cyber GPS" meta="Where your practice could take you">
+            <CareerGps />
+          </ExpandableSection>
+          <ExpandableSection title="Portfolio evidence" meta="Work you can show an employer">
+            <PortfolioPanel />
+          </ExpandableSection>
+          <ExpandableSection title="Competency taxonomy" meta="Skills mapped to the framework">
+            <CompetencyTaxonomy />
+          </ExpandableSection>
         </div>
 
         <div
@@ -396,15 +488,16 @@
         >
         <!-- Course achievements: grouped by course so the profile is a summary,
              not a raw badge feed. -->
-        <section
+        <details
           v-if="summary"
           class="profile-section achievements-section"
-          aria-labelledby="course-achievements-title"
         >
+          <summary class="achievements-section__summary">
+            <span>Course achievements</span>
+            <span class="achievements-section__summary-count">{{ achievements.length }} badges</span>
+          </summary>
           <div class="achievements-section__head">
             <div>
-              <p class="profile-hero__eyebrow">Recognition</p>
-              <h2 id="course-achievements-title" class="section-title">Course achievements</h2>
               <p class="help-text">
                 Badges earned through your courses, grouped so progress is easy to scan.
                 Event and range-wide awards appear separately.
@@ -487,7 +580,7 @@
               </footer>
             </article>
           </div>
-        </section>
+        </details>
 
         <!-- Certificates and printable transcript -->
         <section class="profile-section transcript-section">
@@ -1058,6 +1151,7 @@ import PortfolioPanel from '../components/PortfolioPanel.vue'
 import RoleReadinessPanel from '../components/RoleReadinessPanel.vue'
 import CareerGps from '../components/CareerGps.vue'
 import CompetencyTaxonomy from '../components/CompetencyTaxonomy.vue'
+import ExpandableSection from '../components/ExpandableSection.vue'
 import UserAvatar from '../components/UserAvatar.vue'
 import CheckIcon from '../components/icons/CheckIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
@@ -1401,7 +1495,7 @@ const profileTabs = computed(() => {
     { key: 'skill-tree', label: 'Skill tree' },
   ]
   if (hasCareerAtlas.value) {
-    tabs.push({ key: 'careers', label: 'Careers' })
+    tabs.push({ key: 'careers', label: 'Cyber GPS' })
     tabs.push({ key: 'portfolio', label: 'Portfolio' })
   }
   tabs.push(
@@ -1434,6 +1528,57 @@ const topAffinity = computed(() => {
   return affinities.find((item) => item.recommended) || affinities[0] || null
 })
 const recentAchievements = computed(() => achievements.value.slice(0, 4))
+const haveDimensions = computed(() =>
+  (summary.value?.skill_dna?.dimensions || []).filter((dim) => Number(dim.score) >= 60)
+)
+const buildDimensions = computed(() =>
+  (summary.value?.skill_dna?.dimensions || []).filter((dim) => Number(dim.score) < 60)
+)
+
+const gpsPrompts = ref([])
+const gpsBannerIndex = ref(0)
+const gpsBannerDismissed = ref(localStorage.getItem('ocr.gps.banner.dismissed') === '1')
+let gpsRotationTimer = null
+let gpsRotationPaused = false
+
+async function loadGpsPrompts() {
+  if (gpsBannerDismissed.value) return
+  try {
+    const { data } = await axios.post('/profile/gps', { answers: {} })
+    gpsPrompts.value = (data.questions || []).map((q) => q.prompt).filter(Boolean)
+    startGpsRotation()
+  } catch {
+    // The GPS may be disabled for this deployment; the banner stays hidden.
+  }
+}
+
+function startGpsRotation() {
+  if (gpsRotationTimer) clearInterval(gpsRotationTimer)
+  if (gpsPrompts.value.length < 2) return
+  gpsRotationTimer = window.setInterval(() => {
+    if (!gpsRotationPaused) {
+      gpsBannerIndex.value = (gpsBannerIndex.value + 1) % gpsPrompts.value.length
+    }
+  }, 8000)
+}
+
+function pauseGpsRotation() {
+  gpsRotationPaused = true
+}
+
+function resumeGpsRotation() {
+  gpsRotationPaused = false
+}
+
+function dismissGpsBanner() {
+  gpsBannerDismissed.value = true
+  if (gpsRotationTimer) clearInterval(gpsRotationTimer)
+  try {
+    localStorage.setItem('ocr.gps.banner.dismissed', '1')
+  } catch {
+    // Private mode: the banner returns next visit, which is acceptable.
+  }
+}
 const showHiddenAchievements = computed(
   () => !!user.value?.show_hidden_achievements
 )
@@ -2027,6 +2172,7 @@ onMounted(() => {
   window.addEventListener('focus', onWindowFocus)
   document.addEventListener('pointerdown', handleBorderMenuPointer)
   document.addEventListener('keydown', handleBorderMenuKeydown)
+  loadGpsPrompts()
 })
 
 // Cleanup on unmount
@@ -2034,6 +2180,7 @@ onUnmounted(() => {
   window.removeEventListener('focus', onWindowFocus)
   document.removeEventListener('pointerdown', handleBorderMenuPointer)
   document.removeEventListener('keydown', handleBorderMenuKeydown)
+  if (gpsRotationTimer) clearInterval(gpsRotationTimer)
 })
 
 // Watch for route changes (when navigating to profile page)
@@ -3252,13 +3399,271 @@ watch(() => route.path, (newPath) => {
   gap: 0.65rem;
 }
 
+.achievements-section__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.1rem 0;
+  cursor: pointer;
+  list-style: none;
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.achievements-section__summary::-webkit-details-marker {
+  display: none;
+}
+
+.achievements-section__summary::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid var(--accent-text);
+  margin-right: 0.5rem;
+  transition: transform 150ms ease;
+}
+
+.achievements-section[open] .achievements-section__summary::before {
+  transform: rotate(90deg);
+}
+
+.achievements-section__summary-count {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.achievements-section__summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achievements-section__summary::before {
+    transition: none;
+  }
+}
+
+.gps-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin: 0.75rem 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background:
+    linear-gradient(90deg, var(--accent-bg), transparent 65%),
+    var(--bg-secondary);
+}
+
+.gps-banner__compass {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--accent-text);
+  animation: gps-spin 18s linear infinite;
+}
+
+.gps-banner__compass svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gps-banner__tag {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent-text);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gps-banner__prompt {
+  flex: 1 1 240px;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.gps-banner__note {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.gps-banner__close {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border-color);
+  border-radius: 7px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.gps-banner__close:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.gps-banner__close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.gps-banner__close svg {
+  width: 13px;
+  height: 13px;
+}
+
+.gps-fade-enter-active,
+.gps-fade-leave-active {
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.gps-fade-enter-from {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.gps-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+@keyframes gps-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gps-banner__compass { animation: none; }
+  .gps-fade-enter-active,
+  .gps-fade-leave-active { transition: none; }
+}
+
+.portfolio-intro {
+  margin: 0 0 0.75rem;
+}
+
+.profile-panel > .expandable {
+  margin-bottom: 0.75rem;
+}
+
+.have-build {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+}
+
+.have-build__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.have-build__card {
+  padding: 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-primary);
+}
+
+.have-build__card--have {
+  border-left: 3px solid var(--success);
+}
+
+.have-build__card--build {
+  border-left: 3px solid var(--warning);
+}
+
+.have-build__card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.have-build__card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.have-build__card li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px dashed var(--border-color);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.have-build__card li:last-child {
+  border-bottom: 0;
+}
+
+.have-build__card li strong {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.have-build__card .btn {
+  margin-top: 0.6rem;
+}
+
+@media (max-width: 640px) {
+  .have-build__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .profile-stat {
-  min-width: 86px;
+  flex: 1 1 86px;
+  min-width: 0;
   padding: 0.7rem 0.8rem;
   border-radius: 12px;
   border: 1px solid var(--border-color);
   background: rgba(15, 23, 42, 0.22);
   text-align: center;
+}
+
+@media (max-width: 520px) {
+  .profile-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .profile-stat .profile-stat__label {
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-tabs {
+    padding-right: 1rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .profile-tab {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.76rem;
+    scroll-snap-align: start;
+  }
 }
 
 [data-theme="light"] .profile-stat {
