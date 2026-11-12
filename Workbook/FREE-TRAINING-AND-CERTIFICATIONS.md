@@ -28,6 +28,27 @@ Source: [SWOCTS Resources](https://www.swocts.com/resources), reviewed
 | Software Security (CH SWSEC) | [PortSwigger Web Security Academy](https://portswigger.net/web-security) | [Linux Foundation](https://training.linuxfoundation.org/resources/) | [ISC2 CC](https://www.isc2.org/landing/1mcc) |
 | High School (CH HS09-HS12) | [Cisco NetAcad](https://www.netacad.com/), [MediaSmarts](https://mediasmarts.ca/) | [TryHackMe](https://tryhackme.com/), [CyLab Security Academy](https://learn.cylabacademy.org/), [FTC crypto scams](https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams) | [ISC2 CC](https://www.isc2.org/landing/1mcc), [IBM SkillsBuild](https://skillsbuild.org/learning-catalog), [Microsoft Learn SC-900](https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/) |
 
+## CTF and deeper practice
+
+These are optional external references for learners who want more challenge or a
+different explanation. They are not required for any workbook chapter.
+
+- [Trail of Bits CTF Field Guide](https://trailofbits.github.io/ctf/index.html) —
+  vulnerability discovery, exploit creation, forensics, toolkit building, and
+  operational tradecraft.
+- [Nightmare](https://guyinatuxedo.github.io/index.html) — a binary exploitation
+  course with Linux and Windows material. Use only the local or deliberately
+  vulnerable targets it provides.
+- [Cisco Networking Academy cybersecurity catalog](https://www.netacad.com/catalogs/learn/cybersecurity) —
+  networking and cybersecurity courses, including entry-level pathways.
+- [NPS cyberspace and military operations course](https://nps.edu/-/nps-launches-cyberspace-and-military-operations-course-open-to-all-students) —
+  a public course announcement from the U.S. Naval Postgraduate School; verify
+  eligibility and dates with NPS.
+
+Do not use these references to test systems you do not own or have written
+permission to test. Do not post flags, learner data, or platform screenshots on
+third-party sites.
+
 ## Free certification programs on the SWOCTS page
 
 - **ISC2 Certified in Cybersecurity (CC)** — free training and exam through the

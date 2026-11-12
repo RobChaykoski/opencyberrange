@@ -42,7 +42,7 @@ public profile, or search a public-data mirror. The goal is to teach:
 
 ## Exercise 1 -- The Mobile Build (implemented)
 
-**Lab:** `platform/labs/OSINT/osint-3-1-responsive-leak`
+**Lab:** `platform/labs/OSINT/osint-2-3-responsive-leak`
 **Workbook:** `Workbook/CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build.md`
 
 The staff portal serves a different profile to phones than to desktop browsers.
@@ -58,7 +58,7 @@ only the fields the authenticated user may see, regardless of the client class.
 
 ## Exercise 2 -- The Public Profile (implemented)
 
-**Lab:** `platform/labs/OSINT/osint-3-2-public-profile`
+**Lab:** `platform/labs/OSINT/osint-2-4-public-profile`
 **Workbook:** `Workbook/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile.md`
 
 The instructor places a marker in the **About** section of their own public
@@ -93,7 +93,7 @@ public, review it periodically, and separate personal and professional presence.
 
 ## Exercise 3 -- The Public Banner (implemented)
 
-**Lab:** `platform/labs/OSINT/osint-3-3-public-banner`
+**Lab:** `platform/labs/OSINT/osint-2-5-public-banner`
 **Workbook:** `Workbook/CH_OSINT02_Mobile_OSINT/03_The_Public_Banner.md`
 
 The learner uses a **synthetic Shodan mirror** on the lab target. The mirror

@@ -708,19 +708,19 @@
         "publicsite"
       ]
     },
-    "osint-3-1-responsive-leak": {
+    "osint-2-3-responsive-leak": {
       "content_hash": "4fa701bf0fe3c4e9dd2c07446b37647b54184662d3ca70e452dfbe2da4149c3b",
       "services": [
         "intranet"
       ]
     },
-    "osint-3-2-public-profile": {
+    "osint-2-4-public-profile": {
       "content_hash": "43afa0b547dfbd0856a29cf3e623258a30ea46aa93148f304b6f4d9978d39bfc",
       "services": [
         "intranet"
       ]
     },
-    "osint-3-3-public-banner": {
+    "osint-2-5-public-banner": {
       "content_hash": "527d8cba6e51eac829473c1ad03d1355cc88a5d4ce48ac06f275126a52a8ef98",
       "services": [
         "intranet"

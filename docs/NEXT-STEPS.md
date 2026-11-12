@@ -150,7 +150,7 @@ Work items:
 ### 7. Phone OSINT exercises
 
 The first phone exercise is implemented as
-`platform/labs/OSINT/osint-3-1-responsive-leak` with the workbook chapter
+`platform/labs/OSINT/osint-2-3-responsive-leak` with the workbook chapter
 `Workbook/CH_OSINT02_Mobile_OSINT/01_The_Mobile_Build.md`. The desktop response
 omits the flag; the mobile response includes a contact card with the flag. This
 demonstrates that a client-specific template is not an access control.
@@ -158,16 +158,16 @@ demonstrates that a client-specific template is not an access control.
 Next:
 
 1. Publish and validate the lab on development. Run
-   `python scripts/validate-lab.py platform/labs/OSINT/osint-3-1-responsive-leak`
+   `python scripts/validate-lab.py platform/labs/OSINT/osint-2-3-responsive-leak`
    and a live walkthrough on a phone.
-2. Finish the public-profile exercise (`osint-3-2-public-profile`). It is
+2. Finish the public-profile exercise (`osint-2-4-public-profile`). It is
    implemented with a training mirror and the uppercase
    `OCR{linkedIn_0s1nt_m4st3r_2026}` flag. Set the real `PROFILE_URL` in the lab
    Compose file, regenerate `Workbook/CH_OSINT02_Mobile_OSINT/img/profile-qr.png`
    with `scripts/generate-osint-qr.py`, and confirm the public LinkedIn About
    uses the uppercase form. Do not scrape, collect PII, or search another
    person's profile.
-3. Validate the synthetic Shodan exercise (`osint-3-3-public-banner`). It is
+3. Validate the synthetic Shodan exercise (`osint-2-5-public-banner`). It is
    implemented with a local mirror in `_shared/app.py`; do not query real Shodan
    for third-party hosts.
 4. Update the workbook, `mkdocs-osint.yml`, and the manifest after each lab is

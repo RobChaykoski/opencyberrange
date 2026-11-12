@@ -21,6 +21,10 @@ learner will pass a certification or get a role.
 | **PacketLabs** | External penetration-testing and security-research reference material. | <https://www.packetlabs.net/> |
 | **Cisco Networking Academy** | External networking and cybersecurity courses, useful for learners building foundations. | <https://www.netacad.com/> |
 | **LabShock** | External IoT and OT/ICS cybersecurity training reference for learners moving into industrial and connected-device security. | <https://labshock.io/> |
+| **Trail of Bits CTF Field Guide** | Vulnerability discovery, exploit creation, forensics, toolkit building, and operational tradecraft. | <https://trailofbits.github.io/ctf/index.html> |
+| **Nightmare** | Binary exploitation course material for Linux and Windows practice targets. | <https://guyinatuxedo.github.io/index.html> |
+| **Cisco Networking Academy cybersecurity catalog** | Networking and cybersecurity course pathways, including entry-level material. | <https://www.netacad.com/catalogs/learn/cybersecurity> |
+| **NPS cyberspace and military operations course** | Public course announcement for a U.S. Naval Postgraduate School cyberspace and military operations course. Verify eligibility and dates with NPS. | <https://nps.edu/-/nps-launches-cyberspace-and-military-operations-course-open-to-all-students> |
 
 These are third-party works. Link to them; do not copy their content, charts,
 challenge text, or course material into the platform. Attribute the author and
