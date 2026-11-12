@@ -42,24 +42,24 @@ notes.
 | D4 | Numeric sanity | Yes | PASS | No negative durations/counters, no future timestamps |
 | D5 | Ledger attribution | No | WARN | 6,928 of 7,785 rows unattributed (seed/CLI/system writes); review queue noisy |
 | D6 | Stale lab rows | No | PASS | 178 DB labs = 169 repo + 9 intentional `demotest-*` |
-| P1 | Backup restore drill | Yes | NOT RUN | No restore from a real snapshot in this cycle |
+| P1 | Backup restore drill | Yes | PASS | `pg_dump` + `pg_restore` into a scratch database; counts match exactly (141 users, 178 labs, 230 completions, 158 achievements) |
 | P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | NOT RUN | Dev was already on 2.7.x |
 | P3 | Rollback rehearsal | Yes | NOT RUN | No documented rollback test this cycle |
 | P4 | Signed release tag | Yes | NOT RUN | `v2.7.0` remains the documented unsigned exception; new tag not cut |
 | P5 | Production-shaped host rehearsal | Yes | NOT RUN | No staging host identical to production |
 | P6 | Email delivery | Yes | NOT RUN | No SMTP transaction tested |
-| P7 | WireGuard / Peer Manager | Yes | NOT RUN | No VPN client enrolled this cycle |
+| P7 | WireGuard / Peer Manager | Yes | FAIL | Dev runs the pre-hardening Peer Manager: listens on `0.0.0.0:5000` with fail-open auth. Re-run the installer hardening before production |
 | P8 | RangeBox desktop launch | Yes | NOT RUN | No interactive desktop session this cycle |
 | P9 | Exhaustive button/flow E2E | No | PARTIAL | Route-level Playwright smoke passed; not every button |
 | P10 | Dependency/image digest pinning | No | PARTIAL | Base images remain tag-pinned; digests reported at runtime |
 
 ## Result
 
-- Required PASS: 25
-- Required FAIL: 0
-- Required NOT RUN: 8 (P1-P8)
+- Required PASS: 26
+- Required FAIL: 1 (P7 Peer Manager)
+- Required NOT RUN: 6 (P2-P6, P8)
 - Warnings: 1 (D5)
-- Completion: **25 of 33 required gates (76%)**
+- Completion: **26 of 33 required gates (79%)**
 
 **Decision: DO NOT PROMOTE.** The application is healthy on dev, but the
 production-readiness gates for restore, upgrade/rollback rehearsal, signed
@@ -80,4 +80,4 @@ release, and the infrastructure integrations are not complete.
 |---|---|---|---|
 | Release owner | | | |
 | Data analyst | | Conditional (see D5) | 2026-11-12 |
-| Security reviewer | | Pending P4/P10 | 2026-11-12 |
+| Security reviewer | | FAIL - P7 Peer Manager on 0.0.0.0 | 2026-11-12 |
