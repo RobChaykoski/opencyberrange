@@ -37,7 +37,17 @@
             <p class="gps-eyebrow">Where you are</p>
             <h3 id="gps-where-title">Your current evidence</h3>
           </div>
-          <span class="gps-chip">{{ data.where_you_are.evidence_total }} evidence points</span>
+          <div class="gps-panel__chips">
+            <span
+              class="gps-signal"
+              :class="signalClass"
+              :title="signalTitle"
+            >
+              <span class="gps-signal__dot" aria-hidden="true"></span>
+              {{ signalLabel }}
+            </span>
+            <span class="gps-chip">{{ data.where_you_are.evidence_total }} evidence points</span>
+          </div>
         </div>
 
         <div class="gps-where">
@@ -46,7 +56,18 @@
               v-for="domain in data.where_you_are.top_domains"
               :key="domain.key"
               class="gps-domain"
-              :class="`gps-domain--${domain.colour}`"
+              :class="[
+                `gps-domain--${domain.colour}`,
+                {
+                  'gps-domain--active': domain.recent_count > 0,
+                  'gps-domain--idle': domain.recent_count === 0 && domain.evidence_count > 0,
+                },
+              ]"
+              :title="
+                domain.recent_count > 0
+                  ? `${domain.recent_count} completion(s) here in the last 30 days`
+                  : 'No practice here in the last 30 days. One exercise restores the signal.'
+              "
             >
               <div class="gps-domain__head">
                 <strong>
@@ -79,7 +100,20 @@
 
         <p class="gps-growth">
           <strong>{{ data.where_you_are.recent_total }} recent completion(s)</strong>
-          in the last 30 days. {{ data.growth.note }}
+          in the last 30 days.
+          <span :class="signalClass">
+            {{ signalActive
+              ? 'Your signal is shimmering; keep the habit going.'
+              : 'Your signal is fading. One completed exercise restores it.' }}
+          </span>
+          {{ data.growth.note }}
+        </p>
+
+        <p v-if="fadingDomains.length" class="gps-revisit">
+          <strong>Fading interest signals:</strong>
+          {{ fadingDomains.map((domain) => domain.label).join(', ') }}.
+          You have worked in {{ fadingDomains.length === 1 ? 'this area' : 'these areas' }}
+          before, so a short exercise can show whether the interest is still there.
         </p>
       </section>
 
@@ -221,6 +255,26 @@ const data = ref(null)
 const { answers } = useGpsAnswers()
 
 const hasAnswers = computed(() => Object.values(answers).some(Boolean))
+
+const signalActive = computed(
+  () => (data.value?.where_you_are?.recent_total || 0) > 0,
+)
+const signalClass = computed(() =>
+  signalActive.value ? 'gps-signal--active' : 'gps-signal--idle',
+)
+const signalLabel = computed(() =>
+  signalActive.value ? 'Signal active' : 'Signal fading',
+)
+const signalTitle = computed(() =>
+  signalActive.value
+    ? `${data.value?.where_you_are?.recent_total || 0} completion(s) in the last 30 days`
+    : 'No completion in the last 30 days. One exercise restores the signal.',
+)
+const fadingDomains = computed(() =>
+  (data.value?.where_you_are?.top_domains || []).filter(
+    (domain) => domain.recent_count === 0 && domain.evidence_count > 0,
+  ),
+)
 
 async function load(payload = {}) {
   loading.value = true
@@ -431,6 +485,89 @@ onMounted(() => load())
   font-weight: 700;
 }
 
+.gps-panel__chips {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.gps-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.16rem 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.gps-signal__dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.gps-signal--active {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.gps-signal--active .gps-signal__dot {
+  background: var(--success);
+  animation: gps-signal-pulse 1.8s ease-in-out infinite;
+}
+
+.gps-signal--idle {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.gps-signal--idle .gps-signal__dot {
+  background: var(--warning);
+  animation: gps-signal-fade 3.2s ease-in-out infinite;
+}
+
+.gps-growth .gps-signal--active { color: var(--success); font-weight: 600; }
+.gps-growth .gps-signal--idle { color: var(--warning); font-weight: 600; }
+
+.gps-revisit {
+  margin: 0.35rem 0 0;
+  padding: 0.45rem 0.55rem;
+  border-left: 3px solid var(--warning);
+  border-radius: 0 6px 6px 0;
+  background: var(--warning-bg, var(--bg-primary));
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.gps-revisit strong { color: var(--warning); }
+
+@keyframes gps-signal-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--success) 45%, transparent); }
+  50% { box-shadow: 0 0 0 5px transparent; }
+}
+
+@keyframes gps-signal-fade {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gps-signal__dot,
+  .gps-domain--active .gps-dot,
+  .gps-domain--idle .gps-dot {
+    animation: none !important;
+  }
+}
+
 .gps-where {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
@@ -487,6 +624,18 @@ onMounted(() => load())
 .gps-dot--amber { background: var(--warning); }
 .gps-dot--red { background: var(--danger); }
 .gps-dot--grey { background: var(--text-muted); }
+
+.gps-domain--active .gps-dot {
+  animation: gps-signal-pulse 1.8s ease-in-out infinite;
+}
+
+.gps-domain--idle .gps-dot {
+  animation: gps-signal-fade 3.2s ease-in-out infinite;
+}
+
+.gps-domain--idle {
+  border-style: dashed;
+}
 
 .gps-strengths {
   padding: 0.55rem 0.65rem;

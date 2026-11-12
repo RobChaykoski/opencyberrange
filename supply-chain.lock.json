@@ -91,7 +91,7 @@
       "sha256": "11b207a9b1fc54856e82330c39cb3ce498488717c29edb54386c574f3456bbda"
     },
     "scripts/database_integrity.py": {
-      "sha256": "cfb3a7b168e0e2d20be783f2a9a9aca3a0a2d7c6b3886cda01c05bc6870c9be0"
+      "sha256": "4bc6ff9c6b308482996b3b91e4538df91f60b74123c6c372a545da3786bfd11e"
     },
     "scripts/db-integrity-check.sh": {
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"

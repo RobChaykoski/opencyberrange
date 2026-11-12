@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from collections import Counter
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
@@ -39,7 +40,7 @@ from app.models import (
 )
 from app.services.titles import resolve_titles
 
-FORMULA_VERSION = "2026.13"
+FORMULA_VERSION = "2026.14"
 
 DIMENSION_ORDER = ("explorer", "builder", "tester", "defender", "investigator", "leader")
 
@@ -213,11 +214,14 @@ def tier_for(score: int) -> str:
 
 
 def _clamp(value: float) -> int:
-    return max(0, min(100, round(value)))
+    # Cyber DNA never reaches 100: there is always another branch to develop.
+    return max(0, min(99, round(value)))
 
 
-def _completion_rows(db: Session, user_id: int) -> list[LabCompletion]:
-    return (
+def _completion_rows(
+    db: Session, user_id: int, before: datetime | None = None
+) -> list[LabCompletion]:
+    query = (
         db.query(LabCompletion)
         .options(
             joinedload(LabCompletion.lab)
@@ -225,12 +229,15 @@ def _completion_rows(db: Session, user_id: int) -> list[LabCompletion]:
             .joinedload(Level.track)
         )
         .filter(LabCompletion.user_id == user_id)
-        .all()
     )
+    if before is not None:
+        query = query.filter(LabCompletion.completed_at < before)
+    return query.all()
 
 
-def _signals(db: Session, user_id: int) -> dict:
-    completions = _completion_rows(db, user_id)
+def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
+    now = before or datetime.now(timezone.utc).replace(tzinfo=None)
+    completions = _completion_rows(db, user_id, before=before)
     tracks: set[str] = set()
     categories: set[str] = set()
     defender_labs = 0
@@ -247,6 +254,11 @@ def _signals(db: Session, user_id: int) -> dict:
     no_hint = 0
     perfect = 0
     advanced = 0
+    # Which branches each completed lab feeds. Quiz attempts are attributed to
+    # the same branches so the chart can size a point by the work behind it.
+    lab_branches: dict[int, set[str]] = {}
+    branch_last_at: dict[str, datetime] = {}
+    evidence_weight: Counter[str] = Counter()
 
     for row in completions:
         lab: Lab | None = getattr(row, "lab", None)
@@ -254,6 +266,7 @@ def _signals(db: Session, user_id: int) -> dict:
         track = getattr(level, "track", None) if level else None
         track_slug = _track_slug(track)
         category = (getattr(lab, "category", None) or "general").strip().lower()
+        branches = {"explorer", "builder"}
 
         if track_slug or track is not None:
             tracks.add(track_slug or (track.name or "").strip().lower())
@@ -261,10 +274,12 @@ def _signals(db: Session, user_id: int) -> dict:
 
         if category in DEFENDER_CATEGORIES or track_slug in DEFENDER_TRACKS:
             defender_labs += 1
+            branches.add("defender")
             if track_slug:
                 defender_tracks.add(track_slug)
         if category in INVESTIGATOR_CATEGORIES or track_slug in INVESTIGATOR_TRACKS:
             investigator_labs += 1
+            branches.add("investigator")
             if track_slug:
                 investigator_tracks.add(track_slug)
         if category in BUILDER_CATEGORIES:
@@ -272,6 +287,7 @@ def _signals(db: Session, user_id: int) -> dict:
 
         if category in OFFENSIVE_CATEGORIES:
             offensive_labs += 1
+            branches.add("tester")
             offensive_categories.add(category)
             if category in OFFENSIVE_CORE_CATEGORIES:
                 offensive_core_labs += 1
@@ -279,14 +295,41 @@ def _signals(db: Session, user_id: int) -> dict:
                 offensive_no_hint_labs += 1
         if category == "assessment":
             assessment_labs += 1
+            branches.add("tester")
 
         total_minutes += row.time_spent_minutes or 0
         if (row.hints_used or 0) == 0:
             no_hint += 1
         if (row.attempts or 1) <= 1:
             perfect += 1
-        if (getattr(lab, "difficulty", None) or "").strip().lower() in {"advanced", "expert"}:
+        is_advanced = (
+            (getattr(lab, "difficulty", None) or "").strip().lower()
+            in {"advanced", "expert"}
+        )
+        if is_advanced:
             advanced += 1
+            branches.add("leader")
+        if lab is not None:
+            lab_branches[lab.id] = branches
+
+        # Stronger work leaves a heavier mark. A clean, unaided solve of an
+        # advanced or assessment lab counts for more than a hinted walkthrough.
+        strength = 1.0
+        if (row.hints_used or 0) == 0:
+            strength += 0.5
+        if (row.attempts or 1) <= 1:
+            strength += 0.25
+        if is_advanced:
+            strength += 0.75
+        if category == "assessment":
+            strength += 0.5
+        for branch in branches:
+            evidence_weight[branch] += strength
+            completed_at = getattr(row, "completed_at", None)
+            if completed_at and (
+                branch not in branch_last_at or completed_at > branch_last_at[branch]
+            ):
+                branch_last_at[branch] = completed_at
 
     # A completed lab may have no surviving session row (for example after a
     # cleanup or a historical import), so count the union of opened sessions and
@@ -339,20 +382,108 @@ def _signals(db: Session, user_id: int) -> dict:
         .scalar()
         or 0
     )
+    # Leadership evidence is timestamped too, so an inactive leader branch
+    # decays even when the learner is not completing labs.
+    for stamp in (
+        db.query(func.max(Achievement.awarded_at))
+        .filter(Achievement.user_id == user_id)
+        .scalar(),
+        db.query(func.max(CourseEnrollment.enrolled_at))
+        .filter(CourseEnrollment.user_id == user_id)
+        .scalar(),
+        db.query(func.max(Course.created_at))
+        .filter(Course.instructor_id == user_id)
+        .scalar(),
+    ):
+        if stamp and (
+            "leader" not in branch_last_at or stamp > branch_last_at["leader"]
+        ):
+            branch_last_at["leader"] = stamp
 
-    quiz_rows = (
-        db.query(ExerciseQuizAttempt)
-        .filter(
-            ExerciseQuizAttempt.user_id == user_id,
-            ExerciseQuizAttempt.completed_at.isnot(None),
-        )
-        .all()
+    quiz_query = db.query(ExerciseQuizAttempt).filter(
+        ExerciseQuizAttempt.user_id == user_id,
+        ExerciseQuizAttempt.completed_at.isnot(None),
     )
+    if before is not None:
+        quiz_query = quiz_query.filter(ExerciseQuizAttempt.completed_at < before)
+    quiz_rows = quiz_query.all()
     quiz_best: dict[int, int] = {}
+    quiz_last_at: dict[int, datetime] = {}
     for row in quiz_rows:
         quiz_best[row.lab_id] = max(quiz_best.get(row.lab_id, 0), row.score or 0)
+        if row.completed_at and (
+            row.lab_id not in quiz_last_at or row.completed_at > quiz_last_at[row.lab_id]
+        ):
+            quiz_last_at[row.lab_id] = row.completed_at
     quiz_labs = len(quiz_best)
     quiz_accuracy = round(sum(quiz_best.values()) / quiz_labs) if quiz_labs else None
+    quiz_area: Counter[str] = Counter()
+    for lab_id, best in quiz_best.items():
+        # A quiz counts toward volume and adds strength in proportion to the
+        # learner's best score on that lab's knowledge check.
+        quiz_strength = 0.75 + (best / 100) * 0.75
+        for branch in lab_branches.get(lab_id, {"explorer", "builder"}):
+            quiz_area[branch] += 1
+            evidence_weight[branch] += quiz_strength
+            completed_at = quiz_last_at.get(lab_id)
+            if completed_at and (
+                branch not in branch_last_at or completed_at > branch_last_at[branch]
+            ):
+                branch_last_at[branch] = completed_at
+
+    # How much work sits behind each branch. The score says how far a branch
+    # has grown; this says how much practice supports it. Used to size the
+    # spider-chart points so a point backed by many labs and quizzes reads
+    # heavier than one backed by a single completion.
+    evidence_volume = {
+        "explorer": (
+            started_labs
+            + len(tracks)
+            + len(categories)
+            + quiz_area["explorer"]
+        ),
+        "builder": (
+            len(completions)
+            + builder_labs
+            + no_hint
+            + quiz_area["builder"]
+        ),
+        "tester": (
+            offensive_labs
+            + assessment_labs
+            + quiz_area["tester"]
+        ),
+        "defender": defender_labs + quiz_area["defender"],
+        "investigator": investigator_labs + quiz_area["investigator"],
+        "leader": (
+            int(courses)
+            + int(achievements)
+            + int(instructed)
+            + advanced
+            + int(likes_given)
+            + quiz_area["leader"]
+        ),
+    }
+    # Breadth and leadership work also strengthen a branch's point.
+    evidence_weight["explorer"] += 0.5 * len(session_lab_ids - completed_lab_ids)
+    evidence_weight["explorer"] += 0.25 * len(tracks) + 0.25 * len(categories)
+    evidence_weight["leader"] += (
+        1.5 * int(courses)
+        + 0.5 * int(achievements)
+        + 3.0 * int(instructed)
+        + 0.25 * int(likes_given)
+    )
+
+    last_at = max(
+        (row.completed_at for row in completions if row.completed_at),
+        default=None,
+    )
+    days_since_last = (now - last_at).days if last_at else None
+    minutes_12m = sum(
+        row.time_spent_minutes or 0
+        for row in completions
+        if row.completed_at and row.completed_at >= now - timedelta(days=365)
+    )
 
     return {
         "completed_labs": len(completions),
@@ -381,6 +512,14 @@ def _signals(db: Session, user_id: int) -> dict:
         "quiz_attempts": len(quiz_rows),
         "quiz_labs": quiz_labs,
         "quiz_accuracy": quiz_accuracy,
+        "last_completion_at": last_at,
+        "days_since_last_activity": days_since_last,
+        "minutes_12m": minutes_12m,
+        "evidence_volume": evidence_volume,
+        "evidence_weight": {
+            key: round(value, 2) for key, value in evidence_weight.items()
+        },
+        "branch_last_activity": branch_last_at,
     }
 
 
@@ -569,13 +708,59 @@ def _affinities(signals: dict) -> list[dict]:
     return rows
 
 
+def _recency_factor(days: int | None) -> float:
+    """Keep practice current: a long break slowly lowers the training signal.
+
+    A new completion resets the factor to 1.0, so the effect is repair by
+    practice, not a permanent penalty. The floor is 0.90 (10% at most).
+    """
+    if days is None or days <= 14:
+        return 1.0
+    if days <= 30:
+        return 0.99
+    if days <= 60:
+        return 0.97
+    if days <= 90:
+        return 0.94
+    return 0.90
+
+
 def build_skill_dna(db: Session, user: User) -> dict:
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     signals = _signals(db, user.id)
     scores = _scores(signals)
+    evidence_volume = signals.get("evidence_volume") or {}
+    evidence_weight = signals.get("evidence_weight") or {}
+    branch_last = signals.get("branch_last_activity") or {}
+
+    # Directional trend: rebuild the branch scores as they stood 30 days ago
+    # from the same timestamps. This needs no snapshot table and stays honest
+    # when old data is imported or removed.
+    trend_days = 30
+    prior_cutoff = now - timedelta(days=trend_days)
+    if signals["completed_labs"] or signals["quiz_labs"]:
+        prior_signals = _signals(db, user.id, before=prior_cutoff)
+        prior_scores = _scores(prior_signals)
+        prior_last = prior_signals.get("branch_last_activity") or {}
+    else:
+        prior_scores = scores
+        prior_last = branch_last
 
     dimensions = []
     for spec in DIMENSIONS:
-        score = scores[spec.key]
+        last = branch_last.get(spec.key)
+        branch_days = (now - last).days if last else None
+        branch_factor = _recency_factor(branch_days)
+        score = min(99, round(scores[spec.key] * branch_factor))
+
+        prior_branch_last = prior_last.get(spec.key)
+        prior_days = (
+            (prior_cutoff - prior_branch_last).days if prior_branch_last else None
+        )
+        prior_score = min(
+            99, round(prior_scores[spec.key] * _recency_factor(prior_days))
+        )
+        delta = score - prior_score
         dimensions.append(
             {
                 "key": spec.key,
@@ -583,6 +768,19 @@ def build_skill_dna(db: Session, user: User) -> dict:
                 "class_name": spec.class_name,
                 "tier": tier_for(score),
                 "score": score,
+                "evidence_count": int(evidence_volume.get(spec.key, 0)),
+                "evidence_weight": round(float(evidence_weight.get(spec.key, 0)), 2),
+                "recency": {
+                    "days_since_last_activity": branch_days,
+                    "factor_percent": round(branch_factor * 100),
+                    "decay_percent": round((1 - branch_factor) * 100),
+                },
+                "trend": {
+                    "window_days": trend_days,
+                    "previous_score": prior_score,
+                    "delta": delta,
+                    "direction": "up" if delta > 0 else "down" if delta < 0 else "flat",
+                },
                 "certification_key": spec.certification_key,
                 "certification_focus": spec.certification_focus,
                 "evidence": _evidence(spec, signals, score),
@@ -617,8 +815,30 @@ def build_skill_dna(db: Session, user: User) -> dict:
         class_title=top_class["class_name"],
         class_key=top_class["key"],
     )
-    overall = round(sum(row["score"] for row in dimensions) / len(dimensions))
+    overall = min(99, round(sum(row["score"] for row in dimensions) / len(dimensions)))
+    hours_12m = round((signals.get("minutes_12m") or 0) / 60, 1)
+    ce_percent = min(100, round(hours_12m / 40 * 100)) if hours_12m else 0
+    days = signals.get("days_since_last_activity")
+    if days is None:
+        recency_note = "No completed exercise yet. One completion starts the clock."
+    elif all(row["recency"]["decay_percent"] == 0 for row in dimensions):
+        recency_note = "Current: every branch has practice within the last two weeks."
+    else:
+        stale = [
+            row["label"]
+            for row in dimensions
+            if row["recency"]["decay_percent"] > 0 and row["score"] > 0
+        ]
+        recency_note = (
+            "Each branch decays on its own if it is left alone. "
+            + (
+                f"Practice {', '.join(stale)} to restore the reduced branches."
+                if stale
+                else "A completion in a branch restores it."
+            )
+        )
 
+    weakest = min(dimensions, key=lambda row: row["recency"]["factor_percent"])
     return {
         "formula_version": FORMULA_VERSION,
         "overall": overall,
@@ -627,6 +847,27 @@ def build_skill_dna(db: Session, user: User) -> dict:
         "dimensions": dimensions,
         "affinities": _affinities(signals),
         "titles": titles,
+        "trend_window_days": trend_days,
+        "ceiling_note": "No branch reaches 100: there is always a next skill to develop.",
+        "recency": {
+            "days_since_last_activity": weakest["recency"]["days_since_last_activity"],
+            "factor_percent": weakest["recency"]["factor_percent"],
+            "decay_percent": weakest["recency"]["decay_percent"],
+            "branch": weakest["label"],
+            "note": recency_note,
+        },
+        "continuing_education": {
+            "hours_12m": hours_12m,
+            "target_hours": 40,
+            "percent": ce_percent,
+            "met": hours_12m >= 40,
+            "status": "met" if hours_12m >= 40 else "building",
+            "note": (
+                "Aim for 40 hours of hands-on practice a year, like a continuing-"
+                "education requirement. This is a practice target, not a "
+                "certification claim."
+            ),
+        },
         "quiz": {
             "attempts": signals["quiz_attempts"],
             "labs": signals["quiz_labs"],

@@ -8,6 +8,7 @@
           Six traits built from your range activity. They describe what you have practised,
           not what you are capable of. Pick a title from your achievements and grow the rest.
         </p>
+        <p class="dna-ceiling-note">{{ dna.ceiling_note }}</p>
       </div>
       <span class="dna-formula" :title="`Formula version ${dna.formula_version}`">
         v{{ dna.formula_version }}
@@ -23,9 +24,12 @@
             Built from your completed exercises, course participation, and feedback.
             The shape shows what you have practised; it is not a ranking.
           </p>
+          <p v-if="dna.recency?.decay_percent" class="dna-recency-note">
+            {{ dna.recency.note }}
+          </p>
         </div>
         <span class="dna-tree__badge">
-          {{ dna.class.class_name }} · {{ dna.overall }}/100
+          {{ dna.class.class_name }} · {{ dna.overall }}/99
         </span>
       </div>
 
@@ -49,6 +53,17 @@
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
+              <marker
+                id="dnaTrendArrow"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" class="dna-tree__trend-head" />
+              </marker>
             </defs>
             <circle :cx="treeCenter.x" :cy="treeCenter.y" :r="TREE_RADIUS + 8" class="dna-tree__orbit" />
             <polygon
@@ -76,27 +91,49 @@
               class="dna-tree__tick"
             />
             <polygon :points="treePolygon" class="dna-tree__area" filter="url(#dnaGlow)" />
-            <circle
-              v-for="point in treePoints"
-              :key="`tree-node-${point.key}`"
-              :cx="point.x"
-              :cy="point.y"
-              r="9"
-              class="dna-tree__node"
-              :class="{ 'dna-tree__node--top': point.key === topBranchKey }"
-            />
-            <circle
-              v-for="point in treePoints"
-              :key="`tree-point-${point.key}`"
-              :cx="point.x"
-              :cy="point.y"
-              r="4"
-              class="dna-tree__dot"
-              :class="[
-                `dna-tree__dot--${point.key}`,
-                { 'dna-tree__dot--top': point.key === topBranchKey },
-              ]"
-            />
+            <g v-for="point in treePoints" :key="`tree-node-${point.key}`">
+              <title>
+                {{ point.label }}: {{ point.score }} of 99 · {{ point.evidence }} items ·
+                strength {{ point.weight }}{{ point.delta ? ` · ${point.delta > 0 ? '+' : ''}${point.delta} in 30 days` : '' }}
+              </title>
+              <line
+                v-if="point.moved"
+                :x1="point.priorX"
+                :y1="point.priorY"
+                :x2="point.x"
+                :y2="point.y"
+                class="dna-tree__trend"
+                :class="{
+                  'dna-tree__trend--up': point.delta > 0,
+                  'dna-tree__trend--down': point.delta < 0,
+                }"
+                marker-end="url(#dnaTrendArrow)"
+              />
+              <circle
+                v-if="point.moved"
+                :cx="point.priorX"
+                :cy="point.priorY"
+                r="3"
+                class="dna-tree__trend-origin"
+              />
+              <circle
+                :cx="point.x"
+                :cy="point.y"
+                :r="point.radius"
+                class="dna-tree__node"
+                :class="{ 'dna-tree__node--top': point.key === topBranchKey }"
+              />
+              <circle
+                :cx="point.x"
+                :cy="point.y"
+                :r="point.dotRadius"
+                class="dna-tree__dot"
+                :class="[
+                  `dna-tree__dot--${point.key}`,
+                  { 'dna-tree__dot--top': point.key === topBranchKey },
+                ]"
+              />
+            </g>
             <circle :cx="treeCenter.x" :cy="treeCenter.y" r="13" class="dna-tree__core" />
             <text
               :x="treeCenter.x"
@@ -128,11 +165,22 @@
           >
             <span class="dna-tree__legend-dot" :class="`dna-tree__legend-dot--${dim.key}`" aria-hidden="true"></span>
             <span class="dna-tree__legend-label">{{ dim.label }}</span>
+            <span class="dna-tree__legend-evidence">{{ dim.evidence_count || 0 }} items</span>
+            <span
+              v-if="dim.trend"
+              class="dna-tree__legend-trend"
+              :class="`dna-tree__legend-trend--${dim.trend.direction}`"
+              :title="`${dim.trend.previous_score} thirty days ago`"
+            >
+              {{ dim.trend.delta > 0 ? '▲' : dim.trend.delta < 0 ? '▼' : '→' }}
+              {{ dim.trend.delta < 0 ? -dim.trend.delta : dim.trend.delta }}
+            </span>
             <strong>{{ dim.score }}</strong>
           </div>
           <p class="dna-tree__legend-note">
-            Each branch is capped at 100. Open the branch cards below for the evidence
-            and a practical next step.
+            Each branch is capped at 99 and decays on its own if you stop practising it.
+            A larger point means stronger work behind that branch. Arrows show movement
+            over the last 30 days.
           </p>
         </div>
       </div>
@@ -160,8 +208,8 @@
           role="progressbar"
           :aria-valuenow="dna.overall"
           aria-valuemin="0"
-          aria-valuemax="100"
-          :aria-label="`Overall Cyber DNA score: ${dna.overall} out of 100`"
+          aria-valuemax="99"
+          :aria-label="`Overall Cyber DNA score: ${dna.overall} out of 99`"
         >
           <span :style="{ width: dna.overall + '%' }"></span>
         </div>
@@ -197,12 +245,16 @@
             role="progressbar"
             :aria-valuenow="dim.score"
             aria-valuemin="0"
-            aria-valuemax="100"
-            :aria-label="`${dim.label}: ${dim.score} out of 100`"
+            aria-valuemax="99"
+            :aria-label="`${dim.label}: ${dim.score} out of 99`"
           >
             <span :style="{ width: dim.score + '%' }"></span>
           </div>
           <p class="dna-trait__evidence">{{ dim.evidence }}</p>
+          <p v-if="dim.recency?.decay_percent" class="dna-trait__decay">
+            {{ dim.recency.days_since_last_activity }} days since practice in this branch
+            · training signal -{{ dim.recency.decay_percent }}%
+          </p>
           <p class="dna-trait__next">{{ dim.next_step }}</p>
         </article>
       </div>
@@ -367,6 +419,35 @@
         Find a knowledge check
       </router-link>
     </section>
+
+    <section v-if="dna.continuing_education" class="dna-ce" aria-labelledby="dna-ce-title">
+      <div class="dna-ce__head">
+        <div>
+          <p class="dna-quiz__eyebrow">Continuing education</p>
+          <h3 id="dna-ce-title">
+            {{ dna.continuing_education.hours_12m }} of
+            {{ dna.continuing_education.target_hours }} hours
+          </h3>
+        </div>
+        <span
+          class="dna-ce__status"
+          :class="{ 'dna-ce__status--met': dna.continuing_education.met }"
+        >
+          {{ dna.continuing_education.met ? 'Target met' : 'Building' }}
+        </span>
+      </div>
+      <div
+        class="dna-ce__bar"
+        role="progressbar"
+        :aria-valuenow="dna.continuing_education.percent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        :aria-label="`${dna.continuing_education.hours_12m} of ${dna.continuing_education.target_hours} continuing-education hours`"
+      >
+        <span :style="{ width: dna.continuing_education.percent + '%' }"></span>
+      </div>
+      <p class="dna-ce__note">{{ dna.continuing_education.note }}</p>
+    </section>
   </section>
 </template>
 
@@ -423,12 +504,37 @@ const treePolygon = computed(() =>
     .map((point) => `${point.x},${point.y}`)
     .join(' ')
 )
-const treePoints = computed(() =>
-  treeDimensions.value.map((dimension, index) => ({
-    key: dimension.key,
-    ...treePoint(index, dimension.score),
-  }))
-)
+const treePoints = computed(() => {
+  const dimensions = treeDimensions.value
+  const maxWeight = Math.max(
+    1,
+    ...dimensions.map((dimension) => dimension.evidence_weight || 0),
+  )
+  return dimensions.map((dimension, index) => {
+    const weight = Math.max(0, dimension.evidence_weight || 0)
+    // Point size follows the strength of the work behind a branch, not just
+    // its score. A square-root curve keeps one very busy branch from swamping
+    // the rest while still making stronger practice visibly heavier.
+    const scale = weight ? Math.sqrt(weight / maxWeight) : 0
+    const previousScore = dimension.trend?.previous_score ?? dimension.score
+    const delta = dimension.trend?.delta ?? 0
+    const previous = treePoint(index, previousScore)
+    return {
+      key: dimension.key,
+      label: dimension.label,
+      score: dimension.score,
+      evidence: dimension.evidence_count || 0,
+      weight: Math.round(weight * 10) / 10,
+      delta,
+      moved: delta !== 0 && previousScore !== dimension.score,
+      ...treePoint(index, dimension.score),
+      priorX: previous.x,
+      priorY: previous.y,
+      radius: Math.round((7 + 7 * scale) * 10) / 10,
+      dotRadius: Math.round((3 + 2.4 * scale) * 10) / 10,
+    }
+  })
+})
 const topBranchKey = computed(() => {
   const dimensions = treeDimensions.value
   if (!dimensions.length) return null
@@ -453,7 +559,7 @@ const treeLabels = computed(() =>
 )
 const treeAriaLabel = computed(() => {
   const branches = treeDimensions.value
-    .map((dimension) => `${dimension.label}: ${dimension.score} out of 100`)
+    .map((dimension) => `${dimension.label}: ${dimension.score} out of 99`)
     .join('. ')
   return `Skill tree with six practice branches. ${branches}.`
 })
@@ -708,6 +814,26 @@ const titleDescription = (title) => {
 .dna-tree__dot--leader,
 .dna-tree__legend-dot--leader { fill: var(--danger); background: var(--danger); }
 
+.dna-tree__trend {
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+
+.dna-tree__trend--up { stroke: var(--success); }
+.dna-tree__trend--down { stroke: var(--warning); }
+
+.dna-tree__trend-head {
+  fill: var(--text-muted);
+}
+
+.dna-tree__trend-origin {
+  fill: var(--bg-primary);
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+
 .dna-tree__core {
   fill: var(--bg-tertiary);
   stroke: var(--accent);
@@ -766,6 +892,25 @@ const titleDescription = (title) => {
   background: var(--accent);
   flex-shrink: 0;
 }
+
+.dna-tree__legend-evidence {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.dna-tree__legend-trend {
+  min-width: 2rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dna-tree__legend-trend--up { color: var(--success); }
+.dna-tree__legend-trend--down { color: var(--warning); }
+.dna-tree__legend-trend--flat { color: var(--text-muted); }
 
 .dna-tree__legend-note {
   margin: 0.6rem 0 0;
@@ -944,6 +1089,7 @@ const titleDescription = (title) => {
 }
 
 .dna-trait__evidence,
+.dna-trait__decay,
 .dna-trait__next {
   margin: 0.4rem 0 0;
   font-size: 0.75rem;
@@ -951,6 +1097,7 @@ const titleDescription = (title) => {
 }
 
 .dna-trait__evidence { color: var(--text-secondary); }
+.dna-trait__decay { color: var(--warning); font-weight: 600; }
 .dna-trait__next { color: var(--text-muted); }
 
 .dna-affinities {
@@ -1337,6 +1484,78 @@ const titleDescription = (title) => {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.dna-ceiling-note {
+  margin: 0.4rem 0 0;
+  color: var(--accent-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.dna-recency-note {
+  margin: 0.35rem 0 0;
+  color: var(--warning);
+  font-size: 0.75rem;
+}
+
+.dna-ce {
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.dna-ce__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.dna-ce__head h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.dna-ce__status {
+  flex: 0 0 auto;
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dna-ce__status--met {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.dna-ce__bar {
+  height: 8px;
+  margin: 0.6rem 0 0.45rem;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+  overflow: hidden;
+}
+
+.dna-ce__bar span {
+  display: block;
+  height: 100%;
+  background: var(--brand-gradient);
+}
+
+.dna-ce__note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  line-height: 1.4;
 }
 
 .dna-quiz h3 { margin: 0; color: var(--text-primary); font-size: 0.95rem; }

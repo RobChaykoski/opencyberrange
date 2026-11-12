@@ -500,16 +500,28 @@
             <button type="button" @click="scrollToLabSection('lab-flag')">Flag</button>
             <button type="button" @click="scrollToLabSection('lab-hints')">Hints</button>
           </nav>
+          <div v-if="workspaceMode && rangeboxPoppedOut" class="workspace-popout">
+            <span>RangeBox is in its own window. The briefing, notes, and workbook stay here.</span>
+            <div class="workspace-popout__actions">
+              <button type="button" class="btn btn--secondary btn--sm" @click="focusRangeBoxWindow">
+                Focus RangeBox
+              </button>
+              <button type="button" class="btn btn--secondary btn--sm" @click="restoreRangeBox">
+                Bring it back
+              </button>
+            </div>
+          </div>
           <div
             class="active-lab-grid"
             :class="{
               'active-lab-grid--workspace': workspaceMode,
               'active-lab-grid--workbook-expanded': workspaceMode && workbookExpanded,
+              'active-lab-grid--popped-out': workspaceMode && rangeboxPoppedOut,
             }"
           >
             <!-- RangeBox workspace frame (desktop only) -->
             <section
-              v-if="workspaceMode"
+              v-if="workspaceMode && !rangeboxPoppedOut"
               class="panel-section panel-section--rangebox"
               aria-label="RangeBox desktop"
             >
@@ -524,6 +536,9 @@
                 </h3>
                 <div class="workspace-frame__actions">
                   <span class="workspace-frame__hint">Work here. Copy flags into the panel on the right.</span>
+                  <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBoxPopout">
+                    Pop out
+                  </button>
                   <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBox">
                     Open in new tab
                   </button>
@@ -789,11 +804,13 @@
               </div>
               <div v-if="activeWorkbookUrl" class="workspace-workbook">
                 <iframe
+                  ref="workbookFrame"
                   :key="activeWorkbookUrl"
                   :src="activeWorkbookUrl"
                   title="Exercise workbook"
                   loading="lazy"
                   referrerpolicy="same-origin"
+                  @load="styleWorkbookFrame"
                 ></iframe>
               </div>
               <div v-else class="workspace-empty">
@@ -1166,6 +1183,8 @@ const isRangeBoxActive = computed(() => {
 // workbook along the bottom. VPN-only labs and phones keep the stacked panel.
 const workspaceMode = computed(() => Boolean(isRangeBoxActive.value && !isMobile.value))
 const workbookExpanded = ref(false)
+const rangeboxPoppedOut = ref(false)
+let rangeboxWindow = null
 
 // Icon mapping
 
@@ -1261,6 +1280,43 @@ const workbookOpenable = (wb) => !!workbookUrl(wb, true)
 const activeWorkbookUrl = computed(() =>
   workbookUrl(activeLab.value?.lab?.workbook, true)
 )
+
+const workbookFrame = ref(null)
+
+// MkDocs ships a site header, tabs, and sidebars that waste most of a short
+// embedded pane. Hide the chrome and let the article use the full width so the
+// learner can read and scroll the workbook while the RangeBox stays open.
+const WORKBOOK_EMBED_CSS = `
+  .md-header, .md-tabs, .md-sidebar, .md-footer, .md-top, .md-search { display: none !important; }
+  .md-main__inner { margin: 0 !important; }
+  .md-content { max-width: none !important; }
+  .md-content__inner { margin: 0 !important; padding: 0.75rem 1rem !important; }
+  html, body { height: auto !important; overflow-y: auto !important; }
+  .md-typeset { font-size: 0.84rem; line-height: 1.55; }
+  .md-typeset h1 { font-size: 1.35rem; }
+  .md-typeset h2 { font-size: 1.1rem; }
+  .md-typeset h3 { font-size: 0.98rem; }
+  .md-typeset pre { white-space: pre-wrap; word-break: break-word; }
+  .md-typeset table { display: block; overflow-x: auto; }
+`
+
+function styleWorkbookFrame() {
+  const frame = workbookFrame.value
+  if (!frame) return
+  try {
+    const doc = frame.contentDocument
+    if (!doc?.head) return
+    let style = doc.getElementById('ocr-workbook-embed-style')
+    if (!style) {
+      style = doc.createElement('style')
+      style.id = 'ocr-workbook-embed-style'
+      doc.head.appendChild(style)
+    }
+    style.textContent = WORKBOOK_EMBED_CSS
+  } catch {
+    // Cross-origin or not ready; the iframe still scrolls on its own.
+  }
+}
 
 const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
@@ -1491,6 +1547,59 @@ const openRangeBox = () => {
     },
   })
   window.open(target.href, '_blank', 'noopener')
+}
+
+// Pop the desktop into a separate, resizable window. The main tab then has the
+// full width for the briefing, notes, and workbook while the flag dock travels
+// with the RangeBox window.
+const openRangeBoxPopout = () => {
+  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
+  const target = router.resolve({
+    path: '/rangebox',
+    query: {
+      session: String(rangeboxSessionId.value),
+      image: activeRangeboxImage.value,
+      lab: String(activeLab.value.lab.id),
+      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
+    },
+  })
+  rangeboxWindow = window.open(
+    target.href,
+    'ocr-rangebox',
+    'popup=yes,width=1280,height=900,resizable=yes,scrollbars=yes',
+  )
+  if (!rangeboxWindow) {
+    // Popup blocked: fall back to a normal tab rather than leaving the learner
+    // with no desktop and no message.
+    window.open(target.href, '_blank', 'noopener')
+    return
+  }
+  rangeboxPoppedOut.value = true
+  workbookExpanded.value = true
+  try {
+    rangeboxWindow.focus()
+  } catch {}
+}
+
+const focusRangeBoxWindow = () => {
+  try {
+    rangeboxWindow?.focus()
+  } catch {}
+}
+
+const restoreRangeBox = () => {
+  try {
+    rangeboxWindow?.close()
+  } catch {}
+  rangeboxWindow = null
+  rangeboxPoppedOut.value = false
+}
+
+const syncRangeBoxWindow = () => {
+  if (rangeboxPoppedOut.value && rangeboxWindow?.closed) {
+    rangeboxWindow = null
+    rangeboxPoppedOut.value = false
+  }
 }
 
 const viewLab = async (lab) => {
@@ -1955,6 +2064,7 @@ const renderScenario = (text) => {
 
 // Lifecycle
 onMounted(async () => {
+  window.addEventListener('focus', syncRangeBoxWindow)
   const slug = route.params.trackSlug
   if (!slug) {
     router.push('/exercises')
@@ -2004,6 +2114,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('focus', syncRangeBoxWindow)
   if (timerInterval) clearInterval(timerInterval)
   stopHintTimer()
   stopSpawnTimer()
@@ -3171,7 +3282,7 @@ watch(timeRemaining, (val) => {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
-  grid-template-rows: minmax(0, 1fr) minmax(200px, 30vh);
+  grid-template-rows: minmax(0, 1fr) minmax(240px, 36vh);
   grid-template-areas:
     "rangebox details"
     "workbook workbook";
@@ -3180,7 +3291,34 @@ watch(timeRemaining, (val) => {
 }
 
 .active-lab-grid--workspace.active-lab-grid--workbook-expanded {
-  grid-template-rows: minmax(0, 1fr) minmax(300px, 46vh);
+  grid-template-rows: minmax(0, 1fr) minmax(340px, 58vh);
+}
+
+.active-lab-grid--workspace.active-lab-grid--popped-out {
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "details workbook";
+}
+
+.workspace-popout {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.workspace-popout__actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
 }
 
 .lab-details {

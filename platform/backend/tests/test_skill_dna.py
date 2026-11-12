@@ -21,6 +21,7 @@ from app.models import (
     Track,
 )
 from app.services.skill_dna import (
+    _recency_factor,
     build_skill_dna,
     skill_branch_for_lab,
     skill_branch_mix,
@@ -119,7 +120,16 @@ def _lab(db, track: Track, *, name: str, category: str, difficulty: str = "inter
     return lab
 
 
-def _complete(db, user, lab: Lab, *, hints: int = 0, attempts: int = 1, minutes: int = 30):
+def _complete(
+    db,
+    user,
+    lab: Lab,
+    *,
+    hints: int = 0,
+    attempts: int = 1,
+    minutes: int = 30,
+    completed_at: datetime | None = None,
+):
     row = LabCompletion(
         user_id=user.id,
         lab_id=lab.id,
@@ -127,7 +137,7 @@ def _complete(db, user, lab: Lab, *, hints: int = 0, attempts: int = 1, minutes:
         attempts=attempts,
         hints_used=hints,
         time_spent_minutes=minutes,
-        completed_at=datetime.now(timezone.utc),
+        completed_at=completed_at or datetime.now(timezone.utc),
     )
     db.add(row)
     db.commit()
@@ -257,7 +267,7 @@ def test_skill_dna_scores_and_class(db_session, test_user):
     dna = build_skill_dna(db_session, test_user)
     scores = {row["key"]: row["score"] for row in dna["dimensions"]}
 
-    assert dna["formula_version"] == "2026.13"
+    assert dna["formula_version"] == "2026.14"
     assert scores["explorer"] > 0
     assert scores["builder"] > 0
     assert scores["tester"] > 0
@@ -267,7 +277,7 @@ def test_skill_dna_scores_and_class(db_session, test_user):
     assert dna["class"]["key"] in {"explorer", "builder", "tester", "defender", "investigator", "leader"}
     assert dna["class"]["class_name"] in {"Pathfinder", "Artificer", "Assessor", "Warden", "Seeker", "Commander"}
     assert dna["overall"] > 0
-    assert all(0 <= score <= 100 for score in scores.values())
+    assert all(0 <= score <= 99 for score in scores.values())
     for row in dna["dimensions"]:
         assert row["tier"] != "Unranked"
         assert row["evidence"]
@@ -450,3 +460,57 @@ def test_skill_branch_mapping_and_mix():
     assert by_key["builder"]["assigned"] == 0
     assert by_key["investigator"]["completed"] == 1
     assert by_key["explorer"]["assigned_pct"] == 20.0
+
+def test_recency_factor_thresholds():
+    assert _recency_factor(None) == 1.0
+    assert _recency_factor(14) == 1.0
+    assert _recency_factor(15) == 0.99
+    assert _recency_factor(30) == 0.99
+    assert _recency_factor(31) == 0.97
+    assert _recency_factor(60) == 0.97
+    assert _recency_factor(61) == 0.94
+    assert _recency_factor(90) == 0.94
+    assert _recency_factor(91) == 0.90
+
+
+def test_cyber_dna_caps_and_reports_evidence_and_trend(db_session, test_user):
+    _seed_activity(db_session, test_user)
+    dna = build_skill_dna(db_session, test_user)
+
+    assert dna["overall"] <= 99
+    assert dna["ceiling_note"]
+    assert dna["trend_window_days"] == 30
+    for row in dna["dimensions"]:
+        assert row["score"] <= 99
+        assert row["evidence_count"] > 0
+        assert row["evidence_weight"] > 0
+        assert row["trend"]["window_days"] == 30
+        assert row["trend"]["direction"] in {"up", "down", "flat"}
+        assert 0 <= row["recency"]["factor_percent"] <= 100
+    builder = next(row for row in dna["dimensions"] if row["key"] == "builder")
+    assert builder["trend"]["delta"] > 0, "fresh work should show an upward trend"
+
+
+def test_inactive_branch_decays_without_penalising_active_branch(db_session, test_user):
+    network = _track(db_session, "Network Security", "network")
+    old_lab = _lab(
+        db_session, network, name="Old Traffic Triage", category="network-analysis"
+    )
+    _complete(
+        db_session,
+        test_user,
+        old_lab,
+        completed_at=datetime.now(timezone.utc) - timedelta(days=100),
+    )
+
+    web = _track(db_session, "Web Application Security", "web")
+    new_lab = _lab(db_session, web, name="Fresh Request Triage", category="web")
+    _complete(db_session, test_user, new_lab)
+
+    dna = build_skill_dna(db_session, test_user)
+    defender = next(row for row in dna["dimensions"] if row["key"] == "defender")
+    builder = next(row for row in dna["dimensions"] if row["key"] == "builder")
+
+    assert defender["recency"]["days_since_last_activity"] >= 90
+    assert defender["recency"]["decay_percent"] == 10
+    assert builder["recency"]["decay_percent"] == 0

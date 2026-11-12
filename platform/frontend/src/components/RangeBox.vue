@@ -1,5 +1,12 @@
 ﻿<template>
-  <div class="rangebox" :class="{ 'rangebox--fullscreen': isFullscreen, 'rangebox--collapsed': isCollapsed }">
+  <div
+    ref="rangeboxRoot"
+    class="rangebox"
+    :class="{ 'rangebox--fullscreen': isFullscreen, 'rangebox--collapsed': isCollapsed }"
+    @dragover.prevent
+    @drop.prevent="rejectFileDrop"
+    @dragstart.prevent
+  >
     <!-- Toolbar -->
     <div class="rangebox__toolbar">
       <div class="rangebox__toolbar-left">
@@ -16,6 +23,24 @@
         </span>
       </div>
       <div class="rangebox__toolbar-right">
+        <select
+          v-model="qualityPreset"
+          class="rangebox__select"
+          title="Stream quality"
+          aria-label="Stream quality"
+        >
+          <option v-for="(preset, key) in QUALITY_PRESETS" :key="key" :value="key">
+            {{ preset.label }}
+          </option>
+        </select>
+        <button
+          v-if="connectionState === 'connected'"
+          @click="sendCtrlAltDel"
+          class="rangebox__btn"
+          title="Send Ctrl+Alt+Del to the desktop"
+        >
+          Ctrl+Alt+Del
+        </button>
         <button
           v-if="connectionState === 'disconnected'"
           @click="connect"
@@ -56,13 +81,31 @@
         v-model="clipboardText"
         placeholder="Paste text here, then press Send to transfer to RangeBox..."
         rows="3"
+        @paste="onClipboardPanelPaste"
+        @drop.prevent="rejectFileDrop"
       ></textarea>
+      <p class="rangebox__clipboard-note">
+        Text only. Files cannot leave or enter the RangeBox.
+      </p>
+      <p v-if="clipboardNotice" class="rangebox__clipboard-warning">{{ clipboardNotice }}</p>
       <div class="rangebox__clipboard-actions">
         <button @click="sendClipboard" class="rangebox__btn rangebox__btn--primary" :disabled="!clipboardText">
           Send to RangeBox
         </button>
+        <button @click="readClipboardIntoPanel" class="rangebox__btn" title="Read text from your browser clipboard">
+          Read clipboard
+        </button>
         <button @click="receiveClipboard" class="rangebox__btn">
           Get from RangeBox
+        </button>
+        <button
+          v-if="labContext"
+          @click="useClipboardAsFlag"
+          class="rangebox__btn"
+          :disabled="!clipboardText"
+          title="Copy the clipboard text into the flag field"
+        >
+          Use as flag
         </button>
       </div>
     </div>
@@ -76,6 +119,7 @@
       </div>
       <div v-if="connectionState === 'disconnected'" class="rangebox__disconnected">
         <p>Connection lost</p>
+        <p v-if="connectionMessage" class="rangebox__disconnected-hint">{{ connectionMessage }}</p>
         <button @click="connect" class="rangebox__btn rangebox__btn--primary">Reconnect</button>
       </div>
     </div>
@@ -102,14 +146,28 @@
         <label for="rangebox-flag" class="rangebox__flag-label">Flag</label>
         <input
           id="rangebox-flag"
+          ref="flagInput"
           v-model="flagValue"
           type="text"
           class="rangebox__flag-input"
           placeholder="OCR{your_flag_here}"
           autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
           spellcheck="false"
+          enterkeyhint="go"
           :disabled="flagSubmitting"
+          @paste="onFlagPaste"
         />
+        <button
+          type="button"
+          class="rangebox__btn"
+          :disabled="flagSubmitting"
+          title="Paste and clean the flag from your clipboard"
+          @click="pasteFlagFromClipboard"
+        >
+          Paste
+        </button>
         <button type="submit" class="rangebox__btn rangebox__btn--primary" :disabled="flagSubmitting || !flagValue.trim()">
           {{ flagSubmitting ? 'Checking...' : 'Submit flag' }}
         </button>
@@ -117,6 +175,9 @@
           {{ flagMessage }}
         </span>
       </form>
+      <p v-if="!labCompleted" class="rangebox__flag-hint">
+        Copy the flag inside the desktop; it fills here automatically. Or paste with Ctrl+V.
+      </p>
       <p v-else class="rangebox__flag-done">You can close this window or return to the exercise.</p>
     </div>
   </div>
@@ -143,13 +204,46 @@ const props = defineProps({
 
 const router = useRouter()
 
+const QUALITY_PRESETS = {
+  high: { label: 'High quality', quality: 9, compression: 0 },
+  balanced: { label: 'Balanced', quality: 6, compression: 2 },
+  low: { label: 'Low bandwidth', quality: 3, compression: 6 },
+}
+
 // State
+const rangeboxRoot = ref(null)
 const vncContainer = ref(null)
 const connectionState = ref('connecting') // connecting | connected | disconnected
+const connectionMessage = ref('')
 const isFullscreen = ref(false)
 const isCollapsed = ref(false)
 const showClipboard = ref(false)
 const clipboardText = ref('')
+const clipboardNotice = ref('')
+const qualityPreset = ref(localStorage.getItem('ocr.rangebox.quality') || 'balanced')
+
+const FILE_TRANSFER_NOTICE = 'Files cannot leave or enter the RangeBox. Copy text only.'
+
+function rejectFileDrop(event) {
+  const files = event.dataTransfer?.files
+  if (files?.length) {
+    clipboardNotice.value = FILE_TRANSFER_NOTICE
+  }
+  // Always stop the browser from opening, uploading, or downloading the file.
+  event.preventDefault()
+  event.stopPropagation()
+  if (event.dataTransfer) event.dataTransfer.dropEffect = 'none'
+}
+
+function onClipboardPanelPaste(event) {
+  const items = Array.from(event.clipboardData?.items || [])
+  if (items.some((item) => item.kind === 'file')) {
+    event.preventDefault()
+    clipboardNotice.value = FILE_TRANSFER_NOTICE
+    return
+  }
+  clipboardNotice.value = ''
+}
 
 // In-window flag submission (exercise RangeBox only).
 const flagValue = ref('')
@@ -157,6 +251,65 @@ const flagMessage = ref('')
 const flagError = ref(false)
 const flagSubmitting = ref(false)
 const flagAccepted = ref(false)
+const flagInput = ref(null)
+
+const FLAG_PATTERN = /OCR\{[^}]*\}/i
+
+// Paste and clipboard text can carry newlines, zero-width characters, shell
+// prompts, or a whole log line. Keep only the flag when one is present so a
+// correct flag is not rejected for the wrapper around it.
+function extractFlag(text) {
+  if (!text) return ''
+  const cleaned = String(text)
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .trim()
+  const match = cleaned.match(FLAG_PATTERN)
+  return match ? match[0] : cleaned
+}
+
+function setFlagCandidate(text, message = '') {
+  const candidate = extractFlag(text)
+  if (!candidate) return
+  flagValue.value = candidate
+  flagMessage.value = message
+  flagError.value = false
+  nextTick(() => flagInput.value?.focus())
+}
+
+function onFlagPaste(event) {
+  const items = Array.from(event.clipboardData?.items || [])
+  if (items.some((item) => item.kind === 'file')) {
+    event.preventDefault()
+    flagMessage.value = FILE_TRANSFER_NOTICE
+    flagError.value = true
+    return
+  }
+  const text = event.clipboardData?.getData('text') || ''
+  if (!text) return
+  event.preventDefault()
+  setFlagCandidate(text)
+}
+
+async function pasteFlagFromClipboard() {
+  try {
+    const text = await navigator.clipboard.readText()
+    if (!text) {
+      flagMessage.value = 'Your clipboard is empty. Copy the flag, then try again.'
+      flagError.value = true
+      return
+    }
+    setFlagCandidate(text)
+  } catch {
+    flagMessage.value = 'Clipboard access is blocked. Click the field and press Ctrl+V.'
+    flagError.value = true
+    nextTick(() => flagInput.value?.focus())
+  }
+}
+
+function useClipboardAsFlag() {
+  if (!clipboardText.value) return
+  setFlagCandidate(clipboardText.value, 'Flag copied from the RangeBox clipboard. Check it and submit.')
+}
 
 const timeRemaining = ref(null)
 const impersonation = ref(null)
@@ -301,6 +454,7 @@ const connect = async () => {
   }
 
   connectionState.value = 'connecting'
+  connectionMessage.value = ''
 
   await nextTick()
   const target = vncContainer.value
@@ -332,12 +486,13 @@ const connect = async () => {
     rfb.resizeSession = true
     rfb.clipViewport = false
     rfb.showDotCursor = true
-    rfb.qualityLevel = 6
-    rfb.compressionLevel = 2
+    applyQuality()
 
     rfb.addEventListener('connect', () => {
       connectionState.value = 'connected'
+      connectionMessage.value = ''
       reconnectAttempts = 0
+      try { rfb.focus() } catch {}
       // Force noVNC to recalculate scale after layout settles
       scaleTimer = setTimeout(() => {
         if (rfb && !unmounted) {
@@ -351,6 +506,16 @@ const connect = async () => {
           if (timeRemaining.value !== null) startTimer()
         })
       }
+    })
+
+    rfb.addEventListener('securityfailure', (e) => {
+      connectionMessage.value =
+        e.detail?.reason || 'The desktop rejected the connection. Try reconnecting.'
+    })
+
+    rfb.addEventListener('credentialsrequired', () => {
+      connectionMessage.value =
+        'The desktop asked for credentials this viewer does not hold. Reconnect the session.'
     })
 
     rfb.addEventListener('disconnect', (e) => {
@@ -369,6 +534,13 @@ const connect = async () => {
     rfb.addEventListener('clipboard', (e) => {
       if (e.detail.text) {
         clipboardText.value = e.detail.text
+        // Copying a flag inside the guest should land it in the flag field,
+        // so the learner can submit without a second copy/paste round trip.
+        if (props.labContext && !labCompleted.value && FLAG_PATTERN.test(e.detail.text)) {
+          flagValue.value = extractFlag(e.detail.text)
+          flagMessage.value = 'Flag captured from the desktop clipboard. Check it and submit.'
+          flagError.value = false
+        }
       }
     })
 
@@ -385,9 +557,58 @@ const connect = async () => {
   }
 }
 
-const toggleFullscreen = () => {
-  isFullscreen.value = !isFullscreen.value
+const applyQuality = () => {
+  const preset = QUALITY_PRESETS[qualityPreset.value] || QUALITY_PRESETS.balanced
+  if (rfb) {
+    rfb.qualityLevel = preset.quality
+    rfb.compressionLevel = preset.compression
+  }
+}
+
+watch(qualityPreset, (value) => {
+  localStorage.setItem('ocr.rangebox.quality', value)
+  applyQuality()
+})
+
+const focusRfb = () => {
+  try { rfb?.focus() } catch {}
+}
+
+const sendCtrlAltDel = () => {
+  try { rfb?.sendCtrlAltDel() } catch {}
+  focusRfb()
+}
+
+async function readClipboardIntoPanel() {
+  try {
+    clipboardText.value = await navigator.clipboard.readText()
+  } catch {
+    // Clipboard permission is commonly blocked on http:// or by the browser.
+    // Leave the textarea focused so Ctrl+V still works.
+    showClipboard.value = true
+  }
+}
+
+const handleFullscreenChange = () => {
+  if (!document.fullscreenElement) isFullscreen.value = false
+}
+
+const toggleFullscreen = async () => {
+  if (isFullscreen.value) {
+    isFullscreen.value = false
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen()
+    } catch {}
+    return
+  }
+  isFullscreen.value = true
   if (isCollapsed.value) isCollapsed.value = false
+  try {
+    await rangeboxRoot.value?.requestFullscreen?.()
+  } catch {
+    // The CSS fullscreen class still works when the browser refuses native
+    // fullscreen (for example inside an iframe without allowfullscreen).
+  }
 }
 
 const toggleCollapse = () => {
@@ -409,8 +630,9 @@ const closeViewer = () => {
 
 const submitFlag = async () => {
   const labId = props.labContext?.lab_id
-  const flag = flagValue.value.trim()
+  const flag = extractFlag(flagValue.value)
   if (!labId || !flag || flagSubmitting.value) return
+  flagValue.value = flag
   flagSubmitting.value = true
   flagMessage.value = ''
   flagError.value = false
@@ -482,6 +704,7 @@ const handleKeydown = (e) => {
 
 onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
+  document.addEventListener('fullscreenchange', handleFullscreenChange)
 
   // Watch viewport container for size changes and re-trigger noVNC scaling
   if (vncContainer.value) {
@@ -506,6 +729,7 @@ onMounted(async () => {
 onUnmounted(() => {
   unmounted = true
   window.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('fullscreenchange', handleFullscreenChange)
   stopTimer()
   if (resizeObserver) { resizeObserver.disconnect(); resizeObserver = null }
   if (reconnectTimer) clearTimeout(reconnectTimer)
@@ -651,6 +875,15 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   transition: all 0.15s;
 }
 
+.rangebox__select {
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--border-color, #2a2a3e);
+  border-radius: 4px;
+  background: #12122a;
+  color: #a0a0c0;
+  font-size: 0.72rem;
+}
+
 .rangebox__btn:hover {
   background: rgba(255,255,255,0.05);
   color: #e0e0f0;
@@ -700,6 +933,19 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   display: flex;
   gap: 0.5rem;
   margin-top: 0.4rem;
+}
+
+.rangebox__clipboard-note {
+  margin: 0.35rem 0 0;
+  color: #808090;
+  font-size: 0.66rem;
+}
+
+.rangebox__clipboard-warning {
+  margin: 0.25rem 0 0;
+  color: #f0ad4e;
+  font-size: 0.7rem;
+  font-weight: 600;
 }
 
 /* VNC viewport */
@@ -808,6 +1054,22 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   flex-basis: 100%;
   color: #5cb85c;
   font-size: 0.72rem;
+}
+
+.rangebox__flag-hint {
+  margin: 0.35rem 0 0;
+  color: #808090;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.rangebox__disconnected-hint {
+  max-width: 32rem;
+  margin: 0.35rem 0 0.75rem;
+  color: #f0ad4e;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .rangebox__flag-message--error,
