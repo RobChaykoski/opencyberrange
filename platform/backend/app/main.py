@@ -762,6 +762,15 @@ async def lifespan(app: FastAPI):
         if _dm is not None:
             _dm.close()
 
+    # Bring an existing database onto Alembic after the inline migrations have
+    # made the schema current. This runs under the schema advisory lock and
+    # passes the locked connection to Alembic. A failure is logged but does not
+    # take down a running platform whose inline schema is already current.
+    try:
+        _stamp_or_upgrade_alembic()
+    except Exception as exc:
+        logger.warning("Alembic stamp/upgrade skipped: %s", exc)
+
     # Append-only change ledger for critical tables. The triggers attribute
     # application writes to the authenticated actor and flag manual writes as
     # unattributed. PostgreSQL only; SQLite tests skip it.
