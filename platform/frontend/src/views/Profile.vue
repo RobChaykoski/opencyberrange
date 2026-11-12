@@ -221,7 +221,7 @@
 
         <div
           v-if="gpsQuestions.length && !gpsBannerDismissed"
-          class="gps-banner"
+          class="gps-card"
           role="region"
           aria-label="Optional Cyber GPS questions"
           @mouseenter="pauseGpsRotation"
@@ -229,43 +229,52 @@
           @focusin="pauseGpsRotation"
           @focusout="resumeGpsRotation"
         >
-          <span class="gps-banner__compass" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="9" />
-              <path d="m15.5 8.5-2.2 5.3-5.3 2.2 2.2-5.3z" />
-            </svg>
-          </span>
-          <span class="gps-banner__tag">Optional</span>
+          <div class="gps-card__top">
+            <span class="gps-card__badge">
+              <span class="gps-card__compass" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="m15.5 8.5-2.2 5.3-5.3 2.2 2.2-5.3z" />
+                </svg>
+              </span>
+              Optional &middot; Cyber GPS
+            </span>
+            <button
+              type="button"
+              class="gps-card__close"
+              aria-label="Dismiss optional questions"
+              @click="dismissGpsBanner"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
           <Transition name="gps-fade" mode="out-in">
-            <div :key="gpsBannerIndex" class="gps-banner__question">
-              <p class="gps-banner__prompt">{{ currentGpsQuestion?.prompt }}</p>
-              <div v-if="currentGpsQuestion?.options?.length" class="gps-banner__options">
+            <div :key="gpsBannerIndex" class="gps-card__body">
+              <p class="gps-card__question">{{ currentGpsQuestion?.prompt }}</p>
+              <div v-if="currentGpsQuestion?.options?.length" class="gps-card__options">
                 <button
                   v-for="option in currentGpsQuestion.options"
                   :key="option.id"
                   type="button"
-                  class="gps-banner__option"
+                  class="gps-card__option"
                   @click="chooseGpsAnswer(currentGpsQuestion, option)"
                 >
-                  {{ option.label }}
+                  <span class="gps-card__option-dot" aria-hidden="true"></span>
+                  <span>{{ option.label }}</span>
                 </button>
               </div>
             </div>
           </Transition>
-          <span class="gps-banner__note">Answer or skip; it never affects your progress.</span>
-          <button type="button" class="btn btn--secondary btn--sm" @click="setTab('careers')">
-            Open Cyber GPS
-          </button>
-          <button
-            type="button"
-            class="gps-banner__close"
-            aria-label="Dismiss optional questions"
-            @click="dismissGpsBanner"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
+
+          <div class="gps-card__foot">
+            <span>Optional. Answer or skip; it never affects your progress.</span>
+            <button type="button" class="gps-card__link" @click="setTab('careers')">
+              Open Cyber GPS &rarr;
+            </button>
+          </div>
         </div>
 
         <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
@@ -3466,105 +3475,141 @@ watch(() => route.path, (newPath) => {
   }
 }
 
-.gps-banner {
+.gps-card {
   position: relative;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  margin: 0.75rem 0;
-  padding: 0.6rem 0.8rem;
+  margin: 1rem 0;
+  padding: 0.9rem 1rem 0.8rem;
   border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent);
-  border-radius: 10px;
+  border-radius: 14px;
   background:
-    linear-gradient(90deg, var(--accent-bg), transparent 65%),
+    radial-gradient(circle at 100% 0%, var(--accent-bg), transparent 55%),
     var(--bg-secondary);
+  overflow: hidden;
 }
 
-.gps-banner::before {
+.gps-card::before {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  border-radius: 10px 0 0 10px;
+  inset: 0 0 auto 0;
+  height: 3px;
   background: var(--brand-gradient);
 }
 
-.gps-banner__compass {
-  display: grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  color: var(--accent-text);
-  animation: gps-spin 18s linear infinite;
+.gps-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
-.gps-banner__compass svg {
-  width: 100%;
-  height: 100%;
-}
-
-.gps-banner__tag {
-  padding: 0.1rem 0.4rem;
-  border: 1px solid var(--accent);
-  border-radius: 999px;
+.gps-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   color: var(--accent-text);
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.gps-banner__prompt {
-  flex: 1 1 240px;
-  margin: 0;
+.gps-card__compass {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  animation: gps-spin 18s linear infinite;
+}
+
+.gps-card__compass svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gps-card__question {
+  margin: 0.45rem 0 0.65rem;
   color: var(--text-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
-.gps-banner__question {
+.gps-card__options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.gps-card__option {
   display: flex;
-  flex: 1 1 100%;
-  min-width: 0;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.gps-banner__options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.gps-banner__option {
-  padding: 0.22rem 0.6rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
   border: 1px solid var(--border-color);
-  border-radius: 999px;
-  background: var(--bg-tertiary);
+  border-radius: 9px;
+  background: var(--bg-primary);
   color: var(--text-primary);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
+  text-align: left;
   cursor: pointer;
 }
 
-.gps-banner__option:hover {
+.gps-card__option:hover,
+.gps-card__option:focus-visible {
   border-color: var(--accent);
   color: var(--accent-text);
 }
 
-.gps-banner__option:focus-visible {
+.gps-card__option:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.gps-banner__note {
+.gps-card__option-dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+}
+
+.gps-card__option:hover .gps-card__option-dot {
+  background: var(--accent);
+}
+
+.gps-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.55rem;
+  border-top: 1px dashed var(--border-color);
   color: var(--text-secondary);
   font-size: 0.72rem;
 }
 
-.gps-banner__close {
+.gps-card__link {
+  border: 0;
+  background: transparent;
+  color: var(--accent-text);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gps-card__link:hover {
+  text-decoration: underline;
+}
+
+.gps-card__link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.gps-card__close {
   display: grid;
   place-items: center;
   width: 30px;
@@ -3576,19 +3621,31 @@ watch(() => route.path, (newPath) => {
   cursor: pointer;
 }
 
-.gps-banner__close:hover {
+.gps-card__close:hover {
   border-color: var(--accent);
   color: var(--accent-text);
 }
 
-.gps-banner__close:focus-visible {
+.gps-card__close:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.gps-banner__close svg {
+.gps-card__close svg {
   width: 13px;
   height: 13px;
+}
+
+@media (max-width: 640px) {
+  .gps-card__options {
+    grid-template-columns: 1fr;
+  }
+
+  .gps-card__foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
 }
 
 .gps-fade-enter-active,
@@ -3611,7 +3668,7 @@ watch(() => route.path, (newPath) => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gps-banner__compass { animation: none; }
+  .gps-card__compass { animation: none; }
   .gps-fade-enter-active,
   .gps-fade-leave-active { transition: none; }
 }
