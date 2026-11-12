@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Current supported platform release (unsigned annotated tag) |
+| `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Current supported platform release (unsigned annotated tag; documented exception) |
 | `v2.6.0` | SWOCTS Cyber Range 2.6.0 | Previous release; upgrade to 2.7.0 |
 | `v2.5.5` | SWOCTS Cyber Range 2.5.5 | Previous release; upgrade to 2.7.0 |
 | `v2.5.4` | SWOCTS Cyber Range 2.5.4 | Previous release; upgrade to 2.7.0 |
@@ -23,9 +23,20 @@ represent. It exists because the history contains several naming eras.
 the commit deployed on 11 November 2026. `v2.6.0` points at `2835303b`, the
 commit deployed to production (`172.16.16.41` / `https://ctfd.swocts.com`) and
 development (`172.16.16.44`) on 11 November 2026.
-The release key documented in `docs/SUPPLY-CHAIN.md` still signs the
-supply-chain lock and can sign the tag on the release workstation if a signed
-tag is required.
+The release key documented in `docs/SUPPLY-CHAIN.md` signs the supply-chain lock.
+New release tags must be signed with that key; `v2.7.0` is the documented
+unsigned exception from before the signing gate.
+
+## Release tag checklist
+
+1. Confirm `versions.yaml`, `README.md`, and `/api/version` agree on the release.
+2. Confirm CI, Quality checks, CodeQL, Trivy, and the supply-chain lock are green.
+3. Create a signed annotated tag on the release commit:
+   `git tag -s vX.Y.Z -m "SWOCTS Cyber Range X.Y.Z"`.
+4. Verify the signature locally: `git tag -v vX.Y.Z`.
+5. Push the tag: `git push origin vX.Y.Z`.
+6. Record the tag, commit, and signature status in this file and in the release
+   notes.
 
 ## Legacy wave tags
 

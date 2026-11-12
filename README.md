@@ -166,7 +166,7 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **162 active labs** across **12 tracks** and **53 levels**; **155** expose a workbook page |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **162 active labs** across **12 tracks** and **53 levels**; **158** expose a workbook page |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **164 workbook pages**, **111 analysis sections**, **407 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
@@ -175,6 +175,10 @@ These are current, checkable counts from this repository and metrics the platfor
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
+
+The lab-count metrics are distinct: the badge counts every lab directory under
+`platform/labs`; **162** are active in the catalogue; **158** have a workbook
+page and appear in the generated curriculum table below.
 
 ### Release and repositories
 
@@ -548,8 +552,9 @@ need to be documented separately.
   and orphaned coaching notes are excluded from course-health counts.
 - **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
   deployment, workflow, and lab inputs. CI verifies it, and install, update, and
-  prebuild stop on drift. The `v2.7.0` tag is annotated but unsigned; the lock is
-  signed by the release key. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
+  prebuild stop on drift. The `v2.7.0` tag is an annotated but unsigned
+  documented exception; new release tags must be signed with the release key.
+  The lock itself is signed. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
 - **Celebration privacy.** Celebrations are voluntary and anonymous. The wall
   shows counts only, one celebration per person per win, and celebrations never
   affect progress, completion, course health, Cyber DNA, or any learning metric.
@@ -736,7 +741,8 @@ building during a student spawn.
   from the host management LAN. This isolation is re-applied on backend start
   and persisted for reboot.
 - Lab traffic cannot route between different learners' session networks. The
-  Peer Manager API is internal-only; do not expose port 5000.
+  Peer Manager API is internal-only; it binds to the Docker bridge gateway or
+  loopback, never `0.0.0.0`. Do not expose port 5000.
 - WireGuard private keys are encrypted at rest with `WG_ENCRYPTION_KEY`. VPN
   configs and QR codes are generated on demand and marked `no-store`.
 - Open `51820/udp` only when students use the VPN. See the
@@ -850,7 +856,7 @@ If deploying to a cloud provider, open the following ports in your provider's se
 
 The setup script configures `iptables` on the server itself, but cloud providers add a separate firewall layer that defaults to blocking all inbound traffic. Both layers must allow these ports.
 
-> **Do not open port 5000.** The Peer Manager API is an internal service used by the backend container. It is not meant to be reachable from the internet, and opening it adds attack surface without enabling any student feature.
+> **Do not open port 5000.** The Peer Manager API is an internal service used by the backend container. It binds to the Docker bridge gateway or loopback, never `0.0.0.0`, and refuses to start without an API key. Opening it to the internet adds attack surface without enabling any student feature.
 
 > **KVM note:** Labs that use QEMU/KVM virtual machines require hardware virtualization. Most standard cloud VPS instances do not expose `/dev/kvm`. Use a bare-metal server (Hetzner AX-series, AWS `.metal` instances, OVH dedicated) or a VPS with nested virtualization enabled. Docker-only labs work on any VPS.
 
@@ -880,16 +886,16 @@ For production deployments or custom configurations, see the [Server Deployment 
 
 | Component | Technology | Container |
 |-----------|-----------|-----------|
-| Frontend | Vue.js 3.5.44 + Vite 8.3.5, served by nginx | `ocr-frontend` (port 80/443) |
+| Frontend | Vue.js 3.5.45 + Vite 8.3.6, served by nginx | `ocr-frontend` (port 80/443) |
 | Backend | Python 3.11 + FastAPI 0.162.2 | `ocr-backend` (port 8000, localhost only) |
 | Database | PostgreSQL 15 | `ocr-db` (port 5432, internal only) |
-| Cache and rate limits | Redis 7.2 | `ocr-redis` (port 6379, internal only) |
+| Cache and rate limits | Valkey 9.1.3 | `ocr-valkey` (port 6379, internal only) |
 | VPN | WireGuard + Peer Manager API | Host systemd services (port 51820/UDP) |
 
-Redis 7.2 remains the production pin. **Valkey 9.1.3** is being evaluated as a
-BSD-3-Clause drop-in for the Ubuntu 26.04 candidate; see the
-[Ubuntu 26.04 Valkey vs Redis test plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
-Do not change the production store until that plan's decision gate passes.
+The bundled rate-limit store is **Valkey 9.1.3** (BSD-3-Clause), the
+RESP-compatible Redis 7.2 fork. The client and `redis://` URI are unchanged.
+The [Ubuntu 26.04 Valkey vs Redis test plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md)
+remains the host-baseline decision record.
 
 The running version is available from `GET /api/version` and is shown in the
 footer of every page. `platform/backend/app/version.py` is the single source of
@@ -972,6 +978,8 @@ opencyberrange/
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation, in the admin UI or CLI |
 | [Privacy, Erasure, and Backups](docs/PRIVACY-AND-DATA-DELETION.md) | Privacy officers, DPOs, and administrators reviewing erasure, exports, and retention |
+| [Content gap analysis](docs/CONTENT-GAP-ANALYSIS.md) | Curriculum owners planning the next lab tracks and the defensive debriefs that pair with them |
+| [Security review, November 2026](docs/SECURITY-REVIEW-2026-11.md) | Operators and reviewers tracing each hardening change to its finding and fix |
 | [Privacy notice](docs/PRIVACY-NOTICE.md) | Learners, instructors, and administrators reviewing the PIPEDA-aligned platform notice |
 | [Security policy](SECURITY.md) | Security reporters and reviewers checking scope and export/restore safeguards |
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
@@ -1021,9 +1029,9 @@ or read learner records. Docker host and container state still need
 
 ## Requirements
 
-- **OS:** Ubuntu 24.04 LTS for new 2.1 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
+- **OS:** Ubuntu 24.04 LTS for new 2.7 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range 2.7.0 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Redis 7.2, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range 2.7.0 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used
