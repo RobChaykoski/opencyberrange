@@ -112,7 +112,7 @@
       "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
     },
     "scripts/status-dashboard.py": {
-      "sha256": "56885f0c3fa5af5792b7d1a9dfd8e98c8bf74921366ae58049a04fb238fd7ba9"
+      "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
       "sha256": "80a4482d053252d18d3f2374843e1bdf51889c399aacd7a92d8e4b71a3652d41"
@@ -698,7 +698,7 @@
       ]
     },
     "osint-1-3-exif-metadata": {
-      "content_hash": "a64b01d1ea5e21b1af28b6f7b9e7753c5172ac18fb784b77aa8e005db86e58f4",
+      "content_hash": "8d5ef2534b434e424be558afafd1e76d0f17242096563e98631a3f1fe0295f65",
       "services": [
         "archive"
       ]
@@ -1064,7 +1064,7 @@
       ]
     },
     "windows-6-2-mssql-version-and-instance-enumeration": {
-      "content_hash": "cf70ecdbd7d0d9aac2da01fc926b9f65777feb0fa6fc2cccca1f801562560f21",
+      "content_hash": "c67fe4529a8453fb6b0a2523bef633999e692a21976a014b0004e2eb2ba69fed",
       "services": [
         "target"
       ]

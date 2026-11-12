@@ -46,8 +46,8 @@ The important fields are:
 |---|---|
 | `Make` / `Model` | Canon / EOS R6 |
 | `DateTimeOriginal` | 2026:10:24 14:32:11 |
-| `GPSLatitude` | 42Â° 18' 53" N |
-| `GPSLongitude` | 83Â° 2' 11" W |
+| `GPSLatitude` | 42° 18' 53" N |
+| `GPSLongitude` | 83° 2' 11" W |
 | `ImageDescription` | Loading bay camera 3, frame 0042 |
 | `UserComment` | `OCR{ex1f_m3tadata_l34ks}` |
 

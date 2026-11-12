@@ -229,7 +229,7 @@ def render_html(rows: list[dict], state: str, message: str) -> str:
           </div>
           <p class="url">{row['url']}</p>
           <div class="stats">
-            <div><span>Version</span><strong class="{version_state}">{row['version']}</strong><small>expected {row['expected_version'] or '-'}{(' Â· ' + row['line']) if row.get('line') else ''}</small></div>
+            <div><span>Version</span><strong class="{version_state}">{row['version']}</strong><small>expected {row['expected_version'] or '-'}{(' · ' + row['line']) if row.get('line') else ''}</small></div>
             <div><span>Response</span><strong>{row['response_ms'] if row['response_ms'] is not None else '-'}<small> ms</small></strong></div>
             <div><span>Build asset</span><strong class="mono">{row['main_asset'] or '-'}</strong><small>{row['asset_count']} linked assets</small></div>
           </div>
@@ -239,7 +239,7 @@ def render_html(rows: list[dict], state: str, message: str) -> str:
             <li><span class="{'ok' if row['setup_complete'] else 'warn'}">{setup}</span></li>
             <li><span class="muted">{row['server'] or 'server unknown'}</span></li>
           </ul>
-          {('<p class="error">' + ' Â· '.join(e for e in row['errors'] if e) + '</p>') if any(row['errors']) else ''}
+          {('<p class="error">' + ' · '.join(e for e in row['errors'] if e) + '</p>') if any(row['errors']) else ''}
         </article>""")
 
     return f"""<!doctype html>
@@ -295,9 +295,9 @@ def render_html(rows: list[dict], state: str, message: str) -> str:
 <main>
   <header class="head">
     <div>
-      <p class="eyebrow">SWOCTS Cyber Range Â· powered by OpenCyberRange</p>
+      <p class="eyebrow">SWOCTS Cyber Range · powered by OpenCyberRange</p>
       <h1>Deployment status</h1>
-      <p class="muted">Checked {datetime.now(UTC).isoformat(timespec='seconds')} Â· public API probes only</p>
+      <p class="muted">Checked {datetime.now(UTC).isoformat(timespec='seconds')} · public API probes only</p>
     </div>
     <div class="overall"><span class="dot"></span>{state.upper()}</div>
   </header>

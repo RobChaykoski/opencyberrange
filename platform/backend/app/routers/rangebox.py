@@ -1,4 +1,4 @@
-﻿"""
+"""
 RangeBox routes — browser-based Kali attack desktop via noVNC.
 
 Provides WebSocket proxy between the browser's noVNC client and the
@@ -24,7 +24,7 @@ router = APIRouter()
 docker_manager = DockerManager()
 
 
-# â”€â”€â”€ Helper: authenticate WebSocket connections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Helper: authenticate WebSocket connections ──────────────────────
 async def _authenticate_ws(token: str) -> tuple[int | None, bool]:
     """
     Validate a WebSocket ticket (preferred) or JWT token and return
@@ -66,7 +66,7 @@ async def _authenticate_ws(token: str) -> tuple[int | None, bool]:
         db.close()
 
 
-# â”€â”€â”€ WebSocket ticket endpoint â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── WebSocket ticket endpoint ─────────────────────────────────────
 
 @router.post("/ws-ticket")
 async def get_ws_ticket(
@@ -78,7 +78,7 @@ async def get_ws_ticket(
     return {"ticket": ticket}
 
 
-# â”€â”€â”€ Standalone RangeBox (not tied to a lab session) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Standalone RangeBox (not tied to a lab session) ───────────────
 # NOTE: These MUST be defined before /{session_id}/... routes,
 # otherwise FastAPI matches "standalone" as a session_id int and returns 422.
 
@@ -220,7 +220,7 @@ async def standalone_rangebox_vnc_proxy(
                     except WebSocketDisconnect:
                         pass
                     except Exception as e:
-                        logger.debug(f"standalone browserâ†’container relay ended: {e}")
+                        logger.debug(f"standalone browser→container relay ended: {e}")
                     finally:
                         await upstream.close()
 
@@ -236,7 +236,7 @@ async def standalone_rangebox_vnc_proxy(
                             elif msg.type == aiohttp.WSMsgType.ERROR:
                                 break
                     except Exception as e:
-                        logger.debug(f"standalone containerâ†’browser relay ended: {e}")
+                        logger.debug(f"standalone container→browser relay ended: {e}")
                     finally:
                         try:
                             await websocket.close()
@@ -297,7 +297,7 @@ async def standalone_rangebox_vnc_proxy(
 
 
 
-# â”€â”€â”€ Session-based REST endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Session-based REST endpoints ──────────────────────────────────
 
 def _subnet_base(network_subnet: str | None) -> str | None:
     if not network_subnet:
@@ -438,7 +438,7 @@ async def rangebox_status(
     return docker_manager.get_rangebox_status(current_user.id, lab_slug)
 
 
-# â”€â”€â”€ Session-based WebSocket VNC proxy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Session-based WebSocket VNC proxy ─────────────────────────────
 
 @router.websocket("/{session_id}/vnc")
 async def rangebox_vnc_proxy(
@@ -452,7 +452,7 @@ async def rangebox_vnc_proxy(
 
     Auth: JWT passed as ?token= query parameter.
     """
-    # â”€â”€ 1. Authenticate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 1. Authenticate ──────────────────────────────────────────────
     if not token:
         await websocket.close(code=4401, reason="Missing token")
         return
@@ -462,7 +462,7 @@ async def rangebox_vnc_proxy(
         await websocket.close(code=4401, reason="Invalid token")
         return
 
-    # â”€â”€ 2. Validate session ownership â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 2. Validate session ownership ────────────────────────────────
     db = SessionLocal()
     try:
         session = db.query(LabSession).filter(
@@ -484,7 +484,7 @@ async def rangebox_vnc_proxy(
     finally:
         db.close()
 
-    # â”€â”€ 3. Resolve RangeBox container address â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 3. Resolve RangeBox container address ──────────────────────────
     rangebox_ip = docker_manager.get_rangebox_ip(user_id, lab_slug)
     if not rangebox_ip:
         await websocket.close(code=4500, reason="RangeBox IP not found")
@@ -492,7 +492,7 @@ async def rangebox_vnc_proxy(
 
     rangebox_ws_url = f"ws://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}/websockify"
 
-    # â”€â”€ 4. Connect to the upstream RangeBox websockify â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 4. Connect to the upstream RangeBox websockify ─────────────────
     try:
         import aiohttp
     except ImportError:
@@ -509,10 +509,10 @@ async def rangebox_vnc_proxy(
                 protocols=["binary"],
                 max_msg_size=16 * 1024 * 1024,  # 16MB — VNC can send large frames
             ) as upstream:
-                # â”€â”€ 5. Bidirectional relay â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+                # ── 5. Bidirectional relay ────────────────────────────
 
                 async def browser_to_container():
-                    """Forward messages from browser â†’ RangeBox."""
+                    """Forward messages from browser → RangeBox."""
                     try:
                         while True:
                             msg = await websocket.receive()
@@ -530,12 +530,12 @@ async def rangebox_vnc_proxy(
                     except WebSocketDisconnect:
                         pass
                     except Exception as e:
-                        logger.debug(f"browserâ†’container relay ended: {e}")
+                        logger.debug(f"browser→container relay ended: {e}")
                     finally:
                         await upstream.close()
 
                 async def container_to_browser():
-                    """Forward messages from RangeBox â†’ browser."""
+                    """Forward messages from RangeBox → browser."""
                     try:
                         async for msg in upstream:
                             if msg.type == aiohttp.WSMsgType.BINARY:
@@ -547,7 +547,7 @@ async def rangebox_vnc_proxy(
                             elif msg.type == aiohttp.WSMsgType.ERROR:
                                 break
                     except Exception as e:
-                        logger.debug(f"containerâ†’browser relay ended: {e}")
+                        logger.debug(f"container→browser relay ended: {e}")
                     finally:
                         try:
                             await websocket.close()
@@ -583,7 +583,7 @@ async def rangebox_vnc_proxy(
             pass
 
 
-# â”€â”€â”€ Admin: view a student's RangeBox VNC session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ─── Admin: view a student's RangeBox VNC session ─────────────────
 
 @router.websocket("/admin/{target_user_id}/{session_id}/vnc")
 async def admin_rangebox_vnc_proxy(
@@ -597,7 +597,7 @@ async def admin_rangebox_vnc_proxy(
     Authenticates the caller as an admin, then proxies VNC to
     the target student's RangeBox container.
     """
-    # â”€â”€ 1. Authenticate caller â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 1. Authenticate caller ───────────────────────────────────
     if not token:
         await websocket.close(code=4401, reason="Missing token")
         return
@@ -607,7 +607,7 @@ async def admin_rangebox_vnc_proxy(
         await websocket.close(code=4401, reason="Invalid token")
         return
 
-    # â”€â”€ 2. Verify caller is an admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 2. Verify caller is an admin ─────────────────────────────
     db = SessionLocal()
     try:
         admin = db.query(User).filter(User.id == admin_user_id, User.is_active == True).first()
@@ -615,7 +615,7 @@ async def admin_rangebox_vnc_proxy(
             await websocket.close(code=4403, reason="Admin access required")
             return
 
-        # â”€â”€ 3. Look up the target student's session â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        # ── 3. Look up the target student's session ──────────────
         session = db.query(LabSession).filter(
             LabSession.id == session_id,
             LabSession.user_id == target_user_id,
@@ -632,7 +632,7 @@ async def admin_rangebox_vnc_proxy(
     finally:
         db.close()
 
-    # â”€â”€ 4. Resolve target student's RangeBox IP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 4. Resolve target student's RangeBox IP ──────────────────
     # Try lab-specific RangeBox first, then fall back to standalone.
     # get_rangebox_ip() always returns a computed IP (never None),
     # so we verify the container actually exists before using it.
@@ -656,7 +656,7 @@ async def admin_rangebox_vnc_proxy(
     rangebox_ws_url = f"ws://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}/websockify"
     logger.info(f"Admin {admin.username} viewing RangeBox for user {target_user_id} session {session_id}")
 
-    # â”€â”€ 5. Proxy (same relay logic as regular endpoint) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    # ── 5. Proxy (same relay logic as regular endpoint) ──────────
     try:
         import aiohttp
     except ImportError:
@@ -687,7 +687,7 @@ async def admin_rangebox_vnc_proxy(
                     except WebSocketDisconnect:
                         pass
                     except Exception as e:
-                        logger.debug(f"admin browserâ†’container relay ended: {e}")
+                        logger.debug(f"admin browser→container relay ended: {e}")
                     finally:
                         await upstream.close()
 
@@ -703,7 +703,7 @@ async def admin_rangebox_vnc_proxy(
                             elif msg.type == aiohttp.WSMsgType.ERROR:
                                 break
                     except Exception as e:
-                        logger.debug(f"admin containerâ†’browser relay ended: {e}")
+                        logger.debug(f"admin container→browser relay ended: {e}")
                     finally:
                         try:
                             await websocket.close()

@@ -15,7 +15,7 @@ entitlement; they are not separate version lines. See
 | Edition profile | Platform release | Status | Shape | Primary user |
 |---|---|---|---|---|
 | **Community / Academic** | 2.7.0 (1.1.3 maintenance line) | Supported profile | Single-host Docker Compose teaching platform | Instructor, classroom, self-hosted operator |
-| **Professional** | 2.7.0 | Release profile � analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
+| **Professional** | 2.7.0 | Release profile — analytics preview | Community / Academic plus analytics, reporting, cohort analysis, accreditation support, and research exports | Programme lead, teaching team, analyst |
 | **Enterprise** | 2.7.0 preview | Development profile | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and regulatory reporting | Institution, IT operations, multi-cohort deployment |
 
 ## Edition boundaries
@@ -42,15 +42,15 @@ must not regress it.
 Professional adds the teaching intelligence and evidence layer on the same
 single-host deployment and 2.7.0 platform release. The Professional and Enterprise priority set is:
 
-1. **Competency Framework Engine** � explicit competency definitions, mappings,
+1. **Competency Framework Engine** — explicit competency definitions, mappings,
    evidence rules, and progression levels.
-2. **Student Feedback Engine** � structured, consent-aware feedback tied to
+2. **Student Feedback Engine** — structured, consent-aware feedback tied to
    exercises, tracks, and competencies.
-3. **Radar / Spider Web Reporting** � competency profiles for learners, cohorts,
+3. **Radar / Spider Web Reporting** — competency profiles for learners, cohorts,
    and programmes.
-4. **Exercise Health Analytics** � which labs are failing, where learners
+4. **Exercise Health Analytics** — which labs are failing, where learners
    abandon, and which exercises need authoring attention.
-5. **Instructor Intervention Dashboard** � early, explainable support signals
+5. **Instructor Intervention Dashboard** — early, explainable support signals
    for instructors.
 
 Professional also carries:

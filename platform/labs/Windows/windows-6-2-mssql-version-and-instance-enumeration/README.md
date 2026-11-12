@@ -145,18 +145,18 @@ OCR{mssql_v3rs10n}
 ```
 
 **Verification checklist:**
-- âœ… Starts with `OCR{`
-- âœ… Ends with `}`
-- âœ… Contains only alphanumeric characters and underscores
-- âœ… No extra spaces or characters
+- ✅ Starts with `OCR{`
+- ✅ Ends with `}`
+- ✅ Contains only alphanumeric characters and underscores
+- ✅ No extra spaces or characters
 
 **Success Criteria:**
-- âœ… Verified target IP and network connectivity
-- âœ… Ran nmap version detection on database port (3306 or 1433)
-- âœ… Identified database service version (MySQL 8.0.33 or MS-SQL version)
-- âœ… Analyzed version information and understood database type
-- âœ… Successfully accessed flag in /tmp/flag.txt
-- âœ… Verified flag format is correct: `OCR{...}`
+- ✅ Verified target IP and network connectivity
+- ✅ Ran nmap version detection on database port (3306 or 1433)
+- ✅ Identified database service version (MySQL 8.0.33 or MS-SQL version)
+- ✅ Analyzed version information and understood database type
+- ✅ Successfully accessed flag in /tmp/flag.txt
+- ✅ Verified flag format is correct: `OCR{...}`
 
 **Key Learning Points:**
 - Version detection reveals database software and version

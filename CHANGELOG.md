@@ -677,7 +677,7 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   `date_trunc` bucket expression is now identical in `SELECT` and `GROUP BY`,
   so PostgreSQL no longer raises a grouping error for `/api/dashboard/instructor/pulse`.
 - Repaired double-encoded UTF-8 in user-facing text. The profile avatar-border
-  label now shows `Solid · Blue` instead of `Solid Â· Blue`, and dashes,
+  label now shows `Solid · Blue` instead of the old double-encoded middle dot, and dashes,
   ellipses, multiplication signs, and bullets render correctly across the
   profile and admin views.
 
