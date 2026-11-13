@@ -43,7 +43,7 @@ production.** Platform
 | Lab validator (`validate-lab.py --all`) | **179 labs, 0 errors, 0 warnings** |
 | Topology engine unit tests | **22 passed** |
 
-| Relative links in README, docs, Manual-Lite, Workbook | **496 files, all resolve** |
+| Relative links in README, docs, Manual-Lite, Workbook | **497 files, all resolve** |
 | Frontend build | **Passed** |
 | Frontend lint | **0 errors** (existing warnings only) |
 | Licence guard (`check-licences.py`) | **OK** |
@@ -845,6 +845,7 @@ CI runs the same static checks on every push:
   [RangeBox capacity test](RANGEBOX-CAPACITY.md) on each host class.
 - Production `192.168.120.41` was upgraded to `2.4.1`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
+
 
 
 
