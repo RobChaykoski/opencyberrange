@@ -53,15 +53,17 @@ lab credentials.
   flow would remove the XSS token-theft path; see the session-cookie roadmap
   below. This is a larger architectural change than this pass and is not a
   Release 4 blocker.
-- **Workbook iframe isolation (origin split implemented).** Internet-facing
-  deployments serve the wiki from a sibling hostname (`WIKI_BASE_URL`) and give
-  it an HttpOnly `wiki_session` cookie scoped by `WIKI_COOKIE_DOMAIN`. The SPA
-  keeps its token in `localStorage`; the framed wiki cannot read the parent
-  origin or the HttpOnly cookie. The wiki CSP gains the app origin in
-  `frame-ancestors`, and the legacy `X-Frame-Options` header is removed from
-  wiki responses. See [`WIKI-ORIGIN-SPLIT.md`](WIKI-ORIGIN-SPLIT.md).
-  The same-origin fallback sandboxes the frame without `allow-same-origin`, so
-  development remains safe but keeps the opaque-origin limitations.
+- **Workbook iframe isolation (origin split supported, safe fallback deployed).**
+  Deployments with a second hostname for the same instance set `WIKI_BASE_URL`
+  and give the wiki an HttpOnly `wiki_session` cookie scoped by
+  `WIKI_COOKIE_DOMAIN`. The SPA keeps its token in `localStorage`; the framed
+  wiki cannot read the parent origin or the HttpOnly cookie. The wiki CSP gains
+  the app origin in `frame-ancestors`, and the legacy `X-Frame-Options` header is
+  removed from wiki responses. See [`WIKI-ORIGIN-SPLIT.md`](WIKI-ORIGIN-SPLIT.md).
+  Where no same-instance second hostname exists, the frame stays same-origin but
+  is sandboxed without `allow-same-origin`; the JWT is still unreachable because
+  the cookie is HttpOnly and the opaque document cannot read parent storage.
+  The split is the preferred boundary; the fallback is the deployable one.
 - **Wiki CSP.** The generated wiki no longer allows `unpkg.com` or
   `cdnjs.cloudflare.com`. Mermaid 11, html2pdf 0.10.2, and the theme CSS/JS are
   vendored or built locally, and `theme.font: false` prevents the Google Fonts

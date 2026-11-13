@@ -1,7 +1,8 @@
 # Wiki origin split
 
 Status: **implemented for Release 4 deployments that set the split variables.**
-The same-origin fallback remains for single-host development.
+The same-origin fallback (opaque sandbox plus an HttpOnly wiki cookie) remains
+for deployments without a second hostname that points at the same instance.
 
 ## Why
 
@@ -25,8 +26,11 @@ JavaScript-readable copy.
 | Frame policy | wiki CSP `frame-ancestors 'self' https://ctfd.example.edu` |
 | Auth check | nginx `auth_request` forwards `wiki_session` to the backend |
 
-Both hostnames may be served by the same frontend container. The browser treats
-them as different origins because the hostnames differ.
+Both hostnames must resolve to the **same deployment** (the same frontend,
+backend, database, and wiki volume). The browser treats them as different
+origins because the hostnames differ. A hostname that points at a different
+instance will authenticate against the wrong data and must not be used for the
+split.
 
 Flow:
 
