@@ -2141,7 +2141,7 @@ const focusOptions = computed(() => {
       total: track.total_labs,
       percent: track.progress_percent || 0,
       unit: 'exercises',
-      meta: `${track.completed_labs || 0}/${track.total_labs} exercises · ${track.level_count || 0} levels`,
+      meta: `${track.completed_labs || 0}/${track.total_labs} exercises · ${track.level_count || track.levels?.length || 0} levels`,
       href: `/exercises/${track.track_slug}`,
       action: 'Open track',
     })
@@ -2268,7 +2268,10 @@ const progressLenses = computed(() => {
   const track = selectedTrack
     || tracks.value
       .filter((item) => (item.completed_labs || 0) > 0)
-      .sort((a, b) => (b.progress_percent || 0) - (a.progress_percent || 0))[0]
+      .sort((a, b) => (
+        (b.completed_labs || 0) - (a.completed_labs || 0)
+        || (b.progress_percent || 0) - (a.progress_percent || 0)
+      ))[0]
   if (track) {
     lenses.push({
       key: 'track',
