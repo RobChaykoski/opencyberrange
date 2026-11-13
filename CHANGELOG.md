@@ -2,6 +2,39 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5] - in development
+
+Release 5. LTI 1.3 Advantage, per-student accommodations, and the associated
+procurement evidence. Development `.44` runs this branch; production remains on
+Release 4 `v4.0.1`.
+
+### LTI 1.3 Advantage
+- Platform registry, OIDC third-party login (GET and form POST), signed
+  `id_token` validation, single-use state, external-identity linking, and the
+  SPA ticket exchange.
+- AGS 2.0: private_key_jwt token exchange, line items, reviewed score passback,
+  result retrieval, and an append-only ledger.
+- NRPS 2.0: explicit roster sync with the minimum subject/role/status/context
+  fields and LIS 2.0 membership parsing.
+- Deep Linking 2.0: single-use picker, signed response, lab launch content
+  items, selection limits, and an embeddable picker/callback.
+- Public tool JWKS with an RFC 7638 `kid` on every signed message.
+- Verified end to end against Moodle 5.0.2, including a grade reaching the
+  Moodle gradebook and NRPS returning the course roster.
+
+### Accommodations
+- Per-student 1.0x–3.0x timed-session multiplier and 0–365 day due-date
+  extension, managed by instructors and audited.
+- Learner pause/resume clock with a reason, a frozen expiry, scheduler
+  exclusion, and paused-time credit on resume.
+- Append-only `accommodation_events` and activity-log records.
+
+### Operations
+- Migrations `0015`–`0022`.
+- Development `172.16.16.44` deployed from `release5`; live lab spawn,
+  pause/resume, accommodation read-back, 10-lab sampling, and an authenticated
+  page pass all verified.
+
 ## [4] - 2026-11-12
 
 Release 4. Enterprise single sign-on, the optional Dex/OpenLDAP test stack, and

@@ -145,6 +145,27 @@ staging remain recommended.
 
 Still to do: a Canvas or Brightspace staging test.
 
+## Development deployment
+
+`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now runs Release 5 from
+`release5` at commit `248dd111`.
+
+- `/api/version` = **5**, health = **healthy**, Alembic = **0022**.
+- 188 lab rows; 12 tracks and 139 track-visible labs in the authenticated API.
+- Ten randomly sampled labs returned their detail payload.
+- Authenticated page pass: dashboard, exercises, Windows track, workbooks,
+  courses, profile, instructor, admin, and admin settings with no console or
+  page errors.
+- Live lab spawn on the host, then pause and resume: paused time credited
+  correctly and the session was stopped cleanly.
+- Per-student accommodation set through the API and read back by the learner
+  (`1.5x`, `+4 days`).
+- LTI admin panel present; `/lti/deep-link` served with the LTI embed CSP.
+- Temporary verification accounts were deleted after the pass.
+
+Production remains on the signed Release 4 hotfix `v4.0.1`; Release 5 is not
+deployed to production.
+
 ## Verified on this stack
 
 - `/api/version` = **5**, release name **Release 5 (Development)**.
