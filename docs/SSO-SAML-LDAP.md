@@ -10,6 +10,16 @@ one-time SPA exchange ticket.
 Keep a local break-glass administrator account. SSO never creates or links an
 administrator automatically.
 
+## Turn SSO off for the deployment
+
+Use **Admin -> Platform Settings -> Security -> Institution SSO**. Turning the
+switch off hides the institution sign-in panel and rejects new OIDC, SAML, and
+LDAP logins at `/api/auth/sso/*`, including the ticket exchange. Providers and
+existing sessions are left intact. Local password login and the break-glass
+administrator remain available; SSO-provisioned accounts with
+`password_login_disabled=true` will need SSO re-enabled or an administrator
+decision on their password flag.
+
 ## Shared behaviour
 
 - The login flow can start on one API replica and finish on another. Flow state

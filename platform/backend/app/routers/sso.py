@@ -19,6 +19,7 @@ from app.models import IdentityProvider, SsoLoginState, User
 from app.ratelimit import create_limiter
 from app.services import ldap_auth, oidc, saml_auth, sso_flow
 from app.services.external_identity import SSOError, provision_or_link_external_user
+from app.services.settings_service import get_setting_fresh
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,30 @@ class LdapLoginRequest(BaseModel):
     return_to: str = Field("/dashboard", max_length=500)
 
 
+def sso_enabled(db: Session) -> bool:
+    """Return the deployment-wide SSO switch.
+
+    Read fresh, not from the settings cache: an administrator who turns SSO off
+    must not leave another worker accepting new SSO logins for the cache TTL.
+    Local password login is deliberately not part of this switch.
+    """
+    raw = get_setting_fresh(db, "sso_enabled", "true")
+    return str(raw or "true").strip().lower() in ("true", "1", "yes", "on")
+
+
+def _require_sso_enabled(db: Session) -> None:
+    if not sso_enabled(db):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Single sign-on is disabled for this deployment. Use local "
+                "password sign-in or contact the administrator."
+            ),
+        )
+
+
 def _provider(db: Session, provider_id: int, kind: str) -> IdentityProvider:
+    _require_sso_enabled(db)
     row = db.query(IdentityProvider).filter(IdentityProvider.id == provider_id).first()
     if row is None or not row.enabled:
         raise HTTPException(status_code=404, detail="Identity provider not found")
@@ -64,7 +88,14 @@ def _login_unavailable() -> RedirectResponse:
 
 @router.get("/providers")
 async def list_sso_providers(db: Session = Depends(get_db)):
-    """List enabled providers for the login screen."""
+    """List enabled providers for the login screen.
+
+    The global switch is evaluated here as well as in every flow endpoint, so
+    turning SSO off removes the institution sign-in panel immediately rather
+    than only rejecting the click that follows.
+    """
+    if not sso_enabled(db):
+        return {"providers": [], "sso_enabled": False}
     rows = (
         db.query(IdentityProvider)
         .filter(IdentityProvider.enabled == True)
@@ -90,7 +121,7 @@ async def list_sso_providers(db: Session = Depends(get_db)):
                 "login_path": login_path,
             }
         )
-    return {"providers": providers}
+    return {"providers": providers, "sso_enabled": True}
 
 
 @router.get("/oidc/{provider_id}/login")
@@ -359,6 +390,7 @@ async def exchange_ticket(
     db: Session = Depends(get_db),
 ):
     """Exchange the one-time callback ticket for the platform JWT."""
+    _require_sso_enabled(db)
     try:
         ticket = sso_flow.consume_login_ticket(db, payload.ticket)
     except SSOError as exc:

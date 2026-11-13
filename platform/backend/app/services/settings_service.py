@@ -68,6 +68,8 @@ DEFAULT_SETTINGS = [
      "description": "Account lockout duration in minutes"},
     {"key": "require_approval", "value": "true", "category": "security",
      "description": "Require admin approval for new user registrations"},
+    {"key": "sso_enabled", "value": "true", "category": "security",
+     "description": "Allow users to sign in through the configured LDAP, OIDC, and SAML providers. When off, the institution sign-in panel is hidden and all SSO endpoints reject new logins. Local password login, including the break-glass administrator, remains available."},
     {"key": "enable_api_docs", "value": "false", "category": "security",
      "description": "Enable Swagger UI (/docs) and ReDoc (/redoc) on the backend API"},
     {"key": "privacy_default_on", "value": "true", "category": "security",

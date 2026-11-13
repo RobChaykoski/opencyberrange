@@ -4699,6 +4699,7 @@ const settingMeta = {
   max_failed_attempts:       { label: 'Max Failed Logins',      desc: 'Number of consecutive wrong-password attempts before the account is temporarily locked.', unit: 'attempts' },
   lockout_duration_minutes:  { label: 'Lockout Duration',       desc: 'How long a locked-out account remains inaccessible after exceeding the failed login limit.', unit: 'minutes' },
   require_approval:          { label: 'Require Approval',       desc: 'When enabled, new user registrations must be approved by an admin before the account can log in.' },
+  sso_enabled:               { label: 'Institution SSO',        desc: 'Allow LDAP, OIDC, and SAML sign-in. Turning this off hides the institution sign-in panel and rejects new SSO logins; local password login and the break-glass administrator remain available. Existing SSO sessions are not revoked.' },
   enable_api_docs:           { label: 'API Documentation',      desc: 'Exposes the Swagger UI (/docs) and ReDoc (/redoc) endpoints for the backend API. Disable in production.' },
   privacy_default_on:        { label: 'Default Privacy Mode',   desc: 'Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views.' },
   analytics_min_cohort_size: { label: 'Analytics Minimum Cohort', desc: 'Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment.' },
@@ -5129,6 +5130,15 @@ const toggleSetting = async (key) => {
   if (togglesSaving[key]) return
   const previous = settingsEdits[key]
   const next = previous === 'true' ? 'false' : 'true'
+  if (
+    key === 'sso_enabled' &&
+    next === 'false' &&
+    !window.confirm(
+      'Disable institution SSO? The sign-in panel will be hidden and new SSO logins will be rejected. Local password login and the break-glass administrator remain available. Existing SSO sessions are not signed out.'
+    )
+  ) {
+    return
+  }
   settingsEdits[key] = next
   togglesSaving[key] = true
   try {
