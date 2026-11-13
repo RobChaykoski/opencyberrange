@@ -1465,8 +1465,8 @@ const handleRegister = async () => {
 .preview-certificate__seal {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   border-radius: 50%;
   border: 1px solid rgba(251, 191, 36, 0.65);
@@ -1475,9 +1475,11 @@ const handleRegister = async () => {
     rgba(251, 191, 36, 0.14);
   color: #fbbf24;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: 0.45rem;
+  font-size: 0.36rem;
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  overflow: hidden;
 }
 
 .preview-certificate__label {
