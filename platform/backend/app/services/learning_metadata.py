@@ -45,3 +45,14 @@ def level_label_for_numbers(level_numbers: Sequence[int | None]) -> str:
             return f"Foundations–Level {numbers[-1]}"
         return f"Levels {numbers[0]}–{numbers[-1]}"
     return f"{len(numbers)} levels"
+
+
+def percent_complete(completed: int, total: int) -> int:
+    """Round a completion percentage half-up, matching the learner UI.
+
+    Python's round() is banker's rounding, so 1/8 becomes 12 while JavaScript's
+    Math.round() produces 13. Course cards and the course page must agree.
+    """
+    if total <= 0:
+        return 0
+    return (int(completed) * 100 + int(total) // 2) // int(total)

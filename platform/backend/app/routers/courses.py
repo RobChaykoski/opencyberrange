@@ -37,7 +37,11 @@ from app.schemas import (
 )
 from app.services.achievements import resolve_achievement_label
 from app.services.curriculum_manifest import chapter_label
-from app.services.learning_metadata import aggregate_difficulty, level_label_for_numbers
+from app.services.learning_metadata import (
+    aggregate_difficulty,
+    level_label_for_numbers,
+    percent_complete,
+)
 from app.services import exercise_quiz, settings_service
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
@@ -140,9 +144,7 @@ def _course_response(
         completed_labs = len(get_course_completed_lab_ids(
             db, user_id, course.id, assigned_lab_ids,
         ))
-        progress_percent = (
-            round(completed_labs * 100 / lab_count) if lab_count else 0
-        )
+        progress_percent = percent_complete(completed_labs, lab_count)
     return {
         "id": course.id,
         "name": course.name,
