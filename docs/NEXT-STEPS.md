@@ -1,7 +1,36 @@
-# Next steps after Release 3
+# Next steps: Release 4 close-out and Release 5
 
-Status: **in progress**; Release 3 documentation and deployment completed on
-12 November 2026. Everything below is queued unless marked complete.
+Status: **Release 4 close-out.** Release 4 is deployed to development and
+production, tagged `v4`, and CI is green. The sections below are the historical
+Release 3 queue, retained for context; Release 5 work is tracked in
+[`RELEASE-5-SCOPE.md`](RELEASE-5-SCOPE.md).
+
+## Release 4 close-out
+
+Completed:
+
+- Mandatory `SETUP_TOKEN` for first-run setup.
+- Deployment-wide SSO on/off setting under **Security**.
+- Runtime wiki-origin settings under **Wiki**, with an HttpOnly
+  `wiki_session` cookie and dynamic `frame-ancestors`; same-origin fallback
+  remains until a same-instance custom hostname is configured.
+- Signed `v4` tag, signed supply-chain lock, and refreshed integrity manifest.
+- Release 4 dependency pass: pytest, httpx, pymdown-extensions, matplotlib,
+  pywinrm, upload-artifact, build-push-action, and setup-buildx-action.
+- V3 branch/PR, stale public backup repo, and the Dependabot PR backlog.
+
+Open decisions before Release 5:
+
+1. Activate the custom wiki hostname (DNS + certificate) and set the three Wiki
+   settings, or record the same-origin fallback as the Release 4 boundary.
+2. Confirm production disk headroom and prebuild state.
+3. Decide whether Open Badges 3.0 and minor-account/retention work are Release 5
+   deliverables or follow-ons.
+
+## Historical Release 3 queue
+
+The queue below predates Release 4. Check `versions.yaml` and the current
+`RELEASE-5-SCOPE.md` before acting on any item.
 
 ## Baseline
 

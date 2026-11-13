@@ -141,5 +141,11 @@ notes are in `docs/QUESTION-BANK-SOURCES.md`.
 
 | Release | Contents |
 |---|---|
-| Release 4 | SSO (OIDC/SAML/LDAP), network device topology engine, API exposure fixes, SSO privacy export/erasure, institution sign-in accessibility |
+| Release 4 | SSO (OIDC/SAML/LDAP) with a deployment-wide switch, network device topology engine, API exposure fixes, SSO privacy export/erasure, institution sign-in accessibility, mandatory setup token, HttpOnly wiki session and runtime wiki-origin settings, signed release and supply chain |
 | Release 5 | LTI 1.3 Advantage, multi-tenancy/TA/RBAC, accommodation engine, automated-decision transparency, HECVAT/VPAT/SOC 2/ISO/DPA/PIA artifacts, weekly Jeopardy-style challenge quizzes that feed Cyber DNA |
+
+Candidate additions for Release 5 (not yet committed in this scope):
+
+- Open Badges 3.0 credential issuance from the existing certificate data.
+- Minor-account mode, parental-consent handoff, and a published retention
+  schedule to complete the procurement pack.
