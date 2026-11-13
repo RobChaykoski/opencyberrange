@@ -1,0 +1,30 @@
+issuer: ${DEX_ISSUER}
+storage:
+  type: memory
+web:
+  http: 0.0.0.0:5556
+oauth2:
+  skipApprovalScreen: true
+staticClients:
+  - id: opencyberrange
+    redirectURIs:
+      - ${DEX_REDIRECT_URI}
+    name: SWOCTS Cyber Range
+    secret: ${DEX_CLIENT_SECRET}
+connectors:
+  - type: ldap
+    id: ldap
+    name: Institution LDAP
+    config:
+      host: ldap:389
+      insecureNoSSL: true
+      bindDN: ${LDAP_BIND_DN}
+      bindPW: ${LDAP_BIND_PASSWORD}
+      usernamePrompt: Username
+      userSearch:
+        baseDN: ${LDAP_BASE_DN}
+        filter: "(objectClass=inetOrgPerson)"
+        username: uid
+        idAttr: uid
+        emailAttr: mail
+        nameAttr: cn

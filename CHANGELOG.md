@@ -2,6 +2,226 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [4] - 2026-11-12
+
+Release 4. Enterprise single sign-on, the optional Dex/OpenLDAP test stack, and
+the privacy, accessibility, and API-exposure corrections.
+
+### Enterprise SSO
+- OIDC authorization-code login with PKCE, state, nonce, discovery, JWKS, and
+  issuer/audience/signature validation.
+- SAML 2.0 SP-initiated login with signed assertion validation and shared
+  RelayState/AuthnRequest state.
+- LDAP/Active Directory sign-in with a service bind, user rebind, filter
+  escaping, StartTLS, and certificate verification.
+- One provisioning/linking service for all adapters: verified-email linking,
+  administrator-link refusal, SSO-only accounts, and instructor group mapping.
+- Directory role mapping is refreshed on every SSO login, so a group change takes
+  effect without an administrator editing the account.
+- Optional `sso` compose profile with Dex (OIDC) and OpenLDAP, a generated Dex
+  config, LDAP bootstrap users, and an `/idp/` nginx proxy for local testing.
+- The local administrator password login remains as break-glass access.
+
+### Security
+- The backend now trusts `X-Forwarded-For`/`X-Forwarded-Proto` only from
+  loopback and private Docker bridges. Per-IP rate limits and audit rows use the
+  real client address instead of the nginx container address.
+- SSO states and tickets remain single-use, provider-bound, and short-lived.
+- The API-docs and module gates read their setting fresh on every request, so an
+  administrator disabling either takes effect immediately instead of after the
+  settings cache expires.
+- nginx returns 404 for `/docs`, `/redoc`, and `/openapi.json` on the public
+  origin; API documentation is never served through the learner-facing host.
+- SSO callback failures now render curated user messages instead of raw backend
+  error details.
+- The CI CSP-hash check fails on both missing and stale inline-script hashes;
+  the `v-html` exception remains limited to the two reviewed DOMPurify sites.
+- Workbook and launch links go through `safeHttpUrl` and open with
+  `noopener,noreferrer`.
+- Documented the HttpOnly session-cookie migration roadmap, including CSRF,
+  refresh/revocation, wiki-gate, and acceptance criteria.
+
+### Privacy
+- Subject-access export now includes external identity links and SSO session
+  metadata, without the encrypted ID token or provider secrets.
+- Account erasure explicitly removes external identities, SSO sessions, and SSO
+  tickets and records the counts in the erasure result.
+- Added identity-federation data to the privacy and procurement documentation.
+
+### Accessibility
+- The institution sign-in panel is a labelled section with a heading, visible
+  directory-field labels, per-provider accessible button names, error
+  associations, `aria-busy` state, and visible focus styles.
+- Cyber DNA and Cyber GPS use one scale (`/99` for DNA), an accessible
+  "How this is calculated" disclosure, and a zero-evidence start card instead of
+  an empty radar chart. Career GPS labels each family's evidence band.
+
+### Network device topology
+- Added `x-ocr-topology` to Compose: nodes, roles, and point-to-point links are
+  validated as data, then expanded into per-session `/29` networks with static
+  addresses, forwarding, routes, and node environment.
+- Added the reviewed `ocr-lab/topology-node` image with `router`, `host`, and
+  `service` roles, SSH, a status endpoint, and a flag service.
+- Rejected privileged containers, arbitrary images, host networking, bind
+  mounts, hostile capabilities, and reserved environment keys.
+- Added the routed-path demo lab plus two-router transit, firewall service path,
+  and multi-service router labs, with workbook chapters, engine unit tests, and
+  image-only topology support in the static validator.
+- Added a guided and an independent Forensics variant on the same engine, with a
+  decoy service in the independent version, so learners can choose their pace.
+- Added YARA fundamentals and a YARA + incident-log triage scenario, and a
+  Windows AD fundamentals lab plus an AD-to-SMB credential-reuse scenario.
+
+### Learner experience
+- Dashboard and profile now use the same visible-exercise denominator, and the
+  dashboard course matrix, course card, course detail, and profile all use the
+  same enrolment-aware completion rule. The course-card percentage rounds
+  half-up so it matches the course page.
+- New learners see an evidence-first profile: five tabs, no Cyber GPS or
+  Portfolio tab, no zero-evidence career affinity, and a progress-only Learning
+  record with **Show all tracks** for the rest.
+- Experienced learners can focus the profile on a course, track, certification,
+  or career goal, with course/track/certificate progress lenses and a searchable
+  focus list. The career target is promoted to the top of the Portfolio tab.
+- The title collection is collapsed by default with an **Unlocked only** filter,
+  and achievement badges use the shared SVG icon system instead of emoji.
+- Workbook actions and profile status badges use the shared colour tokens.
+  Track difficulty chips, VM status dots, and the safe admin/track status
+  surfaces use the same tokens; custom-achievement authoring now uses the SVG
+  icon picker.
+
+### Documentation
+- Added the compliance posture, procurement traceability, accessibility
+  statement, automated-scoring statement, HECVAT answer pack, LTI design
+  contract, DPA template, and Release 5 scope.
+- Release 4 does not claim LTI, multi-tenancy, a per-student accommodation
+  engine, a TA role, a signed VPAT, SOC 2, or ISO 27001.
+
+### Fixed
+- Event certificates now transliterate characters the built-in PDF fonts
+  cannot encode, so an event date with an en dash (or an accented name) no
+  longer fails certificate generation.
+
+## [3.1.1] - 2026-11-05
+
+Enterprise SSO adapter release.
+
+### SAML 2.0 sign-in
+- SP-initiated SAML login with signed assertion validation, audience/recipient
+  checks, and AuthnRequest ID validation through `python3-saml`.
+- Shared PostgreSQL state stores the RelayState and AuthnRequest ID, so the ACS
+  can run on a different API replica from the login start.
+- ACS endpoint at `/api/auth/sso/saml/{id}/acs`; the SP entity ID and ACS URL
+  are shown in the provider card.
+- Optional signed AuthnRequests with an SP certificate and private key.
+- Attribute mapping for email, username, name, and groups, with an optional
+  instructor group.
+
+### LDAP and Active Directory sign-in
+- Service bind, user search, and a user rebind to verify the password.
+- LDAP filter escaping, StartTLS, certificate verification, and a configurable
+  server timeout.
+- Attribute mapping for email, username, name, and groups, with an optional
+  instructor group.
+- Direct institution-account form on the login page; failures distinguish bad
+  credentials from a directory outage.
+
+### Shared identity policy
+- OIDC, SAML, and LDAP now use one provisioning and linking service.
+- Verified-email linking, administrator-link refusal, and SSO-only accounts are
+  identical across adapters.
+- New accounts can be provisioned as student or instructor through group
+  mapping. External identities never receive administrator access.
+- Provider test actions validate OIDC discovery, LDAP service bind, and SAML
+  settings.
+
+### Documentation
+- Added `docs/SSO-SAML-LDAP.md`; updated the OIDC guide, ADR 0004, the
+  Enterprise manual supplement, editions, and supported versions.
+
+### Limits
+- SAML RP-initiated logout/SLO remains local; OIDC logout remains the only
+  IdP-initiated logout path.
+- A formal SSO security review remains.
+
+## [3.1.0] - 2026-11-05
+
+Enterprise single sign-on release.
+
+### OIDC SSO
+- Authorization-code login with PKCE, state, nonce, discovery, JWKS, and
+  issuer/audience/signature validation.
+- Shared PostgreSQL flow state and one-time SPA exchange tickets. Any API
+  replica can complete a callback started on another replica; no sticky
+  sessions are required.
+- Stable public callback URL derived from `PUBLIC_BASE_URL`.
+- Auto-provisioning, auto-approval, verified-email linking, and SSO-only
+  accounts. Administrator accounts are never auto-linked.
+- A local break-glass administrator remains available.
+- Provider test endpoint for OIDC discovery and JWKS reachability.
+- The provider card shows the exact redirect URI to register at the IdP.
+- Activity and audit events for SSO login, provisioning, and linking.
+- RP-initiated logout when the provider advertises an end-session endpoint.
+  The ID token is stored encrypted and removed after use.
+- New `password_login_disabled` account flag and `external_identities`,
+  `sso_login_states`, `sso_login_tickets`, and `sso_sessions` tables.
+
+### Documentation
+- Added ADR 0004 (SSO HA contract) and `docs/SSO-OIDC.md`.
+- Updated the Enterprise manual supplement and login guide.
+- Moved the Enterprise version line to **3.1.x**.
+
+### Limits
+- SAML and LDAP login adapters are not part of 3.1.0; their settings remain.
+- A formal SSO security review remains.
+
+## [3.0.3] - 2026-11-05
+
+### Learner profile
+- Added **Skill DNA**: five activity-based traits (Explorer, Builder, Defender,
+  Investigator, Leader), a class, a tier, and a certification alignment card on
+  the profile.
+- Added achievement **titles**. Unlocked titles can be equipped or cleared; the
+  class title returns when no achievement title is equipped. Hidden titles stay
+  secret until unlocked.
+- Added the **Title collection** and the equipped-title badge on the profile.
+- Added explicit course, competition, advanced-lab, and teaching signals to the
+  Leader trait.
+- Added the metric model in `docs/SKILL-DNA.md`.
+
+## [3.0.2] - 2026-11-05
+
+Maintenance release for the Enterprise line.
+
+### Admin user management
+- The Users table shows the last sign-in time, with a relative label and the
+  exact timestamp on hover.
+- Added filters for status, role, last sign-in window, and VPN registration,
+  plus a sort control, result range, clear-filters action, and empty state.
+- Role and account status are separate columns; the table has accessible
+  headers and a stacked layout on narrow screens.
+
+### Reliability
+- Rate limiting now degrades to in-process limits when Redis is unavailable
+  instead of returning HTTP 500 on login.
+
+### Design and release
+- Added the OpenCyberRange Design Tester skill for light/dark, layout, filter,
+  and accessibility reviews.
+
+## [3.0.0] - 2026-11-04
+
+Enterprise release line.
+
+- LDAP, OIDC, and SAML identity-provider settings with encrypted secrets and
+  audit logging (settings-only; login federation remains in the Enterprise HA
+  workstream).
+- Enterprise inherits the Professional 2.1 analytics, reporting, competency,
+  feedback, certification guidance, and admin security changes.
+- Multi-host HA, gateway failover, multi-tenancy, LMS integration, and
+  regulatory reporting remain in the Enterprise programme; see
+  `docs/V3-HA-LAB-POOL.md` and `docs/EDITIONS.md`.
+
 ## Edition model
 
 - **Community / Academic 1.1** — supported single-host teaching platform, lab
@@ -24,7 +244,7 @@ All notable changes to OpenCyberRange are recorded here.
 These five priorities are Professional 2.0 and Enterprise 3.0 only. See
 `docs/PROFESSIONAL-PRIORITIES.md` and `docs/PROGRAMME-REPORTS.md`.
 
-## [Unreleased]
+## [Release 3] - 2026-11-12
 
 ### Cyber DNA 2026.14
 - Branch and overall scores are capped at **99**, never 100.
@@ -57,6 +277,14 @@ These five priorities are Professional 2.0 and Enterprise 3.0 only. See
   rejected. No files leave or enter the desktop.
 - The user manual adds **Navigating your Cyber DNA** with dev screenshots; the
   admin guide adds **Cyber DNA and RangeBox Operations**.
+
+### Community events
+- The **Events** tab keeps platform events at the top and adds an **Around the
+  area** calendar underneath.
+- The calendar combines internal platform events with community events and
+  lists upcoming entries, with source links for SWOCTS Hub and Cyber Hive YXU.
+- Community events are explicitly outside Cyber DNA, course credit, and platform
+  scoring. The user manual adds **Community Events**.
 
 ### Tools
 - CyberChef 11.5.0 is now a pinned, SHA256-verified static build served from

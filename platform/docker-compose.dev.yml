@@ -99,6 +99,14 @@ services:
       WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.255}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
+      WIKI_COOKIE_DOMAIN: ${WIKI_COOKIE_DOMAIN:-}
+      # Stable external origin used to build SSO callback URLs. Leave blank to
+      # fall back to SERVER_PUBLIC_HOST.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL:-}
+      # The dev stack serves HTTPS with a self-signed certificate, so the OIDC
+      # discovery/token calls must accept that certificate.
+      SSO_ALLOW_INSECURE_HTTP: ${SSO_ALLOW_INSECURE_HTTP:-false}
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@example.org}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost,https://localhost}
       # Report plots are generated headlessly; never probe for a display.
@@ -107,6 +115,9 @@ services:
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-30000}
       RATELIMIT_STORAGE_URI: ${RATELIMIT_STORAGE_URI:-redis://valkey:6379/0}
       DOCKER_HOST: tcp://docker-socket-proxy:2375
+      # Only nginx should be trusted to set X-Forwarded-For. Keep this to the
+      # app bridge so a lab container (10.x) cannot spoof a client address.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,172.16.0.0/12}
       TZ: UTC
     volumes:
       - ./backend:/app
@@ -142,7 +153,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        WIKI_BASE_URL: ${WIKI_BASE_URL:-}
     container_name: ocr-frontend
+    environment:
+      WIKI_FRAME_ANCESTOR: ${WIKI_FRAME_ANCESTOR:-}
     ports:
       - "80:80"
       - "443:443"
@@ -164,10 +179,41 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # --- Optional SSO stack (profile: sso) ---
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ocr-ldap
+    profiles: ["sso"]
+    environment:
+      LDAP_ORGANISATION: "SWOCTS Cyber Range"
+      LDAP_DOMAIN: "example.org"
+      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:-SsoDemoAdmin!2026}
+      LDAP_TLS: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+      # The image copies this directory into its own bootstrap folder, so the
+      # repository checkout stays read-only and keeps its host ownership.
+      LDAP_SEED_INTERNAL_LDIF_PATH: /seed
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ${SSO_DIR:-./deploy/sso}/openldap:/seed:ro
+    restart: unless-stopped
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.42.0
+    container_name: ocr-dex
+    profiles: ["sso"]
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    volumes:
+      - ${SSO_DIR:-./deploy/sso}/dex/runtime/config.yaml:/etc/dex/config.yaml:ro
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   workbook_data:
   wiki_data:
+  ldap_data:
+  ldap_config:
 
 networks:
   docker_control:

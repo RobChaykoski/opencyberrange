@@ -37,10 +37,13 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "5ebf9233c28e91fbaa97ab3d3f6c2795cc2c9dbcf9ced3e0e84719da15dfe658"
+      "sha256": "28aa8ebf0a0e20a234fa66b166631f35d434ea666bc61eaa6caf67610c7d20b2"
+    },
+    "platform/backend/app/data/software-integrity.json": {
+      "sha256": "202881a66bba6b4bcc07c3f195492b64100844893c18ccc9fea5e1e2938c60bc"
     },
     "platform/backend/app/version.py": {
-      "sha256": "c3d4a96eeb5460cb4bd8dd39f6fe3e3f06454d2aa79f6f0eb49b857a3001c9b0"
+      "sha256": "d28df52054f1f978f8140929961568ff52a4abd8cbf5e8194ba37d4219944056"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -49,13 +52,13 @@
       "sha256": "12339000e6cf642ecbb32e4cd1433f37e8eadcdbfd0edc152f72fa342273ecec"
     },
     "platform/backend/requirements.txt": {
-      "sha256": "0941b87809899ec134946248576e587286a6f38b00241b369626190f7a736fb2"
+      "sha256": "ab21e863c4ec98c80486e5efc91332ef79f7b5fcef4828bb39a50515a6d6b10d"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "c63dc366c516a3649bfd2cbbfcfecc647961c25f2a45f121afb6af3a7ff8fb63"
+      "sha256": "fc5ca34bd03d186e7cd646e07b0307a4ba1463ee702012e98fafea3bf553a621"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "87cbd243f7dcd427b3925c11377f249b4971101a9997f8039200445f9443d1ad"
+      "sha256": "031e61340833d508af4accde0ff5496fea2dfdf98b5e5f769098f68d57b85866"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -64,31 +67,40 @@
       "sha256": "ce6438391db8a83e22f204ae6cdcc87f96451409b90e76858997bb1a9cd85088"
     },
     "platform/frontend/docker-entrypoint.sh": {
-      "sha256": "c1fab054af8787a652aafb673f5ca87201bacca4a261ad22797c2e55dd176b05"
+      "sha256": "639647659b9a689ea68448dc1404d2ea4eba3be3839cf6b3a90d05aea97f61ea"
     },
     "platform/frontend/index.html": {
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "4909066eb2e78e9e032ae7f81304d129e234c3626f12bd210800b54ce7796c36"
+      "sha256": "7df082447f63f5b1e935b02a3313af45bab84248584a07ff3e0cac344e0f7396"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "bc3934db3dcd67f6f4be47d37aab4bbd728efb3b9609ad214edeb43bef1ec0b8"
+      "sha256": "cc94787aa7f3dcb0b61186bdb6bf840587b8b3b72ddfc3f314c7b7c3ccd213fd"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "476fe9fc0392f59d948d32bd70d4e98b7dd5a5ed0cfa5af7caa7e20dd27ea566"
+      "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
     },
     "platform/frontend/package.json": {
-      "sha256": "ce224894a2e7c83cf703820988bce98dd6806b5213b75a1e2d24dba0b54f25ff"
+      "sha256": "8a76539e35f6bf523dd1d0148ae88e29d4c1838d51acfed33ada2c1b997f4c4f"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "9e5b545f5b2c8d1f9b500323113f0411120548650e0284beaed8088645ec0cfa"
+    },
+    "platform/topology-node/Dockerfile": {
+      "sha256": "c25d2ec9cd32a29c10a7de010d057b639a2c0a800a610abcd5b000b18527e981"
+    },
+    "platform/topology-node/entrypoint.py": {
+      "sha256": "2dd3110270a0f1b72c86fe071ba225fb96e8c5e268caf1931cc46b1caca0f28b"
     },
     "scripts/GDG-Deploy.sh": {
       "sha256": "7857237da1b405ebd672caf74cc7ef292313e7f847799a8a6d82d09cb718ff7b"
     },
     "scripts/check-licences.py": {
       "sha256": "11b207a9b1fc54856e82330c39cb3ce498488717c29edb54386c574f3456bbda"
+    },
+    "scripts/create-lab.py": {
+      "sha256": "2002b63a342ca1634295cd4ea79c73268893968fe51baaca86ceca3110b1fcf0"
     },
     "scripts/database_integrity.py": {
       "sha256": "4bc6ff9c6b308482996b3b91e4538df91f60b74123c6c372a545da3786bfd11e"
@@ -100,7 +112,7 @@
       "sha256": "f6aee83c29e7bff868804eb8d41d0916901a3d8454eb6608aa6d5715b2419039"
     },
     "scripts/generate-about.py": {
-      "sha256": "d47872f0d31207e5732346b6db89b1bc2b52d20d1d9988a375b0ab652be29b3f"
+      "sha256": "d1f9df9deecd70e07fcc7e2cd1cd4fbec9a2f155f56fd8ed309481a0b0bfc082"
     },
     "scripts/install-platform.sh": {
       "sha256": "2e689b91b69de0aa56db7bed14551a61133c84e2bdb1ed5d5450dcd43a36118e"
@@ -109,22 +121,28 @@
       "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
     },
     "scripts/prebuild-labs.sh": {
-      "sha256": "21188daebaac0b10534076c2b05178eb0077257b90695a87bacb65d306f53758"
+      "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
+    },
+    "scripts/security-delta-review.py": {
+      "sha256": "2d6b04f4841dbb8bcc9d1830cad9e968c88856c6bf4f4c3a36ef889b86eb849a"
     },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "80a4482d053252d18d3f2374843e1bdf51889c399aacd7a92d8e4b71a3652d41"
+      "sha256": "fddc7e34b1ba86902179374b0e36a180cf1578a6d5e77bf741cd51c0c73f2350"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
+    },
+    "scripts/validate-lab.py": {
+      "sha256": "9ebf9bd3462e4bec7bbc2c7bcffa28a574355dafbd6012ad039d7c831d03b9ab"
     },
     "scripts/verify-lab-builds.sh": {
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "655a3cdaa9e64d698f2d9278df66a845e8a3e1ccea808f91093101f264c097ac"
+      "sha256": "f5ecf8544ce5356bbcef9bc4c5b48046db54113340f37ac5342521e05f71389e"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -158,6 +176,14 @@
       "services": [
         "evidence"
       ]
+    },
+    "forensics-2-2-topology-forensics-guided": {
+      "content_hash": "aaf41342b0a3fee8edbc22eb7656c7f52c330184abc49518a50c09835d4d6abe",
+      "services": []
+    },
+    "forensics-2-3-topology-forensics-independent": {
+      "content_hash": "86c414b9f989d08e07a54fb00a244d4546946db98836cd1ad58bd08d12c8d434",
+      "services": []
     },
     "high-school-10-1-rangebox-network-basics": {
       "content_hash": "63cdaba0241c4204d499777cba0d763b56c7b034a154fffb7a7439cfa17e48ce",
@@ -578,6 +604,18 @@
         "evidence"
       ]
     },
+    "malware-2-2-yara-fundamentals": {
+      "content_hash": "8588dc31732e75dfe4230488ed1a09b9e8b03799009185e6e418f938242e083c",
+      "services": [
+        "target"
+      ]
+    },
+    "malware-2-3-yara-incident-triage": {
+      "content_hash": "462d5fb4687cd6983e8e4de1976cc073b95b18652b326acb69ed51bc75949339",
+      "services": [
+        "target"
+      ]
+    },
     "network-0-1-ping-basics": {
       "content_hash": "47da487d6b5fd2e9b0489ac634bb66c02a66ad5331c28475dde792b00b402484",
       "services": [
@@ -640,6 +678,10 @@
         "web-server"
       ]
     },
+    "network-12-2-device-topology-engine": {
+      "content_hash": "435be4d20673f93250866cf4c225ae1e89a411c0424e76a019b5902dca692d08",
+      "services": []
+    },
     "network-12-2-firewall-policy-hardening": {
       "content_hash": "9809e0d8f8162a6c582f6a7a733b7350531d7e70d7d1ae2414ffffd4471aa0d9",
       "services": [
@@ -647,6 +689,18 @@
         "traffic-gen",
         "web-server"
       ]
+    },
+    "network-12-3-two-router-transit": {
+      "content_hash": "65c55243af91511b628060e194ff00f65fed59c8673edc6ac8ce64bb76c8892e",
+      "services": []
+    },
+    "network-12-4-firewall-service-path": {
+      "content_hash": "022b72754eaaea798bccbfe090dffbb03b5e08a2d0a99cdd46ceddbb197016c0",
+      "services": []
+    },
+    "network-12-5-multi-service-router": {
+      "content_hash": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
+      "services": []
     },
     "network-2-1-ftp-credential-extraction": {
       "content_hash": "af279adebd8ec17deaa557bbf21abef954f8e6de49e1a75154b244f5bed75289",
@@ -913,6 +967,13 @@
         "target"
       ]
     },
+    "windows-2-10-ad-to-smb-scenario": {
+      "content_hash": "0febfc631f82051075dcb1f0e06a097a744578da469e27c3fa96e73bf4fa600f",
+      "services": [
+        "files",
+        "ldap"
+      ]
+    },
     "windows-2-2-smb-share-listing": {
       "content_hash": "13bfec8de4308a933977232c22f9bfcb1dec09b44770ace08f3460b829cfaba9",
       "services": [
@@ -953,6 +1014,12 @@
       "content_hash": "0cbc096ff5843610f0df77d2f5023d3bbb388bba2aaff1214d21d53fd4af20ae",
       "services": [
         "target"
+      ]
+    },
+    "windows-2-9-ad-fundamentals-basics": {
+      "content_hash": "0eab6ae3539dc4a805fedac66f3180217e454030abf6c0d62da7b1fa6441c2b7",
+      "services": [
+        "ldap"
       ]
     },
     "windows-3-1-smb-manual-credential-test": {
@@ -1186,6 +1253,6 @@
       ]
     }
   },
-  "release": "2.7.0",
+  "release": "4",
   "schema": 1
 }

@@ -7,6 +7,8 @@ copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https:/
 
 theme:
   name: material
+  # No Google Fonts request: the wiki CSP only allows self-hosted styles.
+  font: false
   logo: assets/swocts-cyber-range-mark.png
   favicon: assets/favicon.png
   palette:
@@ -29,9 +31,6 @@ theme:
     - navigation.expand
     - navigation.top
     - content.code.copy
-  font:
-    text: Inter
-    code: JetBrains Mono
 
 markdown_extensions:
   - admonition
@@ -59,9 +58,11 @@ extra_css:
   - stylesheets/extra.css?v=4
 
 extra_javascript:
+  - javascripts/mermaid.min.js?v=1
+  - javascripts/embed-mode.js?v=1
   - javascripts/mermaid-fix.js?v=4
   - javascripts/pdf-export.js?v=2
-  - https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
+  - javascripts/html2pdf.bundle.min.js?v=1
 
 nav:
   - Home: index.md
@@ -94,6 +95,12 @@ nav:
     - Introduction: CH_NETSY12_Firewalls/00_Introduction.md
     - "Exercise 3.1 -- Firewall Fundamentals": CH_NETSY12_Firewalls/01_Firewall_Fundamentals.md
     - "Exercise 3.2 -- Firewall Policy Hardening": CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening.md
+  - "NET04: Device Topology and Routed Paths":
+    - Introduction: CH_NET12_Device_Topology/00_Introduction.md
+    - "Exercise 4.1 -- Follow the Routed Path": CH_NET12_Device_Topology/01_Routed_Path.md
+    - "Exercise 4.2 -- Two-Router Transit": CH_NET12_Device_Topology/02_Two_Router_Transit.md
+    - "Exercise 4.3 -- Firewall the Service Path": CH_NET12_Device_Topology/03_Firewall_Service_Path.md
+    - "Exercise 4.4 -- Multi-Service Router": CH_NET12_Device_Topology/04_Multi_Service_Router.md
   - "NET01B: Traffic and Log Correlation":
     - Introduction: CH_NET01B_Traffic_And_Logs/00_Introduction.md
     - "Exercise 1.1 -- Packet Capture Analysis": CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis.md

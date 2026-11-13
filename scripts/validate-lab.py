@@ -9,12 +9,11 @@ Usage:
     python3 scripts/validate-lab.py --all --json
 """
 
-import os
-import sys
-import re
-import json
 import argparse
-import hashlib
+import json
+import os
+import re
+import sys
 
 try:
     import yaml
@@ -177,14 +176,13 @@ def check_yaml_valid(lab_dir):
     if hints and isinstance(hints, list):
         # Check if hints use structured format
         for i, hint in enumerate(hints):
-            if isinstance(hint, dict):
-                if "text" not in hint and "content" not in hint:
-                    results.append(CheckResult(
-                        f"Hint {i+1} has text/content",
-                        False,
-                        f"Hint {i+1} is a dict but has no 'text' or 'content' key",
-                        severity="warning"
-                    ))
+            if isinstance(hint, dict) and "text" not in hint and "content" not in hint:
+                results.append(CheckResult(
+                    f"Hint {i+1} has text/content",
+                    False,
+                    f"Hint {i+1} is a dict but has no 'text' or 'content' key",
+                    severity="warning"
+                ))
 
     return results
 
@@ -405,6 +403,7 @@ def check_flag_consistency(lab_dir):
     if not dockerfiles:
         # Check if this lab uses shared containers (no local Dockerfiles expected)
         uses_shared = False
+        uses_topology = False
         external_build = []
         if os.path.exists(compose_path):
             try:
@@ -412,6 +411,16 @@ def check_flag_consistency(lab_dir):
                     compose_data = yaml.safe_load(f)
                 uses_shared = isinstance(compose_data, dict) and "x-ocr-shared-containers" in compose_data
                 services = (compose_data or {}).get("services", {}) if isinstance(compose_data, dict) else {}
+                uses_topology = (
+                    isinstance(compose_data, dict)
+                    and bool(services)
+                    and all(
+                        str((svc or {}).get("image", "")).startswith(
+                            ("ocr-lab/topology-node", "osixia/openldap")
+                        )
+                        for svc in services.values()
+                    )
+                )
                 for svc in services.values():
                     build = svc.get("build") if isinstance(svc, dict) else None
                     if not isinstance(build, dict) or not build.get("context"):
@@ -420,13 +429,19 @@ def check_flag_consistency(lab_dir):
                     dockerfile = build.get("dockerfile", "Dockerfile")
                     if os.path.exists(os.path.join(context, dockerfile)):
                         external_build.append(os.path.relpath(context, lab_dir))
-            except (yaml.YAMLError, IOError):
+            except (OSError, yaml.YAMLError):
                 pass
         if uses_shared:
             results.append(CheckResult(
                 "Dockerfiles found",
                 True,
                 "No local Dockerfiles - uses shared containers"
+            ))
+        elif uses_topology:
+            results.append(CheckResult(
+                "Dockerfiles found",
+                True,
+                "Uses a reviewed platform image"
             ))
         elif external_build:
             results.append(CheckResult(
@@ -451,7 +466,7 @@ def check_flag_consistency(lab_dir):
             if yaml_flag in content:
                 flag_found_in_any = True
                 break
-        except IOError:
+        except OSError:
             pass
 
     results.append(CheckResult(
@@ -475,7 +490,7 @@ def check_flag_consistency(lab_dir):
                     "Ubuntu/Debian images should set ENV DEBIAN_FRONTEND=noninteractive to prevent build hangs",
                     severity="warning"
                 ))
-        except IOError:
+        except OSError:
             pass
 
     return results
@@ -700,7 +715,7 @@ def check_template_resolution(lab_dir):
         try:
             with open(compose_path, "r", encoding="utf-8") as f:
                 compose = yaml.safe_load(f) or {}
-            for svc_name in compose.get("services", {}).keys():
+            for svc_name in compose.get("services", {}):
                 node_ids.add(svc_name)
             # Read x-ocr-shared-containers aliases (shared VM/container references)
             for shared in compose.get("x-ocr-shared-containers", []):
@@ -711,7 +726,7 @@ def check_template_resolution(lab_dir):
                     # Aliases are the names test steps typically reference
                     for alias in shared.get("aliases", []):
                         node_ids.add(alias)
-        except (yaml.YAMLError, IOError):
+        except (OSError, yaml.YAMLError):
             pass
 
     # Collect valid credential roles
@@ -776,7 +791,7 @@ def check_mysql_auth_plugin(lab_dir):
                         content = fh.read()
                     if "mysql:8" in content.lower() or "mysql:latest" in content.lower():
                         mysql8_used = True
-                except IOError:
+                except OSError:
                     pass
 
     if not mysql8_used:
@@ -790,7 +805,7 @@ def check_mysql_auth_plugin(lab_dir):
                 try:
                     with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
-                except IOError:
+                except OSError:
                     continue
 
                 # Find CREATE USER ... IDENTIFIED BY without mysql_native_password
@@ -943,7 +958,7 @@ def check_dockerfile_password_safety(lab_dir):
                 try:
                     with open(fpath, "r", errors="ignore", encoding="utf-8") as fh:
                         content = fh.read()
-                except IOError:
+                except OSError:
                     continue
 
                 for m in chpasswd_pattern.finditer(content):
@@ -967,6 +982,131 @@ def check_dockerfile_password_safety(lab_dir):
 
 # ── Main Validation Runner ────────────────────────────────────────────────
 
+def _topology_memory_mb(value):
+    """Parse a Compose memory value such as 192m or 1g to MiB."""
+    if value is None:
+        return None
+    text = str(value).strip().lower()
+    try:
+        if text.endswith("g"):
+            return int(float(text[:-1]) * 1024)
+        if text.endswith("m"):
+            return int(float(text[:-1]))
+        if text.endswith("k"):
+            return max(1, int(float(text[:-1]) / 1024))
+        return int(float(text) / (1024 * 1024))
+    except (TypeError, ValueError):
+        return None
+
+
+def check_topology_lab(lab_dir):
+    """Static checks for an x-ocr-topology lab.
+
+    The backend engine validates again at spawn. These checks catch authoring
+    mistakes before a release and enforce the performance boundary: small,
+    capped nodes and a bounded total memory footprint.
+    """
+    results = []
+    compose_path = os.path.join(lab_dir, "docker-compose.yml")
+    if not os.path.exists(compose_path):
+        return results
+    try:
+        with open(compose_path, "r", encoding="utf-8") as f:
+            compose = yaml.safe_load(f) or {}
+    except (OSError, yaml.YAMLError):
+        return results
+    if not isinstance(compose, dict) or "x-ocr-topology" not in compose:
+        return results
+
+    spec = compose.get("x-ocr-topology") or {}
+    nodes = spec.get("nodes") or {}
+    links = spec.get("links") or []
+    services = compose.get("services") or {}
+
+    results.append(CheckResult(
+        "Topology node count",
+        1 <= len(nodes) <= 12,
+        "Topology supports 1-12 nodes",
+    ))
+    results.append(CheckResult(
+        "Topology link count",
+        1 <= len(links) <= 24,
+        "Topology supports 1-24 links",
+    ))
+    results.append(CheckResult(
+        "Topology training password",
+        len(str(spec.get("training_password") or "")) >= 10,
+        "Topology needs a training password of at least 10 characters",
+    ))
+
+    total_mb = 0
+    for node_id, node in nodes.items():
+        node = node if isinstance(node, dict) else {}
+        service_name = node.get("service")
+        service = services.get(service_name) if isinstance(services, dict) else None
+        results.append(CheckResult(
+            f"Topology node {node_id} service",
+            isinstance(service, dict),
+            f"Node {node_id} must point at a service",
+        ))
+        if not isinstance(service, dict):
+            continue
+        results.append(CheckResult(
+            f"Topology node {node_id} image",
+            str(service.get("image") or "").startswith("ocr-lab/topology-node"),
+            "Topology services use the reviewed node image",
+        ))
+        caps = set(service.get("cap_add") or [])
+        results.append(CheckResult(
+            f"Topology node {node_id} capabilities",
+            not (caps - {"NET_ADMIN", "NET_RAW"}),
+            "Only NET_ADMIN and NET_RAW are allowed",
+        ))
+        results.append(CheckResult(
+            f"Topology node {node_id} privilege",
+            "no-new-privileges:true" in (service.get("security_opt") or []),
+            "security_opt must keep no-new-privileges",
+        ))
+        for forbidden in ("build", "privileged", "network_mode", "pid", "ipc", "devices", "volumes"):
+            results.append(CheckResult(
+                f"Topology node {node_id} no {forbidden}",
+                not service.get(forbidden),
+                f"Topology services must not set {forbidden}",
+            ))
+        memory = _topology_memory_mb(service.get("mem_limit"))
+        results.append(CheckResult(
+            f"Topology node {node_id} memory",
+            memory is not None and memory <= 512,
+            "Topology nodes need mem_limit at or below 512m",
+        ))
+        total_mb += memory or 0
+        try:
+            cpus = float(service.get("cpus"))
+        except (TypeError, ValueError):
+            cpus = None
+        results.append(CheckResult(
+            f"Topology node {node_id} cpu",
+            cpus is not None and cpus <= 0.5,
+            "Topology nodes need cpus at or below 0.5",
+        ))
+        try:
+            pids = int(service.get("pids_limit"))
+        except (TypeError, ValueError):
+            pids = None
+        results.append(CheckResult(
+            f"Topology node {node_id} pids",
+            pids is not None and 32 <= pids <= 256,
+            "Topology nodes need pids_limit between 32 and 256",
+        ))
+
+    results.append(CheckResult(
+        "Topology total memory",
+        total_mb <= 2048,
+        f"Topology total mem_limit must stay at or below 2048m (found {total_mb}m)",
+    ))
+    return results
+
+
 def validate_lab(lab_dir):
     """Run all checks on a lab directory. Returns list of CheckResults."""
     lab_dir = os.path.normpath(lab_dir)
@@ -989,6 +1129,7 @@ def validate_lab(lab_dir):
     results.extend(check_template_resolution(lab_dir))
     results.extend(check_mysql_auth_plugin(lab_dir))
     results.extend(check_topology_ip_offset_match(lab_dir))
+    results.extend(check_topology_lab(lab_dir))
     results.extend(check_test_steps_exist(lab_dir))
 
     return results
@@ -1043,11 +1184,11 @@ def print_results(lab_dir, results, verbose=False):
     pass_count = len(passed)
 
     if errors:
-        status = f"\033[0;31mFAIL\033[0m"
+        status = "\033[0;31mFAIL\033[0m"
     elif warnings:
-        status = f"\033[1;33mWARN\033[0m"
+        status = "\033[1;33mWARN\033[0m"
     else:
-        status = f"\033[0;32mOK\033[0m"
+        status = "\033[0;32mOK\033[0m"
 
     print(f"\n{'─' * 60}")
     print(f"  {slug}  [{status}]  {pass_count}/{total_checks} checks passed")

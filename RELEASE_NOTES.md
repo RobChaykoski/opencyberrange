@@ -1,25 +1,92 @@
-# SWOCTS Cyber Range 2.7.0
+# SWOCTS Cyber Range Release 4
 
 SWOCTS Cyber Range is powered by OpenCyberRange.
 
-Edition: **Professional** — Community / Academic plus analytics, reporting,
-cohort analysis, competency evidence, accreditation support, and research
-exports.
+Edition: **Enterprise** — Professional plus HA, SSO/identity federation,
+enterprise reporting, and compliance reporting. Multi-tenancy and LMS/LTI are
+Release 5.
 
-Status: **feature release**. 2.7.0 adds optional level quizzes with Beginner
-question banks, target-IP guidance for VPN-only labs, and two reliability fixes
-for WireGuard routing and lab cleanup. No database schema change is required.
+Status: **feature release**. Release 4 adds enterprise single sign-on (OIDC,
+SAML 2.0, and LDAP), an optional Dex/OpenLDAP test stack, the security fixes
+below, and the procurement/accessibility documentation pack. It requires no
+new migration beyond the Release 3 schema; the SSO tables are created by the
+existing startup schema step.
 
-!!! note "Development build: Cyber DNA 2026.14 and RangeBox refinements"
-    The development branch adds Cyber DNA formula **2026.14** (scores capped at
-    99, per-branch decay, a 40-hour continuing-education target, a 30-day trend,
-    and evidence-strength point sizing), the Cyber GPS active/fading signal, and
-    the RangeBox workspace refinements (quality presets, Ctrl+Alt+Del, native
-    fullscreen, flag capture, text-only file guard, pop-out window, and the
-    embedded workbook reader). See the changelog and the user manual's
-    **Navigating your Cyber DNA** section.
+## Release 4 highlights
 
-## Highlights
+- **Enterprise SSO.** OIDC authorization-code login with PKCE, SAML 2.0
+  SP-initiated login, and LDAP/Active Directory sign-in. One provisioning and
+  linking policy, instructor group mapping, SSO-only accounts, and a local
+  break-glass administrator.
+- **Directory role refresh.** A group change at the institution applies on the
+  next SSO login without an administrator editing the account.
+- **Optional local IdP stack.** A profile-gated Dex + OpenLDAP compose stack,
+  generated Dex configuration, LDAP bootstrap users, and an `/idp/` reverse
+  proxy for integration testing.
+- **API exposure fix.** The backend trusts `X-Forwarded-For` only from loopback
+  and private Docker bridges, so per-IP rate limits and audit rows use the real
+  client address.
+- **Privacy.** Subject-access export includes identity-federation data; erasure
+  explicitly removes external identities, SSO sessions, and SSO tickets.
+- **Accessibility.** The institution sign-in panel has a labelled section,
+  visible directory-field labels, accessible button names, error associations,
+  and focus styles.
+- **Compliance pack.** Added the compliance posture, procurement traceability,
+  accessibility statement, automated-scoring statement, HECVAT answer pack, LTI
+  design contract, DPA template, and Release 5 scope.
+- **Network device topology.** Labs can declare routers, hosts, and flag
+  services as data. The engine allocates a per-session `/29` for each link,
+  assigns addresses, enables forwarding, installs routes, and exposes a status
+  endpoint. Four routed labs and a workbook chapter ship with the release.
+- **Topology Forensics.** A guided path-reconstruction lab and an independent
+  variant with a decoy service let learners choose their pace. `scripts/create-lab.py`
+  turns a node/link specification into a validated topology lab.
+- **Learner experience.** Dashboard and profile progress now share one
+  denominator and one course-completion rule. New learners get an
+  evidence-first profile and a compact Learning record; experienced learners can
+  focus on a course, track, certification, or career goal, with course/track/
+  certificate progress lenses, a searchable focus list, and the career target at
+  the top of the Portfolio tab. Titles are collapsed by default, achievement
+  badges use the SVG icon system, and custom-achievement authoring uses the same
+  SVG picker. Workbook, track, admin, and profile status surfaces use the shared
+  colour tokens.
+- **Detection and Windows practice.** YARA fundamentals plus a YARA/incident-log
+  triage scenario, and AD fundamentals plus an AD-to-SMB credential-reuse
+  scenario covering the lowest-coverage cohort competencies.
+
+
+## Release 4 limits
+
+- LTI 1.3 Advantage, multi-tenancy, the TA role, the per-student accommodation
+  engine, a signed VPAT/ACR, SOC 2, ISO 27001, a completed HECVAT, and weekly
+  Jeopardy-style challenge quizzes that feed Cyber DNA are Release 5. See
+  `docs/RELEASE-5-SCOPE.md`.
+- SAML single logout remains local. OIDC RP-initiated logout is supported.
+- The topology engine ships routed L3 topologies with Docker bridges as L2
+  segments. A dedicated switch container, FRR/OSPF/BGP, and an nftables node role
+  are not shipped.
+
+## Previous release: Release 3
+
+## Release 3 highlights
+
+- **Cyber DNA 2026.14.** Scores are capped at 99, each branch decays from its
+  own last practice date, the profile reports a 40-hour continuing-education
+  target and a 30-day trend, and spider-chart points grow with evidence
+  strength.
+- **Cyber GPS signal.** The GPS shows an active or fading practice signal and
+  names quiet domains as fading interest signals.
+- **RangeBox workspace.** Stream-quality presets, Ctrl+Alt+Del, native
+  fullscreen, flag capture, a text-only file guard, a pop-out window, and an
+  independently scrolling workbook reader.
+- **Community events.** The Events tab keeps platform events and adds an
+  Around the area calendar for SWOCTS Hub and Cyber Hive YXU meetups.
+- **Production hardening.** Valkey 9.1.3, the Docker socket proxy, backup
+  volume ownership, the runtime integrity manifest, and the signed release key.
+
+## Previous release: 2.7.0
+
+## 2.7.0 highlights
 
 - **Level quizzes.** Completed levels show a Quiz action only when an active
   quiz bank exists. The Beginner track ships with checks for all four stages.

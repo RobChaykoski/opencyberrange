@@ -40,7 +40,7 @@ flowchart LR
 
 ## Manual editions
 
-This is the shared core manual for platform release **2.7.0** plus the
+This is the shared core manual for platform **Release 3** plus the
 **Advanced DNA Insights development preview**. Community / Academic,
 Professional, and Enterprise are cumulative edition profiles on that release;
 Community / Academic 1.1.3 remains a maintenance line for existing installs.
@@ -59,6 +59,8 @@ Edition-specific pages live in the
 - Want the full guide to the six Cyber DNA branches, decay and repair, the
   40-hour continuing-education target, and the trend arrows? See
   [Navigating your Cyber DNA](02_Student_Guide/22_Navigating_Your_Cyber_DNA.md).
+- Looking for local cybersecurity meetups and community workshops? See
+  [Community Events](02_Student_Guide/23_Community_Events.md).
 - Exploring where your practice is gaining, what to try next, and how that maps
   to career families and salary context? See
   [Career Atlas and Momentum](02_Student_Guide/21_Career_Atlas_And_Momentum.md)

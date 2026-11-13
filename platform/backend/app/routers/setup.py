@@ -5,7 +5,6 @@ Guarded by a "setup already complete" check to prevent misuse.
 """
 
 import logging
-import os
 import secrets
 from datetime import timedelta
 
@@ -13,6 +12,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
+from app.config import settings
 from app.ratelimit import create_limiter
 
 from app.database import get_db
@@ -34,8 +34,10 @@ async def setup_status(db: Session = Depends(get_db)):
     return {
         "setup_complete": setting == "true" or user_count > 0,
         "has_users": user_count > 0,
-        # The wizard shows a token field when the server requires one.
-        "setup_token_required": bool(os.environ.get("SETUP_TOKEN")),
+        # First-run setup is always token-gated. The installer generates the
+        # token; a manual deployment must set SETUP_TOKEN before setup can run.
+        "setup_token_required": True,
+        "setup_ready": bool(settings.SETUP_TOKEN),
     }
 
 
@@ -70,15 +72,21 @@ async def complete_setup(
     concurrent requests could both pass the "no users exist" check and
     create duplicate admin accounts.
     """
-    # First-run setup is unauthenticated by necessity. When the server sets
-    # SETUP_TOKEN (install-platform.sh generates one), require it so a fresh
-    # internet-facing install cannot be admin-claimed by whoever reaches it
-    # first. Constant-time compare. If SETUP_TOKEN is unset (isolated install),
-    # the users>0 guard below is the control.
-    expected_token = os.environ.get("SETUP_TOKEN")
-    if expected_token:
-        if not secrets.compare_digest(payload.setup_token or "", expected_token):
-            raise HTTPException(status_code=403, detail="Invalid or missing setup token")
+    # First-run setup is unauthenticated by necessity and always token-gated.
+    # The installer generates SETUP_TOKEN so a fresh internet-facing install
+    # cannot be admin-claimed by whoever reaches it first. A manual deployment
+    # without SETUP_TOKEN cannot complete setup.
+    expected_token = settings.SETUP_TOKEN
+    if not expected_token:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "First-run setup is not configured. Set SETUP_TOKEN and restart "
+                "the platform before opening the setup wizard."
+            ),
+        )
+    if not secrets.compare_digest(payload.setup_token or "", expected_token):
+        raise HTTPException(status_code=403, detail="Invalid or missing setup token")
 
     # Acquire an advisory lock (ID 1) to serialize setup attempts.
     # pg_try_advisory_xact_lock returns immediately — if another transaction

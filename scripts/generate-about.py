@@ -57,6 +57,10 @@ BACKEND_LICENCES = {
     "pyotp": "MIT",
     "redis": "MIT",
     "qrcode": "BSD",
+    "ldap3": "LGPL-3.0-only",
+    "python3-saml": "MIT",
+    "lxml": "BSD-3-Clause",
+    "xmlsec": "MIT",
 }
 
 IMAGE_LICENCES = [
@@ -65,6 +69,9 @@ IMAGE_LICENCES = [
     ("nginx:alpine", "BSD-2-Clause plus Alpine packages"),
     ("postgres:15-alpine", "PostgreSQL Licence plus Alpine packages"),
     ("valkey/valkey:9.1.3-alpine", "BSD-3-Clause plus Alpine packages"),
+    ("ghcr.io/dexidp/dex:v2.42.0", "Apache-2.0"),
+    ("osixia/openldap:1.5.0", "MIT plus OpenLDAP Public License 2.8"),
+    ("ocr-lab/topology-node:latest", "Alpine package licences, OpenSSH BSD, nftables GPL-2.0"),
     ("mysql:8.0", "GPL-2.0"),
     ("php:8.1-apache", "PHP Licence 3.01 plus Apache-2.0"),
     ("nginxinc/nginx-unprivileged:alpine", "BSD-2-Clause plus Alpine packages"),
@@ -120,7 +127,7 @@ def backend_components() -> list[dict[str, str]]:
     rows = []
     for line in (ROOT / "platform/backend/requirements.txt").read_text().splitlines():
         line = line.strip()
-        if not line or line.startswith("#") or line.startswith("-"):
+        if not line or line.startswith(("#", "-")):
             continue
         name = package_name(line)
         rows.append(
@@ -186,6 +193,7 @@ def sbom_manifest() -> list[dict[str, object]]:
         label = {
             "backend.cdx.json": "Backend CycloneDX SBOM",
             "frontend.cdx.json": "Frontend CycloneDX SBOM",
+            "topology-node.cdx.json": "Topology node image CycloneDX SBOM",
         }.get(path.name, path.stem)
         rows.append(
             {
@@ -212,7 +220,7 @@ def _git_revision() -> str:
             text=True,
             stderr=subprocess.DEVNULL,
         ).strip()
-    except Exception:
+    except (subprocess.SubprocessError, OSError):
         return "unknown"
 
 
@@ -225,7 +233,7 @@ def build_metadata(platform: dict, runtime: dict) -> dict:
     return {
         "version": platform.get("version", ""),
         "git_sha": _git_revision(),
-        "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "built_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),  # noqa: UP017
         "release_date": platform.get("date", ""),
         "status": platform.get("status", ""),
         "python": str((runtime.get("python") or {}).get("current", "")),

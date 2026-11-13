@@ -387,9 +387,22 @@ function startTour() { showTour.value = true }
 provide('startTour', startTour)
 watch(() => authState.value.token, (t, old) => { if (t && !old) maybeStartTour() })
 
-const logout = () => {
+const logout = async () => {
+  let postLogoutUrl = null
+  try {
+    const { data } = await api.post('/auth/logout')
+    postLogoutUrl = data?.post_logout_url || null
+  } catch {
+    // Token may already be expired; continue with the local logout.
+  }
   localStorage.removeItem('token')
   localStorage.removeItem('user')
+  if (postLogoutUrl) {
+    // Navigate to the IdP before any in-app request can hit a revoked token and
+    // win the race with the 401 interceptor's /login redirect.
+    window.location.assign(postLogoutUrl)
+    return
+  }
   updateAuthState() // Update reactive state immediately
   resetModules()
   router.push('/login')

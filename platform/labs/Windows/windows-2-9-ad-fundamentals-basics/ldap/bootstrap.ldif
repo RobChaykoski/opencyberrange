@@ -1,0 +1,35 @@
+dn: ou=People,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: Groups
+
+dn: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Helpdesk Analyst
+sn: Analyst
+uid: analyst
+mail: analyst@lab.example.org
+userPassword: {SSHA}qdlDYVoOgBt3T3C0ZnBCLhp7WpfEfIzKMhI9Ow==
+description: Helpdesk analyst account
+
+dn: uid=svc-backup,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Backup Service
+sn: Service
+uid: svc-backup
+mail: svc-backup@lab.example.org
+userPassword: {SSHA}G7MOKX5s3+d0jjJe59dCZZKsFqLIh1+0L5jPcQ==
+description: Service account - password S3rv1ce!Pass - OCR{ad_c0nc3pts_ld4p}
+
+dn: cn=Helpdesk,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Helpdesk
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+
+dn: cn=Domain Admins,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Domain Admins
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org

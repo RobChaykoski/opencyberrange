@@ -95,7 +95,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       args:
-        PLATFORM_VERSION: ${PLATFORM_VERSION:-2.7.0}
+        PLATFORM_VERSION: ${PLATFORM_VERSION:-4}
         BUILD_REVISION: ${BUILD_REVISION:-unknown}
     container_name: ocr-backend
     ports:
@@ -134,6 +134,14 @@ services:
       RANGEBOX_CPU_RESERVE_CORES: ${RANGEBOX_CPU_RESERVE_CORES:-2}
       RANGEBOX_MIN_FREE_DISK_GB: ${RANGEBOX_MIN_FREE_DISK_GB:-10}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
+      # Parent-domain scope for the HttpOnly wiki session cookie when the wiki
+      # is served from a sibling hostname. Empty keeps it host-only.
+      WIKI_COOKIE_DOMAIN: ${WIKI_COOKIE_DOMAIN:-}
+      # Stable external origin used to build SSO callback URLs. Leave blank to
+      # fall back to SERVER_PUBLIC_HOST.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      FRONTEND_BASE_URL: ${FRONTEND_BASE_URL:-}
+      SSO_ALLOW_INSECURE_HTTP: ${SSO_ALLOW_INSECURE_HTTP:-false}
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-privacy@swocts.com}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://localhost}
       # Report plots are generated headlessly; never probe for a display.
@@ -145,6 +153,9 @@ services:
       # The backend talks to the socket proxy, not the host socket. The proxy
       # is reachable only on the docker_control network.
       DOCKER_HOST: tcp://docker-socket-proxy:2375
+      # Only nginx should be trusted to set X-Forwarded-For. Keep this to the
+      # app bridge so a lab container (10.x) cannot spoof a client address.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,172.16.0.0/12}
       TZ: UTC
     volumes:
       - ${LABS_HOST_PATH}:/labs:ro
@@ -190,13 +201,18 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        PLATFORM_VERSION: ${PLATFORM_VERSION:-2.7.0}
+        PLATFORM_VERSION: ${PLATFORM_VERSION:-4}
         BUILD_REVISION: ${BUILD_REVISION:-unknown}
+        # Optional separate wiki origin, for example https://wiki.example.edu.
+        WIKI_BASE_URL: ${WIKI_BASE_URL:-}
     image: ocr-frontend:latest
     container_name: ocr-frontend
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      # App origin allowed to frame a cross-origin wiki. Empty means same-origin.
+      WIKI_FRAME_ANCESTOR: ${WIKI_FRAME_ANCESTOR:-}
     volumes:
       - ./certs:/etc/nginx/certs:ro
       - wiki_data:/usr/share/nginx/wiki:ro
@@ -229,11 +245,43 @@ services:
       TZ: UTC
     restart: "no"
 
+  # --- Optional SSO stack (profile: sso) ---
+  # Start with: docker compose ... --profile sso up -d ldap dex
+  ldap:
+    image: osixia/openldap:1.5.0
+    container_name: ocr-ldap
+    profiles: ["sso"]
+    environment:
+      LDAP_ORGANISATION: "SWOCTS Cyber Range"
+      LDAP_DOMAIN: "example.org"
+      LDAP_ADMIN_PASSWORD: ${SSO_LDAP_ADMIN_PASSWORD:-SsoDemoAdmin!2026}
+      LDAP_TLS: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "false"
+      # The image copies this directory into its own bootstrap folder, so the
+      # repository checkout stays read-only and keeps its host ownership.
+      LDAP_SEED_INTERNAL_LDIF_PATH: /seed
+    volumes:
+      - ldap_data:/var/lib/ldap
+      - ldap_config:/etc/ldap/slapd.d
+      - ${SSO_DIR:-../deploy/sso}/openldap:/seed:ro
+    restart: unless-stopped
+
+  dex:
+    image: ghcr.io/dexidp/dex:v2.42.0
+    container_name: ocr-dex
+    profiles: ["sso"]
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    volumes:
+      - ${SSO_DIR:-../deploy/sso}/dex/runtime/config.yaml:/etc/dex/config.yaml:ro
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   workbook_data:
   wiki_data:
   backups_data:
+  ldap_data:
+  ldap_config:
 
 networks:
   docker_control:

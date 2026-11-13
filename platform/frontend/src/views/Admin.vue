@@ -502,6 +502,13 @@
                             </svg>
                             <span class="visually-hidden">Password change required</span>
                           </span>
+                          <span
+                            v-if="user.password_login_disabled"
+                            class="status-badge status-badge--sso"
+                            title="Managed by an identity provider"
+                          >
+                            SSO
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -650,12 +657,12 @@
                 <span class="topic-item__count">{{ labs.length }}</span>
               </button>
               <button class="topic-item" :class="{ 'topic-item--active': activeLabStatus === 'enabled' && exercisesView === 'manage' }" @click="activeLabStatus = 'enabled'; exercisesView = 'manage'">
-                <span class="topic-item__dot" style="background: #22c55e;"></span>
+                <span class="topic-item__dot" style="background: var(--success);"></span>
                 <span class="topic-item__name">Enabled</span>
                 <span class="topic-item__count">{{ enabledLabsCount }}</span>
               </button>
               <button class="topic-item" :class="{ 'topic-item--active': activeLabStatus === 'disabled' && exercisesView === 'manage' }" @click="activeLabStatus = 'disabled'; exercisesView = 'manage'">
-                <span class="topic-item__dot" style="background: #6b7280;"></span>
+                <span class="topic-item__dot" style="background: var(--text-muted);"></span>
                 <span class="topic-item__name">Disabled</span>
                 <span class="topic-item__count">{{ disabledLabsCount }}</span>
               </button>
@@ -820,7 +827,7 @@
                   </table>
                   <div v-if="labTotalPages > 1" class="pagination" style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center; align-items: center;">
                     <button @click="labPage = labPage - 1" :disabled="labPage <= 1" class="btn btn--secondary btn--sm">Prev</button>
-                    <span style="padding: 0.4rem 0.75rem; color: #94a3b8;">Page {{ labPage }} of {{ labTotalPages }}</span>
+                    <span style="padding: 0.4rem 0.75rem; color: var(--text-secondary);">Page {{ labPage }} of {{ labTotalPages }}</span>
                     <button @click="labPage = labPage + 1" :disabled="labPage >= labTotalPages" class="btn btn--secondary btn--sm">Next</button>
                   </div>
                 </div>
@@ -1132,10 +1139,10 @@
                 <div v-else>
                   <div v-for="(info, name) in sessionLogs" :key="name" style="margin-bottom: 1.5rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                      <span style="font-weight: 600; color: #e2e8f0;">{{ name }}</span>
+                      <span style="font-weight: 600; color: var(--text-primary);">{{ name }}</span>
                       <span class="status-badge" :class="`status-badge--${info.status}`">{{ info.status }}</span>
                     </div>
-                    <pre style="background: #020617; border: 1px solid #1e293b; border-radius: 6px; padding: 0.75rem; font-size: 0.75rem; color: #94a3b8; overflow-x: auto; max-height: 300px; white-space: pre-wrap; word-break: break-all;">{{ info.logs }}</pre>
+                    <pre style="background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.75rem; font-size: 0.75rem; color: var(--text-secondary); overflow-x: auto; max-height: 300px; white-space: pre-wrap; word-break: break-all;">{{ info.logs }}</pre>
                   </div>
                 </div>
               </div>
@@ -1203,7 +1210,7 @@
                 </div>
                 <div v-if="sessionHistoryPages > 1" class="pagination" style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center; align-items: center;">
                   <button @click="fetchSessionHistory(sessionHistoryPage - 1)" :disabled="sessionHistoryPage <= 1" class="btn btn--secondary btn--sm">Prev</button>
-                  <span style="padding: 0.4rem 0.75rem; color: #94a3b8;">Page {{ sessionHistoryPage }} of {{ sessionHistoryPages }} ({{ sessionHistoryTotal }} total)</span>
+                  <span style="padding: 0.4rem 0.75rem; color: var(--text-secondary);">Page {{ sessionHistoryPage }} of {{ sessionHistoryPages }} ({{ sessionHistoryTotal }} total)</span>
                   <button @click="fetchSessionHistory(sessionHistoryPage + 1)" :disabled="sessionHistoryPage >= sessionHistoryPages" class="btn btn--secondary btn--sm">Next</button>
                 </div>
               </div>
@@ -1348,7 +1355,7 @@
                 </table>
                 <div v-if="vpnTotalPages > 1" class="pagination" style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center; align-items: center;">
                   <button @click="vpnPage = vpnPage - 1" :disabled="vpnPage <= 1" class="btn btn--secondary btn--sm">Prev</button>
-                  <span style="padding: 0.4rem 0.75rem; color: #94a3b8;">Page {{ vpnPage }} of {{ vpnTotalPages }}</span>
+                  <span style="padding: 0.4rem 0.75rem; color: var(--text-secondary);">Page {{ vpnPage }} of {{ vpnTotalPages }}</span>
                   <button @click="vpnPage = vpnPage + 1" :disabled="vpnPage >= vpnTotalPages" class="btn btn--secondary btn--sm">Next</button>
                 </div>
               </div>
@@ -1472,7 +1479,7 @@
               </div>
               <div v-if="activityPages > 1" class="pagination" style="display: flex; gap: 0.5rem; margin-top: 1rem; justify-content: center;">
                 <button @click="fetchActivity(activityPage - 1)" :disabled="activityPage <= 1" class="btn btn--secondary btn--sm">Prev</button>
-                <span style="padding: 0.4rem 0.75rem; color: #94a3b8;">Page {{ activityPage }} of {{ activityPages }}</span>
+                <span style="padding: 0.4rem 0.75rem; color: var(--text-secondary);">Page {{ activityPage }} of {{ activityPages }}</span>
                 <button @click="fetchActivity(activityPage + 1)" :disabled="activityPage >= activityPages" class="btn btn--secondary btn--sm">Next</button>
               </div>
             </div>
@@ -1489,7 +1496,7 @@
 
           <!-- Create Course Form -->
           <div v-if="showAdminCreateCourse" class="create-course-form" style="margin-bottom: 1.5rem;">
-            <h3 style="color: #f8fafc; margin-bottom: 1rem;">Create New Course</h3>
+            <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Create New Course</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
               <div class="form-group">
                 <label>Course Name</label>
@@ -1655,12 +1662,12 @@
                 </option>
               </select>
             </div>
-            <div class="course-overview-stats" style="display: flex; gap: 1.5rem; padding: 0.75rem 0; color: #94a3b8; font-size: 0.875rem;">
-              <span><strong style="color: #f8fafc;">{{ managingCourse.student_count }}</strong> students</span>
-              <span><strong style="color: #f8fafc;">{{ managingCourse.lab_count }}</strong> exercises</span>
+            <div class="course-overview-stats" style="display: flex; gap: 1.5rem; padding: 0.75rem 0; color: var(--text-secondary); font-size: 0.875rem;">
+              <span><strong style="color: var(--text-primary);">{{ managingCourse.student_count }}</strong> students</span>
+              <span><strong style="color: var(--text-primary);">{{ managingCourse.lab_count }}</strong> exercises</span>
               <span>Invite: <code class="invite-code-admin" @click="copyToClipboard(managingCourse.invite_code)" style="cursor: pointer;">{{ managingCourse.invite_code }}</code></span>
             </div>
-            <p style="color: #64748b; font-size: 0.8125rem; margin: 0;">
+            <p style="color: var(--text-muted); font-size: 0.8125rem; margin: 0;">
               Use <strong>Open Course</strong> to manage students, exercises, assignments, analytics, and reports.
             </p>
           </div>
@@ -1747,6 +1754,11 @@
           <!-- Admin-only certification question banks -->
           <div v-else-if="activeSettingsCategory === 'question-banks'" class="settings-form">
             <QuestionBankAdmin />
+          </div>
+
+          <!-- V3 identity providers -->
+          <div v-else-if="activeSettingsCategory === 'identity'" class="settings-form">
+            <IdentityProvidersPanel />
           </div>
 
           <!-- Generic settings form for other categories -->
@@ -2583,7 +2595,7 @@
             </div>
             <div class="diagnostics-terminal-body" ref="testerTerminalRef" style="max-height: 600px;">
               <div v-if="!testerSections.length && !testerRunning" class="diagnostics-empty">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.5">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
                 </svg>
                 <p>Select labs and click <strong>Run Tests</strong> to validate exercises end-to-end.</p>
@@ -2614,7 +2626,7 @@
             <!-- Controls -->
             <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1rem;">
               <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 0.25rem;">Level</label>
+                <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Level</label>
                 <select aria-label="Level" v-model.number="stressLevel" class="form-input form-input--sm" style="width: 180px;" :disabled="stressRunning">
                   <option :value="1">1 - API Only</option>
                   <option :value="2">2 - Auth + API</option>
@@ -2623,11 +2635,11 @@
                 </select>
               </div>
               <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 0.25rem;">Users</label>
+                <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Users</label>
                 <input aria-label="Users" v-model.number="stressUsers" type="number" min="1" max="200" class="form-input form-input--sm" style="width: 80px;" :disabled="stressRunning" />
               </div>
               <div v-if="stressLevel === 3 || stressLevel === 4" class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 0.75rem; color: #94a3b8; display: block; margin-bottom: 0.25rem;">Concurrent Spawns</label>
+                <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Concurrent Spawns</label>
                 <input aria-label="Concurrent Spawns" v-model.number="stressConcurrentSpawns" type="number" min="1" max="20" class="form-input form-input--sm" style="width: 80px;" :disabled="stressRunning" />
               </div>
               <div style="display: flex; gap: 0.5rem;">
@@ -2646,10 +2658,10 @@
               </div>
             </div>
 
-            <div v-if="stressLevel === 3" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: #eab308;">
+            <div v-if="stressLevel === 3" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--warning);">
               <strong>Warning:</strong> Level 3 pre-spawns Docker containers for all users before the timed test. Only run on an idle system. The pre-spawn and cleanup phases are not timed.
             </div>
-            <div v-if="stressLevel === 4" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: #eab308;">
+            <div v-if="stressLevel === 4" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--warning);">
               <strong>Warning:</strong> Level 4 spawns standalone RangeBoxes and opens VNC WebSocket connections to each one. Measures VNC frame latency, throughput, and host resource usage. Only run on an idle system.
             </div>
 
@@ -2673,9 +2685,9 @@
                       <td style="font-family: monospace; font-size: 0.8rem;">{{ ep.endpoint }}</td>
                       <td style="text-align: right;">{{ ep.calls }}</td>
                       <td style="text-align: right; font-family: monospace;">{{ ep.p50.toFixed(3) }}s</td>
-                      <td style="text-align: right; font-family: monospace;" :style="ep.p95 > 2 ? 'color: #ef4444' : ''">{{ ep.p95.toFixed(3) }}s</td>
-                      <td style="text-align: right; font-family: monospace;" :style="ep.p99 > 2 ? 'color: #ef4444' : ''">{{ ep.p99.toFixed(3) }}s</td>
-                      <td style="text-align: right;" :style="ep.errors > 0 ? 'color: #ef4444' : ''">{{ ep.errors }}</td>
+                      <td style="text-align: right; font-family: monospace;" :style="ep.p95 > 2 ? 'color: var(--danger)' : ''">{{ ep.p95.toFixed(3) }}s</td>
+                      <td style="text-align: right; font-family: monospace;" :style="ep.p99 > 2 ? 'color: var(--danger)' : ''">{{ ep.p99.toFixed(3) }}s</td>
+                      <td style="text-align: right;" :style="ep.errors > 0 ? 'color: var(--danger)' : ''">{{ ep.errors }}</td>
                       <td style="text-align: center;">
                         <span :style="{ color: ep.passed ? '#22c55e' : '#ef4444', fontWeight: 600 }">{{ ep.passed ? 'PASS' : 'FAIL' }}</span>
                       </td>
@@ -2697,10 +2709,10 @@
                 </div>
                 <div v-if="stressResults.prespawn_total" :style="{ background: stressResults.prespawn_pass ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)', border: '1px solid ' + (stressResults.prespawn_pass ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'), borderRadius: '0.5rem', padding: '0.5rem 0.75rem', fontSize: '0.8rem' }">
                   {{ stressResults.prespawn_pass ? 'PASS' : 'FAIL' }} — Pre-spawn: <strong>{{ stressResults.prespawn_succeeded }}/{{ stressResults.prespawn_total }}</strong> {{ stressResults.level === 4 ? 'RangeBoxes' : 'labs' }}
-                  <span v-if="stressResults.prespawn_failed > 0" style="color: #eab308;"> ({{ stressResults.prespawn_failed }} failed)</span>
+                  <span v-if="stressResults.prespawn_failed > 0" style="color: var(--warning);"> ({{ stressResults.prespawn_failed }} failed)</span>
                 </div>
                 <div v-if="stressResults.host_cpu_pct != null" style="background: rgba(30,41,59,0.5); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.8rem;">
-                  Host CPU: <strong :style="stressResults.host_cpu_pct > 85 ? 'color: #ef4444' : ''">{{ stressResults.host_cpu_pct }}%</strong> &nbsp; Memory: <strong>{{ stressResults.host_mem_pct }}%</strong>
+                  Host CPU: <strong :style="stressResults.host_cpu_pct > 85 ? 'color: var(--danger)' : ''">{{ stressResults.host_cpu_pct }}%</strong> &nbsp; Memory: <strong>{{ stressResults.host_mem_pct }}%</strong>
                 </div>
               </div>
             </div>
@@ -2711,7 +2723,7 @@
                 <span class="diagnostics-terminal-dot" :class="{ 'diagnostics-terminal-dot--active': stressRunning }"></span>
                 <span class="diagnostics-terminal-label">ocr-stress-tester</span>
                 <template v-if="stressRunning">
-                  <span v-if="stressPhase" class="tester-phase-label" style="margin-left: 0.5rem; font-size: 0.7rem; color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
+                  <span v-if="stressPhase" class="tester-phase-label" style="margin-left: 0.5rem; font-size: 0.7rem; color: var(--accent-text); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
                     {{ stressPhase === 'prespawn' ? 'Pre-spawning' : stressPhase === 'timed' ? 'Testing' : stressPhase === 'cleanup' ? 'Cleaning up' : '' }}
                   </span>
                   <template v-if="stressProgressTotal > 0">
@@ -2725,7 +2737,7 @@
               </div>
               <div class="diagnostics-terminal-body" ref="stressTerminalRef" style="max-height: 400px;">
                 <div v-if="!stressSections.length && !stressRunning" class="diagnostics-empty">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.5">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                   </svg>
                   <p>Configure options and click <strong>Run Test</strong> to stress test the platform.</p>
@@ -3863,7 +3875,7 @@ test:
                 @click="launchAsStudent"
                 class="btn impersonate-btn"
                 :disabled="!launchAsForm.userId || !launchAsForm.labSlug || launchAsLoading"
-                style="background: rgba(139, 92, 246, 0.15); border: 1px solid #8b5cf6; color: #8b5cf6;"
+                style="background: rgba(139, 92, 246, 0.15); border: 1px solid var(--purple); color: var(--purple);"
               >
                 {{ launchAsLoading ? 'Launching...' : 'Launch' }}
               </button>
@@ -3883,6 +3895,7 @@ import AchievementStudio from '../components/AchievementStudio.vue'
 import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
+import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
@@ -4637,13 +4650,15 @@ const settingsCategories = computed(() => {
   base.push('achievements')
   // Certification question banks are admin-only data, not a platform setting.
   base.push('question-banks')
+  // Identity provider settings: LDAP/OIDC/SAML configuration.
+  base.push('identity')
   // The Modules tab (optional-module enable/disable) is a real admin control,
   // not a dev tool: show it whenever the edition ships optional modules, so an
   // operator can turn SOC on/off on a production install.
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks' }
+const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
@@ -4684,6 +4699,7 @@ const settingMeta = {
   max_failed_attempts:       { label: 'Max Failed Logins',      desc: 'Number of consecutive wrong-password attempts before the account is temporarily locked.', unit: 'attempts' },
   lockout_duration_minutes:  { label: 'Lockout Duration',       desc: 'How long a locked-out account remains inaccessible after exceeding the failed login limit.', unit: 'minutes' },
   require_approval:          { label: 'Require Approval',       desc: 'When enabled, new user registrations must be approved by an admin before the account can log in.' },
+  sso_enabled:               { label: 'Institution SSO',        desc: 'Allow LDAP, OIDC, and SAML sign-in. Turning this off hides the institution sign-in panel and rejects new SSO logins; local password login and the break-glass administrator remain available. Existing SSO sessions are not revoked.' },
   enable_api_docs:           { label: 'API Documentation',      desc: 'Exposes the Swagger UI (/docs) and ReDoc (/redoc) endpoints for the backend API. Disable in production.' },
   privacy_default_on:        { label: 'Default Privacy Mode',   desc: 'Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views.' },
   analytics_min_cohort_size: { label: 'Analytics Minimum Cohort', desc: 'Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment.' },
@@ -5114,6 +5130,15 @@ const toggleSetting = async (key) => {
   if (togglesSaving[key]) return
   const previous = settingsEdits[key]
   const next = previous === 'true' ? 'false' : 'true'
+  if (
+    key === 'sso_enabled' &&
+    next === 'false' &&
+    !window.confirm(
+      'Disable institution SSO? The sign-in panel will be hidden and new SSO logins will be rejected. Local password login and the break-glass administrator remain available. Existing SSO sessions are not signed out.'
+    )
+  ) {
+    return
+  }
   settingsEdits[key] = next
   togglesSaving[key] = true
   try {
@@ -8413,7 +8438,7 @@ watch(activeTab, (tab) => {
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 1rem;
-  color: #eab308;
+  color: var(--warning);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -8525,7 +8550,7 @@ watch(activeTab, (tab) => {
 }
 
 .stat-card--alert {
-  border-color: #f59e0b;
+  border-color: var(--warning);
   box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3);
   animation: pending-pulse 2s ease-in-out infinite;
 }
@@ -8552,7 +8577,7 @@ watch(activeTab, (tab) => {
   position: absolute;
   top: -6px;
   right: -6px;
-  background: #ef4444;
+  background: var(--danger);
   color: white;
   font-size: 0.7rem;
   font-weight: 700;
@@ -8663,7 +8688,7 @@ watch(activeTab, (tab) => {
 }
 
 .btn--primary:hover {
-  background: #2563eb;
+  background: var(--accent);
 }
 
 .btn--secondary {
@@ -8681,7 +8706,7 @@ watch(activeTab, (tab) => {
 }
 
 .btn--success:hover {
-  background: #16a34a;
+  background: var(--success);
 }
 
 .btn--danger {
@@ -8690,7 +8715,7 @@ watch(activeTab, (tab) => {
 }
 
 .btn--danger:hover {
-  background: #dc2626;
+  background: var(--danger);
 }
 
 .btn--sm {
@@ -8801,9 +8826,9 @@ watch(activeTab, (tab) => {
   border-radius: 4px;
 }
 
-.form-select--public { background: rgba(34, 197, 94, 0.15); color: #4ade80; border-color: rgba(34, 197, 94, 0.3); }
-.form-select--course { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
-.form-select--pending_public { background: rgba(234, 179, 8, 0.15); color: #facc15; border-color: rgba(234, 179, 8, 0.3); }
+.form-select--public { background: rgba(34, 197, 94, 0.15); color: var(--success); border-color: rgba(34, 197, 94, 0.3); }
+.form-select--course { background: rgba(59, 130, 246, 0.15); color: var(--accent-text); border-color: rgba(59, 130, 246, 0.3); }
+.form-select--pending_public { background: rgba(234, 179, 8, 0.15); color: var(--warning); border-color: rgba(234, 179, 8, 0.3); }
 .form-select--draft { background: rgba(148, 163, 184, 0.15); color: var(--text-secondary); border-color: rgba(148, 163, 184, 0.3); }
 
 .form-group--inline {
@@ -9009,11 +9034,11 @@ watch(activeTab, (tab) => {
 
 .action-btn--test {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--warning);
 }
 
 .action-btn--test:hover {
-  background: #f59e0b;
+  background: var(--warning);
   color: white;
 }
 
@@ -9024,11 +9049,11 @@ watch(activeTab, (tab) => {
 
 .action-btn--cache {
   background: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
+  color: var(--purple);
 }
 
 .action-btn--cache:hover {
-  background: #a855f7;
+  background: var(--purple);
   color: white;
 }
 
@@ -9048,11 +9073,11 @@ watch(activeTab, (tab) => {
 
 .action-btn--available {
   background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  color: var(--success);
 }
 
 .action-btn--available:hover {
-  background: #22c55e;
+  background: var(--success);
   color: white;
 }
 
@@ -9077,7 +9102,7 @@ watch(activeTab, (tab) => {
 
 .status-badge--instructor {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--accent-text);
 }
 
 .status-badge--approved {
@@ -9122,21 +9147,21 @@ watch(activeTab, (tab) => {
   white-space: nowrap;
 }
 
-.event-badge--lab_started       { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-.event-badge--lab_stopped       { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
-.event-badge--lab_completed     { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-.event-badge--flag_correct      { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-.event-badge--flag_incorrect    { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-.event-badge--hint_used         { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.event-badge--user_registered   { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
-.event-badge--user_approved     { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
-.event-badge--session_expired   { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.event-badge--vpn_downloaded    { background: rgba(6, 182, 212, 0.15); color: #22d3ee; }
-.event-badge--course_enrolled   { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
-.event-badge--achievement_awarded { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.event-badge--lab_started       { background: rgba(59, 130, 246, 0.15); color: var(--accent-text); }
+.event-badge--lab_stopped       { background: rgba(100, 116, 139, 0.2); color: var(--text-secondary); }
+.event-badge--lab_completed     { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+.event-badge--flag_correct      { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+.event-badge--flag_incorrect    { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+.event-badge--hint_used         { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.event-badge--user_registered   { background: rgba(168, 85, 247, 0.15); color: var(--badge-purple); }
+.event-badge--user_approved     { background: rgba(168, 85, 247, 0.15); color: var(--badge-purple); }
+.event-badge--session_expired   { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.event-badge--vpn_downloaded    { background: rgba(6, 182, 212, 0.15); color: var(--badge-cyan); }
+.event-badge--course_enrolled   { background: rgba(236, 72, 153, 0.15); color: var(--badge-pink); }
+.event-badge--achievement_awarded { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
 /* Diagnostic activity (admin-initiated) */
-.event-badge--diagnostic        { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.event-badge--diagnostic        { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
 .admin-session-tag {
   display: inline-block;
@@ -9148,7 +9173,7 @@ watch(activeTab, (tab) => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--danger);
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
@@ -9162,7 +9187,7 @@ watch(activeTab, (tab) => {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   background: rgba(245, 158, 11, 0.1);
-  color: #d97706;
+  color: var(--warning);
   border: 1px solid rgba(245, 158, 11, 0.25);
   vertical-align: middle;
 }
@@ -9180,10 +9205,10 @@ watch(activeTab, (tab) => {
 }
 
 /* Session status badges */
-.event-badge--session-running   { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-.event-badge--session-stopped   { background: rgba(100, 116, 139, 0.2); color: #94a3b8; }
-.event-badge--session-expired   { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-.event-badge--session-error     { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.event-badge--session-running   { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+.event-badge--session-stopped   { background: rgba(100, 116, 139, 0.2); color: var(--text-secondary); }
+.event-badge--session-expired   { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+.event-badge--session-error     { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
 /* Empty State */
 .empty-state {
@@ -9411,12 +9436,12 @@ watch(activeTab, (tab) => {
 }
 
 .exercise-status-dot--active {
-  background: #22c55e;
+  background: var(--success);
   box-shadow: 0 0 4px rgba(34, 197, 94, 0.5);
 }
 
 .exercise-status-dot--inactive {
-  background: #6b7280;
+  background: var(--text-muted);
 }
 
 .exercise-name {
@@ -9441,13 +9466,13 @@ watch(activeTab, (tab) => {
 
 .exercise-badge--difficulty {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--accent-text);
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .exercise-badge--duration {
   background: rgba(100, 116, 139, 0.15);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(100, 116, 139, 0.3);
 }
 
@@ -9468,7 +9493,7 @@ watch(activeTab, (tab) => {
   font-weight: 600;
   border: 1px solid rgba(100, 116, 139, 0.3);
   background-color: rgba(100, 116, 139, 0.1);
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   flex-shrink: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3E%3Cpath fill='%2394a3b8' d='M0 2l4 4 4-4z'/%3E%3C/svg%3E");
@@ -9478,25 +9503,25 @@ watch(activeTab, (tab) => {
 
 .exercise-vis-select--public {
   border-color: rgba(34, 197, 94, 0.3);
-  color: #4ade80;
+  color: var(--success);
   background-color: rgba(34, 197, 94, 0.1);
 }
 
 .exercise-vis-select--course {
   border-color: rgba(59, 130, 246, 0.3);
-  color: #60a5fa;
+  color: var(--accent-text);
   background-color: rgba(59, 130, 246, 0.1);
 }
 
 .exercise-vis-select--pending_public {
   border-color: rgba(245, 158, 11, 0.3);
-  color: #fbbf24;
+  color: var(--warning);
   background-color: rgba(245, 158, 11, 0.1);
 }
 
 .exercise-vis-select--draft {
   border-color: rgba(100, 116, 139, 0.3);
-  color: #94a3b8;
+  color: var(--text-secondary);
   background-color: rgba(100, 116, 139, 0.1);
 }
 
@@ -9515,7 +9540,7 @@ watch(activeTab, (tab) => {
   font-weight: 700;
   border: 1px solid rgba(100, 116, 139, 0.3);
   background: rgba(100, 116, 139, 0.15);
-  color: #94a3b8;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
   line-height: 1.5;
@@ -9528,7 +9553,7 @@ watch(activeTab, (tab) => {
 
 .exercise-action-btn--danger {
   background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  color: var(--danger);
   border-color: rgba(239, 68, 68, 0.3);
 }
 
@@ -9538,7 +9563,7 @@ watch(activeTab, (tab) => {
 
 .exercise-action-btn--success {
   background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  color: var(--success);
   border-color: rgba(34, 197, 94, 0.3);
 }
 
@@ -9548,7 +9573,7 @@ watch(activeTab, (tab) => {
 
 .exercise-action-btn--test {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--warning);
   border-color: rgba(245, 158, 11, 0.3);
 }
 
@@ -9829,7 +9854,7 @@ watch(activeTab, (tab) => {
 
 .vpn-badge--connected {
   background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  color: var(--success);
 }
 
 .vpn-badge--disconnected {
@@ -9844,7 +9869,7 @@ watch(activeTab, (tab) => {
 
 .vpn-badge--none {
   background: rgba(100, 116, 139, 0.2);
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .vpn-handshake {
@@ -9879,8 +9904,8 @@ watch(activeTab, (tab) => {
 }
 
 .impersonate-btn {
-  border-color: #8b5cf6 !important;
-  color: #8b5cf6 !important;
+  border-color: var(--purple) !important;
+  color: var(--purple) !important;
 }
 
 .impersonate-btn:hover {
@@ -9971,7 +9996,7 @@ watch(activeTab, (tab) => {
 }
 
 .vpn-filter-pill--active:hover {
-  background: #2563eb;
+  background: var(--accent);
   border-color: #2563eb;
 }
 
@@ -10595,7 +10620,7 @@ watch(activeTab, (tab) => {
   border-radius: 3px;
   border: 1px solid rgba(167, 139, 250, 0.4);
   background: rgba(167, 139, 250, 0.12);
-  color: #a78bfa;
+  color: var(--purple);
   white-space: nowrap;
 }
 
@@ -10650,7 +10675,7 @@ watch(activeTab, (tab) => {
 }
 
 .status-badge--exclusive {
-  color: #a78bfa;
+  color: var(--purple);
   background: rgba(167, 139, 250, 0.15);
 }
 
@@ -10891,9 +10916,9 @@ watch(activeTab, (tab) => {
   border-radius: 9999px;
   text-transform: capitalize;
 }
-.difficulty-beginner { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
-.difficulty-intermediate { background: rgba(234, 179, 8, 0.15); color: #facc15; }
-.difficulty-advanced { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.difficulty-beginner { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+.difficulty-intermediate { background: rgba(234, 179, 8, 0.15); color: var(--warning); }
+.difficulty-advanced { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
 .track-badge {
   display: inline-block;
@@ -10994,7 +11019,7 @@ watch(activeTab, (tab) => {
 }
 
 .modal-actions .btn--primary:hover {
-  background: #2563eb !important;
+  background: var(--accent) !important;
 }
 
 /* Edit User Form */
@@ -11191,6 +11216,14 @@ watch(activeTab, (tab) => {
 .status-badge--student {
   background: rgba(148, 163, 184, 0.15);
   color: var(--text-secondary);
+}
+
+.status-badge--sso {
+  margin-left: 0.35rem;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
 }
 
 .password-change-badge {
@@ -11561,7 +11594,7 @@ watch(activeTab, (tab) => {
 
 .setting-info-icon:hover,
 .setting-info-icon:focus {
-  color: #e2e8f0;
+  color: var(--text-primary);
   border-color: var(--text-secondary);
 }
 
@@ -11571,15 +11604,15 @@ watch(activeTab, (tab) => {
   left: 50%;
   bottom: calc(100% + 8px);
   transform: translateX(-50%);
-  background: #1e293b;
-  color: #e2e8f0;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 0.75rem;
   font-weight: 400;
   font-style: normal;
   line-height: 1.45;
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  border: 1px solid #334155;
+  border: 1px solid var(--border-color);
   white-space: normal;
   width: 260px;
   text-align: left;
@@ -11660,7 +11693,7 @@ watch(activeTab, (tab) => {
 .flag-reveal__value {
   font-family: 'Courier New', monospace;
   font-size: 0.875rem;
-  color: #4ade80;
+  color: var(--success);
   background: rgba(34, 197, 94, 0.12);
   border: 1px solid rgba(34, 197, 94, 0.3);
   border-radius: 4px;
@@ -11672,11 +11705,11 @@ watch(activeTab, (tab) => {
 .flag-reveal__note {
   margin: 0.4rem 0 0;
   font-size: 0.8125rem;
-  color: #fbbf24;
+  color: var(--warning);
 }
 
 .flag-reveal__note--error {
-  color: #f87171;
+  color: var(--danger);
 }
 
 /* Extra button styles */
@@ -11710,19 +11743,19 @@ watch(activeTab, (tab) => {
 .system-health-overall--healthy {
   background: rgba(22, 101, 52, 0.15);
   border: 1px solid #166534;
-  color: #4ade80;
+  color: var(--success);
 }
 
 .system-health-overall--warning {
   background: rgba(133, 77, 14, 0.15);
   border: 1px solid #854d0e;
-  color: #fbbf24;
+  color: var(--warning);
 }
 
 .system-health-overall--error {
   background: rgba(153, 27, 27, 0.15);
   border: 1px solid #991b1b;
-  color: #f87171;
+  color: var(--danger);
 }
 
 .system-health-overall-icon {
@@ -11768,7 +11801,7 @@ watch(activeTab, (tab) => {
 
 .system-health-name {
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 .system-health-details {
@@ -11782,13 +11815,13 @@ watch(activeTab, (tab) => {
   min-width: 0;
 }
 
-.status-badge--healthy { color: #4ade80; }
-.status-badge--warning { color: #fbbf24; }
-.status-badge--error { color: #f87171; }
-.status-badge--unreachable { color: #f87171; }
+.status-badge--healthy { color: var(--success); }
+.status-badge--warning { color: var(--warning); }
+.status-badge--error { color: var(--danger); }
+.status-badge--unreachable { color: var(--danger); }
 .status-badge--unknown { color: var(--text-muted); }
-.status-badge--running { color: #4ade80; }
-.status-badge--exited { color: #f87171; }
+.status-badge--running { color: var(--success); }
+.status-badge--exited { color: var(--danger); }
 
 /* Security Audit */
 .security-overall {
@@ -11801,19 +11834,19 @@ watch(activeTab, (tab) => {
 .security-overall--ok {
   background: rgba(34, 197, 94, 0.1);
   border: 1px solid #166534;
-  color: #4ade80;
+  color: var(--success);
 }
 
 .security-overall--warning {
   background: rgba(245, 158, 11, 0.1);
   border: 1px solid #854d0e;
-  color: #fbbf24;
+  color: var(--warning);
 }
 
 .security-overall--error {
   background: var(--danger-bg);
   border: 1px solid #991b1b;
-  color: #f87171;
+  color: var(--danger);
 }
 
 /* Health Status Card (in stats grid) */
@@ -11843,17 +11876,17 @@ watch(activeTab, (tab) => {
 
 .stat-card__icon--health-healthy {
   background: rgba(22, 101, 52, 0.15);
-  color: #4ade80;
+  color: var(--success);
 }
 
 .stat-card__icon--health-warning {
   background: rgba(133, 77, 14, 0.15);
-  color: #fbbf24;
+  color: var(--warning);
 }
 
 .stat-card__icon--health-error {
   background: rgba(153, 27, 27, 0.15);
-  color: #f87171;
+  color: var(--danger);
 }
 
 .health-card-indicators {
@@ -11884,18 +11917,18 @@ watch(activeTab, (tab) => {
 }
 
 .health-dot--green {
-  background: #4ade80;
+  background: var(--success);
   box-shadow: 0 0 4px rgba(74, 222, 128, 0.4);
 }
 
 .health-dot--amber {
-  background: #fbbf24;
+  background: var(--warning);
   box-shadow: 0 0 4px rgba(251, 191, 36, 0.4);
   animation: pulse-amber 2s ease-in-out infinite;
 }
 
 .health-dot--red {
-  background: #f87171;
+  background: var(--danger);
   box-shadow: 0 0 6px rgba(248, 113, 113, 0.5);
   animation: pulse-red 1.5s ease-in-out infinite;
 }
@@ -11968,14 +12001,14 @@ watch(activeTab, (tab) => {
   text-align: center;
 }
 
-.security-check-card--ok .security-check-icon { color: #4ade80; }
-.security-check-card--warning .security-check-icon { color: #fbbf24; }
-.security-check-card--error .security-check-icon { color: #f87171; }
-.security-check-card--info .security-check-icon { color: #60a5fa; }
+.security-check-card--ok .security-check-icon { color: var(--success); }
+.security-check-card--warning .security-check-icon { color: var(--warning); }
+.security-check-card--error .security-check-icon { color: var(--danger); }
+.security-check-card--info .security-check-icon { color: var(--accent-text); }
 
 .security-check-name {
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--text-primary);
   font-size: 0.875rem;
 }
 
@@ -12000,7 +12033,7 @@ watch(activeTab, (tab) => {
   padding: 0.15rem 0.4rem;
   border-radius: 0.25rem;
   font-family: monospace;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 /* Disk usage bar */
@@ -12088,13 +12121,13 @@ watch(activeTab, (tab) => {
 
 .btn--warning {
   background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
+  color: var(--warning);
   border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .btn--warning:hover {
   background: rgba(251, 191, 36, 0.25);
-  border-color: #fbbf24;
+  border-color: var(--warning);
 }
 
 .integrity-summary {
@@ -12572,7 +12605,7 @@ watch(activeTab, (tab) => {
 .vm-terminal-close {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 1.1rem;
   cursor: pointer;
   padding: 0 0.3rem;
@@ -12580,13 +12613,13 @@ watch(activeTab, (tab) => {
   line-height: 1;
 }
 .vm-terminal-close:hover {
-  color: #f87171;
+  color: var(--danger);
 }
 .diagnostics-terminal {
-  border: 1px solid #1e293b;
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   overflow: hidden;
-  background: #020617;
+  background: var(--bg-primary);
 }
 
 .diagnostics-terminal-header {
@@ -12594,11 +12627,11 @@ watch(activeTab, (tab) => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: #0f172a;
+  background: var(--bg-primary);
   border-bottom: 1px solid #1e293b;
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: var(--text-secondary);
 }
 
 .diagnostics-terminal-dot {
@@ -12616,19 +12649,19 @@ watch(activeTab, (tab) => {
 
 .diagnostics-terminal-label {
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 /* Tester progress bar */
 .tester-progress-text {
-  color: #94a3b8;
+  color: var(--text-secondary);
   font-size: 0.65rem;
   margin-left: 0.5rem;
 }
 .tester-progress-bar {
   width: 120px;
   height: 6px;
-  background: #1e293b;
+  background: var(--bg-secondary);
   border-radius: 3px;
   overflow: hidden;
   flex-shrink: 0;
@@ -12640,14 +12673,14 @@ watch(activeTab, (tab) => {
   transition: width 0.4s ease;
 }
 .tester-progress-pct {
-  color: #4ade80;
+  color: var(--success);
   font-weight: 600;
   font-size: 0.65rem;
   min-width: 32px;
 }
 .diagnostics-terminal-time {
   margin-left: auto;
-  color: #64748b;
+  color: var(--text-muted);
 }
 
 .diagnostics-terminal-body {
@@ -12663,10 +12696,10 @@ watch(activeTab, (tab) => {
   width: 6px;
 }
 .diagnostics-terminal-body::-webkit-scrollbar-track {
-  background: #020617;
+  background: var(--bg-primary);
 }
 .diagnostics-terminal-body::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--bg-tertiary);
   border-radius: 3px;
 }
 
@@ -12677,7 +12710,7 @@ watch(activeTab, (tab) => {
   justify-content: center;
   gap: 0.75rem;
   padding: 3rem 1rem;
-  color: #475569;
+  color: var(--text-muted);
   text-align: center;
 }
 
@@ -12688,7 +12721,7 @@ watch(activeTab, (tab) => {
 }
 
 .diagnostics-section-header {
-  color: #60a5fa;
+  color: var(--accent-text);
   padding: 0.5rem 0 0.25rem 0;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -12702,7 +12735,7 @@ watch(activeTab, (tab) => {
 }
 
 .diagnostics-line-time {
-  color: #475569;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
@@ -12713,7 +12746,7 @@ watch(activeTab, (tab) => {
 }
 
 .diagnostics-level--ok { color: #6aaa64; }
-.diagnostics-level--info { color: #60a5fa; }
+.diagnostics-level--info { color: var(--accent-text); }
 .diagnostics-level--warning { color: #e8a735; }
 .diagnostics-level--error { color: #d9534f; }
 
@@ -12794,9 +12827,9 @@ watch(activeTab, (tab) => {
   gap: 0.375rem;
   font-weight: 500;
 }
-.tester-summary-item--ok { color: #4ade80; }
-.tester-summary-item--warning { color: #fbbf24; }
-.tester-summary-item--error { color: #f87171; }
+.tester-summary-item--ok { color: var(--success); }
+.tester-summary-item--warning { color: var(--warning); }
+.tester-summary-item--error { color: var(--danger); }
 .tester-summary-item--total {
   margin-left: auto;
   color: var(--text-muted);
@@ -12901,19 +12934,19 @@ watch(activeTab, (tab) => {
   flex-shrink: 0;
 }
 .tester-status-dot--ok {
-  background: #22c55e;
+  background: var(--success);
   box-shadow: 0 0 4px rgba(34, 197, 94, 0.5);
 }
 .tester-status-dot--warning {
-  background: #f59e0b;
+  background: var(--warning);
   box-shadow: 0 0 4px rgba(245, 158, 11, 0.5);
 }
 .tester-status-dot--error {
-  background: #ef4444;
+  background: var(--danger);
   box-shadow: 0 0 4px rgba(239, 68, 68, 0.5);
 }
 .tester-status-dot--cancelled {
-  background: #6b7280;
+  background: var(--text-muted);
   box-shadow: 0 0 4px rgba(107, 114, 128, 0.3);
 }
 
@@ -12939,13 +12972,13 @@ watch(activeTab, (tab) => {
 
 .tester-badge--test {
   background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  color: var(--success);
   border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .tester-badge--flag {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--accent-text);
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
@@ -12955,7 +12988,7 @@ watch(activeTab, (tab) => {
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
   background: rgba(100, 116, 139, 0.15);
-  color: #94a3b8;
+  color: var(--text-secondary);
   border: 1px solid rgba(100, 116, 139, 0.3);
 }
 .tester-badge--report:hover {
@@ -12963,7 +12996,7 @@ watch(activeTab, (tab) => {
 }
 .tester-badge--report-ok {
   background: rgba(34, 197, 94, 0.15);
-  color: #4ade80;
+  color: var(--success);
   border-color: rgba(34, 197, 94, 0.4);
 }
 .tester-badge--report-ok:hover {
@@ -12971,7 +13004,7 @@ watch(activeTab, (tab) => {
 }
 .tester-badge--report-warning {
   background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  color: var(--warning);
   border-color: rgba(245, 158, 11, 0.4);
 }
 .tester-badge--report-warning:hover {
@@ -12979,7 +13012,7 @@ watch(activeTab, (tab) => {
 }
 .tester-badge--report-error {
   background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  color: var(--danger);
   border-color: rgba(239, 68, 68, 0.4);
 }
 .tester-badge--report-error:hover {
@@ -13137,7 +13170,7 @@ watch(activeTab, (tab) => {
 }
 
 .module-card__save:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--accent);
 }
 
 .module-card__save:disabled {
@@ -13192,7 +13225,7 @@ watch(activeTab, (tab) => {
 .module-log-label {
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.6875rem;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -13212,14 +13245,14 @@ watch(activeTab, (tab) => {
 }
 
 .module-log-time {
-  color: #475569;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 
-.module-log-line--info .module-log-msg { color: #94a3b8; }
-.module-log-line--success .module-log-msg { color: #4ade80; }
-.module-log-line--warn .module-log-msg { color: #fbbf24; }
-.module-log-line--error .module-log-msg { color: #f87171; }
+.module-log-line--info .module-log-msg { color: var(--text-secondary); }
+.module-log-line--success .module-log-msg { color: var(--success); }
+.module-log-line--warn .module-log-msg { color: var(--warning); }
+.module-log-line--error .module-log-msg { color: var(--danger); }
 
 .resource-summary {
   background: rgba(30, 41, 59, 0.5);
@@ -13257,9 +13290,9 @@ watch(activeTab, (tab) => {
   border-radius: 4px;
   transition: width 0.4s ease;
 }
-.resource-summary__bar--ok { background: #4ade80; }
+.resource-summary__bar--ok { background: var(--success); }
 .resource-summary__bar--mid { background: #facc15; }
-.resource-summary__bar--warn { background: #f87171; }
+.resource-summary__bar--warn { background: var(--danger); }
 .resource-summary__values {
   font-size: 0.7rem;
   color: var(--text-muted);
@@ -13287,16 +13320,16 @@ watch(activeTab, (tab) => {
   border-radius: 50%;
   display: inline-block;
 }
-.resource-summary__dot--running { background: #4ade80; }
+.resource-summary__dot--running { background: var(--success); }
 .resource-summary__dot--defined { background: rgba(148, 163, 184, 0.35); }
 .resource-summary__warning {
   margin: 0.5rem 0 0;
   font-size: 0.75rem;
-  color: #f87171;
+  color: var(--danger);
   line-height: 1.4;
 }
 .resource-summary__warning--mild {
-  color: #facc15;
+  color: var(--warning);
 }
 
 /* Provision step indicators */
@@ -13315,21 +13348,21 @@ watch(activeTab, (tab) => {
   font-size: 0.6rem;
   font-weight: 700;
   border: 1.5px solid #475569;
-  color: #64748b;
+  color: var(--text-muted);
   background: transparent;
   transition: all 0.3s ease;
 }
 
 .provision-step--done {
   background: rgba(34, 197, 94, 0.2);
-  border-color: #22c55e;
-  color: #4ade80;
+  border-color: var(--success);
+  color: var(--success);
 }
 
 .provision-step--active {
   background: rgba(59, 130, 246, 0.2);
-  border-color: #3b82f6;
-  color: #60a5fa;
+  border-color: var(--accent-text);
+  color: var(--accent-text);
   animation: provision-pulse 1.5s ease-in-out infinite;
 }
 
@@ -13454,7 +13487,7 @@ watch(activeTab, (tab) => {
 
 .vm-type-toggle button.active {
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--accent-text);
 }
 
 .vm-type-toggle button:disabled {
@@ -13475,7 +13508,7 @@ watch(activeTab, (tab) => {
 }
 
 .vm-def-edit-btn:hover {
-  color: #60a5fa;
+  color: var(--accent-text);
   border-color: rgba(59, 130, 246, 0.3);
   background: rgba(59, 130, 246, 0.1);
 }
@@ -13497,7 +13530,7 @@ watch(activeTab, (tab) => {
   padding: 0.6rem 0.75rem;
   margin-bottom: 0.75rem;
   font-size: 0.75rem;
-  color: #60a5fa;
+  color: var(--accent-text);
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 0.5rem;
@@ -13510,7 +13543,7 @@ watch(activeTab, (tab) => {
   padding: 0.6rem 0.75rem;
   margin-top: 1rem;
   font-size: 0.75rem;
-  color: #fbbf24;
+  color: var(--warning);
   background: rgba(234, 179, 8, 0.1);
   border: 1px solid rgba(234, 179, 8, 0.2);
   border-radius: 0.5rem;

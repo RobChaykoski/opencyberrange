@@ -1,0 +1,30 @@
+dn: ou=people,dc=example,dc=org
+objectClass: organizationalUnit
+ou: people
+
+dn: ou=groups,dc=example,dc=org
+objectClass: organizationalUnit
+ou: groups
+
+dn: uid=sso.student,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: SSO Student
+sn: Student
+givenName: SSO
+uid: sso.student
+mail: sso.student@example.org
+userPassword: {SSHA}i+NB7j72zXPBhwC5XTpPvqCFR7oTQeuEB/fCHw==
+
+dn: uid=sso.instructor,ou=people,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: SSO Instructor
+sn: Instructor
+givenName: SSO
+uid: sso.instructor
+mail: sso.instructor@example.org
+userPassword: {SSHA}i+NB7j72zXPBhwC5XTpPvqCFR7oTQeuEB/fCHw==
+
+dn: cn=instructors,ou=groups,dc=example,dc=org
+objectClass: groupOfUniqueNames
+cn: instructors
+uniqueMember: uid=sso.instructor,ou=people,dc=example,dc=org

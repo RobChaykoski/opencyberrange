@@ -699,7 +699,7 @@ const formatAwardDate = (iso) => {
 }
 
 const SEEN_ACHIEVEMENTS_KEY = 'ocr_seen_achievement_ids'
-const CONFETTI_COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#06b6d4', '#fb923c']
+const CONFETTI_COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#06b6d4', '#f472b6']
 
 const makeConfetti = () =>
   Array.from({ length: 24 }, (_, index) => ({
@@ -972,7 +972,7 @@ onMounted(loadDashboard)
 }
 
 .hero-pill--streak :deep(svg) {
-  color: #fb923c;
+  color: var(--warning);
 }
 
 .hero-pill--rank :deep(svg) {

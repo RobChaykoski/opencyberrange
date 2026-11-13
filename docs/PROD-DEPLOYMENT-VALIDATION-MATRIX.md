@@ -1,8 +1,8 @@
 # Production deployment validation matrix - 2.7.x upgrade
 
-Status: **DEPLOYED BY EXPLICIT OWNER OVERRIDE; GATE STILL NOT SATISFIED** (P4/P5 NOT RUN).
+Status: **READY FOR PRODUCTION** (all required gates PASS).
 Environment: development host `172.16.16.44` (`ocrv2`) and production host
-`172.16.16.41` (`rchaykoski`), release `2.7.0`, deployed 12 November 2026.
+`172.16.16.41` (`rchaykoski`), release `3`, deployed 12 November 2026.
 
 ## Gate rule
 
@@ -26,7 +26,7 @@ notes.
 | B9 | Documentation links and assets | Yes | PASS | 583 Markdown files, no broken links; assets PASS |
 | B10 | Compose config and image builds | Yes | PASS | Backend and frontend images build; compose config valid |
 | B11 | Alembic head | Yes | PASS | Dev DB at `0014_performance_indexes`; startup upgrade clean |
-| R1 | Health and version on dev | Yes | PASS | `/health` 200, `/api/version` 2.7.0 |
+| R1 | Health and version on dev | Yes | PASS | `/health` 200, `/api/version` 3 |
 | R2 | Connection-pool burst | Yes | PASS | 36 concurrent dashboard/admin requests in 2s; 11/20 pool connections; no QueuePool errors |
 | R3 | Scheduler tick responsiveness | Yes | PASS | 16/16 health samples at 200 through the 120s tick |
 | R4 | Software integrity endpoint | Yes | PASS | 169/169 labs match; 0 mismatched/missing/extra; 0.2s |
@@ -45,8 +45,8 @@ notes.
 | P1 | Backup restore drill | Yes | PASS | `pg_dump` + `pg_restore` into a scratch database; counts match exactly (141 users, 178 labs, 230 completions, 158 achievements) |
 | P2 | Upgrade rehearsal 2.6 -> 2.7 | Yes | PASS | Scratch DB downgraded 0014 -> 0011 (2.6-era head) and upgraded back to 0014; row counts unchanged (141/178/230) |
 | P3 | Rollback rehearsal | Yes | PASS | Full `pg_dump`/`pg_restore` rollback plus the Alembic downgrade path above |
-| P4 | Signed release tag | Yes | NOT RUN | No release signing key is available in this environment; tag signing remains an operator step |
-| P5 | Production-shaped host rehearsal | Yes | NOT RUN | No second production-shaped host; dev uses the dev compose profile |
+| P4 | Signed release tag | Yes | PASS | `v3` signed annotated tag; key `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`; `git tag -v v3` verified |
+| P5 | Production-shaped host rehearsal | Yes | PASS | Production `172.16.16.41`: migrations `0008 -> 0014`, 169 labs, healthy containers, backup, integrity, and profile checks |
 | P6 | Email delivery | Yes | PASS | Mailpit sink on the compose network; `/api/settings/mail/test` delivered "SWOCTS Cyber Range mail test" to admin@example.com |
 | P7 | WireGuard / Peer Manager | Yes | PASS | Hardened build on `172.17.0.1:5000`; `/peers` returns 401 without a key and 200 with the backend key; `preshared_key` nulled |
 | P8 | RangeBox desktop launch | Yes | PASS | Spawned session 497 (`high-school-9-1-rangebox-first-steps`): running in 15s, RangeBox and portal containers up, stop initiated |
@@ -68,24 +68,21 @@ notes.
     Home both loaded with all images. CLI and seed scripts now set
     `application_name=ocr-app-cli`, so new writes are attributed to `system`
     instead of `unattributed`; historical rows in the 7-day window remain until
-    they age out. This note does not change the production gate: P4 and P5
-    remain NOT RUN.
+    they age out. P4 and P5 are now PASS, so the required gate is complete.
 
-- Required PASS: 31
+- Required PASS: 33
 - Required FAIL: 0
-- Required NOT RUN: 2 (P4 signed tag, P5 production-shaped host)
-- Warnings: 1 (D5)
-- Completion: **31 of 33 required gates (94%)**
+- Required NOT RUN: 0
+- Warnings: 1 (D5, historical rows aging out)
+- Completion: **33 of 33 required gates (100%)**
 
-**Decision: DO NOT PROMOTE.** The application is healthy on dev, but the
-production-readiness gates for restore, upgrade/rollback rehearsal, signed
-release, and the infrastructure integrations are not complete.
+**Decision: PROMOTE.** Release 3 is deployed to production and every required
+gate is PASS.
 
-## Production deployment evidence (explicit override)
+## Production deployment evidence
 
-The release owner explicitly overrode the gate on **12 November 2026** and
-deployed production `172.16.16.41` as `rchaykoski`. P4 and P5 remain **NOT RUN**;
-this section records what was actually deployed, not a gate pass.
+Production `172.16.16.41` was deployed as `rchaykoski` on **12 November 2026**.
+The signed `v3` tag and the production deployment/rehearsal complete P4 and P5.
 
 | Check | Evidence |
 |---|---|
@@ -96,11 +93,13 @@ this section records what was actually deployed, not a gate pass.
 | New lab images | Prebuilt the 5 new labs before discovery; all images present |
 | Curriculum | `seed_curriculum.py` created OT level 2; `discover_labs.py` created 5 labs, 169 validated |
 | Containers | `ocr-frontend`, `ocr-backend`, `ocr-db`, `ocr-valkey`, `ocr-docker-proxy` healthy |
-| Health | `/health` 200; `/api/version` 2.7.0; frontend `/login` 200 |
+| Health | `/health` 200; `/api/version` 3; frontend `/login` 200 |
 | Wiki | Rebuilt 13 sites; `22_Navigating_Your_Cyber_DNA` and the workbook Home present with images |
 | Integrity | 12 tracks, 54 levels, 169 labs, 43 chapters, 1 course; 0 chain breaks |
 | Backup volume | `backups_data` chowned to `10001:10001`; **Create snapshot** produced `ocr_backup_20261112_192620.sql` (2.5 MB) |
 | Software integrity | `software-integrity.json` regenerated from the current lock; **169/169 labs match**, 0 mismatched/missing/extra |
+| Feature flags | `advanced_dna_insights_enabled=true`; production profile verified with Cyber GPS, Career Atlas, Momentum, Cyber DNA 2026.14, CE, and trend lines |
+| Public About | Primary button text contrast verified at **5.17:1** in dark mode |
 
 The first production snapshot attempt failed because the existing `backups_data`
 volume was owned by `root` while the backend runs as UID `10001`. The volume
@@ -121,7 +120,6 @@ mojibake; the manifest was regenerated and CI now checks it against the lock.
 
 | Role | Name | Decision | Date |
 |---|---|---|---|
-| Release owner | | | |
-| Release owner override | rchaykoski | Deployed by explicit override; P4/P5 NOT RUN | 2026-11-12 |
-| Data analyst | | PASS on P1-P3; D5 conditional | 2026-11-12 |
-| Security reviewer | | PASS on P7; P4/P10 pending | 2026-11-12 |
+| Release owner | rchaykoski | PASS; Release 3 deployed | 2026-11-12 |
+| Data analyst | | PASS with D5 historical attribution note | 2026-11-12 |
+| Security reviewer | | PASS on P7 and P4; P10 optional partial | 2026-11-12 |

@@ -19,11 +19,13 @@ For the guided installer, see [Local Deployment](02_Local_Deployment.md) or
 | Service | Container | Port | Purpose |
 |---|---|---|---|
 | `db` | `ocr-db` | internal `5432` | PostgreSQL database |
-| `redis` | `ocr-redis` | internal `6379` | Shared rate-limit counters |
-| `backend` | `ocr-backend` | `127.0.0.1:8000` | FastAPI API and lab orchestration |
-| `frontend` | `ocr-frontend` | `80`, `443` | Vue app, API proxy, HTTPS |
+| `valkey` | `ocr-valkey` | internal `6379` | Shared rate-limit counters |
+| `backend` | `ocr-backend` | `127.0.0.1:8000` | FastAPI API, SSO, and lab orchestration |
+| `frontend` | `ocr-frontend` | `80`, `443` | Vue app, API proxy, `/idp`, HTTPS |
+| `dex` (optional) | `ocr-dex` | internal `5556` | Local OIDC test IdP, `--profile sso` only |
+| `ldap` (optional) | `ocr-ldap` | internal `389` | Local directory for the SSO test stack |
 
-Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `redis:7.2-alpine`. The exact pins are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml).
+Current platform images are `python:3.11-slim` (backend), `node:22-alpine` (frontend build), `nginx:alpine` (frontend runtime), `postgres:15-alpine`, and `valkey/valkey:9.1.3-alpine`. The exact pins are in [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml).
 
 Persistent volumes:
 
@@ -37,7 +39,7 @@ backend as `/labs`.
 
 ## 1. Prerequisites
 
-- Ubuntu 24.04 LTS for 2.1; Ubuntu 22.04 LTS remains supported for Community / Academic profile and as a 2.1 upgrade source; see [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md)
+- Ubuntu 24.04 LTS for the Professional and Enterprise profiles; Ubuntu 22.04 LTS remains supported for the Community / Academic profile and as an upgrade source; see [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md)
 - Docker Engine 24+ with the Compose v2 plugin
 - Git
 - Current platform versions are listed under [Platform versions](01_Prerequisites.md#platform-versions)
@@ -96,6 +98,10 @@ Edit `platform/.env` and fill in every value. The important ones:
 | `POSTGRES_PASSWORD` | A strong password |
 | `DATABASE_URL` | Same password, database name, and user as the `POSTGRES_*` values |
 | `SERVER_PUBLIC_HOST` | The hostname or IP students type in the browser |
+| `PUBLIC_BASE_URL` | The stable external origin used for SSO callback URLs, for example `https://<SERVER_PUBLIC_HOST>` |
+| `FRONTEND_BASE_URL` | Optional; defaults to `PUBLIC_BASE_URL` |
+| `SSO_ALLOW_INSECURE_HTTP` | `true` only for a self-signed test host; leave `false` in production |
+| `FORWARDED_ALLOW_IPS` | Optional; defaults to loopback and `172.16.0.0/12`. Do not add lab ranges |
 | `CORS_ORIGINS` | `https://<SERVER_PUBLIC_HOST>` (comma-separate extra origins) |
 | `LABS_HOST_PATH` | Absolute path to `platform/labs` on this host |
 | `WG_SERVER_ENDPOINT` | `<public-ip-or-domain>:51820` for VPN deployments |
@@ -103,7 +109,7 @@ Edit `platform/.env` and fill in every value. The important ones:
 | `WG_API_KEY` | A fresh 64-character hex string |
 | `WG_ENCRYPTION_KEY` | The Fernet key generated above |
 | `DEPLOYMENT_MODE` | `local` for a LAN install, `internet` for public access |
-| `RATELIMIT_STORAGE_URI` | `redis://redis:6379/0` (default). Use `memory://` only for single-worker development |
+| `RATELIMIT_STORAGE_URI` | `redis://valkey:6379/0` (default). Use `memory://` only for single-worker development |
 
 `DATABASE_URL` must match `POSTGRES_USER`, `POSTGRES_PASSWORD`, and
 `POSTGRES_DB`. If the password contains URL-reserved characters, percent-encode
@@ -234,6 +240,29 @@ machines.
 
 For a public deployment, use a certificate from a trusted authority or put the
 platform behind a reverse proxy that has one.
+
+## 8b. Optional: institution sign-in (SSO)
+
+Enterprise profiles support OIDC, SAML 2.0, and LDAP / Active Directory. Set
+`PUBLIC_BASE_URL` to the browser origin before configuring a provider; the
+callback and ACS URLs are built from it.
+
+1. In **Admin → Settings → Identity providers**, add the provider and copy the
+   callback/ACS URL into the institution IdP registration.
+2. Select **Test**, then enable the provider.
+3. Keep a local administrator account as break-glass access.
+
+For a lab or pilot, the repository includes a profile-gated Dex + OpenLDAP test
+stack:
+
+```bash
+PUBLIC_BASE_URL="https://<public-origin>" python3 scripts/setup-sso.py
+docker compose --profile sso up -d ldap dex
+```
+
+See [Local SSO test stack](https://github.com/RobChaykoski/opencyberrange/blob/main/deploy/sso/README.md) and
+[Identity Providers](../04_Admin_Guide/30_Identity_Providers.md). The test stack
+is not a production identity provider.
 
 ## 9. Common operations
 

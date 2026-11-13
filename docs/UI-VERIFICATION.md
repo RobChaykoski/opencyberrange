@@ -4,9 +4,154 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## Release 4 production deployment (13 November 2026)
+
+Status: **deployed to production `.41`; version `4`.**
+
+- Pre-deploy backup: `~/opencyberrange-backups/ocr_pre_release4_20261113_000753.dump`
+  (876 KB), plus a copy of `.env`.
+- Database remained at `0014_performance_indexes`; no new migration was needed.
+- Backend and frontend rebuilt; backend healthy; frontend healthy.
+- **173 active labs**, including all four topology labs.
+- Wiki rebuilt: **13 sites**; `CH_NET12_Device_Topology` pages published.
+- `ocr-lab/topology-node:latest` built on the production host.
+- `/api/auth/sso/providers` is empty because no institution IdP is configured;
+  the demo Dex/OpenLDAP stack is not started in production.
+- `/api/version` reports `4`; `/health` reports healthy.
+- `v4` is the signed annotated release tag.
+- **Content update:** added `forensics-2-2-topology-forensics-guided` and
+  `forensics-2-3-topology-forensics-independent` (guided and independent paces,
+  with a decoy service), plus `scripts/create-lab.py` and `FOR03` workbooks.
+  Both labs passed a student E2E on `.44`.
+- **Detection and Windows practice:** added YARA fundamentals and YARA/incident
+  triage (`MAL03`), and AD fundamentals plus AD-to-SMB (`WIN10`). The YARA rules
+  and log correlation were executed against the target images; the AD directory
+  bind and SMB retrieval were verified live. Total lab count is **179**.
+
+## Release 4 QA and deployment (12 November 2026)
+
+Status: **deployed to development `.44`; the same build was promoted to
+production.** Platform
+`/api/version` reports `4`.
+
+### Automated checks
+
+| Check | Result |
+|---|---|
+| Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **538 passed, 0 failed** |
+| Backend suite without a database | **317 passed, 217 skipped** |
+| Lab validator (`validate-lab.py --all`) | **179 labs, 0 errors, 0 warnings** |
+| Topology engine unit tests | **22 passed** |
+
+| Relative links in README, docs, Manual-Lite, Workbook | **497 files, all resolve** |
+| Frontend build | **Passed** |
+| Frontend lint | **0 errors** (existing warnings only) |
+| Licence guard (`check-licences.py`) | **OK** |
+| Supply-chain lock + signature | **OK, release 4** |
+
+### Deployed smoke tests
+
+- `/api/version` = `4`; `/health` healthy.
+- `/login`, `/sso/callback`, `/exercises`, `/profile`, `/admin` return the SPA.
+- Institution sign-in lists the Dex OIDC and LDAP providers.
+- LDAP student login + ticket exchange = student; instructor = instructor, and
+  the directory role refresh applied on the second login.
+- Full OIDC flow (Dex → LDAP connector → callback → ticket exchange) = student.
+- Admin-only endpoints return `401` without a token.
+- `/docs`, `/redoc`, and `/openapi.json` return `404` on the public origin.
+- `enable_api_docs` toggles `200 → 404` on the direct backend port immediately.
+- `advanced_dna_insights_enabled` removes/adds the career atlas payload.
+- The built SPA contains the new **Practice this branch**, **How this is
+  calculated**, **No evidence yet**, and **Established** strings.
+
+### Academy registration and card checks (12 November 2026)
+
+- `/register` uses the current token palette: no legacy orange hex values, and
+  the primary button renders the blue-to-purple gradient in both themes.
+- The right panel presents the three next steps and the privacy/certificate
+  preview instead of the old terminal illustration.
+- The **Network Security** exercise card now shows its level
+  (**Network Foundations**) instead of omitting it because the level number is
+  zero.
+- Exercise cards show dynamic difficulty and level-count tags and are ordered
+  beginner-first for learners; staff keep their explicit sort order.
+- Course cards show dynamic level, difficulty, and track/catalogue tags
+  (`Levels 1–2`, `Beginner`, `Windows Penetration Testing` for CYB-3350).
+- Checked at 1440 px in light and dark themes and at 390 px; no page-level
+  horizontal overflow. Screenshots:
+  `ui-verify-artifacts/academy-*.png`.
+- Course and exercise cards refresh in place when the tab becomes visible, so
+  progress completed in another tab is reflected without a full-page reload.
+  A failed background refresh keeps the existing cards.
+- Dashboard and profile now use the same visible-exercise denominator
+  (`0/139` for the new persona, `17/139` and `12%` for the experienced
+  persona). The dashboard course matrix, course card, and course page all show
+  the same course-context completion (`1/8`, `13%`).
+- A zero-evidence learner sees five profile tabs, no Cyber GPS/Portfolio tab,
+  no zero-evidence career affinity, and the neutral “Your first class” copy.
+  The Learning record shows a start message plus **Show all 12 tracks** instead
+  of a wall of every empty level.
+- An experienced learner’s Learning record defaults to the six tracks with
+  progress and can expand to all twelve.
+- Workbook buttons and profile status badges now use the shared colour tokens
+  instead of legacy orange and hard-coded status hex values. Track difficulty
+  chips, VM status dots, workbook actions, and the safe admin/track status
+  surfaces use the same tokens; category, chart, terminal, and certificate gold
+  colours remain intentionally hard-coded.
+- The custom-achievement authoring form now uses an 11-option SVG icon picker;
+  the live preview and saved achievement cards render the same icon components.
+  No console errors appeared on the Admin settings page.
+- Experienced learners can focus the profile on a course, track, certification,
+  or career goal. The focus card defaults to the enrolled course, shows its
+  progress, and offers the matching open action. The hero lenses show the
+  course (`CYB-3350 1/8 13%`), strongest track (`Windows 8/53 15%`), and
+  certificate count (`6`) alongside the range-wide bar (`17/139 12%`).
+- The career target selector now sits at the top of the Portfolio tab; the
+  duplicate selector inside the readiness panel is hidden.
+- The mobile profile tab bar has a right-edge scroll cue; no horizontal page
+  overflow was introduced.
+- The focus selector has a search field; entering `Security+` reduced the
+  option list to the current course plus **CompTIA Security+**, and selecting it
+  showed `17/80 aligned exercises · 21%`.
+- The title collection is collapsed by default (`12 / 42 unlocked` summary) and
+  its **Unlocked only** filter reduced the visible cards from 42 to 12.
+- Profile achievement badges now render the shared SVG icon components: 4/4
+  overview badges and 12/12 course badges contained an inline SVG rather than an
+  emoji glyph.
+- **Backend suite:** 538 passed, 0 failed.
+- **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
+  and `svc`; the node status endpoints reported host/router/service; `h1` had a
+  default route via `r1`; `r1` reported `ip_forward=1` and both connected
+  `/29` links; `h1` fetched `OCR{t0p0l0gy_r0ut3d}` from the service link
+  address.
+- **Topology progression:** 12.2 → 12.3 → 12.4 → 12.5 unlocked and completed in
+  order. 12.3 forwarded across two routers; 12.4 dropped TCP 8080 and still
+  returned the flag on 80; 12.5 reported three links and reached both services.
+  All four flags were accepted by the API.
+- **Role E2E:** admin endpoints returned `200` for admin and `403` for a student;
+  instructor courses returned `200` for an instructor and `403` for a student;
+  profile summary returned `200` for the student.
+- **Quiz:** a real high-school level quiz returned `200`, answered 5/5, scored
+  `100`, and passed.
+- **RangeBox:** `high-school-9-1-rangebox-first-steps` spawned with
+  `rangebox_enabled=true` and reached `running`.
+- **VPN:** `/api/labs/vpn-config` returned `200` for both a routed lab and the
+  RangeBox lab.
+- **Inventory:** 179 labs validate; the topology node image has a committed
+  CycloneDX SBOM and its build context is in the signed supply-chain lock.
+
+### Known gaps
+
+- The network device topology engine is not part of this deployed build; it
+  remains planned work.
+- Production runs Release 4 on the release commit.
+- SAML single logout and a formal SSO security review remain.
+- LTI, multi-tenancy, per-student accommodations, a signed VPAT, SOC 2, and
+  ISO 27001 are Release 5 (`docs/RELEASE-5-SCOPE.md`).
+
 ## Hardening deployment (12 November 2026)
 
-Status: **deployed to development; production unchanged.**
+Status: **deployed to development and promoted to production.**
 
 - **Runtime:** single-worker default, multi-stage non-root image, Python
   healthcheck, and no `gcc` in the final layer.
@@ -723,4 +868,10 @@ CI runs the same static checks on every push:
   [RangeBox capacity test](RANGEBOX-CAPACITY.md) on each host class.
 - Production `192.168.120.41` was upgraded to `2.4.1`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
+
+
+
+
+
+
 

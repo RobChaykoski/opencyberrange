@@ -17,9 +17,9 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Platform](https://img.shields.io/badge/platform-2.7.0%20release-8b5cf6)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-Release%204-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-169-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-179-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -44,24 +44,24 @@ the upstream OpenCyberRange attribution and licence notices intact.
 
 ## Editions
 
-SWOCTS Cyber Range uses one platform release number (`2.7.0`) with three
+SWOCTS Cyber Range uses one platform release number (`Release 4`) with three
 cumulative edition profiles. The edition names describe scope, entitlement, and
 operational shape, not three separate codebases or three separate version lines.
 See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Community / Academic** | `2.7.0` profile (`1.1.3` maintenance line) | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `2.7.0` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `2.7.0` preview | **Development** | Ubuntu 24.04 LTS | Professional plus HA, SSO, enterprise reporting, multi-tenant support, LMS integration, and compliance reporting |
+| **Community / Academic** | `Release 4` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `Release 4` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `Release 4` | **Release profile — SSO** | Ubuntu 24.04 LTS | Professional plus HA, SSO/identity federation, enterprise reporting, and compliance reporting. Multi-tenancy and LMS/LTI integration are Release 5. |
 
-The Community / Academic profile (1.1.3 maintenance) remains the reference
-behaviour and the fallback.
-Professional is additive: the Community / Academic curriculum, learner
+The Community / Academic profile remains the reference behaviour and the
+fallback. Professional is additive: the Community / Academic curriculum, learner
 workflows, privacy controls, and single-host Docker Compose install remain.
 Enterprise is additive again: it adds the lab pool, control-plane HA, gateway
-failover, identity federation, multi-tenancy, LMS integration, and compliance
-reporting without removing the single-host path.
+failover, and identity federation (OIDC, SAML, LDAP) without removing the
+single-host path. Multi-tenancy, LMS/LTI, and the per-student accommodation
+engine are Release 5, not Release 4.
 
 The five Professional priorities — Competency Framework Engine, Student
 Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
@@ -69,7 +69,7 @@ Instructor Intervention Dashboard — are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on the Community / Academic 1.1.3
-maintenance line and merge forward into the 2.7.0 profiles**, so a fix does not
+maintenance line and merge forward into the Release 4 profiles**, so a fix does not
 wait for a feature release. There is no separate fork to maintain. See
 [Editions](docs/EDITIONS.md) and
 [ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
@@ -84,6 +84,7 @@ The current feature set covers four workstreams:
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses, plus the Competency Framework Engine, Student Feedback Engine, skill-tree radar, exercise health, and the instructor intervention dashboard. | Skill-tree radar delivered; learner/cohort radar, exercise health, and the intervention dashboard remain planned |
 | Mobile student shell | Automatic phone-width detection, an off-canvas navigation drawer, a student bottom tab bar, and explicit fallback behaviour for the embedded RangeBox desktop. | Delivered |
 | RangeBox workspace | A dedicated **RangeBox** tab for standalone practice, plus a combined desktop exercise workspace: RangeBox on the left, scenario/details and flag on the right, and the workbook in a framed bottom pane. Phones and VPN-only labs keep the stacked panel. | Delivered |
+| Network device topology | Labs declare routers, hosts, and flag services as data. The engine allocates per-session `/29` links, enables forwarding, installs routes, and exposes a status endpoint for discovery. | Delivered (routed L3; switch container is Release 5) |
 
 The five priority capabilities are defined in
 [Professional and Enterprise priorities](docs/PROFESSIONAL-PRIORITIES.md). The
@@ -94,8 +95,9 @@ five programme reports are defined in
 evidence, and instructor support only. The mobile student shell and RangeBox
 workspace are Community / Academic features. Bug fixes, security updates,
 dependency/runtime updates, and small compatibility corrections are still
-allowed. New scoring models, enterprise integrations, multi-tenancy, SSO,
-compliance reporting, and multi-host HA are Enterprise preview work.
+allowed. New scoring models, multi-tenancy, LMS/LTI integration, and the
+per-student accommodation engine are Enterprise Release 5 work. Enterprise SSO
+(OIDC, SAML, LDAP) ships in Release 4.
 
 - [Edition model](docs/EDITIONS.md)
 - [Professional program charter](docs/V2-PROGRAM-CHARTER.md)
@@ -106,12 +108,24 @@ compliance reporting, and multi-host HA are Enterprise preview work.
 - [Skill DNA metric model](docs/SKILL-DNA.md)
 - [Celebration Wall](docs/CELEBRATION-WALL.md)
 - [Supply-chain verification](docs/SUPPLY-CHAIN.md)
+- [Network device topology engine](docs/DEVICE-TOPOLOGY.md)
+- [Lab creation engine](docs/LAB-CREATION-ENGINE.md)
 - [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md)
+- [Database schema and Alembic migrations](docs/DATABASE-MIGRATIONS.md)
 - [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
 - [Educational material provenance](docs/EDUCATIONAL-PROVENANCE.md)
 - [Learning framework](docs/LEARNING-FRAMEWORK.md)
 - [Lab metadata schema](docs/LAB-METADATA-SCHEMA.md)
-- [Enterprise preview parking lot](docs/V3-PARKING-LOT.md)
+- [OIDC single sign-on](docs/SSO-OIDC.md)
+- [SAML and LDAP single sign-on](docs/SSO-SAML-LDAP.md)
+- [Local Dex + OpenLDAP test stack](deploy/sso/README.md)
+- [ADR 0004: SSO on the HA control plane](docs/decisions/0004-sso-ha-contract.md)
+- [Compliance posture](docs/COMPLIANCE.md)
+- [Procurement traceability](docs/PROCUREMENT-REQUIREMENTS.md)
+- [Accessibility statement](docs/ACCESSIBILITY.md)
+- [Automated scoring and AI statement](docs/AUTOMATED-SCORING.md)
+- [Release 5 scope](docs/RELEASE-5-SCOPE.md)
+- [Enterprise v3 parking lot](docs/V3-PARKING-LOT.md)
 - [Enterprise HA plan](docs/V3-HA-LAB-POOL.md)
 - [Anti-scraping and crawler controls](docs/ANTI-SCRAPING.md)
 - [Reverse proxy and Nginx Proxy Manager](docs/REVERSE-PROXY.md)
@@ -188,8 +202,8 @@ generated table below lists the **160** that have a workbook page.
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. `main` carries platform release
-**2.7.0** with Community / Academic, Professional, and Enterprise preview
-profiles. The Community / Academic 1.1.3 line remains the supported single-host
+**Release 4** with Community / Academic, Professional, and Enterprise profiles.
+The Community / Academic 1.1.3 line remains the supported single-host
 teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
 into `main`. The tree contains all history from the pre-cutover tree plus the
@@ -228,8 +242,12 @@ source offers, and notice-sensitive components are in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), with licence texts in
 [THIRD_PARTY_LICENSES/](THIRD_PARTY_LICENSES/). In particular:
 
-- **Redis is pinned to 7.2**, which is BSD-3-Clause. Redis 7.4 and later are
-  RSALv2/SSPLv1; do not change the image tag without a licence review.
+- **Valkey 9.1.3** (BSD-3-Clause) is the rate-limit store. Redis 7.4 and later
+  are RSALv2/SSPLv1; do not add Redis 7.4+ without a licence review.
+- SSO adds **ldap3** (LGPL-3.0-only), **python3-saml** (MIT), **lxml**
+  (BSD-3-Clause), and **xmlsec** (MIT). The optional local test stack adds
+  **Dex** (Apache-2.0) and **OpenLDAP** (OpenLDAP Public License 2.8); both are
+  profile-gated and are not started on a normal install.
 - The build-time PCAP generators that import Scapy are **GPL-2.0-only**. They
   carry SPDX headers and are listed in the notice inventory.
 - The RangeBox image includes separate **AGPL-3.0** tools (Hydra, Masscan) and
@@ -552,8 +570,8 @@ need to be documented separately.
   and orphaned coaching notes are excluded from course-health counts.
 - **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
   deployment, workflow, and lab inputs. CI verifies it, and install, update, and
-  prebuild stop on drift. The `v2.7.0` tag is an annotated but unsigned
-  documented exception; new release tags must be signed with the release key.
+  prebuild stop on drift. The `v4` tag is signed with the release key.
+  `v2.7.0` is the documented unsigned exception.
   The lock itself is signed. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
 - **Celebration privacy.** Celebrations are voluntary and anonymous. The wall
   shows counts only, one celebration per person per win, and celebrations never
@@ -569,6 +587,11 @@ Validation history:
 
 | Check | Result |
 |---|---|
+| Release 4 automated QA (12 November 2026) | **538 DB-backed tests passed**, 317 local tests, 179 labs with 0 validation errors, 497 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
+| Release 4 dev smoke (`.44`, 12 November 2026) | `/api/version` = 4; LDAP and OIDC end-to-end; instructor role refresh; admin endpoints 401; API docs 404; setting toggles apply immediately; new DNA/GPS UI present |
+| Release 4 role E2E (`.44`) | Admin/instructor/student authorization; 100% quiz; simple lab flag; RangeBox running; VPN config 200 |
+| Release 4 topology E2E (`.44`) | Four labs in sequence; two-router transit, nftables drop, multi-service mapping; all flags accepted |
+| Release 4 production deploy (`.41`, 13 November 2026) | Version 4; 173 labs; four topology labs; backend/frontend healthy; wiki 13 sites; pre-deploy DB backup |
 | 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
 | 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
@@ -586,7 +609,7 @@ The two development info findings are a known session-coverage gap and seeded
 labs with no creator. Production adds two intentional hint placeholders. None
 are data loss or a broken reference.
 
-The 2.7.0 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The Release 4 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
 process. The current verification pass is recorded in
@@ -893,7 +916,7 @@ For production deployments or custom configurations, see the [Server Deployment 
 | VPN | WireGuard + Peer Manager API | Host systemd services (port 51820/UDP) |
 
 The bundled rate-limit store is **Valkey 9.1.3** (BSD-3-Clause), the
-RESP-compatible Redis 7.2 fork. The client and `redis://` URI are unchanged.
+BSD-licensed fork of Redis 7.2. The client and `redis://` URI are unchanged.
 The [Ubuntu 26.04 Valkey vs Redis test plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md)
 remains the host-baseline decision record.
 
@@ -904,14 +927,14 @@ truth for the platform version; runtime and dependency pins live in
 
 ## Deployment topologies
 
-The 1.x installer is a **single-host Docker Compose** deployment. The 2.6.x line
+The 1.x installer is a **single-host Docker Compose** deployment. Release 4
 keeps that path as the only supported production topology.
 
 | Topology | State | Notes |
 |---|---|---|
 | Single host, Docker Compose | **Supported** | The current installer, upgrade path, backup workflow, and WireGuard host services |
-| Multiple Docker hosts ("pods") | **Enterprise preview candidate** | A controller and per-host agent place each learner session on a registered lab host, track per-host CPU and memory, drain hosts for maintenance, and keep the per-session `/24` isolated whichever host runs the lab. See [the v3 HA lab pool plan](docs/V3-HA-LAB-POOL.md) |
-| Kubernetes | **Enterprise preview candidate** | The same platform and lab images, with the scheduler running as a controller and PostgreSQL, Redis, workbook storage, ingress, and the VPN control plane treated as shared services |
+| Multiple Docker hosts ("pods") | **Release 5 candidate** | A controller and per-host agent place each learner session on a registered lab host, track per-host CPU and memory, drain hosts for maintenance, and keep the per-session `/24` isolated whichever host runs the lab. See [the v3 HA lab pool plan](docs/V3-HA-LAB-POOL.md) |
+| Kubernetes | **Release 5 candidate** | The same platform and lab images, with the scheduler running as a controller and PostgreSQL, Valkey, workbook storage, ingress, and the VPN control plane treated as shared services |
 
 The scale-out design keeps lab definitions and student workflows unchanged:
 students still connect through WireGuard and open the same frontend, and
@@ -919,8 +942,8 @@ instructors still assign the same exercises. The work is in placement, capacity,
 health, and shared state rather than in the curriculum.
 
 Multi-host Docker and Kubernetes are **not supported deployment targets**.
-The setup script and Compose files stay single-host. Multi-host HA is an
-Enterprise preview workstream and is not part of the 2.7.0 release gate.
+The setup script and Compose files stay single-host. Multi-host HA is Release 5
+work and is not part of the Release 4 release gate.
 
 ## Repository Structure
 
@@ -969,11 +992,11 @@ opencyberrange/
 | [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
 | [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the Ubuntu 26.04 candidate plan |
 | [Program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in the current release |
-| [Enterprise preview parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding the current release |
+| [Enterprise parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding the current release |
 | [Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving the current release to 24.04 while 1.1.3 supports 22.04 and 24.04 |
 | [Ubuntu 26.04 Valkey vs Redis plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md) | Release engineers evaluating the next host baseline and rate-limit store |
 | [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment |
-| [Enterprise preview HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the Enterprise preview multi-host Docker pods, routing, storage, and failure recovery |
+| [Enterprise HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the Release 5 multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation, in the admin UI or CLI |
@@ -1031,9 +1054,16 @@ or read learner records. Docker host and container state still need
 
 - **OS:** Ubuntu 24.04 LTS for new 2.7 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range 2.7.0 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range Release 4 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used
 - **Network (local):** Server reachable on the classroom/school network
 - **Network (internet/cloud):** Public IP or Cloudflare Tunnel; ports 443/TCP, 51820/UDP, and 5555/TCP (WSTunnel) open in provider firewall
+
+
+
+
+
+
+

@@ -6,7 +6,14 @@ WORKDIR /app
 
 # Build-only toolchain. The runtime image does not keep gcc or headers.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential libpq-dev && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    pkg-config \
+    libxml2-dev \
+    libxslt1-dev \
+    libxmlsec1-dev \
+    libssl-dev && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -15,7 +22,7 @@ RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 FROM python:3.11-slim
 
-ARG PLATFORM_VERSION=2.7.0
+ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
 
 ENV OCR_BUILD_REVISION=${BUILD_REVISION}
@@ -35,7 +42,14 @@ WORKDIR /app
 # Runtime-only packages. curl and gnupg are used only to add the Docker apt
 # repository; postgresql-client provides pg_dump/pg_restore for backups.
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends postgresql-client curl gnupg && \
+    apt-get install -y --no-install-recommends \
+    postgresql-client \
+    curl \
+    gnupg \
+    libxml2 \
+    libxslt1.1 \
+    libxmlsec1 \
+    libxmlsec1-openssl && \
     rm -rf /var/lib/apt/lists/*
 
 # Docker CLI for lab orchestration. The backend talks to a socket proxy over
@@ -66,4 +80,10 @@ EXPOSE 8000
 # Scale out by setting OCR_UVICORN_WORKERS explicitly and raising
 # DB_POOL_SIZE/DB_MAX_OVERFLOW so (pool + overflow) x workers stays below
 # PostgreSQL max_connections.
-CMD ["sh", "-c", "W=${OCR_UVICORN_WORKERS:-1}; echo \"Starting uvicorn with $W worker(s)\"; exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers $W"]
+#
+# nginx is the only client of this port. Trust its X-Forwarded-For/Proto so
+# request.client.host is the real learner address: otherwise every login,
+# registration, and forgot-username limit shares one global bucket and every
+# audit row records the proxy address. Only private bridge ranges are trusted,
+# so a client cannot spoof the header by reaching the backend directly.
+CMD ["sh", "-c", "W=${OCR_UVICORN_WORKERS:-1}; echo \"Starting uvicorn with $W worker(s)\"; exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers $W --proxy-headers --forwarded-allow-ips \"${FORWARDED_ALLOW_IPS:-127.0.0.1,172.16.0.0/12}\""]

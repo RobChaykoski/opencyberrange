@@ -53,12 +53,35 @@
               <span class="track-card__stat">
                 {{ track.completed_labs }}/{{ track.total_labs }} exercises
               </span>
-              <span v-if="track.current_level" class="track-card__level">
-                Level {{ track.current_level }}
+              <span
+                v-if="track.level_label && !track.is_complete"
+                class="track-card__level"
+                :title="track.current_level_name || track.level_label"
+              >
+                {{ track.level_label }}
               </span>
               <span v-if="track.is_complete" class="track-card__complete-badge">Complete</span>
             </div>
-            <div class="track-card__progress">
+            <div v-if="track.difficulty || track.level_count > 1" class="track-card__tags">
+              <span
+                v-if="track.difficulty"
+                class="track-card__tag"
+                :class="`track-card__tag--${track.difficulty}`"
+              >
+                {{ track.difficulty }}
+              </span>
+              <span v-if="track.level_count > 1" class="track-card__tag track-card__tag--muted">
+                {{ track.level_count }} levels
+              </span>
+            </div>
+            <div
+              class="track-card__progress"
+              role="progressbar"
+              :aria-valuenow="track.progress_percent"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              :aria-label="`${track.name} progress`"
+            >
               <div
                 class="track-card__progress-bar"
                 :style="{ width: track.progress_percent + '%' }"
@@ -154,11 +177,12 @@ const initSortable = () => {
 
 onBeforeUnmount(() => {
   if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null }
+  document.removeEventListener('visibilitychange', refreshOnVisible)
 })
 
 // ── Data fetching ────────────────────────────────────────────────────
-const fetchTracks = async () => {
-  loading.value = true
+const fetchTracks = async ({ silent = false } = {}) => {
+  if (!silent) loading.value = true
   try {
     const token = localStorage.getItem('token')
     if (!token) {
@@ -176,13 +200,22 @@ const fetchTracks = async () => {
       localStorage.removeItem('user')
       router.push('/login')
     }
-    tracks.value = []
+    if (!silent) tracks.value = []
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
+  }
+}
+
+// Progress can change in another tab or after returning from a lab. Refresh
+// the catalogue in place rather than showing the full-page loading overlay.
+const refreshOnVisible = () => {
+  if (document.visibilityState === 'visible' && !loading.value) {
+    fetchTracks({ silent: true })
   }
 }
 
 onMounted(async () => {
+  document.addEventListener('visibilitychange', refreshOnVisible)
   // Handle deep-link from Course page: /exercises?labId=123&courseId=1
   const labId = route.query.labId
   const courseId = route.query.courseId
@@ -356,6 +389,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 1.25rem;
+  height: 100%;
   background: var(--bg-secondary);
   border: 2px solid transparent;
   border-radius: 12px;
@@ -392,6 +426,8 @@ onMounted(async () => {
 .track-card__body {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .track-card__title {
@@ -415,13 +451,15 @@ onMounted(async () => {
 .track-card__stats-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
   margin-bottom: 0.5rem;
 }
 
 .track-card__stat {
   font-size: 0.8125rem;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .track-card__level {
@@ -430,19 +468,62 @@ onMounted(async () => {
   background: var(--bg-tertiary);
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .track-card__complete-badge {
   font-size: 0.75rem;
   color: var(--success);
-  background: rgba(34, 197, 94, 0.15);
+  background: var(--success-bg);
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
   font-weight: 500;
 }
 
+.track-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+
+.track-card__tag {
+  padding: 0.12rem 0.45rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: capitalize;
+}
+
+.track-card__tag--beginner {
+  border-color: color-mix(in srgb, var(--success) 45%, transparent);
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.track-card__tag--intermediate {
+  border-color: color-mix(in srgb, var(--warning) 45%, transparent);
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.track-card__tag--advanced {
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.track-card__tag--muted {
+  color: var(--text-muted);
+}
+
 .track-card__progress {
   height: 4px;
+  margin-top: auto;
   background: var(--bg-tertiary);
   border-radius: 2px;
   overflow: hidden;

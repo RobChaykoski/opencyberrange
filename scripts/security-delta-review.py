@@ -57,6 +57,10 @@ SKIP_PARTS = {
     "__pycache__",
     ".opencode/skills",
 }
+# Third-party minified bundles are reviewed at the pinned vendor version, not
+# line by line. They also contain every Unicode separator under the sun, which
+# crashed the Windows console before the output was forced to UTF-8.
+SKIP_NAME_SUFFIXES = (".min.js", ".min.css", ".map")
 
 SECRET_PATTERNS = [
     (
@@ -122,10 +126,17 @@ def _changed_files(base: str | None, staged: bool) -> list[Path]:
         normalized = name.replace("\\", "/")
         if normalized.endswith("scripts/security-delta-review.py"):
             continue
+        if normalized.lower().endswith(SKIP_NAME_SUFFIXES):
+            continue
         path = ROOT / name
         if not path.is_file():
             continue
-        if any(part in normalized for part in SKIP_PARTS):
+        # Match directory names, not substrings: ".git" must not also skip
+        # ".github" workflows and templates.
+        path_parts = normalized.split("/")
+        if any(part in SKIP_PARTS for part in path_parts):
+            continue
+        if normalized.startswith(".opencode/skills/"):
             continue
         if path.suffix.lower() not in TEXT_SUFFIXES:
             continue
@@ -158,7 +169,7 @@ def _scan_secrets(path: Path, lines: list[str]) -> list[tuple[str, int, str]]:
     findings: list[tuple[str, int, str]] = []
     for number, line in enumerate(lines, start=1):
         for label, pattern in SECRET_PATTERNS:
-            if pattern.search(line):
+            if pattern.search(line) and not _is_suppressed(lines, number, label):
                 findings.append((label, number, line.strip()[:160]))
         # Generic assignments are noisy in docs and tests. Keep them to code.
         if path.suffix.lower() in CODE_SUFFIXES:
@@ -167,7 +178,9 @@ def _scan_secrets(path: Path, lines: list[str]) -> list[tuple[str, int, str]]:
                 line,
             )
             if match and not _is_placeholder(match.group(2)):
-                findings.append(("credential-like assignment", number, line.strip()[:160]))
+                label = "credential-like assignment"
+                if not _is_suppressed(lines, number, label):
+                    findings.append((label, number, line.strip()[:160]))
     return findings
 
 
@@ -204,6 +217,14 @@ def _scan_code(path: Path, lines: list[str]) -> tuple[list[tuple[str, int, str]]
 
 
 def main() -> int:
+    # Findings can contain arbitrary source text (including bidi/separator
+    # characters from third-party files). Keep the Windows console from
+    # aborting the whole review with a UnicodeEncodeError.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError):
+        pass
+
     parser = argparse.ArgumentParser(description="Security delta review")
     parser.add_argument("--base", default=None, help="Git base ref or SHA")
     parser.add_argument("--staged", action="store_true", help="Review staged and untracked files")

@@ -24,7 +24,7 @@ from app.models import (
     CourseLabAssignment, Achievement, CourseCompletionReset,
     Assignment, AssignmentLab, FlagAttempt, CustomAchievement,
     CourseFeedback, ExercisePulseSurvey, ExerciseReaction,
-    Survey, SurveyAttachment, SurveyResponse,
+    Survey, SurveyAttachment, SurveyResponse, Level, Track,
 )
 from app.auth import get_current_active_user, get_current_instructor_user, get_current_admin_user
 from app import entitlement
@@ -37,6 +37,11 @@ from app.schemas import (
 )
 from app.services.achievements import resolve_achievement_label
 from app.services.curriculum_manifest import chapter_label
+from app.services.learning_metadata import (
+    aggregate_difficulty,
+    level_label_for_numbers,
+    percent_complete,
+)
 from app.services import exercise_quiz, settings_service
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
@@ -112,23 +117,34 @@ def _course_response(
     student_count = db.query(func.count(CourseEnrollment.id)).filter(
         CourseEnrollment.course_id == course.id
     ).scalar()
-    lab_count = db.query(func.count(CourseLabAssignment.id)).filter(
-        CourseLabAssignment.course_id == course.id
-    ).scalar()
+    assignment_rows = (
+        db.query(
+            CourseLabAssignment.lab_id,
+            Lab.difficulty,
+            Level.level_number,
+            Track.name,
+        )
+        .join(Lab, Lab.id == CourseLabAssignment.lab_id)
+        .outerjoin(Level, Level.id == Lab.level_id)
+        .outerjoin(Track, Track.id == Level.track_id)
+        .filter(CourseLabAssignment.course_id == course.id)
+        .all()
+    )
+    lab_count = len(assignment_rows)
+    assigned_lab_ids = {row[0] for row in assignment_rows}
+    difficulty, difficulty_rank = aggregate_difficulty(row[1] for row in assignment_rows)
+    track_names = sorted({row[3] for row in assignment_rows if row[3]})
+    level_numbers = sorted({
+        row[2] for row in assignment_rows if row[2] is not None
+    })
+    course_level_label = level_label_for_numbers(level_numbers)
     completed_labs = None
     progress_percent = None
     if user_id is not None:
-        assigned_lab_ids = {
-            row[0] for row in db.query(CourseLabAssignment.lab_id).filter(
-                CourseLabAssignment.course_id == course.id
-            ).all()
-        }
         completed_labs = len(get_course_completed_lab_ids(
             db, user_id, course.id, assigned_lab_ids,
         ))
-        progress_percent = (
-            round(completed_labs * 100 / lab_count) if lab_count else 0
-        )
+        progress_percent = percent_complete(completed_labs, lab_count)
     return {
         "id": course.id,
         "name": course.name,
@@ -149,6 +165,13 @@ def _course_response(
         "lab_count": lab_count,
         "completed_labs": completed_labs,
         "progress_percent": progress_percent,
+        "difficulty": difficulty,
+        "difficulty_rank": difficulty_rank,
+        "track_names": track_names,
+        "track_count": len(track_names),
+        "level_numbers": level_numbers,
+        "level_count": len(level_numbers),
+        "level_label": course_level_label,
     }
 
 
@@ -412,7 +435,15 @@ async def list_courses(
         ).order_by(Course.created_at.desc()).all()
 
     viewer_id = current_user.id if current_user.role not in ('admin', 'instructor') else None
-    return {"courses": [_course_response(c, db, viewer_id) for c in courses]}
+    responses = [_course_response(c, db, viewer_id) for c in courses]
+    # Beginner-first so a learner meets the easiest course before a capstone.
+    # Code/name break ties deterministically.
+    responses.sort(key=lambda course: (
+        course["difficulty_rank"],
+        (course["code"] or "").lower(),
+        (course["name"] or "").lower(),
+    ))
+    return {"courses": responses}
 
 
 @router.get("/{course_id}")

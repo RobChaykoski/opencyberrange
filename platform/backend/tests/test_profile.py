@@ -28,6 +28,22 @@ pytestmark = pytest.mark.db
 
 TEST_PASSWORD = "Correct#Horse7Battery"
 
+
+def _image_signature(data_url: str):
+    """Decode a PNG data URL to (size, pixel bytes).
+
+    Uploads are deliberately re-encoded as PNG to strip metadata, so a
+    byte-for-byte comparison with the original upload is not the contract.
+    """
+    import base64
+    import io
+
+    from PIL import Image
+
+    raw = base64.b64decode(data_url.split(",", 1)[1])
+    with Image.open(io.BytesIO(raw)) as image:
+        return image.size, image.convert("RGB").tobytes()
+
 # 1x1 transparent PNG, valid for the avatar image verifier.
 TINY_PNG = (
     "data:image/png;base64,"
@@ -193,15 +209,17 @@ def test_profile_avatar_round_trip(client, auth_headers, test_user):
 
     me = client.get("/api/auth/me", headers=auth_headers)
     assert me.status_code == 200
-    assert me.json()["avatar_data"] == TINY_PNG
+    stored = me.json()["avatar_data"]
+    assert stored.startswith("data:image/png;base64,")
+    assert _image_signature(stored) == _image_signature(TINY_PNG)
 
     settings = client.get("/api/auth/settings", headers=auth_headers)
     assert settings.status_code == 200
-    assert settings.json()["avatar_data"] == TINY_PNG
+    assert _image_signature(settings.json()["avatar_data"]) == _image_signature(TINY_PNG)
 
     summary = client.get("/api/profile/summary", headers=auth_headers)
     assert summary.status_code == 200
-    assert summary.json()["user"]["avatar_data"] == TINY_PNG
+    assert _image_signature(summary.json()["user"]["avatar_data"]) == _image_signature(TINY_PNG)
 
     cleared = client.put(
         "/api/auth/settings",

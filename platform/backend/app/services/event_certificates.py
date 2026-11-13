@@ -22,8 +22,19 @@ from app.config import settings
 from app.models import Achievement, Competition, CompetitionParticipant, User
 from app.services import settings_service
 from app.services.achievements import competition_achievement_parts
+from app.services.pdf_report import _sanitize_for_pdf
 
 logger = logging.getLogger(__name__)
+
+
+def _pdf_text(value: object) -> str:
+    """Return text the built-in PDF fonts can encode.
+
+    Event names, recipient names, and dates are user-entered and may contain
+    typographic dashes or accented characters that Helvetica/Times cannot
+    encode. The certificate renderer must degrade to ASCII rather than fail.
+    """
+    return _sanitize_for_pdf(str(value or ""))
 
 # Award keys are stable API values. Codes are compact, ASCII-safe parts of the
 # certificate ID. Placement and trophy awards require the matching event badge.
@@ -492,7 +503,7 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_text_color(*ink)
     pdf.set_font("Times", "B", 24)
     pdf.set_xy(0, header_y + 7)
-    pdf.cell(297, 11, certificate.get("title") or "Event Certificate", align="C")
+    pdf.cell(297, 11, _pdf_text(certificate.get("title")) or "Event Certificate", align="C")
 
     pdf.set_draw_color(*gold)
     pdf.set_line_width(0.6)
@@ -506,27 +517,27 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_font("Times", "B", 27)
     pdf.set_text_color(17, 24, 39)
     pdf.set_xy(0, header_y + 33)
-    pdf.cell(297, 13, str(certificate.get("recipient") or "Learner"), align="C")
+    pdf.cell(297, 13, _pdf_text(certificate.get("recipient")) or "Learner", align="C")
 
     pdf.set_font("Helvetica", "", 11)
     pdf.set_text_color(*muted)
     pdf.set_xy(0, header_y + 49)
-    pdf.cell(297, 6, str(certificate.get("body_line") or ""), align="C")
+    pdf.cell(297, 6, _pdf_text(certificate.get("body_line")), align="C")
 
     pdf.set_font("Times", "B", 16)
     pdf.set_text_color(*ink)
     pdf.set_xy(20, header_y + 56)
-    pdf.multi_cell(257, 7, str(certificate.get("event_name") or ""), align="C")
+    pdf.multi_cell(257, 7, _pdf_text(certificate.get("event_name")), align="C")
 
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(*muted)
     pdf.set_xy(0, header_y + 72)
-    pdf.cell(297, 5, str(certificate.get("event_dates") or ""), align="C")
+    pdf.cell(297, 5, _pdf_text(certificate.get("event_dates")), align="C")
 
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(*gold)
     pdf.set_xy(20, header_y + 79)
-    pdf.multi_cell(257, 4, str(certificate.get("award_description") or ""), align="C")
+    pdf.multi_cell(257, 4, _pdf_text(certificate.get("award_description")), align="C")
 
     sponsors = certificate.get("sponsors") or []
     if sponsors:
@@ -546,7 +557,7 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
             pdf.set_font("Helvetica", "", 6.5)
             pdf.set_text_color(*ink)
             pdf.set_xy(x, 168)
-            pdf.cell(cell_w, 4, str(sponsor.get("name") or "")[:32], align="C")
+            pdf.cell(cell_w, 4, _pdf_text(sponsor.get("name"))[:32], align="C")
 
     pdf.set_draw_color(216, 192, 138)
     pdf.set_line_width(0.4)
@@ -559,7 +570,7 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(*ink)
     pdf.set_xy(24, 186)
-    pdf.cell(60, 4, str(certificate.get("issued_display") or ""))
+    pdf.cell(60, 4, _pdf_text(certificate.get("issued_display")))
 
     pdf.set_font("Helvetica", "B", 6.5)
     pdf.set_text_color(*muted)
@@ -568,7 +579,7 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_font("Courier", "", 8)
     pdf.set_text_color(*ink)
     pdf.set_xy(95, 186)
-    pdf.cell(120, 4, str(certificate.get("certificate_id") or ""))
+    pdf.cell(120, 4, _pdf_text(certificate.get("certificate_id")))
 
     pdf.set_font("Helvetica", "B", 6.5)
     pdf.set_text_color(*muted)
@@ -577,7 +588,7 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_font("Helvetica", "", 7)
     pdf.set_text_color(*gold)
     pdf.set_xy(24, 195)
-    pdf.cell(210, 4, str(certificate.get("verify_url") or "Off by account holder"))
+    pdf.cell(210, 4, _pdf_text(certificate.get("verify_url")) or "Off by account holder")
 
     qr_code = certificate.get("qr_code")
     if qr_code:

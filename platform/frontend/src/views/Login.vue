@@ -51,6 +51,80 @@
             {{ errorMessage }}
           </div>
 
+          <div v-if="ssoError" class="error-message" role="alert">
+            {{ ssoError }}
+          </div>
+
+          <section v-if="ssoProviders.length" class="sso-panel" aria-labelledby="sso-panel-title">
+            <h2 id="sso-panel-title" class="sso-panel__label">Institution sign-in</h2>
+            <button
+              v-for="provider in redirectProviders"
+              :key="provider.id"
+              type="button"
+              class="sso-button"
+              :class="{ 'sso-button--primary': provider.is_default }"
+              :disabled="ssoLoading"
+              :aria-label="`Sign in with ${provider.name}`"
+              @click="startSso(provider)"
+            >
+              <span class="sso-button__mark" aria-hidden="true">{{ provider.name.charAt(0) }}</span>
+              <span>
+                <span class="sso-button__title">Sign in with {{ provider.name }}</span>
+                <span class="sso-button__hint">Use your institution account</span>
+              </span>
+            </button>
+            <form
+              v-for="provider in ldapProviders"
+              :key="`ldap-${provider.id}`"
+              class="sso-ldap"
+              :aria-busy="ldapState[provider.id].loading"
+              @submit.prevent="loginLdap(provider)"
+            >
+              <p class="sso-ldap__title">Sign in with {{ provider.name }}</p>
+              <label :for="`ldap-user-${provider.id}`" class="sso-ldap__label">
+                Directory username
+              </label>
+              <input
+                :id="`ldap-user-${provider.id}`"
+                v-model="ldapState[provider.id].username"
+                type="text"
+                class="form-input"
+                placeholder="e.g. sso.student"
+                autocomplete="username"
+                required
+              />
+              <label :for="`ldap-pass-${provider.id}`" class="sso-ldap__label">
+                Directory password
+              </label>
+              <input
+                :id="`ldap-pass-${provider.id}`"
+                v-model="ldapState[provider.id].password"
+                type="password"
+                class="form-input"
+                autocomplete="current-password"
+                :aria-describedby="ldapState[provider.id].error ? `ldap-error-${provider.id}` : undefined"
+                required
+              />
+              <p
+                v-if="ldapState[provider.id].error"
+                :id="`ldap-error-${provider.id}`"
+                class="sso-ldap__error"
+                role="alert"
+              >
+                {{ ldapState[provider.id].error }}
+              </p>
+              <button
+                type="submit"
+                class="sso-ldap__submit"
+                :disabled="ldapState[provider.id].loading"
+                :aria-label="`Sign in with ${provider.name}`"
+              >
+                {{ ldapState[provider.id].loading ? 'Signing in...' : 'Sign in' }}
+              </button>
+            </form>
+            <div class="sso-divider"><span>or use a local account</span></div>
+          </section>
+
           <form @submit.prevent="handleLogin" class="login-form" :aria-busy="loading" novalidate>
             <div class="form-group">
               <label for="username" class="form-label">Username</label>
@@ -360,13 +434,102 @@
 </template>
 
 <script setup>
-import { ref, nextTick, inject } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, computed, nextTick, inject, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios' // Use plain axios for login (no token needed)
 import { setWikiAuthCookie } from '../utils/wikiAuth'
 import { applyPrivacyDefaultForRole } from '../composables/usePrivacy'
 
+const route = useRoute()
 const router = useRouter()
+
+const ssoProviders = ref([])
+const ssoLoading = ref(false)
+const ssoError = ref('')
+const ldapState = reactive({})
+
+const redirectProviders = computed(() =>
+  ssoProviders.value.filter((provider) => provider.kind !== 'ldap')
+)
+const ldapProviders = computed(() =>
+  ssoProviders.value.filter((provider) => provider.kind === 'ldap')
+)
+
+const ensureLdapState = (providerId) => {
+  if (!ldapState[providerId]) {
+    ldapState[providerId] = { username: '', password: '', loading: false, error: '' }
+  }
+  return ldapState[providerId]
+}
+
+const ssoErrorFor = (code) => {
+  if (code === 'unavailable') {
+    return 'Institution sign-in is temporarily unavailable. Use your local account or try again.'
+  }
+  return 'Institution sign-in could not start. Use your local account or try again.'
+}
+
+const fetchSsoProviders = async () => {
+  try {
+    const { data } = await axios.get('/api/auth/sso/providers')
+    ssoProviders.value = data?.providers || []
+    ssoProviders.value
+      .filter((provider) => provider.kind === 'ldap')
+      .forEach((provider) => ensureLdapState(provider.id))
+  } catch {
+    ssoProviders.value = []
+  }
+}
+
+const startSso = (provider) => {
+  if (ssoLoading.value || !provider.login_path) return
+  ssoLoading.value = true
+  const returnTo = route.query.return_to || '/dashboard'
+  const path = `${provider.login_path}?return_to=${encodeURIComponent(returnTo)}`
+  window.location.assign(path)
+}
+
+const loginLdap = async (provider) => {
+  const state = ensureLdapState(provider.id)
+  if (state.loading) return
+  state.error = ''
+  if (!state.username.trim() || !state.password) {
+    state.error = 'Enter your directory username and password.'
+    return
+  }
+  state.loading = true
+  try {
+    const returnTo = String(route.query.return_to || '/dashboard')
+    const { data } = await axios.post(`/api/auth/sso/ldap/${provider.id}/login`, {
+      username: state.username.trim(),
+      password: state.password,
+      return_to: returnTo,
+    })
+    state.password = ''
+    router.push({
+      path: '/sso/callback',
+      query: { ticket: data.ticket, return_to: data.return_to },
+    })
+  } catch (error) {
+    state.password = ''
+    const status = error.response?.status
+    if (status === 401) {
+      state.error = 'The directory rejected those credentials.'
+    } else if (status === 403) {
+      state.error = 'Your directory account cannot sign in to this platform.'
+    } else {
+      state.error = 'Institution sign-in failed. Try again or use a local account.'
+    }
+  } finally {
+    state.loading = false
+  }
+}
+
+onMounted(() => {
+  const code = route.query.sso_error
+  if (code) ssoError.value = ssoErrorFor(String(code))
+  fetchSsoProviders()
+})
 
 const username = ref('')
 const password = ref('')
@@ -454,11 +617,11 @@ const handleLogin = async () => {
     applyPrivacyDefaultForRole(response.data.user?.role)
     capsLockOn.value = false
 
-    // Sync the wiki_auth cookie now, in THIS tab. App.vue only refreshes it on
-    // mount (token was null then) and on cross-tab storage events (which do not
-    // fire in the tab that logged in), so without this a fresh login cannot open
-    // the gated course wikis until a full page reload.
-    setWikiAuthCookie()
+    // Sync the HttpOnly wiki cookie now, in THIS tab. App.vue only refreshes it
+    // on mount (token was null then) and on cross-tab storage events (which do
+    // not fire in the tab that logged in), so without this a fresh login cannot
+    // open the gated course wikis until a full page reload.
+    await setWikiAuthCookie()
 
     const updateAuthState = inject('updateAuthState', null)
     if (updateAuthState) {
@@ -699,6 +862,152 @@ const handleLogin = async () => {
   color: var(--text-secondary);
   font-size: 0.78rem;
   line-height: 1.45;
+}
+
+.sso-panel {
+  margin-bottom: 1.1rem;
+}
+
+.sso-panel__label {
+  margin: 0 0 0.55rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sso-button {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.sso-button + .sso-button {
+  margin-top: 0.5rem;
+}
+
+.sso-button--primary {
+  border-color: var(--accent);
+}
+
+.sso-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--hover-bg);
+}
+
+.sso-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sso-button__mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-weight: 800;
+}
+
+.sso-button__title {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.sso-button__hint {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.sso-ldap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.sso-ldap__title {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.sso-ldap__label {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.sso-button:focus-visible,
+.sso-ldap__submit:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sso-ldap .form-input {
+  padding: 0.55rem 0.7rem;
+  font-size: 0.8125rem;
+}
+
+.sso-ldap__submit {
+  align-self: flex-start;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.sso-ldap__submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.sso-ldap__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.74rem;
+}
+
+.sso-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.sso-divider::before,
+.sso-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
 }
 
 .login-form {

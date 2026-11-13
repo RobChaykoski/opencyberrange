@@ -2,7 +2,8 @@
 
 The SPA's only inline script is the theme bootstrap. nginx pins it by sha256 in
 three CSP headers. If index.html changes without updating the hash, the script
-is silently blocked and the page flashes the wrong theme.
+is silently blocked and the page flashes the wrong theme. CI runs this on every
+pull request and push to main, and fails on both missing and stale hashes.
 
 Usage:
     python scripts/check-csp-hash.py
@@ -46,13 +47,22 @@ def main() -> int:
         if not path.is_file():
             problems.append(f"missing CSP file: {path}")
             continue
-        text = path.read_text(encoding="utf-8")
-        pinned = set(re.findall(r"'sha256-([^']+)'", text))
+        pinned = set()
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if "Content-Security-Policy" in line and "script-src" in line:
+                pinned.update(re.findall(r"'sha256-([^']+)'", line))
         missing = expected - pinned
+        extra = pinned - expected
         if missing:
             problems.append(
                 f"{path.name}: CSP is missing the inline-script hash(es) "
                 + ", ".join(f"sha256-{value}" for value in sorted(missing))
+            )
+        if extra:
+            problems.append(
+                f"{path.name}: CSP has stale inline-script hash(es) that are not "
+                "in index.html: "
+                + ", ".join(f"sha256-{value}" for value in sorted(extra))
             )
 
     if problems:

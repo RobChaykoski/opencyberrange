@@ -3,7 +3,7 @@ Authentication routes for login and registration
 """
 
 from datetime import timedelta, datetime, timezone
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Form, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status, Form, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -793,12 +793,15 @@ async def export_user_data(
         CompetitionParticipant,
         Course,
         CourseEnrollment,
+        ExternalIdentity,
         FlagAttempt,
+        IdentityProvider,
         Lab,
         LabCompletion,
         LabSession,
         LevelQuiz,
         QuizAttempt,
+        SsoSession,
         SurveyConsentEvent,
         WireGuardConfig,
     )
@@ -859,6 +862,20 @@ async def export_user_data(
         db.query(SurveyConsentEvent)
         .filter(SurveyConsentEvent.user_id == uid)
         .order_by(SurveyConsentEvent.created_at)
+        .all()
+    )
+    external_identities = (
+        db.query(ExternalIdentity, IdentityProvider)
+        .join(IdentityProvider, IdentityProvider.id == ExternalIdentity.provider_id, isouter=True)
+        .filter(ExternalIdentity.user_id == uid)
+        .order_by(ExternalIdentity.created_at)
+        .all()
+    )
+    sso_sessions = (
+        db.query(SsoSession, IdentityProvider)
+        .join(IdentityProvider, IdentityProvider.id == SsoSession.provider_id, isouter=True)
+        .filter(SsoSession.user_id == uid)
+        .order_by(SsoSession.created_at)
         .all()
     )
 
@@ -929,6 +946,28 @@ async def export_user_data(
             if vpn
             else None
         ),
+        # Identity-federation data: which external account this local account
+        # is linked to. The provider secret and the encrypted ID token are not
+        # personal data about the learner and are deliberately omitted.
+        "external_identities": [
+            {
+                "provider": provider.name if provider else None,
+                "provider_kind": provider.kind if provider else None,
+                "subject": link.subject,
+                "email": link.email,
+                "linked_at": link.created_at,
+                "last_login_at": link.last_login_at,
+            }
+            for link, provider in external_identities
+        ],
+        "sso_sessions": [
+            {
+                "provider": provider.name if provider else None,
+                "created_at": session.created_at,
+                "expires_at": session.expires_at,
+            }
+            for session, provider in sso_sessions
+        ],
         "courses": [
             {
                 "course_id": course.id if course else enrollment.course_id,
@@ -1535,6 +1574,69 @@ def _normalize_workbook(workbook: str) -> str:
     return wb
 
 
+def _wiki_cookie_secure(request: Request) -> bool:
+    proto = (
+        request.headers.get("x-forwarded-proto")
+        or request.url.scheme
+        or ""
+    ).split(",", 1)[0].strip().lower()
+    return proto == "https" or (settings.PUBLIC_BASE_URL or "").lower().startswith("https://")
+
+
+@router.post("/wiki-cookie", status_code=204)
+async def issue_wiki_cookie(
+    request: Request,
+    response: Response,
+    current_user: User = Depends(get_current_active_user),
+):
+    """Copy the caller's JWT into an HttpOnly wiki cookie.
+
+    The browser keeps the SPA token in localStorage. This endpoint gives the
+    wiki origin a cookie it can use for nginx auth_request without exposing a
+    script-readable token to the framed page. The cookie is scoped by
+    WIKI_COOKIE_DOMAIN so a sibling wiki hostname receives it; leave that unset
+    for a same-origin wiki.
+    """
+    header = request.headers.get("Authorization", "")
+    if not header.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Bearer token required")
+    token = header.split(" ", 1)[1].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Bearer token required")
+
+    secure = _wiki_cookie_secure(request)
+    response.set_cookie(
+        key="wiki_session",
+        value=token,
+        max_age=settings.JWT_EXPIRATION_HOURS * 3600,
+        path="/",
+        domain=settings.WIKI_COOKIE_DOMAIN or None,
+        secure=secure,
+        httponly=True,
+        samesite="none" if secure else "lax",
+    )
+    response.status_code = 204
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@router.delete("/wiki-cookie", status_code=204)
+async def clear_wiki_cookie(request: Request, response: Response):
+    """Remove the HttpOnly wiki cookie on logout or account deletion."""
+    secure = _wiki_cookie_secure(request)
+    response.delete_cookie(
+        key="wiki_session",
+        path="/",
+        domain=settings.WIKI_COOKIE_DOMAIN or None,
+        secure=secure,
+        httponly=True,
+        samesite="none" if secure else "lax",
+    )
+    response.status_code = 204
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 @router.get("/wiki-released")
 async def wiki_released_chapters(
     slug: str,
@@ -1562,7 +1664,9 @@ async def wiki_released_chapters(
     if header.lower().startswith("bearer "):
         token = header.split(" ", 1)[1].strip()
     if not token:
-        token = request.cookies.get("wiki_auth", "")
+        token = request.cookies.get("wiki_session", "") or request.cookies.get(
+            "wiki_auth", ""
+        )
     if not token:
         # Unauthenticated: reveal nothing, and let the caller leave the nav be.
         return {"all": True, "chapters": []}
@@ -1817,7 +1921,21 @@ async def logout(
     jti = payload.get("jti")
     if jti:
         revoke_token(jti, float(payload.get("exp", 0)), user_id=current_user.id)
-    return {"message": "Logged out"}
+
+    # Only SSO-issued tokens redirect to the IdP. A local password login for an
+    # SSO-linked account stays on the local logout path.
+    post_logout_url = None
+    provider_id = payload.get("sso_provider_id")
+    if provider_id:
+        try:
+            from app.services import oidc
+
+            post_logout_url = oidc.build_end_session_url(
+                db, current_user, int(provider_id)
+            )
+        except Exception:
+            logger.exception("Could not build the SSO end-session URL")
+    return {"message": "Logged out", "post_logout_url": post_logout_url}
 
 
 # ==================== MFA (TOTP) ====================

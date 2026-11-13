@@ -1,0 +1,59 @@
+x-ocr-topology:
+  training_user: analyst
+  training_password: "Topology2026"
+  nodes:
+    h1:
+      service: h1
+      role: host
+    fw:
+      service: fw
+      role: router
+    svc:
+      service: svc
+      role: service
+      flag: "OCR{f1r3w4ll_p4th}"
+      http_port: 80
+  links:
+    - from: h1
+      to: fw
+    - from: fw
+      to: svc
+
+services:
+  h1:
+    image: ocr-lab/topology-node:latest
+    hostname: h1
+    labels:
+      ip_offset: "21"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    cpus: 0.20
+    pids_limit: 96
+    restart: unless-stopped
+
+  fw:
+    image: ocr-lab/topology-node:latest
+    hostname: fw
+    labels:
+      ip_offset: "22"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 96
+    restart: unless-stopped
+
+  svc:
+    image: ocr-lab/topology-node:latest
+    hostname: svc
+    labels:
+      ip_offset: "23"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    cpus: 0.20
+    pids_limit: 96
+    restart: unless-stopped
+    environment:
+      FLAG: "OCR{f1r3w4ll_p4th}"

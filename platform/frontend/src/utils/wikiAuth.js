@@ -1,38 +1,36 @@
-// Keep the wiki_auth cookie in sync with the current JWT so the nginx
-// auth_request gates in front of the course wikis always have a valid token to
-// validate.
+import api from '../api/axios'
+
+// Keep the wiki session cookie in sync with the current login.
 //
-// Scope: the cookie is bound to the app's OWN hostname via Domain, which per
-// RFC 6265 sends it to that host AND its subdomains only, NOT to sibling hosts
-// elsewhere on the registrable domain. So a subdomain gated by the same OCR
-// login receives the token, and no other service on the platform domain does.
-// On an IP or localhost it stays host-only.
+// The SPA token stays in localStorage, but the framed wiki must not be able to
+// read it. The backend copies the JWT into an HttpOnly `wiki_session` cookie
+// scoped by WIKI_COOKIE_DOMAIN. Nginx validates that cookie for wiki
+// subrequests. Nothing here writes the JWT from JavaScript.
 //
-// IMPORTANT: every place that sets wiki_auth must use THIS helper. Setting the
-// same cookie name with a different Domain creates a second, separate cookie and
-// nginx then reads an arbitrary one. One helper keeps the scope consistent.
-export function setWikiAuthCookie() {
-  const token = localStorage.getItem('token')
-  if (!token) return
-  const host = window.location.hostname
-  const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host)
-  // Bind to the app's own host (covers only this instance's subdomains).
-  const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
-    ? `; Domain=${host}` : ''
-  // Never allow the JWT cookie to travel over plain HTTP in a real deployment.
-  const secureAttr = (!isIp && host !== 'localhost') ? '; Secure' : ''
-  document.cookie = `wiki_auth=${token}; path=/; SameSite=Lax; max-age=86400${secureAttr}${domainAttr}`
+// IMPORTANT: every place that refreshes wiki auth must use THIS helper so the
+// cookie scope and refresh timing stay consistent.
+export async function setWikiAuthCookie() {
+  try {
+    await api.post('/auth/wiki-cookie')
+  } catch {
+    // The wiki is optional on pages that never open one. A missing cookie
+    // surfaces as a normal wiki login redirect rather than breaking the page.
+  }
 }
 
-// Remove the wiki auth cookie on logout or account deletion. Clear both the
-// runtime derived domain scope and the bare host-only variant so no copy of
-// the token survives a session.
-export function clearWikiAuthCookie() {
+// Remove the HttpOnly cookie on logout or account deletion. Also clear the
+// legacy JS-readable cookie from pre-origin-split builds so it cannot shadow
+// the scoped cookie.
+export async function clearWikiAuthCookie() {
+  try {
+    await api.delete('/auth/wiki-cookie')
+  } catch {
+    // Best effort: the server-side logout path also expires the cookie.
+  }
   const host = window.location.hostname
   const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host)
   const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
     ? `; Domain=${host}` : ''
-  const secureAttr = (!isIp && host !== 'localhost') ? '; Secure' : ''
-  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${secureAttr}${domainAttr}`
-  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${secureAttr}`
+  document.cookie = `wiki_auth=; path=/; max-age=0${domainAttr}`
+  document.cookie = 'wiki_auth=; path=/; max-age=0'
 }

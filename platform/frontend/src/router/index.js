@@ -32,6 +32,12 @@ const routes = [
     meta: { guest: true }
   },
   {
+    path: '/sso/callback',
+    name: 'SsoCallback',
+    component: () => import('../views/SsoCallback.vue'),
+    meta: { guest: true, ssoCallback: true }
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import('../views/Register.vue'),
@@ -237,7 +243,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta.requiresAuth && !token) {
     next('/login')
-  } else if (to.meta.guest && token) {
+  } else if (to.meta.guest && token && !to.meta.ssoCallback) {
     next('/dashboard')
   } else if (to.meta.requiresAdmin && !userHasRole('admin')) {
     next('/dashboard')

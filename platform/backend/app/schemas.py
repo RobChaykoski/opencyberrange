@@ -261,6 +261,7 @@ class UserResponse(BaseModel):
     role: Optional[str] = "student"
     must_change_password: Optional[bool] = False
     equipped_title: Optional[str] = None
+    password_login_disabled: Optional[bool] = False
 
     class Config:
         from_attributes = True
@@ -286,6 +287,7 @@ class UserAdminResponse(BaseModel):
     created_at: Optional[datetime] = None
     last_login_at: Optional[datetime] = None
     equipped_title: Optional[str] = None
+    password_login_disabled: Optional[bool] = False
 
     class Config:
         from_attributes = True
@@ -329,6 +331,7 @@ class UserDetailResponse(BaseModel):
     created_at: Optional[datetime] = None
     last_login_at: Optional[datetime] = None
     equipped_title: Optional[str] = None
+    password_login_disabled: Optional[bool] = False
 
     # Statistics
     total_labs_completed: int = 0
@@ -953,8 +956,8 @@ class SetupRequest(SafeTextModel):
     last_name: Optional[str] = Field(None, max_length=80)
     organization: Optional[str] = Field(None, max_length=120)
     require_approval: Optional[bool] = True
-    # One-time install token; required only when the server sets SETUP_TOKEN
-    # (see /setup/complete). Blank on isolated installs that don't set it.
+    # One-time install token. First-run setup always requires the operator to
+    # configure SETUP_TOKEN (see /setup/complete); there is no unguarded path.
     setup_token: Optional[str] = None
 
     __safe_text_fields__ = {

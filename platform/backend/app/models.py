@@ -2,7 +2,7 @@
 Database models
 """
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, Float, ForeignKey, Text, Index, CheckConstraint, text
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, Float, ForeignKey, Text, Index, CheckConstraint, UniqueConstraint, text
 from sqlalchemy.orm import relationship, deferred
 from sqlalchemy.sql import func
 from app.database import Base
@@ -70,6 +70,11 @@ class User(Base):
     # Equipped achievement title (key from app.services.titles). Null shows the
     # learner's current Skill DNA class instead.
     equipped_title = Column(String(64), nullable=True)
+    # SSO-provisioned accounts cannot use the local password form. Existing
+    # local accounts keep their password unless an administrator changes this.
+    password_login_disabled = Column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     # Email the user on a new login from a new IP.
     login_notifications = Column(Boolean, default=True, server_default=text("true"), nullable=False)
     # Consent to optional account email. Essential security/service messages may
@@ -166,6 +171,154 @@ class User(Base):
     instructed_courses = relationship("Course", back_populates="instructor")
     course_enrollments = relationship("CourseEnrollment", back_populates="user")
     achievements = relationship("Achievement", back_populates="user")
+
+
+class IdentityProvider(Base):
+    """V3-only LDAP/SSO identity provider configuration.
+
+    ``config`` holds non-secret provider settings as JSON. ``secrets`` holds an
+    encrypted JSON object for bind passwords, client secrets, and private keys.
+    Secret values are never returned by the API.
+    """
+    __tablename__ = "identity_providers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(120), nullable=False)
+    kind = Column(String(20), nullable=False)  # ldap, oidc, saml
+    enabled = Column(Boolean, default=False, server_default=text("false"), nullable=False)
+    is_default = Column(Boolean, default=False, server_default=text("false"), nullable=False)
+    config = Column(Text, nullable=False, default="{}", server_default=text("'{}'"))
+    secrets = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        Index("ix_identity_provider_name", "name", unique=True),
+        Index("ix_identity_provider_kind", "kind"),
+    )
+
+
+class ExternalIdentity(Base):
+    """Link a local account to an external IdP subject.
+
+    The provider + subject pair is the stable identity. Email is stored for
+    diagnostics only; it is not the key. The unique constraint prevents two
+    local accounts from claiming the same external identity.
+    """
+
+    __tablename__ = "external_identities"
+
+    id = Column(Integer, primary_key=True, index=True)
+    provider_id = Column(
+        Integer,
+        ForeignKey("identity_providers.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    subject = Column(String(255), nullable=False)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    email = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    last_login_at = Column(DateTime, nullable=True)
+
+    provider = relationship("IdentityProvider")
+    user = relationship("User")
+
+    __table_args__ = (
+        UniqueConstraint("provider_id", "subject", name="uq_external_identity_subject"),
+    )
+
+
+class SsoLoginState(Base):
+    """Short-lived login flow state shared by OIDC and SAML.
+
+    Stored in the shared database, not process memory, so any API replica can
+    complete the callback. The row is consumed atomically to prevent replay.
+    OIDC stores the nonce and PKCE verifier; SAML stores the AuthnRequest ID and
+    ACS URL.
+    """
+
+    __tablename__ = "sso_login_states"
+
+    id = Column(Integer, primary_key=True, index=True)
+    state = Column(String(128), unique=True, nullable=False, index=True)
+    provider_id = Column(
+        Integer,
+        ForeignKey("identity_providers.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    nonce = Column(String(128), nullable=False)
+    code_verifier = Column(String(128), nullable=False)
+    redirect_uri = Column(String(500), nullable=False)
+    return_to = Column(String(500), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+    consumed_at = Column(DateTime, nullable=True)
+
+
+class SsoLoginTicket(Base):
+    """One-time ticket exchanged by the SPA for a platform JWT."""
+
+    __tablename__ = "sso_login_tickets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ticket = Column(String(128), unique=True, nullable=False, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    provider_id = Column(
+        Integer,
+        ForeignKey("identity_providers.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    return_to = Column(String(500), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+    consumed_at = Column(DateTime, nullable=True)
+
+
+class SsoSession(Base):
+    """Latest OIDC session per user/provider for RP-initiated logout.
+
+    The ID token is stored encrypted. It is only used as ``id_token_hint`` when
+    the user logs out and the provider advertises an end-session endpoint.
+    """
+
+    __tablename__ = "sso_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    provider_id = Column(
+        Integer,
+        ForeignKey("identity_providers.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    id_token = Column(Text, nullable=True)
+    session_state = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    expires_at = Column(DateTime, nullable=False)
+
+    provider = relationship("IdentityProvider")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "provider_id", name="uq_sso_session_user_provider"),
+    )
 
 
 class Track(Base):

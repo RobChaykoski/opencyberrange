@@ -1,0 +1,134 @@
+title: Firewall the Service Path - Policy on a Routed Segment
+category: network
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - network-12-2-device-topology-engine
+# By completion students will be able to:
+learning_outcomes:
+  - Explain where a forward-chain firewall policy applies in a routed topology
+  - Read the service link and confirm the pre-policy path
+  - Write an nftables forward rule that blocks a specific service port
+  - Verify that the allowed port still works and the blocked port fails
+  - Describe why policy belongs on the transit node, not the endpoints
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1046
+    technique_name: Network Service Discovery
+    detection: Alert on service probing across a routed segment and review firewall policy changes.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "4.0"
+reviewed_at: "2026-11-12"
+review_status: "engine unit tests and live dev smoke; learner walkthrough pending"
+description: "A workstation reaches a service through a Linux router. Apply an nftables forward policy that keeps the flag service reachable while blocking the status port, then verify both outcomes."
+scenario: |
+  The protected service exposes the flag on port 80 and a status endpoint on
+  port 8080. The router is the only path between the workstation and the
+  service. Your task is to apply a forward-chain policy that keeps HTTP
+  available and blocks the status port, then prove both results from the
+  workstation.
+credentials:
+  - role: "analyst"
+    username: "analyst"
+    # Demo lab credential; security-delta: allow credential-like assignment
+    password: "Topology2026"
+    description: "SSH access to each topology node"
+hints:
+  - text: |
+      Read the router status endpoint first. It reports the service link address,
+      which is the address to test from h1.
+  - text: |
+      Use an `inet` table and a `forward` chain with policy `accept`. Add a drop
+      rule for TCP port 8080.
+  - text: |
+      `nft list chain inet ocr forward` shows the rule. Test port 80 and port
+      8080 separately from h1.
+  - text: |
+      Forwarding must already be enabled on the router; the engine sets that for
+      the router role.
+flag: "OCR{f1r3w4ll_p4th}"
+
+visibility: public
+week: 12
+troubleshooting: "If nft reports that the table exists, delete it first. If the drop rule does not take effect, confirm the chain is hooked at `forward` priority 0 and that the router still reports ip_forward=1."
+defensive_takeaways: "A routed segment is the right place for a forward policy. Keep the allowed service reachable, deny the rest, and verify both paths after every change."
+difficulty_evidence: "Engine unit tests and live dev smoke; learner walkthrough pending."
+difficulty_evidence_source: "automated_and_manual_smoke"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-12"
+workbook: "wiki/range/netfor/CH_NET12_Device_Topology/03_Firewall_Service_Path/"
+
+topology:
+  nodes:
+    - id: "h1"
+      label: "Learner Workstation"
+      type: "workstation"
+      ip_offset: "21"
+      ports: [22, 8080]
+      services: ["OpenSSH", "Status"]
+      x: 1
+      y: 2
+    - id: "fw"
+      label: "Router / Firewall"
+      type: "firewall"
+      ip_offset: "22"
+      ports: [22, 8080]
+      services: ["OpenSSH", "nftables"]
+      x: 2
+      y: 2
+    - id: "svc"
+      label: "Protected Service"
+      type: "server"
+      ip_offset: "23"
+      ports: [22, 80, 8080]
+      services: ["OpenSSH", "HTTP flag", "Status"]
+      x: 3
+      y: 2
+  edges:
+    - from: "h1"
+      to: "fw"
+      label: "workstation link /29"
+      access: "direct"
+    - from: "fw"
+      to: "svc"
+      label: "service link /29"
+      access: "routed"
+
+test:
+  steps:
+    - name: "SSH to the workstation"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'echo connected' 2>&1"
+      expect: "connected"
+      timeout: 20
+
+    - name: "Workstation uses the router"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'ip route | grep default' 2>&1"
+      expect: "default via"
+      timeout: 20
+
+    - name: "Router forwards IPv4"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1"
+      expect: "1"
+      timeout: 20
+
+    - name: "Apply the forward-chain policy"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} \"nft delete table inet ocr 2>/dev/null; nft add table inet ocr; nft add chain inet ocr forward '{ type filter hook forward priority 0; policy accept; }'; nft add rule inet ocr forward tcp dport 8080 drop; nft list chain inet ocr forward\" 2>&1"
+      expect: "tcp dport 8080 drop"
+      timeout: 30
+
+    - name: "Blocked status port is unreachable"
+      command: "IP=$(curl -s --connect-timeout 5 http://{target.fw}:8080/status | jq -r '.links[] | select(.peer==\"svc\") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} \"if wget -qO- --timeout=2 http://$IP:8080/status; then echo reachable; else echo blocked; fi\" 2>&1"
+      expect: "blocked"
+      timeout: 30
+
+    - name: "Allowed HTTP path still returns the flag"
+      command: "IP=$(curl -s --connect-timeout 5 http://{target.fw}:8080/status | jq -r '.links[] | select(.peer==\"svc\") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} \"wget -qO- http://$IP/flag\" 2>&1"
+      expect: "OCR{f1r3w4ll_p4th}"
+      timeout: 30

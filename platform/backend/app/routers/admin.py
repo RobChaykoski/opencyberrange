@@ -347,6 +347,7 @@ async def get_user_details(
         created_at=user.created_at,
         last_login_at=user.last_login_at,
         equipped_title=user.equipped_title,
+        password_login_disabled=user.password_login_disabled,
         total_labs_completed=len(completions_data),
         total_flag_attempts=flag_attempts_count,
         total_hints_used=total_hints,
@@ -454,9 +455,24 @@ async def reset_user_lab(
 
 
 def _enforce_privileged_cap(db: Session):
-    """Entitlement cap on instructor/admin accounts (None = unlimited)."""
-    limit = entitlement.privileged_account_limit()
-    if limit is None:
+    """Entitlement cap on instructor/admin accounts (None = unlimited).
+
+    The platform setting ``max_privileged_accounts`` overrides the edition
+    default. Set it to 0 for unlimited, or to a positive count to allow more
+    instructors and administrators on the same install.
+    """
+    from app.services.settings_service import get_setting_fresh
+
+    configured = get_setting_fresh(db, "max_privileged_accounts")
+    limit: int | None
+    if configured is None:
+        limit = entitlement.privileged_account_limit()
+    else:
+        try:
+            limit = int(str(configured).strip())
+        except (TypeError, ValueError):
+            limit = entitlement.privileged_account_limit()
+    if limit is None or limit <= 0:
         return
     count = db.query(User).filter(User.role.in_(("instructor", "admin"))).count()
     if count >= limit:
@@ -465,8 +481,9 @@ def _enforce_privileged_cap(db: Session):
             status_code=403,
             detail=(
                 f"{edition} includes {limit} privileged account(s) (admin or "
-                f"instructor) and this install has {count}. Upgrade for "
-                f"unlimited instructor accounts (see LICENSING.md)."
+                f"instructor) and this install has {count}. Raise "
+                f"'max_privileged_accounts' in Admin -> Settings -> Security or "
+                f"see LICENSING.md."
             ),
         )
 

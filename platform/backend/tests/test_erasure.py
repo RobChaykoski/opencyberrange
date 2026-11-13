@@ -25,9 +25,12 @@ from app.models import (
     CompetitionParticipant,
     Course,
     CourseEnrollment,
-    FlagAttempt,
+    ExternalIdentity,
+    IdentityProvider,
     InviteCode,
     LabCompletion,
+    SsoLoginTicket,
+    SsoSession,
     User,
 )
 from app.services.erasure import ErasureBlocked, erase_user
@@ -174,6 +177,63 @@ def test_erasure_preserves_other_students_achievements_and_competition(
     db_session.query(CourseEnrollment).filter(CourseEnrollment.course_id == course.id).delete()
     db_session.query(Course).filter(Course.id == course.id).delete()
     db_session.query(User).filter(User.id.in_([bob_id, instructor_id])).delete()
+    db_session.commit()
+
+
+def test_erasure_removes_sso_identity_and_session_rows(db_session, test_password):
+    """Right to erasure includes the external subject, email, and ID token."""
+    suffix = uuid.uuid4().hex[:10]
+    alice = _user(db_session, password_hash=test_password, suffix=f"sso{suffix}")
+    provider = IdentityProvider(
+        name=f"Erasure IdP {suffix}",
+        kind="oidc",
+        enabled=True,
+        config="{}",
+    )
+    db_session.add(provider)
+    db_session.commit()
+    db_session.refresh(provider)
+
+    now = datetime.now(timezone.utc)
+    db_session.add_all([
+        ExternalIdentity(
+            provider_id=provider.id,
+            subject=f"idp-subject-{suffix}",
+            user_id=alice.id,
+            email=alice.email,
+        ),
+        SsoSession(
+            user_id=alice.id,
+            provider_id=provider.id,
+            id_token="encrypted-token",
+            expires_at=now + timedelta(hours=1),
+        ),
+        SsoLoginTicket(
+            ticket=f"ticket-{suffix}",
+            user_id=alice.id,
+            provider_id=provider.id,
+            expires_at=now + timedelta(minutes=2),
+        ),
+    ])
+    db_session.commit()
+    alice_id = alice.id
+
+    result = erase_user(db_session, alice, external_cleanup=False, write_ledger=False)
+    db_session.expire_all()
+
+    assert result.deleted.get("external_identities") == 1
+    assert result.deleted.get("sso_sessions") == 1
+    assert result.deleted.get("sso_login_tickets") == 1
+    assert db_session.query(ExternalIdentity).filter(
+        ExternalIdentity.user_id == alice_id
+    ).count() == 0
+    assert db_session.query(SsoSession).filter(SsoSession.user_id == alice_id).count() == 0
+    assert db_session.query(SsoLoginTicket).filter(
+        SsoLoginTicket.user_id == alice_id
+    ).count() == 0
+    assert db_session.query(User).filter(User.id == alice_id).first() is None
+
+    db_session.query(IdentityProvider).filter(IdentityProvider.id == provider.id).delete()
     db_session.commit()
 
 

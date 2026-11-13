@@ -177,10 +177,18 @@
               </span>
               <span v-if="user.created_at" class="profile-hero__joined">Member since {{ formatDateOnly(user.created_at) }}</span>
             </div>
+            <button
+              v-if="displayName === user.username"
+              type="button"
+              class="profile-hero__name-prompt"
+              @click="setTab('account')"
+            >
+              Add your name for certificates
+            </button>
 
             <div v-if="summary" class="profile-hero__progress">
               <div class="profile-hero__progress-head">
-                <span>Your learning trail</span>
+                <span>Range-wide</span>
                 <span>{{ summary.totals.labs_completed }} / {{ summary.totals.labs_total }} exercises</span>
               </div>
               <div
@@ -194,6 +202,13 @@
                 <span :style="{ width: summary.totals.progress_percent + '%' }"></span>
               </div>
               <p class="profile-hero__progress-note">{{ progressMessage }}</p>
+              <div v-if="progressLenses.length" class="profile-hero__lenses" aria-label="Progress lenses">
+                <span v-for="lens in progressLenses" :key="lens.key" class="profile-lens">
+                  <span class="profile-lens__label">{{ lens.label }}</span>
+                  <strong>{{ lens.text }}</strong>
+                  <span v-if="lens.percent !== null" class="profile-lens__pct">{{ lens.percent }}%</span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -219,8 +234,61 @@
           </div>
         </section>
 
+        <section v-if="hasProfileFocus" class="profile-focus" aria-labelledby="profile-focus-title">
+          <div class="profile-focus__head">
+            <div>
+              <p class="profile-focus__eyebrow">Your focus</p>
+              <h2 id="profile-focus-title" class="profile-focus__title">What matters to you right now</h2>
+            </div>
+            <div class="profile-focus__controls">
+              <input
+                v-model="focusQuery"
+                type="search"
+                class="profile-focus__search"
+                placeholder="Search courses, tracks, certifications, careers"
+                aria-label="Search focus options"
+              />
+              <label class="profile-focus__select">
+                <span>Focus on</span>
+                <select v-model="focusKey">
+                  <optgroup v-for="group in focusGroups" :key="group.label" :label="group.label">
+                    <option v-for="option in group.options" :key="option.key" :value="option.key">
+                      {{ option.label }}
+                    </option>
+                  </optgroup>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div v-if="selectedFocus" class="profile-focus__body">
+            <div class="profile-focus__summary">
+              <span class="profile-focus__label">{{ selectedFocus.label }}</span>
+              <span class="profile-focus__meta">{{ selectedFocus.meta }}</span>
+            </div>
+            <div v-if="selectedFocus.total" class="profile-focus__stats">
+              <strong>{{ selectedFocus.completed }}</strong> / {{ selectedFocus.total }}
+              <span>{{ selectedFocus.unit }}</span>
+              <span class="profile-focus__percent">{{ selectedFocus.percent }}%</span>
+            </div>
+            <div
+              v-if="selectedFocus.total"
+              class="profile-focus__progress"
+              role="progressbar"
+              :aria-valuenow="selectedFocus.percent"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              :aria-label="`${selectedFocus.label} progress`"
+            >
+              <span :style="{ width: selectedFocus.percent + '%' }"></span>
+            </div>
+            <button type="button" class="btn btn--primary btn--sm profile-focus__action" @click="openFocus">
+              {{ selectedFocus.action }}
+            </button>
+          </div>
+        </section>
+
         <div
-          v-if="gpsQuestions.length && !gpsBannerDismissed"
+          v-if="gpsQuestions.length && !gpsBannerDismissed && hasCareerEvidence"
           class="gps-card"
           role="region"
           aria-label="Optional Cyber GPS questions"
@@ -277,28 +345,30 @@
           </div>
         </div>
 
-        <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
-          <button
-            v-for="tab in profileTabs"
-            :key="tab.key"
-            :id="`profile-tab-${tab.key}`"
-            type="button"
-            role="tab"
-            class="profile-tab"
-            :class="{ 'profile-tab--active': activeTab === tab.key }"
-            :aria-selected="activeTab === tab.key"
-            :aria-controls="`profile-panel-${tab.key}`"
-            :tabindex="activeTab === tab.key ? 0 : -1"
-            @click="setTab(tab.key)"
-            @keydown.left.prevent="moveTab(-1)"
-            @keydown.right.prevent="moveTab(1)"
-            @keydown.home.prevent="moveTabTo('overview')"
-            @keydown.end.prevent="moveTabTo(lastProfileTab)"
-          >
-            {{ tab.label }}
-            <span v-if="tab.count !== undefined" class="profile-tab__count">{{ tab.count }}</span>
-          </button>
-        </nav>
+        <div class="profile-tabs-wrap">
+          <nav class="profile-tabs" role="tablist" aria-label="Profile sections">
+            <button
+              v-for="tab in profileTabs"
+              :key="tab.key"
+              :id="`profile-tab-${tab.key}`"
+              type="button"
+              role="tab"
+              class="profile-tab"
+              :class="{ 'profile-tab--active': activeTab === tab.key }"
+              :aria-selected="activeTab === tab.key"
+              :aria-controls="`profile-panel-${tab.key}`"
+              :tabindex="activeTab === tab.key ? 0 : -1"
+              @click="setTab(tab.key)"
+              @keydown.left.prevent="moveTab(-1)"
+              @keydown.right.prevent="moveTab(1)"
+              @keydown.home.prevent="moveTabTo('overview')"
+              @keydown.end.prevent="moveTabTo(lastProfileTab)"
+            >
+              {{ tab.label }}
+              <span v-if="tab.count !== undefined" class="profile-tab__count">{{ tab.count }}</span>
+            </button>
+          </nav>
+        </div>
 
         <p v-if="summaryLoading && !summary" class="help-text">Loading your profile signals...</p>
         <p v-if="summaryError" class="error-message">{{ summaryError }}</p>
@@ -328,7 +398,10 @@
                 <h3>{{ topAffinity?.label || 'Start your first exercise' }}</h3>
                 <p>{{ topAffinity?.next_step || 'Complete one exercise to give your skill tree its first branch.' }}</p>
                 <p v-if="topAffinity?.evidence" class="overview-card__evidence">{{ topAffinity.evidence }}</p>
-                <button type="button" class="btn btn--secondary btn--sm" @click="setTab('skill-tree')">
+                <router-link v-if="!topAffinity" to="/exercises" class="btn btn--secondary btn--sm">
+                  Find your first exercise
+                </router-link>
+                <button v-else type="button" class="btn btn--secondary btn--sm" @click="setTab('skill-tree')">
                   Open skill tree
                 </button>
               </article>
@@ -350,20 +423,21 @@
                 <p class="overview-card__eyebrow">Cyber DNA</p>
                 <div class="overview-dna">
                   <strong>{{ summary?.skill_dna?.class?.class_name || 'Recruit' }}</strong>
-                  <span>{{ summary?.skill_dna?.class?.label || 'No class yet' }}</span>
+                  <span v-if="hasCareerEvidence">{{ summary?.skill_dna?.class?.label || 'No class yet' }}</span>
+                  <span v-else>Your first class</span>
                 </div>
-                <p v-if="summary?.skill_dna">
-                  {{ summary.skill_dna.overall }} / 100 overall, {{ summary.skill_dna.tier }}.
+                <p v-if="hasCareerEvidence">
+                  {{ summary.skill_dna.overall }} / 99 overall, {{ summary.skill_dna.tier }}.
                   Your highest branch is {{ summary.skill_dna.class.label }}.
                 </p>
-                <p v-else>Complete exercises to build your six branches.</p>
+                <p v-else>Complete one exercise to start your Cyber DNA.</p>
               </article>
 
               <article class="overview-card">
                 <p class="overview-card__eyebrow">Recent recognition</p>
                 <div v-if="recentAchievements.length" class="overview-badges">
                   <span v-for="badge in recentAchievements" :key="badge.type + badge.label" class="overview-badge">
-                    <span aria-hidden="true">{{ badge.icon }}</span>{{ badge.label }}
+                    <AchievementIcon :type="badge.type" :icon="badge.type.startsWith('custom_') ? badge.icon : ''" />{{ badge.label }}
                   </span>
                 </div>
                 <p v-else>No badges yet. Your first completed exercise starts the collection.</p>
@@ -390,7 +464,7 @@
                   <ul v-if="haveDimensions.length">
                     <li v-for="dim in haveDimensions" :key="`have-${dim.key}`">
                       <span>{{ dim.label }}</span>
-                      <strong>{{ dim.score }}/100</strong>
+                      <strong>{{ dim.score }}/99</strong>
                     </li>
                   </ul>
                   <p v-else class="help-text">
@@ -402,7 +476,7 @@
                   <ul v-if="buildDimensions.length">
                     <li v-for="dim in buildDimensions" :key="`build-${dim.key}`">
                       <span>{{ dim.label }}</span>
-                      <strong>{{ dim.score }}/100</strong>
+                      <strong>{{ dim.score }}/99</strong>
                     </li>
                   </ul>
                   <p v-else class="help-text">
@@ -482,12 +556,23 @@
           role="tabpanel"
           aria-labelledby="profile-tab-portfolio"
         >
+          <div v-if="careerRoles.length" class="career-target">
+            <label>
+              <span>Target role</span>
+              <select v-model="selectedRole" @change="setGoal(selectedRole)">
+                <option v-for="role in careerRoles" :key="role.id" :value="role.id">
+                  {{ role.title }}{{ role.flagship ? ' · flagship' : '' }}
+                </option>
+              </select>
+            </label>
+            <p>This role drives the readiness score, skills gap, and aligned evidence below.</p>
+          </div>
           <p class="help-text portfolio-intro">
             Your evidence, readiness, and career direction. Open a section when
             you need the detail; nothing here changes your progress.
           </p>
           <ExpandableSection title="Career readiness" meta="What your evidence supports today">
-            <RoleReadinessPanel />
+            <RoleReadinessPanel hide-select />
           </ExpandableSection>
           <ExpandableSection title="Portfolio evidence" meta="Work you can show an employer">
             <PortfolioPanel />
@@ -558,7 +643,9 @@
                   class="course-achievement-badge"
                   :title="badge.description || badge.label"
                 >
-                  <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+                  <span class="course-achievement-badge__icon" aria-hidden="true">
+                    <AchievementIcon :type="badge.type" :icon="badge.type.startsWith('custom_') ? badge.icon : ''" />
+                  </span>
                   <span>{{ badge.label }}</span>
                   <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
                 </span>
@@ -587,7 +674,9 @@
                   class="course-achievement-badge"
                   :title="badge.description || badge.label"
                 >
-                  <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+                  <span class="course-achievement-badge__icon" aria-hidden="true">
+                    <AchievementIcon :type="badge.type" :icon="badge.type.startsWith('custom_') ? badge.icon : ''" />
+                  </span>
                   <span>{{ badge.label }}</span>
                   <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
                 </span>
@@ -650,9 +739,9 @@
               No certificates yet. Finish every exercise in a level and the certificate appears here.
             </p>
 
-            <div v-if="tracks.length" class="profile-tracks">
+            <div v-if="visibleTracks.length" class="profile-tracks">
               <h3 class="subsection-title">Track progress</h3>
-              <div v-for="track in tracks" :key="track.track_slug" class="track-progress">
+              <div v-for="track in visibleTracks" :key="track.track_slug" class="track-progress">
                 <div class="track-progress__head">
                   <span class="track-progress__name">{{ track.track_name }}</span>
                   <span class="track-progress__count">{{ track.completed_labs }} / {{ track.total_labs }} exercises</span>
@@ -693,6 +782,17 @@
                 </div>
               </div>
             </div>
+            <p v-else class="empty-transcript">
+              No track progress yet. Start with an exercise and your first track will appear here.
+            </p>
+            <button
+              v-if="hiddenTrackCount || showAllTracks"
+              type="button"
+              class="btn btn--secondary btn--sm track-progress-toggle"
+              @click="showAllTracks = !showAllTracks"
+            >
+              {{ showAllTracks ? 'Show progress only' : `Show all ${tracks.length} tracks` }}
+            </button>
 
             <details v-if="completions.length" class="completion-details">
               <summary>Completion details ({{ completions.length }})</summary>
@@ -947,6 +1047,20 @@
                 <div class="enrolled-course-card__info">
                   <span class="enrolled-course-card__name">{{ c.name }}</span>
                   <span class="enrolled-course-card__code">{{ c.code }} &mdash; {{ c.semester }}</span>
+                  <span v-if="c.lab_count" class="enrolled-course-card__progress">
+                    {{ c.completed_labs }}/{{ c.lab_count }} exercises · {{ c.progress_percent }}%
+                  </span>
+                  <span
+                    v-if="c.lab_count"
+                    class="enrolled-course-card__bar"
+                    role="progressbar"
+                    :aria-valuenow="c.progress_percent"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    :aria-label="`${c.name} progress`"
+                  >
+                    <span :style="{ width: c.progress_percent + '%' }"></span>
+                  </span>
                 </div>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="enrolled-course-card__arrow">
                   <polyline points="9 18 15 12 9 6"/>
@@ -1172,16 +1286,20 @@ import CareerGps from '../components/CareerGps.vue'
 import CompetencyTaxonomy from '../components/CompetencyTaxonomy.vue'
 import ExpandableSection from '../components/ExpandableSection.vue'
 import UserAvatar from '../components/UserAvatar.vue'
+import AchievementIcon from '../components/icons/AchievementIcon.vue'
 import CheckIcon from '../components/icons/CheckIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
 import XIcon from '../components/icons/XIcon.vue'
 import { getUserTimeZone } from '../utils/timezone'
+import { useCareerGoal } from '../composables/useCareerGoal'
+import { CERTIFICATION_PATHS } from '../data/certificationPaths'
 
 const route = useRoute()
 const router = useRouter()
 const { exerciseAuthoring, fetchModules } = useModules()
+const { selectedRole, setGoal } = useCareerGoal()
 const user = ref(null)
-const { vpnStatus, fetchVpnStatus, isVpnRegistered } = useVpnStatus()
+const { fetchVpnStatus, isVpnRegistered } = useVpnStatus()
 
 const mfa = reactive({
   loading: false,
@@ -1202,7 +1320,10 @@ const loading = ref(true)
 const summary = ref(null)
 const BASE_PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
 const ALL_PROFILE_TABS = ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
-const hasCareerAtlas = computed(() => !!summary.value?.skill_dna?.career_atlas)
+const hasCareerEvidence = computed(() => Number(summary.value?.skill_dna?.overall || 0) > 0)
+const hasCareerAtlas = computed(
+  () => hasCareerEvidence.value && !!summary.value?.skill_dna?.career_atlas
+)
 const profileTabKeys = computed(() =>
   hasCareerAtlas.value
     ? ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
@@ -1504,6 +1625,12 @@ const progressMessage = computed(() => {
   return 'Your first exercise is waiting when you are ready.'
 })
 const tracks = computed(() => summary.value?.tracks || [])
+const showAllTracks = ref(false)
+const visibleTracks = computed(() => {
+  if (showAllTracks.value) return tracks.value
+  return tracks.value.filter((track) => (track.completed_labs || 0) > 0)
+})
+const hiddenTrackCount = computed(() => tracks.value.length - visibleTracks.value.length)
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
 const courseAchievements = computed(() => summary.value?.course_achievements || [])
@@ -1543,6 +1670,7 @@ const advancedCompletions = computed(() =>
   ).length
 )
 const topAffinity = computed(() => {
+  if (!hasCareerEvidence.value) return null
   const affinities = summary.value?.skill_dna?.affinities || []
   return affinities.find((item) => item.recommended) || affinities[0] || null
 })
@@ -1958,6 +2086,242 @@ const fetchEnrolledCourses = async () => {
   }
 }
 
+// --- Focus selector: course, track, certification, or career goal ---
+const careerRoles = ref([])
+const careerRolesLoaded = ref(false)
+const focusKey = ref('range')
+
+async function fetchCareerRoles() {
+  if (careerRolesLoaded.value) return
+  try {
+    const { data } = await axios.get('/profile/roles')
+    careerRoles.value = data.roles || []
+  } catch {
+    careerRoles.value = []
+  } finally {
+    careerRolesLoaded.value = true
+  }
+}
+
+watch(hasCareerEvidence, (value) => {
+  if (value) fetchCareerRoles()
+}, { immediate: true })
+
+const focusPercent = (completed, total) => (
+  total ? Math.round((completed / total) * 100) : 0
+)
+
+const focusOptions = computed(() => {
+  const options = []
+  const totals = summary.value?.totals
+  if (totals) {
+    options.push({
+      key: 'range',
+      group: 'Range',
+      label: 'Whole range',
+      completed: totals.labs_completed,
+      total: totals.labs_total,
+      percent: totals.progress_percent,
+      unit: 'exercises',
+      meta: 'All visible exercises in your catalogue',
+      href: '/exercises',
+      action: 'Browse exercises',
+    })
+  }
+
+  for (const course of enrolledCourses.value) {
+    if (!course.lab_count) continue
+    options.push({
+      key: `course:${course.id}`,
+      group: 'Courses',
+      label: `${course.code} · ${course.name}`,
+      completed: course.completed_labs || 0,
+      total: course.lab_count,
+      percent: course.progress_percent || 0,
+      unit: 'assigned exercises',
+      meta: `${course.completed_labs || 0}/${course.lab_count} assigned exercises · ${course.semester}`,
+      href: `/courses/${course.id}`,
+      action: 'Open course',
+    })
+  }
+
+  for (const track of tracks.value) {
+    if (!track.total_labs) continue
+    options.push({
+      key: `track:${track.track_slug}`,
+      group: 'Tracks',
+      label: track.track_name,
+      completed: track.completed_labs || 0,
+      total: track.total_labs,
+      percent: track.progress_percent || 0,
+      unit: 'exercises',
+      meta: `${track.completed_labs || 0}/${track.total_labs} exercises · ${track.level_count || track.levels?.length || 0} levels`,
+      href: `/exercises/${track.track_slug}`,
+      action: 'Open track',
+    })
+  }
+
+  // Certifications aligned to tracks the learner has already started.
+  const certifications = new Map()
+  for (const track of tracks.value) {
+    if (!track.completed_labs) continue
+    const path = CERTIFICATION_PATHS[track.track_slug]
+    if (!path) continue
+    const names = new Set([
+      ...(path.entry || []),
+      ...(path.core || []),
+      ...(path.advanced || []),
+    ])
+    for (const name of names) {
+      const entry = certifications.get(name) || {
+        name,
+        tracks: [],
+        completed: 0,
+        total: 0,
+      }
+      entry.tracks.push(track)
+      entry.completed += track.completed_labs || 0
+      entry.total += track.total_labs || 0
+      certifications.set(name, entry)
+    }
+  }
+  for (const entry of [...certifications.values()].sort(
+    (a, b) => (b.completed - a.completed) || a.name.localeCompare(b.name)
+  )) {
+    if (!entry.total) continue
+    options.push({
+      key: `cert:${entry.name}`,
+      group: 'Certifications',
+      label: entry.name,
+      completed: entry.completed,
+      total: entry.total,
+      percent: focusPercent(entry.completed, entry.total),
+      unit: 'aligned exercises',
+      meta: `${entry.completed}/${entry.total} exercises across ${entry.tracks.length} aligned track${entry.tracks.length === 1 ? '' : 's'}`,
+      href: `/exercises/${entry.tracks[0].track_slug}`,
+      action: 'Open aligned track',
+    })
+  }
+
+  for (const role of careerRoles.value) {
+    options.push({
+      key: `career:${role.id}`,
+      group: 'Career goals',
+      label: role.title,
+      completed: null,
+      total: null,
+      percent: null,
+      unit: '',
+      meta: 'Target role for readiness and portfolio evidence',
+      tab: 'portfolio',
+      action: 'Open career readiness',
+    })
+  }
+
+  return options
+})
+
+const selectedFocus = computed(
+  () => focusOptions.value.find((option) => option.key === focusKey.value) || null
+)
+
+const focusQuery = ref('')
+
+const focusGroups = computed(() => {
+  const query = focusQuery.value.trim().toLowerCase()
+  const groups = []
+  const index = new Map()
+  for (const option of focusOptions.value) {
+    if (query && !`${option.group} ${option.label}`.toLowerCase().includes(query)) continue
+    if (!index.has(option.group)) {
+      const group = { label: option.group, options: [] }
+      index.set(option.group, group)
+      groups.push(group)
+    }
+    index.get(option.group).options.push(option)
+  }
+  if (selectedFocus.value && !groups.some((group) => group.options.some((option) => option.key === selectedFocus.value.key))) {
+    groups.unshift({ label: 'Current selection', options: [selectedFocus.value] })
+  }
+  return groups
+})
+
+const hasProfileFocus = computed(
+  () => Number(summary.value?.totals?.labs_completed || 0) > 0 && focusOptions.value.length > 1
+)
+
+let focusDefaultApplied = false
+watch(focusOptions, (options) => {
+  const preferred = options.find((option) => option.key.startsWith('course:'))
+    || options.find((option) => option.key.startsWith('track:') && option.completed > 0)
+    || options[0]
+  if (!focusDefaultApplied) {
+    if (preferred && preferred.key !== 'range') {
+      focusKey.value = preferred.key
+      focusDefaultApplied = true
+    }
+    return
+  }
+  if (options.some((option) => option.key === focusKey.value)) return
+  focusKey.value = preferred?.key || 'range'
+}, { immediate: true })
+
+watch(focusKey, (key) => {
+  if (key.startsWith('career:')) setGoal(key.slice('career:'.length))
+})
+
+const progressLenses = computed(() => {
+  if (!hasCareerEvidence.value) return []
+  const lenses = []
+
+  const course = enrolledCourses.value.find((item) => item.lab_count)
+  if (course) {
+    lenses.push({
+      key: 'course',
+      label: course.code,
+      text: `${course.completed_labs || 0}/${course.lab_count}`,
+      percent: course.progress_percent || 0,
+    })
+  }
+
+  const selectedTrack = selectedFocus.value?.key?.startsWith('track:')
+    ? tracks.value.find((item) => `track:${item.track_slug}` === selectedFocus.value.key)
+    : null
+  const track = selectedTrack
+    || tracks.value
+      .filter((item) => (item.completed_labs || 0) > 0)
+      .sort((a, b) => (
+        (b.completed_labs || 0) - (a.completed_labs || 0)
+        || (b.progress_percent || 0) - (a.progress_percent || 0)
+      ))[0]
+  if (track) {
+    lenses.push({
+      key: 'track',
+      label: track.track_name,
+      text: `${track.completed_labs}/${track.total_labs}`,
+      percent: track.progress_percent,
+    })
+  }
+
+  lenses.push({
+    key: 'certificates',
+    label: 'Certificates',
+    text: String(summary.value?.totals?.certificates || 0),
+    percent: null,
+  })
+  return lenses
+})
+
+function openFocus() {
+  const focus = selectedFocus.value
+  if (!focus) return
+  if (focus.tab) {
+    setTab(focus.tab)
+    return
+  }
+  if (focus.href) router.push(focus.href)
+}
+
 const joinCourse = async () => {
   if (!inviteCode.value.trim() || joiningCourse.value) return
   joiningCourse.value = true
@@ -2253,6 +2617,221 @@ watch(() => route.path, (newPath) => {
   gap: 2rem;
 }
 
+/* Focus selector */
+.profile-focus {
+  display: grid;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-secondary);
+}
+
+.profile-focus__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.profile-focus__eyebrow {
+  margin: 0 0 0.15rem;
+  color: var(--accent-text);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.profile-focus__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.profile-focus__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: min(100%, 320px);
+}
+
+.profile-focus__search {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.profile-focus__search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.profile-focus__select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.profile-focus__select select {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.profile-focus__select select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.profile-focus__body {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+}
+
+.profile-focus__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.profile-focus__label {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.profile-focus__meta {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.profile-focus__stats {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.profile-focus__stats strong {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.profile-focus__percent {
+  margin-left: 0.25rem;
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.profile-focus__progress {
+  flex: 1 1 100%;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.profile-focus__progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--purple));
+  transition: width 0.3s ease;
+}
+
+.profile-focus__action {
+  flex: 0 0 auto;
+}
+
+/* Career target */
+.career-target {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+
+.career-target label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.career-target select {
+  min-height: 2.25rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.career-target select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.career-target p {
+  flex: 1 1 240px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+/* Profile tabs: keep the scroll cue visible on narrow screens. */
+.profile-tabs-wrap {
+  position: relative;
+}
+
+@media (max-width: 700px) {
+  .profile-tabs-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 1px;
+    width: 2rem;
+    background: linear-gradient(to right, transparent, var(--bg-primary));
+    pointer-events: none;
+  }
+}
+
 .profile-tabs {
   display: flex;
   gap: 0.25rem;
@@ -2434,6 +3013,10 @@ watch(() => route.path, (newPath) => {
   font-size: 0.72rem;
 }
 
+.overview-badge .achievement-icon {
+  color: var(--accent-text);
+}
+
 .profile-section {
   background: var(--bg-secondary);
   border-radius: 12px;
@@ -2482,50 +3065,50 @@ watch(() => route.path, (newPath) => {
 }
 
 .status-badge--approved {
-  background: rgba(34, 197, 94, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .status-badge--pending {
-  background: rgba(245, 158, 11, 0.15);
+  background: var(--warning-bg);
   color: var(--warning);
-  border: 1px solid var(--warning);
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
 }
 
 .status-badge--active {
-  background: rgba(34, 197, 94, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .status-badge--inactive {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--danger-bg);
   color: var(--danger);
-  border: 1px solid var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
 }
 
 .status-badge--vpn {
-  background: rgba(34, 197, 94, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .status-badge--no-vpn {
-  background: rgba(100, 116, 139, 0.15);
+  background: var(--bg-tertiary);
   color: var(--text-muted);
-  border: 1px solid var(--text-muted);
+  border: 1px solid var(--border-color);
 }
 
 .status-badge--admin {
-  background: rgba(139, 92, 246, 0.15);
-  color: #a78bfa;
-  border: 1px solid #8b5cf6;
+  background: color-mix(in srgb, var(--purple) 15%, transparent);
+  color: var(--badge-purple);
+  border: 1px solid var(--purple);
 }
 
 .status-badge--instructor {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  background: var(--accent-bg);
+  color: var(--accent-text);
   border: 1px solid var(--accent);
 }
 
@@ -2574,7 +3157,7 @@ watch(() => route.path, (newPath) => {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 .input-wrapper {
@@ -2599,7 +3182,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .form-input.error {
-  border-color: #dc2626;
+  border-color: var(--danger);
 }
 
 .form-input::placeholder {
@@ -2638,26 +3221,26 @@ watch(() => route.path, (newPath) => {
 
 .error-text {
   font-size: 0.8125rem;
-  color: #dc2626;
+  color: var(--danger);
   margin-top: 0.25rem;
 }
 
 .error-message {
   font-size: 0.875rem;
-  color: #dc2626;
+  color: var(--danger);
   padding: 0.75rem;
-  background: rgba(220, 38, 38, 0.1);
+  background: var(--danger-bg);
   border-radius: 6px;
-  border: 1px solid #dc2626;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
 }
 
 .success-message {
   font-size: 0.875rem;
-  color: #10b981;
+  color: var(--success);
   padding: 0.75rem;
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--success-bg);
   border-radius: 6px;
-  border: 1px solid #10b981;
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .btn {
@@ -2677,7 +3260,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: #2563eb;
+  filter: brightness(1.08);
 }
 
 .btn--primary:disabled {
@@ -2857,6 +3440,34 @@ watch(() => route.path, (newPath) => {
 .enrolled-course-card__code {
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.enrolled-course-card__progress {
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.enrolled-course-card__bar {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: 4px;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.enrolled-course-card__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.track-progress-toggle {
+  margin-top: 0.75rem;
 }
 
 .enrolled-course-card__arrow {
@@ -3395,9 +4006,60 @@ watch(() => route.path, (newPath) => {
   font-size: 0.72rem;
 }
 
+.profile-hero__lenses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.profile-lens {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.profile-lens__label {
+  max-width: 13rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-lens strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.profile-lens__pct {
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
 .profile-hero__joined {
   color: var(--text-muted);
   font-size: 0.78rem;
+}
+
+.profile-hero__name-prompt {
+  align-self: flex-start;
+  margin-top: 0.45rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
 }
 
 .profile-hero__title {
@@ -4304,6 +4966,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .course-achievement-badge__icon {
+  color: var(--accent-text);
   font-size: 0.85rem;
   line-height: 1;
 }
@@ -4413,6 +5076,31 @@ watch(() => route.path, (newPath) => {
 
   .overview-stat-row {
     grid-template-columns: 1fr;
+  }
+
+  .profile-focus__select {
+    min-width: 100%;
+  }
+
+  .profile-focus__controls {
+    min-width: 100%;
+  }
+
+  .profile-focus__body {
+    align-items: flex-start;
+  }
+
+  .profile-focus__action {
+    width: 100%;
+  }
+
+  .profile-lens__label {
+    max-width: 9rem;
+  }
+
+  .career-target label,
+  .career-target select {
+    width: 100%;
   }
 }
 

@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "2.7.0",
-  "release_date": "2026-11-11",
+  "generated_for_release": "4",
+  "release_date": "2026-11-12",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "2.7.0",
+    "version": "4",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.11",
@@ -173,6 +173,18 @@
         "scope": "backend runtime"
       },
       {
+        "name": "ldap3",
+        "version": "2.9.1",
+        "licence": "LGPL-3.0-only",
+        "scope": "backend runtime"
+      },
+      {
+        "name": "python3-saml",
+        "version": "1.16.0",
+        "licence": "MIT",
+        "scope": "backend runtime"
+      },
+      {
         "name": "qrcode",
         "version": "8.2",
         "licence": "BSD",
@@ -270,6 +282,24 @@
         "name": "valkey/valkey:9.1.3-alpine",
         "version": "",
         "licence": "BSD-3-Clause plus Alpine packages",
+        "scope": "container image"
+      },
+      {
+        "name": "ghcr.io/dexidp/dex:v2.42.0",
+        "version": "",
+        "licence": "Apache-2.0",
+        "scope": "container image"
+      },
+      {
+        "name": "osixia/openldap:1.5.0",
+        "version": "",
+        "licence": "MIT plus OpenLDAP Public License 2.8",
+        "scope": "container image"
+      },
+      {
+        "name": "ocr-lab/topology-node:latest",
+        "version": "",
+        "licence": "Alpine package licences, OpenSSH BSD, nftables GPL-2.0",
         "scope": "container image"
       },
       {
@@ -492,6 +522,10 @@
       "file": "Apache-2.0.txt"
     },
     {
+      "label": "BSD-3-Clause",
+      "file": "BSD-3-Clause.txt"
+    },
+    {
       "label": "certifi-MPL-2.0",
       "file": "certifi-MPL-2.0.txt"
     },
@@ -524,8 +558,16 @@
       "file": "lucide-ISC.txt"
     },
     {
+      "label": "MIT",
+      "file": "MIT.txt"
+    },
+    {
       "label": "novnc-MPL-2.0",
       "file": "novnc-MPL-2.0.txt"
+    },
+    {
+      "label": "OpenLDAP-2.8",
+      "file": "OpenLDAP-2.8.txt"
     },
     {
       "label": "pathspec-MPL-2.0",
@@ -548,14 +590,20 @@
     {
       "name": "backend.cdx.json",
       "label": "Backend CycloneDX SBOM",
-      "bytes": 144972,
-      "sha256": "cd18d224de293c5bda5b992bdd3ec1410a93bbe146d619b13ba2660b63b0cb0c"
+      "bytes": 17913,
+      "sha256": "bd73a4f0d916dfacc054dfd2c4f8d3e41734801d9c153919f862be98b8f486e7"
     },
     {
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
-      "bytes": 184266,
-      "sha256": "140a9980a2830f3170bd035d3577bea86af2840399c868becdb236adb56389fb"
+      "bytes": 250183,
+      "sha256": "18df4fd79b28984b8123ecda446cfdffc10f12d99c51ff0f0140a42e20d837da"
+    },
+    {
+      "name": "topology-node.cdx.json",
+      "label": "Topology node image CycloneDX SBOM",
+      "bytes": 91063,
+      "sha256": "6f986540382f9b198f02e1ac6e193075ceaaa96318b6019a5fe198b734908ffb"
     }
   ]
 }

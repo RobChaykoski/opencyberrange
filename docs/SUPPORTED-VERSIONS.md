@@ -4,26 +4,25 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-11**. Current **platform release: 2.7.0** for this
-tree. **Community / Academic**, **Professional**, and **Enterprise** are edition
-profiles on that release, not separate platform version lines. **Community /
-Academic 1.1.3** remains a supported maintenance line for existing single-host
-installations. See [Editions](EDITIONS.md),
-[Release tags](RELEASES.md), and
+Last reviewed: **2026-11-12**. Current **platform release: 4**. **Community /
+Academic**, **Professional**, and **Enterprise** are edition profiles on that
+release, not separate platform version lines. **Community / Academic 1.1.3**
+remains a supported maintenance line for existing single-host installations. See
+[Editions](EDITIONS.md), [Release tags](RELEASES.md), and
 [ADR 0004](decisions/0004-single-platform-release-version.md).
 
 The separate HA control-plane repository has its own version and is described by
-compatibility with platform 2.7.0. Enterprise remains a preview profile until
-HA, SSO, multi-tenancy, LMS, and compliance reporting are shipped and verified.
+compatibility with platform Release 4. Enterprise ships OIDC, SAML, and LDAP
+single sign-on in Release 4. Multi-tenancy, LTI, and the per-student
+accommodation engine are Release 5.
 
-Host baseline: **Ubuntu 24.04 LTS is certified; 2.7.0 inherits the 2.4.1
-certification completed on 2026-11-08.** See [OS-SUPPORT.md](OS-SUPPORT.md) and
-[V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
+Host baseline: **Ubuntu 24.04 LTS is certified.** See [OS-SUPPORT.md](OS-SUPPORT.md)
+and [V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
 compatibility path for existing 1.1.x deployments.
 
 Test candidates are **not supported** until they pass their promotion gates:
 Ubuntu 26.04 LTS and Valkey 9.1.3. Production remains Ubuntu 24.04 LTS and
-Redis 7.2. See the
+Valkey 9.1.3 for the rate-limit store. See the
 [Ubuntu 26.04 Valkey vs Redis test plan](UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
 
 Dependency audit on **2026-11-08**: `npm audit` reported **0 vulnerabilities**
@@ -31,7 +30,10 @@ and `pip-audit -r platform/backend/requirements.txt` reported **no known
 vulnerabilities**. Safe patch updates were applied: FastAPI 0.162.2,
 SQLAlchemy 2.1.8, Pydantic 2.14.3, and psycopg 3.3.8. The frontend majors were
 then upgraded: Vue Router 5.4.0, ESLint 10.14.0, `@eslint/js` 10.0.1,
-`eslint-plugin-vue` 10.12.0, and `vue-eslint-parser` 10.4.2.
+`eslint-plugin-vue` 10.12.0, and `vue-eslint-parser` 10.4.2. Release 4 adds
+`ldap3==2.9.1` and `python3-saml==1.16.0`. The optional SSO test stack adds
+Dex v2.42.0 and osixia/openldap 1.5.0; both are profile-gated and are not
+started unless `--profile sso` is requested.
 
 ## Policy
 

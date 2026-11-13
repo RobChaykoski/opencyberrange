@@ -38,6 +38,7 @@ from app.models import (
     ExerciseReaction,
     ExerciseTemplate,
     ExerciseTestResult,
+    ExternalIdentity,
     FlagAttempt,
     InstructorApiKey,
     InviteCode,
@@ -46,6 +47,8 @@ from app.models import (
     LabSession,
     QuizAttempt,
     RevokedToken,
+    SsoLoginTicket,
+    SsoSession,
     StudioPendingReview,
     SurveyConsentEvent,
     TemplateInstance,
@@ -392,6 +395,12 @@ def erase_user(
         (LabCompletion, LabCompletion.user_id),
         (QuizAttempt, QuizAttempt.user_id),
         (LabSession, LabSession.user_id),
+        # SSO rows hold an external subject, email, and an encrypted ID token.
+        # The FKs cascade, but deleting explicitly keeps the erasure ledger
+        # accurate and survives an install whose constraints predate the model.
+        (ExternalIdentity, ExternalIdentity.user_id),
+        (SsoLoginTicket, SsoLoginTicket.user_id),
+        (SsoSession, SsoSession.user_id),
         (CompetitionParticipant, CompetitionParticipant.user_id),
         (RevokedToken, RevokedToken.user_id),
         (SurveyConsentEvent, SurveyConsentEvent.user_id),

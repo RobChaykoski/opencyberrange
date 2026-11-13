@@ -15,21 +15,27 @@ flowchart TB
     end
 
     subgraph Edge["Frontend container: ocr-frontend"]
-        N["nginx<br/>TLS, SPA, /api proxy, /wiki"]
+        N["nginx<br/>TLS, SPA, /api proxy, /wiki, /idp"]
         WV["wiki_data volume<br/>read-only"]
     end
 
     subgraph App["Backend container: ocr-backend"]
-        API["FastAPI<br/>auth, RBAC, REST API"]
+        API["FastAPI<br/>auth, RBAC, SSO, REST API"]
         SCHED["Scheduler<br/>session expiry, cleanup"]
         ORCH["Lab orchestrator<br/>Docker Compose"]
         SURVEY["Survey consent<br/>versioned statement"]
         WIKI["Wiki publishing<br/>deploy-time builder"]
     end
 
+    subgraph IdP["Institution identity plane (optional)"]
+        OIDC["OIDC / SAML IdP<br/>institution or CAF"]
+        LDAP["LDAP / Active Directory"]
+        DEX["Dex<br/>local OIDC test IdP"]
+    end
+
     subgraph Data["Persistent data"]
-        PG[("PostgreSQL<br/>users, labs, progress,<br/>consent history")]
-        RD[("Redis<br/>rate-limit counters")]
+        PG[("PostgreSQL<br/>users, labs, progress,<br/>consent, SSO state")]
+        RD[("Valkey<br/>rate-limit counters")]
         WB[("workbook_data<br/>Exercise Studio state")]
         WIKIV[("wiki_data<br/>MkDocs output")]
     end
@@ -38,6 +44,8 @@ flowchart TB
         DOCKER["Docker Engine"]
         NET["Per-session bridge<br/>10.100.x.0/24"]
         LABS["Lab containers<br/>targets and evidence"]
+        TOPO["Topology links<br/>10.128.x /29"]
+        TNODE["Topology nodes<br/>router / host / service"]
         LBOX["Exercise RangeBox<br/>attached to lab network"]
         RBNET["Standalone bridge<br/>10.50.x.0/24"]
         RB["Standalone RangeBox<br/>RangeBox tab"]
@@ -72,6 +80,9 @@ flowchart TB
     DOCKER --> RBNET
     NET --> LABS
     NET --> LBOX
+    NET --> TNODE
+    DOCKER --> TOPO
+    TOPO --> TNODE
     RBNET --> RB
     ORCH -->|firewall + peer rules| PM
     PM --> WG
@@ -119,7 +130,7 @@ flowchart TB
 
 | Boundary | Control |
 |---|---|
-| Internet → frontend | TLS, nginx, API rate limits, CSP/security headers |
+| Internet → frontend | TLS, nginx, API rate limits, CSP/security headers; `/docs`, `/redoc`, and `/openapi.json` return 404 at nginx |
 | Frontend → backend | Private Compose network; backend bound to localhost on the host |
 | Backend → Docker | Docker socket; treat the backend host and `docker` group as privileged |
 | Application → database | Parameterized ORM/SQL, least-privilege app role, backup and restore checks, append-only change ledger, signed table checksums; manual SQL is recorded as unattributed |
@@ -128,6 +139,7 @@ flowchart TB
 | RangeBox → lab | Exercise-box only; attached to that session's bridge and removed on teardown |
 | Lab → lab | Separate per-session bridge networks; no cross-session routing |
 | Lab → management LAN | Firewall drops lab and RangeBox subnets from external interfaces |
+| Topology node → lab | Extra `/29` links inside the protected `10.128.0.0/9` range; no host network, bind mounts, or Docker socket; only `NET_ADMIN`/`NET_RAW` |
 | Wiki build → runtime | Builder writes to a volume; frontend mounts it read-only |
 | Survey consent | Explicit opt-in, versioned statement, append-only consent history |
 
@@ -173,7 +185,7 @@ Discoverability. Each factor is scored **1–5**; the score is their mean.
 
 | ID | Boundary | STRIDE | Threat | DREAD (D/R/E/A/Di) | Rating | Remediation and residual risk |
 |---|---|---|---|---|---|---|
-| T01 | Internet → frontend | Spoofing | A stolen JWT is replayed as a learner or instructor | 3/3/2/3/2 = 2.6 | Medium | Signed JWT with a 24-hour default expiry, revocation, login lockout, rate limits, MFA for privileged accounts, and CSP to reduce token theft. Residual: a stolen token is usable until expiry or revocation; there is no device binding. |
+| T01 | Internet → frontend | Spoofing | A stolen JWT is replayed as a learner or instructor | 3/3/2/3/2 = 2.6 | Medium | Signed JWT with a 24-hour default expiry, revocation, login lockout, rate limits, MFA for privileged accounts, and CSP to reduce token theft. Residual: a stolen token is usable until expiry or revocation; there is no device binding. Planned: HttpOnly session cookie and CSRF protection (see `SECURITY-REVIEW-2026-11.md`). |
 | T02 | Internet → frontend | Tampering | A client changes a user, course, lab, attempt, or certificate identifier to act on another object | 4/4/2/4/3 = 3.4 | Medium | Server-side RBAC and ownership checks on every object; identifiers are resolved server-side; Pydantic request schemas; cross-user tests. Residual: a missed route is a defect, so authorization coverage is reviewed per change. |
 | T03 | Internet → frontend | Repudiation | A learner or instructor denies submitting feedback, exporting data, or changing a grade | 2/3/2/2/3 = 2.4 | Low | Activity and audit events record actor, action, target, and time; exports record a reason; consent history is append-only; timestamps are UTC. Residual: retention depends on the operator's backup and log policy. |
 | T04 | Internet → frontend | Information disclosure | An IDOR or over-broad analytics query exposes another learner's data | 4/3/2/4/3 = 3.2 | Medium | Enrollment and instructor-ownership scoping before aggregation; aggregate-only course metrics; public certificate verification returns minimal fields; `Cache-Control: no-store` on sensitive exports; anonymous comments. Residual: small cohorts can still be inferable, so sample sizes are shown and minimum-sample labels are used. |

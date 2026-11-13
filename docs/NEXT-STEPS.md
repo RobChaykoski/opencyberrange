@@ -1,18 +1,19 @@
-# Next steps after 2.7.0
+# Next steps after Release 3
 
-Status: **in progress**; live manual screenshots refreshed on 12 November 2026.
-Everything below is queued unless marked complete.
+Status: **in progress**; Release 3 documentation and deployment completed on
+12 November 2026. Everything below is queued unless marked complete.
 
 ## Baseline
 
-- `v2.7.0` is live on development (`172.16.16.44`) and production
+- Release 3 is live on development (`172.16.16.44`) and production
   (`172.16.16.41` / `https://ctfd.swocts.com`), both healthy.
-- Tag `v2.7.0` -> `ce7c25bb`; release evidence is in `599d78c1`.
+- Tag `v3` is a signed annotated tag. The release key fingerprint is
+  `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`.
 - CI, Quality checks, CodeQL, and Trivy are green on the public repository.
 - Actions stay disabled on the private `opencyberrange-v2` mirror.
-- Production: 34 GB free disk, computed RangeBox maximum 20, live cap 15.
+- Production: 33 GB free disk, computed RangeBox maximum 20, live cap 15.
 - Development: 189 GB free disk, same computed maximum and live cap.
-- The Beginner quiz banks are live; the other 11 tracks have no quiz banks.
+- The Beginner quiz banks are live; the other tracks have no quiz banks.
 
 ## Queue
 
@@ -273,7 +274,10 @@ See [SECURITY-REVIEW-2026-11.md](SECURITY-REVIEW-2026-11.md). The
 high-confidence secret scan found no production credentials; the only matches
 are synthetic lab SSH keys. Remaining work:
 
-1. Move the SPA token to an HttpOnly cookie with a refresh flow.
+1. Move the SPA token to an HttpOnly, Secure, SameSite session cookie with a
+   short-lived access/refresh flow and CSRF protection; keep the wiki gate
+   server-side. The migration and acceptance criteria are in
+   [SECURITY-REVIEW-2026-11.md](SECURITY-REVIEW-2026-11.md#session-cookie-roadmap-planned).
 2. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
 3. Pin the frontend Dockerfile base image and remove the duplicate healthcheck.
 4. Switch RangeBox to supervisord and pin its toolchain.

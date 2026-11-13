@@ -76,6 +76,17 @@ the interface distinguishes **Suppressed** from **No evidence yet**. Reports and
 exports also exclude suppressed courses from aggregate totals. The default is
 5 learners; set it to 0 only in a trusted test environment.
 
+### Instructor and administrator accounts
+
+**Maximum Privileged Accounts** controls how many instructor and administrator
+accounts the install may have. The edition default is **1**. Raise it to add
+more instructors or admins, or set it to **0** for unlimited. The cap applies
+when you create a user or change a user's role to instructor or admin.
+
+Use **Admin -> Users -> Create User** to add an account and choose the role.
+Use **Edit** on an existing user to promote a student to instructor or admin.
+The change takes effect on the account's next request.
+
 **Timed Exercise Accommodation** adds extra time to lab sessions and session
 extensions. `100%` is the normal length; `150%` gives 50% extra time; the
 maximum is `300%`. Record the accommodation decision outside the platform and

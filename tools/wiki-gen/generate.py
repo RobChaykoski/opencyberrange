@@ -77,10 +77,15 @@ NGINX_END = "    # === END generated wiki blocks ==="
 # every generated page; a nonce/hash scheme would need the site builder to stamp each
 # page, which the current pipeline does not do.
 CSP = (
-    "default-src 'self'; script-src 'self' 'unsafe-inline' "
-    "https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; "
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; "
-    "frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
+    # The frontend entrypoint replaces this placeholder with the configured app
+    # origin (or nothing for same-origin installs). X-Frame-Options is omitted
+    # from wiki responses because CSP frame-ancestors is authoritative and the
+    # header would block a legitimate cross-origin wiki split.
+    "frame-ancestors 'self' __WIKI_FRAME_ANCESTORS__; "
+    "base-uri 'self'; form-action 'self';"
 )
 
 
@@ -182,7 +187,6 @@ def build_nginx_namespace_block(namespace, auth, slugs):
         add_header Cache-Control $wiki_cache_control always;
 
         add_header Content-Security-Policy "{CSP}" always;
-        add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
     }}
@@ -220,7 +224,6 @@ def build_nginx_index_block():
 
         add_header Cache-Control $wiki_cache_control always;
         add_header Content-Security-Policy "{CSP}" always;
-        add_header X-Frame-Options "SAMEORIGIN" always;
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai" always;
     }}

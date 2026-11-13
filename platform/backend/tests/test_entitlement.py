@@ -71,3 +71,36 @@ def test_result_is_cached_per_process(fresh_entitlement, monkeypatch, tmp_path):
     second = fresh_entitlement.get_entitlement()
     assert first is second
     assert second["edition"] == "enterprise"
+
+
+def test_privileged_cap_setting_overrides_edition(monkeypatch):
+    from unittest.mock import MagicMock
+
+    from fastapi import HTTPException
+
+    from app.routers.admin import _enforce_privileged_cap
+
+    db = MagicMock()
+    db.query.return_value.filter.return_value.count.return_value = 3
+
+    monkeypatch.setattr(
+        "app.services.settings_service.get_setting_fresh",
+        lambda db, key: "5",
+    )
+    _enforce_privileged_cap(db)
+
+    monkeypatch.setattr(
+        "app.services.settings_service.get_setting_fresh",
+        lambda db, key: "0",
+    )
+    _enforce_privileged_cap(db)
+
+    monkeypatch.setattr(
+        "app.services.settings_service.get_setting_fresh",
+        lambda db, key: "2",
+    )
+    with pytest.raises(HTTPException) as excinfo:
+        _enforce_privileged_cap(db)
+    assert excinfo.value.status_code == 403
+    assert "max_privileged_accounts" in excinfo.value.detail
+

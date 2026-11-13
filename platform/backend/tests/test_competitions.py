@@ -17,6 +17,22 @@ pytestmark = pytest.mark.db
 TEST_PASSWORD = "Correct#Horse7Battery"
 
 
+def _image_signature(data_url: str):
+    """Decode a PNG data URL to (size, pixel bytes).
+
+    Image uploads are re-encoded as PNG to strip metadata, so byte equality
+    with the original upload is not the contract.
+    """
+    import base64
+    import io
+
+    from PIL import Image
+
+    raw = base64.b64decode(data_url.split(",", 1)[1])
+    with Image.open(io.BytesIO(raw)) as image:
+        return image.size, image.convert("RGB").tobytes()
+
+
 @pytest.fixture()
 def instructor_auth(client, db_session):
     suffix = uuid.uuid4().hex[:8]
@@ -274,7 +290,8 @@ def test_competition_sponsors_are_created_and_replaced(
     assert [item["tier"] for item in sponsors] == ["gold", "bronze"]
     assert sponsors[0]["name"] == "Northstar Bank"
     assert sponsors[0]["website_url"] == "https://northstar.example"
-    assert sponsors[0]["logo_data"] == tiny_png
+    assert sponsors[0]["logo_data"].startswith("data:image/png;base64,")
+    assert _image_signature(sponsors[0]["logo_data"]) == _image_signature(tiny_png)
 
     replaced = client.patch(
         f"/api/competitions/{competition_id}",
@@ -332,7 +349,9 @@ def test_competition_logo_round_trip(client, test_lab, instructor_auth):
             f"/api/competitions/{competition_id}", headers=instructor_auth
         )
         assert detail.status_code == 200, detail.text
-        assert detail.json()["competition"]["logo_data"] == logo
+        stored = detail.json()["competition"]["logo_data"]
+        assert stored.startswith("data:image/png;base64,")
+        assert _image_signature(stored) == _image_signature(logo)
     finally:
         client.delete(
             f"/api/competitions/{competition_id}", headers=instructor_auth

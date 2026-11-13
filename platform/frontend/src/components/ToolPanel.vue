@@ -25,7 +25,7 @@
               {{ expanded ? 'Restore' : 'Expand' }}
             </button>
             <a
-              :href="activeTool.url"
+              :href="toolUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="btn btn--secondary btn--sm"
@@ -51,10 +51,10 @@
           <iframe
             v-show="!timedOut"
             ref="frame"
-            :src="activeTool.url"
+            :src="toolUrl"
             :title="activeTool.title"
             class="tool-panel__frame"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-downloads allow-modals"
+            :sandbox="toolSandbox"
             referrerpolicy="no-referrer"
             allow="clipboard-write"
             @load="onLoad"
@@ -73,7 +73,7 @@
               tab instead; the exercise stays open here.
             </p>
             <a
-              :href="activeTool.url"
+              :href="toolUrl"
               target="_blank"
               rel="noopener noreferrer"
               class="btn btn--primary btn--sm"
@@ -93,10 +93,29 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useToolPanel } from '../composables/useToolPanel'
+import { safeHttpUrl } from '../utils/url'
 
 const { activeTool, isOpen, closeTool } = useToolPanel()
+
+const toolUrl = computed(() => safeHttpUrl(activeTool.value?.url))
+
+// A same-origin tool is a reviewed, pinned build (CyberChef). A future
+// cross-origin tool must not get allow-same-origin, which would cancel the
+// sandbox for the app origin.
+const toolSandbox = computed(() => {
+  const url = toolUrl.value
+  if (!url) return 'allow-scripts allow-forms'
+  try {
+    const sameOrigin = new URL(url, window.location.origin).origin === window.location.origin
+    return sameOrigin
+      ? 'allow-scripts allow-same-origin allow-forms allow-downloads allow-modals'
+      : 'allow-scripts allow-forms allow-downloads allow-modals'
+  } catch {
+    return 'allow-scripts allow-forms'
+  }
+})
 
 const frame = ref(null)
 const closeButton = ref(null)

@@ -24,6 +24,8 @@ from app.database import engine, Base
 from app import modules as module_registry
 module_registry.register_models()
 from app.routers import auth, labs, admin, curriculum, courses, competitions, dashboard, setup, curriculum_admin, instructor, quiz, profile, exercise_quiz
+from app.routers import identity as identity_router
+from app.routers import sso as sso_router
 from app.routers import analytics as analytics_router
 from app.routers import settings as settings_router
 from app.routers import modules as modules_router
@@ -417,7 +419,8 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added equipped_title column to users table")
 
-        # --- Achievement studio metadata (group, tier, difficulty, points) ---        if 'custom_achievements' in inspector.get_table_names():
+        # --- Achievement studio metadata (group, tier, difficulty, points) ---
+        if 'custom_achievements' in inspector.get_table_names():
             custom_columns = {
                 c['name'] for c in sa_inspect(engine).get_columns('custom_achievements')
             }
@@ -446,6 +449,16 @@ async def lifespan(app: FastAPI):
                 ))
                 conn.commit()
                 logger.info("Added experience_key column to competitions table")
+
+        # --- SSO-managed account flag (Enterprise 3.1) ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'password_login_disabled' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN password_login_disabled "
+                "BOOLEAN DEFAULT FALSE NOT NULL"
+            ))
+            conn.commit()
+            logger.info("Added password_login_disabled column to users table")
 
         # --- Lab visibility lifecycle: add 'visibility' and 'created_by' to labs ---
         # Re-read labs columns after potential earlier migrations
@@ -858,7 +871,7 @@ async def docs_access_control(request: Request, call_next):
         from app.services import settings_service
         db = SessionLocal()
         try:
-            enabled = settings_service.get_setting(db, "enable_api_docs", "false")
+            enabled = settings_service.get_setting_fresh(db, "enable_api_docs", "false")
         finally:
             db.close()
         if enabled.lower() not in ("true", "1", "yes"):
@@ -881,7 +894,7 @@ async def module_access_control(request: Request, call_next):
             from app.services import settings_service
             db = SessionLocal()
             try:
-                enabled = settings_service.get_setting(db, setting_key, "false")
+                enabled = settings_service.get_setting_fresh(db, setting_key, "false")
             finally:
                 db.close()
             if enabled.lower() not in ("true", "1", "yes"):
@@ -941,6 +954,8 @@ app.include_router(analytics_router.router, prefix="/api/analytics", tags=["Anal
 app.include_router(competitions.router, prefix="/api/competitions", tags=["Competitions"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
+app.include_router(identity_router.router, prefix="/api/identity", tags=["Identity Providers"])
+app.include_router(sso_router.router, prefix="/api/auth/sso", tags=["Single Sign-On"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 app.include_router(setup.router, prefix="/api/setup", tags=["Setup"])
 app.include_router(curriculum_admin.router, prefix="/api/admin/curriculum", tags=["Curriculum Admin"])

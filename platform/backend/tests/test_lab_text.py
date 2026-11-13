@@ -1,5 +1,4 @@
 """Tests for resolving lab-authored placeholders in student-facing text."""
-import pytest
 
 from app.services.lab_text import render_lab_text, target_address_map
 

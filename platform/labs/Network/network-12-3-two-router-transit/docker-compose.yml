@@ -1,0 +1,82 @@
+x-ocr-topology:
+  training_user: analyst
+  training_password: "Topology2026"
+  nodes:
+    h1:
+      service: h1
+      role: host
+    r1:
+      service: r1
+      role: router
+      routes:
+        - to: node:svc
+          via: r2
+    r2:
+      service: r2
+      role: router
+      routes:
+        - to: node:h1
+          via: r1
+    svc:
+      service: svc
+      role: service
+      flag: "OCR{tw0_r0ut3rs_0n3_p4th}"
+      http_port: 80
+  links:
+    - from: h1
+      to: r1
+    - from: r1
+      to: r2
+    - from: r2
+      to: svc
+
+services:
+  h1:
+    image: ocr-lab/topology-node:latest
+    hostname: h1
+    labels:
+      ip_offset: "21"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    cpus: 0.20
+    pids_limit: 96
+    restart: unless-stopped
+
+  r1:
+    image: ocr-lab/topology-node:latest
+    hostname: r1
+    labels:
+      ip_offset: "22"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 96
+    restart: unless-stopped
+
+  r2:
+    image: ocr-lab/topology-node:latest
+    hostname: r2
+    labels:
+      ip_offset: "23"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 96
+    restart: unless-stopped
+
+  svc:
+    image: ocr-lab/topology-node:latest
+    hostname: svc
+    labels:
+      ip_offset: "24"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    cpus: 0.20
+    pids_limit: 96
+    restart: unless-stopped
+    environment:
+      FLAG: "OCR{tw0_r0ut3rs_0n3_p4th}"

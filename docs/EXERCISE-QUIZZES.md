@@ -119,3 +119,16 @@ only when the exercise has no `quiz.yaml` of its own.
 | High School | MFA and the Lost Phone | CompTIA Security+ |
 | High School | Media Provenance | CompTIA CySA+ |
 | High School | Crypto Rug Pull | CompTIA Security+ |
+
+## Shared certification bank
+
+The shared bank at `platform/backend/app/data/certification-question-banks.yaml`
+carries **81 original items across 9 pathways**: Security+, CySA+ (CS0-004),
+PenTest+ (PT0-003), Network+, Linux+ (XK0-006), SC-900, ISC2 CC, OWASP Top 10,
+and OWASP LLM Top 10. Every pathway declares the career roles it supports, and
+every item names a career and a public reference.
+
+Use it as the fallback for an exercise without a lab-specific bank and as the
+source for the planned weekly challenge boards. See
+[Certification question-bank sources and career mapping](QUESTION-BANK-SOURCES.md)
+for the source/licence table and the review rules.

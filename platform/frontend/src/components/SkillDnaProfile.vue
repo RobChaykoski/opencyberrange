@@ -9,13 +9,45 @@
           not what you are capable of. Pick a title from your achievements and grow the rest.
         </p>
         <p class="dna-ceiling-note">{{ dna.ceiling_note }}</p>
+        <details class="dna-explainer">
+          <summary>How this is calculated</summary>
+          <p>
+            Each branch uses your completed labs, clean solves, course work, and
+            feedback. A branch tops out at 99 and decays on its own when you stop
+            practising it. The evidence count, recency, and 30-day trend are shown
+            under each branch.
+          </p>
+          <p>
+            Cyber DNA is private to you. It describes what you have practised; it is
+            not a grade, a ranking, or a prediction of ability.
+          </p>
+        </details>
       </div>
       <span class="dna-formula" :title="`Formula version ${dna.formula_version}`">
         v{{ dna.formula_version }}
       </span>
     </div>
 
-    <section class="dna-tree" aria-labelledby="dna-tree-title">
+    <section v-if="!hasEvidence" class="dna-empty" aria-labelledby="dna-empty-title">
+      <div class="dna-empty__mark" aria-hidden="true">01</div>
+      <div>
+        <h3 id="dna-empty-title">Your DNA starts with one completed exercise</h3>
+        <p>
+          Finish a lab and this page fills in: six branches, a class, and the
+          practice evidence behind them. Nothing here is public or ranked.
+        </p>
+        <ol class="dna-empty__steps">
+          <li><strong>Pick a track</strong> that interests you — no prior score is needed.</li>
+          <li><strong>Complete one lab</strong> and submit the flag.</li>
+          <li><strong>Come back here</strong> to see the branch you started.</li>
+        </ol>
+        <router-link to="/exercises" class="btn btn--primary btn--sm">
+          Find your first exercise
+        </router-link>
+      </div>
+    </section>
+
+    <section v-if="hasEvidence" class="dna-tree" aria-labelledby="dna-tree-title">
       <div class="dna-tree__head">
         <div>
           <p class="dna-section__eyebrow">Skill tree</p>
@@ -186,7 +218,7 @@
       </div>
     </section>
 
-    <div class="dna-layout">
+    <div v-if="hasEvidence" class="dna-layout">
       <aside class="dna-class-card" :class="`dna-class-card--${dna.class.key}`">
         <div class="dna-class-card__top">
           <span class="dna-class-card__sigil" aria-hidden="true">
@@ -256,6 +288,12 @@
             · training signal -{{ dim.recency.decay_percent }}%
           </p>
           <p class="dna-trait__next">{{ dim.next_step }}</p>
+          <router-link
+            :to="branchLink(dim)"
+            class="dna-trait__action"
+          >
+            Practice this branch <span aria-hidden="true">&rarr;</span>
+          </router-link>
         </article>
       </div>
     </div>
@@ -333,7 +371,7 @@
       </p>
     </div>
 
-    <details class="dna-titles" open>
+    <details class="dna-titles">
       <summary class="dna-titles__summary">
         <span>Title collection</span>
         <span class="dna-titles__count">
@@ -360,6 +398,16 @@
           <span v-if="option.value !== 'all'" class="rarity-dot" :class="`rarity-dot--${option.value}`"></span>
           {{ option.label }}
           <span class="dna-title-filter__count">{{ option.count }}</span>
+        </button>
+        <button
+          type="button"
+          class="dna-title-filter"
+          :class="{ 'dna-title-filter--active': unlockedOnly }"
+          :aria-pressed="unlockedOnly ? 'true' : 'false'"
+          @click="unlockedOnly = !unlockedOnly"
+        >
+          Unlocked only
+          <span class="dna-title-filter__count">{{ dna.titles.unlocked_count }}</span>
         </button>
       </div>
       <div class="dna-title-grid">
@@ -404,6 +452,9 @@
           </div>
         </article>
       </div>
+      <p v-if="!filteredTitles.length" class="dna-titles__empty">
+        No titles match this filter.
+      </p>
     </details>
 
     <section v-if="dna.quiz?.labs" class="dna-quiz" aria-labelledby="dna-quiz-title">
@@ -473,6 +524,30 @@ const TREE_RADIUS = 112
 const TREE_LABEL_RADIUS = 142
 
 const treeDimensions = computed(() => props.dna?.dimensions || [])
+
+const BRANCH_TRACKS = {
+  explorer: 'osint',
+  builder: 'web',
+  tester: 'web',
+  defender: 'network',
+  investigator: 'forensics',
+}
+
+const hasEvidence = computed(() => {
+  const dimensions = props.dna?.dimensions || []
+  return (
+    dimensions.some((dimension) => Number(dimension.evidence_count || 0) > 0) ||
+    Number(props.dna?.overall || 0) > 0
+  )
+})
+
+function branchLink(dimension) {
+  const trackSlug = BRANCH_TRACKS[dimension?.key]
+  return trackSlug
+    ? { name: 'TrackDetail', params: { trackSlug } }
+    : { name: 'Exercises' }
+}
+
 const treePointAtRadius = (index, radius) => {
   const count = treeDimensions.value.length || 6
   const angle = -Math.PI / 2 + index * ((2 * Math.PI) / count)
@@ -588,6 +663,7 @@ const rarityLabels = {
   legendary: 'Legendary',
 }
 const rarityFilter = ref('all')
+const unlockedOnly = ref(false)
 const rarityLabel = (rarity) => rarityLabels[rarity] || rarity
 const rarityOptions = computed(() => {
   const titles = props.dna?.titles?.titles || []
@@ -606,8 +682,12 @@ const titleProgress = computed(() => {
   return Math.round(((props.dna?.titles?.unlocked_count || 0) / total) * 100)
 })
 const filteredTitles = computed(() => {
-  if (rarityFilter.value === 'all') return sortedTitles.value
-  return sortedTitles.value.filter((title) => title.rarity === rarityFilter.value)
+  let titles = sortedTitles.value
+  if (unlockedOnly.value) {
+    titles = titles.filter((title) => title.unlocked)
+  }
+  if (rarityFilter.value === 'all') return titles
+  return titles.filter((title) => title.rarity === rarityFilter.value)
 })
 
 const AFFINITY_LEVEL_LABELS = {
@@ -1100,6 +1180,27 @@ const titleDescription = (title) => {
 .dna-trait__decay { color: var(--warning); font-weight: 600; }
 .dna-trait__next { color: var(--text-muted); }
 
+.dna-trait__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.55rem;
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dna-trait__action:hover {
+  text-decoration: underline;
+}
+
+.dna-trait__action:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .dna-affinities {
   margin-top: 1.5rem;
   padding-top: 1.25rem;
@@ -1300,6 +1401,13 @@ const titleDescription = (title) => {
   font-weight: 500;
 }
 
+.dna-titles__empty {
+  margin: 0;
+  padding: 0 1rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
 .dna-titles__intro {
   margin: 0 1rem 0.75rem;
   color: var(--text-muted);
@@ -1491,6 +1599,80 @@ const titleDescription = (title) => {
   color: var(--accent-text);
   font-size: 0.78rem;
   font-weight: 600;
+}
+
+.dna-explainer {
+  max-width: 58rem;
+  margin-top: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.dna-explainer summary {
+  cursor: pointer;
+  color: var(--accent-text);
+  font-weight: 600;
+  width: fit-content;
+}
+
+.dna-explainer summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.dna-explainer p {
+  margin: 0.4rem 0 0;
+}
+
+.dna-empty {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-top: 1.25rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.dna-empty__mark {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.dna-empty h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.dna-empty p {
+  margin: 0.35rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.dna-empty__steps {
+  margin: 0.6rem 0 0.75rem;
+  padding-left: 1.1rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.dna-empty__steps li + li {
+  margin-top: 0.25rem;
 }
 
 .dna-recency-note {

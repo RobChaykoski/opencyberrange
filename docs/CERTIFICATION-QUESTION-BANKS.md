@@ -34,7 +34,10 @@ before submission. The answer key is revealed only in the submitted attempt.
 
 - Items are **original** and written to published objectives. Do not paste
   copyrighted exam questions or braindumps.
-- Every item names the objective it tests.
+- Every item names the objective it tests and a career pathway.
+- Every pathway declares the career roles it supports.
+- The shared bank currently carries **81 items across 9 pathways**; source and
+  licence notes are in [QUESTION-BANK-SOURCES.md](QUESTION-BANK-SOURCES.md).
 - Every item has a public `https://` reference that is not the platform itself,
   a local host, a private address, or a placeholder domain.
 - Prefer vendor objectives, standards bodies (NIST, IETF, OWASP, MITRE), and

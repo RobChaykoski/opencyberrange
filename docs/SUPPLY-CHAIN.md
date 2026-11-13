@@ -12,10 +12,12 @@ is about to be built, tested, or deployed.
   `package-lock.json`, `versions.yaml`);
 - platform container and proxy inputs (Dockerfiles, Compose files, nginx
   configuration, entrypoint, SPA index);
+- the reviewed topology node build context (`platform/topology-node/`) and its
+  CycloneDX SBOM;
 - deployment and verification scripts;
-- the licence inventory and pinned container images. Redis is pinned to 7.2
-  because 7.4 and later are RSALv2/SSPLv1; see
-  [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md);
+- the licence inventory and pinned container images. Valkey 9.1.3 is the
+  BSD-3-Clause rate-limit store; Redis 7.4 and later are RSALv2/SSPLv1 and are
+  not used. See [`../THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md);
 - GitHub Actions workflows that build, scan, or smoke-test the release;
 - every lab directory, including `lab.yaml`, `README.md`, `quiz.yaml`, and build
   contexts.
@@ -67,10 +69,17 @@ Release 2.5.4 rotates the release key:
 - Signature: `supply-chain.lock.json.asc`
 - Private key: held by the release owner outside the repository
 
-Release 2.6.0 and 2.7.0 use the same release key and sign the regenerated lock.
-The `v2.7.0` Git tag is annotated but **unsigned**; sign it on the release
-workstation if a signed tag is required. The lock signature is independent of
-the tag signature.
+Release 3 rotates the release key again:
+
+- Key: `SWOCTS Cyber Range Release (release@swocts.com)`
+- Fingerprint: `8E81 B5F3 FDC5 F5A6 2B0C 2587 91FD 6FBC 4ADA FDA2`
+- Public key: [`release-signing-key.asc`](release-signing-key.asc)
+- Signature: `supply-chain.lock.json.asc`
+- Private key: held locally by the release owner, passphrase-protected
+
+Releases 2.6.0 and 2.7.0 used the previous key. The `v2.7.0` Git tag is
+annotated but **unsigned**. Release 3 uses the new key and the `v3` tag is
+signed. The lock signature is independent of the tag signature.
 
 Import the public key before verifying:
 
