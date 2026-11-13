@@ -21,6 +21,19 @@ Release line: **Release 4** (Community / Academic, Professional, Enterprise prof
 - Signed supply-chain lock, refreshed runtime integrity manifest, and a signed
   `v4` tag.
 
+## Production hotfix `v4.0.1`
+
+The first Release 4 production build called the authenticated wiki-cookie
+endpoint from the login page. Its 401 triggered the global redirect interceptor,
+which reloaded `/login` and repeated the probe. The hotfix:
+
+- skips the wiki-cookie probe when there is no token;
+- excludes the probe and `/login` from the 401 redirect interceptor;
+- refreshes the wiki cookie only when the app has a token.
+
+Verified in production: `/login` renders with no console or network errors, and
+a real sign-in reaches `/dashboard` without a reload loop.
+
 ## Deployments
 
 | Environment | Status |
