@@ -7,18 +7,18 @@ links.
 | Track | Labs with workbook |
 |---|---:|
 | AI | 3 |
-| Forensics | 2 |
+| Forensics | 4 |
 | High School | 18 |
 | Identity | 3 |
 | Linux | 30 |
-| Malware | 8 |
-| Network | 17 |
+| Malware | 10 |
+| Network | 21 |
 | OSINT | 8 |
 | OT | 2 |
 | Software Security | 2 |
 | Web | 16 |
-| Windows | 51 |
-| **Total** | **160** |
+| Windows | 53 |
+| **Total** | **170** |
 
 ## Labs
 
@@ -27,6 +27,8 @@ links.
 | AI | Indirect Prompt Injection (`ai-1-3-indirect-prompt-injection`) | `wiki/range/ai/CH_AI01_AI_Foundations/03_Indirect_Prompt_Injection/` |
 | AI | Jailbreak Policy Bypass (`ai-1-2-jailbreak-policy-bypass`) | `wiki/range/ai/CH_AI01_AI_Foundations/02_Jailbreak_Policy_Bypass/` |
 | AI | Prompt Injection Basics (`ai-1-1-prompt-injection-basics`) | `wiki/range/ai/CH_AI01_AI_Foundations/01_Prompt_Injection_Basics/` |
+| Forensics | Topology Forensics - Guided Path Reconstruction (`forensics-2-2-topology-forensics-guided`) | `wiki/range/forensics/CH_FOR03_Topology_Forensics/01_Guided_Path/` |
+| Forensics | Topology Forensics - Independent Path Reconstruction (`forensics-2-3-topology-forensics-independent`) | `wiki/range/forensics/CH_FOR03_Topology_Forensics/02_Independent_Path/` |
 | Forensics | VoIP Call Reconstruction (`forensics-2-1-voip-call-reconstruction`) | `wiki/range/forensics/CH_FOR02_Network_Forensics/01_VoIP_Call_Reconstruction/` |
 | Forensics | Windows Memory Analysis with Volatility (`forensics-1-1-windows-memory-volatility`) | `wiki/range/forensics/CH_FOR01_Memory_Forensics/01_Windows_Memory_Volatility/` |
 | High School | Capstone: The Forwarded Message (`high-school-9-8-forwarded-message`) | `wiki/range/high-school/CH_HS09_Grade_9_RangeBox_Basics/08_Forwarded_Message/` |
@@ -88,23 +90,29 @@ links.
 | Malware | Halcyon Retail Group - Invoice Attachment Triage (`malware-1-6-email-attachment-analysis`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/06_Email_Attachment_Analysis/` |
 | Malware | Halcyon Retail Group - Portable Executable Triage (`malware-2-1-pe-header-analysis`) | `wiki/range/malware/CH_MAL02_Executable_Analysis/01_PE_Header_Analysis/` |
 | Malware | Northwind Health - Suspicious Attachment Triage (`malware-1-1-eicar-triage`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/01_EICAR_Triage/` |
+| Malware | YARA Fundamentals - Write a Rule, Find the Artifact (`malware-2-2-yara-fundamentals`) | `wiki/range/malware/CH_MAL03_Detection_And_Triage/01_YARA_Fundamentals/` |
+| Malware | YARA Incident Triage - Match the Artifact, Correlate the Log (`malware-2-3-yara-incident-triage`) | `wiki/range/malware/CH_MAL03_Detection_And_Triage/02_YARA_Incident_Triage/` |
 | Network | Avalon Biotech - Suspicious Traffic Analysis (`network-1-1-packet-capture-analysis`) | `wiki/range/netfor/CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis/` |
 | Network | Can You Reach It? Ping Fundamentals (`network-0-1-ping-basics`) | `wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/` |
 | Network | DNS Data Exfiltration Analysis (`network-2-4-dns-exfiltration`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/04_DNS_Data_Exfiltration/` |
 | Network | DNS Query Anomaly Detection (`network-1-3-dns-anomaly-detection`) | `wiki/range/netfor/CH_NET01_Log_Analysis/03_DNS_Anomaly_Detection/` |
+| Network | Device Topology - Routed Path to a Protected Service (`network-12-2-device-topology-engine`) | `wiki/range/netfor/CH_NET12_Device_Topology/00_Introduction/` |
 | Network | FTP Credential Extraction (`network-2-1-ftp-credential-extraction`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/01_FTP_Credential_Extraction/` |
 | Network | Failed Login Attempt Analysis (`network-1-4-failed-login-analysis`) | `wiki/range/netfor/CH_NET01_Log_Analysis/04_Failed_Login_Analysis/` |
 | Network | Firewall Fundamentals - Controlling Inbound Traffic (`network-12-1-firewall-fundamentals`) | `wiki/range/netfor/CH_NETSY12_Firewalls/01_Firewall_Fundamentals/` |
 | Network | Firewall Policy Hardening - Defense in Depth (`network-12-2-firewall-policy-hardening`) | `wiki/range/netfor/CH_NETSY12_Firewalls/02_Firewall_Policy_Hardening/` |
+| Network | Firewall the Service Path - Policy on a Routed Segment (`network-12-4-firewall-service-path`) | `wiki/range/netfor/CH_NET12_Device_Topology/03_Firewall_Service_Path/` |
 | Network | HTTP Session Cookie Extraction (`network-2-3-http-session-hijacking`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/03_HTTP_Session_Hijacking/` |
 | Network | HTTP Traffic Analysis (`network-1-2-http-traffic-analysis`) | `wiki/range/netfor/CH_NET01_Log_Analysis/02_HTTP_Traffic_Analysis/` |
 | Network | Horizon Aerospace - Log Correlation Investigation (`network-1-2-log-correlation`) | `wiki/range/netfor/CH_NET01B_Traffic_And_Logs/02_Log_Correlation/` |
+| Network | Multi-Service Router - Map and Reach Two Services (`network-12-5-multi-service-router`) | `wiki/range/netfor/CH_NET12_Device_Topology/04_Multi_Service_Router/` |
 | Network | Multi-Stage Attack Chain Analysis (`network-2-5-attack-chain-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/05_Attack_Chain_Analysis/` |
 | Network | Name or Network? Troubleshooting a Broken Portal (`network-0-3-name-or-network`) | `wiki/range/netfor/CH_N0_Network_Foundations/03_Name_or_Network/` |
 | Network | Northwind Freight - WebSocket C2 Tunnel (`network-2-6-wstunnel-c2-tunneling`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/06_WSTunnel_C2_Tunneling/` |
 | Network | SMTP Email Content Analysis (`network-2-2-smtp-email-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/02_SMTP_Email_Analysis/` |
 | Network | Suspicious Port Scan Detection (`network-1-1-port-scan-detection`) | `wiki/range/netfor/CH_NET01_Log_Analysis/01_Port_Scan_Detection/` |
 | Network | The Internet's Phone Book: DNS Records (`network-0-2-dns-basics`) | `wiki/range/netfor/CH_N0_Network_Foundations/02_DNS_Basics/` |
+| Network | Two-Router Transit - Static Routes Across a Transit Link (`network-12-3-two-router-transit`) | `wiki/range/netfor/CH_NET12_Device_Topology/02_Two_Router_Transit/` |
 | OSINT | Badge Photo Intelligence (`osint-1-2-image-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/02_Badge_Photo_Intelligence/` |
 | OSINT | EXIF Metadata Investigation (`osint-1-3-exif-metadata`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/03_EXIF_Metadata/` |
 | OSINT | The Developer's Trail (`osint-2-1-source-code-intelligence`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/04_The_Developers_Trail/` |
@@ -133,12 +141,14 @@ links.
 | Web | Technology Identification (`web-1-2-technology-identification`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/04_Technology_Fingerprinting/` |
 | Web | TrueNorth Hosting - Filtered Injection (`web-2-5-filtered-injection`) | `wiki/range/webpt/CH_WEB02B_API_And_Injection/04_Filtered_Injection/` |
 | Web | Vertex Healthcare - SQL Injection to Shell (`web-3-2-sql-injection-to-shell`) | `wiki/range/webpt/CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell/` |
+| Windows | Active Directory Fundamentals - Read the Directory (`windows-2-9-ad-fundamentals-basics`) | `wiki/range/winpt/CH_WIN10_AD_Authentication/01_AD_Fundamentals/` |
 | Windows | Basic Windows Port Scan (`windows-1-1-basic-port-scan`) | `wiki/range/winpt/CH01_Enumeration/01_Basic_Port_Scan/` |
 | Windows | CME Credential Reuse Automation (`windows-8-5-cme-credential-reuse-automation`) | `wiki/range/winpt/CH08_Credential_Reuse/05_CME_Credential_Reuse_Automation/` |
 | Windows | Complete Windows Penetration Test (`windows-9-3-complete-windows-penetration-test`) | `wiki/range/winpt/CH09_Assessment/03_Complete_Windows_Penetration_Test/` |
 | Windows | Comprehensive Windows Enumeration (`windows-1-5-comprehensive-windows-enumeration`) | `wiki/range/winpt/CH01_Enumeration/05_Comprehensive_Enumeration/` |
 | Windows | Credential Discovery and Reuse Chain (`windows-8-4-credential-discovery-and-reuse-chain`) | `wiki/range/winpt/CH08_Credential_Reuse/04_Credential_Discovery_and_Reuse_Chain/` |
 | Windows | Cross-Service Credential Reuse (`windows-8-2-cross-service-credential-reuse`) | `wiki/range/winpt/CH08_Credential_Reuse/02_Cross_Service_Credential_Reuse/` |
+| Windows | From Directory to Share - Reuse a Service Credential (`windows-2-10-ad-to-smb-scenario`) | `wiki/range/winpt/CH_WIN10_AD_Authentication/02_AD_to_SMB/` |
 | Windows | LDAP Anonymous Bind Test (`windows-7-2-ldap-anonymous-bind-test`) | `wiki/range/winpt/CH07_LDAP_Enumeration/02_LDAP_Anonymous_Bind_Test/` |
 | Windows | LDAP Base DN Enumeration (`windows-7-3-ldap-base-dn-enumeration`) | `wiki/range/winpt/CH07_LDAP_Enumeration/03_LDAP_Base_DN_Enumeration/` |
 | Windows | LDAP Comprehensive Enumeration (`windows-7-6-ldap-comprehensive-enumeration`) | `wiki/range/winpt/CH07_LDAP_Enumeration/06_LDAP_Comprehensive_Enumeration/` |
