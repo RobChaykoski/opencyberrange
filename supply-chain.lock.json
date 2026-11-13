@@ -40,7 +40,7 @@
       "sha256": "28aa8ebf0a0e20a234fa66b166631f35d434ea666bc61eaa6caf67610c7d20b2"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "0a9714f3bfef43f6db4f2926c3d20bce21a0defcfbcd958338b1c114a118b490"
+      "sha256": "1ac176d4da84b7c31facf036ffa55cb0afd6ab89f604e2dafc56d48757c86c10"
     },
     "platform/backend/app/version.py": {
       "sha256": "d28df52054f1f978f8140929961568ff52a4abd8cbf5e8194ba37d4219944056"
@@ -136,7 +136,7 @@
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
     },
     "scripts/validate-lab.py": {
-      "sha256": "eefecab160802c73aca7ebe8b561b7d08f1c7a062fbea559a6450c5cbd15a09a"
+      "sha256": "9ebf9bd3462e4bec7bbc2c7bcffa28a574355dafbd6012ad039d7c831d03b9ab"
     },
     "scripts/verify-lab-builds.sh": {
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
@@ -604,6 +604,18 @@
         "evidence"
       ]
     },
+    "malware-2-2-yara-fundamentals": {
+      "content_hash": "8588dc31732e75dfe4230488ed1a09b9e8b03799009185e6e418f938242e083c",
+      "services": [
+        "target"
+      ]
+    },
+    "malware-2-3-yara-incident-triage": {
+      "content_hash": "462d5fb4687cd6983e8e4de1976cc073b95b18652b326acb69ed51bc75949339",
+      "services": [
+        "target"
+      ]
+    },
     "network-0-1-ping-basics": {
       "content_hash": "47da487d6b5fd2e9b0489ac634bb66c02a66ad5331c28475dde792b00b402484",
       "services": [
@@ -955,6 +967,13 @@
         "target"
       ]
     },
+    "windows-2-10-ad-to-smb-scenario": {
+      "content_hash": "0febfc631f82051075dcb1f0e06a097a744578da469e27c3fa96e73bf4fa600f",
+      "services": [
+        "files",
+        "ldap"
+      ]
+    },
     "windows-2-2-smb-share-listing": {
       "content_hash": "13bfec8de4308a933977232c22f9bfcb1dec09b44770ace08f3460b829cfaba9",
       "services": [
@@ -995,6 +1014,12 @@
       "content_hash": "0cbc096ff5843610f0df77d2f5023d3bbb388bba2aaff1214d21d53fd4af20ae",
       "services": [
         "target"
+      ]
+    },
+    "windows-2-9-ad-fundamentals-basics": {
+      "content_hash": "0eab6ae3539dc4a805fedac66f3180217e454030abf6c0d62da7b1fa6441c2b7",
+      "services": [
+        "ldap"
       ]
     },
     "windows-3-1-smb-manual-credential-test": {

@@ -35,10 +35,10 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 |---|---|
 | Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **534 passed, 0 failed** |
 | Backend suite without a database | **317 passed, 217 skipped** |
-| Lab validator (`validate-lab.py --all`) | **175 labs, 0 errors, 0 warnings** |
+| Lab validator (`validate-lab.py --all`) | **179 labs, 0 errors, 0 warnings** |
 | Topology engine unit tests | **22 passed** |
 
-| Relative links in README, docs, Manual-Lite, Workbook | **488 files, all resolve** |
+| Relative links in README, docs, Manual-Lite, Workbook | **495 files, all resolve** |
 | Frontend build | **Passed** |
 | Frontend lint | **0 errors** (existing warnings only) |
 | Licence guard (`check-licences.py`) | **OK** |
@@ -76,7 +76,7 @@ Status: **deployed to development `.44`; production unchanged.** Platform
   `rangebox_enabled=true` and reached `running`.
 - **VPN:** `/api/labs/vpn-config` returned `200` for both a routed lab and the
   RangeBox lab.
-- **Inventory:** 175 labs validate; the topology node image has a committed
+- **Inventory:** 179 labs validate; the topology node image has a committed
   CycloneDX SBOM and its build context is in the signed supply-chain lock.
 
 ### Known gaps
@@ -807,6 +807,8 @@ CI runs the same static checks on every push:
   [RangeBox capacity test](RANGEBOX-CAPACITY.md) on each host class.
 - Production `192.168.120.41` was upgraded to `2.4.1`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
+
+
 
 
 

@@ -61,6 +61,8 @@ the privacy, accessibility, and API-exposure corrections.
   image-only topology support in the static validator.
 - Added a guided and an independent Forensics variant on the same engine, with a
   decoy service in the independent version, so learners can choose their pace.
+- Added YARA fundamentals and a YARA + incident-log triage scenario, and a
+  Windows AD fundamentals lab plus an AD-to-SMB credential-reuse scenario.
 
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility

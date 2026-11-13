@@ -41,6 +41,9 @@ existing startup schema step.
 - **Topology Forensics.** A guided path-reconstruction lab and an independent
   variant with a decoy service let learners choose their pace. `scripts/create-lab.py`
   turns a node/link specification into a validated topology lab.
+- **Detection and Windows practice.** YARA fundamentals plus a YARA/incident-log
+  triage scenario, and AD fundamentals plus an AD-to-SMB credential-reuse
+  scenario covering the lowest-coverage cohort competencies.
 
 
 ## Release 4 limits
