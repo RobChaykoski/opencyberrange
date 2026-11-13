@@ -441,13 +441,15 @@ onMounted(async () => {
 .track-card__stats-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
   margin-bottom: 0.5rem;
 }
 
 .track-card__stat {
   font-size: 0.8125rem;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .track-card__level {
@@ -456,6 +458,7 @@ onMounted(async () => {
   background: var(--bg-tertiary);
   padding: 0.125rem 0.5rem;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .track-card__complete-badge {

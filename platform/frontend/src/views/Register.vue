@@ -1456,7 +1456,8 @@ const handleRegister = async () => {
 .preview-certificate__top {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  flex-wrap: wrap;
+  gap: 0.45rem;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid rgba(251, 191, 36, 0.18);
 }
@@ -1480,10 +1481,13 @@ const handleRegister = async () => {
 }
 
 .preview-certificate__label {
+  flex: 1 1 120px;
+  min-width: 0;
   color: #fbbf24;
   font-size: 0.5rem;
   font-weight: 800;
   letter-spacing: 0.1em;
+  line-height: 1.25;
   text-transform: uppercase;
 }
 
