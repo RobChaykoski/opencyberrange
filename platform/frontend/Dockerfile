@@ -82,7 +82,7 @@ COPY binaries/ /usr/share/nginx/downloads/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY nginx-ssl.conf /etc/nginx/conf.d/nginx-ssl.conf
 COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
-COPY lti-picker-headers.conf /etc/nginx/snippets/lti-picker-headers.conf
+COPY lti-embed-headers.conf /etc/nginx/snippets/lti-embed-headers.conf
 COPY cyberchef-headers.conf /etc/nginx/snippets/cyberchef-headers.conf
 
 # Entrypoint auto-detects TLS certs and swaps config

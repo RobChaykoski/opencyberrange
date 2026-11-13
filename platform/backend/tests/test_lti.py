@@ -222,6 +222,13 @@ def test_signed_messages_carry_the_jwks_kid():
     assert jwt.get_unverified_header(response)["kid"] == platform_kid(platform)
 
 
+def test_callback_url_can_target_the_lti_callback():
+    from app.services import sso_flow
+
+    url = sso_flow.callback_url({"ticket": "ticket-1"}, path="/lti/callback")
+    assert "/lti/callback?ticket=ticket-1" in url
+
+
 def test_login_redirect_escapes_values():
     platform = SimpleNamespace(
         auth_login_url="https://lms.example.edu/lti/login",

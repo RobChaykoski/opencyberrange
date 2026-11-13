@@ -767,4 +767,6 @@ def ticket_url(
     ticket = sso_flow.create_login_ticket(
         db, user=user, provider=provider, return_to=safe_return
     )
-    return sso_flow.callback_url({"ticket": ticket, "return_to": safe_return})
+    return sso_flow.callback_url(
+        {"ticket": ticket, "return_to": safe_return}, path="/lti/callback"
+    )

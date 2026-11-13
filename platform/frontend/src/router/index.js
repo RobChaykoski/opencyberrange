@@ -38,6 +38,14 @@ const routes = [
     meta: { guest: true, ssoCallback: true }
   },
   {
+    // LTI launches run inside the LMS frame, so this alias is served with the
+    // picker framing policy instead of the strict SPA policy.
+    path: '/lti/callback',
+    name: 'LtiCallback',
+    component: () => import('../views/SsoCallback.vue'),
+    meta: { guest: true, ssoCallback: true, bare: true }
+  },
+  {
     path: '/lti/deep-link',
     name: 'LtiDeepLink',
     component: () => import('../views/DeepLinkPicker.vue'),

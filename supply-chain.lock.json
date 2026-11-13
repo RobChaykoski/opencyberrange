@@ -58,7 +58,7 @@
       "sha256": "7a0c57ed2f3834f88d039195bf618298dab233305b0e290279559501d4283a3d"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "d6ba96a6c94eeed9e9dcb0ca33c31341cd5e5cc0cc00991e65376c7e46c1c89d"
+      "sha256": "6b4599e7b72806eb3c78c1a86554436a967f93b09901b60ee88e34e4644428f0"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -73,10 +73,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "0e0c741acf9ccaf5bf60d3f6f098676b190312f4a2f5f325f5784095fdad7dfb"
+      "sha256": "2d2ef2bbb3e4091c3971867098110fcbd3f10281884f47592ddc8cdcbb2ca6f5"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "c55dde68f9fe1dc88c041fc1778eb512a6a74364de53ebf3a402c594238c47f4"
+      "sha256": "835581dfda9b219eee0d2af251e3aae736416848395fe6e0979fbcbfd9a8f08c"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
