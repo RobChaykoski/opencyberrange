@@ -3880,8 +3880,8 @@ watch(timeRemaining, (val) => {
 .ics-tech-chip--collection .ics-tech-chip__tactic { color: #2dd4bf; }
 .ics-tech-chip--command-and-control { border-left-color: #f472b6; }
 .ics-tech-chip--command-and-control .ics-tech-chip__tactic { color: #f472b6; }
-.ics-tech-chip--inhibit-response-function { border-left-color: #fb923c; }
-.ics-tech-chip--inhibit-response-function .ics-tech-chip__tactic { color: #fb923c; }
+.ics-tech-chip--inhibit-response-function { border-left-color: var(--warning); }
+.ics-tech-chip--inhibit-response-function .ics-tech-chip__tactic { color: var(--warning); }
 .ics-tech-chip--impair-process-control { border-left-color: #f87171; }
 .ics-tech-chip--impair-process-control .ics-tech-chip__tactic { color: #f87171; }
 .ics-tech-chip--impact { border-left-color: #ef4444; }

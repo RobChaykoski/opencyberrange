@@ -1299,7 +1299,7 @@ const router = useRouter()
 const { exerciseAuthoring, fetchModules } = useModules()
 const { selectedRole, setGoal } = useCareerGoal()
 const user = ref(null)
-const { vpnStatus, fetchVpnStatus, isVpnRegistered } = useVpnStatus()
+const { fetchVpnStatus, isVpnRegistered } = useVpnStatus()
 
 const mfa = reactive({
   loading: false,

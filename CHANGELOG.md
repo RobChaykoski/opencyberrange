@@ -64,6 +64,21 @@ the privacy, accessibility, and API-exposure corrections.
 - Added YARA fundamentals and a YARA + incident-log triage scenario, and a
   Windows AD fundamentals lab plus an AD-to-SMB credential-reuse scenario.
 
+### Learner experience
+- Dashboard and profile now use the same visible-exercise denominator, and the
+  dashboard course matrix, course card, course detail, and profile all use the
+  same enrolment-aware completion rule. The course-card percentage rounds
+  half-up so it matches the course page.
+- New learners see an evidence-first profile: five tabs, no Cyber GPS or
+  Portfolio tab, no zero-evidence career affinity, and a progress-only Learning
+  record with **Show all tracks** for the rest.
+- Experienced learners can focus the profile on a course, track, certification,
+  or career goal, with course/track/certificate progress lenses and a searchable
+  focus list. The career target is promoted to the top of the Portfolio tab.
+- The title collection is collapsed by default with an **Unlocked only** filter,
+  and achievement badges use the shared SVG icon system instead of emoji.
+- Workbook actions and profile status badges use the shared colour tokens.
+
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility
   statement, automated-scoring statement, HECVAT answer pack, LTI design

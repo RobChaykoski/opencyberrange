@@ -41,6 +41,13 @@ existing startup schema step.
 - **Topology Forensics.** A guided path-reconstruction lab and an independent
   variant with a decoy service let learners choose their pace. `scripts/create-lab.py`
   turns a node/link specification into a validated topology lab.
+- **Learner experience.** Dashboard and profile progress now share one
+  denominator and one course-completion rule. New learners get an
+  evidence-first profile and a compact Learning record; experienced learners can
+  focus on a course, track, certification, or career goal, with course/track/
+  certificate progress lenses, a searchable focus list, and the career target at
+  the top of the Portfolio tab. Titles are collapsed by default and achievement
+  badges use the SVG icon system.
 - **Detection and Windows practice.** YARA fundamentals plus a YARA/incident-log
   triage scenario, and AD fundamentals plus an AD-to-SMB credential-reuse
   scenario covering the lowest-coverage cohort competencies.
