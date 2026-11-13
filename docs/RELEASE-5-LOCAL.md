@@ -84,15 +84,21 @@ The first Release 5 feature set is in the branch:
   creation, result retrieval, and the reviewed score form.
 - **AGS 2.0 score foundation** — private_key_jwt client assertion, LMS access
   token, line-item creation/reuse, reviewed score payload, result retrieval,
-  append-only `lti_scores` ledger, and admin link/score endpoints. The
-  instructor UI is next.
+  append-only `lti_scores` ledger, and admin link/score endpoints with a reviewed
+  score form in the LTI panel.
 - **NRPS 2.0 roster sync** — captures the membership endpoint, fetches with the
   NRPS scope, and persists only subject, role, status, and context per link on
   an explicit admin sync. Admin live/saved roster endpoints and panel actions
   included.
-- Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`, and
-  `0018_lti_roster` create the platform, login-state, link, score, NRPS fields,
-  and roster table idempotently.
+- **Deep Linking 2.0** — an `LtiDeepLinkingRequest` creates a single-use picker
+  session bound to the launching instructor. `/lti/deep-link` selects exercises
+  and posts back a signed `LtiDeepLinkingResponse` whose `ltiResourceLink`
+  content items carry `/api/lti/launch?lab=<slug>` plus the `lab_slug` custom
+  claim. Starting a deep-linked assignment resolves the lab and lands on the
+  exercise.
+- Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`,
+  `0018_lti_roster`, and `0019_lti_deep_link` create the platform, login-state,
+  link, score, NRPS fields, roster, and picker-session tables idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 
@@ -104,8 +110,12 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
   errors.
 - the AGS client obtained a mock access token with a signed client assertion and
   posted a reviewed score to a mock line item.
+- the Deep Linking flow returned a 302 to the picker with a single-use session,
+  listed 179 labs, and produced a signed `LtiDeepLinkingResponse` with a lab
+  launch URL and `lab_slug` custom claim.
 
-Still to do: Deep Linking 2.0 and a real Moodle/Canvas staging test.
+Still to do: a real Moodle/Canvas staging test (launch, AGS passback, NRPS, and
+Deep Linking).
 
 ## Verified on this stack
 

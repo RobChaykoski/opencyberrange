@@ -38,6 +38,12 @@ const routes = [
     meta: { guest: true, ssoCallback: true }
   },
   {
+    path: '/lti/deep-link',
+    name: 'LtiDeepLink',
+    component: () => import('../views/DeepLinkPicker.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/register',
     name: 'Register',
     component: () => import('../views/Register.vue'),

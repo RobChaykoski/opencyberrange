@@ -10,13 +10,15 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.auth import get_current_admin_user
+from app.auth import get_current_active_user, get_current_admin_user
 from app.config import settings
 from app.crypto import encrypt_secret
 from app.database import get_db
 from app.models import (
     ExternalIdentity,
     IdentityProvider,
+    Lab,
+    LtiDeepLinkSession,
     LtiLink,
     LtiPlatform,
     LtiRosterMember,
@@ -55,6 +57,10 @@ class LtiScoreRequest(BaseModel):
 class LtiLineItemRequest(BaseModel):
     label: str = Field(..., min_length=1, max_length=255)
     max_score: float = Field(..., gt=0)
+
+
+class LtiDeepLinkResponseRequest(BaseModel):
+    lab_slugs: list[str] = Field(..., min_length=1, max_length=20)
 
 
 class LtiPlatformUpdate(BaseModel):
@@ -508,6 +514,73 @@ async def lti_login(
     return RedirectResponse(url, status_code=302)
 
 
+@router.get("/deep-link/{session_token}")
+async def deep_link_info(
+    session_token: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    session = (
+        db.query(LtiDeepLinkSession)
+        .filter(
+            LtiDeepLinkSession.token == session_token,
+            LtiDeepLinkSession.user_id == current_user.id,
+            LtiDeepLinkSession.consumed_at.is_(None),
+            LtiDeepLinkSession.expires_at >= lti_service.utcnow(),
+        )
+        .first()
+    )
+    if session is None:
+        raise HTTPException(status_code=404, detail="Deep Linking session not found")
+    labs = (
+        db.query(Lab)
+        .filter(Lab.is_active == True)
+        .order_by(Lab.name)
+        .limit(500)
+        .all()
+    )
+    return {
+        "title": "Choose exercises for the LMS",
+        "expires_at": session.expires_at.isoformat() if session.expires_at else None,
+        "labs": [
+            {"id": lab.id, "slug": lab.slug, "name": lab.name}
+            for lab in labs
+        ],
+    }
+
+
+@router.post("/deep-link/{session_token}/response")
+async def deep_link_response(
+    session_token: str,
+    payload: LtiDeepLinkResponseRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    try:
+        session = lti_service.consume_deep_link_session(
+            db, session_token, current_user.id
+        )
+    except lti_service.LTIError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    platform = (
+        db.query(LtiPlatform).filter(LtiPlatform.id == session.platform_id).first()
+    )
+    if platform is None or not platform.enabled:
+        raise HTTPException(status_code=404, detail="LTI platform not found")
+    labs = (
+        db.query(Lab)
+        .filter(Lab.slug.in_(payload.lab_slugs), Lab.is_active == True)
+        .all()
+    )
+    if len(labs) != len(set(payload.lab_slugs)):
+        raise HTTPException(status_code=400, detail="One or more exercises were not found")
+    try:
+        signed = lti_service.sign_deep_link_response(platform, session, labs)
+    except lti_service.LTIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {"return_url": session.return_url, "jwt": signed}
+
+
 @router.post("/launch")
 @limiter.limit("60/minute")
 async def lti_launch(
@@ -537,8 +610,29 @@ async def lti_launch(
             platform, id_token, state_row.nonce
         )
         user = lti_service.provision_launch_user(db, platform, claims)
-        lti_service.record_launch_link(db, platform, claims)
-        target = lti_service.ticket_url(db, user, platform)
+        if claims.get(lti_service.LTI_MESSAGE_TYPE_CLAIM) == "LtiDeepLinkingRequest":
+            settings = claims.get(lti_service.LTI_DL_SETTINGS_CLAIM) or {}
+            return_url = str(settings.get("deep_link_return_url") or "").strip()
+            if not return_url:
+                raise lti_service.LTIError(
+                    "The Deep Linking request did not include a return URL."
+                )
+            token = lti_service.create_deep_link_session(
+                db,
+                platform=platform,
+                user=user,
+                return_url=return_url,
+                data=str(settings.get("data") or ""),
+            )
+            return_to = f"/lti/deep-link?session={token}"
+        else:
+            lti_service.record_launch_link(db, platform, claims)
+            return_to = lti_service.target_return_to(
+                db, state_row.target_link_uri
+            )
+        target = lti_service.ticket_url(
+            db, user, platform, return_to=return_to
+        )
     except lti_service.LTIError as exc:
         logger.warning("LTI launch rejected for platform %s: %s", platform.name, exc)
         raise HTTPException(status_code=400, detail=str(exc)) from exc

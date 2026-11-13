@@ -9,10 +9,12 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 from app.services.lti import (
     build_client_assertion,
+    build_content_items,
     build_lineitem_payload,
     build_login_redirect,
     build_score_payload,
     normalize_roster,
+    sign_deep_link_response,
     valid_lti_url,
 )
 
@@ -126,6 +128,48 @@ def test_nrps_roster_keeps_only_minimal_fields():
             "context_id": "course-1",
         }
     ]
+
+
+def test_deep_link_content_items_use_lab_launch_urls():
+    labs = [SimpleNamespace(slug="windows-1-1", name="Basic Port Scan")]
+    items = build_content_items(labs, "https://range.example.edu")
+    assert items == [
+        {
+            "type": "ltiResourceLink",
+            "title": "Basic Port Scan",
+            "url": "https://range.example.edu/api/lti/launch?lab=windows-1-1",
+            "custom": {"lab_slug": "windows-1-1"},
+        }
+    ]
+
+
+def test_deep_link_response_is_signed():
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    private_pem = key.private_bytes(
+        serialization.Encoding.PEM,
+        serialization.PrivateFormat.PKCS8,
+        serialization.NoEncryption(),
+    ).decode()
+    platform = SimpleNamespace(
+        client_id="client-123",
+        issuer="https://lms.example.edu",
+        deployment_id="dep-1",
+        private_key=private_pem,
+    )
+    session = SimpleNamespace(nonce="nonce-1", data="opaque-data")
+    labs = [SimpleNamespace(slug="lab-1", name="Lab One")]
+    token = sign_deep_link_response(platform, session, labs)
+    claims = jwt.decode(
+        token,
+        key.public_key(),
+        algorithms=["RS256"],
+        audience=platform.issuer,
+    )
+    assert claims["iss"] == "client-123"
+    assert claims["nonce"] == "nonce-1"
+    assert claims["https://purl.imsglobal.org/spec/lti/claim/message_type"] == "LtiDeepLinkingResponse"
+    assert claims["https://purl.imsglobal.org/spec/lti-dl/claim/data"] == "opaque-data"
+    assert claims["https://purl.imsglobal.org/spec/lti-dl/claim/content_items"][0]["custom"]["lab_slug"] == "lab-1"
 
 
 def test_login_redirect_escapes_values():

@@ -444,6 +444,33 @@ class LtiRosterMember(Base):
     )
 
 
+class LtiDeepLinkSession(Base):
+    """One Deep Linking 2.0 picker session bound to the launching instructor."""
+
+    __tablename__ = "lti_deep_link_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String(128), unique=True, nullable=False, index=True)
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    return_url = Column(String(500), nullable=False)
+    data = Column(String(500), nullable=True)
+    nonce = Column(String(128), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+    consumed_at = Column(DateTime, nullable=True)
+
+
 class SsoSession(Base):
     """Latest OIDC session per user/provider for RP-initiated logout.
 

@@ -10,8 +10,10 @@ result retrieval, append-only score ledger, and the **LTI platforms** admin
 panel's launched-link/score review UI. NRPS 2.0 roster fetch is implemented
 with the minimum fields (subject, role, status, context), persisted per link on
 an explicit admin sync, and exposed through admin roster endpoints/UI actions.
-Deep Linking 2.0 and a real LMS staging test are still to do. Do not tell a
-buyer LTI is complete until those pass.
+Deep Linking 2.0 accepts an instructor request, issues a single-use picker
+session, returns a signed `LtiDeepLinkingResponse` with local lab launch URLs,
+and resumes the assignment deep link. A real LMS staging test is still to do.
+Do not tell a buyer LTI is complete until it passes.
 
 ## Why
 
@@ -64,8 +66,14 @@ authentication; LTI covers course placement and grades.
 
 ### 5. Deep Linking 2.0
 
-- Accept `LtiDeepLinkingRequest`, render the platform's lab/quiz picker, and
-  return a signed `LtiDeepLinkingResponse` with the selected content item.
+- Accept `LtiDeepLinkingRequest`, render the platform's lab picker, and return a
+  signed `LtiDeepLinkingResponse` with the selected content items.
+- The launch creates a single-use picker session bound to the launching
+  instructor; the picker posts back through the same-origin SPA.
+- Each content item is an `ltiResourceLink` to `/api/lti/launch?lab=<slug>` with
+  the slug in the `custom` claim, so the LMS assignment opens that lab.
+- Starting a deep-linked lab redirects the signed-in user to the exercise with
+  `labId` resolved server-side.
 
 ## Data model
 
@@ -75,6 +83,10 @@ authentication; LTI covers course placement and grades.
 - `lti_users`: platform, subject, local user, role, last_launch.
 - `lti_scores`: link, user, score, max, timestamp, reviewer, override reason,
   LMS response.
+- `lti_roster_members`: link, subject, roles, status, context ID. No names,
+  email addresses, or directory fields.
+- `lti_deep_link_sessions`: single-use picker token, platform, instructor,
+  LMS return URL, opaque data, nonce, expiry, consumed_at.
 
 Reuse `external_identities` for the account link where possible instead of a
 second identity table.
@@ -100,6 +112,9 @@ second identity table.
 6. A failed LMS call leaves the local record intact and retryable.
 7. NRPS sync imports no fields outside the allow-list.
 8. PII: the launch payload with email/name omitted still provisions.
+9. A Deep Linking request yields a single-use picker session; the response is
+   signed and its content items point at the selected lab launch URLs.
+10. A replayed Deep Linking session is rejected.
 
 ## Release gate
 

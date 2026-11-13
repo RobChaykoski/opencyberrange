@@ -15,7 +15,7 @@ import ssl
 import time
 import uuid
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlencode, urlsplit
+from urllib.parse import parse_qs, quote, urlencode, urlsplit
 
 import jwt
 import requests
@@ -26,6 +26,7 @@ from app.crypto import decrypt_secret, is_encrypted
 from app.models import (
     ExternalIdentity,
     IdentityProvider,
+    LtiDeepLinkSession,
     LtiLink,
     LtiLoginState,
     LtiPlatform,
@@ -49,6 +50,9 @@ LTI_CONTEXT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/context"
 LTI_AGS_CLAIM = "https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"
 LTI_NRPS_CLAIM = "https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice"
 LTI_NRPS_SCOPE = "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
+LTI_DL_SETTINGS_CLAIM = "https://purl.imsglobal.org/spec/lti-dl/claim/deep_linking_settings"
+LTI_DL_CONTENT_ITEMS_CLAIM = "https://purl.imsglobal.org/spec/lti-dl/claim/content_items"
+LTI_DL_DATA_CLAIM = "https://purl.imsglobal.org/spec/lti-dl/claim/data"
 LTI_AGS_SCORE_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/score"
 LTI_AGS_LINEITEM_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem"
 LTI_AGS_RESULT_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly"
@@ -96,6 +100,96 @@ def create_login_state(
     return state, nonce
 
 
+def create_deep_link_session(
+    db: Session,
+    *,
+    platform: LtiPlatform,
+    user: User,
+    return_url: str,
+    data: str,
+) -> str:
+    token = secrets.token_urlsafe(32)
+    db.add(
+        LtiDeepLinkSession(
+            token=token,
+            platform_id=platform.id,
+            user_id=user.id,
+            return_url=return_url[:500],
+            data=(data or "")[:500] or None,
+            nonce=secrets.token_urlsafe(32),
+            expires_at=utcnow() + timedelta(seconds=settings.LTI_STATE_TTL_SECONDS),
+        )
+    )
+    db.commit()
+    return token
+
+
+def consume_deep_link_session(
+    db: Session, token: str, user_id: int
+) -> LtiDeepLinkSession:
+    now = utcnow()
+    updated = (
+        db.query(LtiDeepLinkSession)
+        .filter(
+            LtiDeepLinkSession.token == token,
+            LtiDeepLinkSession.user_id == user_id,
+            LtiDeepLinkSession.consumed_at.is_(None),
+            LtiDeepLinkSession.expires_at >= now,
+        )
+        .update({LtiDeepLinkSession.consumed_at: now}, synchronize_session=False)
+    )
+    db.commit()
+    if updated != 1:
+        raise LTIError("This Deep Linking session has expired or was already used.")
+    return (
+        db.query(LtiDeepLinkSession)
+        .filter(LtiDeepLinkSession.token == token)
+        .first()
+    )
+
+
+def build_content_items(labs, public_base: str) -> list[dict]:
+    items = []
+    for lab in labs:
+        slug = str(getattr(lab, "slug", "") or "").strip()
+        if not slug:
+            continue
+        items.append(
+            {
+                "type": "ltiResourceLink",
+                "title": str(getattr(lab, "name", slug))[:255],
+                "url": f"{public_base.rstrip('/')}/api/lti/launch?lab={quote(slug)}",
+                "custom": {"lab_slug": slug},
+            }
+        )
+    return items
+
+
+def sign_deep_link_response(
+    platform: LtiPlatform,
+    session: LtiDeepLinkSession,
+    labs,
+) -> str:
+    now = int(time.time())
+    public_base = sso_flow.public_base_url()
+    payload = {
+        "iss": platform.client_id,
+        "aud": platform.issuer,
+        "iat": now,
+        "exp": now + 300,
+        "nonce": session.nonce,
+        "https://purl.imsglobal.org/spec/lti/claim/message_type": "LtiDeepLinkingResponse",
+        "https://purl.imsglobal.org/spec/lti/claim/version": "1.3.0",
+        "https://purl.imsglobal.org/spec/lti/claim/deployment_id": platform.deployment_id,
+        LTI_DL_DATA_CLAIM: session.data or "",
+        LTI_DL_CONTENT_ITEMS_CLAIM: build_content_items(labs, public_base),
+    }
+    try:
+        return jwt.encode(payload, _private_key(platform), algorithm="RS256")
+    except Exception as exc:
+        raise LTIError("Could not sign the Deep Linking response.") from exc
+
+
 def consume_login_state(db: Session, state: str, platform_id: int) -> LtiLoginState:
     now = utcnow()
     updated = (
@@ -119,6 +213,9 @@ def cleanup_expired(db: Session) -> None:
     db.query(LtiLoginState).filter(LtiLoginState.expires_at < cutoff).delete(
         synchronize_session=False
     )
+    db.query(LtiDeepLinkSession).filter(
+        LtiDeepLinkSession.expires_at < cutoff
+    ).delete(synchronize_session=False)
     db.commit()
 
 
@@ -570,9 +667,32 @@ def provision_launch_user(
     return user
 
 
-def ticket_url(db: Session, user: User, platform: LtiPlatform) -> str:
+def target_return_to(db: Session, target_link_uri: str) -> str:
+    """Resolve a deep-linked lab query to the local exercises route."""
+    from app.models import Lab
+
+    try:
+        query = urlsplit(target_link_uri or "").query
+        lab_slug = (parse_qs(query).get("lab") or [""])[0]
+    except Exception:
+        lab_slug = ""
+    if lab_slug:
+        lab = db.query(Lab).filter(Lab.slug == lab_slug).first()
+        if lab is not None:
+            return f"/exercises?labId={lab.id}"
+    return "/dashboard"
+
+
+def ticket_url(
+    db: Session,
+    user: User,
+    platform: LtiPlatform,
+    *,
+    return_to: str = "/dashboard",
+) -> str:
     provider = _get_provider(db, platform)
+    safe_return = sso_flow.sanitize_return_to(return_to)
     ticket = sso_flow.create_login_ticket(
-        db, user=user, provider=provider, return_to="/dashboard"
+        db, user=user, provider=provider, return_to=safe_return
     )
-    return sso_flow.callback_url({"ticket": ticket, "return_to": "/dashboard"})
+    return sso_flow.callback_url({"ticket": ticket, "return_to": safe_return})
