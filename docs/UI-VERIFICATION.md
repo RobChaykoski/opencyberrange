@@ -38,7 +38,7 @@ production.** Platform
 
 | Check | Result |
 |---|---|
-| Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **537 passed, 0 failed** |
+| Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **538 passed, 0 failed** |
 | Backend suite without a database | **317 passed, 217 skipped** |
 | Lab validator (`validate-lab.py --all`) | **179 labs, 0 errors, 0 warnings** |
 | Topology engine unit tests | **22 passed** |
@@ -83,6 +83,19 @@ production.** Platform
 - Course and exercise cards refresh in place when the tab becomes visible, so
   progress completed in another tab is reflected without a full-page reload.
   A failed background refresh keeps the existing cards.
+- Dashboard and profile now use the same visible-exercise denominator
+  (`0/139` for the new persona, `17/139` and `12%` for the experienced
+  persona). The dashboard course matrix, course card, and course page all show
+  the same course-context completion (`1/8`, `13%`).
+- A zero-evidence learner sees five profile tabs, no Cyber GPS/Portfolio tab,
+  no zero-evidence career affinity, and the neutral “Your first class” copy.
+  The Learning record shows a start message plus **Show all 12 tracks** instead
+  of a wall of every empty level.
+- An experienced learner’s Learning record defaults to the six tracks with
+  progress and can expand to all twelve.
+- Workbook buttons and profile status badges now use the shared colour tokens
+  instead of legacy orange and hard-coded status hex values.
+- **Backend suite:** 538 passed, 0 failed.
 - **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
   and `svc`; the node status endpoints reported host/router/service; `h1` had a
   default route via `r1`; `r1` reported `ip_forward=1` and both connected
