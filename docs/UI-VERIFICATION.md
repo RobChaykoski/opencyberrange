@@ -37,7 +37,7 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 
 | Check | Result |
 |---|---|
-| Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **534 passed, 0 failed** |
+| Backend suite with PostgreSQL (`TEST_DATABASE_URL`) | **537 passed, 0 failed** |
 | Backend suite without a database | **317 passed, 217 skipped** |
 | Lab validator (`validate-lab.py --all`) | **179 labs, 0 errors, 0 warnings** |
 | Topology engine unit tests | **22 passed** |
@@ -62,6 +62,23 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 - `advanced_dna_insights_enabled` removes/adds the career atlas payload.
 - The built SPA contains the new **Practice this branch**, **How this is
   calculated**, **No evidence yet**, and **Established** strings.
+
+### Academy registration and card checks (12 November 2026)
+
+- `/register` uses the current token palette: no legacy orange hex values, and
+  the primary button renders the blue-to-purple gradient in both themes.
+- The right panel presents the three next steps and the privacy/certificate
+  preview instead of the old terminal illustration.
+- The **Network Security** exercise card now shows its level
+  (**Network Foundations**) instead of omitting it because the level number is
+  zero.
+- Exercise cards show dynamic difficulty and level-count tags and are ordered
+  beginner-first for learners; staff keep their explicit sort order.
+- Course cards show dynamic level, difficulty, and track/catalogue tags
+  (`Levels 1–2`, `Beginner`, `Windows Penetration Testing` for CYB-3350).
+- Checked at 1440 px in light and dark themes and at 390 px; no page-level
+  horizontal overflow. Screenshots:
+  `ui-verify-artifacts/academy-*.png`.
 - **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
   and `svc`; the node status endpoints reported host/router/service; `h1` had a
   default route via `r1`; `r1` reported `ip_forward=1` and both connected

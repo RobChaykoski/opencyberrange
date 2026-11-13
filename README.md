@@ -587,7 +587,7 @@ Validation history:
 
 | Check | Result |
 |---|---|
-| Release 4 automated QA (12 November 2026) | **534 DB-backed tests passed**, 317 local tests, 179 labs with 0 validation errors, 495 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
+| Release 4 automated QA (12 November 2026) | **537 DB-backed tests passed**, 317 local tests, 179 labs with 0 validation errors, 495 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
 | Release 4 dev smoke (`.44`, 12 November 2026) | `/api/version` = 4; LDAP and OIDC end-to-end; instructor role refresh; admin endpoints 401; API docs 404; setting toggles apply immediately; new DNA/GPS UI present |
 | Release 4 role E2E (`.44`) | Admin/instructor/student authorization; 100% quiz; simple lab flag; RangeBox running; VPN config 200 |
 | Release 4 topology E2E (`.44`) | Four labs in sequence; two-router transit, nftables drop, multi-service mapping; all flags accepted |
