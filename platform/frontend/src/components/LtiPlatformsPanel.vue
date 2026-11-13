@@ -126,8 +126,11 @@
             <button type="button" class="btn btn--outline btn--xs" :disabled="resultsBusy" @click="loadResults">
               {{ resultsBusy ? 'Loading...' : 'Fetch results' }}
             </button>
-            <button type="button" class="btn btn--outline btn--xs" :disabled="rosterBusy" @click="loadRoster">
-              {{ rosterBusy ? 'Loading...' : 'Fetch roster' }}
+            <button type="button" class="btn btn--outline btn--xs" :disabled="rosterBusy" @click="syncRoster">
+              {{ rosterBusy ? 'Syncing...' : 'Sync roster' }}
+            </button>
+            <button type="button" class="btn btn--outline btn--xs" :disabled="rosterBusy" @click="loadSavedRoster">
+              Saved roster
             </button>
           </div>
         </div>
@@ -470,18 +473,36 @@ const loadResults = async () => {
   }
 }
 
-const loadRoster = async () => {
+const syncRoster = async () => {
   if (!selectedLink.value) return
   rosterBusy.value = true
   roster.value = ''
   scoreMessage.value = ''
   scoreError.value = false
   try {
-    const { data } = await axios.get(`/lti/admin/links/${selectedLink.value.id}/roster`)
+    const { data } = await axios.post(`/lti/admin/links/${selectedLink.value.id}/sync-roster`)
+    roster.value = JSON.stringify(data, null, 2)
+    scoreMessage.value = `Roster synced: ${data.count} member(s).`
+  } catch (e) {
+    scoreError.value = true
+    scoreMessage.value = e.response?.data?.detail || 'Could not sync the NRPS roster.'
+  } finally {
+    rosterBusy.value = false
+  }
+}
+
+const loadSavedRoster = async () => {
+  if (!selectedLink.value) return
+  rosterBusy.value = true
+  roster.value = ''
+  scoreMessage.value = ''
+  scoreError.value = false
+  try {
+    const { data } = await axios.get(`/lti/admin/links/${selectedLink.value.id}/roster/saved`)
     roster.value = JSON.stringify(data, null, 2)
   } catch (e) {
     scoreError.value = true
-    scoreMessage.value = e.response?.data?.detail || 'Could not fetch the NRPS roster.'
+    scoreMessage.value = e.response?.data?.detail || 'Could not load the saved roster.'
   } finally {
     rosterBusy.value = false
   }

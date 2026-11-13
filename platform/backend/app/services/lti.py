@@ -29,6 +29,7 @@ from app.models import (
     LtiLink,
     LtiLoginState,
     LtiPlatform,
+    LtiRosterMember,
     User,
 )
 from app.services import sso_flow
@@ -432,6 +433,38 @@ def get_roster(platform: LtiPlatform, link: LtiLink) -> dict:
         url = str(payload.get("next") or "").strip() or None
         pages += 1
     return {"members": members, "count": len(members)}
+
+
+def sync_roster(db: Session, platform: LtiPlatform, link: LtiLink) -> dict:
+    """Fetch the LMS roster and upsert the minimum membership fields."""
+    payload = get_roster(platform, link)
+    members = payload.get("members") or []
+    existing = {
+        row.subject: row
+        for row in db.query(LtiRosterMember)
+        .filter(LtiRosterMember.link_id == link.id)
+        .all()
+    }
+    seen = set()
+    for member in members:
+        subject = member["user_id"]
+        seen.add(subject)
+        row = existing.get(subject)
+        if row is None:
+            row = LtiRosterMember(
+                link_id=link.id,
+                platform_id=platform.id,
+                subject=subject,
+            )
+            db.add(row)
+        row.roles = json.dumps(member.get("roles") or [])
+        row.status = member.get("status") or "Active"
+        row.context_id = member.get("context_id")
+    for subject, row in existing.items():
+        if subject not in seen:
+            db.delete(row)
+    db.commit()
+    return {"count": len(members), "members": members}
 
 
 def build_score_payload(

@@ -410,6 +410,40 @@ class LtiScore(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
+class LtiRosterMember(Base):
+    """Minimum NRPS roster record: LMS subject, role, status, context.
+
+    Names, email addresses, and other directory fields are deliberately not
+    stored. The roster is refreshed explicitly by an administrator.
+    """
+
+    __tablename__ = "lti_roster_members"
+
+    id = Column(Integer, primary_key=True, index=True)
+    link_id = Column(
+        Integer,
+        ForeignKey("lti_links.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    subject = Column(String(255), nullable=False)
+    roles = Column(Text, nullable=True)
+    status = Column(String(30), nullable=False, default="Active")
+    context_id = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("link_id", "subject", name="uq_lti_roster_member"),
+    )
+
+
 class SsoSession(Base):
     """Latest OIDC session per user/provider for RP-initiated logout.
 

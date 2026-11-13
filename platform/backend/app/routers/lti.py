@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
@@ -18,6 +19,7 @@ from app.models import (
     IdentityProvider,
     LtiLink,
     LtiPlatform,
+    LtiRosterMember,
     LtiScore,
     User,
 )
@@ -307,6 +309,52 @@ async def get_link_roster(
         return lti_service.get_roster(platform, link)
     except lti_service.LTIError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.post("/admin/links/{link_id}/sync-roster")
+async def sync_link_roster(
+    link_id: int,
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_current_admin_user),
+):
+    link = db.query(LtiLink).filter(LtiLink.id == link_id).first()
+    if link is None:
+        raise HTTPException(status_code=404, detail="LTI link not found")
+    platform = (
+        db.query(LtiPlatform).filter(LtiPlatform.id == link.platform_id).first()
+    )
+    if platform is None or not platform.enabled:
+        raise HTTPException(status_code=404, detail="LTI platform not found")
+    try:
+        return lti_service.sync_roster(db, platform, link)
+    except lti_service.LTIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.get("/admin/links/{link_id}/roster/saved")
+async def get_saved_roster(
+    link_id: int,
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_current_admin_user),
+):
+    rows = (
+        db.query(LtiRosterMember)
+        .filter(LtiRosterMember.link_id == link_id)
+        .order_by(LtiRosterMember.subject)
+        .all()
+    )
+    return {
+        "members": [
+            {
+                "subject": row.subject,
+                "roles": json.loads(row.roles) if row.roles else [],
+                "status": row.status,
+                "context_id": row.context_id,
+                "updated_at": row.updated_at.isoformat() if row.updated_at else None,
+            }
+            for row in rows
+        ]
+    }
 
 
 @router.post("/admin/links/{link_id}/score")

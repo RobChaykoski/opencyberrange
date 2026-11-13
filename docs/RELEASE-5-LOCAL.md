@@ -86,12 +86,13 @@ The first Release 5 feature set is in the branch:
   token, line-item creation/reuse, reviewed score payload, result retrieval,
   append-only `lti_scores` ledger, and admin link/score endpoints. The
   instructor UI is next.
-- **NRPS 2.0 roster fetch** — captures the membership endpoint from the launch,
-  fetches the roster with the NRPS scope, and returns only subject, role,
-  status, and context. Admin endpoint and panel action included; persistence and
-  sync policy are next.
-- Migrations `0015_lti_platforms`, `0016_lti_links_scores`, and `0017_lti_nrps`
-  create the platform, login-state, link, score, and NRPS fields idempotently.
+- **NRPS 2.0 roster sync** — captures the membership endpoint, fetches with the
+  NRPS scope, and persists only subject, role, status, and context per link on
+  an explicit admin sync. Admin live/saved roster endpoints and panel actions
+  included.
+- Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`, and
+  `0018_lti_roster` create the platform, login-state, link, score, NRPS fields,
+  and roster table idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 
@@ -104,8 +105,7 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
 - the AGS client obtained a mock access token with a signed client assertion and
   posted a reviewed score to a mock line item.
 
-Still to do: NRPS roster persistence/sync, Deep Linking 2.0, and a real
-Moodle/Canvas staging test.
+Still to do: Deep Linking 2.0 and a real Moodle/Canvas staging test.
 
 ## Verified on this stack
 
