@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 from app.services.lti import (
     build_client_assertion,
+    build_lineitem_payload,
     build_login_redirect,
     build_score_payload,
     valid_lti_url,
@@ -85,6 +86,20 @@ def test_score_payload_uses_lti_ags_fields():
         "activityProgress": "Completed",
         "gradingProgress": "FullyGraded",
         "timestamp": "2026-11-13T12:00:00Z",
+    }
+
+
+def test_lineitem_payload_matches_ags_shape():
+    payload = build_lineitem_payload(
+        label="Basic Windows Port Scan",
+        max_score=100,
+        resource_link_id="resource-1",
+    )
+    assert payload == {
+        "scoreMaximum": 100,
+        "label": "Basic Windows Port Scan",
+        "resourceLinkId": "resource-1",
+        "tag": "opencyberrange",
     }
 
 

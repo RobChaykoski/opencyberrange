@@ -50,6 +50,11 @@ class LtiScoreRequest(BaseModel):
     reason: str = Field(..., min_length=3, max_length=500)
 
 
+class LtiLineItemRequest(BaseModel):
+    label: str = Field(..., min_length=1, max_length=255)
+    max_score: float = Field(..., gt=0)
+
+
 class LtiPlatformUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=120)
     issuer: str | None = Field(None, min_length=1, max_length=255)
@@ -236,6 +241,54 @@ async def list_link_scores(
     }
 
 
+@router.post("/admin/links/{link_id}/lineitem")
+async def create_link_lineitem(
+    link_id: int,
+    payload: LtiLineItemRequest,
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_current_admin_user),
+):
+    link = db.query(LtiLink).filter(LtiLink.id == link_id).first()
+    if link is None:
+        raise HTTPException(status_code=404, detail="LTI link not found")
+    platform = (
+        db.query(LtiPlatform).filter(LtiPlatform.id == link.platform_id).first()
+    )
+    if platform is None or not platform.enabled:
+        raise HTTPException(status_code=404, detail="LTI platform not found")
+    try:
+        lineitem = lti_service.ensure_lineitem(
+            db,
+            platform,
+            link,
+            label=payload.label,
+            max_score=payload.max_score,
+        )
+    except lti_service.LTIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {"lineitem_url": lineitem}
+
+
+@router.get("/admin/links/{link_id}/results")
+async def get_link_results(
+    link_id: int,
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_current_admin_user),
+):
+    link = db.query(LtiLink).filter(LtiLink.id == link_id).first()
+    if link is None:
+        raise HTTPException(status_code=404, detail="LTI link not found")
+    platform = (
+        db.query(LtiPlatform).filter(LtiPlatform.id == link.platform_id).first()
+    )
+    if platform is None or not platform.enabled:
+        raise HTTPException(status_code=404, detail="LTI platform not found")
+    try:
+        return lti_service.get_results(platform, link)
+    except lti_service.LTIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
 @router.post("/admin/links/{link_id}/score")
 async def post_link_score(
     link_id: int,
@@ -259,6 +312,13 @@ async def post_link_score(
         raise HTTPException(status_code=404, detail="Learner not found")
 
     try:
+        lti_service.ensure_lineitem(
+            db,
+            platform,
+            link,
+            label=link.title or "OpenCyberRange exercise",
+            max_score=payload.max_score,
+        )
         subject = lti_service.subject_for_user(db, platform, user.id)
         response = lti_service.post_score(
             platform,

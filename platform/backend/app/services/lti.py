@@ -48,6 +48,7 @@ LTI_CONTEXT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/context"
 LTI_AGS_CLAIM = "https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"
 LTI_AGS_SCORE_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/score"
 LTI_AGS_LINEITEM_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem"
+LTI_AGS_RESULT_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly"
 ALLOWED_MESSAGE_TYPES = {"LtiResourceLinkRequest", "LtiDeepLinkingRequest"}
 ALLOWED_SIGNING_ALGORITHMS = ["RS256", "RS384", "ES256", "ES384"]
 
@@ -308,6 +309,79 @@ def get_access_token(
     if not token:
         raise LTIError("The LMS token response did not include an access token.")
     return token
+
+
+def build_lineitem_payload(
+    *, label: str, max_score: float, resource_link_id: str
+) -> dict:
+    return {
+        "scoreMaximum": max_score,
+        "label": label[:255],
+        "resourceLinkId": resource_link_id,
+        "tag": "opencyberrange",
+    }
+
+
+def ensure_lineitem(
+    db: Session,
+    platform: LtiPlatform,
+    link: LtiLink,
+    *,
+    label: str,
+    max_score: float,
+) -> str:
+    """Return the link's line-item URL, creating it on the LMS if needed."""
+    if link.ags_lineitem_url:
+        return link.ags_lineitem_url
+    if not link.ags_lineitems_url:
+        raise LTIError("This launch did not provide an AGS line-items endpoint.")
+    token = get_access_token(platform, [LTI_AGS_LINEITEM_SCOPE])
+    payload = build_lineitem_payload(
+        label=label,
+        max_score=max_score,
+        resource_link_id=link.resource_link_id,
+    )
+    try:
+        response = requests.post(
+            link.ags_lineitems_url,
+            json=payload,
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+            verify=not settings.SSO_ALLOW_INSECURE_HTTP,
+        )
+    except Exception as exc:
+        raise LTIError("The LMS line-item request failed.") from exc
+    if response.status_code not in (200, 201):
+        raise LTIError(
+            f"The LMS rejected the line item (HTTP {response.status_code})."
+        )
+    try:
+        body = response.json()
+    except Exception:
+        body = {}
+    lineitem_url = str(body.get("id") or response.headers.get("Location") or "").strip()
+    if not lineitem_url:
+        raise LTIError("The LMS line-item response did not include an id or Location.")
+    link.ags_lineitem_url = lineitem_url[:500]
+    db.commit()
+    return link.ags_lineitem_url
+
+
+def get_results(platform: LtiPlatform, link: LtiLink) -> dict:
+    if not link.ags_lineitem_url:
+        raise LTIError("This link has no AGS line item yet.")
+    token = get_access_token(platform, [LTI_AGS_RESULT_SCOPE])
+    try:
+        response = requests.get(
+            link.ags_lineitem_url.rstrip("/") + "/results",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+            verify=not settings.SSO_ALLOW_INSECURE_HTTP,
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as exc:
+        raise LTIError("Could not fetch AGS results from the LMS.") from exc
 
 
 def build_score_payload(
