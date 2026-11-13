@@ -28,16 +28,16 @@ reviewed_at: "2026-11-12"
 review_status: "static exercise and validator; live walkthrough pending"
 description: "Combine AD-style directory enumeration with the existing SMB strength: find the leaked service credential, validate it, and retrieve the evidence share token."
 scenario: |
-  The helpdesk directory contains a service account whose description leaks a
+  The LAB directory contains a service account whose description leaks a
   password. The same credential protects an evidence share. Enumerate the
   directory, validate the credential, and retrieve the case token from the
   share. This combines Active Directory fundamentals with SMB enumeration.
 credentials:
   - role: "analyst"
-    username: "uid=analyst,ou=People,dc=lab,dc=example,dc=org"
+    username: "cn=admin,dc=lab,dc=example,dc=org"
     # Demo lab credential; security-delta: allow credential-like assignment
-    password: "Analyst2026"
-    description: "Standard helpdesk directory account"
+    password: "Adm1nPass2026"
+    description: "Directory administrator (training account)"
 hints:
   - text: |
       Enumerate the directory first, then validate the credential against SMB.

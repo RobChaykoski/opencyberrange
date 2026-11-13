@@ -14,17 +14,17 @@ case token.
 | Base DN | `dc=lab,dc=example,dc=org` |
 | Users | `ou=People` |
 | Groups | `ou=Groups` |
-| Your account | `uid=analyst,ou=People,dc=lab,dc=example,dc=org` |
+| Your account | `cn=admin,dc=lab,dc=example,dc=org` |
 
-A distinguished name is the full path to an object. `uid=analyst` alone is not
+A distinguished name is the full path to an object. A short name alone is not
 enough to bind unless the server is configured to resolve it.
 
 ## Step 2: Bind and enumerate
 
 ```bash
 ldapsearch -x -H ldap://<directory-ip> \
-  -D 'uid=analyst,ou=People,dc=lab,dc=example,dc=org' \
-  -w 'Analyst2026' \
+  -D 'cn=admin,dc=lab,dc=example,dc=org' \
+  -w 'Adm1nPass2026' \
   -b 'dc=lab,dc=example,dc=org' \
   '(objectClass=inetOrgPerson)' cn uid description
 ```
@@ -35,8 +35,8 @@ Record the users and any descriptions.
 
 ```bash
 ldapsearch -x -H ldap://<directory-ip> \
-  -D 'uid=analyst,ou=People,dc=lab,dc=example,dc=org' \
-  -w 'Analyst2026' \
+  -D 'cn=admin,dc=lab,dc=example,dc=org' \
+  -w 'Adm1nPass2026' \
   -b 'dc=lab,dc=example,dc=org' \
   '(uid=svc-backup)' description
 ```
@@ -48,8 +48,8 @@ never store either in a readable attribute.
 
 ```bash
 ldapsearch -x -H ldap://<directory-ip> \
-  -D 'uid=analyst,ou=People,dc=lab,dc=example,dc=org' \
-  -w 'Analyst2026' \
+  -D 'cn=admin,dc=lab,dc=example,dc=org' \
+  -w 'Adm1nPass2026' \
   -b 'ou=Groups,dc=lab,dc=example,dc=org' \
   '(objectClass=groupOfNames)' cn member
 ```

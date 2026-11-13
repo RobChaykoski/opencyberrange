@@ -9,8 +9,8 @@ against an SMB share, and retrieve the evidence token.
 
 ```bash
 ldapsearch -x -H ldap://<directory-ip> \
-  -D 'uid=analyst,ou=People,dc=lab,dc=example,dc=org' \
-  -w 'Analyst2026' \
+  -D 'cn=admin,dc=lab,dc=example,dc=org' \
+  -w 'Adm1nPass2026' \
   -b 'dc=lab,dc=example,dc=org' \
   '(uid=svc-backup)' description
 ```
