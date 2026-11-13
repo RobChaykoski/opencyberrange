@@ -131,7 +131,12 @@ def _changed_files(base: str | None, staged: bool) -> list[Path]:
         path = ROOT / name
         if not path.is_file():
             continue
-        if any(part in normalized for part in SKIP_PARTS):
+        # Match directory names, not substrings: ".git" must not also skip
+        # ".github" workflows and templates.
+        path_parts = normalized.split("/")
+        if any(part in SKIP_PARTS for part in path_parts):
+            continue
+        if normalized.startswith(".opencode/skills/"):
             continue
         if path.suffix.lower() not in TEXT_SUFFIXES:
             continue

@@ -27,6 +27,26 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
+## 4 release status
+
+- Platform source and content: **PolyForm Noncommercial License 1.0.0**.
+- Release artefact: `v4` is a **signed** annotated tag. The supply-chain lock is
+  signed by the release key and verified with
+  `scripts/supply_chain.py --check --signature supply-chain.lock.json.asc`.
+  This supersedes the unsigned-tag notes in the older release sections below.
+- Third-party inventory: `scripts/check-licences.py` reports **OK** for the
+  Release 4 tree.
+- The frontend runtime image is `nginx:alpine`, pinned by digest in
+  `platform/frontend/Dockerfile` so a base-image refresh cannot change it
+  silently.
+- Workbook diagrams and PDF export vendor **Mermaid 11.17.2** and
+  **html2pdf.js 0.10.2** (both MIT) under `Workbook/javascripts/`, with their
+  licence texts. They are served from the wiki origin rather than a CDN.
+- CyberChef remains a pinned static build in the frontend image
+  (`/tools/cyberchef/`, Apache-2.0).
+- Valkey **9.1.3** (BSD-3-Clause) is the rate-limit store in the Release 4
+  compose files.
+
 ## 2.7.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.

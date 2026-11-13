@@ -58,7 +58,7 @@
       "sha256": "8f19b4747ce1f70737de193afbee2c73c77df389675453248d09219490241bd3"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "ae06581f72beef6faf2c33db8e8e2d8811eb2df13d6dbd73bf400b24dce69aab"
+      "sha256": "da0efe0a190303b695d8f7ac525f9dd6e6e5274dfe5e183b7b02f7bb25594b41"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -124,7 +124,7 @@
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
     },
     "scripts/security-delta-review.py": {
-      "sha256": "c594086252e4c1ece31a56a8036885b43464dbdf0ded57921885bb7598d1d99c"
+      "sha256": "2d6b04f4841dbb8bcc9d1830cad9e968c88856c6bf4f4c3a36ef889b86eb849a"
     },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
@@ -142,7 +142,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "e778386226bf9ac06cf677ecd66cfd4f6dc1c65c780ca8f5ed2d4dbf9ac1e77e"
+      "sha256": "f5ecf8544ce5356bbcef9bc4c5b48046db54113340f37ac5342521e05f71389e"
     }
   },
   "generator": "scripts/supply_chain.py",

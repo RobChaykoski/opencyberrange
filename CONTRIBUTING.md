@@ -9,6 +9,19 @@ updated build was created with AI assistance and reviewed by a human maintainer;
 see [`BUILD_NOTICE.md`](BUILD_NOTICE.md) for provenance and
 [`LICENSING.md`](LICENSING.md) for the license summary.
 
+## Contributor License Agreement
+
+External **code** contributions require a signed Contributor License Agreement
+(CLA) before they are merged. The CLA lets the maintainer use, modify,
+distribute, and sublicense your contribution, including in the commercial
+Enterprise edition, while you keep copyright in your work. It does not change
+the public licence for the Lite edition.
+
+The current agreement is [`.github/CLA.md`](.github/CLA.md). To sign it, open an
+issue titled `CLA: <your name>` or contact the maintainer. Do not open a code
+pull request until the signed CLA is on file; a pull request without one can
+still be reviewed, but it cannot be merged into the commercial tier.
+
 ## How to Contribute
 
 ### Before you start

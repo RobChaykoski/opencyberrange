@@ -163,7 +163,7 @@ frontend:
 infrastructure:
   backend_base: "python:3.11-slim"
   frontend_builder: "node:22-alpine"
-  frontend_server: "nginx:alpine"
+  frontend_server: "nginx:alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11"
   postgres_image: "postgres:15-alpine"
   valkey_image: "valkey/valkey:9.1.3-alpine"
   dex_image: "ghcr.io/dexidp/dex:v2.42.0"
