@@ -122,6 +122,9 @@ not stored. The roster keeps only the LMS subject, roles, status, and context.
 | `derived.achievement_points` | Tier × difficulty point value for each badge | Show value and progress | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
 | `achievement_celebrations.*` | Anonymous celebration count | Community recognition | Consent (public action) | Until withdrawn or deletion | Aggregate only | Never linked to identity | Deleted |
 | `course_completion_resets.*` | Instructor reset events | Reset rate and report accuracy | Service / Security | Course lifetime | Instructor; admin | `reports` | Deleted or anonymised |
+| `user_accommodations.user_id`, `time_multiplier`, `due_date_extension_days`, `notes` | Per-student accessibility accommodation | Scale timed sessions and shift assignment due dates | Service | Account lifetime | Self (own multiplier); assigned instructor; admin | `self` (values only; notes excluded) | Deleted |
+| `user_accommodations.updated_by_id`, `updated_at` | Staff member and time of the last change | Accountability | Security | Account lifetime | Admin | Not exported | Reviewer reference nulled |
+| `accommodation_events.user_id`, `actor_id`, `action`, `time_multiplier`, `due_date_extension_days`, `reason`, `created_at` | Append-only accommodation change history | Audit and dispute resolution | Security | Institution audit window | Admin | Not exported | Deleted with the learner |
 
 ## Feedback, surveys, and confidence
 

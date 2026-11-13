@@ -30,6 +30,7 @@ class EventTypes:
     SSO_LOGIN_SUCCESS = "sso_login_success"
     SSO_USER_PROVISIONED = "sso_user_provisioned"
     SSO_ACCOUNT_LINKED = "sso_account_linked"
+    ACCOMMODATION_CHANGED = "accommodation_changed"
 
 
 # Human-readable labels for the feed
@@ -53,6 +54,7 @@ EVENT_LABELS = {
     EventTypes.SSO_LOGIN_SUCCESS: "Signed in with SSO",
     EventTypes.SSO_USER_PROVISIONED: "SSO Account Provisioned",
     EventTypes.SSO_ACCOUNT_LINKED: "SSO Account Linked",
+    EventTypes.ACCOMMODATION_CHANGED: "Accommodation Changed",
 }
 
 

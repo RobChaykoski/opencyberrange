@@ -33,34 +33,28 @@ from app.config import settings
 from app.crypto import encrypt_private_key, decrypt_private_key, is_encrypted
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
+from app.services import accommodations
 
 
-def _accommodation_percent(db) -> int:
-    """Extra time for timed exercises, bounded to the supported range."""
-    try:
-        value = int(
-            settings_service.get_setting(
-                db, "session_accommodation_percent", "100"
-            )
-        )
-    except (TypeError, ValueError):
-        value = 100
-    return max(100, min(300, value))
+def _accommodation_percent(db, user: User | None = None) -> int:
+    """Effective timed-session percentage for a learner (kept for callers/tests)."""
+    return accommodations.effective_percent(db, user.id if user else None)
 
 
-def _session_duration(db) -> timedelta:
-    """Normal session length scaled by the timed-exercise accommodation."""
+def _session_duration(db, user: User | None = None) -> timedelta:
+    """Normal session length scaled by the learner's accommodation."""
     try:
         hours = int(settings_service.get_setting(db, "default_session_hours", "2"))
     except (TypeError, ValueError):
         hours = 2
-    minutes = int(hours * 60 * _accommodation_percent(db) / 100)
+    percent = _accommodation_percent(db, user)
+    minutes = int(hours * 60 * percent / 100)
     return timedelta(minutes=minutes)
 
 
-def _session_extension(db) -> timedelta:
-    """One-hour extension scaled by the timed-exercise accommodation."""
-    return timedelta(minutes=int(60 * _accommodation_percent(db) / 100))
+def _session_extension(db, user: User | None = None) -> timedelta:
+    """One-hour extension scaled by the learner's accommodation."""
+    return timedelta(minutes=int(60 * _accommodation_percent(db, user) / 100))
 
 
 def get_vpn_client_ip(user_id: int, base: str = "10.0.0") -> str:
@@ -276,7 +270,7 @@ async def spawn_lab(
 
     # Session length comes from the operator-tunable setting (was hardcoded 2h)
     # and is scaled by the timed-exercise accommodation percentage.
-    session_delta = _session_duration(db)
+    session_delta = _session_duration(db, current_user)
 
     # Create session record
     is_diagnostic = current_user.diagnostic_until and current_user.diagnostic_until > datetime.now(timezone.utc).replace(tzinfo=None)
@@ -660,7 +654,7 @@ async def extend_lab_session(
         )
     
     # Extend by 1 hour, scaled by the accommodation percentage.
-    extension = _session_extension(db)
+    extension = _session_extension(db, current_user)
     if session.expires_at:
         expires_at = session.expires_at
         if expires_at.tzinfo is None:

@@ -474,6 +474,58 @@ class LtiDeepLinkSession(Base):
     consumed_at = Column(DateTime, nullable=True)
 
 
+class UserAccommodation(Base):
+    """Per-student accessibility accommodation.
+
+    A single row per learner: the multiplier applies to timed lab sessions and
+    the extension applies to course assignment due dates. Changes are appended
+    to ``accommodation_events`` so the reason and actor remain auditable.
+    """
+
+    __tablename__ = "user_accommodations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    time_multiplier = Column(Float, nullable=False, default=1.0, server_default="1")
+    due_date_extension_days = Column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    notes = Column(String(500), nullable=True)
+    updated_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AccommodationEvent(Base):
+    """Append-only record of accommodation changes."""
+
+    __tablename__ = "accommodation_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    action = Column(String(20), nullable=False)
+    time_multiplier = Column(Float, nullable=True)
+    due_date_extension_days = Column(Integer, nullable=True)
+    reason = Column(String(500), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
 class SsoSession(Base):
     """Latest OIDC session per user/provider for RP-initiated logout.
 

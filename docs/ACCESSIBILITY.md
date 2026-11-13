@@ -22,11 +22,16 @@ procurement baseline used by Ontario AODA and most Canadian institutions.
 
 ## Accommodations
 
-- Lab session length and extension scale from
-  `session_accommodation_percent` (clamped to 100–300%) in
-  `app/routers/labs.py`.
-- Per-student multipliers, pause-the-clock, and per-course due dates are
-  **Release 5** (`docs/RELEASE-5-SCOPE.md`).
+- Each learner can have a per-student time multiplier (1.0x–3.0x) and a
+  due-date extension (0–365 days), managed from **Instructor → My Courses →
+  Students → Accommodations**. A per-student record replaces the operator-wide
+  `session_accommodation_percent` for timed lab sessions.
+- The multiplier scales lab session length and one-hour extensions. The
+  extension shifts assignment due dates shown to that learner.
+- Every change is written to `accommodation_events` (append-only) and the
+  activity log; the notes field is for a reference, not diagnosis details.
+- Pause-the-clock remains **Release 5 follow-up** work
+  (`docs/RELEASE-5-SCOPE.md`).
 - There is no hard pass/fail timer in the learner path.
 
 ## Known limitations

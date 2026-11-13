@@ -55,14 +55,13 @@ representing it as available on those platforms.
 |---|---|---|
 | WCAG 2.1/2.2 AA on student assessment screens | Partial | Keyboard operation, landmarks, labels, focus styles, error announcements, reduced-motion, and contrast work are in place. No full external audit. |
 | VPAT 2.5 / ACR | Gap | Draft structure in `docs/ACCESSIBILITY.md`; not signed. |
-| Per-student time multiplier (1.5x/2x/custom) | Partial | `session_accommodation_percent` scales **all** lab sessions from a platform setting (`app/routers/labs.py`). It is not per student. Quiz/assessment timers are not scaled. |
+| Per-student time multiplier (1.5x/2x/custom) | Yes | A per-student 1.0x–3.0x multiplier scales lab session length and extension. Managed in the instructor student panel; a per-student record replaces the operator-wide setting. Quizzes have no timed limit to scale. |
 | Per-student pause-the-clock breaks | Gap | No pause/resume clock model. |
-| Individual due-date extensions across quizzes/assignments | Gap | No per-student due-date override table. |
-| Accommodation persists across a course | Gap | The current setting is global, not attached to a student. |
+| Individual due-date extensions across quizzes/assignments | Partial | Per-student 0–365 day extensions shift assignment due dates. Quiz deadlines are not modelled today. |
+| Accommodation persists across a course | Yes | The record is attached to the user, not the course, and is read on every lab session and assignment list. |
 
-The accommodation engine is a bounded but real feature: user-level multiplier,
-course-level due-date overrides, and pause/resume state applied consistently by
-labs, quizzes, and assignments. It should be its own release increment.
+The accommodation engine now covers the user-level multiplier and due-date
+extension. Pause/resume remains the bounded follow-up increment.
 
 ## 4. Automated scoring, AI, and fairness
 
@@ -108,7 +107,8 @@ Everything below is **Release 5**, not Release 4:
   `release5` and passed a Moodle 5.0.2 staging test; Canvas and Brightspace
   validation plus CAF onboarding remain.
 - Multi-tenancy and the TA role.
-- The per-student accommodation engine (multipliers, pause/resume, due dates).
+- Per-student accommodations: the multiplier and due-date extension are
+  implemented; pause/resume remains.
 - Automated-decision transparency and the human-review workflow.
 - HECVAT Full, VPAT 2.5, SOC 2 Type II, ISO 27001, DPA finalization, Quebec
   PIA/TRA support, Canadian hosting profile.

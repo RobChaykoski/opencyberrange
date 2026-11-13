@@ -271,7 +271,18 @@
                 <tbody>
                   <template v-for="s in courseStudents" :key="s.id">
                     <tr>
-                      <td class="cell-primary"><PrivacyText :value="s.username" fallback="Deleted learner" /></td>
+                      <td class="cell-primary">
+                        <PrivacyText :value="s.username" fallback="Deleted learner" />
+                        <span
+                          v-if="s.time_multiplier > 1 || s.due_date_extension_days > 0"
+                          class="accommodation-badge"
+                          :title="`${Math.round(s.time_multiplier * 100)}% time, +${s.due_date_extension_days} day(s)`"
+                        >
+                          {{ s.time_multiplier > 1 ? `${Math.round(s.time_multiplier * 100)}% time` : '' }}
+                          {{ s.time_multiplier > 1 && s.due_date_extension_days > 0 ? ' · ' : '' }}
+                          {{ s.due_date_extension_days > 0 ? `+${s.due_date_extension_days}d` : '' }}
+                        </span>
+                      </td>
                       <td><PrivacyText :value="s.email" type="email" /></td>
                       <td class="cell-muted">{{ formatDateShort(s.enrolled_at) }}</td>
                       <td class="cell-actions">
@@ -283,6 +294,11 @@
                         <button @click="downloadStudentReport(s)" :disabled="downloadingReportUserId === s.id" class="action-btn action-btn--archive" title="Download PDF">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                          </svg>
+                        </button>
+                        <button @click="openAccommodation(s)" class="action-btn action-btn--view" title="Accommodations">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
                           </svg>
                         </button>
                         <button @click="removeStudent(s)" class="action-btn action-btn--delete" title="Remove">
@@ -1106,6 +1122,61 @@
       </div>
     </div>
 
+    <!-- Accommodations modal -->
+    <div v-if="accommodationStudent" class="modal-overlay" @click.self="closeAccommodation">
+      <div class="modal modal--small">
+        <h3 class="modal-title">Accommodations</h3>
+        <p class="modal-subtitle">{{ accommodationStudent.username }}</p>
+        <p class="modal-hint">
+          Extra time applies to timed lab sessions for this learner. The due-date
+          extension shifts course assignment deadlines. Changes are audited.
+        </p>
+        <div class="form-stack">
+          <div class="form-group">
+            <label class="form-label" for="accommodation-multiplier">Time multiplier</label>
+            <select id="accommodation-multiplier" v-model.number="accommodationForm.time_multiplier" class="form-input">
+              <option :value="1">No extra time (1.0x)</option>
+              <option :value="1.25">1.25x</option>
+              <option :value="1.5">1.5x</option>
+              <option :value="2">2.0x</option>
+              <option :value="3">3.0x</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="accommodation-extension">Due-date extension (days)</label>
+            <input
+              id="accommodation-extension"
+              v-model.number="accommodationForm.due_date_extension_days"
+              class="form-input"
+              type="number"
+              min="0"
+              max="365"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="accommodation-notes">Notes / reason</label>
+            <textarea
+              id="accommodation-notes"
+              v-model="accommodationForm.notes"
+              class="form-input"
+              rows="3"
+              maxlength="500"
+              placeholder="Recorded in the audit trail; do not include diagnosis details."
+            ></textarea>
+          </div>
+        </div>
+        <p v-if="accommodationError" class="form-error" role="alert">{{ accommodationError }}</p>
+        <div class="modal-actions">
+          <button @click="clearAccommodation" class="btn btn--danger" :disabled="accommodationBusy">Clear</button>
+          <button @click="closeAccommodation" class="btn btn--secondary" :disabled="accommodationBusy">Cancel</button>
+          <button @click="saveAccommodation" class="btn btn--primary" :disabled="accommodationBusy">
+            {{ accommodationBusy ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Upload Modal -->
     <div v-if="showUploadModal" class="modal-overlay" @click.self="showUploadModal = false">
       <div class="modal-dialog modal-dialog--lg">
@@ -1331,6 +1402,14 @@ function goStudio(studioTab, fork) {
 }
 const courseManageTab = ref('students')
 const courseStudents = ref([])
+const accommodationStudent = ref(null)
+const accommodationForm = ref({
+  time_multiplier: 1,
+  due_date_extension_days: 0,
+  notes: '',
+})
+const accommodationBusy = ref(false)
+const accommodationError = ref('')
 const courseLabs = ref([])
 const availableLabs = ref([])
 const selectedLabIds = ref([])
@@ -2036,6 +2115,73 @@ async function resetStudentLab(student, lab) {
     showAlert('Failed to reset exercise', 'error')
   } finally {
     resettingCourseLab.value = null
+  }
+}
+
+function closeAccommodation() {
+  if (accommodationBusy.value) return
+  accommodationStudent.value = null
+  accommodationError.value = ''
+}
+
+async function openAccommodation(student) {
+  accommodationError.value = ''
+  let draft = {
+    time_multiplier: Number(student.time_multiplier || 1),
+    due_date_extension_days: Number(student.due_date_extension_days || 0),
+    notes: '',
+  }
+  try {
+    const { data } = await axios.get(`/courses/${managingCourse.value.id}/students/${student.id}/accommodation`)
+    draft = {
+      time_multiplier: Number(data.time_multiplier || 1),
+      due_date_extension_days: Number(data.due_date_extension_days || 0),
+      notes: data.notes || '',
+    }
+  } catch (e) {
+    accommodationError.value = e.response?.data?.detail || 'Could not load the accommodation.'
+  }
+  accommodationForm.value = draft
+  accommodationStudent.value = student
+}
+
+async function saveAccommodation() {
+  if (!accommodationStudent.value) return
+  accommodationBusy.value = true
+  accommodationError.value = ''
+  try {
+    const { data } = await axios.put(
+      `/courses/${managingCourse.value.id}/students/${accommodationStudent.value.id}/accommodation`,
+      accommodationForm.value
+    )
+    accommodationStudent.value.time_multiplier = data.time_multiplier
+    accommodationStudent.value.due_date_extension_days = data.due_date_extension_days
+    showAlert('Accommodation saved')
+    accommodationStudent.value = null
+  } catch (e) {
+    accommodationError.value = e.response?.data?.detail || 'Could not save the accommodation.'
+  } finally {
+    accommodationBusy.value = false
+  }
+}
+
+async function clearAccommodation() {
+  if (!accommodationStudent.value) return
+  if (!confirm(`Clear accommodations for ${accommodationStudent.value.username}?`)) return
+  accommodationBusy.value = true
+  accommodationError.value = ''
+  try {
+    const { data } = await axios.delete(
+      `/courses/${managingCourse.value.id}/students/${accommodationStudent.value.id}/accommodation`
+    )
+    accommodationStudent.value.time_multiplier = data.time_multiplier
+    accommodationStudent.value.due_date_extension_days = data.due_date_extension_days
+    showAlert('Accommodation cleared')
+    accommodationStudent.value = null
+  } catch (e) {
+    accommodationError.value = e.response?.data?.detail || 'Could not clear the accommodation.'
+  } finally {
+    accommodationBusy.value = false
   }
 }
 
@@ -3044,6 +3190,31 @@ onUnmounted(() => {
 .status-badge--archived { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
 .status-badge--done { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
 .status-badge--pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+
+.accommodation-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.modal-hint {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.form-error {
+  margin: 0.5rem 0 0;
+  color: #f87171;
+  font-size: 0.78rem;
+}
 
 /* Invite code */
 .invite-code-display {
