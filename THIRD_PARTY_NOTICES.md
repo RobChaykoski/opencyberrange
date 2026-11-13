@@ -60,6 +60,11 @@ their own licences; the project licence does not override them.
   The licence text is `Workbook/javascripts/html2pdf.LICENSE.txt`; the source is
   pinned from the 0.10.2 release and its SHA256 is recorded in the workbook
   vendor note.
+- Workbook diagrams vendor `mermaid` 11.17.2 at
+  `Workbook/javascripts/mermaid.min.js` (MIT, Copyright Knut Sveidqvist). The
+  licence text is `Workbook/javascripts/mermaid.LICENSE.txt`. Serving it
+  locally keeps the wiki CSP free of third-party script origins; the SHA256 is
+  recorded in the workbook vendor note.
 - Both SSO images are profile-gated (`--profile sso`). They are pulled, not
   redistributed, and are not started on a normal install.
 - Release 4 changes are recorded in `CHANGELOG.md`, `versions.yaml`, and the

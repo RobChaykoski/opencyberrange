@@ -124,7 +124,7 @@
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
     },
     "scripts/security-delta-review.py": {
-      "sha256": "f5b802cdbddc5b293c3f77faed1f47e33e486fff83bc7aea7407caedddbdba5c"
+      "sha256": "c594086252e4c1ece31a56a8036885b43464dbdf0ded57921885bb7598d1d99c"
     },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"

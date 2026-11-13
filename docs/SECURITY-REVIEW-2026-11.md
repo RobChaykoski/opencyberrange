@@ -53,9 +53,18 @@ lab credentials.
   flow would remove the XSS token-theft path; see the session-cookie roadmap
   below. This is a larger architectural change than this pass and is not a
   Release 4 blocker.
-- **Wiki CSP.** The generated wiki allows `'unsafe-inline'` scripts and
-  `unpkg.com`/`cdnjs.cloudflare.com`. Self-hosting those assets at wiki build
-  time is the best next step.
+- **Workbook iframe isolation (implemented).** The framed workbook is sandboxed
+  without `allow-same-origin`, so it has an opaque origin: its scripts cannot
+  read the SPA's `localStorage`, `document.cookie`, or parent DOM. Material,
+  Mermaid, and the PDF exporter are served from the wiki origin. `wiki_auth` is
+  `SameSite=None; Secure` on HTTPS because a sandboxed subresource request is
+  cross-site for cookie purposes; the cookie is still unreadable to the opaque
+  document. Local HTTP development falls back to `SameSite=Lax`, so use HTTPS
+  when testing the embedded workbook.
+- **Wiki CSP.** The generated wiki no longer allows `unpkg.com` or
+  `cdnjs.cloudflare.com`. Mermaid 11, html2pdf 0.10.2, and the theme CSS/JS are
+  vendored or built locally, and `theme.font: false` prevents the Google Fonts
+  request. Remaining inline script allowance is for the Material bootstrap.
 - **Frontend Dockerfile.** The duplicate healthcheck and the unpinned
   `nginx:alpine` tag remain; pin by digest during the supply-chain pass.
 
@@ -255,7 +264,8 @@ pcap header (`d4 c3 b2 a1`) through `socat`, and accepts the filter expression.
 ## Remaining backlog
 
 1. Move the SPA token to an HttpOnly cookie and add a refresh flow.
-2. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
+2. Remove `'unsafe-inline'` from the wiki CSP once the Material bootstrap can be
+   replaced with a hash-pinned script. The wiki JS/CSS are already self-hosted.
 3. Switch RangeBox to supervisord and pin its toolchain.
 4. Run the network tap as non-root with file capabilities.
 5. Add warning-level shellcheck and a disposable-VM installer rehearsal;

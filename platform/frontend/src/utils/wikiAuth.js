@@ -11,6 +11,19 @@
 // IMPORTANT: every place that sets wiki_auth must use THIS helper. Setting the
 // same cookie name with a different Domain creates a second, separate cookie and
 // nginx then reads an arbitrary one. One helper keeps the scope consistent.
+//
+// SameSite=None is deliberate. The workbook iframe is sandboxed without
+// allow-same-origin, so the browser treats its subresource requests as
+// cross-site for cookie purposes. With SameSite=Lax the HTML navigates with the
+// cookie but every stylesheet, script, and image loses it and nginx redirects
+// the asset to /login. The cookie is still unreadable to the framed document
+// (opaque origin), and Secure keeps it off plain HTTP. Local HTTP development
+// falls back to Lax; use HTTPS for the embedded workbook.
+const cookieSiteAttributes = () => {
+  const secure = window.location.protocol === 'https:'
+  return secure ? 'SameSite=None; Secure' : 'SameSite=Lax'
+}
+
 export function setWikiAuthCookie() {
   const token = localStorage.getItem('token')
   if (!token) return
@@ -19,9 +32,7 @@ export function setWikiAuthCookie() {
   // Bind to the app's own host (covers only this instance's subdomains).
   const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
     ? `; Domain=${host}` : ''
-  // Never allow the JWT cookie to travel over plain HTTP in a real deployment.
-  const secureAttr = (!isIp && host !== 'localhost') ? '; Secure' : ''
-  document.cookie = `wiki_auth=${token}; path=/; SameSite=Lax; max-age=86400${secureAttr}${domainAttr}`
+  document.cookie = `wiki_auth=${token}; path=/; ${cookieSiteAttributes()}; max-age=86400${domainAttr}`
 }
 
 // Remove the wiki auth cookie on logout or account deletion. Clear both the
@@ -32,7 +43,6 @@ export function clearWikiAuthCookie() {
   const isIp = /^\d{1,3}(\.\d{1,3}){3}$/.test(host)
   const domainAttr = (!isIp && host !== 'localhost' && host.includes('.'))
     ? `; Domain=${host}` : ''
-  const secureAttr = (!isIp && host !== 'localhost') ? '; Secure' : ''
-  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${secureAttr}${domainAttr}`
-  document.cookie = `wiki_auth=; path=/; SameSite=Lax; max-age=0${secureAttr}`
+  document.cookie = `wiki_auth=; path=/; ${cookieSiteAttributes()}; max-age=0${domainAttr}`
+  document.cookie = `wiki_auth=; path=/; ${cookieSiteAttributes()}; max-age=0`
 }

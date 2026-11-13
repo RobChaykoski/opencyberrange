@@ -343,6 +343,8 @@ _MKDOCS_TEMPLATE = {
     "docs_dir": "Workbook",
     "theme": {
         "name": "material",
+        # No Google Fonts request: the wiki CSP only allows self-hosted styles.
+        "font": False,
         "palette": [
             {
                 "scheme": "slate",
@@ -407,6 +409,7 @@ _MKDOCS_TEMPLATE = {
     ],
     "extra_css": ["stylesheets/extra.css?v=4"],
     "extra_javascript": [
+        "javascripts/mermaid.min.js?v=1",
         "javascripts/embed-mode.js?v=1",
         "javascripts/mermaid-fix.js?v=4",
         "javascripts/html2pdf.bundle.min.js?v=1",

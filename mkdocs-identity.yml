@@ -7,6 +7,8 @@ copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https:/
 
 theme:
   name: material
+  # No Google Fonts request: the wiki CSP only allows self-hosted styles.
+  font: false
   logo: assets/swocts-cyber-range-mark.png
   favicon: assets/favicon.png
   palette:
@@ -29,9 +31,6 @@ theme:
     - navigation.expand
     - navigation.top
     - content.code.copy
-  font:
-    text: Inter
-    code: JetBrains Mono
 
 markdown_extensions:
   - admonition
@@ -59,6 +58,7 @@ extra_css:
   - stylesheets/extra.css?v=4
 
 extra_javascript:
+  - javascripts/mermaid.min.js?v=1
   - javascripts/embed-mode.js?v=1
   - javascripts/mermaid-fix.js?v=4
   - javascripts/pdf-export.js?v=2
