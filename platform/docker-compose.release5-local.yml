@@ -25,6 +25,10 @@ services:
     # Local Docker Desktop bind mounts are simpler as root. This override is
     # only for the disposable test stack.
     user: "0:0"
+    environment:
+      # Docker Desktop's host-network CIDR. This lets the spawn isolation check
+      # run instead of refusing every RangeBox launch.
+      HOST_NETWORK: "192.168.65.0/24"
     ports: !override
       - "127.0.0.1:18080:8000"
 

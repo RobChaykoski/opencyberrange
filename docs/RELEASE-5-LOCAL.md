@@ -82,10 +82,12 @@ docker run --rm \
 ## Known local limitations
 
 - Lab spawning requires the host firewall/network setup and the RangeBox image.
-  Docker Desktop cannot satisfy `_ensure_spawn_isolation` without a
-  `HOST_NETWORK` value, so the local stack verifies the platform, content, wiki,
-  and pages but does not complete a live RangeBox launch. Live workspace
-  regression is run on development (`172.16.16.44`).
+  The local override sets `HOST_NETWORK=192.168.65.0/24` (Docker Desktop's host
+  network), but Docker Desktop still cannot execute the privileged iptables
+  verification (`'NoneType' object has no attribute 'decode'`). The local stack
+  therefore verifies the platform, content, wiki, and pages but does not
+  complete a live RangeBox launch. Live workspace regression is run on
+  development (`172.16.16.44`), where host isolation works.
 - The local stack uses HTTP on port 18081. Production keeps TLS and the
   custom-hostname settings.
 
