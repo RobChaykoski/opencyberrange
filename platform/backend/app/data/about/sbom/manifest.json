@@ -3,14 +3,14 @@
     {
       "name": "backend.cdx.json",
       "label": "Backend CycloneDX SBOM",
-      "bytes": 17913,
-      "sha256": "bd73a4f0d916dfacc054dfd2c4f8d3e41734801d9c153919f862be98b8f486e7"
+      "bytes": 17266,
+      "sha256": "f01a03a84536f5563af30ed48ad7566bccf59ca5c9f5ec50c44977476b920049"
     },
     {
       "name": "frontend.cdx.json",
       "label": "Frontend CycloneDX SBOM",
-      "bytes": 250183,
-      "sha256": "18df4fd79b28984b8123ecda446cfdffc10f12d99c51ff0f0140a42e20d837da"
+      "bytes": 241413,
+      "sha256": "cc08542230f183e3f28ed7adb64de4d04aef29e3e3562a96f66e89f50aa35873"
     },
     {
       "name": "topology-node.cdx.json",

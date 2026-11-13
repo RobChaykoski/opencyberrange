@@ -1,8 +1,8 @@
 # Release 5 scope: enterprise procurement and compliance
 
-Status: **planned.** Release 4 is limited to SSO (OIDC/SAML/LDAP), the network
-device topology engine, and the security, privacy, and accessibility
-corrections already on the Release 4 branch. Everything below is Release 5.
+Status: **in development on the `release5` branch.** Production remains on the
+signed Release 4 tag. The local image/stack bring-up is documented in
+[`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md). Everything below is Release 5.
 
 Source requirements: the university procurement pack covering FERPA, COPPA,
 GDPR/UK GDPR, CCPA/SOPIPA, PIPEDA/FIPPA/MFIPPA, Quebec Law 25, AODA/WCAG 2.2 AA,

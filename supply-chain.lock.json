@@ -43,7 +43,7 @@
       "sha256": "202881a66bba6b4bcc07c3f195492b64100844893c18ccc9fea5e1e2938c60bc"
     },
     "platform/backend/app/version.py": {
-      "sha256": "d28df52054f1f978f8140929961568ff52a4abd8cbf5e8194ba37d4219944056"
+      "sha256": "fde55512504cfda98dd14ba714e0c6742c71f66c93d4a54bef1690f6c4b79f6b"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
@@ -142,7 +142,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "9cfc57f43791fd260c6ae59b7b73275e03bcf1135dd07463bcbc9ea4e6cb2b1a"
+      "sha256": "39e4c604a7cac29736d816345e8ec6aa101014fb1bc5620513802f382708552a"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1253,6 +1253,6 @@
       ]
     }
   },
-  "release": "4",
+  "release": "5",
   "schema": 1
 }
