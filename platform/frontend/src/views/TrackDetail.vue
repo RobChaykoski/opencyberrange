@@ -1360,8 +1360,10 @@ const submitQuiz = async () => {
 const openActiveLab = async (lab) => {
   try {
     const token = localStorage.getItem('token')
+    const params = ltiLaunch.value ? { launch: ltiLaunch.value } : {}
     const { data } = await axios.get(`/exercises/labs/${lab.id}`, {
-      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      params
     })
     activeLab.value = data
     workbookExpanded.value = false
@@ -1595,6 +1597,14 @@ const rangeboxImageForLab = (lab) => {
 // cannot be followed.
 const startExercise = () => launchWithImage(rangeboxImageForLab(activeLab.value?.lab))
 
+const ltiLaunch = computed(() => {
+  const grant = route.query.launch
+  return typeof grant === 'string' ? grant : ''
+})
+
+const spawnUrl = (slug) =>
+  `/labs/spawn/${slug}${ltiLaunch.value ? `?launch=${encodeURIComponent(ltiLaunch.value)}` : ''}`
+
 const launchLab = async (lab) => {
   const running = findActiveTrackLab()
   if (running && running.id !== lab.id) {
@@ -1614,7 +1624,7 @@ const launchLab = async (lab) => {
       ? { rangebox: true, rangebox_image: rangeboxImage }
       : { rangebox: false }
     if (rangeboxImage) activeRangeboxImage.value = rangeboxImage
-    const { data: sp } = await axios.post(`/labs/spawn/${lab.slug}`, spawnBody)
+    const { data: sp } = await axios.post(spawnUrl(lab.slug), spawnBody)
     // Async spawn: wait for the session to actually reach running before opening
     // the panel, otherwise it shows a not-ready lab and never updates.
     if (sp?.session_id && sp.status !== 'running') {
@@ -1662,7 +1672,7 @@ const launchWithImage = async (image) => {
     const body = image
       ? { rangebox: true, rangebox_image: image }
       : { rangebox: false }
-    const { data: sp } = await axios.post(`/labs/spawn/${activeLab.value.lab.slug}`, body)
+    const { data: sp } = await axios.post(spawnUrl(activeLab.value.lab.slug), body)
     if (sp?.session_id && sp.status !== 'running') {
       await pollSpawnStatus(sp.session_id)
     }

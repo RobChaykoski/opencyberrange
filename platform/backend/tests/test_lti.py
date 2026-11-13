@@ -15,12 +15,15 @@ from app.services.lti import (
     build_login_redirect,
     build_score_payload,
     create_deep_link_session,
+    create_launch_grant,
+    lineitem_subpath,
     normalize_roster,
     platform_kid,
     public_jwk,
     sign_deep_link_response,
     tool_jwks,
     valid_lti_url,
+    verify_launch_grant,
 )
 
 
@@ -44,6 +47,7 @@ def test_login_redirect_carries_required_parameters():
         nonce="nonce-value",
         login_hint="learner-1",
         launch_url="https://range.example.edu/api/lti/launch",
+        lti_message_hint='{"launchid":"abc"}',
     )
     assert url.startswith("https://lms.example.edu/lti/login?")
     assert "response_type=id_token" in url
@@ -53,6 +57,7 @@ def test_login_redirect_carries_required_parameters():
     assert "state=state-value" in url
     assert "nonce=nonce-value" in url
     assert "login_hint=learner-1" in url
+    assert "lti_message_hint=%7B%22launchid%22%3A%22abc%22%7D" in url
 
 
 def test_client_assertion_is_signed_private_key_jwt():
@@ -96,6 +101,11 @@ def test_score_payload_uses_lti_ags_fields():
         "timestamp": "2026-11-13T12:00:00Z",
     }
 
+    generated = build_score_payload(subject="lms-user-1", score=8, max_score=10)
+    assert generated["timestamp"].endswith("Z")
+    assert "." not in generated["timestamp"]
+    assert ":" in generated["timestamp"]
+
 
 def test_lineitem_payload_matches_ags_shape():
     payload = build_lineitem_payload(
@@ -132,6 +142,50 @@ def test_nrps_roster_keeps_only_minimal_fields():
             "status": "Active",
             "context_id": "course-1",
         }
+    ]
+
+
+def test_nrps_roster_reads_the_lis_membership_container():
+    payload = {
+        "@context": "http://purl.imsglobal.org/ctx/lis/v2/MembershipContainer",
+        "@type": "Page",
+        "pageOf": {
+            "@type": "LISMembershipContainer",
+            "membershipSubject": {
+                "@type": "Context",
+                "contextId": "2",
+                "membership": [
+                    {
+                        "status": "Active",
+                        "role": ["Learner"],
+                        "member": {
+                            "@type": "LISPerson",
+                            "userId": "3",
+                            "sourcedId": "",
+                        },
+                    },
+                    {
+                        "status": "Active",
+                        "role": ["Instructor"],
+                        "member": {"@type": "LISPerson", "userId": "2"},
+                    },
+                ],
+            },
+        },
+    }
+    assert normalize_roster(payload) == [
+        {
+            "user_id": "3",
+            "roles": ["Learner"],
+            "status": "Active",
+            "context_id": "2",
+        },
+        {
+            "user_id": "2",
+            "roles": ["Instructor"],
+            "status": "Active",
+            "context_id": "2",
+        },
     ]
 
 
@@ -222,6 +276,27 @@ def test_signed_messages_carry_the_jwks_kid():
         platform, session, [SimpleNamespace(slug="lab-1", name="Lab One")]
     )
     assert jwt.get_unverified_header(response)["kid"] == platform_kid(platform)
+
+
+def test_lineitem_subpath_keeps_the_query_string():
+    url = "https://lms.example.edu/mod/lti/services.php/2/lineitems/2/lineitem?type_id=1"
+    assert (
+        lineitem_subpath(url, "scores")
+        == "https://lms.example.edu/mod/lti/services.php/2/lineitems/2/lineitem/scores?type_id=1"
+    )
+    assert (
+        lineitem_subpath(url, "/results")
+        == "https://lms.example.edu/mod/lti/services.php/2/lineitems/2/lineitem/results?type_id=1"
+    )
+
+
+def test_launch_grant_is_scoped_to_user_and_lab():
+    user = SimpleNamespace(id=7)
+    grant = create_launch_grant(user, 141)
+    assert verify_launch_grant(grant, 7, 141)
+    assert not verify_launch_grant(grant, 8, 141)
+    assert not verify_launch_grant(grant, 7, 142)
+    assert not verify_launch_grant(None, 7, 141)
 
 
 def test_deep_link_session_rejects_non_https_return_url():

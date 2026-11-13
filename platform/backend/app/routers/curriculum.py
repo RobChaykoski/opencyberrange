@@ -2007,10 +2007,15 @@ async def get_hint(
 async def get_lab_details(
     lab_id: int,
     course_id: int = None,
+    launch: str | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
     """Get detailed lab info for active lab view"""
+
+    from app.services.lti import verify_launch_grant
+
+    lti_bypass = verify_launch_grant(launch, current_user.id, lab_id)
 
     lab = db.query(Lab).options(
         joinedload(Lab.level).joinedload(Level.track)
@@ -2074,7 +2079,7 @@ async def get_lab_details(
         current_user.is_instructor, visible_lab_ids,
     )
 
-    if not is_unlocked and not course_bypass and not current_user.is_instructor:
+    if not is_unlocked and not course_bypass and not current_user.is_instructor and not lti_bypass:
         raise HTTPException(
             status_code=403,
             detail="This lab is locked. Complete previous labs first."

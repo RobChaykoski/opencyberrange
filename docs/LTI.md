@@ -12,8 +12,9 @@ with the minimum fields (subject, role, status, context), persisted per link on
 an explicit admin sync, and exposed through admin roster endpoints/UI actions.
 Deep Linking 2.0 accepts an instructor request, issues a single-use picker
 session, returns a signed `LtiDeepLinkingResponse` with local lab launch URLs,
-and resumes the assignment deep link. A real LMS staging test is still to do.
-Do not tell a buyer LTI is complete until it passes.
+and resumes the assignment deep link. An end-to-end pass against a local Moodle
+5.0.2 staging site covered launch, Deep Linking, AGS passback, and NRPS. Canvas
+and Brightspace staging tests are still recommended before a broad claim.
 
 ## Why
 
@@ -111,9 +112,10 @@ second identity table.
 - The Deep Linking picker and the LTI launch callback (`/lti/callback`) are
   served without app chrome and with an LTI-only CSP: `frame-ancestors https:`
   so an LMS can embed them and `form-action 'self' https:` so the picker can
-  post the signed response back to the LMS. Other SPA pages keep
-  `frame-ancestors 'self'` and `form-action 'self'`. Client-side navigation
-  keeps the relaxed document policy for the rest of the framed session.
+  post the signed response back to the LMS. Loopback HTTP origins are also
+  allowed for local LMS testing. Other SPA pages keep `frame-ancestors 'self'`
+  and `form-action 'self'`. Client-side navigation keeps the relaxed document
+  policy for the rest of the framed session.
 
 ## Tests
 
@@ -134,3 +136,8 @@ second identity table.
 An end-to-end test against a real LMS staging tenant, with a screenshot of the
 grade appearing in the LMS gradebook and a second test proving the review gate
 blocks an unreviewed score.
+
+Moodle 5.0.2 staging (2026-11-13): passed. An instructor selected a lab through
+Deep Linking, a student launch opened that lab, a reviewed score reached the
+Moodle gradebook, and NRPS returned the course roster. Canvas and Brightspace
+remain recommended validation targets.

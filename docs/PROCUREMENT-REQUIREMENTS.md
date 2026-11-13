@@ -38,16 +38,16 @@ test or documented evidence in this repository — not a certification.
 | OIDC SSO | Yes | `app/services/oidc.py`, PKCE, nonce, JWKS, single-use state/ticket. |
 | LDAP directory login | Yes | `app/services/ldap_auth.py`, role mapping from `memberOf`. |
 | Canadian Access Federation (CAF) | Partial | CAF is SAML 2.0 metadata plus federation trust. The product accepts standard IdP metadata; CAF onboarding is an institutional/federation process. |
-| LTI 1.3 core launch | Partial | Implemented on `release5`: platform registry, OIDC login, signed `id_token` validation, single-use state, external-identity linking, and the SPA exchange. Verified against a mock LMS; a real LMS staging test is pending. |
-| LTI Advantage AGS grade passback | Partial | Implemented: private_key_jwt token exchange, line-item create/reuse, reviewed score form, result retrieval, append-only ledger. Mock-verified; real LMS staging test pending. |
-| LTI NRPS roster sync | Partial | Implemented: explicit admin sync persists only subject, roles, status, and context. No names or email. Mock-verified; real LMS staging test pending. |
-| LTI Deep Linking | Partial | Implemented: single-use picker session, signed `LtiDeepLinkingResponse`, lab launch content items, and deep-linked assignment routing. Browser E2E against a mock LMS; real LMS staging test pending. |
+| LTI 1.3 core launch | Partial | Implemented on `release5`: platform registry, OIDC login (GET and form POST), signed `id_token` validation, single-use state, external-identity linking, and the SPA exchange. End-to-end verified against a Moodle 5.0.2 staging site; Canvas and Brightspace remain recommended. |
+| LTI Advantage AGS grade passback | Partial | Implemented: private_key_jwt token exchange, line-item create/reuse, reviewed score form, result retrieval, append-only ledger. A reviewed score reached the Moodle 5.0.2 gradebook; Canvas and Brightspace remain recommended. |
+| LTI NRPS roster sync | Partial | Implemented: explicit admin sync persists only subject, roles, status, and context, including the LIS 2.0 membership container. No names or email. Verified against Moodle 5.0.2; other LMSs remain recommended. |
+| LTI Deep Linking | Partial | Implemented: single-use picker session, signed `LtiDeepLinkingResponse`, lab launch content items, selection limits, and deep-linked assignment routing. Verified end to end in Moodle 5.0.2; Canvas and Brightspace remain recommended. |
 | Minimal LTI claims (sub, role, context) | Yes | Launch provisioning keys on `sub` + issuer. Email is used only when the LMS sends it; name is not required. NRPS persists the minimum fields. |
 | Avoid standalone student passwords | Yes | SSO-provisioned accounts set `password_login_disabled` and cannot use the local form. |
 
-`docs/LTI.md` holds the design contract and test plan. Do not represent LTI as
-generally available until an end-to-end test against a real Moodle, Canvas, or
-Brightspace staging tenant passes.
+`docs/LTI.md` holds the design contract and test plan. LTI has passed an
+end-to-end Moodle 5.0.2 staging test; validate Canvas or Brightspace before
+representing it as available on those platforms.
 
 ## 3. Accessibility and evaluation
 
@@ -105,8 +105,8 @@ Release 4 can honestly ship:
 Everything below is **Release 5**, not Release 4:
 
 - LTI 1.3 / Advantage: launch, AGS, NRPS, and Deep Linking are implemented on
-  `release5` and awaiting a real-LMS staging test; CAF onboarding and the
-  institutional federation steps remain.
+  `release5` and passed a Moodle 5.0.2 staging test; Canvas and Brightspace
+  validation plus CAF onboarding remain.
 - Multi-tenancy and the TA role.
 - The per-student accommodation engine (multipliers, pause/resume, due dates).
 - Automated-decision transparency and the human-review workflow.

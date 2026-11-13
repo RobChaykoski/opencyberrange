@@ -118,8 +118,25 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
 - `GET /api/lti/jwks` published the tool key with its `kid`; the response JWT
   verified against that JWKS with the matching `kid`.
 
-Still to do: a real Moodle/Canvas staging test (launch, AGS passback, NRPS, and
-Deep Linking).
+## Real Moodle staging pass
+
+A local Moodle 5.0.2 site (bitnami/moodle + MariaDB, port 18082) was registered
+as an LTI 1.3 platform. The pass on 2026-11-13 covered:
+
+- OIDC login, including the form POST and `lti_message_hint` echo Moodle requires;
+- a student launch that opened the deep-linked lab at `/exercises?labId=...`;
+- the sequential-lock bypass for an LTI-assigned lab (short-lived launch grant);
+- Deep Linking content selection with 179 labs and a stored activity link;
+- AGS line-item creation, a reviewed score passback, result retrieval, and the
+  score visible in Moodle's gradebook (80/100);
+- NRPS sync of the LIS 2.0 membership container (2 members, minimum fields only).
+
+Local-only adjustments used for this test, not production code: Moodle fetched
+the tool JWKS and AGS/NRPS URLs through `host.docker.internal`, and its cURL
+security allow-list had to include the local ports. Canvas and Brightspace
+staging remain recommended.
+
+Still to do: a Canvas or Brightspace staging test.
 
 ## Verified on this stack
 

@@ -190,10 +190,13 @@ async def get_labs(
 async def spawn_lab(
     lab_slug: str,
     request: Request,
+    launch: str | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
     """Spawn a lab environment for the user"""
+
+    from app.services.lti import verify_launch_grant
 
     # Check if user already has an active session
     existing_session = db.query(LabSession).filter(
@@ -221,7 +224,9 @@ async def spawn_lab(
     # only discover the lock when the panel refuses to load.
     from app.routers.curriculum import lab_unlocked_for_user
 
-    if not lab_unlocked_for_user(db, current_user, lab):
+    if not lab_unlocked_for_user(db, current_user, lab) and not verify_launch_grant(
+        launch, current_user.id, lab.id
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="This lab is locked. Complete previous labs first.",

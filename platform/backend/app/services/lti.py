@@ -16,7 +16,7 @@ import time
 import uuid
 from base64 import urlsafe_b64encode
 from datetime import datetime, timedelta, timezone
-from urllib.parse import parse_qs, quote, urlencode, urlsplit
+from urllib.parse import parse_qs, quote, urlencode, urlsplit, urlunsplit
 
 import jwt
 import requests
@@ -240,6 +240,7 @@ def build_login_redirect(
     nonce: str,
     login_hint: str,
     launch_url: str,
+    lti_message_hint: str = "",
 ) -> str:
     params = {
         "response_type": "id_token",
@@ -253,6 +254,8 @@ def build_login_redirect(
         "nonce": nonce,
         "lti_deployment_id": platform.deployment_id,
     }
+    if lti_message_hint:
+        params["lti_message_hint"] = lti_message_hint
     return f"{platform.auth_login_url}?{urlencode(params)}"
 
 
@@ -363,8 +366,12 @@ def record_launch_link(
     link.context_id = str(context.get("id") or "")[:255] or None
     link.context_title = str(context.get("title") or "")[:255] or None
     link.title = str(resource.get("title") or "")[:255] or None
-    link.ags_lineitem_url = str(endpoint.get("lineitem") or "")[:500] or None
     link.ags_lineitems_url = str(endpoint.get("lineitems") or "")[:500] or None
+    # A launch only carries `lineitem` when the LMS already has one. Keep a
+    # locally created line item when the claim is absent instead of clearing it.
+    lineitem_claim = str(endpoint.get("lineitem") or "").strip()
+    if lineitem_claim:
+        link.ags_lineitem_url = lineitem_claim[:500]
     scopes = endpoint.get("scope")
     link.ags_scopes = json.dumps(scopes) if scopes else None
     link.nrps_url = str(nrps.get("context_memberships_url") or "")[:500] or None
@@ -527,7 +534,11 @@ def ensure_lineitem(
         response = requests.post(
             link.ags_lineitems_url,
             json=payload,
-            headers={"Authorization": f"Bearer {token}"},
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/vnd.ims.lis.v2.lineitem+json",
+                "Accept": "application/vnd.ims.lis.v2.lineitem+json",
+            },
             timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
             verify=not settings.SSO_ALLOW_INSECURE_HTTP,
         )
@@ -555,8 +566,11 @@ def get_results(platform: LtiPlatform, link: LtiLink) -> dict:
     token = get_access_token(platform, [LTI_AGS_RESULT_SCOPE])
     try:
         response = requests.get(
-            link.ags_lineitem_url.rstrip("/") + "/results",
-            headers={"Authorization": f"Bearer {token}"},
+            lineitem_subpath(link.ags_lineitem_url, "results"),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/vnd.ims.lis.v2.resultcontainer+json",
+            },
             timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
             verify=not settings.SSO_ALLOW_INSECURE_HTTP,
         )
@@ -568,17 +582,33 @@ def get_results(platform: LtiPlatform, link: LtiLink) -> dict:
 
 def normalize_roster(payload: dict) -> list[dict]:
     """Keep only the minimum NRPS fields: subject, role, status, context."""
-    context_id = str((payload.get("context") or {}).get("id") or "") or None
+    page_of = payload.get("pageOf") or {}
+    membership_subject = page_of.get("membershipSubject") or {}
+    context_id = (
+        str((payload.get("context") or {}).get("id") or "")
+        or str(membership_subject.get("contextId") or "")
+        or None
+    )
+    # Some LMSs return a flat members list; the LIS 2.0 container nests them
+    # under pageOf.membershipSubject.membership with role/member objects.
+    entries = payload.get("members") or membership_subject.get("membership") or []
     members = []
-    for member in payload.get("members") or []:
-        subject = str(member.get("user_id") or member.get("userId") or "").strip()
+    for entry in entries:
+        member = entry.get("member") or entry
+        subject = str(
+            member.get("userId")
+            or member.get("user_id")
+            or entry.get("userId")
+            or ""
+        ).strip()
         if not subject:
             continue
+        roles = entry.get("roles") or entry.get("role") or member.get("roles") or []
         members.append(
             {
                 "user_id": subject,
-                "roles": [str(role) for role in (member.get("roles") or [])],
-                "status": str(member.get("status") or "Active"),
+                "roles": [str(role) for role in roles],
+                "status": str(entry.get("status") or "Active"),
                 "context_id": context_id,
             }
         )
@@ -596,7 +626,10 @@ def get_roster(platform: LtiPlatform, link: LtiLink) -> dict:
         try:
             response = requests.get(
                 url,
-                headers={"Authorization": f"Bearer {token}"},
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Accept": "application/vnd.ims.lis.v2.membershipcontainer+json",
+                },
                 timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
                 verify=not settings.SSO_ALLOW_INSECURE_HTTP,
             )
@@ -649,13 +682,20 @@ def build_score_payload(
     max_score: float,
     timestamp: str | None = None,
 ) -> dict:
+    if not timestamp:
+        timestamp = (
+            datetime.now(timezone.utc)
+            .replace(microsecond=0)
+            .isoformat()
+            .replace("+00:00", "Z")
+        )
     return {
         "userId": subject,
         "scoreGiven": score,
         "scoreMaximum": max_score,
         "activityProgress": "Completed",
         "gradingProgress": "FullyGraded",
-        "timestamp": timestamp or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "timestamp": timestamp,
     }
 
 
@@ -670,13 +710,17 @@ def post_score(
     if not link.ags_lineitem_url:
         raise LTIError("This launch did not provide an AGS line-item endpoint.")
     token = get_access_token(platform, [LTI_AGS_SCORE_SCOPE])
-    url = link.ags_lineitem_url.rstrip("/") + "/scores"
+    url = lineitem_subpath(link.ags_lineitem_url, "scores")
     payload = build_score_payload(subject=subject, score=score, max_score=max_score)
     try:
         response = requests.post(
             url,
             json=payload,
-            headers={"Authorization": f"Bearer {token}"},
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/vnd.ims.lis.v1.score+json",
+                "Accept": "application/vnd.ims.lis.v1.score+json",
+            },
             timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
             verify=not settings.SSO_ALLOW_INSECURE_HTTP,
         )
@@ -690,6 +734,13 @@ def post_score(
         "status_code": response.status_code,
         "body": (response.text or "")[:2000],
     }
+
+
+def lineitem_subpath(url: str, suffix: str) -> str:
+    """Append a path segment without breaking an existing query string."""
+    parts = urlsplit(url)
+    path = parts.path.rstrip("/") + "/" + suffix.strip("/")
+    return urlunsplit((parts.scheme, parts.netloc, path, parts.query, parts.fragment))
 
 
 def subject_for_user(db: Session, platform: LtiPlatform, user_id: int) -> str:
@@ -745,7 +796,9 @@ def provision_launch_user(
     return user
 
 
-def target_return_to(db: Session, target_link_uri: str) -> str:
+def target_return_to(
+    db: Session, target_link_uri: str, user: User | None = None
+) -> str:
     """Resolve a deep-linked lab query to the local exercises route."""
     from app.models import Lab
 
@@ -757,8 +810,43 @@ def target_return_to(db: Session, target_link_uri: str) -> str:
     if lab_slug:
         lab = db.query(Lab).filter(Lab.slug == lab_slug).first()
         if lab is not None:
-            return f"/exercises?labId={lab.id}"
+            if user is None:
+                return f"/exercises?labId={lab.id}"
+            grant = create_launch_grant(user, lab.id)
+            return f"/exercises?labId={lab.id}&launch={quote(grant)}"
     return "/dashboard"
+
+
+def create_launch_grant(user: User, lab_id: int) -> str:
+    """Short-lived proof that this user arrived through an LTI assignment."""
+    now = int(time.time())
+    return jwt.encode(
+        {
+            "typ": "lti_launch",
+            "sub": str(user.id),
+            "lab": int(lab_id),
+            "iat": now,
+            "exp": now + 600,
+        },
+        settings.JWT_SECRET,
+        algorithm="HS256",
+    )
+
+
+def verify_launch_grant(token: str | None, user_id: int, lab_id: int) -> bool:
+    if not token:
+        return False
+    try:
+        payload = jwt.decode(
+            token, settings.JWT_SECRET, algorithms=["HS256"]
+        )
+    except Exception:
+        return False
+    return (
+        payload.get("typ") == "lti_launch"
+        and payload.get("sub") == str(user_id)
+        and payload.get("lab") == int(lab_id)
+    )
 
 
 def ticket_url(
@@ -776,3 +864,4 @@ def ticket_url(
     return sso_flow.callback_url(
         {"ticket": ticket, "return_to": safe_return}, path="/lti/callback"
     )
+

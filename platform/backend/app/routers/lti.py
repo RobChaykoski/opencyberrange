@@ -484,18 +484,25 @@ async def tool_jwks(
     return lti_service.tool_jwks(platforms)
 
 
-@router.get("/login")
+@router.api_route("/login", methods=["GET", "POST"])
 @limiter.limit("30/minute")
 async def lti_login(
     request: Request,
-    iss: str,
-    login_hint: str = "",
-    target_link_uri: str = "/dashboard",
-    lti_deployment_id: str = "",
-    client_id: str = "",
     db: Session = Depends(get_db),
 ):
-    """OIDC third-party initiated login from the LMS."""
+    """OIDC third-party initiated login from the LMS (GET or form POST)."""
+    params = dict(request.query_params)
+    if request.method == "POST":
+        form = await request.form()
+        params.update({key: str(value) for key, value in form.items()})
+    iss = str(params.get("iss") or "").strip()
+    client_id = str(params.get("client_id") or "").strip()
+    login_hint = str(params.get("login_hint") or "")
+    target_link_uri = str(params.get("target_link_uri") or "/dashboard")
+    lti_deployment_id = str(params.get("lti_deployment_id") or "")
+    lti_message_hint = str(params.get("lti_message_hint") or "")
+    if not iss:
+        raise HTTPException(status_code=400, detail="iss is required")
     if not client_id:
         raise HTTPException(status_code=400, detail="client_id is required")
     platform = (
@@ -521,6 +528,7 @@ async def lti_login(
         nonce=nonce,
         login_hint=login_hint,
         launch_url=launch_url,
+        lti_message_hint=lti_message_hint,
     )
     return RedirectResponse(url, status_code=302)
 
@@ -661,7 +669,7 @@ async def lti_launch(
         else:
             lti_service.record_launch_link(db, platform, claims)
             return_to = lti_service.target_return_to(
-                db, state_row.target_link_uri
+                db, state_row.target_link_uri, user
             )
         target = lti_service.ticket_url(
             db, user, platform, return_to=return_to

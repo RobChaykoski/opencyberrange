@@ -79,6 +79,8 @@ else:
         fail("lti-embed-headers.conf must allow an HTTPS LMS frame")
     if "form-action 'self' https:" not in embed:
         fail("lti-embed-headers.conf must allow the HTTPS LMS return POST")
+    if "http://localhost:*" not in embed:
+        fail("lti-embed-headers.conf must allow a local HTTP LMS for development")
     if "add_header X-Frame-Options" in embed:
         fail("lti-embed-headers.conf must not send X-Frame-Options")
 
