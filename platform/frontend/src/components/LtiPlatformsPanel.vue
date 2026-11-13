@@ -75,6 +75,105 @@
       </article>
     </div>
 
+    <section class="lti-links" aria-labelledby="lti-links-title">
+      <div class="lti-links__head">
+        <div>
+          <h4 id="lti-links-title">Launched links and scores</h4>
+          <p>Review a launched exercise, create its LMS line item, and post a reviewed score.</p>
+        </div>
+        <button type="button" class="btn btn--outline btn--xs" :disabled="linksLoading" @click="loadLinks">
+          {{ linksLoading ? 'Refreshing...' : 'Refresh' }}
+        </button>
+      </div>
+      <p v-if="linksLoading" class="lti-state">Loading launched links...</p>
+      <p v-else-if="linksError" class="lti-state lti-state--error" role="alert">{{ linksError }}</p>
+      <p v-else-if="!links.length" class="lti-empty">
+        No LMS launch has been recorded yet. A link appears after a successful
+        launch from a registered platform.
+      </p>
+      <div v-else class="lti-links__list">
+        <button
+          v-for="link in links"
+          :key="link.id"
+          type="button"
+          class="lti-link"
+          :class="{ 'lti-link--active': selectedLink?.id === link.id }"
+          @click="selectLink(link)"
+        >
+          <span class="lti-link__title">{{ link.title || link.resource_link_id }}</span>
+          <span class="lti-link__meta">
+            {{ platformName(link.platform_id) }} · {{ link.context_title || link.context_id || 'No context' }}
+          </span>
+          <span class="lti-link__badges">
+            <span class="lti-badge" :class="link.has_lineitem ? 'lti-badge--on' : 'lti-badge--muted'">
+              {{ link.has_lineitem ? 'Line item' : 'No line item' }}
+            </span>
+            <span v-if="link.lab_id" class="lti-badge lti-badge--muted">Lab {{ link.lab_id }}</span>
+          </span>
+        </button>
+      </div>
+
+      <div v-if="selectedLink" class="lti-score-panel">
+        <div class="lti-score-panel__head">
+          <div>
+            <strong>{{ selectedLink.title || selectedLink.resource_link_id }}</strong>
+            <p class="lti-mono">{{ selectedLink.resource_link_id }}</p>
+          </div>
+          <div class="lti-card__actions">
+            <button type="button" class="btn btn--outline btn--xs" :disabled="lineitemBusy" @click="ensureLineitem">
+              {{ lineitemBusy ? 'Creating...' : 'Create line item' }}
+            </button>
+            <button type="button" class="btn btn--outline btn--xs" :disabled="resultsBusy" @click="loadResults">
+              {{ resultsBusy ? 'Loading...' : 'Fetch results' }}
+            </button>
+          </div>
+        </div>
+
+        <form class="lti-score-form" @submit.prevent="submitScore">
+          <label class="field">
+            <span>Local user ID</span>
+            <input v-model="scoreForm.user_id" type="number" min="1" required />
+          </label>
+          <label class="field">
+            <span>Score</span>
+            <input v-model="scoreForm.score" type="number" step="0.01" min="0" required />
+          </label>
+          <label class="field">
+            <span>Out of</span>
+            <input v-model="scoreForm.max_score" type="number" step="0.01" min="0.01" required />
+          </label>
+          <label class="field lti-score-form__reason">
+            <span>Review reason</span>
+            <input v-model="scoreForm.reason" type="text" maxlength="500" placeholder="Why this score is being released" required />
+          </label>
+          <button type="submit" class="btn btn--primary btn--sm" :disabled="scoreBusy">
+            {{ scoreBusy ? 'Posting...' : 'Post reviewed score' }}
+          </button>
+        </form>
+        <p v-if="scoreMessage" class="lti-state" :class="{ 'lti-state--error': scoreError }" role="status">{{ scoreMessage }}</p>
+
+        <div class="lti-scores">
+          <h5>Score history</h5>
+          <p v-if="scoresLoading" class="lti-state">Loading scores...</p>
+          <p v-else-if="scoresError" class="lti-state lti-state--error">{{ scoresError }}</p>
+          <p v-else-if="!scores.length" class="lti-state">No score has been posted for this link.</p>
+          <table v-else class="lti-scores__table">
+            <thead><tr><th>User</th><th>Score</th><th>Status</th><th>Reviewer</th><th>When</th></tr></thead>
+            <tbody>
+              <tr v-for="score in scores" :key="score.id">
+                <td>{{ score.user_id }}</td>
+                <td>{{ score.score }} / {{ score.max_score }}</td>
+                <td>{{ score.status }}</td>
+                <td>{{ score.reviewer_id || '—' }}</td>
+                <td>{{ formatTime(score.created_at) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <pre v-if="results" class="lti-results">{{ results }}</pre>
+      </div>
+    </section>
+
     <form v-if="showForm" class="lti-form" @submit.prevent="savePlatform">
       <div class="lti-form__head">
         <h4>{{ editing ? 'Edit LTI platform' : 'New LTI platform' }}</h4>
@@ -142,6 +241,25 @@ const saving = ref(false)
 const formError = ref('')
 const testingId = ref(null)
 const testResults = reactive({})
+
+const links = ref([])
+const linksLoading = ref(false)
+const linksError = ref('')
+const selectedLinkId = ref(null)
+const selectedLink = computed(() => links.value.find((link) => link.id === selectedLinkId.value) || null)
+const scores = ref([])
+const scoresLoading = ref(false)
+const scoresError = ref('')
+const scoreBusy = ref(false)
+const scoreMessage = ref('')
+const scoreError = ref(false)
+const lineitemBusy = ref(false)
+const resultsBusy = ref(false)
+const results = ref('')
+const scoreForm = reactive({ user_id: '', score: '', max_score: '100', reason: '' })
+
+const platformName = (id) => platforms.value.find((platform) => platform.id === id)?.name || `Platform ${id}`
+const formatTime = (value) => (value ? new Date(value).toLocaleString() : '—')
 
 const loginUrl = computed(() => `${window.location.origin}/api/lti/login`)
 const launchUrl = computed(() => `${window.location.origin}/api/lti/launch`)
@@ -269,7 +387,110 @@ const removePlatform = async (platform) => {
   }
 }
 
-onMounted(load)
+const loadLinks = async () => {
+  linksLoading.value = true
+  linksError.value = ''
+  try {
+    const { data } = await axios.get('/lti/admin/links')
+    links.value = data.links || []
+    if (selectedLinkId.value && !links.value.some((link) => link.id === selectedLinkId.value)) {
+      selectedLinkId.value = null
+      scores.value = []
+    }
+  } catch (e) {
+    linksError.value = e.response?.data?.detail || 'Could not load launched LTI links.'
+  } finally {
+    linksLoading.value = false
+  }
+}
+
+const loadScores = async (linkId) => {
+  scoresLoading.value = true
+  scoresError.value = ''
+  try {
+    const { data } = await axios.get(`/lti/admin/links/${linkId}/scores`)
+    scores.value = data.scores || []
+  } catch (e) {
+    scoresError.value = e.response?.data?.detail || 'Could not load score history.'
+  } finally {
+    scoresLoading.value = false
+  }
+}
+
+const selectLink = async (link) => {
+  selectedLinkId.value = link.id
+  results.value = ''
+  scoreMessage.value = ''
+  scoreError.value = false
+  scoreForm.max_score = '100'
+  await loadScores(link.id)
+}
+
+const ensureLineitem = async () => {
+  if (!selectedLink.value) return
+  lineitemBusy.value = true
+  scoreMessage.value = ''
+  scoreError.value = false
+  try {
+    const { data } = await axios.post(`/lti/admin/links/${selectedLink.value.id}/lineitem`, {
+      label: selectedLink.value.title || 'OpenCyberRange exercise',
+      max_score: Number(scoreForm.max_score) || 100,
+    })
+    selectedLink.value.has_lineitem = true
+    scoreMessage.value = `Line item ready: ${data.lineitem_url}`
+  } catch (e) {
+    scoreError.value = true
+    scoreMessage.value = e.response?.data?.detail || 'Could not create the LMS line item.'
+  } finally {
+    lineitemBusy.value = false
+  }
+}
+
+const loadResults = async () => {
+  if (!selectedLink.value) return
+  resultsBusy.value = true
+  results.value = ''
+  scoreMessage.value = ''
+  scoreError.value = false
+  try {
+    const { data } = await axios.get(`/lti/admin/links/${selectedLink.value.id}/results`)
+    results.value = JSON.stringify(data, null, 2)
+  } catch (e) {
+    scoreError.value = true
+    scoreMessage.value = e.response?.data?.detail || 'Could not fetch LMS results.'
+  } finally {
+    resultsBusy.value = false
+  }
+}
+
+const submitScore = async () => {
+  if (!selectedLink.value) return
+  scoreBusy.value = true
+  scoreMessage.value = ''
+  scoreError.value = false
+  try {
+    const { data } = await axios.post(`/lti/admin/links/${selectedLink.value.id}/score`, {
+      user_id: Number(scoreForm.user_id),
+      score: Number(scoreForm.score),
+      max_score: Number(scoreForm.max_score),
+      reason: scoreForm.reason.trim(),
+    })
+    scoreMessage.value = `Score posted (record ${data.score_id}).`
+    await loadScores(selectedLink.value.id)
+    scoreForm.score = ''
+    scoreForm.reason = ''
+  } catch (e) {
+    scoreError.value = true
+    scoreMessage.value = e.response?.data?.detail || 'Could not post the score.'
+    await loadScores(selectedLink.value.id)
+  } finally {
+    scoreBusy.value = false
+  }
+}
+
+onMounted(async () => {
+  await Promise.all([load(), loadLinks()])
+})
 </script>
 
 <style scoped>
@@ -311,8 +532,30 @@ onMounted(load)
 .lti-form textarea { font-family: var(--font-mono, monospace); resize: vertical; }
 .lti-check { display: flex; align-items: center; gap: 0.4rem; color: var(--text-secondary); font-size: 0.75rem; }
 .lti-form__actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.9rem; }
+.lti-links { border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.65rem; }
+.lti-links__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; }
+.lti-links__head h4 { margin: 0; font-size: 0.92rem; }
+.lti-links__head p { margin: 0.2rem 0 0; color: var(--text-secondary); font-size: 0.72rem; }
+.lti-links__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.5rem; }
+.lti-link { text-align: left; border: 1px solid var(--border-color); border-radius: 0.45rem; background: var(--bg-secondary); color: var(--text-primary); padding: 0.55rem 0.65rem; display: flex; flex-direction: column; gap: 0.2rem; cursor: pointer; }
+.lti-link--active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.lti-link__title { font-weight: 600; font-size: 0.78rem; }
+.lti-link__meta { color: var(--text-muted); font-size: 0.66rem; }
+.lti-link__badges { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+.lti-score-panel { border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.65rem; }
+.lti-score-panel__head { display: flex; justify-content: space-between; gap: 0.75rem; align-items: flex-start; }
+.lti-score-panel__head p { margin: 0.15rem 0 0; color: var(--text-muted); font-size: 0.68rem; }
+.lti-score-form { display: grid; grid-template-columns: 7rem 6rem 6rem minmax(12rem, 1fr) auto; gap: 0.5rem; align-items: end; }
+.lti-score-form .field { display: flex; flex-direction: column; gap: 0.2rem; }
+.lti-score-form .field span { color: var(--text-secondary); font-size: 0.64rem; font-weight: 600; }
+.lti-score-form input { border: 1px solid var(--border-color); border-radius: 0.3rem; background: var(--bg-primary); color: var(--text-primary); padding: 0.38rem 0.45rem; font-size: 0.72rem; }
+.lti-scores h5 { margin: 0 0 0.35rem; font-size: 0.75rem; }
+.lti-scores__table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+.lti-scores__table th, .lti-scores__table td { text-align: left; padding: 0.3rem 0.35rem; border-bottom: 1px solid var(--border-color); }
+.lti-scores__table th { color: var(--text-muted); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.lti-results { max-height: 16rem; overflow: auto; margin: 0; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: 0.35rem; background: var(--bg-primary); color: var(--text-secondary); font-size: 0.66rem; }
 @media (max-width: 720px) {
-  .lti-panel__head, .lti-card__head { flex-direction: column; }
-  .lti-form__grid { grid-template-columns: 1fr; }
+  .lti-panel__head, .lti-card__head, .lti-score-panel__head { flex-direction: column; }
+  .lti-form__grid, .lti-score-form { grid-template-columns: 1fr; }
 }
 </style>

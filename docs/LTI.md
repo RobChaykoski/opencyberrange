@@ -6,9 +6,10 @@ third-party initiated login, launch `id_token` validation, account linking
 through `external_identities`, the SPA exchange, an admin JWKS test, and
 migrations `0015_lti_platforms` / `0016_lti_links_scores`. AGS 2.0 has the
 private_key_jwt access token, line-item creation/reuse, reviewed score payload,
-result retrieval, append-only score ledger, and admin link/score endpoints; the
-instructor UI remains. NRPS 2.0, Deep Linking 2.0, and a real LMS staging test
-are still to do. Do not tell a buyer LTI is complete until those pass.
+result retrieval, append-only score ledger, and the **LTI platforms** admin
+panel's launched-link/score review UI. NRPS 2.0, Deep Linking 2.0, and a real
+LMS staging test are still to do. Do not tell a buyer LTI is complete until
+those pass.
 
 ## Why
 

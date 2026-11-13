@@ -80,7 +80,8 @@ The first Release 5 feature set is in the branch:
   `external_identities`, and hands off to the normal SPA ticket exchange.
 - **Admin -> Settings -> LTI platforms** — register, edit, test the JWKS, and
   delete a deployment. The panel shows the login URL and launch/redirect URI to
-  give the LMS administrator.
+  give the LMS administrator, plus launched links, score history, line-item
+  creation, result retrieval, and the reviewed score form.
 - **AGS 2.0 score foundation** — private_key_jwt client assertion, LMS access
   token, line-item creation/reuse, reviewed score payload, result retrieval,
   append-only `lti_scores` ledger, and admin link/score endpoints. The
@@ -99,8 +100,7 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
 - the AGS client obtained a mock access token with a signed client assertion and
   posted a reviewed score to a mock line item.
 
-Still to do: the AGS instructor UI, NRPS 2.0, Deep Linking 2.0, and a real
-Moodle/Canvas staging test.
+Still to do: NRPS 2.0, Deep Linking 2.0, and a real Moodle/Canvas staging test.
 
 ## Verified on this stack
 
