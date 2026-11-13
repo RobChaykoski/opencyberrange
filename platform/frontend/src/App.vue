@@ -248,7 +248,9 @@ let storageListener = null
 // Keep the wiki_auth cookie in sync with the current JWT so nginx auth_request
 // gates (wikis and the SO console) always have a valid token. Scope logic is in
 // the shared helper.
-const refreshWikiAuthCookie = () => setWikiAuthCookie()
+const refreshWikiAuthCookie = () => {
+  if (authState.value.token) setWikiAuthCookie()
+}
 
 const loadAppVersion = async () => {
   try {

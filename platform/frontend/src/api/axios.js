@@ -26,7 +26,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const url = String(error.config?.url || '')
+    const onLogin = window.location.pathname === '/login'
+    // A wiki-cookie probe is best-effort and must never trigger a redirect.
+    // Nor should a 401 on the login page reload it (bad password, expired
+    // stale token, or the wiki probe): both would cause a reload loop.
+    if (error.response?.status === 401 && !url.includes('/auth/wiki-cookie') && !onLogin) {
       // If impersonating and token expired, restore original session
       const imp = sessionStorage.getItem('ocr_impersonating') === 'true'
       if (imp) {
