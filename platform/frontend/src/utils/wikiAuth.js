@@ -10,6 +10,10 @@ import api from '../api/axios'
 // IMPORTANT: every place that refreshes wiki auth must use THIS helper so the
 // cookie scope and refresh timing stay consistent.
 export async function setWikiAuthCookie() {
+  // Do not probe an authenticated endpoint from the login page or any other
+  // unauthenticated view. A 401 here used to trigger the axios redirect
+  // interceptor, which reloaded /login and started the probe again.
+  if (!localStorage.getItem('token')) return
   try {
     await api.post('/auth/wiki-cookie')
   } catch {
