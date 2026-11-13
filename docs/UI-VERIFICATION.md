@@ -19,6 +19,10 @@ Status: **deployed to production `.41`; version `4`.**
   the demo Dex/OpenLDAP stack is not started in production.
 - `/api/version` reports `4`; `/health` reports healthy.
 - `v4` is the signed annotated release tag.
+- **Content update:** added `forensics-2-2-topology-forensics-guided` and
+  `forensics-2-3-topology-forensics-independent` (guided and independent paces,
+  with a decoy service), plus `scripts/create-lab.py` and `FOR03` workbooks.
+  Both labs passed a student E2E on `.44`; total lab count is **175**.
 
 ## Release 4 QA and dev deployment (12 November 2026)
 

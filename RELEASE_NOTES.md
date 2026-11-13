@@ -38,6 +38,9 @@ existing startup schema step.
   services as data. The engine allocates a per-session `/29` for each link,
   assigns addresses, enables forwarding, installs routes, and exposes a status
   endpoint. Four routed labs and a workbook chapter ship with the release.
+- **Topology Forensics.** A guided path-reconstruction lab and an independent
+  variant with a decoy service let learners choose their pace. `scripts/create-lab.py`
+  turns a node/link specification into a validated topology lab.
 
 
 ## Release 4 limits
