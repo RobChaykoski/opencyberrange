@@ -240,16 +240,25 @@
               <p class="profile-focus__eyebrow">Your focus</p>
               <h2 id="profile-focus-title" class="profile-focus__title">What matters to you right now</h2>
             </div>
-            <label class="profile-focus__select">
-              <span>Focus on</span>
-              <select v-model="focusKey">
-                <optgroup v-for="group in focusGroups" :key="group.label" :label="group.label">
-                  <option v-for="option in group.options" :key="option.key" :value="option.key">
-                    {{ option.label }}
-                  </option>
-                </optgroup>
-              </select>
-            </label>
+            <div class="profile-focus__controls">
+              <input
+                v-model="focusQuery"
+                type="search"
+                class="profile-focus__search"
+                placeholder="Search courses, tracks, certifications, careers"
+                aria-label="Search focus options"
+              />
+              <label class="profile-focus__select">
+                <span>Focus on</span>
+                <select v-model="focusKey">
+                  <optgroup v-for="group in focusGroups" :key="group.label" :label="group.label">
+                    <option v-for="option in group.options" :key="option.key" :value="option.key">
+                      {{ option.label }}
+                    </option>
+                  </optgroup>
+                </select>
+              </label>
+            </div>
           </div>
           <div v-if="selectedFocus" class="profile-focus__body">
             <div class="profile-focus__summary">
@@ -428,7 +437,7 @@
                 <p class="overview-card__eyebrow">Recent recognition</p>
                 <div v-if="recentAchievements.length" class="overview-badges">
                   <span v-for="badge in recentAchievements" :key="badge.type + badge.label" class="overview-badge">
-                    <span aria-hidden="true">{{ badge.icon }}</span>{{ badge.label }}
+                    <AchievementIcon :type="badge.type" />{{ badge.label }}
                   </span>
                 </div>
                 <p v-else>No badges yet. Your first completed exercise starts the collection.</p>
@@ -634,7 +643,9 @@
                   class="course-achievement-badge"
                   :title="badge.description || badge.label"
                 >
-                  <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+                  <span class="course-achievement-badge__icon" aria-hidden="true">
+                    <AchievementIcon :type="badge.type" />
+                  </span>
                   <span>{{ badge.label }}</span>
                   <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
                 </span>
@@ -663,7 +674,9 @@
                   class="course-achievement-badge"
                   :title="badge.description || badge.label"
                 >
-                  <span class="course-achievement-badge__icon" aria-hidden="true">{{ badge.icon }}</span>
+                  <span class="course-achievement-badge__icon" aria-hidden="true">
+                    <AchievementIcon :type="badge.type" />
+                  </span>
                   <span>{{ badge.label }}</span>
                   <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
                 </span>
@@ -1273,6 +1286,7 @@ import CareerGps from '../components/CareerGps.vue'
 import CompetencyTaxonomy from '../components/CompetencyTaxonomy.vue'
 import ExpandableSection from '../components/ExpandableSection.vue'
 import UserAvatar from '../components/UserAvatar.vue'
+import AchievementIcon from '../components/icons/AchievementIcon.vue'
 import CheckIcon from '../components/icons/CheckIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
 import XIcon from '../components/icons/XIcon.vue'
@@ -2207,10 +2221,18 @@ const focusOptions = computed(() => {
   return options
 })
 
+const selectedFocus = computed(
+  () => focusOptions.value.find((option) => option.key === focusKey.value) || null
+)
+
+const focusQuery = ref('')
+
 const focusGroups = computed(() => {
+  const query = focusQuery.value.trim().toLowerCase()
   const groups = []
   const index = new Map()
   for (const option of focusOptions.value) {
+    if (query && !`${option.group} ${option.label}`.toLowerCase().includes(query)) continue
     if (!index.has(option.group)) {
       const group = { label: option.group, options: [] }
       index.set(option.group, group)
@@ -2218,12 +2240,12 @@ const focusGroups = computed(() => {
     }
     index.get(option.group).options.push(option)
   }
+  if (selectedFocus.value && !groups.some((group) => group.options.some((option) => option.key === selectedFocus.value.key))) {
+    groups.unshift({ label: 'Current selection', options: [selectedFocus.value] })
+  }
   return groups
 })
 
-const selectedFocus = computed(
-  () => focusOptions.value.find((option) => option.key === focusKey.value) || null
-)
 const hasProfileFocus = computed(
   () => Number(summary.value?.totals?.labs_completed || 0) > 0 && focusOptions.value.length > 1
 )
@@ -2630,11 +2652,34 @@ watch(() => route.path, (newPath) => {
   font-weight: 700;
 }
 
+.profile-focus__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: min(100%, 320px);
+}
+
+.profile-focus__search {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.profile-focus__search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
 .profile-focus__select {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  min-width: min(100%, 320px);
+  min-width: 0;
   color: var(--text-secondary);
   font-size: 0.72rem;
   font-weight: 600;
@@ -2966,6 +3011,10 @@ watch(() => route.path, (newPath) => {
   background: var(--bg-secondary);
   color: var(--text-secondary);
   font-size: 0.72rem;
+}
+
+.overview-badge .achievement-icon {
+  color: var(--accent-text);
 }
 
 .profile-section {
@@ -4917,6 +4966,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .course-achievement-badge__icon {
+  color: var(--accent-text);
   font-size: 0.85rem;
   line-height: 1;
 }
@@ -5029,6 +5079,10 @@ watch(() => route.path, (newPath) => {
   }
 
   .profile-focus__select {
+    min-width: 100%;
+  }
+
+  .profile-focus__controls {
     min-width: 100%;
   }
 
