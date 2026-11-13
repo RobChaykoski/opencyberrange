@@ -903,7 +903,6 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { hasRole } from '../utils/roles'
-import { useClipboard } from '../composables/useClipboard'
 import { useMobileView } from '../composables/useMobileView'
 import { useToolPanel } from '../composables/useToolPanel'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
@@ -915,7 +914,6 @@ marked.setOptions({ breaks: true, gfm: true })
 
 // Icons
 import { getTrackIcon } from '../components/icons/trackIcons.js'
-import WindowsIcon from '../components/icons/WindowsIcon.vue'
 import ChevronIcon from '../components/icons/ChevronIcon.vue'
 import ClockIcon from '../components/icons/ClockIcon.vue'
 import LockIcon from '../components/icons/LockIcon.vue'
@@ -956,7 +954,6 @@ const quizSubmitting = ref(false)
 const quizData = ref(null)
 const quizAnswers = ref([])
 const quizResult = ref(null)
-const { copied, copyText } = useClipboard()
 
 const loading = ref(false)
 const launchingImage = ref(null)  // which image button was clicked: null, 'kali', 'ubuntu', or 'remnux'
@@ -1118,10 +1115,8 @@ const activeWikiSlug = ref(null)
 // reports the host has no /dev/kvm)
 const kvmAvailable = computed(() => track.value?.kvm_available !== false)
 
-const extendingVmSession = ref(false)
 const isAdminUser = computed(() => hasRole('instructor'))  // true for instructors AND admins
 const certificationPath = computed(() => getCertificationPath(track.value))
-const canManageVms = isAdminUser
 
 // Timer
 const localTimeRemaining = ref(0)
@@ -1157,14 +1152,6 @@ const hintUnlockTime = computed(() => {
   const mins = Math.floor(secs / 60)
   const s = secs % 60
   return `${String(mins).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-})
-
-const scenarioParagraphs = computed(() => {
-  if (!activeLab.value?.lab?.scenario) return []
-  return activeLab.value.lab.scenario
-    .split(/\n\s*\n/)
-    .map(p => p.trim())
-    .filter(p => p.length > 0)
 })
 
 const isExpiringSoon = computed(() => {
@@ -1636,7 +1623,6 @@ const launchLab = async (lab) => {
     await focusRunningLab(running)
     return
   }
-  const trackSlug = track.value?.slug || route.params.trackSlug
   loading.value = true
   spawnError.value = ''
   sessionExpired.value = false
@@ -2014,21 +2000,6 @@ const stopHintTimer = () => {
 // container reports ready. Both pause while the tab is hidden and clean
 // themselves up on unmount.
 
-const vmSessionExpiringSoon = (sc) => {
-  if (!sc.your_session?.expires_at) return false
-  const remaining = (new Date(sc.your_session.expires_at) - Date.now()) / 1000
-  return remaining > 0 && remaining < 900 // 15 minutes
-}
-
-const vmSessionTimeRemaining = (sc) => {
-  if (!sc.your_session?.expires_at) return ''
-  const secs = Math.max(0, Math.floor((new Date(sc.your_session.expires_at) - Date.now()) / 1000))
-  const h = Math.floor(secs / 3600)
-  const m = Math.floor((secs % 3600) / 60)
-  const s = secs % 60
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-}
-
 // Hints/scenarios use angle-bracket placeholders -- flag formats like
 // OCR{...reg_<register>_val_<value>} and command templates like `nmap <target>`.
 // Two markdown hazards corrupt them: (1) <register>/<target> are parsed as HTML
@@ -2090,7 +2061,7 @@ onMounted(async () => {
       if (data.wiki_slug) {
         activeWikiSlug.value = data.wiki_slug
       }
-    } catch (e) { /* ignore */ }
+    } catch { /* ignore */ }
   }
 
   await fetchTrack(slug)
@@ -2309,9 +2280,9 @@ watch(timeRemaining, (val) => {
 .level-vm-chip--clickable:hover { border-color: rgba(148, 163, 184, 0.5); background: rgba(51, 65, 85, 0.7); }
 .level-vm-chip--clickable.level-vm-chip--offline:hover { border-color: rgba(34, 197, 94, 0.4); }
 .level-vm-chip--clickable.level-vm-chip--ready:hover { border-color: rgba(239, 68, 68, 0.4); }
-.level-vm-chip--ready .level-vm-chip__dot { background: #22c55e; }
-.level-vm-chip--booting .level-vm-chip__dot { background: #f59e0b; animation: pulse 1.5s infinite; }
-.level-vm-chip--offline .level-vm-chip__dot { background: #64748b; }
+.level-vm-chip--ready .level-vm-chip__dot { background: var(--success); }
+.level-vm-chip--booting .level-vm-chip__dot { background: var(--warning); animation: pulse 1.5s infinite; }
+.level-vm-chip--offline .level-vm-chip__dot { background: var(--text-muted); }
 .level-vm-chip__name {
   font-weight: 600;
   color: var(--text-primary);
@@ -2319,8 +2290,8 @@ watch(timeRemaining, (val) => {
 .level-vm-chip__state {
   color: var(--text-muted);
 }
-.level-vm-chip--ready .level-vm-chip__state { color: #22c55e; }
-.level-vm-chip--booting .level-vm-chip__state { color: #f59e0b; }
+.level-vm-chip--ready .level-vm-chip__state { color: var(--success); }
+.level-vm-chip--booting .level-vm-chip__state { color: var(--warning); }
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
@@ -2602,7 +2573,7 @@ watch(timeRemaining, (val) => {
   border-radius: 999px;
   border: 1px solid rgba(176, 141, 60, 0.5);
   background: rgba(245, 158, 11, 0.12);
-  color: #b45309;
+  color: var(--warning);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -2617,7 +2588,7 @@ watch(timeRemaining, (val) => {
 
 .level-certificate-btn:hover {
   background: rgba(245, 158, 11, 0.22);
-  border-color: #b45309;
+  border-color: var(--warning);
 }
 
 .level-progress-ring {
@@ -2815,7 +2786,7 @@ watch(timeRemaining, (val) => {
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
   background: rgba(245, 158, 11, 0.15);
-  color: #fbbf24;
+  color: var(--warning);
   margin-left: 0.5rem;
 }
 
@@ -2828,7 +2799,7 @@ watch(timeRemaining, (val) => {
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
   background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--accent-text);
   margin-left: 0.5rem;
   vertical-align: middle;
   position: relative;
@@ -2914,9 +2885,9 @@ watch(timeRemaining, (val) => {
   letter-spacing: 0.02em;
 }
 
-.lab-difficulty--beginner { background: #166534; color: #bbf7d0; }
-.lab-difficulty--intermediate { background: #854d0e; color: #fef08a; }
-.lab-difficulty--advanced { background: #991b1b; color: #fecaca; }
+.lab-difficulty--beginner { background: var(--success-bg); color: var(--success); }
+.lab-difficulty--intermediate { background: var(--warning-bg); color: var(--warning); }
+.lab-difficulty--advanced { background: var(--danger-bg); color: var(--danger); }
 
 .lab-duration {
   display: flex;
@@ -2981,7 +2952,7 @@ watch(timeRemaining, (val) => {
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: #2563eb;
+  filter: brightness(1.08);
 }
 
 .btn--secondary {
@@ -2999,7 +2970,7 @@ watch(timeRemaining, (val) => {
 }
 
 .btn--danger:hover:not(:disabled) {
-  background: #dc2626;
+  filter: brightness(1.08);
 }
 
 .btn--workbook {
@@ -3863,36 +3834,36 @@ watch(timeRemaining, (val) => {
 }
 /* Tactic accent colors (left border + tactic label tint) */
 .ics-tech-chip--initial-access { border-left-color: #60a5fa; }
-.ics-tech-chip--initial-access .ics-tech-chip__tactic { color: #60a5fa; }
+.ics-tech-chip--initial-access .ics-tech-chip__tactic { color: var(--accent-text); }
 .ics-tech-chip--execution { border-left-color: #a78bfa; }
-.ics-tech-chip--execution .ics-tech-chip__tactic { color: #a78bfa; }
+.ics-tech-chip--execution .ics-tech-chip__tactic { color: var(--purple); }
 .ics-tech-chip--persistence { border-left-color: #34d399; }
-.ics-tech-chip--persistence .ics-tech-chip__tactic { color: #34d399; }
+.ics-tech-chip--persistence .ics-tech-chip__tactic { color: var(--success); }
 .ics-tech-chip--privilege-escalation { border-left-color: #fbbf24; }
-.ics-tech-chip--privilege-escalation .ics-tech-chip__tactic { color: #fbbf24; }
+.ics-tech-chip--privilege-escalation .ics-tech-chip__tactic { color: var(--warning); }
 .ics-tech-chip--evasion { border-left-color: #94a3b8; }
-.ics-tech-chip--evasion .ics-tech-chip__tactic { color: #94a3b8; }
+.ics-tech-chip--evasion .ics-tech-chip__tactic { color: var(--text-secondary); }
 .ics-tech-chip--discovery { border-left-color: #22d3ee; }
-.ics-tech-chip--discovery .ics-tech-chip__tactic { color: #22d3ee; }
+.ics-tech-chip--discovery .ics-tech-chip__tactic { color: var(--badge-cyan); }
 .ics-tech-chip--lateral-movement { border-left-color: #818cf8; }
 .ics-tech-chip--lateral-movement .ics-tech-chip__tactic { color: #818cf8; }
 .ics-tech-chip--collection { border-left-color: #2dd4bf; }
 .ics-tech-chip--collection .ics-tech-chip__tactic { color: #2dd4bf; }
 .ics-tech-chip--command-and-control { border-left-color: #f472b6; }
-.ics-tech-chip--command-and-control .ics-tech-chip__tactic { color: #f472b6; }
+.ics-tech-chip--command-and-control .ics-tech-chip__tactic { color: var(--badge-pink); }
 .ics-tech-chip--inhibit-response-function { border-left-color: var(--warning); }
 .ics-tech-chip--inhibit-response-function .ics-tech-chip__tactic { color: var(--warning); }
 .ics-tech-chip--impair-process-control { border-left-color: #f87171; }
-.ics-tech-chip--impair-process-control .ics-tech-chip__tactic { color: #f87171; }
+.ics-tech-chip--impair-process-control .ics-tech-chip__tactic { color: var(--danger); }
 .ics-tech-chip--impact { border-left-color: #ef4444; }
-.ics-tech-chip--impact .ics-tech-chip__tactic { color: #ef4444; }
+.ics-tech-chip--impact .ics-tech-chip__tactic { color: var(--danger); }
 
 .hostname-dns-note {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 0.78rem;
-  color: #34d399;
+  color: var(--success);
   margin: 0.5rem 0 0.75rem;
 }
 
@@ -3901,8 +3872,8 @@ watch(timeRemaining, (val) => {
   width: 0.45rem;
   height: 0.45rem;
   border-radius: 50%;
-  background: #34d399;
-  box-shadow: 0 0 8px #34d399;
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
   flex: 0 0 auto;
 }
 
@@ -4490,7 +4461,7 @@ watch(timeRemaining, (val) => {
 
 .rangebox-launch-bar__label {
   font-size: 0.85rem;
-  color: #5cb85c;
+  color: var(--success);
   font-weight: 500;
 }
 /* Level quiz modal */

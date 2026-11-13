@@ -18,9 +18,49 @@ import TrophyIcon from './TrophyIcon.vue'
 
 const props = defineProps({
   type: { type: String, default: '' },
+  icon: { type: String, default: '' },
 })
 
+const ICON_COMPONENTS = {
+  trophy: TrophyIcon,
+  flag: FlagIcon,
+  flame: FlameIcon,
+  shield: ShieldCheckIcon,
+  target: TargetIcon,
+  clock: ClockIcon,
+  terminal: TerminalIcon,
+  forensics: ForensicsIcon,
+  brain: BrainIcon,
+  lightbulb: LightbulbIcon,
+  check: CheckCircleIcon,
+}
+
+const EMOJI_ICONS = [
+  ['🏆', 'trophy'],
+  ['🎖', 'trophy'],
+  ['🏅', 'trophy'],
+  ['🔥', 'flame'],
+  ['🛡', 'shield'],
+  ['🎯', 'target'],
+  ['⏱', 'clock'],
+  ['⏰', 'clock'],
+  ['🚩', 'flag'],
+  ['💻', 'terminal'],
+  ['⌨', 'terminal'],
+  ['🔍', 'forensics'],
+  ['🧠', 'brain'],
+  ['💡', 'lightbulb'],
+  ['✅', 'check'],
+]
+
 const iconComponent = computed(() => {
+  const icon = (props.icon || '').trim().toLowerCase()
+  if (icon && ICON_COMPONENTS[icon]) return ICON_COMPONENTS[icon]
+  if (icon) {
+    const emoji = EMOJI_ICONS.find(([glyph]) => icon.includes(glyph))
+    if (emoji) return ICON_COMPONENTS[emoji[1]]
+  }
+
   const type = (props.type || '').toLowerCase()
   if (type.includes('first_blood') || type.includes('first_flag')) return FlagIcon
   if (type.includes('no_hints') || type.includes('self_reliant') || type.includes('mfa')) return ShieldCheckIcon

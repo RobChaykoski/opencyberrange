@@ -437,7 +437,7 @@
                 <p class="overview-card__eyebrow">Recent recognition</p>
                 <div v-if="recentAchievements.length" class="overview-badges">
                   <span v-for="badge in recentAchievements" :key="badge.type + badge.label" class="overview-badge">
-                    <AchievementIcon :type="badge.type" />{{ badge.label }}
+                    <AchievementIcon :type="badge.type" :icon="badge.type.startsWith('custom_') ? badge.icon : ''" />{{ badge.label }}
                   </span>
                 </div>
                 <p v-else>No badges yet. Your first completed exercise starts the collection.</p>
@@ -644,7 +644,7 @@
                   :title="badge.description || badge.label"
                 >
                   <span class="course-achievement-badge__icon" aria-hidden="true">
-                    <AchievementIcon :type="badge.type" />
+                    <AchievementIcon :type="badge.type" :icon="badge.type.startsWith('custom_') ? badge.icon : ''" />
                   </span>
                   <span>{{ badge.label }}</span>
                   <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
@@ -675,7 +675,7 @@
                   :title="badge.description || badge.label"
                 >
                   <span class="course-achievement-badge__icon" aria-hidden="true">
-                    <AchievementIcon :type="badge.type" />
+                    <AchievementIcon :type="badge.type" :icon="badge.type.startsWith('custom_') ? badge.icon : ''" />
                   </span>
                   <span>{{ badge.label }}</span>
                   <span v-if="badge.count > 1" class="course-achievement-badge__count">×{{ badge.count }}</span>
