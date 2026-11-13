@@ -1583,10 +1583,21 @@ def _wiki_cookie_secure(request: Request) -> bool:
     return proto == "https" or (settings.PUBLIC_BASE_URL or "").lower().startswith("https://")
 
 
+def _wiki_cookie_domain(db: Session) -> str | None:
+    """Admin-managed parent-domain scope, with the env value as a fallback."""
+    value = (
+        get_setting_fresh(db, "wiki_cookie_domain", "")
+        or settings.WIKI_COOKIE_DOMAIN
+        or ""
+    ).strip()
+    return value or None
+
+
 @router.post("/wiki-cookie", status_code=204)
 async def issue_wiki_cookie(
     request: Request,
     response: Response,
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
     """Copy the caller's JWT into an HttpOnly wiki cookie.
@@ -1610,7 +1621,7 @@ async def issue_wiki_cookie(
         value=token,
         max_age=settings.JWT_EXPIRATION_HOURS * 3600,
         path="/",
-        domain=settings.WIKI_COOKIE_DOMAIN or None,
+        domain=_wiki_cookie_domain(db),
         secure=secure,
         httponly=True,
         samesite="none" if secure else "lax",
@@ -1621,13 +1632,17 @@ async def issue_wiki_cookie(
 
 
 @router.delete("/wiki-cookie", status_code=204)
-async def clear_wiki_cookie(request: Request, response: Response):
+async def clear_wiki_cookie(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+):
     """Remove the HttpOnly wiki cookie on logout or account deletion."""
     secure = _wiki_cookie_secure(request)
     response.delete_cookie(
         key="wiki_session",
         path="/",
-        domain=settings.WIKI_COOKIE_DOMAIN or None,
+        domain=_wiki_cookie_domain(db),
         secure=secure,
         httponly=True,
         samesite="none" if secure else "lax",

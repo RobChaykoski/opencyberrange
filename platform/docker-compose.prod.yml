@@ -210,9 +210,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    environment:
-      # App origin allowed to frame a cross-origin wiki. Empty means same-origin.
-      WIKI_FRAME_ANCESTOR: ${WIKI_FRAME_ANCESTOR:-}
     volumes:
       - ./certs:/etc/nginx/certs:ro
       - wiki_data:/usr/share/nginx/wiki:ro

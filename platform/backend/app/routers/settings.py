@@ -3,6 +3,9 @@ Platform settings API router.
 All endpoints require admin authentication.
 """
 
+import re
+from urllib.parse import urlsplit
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
@@ -32,6 +35,41 @@ from app.services.audit import log_admin_action, AuditActions
 
 router = APIRouter()
 limiter = create_limiter()
+
+
+def _validate_public_origin(value: str, key: str) -> None:
+    parsed = urlsplit(value)
+    if (
+        parsed.scheme != "https"
+        or not parsed.netloc
+        or parsed.path not in ("", "/")
+        or parsed.query
+        or parsed.fragment
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail=f"{key} must be an https origin with no path, query, or fragment.",
+        )
+
+
+def _validate_wiki_setting(key: str, value: str) -> None:
+    value = (value or "").strip()
+    if not value:
+        return
+    if key == "wiki_origin":
+        _validate_public_origin(value, key)
+    elif key == "wiki_frame_ancestor":
+        for origin in value.split():
+            _validate_public_origin(origin, key)
+    elif key == "wiki_cookie_domain":
+        if (
+            not re.fullmatch(r"\.?[A-Za-z0-9][A-Za-z0-9.-]*\.[A-Za-z]{2,}", value)
+            or ".." in value
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="wiki_cookie_domain must be a parent domain such as .example.edu.",
+            )
 
 
 def _serialize_custom_achievement(row: CustomAchievement) -> dict:
@@ -359,6 +397,10 @@ async def update_settings(
     clean = {k: v for k, v in payload.settings.items() if v != "••••••••"}
     if not clean:
         return {"message": "No settings to update", "count": 0}
+
+    for key in ("wiki_origin", "wiki_cookie_domain", "wiki_frame_ancestor"):
+        if key in clean:
+            _validate_wiki_setting(key, str(clean[key]))
 
     if "rangebox_capacity_percent" in clean:
         try:

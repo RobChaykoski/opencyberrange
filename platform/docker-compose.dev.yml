@@ -156,8 +156,6 @@ services:
       args:
         WIKI_BASE_URL: ${WIKI_BASE_URL:-}
     container_name: ocr-frontend
-    environment:
-      WIKI_FRAME_ANCESTOR: ${WIKI_FRAME_ANCESTOR:-}
     ports:
       - "80:80"
       - "443:443"

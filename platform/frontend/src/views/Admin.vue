@@ -1775,6 +1775,13 @@
                 default row below applies to administrators who have not chosen
                 a preference yet.
               </p>
+              <p v-if="activeSettingsCategory === 'wiki'" class="section-desc">
+                Serve workbooks from a separate origin to isolate their scripts
+                from the application's session. The hostname must point at this
+                same deployment and have a valid certificate. Leave the origin
+                empty to keep the wiki same-origin. Changes apply without a
+                rebuild.
+              </p>
               <div v-if="activeSettingsCategory === 'security'" class="setting-row">
                 <div class="setting-info">
                   <span class="setting-key">
@@ -4638,7 +4645,7 @@ const settingsCategories = computed(() => {
   // Only show a category tab if it has at least one visible setting (so an
   // emptied category -- e.g. General after platform_name/deployment_mode were
   // removed -- doesn't render as a blank tab).
-  const order = ['general', 'security', 'labs', 'vpn', 'email', 'features']
+  const order = ['general', 'security', 'wiki', 'labs', 'vpn', 'email', 'features']
   const populated = new Set(
     Object.entries(allSettings.value)
       .filter(([key]) => !hiddenSettingKeys.value.has(key))
@@ -4658,7 +4665,7 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers' }
+const categoryLabels = { general: 'General', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
@@ -4700,6 +4707,9 @@ const settingMeta = {
   lockout_duration_minutes:  { label: 'Lockout Duration',       desc: 'How long a locked-out account remains inaccessible after exceeding the failed login limit.', unit: 'minutes' },
   require_approval:          { label: 'Require Approval',       desc: 'When enabled, new user registrations must be approved by an admin before the account can log in.' },
   sso_enabled:               { label: 'Institution SSO',        desc: 'Allow LDAP, OIDC, and SAML sign-in. Turning this off hides the institution sign-in panel and rejects new SSO logins; local password login and the break-glass administrator remain available. Existing SSO sessions are not revoked.' },
+  wiki_origin:               { label: 'Wiki Origin',            desc: 'Optional separate origin for workbook wikis, for example https://wiki.example.edu. It must point at this same deployment and have a valid TLS certificate. Empty keeps the wiki same-origin.', ph: 'https://wiki.example.edu' },
+  wiki_cookie_domain:        { label: 'Wiki Cookie Domain',     desc: 'Parent-domain scope for the HttpOnly wiki cookie, for example .example.edu. Set this when the wiki runs on a different hostname. Empty keeps the cookie host-only.', ph: '.example.edu' },
+  wiki_frame_ancestor:       { label: 'Wiki Frame Ancestor',    desc: 'Optional space-separated origins allowed to frame the wiki. Empty derives the app origin from FRONTEND_BASE_URL, PUBLIC_BASE_URL, or SERVER_PUBLIC_HOST.', ph: 'https://range.example.edu' },
   enable_api_docs:           { label: 'API Documentation',      desc: 'Exposes the Swagger UI (/docs) and ReDoc (/redoc) endpoints for the backend API. Disable in production.' },
   privacy_default_on:        { label: 'Default Privacy Mode',   desc: 'Start administrators with privacy mode on when they have no saved preference. Privacy mode masks usernames, emails, display names, and student IDs in admin views.' },
   analytics_min_cohort_size: { label: 'Analytics Minimum Cohort', desc: 'Minimum learner cohort for course, exercise, and report analytics. Smaller groups are suppressed to reduce re-identification risk. Set to 0 to disable suppression in a trusted test environment.' },

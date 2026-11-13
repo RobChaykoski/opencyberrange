@@ -1,12 +1,15 @@
+import { ref } from 'vue'
 import { safeHttpUrl } from './url'
 
-// Optional separate origin for the workbook/manual wiki. When set at build
-// time (for example https://wiki.example.edu), the iframe is cross-origin to
-// the SPA and its scripts cannot read the SPA's localStorage. When empty, the
-// wiki stays same-origin for single-host development deployments.
-export const WIKI_BASE_URL = String(
-  import.meta.env.VITE_WIKI_BASE_URL || ''
-).replace(/\/+$/, '')
+// The wiki origin is a server setting read at runtime. The build-time value is
+// only a fallback for older deployments and for the first paint before
+// /api/config/public returns.
+const BUILD_BASE = String(import.meta.env.VITE_WIKI_BASE_URL || '').replace(/\/+$/, '')
+export const wikiBaseUrl = ref(BUILD_BASE)
+
+export function setWikiBaseUrl(value) {
+  wikiBaseUrl.value = String(value || '').trim().replace(/\/+$/, '')
+}
 
 export function wikiUrl(path) {
   if (!path) return ''
@@ -14,5 +17,6 @@ export function wikiUrl(path) {
   if (!raw) return ''
   if (/^https?:\/\//i.test(raw)) return safeHttpUrl(raw)
   const normalized = raw.startsWith('/') ? raw : `/${raw}`
-  return safeHttpUrl(WIKI_BASE_URL ? `${WIKI_BASE_URL}${normalized}` : normalized)
+  const base = wikiBaseUrl.value
+  return safeHttpUrl(base ? `${base}${normalized}` : normalized)
 }

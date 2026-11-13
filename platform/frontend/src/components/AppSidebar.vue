@@ -316,7 +316,7 @@ defineEmits(['toggle', 'logout', 'close'])
 const route = useRoute()
 const { privacyMode, togglePrivacy } = usePrivacy()
 const { openTool } = useToolPanel()
-const manualUrl = wikiUrl('/wiki/reference/manual/')
+const manualUrl = computed(() => wikiUrl('/wiki/reference/manual/'))
 const startTour = inject('startTour', null)
 const replayTour = () => { if (startTour) startTour() }
 

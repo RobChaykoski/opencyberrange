@@ -79,6 +79,14 @@ DEFAULT_SETTINGS = [
     {"key": "max_privileged_accounts", "value": "1", "category": "security",
      "description": "Maximum instructor and administrator accounts on this install. Set to 0 for unlimited, or raise it to add more instructors and admins. The edition default is 1."},
 
+    # --- Wiki origin split ---
+    {"key": "wiki_origin", "value": "", "category": "wiki",
+     "description": "Optional separate origin for the workbook wiki, for example https://wiki.example.edu. It must point at this same deployment and have a valid TLS certificate. Empty keeps the wiki same-origin."},
+    {"key": "wiki_cookie_domain", "value": "", "category": "wiki",
+     "description": "Parent-domain scope for the HttpOnly wiki cookie, for example .example.edu. Set this when the wiki runs on a different hostname. Empty keeps the cookie host-only."},
+    {"key": "wiki_frame_ancestor", "value": "", "category": "wiki",
+     "description": "Optional space-separated list of origins allowed to frame the wiki, for example https://range.example.edu. Empty derives the app origin from FRONTEND_BASE_URL, PUBLIC_BASE_URL, or SERVER_PUBLIC_HOST."},
+
     # --- Labs ---
     {"key": "default_session_hours", "value": "2", "category": "labs",
      "description": "Default exercise session duration in hours"},

@@ -84,7 +84,7 @@ CSP = (
     # origin (or nothing for same-origin installs). X-Frame-Options is omitted
     # from wiki responses because CSP frame-ancestors is authoritative and the
     # header would block a legitimate cross-origin wiki split.
-    "frame-ancestors 'self' __WIKI_FRAME_ANCESTORS__; "
+    "frame-ancestors 'self' $wiki_frame_ancestor; "
     "base-uri 'self'; form-action 'self';"
 )
 
@@ -166,6 +166,7 @@ def build_nginx_namespace_block(namespace, auth, slugs):
     # Baked at build time: {known}
     location ~ ^/wiki/{namespace}/{SLUG_RE}/ {{
         auth_request {sub};
+        auth_request_set $wiki_frame_ancestor $upstream_http_x_wiki_frame_ancestor;
         # Named locations, not "error_page 401 =302 /login". That form makes
         # nginx serve /login's CONTENT with a 302 status and no Location
         # header, so the browser is told to redirect with nowhere to go and
@@ -215,6 +216,7 @@ def build_nginx_index_block():
     return f"""    # /wiki/ landing index (range tracks only; no chapter content here)
     location = /wiki/ {{
         auth_request /_wiki_auth;
+        auth_request_set $wiki_frame_ancestor $upstream_http_x_wiki_frame_ancestor;
         error_page 401 =302 /login;
         error_page 403 =302 /login;
 

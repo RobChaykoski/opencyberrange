@@ -31,6 +31,7 @@ from app.routers import settings as settings_router
 from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
+from app.routers import public_config as public_config_router
 from app.routers import reports as reports_router
 from app.routers import question_bank as question_bank_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
@@ -859,6 +860,53 @@ async def actor_request_context(request: Request, call_next):
         clear_actor()
 
 
+def _wiki_frame_ancestor(db) -> str:
+    """Return the origin(s) allowed to frame a cross-origin wiki.
+
+    The admin setting wins. When it is empty, use the configured public app
+    origin so a normal single-host deployment needs no extra configuration.
+    """
+    from app.services import settings_service
+
+    configured = (
+        settings_service.get_setting_fresh(db, "wiki_frame_ancestor", "") or ""
+    ).strip()
+    if configured:
+        return configured
+    for name in ("FRONTEND_BASE_URL", "PUBLIC_BASE_URL"):
+        value = (getattr(settings, name, "") or "").strip()
+        if value:
+            return value.rstrip("/")
+    host = (settings.SERVER_PUBLIC_HOST or "").strip()
+    if host and host not in ("localhost", "127.0.0.1"):
+        return host.rstrip("/") if host.startswith(("http://", "https://")) else f"https://{host}"
+    return ""
+
+
+@app.middleware("http")
+async def wiki_frame_ancestor_header(request: Request, call_next):
+    """Expose the allowed frame ancestor to nginx's auth_request.
+
+    The wiki CSP cannot read PostgreSQL. The internal /api/auth/me subrequest
+    returns this header, nginx captures it with auth_request_set, and the wiki
+    location interpolates it into frame-ancestors.
+    """
+    response = await call_next(request)
+    if request.url.path == "/api/auth/me":
+        from app.database import SessionLocal
+
+        db = SessionLocal()
+        try:
+            value = _wiki_frame_ancestor(db)
+        except Exception:
+            value = ""
+        finally:
+            db.close()
+        if value:
+            response.headers["X-Wiki-Frame-Ancestor"] = value
+    return response
+
+
 @app.middleware("http")
 async def docs_access_control(request: Request, call_next):
     """Gate /docs, /redoc, /openapi.json behind the enable_api_docs setting."""
@@ -963,6 +1011,7 @@ app.include_router(instructor.router, prefix="/api/instructor", tags=["Instructo
 app.include_router(modules_router.router, prefix="/api/modules", tags=["Modules"])
 app.include_router(rangebox_router.router, prefix="/api/rangebox", tags=["RangeBox"])
 app.include_router(about_router.router, prefix="/api/about", tags=["About"])
+app.include_router(public_config_router.router, prefix="/api", tags=["Public config"])
 app.include_router(reports_router.router, prefix="/api", tags=["Reports"])
 app.include_router(
     question_bank_router.router,

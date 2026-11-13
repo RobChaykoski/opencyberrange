@@ -156,6 +156,7 @@ import { usePrivacy } from './composables/usePrivacy'
 import { useModules } from './composables/useModules'
 import { useMobileView } from './composables/useMobileView'
 import { setWikiAuthCookie } from './utils/wikiAuth'
+import { setWikiBaseUrl } from './utils/wikiUrl'
 import { useImpersonation } from './composables/useImpersonation'
 import api from './api/axios'
 
@@ -259,6 +260,15 @@ const loadAppVersion = async () => {
   }
 }
 
+const loadPublicConfig = async () => {
+  try {
+    const { data } = await api.get('/config/public')
+    setWikiBaseUrl(data.wiki_origin || '')
+  } catch {
+    // The build-time fallback remains if the public config is unavailable.
+  }
+}
+
 onMounted(() => {
   storageListener = () => { updateAuthState(); refreshWikiAuthCookie() }
   window.addEventListener('storage', storageListener)
@@ -271,6 +281,7 @@ onMounted(() => {
   } catch { /* private mode or malformed session */ }
   refreshWikiAuthCookie()
   loadAppVersion()
+  loadPublicConfig()
   // Fetch module status if authenticated
   if (authState.value.token) {
     fetchModules()
