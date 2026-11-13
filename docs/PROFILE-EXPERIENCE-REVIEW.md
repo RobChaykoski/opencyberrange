@@ -13,14 +13,14 @@ Personas: a **new student** (0 completions, 0 certificates, 0 badges) and an
 **Implemented:** P0 data truth (one visible-lab denominator, one course-completion
 rule, honest zero-state copy), P1 progressive disclosure (career tabs and the
 optional GPS card only appear after evidence; the learning record defaults to
-progress-bearing tracks; name prompt in the hero), and the token-colour fixes
-for workbook actions and profile status badges. Course-card percentages now
-round half-up to match the course page.
+progress-bearing tracks; name prompt in the hero), P2 advanced-learner focus
+(course/track/certification/career selector, course/track/certificate progress
+lenses, career target promoted to the top of the portfolio, mobile tab scroll
+cue), and the token-colour fixes for workbook actions and profile status
+badges. Course-card percentages now round half-up to match the course page.
 
-**Remaining:** the P2 focus selector and separate course/track/certificate/
-range-wide progress lenses; moving the career target selector to the top of the
-career area; a mobile tab scroll cue; and replacing emoji badges with the SVG
-icon system.
+**Remaining:** a filter/compact mode for the title collection and replacing
+emoji achievement badges with the SVG icon system.
 
 ## Design test report
 

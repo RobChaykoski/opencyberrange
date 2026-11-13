@@ -95,6 +95,15 @@ production.** Platform
   progress and can expand to all twelve.
 - Workbook buttons and profile status badges now use the shared colour tokens
   instead of legacy orange and hard-coded status hex values.
+- Experienced learners can focus the profile on a course, track, certification,
+  or career goal. The focus card defaults to the enrolled course, shows its
+  progress, and offers the matching open action. The hero lenses show the
+  course (`CYB-3350 1/8 13%`), strongest track (`Windows 8/53 15%`), and
+  certificate count (`6`) alongside the range-wide bar (`17/139 12%`).
+- The career target selector now sits at the top of the Portfolio tab; the
+  duplicate selector inside the readiness panel is hidden.
+- The mobile profile tab bar has a right-edge scroll cue; no horizontal page
+  overflow was introduced.
 - **Backend suite:** 538 passed, 0 failed.
 - **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
   and `svc`; the node status endpoints reported host/router/service; `h1` had a
