@@ -4,6 +4,22 @@
 > management subnet used at the time. Current host status and build assets are
 > in [Deployment status](status-dashboard.md).
 
+## Release 4 production deployment (13 November 2026)
+
+Status: **deployed to production `.41`; version `4`.**
+
+- Pre-deploy backup: `~/opencyberrange-backups/ocr_pre_release4_20261113_000753.dump`
+  (876 KB), plus a copy of `.env`.
+- Database remained at `0014_performance_indexes`; no new migration was needed.
+- Backend and frontend rebuilt; backend healthy; frontend healthy.
+- **173 active labs**, including all four topology labs.
+- Wiki rebuilt: **13 sites**; `CH_NET12_Device_Topology` pages published.
+- `ocr-lab/topology-node:latest` built on the production host.
+- `/api/auth/sso/providers` is empty because no institution IdP is configured;
+  the demo Dex/OpenLDAP stack is not started in production.
+- `/api/version` reports `4`; `/health` reports healthy.
+- `v4` is the signed annotated release tag.
+
 ## Release 4 QA and dev deployment (12 November 2026)
 
 Status: **deployed to development `.44`; production unchanged.** Platform

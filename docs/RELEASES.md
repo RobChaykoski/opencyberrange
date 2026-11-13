@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v4` | SWOCTS Cyber Range Release 4 | Current supported platform release (signed annotated tag to be created at release) |
+| `v4` | SWOCTS Cyber Range Release 4 | Current supported platform release (signed annotated tag) |
 | `v3` | SWOCTS Cyber Range Release 3 | Previous supported release (signed annotated tag) |
 | `v2.7.0` | SWOCTS Cyber Range 2.7.0 | Previous release; upgrade to Release 4 (unsigned tag; documented exception) |
 | `v2.6.0` | SWOCTS Cyber Range 2.6.0 | Previous release; upgrade to Release 3 |
