@@ -571,7 +571,7 @@ need to be documented separately.
 - **Supply-chain lock.** `supply-chain.lock.json` covers dependency, build,
   deployment, workflow, and lab inputs. CI verifies it, and install, update, and
   prebuild stop on drift. The `v4` tag is signed with the release key.
-  `v2.7.0` is the documented unsigned exception.
+  `v2.7.0` remains the documented historical unsigned exception.
   The lock itself is signed. See [Supply-chain verification](docs/SUPPLY-CHAIN.md).
 - **Celebration privacy.** Celebrations are voluntary and anonymous. The wall
   shows counts only, one celebration per person per win, and celebrations never
@@ -591,7 +591,7 @@ Validation history:
 | Release 4 dev smoke (`.44`, 12 November 2026) | `/api/version` = 4; LDAP and OIDC end-to-end; instructor role refresh; admin endpoints 401; API docs 404; setting toggles apply immediately; new DNA/GPS UI present |
 | Release 4 role E2E (`.44`) | Admin/instructor/student authorization; 100% quiz; simple lab flag; RangeBox running; VPN config 200 |
 | Release 4 topology E2E (`.44`) | Four labs in sequence; two-router transit, nftables drop, multi-service mapping; all flags accepted |
-| Release 4 production deploy (`.41`, 13 November 2026) | Version 4; 173 labs; four topology labs; backend/frontend healthy; wiki 13 sites; pre-deploy DB backup |
+| Release 4 production deploy (`.41`, 13 November 2026) | Version 4; 179 labs; four topology labs; backend/frontend healthy; wiki 13 sites; pre-deploy DB backup |
 | 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
 | 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |

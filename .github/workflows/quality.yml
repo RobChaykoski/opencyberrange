@@ -47,6 +47,9 @@ jobs:
       - name: Check licence compliance
         run: python scripts/check-licences.py
 
+      - name: Verify reviewed URL bindings use safeHttpUrl
+        run: python scripts/check-safe-links.py
+
       - name: ShellCheck install and upgrade scripts
         run: |
           sudo apt-get update

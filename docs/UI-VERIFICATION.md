@@ -12,7 +12,7 @@ Status: **deployed to production `.41`; version `4`.**
   (876 KB), plus a copy of `.env`.
 - Database remained at `0014_performance_indexes`; no new migration was needed.
 - Backend and frontend rebuilt; backend healthy; frontend healthy.
-- **173 active labs**, including all four topology labs.
+- **179 active labs**, including all four topology labs.
 - Wiki rebuilt: **13 sites**; `CH_NET12_Device_Topology` pages published.
 - `ocr-lab/topology-node:latest` built on the production host.
 - `/api/auth/sso/providers` is empty because no institution IdP is configured;
@@ -27,6 +27,47 @@ Status: **deployed to production `.41`; version `4`.**
   triage (`MAL03`), and AD fundamentals plus AD-to-SMB (`WIN10`). The YARA rules
   and log correlation were executed against the target images; the AD directory
   bind and SMB retrieval were verified live. Total lab count is **179**.
+
+## Release 4 close-out verification (13 November 2026)
+
+Status: **Release 4 dependency pass, page pass, and a 10-lab sample.**
+
+- Backend: **335 passed, 219 skipped** with the updated pytest/httpx set.
+- Frontend build and lint pass; MkDocs build passes; licence, link, CSP,
+  integrity, and signed supply-chain checks pass.
+- Dependency pass: pytest 9.2.0, httpx 0.28.1, pymdown-extensions 13.0,
+  matplotlib >=3.11.2, pywinrm >=0.5.0, upload-artifact v7,
+  build-push-action v7, setup-buildx-action v4.
+- Ten randomly selected labs passed `validate-lab.py`, workbook-presence,
+  flag/hint/outcome checks, and API discoverability with the workbook path
+  matching the catalog:
+  - `high-school-10-2-rangebox-browser-and-source`
+  - `ai-1-2-jailbreak-policy-bypass`
+  - `windows-1-4-windows-os-detection`
+  - `malware-2-2-yara-fundamentals`
+  - `web-1-4-header-analysis`
+  - `identity-2-1-identity-lifecycle`
+  - `osint-2-2-public-homepage`
+  - `linux-1-2-multi-service-discovery`
+  - `forensics-2-2-topology-forensics-guided`
+  - `ot-2-1-s7comm-register-access`
+- Live workspace pass on development: login, combined workspace, RangeBox VNC
+  connected, workbook frame, Expand/Restore, open in new tab, invalid flag,
+  hint request, mobile fallback, and Stop Exercise all passed (**25/25**
+  checks; the known opaque-sandbox warnings were filtered by the harness).
+- Authenticated page pass: dashboard, exercises, Windows track, workbooks,
+  courses, profile, events, certificate verification, admin users, and admin
+  settings all returned `200` with no page or console errors. `/competitions`
+  redirects to `/events`; `/profile` uses the display name as its heading.
+  The **Wiki** settings tab rendered the origin and cookie-domain fields.
+- The same-origin opaque workbook sandbox produces two expected console
+  warnings (Material's localStorage probe and the instant-navigation sitemap
+  request). They disappear when `wiki_origin` enables the cross-origin split;
+  the regression harness filters only those two known messages.
+- Wiki origin settings were changed and reverted on development without a
+  rebuild: `/api/config/public` and the wiki `frame-ancestors` changed live.
+- Production: version 4, 179 active labs, backend/frontend healthy, signed `v4`
+  tag verified.
 
 ## Release 4 QA and deployment (12 November 2026)
 

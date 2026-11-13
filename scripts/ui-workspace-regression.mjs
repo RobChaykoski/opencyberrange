@@ -112,7 +112,10 @@ async function contextFor(viewport, session) {
     localStorage.setItem('ocr_orientation_seen_v1_' + user.username, '1')
   }, session)
   const page = await context.newPage()
-  page.on('pageerror', (error) => pageErrors.push(String(error)))
+  page.on('pageerror', (error) => {
+    const text = String(error)
+    if (!isExpectedSandboxFallback(text)) pageErrors.push(text)
+  })
   page.on('console', (message) => {
     if (message.type() === 'error' && isRelevantConsoleError(message.text())) {
       consoleErrors.push(message.text())
@@ -134,9 +137,19 @@ async function screenshot(page, name) {
 // authoritative signal.
 const IGNORED_CONSOLE = [
   /Failed when connecting: Connection closed.*RangeBox not ready/i,
+  // The same-origin fallback intentionally sandboxes the workbook without
+  // allow-same-origin. Material's palette probe then throws on localStorage,
+  // and its instant-navigation sitemap request is a cross-origin fetch from an
+  // opaque document. Both disappear when WIKI_BASE_URL enables the origin split.
+  /sandboxed and lacks the 'allow-same-origin'/i,
+  /sitemap\.xml.*CORS policy/i,
+  /Failed to load resource: net::ERR_FAILED/i,
 ]
 function isRelevantConsoleError(text) {
   return !IGNORED_CONSOLE.some((pattern) => pattern.test(text))
+}
+function isExpectedSandboxFallback(text) {
+  return IGNORED_CONSOLE.some((pattern) => pattern.test(text))
 }
 
 function hasOverflow(page) {

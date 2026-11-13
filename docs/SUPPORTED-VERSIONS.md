@@ -4,7 +4,7 @@ This file records the platform baseline, the target for the latest-supported-GA
 upgrade, and the reason for every exception. It is the human-readable companion
 to `versions.yaml`.
 
-Last reviewed: **2026-11-12**. Current **platform release: 4**. **Community /
+Last reviewed: **2026-11-13**. Current **platform release: 4**. **Community /
 Academic**, **Professional**, and **Enterprise** are edition profiles on that
 release, not separate platform version lines. **Community / Academic 1.1.3**
 remains a supported maintenance line for existing single-host installations. See
@@ -20,18 +20,21 @@ Host baseline: **Ubuntu 24.04 LTS is certified.** See [OS-SUPPORT.md](OS-SUPPORT
 and [V2-24.04-BUILD-OUT.md](V2-24.04-BUILD-OUT.md). Ubuntu 22.04 remains the
 compatibility path for existing 1.1.x deployments.
 
-Test candidates are **not supported** until they pass their promotion gates:
-Ubuntu 26.04 LTS and Valkey 9.1.3. Production remains Ubuntu 24.04 LTS and
-Valkey 9.1.3 for the rate-limit store. See the
+Valkey **9.1.3** is the current rate-limit store for both deployments. Ubuntu
+26.04 LTS remains a **test candidate** until it passes its promotion gates;
+production remains Ubuntu 24.04 LTS. See the
 [Ubuntu 26.04 Valkey vs Redis test plan](UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md).
 
-Dependency audit on **2026-11-08**: `npm audit` reported **0 vulnerabilities**
+Dependency audit on **2026-11-13**: `npm audit` reported **0 vulnerabilities**
 and `pip-audit -r platform/backend/requirements.txt` reported **no known
-vulnerabilities**. Safe patch updates were applied: FastAPI 0.162.2,
-SQLAlchemy 2.1.8, Pydantic 2.14.3, and psycopg 3.3.8. The frontend majors were
-then upgraded: Vue Router 5.4.0, ESLint 10.14.0, `@eslint/js` 10.0.1,
-`eslint-plugin-vue` 10.12.0, and `vue-eslint-parser` 10.4.2. Release 4 adds
-`ldap3==2.9.1` and `python3-saml==1.16.0`. The optional SSO test stack adds
+vulnerabilities**. The Release 4 dependency pass updated pytest 9.2.0, httpx
+0.28.1, pymdown-extensions 13.0, matplotlib >=3.11.2, pywinrm >=0.5.0,
+upload-artifact v7, build-push-action v7, and setup-buildx-action v4. Earlier
+safe updates included FastAPI 0.162.2, SQLAlchemy 2.1.8, Pydantic 2.14.3, and
+psycopg 3.3.8. The frontend majors were then upgraded: Vue Router 5.4.0,
+ESLint 10.14.0, `@eslint/js` 10.0.1, `eslint-plugin-vue` 10.12.0, and
+`vue-eslint-parser` 10.4.2. Release 4 adds `ldap3==2.9.1` and
+`python3-saml==1.16.0`. The optional SSO test stack adds
 Dex v2.42.0 and osixia/openldap 1.5.0; both are profile-gated and are not
 started unless `--profile sso` is requested.
 
@@ -56,7 +59,7 @@ started unless `--profile sso` is requested.
 | Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
-| Redis | 7 | 7 | Supported | Shared rate-limit counters; no persistence |
+| Valkey | 9.1.3 | 9.1.3 | Supported | Shared rate-limit counters; no persistence |
 | Backend base | `python:3.11-slim` | Pin a 3.13 slim digest | Wave 1 | psycopg3/cryptography wheels are available; test the runtime swap |
 | Frontend builder | `node:22-alpine` | Pin a digest | Applied in Wave C | Required by Vite 8 |
 | Frontend server | `nginx:alpine` | Pin a supported stable digest | Wave 1 | Verify nginx config compatibility |
@@ -79,7 +82,7 @@ started unless `--profile sso` is requested.
 | docker SDK | 7.2.0 | Wave C (done) | |
 | aiohttp / requests | 3.14.5 / 2.34.2 | Wave A (done) | |
 | APScheduler | 3.11.3 | 4 | Stay on 3.x unless 4.x is justified |
-| fpdf2 / matplotlib / qrcode | 2.9.0 / >=3.10 / 8.2 | Wave A/C (done) | Transcript, charts, QR |
+| fpdf2 / matplotlib / qrcode | 2.9.0 / >=3.11.2 / 8.2 | Wave A/C (done) | Transcript, charts, QR |
 
 ## Frontend dependencies
 
@@ -108,7 +111,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 | PostgreSQL image | `postgres:15-alpine` | `postgres:17-alpine` digest | Wave 6 |
 | MkDocs | 1.6.1 | Newest compatible 1.x | Do not move to 2.0 until Material supports it |
 | Material for MkDocs | 9.8.0 | Newest 9.x | |
-| pymdown-extensions | 11.0.1 | Newest compatible | Required by Material 9.8 |
+| pymdown-extensions | 13.0 | Newest compatible | Required by Material 9.8 |
 | CodeQL action | v4 | Current major | Renovate |
 | Trivy action | 0.36.0 | Current | Renovate |
 | checkout action | v7 | Current major | Renovate |

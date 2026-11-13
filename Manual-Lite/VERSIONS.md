@@ -1,7 +1,7 @@
 # Manual editions
 
 The core manual in this folder describes the workflows shared by the
-**Community / Academic profile** (1.1.3 maintenance) and **Professional Release 3**
+**Community / Academic profile** (1.1.3 maintenance) and **Release 4**
 platforms, plus the **Advanced DNA Insights development preview**. Professional
 and Enterprise are cumulative: every page here still applies, and each edition
 adds the pages in its own supplement.
@@ -14,9 +14,9 @@ adds the pages in its own supplement.
 
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|
-| Community / Academic | Release 3 profile (1.1.x maintenance) | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
-| Professional | Release 3 | [Professional supplement](09_Professional/index.md) | Analytics and reporting preview; competency evidence, feedback, exercise health, and intervention signals are planned |
-| Enterprise | Release 3 preview | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, SSO, enterprise reporting, multi-tenancy, LMS/SIS integration, and compliance reporting |
+| Community / Academic | Release 4 (1.1.x maintenance) | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
+| Professional | Release 4 | [Professional supplement](09_Professional/index.md) | Analytics and reporting preview; competency evidence, feedback, exercise health, and intervention signals are planned |
+| Enterprise | Release 4 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, enterprise reporting, and compliance reporting. Multi-tenancy and LMS/LTI are Release 5 |
 
 ## How to use the manuals
 

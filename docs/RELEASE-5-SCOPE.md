@@ -67,6 +67,86 @@ assessment type, and the values survive export/import.
 Exit criteria: a student can see why a result was produced and obtain a human
 decision; the override is auditable.
 
+## 4a. Minor-account mode and retention
+
+The high-school track means a deployment can include learners under 18 (and,
+depending on jurisdiction, under 16). The product already has an `is_minor`
+flag, consent events, analytics exclusion, and erasure; Release 5 turns those
+controls into a documented mode.
+
+- **Enrollment consent capture** — record the institution's parental/guardian
+  consent reference at enrollment. The institution owns the consent process;
+  the platform records that it happened, not the identity documents.
+- **Restricted surfaces** — minor accounts are excluded from public
+  leaderboards, public celebrations, career salary views, and cohort analytics
+  unless the institution explicitly opts in with a documented basis.
+- **Retention clock** — per-cohort retention dates for learner records,
+  exports, and backups, with a dry-run purge and a completion record.
+- **Procurement handoff** — a one-page minor-mode statement, the retention
+  schedule, and the DPA schedule that covers FIPPA/MFIPPA, PIPEDA, and COPPA
+  where applicable.
+- **Audit evidence** — consent, restriction changes, purge runs, and
+  administrator overrides are recorded in the existing audit/ledger path.
+
+Exit criteria: a minor account cannot appear in a public leaderboard or
+identifiable analytics view by default; consent and retention events are
+auditable; a term-end purge can be previewed and completed with evidence.
+
+## 4b. RangeBox modernization
+
+The current image is Xvfb + XFCE4 + x11vnc + websockify/noVNC on
+`kalilinux/kali-rolling`. The platform contract is sound; the runtime inputs and
+the browser-desktop layer need a Release 5 pass.
+
+- **Reproducible inputs** — pin the Kali snapshot (and digest) and pin SecLists
+  to a commit or verify a checksum. A rolling base with an unverified `master`
+  download does not belong behind a signed supply-chain lock.
+- **Resolve the security-model mismatch** — either remove passwordless sudo and
+  grant only the capabilities the tooling needs, or document explicitly that
+  the student has root inside a caged container and that the host firewall is
+  the boundary. Re-enable the Firefox content sandbox, or record why it is off.
+- **Browser-desktop evaluation** — benchmark KasmVNC as the drop-in replacement
+  for x11vnc/noVNC. Evaluate Selkies as the WebRTC stretch goal only if pilot
+  latency on school networks justifies the signaling/TURN work.
+- **Terminal-only mode** — ship the PRD Phase 4 ttyd + xterm.js mode for slow
+  connections and command-only labs.
+- **Licensing discipline** — keep Burp Community and other non-redistributable
+  tools out of the image; add only tools whose licences permit the bundle.
+
+Exit criteria: two RangeBox builds from the same pinned inputs are equivalent;
+the documented security model matches the image; one browser-desktop path is
+selected and tested; terminal mode works for a command-only lab; the licence
+inventory still passes.
+
+## 4c. Frontend serving-layer modernization
+
+Evaluate a Chainguard or distroless nginx base for the frontend image. This is a
+serving-layer change only: the frontend container serves the SPA, proxies
+`/api`, and gates `/wiki`; it does not execute lab content. RangeBox, UbuntuBox,
+and RemnuxBox keep their own images and are not affected.
+
+- **Remove the shell dependency.** The current `docker-entrypoint.sh` is a shell
+  script that selects the TLS config at start-up. A distroless image has no
+  shell, so move that choice to build time (separate HTTP/HTTPS images) or a
+  tiny init/sidecar. The old envsubst templating for the wiki variables is
+  already gone: `WIKI_BASE_URL` is a build-time fallback, `wiki_origin` and
+  `wiki_cookie_domain` are runtime settings, and `frame-ancestors` is derived
+  from the auth-subrequest header.
+- **Preserve header behaviour verbatim.** Re-run
+  `scripts/check-nginx-security-headers.py`, the CSP-hash check, and the wiki
+  header checks. A missing `add_header` in one location is the exact failure
+  mode the current config comments warn about.
+- **Preserve the wiki auth path.** Confirm `auth_request`, the named 401/403
+  redirect locations, and the CyberChef proxy path behave identically.
+- **Provide a healthcheck that exists.** Distroless images may not ship
+  `wget` or `curl`; use the base image's health mechanism or a sidecar.
+- **Smoke-test the critical path.** Load one workbook-heavy exercise, open
+  CyberChef, confirm the wiki frame and PDF export, and check the security
+  headers. Lab images and exercise content do not need revalidation.
+
+Exit criteria: the serving image builds without a shell, the header/auth/proxy
+checks pass, and one workbook-loading exercise works end to end after the swap.
+
 ## 5. Procurement artifacts
 
 - **HECVAT Full** — complete and review the draft in `docs/HECVAT.md`.
@@ -142,7 +222,7 @@ notes are in `docs/QUESTION-BANK-SOURCES.md`.
 | Release | Contents |
 |---|---|
 | Release 4 | SSO (OIDC/SAML/LDAP) with a deployment-wide switch, network device topology engine, API exposure fixes, SSO privacy export/erasure, institution sign-in accessibility, mandatory setup token, HttpOnly wiki session and runtime wiki-origin settings, signed release and supply chain |
-| Release 5 | LTI 1.3 Advantage, multi-tenancy/TA/RBAC, accommodation engine, automated-decision transparency, HECVAT/VPAT/SOC 2/ISO/DPA/PIA artifacts, weekly Jeopardy-style challenge quizzes that feed Cyber DNA |
+| Release 5 | LTI 1.3 Advantage, multi-tenancy/TA/RBAC, accommodation engine, minor-account mode and retention, automated-decision transparency, HECVAT/VPAT/SOC 2/ISO/DPA/PIA artifacts, RangeBox modernization, frontend serving-layer modernization, weekly Jeopardy-style challenge quizzes that feed Cyber DNA |
 
 Candidate additions for Release 5 (not yet committed in this scope):
 

@@ -47,7 +47,13 @@ commercial terms.
 - Valkey **9.1.3** (BSD-3-Clause) is the rate-limit store in the Release 4
   compose files.
 
-## 2.7.0 release status
+## Historical release status
+
+The sections below are retained for provenance. They describe older releases and
+are superseded by the Release 4 status above; in particular, the unsigned-tag
+and "Valkey not bundled" notes no longer describe the current tree.
+
+### 2.7.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
 - Release artefact: `v2.7.0` is an annotated tag. The supply-chain lock is
@@ -62,7 +68,7 @@ commercial terms.
 - GitHub Actions workflows use third-party actions; their licences remain with
   the action authors.
 
-## 2.6.0 release status
+### 2.6.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
 - Release artefact: `v2.6.0` is an annotated tag. The supply-chain lock is
