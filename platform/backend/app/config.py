@@ -52,6 +52,12 @@ class Settings(BaseSettings):
     # Server public hostname (for general use)
     SERVER_PUBLIC_HOST: str = "localhost"
 
+    # Wiki origin split. When WIKI_COOKIE_DOMAIN is set (for example
+    # ".example.edu"), the wiki session cookie is scoped to the parent domain so
+    # a wiki served from a sibling hostname can authenticate its subresources.
+    # Leave empty for a same-origin wiki.
+    WIKI_COOKIE_DOMAIN: str = ""
+
     # SSO / OIDC. PUBLIC_BASE_URL must be the stable external origin; the OIDC
     # redirect URI is derived from it, not from the request Host header.
     PUBLIC_BASE_URL: str = ""
@@ -126,11 +132,16 @@ def validate_settings():
             "Generate a unique random secret before starting the platform."
         )
 
-    # Validate SETUP_TOKEN when the operator chose to gate first-run setup.
+    # Validate SETUP_TOKEN. First-run setup requires it in every deployment.
     if settings.SETUP_TOKEN and _is_placeholder_secret(settings.SETUP_TOKEN):
         errors.append(
             "SETUP_TOKEN contains a default/placeholder value. "
             "Generate a unique random token before starting the platform."
+        )
+    if not settings.SETUP_TOKEN:
+        warnings.append(
+            "SETUP_TOKEN is not set. First-run setup will be blocked until the "
+            "operator configures it."
         )
     
     # Validate LABS_HOST_PATH

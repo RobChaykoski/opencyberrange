@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Release%204-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-173-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-179-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -109,6 +109,7 @@ per-student accommodation engine are Enterprise Release 5 work. Enterprise SSO
 - [Celebration Wall](docs/CELEBRATION-WALL.md)
 - [Supply-chain verification](docs/SUPPLY-CHAIN.md)
 - [Network device topology engine](docs/DEVICE-TOPOLOGY.md)
+- [Lab creation engine](docs/LAB-CREATION-ENGINE.md)
 - [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md)
 - [Database schema and Alembic migrations](docs/DATABASE-MIGRATIONS.md)
 - [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
@@ -586,10 +587,11 @@ Validation history:
 
 | Check | Result |
 |---|---|
-| Release 4 automated QA (12 November 2026) | **534 DB-backed tests passed**, 317 local tests, 173 labs with 0 validation errors, 485 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
+| Release 4 automated QA (12 November 2026) | **538 DB-backed tests passed**, 317 local tests, 179 labs with 0 validation errors, 497 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
 | Release 4 dev smoke (`.44`, 12 November 2026) | `/api/version` = 4; LDAP and OIDC end-to-end; instructor role refresh; admin endpoints 401; API docs 404; setting toggles apply immediately; new DNA/GPS UI present |
 | Release 4 role E2E (`.44`) | Admin/instructor/student authorization; 100% quiz; simple lab flag; RangeBox running; VPN config 200 |
 | Release 4 topology E2E (`.44`) | Four labs in sequence; two-router transit, nftables drop, multi-service mapping; all flags accepted |
+| Release 4 production deploy (`.41`, 13 November 2026) | Version 4; 173 labs; four topology labs; backend/frontend healthy; wiki 13 sites; pre-deploy DB backup |
 | 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
 | 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
@@ -1058,6 +1060,10 @@ or read learner records. Docker host and container state still need
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used
 - **Network (local):** Server reachable on the classroom/school network
 - **Network (internet/cloud):** Public IP or Cloudflare Tunnel; ports 443/TCP, 51820/UDP, and 5555/TCP (WSTunnel) open in provider firewall
+
+
+
+
 
 
 

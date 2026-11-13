@@ -10,7 +10,7 @@
           certifications that align, and the evidence you can show an employer.
         </p>
       </div>
-      <label class="readiness__select">
+      <label v-if="!hideSelect" class="readiness__select">
         <span>Target role</span>
         <select v-model="selectedRole" @change="loadReadiness">
           <option v-for="role in roles" :key="role.id" :value="role.id">
@@ -238,6 +238,9 @@ import { computed, onMounted, ref, watch } from 'vue'
 import axios from '../api/axios'
 import { useCareerGoal } from '../composables/useCareerGoal'
 
+defineProps({
+  hideSelect: { type: Boolean, default: false },
+})
 const { selectedRole, setGoal } = useCareerGoal()
 const roles = ref([])
 const data = ref(null)

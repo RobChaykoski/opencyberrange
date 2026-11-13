@@ -5,19 +5,21 @@ SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **2.7.0**, with security fixes also maintained on the **1.1.3**
-Community / Academic maintenance line where the same defect applies.
+release is **4** (`v4`, signed annotated tag), with security fixes also
+maintained on the **1.1.3** Community / Academic maintenance line where the
+same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v2.7.0` / `main` | Yes |
-| `v2.6.0` | Security fixes only - upgrade to `v2.7.0` |
-| `v2.5.5` | Security fixes only - upgrade to `v2.7.0` |
-| `v2.5.4` | Security fixes only - upgrade to `v2.7.0` |
-| `v2.5.1`–`v2.5.3` | Security fixes only - upgrade to `v2.7.0` |
-| `v2.4.1` | Security fixes only - upgrade to `v2.7.0` |
-| `v2.1.0`–`v2.1.3` | Security fixes only - upgrade to `v2.7.0` |
-| `v1.1.x` | Maintenance fixes only - upgrade to `v2.7.0` for the current feature line |
+| `v4` / `main` | Yes |
+| `v2.7.0` | Security fixes only - upgrade to `v4` |
+| `v2.6.0` | Security fixes only - upgrade to `v4` |
+| `v2.5.5` | Security fixes only - upgrade to `v4` |
+| `v2.5.4` | Security fixes only - upgrade to `v4` |
+| `v2.5.1` - `v2.5.3` | Security fixes only - upgrade to `v4` |
+| `v2.4.1` | Security fixes only - upgrade to `v4` |
+| `v2.1.0` - `v2.1.3` | Security fixes only - upgrade to `v4` |
+| `v1.1.x` | Maintenance fixes only - upgrade to `v4` for the current feature line |
 | Pre-1.0 builds | No - upgrade to a supported release |
 
 ## Password storage

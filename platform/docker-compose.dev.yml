@@ -99,6 +99,7 @@ services:
       WG_CLIENT_BASE: ${WG_CLIENT_BASE:-10.255}
       LABS_HOST_PATH: ${LABS_HOST_PATH}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
+      WIKI_COOKIE_DOMAIN: ${WIKI_COOKIE_DOMAIN:-}
       # Stable external origin used to build SSO callback URLs. Leave blank to
       # fall back to SERVER_PUBLIC_HOST.
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
@@ -152,7 +153,11 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        WIKI_BASE_URL: ${WIKI_BASE_URL:-}
     container_name: ocr-frontend
+    environment:
+      WIKI_FRAME_ANCESTOR: ${WIKI_FRAME_ANCESTOR:-}
     ports:
       - "80:80"
       - "443:443"

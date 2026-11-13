@@ -84,7 +84,7 @@
             </router-link>
             <a
               v-else
-              :href="event.url"
+              :href="safeHttpUrl(event.url)"
               target="_blank"
               rel="noopener noreferrer"
               class="community-event__link"
@@ -103,12 +103,12 @@
               <p class="community-source__meta">{{ source.location }}</p>
             </div>
             <div class="community-source__actions">
-              <a :href="source.url" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm">
+              <a :href="safeHttpUrl(source.url)" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--sm">
                 Events
               </a>
               <a
                 v-if="source.calendarUrl"
-                :href="source.calendarUrl"
+                :href="safeHttpUrl(source.calendarUrl)"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="btn btn--outline btn--sm"
@@ -125,6 +125,7 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { safeHttpUrl } from '../utils/url'
 
 const props = defineProps({
   internalEvents: { type: Array, default: () => [] },
@@ -184,7 +185,6 @@ const calendarDays = computed(() => {
   const month = viewMonth.value.getMonth()
   const first = new Date(year, month, 1)
   const leading = first.getDay()
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
   const cells = []
   for (let index = 0; index < 42; index += 1) {
     const date = new Date(year, month, index - leading + 1)

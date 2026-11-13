@@ -134,6 +134,9 @@ services:
       RANGEBOX_CPU_RESERVE_CORES: ${RANGEBOX_CPU_RESERVE_CORES:-2}
       RANGEBOX_MIN_FREE_DISK_GB: ${RANGEBOX_MIN_FREE_DISK_GB:-10}
       SERVER_PUBLIC_HOST: ${SERVER_PUBLIC_HOST:-localhost}
+      # Parent-domain scope for the HttpOnly wiki session cookie when the wiki
+      # is served from a sibling hostname. Empty keeps it host-only.
+      WIKI_COOKIE_DOMAIN: ${WIKI_COOKIE_DOMAIN:-}
       # Stable external origin used to build SSO callback URLs. Leave blank to
       # fall back to SERVER_PUBLIC_HOST.
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
@@ -200,11 +203,16 @@ services:
       args:
         PLATFORM_VERSION: ${PLATFORM_VERSION:-4}
         BUILD_REVISION: ${BUILD_REVISION:-unknown}
+        # Optional separate wiki origin, for example https://wiki.example.edu.
+        WIKI_BASE_URL: ${WIKI_BASE_URL:-}
     image: ocr-frontend:latest
     container_name: ocr-frontend
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      # App origin allowed to frame a cross-origin wiki. Empty means same-origin.
+      WIKI_FRAME_ANCESTOR: ${WIKI_FRAME_ANCESTOR:-}
     volumes:
       - ./certs:/etc/nginx/certs:ro
       - wiki_data:/usr/share/nginx/wiki:ro

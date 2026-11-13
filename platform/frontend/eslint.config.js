@@ -51,7 +51,7 @@ module.exports = [
   },
 
   // The only sanctioned raw-HTML sites: both sanitize with DOMPurify. Keep this
-  // list short and review every addition.
+  // list exact (no globs); a new file must be reviewed and added explicitly.
   {
     files: [
       'src/components/TicketPanel.vue',

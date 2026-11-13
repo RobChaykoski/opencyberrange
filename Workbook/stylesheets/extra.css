@@ -176,3 +176,19 @@
   background: url("../assets/opencyberrange-logo.png") center/contain no-repeat;
   border-radius: 2px;
 }
+
+/* Embedded workbook pane (iframe). Keep the chrome out of the frame. */
+.ocr-embed .md-header,
+.ocr-embed .md-tabs,
+.ocr-embed .md-sidebar,
+.ocr-embed .md-footer,
+.ocr-embed .md-search,
+.ocr-embed .md-top,
+.ocr-embed .md-source,
+.ocr-embed .pdf-export-btn { display: none !important; }
+
+.ocr-embed .md-content { margin: 0 !important; }
+.ocr-embed .md-main__inner { margin-top: 0 !important; padding-top: 0.5rem !important; }
+.ocr-embed .md-grid,
+.ocr-embed .md-content__inner { max-width: 100% !important; }
+.ocr-embed .md-content__inner { padding-top: 0.5rem !important; }

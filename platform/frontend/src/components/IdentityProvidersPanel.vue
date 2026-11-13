@@ -7,7 +7,9 @@
         <p class="idp-panel__lead">
           Configure LDAP, OpenID Connect, or SAML providers. All three sign-in
           adapters are active in 3.1. Secrets are encrypted and never returned
-          by the API. Keep a local break-glass administrator account.
+          by the API. Keep a local break-glass administrator account. To turn
+          institution sign-in off for the whole deployment without deleting
+          providers, use <strong>Security &rarr; Institution SSO</strong>.
         </p>
       </div>
       <button type="button" class="btn btn--primary btn--sm" @click="startCreate">

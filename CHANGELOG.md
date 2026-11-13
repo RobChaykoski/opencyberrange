@@ -32,6 +32,14 @@ the privacy, accessibility, and API-exposure corrections.
   settings cache expires.
 - nginx returns 404 for `/docs`, `/redoc`, and `/openapi.json` on the public
   origin; API documentation is never served through the learner-facing host.
+- SSO callback failures now render curated user messages instead of raw backend
+  error details.
+- The CI CSP-hash check fails on both missing and stale inline-script hashes;
+  the `v-html` exception remains limited to the two reviewed DOMPurify sites.
+- Workbook and launch links go through `safeHttpUrl` and open with
+  `noopener,noreferrer`.
+- Documented the HttpOnly session-cookie migration roadmap, including CSRF,
+  refresh/revocation, wiki-gate, and acceptance criteria.
 
 ### Privacy
 - Subject-access export now includes external identity links and SSO session
@@ -59,6 +67,28 @@ the privacy, accessibility, and API-exposure corrections.
 - Added the routed-path demo lab plus two-router transit, firewall service path,
   and multi-service router labs, with workbook chapters, engine unit tests, and
   image-only topology support in the static validator.
+- Added a guided and an independent Forensics variant on the same engine, with a
+  decoy service in the independent version, so learners can choose their pace.
+- Added YARA fundamentals and a YARA + incident-log triage scenario, and a
+  Windows AD fundamentals lab plus an AD-to-SMB credential-reuse scenario.
+
+### Learner experience
+- Dashboard and profile now use the same visible-exercise denominator, and the
+  dashboard course matrix, course card, course detail, and profile all use the
+  same enrolment-aware completion rule. The course-card percentage rounds
+  half-up so it matches the course page.
+- New learners see an evidence-first profile: five tabs, no Cyber GPS or
+  Portfolio tab, no zero-evidence career affinity, and a progress-only Learning
+  record with **Show all tracks** for the rest.
+- Experienced learners can focus the profile on a course, track, certification,
+  or career goal, with course/track/certificate progress lenses and a searchable
+  focus list. The career target is promoted to the top of the Portfolio tab.
+- The title collection is collapsed by default with an **Unlocked only** filter,
+  and achievement badges use the shared SVG icon system instead of emoji.
+- Workbook actions and profile status badges use the shared colour tokens.
+  Track difficulty chips, VM status dots, and the safe admin/track status
+  surfaces use the same tokens; custom-achievement authoring now uses the SVG
+  icon picker.
 
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility
@@ -66,6 +96,11 @@ the privacy, accessibility, and API-exposure corrections.
   contract, DPA template, and Release 5 scope.
 - Release 4 does not claim LTI, multi-tenancy, a per-student accommodation
   engine, a TA role, a signed VPAT, SOC 2, or ISO 27001.
+
+### Fixed
+- Event certificates now transliterate characters the built-in PDF fonts
+  cannot encode, so an event date with an en dash (or an accented name) no
+  longer fails certificate generation.
 
 ## [3.1.1] - 2026-11-05
 

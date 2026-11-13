@@ -99,7 +99,7 @@ const emit = defineEmits(['close', 'next'])
 const primaryButton = ref(null)
 const confetti = ref([])
 
-const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#06b6d4', '#fb923c']
+const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#a78bfa', '#06b6d4', '#f472b6']
 
 const makeConfetti = () => {
   if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

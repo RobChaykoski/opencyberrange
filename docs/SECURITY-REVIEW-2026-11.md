@@ -46,16 +46,74 @@ lab credentials.
 
 ### Findings and follow-ups
 
-- **JWT in `localStorage`.** The SPA stores the access token in `localStorage`,
-  and `wiki_auth` is a JavaScript-set cookie so nginx can authenticate wiki
-  subrequests. The strict CSP and the DOMPurify-only markdown path are the
-  mitigations. A future move to an HttpOnly cookie plus a refresh flow would
-  remove the XSS token-theft path; it is a larger change than this pass.
-- **Wiki CSP.** The generated wiki allows `'unsafe-inline'` scripts and
-  `unpkg.com`/`cdnjs.cloudflare.com`. Self-hosting those assets at wiki build
-  time is the best next step.
+- **JWT in `localStorage` (roadmap item).** The SPA stores the access token in
+  `localStorage`, and `wiki_auth` is a JavaScript-set cookie so nginx can
+  authenticate wiki subrequests. The strict CSP and the DOMPurify-only markdown
+  path are the mitigations. A future move to an HttpOnly cookie plus a refresh
+  flow would remove the XSS token-theft path; see the session-cookie roadmap
+  below. This is a larger architectural change than this pass and is not a
+  Release 4 blocker.
+- **Workbook iframe isolation (origin split implemented).** Internet-facing
+  deployments serve the wiki from a sibling hostname (`WIKI_BASE_URL`) and give
+  it an HttpOnly `wiki_session` cookie scoped by `WIKI_COOKIE_DOMAIN`. The SPA
+  keeps its token in `localStorage`; the framed wiki cannot read the parent
+  origin or the HttpOnly cookie. The wiki CSP gains the app origin in
+  `frame-ancestors`, and the legacy `X-Frame-Options` header is removed from
+  wiki responses. See [`WIKI-ORIGIN-SPLIT.md`](WIKI-ORIGIN-SPLIT.md).
+  The same-origin fallback sandboxes the frame without `allow-same-origin`, so
+  development remains safe but keeps the opaque-origin limitations.
+- **Wiki CSP.** The generated wiki no longer allows `unpkg.com` or
+  `cdnjs.cloudflare.com`. Mermaid 11, html2pdf 0.10.2, and the theme CSS/JS are
+  vendored or built locally, and `theme.font: false` prevents the Google Fonts
+  request. Remaining inline script allowance is for the Material bootstrap.
 - **Frontend Dockerfile.** The duplicate healthcheck and the unpinned
   `nginx:alpine` tag remain; pin by digest during the supply-chain pass.
+
+## Session cookie roadmap (planned)
+
+Status: **planned architectural hardening.** Keep the current design until the
+migration below is implemented and tested.
+
+Current design:
+
+- the SPA keeps the JWT in `localStorage` and sends it as a Bearer token;
+- `wiki_auth` is a JavaScript-set cookie used by nginx for wiki subrequests;
+- CSP and DOMPurify reduce the chance of XSS, but any XSS that executes still
+  has a readable token.
+
+Target design:
+
+- an **HttpOnly, Secure, SameSite=Lax** session cookie set by the backend on
+  local login and SSO exchange;
+- a short-lived access token plus rotating refresh, or a server-side session
+  record with immediate revocation;
+- CSRF defence for cookie-authenticated mutations (SameSite plus a
+  double-submit token or strict Origin check);
+- the app token held in memory only, never `localStorage`;
+- the wiki gate validated server-side (`auth_request` or a backend-issued
+  cookie) so JavaScript never has to create an authentication cookie;
+- local administrator break-glass login unchanged.
+
+Migration steps:
+
+1. Add cookie issuance and a dual-auth window that accepts either Bearer or the
+   session cookie.
+2. Move the SPA to in-memory token state; remove token persistence and the
+   `Authorization` header where the cookie is present.
+3. Add CSRF tokens/origin checks and tests for state-changing endpoints.
+4. Move the wiki gate to server-side validation; keep the current JS cookie only
+   as a transitional fallback.
+5. Revoke/rotate cookies on logout, password change, MFA change, and account
+   erasure; confirm session revocation is immediate.
+6. Remove the Bearer path and the JS cookie after the compatibility window.
+
+Acceptance criteria:
+
+- a simulated XSS cannot read a session token from `localStorage`;
+- the session cookie is HttpOnly/Secure/SameSite and is not exposed to JS;
+- cookie-authenticated mutations reject missing/invalid CSRF tokens;
+- wiki access and workbook links still work;
+- logout and account erasure invalidate the session immediately.
 
 ## RangeBox
 
@@ -207,7 +265,8 @@ pcap header (`d4 c3 b2 a1`) through `socat`, and accepts the filter expression.
 ## Remaining backlog
 
 1. Move the SPA token to an HttpOnly cookie and add a refresh flow.
-2. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
+2. Remove `'unsafe-inline'` from the wiki CSP once the Material bootstrap can be
+   replaced with a hash-pinned script. The wiki JS/CSS are already self-hosted.
 3. Switch RangeBox to supervisord and pin its toolchain.
 4. Run the network tap as non-root with file capabilities.
 5. Add warning-level shellcheck and a disposable-VM installer rehearsal;

@@ -413,10 +413,11 @@ def check_flag_consistency(lab_dir):
                 services = (compose_data or {}).get("services", {}) if isinstance(compose_data, dict) else {}
                 uses_topology = (
                     isinstance(compose_data, dict)
-                    and "x-ocr-topology" in compose_data
                     and bool(services)
                     and all(
-                        str((svc or {}).get("image", "")).startswith("ocr-lab/topology-node")
+                        str((svc or {}).get("image", "")).startswith(
+                            ("ocr-lab/topology-node", "osixia/openldap")
+                        )
                         for svc in services.values()
                     )
                 )
@@ -440,7 +441,7 @@ def check_flag_consistency(lab_dir):
             results.append(CheckResult(
                 "Dockerfiles found",
                 True,
-                "Uses the reviewed topology node image"
+                "Uses a reviewed platform image"
             ))
         elif external_build:
             results.append(CheckResult(

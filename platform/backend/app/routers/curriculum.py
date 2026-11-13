@@ -36,6 +36,7 @@ from app.services.competency_model import mapping_for_lab
 from app.services.docker_manager import DockerManager
 from app.services.lab_text import render_lab_text
 from app.services.curriculum_manifest import chapter_label
+from app.services.learning_metadata import aggregate_difficulty
 from app.services.activity import log_activity, EventTypes
 from app.services import settings_service
 from app.config import settings
@@ -459,28 +460,52 @@ async def list_tracks(
 
     result = []
     for track in tracks:
-        # Count only visible labs
-        total_labs = sum(
-            len([l for l in level.labs if _is_lab_visible(l, current_user, accessible_course_lab_ids)])
-            for level in track.levels
-        )
-        completed_labs = sum(
-            1 for level in track.levels
-            for lab in level.labs
-            if _is_lab_visible(lab, current_user, accessible_course_lab_ids) and lab.id in completed_ids
-        )
-
-        # Find current level (only considering visible labs)
-        current_level = None
+        # Group visible labs by level once. The card needs the same set for the
+        # total, the current level, and the difficulty, so re-filtering three
+        # times is both slower and easier to get inconsistent.
+        visible_by_level = []
         for level in sorted(track.levels, key=lambda l: l.level_number):
-            level_lab_ids = {l.id for l in level.labs if _is_lab_visible(l, current_user, accessible_course_lab_ids)}
-            if level_lab_ids and not level_lab_ids.issubset(completed_ids):
-                current_level = level.level_number
-                break
-        
+            level_labs = [
+                lab for lab in level.labs
+                if _is_lab_visible(lab, current_user, accessible_course_lab_ids)
+            ]
+            if level_labs:
+                visible_by_level.append((level, level_labs))
+
+        total_labs = sum(len(level_labs) for _, level_labs in visible_by_level)
+
         # Hide tracks where no labs are visible to this user
         if total_labs == 0:
             continue
+
+        visible_labs = [
+            lab for _, level_labs in visible_by_level for lab in level_labs
+        ]
+        completed_labs = sum(1 for lab in visible_labs if lab.id in completed_ids)
+
+        # Find the current level. Level 0 is a real level (Network
+        # Foundations), so it must not be treated as "no level".
+        current_level = None
+        current_level_name = None
+        for level, level_labs in visible_by_level:
+            level_lab_ids = {lab.id for lab in level_labs}
+            if not level_lab_ids.issubset(completed_ids):
+                current_level = level.level_number
+                current_level_name = level.name
+                break
+
+        if completed_labs == total_labs:
+            level_label = "Complete"
+        elif current_level is None:
+            level_label = "Not started"
+        elif current_level == 0:
+            level_label = current_level_name or "Foundations"
+        else:
+            level_label = f"Level {current_level}"
+
+        difficulty, difficulty_rank = aggregate_difficulty(
+            lab.difficulty for lab in visible_labs
+        )
 
         result.append({
             "id": track.id,
@@ -492,10 +517,25 @@ async def list_tracks(
             "total_labs": total_labs,
             "completed_labs": completed_labs,
             "current_level": current_level,
+            "current_level_name": current_level_name,
+            "level_label": level_label,
+            "level_count": len(visible_by_level),
+            "start_level": visible_by_level[0][0].level_number,
+            "difficulty": difficulty,
+            "difficulty_rank": difficulty_rank,
+            "sort_order": track.sort_order or 0,
             "progress_percent": round(completed_labs / total_labs * 100) if total_labs > 0 else 0,
             "is_complete": completed_labs == total_labs and total_labs > 0
         })
-    
+
+    # Beginner-first ordering keeps the learner's first screen approachable.
+    # Staff keep their explicit sort_order so the drag-to-reorder tool still
+    # does what it says.
+    if current_user.role not in ("admin", "instructor"):
+        result.sort(key=lambda item: (
+            item["difficulty_rank"], item["sort_order"], item["name"].lower()
+        ))
+
     return {"tracks": result}
 
 

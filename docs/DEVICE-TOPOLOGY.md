@@ -115,10 +115,13 @@ arbitrary next hop that is not directly connected.
 - `network-12-3-two-router-transit` — two routers, transit and return routes.
 - `network-12-4-firewall-service-path` — nftables forward policy on the router.
 - `network-12-5-multi-service-router` — three-link mapping and documentation.
+- `forensics-2-2-topology-forensics-guided` — guided path reconstruction.
+- `forensics-2-3-topology-forensics-independent` — independent variant with a
+  decoy service.
 
-The workbook at `Workbook/CH_NET12_Device_Topology/` covers all four exercises,
-from the status endpoint and default route through transit routes, forward
-policy, and topology documentation.
+The workbook at `Workbook/CH_NET12_Device_Topology/` covers the four network
+exercises; `Workbook/CH_FOR03_Topology_Forensics/` covers the guided and
+independent forensic variants.
 
 ## Tests
 

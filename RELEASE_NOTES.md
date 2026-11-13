@@ -38,13 +38,29 @@ existing startup schema step.
   services as data. The engine allocates a per-session `/29` for each link,
   assigns addresses, enables forwarding, installs routes, and exposes a status
   endpoint. Four routed labs and a workbook chapter ship with the release.
+- **Topology Forensics.** A guided path-reconstruction lab and an independent
+  variant with a decoy service let learners choose their pace. `scripts/create-lab.py`
+  turns a node/link specification into a validated topology lab.
+- **Learner experience.** Dashboard and profile progress now share one
+  denominator and one course-completion rule. New learners get an
+  evidence-first profile and a compact Learning record; experienced learners can
+  focus on a course, track, certification, or career goal, with course/track/
+  certificate progress lenses, a searchable focus list, and the career target at
+  the top of the Portfolio tab. Titles are collapsed by default, achievement
+  badges use the SVG icon system, and custom-achievement authoring uses the same
+  SVG picker. Workbook, track, admin, and profile status surfaces use the shared
+  colour tokens.
+- **Detection and Windows practice.** YARA fundamentals plus a YARA/incident-log
+  triage scenario, and AD fundamentals plus an AD-to-SMB credential-reuse
+  scenario covering the lowest-coverage cohort competencies.
 
 
 ## Release 4 limits
 
 - LTI 1.3 Advantage, multi-tenancy, the TA role, the per-student accommodation
-  engine, a signed VPAT/ACR, SOC 2, ISO 27001, and a completed HECVAT are
-  Release 5. See `docs/RELEASE-5-SCOPE.md`.
+  engine, a signed VPAT/ACR, SOC 2, ISO 27001, a completed HECVAT, and weekly
+  Jeopardy-style challenge quizzes that feed Cyber DNA are Release 5. See
+  `docs/RELEASE-5-SCOPE.md`.
 - SAML single logout remains local. OIDC RP-initiated logout is supported.
 - The topology engine ships routed L3 topologies with Docker bridges as L2
   segments. A dedicated switch container, FRR/OSPF/BGP, and an nftables node role

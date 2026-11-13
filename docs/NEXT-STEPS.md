@@ -274,7 +274,10 @@ See [SECURITY-REVIEW-2026-11.md](SECURITY-REVIEW-2026-11.md). The
 high-confidence secret scan found no production credentials; the only matches
 are synthetic lab SSH keys. Remaining work:
 
-1. Move the SPA token to an HttpOnly cookie with a refresh flow.
+1. Move the SPA token to an HttpOnly, Secure, SameSite session cookie with a
+   short-lived access/refresh flow and CSRF protection; keep the wiki gate
+   server-side. The migration and acceptance criteria are in
+   [SECURITY-REVIEW-2026-11.md](SECURITY-REVIEW-2026-11.md#session-cookie-roadmap-planned).
 2. Self-host the wiki JS/CSS and remove `'unsafe-inline'` from the wiki CSP.
 3. Pin the frontend Dockerfile base image and remove the duplicate healthcheck.
 4. Switch RangeBox to supervisord and pin its toolchain.

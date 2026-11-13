@@ -98,6 +98,38 @@ artifact or an external report.
 Exit criteria: an operator can produce an export, purge a term, and show the
 encryption profile without touching the database by hand.
 
+## 7. Weekly challenge quizzes (Jeopardy-style)
+
+- **Weekly board** — a server-published set of categories and clues, with
+  difficulty values (for example 100–500), a fixed open/close window, and a
+  documented retry policy per clue.
+- **Answer integrity** — clues and answers are graded server-side. The client
+  never receives the answer key before submission, and the bank rotates per
+  cohort so a shared answer sheet does not carry week to week.
+- **Cyber DNA points** — a correct clue awards points to the competency branch
+  it assesses, subject to the existing **99 cap**, per-branch decay, and a
+  published weekly earning ceiling. Points are evidence of practice, not a
+  grade, a public ranking, or a prediction of ability.
+- **Question bank** — items map to `competency-taxonomy.yaml` and are reviewed
+  for accuracy, accessibility, and answer quality. Each item records its source,
+  difficulty, category, and the DNA branch it feeds.
+- **Instructor tools** — schedule a week, preview the board, inspect item-level
+  difficulty and discrimination, and retire a faulty clue without rewriting the
+  learner's history.
+- **Accessibility** — keyboard-first board, no colour-only categories, screen
+  reader labels for values and state, and accommodation-aware timers.
+- **Anti-farming** — weekly ceiling, first-correct-only scoring, no points for
+  replaying a clue, and an audit trail for any manual adjustment.
+
+Exit criteria: a learner completes a weekly board, DNA increases only within the
+published cap and ceiling, replaying a clue cannot farm points, and an instructor
+can retire a faulty clue without rewriting the week.
+
+The seeded bank is
+`platform/backend/app/data/certification-question-banks.yaml` (81 original items
+across 9 certification pathways, each with a career pathway). Source and licence
+notes are in `docs/QUESTION-BANK-SOURCES.md`.
+
 ## Not in Release 5 by default
 
 - A general-purpose AI grader. The product does not grade free text and does not
@@ -110,4 +142,4 @@ encryption profile without touching the database by hand.
 | Release | Contents |
 |---|---|
 | Release 4 | SSO (OIDC/SAML/LDAP), network device topology engine, API exposure fixes, SSO privacy export/erasure, institution sign-in accessibility |
-| Release 5 | LTI 1.3 Advantage, multi-tenancy/TA/RBAC, accommodation engine, automated-decision transparency, HECVAT/VPAT/SOC 2/ISO/DPA/PIA artifacts |
+| Release 5 | LTI 1.3 Advantage, multi-tenancy/TA/RBAC, accommodation engine, automated-decision transparency, HECVAT/VPAT/SOC 2/ISO/DPA/PIA artifacts, weekly Jeopardy-style challenge quizzes that feed Cyber DNA |

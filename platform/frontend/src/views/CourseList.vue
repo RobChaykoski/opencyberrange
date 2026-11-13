@@ -95,6 +95,25 @@
           <h3 class="course-name">{{ course.name }}</h3>
           <p class="course-semester">{{ course.semester }}</p>
           <p v-if="course.description" class="course-description">{{ course.description }}</p>
+          <div v-if="course.lab_count && (course.level_label || course.difficulty || course.track_count)" class="course-card__tags">
+            <span v-if="course.level_label" class="course-tag course-tag--level">
+              {{ course.level_label }}
+            </span>
+            <span
+              v-if="course.difficulty"
+              class="course-tag"
+              :class="`course-tag--${course.difficulty}`"
+            >
+              {{ course.difficulty }}
+            </span>
+            <span
+              v-if="course.track_count"
+              class="course-tag course-tag--muted"
+              :title="(course.track_names || []).join(', ')"
+            >
+              {{ trackLabel(course) }}
+            </span>
+          </div>
           <div class="course-card__stats">
             <span class="stat">{{ course.student_count }} students</span>
             <span class="stat">{{ course.lab_count }} exercises</span>
@@ -134,7 +153,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import axios from '../api/axios'
 import ProgrammeOverview from '../components/ProgrammeOverview.vue'
 
@@ -177,15 +196,22 @@ function courseStatus(course) {
   return { text: 'Active', class: 'status-active' }
 }
 
-async function fetchCourses() {
-  loading.value = true
+function trackLabel(course) {
+  const names = course.track_names || []
+  if (!names.length) return ''
+  if (names.length <= 2) return names.join(' · ')
+  return `${names.slice(0, 2).join(' · ')} +${names.length - 2}`
+}
+
+async function fetchCourses({ silent = false } = {}) {
+  if (!silent) loading.value = true
   try {
     const res = await axios.get('/courses/')
     courses.value = res.data.courses
   } catch (e) {
     console.error('Failed to fetch courses', e)
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
   }
 }
 
@@ -195,6 +221,15 @@ async function fetchMe() {
     currentUser.value = data
   } catch {
     // Keep the localStorage role as a fallback.
+  }
+}
+
+// Progress changes in another tab or after returning from a lab. Refresh the
+// cards when the page becomes visible again, without replacing them with a
+// full-page loading state.
+function refreshOnVisible() {
+  if (document.visibilityState === 'visible' && !loading.value) {
+    fetchCourses({ silent: true })
   }
 }
 
@@ -226,6 +261,11 @@ async function joinCourse() {
 onMounted(() => {
   fetchMe()
   fetchCourses()
+  document.addEventListener('visibilitychange', refreshOnVisible)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', refreshOnVisible)
 })
 </script>
 
@@ -406,7 +446,8 @@ onMounted(() => {
 }
 
 .course-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
   color: inherit;
   text-decoration: none;
   background: var(--bg-secondary);
@@ -499,6 +540,55 @@ onMounted(() => {
   margin-bottom: 0.5rem;
 }
 
+.course-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.course-tag {
+  max-width: 100%;
+  padding: 0.14rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-transform: capitalize;
+}
+
+.course-tag--level {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent-text);
+  background: var(--accent-bg);
+}
+
+.course-tag--beginner {
+  border-color: color-mix(in srgb, var(--success) 45%, transparent);
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.course-tag--intermediate {
+  border-color: color-mix(in srgb, var(--warning) 45%, transparent);
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.course-tag--advanced {
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.course-tag--muted {
+  color: var(--text-muted);
+}
+
 .course-progress {
   margin: 0.15rem 0 0.6rem;
 }
@@ -547,7 +637,8 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  margin-top: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 600;

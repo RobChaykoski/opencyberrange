@@ -7,6 +7,8 @@ copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https:/
 
 theme:
   name: material
+  # No Google Fonts request: the wiki CSP only allows self-hosted styles.
+  font: false
   logo: assets/swocts-cyber-range-mark.png
   favicon: assets/favicon.png
   palette:
@@ -29,9 +31,6 @@ theme:
     - navigation.expand
     - navigation.top
     - content.code.copy
-  font:
-    text: Inter
-    code: JetBrains Mono
 
 markdown_extensions:
   - admonition
@@ -59,9 +58,11 @@ extra_css:
   - stylesheets/extra.css?v=4
 
 extra_javascript:
+  - javascripts/mermaid.min.js?v=1
+  - javascripts/embed-mode.js?v=1
   - javascripts/mermaid-fix.js?v=4
   - javascripts/pdf-export.js?v=2
-  - https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js
+  - javascripts/html2pdf.bundle.min.js?v=1
 
 nav:
   - Home: index.md
@@ -146,4 +147,8 @@ nav:
     - "Exercise 9.2 -- Multi-Service Exploitation": CH09_Assessment/02_Multi_Service_Exploitation.md
     - "Exercise 9.3 -- Complete Windows Penetration Test": CH09_Assessment/03_Complete_Windows_Penetration_Test.md
     - Chapter Review: CH09_Assessment/04_Chapter_Review.md
+  - "WIN10: Active Directory and Authentication":
+    - Introduction: CH_WIN10_AD_Authentication/00_Introduction.md
+    - "Exercise 10.1 -- AD Fundamentals": CH_WIN10_AD_Authentication/01_AD_Fundamentals.md
+    - "Exercise 10.2 -- From Directory to Share": CH_WIN10_AD_Authentication/02_AD_to_SMB.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

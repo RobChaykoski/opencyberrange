@@ -1,0 +1,98 @@
+title: From Directory to Share - Reuse a Service Credential
+category: authentication
+difficulty: intermediate
+estimated_time: 40
+prerequisites:
+  - windows-2-9-ad-fundamentals-basics
+# By completion students will be able to:
+learning_outcomes:
+  - Enumerate a directory for service-account descriptions
+  - Identify a leaked credential and validate it against an SMB share
+  - Retrieve evidence from a share using the discovered account
+  - Explain why credential reuse across services increases impact
+  - Recommend a managed service account and rotation control
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Credential Access
+    technique: T1078
+    technique_name: Valid Accounts
+    detection: Alert on a service account authenticating to a share it does not normally use.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "4.0"
+reviewed_at: "2026-11-12"
+review_status: "static exercise and validator; live walkthrough pending"
+description: "Combine AD-style directory enumeration with the existing SMB strength: find the leaked service credential, validate it, and retrieve the evidence share token."
+scenario: |
+  The LAB directory contains a service account whose description leaks a
+  password. The same credential protects an evidence share. Enumerate the
+  directory, validate the credential, and retrieve the case token from the
+  share. This combines Active Directory fundamentals with SMB enumeration.
+credentials:
+  - role: "analyst"
+    username: "cn=admin,dc=lab,dc=example,dc=org"
+    # Demo lab credential; security-delta: allow credential-like assignment
+    password: "Adm1nPass2026"
+    description: "Directory administrator (training account)"
+hints:
+  - text: |
+      Enumerate the directory first, then validate the credential against SMB.
+      Do not assume a description is current.
+  - text: |
+      `smbclient //<files-ip>/evidence -U 'svc-backup%S3rv1ce!Pass' -c 'get flag.txt /tmp/flag.txt'`
+      retrieves the evidence file.
+  - text: |
+      A service credential should be unique, rotated, and restricted to the
+      service. Reuse across a directory and a file share is the finding.
+flag: "OCR{ad_t0_smb_p4th}"
+
+visibility: public
+week: 2
+troubleshooting: "If the LDAP search works but SMB fails, check the workgroup, the account name, and whether the password is current. If SMB fails entirely, confirm the files container is running."
+defensive_takeaways: "Managed service accounts, unique credentials, rotation, and least privilege reduce the blast radius of a directory leak."
+difficulty_evidence: "Validator and static directory/share walkthrough; live learner walkthrough pending."
+difficulty_evidence_source: "validator_and_static_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-12"
+workbook: "wiki/range/winpt/CH_WIN10_AD_Authentication/02_AD_to_SMB/"
+
+topology:
+  nodes:
+    - id: "ldap"
+      label: "LAB Directory"
+      type: "server"
+      ip_offset: "10"
+      ports: [389, 636]
+      services: ["OpenLDAP", "AD-style objects"]
+      x: 1
+      y: 1
+    - id: "files"
+      label: "Evidence Share"
+      type: "server"
+      ip_offset: "20"
+      ports: [445]
+      services: ["SMB", "Evidence share"]
+      x: 2
+      y: 1
+  edges:
+    - from: "ldap"
+      to: "files"
+      label: "credential reuse"
+      access: "direct"
+
+test:
+  steps:
+    - name: "Find the leaked service credential"
+      command: "ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1"
+      expect: "S3rv1ce!Pass"
+      timeout: 20
+
+    - name: "Retrieve the evidence token from the share"
+      command: "smbclient //{target.files}/evidence -U 'svc-backup%S3rv1ce!Pass' -c 'get flag.txt /tmp/flag.txt' >/dev/null 2>&1; cat /tmp/flag.txt"
+      expect: "OCR{ad_t0_smb_p4th}"
+      timeout: 30

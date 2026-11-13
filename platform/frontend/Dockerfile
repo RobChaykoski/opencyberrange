@@ -11,11 +11,17 @@ RUN npm ci
 # Copy source files
 COPY . .
 
+# Optional separate origin for the wiki. Empty keeps the wiki same-origin.
+ARG WIKI_BASE_URL=""
+ENV VITE_WIKI_BASE_URL=${WIKI_BASE_URL}
+
 # Build the application
 RUN npm run build
 
-# Production stage - serve with nginx
-FROM nginx:alpine
+# Production stage - serve with nginx.
+# Pin the multi-arch index digest so a base-image refresh cannot change the
+# runtime silently. Renovate updates the digest with the tag.
+FROM nginx:alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11
 
 ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown

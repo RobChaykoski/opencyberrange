@@ -123,7 +123,7 @@ const toneClass = computed(() => {
 .medallion--perfectionist { --tone: var(--accent); }
 .medallion--speed-demon { --tone: #f59e0b; }
 .medallion--clean-sweep { --tone: #a78bfa; }
-.medallion--streak { --tone: #fb923c; }
+.medallion--streak { --tone: var(--warning); }
 .medallion--custom { --tone: var(--text-secondary); }
 
 @media (prefers-reduced-motion: reduce) {

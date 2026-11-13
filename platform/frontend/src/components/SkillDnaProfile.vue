@@ -371,7 +371,7 @@
       </p>
     </div>
 
-    <details class="dna-titles" open>
+    <details class="dna-titles">
       <summary class="dna-titles__summary">
         <span>Title collection</span>
         <span class="dna-titles__count">
@@ -398,6 +398,16 @@
           <span v-if="option.value !== 'all'" class="rarity-dot" :class="`rarity-dot--${option.value}`"></span>
           {{ option.label }}
           <span class="dna-title-filter__count">{{ option.count }}</span>
+        </button>
+        <button
+          type="button"
+          class="dna-title-filter"
+          :class="{ 'dna-title-filter--active': unlockedOnly }"
+          :aria-pressed="unlockedOnly ? 'true' : 'false'"
+          @click="unlockedOnly = !unlockedOnly"
+        >
+          Unlocked only
+          <span class="dna-title-filter__count">{{ dna.titles.unlocked_count }}</span>
         </button>
       </div>
       <div class="dna-title-grid">
@@ -442,6 +452,9 @@
           </div>
         </article>
       </div>
+      <p v-if="!filteredTitles.length" class="dna-titles__empty">
+        No titles match this filter.
+      </p>
     </details>
 
     <section v-if="dna.quiz?.labs" class="dna-quiz" aria-labelledby="dna-quiz-title">
@@ -650,6 +663,7 @@ const rarityLabels = {
   legendary: 'Legendary',
 }
 const rarityFilter = ref('all')
+const unlockedOnly = ref(false)
 const rarityLabel = (rarity) => rarityLabels[rarity] || rarity
 const rarityOptions = computed(() => {
   const titles = props.dna?.titles?.titles || []
@@ -668,8 +682,12 @@ const titleProgress = computed(() => {
   return Math.round(((props.dna?.titles?.unlocked_count || 0) / total) * 100)
 })
 const filteredTitles = computed(() => {
-  if (rarityFilter.value === 'all') return sortedTitles.value
-  return sortedTitles.value.filter((title) => title.rarity === rarityFilter.value)
+  let titles = sortedTitles.value
+  if (unlockedOnly.value) {
+    titles = titles.filter((title) => title.unlocked)
+  }
+  if (rarityFilter.value === 'all') return titles
+  return titles.filter((title) => title.rarity === rarityFilter.value)
 })
 
 const AFFINITY_LEVEL_LABELS = {
@@ -1381,6 +1399,13 @@ const titleDescription = (title) => {
   color: var(--text-muted);
   font-size: 0.8125rem;
   font-weight: 500;
+}
+
+.dna-titles__empty {
+  margin: 0;
+  padding: 0 1rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
 }
 
 .dna-titles__intro {

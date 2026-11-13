@@ -61,10 +61,21 @@
         </div>
 
         <div class="studio-form__grid">
-          <label class="studio-field studio-field--icon">
+          <div class="studio-field studio-field--full">
             <span>Icon</span>
-            <input v-model="draft.icon" type="text" maxlength="4" aria-label="Achievement icon" />
-          </label>
+            <div class="studio-icon-picker" role="radiogroup" aria-label="Achievement icon">
+              <label
+                v-for="option in iconOptions"
+                :key="option.key"
+                class="studio-icon-option"
+                :class="{ 'studio-icon-option--active': draft.icon === option.key }"
+              >
+                <input v-model="draft.icon" type="radio" :value="option.key" />
+                <AchievementIcon :icon="option.key" />
+                <span>{{ option.label }}</span>
+              </label>
+            </div>
+          </div>
           <label class="studio-field studio-field--wide">
             <span>Name</span>
             <input v-model="draft.name" type="text" maxlength="80" required placeholder="e.g. Night Owl" />
@@ -109,7 +120,7 @@
         </div>
 
         <div class="studio-preview" aria-live="polite">
-          <span class="studio-preview__icon" aria-hidden="true">{{ draft.icon || '🏅' }}</span>
+          <span class="studio-preview__icon" aria-hidden="true"><AchievementIcon :icon="draft.icon" /></span>
           <div>
             <strong>{{ draft.name || 'Untitled achievement' }}</strong>
             <p>{{ draft.description || 'Add a short description so learners know what they earned.' }}</p>
@@ -196,7 +207,7 @@
               :class="[`studio-card--${item.tier}`, { 'studio-card--inactive': !item.is_active }]"
             >
               <div class="studio-card__head">
-                <span class="studio-card__icon" aria-hidden="true">{{ item.icon }}</span>
+                <span class="studio-card__icon" aria-hidden="true"><AchievementIcon :icon="item.icon" /></span>
                 <div class="studio-card__title">
                   <h4>{{ item.name }}</h4>
                   <span class="studio-card__type">{{ item.source === 'builtin' ? 'Built-in' : 'Custom' }}</span>
@@ -246,6 +257,21 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import axios from '../api/axios'
+import AchievementIcon from './icons/AchievementIcon.vue'
+
+const iconOptions = [
+  { key: 'trophy', label: 'Trophy' },
+  { key: 'flag', label: 'Flag' },
+  { key: 'flame', label: 'Streak' },
+  { key: 'shield', label: 'Shield' },
+  { key: 'target', label: 'Target' },
+  { key: 'clock', label: 'Time' },
+  { key: 'terminal', label: 'Terminal' },
+  { key: 'forensics', label: 'Forensics' },
+  { key: 'brain', label: 'Learning' },
+  { key: 'lightbulb', label: 'Idea' },
+  { key: 'check', label: 'Complete' },
+]
 
 const data = ref(null)
 const loading = ref(true)
@@ -266,7 +292,7 @@ const filters = reactive({
 })
 
 const emptyDraft = () => ({
-  icon: '🏅',
+  icon: 'trophy',
   name: '',
   description: '',
   group_key: 'custom',
@@ -373,7 +399,7 @@ function startCreate() {
 function startEdit(item) {
   if (!item.editable) return
   Object.assign(draft, {
-    icon: item.icon || '🏅',
+    icon: iconOptions.some((option) => option.key === item.icon) ? item.icon : 'trophy',
     name: item.name,
     description: item.description || '',
     group_key: item.group_key,
@@ -615,7 +641,54 @@ onMounted(load)
 
 .studio-field--wide { grid-column: span 2; }
 .studio-field--full { grid-column: 1 / -1; }
-.studio-field--icon input { max-width: 5rem; text-align: center; }
+
+.studio-icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.studio-icon-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+}
+
+.studio-icon-option:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.studio-icon-option--active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+.studio-field .studio-icon-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.studio-icon-option svg {
+  width: 16px;
+  height: 16px;
+}
 
 .studio-field input,
 .studio-field select,
@@ -674,8 +747,15 @@ onMounted(load)
 }
 
 .studio-preview__icon {
+  display: flex;
+  align-items: center;
   font-size: 1.4rem;
   line-height: 1;
+}
+
+.studio-preview__icon svg {
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .studio-preview strong {
@@ -856,8 +936,15 @@ onMounted(load)
 }
 
 .studio-card__icon {
+  display: flex;
+  align-items: center;
   font-size: 1.2rem;
   line-height: 1;
+}
+
+.studio-card__icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .studio-card__title {

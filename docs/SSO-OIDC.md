@@ -6,6 +6,21 @@ adapters are documented in [`SSO-SAML-LDAP.md`](SSO-SAML-LDAP.md).
 This guide is for administrators configuring an OpenID Connect provider, and for
 operators validating it on an HA control plane.
 
+## Turn SSO off for the deployment
+
+Use **Admin -> Platform Settings -> Security -> Institution SSO**. Turning the
+switch off:
+
+- hides the institution sign-in panel on the login page;
+- rejects new OIDC, SAML, and LDAP logins at `/api/auth/sso/*`, including the
+  one-time ticket exchange;
+- does not delete providers or revoke existing sessions;
+- does not affect local password login or the break-glass administrator.
+
+SSO-provisioned accounts normally have `password_login_disabled=true`, so turning
+SSO off can prevent those users from signing in until SSO is re-enabled. Keep the
+break-glass administrator available.
+
 ## How it works
 
 1. The login page lists enabled OIDC and SAML providers, plus an institution
