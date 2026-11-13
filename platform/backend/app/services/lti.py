@@ -14,11 +14,14 @@ import secrets
 import ssl
 import time
 import uuid
+from base64 import urlsafe_b64encode
 from datetime import datetime, timedelta, timezone
 from urllib.parse import parse_qs, quote, urlencode, urlsplit
 
 import jwt
 import requests
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -185,7 +188,12 @@ def sign_deep_link_response(
         LTI_DL_CONTENT_ITEMS_CLAIM: build_content_items(labs, public_base),
     }
     try:
-        return jwt.encode(payload, _private_key(platform), algorithm="RS256")
+        return jwt.encode(
+            payload,
+            _private_key(platform),
+            algorithm="RS256",
+            headers=_signing_headers(platform),
+        )
     except Exception as exc:
         raise LTIError("Could not sign the Deep Linking response.") from exc
 
@@ -370,6 +378,65 @@ def _private_key(platform: LtiPlatform) -> str:
     return value
 
 
+def _b64_uint(value: int) -> str:
+    raw = value.to_bytes((value.bit_length() + 7) // 8, "big")
+    return urlsafe_b64encode(raw).rstrip(b"=").decode("ascii")
+
+
+def _public_key(platform: LtiPlatform) -> rsa.RSAPublicKey:
+    try:
+        loaded = serialization.load_pem_private_key(
+            _private_key(platform).encode("utf-8"), password=None
+        )
+    except Exception as exc:
+        raise LTIError("The stored LMS client key is not a valid private key.") from exc
+    if not isinstance(loaded, rsa.RSAPrivateKey):
+        raise LTIError("Only RSA client keys are supported for LTI signing.")
+    return loaded.public_key()
+
+
+def platform_kid(platform: LtiPlatform) -> str:
+    """Return the RFC 7638 thumbprint used as the JWKS key id."""
+    numbers = _public_key(platform).public_numbers()
+    canonical = json.dumps(
+        {"e": _b64_uint(numbers.e), "kty": "RSA", "n": _b64_uint(numbers.n)},
+        separators=(",", ":"),
+        sort_keys=True,
+    )
+    digest = hashlib.sha256(canonical.encode("utf-8")).digest()
+    return urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
+
+
+def public_jwk(platform: LtiPlatform) -> dict:
+    """Return the public JWK a platform uses to verify our signatures."""
+    numbers = _public_key(platform).public_numbers()
+    return {
+        "kty": "RSA",
+        "use": "sig",
+        "alg": "RS256",
+        "kid": platform_kid(platform),
+        "n": _b64_uint(numbers.n),
+        "e": _b64_uint(numbers.e),
+    }
+
+
+def tool_jwks(platforms) -> dict:
+    """Return a JWKS containing the public keys of enabled platforms."""
+    keys = []
+    for platform in platforms:
+        if not getattr(platform, "enabled", False) or not platform.private_key:
+            continue
+        try:
+            keys.append(public_jwk(platform))
+        except LTIError:
+            continue
+    return {"keys": keys}
+
+
+def _signing_headers(platform: LtiPlatform) -> dict:
+    return {"kid": platform_kid(platform)}
+
+
 def build_client_assertion(platform: LtiPlatform, audience: str | None = None) -> str:
     """Build the private_key_jwt assertion used for an LMS access token."""
     now = int(time.time())
@@ -382,7 +449,12 @@ def build_client_assertion(platform: LtiPlatform, audience: str | None = None) -
         "jti": uuid.uuid4().hex,
     }
     try:
-        return jwt.encode(claims, _private_key(platform), algorithm="RS256")
+        return jwt.encode(
+            claims,
+            _private_key(platform),
+            algorithm="RS256",
+            headers=_signing_headers(platform),
+        )
     except Exception as exc:
         raise LTIError("Could not sign the LMS client assertion.") from exc
 

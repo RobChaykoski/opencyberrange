@@ -45,6 +45,9 @@ authentication; LTI covers course placement and grades.
   institution enables it.
 - Issue a one-time platform ticket and redirect to `/sso/callback`, reusing the
   existing SSO exchange.
+- Publish `GET /api/lti/jwks` with the public key and `kid` of each enabled
+  platform key, so the LMS can verify our client assertions and Deep Linking
+  responses. Every signed tool message carries the matching `kid` header.
 
 ### 3. Assignment and Grade Services (AGS 2.0)
 

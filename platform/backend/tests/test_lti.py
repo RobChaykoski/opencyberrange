@@ -14,7 +14,10 @@ from app.services.lti import (
     build_login_redirect,
     build_score_payload,
     normalize_roster,
+    platform_kid,
+    public_jwk,
     sign_deep_link_response,
+    tool_jwks,
     valid_lti_url,
 )
 
@@ -170,6 +173,53 @@ def test_deep_link_response_is_signed():
     assert claims["https://purl.imsglobal.org/spec/lti/claim/message_type"] == "LtiDeepLinkingResponse"
     assert claims["https://purl.imsglobal.org/spec/lti-dl/claim/data"] == "opaque-data"
     assert claims["https://purl.imsglobal.org/spec/lti-dl/claim/content_items"][0]["custom"]["lab_slug"] == "lab-1"
+
+
+def test_tool_jwks_exposes_only_public_material():
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    private_pem = key.private_bytes(
+        serialization.Encoding.PEM,
+        serialization.PrivateFormat.PKCS8,
+        serialization.NoEncryption(),
+    ).decode()
+    platform = SimpleNamespace(
+        private_key=private_pem,
+        enabled=True,
+    )
+    jwk = public_jwk(platform)
+    assert jwk["kty"] == "RSA"
+    assert jwk["alg"] == "RS256"
+    assert jwk["kid"] == platform_kid(platform)
+    assert "d" not in jwk and "p" not in jwk and "q" not in jwk
+    bundle = tool_jwks([platform, SimpleNamespace(private_key=None, enabled=True),
+                        SimpleNamespace(private_key=private_pem, enabled=False)])
+    assert bundle == {"keys": [jwk]}
+
+
+def test_signed_messages_carry_the_jwks_kid():
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    private_pem = key.private_bytes(
+        serialization.Encoding.PEM,
+        serialization.PrivateFormat.PKCS8,
+        serialization.NoEncryption(),
+    ).decode()
+    platform = SimpleNamespace(
+        client_id="client-123",
+        issuer="https://lms.example.edu",
+        deployment_id="dep-1",
+        token_url="https://lms.example.edu/lti/token",
+        private_key=private_pem,
+        enabled=True,
+    )
+    assertion = build_client_assertion(platform)
+    header = jwt.get_unverified_header(assertion)
+    assert header["kid"] == platform_kid(platform)
+
+    session = SimpleNamespace(nonce="nonce-1", data="opaque")
+    response = sign_deep_link_response(
+        platform, session, [SimpleNamespace(slug="lab-1", name="Lab One")]
+    )
+    assert jwt.get_unverified_header(response)["kid"] == platform_kid(platform)
 
 
 def test_login_redirect_escapes_values():

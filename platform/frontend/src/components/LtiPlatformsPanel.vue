@@ -24,6 +24,10 @@
         <span>Launch / redirect URI</span>
         <code>{{ launchUrl }}</code>
       </div>
+      <div>
+        <span>Tool JWKS URL</span>
+        <code>{{ toolJwksUrl }}</code>
+      </div>
     </div>
 
     <p v-if="loading" class="lti-state">Loading LTI platforms...</p>
@@ -272,6 +276,7 @@ const formatTime = (value) => (value ? new Date(value).toLocaleString() : '—')
 
 const loginUrl = computed(() => `${window.location.origin}/api/lti/login`)
 const launchUrl = computed(() => `${window.location.origin}/api/lti/launch`)
+const toolJwksUrl = computed(() => `${window.location.origin}/api/lti/jwks`)
 
 const blank = () => ({
   name: '',

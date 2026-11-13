@@ -12,7 +12,8 @@ localization.
 ## 1. Identity and LMS integration
 
 - **LTI 1.3 core launch** - OIDC third-party initiated login, signed `id_token`
-  validation, issuer/client/deployment binding, replay protection.
+  validation, issuer/client/deployment binding, replay protection, and a
+  public tool JWKS so the LMS can verify our signatures.
   Status: platform registry, login redirect, launch validation, account linking,
   AGS 2.0, NRPS 2.0, Deep Linking 2.0, and the admin console are implemented on
   `release5`; a real LMS staging test remains.

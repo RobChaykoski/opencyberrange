@@ -473,6 +473,17 @@ async def delete_platform(
     db.commit()
 
 
+@router.get("/jwks")
+async def tool_jwks(
+    db: Session = Depends(get_db),
+):
+    """Public tool keyset used by an LMS to verify our signed messages."""
+    platforms = (
+        db.query(LtiPlatform).filter(LtiPlatform.enabled == True).all()
+    )
+    return lti_service.tool_jwks(platforms)
+
+
 @router.get("/login")
 @limiter.limit("30/minute")
 async def lti_login(

@@ -114,6 +114,8 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
 - the Deep Linking flow returned a 302 to the picker with a single-use session,
   listed 179 labs, and produced a signed `LtiDeepLinkingResponse` with a lab
   launch URL and `lab_slug` custom claim.
+- `GET /api/lti/jwks` published the tool key with its `kid`; the response JWT
+  verified against that JWKS with the matching `kid`.
 
 Still to do: a real Moodle/Canvas staging test (launch, AGS passback, NRPS, and
 Deep Linking).
