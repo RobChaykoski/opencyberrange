@@ -28,7 +28,7 @@ Status: **deployed to production `.41`; version `4`.**
   and log correlation were executed against the target images; the AD directory
   bind and SMB retrieval were verified live. Total lab count is **179**.
 
-## Release 4 QA and dev deployment (12 November 2026)
+## Release 4 QA and deployment (12 November 2026)
 
 Status: **deployed to development `.44`; the same build was promoted to
 production.** Platform
