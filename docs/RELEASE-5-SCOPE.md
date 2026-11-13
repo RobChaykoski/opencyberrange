@@ -11,8 +11,11 @@ localization.
 
 ## 1. Identity and LMS integration
 
-- **LTI 1.3 core launch** — OIDC third-party initiated login, signed `id_token`
+- **LTI 1.3 core launch** - OIDC third-party initiated login, signed `id_token`
   validation, issuer/client/deployment binding, replay protection.
+  Status: platform registry, login redirect, launch validation, and account
+  linking are implemented on `release5`; AGS/NRPS/Deep Linking and the admin
+  console remain.
 - **LTI Advantage AGS 2.0** — line items, score passback, result retrieval, and
   an instructor-review gate before any score leaves the platform.
 - **NRPS 2.0** — roster sync with the minimum claims (`sub`, role, context).

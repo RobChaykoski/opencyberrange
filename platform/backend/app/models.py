@@ -286,6 +286,64 @@ class SsoLoginTicket(Base):
     consumed_at = Column(DateTime, nullable=True)
 
 
+class LtiPlatform(Base):
+    """Registered LTI 1.3 platform (one LMS deployment).
+
+    ``issuer`` + ``client_id`` + ``deployment_id`` identify the tenant. The
+    token and JWKS endpoints are used for Assignment and Grade Services and
+    launch-token verification.
+    """
+
+    __tablename__ = "lti_platforms"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(120), nullable=False)
+    issuer = Column(String(255), nullable=False, index=True)
+    client_id = Column(String(255), nullable=False, index=True)
+    deployment_id = Column(String(255), nullable=False, index=True)
+    auth_login_url = Column(String(500), nullable=False)
+    token_url = Column(String(500), nullable=False)
+    jwks_url = Column(String(500), nullable=False)
+    # Local identity-provider row used for ExternalIdentity links.
+    identity_provider_id = Column(
+        Integer,
+        ForeignKey("identity_providers.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    # RSA private key for client_assertion, encrypted like provider secrets.
+    private_key = Column(Text, nullable=True)
+    enabled = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint(
+            "issuer", "client_id", "deployment_id",
+            name="uq_lti_platform_deployment",
+        ),
+    )
+
+
+class LtiLoginState(Base):
+    """Single-use OIDC third-party-initiated login state for LTI 1.3."""
+
+    __tablename__ = "lti_login_states"
+
+    id = Column(Integer, primary_key=True, index=True)
+    state = Column(String(128), unique=True, nullable=False, index=True)
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    nonce = Column(String(128), nullable=False)
+    target_link_uri = Column(String(500), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+    consumed_at = Column(DateTime, nullable=True)
+
+
 class SsoSession(Base):
     """Latest OIDC session per user/provider for RP-initiated logout.
 

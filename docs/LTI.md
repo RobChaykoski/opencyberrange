@@ -1,8 +1,11 @@
 # LTI 1.3 Advantage: design contract
 
-Status: **Release 5. Not implemented in Release 4.** Do not tell a buyer that
-LTI is available until the endpoints below exist and an LMS integration test
-passes.
+Status: **Release 5 in progress.** Implemented on the `release5` branch:
+platform registration (`/api/lti/admin/platforms`), OIDC third-party initiated
+login (`/api/lti/login`), launch `id_token` validation, account linking through
+`external_identities`, and the SPA exchange. Still to implement: AGS 2.0, NRPS
+2.0, Deep Linking 2.0, the admin console, and a real LMS staging test. Do not
+tell a buyer LTI is complete until those pass.
 
 ## Why
 

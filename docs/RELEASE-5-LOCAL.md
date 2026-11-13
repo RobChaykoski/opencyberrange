@@ -66,6 +66,29 @@ docker run --rm \
   ocr-wiki-builder:release5
 ```
 
+## LTI core slice
+
+The first Release 5 feature set is in the branch:
+
+- `POST/GET/PATCH/DELETE /api/lti/admin/platforms` — register one LMS deployment
+  (issuer, client_id, deployment_id, auth/token/JWKS URLs, encrypted private
+  key).
+- `GET /api/lti/login` — OIDC third-party initiated login with a single-use
+  state and nonce.
+- `POST /api/lti/launch` — verifies the LMS `id_token` against its JWKS, binds
+  issuer/audience/deployment/nonce, rejects replay, links the LMS `sub` through
+  `external_identities`, and hands off to the normal SPA ticket exchange.
+
+Verified against a mock LMS with a locally generated RSA key and JWKS:
+
+- login redirect carried the required parameters;
+- a signed launch reached `/sso/callback` and exchanged for a platform JWT;
+- the user was provisioned as `lti-student` with the LMS student role;
+- replaying the same state returned `400` and was rejected.
+
+Still to do: AGS 2.0, NRPS 2.0, Deep Linking 2.0, the admin console, and a real
+Moodle/Canvas staging test.
+
 ## Verified on this stack
 
 - `/api/version` = **5**, release name **Release 5 (Development)**.
