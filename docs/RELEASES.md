@@ -50,8 +50,9 @@ recorded in `versions.yaml` and returned by `/api/version`.
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
 and are historical. They are **not** the supported single-host platform
 release. The platform release `v4` is the signed tag on the current tree.
-Release 4 ships OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI, and the
-per-student accommodation engine are Release 5.
+Release 4 ships OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI, the
+per-student accommodation engine, and weekly Jeopardy-style challenge quizzes
+that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 

@@ -1,6 +1,33 @@
 <template>
   <div class="register-page">
     <a class="skip-link" href="#register-form">Skip to registration form</a>
+    <nav class="login-powered" aria-label="Powered by OpenCyberRange">
+      <a
+        class="login-powered__brand"
+        href="https://github.com/RobChaykoski/opencyberrange"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Powered by OpenCyberRange — open the OpenCyberRange project"
+        title="Powered by OpenCyberRange"
+      >
+        <span>Powered by</span>
+        <img src="/ocr-logo-dark.png" alt="OpenCyberRange" />
+        <span>OpenCyberRange</span>
+      </a>
+      <span class="login-powered__divider" aria-hidden="true"></span>
+      <a
+        class="login-powered__social"
+        href="https://www.linkedin.com/company/swocts"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="SWOCTS on LinkedIn"
+        title="SWOCTS on LinkedIn"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.55V9h3.57v11.45Z"/>
+        </svg>
+      </a>
+    </nav>
     <div class="register-split">
       <!-- Left: Form Panel -->
       <main class="register-form-panel" id="register-form" tabindex="-1">
@@ -385,50 +412,74 @@
         </div>
       </main>
 
-      <!-- Right: Illustration Panel -->
-      <aside class="register-hero-panel" aria-label="Platform preview">
+      <!-- Right: onboarding preview -->
+      <aside class="register-hero-panel" aria-label="What happens after you register">
         <div class="hero-content">
-          <!-- CSS Terminal Illustration -->
-          <div class="terminal" aria-hidden="true">
-            <div class="terminal__titlebar">
-              <span class="terminal__dot terminal__dot--red"></span>
-              <span class="terminal__dot terminal__dot--yellow"></span>
-              <span class="terminal__dot terminal__dot--green"></span>
-              <span class="terminal__titlebar-text">swocts ~ setup</span>
-            </div>
-            <div class="terminal__body">
-              <div class="terminal__line">
-                <span class="terminal__prompt">$</span>
-                <span class="terminal__cmd">swocts init --user new</span>
-              </div>
-              <div class="terminal__line terminal__line--output">
-                Initializing training environment...
-              </div>
-              <div class="terminal__line terminal__line--success">
-                VPN profile generated
-              </div>
-              <div class="terminal__line terminal__line--success">
-                Lab networks configured
-              </div>
-              <div class="terminal__line terminal__line--success">
-                Practice targets deployed
-              </div>
-              <div class="terminal__line terminal__line--output terminal__line--highlight">
-                Ready. 4 learning paths available.
-              </div>
-              <div class="terminal__line">
-                <span class="terminal__prompt">$</span>
-                <span class="terminal__cursor"></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="hero-text">
-            <h2 class="hero-title">Build skills you can prove</h2>
+          <div class="hero-head">
+            <span class="hero-kicker">Get started</span>
+            <h2 class="hero-title">Your first lab is closer than you think.</h2>
             <p class="hero-subtitle">
-              Hands-on labs, feedback, and verifiable certificates that show what you can do.
+              Create an account, join your course or event, and start practising
+              in the browser. Progress is saved so you can pick up where you left off.
             </p>
           </div>
+
+          <ol class="start-steps" aria-label="Getting started steps">
+            <li class="start-step">
+              <span class="start-step__num" aria-hidden="true">1</span>
+              <span class="start-step__body">
+                <strong>Create your account</strong>
+                <small>Choose a username and a strong, unique password.</small>
+              </span>
+            </li>
+            <li class="start-step">
+              <span class="start-step__num" aria-hidden="true">2</span>
+              <span class="start-step__body">
+                <strong>Join your course or event</strong>
+                <small>Use the invite code or event link from your instructor.</small>
+              </span>
+            </li>
+            <li class="start-step">
+              <span class="start-step__num" aria-hidden="true">3</span>
+              <span class="start-step__body">
+                <strong>Launch your first exercise</strong>
+                <small>Open a guided lab and work at your own pace.</small>
+              </span>
+            </li>
+          </ol>
+
+          <div class="preview-grid">
+            <article class="preview-card preview-card--certificate">
+              <div class="preview-certificate">
+                <div class="preview-certificate__top">
+                  <span class="preview-certificate__seal">SWOCTS</span>
+                  <span class="preview-certificate__label">Certificate of Completion</span>
+                </div>
+                <strong class="preview-certificate__name">Avery Chen</strong>
+                <span class="preview-certificate__track">Network Foundations · Level 1</span>
+                <span class="preview-certificate__meta">Verified · SWOCTS-2026-0142</span>
+              </div>
+            </article>
+
+            <article class="preview-card preview-card--privacy">
+              <div class="preview-card__head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <rect x="4" y="10" width="16" height="10" rx="2"/>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                </svg>
+                <span>Private by default</span>
+              </div>
+              <p>
+                Your individual progress stays private. Under-18 accounts are
+                excluded from instructor reports and course analytics.
+              </p>
+            </article>
+          </div>
+
+          <p class="hero-note">
+            You can stop and resume at any time. Event leaderboards use the
+            display name you choose.
+          </p>
         </div>
       </aside>
     </div>
@@ -589,27 +640,31 @@ const validateEmail = () => {
   }
 }
 
+const setPasswordError = (message) => {
+  errors.password = message
+}
+
 const validatePassword = () => {
   errors.password = ''
   if (!form.password) {
-    errors.password = 'Password is required'
+    setPasswordError('Password is required')
     return
   }
 
   if (!passwordChecks.value.length) {
-    errors.password = 'Password must be at least 8 characters'
+    setPasswordError('Password must be at least 8 characters')
     return
   }
   if (!passwordChecks.value.upper) {
-    errors.password = 'Password must contain at least one uppercase letter'
+    setPasswordError('Password must contain at least one uppercase letter')
     return
   }
   if (!passwordChecks.value.lower) {
-    errors.password = 'Password must contain at least one lowercase letter'
+    setPasswordError('Password must contain at least one lowercase letter')
     return
   }
   if (!passwordChecks.value.number) {
-    errors.password = 'Password must contain at least one number'
+    setPasswordError('Password must contain at least one number')
     return
   }
 
@@ -764,63 +819,133 @@ const handleRegister = async () => {
   z-index: 10;
   padding: 0.65rem 1rem;
   border-radius: 8px;
-  background: #c2410c;
-  color: #ffffff;
+  background: var(--accent);
+  color: #08111f;
   font-weight: 700;
   text-decoration: none;
 }
 
 .skip-link:focus {
   top: 1rem;
-  outline: 3px solid #ffffff;
+  outline: 3px solid #f8fafc;
   outline-offset: 2px;
 }
 
 .register-page {
+  position: relative;
   min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* Powered by / social */
+.login-powered {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.4rem 0.28rem 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.62);
+  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.login-powered__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 999px;
+  color: #cbd5e1;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.login-powered__brand:hover {
+  color: #f8fafc;
+}
+
+.login-powered__brand img {
+  height: 14px;
+  width: auto;
+  padding: 1px 3px;
+  border-radius: 3px;
+  background: #ffffff;
+}
+
+.login-powered__divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(148, 163, 184, 0.28);
+}
+
+.login-powered__social {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #cbd5e1;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.login-powered__social:hover {
+  background: rgba(56, 189, 248, 0.16);
+  color: #e0f2fe;
+}
+
+.login-powered__social svg {
+  width: 13px;
+  height: 13px;
+}
+
+.login-powered a:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.register-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  min-height: 100vh;
+}
+
+/* Left: form */
+.register-form-panel {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 4.5rem 2rem 3rem;
   background: var(--bg-primary);
 }
 
 .register-form-panel:focus-visible {
-  outline: 3px solid #fb923c;
+  outline: 3px solid var(--accent);
   outline-offset: -3px;
-}
-
-.register-split {
-  display: flex;
-  min-height: 100vh;
-}
-
-/* ── Left: Form Panel ── */
-.register-form-panel {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 2rem;
-  background: var(--bg-primary);
 }
 
 .form-panel-inner {
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.9rem;
+  margin-bottom: 1.75rem;
 }
 
 .brand-icon {
-  width: 88px;
-  height: 88px;
+  width: 72px;
+  height: 72px;
   flex-shrink: 0;
   object-fit: contain;
-  background: var(--bg-primary);
-  border-radius: 16px;
-  padding: 6px;
 }
 
 .brand-text {
@@ -838,7 +963,7 @@ const handleRegister = async () => {
 }
 
 .brand-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin: 0;
@@ -847,7 +972,7 @@ const handleRegister = async () => {
 .form-subtext {
   color: var(--text-secondary);
   font-size: 0.9375rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .competition-callout {
@@ -862,7 +987,7 @@ const handleRegister = async () => {
 
 .competition-callout__kicker {
   margin: 0 0 0.2rem;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -888,6 +1013,68 @@ const handleRegister = async () => {
   accent-color: var(--accent);
 }
 
+/* Messages */
+.success-message,
+.error-message {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+}
+
+.success-message {
+  background: var(--success-bg);
+  border: 1px solid color-mix(in srgb, var(--success) 40%, transparent);
+  color: var(--text-primary);
+}
+
+.error-message {
+  background: var(--danger-bg);
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  color: var(--text-primary);
+}
+
+.error-message:focus-visible {
+  outline: 3px solid var(--danger);
+  outline-offset: 2px;
+}
+
+.success-message:focus-visible {
+  outline: 3px solid var(--success);
+  outline-offset: 2px;
+}
+
+.caps-warning {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--warning);
+}
+
+/* Form */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.label-optional {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
 .form-check {
   display: flex;
   align-items: flex-start;
@@ -904,90 +1091,29 @@ const handleRegister = async () => {
   accent-color: var(--accent);
 }
 
-/* Messages */
-.error-message {
-  background: var(--danger-bg);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: var(--text-primary);
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.25rem;
-  font-size: 0.875rem;
-}
-
-.error-message:focus-visible {
-  outline: 3px solid var(--danger);
-  outline-offset: 2px;
-}
-
-.success-message:focus-visible {
-  outline: 3px solid var(--success);
-  outline-offset: 2px;
-}
-
-.caps-warning {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--warning);
-}
-
-.success-message {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  color: #86efac;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1.25rem;
-  font-size: 0.875rem;
-}
-
-/* Form */
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.125rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.form-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.label-optional {
-  font-weight: 400;
-  color: var(--text-secondary);
-}
-
 .input-wrapper {
   position: relative;
 }
 
 .form-input {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.8rem 1rem;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   color: var(--text-primary);
   font-size: 0.9375rem;
-  transition: all 0.2s ease;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .input-wrapper .form-input {
-  padding-right: 2.75rem;
+  padding-right: 4.75rem;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #f97316;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .form-input::placeholder {
@@ -1000,30 +1126,32 @@ const handleRegister = async () => {
 
 .form-input--error:focus {
   border-color: var(--danger);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 18%, transparent);
 }
 
 .password-toggle {
   position: absolute;
-  right: 0.35rem;
   top: 50%;
+  right: 0.25rem;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-width: 2.75rem;
   min-height: 2.75rem;
   padding: 0.35rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 0;
   border-radius: 6px;
-  transition: color 0.2s ease;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
 }
 
-.password-toggle:hover {
+.password-toggle:hover,
+.password-toggle:focus-visible {
   color: var(--text-primary);
+  background: var(--bg-tertiary);
 }
 
 .password-toggle svg {
@@ -1032,14 +1160,16 @@ const handleRegister = async () => {
 }
 
 .help-text {
+  margin: 0;
   font-size: 0.78rem;
   color: var(--text-secondary);
   line-height: 1.45;
 }
 
 .error-text {
+  margin: 0;
   font-size: 0.8125rem;
-  color: #fca5a5;
+  color: var(--danger);
   font-weight: 600;
   line-height: 1.45;
 }
@@ -1047,7 +1177,7 @@ const handleRegister = async () => {
 .password-checklist {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.25rem 0.75rem;
+  gap: 0.3rem 0.75rem;
   margin: 0.15rem 0 0;
   padding: 0;
   list-style: none;
@@ -1088,7 +1218,7 @@ const handleRegister = async () => {
 
 .password-strength__fill--weak { background: var(--danger); }
 .password-strength__fill--fair { background: var(--warning); }
-.password-strength__fill--good { background: #38bdf8; }
+.password-strength__fill--good { background: var(--accent-text); }
 .password-strength__fill--strong { background: var(--success); }
 
 .password-strength__label {
@@ -1097,36 +1227,25 @@ const handleRegister = async () => {
   font-size: 0.78rem;
 }
 
-.form-input:focus-visible,
-.register-button:focus-visible,
-.password-toggle:focus-visible,
-.login-link:focus-visible,
-.form-check input:focus-visible,
-.register-form a:focus-visible {
-  outline: 3px solid #fb923c;
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
 .register-button {
   width: 100%;
   min-height: 2.875rem;
   padding: 0.875rem 1.5rem;
-  background: linear-gradient(135deg, #c2410c, #9a3412);
-  color: white;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
   margin-top: 0.25rem;
 }
 
 .register-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #9a3412, #7c2d12);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(154, 52, 18, 0.35);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 30%, transparent);
+  filter: brightness(1.05);
 }
 
 .register-button:active:not(:disabled) {
@@ -1138,54 +1257,60 @@ const handleRegister = async () => {
   cursor: not-allowed;
 }
 
-/* Login link */
+/* Sign in links */
 .login-section {
-  margin-top: 1.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
   text-align: center;
 }
 
 .login-text {
-  color: var(--text-secondary);
-  font-size: 0.875rem;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .login-text--about {
-  margin-top: 0.4rem;
+  margin-top: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
 }
 
 .login-link {
-  color: #fb923c;
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;
-  font-weight: 600;
+  font-weight: 700;
   margin-left: 0.25rem;
-  transition: color 0.2s ease;
 }
 
 .login-link:hover {
-  color: #fdba74;
   text-decoration-thickness: 2px;
 }
 
-/* ── Right: Hero / Illustration Panel ── */
+/* Right: onboarding preview */
 .register-hero-panel {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
-  background: linear-gradient(135deg, #9a3412 0%, #7c2d12 45%, #5c210b 100%);
+  padding: 2.5rem;
+  background:
+    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 42%),
+    radial-gradient(circle at 90% 80%, color-mix(in srgb, var(--purple) 24%, transparent), transparent 46%),
+    #0b1220;
+  color: #e2e8f0;
   position: relative;
   overflow: hidden;
 }
 
-/* Subtle dot-grid overlay */
 .register-hero-panel::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 26px 26px;
   pointer-events: none;
 }
 
@@ -1194,151 +1319,286 @@ const handleRegister = async () => {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2.5rem;
-  max-width: 480px;
-}
-
-/* ── Terminal ── */
-.terminal {
+  gap: 1.1rem;
   width: 100%;
-  background: #1e1e2e;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.8125rem;
+  max-width: 520px;
 }
 
-.terminal__titlebar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0.65rem 1rem;
-  background: #181825;
+.hero-head {
+  max-width: 46ch;
 }
 
-.terminal__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.terminal__dot--red { background: #f38ba8; }
-.terminal__dot--yellow { background: #f9e2af; }
-.terminal__dot--green { background: #a6e3a1; }
-
-.terminal__titlebar-text {
-  margin-left: 0.5rem;
-  color: #6c7086;
-  font-size: 0.75rem;
-}
-
-.terminal__body {
-  padding: 1rem 1.25rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.terminal__line {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  line-height: 1.6;
-  color: #cdd6f4;
-}
-
-.terminal__line--output {
-  color: #a6adc8;
-  padding-left: 1.25rem;
-}
-
-.terminal__line--highlight {
-  color: #f9e2af;
-  font-weight: 600;
-}
-
-.terminal__line--success {
-  color: #a6e3a1;
-  padding-left: 1.25rem;
-}
-
-.terminal__prompt {
-  color: #a6e3a1;
-  font-weight: 700;
-}
-
-.terminal__cmd {
-  color: #89b4fa;
-}
-
-.terminal__cursor {
+.hero-kicker {
   display: inline-block;
-  width: 8px;
-  height: 15px;
-  background: #cdd6f4;
-  animation: cursor-blink 1s step-end infinite;
-  vertical-align: middle;
-}
-
-@keyframes cursor-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-/* Hero text */
-.hero-text {
-  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #93c5fd;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .hero-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.6rem;
+  color: #f8fafc;
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
 }
 
 .hero-subtitle {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 1rem;
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.86rem;
+  line-height: 1.55;
 }
 
-/* ── Responsive ── */
+.start-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.start-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.start-step__num {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  border: 1px solid rgba(147, 197, 253, 0.45);
+  background: rgba(59, 130, 246, 0.18);
+  color: #dbeafe;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.start-step__body {
+  min-width: 0;
+}
+
+.start-step__body strong {
+  display: block;
+  color: #f1f5f9;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.start-step__body small {
+  display: block;
+  margin-top: 0.1rem;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.preview-card {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.preview-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+  color: #dbeafe;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.preview-card__head svg {
+  width: 16px;
+  height: 16px;
+  color: #93c5fd;
+}
+
+.preview-card--certificate {
+  display: flex;
+  align-items: center;
+}
+
+.preview-certificate {
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem;
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(251, 191, 36, 0.1), transparent 52%),
+    rgba(15, 23, 42, 0.55);
+}
+
+.preview-certificate__top {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid rgba(251, 191, 36, 0.18);
+}
+
+.preview-certificate__seal {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(251, 191, 36, 0.65);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.22), transparent 45%),
+    rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.45rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.preview-certificate__label {
+  color: #fbbf24;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.preview-certificate__name {
+  display: block;
+  margin: 0.4rem 0 0.15rem;
+  color: #f8fafc;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.preview-certificate__track {
+  display: block;
+  color: #dbeafe;
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+.preview-certificate__meta {
+  display: block;
+  margin-top: 0.18rem;
+  color: #94a3b8;
+  font-size: 0.56rem;
+}
+
+.preview-card--privacy {
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-card--privacy p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.hero-note {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+/* Focus */
+.form-input:focus-visible,
+.register-button:focus-visible,
+.password-toggle:focus-visible,
+.login-link:focus-visible,
+.form-check input:focus-visible,
+.register-form a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Responsive */
 @media (max-width: 960px) {
   .register-split {
-    flex-direction: column;
-  }
-
-  .register-hero-panel {
-    padding: 2.5rem 2rem;
-    min-height: auto;
+    grid-template-columns: 1fr;
   }
 
   .register-form-panel {
-    padding: 2rem 1.5rem;
+    padding: 3.5rem 1.5rem 2.5rem;
   }
 
-  .terminal {
-    max-width: 420px;
+  .form-panel-inner {
+    max-width: 560px;
+  }
+
+  .register-hero-panel {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .hero-content {
+    max-width: 640px;
   }
 }
 
 @media (max-width: 640px) {
+  .login-powered {
+    top: 0.6rem;
+    right: 0.6rem;
+    padding: 0.24rem 0.32rem 0.24rem 0.5rem;
+  }
+
+  .login-powered__brand {
+    font-size: 0.58rem;
+  }
+
+  .login-powered img {
+    height: 12px;
+  }
+
+  .register-form-panel {
+    padding: 3rem 1rem 2rem;
+  }
+
   .register-hero-panel {
     padding: 2rem 1rem;
   }
 
-  .form-heading {
-    font-size: 1.5rem;
-  }
-
   .hero-title {
-    font-size: 1.25rem;
+    font-size: 1.45rem;
   }
 
-  .terminal {
-    font-size: 0.75rem;
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-icon {
+    width: 60px;
+    height: 60px;
   }
 
   .password-checklist {
@@ -1351,10 +1611,10 @@ const handleRegister = async () => {
   .register-button,
   .password-toggle,
   .login-link,
-  .terminal__cursor,
+  .login-powered__brand,
+  .login-powered__social,
   .password-strength__fill {
     transition: none;
-    animation: none;
   }
 
   .register-button:hover:not(:disabled) {

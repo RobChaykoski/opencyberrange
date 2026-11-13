@@ -185,6 +185,7 @@ def pathway_summary(pathway: dict) -> dict:
         "objectives_url": pathway.get("objectives_url"),
         "tracks": pathway.get("tracks", []),
         "domains": pathway.get("domains", []),
+        "careers": pathway.get("careers", []),
         "question_count": len(pathway.get("questions", [])),
     }
 
@@ -200,6 +201,7 @@ def public_pathway_for_lab(lab: Lab | None) -> dict | None:
         "code": pathway.get("code"),
         "url": pathway.get("url"),
         "domain": {"id": domain.get("id"), "name": domain.get("name")},
+        "careers": pathway.get("careers", []),
         "sample_size": SAMPLE_SIZE,
         "question_count": len(pathway.get("questions", [])),
         "notice": (
@@ -234,7 +236,7 @@ def validate_banks() -> dict:
 
     for pathway in pathways():
         pathway_id = pathway.get("id", "?")
-        for field in ("name", "code", "url", "objectives_url", "tracks", "domains"):
+        for field in ("name", "code", "url", "objectives_url", "tracks", "domains", "careers"):
             if not pathway.get(field):
                 issues.append(
                     {
@@ -269,6 +271,8 @@ def validate_banks() -> dict:
                 issues.append({"level": "error", "where": where, "message": "domain is not declared"})
             if not str(question.get("objective") or "").strip():
                 issues.append({"level": "error", "where": where, "message": "objective is missing"})
+            if not str(question.get("career") or "").strip():
+                issues.append({"level": "error", "where": where, "message": "career is missing"})
             reference = question.get("reference") or {}
             url = str(reference.get("url") or "").strip()
             if not url.startswith("https://"):

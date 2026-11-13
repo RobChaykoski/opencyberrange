@@ -49,8 +49,9 @@ existing startup schema step.
 ## Release 4 limits
 
 - LTI 1.3 Advantage, multi-tenancy, the TA role, the per-student accommodation
-  engine, a signed VPAT/ACR, SOC 2, ISO 27001, and a completed HECVAT are
-  Release 5. See `docs/RELEASE-5-SCOPE.md`.
+  engine, a signed VPAT/ACR, SOC 2, ISO 27001, a completed HECVAT, and weekly
+  Jeopardy-style challenge quizzes that feed Cyber DNA are Release 5. See
+  `docs/RELEASE-5-SCOPE.md`.
 - SAML single logout remains local. OIDC RP-initiated logout is supported.
 - The topology engine ships routed L3 topologies with Docker bridges as L2
   segments. A dedicated switch container, FRR/OSPF/BGP, and an nftables node role
