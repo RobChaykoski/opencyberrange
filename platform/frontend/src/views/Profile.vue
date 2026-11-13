@@ -177,6 +177,14 @@
               </span>
               <span v-if="user.created_at" class="profile-hero__joined">Member since {{ formatDateOnly(user.created_at) }}</span>
             </div>
+            <button
+              v-if="displayName === user.username"
+              type="button"
+              class="profile-hero__name-prompt"
+              @click="setTab('account')"
+            >
+              Add your name for certificates
+            </button>
 
             <div v-if="summary" class="profile-hero__progress">
               <div class="profile-hero__progress-head">
@@ -220,7 +228,7 @@
         </section>
 
         <div
-          v-if="gpsQuestions.length && !gpsBannerDismissed"
+          v-if="gpsQuestions.length && !gpsBannerDismissed && hasCareerEvidence"
           class="gps-card"
           role="region"
           aria-label="Optional Cyber GPS questions"
@@ -328,7 +336,10 @@
                 <h3>{{ topAffinity?.label || 'Start your first exercise' }}</h3>
                 <p>{{ topAffinity?.next_step || 'Complete one exercise to give your skill tree its first branch.' }}</p>
                 <p v-if="topAffinity?.evidence" class="overview-card__evidence">{{ topAffinity.evidence }}</p>
-                <button type="button" class="btn btn--secondary btn--sm" @click="setTab('skill-tree')">
+                <router-link v-if="!topAffinity" to="/exercises" class="btn btn--secondary btn--sm">
+                  Find your first exercise
+                </router-link>
+                <button v-else type="button" class="btn btn--secondary btn--sm" @click="setTab('skill-tree')">
                   Open skill tree
                 </button>
               </article>
@@ -350,13 +361,14 @@
                 <p class="overview-card__eyebrow">Cyber DNA</p>
                 <div class="overview-dna">
                   <strong>{{ summary?.skill_dna?.class?.class_name || 'Recruit' }}</strong>
-                  <span>{{ summary?.skill_dna?.class?.label || 'No class yet' }}</span>
+                  <span v-if="hasCareerEvidence">{{ summary?.skill_dna?.class?.label || 'No class yet' }}</span>
+                  <span v-else>Your first class</span>
                 </div>
-                <p v-if="summary?.skill_dna">
+                <p v-if="hasCareerEvidence">
                   {{ summary.skill_dna.overall }} / 99 overall, {{ summary.skill_dna.tier }}.
                   Your highest branch is {{ summary.skill_dna.class.label }}.
                 </p>
-                <p v-else>Complete exercises to build your six branches.</p>
+                <p v-else>Complete one exercise to start your Cyber DNA.</p>
               </article>
 
               <article class="overview-card">
@@ -650,9 +662,9 @@
               No certificates yet. Finish every exercise in a level and the certificate appears here.
             </p>
 
-            <div v-if="tracks.length" class="profile-tracks">
+            <div v-if="visibleTracks.length" class="profile-tracks">
               <h3 class="subsection-title">Track progress</h3>
-              <div v-for="track in tracks" :key="track.track_slug" class="track-progress">
+              <div v-for="track in visibleTracks" :key="track.track_slug" class="track-progress">
                 <div class="track-progress__head">
                   <span class="track-progress__name">{{ track.track_name }}</span>
                   <span class="track-progress__count">{{ track.completed_labs }} / {{ track.total_labs }} exercises</span>
@@ -693,6 +705,17 @@
                 </div>
               </div>
             </div>
+            <p v-else class="empty-transcript">
+              No track progress yet. Start with an exercise and your first track will appear here.
+            </p>
+            <button
+              v-if="hiddenTrackCount || showAllTracks"
+              type="button"
+              class="btn btn--secondary btn--sm track-progress-toggle"
+              @click="showAllTracks = !showAllTracks"
+            >
+              {{ showAllTracks ? 'Show progress only' : `Show all ${tracks.length} tracks` }}
+            </button>
 
             <details v-if="completions.length" class="completion-details">
               <summary>Completion details ({{ completions.length }})</summary>
@@ -947,6 +970,20 @@
                 <div class="enrolled-course-card__info">
                   <span class="enrolled-course-card__name">{{ c.name }}</span>
                   <span class="enrolled-course-card__code">{{ c.code }} &mdash; {{ c.semester }}</span>
+                  <span v-if="c.lab_count" class="enrolled-course-card__progress">
+                    {{ c.completed_labs }}/{{ c.lab_count }} exercises · {{ c.progress_percent }}%
+                  </span>
+                  <span
+                    v-if="c.lab_count"
+                    class="enrolled-course-card__bar"
+                    role="progressbar"
+                    :aria-valuenow="c.progress_percent"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    :aria-label="`${c.name} progress`"
+                  >
+                    <span :style="{ width: c.progress_percent + '%' }"></span>
+                  </span>
                 </div>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="enrolled-course-card__arrow">
                   <polyline points="9 18 15 12 9 6"/>
@@ -1202,7 +1239,10 @@ const loading = ref(true)
 const summary = ref(null)
 const BASE_PROFILE_TABS = ['overview', 'skill-tree', 'learning', 'account', 'security']
 const ALL_PROFILE_TABS = ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
-const hasCareerAtlas = computed(() => !!summary.value?.skill_dna?.career_atlas)
+const hasCareerEvidence = computed(() => Number(summary.value?.skill_dna?.overall || 0) > 0)
+const hasCareerAtlas = computed(
+  () => hasCareerEvidence.value && !!summary.value?.skill_dna?.career_atlas
+)
 const profileTabKeys = computed(() =>
   hasCareerAtlas.value
     ? ['overview', 'skill-tree', 'careers', 'portfolio', 'learning', 'account', 'security']
@@ -1504,6 +1544,12 @@ const progressMessage = computed(() => {
   return 'Your first exercise is waiting when you are ready.'
 })
 const tracks = computed(() => summary.value?.tracks || [])
+const showAllTracks = ref(false)
+const visibleTracks = computed(() => {
+  if (showAllTracks.value) return tracks.value
+  return tracks.value.filter((track) => (track.completed_labs || 0) > 0)
+})
+const hiddenTrackCount = computed(() => tracks.value.length - visibleTracks.value.length)
 const completions = computed(() => summary.value?.completions || [])
 const achievements = computed(() => summary.value?.achievements || [])
 const courseAchievements = computed(() => summary.value?.course_achievements || [])
@@ -1543,6 +1589,7 @@ const advancedCompletions = computed(() =>
   ).length
 )
 const topAffinity = computed(() => {
+  if (!hasCareerEvidence.value) return null
   const affinities = summary.value?.skill_dna?.affinities || []
   return affinities.find((item) => item.recommended) || affinities[0] || null
 })
@@ -2482,50 +2529,50 @@ watch(() => route.path, (newPath) => {
 }
 
 .status-badge--approved {
-  background: rgba(34, 197, 94, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .status-badge--pending {
-  background: rgba(245, 158, 11, 0.15);
+  background: var(--warning-bg);
   color: var(--warning);
-  border: 1px solid var(--warning);
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
 }
 
 .status-badge--active {
-  background: rgba(34, 197, 94, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .status-badge--inactive {
-  background: rgba(239, 68, 68, 0.15);
+  background: var(--danger-bg);
   color: var(--danger);
-  border: 1px solid var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
 }
 
 .status-badge--vpn {
-  background: rgba(34, 197, 94, 0.15);
-  color: #10b981;
-  border: 1px solid #10b981;
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .status-badge--no-vpn {
-  background: rgba(100, 116, 139, 0.15);
+  background: var(--bg-tertiary);
   color: var(--text-muted);
-  border: 1px solid var(--text-muted);
+  border: 1px solid var(--border-color);
 }
 
 .status-badge--admin {
-  background: rgba(139, 92, 246, 0.15);
-  color: #a78bfa;
-  border: 1px solid #8b5cf6;
+  background: color-mix(in srgb, var(--purple) 15%, transparent);
+  color: var(--badge-purple);
+  border: 1px solid var(--purple);
 }
 
 .status-badge--instructor {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  background: var(--accent-bg);
+  color: var(--accent-text);
   border: 1px solid var(--accent);
 }
 
@@ -2574,7 +2621,7 @@ watch(() => route.path, (newPath) => {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
 .input-wrapper {
@@ -2599,7 +2646,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .form-input.error {
-  border-color: #dc2626;
+  border-color: var(--danger);
 }
 
 .form-input::placeholder {
@@ -2638,26 +2685,26 @@ watch(() => route.path, (newPath) => {
 
 .error-text {
   font-size: 0.8125rem;
-  color: #dc2626;
+  color: var(--danger);
   margin-top: 0.25rem;
 }
 
 .error-message {
   font-size: 0.875rem;
-  color: #dc2626;
+  color: var(--danger);
   padding: 0.75rem;
-  background: rgba(220, 38, 38, 0.1);
+  background: var(--danger-bg);
   border-radius: 6px;
-  border: 1px solid #dc2626;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
 }
 
 .success-message {
   font-size: 0.875rem;
-  color: #10b981;
+  color: var(--success);
   padding: 0.75rem;
-  background: rgba(16, 185, 129, 0.1);
+  background: var(--success-bg);
   border-radius: 6px;
-  border: 1px solid #10b981;
+  border: 1px solid color-mix(in srgb, var(--success) 45%, transparent);
 }
 
 .btn {
@@ -2677,7 +2724,7 @@ watch(() => route.path, (newPath) => {
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: #2563eb;
+  filter: brightness(1.08);
 }
 
 .btn--primary:disabled {
@@ -2857,6 +2904,34 @@ watch(() => route.path, (newPath) => {
 .enrolled-course-card__code {
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.enrolled-course-card__progress {
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.enrolled-course-card__bar {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  height: 4px;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-tertiary);
+}
+
+.enrolled-course-card__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.track-progress-toggle {
+  margin-top: 0.75rem;
 }
 
 .enrolled-course-card__arrow {
@@ -3398,6 +3473,20 @@ watch(() => route.path, (newPath) => {
 .profile-hero__joined {
   color: var(--text-muted);
   font-size: 0.78rem;
+}
+
+.profile-hero__name-prompt {
+  align-self: flex-start;
+  margin-top: 0.45rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
 }
 
 .profile-hero__title {

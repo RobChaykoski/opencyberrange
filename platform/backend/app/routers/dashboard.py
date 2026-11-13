@@ -40,6 +40,12 @@ from app.services.achievements import (
 from app.services.pdf_report import generate_dashboard_report
 from app.services.curriculum_manifest import chapter_label
 from app.services.spreadsheet_safety import neutralize_row
+from app.routers.courses import get_course_completed_lab_ids
+from app.routers.curriculum import (
+    _is_lab_visible,
+    get_accessible_exclusive_lab_ids,
+    get_user_completions,
+)
 
 # Report timestamps render in the requesting instructor's timezone, falling
 # back to UTC for legacy accounts.
@@ -1297,28 +1303,11 @@ async def student_dashboard(
         joinedload(Track.levels).joinedload(Level.labs)
     ).filter(Track.is_active == True).all()
 
-    # Get accessible exclusive labs
-    now_utc = datetime.now(timezone.utc)
-    exclusive_rows = db.query(CourseLabAssignment.lab_id).join(
-        CourseEnrollment,
-        CourseEnrollment.course_id == CourseLabAssignment.course_id,
-    ).join(
-        Course,
-        Course.id == CourseLabAssignment.course_id,
-    ).filter(
-        CourseEnrollment.user_id == current_user.id,
-        Course.end_date >= now_utc,
-        Course.is_active == True,
-    ).all()
-    accessible_exclusive_ids = {r[0] for r in exclusive_rows}
-
-    completed_ids = {
-        r[0] for r in db.query(LabCompletion.lab_id).filter(
-            LabCompletion.user_id == current_user.id,
-            LabCompletion.flag_submitted.isnot(None),
-            LabCompletion.flag_submitted != "",
-        ).all()
-    }
+    # Use the same visibility and completion helpers as the profile and
+    # exercise catalogue. A dashboard total that counts course-only or draft
+    # labs is not comparable with the catalogue count.
+    accessible_exclusive_ids = get_accessible_exclusive_lab_ids(db, current_user.id)
+    completed_ids = get_user_completions(db, current_user.id)
 
     total_labs = 0
     completed_labs = 0
@@ -1327,12 +1316,8 @@ async def student_dashboard(
     for track in tracks:
         for level in sorted(track.levels, key=lambda l: l.level_number):
             for lab in sorted(level.labs, key=lambda l: l.sort_order):
-                # Visibility check
-                if not current_user.is_admin:
-                    if not lab.is_active:
-                        continue
-                    if getattr(lab, 'is_course_exclusive', False) and lab.id not in accessible_exclusive_ids:
-                        continue
+                if not _is_lab_visible(lab, current_user, accessible_exclusive_ids):
+                    continue
                 total_labs += 1
                 if lab.id in completed_ids:
                     completed_labs += 1
@@ -1418,6 +1403,7 @@ async def student_dashboard(
     matrix_columns = {}
     matrix_rows = []
     matrix_totals = {}
+    now_utc = datetime.now(timezone.utc)
 
     enrollment_rows = db.query(Course, CourseEnrollment).join(
         CourseEnrollment,
@@ -1434,6 +1420,9 @@ async def student_dashboard(
                 CourseLabAssignment.course_id == course.id,
             ).all()
         ]
+        course_completed_ids = get_course_completed_lab_ids(
+            db, current_user.id, course.id, set(assigned_lab_ids),
+        )
         course_labs = []
         if assigned_lab_ids:
             course_labs = db.query(Lab).options(
@@ -1463,7 +1452,7 @@ async def student_dashboard(
             })
             cell = cells.setdefault(key, {"completed": 0, "total": 0})
             cell["total"] += 1
-            if lab.id in completed_ids:
+            if lab.id in course_completed_ids:
                 cell["completed"] += 1
 
         row_completed = sum(c["completed"] for c in cells.values())

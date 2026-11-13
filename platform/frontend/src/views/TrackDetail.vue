@@ -3007,14 +3007,14 @@ watch(timeRemaining, (val) => {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: #e67e22;
-  color: white;
-  border: none;
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
   width: 100%;
   justify-content: center;
 }
@@ -3023,15 +3023,18 @@ watch(timeRemaining, (val) => {
 .btn--workbook:disabled:hover {
   background: var(--bg-tertiary, #2a3142);
   color: var(--text-muted, #8892a4);
+  border-color: var(--border-color);
   cursor: not-allowed;
 }
 
 .workbook-hint--unavailable {
-  color: #fbbf24;
+  color: var(--warning);
 }
 
 .btn--workbook:hover {
-  background: #d35400;
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent-text);
   transform: translateY(-1px);
 }
 

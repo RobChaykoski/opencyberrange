@@ -972,7 +972,7 @@ onMounted(loadDashboard)
 }
 
 .hero-pill--streak :deep(svg) {
-  color: #fb923c;
+  color: var(--warning);
 }
 
 .hero-pill--rank :deep(svg) {
