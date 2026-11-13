@@ -53,14 +53,15 @@ lab credentials.
   flow would remove the XSS token-theft path; see the session-cookie roadmap
   below. This is a larger architectural change than this pass and is not a
   Release 4 blocker.
-- **Workbook iframe isolation (implemented).** The framed workbook is sandboxed
-  without `allow-same-origin`, so it has an opaque origin: its scripts cannot
-  read the SPA's `localStorage`, `document.cookie`, or parent DOM. Material,
-  Mermaid, and the PDF exporter are served from the wiki origin. `wiki_auth` is
-  `SameSite=None; Secure` on HTTPS because a sandboxed subresource request is
-  cross-site for cookie purposes; the cookie is still unreadable to the opaque
-  document. Local HTTP development falls back to `SameSite=Lax`, so use HTTPS
-  when testing the embedded workbook.
+- **Workbook iframe isolation (origin split implemented).** Internet-facing
+  deployments serve the wiki from a sibling hostname (`WIKI_BASE_URL`) and give
+  it an HttpOnly `wiki_session` cookie scoped by `WIKI_COOKIE_DOMAIN`. The SPA
+  keeps its token in `localStorage`; the framed wiki cannot read the parent
+  origin or the HttpOnly cookie. The wiki CSP gains the app origin in
+  `frame-ancestors`, and the legacy `X-Frame-Options` header is removed from
+  wiki responses. See [`WIKI-ORIGIN-SPLIT.md`](WIKI-ORIGIN-SPLIT.md).
+  The same-origin fallback sandboxes the frame without `allow-same-origin`, so
+  development remains safe but keeps the opaque-origin limitations.
 - **Wiki CSP.** The generated wiki no longer allows `unpkg.com` or
   `cdnjs.cloudflare.com`. Mermaid 11, html2pdf 0.10.2, and the theme CSS/JS are
   vendored or built locally, and `theme.font: false` prevents the Google Fonts

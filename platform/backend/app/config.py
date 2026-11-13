@@ -52,6 +52,12 @@ class Settings(BaseSettings):
     # Server public hostname (for general use)
     SERVER_PUBLIC_HOST: str = "localhost"
 
+    # Wiki origin split. When WIKI_COOKIE_DOMAIN is set (for example
+    # ".example.edu"), the wiki session cookie is scoped to the parent domain so
+    # a wiki served from a sibling hostname can authenticate its subresources.
+    # Leave empty for a same-origin wiki.
+    WIKI_COOKIE_DOMAIN: str = ""
+
     # SSO / OIDC. PUBLIC_BASE_URL must be the stable external origin; the OIDC
     # redirect URI is derived from it, not from the request Host header.
     PUBLIC_BASE_URL: str = ""

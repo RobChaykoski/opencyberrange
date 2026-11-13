@@ -808,7 +808,7 @@
                   :src="activeWorkbookUrl"
                   title="Exercise workbook"
                   loading="lazy"
-                  sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+                  :sandbox="workbookSandbox"
                   referrerpolicy="no-referrer"
                 ></iframe>
               </div>
@@ -905,6 +905,7 @@ import { hasRole } from '../utils/roles'
 import { useMobileView } from '../composables/useMobileView'
 import { useToolPanel } from '../composables/useToolPanel'
 import { setWikiAuthCookie } from '../utils/wikiAuth'
+import { wikiUrl } from '../utils/wikiUrl'
 import axios from '../api/axios'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
@@ -1243,10 +1244,10 @@ const toggleLevel = (levelId) => {
 const workbookUrl = (wb, quiet = false) => {
   if (!wb) return null
   if (wb.startsWith('wiki/range/') || wb.startsWith('wiki/course/')) {
-    return '/' + wb
+    return wikiUrl('/' + wb)
   }
   if (activeWikiSlug.value) {
-    return '/wiki/course/' + activeWikiSlug.value + '/' + wb
+    return wikiUrl('/wiki/course/' + activeWikiSlug.value + '/' + wb)
   }
   if (!quiet) {
     console.error('workbookUrl: cannot resolve workbook field (no namespace, no course context):', wb)
@@ -1262,23 +1263,38 @@ const workbookUrl = (wb, quiet = false) => {
 // Quiet, because the template calls this on every render.
 const workbookOpenable = (wb) => !!workbookUrl(wb, true)
 
-// Same-origin workbook URL for the framed bottom pane in the workspace.
+// Workbook URL for the framed bottom pane. When VITE_WIKI_BASE_URL points at a
+// separate origin, the frame is a true origin split and may keep
+// allow-same-origin for its own storage and assets. A same-origin deployment
+// stays opaque so its scripts cannot read the SPA's localStorage.
 const activeWorkbookUrl = computed(() =>
   workbookUrl(activeLab.value?.lab?.workbook, true)
 )
 
-const openWorkbook = () => {
+const workbookSandbox = computed(() => {
+  const url = activeWorkbookUrl.value
+  const base = 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads'
+  if (!url) return base
+  try {
+    const sameOrigin = new URL(url, window.location.origin).origin === window.location.origin
+    return sameOrigin ? base : `${base} allow-same-origin`
+  } catch {
+    return base
+  }
+})
+
+const openWorkbook = async () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
-    setWikiAuthCookie()
+    await setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 }
 
-const openWorkbookForLab = (lab) => {
+const openWorkbookForLab = async (lab) => {
   const url = lab.workbook && workbookUrl(lab.workbook)
   if (url) {
-    setWikiAuthCookie()
+    await setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 }

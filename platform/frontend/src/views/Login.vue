@@ -617,11 +617,11 @@ const handleLogin = async () => {
     applyPrivacyDefaultForRole(response.data.user?.role)
     capsLockOn.value = false
 
-    // Sync the wiki_auth cookie now, in THIS tab. App.vue only refreshes it on
-    // mount (token was null then) and on cross-tab storage events (which do not
-    // fire in the tab that logged in), so without this a fresh login cannot open
-    // the gated course wikis until a full page reload.
-    setWikiAuthCookie()
+    // Sync the HttpOnly wiki cookie now, in THIS tab. App.vue only refreshes it
+    // on mount (token was null then) and on cross-tab storage events (which do
+    // not fire in the tab that logged in), so without this a fresh login cannot
+    // open the gated course wikis until a full page reload.
+    await setWikiAuthCookie()
 
     const updateAuthState = inject('updateAuthState', null)
     if (updateAuthState) {

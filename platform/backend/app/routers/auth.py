@@ -3,7 +3,7 @@ Authentication routes for login and registration
 """
 
 from datetime import timedelta, datetime, timezone
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status, Form, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Response, status, Form, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -1574,6 +1574,69 @@ def _normalize_workbook(workbook: str) -> str:
     return wb
 
 
+def _wiki_cookie_secure(request: Request) -> bool:
+    proto = (
+        request.headers.get("x-forwarded-proto")
+        or request.url.scheme
+        or ""
+    ).split(",", 1)[0].strip().lower()
+    return proto == "https" or (settings.PUBLIC_BASE_URL or "").lower().startswith("https://")
+
+
+@router.post("/wiki-cookie", status_code=204)
+async def issue_wiki_cookie(
+    request: Request,
+    response: Response,
+    current_user: User = Depends(get_current_active_user),
+):
+    """Copy the caller's JWT into an HttpOnly wiki cookie.
+
+    The browser keeps the SPA token in localStorage. This endpoint gives the
+    wiki origin a cookie it can use for nginx auth_request without exposing a
+    script-readable token to the framed page. The cookie is scoped by
+    WIKI_COOKIE_DOMAIN so a sibling wiki hostname receives it; leave that unset
+    for a same-origin wiki.
+    """
+    header = request.headers.get("Authorization", "")
+    if not header.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Bearer token required")
+    token = header.split(" ", 1)[1].strip()
+    if not token:
+        raise HTTPException(status_code=401, detail="Bearer token required")
+
+    secure = _wiki_cookie_secure(request)
+    response.set_cookie(
+        key="wiki_session",
+        value=token,
+        max_age=settings.JWT_EXPIRATION_HOURS * 3600,
+        path="/",
+        domain=settings.WIKI_COOKIE_DOMAIN or None,
+        secure=secure,
+        httponly=True,
+        samesite="none" if secure else "lax",
+    )
+    response.status_code = 204
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@router.delete("/wiki-cookie", status_code=204)
+async def clear_wiki_cookie(request: Request, response: Response):
+    """Remove the HttpOnly wiki cookie on logout or account deletion."""
+    secure = _wiki_cookie_secure(request)
+    response.delete_cookie(
+        key="wiki_session",
+        path="/",
+        domain=settings.WIKI_COOKIE_DOMAIN or None,
+        secure=secure,
+        httponly=True,
+        samesite="none" if secure else "lax",
+    )
+    response.status_code = 204
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 @router.get("/wiki-released")
 async def wiki_released_chapters(
     slug: str,
@@ -1601,7 +1664,9 @@ async def wiki_released_chapters(
     if header.lower().startswith("bearer "):
         token = header.split(" ", 1)[1].strip()
     if not token:
-        token = request.cookies.get("wiki_auth", "")
+        token = request.cookies.get("wiki_session", "") or request.cookies.get(
+            "wiki_auth", ""
+        )
     if not token:
         # Unauthenticated: reveal nothing, and let the caller leave the nav be.
         return {"all": True, "chapters": []}

@@ -11,6 +11,10 @@ RUN npm ci
 # Copy source files
 COPY . .
 
+# Optional separate origin for the wiki. Empty keeps the wiki same-origin.
+ARG WIKI_BASE_URL=""
+ENV VITE_WIKI_BASE_URL=${WIKI_BASE_URL}
+
 # Build the application
 RUN npm run build
 
