@@ -123,7 +123,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       - name: Validate compose
         working-directory: platform
@@ -149,14 +149,14 @@ jobs:
         run: docker compose -f docker-compose.prod.yml config >/dev/null
 
       - name: Build backend
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: platform/backend
           push: false
           tags: ocr-backend:ci
 
       - name: Build frontend
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: platform/frontend
           push: false

@@ -112,7 +112,7 @@ backend:
   requests: "2.34.2"
   apscheduler: "3.11.3"
   fpdf2: "2.9.0"
-  matplotlib: ">=3.10"
+  matplotlib: ">=3.11.2"
   qrcode: "8.2"
   slowapi: "0.1.10"
   python-multipart: "0.0.33"
@@ -120,7 +120,7 @@ backend:
   pyyaml: "6.0.3"
   redis: "8.1.0"
   pyotp: "2.10.0"
-  pywinrm: ">=0.4.3"
+  pywinrm: ">=0.5.0"
   ldap3: "2.9.1"
   python3-saml: "1.16.0"
 
@@ -175,7 +175,7 @@ infrastructure:
   docs:
     mkdocs: "1.6.1"
     mkdocs-material: "9.8.0"
-    pymdown-extensions: "11.0.1"
+    pymdown-extensions: "13.0"
 
 out_of_scope:
   - "platform/labs/**"

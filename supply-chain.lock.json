@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "7f88293e0bb51bc7a8709e0ea22948612ab585e7df976e76f01b17e09fd624bb"
+      "sha256": "c548c8773c11d588a74fa8d05bf225055a3d952eccf009124c4c3ab837521ace"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -16,10 +16,10 @@
       "sha256": "09517df3edfaae6ea356824fb625d967d657733cf1ae43a0f56faff8bdcfb49d"
     },
     ".github/workflows/trivy.yml": {
-      "sha256": "fd2715dfcbb2635d5d784eb3cef3dc359a5b08279876f4e6ceb41babdc57e76a"
+      "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
     },
     ".github/workflows/ui-smoke.yml": {
-      "sha256": "a404fdcdeb5b99ce85e94c500658913d63820d4ad47078dd5a749546c70f43db"
+      "sha256": "353f7d47c289067d77fcbc7d642a328a24ddc7c74707b0163d8bdff227adb0e4"
     },
     ".trivyignore.yaml": {
       "sha256": "a95238a63e8bb0514ac76ecbd7cb89259babce4c466adf73c815f8bf0f42a1ad"
@@ -49,10 +49,10 @@
       "sha256": "83bc3a00e05a2a2327810dcd99dba1bb98630f4f619b9595606d0e29ead33b06"
     },
     "platform/backend/requirements-dev.txt": {
-      "sha256": "12339000e6cf642ecbb32e4cd1433f37e8eadcdbfd0edc152f72fa342273ecec"
+      "sha256": "b1997e587400b62ff93e77b348ff26df0e35d28e15724d86d76b706e3dd9c828"
     },
     "platform/backend/requirements.txt": {
-      "sha256": "ab21e863c4ec98c80486e5efc91332ef79f7b5fcef4828bb39a50515a6d6b10d"
+      "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
     },
     "platform/docker-compose.prod.yml": {
       "sha256": "7a0c57ed2f3834f88d039195bf618298dab233305b0e290279559501d4283a3d"
@@ -142,7 +142,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "f5ecf8544ce5356bbcef9bc4c5b48046db54113340f37ac5342521e05f71389e"
+      "sha256": "9cfc57f43791fd260c6ae59b7b73275e03bcf1135dd07463bcbc9ea4e6cb2b1a"
     }
   },
   "generator": "scripts/supply_chain.py",
