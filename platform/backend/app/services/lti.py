@@ -127,6 +127,22 @@ def build_login_redirect(
     return f"{platform.auth_login_url}?{urlencode(params)}"
 
 
+def test_platform_keys(platform: LtiPlatform) -> dict:
+    """Fetch the registered platform's JWKS and report how many keys it has."""
+    try:
+        client = jwt.PyJWKClient(
+            platform.jwks_url,
+            timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+            ssl_context=_tls_context(),
+        )
+        keys = client.get_signing_keys()
+    except Exception as exc:
+        raise LTIError("Could not fetch the LMS signing keys.") from exc
+    if not keys:
+        raise LTIError("The LMS JWKS returned no signing keys.")
+    return {"ok": True, "keys": len(keys), "message": f"Fetched {len(keys)} signing key(s)."}
+
+
 def _get_provider(db: Session, platform: LtiPlatform) -> IdentityProvider:
     provider = None
     if platform.identity_provider_id:

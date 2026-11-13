@@ -78,6 +78,11 @@ The first Release 5 feature set is in the branch:
 - `POST /api/lti/launch` — verifies the LMS `id_token` against its JWKS, binds
   issuer/audience/deployment/nonce, rejects replay, links the LMS `sub` through
   `external_identities`, and hands off to the normal SPA ticket exchange.
+- **Admin -> Settings -> LTI platforms** — register, edit, test the JWKS, and
+  delete a deployment. The panel shows the login URL and launch/redirect URI to
+  give the LMS administrator.
+- Migration `0015_lti_platforms` creates the platform and login-state tables
+  idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 
@@ -85,9 +90,11 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
 - a signed launch reached `/sso/callback` and exchanged for a platform JWT;
 - the user was provisioned as `lti-student` with the LMS student role;
 - replaying the same state returned `400` and was rejected.
+- the admin panel added, listed, and deleted a mock platform without console
+  errors.
 
-Still to do: AGS 2.0, NRPS 2.0, Deep Linking 2.0, the admin console, and a real
-Moodle/Canvas staging test.
+Still to do: AGS 2.0, NRPS 2.0, Deep Linking 2.0, and a real Moodle/Canvas
+staging test.
 
 ## Verified on this stack
 

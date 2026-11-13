@@ -13,7 +13,7 @@ from app.auth import get_current_admin_user
 from app.config import settings
 from app.crypto import encrypt_secret
 from app.database import get_db
-from app.models import LtiPlatform, User
+from app.models import ExternalIdentity, IdentityProvider, LtiPlatform, User
 from app.ratelimit import create_limiter
 from app.services import lti as lti_service
 from app.services import sso_flow
@@ -160,6 +160,21 @@ async def update_platform(
     return _serialize(platform)
 
 
+@router.post("/admin/platforms/{platform_id}/test")
+async def test_platform(
+    platform_id: int,
+    db: Session = Depends(get_db),
+    _admin: User = Depends(get_current_admin_user),
+):
+    platform = db.query(LtiPlatform).filter(LtiPlatform.id == platform_id).first()
+    if platform is None:
+        raise HTTPException(status_code=404, detail="LTI platform not found")
+    try:
+        return lti_service.test_platform_keys(platform)
+    except lti_service.LTIError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.delete("/admin/platforms/{platform_id}", status_code=204)
 async def delete_platform(
     platform_id: int,
@@ -172,7 +187,22 @@ async def delete_platform(
     db.query(lti_service.LtiLoginState).filter(
         lti_service.LtiLoginState.platform_id == platform.id
     ).delete(synchronize_session=False)
+    provider = None
+    if platform.identity_provider_id:
+        provider = (
+            db.query(IdentityProvider)
+            .filter(IdentityProvider.id == platform.identity_provider_id)
+            .first()
+        )
     db.delete(platform)
+    if provider is not None:
+        has_links = (
+            db.query(ExternalIdentity)
+            .filter(ExternalIdentity.provider_id == provider.id)
+            .first()
+        )
+        if has_links is None:
+            db.delete(provider)
     db.commit()
 
 
