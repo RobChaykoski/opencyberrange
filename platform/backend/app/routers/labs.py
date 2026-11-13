@@ -4,6 +4,7 @@ Lab management routes - spawn, stop, and manage lab sessions
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import PlainTextResponse, Response
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from datetime import datetime, timezone, timedelta
 import asyncio
@@ -487,7 +488,11 @@ async def get_spawn_status(
         "network_subnet": session.network_subnet,
         "rangebox_enabled": session.rangebox_enabled,
         "started_at": session.started_at.isoformat() if session.started_at else None,
-        "expires_at": (session.expires_at.isoformat() + "Z") if session.expires_at else None
+        "expires_at": (session.expires_at.isoformat() + "Z") if session.expires_at else None,
+        "is_paused": session.paused_at is not None,
+        "paused_at": session.paused_at.isoformat() if session.paused_at else None,
+        "paused_seconds": int(session.paused_seconds or 0),
+        "pause_reason": session.pause_reason,
     }
 
 
@@ -671,6 +676,126 @@ async def extend_lab_session(
         "message": "Session extended by 1 hour",
         "expires_at": session.expires_at.isoformat() + "Z" if session.expires_at else None
     }
+
+
+def _session_pause_payload(session: LabSession) -> dict:
+    now = datetime.now(timezone.utc)
+    expires = session.expires_at
+    if expires is not None and expires.tzinfo is None:
+        expires = expires.replace(tzinfo=timezone.utc)
+    paused_at = session.paused_at
+    if paused_at is not None and paused_at.tzinfo is None:
+        paused_at = paused_at.replace(tzinfo=timezone.utc)
+    remaining = 0
+    if expires:
+        base = paused_at or now
+        remaining = max(0, int((expires - base).total_seconds()))
+    return {
+        "session_id": session.id,
+        "status": session.status,
+        "is_paused": paused_at is not None,
+        "paused_at": paused_at.isoformat() if paused_at else None,
+        "paused_seconds": int(session.paused_seconds or 0),
+        "pause_reason": session.pause_reason,
+        "expires_at": expires.isoformat() if expires else None,
+        "time_remaining_seconds": remaining,
+    }
+
+
+class PauseRequest(BaseModel):
+    reason: str = Field(..., max_length=500)
+
+
+@router.post("/pause")
+async def pause_lab_session(
+    payload: PauseRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Pause the learner's clock; the session stays running and is not reaped."""
+    session = db.query(LabSession).filter(
+        LabSession.user_id == current_user.id,
+        LabSession.status == "running",
+    ).first()
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No active lab session found",
+        )
+    reason = (payload.reason or "").strip()
+    if len(reason) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="A short reason is required to pause the clock.",
+        )
+    if session.paused_at is None:
+        session.paused_at = datetime.now(timezone.utc)
+        session.pause_reason = reason
+        log_activity(
+            db,
+            EventTypes.LAB_PAUSED,
+            actor_id=current_user.id,
+            target_type="lab",
+            target_id=session.lab_id,
+            detail={"reason": reason},
+            ip_address=(request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (request.client.host if request.client else None)),
+            commit=False,
+        )
+        db.commit()
+        db.refresh(session)
+    return _session_pause_payload(session)
+
+
+@router.post("/resume")
+async def resume_lab_session(
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Resume a paused session and credit the paused time to its expiry."""
+    session = db.query(LabSession).filter(
+        LabSession.user_id == current_user.id,
+        LabSession.status == "running",
+    ).first()
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No active lab session found",
+        )
+    if session.paused_at is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This session is not paused.",
+        )
+    now = datetime.now(timezone.utc)
+    paused_at = session.paused_at
+    if paused_at.tzinfo is None:
+        paused_at = paused_at.replace(tzinfo=timezone.utc)
+    paused_for = max(timedelta(0), now - paused_at)
+    session.paused_seconds = int(session.paused_seconds or 0) + int(
+        paused_for.total_seconds()
+    )
+    if session.expires_at:
+        expires = session.expires_at
+        if expires.tzinfo is None:
+            expires = expires.replace(tzinfo=timezone.utc)
+        session.expires_at = expires + paused_for
+    session.paused_at = None
+    session.pause_reason = None
+    log_activity(
+        db,
+        EventTypes.LAB_RESUMED,
+        actor_id=current_user.id,
+        target_type="lab",
+        target_id=session.lab_id,
+        detail={"paused_seconds": session.paused_seconds},
+        ip_address=(request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (request.client.host if request.client else None)),
+        commit=False,
+    )
+    db.commit()
+    db.refresh(session)
+    return _session_pause_payload(session)
 
 
 @router.get("/active")
@@ -967,6 +1092,7 @@ def get_track_for_lab(db: Session, lab: Lab):
     if level and level.track_id:
         return level.track_id
     return None
+
 
 
 

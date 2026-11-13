@@ -84,11 +84,12 @@ questionnaire:
   operation, labelled form controls (including the institution sign-in panel),
   error announcements (`role="alert"`), reduced-motion handling, and the
   existing contrast work.
-- Accommodations: a per-student 1.0x–3.0x multiplier and 0–365 day due-date
-  extension, set from the instructor student panel and audited. The multiplier
-  scales lab session length and extension; the operator-wide
-  `session_accommodation_percent` remains the default for learners without a
-  record. There is no hard pass/fail timer in the learner path.
+- Accommodations: a per-student 1.0x–3.0x multiplier, 0–365 day due-date
+  extension, and a pause/resume clock, set from the instructor student panel or
+  the learner controls and audited. The multiplier scales lab session length and
+  extension; the operator-wide `session_accommodation_percent` remains the
+  default for learners without a record. There is no hard pass/fail timer in the
+  learner path.
 - Known limitations and the VPAT/ACR position are in `docs/ACCESSIBILITY.md`.
 - A signed VPAT requires an accessibility audit against the current build; this
   repo provides the draft structure and evidence, not a signature.

@@ -30,8 +30,10 @@ procurement baseline used by Ontario AODA and most Canadian institutions.
   extension shifts assignment due dates shown to that learner.
 - Every change is written to `accommodation_events` (append-only) and the
   activity log; the notes field is for a reference, not diagnosis details.
-- Pause-the-clock remains **Release 5 follow-up** work
-  (`docs/RELEASE-5-SCOPE.md`).
+- The learner can **pause the session clock** with a required reason. While
+  paused the countdown is frozen, the scheduler does not reap the session, and
+  resuming credits the paused time to the expiry. Pause/resume events are
+  audited.
 - There is no hard pass/fail timer in the learner path.
 
 ## Known limitations

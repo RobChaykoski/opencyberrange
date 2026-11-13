@@ -53,9 +53,9 @@ TA access is denied outside the assigned section.
 - Per-student due-date extensions that persist across a course.
 - Instructor/administrator UI, export coverage, and a WCAG 2.2 AA review.
 
-Status: the per-student multiplier (1.0x–3.0x) and due-date extension are
-implemented on `release5`, with an audited instructor panel. Pause/resume and
-the full export/AA review remain.
+Status: the per-student multiplier (1.0x–3.0x), due-date extension, and
+pause/resume clock are implemented on `release5`, with an audited instructor
+panel and learner controls. Export coverage and the external AA review remain.
 
 Exit criteria: the same student receives the multiplier and extension in every
 assessment type, and the values survive export/import.

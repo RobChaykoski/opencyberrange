@@ -35,6 +35,7 @@ def _cleanup_expired_sessions_once() -> None:
         # Find all running sessions that have expired
         sessions = db.query(LabSession).filter(
             LabSession.status == "running",
+            LabSession.paused_at.is_(None),
             LabSession.expires_at < now
         ).all()
 

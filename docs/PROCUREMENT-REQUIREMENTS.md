@@ -56,12 +56,12 @@ representing it as available on those platforms.
 | WCAG 2.1/2.2 AA on student assessment screens | Partial | Keyboard operation, landmarks, labels, focus styles, error announcements, reduced-motion, and contrast work are in place. No full external audit. |
 | VPAT 2.5 / ACR | Gap | Draft structure in `docs/ACCESSIBILITY.md`; not signed. |
 | Per-student time multiplier (1.5x/2x/custom) | Yes | A per-student 1.0x–3.0x multiplier scales lab session length and extension. Managed in the instructor student panel; a per-student record replaces the operator-wide setting. Quizzes have no timed limit to scale. |
-| Per-student pause-the-clock breaks | Gap | No pause/resume clock model. |
+| Per-student pause-the-clock breaks | Yes | The learner pauses with a required reason; the countdown freezes, the expiry is credited on resume, and the scheduler skips paused sessions. Both events are audited. |
 | Individual due-date extensions across quizzes/assignments | Partial | Per-student 0–365 day extensions shift assignment due dates. Quiz deadlines are not modelled today. |
 | Accommodation persists across a course | Yes | The record is attached to the user, not the course, and is read on every lab session and assignment list. |
 
-The accommodation engine now covers the user-level multiplier and due-date
-extension. Pause/resume remains the bounded follow-up increment.
+The accommodation engine covers the user-level multiplier, due-date extension,
+and pause/resume clock. Export coverage and the external AA review remain.
 
 ## 4. Automated scoring, AI, and fairness
 
@@ -107,8 +107,8 @@ Everything below is **Release 5**, not Release 4:
   `release5` and passed a Moodle 5.0.2 staging test; Canvas and Brightspace
   validation plus CAF onboarding remain.
 - Multi-tenancy and the TA role.
-- Per-student accommodations: the multiplier and due-date extension are
-  implemented; pause/resume remains.
+- Per-student accommodations: multiplier, due-date extension, and pause/resume
+  are implemented; export coverage and the external AA review remain.
 - Automated-decision transparency and the human-review workflow.
 - HECVAT Full, VPAT 2.5, SOC 2 Type II, ISO 27001, DPA finalization, Quebec
   PIA/TRA support, Canadian hosting profile.

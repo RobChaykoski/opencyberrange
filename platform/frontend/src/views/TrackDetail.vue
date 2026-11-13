@@ -369,10 +369,28 @@
             >Exit</button>
           </div>
           <div v-if="activeLab.session" class="active-lab-panel__timer-section">
-            <div class="active-lab-panel__timer" :class="{ 'timer--warning': isExpiringSoon }">
+            <div class="active-lab-panel__timer" :class="{ 'timer--warning': isExpiringSoon, 'timer--paused': activeLab.session.is_paused }">
               <ClockIcon />
-              {{ timeRemaining }}
+              {{ activeLab.session.is_paused ? 'Paused' : timeRemaining }}
             </div>
+            <button
+              v-if="activeLab.session.is_paused"
+              @click="resumeSession"
+              class="btn btn--primary btn--sm"
+              :disabled="resumingClock"
+              title="Resume the exercise clock and credit the paused time"
+            >
+              {{ resumingClock ? 'Resuming...' : 'Resume' }}
+            </button>
+            <button
+              v-else
+              @click="pauseSession"
+              class="btn btn--secondary btn--sm"
+              :disabled="pausingClock"
+              title="Pause the exercise clock with a reason"
+            >
+              {{ pausingClock ? 'Pausing...' : 'Pause' }}
+            </button>
             <button
               @click="extendSession"
               class="btn btn--secondary btn--sm extend-btn"
@@ -1007,6 +1025,8 @@ function isDrill(lab) {
 
 // Session
 const extendingSession = ref(false)
+const pausingClock = ref(false)
+const resumingClock = ref(false)
 const launchingLab = ref(false)
 const activeCourseId = ref(null)
 
@@ -1727,6 +1747,48 @@ const extendSession = async () => {
   }
 }
 
+const applyPausedSession = (data) => {
+  if (!activeLab.value?.session) return
+  Object.assign(activeLab.value.session, {
+    is_paused: data.is_paused,
+    paused_at: data.paused_at,
+    paused_seconds: data.paused_seconds,
+    pause_reason: data.pause_reason,
+    expires_at: data.expires_at,
+  })
+  localTimeRemaining.value = data.time_remaining_seconds
+}
+
+const pauseSession = async () => {
+  if (pausingClock.value) return
+  const reason = window.prompt('Reason for pausing the exercise clock? (recorded in the audit trail)')
+  if (!reason || reason.trim().length < 3) return
+  pausingClock.value = true
+  try {
+    const { data } = await axios.post('/labs/pause', { reason: reason.trim() })
+    applyPausedSession(data)
+  } catch (error) {
+    console.error('Failed to pause session:', error)
+    alert(error.response?.data?.detail || 'Failed to pause the exercise clock')
+  } finally {
+    pausingClock.value = false
+  }
+}
+
+const resumeSession = async () => {
+  if (resumingClock.value) return
+  resumingClock.value = true
+  try {
+    const { data } = await axios.post('/labs/resume')
+    applyPausedSession(data)
+  } catch (error) {
+    console.error('Failed to resume session:', error)
+    alert(error.response?.data?.detail || 'Failed to resume the exercise clock')
+  } finally {
+    resumingClock.value = false
+  }
+}
+
 // Achievement IDs are fetched alongside the submission so the celebration can
 // reveal badges that the backend awards in its background task. Returns null
 // when the baseline cannot be read; in that case the overlay still celebrates
@@ -2066,6 +2128,7 @@ onMounted(async () => {
   }
 
   timerInterval = setInterval(() => {
+    if (activeLab.value?.session?.is_paused) return
     if (localTimeRemaining.value > 0) {
       localTimeRemaining.value--
     }
@@ -3130,6 +3193,11 @@ watch(timeRemaining, (val) => {
 .timer--warning {
   color: var(--danger);
   animation: pulse 1s infinite;
+}
+
+.timer--paused {
+  color: var(--warning, #f59e0b);
+  animation: none;
 }
 
 .extend-btn {

@@ -2274,7 +2274,23 @@ async def get_lab_details(
             "rangebox_enabled": session.rangebox_enabled,
             "started_at": session.started_at.isoformat() if session.started_at else None,
             "expires_at": (session.expires_at.isoformat() + "Z") if session.expires_at else None,
-            "time_remaining_seconds": max(0, int((session.expires_at.replace(tzinfo=timezone.utc) - datetime.now(timezone.utc)).total_seconds())) if session.expires_at else 0,
+            "is_paused": session.paused_at is not None,
+            "paused_at": session.paused_at.isoformat() if session.paused_at else None,
+            "paused_seconds": int(session.paused_seconds or 0),
+            "pause_reason": session.pause_reason,
+            "time_remaining_seconds": max(
+                0,
+                int(
+                    (
+                        session.expires_at.replace(tzinfo=timezone.utc)
+                        - (
+                            session.paused_at.replace(tzinfo=timezone.utc)
+                            if session.paused_at
+                            else datetime.now(timezone.utc)
+                        )
+                    ).total_seconds()
+                ),
+            ) if session.expires_at else 0,
             "duration_minutes": lab.duration_minutes or 120
         } if session else None,
         "hostnames": hostnames_data,

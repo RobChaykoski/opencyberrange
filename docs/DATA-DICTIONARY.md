@@ -108,6 +108,7 @@ not stored. The roster keeps only the LMS subject, roles, status, and context.
 | Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
 |---|---|---|---|---|---|---|---|
 | `lab_sessions.id`, `user_id`, `lab_id`, `started_at`, `expires_at`, `stopped_at`, `status` | Lab session lifecycle | Launch, stop, troubleshoot, and measure active time | Service / Security | Session history for the institution window; 90-day operational review | Self; instructor for assigned course; admin | `self`, `reports` | Deleted |
+| `lab_sessions.paused_at`, `paused_seconds`, `pause_reason` | Clock pause state and reason | Accommodation pause/resume without losing access | Service / Security | Session history | Self; instructor; admin | `self` (state only) | Deleted |
 | `lab_sessions.network_id`, `network_subnet` | Isolated network identifiers | Routing and cleanup | Security | Session lifetime plus cleanup | Admin/system | Not in learner reports | Deleted |
 | `lab_sessions.is_diagnostic`, `rangebox_enabled`, `impersonated_by` | Mode and support context | Separate diagnostic runs and admin support | Security | Session history | Admin | `self` (mode only) | Deleted |
 | `lab_sessions.seeded_flag_hash` | Per-session flag hash | Per-student flag validation | Security | Session lifetime | Auth/flag service only | Never | Deleted |

@@ -772,6 +772,11 @@ class LabSession(Base):
     started_at = Column(DateTime, server_default=func.now())
     expires_at = Column(DateTime, nullable=False)
     stopped_at = Column(DateTime, nullable=True)
+    # Accommodation pause: while paused_at is set the expiry clock is frozen and
+    # the scheduler must not reap the session. Resume credits the paused time.
+    paused_at = Column(DateTime, nullable=True)
+    paused_seconds = Column(Integer, nullable=False, default=0, server_default="0")
+    pause_reason = Column(String(500), nullable=True)
     
     # Relationships
     user = relationship("User", back_populates="sessions", foreign_keys=[user_id])

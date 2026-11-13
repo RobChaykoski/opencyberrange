@@ -100,12 +100,14 @@ The first Release 5 feature set is in the branch:
 - **Per-student accommodations** — a 1.0x–3.0x time multiplier and a 0–365
   day due-date extension can be set per learner from the instructor student
   panel. Lab sessions and assignment due dates use the record; changes are
-  append-only in `accommodation_events` and the activity log.
+  append-only in `accommodation_events` and the activity log. The learner can
+  also pause the session clock with a reason; the scheduler skips paused
+  sessions and resume credits the paused time.
 - Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`,
-  `0018_lti_roster`, `0019_lti_deep_link`, `0020_lti_dl_multiple`, and
-  `0021_accommodations` create the platform, login-state, link, score, NRPS
-  fields, roster, picker-session, multi-selection, and accommodation tables
-  idempotently.
+  `0018_lti_roster`, `0019_lti_deep_link`, `0020_lti_dl_multiple`,
+  `0021_accommodations`, and `0022_lab_pause` create the platform, login-state,
+  link, score, NRPS fields, roster, picker-session, multi-selection,
+  accommodation, and pause tables/columns idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 

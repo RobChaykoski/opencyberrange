@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 class EventTypes:
     LAB_STARTED = "lab_started"
     LAB_STOPPED = "lab_stopped"
+    LAB_PAUSED = "lab_paused"
+    LAB_RESUMED = "lab_resumed"
     LAB_COMPLETED = "lab_completed"
     FLAG_CORRECT = "flag_correct"
     FLAG_INCORRECT = "flag_incorrect"
@@ -37,6 +39,8 @@ class EventTypes:
 EVENT_LABELS = {
     EventTypes.LAB_STARTED: "Started Lab",
     EventTypes.LAB_STOPPED: "Stopped Lab",
+    EventTypes.LAB_PAUSED: "Paused Lab Clock",
+    EventTypes.LAB_RESUMED: "Resumed Lab Clock",
     EventTypes.LAB_COMPLETED: "Completed Lab",
     EventTypes.FLAG_CORRECT: "Solved",
     EventTypes.FLAG_INCORRECT: "Wrong Flag",
