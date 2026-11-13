@@ -109,6 +109,7 @@ per-student accommodation engine are Enterprise Release 5 work. Enterprise SSO
 - [Celebration Wall](docs/CELEBRATION-WALL.md)
 - [Supply-chain verification](docs/SUPPLY-CHAIN.md)
 - [Network device topology engine](docs/DEVICE-TOPOLOGY.md)
+- [Lab creation engine](docs/LAB-CREATION-ENGINE.md)
 - [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md)
 - [Database schema and Alembic migrations](docs/DATABASE-MIGRATIONS.md)
 - [Exercise and RangeBox review](docs/EXERCISE-AND-RANGEBOX-REVIEW.md)
