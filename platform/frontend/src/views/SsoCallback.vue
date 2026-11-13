@@ -48,6 +48,25 @@ const friendlyError = (code) => {
   return 'Single sign-on could not complete. Try again, or use your local account.'
 }
 
+const friendlyHttpError = (error) => {
+  const status = error.response?.status
+  const detail = String(error.response?.data?.detail || '')
+  if (status === 403 && /awaiting administrator approval/i.test(detail)) {
+    return friendlyError('pending_approval')
+  }
+  if (status === 400) return friendlyError('invalid_request')
+  if (status === 401 || status === 403) {
+    return 'Your institution account cannot sign in to this platform. Contact your instructor or administrator.'
+  }
+  if (status === 429) {
+    return 'Too many sign-in attempts. Wait a minute and try again.'
+  }
+  if (status >= 500) {
+    return 'Institution sign-in is temporarily unavailable. Use your local account or try again.'
+  }
+  return friendlyError('invalid_request')
+}
+
 const finishSignIn = async (data) => {
   localStorage.setItem('token', data.access_token)
   localStorage.setItem('user', JSON.stringify(data.user || {}))
@@ -84,8 +103,7 @@ onMounted(async () => {
     const { data } = await axios.post('/api/auth/sso/exchange', { ticket: ticketValue })
     await finishSignIn(data)
   } catch (error) {
-    errorMessage.value = error.response?.data?.detail
-      || 'Single sign-on could not complete. Try again, or use your local account.'
+    errorMessage.value = friendlyHttpError(error)
     loading.value = false
   }
 })

@@ -32,6 +32,14 @@ the privacy, accessibility, and API-exposure corrections.
   settings cache expires.
 - nginx returns 404 for `/docs`, `/redoc`, and `/openapi.json` on the public
   origin; API documentation is never served through the learner-facing host.
+- SSO callback failures now render curated user messages instead of raw backend
+  error details.
+- The CI CSP-hash check fails on both missing and stale inline-script hashes;
+  the `v-html` exception remains limited to the two reviewed DOMPurify sites.
+- Workbook and launch links go through `safeHttpUrl` and open with
+  `noopener,noreferrer`.
+- Documented the HttpOnly session-cookie migration roadmap, including CSRF,
+  refresh/revocation, wiki-gate, and acceptance criteria.
 
 ### Privacy
 - Subject-access export now includes external identity links and SSO session

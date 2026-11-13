@@ -1309,7 +1309,7 @@ const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
     setWikiAuthCookie()
-    window.open(url, '_blank', 'noopener')
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 }
 
@@ -1317,7 +1317,7 @@ const openWorkbookForLab = (lab) => {
   const url = lab.workbook && workbookUrl(lab.workbook)
   if (url) {
     setWikiAuthCookie()
-    window.open(url, '_blank', 'noopener')
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 }
 
@@ -1533,7 +1533,7 @@ const openRangeBox = () => {
       course: activeCourseId.value ? String(activeCourseId.value) : undefined,
     },
   })
-  window.open(target.href, '_blank', 'noopener')
+  window.open(target.href, '_blank', 'noopener,noreferrer')
 }
 
 // Pop the desktop into a separate, resizable window. The main tab then has the
@@ -1558,7 +1558,7 @@ const openRangeBoxPopout = () => {
   if (!rangeboxWindow) {
     // Popup blocked: fall back to a normal tab rather than leaving the learner
     // with no desktop and no message.
-    window.open(target.href, '_blank', 'noopener')
+    window.open(target.href, '_blank', 'noopener,noreferrer')
     return
   }
   rangeboxPoppedOut.value = true

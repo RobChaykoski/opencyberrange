@@ -74,7 +74,7 @@ function open(wb) {
     title: wb.name,
     url,
   }).catch(() => { /* analytics is best-effort */ })
-  window.open(url, '_blank', 'noopener')
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 function initSortable() {
