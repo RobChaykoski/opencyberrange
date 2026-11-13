@@ -12,6 +12,7 @@ from app.services.lti import (
     build_lineitem_payload,
     build_login_redirect,
     build_score_payload,
+    normalize_roster,
     valid_lti_url,
 )
 
@@ -101,6 +102,30 @@ def test_lineitem_payload_matches_ags_shape():
         "resourceLinkId": "resource-1",
         "tag": "opencyberrange",
     }
+
+
+def test_nrps_roster_keeps_only_minimal_fields():
+    payload = {
+        "context": {"id": "course-1"},
+        "members": [
+            {
+                "user_id": "lms-user-1",
+                "roles": ["Learner"],
+                "status": "Active",
+                "name": "Should not be returned",
+                "email": "should-not-be-returned@example.edu",
+            },
+            {"roles": ["Instructor"], "status": "Active"},
+        ],
+    }
+    assert normalize_roster(payload) == [
+        {
+            "user_id": "lms-user-1",
+            "roles": ["Learner"],
+            "status": "Active",
+            "context_id": "course-1",
+        }
+    ]
 
 
 def test_login_redirect_escapes_values():

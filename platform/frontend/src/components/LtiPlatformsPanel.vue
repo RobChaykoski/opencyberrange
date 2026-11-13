@@ -126,6 +126,9 @@
             <button type="button" class="btn btn--outline btn--xs" :disabled="resultsBusy" @click="loadResults">
               {{ resultsBusy ? 'Loading...' : 'Fetch results' }}
             </button>
+            <button type="button" class="btn btn--outline btn--xs" :disabled="rosterBusy" @click="loadRoster">
+              {{ rosterBusy ? 'Loading...' : 'Fetch roster' }}
+            </button>
           </div>
         </div>
 
@@ -171,6 +174,7 @@
           </table>
         </div>
         <pre v-if="results" class="lti-results">{{ results }}</pre>
+        <pre v-if="roster" class="lti-results">{{ roster }}</pre>
       </div>
     </section>
 
@@ -255,7 +259,9 @@ const scoreMessage = ref('')
 const scoreError = ref(false)
 const lineitemBusy = ref(false)
 const resultsBusy = ref(false)
+const rosterBusy = ref(false)
 const results = ref('')
+const roster = ref('')
 const scoreForm = reactive({ user_id: '', score: '', max_score: '100', reason: '' })
 
 const platformName = (id) => platforms.value.find((platform) => platform.id === id)?.name || `Platform ${id}`
@@ -420,6 +426,7 @@ const loadScores = async (linkId) => {
 const selectLink = async (link) => {
   selectedLinkId.value = link.id
   results.value = ''
+  roster.value = ''
   scoreMessage.value = ''
   scoreError.value = false
   scoreForm.max_score = '100'
@@ -460,6 +467,23 @@ const loadResults = async () => {
     scoreMessage.value = e.response?.data?.detail || 'Could not fetch LMS results.'
   } finally {
     resultsBusy.value = false
+  }
+}
+
+const loadRoster = async () => {
+  if (!selectedLink.value) return
+  rosterBusy.value = true
+  roster.value = ''
+  scoreMessage.value = ''
+  scoreError.value = false
+  try {
+    const { data } = await axios.get(`/lti/admin/links/${selectedLink.value.id}/roster`)
+    roster.value = JSON.stringify(data, null, 2)
+  } catch (e) {
+    scoreError.value = true
+    scoreMessage.value = e.response?.data?.detail || 'Could not fetch the NRPS roster.'
+  } finally {
+    rosterBusy.value = false
   }
 }
 

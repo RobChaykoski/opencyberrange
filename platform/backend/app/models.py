@@ -368,6 +368,8 @@ class LtiLink(Base):
     ags_lineitem_url = Column(String(500), nullable=True)
     ags_lineitems_url = Column(String(500), nullable=True)
     ags_scopes = Column(Text, nullable=True)
+    nrps_url = Column(String(500), nullable=True)
+    nrps_versions = Column(Text, nullable=True)
     lab_id = Column(Integer, ForeignKey("labs.id", ondelete="SET NULL"), nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

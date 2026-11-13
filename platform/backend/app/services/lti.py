@@ -46,6 +46,8 @@ LTI_MESSAGE_TYPE_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/message_type
 LTI_RESOURCE_LINK_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/resource_link"
 LTI_CONTEXT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/context"
 LTI_AGS_CLAIM = "https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"
+LTI_NRPS_CLAIM = "https://purl.imsglobal.org/spec/lti-nrps/claim/namesroleservice"
+LTI_NRPS_SCOPE = "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
 LTI_AGS_SCORE_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/score"
 LTI_AGS_LINEITEM_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem"
 LTI_AGS_RESULT_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly"
@@ -231,6 +233,7 @@ def record_launch_link(
     resource = claims.get(LTI_RESOURCE_LINK_CLAIM) or {}
     context = claims.get(LTI_CONTEXT_CLAIM) or {}
     endpoint = claims.get(LTI_AGS_CLAIM) or {}
+    nrps = claims.get(LTI_NRPS_CLAIM) or {}
     resource_link_id = str(resource.get("id") or "").strip()
     if not resource_link_id:
         return None
@@ -252,6 +255,9 @@ def record_launch_link(
     link.ags_lineitems_url = str(endpoint.get("lineitems") or "")[:500] or None
     scopes = endpoint.get("scope")
     link.ags_scopes = json.dumps(scopes) if scopes else None
+    link.nrps_url = str(nrps.get("context_memberships_url") or "")[:500] or None
+    versions = nrps.get("service_versions")
+    link.nrps_versions = json.dumps(versions) if versions else None
     db.commit()
     db.refresh(link)
     return link
@@ -382,6 +388,50 @@ def get_results(platform: LtiPlatform, link: LtiLink) -> dict:
         return response.json()
     except Exception as exc:
         raise LTIError("Could not fetch AGS results from the LMS.") from exc
+
+
+def normalize_roster(payload: dict) -> list[dict]:
+    """Keep only the minimum NRPS fields: subject, role, status, context."""
+    context_id = str((payload.get("context") or {}).get("id") or "") or None
+    members = []
+    for member in payload.get("members") or []:
+        subject = str(member.get("user_id") or member.get("userId") or "").strip()
+        if not subject:
+            continue
+        members.append(
+            {
+                "user_id": subject,
+                "roles": [str(role) for role in (member.get("roles") or [])],
+                "status": str(member.get("status") or "Active"),
+                "context_id": context_id,
+            }
+        )
+    return members
+
+
+def get_roster(platform: LtiPlatform, link: LtiLink) -> dict:
+    if not link.nrps_url:
+        raise LTIError("This launch did not provide an NRPS membership endpoint.")
+    token = get_access_token(platform, [LTI_NRPS_SCOPE])
+    url = link.nrps_url
+    members: list[dict] = []
+    pages = 0
+    while url and pages < 5:
+        try:
+            response = requests.get(
+                url,
+                headers={"Authorization": f"Bearer {token}"},
+                timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+                verify=not settings.SSO_ALLOW_INSECURE_HTTP,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except Exception as exc:
+            raise LTIError("Could not fetch the NRPS roster from the LMS.") from exc
+        members.extend(normalize_roster(payload))
+        url = str(payload.get("next") or "").strip() or None
+        pages += 1
+    return {"members": members, "count": len(members)}
 
 
 def build_score_payload(
