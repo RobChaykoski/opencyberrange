@@ -1,9 +1,9 @@
 # Procurement requirements: traceability
 
-Status: **Release 4 readiness assessment.** Reviewed against the code in this
-branch on 2026-11-12. Each row states what exists, what is partial, and what is
-a deployment or organizational obligation. "Implemented" means there is code
-and a test or documented evidence in this repository — not a certification.
+Status: **Release 5 in progress.** Reviewed against the code in this branch on
+2026-11-13. Each row states what exists, what is partial, and what is a
+deployment or organizational obligation. "Implemented" means there is code and a
+test or documented evidence in this repository — not a certification.
 
 ## Legend
 
@@ -38,15 +38,16 @@ and a test or documented evidence in this repository — not a certification.
 | OIDC SSO | Yes | `app/services/oidc.py`, PKCE, nonce, JWKS, single-use state/ticket. |
 | LDAP directory login | Yes | `app/services/ldap_auth.py`, role mapping from `memberOf`. |
 | Canadian Access Federation (CAF) | Partial | CAF is SAML 2.0 metadata plus federation trust. The product accepts standard IdP metadata; CAF onboarding is an institutional/federation process. |
-| LTI 1.3 core launch | **Gap** | No LTI router, no `id_token` launch validation. |
-| LTI Advantage AGS grade passback | **Gap** | No line-item or score service. |
-| LTI NRPS roster sync | **Gap** | No membership service. |
-| LTI Deep Linking | **Gap** | No deep-link flow. |
-| Minimal LTI claims (sub, role, context) | Gap | Must be designed with the launch; do not request email/name by default. |
+| LTI 1.3 core launch | Partial | Implemented on `release5`: platform registry, OIDC login, signed `id_token` validation, single-use state, external-identity linking, and the SPA exchange. Verified against a mock LMS; a real LMS staging test is pending. |
+| LTI Advantage AGS grade passback | Partial | Implemented: private_key_jwt token exchange, line-item create/reuse, reviewed score form, result retrieval, append-only ledger. Mock-verified; real LMS staging test pending. |
+| LTI NRPS roster sync | Partial | Implemented: explicit admin sync persists only subject, roles, status, and context. No names or email. Mock-verified; real LMS staging test pending. |
+| LTI Deep Linking | Partial | Implemented: single-use picker session, signed `LtiDeepLinkingResponse`, lab launch content items, and deep-linked assignment routing. Browser E2E against a mock LMS; real LMS staging test pending. |
+| Minimal LTI claims (sub, role, context) | Yes | Launch provisioning keys on `sub` + issuer. Email is used only when the LMS sends it; name is not required. NRPS persists the minimum fields. |
 | Avoid standalone student passwords | Yes | SSO-provisioned accounts set `password_login_disabled` and cannot use the local form. |
 
 `docs/LTI.md` holds the design contract and test plan. Do not represent LTI as
-available until those endpoints exist and an LMS integration test passes.
+generally available until an end-to-end test against a real Moodle, Canvas, or
+Brightspace staging tenant passes.
 
 ## 3. Accessibility and evaluation
 
@@ -69,8 +70,8 @@ labs, quizzes, and assignments. It should be its own release increment.
 |---|---|---|
 | AI/LLM grading or feedback | **N/A** | No LLM SDK, API key, or inference path exists. Flags are compared with a seeded hash. |
 | Zero-data-retention AI contracts | N/A / Org | The product sends no learner work to an AI provider. If an institution adds one, the contract is theirs. |
-| Human-in-the-loop before LMS sync | N/A today / Required with LTI | There is no LMS sync to gate. When AGS is added, the design must default to instructor review or an explicit per-course auto-sync setting. |
-| Immutable audit of automated scores | Partial | Flag attempts, completion records, and admin activity are logged. There is no immutable, append-only score ledger with rubric criteria and confidence. |
+| Human-in-the-loop before LMS sync | Yes | AGS requires reviewer sign-off in the **LTI platforms** panel before a score is posted; every passback is recorded append-only. Per-course auto-sync is not enabled. |
+| Immutable audit of automated scores | Partial | Flag attempts, completion records, and admin activity are logged, and every LMS passback is appended to `lti_scores` with reviewer, time, score, and LMS response. Rubric criteria and confidence are not modelled because completion is a deterministic flag match. |
 | Manual grade override with audit | Partial | Instructors can review evidence; there is no formal override record with reason. |
 | Student notice that automated logic evaluated them | Partial | The UI states that completion is automated, but there is no per-submission notice or "request human review" workflow. |
 | Explainable primary factors | Partial | Completion criteria and workbook rubric are visible; the score is a deterministic flag match, not a weighted model. |
@@ -103,7 +104,9 @@ Release 4 can honestly ship:
 
 Everything below is **Release 5**, not Release 4:
 
-- LTI 1.3 / Advantage (launch, AGS, NRPS, Deep Linking, CAF onboarding).
+- LTI 1.3 / Advantage: launch, AGS, NRPS, and Deep Linking are implemented on
+  `release5` and awaiting a real-LMS staging test; CAF onboarding and the
+  institutional federation steps remain.
 - Multi-tenancy and the TA role.
 - The per-student accommodation engine (multipliers, pause/resume, due dates).
 - Automated-decision transparency and the human-review workflow.

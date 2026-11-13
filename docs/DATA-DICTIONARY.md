@@ -1,6 +1,6 @@
 # Data dictionary
 
-Status: ****Release 3** + career, achievement, and question-bank preview**
+Status: **Release 5 in progress** (LTI 1.3, AGS, NRPS, and Deep Linking added)
 Owner: Platform / Privacy
 Review cadence: each release and at least annually
 Related: [Privacy notice](PRIVACY-NOTICE.md),
@@ -64,6 +64,31 @@ institution.
 | `wireguard_configs.private_key` | Fernet-encrypted peer key | VPN access | Service / Security | Until peer removed or deletion | VPN service only | Never | Deleted and peer removed |
 | `wireguard_configs.public_key`, `client_ip` | VPN peer identity | Route the learner's tunnel | Service | Until peer removed or deletion | Self; admin | `self` (metadata only) | Deleted |
 | `activity_events.ip_address` | Request source address | Abuse and security investigation | Security | 90-day review window by default | Admin | `activity` | Anonymised |
+| `identity_providers.name`, `kind`, `enabled`, `is_default`, `config` | Registered OIDC/SAML/LDAP connection metadata and endpoints | Institution sign-in | Service / Security | Until deleted by an admin | Admin | Not exported | Kept while the provider is configured |
+| `identity_providers.secrets` | Encrypted client secret, bind password, or signing key | Authenticate to the identity provider | Security | Until rotated or deleted | Auth service only | Never | Deleted |
+| `external_identities.provider_id`, `subject` | Pseudonymous subject from the institution IdP or LMS | Link an external login to one local account | Service / Security | Account lifetime | Self as an opaque link; admin | `self` (provider name only) | Deleted |
+| `external_identities.email`, `last_login_at` | Email returned by the provider and last external sign-in | Account matching and support | Service / Security | Account lifetime | Self; admin | `self` | Deleted |
+| `sso_sessions.user_id`, `provider_id`, `session_state`, `expires_at` | Local record of an external session | Single sign-out and session awareness | Security | Until expiry or sign-out | Auth service; admin | Never | Deleted |
+| `sso_sessions.id_token` | Encrypted ID token from the provider | Refresh identity claims without a second login | Security | Until expiry or sign-out | Auth service only | Never | Deleted |
+| `sso_login_states.state`, `nonce`, `code_verifier`, `redirect_uri`, `return_to` | In-flight OIDC/SAML login state | CSRF and replay protection | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+| `sso_login_tickets.ticket`, `user_id`, `return_to` | Single-use hand-off from the provider callback to the SPA | Complete sign-in without exposing tokens | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+
+## LMS integration (LTI 1.3)
+
+| Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
+|---|---|---|---|---|---|---|---|
+| `lti_platforms.name`, `issuer`, `client_id`, `deployment_id`, `auth_login_url`, `token_url`, `jwks_url`, `enabled` | Registered LMS deployment and endpoints | Launch and grade-passback trust | Service / Security | Until removed by an admin | Admin | Not exported | Kept while the platform is configured |
+| `lti_platforms.private_key` | Encrypted tool private key for `private_key_jwt` and response signing | Prove the tool to the LMS | Security | Until rotated or deleted | Signing service only | Never | Deleted |
+| `lti_login_states.state`, `nonce`, `platform_id`, `target_link_uri` | In-flight LTI login state | Bind a launch to the registered platform and stop replay | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+| `lti_links.resource_link_id`, `context_id`, `title`, `lab_id` | LMS assignment link to a local lab | Open the right exercise and reuse the line item | Service | Course lifetime | Instructor; admin | Not in learner exports | Kept as course structure; learner link removed |
+| `lti_links.context_title`, `ags_lineitem_url`, `ags_lineitems_url`, `ags_scopes`, `nrps_url`, `nrps_versions` | LMS course label and service endpoints | Grade passback and roster sync | Service | Course lifetime | Admin | Not exported | Kept while the link exists |
+| `lti_scores.link_id`, `user_id`, `score`, `max_score`, `status`, `created_at` | Append-only record of each score passback | Grade audit and reconciliation | Service / Security | Institution schedule | Self; instructor; admin | `self` (score only) | Deleted with the learner |
+| `lti_scores.reviewer_id`, `reason`, `lms_response` | Reviewer, review note, and LMS response | Prove the human review gate | Security | Institution schedule | Admin | Not in learner exports | Reviewer reference nulled |
+| `lti_roster_members.subject`, `roles`, `status`, `context_id` | Minimum NRPS membership record from the LMS | Roster reconciliation without importing directory data | Service | Until the next sync or link removal | Admin | Not exported | Deleted when the link or platform is removed |
+| `lti_deep_link_sessions.token`, `user_id`, `platform_id`, `return_url`, `data`, `nonce` | Single-use Deep Linking picker session | Return selected exercises to the LMS safely | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+
+Names, email addresses, and other directory fields from NRPS are deliberately
+not stored. The roster keeps only the LMS subject, roles, status, and context.
 
 ## Course, cohort, and assignment
 
