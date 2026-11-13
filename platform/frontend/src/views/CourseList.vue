@@ -95,7 +95,7 @@
           <h3 class="course-name">{{ course.name }}</h3>
           <p class="course-semester">{{ course.semester }}</p>
           <p v-if="course.description" class="course-description">{{ course.description }}</p>
-          <div v-if="course.level_label || course.difficulty || course.track_count" class="course-card__tags">
+          <div v-if="course.lab_count && (course.level_label || course.difficulty || course.track_count)" class="course-card__tags">
             <span v-if="course.level_label" class="course-tag course-tag--level">
               {{ course.level_label }}
             </span>
@@ -153,7 +153,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import axios from '../api/axios'
 import ProgrammeOverview from '../components/ProgrammeOverview.vue'
 
@@ -203,15 +203,15 @@ function trackLabel(course) {
   return `${names.slice(0, 2).join(' · ')} +${names.length - 2}`
 }
 
-async function fetchCourses() {
-  loading.value = true
+async function fetchCourses({ silent = false } = {}) {
+  if (!silent) loading.value = true
   try {
     const res = await axios.get('/courses/')
     courses.value = res.data.courses
   } catch (e) {
     console.error('Failed to fetch courses', e)
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
   }
 }
 
@@ -221,6 +221,15 @@ async function fetchMe() {
     currentUser.value = data
   } catch {
     // Keep the localStorage role as a fallback.
+  }
+}
+
+// Progress changes in another tab or after returning from a lab. Refresh the
+// cards when the page becomes visible again, without replacing them with a
+// full-page loading state.
+function refreshOnVisible() {
+  if (document.visibilityState === 'visible' && !loading.value) {
+    fetchCourses({ silent: true })
   }
 }
 
@@ -252,6 +261,11 @@ async function joinCourse() {
 onMounted(() => {
   fetchMe()
   fetchCourses()
+  document.addEventListener('visibilitychange', refreshOnVisible)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', refreshOnVisible)
 })
 </script>
 

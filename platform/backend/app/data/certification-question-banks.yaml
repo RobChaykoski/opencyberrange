@@ -593,8 +593,8 @@ pathways:
     explanation: Rate limiting and coordination keep the test inside the agreed threshold and avoid locking real
       users. Maximum-rate brute force, uncoordinated spraying, and retrying after lockout can cause outages.
     reference:
-      label: 'NIST SP 800-63B: Digital Identity Guidelines'
-      url: https://csrc.nist.gov/pubs/sp/800/63b/final
+      label: 'NIST SP 800-63B-4: Digital Identity Guidelines'
+      url: https://csrc.nist.gov/pubs/sp/800/63/b/4/final
     career: Penetration tester
   - id: pentest-5-02
     domain: '5'

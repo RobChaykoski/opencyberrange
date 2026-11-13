@@ -177,11 +177,12 @@ const initSortable = () => {
 
 onBeforeUnmount(() => {
   if (sortableInstance) { sortableInstance.destroy(); sortableInstance = null }
+  document.removeEventListener('visibilitychange', refreshOnVisible)
 })
 
 // ── Data fetching ────────────────────────────────────────────────────
-const fetchTracks = async () => {
-  loading.value = true
+const fetchTracks = async ({ silent = false } = {}) => {
+  if (!silent) loading.value = true
   try {
     const token = localStorage.getItem('token')
     if (!token) {
@@ -199,13 +200,22 @@ const fetchTracks = async () => {
       localStorage.removeItem('user')
       router.push('/login')
     }
-    tracks.value = []
+    if (!silent) tracks.value = []
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
+  }
+}
+
+// Progress can change in another tab or after returning from a lab. Refresh
+// the catalogue in place rather than showing the full-page loading overlay.
+const refreshOnVisible = () => {
+  if (document.visibilityState === 'visible' && !loading.value) {
+    fetchTracks({ silent: true })
   }
 }
 
 onMounted(async () => {
+  document.addEventListener('visibilitychange', refreshOnVisible)
   // Handle deep-link from Course page: /exercises?labId=123&courseId=1
   const labId = route.query.labId
   const courseId = route.query.courseId

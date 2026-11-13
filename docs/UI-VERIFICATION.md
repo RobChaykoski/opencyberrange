@@ -22,7 +22,7 @@ Status: **deployed to production `.41`; version `4`.**
 - **Content update:** added `forensics-2-2-topology-forensics-guided` and
   `forensics-2-3-topology-forensics-independent` (guided and independent paces,
   with a decoy service), plus `scripts/create-lab.py` and `FOR03` workbooks.
-  Both labs passed a student E2E on `.44`; total lab count is **175**.
+  Both labs passed a student E2E on `.44`.
 - **Detection and Windows practice:** added YARA fundamentals and YARA/incident
   triage (`MAL03`), and AD fundamentals plus AD-to-SMB (`WIN10`). The YARA rules
   and log correlation were executed against the target images; the AD directory
@@ -30,7 +30,8 @@ Status: **deployed to production `.41`; version `4`.**
 
 ## Release 4 QA and dev deployment (12 November 2026)
 
-Status: **deployed to development `.44`; production unchanged.** Platform
+Status: **deployed to development `.44`; the same build was promoted to
+production.** Platform
 `/api/version` reports `4`.
 
 ### Automated checks
@@ -42,7 +43,7 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 | Lab validator (`validate-lab.py --all`) | **179 labs, 0 errors, 0 warnings** |
 | Topology engine unit tests | **22 passed** |
 
-| Relative links in README, docs, Manual-Lite, Workbook | **495 files, all resolve** |
+| Relative links in README, docs, Manual-Lite, Workbook | **496 files, all resolve** |
 | Frontend build | **Passed** |
 | Frontend lint | **0 errors** (existing warnings only) |
 | Licence guard (`check-licences.py`) | **OK** |
@@ -79,6 +80,9 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 - Checked at 1440 px in light and dark themes and at 390 px; no page-level
   horizontal overflow. Screenshots:
   `ui-verify-artifacts/academy-*.png`.
+- Course and exercise cards refresh in place when the tab becomes visible, so
+  progress completed in another tab is reflected without a full-page reload.
+  A failed background refresh keeps the existing cards.
 - **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
   and `svc`; the node status endpoints reported host/router/service; `h1` had a
   default route via `r1`; `r1` reported `ip_forward=1` and both connected
@@ -104,14 +108,14 @@ Status: **deployed to development `.44`; production unchanged.** Platform
 
 - The network device topology engine is not part of this deployed build; it
   remains planned work.
-- Production has not been upgraded to Release 4.
+- Production runs Release 4 on the release commit.
 - SAML single logout and a formal SSO security review remain.
 - LTI, multi-tenancy, per-student accommodations, a signed VPAT, SOC 2, and
   ISO 27001 are Release 5 (`docs/RELEASE-5-SCOPE.md`).
 
 ## Hardening deployment (12 November 2026)
 
-Status: **deployed to development; production unchanged.**
+Status: **deployed to development and promoted to production.**
 
 - **Runtime:** single-worker default, multi-stage non-root image, Python
   healthcheck, and no `gcc` in the final layer.
