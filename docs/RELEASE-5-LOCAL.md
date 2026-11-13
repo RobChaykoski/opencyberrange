@@ -91,6 +91,21 @@ docker run --rm \
 - The local stack uses HTTP on port 18081. Production keeps TLS and the
   custom-hostname settings.
 
+## Skills and templates used
+
+- `opencyberrange-student-tester` — ten-lab content and discoverability pass.
+- `opencyberrange-design-tester` — page hierarchy, themes, responsive workspace,
+  and admin settings review.
+- `opencyberrange-software-security` — safe-URL bindings and the security delta
+  review.
+- `opencyberrange-inclusive-curriculum` — minor-account and high-school framing.
+- `opencyberrange-learning-impact` — analytics and retention planning.
+- `opencyberrange-course-content-management` — course/lab relationship checks.
+- `opencyberrange-ha-architecture` and `opencyberrange-program-management` —
+  local-versus-deployed boundaries and release gating.
+- Existing `platform/templates` and the Compose templates; no new lab template
+  or content pattern was introduced for the local stack.
+
 ## Do not deploy
 
 Do not promote `release5` to development or production until the Release 5
