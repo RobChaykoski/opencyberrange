@@ -78,6 +78,9 @@ the privacy, accessibility, and API-exposure corrections.
 - The title collection is collapsed by default with an **Unlocked only** filter,
   and achievement badges use the shared SVG icon system instead of emoji.
 - Workbook actions and profile status badges use the shared colour tokens.
+  Track difficulty chips, VM status dots, and the safe admin/track status
+  surfaces use the same tokens; custom-achievement authoring now uses the SVG
+  icon picker.
 
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility

@@ -46,8 +46,10 @@ existing startup schema step.
   evidence-first profile and a compact Learning record; experienced learners can
   focus on a course, track, certification, or career goal, with course/track/
   certificate progress lenses, a searchable focus list, and the career target at
-  the top of the Portfolio tab. Titles are collapsed by default and achievement
-  badges use the SVG icon system.
+  the top of the Portfolio tab. Titles are collapsed by default, achievement
+  badges use the SVG icon system, and custom-achievement authoring uses the same
+  SVG picker. Workbook, track, admin, and profile status surfaces use the shared
+  colour tokens.
 - **Detection and Windows practice.** YARA fundamentals plus a YARA/incident-log
   triage scenario, and AD fundamentals plus an AD-to-SMB credential-reuse
   scenario covering the lowest-coverage cohort competencies.

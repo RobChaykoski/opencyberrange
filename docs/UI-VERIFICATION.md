@@ -94,7 +94,13 @@ production.** Platform
 - An experienced learner’s Learning record defaults to the six tracks with
   progress and can expand to all twelve.
 - Workbook buttons and profile status badges now use the shared colour tokens
-  instead of legacy orange and hard-coded status hex values.
+  instead of legacy orange and hard-coded status hex values. Track difficulty
+  chips, VM status dots, workbook actions, and the safe admin/track status
+  surfaces use the same tokens; category, chart, terminal, and certificate gold
+  colours remain intentionally hard-coded.
+- The custom-achievement authoring form now uses an 11-option SVG icon picker;
+  the live preview and saved achievement cards render the same icon components.
+  No console errors appeared on the Admin settings page.
 - Experienced learners can focus the profile on a course, track, certification,
   or career goal. The focus card defaults to the enrolled course, shows its
   progress, and offers the matching open action. The hero lenses show the
