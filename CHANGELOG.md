@@ -71,6 +71,11 @@ the privacy, accessibility, and API-exposure corrections.
 - Release 4 does not claim LTI, multi-tenancy, a per-student accommodation
   engine, a TA role, a signed VPAT, SOC 2, or ISO 27001.
 
+### Fixed
+- Event certificates now transliterate characters the built-in PDF fonts
+  cannot encode, so an event date with an en dash (or an accented name) no
+  longer fails certificate generation.
+
 ## [3.1.1] - 2026-11-05
 
 Enterprise SSO adapter release.
