@@ -106,9 +106,19 @@ tracks:
         prerequisites: [WIN08]
         exercises: 3
         estimated_minutes: 360
-        recommended_next: LIN01
+        recommended_next: WIN10
         status: published
         intro: CH09_Assessment/00_Introduction.md
+      - id: WIN10
+        directory: CH_WIN10_AD_Authentication
+        display_name: "Active Directory and Authentication"
+        difficulty: "beginner"
+        prerequisites: [WIN02]
+        exercises: 2
+        estimated_minutes: 75
+        recommended_next: LIN01
+        status: published
+        intro: CH_WIN10_AD_Authentication/00_Introduction.md
 
   - id: linpt
     pathway_order: 12
@@ -374,9 +384,19 @@ tracks:
         prerequisites: [MAL01]
         exercises: 1
         estimated_minutes: 50
-        recommended_next: FOR01
+        recommended_next: MAL03
         status: published
         intro: CH_MAL02_Executable_Analysis/00_Introduction.md
+      - id: MAL03
+        directory: CH_MAL03_Detection_And_Triage
+        display_name: "Detection and Triage"
+        difficulty: "beginner"
+        prerequisites: [MAL02]
+        exercises: 2
+        estimated_minutes: 70
+        recommended_next: FOR01
+        status: published
+        intro: CH_MAL03_Detection_And_Triage/00_Introduction.md
 
   - id: ot
     pathway_order: 9

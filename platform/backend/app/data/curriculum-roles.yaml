@@ -168,6 +168,7 @@ pathways:
       - FOR-007
       - FOR-008
       - FOR-012
+      - MAL-008
       - TH-001
       - TH-004
       - TH-005
@@ -175,6 +176,9 @@ pathways:
       - NET-004
       - NET-030
       - NET-034
+      - WIN-009
+      - WIN-012
+      - WIN-013
       - PROF-001
       - PROF-009
       - PROF-010
@@ -367,6 +371,7 @@ pathways:
       - FOR-012
       - FOR-013
       - FOR-015
+      - MAL-008
       - WIN-004
       - WIN-005
       - WIN-018

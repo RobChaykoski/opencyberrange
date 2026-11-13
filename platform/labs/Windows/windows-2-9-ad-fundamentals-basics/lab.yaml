@@ -1,0 +1,94 @@
+title: Active Directory Fundamentals - Read the Directory
+category: authentication
+difficulty: beginner
+estimated_time: 35
+prerequisites:
+  - windows-2-1-smb-connection-test
+# By completion students will be able to:
+learning_outcomes:
+  - Explain the role of a domain, directory, and distinguished name
+  - Bind to a directory with a standard user account
+  - Enumerate users and groups with an LDAP search
+  - Identify a service account and its risky description field
+  - Describe how Active Directory uses Kerberos for domain authentication
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1087
+    technique_name: Account Discovery
+    detection: Alert on directory searches that enumerate service accounts and group membership.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "4.0"
+reviewed_at: "2026-11-12"
+review_status: "static exercise and validator; live walkthrough pending"
+description: "A beginner directory exercise: bind with a standard account, enumerate users and groups, and find the service account whose description leaks a credential and the case token."
+scenario: |
+  The LAB directory is modelled on Active Directory: a domain, organizational
+  units, users, groups, and a service account. You have a standard helpdesk
+  account. Enumerate the directory and find the service account that a careless
+  administrator documented too well.
+
+  This lab uses an LDAP directory with AD-style objects so it runs without a
+  Windows domain controller. The concepts (domain, DN, users, groups, service
+  accounts, LDAP filters) map directly to AD; Kerberos is discussed in the
+  workbook but the lab authenticates with LDAP.
+credentials:
+  - role: "analyst"
+    username: "uid=analyst,ou=People,dc=lab,dc=example,dc=org"
+    # Demo lab credential; security-delta: allow credential-like assignment
+    password: "Analyst2026"
+    description: "Standard helpdesk directory account"
+hints:
+  - text: |
+      The base DN is `dc=lab,dc=example,dc=org`. Users live under
+      `ou=People`, groups under `ou=Groups`.
+  - text: |
+      Bind with `ldapsearch -x -H ldap://<target> -D '<bind-dn>' -w '<password>'
+      -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)'`.
+  - text: |
+      Read the `description` attribute. A service account should never store a
+      password or a token there.
+  - text: |
+      Compare the service account with the helpdesk group and the Domain Admins
+      group. Group membership is part of the identity, not just the user entry.
+flag: "OCR{ad_c0nc3pts_ld4p}"
+
+visibility: public
+week: 2
+troubleshooting: "If the bind fails, use the full DN shown in the exercise, not a short username. If the search returns nothing, confirm the base DN and the filter."
+defensive_takeaways: "Service-account descriptions are a common leak. Use managed service accounts, rotate credentials, and alert on directory searches that enumerate privileged groups."
+difficulty_evidence: "Validator and static directory walkthrough; live learner walkthrough pending."
+difficulty_evidence_source: "validator_and_static_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-12"
+workbook: "wiki/range/winpt/CH_WIN10_AD_Authentication/01_AD_Fundamentals/"
+
+topology:
+  nodes:
+    - id: "ldap"
+      label: "LAB Directory"
+      type: "server"
+      ip_offset: "10"
+      ports: [389, 636]
+      services: ["OpenLDAP", "AD-style objects"]
+      x: 1
+      y: 1
+  edges: []
+
+test:
+  steps:
+    - name: "Bind with the helpdesk account and find the service account"
+      command: "ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1"
+      expect: "S3rv1ce!Pass"
+      timeout: 20
+
+    - name: "Recover the case token from the description"
+      command: "ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1 | grep -o 'OCR{[^}]*}'"
+      expect: "OCR{ad_c0nc3pts_ld4p}"
+      timeout: 20
