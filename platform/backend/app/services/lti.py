@@ -110,7 +110,12 @@ def create_deep_link_session(
     user: User,
     return_url: str,
     data: str,
+    accept_multiple: bool = False,
 ) -> str:
+    if not valid_lti_url(
+        return_url, allow_http=settings.SSO_ALLOW_INSECURE_HTTP
+    ):
+        raise LTIError("The LMS Deep Linking return URL is not a valid HTTPS URL.")
     token = secrets.token_urlsafe(32)
     db.add(
         LtiDeepLinkSession(
@@ -119,6 +124,7 @@ def create_deep_link_session(
             user_id=user.id,
             return_url=return_url[:500],
             data=(data or "")[:500] or None,
+            accept_multiple=bool(accept_multiple),
             nonce=secrets.token_urlsafe(32),
             expires_at=utcnow() + timedelta(seconds=settings.LTI_STATE_TTL_SECONDS),
         )

@@ -552,6 +552,7 @@ async def deep_link_info(
     )
     return {
         "title": "Choose exercises for the LMS",
+        "accept_multiple": bool(session.accept_multiple),
         "expires_at": session.expires_at.isoformat() if session.expires_at else None,
         "labs": [
             {"id": lab.id, "slug": lab.slug, "name": lab.name}
@@ -567,6 +568,26 @@ async def deep_link_response(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
+    pending = (
+        db.query(LtiDeepLinkSession)
+        .filter(
+            LtiDeepLinkSession.token == session_token,
+            LtiDeepLinkSession.user_id == current_user.id,
+            LtiDeepLinkSession.consumed_at.is_(None),
+            LtiDeepLinkSession.expires_at >= lti_service.utcnow(),
+        )
+        .first()
+    )
+    if pending is None:
+        raise HTTPException(
+            status_code=400,
+            detail="This Deep Linking session has expired or was already used.",
+        )
+    if not pending.accept_multiple and len(set(payload.lab_slugs)) > 1:
+        raise HTTPException(
+            status_code=400,
+            detail="This LMS accepts a single exercise per link.",
+        )
     try:
         session = lti_service.consume_deep_link_session(
             db, session_token, current_user.id
@@ -634,6 +655,7 @@ async def lti_launch(
                 user=user,
                 return_url=return_url,
                 data=str(settings.get("data") or ""),
+                accept_multiple=bool(settings.get("accept_multiple", False)),
             )
             return_to = f"/lti/deep-link?session={token}"
         else:

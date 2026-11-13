@@ -75,6 +75,10 @@ authentication; LTI covers course placement and grades.
   instructor; the picker posts back through the same-origin SPA.
 - Each content item is an `ltiResourceLink` to `/api/lti/launch?lab=<slug>` with
   the slug in the `custom` claim, so the LMS assignment opens that lab.
+- Respect the platform's `accept_multiple` setting: the picker and the response
+  endpoint allow one exercise per link unless the LMS accepts several.
+- Reject a Deep Linking return URL that is not HTTPS (HTTP is allowed only with
+  the explicit development setting).
 - Starting a deep-linked lab redirects the signed-in user to the exercise with
   `labId` resolved server-side.
 

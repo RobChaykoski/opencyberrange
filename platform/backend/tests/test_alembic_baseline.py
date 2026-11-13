@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0019_lti_deep_link"]
+    assert heads == ["0020_lti_dl_multiple"]
 
 
 def test_revision_graph_is_linear():
@@ -43,3 +43,4 @@ def test_baseline_revision_exists():
     assert "0017_lti_nrps.py" in names
     assert "0018_lti_roster.py" in names
     assert "0019_lti_deep_link.py" in names
+    assert "0020_lti_dl_multiple.py" in names

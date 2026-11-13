@@ -17,7 +17,7 @@
         </label>
         <div class="deeplink-list" role="group" aria-label="Exercises">
           <label v-for="lab in filteredLabs" :key="lab.slug" class="deeplink-item">
-            <input v-model="selected" type="checkbox" :value="lab.slug" />
+            <input v-model="selected" type="checkbox" :value="lab.slug" @change="onSelect(lab.slug)" />
             <span>
               <strong>{{ lab.name }}</strong>
               <small>{{ lab.slug }}</small>
@@ -27,7 +27,7 @@
         <p v-if="!filteredLabs.length" class="deeplink-state">No exercises match that search.</p>
 
         <div class="deeplink-actions">
-          <span>{{ selected.length }} selected</span>
+          <span>{{ selected.length }} selected{{ acceptMultiple ? '' : ' (one per link)' }}</span>
           <button type="button" class="btn btn--primary" :disabled="submitting || !selected.length" @click="submit">
             {{ submitting ? 'Returning to LMS...' : 'Send to LMS' }}
           </button>
@@ -48,6 +48,7 @@ const route = useRoute()
 const title = ref('Choose exercises for the LMS')
 const labs = ref([])
 const selected = ref([])
+const acceptMultiple = ref(false)
 const query = ref('')
 const loading = ref(true)
 const error = ref('')
@@ -73,12 +74,19 @@ onMounted(async () => {
     const { data } = await api.get(`/lti/deep-link/${encodeURIComponent(session)}`)
     title.value = data.title || title.value
     labs.value = data.labs || []
+    acceptMultiple.value = Boolean(data.accept_multiple)
   } catch (e) {
     error.value = e.response?.data?.detail || 'Could not load the Deep Linking session.'
   } finally {
     loading.value = false
   }
 })
+
+const onSelect = (slug) => {
+  if (acceptMultiple.value) return
+  // The LMS accepts one content item per link; keep only the latest choice.
+  if (selected.value.includes(slug)) selected.value = [slug]
+}
 
 const submit = async () => {
   submitting.value = true

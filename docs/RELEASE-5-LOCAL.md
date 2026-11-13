@@ -98,8 +98,9 @@ The first Release 5 feature set is in the branch:
   exercise. The picker and the launch callback render without app chrome and
   share an LTI-only CSP so an LMS can frame them and receive the return POST.
 - Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`,
-  `0018_lti_roster`, and `0019_lti_deep_link` create the platform, login-state,
-  link, score, NRPS fields, roster, and picker-session tables idempotently.
+  `0018_lti_roster`, `0019_lti_deep_link`, and `0020_lti_dl_multiple` create the
+  platform, login-state, link, score, NRPS fields, roster, picker-session, and
+  multi-selection fields idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 

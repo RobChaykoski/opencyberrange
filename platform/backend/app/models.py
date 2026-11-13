@@ -465,6 +465,9 @@ class LtiDeepLinkSession(Base):
     )
     return_url = Column(String(500), nullable=False)
     data = Column(String(500), nullable=True)
+    accept_multiple = Column(
+        Boolean, nullable=False, default=False, server_default=text("false")
+    )
     nonce = Column(String(128), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
     expires_at = Column(DateTime, nullable=False)

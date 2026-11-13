@@ -85,7 +85,7 @@ institution.
 | `lti_scores.link_id`, `user_id`, `score`, `max_score`, `status`, `created_at` | Append-only record of each score passback | Grade audit and reconciliation | Service / Security | Institution schedule | Self; instructor; admin | `self` (score only) | Deleted with the learner |
 | `lti_scores.reviewer_id`, `reason`, `lms_response` | Reviewer, review note, and LMS response | Prove the human review gate | Security | Institution schedule | Admin | Not in learner exports | Reviewer reference nulled |
 | `lti_roster_members.subject`, `roles`, `status`, `context_id` | Minimum NRPS membership record from the LMS | Roster reconciliation without importing directory data | Service | Until the next sync or link removal | Admin | Not exported | Deleted when the link or platform is removed |
-| `lti_deep_link_sessions.token`, `user_id`, `platform_id`, `return_url`, `data`, `nonce` | Single-use Deep Linking picker session | Return selected exercises to the LMS safely | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+| `lti_deep_link_sessions.token`, `user_id`, `platform_id`, `return_url`, `data`, `nonce`, `accept_multiple` | Single-use Deep Linking picker session | Return selected exercises to the LMS safely | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
 
 Names, email addresses, and other directory fields from NRPS are deliberately
 not stored. The roster keeps only the LMS subject, roles, status, and context.

@@ -8,11 +8,13 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 from app.services.lti import (
+    LTIError,
     build_client_assertion,
     build_content_items,
     build_lineitem_payload,
     build_login_redirect,
     build_score_payload,
+    create_deep_link_session,
     normalize_roster,
     platform_kid,
     public_jwk,
@@ -220,6 +222,19 @@ def test_signed_messages_carry_the_jwks_kid():
         platform, session, [SimpleNamespace(slug="lab-1", name="Lab One")]
     )
     assert jwt.get_unverified_header(response)["kid"] == platform_kid(platform)
+
+
+def test_deep_link_session_rejects_non_https_return_url():
+    platform = SimpleNamespace(id=1)
+    user = SimpleNamespace(id=2)
+    with pytest.raises(LTIError):
+        create_deep_link_session(
+            None,
+            platform=platform,
+            user=user,
+            return_url="http://lms.example.edu/deep-link-return",
+            data="opaque",
+        )
 
 
 def test_callback_url_can_target_the_lti_callback():
