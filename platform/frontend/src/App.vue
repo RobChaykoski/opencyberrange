@@ -33,7 +33,7 @@
     </button>
 
     <!-- Sidebar Layout (authenticated) -->
-    <template v-if="isAuthenticated">
+    <template v-if="isAuthenticated && !isBareRoute">
       <AppSidebar
         :collapsed="isMobile ? false : sidebarCollapsed"
         :mobile-open="mobileNavOpen"
@@ -114,13 +114,19 @@
     </template>
 
     <!-- Guest (no sidebar) -->
-    <main v-else class="main-content main-content--guest">
+    <main v-else-if="!isBareRoute" class="main-content main-content--guest">
       <router-view :key="'guest'" />
     </main>
 
-    <ToolPanel />
+    <!-- Embedded surfaces (for example the LTI Deep Linking picker) render
+         without app chrome so they fit inside an LMS iframe. -->
+    <main v-else class="main-content main-content--guest main-content--bare">
+      <router-view :key="'bare'" />
+    </main>
 
-    <footer class="app-footer">
+    <ToolPanel v-if="!isBareRoute" />
+
+    <footer v-if="!isBareRoute" class="app-footer">
       <router-link to="/dashboard" class="app-footer__brand" aria-label="SWOCTS Cyber Range">
         <img src="/swocts-cyber-range-mark.png" alt="" class="app-footer__mark" />
         <span>SWOCTS Cyber Range</span>
@@ -145,7 +151,7 @@
 
 <script setup>
 import { computed, ref, watch, onMounted, onUnmounted, provide, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
 import GuidedTour from './components/GuidedTour.vue'
 import ImpersonationBanner from './components/ImpersonationBanner.vue'
@@ -161,6 +167,8 @@ import { useImpersonation } from './composables/useImpersonation'
 import api from './api/axios'
 
 const router = useRouter()
+const route = useRoute()
+const isBareRoute = computed(() => route.meta.bare === true)
 const { applyPrivacyDefaultForRole } = usePrivacy()
 const { theme, nextThemeLabel, toggleTheme } = useTheme()
 const { fetchModules, isModuleEnabled, resetModules } = useModules()
@@ -366,6 +374,7 @@ async function persistTourSeenOnServer() {
 }
 
 async function maybeStartTour() {
+  if (isBareRoute.value) return
   if (!authState.value.token || userRole.value !== 'student') return
   if (tourUser.value === 'anon') return
   if (localStorage.getItem(tourKey.value)) return
@@ -625,6 +634,11 @@ body {
 
 .main-content--guest {
   width: 100%;
+}
+
+.main-content--bare {
+  grid-column: 1 / -1;
+  overflow-y: auto;
 }
 
 /* Mobile application shell. The sidebar becomes an off-canvas drawer and a

@@ -41,7 +41,7 @@ const routes = [
     path: '/lti/deep-link',
     name: 'LtiDeepLink',
     component: () => import('../views/DeepLinkPicker.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, bare: true }
   },
   {
     path: '/register',

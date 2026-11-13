@@ -101,6 +101,11 @@ second identity table.
 - Grade passback is disabled until an instructor approves, unless the
   institution sets the per-course auto-sync flag.
 - Every passback is audited with the local user, score, time, and reviewer.
+- The Deep Linking picker is served without app chrome and with a picker-only
+  CSP: `frame-ancestors https:` so an LMS can embed it and
+  `form-action 'self' https:` so it can post the signed response back to the
+  LMS. Other SPA pages keep `frame-ancestors 'self'` and
+  `form-action 'self'`.
 
 ## Tests
 

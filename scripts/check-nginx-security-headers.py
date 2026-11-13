@@ -26,6 +26,14 @@ REQUIRED_SNIPPET_MARKERS = [
     "Strict-Transport-Security",
 ]
 INCLUDE = "include /etc/nginx/snippets/security-headers.conf;"
+PICKER_SNIPPET = FRONTEND / "lti-picker-headers.conf"
+PICKER_INCLUDE = "include /etc/nginx/snippets/lti-picker-headers.conf;"
+PICKER_MARKERS = [
+    "Content-Security-Policy",
+    "X-Content-Type-Options",
+    "Strict-Transport-Security",
+]
+PICKER_LOCATION = "location = /lti/deep-link"
 
 
 def fail(message: str) -> None:
@@ -54,6 +62,24 @@ for path in NGINX_FILES:
     for location in ("location = /index.html", "location / {"):
         if location not in text:
             fail(f"{path.name} is missing {location}")
+    if PICKER_INCLUDE not in text:
+        fail(f"{path.name} does not include the LTI picker snippet")
+    if PICKER_LOCATION not in text:
+        fail(f"{path.name} is missing {PICKER_LOCATION}")
+
+if not PICKER_SNIPPET.exists():
+    fail("platform/frontend/lti-picker-headers.conf is missing")
+else:
+    picker = PICKER_SNIPPET.read_text(encoding="utf-8")
+    for marker in PICKER_MARKERS:
+        if marker not in picker:
+            fail(f"lti-picker-headers.conf is missing {marker}")
+    if "frame-ancestors https:" not in picker:
+        fail("lti-picker-headers.conf must allow an HTTPS LMS frame")
+    if "form-action 'self' https:" not in picker:
+        fail("lti-picker-headers.conf must allow the HTTPS LMS return POST")
+    if "add_header X-Frame-Options" in picker:
+        fail("lti-picker-headers.conf must not send X-Frame-Options")
 
 if failures:
     sys.exit(1)

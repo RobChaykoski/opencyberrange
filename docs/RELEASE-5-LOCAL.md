@@ -95,7 +95,8 @@ The first Release 5 feature set is in the branch:
   and posts back a signed `LtiDeepLinkingResponse` whose `ltiResourceLink`
   content items carry `/api/lti/launch?lab=<slug>` plus the `lab_slug` custom
   claim. Starting a deep-linked assignment resolves the lab and lands on the
-  exercise.
+  exercise. The picker renders without app chrome and has a picker-only CSP so
+  an LMS can frame it and receive the return POST.
 - Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`,
   `0018_lti_roster`, and `0019_lti_deep_link` create the platform, login-state,
   link, score, NRPS fields, roster, and picker-session tables idempotently.
