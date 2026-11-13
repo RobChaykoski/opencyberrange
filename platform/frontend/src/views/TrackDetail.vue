@@ -3073,13 +3073,15 @@ watch(timeRemaining, (val) => {
 }
 
 .btn--workbook-sm {
-  background: #e67e22 !important;
-  color: white !important;
-  border: none;
+  background: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color);
 }
 
 .btn--workbook-sm:hover {
-  background: #d35400 !important;
+  background: var(--accent-bg) !important;
+  border-color: var(--accent);
+  color: var(--accent-text) !important;
 }
 
 /* Active Lab Panel */
