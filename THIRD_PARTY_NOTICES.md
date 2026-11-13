@@ -55,6 +55,11 @@ their own licences; the project licence does not override them.
   this directory cover GPL-2.0 and BSD-3-Clause. A CycloneDX SBOM is committed at
   `platform/backend/app/data/about/sbom/topology-node.cdx.json`; the image build
   context is covered by `supply-chain.lock.json`.
+- Workbook PDF export vendors `html2pdf.js` 0.10.2 at
+  `Workbook/javascripts/html2pdf.bundle.min.js` (MIT, Copyright Erik Koopmans).
+  The licence text is `Workbook/javascripts/html2pdf.LICENSE.txt`; the source is
+  pinned from the 0.10.2 release and its SHA256 is recorded in the workbook
+  vendor note.
 - Both SSO images are profile-gated (`--profile sso`). They are pulled, not
   redistributed, and are not started on a normal install.
 - Release 4 changes are recorded in `CHANGELOG.md`, `versions.yaml`, and the

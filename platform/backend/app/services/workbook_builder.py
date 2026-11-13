@@ -407,8 +407,9 @@ _MKDOCS_TEMPLATE = {
     ],
     "extra_css": ["stylesheets/extra.css?v=4"],
     "extra_javascript": [
+        "javascripts/embed-mode.js?v=1",
         "javascripts/mermaid-fix.js?v=4",
-        "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js",
+        "javascripts/html2pdf.bundle.min.js?v=1",
         "javascripts/pdf-export.js?v=2",
     ],
 }

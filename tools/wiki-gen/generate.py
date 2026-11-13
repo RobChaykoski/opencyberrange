@@ -77,8 +77,8 @@ NGINX_END = "    # === END generated wiki blocks ==="
 # every generated page; a nonce/hash scheme would need the site builder to stamp each
 # page, which the current pipeline does not do.
 CSP = (
-    "default-src 'self'; script-src 'self' 'unsafe-inline' "
-    "https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; "
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+    "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; "
     "frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
 )

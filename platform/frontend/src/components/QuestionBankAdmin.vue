@@ -64,7 +64,7 @@
                   Sample size per attempt: 3.
                 </p>
               </div>
-              <a :href="detail.objectives_url" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--xs">
+              <a :href="safeHttpUrl(detail.objectives_url)" target="_blank" rel="noopener noreferrer" class="btn btn--outline btn--xs">
                 Public objectives
               </a>
             </header>
@@ -100,7 +100,7 @@
                 </p>
                 <p class="qbank-question__reference">
                   <span>Reference</span>
-                  <a :href="question.reference.url" target="_blank" rel="noopener noreferrer">
+                  <a :href="safeHttpUrl(question.reference.url)" target="_blank" rel="noopener noreferrer">
                     {{ question.reference.label || question.reference.url }}
                   </a>
                 </p>
@@ -116,6 +116,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from '../api/axios'
+import { safeHttpUrl } from '../utils/url'
 
 const loading = ref(true)
 const error = ref('')

@@ -804,13 +804,12 @@
               </div>
               <div v-if="activeWorkbookUrl" class="workspace-workbook">
                 <iframe
-                  ref="workbookFrame"
                   :key="activeWorkbookUrl"
                   :src="activeWorkbookUrl"
                   title="Exercise workbook"
                   loading="lazy"
-                  referrerpolicy="same-origin"
-                  @load="styleWorkbookFrame"
+                  sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
+                  referrerpolicy="no-referrer"
                 ></iframe>
               </div>
               <div v-else class="workspace-empty">
@@ -1267,43 +1266,6 @@ const workbookOpenable = (wb) => !!workbookUrl(wb, true)
 const activeWorkbookUrl = computed(() =>
   workbookUrl(activeLab.value?.lab?.workbook, true)
 )
-
-const workbookFrame = ref(null)
-
-// MkDocs ships a site header, tabs, and sidebars that waste most of a short
-// embedded pane. Hide the chrome and let the article use the full width so the
-// learner can read and scroll the workbook while the RangeBox stays open.
-const WORKBOOK_EMBED_CSS = `
-  .md-header, .md-tabs, .md-sidebar, .md-footer, .md-top, .md-search { display: none !important; }
-  .md-main__inner { margin: 0 !important; }
-  .md-content { max-width: none !important; }
-  .md-content__inner { margin: 0 !important; padding: 0.75rem 1rem !important; }
-  html, body { height: auto !important; overflow-y: auto !important; }
-  .md-typeset { font-size: 0.84rem; line-height: 1.55; }
-  .md-typeset h1 { font-size: 1.35rem; }
-  .md-typeset h2 { font-size: 1.1rem; }
-  .md-typeset h3 { font-size: 0.98rem; }
-  .md-typeset pre { white-space: pre-wrap; word-break: break-word; }
-  .md-typeset table { display: block; overflow-x: auto; }
-`
-
-function styleWorkbookFrame() {
-  const frame = workbookFrame.value
-  if (!frame) return
-  try {
-    const doc = frame.contentDocument
-    if (!doc?.head) return
-    let style = doc.getElementById('ocr-workbook-embed-style')
-    if (!style) {
-      style = doc.createElement('style')
-      style.id = 'ocr-workbook-embed-style'
-      doc.head.appendChild(style)
-    }
-    style.textContent = WORKBOOK_EMBED_CSS
-  } catch {
-    // Cross-origin or not ready; the iframe still scrolls on its own.
-  }
-}
 
 const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)

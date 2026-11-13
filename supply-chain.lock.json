@@ -73,10 +73,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "9032a1b3466b7f2e5f9992298d2f74e700f2fb99535baab829f271b993f1cc80"
+      "sha256": "79f9f614a75dcc2a015e56b135b8e5254c36ccae6bf3ff614d095e42698fdbb1"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "3faf5c5db6e64d8cabf5b22e7ceff58677e249e04e567c801ca94863dd427605"
+      "sha256": "ca4ec688cb5c5d5da128851e2d5f81b61a8d5ea572fa1900b527199376523b8b"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"

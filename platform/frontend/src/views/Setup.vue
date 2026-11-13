@@ -20,6 +20,11 @@
 
       <!-- Error -->
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div v-if="!setupReady" class="error-message">
+        First-run setup is not configured. Set SETUP_TOKEN in the server
+        environment and restart the platform before creating the administrator
+        account.
+      </div>
 
       <!-- Step 1: Admin Account -->
       <div v-if="step === 1" class="setup-card">
@@ -141,6 +146,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { applyPrivacyDefaultForRole } from '../composables/usePrivacy'
+import { passwordPolicyError } from '../utils/passwordPolicy'
 
 const router = useRouter()
 
@@ -150,7 +156,8 @@ const errorMessage = ref('')
 const confirmPassword = ref('')
 const stepLabels = ['Account', 'Security', 'Modules', 'Review']
 const availableModules = ref([])
-const tokenRequired = ref(false)
+const tokenRequired = ref(true)
+const setupReady = ref(true)
 
 const form = reactive({
   admin_username: '',
@@ -160,19 +167,14 @@ const form = reactive({
   setup_token: '',
 })
 
-const _ShieldIcon = {
-  template: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 2L3 7V12C3 16.97 7.02 21.45 12 22C16.98 21.45 21 16.97 21 12V7L12 2Z"/>
-  </svg>`
-}
-
 onMounted(async () => {
   try {
     const { data } = await axios.get('/api/setup/status')
     if (data.setup_complete) {
       router.replace('/login')
     }
-    tokenRequired.value = !!data.setup_token_required
+    tokenRequired.value = true
+    setupReady.value = data.setup_ready !== false
   } catch {
     // If API not available, stay on setup page
   }
@@ -190,6 +192,10 @@ onMounted(async () => {
 
 const validateStep2 = () => {
   errorMessage.value = ''
+  if (!setupReady.value) {
+    errorMessage.value = 'Set SETUP_TOKEN on the server and restart the platform before continuing.'
+    return
+  }
   if (!form.admin_username || form.admin_username.length < 3) {
     errorMessage.value = 'Username must be at least 3 characters'
     return
@@ -209,6 +215,10 @@ const validateStep2 = () => {
     errorMessage.value = 'That email uses a reserved domain (.local, .example, .invalid, .test). Use a real, deliverable address.'
     return
   }
+  if (!form.setup_token.trim()) {
+    errorMessage.value = 'Enter the one-time setup token from the server install output.'
+    return
+  }
   // Password complexity validation
   const pw = form.admin_password || ''
   if (pw.length < 8) {
@@ -225,6 +235,14 @@ const validateStep2 = () => {
   }
   if (!/[0-9]/.test(pw)) {
     errorMessage.value = 'Password must contain at least one number'
+    return
+  }
+  const policyError = passwordPolicyError(pw, {
+    username: form.admin_username,
+    email: form.admin_email,
+  })
+  if (policyError) {
+    errorMessage.value = policyError
     return
   }
   if (form.admin_password !== confirmPassword.value) {

@@ -126,11 +126,16 @@ def validate_settings():
             "Generate a unique random secret before starting the platform."
         )
 
-    # Validate SETUP_TOKEN when the operator chose to gate first-run setup.
+    # Validate SETUP_TOKEN. First-run setup requires it in every deployment.
     if settings.SETUP_TOKEN and _is_placeholder_secret(settings.SETUP_TOKEN):
         errors.append(
             "SETUP_TOKEN contains a default/placeholder value. "
             "Generate a unique random token before starting the platform."
+        )
+    if not settings.SETUP_TOKEN:
+        warnings.append(
+            "SETUP_TOKEN is not set. First-run setup will be blocked until the "
+            "operator configures it."
         )
     
     # Validate LABS_HOST_PATH
