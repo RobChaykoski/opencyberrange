@@ -19,7 +19,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Release%204-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-173-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-175-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -586,7 +586,7 @@ Validation history:
 
 | Check | Result |
 |---|---|
-| Release 4 automated QA (12 November 2026) | **534 DB-backed tests passed**, 317 local tests, 173 labs with 0 validation errors, 485 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
+| Release 4 automated QA (12 November 2026) | **534 DB-backed tests passed**, 317 local tests, 175 labs with 0 validation errors, 488 docs/manual/workbook link files resolve, frontend build and lint pass, licence guard and signed supply-chain lock pass |
 | Release 4 dev smoke (`.44`, 12 November 2026) | `/api/version` = 4; LDAP and OIDC end-to-end; instructor role refresh; admin endpoints 401; API docs 404; setting toggles apply immediately; new DNA/GPS UI present |
 | Release 4 role E2E (`.44`) | Admin/instructor/student authorization; 100% quiz; simple lab flag; RangeBox running; VPN config 200 |
 | Release 4 topology E2E (`.44`) | Four labs in sequence; two-router transit, nftables drop, multi-service mapping; all flags accepted |
@@ -1059,6 +1059,7 @@ or read learner records. Docker host and container state still need
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used
 - **Network (local):** Server reachable on the classroom/school network
 - **Network (internet/cloud):** Public IP or Cloudflare Tunnel; ports 443/TCP, 51820/UDP, and 5555/TCP (WSTunnel) open in provider firewall
+
 
 
 

@@ -59,6 +59,8 @@ the privacy, accessibility, and API-exposure corrections.
 - Added the routed-path demo lab plus two-router transit, firewall service path,
   and multi-service router labs, with workbook chapters, engine unit tests, and
   image-only topology support in the static validator.
+- Added a guided and an independent Forensics variant on the same engine, with a
+  decoy service in the independent version, so learners can choose their pace.
 
 ### Documentation
 - Added the compliance posture, procurement traceability, accessibility

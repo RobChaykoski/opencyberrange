@@ -172,7 +172,9 @@ pathways:
       - TH-004
       - TH-005
       - TH-007
+      - NET-004
       - NET-030
+      - NET-034
       - PROF-001
       - PROF-009
       - PROF-010
@@ -371,6 +373,8 @@ pathways:
       - LIN-018
       - LIN-024
       - IR-003
+      - NET-004
+      - NET-034
       - PROF-010
     tracks: [forensics, malware, winpt, linpt]
     categories: [forensics, malware]

@@ -74,4 +74,8 @@ nav:
   - "FOR02: Network Forensics":
     - Introduction: CH_FOR02_Network_Forensics/00_Introduction.md
     - "VoIP Call Reconstruction": CH_FOR02_Network_Forensics/01_VoIP_Call_Reconstruction.md
+  - "FOR03: Topology Forensics":
+    - Introduction: CH_FOR03_Topology_Forensics/00_Introduction.md
+    - "Guided Path Reconstruction": CH_FOR03_Topology_Forensics/01_Guided_Path.md
+    - "Independent Path Reconstruction": CH_FOR03_Topology_Forensics/02_Independent_Path.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

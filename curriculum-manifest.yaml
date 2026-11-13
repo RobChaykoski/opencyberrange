@@ -588,6 +588,16 @@ tracks:
         prerequisites: [FOR01]
         exercises: 1
         estimated_minutes: 45
-        recommended_next: OSINT01
+        recommended_next: FOR03
         status: published
         intro: CH_FOR02_Network_Forensics/00_Introduction.md
+      - id: FOR03
+        directory: CH_FOR03_Topology_Forensics
+        display_name: "Topology Forensics"
+        difficulty: "intermediate"
+        prerequisites: [FOR02]
+        exercises: 2
+        estimated_minutes: 60
+        recommended_next: OSINT01
+        status: published
+        intro: CH_FOR03_Topology_Forensics/00_Introduction.md

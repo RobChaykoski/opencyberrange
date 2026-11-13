@@ -1,0 +1,136 @@
+title: Topology Forensics - Independent Path Reconstruction
+category: forensics
+difficulty: intermediate
+estimated_time: 35
+prerequisites:
+  - forensics-2-2-topology-forensics-guided
+# By completion students will be able to:
+learning_outcomes:
+  - Reconstruct a three-link topology without step-by-step instructions
+  - Identify the service that holds the case token among a decoy
+  - Prove the routed path using link addresses rather than management addresses
+  - Distinguish a decoy service from the evidence service
+  - Produce a concise evidence record another analyst can reproduce
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1018
+    technique_name: Remote System Discovery
+    detection: Alert on service and route discovery that crosses a routed segment.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "4.0"
+reviewed_at: "2026-11-12"
+review_status: "engine unit tests and live dev smoke; learner walkthrough pending"
+description: "An independent reconstruction: map a three-link router, tell the case service from a decoy, and recover the token through the routed path."
+scenario: |
+  The workstation contacted two services through a router. One is the protected
+  case service; the other is a decoy used to test whether the investigator
+  verifies the evidence before acting. The guided version is not shown here:
+  map the links, identify the correct service, and record the path.
+
+  Work at your own pace. The automated checks are the same whether you follow a
+  written procedure or build your own.
+credentials:
+  - role: "analyst"
+    username: "analyst"
+    # Demo lab credential; security-delta: allow credential-like assignment
+    password: "Topology2026"
+    description: "SSH access to each topology node"
+hints:
+  - text: |
+      The router status endpoint lists every link. Compare each peer with its
+      role and status before choosing the evidence service. The decoy is a
+      service too; the difference is what it returns.
+flag: "OCR{f0r3ns1c_p4th_1nd3p3nd3nt}"
+
+visibility: public
+week: 2
+troubleshooting: "If the token request fails, confirm the service link address from the router status and verify the workstation default route. A decoy service will answer status but will not return the case token."
+defensive_takeaways: "Independent reconstruction is the test of a forensic method. Record the evidence, verify the service identity, and make the path reproducible."
+difficulty_evidence: "Engine unit tests and live dev smoke; learner walkthrough pending."
+difficulty_evidence_source: "automated_and_manual_smoke"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-12"
+workbook: "wiki/range/forensics/CH_FOR03_Topology_Forensics/02_Independent_Path/"
+
+topology:
+  nodes:
+    - id: "workstation"
+      label: "Investigation Workstation"
+      type: "workstation"
+      ip_offset: "21"
+      ports: [22, 8080]
+      services: ["OpenSSH", "Status"]
+      x: 1
+      y: 2
+    - id: "router"
+      label: "Case Router"
+      type: "router"
+      ip_offset: "22"
+      ports: [22, 8080]
+      services: ["OpenSSH", "IPv4 forwarding"]
+      x: 2
+      y: 2
+    - id: "case-svc"
+      label: "Protected Case Service"
+      type: "server"
+      ip_offset: "23"
+      ports: [22, 80, 8080]
+      services: ["OpenSSH", "HTTP case token"]
+      x: 3
+      y: 1
+    - id: "decoy"
+      label: "Decoy Service"
+      type: "server"
+      ip_offset: "24"
+      ports: [22, 8080]
+      services: ["OpenSSH", "Status only"]
+      x: 3
+      y: 3
+  edges:
+    - from: "workstation"
+      to: "router"
+      label: "workstation link /29"
+      access: "direct"
+    - from: "router"
+      to: "case-svc"
+      label: "case link /29"
+      access: "routed"
+    - from: "router"
+      to: "decoy"
+      label: "decoy link /29"
+      access: "routed"
+
+test:
+  steps:
+    - name: "Router reports three links"
+      command: "curl -s --connect-timeout 5 http://{target.router}:8080/status | jq -r '.links | length'"
+      expect: "3"
+      timeout: 15
+
+    - name: "Workstation uses the router"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'ip route | grep default' 2>&1"
+      expect: "default via"
+      timeout: 20
+
+    - name: "Case service is identified"
+      command: "curl -s --connect-timeout 5 http://{target.case-svc}:8080/status"
+      expect: '"node": "case-svc"'
+      timeout: 15
+
+    - name: "Decoy is present but is not the case service"
+      command: "curl -s --connect-timeout 5 http://{target.decoy}:8080/status"
+      expect: '"node": "decoy"'
+      timeout: 15
+
+    - name: "Recover the case token through the routed path"
+      command: "IP=$(curl -s --connect-timeout 5 http://{target.router}:8080/status | jq -r '.links[] | select(.peer==\"case-svc\") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} \"wget -qO- http://$IP/flag\" 2>&1"
+      expect: "OCR{f0r3ns1c_p4th_1nd3p3nd3nt}"
+      timeout: 30
