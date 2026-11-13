@@ -344,6 +344,70 @@ class LtiLoginState(Base):
     consumed_at = Column(DateTime, nullable=True)
 
 
+class LtiLink(Base):
+    """One LMS resource link launched into the platform.
+
+    The LMS resource-link id is the stable key. AGS endpoints and scopes come
+    from the launch claim; ``lab_id`` is filled when the link is mapped to a
+    local exercise.
+    """
+
+    __tablename__ = "lti_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    resource_link_id = Column(String(255), nullable=False, index=True)
+    context_id = Column(String(255), nullable=True, index=True)
+    context_title = Column(String(255), nullable=True)
+    title = Column(String(255), nullable=True)
+    ags_lineitem_url = Column(String(500), nullable=True)
+    ags_lineitems_url = Column(String(500), nullable=True)
+    ags_scopes = Column(Text, nullable=True)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint(
+            "platform_id", "resource_link_id", name="uq_lti_link_resource"
+        ),
+    )
+
+
+class LtiScore(Base):
+    """Append-only record of a score passback attempt."""
+
+    __tablename__ = "lti_scores"
+
+    id = Column(Integer, primary_key=True, index=True)
+    link_id = Column(
+        Integer,
+        ForeignKey("lti_links.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    reviewer_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    score = Column(Float, nullable=False)
+    max_score = Column(Float, nullable=False)
+    status = Column(String(20), nullable=False)
+    reason = Column(String(500), nullable=True)
+    lms_response = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
 class SsoSession(Base):
     """Latest OIDC session per user/provider for RP-initiated logout.
 

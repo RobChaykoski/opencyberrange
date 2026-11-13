@@ -81,8 +81,11 @@ The first Release 5 feature set is in the branch:
 - **Admin -> Settings -> LTI platforms** — register, edit, test the JWKS, and
   delete a deployment. The panel shows the login URL and launch/redirect URI to
   give the LMS administrator.
-- Migration `0015_lti_platforms` creates the platform and login-state tables
-  idempotently.
+- **AGS 2.0 score foundation** — private_key_jwt client assertion, LMS access
+  token, reviewed score payload, append-only `lti_scores` ledger, and admin
+  link/score endpoints. Line-item creation and result retrieval are next.
+- Migrations `0015_lti_platforms` and `0016_lti_links_scores` create the
+  platform, login-state, link, and score tables idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 
@@ -92,9 +95,11 @@ Verified against a mock LMS with a locally generated RSA key and JWKS:
 - replaying the same state returned `400` and was rejected.
 - the admin panel added, listed, and deleted a mock platform without console
   errors.
+- the AGS client obtained a mock access token with a signed client assertion and
+  posted a reviewed score to a mock line item.
 
-Still to do: AGS 2.0, NRPS 2.0, Deep Linking 2.0, and a real Moodle/Canvas
-staging test.
+Still to do: AGS line-item creation/result retrieval and instructor UI, NRPS 2.0,
+Deep Linking 2.0, and a real Moodle/Canvas staging test.
 
 ## Verified on this stack
 

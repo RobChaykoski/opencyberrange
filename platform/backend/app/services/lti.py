@@ -12,14 +12,25 @@ import json
 import logging
 import secrets
 import ssl
-from datetime import timedelta
+import time
+import uuid
+from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode, urlsplit
 
 import jwt
+import requests
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.models import IdentityProvider, LtiLoginState, LtiPlatform, User
+from app.crypto import decrypt_secret, is_encrypted
+from app.models import (
+    ExternalIdentity,
+    IdentityProvider,
+    LtiLink,
+    LtiLoginState,
+    LtiPlatform,
+    User,
+)
 from app.services import sso_flow
 from app.services.external_identity import (
     ExternalUser,
@@ -34,6 +45,9 @@ LTI_DEPLOYMENT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/deployment_id"
 LTI_MESSAGE_TYPE_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/message_type"
 LTI_RESOURCE_LINK_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/resource_link"
 LTI_CONTEXT_CLAIM = "https://purl.imsglobal.org/spec/lti/claim/context"
+LTI_AGS_CLAIM = "https://purl.imsglobal.org/spec/lti-ags/claim/endpoint"
+LTI_AGS_SCORE_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/score"
+LTI_AGS_LINEITEM_SCOPE = "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem"
 ALLOWED_MESSAGE_TYPES = {"LtiResourceLinkRequest", "LtiDeepLinkingRequest"}
 ALLOWED_SIGNING_ALGORITHMS = ["RS256", "RS384", "ES256", "ES384"]
 
@@ -207,6 +221,158 @@ def validate_launch_token(platform: LtiPlatform, id_token: str, nonce: str) -> d
     if claims.get(LTI_MESSAGE_TYPE_CLAIM) not in ALLOWED_MESSAGE_TYPES:
         raise LTIError("This LTI message type is not supported.")
     return claims
+
+
+def record_launch_link(
+    db: Session, platform: LtiPlatform, claims: dict
+) -> LtiLink | None:
+    """Persist the resource link and AGS endpoints from a launch claim."""
+    resource = claims.get(LTI_RESOURCE_LINK_CLAIM) or {}
+    context = claims.get(LTI_CONTEXT_CLAIM) or {}
+    endpoint = claims.get(LTI_AGS_CLAIM) or {}
+    resource_link_id = str(resource.get("id") or "").strip()
+    if not resource_link_id:
+        return None
+    link = (
+        db.query(LtiLink)
+        .filter(
+            LtiLink.platform_id == platform.id,
+            LtiLink.resource_link_id == resource_link_id,
+        )
+        .first()
+    )
+    if link is None:
+        link = LtiLink(platform_id=platform.id, resource_link_id=resource_link_id)
+        db.add(link)
+    link.context_id = str(context.get("id") or "")[:255] or None
+    link.context_title = str(context.get("title") or "")[:255] or None
+    link.title = str(resource.get("title") or "")[:255] or None
+    link.ags_lineitem_url = str(endpoint.get("lineitem") or "")[:500] or None
+    link.ags_lineitems_url = str(endpoint.get("lineitems") or "")[:500] or None
+    scopes = endpoint.get("scope")
+    link.ags_scopes = json.dumps(scopes) if scopes else None
+    db.commit()
+    db.refresh(link)
+    return link
+
+
+def _private_key(platform: LtiPlatform) -> str:
+    if not platform.private_key:
+        raise LTIError("No LMS client private key is stored for this platform.")
+    value = platform.private_key
+    if is_encrypted(value):
+        value = decrypt_secret(value)
+    return value
+
+
+def build_client_assertion(platform: LtiPlatform, audience: str | None = None) -> str:
+    """Build the private_key_jwt assertion used for an LMS access token."""
+    now = int(time.time())
+    claims = {
+        "iss": platform.client_id,
+        "sub": platform.client_id,
+        "aud": audience or platform.token_url,
+        "iat": now,
+        "exp": now + 300,
+        "jti": uuid.uuid4().hex,
+    }
+    try:
+        return jwt.encode(claims, _private_key(platform), algorithm="RS256")
+    except Exception as exc:
+        raise LTIError("Could not sign the LMS client assertion.") from exc
+
+
+def get_access_token(
+    platform: LtiPlatform, scopes: list[str] | tuple[str, ...]
+) -> str:
+    assertion = build_client_assertion(platform)
+    try:
+        response = requests.post(
+            platform.token_url,
+            data={
+                "grant_type": "client_credentials",
+                "client_assertion_type": (
+                    "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+                ),
+                "client_assertion": assertion,
+                "scope": " ".join(scopes),
+            },
+            timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+            verify=not settings.SSO_ALLOW_INSECURE_HTTP,
+        )
+        response.raise_for_status()
+        payload = response.json()
+    except Exception as exc:
+        raise LTIError("The LMS did not issue an access token.") from exc
+    token = str(payload.get("access_token") or "").strip()
+    if not token:
+        raise LTIError("The LMS token response did not include an access token.")
+    return token
+
+
+def build_score_payload(
+    *,
+    subject: str,
+    score: float,
+    max_score: float,
+    timestamp: str | None = None,
+) -> dict:
+    return {
+        "userId": subject,
+        "scoreGiven": score,
+        "scoreMaximum": max_score,
+        "activityProgress": "Completed",
+        "gradingProgress": "FullyGraded",
+        "timestamp": timestamp or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+    }
+
+
+def post_score(
+    platform: LtiPlatform,
+    link: LtiLink,
+    *,
+    subject: str,
+    score: float,
+    max_score: float,
+) -> dict:
+    if not link.ags_lineitem_url:
+        raise LTIError("This launch did not provide an AGS line-item endpoint.")
+    token = get_access_token(platform, [LTI_AGS_SCORE_SCOPE])
+    url = link.ags_lineitem_url.rstrip("/") + "/scores"
+    payload = build_score_payload(subject=subject, score=score, max_score=max_score)
+    try:
+        response = requests.post(
+            url,
+            json=payload,
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=settings.SSO_HTTP_TIMEOUT_SECONDS,
+            verify=not settings.SSO_ALLOW_INSECURE_HTTP,
+        )
+    except Exception as exc:
+        raise LTIError("The score passback request failed.") from exc
+    if response.status_code not in (200, 201, 204):
+        raise LTIError(
+            f"The LMS rejected the score passback (HTTP {response.status_code})."
+        )
+    return {
+        "status_code": response.status_code,
+        "body": (response.text or "")[:2000],
+    }
+
+
+def subject_for_user(db: Session, platform: LtiPlatform, user_id: int) -> str:
+    provider = _get_provider(db, platform)
+    link = (
+        db.query(ExternalIdentity)
+        .filter(
+            ExternalIdentity.provider_id == provider.id,
+            ExternalIdentity.user_id == user_id,
+        )
+        .first()
+    )
+    if link is None:
+        raise LTIError("This user is not linked to the selected LTI platform.")
+    return link.subject
 
 
 def provision_launch_user(
