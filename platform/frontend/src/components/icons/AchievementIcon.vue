@@ -29,7 +29,7 @@ const iconComponent = computed(() => {
   if (type.includes('clean_sweep') || type.includes('level_complete')) return CheckCircleIcon
   if (type.includes('shell') || type.includes('rangebox') || type.includes('source_')) return TerminalIcon
   if (type.includes('memory') || type.includes('forensic') || type.includes('evidence') || type.includes('log_')) return ForensicsIcon
-  if (type.includes('learning_hours') || type.includes('scholar') || type.includes('quiz_')) return BrainIcon
+  if (type.includes('learning_hours') || type.includes('scholar')) return BrainIcon
   if (type.includes('quiz_') || type.includes('provenance') || type.includes('liquidity') || type.includes('frontier')) return LightbulbIcon
   if (type.includes('comp_') || type.includes('placement') || type.includes('trophy') || type.includes('custom_')) return TrophyIcon
   return TrophyIcon

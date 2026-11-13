@@ -19,8 +19,10 @@ lenses, career target promoted to the top of the portfolio, mobile tab scroll
 cue), and the token-colour fixes for workbook actions and profile status
 badges. Course-card percentages now round half-up to match the course page.
 
-**Remaining:** a filter/compact mode for the title collection and replacing
-emoji achievement badges with the SVG icon system.
+**Remaining:** no open items from this review. The title collection now opens in
+a compact state with an unlocked-only filter, profile badges use the shared SVG
+icon system, and the focus selector has a search field for the long
+certification list.
 
 ## Design test report
 

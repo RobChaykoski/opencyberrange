@@ -104,6 +104,14 @@ production.** Platform
   duplicate selector inside the readiness panel is hidden.
 - The mobile profile tab bar has a right-edge scroll cue; no horizontal page
   overflow was introduced.
+- The focus selector has a search field; entering `Security+` reduced the
+  option list to the current course plus **CompTIA Security+**, and selecting it
+  showed `17/80 aligned exercises · 21%`.
+- The title collection is collapsed by default (`12 / 42 unlocked` summary) and
+  its **Unlocked only** filter reduced the visible cards from 42 to 12.
+- Profile achievement badges now render the shared SVG icon components: 4/4
+  overview badges and 12/12 course badges contained an inline SVG rather than an
+  emoji glyph.
 - **Backend suite:** 538 passed, 0 failed.
 - **Topology engine:** `network-12-2-device-topology-engine` spawned `h1`, `r1`,
   and `svc`; the node status endpoints reported host/router/service; `h1` had a
