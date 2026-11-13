@@ -55,7 +55,7 @@ Use **Admin -> Platform Settings -> Wiki**. Changes apply without a rebuild.
 |---|---|---|
 | `wiki_origin` | `https://wiki.example.edu` | Separate wiki origin. Empty keeps it same-origin. |
 | `wiki_cookie_domain` | `.example.edu` | Parent-domain scope for `wiki_session`. Empty keeps it host-only. |
-| `wiki_frame_ancestor` | `https://app.example.edu` | Optional allowed parent origin. Empty derives the app origin from `FRONTEND_BASE_URL`, `PUBLIC_BASE_URL`, or `SERVER_PUBLIC_HOST`. |
+| `wiki_frame_ancestor` | `https://app.example.edu` | Allowed parent origin. Empty derives it from `FRONTEND_BASE_URL`, `PUBLIC_BASE_URL`, or `SERVER_PUBLIC_HOST` when a wiki origin is set. Set it explicitly when those values are an IP address or a different hostname than the browser uses. |
 
 The SPA reads `wiki_origin` from `GET /api/config/public` at boot. The wiki
 cookie endpoint reads `wiki_cookie_domain` fresh on every request.

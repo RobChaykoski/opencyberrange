@@ -868,6 +868,15 @@ def _wiki_frame_ancestor(db) -> str:
     """
     from app.services import settings_service
 
+    # Same-origin wikis are already covered by 'self'. Do not widen the policy
+    # with an environment-derived origin unless the admin has opted into a
+    # separate wiki origin.
+    wiki_origin = (
+        settings_service.get_setting_fresh(db, "wiki_origin", "") or ""
+    ).strip()
+    if not wiki_origin:
+        return ""
+
     configured = (
         settings_service.get_setting_fresh(db, "wiki_frame_ancestor", "") or ""
     ).strip()
