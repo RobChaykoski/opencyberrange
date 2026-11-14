@@ -304,6 +304,17 @@ class DockerManager:
         "10.50.0.0/16",   # RangeBox standalone networks
     ]
 
+    # Broad source ranges for the default-deny lab egress policy. New lab
+    # /24s inherit the rules without waiting for a per-network refresh.
+    _EGRESS_SOURCES = [
+        "10.50.0.0/16",
+        "10.100.0.0/14",
+        "10.104.0.0/13",
+        "10.112.0.0/12",
+        "10.128.0.0/9",
+    ]
+    _QEMU_MGMT_PORTS = "5700,5900,7100,8006,8004"
+
     # Maximum time (seconds) to wait for a QEMU-based shared container to boot
     _SHARED_CONTAINER_BOOT_TIMEOUT = 300  # 5 minutes
 
@@ -1066,6 +1077,148 @@ fi
                 results.append({"rule": rule, "action": "failed", "error": str(e)})
 
         return results
+
+    def _lab_gateways(self) -> set[str]:
+        """Gateways of currently existing lab networks."""
+        gateways: set[str] = set()
+        for net in self.client.networks.list():
+            configs = (net.attrs.get("IPAM") or {}).get("Config") or []
+            for cfg in configs:
+                subnet = str(cfg.get("Subnet") or "")
+                gateway = cfg.get("Gateway")
+                if not subnet.startswith("10.") or not gateway:
+                    continue
+                try:
+                    second = int(subnet.split(".")[1])
+                except (IndexError, ValueError):
+                    continue
+                if second == 50 or 100 <= second <= 255:
+                    gateways.add(str(gateway))
+        return gateways
+
+    def ensure_lab_egress_isolation(self) -> list:
+        """Default-deny lab egress except lab ranges and shared targets.
+
+        Blocks the host LAN, platform containers, lab gateways, the internet,
+        and link-local metadata. Host-local services are dropped in a dedicated
+        INPUT chain because they never traverse DOCKER-USER.
+        """
+        if not self.client:
+            return [{"rule": "egress", "action": "failed", "error": "Docker client unavailable"}]
+
+        try:
+            gateways = sorted(self._lab_gateways())
+        except Exception as exc:
+            logger.warning("Could not enumerate lab gateways: %s", exc)
+            gateways = []
+
+        lines = [
+            "iptables -N OCR-LAB-INPUT 2>/dev/null || true",
+            "iptables -C INPUT -j OCR-LAB-INPUT 2>/dev/null || iptables -I INPUT 1 -j OCR-LAB-INPUT",
+        ]
+        for src in self._EGRESS_SOURCES:
+            lines.append(
+                f"iptables -C OCR-LAB-INPUT -s {src} -j DROP 2>/dev/null || "
+                f"iptables -A OCR-LAB-INPUT -s {src} -j DROP"
+            )
+        for src in self._EGRESS_SOURCES:
+            lines.append(
+                f"iptables -C DOCKER-USER -s {src} -m conntrack "
+                f"--ctstate ESTABLISHED,RELATED -j ACCEPT 2>/dev/null || "
+                f"iptables -A DOCKER-USER -s {src} -m conntrack "
+                f"--ctstate ESTABLISHED,RELATED -j ACCEPT"
+            )
+            for gateway in gateways:
+                lines.append(
+                    f"iptables -C DOCKER-USER -s {src} -d {gateway} -j DROP 2>/dev/null || "
+                    f"iptables -A DOCKER-USER -s {src} -d {gateway} -j DROP"
+                )
+            lines.append(
+                f"iptables -C DOCKER-USER -s {src} -d 172.30.0.0/16 -p tcp "
+                f"-m multiport --dports {self._QEMU_MGMT_PORTS} -j DROP 2>/dev/null || "
+                f"iptables -A DOCKER-USER -s {src} -d 172.30.0.0/16 -p tcp "
+                f"-m multiport --dports {self._QEMU_MGMT_PORTS} -j DROP"
+            )
+            lines.append(
+                f"iptables -C DOCKER-USER -s {src} -d 172.30.0.0/16 -j ACCEPT 2>/dev/null || "
+                f"iptables -A DOCKER-USER -s {src} -d 172.30.0.0/16 -j ACCEPT"
+            )
+            lines.append(
+                f"iptables -C DOCKER-USER -s {src} -d 10.150.0.0/24 -j ACCEPT 2>/dev/null || "
+                f"iptables -A DOCKER-USER -s {src} -d 10.150.0.0/24 -j ACCEPT"
+            )
+            for dst in self._EGRESS_SOURCES:
+                lines.append(
+                    f"iptables -C DOCKER-USER -s {src} -d {dst} -j ACCEPT 2>/dev/null || "
+                    f"iptables -A DOCKER-USER -s {src} -d {dst} -j ACCEPT"
+                )
+            for dst in ("172.16.0.0/12", "169.254.0.0/16"):
+                lines.append(
+                    f"iptables -C DOCKER-USER -s {src} -d {dst} -j DROP 2>/dev/null || "
+                    f"iptables -A DOCKER-USER -s {src} -d {dst} -j DROP"
+                )
+            lines.append(
+                f"iptables -C DOCKER-USER -s {src} -j DROP 2>/dev/null || "
+                f"iptables -A DOCKER-USER -s {src} -j DROP"
+            )
+
+        try:
+            self.client.containers.run(
+                "alpine:latest",
+                command=["sh", "-c", "\n".join(lines)],
+                network_mode="host",
+                privileged=True,
+                remove=True,
+            )
+        except Exception as exc:
+            logger.warning("Failed to apply lab egress isolation: %s", exc)
+            return [{"rule": "egress", "action": "failed", "error": str(exc)}]
+        logger.info(
+            "Lab egress isolation ensured for %d source ranges and %d gateways",
+            len(self._EGRESS_SOURCES),
+            len(gateways),
+        )
+        return [{"rule": "lab-egress", "action": "ensured"}]
+
+    def ensure_proxy_attachments(self) -> list:
+        """Reattach the backend to proxy networks after a restart/redeploy.
+
+        A backend recreate drops its interfaces on the per-session proxy
+        networks, which silently breaks VNC for RangeBoxes that stayed running.
+        """
+        if not self.client:
+            return []
+        try:
+            backend = self.client.containers.get(_BACKEND_CONTAINER)
+        except Exception:
+            return []
+        attached = set(
+            ((backend.attrs.get("NetworkSettings") or {}).get("Networks") or {}).keys()
+        )
+        changed = []
+        for net in self.client.networks.list():
+            if not net.name.startswith("ocr-proxy-") or net.name in attached:
+                continue
+            if not (net.attrs.get("Containers") or {}):
+                continue
+            configs = (net.attrs.get("IPAM") or {}).get("Config") or []
+            subnet = str(configs[0].get("Subnet") or "") if configs else ""
+            ipv4 = None
+            if subnet:
+                base = subnet.split("/")[0].rsplit(".", 1)[0]
+                ipv4 = f"{base}.3"
+            try:
+                if ipv4:
+                    net.connect(backend, ipv4_address=ipv4)
+                else:
+                    net.connect(backend)
+                attached.add(net.name)
+                changed.append(net.name)
+            except Exception as exc:
+                logger.warning("Could not reattach backend to %s: %s", net.name, exc)
+        if changed:
+            logger.info("Reattached backend to proxy networks: %s", ", ".join(changed))
+        return changed
 
     def audit_lab_network_isolation(self) -> list:
         """

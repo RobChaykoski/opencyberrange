@@ -127,6 +127,32 @@ From the operator workstation, refresh the documented status page:
 python scripts/status-dashboard.py --config docs/status-hosts.json
 ```
 
+## Lab egress isolation
+
+`scripts/harden-lab-egress.sh` applies the host firewall policy that keeps lab
+and RangeBox containers inside the sandbox:
+
+- allowed: the lab ranges (`10.50/16`, `10.100/14`, `10.104/13`, `10.112/12`,
+  `10.128/9`), the shared target network `10.150.0.0/24`, and QEMU guests on
+  `172.30.0.0/16` (management ports 5700/5900/7100/8006/8004 dropped);
+- blocked: the host LAN and platform containers (`172.16.0.0/12`), lab gateways
+  (`.254`, including SSH and any host listener), the internet, and
+  `169.254.0.0/16` metadata.
+
+It writes to `DOCKER-USER` and a dedicated `OCR-LAB-INPUT` chain, and the
+production crontab re-applies it at boot and every five minutes. Apply it
+manually after a Docker/iptables change:
+
+```bash
+bash scripts/harden-lab-egress.sh
+```
+
+Verify from a lab network that the platform, host SSH, internet, and metadata
+are blocked while a same-lab target remains reachable. Docker bridge isolation
+still separates one lab from another; the firewall allows the lab ranges so
+shared targets and routed exercises keep working. DNS through Docker's embedded
+resolver remains a residual exfiltration path.
+
 ## Backups
 
 Production runs `scripts/backup-production.sh` daily at 03:15 UTC from the

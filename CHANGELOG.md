@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.2.1] - 2026-11-14
+
+### Security
+- Lab and RangeBox egress is default-deny: the host LAN and published platform
+  ports, lab gateways (including SSH), the internet, and link-local metadata are
+  blocked. Same-lab ranges, the shared target network, and QEMU guests keep
+  working. Host-local services are dropped in a dedicated `OCR-LAB-INPUT` chain.
+- The backend reattaches to live RangeBox proxy networks on startup, so a
+  redeploy no longer breaks VNC for sessions that stay running.
+
 ## [5.2.0] - 2026-11-14
 
 ### Audit and impersonation

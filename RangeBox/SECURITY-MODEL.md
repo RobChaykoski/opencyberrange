@@ -37,6 +37,24 @@ RangeBox holds no learner records, credentials to the platform, or persistent
 personal data. The platform account, workbook, and flag delivery live outside
 the desktop container. Treat anything typed into a lab as disposable.
 
+## Egress policy
+
+Lab and RangeBox containers may reach their own and other lab subnets at the
+host firewall, but Docker bridge isolation still blocks cross-lab containers.
+The shared target network (`10.150.0.0/24`) and the QEMU guest network
+(`172.30.0.0/16`, management ports dropped) are allowed. Everything else is
+dropped: the host LAN and published platform ports (`172.16.0.0/12`), lab
+gateways (`.254`), the internet, and link-local/cloud metadata.
+
+The rules live in `DOCKER-USER` plus a dedicated `OCR-LAB-INPUT` chain, applied
+by `scripts/harden-lab-egress.sh` at boot, every five minutes, and when the
+platform ensures isolation. `INPUT` drops are required because host-local
+services such as SSH never traverse `DOCKER-USER`.
+
+Residual risk: DNS uses Docker's embedded resolver and can still reach upstream
+resolvers from the host, so DNS tunnelling is not blocked by these rules. Treat
+it as an exfiltration channel to close with an internal resolver if required.
+
 ## Validation
 
 - `scripts/audit-lab-isolation.py` checks the host network rules.

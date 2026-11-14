@@ -769,8 +769,19 @@ async def lifespan(app: FastAPI):
         # 2. Lab network isolation (outbound: lab→host LAN)
         applied.extend(_dm.ensure_lab_network_isolation())
 
+        # 2b. Default-deny lab egress: platform, host, internet, metadata.
+        applied.extend(_dm.ensure_lab_egress_isolation())
+
         # 3. Inbound isolation (external interfaces → Docker lab networks)
         applied.extend(_dm.ensure_inbound_isolation())
+
+        # 4. Reattach live RangeBox proxy networks after a backend restart.
+        try:
+            reattached = _dm.ensure_proxy_attachments()
+            if reattached:
+                logger.info("Startup proxy reattach: %s", ", ".join(reattached))
+        except Exception as proxy_e:
+            logger.warning(f"Startup proxy reattach: {proxy_e}")
 
         if applied:
             logger.info("Startup firewall: applied %d rules", len(applied))
