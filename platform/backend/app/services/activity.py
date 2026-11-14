@@ -40,6 +40,7 @@ class EventTypes:
     REVIEW_REQUESTED = "review_requested"
     REVIEW_DECIDED = "review_decided"
     AUDIT_REPORT_VIEWED = "audit_report_viewed"
+    COHORT_CREATED = "cohort_created"
 
 
 # Human-readable labels for the feed
@@ -73,6 +74,7 @@ EVENT_LABELS = {
     EventTypes.REVIEW_REQUESTED: "Human Review Requested",
     EventTypes.REVIEW_DECIDED: "Human Review Decided",
     EventTypes.AUDIT_REPORT_VIEWED: "Audit History Viewed",
+    EventTypes.COHORT_CREATED: "Course Cohort Created",
 }
 
 

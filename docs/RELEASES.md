@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.4.0` | SWOCTS Cyber Range Release 5.4 | Current production feature release (signed annotated tag): instructor cross-course overview and trends |
+| `v5.5.0` | SWOCTS Cyber Range Release 5.5 | Current production feature release (signed annotated tag): course cohorts, exercise sets, and requirements |
+| `v5.4.0` | SWOCTS Cyber Range Release 5.4 | Previous feature release (signed annotated tag): instructor cross-course overview and trends |
 | `v5.3.1` | SWOCTS Cyber Range Release 5.3.1 | Previous UI patch (signed annotated tag): grouped admin navigation, Academy workbooks, IA proposal |
 | `v5.3.0` | SWOCTS Cyber Range Release 5.3 | Previous feature release (signed annotated tag): System metrics and graphs |
 | `v5.2.2` | SWOCTS Cyber Range Release 5.2.2 | Previous security patch (signed annotated tag): egress rule persistence |
@@ -34,7 +35,7 @@ represent. It exists because the history contains several naming eras.
 | `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to Release 3 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
-`v5.4.0`, `v5.3.1`, `v5.3.0`, `v5.2.2`, `v5.2.1`, `v5.2.0`, `v5.1.2`, `v5.1.1`, `v5.1.0`, `v5.0.1`, `v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the release key
+`v5.5.0`, `v5.4.0`, `v5.3.1`, `v5.3.0`, `v5.2.2`, `v5.2.1`, `v5.2.0`, `v5.1.2`, `v5.1.1`, `v5.1.0`, `v5.0.1`, `v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the release key
 `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`. The public key is
 `docs/release-signing-key.asc`. `v2.7.0` is the last unsigned annotated tag,
 points at `ce7c25bb`, and remains a documented exception from before the
@@ -73,6 +74,7 @@ that feed Cyber DNA are Release 5.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.
+
 
 
 

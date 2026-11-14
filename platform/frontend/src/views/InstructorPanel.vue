@@ -327,6 +327,7 @@
           <div class="sub-tabs">
             <button @click="courseManageTab = 'students'" :class="['sub-tab', { active: courseManageTab === 'students' }]">Students ({{ courseStudents.length }})</button>
             <button @click="courseManageTab = 'exercises'" :class="['sub-tab', { active: courseManageTab === 'exercises' }]">Exercises ({{ courseLabs.length }})</button>
+        <button @click="courseManageTab = 'exercise-plan'" :class="['sub-tab', { active: courseManageTab === 'exercise-plan' }]">Exercise plan</button>
             <button @click="switchToAssignments" :class="['sub-tab', { active: courseManageTab === 'assignments' }]">Assignments ({{ courseAssignments.length }})</button>
             <button @click="openReportsTab" :class="['sub-tab', { active: courseManageTab === 'reports' }]">Reports</button>
           <button @click="courseManageTab = 'reviews'" :class="['sub-tab', { active: courseManageTab === 'reviews' }]">Reviews ({{ courseReviews.length }})</button>
@@ -699,6 +700,15 @@
           </div>
 
           <!-- Assignments sub-tab -->
+          <div v-if="courseManageTab === 'exercise-plan'" class="sub-tab-content">
+            <CoursePlanningPanel
+              v-if="managingCourse"
+              :course-id="managingCourse.id"
+              :students="courseStudents"
+              :labs="courseLabs"
+            />
+          </div>
+
           <div v-if="courseManageTab === 'assignments'" class="sub-tab-content">
             <!-- Create assignment form -->
             <div class="assign-header-row" style="margin-bottom: 1rem;">
@@ -1508,6 +1518,7 @@ import axios from '../api/axios'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import AuditHistory from '../components/AuditHistory.vue'
+import CoursePlanningPanel from '../components/CoursePlanningPanel.vue'
 import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
 import { getUserTimeZone } from '../utils/timezone'

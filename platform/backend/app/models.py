@@ -1229,6 +1229,105 @@ class SystemMetric(Base):
     db_connections = Column(Integer, nullable=True)
 
 
+class CourseCohort(Base):
+    """A learner group inside one course for targeted requirements."""
+
+    __tablename__ = "course_cohorts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name = Column(String(120), nullable=False)
+    description = Column(String(500), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (UniqueConstraint("course_id", "name", name="uq_course_cohort_name"),)
+
+
+class CourseCohortMember(Base):
+    __tablename__ = "course_cohort_members"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cohort_id = Column(
+        Integer,
+        ForeignKey("course_cohorts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+
+    __table_args__ = (
+        UniqueConstraint("cohort_id", "user_id", name="uq_course_cohort_member"),
+    )
+
+
+class ExerciseSet(Base):
+    __tablename__ = "exercise_sets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name = Column(String(120), nullable=False)
+    description = Column(String(500), nullable=True)
+    sort_order = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("course_id", "name", name="uq_exercise_set_name"),
+    )
+
+
+class ExerciseSetItem(Base):
+    __tablename__ = "exercise_set_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    set_id = Column(
+        Integer,
+        ForeignKey("exercise_sets.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    lab_id = Column(
+        Integer, ForeignKey("labs.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    sort_order = Column(Integer, default=0, nullable=False)
+    required = Column(Boolean, default=True, nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint("set_id", "lab_id", name="uq_exercise_set_item"),
+    )
+
+
+class CourseRequirement(Base):
+    __tablename__ = "course_requirements"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    cohort_id = Column(
+        Integer,
+        ForeignKey("course_cohorts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    set_id = Column(
+        Integer,
+        ForeignKey("exercise_sets.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    rule_type = Column(String(20), nullable=False, default="complete_all")
+    threshold = Column(Integer, nullable=True)
+    due_at = Column(DateTime, nullable=True)
+    note = Column(String(500), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
 class ReportExport(Base):
     """Immutable manifest for a generated instructor report.
 

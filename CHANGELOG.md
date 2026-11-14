@@ -2,6 +2,20 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.5.0] - 2026-11-14
+
+### Course planning
+- Added cohorts, exercise sets, and requirements to a course, with migration
+  `0028_course_planning`.
+- Instructor course workspace has an **Exercise plan** tab: create cohorts and
+  pick members from the enrolled roster, build exercise sets from the course
+  labs, attach a completion rule (all / percent / count) with a due date and
+  note, and see coverage by cohort.
+- Coverage shows learners, met/missing counts, overdue state, and per-learner
+  completion for the instructor. Usernames respect privacy mode.
+- Requirements are planning and coverage in this phase; platform-wide exercise
+  access is unchanged. Enforcement of cohort-specific access is a later change.
+
 ## [5.4.0] - 2026-11-14
 
 ### Instructor
