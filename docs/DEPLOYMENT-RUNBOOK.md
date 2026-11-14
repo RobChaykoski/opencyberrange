@@ -170,8 +170,8 @@ the tabbed workspace, and a dedicated workbook origin. Before deploying:
 3. After migrations, set the `wiki_origin` platform setting to
    `https://<host>:8443`.
 4. Build with `PLATFORM_VERSION=5` and confirm `/api/version`.
-5. Apply migrations `0015`–`0024` and confirm `alembic current` reports
-   `0024_retention`.
+5. Apply migrations `0015`–`0025` and confirm `alembic current` reports
+   `0025_review_requests`.
 
 Production compose build and deploy:
 

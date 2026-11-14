@@ -109,12 +109,17 @@ The first Release 5 feature set is in the branch:
   missing. Each course also has a retention date and note, a preview of the
   records in scope, and append-only preview/completion evidence. The destructive
   purge remains a documented operator step after backup.
+- **Human review** — the exercise result panel explains deterministic flag
+  matching and lets a learner request review. Instructors see pending requests
+  in the course **Reviews** tab and approve or reject with a note; requests and
+  decisions are audited.
 - Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`,
   `0018_lti_roster`, `0019_lti_deep_link`, `0020_lti_dl_multiple`,
-  `0021_accommodations`, `0022_lab_pause`, `0023_minor_consent`, and
-  `0024_retention` create the platform, login-state, link, score, NRPS fields,
-  roster, picker-session, multi-selection, accommodation, pause, consent, and
-  retention tables/columns idempotently.
+  `0021_accommodations`, `0022_lab_pause`, `0023_minor_consent`,
+  `0024_retention`, and `0025_review_requests` create the platform, login-state,
+  link, score, NRPS fields, roster, picker-session, multi-selection,
+  accommodation, pause, consent, retention, and review tables/columns
+  idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 

@@ -204,6 +204,7 @@
             <button @click="courseManageTab = 'exercises'" :class="['sub-tab', { active: courseManageTab === 'exercises' }]">Exercises ({{ courseLabs.length }})</button>
             <button @click="switchToAssignments" :class="['sub-tab', { active: courseManageTab === 'assignments' }]">Assignments ({{ courseAssignments.length }})</button>
             <button @click="openReportsTab" :class="['sub-tab', { active: courseManageTab === 'reports' }]">Reports</button>
+          <button @click="courseManageTab = 'reviews'" :class="['sub-tab', { active: courseManageTab === 'reviews' }]">Reviews ({{ courseReviews.length }})</button>
             <button @click="courseManageTab = 'settings'" :class="['sub-tab', { active: courseManageTab === 'settings' }]">Settings</button>
           </div>
 
@@ -797,6 +798,45 @@
                 </div>
               </details>
             </template>
+          </div>
+
+          <!-- Reviews sub-tab -->
+          <div v-if="courseManageTab === 'reviews'" class="sub-tab-content">
+            <h4 class="settings-section-title">Human review requests</h4>
+            <p class="students-note">
+              These are learner requests about deterministic results. Approving or
+              rejecting records your note and closes the request.
+            </p>
+            <p v-if="reviewsLoading" class="loading-text">Loading review requests...</p>
+            <p v-else-if="reviewsError" class="form-error" role="alert">{{ reviewsError }}</p>
+            <div v-else-if="!courseReviews.length" class="empty-state">
+              No pending review requests.
+            </div>
+            <div v-else class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Learner</th>
+                    <th>Exercise</th>
+                    <th>Reason</th>
+                    <th>Requested</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="review in courseReviews" :key="review.id">
+                    <td class="cell-primary"><PrivacyText :value="review.username" fallback="Deleted learner" /></td>
+                    <td>{{ review.lab_name || `Exercise ${review.lab_id}` }}</td>
+                    <td class="cell-muted">{{ review.reason }}</td>
+                    <td class="cell-muted">{{ formatDateShort(review.requested_at) }}</td>
+                    <td class="cell-actions">
+                      <button class="btn btn--primary btn--xs" :disabled="reviewsBusy === review.id" @click="decideReview(review, 'approved')">Approve</button>
+                      <button class="btn btn--danger btn--xs" :disabled="reviewsBusy === review.id" @click="decideReview(review, 'rejected')">Reject</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <!-- Settings sub-tab -->
@@ -1526,6 +1566,10 @@ function hideFlag(labId) {
 
 // Assignment management state
 const courseAssignments = ref([])
+const courseReviews = ref([])
+const reviewsLoading = ref(false)
+const reviewsError = ref('')
+const reviewsBusy = ref(null)
 const dragIndex = ref(null)
 const dragOverIndex = ref(null)
 const showCreateAssignment = ref(false)
@@ -1991,6 +2035,44 @@ async function fetchCourseStudents() {
     console.error('Failed to fetch course students:', e)
   }
 }
+
+async function fetchCourseReviews() {
+  if (!managingCourse.value) return
+  reviewsLoading.value = true
+  reviewsError.value = ''
+  try {
+    const res = await axios.get(`/courses/${managingCourse.value.id}/reviews?status=pending`)
+    courseReviews.value = res.data.reviews || []
+  } catch (e) {
+    reviewsError.value = e.response?.data?.detail || 'Could not load review requests.'
+  } finally {
+    reviewsLoading.value = false
+  }
+}
+
+async function decideReview(review, status) {
+  const note = window.prompt(
+    status === 'approved'
+      ? 'Note for the learner (what did you review?):'
+      : 'Reason for rejecting the request:',
+    ''
+  )
+  if (note === null) return
+  reviewsBusy.value = review.id
+  try {
+    await axios.put(`/reviews/${review.id}/decision`, { status, note })
+    await fetchCourseReviews()
+    showAlert(status === 'approved' ? 'Review approved' : 'Review rejected')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Could not decide the review.', 'error')
+  } finally {
+    reviewsBusy.value = null
+  }
+}
+
+watch(courseManageTab, (tab) => {
+  if (tab === 'reviews') fetchCourseReviews()
+})
 
 async function fetchCourseLabs() {
   if (!managingCourse.value) return

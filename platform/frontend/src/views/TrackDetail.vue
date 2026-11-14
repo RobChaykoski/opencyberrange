@@ -827,6 +827,27 @@
               <p v-if="flagSuccess && flagStoppedSession" class="flag-message flag-message--success">
                 Your lab environment is shutting down and this panel will close in a moment.
               </p>
+              <div class="review-request">
+                <p class="review-request__note">
+                  Results are produced by deterministic flag matching. If you believe
+                  this result is wrong, ask an instructor to review it.
+                </p>
+                <div class="review-request__actions">
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="reviewBusy || reviewRequest?.status === 'pending'"
+                    @click="requestHumanReview"
+                  >
+                    {{ reviewRequest?.status === 'pending' ? 'Review pending' : 'Request human review' }}
+                  </button>
+                  <span v-if="reviewRequest && reviewRequest.status !== 'pending'" class="review-request__status">
+                    {{ reviewRequest.status }}
+                    <template v-if="reviewRequest.decision_note"> · {{ reviewRequest.decision_note }}</template>
+                  </span>
+                </div>
+                <p v-if="reviewMessage" class="review-request__message">{{ reviewMessage }}</p>
+              </div>
             </div>
 
             <!-- Hints -->
@@ -1048,6 +1069,9 @@ const flagMessage = ref('')
 const flagError = ref(false)
 const flagSuccess = ref(false)
 const submittingFlag = ref(false)
+const reviewRequest = ref(null)
+const reviewBusy = ref(false)
+const reviewMessage = ref('')
 
 // Quick exercise reaction (like/dislike) shown to learners while they work.
 const reaction = ref(null)
@@ -1478,6 +1502,7 @@ const openActiveLab = async (lab) => {
     activeLab.value = data
     workbookLoaded.value = workspaceTab.value === 'workbook'
     loadReaction(data.lab?.id || lab.id)
+    loadReviewRequest()
 
     // The framed workbook loads from the wiki origin; make sure the
     // wiki auth cookie is present before the iframe requests it.
@@ -1566,6 +1591,8 @@ const setReaction = async (value) => {
 const closeActiveLab = () => {
   activeLab.value = null
   workbookLoaded.value = false
+  reviewRequest.value = null
+  reviewMessage.value = ''
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
@@ -1933,6 +1960,46 @@ const handlePulseDone = () => {
     const target = pendingCourseRedirect
     pendingCourseRedirect = null
     router.push(target)
+  }
+}
+
+const loadReviewRequest = async () => {
+  if (!activeLab.value?.lab?.id) return
+  try {
+    const { data } = await axios.get('/reviews/mine')
+    const labId = activeLab.value.lab.id
+    reviewRequest.value = (data.reviews || []).find((r) => r.lab_id === labId) || null
+  } catch {
+    reviewRequest.value = null
+  }
+}
+
+const requestHumanReview = async () => {
+  if (!activeLab.value?.lab?.id || reviewBusy.value) return
+  const reason = window.prompt(
+    'What should the instructor review? Include what you expected and what happened.'
+  )
+  if (!reason || reason.trim().length < 5) return
+  reviewBusy.value = true
+  reviewMessage.value = ''
+  try {
+    const { data } = await axios.post('/reviews', {
+      lab_id: activeLab.value.lab.id,
+      course_id: activeCourseId.value || null,
+      source: 'flag',
+      reason: reason.trim(),
+    })
+    reviewRequest.value = data
+    reviewMessage.value = 'Review requested. Your instructor will see it.'
+  } catch (e) {
+    if (e.response?.status === 409) {
+      await loadReviewRequest()
+      reviewMessage.value = 'You already have a pending review for this exercise.'
+    } else {
+      reviewMessage.value = e.response?.data?.detail || 'Could not request a review.'
+    }
+  } finally {
+    reviewBusy.value = false
   }
 }
 
@@ -4072,6 +4139,38 @@ watch(timeRemaining, (val) => {
 
 .flag-message--success { color: var(--success); }
 .flag-message--error { color: var(--danger); }
+
+.review-request {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.review-request__note {
+  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.review-request__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.review-request__status {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  text-transform: capitalize;
+}
+
+.review-request__message {
+  margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
 
 /* Hints */
 .hint-count {

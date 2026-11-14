@@ -19,7 +19,7 @@ def _script() -> ScriptDirectory:
 def test_alembic_head_is_the_metadata_revision():
     script = _script()
     heads = script.get_heads()
-    assert heads == ["0024_retention"]
+    assert heads == ["0025_review_requests"]
 
 
 def test_revision_graph_is_linear():
@@ -48,3 +48,4 @@ def test_baseline_revision_exists():
     assert "0022_lab_pause.py" in names
     assert "0023_minor_consent.py" in names
     assert "0024_retention.py" in names
+    assert "0025_review_requests.py" in names

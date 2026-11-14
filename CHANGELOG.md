@@ -48,6 +48,13 @@ Release 4 `v4.0.1`.
   stays mounted afterwards, so switching tabs does not reload it or lose its
   scroll position.
 
+### Human review
+- The exercise result panel states that flag matching is deterministic and
+  offers a human-review request. Learners see pending/approved/rejected status
+  and the instructor's note.
+- Instructors review pending requests per course, approve or reject with a note,
+  and every request/decision is audited.
+
 ### Minor accounts
 - Minor enrollments can record the institution's parental/guardian consent
   reference and the staff member who recorded it. The roster flags missing
@@ -57,7 +64,7 @@ Release 4 `v4.0.1`.
   the documented backup-and-purge runbook step.
 
 ### Operations
-- Migrations `0015`–`0024`.
+- Migrations `0015`–`0025`.
 - Development `172.16.16.44` deployed from `release5`; live lab spawn,
   pause/resume, accommodation read-back, 10-lab sampling, and an authenticated
   page pass all verified.

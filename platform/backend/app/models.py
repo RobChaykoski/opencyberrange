@@ -1149,6 +1149,37 @@ class RetentionRun(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
+class ReviewRequest(Base):
+    """Learner request for a human decision on a deterministic result."""
+
+    __tablename__ = "review_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    lab_id = Column(
+        Integer, ForeignKey("labs.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    source = Column(String(30), nullable=False, default="flag")
+    reason = Column(String(1000), nullable=False)
+    status = Column(String(20), nullable=False, default="pending", server_default="pending")
+    rule_version = Column(String(50), nullable=False, default="deterministic-v1")
+    primary_factors = Column(Text, nullable=True)
+    decision_note = Column(String(1000), nullable=True)
+    decided_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    requested_at = Column(DateTime, server_default=func.now())
+    decided_at = Column(DateTime, nullable=True)
+
+
 class ReportExport(Base):
     """Immutable manifest for a generated instructor report.
 

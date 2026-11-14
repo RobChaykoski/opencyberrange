@@ -34,6 +34,7 @@ from app.routers import about as about_router
 from app.routers import public_config as public_config_router
 from app.routers import lti as lti_router
 from app.routers import accommodations as accommodations_router
+from app.routers import reviews as reviews_router
 from app.routers import reports as reports_router
 from app.routers import question_bank as question_bank_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
@@ -1017,6 +1018,7 @@ app.include_router(identity_router.router, prefix="/api/identity", tags=["Identi
 app.include_router(sso_router.router, prefix="/api/auth/sso", tags=["Single Sign-On"])
 app.include_router(lti_router.router, prefix="/api/lti", tags=["LTI 1.3"])
 app.include_router(accommodations_router.router, prefix="/api", tags=["Accommodations"])
+app.include_router(reviews_router.router, prefix="/api", tags=["Human review"])
 app.include_router(settings_router.router, prefix="/api/settings", tags=["Settings"])
 app.include_router(setup.router, prefix="/api/setup", tags=["Setup"])
 app.include_router(curriculum_admin.router, prefix="/api/admin/curriculum", tags=["Curriculum Admin"])

@@ -36,13 +36,18 @@ comparisons against authored answer keys.
 - Admin and activity audit rows record the actor, action, target, time, and IP.
 - The flag itself is stored as a hash, not plaintext.
 
-## Release 5 work
+## Release 5 status
 
-- Per-submission notice that automated logic produced the result.
-- Primary factors shown to the learner.
-- A "request human review" workflow with status and outcome.
-- An append-only score ledger with rule version, reviewer, and override reason.
-- LTI grade passback gated on instructor review.
+- The exercise flag panel states that the result is produced by deterministic
+  flag matching and offers **Request human review**.
+- A review request stores the learner's reason, source, attempts, completion
+  state, and rule version. The learner sees pending/approved/rejected status and
+  the instructor's note.
+- Instructors see pending requests in **My Courses -> Reviews** and approve or
+  reject with a note. Decisions are audited.
+- The LTI AGS ledger records rule/score/reviewer data and is gated on instructor
+  review before a score is posted.
+- Remaining: a deeper per-question rubric breakdown for non-flag assessments.
 
 ## Bias and validation
 

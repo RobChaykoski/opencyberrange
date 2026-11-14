@@ -16,11 +16,13 @@ Development `172.16.16.44` is running Release 5 (backend `893fbcfe`, frontend
 - **Minor accounts** — enrollment consent reference, consent-needed flags,
   restricted leaderboards/celebrations/analytics, and a per-course retention
   policy with preview counts and append-only completion evidence.
+- **Human review** — deterministic-result notice, learner review requests,
+  instructor approve/reject decisions with notes, and audited status.
 - **Exercise workspace** — one tabbed shell for every lab (Desktop / Exercise /
   Workbook), URL-persisted lab and tab, mobile layout, one RangeBox toolbar.
 - **Workbook origin** — dedicated HTTPS origin on 8443, its own storage/search,
   CSP frame allowance, lazy loading.
-- Migrations `0015`–`0024`, all idempotent and applied on dev.
+- Migrations `0015`–`0025`, all idempotent and applied on dev.
 
 ## Deliberately deferred
 

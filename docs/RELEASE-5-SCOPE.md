@@ -75,6 +75,10 @@ assessment type, and the values survive export/import.
 - A bias/validation note limited to what the product actually does: deterministic
   flag matching and equal-access testing. No writing-style model exists.
 
+Status: the learner notice, primary factors, request/decision workflow, and
+audited review evidence are implemented on `release5`; deeper rubric breakdowns
+for non-flag assessments remain.
+
 Exit criteria: a student can see why a result was produced and obtain a human
 decision; the override is auditable.
 

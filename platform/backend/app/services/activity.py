@@ -37,6 +37,8 @@ class EventTypes:
     RETENTION_POLICY_SET = "retention_policy_set"
     RETENTION_PREVIEW = "retention_preview"
     RETENTION_COMPLETED = "retention_completed"
+    REVIEW_REQUESTED = "review_requested"
+    REVIEW_DECIDED = "review_decided"
 
 
 # Human-readable labels for the feed
@@ -67,6 +69,8 @@ EVENT_LABELS = {
     EventTypes.RETENTION_POLICY_SET: "Retention Policy Set",
     EventTypes.RETENTION_PREVIEW: "Retention Preview Run",
     EventTypes.RETENTION_COMPLETED: "Retention Run Completed",
+    EventTypes.REVIEW_REQUESTED: "Human Review Requested",
+    EventTypes.REVIEW_DECIDED: "Human Review Decided",
 }
 
 
