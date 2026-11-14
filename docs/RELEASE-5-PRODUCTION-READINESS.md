@@ -88,6 +88,9 @@ security patch, IdP settings feature, and operations patch.
   `platform-env-pre-5.14.0-20261114-230150`.
 - Rollback images: `ocr-backend:rollback-5.13.1-20261114-230150` and
   `ocr-frontend:rollback-5.13.1-20261114-230150`.
+- Tag `v5.14.0` is signed with the replacement release key
+  `68A817762C831475F00DB54E775050A4C4921814` at commit `1c5a0d9e`.
+  The previous key remains published for verifying older tags.
 - Verified: backend and frontend healthy, `/api/version` = 5, database up,
   Alembic `0030_cohort_strict`, 179 active labs, 12 tracks, the SPA returned
   200, the workbook origin returned the 302 session gate, and the certificate

@@ -77,6 +77,19 @@ Release 3 rotates the release key again:
 - Signature: `supply-chain.lock.json.asc`
 - Private key: held locally by the release owner, passphrase-protected
 
+Release 5.14.0 rotates the release key again:
+
+- Key: `SWOCTS Cyber Range Release <release@swocts.com>`
+- Fingerprint: `68A8 1776 2C83 1475 F00D B54E 7750 50A4 C492 1814`
+- Public key: [`release-signing-key.asc`](release-signing-key.asc)
+- Previous public key: [`release-signing-key-previous.asc`](release-signing-key-previous.asc)
+- Signature: `supply-chain.lock.json.asc` (re-signed with the new key)
+- Private key: held locally by the release owner
+
+The previous key (`8E81 B5F3 FDC5 F5A6 2B0C 2587 91FD 6FBC 4ADA FDA2`)
+remains published for verifying tags up to `v5.13.1`. Its passphrase was
+unavailable, so it was retired without a revocation certificate.
+
 Releases 2.6.0 and 2.7.0 used the previous key. The `v2.7.0` Git tag is
 annotated but **unsigned**. Release 3 uses the new key and the `v3` tag is
 signed. The lock signature is independent of the tag signature.

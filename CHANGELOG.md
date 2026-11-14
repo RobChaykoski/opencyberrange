@@ -19,6 +19,11 @@ All notable changes to OpenCyberRange are recorded here.
 - Reloading a certificate route now replaces the previous recipient, level, and
   certificate ID instead of leaving stale data on screen.
 
+### Security
+- Rotated the release signing key. `v5.14.0` is signed with
+  `68A817762C831475F00DB54E775050A4C4921814`; the previous key remains
+  published for verifying older tags.
+
 ### Documentation
 - Workbook and documentation links now open synchronously from the click, so
   browsers do not block them as popups after the auth-cookie request.
