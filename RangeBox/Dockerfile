@@ -1,5 +1,5 @@
 # OpenCyberRange RangeBox — Browser-Based Kali Attack Desktop
-# Architecture: Xvfb + XFCE4 + x11vnc + websockify/noVNC
+# Architecture: KasmVNC (Xvnc + built-in web server) + XFCE4
 #
 # Build:
 #   docker build -t opencyberrange/rangebox:lite --target lite RangeBox/
@@ -17,20 +17,28 @@ ENV DEBIAN_FRONTEND=noninteractive \
     MOZ_DISABLE_CONTENT_SANDBOX=1
 
 # ── Layer 1: Desktop environment + VNC stack ────────────────────────────
+ARG KASMVNC_VERSION=1.5.2
+ARG KASMVNC_SHA256=f57bba80fe7f0ca95e598c395a6a5292d16e04be1e09949410415492ead62fba
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    xvfb \
     x11-utils \
     xfce4 \
     xfce4-terminal \
     dbus-x11 \
-    x11vnc \
-    novnc \
-    websockify \
+    ssl-cert \
     fonts-liberation \
     fonts-dejavu-core \
     supervisor \
     sudo \
     locales \
+    curl \
+    ca-certificates \
+    && curl -fsSL --retry 3 -o /tmp/kasmvnc.deb \
+        "https://github.com/kasmtech/KasmVNC/releases/download/v${KASMVNC_VERSION}/kasmvncserver_kali_kali-rolling_${KASMVNC_VERSION}_amd64.deb" \
+    && echo "${KASMVNC_SHA256}  /tmp/kasmvnc.deb" | sha256sum -c - \
+    && apt-get install -y --no-install-recommends /tmp/kasmvnc.deb \
+    && make-ssl-cert generate-default-snakeoil --force-overwrite \
+    && rm -f /tmp/kasmvnc.deb \
     && sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -124,7 +132,7 @@ RUN mkdir -p /usr/share/seclists/Discovery/Web-Content \
 # ── Layer 5: System configuration ─────────────────────────────────────
 
 # Create non-root user with passwordless sudo and passwordless su to root
-RUN useradd -m -s /bin/bash -G sudo kali && \
+RUN useradd -m -s /bin/bash -G sudo,ssl-cert kali && \
     echo "kali ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "kali:kali" | chpasswd && \
     passwd -d root

@@ -24,6 +24,7 @@
       </div>
       <div class="rangebox__toolbar-right">
         <select
+          v-if="transport !== 'kasm'"
           v-model="qualityPreset"
           class="rangebox__select"
           title="Stream quality"
@@ -34,7 +35,15 @@
           </option>
         </select>
         <button
-          v-if="connectionState === 'connected'"
+          v-if="transport === 'kasm'"
+          @click="connect"
+          class="rangebox__btn"
+          title="Reload the KasmVNC desktop"
+        >
+          Reload desktop
+        </button>
+        <button
+          v-if="transport !== 'kasm' && connectionState === 'connected'"
           @click="sendCtrlAltDel"
           class="rangebox__btn"
           title="Send Ctrl+Alt+Del to the desktop"
@@ -50,6 +59,7 @@
           Reconnect
         </button>
         <button
+          v-if="transport !== 'kasm'"
           @click="toggleClipboard"
           class="rangebox__btn"
           :class="{ 'rangebox__btn--active': showClipboard }"
@@ -75,8 +85,8 @@
       </div>
     </div>
 
-    <!-- Clipboard panel -->
-    <div v-if="showClipboard && !isCollapsed" class="rangebox__clipboard">
+    <!-- Clipboard panel (noVNC transport; KasmVNC has its own control bar) -->
+    <div v-if="transport !== 'kasm' && showClipboard && !isCollapsed" class="rangebox__clipboard">
       <textarea
         v-model="clipboardText"
         placeholder="Paste text here, then press Send to transfer to RangeBox..."
@@ -112,7 +122,17 @@
 
     <!-- VNC viewport -->
     <div v-show="!isCollapsed" ref="vncContainer" class="rangebox__viewport">
-      <div v-if="connectionState === 'connecting'" class="rangebox__connecting">
+      <iframe
+        v-if="transport === 'kasm' && kasmUrl"
+        :src="kasmUrl"
+        class="rangebox__kasm"
+        title="RangeBox desktop"
+        allow="clipboard-read; clipboard-write; fullscreen"
+        allowfullscreen
+        referrerpolicy="no-referrer"
+        @load="onKasmLoad"
+      ></iframe>
+      <div v-if="transport !== 'kasm' && connectionState === 'connecting'" class="rangebox__connecting">
         <div class="rangebox__spinner"></div>
         <p>Connecting to RangeBox...</p>
         <p class="rangebox__connecting-hint">Starting {{ imageDisplayName || 'RangeBox' }} desktop environment</p>
@@ -176,7 +196,12 @@
         </span>
       </form>
       <p v-if="!labCompleted" class="rangebox__flag-hint">
-        Copy the flag inside the desktop; it fills here automatically. Or paste with Ctrl+V.
+        <template v-if="transport === 'kasm'">
+          Copy the flag inside the desktop, then click Paste (or press Ctrl+V) and submit.
+        </template>
+        <template v-else>
+          Copy the flag inside the desktop; it fills here automatically. Or paste with Ctrl+V.
+        </template>
       </p>
       <p v-else class="rangebox__flag-done">You can close this window or return to the exercise.</p>
     </div>
@@ -221,6 +246,10 @@ const showClipboard = ref(false)
 const clipboardText = ref('')
 const clipboardNotice = ref('')
 const qualityPreset = ref(localStorage.getItem('ocr.rangebox.quality') || 'balanced')
+// noVNC is the fallback; the backend probes the running image and reports
+// "kasm" when the container serves KasmVNC's own browser client.
+const transport = ref('novnc')
+const kasmUrl = ref('')
 
 const FILE_TRANSFER_NOTICE = 'Files cannot leave or enter the RangeBox. Copy text only.'
 
@@ -387,6 +416,7 @@ const startTimer = () => {
       if (timeRemaining.value <= 0) {
         // Session expired — disconnect
         connectionState.value = 'disconnected'
+        kasmUrl.value = ''
         if (rfb) {
           try { rfb.disconnect() } catch {}
           rfb = null
@@ -421,30 +451,80 @@ const impersonationPoll = usePoll(fetchImpersonationStatus, 10000, { auto: false
 // RFB is imported lazily inside connect() so noVNC stays out of the shared
 // bundle and only loads when a VNC connection is actually opened.
 
-const getWsUrl = async () => {
-  const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-  let path
+const rangeboxProxyPath = () => {
   if (isAdminViewer.value) {
     // Admin viewing a student's RangeBox
-    path = `admin/${props.adminTargetUserId}/${props.sessionId}/vnc`
-    } else if (props.standalone) {
-    path = 'standalone/vnc'
-  } else {
-    path = `${props.sessionId}/vnc`
+    return `admin/${props.adminTargetUserId}/${props.sessionId}/vnc`
   }
+  if (props.standalone) return 'standalone/vnc'
+  return `${props.sessionId}/vnc`
+}
+
+const transportQuery = () => {
+  if (isAdminViewer.value) {
+    return {
+      admin_target_user_id: props.adminTargetUserId,
+      session_id: props.sessionId,
+    }
+  }
+  if (props.standalone) return { standalone: true }
+  return { session_id: props.sessionId }
+}
+
+const getWsTicket = async () => {
   // Exchange JWT for a short-lived, single-use ticket to avoid leaking
   // the long-lived JWT into WebSocket URLs, logs, and browser history.
-  let credential
   try {
     const { data } = await axios.post('/rangebox/ws-ticket')
-    credential = data.ticket
+    return data.ticket
   } catch {
     // Do NOT fall back to raw JWT — it would leak into URLs, logs, and browser history.
     // Force the user to retry instead.
     console.warn('Failed to obtain WebSocket ticket — connection will not be established.')
     return null
   }
-  return `${proto}//${window.location.host}/api/rangebox/${path}?token=${encodeURIComponent(credential)}`
+}
+
+const getWsUrl = async () => {
+  const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const credential = await getWsTicket()
+  if (!credential) return null
+  return `${proto}//${window.location.host}/api/rangebox/${rangeboxProxyPath()}?token=${encodeURIComponent(credential)}`
+}
+
+const startSessionCountdown = () => {
+  if (!props.showTimer) return
+  fetchTimeRemaining().then(() => {
+    if (timeRemaining.value !== null) startTimer()
+  })
+}
+
+const onKasmLoad = () => {
+  if (unmounted) return
+  connectionState.value = 'connected'
+  connectionMessage.value = ''
+  reconnectAttempts = 0
+  startSessionCountdown()
+}
+
+const connectKasm = async () => {
+  const ticket = await getWsTicket()
+  if (!ticket) {
+    connectionState.value = 'disconnected'
+    return
+  }
+  // KasmVNC's own client speaks its server's protocol; the bundled noVNC
+  // client can render the framebuffer but cannot send input or resize.
+  const wsPath = `api/rangebox/${rangeboxProxyPath()}?token=${encodeURIComponent(ticket)}`
+  const params = new URLSearchParams({
+    autoconnect: '1',
+    show_control_bar: '1',
+    resize: 'remote',
+    reconnect: '0',
+    path: wsPath,
+  })
+  if (isAdminViewer.value) params.set('view_only', '1')
+  kasmUrl.value = `/kasm/vnc.html?${params.toString()}`
 }
 
 const connect = async () => {
@@ -452,11 +532,43 @@ const connect = async () => {
     try { rfb.disconnect() } catch {}
     rfb = null
   }
+  kasmUrl.value = ''
 
   connectionState.value = 'connecting'
   connectionMessage.value = ''
 
   await nextTick()
+
+  // Older images use noVNC; KasmVNC images need KasmVNC's own client.
+  let detected
+  try {
+    const { data } = await axios.get('/rangebox/transport', {
+      params: transportQuery(),
+    })
+    detected = data.transport
+  } catch {
+    detected = null
+  }  if (detected !== 'kasm' && detected !== 'novnc') {
+    // The container exists but its web server is not ready yet. Do not guess
+    // noVNC against a KasmVNC image: it renders but cannot send input.
+    connectionState.value = 'connecting'
+    connectionMessage.value = 'Waiting for the desktop to start...'
+    if (!unmounted && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+      reconnectAttempts++
+      const delay = Math.min(2000 * reconnectAttempts, 10000)
+      reconnectTimer = setTimeout(connect, delay)
+    } else {
+      connectionState.value = 'disconnected'
+      connectionMessage.value = 'The desktop did not start. Try reconnecting.'
+    }
+    return
+  }
+  transport.value = detected
+  if (transport.value === 'kasm') {
+    await connectKasm()
+    return
+  }
+
   const target = vncContainer.value
   if (!target) return
 
@@ -501,11 +613,7 @@ const connect = async () => {
         }
       }, 200)
       // Fetch session time remaining and start countdown
-      if (props.showTimer) {
-        fetchTimeRemaining().then(() => {
-          if (timeRemaining.value !== null) startTimer()
-        })
-      }
+      startSessionCountdown()
     })
 
     rfb.addEventListener('securityfailure', (e) => {
@@ -735,6 +843,7 @@ onUnmounted(() => {
   if (reconnectTimer) clearTimeout(reconnectTimer)
   if (initialConnectTimer) clearTimeout(initialConnectTimer)
   if (scaleTimer) clearTimeout(scaleTimer)
+  kasmUrl.value = ''
   if (rfb) {
     try { rfb.disconnect() } catch {}
     rfb = null
@@ -965,6 +1074,16 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   overflow: hidden;
 }
 
+.rangebox__kasm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+  z-index: 1;
+}
+
 .rangebox--fullscreen .rangebox__viewport {
   min-height: 0;
 }
@@ -1098,6 +1217,7 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;

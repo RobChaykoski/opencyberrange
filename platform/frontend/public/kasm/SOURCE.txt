@@ -1,0 +1,17 @@
+KasmVNC 1.5.2 browser client
+Copyright (C) Kasm Technologies and contributors
+Licensed under the GNU General Public License version 2 (GPL-2.0).
+
+This directory is an unmodified copy of /usr/share/kasmvnc/www from the
+upstream release package. Source code:
+
+  https://github.com/kasmtech/KasmVNC/tree/v1.5.2
+
+Package used by the RangeBox image:
+
+  kasmvncserver_kali_kali-rolling_1.5.2_amd64.deb
+  SHA-256 f57bba80fe7f0ca95e598c395a6a5292d16e04be1e09949410415492ead62fba
+
+The full GPL-2.0 text ships in THIRD_PARTY_LICENSES/GPL-2.0.txt at the
+repository root. See docs/KASMVNC.md for the platform integration and the
+custom Content-Security-Policy that applies to this path.

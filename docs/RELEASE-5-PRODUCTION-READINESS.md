@@ -26,7 +26,8 @@ security patch, IdP settings feature, and operations patch.
 - **RangeBox** — Kali base digest and SecLists commit pinned; only the
   wordlists the exercises reference are baked in, at their documented paths;
   the root-inside-caged-container model and Firefox sandbox rationale are
-  documented in `RangeBox/SECURITY-MODEL.md`. noVNC is the selected path;
+  documented in `RangeBox/SECURITY-MODEL.md`. noVNC was the 5.0 path; the Kali
+  image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
 - Migrations `0015`–`0025`, all idempotent and applied on dev and production.
 
@@ -79,10 +80,11 @@ security patch, IdP settings feature, and operations patch.
 
 ## Deliberately deferred
 
-- **KasmVNC** — evaluated as a transport replacement, not selected for 5.0.
-  noVNC is stable on dev; the shell and workbook consistency problems were not
-  caused by the VNC transport. Revisit after 5.0 with latency, resize, and
-  reconnect measurements.
+- **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali
+  RangeBox in the 5.11 line. KasmVNC's own client is required for input and
+  resize; the platform serves a pinned copy and proxies only the WebSocket. See
+  [`KASMVNC.md`](KASMVNC.md). UbuntuBox and RemnuxBox remain on noVNC until
+  their images are rebuilt.
 - **Distroless/Chainguard frontend** — nginx:alpine remains the serving base.
   A distroless migration would remove the shell entrypoint that selects the
   HTTP/HTTPS config and risks the production serving path. Defer to a dedicated

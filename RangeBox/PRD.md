@@ -4,6 +4,12 @@
 **Date:** 2026-03-01
 **Status:** Implemented
 
+> **Transport update:** the Kali image now uses KasmVNC, and the platform serves
+> a pinned KasmVNC client while proxying only the WebSocket. See
+> [`../docs/KASMVNC.md`](../docs/KASMVNC.md). Sections that describe
+> Xvfb/x11vnc/websockify/noVNC are the original design and still describe the
+> UbuntuBox and RemnuxBox fallback path.
+
 ---
 
 ## 1. Executive Summary
@@ -169,11 +175,10 @@ targets. Zero local setup.
 
 | Component | Choice | Rationale |
 |-----------|--------|-----------|
-| **VNC Server** | x11vnc | Lightweight, attaches to existing X display (vs. TigerVNC which creates its own) |
-| **Display Server** | Xvfb | Virtual framebuffer; no physical display needed in container |
+| **Desktop Transport** | KasmVNC | Web-native VNC server; its own client is required for input and resize |
+| **Display Server** | Xvnc (KasmVNC) | The X server and web socket are one process |
 | **Desktop Environment** | XFCE4 | Lightest full DE (~200MB RAM). Familiar to Kali users. |
-| **WebSocket Bridge** | websockify | Standard VNC-to-WebSocket proxy. Used by noVNC, OpenStack, Proxmox. |
-| **Browser Client** | noVNC | De facto standard HTML5 VNC client. MIT license. Used by Proxmox, OpenStack. |
+| **Browser Client** | KasmVNC client | Served by the platform from a pinned copy; noVNC remains for older images |
 | **Base Image** | kalilinux/kali-rolling | Official Kali Docker image. Students expect Kali tooling. |
 | **Container IP** | .254 on lab subnet | Convention: last usable IP, avoids conflict with lab targets (.1-.250) |
 

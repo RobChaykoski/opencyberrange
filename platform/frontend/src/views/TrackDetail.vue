@@ -512,7 +512,7 @@
             <button type="button" @click="scrollToLabSection('lab-hints')">Hints</button>
           </nav>
           <nav
-            v-if="workspaceMode"
+            v-if="workspaceMode && !wideWorkspace"
             class="workspace-tabs"
             role="tablist"
             aria-label="Exercise workspace"
@@ -557,13 +557,15 @@
             class="active-lab-grid"
             :class="{
               'active-lab-grid--workspace': workspaceMode,
-              'active-lab-grid--tabs': workspaceMode,
+              'active-lab-grid--tabs': workspaceMode && !wideWorkspace,
+              'active-lab-grid--workbook-expanded': workbookExpanded,
+              'active-lab-grid--no-workbook': !activeLab.lab.workbook,
             }"
           >
             <!-- RangeBox workspace frame (desktop only) -->
             <section
               v-if="isRangeBoxActive && !isMobile"
-              v-show="workspaceTab === 'desktop'"
+              v-show="wideWorkspace || workspaceTab === 'desktop'"
               id="workspace-panel-desktop"
               role="tabpanel"
               aria-labelledby="workspace-tab-desktop"
@@ -581,7 +583,7 @@
 
             <!-- Desktop tab when RangeBox is unavailable, popped out, or on mobile -->
             <section
-              v-if="workspaceTab === 'desktop' && (!isRangeBoxActive || isMobile)"
+              v-if="wideWorkspace ? !isRangeBoxActive : (workspaceTab === 'desktop' && (!isRangeBoxActive || isMobile))"
               id="workspace-panel-desktop"
               role="tabpanel"
               aria-labelledby="workspace-tab-desktop"
@@ -631,13 +633,26 @@
             </section>
 
             <div
-              v-show="!workspaceMode || workspaceTab === 'exercise'"
+              v-show="wideWorkspace || !workspaceMode || workspaceTab === 'exercise'"
               id="workspace-panel-exercise"
               role="tabpanel"
               aria-labelledby="workspace-tab-exercise"
               class="lab-details"
               :class="{ 'lab-details--workspace': workspaceMode }"
             >
+            <!-- Beginner labs are workbook-led: keep the walkthrough in view. -->
+            <div v-if="workspaceMode && isBeginnerLab" class="beginner-workbook-callout">
+              <div>
+                <strong>New to this exercise?</strong>
+                <p>
+                  Follow the workbook walkthrough below. On a wide screen it stays
+                  open beside the desktop so you can work through the steps.
+                </p>
+              </div>
+              <button type="button" class="btn btn--primary btn--sm" @click="focusWorkbook">
+                Open workbook walkthrough
+              </button>
+            </div>
             <!-- Scenario (spans full width of grid) -->
             <div v-if="activeLab.lab.scenario" id="lab-briefing" class="panel-section panel-section--full panel-section--scenario">
               <h3 class="section-title">
@@ -789,39 +804,64 @@
             </div>
 
             <!-- Flag Submission (hidden for in-app triage exercises, which are scored, not flag-based) -->
-            <div class="panel-section panel-section--full" id="lab-flag">
-              <h3 class="section-title">
-                <FlagIcon />
-                Submit Flag
-              </h3>
+            <div class="panel-section panel-section--full flag-panel" id="lab-flag">
+              <div class="flag-panel__head">
+                <h3 class="section-title">
+                  <FlagIcon />
+                  Submit the flag
+                </h3>
+                <div class="flag-panel__meta">
+                  <span id="lab-flag-help">Flag <code>OCR{...}</code> · paste from the desktop, then press Enter.</span>
+                  <button
+                    type="button"
+                    class="flag-panel__hint-link"
+                    @click="scrollToLabSection('lab-hints')"
+                  >
+                    Need a hint?
+                  </button>
+                </div>
+              </div>
               <div class="flag-form">
                 <input
                   v-model="flagInput"
                   type="text"
                   id="lab-flag-input"
                   aria-label="Flag"
+                  aria-describedby="lab-flag-help"
                   placeholder="OCR{your_flag_here}"
                   class="flag-input"
                   autocomplete="off"
+                  autocapitalize="off"
+                  autocorrect="off"
                   spellcheck="false"
                   :class="{ 'flag-input--error': flagError, 'flag-input--success': flagSuccess }"
+                  @paste="onFlagPaste"
                   @keyup.enter="submitFlag"
                 />
                 <button
+                  type="button"
+                  class="btn btn--secondary flag-paste"
+                  :disabled="submittingFlag"
+                  @click="pasteFlagFromClipboard"
+                >
+                  Paste
+                </button>
+                <button
                   @click="submitFlag"
-                  class="btn btn--primary"
-                  :disabled="submittingFlag || !flagInput"
+                  class="btn btn--primary flag-submit"
+                  :disabled="submittingFlag || !flagInput.trim()"
                 >
                   {{ submittingFlag ? 'Checking...' : 'Submit' }}
                 </button>
               </div>
+              <p v-if="flagPasteNote" class="flag-paste-note" role="status">{{ flagPasteNote }}</p>
               <p class="flag-guidance">
                 Format <code>OCR{example_text}</code>, case sensitive. Submit the whole value.
               </p>
               <p v-if="activeLab.session" class="flag-autostop-warning">
                 A correct flag stops the lab a few seconds later. Save your notes first.
               </p>
-              <p v-if="flagMessage" :class="['flag-message', flagSuccess ? 'flag-message--success' : 'flag-message--error']">
+              <p v-if="flagMessage" :class="['flag-message', flagSuccess ? 'flag-message--success' : 'flag-message--error']" role="status">
                 {{ flagMessage }}
               </p>
               <p v-if="flagSuccess && flagStoppedSession" class="flag-message flag-message--success">
@@ -877,7 +917,8 @@
 
             <!-- Workbook workspace frame -->
             <section
-              v-show="workspaceTab === 'workbook'"
+              v-if="activeLab.lab.workbook"
+              v-show="wideWorkspace || workspaceTab === 'workbook'"
               id="workspace-panel-workbook"
               role="tabpanel"
               aria-labelledby="workspace-tab-workbook"
@@ -893,6 +934,15 @@
                   Workbook
                 </h3>
                 <div class="workspace-frame__actions">
+                  <button
+                    v-if="wideWorkspace"
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    @click="workbookExpanded = !workbookExpanded"
+                    :aria-pressed="workbookExpanded"
+                  >
+                    {{ workbookExpanded ? 'Shrink workbook' : 'Expand workbook' }}
+                  </button>
                   <button
                     v-if="activeWorkbookUrl"
                     type="button"
@@ -1068,6 +1118,7 @@ const flagInput = ref('')
 const flagMessage = ref('')
 const flagError = ref(false)
 const flagSuccess = ref(false)
+const flagPasteNote = ref('')
 const submittingFlag = ref(false)
 const reviewRequest = ref(null)
 const reviewBusy = ref(false)
@@ -1279,12 +1330,62 @@ const isRangeBoxActive = computed(() => {
 // the briefing/flag, and the workbook. The shell is the same for every lab;
 // the Desktop tab shows the VPN or start state when RangeBox is unavailable.
 const workspaceMode = computed(() => Boolean(activeLab.value))
+const isBeginnerLab = computed(
+  () => activeLab.value?.lab?.difficulty === 'beginner'
+)
+// The single-pane workspace needs room for the desktop, the briefing/flag, and
+// the workbook at the same time. Narrower desktop widths keep the tab shell so
+// no pane collapses to an unusable sliver.
+const wideWorkspaceQuery = typeof window !== 'undefined'
+  ? window.matchMedia('(min-width: 1200px)')
+  : null
+const wideWorkspace = ref(wideWorkspaceQuery ? wideWorkspaceQuery.matches : false)
+const updateWideWorkspace = (event) => {
+  wideWorkspace.value = event.matches
+}
 const WORKSPACE_TABS = ['desktop', 'exercise', 'workbook']
 const requestedTab = String(route.query.tab || '')
 const workspaceTab = ref(
   WORKSPACE_TABS.includes(requestedTab) ? requestedTab : 'desktop'
 )
-const workbookLoaded = ref(workspaceTab.value === 'workbook')
+const workbookLoaded = ref(wideWorkspace.value || workspaceTab.value === 'workbook')
+const workbookExpanded = ref(false)
+
+onMounted(() => {
+  if (!wideWorkspaceQuery) return
+  wideWorkspaceQuery.addEventListener('change', updateWideWorkspace)
+  if (wideWorkspace.value) workbookLoaded.value = true
+})
+onUnmounted(() => {
+  wideWorkspaceQuery?.removeEventListener('change', updateWideWorkspace)
+})
+watch(wideWorkspace, (wide) => {
+  if (wide) workbookLoaded.value = true
+})
+// Beginner exercises are workbook-led. Open the walkthrough taller so the
+// first steps are readable beside the desktop without hunting for a tab.
+watch(
+  [activeLab, wideWorkspace],
+  ([lab, wide]) => {
+    if (wide) {
+      workbookExpanded.value = lab?.lab?.difficulty === 'beginner'
+    }
+  },
+  { immediate: true }
+)
+
+const focusWorkbook = () => {
+  if (!wideWorkspace.value) {
+    workspaceTab.value = 'workbook'
+    return
+  }
+  workbookExpanded.value = true
+  nextTick(() => {
+    document
+      .getElementById('workspace-panel-workbook')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  })
+}
 const focusWorkspaceTab = (offset) => {
   const index = WORKSPACE_TABS.indexOf(workspaceTab.value)
   const next = WORKSPACE_TABS[(index + offset + WORKSPACE_TABS.length) % WORKSPACE_TABS.length]
@@ -2003,8 +2104,44 @@ const requestHumanReview = async () => {
   }
 }
 
+// Learners often copy more than the flag (prompt, newline, Markdown). Keep the
+// OCR{...} token when one is present, otherwise trim the surrounding text.
+const normalizeFlag = (value) => {
+  const text = String(value || '')
+  const match = text.match(/OCR\{[^}\r\n]+\}/i)
+  return match ? match[0] : text.trim()
+}
+
+const pasteFlagFromClipboard = async () => {
+  flagPasteNote.value = ''
+  try {
+    const text = await navigator.clipboard.readText()
+    if (!text.trim()) {
+      flagPasteNote.value = 'Your clipboard is empty.'
+      return
+    }
+    flagInput.value = normalizeFlag(text)
+    nextTick(() => document.getElementById('lab-flag-input')?.focus())
+  } catch {
+    flagPasteNote.value =
+      'Clipboard access is blocked. Click the field and press Ctrl+V.'
+  }
+}
+
+const onFlagPaste = (event) => {
+  const text = event.clipboardData?.getData('text') || ''
+  if (!text) return
+  const cleaned = normalizeFlag(text)
+  if (cleaned !== text) {
+    event.preventDefault()
+    flagInput.value = cleaned
+  }
+}
+
 const submitFlag = async () => {
-  if (!flagInput.value || submittingFlag.value) return
+  const candidate = normalizeFlag(flagInput.value)
+  if (!candidate || submittingFlag.value) return
+  flagInput.value = candidate
 
   submittingFlag.value = true
   flagMessage.value = ''
@@ -2018,7 +2155,7 @@ const submitFlag = async () => {
     const flagUrl = activeCourseId.value
       ? `/exercises/labs/${activeLab.value.lab.id}/submit-flag?course_id=${activeCourseId.value}`
       : `/exercises/labs/${activeLab.value.lab.id}/submit-flag`
-    const { data } = await axios.post(flagUrl, { flag: flagInput.value })
+    const { data } = await axios.post(flagUrl, { flag: candidate })
 
     flagMessage.value = data.message
 
@@ -2043,10 +2180,16 @@ const submitFlag = async () => {
       }
     } else {
       flagError.value = true
+      nextTick(() => {
+        const input = document.getElementById('lab-flag-input')
+        input?.focus()
+        input?.select()
+      })
     }
   } catch (error) {
     flagMessage.value = error.response?.data?.detail || 'Submission failed'
     flagError.value = true
+    nextTick(() => document.getElementById('lab-flag-input')?.focus())
   } finally {
     submittingFlag.value = false
   }
@@ -3464,6 +3607,7 @@ watch(timeRemaining, (val) => {
 }
 
 .panel-section--desktop-fallback {
+  grid-area: rangebox;
   padding: 1.5rem;
   border: 1px solid var(--border-color);
   overflow-y: auto;
@@ -3510,7 +3654,12 @@ watch(timeRemaining, (val) => {
 }
 
 .active-lab-grid--workspace.active-lab-grid--workbook-expanded {
-  grid-template-rows: minmax(0, 1fr) minmax(340px, 58vh);
+  grid-template-rows: minmax(0, 1fr) minmax(320px, 46vh);
+}
+
+.active-lab-grid--workspace.active-lab-grid--no-workbook {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "rangebox details";
 }
 
 .lab-details {
@@ -3540,6 +3689,7 @@ watch(timeRemaining, (val) => {
   z-index: 3;
   padding: 0.75rem 0.9rem;
   border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
   box-shadow: 0 -8px 18px rgba(0, 0, 0, 0.18);
 }
 
@@ -3556,6 +3706,14 @@ watch(timeRemaining, (val) => {
   padding: 0.45rem 0.6rem;
   font-size: 0.72rem;
   line-height: 1.35;
+}
+
+.lab-details--workspace #lab-flag .review-request {
+  margin-top: 0.5rem;
+}
+
+.lab-details--workspace #lab-flag .review-request__note {
+  display: none;
 }
 
 .panel-section--rangebox,
@@ -4111,10 +4269,58 @@ watch(timeRemaining, (val) => {
 .flag-form {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.flag-panel {
+  border-left: 3px solid var(--accent);
+}
+
+.flag-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.flag-panel__head .section-title {
+  margin-bottom: 0;
+}
+
+.flag-panel__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.flag-panel__meta code {
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: monospace;
+}
+
+.flag-panel__hint-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.flag-panel__hint-link:hover {
+  text-decoration: underline;
 }
 
 .flag-input {
-  flex: 1;
+  flex: 1 1 18rem;
+  min-width: 0;
   background: var(--bg-secondary);
   border: 2px solid var(--border-color);
   border-radius: 6px;
@@ -4123,6 +4329,49 @@ watch(timeRemaining, (val) => {
   font-family: monospace;
   font-size: 1rem;
 }
+
+.flag-paste,
+.flag-submit {
+  min-width: 5.5rem;
+}
+
+.flag-paste-note {
+  margin: 0.5rem 0 0;
+  color: var(--warning, #b8860b);
+  font-size: 0.78rem;
+}
+
+.beginner-workbook-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+
+.beginner-workbook-callout strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.beginner-workbook-callout p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 700px) {
+  .beginner-workbook-callout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 
 .flag-input:focus {
   outline: none;

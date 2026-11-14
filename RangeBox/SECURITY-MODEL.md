@@ -10,13 +10,27 @@ desktop.
 - The desktop user (`kali`/`student`) has passwordless sudo because the exercises
   install tools, edit system files, and practise privilege escalation. Removing
   sudo would break the teaching contract.
-- Firefox runs with `MOZ_DISABLE_CONTENT_SANDBOX=1`. The desktop is Xvfb inside a
-  container without the user-namespace support needed for the browser sandbox.
-  The compensating control is that the browser has no host filesystem, no host
-  network, and the container is destroyed after the session.
+- Firefox runs with `MOZ_DISABLE_CONTENT_SANDBOX=1`. The desktop is an isolated
+  X server inside a container without the user-namespace support needed for the
+  browser sandbox. The compensating control is that the browser has no host
+  filesystem, no host network, and the container is destroyed after the session.
 - The container is not privileged, does not use host networking, and has no
   access to the Docker socket. Lab networks are separate bridges with host
   firewall rules applied by the installer/Peer Manager.
+
+## Browser-desktop transport
+
+The Kali RangeBox image runs KasmVNC (Xvnc plus its built-in web server) on
+port 6080. The platform never loads the browser client from the container: a
+student is root inside the container and could modify it. Instead, the platform
+serves a pinned, unmodified KasmVNC client from `/kasm/` and proxies only the
+WebSocket to the container. The proxy authenticates a short-lived ticket,
+checks session ownership, and drops input for admin view-only sessions.
+
+KasmVNC runs with `SecurityTypes None` and `DisableBasicAuth` because the port
+is only reachable on the internal Docker network and the platform proxy is the
+authentication boundary. KasmVNC's HTTPS listener is disabled; the platform
+terminates TLS.
 
 ## Boundary
 

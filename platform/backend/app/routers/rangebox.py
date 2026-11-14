@@ -9,6 +9,8 @@ so the VNC server inside the container needs no password.
 import asyncio
 import json
 import logging
+import urllib.error
+import urllib.request
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query, status
 from sqlalchemy.orm import Session
@@ -76,6 +78,108 @@ async def get_ws_ticket(
     The ticket replaces the JWT in WebSocket URLs to prevent token leakage."""
     ticket = create_ws_ticket(current_user.id)
     return {"ticket": ticket}
+
+
+def _detect_rangebox_transport(rangebox_ip: str | None) -> str | None:
+    """Return the browser-desktop transport used by a RangeBox container.
+
+    Older images serve noVNC through websockify. KasmVNC images serve their
+    own web client and speak the KasmVNC protocol, which the bundled noVNC
+    client cannot drive. Probing the title keeps mixed image versions working
+    during a rolling rebuild instead of assuming a global setting.
+
+    ``None`` means the probe could not reach the container yet; the caller
+    should retry rather than guess a client that may not accept input.
+    """
+    if not rangebox_ip:
+        return None
+    url = f"http://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}/vnc.html"
+    try:
+        with urllib.request.urlopen(url, timeout=1.5) as response:
+            body = response.read(4096).decode("utf-8", "ignore")
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return None
+    return "kasm" if "KasmVNC" in body else "novnc"
+
+
+@router.get("/transport")
+def rangebox_transport(
+    session_id: int | None = Query(default=None),
+    standalone: bool = Query(default=False),
+    admin_target_user_id: int | None = Query(default=None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Report which browser-desktop client the running RangeBox expects."""
+    rangebox_ip: str | None = None
+
+    if admin_target_user_id is not None:
+        if current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="Admin access required")
+        if session_id is None:
+            raise HTTPException(status_code=400, detail="session_id is required")
+        session = (
+            db.query(LabSession)
+            .filter(
+                LabSession.id == session_id,
+                LabSession.user_id == admin_target_user_id,
+                LabSession.status == "running",
+            )
+            .first()
+        )
+        if session is None:
+            raise HTTPException(status_code=404, detail="No active session for target user")
+        lab = db.query(Lab).filter(Lab.id == session.lab_id).first()
+        lab_slug = lab.slug if lab else "unknown"
+        if session.rangebox_enabled:
+            status = docker_manager.get_rangebox_status(
+                admin_target_user_id,
+                lab_slug,
+                include_stats=False,
+            )
+            if status.get("status") == "running":
+                rangebox_ip = docker_manager.get_rangebox_ip(
+                    admin_target_user_id, lab_slug
+                )
+        if not rangebox_ip:
+            status = docker_manager.get_standalone_rangebox_status(
+                admin_target_user_id, include_stats=False
+            )
+            if status.get("status") == "running":
+                rangebox_ip = docker_manager.get_standalone_rangebox_ip(
+                    admin_target_user_id
+                )
+    elif standalone:
+        rangebox_ip = docker_manager.get_standalone_rangebox_ip(current_user.id)
+    elif session_id is not None:
+        session = (
+            db.query(LabSession)
+            .filter(
+                LabSession.id == session_id,
+                LabSession.user_id == current_user.id,
+                LabSession.status == "running",
+            )
+            .first()
+        )
+        if session is None:
+            raise HTTPException(status_code=404, detail="No active session")
+        if not session.rangebox_enabled:
+            raise HTTPException(status_code=400, detail="RangeBox not enabled for this session")
+        lab_slug = session.lab.slug if session.lab else "unknown"
+        rangebox_ip = docker_manager.get_rangebox_ip(current_user.id, lab_slug)
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="session_id, standalone, or admin_target_user_id is required",
+        )
+
+    if not rangebox_ip:
+        raise HTTPException(status_code=404, detail="RangeBox is not running")
+
+    return {
+        "transport": _detect_rangebox_transport(rangebox_ip),
+        "web_port": docker_manager.RANGEBOX_NOVNC_PORT,
+    }
 
 
 # ─── Standalone RangeBox (not tied to a lab session) ───────────────

@@ -1,6 +1,6 @@
 #!/bin/bash
 # RangeBox Entrypoint
-# Starts: Xvfb (virtual display) → XFCE4 (desktop) → x11vnc (VNC) → websockify (WebSocket bridge)
+# Starts: KasmVNC's Xvnc (virtual display + web socket) -> XFCE4 desktop
 #
 # Privileged network hygiene (gateway DROP rules, dnsmasq, /etc/resolv.conf)
 # runs through `sudo -n` because the image's final USER is `kali`. The image
@@ -9,7 +9,7 @@
 set -e
 
 RESOLUTION="${RESOLUTION:-1280x800}"
-DEPTH="${DEPTH:-16}"
+DEPTH="${DEPTH:-24}"
 VNC_PORT="${VNC_PORT:-5900}"
 NOVNC_PORT="${NOVNC_PORT:-6080}"
 DISPLAY_NUM="${DISPLAY_NUM:-1}"
@@ -19,21 +19,33 @@ export HOME="/home/kali"
 
 echo "[rangebox] Starting RangeBox..."
 echo "[rangebox] Resolution: ${RESOLUTION}x${DEPTH}"
-echo "[rangebox] VNC port: ${VNC_PORT}, noVNC port: ${NOVNC_PORT}"
+echo "[rangebox] KasmVNC web port: ${NOVNC_PORT}"
 
-# ── 1. Start virtual framebuffer ───────────────────────────────────────
-echo "[rangebox] Starting Xvfb on display :${DISPLAY_NUM}..."
-Xvfb "${DISPLAY}" -screen 0 "${RESOLUTION}x${DEPTH}" -ac +extension GLX +render -noreset &
-XVFB_PID=$!
+# ── 1. Start KasmVNC (X server + web socket) ──────────────────────────
+# KasmVNC replaces Xvfb + x11vnc + websockify: one process owns the display
+# and serves the KasmVNC client/WebSocket on NOVNC_PORT.
+echo "[rangebox] Starting KasmVNC on display :${DISPLAY_NUM}..."
+mkdir -p "${HOME}/.vnc"
+Xvnc "${DISPLAY}" \
+    -geometry "${RESOLUTION}" \
+    -depth "${DEPTH}" \
+    -SecurityTypes None \
+    -DisableBasicAuth \
+    -websocketPort "${NOVNC_PORT}" \
+    -sslOnly 0 \
+    -interface 0.0.0.0 \
+    -AlwaysShared \
+    -httpd /usr/share/kasmvnc/www &
+XVNC_PID=$!
 
-# Wait for X server to be ready
-for i in $(seq 1 10); do
+# Wait for the X server to be ready
+for i in $(seq 1 20); do
     if xdpyinfo -display "${DISPLAY}" >/dev/null 2>&1; then
-        echo "[rangebox] Xvfb ready."
+        echo "[rangebox] KasmVNC ready."
         break
     fi
-    if [ "$i" -eq 10 ]; then
-        echo "[rangebox] ERROR: Xvfb failed to start."
+    if [ "$i" -eq 20 ]; then
+        echo "[rangebox] ERROR: KasmVNC failed to start."
         exit 1
     fi
     sleep 0.5
@@ -131,54 +143,19 @@ XFCE_PID=$!
 # Wait for desktop to initialize
 sleep 3
 
-# ── 4. Start VNC server ───────────────────────────────────────────────
+# ── 4. KasmVNC is already serving the display and WebSocket ───────────
 # No password — authentication is handled by FastAPI's WebSocket proxy.
-# The VNC port is only accessible within the Docker network.
-echo "[rangebox] Starting x11vnc on port ${VNC_PORT}..."
-x11vnc \
-    -display "${DISPLAY}" \
-    -forever \
-    -shared \
-    -rfbport "${VNC_PORT}" \
-    -nopw \
-    -xkb \
-    -noxrecord \
-    -noxfixes \
-    -noxdamage \
-    -cursor arrow \
-    -nowf \
-    -defer "${VNC_DEFER:-50}" \
-    -wait "${VNC_WAIT:-30}" \
-    -threads \
-    &
-X11VNC_PID=$!
-
-# Wait for VNC server to bind
-sleep 1
-
-# ── 5. Start noVNC websockify bridge ──────────────────────────────────
-# This is the main foreground process. When it exits, the container stops.
-echo "[rangebox] Starting noVNC websockify on port ${NOVNC_PORT}..."
-echo "[rangebox] ✓ RangeBox ready. Connect to http://localhost:${NOVNC_PORT}/vnc.html"
-
-# Determine noVNC web directory
-NOVNC_DIR="/usr/share/novnc"
-if [ ! -f "${NOVNC_DIR}/vnc.html" ]; then
-    NOVNC_DIR="/usr/share/novnc/utils/../"
-fi
+# The KasmVNC port is only reachable inside the Docker network.
+echo "[rangebox] ✓ RangeBox ready. KasmVNC client on port ${NOVNC_PORT}"
 
 # Trap signals for graceful shutdown
 cleanup() {
     echo "[rangebox] Shutting down..."
-    kill "${X11VNC_PID}" 2>/dev/null || true
     kill "${XFCE_PID}" 2>/dev/null || true
-    kill "${XVFB_PID}" 2>/dev/null || true
+    kill "${XVNC_PID}" 2>/dev/null || true
     exit 0
 }
 trap cleanup SIGTERM SIGINT
 
-# Run websockify in foreground (keeps container alive)
-websockify \
-    --web "${NOVNC_DIR}" \
-    "${NOVNC_PORT}" \
-    "localhost:${VNC_PORT}"
+# Keep the container alive while KasmVNC runs. If Xvnc exits, stop.
+wait "${XVNC_PID}"

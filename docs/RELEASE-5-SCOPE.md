@@ -137,9 +137,10 @@ the browser-desktop layer need a Release 5 pass.
 Status: the Kali base digest and SecLists commit are pinned, the wordlists the
 exercises reference are baked in at their documented paths, and the root-inside-
 container model with the Firefox sandbox rationale is documented in
-[`RangeBox/SECURITY-MODEL.md`](../RangeBox/SECURITY-MODEL.md). noVNC is the
-selected browser-desktop path for 5.0; KasmVNC is deferred. Terminal-only mode
-remains.
+[`RangeBox/SECURITY-MODEL.md`](../RangeBox/SECURITY-MODEL.md). The Kali image
+now uses KasmVNC; the platform serves a pinned KasmVNC client and keeps noVNC
+for older UbuntuBox/RemnuxBox images. See
+[`docs/KASMVNC.md`](KASMVNC.md). Terminal-only mode remains.
 
 Exit criteria: two RangeBox builds from the same pinned inputs are equivalent;
 the documented security model matches the image; one browser-desktop path is

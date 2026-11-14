@@ -173,6 +173,7 @@ the frontend image.
 | dompurify | MPL-2.0 OR Apache-2.0 | This build uses the Apache-2.0 option |
 | sortablejs | MIT | Include copyright notice |
 | @novnc/novnc | MPL-2.0 | Include licence; disclose modifications to MPL files |
+| KasmVNC web client 1.5.2 | GPL-2.0 | Vendored unmodified under `platform/frontend/public/kasm/`; source and hash in `docs/KASMVNC.md` |
 
 `vue-eslint-parser` is a development/lint tool; it is not part of the runtime
 bundle. Development-only packages (Vite, ESLint, plugins, `lightningcss`) are
@@ -237,6 +238,7 @@ image set is:
 | `alpine:3.18` / `alpine:3.19` | Alpine package licences | Lab sidecars and builders |
 | `ubuntu:22.04` / `ubuntu:24.04` | Ubuntu/Debian package licences | Desktop and lab targets |
 | `kalilinux/kali-rolling` | Kali/Debian package licences | RangeBox and one lab target |
+| KasmVNC 1.5.2 | GPL-2.0 | RangeBox desktop transport and vendored browser client; pinned package and source in `docs/KASMVNC.md` |
 | `remnux/remnux-distro:noble` | REMnux/Debian package licences | RemnuxBox |
 | `0x4d4c/inetsim@sha256:01fdf65489db7b9a77a33cc336ba1d5ddf23aded35eeb23f2c6455290ca595e8` | INetSim GPL-2.0 plus Debian packages | Third-party image; pinned to the reviewed digest |
 | `axllent/mailpit` | MIT | Development mail catcher only |
@@ -248,6 +250,12 @@ ephemeral rate-limit counters.
 If you distribute built images, include the licences for the installed packages
 or provide a clear source/notice path. Do not assume the base image's licence
 covers every package inside it.
+
+KasmVNC is GPL-2.0. The RangeBox image installs the unmodified upstream Debian
+package, and the platform serves an unmodified copy of its web client as a
+separate program under `/kasm/`. The corresponding source is published at
+<https://github.com/kasmtech/KasmVNC/tree/v1.5.2>; the exact package and SHA-256
+are recorded in `docs/KASMVNC.md`.
 
 ## Lab toolchains
 
@@ -266,6 +274,7 @@ Each lab may install its own packages. The main notice-sensitive toolchains are:
 | Volatility 3 | Volatility Software License 1.0 (VSL-1.0) | Memory/forensics labs and RangeBox |
 | PyCryptodome | Public domain / BSD-2-Clause | Memory lab |
 | INetSim | GPL-2.0 | Malware labs |
+| KasmVNC | GPL-2.0 | RangeBox desktop server (Kali image) |
 | Nmap | GPL-2.0 / Nmap Public Source Licence terms | RangeBox and lab tooling |
 | SQLMap | GPL-2.0 | RangeBox and lab tooling |
 | Wireshark / tshark | GPL-2.0 | RangeBox and network labs |

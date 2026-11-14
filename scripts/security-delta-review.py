@@ -56,6 +56,9 @@ SKIP_PARTS = {
     ".venv",
     "__pycache__",
     ".opencode/skills",
+    # KasmVNC's pinned, unmodified browser client. It is audited at the
+    # upstream release and hash level (docs/KASMVNC.md), not line by line.
+    "kasm",
 }
 # Third-party minified bundles are reviewed at the pinned vendor version, not
 # line by line. They also contain every Unicode separator under the sun, which

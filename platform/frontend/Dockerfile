@@ -84,6 +84,7 @@ COPY nginx-ssl.conf /etc/nginx/conf.d/nginx-ssl.conf
 COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY lti-embed-headers.conf /etc/nginx/snippets/lti-embed-headers.conf
 COPY cyberchef-headers.conf /etc/nginx/snippets/cyberchef-headers.conf
+COPY kasm-headers.conf /etc/nginx/snippets/kasm-headers.conf
 
 # Entrypoint auto-detects TLS certs and swaps config
 COPY docker-entrypoint.sh /docker-entrypoint.sh
