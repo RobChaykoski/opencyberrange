@@ -59,7 +59,15 @@ def tls_verify() -> bool:
 
 def sanitize_return_to(value: str | None) -> str:
     value = (value or "").strip()
-    if not value.startswith("/") or value.startswith("//"):
+    # Only an absolute site path is allowed. Reject protocol-relative and
+    # backslash forms: browsers treat "/\host" like "//host", which would turn
+    # a post-login redirect into an open redirect.
+    if (
+        not value.startswith("/")
+        or value.startswith("//")
+        or "\\" in value
+        or any(ord(char) < 32 for char in value)
+    ):
         return "/dashboard"
     return value[:500]
 

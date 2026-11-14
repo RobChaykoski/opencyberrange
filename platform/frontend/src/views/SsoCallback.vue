@@ -77,7 +77,8 @@ const finishSignIn = async (data) => {
     window.__updateAuthState()
   }
   const target = typeof data.return_to === 'string' && data.return_to.startsWith('/')
-    && !data.return_to.startsWith('//')
+    && !data.return_to.startsWith('//') && !data.return_to.includes('\\')
+    && ![...data.return_to].some((ch) => ch.charCodeAt(0) < 32)
     ? data.return_to
     : '/dashboard'
   await router.replace(target)

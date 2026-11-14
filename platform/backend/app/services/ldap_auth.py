@@ -64,6 +64,16 @@ def _connection(provider: IdentityProvider) -> Connection:
         port = parsed.port or (636 if use_ssl else 389)
     except ValueError as exc:
         raise SSOError("The LDAP server URL is not valid.", code="unavailable") from exc
+    if (
+        not use_ssl
+        and not bool(config.get("start_tls", False))
+        and not bool(config.get("allow_plaintext", False))
+    ):
+        raise SSOError(
+            "LDAP requires ldaps:// or StartTLS. Set allow_plaintext only for an "
+            "isolated lab network.",
+            code="unavailable",
+        )
     verify = bool(config.get("tls_verify", True))
     tls = Tls(validate=ssl.CERT_REQUIRED if verify else ssl.CERT_NONE)
     bind_dn = _config_value(config, "bind_dn")
@@ -84,6 +94,7 @@ def _connection(provider: IdentityProvider) -> Connection:
             user=bind_dn or None,
             password=bind_password or None,
             auto_bind=False,
+            auto_referrals=False,
             receive_timeout=_timeout(config),
             raise_exceptions=False,
         )

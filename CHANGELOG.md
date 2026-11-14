@@ -2,6 +2,25 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.0.1] - 2026-11-14
+
+Security and compliance patch on top of Release 5.
+
+### Security hardening
+- LDAP: referral chasing is disabled, and plaintext `ldap://` requires an
+  explicit `allow_plaintext` opt-in; `ldaps://` or StartTLS is the default.
+- OIDC: ID-token signing algorithms are restricted to an asymmetric allowlist;
+  a provider advertising only `HS*`/`none` fails closed. Nonce comparison is
+  constant-time.
+- SSO: post-login `return_to` rejects backslash and control-character forms in
+  both the backend and the SPA.
+- Production: `wiki_frame_ancestor` is set for the real app origins so workbooks
+  frame on `https://172.16.16.41`, `https://ctfd.swocts.com`, and the public IP.
+
+### Review record
+- Added `docs/SECURITY-REVIEW-5.0.1.md` covering the SSO review, route-guard and
+  bundle exposure check, frontend licence scan, and IdP export assessment.
+
 ## [5] - 2026-11-14
 
 Release 5. LTI 1.3 Advantage, per-student accommodations, human review, the

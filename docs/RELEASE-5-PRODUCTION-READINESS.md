@@ -41,6 +41,10 @@ release tag records the docs-complete commit.
 - `wiki_origin` set to `https://172.16.16.41:8443`; the 8443 listener serves the
   main HTTPS server, `/wiki/` enforces the session gate (302), and the SPA CSP
   allows `frame-src https://*:8443`.
+- `wiki_frame_ancestor` set to
+  `https://172.16.16.41 https://ctfd.swocts.com https://70.54.16.7` after the
+  5.0.0 smoke test showed the workbook was blocked when the app was opened on
+  the direct host or the public domain.
 - `opencyberrange/rangebox:lite` rebuilt on the host from the pinned Kali digest
   and SecLists commit; a fresh container served noVNC in 11 s and the documented
   wordlist paths exist inside the image.

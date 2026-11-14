@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.0.0` | SWOCTS Cyber Range Release 5 | Current production release (signed annotated tag) |
+| `v5.0.1` | SWOCTS Cyber Range Release 5 security patch | Current production patch (signed annotated tag): SSO hardening and workbook framing |
+| `v5.0.0` | SWOCTS Cyber Range Release 5 | Release 5 baseline (signed annotated tag) |
 | `v4.0.2` | SWOCTS Cyber Range Release 4 production hotfix | Previous production hotfix (signed annotated tag): RangeBox workspace tabs |
 | `v4.0.1` | SWOCTS Cyber Range Release 4 hotfix | Release 4 hotfix (signed annotated tag): login reload loop |
 | `v4` | SWOCTS Cyber Range Release 4 | Release 4 baseline (signed annotated tag) |
@@ -24,7 +25,7 @@ represent. It exists because the history contains several naming eras.
 | `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to Release 3 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
-`v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the release key
+`v5.0.1`, `v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the release key
 `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`. The public key is
 `docs/release-signing-key.asc`. `v2.7.0` is the last unsigned annotated tag,
 points at `ce7c25bb`, and remains a documented exception from before the

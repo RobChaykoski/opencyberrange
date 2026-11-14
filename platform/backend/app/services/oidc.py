@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import hmac
 import logging
 import secrets
 import ssl
@@ -41,6 +42,23 @@ from app.services.sso_flow import (
 logger = logging.getLogger(__name__)
 
 _DISCOVERY_CACHE: dict[str, tuple[float, dict]] = {}
+
+# ID tokens must be signed with an asymmetric algorithm. The discovery document
+# is provider-controlled, so never pass its list straight into PyJWT: a
+# provider (or a compromised discovery document) could advertise HS* and turn
+# the public key into a shared secret.
+SUPPORTED_ID_TOKEN_ALGS = {
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "EdDSA",
+}
 
 # Kept as an alias so existing callers and tests can catch every adapter error.
 OIDCError = SSOError
@@ -180,26 +198,38 @@ def _jwk_client(document: dict) -> jwt.PyJWKClient:
     )
 
 
+def allowed_id_token_algorithms(document: dict) -> list[str]:
+    """Return the asymmetric algorithms this provider may use, or fail closed."""
+    advertised = document.get("id_token_signing_alg_values_supported") or ["RS256"]
+    algorithms = [str(alg) for alg in advertised if str(alg) in SUPPORTED_ID_TOKEN_ALGS]
+    if not algorithms:
+        raise OIDCError(
+            "The identity provider does not advertise a supported asymmetric "
+            "ID-token signing algorithm."
+        )
+    return algorithms
+
+
 def validate_id_token(provider: IdentityProvider, id_token: str, nonce: str) -> dict:
     config = provider_config(provider)
     document = discover(provider)
     issuer = str(config.get("issuer", "")).rstrip("/")
     client_id = str(config.get("client_id", ""))
-    algorithms = document.get("id_token_signing_alg_values_supported") or ["RS256"]
+    algorithms = allowed_id_token_algorithms(document)
     try:
         jwk_client = _jwk_client(document)
         signing_key = jwk_client.get_signing_key_from_jwt(id_token)
         claims = jwt.decode(
             id_token,
             signing_key.key,
-            algorithms=list(algorithms),
+            algorithms=algorithms,
             audience=client_id,
             issuer=issuer,
             options={"require": ["exp", "iat", "sub"]},
         )
     except Exception as exc:
         raise OIDCError(f"ID token validation failed: {exc}") from exc
-    if str(claims.get("nonce", "")) != nonce:
+    if not hmac.compare_digest(str(claims.get("nonce", "")), nonce):
         raise OIDCError("ID token nonce does not match the authorization request.")
     return claims
 
