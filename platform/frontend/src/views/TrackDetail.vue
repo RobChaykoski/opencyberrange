@@ -1293,7 +1293,10 @@ const focusWorkspaceTab = (offset) => {
   const index = WORKSPACE_TABS.indexOf(workspaceTab.value)
   const next = WORKSPACE_TABS[(index + offset + WORKSPACE_TABS.length) % WORKSPACE_TABS.length]
   workspaceTab.value = next
-  nextTick(() => document.getElementById(`workspace-tab-${next}`)?.focus())
+  nextTick(() => {
+    // Let the router replace finish before restoring focus to the tab.
+    setTimeout(() => document.getElementById(`workspace-tab-${next}`)?.focus(), 50)
+  })
 }
 watch(workspaceTab, (tab) => {
   if (!activeLab.value) return
