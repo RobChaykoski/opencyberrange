@@ -109,6 +109,60 @@
       </section>
 
       <section class="panel about-panel">
+        <h2 class="panel-title">Platform maintenance</h2>
+        <p class="about-copy">
+          Versions of the host and runtime that operate the platform — not the tools
+          inside lab containers. Status reflects the supported baseline and next
+          upgrade target; follow the referenced document before changing a component.
+        </p>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Component</th>
+                <th scope="col">Running</th>
+                <th scope="col">Supported / target</th>
+                <th scope="col">Status</th>
+                <th scope="col">Upgrade path</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in about.platform_health || []" :key="item.key">
+                <td class="cell-primary">{{ item.name }}<div class="cell-muted">{{ item.note }}</div></td>
+                <td class="cell-mono">{{ item.current }}</td>
+                <td>{{ item.target }}</td>
+                <td>
+                  <span :class="['about-health', `about-health--${item.status}`]">
+                    {{ statusLabel(item.status) }}
+                  </span>
+                </td>
+                <td class="cell-mono">{{ item.path }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="about-maintenance">
+          <h3>Upgrade and rollback</h3>
+          <p>
+            Take a verified backup first. Production upgrades are image rebuilds plus
+            an Alembic upgrade; rollback restores the retained previous image tags and
+            the pre-deploy database dump.
+          </p>
+          <pre class="about-command">{{ about.upgrade?.upgrade_command }}</pre>
+          <p class="cell-muted">
+            Rollback: {{ about.upgrade?.rollback }} See
+            <code>{{ about.upgrade?.readiness }}</code>.
+          </p>
+          <p class="cell-muted">
+            Operations: <code>{{ about.upgrade?.backup }}</code> ·
+            <code>{{ about.upgrade?.check }}</code> ·
+            <code>{{ about.upgrade?.runbook }}</code>
+          </p>
+        </div>
+      </section>
+
+      <section class="panel about-panel">
         <h2 class="panel-title">Content and integrity</h2>
         <dl class="about-facts about-facts--compact">
           <div class="about-fact">
@@ -388,6 +442,14 @@ const formatTimestamp = (value) => {
   if (Number.isNaN(date.getTime())) return value
   return date.toLocaleString()
 }
+
+const statusLabel = (status) =>
+  ({
+    current: 'Current',
+    supported: 'Supported',
+    'upgrade-planned': 'Upgrade planned',
+    'upgrade-candidate': 'Upgrade candidate',
+  })[status] || status
 
 const PROJECT_LICENCE_FILES = new Set([
   'LICENSE',
@@ -670,6 +732,35 @@ onMounted(load)
   margin: 0.75rem 0 0;
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+.about-health {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+.about-health--current { color: var(--success); border-color: var(--success); }
+.about-health--supported { color: var(--accent-text); border-color: var(--accent); }
+.about-health--upgrade-planned,
+.about-health--upgrade-candidate { color: var(--warning, #d97706); border-color: var(--warning, #d97706); }
+.about-maintenance {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+.about-maintenance h3 { margin: 0 0 0.4rem; font-size: 0.95rem; }
+.about-command {
+  margin: 0.6rem 0;
+  padding: 0.6rem;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
 }
 
 .about-subtitle {

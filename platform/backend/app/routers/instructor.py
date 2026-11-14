@@ -84,6 +84,7 @@ def _overview_window(
 def instructor_overview(
     days: int = 30,
     course_id: Optional[int] = None,
+    student_id: Optional[int] = None,
     start: Optional[str] = None,
     end: Optional[str] = None,
     db: Session = Depends(get_db),
@@ -104,6 +105,21 @@ def instructor_overview(
     courses = query.order_by(Course.code, Course.name).all()
     if course_id is not None and not courses:
         raise HTTPException(status_code=404, detail="Course not found")
+    if student_id is not None:
+        if course_id is None:
+            raise HTTPException(
+                status_code=400, detail="Select a course before filtering by student"
+            )
+        enrolled = (
+            db.query(CourseEnrollment)
+            .filter(
+                CourseEnrollment.course_id == course_id,
+                CourseEnrollment.user_id == student_id,
+            )
+            .first()
+        )
+        if enrolled is None:
+            raise HTTPException(status_code=404, detail="Student is not in this course")
 
     course_ids = [course.id for course in courses]
     learner_ids: set[int] = set()
@@ -118,7 +134,8 @@ def instructor_overview(
             .filter(CourseEnrollment.course_id.in_(course_ids))
             .all()
         ):
-            learner_ids.add(enrollment.user_id)
+            if student_id is None or enrollment.user_id == student_id:
+                learner_ids.add(enrollment.user_id)
         lab_ids = {
             row.lab_id
             for row in db.query(CourseLabAssignment.lab_id)
@@ -132,6 +149,7 @@ def instructor_overview(
                 LabSession.lab_id.in_(lab_ids) if lab_ids else False,
                 LabSession.started_at >= start_dt,
                 LabSession.started_at <= end_dt,
+                *([LabSession.user_id == student_id] if student_id is not None else []),
             )
             .distinct()
             .all()
@@ -147,12 +165,15 @@ def instructor_overview(
 
     total_assigned = total_completed = 0
     for course in courses:
-        enrolled_ids = {
-            row.user_id
-            for row in db.query(CourseEnrollment.user_id)
-            .filter(CourseEnrollment.course_id == course.id)
-            .all()
-        }
+        if student_id is not None:
+            enrolled_ids = {student_id}
+        else:
+            enrolled_ids = {
+                row.user_id
+                for row in db.query(CourseEnrollment.user_id)
+                .filter(CourseEnrollment.course_id == course.id)
+                .all()
+            }
         course_lab_ids = [
             row.lab_id
             for row in db.query(CourseLabAssignment.lab_id)
@@ -192,7 +213,7 @@ def instructor_overview(
             )
             .count()
         )
-        suppressed = 0 < len(enrolled_ids) < 5
+        suppressed = student_id is None and 0 < len(enrolled_ids) < 5
         rate = None
         if assigned_pairs and not suppressed:
             rate = round(min(completed / assigned_pairs, 1.0) * 100, 1)
@@ -224,6 +245,7 @@ def instructor_overview(
                 LabCompletion.lab_id.in_(lab_ids),
                 LabCompletion.completed_at >= start_dt,
                 LabCompletion.completed_at <= end_dt,
+                *([LabCompletion.user_id == student_id] if student_id is not None else []),
             )
             .group_by(func.date(LabCompletion.completed_at))
             .all()
@@ -238,6 +260,7 @@ def instructor_overview(
                 LabSession.lab_id.in_(lab_ids),
                 LabSession.started_at >= start_dt,
                 LabSession.started_at <= end_dt,
+                *([LabSession.user_id == student_id] if student_id is not None else []),
             )
             .group_by(func.date(LabSession.started_at))
             .all()
@@ -255,7 +278,7 @@ def instructor_overview(
             cursor += timedelta(days=1)
 
     completion_rate = None
-    if total_assigned and len(learner_ids) >= 5:
+    if total_assigned and (student_id is not None or len(learner_ids) >= 5):
         completion_rate = round(min(total_completed / total_assigned, 1.0) * 100, 1)
 
     return {
@@ -272,7 +295,7 @@ def instructor_overview(
             "completed": total_completed,
             "completion_rate": completion_rate,
             "pending_reviews": pending_reviews,
-            "suppressed": 0 < len(learner_ids) < 5,
+            "suppressed": student_id is None and 0 < len(learner_ids) < 5,
         },
         "trend": trend,
         "courses": rows,

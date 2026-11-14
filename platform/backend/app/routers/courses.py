@@ -473,6 +473,10 @@ async def get_course(
     ).order_by(CourseLabAssignment.sort_order).all()
 
     assigned_lab_ids = {a.lab_id for a in assignments}
+    if is_enrolled:
+        from app.services.course_planning import cohort_lab_ids
+
+        assigned_lab_ids |= cohort_lab_ids(db, current_user.id, course_id)
 
     # Course-aware: only count completions after enrollment (+ respecting resets)
     if is_enrolled:

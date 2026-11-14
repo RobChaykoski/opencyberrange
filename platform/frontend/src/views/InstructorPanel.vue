@@ -61,10 +61,19 @@
           </label>
           <label class="overview-filter">
             <span>Course</span>
-            <select v-model="overviewCourseId" class="form-input form-input--sm" @change="fetchOverview">
+            <select v-model="overviewCourseId" class="form-input form-input--sm" @change="onOverviewCourseChange">
               <option value="all">All my courses</option>
               <option v-for="course in courses" :key="course.id" :value="String(course.id)">
                 {{ course.code ? `${course.code} — ${course.name}` : course.name }}
+              </option>
+            </select>
+          </label>
+          <label v-if="overviewCourseId !== 'all'" class="overview-filter">
+            <span>Student</span>
+            <select v-model="overviewStudentId" class="form-input form-input--sm" @change="fetchOverview">
+              <option value="">All students</option>
+              <option v-for="student in overviewStudents" :key="student.id" :value="String(student.id)">
+                {{ student.username }}
               </option>
             </select>
           </label>
@@ -74,6 +83,9 @@
         </div>
 
         <p v-if="overviewError" class="form-error" role="alert">{{ overviewError }}</p>
+        <p v-if="overviewStudentId" class="overview-note">
+          Showing the selected learner's own progress in this course. Other learners are not included.
+        </p>
         <div v-if="overviewLoading && !overview" class="empty-state">Loading overview...</div>
         <template v-else-if="overview">
           <div class="overview-grid">
@@ -1542,6 +1554,25 @@ const overviewDays = ref(30)
 const overviewStart = ref('')
 const overviewEnd = ref('')
 const overviewCourseId = ref('all')
+const overviewStudentId = ref('')
+const overviewStudents = ref([])
+
+const loadOverviewStudents = async () => {
+  overviewStudents.value = []
+  overviewStudentId.value = ''
+  if (overviewCourseId.value === 'all') return
+  try {
+    const { data } = await axios.get(`/courses/${overviewCourseId.value}/students`)
+    overviewStudents.value = data.students || []
+  } catch {
+    overviewStudents.value = []
+  }
+}
+
+const onOverviewCourseChange = async () => {
+  await loadOverviewStudents()
+  await fetchOverview()
+}
 
 const fetchOverview = async () => {
   overviewLoading.value = true
@@ -1551,6 +1582,7 @@ const fetchOverview = async () => {
     if (overviewStart.value) params.set('start', `${overviewStart.value}T00:00:00`)
     if (overviewEnd.value) params.set('end', `${overviewEnd.value}T23:59:59`)
     if (overviewCourseId.value !== 'all') params.set('course_id', overviewCourseId.value)
+    if (overviewStudentId.value) params.set('student_id', overviewStudentId.value)
     const { data } = await axios.get(`/instructor/overview?${params.toString()}`)
     overview.value = data
   } catch (e) {

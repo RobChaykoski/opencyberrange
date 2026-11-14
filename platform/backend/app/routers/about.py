@@ -157,6 +157,103 @@ def _edition_label(value: str) -> str:
     }.get(str(value).lower(), str(value))
 
 
+def _docker_runtime() -> dict:
+    try:
+        import docker
+
+        client = docker.from_env()
+        info = client.info()
+        payload = {
+            "docker": str(info.get("ServerVersion") or ""),
+            "host_os": str(info.get("OperatingSystem") or ""),
+            "kernel": str(info.get("KernelVersion") or ""),
+            "host_cpu": info.get("NCPU"),
+            "host_memory": info.get("MemTotal"),
+        }
+        client.close()
+        return {key: value for key, value in payload.items() if value not in (None, "")}
+    except Exception:
+        return {}
+
+
+def _platform_health(runtime: dict) -> list[dict]:
+    """Current vs supported/target versions and the upgrade path for each."""
+    return [
+        {
+            "key": "platform",
+            "name": "Platform release",
+            "current": APP_VERSION,
+            "target": "current supported line",
+            "status": "current",
+            "note": "Signed release; see the tag and changelog.",
+            "path": "docs/RELEASES.md",
+        },
+        {
+            "key": "host_os",
+            "name": "Host OS",
+            "current": runtime.get("host_os") or "unknown",
+            "target": "Ubuntu 26.04 LTS candidate",
+            "status": "upgrade-candidate",
+            "note": "Certified on 24.04; 26.04 is the next LTS test candidate.",
+            "path": "docs/UBUNTU-NEXT-UPGRADE-CANDIDATE.md",
+        },
+        {
+            "key": "kernel",
+            "name": "Kernel",
+            "current": runtime.get("kernel") or "unknown",
+            "target": "matches the host OS",
+            "status": "current",
+            "note": "Reported by the container runtime.",
+            "path": "docs/UBUNTU-NEXT-UPGRADE-CANDIDATE.md",
+        },
+        {
+            "key": "docker",
+            "name": "Docker Engine",
+            "current": runtime.get("docker") or "unknown",
+            "target": "Engine 24+ with Compose v2",
+            "status": "current",
+            "note": "Single-host supported shape.",
+            "path": "docs/DEPLOYMENT-RUNBOOK.md",
+        },
+        {
+            "key": "python",
+            "name": "Python runtime",
+            "current": runtime.get("python") or "unknown",
+            "target": "3.13 compatibility target",
+            "status": "upgrade-planned",
+            "note": "3.11 is the supported runtime; 3.13 is in compatibility testing.",
+            "path": "versions.yaml",
+        },
+        {
+            "key": "postgres",
+            "name": "PostgreSQL",
+            "current": runtime.get("postgres") or "unknown",
+            "target": "17 major upgrade",
+            "status": "upgrade-planned",
+            "note": "Dump/restore migration is required; plan a maintenance window.",
+            "path": "docs/DEPLOYMENT-RUNBOOK.md",
+        },
+        {
+            "key": "node",
+            "name": "Node build toolchain",
+            "current": runtime.get("node") or "unknown",
+            "target": "24 compatibility target",
+            "status": "supported",
+            "note": "Build-time only; not shipped in the frontend image.",
+            "path": "versions.yaml",
+        },
+        {
+            "key": "schema",
+            "name": "Database schema",
+            "current": runtime.get("schema_revision") or "unknown",
+            "target": "Alembic head",
+            "status": "current",
+            "note": "Applied by the release deployment.",
+            "path": "docs/DEPLOYMENT-RUNBOOK.md",
+        },
+    ]
+
+
 def _live_overlay(data: dict, db: Session) -> dict:
     build = _read_build()
     platform_data = data.setdefault("platform", {})
@@ -180,6 +277,7 @@ def _live_overlay(data: dict, db: Session) -> dict:
         "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     runtime.update(_database_runtime(db))
+    runtime.update(_docker_runtime())
     try:
         from app import entitlement
 
@@ -219,6 +317,15 @@ def _live_overlay(data: dict, db: Session) -> dict:
                 "image_digests": _image_digests(),
             },
             "runtime": runtime,
+            "platform_health": _platform_health(runtime),
+            "upgrade": {
+                "runbook": "docs/DEPLOYMENT-RUNBOOK.md",
+                "readiness": "docs/RELEASE-5-PRODUCTION-READINESS.md",
+                "backup": "bash scripts/backup-production.sh",
+                "check": "bash scripts/monitor-deployment.sh",
+                "upgrade_command": "git pull --ff-only && docker compose build backend frontend && docker compose up -d backend frontend && docker exec ocr-backend alembic -c alembic.ini upgrade head",
+                "rollback": "Restore the pre-deploy dump and the retained previous image tags; see the readiness rollback section.",
+            },
             "content": _content_counts(db),
             "integrity": _integrity_summary(),
         }

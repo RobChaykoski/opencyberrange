@@ -2,6 +2,25 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.6.0] - 2026-11-14
+
+### Cohort enforcement
+- Labs in an exercise set required for a learner's cohort now count as course
+  access and open without the sequential-track prerequisite lock. The course
+  detail listing includes those labs. Cohort-specific access is additive; it does
+  not remove anything assigned course-wide.
+
+### Instructor reporting
+- The instructor Overview can filter to one student inside a selected course.
+  Cards and trends then reflect that learner only; cross-course student filtering
+  is intentionally not offered.
+
+### About
+- The About page has a **Platform maintenance** section: live host OS, kernel,
+  Docker, Python, PostgreSQL, schema, and build toolchain versions with supported/
+  target status and the upgrade path. It also shows the operator upgrade and
+  rollback commands and the readiness/runbook references.
+
 ## [5.5.0] - 2026-11-14
 
 ### Course planning

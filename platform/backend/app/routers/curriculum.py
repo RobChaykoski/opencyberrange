@@ -271,7 +271,13 @@ def get_accessible_exclusive_lab_ids(db: Session, user_id: int) -> set:
     ).filter(
         Course.instructor_id == user_id,
     ).all()
-    return {r[0] for r in enrolled_rows} | {r[0] for r in instructed_rows}
+    from app.services.course_planning import cohort_lab_ids
+
+    return (
+        {r[0] for r in enrolled_rows}
+        | {r[0] for r in instructed_rows}
+        | cohort_lab_ids(db, user_id)
+    )
 
 
 def _is_lab_visible(lab, user, accessible_course_lab_ids: set, *, course_context: bool = False) -> bool:
@@ -316,6 +322,10 @@ def lab_unlocked_for_user(db: Session, user, lab: Lab) -> bool:
     the two paths in one helper prevents them from drifting again.
     """
     if user.is_admin or getattr(user, "is_instructor", False):
+        return True
+    from app.services.course_planning import cohort_lab_ids
+
+    if lab.id in cohort_lab_ids(db, user.id):
         return True
     if not lab.level_id:
         return True
