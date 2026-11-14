@@ -302,6 +302,7 @@ async def standalone_rangebox_vnc_proxy(
         async with aiohttp.ClientSession() as http_session:
             async with http_session.ws_connect(
                 rangebox_ws_url,
+                headers={"Origin": f"http://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}"},
                 protocols=["binary"],
                 max_msg_size=16 * 1024 * 1024,
             ) as upstream:
@@ -610,8 +611,9 @@ async def rangebox_vnc_proxy(
         async with aiohttp.ClientSession() as http_session:
             async with http_session.ws_connect(
                 rangebox_ws_url,
+                headers={"Origin": f"http://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}"},
                 protocols=["binary"],
-                max_msg_size=16 * 1024 * 1024,  # 16MB — VNC can send large frames
+                max_msg_size=16 * 1024 * 1024,  # 16MB - VNC can send large frames
             ) as upstream:
                 # ── 5. Bidirectional relay ────────────────────────────
 
@@ -773,6 +775,7 @@ async def admin_rangebox_vnc_proxy(
         async with aiohttp.ClientSession() as http_session:
             async with http_session.ws_connect(
                 rangebox_ws_url,
+                headers={"Origin": f"http://{rangebox_ip}:{docker_manager.RANGEBOX_NOVNC_PORT}"},
                 protocols=["binary"],
                 max_msg_size=16 * 1024 * 1024,
             ) as upstream:
@@ -834,3 +837,4 @@ async def admin_rangebox_vnc_proxy(
             await websocket.close(code=4500, reason="Proxy error")
         except Exception:
             pass
+

@@ -144,6 +144,17 @@ XFCE_PID=$!
 # Wait for desktop to initialize
 sleep 3
 
+# xfdesktop can start before its per-monitor backdrop property exists, leaving
+# a black root window. Set every last-image property to the branded wallpaper.
+WALLPAPER="/usr/share/backgrounds/ocr-wallpaper.png"
+if [ -f "${WALLPAPER}" ] && command -v xfconf-query >/dev/null 2>&1; then
+    xfconf-query -c xfce4-desktop -l 2>/dev/null \
+        | grep -E 'last-image$' \
+        | while read -r prop; do
+            xfconf-query -c xfce4-desktop -p "${prop}" -s "${WALLPAPER}" 2>/dev/null || true
+        done
+fi
+
 # ── 4. KasmVNC is already serving the display and WebSocket ───────────
 # No password — authentication is handled by FastAPI's WebSocket proxy.
 # The KasmVNC port is only reachable inside the Docker network.

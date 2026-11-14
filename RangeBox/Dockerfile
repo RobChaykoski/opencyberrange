@@ -154,6 +154,11 @@ RUN mkdir -p /home/kali/.config/xfce4 && \
 
 # OCR desktop wallpaper
 COPY ocr-wallpaper.png /usr/share/backgrounds/ocr-wallpaper.png
+# xfdesktop falls back to the desktop-base default when the per-monitor
+# property has not been created yet. Point that fallback at the branded
+# wallpaper so KasmVNC sessions do not start on a black root window.
+RUN mkdir -p /usr/share/images/desktop-base && \
+    cp /usr/share/backgrounds/ocr-wallpaper.png /usr/share/images/desktop-base/default
 RUN mkdir -p /home/kali/.config/xfce4/xfconf/xfce-perchannel-xml && \
     cat > /home/kali/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml << 'XFCEXML'
 <?xml version="1.0" encoding="UTF-8"?>
