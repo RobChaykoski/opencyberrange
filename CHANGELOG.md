@@ -2,7 +2,7 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [5.1.0] - in development
+## [5.1.0] - 2026-11-14
 
 ### Identity
 - Identity provider settings export/import: versioned bundle, fixed dry-run
@@ -15,8 +15,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Production backups now push off-host to `ocr-offsite:/home/ocrv2/backups/prod`
   after the nightly dump; the weekly restore drill is unchanged.
 
-### Planned
-- Open Badges 3.0 hosted credentials (see `docs/OPEN-BADGES-3.0-SCOPE.md`).
+### Next
+- Open Badges 3.0 hosted credentials are planned for 5.2; the build plan is in
+  `docs/OPEN-BADGES-3.0-SCOPE.md` and nothing is claimed as shipped.
 
 ## [5.0.1] - 2026-11-14
 

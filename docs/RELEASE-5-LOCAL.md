@@ -159,7 +159,7 @@ Still to do: a Canvas or Brightspace staging test.
 
 ## Development deployment
 
-`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.0.1`
+`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.1.0`
 patch release.
 
 - `/api/version` = **5**, health = **healthy**, Alembic = **0025**.
@@ -192,7 +192,7 @@ patch release.
   served noVNC within 6 seconds.
 - Temporary verification accounts were deleted after the pass.
 
-Production also runs Release 5 (`v5.0.1`); see the deployment record in
+Production also runs Release 5 (`v5.1.0`); see the deployment record in
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
 ## Verified on this stack
@@ -240,3 +240,4 @@ Production also runs Release 5 (`v5.0.1`); see the deployment record in
 Do not promote `release5` to development or production until the Release 5
 exit criteria in [`RELEASE-5-SCOPE.md`](RELEASE-5-SCOPE.md) are met. Production
 must stay on the signed `v4` tag.
+

@@ -1,9 +1,10 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.0.1`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.1.0`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0025`. Production application images were built from `9b943b41`; the
-`v5.0.0` and `v5.0.1` tags record the release and security patch.
+Alembic `0025`. Production application images were built from `318699e6`;
+`v5.0.0`, `v5.0.1`, and `v5.1.0` record the release, security patch, and IdP
+settings feature line.
 
 ## Ready for production
 
@@ -55,6 +56,12 @@ Alembic `0025`. Production application images were built from `9b943b41`; the
 - **5.0.1 patch (same day)** deployed from `9b943b41`: LDAP referral and
   plaintext hardening, OIDC algorithm allowlist, SSO redirect guard. Backend and
   frontend rebuilt, both healthy, Alembic unchanged at `0025`.
+- **5.1.0 feature release (same day)** deployed from `318699e6`: identity
+  provider settings export/import (dry-run first, secrets never exported,
+  missing secrets force a provider disabled, audited), the unused `meta.module`
+  router branch removed, nightly backups pushed off-host. Verified on
+  development with a temporary admin: export, create, re-import skip, and
+  cleanup all passed. Open Badges 3.0 remains planned for 5.2.
 
 ## Deliberately deferred
 
