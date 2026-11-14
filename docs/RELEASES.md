@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.2.1` | SWOCTS Cyber Range Release 5.2.1 | Current production security patch (signed annotated tag): default-deny lab egress |
+| `v5.2.2` | SWOCTS Cyber Range Release 5.2.2 | Current production security patch (signed annotated tag): egress rule persistence |
+| `v5.2.1` | SWOCTS Cyber Range Release 5.2.1 | Previous security patch (signed annotated tag): default-deny lab egress |
 | `v5.2.0` | SWOCTS Cyber Range Release 5.2 | Previous production feature release (signed annotated tag): interaction audit, impersonation records, backup transports |
 | `v5.1.2` | SWOCTS Cyber Range Release 5.1.2 | Previous operations patch (signed annotated tag): alert hook, SMB backup path |
 | `v5.1.1` | SWOCTS Cyber Range Release 5.1.1 | Previous production patch (signed annotated tag): encrypted off-host backups, monitoring, LDAP dev fix |
@@ -30,7 +31,7 @@ represent. It exists because the history contains several naming eras.
 | `v2.1.4-professional`, `v2.1.4` | Professional 2.1.4 | Previous current line; upgrade to Release 3 |
 | `v1.1.x` | Community / Academic 1.1.3 | Maintenance line for existing single-host installs |
 
-`v5.2.1`, `v5.2.0`, `v5.1.2`, `v5.1.1`, `v5.1.0`, `v5.0.1`, `v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the release key
+`v5.2.2`, `v5.2.1`, `v5.2.0`, `v5.1.2`, `v5.1.1`, `v5.1.0`, `v5.0.1`, `v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the release key
 `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`. The public key is
 `docs/release-signing-key.asc`. `v2.7.0` is the last unsigned annotated tag,
 points at `ce7c25bb`, and remains a documented exception from before the
@@ -69,5 +70,6 @@ that feed Cyber DNA are Release 5.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.
+
 
 

@@ -1113,6 +1113,7 @@ fi
             gateways = []
 
         lines = [
+            "apk add --no-cache iptables >/dev/null 2>&1",
             "iptables -N OCR-LAB-INPUT 2>/dev/null || true",
             "iptables -C INPUT -j OCR-LAB-INPUT 2>/dev/null || iptables -I INPUT 1 -j OCR-LAB-INPUT",
         ]

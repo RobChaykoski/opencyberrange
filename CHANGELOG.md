@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.2.2] - 2026-11-14
+
+### Fixes
+- The startup lab-egress pass now installs `iptables` in its helper container;
+  `alpine:latest` does not include it, so the pass had been failing on both
+  hosts while the manually applied rules stayed in place.
+- The egress policy is also re-applied at boot and every five minutes from the
+  deploy user's crontab on development and production.
+
 ## [5.2.1] - 2026-11-14
 
 ### Security

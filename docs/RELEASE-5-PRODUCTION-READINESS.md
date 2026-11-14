@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.2.1`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.2.2`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0025`. Production application images were built from the `v5.2.1`
-commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, and `v5.2.1` record the release,
+Alembic `0026_impersonation_sessions`. Production application images were built from the `v5.2.2`
+commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, and `v5.2.2` record the release,
 security patch, IdP settings feature, and operations patch.
 
 ## Ready for production
@@ -61,7 +61,17 @@ security patch, IdP settings feature, and operations patch.
   missing secrets force a provider disabled, audited), the unused `meta.module`
   router branch removed, nightly backups pushed off-host. Verified on
   development with a temporary admin: export, create, re-import skip, and
-  cleanup all passed. Open Badges 3.0 remains planned for 5.2.
+  cleanup all passed. Open Badges 3.0 remains planned for a later 5.x release.
+- **5.2.0 feature release (same day)** deployed from `51cb9faa`: admin and
+  course-scoped interaction history, server-side impersonation sessions with
+  live/ended/expired status, migration `0026`, and encrypted multi-transport
+  backups. Audit flow verified on development with a temporary admin.
+- **5.2.1 security patch (same day)** deployed from `ea518981`: default-deny lab
+  egress. Testing had found lab containers could reach the platform frontend
+  (80/443/8443), host SSH, and lab gateways; those paths are now dropped while
+  same-lab, shared targets, and QEMU guests keep working.
+- **5.2.2 patch (same day)** fixes the startup egress helper (it now installs
+  `iptables`) and schedules the egress script at boot and every five minutes.
 
 ## Deliberately deferred
 
@@ -107,7 +117,7 @@ security patch, IdP settings feature, and operations patch.
 
 - `/api/version` = 5; backend `/health` reports the database up (`/health` on the
   SPA origin is a client route, so probe the backend on port 8000).
-- `alembic current` = `0025_review_requests`; no failed migrations.
+- `alembic current` = `0026_impersonation_sessions`; no failed migrations.
 - 179 labs discovered; ten random lab detail checks pass.
 - Authenticated pages: dashboard, exercises, Windows track, workbooks, courses,
   profile, instructor, admin, admin settings.
@@ -135,6 +145,8 @@ Released on 2026-11-14 as `v5.0.0` for the implemented scope above.
 Do **not** describe the deferred items as shipped. A real Canvas/Brightspace
 staging test and the external accessibility/security assessments remain
 institutional or later-release work.
+
+
 
 
 
