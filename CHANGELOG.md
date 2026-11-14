@@ -29,6 +29,12 @@ Release 4 `v4.0.1`.
   exclusion, and paused-time credit on resume.
 - Append-only `accommodation_events` and activity-log records.
 
+### Learning workspace
+- The RangeBox exercise view uses full-size **Desktop**, **Exercise**, and
+  **Workbook** tabs instead of a split grid. The desktop stays mounted across
+  tab switches so the VNC session is not dropped. The briefing, flag, hints,
+  and workbook remain one click away.
+
 ### Operations
 - Migrations `0015`–`0022`.
 - Development `172.16.16.44` deployed from `release5`; live lab spawn,

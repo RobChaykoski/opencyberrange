@@ -148,7 +148,7 @@ Still to do: a Canvas or Brightspace staging test.
 ## Development deployment
 
 `172.16.16.44` (`ocrv2`, `~/opencyberrange`) now runs Release 5 from
-`release5` at commit `248dd111`.
+`release5` (backend `248dd111`, frontend `df6abc55`).
 
 - `/api/version` = **5**, health = **healthy**, Alembic = **0022**.
 - 188 lab rows; 12 tracks and 139 track-visible labs in the authenticated API.
@@ -158,6 +158,8 @@ Still to do: a Canvas or Brightspace staging test.
   page errors.
 - Live lab spawn on the host, then pause and resume: paused time credited
   correctly and the session was stopped cleanly.
+- Exercise workspace tabs: Desktop, Exercise, and Workbook each fill the pane;
+  RangeBox stayed connected across tab switches and the workbook rendered.
 - Per-student accommodation set through the API and read back by the learner
   (`1.5x`, `+4 days`).
 - LTI admin panel present; `/lti/deep-link` served with the LTI embed CSP.

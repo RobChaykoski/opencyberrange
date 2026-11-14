@@ -1,10 +1,10 @@
 # Release 5 scope: enterprise procurement and compliance
 
 Status: **in development on the `release5` branch; deployed to development
-`172.16.16.44` (commit `248dd111`, version 5, Alembic `0022`).** Production
-remains on the signed Release 4 tag `v4.0.1`. The local image/stack bring-up and
-deployment evidence are documented in [`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md).
-Everything below is Release 5.
+`172.16.16.44` (backend `248dd111`, frontend `df6abc55`, version 5, Alembic
+`0022`).** Production remains on the signed Release 4 tag `v4.0.1`. The local
+image/stack bring-up and deployment evidence are documented in
+[`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md). Everything below is Release 5.
 
 Source requirements: the university procurement pack covering FERPA, COPPA,
 GDPR/UK GDPR, CCPA/SOPIPA, PIPEDA/FIPPA/MFIPPA, Quebec Law 25, AODA/WCAG 2.2 AA,
