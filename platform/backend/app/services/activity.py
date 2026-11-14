@@ -39,6 +39,7 @@ class EventTypes:
     RETENTION_COMPLETED = "retention_completed"
     REVIEW_REQUESTED = "review_requested"
     REVIEW_DECIDED = "review_decided"
+    AUDIT_REPORT_VIEWED = "audit_report_viewed"
 
 
 # Human-readable labels for the feed
@@ -71,6 +72,7 @@ EVENT_LABELS = {
     EventTypes.RETENTION_COMPLETED: "Retention Run Completed",
     EventTypes.REVIEW_REQUESTED: "Human Review Requested",
     EventTypes.REVIEW_DECIDED: "Human Review Decided",
+    EventTypes.AUDIT_REPORT_VIEWED: "Audit History Viewed",
 }
 
 

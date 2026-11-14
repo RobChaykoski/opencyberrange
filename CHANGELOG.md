@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.2.0] - 2026-11-14
+
+### Audit and impersonation
+- Admins can open any user's interaction history; instructors can open it for a
+  student enrolled in their course. The report combines activity events with the
+  impersonation sessions involving that user, and every view is itself audited.
+- Impersonation is now recorded server-side for its full lifetime, with
+  **live**, **ended**, and **expired** status. The admin Activity tab shows live
+  sessions and accepts a username lookup for the full history.
+- `impersonation_sessions` migration `0026`, with start/exit audit detail that
+  names the target and session.
+
+### Operations
+- Backup transports can now write the encrypted set to an SSH/rsync target, an
+  already-mounted NFS directory, an SMB share via curl, an rclone remote, or a
+  custom command. Off-host copies are encrypted by default; plaintext requires
+  the explicit `BACKUP_ALLOW_PLAINTEXT=1` override.
+
 ## [5.1.2] - 2026-11-14
 
 ### Operations

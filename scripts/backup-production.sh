@@ -12,6 +12,16 @@
 #   BACKEND_CONTAINER default ocr-backend
 #   DB_USER/DB_NAME  default labuser/labdb
 #   ENV_FILE         default ~/opencyberrange/platform/.env
+#
+# Off-host destinations (any combination; encrypted by default):
+#   BACKUP_REMOTE         rsync target, e.g. ocr-offsite:/path
+#   BACKUP_NFS_DIR        path to an already-mounted NFS directory
+#   BACKUP_SMB_URL        smb://host/share/dir/ (curl + netrc)
+#   BACKUP_RCLONE_REMOTE  rclone remote:path (S3, WebDAV, SFTP, crypt)
+#   BACKUP_COPY_CMD       executable receiving each encrypted file path
+#   BACKUP_GPG_RECIPIENT  required for encryption (public key)
+#   BACKUP_ALLOW_PLAINTEXT=1 explicitly allows unencrypted off-host copies
+#   BACKUP_SMB_NETRC      default ~/.ocr-smb-netrc
 set -euo pipefail
 
 BACKUP_DIR="${BACKUP_DIR:-$HOME/backups}"
@@ -68,7 +78,17 @@ fi
 sha256sum "$DUMP" > "$DUMP.sha256"
 chmod 600 "$DUMP.sha256"
 
-if [ -n "${BACKUP_REMOTE:-}" ]; then
+DESTINATIONS=0
+for var in BACKUP_REMOTE BACKUP_NFS_DIR BACKUP_SMB_URL BACKUP_RCLONE_REMOTE BACKUP_COPY_CMD; do
+  [ -n "${!var:-}" ] && DESTINATIONS=1
+done
+
+if [ "$DESTINATIONS" = 1 ]; then
+  if [ -z "${BACKUP_GPG_RECIPIENT:-}" ] && [ "${BACKUP_ALLOW_PLAINTEXT:-0}" != "1" ]; then
+    echo "ERROR: off-host backups require BACKUP_GPG_RECIPIENT (or an explicit BACKUP_ALLOW_PLAINTEXT=1)" >&2
+    exit 1
+  fi
+
   files=("$DUMP.sha256")
   encrypted=()
   if [ -n "${BACKUP_GPG_RECIPIENT:-}" ]; then
@@ -91,9 +111,19 @@ if [ -n "${BACKUP_REMOTE:-}" ]; then
     files=("$DUMP" "$DUMP.sha256")
     [ -n "$LEDGER_FILE" ] && files+=("$LEDGER_FILE")
     [ -n "$ENV_COPY" ] && files+=("$ENV_COPY")
+    echo "WARNING: BACKUP_ALLOW_PLAINTEXT=1, off-host copies are not encrypted"
   fi
-  echo "remote:   syncing to $BACKUP_REMOTE"
-  rsync -a "${files[@]}" "${BACKUP_REMOTE%/}/"
+
+  if [ -n "${BACKUP_REMOTE:-}" ]; then
+    echo "remote:   syncing to $BACKUP_REMOTE"
+    rsync -a "${files[@]}" "${BACKUP_REMOTE%/}/"
+  fi
+
+  if [ -n "${BACKUP_NFS_DIR:-}" ]; then
+    [ -d "$BACKUP_NFS_DIR" ] || { echo "ERROR: BACKUP_NFS_DIR is not a mounted directory: $BACKUP_NFS_DIR" >&2; exit 1; }
+    cp -p "${files[@]}" "${BACKUP_NFS_DIR%/}/"
+    echo "nfs:      copied encrypted set to $BACKUP_NFS_DIR"
+  fi
 
   if [ -n "${BACKUP_SMB_URL:-}" ]; then
     if [ ${#encrypted[@]} -eq 0 ]; then
@@ -107,6 +137,21 @@ if [ -n "${BACKUP_REMOTE:-}" ]; then
         -T "$f" "${BACKUP_SMB_URL%/}/$(basename "$f")"
     done
     echo "smb:      uploaded encrypted set to $BACKUP_SMB_URL"
+  fi
+
+  if [ -n "${BACKUP_RCLONE_REMOTE:-}" ]; then
+    command -v rclone >/dev/null || { echo "ERROR: rclone not found for BACKUP_RCLONE_REMOTE" >&2; exit 1; }
+    for f in "${files[@]}"; do
+      rclone copyto "$f" "${BACKUP_RCLONE_REMOTE%/}/$(basename "$f")"
+    done
+    echo "rclone:   uploaded to $BACKUP_RCLONE_REMOTE"
+  fi
+
+  if [ -n "${BACKUP_COPY_CMD:-}" ]; then
+    for f in "${files[@]}"; do
+      "$BACKUP_COPY_CMD" "$f"
+    done
+    echo "command:  handed the encrypted set to BACKUP_COPY_CMD"
   fi
 
   if [ ${#encrypted[@]} -gt 0 ]; then

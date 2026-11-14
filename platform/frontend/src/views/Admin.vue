@@ -1396,6 +1396,55 @@
               </div>
             </div>
             <p v-if="activityMessage" class="success-message">{{ activityMessage }}</p>
+
+            <div class="audit-toolbar">
+              <input
+                v-model="auditUsername"
+                class="form-input form-input--sm"
+                placeholder="Student or instructor username"
+                @keyup.enter="openAdminHistory"
+              >
+              <button class="btn btn--secondary btn--sm" @click="openAdminHistory">Open history</button>
+              <button class="btn btn--outline btn--sm" @click="loadLiveImpersonations">
+                Refresh live impersonations
+              </button>
+              <span v-if="auditError" class="form-error" role="alert">{{ auditError }}</span>
+            </div>
+
+            <div v-if="liveImpersonations.length" class="audit-live">
+              <h4>Live impersonation sessions</h4>
+              <div class="table-container">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Actor</th>
+                      <th>Target</th>
+                      <th>Mode</th>
+                      <th>Started</th>
+                      <th>Expires</th>
+                      <th>IP</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="session in liveImpersonations" :key="session.session_id">
+                      <td>{{ session.actor_username }}</td>
+                      <td>{{ session.target_username || 'role view' }}</td>
+                      <td>{{ session.mode }}</td>
+                      <td>{{ new Date(session.started_at).toLocaleString() }}</td>
+                      <td>{{ new Date(session.expires_at).toLocaleString() }}</td>
+                      <td>{{ session.ip_address || '—' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <AuditHistory
+              v-if="auditEndpoint"
+              :endpoint="auditEndpoint"
+              :title="auditTitle"
+              @close="auditEndpoint = ''"
+            />
             <div v-if="activityClearOpen" class="activity-clear-panel">
               <h3>Clear activity log</h3>
               <p>
@@ -3940,6 +3989,7 @@ import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
+import AuditHistory from '../components/AuditHistory.vue'
 import LtiPlatformsPanel from '../components/LtiPlatformsPanel.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
@@ -4882,6 +4932,30 @@ const activityClearScope = ref('90')
 const activityClearConfirm = ref('')
 const activityClearing = ref(false)
 const activityClearError = ref('')
+const auditUsername = ref('')
+const auditEndpoint = ref('')
+const auditTitle = ref('')
+const auditError = ref('')
+const liveImpersonations = ref([])
+
+const openAdminHistory = () => {
+  const username = auditUsername.value.trim()
+  if (!username) return
+  auditError.value = ''
+  auditTitle.value = `History: ${username}`
+  auditEndpoint.value = `/admin/audit/users/by-username/${encodeURIComponent(username)}/history`
+}
+
+const loadLiveImpersonations = async () => {
+  try {
+    const { data } = await axios.get('/admin/audit/impersonations?live_only=true')
+    liveImpersonations.value = data.sessions || []
+  } catch (e) {
+    auditError.value = e.response?.data?.detail || 'Could not load live impersonation sessions.'
+  }
+}
+
+onMounted(loadLiveImpersonations)
 
 const eventTypeLabelMap = {
   lab_started: 'Lab Started',
@@ -13874,6 +13948,23 @@ watch(activeTab, (tab) => {
   align-items: center;
   gap: 0.5rem;
   justify-content: flex-end;
+}
+.audit-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1rem;
+}
+.audit-toolbar .form-input {
+  width: 260px;
+}
+.audit-live {
+  margin-top: 1rem;
+}
+.audit-live h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
 }
 .activity-clear-panel {
   margin: 0.75rem 0 1rem;

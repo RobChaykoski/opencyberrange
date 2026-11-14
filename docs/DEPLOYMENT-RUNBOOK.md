@@ -161,27 +161,34 @@ data. Rotating the backup key requires importing the new public key on
 production, updating `BACKUP_GPG_RECIPIENT`, and keeping the old private key
 long enough to read existing off-host copies.
 
-### SMB/NAS target
+### Backup transports
 
-An additional SMB copy can be enabled without a root mount by uploading the
-encrypted files with `curl` (Ubuntu's curl includes SMB). Configure:
+Any combination of these can be set; each receives the encrypted set. Without
+`BACKUP_GPG_RECIPIENT` the script refuses to copy off-host unless
+`BACKUP_ALLOW_PLAINTEXT=1` is explicitly set.
 
-```bash
-# ~/.ocr-smb-netrc  (chmod 600)
+| Variable | Transport | Notes |
+|---|---|---|
+| `BACKUP_REMOTE` | rsync over SSH | Current production path (`ocr-offsite:/home/ocrv2/backups/prod`); SSH encrypts transit |
+| `BACKUP_NFS_DIR` | NFS | Path to an **already mounted** directory. Prefer NFSv4 with Kerberos; the mounted filesystem must be writable by the deploy user |
+| `BACKUP_SMB_URL` | SMB via curl | `smb://172.16.16.8/Backups/OCR-Export-Backup/` with `BACKUP_SMB_NETRC`; prefer SMB3 signing/encryption |
+| `BACKUP_RCLONE_REMOTE` | Any rclone remote | S3/WebDAV/SFTP; use an rclone `crypt` remote or provider-side encryption |
+| `BACKUP_COPY_CMD` | Custom executable | Receives each encrypted file path; the escape hatch for an institutional tool |
+
+NFS/SMB/rclone all carry the same GPG-encrypted files, so transport encryption
+is a second layer, not the only one. Mounting NFS/CIFS requires root and is done
+by the host operator; the backup script itself never mounts anything.
+
+For SMB, create `~/.ocr-smb-netrc` (mode 600):
+
+```text
 machine 172.16.16.8 login <service-account> password <secret>
 ```
 
-and set these in the backup cron:
-
-```bash
-BACKUP_SMB_URL='smb://172.16.16.8/Backups/OCR-Export-Backup/'
-BACKUP_SMB_NETRC="$HOME/.ocr-smb-netrc"
-```
-
-SMB upload requires `BACKUP_GPG_RECIPIENT`, so only encrypted payloads leave the
-host. The target directory must allow that account to create files. The NAS
-upload stays disabled until a service account is provided; the dev off-host
-copy remains the active secondary target.
+and set `BACKUP_SMB_URL='smb://172.16.16.8/Backups/OCR-Export-Backup/'` plus
+`BACKUP_SMB_NETRC="$HOME/.ocr-smb-netrc"` in the backup cron. The NAS copy
+stays disabled until that service account is provided; the dev off-host copy
+remains the active secondary target.
 
 ```bash
 crontab -l | grep -E 'backup-production|restore-drill'

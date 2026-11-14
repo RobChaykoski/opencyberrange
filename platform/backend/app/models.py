@@ -1180,6 +1180,33 @@ class ReviewRequest(Base):
     decided_at = Column(DateTime, nullable=True)
 
 
+class ImpersonationSession(Base):
+    """Server-side record of an impersonation token for audit and live status."""
+
+    __tablename__ = "impersonation_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String(64), nullable=False, unique=True, index=True)
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    actor_username = Column(String(120), nullable=False)
+    target_user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    target_username = Column(String(120), nullable=True)
+    mode = Column(String(30), nullable=False)
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True
+    )
+    read_only = Column(Boolean, default=True, nullable=False)
+    ip_address = Column(String(45), nullable=True)
+    started_at = Column(DateTime, server_default=func.now(), index=True)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    ended_at = Column(DateTime, nullable=True)
+    end_reason = Column(String(30), nullable=True)
+
+
 class ReportExport(Base):
     """Immutable manifest for a generated instructor report.
 

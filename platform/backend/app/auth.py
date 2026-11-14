@@ -463,6 +463,7 @@ def create_impersonation_token(
     mode: str,
     course_id: Optional[int] = None,
     expires_delta: Optional[timedelta] = None,
+    session_id: Optional[str] = None,
 ) -> str:
     """Create a JWT for an impersonation session.
     The token carries the target identity plus original-user metadata."""
@@ -478,6 +479,8 @@ def create_impersonation_token(
     }
     if course_id is not None:
         data["imp_course_id"] = course_id
+    if session_id:
+        data["imp_sid"] = session_id
     return create_access_token(data, expires_delta=expires_delta)
 
 

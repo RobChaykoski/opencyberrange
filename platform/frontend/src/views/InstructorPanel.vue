@@ -318,6 +318,11 @@
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/>
                           </svg>
                         </button>
+                        <button @click="openStudentHistory(s)" class="action-btn action-btn--view" title="Interaction history">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
+                          </svg>
+                        </button>
                         <button @click="removeStudent(s)" class="action-btn action-btn--delete" title="Remove">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3 6 5 6 21 6"/><path d="M19 6V20C19 21.1 18.1 22 17 22H7C5.9 22 5 21.1 5 20V6M8 6V4C8 2.9 8.9 2 10 2H14C15.1 2 16 2.9 16 4V6"/>
@@ -799,6 +804,13 @@
               </details>
             </template>
           </div>
+
+          <AuditHistory
+            v-if="auditEndpoint"
+            :endpoint="auditEndpoint"
+            :title="auditTitle"
+            @close="auditEndpoint = ''"
+          />
 
           <!-- Reviews sub-tab -->
           <div v-if="courseManageTab === 'reviews'" class="sub-tab-content">
@@ -1370,6 +1382,7 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from '../api/axios'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
+import AuditHistory from '../components/AuditHistory.vue'
 import { useImpersonation } from '../composables/useImpersonation'
 import { useModules } from '../composables/useModules'
 import { getUserTimeZone } from '../utils/timezone'
@@ -1458,6 +1471,14 @@ function goStudio(studioTab, fork) {
 }
 const courseManageTab = ref('students')
 const courseStudents = ref([])
+const auditEndpoint = ref('')
+const auditTitle = ref('')
+
+function openStudentHistory(student) {
+  if (!managingCourse.value) return
+  auditEndpoint.value = `/courses/${managingCourse.value.id}/students/${student.id}/history`
+  auditTitle.value = `History: ${student.username}`
+}
 const accommodationStudent = ref(null)
 const accommodationForm = ref({
   time_multiplier: 1,

@@ -12,6 +12,7 @@ from typing import Literal, Optional
 import base64
 import io
 import logging
+import secrets
 import qrcode
 import re
 
@@ -22,6 +23,7 @@ from app.models import (
     User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
     Course, ExerciseReaction, InviteCode, Assignment, AssignmentLab,
     Competition, CompetitionParticipant, SurveyConsentEvent,
+    ImpersonationSession,
 )
 from app.auth import (
     authenticate_user,
@@ -2167,6 +2169,26 @@ async def start_impersonation(
         # The imp claims carry the effective role.
         target_username = current_user.username
 
+    # Record the session server-side so admin audit can show live vs ended.
+    session_id = secrets.token_urlsafe(24)
+    started = datetime.now(timezone.utc)
+    expires = started + timedelta(hours=1)
+    db.add(
+        ImpersonationSession(
+            session_id=session_id,
+            actor_id=current_user.id,
+            actor_username=current_user.username,
+            target_user_id=target_user.id if target_user else None,
+            target_username=target_username,
+            mode=mode,
+            course_id=course_id,
+            read_only=True,
+            ip_address=request.client.host if request.client else None,
+            expires_at=expires,
+        )
+    )
+    db.commit()
+
     # Create impersonation token
     token = create_impersonation_token(
         original_user=current_user,
@@ -2174,6 +2196,7 @@ async def start_impersonation(
         target_role=target_role,
         mode=mode,
         course_id=course_id,
+        session_id=session_id,
     )
 
     # Build response user dicts
@@ -2259,14 +2282,32 @@ async def exit_impersonation(
         expires_delta=timedelta(hours=settings.JWT_EXPIRATION_HOURS),
     )
 
+    # Close the server-side session record, when this token has one.
+    session_id = payload.get("imp_sid")
+    session = None
+    if session_id:
+        session = (
+            db.query(ImpersonationSession)
+            .filter(ImpersonationSession.session_id == session_id)
+            .first()
+        )
+    if session is not None and session.ended_at is None:
+        session.ended_at = datetime.now(timezone.utc)
+        session.end_reason = "exit"
+        db.commit()
+
     # Audit log
     log_activity(
         db, EventTypes.IMPERSONATION_END,
         actor_id=original_user.id,
-        target_type="user",
-        target_id=original_user.id,
-        target_label=original_user.username,
-        detail={"imp_mode": payload.get("imp_mode")},
+        target_type="user" if (session and session.target_user_id) else "role",
+        target_id=session.target_user_id if session else None,
+        target_label=(session.target_username if session else original_user.username),
+        detail={
+            "imp_mode": payload.get("imp_mode"),
+            "session_id": session_id,
+            "target_username": session.target_username if session else None,
+        },
         ip_address=request.client.host if request.client else None,
     )
 

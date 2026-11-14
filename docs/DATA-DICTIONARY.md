@@ -195,6 +195,7 @@ UI and the API documentation.
 | Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
 |---|---|---|---|---|---|---|---|
 | `activity_events.event_type`, `target_type`, `target_id`, `target_label`, `detail`, `created_at` | Activity feed and audit context | Support, security, teaching review | Security / Service | 90-day review window by default | Admin; instructor only for assigned course | `activity` (admin) | Anonymised |
+| `impersonation_sessions.session_id`, `actor_username`, `target_username`, `mode`, `course_id`, `started_at`, `expires_at`, `ended_at`, `end_reason`, `ip_address` | Server-side record of an impersonation token and its live/ended state | Prove who viewed as whom and when | Security / Legal | Audit window | Admin | Not exported | Actor/target names snapshotted; IDs nulled on user deletion |
 | `data_integrity_ledger.*` | Row hashes and actor type | Tamper evidence | Security / Legal | Institution audit schedule | Admin; auditor | Not exported through learner reports | Kept; contains no row contents |
 | `platform_settings.*` | Runtime configuration | Operate the platform | Service / Security | Until changed | Admin | Not in learner exports | Kept |
 | `derived.active_time_minutes` | Bounded session time per learner-lab pair | Learning-time metrics | Service | Computed on read; no separate store | Self; instructor aggregate; admin | `reports`, `analytics` | Deleted with source rows |
