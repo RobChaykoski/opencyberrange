@@ -41,6 +41,7 @@ class EventTypes:
     REVIEW_DECIDED = "review_decided"
     AUDIT_REPORT_VIEWED = "audit_report_viewed"
     COHORT_CREATED = "cohort_created"
+    COHORT_SETTINGS_CHANGED = "cohort_settings_changed"
     OPEN_BADGE_ISSUED = "open_badge_issued"
     OPEN_BADGE_REVOKED = "open_badge_revoked"
     OPEN_BADGE_SETTINGS_CHANGED = "open_badge_settings_changed"
@@ -80,6 +81,7 @@ EVENT_LABELS = {
     EventTypes.REVIEW_DECIDED: "Human Review Decided",
     EventTypes.AUDIT_REPORT_VIEWED: "Audit History Viewed",
     EventTypes.COHORT_CREATED: "Course Cohort Created",
+    EventTypes.COHORT_SETTINGS_CHANGED: "Course Cohort Settings Changed",
     EventTypes.OPEN_BADGE_ISSUED: "Open Badge Issued",
     EventTypes.OPEN_BADGE_REVOKED: "Open Badge Revoked",
     EventTypes.OPEN_BADGE_SETTINGS_CHANGED: "Open Badge Settings Changed",
@@ -120,6 +122,7 @@ def log_activity(
                 db.rollback()
             except Exception:
                 pass
+
 
 
 

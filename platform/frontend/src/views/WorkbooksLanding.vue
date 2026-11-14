@@ -69,12 +69,14 @@ const canReorder = (() => {
 async function open(wb) {
   const url = wikiUrl(wb.url)
   if (!url) return
-  await setWikiAuthCookie()
+  // Open synchronously from the click. Awaiting the cookie call first lets
+  // browsers treat the later window.open as a popup and block it.
+  window.open(url, '_blank', 'noopener,noreferrer')
+  setWikiAuthCookie()
   api.post('/analytics/events/workbook-open', {
     title: wb.name,
     url,
   }).catch(() => { /* analytics is best-effort */ })
-  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 function initSortable() {
@@ -118,7 +120,10 @@ async function load() {
   initSortable()
 }
 
-onMounted(load)
+onMounted(() => {
+  setWikiAuthCookie()
+  load()
+})
 onUnmounted(() => { if (sortable) { sortable.destroy(); sortable = null } })
 </script>
 

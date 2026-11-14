@@ -2,6 +2,28 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.14.0] - 2026-11-14
+
+### Course cohorts and certification
+- Added opt-in **strict cohort access** for a course. When enabled and at least
+  one cohort has an exercise-set requirement, course detail, scoreboard, and
+  course-scoped achievements use only the learner's cohort labs.
+- Added a **default cohort** and **Sync enrollments** action; new enrollments
+  are placed in the default cohort when strict mode is on.
+- Course-scoped Clean Sweep and custom `course_completed` achievements now use
+  the same visible lab set as the course page.
+- Reviewed the certification question banks (81 items, 9 pathways, 69
+  references) and recorded the 14 November review.
+- Fixed certificate PDFs ignoring the selected design; the PDF now uses the
+  same classic/executive/modern/minimal design as the page.
+- Reloading a certificate route now replaces the previous recipient, level, and
+  certificate ID instead of leaving stale data on screen.
+
+### Documentation
+- Workbook and documentation links now open synchronously from the click, so
+  browsers do not block them as popups after the auth-cookie request.
+- The Workbooks page refreshes the wiki auth cookie on mount.
+
 ## [5.13.1] - 2026-11-14
 
 ### Open Badges

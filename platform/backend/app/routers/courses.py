@@ -50,6 +50,7 @@ from app.services.audit import log_admin_action, AuditActions
 from app.services.report_integrity import record_report
 from app.services.activity import log_activity, EventTypes
 from app.services.course_wiki import rebuild_course_wiki
+from app.services.course_planning import cohort_lab_ids, strict_cohort_lab_ids, sync_default_cohort
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -474,9 +475,12 @@ async def get_course(
 
     assigned_lab_ids = {a.lab_id for a in assignments}
     if is_enrolled:
-        from app.services.course_planning import cohort_lab_ids
-
         assigned_lab_ids |= cohort_lab_ids(db, current_user.id, course_id)
+    if is_enrolled and not is_instructor:
+        strict_ids = strict_cohort_lab_ids(db, current_user.id, course_id)
+        if strict_ids is not None:
+            assignments = [a for a in assignments if a.lab_id in strict_ids]
+            assigned_lab_ids &= strict_ids
 
     # Course-aware: only count completions after enrollment (+ respecting resets)
     if is_enrolled:
@@ -1318,6 +1322,8 @@ async def join_course(
     db.flush()  # so _ensure_scope_token can see the row
     _ensure_scope_token(db, enrollment)
     db.commit()
+    if course.cohort_strict:
+        sync_default_cohort(db, course)
     logger.info(f"User {current_user.username} enrolled in {course.code}")
 
     log_activity(db, EventTypes.COURSE_ENROLLED,
@@ -1373,6 +1379,8 @@ async def enroll_students_bulk(
         for ce in new_enrollments:
             _ensure_scope_token(db, ce)
         db.commit()
+        if course.cohort_strict:
+            sync_default_cohort(db, course)
         for uid in enrolled:
             log_activity(db, EventTypes.COURSE_ENROLLED,
                          actor_id=uid, target_type="course",
@@ -1693,6 +1701,10 @@ async def get_scoreboard(
     assignments = db.query(CourseLabAssignment).filter(
         CourseLabAssignment.course_id == course_id,
     ).order_by(CourseLabAssignment.sort_order).all()
+    if is_enrolled and not is_instructor:
+        strict_ids = strict_cohort_lab_ids(db, current_user.id, course_id)
+        if strict_ids is not None:
+            assignments = [a for a in assignments if a.lab_id in strict_ids]
 
     labs = []
     lab_map = {}

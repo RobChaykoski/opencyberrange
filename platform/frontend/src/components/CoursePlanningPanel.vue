@@ -17,6 +17,31 @@
     <p v-if="error" class="form-error" role="alert">{{ error }}</p>
     <p v-if="message" class="success-message">{{ message }}</p>
 
+    <div class="planning-strict">
+      <label>
+        <input
+          type="checkbox"
+          :checked="Boolean(planning?.cohort_strict)"
+          :disabled="saving || !planning"
+          @change="setStrict($event.target.checked)"
+        />
+        <strong>Strict cohort access</strong>
+      </label>
+      <p>
+        When on, enrolled learners see only the labs in their cohort's exercise
+        sets. Course-wide labs stay visible only while no cohort requirement has
+        been configured. The default cohort receives new enrollments.
+      </p>
+      <button
+        v-if="planning?.cohort_strict"
+        class="btn btn--secondary btn--sm"
+        :disabled="saving"
+        @click="syncDefaultCohort"
+      >
+        Sync enrollments to default cohort
+      </button>
+    </div>
+
     <!-- Cohorts -->
     <div class="planning-block">
       <h4>Cohorts</h4>
@@ -32,9 +57,20 @@
           <div>
             <strong>{{ cohort.name }}</strong>
             <span class="cell-muted"> · {{ cohort.members.length }} member(s)</span>
+            <span v-if="cohort.is_default" class="planning-default-badge">Default</span>
             <p v-if="cohort.description" class="cell-muted">{{ cohort.description }}</p>
           </div>
-          <button class="btn btn--danger btn--xs" @click="deleteCohort(cohort)">Delete</button>
+          <div class="planning-card__actions">
+            <button
+              v-if="!cohort.is_default"
+              class="btn btn--secondary btn--xs"
+              :disabled="saving"
+              @click="makeDefaultCohort(cohort)"
+            >
+              Make default
+            </button>
+            <button class="btn btn--danger btn--xs" @click="deleteCohort(cohort)">Delete</button>
+          </div>
         </div>
         <details>
           <summary>Members</summary>
@@ -240,6 +276,24 @@ const run = async (action, success) => {
   }
 }
 
+const setStrict = (enabled) =>
+  run(
+    () => axios.put(`/courses/${props.courseId}/cohort-settings`, { strict: enabled }),
+    enabled ? 'Strict cohort access is on.' : 'Strict cohort access is off.',
+  )
+
+const makeDefaultCohort = (cohort) =>
+  run(
+    () => axios.patch(`/courses/${props.courseId}/cohorts/${cohort.id}`, { is_default: true }),
+    `${cohort.name} is now the default cohort.`,
+  )
+
+const syncDefaultCohort = () =>
+  run(
+    () => axios.post(`/courses/${props.courseId}/cohorts/sync-default`),
+    'Enrollments synced to the default cohort.',
+  )
+
 const createCohort = () =>
   run(async () => {
     await axios.post(`/courses/${props.courseId}/cohorts`, {
@@ -352,6 +406,30 @@ onMounted(load)
 
 <style scoped>
 .planning { display: flex; flex-direction: column; gap: 1rem; }
+.planning-strict {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+.planning-strict label { display: inline-flex; align-items: center; gap: 0.4rem; }
+.planning-strict p { flex: 1 1 18rem; margin: 0; color: var(--text-muted); font-size: 0.8rem; line-height: 1.45; }
+.planning-default-badge {
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.planning-card__actions { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: flex-start; }
 .planning-block { border-top: 1px solid var(--border-color); padding-top: 1rem; }
 .planning-block h4 { margin: 0 0 0.6rem; font-size: 0.95rem; }
 .planning-form { display: flex; gap: 0.5rem; align-items: center; margin: 0.5rem 0; }

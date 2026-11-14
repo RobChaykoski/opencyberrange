@@ -1,5 +1,5 @@
 version: '1.0'
-reviewed_at: '2026-11-12'
+reviewed_at: '2026-11-14'
 status: admin-curated; original practice mapped to current public objectives and career pathways
 notes: 'These are original practice items written to published objectives and public, openly available references.
   They are not copied exam questions and are not a certification exam. Every item carries the objective it tests,
@@ -1839,3 +1839,4 @@ sources:
 - name: CompTIA exam objectives
   url: https://www.comptia.org/en-us/certifications/
   licence: Objectives used as reference; questions are original
+

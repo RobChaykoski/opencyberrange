@@ -14,6 +14,7 @@ from app.models import (
 )
 from app.database import retry_on_deadlock
 from app.services.activity import log_activity, EventTypes
+from app.services.course_planning import visible_course_lab_ids
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +155,7 @@ ACHIEVEMENT_DESCRIPTIONS = {
     NO_HINTS: "Completed a lab without using any hints",
     PERFECTIONIST: "Completed a lab on the first flag attempt",
     SPEED_DEMON: "Completed a lab in under half the estimated time",
-    CLEAN_SWEEP: "Completed all assigned labs in the course",
+    CLEAN_SWEEP: "Completed every visible assigned lab in the course",
     STREAK: "Completed 3+ labs in a row with no hints and first attempt",
     SHELL_SHOCKED: "Found the command-injection bug and captured the flag on the first attempt without hints",
     SOURCE_WHISPERER: "Found the hidden export route without using hints",
@@ -243,7 +244,7 @@ CUSTOM_ACHIEVEMENT_TRIGGERS = {
     "labs_completed": "Complete N exercises in the course",
     "no_hint_labs": "Complete N exercises without using hints",
     "perfect_labs": "Complete N exercises on the first attempt",
-    "course_completed": "Complete every exercise assigned to the course",
+    "course_completed": "Complete every visible exercise assigned to the course",
     "osint_labs_completed": "Complete N OSINT exercises in the course",
     "osint_no_hint_labs": "Complete N OSINT exercises without using hints",
     "osint_perfect_labs": "Complete N OSINT exercises on the first attempt",
@@ -924,12 +925,15 @@ def check_achievements(db: Session, user_id: int, lab_id: int):
         # --- hidden per-lab badges (RangeBox, Forensics, Software Security) ---
         _check_lab_badges(db, user_id, course_id, lab, completion)
 
-        # --- clean_sweep: all assigned labs in course completed (course-aware) ---
-        course_lab_ids = {
+        # --- clean_sweep: all visible assigned labs in course completed ---
+        assigned_lab_ids = {
             a.lab_id for a in db.query(CourseLabAssignment).filter(
                 CourseLabAssignment.course_id == course_id
             ).all()
         }
+        course_lab_ids = visible_course_lab_ids(
+            db, user_id, course_id, assigned_lab_ids
+        )
         from app.routers.courses import get_course_completed_lab_ids
         user_completed = get_course_completed_lab_ids(db, user_id, course_id, course_lab_ids)
         if course_lab_ids and course_lab_ids.issubset(user_completed):
@@ -1141,3 +1145,4 @@ def _check_custom_achievements(
                 db, user_id, course_id, None,
                 custom_achievement_type(definition.id),
             )
+

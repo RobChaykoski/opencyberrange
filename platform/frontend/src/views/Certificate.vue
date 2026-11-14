@@ -339,7 +339,10 @@ const downloadPdf = async () => {
       : await axios.get(
         `/exercises/tracks/${route.params.trackSlug}/levels/${route.params.levelId}/certificate.pdf`,
         {
-          params: { include_achievements: showAchievements.value },
+          params: {
+            include_achievements: showAchievements.value,
+            design: activeDesign.value,
+          },
           responseType: 'blob',
         }
       )
@@ -468,6 +471,24 @@ watch(activeDesign, (value) => {
     // Storage can be unavailable in private browsing; the design still applies.
   }
 })
+
+// The certificate route can change without unmounting this view (for example
+// opening another level from the certificate actions). Reload so the displayed
+// recipient, level, and certificate ID cannot stay on the previous award.
+watch(
+  () => [
+    route.params.trackSlug,
+    route.params.levelId,
+    route.params.eventId,
+    route.params.award,
+  ],
+  () => {
+    certificate.value = null
+    badge.value = null
+    badgeError.value = ''
+    load()
+  }
+)
 
 const printCertificate = () => window.print()
 

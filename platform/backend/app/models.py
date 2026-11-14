@@ -1108,6 +1108,11 @@ class Course(Base):
     end_date = Column(DateTime, nullable=False)
     is_active = Column(Boolean, default=False)
     is_archived = Column(Boolean, default=False)
+    # When true, a learner sees only the course labs that belong to their
+    # cohort's exercise sets. Course-wide labs remain visible when no cohort
+    # requirement has been configured, so an unfinished plan never blanks a
+    # course by accident.
+    cohort_strict = Column(Boolean, default=False, server_default=text("false"), nullable=False)
     wiki_slug = Column(String(50), nullable=True, index=True)
     wiki_theme_color = Column(String(30), default="blue")
     # Per-cohort retention clock. When retention_until passes, the course is
@@ -1240,6 +1245,9 @@ class CourseCohort(Base):
     )
     name = Column(String(120), nullable=False)
     description = Column(String(500), nullable=True)
+    # Exactly one cohort per course may be the automatic enrollment target.
+    # The API clears the flag from siblings when a new default is selected.
+    is_default = Column(Boolean, default=False, server_default=text("false"), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
 
     __table_args__ = (UniqueConstraint("course_id", "name", name="uq_course_cohort_name"),)

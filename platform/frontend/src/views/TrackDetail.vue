@@ -1518,19 +1518,19 @@ const workbookSandbox = computed(() => {
   }
 })
 
-const openWorkbook = async () => {
+const openWorkbook = () => {
   const url = activeLab.value?.lab?.workbook && workbookUrl(activeLab.value.lab.workbook)
   if (url) {
-    await setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
+    setWikiAuthCookie()
   }
 }
 
-const openWorkbookForLab = async (lab) => {
+const openWorkbookForLab = (lab) => {
   const url = lab.workbook && workbookUrl(lab.workbook)
   if (url) {
-    await setWikiAuthCookie()
     window.open(url, '_blank', 'noopener,noreferrer')
+    setWikiAuthCookie()
   }
 }
 

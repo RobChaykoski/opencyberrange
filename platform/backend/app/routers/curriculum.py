@@ -669,6 +669,7 @@ def build_level_certificate(
     include_qr: bool = True,
     include_achievements: bool = True,
     base_url: Optional[str] = None,
+    design: Optional[str] = None,
 ) -> Optional[dict]:
     """Build the certificate payload for one level, or None when incomplete.
 
@@ -753,7 +754,11 @@ def build_level_certificate(
 
     return {
         "certificate_id": certificate_id,
-        "design": _certificate_design(db),
+        "design": (
+            design.strip().lower()
+            if design and design.strip().lower() in CERTIFICATE_DESIGNS
+            else _certificate_design(db)
+        ),
         # Prefer the name the student supplied in their profile; fall back to
         # the login handle so a half-filled profile still prints something.
         "recipient": current_user.display_name,
@@ -982,6 +987,7 @@ def _load_level_certificate(
     include_achievements: bool,
     db: Session,
     current_user: User,
+    design: Optional[str] = None,
 ) -> dict:
     """Resolve the track/level and return the certificate payload or raise."""
     track = db.query(Track).options(
@@ -1013,6 +1019,7 @@ def _load_level_certificate(
         db, current_user, track, level, visible_labs, completed_ids,
         include_achievements=include_achievements,
         base_url=_certificate_base_url(request, db),
+        design=design,
     )
     if certificate is None:
         raise HTTPException(
@@ -1063,11 +1070,13 @@ async def get_level_certificate_pdf(
     track_slug: str,
     level_id: int,
     include_achievements: bool = Query(True),
+    design: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
     certificate = _load_level_certificate(
-        request, track_slug, level_id, include_achievements, db, current_user
+        request, track_slug, level_id, include_achievements, db, current_user,
+        design=design,
     )
     pdf_bytes = _certificate_pdf_bytes(certificate)
     filename = f"{certificate['certificate_id']}.pdf"

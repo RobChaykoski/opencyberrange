@@ -25,6 +25,7 @@ from app.models import (
     User,
 )
 from app.services.activity import EventTypes, log_activity
+from app.services.course_planning import sync_default_cohort
 
 router = APIRouter()
 
@@ -85,11 +86,17 @@ def _member_ids(db: Session, cohort_id: int) -> list[int]:
 class CohortCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=120)
     description: str | None = Field(None, max_length=500)
+    is_default: bool = False
 
 
 class CohortUpdate(BaseModel):
     name: str | None = Field(None, min_length=1, max_length=120)
     description: str | None = Field(None, max_length=500)
+    is_default: bool | None = None
+
+
+class CohortSettingsUpdate(BaseModel):
+    strict: bool
 
 
 class MembersRequest(BaseModel):
@@ -193,6 +200,7 @@ def _cohort_payload(db: Session, row: CourseCohort) -> dict:
         "id": row.id,
         "name": row.name,
         "description": row.description,
+        "is_default": bool(row.is_default),
         "members": [
             {"id": member.id, "username": member.username, "role": member.role}
             for member in members
@@ -330,6 +338,7 @@ def get_planning(
         .all()
     )
     return {
+        "cohort_strict": bool(course.cohort_strict),
         "cohorts": [_cohort_payload(db, row) for row in cohorts],
         "exercise_sets": [_set_payload(db, row) for row in sets],
         "requirements": [_requirement_payload(row) for row in requirements],
@@ -359,7 +368,12 @@ def create_cohort(
         course_id=course.id,
         name=payload.name.strip(),
         description=(payload.description or "").strip() or None,
+        is_default=bool(payload.is_default),
     )
+    if payload.is_default:
+        db.query(CourseCohort).filter(
+            CourseCohort.course_id == course.id
+        ).update({CourseCohort.is_default: False}, synchronize_session=False)
     db.add(row)
     db.commit()
     db.refresh(row)
@@ -389,6 +403,12 @@ def update_cohort(
         row.name = payload.name.strip()
     if payload.description is not None:
         row.description = payload.description.strip() or None
+    if payload.is_default is not None:
+        if payload.is_default:
+            db.query(CourseCohort).filter(
+                CourseCohort.course_id == course_id
+            ).update({CourseCohort.is_default: False}, synchronize_session=False)
+        row.is_default = bool(payload.is_default)
     db.commit()
     return _cohort_payload(db, row)
 
@@ -435,6 +455,39 @@ def set_cohort_members(
         db.add(CourseCohortMember(cohort_id=cohort.id, user_id=user_id))
     db.commit()
     return _cohort_payload(db, cohort)
+
+
+@router.put("/courses/{course_id}/cohort-settings")
+def update_cohort_settings(
+    course_id: int,
+    payload: CohortSettingsUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    course = _course_or_403(db, course_id, current_user)
+    course.cohort_strict = bool(payload.strict)
+    db.commit()
+    log_activity(
+        db,
+        EventTypes.COHORT_SETTINGS_CHANGED,
+        actor_id=current_user.id,
+        target_type="course",
+        target_id=course.id,
+        target_label=course.name,
+        detail={"cohort_strict": course.cohort_strict},
+    )
+    return {"cohort_strict": bool(course.cohort_strict)}
+
+
+@router.post("/courses/{course_id}/cohorts/sync-default")
+def sync_default_cohort_members(
+    course_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    course = _course_or_403(db, course_id, current_user)
+    added = sync_default_cohort(db, course)
+    return {"added": added}
 
 
 @router.post("/courses/{course_id}/exercise-sets", status_code=201)
@@ -633,3 +686,4 @@ def get_coverage(
 ):
     course = _course_or_403(db, course_id, current_user)
     return {"coverage": _coverage(db, course)}
+

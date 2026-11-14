@@ -97,6 +97,14 @@ today. Existing `course_lab_assignments` remain supported and appear as an
 implicit "individual assignments" group. Reports show requirement coverage by
 cohort and flag learners with no matching cohort.
 
+**Strict cohort mode** is an opt-in course setting. When enabled and at least
+one cohort has an exercise-set requirement, the course detail, scoreboard, and
+course-scoped achievements use only the labs in the learner's cohort sets.
+Course-wide assignments remain visible only while no cohort requirement exists,
+so an unfinished plan cannot blank a course. A cohort may be marked **default**
+to receive new enrollments; instructors can run **Sync enrollments** to add
+existing unassigned learners.
+
 ## Reporting and trends
 
 Metric contracts follow the education-data skill: always state unit, population,

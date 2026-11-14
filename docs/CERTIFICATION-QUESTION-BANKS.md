@@ -1,6 +1,6 @@
 # Certification question banks
 
-Status: **admin-curated; original exam-style practice** (reviewed 12 November
+Status: **admin-curated; original exam-style practice** (reviewed 14 November
 2026).
 
 The exercise knowledge check draws three questions from a certification pathway
@@ -99,3 +99,4 @@ more specific pathway does not.
 5. Open **Admin -> Settings -> Question banks** and review the rendered item,
    correct answer, explanation, and reference.
 6. Record the review in `docs/UI-VERIFICATION.md` if the change affects the UI.
+
