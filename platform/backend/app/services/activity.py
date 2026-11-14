@@ -34,6 +34,9 @@ class EventTypes:
     SSO_ACCOUNT_LINKED = "sso_account_linked"
     ACCOMMODATION_CHANGED = "accommodation_changed"
     MINOR_CONSENT_RECORDED = "minor_consent_recorded"
+    RETENTION_POLICY_SET = "retention_policy_set"
+    RETENTION_PREVIEW = "retention_preview"
+    RETENTION_COMPLETED = "retention_completed"
 
 
 # Human-readable labels for the feed
@@ -61,6 +64,9 @@ EVENT_LABELS = {
     EventTypes.SSO_ACCOUNT_LINKED: "SSO Account Linked",
     EventTypes.ACCOMMODATION_CHANGED: "Accommodation Changed",
     EventTypes.MINOR_CONSENT_RECORDED: "Minor Consent Recorded",
+    EventTypes.RETENTION_POLICY_SET: "Retention Policy Set",
+    EventTypes.RETENTION_PREVIEW: "Retention Preview Run",
+    EventTypes.RETENTION_COMPLETED: "Retention Run Completed",
 }
 
 

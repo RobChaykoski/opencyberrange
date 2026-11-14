@@ -1110,6 +1110,13 @@ class Course(Base):
     is_archived = Column(Boolean, default=False)
     wiki_slug = Column(String(50), nullable=True, index=True)
     wiki_theme_color = Column(String(30), default="blue")
+    # Per-cohort retention clock. When retention_until passes, the course is
+    # listed as retention-due. Actual record deletion is an operator runbook
+    # step; previews and completion evidence are stored in retention_runs.
+    retention_until = Column(DateTime, nullable=True)
+    retention_note = Column(String(500), nullable=True)
+    retention_set_by_id = Column(Integer, nullable=True)
+    retention_set_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 
     # Relationships
@@ -1118,6 +1125,28 @@ class Course(Base):
     lab_assignments = relationship("CourseLabAssignment", back_populates="course", cascade="all, delete-orphan")
     achievements = relationship("Achievement", back_populates="course", cascade="all, delete-orphan")
     assignments = relationship("Assignment", back_populates="course", cascade="all, delete-orphan", order_by="Assignment.sort_order")
+
+
+class RetentionRun(Base):
+    """Append-only evidence of a retention preview or operator completion."""
+
+    __tablename__ = "retention_runs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(
+        Integer,
+        ForeignKey("courses.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    action = Column(String(20), nullable=False)  # preview | completed
+    counts = Column(Text, nullable=True)
+    note = Column(String(500), nullable=True)
+    reference = Column(String(200), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
 
 
 class ReportExport(Base):

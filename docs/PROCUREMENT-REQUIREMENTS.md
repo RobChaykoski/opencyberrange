@@ -28,7 +28,7 @@ test or documented evidence in this repository — not a certification.
 | Breach-relevant logging | Yes | Admin/activity audit trail with actor, action, target, IP; erasure anonymises it. |
 | Quebec Law 25 PIA | Org | The product supplies this inventory, `docs/PRIVACY-AND-DATA-DELETION.md`, and the automated-decision statement below. A PIA is completed by the institution. |
 | Quebec Law 25 transfer assessment | Org | Deployment region and any sub-processor are operator choices. |
-| Minor-account safeguards | Partial | `is_minor` excludes accounts from public leaderboards, celebrations, and cohort analytics; minor enrollments record an institutional consent reference and the recording staff member. Per-cohort retention clock and the final procurement handoff remain. |
+| Minor-account safeguards | Partial | `is_minor` excludes accounts from public leaderboards, celebrations, and cohort analytics; minor enrollments record an institutional consent reference and the recording staff member. Courses have a retention date, a record-count preview, and append-only completion evidence; the destructive purge is an operator runbook step. |
 | 72-hour breach notification | Org | The audit trail supports investigation; notification is an institutional process. |
 
 ## 2. Authentication and LMS integration

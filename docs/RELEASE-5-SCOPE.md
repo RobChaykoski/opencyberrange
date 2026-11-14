@@ -98,9 +98,11 @@ controls into a documented mode.
 - **Audit evidence** — consent, restriction changes, purge runs, and
   administrator overrides are recorded in the existing audit/ledger path.
 
-Status: minor enrollment consent capture and the restricted surfaces are
-implemented on `release5`; the per-cohort retention clock and the final
-minor-mode procurement handoff remain.
+Status: minor enrollment consent capture, the restricted surfaces, and the
+retention clock (policy, preview counts, and append-only completion evidence)
+are implemented on `release5`. The destructive purge remains a documented
+operator step after backup, and the final minor-mode procurement handoff is
+still to write.
 
 Exit criteria: a minor account cannot appear in a public leaderboard or
 identifiable analytics view by default; consent and retention events are

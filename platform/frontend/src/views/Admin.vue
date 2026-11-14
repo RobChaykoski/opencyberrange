@@ -1670,6 +1670,38 @@
             <p style="color: var(--text-muted); font-size: 0.8125rem; margin: 0;">
               Use <strong>Open Course</strong> to manage students, exercises, assignments, analytics, and reports.
             </p>
+            <div class="retention-panel">
+              <h4 class="retention-panel__title">Records retention</h4>
+              <p class="retention-panel__lead">
+                Set the date this cohort's records are due for retention review. The
+                platform previews counts and records a completion reference; deleting
+                records remains a documented operator step after a backup.
+              </p>
+              <div class="retention-panel__row">
+                <label class="retention-panel__field">
+                  <span>Retention date</span>
+                  <input v-model="retentionForm.retention_until" type="datetime-local" class="form-input" />
+                </label>
+                <label class="retention-panel__field retention-panel__field--grow">
+                  <span>Note</span>
+                  <input v-model="retentionForm.note" maxlength="500" class="form-input" placeholder="Policy or term reference" />
+                </label>
+              </div>
+              <div class="retention-panel__actions">
+                <button class="btn btn--primary btn--sm" :disabled="retentionBusy" @click="saveRetention">Save policy</button>
+                <button class="btn btn--secondary btn--sm" :disabled="retentionBusy" @click="previewRetention">Preview counts</button>
+                <button class="btn btn--secondary btn--sm" :disabled="retentionBusy" @click="completeRetention">Record completed purge</button>
+              </div>
+              <p v-if="retentionMessage" class="retention-panel__message">{{ retentionMessage }}</p>
+              <pre v-if="retentionPreview" class="retention-panel__counts">{{ JSON.stringify(retentionPreview.counts, null, 2) }}</pre>
+              <ul v-if="retentionRuns.length" class="retention-panel__runs">
+                <li v-for="run in retentionRuns" :key="run.id">
+                  <strong>{{ run.action }}</strong>
+                  · {{ new Date(run.created_at).toLocaleString() }}
+                  <span v-if="run.reference">· {{ run.reference }}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -7887,6 +7919,11 @@ const courseSortKey = ref('created_at')
 const courseSortDir = ref('desc')
 const studentLabDetails = ref({})  // { userId: [...labs] | 'loading' }
 const resettingCourseLab = ref(null)  // "userId-labId" while resetting
+const retentionForm = ref({ retention_until: '', note: '' })
+const retentionPreview = ref(null)
+const retentionRuns = ref([])
+const retentionBusy = ref(false)
+const retentionMessage = ref('')
 
 const instructorUsers = computed(() => {
   return users.value.filter(u => u.role === 'instructor' || u.role === 'admin')
@@ -8047,12 +8084,90 @@ const updateCourseInstructor = async (newId) => {
   }
 }
 
+const loadRetention = async (courseId) => {
+  retentionPreview.value = null
+  retentionMessage.value = ''
+  try {
+    const [policy, runs] = await Promise.all([
+      axios.get(`/admin/courses/${courseId}/retention`),
+      axios.get(`/admin/courses/${courseId}/retention/runs`),
+    ])
+    retentionForm.value = {
+      retention_until: policy.data.retention_until
+        ? String(policy.data.retention_until).slice(0, 16)
+        : '',
+      note: policy.data.retention_note || '',
+    }
+    retentionRuns.value = runs.data.runs || []
+  } catch (e) {
+    retentionMessage.value = e.response?.data?.detail || 'Could not load the retention policy.'
+  }
+}
+
+const saveRetention = async () => {
+  if (!managingCourse.value) return
+  retentionBusy.value = true
+  retentionMessage.value = ''
+  try {
+    const until = retentionForm.value.retention_until
+    await axios.put(`/admin/courses/${managingCourse.value.id}/retention`, {
+      retention_until: until ? until : null,
+      note: retentionForm.value.note,
+    })
+    retentionMessage.value = 'Retention policy saved.'
+    await loadRetention(managingCourse.value.id)
+  } catch (e) {
+    retentionMessage.value = e.response?.data?.detail || 'Could not save the retention policy.'
+  } finally {
+    retentionBusy.value = false
+  }
+}
+
+const previewRetention = async () => {
+  if (!managingCourse.value) return
+  retentionBusy.value = true
+  retentionMessage.value = ''
+  try {
+    const { data } = await axios.post(`/admin/courses/${managingCourse.value.id}/retention/preview`)
+    retentionPreview.value = data
+    retentionMessage.value = `Preview run #${data.run_id} recorded.`
+    const runs = await axios.get(`/admin/courses/${managingCourse.value.id}/retention/runs`)
+    retentionRuns.value = runs.data.runs || []
+  } catch (e) {
+    retentionMessage.value = e.response?.data?.detail || 'Could not run the retention preview.'
+  } finally {
+    retentionBusy.value = false
+  }
+}
+
+const completeRetention = async () => {
+  if (!managingCourse.value) return
+  const reference = window.prompt('Reference for the completed purge (ticket, runbook id):')
+  if (!reference || reference.trim().length < 2) return
+  retentionBusy.value = true
+  retentionMessage.value = ''
+  try {
+    const { data } = await axios.post(
+      `/admin/courses/${managingCourse.value.id}/retention/complete`,
+      { note: retentionForm.value.note, reference: reference.trim() }
+    )
+    retentionMessage.value = `Completion recorded as run #${data.run_id}.`
+    const runs = await axios.get(`/admin/courses/${managingCourse.value.id}/retention/runs`)
+    retentionRuns.value = runs.data.runs || []
+  } catch (e) {
+    retentionMessage.value = e.response?.data?.detail || 'Could not record the completion.'
+  } finally {
+    retentionBusy.value = false
+  }
+}
+
 const openCourseManager = (course) => {
   // Toggle: clicking same course closes panel
   if (managingCourse.value && managingCourse.value.id === course.id) {
     managingCourse.value = null
   } else {
     managingCourse.value = course
+    loadRetention(course.id)
   }
 }
 
@@ -10409,6 +10524,72 @@ watch(activeTab, (tab) => {
   border: 1px solid var(--border-primary);
   border-radius: 12px;
   padding: 1.25rem;
+}
+
+.retention-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-primary);
+}
+
+.retention-panel__title {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+}
+
+.retention-panel__lead {
+  margin: 0 0 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  max-width: 72ch;
+}
+
+.retention-panel__row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.retention-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.retention-panel__field--grow {
+  flex: 1 1 260px;
+}
+
+.retention-panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.retention-panel__message {
+  margin: 0.6rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.retention-panel__counts {
+  margin: 0.6rem 0 0;
+  padding: 0.6rem;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  overflow-x: auto;
+}
+
+.retention-panel__runs {
+  margin: 0.6rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
 }
 
 .assign-instructor-row {
