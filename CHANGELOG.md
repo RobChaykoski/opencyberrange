@@ -2,6 +2,13 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.8.1] - 2026-11-14
+
+### Fixes
+- Badge eligibility now evaluates only the labs in the requested level, not every
+  lab in the track. The first build incorrectly required all track labs before
+  issuing a level credential.
+
 ## [5.8.0] - 2026-11-14
 
 ### Open Badges 3.0

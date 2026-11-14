@@ -173,7 +173,7 @@ def issue_badge(
     accessible = get_accessible_exclusive_lab_ids(db, user.id)
     visible_ids = _visible_lab_ids(track, user, accessible)
     visible_labs = [
-        lab for row in track.levels for lab in row.labs if lab.id in visible_ids
+        lab for lab in level.labs if lab.id in visible_ids
     ]
     certificate = build_level_certificate(
         db,
