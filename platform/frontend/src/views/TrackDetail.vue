@@ -1601,7 +1601,7 @@ const openActiveLab = async (lab) => {
       params
     })
     activeLab.value = data
-    workbookLoaded.value = workspaceTab.value === 'workbook'
+    workbookLoaded.value = wideWorkspace.value || workspaceTab.value === 'workbook'
     loadReaction(data.lab?.id || lab.id)
     loadReviewRequest()
 
@@ -4319,7 +4319,7 @@ watch(timeRemaining, (val) => {
 }
 
 .flag-input {
-  flex: 1 1 18rem;
+  flex: 1 1 14rem;
   min-width: 0;
   background: var(--bg-secondary);
   border: 2px solid var(--border-color);

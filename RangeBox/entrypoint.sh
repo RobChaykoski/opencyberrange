@@ -35,6 +35,7 @@ Xvnc "${DISPLAY}" \
     -sslOnly 0 \
     -interface 0.0.0.0 \
     -AlwaysShared \
+    -publicIP 127.0.0.1 \
     -httpd /usr/share/kasmvnc/www &
 XVNC_PID=$!
 

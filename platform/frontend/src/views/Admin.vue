@@ -5342,6 +5342,18 @@ const filteredSettings = computed(() => {
       result[key] = settingsEdits[key] !== undefined ? settingsEdits[key] : val.value
     }
   }
+  if (activeSettingsCategory.value === 'exports') {
+    const order = [
+      'export_label_enabled',
+      'export_classification',
+      'export_organisation',
+      'export_handling_note',
+      'export_include_timestamp',
+    ]
+    return Object.fromEntries(
+      order.filter((key) => key in result).map((key) => [key, result[key]])
+    )
+  }
   return result
 })
 
