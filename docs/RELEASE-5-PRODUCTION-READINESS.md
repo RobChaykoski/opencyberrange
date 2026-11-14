@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.13.1`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.14.0`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0029_open_badges`. Production application images were built from the `v5.13.1`
-commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`, `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, and `v5.13.1` record the release,
+Alembic `0030_cohort_strict`. Production application images were built from the
+`1c5a0d9e` commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`, `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`, and `v5.14.0` record the release,
 security patch, IdP settings feature, and operations patch.
 
 ## Ready for production
@@ -29,7 +29,7 @@ security patch, IdP settings feature, and operations patch.
   documented in `RangeBox/SECURITY-MODEL.md`. noVNC was the 5.0 path; the Kali
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
-- Migrations `0015`–`0025`, all idempotent and applied on dev and production.
+- Migrations `0015`–`0030`, all idempotent and applied on dev and production.
 
 ## Production deployment record — 2026-11-14
 
@@ -78,6 +78,31 @@ security patch, IdP settings feature, and operations patch.
   active sessions, DB connections, RangeBoxes, and container/image counts, with
   inline SVG history graphs and 1h/6h/24h/7d windows.
 
+## 5.14.0 deployment record - 2026-11-14
+
+- Deployed from `main` at `1c5a0d9e` with `PLATFORM_VERSION=5`; backend and
+  frontend rebuilt, and Alembic upgraded `0029_open_badges` to
+  `0030_cohort_strict`.
+- Pre-deploy backup: `~/opencyberrange/backups/pre-5.14.0-20261114-230150.sql.gz`
+  (796 KB, `gzip -t` clean), with the environment copy
+  `platform-env-pre-5.14.0-20261114-230150`.
+- Rollback images: `ocr-backend:rollback-5.13.1-20261114-230150` and
+  `ocr-frontend:rollback-5.13.1-20261114-230150`.
+- Verified: backend and frontend healthy, `/api/version` = 5, database up,
+  Alembic `0030_cohort_strict`, 179 active labs, 12 tracks, the SPA returned
+  200, the workbook origin returned the 302 session gate, and the certificate
+  PDF endpoint returned 401 without a token.
+- Certificate PDFs now honor the selected design. On development, classic,
+  executive, modern, and minimal returned distinct sizes and SHA-256 hashes;
+  an unknown design falls back to classic.
+- Strict cohort mode was exercised end to end on development with a temporary
+  course, two cohorts, two exercise sets, a default cohort, and an enrolled
+  learner. Default sync placed the learner, cohort A saw two of four assigned
+  labs, cohort B saw the other two, and removing the requirements or disabling
+  strict mode restored all four. The learner course page reported "0 of 2
+  assigned exercises". The temporary course, user, and completions were
+  deleted afterwards.
+
 ## Deliberately deferred
 
 - **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali
@@ -101,7 +126,7 @@ security patch, IdP settings feature, and operations patch.
 1. Take and verify a database backup and a copy of the erasure ledger.
 2. Deploy backend + frontend images from the release commit, or pull `main`
    after the release merge.
-3. Apply migrations `0015`–`0025` during a maintenance window. Dev upgraded
+3. Apply migrations `0015`–`0030` during a maintenance window. Dev upgraded
    cleanly from `0014` to `0025`; the migration is additive.
 4. Confirm **TCP 8443** reaches the frontend. Probed on 2026-11-14: production
    UFW is disabled (`/etc/ufw/ufw.conf` `ENABLED=no`), and 8443 resets rather
@@ -123,7 +148,7 @@ security patch, IdP settings feature, and operations patch.
 
 - `/api/version` = 5; backend `/health` reports the database up (`/health` on the
   SPA origin is a client route, so probe the backend on port 8000).
-- `alembic current` = `0029_open_badges`; no failed migrations.
+- `alembic current` = `0030_cohort_strict`; no failed migrations.
 - 179 labs discovered; ten random lab detail checks pass.
 - Authenticated pages: dashboard, exercises, Windows track, workbooks, courses,
   profile, instructor, admin, admin settings.
@@ -138,7 +163,7 @@ security patch, IdP settings feature, and operations patch.
 
 ## Rollback
 
-- Production has the Release 4 rollback images tagged
+- Production retains the Release 4 rollback images (`release4-rollback-20261114-044349`) and the 5.13.1 rollback images (`rollback-5.13.1-20261114-230150`) tagged
   `ocr-frontend:release4-rollback-20261114-044349` and
   `ocr-backend:release4-rollback-20261114-044349`, plus the pre-deploy database
   dump and erasure-ledger copy listed above.

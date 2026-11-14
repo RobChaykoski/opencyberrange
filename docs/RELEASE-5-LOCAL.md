@@ -159,10 +159,10 @@ Still to do: a Canvas or Brightspace staging test.
 
 ## Development deployment
 
-`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.13.1`
-patch release.
+`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.14.0`
+release (`1c5a0d9e`).
 
-- `/api/version` = **5**, health = **healthy**, Alembic = **0025**.
+- `/api/version` = **5**, health = **healthy**, Alembic = **0030**.
 - 188 lab rows; 12 tracks and 139 track-visible labs in the authenticated API.
 - Ten randomly sampled labs returned their detail payload.
 - Authenticated page pass: dashboard, exercises, Windows track, workbooks,
@@ -191,8 +191,16 @@ patch release.
   commit. The documented wordlist paths exist in the image and a fresh container
   served noVNC within 6 seconds.
 - Temporary verification accounts were deleted after the pass.
+- Strict cohort mode was exercised end to end with a temporary course: default
+  cohort sync placed an enrolled learner, cohort A saw two of four course labs,
+  cohort B saw the other two, and removing the requirements or disabling strict
+  mode restored all four. The learner course page reported "0 of 2 assigned
+  exercises" for the filtered cohort.
+- Certificate PDFs returned distinct sizes and SHA-256 hashes for the classic,
+  executive, modern, and minimal designs; an unknown design falls back to
+  classic. Temporary cohort and certificate accounts were removed afterwards.
 
-Production also runs Release 5 (`v5.13.1`); see the deployment record in
+Production also runs Release 5 (`v5.14.0`); see the deployment record in
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
 ## Verified on this stack
