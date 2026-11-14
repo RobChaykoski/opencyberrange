@@ -159,8 +159,8 @@ Still to do: a Canvas or Brightspace staging test.
 
 ## Development deployment
 
-`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.0.0`
-release.
+`172.16.16.44` (`ocrv2`, `~/opencyberrange`) now tracks `main` at the `v5.0.1`
+patch release.
 
 - `/api/version` = **5**, health = **healthy**, Alembic = **0025**.
 - 188 lab rows; 12 tracks and 139 track-visible labs in the authenticated API.
@@ -192,7 +192,7 @@ release.
   served noVNC within 6 seconds.
 - Temporary verification accounts were deleted after the pass.
 
-Production also runs Release 5 (`v5.0.0`); see the deployment record in
+Production also runs Release 5 (`v5.0.1`); see the deployment record in
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
 ## Verified on this stack

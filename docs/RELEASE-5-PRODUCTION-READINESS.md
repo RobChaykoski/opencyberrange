@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.0.0`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.0.1`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0025`. Production application images were built from `bf3f6a2c`; the
-release tag records the docs-complete commit.
+Alembic `0025`. Production application images were built from `9b943b41`; the
+`v5.0.0` and `v5.0.1` tags record the release and security patch.
 
 ## Ready for production
 
@@ -52,6 +52,9 @@ release tag records the docs-complete commit.
   OpenCyberRange)**, backend `/health` database up, 179 labs, new review /
   accommodation / LTI / retention endpoints return 401 without a token, and the
   served `TrackDetail` bundle contains the workspace tabs and review panel.
+- **5.0.1 patch (same day)** deployed from `9b943b41`: LDAP referral and
+  plaintext hardening, OIDC algorithm allowlist, SSO redirect guard. Backend and
+  frontend rebuilt, both healthy, Alembic unchanged at `0025`.
 
 ## Deliberately deferred
 
