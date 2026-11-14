@@ -127,6 +127,26 @@ From the operator workstation, refresh the documented status page:
 python scripts/status-dashboard.py --config docs/status-hosts.json
 ```
 
+## Backups
+
+Production runs `scripts/backup-production.sh` daily at 03:15 UTC from the
+deploy user's crontab. It writes a validated custom-format dump
+(`ocr-backup-<stamp>.dump`), the erasure ledger, the platform `.env`, and a
+SHA-256 file to `~/backups`, pruning only its own files after 14 days.
+
+```bash
+crontab -l | grep backup-production
+bash scripts/backup-production.sh          # run now
+bash scripts/restore-drill.sh              # restore newest dump to a scratch DB
+```
+
+`restore-drill.sh` never touches the live database: it restores into a
+`labdb_restore_drill_*` database, compares row counts for the core tables, and
+drops it. Run it after installing or changing the timer, and before a release
+that includes a migration. Copy `~/backups` off-host (set `BACKUP_REMOTE` to an
+rsync target to do it from the script) so a host failure does not take the
+database and its backups together.
+
 ## Regression checks
 
 Run these from the operator workstation against a deployment. Each writes JSON
