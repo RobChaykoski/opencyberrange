@@ -44,6 +44,9 @@ Release 4 `v4.0.1`.
 - Workbooks can be served from a dedicated wiki origin. Dev uses
   `https://172.16.16.44:8443`, so the framed workbook keeps its own storage and
   search without access to the SPA token; the SPA CSP allows that frame.
+- The workbook iframe loads only when the Workbook tab is first opened. It
+  stays mounted afterwards, so switching tabs does not reload it or lose its
+  scroll position.
 
 ### Minor accounts
 - Minor enrollments can record the institution's parental/guardian consent
