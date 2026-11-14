@@ -165,8 +165,9 @@ Release 5 adds LTI 1.3, per-student accommodations, minor consent/retention,
 the tabbed workspace, and a dedicated workbook origin. Before deploying:
 
 1. Take a database backup and copy the erasure ledger.
-2. Open TCP **8443** in the host firewall. The frontend container exposes it;
-   workbooks are served from `https://<host>:8443`.
+2. Confirm TCP **8443** reaches the frontend. UFW is disabled on the current
+   host and the port resets rather than drops, so no host firewall change is
+   required. Workbooks are served from `https://<host>:8443`.
 3. After migrations, set the `wiki_origin` platform setting to
    `https://<host>:8443`.
 4. Build with `PLATFORM_VERSION=5` and confirm `/api/version`.

@@ -1,8 +1,9 @@
 # SWOCTS Cyber Range
 
-> **Release 5 development branch.** Production remains on the signed `v4` tag.
+> **Release 5 is the current production release (signed `v5.0.0`).**
 > The local image and stack bring-up is documented in
-> [`docs/RELEASE-5-LOCAL.md`](docs/RELEASE-5-LOCAL.md).
+> [`docs/RELEASE-5-LOCAL.md`](docs/RELEASE-5-LOCAL.md); the production
+> readiness record is [`docs/RELEASE-5-PRODUCTION-READINESS.md`](docs/RELEASE-5-PRODUCTION-READINESS.md).
 
 > **SWOCTS Cyber Range** is the SWOCTS-branded deployment of the OpenCyberRange training platform. The product identity, crest, and title are SWOCTS; the underlying platform, code, and upstream attribution remain OpenCyberRange.
 >
@@ -21,7 +22,7 @@
 > original author. See [BUILD_NOTICE.md](BUILD_NOTICE.md) for the full notice.
 > The original copyright and PolyForm Noncommercial licence remain in force.
 
-[![Platform](https://img.shields.io/badge/platform-Release%204-8b5cf6)](RELEASE_NOTES.md)
+[![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
 [![Labs](https://img.shields.io/badge/labs-179-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
@@ -48,24 +49,24 @@ the upstream OpenCyberRange attribution and licence notices intact.
 
 ## Editions
 
-SWOCTS Cyber Range uses one platform release number (`Release 4`) with three
+SWOCTS Cyber Range uses one platform release number (`Release 5`) with three
 cumulative edition profiles. The edition names describe scope, entitlement, and
 operational shape, not three separate codebases or three separate version lines.
 See [ADR 0004](docs/decisions/0004-single-platform-release-version.md).
 
 | Edition profile | Platform release | State | Host OS | Purpose |
 |---|---|---|---|---|
-| **Community / Academic** | `Release 4` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
-| **Professional** | `Release 4` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
-| **Enterprise** | `Release 4` | **Release profile — SSO** | Ubuntu 24.04 LTS | Professional plus HA, SSO/identity federation, enterprise reporting, and compliance reporting. Multi-tenancy and LMS/LTI integration are Release 5. |
+| **Community / Academic** | `Release 5` | **Supported** | Ubuntu 22.04 / 24.04 LTS | Single-host teaching platform; lab/workbook improvements, authoring, maintenance, and security |
+| **Professional** | `Release 5` | **Release profile — analytics preview** | Ubuntu 24.04 LTS | Community / Academic plus analytics, reporting, cohort analysis, competency evidence, accreditation support, and research exports |
+| **Enterprise** | `Release 5` | **Release profile — SSO** | Ubuntu 24.04 LTS | Professional plus HA, SSO/identity federation, enterprise reporting, and compliance reporting. Multi-tenancy remains deferred. |
 
 The Community / Academic profile remains the reference behaviour and the
 fallback. Professional is additive: the Community / Academic curriculum, learner
 workflows, privacy controls, and single-host Docker Compose install remain.
 Enterprise is additive again: it adds the lab pool, control-plane HA, gateway
 failover, and identity federation (OIDC, SAML, LDAP) without removing the
-single-host path. Multi-tenancy, LMS/LTI, and the per-student accommodation
-engine are Release 5, not Release 4.
+single-host path. LMS/LTI 1.3 and the per-student accommodation engine ship in
+Release 5; multi-tenancy remains deferred.
 
 The five Professional priorities — Competency Framework Engine, Student
 Feedback Engine, Radar / Spider Web Reporting, Exercise Health Analytics, and
@@ -73,7 +74,7 @@ Instructor Intervention Dashboard — are **Professional and Enterprise only**.
 They are not Community / Academic work.
 
 **Bug fixes and security updates continue on the Community / Academic 1.1.3
-maintenance line and merge forward into the Release 4 profiles**, so a fix does not
+maintenance line and merge forward into the Release 5 profiles**, so a fix does not
 wait for a feature release. There is no separate fork to maintain. See
 [Editions](docs/EDITIONS.md) and
 [ADR 0003](docs/decisions/0003-edition-scope-refinement.md).
@@ -99,9 +100,9 @@ five programme reports are defined in
 evidence, and instructor support only. The mobile student shell and RangeBox
 workspace are Community / Academic features. Bug fixes, security updates,
 dependency/runtime updates, and small compatibility corrections are still
-allowed. New scoring models, multi-tenancy, LMS/LTI integration, and the
-per-student accommodation engine are Enterprise Release 5 work. Enterprise SSO
-(OIDC, SAML, LDAP) ships in Release 4.
+allowed. Multi-tenancy and new scoring models remain later-release work. LMS/LTI
+integration and the per-student accommodation engine ship in Release 5.
+Enterprise SSO (OIDC, SAML, LDAP) shipped in Release 4.
 
 - [Edition model](docs/EDITIONS.md)
 - [Professional program charter](docs/V2-PROGRAM-CHARTER.md)
@@ -206,7 +207,7 @@ generated table below lists the **160** that have a workbook page.
 | [`opencyberrange-backup`](https://github.com/RobChaykoski/opencyberrange-backup) | Backup mirror of the production tree | `main`, synced with canonical |
 
 This repository is the only development tree. `main` carries platform release
-**Release 4** with Community / Academic, Professional, and Enterprise profiles.
+**Release 5** with Community / Academic, Professional, and Enterprise profiles.
 The Community / Academic 1.1.3 line remains the supported single-host
 teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
@@ -596,6 +597,8 @@ Validation history:
 | Release 4 role E2E (`.44`) | Admin/instructor/student authorization; 100% quiz; simple lab flag; RangeBox running; VPN config 200 |
 | Release 4 topology E2E (`.44`) | Four labs in sequence; two-router transit, nftables drop, multi-service mapping; all flags accepted |
 | Release 4 production deploy (`.41`, 13 November 2026) | Version 4; 179 labs; four topology labs; backend/frontend healthy; wiki 13 sites; pre-deploy DB backup |
+| Release 5 automated QA (14 November 2026) | 358 local tests passed / 219 skipped; CI backend, frontend, labs/links/docs, compose, CodeQL, Trivy, and security scans green; 179 labs; signed supply-chain lock |
+| Release 5 production deploy (`.41`, 14 November 2026) | Version 5; Alembic `0025_review_requests`; 179 labs; backend/frontend healthy; 8443 workbook origin responding; pre-deploy DB and ledger backups |
 | 2.7.0 code scanning (11 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
 | 2.7.0 deployment smoke | Dev and prod on `2.7.0`, healthy; 164 labs; quiz banks, learning smoke, target reveal, and a non-Beginner lab verified |
 | 2.6.0 code scanning (10 November 2026) | **0 open alerts**; CI, CodeQL, Trivy, and Quality checks green |
@@ -613,7 +616,7 @@ The two development info findings are a known session-coverage gap and seeded
 labs with no creator. Production adds two intentional hint placeholders. None
 are data loss or a broken reference.
 
-The Release 4 line also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The platform also uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It maps each category to interface, data,
 and project controls, names the required tests, and defines the exception
 process. The current verification pass is recorded in
@@ -931,7 +934,7 @@ truth for the platform version; runtime and dependency pins live in
 
 ## Deployment topologies
 
-The 1.x installer is a **single-host Docker Compose** deployment. Release 4
+The 1.x installer is a **single-host Docker Compose** deployment. Release 5
 keeps that path as the only supported production topology.
 
 | Topology | State | Notes |
@@ -1058,7 +1061,7 @@ or read learner records. Docker host and container state still need
 
 - **OS:** Ubuntu 24.04 LTS for new 2.7 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range Release 4 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range Release 5 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

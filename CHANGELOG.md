@@ -2,11 +2,11 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [5] - in development
+## [5] - 2026-11-14
 
-Release 5. LTI 1.3 Advantage, per-student accommodations, and the associated
-procurement evidence. Development `.44` runs this branch; production remains on
-Release 4 `v4.0.2`.
+Release 5. LTI 1.3 Advantage, per-student accommodations, human review, the
+tabbed workspace, and the associated procurement evidence. Production and
+development both run this release from `main`.
 
 ### LTI 1.3 Advantage
 - Platform registry, OIDC third-party login (GET and form POST), signed
@@ -75,9 +75,12 @@ Release 4 `v4.0.2`.
 
 ### Operations
 - Migrations `0015`–`0025`.
-- Development `172.16.16.44` deployed from `release5`; live lab spawn,
-  pause/resume, accommodation read-back, 10-lab sampling, and an authenticated
-  page pass all verified.
+- Development `172.16.16.44` tracks `main`; live lab spawn, pause/resume,
+  accommodation read-back, 10-lab sampling, and an authenticated page pass all
+  verified.
+- Production `172.16.16.41` deployed on 2026-11-14: version 5, Alembic
+  `0025_review_requests`, 179 labs, backend/frontend healthy, 8443 workbook
+  origin responding.
 
 ## [4.0.2] - 2026-11-14
 

@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
-Status: **release candidate prepared; production not yet deployed.**
-Development `172.16.16.44` is running Release 5 from `release5` head `6d480089`
-(backend rebuilt at that commit; frontend sources unchanged since `64549e3e`;
-Alembic `0025`). Production remains on the signed Release 4 hotfix `v4.0.2`.
+Status: **released and deployed to production on 2026-11-14 (`v5.0.0`).**
+Development `172.16.16.44` and production `172.16.16.41` both track `main`;
+Alembic `0025`. Production application images were built from `bf3f6a2c`; the
+release tag records the docs-complete commit.
 
 ## Ready for production
 
@@ -27,7 +27,27 @@ Alembic `0025`). Production remains on the signed Release 4 hotfix `v4.0.2`.
   the root-inside-caged-container model and Firefox sandbox rationale are
   documented in `RangeBox/SECURITY-MODEL.md`. noVNC is the selected path;
   terminal-only mode remains.
-- Migrations `0015`–`0025`, all idempotent and applied on dev.
+- Migrations `0015`–`0025`, all idempotent and applied on dev and production.
+
+## Production deployment record — 2026-11-14
+
+- Deployed from `main` at `bf3f6a2c` with `PLATFORM_VERSION=5`; Alembic upgraded
+  `0024_retention` → `0025_review_requests`.
+- Pre-deploy backups: `~/backups/ocr-pre-r5-20261114-044349.dump` (992 KB,
+  629 objects), `~/backups/erasure-ledger-pre-r5-20261114-044349.jsonl`, and
+  `~/backups/platform-env-pre-r5-20261114-044349`.
+- Rollback images: `ocr-frontend:release4-rollback-20261114-044349` and
+  `ocr-backend:release4-rollback-20261114-044349`.
+- `wiki_origin` set to `https://172.16.16.41:8443`; the 8443 listener serves the
+  main HTTPS server, `/wiki/` enforces the session gate (302), and the SPA CSP
+  allows `frame-src https://*:8443`.
+- `opencyberrange/rangebox:lite` rebuilt on the host from the pinned Kali digest
+  and SecLists commit; a fresh container served noVNC in 11 s and the documented
+  wordlist paths exist inside the image.
+- Verified: `/api/version` = 5 with release name **Release 5 (Powered by
+  OpenCyberRange)**, backend `/health` database up, 179 labs, new review /
+  accommodation / LTI / retention endpoints return 401 without a token, and the
+  served `TrackDetail` bundle contains the workspace tabs and review panel.
 
 ## Deliberately deferred
 
@@ -71,7 +91,8 @@ Alembic `0025`). Production remains on the signed Release 4 hotfix `v4.0.2`.
 
 ## Verification checklist
 
-- `/api/version` = 5; `/health` database up.
+- `/api/version` = 5; backend `/health` reports the database up (`/health` on the
+  SPA origin is a client route, so probe the backend on port 8000).
 - `alembic current` = `0025_review_requests`; no failed migrations.
 - 179 labs discovered; ten random lab detail checks pass.
 - Authenticated pages: dashboard, exercises, Windows track, workbooks, courses,
@@ -87,15 +108,16 @@ Alembic `0025`). Production remains on the signed Release 4 hotfix `v4.0.2`.
 
 ## Rollback
 
-- Production currently has the `v4.0.2` frontend image tagged for rollback and
-  a database backup. For Release 5, keep the previous backend/frontend image
-  tags and the pre-deploy database dump.
+- Production has the Release 4 rollback images tagged
+  `ocr-frontend:release4-rollback-20261114-044349` and
+  `ocr-backend:release4-rollback-20261114-044349`, plus the pre-deploy database
+  dump and erasure-ledger copy listed above.
 - The schema migrations are additive; a rollback before traffic should restore
   the database dump, not run destructive downgrades in place.
 
 ## Release gate
 
-Go for a controlled Release 5 deployment of the implemented scope above.
+Released on 2026-11-14 as `v5.0.0` for the implemented scope above.
 Do **not** describe the deferred items as shipped. A real Canvas/Brightspace
 staging test and the external accessibility/security assessments remain
 institutional or later-release work.
