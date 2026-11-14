@@ -2,8 +2,8 @@
 
 Status: **release candidate prepared; production not yet deployed.**
 Development `172.16.16.44` is running Release 5 (backend `893fbcfe`, frontend
-after the retention message fix, Alembic `0024`). Production remains on the
-signed Release 4 hotfix `v4.0.2`.
+`29603dad`, Alembic `0024`). Production remains on the signed Release 4 hotfix
+`v4.0.2`.
 
 ## Ready for production
 

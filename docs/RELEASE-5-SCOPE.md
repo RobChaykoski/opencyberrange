@@ -1,8 +1,9 @@
 # Release 5 scope: enterprise procurement and compliance
 
-Status: **in development on the `release5` branch; deployed to development
-`172.16.16.44` (backend `248dd111`, frontend `df6abc55`, version 5, Alembic
-`0022`).** Production remains on the signed Release 4 tag `v4.0.1`. The local
+Status: **release candidate on the `release5` branch; deployed to development
+`172.16.16.44` (backend `893fbcfe`, frontend `29603dad`, version 5, Alembic
+`0024`).** Production remains on the signed Release 4 hotfix `v4.0.2`; see
+[`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md). The local
 image/stack bring-up and deployment evidence are documented in
 [`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md). Everything below is Release 5.
 
