@@ -2078,6 +2078,7 @@
           <h2 class="panel-title" style="margin-bottom: 1rem;">System</h2>
           <div class="sub-tabs">
             <button @click="systemSubTab = 'health'" :class="['sub-tab', { active: systemSubTab === 'health' }]">Health</button>
+            <button @click="openMetricsTab" :class="['sub-tab', { active: systemSubTab === 'metrics' }]">Metrics</button>
             <button @click="systemSubTab = 'integrity'; fetchDataIntegrity()" :class="['sub-tab', { active: systemSubTab === 'integrity' }]">Integrity</button>
             <button @click="systemSubTab = 'backups'" :class="['sub-tab', { active: systemSubTab === 'backups' }]">Backups</button>
             <button @click="systemSubTab = 'software'; fetchSoftwareIntegrity()" :class="['sub-tab', { active: systemSubTab === 'software' }]">Software</button>
@@ -2125,6 +2126,53 @@
                 </div>
               </div>
             </div>
+          </div>
+
+          <!-- Metrics Sub-tab -->
+          <div v-if="systemSubTab === 'metrics'">
+            <div class="panel-header">
+              <h3 class="section-title">System metrics</h3>
+              <div class="metrics-actions">
+                <select v-model.number="metricsHours" class="form-input form-input--sm" @change="fetchSystemMetrics">
+                  <option :value="1">1 hour</option>
+                  <option :value="6">6 hours</option>
+                  <option :value="24">24 hours</option>
+                  <option :value="168">7 days</option>
+                </select>
+                <button class="btn btn--outline btn--sm" :disabled="metricsSampling" @click="sampleMetrics">
+                  {{ metricsSampling ? 'Sampling...' : 'Sample now' }}
+                </button>
+                <button class="btn btn--secondary btn--sm" :disabled="metricsLoading" @click="fetchSystemMetrics">
+                  {{ metricsLoading ? 'Loading...' : 'Refresh' }}
+                </button>
+              </div>
+            </div>
+            <p v-if="metricsError" class="form-error" role="alert">{{ metricsError }}</p>
+            <div v-if="metricsLoading && !systemMetrics" class="empty-state">Loading metrics...</div>
+            <template v-else-if="systemMetrics">
+              <div class="metrics-grid">
+                <article v-for="card in metricCards" :key="card.key" class="metric-card">
+                  <div class="metric-card__head">
+                    <span class="metric-card__label">{{ card.label }}</span>
+                    <strong class="metric-card__value">{{ card.value }}</strong>
+                  </div>
+                  <svg class="metric-card__chart" viewBox="0 0 240 56" preserveAspectRatio="none" role="img" :aria-label="card.label">
+                    <polyline :points="card.points" fill="none" stroke="currentColor" stroke-width="2" />
+                  </svg>
+                  <p class="metric-card__sub">{{ card.sub }}</p>
+                </article>
+              </div>
+              <p class="section-desc">
+                Sampled every minute from host load/memory/disk, the database, and
+                the container runtime. Samples are kept for 30 days; the graph shows
+                the selected window. This is the platform host, not the tools inside
+                lab containers.
+              </p>
+              <p class="section-desc">
+                {{ systemMetrics.sample_count }} sample(s) in this window ·
+                latest {{ systemMetrics.latest ? new Date(systemMetrics.latest.created_at).toLocaleString() : '—' }}
+              </p>
+            </template>
           </div>
 
           <!-- Integrity Sub-tab -->
@@ -4980,6 +5028,12 @@ const eventTypeLabel = (et) => {
 // System status state
 const systemStatus = ref({})
 const systemStatusLoading = ref(false)
+const systemMetrics = ref(null)
+const metricsLoading = ref(false)
+const metricsSampling = ref(false)
+const metricsError = ref('')
+const metricsHours = ref(24)
+let metricsTimer = null
 const softwareIntegrity = ref(null)
 const softwareIntegrityLoading = ref(false)
 const softwareIntegrityError = ref('')
@@ -5531,6 +5585,154 @@ const fetchSystemStatus = async () => {
     systemStatusLoading.value = false
   }
 }
+
+const fetchSystemMetrics = async () => {
+  metricsLoading.value = true
+  metricsError.value = ''
+  try {
+    const { data } = await axios.get(`/admin/system/metrics?hours=${metricsHours.value}`)
+    systemMetrics.value = data
+  } catch (e) {
+    metricsError.value = e.response?.data?.detail || 'Could not load system metrics.'
+  } finally {
+    metricsLoading.value = false
+  }
+}
+
+const sampleMetrics = async () => {
+  metricsSampling.value = true
+  metricsError.value = ''
+  try {
+    await axios.post('/admin/system/metrics/sample')
+    await fetchSystemMetrics()
+  } catch (e) {
+    metricsError.value = e.response?.data?.detail || 'Could not take a metrics sample.'
+  } finally {
+    metricsSampling.value = false
+  }
+}
+
+const startMetricsPoll = () => {
+  if (metricsTimer) return
+  metricsTimer = setInterval(() => {
+    if (systemSubTab.value === 'metrics') fetchSystemMetrics()
+  }, 60000)
+}
+
+const openMetricsTab = () => {
+  systemSubTab.value = 'metrics'
+  fetchSystemMetrics()
+  startMetricsPoll()
+}
+
+const sparkPoints = (values) => {
+  const clean = (values || []).filter((value) => typeof value === 'number' && !Number.isNaN(value))
+  if (!clean.length) return '0,28 240,28'
+  if (clean.length === 1) return '0,28 240,28'
+  const min = Math.min(...clean)
+  const max = Math.max(...clean)
+  const span = max - min || 1
+  return clean
+    .map((value, index) => {
+      const x = (index / (clean.length - 1)) * 240
+      const y = 52 - ((value - min) / span) * 48
+      return `${x.toFixed(1)},${y.toFixed(1)}`
+    })
+    .join(' ')
+}
+
+const pctSeries = (series, usedField, totalField) =>
+  (series || [])
+    .map((row) => (row[totalField] ? (row[usedField] / row[totalField]) * 100 : null))
+    .filter((value) => value !== null)
+
+const metricCards = computed(() => {
+  const data = systemMetrics.value
+  if (!data?.latest) return []
+  const series = data.series || []
+  const latest = data.latest
+  const number = (value, digits = 1) =>
+    typeof value === 'number' ? value.toFixed(digits) : '—'
+  const memPct = latest.mem_total_mb
+    ? Math.round((latest.mem_used_mb / latest.mem_total_mb) * 100)
+    : 0
+  const diskPct = latest.disk_total_gb
+    ? Math.round((latest.disk_used_gb / latest.disk_total_gb) * 100)
+    : 0
+  const values = (field) => series.map((row) => row[field])
+  return [
+    {
+      key: 'load',
+      label: 'CPU load (1m)',
+      value: number(latest.load1, 2),
+      sub: `${latest.cpu_count || 1} cores · 5m ${number(latest.load5, 2)} · 15m ${number(latest.load15, 2)}`,
+      points: sparkPoints(values('load1')),
+    },
+    {
+      key: 'memory',
+      label: 'Memory used',
+      value: `${memPct}%`,
+      sub: `${latest.mem_used_mb || 0} / ${latest.mem_total_mb || 0} MB`,
+      points: sparkPoints(pctSeries(series, 'mem_used_mb', 'mem_total_mb')),
+    },
+    {
+      key: 'disk',
+      label: 'Disk used',
+      value: `${diskPct}%`,
+      sub: `${number(latest.disk_used_gb, 1)} / ${number(latest.disk_total_gb, 1)} GB`,
+      points: sparkPoints(pctSeries(series, 'disk_used_gb', 'disk_total_gb')),
+    },
+    {
+      key: 'sessions',
+      label: 'Active lab sessions',
+      value: latest.active_sessions ?? 0,
+      sub: 'starting or running',
+      points: sparkPoints(values('active_sessions')),
+    },
+    {
+      key: 'db',
+      label: 'DB connections',
+      value: latest.db_connections ?? 0,
+      sub: 'current database',
+      points: sparkPoints(values('db_connections')),
+    },
+    {
+      key: 'rangeboxes',
+      label: 'Live RangeBoxes',
+      value: latest.rangebox_count ?? 0,
+      sub: 'containers labelled rangebox',
+      points: sparkPoints(values('rangebox_count')),
+    },
+    {
+      key: 'containers',
+      label: 'Containers',
+      value: latest.docker_containers ?? 0,
+      sub: 'running on the host',
+      points: sparkPoints(values('docker_containers')),
+    },
+    {
+      key: 'images',
+      label: 'Docker images',
+      value: latest.docker_images ?? 0,
+      sub: 'local image cache',
+      points: sparkPoints(values('docker_images')),
+    },
+  ]
+})
+
+watch(systemSubTab, (tab) => {
+  if (tab !== 'metrics' && metricsTimer) {
+    clearInterval(metricsTimer)
+    metricsTimer = null
+  }
+})
+
+onUnmounted(() => {
+  if (metricsTimer) {
+    clearInterval(metricsTimer)
+    metricsTimer = null
+  }
+})
 
 // Header system-health dot -- driven by the minimal, install-aware status.
 const fetchDataIntegrity = async () => {
@@ -13965,6 +14167,50 @@ watch(activeTab, (tab) => {
 .audit-live h4 {
   margin: 0 0 0.5rem;
   font-size: 0.9rem;
+}
+.metrics-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.metric-card {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: var(--bg-secondary);
+}
+.metric-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.metric-card__label {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.metric-card__value {
+  font-size: 1.35rem;
+}
+.metric-card__chart {
+  width: 100%;
+  height: 56px;
+  margin: 0.5rem 0 0.25rem;
+  color: var(--accent);
+}
+.metric-card__sub {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
 }
 .activity-clear-panel {
   margin: 0.75rem 0 1rem;

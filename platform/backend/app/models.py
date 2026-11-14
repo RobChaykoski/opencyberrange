@@ -1207,6 +1207,28 @@ class ImpersonationSession(Base):
     end_reason = Column(String(30), nullable=True)
 
 
+class SystemMetric(Base):
+    """Point-in-time host and platform metrics for the admin graphs."""
+
+    __tablename__ = "system_metrics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, server_default=func.now(), index=True)
+    load1 = Column(Float, nullable=True)
+    load5 = Column(Float, nullable=True)
+    load15 = Column(Float, nullable=True)
+    cpu_count = Column(Integer, nullable=True)
+    mem_total_mb = Column(Integer, nullable=True)
+    mem_used_mb = Column(Integer, nullable=True)
+    disk_total_gb = Column(Float, nullable=True)
+    disk_used_gb = Column(Float, nullable=True)
+    active_sessions = Column(Integer, nullable=True)
+    rangebox_count = Column(Integer, nullable=True)
+    docker_containers = Column(Integer, nullable=True)
+    docker_images = Column(Integer, nullable=True)
+    db_connections = Column(Integer, nullable=True)
+
+
 class ReportExport(Base):
     """Immutable manifest for a generated instructor report.
 

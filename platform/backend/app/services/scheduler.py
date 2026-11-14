@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import LabSession
 from app.services import backups
+from app.services import system_metrics
 from app.services.docker_manager import DockerManager
 from app import modules as module_registry
 
@@ -19,6 +20,7 @@ docker_manager = DockerManager()
 _session_cleanup_task = None
 _backup_task = None
 _revocation_cleanup_task = None
+_metrics_task = None
 _module_tasks = {}   # label -> asyncio.Task, one per discovered module tick
 
 
@@ -197,9 +199,21 @@ async def cleanup_revocations():
             logger.error("Error in token-revocation cleanup task: %s", exc)
 
 
+async def collect_system_metrics_loop():
+    """Sample host/platform metrics every minute for the admin graphs."""
+    while True:
+        try:
+            await asyncio.to_thread(system_metrics.sample_once)
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            logger.warning("System metrics sample failed: %s", exc)
+        await asyncio.sleep(60)
+
+
 def start_scheduler():
     """Start the background scheduler tasks"""
-    global _session_cleanup_task, _backup_task, _revocation_cleanup_task
+    global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
 
     logger.info("Starting background scheduler...")
 
@@ -218,6 +232,10 @@ def start_scheduler():
         _revocation_cleanup_task = asyncio.create_task(cleanup_revocations())
         logger.info("Started token-revocation cleanup task")
 
+    if _metrics_task is None or _metrics_task.done():
+        _metrics_task = asyncio.create_task(collect_system_metrics_loop())
+        logger.info("Started system metrics sampler")
+
     # Start each present module's background tick. Editions with no
     # optional modules installed have none to start.
     # Adding a module with a scheduler_tick needs no edit to this file.
@@ -235,7 +253,7 @@ async def shutdown_scheduler():
     running, so awaiting the cancellations is the only safe option.
     ``run_until_complete`` would raise "event loop is already running".
     """
-    global _session_cleanup_task, _backup_task, _revocation_cleanup_task
+    global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
 
     logger.info("Shutting down background scheduler...")
 
@@ -246,6 +264,8 @@ async def shutdown_scheduler():
         tasks.append(_backup_task)
     if _revocation_cleanup_task and not _revocation_cleanup_task.done():
         tasks.append(_revocation_cleanup_task)
+    if _metrics_task and not _metrics_task.done():
+        tasks.append(_metrics_task)
     tasks.extend(t for t in _module_tasks.values() if t and not t.done())
 
     for t in tasks:
@@ -257,4 +277,6 @@ async def shutdown_scheduler():
 
     _session_cleanup_task = None
     _backup_task = None
+    _metrics_task = None
     _module_tasks.clear()
+

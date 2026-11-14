@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.2.2`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.3.0`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0026_impersonation_sessions`. Production application images were built from the `v5.2.2`
-commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, and `v5.2.2` record the release,
+Alembic `0027_system_metrics`. Production application images were built from the `v5.3.0`
+commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, and `v5.3.0` record the release,
 security patch, IdP settings feature, and operations patch.
 
 ## Ready for production
@@ -72,6 +72,10 @@ security patch, IdP settings feature, and operations patch.
   same-lab, shared targets, and QEMU guests keep working.
 - **5.2.2 patch (same day)** fixes the startup egress helper (it now installs
   `iptables`) and schedules the egress script at boot and every five minutes.
+- **5.3.0 feature release (same day)** adds the System → Metrics view and
+  migration `0027_system_metrics`: per-minute samples of CPU load, memory, disk,
+  active sessions, DB connections, RangeBoxes, and container/image counts, with
+  inline SVG history graphs and 1h/6h/24h/7d windows.
 
 ## Deliberately deferred
 
@@ -117,7 +121,7 @@ security patch, IdP settings feature, and operations patch.
 
 - `/api/version` = 5; backend `/health` reports the database up (`/health` on the
   SPA origin is a client route, so probe the backend on port 8000).
-- `alembic current` = `0026_impersonation_sessions`; no failed migrations.
+- `alembic current` = `0027_system_metrics`; no failed migrations.
 - 179 labs discovered; ten random lab detail checks pass.
 - Authenticated pages: dashboard, exercises, Windows track, workbooks, courses,
   profile, instructor, admin, admin settings.
@@ -145,6 +149,7 @@ Released on 2026-11-14 as `v5.0.0` for the implemented scope above.
 Do **not** describe the deferred items as shipped. A real Canvas/Brightspace
 staging test and the external accessibility/security assessments remain
 institutional or later-release work.
+
 
 
 

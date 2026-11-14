@@ -3018,6 +3018,29 @@ async def discover_labs(
 
 # ==================== Activity / Audit Log ====================
 
+@router.get("/system/metrics")
+async def get_system_metrics(
+    hours: int = 24,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Sampled host/platform metrics for the admin System graphs."""
+    from app.services import system_metrics
+
+    return system_metrics.history(db, hours)
+
+
+@router.post("/system/metrics/sample")
+async def sample_system_metrics(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Take a metrics sample now (the scheduler also samples every minute)."""
+    from app.services import system_metrics
+
+    return system_metrics.sample_once()
+
+
 @router.get("/activity")
 async def get_activity_log(
     page: int = 1,

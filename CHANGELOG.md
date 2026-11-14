@@ -2,6 +2,17 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.3.0] - 2026-11-14
+
+### System view
+- Added a **Metrics** sub-tab to Admin → System with CPU load, memory, disk,
+  active lab sessions, DB connections, live RangeBoxes, and container/image
+  counts. Each card shows the current value and an inline history graph, with
+  1-hour, 6-hour, 24-hour, and 7-day windows.
+- Metrics are sampled every minute from host load/memory/disk, PostgreSQL, and
+  the container runtime, retained for 30 days. Admin-only
+  `/api/admin/system/metrics` and a manual "Sample now" action back the view.
+
 ## [5.2.2] - 2026-11-14
 
 ### Fixes
