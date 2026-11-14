@@ -58,7 +58,7 @@
       "sha256": "86ec40199e02061aafd486121d763188518578e75f2e789fcc4d5e2d9650019d"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "6b4599e7b72806eb3c78c1a86554436a967f93b09901b60ee88e34e4644428f0"
+      "sha256": "d27272bb4a4bb2c8c426ecac1c2602be7a83503c20be4b2025e0579be20dfdb5"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
@@ -73,10 +73,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "fee297a0c38dc24bb13f6e0056802ac0f4e4efa561007f114d82625927f2d145"
+      "sha256": "a4d2ff4aad6f6b4d7c2cee1977c6517a7e028e0bb8445e6a8644b93cae78d488"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "9154052ab6d1f855d8ccb02ebf9ed60985fa64b80ad7bb8d0baa6c86d4baf69e"
+      "sha256": "71d811fc801072cbfce21e7220e291a56414a85c34cb4c3d6e81b5464cff82ca"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
@@ -124,7 +124,7 @@
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
     },
     "scripts/security-delta-review.py": {
-      "sha256": "2d6b04f4841dbb8bcc9d1830cad9e968c88856c6bf4f4c3a36ef889b86eb849a"
+      "sha256": "1b2e5f5d8b11e599146b2d120960d3bacc234f84254b40ae4e99331994e5ee0d"
     },
     "scripts/status-dashboard.py": {
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
