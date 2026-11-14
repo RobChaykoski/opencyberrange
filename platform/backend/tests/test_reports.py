@@ -24,6 +24,18 @@ pytestmark = pytest.mark.db
 TEST_PASSWORD = "Correct#Horse7Battery"
 
 
+def _csv_text(content: bytes) -> str:
+    """Drop the visible export-label comments before parsing the table."""
+    text = content.decode("utf-8-sig")
+    return "\n".join(
+        line for line in text.splitlines() if not line.startswith("#")
+    )
+
+
+def _csv_rows(content: bytes) -> list[dict]:
+    return list(csv.DictReader(io.StringIO(_csv_text(content))))
+
+
 def _login(client, user):
     resp = client.post(
         "/api/auth/login",
@@ -305,8 +317,9 @@ def test_instructor_can_generate_and_download_reports(client, report_data, db_se
     assert diagnostics.status_code == 200, diagnostics.text
     assert diagnostics.content.startswith(b"\xef\xbb\xbf")
     lines = diagnostics.content.decode("utf-8-sig").splitlines()
-    assert lines[0].startswith("report_id,")
-    assert lines[1].startswith(diagnostics.headers["x-report-id"])
+    assert lines[0].startswith("# Data classification:")
+    header_index = next(index for index, line in enumerate(lines) if line.startswith("report_id,"))
+    assert lines[header_index + 1].startswith(diagnostics.headers["x-report-id"])
 
     queue = client.get(
         f"/api/courses/{course_id}/reports/coaching-queue.csv",
@@ -315,8 +328,8 @@ def test_instructor_can_generate_and_download_reports(client, report_data, db_se
     )
     assert queue.status_code == 200, queue.text
     queue_lines = queue.content.decode("utf-8-sig").splitlines()
-    assert queue_lines[0].startswith("report_id,")
-    assert "learner" in queue_lines[0]
+    queue_header = next(line for line in queue_lines if line.startswith("report_id,"))
+    assert "learner" in queue_header
 
     queue_pdf = client.get(
         f"/api/courses/{course_id}/reports/coaching-queue.pdf",
@@ -337,7 +350,7 @@ def test_exercise_baselines_and_fast_hint_free_coaching_signal(client, report_da
         headers=instructor,
     )
     assert diagnostics.status_code == 200, diagnostics.text
-    rows = list(csv.DictReader(io.StringIO(diagnostics.content.decode("utf-8-sig"))))
+    rows = _csv_rows(diagnostics.content)
     baseline_fields = {
         "baseline_completions",
         "baseline_median_time_minutes",
@@ -363,7 +376,7 @@ def test_exercise_baselines_and_fast_hint_free_coaching_signal(client, report_da
     )
     assert queue.status_code == 200, queue.text
     queue_rows = list(
-        csv.DictReader(io.StringIO(queue.content.decode("utf-8-sig")))
+        _csv_rows(queue.content)
     )
     fast = next(
         row
