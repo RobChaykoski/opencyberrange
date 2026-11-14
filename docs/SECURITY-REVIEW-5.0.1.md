@@ -92,17 +92,17 @@ Scanned the installed tree (188 packages) and compared it with
   development-only and are covered by the notices' dev-tooling paragraph rather
   than one row each. No action.
 
-## IdP settings import/export (assessment)
+## IdP settings import/export (implemented in 5.1)
 
-Provider configuration is non-secret JSON; secrets (client secret, bind
-password, SP private key) are encrypted with the application key and never
-returned by the admin API. A portable export should therefore:
+`GET /api/identity/providers/export` returns a versioned bundle of provider
+metadata and non-secret config with `secrets_exported: false`; secret values are
+never serialized. `POST /api/identity/providers/import` accepts the bundle,
+defaults to a dry run, skips existing names unless `update_existing` is set, and
+forces a provider disabled when its required secrets are absent. Provided
+secrets are encrypted at rest using the same path as the create/update API, and
+imports are audited. The admin Identity providers panel has Export and Import
+actions.
 
-- export provider metadata and non-secret config only, and require secrets to be
-  re-entered on import (simplest and safest), or use a passphrase-encrypted
-  bundle if a one-step move is required;
-- validate the schema, URLs, SAML certificate, and OIDC algorithm support on
-  import, with a dry-run diff before writing;
-- remain admin-only and audited, and never log secret material.
-
-This is a 5.1 feature, not part of the 5.0.1 security patch.
+Operators still re-enter secrets after a cross-environment import; the UI states
+this explicitly. The bundle is admin-only and should be handled as sensitive
+infrastructure configuration even though it contains no secrets.

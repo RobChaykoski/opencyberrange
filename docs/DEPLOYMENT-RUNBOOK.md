@@ -134,8 +134,15 @@ deploy user's crontab. It writes a validated custom-format dump
 (`ocr-backup-<stamp>.dump`), the erasure ledger, the platform `.env`, and a
 SHA-256 file to `~/backups`, pruning only its own files after 14 days.
 
+The cron sets
+`BACKUP_REMOTE=ocr-offsite:/home/ocrv2/backups/prod`. The `ocr-offsite` SSH alias
+on the production host uses `~/.ssh/ocr_backup_ed25519`, whose public key is
+authorized on development; development is an interim off-host target and must
+be replaced by institutional backup storage before it is relied on for disaster
+recovery. Prune the off-host copy under the institution's retention policy.
+
 ```bash
-crontab -l | grep backup-production
+crontab -l | grep -E 'backup-production|restore-drill'
 bash scripts/backup-production.sh          # run now
 bash scripts/restore-drill.sh              # restore newest dump to a scratch DB
 ```

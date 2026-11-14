@@ -12,10 +12,27 @@
           providers, use <strong>Security &rarr; Institution SSO</strong>.
         </p>
       </div>
-      <button type="button" class="btn btn--primary btn--sm" @click="startCreate">
-        Add provider
-      </button>
+      <div class="idp-panel__actions">
+        <button type="button" class="btn btn--outline btn--sm" @click="exportProviders">
+          Export
+        </button>
+        <label class="btn btn--outline btn--sm idp-import">
+          {{ importing ? 'Importing...' : 'Import' }}
+          <input
+            type="file"
+            accept="application/json,.json"
+            :disabled="importing"
+            hidden
+            @change="importProviders"
+          />
+        </label>
+        <button type="button" class="btn btn--primary btn--sm" @click="startCreate">
+          Add provider
+        </button>
+      </div>
     </header>
+
+    <p v-if="transferMessage" class="idp-state" role="status">{{ transferMessage }}</p>
 
     <p v-if="loading" class="idp-state">Loading identity providers...</p>
     <p v-else-if="error" class="idp-state idp-state--error" role="alert">{{ error }}</p>
@@ -355,6 +372,8 @@ const saving = ref(false)
 const formError = ref('')
 const testingId = ref(null)
 const testResults = reactive({})
+const transferMessage = ref('')
+const importing = ref(false)
 
 const blankConfig = (kind = 'ldap') => {
   const common = {
@@ -442,6 +461,67 @@ const load = async () => {
     error.value = e.response?.data?.detail || 'Could not load identity providers.'
   } finally {
     loading.value = false
+  }
+}
+
+const exportProviders = async () => {
+  transferMessage.value = ''
+  try {
+    const { data } = await axios.get('/identity/providers/export')
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `identity-providers-${new Date().toISOString().slice(0, 10)}.json`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    transferMessage.value = `Exported ${data.providers?.length || 0} provider(s). Secret values are not included.`
+  } catch (e) {
+    transferMessage.value = e.response?.data?.detail || 'Could not export identity providers.'
+  }
+}
+
+const importProviders = async (event) => {
+  const file = event.target.files?.[0]
+  event.target.value = ''
+  if (!file) return
+  transferMessage.value = ''
+  let bundle
+  try {
+    bundle = JSON.parse(await file.text())
+  } catch {
+    transferMessage.value = 'The selected file is not valid JSON.'
+    return
+  }
+  const items = Array.isArray(bundle.providers) ? bundle.providers : []
+  if (!items.length) {
+    transferMessage.value = 'The bundle contains no providers.'
+    return
+  }
+  const names = items.map((item) => item.name).join(', ')
+  const proceed = window.confirm(
+    `Import ${items.length} provider(s): ${names}?\n\n` +
+      'Existing names are skipped. Secrets are not included in the export, so ' +
+      'providers that need them import disabled until you add the secrets.'
+  )
+  if (!proceed) return
+  importing.value = true
+  try {
+    const { data } = await axios.post('/identity/providers/import', {
+      providers: items,
+      dry_run: false,
+      update_existing: false,
+    })
+    transferMessage.value =
+      `Imported: ${data.created} created, ${data.updated} updated, ` +
+      `${data.skipped} skipped. Add missing secrets before enabling a provider.`
+    await load()
+  } catch (e) {
+    transferMessage.value = e.response?.data?.detail || 'Could not import identity providers.'
+  } finally {
+    importing.value = false
   }
 }
 
@@ -573,6 +653,16 @@ onMounted(load)
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+}
+.idp-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.idp-import {
+  cursor: pointer;
 }
 .idp-panel__eyebrow {
   margin: 0 0 0.2rem;

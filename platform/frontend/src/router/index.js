@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { ensureModules, isModuleEnabled } from '../composables/useModules'
 
 const ROLE_HIERARCHY = { student: 0, instructor: 1, admin: 2 }
 
@@ -263,20 +262,6 @@ router.beforeEach(async (to, from, next) => {
     next('/dashboard')
   } else if (to.meta.requiresInstructor && !userHasRole('instructor')) {
     next('/dashboard')
-  } else if (to.meta.module) {
-    // Module route guard: fail closed. A module route is only reachable when
-    // the modules API affirmatively reports the module enabled. Answers come
-    // from the shared useModules cache, so this fetches once per session
-    // instead of once per navigation; a failed load redirects to the dashboard.
-    try {
-      const loaded = await ensureModules()
-      if (!loaded || !isModuleEnabled(to.meta.module)) {
-        return next('/dashboard')
-      }
-    } catch {
-      return next('/dashboard')
-    }
-    next()
   } else {
     // Check if user must change password (except when already on change-password page)
     // Skip during impersonation — impersonated users don't change passwords

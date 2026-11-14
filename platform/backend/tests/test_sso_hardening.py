@@ -10,6 +10,8 @@ import pytest
 from app.services import ldap_auth, oidc
 from app.services.external_identity import SSOError
 from app.services.sso_flow import sanitize_return_to
+from app.crypto import encrypt_secret
+from app.routers.identity import _export_provider
 
 
 @pytest.mark.parametrize(
@@ -99,3 +101,20 @@ def test_ldap_plaintext_opt_in_does_not_trip_the_guard(monkeypatch):
     ldap_auth._connection(provider)
     assert calls["auto_referrals"] is False
     assert calls["opened"] is True
+
+
+def test_provider_export_never_includes_secret_values():
+    row = SimpleNamespace(
+        name="Campus OIDC",
+        kind="oidc",
+        enabled=True,
+        is_default=False,
+        config=json.dumps({"issuer": "https://idp.example.edu", "client_id": "ocr"}),
+        secrets=encrypt_secret(json.dumps({"client_secret": "super-secret-value"})),
+    )
+    exported = _export_provider(row)
+    serialized = json.dumps(exported)
+    assert "super-secret-value" not in serialized
+    assert "secrets" not in exported
+    assert exported["secret_keys"] == ["client_secret"]
+    assert exported["has_secrets"] is True

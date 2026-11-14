@@ -7,6 +7,7 @@ flows live in ``app.routers.sso``.
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field, field_validator
@@ -54,6 +55,29 @@ class IdentityProviderUpdate(BaseModel):
     is_default: bool | None = None
     config: dict | None = None
     secrets: dict | None = None
+
+
+class IdentityProviderImportItem(BaseModel):
+    name: str = Field(..., min_length=2, max_length=120)
+    kind: str
+    enabled: bool = False
+    is_default: bool = False
+    config: dict = Field(default_factory=dict)
+    secrets: dict | None = None
+
+    @field_validator("kind")
+    @classmethod
+    def valid_kind(cls, value: str) -> str:
+        value = value.lower().strip()
+        if value not in SUPPORTED_KINDS:
+            raise ValueError("kind must be ldap, oidc, or saml")
+        return value
+
+
+class IdentityProviderImport(BaseModel):
+    providers: list[IdentityProviderImportItem]
+    dry_run: bool = True
+    update_existing: bool = False
 
 
 def _json(value: str | None) -> dict:
@@ -107,14 +131,17 @@ def _validate_config(kind: str, config: dict) -> dict:
         config.setdefault("display_name_attribute", "cn")
         config.setdefault("group_attribute", "memberOf")
         config.setdefault("timeout_seconds", settings.SSO_HTTP_TIMEOUT_SECONDS)
+        config.setdefault("allow_plaintext", False)
+        config["allow_plaintext"] = truthy(config["allow_plaintext"])
         if (
             server.startswith("ldap://")
             and not bool(config.get("start_tls", False))
+            and not bool(config.get("allow_plaintext", False))
             and not settings.SSO_ALLOW_INSECURE_HTTP
         ):
             raise HTTPException(
                 status_code=400,
-                detail="LDAP server_url must use ldaps:// or StartTLS",
+                detail="LDAP server_url must use ldaps://, StartTLS, or explicit allow_plaintext",
             )
         _apply_common(config)
     elif kind == "oidc":
@@ -218,6 +245,34 @@ def _serialize(row: IdentityProvider) -> dict:
     return data
 
 
+def _export_provider(row: IdentityProvider) -> dict:
+    """Portable provider settings without secret values."""
+    return {
+        "name": row.name,
+        "kind": row.kind,
+        "enabled": bool(row.enabled),
+        "is_default": bool(row.is_default),
+        "config": _json(row.config),
+        "secret_keys": _secret_keys(row.secrets),
+        "has_secrets": bool(row.secrets),
+    }
+
+
+def _merge_secrets(row: IdentityProvider, updates: dict) -> None:
+    existing: dict = {}
+    if row.secrets:
+        try:
+            existing = json.loads(decrypt_secret(row.secrets))
+        except Exception:
+            existing = {}
+    for key, value in updates.items():
+        if value in (None, ""):
+            existing.pop(key, None)
+        else:
+            existing[key] = value
+    row.secrets = encrypt_secret(json.dumps(existing)) if existing else None
+
+
 def _set_default(db: Session, row: IdentityProvider) -> None:
     db.query(IdentityProvider).filter(IdentityProvider.id != row.id).update(
         {IdentityProvider.is_default: False}, synchronize_session=False
@@ -245,6 +300,162 @@ def list_identity_providers(
 ):
     rows = db.query(IdentityProvider).order_by(IdentityProvider.name).all()
     return {"providers": [_serialize(row) for row in rows]}
+
+
+@router.get("/providers/export")
+def export_identity_providers(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user),
+):
+    """Export portable provider settings. Secret values are never included."""
+    rows = db.query(IdentityProvider).order_by(IdentityProvider.name).all()
+    return {
+        "format": "ocr-identity-providers",
+        "version": 1,
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "secrets_exported": False,
+        "providers": [_export_provider(row) for row in rows],
+    }
+
+
+@router.post("/providers/import")
+def import_identity_providers(
+    payload: IdentityProviderImport,
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user),
+):
+    """Validate or import an exported provider bundle.
+
+    The default is a dry run. Secret values may be supplied on import; they are
+    encrypted at rest and never echoed back. A provider whose required secrets
+    are absent is imported disabled rather than enabled in a broken state.
+    """
+    if not payload.providers:
+        raise HTTPException(status_code=400, detail="No providers in the import bundle")
+    if sum(1 for item in payload.providers if item.is_default) > 1:
+        raise HTTPException(status_code=400, detail="Only one provider may be default")
+
+    prepared = []
+    seen: set[str] = set()
+    for item in payload.providers:
+        name = item.name.strip()
+        if name.lower() in seen:
+            raise HTTPException(
+                status_code=400, detail=f"Duplicate provider name in bundle: {name}"
+            )
+        seen.add(name.lower())
+        config = _validate_config(item.kind, item.config)
+        secrets = _validate_secret_keys(item.kind, item.secrets)
+        existing = (
+            db.query(IdentityProvider)
+            .filter(IdentityProvider.name == name)
+            .first()
+        )
+        if existing is not None and existing.kind != item.kind:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Provider {name} exists with kind {existing.kind}",
+            )
+        if existing is not None and not payload.update_existing:
+            action = "skip"
+        else:
+            action = "create" if existing is None else "update"
+
+        required = SECRET_KEYS[item.kind]
+        has_existing_secrets = bool(existing and existing.secrets)
+        missing = sorted(required - set(secrets))
+        enabled = bool(item.enabled)
+        forced_disabled = False
+        if action != "skip" and enabled and missing and not has_existing_secrets:
+            enabled = False
+            forced_disabled = True
+        is_default = bool(item.is_default) and enabled
+        prepared.append(
+            {
+                "item": item,
+                "name": name,
+                "config": config,
+                "secrets": secrets,
+                "existing": existing,
+                "action": action,
+                "enabled": enabled,
+                "forced_disabled": forced_disabled,
+                "is_default": is_default,
+                "missing_secrets": missing if action != "skip" else [],
+            }
+        )
+
+    if payload.dry_run:
+        return {
+            "dry_run": True,
+            "providers": [
+                {
+                    "name": entry["name"],
+                    "kind": entry["item"].kind,
+                    "action": entry["action"],
+                    "enabled": entry["enabled"],
+                    "missing_secrets": entry["missing_secrets"],
+                }
+                for entry in prepared
+            ],
+        }
+
+    results = []
+    try:
+        for entry in prepared:
+            item = entry["item"]
+            row = entry["existing"]
+            if entry["action"] == "skip":
+                results.append({"name": entry["name"], "action": "skipped"})
+                continue
+            if row is None:
+                row = IdentityProvider(
+                    name=entry["name"],
+                    kind=item.kind,
+                    enabled=entry["enabled"],
+                    is_default=False,
+                    config=json.dumps(entry["config"]),
+                    secrets=(
+                        encrypt_secret(json.dumps(entry["secrets"]))
+                        if entry["secrets"]
+                        else None
+                    ),
+                )
+                db.add(row)
+                db.flush()
+            else:
+                row.config = json.dumps(entry["config"])
+                row.enabled = entry["enabled"]
+                if entry["secrets"]:
+                    _merge_secrets(row, entry["secrets"])
+                db.flush()
+            if entry["is_default"]:
+                _set_default(db, row)
+            _audit(
+                request,
+                current_user,
+                "IDENTITY_PROVIDER_IMPORTED",
+                row,
+            )
+            results.append(
+                {
+                    "name": entry["name"],
+                    "action": entry["action"],
+                    "enabled": bool(row.enabled),
+                }
+            )
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    return {
+        "dry_run": False,
+        "created": sum(1 for r in results if r["action"] == "create"),
+        "updated": sum(1 for r in results if r["action"] == "update"),
+        "skipped": sum(1 for r in results if r["action"] == "skipped"),
+        "providers": results,
+    }
 
 
 @router.post("/providers", status_code=201)

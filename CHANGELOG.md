@@ -2,6 +2,22 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.1.0] - in development
+
+### Identity
+- Identity provider settings export/import: versioned bundle, fixed dry-run
+  first, existing names skipped unless requested, missing secrets force a
+  provider disabled, admin-only and audited. Secret values are never exported.
+- Removed the unused `meta.module` router branch; modules remain enforced by the
+  backend middleware and feature flags.
+
+### Operations
+- Production backups now push off-host to `ocr-offsite:/home/ocrv2/backups/prod`
+  after the nightly dump; the weekly restore drill is unchanged.
+
+### Planned
+- Open Badges 3.0 hosted credentials (see `docs/OPEN-BADGES-3.0-SCOPE.md`).
+
 ## [5.0.1] - 2026-11-14
 
 Security and compliance patch on top of Release 5.
