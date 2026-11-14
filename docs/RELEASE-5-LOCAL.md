@@ -198,7 +198,7 @@ deployed to production.
 
 ## Verified on this stack
 
-- `/api/version` = **5**, release name **Release 5 (Development)**.
+- `/api/version` = **5**, release name **Release 5 (Powered by OpenCyberRange)**.
 - Platform initialization imported **179 labs** and **12 tracks**.
 - Ten randomly selected labs passed validation and API discoverability:
   High School, AI, Windows, Malware, Web, Identity, OSINT, Linux, Forensics,
