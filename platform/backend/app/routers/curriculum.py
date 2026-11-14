@@ -2007,10 +2007,15 @@ async def get_hint(
 async def get_lab_details(
     lab_id: int,
     course_id: int = None,
+    launch: str | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
     """Get detailed lab info for active lab view"""
+
+    from app.services.lti import verify_launch_grant
+
+    lti_bypass = verify_launch_grant(launch, current_user.id, lab_id)
 
     lab = db.query(Lab).options(
         joinedload(Lab.level).joinedload(Level.track)
@@ -2074,7 +2079,7 @@ async def get_lab_details(
         current_user.is_instructor, visible_lab_ids,
     )
 
-    if not is_unlocked and not course_bypass and not current_user.is_instructor:
+    if not is_unlocked and not course_bypass and not current_user.is_instructor and not lti_bypass:
         raise HTTPException(
             status_code=403,
             detail="This lab is locked. Complete previous labs first."
@@ -2269,7 +2274,23 @@ async def get_lab_details(
             "rangebox_enabled": session.rangebox_enabled,
             "started_at": session.started_at.isoformat() if session.started_at else None,
             "expires_at": (session.expires_at.isoformat() + "Z") if session.expires_at else None,
-            "time_remaining_seconds": max(0, int((session.expires_at.replace(tzinfo=timezone.utc) - datetime.now(timezone.utc)).total_seconds())) if session.expires_at else 0,
+            "is_paused": session.paused_at is not None,
+            "paused_at": session.paused_at.isoformat() if session.paused_at else None,
+            "paused_seconds": int(session.paused_seconds or 0),
+            "pause_reason": session.pause_reason,
+            "time_remaining_seconds": max(
+                0,
+                int(
+                    (
+                        session.expires_at.replace(tzinfo=timezone.utc)
+                        - (
+                            session.paused_at.replace(tzinfo=timezone.utc)
+                            if session.paused_at
+                            else datetime.now(timezone.utc)
+                        )
+                    ).total_seconds()
+                ),
+            ) if session.expires_at else 0,
             "duration_minutes": lab.duration_minutes or 120
         } if session else None,
         "hostnames": hostnames_data,

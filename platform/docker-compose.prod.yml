@@ -210,6 +210,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8443:8443"
     volumes:
       - ./certs:/etc/nginx/certs:ro
       - wiki_data:/usr/share/nginx/wiki:ro
@@ -285,3 +286,4 @@ networks:
     # Backend <-> socket proxy only. Nothing student-reachable joins this
     # network, and internal: true keeps the proxy off the internet.
     internal: true
+

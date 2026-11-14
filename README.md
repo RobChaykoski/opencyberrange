@@ -1,5 +1,9 @@
 # SWOCTS Cyber Range
 
+> **Release 5 development branch.** Production remains on the signed `v4` tag.
+> The local image and stack bring-up is documented in
+> [`docs/RELEASE-5-LOCAL.md`](docs/RELEASE-5-LOCAL.md).
+
 > **SWOCTS Cyber Range** is the SWOCTS-branded deployment of the OpenCyberRange training platform. The product identity, crest, and title are SWOCTS; the underlying platform, code, and upstream attribution remain OpenCyberRange.
 >
 > **Original project and attribution**

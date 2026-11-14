@@ -258,5 +258,5 @@ def log_sso_login(
         )
 
 
-def callback_url(params: dict) -> str:
-    return f"{frontend_base_url()}/sso/callback?{urlencode(params)}"
+def callback_url(params: dict, path: str = "/sso/callback") -> str:
+    return f"{frontend_base_url()}{path}?{urlencode(params)}"

@@ -717,6 +717,10 @@ class BulkEnrollRequest(BaseModel):
     user_ids: List[int]
 
 
+class MinorConsentRequest(BaseModel):
+    reference: str = Field(..., min_length=3, max_length=200)
+
+
 class ScoreboardEntry(BaseModel):
     rank: int
     user_id: int

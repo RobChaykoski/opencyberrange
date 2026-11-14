@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 class EventTypes:
     LAB_STARTED = "lab_started"
     LAB_STOPPED = "lab_stopped"
+    LAB_PAUSED = "lab_paused"
+    LAB_RESUMED = "lab_resumed"
     LAB_COMPLETED = "lab_completed"
     FLAG_CORRECT = "flag_correct"
     FLAG_INCORRECT = "flag_incorrect"
@@ -30,12 +32,21 @@ class EventTypes:
     SSO_LOGIN_SUCCESS = "sso_login_success"
     SSO_USER_PROVISIONED = "sso_user_provisioned"
     SSO_ACCOUNT_LINKED = "sso_account_linked"
+    ACCOMMODATION_CHANGED = "accommodation_changed"
+    MINOR_CONSENT_RECORDED = "minor_consent_recorded"
+    RETENTION_POLICY_SET = "retention_policy_set"
+    RETENTION_PREVIEW = "retention_preview"
+    RETENTION_COMPLETED = "retention_completed"
+    REVIEW_REQUESTED = "review_requested"
+    REVIEW_DECIDED = "review_decided"
 
 
 # Human-readable labels for the feed
 EVENT_LABELS = {
     EventTypes.LAB_STARTED: "Started Lab",
     EventTypes.LAB_STOPPED: "Stopped Lab",
+    EventTypes.LAB_PAUSED: "Paused Lab Clock",
+    EventTypes.LAB_RESUMED: "Resumed Lab Clock",
     EventTypes.LAB_COMPLETED: "Completed Lab",
     EventTypes.FLAG_CORRECT: "Solved",
     EventTypes.FLAG_INCORRECT: "Wrong Flag",
@@ -53,6 +64,13 @@ EVENT_LABELS = {
     EventTypes.SSO_LOGIN_SUCCESS: "Signed in with SSO",
     EventTypes.SSO_USER_PROVISIONED: "SSO Account Provisioned",
     EventTypes.SSO_ACCOUNT_LINKED: "SSO Account Linked",
+    EventTypes.ACCOMMODATION_CHANGED: "Accommodation Changed",
+    EventTypes.MINOR_CONSENT_RECORDED: "Minor Consent Recorded",
+    EventTypes.RETENTION_POLICY_SET: "Retention Policy Set",
+    EventTypes.RETENTION_PREVIEW: "Retention Preview Run",
+    EventTypes.RETENTION_COMPLETED: "Retention Run Completed",
+    EventTypes.REVIEW_REQUESTED: "Human Review Requested",
+    EventTypes.REVIEW_DECIDED: "Human Review Decided",
 }
 
 

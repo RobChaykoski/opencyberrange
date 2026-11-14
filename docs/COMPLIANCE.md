@@ -59,10 +59,12 @@ questionnaire:
   upgraded on login). WireGuard keys, TOTP secrets, IdP secrets, and OIDC ID
   tokens are encrypted with the application key. Database-at-rest encryption is
   a host/volume choice, not provided by the application.
-- **Minors.** `is_minor` drives analytics/reporting exclusion. Consent events are
-  recorded with a version. Auto-provisioned SSO accounts still need the
-  institution's own parental-consent process; the product cannot infer age from
-  an IdP assertion.
+- **Minors.** `is_minor` drives analytics/reporting exclusion. Enrollment now
+  records the institution's parental/guardian consent reference (not identity
+  documents) and flags a minor enrollment that still needs one. Survey/email
+  consent events are recorded with a version. Auto-provisioned SSO accounts
+  still need the institution's own parental-consent process; the product cannot
+  infer age from an IdP assertion.
 - **Logging.** Security events record actor, action, target, and IP; erasure
   removes or redacts identifying fields from activity records. Debug logging
   never writes secrets or learner email addresses.
@@ -84,10 +86,12 @@ questionnaire:
   operation, labelled form controls (including the institution sign-in panel),
   error announcements (`role="alert"`), reduced-motion handling, and the
   existing contrast work.
-- Accommodations: `app/routers/labs.py` scales lab session length and extension
-  by `session_accommodation_percent` (clamped to 100–300%) so an institution can
-  grant extended time without special-casing a lab. There is no hard pass/fail
-  timer in the learner path.
+- Accommodations: a per-student 1.0x–3.0x multiplier, 0–365 day due-date
+  extension, and a pause/resume clock, set from the instructor student panel or
+  the learner controls and audited. The multiplier scales lab session length and
+  extension; the operator-wide `session_accommodation_percent` remains the
+  default for learners without a record. There is no hard pass/fail timer in the
+  learner path.
 - Known limitations and the VPAT/ACR position are in `docs/ACCESSIBILITY.md`.
 - A signed VPAT requires an accessibility audit against the current build; this
   repo provides the draft structure and evidence, not a signature.

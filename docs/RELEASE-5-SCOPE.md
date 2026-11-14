@@ -1,8 +1,11 @@
 # Release 5 scope: enterprise procurement and compliance
 
-Status: **planned.** Release 4 is limited to SSO (OIDC/SAML/LDAP), the network
-device topology engine, and the security, privacy, and accessibility
-corrections already on the Release 4 branch. Everything below is Release 5.
+Status: **release candidate on the `release5` branch; deployed to development
+`172.16.16.44` (`release5` head `6d480089`, version 5, Alembic
+`0025`).** Production remains on the signed Release 4 hotfix `v4.0.2`; see
+[`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md). The local
+image/stack bring-up and deployment evidence are documented in
+[`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md). Everything below is Release 5.
 
 Source requirements: the university procurement pack covering FERPA, COPPA,
 GDPR/UK GDPR, CCPA/SOPIPA, PIPEDA/FIPPA/MFIPPA, Quebec Law 25, AODA/WCAG 2.2 AA,
@@ -11,8 +14,12 @@ localization.
 
 ## 1. Identity and LMS integration
 
-- **LTI 1.3 core launch** — OIDC third-party initiated login, signed `id_token`
-  validation, issuer/client/deployment binding, replay protection.
+- **LTI 1.3 core launch** - OIDC third-party initiated login, signed `id_token`
+  validation, issuer/client/deployment binding, replay protection, and a
+  public tool JWKS so the LMS can verify our signatures.
+  Status: platform registry, login redirect, launch validation, account linking,
+  AGS 2.0, NRPS 2.0, Deep Linking 2.0, and the admin console are implemented on
+  `release5`; a real LMS staging test remains.
 - **LTI Advantage AGS 2.0** — line items, score passback, result retrieval, and
   an instructor-review gate before any score leaves the platform.
 - **NRPS 2.0** — roster sync with the minimum claims (`sub`, role, context).
@@ -49,6 +56,10 @@ TA access is denied outside the assigned section.
 - Per-student due-date extensions that persist across a course.
 - Instructor/administrator UI, export coverage, and a WCAG 2.2 AA review.
 
+Status: the per-student multiplier (1.0x–3.0x), due-date extension, and
+pause/resume clock are implemented on `release5`, with an audited instructor
+panel and learner controls. Export coverage and the external AA review remain.
+
 Exit criteria: the same student receives the multiplier and extension in every
 assessment type, and the values survive export/import.
 
@@ -63,6 +74,10 @@ assessment type, and the values survive export/import.
   reviewer, and override reason.
 - A bias/validation note limited to what the product actually does: deterministic
   flag matching and equal-access testing. No writing-style model exists.
+
+Status: the learner notice, primary factors, request/decision workflow, and
+audited review evidence are implemented on `release5`; deeper rubric breakdowns
+for non-flag assessments remain.
 
 Exit criteria: a student can see why a result was produced and obtain a human
 decision; the override is auditable.
@@ -88,6 +103,12 @@ controls into a documented mode.
 - **Audit evidence** — consent, restriction changes, purge runs, and
   administrator overrides are recorded in the existing audit/ledger path.
 
+Status: minor enrollment consent capture, the restricted surfaces, and the
+retention clock (policy, preview counts, and append-only completion evidence)
+are implemented on `release5`. The destructive purge remains a documented
+operator step after backup, and the final minor-mode procurement handoff is
+still to write.
+
 Exit criteria: a minor account cannot appear in a public leaderboard or
 identifiable analytics view by default; consent and retention events are
 auditable; a term-end purge can be previewed and completed with evidence.
@@ -112,6 +133,13 @@ the browser-desktop layer need a Release 5 pass.
   connections and command-only labs.
 - **Licensing discipline** — keep Burp Community and other non-redistributable
   tools out of the image; add only tools whose licences permit the bundle.
+
+Status: the Kali base digest and SecLists commit are pinned, the wordlists the
+exercises reference are baked in at their documented paths, and the root-inside-
+container model with the Firefox sandbox rationale is documented in
+[`RangeBox/SECURITY-MODEL.md`](../RangeBox/SECURITY-MODEL.md). noVNC is the
+selected browser-desktop path for 5.0; KasmVNC is deferred. Terminal-only mode
+remains.
 
 Exit criteria: two RangeBox builds from the same pinned inputs are equivalent;
 the documented security model matches the image; one browser-desktop path is

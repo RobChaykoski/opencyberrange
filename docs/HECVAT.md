@@ -76,7 +76,7 @@ model actually sold.
 
 - WCAG 2.2 AA target; partial conformance with known limitations.
 - VPAT/ACR: not signed. Release 5 audit.
-- Accommodations: global session scaling today; per-student engine is Release 5.
+- Accommodations: per-student time multiplier, due-date extension, and an audited pause/resume clock, managed by an instructor or the learner.
 
 ### AI
 

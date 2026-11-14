@@ -1,9 +1,9 @@
 # Procurement requirements: traceability
 
-Status: **Release 4 readiness assessment.** Reviewed against the code in this
-branch on 2026-11-12. Each row states what exists, what is partial, and what is
-a deployment or organizational obligation. "Implemented" means there is code
-and a test or documented evidence in this repository — not a certification.
+Status: **Release 5 in progress.** Reviewed against the code in this branch on
+2026-11-13. Each row states what exists, what is partial, and what is a
+deployment or organizational obligation. "Implemented" means there is code and a
+test or documented evidence in this repository — not a certification.
 
 ## Legend
 
@@ -28,6 +28,7 @@ and a test or documented evidence in this repository — not a certification.
 | Breach-relevant logging | Yes | Admin/activity audit trail with actor, action, target, IP; erasure anonymises it. |
 | Quebec Law 25 PIA | Org | The product supplies this inventory, `docs/PRIVACY-AND-DATA-DELETION.md`, and the automated-decision statement below. A PIA is completed by the institution. |
 | Quebec Law 25 transfer assessment | Org | Deployment region and any sub-processor are operator choices. |
+| Minor-account safeguards | Partial | `is_minor` excludes accounts from public leaderboards, celebrations, and cohort analytics; minor enrollments record an institutional consent reference and the recording staff member. Courses have a retention date, a record-count preview, and append-only completion evidence; the destructive purge is an operator runbook step. |
 | 72-hour breach notification | Org | The audit trail supports investigation; notification is an institutional process. |
 
 ## 2. Authentication and LMS integration
@@ -38,15 +39,16 @@ and a test or documented evidence in this repository — not a certification.
 | OIDC SSO | Yes | `app/services/oidc.py`, PKCE, nonce, JWKS, single-use state/ticket. |
 | LDAP directory login | Yes | `app/services/ldap_auth.py`, role mapping from `memberOf`. |
 | Canadian Access Federation (CAF) | Partial | CAF is SAML 2.0 metadata plus federation trust. The product accepts standard IdP metadata; CAF onboarding is an institutional/federation process. |
-| LTI 1.3 core launch | **Gap** | No LTI router, no `id_token` launch validation. |
-| LTI Advantage AGS grade passback | **Gap** | No line-item or score service. |
-| LTI NRPS roster sync | **Gap** | No membership service. |
-| LTI Deep Linking | **Gap** | No deep-link flow. |
-| Minimal LTI claims (sub, role, context) | Gap | Must be designed with the launch; do not request email/name by default. |
+| LTI 1.3 core launch | Partial | Implemented on `release5`: platform registry, OIDC login (GET and form POST), signed `id_token` validation, single-use state, external-identity linking, and the SPA exchange. End-to-end verified against a Moodle 5.0.2 staging site; Canvas and Brightspace remain recommended. |
+| LTI Advantage AGS grade passback | Partial | Implemented: private_key_jwt token exchange, line-item create/reuse, reviewed score form, result retrieval, append-only ledger. A reviewed score reached the Moodle 5.0.2 gradebook; Canvas and Brightspace remain recommended. |
+| LTI NRPS roster sync | Partial | Implemented: explicit admin sync persists only subject, roles, status, and context, including the LIS 2.0 membership container. No names or email. Verified against Moodle 5.0.2; other LMSs remain recommended. |
+| LTI Deep Linking | Partial | Implemented: single-use picker session, signed `LtiDeepLinkingResponse`, lab launch content items, selection limits, and deep-linked assignment routing. Verified end to end in Moodle 5.0.2; Canvas and Brightspace remain recommended. |
+| Minimal LTI claims (sub, role, context) | Yes | Launch provisioning keys on `sub` + issuer. Email is used only when the LMS sends it; name is not required. NRPS persists the minimum fields. |
 | Avoid standalone student passwords | Yes | SSO-provisioned accounts set `password_login_disabled` and cannot use the local form. |
 
-`docs/LTI.md` holds the design contract and test plan. Do not represent LTI as
-available until those endpoints exist and an LMS integration test passes.
+`docs/LTI.md` holds the design contract and test plan. LTI has passed an
+end-to-end Moodle 5.0.2 staging test; validate Canvas or Brightspace before
+representing it as available on those platforms.
 
 ## 3. Accessibility and evaluation
 
@@ -54,14 +56,13 @@ available until those endpoints exist and an LMS integration test passes.
 |---|---|---|
 | WCAG 2.1/2.2 AA on student assessment screens | Partial | Keyboard operation, landmarks, labels, focus styles, error announcements, reduced-motion, and contrast work are in place. No full external audit. |
 | VPAT 2.5 / ACR | Gap | Draft structure in `docs/ACCESSIBILITY.md`; not signed. |
-| Per-student time multiplier (1.5x/2x/custom) | Partial | `session_accommodation_percent` scales **all** lab sessions from a platform setting (`app/routers/labs.py`). It is not per student. Quiz/assessment timers are not scaled. |
-| Per-student pause-the-clock breaks | Gap | No pause/resume clock model. |
-| Individual due-date extensions across quizzes/assignments | Gap | No per-student due-date override table. |
-| Accommodation persists across a course | Gap | The current setting is global, not attached to a student. |
+| Per-student time multiplier (1.5x/2x/custom) | Yes | A per-student 1.0x–3.0x multiplier scales lab session length and extension. Managed in the instructor student panel; a per-student record replaces the operator-wide setting. Quizzes have no timed limit to scale. |
+| Per-student pause-the-clock breaks | Yes | The learner pauses with a required reason; the countdown freezes, the expiry is credited on resume, and the scheduler skips paused sessions. Both events are audited. |
+| Individual due-date extensions across quizzes/assignments | Partial | Per-student 0–365 day extensions shift assignment due dates. Quiz deadlines are not modelled today. |
+| Accommodation persists across a course | Yes | The record is attached to the user, not the course, and is read on every lab session and assignment list. |
 
-The accommodation engine is a bounded but real feature: user-level multiplier,
-course-level due-date overrides, and pause/resume state applied consistently by
-labs, quizzes, and assignments. It should be its own release increment.
+The accommodation engine covers the user-level multiplier, due-date extension,
+and pause/resume clock. Export coverage and the external AA review remain.
 
 ## 4. Automated scoring, AI, and fairness
 
@@ -69,8 +70,8 @@ labs, quizzes, and assignments. It should be its own release increment.
 |---|---|---|
 | AI/LLM grading or feedback | **N/A** | No LLM SDK, API key, or inference path exists. Flags are compared with a seeded hash. |
 | Zero-data-retention AI contracts | N/A / Org | The product sends no learner work to an AI provider. If an institution adds one, the contract is theirs. |
-| Human-in-the-loop before LMS sync | N/A today / Required with LTI | There is no LMS sync to gate. When AGS is added, the design must default to instructor review or an explicit per-course auto-sync setting. |
-| Immutable audit of automated scores | Partial | Flag attempts, completion records, and admin activity are logged. There is no immutable, append-only score ledger with rubric criteria and confidence. |
+| Human-in-the-loop before LMS sync | Yes | AGS requires reviewer sign-off in the **LTI platforms** panel before a score is posted; every passback is recorded append-only. Per-course auto-sync is not enabled. |
+| Immutable audit of automated scores | Partial | Flag attempts, completion records, and admin activity are logged, and every LMS passback is appended to `lti_scores` with reviewer, time, score, and LMS response. Rubric criteria and confidence are not modelled because completion is a deterministic flag match. |
 | Manual grade override with audit | Partial | Instructors can review evidence; there is no formal override record with reason. |
 | Student notice that automated logic evaluated them | Partial | The UI states that completion is automated, but there is no per-submission notice or "request human review" workflow. |
 | Explainable primary factors | Partial | Completion criteria and workbook rubric are visible; the score is a deterministic flag match, not a weighted model. |
@@ -103,9 +104,12 @@ Release 4 can honestly ship:
 
 Everything below is **Release 5**, not Release 4:
 
-- LTI 1.3 / Advantage (launch, AGS, NRPS, Deep Linking, CAF onboarding).
+- LTI 1.3 / Advantage: launch, AGS, NRPS, and Deep Linking are implemented on
+  `release5` and passed a Moodle 5.0.2 staging test; Canvas and Brightspace
+  validation plus CAF onboarding remain.
 - Multi-tenancy and the TA role.
-- The per-student accommodation engine (multipliers, pause/resume, due dates).
+- Per-student accommodations: multiplier, due-date extension, and pause/resume
+  are implemented; export coverage and the external AA review remain.
 - Automated-decision transparency and the human-review workflow.
 - HECVAT Full, VPAT 2.5, SOC 2 Type II, ISO 27001, DPA finalization, Quebec
   PIA/TRA support, Canadian hosting profile.

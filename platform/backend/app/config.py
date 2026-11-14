@@ -63,6 +63,8 @@ class Settings(BaseSettings):
     PUBLIC_BASE_URL: str = ""
     FRONTEND_BASE_URL: str = ""
     SSO_STATE_TTL_SECONDS: int = 600
+    # LTI 1.3 login state is as short-lived as the SSO flow.
+    LTI_STATE_TTL_SECONDS: int = 600
     SSO_TICKET_TTL_SECONDS: int = 120
     SSO_HTTP_TIMEOUT_SECONDS: int = 10
     SSO_DISCOVERY_CACHE_SECONDS: int = 300

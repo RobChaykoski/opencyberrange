@@ -4527,3 +4527,270 @@ def _record_capacity_test_result(results: dict) -> None:
         rangebox_capacity.record_stress_ceiling(succeeded, computed)
     except Exception as exc:
         logger.warning("Could not record the RangeBox stress ceiling: %s", exc)
+
+
+class RetentionPolicyRequest(BaseModel):
+    retention_until: datetime | None = None
+    note: str = Field("", max_length=500)
+
+
+class RetentionCompleteRequest(BaseModel):
+    note: str = Field("", max_length=500)
+    reference: str = Field("", max_length=200)
+
+
+def _retention_policy(course) -> dict:
+    return {
+        "course_id": course.id,
+        "course_code": course.code,
+        "retention_until": course.retention_until.isoformat() if course.retention_until else None,
+        "retention_note": course.retention_note,
+        "retention_set_by_id": course.retention_set_by_id,
+        "retention_set_at": course.retention_set_at.isoformat() if course.retention_set_at else None,
+    }
+
+
+def _retention_counts(db, course_id: int) -> dict:
+    from app.models import (
+        Achievement,
+        CourseEnrollment,
+        CourseLabAssignment,
+        ExerciseQuizAttempt,
+        FlagAttempt,
+        LabCompletion,
+        LabSession,
+        QuizAttempt,
+    )
+
+    enrollments = (
+        db.query(CourseEnrollment)
+        .filter(CourseEnrollment.course_id == course_id)
+        .all()
+    )
+    user_ids = [row.user_id for row in enrollments]
+    lab_ids = [
+        row.lab_id
+        for row in db.query(CourseLabAssignment)
+        .filter(CourseLabAssignment.course_id == course_id)
+        .all()
+    ]
+    if not user_ids:
+        return {
+            "enrollments": 0,
+            "lab_sessions": 0,
+            "lab_completions": 0,
+            "flag_attempts": 0,
+            "quiz_attempts": 0,
+            "exercise_quiz_attempts": 0,
+            "achievements": 0,
+        }
+    return {
+        "enrollments": len(user_ids),
+        "lab_sessions": db.query(LabSession)
+        .filter(LabSession.user_id.in_(user_ids))
+        .count(),
+        "lab_completions": db.query(LabCompletion)
+        .filter(
+            LabCompletion.user_id.in_(user_ids),
+            LabCompletion.lab_id.in_(lab_ids),
+        )
+        .count()
+        if lab_ids
+        else 0,
+        "flag_attempts": db.query(FlagAttempt)
+        .filter(FlagAttempt.user_id.in_(user_ids))
+        .count(),
+        "quiz_attempts": db.query(QuizAttempt)
+        .filter(QuizAttempt.user_id.in_(user_ids))
+        .count(),
+        "exercise_quiz_attempts": db.query(ExerciseQuizAttempt)
+        .filter(ExerciseQuizAttempt.user_id.in_(user_ids))
+        .count(),
+        "achievements": db.query(Achievement)
+        .filter(
+            Achievement.user_id.in_(user_ids),
+            Achievement.course_id == course_id,
+        )
+        .count(),
+    }
+
+
+@router.get("/retention/due")
+async def list_retention_due(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    from app.models import Course
+
+    now = datetime.now(timezone.utc)
+    rows = db.query(Course).filter(Course.retention_until.isnot(None)).all()
+    due = []
+    for course in rows:
+        until = course.retention_until
+        if until is not None and until.tzinfo is None:
+            until = until.replace(tzinfo=timezone.utc)
+        if until is not None and until <= now:
+            due.append(_retention_policy(course))
+    return {"due": due}
+
+
+@router.get("/courses/{course_id}/retention")
+async def get_retention_policy(
+    course_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    from app.models import Course
+
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    return _retention_policy(course)
+
+
+@router.put("/courses/{course_id}/retention")
+async def set_retention_policy(
+    course_id: int,
+    payload: RetentionPolicyRequest,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    from app.models import Course
+
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    course.retention_until = payload.retention_until
+    course.retention_note = (payload.note or "").strip()[:500] or None
+    course.retention_set_by_id = admin.id
+    course.retention_set_at = datetime.now(timezone.utc)
+    log_activity(
+        db,
+        EventTypes.RETENTION_POLICY_SET,
+        actor_id=admin.id,
+        target_type="course",
+        target_id=course.id,
+        target_label=course.code,
+        detail={"retention_until": course.retention_until.isoformat() if course.retention_until else None},
+        commit=False,
+    )
+    db.commit()
+    db.refresh(course)
+    return _retention_policy(course)
+
+
+@router.post("/courses/{course_id}/retention/preview")
+async def preview_retention(
+    course_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    from app.models import Course, RetentionRun
+
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    counts = _retention_counts(db, course_id)
+    run = RetentionRun(
+        course_id=course_id,
+        actor_id=admin.id,
+        action="preview",
+        counts=json.dumps(counts),
+    )
+    db.add(run)
+    log_activity(
+        db,
+        EventTypes.RETENTION_PREVIEW,
+        actor_id=admin.id,
+        target_type="course",
+        target_id=course.id,
+        target_label=course.code,
+        detail=counts,
+        commit=False,
+    )
+    db.commit()
+    db.refresh(run)
+    return {
+        "run_id": run.id,
+        "created_at": run.created_at.isoformat() if run.created_at else None,
+        "policy": _retention_policy(course),
+        "counts": counts,
+    }
+
+
+@router.post("/courses/{course_id}/retention/complete")
+async def complete_retention(
+    course_id: int,
+    payload: RetentionCompleteRequest,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Record the operator's completed purge after the documented runbook step.
+
+    The platform deliberately does not auto-delete learner records. The operator
+    takes a backup, runs the documented purge, then records the reference here.
+    """
+    from app.models import Course, RetentionRun
+
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if course is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+    counts = _retention_counts(db, course_id)
+    run = RetentionRun(
+        course_id=course_id,
+        actor_id=admin.id,
+        action="completed",
+        counts=json.dumps(counts),
+        note=(payload.note or "").strip()[:500] or None,
+        reference=(payload.reference or "").strip()[:200] or None,
+    )
+    db.add(run)
+    log_activity(
+        db,
+        EventTypes.RETENTION_COMPLETED,
+        actor_id=admin.id,
+        target_type="course",
+        target_id=course.id,
+        target_label=course.code,
+        detail={"reference": run.reference},
+        commit=False,
+    )
+    db.commit()
+    db.refresh(run)
+    return {
+        "run_id": run.id,
+        "created_at": run.created_at.isoformat() if run.created_at else None,
+        "counts": counts,
+        "reference": run.reference,
+    }
+
+
+@router.get("/courses/{course_id}/retention/runs")
+async def list_retention_runs(
+    course_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    from app.models import RetentionRun
+
+    rows = (
+        db.query(RetentionRun)
+        .filter(RetentionRun.course_id == course_id)
+        .order_by(RetentionRun.id.desc())
+        .limit(50)
+        .all()
+    )
+    return {
+        "runs": [
+            {
+                "id": row.id,
+                "action": row.action,
+                "actor_id": row.actor_id,
+                "counts": json.loads(row.counts) if row.counts else {},
+                "note": row.note,
+                "reference": row.reference,
+                "created_at": row.created_at.isoformat() if row.created_at else None,
+            }
+            for row in rows
+        ]
+    }

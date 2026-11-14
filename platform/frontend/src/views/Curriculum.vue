@@ -220,10 +220,13 @@ onMounted(async () => {
   const labId = route.query.labId
   const courseId = route.query.courseId
   const wikiSlug = route.query.wikiSlug
+  const launchGrant = route.query.launch
   if (labId) {
     try {
       const token = localStorage.getItem('token')
-      const params = courseId ? { course_id: courseId } : {}
+      const params = {}
+      if (courseId) params.course_id = courseId
+      if (launchGrant) params.launch = launchGrant
       const { data } = await axios.get(`/exercises/labs/${labId}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {},
         params
@@ -231,6 +234,7 @@ onMounted(async () => {
       const query = { labId }
       if (courseId) query.courseId = courseId
       if (wikiSlug) query.wikiSlug = wikiSlug
+      if (launchGrant) query.launch = launchGrant
       if (data.track?.slug) {
         router.replace({ path: `/exercises/${data.track.slug}`, query })
         return

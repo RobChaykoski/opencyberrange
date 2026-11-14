@@ -1,0 +1,43 @@
+# Local Release 5 test stack.
+#
+# Usage (from platform/):
+#   docker compose -p ocr-r5 \
+#     -f docker-compose.dev.yml \
+#     -f docker-compose.release5-local.yml \
+#     --env-file ../.release5-local.env \
+#     up -d --build
+#
+# The published ports intentionally avoid the default 80/443 so this stack can
+# run beside an existing local development instance. Do not use this file for a
+# production deployment.
+
+services:
+  db:
+    container_name: ocr-r5-db
+  valkey:
+    container_name: ocr-r5-valkey
+  docker-socket-proxy:
+    container_name: ocr-r5-docker-proxy
+
+  backend:
+    image: opencyberrange-backend:release5
+    container_name: ocr-r5-backend
+    # Local Docker Desktop bind mounts are simpler as root. This override is
+    # only for the disposable test stack.
+    user: "0:0"
+    environment:
+      # Docker Desktop's host-network CIDR. This lets the spawn isolation check
+      # run instead of refusing every RangeBox launch.
+      HOST_NETWORK: "192.168.65.0/24"
+    ports: !override
+      - "127.0.0.1:18080:8000"
+
+  frontend:
+    image: opencyberrange-frontend:release5
+    container_name: ocr-r5-frontend
+    build:
+      args:
+        PLATFORM_VERSION: "5"
+        BUILD_REVISION: "release5-local"
+    ports: !override
+      - "127.0.0.1:18081:80"

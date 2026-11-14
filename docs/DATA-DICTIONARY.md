@@ -1,6 +1,6 @@
 # Data dictionary
 
-Status: ****Release 3** + career, achievement, and question-bank preview**
+Status: **Release 5 in progress** (LTI 1.3, AGS, NRPS, and Deep Linking added)
 Owner: Platform / Privacy
 Review cadence: each release and at least annually
 Related: [Privacy notice](PRIVACY-NOTICE.md),
@@ -64,6 +64,31 @@ institution.
 | `wireguard_configs.private_key` | Fernet-encrypted peer key | VPN access | Service / Security | Until peer removed or deletion | VPN service only | Never | Deleted and peer removed |
 | `wireguard_configs.public_key`, `client_ip` | VPN peer identity | Route the learner's tunnel | Service | Until peer removed or deletion | Self; admin | `self` (metadata only) | Deleted |
 | `activity_events.ip_address` | Request source address | Abuse and security investigation | Security | 90-day review window by default | Admin | `activity` | Anonymised |
+| `identity_providers.name`, `kind`, `enabled`, `is_default`, `config` | Registered OIDC/SAML/LDAP connection metadata and endpoints | Institution sign-in | Service / Security | Until deleted by an admin | Admin | Not exported | Kept while the provider is configured |
+| `identity_providers.secrets` | Encrypted client secret, bind password, or signing key | Authenticate to the identity provider | Security | Until rotated or deleted | Auth service only | Never | Deleted |
+| `external_identities.provider_id`, `subject` | Pseudonymous subject from the institution IdP or LMS | Link an external login to one local account | Service / Security | Account lifetime | Self as an opaque link; admin | `self` (provider name only) | Deleted |
+| `external_identities.email`, `last_login_at` | Email returned by the provider and last external sign-in | Account matching and support | Service / Security | Account lifetime | Self; admin | `self` | Deleted |
+| `sso_sessions.user_id`, `provider_id`, `session_state`, `expires_at` | Local record of an external session | Single sign-out and session awareness | Security | Until expiry or sign-out | Auth service; admin | Never | Deleted |
+| `sso_sessions.id_token` | Encrypted ID token from the provider | Refresh identity claims without a second login | Security | Until expiry or sign-out | Auth service only | Never | Deleted |
+| `sso_login_states.state`, `nonce`, `code_verifier`, `redirect_uri`, `return_to` | In-flight OIDC/SAML login state | CSRF and replay protection | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+| `sso_login_tickets.ticket`, `user_id`, `return_to` | Single-use hand-off from the provider callback to the SPA | Complete sign-in without exposing tokens | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+
+## LMS integration (LTI 1.3)
+
+| Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
+|---|---|---|---|---|---|---|---|
+| `lti_platforms.name`, `issuer`, `client_id`, `deployment_id`, `auth_login_url`, `token_url`, `jwks_url`, `enabled` | Registered LMS deployment and endpoints | Launch and grade-passback trust | Service / Security | Until removed by an admin | Admin | Not exported | Kept while the platform is configured |
+| `lti_platforms.private_key` | Encrypted tool private key for `private_key_jwt` and response signing | Prove the tool to the LMS | Security | Until rotated or deleted | Signing service only | Never | Deleted |
+| `lti_login_states.state`, `nonce`, `platform_id`, `target_link_uri` | In-flight LTI login state | Bind a launch to the registered platform and stop replay | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+| `lti_links.resource_link_id`, `context_id`, `title`, `lab_id` | LMS assignment link to a local lab | Open the right exercise and reuse the line item | Service | Course lifetime | Instructor; admin | Not in learner exports | Kept as course structure; learner link removed |
+| `lti_links.context_title`, `ags_lineitem_url`, `ags_lineitems_url`, `ags_scopes`, `nrps_url`, `nrps_versions` | LMS course label and service endpoints | Grade passback and roster sync | Service | Course lifetime | Admin | Not exported | Kept while the link exists |
+| `lti_scores.link_id`, `user_id`, `score`, `max_score`, `status`, `created_at` | Append-only record of each score passback | Grade audit and reconciliation | Service / Security | Institution schedule | Self; instructor; admin | `self` (score only) | Deleted with the learner |
+| `lti_scores.reviewer_id`, `reason`, `lms_response` | Reviewer, review note, and LMS response | Prove the human review gate | Security | Institution schedule | Admin | Not in learner exports | Reviewer reference nulled |
+| `lti_roster_members.subject`, `roles`, `status`, `context_id` | Minimum NRPS membership record from the LMS | Roster reconciliation without importing directory data | Service | Until the next sync or link removal | Admin | Not exported | Deleted when the link or platform is removed |
+| `lti_deep_link_sessions.token`, `user_id`, `platform_id`, `return_url`, `data`, `nonce`, `accept_multiple` | Single-use Deep Linking picker session | Return selected exercises to the LMS safely | Security | Minutes until consumed or expiry | Auth service only | Never | Deleted |
+
+Names, email addresses, and other directory fields from NRPS are deliberately
+not stored. The roster keeps only the LMS subject, roles, status, and context.
 
 ## Course, cohort, and assignment
 
@@ -72,8 +97,13 @@ institution.
 | `courses.id`, `courses.name`, `courses.code`, `courses.semester` | Course identity | Deliver and report on the course | Service | Institution schedule | Self where enrolled; assigned instructor; admin | `self`, `reports` | Course kept; learner link removed |
 | `courses.description`, `courses.start_date`, `end_date`, `is_active`, `is_archived` | Course context and dates | Scheduling and reporting windows | Service | Institution schedule | Enrolled learners; instructor; admin | `self`, `reports` | Course kept |
 | `courses.invite_code` | Join code | Course enrolment | Service / Security | Until rotated or course deleted | Instructor; admin | Not exported in learner reports | Course kept |
+| `courses.retention_until`, `retention_note`, `retention_set_by_id`, `retention_set_at` | Cohort retention date, note, and who set it | Term-end retention review | Service / Legal | Course lifetime plus audit window | Admin | Not in learner reports | Kept as course policy |
+| `retention_runs.course_id`, `actor_id`, `action`, `counts`, `note`, `reference`, `created_at` | Append-only retention preview and completion evidence | Prove the cohort was reviewed and completed | Security / Legal | Institution audit window | Admin | Not exported | Kept as audit evidence |
+| `review_requests.user_id`, `course_id`, `lab_id`, `source`, `reason`, `status` | Learner request for a human decision | Appeal a deterministic result | Service / Legal | Course lifetime plus audit window | Self; assigned instructor; admin | `self` (status and note) | Deleted with the learner |
+| `review_requests.rule_version`, `primary_factors`, `decision_note`, `decided_by_id`, `requested_at`, `decided_at` | Rule, factors, decision, and reviewer | Explain and audit the outcome | Security / Legal | Institution audit window | Admin; assigned instructor | Not in learner exports | Reviewer reference nulled; explanation retained in the audit trail |
 | `course_enrollments.course_id`, `user_id`, `enrolled_at` | Enrolment link | Roster and cohort membership | Service | Institution schedule | Self; instructor; admin | `self`, `reports` | Deleted |
 | `course_enrollments.seat_number`, `scope_token` | Per-course pseudonymous seat and scoping token | Private scoreboard and per-student lab scoping | Service | Course lifetime | Self; instructor; admin | `reports` (seat only where configured) | Deleted |
+| `course_enrollments.consent_reference`, `consent_recorded_at`, `consent_recorded_by_id` | Institution parental/guardian consent reference for a minor enrollment | Record that consent was obtained without storing identity documents | Service / Legal | Course lifetime plus audit window | Assigned instructor; admin | `reports` (status only; reference not exported) | Deleted |
 | `course_lab_assignments.lab_id`, `sort_order`, `display_name` | Exercises assigned to the course | Curriculum delivery | Service | Course lifetime | Enrolled learners; instructor; admin | `reports` | Kept as course content |
 | `assignments.name`, `description`, `due_date`, `start_date`, `locked` | Assignment grouping | Organise work and deadlines | Service | Course lifetime | Enrolled learners; instructor; admin | `reports` | Kept as course content |
 | `assignment_labs.lab_id` | Labs in an assignment | Scope reports and due work | Service | Course lifetime | Enrolled learners; instructor; admin | `reports` | Kept |
@@ -83,6 +113,7 @@ institution.
 | Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
 |---|---|---|---|---|---|---|---|
 | `lab_sessions.id`, `user_id`, `lab_id`, `started_at`, `expires_at`, `stopped_at`, `status` | Lab session lifecycle | Launch, stop, troubleshoot, and measure active time | Service / Security | Session history for the institution window; 90-day operational review | Self; instructor for assigned course; admin | `self`, `reports` | Deleted |
+| `lab_sessions.paused_at`, `paused_seconds`, `pause_reason` | Clock pause state and reason | Accommodation pause/resume without losing access | Service / Security | Session history | Self; instructor; admin | `self` (state only) | Deleted |
 | `lab_sessions.network_id`, `network_subnet` | Isolated network identifiers | Routing and cleanup | Security | Session lifetime plus cleanup | Admin/system | Not in learner reports | Deleted |
 | `lab_sessions.is_diagnostic`, `rangebox_enabled`, `impersonated_by` | Mode and support context | Separate diagnostic runs and admin support | Security | Session history | Admin | `self` (mode only) | Deleted |
 | `lab_sessions.seeded_flag_hash` | Per-session flag hash | Per-student flag validation | Security | Session lifetime | Auth/flag service only | Never | Deleted |
@@ -97,6 +128,9 @@ institution.
 | `derived.achievement_points` | Tier × difficulty point value for each badge | Show value and progress | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
 | `achievement_celebrations.*` | Anonymous celebration count | Community recognition | Consent (public action) | Until withdrawn or deletion | Aggregate only | Never linked to identity | Deleted |
 | `course_completion_resets.*` | Instructor reset events | Reset rate and report accuracy | Service / Security | Course lifetime | Instructor; admin | `reports` | Deleted or anonymised |
+| `user_accommodations.user_id`, `time_multiplier`, `due_date_extension_days`, `notes` | Per-student accessibility accommodation | Scale timed sessions and shift assignment due dates | Service | Account lifetime | Self (own multiplier); assigned instructor; admin | `self` (values only; notes excluded) | Deleted |
+| `user_accommodations.updated_by_id`, `updated_at` | Staff member and time of the last change | Accountability | Security | Account lifetime | Admin | Not exported | Reviewer reference nulled |
+| `accommodation_events.user_id`, `actor_id`, `action`, `time_multiplier`, `due_date_extension_days`, `reason`, `created_at` | Append-only accommodation change history | Audit and dispute resolution | Security | Institution audit window | Admin | Not exported | Deleted with the learner |
 
 ## Feedback, surveys, and confidence
 

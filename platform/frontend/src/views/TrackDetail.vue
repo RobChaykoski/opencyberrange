@@ -333,13 +333,6 @@
             <span v-if="activeLab.session" class="active-badge">Active</span>
             <span v-else-if="activeLab.lab.is_completed" class="completed-badge">Completed</span>
             <button
-              v-if="isRangeBoxActive && !workspaceMode"
-              @click="openRangeBox"
-              class="btn btn--primary btn--sm"
-            >
-              Open RangeBox
-            </button>
-            <button
               @click="openKnowledgeCheck(activeLab.lab)"
               class="btn btn--secondary btn--sm"
               title="Optional benchmark; most useful after the exercise"
@@ -369,10 +362,28 @@
             >Exit</button>
           </div>
           <div v-if="activeLab.session" class="active-lab-panel__timer-section">
-            <div class="active-lab-panel__timer" :class="{ 'timer--warning': isExpiringSoon }">
+            <div class="active-lab-panel__timer" :class="{ 'timer--warning': isExpiringSoon, 'timer--paused': activeLab.session.is_paused }">
               <ClockIcon />
-              {{ timeRemaining }}
+              {{ activeLab.session.is_paused ? 'Paused' : timeRemaining }}
             </div>
+            <button
+              v-if="activeLab.session.is_paused"
+              @click="resumeSession"
+              class="btn btn--primary btn--sm"
+              :disabled="resumingClock"
+              title="Resume the exercise clock and credit the paused time"
+            >
+              {{ resumingClock ? 'Resuming...' : 'Resume' }}
+            </button>
+            <button
+              v-else
+              @click="pauseSession"
+              class="btn btn--secondary btn--sm"
+              :disabled="pausingClock"
+              title="Pause the exercise clock with a reason"
+            >
+              {{ pausingClock ? 'Pausing...' : 'Pause' }}
+            </button>
             <button
               @click="extendSession"
               class="btn btn--secondary btn--sm extend-btn"
@@ -494,37 +505,36 @@
         </div>
 
         <div class="active-lab-panel__body" :class="{ 'active-lab-panel__body--workspace': workspaceMode }">
-          <nav v-if="isMobile" class="active-lab-jump" aria-label="Exercise sections">
+          <nav v-if="isMobile && workspaceTab === 'exercise'" class="active-lab-jump" aria-label="Exercise sections">
             <button type="button" @click="scrollToLabSection('lab-briefing')">Briefing</button>
             <button type="button" @click="scrollToLabSection('lab-targets')">Targets</button>
             <button type="button" @click="scrollToLabSection('lab-flag')">Flag</button>
             <button type="button" @click="scrollToLabSection('lab-hints')">Hints</button>
           </nav>
-          <div v-if="workspaceMode && rangeboxPoppedOut" class="workspace-popout">
-            <span>RangeBox is in its own window. The briefing, notes, and workbook stay here.</span>
-            <div class="workspace-popout__actions">
-              <button type="button" class="btn btn--secondary btn--sm" @click="focusRangeBoxWindow">
-                Focus RangeBox
-              </button>
-              <button type="button" class="btn btn--secondary btn--sm" @click="restoreRangeBox">
-                Bring it back
-              </button>
-            </div>
-          </div>
-          <nav v-if="workspaceMode" class="workspace-tabs" role="tablist" aria-label="Exercise workspace">
+          <nav
+            v-if="workspaceMode"
+            class="workspace-tabs"
+            role="tablist"
+            aria-label="Exercise workspace"
+            @keydown.left.prevent="focusWorkspaceTab(-1)"
+            @keydown.right.prevent="focusWorkspaceTab(1)"
+          >
             <button
               type="button"
+              id="workspace-tab-desktop"
               role="tab"
+              aria-controls="workspace-panel-desktop"
               :aria-selected="workspaceTab === 'desktop'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'desktop' }]"
-              :disabled="rangeboxPoppedOut"
               @click="workspaceTab = 'desktop'"
             >
               Desktop
             </button>
             <button
               type="button"
+              id="workspace-tab-exercise"
               role="tab"
+              aria-controls="workspace-panel-exercise"
               :aria-selected="workspaceTab === 'exercise'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'exercise' }]"
               @click="workspaceTab = 'exercise'"
@@ -533,7 +543,9 @@
             </button>
             <button
               type="button"
+              id="workspace-tab-workbook"
               role="tab"
+              aria-controls="workspace-panel-workbook"
               :aria-selected="workspaceTab === 'workbook'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'workbook' }]"
               @click="workspaceTab = 'workbook'"
@@ -546,35 +558,18 @@
             :class="{
               'active-lab-grid--workspace': workspaceMode,
               'active-lab-grid--tabs': workspaceMode,
-              'active-lab-grid--popped-out': workspaceMode && rangeboxPoppedOut,
             }"
           >
             <!-- RangeBox workspace frame (desktop only) -->
             <section
-              v-if="workspaceMode && !rangeboxPoppedOut"
+              v-if="isRangeBoxActive && !isMobile"
               v-show="workspaceTab === 'desktop'"
+              id="workspace-panel-desktop"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-desktop"
               class="panel-section panel-section--rangebox"
               aria-label="RangeBox desktop"
             >
-              <div class="workspace-frame__head">
-                <h3 class="section-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                    <line x1="8" y1="21" x2="16" y2="21"/>
-                    <line x1="12" y1="17" x2="12" y2="21"/>
-                  </svg>
-                  RangeBox
-                </h3>
-                <div class="workspace-frame__actions">
-                  <span class="workspace-frame__hint">Work here. Submit flags in the Exercise tab.</span>
-                  <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBoxPopout">
-                    Pop out
-                  </button>
-                  <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBox">
-                    Open in new tab
-                  </button>
-                </div>
-              </div>
               <div class="workspace-rangebox">
                 <RangeBox
                   :session-id="rangeboxSessionId"
@@ -584,8 +579,62 @@
               </div>
             </section>
 
+            <!-- Desktop tab when RangeBox is unavailable, popped out, or on mobile -->
+            <section
+              v-if="workspaceTab === 'desktop' && (!isRangeBoxActive || isMobile)"
+              id="workspace-panel-desktop"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-desktop"
+              class="panel-section panel-section--desktop-fallback"
+              aria-label="Desktop"
+            >
+              <div class="desktop-fallback">
+                <template v-if="isRangeBoxActive && isMobile">
+                  <h3 class="section-title">Desktop is built for a larger screen</h3>
+                  <p>
+                    The interactive desktop needs a laptop or desktop with a keyboard and
+                    mouse. You can still open it full-screen, or use the Exercise tab.
+                  </p>
+                  <router-link
+                    :to="{ path: '/rangebox', query: { session: rangeboxSessionId, mobile: 'true' } }"
+                    class="btn btn--primary btn--sm"
+                  >
+                    Open the desktop
+                  </router-link>
+                </template>
+                <template v-else-if="activeLab.session">
+                  <h3 class="section-title">Connect to this lab over the VPN</h3>
+                  <p>
+                    This exercise runs on the isolated lab network. Connect with the VPN,
+                    then use your own terminal and tools.
+                  </p>
+                  <p v-if="activeLab.session.network_subnet" class="desktop-fallback__meta">
+                    Lab subnet: <code>{{ activeLab.session.network_subnet }}</code>
+                  </p>
+                  <router-link to="/vpn-setup" class="btn btn--primary btn--sm">
+                    Open VPN Setup
+                  </router-link>
+                </template>
+                <template v-else>
+                  <h3 class="section-title">Start the exercise</h3>
+                  <p>The desktop opens here once the lab environment is running.</p>
+                  <button
+                    type="button"
+                    class="btn btn--primary btn--sm"
+                    :disabled="launchingLab"
+                    @click="startExercise"
+                  >
+                    {{ launchingLab ? 'Starting...' : 'Start Exercise' }}
+                  </button>
+                </template>
+              </div>
+            </section>
+
             <div
               v-show="!workspaceMode || workspaceTab === 'exercise'"
+              id="workspace-panel-exercise"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-exercise"
               class="lab-details"
               :class="{ 'lab-details--workspace': workspaceMode }"
             >
@@ -778,6 +827,27 @@
               <p v-if="flagSuccess && flagStoppedSession" class="flag-message flag-message--success">
                 Your lab environment is shutting down and this panel will close in a moment.
               </p>
+              <div class="review-request">
+                <p class="review-request__note">
+                  Results are produced by deterministic flag matching. If you believe
+                  this result is wrong, ask an instructor to review it.
+                </p>
+                <div class="review-request__actions">
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="reviewBusy || reviewRequest?.status === 'pending'"
+                    @click="requestHumanReview"
+                  >
+                    {{ reviewRequest?.status === 'pending' ? 'Review pending' : 'Request human review' }}
+                  </button>
+                  <span v-if="reviewRequest && reviewRequest.status !== 'pending'" class="review-request__status">
+                    {{ reviewRequest.status }}
+                    <template v-if="reviewRequest.decision_note"> · {{ reviewRequest.decision_note }}</template>
+                  </span>
+                </div>
+                <p v-if="reviewMessage" class="review-request__message">{{ reviewMessage }}</p>
+              </div>
             </div>
 
             <!-- Hints -->
@@ -805,10 +875,12 @@
             </div>
             </div>
 
-            <!-- Workbook workspace frame (desktop only) -->
+            <!-- Workbook workspace frame -->
             <section
-              v-if="workspaceMode"
               v-show="workspaceTab === 'workbook'"
+              id="workspace-panel-workbook"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-workbook"
               class="panel-section panel-section--workbook"
               aria-label="Exercise workbook"
             >
@@ -831,7 +903,7 @@
                   </button>
                 </div>
               </div>
-              <div v-if="activeWorkbookUrl" class="workspace-workbook">
+              <div v-if="workbookLoaded && activeWorkbookUrl" class="workspace-workbook">
                 <iframe
                   :key="activeWorkbookUrl"
                   :src="activeWorkbookUrl"
@@ -841,9 +913,12 @@
                   referrerpolicy="no-referrer"
                 ></iframe>
               </div>
-              <div v-else class="workspace-empty">
+              <div v-else-if="!activeWorkbookUrl" class="workspace-empty">
                 This exercise's walkthrough lives in a course workbook. Open the
                 exercise from the course to read it.
+              </div>
+              <div v-else class="workspace-empty">
+                The workbook opens when you select this tab.
               </div>
             </section>
           </div>
@@ -928,7 +1003,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { hasRole } from '../utils/roles'
 import { useMobileView } from '../composables/useMobileView'
@@ -994,6 +1069,9 @@ const flagMessage = ref('')
 const flagError = ref(false)
 const flagSuccess = ref(false)
 const submittingFlag = ref(false)
+const reviewRequest = ref(null)
+const reviewBusy = ref(false)
+const reviewMessage = ref('')
 
 // Quick exercise reaction (like/dislike) shown to learners while they work.
 const reaction = ref(null)
@@ -1036,6 +1114,8 @@ function isDrill(lab) {
 
 // Session
 const extendingSession = ref(false)
+const pausingClock = ref(false)
+const resumingClock = ref(false)
 const launchingLab = ref(false)
 const activeCourseId = ref(null)
 
@@ -1196,14 +1276,37 @@ const isRangeBoxActive = computed(() => {
 })
 
 // Desktop exercise workspace: one full-size tab each for the RangeBox desktop,
-// the briefing/flag, and the workbook. VPN-only labs and phones keep the
-// stacked panel.
-const workspaceMode = computed(() => Boolean(isRangeBoxActive.value && !isMobile.value))
-const workspaceTab = ref('desktop')
-const workbookExpanded = ref(false)
-const rangeboxPoppedOut = ref(false)
-let rangeboxWindow = null
-
+// the briefing/flag, and the workbook. The shell is the same for every lab;
+// the Desktop tab shows the VPN or start state when RangeBox is unavailable.
+const workspaceMode = computed(() => Boolean(activeLab.value))
+const WORKSPACE_TABS = ['desktop', 'exercise', 'workbook']
+const requestedTab = String(route.query.tab || '')
+const workspaceTab = ref(
+  WORKSPACE_TABS.includes(requestedTab) ? requestedTab : 'desktop'
+)
+const workbookLoaded = ref(workspaceTab.value === 'workbook')
+const focusWorkspaceTab = (offset) => {
+  const index = WORKSPACE_TABS.indexOf(workspaceTab.value)
+  const next = WORKSPACE_TABS[(index + offset + WORKSPACE_TABS.length) % WORKSPACE_TABS.length]
+  workspaceTab.value = next
+  nextTick(() => {
+    // Let the router replace finish before restoring focus to the tab.
+    setTimeout(() => document.getElementById(`workspace-tab-${next}`)?.focus(), 50)
+  })
+}
+watch(workspaceTab, (tab) => {
+  if (tab === 'workbook') workbookLoaded.value = true
+  if (!activeLab.value) return
+  if (String(route.query.tab || '') === tab) return
+  router.replace({ path: route.path, query: { ...route.query, tab } })
+})
+watch(
+  () => route.query.tab,
+  (tab) => {
+    const next = WORKSPACE_TABS.includes(String(tab)) ? String(tab) : 'desktop'
+    if (next !== workspaceTab.value) workspaceTab.value = next
+  }
+)
 // Icon mapping
 
 // Methods
@@ -1391,15 +1494,17 @@ const submitQuiz = async () => {
 const openActiveLab = async (lab) => {
   try {
     const token = localStorage.getItem('token')
+    const params = ltiLaunch.value ? { launch: ltiLaunch.value } : {}
     const { data } = await axios.get(`/exercises/labs/${lab.id}`, {
-      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      params
     })
     activeLab.value = data
-    workspaceTab.value = 'desktop'
-    workbookExpanded.value = false
+    workbookLoaded.value = workspaceTab.value === 'workbook'
     loadReaction(data.lab?.id || lab.id)
+    loadReviewRequest()
 
-    // The framed workbook pane loads a same-origin MkDocs page; make sure the
+    // The framed workbook loads from the wiki origin; make sure the
     // wiki auth cookie is present before the iframe requests it.
     if (data.lab?.workbook) setWikiAuthCookie()
 
@@ -1485,7 +1590,9 @@ const setReaction = async (value) => {
 
 const closeActiveLab = () => {
   activeLab.value = null
-  workbookExpanded.value = false
+  workbookLoaded.value = false
+  reviewRequest.value = null
+  reviewMessage.value = ''
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
@@ -1518,7 +1625,12 @@ const exitExercise = () => {
   closeActiveLab()
   if (courseExercisesLink.value) {
     router.push(courseExercisesLink.value)
+    return
   }
+  const query = { ...route.query }
+  delete query.labId
+  delete query.tab
+  router.replace({ path: route.path, query })
 }
 
 const openKnowledgeCheck = (lab) => {
@@ -1527,77 +1639,6 @@ const openKnowledgeCheck = (lab) => {
     name: 'ExerciseQuiz',
     params: { trackSlug: route.params.trackSlug, labSlug: lab.slug },
   })
-}
-
-// Open the full-screen RangeBox in a new tab. The workspace already keeps the
-// desktop, details, and workbook together; this is the fallback for a second
-// monitor or a browser that performs better in a dedicated tab.
-const openRangeBox = () => {
-  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
-  const target = router.resolve({
-    path: '/rangebox',
-    query: {
-      session: String(rangeboxSessionId.value),
-      image: activeRangeboxImage.value,
-      lab: String(activeLab.value.lab.id),
-      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
-    },
-  })
-  window.open(target.href, '_blank', 'noopener,noreferrer')
-}
-
-// Pop the desktop into a separate, resizable window. The main tab then has the
-// full width for the briefing, notes, and workbook while the flag dock travels
-// with the RangeBox window.
-const openRangeBoxPopout = () => {
-  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
-  const target = router.resolve({
-    path: '/rangebox',
-    query: {
-      session: String(rangeboxSessionId.value),
-      image: activeRangeboxImage.value,
-      lab: String(activeLab.value.lab.id),
-      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
-    },
-  })
-  rangeboxWindow = window.open(
-    target.href,
-    'ocr-rangebox',
-    'popup=yes,width=1280,height=900,resizable=yes,scrollbars=yes',
-  )
-  if (!rangeboxWindow) {
-    // Popup blocked: fall back to a normal tab rather than leaving the learner
-    // with no desktop and no message.
-    window.open(target.href, '_blank', 'noopener,noreferrer')
-    return
-  }
-  rangeboxPoppedOut.value = true
-  workspaceTab.value = 'exercise'
-  workbookExpanded.value = false
-  try {
-    rangeboxWindow.focus()
-  } catch {}
-}
-
-const focusRangeBoxWindow = () => {
-  try {
-    rangeboxWindow?.focus()
-  } catch {}
-}
-
-const restoreRangeBox = () => {
-  try {
-    rangeboxWindow?.close()
-  } catch {}
-  rangeboxWindow = null
-  rangeboxPoppedOut.value = false
-}
-
-const syncRangeBoxWindow = () => {
-  if (rangeboxPoppedOut.value && rangeboxWindow?.closed) {
-    rangeboxWindow = null
-    rangeboxPoppedOut.value = false
-  }
 }
 
 const viewLab = async (lab) => {
@@ -1628,6 +1669,14 @@ const rangeboxImageForLab = (lab) => {
 // cannot be followed.
 const startExercise = () => launchWithImage(rangeboxImageForLab(activeLab.value?.lab))
 
+const ltiLaunch = computed(() => {
+  const grant = route.query.launch
+  return typeof grant === 'string' ? grant : ''
+})
+
+const spawnUrl = (slug) =>
+  `/labs/spawn/${slug}${ltiLaunch.value ? `?launch=${encodeURIComponent(ltiLaunch.value)}` : ''}`
+
 const launchLab = async (lab) => {
   const running = findActiveTrackLab()
   if (running && running.id !== lab.id) {
@@ -1647,7 +1696,7 @@ const launchLab = async (lab) => {
       ? { rangebox: true, rangebox_image: rangeboxImage }
       : { rangebox: false }
     if (rangeboxImage) activeRangeboxImage.value = rangeboxImage
-    const { data: sp } = await axios.post(`/labs/spawn/${lab.slug}`, spawnBody)
+    const { data: sp } = await axios.post(spawnUrl(lab.slug), spawnBody)
     // Async spawn: wait for the session to actually reach running before opening
     // the panel, otherwise it shows a not-ready lab and never updates.
     if (sp?.session_id && sp.status !== 'running') {
@@ -1695,7 +1744,7 @@ const launchWithImage = async (image) => {
     const body = image
       ? { rangebox: true, rangebox_image: image }
       : { rangebox: false }
-    const { data: sp } = await axios.post(`/labs/spawn/${activeLab.value.lab.slug}`, body)
+    const { data: sp } = await axios.post(spawnUrl(activeLab.value.lab.slug), body)
     if (sp?.session_id && sp.status !== 'running') {
       await pollSpawnStatus(sp.session_id)
     }
@@ -1747,6 +1796,48 @@ const extendSession = async () => {
     alert(error.response?.data?.detail || 'Failed to extend session')
   } finally {
     extendingSession.value = false
+  }
+}
+
+const applyPausedSession = (data) => {
+  if (!activeLab.value?.session) return
+  Object.assign(activeLab.value.session, {
+    is_paused: data.is_paused,
+    paused_at: data.paused_at,
+    paused_seconds: data.paused_seconds,
+    pause_reason: data.pause_reason,
+    expires_at: data.expires_at,
+  })
+  localTimeRemaining.value = data.time_remaining_seconds
+}
+
+const pauseSession = async () => {
+  if (pausingClock.value) return
+  const reason = window.prompt('Reason for pausing the exercise clock? (recorded in the audit trail)')
+  if (!reason || reason.trim().length < 3) return
+  pausingClock.value = true
+  try {
+    const { data } = await axios.post('/labs/pause', { reason: reason.trim() })
+    applyPausedSession(data)
+  } catch (error) {
+    console.error('Failed to pause session:', error)
+    alert(error.response?.data?.detail || 'Failed to pause the exercise clock')
+  } finally {
+    pausingClock.value = false
+  }
+}
+
+const resumeSession = async () => {
+  if (resumingClock.value) return
+  resumingClock.value = true
+  try {
+    const { data } = await axios.post('/labs/resume')
+    applyPausedSession(data)
+  } catch (error) {
+    console.error('Failed to resume session:', error)
+    alert(error.response?.data?.detail || 'Failed to resume the exercise clock')
+  } finally {
+    resumingClock.value = false
   }
 }
 
@@ -1869,6 +1960,46 @@ const handlePulseDone = () => {
     const target = pendingCourseRedirect
     pendingCourseRedirect = null
     router.push(target)
+  }
+}
+
+const loadReviewRequest = async () => {
+  if (!activeLab.value?.lab?.id) return
+  try {
+    const { data } = await axios.get('/reviews/mine')
+    const labId = activeLab.value.lab.id
+    reviewRequest.value = (data.reviews || []).find((r) => r.lab_id === labId) || null
+  } catch {
+    reviewRequest.value = null
+  }
+}
+
+const requestHumanReview = async () => {
+  if (!activeLab.value?.lab?.id || reviewBusy.value) return
+  const reason = window.prompt(
+    'What should the instructor review? Include what you expected and what happened.'
+  )
+  if (!reason || reason.trim().length < 5) return
+  reviewBusy.value = true
+  reviewMessage.value = ''
+  try {
+    const { data } = await axios.post('/reviews', {
+      lab_id: activeLab.value.lab.id,
+      course_id: activeCourseId.value || null,
+      source: 'flag',
+      reason: reason.trim(),
+    })
+    reviewRequest.value = data
+    reviewMessage.value = 'Review requested. Your instructor will see it.'
+  } catch (e) {
+    if (e.response?.status === 409) {
+      await loadReviewRequest()
+      reviewMessage.value = 'You already have a pending review for this exercise.'
+    } else {
+      reviewMessage.value = e.response?.data?.detail || 'Could not request a review.'
+    }
+  } finally {
+    reviewBusy.value = false
   }
 }
 
@@ -2046,7 +2177,6 @@ const renderScenario = (text) => {
 
 // Lifecycle
 onMounted(async () => {
-  window.addEventListener('focus', syncRangeBoxWindow)
   const slug = route.params.trackSlug
   if (!slug) {
     router.push('/exercises')
@@ -2079,16 +2209,16 @@ onMounted(async () => {
 
   if (labId) {
     await openActiveLab({ id: Number(labId) })
-    // Keep the course context on the URL so a refresh or a shared link still
-    // knows which course overview to return to. The one-shot labId is
-    // dropped so reloading the track does not reopen a stale panel.
-    const carried = {}
+    // Keep the lab and tab in the URL so a refresh or a shared link restores
+    // the same workspace; the course context still travels with it.
+    const carried = { labId: String(labId), tab: workspaceTab.value }
     if (route.query.courseId) carried.courseId = route.query.courseId
     if (route.query.wikiSlug) carried.wikiSlug = route.query.wikiSlug
     router.replace({ path: `/exercises/${slug}`, query: carried })
   }
 
   timerInterval = setInterval(() => {
+    if (activeLab.value?.session?.is_paused) return
     if (localTimeRemaining.value > 0) {
       localTimeRemaining.value--
     }
@@ -2096,7 +2226,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('focus', syncRangeBoxWindow)
   if (timerInterval) clearInterval(timerInterval)
   stopHintTimer()
   stopSpawnTimer()
@@ -3155,6 +3284,11 @@ watch(timeRemaining, (val) => {
   animation: pulse 1s infinite;
 }
 
+.timer--paused {
+  color: var(--warning, #f59e0b);
+  animation: none;
+}
+
 .extend-btn {
   font-size: 0.875rem;
   padding: 0.25rem 0.75rem;
@@ -3253,6 +3387,12 @@ watch(timeRemaining, (val) => {
   flex-direction: column;
 }
 
+/* Mobile keeps a 78vh cap for the inline panel; the workspace owns the
+   viewport instead. */
+.active-lab-panel.active-lab-panel--workspace {
+  max-height: none;
+}
+
 .active-lab-panel--workspace .active-lab-panel__header {
   flex: 0 0 auto;
 }
@@ -3263,6 +3403,12 @@ watch(timeRemaining, (val) => {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+}
+
+/* The old panel reserved 60vh for the mobile tab bar. The full-screen
+   workspace owns the viewport, so that reserve would collapse the tab pane. */
+.active-lab-panel--workspace .active-lab-panel__body--workspace {
+  padding-bottom: 0.75rem;
 }
 
 .workspace-tabs {
@@ -3317,6 +3463,40 @@ watch(timeRemaining, (val) => {
   padding-bottom: 0.25rem;
 }
 
+.panel-section--desktop-fallback {
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.desktop-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  max-width: 720px;
+}
+
+.desktop-fallback .section-title {
+  margin: 0;
+}
+
+.desktop-fallback p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.desktop-fallback__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.desktop-fallback__meta code {
+  font-family: var(--font-mono, monospace);
+}
+
 .active-lab-grid--workspace {
   flex: 1 1 auto;
   display: grid;
@@ -3331,33 +3511,6 @@ watch(timeRemaining, (val) => {
 
 .active-lab-grid--workspace.active-lab-grid--workbook-expanded {
   grid-template-rows: minmax(0, 1fr) minmax(340px, 58vh);
-}
-
-.active-lab-grid--workspace.active-lab-grid--popped-out {
-  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-areas: "details workbook";
-}
-
-.workspace-popout {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem 0.7rem;
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent);
-  border-radius: 8px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-}
-
-.workspace-popout__actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-left: auto;
 }
 
 .lab-details {
@@ -3512,6 +3665,14 @@ watch(timeRemaining, (val) => {
 
   .workspace-frame__hint {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Leave the compact app top bar visible above the full-screen workspace. */
+  .active-lab-panel.active-lab-panel--workspace {
+    top: 56px;
+    height: calc(100dvh - 56px);
   }
 }
 
@@ -3978,6 +4139,38 @@ watch(timeRemaining, (val) => {
 
 .flag-message--success { color: var(--success); }
 .flag-message--error { color: var(--danger); }
+
+.review-request {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.review-request__note {
+  margin: 0 0 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.review-request__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.review-request__status {
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+  text-transform: capitalize;
+}
+
+.review-request__message {
+  margin: 0.4rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
 
 /* Hints */
 .hint-count {

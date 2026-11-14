@@ -204,6 +204,7 @@
             <button @click="courseManageTab = 'exercises'" :class="['sub-tab', { active: courseManageTab === 'exercises' }]">Exercises ({{ courseLabs.length }})</button>
             <button @click="switchToAssignments" :class="['sub-tab', { active: courseManageTab === 'assignments' }]">Assignments ({{ courseAssignments.length }})</button>
             <button @click="openReportsTab" :class="['sub-tab', { active: courseManageTab === 'reports' }]">Reports</button>
+          <button @click="courseManageTab = 'reviews'" :class="['sub-tab', { active: courseManageTab === 'reviews' }]">Reviews ({{ courseReviews.length }})</button>
             <button @click="courseManageTab = 'settings'" :class="['sub-tab', { active: courseManageTab === 'settings' }]">Settings</button>
           </div>
 
@@ -271,7 +272,29 @@
                 <tbody>
                   <template v-for="s in courseStudents" :key="s.id">
                     <tr>
-                      <td class="cell-primary"><PrivacyText :value="s.username" fallback="Deleted learner" /></td>
+                      <td class="cell-primary">
+                        <PrivacyText :value="s.username" fallback="Deleted learner" />
+                        <span v-if="s.is_minor" class="minor-badge">Minor</span>
+                        <span
+                          v-if="s.is_minor && !s.consent_recorded"
+                          class="consent-badge consent-badge--needed"
+                          title="Record the institution's parental/guardian consent reference"
+                        >Consent needed</span>
+                        <span
+                          v-else-if="s.is_minor"
+                          class="consent-badge"
+                          :title="`Recorded ${s.consent_recorded_at ? new Date(s.consent_recorded_at).toLocaleString() : ''}${s.consent_reference ? ' · ' + s.consent_reference : ''}`"
+                        >Consent on file</span>
+                        <span
+                          v-if="s.time_multiplier > 1 || s.due_date_extension_days > 0"
+                          class="accommodation-badge"
+                          :title="`${Math.round(s.time_multiplier * 100)}% time, +${s.due_date_extension_days} day(s)`"
+                        >
+                          {{ s.time_multiplier > 1 ? `${Math.round(s.time_multiplier * 100)}% time` : '' }}
+                          {{ s.time_multiplier > 1 && s.due_date_extension_days > 0 ? ' · ' : '' }}
+                          {{ s.due_date_extension_days > 0 ? `+${s.due_date_extension_days}d` : '' }}
+                        </span>
+                      </td>
                       <td><PrivacyText :value="s.email" type="email" /></td>
                       <td class="cell-muted">{{ formatDateShort(s.enrolled_at) }}</td>
                       <td class="cell-actions">
@@ -283,6 +306,16 @@
                         <button @click="downloadStudentReport(s)" :disabled="downloadingReportUserId === s.id" class="action-btn action-btn--archive" title="Download PDF">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                          </svg>
+                        </button>
+                        <button @click="openAccommodation(s)" class="action-btn action-btn--view" title="Accommodations">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
+                          </svg>
+                        </button>
+                        <button v-if="s.is_minor" @click="recordConsent(s)" :disabled="consentBusy === s.id" class="action-btn action-btn--archive" :title="s.consent_recorded ? 'Update consent reference' : 'Record consent'">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/>
                           </svg>
                         </button>
                         <button @click="removeStudent(s)" class="action-btn action-btn--delete" title="Remove">
@@ -767,6 +800,45 @@
             </template>
           </div>
 
+          <!-- Reviews sub-tab -->
+          <div v-if="courseManageTab === 'reviews'" class="sub-tab-content">
+            <h4 class="settings-section-title">Human review requests</h4>
+            <p class="students-note">
+              These are learner requests about deterministic results. Approving or
+              rejecting records your note and closes the request.
+            </p>
+            <p v-if="reviewsLoading" class="loading-text">Loading review requests...</p>
+            <p v-else-if="reviewsError" class="form-error" role="alert">{{ reviewsError }}</p>
+            <div v-else-if="!courseReviews.length" class="empty-state">
+              No pending review requests.
+            </div>
+            <div v-else class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Learner</th>
+                    <th>Exercise</th>
+                    <th>Reason</th>
+                    <th>Requested</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="review in courseReviews" :key="review.id">
+                    <td class="cell-primary"><PrivacyText :value="review.username" fallback="Deleted learner" /></td>
+                    <td>{{ review.lab_name || `Exercise ${review.lab_id}` }}</td>
+                    <td class="cell-muted">{{ review.reason }}</td>
+                    <td class="cell-muted">{{ formatDateShort(review.requested_at) }}</td>
+                    <td class="cell-actions">
+                      <button class="btn btn--primary btn--xs" :disabled="reviewsBusy === review.id" @click="decideReview(review, 'approved')">Approve</button>
+                      <button class="btn btn--danger btn--xs" :disabled="reviewsBusy === review.id" @click="decideReview(review, 'rejected')">Reject</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- Settings sub-tab -->
           <div v-if="courseManageTab === 'settings'" class="sub-tab-content">
             <div class="course-settings-form">
@@ -1106,6 +1178,61 @@
       </div>
     </div>
 
+    <!-- Accommodations modal -->
+    <div v-if="accommodationStudent" class="modal-overlay" @click.self="closeAccommodation">
+      <div class="modal modal--small">
+        <h3 class="modal-title">Accommodations</h3>
+        <p class="modal-subtitle">{{ accommodationStudent.username }}</p>
+        <p class="modal-hint">
+          Extra time applies to timed lab sessions for this learner. The due-date
+          extension shifts course assignment deadlines. Changes are audited.
+        </p>
+        <div class="form-stack">
+          <div class="form-group">
+            <label class="form-label" for="accommodation-multiplier">Time multiplier</label>
+            <select id="accommodation-multiplier" v-model.number="accommodationForm.time_multiplier" class="form-input">
+              <option :value="1">No extra time (1.0x)</option>
+              <option :value="1.25">1.25x</option>
+              <option :value="1.5">1.5x</option>
+              <option :value="2">2.0x</option>
+              <option :value="3">3.0x</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="accommodation-extension">Due-date extension (days)</label>
+            <input
+              id="accommodation-extension"
+              v-model.number="accommodationForm.due_date_extension_days"
+              class="form-input"
+              type="number"
+              min="0"
+              max="365"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="accommodation-notes">Notes / reason</label>
+            <textarea
+              id="accommodation-notes"
+              v-model="accommodationForm.notes"
+              class="form-input"
+              rows="3"
+              maxlength="500"
+              placeholder="Recorded in the audit trail; do not include diagnosis details."
+            ></textarea>
+          </div>
+        </div>
+        <p v-if="accommodationError" class="form-error" role="alert">{{ accommodationError }}</p>
+        <div class="modal-actions">
+          <button @click="clearAccommodation" class="btn btn--danger" :disabled="accommodationBusy">Clear</button>
+          <button @click="closeAccommodation" class="btn btn--secondary" :disabled="accommodationBusy">Cancel</button>
+          <button @click="saveAccommodation" class="btn btn--primary" :disabled="accommodationBusy">
+            {{ accommodationBusy ? 'Saving...' : 'Save' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Upload Modal -->
     <div v-if="showUploadModal" class="modal-overlay" @click.self="showUploadModal = false">
       <div class="modal-dialog modal-dialog--lg">
@@ -1331,6 +1458,15 @@ function goStudio(studioTab, fork) {
 }
 const courseManageTab = ref('students')
 const courseStudents = ref([])
+const accommodationStudent = ref(null)
+const accommodationForm = ref({
+  time_multiplier: 1,
+  due_date_extension_days: 0,
+  notes: '',
+})
+const accommodationBusy = ref(false)
+const accommodationError = ref('')
+const consentBusy = ref(null)
 const courseLabs = ref([])
 const availableLabs = ref([])
 const selectedLabIds = ref([])
@@ -1430,6 +1566,10 @@ function hideFlag(labId) {
 
 // Assignment management state
 const courseAssignments = ref([])
+const courseReviews = ref([])
+const reviewsLoading = ref(false)
+const reviewsError = ref('')
+const reviewsBusy = ref(null)
 const dragIndex = ref(null)
 const dragOverIndex = ref(null)
 const showCreateAssignment = ref(false)
@@ -1788,9 +1928,15 @@ async function enrollSelectedStudents() {
     const ids = Array.from(selectedEnrollIds.value)
     const res = await axios.post(`/courses/${managingCourse.value.id}/enroll-bulk`, { user_ids: ids })
     const count = res.data.enrolled_count || ids.length
+    const consentCount = (res.data.consent_required || []).length
     selectedEnrollIds.value = new Set()
     enrollSearch.value = ''
-    showAlert(`${count} student${count !== 1 ? 's' : ''} enrolled`)
+    showAlert(
+      `${count} student${count !== 1 ? 's' : ''} enrolled` +
+      (consentCount
+        ? `. Record consent for ${consentCount} minor account${consentCount !== 1 ? 's' : ''}.`
+        : '')
+    )
     await fetchCourseStudents()
     await fetchEnrollableUsers()
     fetchCourses()
@@ -1889,6 +2035,44 @@ async function fetchCourseStudents() {
     console.error('Failed to fetch course students:', e)
   }
 }
+
+async function fetchCourseReviews() {
+  if (!managingCourse.value) return
+  reviewsLoading.value = true
+  reviewsError.value = ''
+  try {
+    const res = await axios.get(`/courses/${managingCourse.value.id}/reviews?status=pending`)
+    courseReviews.value = res.data.reviews || []
+  } catch (e) {
+    reviewsError.value = e.response?.data?.detail || 'Could not load review requests.'
+  } finally {
+    reviewsLoading.value = false
+  }
+}
+
+async function decideReview(review, status) {
+  const note = window.prompt(
+    status === 'approved'
+      ? 'Note for the learner (what did you review?):'
+      : 'Reason for rejecting the request:',
+    ''
+  )
+  if (note === null) return
+  reviewsBusy.value = review.id
+  try {
+    await axios.put(`/reviews/${review.id}/decision`, { status, note })
+    await fetchCourseReviews()
+    showAlert(status === 'approved' ? 'Review approved' : 'Review rejected')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Could not decide the review.', 'error')
+  } finally {
+    reviewsBusy.value = null
+  }
+}
+
+watch(courseManageTab, (tab) => {
+  if (tab === 'reviews') fetchCourseReviews()
+})
 
 async function fetchCourseLabs() {
   if (!managingCourse.value) return
@@ -2036,6 +2220,98 @@ async function resetStudentLab(student, lab) {
     showAlert('Failed to reset exercise', 'error')
   } finally {
     resettingCourseLab.value = null
+  }
+}
+
+function closeAccommodation() {
+  if (accommodationBusy.value) return
+  accommodationStudent.value = null
+  accommodationError.value = ''
+}
+
+async function openAccommodation(student) {
+  accommodationError.value = ''
+  let draft = {
+    time_multiplier: Number(student.time_multiplier || 1),
+    due_date_extension_days: Number(student.due_date_extension_days || 0),
+    notes: '',
+  }
+  try {
+    const { data } = await axios.get(`/courses/${managingCourse.value.id}/students/${student.id}/accommodation`)
+    draft = {
+      time_multiplier: Number(data.time_multiplier || 1),
+      due_date_extension_days: Number(data.due_date_extension_days || 0),
+      notes: data.notes || '',
+    }
+  } catch (e) {
+    accommodationError.value = e.response?.data?.detail || 'Could not load the accommodation.'
+  }
+  accommodationForm.value = draft
+  accommodationStudent.value = student
+}
+
+async function saveAccommodation() {
+  if (!accommodationStudent.value) return
+  accommodationBusy.value = true
+  accommodationError.value = ''
+  try {
+    const { data } = await axios.put(
+      `/courses/${managingCourse.value.id}/students/${accommodationStudent.value.id}/accommodation`,
+      accommodationForm.value
+    )
+    accommodationStudent.value.time_multiplier = data.time_multiplier
+    accommodationStudent.value.due_date_extension_days = data.due_date_extension_days
+    showAlert('Accommodation saved')
+    accommodationStudent.value = null
+  } catch (e) {
+    accommodationError.value = e.response?.data?.detail || 'Could not save the accommodation.'
+  } finally {
+    accommodationBusy.value = false
+  }
+}
+
+async function clearAccommodation() {
+  if (!accommodationStudent.value) return
+  if (!confirm(`Clear accommodations for ${accommodationStudent.value.username}?`)) return
+  accommodationBusy.value = true
+  accommodationError.value = ''
+  try {
+    const { data } = await axios.delete(
+      `/courses/${managingCourse.value.id}/students/${accommodationStudent.value.id}/accommodation`
+    )
+    accommodationStudent.value.time_multiplier = data.time_multiplier
+    accommodationStudent.value.due_date_extension_days = data.due_date_extension_days
+    showAlert('Accommodation cleared')
+    accommodationStudent.value = null
+  } catch (e) {
+    accommodationError.value = e.response?.data?.detail || 'Could not clear the accommodation.'
+  } finally {
+    accommodationBusy.value = false
+  }
+}
+
+async function recordConsent(student) {
+  const current = student.consent_reference
+    ? `Current reference: ${student.consent_reference}\n\n`
+    : ''
+  const reference = window.prompt(
+    `${current}Institution parental/guardian consent reference for ${student.username}:`
+  )
+  if (!reference || reference.trim().length < 3) return
+  consentBusy.value = student.id
+  try {
+    const { data } = await axios.put(
+      `/courses/${managingCourse.value.id}/students/${student.id}/consent`,
+      { reference: reference.trim() }
+    )
+    student.consent_recorded = true
+    student.consent_recorded_at = data.consent_recorded_at
+    student.consent_reference = data.consent_reference
+    showAlert('Consent reference recorded')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Could not record the consent reference.', 'error')
+  } finally {
+    consentBusy.value = null
   }
 }
 
@@ -3044,6 +3320,60 @@ onUnmounted(() => {
 .status-badge--archived { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
 .status-badge--done { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
 .status-badge--pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+
+.accommodation-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.minor-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.consent-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.consent-badge--needed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.modal-hint {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.form-error {
+  margin: 0.5rem 0 0;
+  color: #f87171;
+  font-size: 0.78rem;
+}
 
 /* Invite code */
 .invite-code-display {

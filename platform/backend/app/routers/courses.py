@@ -10,7 +10,7 @@ import re
 import secrets
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -25,6 +25,7 @@ from app.models import (
     Assignment, AssignmentLab, FlagAttempt, CustomAchievement,
     CourseFeedback, ExercisePulseSurvey, ExerciseReaction,
     Survey, SurveyAttachment, SurveyResponse, Level, Track,
+    UserAccommodation,
 )
 from app.auth import get_current_active_user, get_current_instructor_user, get_current_admin_user
 from app import entitlement
@@ -32,6 +33,7 @@ from app.schemas import (
     CourseCreate, CourseUpdate, CourseJoinRequest,
     CourseLabAssignRequest, CourseLabBulkRemoveRequest, CourseLabReorderRequest, CourseLabUpdateRequest, AssignmentReorderRequest,
     BulkEnrollRequest,
+    MinorConsentRequest,
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
     CourseFeedbackRequest,
 )
@@ -42,7 +44,7 @@ from app.services.learning_metadata import (
     level_label_for_numbers,
     percent_complete,
 )
-from app.services import exercise_quiz, settings_service
+from app.services import exercise_quiz, settings_service, accommodations
 from app.export_reason import require_export_reason
 from app.services.audit import log_admin_action, AuditActions
 from app.services.report_integrity import record_report
@@ -1376,6 +1378,7 @@ async def enroll_students_bulk(
         "enrolled_count": len(enrolled),
         "skipped_count": len(skipped),
         "skipped": skipped,
+        "consent_required": [s.id for s in students if s.id in enrolled and getattr(s, "is_minor", False)],
     }
 
 
@@ -1419,16 +1422,84 @@ async def list_students(
     ).all()
 
     students = []
+    user_ids = [e.user_id for e in enrollments if e.user]
+    records = {
+        row.user_id: row
+        for row in db.query(UserAccommodation)
+        .filter(UserAccommodation.user_id.in_(user_ids))
+        .all()
+    } if user_ids else {}
     for e in enrollments:
         u = e.user
+        record = records.get(u.id)
         students.append({
             "id": u.id,
             "username": u.username,
             "email": u.email,
             "student_id": u.student_id,
             "enrolled_at": e.enrolled_at,
+            "is_minor": bool(getattr(u, "is_minor", False)),
+            "consent_recorded": bool(e.consent_recorded_at),
+            "consent_recorded_at": e.consent_recorded_at,
+            "consent_reference": e.consent_reference,
+            "time_multiplier": float(record.time_multiplier) if record else 1.0,
+            "due_date_extension_days": int(record.due_date_extension_days or 0) if record else 0,
         })
     return {"students": students}
+
+
+@router.put("/{course_id}/students/{user_id}/consent")
+async def record_minor_consent(
+    course_id: int,
+    user_id: int,
+    data: MinorConsentRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Record the institution's parental/guardian consent reference for a minor."""
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+
+    student = db.query(User).filter(User.id == user_id).first()
+    if student is None:
+        raise HTTPException(status_code=404, detail="Learner not found")
+    if not getattr(student, "is_minor", False):
+        raise HTTPException(
+            status_code=400,
+            detail="Consent references are only recorded for minor accounts.",
+        )
+    enrollment = db.query(CourseEnrollment).filter(
+        CourseEnrollment.course_id == course_id,
+        CourseEnrollment.user_id == user_id,
+    ).first()
+    if enrollment is None:
+        raise HTTPException(
+            status_code=404, detail="Learner is not enrolled in this course"
+        )
+
+    reference = data.reference.strip()
+    if len(reference) < 3:
+        raise HTTPException(status_code=400, detail="A consent reference is required.")
+    enrollment.consent_reference = reference
+    enrollment.consent_recorded_at = datetime.now(timezone.utc)
+    enrollment.consent_recorded_by_id = current_user.id
+    log_activity(
+        db,
+        EventTypes.MINOR_CONSENT_RECORDED,
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=student.id,
+        target_label=student.username,
+        detail={"course_id": course_id, "consent": "recorded"},
+        commit=False,
+    )
+    db.commit()
+    return {
+        "user_id": student.id,
+        "consent_recorded": True,
+        "consent_recorded_at": enrollment.consent_recorded_at,
+        "consent_reference": enrollment.consent_reference,
+    }
 
 
 # ==================== Lab Assignment ====================
@@ -2167,8 +2238,15 @@ async def list_assignments(
             db, current_user.id, course_id, assigned_lab_ids
         )
 
+    extension_days = 0
+    if not is_instructor:
+        extension_days = accommodations.extension_days(db, current_user.id)
+
     result = []
     for asn in assignments:
+        effective_due = asn.due_date
+        if effective_due is not None and extension_days:
+            effective_due = effective_due + timedelta(days=extension_days)
         labs = []
         for al in asn.assignment_labs:
             lab = al.lab
@@ -2208,8 +2286,8 @@ async def list_assignments(
 
         # Determine due date status
         is_ended = False
-        if asn.due_date:
-            due_dt = asn.due_date
+        if effective_due:
+            due_dt = effective_due
             if due_dt.tzinfo is None:
                 due_dt = due_dt.replace(tzinfo=timezone.utc)
             if due_dt < datetime.now(timezone.utc):
@@ -2223,6 +2301,8 @@ async def list_assignments(
             "name": asn.name,
             "description": asn.description,
             "due_date": asn.due_date,
+            "effective_due_date": effective_due,
+            "accommodation_extension_days": extension_days,
             "start_date": asn.start_date,
             "sort_order": asn.sort_order,
             "created_at": asn.created_at,

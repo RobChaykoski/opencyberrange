@@ -2,6 +2,83 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5] - in development
+
+Release 5. LTI 1.3 Advantage, per-student accommodations, and the associated
+procurement evidence. Development `.44` runs this branch; production remains on
+Release 4 `v4.0.2`.
+
+### LTI 1.3 Advantage
+- Platform registry, OIDC third-party login (GET and form POST), signed
+  `id_token` validation, single-use state, external-identity linking, and the
+  SPA ticket exchange.
+- AGS 2.0: private_key_jwt token exchange, line items, reviewed score passback,
+  result retrieval, and an append-only ledger.
+- NRPS 2.0: explicit roster sync with the minimum subject/role/status/context
+  fields and LIS 2.0 membership parsing.
+- Deep Linking 2.0: single-use picker, signed response, lab launch content
+  items, selection limits, and an embeddable picker/callback.
+- Public tool JWKS with an RFC 7638 `kid` on every signed message.
+- Verified end to end against Moodle 5.0.2, including a grade reaching the
+  Moodle gradebook and NRPS returning the course roster.
+
+### Accommodations
+- Per-student 1.0x–3.0x timed-session multiplier and 0–365 day due-date
+  extension, managed by instructors and audited.
+- Learner pause/resume clock with a reason, a frozen expiry, scheduler
+  exclusion, and paused-time credit on resume.
+- Append-only `accommodation_events` and activity-log records.
+
+### Learning workspace
+- The exercise view uses full-size **Desktop**, **Exercise**, and **Workbook**
+  tabs instead of a split grid. The desktop stays mounted across tab switches
+  so the VNC session is not dropped. The briefing, flag, hints, and workbook
+  remain one click away.
+- The same tabs appear for every lab. The Desktop tab shows RangeBox, VPN
+  connection guidance, a start prompt, or the mobile notice instead of
+  changing the whole page layout. The selected lab and tab persist in the URL
+  across refresh and back/forward.
+- The RangeBox toolbar is the single desktop bar: the duplicate pane header is
+  gone, and connection/clipboard/fullscreen/quality controls stay in one place.
+  Left/right arrow keys move between tabs.
+- Workbooks can be served from a dedicated wiki origin. Dev uses
+  `https://172.16.16.44:8443`, so the framed workbook keeps its own storage and
+  search without access to the SPA token; the SPA CSP allows that frame.
+- The workbook iframe loads only when the Workbook tab is first opened. It
+  stays mounted afterwards, so switching tabs does not reload it or lose its
+  scroll position.
+
+### Human review
+- The exercise result panel states that flag matching is deterministic and
+  offers a human-review request. Learners see pending/approved/rejected status
+  and the instructor's note.
+- Instructors review pending requests per course, approve or reject with a note,
+  and every request/decision is audited.
+
+### Minor accounts
+- Minor enrollments can record the institution's parental/guardian consent
+  reference and the staff member who recorded it. The roster flags missing
+  consent, and changes are audited. Identity documents are not stored.
+- Each course has a retention date and note. Administrators can preview the
+  learner records in scope and record an append-only completion reference after
+  the documented backup-and-purge runbook step.
+
+### RangeBox
+- Pinned the Kali base image digest and the SecLists commit.
+- Baked the wordlists the labs reference at their documented paths: `common.txt`
+  (also at `/usr/share/wordlists/dirb/common.txt`), the DirBuster medium list
+  (also at `/usr/share/wordlists/dirbuster/`), the DNS top-5000 list, and two
+  password shortlists. The upstream medium-list filename moved; the download now
+  uses the pinned path that resolves.
+- Documented the root-inside-caged-container model and the Firefox content
+  sandbox rationale in `RangeBox/SECURITY-MODEL.md`.
+
+### Operations
+- Migrations `0015`–`0025`.
+- Development `172.16.16.44` deployed from `release5`; live lab spawn,
+  pause/resume, accommodation read-back, 10-lab sampling, and an authenticated
+  page pass all verified.
+
 ## [4.0.2] - 2026-11-14
 
 Release 4 production hotfix. Frontend only; schema and API remain Release 4.

@@ -27,7 +27,33 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
-## 2.7.0 release status
+## 4 release status
+
+- Platform source and content: **PolyForm Noncommercial License 1.0.0**.
+- Release artefact: `v4` is a **signed** annotated tag. The supply-chain lock is
+  signed by the release key and verified with
+  `scripts/supply_chain.py --check --signature supply-chain.lock.json.asc`.
+  This supersedes the unsigned-tag notes in the older release sections below.
+- Third-party inventory: `scripts/check-licences.py` reports **OK** for the
+  Release 4 tree.
+- The frontend runtime image is `nginx:alpine`, pinned by digest in
+  `platform/frontend/Dockerfile` so a base-image refresh cannot change it
+  silently.
+- Workbook diagrams and PDF export vendor **Mermaid 11.17.2** and
+  **html2pdf.js 0.10.2** (both MIT) under `Workbook/javascripts/`, with their
+  licence texts. They are served from the wiki origin rather than a CDN.
+- CyberChef remains a pinned static build in the frontend image
+  (`/tools/cyberchef/`, Apache-2.0).
+- Valkey **9.1.3** (BSD-3-Clause) is the rate-limit store in the Release 4
+  compose files.
+
+## Historical release status
+
+The sections below are retained for provenance. They describe older releases and
+are superseded by the Release 4 status above; in particular, the unsigned-tag
+and "Valkey not bundled" notes no longer describe the current tree.
+
+### 2.7.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
 - Release artefact: `v2.7.0` is an annotated tag. The supply-chain lock is
@@ -42,7 +68,7 @@ commercial terms.
 - GitHub Actions workflows use third-party actions; their licences remain with
   the action authors.
 
-## 2.6.0 release status
+### 2.6.0 release status
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
 - Release artefact: `v2.6.0` is an annotated tag. The supply-chain lock is

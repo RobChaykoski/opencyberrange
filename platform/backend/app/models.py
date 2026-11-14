@@ -169,7 +169,11 @@ class User(Base):
     completions = relationship("LabCompletion", back_populates="user")
     flag_attempts = relationship("FlagAttempt", back_populates="user")
     instructed_courses = relationship("Course", back_populates="instructor")
-    course_enrollments = relationship("CourseEnrollment", back_populates="user")
+    course_enrollments = relationship(
+        "CourseEnrollment",
+        back_populates="user",
+        foreign_keys="CourseEnrollment.user_id",
+    )
     achievements = relationship("Achievement", back_populates="user")
 
 
@@ -284,6 +288,246 @@ class SsoLoginTicket(Base):
     created_at = Column(DateTime, server_default=func.now())
     expires_at = Column(DateTime, nullable=False)
     consumed_at = Column(DateTime, nullable=True)
+
+
+class LtiPlatform(Base):
+    """Registered LTI 1.3 platform (one LMS deployment).
+
+    ``issuer`` + ``client_id`` + ``deployment_id`` identify the tenant. The
+    token and JWKS endpoints are used for Assignment and Grade Services and
+    launch-token verification.
+    """
+
+    __tablename__ = "lti_platforms"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(120), nullable=False)
+    issuer = Column(String(255), nullable=False, index=True)
+    client_id = Column(String(255), nullable=False, index=True)
+    deployment_id = Column(String(255), nullable=False, index=True)
+    auth_login_url = Column(String(500), nullable=False)
+    token_url = Column(String(500), nullable=False)
+    jwks_url = Column(String(500), nullable=False)
+    # Local identity-provider row used for ExternalIdentity links.
+    identity_provider_id = Column(
+        Integer,
+        ForeignKey("identity_providers.id", ondelete="SET NULL"),
+        nullable=True,
+    )
+    # RSA private key for client_assertion, encrypted like provider secrets.
+    private_key = Column(Text, nullable=True)
+    enabled = Column(Boolean, default=True, server_default=text("true"), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint(
+            "issuer", "client_id", "deployment_id",
+            name="uq_lti_platform_deployment",
+        ),
+    )
+
+
+class LtiLoginState(Base):
+    """Single-use OIDC third-party-initiated login state for LTI 1.3."""
+
+    __tablename__ = "lti_login_states"
+
+    id = Column(Integer, primary_key=True, index=True)
+    state = Column(String(128), unique=True, nullable=False, index=True)
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    nonce = Column(String(128), nullable=False)
+    target_link_uri = Column(String(500), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+    consumed_at = Column(DateTime, nullable=True)
+
+
+class LtiLink(Base):
+    """One LMS resource link launched into the platform.
+
+    The LMS resource-link id is the stable key. AGS endpoints and scopes come
+    from the launch claim; ``lab_id`` is filled when the link is mapped to a
+    local exercise.
+    """
+
+    __tablename__ = "lti_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    resource_link_id = Column(String(255), nullable=False, index=True)
+    context_id = Column(String(255), nullable=True, index=True)
+    context_title = Column(String(255), nullable=True)
+    title = Column(String(255), nullable=True)
+    ags_lineitem_url = Column(String(500), nullable=True)
+    ags_lineitems_url = Column(String(500), nullable=True)
+    ags_scopes = Column(Text, nullable=True)
+    nrps_url = Column(String(500), nullable=True)
+    nrps_versions = Column(Text, nullable=True)
+    lab_id = Column(Integer, ForeignKey("labs.id", ondelete="SET NULL"), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint(
+            "platform_id", "resource_link_id", name="uq_lti_link_resource"
+        ),
+    )
+
+
+class LtiScore(Base):
+    """Append-only record of a score passback attempt."""
+
+    __tablename__ = "lti_scores"
+
+    id = Column(Integer, primary_key=True, index=True)
+    link_id = Column(
+        Integer,
+        ForeignKey("lti_links.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    reviewer_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    score = Column(Float, nullable=False)
+    max_score = Column(Float, nullable=False)
+    status = Column(String(20), nullable=False)
+    reason = Column(String(500), nullable=True)
+    lms_response = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
+class LtiRosterMember(Base):
+    """Minimum NRPS roster record: LMS subject, role, status, context.
+
+    Names, email addresses, and other directory fields are deliberately not
+    stored. The roster is refreshed explicitly by an administrator.
+    """
+
+    __tablename__ = "lti_roster_members"
+
+    id = Column(Integer, primary_key=True, index=True)
+    link_id = Column(
+        Integer,
+        ForeignKey("lti_links.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    subject = Column(String(255), nullable=False)
+    roles = Column(Text, nullable=True)
+    status = Column(String(30), nullable=False, default="Active")
+    context_id = Column(String(255), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    __table_args__ = (
+        UniqueConstraint("link_id", "subject", name="uq_lti_roster_member"),
+    )
+
+
+class LtiDeepLinkSession(Base):
+    """One Deep Linking 2.0 picker session bound to the launching instructor."""
+
+    __tablename__ = "lti_deep_link_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String(128), unique=True, nullable=False, index=True)
+    platform_id = Column(
+        Integer,
+        ForeignKey("lti_platforms.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    return_url = Column(String(500), nullable=False)
+    data = Column(String(500), nullable=True)
+    accept_multiple = Column(
+        Boolean, nullable=False, default=False, server_default=text("false")
+    )
+    nonce = Column(String(128), nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+    expires_at = Column(DateTime, nullable=False)
+    consumed_at = Column(DateTime, nullable=True)
+
+
+class UserAccommodation(Base):
+    """Per-student accessibility accommodation.
+
+    A single row per learner: the multiplier applies to timed lab sessions and
+    the extension applies to course assignment due dates. Changes are appended
+    to ``accommodation_events`` so the reason and actor remain auditable.
+    """
+
+    __tablename__ = "user_accommodations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    time_multiplier = Column(Float, nullable=False, default=1.0, server_default="1")
+    due_date_extension_days = Column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    notes = Column(String(500), nullable=True)
+    updated_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class AccommodationEvent(Base):
+    """Append-only record of accommodation changes."""
+
+    __tablename__ = "accommodation_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    action = Column(String(20), nullable=False)
+    time_multiplier = Column(Float, nullable=True)
+    due_date_extension_days = Column(Integer, nullable=True)
+    reason = Column(String(500), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
 
 
 class SsoSession(Base):
@@ -532,6 +776,11 @@ class LabSession(Base):
     started_at = Column(DateTime, server_default=func.now())
     expires_at = Column(DateTime, nullable=False)
     stopped_at = Column(DateTime, nullable=True)
+    # Accommodation pause: while paused_at is set the expiry clock is frozen and
+    # the scheduler must not reap the session. Resume credits the paused time.
+    paused_at = Column(DateTime, nullable=True)
+    paused_seconds = Column(Integer, nullable=False, default=0, server_default="0")
+    pause_reason = Column(String(500), nullable=True)
     
     # Relationships
     user = relationship("User", back_populates="sessions", foreign_keys=[user_id])
@@ -861,6 +1110,13 @@ class Course(Base):
     is_archived = Column(Boolean, default=False)
     wiki_slug = Column(String(50), nullable=True, index=True)
     wiki_theme_color = Column(String(30), default="blue")
+    # Per-cohort retention clock. When retention_until passes, the course is
+    # listed as retention-due. Actual record deletion is an operator runbook
+    # step; previews and completion evidence are stored in retention_runs.
+    retention_until = Column(DateTime, nullable=True)
+    retention_note = Column(String(500), nullable=True)
+    retention_set_by_id = Column(Integer, nullable=True)
+    retention_set_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 
     # Relationships
@@ -869,6 +1125,59 @@ class Course(Base):
     lab_assignments = relationship("CourseLabAssignment", back_populates="course", cascade="all, delete-orphan")
     achievements = relationship("Achievement", back_populates="course", cascade="all, delete-orphan")
     assignments = relationship("Assignment", back_populates="course", cascade="all, delete-orphan", order_by="Assignment.sort_order")
+
+
+class RetentionRun(Base):
+    """Append-only evidence of a retention preview or operator completion."""
+
+    __tablename__ = "retention_runs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    course_id = Column(
+        Integer,
+        ForeignKey("courses.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    action = Column(String(20), nullable=False)  # preview | completed
+    counts = Column(Text, nullable=True)
+    note = Column(String(500), nullable=True)
+    reference = Column(String(200), nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+
+class ReviewRequest(Base):
+    """Learner request for a human decision on a deterministic result."""
+
+    __tablename__ = "review_requests"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    course_id = Column(
+        Integer, ForeignKey("courses.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    lab_id = Column(
+        Integer, ForeignKey("labs.id", ondelete="SET NULL"), nullable=True, index=True
+    )
+    source = Column(String(30), nullable=False, default="flag")
+    reason = Column(String(1000), nullable=False)
+    status = Column(String(20), nullable=False, default="pending", server_default="pending")
+    rule_version = Column(String(50), nullable=False, default="deterministic-v1")
+    primary_factors = Column(Text, nullable=True)
+    decision_note = Column(String(1000), nullable=True)
+    decided_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    requested_at = Column(DateTime, server_default=func.now())
+    decided_at = Column(DateTime, nullable=True)
 
 
 class ReportExport(Base):
@@ -913,10 +1222,20 @@ class CourseEnrollment(Base):
     # order), shown privately to the student and used on the projected
     # scoreboard so names are never displayed. Assigned lazily; NULL until then.
     seat_number = Column(Integer, nullable=True)
+    # Minor-account enrollment: the institution records the parental/guardian
+    # consent reference. The platform stores the reference and the staff member,
+    # not identity documents.
+    consent_reference = Column(String(200), nullable=True)
+    consent_recorded_at = Column(DateTime, nullable=True)
+    consent_recorded_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
 
     # Relationships
     course = relationship("Course", back_populates="enrollments")
-    user = relationship("User", back_populates="course_enrollments")
+    user = relationship(
+        "User", back_populates="course_enrollments", foreign_keys=[user_id]
+    )
 
     __table_args__ = (
         Index('ix_enrollment_course_user', 'course_id', 'user_id', unique=True),
