@@ -26,14 +26,14 @@
     <form class="badge-admin__form" @submit.prevent="saveSettings">
       <label>
         <span>Issuer name</span>
-        <input v-model="form.issuer_name" class="form-input form-input--sm" required>
+        <input v-model="form.issuer_name" class="form-input form-input--sm" :disabled="!settings" required>
       </label>
       <label>
         <span>Issuer URL</span>
-        <input v-model="form.issuer_url" class="form-input form-input--sm" placeholder="https://range.example.edu">
+        <input v-model="form.issuer_url" class="form-input form-input--sm" :disabled="!settings" placeholder="https://range.example.edu">
       </label>
-      <button class="btn btn--primary btn--sm" :disabled="saving">Save</button>
-      <button type="button" class="btn btn--danger btn--sm" :disabled="rotating" @click="rotateKey">
+      <button class="btn btn--primary btn--sm" :disabled="saving || !settings">Save</button>
+      <button type="button" class="btn btn--danger btn--sm" :disabled="rotating || !settings" @click="rotateKey">
         {{ rotating ? 'Rotating...' : 'Rotate signing key' }}
       </button>
     </form>

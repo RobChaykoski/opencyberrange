@@ -11,6 +11,7 @@ All notable changes to OpenCyberRange are recorded here.
   revoked credential cannot be changed.
 - Changing the issuer URL after credentials exist now requires explicit
   confirmation; older credentials keep their original issuer and status URL.
+  The issuer form stays disabled until the current settings load.
 
 ## [5.9.1] - 2026-11-14
 
