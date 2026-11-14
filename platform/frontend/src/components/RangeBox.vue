@@ -786,6 +786,8 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   border-bottom: 1px solid var(--border-color, #2a2a3e);
   flex-shrink: 0;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  row-gap: 0.35rem;
 }
 
 .rangebox__toolbar-left,
@@ -793,6 +795,12 @@ watch(() => props.sessionId, (newVal, oldVal) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.rangebox__toolbar-right {
+  justify-content: flex-end;
 }
 
 .rangebox__label {
