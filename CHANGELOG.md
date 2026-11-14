@@ -38,6 +38,9 @@ Release 4 `v4.0.1`.
   connection guidance, a start prompt, or the mobile notice instead of
   changing the whole page layout. The selected lab and tab persist in the URL
   across refresh and back/forward.
+- The RangeBox toolbar is the single desktop bar: the duplicate pane header is
+  gone, and connection/clipboard/fullscreen/quality controls stay in one place.
+  Left/right arrow keys move between tabs.
 
 ### Minor accounts
 - Minor enrollments can record the institution's parental/guardian consent
