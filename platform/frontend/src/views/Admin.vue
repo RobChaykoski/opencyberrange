@@ -8114,8 +8114,8 @@ const saveRetention = async () => {
       retention_until: until ? until : null,
       note: retentionForm.value.note,
     })
-    retentionMessage.value = 'Retention policy saved.'
     await loadRetention(managingCourse.value.id)
+    retentionMessage.value = 'Retention policy saved.'
   } catch (e) {
     retentionMessage.value = e.response?.data?.detail || 'Could not save the retention policy.'
   } finally {
