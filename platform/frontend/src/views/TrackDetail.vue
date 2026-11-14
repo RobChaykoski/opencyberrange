@@ -512,7 +512,7 @@
         </div>
 
         <div class="active-lab-panel__body" :class="{ 'active-lab-panel__body--workspace': workspaceMode }">
-          <nav v-if="isMobile" class="active-lab-jump" aria-label="Exercise sections">
+          <nav v-if="isMobile && workspaceTab === 'exercise'" class="active-lab-jump" aria-label="Exercise sections">
             <button type="button" @click="scrollToLabSection('lab-briefing')">Briefing</button>
             <button type="button" @click="scrollToLabSection('lab-targets')">Targets</button>
             <button type="button" @click="scrollToLabSection('lab-flag')">Flag</button>
@@ -532,7 +532,9 @@
           <nav v-if="workspaceMode" class="workspace-tabs" role="tablist" aria-label="Exercise workspace">
             <button
               type="button"
+              id="workspace-tab-desktop"
               role="tab"
+              aria-controls="workspace-panel-desktop"
               :aria-selected="workspaceTab === 'desktop'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'desktop' }]"
               :disabled="rangeboxPoppedOut"
@@ -542,7 +544,9 @@
             </button>
             <button
               type="button"
+              id="workspace-tab-exercise"
               role="tab"
+              aria-controls="workspace-panel-exercise"
               :aria-selected="workspaceTab === 'exercise'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'exercise' }]"
               @click="workspaceTab = 'exercise'"
@@ -551,7 +555,9 @@
             </button>
             <button
               type="button"
+              id="workspace-tab-workbook"
               role="tab"
+              aria-controls="workspace-panel-workbook"
               :aria-selected="workspaceTab === 'workbook'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'workbook' }]"
               @click="workspaceTab = 'workbook'"
@@ -569,8 +575,11 @@
           >
             <!-- RangeBox workspace frame (desktop only) -->
             <section
-              v-if="workspaceMode && !rangeboxPoppedOut"
+              v-if="isRangeBoxActive && !rangeboxPoppedOut && !isMobile"
               v-show="workspaceTab === 'desktop'"
+              id="workspace-panel-desktop"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-desktop"
               class="panel-section panel-section--rangebox"
               aria-label="RangeBox desktop"
             >
@@ -602,8 +611,74 @@
               </div>
             </section>
 
+            <!-- Desktop tab when RangeBox is unavailable, popped out, or on mobile -->
+            <section
+              v-if="workspaceTab === 'desktop' && (!isRangeBoxActive || rangeboxPoppedOut || isMobile)"
+              id="workspace-panel-desktop"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-desktop"
+              class="panel-section panel-section--desktop-fallback"
+              aria-label="Desktop"
+            >
+              <div class="desktop-fallback">
+                <template v-if="isRangeBoxActive && rangeboxPoppedOut">
+                  <h3 class="section-title">RangeBox is in its own window</h3>
+                  <p>The desktop is detached. Bring it back to keep everything in this window.</p>
+                  <div class="desktop-fallback__actions">
+                    <button type="button" class="btn btn--secondary btn--sm" @click="focusRangeBoxWindow">
+                      Focus RangeBox
+                    </button>
+                    <button type="button" class="btn btn--primary btn--sm" @click="restoreRangeBox">
+                      Bring it back
+                    </button>
+                  </div>
+                </template>
+                <template v-else-if="isRangeBoxActive && isMobile">
+                  <h3 class="section-title">Desktop is built for a larger screen</h3>
+                  <p>
+                    The interactive desktop needs a laptop or desktop with a keyboard and
+                    mouse. You can still open it full-screen, or use the Exercise tab.
+                  </p>
+                  <router-link
+                    :to="{ path: '/rangebox', query: { session: rangeboxSessionId, mobile: 'true' } }"
+                    class="btn btn--primary btn--sm"
+                  >
+                    Open the desktop
+                  </router-link>
+                </template>
+                <template v-else-if="activeLab.session">
+                  <h3 class="section-title">Connect to this lab over the VPN</h3>
+                  <p>
+                    This exercise runs on the isolated lab network. Connect with the VPN,
+                    then use your own terminal and tools.
+                  </p>
+                  <p v-if="activeLab.session.network_subnet" class="desktop-fallback__meta">
+                    Lab subnet: <code>{{ activeLab.session.network_subnet }}</code>
+                  </p>
+                  <router-link to="/vpn-setup" class="btn btn--primary btn--sm">
+                    Open VPN Setup
+                  </router-link>
+                </template>
+                <template v-else>
+                  <h3 class="section-title">Start the exercise</h3>
+                  <p>The desktop opens here once the lab environment is running.</p>
+                  <button
+                    type="button"
+                    class="btn btn--primary btn--sm"
+                    :disabled="launchingLab"
+                    @click="startExercise"
+                  >
+                    {{ launchingLab ? 'Starting...' : 'Start Exercise' }}
+                  </button>
+                </template>
+              </div>
+            </section>
+
             <div
               v-show="!workspaceMode || workspaceTab === 'exercise'"
+              id="workspace-panel-exercise"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-exercise"
               class="lab-details"
               :class="{ 'lab-details--workspace': workspaceMode }"
             >
@@ -823,10 +898,12 @@
             </div>
             </div>
 
-            <!-- Workbook workspace frame (desktop only) -->
+            <!-- Workbook workspace frame -->
             <section
-              v-if="workspaceMode"
               v-show="workspaceTab === 'workbook'"
+              id="workspace-panel-workbook"
+              role="tabpanel"
+              aria-labelledby="workspace-tab-workbook"
               class="panel-section panel-section--workbook"
               aria-label="Exercise workbook"
             >
@@ -1215,10 +1292,27 @@ const isRangeBoxActive = computed(() => {
   return activeLab.value?.session?.rangebox_enabled && rangeboxSessionId.value
 })
 
-// Desktop exercise workspace: RangeBox top-left, details/flag on the right,
-// workbook along the bottom. VPN-only labs and phones keep the stacked panel.
-const workspaceMode = computed(() => Boolean(isRangeBoxActive.value && !isMobile.value))
-const workspaceTab = ref('desktop')
+// Desktop exercise workspace: one full-size tab each for the RangeBox desktop,
+// the briefing/flag, and the workbook. The shell is the same for every lab;
+// the Desktop tab shows the VPN or start state when RangeBox is unavailable.
+const workspaceMode = computed(() => Boolean(activeLab.value))
+const WORKSPACE_TABS = ['desktop', 'exercise', 'workbook']
+const requestedTab = String(route.query.tab || '')
+const workspaceTab = ref(
+  WORKSPACE_TABS.includes(requestedTab) ? requestedTab : 'desktop'
+)
+watch(workspaceTab, (tab) => {
+  if (!activeLab.value) return
+  if (String(route.query.tab || '') === tab) return
+  router.replace({ path: route.path, query: { ...route.query, tab } })
+})
+watch(
+  () => route.query.tab,
+  (tab) => {
+    const next = WORKSPACE_TABS.includes(String(tab)) ? String(tab) : 'desktop'
+    if (next !== workspaceTab.value) workspaceTab.value = next
+  }
+)
 const workbookExpanded = ref(false)
 const rangeboxPoppedOut = ref(false)
 let rangeboxWindow = null
@@ -1416,7 +1510,6 @@ const openActiveLab = async (lab) => {
       params
     })
     activeLab.value = data
-    workspaceTab.value = 'desktop'
     workbookExpanded.value = false
     loadReaction(data.lab?.id || lab.id)
 
@@ -1539,7 +1632,12 @@ const exitExercise = () => {
   closeActiveLab()
   if (courseExercisesLink.value) {
     router.push(courseExercisesLink.value)
+    return
   }
+  const query = { ...route.query }
+  delete query.labId
+  delete query.tab
+  router.replace({ path: route.path, query })
 }
 
 const openKnowledgeCheck = (lab) => {
@@ -2150,10 +2248,9 @@ onMounted(async () => {
 
   if (labId) {
     await openActiveLab({ id: Number(labId) })
-    // Keep the course context on the URL so a refresh or a shared link still
-    // knows which course overview to return to. The one-shot labId is
-    // dropped so reloading the track does not reopen a stale panel.
-    const carried = {}
+    // Keep the lab and tab in the URL so a refresh or a shared link restores
+    // the same workspace; the course context still travels with it.
+    const carried = { labId: String(labId), tab: workspaceTab.value }
     if (route.query.courseId) carried.courseId = route.query.courseId
     if (route.query.wikiSlug) carried.wikiSlug = route.query.wikiSlug
     router.replace({ path: `/exercises/${slug}`, query: carried })
@@ -3392,6 +3489,40 @@ watch(timeRemaining, (val) => {
 
 .active-lab-grid--tabs > .lab-details--workspace {
   padding-bottom: 0.25rem;
+}
+
+.panel-section--desktop-fallback {
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  overflow-y: auto;
+}
+
+.desktop-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.85rem;
+  max-width: 720px;
+}
+
+.desktop-fallback .section-title {
+  margin: 0;
+}
+
+.desktop-fallback p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.desktop-fallback__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.desktop-fallback__meta code {
+  font-family: var(--font-mono, monospace);
 }
 
 .active-lab-grid--workspace {
