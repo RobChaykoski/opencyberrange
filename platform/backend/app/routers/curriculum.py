@@ -14,6 +14,7 @@ import logging
 import re
 
 from app.ratelimit import create_limiter
+from app.services.export_labels import apply_pdf_metadata
 
 from app.database import get_db, SessionLocal
 from app.models import (
@@ -820,6 +821,11 @@ def _certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_subject("Certificate of completion")
     pdf.set_creator("SWOCTS Cyber Range")
     pdf.set_keywords("SWOCTS, cyber range, certificate, accessibility")
+    apply_pdf_metadata(
+        pdf,
+        "SWOCTS Cyber Range certificate",
+        "Certificate of completion",
+    )
     if hasattr(pdf, "set_lang"):
         pdf.set_lang("en")
     pdf.add_page()

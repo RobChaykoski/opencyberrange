@@ -8,6 +8,7 @@ from fpdf import FPDF
 from typing import List
 
 from app.timezones import resolve_timezone
+from app.services.export_labels import apply_pdf_metadata
 
 
 def _configure_pdf(pdf: FPDF, title: str, subject: str = "Learning report") -> None:
@@ -17,6 +18,7 @@ def _configure_pdf(pdf: FPDF, title: str, subject: str = "Learning report") -> N
     pdf.set_subject(_sanitize_for_pdf(subject))
     pdf.set_creator("SWOCTS Cyber Range")
     pdf.set_keywords("SWOCTS, cyber range, learning report, accessibility")
+    apply_pdf_metadata(pdf, title, subject)
     if hasattr(pdf, "set_lang"):
         pdf.set_lang("en")
 

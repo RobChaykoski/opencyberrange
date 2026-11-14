@@ -1061,16 +1061,13 @@
                   </div>
                   <div class="session-rangebox-status">
                     <span class="vpn-status-label">RangeBox:</span>
-                    <a
+                    <span
                       v-if="session.rangebox?.status === 'running'"
-                      class="vpn-badge vpn-badge--connected rangebox-view-link"
-                      :href="`/rangebox?session=${session.session_id}&userId=${session.user_id}`"
-                      target="_blank"
-                      title="View student's RangeBox screen in new tab"
+                      class="vpn-badge vpn-badge--connected"
                     >
-                      Active â†—
+                      Active
                       <span v-if="session.rangebox?.mode === 'standalone'" class="vpn-handshake">(standalone)</span>
-                    </a>
+                    </span>
                     <span v-else-if="session.rangebox?.enabled" class="vpn-badge vpn-badge--disconnected">Stopped</span>
                     <span v-else class="vpn-badge vpn-badge--none">None</span>
                   </div>
@@ -1878,6 +1875,18 @@
                 empty to keep the wiki same-origin. Changes apply without a
                 rebuild.
               </p>
+              <p v-if="activeSettingsCategory === 'exports'" class="section-desc">
+                Add a data-classification label and handling note to exported
+                PDFs, CSV files, and download responses. The label is written to
+                PDF document properties and to <code>X-Data-*</code> response
+                headers so recipients can see how the file should be handled.
+              </p>
+              <div v-if="activeSettingsCategory === 'exports'" class="export-label-preview">
+                <span class="export-label-preview__eyebrow">Preview</span>
+                <strong>{{ exportClassificationLabel }}</strong>
+                <span>{{ settingsEdits.export_organisation || 'SWOCTS Cyber Range' }}</span>
+                <p>{{ exportHandlingPreview }}</p>
+              </div>
               <div v-if="activeSettingsCategory === 'security'" class="setting-row">
                 <div class="setting-info">
                   <span class="setting-key">
@@ -1996,6 +2005,14 @@
                       <option v-for="design in certificateDesigns" :key="design.value" :value="design.value">
                         {{ design.label }}
                       </option>
+                    </select>
+                  </template>
+                  <template v-else-if="key === 'export_classification'">
+                    <select v-model="settingsEdits[key]" class="form-input form-input--sm">
+                      <option value="public">Public</option>
+                      <option value="internal">Internal</option>
+                      <option value="confidential">Confidential</option>
+                      <option value="restricted">Restricted</option>
                     </select>
                   </template>
                   <template v-else-if="key === 'mail_security'">
@@ -4802,7 +4819,7 @@ const settingsCategories = computed(() => {
   // Only show a category tab if it has at least one visible setting (so an
   // emptied category -- e.g. General after platform_name/deployment_mode were
   // removed -- doesn't render as a blank tab).
-  const order = ['general', 'security', 'wiki', 'labs', 'vpn', 'email', 'features']
+  const order = ['general', 'exports', 'security', 'wiki', 'labs', 'vpn', 'email', 'features']
   const populated = new Set(
     Object.entries(allSettings.value)
       .filter(([key]) => !hiddenSettingKeys.value.has(key))
@@ -4826,11 +4843,29 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
+const categoryLabels = { general: 'General', exports: 'Data labels', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
 const settingsEdits = reactive({})
+const exportClassificationLabel = computed(() => {
+  const value = settingsEdits.export_classification || 'internal'
+  return {
+    public: 'Public',
+    internal: 'Internal',
+    confidential: 'Confidential',
+    restricted: 'Restricted',
+  }[value] || 'Internal'
+})
+const exportHandlingPreview = computed(() => {
+  if (settingsEdits.export_handling_note) return settingsEdits.export_handling_note
+  return {
+    public: 'Approved for public release.',
+    internal: 'Internal use. Share only within the institution.',
+    confidential: 'Confidential. Share only with authorised recipients.',
+    restricted: "Restricted. Handle under the institution's data policy.",
+  }[settingsEdits.export_classification || 'internal']
+})
 const certificateDesigns = [
   { value: 'classic', label: 'Classic' },
   { value: 'executive', label: 'Executive' },
@@ -4863,6 +4898,11 @@ watch(activeSettingsCategory, (category) => {
 
 const settingMeta = {
   setup_complete:            { label: 'Setup Complete',          desc: 'Indicates whether the first-run setup wizard has been completed.' },
+  export_label_enabled:     { label: 'Export Data Labels',      desc: 'Add a data-classification label and handling note to exported PDFs, CSVs, and download responses.' },
+  export_classification:    { label: 'Default Classification',  desc: 'Classification applied to exports: public, internal, confidential, or restricted.' },
+  export_organisation:      { label: 'Export Owner',            desc: 'Organisation name written as the author/owner of exported files. Empty uses SWOCTS Cyber Range.' },
+  export_handling_note:     { label: 'Handling Note',           desc: 'Instruction added to export metadata, for example "Contains learner records. Share only with authorised staff."' },
+  export_include_timestamp: { label: 'Include Generation Time', desc: 'Record when the export was generated in the document metadata and response headers.' },
   jwt_expiration_hours:      { label: 'Session Lifetime',       desc: 'How long a user stays logged in before they must re-authenticate.', unit: 'hours' },
   max_failed_attempts:       { label: 'Max Failed Logins',      desc: 'Number of consecutive wrong-password attempts before the account is temporarily locked.', unit: 'attempts' },
   lockout_duration_minutes:  { label: 'Lockout Duration',       desc: 'How long a locked-out account remains inaccessible after exceeding the failed login limit.', unit: 'minutes' },
@@ -10346,17 +10386,6 @@ watch(activeTab, (tab) => {
   gap: 0.5rem;
 }
 
-.rangebox-view-link {
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-
-.rangebox-view-link:hover {
-  background: rgba(34, 197, 94, 0.3) !important;
-  transform: scale(1.05);
-}
-
 .impersonate-btn {
   border-color: var(--purple) !important;
   color: var(--purple) !important;
@@ -12930,6 +12959,37 @@ watch(activeTab, (tab) => {
   color: var(--text-muted);
   margin-bottom: 1.25rem;
   line-height: 1.5;
+}
+
+.export-label-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.export-label-preview__eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.export-label-preview strong {
+  font-size: 0.95rem;
+}
+
+.export-label-preview p {
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.45;
 }
 
 .section-divider {

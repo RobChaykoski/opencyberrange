@@ -7,7 +7,7 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.11.0` | SWOCTS Cyber Range Release 5.11 | Current production feature release (signed annotated tag): KasmVNC RangeBox and single-pane learning workspace |
+| `v5.11.0` | SWOCTS Cyber Range Release 5.11 | Current production feature release (signed annotated tag): KasmVNC RangeBox, single-pane learning workspace, role-aware navigation, export data labels |
 | `v5.10.0` | SWOCTS Cyber Range Release 5.10 | Previous feature release (signed annotated tag): profile badge list, name sharing, issuer URL guard |
 | `v5.9.1` | SWOCTS Cyber Range Release 5.9.1 | Previous patch (signed annotated tag): badge revocation UI |
 | `v5.9.0` | SWOCTS Cyber Range Release 5.9 | Previous feature release (signed annotated tag): badge admin, key rotation, public viewer |

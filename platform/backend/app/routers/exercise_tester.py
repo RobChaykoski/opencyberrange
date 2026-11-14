@@ -29,6 +29,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
 from fpdf import FPDF
 from app.ratelimit import create_limiter
+from app.services.export_labels import apply_pdf_metadata
 from sqlalchemy.orm import Session
 
 import requests as http_requests
@@ -1915,6 +1916,7 @@ def _generate_exercise_test_pdf(data: dict) -> bytes:
         PDF file bytes.
     """
     pdf = _ExerciseTestPDF()
+    apply_pdf_metadata(pdf, "Exercise test report", "Automated exercise test results")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=20)
     pdf.add_page()

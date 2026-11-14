@@ -4,7 +4,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [5.11.0] - 2026-11-14
 
-### RangeBox
+### RangeBox and learning workspace
 - The Kali RangeBox now runs KasmVNC (Xvnc plus its built-in web server)
   instead of Xvfb + x11vnc + websockify. KasmVNC provides native dynamic
   resize, clipboard, and its own control bar.
@@ -14,11 +14,40 @@ All notable changes to OpenCyberRange are recorded here.
 - `/api/rangebox/transport` probes each running container and selects KasmVNC
   or noVNC per image, so mixed and rolling rebuilds keep working. UbuntuBox and
   RemnuxBox remain on noVNC until rebuilt.
+- Wide screens now present the desktop, exercise briefing/flag, and workbook in
+  one workspace instead of three tabs. The exercise flag card is sticky, has
+  Paste/Enter submission, and links directly to hints.
+- Beginner exercises open the workbook taller and show a workbook-led callout;
+  compact screens keep the tab shell.
 - For KasmVNC sessions, the platform hides its noVNC-only quality, clipboard,
   and Ctrl+Alt+Del controls and offers **Reload desktop** with a fresh
   WebSocket ticket. Admin "View As" remains read-only at the proxy.
 - KasmVNC is GPL-2.0; package, SHA-256, source, and the custom CSP are recorded
   in `docs/KASMVNC.md` and `THIRD_PARTY_NOTICES.md`.
+
+### Role-aware navigation
+- Administrators now land on the Admin interface and no longer see the learner
+  Ops Center, Academy, Tools, or RangeBox navigation. The Admin sections are
+  split into Administration and Operations.
+- Instructors keep the learner menu (including RangeBox and workbooks) plus a
+  Teaching section for their courses, exercises, reports, and surveys.
+- The sidebar shows the signed-in role beside the account name. Administrators
+  keep profile, privacy mode, logout, and the manual; the admin RangeBox
+  capacity and stress tools remain under Admin settings.
+- Admin live-activity rows show RangeBox status without opening the student
+  desktop.
+
+### Export data labels
+- New **Settings → Data labels** option controls a classification (Public,
+  Internal, Confidential, Restricted), export owner, optional handling note,
+  and generation timestamp.
+- A response middleware labels every attachment, PDF, and CSV download with
+  `X-Data-Classification`, `X-Data-Organisation`, `X-Data-Handling`,
+  `X-Data-Source`, and `X-Export-Generated-At`.
+- PDF report, transcript, certificate, event-certificate, analytics, and
+  exercise-test exports write the label into document properties.
+- Personal-data and provider JSON exports include an `export_metadata` object.
+  The admin settings panel previews the label before saving.
 
 ## [5.10.0] - 2026-11-14
 

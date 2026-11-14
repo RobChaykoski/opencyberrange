@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from fpdf import FPDF
 
 from app.services.pdf_report import _sanitize_for_pdf
+from app.services.export_labels import apply_pdf_metadata
 from app.timezones import UTC, resolve_timezone
 
 MARGIN = 14
@@ -307,6 +308,7 @@ def _draw_achievements(pdf: FPDF, achievements: list):
 def generate_profile_transcript(summary: dict, timezone_name: str | None = None) -> bytes:
     """Build the transcript PDF from a profile summary payload."""
     pdf = ProfileTranscriptPDF()
+    apply_pdf_metadata(pdf, "Learner transcript", "Profile transcript")
     pdf.alias_nb_pages()
     pdf.set_auto_page_break(auto=True, margin=18)
     pdf.set_margins(MARGIN, 14, MARGIN)

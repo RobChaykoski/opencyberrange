@@ -20,6 +20,7 @@ from app.database import get_db
 from app.models import IdentityProvider, User
 from app.services import ldap_auth, oidc, saml_auth
 from app.services.audit import log_admin_action
+from app.services.export_labels import export_metadata
 from app.services.external_identity import SSOError, truthy
 
 router = APIRouter()
@@ -313,6 +314,7 @@ def export_identity_providers(
         "format": "ocr-identity-providers",
         "version": 1,
         "exported_at": datetime.now(timezone.utc).isoformat(),
+        "export_metadata": export_metadata(),
         "secrets_exported": False,
         "providers": [_export_provider(row) for row in rows],
     }

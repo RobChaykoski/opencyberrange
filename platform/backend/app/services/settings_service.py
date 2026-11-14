@@ -36,6 +36,16 @@ DEFAULT_SETTINGS = [
      "description": "Base URL used in certificate QR codes for verification (e.g. https://range.example.com). Empty uses the request host.", "is_secret": False},
     {"key": "certificate_design", "value": "classic", "category": "general",
      "description": "Default certificate design: classic, executive, modern, or minimal", "is_secret": False},
+    {"key": "export_label_enabled", "value": "true", "category": "exports",
+     "description": "Add a data-classification label and handling note to exported PDFs, CSV files, and download responses.", "is_secret": False},
+    {"key": "export_classification", "value": "internal", "category": "exports",
+     "description": "Default data classification for exported files: public, internal, confidential, or restricted.", "is_secret": False},
+    {"key": "export_organisation", "value": "", "category": "exports",
+     "description": "Organisation name recorded as the author/owner of exported files. Empty uses SWOCTS Cyber Range.", "is_secret": False},
+    {"key": "export_handling_note", "value": "", "category": "exports",
+     "description": "Optional handling instruction added to export metadata, for example 'Contains learner records. Share only with authorised staff.'", "is_secret": False},
+    {"key": "export_include_timestamp", "value": "true", "category": "exports",
+     "description": "Record the generation time in export metadata and response headers.", "is_secret": False},
 
     # --- Email ---
     {"key": "mail_enabled", "value": "false", "category": "email",

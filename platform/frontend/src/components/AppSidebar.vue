@@ -50,6 +50,10 @@
 
     <!-- Navigation Sections -->
     <nav class="sidebar__nav">
+      <!-- Student-facing workspace. Administrators work from the Admin
+           sections instead of a second copy of the learner menu. Instructors
+           keep this menu so they can see and use what students see. -->
+      <template v-if="showUserNav">
       <!-- OPS CENTER -->
       <div class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Ops Center</span>
@@ -144,11 +148,12 @@
           <span v-show="!collapsed" class="nav-item__label">CyberChef</span>
         </button>
       </div>
+      </template>
 
 
-      <!-- INSTRUCTOR (instructor + admin) -->
-      <div v-if="showInstructor" class="nav-section">
-        <span v-show="!collapsed" class="nav-section__label">Instructor</span>
+      <!-- INSTRUCTOR (instructor only; administrators use the Admin sections) -->
+      <div v-if="showInstructorTools" class="nav-section">
+        <span v-show="!collapsed" class="nav-section__label">Teaching</span>
         <router-link to="/instructor?tab=courses" aria-label="My Courses" title="My Courses" class="nav-item" :class="{ 'nav-item--active': isInstructorTab('courses') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
@@ -181,7 +186,7 @@
 
       <!-- ADMIN (admin only) -->
       <div v-if="showAdmin" class="nav-section">
-        <span v-show="!collapsed" class="nav-section__label">Admin</span>
+        <span v-show="!collapsed" class="nav-section__label">Administration</span>
         <router-link to="/admin?tab=users" aria-label="Users" title="Users" class="nav-item" :class="{ 'nav-item--active': isAdminTab('users') || isAdminTab('pending') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M17 21V19C17 17.9 16.1 17 15 17H9C7.9 17 7 17.9 7 19V21"/>
@@ -202,6 +207,10 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">All exercises</span>
         </router-link>
+      </div>
+
+      <div v-if="showAdmin" class="nav-section">
+        <span v-show="!collapsed" class="nav-section__label">Operations</span>
         <router-link to="/admin?tab=monitoring" aria-label="Live activity" title="Live activity" class="nav-item" :class="{ 'nav-item--active': isAdminTab('monitoring') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -214,6 +223,14 @@
             <path d="M7 15l4-4 3 3 5-6"/>
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Reports &amp; analytics</span>
+        </router-link>
+        <router-link to="/surveys" aria-label="Surveys" title="Surveys" class="nav-item" :class="{ 'nav-item--active': isActive('/surveys') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="M9 12h6M9 16h4"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Surveys</span>
         </router-link>
         <router-link to="/admin?tab=system" aria-label="System" title="System" class="nav-item" :class="{ 'nav-item--active': isAdminTab('system') }">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
@@ -231,7 +248,7 @@
         </router-link>
       </div>
 
-      <div v-if="showAdmin" class="nav-section">
+      <div v-if="showPrivileged" class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Resources</span>
         <a :href="manualUrl" aria-label="User Manual" title="User Manual" target="_blank" rel="noopener" class="nav-item" @click="setWikiAuthCookie">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
@@ -246,7 +263,7 @@
 
     <!-- User Section -->
     <div class="sidebar__footer">
-      <div v-if="showInstructor" class="privacy-row" :class="{ 'privacy-row--collapsed': collapsed }">
+      <div v-if="showPrivileged" class="privacy-row" :class="{ 'privacy-row--collapsed': collapsed }">
         <button @click="togglePrivacy" class="privacy-btn" :title="privacyMode ? 'Show names (Privacy OFF)' : 'Mask names (Privacy ON)'">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="privacy-btn__icon">
             <template v-if="privacyMode">
@@ -265,7 +282,7 @@
           </span>
         </button>
       </div>
-      <button v-show="!collapsed && startTour" @click="replayTour" class="tour-btn" title="Replay the orientation tour">
+      <button v-if="!showAdmin" v-show="!collapsed && startTour" @click="replayTour" class="tour-btn" title="Replay the orientation tour">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="tour-btn__icon">
           <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
         </svg>
@@ -273,7 +290,10 @@
       </button>
       <router-link to="/profile" aria-label="Profile" title="Profile" class="nav-item nav-item--user" :class="{ 'nav-item--active': isActive('/profile') }">
         <div class="user-avatar">{{ userInitial }}</div>
-        <span v-show="!collapsed" class="nav-item__label">{{ formattedUsername }}</span>
+        <span v-show="!collapsed" class="nav-item__label nav-item__identity">
+          <span class="nav-item__name">{{ formattedUsername }}</span>
+          <span class="nav-item__role">{{ roleLabel }}</span>
+        </span>
       </router-link>
       <button v-show="!collapsed" @click="$emit('logout')" class="logout-btn">Logout</button>
       <div v-show="!collapsed" class="powered-footer">
@@ -320,8 +340,15 @@ const manualUrl = computed(() => wikiUrl('/wiki/reference/manual/'))
 const startTour = inject('startTour', null)
 const replayTour = () => { if (startTour) startTour() }
 
-const showInstructor = computed(() => ['instructor', 'admin'].includes(props.userRole))
+const showUserNav = computed(() => props.userRole !== 'admin')
+const showInstructorTools = computed(() => props.userRole === 'instructor')
 const showAdmin = computed(() => props.userRole === 'admin')
+const showPrivileged = computed(() => ['instructor', 'admin'].includes(props.userRole))
+const roleLabel = computed(() => ({
+  admin: 'Administrator',
+  instructor: 'Instructor',
+  student: 'Student',
+}[props.userRole] || 'User'))
 
 
 
@@ -579,6 +606,28 @@ const userInitial = computed(() => {
 .nav-item__label {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.nav-item__identity {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.nav-item__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nav-item__role {
+  margin-top: 0.1rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 /* Footer */

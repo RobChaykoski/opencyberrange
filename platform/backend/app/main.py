@@ -38,6 +38,7 @@ from app.routers import reviews as reviews_router
 from app.routers import audit as audit_router
 from app.routers import planning as planning_router
 from app.routers import open_badges as open_badges_router
+from app.services import export_labels as export_labels_service
 from app.routers import reports as reports_router
 from app.routers import question_bank as question_bank_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
@@ -956,6 +957,29 @@ async def docs_access_control(request: Request, call_next):
 # {prefix: setting_key} built from the discovered modules' manifests. A new
 # module declaring gate_prefixes is enforced here with no edit to this file.
 _MODULE_GATE = module_registry.gate_map()
+
+
+@app.middleware("http")
+async def export_label_headers(request: Request, call_next):
+    """Attach the configured data label to downloadable exports.
+
+    Detection is intentionally response-based so every current and future
+    PDF/CSV/attachment endpoint inherits the label without each router having
+    to remember. PDF document properties are set by the report builders; this
+    adds the machine-readable response headers.
+    """
+    response = await call_next(request)
+    content_type = (response.headers.get("content-type") or "").lower()
+    disposition = (response.headers.get("content-disposition") or "").lower()
+    is_export = (
+        "attachment" in disposition
+        or content_type.startswith("application/pdf")
+        or content_type.startswith("text/csv")
+    )
+    if is_export:
+        for key, value in export_labels_service.export_response_headers().items():
+            response.headers.setdefault(key, value)
+    return response
 
 
 @app.middleware("http")

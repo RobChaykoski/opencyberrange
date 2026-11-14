@@ -63,6 +63,23 @@ TEST_PASSWORD = "Correct#Horse7Battery"
 TEST_FLAG = "OCR{pytest_smoke_flag}"
 
 
+@pytest.fixture(autouse=True)
+def _export_labels_without_database(monkeypatch):
+    """Fail fast when a PDF unit test has no test database.
+
+    Export labels are advisory metadata. Without TEST_DATABASE_URL the
+    placeholder Postgres URL would make every PDF test wait for a connection
+    timeout just to discover there is no settings row.
+    """
+    if TEST_DATABASE_URL:
+        return
+
+    def _unavailable():
+        raise RuntimeError("no test database")
+
+    monkeypatch.setattr("app.services.export_labels.SessionLocal", _unavailable)
+
+
 @pytest.fixture(scope="session")
 def client():
     """TestClient WITHOUT the lifespan context.

@@ -42,6 +42,7 @@ from app.auth import (
 )
 from app.services import mail
 from app.services import totp as totp_service
+from app.services.export_labels import export_metadata
 from app.config import settings
 from app.schemas import ChangePasswordRequest, ImpersonateRequest, ImpersonateResponse, _validate_password, _password_policy_error
 from app.services.wireguard_manager import WireGuardManager
@@ -907,6 +908,7 @@ async def export_user_data(
     return {
         "format_version": 2,
         "generated_at": exported_at,
+        "export_metadata": export_metadata(),
         "account": {
             "id": current_user.id,
             "username": current_user.username,

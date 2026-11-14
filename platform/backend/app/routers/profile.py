@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.auth import get_current_active_user
 from app.database import get_db
 from app.services.audit import log_admin_action, AuditActions
+from app.services.export_labels import export_metadata
 from app.models import (
     Achievement,
     Course,
@@ -406,7 +407,10 @@ async def get_career_dossier(
     """Return the learner's career-discovery dossier as JSON."""
     dossier = build_career_dossier(db, current_user)
     _log_career_export(request, current_user, "json")
-    return JSONResponse(content=dossier, headers={"Cache-Control": "no-store"})
+    return JSONResponse(
+        content={**dossier, "export_metadata": export_metadata()},
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @router.get("/career-dossier.md", summary="Career-profile dossier (Markdown)")
@@ -490,7 +494,10 @@ async def get_portfolio(
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
     _log_portfolio_export(request, current_user, "json")
-    return JSONResponse(content=portfolio, headers={"Cache-Control": "no-store"})
+    return JSONResponse(
+        content={**portfolio, "export_metadata": export_metadata()},
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @router.get("/portfolio.md", summary="Professional portfolio (Markdown)")

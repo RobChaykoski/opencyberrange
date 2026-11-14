@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 from fpdf import FPDF
 
+from app.services.export_labels import apply_pdf_metadata
 from app.services.pdf_report import _sanitize_for_pdf
 
 
@@ -50,6 +51,7 @@ def generate_reports_pdf(payload: dict) -> bytes:
     pdf.set_subject("Cross-course learning report")
     pdf.set_creator("SWOCTS Cyber Range")
     pdf.set_keywords("SWOCTS, cyber range, learning reports, accessibility")
+    apply_pdf_metadata(pdf, "SWOCTS Cyber Range - learning reports", "Cross-course learning report")
     if hasattr(pdf, "set_lang"):
         pdf.set_lang("en")
     pdf.add_page()

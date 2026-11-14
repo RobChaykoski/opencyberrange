@@ -23,6 +23,7 @@ from app.models import Achievement, Competition, CompetitionParticipant, User
 from app.services import settings_service
 from app.services.achievements import competition_achievement_parts
 from app.services.pdf_report import _sanitize_for_pdf
+from app.services.export_labels import apply_pdf_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -468,6 +469,11 @@ def event_certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.set_subject(certificate.get("title") or "Event certificate")
     pdf.set_creator("SWOCTS Cyber Range")
     pdf.set_keywords("SWOCTS, cyber range, event, certificate")
+    apply_pdf_metadata(
+        pdf,
+        "SWOCTS Cyber Range event certificate",
+        certificate.get("title") or "Event certificate",
+    )
     if hasattr(pdf, "set_lang"):
         pdf.set_lang("en")
     pdf.add_page()

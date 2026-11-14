@@ -259,11 +259,21 @@ router.beforeEach(async (to, from, next) => {
   }
 
   const token = localStorage.getItem('token')
+  const impersonating = sessionStorage.getItem('ocr_impersonating') === 'true'
 
   if (to.meta.requiresAuth && !token) {
     next('/login')
   } else if (to.meta.guest && token && !to.meta.ssoCallback) {
     next('/dashboard')
+  } else if (
+    to.path === '/dashboard'
+    && token
+    && !impersonating
+    && userHasRole('admin')
+  ) {
+    // Administrators work from the Admin sections; the learner/instructor
+    // dashboard is not part of their interface.
+    next('/admin')
   } else if (to.meta.requiresAdmin && !userHasRole('admin')) {
     next('/dashboard')
   } else if (to.meta.requiresInstructor && !userHasRole('instructor')) {
