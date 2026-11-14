@@ -394,7 +394,11 @@ def import_identity_providers(
                     "name": entry["name"],
                     "kind": entry["item"].kind,
                     "action": entry["action"],
-                    "enabled": entry["enabled"],
+                    "enabled": (
+                        entry["enabled"]
+                        if entry["action"] != "skip"
+                        else bool(entry["existing"].enabled)
+                    ),
                     "missing_secrets": entry["missing_secrets"],
                 }
                 for entry in prepared
