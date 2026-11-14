@@ -882,7 +882,7 @@
                   </button>
                 </div>
               </div>
-              <div v-if="activeWorkbookUrl" class="workspace-workbook">
+              <div v-if="workbookLoaded && activeWorkbookUrl" class="workspace-workbook">
                 <iframe
                   :key="activeWorkbookUrl"
                   :src="activeWorkbookUrl"
@@ -892,9 +892,12 @@
                   referrerpolicy="no-referrer"
                 ></iframe>
               </div>
-              <div v-else class="workspace-empty">
+              <div v-else-if="!activeWorkbookUrl" class="workspace-empty">
                 This exercise's walkthrough lives in a course workbook. Open the
                 exercise from the course to read it.
+              </div>
+              <div v-else class="workspace-empty">
+                The workbook opens when you select this tab.
               </div>
             </section>
           </div>
@@ -1257,6 +1260,7 @@ const requestedTab = String(route.query.tab || '')
 const workspaceTab = ref(
   WORKSPACE_TABS.includes(requestedTab) ? requestedTab : 'desktop'
 )
+const workbookLoaded = ref(workspaceTab.value === 'workbook')
 const focusWorkspaceTab = (offset) => {
   const index = WORKSPACE_TABS.indexOf(workspaceTab.value)
   const next = WORKSPACE_TABS[(index + offset + WORKSPACE_TABS.length) % WORKSPACE_TABS.length]
@@ -1267,6 +1271,7 @@ const focusWorkspaceTab = (offset) => {
   })
 }
 watch(workspaceTab, (tab) => {
+  if (tab === 'workbook') workbookLoaded.value = true
   if (!activeLab.value) return
   if (String(route.query.tab || '') === tab) return
   router.replace({ path: route.path, query: { ...route.query, tab } })
@@ -1471,6 +1476,7 @@ const openActiveLab = async (lab) => {
       params
     })
     activeLab.value = data
+    workbookLoaded.value = workspaceTab.value === 'workbook'
     loadReaction(data.lab?.id || lab.id)
 
     // The framed workbook loads from the wiki origin; make sure the
@@ -1559,6 +1565,7 @@ const setReaction = async (value) => {
 
 const closeActiveLab = () => {
   activeLab.value = null
+  workbookLoaded.value = false
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
