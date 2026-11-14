@@ -739,6 +739,47 @@
               No certificates yet. Finish every exercise in a level and the certificate appears here.
             </p>
 
+            <div class="open-badges-block">
+              <div class="open-badges-block__head">
+                <h3 class="subsection-title">Open Badges</h3>
+                <button class="btn btn--outline btn--sm" :disabled="badgesLoading" @click="fetchBadges">
+                  {{ badgesLoading ? 'Loading...' : 'Refresh' }}
+                </button>
+              </div>
+              <p class="help-text">
+                Portable Open Badges 3.0 credentials issued from your level certificates.
+                The public link is pseudonymous unless you choose to include your name.
+              </p>
+              <p v-if="badgeMessage" class="success-message">{{ badgeMessage }}</p>
+              <p v-if="badgeError" class="error-message" role="alert">{{ badgeError }}</p>
+              <div v-if="!badges.length" class="empty-transcript">
+                No Open Badges yet. Open a certificate and choose <strong>Get Open Badge</strong>.
+              </div>
+              <ul v-else class="open-badges-list">
+                <li v-for="badge in badges" :key="badge.jti">
+                  <div>
+                    <strong>{{ badge.achievement_name }}</strong>
+                    <span :class="['open-badge-status', `open-badge-status--${badge.status}`]">{{ badge.status }}</span>
+                    <p class="cell-muted">
+                      {{ badge.issued_at ? new Date(badge.issued_at).toLocaleDateString() : '—' }}
+                      · {{ badge.recipient_name_opt_in ? 'Name shared' : 'Pseudonymous' }}
+                    </p>
+                  </div>
+                  <div class="open-badges-actions">
+                    <a class="btn btn--outline btn--xs" :href="`/badges/${badge.jti}`" target="_blank" rel="noopener">View</a>
+                    <button class="btn btn--ghost btn--xs" @click="copyBadge(badge)">Copy link</button>
+                    <button
+                      class="btn btn--ghost btn--xs"
+                      :disabled="badgeConsentBusy === badge.id || badge.status === 'revoked'"
+                      @click="toggleBadgeName(badge)"
+                    >
+                      {{ badge.recipient_name_opt_in ? 'Use pseudonym' : 'Include my name' }}
+                    </button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
             <div v-if="visibleTracks.length" class="profile-tracks">
               <h3 class="subsection-title">Track progress</h3>
               <div v-for="track in visibleTracks" :key="track.track_slug" class="track-progress">
@@ -1614,6 +1655,59 @@ const roleBadgeClass = computed(() => ({
 }))
 
 const certificates = computed(() => summary.value?.certificates || [])
+const badges = ref([])
+const badgesLoading = ref(false)
+const badgeError = ref('')
+const badgeMessage = ref('')
+const badgeConsentBusy = ref(null)
+
+async function fetchBadges() {
+  badgesLoading.value = true
+  badgeError.value = ''
+  try {
+    const { data } = await axios.get('/badges/mine')
+    badges.value = data.credentials || []
+  } catch (e) {
+    badgeError.value = e.response?.data?.detail || 'Could not load your Open Badges.'
+  } finally {
+    badgesLoading.value = false
+  }
+}
+
+async function copyBadge(badge) {
+  const url = `${window.location.origin}/badges/${badge.jti}`
+  try {
+    await navigator.clipboard.writeText(url)
+  } catch {
+    const input = document.createElement('textarea')
+    input.value = url
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    input.remove()
+  }
+  badgeMessage.value = 'Badge link copied.'
+  setTimeout(() => { badgeMessage.value = '' }, 2500)
+}
+
+async function toggleBadgeName(badge) {
+  badgeConsentBusy.value = badge.id
+  badgeError.value = ''
+  const includeName = !badge.recipient_name_opt_in
+  try {
+    await axios.post(`/badges/${badge.id}/consent`, {
+      include_name: includeName,
+    })
+    await fetchBadges()
+    badgeMessage.value = includeName
+      ? 'Your name will be included in the public credential.'
+      : 'Your name will be omitted from the public credential.'
+  } catch (e) {
+    badgeError.value = e.response?.data?.detail || 'Could not update name sharing.'
+  } finally {
+    badgeConsentBusy.value = null
+  }
+}
 
 const progressMessage = computed(() => {
   const percent = summary.value?.totals?.progress_percent ?? 0
@@ -2550,6 +2644,7 @@ usePoll(refreshVpnStatus, 10000)
 onMounted(() => {
   fetchUserInfo()
   fetchSummary()
+  fetchBadges()
   fetchEnrolledCourses()
   nextTick(() => {
     document.getElementById(`profile-tab-${activeTab.value}`)?.scrollIntoView({
@@ -4501,6 +4596,47 @@ watch(() => route.path, (newPath) => {
 
 .transcript-section {
   padding: 1.6rem;
+}
+.open-badges-block {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+.open-badges-block__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.open-badges-list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.open-badges-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+}
+.open-badges-list p { margin: 0.2rem 0 0; font-size: 0.75rem; }
+.open-badges-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.open-badge-status {
+  margin-left: 0.45rem;
+  font-size: 0.7rem;
+  text-transform: capitalize;
+}
+.open-badge-status--active { color: var(--success); }
+.open-badge-status--revoked { color: var(--danger); }
+@media (max-width: 700px) {
+  .open-badges-list li { flex-direction: column; align-items: flex-start; }
 }
 
 .transcript-head {

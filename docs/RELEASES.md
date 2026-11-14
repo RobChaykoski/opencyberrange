@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.9.1` | SWOCTS Cyber Range Release 5.9.1 | Current patch (signed annotated tag): badge revocation UI |
+| `v5.10.0` | SWOCTS Cyber Range Release 5.10 | Current production feature release (signed annotated tag): profile badge list, name sharing, issuer URL guard |
+| `v5.9.1` | SWOCTS Cyber Range Release 5.9.1 | Previous patch (signed annotated tag): badge revocation UI |
 | `v5.9.0` | SWOCTS Cyber Range Release 5.9 | Previous feature release (signed annotated tag): badge admin, key rotation, public viewer |
 | `v5.8.1` | SWOCTS Cyber Range Release 5.8.1 | Previous patch (signed annotated tag): badge eligibility fix |
 | `v5.8.0` | SWOCTS Cyber Range Release 5.8 | Previous feature release (signed annotated tag): Open Badges 3.0 level credentials |

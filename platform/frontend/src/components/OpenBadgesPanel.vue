@@ -113,11 +113,24 @@ const saveSettings = async () => {
   saving.value = true
   error.value = ''
   message.value = ''
-  try {
-    await axios.put('/admin/badges/settings', {
+  const send = (confirmChange) =>
+    axios.put('/admin/badges/settings', {
       issuer_name: form.issuer_name,
       issuer_url: form.issuer_url,
+      confirm_change: confirmChange,
     })
+  try {
+    try {
+      await send(false)
+    } catch (e) {
+      if (e.response?.status === 409) {
+        const proceed = window.confirm(`${e.response.data.detail}\n\nContinue?`)
+        if (!proceed) return
+        await send(true)
+      } else {
+        throw e
+      }
+    }
     message.value = 'Issuer settings saved.'
     await load()
   } catch (e) {

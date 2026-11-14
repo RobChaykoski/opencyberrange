@@ -32,6 +32,7 @@ class RevokeRequest(BaseModel):
 class BadgeSettingsUpdate(BaseModel):
     issuer_name: str = Field(..., min_length=1, max_length=120)
     issuer_url: str = Field("", max_length=500)
+    confirm_change: bool = False
 
 
 def _credential_or_404(db: Session, jti: str) -> OpenBadgeCredential:
@@ -71,6 +72,21 @@ def update_badge_settings(
     url = payload.issuer_url.strip().rstrip("/")
     if url and not url.startswith(("https://", "http://")):
         raise HTTPException(status_code=400, detail="Issuer URL must be http(s)")
+    current_url = (
+        settings_service.get_setting_fresh(db, "open_badge_issuer_url", "") or ""
+    ).strip().rstrip("/")
+    if (
+        url != current_url
+        and db.query(OpenBadgeCredential).count()
+        and not payload.confirm_change
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Credentials already exist at this issuer URL. Confirm the change: "
+                "older credentials keep their original issuer and status location."
+            ),
+        )
     settings_service.set_setting(
         db, "open_badge_issuer_name", payload.issuer_name.strip()
     )
@@ -269,8 +285,19 @@ def badge_consent(
     )
     if row is None:
         raise HTTPException(status_code=404, detail="Badge not found")
+    if open_badges.credential_status(row) == "revoked":
+        raise HTTPException(status_code=409, detail="Revoked credentials cannot be changed")
     row.recipient_name_opt_in = bool(payload.include_name)
     db.commit()
+    log_activity(
+        db,
+        EventTypes.OPEN_BADGE_CONSENT_CHANGED,
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=current_user.id,
+        target_label=row.jti,
+        detail={"include_name": bool(row.recipient_name_opt_in)},
+    )
     return {"ok": True, "recipient_name_opt_in": bool(row.recipient_name_opt_in)}
 
 

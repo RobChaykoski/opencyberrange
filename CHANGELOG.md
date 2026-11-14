@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.10.0] - 2026-11-14
+
+### Open Badges
+- The profile now lists issued Open Badges with status, issue date, name-sharing
+  state, viewer links, copy-link, and a toggle to include or omit the display
+  name on the public credential. Name-sharing changes are audited, and a
+  revoked credential cannot be changed.
+- Changing the issuer URL after credentials exist now requires explicit
+  confirmation; older credentials keep their original issuer and status URL.
+
 ## [5.9.1] - 2026-11-14
 
 ### Open Badges
