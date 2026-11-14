@@ -2,6 +2,7 @@
 
 import re
 
+from app.routers import curriculum
 from app.routers.curriculum import CERTIFICATE_DESIGNS, _certificate_pdf_bytes
 
 
@@ -30,20 +31,13 @@ def _certificate(design: str) -> dict:
     }
 
 
-def _stable(pdf: bytes) -> bytes:
-    """Drop the render timestamp so two renders can be compared."""
-    return re.sub(rb"/CreationDate \(.*?\)", b"", pdf)
-
-
 def test_each_design_renders_a_distinct_a4_landscape_pdf():
     outputs = {
         design: _certificate_pdf_bytes(_certificate(design))
         for design in CERTIFICATE_DESIGNS
     }
 
-    assert len(set(_stable(pdf) for pdf in outputs.values())) == len(
-        CERTIFICATE_DESIGNS
-    )
+    assert len(set(outputs.values())) == len(CERTIFICATE_DESIGNS)
 
     for design, pdf in outputs.items():
         assert pdf.startswith(b"%PDF"), design
@@ -59,7 +53,12 @@ def test_each_design_renders_a_distinct_a4_landscape_pdf():
         assert abs(height_pt - 595.28) < 1, design
 
 
-def test_unknown_design_falls_back_to_classic():
-    classic = _certificate_pdf_bytes(_certificate("classic"))
-    fallback = _certificate_pdf_bytes(_certificate("not-a-design"))
-    assert _stable(classic) == _stable(fallback)
+def test_unknown_design_falls_back_to_classic(monkeypatch):
+    seen = []
+
+    def capture(pdf, certificate, design, qr_path):
+        seen.append(design)
+
+    monkeypatch.setattr(curriculum, "_draw_certificate_pdf", capture)
+    curriculum._certificate_pdf_bytes(_certificate("not-a-design"))
+    assert seen == ["classic"]
