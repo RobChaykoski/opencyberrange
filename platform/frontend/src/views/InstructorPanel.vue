@@ -14,6 +14,11 @@
     <div class="tab-bar">
       <button
         class="tab-btn"
+        :class="{ 'tab-btn--active': activeTab === 'overview' }"
+        @click="switchTab('overview')"
+      >Overview</button>
+      <button
+        class="tab-btn"
         :class="{ 'tab-btn--active': activeTab === 'courses' }"
         @click="switchTab('courses')"
       >My Courses</button>
@@ -22,6 +27,126 @@
         :class="{ 'tab-btn--active': activeTab === 'labs' }"
         @click="switchTab('labs')"
       >Exercises</button>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div v-if="activeTab === 'overview'" class="tab-content">
+      <div class="panel">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Teaching overview</h2>
+            <p class="section-desc">
+              Aggregate progress across your courses. Slices with fewer than five
+              learners are suppressed; no learner is ranked or named here.
+            </p>
+          </div>
+        </div>
+
+        <div class="overview-filters">
+          <label class="overview-filter">
+            <span>Window</span>
+            <select v-model.number="overviewDays" class="form-input form-input--sm" @change="fetchOverview">
+              <option :value="7">Last 7 days</option>
+              <option :value="30">Last 30 days</option>
+              <option :value="90">Last 90 days</option>
+            </select>
+          </label>
+          <label class="overview-filter">
+            <span>From</span>
+            <input v-model="overviewStart" type="date" class="form-input form-input--sm" @change="fetchOverview" />
+          </label>
+          <label class="overview-filter">
+            <span>To</span>
+            <input v-model="overviewEnd" type="date" class="form-input form-input--sm" @change="fetchOverview" />
+          </label>
+          <label class="overview-filter">
+            <span>Course</span>
+            <select v-model="overviewCourseId" class="form-input form-input--sm" @change="fetchOverview">
+              <option value="all">All my courses</option>
+              <option v-for="course in courses" :key="course.id" :value="String(course.id)">
+                {{ course.code ? `${course.code} — ${course.name}` : course.name }}
+              </option>
+            </select>
+          </label>
+          <button class="btn btn--secondary btn--sm" :disabled="overviewLoading" @click="fetchOverview">
+            {{ overviewLoading ? 'Loading...' : 'Refresh' }}
+          </button>
+        </div>
+
+        <p v-if="overviewError" class="form-error" role="alert">{{ overviewError }}</p>
+        <div v-if="overviewLoading && !overview" class="empty-state">Loading overview...</div>
+        <template v-else-if="overview">
+          <div class="overview-grid">
+            <article v-for="card in overviewCards" :key="card.key" class="overview-card">
+              <span class="overview-card__label">{{ card.label }}</span>
+              <strong class="overview-card__value">{{ card.value }}</strong>
+              <span class="overview-card__sub">{{ card.sub }}</span>
+            </article>
+          </div>
+
+          <div class="overview-chart">
+            <div class="overview-chart__head">
+              <h3>Trends</h3>
+              <div class="overview-legend">
+                <span><i class="overview-dot overview-dot--completions"></i> Completions</span>
+                <span><i class="overview-dot overview-dot--active"></i> Active learners</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 600 170" preserveAspectRatio="none" role="img" aria-label="Completion and active learner trend">
+              <line x1="0" y1="140" x2="600" y2="140" class="overview-axis" />
+              <polyline :points="overviewPoints('completions')" class="overview-line overview-line--completions" />
+              <polyline :points="overviewPoints('active_learners')" class="overview-line overview-line--active" />
+            </svg>
+            <div class="overview-chart__axis">
+              <span>{{ overview.window.start.slice(0, 10) }}</span>
+              <span>{{ overview.window.end.slice(0, 10) }}</span>
+            </div>
+          </div>
+
+          <div v-if="overview.totals.suppressed" class="overview-note">
+            Course-level rates are hidden because this window has fewer than five learners.
+          </div>
+
+          <div v-if="overview.courses.length" class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Course</th>
+                  <th>Learners</th>
+                  <th>Assigned pairs</th>
+                  <th>Completed</th>
+                  <th>Completion</th>
+                  <th>Active</th>
+                  <th>Reviews</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in overview.courses" :key="row.id">
+                  <td class="cell-primary">
+                    <strong>{{ row.code }}</strong>
+                    <div class="cell-muted">{{ row.name }}</div>
+                  </td>
+                  <td>{{ row.learners }}</td>
+                  <td>{{ row.assigned_pairs }}</td>
+                  <td>{{ row.completed }}</td>
+                  <td>
+                    <span :class="['overview-pill', completionClass(row.completion_rate)]">
+                      {{ row.suppressed ? 'n<5' : (row.completion_rate === null ? '—' : `${row.completion_rate}%`) }}
+                    </span>
+                  </td>
+                  <td>{{ row.active_learners }}</td>
+                  <td>{{ row.pending_reviews }}</td>
+                  <td class="cell-actions">
+                    <button class="btn btn--outline btn--xs" @click="openOverviewCourse(row)">Open course</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div v-else class="empty-state">No courses are assigned to you yet.</div>
+        </template>
+      </div>
     </div>
 
     <!-- MY COURSES TAB -->
@@ -1397,8 +1522,83 @@ const currentUser = (() => { try { return JSON.parse(localStorage.getItem('user'
 const route = useRoute()
 const router = useRouter()
 
-const activeTab = ref(route.query.tab || 'courses')
+const activeTab = ref(route.query.tab || 'overview')
 const courses = ref([])
+const overview = ref(null)
+const overviewLoading = ref(false)
+const overviewError = ref('')
+const overviewDays = ref(30)
+const overviewStart = ref('')
+const overviewEnd = ref('')
+const overviewCourseId = ref('all')
+
+const fetchOverview = async () => {
+  overviewLoading.value = true
+  overviewError.value = ''
+  try {
+    const params = new URLSearchParams({ days: String(overviewDays.value) })
+    if (overviewStart.value) params.set('start', `${overviewStart.value}T00:00:00`)
+    if (overviewEnd.value) params.set('end', `${overviewEnd.value}T23:59:59`)
+    if (overviewCourseId.value !== 'all') params.set('course_id', overviewCourseId.value)
+    const { data } = await axios.get(`/instructor/overview?${params.toString()}`)
+    overview.value = data
+  } catch (e) {
+    overviewError.value = e.response?.data?.detail || 'Could not load the teaching overview.'
+  } finally {
+    overviewLoading.value = false
+  }
+}
+
+const overviewCards = computed(() => {
+  const totals = overview.value?.totals
+  if (!totals) return []
+  const rate = totals.suppressed
+    ? 'n<5'
+    : totals.completion_rate === null
+      ? '—'
+      : `${totals.completion_rate}%`
+  return [
+    { key: 'courses', label: 'Courses', value: totals.courses, sub: 'visible to you' },
+    { key: 'learners', label: 'Learners', value: totals.learners, sub: 'enrolled, unique' },
+    { key: 'active', label: 'Active learners', value: totals.active_learners, sub: 'in the selected window' },
+    { key: 'rate', label: 'Completion', value: rate, sub: `${totals.completed} of ${totals.assigned_pairs} assigned pairs` },
+    { key: 'completed', label: 'Completed exercises', value: totals.completed, sub: 'learner–exercise pairs' },
+    { key: 'reviews', label: 'Pending reviews', value: totals.pending_reviews, sub: 'awaiting a decision' },
+  ]
+})
+
+const overviewPoints = (field) => {
+  const series = overview.value?.trend || []
+  const values = series.map((row) => row[field] || 0)
+  if (!values.length) return ''
+  if (values.length === 1) return `0,140 600,140`
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  const span = max - min || 1
+  return values
+    .map((value, index) => {
+      const x = (index / (values.length - 1)) * 600
+      const y = 140 - ((value - min) / span) * 130
+      return `${x.toFixed(1)},${y.toFixed(1)}`
+    })
+    .join(' ')
+}
+
+const completionClass = (rate) => {
+  if (rate === null || rate === undefined) return 'overview-pill--muted'
+  if (rate >= 80) return 'overview-pill--good'
+  if (rate >= 50) return 'overview-pill--warn'
+  return 'overview-pill--bad'
+}
+
+const openOverviewCourse = async (row) => {
+  const course = courses.value.find((item) => item.id === row.id)
+  if (!course) return
+  switchTab('courses')
+  await openCourseManagerTab(course, 'students')
+  await nextTick()
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
 const coursesLoading = ref(false)
 const labs = ref([])
 const trackSummaries = ref([])
@@ -3132,6 +3332,10 @@ async function fetchLabAssignments() {
   }
 }
 
+watch(activeTab, (tab) => {
+  if (tab === 'overview') fetchOverview()
+})
+
 onMounted(() => {
   fetchModules()
   fetchCourses()
@@ -3139,6 +3343,7 @@ onMounted(() => {
   fetchLabAssignments()
   fetchTesterResults()
   checkActiveTestRun()
+  if (activeTab.value === 'overview') fetchOverview()
 })
 
 onUnmounted(() => {
@@ -3176,6 +3381,96 @@ onUnmounted(() => {
   gap: 0.25rem;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 1.5rem;
+}
+.overview-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+.overview-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+.overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-secondary);
+}
+.overview-card__label {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.overview-card__value { font-size: 1.5rem; color: var(--text-primary); }
+.overview-card__sub { color: var(--text-muted); font-size: 0.72rem; }
+.overview-chart { margin: 1.25rem 0; }
+.overview-chart__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.overview-chart__head h3 { margin: 0; font-size: 0.95rem; }
+.overview-chart svg { width: 100%; height: 170px; display: block; }
+.overview-chart__axis {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+.overview-axis { stroke: var(--border-color); stroke-width: 1; }
+.overview-line { fill: none; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.overview-line--completions { stroke: var(--accent); }
+.overview-line--active { stroke: var(--success); }
+.overview-legend {
+  display: flex;
+  gap: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+.overview-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  margin-right: 0.3rem;
+}
+.overview-dot--completions { background: var(--accent); }
+.overview-dot--active { background: var(--success); }
+.overview-pill {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+.overview-pill--good { color: var(--success); border-color: var(--success); }
+.overview-pill--warn { color: var(--warning, #d97706); border-color: var(--warning, #d97706); }
+.overview-pill--bad { color: var(--danger); border-color: var(--danger); }
+.overview-pill--muted { color: var(--text-muted); }
+.overview-note {
+  margin: 0.75rem 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
 }
 
 .tab-btn {

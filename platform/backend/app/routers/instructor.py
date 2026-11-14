@@ -11,16 +11,29 @@ import logging
 import os
 import re
 import shutil
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File, Form
 from pydantic import BaseModel
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 import yaml
 
 from app.database import get_db
-from app.models import User, Course, CourseEnrollment, CourseLabAssignment, Lab, LabCompletion, Track, Level
+from app.models import (
+    User,
+    Course,
+    CourseEnrollment,
+    CourseLabAssignment,
+    Lab,
+    LabCompletion,
+    LabSession,
+    ReviewRequest,
+    Track,
+    Level,
+)
 from app.auth import get_current_instructor_user
 from app.services.audit import log_admin_action, AuditActions
 from app.services.docker_manager import get_track_directory_name
@@ -40,6 +53,230 @@ except ImportError:
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
+
+
+def _overview_window(
+    days: int, start: Optional[str], end: Optional[str]
+) -> tuple[datetime, datetime]:
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    end_dt = now
+    if end:
+        try:
+            end_dt = datetime.fromisoformat(end.replace("Z", "+00:00")).replace(
+                tzinfo=None
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Invalid end date") from exc
+    start_dt = end_dt - timedelta(days=max(1, min(int(days), 365)))
+    if start:
+        try:
+            start_dt = datetime.fromisoformat(start.replace("Z", "+00:00")).replace(
+                tzinfo=None
+            )
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail="Invalid start date") from exc
+    if start_dt >= end_dt:
+        raise HTTPException(status_code=400, detail="Start must be before end")
+    return start_dt, end_dt
+
+
+@router.get("/overview")
+def instructor_overview(
+    days: int = 30,
+    course_id: Optional[int] = None,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Aggregate cross-course cards and a trend series for the instructor view.
+
+    Definitions: assigned pairs = course lab assignments × enrolled learners;
+    completion = completed learner–exercise pairs / assigned pairs. Slices with
+    fewer than five learners have their rate suppressed. No learner is named.
+    """
+    start_dt, end_dt = _overview_window(days, start, end)
+    query = db.query(Course)
+    if current_user.role != "admin":
+        query = query.filter(Course.instructor_id == current_user.id)
+    if course_id is not None:
+        query = query.filter(Course.id == course_id)
+    courses = query.order_by(Course.code, Course.name).all()
+    if course_id is not None and not courses:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    course_ids = [course.id for course in courses]
+    learner_ids: set[int] = set()
+    active_ids: set[int] = set()
+    lab_ids: set[int] = set()
+    pending_reviews = 0
+    rows = []
+
+    if course_ids:
+        for enrollment in (
+            db.query(CourseEnrollment.course_id, CourseEnrollment.user_id)
+            .filter(CourseEnrollment.course_id.in_(course_ids))
+            .all()
+        ):
+            learner_ids.add(enrollment.user_id)
+        lab_ids = {
+            row.lab_id
+            for row in db.query(CourseLabAssignment.lab_id)
+            .filter(CourseLabAssignment.course_id.in_(course_ids))
+            .all()
+        }
+        active_ids = {
+            row.user_id
+            for row in db.query(LabSession.user_id)
+            .filter(
+                LabSession.lab_id.in_(lab_ids) if lab_ids else False,
+                LabSession.started_at >= start_dt,
+                LabSession.started_at <= end_dt,
+            )
+            .distinct()
+            .all()
+        } if lab_ids else set()
+        pending_reviews = (
+            db.query(ReviewRequest)
+            .filter(
+                ReviewRequest.course_id.in_(course_ids),
+                ReviewRequest.status == "pending",
+            )
+            .count()
+        )
+
+    total_assigned = total_completed = 0
+    for course in courses:
+        enrolled_ids = {
+            row.user_id
+            for row in db.query(CourseEnrollment.user_id)
+            .filter(CourseEnrollment.course_id == course.id)
+            .all()
+        }
+        course_lab_ids = [
+            row.lab_id
+            for row in db.query(CourseLabAssignment.lab_id)
+            .filter(CourseLabAssignment.course_id == course.id)
+            .all()
+        ]
+        assigned_pairs = len(enrolled_ids) * len(course_lab_ids)
+        completed = 0
+        if enrolled_ids and course_lab_ids:
+            completed = (
+                db.query(func.count(LabCompletion.id))
+                .filter(
+                    LabCompletion.user_id.in_(enrolled_ids),
+                    LabCompletion.lab_id.in_(course_lab_ids),
+                )
+                .scalar()
+                or 0
+            )
+        active = 0
+        if enrolled_ids and course_lab_ids:
+            active = (
+                db.query(LabSession.user_id)
+                .filter(
+                    LabSession.user_id.in_(enrolled_ids),
+                    LabSession.lab_id.in_(course_lab_ids),
+                    LabSession.started_at >= start_dt,
+                    LabSession.started_at <= end_dt,
+                )
+                .distinct()
+                .count()
+            )
+        course_pending = (
+            db.query(ReviewRequest)
+            .filter(
+                ReviewRequest.course_id == course.id,
+                ReviewRequest.status == "pending",
+            )
+            .count()
+        )
+        suppressed = 0 < len(enrolled_ids) < 5
+        rate = None
+        if assigned_pairs and not suppressed:
+            rate = round(min(completed / assigned_pairs, 1.0) * 100, 1)
+        total_assigned += assigned_pairs
+        total_completed += completed
+        rows.append(
+            {
+                "id": course.id,
+                "code": getattr(course, "code", None) or f"Course {course.id}",
+                "name": course.name,
+                "learners": len(enrolled_ids),
+                "assigned_pairs": assigned_pairs,
+                "completed": completed,
+                "completion_rate": rate,
+                "active_learners": active,
+                "pending_reviews": course_pending,
+                "suppressed": suppressed,
+            }
+        )
+
+    trend = []
+    if lab_ids:
+        completions_by_day = {
+            str(day): count
+            for day, count in db.query(
+                func.date(LabCompletion.completed_at), func.count(LabCompletion.id)
+            )
+            .filter(
+                LabCompletion.lab_id.in_(lab_ids),
+                LabCompletion.completed_at >= start_dt,
+                LabCompletion.completed_at <= end_dt,
+            )
+            .group_by(func.date(LabCompletion.completed_at))
+            .all()
+        }
+        active_by_day = {
+            str(day): count
+            for day, count in db.query(
+                func.date(LabSession.started_at),
+                func.count(func.distinct(LabSession.user_id)),
+            )
+            .filter(
+                LabSession.lab_id.in_(lab_ids),
+                LabSession.started_at >= start_dt,
+                LabSession.started_at <= end_dt,
+            )
+            .group_by(func.date(LabSession.started_at))
+            .all()
+        }
+        cursor = start_dt.date()
+        while cursor <= end_dt.date():
+            key = str(cursor)
+            trend.append(
+                {
+                    "date": key,
+                    "completions": int(completions_by_day.get(key, 0)),
+                    "active_learners": int(active_by_day.get(key, 0)),
+                }
+            )
+            cursor += timedelta(days=1)
+
+    completion_rate = None
+    if total_assigned and len(learner_ids) >= 5:
+        completion_rate = round(min(total_completed / total_assigned, 1.0) * 100, 1)
+
+    return {
+        "window": {
+            "start": start_dt.isoformat(),
+            "end": end_dt.isoformat(),
+            "days": max(1, (end_dt - start_dt).days),
+        },
+        "totals": {
+            "courses": len(courses),
+            "learners": len(learner_ids),
+            "active_learners": len(active_ids),
+            "assigned_pairs": total_assigned,
+            "completed": total_completed,
+            "completion_rate": completion_rate,
+            "pending_reviews": pending_reviews,
+            "suppressed": 0 < len(learner_ids) < 5,
+        },
+        "trend": trend,
+        "courses": rows,
+    }
 
 
 @router.get("/courses")
@@ -948,3 +1185,4 @@ async def reveal_lab_flag(
         "status": "ok",
         "message": "",
     }
+

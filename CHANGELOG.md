@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.4.0] - 2026-11-14
+
+### Instructor
+- Added a cross-course **Overview** to the instructor panel: cards for courses,
+  unique learners, active learners, completion, completed pairs, and pending
+  reviews; a completion/active-learner trend chart; and a course table.
+- Filters: 7/30/90-day windows, custom start/end dates, and a single-course
+  filter. Course rates are suppressed below five learners; no learner is ranked
+  or named. Existing course management tabs are unchanged.
+
 ## [5.3.1] - 2026-11-14
 
 ### Navigation
