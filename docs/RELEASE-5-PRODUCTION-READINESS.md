@@ -53,8 +53,11 @@ Alembic `0025`). Production remains on the signed Release 4 hotfix `v4.0.2`.
    after the release merge.
 3. Apply migrations `0015`–`0025` during a maintenance window. Dev upgraded
    cleanly from `0014` to `0025`; the migration is additive.
-4. Open **TCP 8443** in the host firewall. The frontend container exposes it; the
-   browser must reach it for workbooks.
+4. Confirm **TCP 8443** reaches the frontend. Probed on 2026-11-14: production
+   UFW is disabled (`/etc/ufw/ufw.conf` `ENABLED=no`), and 8443 resets rather
+   than drops from both the workstation and development, so no host firewall
+   change is required. Release 4 does not publish the port yet; after deploying,
+   confirm a browser can open `https://<production-host>:8443`.
 5. Set the `wiki_origin` platform setting to `https://<production-host>:8443`.
 6. Set `PLATFORM_VERSION=5` for the frontend build and confirm `/api/version`
    reports 5.
