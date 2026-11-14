@@ -529,7 +529,14 @@
               </button>
             </div>
           </div>
-          <nav v-if="workspaceMode" class="workspace-tabs" role="tablist" aria-label="Exercise workspace">
+          <nav
+            v-if="workspaceMode"
+            class="workspace-tabs"
+            role="tablist"
+            aria-label="Exercise workspace"
+            @keydown.left.prevent="focusWorkspaceTab(-1)"
+            @keydown.right.prevent="focusWorkspaceTab(1)"
+          >
             <button
               type="button"
               id="workspace-tab-desktop"
@@ -583,25 +590,6 @@
               class="panel-section panel-section--rangebox"
               aria-label="RangeBox desktop"
             >
-              <div class="workspace-frame__head">
-                <h3 class="section-title">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="section-icon">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                    <line x1="8" y1="21" x2="16" y2="21"/>
-                    <line x1="12" y1="17" x2="12" y2="21"/>
-                  </svg>
-                  RangeBox
-                </h3>
-                <div class="workspace-frame__actions">
-                  <span class="workspace-frame__hint">Work here. Submit flags in the Exercise tab.</span>
-                  <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBoxPopout">
-                    Pop out
-                  </button>
-                  <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBox">
-                    Open in new tab
-                  </button>
-                </div>
-              </div>
               <div class="workspace-rangebox">
                 <RangeBox
                   :session-id="rangeboxSessionId"
@@ -1023,7 +1011,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { hasRole } from '../utils/roles'
 import { useMobileView } from '../composables/useMobileView'
@@ -1301,6 +1289,12 @@ const requestedTab = String(route.query.tab || '')
 const workspaceTab = ref(
   WORKSPACE_TABS.includes(requestedTab) ? requestedTab : 'desktop'
 )
+const focusWorkspaceTab = (offset) => {
+  const index = WORKSPACE_TABS.indexOf(workspaceTab.value)
+  const next = WORKSPACE_TABS[(index + offset + WORKSPACE_TABS.length) % WORKSPACE_TABS.length]
+  workspaceTab.value = next
+  nextTick(() => document.getElementById(`workspace-tab-${next}`)?.focus())
+}
 watch(workspaceTab, (tab) => {
   if (!activeLab.value) return
   if (String(route.query.tab || '') === tab) return
