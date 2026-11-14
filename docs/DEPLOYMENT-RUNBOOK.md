@@ -161,6 +161,28 @@ data. Rotating the backup key requires importing the new public key on
 production, updating `BACKUP_GPG_RECIPIENT`, and keeping the old private key
 long enough to read existing off-host copies.
 
+### SMB/NAS target
+
+An additional SMB copy can be enabled without a root mount by uploading the
+encrypted files with `curl` (Ubuntu's curl includes SMB). Configure:
+
+```bash
+# ~/.ocr-smb-netrc  (chmod 600)
+machine 172.16.16.8 login <service-account> password <secret>
+```
+
+and set these in the backup cron:
+
+```bash
+BACKUP_SMB_URL='smb://172.16.16.8/Backups/OCR-Export-Backup/'
+BACKUP_SMB_NETRC="$HOME/.ocr-smb-netrc"
+```
+
+SMB upload requires `BACKUP_GPG_RECIPIENT`, so only encrypted payloads leave the
+host. The target directory must allow that account to create files. The NAS
+upload stays disabled until a service account is provided; the dev off-host
+copy remains the active secondary target.
+
 ```bash
 crontab -l | grep -E 'backup-production|restore-drill'
 bash scripts/backup-production.sh          # run now
@@ -183,13 +205,16 @@ certificate's 30-day expiry window. It writes
 `~/.local/state/ocr-monitor/status.json` and logs to
 `~/.local/state/ocr-monitor/cron.log`.
 
-Set `ALERT_WEBHOOK_URL` (Slack-compatible JSON `{"text": ...}`) in
-`~/.ocr-monitor.env` to receive failures; without it, failures are log-only.
+Set `ALERT_WEBHOOK_URL` (Slack-compatible JSON `{"text": ...}`) and/or
+`ALERT_COMMAND` (an executable that receives the failure message as its first
+argument) in `~/.ocr-monitor.env` to receive failures. Without either, failures
+are still visible in `status.json`, `last-failure.txt`, and `cron.log`.
 `DISK_MIN_GB` and `BACKUP_MAX_HOURS` override the defaults in that file.
 
 ```bash
 bash scripts/monitor-deployment.sh
 cat ~/.local/state/ocr-monitor/status.json
+cat ~/.local/state/ocr-monitor/last-failure.txt 2>/dev/null
 ```
 
 ## Regression checks

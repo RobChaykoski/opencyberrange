@@ -94,7 +94,24 @@ if [ -n "${BACKUP_REMOTE:-}" ]; then
   fi
   echo "remote:   syncing to $BACKUP_REMOTE"
   rsync -a "${files[@]}" "${BACKUP_REMOTE%/}/"
-  [ ${#encrypted[@]} -gt 0 ] && rm -f "${encrypted[@]}"
+
+  if [ -n "${BACKUP_SMB_URL:-}" ]; then
+    if [ ${#encrypted[@]} -eq 0 ]; then
+      echo "ERROR: BACKUP_SMB_URL requires BACKUP_GPG_RECIPIENT" >&2
+      exit 1
+    fi
+    netrc="${BACKUP_SMB_NETRC:-$HOME/.ocr-smb-netrc}"
+    [ -f "$netrc" ] || { echo "ERROR: missing SMB credentials file $netrc" >&2; exit 1; }
+    for f in "$DUMP.sha256" "${encrypted[@]}"; do
+      curl -sS --fail --max-time 300 --netrc-file "$netrc" \
+        -T "$f" "${BACKUP_SMB_URL%/}/$(basename "$f")"
+    done
+    echo "smb:      uploaded encrypted set to $BACKUP_SMB_URL"
+  fi
+
+  if [ ${#encrypted[@]} -gt 0 ]; then
+    rm -f "${encrypted[@]}"
+  fi
 fi
 
 find "$BACKUP_DIR" -maxdepth 1 -type f \

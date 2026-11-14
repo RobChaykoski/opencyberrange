@@ -2,6 +2,15 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.1.2] - 2026-11-14
+
+### Operations
+- The deployment monitor now supports an `ALERT_COMMAND` hook and writes
+  `last-failure.txt`, so failures are actionable without a webhook.
+- The backup script can upload the encrypted set to an SMB/NAS target via curl
+  (`BACKUP_SMB_URL`, `BACKUP_SMB_NETRC`). The NAS copy remains disabled until a
+  service account is provided.
+
 ## [5.1.1] - 2026-11-14
 
 ### Operations

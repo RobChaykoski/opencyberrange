@@ -95,10 +95,14 @@ check_cert
 if [ ${#issues[@]} -gt 0 ]; then
   msg="OCR production check failed: ${issues[*]}"
   echo "[$(date -u +%FT%TZ)] FAIL $msg"
+  printf '%s\n' "$msg" > "$STATE_DIR/last-failure.txt"
   if [ -n "${ALERT_WEBHOOK_URL:-}" ]; then
     payload=$(python3 -c 'import json,sys; print(json.dumps({"text": sys.argv[1]}))' "$msg")
     curl -sS --max-time 10 -X POST -H 'Content-Type: application/json' \
       --data "$payload" "$ALERT_WEBHOOK_URL" >/dev/null || true
+  fi
+  if [ -n "${ALERT_COMMAND:-}" ]; then
+    "$ALERT_COMMAND" "$msg" >/dev/null 2>&1 || true
   fi
   printf '{"ok":false,"checked_at":%s,"issues":%s}\n' "$now" \
     "$(python3 -c 'import json,sys; print(json.dumps(sys.argv[1:]))' "${issues[@]}")" \
@@ -106,5 +110,6 @@ if [ ${#issues[@]} -gt 0 ]; then
   exit 1
 fi
 
+rm -f "$STATE_DIR/last-failure.txt"
 printf '{"ok":true,"checked_at":%s,"issues":[]}\n' "$now" > "$STATE_DIR/status.json"
 echo "[$(date -u +%FT%TZ)] OK"
