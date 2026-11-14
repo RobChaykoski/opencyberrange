@@ -41,6 +41,9 @@ Release 4 `v4.0.1`.
 - The RangeBox toolbar is the single desktop bar: the duplicate pane header is
   gone, and connection/clipboard/fullscreen/quality controls stay in one place.
   Left/right arrow keys move between tabs.
+- Workbooks can be served from a dedicated wiki origin. Dev uses
+  `https://172.16.16.44:8443`, so the framed workbook keeps its own storage and
+  search without access to the SPA token; the SPA CSP allows that frame.
 
 ### Minor accounts
 - Minor enrollments can record the institution's parental/guardian consent

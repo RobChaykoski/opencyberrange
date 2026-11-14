@@ -50,6 +50,8 @@ else:
     for marker in REQUIRED_SNIPPET_MARKERS:
         if marker not in snippet:
             fail(f"security-headers.conf is missing {marker}")
+    if "frame-src 'self' https://*:8443" not in snippet:
+        fail("security-headers.conf must allow the dedicated workbook origin frame")
 
 for path in NGINX_FILES:
     if not path.exists():

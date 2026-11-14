@@ -55,7 +55,7 @@
       "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "7a0c57ed2f3834f88d039195bf618298dab233305b0e290279559501d4283a3d"
+      "sha256": "86ec40199e02061aafd486121d763188518578e75f2e789fcc4d5e2d9650019d"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "6b4599e7b72806eb3c78c1a86554436a967f93b09901b60ee88e34e4644428f0"
@@ -73,10 +73,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "2d2ef2bbb3e4091c3971867098110fcbd3f10281884f47592ddc8cdcbb2ca6f5"
+      "sha256": "fee297a0c38dc24bb13f6e0056802ac0f4e4efa561007f114d82625927f2d145"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "835581dfda9b219eee0d2af251e3aae736416848395fe6e0979fbcbfd9a8f08c"
+      "sha256": "9154052ab6d1f855d8ccb02ebf9ed60985fa64b80ad7bb8d0baa6c86d4baf69e"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
@@ -85,7 +85,7 @@
       "sha256": "8a76539e35f6bf523dd1d0148ae88e29d4c1838d51acfed33ada2c1b997f4c4f"
     },
     "platform/frontend/security-headers.conf": {
-      "sha256": "9e5b545f5b2c8d1f9b500323113f0411120548650e0284beaed8088645ec0cfa"
+      "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
     },
     "platform/topology-node/Dockerfile": {
       "sha256": "c25d2ec9cd32a29c10a7de010d057b639a2c0a800a610abcd5b000b18527e981"
