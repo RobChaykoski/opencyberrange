@@ -115,6 +115,17 @@
           inside lab containers. Status reflects the supported baseline and next
           upgrade target; follow the referenced document before changing a component.
         </p>
+        <p v-if="about.host_updates?.available" class="about-copy">
+          Host package check: {{ about.host_updates.upgradable_packages }} upgradable
+          ({{ about.host_updates.security_updates }} security), reboot
+          {{ about.host_updates.reboot_required ? 'required' : 'not required' }} ·
+          checked {{ formatTimestamp(about.host_updates.checked_at) }}.
+        </p>
+        <p v-else class="about-copy cell-muted">
+          Host package status has not been collected yet. Run
+          <code>scripts/collect-host-health.sh</code> on the host (the scheduler runs
+          it every six hours).
+        </p>
         <div class="table-container">
           <table class="data-table">
             <thead>

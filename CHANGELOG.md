@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.7.0] - 2026-11-14
+
+### About
+- Added real host package/reboot status. `scripts/collect-host-health.sh` records
+  the OS, kernel, uptime, upgradable/security package counts, reboot-required
+  flag, and disk free space into the backend's backup volume; About reads it and
+  adds an **OS packages** maintenance row and a checked-at summary.
+- The collector runs at boot and every six hours from the deploy user's crontab;
+  it needs no root and no new mounts.
+- Added a **Platform maintenance** browser pass across Admin groups, System
+  metrics, About, the instructor overview, and Exercise plan in dark and light
+  themes; no console errors.
+
 ## [5.6.0] - 2026-11-14
 
 ### Cohort enforcement

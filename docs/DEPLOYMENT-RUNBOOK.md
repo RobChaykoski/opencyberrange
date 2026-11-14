@@ -153,6 +153,24 @@ still separates one lab from another; the firewall allows the lab ranges so
 shared targets and routed exercises keep working. DNS through Docker's embedded
 resolver remains a residual exfiltration path.
 
+## Host health and package status
+
+`scripts/collect-host-health.sh` writes the host OS/kernel, upgradable and
+security package counts, reboot-required flag, and disk space to
+`/app/backups/host-health.json` inside the backend container (via `docker cp`,
+so no root or extra mount is needed). Production and development run it at boot
+and every six hours from the deploy user's crontab. About → Platform maintenance
+shows the result, including an **OS packages** row.
+
+```bash
+bash scripts/collect-host-health.sh
+crontab -l | grep collect-host-health
+```
+
+The collector uses `apt list --upgradable`, which is read-only and runs without
+root. Apply the packages in a maintenance window and reboot when the flag says
+so; take a backup first.
+
 ## Backups
 
 Production runs `scripts/backup-production.sh` daily at 03:15 UTC from the

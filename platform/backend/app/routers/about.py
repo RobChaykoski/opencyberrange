@@ -176,9 +176,23 @@ def _docker_runtime() -> dict:
         return {}
 
 
-def _platform_health(runtime: dict) -> list[dict]:
+def _host_health() -> dict:
+    """Host package/reboot status written by scripts/collect-host-health.sh."""
+    path = os.environ.get("HOST_HEALTH_FILE", "/app/backups/host-health.json")
+    try:
+        with open(path, encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, ValueError):
+        return {"available": False}
+    if not isinstance(data, dict):
+        return {"available": False}
+    data["available"] = True
+    return data
+
+
+def _platform_health(runtime: dict, host_health: dict | None = None) -> list[dict]:
     """Current vs supported/target versions and the upgrade path for each."""
-    return [
+    components = [
         {
             "key": "platform",
             "name": "Platform release",
@@ -252,6 +266,27 @@ def _platform_health(runtime: dict) -> list[dict]:
             "path": "docs/DEPLOYMENT-RUNBOOK.md",
         },
     ]
+    if host_health and host_health.get("available"):
+        upgradable = int(host_health.get("upgradable_packages") or 0)
+        security = int(host_health.get("security_updates") or 0)
+        reboot = bool(host_health.get("reboot_required"))
+        note = f"{upgradable} package(s) upgradable"
+        if security:
+            note += f", {security} security"
+        if reboot:
+            note += "; reboot required"
+        components.append(
+            {
+                "key": "packages",
+                "name": "OS packages",
+                "current": f"{upgradable} upgradable",
+                "target": "security updates applied in a maintenance window",
+                "status": "upgrade-planned" if (upgradable or reboot) else "current",
+                "note": note,
+                "path": "docs/DEPLOYMENT-RUNBOOK.md",
+            }
+        )
+    return components
 
 
 def _live_overlay(data: dict, db: Session) -> dict:
@@ -302,6 +337,7 @@ def _live_overlay(data: dict, db: Session) -> dict:
     env_revision = os.environ.get("OCR_BUILD_REVISION", "").strip()
     if not env_revision or env_revision.lower() == "unknown":
         env_revision = build.get("git_sha", "unknown")
+    host_health = _host_health()
 
     data.update(
         {
@@ -317,7 +353,8 @@ def _live_overlay(data: dict, db: Session) -> dict:
                 "image_digests": _image_digests(),
             },
             "runtime": runtime,
-            "platform_health": _platform_health(runtime),
+            "platform_health": _platform_health(runtime, host_health),
+            "host_updates": host_health,
             "upgrade": {
                 "runbook": "docs/DEPLOYMENT-RUNBOOK.md",
                 "readiness": "docs/RELEASE-5-PRODUCTION-READINESS.md",
