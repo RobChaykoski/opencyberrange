@@ -162,7 +162,7 @@
     "windows-6-1-mssql-service-detection": "4d419b8a36fb0a592cd62c9227919bd33162a1d46ab28650db65f1007cbcfe04",
     "windows-6-2-mssql-version-and-instance-enumeration": "c67fe4529a8453fb6b0a2523bef633999e692a21976a014b0004e2eb2ba69fed",
     "windows-6-3-mssql-manual-authentication": "0bc754d6bc0177e834d785fe7594818c808751257ad62aaf2cab26c37cd90f08",
-    "windows-6-4-mssql-credential-brute-force": "287ea8cabcda1ba29fff10fadffbd48507824c09b726db21a3130c463f2e26c5",
+    "windows-6-4-mssql-credential-brute-force": "b843716c6d6538bf59fa55b9f8d02da96073c5ac1e8f3504c578f2164d4ed950",
     "windows-6-5-mssql-basic-query-execution": "d4ea31c70f846daced6fa28b429aef9eabf51307362bf90a3458c6f6df6714de",
     "windows-6-6-mssql-xp-cmdshell-activation": "fc55a720715a0f1e4ae1afc21ca28e131cc9ce73deb3d75fcc19187ed95d5093",
     "windows-6-7-mssql-file-system-access-via-xp-cmdshell": "fa138ece56ca8cc8f3ec38acc86ad3a8077877b50cc07a4644d40207b16a4eb1",
