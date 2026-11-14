@@ -4529,9 +4529,6 @@ def _record_capacity_test_result(results: dict) -> None:
         logger.warning("Could not record the RangeBox stress ceiling: %s", exc)
 
 
-import json
-
-
 class RetentionPolicyRequest(BaseModel):
     retention_until: datetime | None = None
     note: str = Field("", max_length=500)
