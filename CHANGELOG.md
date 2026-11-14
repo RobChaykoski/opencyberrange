@@ -2,6 +2,12 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.9.1] - 2026-11-14
+
+### Open Badges
+- The admin Open Badges panel can revoke an active credential with a reason; the
+  action is audited and the list refreshes to show the new status.
+
 ## [5.9.0] - 2026-11-14
 
 ### Open Badges

@@ -59,6 +59,14 @@
             <td><span :class="['badge-admin__status', `badge-admin__status--${row.status}`]">{{ row.status }}</span></td>
             <td class="cell-actions">
               <a class="btn btn--outline btn--xs" :href="`/badges/${row.jti}`" target="_blank" rel="noopener">View</a>
+              <button
+                v-if="row.status === 'active'"
+                class="btn btn--danger btn--xs"
+                :disabled="revokingId === row.id"
+                @click="revoke(row)"
+              >
+                {{ revokingId === row.id ? 'Revoking...' : 'Revoke' }}
+              </button>
             </td>
           </tr>
         </tbody>
@@ -77,6 +85,7 @@ const credentials = ref([])
 const loading = ref(false)
 const saving = ref(false)
 const rotating = ref(false)
+const revokingId = ref(null)
 const error = ref('')
 const message = ref('')
 const form = reactive({ issuer_name: '', issuer_url: '' })
@@ -131,6 +140,27 @@ const rotateKey = async () => {
     error.value = e.response?.data?.detail || 'Could not rotate the key.'
   } finally {
     rotating.value = false
+  }
+}
+
+const revoke = async (row) => {
+  const reason = window.prompt('Reason for revoking this credential (recorded in the audit log):', '')
+  if (reason === null) return
+  if (reason.trim().length < 3) {
+    error.value = 'A revocation reason of at least three characters is required.'
+    return
+  }
+  revokingId.value = row.id
+  error.value = ''
+  message.value = ''
+  try {
+    await axios.post(`/admin/badges/${row.id}/revoke`, { reason: reason.trim() })
+    message.value = 'Credential revoked.'
+    await load()
+  } catch (e) {
+    error.value = e.response?.data?.detail || 'Could not revoke the credential.'
+  } finally {
+    revokingId.value = null
   }
 }
 
