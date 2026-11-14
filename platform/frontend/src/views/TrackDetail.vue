@@ -3439,6 +3439,12 @@ watch(timeRemaining, (val) => {
   padding: 1rem;
 }
 
+/* The old panel reserved 60vh for the mobile tab bar. The full-screen
+   workspace owns the viewport, so that reserve would collapse the tab pane. */
+.active-lab-panel--workspace .active-lab-panel__body--workspace {
+  padding-bottom: 0.75rem;
+}
+
 .workspace-tabs {
   flex: 0 0 auto;
   display: flex;
