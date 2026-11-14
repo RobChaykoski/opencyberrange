@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.7.0`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.8.0`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0028_course_planning`. Production application images were built from the `v5.7.0`
-commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, and `v5.7.0` record the release,
+Alembic `0029_open_badges`. Production application images were built from the `v5.8.0`
+commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, and `v5.8.0` record the release,
 security patch, IdP settings feature, and operations patch.
 
 ## Ready for production
@@ -121,7 +121,7 @@ security patch, IdP settings feature, and operations patch.
 
 - `/api/version` = 5; backend `/health` reports the database up (`/health` on the
   SPA origin is a client route, so probe the backend on port 8000).
-- `alembic current` = `0028_course_planning`; no failed migrations.
+- `alembic current` = `0029_open_badges`; no failed migrations.
 - 179 labs discovered; ten random lab detail checks pass.
 - Authenticated pages: dashboard, exercises, Windows track, workbooks, courses,
   profile, instructor, admin, admin settings.
@@ -149,6 +149,7 @@ Released on 2026-11-14 as `v5.0.0` for the implemented scope above.
 Do **not** describe the deferred items as shipped. A real Canvas/Brightspace
 staging test and the external accessibility/security assessments remain
 institutional or later-release work.
+
 
 
 

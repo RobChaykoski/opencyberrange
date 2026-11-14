@@ -41,6 +41,8 @@ class EventTypes:
     REVIEW_DECIDED = "review_decided"
     AUDIT_REPORT_VIEWED = "audit_report_viewed"
     COHORT_CREATED = "cohort_created"
+    OPEN_BADGE_ISSUED = "open_badge_issued"
+    OPEN_BADGE_REVOKED = "open_badge_revoked"
 
 
 # Human-readable labels for the feed
@@ -75,6 +77,8 @@ EVENT_LABELS = {
     EventTypes.REVIEW_DECIDED: "Human Review Decided",
     EventTypes.AUDIT_REPORT_VIEWED: "Audit History Viewed",
     EventTypes.COHORT_CREATED: "Course Cohort Created",
+    EventTypes.OPEN_BADGE_ISSUED: "Open Badge Issued",
+    EventTypes.OPEN_BADGE_REVOKED: "Open Badge Revoked",
 }
 
 
@@ -110,3 +114,4 @@ def log_activity(
                 db.rollback()
             except Exception:
                 pass
+

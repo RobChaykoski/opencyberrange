@@ -2,6 +2,20 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.8.0] - 2026-11-14
+
+### Open Badges 3.0
+- Hosted **JWT-VC** credentials for completed level certificates, signed with
+  Ed25519. The issuer key is generated on first use and stored encrypted; the
+  public issuer profile and JWKS are published.
+- Learners issue a badge from the certificate page, see the credential link, and
+  can copy it. Sharing is opt-in; the credential subject is pseudonymous by
+  default, with an optional display name.
+- Credentials expose a status endpoint and an audited admin revocation path.
+  Migration `0029_open_badges`.
+- Phase 1 covers level certificates; event awards, badge images, and third-party
+  viewer compatibility testing remain follow-ups.
+
 ## [5.7.0] - 2026-11-14
 
 ### About

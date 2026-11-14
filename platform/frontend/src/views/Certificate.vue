@@ -41,6 +41,14 @@
         >
           Share on LinkedIn
         </a>
+        <button
+          v-if="certificate && !isEvent"
+          class="btn btn--secondary"
+          :disabled="badgeBusy"
+          @click="issueBadge"
+        >
+          {{ badgeBusy ? 'Issuing…' : 'Get Open Badge' }}
+        </button>
         <button v-if="certificate" class="btn btn--primary" @click="printCertificate">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 6 2 18 2 18 9"/>
@@ -50,6 +58,18 @@
           Print certificate
         </button>
       </div>
+    </div>
+
+    <div v-if="badge || badgeError" class="certificate-badge no-print">
+      <p v-if="badgeError" class="form-error" role="alert">{{ badgeError }}</p>
+      <template v-if="badge">
+        <strong>Open Badge ready.</strong>
+        <a :href="badgeLink" target="_blank" rel="noopener noreferrer">View credential</a>
+        <button class="btn btn--ghost btn--xs" @click="copyBadgeLink">
+          {{ badgeCopied ? 'Link copied' : 'Copy badge link' }}
+        </button>
+        <span class="cell-muted">{{ badge.status }}</span>
+      </template>
     </div>
 
     <div v-if="loading" class="certificate-state">Preparing your certificate...</div>
@@ -281,6 +301,10 @@ const error = ref('')
 const showAchievements = ref(true)
 const activeDesign = ref('classic')
 const downloading = ref(false)
+const badge = ref(null)
+const badgeBusy = ref(false)
+const badgeError = ref('')
+const badgeCopied = ref(false)
 const copied = ref(false)
 const actionMessage = ref('')
 const accountUsername = ref('')
@@ -293,6 +317,11 @@ const usingAccountName = computed(() => (
 const shareUrl = computed(() => {
   return safeHttpUrl(certificate.value?.verify_url)
 })
+const badgeLink = computed(() =>
+  badge.value?.jti
+    ? `${window.location.origin}/api/badges/credentials/${badge.value.jti}`
+    : ''
+)
 const linkedInUrl = computed(() => {
   if (!shareUrl.value) return 'https://www.linkedin.com/'
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl.value)}`
@@ -346,6 +375,41 @@ const copyLink = async () => {
   actionMessage.value = 'Verification link copied.'
   setTimeout(() => { copied.value = false }, 2500)
   setTimeout(() => { actionMessage.value = '' }, 3500)
+}
+
+const issueBadge = async () => {
+  if (badgeBusy.value) return
+  badgeBusy.value = true
+  badgeError.value = ''
+  try {
+    const { data } = await axios.post('/badges/issue', {
+      track_slug: route.params.trackSlug,
+      level_id: Number(route.params.levelId),
+    })
+    badge.value = data
+    badgeCopied.value = false
+  } catch (e) {
+    badgeError.value =
+      e.response?.data?.detail || 'Could not issue an Open Badge for this certificate.'
+  } finally {
+    badgeBusy.value = false
+  }
+}
+
+const copyBadgeLink = async () => {
+  if (!badgeLink.value) return
+  try {
+    await navigator.clipboard.writeText(badgeLink.value)
+  } catch {
+    const input = document.createElement('textarea')
+    input.value = badgeLink.value
+    document.body.appendChild(input)
+    input.select()
+    document.execCommand('copy')
+    input.remove()
+  }
+  badgeCopied.value = true
+  setTimeout(() => { badgeCopied.value = false }, 2500)
 }
 
 const load = async () => {
@@ -431,6 +495,19 @@ onMounted(() => {
   align-items: center;
   gap: 0.75rem;
   padding-right: 2.75rem;
+}
+.certificate-badge {
+  width: min(100%, 1040px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 auto 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  font-size: 0.85rem;
 }
 
 .certificate-actions__right {

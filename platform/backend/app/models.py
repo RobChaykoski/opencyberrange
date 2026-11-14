@@ -1328,6 +1328,39 @@ class CourseRequirement(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
+class OpenBadgeCredential(Base):
+    """Hosted Open Badges 3.0 credential for a completed level certificate."""
+
+    __tablename__ = "open_badge_credentials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    certificate_id = Column(String(80), nullable=False, index=True)
+    track_slug = Column(String(100), nullable=False)
+    level_id = Column(Integer, ForeignKey("levels.id", ondelete="SET NULL"), nullable=True)
+    subject_id = Column(String(64), nullable=False, unique=True, index=True)
+    jti = Column(String(64), nullable=False, unique=True, index=True)
+    achievement_name = Column(String(200), nullable=False)
+    achievement_description = Column(Text, nullable=True)
+    criteria_url = Column(String(500), nullable=True)
+    evidence_url = Column(String(500), nullable=True)
+    issued_at = Column(DateTime, server_default=func.now())
+    recipient_name_opt_in = Column(Boolean, default=False, nullable=False)
+    revoked_at = Column(DateTime, nullable=True)
+    revoked_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    revocation_reason = Column(String(500), nullable=True)
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "certificate_id", name="uq_open_badge_source"),
+    )
+
+    user = relationship("User", foreign_keys=[user_id])
+
+
 class ReportExport(Base):
     """Immutable manifest for a generated instructor report.
 

@@ -116,6 +116,14 @@ DEFAULT_SETTINGS = [
     {"key": "vpn_wstunnel_url", "value": "", "category": "vpn",
      "description": "WebSocket tunnel URL (e.g. wss://vpn.yourdomain.com)"},
 
+    # --- Open Badges ---
+    {"key": "open_badge_issuer_name", "value": "SWOCTS Cyber Range", "category": "badges",
+     "description": "Issuer name shown in Open Badges 3.0 credentials."},
+    {"key": "open_badge_issuer_url", "value": "", "category": "badges",
+     "description": "Public issuer URL for Open Badges credentials. Empty uses the platform public URL."},
+    {"key": "open_badge_signing_key", "value": "", "category": "badges", "is_secret": True,
+     "description": "Ed25519 private key used to sign Open Badges credentials. Generated on first use."},
+
     # --- Features ---
     {"key": "advanced_dna_insights_enabled", "value": "false", "category": "features",
      "description": "Show the development-only Momentum and Career Atlas surfaces on learner profiles and career dossiers. Keep this off in production until the review in docs/CAREER-ATLAS-AND-MOMENTUM.md is signed off.", "is_secret": False},
