@@ -6,7 +6,7 @@ All notable changes to OpenCyberRange are recorded here.
 
 Release 5. LTI 1.3 Advantage, per-student accommodations, and the associated
 procurement evidence. Development `.44` runs this branch; production remains on
-Release 4 `v4.0.1`.
+Release 4 `v4.0.2`.
 
 ### LTI 1.3 Advantage
 - Platform registry, OIDC third-party login (GET and form POST), signed
@@ -78,6 +78,16 @@ Release 4 `v4.0.1`.
 - Development `172.16.16.44` deployed from `release5`; live lab spawn,
   pause/resume, accommodation read-back, 10-lab sampling, and an authenticated
   page pass all verified.
+
+## [4.0.2] - 2026-11-14
+
+Release 4 production hotfix. Frontend only; schema and API remain Release 4.
+
+### RangeBox workspace
+- Desktop, Exercise, and Workbook are full-size tabs instead of a split grid.
+- RangeBox stays mounted across tab switches.
+- The desktop toolbar wraps in narrow panels instead of clipping controls.
+- See [`RELEASE-4-HOTFIX-4.0.2.md`](docs/RELEASE-4-HOTFIX-4.0.2.md).
 
 ## [4] - 2026-11-12
 
