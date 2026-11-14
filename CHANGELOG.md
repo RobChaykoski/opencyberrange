@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.13.1] - 2026-11-14
+
+### Open Badges
+- The public credential viewer now verifies the Ed25519 JWT signature against
+  the issuer JWKS and reports verified, invalid, or unavailable.
+- Public issuer, achievement, subject, and credential endpoints allow
+  browser-based third-party viewers through an explicit CORS policy.
+- Added a regression test for the Open Badges 3.0 compatibility fields
+  (`vc.id`, `criteria.id`, image, issuer profile, credential schema).
+
 ## [5.13.0] - 2026-11-14
 
 ### RangeBox
