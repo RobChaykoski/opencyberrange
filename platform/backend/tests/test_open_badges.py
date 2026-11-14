@@ -3,13 +3,45 @@
 from __future__ import annotations
 
 import base64
+from datetime import datetime, timezone
 from types import SimpleNamespace
 
 import jwt
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
+import app.services.open_badges as open_badges
 from app.services.open_badges import _b64url, credential_status
+
+
+def test_credential_payload_has_open_badges_compatibility_fields(monkeypatch):
+    monkeypatch.setattr(
+        open_badges, "issuer_url", lambda _db: "https://range.example.edu"
+    )
+    monkeypatch.setattr(open_badges, "issuer_name", lambda _db: "Example Range")
+    row = SimpleNamespace(
+        jti="credential-1",
+        subject_id="subject-1",
+        certificate_id="certificate-1",
+        achievement_name="Linux Fundamentals",
+        achievement_description="Completed the level.",
+        criteria_url="https://range.example.edu/verify/certificate/certificate-1",
+        evidence_url="https://range.example.edu/verify/certificate/certificate-1",
+        issued_at=datetime(2026, 11, 14, tzinfo=timezone.utc),
+        recipient_name_opt_in=False,
+        user=None,
+        track_slug="linux",
+    )
+    payload = open_badges.credential_payload(None, row)
+    vc = payload["vc"]
+    assert vc["id"] == "https://range.example.edu/api/badges/credentials/credential-1"
+    assert vc["issuer"]["type"] == ["Profile"]
+    assert vc["credentialSubject"]["achievement"]["criteria"]["id"].endswith(
+        "/certificate-1"
+    )
+    assert vc["credentialSubject"]["achievement"]["image"]["id"].endswith("/image")
+    assert vc["credentialSchema"][0]["type"] == "JsonSchemaValidator2018"
+
 
 
 def test_ed25519_jwt_round_trip_and_tamper_detection():

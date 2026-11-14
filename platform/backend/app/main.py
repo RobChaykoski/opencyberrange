@@ -983,6 +983,28 @@ async def export_label_headers(request: Request, call_next):
 
 
 @app.middleware("http")
+async def public_badge_cors(request: Request, call_next):
+    """Allow browser-based third-party Open Badges viewers to fetch credentials.
+
+    Only the public issuer, achievement, subject, and credential endpoints are
+    opened. Authenticated badge management stays behind the normal CORS policy.
+    """
+    response = await call_next(request)
+    path = request.url.path
+    if path.startswith(
+        (
+            "/api/badges/issuer",
+            "/api/badges/credentials/",
+            "/api/badges/achievements/",
+            "/api/badges/subjects/",
+        )
+    ):
+        response.headers.setdefault("Access-Control-Allow-Origin", "*")
+        response.headers.setdefault("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS")
+    return response
+
+
+@app.middleware("http")
 async def module_access_control(request: Request, call_next):
     """Return 404 for disabled module API paths (hot-toggle without restart)."""
     path = request.url.path

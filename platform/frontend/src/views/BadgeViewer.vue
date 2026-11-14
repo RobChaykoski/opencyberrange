@@ -14,6 +14,11 @@
           </div>
           <span :class="['badge-status', `badge-status--${data.status}`]">{{ data.status }}</span>
         </header>
+        <div class="badge-signature-row">
+          <span :class="['badge-signature', `badge-signature--${signatureState}`]">
+            {{ signatureLabel }}
+          </span>
+        </div>
 
         <div v-if="data.status === 'revoked'" class="badge-revoked" role="alert">
           This credential has been revoked and should not be treated as valid.
@@ -62,6 +67,53 @@ const data = ref(null)
 const loading = ref(true)
 const error = ref('')
 const copied = ref(false)
+const signatureState = ref('checking')
+
+const signatureLabel = computed(() => {
+  if (signatureState.value === 'valid') return 'Signature verified'
+  if (signatureState.value === 'invalid') return 'Signature invalid'
+  if (signatureState.value === 'unavailable') return 'Signature check unavailable'
+  return 'Checking signature...'
+})
+
+const b64urlBytes = (value) => {
+  const padded = value.replace(/-/g, '+').replace(/_/g, '/')
+  const binary = atob(padded + '='.repeat((4 - (padded.length % 4)) % 4))
+  return Uint8Array.from(binary, (char) => char.charCodeAt(0))
+}
+
+const verifySignature = async (token) => {
+  try {
+    if (!window.crypto?.subtle) {
+      signatureState.value = 'unavailable'
+      return
+    }
+    const [headerPart, payloadPart, signaturePart] = token.split('.')
+    const header = JSON.parse(new TextDecoder().decode(b64urlBytes(headerPart)))
+    const { data: jwks } = await axios.get('/badges/issuer/jwks')
+    const jwk = (jwks.keys || []).find((key) => key.kid === header.kid)
+    if (!jwk || !jwk.x) {
+      signatureState.value = 'unavailable'
+      return
+    }
+    const key = await crypto.subtle.importKey(
+      'jwk',
+      { kty: 'OKP', crv: 'Ed25519', x: jwk.x },
+      { name: 'Ed25519' },
+      false,
+      ['verify'],
+    )
+    const valid = await crypto.subtle.verify(
+      { name: 'Ed25519' },
+      key,
+      b64urlBytes(signaturePart),
+      new TextEncoder().encode(`${headerPart}.${payloadPart}`),
+    )
+    signatureState.value = valid ? 'valid' : 'invalid'
+  } catch {
+    signatureState.value = 'unavailable'
+  }
+}
 
 const vc = computed(() => {
   try {
@@ -133,6 +185,8 @@ onMounted(async () => {
   try {
     const { data: payload } = await axios.get(`/badges/credentials/${route.params.jti}`)
     data.value = payload
+    if (payload?.credential) await verifySignature(payload.credential)
+    else signatureState.value = 'unavailable'
   } catch (e) {
     error.value = e.response?.data?.detail || 'This credential could not be found.'
   } finally {
@@ -171,6 +225,19 @@ onMounted(async () => {
 }
 .badge-status--active { color: var(--success); border-color: var(--success); }
 .badge-status--revoked { color: var(--danger); border-color: var(--danger); }
+.badge-signature-row { margin-top: 0.75rem; }
+.badge-signature {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.badge-signature--valid { color: var(--success); border-color: var(--success); }
+.badge-signature--invalid { color: var(--danger); border-color: var(--danger); }
+.badge-signature--unavailable { color: var(--warning); border-color: var(--warning); }
 .badge-revoked {
   margin: 1rem 0;
   padding: 0.7rem;
