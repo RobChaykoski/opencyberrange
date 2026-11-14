@@ -807,18 +807,91 @@ def _certificate_base_url(request: Request, db: Session) -> str:
     return ""
 
 
+PDF_CERTIFICATE_THEMES = {
+    "classic": {
+        "paper": (255, 253, 248),
+        "accent": (176, 141, 60),
+        "heading": (31, 41, 55),
+        "detail": (75, 85, 99),
+        "muted": (107, 114, 128),
+        "name": (17, 24, 39),
+        "name_rule": (216, 192, 138),
+        "name_rule_width": 0.3,
+        "frame_rule": (216, 192, 138),
+        "title_font": ("Times", "B", 30),
+        "name_font": ("Times", "B", 30),
+        "align": "C",
+        "x": 20.0,
+        "w": 257.0,
+    },
+    "executive": {
+        "paper": (255, 255, 255),
+        "accent": (200, 162, 74),
+        "heading": (11, 37, 69),
+        "detail": (11, 37, 69),
+        "muted": (71, 85, 105),
+        "name": (11, 37, 69),
+        "name_rule": (200, 162, 74),
+        "name_rule_width": 0.8,
+        "frame_rule": (215, 222, 232),
+        "title_font": ("Times", "B", 28),
+        "name_font": ("Times", "B", 30),
+        "align": "L",
+        "x": 30.0,
+        "w": 237.0,
+    },
+    "modern": {
+        "paper": (255, 255, 255),
+        "accent": (15, 118, 110),
+        "heading": (15, 23, 42),
+        "detail": (15, 118, 110),
+        "muted": (71, 85, 105),
+        "name": (15, 23, 42),
+        "name_rule": (15, 118, 110),
+        "name_rule_width": 1.2,
+        "frame_rule": (226, 232, 240),
+        "title_font": ("Helvetica", "B", 26),
+        "name_font": ("Helvetica", "B", 28),
+        "align": "L",
+        "x": 30.0,
+        "w": 237.0,
+    },
+    "minimal": {
+        "paper": (255, 255, 255),
+        "accent": (107, 114, 128),
+        "heading": (17, 24, 39),
+        "detail": (107, 114, 128),
+        "muted": (107, 114, 128),
+        "name": (17, 24, 39),
+        "name_rule": (209, 213, 219),
+        "name_rule_width": 0.4,
+        "frame_rule": (209, 213, 219),
+        "title_font": ("Helvetica", "", 26),
+        "name_font": ("Helvetica", "B", 28),
+        "align": "C",
+        "x": 20.0,
+        "w": 257.0,
+    },
+}
+
+
 def _certificate_pdf_bytes(certificate: dict) -> bytes:
     """Render the certificate as a clean, shareable landscape A4 PDF.
 
     The web page remains the primary view; this file is for LinkedIn posts,
     e-portfolios, and printing where a consistent asset is better than a
-    browser print dialog.
+    browser print dialog. Each web design has a matching PDF treatment so a
+    download never silently falls back to the classic layout.
     """
     import base64
     import os
     import tempfile
 
     from fpdf import FPDF
+
+    design = str(certificate.get("design") or "classic").strip().lower()
+    if design not in CERTIFICATE_DESIGNS:
+        design = "classic"
 
     pdf = FPDF(orientation="L", unit="mm", format="A4")
     pdf.set_title("SWOCTS Cyber Range certificate")
@@ -836,75 +909,166 @@ def _certificate_pdf_bytes(certificate: dict) -> bytes:
     pdf.add_page()
     pdf.set_auto_page_break(False)
 
-    gold = (176, 141, 60)
-    ink = (31, 41, 55)
-    muted = (107, 114, 128)
-    paper = (255, 253, 248)
-    pdf.set_fill_color(*paper)
+    qr_path = None
+    qr_code = certificate.get("qr_code")
+    if qr_code:
+        try:
+            encoded = qr_code.split(",", 1)[1] if "," in qr_code else qr_code
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as handle:
+                handle.write(base64.b64decode(encoded))
+                qr_path = handle.name
+        except Exception as exc:  # pragma: no cover - QR is decorative
+            logger.warning("Certificate PDF QR render failed: %s", exc)
+            qr_path = None
+
+    try:
+        _draw_certificate_pdf(pdf, certificate, design, qr_path)
+    finally:
+        if qr_path:
+            try:
+                os.unlink(qr_path)
+            except OSError:
+                pass
+
+    return bytes(pdf.output())
+
+
+def _draw_certificate_pdf(pdf, certificate: dict, design: str, qr_path: str | None) -> None:
+    """Draw one certificate design onto an FPDF page."""
+    theme = PDF_CERTIFICATE_THEMES[design]
+    accent = theme["accent"]
+    heading = theme["heading"]
+    muted = theme["muted"]
+    align = theme["align"]
+    x = theme["x"]
+    w = theme["w"]
+
+    pdf.set_fill_color(*theme["paper"])
     pdf.rect(0, 0, 297, 210, style="F")
 
-    pdf.set_draw_color(*gold)
-    pdf.set_line_width(1.2)
-    pdf.rect(8, 8, 281, 194)
-    pdf.set_line_width(0.3)
-    pdf.set_draw_color(216, 192, 138)
-    pdf.rect(12, 12, 273, 186)
+    if design == "classic":
+        pdf.set_draw_color(*accent)
+        pdf.set_line_width(1.2)
+        pdf.rect(8, 8, 281, 194)
+        pdf.set_line_width(0.3)
+        pdf.set_draw_color(216, 192, 138)
+        pdf.rect(12, 12, 273, 186)
+    elif design == "executive":
+        pdf.set_draw_color(*accent)
+        pdf.set_line_width(2.0)
+        pdf.rect(7, 7, 283, 196)
+        pdf.set_draw_color(*heading)
+        pdf.set_line_width(0.8)
+        pdf.rect(12, 12, 273, 186)
+    elif design == "modern":
+        pdf.set_draw_color(226, 232, 240)
+        pdf.set_line_width(0.4)
+        pdf.rect(8, 8, 281, 194)
+        pdf.set_fill_color(*accent)
+        pdf.rect(8, 8, 6, 194, style="F")
+    else:  # minimal
+        pdf.set_draw_color(209, 213, 219)
+        pdf.set_line_width(0.4)
+        pdf.rect(14, 14, 269, 182)
 
-    pdf.set_text_color(*gold)
-    pdf.set_font("Helvetica", "B", 10)
-    pdf.set_xy(0, 22)
-    pdf.cell(297, 6, "SWOCTS CYBER RANGE", align="C")
+    if design == "classic":
+        pdf.set_text_color(*accent)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.set_xy(0, 22)
+        pdf.cell(297, 6, "SWOCTS CYBER RANGE", align="C")
 
-    pdf.set_text_color(*ink)
-    pdf.set_font("Times", "B", 30)
-    pdf.set_xy(0, 31)
-    pdf.cell(297, 14, "Certificate of Completion", align="C")
+        pdf.set_text_color(*heading)
+        pdf.set_font(*theme["title_font"])
+        pdf.set_xy(0, 31)
+        pdf.cell(297, 14, "Certificate of Completion", align="C")
 
-    pdf.set_draw_color(*gold)
-    pdf.set_line_width(0.6)
-    pdf.line(110, 49, 187, 49)
+        pdf.set_draw_color(*accent)
+        pdf.set_line_width(0.6)
+        pdf.line(110, 49, 187, 49)
+    elif design == "executive":
+        pdf.set_text_color(*heading)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.set_xy(x, 22)
+        pdf.cell(w, 6, "SWOCTS CYBER RANGE")
+
+        pdf.set_font(*theme["title_font"])
+        pdf.set_xy(x, 29)
+        pdf.cell(w, 14, "Certificate of Completion")
+
+        pdf.set_draw_color(*heading)
+        pdf.set_line_width(1.0)
+        pdf.line(x, 47, x + w, 47)
+    elif design == "modern":
+        pdf.set_text_color(*accent)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.set_xy(x, 21)
+        pdf.cell(w, 6, "SWOCTS CYBER RANGE", align="R")
+
+        pdf.set_text_color(*heading)
+        pdf.set_font(*theme["title_font"])
+        pdf.set_xy(x, 29)
+        pdf.cell(w, 14, "Certificate of Completion")
+
+        pdf.set_draw_color(*accent)
+        pdf.set_line_width(1.2)
+        pdf.line(x, 47, x + 40, 47)
+    else:  # minimal
+        pdf.set_text_color(*muted)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.set_xy(0, 23)
+        pdf.cell(297, 6, "SWOCTS CYBER RANGE", align="C")
+
+        pdf.set_text_color(*heading)
+        pdf.set_font(*theme["title_font"])
+        pdf.set_xy(0, 31)
+        pdf.cell(297, 14, "Certificate of Completion", align="C")
+
+        pdf.set_draw_color(*theme["frame_rule"])
+        pdf.set_line_width(0.3)
+        pdf.line(128.5, 48, 168.5, 48)
 
     pdf.set_font("Helvetica", "", 12)
     pdf.set_text_color(*muted)
-    pdf.set_xy(0, 57)
-    pdf.cell(297, 7, "This is to certify that", align="C")
+    pdf.set_xy(x, 57)
+    pdf.cell(w, 7, "This is to certify that", align=align)
 
     recipient = str(certificate.get("recipient") or "Learner")
-    pdf.set_font("Times", "B", 30)
-    pdf.set_text_color(17, 24, 39)
-    pdf.set_xy(0, 66)
-    pdf.cell(297, 15, recipient, align="C")
-    name_width = max(60.0, pdf.get_string_width(recipient) + 24)
-    pdf.set_draw_color(216, 192, 138)
-    pdf.set_line_width(0.3)
-    pdf.line(148.5 - name_width / 2, 83, 148.5 + name_width / 2, 83)
+    pdf.set_font(*theme["name_font"])
+    pdf.set_text_color(*theme["name"])
+    pdf.set_xy(x, 66)
+    pdf.cell(w, 15, recipient, align=align)
+    name_width = min(max(60.0, pdf.get_string_width(recipient) + 24), w)
+    line_x = 148.5 - name_width / 2 if align == "C" else x
+    pdf.set_draw_color(*theme["name_rule"])
+    pdf.set_line_width(theme["name_rule_width"])
+    pdf.line(line_x, 83, line_x + name_width, 83)
 
     pdf.set_font("Helvetica", "", 12)
     pdf.set_text_color(*muted)
-    pdf.set_xy(0, 89)
-    pdf.cell(297, 7, "has successfully completed", align="C")
+    pdf.set_xy(x, 89)
+    pdf.cell(w, 7, "has successfully completed", align=align)
 
-    pdf.set_font("Times", "B", 18)
-    pdf.set_text_color(*ink)
-    pdf.set_xy(0, 98)
+    pdf.set_font("Helvetica", "B", 18)
+    pdf.set_text_color(*heading)
+    pdf.set_xy(x, 98)
     pdf.cell(
-        297, 9,
+        w, 9,
         f"Level {certificate['level_number']}: {certificate['level_name']}",
-        align="C",
+        align=align,
     )
 
     pdf.set_font("Helvetica", "B", 13)
-    pdf.set_text_color(75, 85, 99)
-    pdf.set_xy(0, 108)
-    pdf.cell(297, 7, str(certificate.get("track_name") or ""), align="C")
+    pdf.set_text_color(*theme["detail"])
+    pdf.set_xy(x, 108)
+    pdf.cell(w, 7, str(certificate.get("track_name") or ""), align=align)
 
     pdf.set_font("Helvetica", "", 10)
-    pdf.set_text_color(*gold)
-    pdf.set_xy(0, 116)
+    pdf.set_text_color(*accent)
+    pdf.set_xy(x, 116)
     pdf.cell(
-        297, 6,
+        w, 6,
         f"{certificate['exercises_completed']} of {certificate['exercises_total']} exercises completed",
-        align="C",
+        align=align,
     )
 
     achievements = certificate.get("achievements") or []
@@ -918,66 +1082,52 @@ def _certificate_pdf_bytes(certificate: dict) -> bytes:
         if labels:
             pdf.set_font("Helvetica", "", 8)
             pdf.set_text_color(*muted)
-            pdf.set_xy(20, 128)
-            pdf.multi_cell(257, 4, "Achievements: " + "  ·  ".join(labels), align="C")
+            pdf.set_xy(x, 128)
+            pdf.multi_cell(w, 4, "Achievements: " + "  -  ".join(labels), align=align)
 
-    pdf.set_draw_color(216, 192, 138)
+    pdf.set_draw_color(*theme["frame_rule"])
     pdf.set_line_width(0.4)
-    pdf.line(20, 158, 277, 158)
+    pdf.line(x, 158, x + w, 158)
+
+    meta_x = x if align == "L" else 24.0
+    id_x = x + 96 if align == "L" else 120.0
 
     pdf.set_font("Helvetica", "B", 7)
     pdf.set_text_color(*muted)
-    pdf.set_xy(24, 164)
+    pdf.set_xy(meta_x, 164)
     pdf.cell(70, 4, "DATE AWARDED")
     pdf.set_font("Helvetica", "", 10)
-    pdf.set_text_color(*ink)
-    pdf.set_xy(24, 169)
+    pdf.set_text_color(*heading)
+    pdf.set_xy(meta_x, 169)
     pdf.cell(90, 5, str(certificate.get("issued_display") or ""))
 
     pdf.set_font("Helvetica", "B", 7)
     pdf.set_text_color(*muted)
-    pdf.set_xy(120, 164)
+    pdf.set_xy(id_x, 164)
     pdf.cell(70, 4, "CERTIFICATE ID")
     pdf.set_font("Courier", "", 9)
-    pdf.set_text_color(*ink)
-    pdf.set_xy(120, 169)
+    pdf.set_text_color(*heading)
+    pdf.set_xy(id_x, 169)
     pdf.cell(95, 5, str(certificate.get("certificate_id") or ""))
 
     pdf.set_font("Helvetica", "B", 7)
     pdf.set_text_color(*muted)
-    pdf.set_xy(24, 178)
-    pdf.cell(70, 4, "VERIFY" if certificate.get("public_verification", True) else "PUBLIC VERIFICATION")
-    pdf.set_font("Helvetica", "", 8)
-    pdf.set_text_color(*gold)
-    pdf.set_xy(24, 182)
+    pdf.set_xy(meta_x, 178)
     pdf.cell(
-        210,
+        70, 4,
+        "VERIFY" if certificate.get("public_verification", True) else "PUBLIC VERIFICATION",
+    )
+    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(*accent)
+    pdf.set_xy(meta_x, 182)
+    pdf.cell(
+        205,
         5,
-        str(
-            certificate.get("verify_url")
-            or "Off by account holder"
-        ),
+        str(certificate.get("verify_url") or "Off by account holder"),
     )
 
-    qr_code = certificate.get("qr_code")
-    qr_path = None
-    if qr_code:
-        try:
-            encoded = qr_code.split(",", 1)[1] if "," in qr_code else qr_code
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as handle:
-                handle.write(base64.b64decode(encoded))
-                qr_path = handle.name
-            pdf.image(qr_path, x=252, y=160, w=26)
-        except Exception as exc:  # pragma: no cover - QR is decorative
-            logger.warning("Certificate PDF QR render failed: %s", exc)
-        finally:
-            if qr_path:
-                try:
-                    os.unlink(qr_path)
-                except OSError:
-                    pass
-
-    return bytes(pdf.output())
+    if qr_path:
+        pdf.image(qr_path, x=252, y=160, w=26)
 
 
 def _load_level_certificate(
