@@ -3427,6 +3427,12 @@ watch(timeRemaining, (val) => {
   flex-direction: column;
 }
 
+/* Mobile keeps a 78vh cap for the inline panel; the workspace owns the
+   viewport instead. */
+.active-lab-panel.active-lab-panel--workspace {
+  max-height: none;
+}
+
 .active-lab-panel--workspace .active-lab-panel__header {
   flex: 0 0 auto;
 }
