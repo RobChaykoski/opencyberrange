@@ -2,6 +2,17 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.3.1] - 2026-11-14
+
+### Navigation
+- Admin tabs are grouped into People, Learning, Operations, and Configuration
+  instead of one flat row; tab keys and routes are unchanged.
+- Workbooks moved into the Academy sidebar section for every role; the admin
+  Resources section keeps the user manual.
+- Added the Academy/instructor/reporting information-architecture proposal
+  (`docs/ACADEMY-INSTRUCTOR-REPORTING-IA.md`), including cohorts, exercise sets,
+  requirements, trend metrics, and privacy thresholds.
+
 ## [5.3.0] - 2026-11-14
 
 ### System view

@@ -115,6 +115,13 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Exercises</span>
         </router-link>
+        <router-link to="/workbooks" aria-label="Workbooks" title="Workbooks" class="nav-item" :class="{ 'nav-item--active': isActive('/workbooks') }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Workbooks</span>
+        </router-link>
       </div>
 
       <!-- TOOLS -->
@@ -226,13 +233,6 @@
 
       <div v-if="showAdmin" class="nav-section">
         <span v-show="!collapsed" class="nav-section__label">Resources</span>
-        <router-link to="/workbooks" aria-label="Workbooks" title="Workbooks" class="nav-item">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-          </svg>
-          <span v-show="!collapsed" class="nav-item__label">Workbooks</span>
-        </router-link>
         <a :href="manualUrl" aria-label="User Manual" title="User Manual" target="_blank" rel="noopener" class="nav-item" @click="setWikiAuthCookie">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>

@@ -18,18 +18,23 @@
       </div>
 
       <nav class="admin-section-nav" aria-label="Admin sections">
-        <button
-          v-for="tab in adminTabs"
-          :key="tab.key"
-          type="button"
-          class="admin-section-nav__item"
-          :class="{ 'admin-section-nav__item--active': activeTab === tab.key }"
-          :aria-current="activeTab === tab.key ? 'page' : undefined"
-          @click="selectAdminTab(tab.key)"
-        >
-          {{ tab.label }}
-          <span v-if="tab.count" class="admin-section-nav__count">{{ tab.count }}</span>
-        </button>
+        <div v-for="group in adminTabGroups" :key="group.label" class="admin-section-nav__group">
+          <span class="admin-section-nav__group-label" aria-hidden="true">{{ group.label }}</span>
+          <div class="admin-section-nav__items" role="group" :aria-label="group.label">
+            <button
+              v-for="tab in group.tabs"
+              :key="tab.key"
+              type="button"
+              class="admin-section-nav__item"
+              :class="{ 'admin-section-nav__item--active': activeTab === tab.key }"
+              :aria-current="activeTab === tab.key ? 'page' : undefined"
+              @click="selectAdminTab(tab.key)"
+            >
+              {{ tab.label }}
+              <span v-if="tab.count" class="admin-section-nav__count">{{ tab.count }}</span>
+            </button>
+          </div>
+        </div>
       </nav>
 
       <!-- Alert messages render through the shared global toast -->
@@ -4311,6 +4316,16 @@ const adminTabs = computed(() => [
   { key: 'system', label: 'System' },
   { key: 'settings', label: 'Settings' },
 ])
+
+const adminTabGroups = computed(() => {
+  const byKey = Object.fromEntries(adminTabs.value.map((tab) => [tab.key, tab]))
+  return [
+    { label: 'People', tabs: [byKey.users, byKey.pending].filter(Boolean) },
+    { label: 'Learning', tabs: [byKey.courses, byKey.exercises].filter(Boolean) },
+    { label: 'Operations', tabs: [byKey.monitoring, byKey.system].filter(Boolean) },
+    { label: 'Configuration', tabs: [byKey.settings].filter(Boolean) },
+  ]
+})
 
 function selectAdminTab(tab) {
   activeTab.value = tab
@@ -8728,7 +8743,8 @@ watch(activeTab, (tab) => {
    current admin job visible when the sidebar is collapsed or mobile. */
 .admin-section-nav {
   display: flex;
-  gap: 0.25rem;
+  align-items: flex-start;
+  gap: 1.25rem;
   overflow-x: auto;
   margin: 0 0 1.5rem;
   padding-bottom: 0.25rem;
@@ -8737,6 +8753,27 @@ watch(activeTab, (tab) => {
   top: 0;
   z-index: 5;
   background: var(--bg-primary);
+}
+
+.admin-section-nav__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.admin-section-nav__group-label {
+  padding-left: 0.8rem;
+  color: var(--text-muted);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.admin-section-nav__items {
+  display: flex;
+  gap: 0.25rem;
 }
 
 .admin-section-nav__item {
