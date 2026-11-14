@@ -3378,7 +3378,7 @@ watch(timeRemaining, (val) => {
   cursor: not-allowed;
 }
 
-.active-lab-grid--tabs {
+.active-lab-grid--workspace.active-lab-grid--tabs {
   display: block;
   flex: 1 1 auto;
   min-height: 0;
