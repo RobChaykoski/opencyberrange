@@ -2,6 +2,16 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [4.0.2] - 2026-11-14
+
+Release 4 production hotfix. Frontend only; schema and API remain Release 4.
+
+### RangeBox workspace
+- Desktop, Exercise, and Workbook are full-size tabs instead of a split grid.
+- RangeBox stays mounted across tab switches.
+- The desktop toolbar wraps in narrow panels instead of clipping controls.
+- See [`RELEASE-4-HOTFIX-4.0.2.md`](docs/RELEASE-4-HOTFIX-4.0.2.md).
+
 ## [4] - 2026-11-12
 
 Release 4. Enterprise single sign-on, the optional Dex/OpenLDAP test stack, and
