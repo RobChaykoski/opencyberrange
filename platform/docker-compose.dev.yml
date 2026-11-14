@@ -159,6 +159,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8443:8443"
     volumes:
       # The user manual and workbook wiki are built into this volume by the
       # wiki-builder. The source image carries only a placeholder.
@@ -216,3 +217,4 @@ volumes:
 networks:
   docker_control:
     internal: true
+
