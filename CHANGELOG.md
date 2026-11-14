@@ -2,6 +2,18 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.12.0] - 2026-11-14
+
+### RangeBox
+- UbuntuBox now uses KasmVNC (Xvnc plus its built-in web server) instead of
+  Xvfb + x11vnc + websockify, matching the Kali RangeBox. It is pinned to the
+  Ubuntu 22.04 KasmVNC 1.5.2 package with a SHA-256 check.
+- The platform's existing transport probe selects the KasmVNC client for
+  UbuntuBox automatically; RemnuxBox remains on noVNC until its image is
+  rebuilt.
+- Both KasmVNC images pin `publicIP` to the loopback address so they start on
+  isolated lab networks without STUN/internet.
+
 ## [5.11.0] - 2026-11-14
 
 ### RangeBox and learning workspace

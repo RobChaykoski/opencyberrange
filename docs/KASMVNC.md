@@ -1,8 +1,8 @@
 # KasmVNC transport for RangeBox
 
-Status: **implemented for the Kali RangeBox image; mixed deployments remain
-supported.** UbuntuBox and RemnuxBox continue to serve noVNC until their images
-are rebuilt with the same change.
+Status: **implemented for the Kali RangeBox and UbuntuBox images; mixed
+deployments remain supported.** RemnuxBox continues to serve noVNC until its
+image is rebuilt with the same change.
 
 ## Why the transport changed
 

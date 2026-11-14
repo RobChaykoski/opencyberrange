@@ -1,5 +1,5 @@
 # OpenCyberRange UbuntuBox — Browser-Based Ubuntu Desktop
-# Architecture: Xvfb + XFCE4 + x11vnc + websockify/noVNC
+# Architecture: KasmVNC (Xvnc + built-in web server) + XFCE4
 #
 # A general-purpose Ubuntu desktop for students who need a clean Linux
 # environment without Kali-specific pentesting tools.  Useful for:
@@ -22,22 +22,30 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8 \
     MOZ_DISABLE_CONTENT_SANDBOX=1
 
-# ── Layer 1: Desktop environment + VNC stack ────────────────────────────
+# ── Layer 1: Desktop environment + KasmVNC ──────────────────────────────
+ARG KASMVNC_VERSION=1.5.2
+ARG KASMVNC_SHA256=a7fb93f4ce3cfc93a3ddd593c23a437d8929791a79e1598ff2901cc7020b3e8f
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    xvfb \
     x11-utils \
     xfce4 \
     xfce4-terminal \
     xfce4-taskmanager \
     dbus-x11 \
-    x11vnc \
-    novnc \
-    websockify \
+    ssl-cert \
     fonts-liberation \
     fonts-dejavu-core \
     supervisor \
     sudo \
     locales \
+    curl \
+    ca-certificates \
+    && curl -fsSL --retry 3 -o /tmp/kasmvnc.deb \
+        "https://github.com/kasmtech/KasmVNC/releases/download/v${KASMVNC_VERSION}/kasmvncserver_ubuntu_jammy_${KASMVNC_VERSION}_amd64.deb" \
+    && echo "${KASMVNC_SHA256}  /tmp/kasmvnc.deb" | sha256sum -c - \
+    && apt-get install -y --no-install-recommends /tmp/kasmvnc.deb \
+    && make-ssl-cert generate-default-snakeoil --force-overwrite \
+    && rm -f /tmp/kasmvnc.deb \
     && sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -79,7 +87,7 @@ RUN install -d -m 0755 /etc/apt/keyrings && \
 # ── Layer 3: System configuration ───────────────────────────────────────
 
 # Create non-root user with passwordless sudo
-RUN useradd -m -s /bin/bash -G sudo student && \
+RUN useradd -m -s /bin/bash -G sudo,ssl-cert student && \
     echo "student ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "student:student" | chpasswd
 
