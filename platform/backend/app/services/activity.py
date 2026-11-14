@@ -33,6 +33,7 @@ class EventTypes:
     SSO_USER_PROVISIONED = "sso_user_provisioned"
     SSO_ACCOUNT_LINKED = "sso_account_linked"
     ACCOMMODATION_CHANGED = "accommodation_changed"
+    MINOR_CONSENT_RECORDED = "minor_consent_recorded"
 
 
 # Human-readable labels for the feed
@@ -59,6 +60,7 @@ EVENT_LABELS = {
     EventTypes.SSO_USER_PROVISIONED: "SSO Account Provisioned",
     EventTypes.SSO_ACCOUNT_LINKED: "SSO Account Linked",
     EventTypes.ACCOMMODATION_CHANGED: "Accommodation Changed",
+    EventTypes.MINOR_CONSENT_RECORDED: "Minor Consent Recorded",
 }
 
 

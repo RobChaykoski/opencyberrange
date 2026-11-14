@@ -273,6 +273,17 @@
                     <tr>
                       <td class="cell-primary">
                         <PrivacyText :value="s.username" fallback="Deleted learner" />
+                        <span v-if="s.is_minor" class="minor-badge">Minor</span>
+                        <span
+                          v-if="s.is_minor && !s.consent_recorded"
+                          class="consent-badge consent-badge--needed"
+                          title="Record the institution's parental/guardian consent reference"
+                        >Consent needed</span>
+                        <span
+                          v-else-if="s.is_minor"
+                          class="consent-badge"
+                          :title="`Recorded ${s.consent_recorded_at ? new Date(s.consent_recorded_at).toLocaleString() : ''}${s.consent_reference ? ' · ' + s.consent_reference : ''}`"
+                        >Consent on file</span>
                         <span
                           v-if="s.time_multiplier > 1 || s.due_date_extension_days > 0"
                           class="accommodation-badge"
@@ -299,6 +310,11 @@
                         <button @click="openAccommodation(s)" class="action-btn action-btn--view" title="Accommodations">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/>
+                          </svg>
+                        </button>
+                        <button v-if="s.is_minor" @click="recordConsent(s)" :disabled="consentBusy === s.id" class="action-btn action-btn--archive" :title="s.consent_recorded ? 'Update consent reference' : 'Record consent'">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/>
                           </svg>
                         </button>
                         <button @click="removeStudent(s)" class="action-btn action-btn--delete" title="Remove">
@@ -1410,6 +1426,7 @@ const accommodationForm = ref({
 })
 const accommodationBusy = ref(false)
 const accommodationError = ref('')
+const consentBusy = ref(null)
 const courseLabs = ref([])
 const availableLabs = ref([])
 const selectedLabIds = ref([])
@@ -1867,9 +1884,15 @@ async function enrollSelectedStudents() {
     const ids = Array.from(selectedEnrollIds.value)
     const res = await axios.post(`/courses/${managingCourse.value.id}/enroll-bulk`, { user_ids: ids })
     const count = res.data.enrolled_count || ids.length
+    const consentCount = (res.data.consent_required || []).length
     selectedEnrollIds.value = new Set()
     enrollSearch.value = ''
-    showAlert(`${count} student${count !== 1 ? 's' : ''} enrolled`)
+    showAlert(
+      `${count} student${count !== 1 ? 's' : ''} enrolled` +
+      (consentCount
+        ? `. Record consent for ${consentCount} minor account${consentCount !== 1 ? 's' : ''}.`
+        : '')
+    )
     await fetchCourseStudents()
     await fetchEnrollableUsers()
     fetchCourses()
@@ -2182,6 +2205,31 @@ async function clearAccommodation() {
     accommodationError.value = e.response?.data?.detail || 'Could not clear the accommodation.'
   } finally {
     accommodationBusy.value = false
+  }
+}
+
+async function recordConsent(student) {
+  const current = student.consent_reference
+    ? `Current reference: ${student.consent_reference}\n\n`
+    : ''
+  const reference = window.prompt(
+    `${current}Institution parental/guardian consent reference for ${student.username}:`
+  )
+  if (!reference || reference.trim().length < 3) return
+  consentBusy.value = student.id
+  try {
+    const { data } = await axios.put(
+      `/courses/${managingCourse.value.id}/students/${student.id}/consent`,
+      { reference: reference.trim() }
+    )
+    student.consent_recorded = true
+    student.consent_recorded_at = data.consent_recorded_at
+    student.consent_reference = data.consent_reference
+    showAlert('Consent reference recorded')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Could not record the consent reference.', 'error')
+  } finally {
+    consentBusy.value = null
   }
 }
 
@@ -3201,6 +3249,35 @@ onUnmounted(() => {
   font-size: 0.625rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.minor-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.consent-badge {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 9999px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.consent-badge--needed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
 }
 
 .modal-hint {

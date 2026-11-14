@@ -103,11 +103,15 @@ The first Release 5 feature set is in the branch:
   append-only in `accommodation_events` and the activity log. The learner can
   also pause the session clock with a reason; the scheduler skips paused
   sessions and resume credits the paused time.
+- **Minor-account consent** — a minor enrollment records the institution's
+  parental/guardian consent reference and the staff member who recorded it; the
+  instructor roster flags minors whose consent is still missing. The reference,
+  not identity documents, is stored, and the change is audited.
 - Migrations `0015_lti_platforms`, `0016_lti_links_scores`, `0017_lti_nrps`,
   `0018_lti_roster`, `0019_lti_deep_link`, `0020_lti_dl_multiple`,
-  `0021_accommodations`, and `0022_lab_pause` create the platform, login-state,
-  link, score, NRPS fields, roster, picker-session, multi-selection,
-  accommodation, and pause tables/columns idempotently.
+  `0021_accommodations`, `0022_lab_pause`, and `0023_minor_consent` create the
+  platform, login-state, link, score, NRPS fields, roster, picker-session,
+  multi-selection, accommodation, pause, and consent fields idempotently.
 
 Verified against a mock LMS with a locally generated RSA key and JWKS:
 

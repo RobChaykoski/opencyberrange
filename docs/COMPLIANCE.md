@@ -59,10 +59,12 @@ questionnaire:
   upgraded on login). WireGuard keys, TOTP secrets, IdP secrets, and OIDC ID
   tokens are encrypted with the application key. Database-at-rest encryption is
   a host/volume choice, not provided by the application.
-- **Minors.** `is_minor` drives analytics/reporting exclusion. Consent events are
-  recorded with a version. Auto-provisioned SSO accounts still need the
-  institution's own parental-consent process; the product cannot infer age from
-  an IdP assertion.
+- **Minors.** `is_minor` drives analytics/reporting exclusion. Enrollment now
+  records the institution's parental/guardian consent reference (not identity
+  documents) and flags a minor enrollment that still needs one. Survey/email
+  consent events are recorded with a version. Auto-provisioned SSO accounts
+  still need the institution's own parental-consent process; the product cannot
+  infer age from an IdP assertion.
 - **Logging.** Security events record actor, action, target, and IP; erasure
   removes or redacts identifying fields from activity records. Debug logging
   never writes secrets or learner email addresses.

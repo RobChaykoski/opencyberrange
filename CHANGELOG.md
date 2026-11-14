@@ -35,8 +35,13 @@ Release 4 `v4.0.1`.
   tab switches so the VNC session is not dropped. The briefing, flag, hints,
   and workbook remain one click away.
 
+### Minor accounts
+- Minor enrollments can record the institution's parental/guardian consent
+  reference and the staff member who recorded it. The roster flags missing
+  consent, and changes are audited. Identity documents are not stored.
+
 ### Operations
-- Migrations `0015`–`0022`.
+- Migrations `0015`–`0023`.
 - Development `172.16.16.44` deployed from `release5`; live lab spawn,
   pause/resume, accommodation read-back, 10-lab sampling, and an authenticated
   page pass all verified.

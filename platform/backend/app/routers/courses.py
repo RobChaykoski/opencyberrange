@@ -33,6 +33,7 @@ from app.schemas import (
     CourseCreate, CourseUpdate, CourseJoinRequest,
     CourseLabAssignRequest, CourseLabBulkRemoveRequest, CourseLabReorderRequest, CourseLabUpdateRequest, AssignmentReorderRequest,
     BulkEnrollRequest,
+    MinorConsentRequest,
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
     CourseFeedbackRequest,
 )
@@ -1377,6 +1378,7 @@ async def enroll_students_bulk(
         "enrolled_count": len(enrolled),
         "skipped_count": len(skipped),
         "skipped": skipped,
+        "consent_required": [s.id for s in students if s.id in enrolled and getattr(s, "is_minor", False)],
     }
 
 
@@ -1436,10 +1438,68 @@ async def list_students(
             "email": u.email,
             "student_id": u.student_id,
             "enrolled_at": e.enrolled_at,
+            "is_minor": bool(getattr(u, "is_minor", False)),
+            "consent_recorded": bool(e.consent_recorded_at),
+            "consent_recorded_at": e.consent_recorded_at,
+            "consent_reference": e.consent_reference,
             "time_multiplier": float(record.time_multiplier) if record else 1.0,
             "due_date_extension_days": int(record.due_date_extension_days or 0) if record else 0,
         })
     return {"students": students}
+
+
+@router.put("/{course_id}/students/{user_id}/consent")
+async def record_minor_consent(
+    course_id: int,
+    user_id: int,
+    data: MinorConsentRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Record the institution's parental/guardian consent reference for a minor."""
+    course = _get_course_or_404(db, course_id)
+    _require_instructor(course, current_user)
+
+    student = db.query(User).filter(User.id == user_id).first()
+    if student is None:
+        raise HTTPException(status_code=404, detail="Learner not found")
+    if not getattr(student, "is_minor", False):
+        raise HTTPException(
+            status_code=400,
+            detail="Consent references are only recorded for minor accounts.",
+        )
+    enrollment = db.query(CourseEnrollment).filter(
+        CourseEnrollment.course_id == course_id,
+        CourseEnrollment.user_id == user_id,
+    ).first()
+    if enrollment is None:
+        raise HTTPException(
+            status_code=404, detail="Learner is not enrolled in this course"
+        )
+
+    reference = data.reference.strip()
+    if len(reference) < 3:
+        raise HTTPException(status_code=400, detail="A consent reference is required.")
+    enrollment.consent_reference = reference
+    enrollment.consent_recorded_at = datetime.now(timezone.utc)
+    enrollment.consent_recorded_by_id = current_user.id
+    log_activity(
+        db,
+        EventTypes.MINOR_CONSENT_RECORDED,
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=student.id,
+        target_label=student.username,
+        detail={"course_id": course_id, "consent": "recorded"},
+        commit=False,
+    )
+    db.commit()
+    return {
+        "user_id": student.id,
+        "consent_recorded": True,
+        "consent_recorded_at": enrollment.consent_recorded_at,
+        "consent_reference": enrollment.consent_reference,
+    }
 
 
 # ==================== Lab Assignment ====================

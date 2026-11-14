@@ -169,7 +169,11 @@ class User(Base):
     completions = relationship("LabCompletion", back_populates="user")
     flag_attempts = relationship("FlagAttempt", back_populates="user")
     instructed_courses = relationship("Course", back_populates="instructor")
-    course_enrollments = relationship("CourseEnrollment", back_populates="user")
+    course_enrollments = relationship(
+        "CourseEnrollment",
+        back_populates="user",
+        foreign_keys="CourseEnrollment.user_id",
+    )
     achievements = relationship("Achievement", back_populates="user")
 
 
@@ -1158,10 +1162,20 @@ class CourseEnrollment(Base):
     # order), shown privately to the student and used on the projected
     # scoreboard so names are never displayed. Assigned lazily; NULL until then.
     seat_number = Column(Integer, nullable=True)
+    # Minor-account enrollment: the institution records the parental/guardian
+    # consent reference. The platform stores the reference and the staff member,
+    # not identity documents.
+    consent_reference = Column(String(200), nullable=True)
+    consent_recorded_at = Column(DateTime, nullable=True)
+    consent_recorded_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
 
     # Relationships
     course = relationship("Course", back_populates="enrollments")
-    user = relationship("User", back_populates="course_enrollments")
+    user = relationship(
+        "User", back_populates="course_enrollments", foreign_keys=[user_id]
+    )
 
     __table_args__ = (
         Index('ix_enrollment_course_user', 'course_id', 'user_id', unique=True),
