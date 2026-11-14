@@ -159,6 +159,35 @@ python scripts/check-doc-assets.py
 python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 ```
 
+## Release 5 deployment notes
+
+Release 5 adds LTI 1.3, per-student accommodations, minor consent/retention,
+the tabbed workspace, and a dedicated workbook origin. Before deploying:
+
+1. Take a database backup and copy the erasure ledger.
+2. Open TCP **8443** in the host firewall. The frontend container exposes it;
+   workbooks are served from `https://<host>:8443`.
+3. After migrations, set the `wiki_origin` platform setting to
+   `https://<host>:8443`.
+4. Build with `PLATFORM_VERSION=5` and confirm `/api/version`.
+5. Apply migrations `0015`–`0024` and confirm `alembic current` reports
+   `0024_retention`.
+
+Production compose build and deploy:
+
+```bash
+cd ~/opencyberrange/platform
+docker compose -f docker-compose.prod.yml -f docker-compose.adopt.yml \
+  -f docker-compose.override.yml build backend frontend
+docker compose -f docker-compose.prod.yml -f docker-compose.adopt.yml \
+  -f docker-compose.override.yml up -d
+docker exec ocr-backend sh -c 'cd /app && alembic -c alembic.ini upgrade head'
+```
+
+Verify version, health, labs, the workspace tabs, the 8443 workbook, and the
+LTI admin panel. Keep the previous image tags and the pre-deploy database dump
+for rollback. See [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+
 ## Release evidence
 
 Record verification results in `docs/UI-VERIFICATION.md`. The repeatable
