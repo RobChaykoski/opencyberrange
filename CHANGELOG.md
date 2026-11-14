@@ -63,6 +63,16 @@ Release 4 `v4.0.1`.
   learner records in scope and record an append-only completion reference after
   the documented backup-and-purge runbook step.
 
+### RangeBox
+- Pinned the Kali base image digest and the SecLists commit.
+- Baked the wordlists the labs reference at their documented paths: `common.txt`
+  (also at `/usr/share/wordlists/dirb/common.txt`), the DirBuster medium list
+  (also at `/usr/share/wordlists/dirbuster/`), the DNS top-5000 list, and two
+  password shortlists. The upstream medium-list filename moved; the download now
+  uses the pinned path that resolves.
+- Documented the root-inside-caged-container model and the Firefox content
+  sandbox rationale in `RangeBox/SECURITY-MODEL.md`.
+
 ### Operations
 - Migrations `0015`–`0025`.
 - Development `172.16.16.44` deployed from `release5`; live lab spawn,

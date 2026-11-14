@@ -9,7 +9,7 @@
 #   docker run --rm -p 6080:6080 --shm-size=256m opencyberrange/rangebox:lite
 #   Open http://localhost:6080/vnc.html
 
-FROM kalilinux/kali-rolling AS lite
+FROM kalilinux/kali-rolling@sha256:6ec743d9fc5cd397451eeddeff3869bcfab5de9bd5dec5b1f34cbfbd80313073 AS lite
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC \
@@ -98,13 +98,28 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     && chmod +x /usr/share/doc/python3-impacket/examples/mssqlclient.py
 
 # ── Layer 4: Wordlists ────────────────────────────────────────────────
-# SecLists is MIT. No breach-derived wordlists are downloaded or baked in
-# here; use Kali's local wordlists under your own policy.
-RUN mkdir -p /usr/share/seclists && \
-    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt \
-        -o /usr/share/seclists/common.txt && \
-    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/directory-list-2.3-medium.txt \
-        -o /usr/share/seclists/directory-list-2.3-medium.txt
+# SecLists is MIT. Only the wordlists the exercises reference are baked in,
+# at their documented paths. Pinned to a repository commit so two builds from
+# the same inputs are equivalent.
+ARG SECLISTS_COMMIT=a252ee440077942778d43b0a087ff01870900f23
+RUN mkdir -p /usr/share/seclists/Discovery/Web-Content \
+             /usr/share/seclists/Discovery/DNS \
+             /usr/share/seclists/Passwords/Common-Credentials \
+             /usr/share/wordlists/dirb \
+             /usr/share/wordlists/dirbuster && \
+    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/${SECLISTS_COMMIT}/Discovery/Web-Content/common.txt \
+        -o /usr/share/seclists/Discovery/Web-Content/common.txt && \
+    cp /usr/share/seclists/Discovery/Web-Content/common.txt /usr/share/wordlists/dirb/common.txt && \
+    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/${SECLISTS_COMMIT}/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt \
+        -o /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt && \
+    ln -s /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
+        /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt && \
+    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/${SECLISTS_COMMIT}/Discovery/DNS/subdomains-top1million-5000.txt \
+        -o /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt && \
+    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/${SECLISTS_COMMIT}/Passwords/Common-Credentials/xato-net-10-million-passwords-100.txt \
+        -o /usr/share/seclists/Passwords/Common-Credentials/xato-net-10-million-passwords-100.txt && \
+    curl -sfL https://raw.githubusercontent.com/danielmiessler/SecLists/${SECLISTS_COMMIT}/Passwords/Common-Credentials/probable-v2_top-1575.txt \
+        -o /usr/share/seclists/Passwords/Common-Credentials/probable-v2_top-1575.txt
 
 # ── Layer 5: System configuration ─────────────────────────────────────
 

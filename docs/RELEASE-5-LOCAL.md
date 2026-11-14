@@ -162,7 +162,7 @@ Still to do: a Canvas or Brightspace staging test.
 `172.16.16.44` (`ocrv2`, `~/opencyberrange`) now runs Release 5 from
 `release5` (backend `64549e3e`, frontend `64549e3e`).
 
-- `/api/version` = **5**, health = **healthy**, Alembic = **0022**.
+- `/api/version` = **5**, health = **healthy**, Alembic = **0025**.
 - 188 lab rows; 12 tracks and 139 track-visible labs in the authenticated API.
 - Ten randomly sampled labs returned their detail payload.
 - Authenticated page pass: dashboard, exercises, Windows track, workbooks,
@@ -187,9 +187,12 @@ Still to do: a Canvas or Brightspace staging test.
 - Per-student accommodation set through the API and read back by the learner
   (`1.5x`, `+4 days`).
 - LTI admin panel present; `/lti/deep-link` served with the LTI embed CSP.
+- Rebuilt `opencyberrange/rangebox:lite` from the pinned Kali digest and SecLists
+  commit. The documented wordlist paths exist in the image and a fresh container
+  served noVNC within 6 seconds.
 - Temporary verification accounts were deleted after the pass.
 
-Production remains on the signed Release 4 hotfix `v4.0.1`; Release 5 is not
+Production remains on the signed Release 4 hotfix `v4.0.2`; Release 5 is not
 deployed to production.
 
 ## Verified on this stack
@@ -201,7 +204,7 @@ deployed to production.
   and OT.
 - Authenticated page pass: dashboard, exercises, workbooks, courses, profile,
   admin users, admin settings, and the Wiki settings tab.
-- Backend: **335 passed, 219 skipped**.
+- Backend: **358 passed, 219 skipped**.
 - Frontend build and lint: clean (existing warnings only).
 - Licence, safe-URL, CSP, and signed supply-chain guards pass on the branch.
 
