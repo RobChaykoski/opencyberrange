@@ -68,6 +68,7 @@ def _connection(provider: IdentityProvider) -> Connection:
         not use_ssl
         and not bool(config.get("start_tls", False))
         and not bool(config.get("allow_plaintext", False))
+        and not settings.SSO_ALLOW_INSECURE_HTTP
     ):
         raise SSOError(
             "LDAP requires ldaps:// or StartTLS. Set allow_plaintext only for an "
