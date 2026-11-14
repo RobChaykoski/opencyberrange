@@ -523,6 +523,8 @@ const userInitial = computed(() => {
   flex: 1;
   overflow-y: auto;
   padding: 0.75rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
 }
 
 .nav-section {
@@ -761,6 +763,29 @@ const userInitial = computed(() => {
   background: var(--danger-bg);
   border-color: var(--danger);
   color: var(--danger);
+}
+
+/* Shorter laptop windows: tighten the brand and nav rhythm so Teaching and
+   Operations links are not pushed below the fold. */
+@media (max-height: 900px) and (min-width: 769px) {
+  .sidebar__brand {
+    padding: 0.75rem 1rem 0.6rem;
+  }
+  .brand-icon {
+    width: 64px;
+    height: 64px;
+  }
+  .nav-section {
+    padding-top: 0.35rem;
+  }
+  .nav-item {
+    padding-top: 0.38rem;
+    padding-bottom: 0.38rem;
+  }
+  .nav-section__label {
+    padding-top: 0.35rem;
+    padding-bottom: 0.25rem;
+  }
 }
 
 /* Responsive - off-canvas drawer on phones */

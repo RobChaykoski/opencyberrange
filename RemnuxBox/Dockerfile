@@ -1,5 +1,5 @@
 # OpenCyberRange RemnuxBox — Browser-Based REMnux Analysis Desktop
-# Architecture: Xvfb + XFCE4 + x11vnc + websockify/noVNC
+# Architecture: KasmVNC (Xvnc + built-in web server) + XFCE4
 #
 # REMnux is a Linux distribution for malware analysis and reverse engineering.
 # The official image is built for CLI use (SSH + GUI-over-SSH tunnel), so this
@@ -30,23 +30,29 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8 \
     MOZ_DISABLE_CONTENT_SANDBOX=1
 
-# ── Layer 1: Desktop environment + VNC stack ────────────────────────────
+# ── Layer 1: Desktop environment + KasmVNC ─────────────────────────────
+ARG KASMVNC_VERSION=1.5.2
+ARG KASMVNC_SHA256=89a5d1fbe9e032b122202be158a2b25f15c97e0a5b8dcf92a5e6835c7b7b2acd
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    xvfb \
     x11-utils \
     xfce4 \
     xfce4-terminal \
     xfce4-taskmanager \
     dbus-x11 \
-    x11vnc \
-    novnc \
-    websockify \
+    ssl-cert \
     fonts-liberation \
     fonts-dejavu-core \
     supervisor \
     sudo \
     locales \
     curl wget ca-certificates \
+    && curl -fsSL --retry 3 -o /tmp/kasmvnc.deb \
+        "https://github.com/kasmtech/KasmVNC/releases/download/v${KASMVNC_VERSION}/kasmvncserver_ubuntu_noble_${KASMVNC_VERSION}_amd64.deb" \
+    && echo "${KASMVNC_SHA256}  /tmp/kasmvnc.deb" | sha256sum -c - \
+    && apt-get install -y --no-install-recommends /tmp/kasmvnc.deb \
+    && make-ssl-cert generate-default-snakeoil --force-overwrite \
+    && rm -f /tmp/kasmvnc.deb \
     && sed -i 's/# en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen && locale-gen \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -75,7 +81,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # as the desktop account: PATH, virtualenvs and tool config behave exactly as
 # in the upstream image. Only sudo is added.
 RUN id -u remnux >/dev/null 2>&1 || useradd -m -s /bin/bash remnux
-RUN usermod -aG sudo remnux
+RUN usermod -aG sudo,ssl-cert remnux
 RUN printf 'remnux ALL=(ALL) NOPASSWD:ALL\n' > /etc/sudoers.d/90-remnux \
     && chmod 0440 /etc/sudoers.d/90-remnux
 

@@ -9,6 +9,7 @@ re-invent a labelling scheme.
 
 from __future__ import annotations
 
+import html
 from datetime import datetime, timezone
 from typing import Any
 
@@ -140,3 +141,63 @@ def export_metadata() -> dict[str, Any]:
     """JSON-friendly metadata for application/json exports."""
     labels = export_labels()
     return dict(labels) if labels else {}
+
+
+def _label_lines(labels: dict[str, Any]) -> list[str]:
+    lines = [f"Data classification: {labels['classification']}"]
+    lines.append(f"Organisation: {labels['organisation']}")
+    if labels.get("handling"):
+        lines.append(f"Handling: {labels['handling']}")
+    if labels.get("generated_at"):
+        lines.append(f"Generated: {labels['generated_at']}")
+    return lines
+
+
+def csv_with_labels(data: bytes) -> bytes:
+    """Prepend human-readable label comments to a CSV download.
+
+    The comment rows are intentionally marked with ``#`` so a reader can see
+    the handling instruction before the header row. The response headers still
+    carry the machine-readable version.
+    """
+    labels = export_labels()
+    if not labels:
+        return data
+    text = data.decode("utf-8-sig")
+    prefix = "".join(f"# {line}\n" for line in _label_lines(labels))
+    return ("\ufeff" + prefix + text).encode("utf-8")
+
+
+def markdown_with_labels(text: str) -> str:
+    labels = export_labels()
+    if not labels:
+        return text
+    lines = _label_lines(labels)
+    block = "\n".join(f"> **{line.split(': ', 1)[0]}:** {line.split(': ', 1)[1]}" for line in lines)
+    return f"{block}\n\n---\n\n{text}"
+
+
+def html_with_labels(content: str) -> str:
+    labels = export_labels()
+    if not labels:
+        return content
+    lines = "".join(
+        f"<div><strong>{html.escape(line.split(': ', 1)[0])}:</strong> "
+        f"{html.escape(line.split(': ', 1)[1])}</div>"
+        for line in _label_lines(labels)
+    )
+    banner = (
+        '<div style="margin:0 0 1rem;padding:0.75rem 1rem;border:1px solid #cbd5e1;'
+        'border-left:4px solid #2563eb;border-radius:6px;background:#f8fafc;'
+        'color:#334155;font:13px/1.45 system-ui,sans-serif">'
+        f"{lines}</div>"
+    )
+    marker = "<body"
+    index = content.lower().find(marker)
+    if index == -1:
+        return banner + content
+    close = content.find(">", index)
+    if close == -1:
+        return banner + content
+    return content[: close + 1] + banner + content[close + 1 :]
+

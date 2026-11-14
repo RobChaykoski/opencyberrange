@@ -64,12 +64,13 @@ provider export include an `export_metadata` object:
 }
 ```
 
-## CSV and Markdown
+### CSV, Markdown, and HTML
 
-CSV downloads carry the label in response headers. The CSV body is unchanged so
-spreadsheet imports and existing parsers keep working. Markdown and HTML
-portfolio downloads carry the headers as well; adding a visible footer to those
-formats is a content-design decision and is not implied by the metadata switch.
+CSV downloads prepend `#` comment rows with the classification, organisation,
+handling note, and generation time, followed by the normal header row. The
+response headers remain the machine-readable copy. Markdown dossiers and
+portfolios start with a blockquote label block; HTML exports insert a styled
+label banner immediately after `<body>`.
 
 ## Scope and limits
 

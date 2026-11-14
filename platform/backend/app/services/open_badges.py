@@ -119,16 +119,25 @@ def credential_payload(db: Session, row: OpenBadgeCredential) -> dict:
     issuer = issuer_url(db)
     subject = _subject_url(issuer, row)
     user = row.user if getattr(row, "user", None) else None
+    is_event = bool(row.track_slug and row.track_slug.startswith("event:"))
+    image_url = f"{issuer}/api/badges/achievements/{row.certificate_id}/image.png"
     achievement = {
         "id": f"{issuer}/api/badges/achievements/{row.certificate_id}",
         "type": ["Achievement"],
         "name": row.achievement_name,
         "description": row.achievement_description or row.achievement_name,
+        "image": {"id": image_url, "type": "Image"},
         "criteria": {
+            "id": row.criteria_url or issuer,
             "narrative": (
-                "Completed every required exercise in this level of the "
-                "SWOCTS Cyber Range."
-            )
+                row.achievement_description
+                or (
+                    "Earned an award in this SWOCTS Cyber Range event."
+                    if is_event
+                    else "Completed every required exercise in this level of the "
+                    "SWOCTS Cyber Range."
+                )
+            ),
         },
     }
     credential_subject = {"id": subject, "achievement": achievement}
@@ -147,9 +156,24 @@ def credential_payload(db: Session, row: OpenBadgeCredential) -> dict:
             ],
             "type": ["VerifiableCredential", "OpenBadgeCredential"],
             "name": row.achievement_name,
-            "issuer": {"id": issuer, "name": issuer_name(db)},
+            "issuer": {
+                "id": issuer,
+                "type": ["Profile"],
+                "name": issuer_name(db),
+                "url": issuer,
+                "image": {"id": image_url, "type": "Image"},
+            },
             "validFrom": (row.issued_at or datetime.now(timezone.utc)).isoformat(),
             "credentialSubject": credential_subject,
+            "credentialSchema": [
+                {
+                    "id": (
+                        "https://purl.imsglobal.org/spec/ob/v3p0/schema/json/"
+                        "ob_v3p0_achievementcredential_schema.json"
+                    ),
+                    "type": "JsonSchemaValidator2018",
+                }
+            ],
             "evidence": [
                 {
                     "id": row.evidence_url or issuer,
@@ -253,6 +277,76 @@ def issue_badge(
         achievement_name=f"{certificate['track_name']} — {certificate['level_name']}",
         achievement_description=certificate.get("level_description")
         or f"Level {certificate['level_number']} of {certificate['track_name']}",
+        criteria_url=verify_url,
+        evidence_url=verify_url,
+        recipient_name_opt_in=bool(include_name),
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def issue_event_badge(
+    db: Session,
+    user: User,
+    competition,
+    award_key: str,
+    *,
+    include_name: bool = False,
+) -> OpenBadgeCredential:
+    """Issue a hosted credential for an earned event award."""
+    from app.services.event_certificates import (
+        build_event_certificate,
+        event_award_keys_for_user,
+        event_ended,
+    )
+
+    if not event_ended(competition):
+        raise ValueError("event_not_ended")
+    if award_key not in event_award_keys_for_user(
+        db, user.id, competition.id, competition.experience_key
+    ):
+        raise ValueError("award_not_earned")
+    certificate = build_event_certificate(
+        db,
+        user,
+        competition,
+        award_key,
+        include_qr=False,
+        base_url=issuer_url(db),
+    )
+    existing = (
+        db.query(OpenBadgeCredential)
+        .filter(
+            OpenBadgeCredential.user_id == user.id,
+            OpenBadgeCredential.certificate_id == certificate["certificate_id"],
+        )
+        .first()
+    )
+    if existing is not None:
+        if include_name and not existing.recipient_name_opt_in:
+            existing.recipient_name_opt_in = True
+            db.commit()
+        return existing
+
+    verify_url = (
+        certificate.get("verify_url")
+        or f"{issuer_url(db)}/verify/certificate/{certificate['certificate_id']}"
+    )
+    row = OpenBadgeCredential(
+        user_id=user.id,
+        certificate_id=certificate["certificate_id"],
+        track_slug=f"event:{competition.id}",
+        level_id=None,
+        subject_id=uuid.uuid4().hex,
+        jti=uuid.uuid4().hex,
+        achievement_name=(
+            f"{competition.name} — {certificate['title']}"
+        )[:200],
+        achievement_description=certificate.get("award_description")
+        or certificate.get("award_label")
+        or "Event award",
         criteria_url=verify_url,
         evidence_url=verify_url,
         recipient_name_opt_in=bool(include_name),

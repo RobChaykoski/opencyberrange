@@ -83,8 +83,8 @@ security patch, IdP settings feature, and operations patch.
 - **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali
   RangeBox in the 5.11 line. KasmVNC's own client is required for input and
   resize; the platform serves a pinned copy and proxies only the WebSocket. See
-  [`KASMVNC.md`](KASMVNC.md). RemnuxBox remains on noVNC until its image is
-  rebuilt.
+  [`KASMVNC.md`](KASMVNC.md). All three desktop images use KasmVNC; noVNC
+  remains available for older images.
 - **Distroless/Chainguard frontend** — nginx:alpine remains the serving base.
   A distroless migration would remove the shell entrypoint that selects the
   HTTP/HTTPS config and risks the production serving path. Defer to a dedicated

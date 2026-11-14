@@ -27,6 +27,7 @@ from app.routers.analytics import (
     course_overview,
 )
 from app.services.audit import AuditActions, log_admin_action
+from app.services.export_labels import csv_with_labels
 from app.services.report_integrity import record_report, verify_report
 from app.services.report_pdf import (
     generate_coaching_queue_pdf,
@@ -177,7 +178,7 @@ def _csv_bytes(headers: list[str], rows: list[list]) -> bytes:
     writer.writerow(headers)
     for row in rows:
         writer.writerow(neutralize_row(row))
-    return buffer.getvalue().encode("utf-8-sig")
+    return csv_with_labels(buffer.getvalue().encode("utf-8-sig"))
 
 
 def _aware(value: datetime | None) -> datetime | None:

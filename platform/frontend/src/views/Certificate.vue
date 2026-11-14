@@ -42,10 +42,10 @@
           Share on LinkedIn
         </a>
         <button
-          v-if="certificate && !isEvent"
+          v-if="certificate"
           class="btn btn--secondary"
           :disabled="badgeBusy"
-          @click="issueBadge"
+          @click="isEvent ? issueEventBadge() : issueBadge()"
         >
           {{ badgeBusy ? 'Issuing…' : 'Get Open Badge' }}
         </button>
@@ -391,6 +391,25 @@ const issueBadge = async () => {
   } catch (e) {
     badgeError.value =
       e.response?.data?.detail || 'Could not issue an Open Badge for this certificate.'
+  } finally {
+    badgeBusy.value = false
+  }
+}
+
+const issueEventBadge = async () => {
+  if (badgeBusy.value) return
+  badgeBusy.value = true
+  badgeError.value = ''
+  try {
+    const { data } = await axios.post('/badges/events/issue', {
+      competition_id: Number(route.params.eventId),
+      award: eventAward.value,
+    })
+    badge.value = data
+    badgeCopied.value = false
+  } catch (e) {
+    badgeError.value =
+      e.response?.data?.detail || 'Could not issue an Open Badge for this event award.'
   } finally {
     badgeBusy.value = false
   }

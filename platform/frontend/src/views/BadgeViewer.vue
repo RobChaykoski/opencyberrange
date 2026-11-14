@@ -6,6 +6,7 @@
 
       <template v-else-if="data">
         <header class="badge-head">
+          <img v-if="badgeImage" :src="badgeImage" alt="" class="badge-image" />
           <div>
             <p class="badge-eyebrow">Open Badge 3.0 · JWT-VC</p>
             <h1>{{ vc?.name || achievement?.name || 'Credential' }}</h1>
@@ -74,6 +75,11 @@ const vc = computed(() => {
   }
 })
 const achievement = computed(() => vc.value?.credentialSubject?.achievement || null)
+const badgeImage = computed(() => {
+  const image = achievement.value?.image
+  if (!image) return ''
+  return typeof image === 'string' ? image : image.id || ''
+})
 const recipient = computed(
   () => vc.value?.credentialSubject?.name || 'Pseudonymous subject'
 )
@@ -152,6 +158,7 @@ onMounted(async () => {
 .badge-state { color: var(--text-muted); }
 .badge-state--error { color: var(--danger); }
 .badge-head { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+.badge-image { width: 96px; height: 96px; border-radius: 12px; flex: 0 0 auto; }
 .badge-eyebrow { margin: 0 0 0.3rem; color: var(--accent); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
 .badge-head h1 { margin: 0; font-size: 1.5rem; }
 .badge-issuer { margin: 0.3rem 0 0; color: var(--text-muted); }

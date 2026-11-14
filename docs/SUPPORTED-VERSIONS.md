@@ -98,7 +98,7 @@ baseline; Wave 5 updates the runtime and Wave 1 updates the toolchain.
 | marked | 18.1.3 | Wave A (done) | |
 | DOMPurify | 3.4.17 | Wave A (done) | Keep sanitisation tests |
 | noVNC | 1.7.0 | Wave C (done) | Required for Vite 8 (Rolldown); legacy RangeBox viewer |
-| KasmVNC | 1.5.2 | 5.12 | RangeBox Kali/Ubuntu transport and vendored browser client; GPL-2.0 |
+| KasmVNC | 1.5.2 | 5.13 | RangeBox Kali/Ubuntu/REMnux transport and vendored browser client; GPL-2.0 |
 | sortablejs | 1.15.7 | 5 | |
 | Vite | 8.3.6 | Wave C (done) | Rolldown; Node 22+ |
 | @vitejs/plugin-vue | 6.0.10 | Wave C (done) | Pairs with Vite 8 |

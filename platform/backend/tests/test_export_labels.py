@@ -75,3 +75,27 @@ def test_pdf_metadata_is_written(monkeypatch):
     assert b"Example Institute" in output
     assert b"Restricted" in output
 
+
+def test_csv_markdown_and_html_labels_are_visible(monkeypatch):
+    _patch(
+        monkeypatch,
+        {
+            "export_label_enabled": "true",
+            "export_classification": "confidential",
+            "export_organisation": "Example Institute",
+            "export_handling_note": "Authorised staff only.",
+            "export_include_timestamp": "false",
+        },
+    )
+    csv_data = export_labels.csv_with_labels(b"a,b\n1,2\n")
+    assert csv_data.decode("utf-8-sig").startswith("# Data classification: Confidential")
+    assert "Authorised staff only." in csv_data.decode("utf-8-sig")
+
+    markdown = export_labels.markdown_with_labels("# Report\n")
+    assert "Data classification:** Confidential" in markdown
+    assert markdown.endswith("# Report\n")
+
+    html = export_labels.html_with_labels("<html><body><p>Report</p></body></html>")
+    assert "Data classification:" in html
+    assert html.index("Data classification:") < html.index("<p>Report</p>")
+

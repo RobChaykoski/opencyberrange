@@ -1,4 +1,4 @@
-﻿"""Profile summary and printable transcript endpoints.
+"""Profile summary and printable transcript endpoints.
 
 The profile page needs one authoritative view of a student's completion
 record: the same certificate IDs the certificate page issues, the labs behind
@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session, joinedload
 from app.auth import get_current_active_user
 from app.database import get_db
 from app.services.audit import log_admin_action, AuditActions
-from app.services.export_labels import export_metadata
+from app.services.export_labels import export_metadata, html_with_labels, markdown_with_labels
 from app.models import (
     Achievement,
     Course,
@@ -424,7 +424,7 @@ async def get_career_dossier_markdown(
     dossier = build_career_dossier(db, current_user)
     _log_career_export(request, current_user, "markdown")
     return Response(
-        content=render_career_markdown(dossier),
+        content=markdown_with_labels(render_career_markdown(dossier)),
         media_type="text/markdown; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -447,7 +447,7 @@ async def get_career_dossier_html(
     dossier = build_career_dossier(db, current_user)
     _log_career_export(request, current_user, "html")
     return Response(
-        content=render_career_html(dossier),
+        content=html_with_labels(render_career_html(dossier)),
         media_type="text/html; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -513,7 +513,7 @@ async def get_portfolio_markdown(
     portfolio = build_portfolio(db, current_user, summary)
     _log_portfolio_export(request, current_user, "markdown")
     return Response(
-        content=render_portfolio_markdown(portfolio),
+        content=markdown_with_labels(render_portfolio_markdown(portfolio)),
         media_type="text/markdown; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -538,7 +538,7 @@ async def get_portfolio_html(
     portfolio = build_portfolio(db, current_user, summary)
     _log_portfolio_export(request, current_user, "html")
     return Response(
-        content=render_portfolio_html(portfolio),
+        content=html_with_labels(render_portfolio_html(portfolio)),
         media_type="text/html; charset=utf-8",
         headers={
             "Content-Disposition": (

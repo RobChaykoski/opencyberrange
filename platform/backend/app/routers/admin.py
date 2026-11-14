@@ -53,6 +53,7 @@ from app import entitlement
 from app.services.docker_manager import DockerManager, get_subnet_id
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
+from app.services.export_labels import csv_with_labels
 from app.services.activity import log_activity, EventTypes
 from app.services.achievements import resolve_achievement_label
 from app.services.backups import backup_directory, create_database_backup
@@ -3215,7 +3216,7 @@ async def export_activity_log(
             writer.writerow({
                 key: neutralize_cell(row.get(key)) for key in fields
             })
-        content = buffer.getvalue()
+        content = csv_with_labels(buffer.getvalue().encode("utf-8"))
         media_type = "text/csv"
         filename = f"activity-log-{stamp}.csv"
     else:

@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_active_user, get_current_admin_user
 from app.database import get_db
-from app.models import OpenBadgeCredential, User
-from app.services import open_badges, settings_service
+from app.models import (
+    Competition,
+    CompetitionParticipant,
+    OpenBadgeCredential,
+    User,
+)
+from app.services import badge_image, open_badges, settings_service
 from app.services.activity import EventTypes, log_activity
 
 router = APIRouter()
@@ -18,6 +23,12 @@ router = APIRouter()
 class IssueRequest(BaseModel):
     track_slug: str = Field(..., min_length=1, max_length=100)
     level_id: int
+    include_name: bool = False
+
+
+class EventIssueRequest(BaseModel):
+    competition_id: int
+    award: str = Field(..., min_length=1, max_length=40)
     include_name: bool = False
 
 
@@ -154,6 +165,7 @@ def issuer_profile(db: Session = Depends(get_db)):
     issuer = open_badges.issuer_url(db)
     return {
         "id": issuer,
+        "type": ["Profile"],
         "name": open_badges.issuer_name(db),
         "url": issuer,
         "jwks_uri": f"{issuer}/api/badges/issuer/jwks",
@@ -178,6 +190,29 @@ def achievement_definition(certificate_id: str, db: Session = Depends(get_db)):
     return payload["vc"]["credentialSubject"]["achievement"]
 
 
+@router.get("/badges/achievements/{certificate_id}/image.png")
+def achievement_image(certificate_id: str, db: Session = Depends(get_db)):
+    row = (
+        db.query(OpenBadgeCredential)
+        .filter(OpenBadgeCredential.certificate_id == certificate_id)
+        .first()
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="Achievement not found")
+    is_event = bool(row.track_slug and row.track_slug.startswith("event:"))
+    png = badge_image.badge_png(
+        row.achievement_name,
+        subtitle="Event award" if is_event else "Level credential",
+        footer=row.certificate_id[-10:],
+        kind="event" if is_event else "level",
+    )
+    return Response(
+        content=png,
+        media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+
 @router.get("/badges/credentials/{jti}")
 def hosted_credential(jti: str, db: Session = Depends(get_db)):
     row = _credential_or_404(db, jti)
@@ -187,6 +222,20 @@ def hosted_credential(jti: str, db: Session = Depends(get_db)):
         "format": "jwt_vc_json",
         "credential": open_badges.sign_credential(db, row),
     }
+
+
+@router.get("/badges/credentials/{jti}/jwt")
+def hosted_credential_jwt(jti: str, db: Session = Depends(get_db)):
+    row = _credential_or_404(db, jti)
+    token = open_badges.sign_credential(db, row)
+    return Response(
+        content=token,
+        media_type="application/vc+jwt",
+        headers={
+            "Cache-Control": "no-store",
+            "Content-Disposition": f'inline; filename="{row.jti}.jwt"',
+        },
+    )
 
 
 @router.get("/badges/credentials/{jti}/status")
@@ -259,6 +308,72 @@ def issue_badge(
         target_id=current_user.id,
         target_label=current_user.username,
         detail={"jti": row.jti, "certificate_id": row.certificate_id},
+    )
+    return {
+        "id": row.id,
+        "jti": row.jti,
+        "status": open_badges.credential_status(row),
+        "credential": open_badges.sign_credential(db, row),
+    }
+
+
+@router.post("/badges/events/issue", status_code=201)
+def issue_event_badge(
+    payload: EventIssueRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    competition = (
+        db.query(Competition)
+        .filter(Competition.id == payload.competition_id)
+        .first()
+    )
+    if competition is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+    participant = (
+        db.query(CompetitionParticipant)
+        .filter(
+            CompetitionParticipant.competition_id == competition.id,
+            CompetitionParticipant.user_id == current_user.id,
+        )
+        .first()
+    )
+    if participant is None:
+        raise HTTPException(
+            status_code=403, detail="Join the event before requesting a badge."
+        )
+    if not current_user.is_approved:
+        raise HTTPException(status_code=403, detail="Account is not approved.")
+    try:
+        row = open_badges.issue_event_badge(
+            db,
+            current_user,
+            competition,
+            payload.award.strip().lower(),
+            include_name=payload.include_name,
+        )
+    except ValueError as exc:
+        if str(exc) == "event_not_ended":
+            raise HTTPException(
+                status_code=409,
+                detail="Event badges are available after the event ends.",
+            ) from exc
+        raise HTTPException(
+            status_code=404, detail="That event award is not available."
+        ) from exc
+    log_activity(
+        db,
+        EventTypes.OPEN_BADGE_ISSUED,
+        actor_id=current_user.id,
+        target_type="user",
+        target_id=current_user.id,
+        target_label=current_user.username,
+        detail={
+            "jti": row.jti,
+            "certificate_id": row.certificate_id,
+            "event_id": competition.id,
+            "award": payload.award,
+        },
     )
     return {
         "id": row.id,

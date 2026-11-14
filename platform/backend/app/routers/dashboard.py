@@ -26,6 +26,7 @@ from app.auth import get_current_active_user, get_current_instructor_user
 from app.export_reason import require_export_reason
 from app.services.activity import EVENT_LABELS
 from app.services.audit import log_admin_action, AuditActions
+from app.services.export_labels import csv_with_labels
 from app.services.achievements import (
     ACHIEVEMENT_DESCRIPTIONS,
     ACHIEVEMENT_LABELS,
@@ -1129,7 +1130,7 @@ async def instructor_report(
             (e.get("detail") or "").replace("\n", " ") if isinstance(e.get("detail"), str) else (e.get("detail") or ""),
         ]))
 
-    csv_bytes = buf.getvalue().encode("utf-8")
+    csv_bytes = csv_with_labels(buf.getvalue().encode("utf-8"))
     log_admin_action(
         action=AuditActions.REPORT_EXPORTED,
         admin_user_id=current_user.id,

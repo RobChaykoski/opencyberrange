@@ -2,6 +2,35 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.13.0] - 2026-11-14
+
+### RangeBox
+- RemnuxBox now uses KasmVNC (Ubuntu 24.04 package), completing the transport
+  migration for Kali, Ubuntu, and REMnux. All three images pin `publicIP` to
+  loopback so they start on isolated lab networks without STUN/internet.
+- The platform's transport probe keeps noVNC available for older images.
+
+### Lab operations
+- Backend composes now set `DOCKER_CONFIG=/tmp/.docker`, so on-demand lab
+  builds by the non-root backend no longer fail with
+  `mkdir /.docker: permission denied`.
+- The sidebar compacts its brand and nav rhythm on shorter laptop windows so
+  Teaching and Operations links are not pushed below the fold.
+
+### Export labels
+- CSV reports and activity exports prepend visible classification/owner/
+  handling comments; Markdown and HTML dossiers/portfolios carry a visible
+  label block in addition to the `X-Data-*` response headers.
+
+### Open Badges
+- Event awards can be issued as hosted Open Badges from the event certificate
+  page; eligibility and event-end rules match the PDF certificate.
+- Hosted achievements now expose deterministic PNG badge artwork, referenced
+  from the credential's achievement and issuer `image` fields.
+- Credentials add `criteria.id`, `credentialSchema`, issuer profile type, and
+  a raw JWT endpoint (`/api/badges/credentials/{jti}/jwt`) for third-party
+  viewers. The credential viewer displays the badge artwork.
+
 ## [5.12.0] - 2026-11-14
 
 ### RangeBox
