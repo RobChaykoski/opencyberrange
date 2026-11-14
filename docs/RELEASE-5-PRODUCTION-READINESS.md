@@ -1,9 +1,9 @@
 # Release 5 production readiness
 
 Status: **release candidate prepared; production not yet deployed.**
-Development `172.16.16.44` is running Release 5 (backend `64549e3e`, frontend
-`64549e3e`, Alembic `0025`). Production remains on the signed Release 4 hotfix
-`v4.0.2`.
+Development `172.16.16.44` is running Release 5 from `release5` head `6d480089`
+(backend rebuilt at that commit; frontend sources unchanged since `64549e3e`;
+Alembic `0025`). Production remains on the signed Release 4 hotfix `v4.0.2`.
 
 ## Ready for production
 

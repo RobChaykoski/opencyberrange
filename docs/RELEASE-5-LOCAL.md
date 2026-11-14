@@ -160,7 +160,8 @@ Still to do: a Canvas or Brightspace staging test.
 ## Development deployment
 
 `172.16.16.44` (`ocrv2`, `~/opencyberrange`) now runs Release 5 from
-`release5` (backend `64549e3e`, frontend `64549e3e`).
+`release5` head `6d480089` (backend rebuilt at that commit; frontend sources
+unchanged since `64549e3e`).
 
 - `/api/version` = **5**, health = **healthy**, Alembic = **0025**.
 - 188 lab rows; 12 tracks and 139 track-visible labs in the authenticated API.
