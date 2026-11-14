@@ -529,17 +529,48 @@
               </button>
             </div>
           </div>
+          <nav v-if="workspaceMode" class="workspace-tabs" role="tablist" aria-label="Exercise workspace">
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="workspaceTab === 'desktop'"
+              :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'desktop' }]"
+              :disabled="rangeboxPoppedOut"
+              @click="workspaceTab = 'desktop'"
+            >
+              Desktop
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="workspaceTab === 'exercise'"
+              :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'exercise' }]"
+              @click="workspaceTab = 'exercise'"
+            >
+              Exercise
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="workspaceTab === 'workbook'"
+              :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'workbook' }]"
+              @click="workspaceTab = 'workbook'"
+            >
+              Workbook
+            </button>
+          </nav>
           <div
             class="active-lab-grid"
             :class="{
               'active-lab-grid--workspace': workspaceMode,
-              'active-lab-grid--workbook-expanded': workspaceMode && workbookExpanded,
+              'active-lab-grid--tabs': workspaceMode,
               'active-lab-grid--popped-out': workspaceMode && rangeboxPoppedOut,
             }"
           >
             <!-- RangeBox workspace frame (desktop only) -->
             <section
               v-if="workspaceMode && !rangeboxPoppedOut"
+              v-show="workspaceTab === 'desktop'"
               class="panel-section panel-section--rangebox"
               aria-label="RangeBox desktop"
             >
@@ -553,7 +584,7 @@
                   RangeBox
                 </h3>
                 <div class="workspace-frame__actions">
-                  <span class="workspace-frame__hint">Work here. Copy flags into the panel on the right.</span>
+                  <span class="workspace-frame__hint">Work here. Submit flags in the Exercise tab.</span>
                   <button type="button" class="btn btn--secondary btn--sm" @click="openRangeBoxPopout">
                     Pop out
                   </button>
@@ -571,7 +602,11 @@
               </div>
             </section>
 
-            <div class="lab-details" :class="{ 'lab-details--workspace': workspaceMode }">
+            <div
+              v-show="!workspaceMode || workspaceTab === 'exercise'"
+              class="lab-details"
+              :class="{ 'lab-details--workspace': workspaceMode }"
+            >
             <!-- Scenario (spans full width of grid) -->
             <div v-if="activeLab.lab.scenario" id="lab-briefing" class="panel-section panel-section--full panel-section--scenario">
               <h3 class="section-title">
@@ -791,6 +826,7 @@
             <!-- Workbook workspace frame (desktop only) -->
             <section
               v-if="workspaceMode"
+              v-show="workspaceTab === 'workbook'"
               class="panel-section panel-section--workbook"
               aria-label="Exercise workbook"
             >
@@ -803,13 +839,6 @@
                   Workbook
                 </h3>
                 <div class="workspace-frame__actions">
-                  <button
-                    type="button"
-                    class="btn btn--secondary btn--sm"
-                    @click="workbookExpanded = !workbookExpanded"
-                  >
-                    {{ workbookExpanded ? 'Restore' : 'Expand' }}
-                  </button>
                   <button
                     v-if="activeWorkbookUrl"
                     type="button"
@@ -1189,6 +1218,7 @@ const isRangeBoxActive = computed(() => {
 // Desktop exercise workspace: RangeBox top-left, details/flag on the right,
 // workbook along the bottom. VPN-only labs and phones keep the stacked panel.
 const workspaceMode = computed(() => Boolean(isRangeBoxActive.value && !isMobile.value))
+const workspaceTab = ref('desktop')
 const workbookExpanded = ref(false)
 const rangeboxPoppedOut = ref(false)
 let rangeboxWindow = null
@@ -1386,6 +1416,7 @@ const openActiveLab = async (lab) => {
       params
     })
     activeLab.value = data
+    workspaceTab.value = 'desktop'
     workbookExpanded.value = false
     loadReaction(data.lab?.id || lab.id)
 
@@ -1562,7 +1593,8 @@ const openRangeBoxPopout = () => {
     return
   }
   rangeboxPoppedOut.value = true
-  workbookExpanded.value = true
+  workspaceTab.value = 'exercise'
+  workbookExpanded.value = false
   try {
     rangeboxWindow.focus()
   } catch {}
@@ -3308,6 +3340,58 @@ watch(timeRemaining, (val) => {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+}
+
+.workspace-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.workspace-tabs__tab {
+  padding: 0.35rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.workspace-tabs__tab:hover:not(:disabled) {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.workspace-tabs__tab--active {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.workspace-tabs__tab:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.active-lab-grid--tabs {
+  display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.active-lab-grid--tabs > .panel-section,
+.active-lab-grid--tabs > .lab-details--workspace {
+  height: 100%;
+}
+
+.active-lab-grid--tabs > .lab-details--workspace {
+  padding-bottom: 0.25rem;
 }
 
 .active-lab-grid--workspace {
