@@ -30,10 +30,14 @@ Release 4 `v4.0.1`.
 - Append-only `accommodation_events` and activity-log records.
 
 ### Learning workspace
-- The RangeBox exercise view uses full-size **Desktop**, **Exercise**, and
-  **Workbook** tabs instead of a split grid. The desktop stays mounted across
-  tab switches so the VNC session is not dropped. The briefing, flag, hints,
-  and workbook remain one click away.
+- The exercise view uses full-size **Desktop**, **Exercise**, and **Workbook**
+  tabs instead of a split grid. The desktop stays mounted across tab switches
+  so the VNC session is not dropped. The briefing, flag, hints, and workbook
+  remain one click away.
+- The same tabs appear for every lab. The Desktop tab shows RangeBox, VPN
+  connection guidance, a start prompt, or the mobile notice instead of
+  changing the whole page layout. The selected lab and tab persist in the URL
+  across refresh and back/forward.
 
 ### Minor accounts
 - Minor enrollments can record the institution's parental/guardian consent
