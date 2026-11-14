@@ -1847,6 +1847,11 @@
             <IdentityProvidersPanel />
           </div>
 
+          <!-- Open Badges issuer -->
+          <div v-else-if="activeSettingsCategory === 'open-badges'" class="settings-form">
+            <OpenBadgesPanel />
+          </div>
+
           <!-- LTI 1.3 platform registrations -->
           <div v-else-if="activeSettingsCategory === 'lti'" class="settings-form">
             <LtiPlatformsPanel />
@@ -4042,6 +4047,7 @@ import QuestionBankAdmin from '../components/QuestionBankAdmin.vue'
 import PrivacyText from '../components/PrivacyText.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
+import OpenBadgesPanel from '../components/OpenBadgesPanel.vue'
 import AuditHistory from '../components/AuditHistory.vue'
 import LtiPlatformsPanel from '../components/LtiPlatformsPanel.vue'
 import { getUserTimeZone } from '../utils/timezone'
@@ -4810,6 +4816,8 @@ const settingsCategories = computed(() => {
   base.push('question-banks')
   // Identity provider settings: LDAP/OIDC/SAML configuration.
   base.push('identity')
+  // Hosted Open Badges 3.0 issuer and credentials.
+  base.push('open-badges')
   // LTI 1.3 platform registrations.
   base.push('lti')
   // The Modules tab (optional-module enable/disable) is a real admin control,
@@ -4818,7 +4826,7 @@ const settingsCategories = computed(() => {
   if (Object.keys(modules.value || {}).length > 0) base.push('modules')
   return base
 })
-const categoryLabels = { general: 'General', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', lti: 'LTI platforms' }
+const categoryLabels = { general: 'General', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
@@ -15114,3 +15122,4 @@ watch(activeTab, (tab) => {
   }
 }
 </style>
+

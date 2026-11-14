@@ -2,6 +2,19 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.9.0] - 2026-11-14
+
+### Open Badges
+- Added an admin **Open Badges** settings panel: issuer name and URL, current
+  key ID, signing-key count, credential count, recent credentials, and key
+  rotation.
+- Key rotation publishes the old public key in the JWKS so credentials signed
+  before rotation still verify.
+- Added a public `/badges/:jti` credential viewer: achievement, issuer, status,
+  recipient (or pseudonymous subject), JWKS link, JWT copy/download, and raw
+  claims. The certificate page now links to the viewer.
+- Added admin-only badge settings/list/rotate endpoints; changes are audited.
+
 ## [5.8.1] - 2026-11-14
 
 ### Fixes

@@ -123,6 +123,8 @@ DEFAULT_SETTINGS = [
      "description": "Public issuer URL for Open Badges credentials. Empty uses the platform public URL."},
     {"key": "open_badge_signing_key", "value": "", "category": "badges", "is_secret": True,
      "description": "Ed25519 private key used to sign Open Badges credentials. Generated on first use."},
+    {"key": "open_badge_retired_keys", "value": "[]", "category": "badges",
+     "description": "Public JWKs retired by key rotation, kept so older credentials still verify."},
 
     # --- Features ---
     {"key": "advanced_dna_insights_enabled", "value": "false", "category": "features",

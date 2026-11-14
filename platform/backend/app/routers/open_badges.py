@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_active_user, get_current_admin_user
 from app.database import get_db
 from app.models import OpenBadgeCredential, User
-from app.services import open_badges
+from app.services import open_badges, settings_service
 from app.services.activity import EventTypes, log_activity
 
 router = APIRouter()
@@ -29,6 +29,11 @@ class RevokeRequest(BaseModel):
     reason: str = Field(..., min_length=3, max_length=500)
 
 
+class BadgeSettingsUpdate(BaseModel):
+    issuer_name: str = Field(..., min_length=1, max_length=120)
+    issuer_url: str = Field("", max_length=500)
+
+
 def _credential_or_404(db: Session, jti: str) -> OpenBadgeCredential:
     row = (
         db.query(OpenBadgeCredential)
@@ -38,6 +43,94 @@ def _credential_or_404(db: Session, jti: str) -> OpenBadgeCredential:
     if row is None:
         raise HTTPException(status_code=404, detail="Credential not found")
     return row
+
+
+@router.get("/admin/badges/settings")
+def badge_settings(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    jwks = open_badges.public_jwks(db)
+    current = jwks["keys"][0] if jwks["keys"] else {}
+    count = db.query(OpenBadgeCredential).count()
+    return {
+        "issuer_name": open_badges.issuer_name(db),
+        "issuer_url": open_badges.issuer_url(db),
+        "current_kid": current.get("kid"),
+        "signing_keys": len(jwks["keys"]),
+        "credential_count": count,
+    }
+
+
+@router.put("/admin/badges/settings")
+def update_badge_settings(
+    payload: BadgeSettingsUpdate,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    url = payload.issuer_url.strip().rstrip("/")
+    if url and not url.startswith(("https://", "http://")):
+        raise HTTPException(status_code=400, detail="Issuer URL must be http(s)")
+    settings_service.set_setting(
+        db, "open_badge_issuer_name", payload.issuer_name.strip()
+    )
+    settings_service.set_setting(db, "open_badge_issuer_url", url)
+    log_activity(
+        db,
+        EventTypes.OPEN_BADGE_SETTINGS_CHANGED,
+        actor_id=admin.id,
+        target_type="platform",
+        detail={"issuer_name": payload.issuer_name.strip(), "issuer_url": url},
+    )
+    return {
+        "issuer_name": open_badges.issuer_name(db),
+        "issuer_url": open_badges.issuer_url(db),
+    }
+
+
+@router.post("/admin/badges/rotate-key")
+def rotate_badge_key(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    jwk = open_badges.rotate_key(db)
+    log_activity(
+        db,
+        EventTypes.OPEN_BADGE_KEY_ROTATED,
+        actor_id=admin.id,
+        target_type="platform",
+        detail={"kid": jwk.get("kid")},
+    )
+    return {"kid": jwk.get("kid"), "keys": len(open_badges.public_jwks(db)["keys"])}
+
+
+@router.get("/admin/badges")
+def list_badges(
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    rows = (
+        db.query(OpenBadgeCredential)
+        .order_by(OpenBadgeCredential.issued_at.desc())
+        .limit(min(max(limit, 1), 500))
+        .all()
+    )
+    return {
+        "credentials": [
+            {
+                "id": row.id,
+                "jti": row.jti,
+                "certificate_id": row.certificate_id,
+                "username": row.user.username if row.user else None,
+                "achievement_name": row.achievement_name,
+                "issued_at": row.issued_at.isoformat() if row.issued_at else None,
+                "status": open_badges.credential_status(row),
+                "revocation_reason": row.revocation_reason,
+            }
+            for row in rows
+        ]
+    }
 
 
 @router.get("/badges/issuer")
@@ -204,3 +297,4 @@ def revoke_badge(
         detail={"jti": row.jti, "reason": reason},
     )
     return {"ok": True, "status": open_badges.credential_status(row)}
+

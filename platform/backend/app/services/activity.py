@@ -43,6 +43,8 @@ class EventTypes:
     COHORT_CREATED = "cohort_created"
     OPEN_BADGE_ISSUED = "open_badge_issued"
     OPEN_BADGE_REVOKED = "open_badge_revoked"
+    OPEN_BADGE_SETTINGS_CHANGED = "open_badge_settings_changed"
+    OPEN_BADGE_KEY_ROTATED = "open_badge_key_rotated"
 
 
 # Human-readable labels for the feed
@@ -79,6 +81,8 @@ EVENT_LABELS = {
     EventTypes.COHORT_CREATED: "Course Cohort Created",
     EventTypes.OPEN_BADGE_ISSUED: "Open Badge Issued",
     EventTypes.OPEN_BADGE_REVOKED: "Open Badge Revoked",
+    EventTypes.OPEN_BADGE_SETTINGS_CHANGED: "Open Badge Settings Changed",
+    EventTypes.OPEN_BADGE_KEY_ROTATED: "Open Badge Key Rotated",
 }
 
 
@@ -114,4 +118,5 @@ def log_activity(
                 db.rollback()
             except Exception:
                 pass
+
 

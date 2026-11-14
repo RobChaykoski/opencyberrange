@@ -213,6 +213,12 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/badges/:jti',
+    name: 'BadgeViewer',
+    component: () => import('../views/BadgeViewer.vue'),
+    meta: { public: true }
+  },
+  {
     path: '/privacy',
     name: 'Privacy',
     component: () => import('../views/Privacy.vue')

@@ -319,7 +319,7 @@ const shareUrl = computed(() => {
 })
 const badgeLink = computed(() =>
   badge.value?.jti
-    ? `${window.location.origin}/api/badges/credentials/${badge.value.jti}`
+    ? `${window.location.origin}/badges/${badge.value.jti}`
     : ''
 )
 const linkedInUrl = computed(() => {

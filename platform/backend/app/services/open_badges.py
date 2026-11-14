@@ -36,17 +36,19 @@ def issuer_name(db: Session) -> str:
     ).strip()
 
 
-def _key_material(db: Session) -> tuple[Ed25519PrivateKey, str, dict]:
-    pem = settings_service.get_setting_fresh(db, "open_badge_signing_key", "") or ""
-    if not pem:
-        private = Ed25519PrivateKey.generate()
-        pem = private.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption(),
-        ).decode("ascii")
-        settings_service.set_setting(db, "open_badge_signing_key", pem)
-    private = serialization.load_pem_private_key(pem.encode("ascii"), password=None)
+def _generate_private() -> Ed25519PrivateKey:
+    return Ed25519PrivateKey.generate()
+
+
+def _private_pem(private: Ed25519PrivateKey) -> str:
+    return private.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    ).decode("ascii")
+
+
+def _jwk_for(private: Ed25519PrivateKey) -> dict:
     raw_public = private.public_key().public_bytes(
         encoding=serialization.Encoding.Raw,
         format=serialization.PublicFormat.Raw,
@@ -56,13 +58,50 @@ def _key_material(db: Session) -> tuple[Ed25519PrivateKey, str, dict]:
         {"crv": "Ed25519", "kty": "OKP", "x": x}, separators=(",", ":"), sort_keys=True
     )
     kid = _b64url(hashlib.sha256(thumb_input.encode("ascii")).digest())
-    jwk = {"kty": "OKP", "crv": "Ed25519", "x": x, "kid": kid, "use": "sig", "alg": "EdDSA"}
-    return private, kid, jwk
+    return {"kty": "OKP", "crv": "Ed25519", "x": x, "kid": kid, "use": "sig", "alg": "EdDSA"}
+
+
+def _key_material(db: Session) -> tuple[Ed25519PrivateKey, str, dict]:
+    pem = settings_service.get_setting_fresh(db, "open_badge_signing_key", "") or ""
+    if not pem:
+        private = _generate_private()
+        pem = _private_pem(private)
+        settings_service.set_setting(db, "open_badge_signing_key", pem)
+    private = serialization.load_pem_private_key(pem.encode("ascii"), password=None)
+    jwk = _jwk_for(private)
+    return private, jwk["kid"], jwk
+
+
+def _retired_keys(db: Session) -> list[dict]:
+    raw = settings_service.get_setting_fresh(db, "open_badge_retired_keys", "[]") or "[]"
+    try:
+        data = json.loads(raw)
+    except (TypeError, ValueError):
+        return []
+    return [row for row in data if isinstance(row, dict) and row.get("kid")] if isinstance(data, list) else []
 
 
 def public_jwks(db: Session) -> dict:
-    _, _, jwk = _key_material(db)
-    return {"keys": [jwk]}
+    _, _, current = _key_material(db)
+    keys = [current]
+    for row in _retired_keys(db):
+        if row.get("kid") != current.get("kid"):
+            keys.append(row)
+    return {"keys": keys}
+
+
+def rotate_key(db: Session) -> dict:
+    """Keep the old public key for verification, then generate a new key."""
+    _, _, current = _key_material(db)
+    retired = [row for row in _retired_keys(db) if row.get("kid") != current.get("kid")]
+    retired.insert(0, current)
+    retired = retired[:5]
+    settings_service.set_setting(
+        db, "open_badge_retired_keys", json.dumps(retired, separators=(",", ":"))
+    )
+    private = _generate_private()
+    settings_service.set_setting(db, "open_badge_signing_key", _private_pem(private))
+    return _jwk_for(private)
 
 
 def _subject_url(issuer: str, row: OpenBadgeCredential) -> str:
