@@ -1,10 +1,10 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.1.0`).**
+Status: **released and deployed to production on 2026-11-14 (`v5.1.1`).**
 Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0025`. Production application images were built from `318699e6`;
-`v5.0.0`, `v5.0.1`, and `v5.1.0` record the release, security patch, and IdP
-settings feature line.
+Alembic `0025`. Production application images were built from the `v5.1.1`
+commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, and `v5.1.1` record the release,
+security patch, IdP settings feature, and operations patch.
 
 ## Ready for production
 

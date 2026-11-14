@@ -135,11 +135,31 @@ deploy user's crontab. It writes a validated custom-format dump
 SHA-256 file to `~/backups`, pruning only its own files after 14 days.
 
 The cron sets
-`BACKUP_REMOTE=ocr-offsite:/home/ocrv2/backups/prod`. The `ocr-offsite` SSH alias
-on the production host uses `~/.ssh/ocr_backup_ed25519`, whose public key is
-authorized on development; development is an interim off-host target and must
-be replaced by institutional backup storage before it is relied on for disaster
-recovery. Prune the off-host copy under the institution's retention policy.
+`BACKUP_REMOTE=ocr-offsite:/home/ocrv2/backups/prod` and
+`BACKUP_GPG_RECIPIENT=1082980711C1246F3601434C84F6ACCD1A0E0CB0`. The
+`ocr-offsite` SSH alias on the production host uses
+`~/.ssh/ocr_backup_ed25519`, whose public key is authorized on development.
+Sensitive off-host files (dump, erasure ledger, platform env) are encrypted to
+the **OCR Offsite Backup** key before transfer; production holds only the public
+key, and the private key is kept in the release operator's keyring. The local
+plaintext dump is retained for the weekly drill. Development is an interim
+off-host target and must be replaced by institutional storage before it is
+relied on for disaster recovery. Prune the off-host copy under the institution's
+retention policy.
+
+Restore from the off-host copy:
+
+```bash
+scp ocr-dev:/home/ocrv2/backups/prod/ocr-backup-<stamp>.dump.gpg .
+scp ocr-dev:/home/ocrv2/backups/prod/ocr-backup-<stamp>.dump.sha256 .
+gpg --decrypt --output ocr-backup-<stamp>.dump ocr-backup-<stamp>.dump.gpg
+sha256sum -c ocr-backup-<stamp>.dump.sha256   # compare the hash only
+```
+
+Then restore into a scratch database and compare counts before touching live
+data. Rotating the backup key requires importing the new public key on
+production, updating `BACKUP_GPG_RECIPIENT`, and keeping the old private key
+long enough to read existing off-host copies.
 
 ```bash
 crontab -l | grep -E 'backup-production|restore-drill'
@@ -153,6 +173,24 @@ drops it. Run it after installing or changing the timer, and before a release
 that includes a migration. Copy `~/backups` off-host (set `BACKUP_REMOTE` to an
 rsync target to do it from the script) so a host failure does not take the
 database and its backups together.
+
+## Monitoring
+
+`scripts/monitor-deployment.sh` runs every 10 minutes from the deploy user's
+crontab and checks `/api/version`, the backend health probe, the 8443 workbook
+origin, container health, free disk, local and off-host backup age, and the TLS
+certificate's 30-day expiry window. It writes
+`~/.local/state/ocr-monitor/status.json` and logs to
+`~/.local/state/ocr-monitor/cron.log`.
+
+Set `ALERT_WEBHOOK_URL` (Slack-compatible JSON `{"text": ...}`) in
+`~/.ocr-monitor.env` to receive failures; without it, failures are log-only.
+`DISK_MIN_GB` and `BACKUP_MAX_HOURS` override the defaults in that file.
+
+```bash
+bash scripts/monitor-deployment.sh
+cat ~/.local/state/ocr-monitor/status.json
+```
 
 ## Regression checks
 

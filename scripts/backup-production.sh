@@ -49,27 +49,52 @@ echo "database: $DUMP ($(du -h "$DUMP" | cut -f1), $OBJECTS objects)"
 
 if docker cp "$BACKEND_CONTAINER:/workbook/erasure-ledger.jsonl" \
      "$BACKUP_DIR/erasure-ledger-$STAMP.jsonl" 2>/dev/null; then
-  chmod 600 "$BACKUP_DIR/erasure-ledger-$STAMP.jsonl"
-  echo "ledger:   $BACKUP_DIR/erasure-ledger-$STAMP.jsonl"
+  LEDGER_FILE="$BACKUP_DIR/erasure-ledger-$STAMP.jsonl"
+  chmod 600 "$LEDGER_FILE"
+  echo "ledger:   $LEDGER_FILE"
 else
+  LEDGER_FILE=""
   echo "ledger:   not present on this deployment (ok)"
 fi
 
+ENV_COPY=""
 if [ -f "$ENV_FILE" ]; then
-  cp "$ENV_FILE" "$BACKUP_DIR/platform-env-$STAMP"
-  chmod 600 "$BACKUP_DIR/platform-env-$STAMP"
-  echo "env:      $BACKUP_DIR/platform-env-$STAMP"
+  ENV_COPY="$BACKUP_DIR/platform-env-$STAMP"
+  cp "$ENV_FILE" "$ENV_COPY"
+  chmod 600 "$ENV_COPY"
+  echo "env:      $ENV_COPY"
 fi
 
 sha256sum "$DUMP" > "$DUMP.sha256"
 chmod 600 "$DUMP.sha256"
 
 if [ -n "${BACKUP_REMOTE:-}" ]; then
-  files=("$DUMP" "$DUMP.sha256")
-  LEDGER_FILE="$BACKUP_DIR/erasure-ledger-$STAMP.jsonl"
-  [ -f "$LEDGER_FILE" ] && files+=("$LEDGER_FILE")
+  files=("$DUMP.sha256")
+  encrypted=()
+  if [ -n "${BACKUP_GPG_RECIPIENT:-}" ]; then
+    command -v gpg >/dev/null || { echo "ERROR: gpg not found for backup encryption" >&2; exit 1; }
+    sensitive=("$DUMP")
+    [ -n "$LEDGER_FILE" ] && sensitive+=("$LEDGER_FILE")
+    [ -n "$ENV_COPY" ] && sensitive+=("$ENV_COPY")
+    for src in "${sensitive[@]}"; do
+      gpg --batch --yes --trust-model always \
+        --recipient "$BACKUP_GPG_RECIPIENT" \
+        --output "$src.gpg" --encrypt "$src"
+      files+=("$src.gpg")
+      encrypted+=("$src.gpg")
+    done
+    sha256sum "$DUMP.gpg" > "$DUMP.gpg.sha256"
+    files+=("$DUMP.gpg.sha256")
+    encrypted+=("$DUMP.gpg.sha256")
+    echo "encrypt:  ${#encrypted[@]} file(s) for $BACKUP_GPG_RECIPIENT"
+  else
+    files=("$DUMP" "$DUMP.sha256")
+    [ -n "$LEDGER_FILE" ] && files+=("$LEDGER_FILE")
+    [ -n "$ENV_COPY" ] && files+=("$ENV_COPY")
+  fi
   echo "remote:   syncing to $BACKUP_REMOTE"
   rsync -a "${files[@]}" "${BACKUP_REMOTE%/}/"
+  [ ${#encrypted[@]} -gt 0 ] && rm -f "${encrypted[@]}"
 fi
 
 find "$BACKUP_DIR" -maxdepth 1 -type f \

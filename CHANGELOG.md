@@ -2,6 +2,23 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.1.1] - 2026-11-14
+
+### Operations
+- Off-host backups are encrypted to the **OCR Offsite Backup** key before
+  transfer (dump, erasure ledger, and platform env); the local plaintext dump is
+  retained for the weekly restore drill. Verified by decrypting the off-host
+  copy and matching the SHA-256.
+- `scripts/monitor-deployment.sh` runs every 10 minutes and checks the API
+  version, backend health, 8443 workbook origin, containers, disk, local and
+  off-host backup age, and certificate expiry. Optional Slack-compatible webhook
+  via `~/.ocr-monitor.env`.
+
+### Fixes
+- The dev-only LDAP plaintext escape hatch now honors
+  `SSO_ALLOW_INSECURE_HTTP`, matching the provider validator. This restores the
+  local Dex/OpenLDAP stack without weakening production defaults.
+
 ## [5.1.0] - 2026-11-14
 
 ### Identity
