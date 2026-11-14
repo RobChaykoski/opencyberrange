@@ -3735,6 +3735,14 @@ watch(timeRemaining, (val) => {
   }
 }
 
+@media (max-width: 768px) {
+  /* Leave the compact app top bar visible above the full-screen workspace. */
+  .active-lab-panel.active-lab-panel--workspace {
+    top: 56px;
+    height: calc(100dvh - 56px);
+  }
+}
+
 @media (max-height: 720px) {
   .active-lab-grid--workspace {
     grid-template-rows: minmax(0, 1fr) minmax(150px, 28vh);
