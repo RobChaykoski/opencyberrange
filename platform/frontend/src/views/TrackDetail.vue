@@ -650,7 +650,7 @@
                 </p>
               </div>
               <button type="button" class="btn btn--primary btn--sm" @click="focusWorkbook">
-                Open workbook walkthrough
+                Open workbook
               </button>
             </div>
             <!-- Scenario (spans full width of grid) -->
@@ -4363,6 +4363,11 @@ watch(timeRemaining, (val) => {
   color: var(--text-secondary);
   font-size: 0.82rem;
   line-height: 1.45;
+}
+
+.beginner-workbook-callout .btn {
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 @media (max-width: 700px) {

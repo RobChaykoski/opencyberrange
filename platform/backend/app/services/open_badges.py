@@ -120,7 +120,7 @@ def credential_payload(db: Session, row: OpenBadgeCredential) -> dict:
     subject = _subject_url(issuer, row)
     user = row.user if getattr(row, "user", None) else None
     is_event = bool(row.track_slug and row.track_slug.startswith("event:"))
-    image_url = f"{issuer}/api/badges/achievements/{row.certificate_id}/image.png"
+    image_url = f"{issuer}/api/badges/achievements/{row.certificate_id}/image"
     achievement = {
         "id": f"{issuer}/api/badges/achievements/{row.certificate_id}",
         "type": ["Achievement"],
@@ -155,6 +155,7 @@ def credential_payload(db: Session, row: OpenBadgeCredential) -> dict:
                 "https://purl.imsglobal.org/spec/ob/v3p0/context.json",
             ],
             "type": ["VerifiableCredential", "OpenBadgeCredential"],
+            "id": f"{issuer}/api/badges/credentials/{row.jti}",
             "name": row.achievement_name,
             "issuer": {
                 "id": issuer,
@@ -366,4 +367,5 @@ def revoke_badge(
     db.commit()
     db.refresh(row)
     return row
+
 

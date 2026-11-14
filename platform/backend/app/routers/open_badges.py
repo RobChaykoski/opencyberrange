@@ -190,7 +190,7 @@ def achievement_definition(certificate_id: str, db: Session = Depends(get_db)):
     return payload["vc"]["credentialSubject"]["achievement"]
 
 
-@router.get("/badges/achievements/{certificate_id}/image.png")
+@router.get("/badges/achievements/{certificate_id}/image")
 def achievement_image(certificate_id: str, db: Session = Depends(get_db)):
     row = (
         db.query(OpenBadgeCredential)
@@ -439,4 +439,5 @@ def revoke_badge(
         detail={"jti": row.jti, "reason": reason},
     )
     return {"ok": True, "status": open_badges.credential_status(row)}
+
 
