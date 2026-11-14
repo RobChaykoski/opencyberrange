@@ -333,13 +333,6 @@
             <span v-if="activeLab.session" class="active-badge">Active</span>
             <span v-else-if="activeLab.lab.is_completed" class="completed-badge">Completed</span>
             <button
-              v-if="isRangeBoxActive && !workspaceMode"
-              @click="openRangeBox"
-              class="btn btn--primary btn--sm"
-            >
-              Open RangeBox
-            </button>
-            <button
               @click="openKnowledgeCheck(activeLab.lab)"
               class="btn btn--secondary btn--sm"
               title="Optional benchmark; most useful after the exercise"
@@ -518,17 +511,6 @@
             <button type="button" @click="scrollToLabSection('lab-flag')">Flag</button>
             <button type="button" @click="scrollToLabSection('lab-hints')">Hints</button>
           </nav>
-          <div v-if="workspaceMode && rangeboxPoppedOut" class="workspace-popout">
-            <span>RangeBox is in its own window. The briefing, notes, and workbook stay here.</span>
-            <div class="workspace-popout__actions">
-              <button type="button" class="btn btn--secondary btn--sm" @click="focusRangeBoxWindow">
-                Focus RangeBox
-              </button>
-              <button type="button" class="btn btn--secondary btn--sm" @click="restoreRangeBox">
-                Bring it back
-              </button>
-            </div>
-          </div>
           <nav
             v-if="workspaceMode"
             class="workspace-tabs"
@@ -544,7 +526,6 @@
               aria-controls="workspace-panel-desktop"
               :aria-selected="workspaceTab === 'desktop'"
               :class="['workspace-tabs__tab', { 'workspace-tabs__tab--active': workspaceTab === 'desktop' }]"
-              :disabled="rangeboxPoppedOut"
               @click="workspaceTab = 'desktop'"
             >
               Desktop
@@ -577,12 +558,11 @@
             :class="{
               'active-lab-grid--workspace': workspaceMode,
               'active-lab-grid--tabs': workspaceMode,
-              'active-lab-grid--popped-out': workspaceMode && rangeboxPoppedOut,
             }"
           >
             <!-- RangeBox workspace frame (desktop only) -->
             <section
-              v-if="isRangeBoxActive && !rangeboxPoppedOut && !isMobile"
+              v-if="isRangeBoxActive && !isMobile"
               v-show="workspaceTab === 'desktop'"
               id="workspace-panel-desktop"
               role="tabpanel"
@@ -601,7 +581,7 @@
 
             <!-- Desktop tab when RangeBox is unavailable, popped out, or on mobile -->
             <section
-              v-if="workspaceTab === 'desktop' && (!isRangeBoxActive || rangeboxPoppedOut || isMobile)"
+              v-if="workspaceTab === 'desktop' && (!isRangeBoxActive || isMobile)"
               id="workspace-panel-desktop"
               role="tabpanel"
               aria-labelledby="workspace-tab-desktop"
@@ -609,19 +589,7 @@
               aria-label="Desktop"
             >
               <div class="desktop-fallback">
-                <template v-if="isRangeBoxActive && rangeboxPoppedOut">
-                  <h3 class="section-title">RangeBox is in its own window</h3>
-                  <p>The desktop is detached. Bring it back to keep everything in this window.</p>
-                  <div class="desktop-fallback__actions">
-                    <button type="button" class="btn btn--secondary btn--sm" @click="focusRangeBoxWindow">
-                      Focus RangeBox
-                    </button>
-                    <button type="button" class="btn btn--primary btn--sm" @click="restoreRangeBox">
-                      Bring it back
-                    </button>
-                  </div>
-                </template>
-                <template v-else-if="isRangeBoxActive && isMobile">
+                <template v-if="isRangeBoxActive && isMobile">
                   <h3 class="section-title">Desktop is built for a larger screen</h3>
                   <p>
                     The interactive desktop needs a laptop or desktop with a keyboard and
@@ -1310,10 +1278,6 @@ watch(
     if (next !== workspaceTab.value) workspaceTab.value = next
   }
 )
-const workbookExpanded = ref(false)
-const rangeboxPoppedOut = ref(false)
-let rangeboxWindow = null
-
 // Icon mapping
 
 // Methods
@@ -1507,10 +1471,9 @@ const openActiveLab = async (lab) => {
       params
     })
     activeLab.value = data
-    workbookExpanded.value = false
     loadReaction(data.lab?.id || lab.id)
 
-    // The framed workbook pane loads a same-origin MkDocs page; make sure the
+    // The framed workbook loads from the wiki origin; make sure the
     // wiki auth cookie is present before the iframe requests it.
     if (data.lab?.workbook) setWikiAuthCookie()
 
@@ -1596,7 +1559,6 @@ const setReaction = async (value) => {
 
 const closeActiveLab = () => {
   activeLab.value = null
-  workbookExpanded.value = false
   sessionExpired.value = false
   spawnError.value = ''
   panelNotice.value = ''
@@ -1643,77 +1605,6 @@ const openKnowledgeCheck = (lab) => {
     name: 'ExerciseQuiz',
     params: { trackSlug: route.params.trackSlug, labSlug: lab.slug },
   })
-}
-
-// Open the full-screen RangeBox in a new tab. The workspace already keeps the
-// desktop, details, and workbook together; this is the fallback for a second
-// monitor or a browser that performs better in a dedicated tab.
-const openRangeBox = () => {
-  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
-  const target = router.resolve({
-    path: '/rangebox',
-    query: {
-      session: String(rangeboxSessionId.value),
-      image: activeRangeboxImage.value,
-      lab: String(activeLab.value.lab.id),
-      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
-    },
-  })
-  window.open(target.href, '_blank', 'noopener,noreferrer')
-}
-
-// Pop the desktop into a separate, resizable window. The main tab then has the
-// full width for the briefing, notes, and workbook while the flag dock travels
-// with the RangeBox window.
-const openRangeBoxPopout = () => {
-  if (!rangeboxSessionId.value || !activeLab.value?.lab?.id) return
-  const target = router.resolve({
-    path: '/rangebox',
-    query: {
-      session: String(rangeboxSessionId.value),
-      image: activeRangeboxImage.value,
-      lab: String(activeLab.value.lab.id),
-      course: activeCourseId.value ? String(activeCourseId.value) : undefined,
-    },
-  })
-  rangeboxWindow = window.open(
-    target.href,
-    'ocr-rangebox',
-    'popup=yes,width=1280,height=900,resizable=yes,scrollbars=yes',
-  )
-  if (!rangeboxWindow) {
-    // Popup blocked: fall back to a normal tab rather than leaving the learner
-    // with no desktop and no message.
-    window.open(target.href, '_blank', 'noopener,noreferrer')
-    return
-  }
-  rangeboxPoppedOut.value = true
-  workspaceTab.value = 'exercise'
-  workbookExpanded.value = false
-  try {
-    rangeboxWindow.focus()
-  } catch {}
-}
-
-const focusRangeBoxWindow = () => {
-  try {
-    rangeboxWindow?.focus()
-  } catch {}
-}
-
-const restoreRangeBox = () => {
-  try {
-    rangeboxWindow?.close()
-  } catch {}
-  rangeboxWindow = null
-  rangeboxPoppedOut.value = false
-}
-
-const syncRangeBoxWindow = () => {
-  if (rangeboxPoppedOut.value && rangeboxWindow?.closed) {
-    rangeboxWindow = null
-    rangeboxPoppedOut.value = false
-  }
 }
 
 const viewLab = async (lab) => {
@@ -2212,7 +2103,6 @@ const renderScenario = (text) => {
 
 // Lifecycle
 onMounted(async () => {
-  window.addEventListener('focus', syncRangeBoxWindow)
   const slug = route.params.trackSlug
   if (!slug) {
     router.push('/exercises')
@@ -2262,7 +2152,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('focus', syncRangeBoxWindow)
   if (timerInterval) clearInterval(timerInterval)
   stopHintTimer()
   stopSpawnTimer()
@@ -3548,33 +3437,6 @@ watch(timeRemaining, (val) => {
 
 .active-lab-grid--workspace.active-lab-grid--workbook-expanded {
   grid-template-rows: minmax(0, 1fr) minmax(340px, 58vh);
-}
-
-.active-lab-grid--workspace.active-lab-grid--popped-out {
-  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-areas: "details workbook";
-}
-
-.workspace-popout {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-  padding: 0.5rem 0.7rem;
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--accent);
-  border-radius: 8px;
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-}
-
-.workspace-popout__actions {
-  display: flex;
-  gap: 0.4rem;
-  margin-left: auto;
 }
 
 .lab-details {
