@@ -279,12 +279,15 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Check if user is approved
+    # Check if user is approved. The password already verified above, so a
+    # specific message here does not reveal whether an account exists.
     if not user.is_approved:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "Your account is waiting for administrator approval. "
+                "You can sign in once an administrator approves it."
+            ),
         )
     
     # Check if user is locked (shouldn't happen after authenticate_user, but double-check)
