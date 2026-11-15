@@ -14,6 +14,12 @@ All notable changes to OpenCyberRange are recorded here.
 - Added student workbooks and a dedicated `msfpt` workbook wiki.
 - Documented the independent-content position, OffSec attribution, and Hackers
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.
+
+### Live memory forensics
+- Added Forensics level 3 with a KVM/TCG Ubuntu 22.04 target, AVML acquisition,
+  and a student workbook for memory analysis with Volatility and strings.
+- Documented the Ubuntu cloud image and MIT-licensed AVML sources; neither the
+  guest image nor the acquisition binary is committed.
 - Fixed the workbook wiki builder to fall back to the repository `.env` and to
   infer the running compose project, so a rebuild targets the volume the
   frontend actually serves.

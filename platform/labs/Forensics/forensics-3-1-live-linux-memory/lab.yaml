@@ -1,0 +1,139 @@
+title: Live Linux Memory Acquisition
+category: forensics
+difficulty: intermediate
+estimated_time: 120
+prerequisites:
+  - forensics-1-1-windows-memory-volatility
+# By completion students will be able to:
+learning_outcomes:
+  - Acquire volatile memory from a running Linux guest with AVML.
+  - Verify the acquisition file and record its hash for chain of custody.
+  - Transfer the memory image from the target to the analyst workstation.
+  - Identify the live process and its environment with Volatility and strings.
+  - Explain why volatile evidence must be collected before shutdown.
+mapped_skills:
+  - incident_forensics
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Record the acquisition command, file size, and SHA-256 hash.
+  - Explain why the flag exists in memory but not in a disk file.
+mitre_attack:
+  - tactic: Collection
+    technique: T1005
+    technique_name: Data from Local System
+    detection: Monitor raw memory access, AVML execution, and unusual reads of /proc/kcore.
+owner: OpenCyberRange Curriculum
+content_version: "5.15.0"
+reviewed_at: "2026-11-15"
+review_status: original content; live lab walkthrough pending
+description: Acquire live memory from a running Linux guest, transfer the image to the analyst workstation, and recover a flag that exists only in a process environment.
+scenario: |
+  A small incident-response team has been asked to preserve volatile evidence
+  from a Linux server before it is rebooted. The server is still running and
+  the only known lead is a process that was started by an unknown operator.
+
+  You have an analyst account on the memory lab host. Capture physical memory
+  with AVML, move the image to your Kali RangeBox, and analyse it. The flag is
+  deliberately kept out of disk files; it exists only in the live process
+  environment.
+
+  Stay inside the isolated lab network. The memory image can contain sensitive
+  material, so handle it as evidence.
+flag: "OCR{live_mem_4f8c2a}"
+tools:
+  - rangebox
+  - kali
+  - terminal
+visibility: public
+
+hostnames:
+  - ip_offset: "10"
+    hostname: "memory.lab"
+    description: "Live Linux memory target (SSH 22)"
+
+topology:
+  nodes:
+    - id: "target"
+      label: "Live Linux memory target"
+      type: "server"
+      ip_offset: "10"
+      ports: [22]
+      services: ["ssh", "avml"]
+      x: 1
+      y: 1
+
+credentials:
+  - username: "analyst"
+    # security-delta: allow credential-like assignment - lab-facing analyst credential
+    password: "Analyst#2026"
+    role: "analyst"
+    description: "Analyst account on the live memory target"
+
+hints:
+  - text: |
+      Connect from the RangeBox terminal:
+
+      ssh analyst@memory.lab
+
+      The password is in the lab credentials panel. Confirm AVML is installed:
+
+      avml --version
+    unlock_after_minutes: 0
+  - text: |
+      Acquire memory with `sudo`:
+
+      sudo avml acquire /tmp/mem.lime
+
+      Record the size and SHA-256 hash immediately:
+
+      ls -lh /tmp/mem.lime
+      sha256sum /tmp/mem.lime
+    unlock_after_minutes: 5
+  - text: |
+      Pull the image back to the Kali RangeBox with `scp`:
+
+      scp analyst@memory.lab:/tmp/mem.lime .
+    unlock_after_minutes: 10
+  - text: |
+      Start with image identification and a process search:
+
+      vol -f mem.lime banners
+      strings -a mem.lime | grep -a 'MEMFLAG='
+
+      The process environment is the evidence; the flag is not stored in a
+      normal file.
+    unlock_after_minutes: 20
+  - text: |
+      If Volatility's Linux process plugins need symbols, the `banners` plugin
+      still identifies the kernel. `strings` is a valid triage step for a known
+      environment marker, and the workbook explains how to move from the
+      marker to the process.
+    unlock_after_minutes: 35
+troubleshooting: "If SSH is refused, confirm the lab is running and that port 22 is reachable. If AVML fails, check that you used sudo and that /tmp has free space. If the flag is missing from the dump, confirm you captured after the live process was started and search for MEMFLAG rather than a disk path."
+defensive_takeaways: "Volatile memory can contain secrets that never touch disk. Collect it early, hash the image, encrypt it at rest, and restrict access. Minimise secrets in process environments and detect unexpected raw memory access."
+difficulty_evidence: "Static author review plus live AVML acquisition in the prepared guest; full student walkthrough pending."
+difficulty_evidence_source: "author_review"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-15"
+workbook: "wiki/range/forensics/CH_FOR03_Live_Memory/01_Live_Linux_Memory/"
+
+test:
+  steps:
+    - name: "Analyst host is reachable over SSH"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no {cred.analyst.user}@{target.target} 'echo connected' 2>&1"
+      expect: "connected"
+      timeout: 30
+    - name: "AVML is installed"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no {cred.analyst.user}@{target.target} 'avml --version' 2>&1"
+      expect: "avml"
+      timeout: 30
+    - name: "Live flag process is present"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no {cred.analyst.user}@{target.target} 'sudo grep -l MEMFLAG= /proc/[0-9]*/environ 2>/dev/null | head -1' 2>&1"
+      expect: "/proc/"
+      timeout: 30
+    - name: "Flag is present in the live process environment"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PreferredAuthentications=password -o PubkeyAuthentication=no {cred.analyst.user}@{target.target} 'sudo grep -h MEMFLAG= /proc/[0-9]*/environ 2>/dev/null | head -1' 2>&1"
+      expect: "OCR{live_mem_4f8c2a}"
+      timeout: 30

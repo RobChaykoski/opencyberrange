@@ -1,0 +1,19 @@
+x-ocr-kvm-preferred: true
+x-ocr-reviewed-image: ocr-ubuntu-memory:latest
+services:
+  target:
+    image: ocr-ubuntu-memory:latest
+    hostname: memory-lab
+    labels:
+      ip_offset: "10"
+    environment:
+      LAB_FLAG: "OCR{live_mem_4f8c2a}"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2560M
+        reservations:
+          cpus: '0.5'
+          memory: 1024M
