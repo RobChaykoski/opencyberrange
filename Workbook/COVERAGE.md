@@ -15,11 +15,11 @@ links.
 | Metasploit | 8 |
 | Network | 21 |
 | OSINT | 8 |
-| OT | 2 |
+| OT | 3 |
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 53 |
-| **Total** | **179** |
+| **Total** | **180** |
 
 ## Labs
 
@@ -133,6 +133,7 @@ links.
 | OSINT | The Public Profile (`osint-2-4-public-profile`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile/` |
 | OT | Halcyon Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | OT | Halcyon Industrial - S7comm Data Block Read (`ot-2-1-s7comm-register-access`) | `wiki/range/ot/CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read/` |
+| OT | Halcyon Industrial - Setpoint Tampering (`ot-1-2-modbus-setpoint-tampering`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/02_Modbus_Write_Setpoint/` |
 | Software Security | Diagnostics Command Injection (`software-security-2-1-diagnostics-command-injection`) | `wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostics_Command_Injection/` |
 | Software Security | Hidden Export Route (`software-security-1-1-hidden-export-route`) | `wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Export_Route/` |
 | Web | Basic Directory Enumeration (`web-1-1-basic-directory-enumeration`) | `wiki/range/webpt/CH_WEB01_Web_Reconnaissance/05_Content_Directory_and_File_Discovery/` |

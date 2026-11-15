@@ -115,6 +115,7 @@
     "osint-2-4-public-profile": "e68d537d8a45495c2953dc8a6a1d62b6ba053837aad1bd58eac48a096600bf96",
     "osint-2-5-public-banner": "73fa1247efb7eff3e1c2fe94485751867c3d15d73abec63aa0fd286de7719372",
     "ot-1-1-modbus-register-analysis": "d2b21ac0ee30f78571191a20afd4f944b28691bcd72fed3e9d8068030e7f221f",
+    "ot-1-2-modbus-setpoint-tampering": "f4364ad4a90e52f4635662acdaf6a61f63a22ed8d1887b3ce16375c0cc0ab44d",
     "ot-2-1-s7comm-register-access": "abe66f1bdca7403b3038467089b6ebc3ec09332cb6c641a959ed3d0cda70dbad",
     "software-security-1-1-hidden-export-route": "93c066862f1c7bd51afceeb9a4e4c26e2a37294fe6eb127e91e76f5d77360a9f",
     "software-security-2-1-diagnostics-command-injection": "a43b4afbe37cc1eedb7723d3b1703539a850308ec72d332611908a30f2f90fff",

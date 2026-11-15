@@ -51,6 +51,13 @@ represent. It exists because the history contains several naming eras.
 `68A817762C831475F00DB54E775050A4C4921814`. The public key is
 `docs/release-signing-key.asc`.
 
+Key custody: the current release key has no passphrase. The private key exists
+only on the offline signing workstation, and that host's disk must stay
+encrypted and the machine powered off when not signing. Do not copy the private
+key to a CI runner, a server, or a backup that is stored with the releases. If
+the signing host is lost, retire the key and publish a replacement rather than
+reusing it.
+
 `v5.13.1`, `v5.13.0`, `v5.12.0`, `v5.11.0`, `v5.10.0`, `v5.9.1`, `v5.9.0`, `v5.8.1`, `v5.8.0`, `v5.7.0`, `v5.6.0`, `v5.5.0`, `v5.4.0`, `v5.3.1`, `v5.3.0`, `v5.2.2`, `v5.2.1`, `v5.2.0`, `v5.1.2`, `v5.1.1`, `v5.1.0`, `v5.0.1`, `v5.0.0`, `v4.0.2`, `v4` and `v4.0.1` are signed with the previous release key
 `8E81B5F3FDC5F5A62B0C258791FD6FBC4ADAFDA2`, retained for historical
 verification at `docs/release-signing-key-previous.asc`. The previous key's

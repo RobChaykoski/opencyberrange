@@ -180,6 +180,26 @@ security patch, IdP settings feature, and operations patch.
 - The signed supply-chain lock was refreshed for the Dockerfile changes and
   re-signed with release key `68A817762C831475F00DB54E775050A4C4921814`.
 
+## OT setpoint tampering lab - 2026-11-15
+
+- Added `ot-1-2-modbus-setpoint-tampering` to the OT track. The target is the
+  original pymodbus controller, extended with a process simulation: holding
+  register 10 is a writable setpoint, register 11 reports the measured value,
+  and a setpoint of 250 or more trips the interlock and exposes the marker.
+- Development imported the lab as row 207 and production as row 191, both
+  `validation_status=ok`. The target image was built on both hosts as
+  `ocr-lab/ot-1-2-modbus-setpoint-tampering-plc:latest`.
+- End-to-end checks on both hosts: spawn with a temporary learner, run the
+  three manifest test steps from a sidecar on the lab network (service
+  reachable, setpoint writes and reads back as 250, marker decodes to
+  `OCR{m0dbu5_wr1t3_c0ntr0l}`), submit the flag, then erase the learner and
+  session. The workbook page builds and serves on both hosts.
+- OpenPLC was evaluated for this lab and deferred. The maintained OpenPLC
+  Runtime v4 image starts but exposes no Modbus registers without a program ZIP
+  produced by the OpenPLC Editor, and the v3 runtime repository is archived
+  upstream. The pymodbus controller is original content and stays consistent
+  with exercise 1.1.
+
 ## Deliberately deferred
 
 - **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali

@@ -32,7 +32,7 @@
 - Gibberish output: How does byte-order (endianness) affect register interpretation?
 - mbpoll not found: What alternative Python libraries or raw socket methods can read Modbus registers?
 
-### Lab 1.2: (Planned) Modbus Write single register
+### Lab 1.2: Modbus Write single register (implemented as `ot-1-2-modbus-setpoint-tampering`)
 
 **Prompt:** A malicious insider attempts to write to a holding register to disrupt the process line. 
 - Function code 0x06 writes a single register. What ethical concerns surround unauthorized writes?
