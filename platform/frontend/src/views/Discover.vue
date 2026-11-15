@@ -419,14 +419,15 @@ async function skip() {
 }
 .why-list li {
   counter-increment: why;
-  display: grid;
-  grid-template-columns: 1.6rem 1fr;
-  gap: 0.65rem;
-  align-items: start;
+  position: relative;
+  padding-left: 2.25rem;
   font-size: 0.85rem;
 }
 .why-list li::before {
   content: counter(why);
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 1.6rem;
   height: 1.6rem;
   border-radius: 50%;
