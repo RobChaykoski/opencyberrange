@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.15.0`).**
+> **Release 5 is the current release line (latest signed `v5.16.0`).**
 > The local image and stack bring-up is documented in
 > [`docs/RELEASE-5-LOCAL.md`](docs/RELEASE-5-LOCAL.md); the production
 > readiness record is [`docs/RELEASE-5-PRODUCTION-READINESS.md`](docs/RELEASE-5-PRODUCTION-READINESS.md).

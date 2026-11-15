@@ -1,9 +1,9 @@
 # Next steps
 
-Status: **Release 5 is deployed to development and production; `v5.15.0` is
-the newest signed release.** The platform runs Python 3.13, the security
-hardening wave is live, the OT track has three exercises plus an offline scan
-assistant, and the user manual reflects the current UI.
+Status: **Release 5.16.0 is deployed to development; the production deployment
+is in progress.** The platform runs Python 3.13, the security hardening wave is
+live, the OT track has three exercises plus an offline scan assistant, and the
+user manual reflects the current UI.
 This page tracks what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 

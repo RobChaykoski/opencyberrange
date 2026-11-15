@@ -2,7 +2,7 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.16.0] - 2026-11-15
 
 ### Labs
 - Added `network-12-6-appliance-segment`: a dual-homed OpenWrt 24.10.5

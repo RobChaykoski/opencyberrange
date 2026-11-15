@@ -1,12 +1,13 @@
 # Release 5 production readiness
 
-Status: **`v5.15.0` is released and deployed.** Development `172.16.16.44` and
-production `172.16.16.41` both run `main` at `e645be91` (`v5.15.0`) with images
-rebuilt on 2026-11-15; Alembic `0030_cohort_strict`. The release tags `v5.0.0`,
-`v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`,
-`v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`,
-`v5.8.1`, `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`,
-`v5.13.1`, `v5.14.0`, and `v5.15.0` record the feature releases, security
+Status: **`v5.16.0` is tagged; the production deployment is in progress.**
+Development `172.16.16.44` runs `main` at the release commit with Alembic
+`0031_learner_snapshots`; production `172.16.16.41` still runs `v5.15.0` until
+the deployment record below is updated. The release tags `v5.0.0`, `v5.0.1`,
+`v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
+`v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
+`v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
+`v5.14.0`, `v5.15.0`, and `v5.16.0` record the feature releases, security
 patches, and operations patches.
 
 ## Ready for production

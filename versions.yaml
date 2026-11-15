@@ -11,7 +11,7 @@ platform:
   name: "SWOCTS Cyber Range"
   version: "5"
   status: "release"
-  date: "2026-11-14"
+  date: "2026-11-15"
 
 editions:
   community_academic:
@@ -42,7 +42,7 @@ maintenance_lines:
 release:
   version: "5"
   status: "release"
-  date: "2026-11-14"
+  date: "2026-11-15"
 
 development:
   version: "5"
