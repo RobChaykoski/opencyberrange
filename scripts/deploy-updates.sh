@@ -206,6 +206,11 @@ git_pull() {
     if [ "$EUID" -eq 0 ] && [ -n "$SUDO_USER" ]; then
         chown -R "$SUDO_USER:$SUDO_USER" "$REPO_DIR/.git" 2>/dev/null || true
     fi
+    # New files inherit the host umask. After the 027 hardening, git writes lab
+    # content as rw-rw---- while both backend containers and lab targets read
+    # bind mounts as different UIDs. This content is not secret, so grant read.
+    chmod -R a+rX "$REPO_DIR/platform/labs" "$REPO_DIR/templates" 2>/dev/null || true
+    chmod a+r "$REPO_DIR"/curriculum-*.yaml 2>/dev/null || true
     if [ "$git_ok" -ne 1 ]; then
         # A private or unreachable remote must not abort the whole update. The
         # local tree is a valid source: rebuild and restart from what is here.

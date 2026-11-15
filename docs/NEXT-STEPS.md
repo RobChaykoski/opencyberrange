@@ -14,8 +14,12 @@ This page tracks what is left; the deployment record is
 - Image hardening: pinned base digests, build-time OS upgrades, no `curl`,
   `gnupg`, `pip`, `setuptools`, or `wheel` in the backend runtime.
 - Python 3.13 runtime and CI migration, with the full suite green on 3.13.
-- Host hardening: umask 027 and disabled core dumps on dev and production.
-- OT 1.1 (read registers) and OT 1.2 (setpoint write).
+- Host hardening: umask 027 and disabled core dumps on dev and production, with
+  a post-pull permission normalisation for bind-mounted lab content.
+- OT 1.1 (read registers), OT 1.2 (setpoint write), and OT 1.3 (gateway
+  bypass).
+- First-run "Discover your Cyber DNA" flow, dashboard DNA band, growth velocity
+  with 30/60/90 trends, and confidence gates for career recommendations.
 - Manual refresh: live screenshots, corrected navigation and course/admin
   instructions, and the redesigned footer.
 
@@ -29,9 +33,12 @@ This page tracks what is left; the deployment record is
 3. **Manual publishing.** CI builds every MkDocs site, but the repository has no
    publish workflow. Decide where the built manual is hosted (release artifact,
    internal web root, or documentation host) and add that step.
-4. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
+4. **Persisted learner snapshots.** Store the DNA/GPS payload and factor weights
+   at build time so a later scoring change cannot rewrite an old report. See
+   `CYBER-GPS-SCHEMA.md`.
+5. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
-5. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
+6. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
 
 ## Deliberately deferred
 

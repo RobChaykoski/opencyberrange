@@ -34,6 +34,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Added `scripts/ui-manual-screenshots.mjs` and
   `docs/MANUAL-SCREENSHOTS.md` so the screenshot set can be regenerated with
   demo credentials instead of ad-hoc scripts.
+- Lab discovery and target builds now work after the 027 host hardening:
+  deploy pulls grant read access to the bind-mounted lab content, so the
+  non-root backend can read `lab.yaml` and `docker-compose.yml`.
 
 ### OT/ICS track
 - Added `ot-1-3-modbus-gateway-bypass`: the PLC sits on an internal control

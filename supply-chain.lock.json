@@ -112,7 +112,7 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "56ea51984c5a5242ef61b9fd83202cd572c567a3f08b215648af8d58b9b78309"
+      "sha256": "be49edebef593720e4fef8c2cae79910c21cb1047fc3e4dc3ed6ec3be12b936f"
     },
     "scripts/generate-about.py": {
       "sha256": "d1f9df9deecd70e07fcc7e2cd1cd4fbec9a2f155f56fd8ed309481a0b0bfc082"

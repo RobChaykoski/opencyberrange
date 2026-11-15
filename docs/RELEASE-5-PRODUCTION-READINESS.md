@@ -200,6 +200,23 @@ security patch, IdP settings feature, and operations patch.
   upstream. The pymodbus controller is original content and stays consistent
   with exercise 1.1.
 
+## OT setpoint and gateway labs - 2026-11-15
+
+- Added `ot-1-2-modbus-setpoint-tampering` and
+  `ot-1-3-modbus-gateway-bypass`. The gateway lab places the PLC on an internal
+  control network behind a proxy that filters only function code 0x06; students
+  bypass it with 0x10.
+- Development imported 1.2 as row 207 and 1.3 as row 208. Production imported
+  1.2 as row 191 and 1.3 as row 192, both `validation_status=ok`.
+- End-to-end on both hosts: spawn with a temporary learner, confirm the PLC is
+  unreachable from the lab network, read through the gateway, observe the
+  blocked 0x06 write, bypass with 0x10, recover the marker, submit the flag,
+  then erase the learner. The workbook wiki builds on both hosts.
+- Permission fix: after the 027 umask hardening, `git pull` wrote new lab files
+  as `rw-rw----`. The production backend runs as UID 10001 and could not read
+  the new `lab.yaml`, so discovery reported "no lab.yaml". The deploy scripts
+  now normalise read permissions on `platform/labs` and `templates`.
+
 ## Python 3.13 runtime - 2026-11-15
 
 - Backend runtime and CI moved from Python 3.11 to 3.13. The base is pinned to

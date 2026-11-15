@@ -196,6 +196,14 @@ development index moved from 62 to 64 and production from 63 to 65; neither
 report contains `AUTH-9328` or `KRNL-5820` any more. The production host has no
 warnings. Development still has one: `KRNL-5830`, "reboot most likely needed".
 
+Umask 027 also changes deployment behaviour: new files written by `git pull`
+are group-readable only. Lab content and templates are bind-mounted into
+containers that run as a different UID (the production backend runs as 10001),
+so `scripts/deploy-updates.sh` now grants `a+rX` on `platform/labs` and
+`templates` after a pull. The same fix is applied to the production deploy
+script. Without it, lab discovery reports "no lab.yaml" because the file exists
+but the container cannot read it.
+
 No Lynis finding was treated as a release blocker. The two "candidate" rows are
 cheap wins for the next maintenance window.
 
