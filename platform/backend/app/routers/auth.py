@@ -565,7 +565,9 @@ async def get_user_settings(
         "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
         "notification_prefs": prefs or {},
         "needs_dna_onboarding": (
-            not (prefs or {}).get("dna_onboarding_v1") and completed_labs == 0
+            getattr(current_user, "role", "student") == "student"
+            and not (prefs or {}).get("dna_onboarding_v1")
+            and completed_labs == 0
         ),
         "show_hidden_achievements": bool(
             getattr(current_user, "show_hidden_achievements", False)

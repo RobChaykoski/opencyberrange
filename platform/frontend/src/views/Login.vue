@@ -666,7 +666,11 @@ const handleLogin = async () => {
       const settings = await axios.get('/api/auth/settings', {
         headers: { Authorization: `Bearer ${response.data.access_token}` },
       })
-      if (settings.data?.needs_dna_onboarding && !route.query.return_to) {
+      if (
+        settings.data?.needs_dna_onboarding
+        && response.data.user?.role === 'student'
+        && !route.query.return_to
+      ) {
         destination = '/discover'
       }
     } catch {

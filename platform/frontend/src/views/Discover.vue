@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../api/axios'
 import DiscoverIcon from '../components/DiscoverIcon.vue'
@@ -117,6 +117,19 @@ const router = useRouter()
 const step = ref('choose')
 const selectedKey = ref('')
 const selected = ref(null)
+
+onMounted(() => {
+  // Student-only first-run flow. Instructors and admins keep their dashboard
+  // even if a stale link lands them here.
+  try {
+    const user = JSON.parse(localStorage.getItem('user') || '{}')
+    if (user.role && user.role !== 'student') {
+      router.replace('/dashboard')
+    }
+  } catch {
+    // Malformed session: leave the route so the login guard can handle it.
+  }
+})
 
 const interests = [
   {
