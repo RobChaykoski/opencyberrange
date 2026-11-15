@@ -1,0 +1,129 @@
+title: Network Appliance Segmentation - Pivot Through an OpenWrt Gateway
+category: network
+difficulty: intermediate
+estimated_time: 60
+prerequisites:
+  - network-12-5-multi-service-router
+# By completion students will be able to:
+learning_outcomes:
+  - Identify the two network segments attached to an OpenWrt appliance
+  - Explain why a protected service on an internal segment is not directly reachable
+  - Verify IP forwarding and the default-deny forward policy on the appliance
+  - Pivot through the appliance with an SSH local port forward
+  - Retrieve a protected service flag without joining the internal segment
+mapped_skills:
+  - network_systems
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Discovery
+    technique: T1016
+    technique_name: System Network Configuration Discovery
+    detection: Alert on interface and route discovery from a learner workstation.
+  - tactic: Lateral Movement
+    technique: T1021.004
+    technique_name: Remote Services - SSH
+    detection: Alert on SSH sessions and local port forwards from the range network.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "5.0"
+reviewed_at: "2026-11-15"
+review_status: "live dev smoke; learner walkthrough pending"
+description: "An OpenWrt appliance connects the training network to a protected control segment. Map both interfaces, confirm the segmentation, and pivot through the appliance to retrieve the protected flag."
+scenario: |
+  The workstation network and a protected control segment meet at one OpenWrt
+  appliance. The control segment is internal: the protected service has no
+  address on the training network. The appliance is dual-homed and forwards
+  traffic, but its forward chain is default-deny until an operator adds a rule.
+
+  Map the appliance's two segments, prove the protected service is not directly
+  reachable, inspect the firewall policy, and pivot through the appliance with
+  SSH local port forwarding.
+credentials:
+  - role: "analyst"
+    username: "root"
+    # Demo lab credential; security-delta: allow credential-like assignment
+    password: "Appliance2026"
+    description: "SSH access to the OpenWrt appliance"
+hints:
+  - text: |
+      SSH to the appliance and run `ip -4 addr show`. One interface is the
+      training network; the other is the protected control segment.
+    unlock_after_minutes: 5
+  - text: |
+      `ip route` on the appliance shows both connected subnets. The protected
+      service has no route from your workstation because it is on the internal
+      segment.
+    unlock_after_minutes: 12
+  - text: |
+      `nft list chain inet labfw forward` shows the default-deny forward
+      policy. Forwarding is for routed traffic; an SSH local forward is
+      terminated by the appliance itself.
+    unlock_after_minutes: 20
+  - text: |
+      Resolve the protected host from the appliance, then tunnel it:
+      `ssh -L 18080:<protected-ip>:80 root@appliance` and browse
+      `http://127.0.0.1:18080/flag`.
+    unlock_after_minutes: 30
+flag: "OCR{appl1ance_s3gm3nt_p1v0t}"
+
+visibility: public
+week: 12
+troubleshooting: "If SSH is refused, the appliance may still be starting Dropbear; wait a few seconds and retry. If the tunnel returns connection refused, confirm the protected host resolves on the appliance with `nslookup protected`, then check that the forward used the control-segment address."
+defensive_takeaways: "A dual-homed appliance is both a control and a pivot point. Keep management access on a separate path, restrict who can log in to the appliance, log SSH local forwards, and remember that default-deny forwarding does not stop a shell on the appliance from reaching both segments."
+difficulty_evidence: "Live development smoke test of the appliance, the protected service, and the SSH pivot; learner walkthrough pending."
+difficulty_evidence_source: "automated_and_manual_smoke"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-15"
+workbook: "wiki/range/netfor/CH_NET12_Device_Topology/05_Network_Appliance_Segment/"
+
+topology:
+  nodes:
+    - id: "appliance"
+      label: "OpenWrt Appliance"
+      type: "router"
+      ip_offset: "70"
+      ports: [22, 80]
+      services: ["OpenSSH", "nftables"]
+      x: 2
+      y: 2
+  edges: []
+
+test:
+  steps:
+    - name: "SSH to the appliance"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'head -1 /etc/openwrt_release' 2>&1"
+      expect: "OpenWrt"
+      timeout: 30
+
+    - name: "The appliance has a control-segment interface"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'ip -4 addr show eth1' 2>&1"
+      expect: "inet "
+      timeout: 20
+
+    - name: "The appliance forwards IPv4"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1"
+      expect: "1"
+      timeout: 20
+
+    - name: "The protected segment is not directly reachable"
+      command: "curl -s -o /dev/null -w '%{http_code}' --connect-timeout 3 http://protected/flag || true"
+      expect: "000"
+      timeout: 15
+
+    - name: "The forward policy is default-deny"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'nft list chain inet labfw forward' 2>&1"
+      expect: "policy drop"
+      timeout: 20
+
+    - name: "The appliance reaches the protected service"
+      command: "sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'wget -q -O - http://protected/flag' 2>&1"
+      expect: "OCR{"
+      timeout: 20
+
+    - name: "Pivot through the appliance and retrieve the flag"
+      command: "PIP=$(sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} \"nslookup protected\" | sed -n 's/^Address:[[:space:]]*//p' | tail -1); sshpass -p '{cred.analyst.pass}' ssh -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -L 18080:$PIP:80 {cred.analyst.user}@{target.appliance}; sleep 1; curl -s --noproxy '*' http://127.0.0.1:18080/flag"
+      expect: "OCR{appl1ance_s3gm3nt_p1v0t}"
+      timeout: 45

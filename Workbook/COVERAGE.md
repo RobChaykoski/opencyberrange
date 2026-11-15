@@ -13,13 +13,13 @@ links.
 | Linux | 30 |
 | Malware | 10 |
 | Metasploit | 8 |
-| Network | 21 |
+| Network | 22 |
 | OSINT | 8 |
 | OT | 4 |
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 53 |
-| **Total** | **181** |
+| **Total** | **182** |
 
 ## Labs
 
@@ -118,6 +118,7 @@ links.
 | Network | Multi-Service Router - Map and Reach Two Services (`network-12-5-multi-service-router`) | `wiki/range/netfor/CH_NET12_Device_Topology/04_Multi_Service_Router/` |
 | Network | Multi-Stage Attack Chain Analysis (`network-2-5-attack-chain-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/05_Attack_Chain_Analysis/` |
 | Network | Name or Network? Troubleshooting a Broken Portal (`network-0-3-name-or-network`) | `wiki/range/netfor/CH_N0_Network_Foundations/03_Name_or_Network/` |
+| Network | Network Appliance Segmentation - Pivot Through an OpenWrt Gateway (`network-12-6-appliance-segment`) | `wiki/range/netfor/CH_NET12_Device_Topology/05_Network_Appliance_Segment/` |
 | Network | Northwind Freight - WebSocket C2 Tunnel (`network-2-6-wstunnel-c2-tunneling`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/06_WSTunnel_C2_Tunneling/` |
 | Network | SMTP Email Content Analysis (`network-2-2-smtp-email-analysis`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/02_SMTP_Email_Analysis/` |
 | Network | Suspicious Port Scan Detection (`network-1-1-port-scan-detection`) | `wiki/range/netfor/CH_NET01_Log_Analysis/01_Port_Scan_Detection/` |

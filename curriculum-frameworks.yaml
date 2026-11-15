@@ -139,6 +139,7 @@ chapter_defaults:
   NET01B: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
   NET02: {primary_competency: incident_forensics, framework_refs: [NICE, NIST_CSF]}
   NET03: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
+  NET04: {primary_competency: network_systems, framework_refs: [NICE, NIST_CSF]}
 
   WEB01: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}
   WEB01B: {primary_competency: web_api, framework_refs: [OWASP_TOP10, OWASP_ASVS]}

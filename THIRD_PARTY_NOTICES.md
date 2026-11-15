@@ -241,6 +241,7 @@ image set is:
 | KasmVNC 1.5.2 | GPL-2.0 | RangeBox desktop transport and vendored browser client; pinned package and source in `docs/KASMVNC.md` |
 | `remnux/remnux-distro:noble` | REMnux/Debian package licences | RemnuxBox |
 | `0x4d4c/inetsim@sha256:01fdf65489db7b9a77a33cc336ba1d5ddf23aded35eeb23f2c6455290ca595e8` | INetSim GPL-2.0 plus Debian packages | Third-party image; pinned to the reviewed digest |
+| `openwrt/rootfs@sha256:46c12e45e9071aa5afb23ee0a1cda75e6a34f49eb0cf4f6fd171c6be2ce0162f` | OpenWrt GPL-2.0 plus OpenWrt package licences | Network-appliance lab; pinned to the reviewed 24.10.5 digest; corresponding source at <https://github.com/openwrt/openwrt> |
 | `axllent/mailpit` | MIT | Development mail catcher only |
 
 **Valkey is BSD-3-Clause.** It is the Linux Foundation fork of Redis 7.2 and is
@@ -387,6 +388,7 @@ source is available from the distribution used to build the image:
 - PHP: <https://www.php.net/downloads>
 - Valkey 9.1: <https://github.com/valkey-io/valkey>
 - INetSim: <https://www.inetsim.org/>
+- OpenWrt: <https://github.com/openwrt/openwrt>
 - Snap7: <https://snap7.sourceforge.net/>
 - Volatility 3: <https://github.com/volatilityfoundation/volatility3>
 - Hydra: <https://github.com/vanhauser-thc/thc-hydra>

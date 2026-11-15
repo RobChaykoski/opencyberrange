@@ -1,9 +1,9 @@
 {
   "version": "5",
-  "git_sha": "af78a14d",
-  "built_at": "2026-11-13T07:04:39+00:00",
-  "release_date": "2026-11-13",
-  "status": "development",
+  "git_sha": "31c780e7",
+  "built_at": "2026-11-15T22:18:30+00:00",
+  "release_date": "2026-11-14",
+  "status": "release",
   "python": "3.11",
   "node": "22",
   "postgres": "15",

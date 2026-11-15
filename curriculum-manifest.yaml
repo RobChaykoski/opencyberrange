@@ -288,8 +288,8 @@ tracks:
         display_name: "Device Topology and Routed Paths"
         difficulty: "intermediate"
         prerequisites: [NET03]
-        exercises: 4
-        estimated_minutes: 225
+        exercises: 5
+        estimated_minutes: 285
         recommended_next: WEB01
         status: published
         intro: CH_NET12_Device_Topology/00_Introduction.md

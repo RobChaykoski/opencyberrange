@@ -1,0 +1,54 @@
+# OpenWrt appliance lab.
+#
+# The appliance is dual-homed: eth0 on the training network, eth1 on the
+# internal control segment. The protected service lives only on the internal
+# segment, so the learner must pivot through the appliance.
+#
+# The OpenWrt rootfs image is reviewed and provisioned as a pull-through image;
+# the credential hash and the startup script are in-lab files. nginx is built
+# locally so the flag file is copied with a readable mode regardless of the
+# host umask.
+x-ocr-reviewed-image: "openwrt/rootfs@sha256:46c12e45e9071aa5afb23ee0a1cda75e6a34f49eb0cf4f6fd171c6be2ce0162f"
+
+services:
+  appliance:
+    image: openwrt/rootfs@sha256:46c12e45e9071aa5afb23ee0a1cda75e6a34f49eb0cf4f6fd171c6be2ce0162f
+    hostname: appliance
+    labels:
+      ip_offset: "70"
+    cap_add: [NET_ADMIN]
+    sysctls:
+      net.ipv4.ip_forward: "1"
+    volumes:
+      - ./containers/appliance/entrypoint.sh:/lab/entrypoint.sh:ro
+      - ./containers/appliance/shadow:/lab/shadow:ro
+    command: ["/bin/sh", "/lab/entrypoint.sh"]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    networks:
+      - default
+      - control
+    restart: unless-stopped
+
+  protected:
+    build:
+      context: ./containers/protected
+      dockerfile: Dockerfile
+    hostname: protected
+    labels:
+      ocr_lab_net: "false"
+    cap_add: [NET_ADMIN]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    cpus: 0.25
+    pids_limit: 64
+    networks:
+      - control
+    restart: unless-stopped
+
+networks:
+  default:
+  control:
+    internal: true

@@ -1,10 +1,10 @@
 {
   "generated_for_release": "5",
-  "release_date": "2026-11-13",
+  "release_date": "2026-11-14",
   "platform": {
     "name": "SWOCTS Cyber Range",
     "version": "5",
-    "status": "development",
+    "status": "release",
     "edition": "Community / Academic",
     "python": "3.11",
     "node": "22",
@@ -354,6 +354,12 @@
         "name": "0x4d4c/inetsim@sha256:01fdf65489db7b9a77a33cc336ba1d5ddf23aded35eeb23f2c6455290ca595e8",
         "version": "",
         "licence": "INetSim GPL-2.0 plus Debian packages",
+        "scope": "container image"
+      },
+      {
+        "name": "openwrt/rootfs@sha256:46c12e45e9071aa5afb23ee0a1cda75e6a34f49eb0cf4f6fd171c6be2ce0162f",
+        "version": "",
+        "licence": "OpenWrt GPL-2.0 plus OpenWrt package licences",
         "scope": "container image"
       },
       {

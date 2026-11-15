@@ -84,6 +84,10 @@ IMAGE_LICENCES = [
         "0x4d4c/inetsim@sha256:01fdf65489db7b9a77a33cc336ba1d5ddf23aded35eeb23f2c6455290ca595e8",
         "INetSim GPL-2.0 plus Debian packages",
     ),
+    (
+        "openwrt/rootfs@sha256:46c12e45e9071aa5afb23ee0a1cda75e6a34f49eb0cf4f6fd171c6be2ce0162f",
+        "OpenWrt GPL-2.0 plus OpenWrt package licences",
+    ),
     ("axllent/mailpit", "MIT"),
 ]
 
