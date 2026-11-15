@@ -57,11 +57,16 @@ avml --version
 ```bash
 sudo avml acquire /tmp/mem.lime
 ls -lh /tmp/mem.lime
-sha256sum /tmp/mem.lime
+sudo sha256sum /tmp/mem.lime
 ```
 
 Record the size and hash before you move the file. The acquisition may take
-several seconds and produces an image roughly the size of guest RAM.
+several seconds and produces an image roughly the size of guest RAM. Make the
+image readable by your analyst account before transferring it:
+
+```bash
+sudo chmod 644 /tmp/mem.lime
+```
 
 ### 3. Transfer the image
 
