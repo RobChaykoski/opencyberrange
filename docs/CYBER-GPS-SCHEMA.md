@@ -79,9 +79,20 @@ dashboard shows:
 - the reason ("your recent work is all beginner level");
 - one action with a destination.
 
-The planned `learner_snapshots` table will store the whole payload and the
-factor weights used at the time, so a later scoring change does not rewrite an
-old report. Until that table exists, the API builds the payload on read.
+The `learner_snapshots` table stores the whole report payload and the factor
+weights used at the time, so a later scoring change does not rewrite an old
+report. A career dossier or portfolio export records a snapshot; re-downloading
+it returns the stored payload, not a rebuild from live evidence. Snapshots are
+deduplicated per learner, kind, and content hash; the hash excludes generation
+timestamps, portfolio IDs, and export metadata, so viewing an unchanged report
+again does not create a new row.
+
+Snapshots are available at:
+
+- `GET /api/profile/snapshots` — the learner's stored reports, newest first;
+- `GET /api/profile/snapshots/{id}` — the stored payload and the weights used;
+- `GET /api/profile/snapshots/{id}/markdown` and `/html` — the stored report
+  re-rendered without recomputing any score.
 
 ## Privacy and anti-gaming rules
 
@@ -104,7 +115,6 @@ old report. Until that table exists, the API builds the payload on read.
 
 ## Deferred
 
-- A persisted `learner_snapshots` table with JSONB payloads and factor weights.
 - NICE work-role mapping in the public transcript.
 - Employer-facing transcript export with DNA, competencies, and confidence.
 - The cohort-based prediction layer. It is not part of Release 5 and must not be

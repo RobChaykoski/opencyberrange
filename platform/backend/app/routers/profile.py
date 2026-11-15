@@ -10,7 +10,7 @@ apart.
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 from app.ratelimit import create_limiter
@@ -52,6 +52,13 @@ from app.services.career_profile import (
     render_markdown as render_career_markdown,
 )
 from app.services.feature_flags import advanced_dna_insights_enabled
+from app.services.learner_snapshots import (
+    get_snapshot,
+    list_snapshots,
+    record_snapshot,
+    snapshot_meta,
+    snapshot_payload,
+)
 from app.services.portfolio import (
     build_portfolio,
     render_html as render_portfolio_html,
@@ -400,6 +407,38 @@ def _log_career_export(request: Request, current_user: User, export_format: str)
     )
 
 
+def _snapshot_headers(row) -> dict[str, str]:
+    return {
+        "X-OCR-Snapshot-ID": str(row.id),
+        "X-OCR-Snapshot-SHA256": row.content_sha256,
+    }
+
+
+def _snapshot_footer(row) -> str:
+    meta = snapshot_meta(row)
+    return (
+        "\n\n---\n\n"
+        f"Report snapshot `{meta['snapshot_id']}` "
+        f"({meta['created_at']}). This report is stored unchanged; "
+        "later formula changes do not alter it.\n"
+    )
+
+
+def _with_html_footer(body: str, row) -> str:
+    meta = snapshot_meta(row)
+    footer = (
+        '<footer class="snapshot-footer" '
+        'style="margin-top:2rem;border-top:1px solid #ccc;padding-top:.5rem;'
+        'font-size:.85rem;color:#555">'
+        f"Report snapshot {meta['snapshot_id']} ({meta['created_at']}). "
+        "This report is stored unchanged; later formula changes do not alter it."
+        "</footer>"
+    )
+    if "</body>" in body:
+        return body.replace("</body>", footer + "</body>", 1)
+    return body + footer
+
+
 @router.get("/career-dossier", summary="Career-profile dossier (JSON)")
 @limiter.limit("30/minute")
 async def get_career_dossier(
@@ -409,10 +448,15 @@ async def get_career_dossier(
 ):
     """Return the learner's career-discovery dossier as JSON."""
     dossier = build_career_dossier(db, current_user)
+    snapshot, _ = record_snapshot(db, current_user, "career_dossier", dossier)
     _log_career_export(request, current_user, "json")
     return JSONResponse(
-        content={**dossier, "export_metadata": export_metadata()},
-        headers={"Cache-Control": "no-store"},
+        content={
+            **dossier,
+            "export_metadata": export_metadata(),
+            "snapshot": snapshot_meta(snapshot),
+        },
+        headers={"Cache-Control": "no-store", **_snapshot_headers(snapshot)},
     )
 
 
@@ -425,9 +469,11 @@ async def get_career_dossier_markdown(
 ):
     """Download the learner's career-discovery dossier as Markdown."""
     dossier = build_career_dossier(db, current_user)
+    snapshot, _ = record_snapshot(db, current_user, "career_dossier", dossier)
     _log_career_export(request, current_user, "markdown")
     return Response(
-        content=markdown_with_labels(render_career_markdown(dossier)),
+        content=markdown_with_labels(render_career_markdown(dossier))
+        + _snapshot_footer(snapshot),
         media_type="text/markdown; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -435,6 +481,7 @@ async def get_career_dossier_markdown(
                 f'"career-profile-{_safe_export_name(current_user.username)}.md"'
             ),
             "Cache-Control": "no-store",
+            **_snapshot_headers(snapshot),
         },
     )
 
@@ -448,9 +495,12 @@ async def get_career_dossier_html(
 ):
     """View or print the learner's career-discovery dossier as HTML."""
     dossier = build_career_dossier(db, current_user)
+    snapshot, _ = record_snapshot(db, current_user, "career_dossier", dossier)
     _log_career_export(request, current_user, "html")
     return Response(
-        content=html_with_labels(render_career_html(dossier)),
+        content=_with_html_footer(
+            html_with_labels(render_career_html(dossier)), snapshot
+        ),
         media_type="text/html; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -458,6 +508,7 @@ async def get_career_dossier_html(
                 f'"career-profile-{_safe_export_name(current_user.username)}.html"'
             ),
             "Cache-Control": "no-store",
+            **_snapshot_headers(snapshot),
         },
     )
 
@@ -496,10 +547,15 @@ async def get_portfolio(
     _require_portfolio(db)
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
+    snapshot, _ = record_snapshot(db, current_user, "portfolio", portfolio)
     _log_portfolio_export(request, current_user, "json")
     return JSONResponse(
-        content={**portfolio, "export_metadata": export_metadata()},
-        headers={"Cache-Control": "no-store"},
+        content={
+            **portfolio,
+            "export_metadata": export_metadata(),
+            "snapshot": snapshot_meta(snapshot),
+        },
+        headers={"Cache-Control": "no-store", **_snapshot_headers(snapshot)},
     )
 
 
@@ -514,9 +570,11 @@ async def get_portfolio_markdown(
     _require_portfolio(db)
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
+    snapshot, _ = record_snapshot(db, current_user, "portfolio", portfolio)
     _log_portfolio_export(request, current_user, "markdown")
     return Response(
-        content=markdown_with_labels(render_portfolio_markdown(portfolio)),
+        content=markdown_with_labels(render_portfolio_markdown(portfolio))
+        + _snapshot_footer(snapshot),
         media_type="text/markdown; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -524,6 +582,7 @@ async def get_portfolio_markdown(
                 f'"professional-portfolio-{_safe_export_name(current_user.username)}.md"'
             ),
             "Cache-Control": "no-store",
+            **_snapshot_headers(snapshot),
         },
     )
 
@@ -539,9 +598,12 @@ async def get_portfolio_html(
     _require_portfolio(db)
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
+    snapshot, _ = record_snapshot(db, current_user, "portfolio", portfolio)
     _log_portfolio_export(request, current_user, "html")
     return Response(
-        content=html_with_labels(render_portfolio_html(portfolio)),
+        content=_with_html_footer(
+            html_with_labels(render_portfolio_html(portfolio)), snapshot
+        ),
         media_type="text/html; charset=utf-8",
         headers={
             "Content-Disposition": (
@@ -549,7 +611,103 @@ async def get_portfolio_html(
                 f'"professional-portfolio-{_safe_export_name(current_user.username)}.html"'
             ),
             "Cache-Control": "no-store",
+            **_snapshot_headers(snapshot),
         },
+    )
+
+
+@router.get("/snapshots", summary="Stored report snapshots")
+@limiter.limit("30/minute")
+async def list_report_snapshots(
+    request: Request,
+    kind: Optional[str] = Query(
+        None, pattern="^(career_dossier|portfolio)$"
+    ),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """List the learner's stored reports, newest first.
+
+    A stored report is immutable: re-downloading it returns the payload and
+    factor weights captured when it was generated.
+    """
+    rows = list_snapshots(db, current_user.id, kind=kind, limit=limit)
+    return JSONResponse(
+        content={"snapshots": [snapshot_meta(row) for row in rows]},
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+def _owned_snapshot(db: Session, current_user: User, snapshot_id: int):
+    row = get_snapshot(db, current_user.id, snapshot_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Report snapshot not found.")
+    if row.kind == "portfolio":
+        _require_portfolio(db)
+    return row
+
+
+@router.get("/snapshots/{snapshot_id}", summary="Stored report snapshot")
+@limiter.limit("30/minute")
+async def get_report_snapshot(
+    request: Request,
+    snapshot_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Return a stored report payload and the weights used to build it."""
+    row = _owned_snapshot(db, current_user, snapshot_id)
+    return JSONResponse(
+        content={
+            "snapshot": snapshot_meta(row, include_weights=True),
+            "payload": snapshot_payload(row),
+        },
+        headers={"Cache-Control": "no-store"},
+    )
+
+
+@router.get("/snapshots/{snapshot_id}/markdown", summary="Stored report (Markdown)")
+@limiter.limit("20/minute")
+async def get_report_snapshot_markdown(
+    request: Request,
+    snapshot_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Re-render a stored report as Markdown without recomputing it."""
+    row = _owned_snapshot(db, current_user, snapshot_id)
+    payload = snapshot_payload(row)
+    if row.kind == "career_dossier":
+        body = render_career_markdown(payload)
+    else:
+        body = render_portfolio_markdown(payload)
+    return Response(
+        content=markdown_with_labels(body) + _snapshot_footer(row),
+        media_type="text/markdown; charset=utf-8",
+        headers={"Cache-Control": "no-store", **_snapshot_headers(row)},
+    )
+
+
+@router.get("/snapshots/{snapshot_id}/html", summary="Stored report (HTML)")
+@limiter.limit("20/minute")
+async def get_report_snapshot_html(
+    request: Request,
+    snapshot_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Re-render a stored report as printable HTML without recomputing it."""
+    row = _owned_snapshot(db, current_user, snapshot_id)
+    payload = snapshot_payload(row)
+    if row.kind == "career_dossier":
+        body = render_career_html(payload)
+    else:
+        body = render_portfolio_html(payload)
+    return Response(
+        content=_with_html_footer(html_with_labels(body), row),
+        media_type="text/html; charset=utf-8",
+        headers={"Cache-Control": "no-store", **_snapshot_headers(row)},
     )
 
 

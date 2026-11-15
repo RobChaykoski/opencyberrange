@@ -45,6 +45,7 @@ from app.models import (
     Lab,
     LabCompletion,
     LabSession,
+    LearnerSnapshot,
     QuizAttempt,
     RevokedToken,
     SsoLoginTicket,
@@ -393,6 +394,7 @@ def erase_user(
         (ExerciseReaction, ExerciseReaction.user_id),
         (FlagAttempt, FlagAttempt.user_id),
         (LabCompletion, LabCompletion.user_id),
+        (LearnerSnapshot, LearnerSnapshot.user_id),
         (QuizAttempt, QuizAttempt.user_id),
         (LabSession, LabSession.user_id),
         # SSO rows hold an external subject, email, and an encrypted ID token.

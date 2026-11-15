@@ -472,6 +472,7 @@ def build_momentum(db: Session, user: User) -> dict:
 
     return {
         "version": MOMENTUM_VERSION,
+        "factor_weights": FRICTION_WEIGHTS,
         "window": (
             "Recent half of completed exercises compared with the earlier half. "
             "Friction uses hints, reattempts, time over estimate, and unfinished "

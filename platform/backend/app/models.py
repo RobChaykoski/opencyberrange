@@ -819,6 +819,42 @@ class LabCompletion(Base):
     )
 
 
+class LearnerSnapshot(Base):
+    """Immutable report snapshot with the formula and factor weights used.
+
+    A persisted report is rendered from this row, not rebuilt from live
+    evidence. That way a later scoring change cannot rewrite an old report.
+    Payload and weights are canonical JSON in Text columns, matching the
+    existing ``competency_mapping`` convention.
+    """
+
+    __tablename__ = "learner_snapshots"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    kind = Column(String(32), nullable=False)  # career_dossier | portfolio
+    schema_version = Column(String(32), nullable=False)
+    formula_version = Column(String(32), nullable=True)
+    weights = Column(Text, nullable=False)
+    payload = Column(Text, nullable=False)
+    content_sha256 = Column(String(64), nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+
+    user = relationship("User")
+    __table_args__ = (
+        Index("ix_learner_snapshots_user_kind", "user_id", "kind"),
+        Index(
+            "ix_learner_snapshots_unique",
+            "user_id",
+            "kind",
+            "content_sha256",
+            unique=True,
+        ),
+    )
+
+
 class ExercisePulseSurvey(Base):
     """Three-question learner pulse taken after an exercise.
 

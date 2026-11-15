@@ -1,8 +1,8 @@
 # Database schema and Alembic migrations
 
 Audience: operators upgrading a deployment, and reviewers answering change-
-management or disaster-recovery questions. Current schema head: **0014**
-(`0014_performance_indexes`).
+management or disaster-recovery questions. Current schema head: **0031**
+(`0031_learner_snapshots`).
 
 ## Short version for operators
 

@@ -37,6 +37,7 @@ from app.models import LabCompletion
 
 WINDOW_DAYS = 30
 TREND_WINDOWS = (30, 60, 90)
+GROWTH_VERSION = "2026.1"
 DIFFICULTY_WEIGHT = {
     "beginner": 1.0,
     "intermediate": 2.0,
@@ -359,6 +360,14 @@ def build_growth_velocity(db: Session, user) -> dict:
         state = "steady"
 
     return {
+        "version": GROWTH_VERSION,
+        "factor_weights": {
+            "window_days": WINDOW_DAYS,
+            "trend_windows": list(TREND_WINDOWS),
+            "difficulty": DIFFICULTY_WEIGHT,
+            "min_percent_evidence": MIN_PERCENT_EVIDENCE,
+            "min_career_evidence": MIN_CAREER_EVIDENCE,
+        },
         "window_days": WINDOW_DAYS,
         "state": state,
         "confidence": confidence,

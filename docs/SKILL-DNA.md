@@ -102,7 +102,9 @@ data sources, and review checklist.
 
 Each trait is scored from **0 to 99**. Scores are capped, so a very active
 learner cannot reach 100: there is always another skill or branch to develop.
-Formula version: **2026.14**.
+Formula version: **2026.14**. The API returns the coefficients and recency
+steps in `factor_weights`, and every persisted career-dossier or portfolio
+snapshot stores that object with the report.
 
 Each branch also has its own recency factor. A branch that has been quiet for
 more than 14 days is reduced by up to 10% (floor 0.90), and a new completion or

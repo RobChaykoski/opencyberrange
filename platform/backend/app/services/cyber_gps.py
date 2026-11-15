@@ -19,6 +19,15 @@ from app.services.role_readiness import build_role_readiness, load_roles
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 GPS_FILE = DATA_DIR / "cyber-gps.yaml"
 
+# Published fit weights. They are returned in the payload and stored with a
+# report snapshot so a later tuning change cannot rewrite an old report.
+FIT_WEIGHTS = {
+    "without_interest": {"evidence": 0.75, "growth": 0.25},
+    "with_interest": {"evidence": 0.55, "interest": 0.25, "growth": 0.20},
+    "interest_max_scale": 100,
+    "growth_scale": 25,
+}
+
 _gps_cache: dict | None = None
 
 
@@ -143,20 +152,35 @@ def build_gps(
             for competency_id in critical_ids
         )
         growth = (
-            min(100.0, (recent / max(1, len(critical_ids))) * 25)
+            min(
+                100.0,
+                (recent / max(1, len(critical_ids)))
+                * FIT_WEIGHTS["growth_scale"],
+            )
             if critical_ids
             else 0.0
         )
         evidence = float(readiness["readiness"]["score"] or 0)
         role_interest = (
-            interest.get(role_id, 0.0) / interest_max * 100
+            interest.get(role_id, 0.0)
+            / interest_max
+            * FIT_WEIGHTS["interest_max_scale"]
             if interest_max
             else None
         )
         if role_interest is None:
-            fit = 0.75 * evidence + 0.25 * growth
+            fit_weights = FIT_WEIGHTS["without_interest"]
+            fit = (
+                fit_weights["evidence"] * evidence
+                + fit_weights["growth"] * growth
+            )
         else:
-            fit = 0.55 * evidence + 0.25 * role_interest + 0.20 * growth
+            fit_weights = FIT_WEIGHTS["with_interest"]
+            fit = (
+                fit_weights["evidence"] * evidence
+                + fit_weights["interest"] * role_interest
+                + fit_weights["growth"] * growth
+            )
         fit = round(fit, 1)
         label, colour = _fit_label(fit)
         top_domains = readiness["domains"][:2]
@@ -257,6 +281,7 @@ def build_gps(
 
     return {
         "version": load_gps().get("version"),
+        "factor_weights": FIT_WEIGHTS,
         "answers_received": bool(answers),
         "answers_note": (
             "Answers are used for this view only and are not saved. Skip any "

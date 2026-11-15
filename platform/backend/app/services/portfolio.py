@@ -260,6 +260,7 @@ def build_portfolio(db: Session, user: User, summary: dict) -> dict:
         },
         "cyber_dna": {
             "formula_version": dna.get("formula_version"),
+            "factor_weights": dna.get("factor_weights"),
             "overall": dna.get("overall"),
             "tier": dna.get("tier"),
             "class": dna.get("class"),

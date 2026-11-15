@@ -42,6 +42,78 @@ from app.services.titles import resolve_titles
 
 FORMULA_VERSION = "2026.14"
 
+# Published factor weights. They live in the payload and in every persisted
+# report snapshot so a later formula change cannot silently rewrite an old
+# report. The scoring functions below read these values; keep the two in step.
+FACTOR_WEIGHTS = {
+    "cap": 99,
+    "recency": [
+        {"max_days": 14, "factor": 1.0},
+        {"max_days": 30, "factor": 0.99},
+        {"max_days": 60, "factor": 0.97},
+        {"max_days": 90, "factor": 0.94},
+        {"max_days": None, "factor": 0.90},
+    ],
+    "evidence_strength": {
+        "base": 1.0,
+        "clean_solve": 0.5,
+        "first_attempt": 0.25,
+        "advanced": 0.75,
+        "assessment": 0.5,
+        "quiz_base": 0.75,
+        "quiz_scale": 0.75,
+        "explorer_open_lab": 0.5,
+        "explorer_track": 0.25,
+        "explorer_category": 0.25,
+        "leader_course": 1.5,
+        "leader_achievement": 0.5,
+        "leader_instructed": 3.0,
+        "leader_like": 0.25,
+    },
+    "dimensions": {
+        "explorer": {
+            "track": 7,
+            "category": 2,
+            "started_lab": 1.2,
+            "track_bonus": 2,
+            "quiz_lab": 1.0,
+        },
+        "builder": {
+            "completed_lab": 2.0,
+            "minute": 0.04,
+            "no_hint_lab": 1.0,
+            "perfect_lab": 0.5,
+            "builder_lab": 1.0,
+            "quiz_lab": 1.5,
+            "quiz_accuracy_point": 0.15,
+        },
+        "tester": {
+            "offensive_core_lab": 9,
+            "offensive_lab": 2,
+            "offensive_category": 3,
+            "offensive_no_hint_lab": 1,
+            "assessment_lab": 3,
+        },
+        "defender": {
+            "defender_lab": 9,
+            "defender_track": 3,
+            "category": 2,
+        },
+        "investigator": {
+            "investigator_lab": 9,
+            "investigator_track": 3,
+            "category": 2,
+        },
+        "leader": {
+            "course": 6,
+            "achievement": 2,
+            "advanced_lab": 4,
+            "instructed_course": 8,
+            "like": 1,
+        },
+    },
+}
+
 DIMENSION_ORDER = ("explorer", "builder", "tester", "defender", "investigator", "leader")
 
 BUILDER_CATEGORIES = {
@@ -215,7 +287,7 @@ def tier_for(score: int) -> str:
 
 def _clamp(value: float) -> int:
     # Cyber DNA never reaches 100: there is always another branch to develop.
-    return max(0, min(99, round(value)))
+    return max(0, min(FACTOR_WEIGHTS["cap"], round(value)))
 
 
 def _completion_rows(
@@ -314,15 +386,16 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
 
         # Stronger work leaves a heavier mark. A clean, unaided solve of an
         # advanced or assessment lab counts for more than a hinted walkthrough.
-        strength = 1.0
+        strength_weights = FACTOR_WEIGHTS["evidence_strength"]
+        strength = strength_weights["base"]
         if (row.hints_used or 0) == 0:
-            strength += 0.5
+            strength += strength_weights["clean_solve"]
         if (row.attempts or 1) <= 1:
-            strength += 0.25
+            strength += strength_weights["first_attempt"]
         if is_advanced:
-            strength += 0.75
+            strength += strength_weights["advanced"]
         if category == "assessment":
-            strength += 0.5
+            strength += strength_weights["assessment"]
         for branch in branches:
             evidence_weight[branch] += strength
             completed_at = getattr(row, "completed_at", None)
@@ -421,7 +494,10 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
     for lab_id, best in quiz_best.items():
         # A quiz counts toward volume and adds strength in proportion to the
         # learner's best score on that lab's knowledge check.
-        quiz_strength = 0.75 + (best / 100) * 0.75
+        quiz_strength = (
+            FACTOR_WEIGHTS["evidence_strength"]["quiz_base"]
+            + (best / 100) * FACTOR_WEIGHTS["evidence_strength"]["quiz_scale"]
+        )
         for branch in lab_branches.get(lab_id, {"explorer", "builder"}):
             quiz_area[branch] += 1
             evidence_weight[branch] += quiz_strength
@@ -465,13 +541,19 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
         ),
     }
     # Breadth and leadership work also strengthen a branch's point.
-    evidence_weight["explorer"] += 0.5 * len(session_lab_ids - completed_lab_ids)
-    evidence_weight["explorer"] += 0.25 * len(tracks) + 0.25 * len(categories)
+    strength_weights = FACTOR_WEIGHTS["evidence_strength"]
+    evidence_weight["explorer"] += strength_weights["explorer_open_lab"] * len(
+        session_lab_ids - completed_lab_ids
+    )
+    evidence_weight["explorer"] += strength_weights["explorer_track"] * len(tracks)
+    evidence_weight["explorer"] += strength_weights["explorer_category"] * len(
+        categories
+    )
     evidence_weight["leader"] += (
-        1.5 * int(courses)
-        + 0.5 * int(achievements)
-        + 3.0 * int(instructed)
-        + 0.25 * int(likes_given)
+        strength_weights["leader_course"] * int(courses)
+        + strength_weights["leader_achievement"] * int(achievements)
+        + strength_weights["leader_instructed"] * int(instructed)
+        + strength_weights["leader_like"] * int(likes_given)
     )
 
     last_at = max(
@@ -524,45 +606,53 @@ def _signals(db: Session, user_id: int, before: datetime | None = None) -> dict:
 
 
 def _scores(signals: dict) -> dict[str, int]:
+    w = FACTOR_WEIGHTS["dimensions"]
+    explorer_w = w["explorer"]
+    builder_w = w["builder"]
+    tester_w = w["tester"]
+    defender_w = w["defender"]
+    investigator_w = w["investigator"]
+    leader_w = w["leader"]
     explorer = _clamp(
-        7 * len(signals["tracks"])
-        + 2 * len(signals["categories"])
-        + 1.2 * min(signals["started_labs"], 20)
-        + 2 * min(len(signals["tracks"]), 3)
-        + 1.0 * min(signals["quiz_labs"], 10)
+        explorer_w["track"] * len(signals["tracks"])
+        + explorer_w["category"] * len(signals["categories"])
+        + explorer_w["started_lab"] * min(signals["started_labs"], 20)
+        + explorer_w["track_bonus"] * min(len(signals["tracks"]), 3)
+        + explorer_w["quiz_lab"] * min(signals["quiz_labs"], 10)
     )
     builder = _clamp(
-        2.0 * min(signals["completed_labs"], 25)
-        + 0.04 * min(signals["total_minutes"], 1200)
-        + 1.0 * min(signals["no_hint_labs"], 10)
-        + 0.5 * min(signals["perfect_labs"], 10)
-        + 1.0 * min(signals["builder_labs"], 10)
-        + 1.5 * min(signals["quiz_labs"], 10)
-        + 0.15 * (signals["quiz_accuracy"] or 0)
+        builder_w["completed_lab"] * min(signals["completed_labs"], 25)
+        + builder_w["minute"] * min(signals["total_minutes"], 1200)
+        + builder_w["no_hint_lab"] * min(signals["no_hint_labs"], 10)
+        + builder_w["perfect_lab"] * min(signals["perfect_labs"], 10)
+        + builder_w["builder_lab"] * min(signals["builder_labs"], 10)
+        + builder_w["quiz_lab"] * min(signals["quiz_labs"], 10)
+        + builder_w["quiz_accuracy_point"] * (signals["quiz_accuracy"] or 0)
     )
     tester = _clamp(
-        9 * min(signals["offensive_core_labs"], 12)
-        + 2 * min(signals["offensive_labs"], 20)
-        + 3 * min(len(signals["offensive_categories"]), 4)
-        + 1 * min(signals["offensive_no_hint_labs"], 10)
-        + 3 * min(signals["assessment_labs"], 4)
+        tester_w["offensive_core_lab"] * min(signals["offensive_core_labs"], 12)
+        + tester_w["offensive_lab"] * min(signals["offensive_labs"], 20)
+        + tester_w["offensive_category"] * min(len(signals["offensive_categories"]), 4)
+        + tester_w["offensive_no_hint_lab"] * min(signals["offensive_no_hint_labs"], 10)
+        + tester_w["assessment_lab"] * min(signals["assessment_labs"], 4)
     )
     defender = _clamp(
-        9 * min(signals["defender_labs"], 12)
-        + 3 * min(len(signals["defender_tracks"]), 4)
-        + 2 * min(len(signals["categories"]), 5)
+        defender_w["defender_lab"] * min(signals["defender_labs"], 12)
+        + defender_w["defender_track"] * min(len(signals["defender_tracks"]), 4)
+        + defender_w["category"] * min(len(signals["categories"]), 5)
     )
     investigator = _clamp(
-        9 * min(signals["investigator_labs"], 12)
-        + 3 * min(len(signals["investigator_tracks"]), 4)
-        + 2 * min(len(signals["categories"]), 5)
+        investigator_w["investigator_lab"] * min(signals["investigator_labs"], 12)
+        + investigator_w["investigator_track"]
+        * min(len(signals["investigator_tracks"]), 4)
+        + investigator_w["category"] * min(len(signals["categories"]), 5)
     )
     leader = _clamp(
-        6 * min(signals["courses"], 5)
-        + 2 * min(signals["achievements"], 20)
-        + 4 * min(signals["advanced_labs"], 10)
-        + 8 * min(signals["instructed_courses"], 3)
-        + 1 * min(signals["likes_given"], 10)
+        leader_w["course"] * min(signals["courses"], 5)
+        + leader_w["achievement"] * min(signals["achievements"], 20)
+        + leader_w["advanced_lab"] * min(signals["advanced_labs"], 10)
+        + leader_w["instructed_course"] * min(signals["instructed_courses"], 3)
+        + leader_w["like"] * min(signals["likes_given"], 10)
     )
     return {
         "explorer": explorer,
@@ -714,15 +804,13 @@ def _recency_factor(days: int | None) -> float:
     A new completion resets the factor to 1.0, so the effect is repair by
     practice, not a permanent penalty. The floor is 0.90 (10% at most).
     """
-    if days is None or days <= 14:
-        return 1.0
-    if days <= 30:
-        return 0.99
-    if days <= 60:
-        return 0.97
-    if days <= 90:
-        return 0.94
-    return 0.90
+    if days is None:
+        return FACTOR_WEIGHTS["recency"][0]["factor"]
+    for step in FACTOR_WEIGHTS["recency"]:
+        max_days = step["max_days"]
+        if max_days is None or days <= max_days:
+            return step["factor"]
+    return FACTOR_WEIGHTS["recency"][-1]["factor"]
 
 
 def build_skill_dna(db: Session, user: User) -> dict:
@@ -841,6 +929,7 @@ def build_skill_dna(db: Session, user: User) -> dict:
     weakest = min(dimensions, key=lambda row: row["recency"]["factor_percent"])
     return {
         "formula_version": FORMULA_VERSION,
+        "factor_weights": FACTOR_WEIGHTS,
         "overall": overall,
         "tier": tier_for(overall),
         "class": top_class,

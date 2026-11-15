@@ -206,6 +206,7 @@ def build_career_dossier(db: Session, user: User) -> dict:
         ),
         "cyber_dna": {
             "formula_version": dna["formula_version"],
+            "factor_weights": dna.get("factor_weights"),
             "overall": dna["overall"],
             "tier": dna["tier"],
             "class": dna["class"],
