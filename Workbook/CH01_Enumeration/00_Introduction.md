@@ -106,7 +106,7 @@ You need one of these two environments:
 1. **RangeBox:** launch the exercise with a RangeBox desktop, open its
    terminal, and work there. The RangeBox is already on the exercise network.
 2. **Your own Kali Linux VM over VPN:** Kali Linux is a Linux distribution that
-   ships with security tools. Connect the VPN first, open a terminal, and
+   ships with security tools. Connect with RangeBox or the VPN, open a terminal, and
    confirm the platform shows the VPN as connected.
 
 Commands in this chapter run **inside the RangeBox terminal or your own

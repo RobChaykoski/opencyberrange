@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - No credentials are needed for scanning; you will observe the service from the outside.
 - You should be comfortable running commands in a Linux terminal.
 

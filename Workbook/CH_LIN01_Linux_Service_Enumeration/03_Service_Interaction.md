@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Exercises L1.1 and L1.2.
 - You will need a terminal with an FTP client and basic banner-grabbing tools (netcat).
 

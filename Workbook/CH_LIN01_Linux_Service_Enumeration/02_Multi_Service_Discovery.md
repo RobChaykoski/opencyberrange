@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Exercise L1.1 and be comfortable reading Nmap output.
 - You will need a terminal, an FTP client, and a web browser (or curl).
 

@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Labs W1.1 and W1.2 and be comfortable using curl.
 - No credentials are needed: you will test HTTP methods from the outside.
 

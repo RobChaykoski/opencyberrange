@@ -4,6 +4,18 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Lab access and stop controls
+- Beginner labs now launch a Kali RangeBox by default, and the exercise panel
+  offers an explicit **Start with desktop** or **Start with VPN** choice. The
+  workbooks say RangeBox or VPN instead of assuming a tunnel.
+- Stop Exercise and Stop RangeBox use an accessible in-app confirmation dialog
+  with a **Stopping...** state. The previous `window.confirm` silently returned
+  false in embedded browsers, so no stop request was sent.
+- Unknown routes and `/challenges` redirect to the dashboard or login instead of
+  rendering a blank page.
+- Registration states that an administrator reviews new accounts, and the public
+  config exposes whether approval is required.
+
 ### Cyber DNA and Career GPS
 - Added an interest-based "Discover your Cyber DNA" first-run flow. New
   learners pick what they enjoy (building, investigating, breaking, defending,

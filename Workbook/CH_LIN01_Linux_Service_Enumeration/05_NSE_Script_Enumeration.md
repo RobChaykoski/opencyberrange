@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Exercises L1.1 through L1.4.
 - You will need a terminal with Nmap installed (NSE scripts are included with Nmap).
 

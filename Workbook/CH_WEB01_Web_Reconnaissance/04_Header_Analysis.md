@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Labs W1.1 through W1.3 and be familiar with curl's verbose output.
 - No credentials are needed: header analysis is entirely passive.
 

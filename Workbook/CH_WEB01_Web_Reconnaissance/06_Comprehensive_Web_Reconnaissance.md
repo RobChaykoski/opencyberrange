@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Labs W1.1 through W1.5 and be comfortable with all reconnaissance tools.
 - The lab combines every technique from the chapter, so review your notes if needed.
 

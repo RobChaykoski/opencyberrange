@@ -2,7 +2,7 @@
 
 ## Before You Begin
 
-- Confirm your VPN connection is active and you can reach the lab network.
+- Connect with RangeBox or the VPN, then confirm you can reach the lab network.
 - You should have completed Labs W1.1 through W1.4 and be comfortable with nmap and curl.
 - No credentials are needed: subdomain discovery in this lab uses a subnet sweep and HTTP requests.
 
