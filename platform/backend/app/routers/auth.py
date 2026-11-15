@@ -23,7 +23,7 @@ from app.models import (
     User, WireGuardConfig, Lab, CourseLabAssignment, CourseEnrollment,
     Course, ExerciseReaction, InviteCode, Assignment, AssignmentLab,
     Competition, CompetitionParticipant, SurveyConsentEvent,
-    ImpersonationSession,
+    ImpersonationSession, LabCompletion,
 )
 from app.auth import (
     authenticate_user,
@@ -533,6 +533,16 @@ async def get_user_settings(
             recovery_count = len(_json.loads(current_user.mfa_recovery_codes))
         except Exception:
             recovery_count = 0
+    completed_labs = (
+        db.query(func.count(LabCompletion.id))
+        .filter(
+            LabCompletion.user_id == current_user.id,
+            LabCompletion.flag_submitted.isnot(None),
+            LabCompletion.flag_submitted != "",
+        )
+        .scalar()
+        or 0
+    )
     return {
         "first_name": current_user.first_name,
         "last_name": current_user.last_name,
@@ -548,6 +558,9 @@ async def get_user_settings(
         "email_consent_version": getattr(current_user, "email_consent_version", None),
         "email_consent_updated_at": getattr(current_user, "email_consent_updated_at", None),
         "notification_prefs": prefs or {},
+        "needs_dna_onboarding": (
+            not (prefs or {}).get("dna_onboarding_v1") and completed_labs == 0
+        ),
         "show_hidden_achievements": bool(
             getattr(current_user, "show_hidden_achievements", False)
         ),

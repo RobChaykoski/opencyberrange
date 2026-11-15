@@ -354,12 +354,12 @@ const tourSteps = [
 // Browser storage is the fast path, but it is origin-scoped and can be
 // cleared. Persist the same preference on the account so a student does not
 // see the tour again from another browser, hostname, or private window.
-async function tourSeenOnServer() {
+async function settingsOnServer() {
   try {
     const { data } = await api.get('/auth/settings')
-    return Boolean(data?.notification_prefs?.orientation_seen_v1)
+    return data || null
   } catch {
-    return false
+    return null
   }
 }
 
@@ -382,7 +382,21 @@ async function maybeStartTour() {
   if (tourCheckedForToken === authState.value.token) return
   tourCheckedForToken = authState.value.token
 
-  if (await tourSeenOnServer()) {
+  const settings = await settingsOnServer()
+  const prefs = settings?.notification_prefs || {}
+  if (settings?.needs_dna_onboarding && route.path !== '/discover') {
+    // First-run discovery replaces the generic tour for new learners. The
+    // preference is stored when they choose an interest or skip, so this
+    // redirect happens once per account rather than on every login.
+    try {
+      await router.push('/discover')
+    } catch {
+      // Navigation can fail if the user is already leaving; the dashboard band
+      // still offers the same entry point.
+    }
+    return
+  }
+  if (prefs.orientation_seen_v1) {
     try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
     return
   }

@@ -308,12 +308,34 @@
             <span class="hero-kicker">Platform preview</span>
             <h2 class="hero-title">Learn by doing.<br />Prove what you can do.</h2>
             <p class="hero-subtitle">
-              Hands-on labs, a browser-based RangeBox, achievements, and
-              verifiable certificates.
+              Hands-on labs, a browser-based RangeBox, and a Cyber DNA profile
+              that turns your practice into career direction.
             </p>
           </div>
 
           <div class="preview-grid">
+            <article class="preview-card preview-card--dna">
+              <div class="preview-card__head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M7 3c0 6 10 6 10 12M17 3c0 6-10 6-10 12M7 21c0-1 10-1 10-6M17 21c0-1-10-1-10-6"/>
+                  <path d="M8.5 6h7M8.5 18h7M9.5 9h5M9.5 15h5"/>
+                </svg>
+                <span>Cyber DNA · Career GPS</span>
+              </div>
+              <div class="preview-dna">
+                <svg class="preview-dna__chart" viewBox="0 0 120 120" aria-hidden="true">
+                  <polygon class="preview-dna__grid" points="60,10 103,35 103,85 60,110 17,85 17,35" />
+                  <polygon class="preview-dna__grid preview-dna__grid--inner" points="60,32 84,46 84,74 60,88 36,74 36,46" />
+                  <polygon class="preview-dna__shape" points="60,22 96,40 88,78 60,96 30,80 24,44" />
+                </svg>
+                <div class="preview-dna__body">
+                  <strong>Investigator</strong>
+                  <small>Primary archetype · confidence 0.88</small>
+                  <p class="preview-dna__career">Career GPS: Threat Intelligence Analyst <b>94%</b></p>
+                  <p class="preview-dna__evidence">14 evidence labs · Defender +18% this month</p>
+                </div>
+              </div>
+            </article>
             <article class="preview-card preview-card--labs">
               <div class="preview-card__head">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -1490,6 +1512,73 @@ const handleLogin = async () => {
   width: 13px;
   height: 13px;
   color: #93c5fd;
+}
+
+.preview-card--dna {
+  grid-column: 1 / -1;
+  border-color: rgba(96, 165, 250, 0.45);
+  background:
+    radial-gradient(420px 120px at 12% 0%, rgba(59, 130, 246, 0.22), transparent 70%),
+    rgba(15, 23, 42, 0.6);
+}
+
+.preview-dna {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.preview-dna__chart {
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+}
+
+.preview-dna__grid {
+  fill: none;
+  stroke: rgba(147, 197, 253, 0.25);
+  stroke-width: 1;
+}
+
+.preview-dna__grid--inner {
+  stroke: rgba(147, 197, 253, 0.16);
+}
+
+.preview-dna__shape {
+  fill: rgba(59, 130, 246, 0.35);
+  stroke: #60a5fa;
+  stroke-width: 1.5;
+}
+
+.preview-dna__body {
+  min-width: 0;
+}
+
+.preview-dna__body strong {
+  display: block;
+  color: #eff6ff;
+  font-size: 0.95rem;
+}
+
+.preview-dna__body small {
+  color: #93c5fd;
+  font-size: 0.66rem;
+}
+
+.preview-dna__career {
+  margin: 0.3rem 0 0.15rem;
+  color: #dbeafe;
+  font-size: 0.74rem;
+}
+
+.preview-dna__career b {
+  color: #86efac;
+}
+
+.preview-dna__evidence {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.66rem;
 }
 
 .preview-card--certificate {

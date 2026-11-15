@@ -61,6 +61,7 @@ from app.services.profile_report import generate_profile_transcript
 from app.services.skill_momentum import build_momentum
 from app.services.curriculum_manifest import chapter_label
 from app.services.skill_dna import build_skill_dna
+from app.services.growth_velocity import build_growth_velocity
 from app.services.titles import equip_title
 
 router = APIRouter()
@@ -286,6 +287,7 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
     } for course, _enrollment in enrollment_rows]
 
     skill_dna = build_skill_dna(db, current_user)
+    growth_velocity = build_growth_velocity(db, current_user)
     if advanced_dna_insights_enabled(db):
         momentum = build_momentum(db, current_user)
         next_labs = {
@@ -332,6 +334,7 @@ def _build_profile_summary(db: Session, current_user: User) -> dict:
         "course_achievements": course_achievements,
         "courses": courses,
         "skill_dna": skill_dna,
+        "growth_velocity": growth_velocity,
     }
 
 

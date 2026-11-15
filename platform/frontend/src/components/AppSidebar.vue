@@ -159,6 +159,20 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">Workbooks</span>
         </router-link>
+        <router-link to="/profile?tab=skill-tree" aria-label="Cyber DNA" title="Cyber DNA report" class="nav-item" :class="{ 'nav-item--active': isActive('/profile') && route.query.tab === 'skill-tree' }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <path d="M7 3c0 6 10 6 10 12M17 3c0 6-10 6-10 12M7 21c0-1 10-1 10-6M17 21c0-1-10-1-10-6"/>
+            <path d="M8.5 6h7M8.5 18h7M9.5 9h5M9.5 15h5"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Cyber DNA</span>
+        </router-link>
+        <router-link to="/profile?tab=careers" aria-label="Career GPS" title="Career GPS" class="nav-item" :class="{ 'nav-item--active': isActive('/profile') && route.query.tab === 'careers' }">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M15.5 8.5 10 10l-1.5 5.5L14 14z"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">Career GPS</span>
+        </router-link>
       </div>
 
       <!-- TOOLS -->

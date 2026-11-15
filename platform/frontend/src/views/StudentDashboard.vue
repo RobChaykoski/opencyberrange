@@ -92,6 +92,8 @@
       </div>
     </header>
 
+    <CyberDnaBand v-if="profile" :profile="profile" :settings="settings" />
+
     <!-- Next objective, VPN, rank / milestone -->
     <div class="dashboard-grid">
       <div class="card card--objective">
@@ -357,6 +359,7 @@ import { computed, markRaw, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import { getTrackIcon } from '../components/icons/trackIcons.js'
 import AchievementMedallion from '../components/AchievementMedallion.vue'
+import CyberDnaBand from '../components/CyberDnaBand.vue'
 import LearningAnalytics from '../components/LearningAnalytics.vue'
 import AvailableSurveys from '../components/AvailableSurveys.vue'
 import TargetIcon from '../components/icons/TargetIcon.vue'
@@ -379,6 +382,7 @@ const data = ref({
 })
 
 const profile = ref(null)
+const settings = ref(null)
 const loading = ref(true)
 const profileLoading = ref(true)
 const error = ref('')
@@ -758,9 +762,10 @@ const loadDashboard = async () => {
   profileLoading.value = true
   error.value = ''
 
-  const [dashboardResult, profileResult] = await Promise.allSettled([
+  const [dashboardResult, profileResult, settingsResult] = await Promise.allSettled([
     axios.get('/dashboard/student'),
     axios.get('/profile/summary'),
+    axios.get('/auth/settings'),
   ])
 
   if (dashboardResult.status === 'fulfilled') {
@@ -769,6 +774,9 @@ const loadDashboard = async () => {
   if (profileResult.status === 'fulfilled') {
     profile.value = profileResult.value.data
     detectNewAchievements(profile.value.achievements || [])
+  }
+  if (settingsResult.status === 'fulfilled') {
+    settings.value = settingsResult.value.data
   }
 
   if (dashboardResult.status === 'rejected' && profileResult.status === 'rejected') {

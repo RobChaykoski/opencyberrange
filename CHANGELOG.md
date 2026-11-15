@@ -4,6 +4,21 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Cyber DNA and Career GPS
+- Added an interest-based "Discover your Cyber DNA" first-run flow. New
+  learners pick what they enjoy (building, investigating, breaking, defending,
+  or not sure) and get three starter exercises instead of an empty dashboard.
+- Added a Cyber DNA band to the student dashboard: starter-path progress, class
+  and strongest branch, growth-velocity signals, 30/60/90-day trend, and the
+  next opportunity.
+- Added growth velocity: completions, hint discipline, challenge stretch, and
+  consistency compared with the prior 30 days, exposed with confidence labels
+  and minimum-evidence gates. Percentages require 3 completions; career roles
+  require 8. The data is personal and never ranked.
+- Surfaced Cyber DNA and Career GPS in the sidebar and on the sign-in preview.
+- Documented the four-layer model and the anti-gaming/privacy rules in
+  `docs/CYBER-GPS-SCHEMA.md`.
+
 ### User manual
 - Regenerated every manual screenshot from the current Release 5 interface:
   student dashboard and profile tabs, lab workspace, course pages, instructor
