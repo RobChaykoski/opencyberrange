@@ -257,7 +257,7 @@
       </section>
     </div>
 
-    <LearningAnalytics />
+    <LearningAnalytics :growth="profile ? profile.growth_velocity : null" />
     <AvailableSurveys />
 
     <!-- Completion matrix: one card per course with a level-by-level heatmap -->

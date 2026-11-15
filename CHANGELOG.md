@@ -11,6 +11,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Added a Cyber DNA band to the student dashboard: starter-path progress, class
   and strongest branch, growth-velocity signals, 30/60/90-day trend, and the
   next opportunity.
+- Added 30/60/90-day windows to the student learning-analytics chart and to the
+  instructor Pulse chart, with a privacy note that instructor charts aggregate
+  activity and never rank learners.
 - Added growth velocity: completions, hint discipline, challenge stretch, and
   consistency compared with the prior 30 days, exposed with confidence labels
   and minimum-evidence gates. Percentages require 3 completions; career roles

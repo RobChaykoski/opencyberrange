@@ -72,6 +72,35 @@
         </article>
       </div>
 
+      <div v-if="trend.length" class="trend-block">
+        <div class="growth-head">
+          <h3>30 / 60 / 90 days</h3>
+          <span>Your completed exercises in each window</span>
+        </div>
+        <div class="trend-chart">
+          <div v-for="point in trend" :key="point.days" class="trend-chart__item">
+            <strong class="trend-chart__value">{{ point.completions }}</strong>
+            <span class="trend-chart__bar" :style="{ height: barHeight(point.completions) }"></span>
+            <span class="trend-chart__label">{{ point.days }} days</span>
+          </div>
+        </div>
+        <p class="trend-note">
+          Counts, not percentages. Percentages appear after three completions.
+          <span v-if="confidence">Current confidence: {{ confidence.label }}.</span>
+        </p>
+      </div>
+
+      <div v-if="opportunity" class="opportunity-card">
+        <div>
+          <span class="opportunity-card__eyebrow">Next opportunity</span>
+          <strong>{{ opportunity.label }}</strong>
+          <p>{{ opportunity.detail }}</p>
+        </div>
+        <router-link :to="opportunity.route" class="btn btn--ghost btn--sm">
+          {{ opportunity.action }}
+        </router-link>
+      </div>
+
       <div class="impact-grid">
         <article class="impact-card">
           <span>Learning reported</span>
@@ -159,15 +188,25 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import axios from '../api/axios'
 import { useClipboard } from '../composables/useClipboard'
 import CompetencyRadar from './CompetencyRadar.vue'
+
+const props = defineProps({
+  growth: { type: Object, default: null },
+})
 
 const { copied, copyText } = useClipboard()
 const data = ref(null)
 const loading = ref(true)
 const error = ref('')
+
+const trend = computed(() => props.growth?.trend || [])
+const confidence = computed(() => props.growth?.confidence || null)
+const opportunity = computed(() => props.growth?.opportunities?.[0] || null)
+const trendMax = computed(() => Math.max(1, ...trend.value.map((point) => point.completions)))
+const barHeight = (value) => `${Math.max(8, Math.round((value / trendMax.value) * 100))}%`
 
 const statusLabel = (status) => ({
   improving: 'Improving',
@@ -575,5 +614,83 @@ onMounted(load)
   margin: 0.5rem 0 0;
   color: var(--text-muted);
   font-size: 0.6rem;
+}
+
+.trend-block {
+  margin-top: 1rem;
+}
+.trend-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.5rem;
+  height: 7rem;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.trend-chart__item {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+.trend-chart__value {
+  font-size: 0.8rem;
+}
+.trend-chart__bar {
+  width: 100%;
+  max-width: 4.5rem;
+  min-height: 6px;
+  border-radius: 0.25rem 0.25rem 0 0;
+  background: linear-gradient(180deg, var(--accent), rgba(37, 99, 235, 0.3));
+}
+.trend-chart__label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.trend-note {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+.opportunity-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent);
+  border-radius: 0.4rem;
+  background: var(--bg-secondary);
+}
+.opportunity-card__eyebrow {
+  display: block;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+.opportunity-card strong {
+  display: block;
+  margin: 0.15rem 0;
+  font-size: 0.9rem;
+}
+.opportunity-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+@media (max-width: 640px) {
+  .opportunity-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 </style>

@@ -188,6 +188,9 @@
             { key: '6h', label: '6h' },
             { key: '24h', label: '24h' },
             { key: '7d', label: '7d' },
+            { key: '30d', label: '30d' },
+            { key: '60d', label: '60d' },
+            { key: '90d', label: '90d' },
             { key: 'custom', label: 'Custom' },
           ]"
           :key="preset.key"
@@ -310,6 +313,10 @@
         <h2 class="panel__title">The Pulse</h2>
         <span class="panel__subtitle">{{ filterSubtitle }}</span>
       </div>
+      <p class="pulse-note">
+        Aggregate activity for the courses you teach. This chart does not rank learners
+        or expose an individual growth score.
+      </p>
       <div class="chart-container" aria-hidden="true">
         <Line v-if="pulseData.labels.length" :data="pulseData" :options="chartOptions" />
         <div v-else class="chart-empty">No activity data yet</div>
@@ -561,6 +568,15 @@ const filterRange = computed(() => {
     case '7d':
       start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
       break
+    case '30d':
+      start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      break
+    case '60d':
+      start = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000)
+      break
+    case '90d':
+      start = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+      break
     case 'custom': {
       const s = customStart.value ? new Date(customStart.value) : null
       const e = customEnd.value ? new Date(customEnd.value) : null
@@ -583,6 +599,9 @@ const filterSubtitle = computed(() => {
     case '6h': base = 'Last 6 hours'; break
     case '24h': base = 'Last 24 hours'; break
     case '7d': base = 'Last 7 days'; break
+    case '30d': base = 'Last 30 days'; break
+    case '60d': base = 'Last 60 days'; break
+    case '90d': base = 'Last 90 days'; break
     case 'custom': {
       const s = customStart.value ? new Date(customStart.value).toLocaleDateString() : '...'
       const e = customEnd.value ? new Date(customEnd.value).toLocaleDateString() : 'now'
@@ -839,6 +858,9 @@ const rangeLabelText = () => {
     case '6h': return 'Last 6 hours'
     case '24h': return 'Last 24 hours'
     case '7d': return 'Last 7 days'
+    case '30d': return 'Last 30 days'
+    case '60d': return 'Last 60 days'
+    case '90d': return 'Last 90 days'
     case 'custom': {
       const s = customStart.value ? new Date(customStart.value).toLocaleString() : '...'
       const e = customEnd.value ? new Date(customEnd.value).toLocaleString() : 'now'
@@ -1231,6 +1253,13 @@ onMounted(() => {
 .panel__subtitle {
   font-size: 0.8125rem;
   color: var(--text-muted);
+}
+
+.pulse-note {
+  margin: 0.35rem 0 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
 }
 
 .panel__description {
