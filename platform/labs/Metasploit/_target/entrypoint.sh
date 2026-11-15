@@ -20,9 +20,18 @@ SSH_OPTS="-o StrictHostKeyChecking=no \
 
 echo "[target] starting Metasploitable 2 (profile=$LAB_PROFILE)"
 
+if [ -r /dev/kvm ] && [ -w /dev/kvm ]; then
+    echo "[target] KVM acceleration enabled"
+    set -- -enable-kvm -cpu host -smp 1
+else
+    echo "[target] KVM unavailable; using TCG software emulation (slower)"
+    set -- -accel tcg,thread=multi -cpu max -smp 2
+fi
+
 qemu-system-x86_64 \
     -name metasploitable2 \
-    -enable-kvm -cpu host -smp 1 -m 1024 \
+    "$@" \
+    -m 1024 \
     -drive file=/vm/metasploitable2.qcow2,format=qcow2,if=ide,snapshot=on \
     -netdev user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:2222-:22,hostfwd=tcp:127.0.0.1:2121-:21,hostfwd=tcp:127.0.0.1:8080-:80,hostfwd=tcp:127.0.0.1:1139-:139,hostfwd=tcp:127.0.0.1:1445-:445,hostfwd=tcp:127.0.0.1:13306-:3306,hostfwd=tcp:127.0.0.1:15432-:5432,hostfwd=tcp:127.0.0.1:16200-:6200,hostfwd=tcp:127.0.0.1:18180-:8180 \
     -device e1000,netdev=net0 \
@@ -59,7 +68,7 @@ cleanup() {
 trap cleanup TERM INT
 
 ready=0
-for _ in $(seq 1 100); do
+for _ in $(seq 1 300); do
     if sshpass -p msfadmin ssh $SSH_OPTS msfadmin@127.0.0.1 true 2>/dev/null; then
         ready=1
         break

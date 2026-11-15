@@ -8,7 +8,8 @@ Use a Meterpreter session to forward a local-only HTTP service and retrieve a fl
 - **Estimated time:** 120 minutes
 - **Target:** `ocr-metasploitable2:latest` with `LAB_PROFILE=pivot`
 - **Flag:** stored at the location defined by the target profile
-- **KVM:** required. The platform refuses to spawn this lab without `/dev/kvm`.
+- **Virtualization:** KVM is used when available. Without `/dev/kvm` the
+  target falls back to QEMU TCG software emulation, which is slower.
 
 ## Instructor notes
 

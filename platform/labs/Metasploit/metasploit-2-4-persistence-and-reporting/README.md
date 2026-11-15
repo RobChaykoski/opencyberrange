@@ -8,7 +8,8 @@ Collect system evidence, demonstrate a reversible persistence check, remove the 
 - **Estimated time:** 120 minutes
 - **Target:** `ocr-metasploitable2:latest` with `LAB_PROFILE=root`
 - **Flag:** stored at the location defined by the target profile
-- **KVM:** required. The platform refuses to spawn this lab without `/dev/kvm`.
+- **Virtualization:** KVM is used when available. Without `/dev/kvm` the
+  target falls back to QEMU TCG software emulation, which is slower.
 
 ## Instructor notes
 

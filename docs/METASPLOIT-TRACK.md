@@ -32,8 +32,10 @@ a month**.
 
 - **Attacker:** Kali RangeBox supplied by the platform.
 - **Target:** Metasploitable 2, packaged as `ocr-metasploitable2:latest`.
-- **KVM:** required. The target runs under QEMU/KVM. The platform refuses to
-  spawn these labs on a host without `/dev/kvm`.
+- **Virtualization:** KVM is strongly recommended. On hosts without
+  `/dev/kvm`, the target falls back to QEMU TCG software emulation. Boot is
+  slower and the practical concurrency is much lower, but the labs can still
+  run.
 - **Network:** the target uses QEMU user networking with egress restricted. The
   guest cannot reach the Internet. Service ports are exposed to the lab network
   through a userspace proxy, including FTP control (21), SSH (22), HTTP (80),
@@ -45,10 +47,11 @@ a month**.
 ## Host readiness
 
 The development host provides `/dev/kvm` and the target image has been built and
-exercised there. Production currently does **not** expose `/dev/kvm`; the
-platform will refuse to spawn these labs on that host until nested virtualization
-or a KVM-capable deployment is available. Do not publish the track as runnable
-on a host that lacks hardware virtualization.
+exercised there with hardware acceleration. Production is itself a KVM guest
+without nested virtualization, so it has no `/dev/kvm`. The target detects that
+at start-up and uses TCG software emulation. Expect a multi-minute first boot and
+much lower concurrency on production; enable nested virtualization on the
+hypervisor if the track becomes a regular part of the timetable.
 
 ## Provisioning
 
@@ -96,6 +99,7 @@ lab network. Never expose the target to an untrusted network, and never reuse
 the exercise commands against systems you do not own or have explicit permission
 to test.
 
-The labs are marked `x-ocr-requires-kvm: true` in their compose files. The
-discovery script maps that to the lab's `requires_kvm` field so the platform can
-refuse an unsafe spawn before a container starts.
+The labs are marked `x-ocr-kvm-preferred: true` in their compose files. KVM is
+used automatically when `/dev/kvm` is available. Otherwise the target uses TCG,
+which keeps the labs usable on production but is not suitable for a large class
+at once.

@@ -26,7 +26,7 @@ RUN chmod 0555 /opt/entrypoint.sh \
 
 EXPOSE 22 21 80 139 445 3306 5432 6200 8180
 
-HEALTHCHECK --interval=15s --timeout=8s --start-period=180s --retries=12 \
+HEALTHCHECK --interval=20s --timeout=10s --start-period=600s --retries=30 \
     CMD sshpass -p msfadmin ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o HostKeyAlgorithms=+ssh-rsa -o PubkeyAcceptedAlgorithms=+ssh-rsa -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ConnectTimeout=5 msfadmin@127.0.0.1 true || exit 1
 
 ENTRYPOINT ["/opt/entrypoint.sh"]

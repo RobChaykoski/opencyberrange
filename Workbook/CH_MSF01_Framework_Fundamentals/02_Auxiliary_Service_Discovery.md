@@ -4,8 +4,8 @@
 
 - Confirm the lab is running and that you can reach the target from your Kali
   RangeBox.
-- This lab requires a KVM-capable host. If the platform reports that the lab
-  cannot start, ask the instructor to check `/dev/kvm`.
+- KVM acceleration is used when available. Without `/dev/kvm` the target uses
+  software emulation, so the first boot can take several minutes.
 - Work only inside the isolated lab network. Do not scan or attack any system
   outside the exercise.
 - Keep a notebook open. Record the command, the output, and the reason for each

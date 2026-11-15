@@ -8,8 +8,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Added an original eight-exercise Metasploit track covering workspaces,
   auxiliary discovery, validation, exploitation, Meterpreter, database access,
   pivoting, persistence, and cleanup.
-- Added a KVM-backed Metasploitable 2 target image with read-only snapshots,
-  restricted egress, per-exercise flags, and a separate provisioning script.
+- Added a Metasploitable 2 target image with KVM acceleration when available,
+  a TCG software-emulation fallback, read-only snapshots, restricted egress,
+  per-exercise flags, and a separate provisioning script.
 - Added student workbooks and a dedicated `msfpt` workbook wiki.
 - Documented the independent-content position, OffSec attribution, and Hackers
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.

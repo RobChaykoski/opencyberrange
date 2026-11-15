@@ -1,4 +1,4 @@
-x-ocr-requires-kvm: true
+x-ocr-kvm-preferred: true
 x-ocr-reviewed-image: ocr-metasploitable2:latest
 services:
   target:
@@ -9,8 +9,6 @@ services:
     environment:
       LAB_FLAG: "OCR{msf_pivot_9d7a}"
       LAB_PROFILE: "pivot"
-    devices:
-      - /dev/kvm:/dev/kvm
     restart: unless-stopped
     deploy:
       resources:

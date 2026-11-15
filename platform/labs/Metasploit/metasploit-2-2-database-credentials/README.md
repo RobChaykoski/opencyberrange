@@ -8,7 +8,8 @@ Test a MySQL service for weak authentication, use an auxiliary SQL module, and r
 - **Estimated time:** 90 minutes
 - **Target:** `ocr-metasploitable2:latest` with `LAB_PROFILE=mysql`
 - **Flag:** stored at the location defined by the target profile
-- **KVM:** required. The platform refuses to spawn this lab without `/dev/kvm`.
+- **Virtualization:** KVM is used when available. Without `/dev/kvm` the
+  target falls back to QEMU TCG software emulation, which is slower.
 
 ## Instructor notes
 
