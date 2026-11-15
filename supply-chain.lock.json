@@ -37,7 +37,7 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "28aa8ebf0a0e20a234fa66b166631f35d434ea666bc61eaa6caf67610c7d20b2"
+      "sha256": "7d81e7b65fbdc2adba59fd81881b9a4c19f75993ff99e667d06636f30f26c592"
     },
     "platform/backend/app/data/software-integrity.json": {
       "sha256": "c5c250ad168a0654d77be97b1696fba7a91ce677ac420153821a9ea001de3b2c"
@@ -58,7 +58,7 @@
       "sha256": "9fd58e5e767e0f3a9c16d4b29db9ebbd2e9bb8368fe77ea8636613c6dd0cd43f"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "d27272bb4a4bb2c8c426ecac1c2602be7a83503c20be4b2025e0579be20dfdb5"
+      "sha256": "9e3b245504089bc52f6e228a86daaa5738e06790cd78fa7dc1ce9fda750ff4e4"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
