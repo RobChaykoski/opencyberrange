@@ -654,7 +654,19 @@ const handleLogin = async () => {
 
     await nextTick()
     await new Promise(resolve => setTimeout(resolve, 100))
-    router.push('/dashboard')
+
+    let destination = '/dashboard'
+    try {
+      const settings = await axios.get('/api/auth/settings', {
+        headers: { Authorization: `Bearer ${response.data.access_token}` },
+      })
+      if (settings.data?.needs_dna_onboarding && !route.query.return_to) {
+        destination = '/discover'
+      }
+    } catch {
+      // Fall back to the dashboard; the dashboard band offers the same flow.
+    }
+    router.push(destination)
   } catch (error) {
     const mfaHeader = error.response?.headers?.['x-mfa-required']
     if (mfaHeader === 'true' || error.response?.data?.detail === 'MFA code required') {
