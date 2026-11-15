@@ -126,12 +126,13 @@ security patch, IdP settings feature, and operations patch.
   lab rows 182-189 validate `ok`; `requires_kvm` is false so the platform does
   not refuse the spawn on this host.
 - Built `ocr-metasploitable2:latest` on production. The target uses KVM when
-  `/dev/kvm` exists and falls back to QEMU TCG when it does not. Production is a
-  KVM guest without nested virtualization, so it uses TCG.
+  `/dev/kvm` exists and falls back to QEMU TCG when it does not. Production's VM
+  CPU type was changed to expose `vmx`; `/dev/kvm` is now present.
 - Production smoke test: spawned `metasploit-1-1-workspace-and-modules` with a
-  Kali RangeBox. The target booted under TCG, injected its flag, and the
-  RangeBox retrieved `OCR{msf_workspace_7c1a}` from
-  `http://target/flag.txt`. The temporary user and session were removed.
+  Kali RangeBox. The target log reported `KVM acceleration enabled`, the KVM
+  device was present in the target container, and the RangeBox retrieved
+  `OCR{msf_workspace_7c1a}` from `http://target/flag.txt`. The temporary user and
+  session were removed.
 - LVM: the root LV was 99 GiB inside a 198 GiB volume group. Extended the LV to
   198 GiB and grew ext4 online; root is now 195 GiB with about 97 GiB free (43%
   used). The root filesystem had reached 100% during the target image build,

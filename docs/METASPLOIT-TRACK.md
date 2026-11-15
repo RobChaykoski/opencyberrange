@@ -46,11 +46,10 @@ a month**.
 
 ## Host readiness
 
-The development host provides `/dev/kvm` and the target image has been built and
-exercised there with hardware acceleration. Production is itself a KVM guest,
-but its CPU is exposed as `QEMU Virtual CPU version 2.5+` with no `vmx` or `svm`
-flags. Enabling nested virtualization on the hypervisor is not sufficient: the
-guest CPU model must also expose the virtualization extensions.
+The development and production hosts both expose `/dev/kvm` and run the target
+with hardware acceleration. Production was initially presented with a
+`QEMU Virtual CPU version 2.5+` model that hid `vmx`; setting the VM CPU type to
+`host` and cold-starting the VM exposed the flag and `/dev/kvm`.
 
 To check a host:
 
@@ -65,9 +64,8 @@ reboot does not change the CPU model. After `/dev/kvm` appears, restart the
 backend so its one-time KVM probe re-runs; the platform then injects
 `/dev/kvm` into the target container.
 
-Current production behaviour: no `/dev/kvm`, so the target uses TCG. Expect a
-multi-minute first boot and much lower concurrency. Enable nested virtualization
-on the hypervisor if the track becomes a regular part of the timetable.
+The target still falls back to TCG if a host genuinely has no `/dev/kvm`, but
+that path is now a compatibility fallback rather than the production default.
 
 ## Provisioning
 
