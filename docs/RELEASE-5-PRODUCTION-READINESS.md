@@ -200,6 +200,25 @@ security patch, IdP settings feature, and operations patch.
   upstream. The pymodbus controller is original content and stays consistent
   with exercise 1.1.
 
+## Python 3.13 runtime - 2026-11-15
+
+- Backend runtime and CI moved from Python 3.11 to 3.13. The base is pinned to
+  `python:3.13-slim@sha256:e48f59cd…`; CI, pip-audit, quality, and
+  security-delta workflows run the same minor.
+- Pre-flight: the full backend suite (630 tests) passed on 3.13 against
+  PostgreSQL 17 before the image change was merged.
+- Deployed to development and production. Both report Python 3.13.18, no `pip`
+  in the runtime image, and healthy backend/frontend endpoints. A real lab
+  spawn plus stop succeeded on both hosts and the temporary learners were
+  erased.
+- Grype on the production backend: 339 matches (1 critical, 105 high), matching
+  the local rebuild. The remaining interpreter findings are fixed only on
+  3.15/3.16, which are not stable.
+- Added `deploy/host-hardening.sh`, which applies the two low-risk Lynis items
+  (umask 027, disabled core dumps). Dry-run output on both hosts shows both
+  changes pending. The script needs root; neither host grants passwordless
+  sudo, so it has not been applied by the assistant.
+
 ## Deliberately deferred
 
 - **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali
