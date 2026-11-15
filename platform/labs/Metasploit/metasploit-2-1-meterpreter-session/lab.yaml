@@ -1,0 +1,65 @@
+title: Meterpreter Session
+category: post-exploitation
+difficulty: intermediate
+estimated_time: 105
+prerequisites:
+- Metasploit Operations 1.1
+- An isolated Kali RangeBox
+learning_outcomes:
+- Identify the Java RMI service.
+- Select a module and a Meterpreter payload that match the target.
+- Open and verify a Meterpreter session.
+- Collect system identity and platform evidence.
+- Read the root flag and close the session.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Execution
+  technique: T1059
+  technique_name: Command and Scripting Interpreter
+  detection: Alert on unexpected Java class loading and on application servers opening outbound connections to user networks.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Obtain a Meterpreter session through a Java RMI service, verify the session, and collect basic system evidence.
+scenario: |-
+  The training host runs an old Java RMI registry. Your task is to use a
+  Meterpreter payload to obtain an interactive session, confirm the session type,
+  and collect a small evidence set. Meterpreter is a payload, not a module: the
+  module delivers it and the session gives you a post-exploitation interface.
+
+  Keep the session focused. This exercise is about understanding the interface,
+  not about running every available command.
+flag: OCR{msf_meterpreter_1b6e}
+hints:
+- text: If the module returns a command shell instead of Meterpreter, the payload did not match the target. Re-check the payload and the module target.
+  unlock_after_minutes: 0
+- text: Java RMI may take a moment to load the payload. Watch the console for callback errors.
+  unlock_after_minutes: 5
+- text: Use `sessions -i <id>` to enter a session and `background` to leave it running.
+  unlock_after_minutes: 10
+- text: The flag is root-owned.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: Remove exposed RMI registries, restrict them to trusted hosts, and monitor for unexpected class loading and outbound callbacks from application servers.
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/01_Meterpreter_Session/
+test:
+  steps:
+  - name: RMI port
+    command: nc -z -w 5 {target.target} 1099 && echo rmi_open
+    expect: rmi_open
+  - name: SSH banner
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH

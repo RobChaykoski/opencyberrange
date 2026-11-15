@@ -1,0 +1,64 @@
+title: Database Credentials and Data Access
+category: post-exploitation
+difficulty: intermediate
+estimated_time: 90
+prerequisites:
+- Metasploit Operations 1.1
+- An isolated Kali RangeBox
+learning_outcomes:
+- Identify the MySQL version.
+- Test for blank or default credentials within scope.
+- Use an auxiliary SQL module to run a read-only query.
+- Retrieve the flag from the `msf_lab.flags` table.
+- Explain why database exposure is a high-impact finding.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Credential Access
+  technique: T1078
+  technique_name: Valid Accounts
+  detection: Alert on database logins from unusual hosts and on repeated authentication failures followed by success.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Test a MySQL service for weak authentication, use an auxiliary SQL module, and retrieve a flag from the database.
+scenario: |-
+  The target exposes MySQL. The assessment scope permits authentication testing
+  against this isolated host. Your task is to determine whether the database
+  accepts blank or default credentials, then use an auxiliary SQL module to read a
+  specific table. Do not dump unrelated data.
+
+  The flag is stored in the `msf_lab.flags` table.
+flag: OCR{msf_mysql_4c2f}
+hints:
+- text: The version scanner does not authenticate; the login scanner does.
+  unlock_after_minutes: 0
+- text: A blank password can be tested explicitly. Check the module options for the blank-password setting.
+  unlock_after_minutes: 5
+- text: The SQL module needs a username, password, and a query. Keep the query read-only.
+  unlock_after_minutes: 10
+- text: The database name and table are provided in the scenario; do not enumerate other schemas.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: Require strong database authentication, bind MySQL to management interfaces, remove default accounts, and monitor authentication failures and unusual SQL clients.
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/02_Database_Credentials_and_Data_Access/
+test:
+  steps:
+  - name: MySQL port
+    command: nc -z -w 5 {target.target} 3306 && echo mysql_open
+    expect: mysql_open
+  - name: SSH banner
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH

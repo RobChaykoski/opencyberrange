@@ -1,0 +1,65 @@
+title: Samba Exploitation and First Session
+category: exploitation
+difficulty: intermediate
+estimated_time: 105
+prerequisites:
+- Basic Linux command line
+- An isolated Kali RangeBox
+learning_outcomes:
+- Identify the SMB service and version.
+- Select a module that matches the observed service.
+- Configure a reverse payload with the RangeBox address.
+- Open, list, and interact with a session.
+- Read the root flag and close the session cleanly.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Lateral Movement
+  technique: T1210
+  technique_name: Exploitation of Remote Services
+  detection: Monitor SMB username fields for shell metacharacters and alert on new outbound connections from SMB servers.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Use a Samba usermap_script module to obtain a command shell, manage the session, and read the root flag.
+scenario: |-
+  The training host also exposes SMB. The service version is old enough that a
+  known username-map command injection may apply. Your task is to validate the
+  service, configure a reverse payload with the correct local address, and manage
+  the resulting session without losing track of it.
+
+  This exercise introduces the session lifecycle: create, list, interact, and
+  close. The target is isolated and intentionally vulnerable.
+flag: OCR{msf_samba_8f3c}
+hints:
+- text: A reverse payload fails if `LHOST` is not reachable from the target. Use the RangeBox lab address.
+  unlock_after_minutes: 0
+- text: If the module returns a command shell, `sessions -u <id>` may upgrade it, but the upgrade is not guaranteed on this old target.
+  unlock_after_minutes: 5
+- text: Use `sessions -l` or `sessions` to list sessions; the ID is shown in the first column.
+  unlock_after_minutes: 10
+- text: The flag is root-owned; confirm your shell identity before reading it.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: Remove SMBv1 and unsupported Samba versions, restrict file-sharing to trusted networks, and alert on unexpected outbound reverse connections from file servers.
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/04_Samba_Exploitation_and_First_Session/
+test:
+  steps:
+  - name: SMB port
+    command: nc -z -w 5 {target.target} 445 && echo smb_open
+    expect: smb_open
+  - name: SSH banner
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH

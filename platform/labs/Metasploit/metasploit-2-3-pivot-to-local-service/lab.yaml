@@ -1,0 +1,65 @@
+title: Pivot to a Local-Only Service
+category: post-exploitation
+difficulty: advanced
+estimated_time: 120
+prerequisites:
+- Metasploit Operations 1.1
+- An isolated Kali RangeBox
+learning_outcomes:
+- Confirm the local-only service is not reachable directly.
+- Open a Meterpreter session on the target.
+- Create a local port forward through the session.
+- Retrieve the flag from the forwarded service.
+- Remove the forward and close the session.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Command and Control
+  technique: T1090
+  technique_name: Proxy
+  detection: Alert on hosts creating unexpected local listeners and on repeated connections to loopback services through a session.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Use a Meterpreter session to forward a local-only HTTP service and retrieve a flag that is not exposed on the network.
+scenario: |-
+  The target runs an HTTP service bound only to `127.0.0.1:9000`. It is not
+  reachable from your RangeBox directly. You have a Meterpreter session on the
+  target; use it to forward the local service and read the evidence file.
+
+  This exercise demonstrates why a host-level foothold changes the attack surface:
+  services that are invisible to a network scan become reachable through the
+  compromised host.
+flag: OCR{msf_pivot_9d7a}
+hints:
+- text: The service is bound to the target's loopback, so `target:9000` will not work.
+  unlock_after_minutes: 0
+- text: '`portfwd add -l <local-port> -p <remote-port> -r <remote-host>` creates the tunnel.'
+  unlock_after_minutes: 5
+- text: If the local port is already in use, choose a different local port and adjust the curl command.
+  unlock_after_minutes: 10
+- text: Remove the forward before closing the session so you do not leave a listener behind.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: Inventory loopback-only services, restrict them to local administration, and monitor for unexpected port-forward behaviour and outbound tunnels from compromised hosts.
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/03_Pivot_to_Local_Service/
+test:
+  steps:
+  - name: Target SSH
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: Direct 9000 closed
+    command: nc -z -w 3 {target.target} 9000 && echo open || echo closed
+    expect: closed

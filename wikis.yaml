@@ -59,6 +59,11 @@ tracks:
     docs_dir: Workbook
     auth: student
     theme: teal
+  msfpt:
+    config: mkdocs-msfpt.yml
+    docs_dir: Workbook
+    auth: student
+    theme: red
 reference:
   manual:
     config: mkdocs-manual-lite.yml

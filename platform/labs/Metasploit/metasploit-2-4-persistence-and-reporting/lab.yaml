@@ -1,0 +1,65 @@
+title: Persistence, Evidence, and Cleanup
+category: post-exploitation
+difficulty: advanced
+estimated_time: 120
+prerequisites:
+- Metasploit Operations 1.1
+- An isolated Kali RangeBox
+learning_outcomes:
+- Collect system identity and platform evidence.
+- Explain how a scheduled task can provide persistence.
+- Add, verify, and remove a harmless scheduled marker.
+- Read the root flag.
+- Produce a short, reproducible evidence summary.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Persistence
+  technique: T1053
+  technique_name: Scheduled Task/Job
+  detection: Alert on new or modified cron entries and on scheduled jobs that spawn network or shell activity.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Collect system evidence, demonstrate a reversible persistence check, remove the artifact, and document the session.
+scenario: |-
+  The client wants to understand how a foothold could survive a reboot and what
+  evidence an analyst should collect. You will use a Meterpreter session to
+  collect basic system information, add a harmless scheduled marker, verify it,
+  then remove it.
+
+  The marker is not a backdoor. It writes a heartbeat to a temporary file so you
+  can observe the scheduled-task mechanism without leaving access behind.
+flag: OCR{msf_report_3e8b}
+hints:
+- text: Use `crontab -e` or a controlled `crontab` update. Change only the line you added.
+  unlock_after_minutes: 0
+- text: The marker is intentionally harmless; do not add a reverse shell or a real persistence mechanism.
+  unlock_after_minutes: 5
+- text: Record the before-and-after `crontab -l` output as evidence of cleanup.
+  unlock_after_minutes: 10
+- text: The flag is root-owned; confirm your session identity first.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: Monitor scheduled-task, service, and startup changes against a baseline. Alert on new cron entries, unexpected interpreters, and files written to temporary directories by scheduled jobs.
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/04_Persistence_Evidence_and_Cleanup/
+test:
+  steps:
+  - name: Target SSH
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: SMB port
+    command: nc -z -w 5 {target.target} 445 && echo smb_open
+    expect: smb_open

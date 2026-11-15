@@ -1,0 +1,67 @@
+title: Workspace and Module Discipline
+category: tooling
+difficulty: beginner
+estimated_time: 75
+prerequisites:
+- Basic Linux command line
+- An isolated Kali RangeBox
+learning_outcomes:
+- Start msfconsole and confirm the database is connected.
+- Create and switch to a named workspace for the engagement.
+- Search for a module and read its metadata before using it.
+- Inspect the module options and required values.
+- Record the target web flag as evidence of a working session.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Discovery
+  technique: T1595
+  technique_name: Active Scanning
+  detection: Alert on repeated service probes from a single source and on unusual SSH version scanning.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Set up a Metasploit workspace, confirm database connectivity, and select the correct auxiliary module before touching the target.
+scenario: |-
+  Northwind Freight has asked your team to begin a small, authorised assessment of
+  one of its training systems. The project lead wants clean evidence from the
+  first command: a named workspace, a working database connection, and a module
+  chosen from its metadata rather than from a memorised name.
+
+  Your Kali RangeBox already has the Metasploit Framework installed. The target is
+  a deliberately vulnerable training host on the isolated lab network. Nothing in
+  this exercise requires exploiting a service; the goal is disciplined setup and
+  module selection.
+flag: OCR{msf_workspace_7c1a}
+hints:
+- text: The console remembers the current workspace. If you change it, run `workspace` again before scanning.
+  unlock_after_minutes: 0
+- text: '`search` accepts filters such as `type:auxiliary` and `name:ssh`. Use `help search` if the syntax is unfamiliar.'
+  unlock_after_minutes: 5
+- text: '`info` shows what a module does; `show options` shows what it needs. Read both before `run`.'
+  unlock_after_minutes: 10
+- text: The target web root is reachable at `http://target/` from the RangeBox.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: 'Inventory exposed management services, restrict them to administration networks, and log scanner-style connection attempts. A clean workspace is also a defensive habit: it makes later evidence review possible.'
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/01_Workspace_and_Module_Discipline/
+test:
+  steps:
+  - name: Target web service
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/
+    expect: '200'
+  - name: Flag served
+    command: curl -s http://{target.target}/flag.txt
+    expect: OCR{msf_workspace_7c1a}

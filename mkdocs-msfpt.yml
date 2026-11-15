@@ -1,0 +1,83 @@
+site_name: "SWOCTS Cyber Range - Metasploit Operations"
+site_description: "Metasploit Framework operations exercises for SWOCTS Cyber Range"
+site_url: ""
+docs_dir: Workbook
+site_dir: _site_msfpt
+copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
+
+theme:
+  name: material
+  # No Google Fonts request: the wiki CSP only allows self-hosted styles.
+  font: false
+  logo: assets/swocts-cyber-range-mark.png
+  favicon: assets/favicon.png
+  palette:
+    - scheme: slate
+      primary: red
+      accent: red
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: red
+      accent: red
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css?v=4
+
+extra_javascript:
+  - javascripts/mermaid.min.js?v=1
+  - javascripts/embed-mode.js?v=1
+  - javascripts/mermaid-fix.js?v=4
+  - javascripts/pdf-export.js?v=2
+  - javascripts/html2pdf.bundle.min.js?v=1
+
+nav:
+  - Home: index.md
+  - "Curriculum map": CURRICULUM.md
+  - Terminology: TERMINOLOGY.md
+  - Frameworks: FRAMEWORKS.md
+  - "Metasploit Operations": CH_MSF00_Track_Introduction/00_Introduction.md
+  - "MSF01: Framework Fundamentals":
+    - "Exercise 1.1 -- Workspace and Module Discipline": CH_MSF01_Framework_Fundamentals/01_Workspace_and_Module_Discipline.md
+    - "Exercise 1.2 -- Auxiliary Service Discovery": CH_MSF01_Framework_Fundamentals/02_Auxiliary_Service_Discovery.md
+    - "Exercise 1.3 -- Validate Before You Exploit": CH_MSF01_Framework_Fundamentals/03_Validate_Before_Exploit.md
+    - "Exercise 1.4 -- Samba Exploitation and First Session": CH_MSF01_Framework_Fundamentals/04_Samba_Exploitation_and_First_Session.md
+  - "MSF02: Exploitation and Post-Exploitation":
+    - "Exercise 2.1 -- Meterpreter Session": CH_MSF02_Exploitation_and_Post_Exploitation/01_Meterpreter_Session.md
+    - "Exercise 2.2 -- Database Credentials and Data Access": CH_MSF02_Exploitation_and_Post_Exploitation/02_Database_Credentials_and_Data_Access.md
+    - "Exercise 2.3 -- Pivot to a Local-Only Service": CH_MSF02_Exploitation_and_Post_Exploitation/03_Pivot_to_Local_Service.md
+    - "Exercise 2.4 -- Persistence, Evidence, and Cleanup": CH_MSF02_Exploitation_and_Post_Exploitation/04_Persistence_Evidence_and_Cleanup.md
+  - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

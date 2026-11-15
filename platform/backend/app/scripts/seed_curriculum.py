@@ -284,7 +284,23 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                       {   'level_number': 2,
                           'name': 'Identity Lifecycle',
                           'description': 'Joiners, movers, leavers, access '
-                                         'reviews, and service accounts'}]}]
+                                         'reviews, and service accounts'}]},
+    {   'name': 'Metasploit Operations',
+        'slug': 'metasploit',
+        'description': 'Use the Metasploit Framework for authorised service '
+                       'validation, exploitation, and post-exploitation in an '
+                       'isolated lab.',
+        'icon': 'pentest',
+        'color': '#DC2626',
+        'sort_order': 13,
+        'levels': [   {   'level_number': 1,
+                          'name': 'Framework Fundamentals',
+                          'description': 'Workspaces, modules, scanning, '
+                                         'validation, and first sessions'},
+                      {   'level_number': 2,
+                          'name': 'Exploitation and Post-Exploitation',
+                          'description': 'Meterpreter, database access, '
+                                         'pivoting, persistence, and reporting'}]}]
 
 # Additional levels not part of the main track definitions
 # (e.g., midterm/assessment levels inserted at non-sequential positions)

@@ -1,0 +1,65 @@
+title: Auxiliary Service Discovery
+category: reconnaissance
+difficulty: beginner
+estimated_time: 90
+prerequisites:
+- Basic Linux command line
+- An isolated Kali RangeBox
+learning_outcomes:
+- Run a TCP port scan with an auxiliary module.
+- Identify SSH, FTP, HTTP, and MySQL versions with service-specific scanners.
+- Store and review results in the workspace database.
+- Explain why version evidence matters before exploitation.
+- Retrieve the target flag from the web service.
+mapped_skills:
+- network_systems
+- security_operations
+- vulnerability_management
+assessment_criteria:
+- Submit the correct flag.
+- Record the commands and observations requested in the workbook.
+- Explain the defensive lesson in your own words.
+mitre_attack:
+- tactic: Discovery
+  technique: T1046
+  technique_name: Network Service Discovery
+  detection: Monitor for sequential connection attempts across common service ports and for repeated protocol banner grabs.
+owner: OpenCyberRange Curriculum
+content_version: 5.15.0
+reviewed_at: '2026-11-15'
+review_status: original content; live lab walkthrough pending
+description: Use Metasploit auxiliary scanners to identify exposed services and record them in the workspace database.
+scenario: |-
+  The Northwind training host exposes several legacy services. Your task is to
+  build a service inventory with Metasploit auxiliary scanners, not with a single
+  blind port scan. The inventory should identify the protocol and the version for
+  each reachable service so the next exercise can choose a validation target.
+
+  Stay inside the lab network. The target is intentionally vulnerable and must
+  never be exposed to an untrusted network.
+flag: OCR{msf_aux_scan_2e4b}
+hints:
+- text: Every scanner module uses `RHOSTS`; most use a default port that you can override with `RPORT`.
+  unlock_after_minutes: 0
+- text: If a scanner reports no result, confirm the port is open with the TCP port scanner first.
+  unlock_after_minutes: 5
+- text: '`services` reads from the database. If the list is empty, the module may not have written to the current workspace.'
+  unlock_after_minutes: 10
+- text: The web service serves a small evidence file at `/flag.txt`.
+  unlock_after_minutes: 15
+troubleshooting: If the target is unreachable, confirm the lab is running and that the host provides /dev/kvm. If Metasploit reports a callback error, re-check LHOST and the lab network address. Report a persistent technical failure to the instructor so it is not mistaken for a learning difficulty.
+defensive_takeaways: 'Reduce the exposed service set, remove legacy protocols from user networks, and alert on version-scanning patterns. Version data is reconnaissance: treat banners as information leakage.'
+difficulty_evidence: Author review of the lab definition and commands; live student walkthrough pending.
+difficulty_evidence_source: author_review
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-15'
+workbook: wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/02_Auxiliary_Service_Discovery/
+test:
+  steps:
+  - name: Target web service
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/
+    expect: '200'
+  - name: Flag served
+    command: curl -s http://{target.target}/flag.txt
+    expect: OCR{msf_aux_scan_2e4b}

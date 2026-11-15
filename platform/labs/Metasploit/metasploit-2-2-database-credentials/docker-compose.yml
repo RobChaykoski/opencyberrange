@@ -1,0 +1,19 @@
+x-ocr-requires-kvm: true
+services:
+  target:
+    image: ocr-metasploitable2:latest
+    hostname: msf-target
+    environment:
+      LAB_FLAG: "OCR{msf_mysql_4c2f}"
+      LAB_PROFILE: "mysql"
+    devices:
+      - /dev/kvm:/dev/kvm
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1536M
+        reservations:
+          cpus: '0.25'
+          memory: 512M

@@ -307,13 +307,16 @@ def discover_labs():
                     except Exception as e:
                         print(f"  Warning: can't read docker-compose.yml: {e}")
 
-                # Labs whose compose declares an external container need the
-                # Windows VM, which needs /dev/kvm on the host
+                # Labs whose compose declares an external container or a
+                # QEMU/KVM device need /dev/kvm on the host.
                 requires_kvm = False
                 if compose_content:
                     try:
                         _comp = yaml.safe_load(compose_content) or {}
-                        requires_kvm = bool(_comp.get('x-ocr-shared-containers'))
+                        requires_kvm = (
+                            bool(_comp.get('x-ocr-shared-containers'))
+                            or bool(_comp.get('x-ocr-requires-kvm'))
+                        )
                     except Exception:
                         requires_kvm = False
                 counts_toward_certificate = bool(
