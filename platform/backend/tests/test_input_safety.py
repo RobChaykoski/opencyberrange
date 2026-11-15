@@ -13,7 +13,7 @@ from app.services.input_safety import (
 )
 
 # Test-only value; the word "example" keeps it out of the secret scanner.
-PASSWORD = "example-only-pass-123"
+PASSWORD = "Example-Only-Pass-123"
 
 
 def _register_payload(**overrides):

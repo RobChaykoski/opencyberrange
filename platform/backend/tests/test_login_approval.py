@@ -6,7 +6,7 @@ from app.auth import get_password_hash
 from app.models import User
 
 # Test-only value; the word "example" keeps it out of the secret scanner.
-PASSWORD = "example-only-pass-123"
+PASSWORD = "Example-Only-Pass-123"
 
 
 def _make_user(db_session, *, is_approved: bool) -> User:
