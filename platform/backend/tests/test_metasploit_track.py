@@ -42,6 +42,8 @@ def test_eight_labs_with_unique_flags_and_matching_profiles():
             "pivot",
             "root",
         }
+        assert "rangebox" in lab["tools"]
+        assert lab["visibility"] == "public"
         assert lab["test"]["steps"], f"{lab_dir.name} has no test steps"
 
 

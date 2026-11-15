@@ -19,6 +19,12 @@ assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.
 - Explain the defensive lesson in your own words.
+tools:
+- rangebox
+- kali
+- msfconsole
+- terminal
+visibility: public
 mitre_attack:
 - tactic: Discovery
   technique: T1046
