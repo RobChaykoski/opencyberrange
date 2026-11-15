@@ -140,6 +140,23 @@ security patch, IdP settings feature, and operations patch.
 - The older Release 4 rollback images were removed to make room before the
   expansion. The 5.13.1 rollback images remain.
 
+## Live memory forensics lab - 2026-11-15
+
+- Added Forensics level 3 with the `forensics-3-1-live-linux-memory` lab.
+  The target is an Ubuntu 22.04 guest with AVML 0.21.0, reached over SSH.
+- Production imported lab row 190 with `validation_status=ok` and
+  `requires_kvm=false`; the platform injects `/dev/kvm` when the host probe
+  succeeds.
+- Built `ocr-ubuntu-memory:latest` on production and ran the lab with a Kali
+  RangeBox. The target used KVM acceleration, the student acquired a 2.0 GiB
+  memory image, transferred it with `scp`, and recovered
+  `MEMFLAG=OCR{live_mem_4f8c2a}`.
+- The SHA-256 matched after transfer. Temporary user, completions, session, and
+  containers were removed. Production had about 82 GiB free after the image
+  build.
+- Ubuntu cloud images are downloaded on demand; AVML is MIT licensed. Neither
+  the guest image nor the AVML binary is committed to the repository.
+
 ## Deliberately deferred
 
 - **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali
