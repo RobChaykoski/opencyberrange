@@ -9,13 +9,21 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PLATFORM_DIR="$REPO_DIR/platform"
 
-if [ ! -f "$PLATFORM_DIR/.env" ]; then
-    echo "error: $PLATFORM_DIR/.env is required" >&2
+ENV_FILE="${WIKI_ENV_FILE:-$PLATFORM_DIR/.env}"
+if [ ! -f "$ENV_FILE" ]; then
+    ENV_FILE="$REPO_DIR/.env"
+fi
+if [ ! -f "$ENV_FILE" ]; then
+    echo "error: a platform .env is required (checked $PLATFORM_DIR/.env and $REPO_DIR/.env)" >&2
     exit 1
 fi
 
 cd "$PLATFORM_DIR"
-COMPOSE=(docker compose --env-file .env)
+COMPOSE=(docker compose --env-file "$ENV_FILE")
+if [ -z "${COMPOSE_PROJECT_NAME:-}" ]; then
+    COMPOSE_PROJECT_NAME=$(docker inspect ocr-frontend \
+        --format '{{index .Config.Labels "com.docker.compose.project"}}' 2>/dev/null || true)
+fi
 if [ -n "${COMPOSE_PROJECT_NAME:-}" ]; then
     COMPOSE+=(-p "$COMPOSE_PROJECT_NAME")
 fi

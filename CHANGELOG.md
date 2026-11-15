@@ -13,6 +13,9 @@ All notable changes to OpenCyberRange are recorded here.
 - Added student workbooks and a dedicated `msfpt` workbook wiki.
 - Documented the independent-content position, OffSec attribution, and Hackers
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.
+- Fixed the workbook wiki builder to fall back to the repository `.env` and to
+  infer the running compose project, so a rebuild targets the volume the
+  frontend actually serves.
 
 ## [5.14.0] - 2026-11-14
 
