@@ -420,6 +420,39 @@ class DockerManager:
         "LAB_ALLOW_ON_DEMAND_BUILD", "true"
     ).strip().lower() not in {"0", "false", "no", "off"}
 
+    @classmethod
+    def _apply_default_service_limits(cls, svc_cfg: dict, svc_override: dict) -> None:
+        """Add default resource and capability limits for one lab service.
+
+        Anything the compose file already declares wins. The pids limit follows
+        the shape of the file: Compose rejects a service that carries both a
+        top-level ``pids_limit`` and ``deploy.resources.limits.pids``.
+        """
+        if not svc_cfg.get("mem_limit") and not svc_cfg.get("deploy"):
+            svc_override["mem_limit"] = cls.LAB_MEM_LIMIT
+            svc_override["memswap_limit"] = cls.LAB_MEM_LIMIT  # no swap
+        if (
+            not svc_cfg.get("cpus")
+            and not svc_cfg.get("cpu_quota")
+            and not svc_cfg.get("deploy")
+        ):
+            try:
+                svc_override["cpus"] = float(cls.LAB_CPU_LIMIT)
+            except (TypeError, ValueError):
+                svc_override["cpus"] = 1.0
+        if not svc_cfg.get("pids_limit"):
+            if svc_cfg.get("deploy"):
+                limits = (
+                    svc_override.setdefault("deploy", {})
+                    .setdefault("resources", {})
+                    .setdefault("limits", {})
+                )
+                limits.setdefault("pids", cls.LAB_PIDS_LIMIT)
+            else:
+                svc_override["pids_limit"] = cls.LAB_PIDS_LIMIT
+        if not svc_cfg.get("cap_drop"):
+            svc_override["cap_drop"] = list(cls.LAB_DEFAULT_CAP_DROP)
+
     def _ensure_shared_container_running(self, container_name: str) -> bool:
         """
         Ensure a shared container is running.  If it's stopped, start it and
@@ -2005,20 +2038,9 @@ fi
             if svc_cfg.get("build"):
                 svc_override["image"] = f"ocr-lab/{lab_slug}-{svc_name}:latest"
 
-            # Default CPU / memory caps. Skipped when the compose file sets
-            # its own mem_limit / cpus / deploy limits for the service.
-            if not svc_cfg.get("mem_limit") and not svc_cfg.get("deploy"):
-                svc_override["mem_limit"] = self.LAB_MEM_LIMIT
-                svc_override["memswap_limit"] = self.LAB_MEM_LIMIT  # no swap
-            if not svc_cfg.get("cpus") and not svc_cfg.get("cpu_quota") and not svc_cfg.get("deploy"):
-                try:
-                    svc_override["cpus"] = float(self.LAB_CPU_LIMIT)
-                except (TypeError, ValueError):
-                    svc_override["cpus"] = 1.0
-            if not svc_cfg.get("pids_limit"):
-                svc_override["pids_limit"] = self.LAB_PIDS_LIMIT
-            if not svc_cfg.get("cap_drop"):
-                svc_override["cap_drop"] = list(self.LAB_DEFAULT_CAP_DROP)
+            # Default CPU / memory / pids caps and host-level capability drops.
+            # Skipped per field when the compose file sets its own value.
+            self._apply_default_service_limits(svc_cfg, svc_override)
 
             # Opt-out: a service labeled ocr_lab_net="false" stays OFF the student
             # lab net and lives only on its own in-compose network (e.g. a

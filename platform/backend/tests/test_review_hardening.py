@@ -87,3 +87,33 @@ def test_lab_services_get_default_process_and_capability_limits():
     assert "SYS_PTRACE" in DockerManager.LAB_DEFAULT_CAP_DROP
     assert "SETUID" not in DockerManager.LAB_DEFAULT_CAP_DROP
     assert "SETGID" not in DockerManager.LAB_DEFAULT_CAP_DROP
+
+
+def test_default_limits_place_pids_where_compose_expects_them():
+    plain_override = {}
+    DockerManager._apply_default_service_limits({}, plain_override)
+    assert plain_override["pids_limit"] == DockerManager.LAB_PIDS_LIMIT
+    assert "deploy" not in plain_override
+
+    deploy_override = {}
+    DockerManager._apply_default_service_limits(
+        {"deploy": {"resources": {"limits": {"cpus": "0.5"}}}},
+        deploy_override,
+    )
+    assert "pids_limit" not in deploy_override
+    assert (
+        deploy_override["deploy"]["resources"]["limits"]["pids"]
+        == DockerManager.LAB_PIDS_LIMIT
+    )
+
+
+def test_default_limits_do_not_override_explicit_lab_values():
+    svc_cfg = {
+        "mem_limit": "2g",
+        "cpus": 2,
+        "pids_limit": 9000,
+        "cap_drop": ["ALL"],
+    }
+    override = {}
+    DockerManager._apply_default_service_limits(svc_cfg, override)
+    assert override == {}
