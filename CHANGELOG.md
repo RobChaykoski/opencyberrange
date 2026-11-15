@@ -4,6 +4,15 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### OT/ICS track
+- Added `ot-1-2-modbus-setpoint-tampering`: students write an unauthenticated
+  setpoint with function code 0x06, confirm the write, and recover a marker
+  exposed after the simulated safety interlock trips. Includes a process
+  simulation, a workbook, and write-detection guidance.
+- The lab uses the same original pymodbus controller as 1.1. An OpenPLC-based
+  target was evaluated and deferred: OpenPLC v4 exposes no Modbus registers
+  without an editor-generated program ZIP, and OpenPLC v3 is archived upstream.
+
 ### Metasploit Operations track
 - Added an original eight-exercise Metasploit track covering workspaces,
   auxiliary discovery, validation, exploitation, Meterpreter, database access,

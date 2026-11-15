@@ -829,6 +829,12 @@
         "plc"
       ]
     },
+    "ot-1-2-modbus-setpoint-tampering": {
+      "content_hash": "f4364ad4a90e52f4635662acdaf6a61f63a22ed8d1887b3ce16375c0cc0ab44d",
+      "services": [
+        "plc"
+      ]
+    },
     "ot-2-1-s7comm-register-access": {
       "content_hash": "abe66f1bdca7403b3038467089b6ebc3ec09332cb6c641a959ed3d0cda70dbad",
       "services": [
