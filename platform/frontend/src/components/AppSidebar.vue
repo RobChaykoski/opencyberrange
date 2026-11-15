@@ -194,6 +194,23 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">CyberChef</span>
         </button>
+        <button
+          type="button"
+          aria-label="OT scan assistant (opens in a panel)"
+          title="OT scan assistant - safe nmap for Modbus, S7, EtherNet/IP, DNP3"
+          class="nav-item nav-item--button"
+          @click="openTool('otscan')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="4"/>
+            <line x1="12" y1="3" x2="12" y2="7"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+            <line x1="3" y1="12" x2="7" y2="12"/>
+            <line x1="17" y1="12" x2="21" y2="12"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">OT Scan</span>
+        </button>
       </div>
       </template>
 

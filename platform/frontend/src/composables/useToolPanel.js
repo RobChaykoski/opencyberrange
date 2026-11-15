@@ -12,6 +12,14 @@ const TOOLS = Object.freeze({
     attribution:
       'CyberChef is an Apache-2.0 tool by GCHQ. The pinned build is served from this platform, so it works without internet access.',
   },
+  otscan: {
+    key: 'otscan',
+    title: 'OT scan assistant',
+    url: '/tools/ot-scan/',
+    description: 'Build a slow, scoped nmap command for Modbus, S7, EtherNet/IP, or DNP3.',
+    attribution:
+      'Runs entirely in this panel. The platform does not send a scan; it only writes the command after you confirm authorisation.',
+  },
 })
 
 const activeKey = ref(null)

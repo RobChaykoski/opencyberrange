@@ -6,6 +6,7 @@
 - [ ] A terminal open
 - [ ] The **PLC** address from the panel
 - [ ] `python3`, `nmap`, `mbpoll` available
+- [ ] Read the [OT scanning safety](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OT-SCANNING-SAFETY.md) note; outside this lab you also need written authorization
 
 ## Scenario
 
@@ -48,9 +49,19 @@ Protocol ID is 0 for Modbus TCP. Each register is 16 bits.
 
 ### Step 1: Discover the Service
 
+Start with an ARP sweep on the lab subnet, then scan only the Modbus port with a
+delay and one probe at a time:
+
 ```bash
-nmap -sV -p 502 <plc_ip>
+nmap -sn -PR 10.100.x.0/24
+nmap -sT -Pn -p 502 --scan-delay 5s --max-parallelism 1 <plc_ip>
+nmap -sT -Pn -p 502 --scan-delay 5s --max-parallelism 1 \
+  --script modbus-discover <plc_ip>
 ```
+
+The delay and single-thread settings are not decoration: a small PLC network
+stack can drop its process task under a fast scan. See
+[OT/ICS scanning safety](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OT-SCANNING-SAFETY.md).
 
 ### Step 2: Read Holding Registers with mbpoll
 

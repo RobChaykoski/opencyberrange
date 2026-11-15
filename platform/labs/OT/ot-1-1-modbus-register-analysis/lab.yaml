@@ -72,9 +72,11 @@ topology:
 hints:
   - text: |
       Find the service first:
-      nmap -sV -p 502 <plc_ip>
-      Then read holding registers 0..40 with a Modbus client. mbpoll is
-      available on the RangeBox; python3 with a raw socket also works.
+      nmap -sn -PR 10.100.x.0/24
+      nmap -sT -Pn -p 502 --scan-delay 5s --max-parallelism 1 <plc_ip>
+      On a real controller, use the delay and single-thread settings. Then
+      read holding registers 0..40 with a Modbus client. mbpoll is available
+      on the RangeBox; python3 with a raw socket also works.
     unlock_after_minutes: 5
   - text: |
       Modbus TCP read-holding-registers (function 0x03) request layout:

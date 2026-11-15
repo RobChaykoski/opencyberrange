@@ -72,7 +72,8 @@ topology:
 hints:
   - text: |
       Confirm the service before writing a client:
-      nmap -sV -p 102 <plc_ip>
+      nmap -sn -PR 10.100.x.0/24
+      nmap -sT -Pn -p 102 --scan-delay 5s --max-parallelism 1 <plc_ip>
       S7comm usually appears as "s7comm" or "iso-tsap" on TCP 102.
     unlock_after_minutes: 5
   - text: |

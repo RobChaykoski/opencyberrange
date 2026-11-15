@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>OT scan assistant</title>
+<link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <header class="head">
+    <div>
+      <h1>OT scan assistant</h1>
+      <p class="lede">
+        Build a slow, scoped nmap command for an industrial network. Nothing is
+        scanned from this page; it only writes the command for you to review and
+        run inside the authorised lab or engagement.
+      </p>
+    </div>
+    <span class="badge">Offline</span>
+  </header>
+
+  <div class="layout">
+    <section class="card" aria-labelledby="scope-title">
+      <h2 id="scope-title">Scope</h2>
+
+      <div class="row">
+        <div class="seg" role="group" aria-label="Scan mode">
+          <button type="button" id="mode-discover" aria-pressed="true">ARP discovery</button>
+          <button type="button" id="mode-service" aria-pressed="false">Service scan</button>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Target host or subnet</span>
+        <input type="text" id="target" placeholder="10.100.3.60 or 10.100.3.0/24" autocomplete="off" spellcheck="false" />
+      </label>
+
+      <div id="protocol-wrap">
+        <h2>Protocols</h2>
+        <div class="protocols">
+          <label><input type="checkbox" value="modbus" checked /> Modbus <small>502</small></label>
+          <label><input type="checkbox" value="s7" /> S7comm <small>102</small></label>
+          <label><input type="checkbox" value="enip" /> EtherNet/IP <small>44818</small></label>
+          <label><input type="checkbox" value="dnp3" /> DNP3 <small>20000</small></label>
+        </div>
+      </div>
+
+      <label class="field field--spaced">
+        <span>Delay between probes</span>
+        <select id="delay">
+          <option value="3s">3 seconds</option>
+          <option value="5s" selected>5 seconds</option>
+          <option value="10s">10 seconds</option>
+        </select>
+      </label>
+
+      <p class="hint">Parallelism is fixed at one probe. Do not add <code>-T4</code>, <code>-A</code>, or a full-port sweep.</p>
+    </section>
+
+    <section class="card output" aria-labelledby="output-title">
+      <h2 id="output-title">Command</h2>
+      <pre id="command">Enter a target to generate a command.</pre>
+      <div class="actions">
+        <button type="button" class="btn btn--primary" id="copy" disabled>Copy command</button>
+        <span class="copy-state" id="copy-state" role="status"></span>
+      </div>
+      <div class="warning" id="warning">
+        Confirm written authorization before you run this command. A PLC or RTU
+        may not survive a fast scan.
+      </div>
+
+      <div class="stop">
+        <strong>Stop conditions</strong>
+        <ul>
+          <li>A controller faults, reboots, or drops its process network.</li>
+          <li>A device stops answering after a probe.</li>
+          <li>The control room reports communication alarms.</li>
+          <li>You lose the maintenance-window contact.</li>
+        </ul>
+      </div>
+    </section>
+  </div>
+
+  <section class="card card--spaced" aria-labelledby="auth-title">
+    <h2 id="auth-title">Before you scan</h2>
+    <ul class="checklist">
+      <li><input type="checkbox" id="auth" /><label for="auth"><strong>Written authorization</strong> covers this range, these ports, the maintenance window, and the stop condition.</label></li>
+      <li><input type="checkbox" id="contact" /><label for="contact"><strong>On-site contact</strong> is available for the whole scan.</label></li>
+      <li><input type="checkbox" id="window" /><label for="window"><strong>Maintenance window</strong> is open and the rollback path is agreed.</label></li>
+      <li><input type="checkbox" id="scope" /><label for="scope"><strong>Scope is minimal</strong>: one protocol port, no exploit scripts, no write probes.</label></li>
+    </ul>
+    <p class="hint hint--spaced">
+      The copy button stays disabled until the authorization box is ticked.
+    </p>
+  </section>
+
+<script>
+(function () {
+  "use strict";
+
+  var PROTOCOLS = {
+    modbus: { port: "502", script: "modbus-discover" },
+    s7: { port: "102", script: "s7-info" },
+    enip: { port: "44818", script: "enip-info" },
+    dnp3: { port: "20000", script: "dnp3-info" }
+  };
+
+  var mode = "discover";
+  var target = document.getElementById("target");
+  var delay = document.getElementById("delay");
+  var command = document.getElementById("command");
+  var copy = document.getElementById("copy");
+  var copyState = document.getElementById("copy-state");
+  var warning = document.getElementById("warning");
+  var auth = document.getElementById("auth");
+  var modeDiscover = document.getElementById("mode-discover");
+  var modeService = document.getElementById("mode-service");
+  var protocolWrap = document.getElementById("protocol-wrap");
+
+  try {
+    var stored = localStorage.getItem("theme");
+    if (stored === "light" || stored === "contrast") {
+      document.documentElement.setAttribute("data-theme", stored === "light" ? "light" : "dark");
+    }
+  } catch (err) { /* private mode */ }
+
+  function validIPv4(value) {
+    var parts = value.split(".");
+    if (parts.length !== 4) return false;
+    for (var i = 0; i < 4; i++) {
+      if (!/^\d{1,3}$/.test(parts[i])) return false;
+      var n = Number(parts[i]);
+      if (n < 0 || n > 255) return false;
+    }
+    return true;
+  }
+
+  function validTarget(value) {
+    var v = value.trim();
+    if (!v) return null;
+    var slash = v.indexOf("/");
+    if (slash === -1) return validIPv4(v) ? v : null;
+    var host = v.slice(0, slash);
+    var mask = v.slice(slash + 1);
+    if (!validIPv4(host) || !/^\d{1,2}$/.test(mask)) return null;
+    var bits = Number(mask);
+    if (bits < 0 || bits > 32) return null;
+    return host + "/" + bits;
+  }
+
+  function selectedProtocols() {
+    var out = [];
+    document.querySelectorAll(".protocols input:checked").forEach(function (el) {
+      if (PROTOCOLS[el.value]) out.push(PROTOCOLS[el.value]);
+    });
+    return out;
+  }
+
+  function build() {
+    var safe = validTarget(target.value);
+    auth.checked ? warning.classList.remove("show") : warning.classList.add("show");
+
+    if (!safe) {
+      command.textContent = "Enter a valid IPv4 address or CIDR range.";
+      copy.disabled = true;
+      return;
+    }
+
+    if (mode === "discover") {
+      command.textContent = "nmap -sn -PR " + safe;
+    } else {
+      var protocols = selectedProtocols();
+      if (!protocols.length) {
+        command.textContent = "Select at least one protocol.";
+        copy.disabled = true;
+        return;
+      }
+      var ports = protocols.map(function (p) { return p.port; }).join(",");
+      var scripts = protocols.map(function (p) { return p.script; }).join(",");
+      command.textContent =
+        "nmap -sT -Pn -p " + ports +
+        " --scan-delay " + delay.value +
+        " --max-parallelism 1" +
+        " --script " + scripts +
+        " " + safe;
+    }
+
+    copy.disabled = !auth.checked;
+  }
+
+  function setMode(next) {
+    mode = next;
+    modeDiscover.setAttribute("aria-pressed", String(next === "discover"));
+    modeService.setAttribute("aria-pressed", String(next === "service"));
+    protocolWrap.style.display = next === "service" ? "" : "none";
+    build();
+  }
+
+  modeDiscover.addEventListener("click", function () { setMode("discover"); });
+  modeService.addEventListener("click", function () { setMode("service"); });
+  target.addEventListener("input", build);
+  delay.addEventListener("change", build);
+  document.querySelectorAll(".protocols input").forEach(function (el) {
+    el.addEventListener("change", build);
+  });
+  auth.addEventListener("change", build);
+
+  copy.addEventListener("click", function () {
+    var text = command.textContent;
+    if (!text) return;
+    function done() {
+      copyState.textContent = "Copied";
+      window.setTimeout(function () { copyState.textContent = ""; }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var area = document.createElement("textarea");
+      area.value = text;
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand("copy"); done(); } catch (err) { copyState.textContent = "Select and copy manually"; }
+      document.body.removeChild(area);
+    }
+  });
+
+  setMode("discover");
+  target.value = "10.100.3.60";
+  build();
+})();
+</script>
+</body>
+</html>
+<script src="app.js"></script>

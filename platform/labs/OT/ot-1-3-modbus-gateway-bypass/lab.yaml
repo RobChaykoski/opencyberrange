@@ -73,7 +73,8 @@ topology:
 hints:
   - text: |
       Start with discovery. Only one host answers on the lab subnet:
-      nmap -sV -p 502 <gateway_ip>
+      nmap -sn -PR 10.100.x.0/24
+      nmap -sT -Pn -p 502 --scan-delay 5s --max-parallelism 1 <gateway_ip>
       The PLC name does not resolve from the lab network by design.
     unlock_after_minutes: 5
   - text: |

@@ -50,11 +50,16 @@ controls.
 
 !!! target "Probe TCP 102"
     ```bash
-    nmap -sV -p 102 <plc_ip>
+    nmap -sn -PR 10.100.x.0/24
+    nmap -sT -Pn -p 102 --scan-delay 5s --max-parallelism 1 <plc_ip>
+    nmap -sT -Pn -p 102 --scan-delay 5s --max-parallelism 1 \
+      --script s7-info <plc_ip>
     ```
 
     A Siemens-style controller answers on `102/tcp` (`s7comm` or `iso-tsap`).
     If the port is filtered, stop and check the target address in the panel.
+    Use the delay and single-thread settings on any real controller; see
+    [OT/ICS scanning safety](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OT-SCANNING-SAFETY.md).
 
 ### Step 2: Connect with a client
 

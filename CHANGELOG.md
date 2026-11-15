@@ -42,6 +42,14 @@ All notable changes to OpenCyberRange are recorded here.
   non-root backend can read `lab.yaml` and `docker-compose.yml`.
 
 ### OT/ICS track
+- Added `docs/OT-SCANNING-SAFETY.md` and applied the procedure across the OT
+  workbooks and hints: written authorization, ARP discovery (`-sn -PR`), a
+  delay with `--max-parallelism 1`, specific industrial ports, and identification
+  scripts only.
+- Added an offline **OT Scan** assistant to the Tools panel and to the running
+  exercise header. It validates an IPv4/CIDR target, builds a slow nmap command
+  for Modbus, S7, EtherNet/IP, or DNP3, and gates copying on the authorization
+  checklist. It never sends a scan.
 - Added `ot-1-3-modbus-gateway-bypass`: the PLC sits on an internal control
   network behind a gateway whose write allow-list inspects only function code
   0x06. Students confirm the segmentation, watch a single-register write fail,

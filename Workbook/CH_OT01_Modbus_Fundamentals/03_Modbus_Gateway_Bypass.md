@@ -48,8 +48,10 @@ holding register.
 ### Step 1: Confirm the Segmentation
 
 ```bash
-nmap -sn 10.100.x.0/24
-nmap -sV -p 502 <gateway_ip>
+nmap -sn -PR 10.100.x.0/24
+nmap -sT -Pn -p 502 --scan-delay 5s --max-parallelism 1 <gateway_ip>
+nmap -sT -Pn -p 502 --scan-delay 5s --max-parallelism 1 \
+  --script modbus-discover <gateway_ip>
 ```
 
 Only the gateway should answer. The PLC hostname is not on the lab network, so

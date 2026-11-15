@@ -347,6 +347,14 @@
             >
               CyberChef
             </button>
+            <button
+              type="button"
+              class="btn btn--secondary btn--sm"
+              title="Build a slow, scoped nmap command for this lab network"
+              @click="openTool('otscan')"
+            >
+              OT Scan
+            </button>
             <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
             <template v-else>
               <div class="launch-buttons">

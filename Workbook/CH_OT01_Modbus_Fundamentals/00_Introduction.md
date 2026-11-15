@@ -47,3 +47,18 @@ that checks only one function code.
 Modbus has no authentication. Treat every register read as potentially
 sensitive and every write as potentially dangerous. The writes in this chapter
 target a simulated controller only. Never write to a real controller.
+
+## Scanning a Real OT Network
+
+A PLC or RTU is not a server. Before you scan anything outside this lab:
+
+1. Get written authorization for the range, ports, window, and stop condition.
+2. Discover with an ARP sweep first: `nmap -sn -PR <subnet>`.
+3. Slow it down: `--scan-delay 5s --max-parallelism 1`.
+4. Scan only the protocol port you need: 502 Modbus, 102 S7, 44818 EtherNet/IP,
+   20000 DNP3.
+5. Identify with `modbus-discover`, `s7-info`, `enip-info`, or `dnp3-info`; do
+   not run exploit or write probes during discovery.
+
+The full procedure, including stop conditions, is in
+[OT/ICS scanning safety](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OT-SCANNING-SAFETY.md).
