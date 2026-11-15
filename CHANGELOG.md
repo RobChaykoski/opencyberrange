@@ -29,6 +29,14 @@ All notable changes to OpenCyberRange are recorded here.
   mounts, unexpected devices, and dangerous capabilities at runtime.
 - Lab services receive a default process limit and drop host-level
   capabilities; SETUID/SETGID remain available for privilege-escalation labs.
+  The process limit is written as `pids_limit`, or as
+  `deploy.resources.limits.pids` when the compose file already has a `deploy`
+  block, so Compose accepts both shapes.
+- Container bases are pinned by digest and refreshed with `apt-get upgrade` or
+  `apk upgrade` at build time. The backend runtime no longer carries `curl`,
+  `gnupg`, `pip`, `setuptools`, or `wheel`.
+- Added `docs/SECURITY-SCANNING.md` with the Syft, Grype, and Lynis procedure,
+  before/after image counts, and the triage of the findings that remain.
 
 ### Live memory forensics
 - Added Forensics level 3 with a KVM/TCG Ubuntu 22.04 target, AVML acquisition,

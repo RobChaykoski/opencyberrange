@@ -1,4 +1,5 @@
-FROM node:22-alpine AS builder
+# Pin both stages by index digest; Renovate updates them with the tag.
+FROM node:22-alpine@sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a AS builder
 
 WORKDIR /app
 
@@ -20,8 +21,9 @@ RUN npm run build
 
 # Production stage - serve with nginx.
 # Pin the multi-arch index digest so a base-image refresh cannot change the
-# runtime silently. Renovate updates the digest with the tag.
-FROM nginx:alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11
+# runtime silently. Renovate updates the digest with the tag. apk upgrade below
+# still pulls Alpine security fixes that landed after the pinned digest.
+FROM nginx:alpine@sha256:fed7e14be83cbd2661a75cdc5b872d936cf155d46c327084d30b8df19ae88d72
 
 ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
@@ -34,8 +36,9 @@ LABEL org.opencontainers.image.title="SWOCTS Cyber Range frontend" \
       org.opencontainers.image.licenses="LicenseRef-PolyForm-Noncommercial-1.0.0"
 
 # Used by the compose healthcheck; nginx:alpine does not guarantee curl across
-# base-image updates.
-RUN apk add --no-cache curl
+# base-image updates. Upgrade first so the image carries current Alpine
+# security fixes for musl, zlib, and libxml2/libxslt.
+RUN apk upgrade --no-cache && apk add --no-cache curl
 
 # CyberChef is a static, client-side tool. Serve the pinned release from the
 # same origin so the tool panel works on an isolated range with no internet

@@ -1,10 +1,14 @@
 # syntax=docker/dockerfile:1
 
-FROM python:3.11-slim AS build
+# Pin the multi-arch index digest so a base-image refresh cannot change the
+# build silently; Renovate updates the digest with the tag. OS packages are
+# refreshed with apt-get upgrade below because a pinned base still goes stale.
+FROM python:3.11-slim@sha256:07d4824036af339fa1b6ef769cc99d9c10a141769538b52b3b597c84f7a7b535 AS build
 
 WORKDIR /app
 
-# Build-only toolchain. The runtime image does not keep gcc or headers.
+# Build-only toolchain. The runtime image does not keep gcc or headers. curl and
+# gnupg are here only to fetch the Docker apt key for the runtime stage.
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -13,14 +17,20 @@ RUN apt-get update && \
     libxml2-dev \
     libxslt1-dev \
     libxmlsec1-dev \
-    libssl-dev && \
+    libssl-dev \
+    curl \
+    gnupg && \
     rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg \
+        | gpg --dearmor -o /keyrings/docker-archive-keyring.gpg
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 
-FROM python:3.11-slim
+FROM python:3.11-slim@sha256:07d4824036af339fa1b6ef769cc99d9c10a141769538b52b3b597c84f7a7b535
 
 ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
@@ -39,13 +49,18 @@ LABEL org.opencontainers.image.title="SWOCTS Cyber Range backend" \
 
 WORKDIR /app
 
-# Runtime-only packages. curl and gnupg are used only to add the Docker apt
-# repository; postgresql-client provides pg_dump/pg_restore for backups.
+# Runtime-only packages. postgresql-client provides pg_dump/pg_restore for
+# backups. There is deliberately no curl or GPG toolchain in the runtime image:
+# the Docker apt key is downloaded in the build stage. Application code uses
+# the Python requests client, and the healthcheck uses the image's Python.
+#
+# apt-get upgrade refreshes the Debian point release: the base digest is pinned
+# for reproducibility, but security updates that landed after that digest still
+# need to be pulled in at build time.
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     postgresql-client \
-    curl \
-    gnupg \
     libxml2 \
     libxslt1.1 \
     libxmlsec1 \
@@ -54,14 +69,23 @@ RUN apt-get update && \
 
 # Docker CLI for lab orchestration. The backend talks to a socket proxy over
 # DOCKER_HOST; it does not need the host socket mounted into the container.
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list && \
+COPY --from=build /keyrings/docker-archive-keyring.gpg /usr/share/keyrings/docker-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list && \
     apt-get update && \
     apt-get install -y --no-install-recommends docker-ce-cli docker-compose-plugin docker-buildx-plugin && \
     rm -rf /var/lib/apt/lists/*
 
 # Python wheels built in the build stage.
 COPY --from=build /install /usr/local
+
+# The application never installs packages at runtime, so pip, setuptools, and
+# wheel are removed from the shipped image. This also removes their bundled
+# dependencies (for example jaraco-context) from the vulnerability surface.
+RUN python -m pip uninstall -y pip setuptools wheel && \
+    rm -rf /usr/local/lib/python3.11/site-packages/pip* \
+           /usr/local/lib/python3.11/site-packages/setuptools* \
+           /usr/local/lib/python3.11/site-packages/wheel* \
+           /usr/local/lib/python3.11/site-packages/pkg_resources
 
 COPY . /app/
 
