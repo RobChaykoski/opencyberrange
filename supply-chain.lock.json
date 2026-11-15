@@ -43,7 +43,7 @@
       "sha256": "a5cd21554c3df59a5b0b83f8cdac8132d50543a17b7183218a98994e899ffbe5"
     },
     "platform/backend/Dockerfile": {
-      "sha256": "3efcff6277f4020b656ba6935c695005917a99cdcd9965ce86980a8d86e12d48"
+      "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
     "platform/backend/app/data/software-integrity.json": {
       "sha256": "3539f4f047ef47963a1259dfc8a88a33bd0e8ff2193bc2f7708a518268754bcc"
