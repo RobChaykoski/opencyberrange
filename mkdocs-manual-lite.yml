@@ -29,6 +29,7 @@ theme:
     - navigation.expand
     - navigation.top
     - navigation.indexes
+    - navigation.footer
     - toc.integrate
     - content.code.copy
 
@@ -123,7 +124,7 @@ nav:
     - "Enrolling Students": 03_Instructor_Guide/05_Enrolling_Students.md
     - "Removing Students": 03_Instructor_Guide/06_Removing_Students.md
     - "Assigning Labs to a Course": 03_Instructor_Guide/07_Assigning_Labs_to_a_Course.md
-    - "Reordering Course Labs": 03_Instructor_Guide/08_Reordering_Course_Labs.md
+    - "Exercise Plan and Cohorts": 03_Instructor_Guide/08_Exercise_Plan_and_Cohorts.md
     - "Monitoring Student Progress": 03_Instructor_Guide/09_Monitoring_Student_Progress.md
     - "Viewing Course Health and Feedback": 03_Instructor_Guide/10_Viewing_the_Course_Scoreboard.md
     - "Resetting a Student Lab": 03_Instructor_Guide/11_Resetting_a_Student_Lab.md

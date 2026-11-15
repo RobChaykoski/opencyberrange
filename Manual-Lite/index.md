@@ -40,12 +40,10 @@ flowchart LR
 
 ## Manual editions
 
-This is the shared core manual for platform **Release 3** plus the
-**Advanced DNA Insights development preview**. Community / Academic,
-Professional, and Enterprise are cumulative edition profiles on that release;
-Community / Academic 1.1.3 remains a maintenance line for existing installs.
-Edition-specific pages live in the
-[Professional supplement](09_Professional/index.md) and the
+This is the shared core manual for platform **Release 5** plus the
+**Advanced DNA Insights** feature. Community / Academic, Professional, and
+Enterprise are cumulative edition profiles on that release. Edition-specific
+pages live in the [Professional supplement](09_Professional/index.md) and the
 [Enterprise supplement](10_Enterprise/index.md). See
 [Manual editions](VERSIONS.md) for the feature matrix.
 

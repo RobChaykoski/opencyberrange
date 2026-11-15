@@ -1,10 +1,10 @@
 # Manual editions
 
 The core manual in this folder describes the workflows shared by the
-**Community / Academic profile** (1.1.3 maintenance) and **Release 4**
-platforms, plus the **Advanced DNA Insights development preview**. Professional
-and Enterprise are cumulative: every page here still applies, and each edition
-adds the pages in its own supplement.
+**Community / Academic**, **Professional**, and **Enterprise** edition profiles
+on platform **Release 5**, plus the **Advanced DNA Insights** feature (enabled
+under Admin settings). Professional and Enterprise are cumulative: every page
+here still applies, and each edition adds the pages in its own supplement.
 
 !!! note "Development preview"
     Momentum, the Career Atlas, and the extended career dossier are gated by
@@ -14,9 +14,14 @@ adds the pages in its own supplement.
 
 | Edition profile | Platform release | Manual | What it adds |
 |---|---|---|---|
-| Community / Academic | Release 4 (1.1.x maintenance) | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
-| Professional | Release 4 | [Professional supplement](09_Professional/index.md) | Analytics and reporting preview; competency evidence, feedback, exercise health, and intervention signals are planned |
-| Enterprise | Release 4 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, enterprise reporting, and compliance reporting. Multi-tenancy and LMS/LTI are Release 5 |
+| Community / Academic | Release 5 | This manual | Single-host teaching platform, labs, workbooks, courses, certificates, privacy, and administration |
+| Professional | Release 5 | [Professional supplement](09_Professional/index.md) | Analytics and reporting, competency evidence, feedback, exercise health, and intervention signals |
+| Enterprise | Release 5 (SSO; HA preview) | [Enterprise supplement](10_Enterprise/index.md) | Multi-host HA lab pool, OIDC/SAML/LDAP SSO, enterprise reporting, and compliance reporting |
+
+Release 5 remains a single-tenant appliance: one deployment serves one
+institution. Multi-tenancy and LMS/LTI deep integration are not part of this
+release. Confirm the edition-specific limits in
+[Admin Panel Overview](04_Admin_Guide/01_Admin_Panel_Overview.md).
 
 ## How to use the manuals
 
@@ -24,9 +29,9 @@ adds the pages in its own supplement.
   does on a single host.
 - Open the Professional supplement when you need the analytics, reporting, or
   competency pages. Those pages assume the core manual.
-- Open the Enterprise supplement for the HA topology, identity federation,
-  tenancy, and compliance material. HA is a separate deployment, not a setting
-  in the single-host Compose stack.
+- Open the Enterprise supplement for the HA topology, identity federation, and
+  compliance material. HA is a separate deployment, not a setting in the
+  single-host Compose stack.
 
 !!! note "Keep the editions cumulative"
     A fix or explanation that belongs to all editions belongs in this core

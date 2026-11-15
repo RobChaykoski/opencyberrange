@@ -9,22 +9,23 @@ The Active Lab panel is the single screen that hosts everything you do during an
 
 ## What the panel contains
 
-The Active Lab panel slides up on the track page. From top to bottom it shows:
+The Active Lab panel opens on the track page. It has a control bar and two working columns:
 
-- **Scenario:** the situation and goal, rendered from the lab's brief.
-- **Objectives:** the list of things to accomplish.
-- **Exercise Network:** the subnet for the lab, plus a "Your targets:" list of per-node IPs when the lab provides them. When it does not, the section reads "Scan the network to discover target machines."
-- **Target Hostnames:** the names workbook steps use. They resolve automatically inside RangeBox. If you connect over VPN from your own machine, add the same hostnames to your `/etc/hosts` file (or `C:\Windows\System32\drivers\etc\hosts` on Windows).
-- **Open Workbook:** a button that opens the lab's workbook in a new tab.
-- **Submit Flag:** the form where you enter your answer. See [Submitting Flags](07_Submitting_Flags.md).
-- **Hints:** time-gated help. See [Using Hints](08_Using_Hints.md).
-- A countdown timer and a **+1 Hour** button. See [Extending a Lab Session](09_Extending_a_Lab_Session.md).
+- **Control bar:** the exercise name, an **Active** badge, **Knowledge check**, **CyberChef**, **Stop Exercise**, **Exit**, a live countdown timer, **Pause**, and **+1 Hour**. See [Extending a Lab Session](09_Extending_a_Lab_Session.md) and [Stopping a Lab](10_Stopping_a_Lab.md).
+- **Reaction bar:** "Was this exercise useful?" with Like and Dislike. Your instructor sees totals, not your name.
+- **Connect to this lab over the VPN:** the lab subnet and an **Open VPN Setup** button. Labs with RangeBox show a desktop entry point instead.
+- **New to this exercise?:** a short prompt and **Open workbook** when the lab has a workbook.
+- **Submit the flag:** the flag field, **Paste**, **Submit**, and **Request human review**. See [Submitting Flags](07_Submitting_Flags.md).
+- **Hints:** time-gated help inside the panel or the workbook callout. See [Using Hints](08_Using_Hints.md).
+- **Workbook pane:** the guided walkthrough, with **Shrink workbook** and **Open in new tab**.
+
+Scenario, objectives, target hostnames, and per-node IPs live in the workbook and the lab brief. Some labs also list target IPs in the connection panel; others ask you to scan the subnet.
 
 <figure markdown>
 
-![The Active Lab panel of a running lab showing the Active badge, timer, scenario, objectives, and Exercise Network](img/working-in-a-lab.png)
+![The Active Lab panel of a running lab showing the Active badge, timer, Stop Exercise and +1 Hour controls, VPN connection panel, flag form, and workbook pane](img/working-in-a-lab.png)
 
-<figcaption>The Active Lab panel hosts the scenario, network details, workbook link, flag form, and hints for the running lab.</figcaption>
+<figcaption>The Active Lab panel combines the session controls, the VPN connection details, the flag form, and the workbook in one workspace.</figcaption>
 </figure>
 
 ## Reach the targets two ways
@@ -79,13 +80,13 @@ correct flag shows the usual success message and tears the environment down.
 
 ## Steps to start working
 
-1. Read the **Scenario** and **Objectives** at the top of the panel.
-2. Note the target IPs in **Exercise Network**, or plan to scan the subnet if no IPs are listed.
-3. Connect: launch RangeBox from the panel, or activate your VPN tunnel.
-4. Open the workbook with **Open Workbook** for guided steps when one is provided.
+1. Read the lab brief and the **New to this exercise?** prompt at the top of the panel.
+2. Note the subnet in **Connect to this lab over the VPN**, or open the workbook for target details.
+3. Connect: launch RangeBox from the panel, or activate your VPN tunnel and open **Open VPN Setup** for the config.
+4. Open the workbook with **Open workbook** for guided steps when one is provided.
 5. Work toward the objectives, then submit your flag.
 
-**What you should see:** target IPs in the Exercise Network section, or a prompt to scan the network, and a reachable target once your connection is up.
+**What you should see:** the lab subnet in the connection panel, a reachable target once your tunnel or desktop is up, and the workbook pane if the lab ships one.
 
 ## When something looks off
 

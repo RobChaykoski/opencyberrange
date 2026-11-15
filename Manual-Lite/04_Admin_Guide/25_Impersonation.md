@@ -1,6 +1,6 @@
 # Impersonation
 
-The platform has two separate features that both involve acting as another user, and the word "Impersonate" appears in both. They do different things, and you choose between them by intent. Use **View As** to see the platform exactly as a student sees it, without changing anything. Use **Launch As** (also labeled **Impersonate** on a session card) to bridge your own RangeBox onto a student's lab network so you can reach their running targets.
+The platform has two separate features that both involve acting as another user, and the word "Impersonate" appears in both. They do different things, and you choose between them by intent. Use **Student Preview** (View As) to see the platform exactly as a student sees it, without changing anything. Use **Launch As** (also labeled **Impersonate** on a session card) to bridge your own RangeBox onto a student's lab network so you can reach their running targets.
 
 ## Prerequisites
 
@@ -13,7 +13,7 @@ The two impersonation paths and what each one grants.
 
 ```mermaid
 flowchart TD
-  subgraph ViewAs[View As read only]
+  subgraph ViewAs[Student Preview read only]
     V1[Start preview as a student] --> V2[Banner appears app wide]
     V2 --> V3[Mutations blocked server side]
     V3 --> V4[Exit Preview]
@@ -25,7 +25,7 @@ flowchart TD
   end
 ```
 
-| Aspect | View As | Launch As |
+| Aspect | Student Preview | Launch As |
 | --- | --- | --- |
 | What it does | Renders the platform UI as that student | Connects your RangeBox to the student's lab network |
 | Mutations | Blocked: launching labs, submitting flags, and edits return an error | Full network access to the student's running targets |
@@ -33,7 +33,7 @@ flowchart TD
 | How you leave | Exit Preview button in the banner | Disconnect |
 | Where you start it | User and course contexts | Live activity tab: Launch As Student, or a session card's Impersonate button |
 
-## Steps: View As (read-only)
+## Steps: Student Preview (read-only)
 
 1. Start a preview from a user or course context.
 2. Confirm the banner across the top reads **VIEWING AS** with the student's label and "Read-only mode. Actions like launching labs are disabled."
@@ -44,7 +44,7 @@ flowchart TD
 
 ![App-wide impersonation banner reading VIEWING AS in read-only mode](img/admin-impersonation.png)
 
-<figcaption>The View As state: the read-only banner names the student you are previewing and offers Exit Preview.</figcaption>
+<figcaption>The Student Preview state: the read-only banner names the student you are previewing and offers Exit Preview.</figcaption>
 </figure>
 
 ## Steps: Launch As (session bridge)
@@ -56,10 +56,10 @@ flowchart TD
 
 ## What you should see
 
-In View As, the banner stays visible on every page and mutating actions fail until you exit. In Launch As, you can reach the student's lab targets from your RangeBox.
+In Student Preview, the banner stays visible on every page and mutating actions fail until you exit. In Launch As, you can reach the student's lab targets from your RangeBox.
 
 !!! note "Read-only is enforced on the server"
-    View As blocks every create, update, and delete request at the server, whitelisting only the exit and change-password actions. Some mutating buttons in the interface are not yet visually disabled, so a button may appear clickable but the action still fails. Treat the banner as the signal that you are read-only.
+    Student Preview blocks every create, update, and delete request at the server, whitelisting only the exit and change-password actions. Some mutating buttons in the interface are not yet visually disabled, so a button may appear clickable but the action still fails. Treat the banner as the signal that you are read-only.
 
 !!! warning "You cannot impersonate an admin or stack impersonations"
-    View As refuses to target an admin account and refuses to start a second preview while one is active. Exit the current preview first.
+    Student Preview refuses to target an admin account and refuses to start a second preview while one is active. Exit the current preview first.

@@ -7,9 +7,9 @@ ranking, or a prediction of employability.
 
 <figure markdown>
 
-![Cyber DNA section showing the class card, six branch cards, practice affinities, career alignment, title collection, knowledge checks, and continuing education](img/profile-cyber-dna.png)
+![Cyber DNA section showing the class card and the six branch cards with scores and evidence counts](img/profile-cyber-dna.png)
 
-<figcaption>The Cyber DNA section on the Skill tree tab. The class card, branch cards, affinities, titles, and continuing-education card all come from the same practice record.</figcaption>
+<figcaption>The Cyber DNA section on the Skill tree tab. The class card and branch cards all come from the same practice record.</figcaption>
 </figure>
 
 ## Open your Cyber DNA

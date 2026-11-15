@@ -27,7 +27,7 @@ flowchart TD
 ## Create an assignment
 
 1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click the course.
+2. On the **My Courses** tab, click **Manage** on the course card.
 3. Click the **Assignments** sub-tab.
 4. Click **+ New Assignment**.
 5. Fill in the name, **start datetime**, **due datetime**, and an optional description.
@@ -58,7 +58,7 @@ flowchart TD
 - **Delete:** remove the assignment; its labs stay assigned to the course and can be regrouped.
 
 !!! note
-    Assignment cards reorder by drag and drop. The course's underlying lab order is a separate list with up and down controls in the course detail view. See [08_Reordering_Course_Labs.md](08_Reordering_Course_Labs.md). Do not conflate the two.
+    Assignment cards reorder by drag and drop. The course's underlying lab order is a separate list with up and down controls in the course detail view. See [08_Exercise_Plan_and_Cohorts.md](08_Exercise_Plan_and_Cohorts.md). Do not conflate the two.
 
 !!! tip
     The start date is the real availability gate. To release a week on a fixed day, set the assignment's start datetime to that day. Students see the labs only after the start time passes.

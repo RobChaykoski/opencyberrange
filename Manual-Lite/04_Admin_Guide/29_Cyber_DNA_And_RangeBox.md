@@ -126,9 +126,9 @@ workbook while the RangeBox stays open. **Expand** increases the workbook pane;
 
 <figure markdown>
 
-![Workbook reading view with the MkDocs chrome removed and the article using the full width](../02_Student_Guide/img/workbook-reading.png)
+![Workbook reading view opened in its own tab, showing the course navigation and the exercise walkthrough](../02_Student_Guide/img/workbook-reading.png)
 
-<figcaption>The embedded workbook hides site chrome and scrolls independently. This is the reading view used in the workspace.</figcaption>
+<figcaption>The workbook also opens in its own tab. In the lab workspace the same content is embedded in the workbook pane without site chrome.</figcaption>
 </figure>
 
 ### No files leave the RangeBox

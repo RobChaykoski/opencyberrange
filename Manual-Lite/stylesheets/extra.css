@@ -14,3 +14,145 @@
   background: url("../assets/opencyberrange-logo.png") center/contain no-repeat;
   border-radius: 2px;
 }
+
+/* Footer: a designed bar instead of a bare strip at the end of the page.
+   The footer still scrolls with the content, but the top rule, spacing, and
+   aligned meta row make it read as a deliberate end-of-page marker. */
+.md-footer {
+  margin-top: 2.4rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  background: linear-gradient(
+    180deg,
+    var(--md-default-bg-color) 0%,
+    var(--md-footer-bg-color) 140%
+  );
+}
+
+.md-footer__inner {
+  margin: 0 auto;
+  max-width: 61rem;
+  padding: 0.2rem 0.8rem 0;
+}
+
+.md-footer__inner:not([hidden]) {
+  padding-bottom: 0;
+}
+
+.md-footer__link {
+  border-radius: 0.3rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  transition: background-color 125ms, transform 125ms;
+}
+
+.md-footer__link:hover {
+  background: var(--md-default-fg-color--lightest);
+  transform: translateY(-1px);
+}
+
+.md-footer__direction {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.md-footer-meta {
+  background: transparent;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.md-footer-meta__inner {
+  margin: 0 auto;
+  max-width: 61rem;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem 1.2rem;
+}
+
+.md-copyright {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.7rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+}
+
+.md-copyright__highlight {
+  color: var(--md-default-fg-color);
+  font-weight: 600;
+}
+
+.md-footer-meta .md-copyright {
+  order: 1;
+}
+
+.md-footer-meta .md-social {
+  order: 2;
+}
+
+/* Conventional back-to-top control: bottom right, clear of the reading
+   column, instead of the stock pill that floats under the header. */
+body .md-top {
+  top: auto !important;
+  bottom: 1.25rem !important;
+  right: 1.25rem !important;
+  left: auto !important;
+  margin: 0;
+  transform: none;
+  box-shadow: var(--md-shadow-z2);
+}
+
+body .md-top[hidden] {
+  transform: translateY(0.25rem);
+}
+
+[dir="rtl"] body .md-top {
+  right: auto;
+  left: 1.25rem;
+  margin: 0;
+  transform: none;
+}
+
+/* Tighten the article and make wide tables scroll inside their wrapper
+   instead of pushing the page wider than the reading column. */
+.md-typeset .md-typeset__scrollwrap {
+  max-width: 100%;
+}
+
+/* Screenshots: keep every figure inside the reading column, add a subtle
+   frame so dark captures do not bleed into the page background. */
+.md-typeset img,
+.md-typeset svg,
+.md-typeset video {
+  max-width: 100%;
+  height: auto;
+}
+
+.md-typeset figure img {
+  display: block;
+  margin: 0 auto;
+  border-radius: 0.2rem;
+  box-shadow: 0 0 0 1px var(--md-default-fg-color--lightest);
+}
+
+.md-typeset figcaption {
+  color: var(--md-default-fg-color--light);
+  font-size: 0.72rem;
+}
+
+/* On phones the footer meta stacks cleanly and the top button clears the
+   bottom browser chrome. */
+@media screen and (max-width: 44.9375em) {
+  .md-footer-meta__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .md-top {
+    bottom: 4.25rem;
+    right: 0.9rem;
+  }
+}

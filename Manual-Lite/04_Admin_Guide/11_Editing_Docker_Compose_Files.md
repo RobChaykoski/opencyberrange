@@ -9,7 +9,7 @@ Each exercise runs from a Docker Compose definition that declares the lab's cont
 
 ## Steps
 
-1. In the left sidebar, click **Exercises**. The panel opens at `/admin?tab=exercises` and shows the exercise management table.
+1. In the left sidebar, click **Exercises**. The panel opens at `/admin?tab=labs` and shows the exercise management table.
 2. Find the exercise row you want to change. Use the search box or the topic and status filters in the left column to narrow the list.
 3. Click the **edit** (pencil) action on that row. The **Edit Exercise** modal opens.
 4. At the top of the modal, click the **Compose** tab. The compose YAML for the exercise loads into an editor.

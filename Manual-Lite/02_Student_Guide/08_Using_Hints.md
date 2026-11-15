@@ -9,15 +9,15 @@ Hints give you graduated help when you are stuck. The Hints section sits in the 
 ## Request a hint
 
 1. In the Active Lab panel, find the **Hints** section. Its header reads "Hints (X/Y used)".
-2. Click **Request Hint**.
+2. Click **Request Hint**. The **Need a hint?** link next to the flag field opens the same panel.
 3. Read the revealed hint, or read the countdown if the next hint has not unlocked yet.
 4. Wait for the timer when prompted, then request again.
 
 <figure markdown>
 
-![The Hints section of the Active Lab panel showing the used counter and the Request Hint button](img/hints.png)
+![The Hints section of the Active Lab panel showing the used counter, a revealed hint, and the Request Hint button](img/hints.png)
 
-<figcaption>The Hints section shows how many hints you have used and a Request Hint button.</figcaption>
+<figcaption>The Hints section shows how many hints you have used, the hint text, and the Request Hint button.</figcaption>
 </figure>
 
 **What you should see:** a revealed hint rendered below the button, or a message such as "First hint unlocks in N minutes" with a countdown that disables the button until the next hint is available.

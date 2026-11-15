@@ -9,7 +9,7 @@ You create a new exercise without touching the server filesystem by using the Cr
 
 ## Steps
 
-1. In the left sidebar, click **Exercises** to open `/admin?tab=exercises`.
+1. In the left sidebar, click **Exercises** to open `/admin?tab=labs`.
 2. In the panel header, click **+ Create Exercise**. The **Create Exercise** modal opens.
 3. Choose a mode with the tab buttons at the top of the modal:
     - **Import from YAML** pastes a complete `lab.yaml` into one field. The form parses it into the exercise definition.

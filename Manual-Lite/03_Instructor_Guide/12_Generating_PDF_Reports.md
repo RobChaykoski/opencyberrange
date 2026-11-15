@@ -22,7 +22,7 @@ For the cross-course teaching view, open **Reports & analytics** in the Instruct
 ## Download the full class report
 
 1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click the course.
+2. On the **My Courses** tab, click **Manage** on the course card.
 3. Click the **Reports** sub-tab.
 4. Click **Download Full Class Report (PDF)**.
 5. Enter a reason of at least five characters when prompted. The reason is recorded in the audit log with your username and the report scope.

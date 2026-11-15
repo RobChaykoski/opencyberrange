@@ -36,9 +36,9 @@ stateDiagram-v2
 
 <figure markdown>
 
-![Course manager Settings sub-tab with archive and delete controls](img/course-card-actions.png)
+![Course cards showing the action row with roster, exercises, duplicate, archive, delete, and student preview controls](img/course-card-actions.png)
 
-<figcaption>Course management exposes archive, unarchive, and delete controls alongside the editable settings.</figcaption>
+<figcaption>Each course card carries its actions: roster, exercises, duplicate, archive, delete, and Student Preview.</figcaption>
 </figure>
 
 ## Find and unarchive a course

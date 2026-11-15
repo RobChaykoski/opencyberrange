@@ -4,6 +4,19 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### User manual
+- Regenerated every manual screenshot from the current Release 5 interface:
+  student dashboard and profile tabs, lab workspace, course pages, instructor
+  panel and course manager, and the admin console.
+- Corrected the navigation, dashboard, lab workspace, course, instructor, and
+  admin instructions to match the current UI, including the moved course
+  manager, the Live activity and System tabs, and the Exercise plan cohorts.
+- Redesigned the manual footer: previous/next page links, a framed meta bar,
+  a bottom-right back-to-top control, and figure styling that keeps screenshots
+  inside the reading column.
+- Removed the synthetic Career Atlas/Momentum preview generator; the manual now
+  uses live captures.
+
 ### OT/ICS track
 - Added `ot-1-2-modbus-setpoint-tampering`: students write an unauthenticated
   setpoint with function code 0x06, confirm the write, and recover a marker

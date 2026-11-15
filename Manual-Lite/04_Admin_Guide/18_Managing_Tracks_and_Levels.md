@@ -21,7 +21,7 @@ flowchart TD
 
 ## Steps
 
-1. In the left sidebar, click **Exercises** to open `/admin?tab=exercises`.
+1. In the left sidebar, click **Exercises** to open `/admin?tab=labs`.
 2. In the left column under Management, click **Tracks & Levels**. The **Curriculum Management** view loads.
 3. Create a track: click **+ Create Track**, fill in the track details, and save. The track appears in the list with a level and exercise count.
 4. Expand a track by clicking its header row. The track actions and its levels appear.

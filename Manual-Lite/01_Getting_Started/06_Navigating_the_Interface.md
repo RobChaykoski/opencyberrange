@@ -51,14 +51,18 @@ The sidebar groups links into sections. You see only the sections your role allo
 | Section | Links | Who sees it |
 | --- | --- | --- |
 | Ops Center | Dashboard, RangeBox, Celebration Wall, Events, VPN Setup | Everyone |
-| Academy | Courses, Exercises, and Activities when that module is enabled | Everyone |
-| Team Challenges | Optional module links, each shown only when an admin enables that module | Everyone, when a module is enabled |
-| Instructor | My Courses, Exercises, Surveys, and Reports & analytics (instructors only) | Instructors and admins |
-| Admin | Users, Courses, Exercises, Live activity, Reports & analytics, System, Settings, Workbooks, User Manual | Admins only |
+| Academy | Courses, Exercises, Workbooks | Everyone |
+| Tools | CyberChef | Everyone |
+| Teaching | My Courses, My Exercises, Reports & analytics, Surveys | Instructors and admins |
+| Administration | Users, All courses, All exercises, Live activity, Reports & analytics, System, Settings | Admins only |
+| Resources | Privacy Mode, Take the tour, Profile, Logout, User Manual | Everyone, with moderation items for instructors and admins |
 
-**Reports & analytics** opens at `/reports` and is not an Admin Panel tab. Admins see it in the Admin section; instructors see it in the Instructor section. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
+**Reports & analytics** opens at `/reports` and is not an Admin Panel tab. Admins see it in the Administration section; instructors see it in Teaching. **Surveys** opens at `/surveys` for instructors and admins. See [Reporting and Analytics](../04_Admin_Guide/28_Reporting_And_Analytics.md).
 
-Team Challenges links are conditional. The platform shows a Team Challenges link only when an admin has turned on the matching module, so the section may be empty or absent in your deployment.
+**Events** replaces the older Team Challenges module: it lists opt-in,
+time-boxed competitions and the community calendar. Events appear only when an
+administrator has published one or enabled the community source, so the list
+may be empty in a new deployment. See [Community Events](../02_Student_Guide/23_Community_Events.md).
 
 ## On a phone
 

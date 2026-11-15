@@ -10,7 +10,7 @@ The Students sub-tab inside a course shows your roster and, for each student, a 
 ## Open the roster
 
 1. In the left sidebar, select **My Courses**.
-2. On the **My Courses** tab, click the course you want to inspect.
+2. On the **My Courses** tab, click **Manage** on the course card.
 3. Click the **Students** sub-tab.
 
 **What you should see:** a table with one row per enrolled student, listing **Username**, **Email**, **Enrolled** date, and an **Actions** column. Usernames and emails show in full by default; turn on Privacy Mode, the optional sidebar toggle, to mask them to a partial value.

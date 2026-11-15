@@ -17,7 +17,7 @@ Submitting the correct flag is how you complete a lab. The Submit Flag form sits
 
 ![The Submit Flag form inside the Active Lab panel, with the OCR flag input and Submit button](img/submit-flag.png)
 
-<figcaption>The Submit Flag form is part of the Active Lab panel, below the scenario and network details.</figcaption>
+<figcaption>The Submit Flag form sits in the right-hand column of the Active Lab panel, beside the connection details and workbook callout.</figcaption>
 </figure>
 
 **What you should see:** a green success message on a correct flag, then the panel closes itself after a couple of seconds as the environment is torn down. A wrong flag shows a red message and the lab keeps running.

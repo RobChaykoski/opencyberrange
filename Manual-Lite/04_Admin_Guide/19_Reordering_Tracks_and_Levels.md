@@ -19,7 +19,7 @@ flowchart LR
 
 ## Steps
 
-1. In the left sidebar, click **Exercises** to open `/admin?tab=exercises`.
+1. In the left sidebar, click **Exercises** to open `/admin?tab=labs`.
 2. In the left column under Management, click **Tracks & Levels** to open the Curriculum Management view.
 3. Confirm the current order by reading the track list top to bottom and expanding a track to see its levels in sequence.
 4. Apply the reorder. The reorder behavior is driven by the track and level sort values that the platform reorder endpoints set.

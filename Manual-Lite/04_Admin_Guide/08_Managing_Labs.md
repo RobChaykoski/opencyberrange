@@ -8,7 +8,7 @@ The Exercises tab is where you browse, filter, and act on every lab on the platf
 
 ## Open the Exercises tab
 
-1. Open the Admin Panel and click **Exercises** in the sidebar. The route is `/admin?tab=exercises`.
+1. Open the Admin Panel and click **Exercises** in the sidebar. The route is `/admin?tab=labs`.
 
 **What you should see:** the Exercises panel with a left sidebar (Topics, Status, Management), header buttons, and the exercise table.
 

@@ -1,57 +1,72 @@
 # Course Labs and Assignments
 
-Work through the labs your instructor assigns inside a course. Solving a lab from the course view counts toward your course progress and opens the course wiki instead of the public track wiki.
+Your instructor assigns a set of exercises to the course. The course workspace
+shows how far you have progressed through them; the labs themselves open from
+the track pages, with the course context attached so the solve counts for the
+course.
 
 ## Prerequisites
 
 - Enrollment in an active course. See [Joining a Course](12_Joining_a_Course.md).
 
-## The course view
+## The course workspace
 
-Open a course from your Courses list to reach its tabs:
+Open a course from your Courses list. Students see two tabs:
 
-- **Content:** the assignments and their labs.
-- **Overview:** your progress, the next exercise, and feedback status. See [Course Progress and Feedback](14_Viewing_the_Scoreboard.md).
-- **Feedback:** the course check-in, aggregate student voice, and coaching notes.
-- **Achievements:** the badges you earn in the course. See [Achievements and Badges](15_Achievements_and_Badges.md).
+- **Overview:** your progress and next exercise, the course description, your
+  instructor, the term, and your feedback status.
+- **Feedback:** the course check-in, aggregate student voice, and coaching
+  notes. See [Course Progress and Feedback](14_Viewing_the_Scoreboard.md).
 
-The Exercises tab groups labs into assignments. Each assignment shows its labs, and the heading shows how many exercises it contains. A locked assignment displays "This assignment is locked by your instructor" until your instructor opens it. Drill labs carry a blue **Drill** badge.
+The Overview reports how many assigned exercises you have completed out of the
+total, the percentage, and a one-line next step. It does not list a leaderboard
+or another student's progress.
 
 <figure markdown>
 
-![Course Exercises tab showing assignments and their assigned labs](img/course-labs.png)
+![Course Overview tab showing completion progress, next step, feedback status, and course details](img/course-labs.png)
 
-<figcaption>The Exercises tab lists each assignment with its labs; locked assignments show a notice and drill labs carry a Drill badge.</figcaption>
+<figcaption>The course Overview summarises assigned-exercise progress and links to the check-in; the labs themselves open from their tracks.</figcaption>
 </figure>
 
-## Steps
+## Open an assigned exercise
 
-1. Open the course from **Courses**.
-2. Stay on the **Exercises** tab.
-3. Find an unlocked assignment and click an assigned lab.
-4. Launch the lab and solve it as usual. See [Launching a Lab](04_Launching_a_Lab.md) and [Submitting Flags](07_Submitting_Flags.md).
+1. Open the course from **Courses** and read the **Your progress** panel for the
+   next exercise.
+2. Open **Exercises** in the sidebar and pick the track named in your course.
+3. Expand the level and click **Launch** on the assigned lab. See
+   [Launching a Lab](04_Launching_a_Lab.md).
+4. Solve the exercise and submit the flag. See
+   [Submitting Flags](07_Submitting_Flags.md).
 
-**What you should see:** the lab opens with the course context attached. When you submit a correct flag, the solve counts toward your course progress and the Open Workbook button points to the course wiki.
+**What you should see:** the lab opens with the course context attached. A
+correct flag updates the course progress and any course-scoped achievements.
 
-The path below shows how a course lab gives course credit.
+The path below shows how a course assignment gives course credit.
 
 ```mermaid
 flowchart LR
-    A[Open course] --> B[Exercises tab]
-    B --> C[Open assigned lab]
-    C --> D[Launch and solve]
+    A[Course Overview] --> B[Exercises hub]
+    B --> C[Track and level]
+    C --> D[Launch assigned lab]
     D --> E[Flag submitted with course context]
-    E --> F[Progress and achievements update]
+    E --> F[Course progress and achievements update]
 ```
 
-## Course only labs
+## Course-only labs
 
-Some labs are assigned only through a course. Course only labs do not appear in the main Exercises hub; you reach them solely from the course view. They open even when sequential track locking would otherwise hide them, because your enrollment grants access.
+Some labs are assigned only through a course. They do not appear in the main
+Exercises hub; your instructor shares how to reach them, and the course view
+grants access even when sequential track locking would otherwise hide them.
 
 !!! note "Course wiki needs active enrollment"
-    The course workbook opens only while the course is active and you are enrolled. An ended or inactive course returns an access error when you open its wiki.
+    The course workbook opens only while the course is active and you are
+    enrolled. An ended or inactive course returns an access error when you open
+    its wiki.
 
-!!! warning "Locked assignments are instructor controlled"
-    If an assignment shows "This assignment is locked by your instructor", you cannot open its labs yet. Wait until your instructor unlocks it.
+!!! warning "Assignments can be time-boxed"
+    An assignment with a future start date stays closed until that date. Check
+    the assignment's start and due badges in the course workspace.
 
-If a course lab will not open or its workbook is blocked, see [Cannot Reach Lab Target](../07_Troubleshooting/05_Cannot_Reach_Lab_Target.md).
+If a course lab will not open or its workbook is blocked, see
+[Cannot Reach Lab Target](../07_Troubleshooting/05_Cannot_Reach_Lab_Target.md).

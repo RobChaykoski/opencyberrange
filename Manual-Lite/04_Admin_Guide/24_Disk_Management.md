@@ -8,7 +8,7 @@ Lab images and Docker build cache accumulate over time and fill the host disk. D
 
 ## Where it lives
 
-Disk Management is a modal launched from the **Exercises** tab, not a standalone screen. Open the **Exercises** link in the left sidebar (or go to `/admin?tab=exercises`), then click the **Disk Management** button in the panel header.
+Disk Management is a modal launched from the **Exercises** tab, not a standalone screen. Open the **Exercises** link in the left sidebar (or go to `/admin?tab=labs`), then click the **Disk Management** button in the panel header.
 
 ## Steps
 
