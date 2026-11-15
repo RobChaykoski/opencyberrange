@@ -1,14 +1,13 @@
 # Release 5 production readiness
 
-Status: **`v5.15.0` is tagged; production and development still run the
-`v5.14.0` images built from `1c5a0d9e` until the deployment record below is
-updated.** Development `172.16.16.44` and production `172.16.16.41` both track
-`main`; Alembic `0030_cohort_strict`. The release tags `v5.0.0`, `v5.0.1`,
-`v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
-`v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
-`v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
-`v5.14.0`, and `v5.15.0` record the feature releases, security patches, and
-operations patches.
+Status: **`v5.15.0` is released and deployed.** Development `172.16.16.44` and
+production `172.16.16.41` both run `main` at `e645be91` (`v5.15.0`) with images
+rebuilt on 2026-11-15; Alembic `0030_cohort_strict`. The release tags `v5.0.0`,
+`v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`,
+`v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`,
+`v5.8.1`, `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`,
+`v5.13.1`, `v5.14.0`, and `v5.15.0` record the feature releases, security
+patches, and operations patches.
 
 ## Ready for production
 
@@ -34,6 +33,25 @@ operations patches.
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
 - Migrations `0015`–`0030`, all idempotent and applied on dev and production.
+
+## 5.15.0 deployment record - 2026-11-15
+
+- Both hosts had already been rebuilt from the 5.15.0 code on 2026-11-15
+  (development 20:20 UTC, production 20:24 UTC). The backend source inside both
+  images matches the release tree exactly, so `v5.15.0` needed no image rebuild
+  and no migration.
+- Fast-forwarded the development and production checkouts to `e645be91`
+  (`v5.15.0`). Only documentation and workbook text changed after the image
+  builds, so the running containers were not recreated.
+- Rebuilt the development wiki tree from the release commit with
+  `ocr-wiki-builder:latest` (14 sites). Production already carried the updated
+  workbook text from its 20:28 UTC build.
+- Verified: backend, frontend, database, and Valkey healthy on both hosts with
+  the remaining services up; `/api/version` = 5 with the Release 5 name; Alembic
+  unchanged at `0030_cohort_strict`; 195 built workbook pages carry the
+  "RangeBox or the VPN" wording on each host.
+- Tag `v5.15.0` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814` at commit `e645be91`.
 
 ## Production deployment record — 2026-11-14
 
