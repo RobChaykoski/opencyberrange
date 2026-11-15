@@ -751,7 +751,7 @@
       "services": []
     },
     "network-12-6-appliance-segment": {
-      "content_hash": "1d363ad7f587d7ee2995980dc131a96fcd209507d7bfd9ee6dd0622815f35f79",
+      "content_hash": "61447cb75b78c8941adb0cfb61e8c989a395bcd3e650a0aca51102765626c95d",
       "services": [
         "protected"
       ]

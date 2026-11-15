@@ -100,7 +100,7 @@
     "network-12-3-two-router-transit": "65c55243af91511b628060e194ff00f65fed59c8673edc6ac8ce64bb76c8892e",
     "network-12-4-firewall-service-path": "022b72754eaaea798bccbfe090dffbb03b5e08a2d0a99cdd46ceddbb197016c0",
     "network-12-5-multi-service-router": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
-    "network-12-6-appliance-segment": "1d363ad7f587d7ee2995980dc131a96fcd209507d7bfd9ee6dd0622815f35f79",
+    "network-12-6-appliance-segment": "61447cb75b78c8941adb0cfb61e8c989a395bcd3e650a0aca51102765626c95d",
     "network-2-1-ftp-credential-extraction": "af279adebd8ec17deaa557bbf21abef954f8e6de49e1a75154b244f5bed75289",
     "network-2-2-smtp-email-analysis": "b1afad13a29e40dfa0ecae79a06e311bdf4110c73854794b22dd4bcbb9bd3f0a",
     "network-2-3-http-session-hijacking": "67643bb54164d0aee813f4e0d1dfce0dd235b7fb229369c7464a71fc279e19f5",

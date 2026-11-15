@@ -16,11 +16,13 @@ The appliance has two interfaces:
 
 | Interface | Network | Reachable from your workstation |
 |---|---|---|
-| `eth0` | training network | yes |
-| `eth1` | protected control segment | no |
+| training interface | training network | yes |
+| control interface | protected control segment | no |
 
-The protected service has no address on the training network. The appliance is
-the only device attached to both segments.
+Interface names depend on start order; use `ip -4 addr show` and the
+address ranges rather than assuming `eth0` or `eth1`. The protected service has
+no address on the training network. The appliance is the only device attached
+to both segments.
 
 ## Step 1: Map the appliance
 
