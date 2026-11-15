@@ -49,7 +49,7 @@
       "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "321a1cd523494aa8c7198a0a4e3997d47d76d4ad148c4c5d89efaece2437c3fc"
+      "sha256": "630cc17b3bd090cc11a5a8ea955f1c47a28442b1f4914a89d013ff98d41d795b"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
