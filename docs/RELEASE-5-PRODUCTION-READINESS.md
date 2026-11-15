@@ -1,10 +1,14 @@
 # Release 5 production readiness
 
-Status: **released and deployed to production on 2026-11-14 (`v5.14.0`).**
-Development `172.16.16.44` and production `172.16.16.41` both track `main`;
-Alembic `0030_cohort_strict`. Production application images were built from the
-`1c5a0d9e` commit; `v5.0.0`, `v5.0.1`, `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`, `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`, `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`, and `v5.14.0` record the release,
-security patch, IdP settings feature, and operations patch.
+Status: **`v5.15.0` is tagged; production and development still run the
+`v5.14.0` images built from `1c5a0d9e` until the deployment record below is
+updated.** Development `172.16.16.44` and production `172.16.16.41` both track
+`main`; Alembic `0030_cohort_strict`. The release tags `v5.0.0`, `v5.0.1`,
+`v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
+`v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
+`v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
+`v5.14.0`, and `v5.15.0` record the feature releases, security patches, and
+operations patches.
 
 ## Ready for production
 

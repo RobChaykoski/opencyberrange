@@ -1,18 +1,25 @@
 # Next steps
 
-Status: **Release 5 is deployed to development and production.** The platform
-runs Python 3.13, the security hardening wave is live, the OT track has three
-exercises (read, write, gateway), and the user manual reflects the current UI.
+Status: **Release 5 is deployed to development and production; `v5.15.0` is
+the newest signed release.** The platform runs Python 3.13, the security
+hardening wave is live, the OT track has three exercises plus an offline scan
+assistant, and the user manual reflects the current UI.
 This page tracks what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
 ## Recently completed
 
+- Release 5.15.0: RangeBox-by-default launch choice with an in-app stop dialog,
+  pending-approval and inactive-account login states, the offline OT Scan
+  assistant, and OT 1.3 (gateway bypass). Tagged as `v5.15.0`.
+- Weekly built-image scan in CI (Syft SBOM plus Grype SARIF, failing on a
+  fixable critical), replacing the manual scan runs.
 - Security review fixes: sanitised client IPs, pinned GPG verification,
   instructor grouped counts, compose host-escape guard, lab capability and
   process limits, and the Compose `pids_limit` shape fix.
 - Image hardening: pinned base digests, build-time OS upgrades, no `curl`,
-  `gnupg`, `pip`, `setuptools`, or `wheel` in the backend runtime.
+  `gnupg`, `pip`, `setuptools`, or `wheel` in the backend runtime, and readable
+  copied source/static files after the 027 umask.
 - Python 3.13 runtime and CI migration, with the full suite green on 3.13.
 - Host hardening: umask 027 and disabled core dumps on dev and production, with
   a post-pull permission normalisation for bind-mounted lab content.
@@ -28,17 +35,15 @@ This page tracks what is left; the deployment record is
 1. **Network-appliance lab.** Add an OpenWrt or pfSense target on the existing
    Docker topology for firewall and routing exercises. Larger than an OT lab
    because it introduces a second network segment.
-2. **Automated image scans.** Move Syft and Grype from manual runs into a weekly
-   CI job with SBOM artifacts and a critical-finding gate.
-3. **Manual publishing.** CI builds every MkDocs site, but the repository has no
+2. **Manual publishing.** CI builds every MkDocs site, but the repository has no
    publish workflow. Decide where the built manual is hosted (release artifact,
    internal web root, or documentation host) and add that step.
-4. **Persisted learner snapshots.** Store the DNA/GPS payload and factor weights
+3. **Persisted learner snapshots.** Store the DNA/GPS payload and factor weights
    at build time so a later scoring change cannot rewrite an old report. See
    `CYBER-GPS-SCHEMA.md`.
-5. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
+4. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
-6. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
+5. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
 
 ## Deliberately deferred
 

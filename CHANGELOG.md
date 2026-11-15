@@ -2,7 +2,7 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.15.0] - 2026-11-15
 
 ### Lab access and stop controls
 - Beginner labs now launch a Kali RangeBox by default, and the exercise panel
@@ -83,7 +83,8 @@ All notable changes to OpenCyberRange are recorded here.
   pivoting, persistence, and cleanup.
 - Added a Metasploitable 2 target image with KVM acceleration when available,
   a TCG software-emulation fallback, read-only snapshots, restricted egress,
-  per-exercise flags, and a separate provisioning script.
+  per-exercise flags, and a separate provisioning script. `/dev/kvm` is passed
+  into the target only when the host actually exposes it.
 - Added student workbooks and a dedicated `msfpt` workbook wiki.
 - Documented the independent-content position, OffSec attribution, and Hackers
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.
@@ -124,6 +125,9 @@ All notable changes to OpenCyberRange are recorded here.
   applying it needs root on each host.
 - Added `docs/SECURITY-SCANNING.md` with the Syft, Grype, and Lynis procedure,
   before/after image counts, and the triage of the findings that remain.
+- The image builds make copied source and static tool files readable by the
+  runtime user and the nginx worker after the 027 host umask, without making
+  code writable.
 
 ### Live memory forensics
 - Added Forensics level 3 with a KVM/TCG Ubuntu 22.04 target, AVML acquisition,
