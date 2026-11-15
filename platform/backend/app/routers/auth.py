@@ -298,12 +298,15 @@ async def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Check if is_active exists and is False
+    # Check if is_active exists and is False. As with approval, the password
+    # already verified, so the specific message is safe.
     if hasattr(user, 'is_active') and not user.is_active:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=(
+                "Your account is inactive. Contact an administrator to "
+                "reactivate it."
+            ),
         )
 
     # Second factor. Only enforced after the password checks out, so the

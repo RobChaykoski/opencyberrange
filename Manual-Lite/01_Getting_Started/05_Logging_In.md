@@ -36,9 +36,9 @@ SAML 2.0, and LDAP/Active Directory.
 3. The platform returns you to your dashboard.
 
 SSO-provisioned accounts do not use the local password form. If your account is
-pending approval, the platform asks you to contact an administrator. Keep the
-local administrator account available as a break-glass path if the identity
-provider is unavailable.
+pending approval, the platform shows an approval notice and you can sign in once
+an administrator approves it. Keep the local administrator account available as
+a break-glass path if the identity provider is unavailable.
 
 If your institution changes your directory group, the platform applies the new
 role on your next SSO login. You do not need a new account.
@@ -88,7 +88,7 @@ administrator to enable **Admin -> Settings -> Email**.
 | Message | What it means | What to do |
 | --- | --- | --- |
 | Incorrect username or password | The username or password is wrong, or the account is locked from too many failed attempts | Re-enter your credentials carefully. If it keeps failing, see [Account Locked](../07_Troubleshooting/02_Account_Locked.md). |
-| User account not approved. Please wait for admin approval. | An admin has not approved your account yet | Wait for approval, then sign in. See [Registering an Account](04_Registering_an_Account.md). |
+| "Your account is waiting for administrator approval. You can sign in once an administrator approves it." | An admin has not approved your account yet | Wait for approval, then sign in. See [Registering an Account](04_Registering_an_Account.md). |
 | User account is inactive | An admin has disabled your account | Contact your instructor or admin. |
 | The directory rejected those credentials | The LDAP/institution username or password is wrong | Re-enter the directory credentials. Your local platform password is not used here. |
 | Your directory account cannot sign in to this platform | The directory account exists but is not approved here | Ask your instructor or administrator to approve or link the account. |

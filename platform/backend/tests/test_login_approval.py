@@ -48,3 +48,17 @@ def test_wrong_password_keeps_the_generic_message(client, db_session):
 
     assert resp.status_code == 401, resp.text
     assert resp.json()["detail"] == "Incorrect username or password"
+
+
+def test_inactive_account_says_it_is_inactive(client, db_session):
+    user = _make_user(db_session, is_approved=True)
+    user.is_active = False
+    db_session.commit()
+
+    resp = client.post(
+        "/api/auth/login",
+        data={"username": user.username, "password": PASSWORD},
+    )
+
+    assert resp.status_code == 403, resp.text
+    assert "account is inactive" in resp.json()["detail"].lower()

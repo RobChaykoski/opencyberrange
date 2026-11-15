@@ -25,8 +25,8 @@ The login screen lives at `/login`. Enter your username (not your email) and pas
 | "Incorrect username or password" | Wrong password, wrong username, or a locked account (the message is the same for all three) | Re-enter your password carefully, confirm you typed your username and not your email, then read [Account Locked](02_Account_Locked.md) if it persists |
 | Password rejected even though you are sure it is right | Caps Lock on, or a trailing space; the password is case-sensitive | Retype the password with Caps Lock off and no leading or trailing space |
 | Sign in fails when you enter your email | The form expects your username, not your email | Use the username you chose at registration |
-| "User account not approved. Please wait for admin approval." | The account exists but an administrator has not approved it yet | Wait for approval; an administrator clears it from the pending list |
-| "User account is inactive" | An administrator deactivated the account | Contact an administrator to reactivate it |
+| "Your account is waiting for administrator approval. You can sign in once an administrator approves it." | The account exists but an administrator has not approved it yet | Wait for approval; an administrator clears it from the pending list |
+| "Your account is inactive. Contact an administrator to reactivate it." | An administrator deactivated the account | Contact an administrator to reactivate it |
 | You land on a change-password screen | The account is flagged to change its password on first sign in | Set a new password; after the change the flag clears and you reach the dashboard. See [Changing Your Password](../02_Student_Guide/17_Changing_Your_Password.md) |
 | Repeated quick attempts start failing instantly | Login is rate limited to about 10 attempts per minute per source | Wait a minute, then try again slowly |
 

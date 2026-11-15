@@ -77,6 +77,10 @@ All notable changes to OpenCyberRange are recorded here.
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.
 
 ### Security and performance hardening
+- Login now distinguishes "waiting for administrator approval" and "account
+  inactive" from a wrong password. The password is verified first, so the
+  message does not reveal whether an account exists; wrong passwords keep the
+  generic error.
 - Added a weekly built-image scan: pinned Syft and Grype build both images,
   publish a CycloneDX SBOM and SARIF, and fail on a fixable critical. The
   dependency audits stay advisory; this gate covers the OS packages in the
