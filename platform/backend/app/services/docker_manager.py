@@ -1896,6 +1896,17 @@ fi
             labels = svc_cfg.get("labels", {})
             svc_override = {}
 
+            # Labs that prefer hardware virtualization get /dev/kvm only when
+            # the host actually exposes it. On a host without nested
+            # virtualization the same lab starts without the device and the
+            # target falls back to software emulation.
+            kvm_preferred = bool(compose_data.get("x-ocr-kvm-preferred")) or bool(
+                svc_cfg.get("x-ocr-kvm-preferred")
+            )
+            if kvm_preferred and host_kvm_available():
+                svc_override["devices"] = ["/dev/kvm:/dev/kvm"]
+                logger.info(f"Passing /dev/kvm to {lab_slug}/{svc_name}")
+
             # Build services use the stable image tag published by
             # scripts/prebuild-labs.sh. This avoids retagging a copy per user
             # and makes the fast path work without a build.
