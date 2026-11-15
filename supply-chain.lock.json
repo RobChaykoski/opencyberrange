@@ -13,7 +13,7 @@
       "sha256": "101ad3be755cd0a8bdd44cbc76a1fb19e46c29aa8cf1e520f0f005dc24240a89"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "5c034d97bf50839f79300a972626f1a8e0998f07cbae3afa805b863d47b0c908"
+      "sha256": "faea652dd53e41fca43a89a81fa5dbe4f575887b3d02f85ca5ec420644a51044"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
@@ -109,13 +109,13 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "f6aee83c29e7bff868804eb8d41d0916901a3d8454eb6608aa6d5715b2419039"
+      "sha256": "56ea51984c5a5242ef61b9fd83202cd572c567a3f08b215648af8d58b9b78309"
     },
     "scripts/generate-about.py": {
       "sha256": "d1f9df9deecd70e07fcc7e2cd1cd4fbec9a2f155f56fd8ed309481a0b0bfc082"
     },
     "scripts/install-platform.sh": {
-      "sha256": "2e689b91b69de0aa56db7bed14551a61133c84e2bdb1ed5d5450dcd43a36118e"
+      "sha256": "f259f1f15414516855b83d07fafa1aa980784f5b489ce0ca5da10a31ea662c4c"
     },
     "scripts/lab_build_hash.py": {
       "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
@@ -130,7 +130,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "fddc7e34b1ba86902179374b0e36a180cf1578a6d5e77bf741cd51c0c73f2350"
+      "sha256": "327ae979df971ae5d978fd35d5858ad155e7c33e3bccf9f2ecfff468df021be1"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"

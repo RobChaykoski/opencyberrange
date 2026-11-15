@@ -222,18 +222,27 @@ def is_token_revoked(jti: str) -> bool:
         db.close()
 
 
-def _check_token_revocation(username: str, jti: Optional[str], iat_epoch: float) -> bool:
+def _check_token_revocation(
+    username: str,
+    jti: Optional[str],
+    iat_epoch: float,
+    db: Optional[Session] = None,
+) -> bool:
     """Return True when the token is revoked, either individually (jti row)
     or by a per-user mass revocation issued after the token's iat.
 
-    Fails open with a logged warning if the revoked_tokens table is missing,
-    so a half-deployed schema does not lock everyone out."""
+    Pass the request's session when one is available so authentication does
+    not open a second pooled connection on every request. Fails open with a
+    logged warning if the revoked_tokens table is missing, so a half-deployed
+    schema does not lock everyone out."""
     from app.database import SessionLocal
     from app.models import RevokedToken
     keys = [_revocation_sentinel(username)]
     if jti:
         keys.append(jti)
-    db = SessionLocal()
+    owns_session = db is None
+    if owns_session:
+        db = SessionLocal()
     try:
         rows = db.query(RevokedToken).filter(RevokedToken.jti.in_(keys)).all()
         for row in rows:
@@ -253,7 +262,8 @@ def _check_token_revocation(username: str, jti: Optional[str], iat_epoch: float)
         )
         return False
     finally:
-        db.close()
+        if owns_session:
+            db.close()
 
 
 def get_user_by_username(db: Session, username: str) -> Optional[User]:
@@ -338,7 +348,7 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     return user
 
 
-def _decode_token(token: str) -> dict:
+def _decode_token(token: str, db: Optional[Session] = None) -> dict:
     """Decode and validate a JWT token, returning the full payload.
     Raises HTTPException on invalid/revoked tokens."""
     credentials_exception = HTTPException(
@@ -354,7 +364,9 @@ def _decode_token(token: str) -> dict:
 
         # One DB round trip covers both individual (jti) revocation and
         # per-user mass revocation (e.g. admin force-logout).
-        if _check_token_revocation(username, payload.get("jti"), payload.get("iat", 0)):
+        if _check_token_revocation(
+            username, payload.get("jti"), payload.get("iat", 0), db=db
+        ):
             raise credentials_exception
 
         return payload
@@ -362,7 +374,7 @@ def _decode_token(token: str) -> dict:
         raise credentials_exception
 
 
-async def get_current_user(
+def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
 ) -> User:
@@ -377,7 +389,7 @@ async def get_current_user(
     For impersonation tokens (imp=True), returns the impersonated user
     but attaches impersonation metadata to the user object.
     """
-    payload = _decode_token(token)
+    payload = _decode_token(token, db=db)
     username = payload.get("sub")
 
     user = get_user_by_username(db, username=username)
@@ -403,7 +415,7 @@ async def get_current_user(
     return user
 
 
-async def get_current_active_user(
+def get_current_active_user(
     current_user: User = Depends(get_current_user)
 ) -> User:
     """Get current active and approved user"""
@@ -417,7 +429,7 @@ async def get_current_active_user(
     return current_user
 
 
-async def get_current_admin_user(
+def get_current_admin_user(
     current_user: User = Depends(get_current_active_user)
 ) -> User:
     """Get current admin user"""
@@ -426,7 +438,7 @@ async def get_current_admin_user(
     return current_user
 
 
-async def get_current_instructor_user(
+def get_current_instructor_user(
     current_user: User = Depends(get_current_active_user)
 ) -> User:
     """Require instructor or admin role"""

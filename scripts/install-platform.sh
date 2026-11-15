@@ -252,11 +252,14 @@ verify_supply_chain() {
     if ! command -v python3 &> /dev/null; then
         error_exit "python3 is required to verify supply-chain.lock.json"
     fi
-    log "${BLUE}Verifying supply-chain hashes...${NC}"
-    if ! (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check); then
+    if ! command -v gpg &> /dev/null; then
+        error_exit "gpg is required to verify the release signature on supply-chain.lock.json"
+    fi
+    log "${BLUE}Verifying supply-chain hashes and signature...${NC}"
+    if ! (cd "$REPO_DIR" && python3 scripts/supply_chain.py --check --signature supply-chain.lock.json.asc --gpg-public-key docs/release-signing-key.asc --gpg-fingerprint 68A817762C831475F00DB54E775050A4C4921814); then
         error_exit "Supply-chain verification failed. Review the drift, then run scripts/supply_chain.py --update only for an intentional change."
     fi
-    log "${GREEN}[ok] Supply-chain hashes match${NC}"
+    log "${GREEN}[ok] Supply-chain hashes and signature match${NC}"
 }
 
 # Generate secure random string

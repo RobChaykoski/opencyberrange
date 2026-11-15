@@ -142,6 +142,16 @@ def allocate_vpn_client_ip(db: Session, user_id: int, base: str = "10.0.0") -> s
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
+
+def _client_ip(request: Request) -> str | None:
+    """Return the proxy-sanitised client address.
+
+    uvicorn's ProxyHeadersMiddleware already walks X-Forwarded-For in reverse
+    and returns the first untrusted hop. Reading the header directly would let
+    a learner spoof the audit IP by prepending a value.
+    """
+    return request.client.host if request.client else None
+
 docker_manager = DockerManager()
 wireguard_manager = WireGuardManager(
     api_url=settings.WG_API_URL,
@@ -309,7 +319,7 @@ async def spawn_lab(
         except (TypeError, ValueError):
             logger.warning("Could not parse hostnames for lab %s", lab_slug)
     diagnostic = bool(is_diagnostic)
-    req_client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (request.client.host if request.client else None)
+    req_client_ip = _client_ip(request)
 
     async def bring_up_lab():
         """Bring up the lab environment and record the outcome on the session row.
@@ -627,7 +637,7 @@ async def stop_lab(
     # Start cleanup in background (fire and forget)
     _track_background_task(cleanup_lab())
 
-    client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or request.client.host if request.client else None
+    client_ip = _client_ip(request)
     is_diagnostic = current_user.diagnostic_until and current_user.diagnostic_until > datetime.now(timezone.utc).replace(tzinfo=None)
     log_activity(db, EventTypes.LAB_STOPPED,
                   actor_id=current_user.id, target_type="lab",
@@ -739,7 +749,7 @@ async def pause_lab_session(
             target_type="lab",
             target_id=session.lab_id,
             detail={"reason": reason},
-            ip_address=(request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (request.client.host if request.client else None)),
+            ip_address=_client_ip(request),
             commit=False,
         )
         db.commit()
@@ -790,7 +800,7 @@ async def resume_lab_session(
         target_type="lab",
         target_id=session.lab_id,
         detail={"paused_seconds": session.paused_seconds},
-        ip_address=(request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (request.client.host if request.client else None)),
+        ip_address=_client_ip(request),
         commit=False,
     )
     db.commit()

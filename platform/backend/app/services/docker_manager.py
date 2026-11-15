@@ -14,6 +14,7 @@ import tempfile
 import time
 import threading
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta, timezone
 
@@ -26,6 +27,78 @@ except ImportError:  # Windows development hosts: fall back to a thread lock
 
 
 logger = logging.getLogger(__name__)
+
+# Lab compose files may need NET_ADMIN for routed/firewall exercises, but a
+# compromised backend must not be able to turn a lab into a host-root escape.
+_ALLOWED_CAP_ADD = {
+    "CHOWN",
+    "NET_ADMIN",
+    "NET_BIND_SERVICE",
+    "NET_RAW",
+    "SETGID",
+    "SETUID",
+    "SYS_NICE",
+}
+_ALLOWED_DEVICES = {"/dev/kvm:/dev/kvm"}
+
+
+def validate_lab_compose(compose_data: dict, lab_slug: str) -> None:
+    """Reject compose features that can escape the lab boundary.
+
+    Lab definitions are authored by instructors and admins, but the backend is
+    the component that talks to the Docker socket. This guard is the last line
+    of defence if a bad or compromised compose file reaches a spawn.
+    """
+    if not isinstance(compose_data, dict):
+        return
+    services = compose_data.get("services") or {}
+    if not isinstance(services, dict):
+        return
+
+    for service_name, service in services.items():
+        if not isinstance(service, dict):
+            continue
+        where = f"{lab_slug}/{service_name}"
+        if service.get("privileged"):
+            raise ValueError(f"{where}: privileged containers are not allowed")
+        for key in ("pid", "ipc", "userns_mode"):
+            if str(service.get(key) or "").strip().lower() == "host":
+                raise ValueError(f"{where}: {key}=host is not allowed")
+        network_mode = str(service.get("network_mode") or "").strip().lower()
+        if network_mode == "host" or network_mode.startswith("container:"):
+            raise ValueError(f"{where}: network_mode={network_mode} is not allowed")
+
+        for volume in service.get("volumes") or []:
+            source = ""
+            if isinstance(volume, str):
+                source = volume.split(":", 1)[0].strip()
+            elif isinstance(volume, dict):
+                source = str(volume.get("source") or "").strip()
+            if not source:
+                continue
+            parts = Path(source).parts
+            if (
+                source.startswith("/")
+                or source.startswith("~")
+                or ".." in parts
+            ):
+                raise ValueError(
+                    f"{where}: host bind source {source!r} is not allowed; "
+                    "use a relative path inside the lab or a named volume"
+                )
+
+        for device in service.get("devices") or []:
+            value = device if isinstance(device, str) else str(device)
+            if value not in _ALLOWED_DEVICES:
+                raise ValueError(f"{where}: device {value!r} is not allowed")
+
+        cap_add = service.get("cap_add") or []
+        if isinstance(cap_add, str):
+            cap_add = [cap_add]
+        for capability in cap_add:
+            name = str(capability).strip().upper().removeprefix("CAP_")
+            if name not in _ALLOWED_CAP_ADD:
+                raise ValueError(f"{where}: cap_add {name!r} is not allowed")
 
 # Serialise the capacity check and container creation for RangeBoxes. Without
 # this, concurrent launch requests can all observe free capacity before any of
@@ -1847,6 +1920,8 @@ fi
 
         if not compose_data:
             raise Exception(f"No compose configuration found for {lab_slug} (no DB content, no file at {compose_file})")
+
+        validate_lab_compose(compose_data, lab_slug)
 
         # Optional network-device topology. The engine validates the lab's
         # x-ocr-topology block, allocates per-session /29 links, and returns the

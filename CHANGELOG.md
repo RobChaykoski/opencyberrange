@@ -15,6 +15,19 @@ All notable changes to OpenCyberRange are recorded here.
 - Documented the independent-content position, OffSec attribution, and Hackers
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.
 
+### Security and performance hardening
+- Audit rows now use uvicorn's proxy-sanitised client address instead of the
+  first, client-controlled `X-Forwarded-For` value.
+- The supply-chain lock is now verified against a pinned release fingerprint in
+  CI and the install/update scripts, using a throwaway GnuPG keyring.
+- Authentication dependencies run in the threadpool and reuse the request
+  database session for the revocation check instead of opening a second
+  connection per request.
+- The instructor course list uses grouped count queries rather than three
+  queries per course.
+- Lab spawns now reject privileged containers, host networking, host bind
+  mounts, unexpected devices, and dangerous capabilities at runtime.
+
 ### Live memory forensics
 - Added Forensics level 3 with a KVM/TCG Ubuntu 22.04 target, AVML acquisition,
   and a student workbook for memory analysis with Volatility and strings.

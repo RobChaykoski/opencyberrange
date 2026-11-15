@@ -49,6 +49,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -377,7 +378,13 @@ def verify_data(
     return errors, warnings, summary
 
 
-def verify_signature(lock_path: Path, signature: Path, public_key: str | None) -> list[str]:
+def verify_signature(
+    lock_path: Path,
+    signature: Path,
+    public_key: str | None,
+    gpg_public_key: str | None = None,
+    gpg_fingerprint: str | None = None,
+) -> list[str]:
     if not signature.is_file():
         return [f"MISSING signature: {signature}"]
     if shutil.which("minisign") and public_key:
@@ -391,14 +398,53 @@ def verify_signature(lock_path: Path, signature: Path, public_key: str | None) -
             return [f"BAD signature: {result.stderr.strip() or result.stdout.strip()}"]
         return []
     if shutil.which("gpg"):
-        result = subprocess.run(
-            ["gpg", "--verify", str(signature), str(lock_path)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            return [f"BAD signature: {result.stderr.strip() or result.stdout.strip()}"]
+        # Verify in a throwaway keyring and, when a fingerprint is supplied,
+        # require the signature to come from that exact key. A default-keyring
+        # `gpg --verify` accepts any trusted key and does not pin the release
+        # identity.
+        with tempfile.TemporaryDirectory(prefix="ocr-gpg-") as gpg_home:
+            env = os.environ.copy()
+            env["GNUPGHOME"] = gpg_home
+            if gpg_public_key:
+                key_path = Path(gpg_public_key)
+                if not key_path.is_file():
+                    return [f"MISSING gpg public key: {gpg_public_key}"]
+                imported = subprocess.run(
+                    ["gpg", "--batch", "--import", str(key_path)],
+                    capture_output=True,
+                    text=True,
+                    env=env,
+                    check=False,
+                )
+                if imported.returncode != 0:
+                    return [
+                        (
+                            "BAD gpg public key: "
+                            f"{imported.stderr.strip() or imported.stdout.strip()}"
+                        )
+                    ]
+            result = subprocess.run(
+                ["gpg", "--status-fd", "1", "--verify", str(signature), str(lock_path)],
+                capture_output=True,
+                text=True,
+                env=env,
+                check=False,
+            )
+            if result.returncode != 0:
+                return [f"BAD signature: {result.stderr.strip() or result.stdout.strip()}"]
+            if gpg_fingerprint:
+                expected = re.sub(r"\s+", "", gpg_fingerprint).upper()
+                valid = re.search(
+                    rf"\[GNUPG:\] VALIDSIG {re.escape(expected)}\b",
+                    result.stdout,
+                )
+                if not valid:
+                    return [
+                        (
+                            "BAD signature: valid signature is not from the pinned "
+                            f"release key {gpg_fingerprint}"
+                        )
+                    ]
         return []
     return ["NO verifier: install minisign or gpg to verify the lock signature"]
 
@@ -426,6 +472,14 @@ def main() -> int:
     parser.add_argument("--strict-pins", action="store_true", help="fail on unpinned base images")
     parser.add_argument("--signature", help="detached signature over the lock")
     parser.add_argument("--public-key", help="minisign public key")
+    parser.add_argument(
+        "--gpg-public-key",
+        help="GnuPG public key file to import into a throwaway keyring",
+    )
+    parser.add_argument(
+        "--gpg-fingerprint",
+        help="require the signature to come from this GnuPG fingerprint",
+    )
     parser.add_argument("--json", action="store_true", help="machine-readable result")
     args = parser.parse_args()
 
@@ -475,7 +529,13 @@ def main() -> int:
 
     signature_errors: list[str] = []
     if args.signature:
-        signature_errors = verify_signature(lock_path, Path(args.signature).resolve(), args.public_key)
+        signature_errors = verify_signature(
+            lock_path,
+            Path(args.signature).resolve(),
+            args.public_key,
+            gpg_public_key=args.gpg_public_key,
+            gpg_fingerprint=args.gpg_fingerprint,
+        )
 
     errors, warnings, summary = verify_data(
         lock,

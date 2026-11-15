@@ -303,7 +303,7 @@ def instructor_overview(
 
 
 @router.get("/courses")
-async def list_my_courses(
+def list_my_courses(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_instructor_user),
 ):
@@ -312,16 +312,33 @@ async def list_my_courses(
     if current_user.role != 'admin':
         query = query.filter(Course.instructor_id == current_user.id)
 
-    courses = query.order_by(Course.created_at.desc()).all()
+    courses = (
+        query.options(joinedload(Course.instructor))
+        .order_by(Course.created_at.desc())
+        .all()
+    )
+    course_ids = [c.id for c in courses]
+    enrollment_counts = {}
+    lab_counts = {}
+    if course_ids:
+        enrollment_counts = dict(
+            db.query(CourseEnrollment.course_id, func.count(CourseEnrollment.id))
+            .filter(CourseEnrollment.course_id.in_(course_ids))
+            .group_by(CourseEnrollment.course_id)
+            .all()
+        )
+        lab_counts = dict(
+            db.query(
+                CourseLabAssignment.course_id, func.count(CourseLabAssignment.id)
+            )
+            .filter(CourseLabAssignment.course_id.in_(course_ids))
+            .group_by(CourseLabAssignment.course_id)
+            .all()
+        )
+
     result = []
     for c in courses:
-        student_count = db.query(CourseEnrollment).filter(
-            CourseEnrollment.course_id == c.id
-        ).count()
-        lab_count = db.query(CourseLabAssignment).filter(
-            CourseLabAssignment.course_id == c.id
-        ).count()
-        instructor = db.query(User).filter(User.id == c.instructor_id).first()
+        instructor = c.instructor
         result.append({
             "id": c.id,
             "name": c.name,
@@ -336,8 +353,8 @@ async def list_my_courses(
             "is_active": c.is_active,
             "is_archived": getattr(c, 'is_archived', False),
             "created_at": c.created_at.isoformat() if c.created_at else None,
-            "student_count": student_count,
-            "lab_count": lab_count,
+            "student_count": enrollment_counts.get(c.id, 0),
+            "lab_count": lab_counts.get(c.id, 0),
         })
     return result
 
