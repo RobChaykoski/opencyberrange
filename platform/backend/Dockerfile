@@ -91,9 +91,13 @@ COPY . /app/
 
 # Non-root runtime user. Named volumes created from these directories inherit
 # the ownership, so /app/backups and /workbook stay writable after a mount.
+# The recursive chmod also makes every copied source file readable by the
+# runtime user: a host umask of 027 can leave new files mode 640, which the
+# image would otherwise preserve as root-owned and unreadable to UID 10001.
 RUN useradd --uid 10001 --create-home --shell /usr/sbin/nologin ocr && \
     mkdir -p /app/backups /workbook && \
-    chown -R ocr:ocr /app/backups /workbook
+    chown -R ocr:ocr /app/backups /workbook && \
+    chmod -R a+rX /app
 
 USER ocr
 
