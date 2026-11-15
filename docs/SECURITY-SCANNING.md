@@ -11,15 +11,17 @@ Three scanners cover different questions:
 - **Grype** matches that inventory against vulnerability data.
 - **Lynis** audits the host configuration rather than container contents.
 
-Trivy (filesystem, secret, and misconfiguration scan) and the dependency-audit
-workflow already run in CI. This note covers the scans that need a built image
-or a real host and therefore stay manual.
+Trivy (filesystem, secret, and misconfiguration scan), the dependency audits, and
+the weekly built-image Syft/Grype job run in CI. This note covers what those
+jobs do, the host audit that stays manual, and the triage behind every accepted
+finding.
 
 ## What already runs automatically
 
 | Control | Where | Blocking |
 | --- | --- | --- |
 | Trivy filesystem scan (`vuln,secret,misconfig`, CRITICAL/HIGH, unfixed ignored) | `.github/workflows/trivy.yml` | Yes |
+| Built-image Syft SBOM and Grype scan (weekly, fixable criticals) | `.github/workflows/image-scan.yml` | Yes |
 | `pip-audit` and `npm audit --omit=dev` | `.github/workflows/dependency-audit.yml` | No (baseline, PR and weekly) |
 | CodeQL, OpenSSF Scorecard, security delta review | `.github/workflows/` | Yes |
 | Container digest updates | `renovate.json` (`pinDigests`) | PR |
@@ -27,6 +29,12 @@ or a real host and therefore stay manual.
 At the time of these scans both dependency audits were clean: `npm audit`
 reported 0 vulnerabilities (222 packages, including dev) and `pip-audit`
 reported "No known vulnerabilities found" for `platform/backend/requirements.txt`.
+
+The image job builds the backend and frontend images, writes a CycloneDX SBOM,
+and runs Grype with `--only-fixed --fail-on critical`. A critical with no
+published fix (the Debian `libxml2` entry below) does not fail the job, because
+there is nothing to rebuild against; it stays documented here. Fixable
+criticals fail the run and keep the SBOM and SARIF artifacts for triage.
 
 ## Reproducing the scans
 

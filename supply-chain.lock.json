@@ -12,6 +12,9 @@
     ".github/workflows/dependency-audit.yml": {
       "sha256": "3c80161a5a1660a6441c55cdef5970d53cd58a3e465a04ff8c7b051d5c56993b"
     },
+    ".github/workflows/image-scan.yml": {
+      "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
+    },
     ".github/workflows/quality.yml": {
       "sha256": "d0b2060bd434d3f8436734f537fc73814cde7112f312effb01f09c16c0c456e9"
     },
@@ -133,7 +136,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "a4c36e88761d81049d9957111c1e18583f04d65b9b5a0ea73f7a9584383afd95"
+      "sha256": "d80870a0915b7e961b087684d10a7c7e689596927eb502698d714fc77783353c"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"

@@ -69,6 +69,10 @@ All notable changes to OpenCyberRange are recorded here.
   For Charity donation information in `docs/METASPLOIT-TRACK.md`.
 
 ### Security and performance hardening
+- Added a weekly built-image scan: pinned Syft and Grype build both images,
+  publish a CycloneDX SBOM and SARIF, and fail on a fixable critical. The
+  dependency audits stay advisory; this gate covers the OS packages in the
+  images.
 - Audit rows now use uvicorn's proxy-sanitised client address instead of the
   first, client-controlled `X-Forwarded-For` value.
 - The supply-chain lock is now verified against a pinned release fingerprint in

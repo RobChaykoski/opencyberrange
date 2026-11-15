@@ -115,6 +115,7 @@ COVERED_FILES = [
     ".github/workflows/dependency-audit.yml",
     ".github/workflows/trivy.yml",
     ".github/workflows/ui-smoke.yml",
+    ".github/workflows/image-scan.yml",
     ".trivyignore.yaml",
 ]
 
