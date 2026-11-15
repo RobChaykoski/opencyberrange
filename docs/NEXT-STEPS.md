@@ -43,9 +43,13 @@ This page tracks what is left; the deployment record is
 
 ## Open queue
 
-1. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
+1. **Cyber DNA v3.** Implement the evidence ledger, behavior profile, interest
+   vector, and career-affinity scores from
+   [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
+   of scope. Draft RFC, awaiting approval.
+2. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
-2. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
+3. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
 
 ## Deliberately deferred
 
