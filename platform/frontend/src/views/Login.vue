@@ -47,7 +47,11 @@
             Your account and personal data have been deleted.
           </div>
 
-          <div v-if="errorMessage" ref="errorBanner" tabindex="-1" class="error-message" role="alert" aria-live="assertive" aria-atomic="true">
+          <div v-if="pendingApproval" class="pending-message" role="status" aria-live="polite">
+            {{ errorMessage }}
+          </div>
+
+          <div v-else-if="errorMessage" ref="errorBanner" tabindex="-1" class="error-message" role="alert" aria-live="assertive" aria-atomic="true">
             {{ errorMessage }}
           </div>
 
@@ -559,6 +563,7 @@ const showPassword = ref(false)
 const mfaRequired = ref(false)
 const mfaCode = ref('')
 const errorMessage = ref('')
+const pendingApproval = ref(false)
 const loading = ref(false)
 const capsLockOn = ref(false)
 const errorBanner = ref(null)
@@ -610,6 +615,7 @@ const requestUsername = async () => {
 
 const handleLogin = async () => {
   errorMessage.value = ''
+  pendingApproval.value = false
   const loginName = username.value.trim()
   if (!loginName || !password.value) {
     errorMessage.value = 'Enter your username and password to continue.'
@@ -682,13 +688,19 @@ const handleLogin = async () => {
       capsLockOn.value = false
       if (error.response?.status === 429) {
         errorMessage.value = 'Too many sign-in attempts. Wait a minute and try again.'
+      } else if (
+        error.response?.status === 403
+        && String(error.response?.data?.detail || '').toLowerCase().includes('approval')
+      ) {
+        pendingApproval.value = true
+        errorMessage.value = error.response.data.detail
       } else if (error.response?.data?.detail) {
         errorMessage.value = error.response.data.detail
       } else {
         errorMessage.value = 'Login failed. Please check your credentials and try again.'
       }
       await nextTick()
-      errorBanner.value?.focus()
+      if (!pendingApproval.value) errorBanner.value?.focus()
     }
   } finally {
     loading.value = false
@@ -865,6 +877,16 @@ const handleLogin = async () => {
   border-radius: 8px;
   margin-bottom: 1.25rem;
   font-size: 0.875rem;
+}
+
+.pending-message {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, transparent);
 }
 
 .success-message {
