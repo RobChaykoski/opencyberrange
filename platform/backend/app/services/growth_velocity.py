@@ -300,8 +300,12 @@ def build_growth_velocity(db: Session, user) -> dict:
             "label": "Improvement over time",
             "value": (
                 f"{completion_delta:+d} labs vs prior 30 days"
-                if current["completions"] or prior["completions"]
-                else "No recent completions"
+                if prior["completions"] and completion_delta
+                else (
+                    "Same pace as the prior 30 days"
+                    if prior["completions"]
+                    else f"{current['completions']} labs in the last 30 days"
+                )
             ),
             "direction": _direction(completion_delta),
             "detail": (
