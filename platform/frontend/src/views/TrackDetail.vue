@@ -355,7 +355,14 @@
             >
               OT Scan
             </button>
-            <button v-if="activeLab.session" @click="stopLab" class="btn btn--danger btn--sm">Stop Exercise</button>
+            <button
+              v-if="activeLab.session"
+              @click="stopLab"
+              class="btn btn--danger btn--sm"
+              :disabled="stoppingLab"
+            >
+              {{ stoppingLab ? 'Stopping...' : 'Stop Exercise' }}
+            </button>
             <template v-else>
               <div class="launch-buttons">
                 <button @click="startExercise" class="btn btn--primary btn--sm" :disabled="launchingLab">
@@ -456,6 +463,8 @@
             <button class="btn btn--secondary btn--sm" @click="spawnError = ''">Dismiss</button>
           </div>
         </div>
+
+        <p v-if="stopError" class="stop-error" role="alert">{{ stopError }}</p>
 
         <!-- Quick reaction: visible at the top of the exercise once started -->
         <div
@@ -626,16 +635,29 @@
                   </router-link>
                 </template>
                 <template v-else>
-                  <h3 class="section-title">Start the exercise</h3>
-                  <p>The desktop opens here once the lab environment is running.</p>
-                  <button
-                    type="button"
-                    class="btn btn--primary btn--sm"
-                    :disabled="launchingLab"
-                    @click="startExercise"
-                  >
-                    {{ launchingLab ? 'Starting...' : 'Start Exercise' }}
-                  </button>
+                  <h3 class="section-title">Choose how to work</h3>
+                  <p>
+                    RangeBox is a full Linux desktop in this browser tab; no VPN setup
+                    needed. VPN uses your own terminal and tools on this machine.
+                  </p>
+                  <div class="launch-choice">
+                    <button
+                      type="button"
+                      class="btn btn--primary btn--sm"
+                      :disabled="launchingLab"
+                      @click="startExercise"
+                    >
+                      {{ launchingLab ? 'Starting...' : panelRangeboxLabel }}
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn--secondary btn--sm"
+                      :disabled="launchingLab"
+                      @click="launchWithImage(null)"
+                    >
+                      Start with VPN
+                    </button>
+                  </div>
                 </template>
               </div>
             </section>
@@ -1058,6 +1080,19 @@
       </div>
     </div>
   </div>
+
+  <ConfirmDialog
+    :open="showStopConfirm"
+    title="Stop this exercise?"
+    :message="`The ${activeLab?.lab?.name || 'exercise'} environment will be torn down. Unsaved work in the desktop is lost.`"
+    confirm-label="Stop exercise"
+    cancel-label="Keep working"
+    busy-label="Stopping..."
+    :busy="stoppingLab"
+    danger
+    @confirm="confirmStopLab"
+    @cancel="showStopConfirm = false"
+  />
 </template>
 
 <script setup>
@@ -1083,6 +1118,7 @@ import TargetIcon from '../components/icons/TargetIcon.vue'
 import PlayCircleIcon from '../components/icons/PlayCircleIcon.vue'
 import CircleIcon from '../components/icons/CircleIcon.vue'
 import XIcon from '../components/icons/XIcon.vue'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 import ServerIcon from '../components/icons/ServerIcon.vue'
 import FlagIcon from '../components/icons/FlagIcon.vue'
 import LightbulbIcon from '../components/icons/LightbulbIcon.vue'
@@ -1108,6 +1144,9 @@ const track = ref(null)
 const trackError = ref('')
 const expandedLevels = ref([])
 const activeLab = ref(null)
+const showStopConfirm = ref(false)
+const stoppingLab = ref(false)
+const stopError = ref('')
 
 // Level quiz state
 const showQuizModal = ref(false)
@@ -1775,8 +1814,22 @@ const rangeboxImageForLab = (lab) => {
 
 // Starting from the open panel must honour the lab's expected desktop image;
 // otherwise a RangeBox lab starts VPN-only and the workbook's desktop steps
-// cannot be followed.
-const startExercise = () => launchWithImage(rangeboxImageForLab(activeLab.value?.lab))
+// cannot be followed. Beginner labs default to Kali so a new learner can work
+// entirely in the browser; the panel also offers an explicit VPN launch.
+const labIsBeginner = (lab) =>
+  String(lab?.difficulty || '').toLowerCase() === 'beginner'
+
+const defaultRangeboxImageForLab = (lab) =>
+  rangeboxImageForLab(lab) || (labIsBeginner(lab) ? 'kali' : null)
+
+const startExercise = () => launchWithImage(defaultRangeboxImageForLab(activeLab.value?.lab))
+
+const panelRangeboxLabel = computed(() => {
+  const image = rangeboxImageForLab(activeLab.value?.lab) || 'kali'
+  if (image === 'remnux') return 'Start with REMnux desktop'
+  if (image === 'ubuntu') return 'Start with Ubuntu desktop'
+  return 'Start with Kali desktop'
+})
 
 const ltiLaunch = computed(() => {
   const grant = route.query.launch
@@ -1800,7 +1853,8 @@ const launchLab = async (lab) => {
     // Some labs assume a desktop image (for example Ghidra on REMnux). The
     // plain Launch button used to spawn them without one, so the student got
     // an evidence server and a workbook that said "open the REMnux desktop".
-    const rangeboxImage = rangeboxImageForLab(lab)
+    // Beginner labs now default to Kali so the browser-only path works.
+    const rangeboxImage = defaultRangeboxImageForLab(lab)
     const spawnBody = rangeboxImage
       ? { rangebox: true, rangebox_image: rangeboxImage }
       : { rangebox: false }
@@ -1872,9 +1926,17 @@ const launchWithImage = async (image) => {
   }
 }
 
-const stopLab = async () => {
-  if (!confirm('Are you sure you want to stop this exercise?')) return
-  loading.value = true
+const stopLab = () => {
+  if (stoppingLab.value) return
+  stopError.value = ''
+  showStopConfirm.value = true
+}
+
+const confirmStopLab = async () => {
+  showStopConfirm.value = false
+  if (stoppingLab.value) return
+  stoppingLab.value = true
+  stopError.value = ''
   try {
     await axios.post('/labs/stop')
     activeLab.value = null
@@ -1886,8 +1948,10 @@ const stopLab = async () => {
     fetchTrack(route.params.trackSlug).catch(err => console.error('Failed to refresh track:', err))
   } catch (error) {
     console.error('Failed to stop lab:', error)
+    stopError.value = error.response?.data?.detail
+      || 'Could not stop the exercise. Try again, or refresh the page.'
   } finally {
-    loading.value = false
+    stoppingLab.value = false
   }
 }
 
@@ -3381,6 +3445,16 @@ watch(timeRemaining, (val) => {
   flex-wrap: wrap;
   gap: 0.75rem;
   min-width: 0;
+}
+
+.stop-error {
+  margin: 0.4rem 0 0;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--danger);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  border-radius: 0 0.35rem 0.35rem 0;
 }
 
 .active-lab-panel__title-group h2 {
@@ -4963,6 +5037,13 @@ watch(timeRemaining, (val) => {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+.launch-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
 }
 
 /* RangeBox launch bar (moved to VPN connection page) */

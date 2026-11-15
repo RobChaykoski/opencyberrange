@@ -18,7 +18,13 @@ router = APIRouter()
 def public_config(db: Session = Depends(get_db)):
     """Return runtime values needed by the SPA before authentication."""
     wiki_origin = (get_setting_fresh(db, "wiki_origin", "") or "").strip()
+    require_approval = (
+        get_setting_fresh(db, "require_approval", "true") or "true"
+    ).strip().lower() != "false"
     return JSONResponse(
-        {"wiki_origin": wiki_origin},
+        {
+            "wiki_origin": wiki_origin,
+            "require_approval": require_approval,
+        },
         headers={"Cache-Control": "no-store"},
     )

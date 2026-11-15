@@ -116,12 +116,26 @@
       </section>
     </div>
   </div>
+
+  <ConfirmDialog
+    :open="showStopConfirm"
+    title="Stop this RangeBox?"
+    message="Any unsaved work in the desktop will be lost. The standalone desktop is rebuilt on the next launch."
+    confirm-label="Stop RangeBox"
+    cancel-label="Keep working"
+    busy-label="Stopping..."
+    :busy="loading"
+    danger
+    @confirm="confirmStop"
+    @cancel="showStopConfirm = false"
+  />
 </template>
 
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import axios from '../api/axios'
 import RangeBox from '../components/RangeBox.vue'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 import MobileEfficiencyNotice from '../components/MobileEfficiencyNotice.vue'
 import { useMobileView } from '../composables/useMobileView'
 import { usePoll } from '../composables/usePoll'
@@ -217,10 +231,15 @@ const launch = async () => {
   }
 }
 
-const stop = async () => {
-  if (!window.confirm('Stop this RangeBox? Any unsaved work in the desktop will be lost.')) {
-    return
-  }
+const showStopConfirm = ref(false)
+
+const stop = () => {
+  if (status.value !== 'running' || loading.value) return
+  showStopConfirm.value = true
+}
+
+const confirmStop = async () => {
+  showStopConfirm.value = false
   loading.value = true
   errorMessage.value = ''
   status.value = 'stopping'

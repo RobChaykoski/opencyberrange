@@ -42,6 +42,9 @@
           </div>
 
           <p class="form-subtext">Build hands-on skills you can prove</p>
+          <p v-if="approvalRequired" class="approval-note">
+            New accounts are reviewed by an administrator before the first sign-in.
+          </p>
 
           <div v-if="competition" class="competition-callout">
             <p class="competition-callout__kicker">Event registration</p>
@@ -506,7 +509,15 @@ const formatCompetitionDates = (event) => {
   return `${start.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })} – ${end.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`
 }
 
+const approvalRequired = ref(true)
+
 onMounted(async () => {
+  try {
+    const { data } = await axios.get('/api/config/public')
+    approvalRequired.value = data?.require_approval !== false
+  } catch {
+    // Keep the note; approval is the default.
+  }
   const requested = Number(route.query.event || route.query.competition)
   if (!Number.isInteger(requested) || requested <= 0) return
   competitionId.value = requested
@@ -973,6 +984,17 @@ const handleRegister = async () => {
   color: var(--text-secondary);
   font-size: 0.9375rem;
   margin-bottom: 1.5rem;
+}
+
+.approval-note {
+  margin: -0.9rem 0 1.2rem;
+  padding: 0.5rem 0.7rem;
+  border-left: 3px solid var(--warning);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  border-radius: 0 0.35rem 0.35rem 0;
 }
 
 .competition-callout {

@@ -235,6 +235,11 @@ const routes = [
     component: () => import('../views/RangeBoxView.vue'),
     meta: { requiresAuth: true }
   },
+  // Legacy competition URL and unknown paths. Unknown paths go through the
+  // dashboard guard, so an unauthenticated visitor lands on the login page
+  // instead of a blank screen.
+  { path: '/challenges', redirect: '/events' },
+  { path: '/:pathMatch(.*)*', redirect: '/dashboard' },
   ]
 
 const router = createRouter({
