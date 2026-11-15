@@ -24,7 +24,7 @@ qemu-system-x86_64 \
     -name metasploitable2 \
     -enable-kvm -cpu host -smp 1 -m 1024 \
     -drive file=/vm/metasploitable2.qcow2,format=qcow2,if=ide,snapshot=on \
-    -netdev user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:2222-:22,hostfwd=tcp:127.0.0.1:2121-:21,hostfwd=tcp:127.0.0.1:8080-:80,hostfwd=tcp:127.0.0.1:1139-:139,hostfwd=tcp:127.0.0.1:1445-:445,hostfwd=tcp:127.0.0.1:13306-:3306,hostfwd=tcp:127.0.0.1:15432-:5432,hostfwd=tcp:127.0.0.1:18180-:8180 \
+    -netdev user,id=net0,restrict=on,hostfwd=tcp:127.0.0.1:2222-:22,hostfwd=tcp:127.0.0.1:2121-:21,hostfwd=tcp:127.0.0.1:8080-:80,hostfwd=tcp:127.0.0.1:1139-:139,hostfwd=tcp:127.0.0.1:1445-:445,hostfwd=tcp:127.0.0.1:13306-:3306,hostfwd=tcp:127.0.0.1:15432-:5432,hostfwd=tcp:127.0.0.1:16200-:6200,hostfwd=tcp:127.0.0.1:18180-:8180 \
     -device e1000,netdev=net0 \
     -display none \
     -serial file:/tmp/console.log \
@@ -46,6 +46,7 @@ forward_port 139 1139
 forward_port 445 1445
 forward_port 3306 13306
 forward_port 5432 15432
+forward_port 6200 16200
 forward_port 8180 18180
 
 cleanup() {

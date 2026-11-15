@@ -36,7 +36,9 @@ a month**.
   spawn these labs on a host without `/dev/kvm`.
 - **Network:** the target uses QEMU user networking with egress restricted. The
   guest cannot reach the Internet. Service ports are exposed to the lab network
-  through a userspace proxy.
+  through a userspace proxy, including FTP control (21), SSH (22), HTTP (80),
+  SMB (139/445), MySQL (3306), PostgreSQL (5432), the vsftpd backdoor shell
+  (6200), and Tomcat (8180).
 - **Reset:** the qcow2 is mounted read-only and QEMU uses `-snapshot`. A restart
   returns the guest to its clean state.
 
