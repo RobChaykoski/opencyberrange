@@ -33,7 +33,7 @@ def fetch(base, path, token):
             return r.status, r.read(4000).decode("utf-8", "replace")
     except urllib.error.HTTPError as e:
         return e.code, ""
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  # probe failure is the result, not an exception
         return None, str(e)
 
 
@@ -49,7 +49,8 @@ def main():
         name, _, tok = spec.partition("=")
         identities[name] = tok
 
-    targets = json.load(open(TARGETS))
+    with open(TARGETS) as handle:
+        targets = json.load(handle)
     names = list(identities)
     print(f"{'target':<26} {'tier':<9} " + " ".join(f"{n:<14}" for n in names))
     print("-" * (36 + 15 * len(names)))

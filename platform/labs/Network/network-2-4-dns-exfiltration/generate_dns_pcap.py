@@ -8,10 +8,11 @@ DNS Tunneling PCAP Generator
 Creates realistic network traffic showing DNS data exfiltration
 """
 
-from scapy.all import *
 import random
-import time
 import sys
+
+from scapy.all import *
+
 
 def generate_dns_pcap(output_file):
     """Generate PCAP file with DNS tunneling traffic"""
@@ -163,7 +164,7 @@ EXFIL_COMPLETE:TRUE"""
     # Write PCAP file
     print(f"[*] Writing {len(packets)} packets to {output_file}")
     wrpcap(output_file, packets)
-    print(f"[+] PCAP generated successfully!")
+    print("[+] PCAP generated successfully!")
     print(f"[+] Suspicious domain: {attacker_domain}")
     print(f"[+] Infected host: {victim_ip}")
     print(f"[+] Number of exfiltration queries: {len(data_chunks)}")

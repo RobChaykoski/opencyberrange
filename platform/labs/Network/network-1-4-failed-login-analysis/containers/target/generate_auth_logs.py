@@ -121,10 +121,10 @@ def generate_bruteforce_attack(base_time, start_offset=3600):
     logs.append(f"# Attack detected from {ATTACKER_IP}")
     logs.append(f"# Total failed attempts: {num_attempts}")
     logs.append(f"# Unique usernames tried: {len(set(BRUTEFORCE_USERNAMES[:num_attempts]))}")
-    logs.append(f"# Attack pattern: Dictionary-based SSH brute-force")
-    logs.append(f"# Recommendation: Block IP immediately, review fail2ban configuration")
-    logs.append(f"# Flag: OCR{{brut3_f0rc3_d3t3ct3d}}")
-    logs.append(f"# IP has been added to blocklist")
+    logs.append("# Attack pattern: Dictionary-based SSH brute-force")
+    logs.append("# Recommendation: Block IP immediately, review fail2ban configuration")
+    logs.append("# Flag: OCR{brut3_f0rc3_d3t3ct3d}")
+    logs.append("# IP has been added to blocklist")
 
     return logs, final_time_offset
 
@@ -133,7 +133,6 @@ def generate_session_logs(base_time, time_offset, count=5):
     logs = []
 
     for i in range(count):
-        src_ip = random.choice(HOSPITAL_IPS)
         username = random.choice(LEGITIMATE_USERS)
         pid = random.randint(10000, 30000)
 

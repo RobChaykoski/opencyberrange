@@ -1,7 +1,8 @@
 """Pinnacle Cloud Services. Documentation Portal (vulnerable to path traversal)"""
 
-from flask import Flask, request, send_file, abort
 import os
+
+from flask import Flask, abort, request, send_file
 
 app = Flask(__name__)
 
@@ -167,7 +168,7 @@ def download():
         return send_file(filepath, as_attachment=False)
     except FileNotFoundError:
         abort(404, f"File not found: {filename}")
-    except Exception:
+    except Exception:  # noqa: BLE001  # controlled 500 on any file-serve failure
         abort(500, "Internal server error")
 
 

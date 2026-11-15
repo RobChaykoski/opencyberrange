@@ -3,6 +3,7 @@ import http.server
 import socketserver
 import sys
 
+
 class WinRMHandler(http.server.SimpleHTTPRequestHandler):
     server_version = "Microsoft-HTTPAPI/2.0"
     sys_version = ""

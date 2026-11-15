@@ -9,12 +9,13 @@ Creates a realistic packet capture with HTTP and HTTPS traffic,
 including cleartext credentials in an HTTP POST request.
 """
 
-import sys
-from scapy.all import *
-from scapy.layers.inet import IP, TCP, UDP
-from scapy.layers.dns import DNS, DNSQR, DNSRR
-from scapy.layers.http import HTTP, HTTPRequest, HTTPResponse
 import random
+import sys
+
+from scapy.all import *
+from scapy.layers.dns import DNS, DNSQR, DNSRR
+from scapy.layers.inet import IP, TCP, UDP
+
 
 def create_tcp_handshake(src_ip, dst_ip, src_port, dst_port, seq_base):
     """Create a TCP 3-way handshake"""
@@ -226,9 +227,9 @@ def generate_pcap(output_file):
     # Write PCAP file
     wrpcap(output_file, packets)
 
-    print(f"  [✓] PCAP file created successfully!")
-    print(f"\nFlag location: HTTP POST to /api/login")
-    print(f"Flag value: OCR{{http_cr3d3nt14ls}}")
+    print("  [✓] PCAP file created successfully!")
+    print("\nFlag location: HTTP POST to /api/login")
+    print("Flag value: OCR{http_cr3d3nt14ls}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

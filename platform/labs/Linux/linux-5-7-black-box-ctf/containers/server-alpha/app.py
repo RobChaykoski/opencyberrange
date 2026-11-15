@@ -2,7 +2,8 @@
 """Titan Global Industries. Corporate Product Portal (server-alpha)."""
 
 import sqlite3
-from flask import Flask, request, jsonify, Response
+
+from flask import Flask, Response, jsonify, request
 
 app = Flask(__name__)
 DB_PATH = "/app/titan.db"
@@ -76,7 +77,7 @@ def search():
     try:
         c.execute(sql)
         rows = c.fetchall()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  # return a controlled 500, keep the lab service up
         conn.close()
         return jsonify({"error": str(e)}), 500
     conn.close()

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import socket
-import paramiko
-import threading
 import sys
+import threading
 import traceback
+
+import paramiko
+
 
 class CustomSSHServer(paramiko.ServerInterface):
     def check_auth_password(self, username, password):
@@ -29,13 +31,13 @@ def handle_client(client_sock, addr):
         channel = transport.accept(20)
         if channel:
             channel.close()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  # one client failure must not stop the listener
         print(f'Error handling client: {e}', file=sys.stderr)
         traceback.print_exc()
     finally:
         try:
             transport.close()
-        except:
+        except:  # noqa: E722, S110  # best-effort close; transport may be unbound
             pass
 
 def main():
@@ -59,10 +61,10 @@ def main():
             except KeyboardInterrupt:
                 print('Shutting down...', flush=True)
                 break
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001  # accept loop keeps serving after a transient error
                 print(f'Accept error: {e}', file=sys.stderr, flush=True)
                 traceback.print_exc()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  # fatal handler logs before exiting
         print(f'Fatal error: {e}', file=sys.stderr, flush=True)
         traceback.print_exc()
         sys.exit(1)

@@ -8,10 +8,11 @@ Generate realistic HTTP session hijacking PCAP for MediCare patient portal.
 Shows legitimate user session being hijacked by attacker using stolen cookie.
 """
 
-import sys
 import random
+import sys
 from datetime import datetime, timedelta
-from scapy.all import IP, TCP, Ether, UDP, DNS, DNSQR, DNSRR, Raw, wrpcap
+
+from scapy.all import DNS, DNSQR, DNSRR, IP, TCP, UDP, Ether, Raw, wrpcap
 
 # Network configuration
 SERVER_IP = "192.168.100.10"
@@ -124,7 +125,7 @@ def create_http_request(timestamp, src_ip, src_mac, dst_ip, dst_mac, sport, dpor
 
     http_data = f"{method} {path} HTTP/1.1\r\n"
     http_data += f"Host: {host}\r\n"
-    http_data += f"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n"
+    http_data += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n"
     if cookie:
         http_data += f"Cookie: {cookie}\r\n"
     http_data += extra_headers
@@ -266,7 +267,7 @@ def generate_pcap(output_file):
     current_time = datetime.now() - timedelta(hours=3, minutes=30)
     base_timestamp = current_time.timestamp()
 
-    print(f"Generating HTTP session hijacking PCAP...")
+    print("Generating HTTP session hijacking PCAP...")
 
     # === Background traffic: DNS queries ===
     print("Adding background DNS queries...")
@@ -634,12 +635,12 @@ def generate_pcap(output_file):
     print(f"\nWriting {len(packets)} packets to {output_file}...")
     wrpcap(output_file, packets)
 
-    print(f"✓ PCAP generated successfully!")
-    print(f"\nKey details:")
+    print("✓ PCAP generated successfully!")
+    print("\nKey details:")
     print(f"  - Legitimate user: {LEGITIMATE_USER_IP}")
     print(f"  - Attacker: {ATTACKER_IP}")
     print(f"  - Stolen SESSIONID: {STOLEN_SESSION_ID[:30]}...")
-    print(f"  - Flag embedded in: cookie value and attacker's response data")
+    print("  - Flag embedded in: cookie value and attacker's response data")
     print(f"  - Total packets: {len(packets)}")
 
 if __name__ == "__main__":

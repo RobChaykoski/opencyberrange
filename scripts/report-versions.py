@@ -54,7 +54,7 @@ def parse_requirements(path: Path) -> dict[str, str]:
         return versions
     for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
         line = line.strip()
-        if not line or line.startswith("#") or line.startswith("-"):
+        if not line or line.startswith(("#", "-")):
             continue
         match = REQUIREMENT_RE.match(line)
         if match:

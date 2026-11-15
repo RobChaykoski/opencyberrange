@@ -70,19 +70,21 @@ def db_slugs(psql_cmd):
     argv = shlex.split(psql_cmd) + ["-tAc"]
     argv.append(shlex.quote(SLUG_QUERY) if argv[0] == "ssh" else SLUG_QUERY)
     try:
-        out = subprocess.run(argv, capture_output=True, text=True, timeout=60)
+        out = subprocess.run(
+            argv, capture_output=True, text=True, timeout=60, check=False
+        )
     except (subprocess.SubprocessError, OSError) as exc:
-        print("  ! could not query the database: %s" % exc)
+        print(f"  ! could not query the database: {exc}")
         return None
     if out.returncode != 0:
-        print("  ! database query failed: %s" % (out.stderr or "").strip()[:200])
+        print(f"  ! database query failed: {(out.stderr or '').strip()[:200]}")
         return None
     return {line.strip() for line in out.stdout.splitlines() if line.strip()}
 
 
 def generator_slugs(courses_json):
     if not os.path.isfile(courses_json):
-        print("  ! no courses.json at %s" % courses_json)
+        print(f"  ! no courses.json at {courses_json}")
         return set(), {}
     with open(courses_json) as fh:
         entries = json.load(fh)
@@ -100,16 +102,16 @@ def built_slugs(build_context, remote):
     """
     course_dir = os.path.join(build_context, "wiki", "course")
     if remote:
-        script = ('for d in %s/*/; do [ -f "$d/index.html" ] && basename "$d"; done'
-                  % course_dir)
+        script = (f'for d in {course_dir}/*/; do [ -f "$d/index.html" ] && basename "$d"; done')
         out = subprocess.run(["ssh", remote, script],
-                             capture_output=True, text=True, timeout=60)
+                             capture_output=True, text=True, timeout=60,
+                             check=False)
         if out.returncode != 0:
-            print("  ! could not list %s on %s" % (course_dir, remote))
+            print(f"  ! could not list {course_dir} on {remote}")
         return {l.strip() for l in out.stdout.splitlines() if l.strip()}
 
     if not os.path.isdir(course_dir):
-        print("  ! no build context wiki dir at %s" % course_dir)
+        print(f"  ! no build context wiki dir at {course_dir}")
         return set()
     found = set()
     for name in sorted(os.listdir(course_dir)):
@@ -133,8 +135,7 @@ def main():
     args = ap.parse_args()
 
     print("wiki coverage")
-    print("  build context : %s%s" % (
-        (args.remote + ":") if args.remote else "", args.build_context))
+    print(f"  build context : {(args.remote + ':') if args.remote else ''}{args.build_context}")
 
     gen, configs = generator_slugs(args.courses_json)
     built = built_slugs(args.build_context, args.remote)
@@ -146,7 +147,7 @@ def main():
         return 0
 
     print()
-    print("  %-16s %-4s %-4s %-6s %s" % ("slug", "db", "gen", "built", "config"))
+    print(f"  {'slug':<16} {'db':<4} {'gen':<4} {'built':<6} config")
     print("  " + "-" * 62)
     broken = []
     for slug in every:
@@ -156,7 +157,7 @@ def main():
                "yes" if slug in gen else "no",
                "yes" if slug in built else "NO",
                configs.get(slug, ""))
-        print("  %-16s %-4s %-4s %-6s %s" % row)
+        print(f"  {row[0]:<16} {row[1]:<4} {row[2]:<4} {row[3]:<6} {row[4]}")
         if db is not None and slug in db and slug not in built:
             broken.append(slug)
 
@@ -165,18 +166,18 @@ def main():
         print("  database not consulted; pass --psql to check what students will request")
 
     if broken:
-        print("  BROKEN: %d course wiki(s) the database expects have no built output." % len(broken))
+        print(f"  BROKEN: {len(broken)} course wiki(s) the database expects have no built output.")
         for slug in broken:
-            print("     /wiki/course/%s/ will 404 for every enrolled student" % slug)
+            print(f"     /wiki/course/{slug}/ will 404 for every enrolled student")
         print("  Build it and sync it into the build context before building the frontend image.")
         return 1
 
     stale = sorted(built - gen)
     if stale:
-        print("  note: built but not in courses.json: %s" % ", ".join(stale))
+        print(f"  note: built but not in courses.json: {', '.join(stale)}")
     unbuilt = sorted(gen - built)
     if unbuilt:
-        print("  note: in courses.json but not built: %s" % ", ".join(unbuilt))
+        print(f"  note: in courses.json but not built: {', '.join(unbuilt)}")
     if db is None:
         print("  INCOMPLETE: config and build context compared, database not checked.")
         return 0

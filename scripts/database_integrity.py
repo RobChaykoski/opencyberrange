@@ -26,14 +26,14 @@ import hmac
 import json
 import os
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 try:
     import psycopg
     from psycopg import sql
     from psycopg.rows import dict_row
-except Exception as exc:  # pragma: no cover - only when run outside the image
+except Exception as exc:  # pragma: no cover - only when run outside the image  # noqa: BLE001  # optional import turns into an operator message
     raise SystemExit(f"psycopg is required: {exc}")
 
 CRITICAL_TABLES = [
@@ -161,11 +161,11 @@ def build_manifest(conn) -> dict:
         from app.version import APP_VERSION  # type: ignore
 
         release = APP_VERSION
-    except Exception:
+    except Exception:  # noqa: BLE001  # optional APP_VERSION import; env fallback
         release = os.environ.get("OCR_RELEASE", "unknown")
     return {
         "schema": 1,
-        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generated_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "database": os.environ.get("PGDATABASE") or "labdb",
         "release": release,
         "tables": tables,
@@ -519,7 +519,7 @@ def business_checks(conn, results: list[dict]):
     for check_id, severity, sql_text, detail in checks:
         try:
             n = count_sql(conn, sql_text)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001  # record the failed check and keep scanning
             add_check(results, check_id, "warning", 0, f"check could not run: {exc}")
             continue
         if n:
@@ -586,7 +586,7 @@ def run_quality(conn, as_json: bool) -> int:
     warning = sum(1 for row in results if row["severity"] == "warning")
     info = sum(1 for row in results if row["severity"] == "info")
     payload = {
-        "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "checked_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "critical": critical,
         "warning": warning,
         "info": info,
@@ -667,7 +667,7 @@ def run_dimensions(conn, as_json: bool = False) -> int:
     try:
         from app.services.db_integrity import LEDGER_TABLES
         expected_tables = list(LEDGER_TABLES)
-    except Exception:
+    except Exception:  # noqa: BLE001  # optional LEDGER_TABLES import; critical-table fallback
         expected_tables = list(CRITICAL_TABLES)
 
     def scalar(query: str, params: tuple = ()) -> Any:

@@ -46,7 +46,8 @@ def _is_dynamic(node: ast.AST) -> bool:
 
 def scan_file(path: str) -> list[tuple[int, str]]:
     try:
-        src = open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as handle:
+            src = handle.read()
         tree = ast.parse(src)
     except (SyntaxError, UnicodeDecodeError) as exc:
         return [(0, f"parse error: {exc}")]

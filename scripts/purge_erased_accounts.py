@@ -60,7 +60,7 @@ def main() -> int:
         from app.models import User
         from app.services.erasure import ErasureBlocked, erase_user
         from app.services.erasure_ledger import identifier_hashes, load_erased_hashes
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001  # lazy import failure prints operator guidance and exits 2
         print(
             "error: this script must run inside the OpenCyberRange backend "
             f"container (import failed: {exc})",
@@ -110,7 +110,7 @@ def main() -> int:
             except ErasureBlocked as exc:
                 failures += 1
                 print(f"  BLOCKED {username}: {exc.message}", file=sys.stderr)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001  # one account failure is counted; batch continues
                 failures += 1
                 print(f"  FAILED {username}: {exc}", file=sys.stderr)
 

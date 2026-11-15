@@ -1,7 +1,8 @@
 """Cascade Digital Media. Content Platform (vulnerable to directory traversal)"""
 
-from flask import Flask, request, send_file, abort
 import os
+
+from flask import Flask, abort, request, send_file
 
 app = Flask(__name__)
 
@@ -211,7 +212,7 @@ def media_download():
         return send_file(filepath, as_attachment=False)
     except FileNotFoundError:
         abort(404, f"Asset not found: {filename}")
-    except Exception:
+    except Exception:  # noqa: BLE001  # controlled 500 on any file-serve failure
         abort(500, "Internal server error")
 
 
@@ -229,7 +230,7 @@ def docs_fetch():
         return send_file(filepath, as_attachment=False)
     except FileNotFoundError:
         abort(404, f"Document not found: {filename}")
-    except Exception:
+    except Exception:  # noqa: BLE001  # controlled 500 on any file-serve failure
         abort(500, "Internal server error")
 
 
@@ -247,7 +248,7 @@ def api_export():
         return send_file(filepath, as_attachment=False)
     except FileNotFoundError:
         abort(404, f"Report not found: {filename}")
-    except Exception:
+    except Exception:  # noqa: BLE001  # controlled 500 on any file-serve failure
         abort(500, "Internal server error")
 
 

@@ -165,7 +165,7 @@ def page(title: str, body: str) -> str:
 
 
 def _session_token(user: str, role: str) -> str:
-    return base64.b64encode(f"{user}:{role}".encode("utf-8")).decode("ascii")
+    return base64.b64encode(f"{user}:{role}".encode()).decode("ascii")
 
 
 def _parse_session(value: str):
@@ -388,7 +388,7 @@ def oauth_me_body() -> str:
 
 
 def lifecycle_home_body() -> str:
-    return f"""
+    return """
       <span class="pill">Access review</span>
       <h1>Quarterly access review</h1>
       <p class="lede">A community centre is reviewing who can still reach its

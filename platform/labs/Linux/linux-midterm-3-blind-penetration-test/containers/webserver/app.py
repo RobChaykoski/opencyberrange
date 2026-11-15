@@ -7,7 +7,8 @@ assessment marker.
 """
 
 import os
-from flask import Flask, request, abort
+
+from flask import Flask, abort, request
 
 app = Flask(__name__)
 

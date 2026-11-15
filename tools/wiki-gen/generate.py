@@ -361,7 +361,8 @@ def _splice_nginx(blocks):
     for path in NGINX_CONFS:
         if not os.path.exists(path):
             continue
-        lines = open(path).read().splitlines(keepends=True)
+        with open(path) as handle:
+            lines = handle.read().splitlines(keepends=True)
         try:
             b = next(i for i, l in enumerate(lines) if begin in l)
             e = next(i for i, l in enumerate(lines) if end in l)
@@ -451,9 +452,14 @@ def cmd_check(against_dir, all_wikis):
     for name in names:
         if name.startswith("nginx:"):
             continue  # nginx splices are in-place edits, not files in the emit dir
-        new = open(os.path.join(tmp, name)).read()
+        with open(os.path.join(tmp, name)) as handle:
+            new = handle.read()
         old_path = os.path.join(against_dir, name)
-        old = open(old_path).read() if os.path.exists(old_path) else ""
+        if os.path.exists(old_path):
+            with open(old_path) as handle:
+                old = handle.read()
+        else:
+            old = ""
         if new != old:
             differs = True
             print(f"DRIFT: {name}")

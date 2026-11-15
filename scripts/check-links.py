@@ -193,16 +193,20 @@ def check_file(path: Path, anchors: bool, external: bool, timeout: float) -> lis
         if not resolved.exists():
             problems.append(f"{path}: missing target {target}")
             continue
-        if anchors and anchor and resolved.suffix.lower() == ".md":
-            if anchor not in anchors_for(resolved):
-                problems.append(f"{path}: missing anchor #{anchor} in {target}")
+        if (
+            anchors
+            and anchor
+            and resolved.suffix.lower() == ".md"
+            and anchor not in anchors_for(resolved)
+        ):
+            problems.append(f"{path}: missing anchor #{anchor} in {target}")
     return problems
 
 
 def check_mkdocs_nav(config_path: Path) -> list[str]:
     problems: list[str] = []
     try:
-        config = yaml.load(config_path.read_text(encoding="utf-8"), Loader=_DocsLoader) or {}
+        config = yaml.load(config_path.read_text(encoding="utf-8"), Loader=_DocsLoader) or {}  # security-delta: allow unsafe yaml load  # restricted docs-only loader
     except yaml.YAMLError as exc:
         return [f"{config_path}: invalid YAML: {exc}"]
 

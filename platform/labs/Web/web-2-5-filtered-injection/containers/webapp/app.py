@@ -1,7 +1,8 @@
 """TrueNorth Hosting. DNS Lookup Tool (vulnerable to newline injection)"""
 
-from flask import Flask, request
 import subprocess
+
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -177,16 +178,17 @@ def lookup():
     try:
         result = subprocess.run(
             f"nslookup {cleaned}",
-            shell=True,
+            shell=True,  # security-delta: allow shell execution  # command-injection lab input
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
+            check=False,
         )
         output = result.stdout + result.stderr
     except subprocess.TimeoutExpired:
         output = "Request timed out."
-    except Exception as e:
-        output = f"Error: {str(e)}"
+    except Exception as e:  # noqa: BLE001  # show the lookup error, keep the app up
+        output = f"Error: {e!s}"
 
     return f"""<!DOCTYPE html>
 <html lang="en">

@@ -10,7 +10,6 @@ students analyze; the generator is not shipped in the evidence container.
 """
 import audioop
 import os
-import struct
 import wave
 
 from scapy.all import IP, UDP, Raw, wrpcap

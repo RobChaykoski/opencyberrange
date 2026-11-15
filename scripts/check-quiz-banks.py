@@ -25,7 +25,7 @@ def validate(path: Path) -> list[str]:
     errors: list[str] = []
     try:
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001  # parse failures are returned as validation errors
         return [f"cannot parse: {exc}"]
     if not isinstance(data, dict):
         return ["top level must be a mapping"]

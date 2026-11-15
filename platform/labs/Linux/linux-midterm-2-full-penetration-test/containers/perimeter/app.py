@@ -5,8 +5,9 @@ A deliberately vulnerable Flask application with command injection on /healthche
 The .env file in the same directory leaks SSH credentials for the core server.
 """
 
-from flask import Flask, request
 import subprocess
+
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -205,16 +206,17 @@ def healthcheck():
     try:
         r = subprocess.run(
             f"ping -c 1 -W 2 {host}",
-            shell=True,
+            shell=True,  # security-delta: allow shell execution  # lab health check; the input is the exercise
             capture_output=True,
             text=True,
-            timeout=8
+            timeout=8,
+            check=False,
         )
         out = r.stdout + r.stderr
     except subprocess.TimeoutExpired:
         out = "Request timed out."
-    except Exception as e:
-        out = f"Error: {str(e)}"
+    except Exception as e:  # noqa: BLE001  # show the error in the health page, keep the app up
+        out = f"Error: {e!s}"
 
     return f"""<!DOCTYPE html>
 <html lang="en">

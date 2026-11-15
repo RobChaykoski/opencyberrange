@@ -29,7 +29,7 @@ def load_services(compose_path: str) -> dict:
         with open(compose_path, encoding="utf-8") as handle:
             compose = yaml.safe_load(handle) or {}
         return compose.get("services") or {}
-    except Exception:
+    except Exception:  # noqa: BLE001, S110  # PyYAML is optional; use the line-parser fallback
         pass
 
     services: dict[str, dict] = {}

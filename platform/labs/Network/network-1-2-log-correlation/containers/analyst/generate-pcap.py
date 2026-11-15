@@ -15,10 +15,7 @@ The PCAP contains:
 Uses scapy to construct packets with proper protocol dissection support.
 """
 
-from scapy.all import (
-    Ether, IP, TCP, UDP, DNS, DNSQR, Raw,
-    wrpcap
-)
+from scapy.all import DNS, DNSQR, IP, TCP, UDP, Ether, Raw, wrpcap
 
 # -- Network topology ---------------------------------------------------------
 ATTACKER    = "10.30.1.105"       # Attacker IP
@@ -344,6 +341,6 @@ add_pkt(
 
 wrpcap("/home/analyst/evidence/capture.pcap", pkts)
 print(f"[+] Generated capture.pcap with {len(pkts)} packets")
-print(f"[+] IOC 1 (HTTP POST token): c0rr3l4t3")
-print(f"[+] IOC 2 (FTP password):    l0g")
-print(f"[+] IOC 3 (DNS exfil label):  hunt")
+print("[+] IOC 1 (HTTP POST token): c0rr3l4t3")
+print("[+] IOC 2 (FTP password):    l0g")
+print("[+] IOC 3 (DNS exfil label):  hunt")

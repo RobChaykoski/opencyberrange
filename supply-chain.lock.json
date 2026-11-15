@@ -49,7 +49,7 @@
       "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "630cc17b3bd090cc11a5a8ea955f1c47a28442b1f4914a89d013ff98d41d795b"
+      "sha256": "0962e743d6d208231ceb1c6cee7682f2037638740d4f4f77bf3a2014903daf26"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
@@ -109,13 +109,13 @@
       "sha256": "1669ff84cb7e69ec11f35e115c8e1c7ef51a32d3ea7302c46946e97db8a77fb9"
     },
     "scripts/check-licences.py": {
-      "sha256": "11b207a9b1fc54856e82330c39cb3ce498488717c29edb54386c574f3456bbda"
+      "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
     },
     "scripts/create-lab.py": {
       "sha256": "2002b63a342ca1634295cd4ea79c73268893968fe51baaca86ceca3110b1fcf0"
     },
     "scripts/database_integrity.py": {
-      "sha256": "4bc6ff9c6b308482996b3b91e4538df91f60b74123c6c372a545da3786bfd11e"
+      "sha256": "5a7d3481a544fdf68dffbcac7dc8d166a882a046c295cc87af3b3e1065868967"
     },
     "scripts/db-integrity-check.sh": {
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
@@ -130,7 +130,7 @@
       "sha256": "f259f1f15414516855b83d07fafa1aa980784f5b489ce0ca5da10a31ea662c4c"
     },
     "scripts/lab_build_hash.py": {
-      "sha256": "6094d8d5f8bb147799b981274db9afba3789a217ba812f1a57a429630d6b989d"
+      "sha256": "47f9b084a529c6ef0460cdb0895f0b90d3adf18c6c37ecf97b4f34bfabe952cf"
     },
     "scripts/prebuild-labs.sh": {
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
@@ -184,7 +184,7 @@
       ]
     },
     "forensics-2-1-voip-call-reconstruction": {
-      "content_hash": "eec780405aba041f91c9a90007496773cefd01542c7f2962890997150e8c4cca",
+      "content_hash": "31f076f6621f11548e1307f10795ebe36822b3033cf308003e36ffe53b51f544",
       "services": [
         "evidence"
       ]
@@ -328,7 +328,7 @@
       ]
     },
     "linux-1-1-ssh-service-detection": {
-      "content_hash": "f618d494f692d60d918b55c522b2cb0dfd59481b583b03b6d028b8d0e0b0ad2d",
+      "content_hash": "db34068a3813619a3abe2e7b909f702077689d04737f156065bf106bcff87fcd",
       "services": [
         "target"
       ]
@@ -475,7 +475,7 @@
       ]
     },
     "linux-4-3-three-hop-pivot": {
-      "content_hash": "0a9992e2f8db4d1b25ddd68e775de88b1169958005e816cda4991239c8aae8ac",
+      "content_hash": "4e5dd7b016c276209e38b1272d13db9d9e810232692f4fa7330be5366756bdd4",
       "services": [
         "host-a",
         "host-b",
@@ -497,7 +497,7 @@
       ]
     },
     "linux-5-5-capstone-ctf": {
-      "content_hash": "11ba021bd018e53ab7f32502e20f1f7359c783c5bbe7e29a12ec5af7a4955cc6",
+      "content_hash": "75d6a264e844736d6ee221940427e3807176d46e8e23b10f70db7f75e2321b89",
       "services": [
         "appserver",
         "datastore",
@@ -513,7 +513,7 @@
       ]
     },
     "linux-5-7-black-box-ctf": {
-      "content_hash": "1b7e7dd7b1d12a3d27f42d7d060fc1c55d2e85185e1792c7d82d2ef82a3c5188",
+      "content_hash": "960db4258c413d9cadcba8c49772bdc4f477ce2fe205387c15b40d5d7373e7ff",
       "services": [
         "server-alpha",
         "server-bravo",
@@ -535,35 +535,35 @@
       ]
     },
     "linux-final-1-branch-office-practice": {
-      "content_hash": "216fe6ca2f215a34b9d3c54c603073a083972c73dd6e5de9c6921757c53a541b",
+      "content_hash": "7763af7874713b3ab0b6c120241d8c4fa34d4607c7603f116d28512de0a8ddbd",
       "services": [
         "branch-fs",
         "branch-portal"
       ]
     },
     "linux-final-2-clinic-final": {
-      "content_hash": "46c1fb288d4a2e1c7ddb9423a5247e535af5e8e35ec340c1e79886284d95ae80",
+      "content_hash": "5e5655e7c2e1d7c3480ad307f342d129835bc128f0c3b81a2ccd01a0be2c1ac5",
       "services": [
         "clinic-fs",
         "clinic-portal"
       ]
     },
     "linux-final-3-architecture-mock": {
-      "content_hash": "8e855fac9681b389a9a612049e1e6138b8d7a79c67ea93cbbf612c5581f91923",
+      "content_hash": "ffc9ebc862704b07b886dd50f50e8715e14837f8c47a9202ac632fc8aaabaa71",
       "services": [
         "kestrel-fs",
         "kestrel-portal"
       ]
     },
     "linux-midterm-2-full-penetration-test": {
-      "content_hash": "c487b1a18d1e84c2e249d500e3a5c6258bce3fabbb3d520b088dccd035be5886",
+      "content_hash": "36e678e6cdb2ac8da3d406cbfffb0fba6bc5d6b78a18e8e961cbd7e0931debee",
       "services": [
         "core",
         "perimeter"
       ]
     },
     "linux-midterm-3-blind-penetration-test": {
-      "content_hash": "7dda7325d4484f72822cdf386e5b9641530a27b97c7b316b842f29fd94049764",
+      "content_hash": "8d7df12e5d8c35bf65f2eb53affa25847dad9780fe263bba0ecfcec0bbb40736",
       "services": [
         "backend",
         "webserver"
@@ -576,19 +576,19 @@
       ]
     },
     "malware-1-2-strings-static-analysis": {
-      "content_hash": "4a7b57ff43f2185712f18cb65ab932b42b68d65249a86c18b5128634e942d487",
+      "content_hash": "ae6d143aa97297be30102a1c1c329f2f61433bbd7772b5fc88fefba04ea4488c",
       "services": [
         "evidence"
       ]
     },
     "malware-1-3-ghidra-static-reversing": {
-      "content_hash": "e25269135fefc4e6bba6f16c959d218ac083777594f6d74f170b6ddd8868d837",
+      "content_hash": "836d71e4f5c49f4c403d5ad566bc0bccf16ec6a765f5b289b31863641072f1aa",
       "services": [
         "evidence"
       ]
     },
     "malware-1-4-c2-pcap-wireshark": {
-      "content_hash": "f3b7d497a2f3cb39898c232bc8ce23ba6b4800db68bc29c46e91f3627caacd86",
+      "content_hash": "2a2cd9e15d495451b413ee4de50bfe8c590bbfed9438b46a425cccda8d3e1f17",
       "services": [
         "evidence"
       ]
@@ -615,7 +615,7 @@
       ]
     },
     "malware-2-1-pe-header-analysis": {
-      "content_hash": "0f0adede3512ef8199f0bf9e06b4abda965f1ca36ae3540985fb42f367950be6",
+      "content_hash": "265e25bf4cf798c284db7aa697c2dd823a8a9a4f945924a62e9df2810639ac18",
       "services": [
         "evidence"
       ]
@@ -683,7 +683,7 @@
       ]
     },
     "network-1-1-packet-capture-analysis": {
-      "content_hash": "49e3c906acb0911c08eb832ff763dd23a6708883dcb740fde86599823b0f3daf",
+      "content_hash": "60468f25a4447a767e3c714bea976eadbf68cee4cc0e7b9ace102ccc7a4695e6",
       "services": [
         "analyst"
       ]
@@ -695,13 +695,13 @@
       ]
     },
     "network-1-2-http-traffic-analysis": {
-      "content_hash": "baa582630581c22ee6069723f27b00cab78ddda575ca5bdf80c6ff768fcafa75",
+      "content_hash": "a6f8d6da65faef78b809b613d28ca4466c499e2656e1be4dd9a650ce8ea36c37",
       "services": [
         "target"
       ]
     },
     "network-1-2-log-correlation": {
-      "content_hash": "6a7bb3edd088956a10d39e15d609fd22bd7a53539570138c1bed35e5c2d23021",
+      "content_hash": "abdc760baa5f3cd2c826cffeeef8ddf39d4dc0facc20e8445d9ccac6690e5dd6",
       "services": [
         "analyst"
       ]
@@ -713,7 +713,7 @@
       ]
     },
     "network-1-4-failed-login-analysis": {
-      "content_hash": "fdbf3ed0e428057a0ef1e21927f9b8403b193224ab4967155e8d5d073e13e63e",
+      "content_hash": "23b97fd629600266574b27f1b93342a3c31e2ff0d4469f1b5d0ac6f5d4525ac1",
       "services": [
         "target"
       ]
@@ -757,31 +757,31 @@
       ]
     },
     "network-2-1-ftp-credential-extraction": {
-      "content_hash": "af279adebd8ec17deaa557bbf21abef954f8e6de49e1a75154b244f5bed75289",
+      "content_hash": "4d58c517e6cc61c75152d135a0add328373be5368258d90928aff73bab812d9c",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-2-smtp-email-analysis": {
-      "content_hash": "b1afad13a29e40dfa0ecae79a06e311bdf4110c73854794b22dd4bcbb9bd3f0a",
+      "content_hash": "9a96bcb35ae136139aa2680e21ddc20e4b0d32a4009f7c7620b1334564d573eb",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-3-http-session-hijacking": {
-      "content_hash": "67643bb54164d0aee813f4e0d1dfce0dd235b7fb229369c7464a71fc279e19f5",
+      "content_hash": "64984c84573c7e2473c72ee2c1606b7f87ff188a9e2d71ad1ae12a91d5dd7cfc",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-4-dns-exfiltration": {
-      "content_hash": "6cf148b8c355c1776901ee0602cfbf9673cf01afd33fb840b5a1a0f7f816f9c5",
+      "content_hash": "6c41d196f13e77d7070d4450705b3cb13420fa8d96ec4e975f3d2763dfa0493f",
       "services": [
         "analyst-workstation"
       ]
     },
     "network-2-5-attack-chain-analysis": {
-      "content_hash": "1cf58b643ea458fb012d5dcae7331dc52f4255071a6a7b1b21354bdbbb9bfc80",
+      "content_hash": "f2c4ece4eb9d0315030c72f971f0378db2cdf7f4a720958310f59c913142c5f6",
       "services": [
         "network-2-5"
       ]
@@ -842,7 +842,7 @@
       ]
     },
     "ot-1-1-modbus-register-analysis": {
-      "content_hash": "5801c0a7ae7ec31baa447bcec7277e18c8226e89f14894be6915089b4aa354f0",
+      "content_hash": "d193b247c684ae4929ec3006de1c31375b97718364a2b54c0cca9983e42c7d81",
       "services": [
         "plc"
       ]
@@ -854,7 +854,7 @@
       ]
     },
     "ot-1-3-modbus-gateway-bypass": {
-      "content_hash": "abdfbd68fef0bc42559418b7ccd2c1b1dce0875059c6bd636668d6264c783157",
+      "content_hash": "d68073fe092e4abfc01282b9c763927792d94eb56fa1474c93a2495e68992e8b",
       "services": [
         "gateway",
         "plc"
@@ -917,13 +917,13 @@
       ]
     },
     "web-1-7-directory-traversal": {
-      "content_hash": "8aa5e8ec843208f2a530891158180f5261a0f38e8da4b0b209e4c834e2e59a85",
+      "content_hash": "dac8fe51ad697b21e2f16dacb1752e1b608cff6ee8fc70e26499d2b0b14ef3c5",
       "services": [
         "webapp"
       ]
     },
     "web-1-8-traversal-scavenger-hunt": {
-      "content_hash": "c835a48cbd6ed2f3f37914c6c052eafe8288f4c0d56fba8ae47805c53405f196",
+      "content_hash": "dac33a69900774cfdcf6cedbcc6fdc27aa47a55d9c74514d1860035343e6c8b1",
       "services": [
         "webapp"
       ]
@@ -936,13 +936,13 @@
       ]
     },
     "web-2-2-insecure-api-endpoints": {
-      "content_hash": "42004f11dcc21534b639dacf5ebb4618d0649284bd3bf99c229538563b03cbaa",
+      "content_hash": "439cb958e7e4671a4e3782084fb59e1ea4cce75d26d4d9915b9b73558779cfaa",
       "services": [
         "webapp"
       ]
     },
     "web-2-3-command-injection": {
-      "content_hash": "d4b546900b4fba0448e97848c93c8206d7b8270912afe658e296916a175191a2",
+      "content_hash": "a905ad88ed4cb9f358196564732ac468d2556a044a98ac7078b5cfdf5a09ed22",
       "services": [
         "webapp"
       ]
@@ -955,27 +955,27 @@
       ]
     },
     "web-2-5-filtered-injection": {
-      "content_hash": "c040328613fb3587b37fd87493803a6a4f9bf56b4ed600d166d93aa06837a043",
+      "content_hash": "4e76518cddb8545c647a039b2320d72f3870881da508aa073ac53395d3ecc317",
       "services": [
         "webapp"
       ]
     },
     "web-3-1-hidden-login-discovery": {
-      "content_hash": "69baf979b414c52d802cafb5c1cdaed8856d3a0e4041922da481cd3c66a18145",
+      "content_hash": "2acd9a80ffd58c2d754b95622d4c4c1a87db8131dc47237570e5a1d5cec22eb2",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-2-sql-injection-to-shell": {
-      "content_hash": "278f0b4964cad405ebfd76a568752220d02387f770c56cdca2ad7b4b619d005b",
+      "content_hash": "35adf5bd014da78c87d31b6d25bd34e4861f506f679275a7e54b107805f6feae",
       "services": [
         "dbserver",
         "webapp"
       ]
     },
     "web-3-3-full-web-to-root": {
-      "content_hash": "5519b62855c155e1ac11c2e8ce76312effd2bb61382dc9691e60eafc08754e5b",
+      "content_hash": "5359558b00f00bc9d50d0c94f517f4c1bd197a1aa3872e02ecb548bcd0056429",
       "services": [
         "dbserver",
         "internal",
@@ -1162,7 +1162,7 @@
       ]
     },
     "windows-5-2-winrm-version-and-configuration-enumeration": {
-      "content_hash": "01d7b1e9f8652f08472fcf95a189efdb91b768ed48222a83b24c9d9eebbf0bfa",
+      "content_hash": "523c23f9594175d563e3a07d3d4c9365b1e1ac83e4081f604ba710739fe26f0f",
       "services": [
         "target"
       ]

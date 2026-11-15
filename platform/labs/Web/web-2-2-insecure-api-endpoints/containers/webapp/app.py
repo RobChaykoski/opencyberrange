@@ -1,6 +1,6 @@
 """Metro Transit Authority. Public REST API (broken access controls)"""
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 

@@ -8,11 +8,12 @@ Multi-Stage Attack Chain PCAP Generator
 Creates realistic network traffic showing a complete cyber attack from initial access to data exfiltration
 """
 
-from scapy.all import *
 import random
 import struct
 import sys
-import datetime
+
+from scapy.all import *
+
 
 def generate_attack_pcap(output_file):
     """Generate PCAP file with complete multi-stage attack chain"""
@@ -25,7 +26,6 @@ def generate_attack_pcap(output_file):
     file_server = "10.0.10.50"         # Patient records file server
     domain_controller = "10.0.10.5"    # Active Directory server
     dns_server = "10.0.10.1"           # Internal DNS
-    gateway = "10.0.10.1"              # Default gateway
 
     # Other internal hosts for background traffic
     internal_hosts = [
@@ -159,7 +159,7 @@ Connection: keep-alive\r
     current_time += 0.5
 
     # HTTP 200 OK response with executable
-    http_response = f"""HTTP/1.1 200 OK\r
+    http_response = """HTTP/1.1 200 OK\r
 Content-Type: application/octet-stream\r
 Content-Length: 2457600\r
 Content-Disposition: attachment; filename="system-update.exe"\r
@@ -247,7 +247,7 @@ Server: nginx/1.18.0\r
         beacon_count += 1
 
     print(f"    Generated {beacon_count} C2 beacons to {c2_domain} ({c2_ip})")
-    print(f"    Beacon interval: 5 minutes")
+    print("    Beacon interval: 5 minutes")
 
     # ========================================================================
     # PHASE 3: CREDENTIAL HARVESTING - SMB Brute Force (T+90 minutes)
@@ -307,7 +307,7 @@ Server: nginx/1.18.0\r
     smb_success.time = current_time + 0.02
     packets.append(smb_success)
 
-    print(f"    Successful authentication achieved")
+    print("    Successful authentication achieved")
 
     # ========================================================================
     # PHASE 4: LATERAL MOVEMENT - Access File Server (T+120 minutes)
@@ -355,8 +355,8 @@ Server: nginx/1.18.0\r
         packets.append(file_response)
 
     print(f"    Accessed file server: {file_server}")
-    print(f"    Share: \\\\FILESERVER\\PatientRecords$")
-    print(f"    Files enumerated: 10+")
+    print("    Share: \\\\FILESERVER\\PatientRecords$")
+    print("    Files enumerated: 10+")
 
     # ========================================================================
     # PHASE 5: DATA EXFILTRATION - FTP Upload (T+180 minutes)
@@ -460,7 +460,7 @@ Server: nginx/1.18.0\r
     packets.append(ftp_data_synack)
 
     # Large file transfer (simulated with multiple data packets)
-    print(f"    Uploading: patient-records-OCR{{full_4tt4ck_ch41n_m4pp3d}}.zip")
+    print("    Uploading: patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip")
     print(f"    Destination: {exfil_server}:21 (FTP)")
 
     for i in range(20):
@@ -490,14 +490,14 @@ Server: nginx/1.18.0\r
     ftp_goodbye.time = current_time + 21.05
     packets.append(ftp_goodbye)
 
-    print(f"    File size: ~15 MB (patient database export)")
-    print(f"    FLAG EMBEDDED IN FILENAME!")
+    print("    File size: ~15 MB (patient database export)")
+    print("    FLAG EMBEDDED IN FILENAME!")
 
     # ========================================================================
     # Add some post-exfiltration normal traffic to make it realistic
     # ========================================================================
     current_time += 300
-    print(f"\n[*] Adding post-exfiltration cleanup traffic...")
+    print("\n[*] Adding post-exfiltration cleanup traffic...")
 
     for i in range(30):
         src_host = random.choice(internal_hosts + [victim_workstation])
@@ -518,7 +518,7 @@ Server: nginx/1.18.0\r
     hours = total_duration // 3600
     minutes = (total_duration % 3600) // 60
 
-    print(f"\n[*] Attack Timeline Summary:")
+    print("\n[*] Attack Timeline Summary:")
     print(f"    Total duration: {hours}h {minutes}m")
     print(f"    Total packets: {len(packets)}")
     print(f"    Compromised host: {victim_workstation}")
@@ -528,23 +528,23 @@ Server: nginx/1.18.0\r
 
     wrpcap(output_file, packets)
 
-    print(f"[+] PCAP generated successfully!")
+    print("[+] PCAP generated successfully!")
     print()
-    print(f"[+] Key Indicators of Compromise (IOCs):")
+    print("[+] Key Indicators of Compromise (IOCs):")
     print(f"    - Malicious domain: {malicious_domain} ({malicious_ip})")
     print(f"    - C2 server: {c2_domain} ({c2_ip})")
     print(f"    - Exfiltration server: {exfil_server}")
-    print(f"    - Malicious file: system-update.exe")
-    print(f"    - Exfiltrated file: patient-records-OCR{{full_4tt4ck_ch41n_m4pp3d}}.zip")
+    print("    - Malicious file: system-update.exe")
+    print("    - Exfiltrated file: patient-records-OCR{full_4tt4ck_ch41n_m4pp3d}.zip")
     print()
-    print(f"[+] Attack Chain Stages:")
-    print(f"    1. Initial Access: T+30min (HTTP malware download)")
-    print(f"    2. C2 Communication: T+45min (HTTPS beaconing every 5min)")
-    print(f"    3. Credential Harvesting: T+90min (SMB brute force)")
-    print(f"    4. Lateral Movement: T+120min (SMB to file server)")
-    print(f"    5. Data Exfiltration: T+180min (FTP upload)")
+    print("[+] Attack Chain Stages:")
+    print("    1. Initial Access: T+30min (HTTP malware download)")
+    print("    2. C2 Communication: T+45min (HTTPS beaconing every 5min)")
+    print("    3. Credential Harvesting: T+90min (SMB brute force)")
+    print("    4. Lateral Movement: T+120min (SMB to file server)")
+    print("    5. Data Exfiltration: T+180min (FTP upload)")
     print()
-    print(f"[+] Flag location: Embedded in FTP STOR command filename")
+    print("[+] Flag location: Embedded in FTP STOR command filename")
 
 if __name__ == "__main__":
     output = sys.argv[1] if len(sys.argv) > 1 else "full-attack.pcap"

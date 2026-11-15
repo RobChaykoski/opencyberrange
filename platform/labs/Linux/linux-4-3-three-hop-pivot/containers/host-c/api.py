@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Meridian Trust Bank. Core Banking API (simulated)."""
 
-from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-API_KEY = "MTB_k3y_h0p_l4t3r4l"
+API_KEY = "MTB_k3y_h0p_l4t3r4l"  # security-delta: allow credential-like assignment  # demo lab credential
 LISTEN_PORT = 8080
 
 
@@ -13,7 +13,6 @@ class MeridianAPIHandler(BaseHTTPRequestHandler):
 
     def log_message(self, format, *args):
         """Suppress default request logging."""
-        pass
 
     def _send_json(self, status, data):
         self.send_response(status)

@@ -5,7 +5,7 @@ A deliberately vulnerable Flask application for the Hidden Login Discovery lab.
 Contains a hidden staff portal with default credentials and leaked DB config.
 """
 
-from flask import Flask, request, redirect, make_response, url_for
+from flask import Flask, make_response, redirect, request
 
 app = Flask(__name__)
 

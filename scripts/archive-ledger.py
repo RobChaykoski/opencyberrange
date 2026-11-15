@@ -28,13 +28,13 @@ import hmac
 import json
 import os
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 try:
     import psycopg
     from psycopg.rows import dict_row
-except Exception as exc:  # pragma: no cover
+except Exception as exc:  # pragma: no cover  # noqa: BLE001  # optional import turns into an operator message
     raise SystemExit(f"psycopg is required: {exc}")
 
 COLUMNS = (
@@ -76,7 +76,7 @@ def ledger_triggers(conn) -> list[str]:
 
 def archive(args) -> int:
     before = date.fromisoformat(args.before)
-    keep_cutoff = datetime.now(timezone.utc).date() - timedelta(days=args.keep_days)
+    keep_cutoff = datetime.now(UTC).date() - timedelta(days=args.keep_days)
     if before > keep_cutoff:
         raise SystemExit(
             f"refusing to archive after {keep_cutoff}: keep at least {args.keep_days} days"
@@ -139,7 +139,7 @@ def archive(args) -> int:
 
         manifest = {
             "schema": 1,
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "before": before.isoformat(),
             "chunk_days": args.chunk_days,
             "keep_days": args.keep_days,

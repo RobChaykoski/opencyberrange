@@ -8,11 +8,13 @@ Generate realistic PCAP file with SMTP email traffic including data exfiltration
 Includes 3-4 hours of network traffic with multiple emails and distractors.
 """
 
-from scapy.all import *
-from scapy.layers.inet import IP, TCP, UDP
-from scapy.layers.dns import DNS, DNSQR, DNSRR
 import random
 import sys
+
+from scapy.all import *
+from scapy.layers.dns import DNS, DNSQR
+from scapy.layers.inet import IP, TCP, UDP
+
 
 def tcp_handshake(packets, timestamp, src_ip, dst_ip, sport, dport):
     """Generate TCP 3-way handshake."""
@@ -74,9 +76,9 @@ def generate_legitimate_email(packets, base_time, offset_minutes, src_ip, smtp_s
         "S: 250-mail.medicare.local",
         "S: 250-SIZE 10240000",
         "S: 250 HELP",
-        f"C: MAIL FROM:<nurse@medicare.local>",
+        "C: MAIL FROM:<nurse@medicare.local>",
         "S: 250 OK",
-        f"C: RCPT TO:<doctor@medicare.local>",
+        "C: RCPT TO:<doctor@medicare.local>",
         "S: 250 OK",
         "C: DATA",
         "S: 354 End data with <CR><LF>.<CR><LF>",
@@ -228,9 +230,9 @@ def main(output_file):
 
     wrpcap(output_file, packets)
     print("PCAP file created successfully!")
-    print(f"Suspicious email timestamp: ~2 hours into capture (16:15)")
-    print(f"Look for external recipient: external.contact@protonmail.com")
-    print(f"Flag in email body: OCR{{smtp_d4t4_3xf1ltr4t10n}}")
+    print("Suspicious email timestamp: ~2 hours into capture (16:15)")
+    print("Look for external recipient: external.contact@protonmail.com")
+    print("Flag in email body: OCR{smtp_d4t4_3xf1ltr4t10n}")
 
 if __name__ == "__main__":
     output = sys.argv[1] if len(sys.argv) > 1 else "email-exfiltration.pcap"

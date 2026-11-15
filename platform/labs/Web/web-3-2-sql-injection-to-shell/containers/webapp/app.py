@@ -7,8 +7,9 @@ making it vulnerable to UNION-based SQL injection.
 """
 
 import time
+
 import pymysql as MySQLdb  # PyMySQL is MIT; keeps the MySQLdb-compatible API.
-from flask import Flask, request, redirect, make_response
+from flask import Flask, make_response, redirect, request
 
 app = Flask(__name__)
 
@@ -315,7 +316,7 @@ def portal_do_login():
 
         return redirect("/portal/?error=1")
 
-    except Exception:
+    except Exception:  # noqa: BLE001  # login failure redirects; do not leak a stack
         return redirect("/portal/?error=1")
 
 

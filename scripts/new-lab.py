@@ -465,6 +465,7 @@ def main():
         result = subprocess.run(
             [sys.executable, str(VALIDATOR), str(lab_dir), "--labs-dir", str(labs_dir)],
             cwd=str(REPO_ROOT),
+            check=False,
         )
     except OSError as exc:
         print(f"Could not run validator: {exc}", file=sys.stderr)

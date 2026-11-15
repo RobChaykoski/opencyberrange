@@ -21,7 +21,7 @@ rows = []
 for lab_yaml in sorted(LABS.rglob("lab.yaml")):
     try:
         data = yaml.safe_load(lab_yaml.read_text(encoding="utf-8")) or {}
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001  # bad lab.yaml is warned and skipped
         print(f"warning: could not parse {lab_yaml}: {exc}", file=sys.stderr)
         continue
     workbook = str(data.get("workbook") or "").strip()

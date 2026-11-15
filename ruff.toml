@@ -1,0 +1,13 @@
+# Repository lint scope.
+#
+# The `.opencode/` directory holds vendored OpenCode skills and their own
+# tooling/notices. They are third-party code: rewriting them with ruff would
+# fork them from their upstream and invalidate their notices, so they are
+# excluded from the repository lint pass.
+#
+# `backups/` may contain older copies of the repository (including Python
+# files) and is not source.
+extend-exclude = [
+    ".opencode",
+    "backups",
+]

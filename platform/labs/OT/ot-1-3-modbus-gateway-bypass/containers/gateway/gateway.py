@@ -56,7 +56,7 @@ def handle(client):
         while True:
             try:
                 header = recv_exact(client, 7)
-            except (ConnectionError, socket.timeout):
+            except (TimeoutError, ConnectionError):
                 break
             length = struct.unpack(">H", header[4:6])[0]
             pdu = recv_exact(client, max(length - 1, 1))

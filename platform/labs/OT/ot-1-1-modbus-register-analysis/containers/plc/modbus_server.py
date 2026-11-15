@@ -6,11 +6,14 @@ register). A handful of decoy registers and a coil bank make the device look
 like a real controller. Students enumerate the register map with mbpoll or
 pymodbus and decode the marker.
 """
-import time
 
-from pymodbus.server import StartTcpServer
-from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
+from pymodbus.datastore import (
+    ModbusSequentialDataBlock,
+    ModbusServerContext,
+    ModbusSlaveContext,
+)
 from pymodbus.device import ModbusDeviceIdentification
+from pymodbus.server import StartTcpServer
 
 FLAG = "OCR{m0dbu5_r3g15t3r5_r3v34l3d}"
 

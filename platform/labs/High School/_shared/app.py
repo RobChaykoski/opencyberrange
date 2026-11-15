@@ -26,8 +26,8 @@ import io
 import json
 import os
 import zipfile
-from urllib.parse import parse_qs, quote
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, quote
 
 MODE = os.environ.get("LAB_MODE", "welcome")
 FLAG = os.environ.get("FLAG", "OCR{rangebox_flag_not_set}")
@@ -185,7 +185,7 @@ grep -R "OCR{" evidence</pre>
 
 
 def network_body() -> str:
-    return f"""
+    return """
       <span class="pill">Network basics</span>
       <h1>Ask a service how it is doing</h1>
       <p class="lede">Every web request has a request and a response. Response
@@ -214,7 +214,7 @@ def network_body() -> str:
 
 
 def browser_body() -> str:
-    return f"""
+    return """
       <span class="pill">Browser basics</span>
       <h1>The page is not the whole story</h1>
       <p class="lede">A web page is delivered as text. The browser turns that text
@@ -635,7 +635,7 @@ MFA_ANSWER = "The Lantern Keeper"
 
 
 def mfa_home_body() -> str:
-    return f"""
+    return """
       <span class="pill">Identity</span>
       <h1>MFA and the lost phone</h1>
       <p class="lede">A community centre volunteer lost their phone. The account
@@ -690,7 +690,7 @@ def mfa_login_body(error: str = "") -> str:
 
 
 def mfa_mfa_body() -> str:
-    return f"""
+    return """
       <span class="pill">Second factor</span>
       <h1>Enter your authenticator code</h1>
       <div class="card">
@@ -711,7 +711,7 @@ def mfa_mfa_body() -> str:
 
 
 def mfa_staff_body() -> str:
-    return f"""
+    return """
       <span class="pill">Directory</span>
       <h1>Community centre staff</h1>
       <p class="lede">These public profiles help visitors put a name to a role.
@@ -1141,7 +1141,7 @@ def access_log() -> str:
         '203.0.113.66 - - [18/Mar/2026:09:12:10 +0000] "GET /admin HTTP/1.1" 404 189 "-" "sqlmap/1.8"',
         '203.0.113.66 - - [18/Mar/2026:09:12:13 +0000] "GET /wp-login.php HTTP/1.1" 404 189 "-" "sqlmap/1.8"',
         '203.0.113.66 - - [18/Mar/2026:09:12:17 +0000] "GET /backup.sql HTTP/1.1" 404 189 "-" "sqlmap/1.8"',
-        '203.0.113.66 - - [18/Mar/2026:09:12:22 +0000] "GET /admin?token=' + FLAG + ' HTTP/1.1" 200 512 "-" "sqlmap/1.8"',
+        '203.0.113.66 - - [18/Mar/2026:09:12:22 +0000] "GET /admin?token=' + FLAG + ' HTTP/1.1" 200 512 "-" "sqlmap/1.8"',  # security-delta: allow credential-like assignment  # simulated access log
         '10.0.40.22 - - [18/Mar/2026:09:14:51 +0000] "GET /schedule HTTP/1.1" 200 1203 "-" "Mozilla/5.0"',
         '10.0.40.31 - - [18/Mar/2026:09:16:08 +0000] "GET /health HTTP/1.1" 200 32 "-" "curl/8.5.0"',
         '10.0.40.15 - - [18/Mar/2026:09:18:33 +0000] "GET / HTTP/1.1" 200 512 "-" "Mozilla/5.0"',

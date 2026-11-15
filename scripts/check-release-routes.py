@@ -13,7 +13,11 @@ Every route it lists under "NOT obviously tier" needs a human decision. Routes
 belonging to a feature the release excludes on purpose (Exercise Studio) show
 up here too, which is correct: the point is that a person confirms each one.
 """
-import ast, io, os, sys, re
+import ast
+import os
+import re
+import sys
+
 dev, rel = sys.argv[1], sys.argv[2]
 def routes(root):
     out = {}
@@ -23,8 +27,11 @@ def routes(root):
         for fn in files:
             if not fn.endswith(".py"): continue
             fp = os.path.join(dirpath, fn)
-            try: tree = ast.parse(io.open(fp, encoding="utf-8").read())
-            except Exception: continue
+            try:
+                with open(fp, encoding="utf-8") as handle:
+                    tree = ast.parse(handle.read())
+            except (SyntaxError, UnicodeDecodeError, OSError):  # skip unparseable files
+                continue
             for n in ast.walk(tree):
                 if not isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)): continue
                 for d in n.decorator_list:
@@ -37,8 +44,8 @@ def routes(root):
     return out
 a, b = routes(dev), routes(rel)
 gone = sorted(set(a) - set(b))
-print("dev routes: %d | lite routes: %d | removed: %d" % (len(a), len(b), len(gone)))
-TIER = re.compile(r"soc|siem|dfir|shared|wazuh|reboot|onion", re.I)
+print(f"dev routes: {len(a)} | lite routes: {len(b)} | removed: {len(gone)}")
+TIER = re.compile(r"soc|siem|dfir|shared|wazuh|reboot|onion", re.IGNORECASE)
 susp = [g for g in gone if not TIER.search(g[1] + a[g] + g[2])]
-print("\nremoved but NOT obviously tier (%d) -- these need a human look:" % len(susp))
-for m, p, f in susp: print("   %-6s %-52s %s :: %s" % (m, p, f, a[(m,p,f)]))
+print(f"\nremoved but NOT obviously tier ({len(susp)}) -- these need a human look:")
+for m, p, f in susp: print(f"   {m:<6} {p:<52} {f} :: {a[(m,p,f)]}")

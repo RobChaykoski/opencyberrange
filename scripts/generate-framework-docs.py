@@ -64,8 +64,10 @@ def main() -> int:
         "- **one or two framework references** that actually govern the work;",
         "- **one measurable outcome**.",
         "",
-        "An explicit value in a lab's `lab.yaml` overrides the chapter default. "
-        "Lab-level overrides are listed below.",
+        (
+            "An explicit value in a lab's `lab.yaml` overrides the chapter default. "
+            "Lab-level overrides are listed below."
+        ),
         "",
         "## Framework registry",
         "",
@@ -80,9 +82,11 @@ def main() -> int:
 
     lines.extend([
         "",
-        "Frameworks registered but not mapped yet are shown as **Not yet**. They "
-        "remain in the registry so future SBOM or supply-chain exercises can use "
-        "them without inventing a local variant.",
+        (
+            "Frameworks registered but not mapped yet are shown as **Not yet**. They "
+            "remain in the registry so future SBOM or supply-chain exercises can use "
+            "them without inventing a local variant."
+        ),
         "",
         "## Primary competencies",
         "",
@@ -135,11 +139,13 @@ def main() -> int:
         "",
         "## Measurable outcomes",
         "",
-        "Each lab uses its explicit `measurable_outcome` when present. Otherwise it "
-        "uses the first learning outcome that is not a flag-submission statement. "
-        "If neither exists, the generator supplies one observation/interpretation/"
-        "confidence sentence. The validation script rejects a missing or too-short "
-        "outcome.",
+        (
+            "Each lab uses its explicit `measurable_outcome` when present. Otherwise it "
+            "uses the first learning outcome that is not a flag-submission statement. "
+            "If neither exists, the generator supplies one observation/interpretation/"
+            "confidence sentence. The validation script rejects a missing or too-short "
+            "outcome."
+        ),
         "",
         "## Validation",
         "",
@@ -147,8 +153,10 @@ def main() -> int:
         "python scripts/validate-framework-map.py",
         "```",
         "",
-        "The validator checks every lab for exactly one known competency, one or two "
-        "known framework references, and one measurable outcome.",
+        (
+            "The validator checks every lab for exactly one known competency, one or two "
+            "known framework references, and one measurable outcome."
+        ),
         "",
     ])
     content = "\n".join(lines) + "\n"

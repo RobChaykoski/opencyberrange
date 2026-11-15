@@ -6,7 +6,7 @@ Order #7 contains internal maintenance credentials (SSH creds for appserver).
 The /api/config endpoint has broken access control exposing marker 1.
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 

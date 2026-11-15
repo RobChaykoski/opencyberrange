@@ -151,10 +151,12 @@ def render_readme_inventory(manifest: dict) -> str:
         "",
         render_track_table(manifest),
         "",
-        "**Total:** "
-        f"{sum(track_totals(t)[0] for t in manifest.get('tracks', []))} exercises "
-        f"across {len(manifest.get('tracks', []))} tracks and "
-        f"{len(all_chapters(manifest))} chapters.",
+        (
+            "**Total:** "
+            f"{sum(track_totals(t)[0] for t in manifest.get('tracks', []))} exercises "
+            f"across {len(manifest.get('tracks', []))} tracks and "
+            f"{len(all_chapters(manifest))} chapters."
+        ),
         "",
         "Recommended pathway:",
         "",
@@ -177,13 +179,17 @@ def render_index_inventory(manifest: dict) -> str:
         "",
         render_track_table(manifest),
         "",
-        "**Total:** "
-        f"{sum(track_totals(t)[0] for t in manifest.get('tracks', []))} exercises "
-        f"across {len(manifest.get('tracks', []))} tracks and "
-        f"{len(all_chapters(manifest))} chapters.",
+        (
+            "**Total:** "
+            f"{sum(track_totals(t)[0] for t in manifest.get('tracks', []))} exercises "
+            f"across {len(manifest.get('tracks', []))} tracks and "
+            f"{len(all_chapters(manifest))} chapters."
+        ),
         "",
-        f"See the [full curriculum map](CURRICULUM.md) and the "
-        "[cross-curriculum terminology](TERMINOLOGY.md).",
+        (
+            "See the [full curriculum map](CURRICULUM.md) and the "
+            "[cross-curriculum terminology](TERMINOLOGY.md)."
+        ),
         "",
         "Recommended pathway:",
         "",
@@ -363,7 +369,7 @@ def render_glossary_section(glossary: dict) -> str:
 
 
 def replace_marked(text: str, begin: str, end: str, body: str) -> str:
-    pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.S)
+    pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.DOTALL)
     replacement = f"{begin}\n{body.rstrip()}\n{end}"
     if not pattern.search(text):
         raise SystemExit(f"missing markers: {begin}")
@@ -459,7 +465,7 @@ def update_intro_titles(manifest: dict) -> dict[Path, str]:
                 block,
                 updated,
                 count=1,
-                flags=re.S,
+                flags=re.DOTALL,
             )
         else:
             updated = updated.replace(f"{desired}\n", f"{desired}\n\n{block}\n", 1)

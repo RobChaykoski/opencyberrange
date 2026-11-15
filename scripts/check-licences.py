@@ -121,9 +121,10 @@ for path in ROOT.glob("platform/labs/**/Dockerfile*"):
 # 6. Scapy-importing lab generators must carry the GPL-2.0 SPDX header.
 for path in ROOT.glob("platform/labs/**/*.py"):
     text = read(path)
-    if re.search(r"^\s*(?:from|import)\s+scapy\b", text, re.IGNORECASE | re.MULTILINE):
-        if "SPDX-License-Identifier: GPL-2.0-only" not in text:
-            fail(f"{path.relative_to(ROOT)} imports Scapy without the GPL-2.0 SPDX header")
+    if re.search(
+        r"^\s*(?:from|import)\s+scapy\b", text, re.IGNORECASE | re.MULTILINE
+    ) and "SPDX-License-Identifier: GPL-2.0-only" not in text:
+        fail(f"{path.relative_to(ROOT)} imports Scapy without the GPL-2.0 SPDX header")
 
 # 7. Production frontend dependencies must not declare strong copyleft.
 lock_path = ROOT / "platform/frontend/package-lock.json"

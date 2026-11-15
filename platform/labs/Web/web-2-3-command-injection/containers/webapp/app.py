@@ -1,7 +1,8 @@
 """CloudPing Diagnostics. Network Ping Tool (vulnerable to command injection)"""
 
-from flask import Flask, request
 import subprocess
+
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -161,16 +162,17 @@ def ping():
     try:
         result = subprocess.run(
             f"ping -c 2 -W 3 {host}",
-            shell=True,  # shell=True enables command injection
+            shell=True,  # shell=True enables command injection; security-delta: allow shell execution
             capture_output=True,
             text=True,
-            timeout=10
+            timeout=10,
+            check=False,
         )
         output = result.stdout + result.stderr
     except subprocess.TimeoutExpired:
         output = "Request timed out."
-    except Exception as e:
-        output = f"Error: {str(e)}"
+    except Exception as e:  # noqa: BLE001  # show the command error, keep the app up
+        output = f"Error: {e!s}"
 
     return f"""<!DOCTYPE html>
 <html lang="en">

@@ -10,7 +10,8 @@ content, and flag values.
 """
 
 import sqlite3
-from flask import Flask, request, redirect, make_response
+
+from flask import Flask, make_response, redirect, request
 
 app = Flask(__name__)
 
@@ -516,7 +517,7 @@ def _try_sqli_login(username, password):
     if "#" in username or "#" in password:
         payloads.append((username.replace("#", "--"), password.replace("#", "--")))
     for u, p in payloads:
-        query = "SELECT id, username, role FROM staff WHERE username='%s' AND password='%s'" % (u, p)
+        query = f"SELECT id, username, role FROM staff WHERE username='{u}' AND password='{p}'"
         try:
             conn = get_db()
             cur = conn.cursor()
@@ -526,7 +527,7 @@ def _try_sqli_login(username, password):
             conn.close()
             if row:
                 return row
-        except Exception:
+        except Exception:  # noqa: BLE001, S112  # intentional: retry the alternate SQLi payload
             continue
     return None
 

@@ -19,7 +19,7 @@ import json
 import os
 import stat
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import psycopg
@@ -70,7 +70,7 @@ def connect(database_url: str):
         conn = psycopg.connect(database_url)
         conn.autocommit = False
         return conn
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001  # connection failure is routed through fail()
         fail(f"could not connect to the database: {exc}")
 
 
@@ -134,7 +134,7 @@ def parse_datetime(value):
     if isinstance(value, datetime):
         return value
     try:
-        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        return datetime.fromisoformat(str(value))
     except ValueError:
         return None
 
@@ -176,7 +176,7 @@ def export_users(args):
         payload = {
             "format": FORMAT,
             "version": VERSION,
-            "exported_at": datetime.now(timezone.utc).isoformat(),
+            "exported_at": datetime.now(UTC).isoformat(),
             "user_count": len(users),
             "users": users,
         }
@@ -380,7 +380,7 @@ def import_users(args):
                         )
                     conn.commit()
                     created += 1
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001  # per-user failure rolls back and continues
                 conn.rollback()
                 errors += 1
                 warnings.append(f"{username}: {exc}")

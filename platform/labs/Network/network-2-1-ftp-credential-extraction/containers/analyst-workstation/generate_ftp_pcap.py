@@ -8,12 +8,13 @@ Generate realistic PCAP file with FTP traffic including credential leak.
 Includes 2-3 hours of network traffic with various protocols as distractors.
 """
 
-from scapy.all import *
-from scapy.layers.inet import IP, TCP, UDP
-from scapy.layers.dns import DNS, DNSQR, DNSRR
-from scapy.layers.http import HTTP, HTTPRequest, HTTPResponse
 import random
 import sys
+
+from scapy.all import *
+from scapy.layers.dns import DNS, DNSQR, DNSRR
+from scapy.layers.inet import IP, TCP, UDP
+
 
 def generate_dns_traffic(packets, base_time, src_ip, dst_ip="8.8.8.8"):
     """Generate realistic DNS queries as distractor traffic."""
