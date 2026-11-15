@@ -64,7 +64,7 @@
       "sha256": "9fd58e5e767e0f3a9c16d4b29db9ebbd2e9bb8368fe77ea8636613c6dd0cd43f"
     },
     "platform/frontend/Dockerfile": {
-      "sha256": "9e3b245504089bc52f6e228a86daaa5738e06790cd78fa7dc1ce9fda750ff4e4"
+      "sha256": "a1f4aa425bd21d751a302d8e9dc3c03ab1464bca9919a907b495ece173793690"
     },
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz": {
       "sha256": "7687e4354e91e856beb8d1d3bbf86f990f4cf752be639ad6d1f21b57c8191cf8"
