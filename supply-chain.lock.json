@@ -43,7 +43,7 @@
       "sha256": "3efcff6277f4020b656ba6935c695005917a99cdcd9965ce86980a8d86e12d48"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "47dc4e35c6f2aa44edfbcb859287fb9cde95eecc2b4e43fa503aedc97f663045"
+      "sha256": "3539f4f047ef47963a1259dfc8a88a33bd0e8ff2193bc2f7708a518268754bcc"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
@@ -835,6 +835,13 @@
     "ot-1-2-modbus-setpoint-tampering": {
       "content_hash": "f4364ad4a90e52f4635662acdaf6a61f63a22ed8d1887b3ce16375c0cc0ab44d",
       "services": [
+        "plc"
+      ]
+    },
+    "ot-1-3-modbus-gateway-bypass": {
+      "content_hash": "549b6fdb7252038ede8031bb72d5b4ca80a04e66d8ab51be4c9ccb08949cee85",
+      "services": [
+        "gateway",
         "plc"
       ]
     },

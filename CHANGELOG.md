@@ -21,6 +21,13 @@ All notable changes to OpenCyberRange are recorded here.
   demo credentials instead of ad-hoc scripts.
 
 ### OT/ICS track
+- Added `ot-1-3-modbus-gateway-bypass`: the PLC sits on an internal control
+  network behind a gateway whose write allow-list inspects only function code
+  0x06. Students confirm the segmentation, watch a single-register write fail,
+  bypass the filter with 0x10, and recover the interlock marker. Includes a
+  workbook and defensive guidance on filtering every write opcode.
+- Added the missing OT 1.2 and 1.3 workbook entries to the OT wiki navigation
+  and refreshed the chapter introduction.
 - Added `ot-1-2-modbus-setpoint-tampering`: students write an unauthenticated
   setpoint with function code 0x06, confirm the write, and recover a marker
   exposed after the simulated safety interlock trips. Includes a process

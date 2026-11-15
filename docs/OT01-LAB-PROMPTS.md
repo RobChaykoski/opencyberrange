@@ -39,12 +39,12 @@
 - If you could monitor all register writes in real-time, what anomaly detection rules would you implement?
 - How would you respond if a write changed a safety-critical setpoint without authorization?
 
-### Lab 1.3: (Planned) Modbus Industrial Gateway
+### Lab 1.3: Modbus Industrial Gateway (implemented as `ot-1-3-modbus-gateway-bypass`)
 
-**Prompt:** Your organization has a Modbus TCP-to-SNMP gateway. 
+**Prompt:** Your organization placed a Modbus TCP gateway in front of a PLC with a write allow-list.
 - What additional attack surface does the gateway introduce?
-- How would you validate that the gateway properly filters/modifies Modbus data?
-- What logging and alerting would you configure for gateway-mediated register reads?
+- How would you validate that the gateway properly filters every write function code, not just one?
+- What logging and alerting would you configure for gateway-mediated register writes?
 
 ### Lab 1.4: (Planned) Modbus TCP Encapsulation
 

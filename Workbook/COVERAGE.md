@@ -15,11 +15,11 @@ links.
 | Metasploit | 8 |
 | Network | 21 |
 | OSINT | 8 |
-| OT | 3 |
+| OT | 4 |
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 53 |
-| **Total** | **180** |
+| **Total** | **181** |
 
 ## Labs
 
@@ -131,6 +131,7 @@ links.
 | OSINT | The Public Footprint (`osint-1-1-public-footprint`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/01_The_Public_Footprint/` |
 | OSINT | The Public Homepage (`osint-2-2-public-homepage`) | `wiki/range/osint/CH_OSINT01_OSINT_Foundations/05_The_Public_Homepage/` |
 | OSINT | The Public Profile (`osint-2-4-public-profile`) | `wiki/range/osint/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile/` |
+| OT | Halcyon Industrial - Modbus Gateway Bypass (`ot-1-3-modbus-gateway-bypass`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/03_Modbus_Gateway_Bypass/` |
 | OT | Halcyon Industrial - Modbus Register Triage (`ot-1-1-modbus-register-analysis`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/01_Modbus_Register_Analysis/` |
 | OT | Halcyon Industrial - S7comm Data Block Read (`ot-2-1-s7comm-register-access`) | `wiki/range/ot/CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read/` |
 | OT | Halcyon Industrial - Setpoint Tampering (`ot-1-2-modbus-setpoint-tampering`) | `wiki/range/ot/CH_OT01_Modbus_Fundamentals/02_Modbus_Write_Setpoint/` |
