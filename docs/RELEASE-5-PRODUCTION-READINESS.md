@@ -52,6 +52,9 @@ patches, and operations patches.
   "RangeBox or the VPN" wording on each host.
 - Tag `v5.15.0` is signed with the release key
   `68A817762C831475F00DB54E775050A4C4921814` at commit `e645be91`.
+- Verified the production RangeBox `lite` wordlist paths inside the image:
+  `common.txt` (4,751 lines) and `directory-list-2.3-medium.txt` (220,559
+  lines), at both the SecLists and the dirb/dirbuster paths the workbooks use.
 
 ## Production deployment record — 2026-11-14
 
@@ -328,7 +331,8 @@ patches, and operations patches.
 
 ## Release gate
 
-Released on 2026-11-14 as `v5.0.0` for the implemented scope above.
+Released on 2026-11-14 as `v5.0.0` and maintained through `v5.15.0` on
+2026-11-15 for the implemented scope above.
 Do **not** describe the deferred items as shipped. A real Canvas/Brightspace
 staging test and the external accessibility/security assessments remain
 institutional or later-release work.
