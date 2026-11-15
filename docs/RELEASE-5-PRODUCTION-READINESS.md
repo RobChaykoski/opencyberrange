@@ -157,6 +157,29 @@ security patch, IdP settings feature, and operations patch.
 - Ubuntu cloud images are downloaded on demand; AVML is MIT licensed. Neither
   the guest image nor the AVML binary is committed to the repository.
 
+## Image hardening and lab spawn fix - 2026-11-15
+
+- Fixed the lab launcher regression introduced by the process-limit hardening.
+  Compose rejects a service that carries both `pids_limit` and
+  `deploy.resources.limits.pids`; the override now writes the limit in the
+  same shape the lab's compose file uses. Verified on development with a
+  `deploy` lab (`linux-1-1-ssh-service-detection`) and a plain lab
+  (`ai-1-1-prompt-injection-basics`), then on production with `linux-1-1`
+  (session 242). Temporary users and sessions were erased afterwards.
+- Rebuilt backend and frontend from `54d3013b` with pinned base digests,
+  `apt-get upgrade` / `apk upgrade`, and a smaller backend runtime: no `curl`,
+  `gnupg`, `pip`, `setuptools`, or `wheel`. Production reports revision
+  `54d3013b`, HTTPS returns 200, and HTTP redirects to HTTPS.
+- Grype counts after the rebuild: backend 345 matches (1 critical, 105 high),
+  frontend 3 matches (0 critical, 0 high). The remaining critical is a Debian
+  `wont-fix` `libxml2` entry. The full triage is in
+  [`SECURITY-SCANNING.md`](SECURITY-SCANNING.md).
+- Development `/workbook` was owned by UID 10001 while the dev backend runs as
+  UID 1000, so the erasure ledger could not be written there. Re-owned the
+  volume to 1000; production was already correct.
+- The signed supply-chain lock was refreshed for the Dockerfile changes and
+  re-signed with release key `68A817762C831475F00DB54E775050A4C4921814`.
+
 ## Deliberately deferred
 
 - **KasmVNC** - evaluated for 5.0 and deferred, then adopted for the Kali
