@@ -1,8 +1,11 @@
 x-ocr-requires-kvm: true
+x-ocr-reviewed-image: ocr-metasploitable2:latest
 services:
   target:
     image: ocr-metasploitable2:latest
     hostname: msf-target
+    labels:
+      ip_offset: "10"
     environment:
       LAB_FLAG: "OCR{msf_samba_8f3c}"
       LAB_PROFILE: "root"

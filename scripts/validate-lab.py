@@ -36,7 +36,7 @@ VALID_CATEGORIES = {
 SLUG_PATTERN = re.compile(r"^[a-z]+(?:-[a-z]+)*-(?:\d+-\d+|midterm-\d+|final-\d+)-[a-z0-9-]+$")
 FLAG_PATTERN = re.compile(r"^OCR\{.+\}$")
 REQUIRED_YAML_FIELDS = ["title", "description", "difficulty", "flag"]
-KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "ot", "ai", "osint", "high-school", "software-security", "identity", "capitalflow", "forensics", "refinery", "windows-server"}
+KNOWN_TRACK_SLUGS = {"windows", "linux", "web", "network", "malware", "ot", "ai", "osint", "high-school", "software-security", "identity", "capitalflow", "forensics", "refinery", "windows-server", "metasploit"}
 DANGEROUS_PASSWORD_CHARS = set('!`$\\"')
 DANGEROUS_PASSWORD_CHARS_DISPLAY = "! ` $ \\ \""
 
@@ -404,12 +404,14 @@ def check_flag_consistency(lab_dir):
         # Check if this lab uses shared containers (no local Dockerfiles expected)
         uses_shared = False
         uses_topology = False
+        uses_reviewed_image = False
         external_build = []
         if os.path.exists(compose_path):
             try:
                 with open(compose_path, "r", encoding="utf-8") as f:
                     compose_data = yaml.safe_load(f)
                 uses_shared = isinstance(compose_data, dict) and "x-ocr-shared-containers" in compose_data
+                uses_reviewed_image = isinstance(compose_data, dict) and "x-ocr-reviewed-image" in compose_data
                 services = (compose_data or {}).get("services", {}) if isinstance(compose_data, dict) else {}
                 uses_topology = (
                     isinstance(compose_data, dict)
@@ -442,6 +444,12 @@ def check_flag_consistency(lab_dir):
                 "Dockerfiles found",
                 True,
                 "Uses a reviewed platform image"
+            ))
+        elif uses_reviewed_image:
+            results.append(CheckResult(
+                "Dockerfiles found",
+                True,
+                "Uses a reviewed external image provisioned on the host"
             ))
         elif external_build:
             results.append(CheckResult(

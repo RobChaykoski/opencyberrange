@@ -33,7 +33,9 @@ def test_eight_labs_with_unique_flags_and_matching_profiles():
         assert flag not in flags, f"duplicate flag {flag}"
         flags[flag] = lab_dir.name
         assert compose["x-ocr-requires-kvm"] is True
+        assert compose["x-ocr-reviewed-image"] == "ocr-metasploitable2:latest"
         assert target["image"] == "ocr-metasploitable2:latest"
+        assert target["labels"]["ip_offset"] == "10"
         assert target["environment"]["LAB_FLAG"] == flag
         assert target["environment"]["LAB_PROFILE"] in {
             "web",

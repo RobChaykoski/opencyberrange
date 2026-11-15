@@ -1,8 +1,11 @@
 x-ocr-requires-kvm: true
+x-ocr-reviewed-image: ocr-metasploitable2:latest
 services:
   target:
     image: ocr-metasploitable2:latest
     hostname: msf-target
+    labels:
+      ip_offset: "10"
     environment:
       LAB_FLAG: "OCR{msf_aux_scan_2e4b}"
       LAB_PROFILE: "web"

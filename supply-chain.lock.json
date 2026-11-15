@@ -136,7 +136,7 @@
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
     },
     "scripts/validate-lab.py": {
-      "sha256": "9ebf9bd3462e4bec7bbc2c7bcffa28a574355dafbd6012ad039d7c831d03b9ab"
+      "sha256": "2ad2377f23d0a612fe85a0d326c9a668f500fbacf5be1c88c6abb147c6a01960"
     },
     "scripts/verify-lab-builds.sh": {
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
@@ -617,35 +617,35 @@
       ]
     },
     "metasploit-1-1-workspace-and-modules": {
-      "content_hash": "d013a9b829ce6b83289b69d63c0b6cd8d69ceb47421e7f372bad57948d2b2de9",
+      "content_hash": "7c734f44a068a968e81534291d5153593edbe8d0d2c9947c4272bd2dfee9d544",
       "services": []
     },
     "metasploit-1-2-service-discovery": {
-      "content_hash": "955c8fb4dbf142e989d1f65a20a9602d44ae8bd358fddb8a837b28d666d3e094",
+      "content_hash": "b416588f2228c623afd5ad1a2fef6c7e0659abc7872d0f66bb161e6e77532ade",
       "services": []
     },
     "metasploit-1-3-validate-before-exploit": {
-      "content_hash": "e56752e92b457d9777a9736cdaaba417e8a5d720f3a5dc578bfc1bb8a4fef8bf",
+      "content_hash": "7f933b8f13b20d8fd1caa0c09a9536b14ea1d1bb6e0178e3c7372ce2f194ec66",
       "services": []
     },
     "metasploit-1-4-first-shell": {
-      "content_hash": "89428e73f89f36eb2c27535c9572767b2091731255f6a4f857368a86f5bc42c5",
+      "content_hash": "5e3c344a0a60dfd66311d31a3b21598e43d24771bd2d024e7c8e26012a45396d",
       "services": []
     },
     "metasploit-2-1-meterpreter-session": {
-      "content_hash": "f206031eedf3f3aa25e408e909072e042de62c9434f2b4cf43efd5045b12be7c",
+      "content_hash": "5689aff5594b5946dd2e7c8bb7993d0d5ebe037734a2be7c2a60fb94b05b11dc",
       "services": []
     },
     "metasploit-2-2-database-credentials": {
-      "content_hash": "2c236ccffd72b0520c776a246e0fbe1a54d521d0676e64ba0103dae349f10582",
+      "content_hash": "bcb33677338936e219f409f88a89a1c4fac761fb441afe2d80a079478a4b9b56",
       "services": []
     },
     "metasploit-2-3-pivot-to-local-service": {
-      "content_hash": "feb76fdb0e35fdb856a394be4909a54b093db45ee47f87a9723566865669680b",
+      "content_hash": "18076dbd384c71ec15b769c348584d7dae5b22e1775b9688798b52c81ed5d6f2",
       "services": []
     },
     "metasploit-2-4-persistence-and-reporting": {
-      "content_hash": "87bf26be3037e17115bb123f532d5d4d641db13a5853d7b91f9d16048454d243",
+      "content_hash": "233db44b61414595d1f828590bf1e777fa4bad62c4277f64773895523eef8938",
       "services": []
     },
     "network-0-1-ping-basics": {
