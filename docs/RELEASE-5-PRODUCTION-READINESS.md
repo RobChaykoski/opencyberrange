@@ -1,9 +1,8 @@
 # Release 5 production readiness
 
-Status: **`v5.16.0` is tagged; the production deployment is in progress.**
-Development `172.16.16.44` runs `main` at the release commit with Alembic
-`0031_learner_snapshots`; production `172.16.16.41` still runs `v5.15.0` until
-the deployment record below is updated. The release tags `v5.0.0`, `v5.0.1`,
+Status: **`v5.16.0` is released and deployed.** Development `172.16.16.44` and
+production `172.16.16.41` both run `main` at `6c94ad52` (`v5.16.0`) with Alembic
+`0031_learner_snapshots`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
@@ -34,6 +33,29 @@ patches, and operations patches.
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
 - Migrations `0015`–`0030`, all idempotent and applied on dev and production.
+
+## 5.16.0 deployment record - 2026-11-15
+
+- Deployed from `main` at `6c94ad52` (`v5.16.0`). Backend rebuilt from the
+  release commit; the frontend was unchanged and not recreated.
+- Pre-deploy backup: `~/backups/ocr-backup-20261115-225613.dump` (1.3 MB,
+  858 objects), plus `erasure-ledger-20261115-225613.jsonl` and
+  `platform-env-20261115-225613`.
+- Alembic upgraded `0030_cohort_strict` → `0031_learner_snapshots` on backend
+  startup. No data migration or manual SQL was required.
+- Lab discovery picked up `network-12-6-appliance-segment` after the post-pull
+  `chmod -R a+rX platform/labs` (the 027 umask otherwise left `lab.yaml`
+  unreadable to the non-root backend). 191 labs are registered.
+- Wiki tree rebuilt from the release commit with the `wiki-builder` profile;
+  exercise 12.5 is served at
+  `/wiki/range/netfor/CH_NET12_Device_Topology/05_Network_Appliance_Segment/`.
+- `ocr-lab/network-12-6-appliance-segment-protected:latest` prebuilt on the
+  host; `openwrt/rootfs@sha256:46c1…` pulled for the appliance.
+- Verified: backend, frontend, database, and Valkey healthy; `/api/version` = 5
+  with the Release 5 name; Alembic `0031_learner_snapshots`; the new lab is
+  active; the workbook page renders. 87 GB remains free at 54% used.
+- Tag `v5.16.0` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814` at commit `6c94ad52`.
 
 ## 5.15.0 deployment record - 2026-11-15
 
