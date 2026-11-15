@@ -215,9 +215,9 @@ security patch, IdP settings feature, and operations patch.
   the local rebuild. The remaining interpreter findings are fixed only on
   3.15/3.16, which are not stable.
 - Added `deploy/host-hardening.sh`, which applies the two low-risk Lynis items
-  (umask 027, disabled core dumps). Dry-run output on both hosts shows both
-  changes pending. The script needs root; neither host grants passwordless
-  sudo, so it has not been applied by the assistant.
+  (umask 027, disabled core dumps). Applied on both hosts: development moved
+  from 62 to 64 with one reboot warning, production from 63 to 65 with no
+  warnings. `AUTH-9328` and `KRNL-5820` no longer appear in either report.
 
 ## Deliberately deferred
 

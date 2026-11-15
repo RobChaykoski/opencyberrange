@@ -173,8 +173,8 @@ index as a baseline, not an audit certificate.
 
 | Host | Hardening index | Warnings | Suggestions | Tests |
 | --- | --- | --- | --- | --- |
-| development | 62 | 1 | 33 | 261 |
-| production | 63 | 0 | 34 | 260 |
+| development | 62 → 64 | 1 | 33 → 31 | 261 |
+| production | 63 → 65 | 0 | 34 → 32 | 260 |
 
 The single development warning is `KRNL-5830`, "reboot most likely needed"
 after kernel and library updates. Production had no warnings.
@@ -186,14 +186,15 @@ Suggestions that matter for this deployment, and their status:
 | `BOOT-5122` GRUB password | Deferred: physical/console access is controlled; GRUB passwords complicate unattended recovery. Revisit for on-premise installs. |
 | `AUTH-9230` password hashing rounds in `/etc/login.defs` | Deferred: authentication is application-level (argon2/bcrypt), not system accounts. |
 | `AUTH-9262` PAM password-quality module | Deferred: no interactive system logins; the platform enforces password policy in the app. |
-| `AUTH-9328` umask `027` | Script provided: `sudo bash deploy/host-hardening.sh`. Apply on each host; the script backs up the file it edits. |
-| `KRNL-5820` disable core dumps | Script provided: `sudo bash deploy/host-hardening.sh`. Same script, same backup. |
+| `AUTH-9328` umask `027` | Applied 2026-11-15 on development and production with `deploy/host-hardening.sh`; Lynis no longer reports it. |
+| `KRNL-5820` disable core dumps | Applied 2026-11-15 with the same script; Lynis no longer reports it. |
 | `FILE-6310` separate `/tmp`, `/var`, `/home` partitions | Accepted: LVM has a single root logical volume; splitting now requires downtime and a reinstall path. Documented in the production readiness record. |
 | `USB-1000` disable USB storage | Deferred: host is in a datacentre; physical access is the boundary. |
 
-The two scripted items are idempotent and previewable with `--dry-run`. They were
-not applied by the assistant because neither host grants passwordless sudo; run
-the script from an administrative session and re-run Lynis afterwards.
+The two scripted items were applied on both hosts on 15 November 2026. The
+development index moved from 62 to 64 and production from 63 to 65; neither
+report contains `AUTH-9328` or `KRNL-5820` any more. The production host has no
+warnings. Development still has one: `KRNL-5830`, "reboot most likely needed".
 
 No Lynis finding was treated as a release blocker. The two "candidate" rows are
 cheap wins for the next maintenance window.
