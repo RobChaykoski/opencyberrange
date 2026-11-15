@@ -93,6 +93,11 @@ COPY kasm-headers.conf /etc/nginx/snippets/kasm-headers.conf
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
+# Static files are served by the unprivileged nginx worker. A 027 host umask can
+# leave Vite's copied public files group-only, which returns 403, so normalise
+# read access for the whole document root.
+RUN chmod -R a+rX /usr/share/nginx/html /usr/share/nginx/downloads /usr/share/nginx/wiki
+
 EXPOSE 80 443
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=5 \
