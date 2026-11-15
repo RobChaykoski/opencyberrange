@@ -3,18 +3,17 @@ category: reconnaissance
 difficulty: beginner
 estimated_time: 90
 prerequisites:
-- Basic Linux command line
-- An isolated Kali RangeBox
+- metasploit-1-1-workspace-and-modules
+# By completion students will be able to:
 learning_outcomes:
-- Run a TCP port scan with an auxiliary module.
+- Perform a TCP port scan with a Metasploit auxiliary module.
 - Identify SSH, FTP, HTTP, and MySQL versions with service-specific scanners.
-- Store and review results in the workspace database.
+- Document the discovered services in the workspace database.
 - Explain why version evidence matters before exploitation.
-- Retrieve the target flag from the web service.
+- Retrieve the web flag from the target.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

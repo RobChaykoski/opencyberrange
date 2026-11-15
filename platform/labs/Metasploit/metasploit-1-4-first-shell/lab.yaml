@@ -3,18 +3,17 @@ category: exploitation
 difficulty: intermediate
 estimated_time: 105
 prerequisites:
-- Basic Linux command line
-- An isolated Kali RangeBox
+- metasploit-1-3-validate-before-exploit
+# By completion students will be able to:
 learning_outcomes:
 - Identify the SMB service and version.
-- Select a module that matches the observed service.
-- Configure a reverse payload with the RangeBox address.
-- Open, list, and interact with a session.
-- Read the root flag and close the session cleanly.
+- Configure a reverse payload with a reachable RangeBox address.
+- Exploit the service and obtain a session.
+- Document the session identity and host information.
+- Retrieve the root flag and document the cleanup.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

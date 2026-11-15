@@ -3,18 +3,17 @@ category: post-exploitation
 difficulty: intermediate
 estimated_time: 90
 prerequisites:
-- Metasploit Operations 1.1
-- An isolated Kali RangeBox
+- metasploit-2-1-meterpreter-session
+# By completion students will be able to:
 learning_outcomes:
-- Identify the MySQL version.
-- Test for blank or default credentials within scope.
-- Use an auxiliary SQL module to run a read-only query.
-- Retrieve the flag from the `msf_lab.flags` table.
+- Identify the MySQL service and version.
+- Test a small, authorised credential set including the blank-password case.
+- Perform a read-only SQL query with the valid account.
+- Retrieve the flag from the msf_lab.flags table.
 - Explain why database exposure is a high-impact finding.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

@@ -3,18 +3,17 @@ category: post-exploitation
 difficulty: intermediate
 estimated_time: 105
 prerequisites:
-- Metasploit Operations 1.1
-- An isolated Kali RangeBox
+- metasploit-1-4-first-shell
+# By completion students will be able to:
 learning_outcomes:
-- Identify the Java RMI service.
-- Select a module and a Meterpreter payload that match the target.
-- Open and verify a Meterpreter session.
-- Collect system identity and platform evidence.
-- Read the root flag and close the session.
+- Identify the Java RMI service and its registry port.
+- Configure a Meterpreter payload for the target.
+- Connect to a Meterpreter session and verify the session type.
+- Document system identity, platform, and user context.
+- Retrieve the root flag and document the session cleanup.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

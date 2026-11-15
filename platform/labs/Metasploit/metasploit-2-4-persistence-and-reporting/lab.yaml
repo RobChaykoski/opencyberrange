@@ -3,18 +3,17 @@ category: post-exploitation
 difficulty: advanced
 estimated_time: 120
 prerequisites:
-- Metasploit Operations 1.1
-- An isolated Kali RangeBox
+- metasploit-2-3-pivot-to-local-service
+# By completion students will be able to:
 learning_outcomes:
-- Collect system identity and platform evidence.
+- Document system identity and platform evidence from a session.
 - Explain how a scheduled task can provide persistence.
-- Add, verify, and remove a harmless scheduled marker.
-- Read the root flag.
-- Produce a short, reproducible evidence summary.
+- Configure a harmless scheduled marker and verify it.
+- Retrieve the root flag.
+- Document the cleanup and the evidence summary.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

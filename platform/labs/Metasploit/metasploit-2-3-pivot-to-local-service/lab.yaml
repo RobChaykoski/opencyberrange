@@ -3,18 +3,17 @@ category: post-exploitation
 difficulty: advanced
 estimated_time: 120
 prerequisites:
-- Metasploit Operations 1.1
-- An isolated Kali RangeBox
+- metasploit-2-2-database-credentials
+# By completion students will be able to:
 learning_outcomes:
-- Confirm the local-only service is not reachable directly.
-- Open a Meterpreter session on the target.
-- Create a local port forward through the session.
+- Identify the local-only service and explain why it is not externally reachable.
+- Connect to a Meterpreter session on the target.
+- Configure a local port forward through the session.
 - Retrieve the flag from the forwarded service.
-- Remove the forward and close the session.
+- Document the forward and remove it after collecting evidence.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

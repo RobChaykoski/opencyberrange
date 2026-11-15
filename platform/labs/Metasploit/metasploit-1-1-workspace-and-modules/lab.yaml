@@ -2,19 +2,16 @@ title: Workspace and Module Discipline
 category: tooling
 difficulty: beginner
 estimated_time: 75
-prerequisites:
-- Basic Linux command line
-- An isolated Kali RangeBox
+prerequisites: []
+# By completion students will be able to:
 learning_outcomes:
-- Start msfconsole and confirm the database is connected.
-- Create and switch to a named workspace for the engagement.
-- Search for a module and read its metadata before using it.
-- Inspect the module options and required values.
-- Record the target web flag as evidence of a working session.
+- Configure a Metasploit workspace and confirm database connectivity.
+- Identify a module's purpose, platform, and required options from its metadata.
+- Document the selected module and target service in the workspace.
+- Retrieve the target web flag and record the command that produced it.
 mapped_skills:
 - network_systems
-- security_operations
-- vulnerability_management
+- identity_access
 assessment_criteria:
 - Submit the correct flag.
 - Record the commands and observations requested in the workbook.

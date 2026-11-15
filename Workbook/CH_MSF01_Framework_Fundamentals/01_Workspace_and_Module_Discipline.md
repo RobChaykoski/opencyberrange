@@ -25,11 +25,10 @@ module selection.
 
 ## Your Objectives
 
-- Start msfconsole and confirm the database is connected.
-- Create and switch to a named workspace for the engagement.
-- Search for a module and read its metadata before using it.
-- Inspect the module options and required values.
-- Record the target web flag as evidence of a working session.
+- Configure a Metasploit workspace and confirm database connectivity.
+- Identify a module's purpose, platform, and required options from its metadata.
+- Document the selected module and target service in the workspace.
+- Retrieve the target web flag and record the command that produced it.
 
 ## Background
 

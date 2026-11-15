@@ -23,11 +23,11 @@ never be exposed to an untrusted network.
 
 ## Your Objectives
 
-- Run a TCP port scan with an auxiliary module.
+- Perform a TCP port scan with a Metasploit auxiliary module.
 - Identify SSH, FTP, HTTP, and MySQL versions with service-specific scanners.
-- Store and review results in the workspace database.
+- Document the discovered services in the workspace database.
 - Explain why version evidence matters before exploitation.
-- Retrieve the target flag from the web service.
+- Retrieve the web flag from the target.
 
 ## Background
 

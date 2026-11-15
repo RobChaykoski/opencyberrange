@@ -12,13 +12,14 @@ links.
 | Identity | 3 |
 | Linux | 30 |
 | Malware | 10 |
+| Metasploit | 8 |
 | Network | 21 |
 | OSINT | 8 |
 | OT | 2 |
 | Software Security | 2 |
 | Web | 16 |
 | Windows | 53 |
-| **Total** | **170** |
+| **Total** | **178** |
 
 ## Labs
 
@@ -92,6 +93,14 @@ links.
 | Malware | Northwind Health - Suspicious Attachment Triage (`malware-1-1-eicar-triage`) | `wiki/range/malware/CH_MAL01_Malware_Fundamentals/01_EICAR_Triage/` |
 | Malware | YARA Fundamentals - Write a Rule, Find the Artifact (`malware-2-2-yara-fundamentals`) | `wiki/range/malware/CH_MAL03_Detection_And_Triage/01_YARA_Fundamentals/` |
 | Malware | YARA Incident Triage - Match the Artifact, Correlate the Log (`malware-2-3-yara-incident-triage`) | `wiki/range/malware/CH_MAL03_Detection_And_Triage/02_YARA_Incident_Triage/` |
+| Metasploit | Auxiliary Service Discovery (`metasploit-1-2-service-discovery`) | `wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/02_Auxiliary_Service_Discovery/` |
+| Metasploit | Database Credentials and Data Access (`metasploit-2-2-database-credentials`) | `wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/02_Database_Credentials_and_Data_Access/` |
+| Metasploit | Meterpreter Session (`metasploit-2-1-meterpreter-session`) | `wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/01_Meterpreter_Session/` |
+| Metasploit | Persistence, Evidence, and Cleanup (`metasploit-2-4-persistence-and-reporting`) | `wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/04_Persistence_Evidence_and_Cleanup/` |
+| Metasploit | Pivot to a Local-Only Service (`metasploit-2-3-pivot-to-local-service`) | `wiki/range/msfpt/CH_MSF02_Exploitation_and_Post_Exploitation/03_Pivot_to_Local_Service/` |
+| Metasploit | Samba Exploitation and First Session (`metasploit-1-4-first-shell`) | `wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/04_Samba_Exploitation_and_First_Session/` |
+| Metasploit | Validate Before You Exploit (`metasploit-1-3-validate-before-exploit`) | `wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/03_Validate_Before_Exploit/` |
+| Metasploit | Workspace and Module Discipline (`metasploit-1-1-workspace-and-modules`) | `wiki/range/msfpt/CH_MSF01_Framework_Fundamentals/01_Workspace_and_Module_Discipline/` |
 | Network | Avalon Biotech - Suspicious Traffic Analysis (`network-1-1-packet-capture-analysis`) | `wiki/range/netfor/CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis/` |
 | Network | Can You Reach It? Ping Fundamentals (`network-0-1-ping-basics`) | `wiki/range/netfor/CH_N0_Network_Foundations/01_Ping_Basics/` |
 | Network | DNS Data Exfiltration Analysis (`network-2-4-dns-exfiltration`) | `wiki/range/netfor/CH_NET02_PCAP_Forensics/04_DNS_Data_Exfiltration/` |
