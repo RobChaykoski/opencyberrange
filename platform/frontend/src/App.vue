@@ -396,6 +396,11 @@ async function maybeStartTour() {
     }
     return
   }
+  if (prefs.dna_onboarding_v1) {
+    // The discovery flow replaces the generic orientation tour for new
+    // learners. The tour stays replayable from the sidebar.
+    return
+  }
   if (prefs.orientation_seen_v1) {
     try { localStorage.setItem(tourKey.value, '1') } catch { /* private mode */ }
     return
