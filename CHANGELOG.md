@@ -27,6 +27,8 @@ All notable changes to OpenCyberRange are recorded here.
   queries per course.
 - Lab spawns now reject privileged containers, host networking, host bind
   mounts, unexpected devices, and dangerous capabilities at runtime.
+- Lab services receive a default process limit and drop host-level
+  capabilities; SETUID/SETGID remain available for privilege-escalation labs.
 
 ### Live memory forensics
 - Added Forensics level 3 with a KVM/TCG Ubuntu 22.04 target, AVML acquisition,

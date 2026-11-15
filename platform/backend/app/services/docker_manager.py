@@ -397,6 +397,23 @@ class DockerManager:
     # limits keeps them. Env-overridable for bigger or smaller hosts.
     LAB_MEM_LIMIT = os.environ.get("LAB_MEM_LIMIT", "1g")
     LAB_CPU_LIMIT = os.environ.get("LAB_CPU_LIMIT", "1.0")
+    LAB_PIDS_LIMIT = int(os.environ.get("LAB_PIDS_LIMIT", "512"))
+    # Keep host-level capabilities out of lab services. A lab that genuinely
+    # needs one of these can re-add it with cap_add; Docker applies cap_add
+    # after cap_drop. Do not drop SETUID/SETGID: several privilege-escalation
+    # labs rely on setuid binaries inside the container.
+    LAB_DEFAULT_CAP_DROP = [
+        "SYS_ADMIN",
+        "SYS_BOOT",
+        "SYS_MODULE",
+        "SYS_NICE",
+        "SYS_PTRACE",
+        "SYS_RAWIO",
+        "SYS_TIME",
+        "AUDIT_CONTROL",
+        "MAC_ADMIN",
+        "MAC_OVERRIDE",
+    ]
     # Production should set this to false so a missing prebuilt image fails
     # clearly instead of triggering a slow build during a student spawn.
     ALLOW_ON_DEMAND_BUILD = os.environ.get(
@@ -1998,6 +2015,10 @@ fi
                     svc_override["cpus"] = float(self.LAB_CPU_LIMIT)
                 except (TypeError, ValueError):
                     svc_override["cpus"] = 1.0
+            if not svc_cfg.get("pids_limit"):
+                svc_override["pids_limit"] = self.LAB_PIDS_LIMIT
+            if not svc_cfg.get("cap_drop"):
+                svc_override["cap_drop"] = list(self.LAB_DEFAULT_CAP_DROP)
 
             # Opt-out: a service labeled ocr_lab_net="false" stays OFF the student
             # lab net and lives only on its own in-compose network (e.g. a

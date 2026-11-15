@@ -1,6 +1,7 @@
 """Regression checks for the security-review hardening."""
 
 import inspect
+import re
 
 import pytest
 from starlette.requests import Request
@@ -12,7 +13,9 @@ from app.auth import (
     get_current_user,
 )
 from app.routers.labs import _client_ip
-from app.services.docker_manager import validate_lab_compose
+from app.services.db_integrity import LEDGER_TABLES
+from app.services.docker_manager import DockerManager, validate_lab_compose
+from app.services.erasure import _OPTIONAL_USER_REFERENCES
 
 
 def test_client_ip_uses_uvicorn_sanitised_address():
@@ -66,3 +69,21 @@ def test_compose_guard_allows_lab_relative_binds_and_net_admin():
         },
         "test-lab",
     )
+
+
+def test_sql_identifier_lists_are_fixed_constants():
+    identifier = re.compile(r"^[a-z][a-z0-9_]*$")
+    for table, column, action in _OPTIONAL_USER_REFERENCES:
+        assert identifier.fullmatch(table), table
+        assert identifier.fullmatch(column), column
+        assert action in {"delete", "null"}, action
+    for table in LEDGER_TABLES:
+        assert identifier.fullmatch(table), table
+
+
+def test_lab_services_get_default_process_and_capability_limits():
+    assert DockerManager.LAB_PIDS_LIMIT <= 1024
+    assert "SYS_ADMIN" in DockerManager.LAB_DEFAULT_CAP_DROP
+    assert "SYS_PTRACE" in DockerManager.LAB_DEFAULT_CAP_DROP
+    assert "SETUID" not in DockerManager.LAB_DEFAULT_CAP_DROP
+    assert "SETGID" not in DockerManager.LAB_DEFAULT_CAP_DROP
