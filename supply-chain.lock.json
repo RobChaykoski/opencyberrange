@@ -12,6 +12,9 @@
     ".github/workflows/dependency-audit.yml": {
       "sha256": "3c80161a5a1660a6441c55cdef5970d53cd58a3e465a04ff8c7b051d5c56993b"
     },
+    ".github/workflows/docs-publish.yml": {
+      "sha256": "007be2d1fcd0226ba8172b67671b00365eb0d52750c381c579da785a90bd8fe3"
+    },
     ".github/workflows/image-scan.yml": {
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
@@ -46,7 +49,7 @@
       "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "cd4c3febc33038ec346101e99ea23879b8dade61a4b9dfc742b1e689f8dd5bd5"
+      "sha256": "d04eb3071b720639df161b80e76ec7f171805f7db8e008acae155302fe3aa80d"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
@@ -102,6 +105,9 @@
     "scripts/GDG-Deploy.sh": {
       "sha256": "7857237da1b405ebd672caf74cc7ef292313e7f847799a8a6d82d09cb718ff7b"
     },
+    "scripts/check-built-docs.py": {
+      "sha256": "1669ff84cb7e69ec11f35e115c8e1c7ef51a32d3ea7302c46946e97db8a77fb9"
+    },
     "scripts/check-licences.py": {
       "sha256": "11b207a9b1fc54856e82330c39cb3ce498488717c29edb54386c574f3456bbda"
     },
@@ -118,7 +124,7 @@
       "sha256": "be49edebef593720e4fef8c2cae79910c21cb1047fc3e4dc3ed6ec3be12b936f"
     },
     "scripts/generate-about.py": {
-      "sha256": "d1f9df9deecd70e07fcc7e2cd1cd4fbec9a2f155f56fd8ed309481a0b0bfc082"
+      "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
     },
     "scripts/install-platform.sh": {
       "sha256": "f259f1f15414516855b83d07fafa1aa980784f5b489ce0ca5da10a31ea662c4c"
@@ -136,7 +142,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "d80870a0915b7e961b087684d10a7c7e689596927eb502698d714fc77783353c"
+      "sha256": "937f58cc39530b0f64b5daa7973ca61eefdf723f6620c36078196b6d65d4488a"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
@@ -743,6 +749,12 @@
     "network-12-5-multi-service-router": {
       "content_hash": "0e2fdb5b6ba668c443d5932590ba8ad2fc055bdb9974fe1d89c618793476d798",
       "services": []
+    },
+    "network-12-6-appliance-segment": {
+      "content_hash": "1d363ad7f587d7ee2995980dc131a96fcd209507d7bfd9ee6dd0622815f35f79",
+      "services": [
+        "protected"
+      ]
     },
     "network-2-1-ftp-credential-extraction": {
       "content_hash": "af279adebd8ec17deaa557bbf21abef954f8e6de49e1a75154b244f5bed75289",

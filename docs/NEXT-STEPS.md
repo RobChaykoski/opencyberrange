@@ -9,6 +9,17 @@ This page tracks what is left; the deployment record is
 
 ## Recently completed
 
+- Network-appliance lab `network-12-6-appliance-segment`: a dual-homed OpenWrt
+  24.10.5 appliance with a protected internal segment, a default-deny forward
+  chain, and an SSH local-forward pivot. Includes a workbook page, the NET04
+  framework mapping, and the pinned image notices.
+- Manual publishing: `docs-publish.yml` builds the manual (or every site for
+  inspection), checks the built output, and publishes a checksummed artifact.
+  The decision and internal-web-root recipe are in `MANUAL-PUBLISHING.md`.
+- Persisted learner snapshots: `learner_snapshots` stores the career dossier and
+  portfolio payload, schema/formula versions, and the factor weights used.
+  Stored reports re-render from the snapshot, so a later scoring change cannot
+  rewrite an old report.
 - Release 5.15.0: RangeBox-by-default launch choice with an in-app stop dialog,
   pending-approval and inactive-account login states, the offline OT Scan
   assistant, and OT 1.3 (gateway bypass). Tagged as `v5.15.0`.
@@ -32,18 +43,9 @@ This page tracks what is left; the deployment record is
 
 ## Open queue
 
-1. **Network-appliance lab.** Add an OpenWrt or pfSense target on the existing
-   Docker topology for firewall and routing exercises. Larger than an OT lab
-   because it introduces a second network segment.
-2. **Manual publishing.** CI builds every MkDocs site, but the repository has no
-   publish workflow. Decide where the built manual is hosted (release artifact,
-   internal web root, or documentation host) and add that step.
-3. **Persisted learner snapshots.** Store the DNA/GPS payload and factor weights
-   at build time so a later scoring change cannot rewrite an old report. See
-   `CYBER-GPS-SCHEMA.md`.
-4. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
+1. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
-5. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
+2. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.
 
 ## Deliberately deferred
 

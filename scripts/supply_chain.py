@@ -108,6 +108,7 @@ COVERED_FILES = [
     "scripts/verify-lab-builds.sh",
     "scripts/ui-smoke.mjs",
     "scripts/status-dashboard.py",
+    "scripts/check-built-docs.py",
     ".github/workflows/ci.yml",
     ".github/workflows/quality.yml",
     ".github/workflows/codeql.yml",
@@ -116,6 +117,7 @@ COVERED_FILES = [
     ".github/workflows/trivy.yml",
     ".github/workflows/ui-smoke.yml",
     ".github/workflows/image-scan.yml",
+    ".github/workflows/docs-publish.yml",
     ".trivyignore.yaml",
 ]
 
