@@ -11,6 +11,7 @@
         </p>
       </header>
 
+      <div class="discover__layout">
       <section v-if="step === 'choose'" aria-labelledby="interest-heading">
         <h2 id="interest-heading" class="discover__section-title">What do you enjoy doing?</h2>
         <div class="interest-grid">
@@ -74,6 +75,34 @@
           <button type="button" class="btn btn--ghost" @click="skip">Skip for now</button>
         </div>
       </section>
+
+      <aside class="discover__why" aria-labelledby="why-heading">
+        <p class="discover__eyebrow">The path</p>
+        <h2 id="why-heading" class="discover__why-title">What you unlock</h2>
+        <ol class="why-list">
+          <li>
+            <strong>Three starter challenges</strong>
+            <span>Short exercises from different tracks, so the evidence is not one-note.</span>
+          </li>
+          <li>
+            <strong>Cyber DNA report</strong>
+            <span>Six practice traits, a class, and your strongest branch. Unlocks at three completions.</span>
+          </li>
+          <li>
+            <strong>Career GPS</strong>
+            <span>Directions, not verdicts. Named roles appear only after eight pieces of evidence.</span>
+          </li>
+          <li>
+            <strong>Pathway and transcript</strong>
+            <span>A recommended track, achievements with evidence, and an export you can show an employer.</span>
+          </li>
+        </ol>
+        <p class="discover__why-note">
+          Your profile is private. It is never ranked, and instructors see aggregates, not your
+          individual growth.
+        </p>
+      </aside>
+      </div>
     </div>
   </div>
 </template>
@@ -362,6 +391,72 @@ async function skip() {
   gap: 0.75rem;
   flex-wrap: wrap;
   margin-top: 1.5rem;
+}
+.discover__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+.discover__why {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  background: var(--bg-secondary);
+}
+.discover__why-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+.why-list {
+  list-style: none;
+  counter-reset: why;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.why-list li {
+  counter-increment: why;
+  display: grid;
+  grid-template-columns: 1.6rem 1fr;
+  gap: 0.65rem;
+  align-items: start;
+  font-size: 0.85rem;
+}
+.why-list li::before {
+  content: counter(why);
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.why-list strong {
+  display: block;
+  margin-bottom: 0.15rem;
+}
+.why-list span {
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.discover__why-note {
+  margin: 1rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+@media (max-width: 900px) {
+  .discover__layout {
+    grid-template-columns: 1fr;
+  }
 }
 @media (max-width: 640px) {
   .starter {
