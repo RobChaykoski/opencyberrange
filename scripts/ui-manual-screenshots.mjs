@@ -1,187 +1,437 @@
 /**
- * Capture manual screenshots for the advanced DNA insights preview.
+ * Capture and refresh the SWOCTS Cyber Range user-manual screenshots.
  *
- * Run this on a development deployment after the feature is enabled:
- *
+ * Usage:
  *   UI_BASE_URL=https://172.16.16.44 \
- *   UI_SMOKE_USERNAME=... UI_SMOKE_PASSWORD=... \
+ *   UI_STUDENT_USERNAME=... UI_STUDENT_PASSWORD=... \
+ *   UI_INSTRUCTOR_USERNAME=... UI_INSTRUCTOR_PASSWORD=... \
+ *   UI_ADMIN_USERNAME=... UI_ADMIN_PASSWORD=... \
  *   node scripts/ui-manual-screenshots.mjs
  *
- * Or pass a short-lived token with UI_SMOKE_TOKEN.
+ * Optional:
+ *   UI_MANUAL_ACTIVE_LAB=1     spawn linux-1-1 and capture the active-lab
+ *                              shots, then stop the session
+ *   UI_MANUAL_STUDENT_IMAGE=... override the student/desktop screenshot to use
+ *   UI_MANUAL_SKIP_ADMIN=1      skip admin captures (no admin credentials)
  *
- * The script only performs GETs and UI navigation. It writes:
- *   Manual-Lite/02_Student_Guide/img/profile-momentum.png
- *   Manual-Lite/02_Student_Guide/img/profile-careers.png
- *   Manual-Lite/04_Admin_Guide/img/admin-settings-features.png
+ * Prerequisites for the admin screenshots:
+ *   - at least one pending account (Users > Pending)
+ *   - at least one locked account
+ * The script does not create accounts. If a capture target is missing it logs
+ * SKIP and leaves the existing image in place.
  *
- * It requires Playwright, as the other UI scripts do:
- *   npm install --no-save playwright
- *   npx playwright install --with-deps chromium
+ * The script signs in through the API, sets the browser token in
+ * localStorage, turns Privacy Mode off for admin shots, and writes PNGs under
+ * Manual-Lite/**. It performs GETs plus, when UI_MANUAL_ACTIVE_LAB=1, one lab
+ * spawn and stop.
+ *
+ * Requires Playwright: npx playwright install chromium
  */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium, request } from 'playwright'
 
 const BASE = (process.env.UI_BASE_URL || '').replace(/\/$/, '')
-let TOKEN = process.env.UI_SMOKE_TOKEN || ''
-const USERNAME = process.env.UI_SMOKE_USERNAME || ''
-const PASSWORD = process.env.UI_SMOKE_PASSWORD || ''
 const ROOT = process.cwd()
-const STUDENT_IMG = path.join(ROOT, 'Manual-Lite', '02_Student_Guide', 'img')
-const ADMIN_IMG = path.join(ROOT, 'Manual-Lite', '04_Admin_Guide', 'img')
+const ACTIVE_LAB = process.env.UI_MANUAL_ACTIVE_LAB === '1'
+const SKIP_ADMIN = process.env.UI_MANUAL_SKIP_ADMIN === '1'
+
+const IMG = {
+  start: path.join(ROOT, 'Manual-Lite', '01_Getting_Started', 'img'),
+  student: path.join(ROOT, 'Manual-Lite', '02_Student_Guide', 'img'),
+  instructor: path.join(ROOT, 'Manual-Lite', '03_Instructor_Guide', 'img'),
+  admin: path.join(ROOT, 'Manual-Lite', '04_Admin_Guide', 'img'),
+  vpn: path.join(ROOT, 'Manual-Lite', '05_VPN_Setup_Guide', 'img'),
+  workflow: path.join(ROOT, 'Manual-Lite', '06_Lab_Workflow_Reference', 'img'),
+  trouble: path.join(ROOT, 'Manual-Lite', '07_Troubleshooting', 'img'),
+  deploy: path.join(ROOT, 'Manual-Lite', '00_Server_Deployment', 'img'),
+}
+
+const CREDS = {
+  student: {
+    username: process.env.UI_STUDENT_USERNAME || process.env.UI_SMOKE_USERNAME || '',
+    password: process.env.UI_STUDENT_PASSWORD || process.env.UI_SMOKE_PASSWORD || '',
+  },
+  instructor: {
+    username: process.env.UI_INSTRUCTOR_USERNAME || '',
+    password: process.env.UI_INSTRUCTOR_PASSWORD || '',
+  },
+  admin: {
+    username: process.env.UI_ADMIN_USERNAME || '',
+    password: process.env.UI_ADMIN_PASSWORD || '',
+  },
+}
 
 if (!BASE) {
   console.log('Manual screenshots skipped: UI_BASE_URL is required.')
   process.exit(0)
 }
 
-async function login() {
-  if (TOKEN) {
-    const api = await request.newContext({
-      baseURL: BASE,
-      ignoreHTTPSErrors: true,
-      extraHTTPHeaders: { Authorization: `Bearer ${TOKEN}` },
-    })
-    try {
-      const me = await api.get('/api/auth/me')
-      if (!me.ok()) return null
-      return { token: TOKEN, user: await me.json() }
-    } finally {
-      await api.dispose()
-    }
-  }
-  if (!USERNAME || !PASSWORD) return null
+const report = []
+const browser = await chromium.launch({ headless: true })
+
+async function login(role) {
+  const { username, password } = CREDS[role]
+  if (!username || !password) return null
   const api = await request.newContext({ baseURL: BASE, ignoreHTTPSErrors: true })
   try {
-    const response = await api.post('/api/auth/login', {
-      form: { username: USERNAME, password: PASSWORD },
-    })
-    if (!response.ok()) return null
+    const response = await api.post('/api/auth/login', { form: { username, password } })
+    if (!response.ok()) {
+      console.error(`login failed for ${role} (${response.status()})`)
+      return null
+    }
     const body = await response.json()
-    const token = body.access_token || body.token || ''
-    if (!token) return null
     const me = await api.get('/api/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${body.access_token}` },
     })
-    return { token, user: me.ok() ? await me.json() : {} }
+    return { token: body.access_token, user: me.ok() ? await me.json() : {} }
   } finally {
     await api.dispose()
   }
 }
 
-const session = await login()
-if (!session?.token) {
-  console.error('Manual screenshots failed: provide UI_SMOKE_TOKEN or UI_SMOKE_USERNAME / UI_SMOKE_PASSWORD.')
-  process.exit(1)
-}
-
-fs.mkdirSync(STUDENT_IMG, { recursive: true })
-fs.mkdirSync(ADMIN_IMG, { recursive: true })
-
-const browser = await chromium.launch({ headless: true })
-const written = []
-const errors = []
-
-async function contextFor(theme, viewport = { width: 1440, height: 1100 }) {
+async function contextFor(session, viewport = { width: 1440, height: 1100 }) {
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport,
     deviceScaleFactor: 2,
   })
-  await context.addInitScript(({ token, user, theme }) => {
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(user))
-    localStorage.setItem('theme', theme)
-    localStorage.setItem('ocr_orientation_seen_v1_' + user.username, '1')
-  }, { token: session.token, user: session.user, theme })
+  if (session) {
+    await context.addInitScript(({ token, user }) => {
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(user))
+      localStorage.setItem('theme', 'dark')
+      localStorage.setItem('privacy-mode', 'off')
+      localStorage.setItem('ocr_orientation_seen_v1_' + user.username, '1')
+    }, session)
+  }
   const page = await context.newPage()
-  page.on('pageerror', (error) => errors.push(String(error)))
+  page.setDefaultTimeout(15000)
+  page.on('pageerror', (err) => console.error('pageerror:', String(err).split('\n')[0]))
   return { context, page }
 }
 
+async function go(page, route, wait = 1300) {
+  await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle', timeout: 60000 })
+  await page.waitForTimeout(wait)
+}
+
 async function shot(page, selector, target, label) {
-  const locator = page.locator(selector).first()
-  await locator.waitFor({ state: 'visible', timeout: 45000 })
-  await locator.scrollIntoViewIfNeeded()
-  await page.waitForTimeout(350)
-  await locator.screenshot({ path: target, animations: 'disabled' })
-  written.push(path.relative(ROOT, target))
-  console.log(`WROTE: ${label} -> ${path.relative(ROOT, target)}`)
-}
-
-const dark = await contextFor('dark')
-try {
-  await dark.page.goto(`${BASE}/profile?tab=skill-tree`, { waitUntil: 'networkidle', timeout: 45000 })
-  if (!(await dark.page.locator('.momentum').count())) {
-    console.error(
-      'Momentum is not visible. Enable Admin -> Settings -> Features -> Advanced DNA Insights on this deployment.'
-    )
-    process.exitCode = 1
-  } else {
-    await shot(
-      dark.page,
-      '.dna-section',
-      path.join(STUDENT_IMG, 'profile-cyber-dna.png'),
-      'Cyber DNA section'
-    )
-    await shot(
-      dark.page,
-      '.momentum',
-      path.join(STUDENT_IMG, 'profile-momentum.png'),
-      'Momentum panel'
-    )
-  }
-
-  await dark.page.goto(`${BASE}/profile?tab=careers`, { waitUntil: 'networkidle', timeout: 45000 })
-  if (!(await dark.page.locator('.atlas').count())) {
-    console.error(
-      'Career Atlas is not visible. Enable Admin -> Settings -> Features -> Advanced DNA Insights on this deployment.'
-    )
-    process.exitCode = 1
-  } else {
-    await shot(
-      dark.page,
-      '.atlas',
-      path.join(STUDENT_IMG, 'profile-careers.png'),
-      'Career Atlas'
-    )
-  }
-} finally {
-  await dark.context.close()
-}
-
-if (session.user?.role === 'admin') {
-  const admin = await contextFor('dark', { width: 1440, height: 1000 })
   try {
-    await admin.page.goto(`${BASE}/admin?tab=settings`, { waitUntil: 'networkidle', timeout: 45000 })
-    const features = admin.page.locator('button.lab-tab', { hasText: 'Features' }).first()
-    if (await features.count()) {
-      await features.click()
-      await admin.page.waitForTimeout(500)
-      await admin.page.screenshot({
-        path: path.join(ADMIN_IMG, 'admin-settings-features.png'),
-        fullPage: false,
-        animations: 'disabled',
-      })
-      written.push(path.relative(ROOT, path.join(ADMIN_IMG, 'admin-settings-features.png')))
-      console.log('WROTE: Admin Features settings -> Manual-Lite/04_Admin_Guide/img/admin-settings-features.png')
-    } else {
-      console.error('Features settings tab not found. Is this build current?')
-      process.exitCode = 1
-    }
-  } finally {
-    await admin.context.close()
+    const locator = page.locator(selector).first()
+    await locator.waitFor({ state: 'visible', timeout: 12000 })
+    await locator.scrollIntoViewIfNeeded()
+    await page.waitForTimeout(300)
+    await locator.screenshot({ path: target, animations: 'disabled' })
+    report.push(`OK ${label}`)
+  } catch (err) {
+    report.push(`SKIP ${label}: ${String(err).split('\n')[0]}`)
   }
+}
+
+async function viewportShot(page, target, label) {
+  await page.screenshot({ path: target, animations: 'disabled' })
+  report.push(`OK ${label}`)
+}
+
+async function closeOverlay(page) {
+  const overlay = page.locator('.modal-overlay').first()
+  if (await overlay.count()) {
+    await overlay.click({ position: { x: 4, y: 4 } }).catch(() => {})
+    await page.waitForTimeout(400)
+  }
+}
+
+for (const dir of Object.values(IMG)) fs.mkdirSync(dir, { recursive: true })
+
+// ---------- Guest pages ----------
+{
+  const { context, page } = await contextFor(null)
+  await go(page, '/login')
+  await viewportShot(page, path.join(IMG.start, 'login.png'), 'login')
+  await viewportShot(page, path.join(IMG.trouble, 'login-screen.png'), 'login-screen')
+  await go(page, '/register')
+  await viewportShot(page, path.join(IMG.start, 'register.png'), 'register')
+  await context.close()
+}
+
+// ---------- Student ----------
+const student = await login('student')
+if (student) {
+  const { context, page } = await contextFor(student)
+  await go(page, '/dashboard')
+  await viewportShot(page, path.join(IMG.student, 'student-dashboard.png'), 'student dashboard')
+  await viewportShot(page, path.join(IMG.start, 'navigation-sidebar.png'), 'navigation sidebar')
+
+  await go(page, '/exercises')
+  await viewportShot(page, path.join(IMG.student, 'browsing-exercises.png'), 'browsing exercises')
+
+  await go(page, '/exercises/linux')
+  await viewportShot(page, path.join(IMG.student, 'track-detail.png'), 'track detail')
+  await viewportShot(page, path.join(IMG.workflow, 'lab-statuses.png'), 'lab statuses')
+
+  await go(page, '/courses')
+  await viewportShot(page, path.join(IMG.student, 'course-list.png'), 'course list')
+  const courseLink = page.locator('.course-card__action, a[href^="/courses/"]').first()
+  if (await courseLink.count()) {
+    await courseLink.click()
+    await page.waitForTimeout(1400)
+    await viewportShot(page, path.join(IMG.student, 'course-labs.png'), 'course overview')
+  }
+
+  await go(page, '/vpn-setup')
+  await viewportShot(page, path.join(IMG.student, 'vpn-setup.png'), 'vpn setup page')
+  await viewportShot(page, path.join(IMG.vpn, 'vpn-overview.png'), 'vpn overview')
+  await shot(page, '.vpn-card', path.join(IMG.vpn, 'vpn-download.png'), 'vpn download')
+  await shot(page, '.instructions-card', path.join(IMG.vpn, 'vpn-linux.png'), 'vpn instructions')
+
+  await go(page, '/profile')
+  await viewportShot(page, path.join(IMG.student, 'profile.png'), 'profile overview')
+  const tab = (name) => page.locator('.profile-tab', { hasText: name }).first()
+  if (await tab('Skill tree').count()) {
+    await tab('Skill tree').click()
+    await page.waitForTimeout(1200)
+    await shot(page, '.dna-layout', path.join(IMG.student, 'profile-cyber-dna.png'), 'dna layout')
+    await shot(page, '.dna-class-card', path.join(IMG.student, 'profile-dna-class.png'), 'dna class')
+    await shot(page, '.dna-tree', path.join(IMG.student, 'profile-dna-tree.png'), 'dna tree')
+    await shot(page, '.dna-ce', path.join(IMG.student, 'profile-dna-continuing-education.png'), 'dna continuing education')
+    await shot(page, '.momentum', path.join(IMG.student, 'profile-momentum.png'), 'momentum')
+  }
+  if (await tab('Cyber GPS').count()) {
+    await tab('Cyber GPS').click()
+    await page.waitForTimeout(1200)
+    await shot(page, '.gps-panel', path.join(IMG.student, 'profile-cyber-gps.png'), 'cyber gps')
+    await shot(page, '.gps-revisit', path.join(IMG.student, 'profile-cyber-gps-signal.png'), 'fading signal')
+    await shot(page, '.atlas', path.join(IMG.student, 'profile-careers.png'), 'career atlas')
+  }
+
+  await go(page, '/events')
+  await shot(page, '.community-events', path.join(IMG.student, 'community-events-calendar.png'), 'community events')
+
+  await go(page, '/change-password')
+  await viewportShot(page, path.join(IMG.student, 'change-password.png'), 'change password')
+
+  const mobile = await contextFor(student, { width: 390, height: 844 })
+  await go(mobile.page, '/dashboard', 1600)
+  await viewportShot(mobile.page, path.join(IMG.student, 'mobile-navigation.png'), 'mobile navigation')
+  await mobile.context.close()
+
+  await go(page, '/workbooks')
+  const open = page.locator('.wb-card__open').first()
+  if (await open.count()) {
+    const [reader] = await Promise.all([context.waitForEvent('page'), open.click()])
+    await reader.waitForLoadState('networkidle').catch(() => {})
+    await reader.waitForTimeout(2000)
+    await reader.screenshot({
+      path: path.join(IMG.student, 'workbook-reading.png'),
+      animations: 'disabled',
+    })
+    report.push('OK workbook reading')
+    await reader.close()
+  }
+
+  if (ACTIVE_LAB) {
+    const api = await request.newContext({ baseURL: BASE, ignoreHTTPSErrors: true })
+    const headers = { Authorization: `Bearer ${student.token}` }
+    const spawn = await api.post('/api/labs/spawn/linux-1-1-ssh-service-detection', {
+      headers,
+      data: { rangebox: false },
+    })
+    if (spawn.ok()) {
+      const { session_id: sessionId } = await spawn.json()
+      for (let i = 0; i < 60; i++) {
+        const status = await api.get(`/api/labs/spawn-status/${sessionId}`, { headers })
+        const data = status.ok() ? await status.json() : {}
+        if (['running', 'error', 'failed'].includes(data.status)) break
+        await new Promise((resolve) => setTimeout(resolve, 3000))
+      }
+      await go(page, '/exercises/linux', 1800)
+      await shot(page, '.active-lab-panel', path.join(IMG.student, 'working-in-a-lab.png'), 'working in a lab')
+      await shot(page, '.active-lab-panel__header', path.join(IMG.student, 'active-lab-extend.png'), 'active lab extend')
+      await shot(page, '.active-lab-panel__header', path.join(IMG.student, 'active-lab-stop.png'), 'active lab stop')
+      await shot(page, '.flag-panel', path.join(IMG.student, 'submit-flag.png'), 'submit flag')
+      const hint = page.getByRole('button', { name: /Need a hint/i }).first()
+      if (await hint.count()) {
+        await hint.click()
+        await page.waitForTimeout(700)
+        const requestHint = page.getByRole('button', { name: /Request Hint/i }).first()
+        if (await requestHint.count()) {
+          await requestHint.click()
+          await page.waitForTimeout(1200)
+        }
+        await shot(
+          page,
+          '.active-lab-grid .panel-section:has(.section-title:has-text("Hints"))',
+          path.join(IMG.student, 'hints.png'),
+          'hints'
+        )
+      }
+      await api.post('/api/labs/stop', { headers, data: { session_id: sessionId } })
+    } else {
+      report.push(`SKIP active lab: spawn returned ${spawn.status()}`)
+    }
+    await api.dispose()
+  }
+  await context.close()
 } else {
-  console.log('Skipped admin screenshot: the signed-in account is not an administrator.')
+  report.push('SKIP student captures: no student credentials')
+}
+
+// ---------- Instructor ----------
+const instructor = await login('instructor')
+if (instructor) {
+  const { context, page } = await contextFor(instructor)
+  await go(page, '/instructor', 1700)
+  await viewportShot(page, path.join(IMG.instructor, 'instructor-dashboard.png'), 'instructor dashboard')
+
+  await go(page, '/instructor?tab=courses', 1500)
+  await viewportShot(page, path.join(IMG.instructor, 'course-card-actions.png'), 'course cards')
+  const manage = page.getByRole('button', { name: /Manage/i }).first()
+  if (await manage.count()) {
+    await manage.click()
+    await page.waitForTimeout(1400)
+    const files = {
+      Students: 'course-students.png',
+      'Exercises (': 'course-exercises.png',
+      'Exercise plan': 'course-reorder-labs.png',
+      Assignments: 'course-assignments.png',
+      Reports: 'course-reports.png',
+      Settings: 'course-settings.png',
+    }
+    for (const [name, file] of Object.entries(files)) {
+      const btn = page.locator('.sub-tab', { hasText: name }).first()
+      if (await btn.count()) {
+        await btn.click()
+        await page.waitForTimeout(1200)
+        await viewportShot(page, path.join(IMG.instructor, file), `course ${name}`)
+      } else {
+        report.push(`SKIP course tab ${name}`)
+      }
+    }
+  }
+
+  // Student Preview banner
+  await go(page, '/instructor?tab=courses', 1300)
+  const preview = page.locator('.action-btn--impersonate').first()
+  if (await preview.count()) {
+    await preview.click()
+    await page.waitForTimeout(2200)
+    await shot(page, '.imp-banner', path.join(IMG.admin, 'admin-impersonation.png'), 'student preview banner')
+    const exit = page.getByRole('button', { name: /Exit Preview/i }).first()
+    if (await exit.count()) {
+      await exit.click()
+      await page.waitForTimeout(700)
+    }
+  }
+  await context.close()
+} else {
+  report.push('SKIP instructor captures: no instructor credentials')
+}
+
+// ---------- Admin ----------
+const admin = SKIP_ADMIN ? null : await login('admin')
+if (admin) {
+  const { context, page } = await contextFor(admin)
+  await go(page, '/admin', 1500)
+  await viewportShot(page, path.join(IMG.admin, 'admin-panel-overview.png'), 'admin overview')
+
+  const createUser = page.getByRole('button', { name: /Create New User/i }).first()
+  if (await createUser.count()) {
+    await createUser.click()
+    await page.waitForTimeout(800)
+    await shot(page, '.create-form', path.join(IMG.admin, 'admin-create-user.png'), 'create user form')
+  }
+
+  await go(page, '/admin?tab=users')
+  const pending = page.getByRole('button', { name: /^Pending/ }).first()
+  if (await pending.count()) {
+    await pending.click()
+    await page.waitForTimeout(1100)
+    await viewportShot(page, path.join(IMG.admin, 'admin-pending.png'), 'pending approvals')
+  }
+  const filter = page.locator('select').filter({ has: page.locator('option[value="locked"]') }).first()
+  if (await filter.count()) {
+    await filter.selectOption('locked')
+    await page.waitForTimeout(1100)
+    await viewportShot(page, path.join(IMG.admin, 'admin-locked-users.png'), 'locked users')
+  }
+
+  await go(page, '/admin?tab=labs', 1500)
+  await viewportShot(page, path.join(IMG.admin, 'admin-exercises.png'), 'admin exercises')
+  const tracks = page.getByRole('button', { name: /Tracks & Levels/i }).first()
+  if (await tracks.count()) {
+    await tracks.click()
+    await page.waitForTimeout(1100)
+    await viewportShot(page, path.join(IMG.admin, 'admin-tracks.png'), 'admin tracks')
+  }
+  await go(page, '/admin?tab=labs', 1300)
+  const edit = page.locator('.action-btn--view').first()
+  if (await edit.count()) {
+    await edit.click()
+    await page.waitForTimeout(1200)
+    await shot(page, '.modal', path.join(IMG.admin, 'admin-edit-lab.png'), 'edit lab')
+    const composeTab = page.locator('.modal button').filter({ hasText: /Compose/i }).first()
+    if (await composeTab.count()) {
+      await composeTab.click()
+      await page.waitForTimeout(800)
+      await shot(page, '.modal', path.join(IMG.admin, 'admin-edit-compose.png'), 'edit compose')
+    }
+    await closeOverlay(page)
+  }
+  const createLab = page.getByRole('button', { name: /\+ Create Exercise/i }).first()
+  if (await createLab.count()) {
+    await createLab.click()
+    await page.waitForTimeout(1000)
+    await shot(page, '.modal', path.join(IMG.admin, 'admin-create-lab.png'), 'create lab')
+    await closeOverlay(page)
+  }
+  const disk = page.getByRole('button', { name: /Disk Management/i }).first()
+  if (await disk.count()) {
+    await disk.click()
+    await page.waitForTimeout(1100)
+    await shot(page, '.modal', path.join(IMG.admin, 'admin-disk.png'), 'disk management')
+    await closeOverlay(page)
+  }
+
+  await go(page, '/admin?tab=monitoring', 1500)
+  await viewportShot(page, path.join(IMG.admin, 'admin-monitoring-sessions.png'), 'sessions')
+  const vpn = page.getByRole('button', { name: /VPN Peers/ }).first()
+  if (await vpn.count()) {
+    await vpn.click()
+    await page.waitForTimeout(1200)
+    await viewportShot(page, path.join(IMG.admin, 'admin-vpn-peers.png'), 'vpn peers')
+  }
+  const audit = page.getByRole('button', { name: /Activity Log/ }).first()
+  if (await audit.count()) {
+    await audit.click()
+    await page.waitForTimeout(1200)
+    const eventSelect = page.locator('select').first()
+    const options = await eventSelect.locator('option').allTextContents()
+    const loginOption = options.find((value) => /login/i.test(value))
+    if (loginOption) {
+      await eventSelect.selectOption({ label: loginOption })
+      await page.waitForTimeout(1200)
+    }
+    await viewportShot(page, path.join(IMG.admin, 'admin-activity-log.png'), 'activity log')
+  }
+
+  await go(page, '/admin?tab=settings', 1500)
+  await viewportShot(page, path.join(IMG.admin, 'admin-settings.png'), 'settings')
+  const features = page.getByRole('button', { name: /^Features/ }).first()
+  if (await features.count()) {
+    await features.click()
+    await page.waitForTimeout(900)
+    await viewportShot(page, path.join(IMG.admin, 'admin-settings-features.png'), 'features')
+  }
+
+  await go(page, '/admin?tab=system', 1500)
+  await viewportShot(page, path.join(IMG.admin, 'admin-diagnostics.png'), 'system')
+  await viewportShot(page, path.join(IMG.deploy, 'post-install-admin.png'), 'post-install admin')
+  await context.close()
+} else {
+  report.push('SKIP admin captures: no admin credentials')
 }
 
 await browser.close()
-
-if (errors.length) {
-  console.error('Page errors observed during capture:')
-  for (const error of errors) console.error(`  - ${error}`)
-  process.exitCode = 1
-}
-
-console.log(`Manual screenshots complete: ${written.length} file(s).`)
+console.log(report.join('\n'))
+console.log(`Manual screenshots complete: ${report.filter((line) => line.startsWith('OK')).length} image(s).`)

@@ -16,6 +16,9 @@ All notable changes to OpenCyberRange are recorded here.
   inside the reading column.
 - Removed the synthetic Career Atlas/Momentum preview generator; the manual now
   uses live captures.
+- Added `scripts/ui-manual-screenshots.mjs` and
+  `docs/MANUAL-SCREENSHOTS.md` so the screenshot set can be regenerated with
+  demo credentials instead of ad-hoc scripts.
 
 ### OT/ICS track
 - Added `ot-1-2-modbus-setpoint-tampering`: students write an unauthenticated
