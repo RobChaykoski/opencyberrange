@@ -2,6 +2,28 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Labs
+- Added `network-12-6-appliance-segment`: a dual-homed OpenWrt 24.10.5
+  appliance on the training network and an internal control segment. The
+  protected service stays off the student lab network, the forward chain is
+  default-deny, and the learner pivots with an SSH local forward. Includes the
+  workbook page and the NET04 framework mapping.
+
+### Reports
+- Added the `learner_snapshots` table (migration `0031`). A career-dossier or
+  portfolio export stores its payload, schema and formula versions, factor
+  weights, and a content hash. Stored reports re-render from the snapshot, so a
+  later scoring change cannot rewrite an old report. Snapshots are owner-only
+  and deleted with the account.
+
+### Documentation
+- Added `docs-publish.yml`: it builds the user manual (or every site for
+  inspection), checks the built tree, and publishes a tarball with
+  `SHA256SUMS` and a manifest. Workbook and course sites stay unpublished; see
+  `docs/MANUAL-PUBLISHING.md`.
+
 ## [5.15.0] - 2026-11-15
 
 ### Lab access and stop controls
