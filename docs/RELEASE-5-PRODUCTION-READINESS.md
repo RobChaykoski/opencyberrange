@@ -95,6 +95,12 @@ security patch, IdP settings feature, and operations patch.
   Alembic `0030_cohort_strict`, 179 active labs, 12 tracks, the SPA returned
   200, the workbook origin returned the 302 session gate, and the certificate
   PDF endpoint returned 401 without a token.
+- Docker build cache was pruned (about 2 GB); 14 GB remains free at 86% used.
+  The 55 GB of reclaimable images are active-lab prebuilds retained for fast
+  spawning, not stale layers.
+- The production git tree was pulled to `045efe38` (documentation, key rotation,
+  and a test-only change) while the running images remain those built from
+  `1c5a0d9e`.
 - Certificate PDFs now honor the selected design. On development, classic,
   executive, modern, and minimal returned distinct sizes and SHA-256 hashes;
   an unknown design falls back to classic.
@@ -105,6 +111,12 @@ security patch, IdP settings feature, and operations patch.
   strict mode restored all four. The learner course page reported "0 of 2
   assigned exercises". The temporary course, user, and completions were
   deleted afterwards.
+- Strict cohort mode was also smoke-tested on production with a temporary
+  course, user, two cohorts, two exercise sets, and a default cohort. Cohort A
+  returned labs 1-2, cohort B returned labs 3-4, and disabling strict mode or
+  removing the requirements returned all four labs. The course page reported
+  "0 of 2 assigned exercises" for the filtered cohort. The course, user, and
+  related rows were deleted; production returned to its single course.
 
 ## Deliberately deferred
 
