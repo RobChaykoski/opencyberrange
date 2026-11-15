@@ -40,6 +40,14 @@ a month**.
 - **Reset:** the qcow2 is mounted read-only and QEMU uses `-snapshot`. A restart
   returns the guest to its clean state.
 
+## Host readiness
+
+The development host provides `/dev/kvm` and the target image has been built and
+exercised there. Production currently does **not** expose `/dev/kvm`; the
+platform will refuse to spawn these labs on that host until nested virtualization
+or a KVM-capable deployment is available. Do not publish the track as runnable
+on a host that lacks hardware virtualization.
+
 ## Provisioning
 
 The VM image is not committed to the repository. On each KVM-capable host:
