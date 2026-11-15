@@ -19,9 +19,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Wave 0 records the current baseline on 3.11. Wave 1 adds 3.12/3.13
-        # after the runtime image and dependency upgrades.
-        python-version: ["3.11"]
+        # The backend runtime image is Python 3.13. Keep CI on the same minor so
+        # a wheel or stdlib change shows up before the image is rebuilt.
+        python-version: ["3.13"]
     services:
       postgres:
         image: postgres:17-alpine
@@ -97,7 +97,7 @@ jobs:
 
       - uses: actions/setup-python@v7
         with:
-          python-version: "3.11"
+          python-version: "3.13"
 
       - name: Check SPA security headers
         run: python scripts/check-nginx-security-headers.py

@@ -56,11 +56,11 @@ started unless `--profile sso` is requested.
 | Component | Current | Target | Status | Notes |
 |---|---|---|---|---|
 | Host OS | Community / Academic profile: Ubuntu 22.04 and 24.04 LTS; Professional and Enterprise profiles: Ubuntu 24.04 LTS | 24.04 for Professional/Enterprise profiles | Validation in progress | Community / Academic supports both LTS releases; the Professional profile is deployed and KVM ready, with network/VPN and recovery gates remaining; Enterprise inherits the Professional baseline. See [Host OS support](OS-SUPPORT.md) and the [24.04 build-out plan](V2-24.04-BUILD-OUT.md) |
-| Python | 3.11 | 3.13 | Remaining (runtime wave) | Re-evaluate 3.14 after wheels |
+| Python | 3.13 | 3.13 | Applied (runtime wave) | Re-evaluate 3.14 after wheels |
 | Node.js | 22 LTS | 24 LTS | Applied in Wave C | Re-evaluate 24 LTS next |
 | PostgreSQL | 15 | 17 | Planned major upgrade | Separate deployment, dump/restore |
 | Valkey | 9.1.3 | 9.1.3 | Supported | Shared rate-limit counters; no persistence |
-| Backend base | `python:3.11-slim` | Pin a 3.13 slim digest | Wave 1 | psycopg3/cryptography wheels are available; test the runtime swap |
+| Backend base | `python:3.13-slim` (digest pinned) | 3.13 slim digest | Applied in Wave 1 | CI runs the same minor |
 | Frontend builder | `node:22-alpine` | Pin a digest | Applied in Wave C | Required by Vite 8 |
 | Frontend server | `nginx:alpine` | Pin a supported stable digest | Wave 1 | Verify nginx config compatibility |
 

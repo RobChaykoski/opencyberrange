@@ -99,6 +99,7 @@ COVERED_FILES = [
     "deploy/systemd/ocr-db-integrity.timer",
     "deploy/systemd/ocr-db-integrity-alert@.service",
     "deploy/systemd/README.md",
+    "deploy/host-hardening.sh",
     "scripts/check-licences.py",
     "scripts/create-lab.py",
     "scripts/generate-about.py",

@@ -6,7 +6,7 @@
 # across the tree in bulk; fix files as they are touched.
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py313"
 line-length = 120
 src = ["app"]
 extend-exclude = [

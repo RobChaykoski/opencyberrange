@@ -44,6 +44,12 @@ All notable changes to OpenCyberRange are recorded here.
 - Container bases are pinned by digest and refreshed with `apt-get upgrade` or
   `apk upgrade` at build time. The backend runtime no longer carries `curl`,
   `gnupg`, `pip`, `setuptools`, or `wheel`.
+- The backend runtime and CI moved from Python 3.11 to 3.13, which clears the
+  interpreter findings that only had fixes on newer minor branches. The full
+  suite passes against PostgreSQL 17 on 3.13.
+- Added `deploy/host-hardening.sh` for the two low-risk Lynis items (umask 027
+  and disabled core dumps). It is idempotent and previewable with `--dry-run`;
+  applying it needs root on each host.
 - Added `docs/SECURITY-SCANNING.md` with the Syft, Grype, and Lynis procedure,
   before/after image counts, and the triage of the findings that remain.
 

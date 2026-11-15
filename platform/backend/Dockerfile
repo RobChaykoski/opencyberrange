@@ -3,7 +3,7 @@
 # Pin the multi-arch index digest so a base-image refresh cannot change the
 # build silently; Renovate updates the digest with the tag. OS packages are
 # refreshed with apt-get upgrade below because a pinned base still goes stale.
-FROM python:3.11-slim@sha256:07d4824036af339fa1b6ef769cc99d9c10a141769538b52b3b597c84f7a7b535 AS build
+FROM python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90 AS build
 
 WORKDIR /app
 
@@ -30,7 +30,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 
-FROM python:3.11-slim@sha256:07d4824036af339fa1b6ef769cc99d9c10a141769538b52b3b597c84f7a7b535
+FROM python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90
 
 ARG PLATFORM_VERSION=4
 ARG BUILD_REVISION=unknown
@@ -82,10 +82,10 @@ COPY --from=build /install /usr/local
 # wheel are removed from the shipped image. This also removes their bundled
 # dependencies (for example jaraco-context) from the vulnerability surface.
 RUN python -m pip uninstall -y pip setuptools wheel && \
-    rm -rf /usr/local/lib/python3.11/site-packages/pip* \
-           /usr/local/lib/python3.11/site-packages/setuptools* \
-           /usr/local/lib/python3.11/site-packages/wheel* \
-           /usr/local/lib/python3.11/site-packages/pkg_resources
+    rm -rf /usr/local/lib/python3.13/site-packages/pip* \
+           /usr/local/lib/python3.13/site-packages/setuptools* \
+           /usr/local/lib/python3.13/site-packages/wheel* \
+           /usr/local/lib/python3.13/site-packages/pkg_resources
 
 COPY . /app/
 

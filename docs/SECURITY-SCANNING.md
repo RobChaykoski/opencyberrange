@@ -77,16 +77,22 @@ rebuild.
 
 | Image | Before (crit/high/medium/low/neg/unknown) | After (crit/high/medium/low/neg/unknown) |
 | --- | --- | --- |
-| backend | 574 (17/230/142/39/105/41) | 345 (1/105/101/19/78/41) |
+| backend | 574 (17/230/142/39/105/41) | 339 (1/105/96/19/77/41) |
 | frontend | 8 (1/3/4/0/0/0) | 3 (0/0/3/0/0/0) |
 
-The remaining backend critical is a Debian `wont-fix` entry (see triage below),
-not a missed upgrade.
+The backend "after" column is the Python 3.13 rebuild. The intermediate 3.11
+rebuild measured 345 matches; moving the runtime and CI to 3.13 cleared the
+interpreter findings that only had fixes on newer minor branches. The remaining
+backend critical is a Debian `wont-fix` entry (see triage below), not a missed
+upgrade.
 
 ### What changed in the images
 
 - Backend and frontend base images are pinned by multi-arch index digest, so a
   rebuild cannot silently change the base. Renovate updates the digests.
+- The backend runtime and CI moved from Python 3.11 to 3.13. The full suite
+  (630 tests) passes against PostgreSQL 17 on 3.13, and CI now runs the same
+  minor as the image.
 - Backend runtime runs `apt-get upgrade` before installing its packages, so
   Debian point-release fixes that landed after the pinned digest are applied.
 - Frontend runtime runs `apk upgrade` before adding `curl`, so Alpine security
@@ -109,13 +115,14 @@ trixie. The high-severity `libkrb5*` entries are in the same position: Debian
 has no fixed version, and the image already carries the newest trixie package
 set. These are vendor assessments, not missed upgrades.
 
-The 14 findings that do show a fixed version split into two groups:
+The 8 findings that do show a fixed version split into two groups:
 
-- Python interpreter CVEs fixed only on the 3.12/3.13/3.14 branches (for
-  example CVE-2025-12781, CVE-2026-12345). The fix is a minor-version migration,
-  not a rebuild.
+- Three Python interpreter CVEs (`CVE-2025-15367`, `CVE-2026-116566`,
+  `CVE-2026-103995`) are fixed only on the 3.15/3.16 branches, which are not
+  stable releases. The runtime is on the current 3.13 patch, which is in full
+  support until October 2028; re-evaluate when 3.15 reaches GA.
 - Go library CVEs inside the Docker Inc. `docker-ce-cli` binary
-  (`GO-2026-4887`, `github.com/moby/go-archive`, `klauspost/compress`,
+  (`github.com/moby/go-archive`, `klauspost/compress`,
   `go.opentelemetry.io/otel`). They move when Docker publishes a new package.
 
 Compensating controls for the remaining library findings:
@@ -134,12 +141,11 @@ The frontend's remaining three matches are one `busybox` CVE
 `ssl_client`. Alpine has not published a fixed package; the frontend serves
 static files, and busybox applets are not exposed to requests.
 
-Two follow-ups remain open:
+The remaining follow-ups:
 
-1. **Python 3.11 branch.** Several interpreter CVEs are fixed only on newer
-   minor branches. Python 3.11 is in security-only maintenance until October
-   2027. Plan a migration to the current stable minor release rather than
-   backporting.
+1. **Python 3.15.** The runtime and CI are on 3.13 (applied). Three interpreter
+   CVEs are fixed only on 3.15/3.16, which are not stable. Re-evaluate after
+   3.15 reaches GA; do not chase alpha branches for a production image.
 2. **Docker CLI Go findings** move when Docker Inc. publishes a new trixie
    package. Renovate tracks the base image, and the weekly Trivy scan surfaces
    changes.
@@ -180,10 +186,14 @@ Suggestions that matter for this deployment, and their status:
 | `BOOT-5122` GRUB password | Deferred: physical/console access is controlled; GRUB passwords complicate unattended recovery. Revisit for on-premise installs. |
 | `AUTH-9230` password hashing rounds in `/etc/login.defs` | Deferred: authentication is application-level (argon2/bcrypt), not system accounts. |
 | `AUTH-9262` PAM password-quality module | Deferred: no interactive system logins; the platform enforces password policy in the app. |
-| `AUTH-9328` umask `027` | Candidate: low risk, no known breakage. |
-| `KRNL-5820` disable core dumps | Candidate: limits crash data that can contain secrets. |
+| `AUTH-9328` umask `027` | Script provided: `sudo bash deploy/host-hardening.sh`. Apply on each host; the script backs up the file it edits. |
+| `KRNL-5820` disable core dumps | Script provided: `sudo bash deploy/host-hardening.sh`. Same script, same backup. |
 | `FILE-6310` separate `/tmp`, `/var`, `/home` partitions | Accepted: LVM has a single root logical volume; splitting now requires downtime and a reinstall path. Documented in the production readiness record. |
 | `USB-1000` disable USB storage | Deferred: host is in a datacentre; physical access is the boundary. |
+
+The two scripted items are idempotent and previewable with `--dry-run`. They were
+not applied by the assistant because neither host grants passwordless sudo; run
+the script from an administrative session and re-run Lynis afterwards.
 
 No Lynis finding was treated as a release blocker. The two "candidate" rows are
 cheap wins for the next maintenance window.

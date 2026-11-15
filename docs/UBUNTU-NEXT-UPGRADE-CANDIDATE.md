@@ -14,7 +14,7 @@ provided later, dispatch the workflow with that runner label.
 
 - Ubuntu 24.04 LTS is the certified 2.5.4 host baseline.
 - Ubuntu 26.04 LTS is the next long-lived host baseline for the 2.5.x/2.6 line.
-- The platform containers are unchanged (`python:3.11-slim`, `node:22-alpine`,
+- The platform containers are unchanged (`python:3.13-slim`, `node:22-alpine`,
   `nginx:alpine`, `postgres:15-alpine`, `redis:7.2-alpine`).
 - The host installer targets "Ubuntu 22.04 or newer", so 26.04 should mostly
   reuse the 24.04 path. The unknown is host tooling: Docker, nftables,
