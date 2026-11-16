@@ -1,6 +1,6 @@
 # Next steps
 
-Status: **Release 5.16.0 is deployed to development and production. Cyber DNA
+Status: **Release 5.17.1 is deployed to development and production. Cyber DNA
 v3 Phase 1 is enabled on development only.** The platform runs Python 3.13, the
 security hardening wave is live, the OT track has three exercises plus an
 offline scan assistant, and the user manual reflects the current UI.

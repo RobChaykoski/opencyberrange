@@ -19,6 +19,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from app.auth import get_password_hash
+from app.consent import service as consent_service
 from app.cyber_dna.models import DnaSnapshot
 from app.models import (
     Course,
@@ -131,6 +132,10 @@ def test_profile_snapshot_owner_succeeds_and_non_owner_gets_404(
 ):
     owner = _user(db_session)
     outsider = _user(db_session)
+    consent_service.grant(db_session, owner.id, "portfolio")
+    consent_service.grant(db_session, owner.id, "cyber_dna")
+    consent_service.grant(db_session, outsider.id, "portfolio")
+    consent_service.grant(db_session, outsider.id, "cyber_dna")
     snapshot = _snapshot(db_session, owner)
 
     owner_headers = _headers(client, owner)
@@ -159,6 +164,8 @@ def test_cyber_dna_snapshot_owner_succeeds_and_non_owner_gets_404(
 ):
     owner = _user(db_session)
     outsider = _user(db_session)
+    consent_service.grant(db_session, owner.id, "cyber_dna")
+    consent_service.grant(db_session, outsider.id, "cyber_dna")
     snapshot = _dna_snapshot(db_session, owner)
     _setting(db_session, "cyber_dna_v3_enabled", "true")
 

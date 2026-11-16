@@ -451,6 +451,14 @@ def test_regrant_allows_new_activity_without_restoring_old_data(
     assert after["snapshots"] == 0
 
 
+def test_optional_profiling_defaults_are_opt_in(db_session, test_user):
+    for consent_type in ("cyber_dna", "cyber_gps", "portfolio"):
+        state = service.state_for(db_session, test_user.id, consent_type)
+        assert state["default_granted"] is False
+        assert state["granted"] is False
+        assert service.blocked_status(db_session, test_user.id, consent_type) == "revoked"
+
+
 def test_gps_and_portfolio_gates_preserve_course_progress(
     client, db_session, auth_headers, test_user, test_lab
 ):

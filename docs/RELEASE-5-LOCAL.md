@@ -1,6 +1,8 @@
 # Release 5 local development stack
 
-Status: **development only.** Production remains on Release 4.
+Status: **historical local-development guide.** Current production is Release
+**5.17.1**; see the
+[production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md).
 
 This guide brings up the Release 5 branch on a workstation without touching the
 development or production hosts.
@@ -200,8 +202,8 @@ release (`1c5a0d9e`).
   executive, modern, and minimal designs; an unknown design falls back to
   classic. Temporary cohort and certificate accounts were removed afterwards.
 
-Production also runs Release 5 (`v5.14.0`); see the deployment record in
-[`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+Production also runs Release 5 (`v5.17.1`); see the deployment record in
+[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).
 
 ## Verified on this stack
 
@@ -245,9 +247,9 @@ Production also runs Release 5 (`v5.14.0`); see the deployment record in
 
 ## Do not deploy
 
-Do not promote `release5` to development or production until the Release 5
-exit criteria in [`RELEASE-5-SCOPE.md`](RELEASE-5-SCOPE.md) are met. Production
-must stay on the signed `v4` tag.
+The `release5` local stack is retained for historical reproduction. The
+current production release is the signed `v5.17.1` tag; use the
+[deployment runbook](DEPLOYMENT-RUNBOOK.md) for any new deployment.
 
 
 

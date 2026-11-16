@@ -26,7 +26,7 @@ still be reviewed, but it cannot be merged into the commercial tier.
 
 ### Before you start
 
-- Python 3.11, Node 22, PostgreSQL 15, Redis 7.2, and Docker Compose v2.
+- Python 3.13, Node 22, PostgreSQL 15, Valkey 9.1.3, and Docker Compose v2.
   Current pins are in [`versions.yaml`](versions.yaml).
 - Backend tests: `cd platform/backend && pytest -q` with `TEST_DATABASE_URL`
   pointing at a throwaway PostgreSQL database.
@@ -152,7 +152,14 @@ Improvements to documentation, installation guides, and tutorials are always app
 
 ## Code of Conduct
 
-Be respectful, constructive, and collaborative. This project exists to serve educators and students.
+All participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). It
+covers learners, instructors, administrators, contributors, and event
+participants, and it includes the lab-safety rules, privacy expectations,
+minor-safety rules, reporting contacts, enforcement steps, and appeal path.
+
+Report a conduct concern to `conduct@swocts.com`, a security concern to
+`security@swocts.com`, or a privacy concern to `privacy@swocts.com`. Do not use
+a public issue for a personal or security report.
 
 ## License
 

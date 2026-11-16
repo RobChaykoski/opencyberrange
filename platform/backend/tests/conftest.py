@@ -43,6 +43,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 import app.main as main_module  # noqa: E402
 from app import database  # noqa: E402
 from app.auth import get_password_hash  # noqa: E402
+from app.consent import service as consent_service  # noqa: E402
 from app.models import FlagAttempt, Lab, LabCompletion, User  # noqa: E402
 from app.routers import admin as admin_router_module  # noqa: E402
 from app.routers import auth as auth_router_module  # noqa: E402
@@ -191,8 +192,16 @@ def test_lab(db_session):
 
 
 @pytest.fixture()
-def auth_headers(client, test_user):
-    """Bearer headers for test_user obtained through the real login flow."""
+def auth_headers(client, db_session, test_user):
+    """Bearer headers for a learner who has opted in to optional profiling.
+
+    Cyber DNA, Cyber GPS, and the professional portfolio are explicit opt-in.
+    Most API tests exercise the post-onboarding path, so grant them here; the
+    separate default-denial test proves a new learner is not profiled before
+    consent.
+    """
+    for consent_type in ("cyber_dna", "cyber_gps", "portfolio"):
+        consent_service.grant(db_session, test_user.id, consent_type)
     resp = client.post(
         "/api/auth/login",
         data={"username": test_user.username, "password": TEST_PASSWORD},

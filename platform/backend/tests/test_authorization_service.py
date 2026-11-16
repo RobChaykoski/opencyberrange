@@ -9,6 +9,7 @@ import pytest
 from fastapi import HTTPException
 
 from app.auth import get_password_hash
+from app.consent import service as consent_service
 from app.models import (
     Course,
     PlatformSetting,
@@ -262,6 +263,7 @@ def test_break_glass_grant_allows_private_access_then_revoke_denies(db_session):
     rbac.seed(db_session)
     learner = _user(db_session, "student")
     admin = _user(db_session, "admin", mfa=True)
+    consent_service.grant(db_session, learner.id, "cyber_dna")
     _set(db_session, break_glass_enabled="true")
 
     grant = authorization.create_break_glass(
@@ -305,6 +307,7 @@ def test_break_glass_approval_flow_keeps_grant_pending_until_approved(db_session
     learner = _user(db_session, "student")
     requester = _user(db_session, "privacy_officer", mfa=True)
     approver = _user(db_session, "admin", mfa=True)
+    consent_service.grant(db_session, learner.id, "cyber_dna")
     _set(db_session, break_glass_enabled="true", break_glass_require_approval="true")
 
     grant = authorization.create_break_glass(

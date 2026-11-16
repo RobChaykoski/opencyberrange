@@ -9,7 +9,7 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.17.0"
+  version: "5.17.1"
   status: "release"
   date: "2026-11-16"
 
@@ -40,13 +40,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5"
+  version: "5.17.1"
   status: "release"
-  date: "2026-11-15"
+  date: "2026-11-16"
 
 development:
-  version: "5"
-  focus: "Post-5.0 work: KasmVNC evaluation, terminal-only labs, distroless serving layer, and multi-tenancy research"
+  version: "5.17.1"
+  focus: "Post-5.17 work: Active Directory and modern application-security pathways, report-based labs, and multi-tenancy research"
 
 policy:
   name: latest-supported-ga
@@ -78,10 +78,10 @@ runtime:
       migration: "docs/V2-UBUNTU-24.04-MIGRATION.md"
       ha: "docs/V3-HA-LAB-POOL.md"
   python:
-    current: "3.11"
-    target: "3.13"
+    current: "3.13"
+    target: "3.14"
     candidate: "3.14"
-    status: "compatibility-testing"
+    status: "current; 3.14 evaluation"
   node:
     current: "22"
     target: "24"

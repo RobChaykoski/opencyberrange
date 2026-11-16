@@ -112,6 +112,9 @@ services:
       # Production startup requires a separate REPORT_SIGNING_KEY. Set it in
       # .env; startup fails if it is missing or equals JWT_SECRET.
       ENVIRONMENT: production
+      OCR_DEPLOYMENT_MODE: production
+      # Fail startup if a protected route lacks an auth/permission dependency.
+      OCR_AUTHZ_STRICT: "1"
       # Keep (pool + overflow) x workers below PostgreSQL max_connections,
       # minus reserved slots. The 4 + 4 defaults put 9 workers at 72.
       DB_POOL_SIZE: ${DB_POOL_SIZE:-10}

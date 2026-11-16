@@ -141,6 +141,13 @@ domains:
           - {id: WIN-013, name: Kerberos Fundamentals}
           - {id: WIN-014, name: Domain Administration}
           - {id: WIN-015, name: Domain Troubleshooting}
+          - {id: WIN-022, name: AD Enumeration and Attack-Path Mapping}
+          - {id: WIN-023, name: Kerberoasting and AS-REP Roasting}
+          - {id: WIN-024, name: ACL and DACL Abuse}
+          - {id: WIN-025, name: Delegation Abuse}
+          - {id: WIN-026, name: AD CS Abuse}
+          - {id: WIN-027, name: Ticket Forgery and DCSync}
+          - {id: WIN-028, name: AD Tiering, LAPS, and Remediation}
       - id: WIN-SEC
         label: Windows Security
         competencies:
@@ -183,6 +190,54 @@ domains:
           - {id: WEB-017, name: Directory Traversal}
           - {id: WEB-018, name: Broken Authentication}
           - {id: WEB-019, name: OWASP Top 10 Mapping}
+
+  - id: APPSEC
+    label: Modern Application Security
+    description: API, GraphQL, token, DevSecOps, container, Kubernetes, and supply-chain security.
+    categories:
+      - id: APPSEC-API
+        label: API Security
+        competencies:
+          - {id: APP-001, name: API Inventory and Documentation}
+          - {id: APP-002, name: Object-Level Authorization}
+          - {id: APP-003, name: Function-Level Authorization}
+          - {id: APP-004, name: API Resource and Rate Limits}
+      - id: APPSEC-GRAPHQL
+        label: GraphQL Security
+        competencies:
+          - {id: APP-005, name: GraphQL Schema and Introspection}
+          - {id: APP-006, name: Query Depth and Batching Abuse}
+          - {id: APP-007, name: GraphQL Field-Level Authorization}
+      - id: APPSEC-TOKENS
+        label: Token and Identity Security
+        competencies:
+          - {id: APP-008, name: JWT Validation}
+          - {id: APP-009, name: OAuth and OIDC Flows}
+          - {id: APP-010, name: Redirect URI and Consent Abuse}
+          - {id: APP-011, name: Token Revocation and Session Binding}
+      - id: APPSEC-DEVSECOPS
+        label: DevSecOps
+        competencies:
+          - {id: APP-012, name: Secure CI/CD Pipelines}
+          - {id: APP-013, name: Secret and Dependency Scanning}
+          - {id: APP-014, name: Build Artifact Provenance}
+      - id: APPSEC-CONTAINER
+        label: Container Security
+        competencies:
+          - {id: APP-015, name: Container Hardening}
+          - {id: APP-016, name: Image Provenance and Pinning}
+          - {id: APP-017, name: Container Runtime Isolation}
+      - id: APPSEC-K8S
+        label: Kubernetes Security
+        competencies:
+          - {id: APP-018, name: Kubernetes RBAC}
+          - {id: APP-019, name: Service Accounts and Secrets}
+          - {id: APP-020, name: Network Policy and Admission Control}
+      - id: APPSEC-SUPPLY
+        label: Software Supply Chain
+        competencies:
+          - {id: APP-021, name: SBOM and Artifact Signing}
+          - {id: APP-022, name: Supply Chain Risk Assessment}
 
   - id: OSINT
     label: OSINT

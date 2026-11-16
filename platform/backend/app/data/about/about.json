@@ -1,12 +1,12 @@
 {
-  "generated_for_release": "5.17.0",
+  "generated_for_release": "5.17.1",
   "release_date": "2026-11-16",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "5.17.0",
+    "version": "5.17.1",
     "status": "release",
     "edition": "Community / Academic",
-    "python": "3.11",
+    "python": "3.13",
     "node": "22",
     "postgres": "15",
     "valkey": "9.1.3",

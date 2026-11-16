@@ -1,6 +1,10 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.16.0`).**
+> **Release 5 is the current release line (latest signed `v5.17.1`).**
+>
+> Community participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+> The authoritative deployment state is the
+> [production deployment statement](docs/PRODUCTION-DEPLOYMENT-STATEMENT.md).
 > The local image and stack bring-up is documented in
 > [`docs/RELEASE-5-LOCAL.md`](docs/RELEASE-5-LOCAL.md); the production
 > readiness record is [`docs/RELEASE-5-PRODUCTION-READINESS.md`](docs/RELEASE-5-PRODUCTION-READINESS.md).
@@ -24,7 +28,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-179-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-191-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -224,8 +228,8 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **160** labs expose a workbook page and appear in the generated curriculum table below |
-| Guided lab instruction | Workbook walkthroughs and analysis questions | **168 workbook pages**, **113 analysis sections**, **413 analysis questions** |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **191** lab definitions; **182** expose a workbook page |
+| Guided lab instruction | Workbook walkthroughs and analysis questions | **182 workbook-mapped labs**, with guided analysis sections and questions |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **191 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
@@ -234,9 +238,10 @@ These are current, checkable counts from this repository and metrics the platfor
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
-The badge counts every `lab.yaml` under `platform/labs` (**169** today). A
-running deployment seeds only the labs that map to a track and level, and the
-generated table below lists the **160** that have a workbook page.
+The badge counts every `lab.yaml` under `platform/labs` (**191** today). A
+running deployment registers all **191** after discovery, and the generated
+table below lists the **182** that have a workbook page. See [Lab and content
+counts](docs/COUNTS.md) for the exact definitions.
 
 ### Release and repositories
 
@@ -423,7 +428,7 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-**Total:** 160 exercises across 12 tracks and 43 chapters.
+**Total:** 182 workbook-mapped exercises across 12 tracks.
 
 Recommended pathway:
 

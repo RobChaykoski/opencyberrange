@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.17.0` | SWOCTS Cyber Range Release 5.17 | Current feature release (signed annotated tag): admin release/update indicator, RBAC/PBAC role editing and Moves/Adds/Changes, ATT&CK Navigator, report-based DFIR pathway, open dataset registry, and OWASP API/web/agentic validation and lab plans |
+| `v5.17.1` | SWOCTS Cyber Range Release 5.17.1 | Current security/configuration release (signed annotated tag): fail-closed authorization, explicit production configuration, mandatory WireGuard key encryption, opt-in Cyber DNA/GPS/portfolio defaults, lab-outcomes contract, API manual, Code of Conduct, and release-governance documents |
+| `v5.17.0` | SWOCTS Cyber Range Release 5.17 | Previous feature release (signed annotated tag): admin release/update indicator, RBAC/PBAC role editing and Moves/Adds/Changes, ATT&CK Navigator, report-based DFIR pathway, open dataset registry, and OWASP API/web/agentic validation and lab plans |
 | `v5.16.0` | SWOCTS Cyber Range Release 5.16 | Previous feature release (signed annotated tag): OpenWrt appliance segmentation lab, persisted learner report snapshots, checked manual publishing |
 | `v5.15.0` | SWOCTS Cyber Range Release 5.15 | Previous feature release (signed annotated tag): RangeBox launch choice and stop dialog, auth states, Cyber DNA discovery, OT scan assistant and gateway lab, Python 3.13, weekly built-image scan |
 | `v5.14.0` | SWOCTS Cyber Range Release 5.14 | Previous feature release (signed annotated tag): strict cohorts, certificate design consistency, documentation click fix |
@@ -90,7 +91,7 @@ recorded in `versions.yaml` and returned by `/api/version`.
 
 Tags `v3.0.0` through `v3.1.2` belong to the experimental Enterprise/HA branch
 and are historical. They are **not** the supported single-host platform
-release. The current platform releases are the `v5.x` tags on `main`; `v5.16.0`
+release. The current platform releases are the `v5.x` tags on `main`; `v5.17.1`
 is the newest.
 Release 4 added OIDC, SAML, and LDAP SSO. Multi-tenancy, LMS/LTI,
 the per-student accommodation engine, and weekly Jeopardy-style challenge quizzes
@@ -98,7 +99,7 @@ that feed Cyber DNA are Release 5.
 
 ## Choosing a version
 
-1. Use `main` or the latest `v5.x` tag (currently `v5.16.0`) for new installs.
+1. Use `main` or the latest `v5.x` tag (currently `v5.17.1`) for new installs.
 2. Keep `1.1.x` only for an existing Community / Academic maintenance install.
 3. Do not deploy a `v2.2.x`, `v2.3.x`, or `v3.x` tag as the current platform.
 4. Check `docs/SUPPORTED-VERSIONS.md` before changing a dependency or host OS.

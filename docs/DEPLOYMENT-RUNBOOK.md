@@ -2,6 +2,20 @@
 
 Operational commands for the two deployed environments.
 
+**Current release:** `5.17.1` (signed tag `v5.17.1`, Alembic
+`0040_settings_change_control`). The admin **System → Health → Release status**
+panel compares the installed version with the latest GitHub release or tag.
+The authoritative deployment state, including whether cutover has run, is in
+[`PRODUCTION-DEPLOYMENT-STATEMENT.md`](PRODUCTION-DEPLOYMENT-STATEMENT.md).
+Backup restore evidence is in
+[`BACKUP-RESTORE-TEST.md`](BACKUP-RESTORE-TEST.md); sizing and topology are in
+[`DEPLOYMENT-TOPOLOGY-AND-SIZING.md`](DEPLOYMENT-TOPOLOGY-AND-SIZING.md).
+
+Production Compose sets `ENVIRONMENT=production`, `OCR_DEPLOYMENT_MODE=production`,
+and `OCR_AUTHZ_STRICT=1`. Startup refuses a production-intended host with a
+non-production environment, a missing strict-authorization flag, or a missing
+`WG_ENCRYPTION_KEY`. Do not add an override that bypasses these guards.
+
 | Environment | Address | Login / deploy user | Repository | Compose directory |
 |---|---|---|---|---|
 | Production | `172.16.16.41` / `https://ctfd.swocts.com` | `rchaykoski` | `~/opencyberrange` | `~/opencyberrange/platform` |
@@ -349,20 +363,23 @@ python scripts/check-doc-assets.py
 python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 ```
 
-## Release 5 deployment notes
+## Release 5.17 deployment notes
 
-Release 5 adds LTI 1.3, per-student accommodations, minor consent/retention,
-the tabbed workspace, and a dedicated workbook origin. Before deploying:
+Release 5.17 adds the admin release indicator, RBAC/PBAC role editing and
+Moves/Adds/Changes, the ATT&CK Navigator tool, the report-based DFIR pathway,
+the external dataset registry, and the OWASP API/web/agentic validation
+baseline. Before deploying:
 
-1. Take a database backup and copy the erasure ledger.
-2. Confirm TCP **8443** reaches the frontend. UFW is disabled on the current
-   host and the port resets rather than drops, so no host firewall change is
-   required. Workbooks are served from `https://<host>:8443`.
-3. After migrations, set the `wiki_origin` platform setting to
-   `https://<host>:8443`.
-4. Build with `PLATFORM_VERSION=5` and confirm `/api/version`.
-5. Apply migrations `0015`–`0025` and confirm `alembic current` reports
-   `0025_review_requests`.
+1. Take a database backup and confirm the backup checksum and `.env` copy.
+2. Confirm TCP **8443** reaches the frontend. Workbooks are served from
+   `https://<host>:8443`; the CSP allows the workbook origin and the exact
+   `https://mitre-attack.github.io` Navigator origin.
+3. Set the `wiki_origin` platform setting to `https://<host>:8443` if it is not
+   already set.
+4. Build with `PLATFORM_VERSION=5.17.1` and confirm `/api/version`.
+5. Let the backend apply migrations during startup and confirm `alembic current`
+   reports `0040_settings_change_control` (head). Do not run
+   `alembic upgrade head` by hand while the backend is serving.
 
 Production compose build and deploy:
 
@@ -371,13 +388,15 @@ cd ~/opencyberrange/platform
 docker compose -f docker-compose.prod.yml -f docker-compose.adopt.yml \
   -f docker-compose.override.yml build backend frontend
 docker compose -f docker-compose.prod.yml -f docker-compose.adopt.yml \
-  -f docker-compose.override.yml up -d
-docker exec ocr-backend sh -c 'cd /app && alembic -c alembic.ini upgrade head'
+  -f docker-compose.override.yml up -d backend frontend
+docker exec ocr-backend alembic current
 ```
 
-Verify version, health, labs, the workspace tabs, the 8443 workbook, and the
-LTI admin panel. Keep the previous image tags and the pre-deploy database dump
-for rollback. See [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
+Verify `/api/version` reports `5.17.1`, `/health` returns 200, the admin
+**Release status** panel reports **Up to date**, the 8443 workbook loads, and the
+lab list still contains the expected 191 labs. Keep the previous image tags and
+the pre-deploy database dump for rollback. See
+[`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
 ## Release evidence
 

@@ -3,7 +3,7 @@
 Status: **planning** (12 November 2026). This is a curriculum roadmap, not a
 release commitment.
 
-The catalogue covers 12 track folders and roughly 160 labs. Classic pentest
+The catalogue covers 12 track folders and 191 lab definitions. Classic pentest
 enumeration is deep (Windows services, Linux privilege escalation, web
 reconnaissance to injection, network analysis). The gaps below are ranked by
 learner value and by how much of the existing RangeBox/tester toolchain they
@@ -14,8 +14,15 @@ reuse.
 ### 1. Active Directory
 
 The Windows track is strong on SMB, RDP, WinRM, MSSQL, and LDAP enumeration but
-has no AD attack content. The RangeBox already ships `netexec`, `evil-winrm`,
+had no AD attack content. The RangeBox already ships `netexec`, `evil-winrm`,
 and `impacket`, so the tooling is installed and unused.
+
+**Status:** a reviewed ten-module pathway now exists in
+[`ACTIVE-DIRECTORY-PATHWAY.md`](ACTIVE-DIRECTORY-PATHWAY.md) and
+`platform/backend/app/data/ad-pathway.yaml`. It covers BloodHound-style
+enumeration, Kerberoasting, AS-REP roasting, ACL/DACL abuse, delegation, AD CS,
+DCSync/tickets, GPO/LAPS defence, and a capstone. The `windows-11-*` labs are
+planned, not yet built.
 
 Suggested arc:
 
@@ -54,6 +61,12 @@ Two labs is thin for a full track. Add the standard web-application set:
 - deserialization basics.
 
 Pair the track with the Web track for a "build then break" module.
+
+**Status:** the modern application-security sequence is now specified in
+[`MODERN-APP-SECURITY-PATHWAY.md`](MODERN-APP-SECURITY-PATHWAY.md) and
+`platform/backend/app/data/modern-appsec-pathway.yaml`. It adds API, GraphQL,
+JWT, OAuth/OIDC, DevSecOps, container, Kubernetes, and supply-chain modules,
+with evidence and fix requirements. The `web-11-*` labs are planned.
 
 ### 4. Container and CI/CD security
 

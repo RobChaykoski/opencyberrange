@@ -1,0 +1,267 @@
+# Active Directory attack and remediation pathway
+#
+# Bridges the existing LDAP/SMB labs into a full AD attack path. Every module
+# requires an evidence artifact and a defensive finding, not only a flag.
+# The lab target is a synthetic, isolated domain; no production domain or real
+# credential is ever used.
+
+version: 1
+title: Active Directory Attack and Remediation
+status: reviewed pathway specification
+audience: >-
+  Intermediate Windows learners who can enumerate SMB, LDAP, RDP, and WinRM and
+  want to move from service enumeration into domain attack paths and defence.
+prerequisites:
+  completed_pathways: [WIN02, WIN07]
+  baseline_competencies: [WIN-005, WIN-009, WIN-012, WIN-013, NET-027]
+principles:
+  - "Map the domain before attacking it: identity, groups, trusts, and delegation are the path."
+  - "Every attack step names the misconfiguration it abuses and the control that would stop it."
+  - "Use a disposable synthetic domain with no egress, no real accounts, and no production trust."
+  - "Tickets and hashes are evidence, not trophies. Record provenance, time, and scope."
+  - "A path is not complete until the learner writes the remediation for each hop."
+data_policy:
+  synthetic_only: true
+  real_pii: false
+  real_credentials: false
+  domain: "lab.example"
+  notes: >-
+    The planned labs use a synthetic Samba AD DC or an approved disposable
+    Windows evaluation domain. They never join a real domain or reuse a real
+    credential.
+pathway_contract:
+  evidence_required: true
+  report_required: true
+  attack_path_required: true
+  defensive_fix_required: true
+modules:
+  - id: AD-01
+    title: "Directory Fundamentals and Trust Boundaries"
+    difficulty: beginner
+    estimated_minutes: 60
+    prerequisites: []
+    datasets: []
+    existing_labs: [windows-2-9-ad-fundamentals-basics, windows-2-10-ad-to-smb-scenario]
+    planned_labs: []
+    competencies:
+      - {id: WIN-009, weight: 0.35}
+      - {id: WIN-012, weight: 0.25}
+      - {id: WIN-013, weight: 0.20}
+      - {id: NET-027, weight: 0.20}
+    evidence: [directory_map, evidence_artifact, defensive_report]
+    report_required: true
+    attack: [T1087.002, T1069.002]
+    outcomes:
+      - "Explain domain, forest, OU, distinguished name, and service account."
+      - "Map users, groups, and computers from the directory."
+      - "Identify the trust boundary between the learner host and the domain."
+      - "State why a directory description or group membership is not proof of access."
+    safety: "Use the training directory administrator account only; no real domain data."
+
+  - id: AD-02
+    title: "Domain Enumeration and Attack-Path Mapping"
+    difficulty: beginner
+    estimated_minutes: 90
+    prerequisites: [AD-01]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-1-ad-domain-enumeration]
+    competencies:
+      - {id: WIN-022, weight: 0.40}
+      - {id: WIN-009, weight: 0.20}
+      - {id: WIN-013, weight: 0.20}
+      - {id: TH-003, weight: 0.20}
+    evidence: [directory_map, attack_path, evidence_artifact]
+    report_required: true
+    attack: [T1087.002, T1069.002, T1018, T1482]
+    outcomes:
+      - "Enumerate domains, trusts, users, groups, computers, and sessions with ldapdomaindump or netexec."
+      - "Collect BloodHound-compatible data with bloodhound-python in the isolated lab."
+      - "Explain nodes, edges, and why one edge is not yet an exploit."
+      - "Rank three paths by required privilege and likely impact."
+    safety: "Collector output stays in the lab; no upload to a public BloodHound instance."
+
+  - id: AD-03
+    title: "Kerberoasting"
+    difficulty: intermediate
+    estimated_minutes: 100
+    prerequisites: [AD-02]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-2-kerberoasting]
+    competencies:
+      - {id: WIN-023, weight: 0.45}
+      - {id: WIN-013, weight: 0.25}
+      - {id: WIN-020, weight: 0.15}
+      - {id: TH-003, weight: 0.15}
+    evidence: [command_transcript, ticket_artifact, defensive_report]
+    report_required: true
+    attack: [T1558.003, T1110.002]
+    outcomes:
+      - "Find accounts with a service principal name and request a service ticket."
+      - "Extract the ticket hash in the lab and explain the offline cracking model."
+      - "Identify the weak service-account password policy that made it possible."
+      - "Recommend gMSA, rotation, and service-account tiering."
+    safety: "Crack only the synthetic lab hash; do not use a real wordlist or credential."
+
+  - id: AD-04
+    title: "AS-REP Roasting and Password Spray"
+    difficulty: intermediate
+    estimated_minutes: 90
+    prerequisites: [AD-02]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-3-asrep-spray]
+    competencies:
+      - {id: WIN-023, weight: 0.35}
+      - {id: WIN-012, weight: 0.25}
+      - {id: WIN-020, weight: 0.20}
+      - {id: TH-003, weight: 0.20}
+    evidence: [command_transcript, policy_analysis, defensive_report]
+    report_required: true
+    attack: [T1558.004, T1110.003]
+    outcomes:
+      - "Find accounts that do not require Kerberos pre-authentication."
+      - "Request an AS-REP and explain what the encrypted part proves."
+      - "Test a bounded spray against the synthetic domain and respect lockout policy."
+      - "Recommend pre-authentication enforcement, lockout, and honey accounts."
+    safety: "Use a single test password and a bounded account set; never spray a real domain."
+
+  - id: AD-05
+    title: "ACL and DACL Abuse"
+    difficulty: advanced
+    estimated_minutes: 120
+    prerequisites: [AD-02, AD-03]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-4-acl-dacl-abuse]
+    competencies:
+      - {id: WIN-024, weight: 0.45}
+      - {id: WIN-022, weight: 0.20}
+      - {id: WIN-014, weight: 0.15}
+      - {id: IR-002, weight: 0.20}
+    evidence: [acl_map, attack_path, defensive_report]
+    report_required: true
+    attack: [T1222.001, T1098, T1484]
+    outcomes:
+      - "Read ACLs and identify GenericAll, WriteDACL, ForceChangePassword, and AddMember."
+      - "Turn one ACL edge into a controlled lab action."
+      - "Show the resulting group or account change in the directory."
+      - "Recommend tiered administration, ACL review, and change alerting."
+    safety: "Modify only the synthetic lab object named in the brief; restore or reset after."
+
+  - id: AD-06
+    title: "Delegation Abuse"
+    difficulty: advanced
+    estimated_minutes: 120
+    prerequisites: [AD-03, AD-05]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-5-delegation-abuse]
+    competencies:
+      - {id: WIN-025, weight: 0.45}
+      - {id: WIN-013, weight: 0.25}
+      - {id: WIN-020, weight: 0.15}
+      - {id: IR-003, weight: 0.15}
+    evidence: [delegation_map, ticket_artifact, defensive_report]
+    report_required: true
+    attack: [T1558.001, T1134.001, T1550.003]
+    outcomes:
+      - "Identify unconstrained, constrained, and resource-based constrained delegation."
+      - "Explain which ticket or service access each delegation type enables."
+      - "Demonstrate one abuse in the synthetic domain and record the service ticket."
+      - "Recommend the delegation removal, protocol transition, and tiering controls."
+    safety: "Use only synthetic service accounts and a disposable domain controller."
+
+  - id: AD-07
+    title: "AD CS Abuse"
+    difficulty: advanced
+    estimated_minutes: 120
+    prerequisites: [AD-02, AD-05]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-6-adcs-abuse]
+    competencies:
+      - {id: WIN-026, weight: 0.45}
+      - {id: WIN-014, weight: 0.20}
+      - {id: WIN-020, weight: 0.15}
+      - {id: IR-002, weight: 0.20}
+    evidence: [template_review, certificate_artifact, defensive_report]
+    report_required: true
+    attack: [T1649, T1553.004, T1078.002]
+    outcomes:
+      - "Inventory certificate authorities, templates, and enrollment rights."
+      - "Identify an ESC-style misconfiguration in the synthetic template."
+      - "Request and use a certificate in the lab to prove the impact."
+      - "Recommend template ACLs, approval, manager approval, and CA monitoring."
+    safety: "Use the lab CA only; never enroll against a real enterprise CA."
+
+  - id: AD-08
+    title: "Credential Dumping and Ticket Abuse"
+    difficulty: advanced
+    estimated_minutes: 140
+    prerequisites: [AD-03, AD-06]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-7-dcsync-tickets]
+    competencies:
+      - {id: WIN-027, weight: 0.45}
+      - {id: WIN-023, weight: 0.20}
+      - {id: WIN-021, weight: 0.15}
+      - {id: IR-002, weight: 0.20}
+    evidence: [replication_evidence, ticket_artifact, timeline, defensive_report]
+    report_required: true
+    attack: [T1003.006, T1558.001, T1558.002, T1550.003]
+    outcomes:
+      - "Explain DCSync replication permissions and the DRSUAPI path."
+      - "Use a synthetic domain-admin context to dump a lab secret."
+      - "Explain Golden and Silver ticket trust assumptions."
+      - "Recommend KRBTGT rotation, tiered admin, and replication monitoring."
+    safety: "Never run a credential dump against a production domain or real account."
+
+  - id: AD-09
+    title: "GPO, LAPS, and Tiered Administration Defence"
+    difficulty: intermediate
+    estimated_minutes: 90
+    prerequisites: [AD-05]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-8-gpo-laps-defence]
+    competencies:
+      - {id: WIN-011, weight: 0.30}
+      - {id: WIN-028, weight: 0.40}
+      - {id: WIN-016, weight: 0.15}
+      - {id: IR-003, weight: 0.15}
+    evidence: [gpo_review, laps_evidence, defensive_report]
+    report_required: true
+    attack: [T1484.001, T1556]
+    outcomes:
+      - "Review GPO links, delegation, and local administrator exposure."
+      - "Explain LAPS, gMSA, and tiered administration as compensating controls."
+      - "Identify one policy change that would break a path found earlier."
+      - "Write a verification step for the policy change."
+    safety: "Read-only GPO review unless the synthetic lab explicitly authorises a change."
+
+  - id: AD-10
+    title: "Capstone: AD Attack Path and Remediation Report"
+    difficulty: advanced
+    estimated_minutes: 180
+    prerequisites: [AD-02, AD-03, AD-04, AD-05, AD-06, AD-07, AD-08, AD-09]
+    datasets: []
+    existing_labs: []
+    planned_labs: [windows-11-9-ad-capstone]
+    competencies:
+      - {id: WIN-022, weight: 0.20}
+      - {id: WIN-024, weight: 0.20}
+      - {id: WIN-028, weight: 0.25}
+      - {id: IR-008, weight: 0.15}
+      - {id: PROF-010, weight: 0.20}
+    evidence: [attack_path, timeline, analyst_report, defensive_report]
+    report_required: true
+    attack: [T1078.002, T1558, T1003.006, T1484]
+    outcomes:
+      - "Build one defensible path from a low-privilege account to a domain objective."
+      - "Record each hop, the misconfiguration, the evidence, and the confidence."
+      - "Separate observed evidence from inference and name missing telemetry."
+      - "Deliver a remediation plan with owner, effort, verification, and residual risk."
+    safety: "Capstone target is disposable and isolated; no real domain or credential."

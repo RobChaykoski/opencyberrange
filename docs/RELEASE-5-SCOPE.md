@@ -1,8 +1,8 @@
 # Release 5 scope: enterprise procurement and compliance
 
-Status: **release candidate on the `release5` branch; deployed to development
-`172.16.16.44` (`release5` head `6d480089`, version 5, Alembic
-`0025`).** Production remains on the signed Release 4 hotfix `v4.0.2`; see
+Status: **released and deployed as `v5.17.1`.** Development `172.16.16.44`
+and production `172.16.16.41` run `main` at `17c9a7e8` with Alembic
+`0040_settings_change_control`; see
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md). The local
 image/stack bring-up and deployment evidence are documented in
 [`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md). Everything below is Release 5.

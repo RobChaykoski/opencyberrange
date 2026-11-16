@@ -2,6 +2,36 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.1] - 2026-11-16
+
+### Release hardening
+
+- **Fail-closed authorization:** production Compose sets `OCR_AUTHZ_STRICT=1`;
+  the backend refuses production startup when a protected route lacks an
+  authorization dependency.
+- **Explicit production configuration:** `ENVIRONMENT` is validated, and an
+  `OCR_DEPLOYMENT_MODE=production` intent with a non-production environment
+  fails startup.
+- **WireGuard key requirement:** production and VPN-enabled deployments now
+  refuse startup without `WG_ENCRYPTION_KEY`. The old warning was not enough.
+- **Opt-in profiling:** Cyber DNA, Cyber GPS, and the professional portfolio
+  now default to **not granted**. A learner must opt in before those surfaces
+  process or display derived data.
+- **Lab outcomes contract:** `platform/backend/app/data/lab-outcomes.yaml`
+  gives every lab skills earned, competencies proven, knowledge domains,
+  evidence artifacts, and a confidence score.
+- **API manual:** the user manual now includes a generated, complete API
+  reference from the OpenAPI schema.
+- **Code of Conduct:** added a formal policy with lab-safety, privacy,
+  minor-safety, reporting, enforcement, and appeal procedures.
+- **Release and governance documents:** added the production deployment
+  statement, validation report, backup/restore test, topology and sizing guide,
+  contributor/branch inventory, tenant-isolation status, and independent-testing
+  status. Lab counts are now reconciled in `docs/COUNTS.md`.
+- **New pathways:** added the Active Directory attack/remediation pathway and
+  the modern application-security pathway (API, GraphQL, JWT, OAuth, DevSecOps,
+  containers, Kubernetes, supply chain).
+
 ## [5.17.0] - 2026-11-16
 
 ### Release 5.17 highlights

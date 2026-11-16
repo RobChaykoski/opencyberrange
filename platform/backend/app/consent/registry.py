@@ -35,7 +35,7 @@ CONSENT_TYPES: dict[str, ConsentSpec] = {
             "Competency evidence, behavior and interest profiles, affinity "
             "signals, and stored DNA snapshots."
         ),
-        default_granted=True,
+        default_granted=False,
         targets=(
             TargetSpec("cyber_dna", "evidence"),
             TargetSpec("cyber_dna", "snapshots"),
@@ -59,7 +59,7 @@ CONSENT_TYPES: dict[str, ConsentSpec] = {
             "Direction finding from evidence: gap analysis, target roles, "
             "learning routes, forecasts, and readiness scores."
         ),
-        default_granted=True,
+        default_granted=False,
         targets=(TargetSpec("cyber_gps", "cache"),),
         removed=(
             "Learning routes and target-role views",
@@ -73,7 +73,7 @@ CONSENT_TYPES: dict[str, ConsentSpec] = {
         description=(
             "The learner-generated portfolio and stored career/report snapshots."
         ),
-        default_granted=True,
+        default_granted=False,
         targets=(TargetSpec("reports", "learner_snapshots"),),
         removed=("Stored portfolio and career snapshots",),
         kept=("Certificates", "Transcript and completed exercises"),

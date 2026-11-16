@@ -63,6 +63,8 @@ pages live in the [Professional supplement](09_Professional/index.md) and the
   to career families and salary context? See
   [Career Atlas and Momentum](02_Student_Guide/21_Career_Atlas_And_Momentum.md)
   (development preview).
+- Integrating with the platform API? See the
+  [API Reference](11_API_Reference/index.md).
 - Need the exact rules for flags, scoring, and lab timing? See the
   [Lab Workflow Reference](06_Lab_Workflow_Reference/01_Lab_Lifecycle_Overview.md).
 - Looking for a term or the MISP-aligned definition? See the

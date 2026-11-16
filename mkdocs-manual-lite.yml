@@ -100,6 +100,7 @@ nav:
     - "Connecting to the VPN": 05_VPN_Setup_Guide/06_Connecting_to_the_VPN.md
     - "Testing Your Connection": 05_VPN_Setup_Guide/07_Testing_Your_Connection.md
     - "Troubleshooting VPN Issues": 05_VPN_Setup_Guide/08_Troubleshooting_VPN_Issues.md
+  - "API Reference": 11_API_Reference/index.md
   - "Lab Workflow Reference":
     - "Lab Lifecycle Overview": 06_Lab_Workflow_Reference/01_Lab_Lifecycle_Overview.md
     - "How Prerequisite Unlocking Works": 06_Lab_Workflow_Reference/02_How_Prerequisite_Unlocking_Works.md

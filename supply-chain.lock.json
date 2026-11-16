@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "888602b25786829d57e2a458e9aa5c6415918786cde91343afbf292841405b94"
+      "sha256": "a2d0e072e309f23b0bd250802bf51c8ce7e9bc80d8ad6144ed374d6371600ded"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -51,6 +51,9 @@
     "platform/backend/Dockerfile": {
       "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
+    "platform/backend/app/data/ad-pathway.yaml": {
+      "sha256": "da4659a85c9c0169397f664aa7ddeb018277ccceaac718f72901d7b55829567b"
+    },
     "platform/backend/app/data/competency-contract-overrides.yaml": {
       "sha256": "13b4360476eb7f01ea93eb037e25e10f1c10f99e538fce2d6a61c6bc7a0745d3"
     },
@@ -64,7 +67,7 @@
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
     },
     "platform/backend/app/data/competency-taxonomy.yaml": {
-      "sha256": "657acd043e3a48b310595ed3a42444f7fea079b2f9b592d02388f6f1a3921746"
+      "sha256": "c8b608b0ef494aca07395987421de15ea873947ec05ce31d81ea4df0e0418fd7"
     },
     "platform/backend/app/data/detection-datasets/README.md": {
       "sha256": "383319fa4559e474c52acfbb26ed3f797d485c65e6ae6f58117f47e1f1e735f9"
@@ -156,8 +159,14 @@
     "platform/backend/app/data/external-targets.yaml": {
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
+    "platform/backend/app/data/lab-outcomes.yaml": {
+      "sha256": "6c66fabf2bb47a8a46204170f0d27a9c633cb52518443290c9ebd13e60a68a0a"
+    },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
+    },
+    "platform/backend/app/data/modern-appsec-pathway.yaml": {
+      "sha256": "fafda2cd6178171cb6d89cffe0f731fbf11701feb9e2c698a65824523d58c5cd"
     },
     "platform/backend/app/data/owasp-security-baseline.yaml": {
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
@@ -178,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "b121e9a68c10554f4e85999c8922bbd6e0034fe98fb8a3b5e47baa27553b1057"
+      "sha256": "4211cfdc9a025164938381bbb7fc27c2ed5b7b7c4f9c13e1922402fec3798206"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
@@ -193,7 +202,7 @@
       "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "2cda5e383579d070f5c6b806f6a209f4a3f116fafdad7cf81051a90c2bd1dcc4"
+      "sha256": "64e0de4ea8ec68d9eb49af6dc0a48f8de2716e1ab22c9876837e20710985d40a"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "a1f4aa425bd21d751a302d8e9dc3c03ab1464bca9919a907b495ece173793690"
@@ -306,11 +315,17 @@
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
     },
+    "scripts/generate-api-manual.py": {
+      "sha256": "932569d5fecddfc6c62e665afb5abec732b734ccc635354084fea2f2c4e73066"
+    },
     "scripts/generate-competency-contracts.py": {
       "sha256": "6da347de5026b4649c1a0dd02397666d8971e55e27bb9edb92a23b528e4d0bde"
     },
     "scripts/generate-lab-manifests.py": {
       "sha256": "b42fffbf9f9e9e8941f5d0751a53953e5da4de2bb91e0e7d28c6d258434e3f96"
+    },
+    "scripts/generate-lab-outcomes.py": {
+      "sha256": "0bca0fcae5a1f033b82e69cabdebe2f237590d3f47c09fb4be9f02156b326cd8"
     },
     "scripts/generate-rbac-matrix.py": {
       "sha256": "e6c423a7bd77efce87b02511565d5db376ebc5427d9b9a1b071e44b139251521"
@@ -334,7 +349,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "1ea67774344f7e5c8c320b9b2332966164aafdfb10e8304082a3489b41f85d7a"
+      "sha256": "3c049004d3f9af89702a20c717d8e3d8975f22f1ba0b0227f6b9840dfeb9ef6a"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6af1529b5aec59e29d35b58b5a48910681abc0c92ef3f6d1ee3389ebff07757f"
@@ -352,7 +367,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "7dbf358adc90de99d11bd1f98b18688255611d9c2d8d6678439d7ff0ebe6d9e3"
+      "sha256": "c35368daeb0b4261239e6439beaddef3397f7126535bd92a88974264e11a30bb"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1518,6 +1533,6 @@
       ]
     }
   },
-  "release": "5.17.0",
+  "release": "5.17.1",
   "schema": 1
 }

@@ -65,8 +65,11 @@ def test_catalog_and_role_grants_are_consistent():
 
 
 def test_self_permissions_do_not_cross_learners(db_session):
+    from app.consent import service as consent_service
+
     student = _user(db_session, "student")
     other = _user(db_session, "student")
+    consent_service.grant(db_session, student.id, "cyber_dna")
 
     own = authorize(
         db_session,

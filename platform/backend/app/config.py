@@ -15,6 +15,12 @@ class Settings(BaseSettings):
     # JWT - MUST be set via environment variable (generate with: python3 -c "import secrets; print(secrets.token_urlsafe(64))")
     JWT_SECRET: str = ""
     ENVIRONMENT: str = "development"
+    # production | development | test. An explicit deployment mode lets a
+    # production-intended host fail closed if ENVIRONMENT is misconfigured.
+    OCR_DEPLOYMENT_MODE: str = ""
+    # Production must refuse startup when a protected route lacks an
+    # authorization dependency. route_audit reads the same variable.
+    OCR_AUTHZ_STRICT: bool = False
     SETUP_TOKEN: str = ""
     JWT_ALGORITHM: str = "HS256"
     JWT_ISSUER: str = "opencyberrange"
@@ -123,7 +129,42 @@ def validate_settings():
     warnings = []
     environment = (settings.ENVIRONMENT or "development").strip().lower()
     production = environment in {"production", "prod"}
-    
+    deployment_mode = (settings.OCR_DEPLOYMENT_MODE or "").strip().lower()
+    production_mode = deployment_mode in {"production", "prod"}
+
+    if environment not in {"development", "test", "production", "prod"}:
+        errors.append(
+            "ENVIRONMENT must be development, test, or production; "
+            f"got {settings.ENVIRONMENT!r}."
+        )
+    if deployment_mode and deployment_mode not in {
+        "development",
+        "test",
+        "production",
+        "prod",
+    }:
+        errors.append(
+            "OCR_DEPLOYMENT_MODE must be development, test, or production; "
+            f"got {settings.OCR_DEPLOYMENT_MODE!r}."
+        )
+    if production_mode and not production:
+        errors.append(
+            "OCR_DEPLOYMENT_MODE=production requires ENVIRONMENT=production. "
+            "Refusing to start a production-intended host with a non-production "
+            "environment."
+        )
+    if production:
+        if not settings.OCR_AUTHZ_STRICT:
+            errors.append(
+                "OCR_AUTHZ_STRICT=1 is required in production so a protected "
+                "route without an authorization dependency stops startup."
+            )
+        if not settings.WG_ENCRYPTION_KEY:
+            errors.append(
+                "WG_ENCRYPTION_KEY is required in production; WireGuard private "
+                "keys must never be stored unencrypted."
+            )
+
     # Validate DATABASE_URL
     if not settings.DATABASE_URL:
         errors.append(
@@ -201,12 +242,21 @@ def validate_settings():
             "Set to the absolute host path of the labs/ directory (e.g. /opt/opencyberrange/platform/labs)."
         )
 
-    # Validate WG_ENCRYPTION_KEY (only if VPN features are used)
+    # Validate WG_ENCRYPTION_KEY. A VPN-enabled deployment must never store a
+    # private key in plaintext; production fails closed.
+    vpn_configured = bool(
+        settings.WG_SERVER_ENDPOINT
+        or settings.WG_SERVER_PUBLIC_KEY
+        or settings.WG_API_KEY
+    )
     if not settings.WG_ENCRYPTION_KEY:
-        warnings.append(
-            "WG_ENCRYPTION_KEY not set. WireGuard private keys will not be encrypted. "
-            "Generate with: python3 -c \"from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())\""
+        message = (
+            "WG_ENCRYPTION_KEY not set. WireGuard private keys would be stored "
+            "unencrypted. Generate with: python3 -c "
+            "\"from cryptography.fernet import Fernet; "
+            "print(Fernet.generate_key().decode())\""
         )
+        (errors if (production or vpn_configured) else warnings).append(message)
     
     # Log warnings
     for warning in warnings:

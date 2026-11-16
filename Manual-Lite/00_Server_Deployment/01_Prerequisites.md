@@ -4,25 +4,25 @@ Before you install SWOCTS Cyber Range you size the host, open the right ports, a
 
 ## Operating system
 
-Use **Ubuntu 24.04 LTS** for a new 2.7.0 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source for 2.7.0. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
+Use **Ubuntu 24.04 LTS** for a new 5.17.1 deployment. **Community / Academic profile** supports both Ubuntu 22.04 and 24.04 LTS, and **Ubuntu 22.04** remains an upgrade source. The setup script installs all dependencies through `apt`, so a clean server install is the simplest starting point. See [Host OS support](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/OS-SUPPORT.md) and the [24.04 migration plan](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/V2-UBUNTU-24.04-MIGRATION.md).
 
 ## Platform versions
 
-The current supported stack for the 2.7.0 release line is:
+The current supported stack for the 5.17.1 release line is:
 
 | Component | Version | Notes |
 |---|---|---|
-| Host OS | Ubuntu 24.04 LTS for 2.7.0 | Community / Academic profile supports 22.04 and 24.04 LTS |
-| SWOCTS Cyber Range | `2.7.0` | Shown in the page footer and returned by `GET /api/version` |
-| Python | 3.11 | Backend image: `python:3.11-slim` |
-| Node.js | 22 LTS | Frontend build image: `node:22-alpine` |
-| PostgreSQL | 15 | Database image: `postgres:15-alpine` |
-| Redis | 7.2 | `redis:7.2-alpine`, shared rate-limit counters |
+| Host OS | Ubuntu 24.04 LTS for 5.17.1 | Community / Academic profile supports 22.04 and 24.04 LTS |
+| SWOCTS Cyber Range | `5.17.1` | Shown in the page footer and returned by `GET /api/version` |
+| Python | 3.13 | Backend image: `python:3.13-slim`; 3.14 is the next evaluation target |
+| Node.js | 22 LTS | Frontend build image: `node:22-alpine`; 24 is a compatibility target |
+| PostgreSQL | 15 | Database image: `postgres:15-alpine`; 17 is a planned major upgrade |
+| Valkey | 9.1.3 | `valkey/valkey:9.1.3-alpine`, shared rate-limit counters |
 | nginx | stable Alpine | Frontend runtime image |
 | Docker Engine | 24 or newer | With the Compose v2 plugin |
 
 [`versions.yaml`](https://github.com/RobChaykoski/opencyberrange/blob/main/versions.yaml) is the source of truth for exact dependency
-and image pins. Python 3.13, Node.js 24, and PostgreSQL 17 are tracked there as
+and image pins. Python 3.14, Node.js 24, and PostgreSQL 17 are tracked there as
 future targets; they are not part of the current single-host installation.
 
 ## Hardware

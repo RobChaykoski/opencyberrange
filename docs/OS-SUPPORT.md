@@ -44,7 +44,7 @@ Do not promote 26.04 until the plan's host gates pass and this page marks it
 This decision is about the **host OS only**. It does not change:
 
 - the platform containers, which use `python:3.13-slim`, `node:22-alpine`,
-  `nginx:alpine`, `postgres:15-alpine`, and `redis:7.2-alpine`;
+  `nginx:alpine`, `postgres:15-alpine`, and `valkey/valkey:9.1.3-alpine`;
 - the exercise containers under `platform/labs/`, which stay on their pinned
   bases for reproducible labs;
 - the Kali-based RangeBox, which follows `kalilinux/kali-rolling`;
