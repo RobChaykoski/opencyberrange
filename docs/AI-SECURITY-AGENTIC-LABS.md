@@ -104,8 +104,18 @@ import rule.
 - Treat model output as untrusted text; never let it trigger a tool directly.
 - Keep the lab inside the default-deny network and disposable storage.
 
+## References
+
+- [OWASP Agentic Skills Top 10](https://owasp.github.io/www-project-agentic-skills-top-10/)
+- [OWASP Secure Coding with AI Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secure_Coding_with_AI_Cheat_Sheet.html)
+- [OWASP Threat Modeling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html)
+- [Threat Modeling Manifesto](https://www.threatmodelingmanifesto.org/)
+- [OpenCRE Explorer](https://www.opencre.org/explorer)
+
 ## Attribution
 
 OWASP Agentic Skills Top 10 is CC BY-SA 4.0, OWASP Agentic Skills Top 10
-project team. OpenCRE is CC0-1.0, OWASP OpenCRE project. See
+project team. OWASP Cheat Sheet Series is CC BY-SA 4.0, OWASP Cheat Sheet
+Series Team. The Threat Modeling Manifesto is CC BY 4.0, the Threat Modeling
+Manifesto working group. OpenCRE is CC0-1.0, OWASP OpenCRE project. See
 [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).

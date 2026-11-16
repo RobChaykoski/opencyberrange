@@ -106,8 +106,18 @@ failure is contained and auditable.
 - Do not run denial-of-service, destructive, or third-party tests.
 - Do not paste real tokens, passwords, or personal data into a report.
 
+## References
+
+- [OWASP API Security Top 10 2023](https://api-security.owasp.org/editions/2023/en/0x00-header/)
+- [OWASP FastAPI Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html)
+- [OWASP REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)
+- [OWASP Multi-Tenant Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html)
+- [OpenCRE Explorer](https://www.opencre.org/explorer)
+
 ## Attribution
 
 OWASP API Security Top 10 2023 is CC BY-SA 4.0, OWASP API Security Project team.
+OWASP Cheat Sheet Series is CC BY-SA 4.0, OWASP Cheat Sheet Series Team.
 Juice Shop is MIT, Bjoern Kimminich and the OWASP Juice Shop contributors.
-See [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+OpenCRE is CC0-1.0, OWASP OpenCRE project. See
+[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).

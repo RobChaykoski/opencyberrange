@@ -97,8 +97,18 @@ error with a server failure. Add a bounded error path and a cleanup check.
 - Do not run destructive or third-party tests.
 - Do not paste real tokens, passwords, or personal data into a report.
 
+## References
+
+- [OWASP Top 10 2025](https://top10.owasp.org/2025/)
+- [OWASP Threat Modeling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html)
+- [Threat Modeling Manifesto](https://www.threatmodelingmanifesto.org/)
+- [OWASP Security Terminology Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Security_Terminology_Cheat_Sheet.html)
+- [OpenCRE Explorer](https://www.opencre.org/explorer)
+
 ## Attribution
 
-OWASP Top 10 2025 is CC BY 3.0, OWASP Top 10 Team. Juice Shop is MIT, Bjoern
-Kimminich and the OWASP Juice Shop contributors. OpenCRE is CC0-1.0, OWASP
-OpenCRE project. See [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+OWASP Top 10 2025 is CC BY 3.0, OWASP Top 10 Team. OWASP Cheat Sheet Series is
+CC BY-SA 4.0, OWASP Cheat Sheet Series Team. The Threat Modeling Manifesto is
+CC BY 4.0, the Threat Modeling Manifesto working group. Juice Shop is MIT,
+Bjoern Kimminich and the OWASP Juice Shop contributors. OpenCRE is CC0-1.0,
+OWASP OpenCRE project. See [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
