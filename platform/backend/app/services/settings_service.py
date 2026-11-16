@@ -139,6 +139,8 @@ DEFAULT_SETTINGS = [
     # --- Features ---
     {"key": "advanced_dna_insights_enabled", "value": "false", "category": "features",
      "description": "Show the development-only Momentum and Career Atlas surfaces on learner profiles and career dossiers. Keep this off in production until the review in docs/CAREER-ATLAS-AND-MOMENTUM.md is signed off.", "is_secret": False},
+    {"key": "cyber_dna_v3_enabled", "value": "false", "category": "features",
+     "description": "Expose the Cyber DNA v3 evidence, behavior, interest, and career-affinity APIs. Evidence is recorded regardless of this gate; the gate controls the learner-facing read surfaces. See docs/CYBER-DNA-V3.md.", "is_secret": False},
 
 
 

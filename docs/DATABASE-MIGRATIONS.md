@@ -1,8 +1,8 @@
 # Database schema and Alembic migrations
 
 Audience: operators upgrading a deployment, and reviewers answering change-
-management or disaster-recovery questions. Current schema head: **0031**
-(`0031_learner_snapshots`).
+management or disaster-recovery questions. Current schema head: **0032**
+(`0032_cyber_dna`).
 
 ## Short version for operators
 

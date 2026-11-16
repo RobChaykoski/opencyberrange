@@ -9,6 +9,10 @@ This page tracks what is left; the deployment record is
 
 ## Recently completed
 
+- **Cyber DNA v3 Phase 1.** The event-driven DNA context, evidence ledger,
+  behavior/interest/affinity derivation, snapshot API, gated `30/3/100`
+  affinity, backfill adapter, and erasure hook are implemented on `main` behind
+  `cyber_dna_v3_enabled=false`. See [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md).
 - Network-appliance lab `network-12-6-appliance-segment`: a dual-homed OpenWrt
   24.10.5 appliance with a protected internal segment, a default-deny forward
   chain, and an SSH local-forward pivot. Includes a workbook page, the NET04
@@ -43,10 +47,11 @@ This page tracks what is left; the deployment record is
 
 ## Open queue
 
-1. **Cyber DNA v3.** Implement the evidence ledger, behavior profile, interest
-   vector, and career-affinity scores from
+1. **Cyber DNA v3 rollout.** Enable `cyber_dna_v3_enabled` on development,
+   run the backfill dry-run, then add the learner UI. Tune behavior weights and
+   the affinity formula after a term of evidence. See
    [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
-   of scope. Draft RFC, awaiting approval.
+   of scope.
 2. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
    the 3.15/3.16 branches; do not chase alpha releases.
 3. **Docker CLI Go findings** move with Docker Inc.'s next trixie package.

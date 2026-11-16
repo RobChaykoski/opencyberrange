@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.services.settings_service import get_setting_fresh
 
 ADVANCED_DNA_INSIGHTS = "advanced_dna_insights_enabled"
+CYBER_DNA_V3 = "cyber_dna_v3_enabled"
 
 _TRUTHY = {"1", "true", "yes", "on", "enabled"}
 
@@ -35,3 +36,13 @@ def advanced_dna_insights_enabled(db: Session) -> bool:
     default ``false``.
     """
     return setting_enabled(db, ADVANCED_DNA_INSIGHTS)
+
+
+def cyber_dna_v3_enabled(db: Session) -> bool:
+    """Return True when the Cyber DNA v3 read APIs may be shown.
+
+    Evidence is recorded regardless of this gate. The gate keeps the new
+    evidence, behavior, interest, and affinity surfaces off until the rollout
+    in ``docs/CYBER-DNA-V3.md`` reaches them.
+    """
+    return setting_enabled(db, CYBER_DNA_V3)

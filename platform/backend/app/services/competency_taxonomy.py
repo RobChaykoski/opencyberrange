@@ -163,6 +163,38 @@ def competencies_for_lab(lab: Lab | None) -> list[str]:
     return []
 
 
+def competency_index() -> dict:
+    """Return the taxonomy competency index keyed by competency ID."""
+    return _taxonomy_index()[2]
+
+
+def evidence_competencies_for_lab(lab: Lab | None) -> list[str]:
+    """Return competencies for the evidence ledger.
+
+    The chapter mapping is the precise source. When a lab has no chapter, use
+    its primary competency axis or category. Unlike ``competencies_for_lab``,
+    this deliberately does not expand a whole track: a track-wide fallback
+    would give every completion a tiny weight in dozens of unrelated
+    competencies and flatten the scores.
+    """
+    if lab is None:
+        return []
+    mapping = load_mapping()
+    chapter_id = (getattr(lab, "chapter_id", None) or "").strip()
+    if chapter_id and chapter_id in mapping.get("chapters", {}):
+        return list(dict.fromkeys(mapping["chapters"][chapter_id]))
+
+    axis = (getattr(lab, "primary_competency", None) or "").strip().lower()
+    domain = PRIMARY_AXIS_TO_DOMAIN.get(axis)
+    if domain:
+        return _expand_domains([domain])
+
+    category = (getattr(lab, "category", None) or "general").strip().lower()
+    if category in mapping.get("categories", {}):
+        return list(dict.fromkeys(mapping["categories"][category]))
+    return []
+
+
 def _evidence_level(count: int) -> str:
     if count <= 0:
         return "no_evidence"

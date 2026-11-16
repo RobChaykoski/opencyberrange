@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [Unreleased]
+
+### Cyber DNA v3 — Phase 1
+- Added the Cyber DNA bounded context (`app/cyber_dna`) with its own
+  `dna_evidence_records` and `dna_snapshots` tables (migration `0032`). It does
+  not read exercise tables and has no foreign keys into them; the exercise
+  platform emits a versioned `ActivityCompleted` event.
+- Evidence is append-only and idempotent per event and competency. Competency
+  scores, a five-signal behavior profile, and a voluntary interest vector are
+  derived from it.
+- Career affinity is **gated** until a learner has 30+ labs, 3+ domains, and
+  100+ competency observations. It is descriptive, never a probability.
+- Added owner-only `/api/dna/v3/...` endpoints behind
+  `cyber_dna_v3_enabled=false`, plus behavior/interest/affinity snapshots.
+- Added `scripts/backfill-evidence.py`, an exercise-side adapter for existing
+  completions, and explicit DNA erasure in the account-deletion path.
+- The design is in `docs/CYBER-DNA-V3.md`.
+
 ## [5.16.0] - 2026-11-15
 
 ### Labs

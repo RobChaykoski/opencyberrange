@@ -1860,6 +1860,23 @@ async def submit_flag(
             db.add(completion)
         db.commit()
 
+        # Emit the Cyber DNA activity event. The adapter maps the lab to
+        # competencies and the DNA package stores evidence in its own tables.
+        # A valid solve must not fail because the DNA context is unavailable.
+        completion_row = existing_completion or completion
+        if completion_row is not None:
+            try:
+                from app.services.dna_events import emit_completion_event
+
+                emit_completion_event(db, current_user.id, completion_row, lab)
+            except Exception as dna_error:
+                logger.warning(
+                    "Cyber DNA event failed for user %s lab %s: %s",
+                    current_user.id,
+                    lab_id,
+                    dna_error,
+                )
+
         # Check and award course achievements in background
         # (uses its own DB session since the request session closes after response)
         def _run_achievement_check(user_id: int, lab_id_inner: int):

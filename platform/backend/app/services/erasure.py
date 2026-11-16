@@ -315,6 +315,14 @@ def erase_user(
     email = (user.email or "").strip()
     result = ErasureResult(user_id=user_id)
 
+    # Cyber DNA owns its own tables and has no foreign key to exercise rows.
+    # Ask the bounded context to erase this learner explicitly.
+    from app.cyber_dna.service import erase_learner as erase_dna_learner
+
+    dna_deleted = erase_dna_learner(db, user_id)
+    if dna_deleted:
+        result.deleted["dna_evidence_records"] = dna_deleted
+
     # Record the suppression entry before touching the database. If this cannot
     # be written, abort: a restore from a pre-deletion backup would otherwise
     # bring the account back and silently undo the erasure.
