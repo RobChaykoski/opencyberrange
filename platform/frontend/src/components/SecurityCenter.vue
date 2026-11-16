@@ -1237,6 +1237,16 @@ onMounted(refreshAll)
 .security-policy__card p { margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; }
 .security-center :is(button, input, select, textarea, [tabindex="0"]):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+.sub-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.25rem; }
+.sub-tab { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--text-secondary); padding: 0.45rem 0.7rem; border-radius: 6px 6px 0 0; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
+.sub-tab:hover { color: var(--text-primary); background: var(--bg-secondary); }
+.sub-tab.active { color: var(--accent-text); border-bottom-color: var(--accent); background: var(--bg-secondary); }
+
+.security-panel .data-table th,
+.security-panel .data-table td { padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--border-color); text-align: left; vertical-align: top; }
+.security-panel .data-table thead th { background: var(--bg-secondary); color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.security-panel .data-table tbody tr:hover { background: var(--bg-secondary); }
+
 .security-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .security-section-head h3 { margin: 0; }
 .role-editor, .mac-panel { display: grid; gap: 0.9rem; border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; background: var(--bg-secondary); min-width: 0; }
