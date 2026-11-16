@@ -105,6 +105,7 @@ const toolUrl = computed(() => safeHttpUrl(activeTool.value?.url))
 // cross-origin tool must not get allow-same-origin, which would cancel the
 // sandbox for the app origin.
 const toolSandbox = computed(() => {
+  if (activeTool.value?.sandbox) return activeTool.value.sandbox
   const url = toolUrl.value
   if (!url) return 'allow-scripts allow-forms'
   try {

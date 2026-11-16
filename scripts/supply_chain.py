@@ -138,6 +138,7 @@ COVERED_FILES = [
     "platform/frontend/nginx.conf",
     "platform/frontend/nginx-ssl.conf",
     "platform/frontend/security-headers.conf",
+    "platform/frontend/src/composables/useToolPanel.js",
     "platform/frontend/index.html",
     "platform/frontend/binaries/wstunnel_10.5.2_linux_amd64.tar.gz",
     "platform/frontend/binaries/wstunnel_10.5.2_linux_arm64.tar.gz",

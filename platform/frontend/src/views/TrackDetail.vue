@@ -356,6 +356,14 @@
               OT Scan
             </button>
             <button
+              type="button"
+              class="btn btn--secondary btn--sm"
+              title="Open MITRE ATT&CK Navigator for technique coverage"
+              @click="openTool('attacknavigator')"
+            >
+              ATT&amp;CK
+            </button>
+            <button
               v-if="activeLab.session"
               @click="stopLab"
               class="btn btn--danger btn--sm"

@@ -211,6 +211,21 @@
           </svg>
           <span v-show="!collapsed" class="nav-item__label">OT Scan</span>
         </button>
+        <button
+          type="button"
+          aria-label="MITRE ATT&CK Navigator (opens in a panel)"
+          title="MITRE ATT&CK Navigator — technique coverage and layers"
+          class="nav-item nav-item--button"
+          @click="openTool('attacknavigator')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="nav-item__icon" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          <span v-show="!collapsed" class="nav-item__label">ATT&amp;CK</span>
+        </button>
       </div>
       </template>
 

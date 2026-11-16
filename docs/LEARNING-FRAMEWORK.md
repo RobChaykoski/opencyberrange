@@ -121,6 +121,7 @@ publicly or make high-stakes decisions.
 - [Defensive detection-engineering pathway](DETECTION-ENGINEERING-PATHWAY.md)
 - [Digital forensics and incident response pathway](DFIR-PATHWAY.md)
 - [Malware lab governance](MALWARE-LAB-GOVERNANCE.md)
+- [MITRE ATT&CK Navigator tool](ATTACK-NAVIGATOR.md)
 - [Minor-safe defaults](MINOR-SAFE-DEFAULTS.md)
 - [System architecture](ARCHITECTURE.md)
 - [NICE mapping matrix](NICE-MAPPING.md)

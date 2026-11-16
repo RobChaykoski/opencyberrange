@@ -205,7 +205,7 @@
       "sha256": "c5741dbb294018f6124ea0df1b4a1cbe6c99443a90d78ca200d003e1c3c043e8"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "bf9a9358ba5f341677fee6fe2c2e2ab860fab8f9d38e88ce740d18ea472e46a7"
+      "sha256": "e4a9eb11c9a357506610bbaca2acb4689fa2f22e313f9be0e053b0a605c58298"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "76c7afdcd9855159ff433060072ddd3e6917f78c48a452a6b8df815a85b4849e"
@@ -214,7 +214,10 @@
       "sha256": "ad3b29316b741671a2b2576952bb75a29342dfa888c91df1be0470a8584b3126"
     },
     "platform/frontend/security-headers.conf": {
-      "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
+      "sha256": "1020a6e3ce249010704b6c92b7077fc661ed499fe58654b7a960299a67254152"
+    },
+    "platform/frontend/src/composables/useToolPanel.js": {
+      "sha256": "2af94f01e1971686c7dd0ca2b94552cd6537f1802a3c3ccf0974fce6611d951e"
     },
     "platform/labs/High School/_shared/app.py": {
       "sha256": "e379a1840c4f522e34ba54d72b409ae8464b5babb10e08a409dbedd267b9dfd8"
@@ -316,7 +319,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "c128fb34c0ebe0b1e245c4f998334626dd908cca7d9b6a320a3a39699d0e8749"
+      "sha256": "55bb8084e7b50b60f8b4f96d5ba308545503a127991f4f312230439ea0a778d7"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"

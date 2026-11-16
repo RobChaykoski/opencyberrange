@@ -20,6 +20,19 @@ const TOOLS = Object.freeze({
     attribution:
       'Runs entirely in this panel. The platform does not send a scan; it only writes the command after you confirm authorisation.',
   },
+  attacknavigator: {
+    key: 'attacknavigator',
+    title: 'MITRE ATT&CK Navigator',
+    url: 'https://mitre-attack.github.io/attack-navigator/',
+    description:
+      'Explore ATT&CK techniques and build a coverage layer for a lab or detection review.',
+    attribution:
+      'MITRE ATT&CK Navigator is an Apache-2.0 project by The MITRE Corporation. It runs at mitre-attack.github.io and needs internet access.',
+    // Navigator keeps its layers in its own browser storage. The iframe stays
+    // cross-origin, so allow-same-origin preserves Navigator's origin and
+    // storage without granting access to the platform origin.
+    sandbox: 'allow-scripts allow-same-origin allow-forms allow-downloads allow-modals',
+  },
 })
 
 const activeKey = ref(null)
