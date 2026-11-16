@@ -11,8 +11,8 @@ another document disagrees, this page and the signed tag win.
 |---|---|
 | Release | **5.17.1** |
 | Signed tag | **`v5.17.1`** |
-| Tag commit | `a3d775b6` |
-| Runtime code commit | `a3d775b6` |
+| Tag commit | `b9d99d2a` |
+| Runtime code commit | `b9d99d2a` |
 | Alembic revision | **`0040_settings_change_control`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -74,7 +74,7 @@ The cutover requires all of the following:
 - Registered labs → `191`
 - Release status → `current` / `v5.17.1`
 - Backup restore drill → `PASSED`
-- CI on `a3d775b6` → all workflows green
+- CI on `b9d99d2a` → all workflows green
 
 ## Related documents
 

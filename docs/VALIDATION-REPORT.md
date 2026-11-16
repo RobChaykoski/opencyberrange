@@ -1,7 +1,7 @@
 # Validation report
 
 **Release:** 5.17.1
-**Commit:** `a3d775b6` (signed tag `v5.17.1`)
+**Commit:** `b9d99d2a` (signed tag `v5.17.1`)
 **Date:** 16 November 2026
 
 This is the reproducible validation record for the current release. Commands

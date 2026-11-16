@@ -1,7 +1,7 @@
 # Release 5 production readiness
 
 Status: **`v5.17.1` is released and deployed.** Development `172.16.16.44` and
-production `172.16.16.41` both run `main` at `a3d775b6` (`v5.17.1`) with Alembic
+production `172.16.16.41` both run `main` at `b9d99d2a` (`v5.17.1`) with Alembic
 `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
@@ -36,7 +36,7 @@ releases, security patches, and operations patches.
 
 ## 5.17.1 deployment record - 2026-11-16
 
-- Deployed from `main` at `a3d775b6` (`v5.17.1`). Backend and frontend were
+- Deployed from `main` at `b9d99d2a` (`v5.17.1`). Backend and frontend were
   rebuilt from the release tree.
 - Pre-deploy backup: `~/backups/ocr-backup-20261116-181526.dump` (checksum and
   platform env recorded alongside it).
@@ -54,7 +54,7 @@ releases, security patches, and operations patches.
 - This is a code deployment. Database `deployment_mode` remains `development`
   and `data_collection_mode` remains `sample`; the one-way cutover has not run.
 - Tag `v5.17.1` is signed with the release key
-  `68A817762C831475F00DB54E775050A4C4921814` at commit `a3d775b6`.
+  `68A817762C831475F00DB54E775050A4C4921814` at commit `b9d99d2a`.
 
 ## 5.17.0 deployment record - 2026-11-16
 
