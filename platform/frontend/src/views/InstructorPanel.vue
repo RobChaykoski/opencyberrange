@@ -1226,6 +1226,17 @@
                         >{{ c.code }} — {{ c.name }}</option>
                       </select>
                       <button
+                        class="action-btn action-btn--view"
+                        @click="exportExercise(lab)"
+                        title="Export exercise as a reusable ZIP"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                      </button>
+                      <button
                         class="action-btn action-btn--test"
                         @click="runTestForLab(lab)"
                         :disabled="testerRunning"
@@ -3126,6 +3137,28 @@ async function deleteExercise(lab) {
     fetchLabs()
   } catch (e) {
     showAlert(e.response?.data?.detail || 'Failed to delete exercise', 'error')
+  }
+}
+
+async function exportExercise(lab) {
+  try {
+    const response = await axios.get(`/instructor/labs/${lab.id}/export`, {
+      responseType: 'blob',
+    })
+    const disposition = response.headers['content-disposition'] || ''
+    const match = /filename="?([^";]+)"?/i.exec(disposition)
+    const filename = match?.[1] || `${lab.slug || 'exercise'}-export.zip`
+    const url = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    showAlert('Exercise export downloaded. The flag was replaced with a placeholder.')
+  } catch (e) {
+    showAlert(e.response?.data?.detail || 'Failed to export exercise', 'error')
   }
 }
 

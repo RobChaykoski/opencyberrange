@@ -620,6 +620,9 @@
               <button @click="scanLabs" :disabled="scanningLabs" class="btn btn--secondary btn--sm">
                 {{ scanningLabs ? 'Scanning...' : 'Scan for Exercises' }}
               </button>
+              <button @click="openImportExercise" class="btn btn--secondary btn--sm">
+                Import Exercise
+              </button>
               <button @click="openCreateLabModal" class="btn btn--success btn--sm">+ Create Exercise</button>
             </div>
           </div>
@@ -774,6 +777,13 @@
                               title="Run exercise tester"
                             >
                               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v5l3 9H6l3-9V3z"/><path d="M8 3h8"/></svg>
+                            </button>
+                            <button
+                              @click="exportExercise(lab)"
+                              class="action-btn action-btn--view"
+                              title="Export exercise as a reusable ZIP"
+                            >
+                              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             </button>
                             <button
                               @click="deleteLabImages(lab)"
@@ -3098,6 +3108,162 @@
         </div>
       </transition>
 
+      <!-- Import Exercise Modal -->
+      <transition name="fade">
+        <div
+          v-if="showImportExerciseModal"
+          class="modal-overlay"
+          @click.self="closeImportExercise"
+        >
+          <div class="modal modal--large">
+            <h3 class="modal-title">Import exercise</h3>
+            <p class="modal-subtitle">
+              Upload an exercise export ZIP. It is created as a draft so you can
+              review it before students see it.
+            </p>
+
+            <div class="form-stack">
+              <div class="form-group">
+                <label for="import-exercise-file">Exercise ZIP</label>
+                <input
+                  id="import-exercise-file"
+                  type="file"
+                  accept=".zip,application/zip"
+                  class="form-input"
+                  :disabled="importingExercise"
+                  @change="handleImportFile"
+                />
+              </div>
+              <div v-if="importFile" class="upload-preview">
+                Selected: {{ importFile.name }} ({{ formatBytes(importFile.size) }})
+              </div>
+
+              <div class="form-row-inline">
+                <div class="form-group" style="flex: 1">
+                  <label for="import-exercise-track">Track</label>
+                  <select
+                    id="import-exercise-track"
+                    v-model="importTrack"
+                    class="form-input"
+                    :disabled="importingExercise"
+                  >
+                    <option value="">Choose a track...</option>
+                    <option
+                      v-for="track in curriculumTracks"
+                      :key="track.id"
+                      :value="track.slug"
+                    >
+                      {{ track.name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex: 1">
+                  <label for="import-exercise-level">Level</label>
+                  <select
+                    id="import-exercise-level"
+                    v-model="importLevelId"
+                    class="form-input"
+                    :disabled="importingExercise || !importTrack"
+                  >
+                    <option value="">Choose a level...</option>
+                    <option
+                      v-for="level in importLevelOptions"
+                      :key="level.id"
+                      :value="level.id"
+                    >
+                      Level {{ level.level_number }} — {{ level.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="import-exercise-name">New exercise name (optional)</label>
+                <input
+                  id="import-exercise-name"
+                  v-model="importName"
+                  class="form-input"
+                  maxlength="100"
+                  placeholder="Defaults to the title in lab.yaml"
+                  :disabled="importingExercise"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="import-exercise-flag">Flag (optional)</label>
+                <input
+                  id="import-exercise-flag"
+                  v-model="importFlag"
+                  class="form-input"
+                  maxlength="200"
+                  placeholder="Leave blank to generate a new flag"
+                  :disabled="importingExercise || importReuseFlag"
+                />
+              </div>
+
+              <label class="import-toggle">
+                <input
+                  v-model="importReuseFlag"
+                  type="checkbox"
+                  :disabled="importingExercise || !!importFlag"
+                />
+                <span>Reuse the flag from the ZIP if it contains one</span>
+              </label>
+
+              <p class="form-hint">
+                Exports replace the flag with a placeholder unless an administrator
+                explicitly includes it. Leaving this blank generates a new flag and
+                shows it once after import.
+              </p>
+
+              <p v-if="importError" class="error-message" role="alert">
+                {{ importError }}
+              </p>
+
+              <div v-if="importResult" class="import-result">
+                <p class="success-message">{{ importResult.message }}</p>
+                <p v-if="importResult.generated_flag" class="import-result__flag">
+                  New flag:
+                  <code>{{ importResult.generated_flag }}</code>
+                  <span class="import-result__hint">Store it now; it is shown once.</span>
+                </p>
+                <div v-if="importResult.warnings?.length" class="import-result__warnings">
+                  <strong>Review notes</strong>
+                  <ul>
+                    <li v-for="warning in importResult.warnings" :key="warning">
+                      {{ warning }}
+                    </li>
+                  </ul>
+                </div>
+                <p class="import-result__files">
+                  {{ importResult.file_count }} file(s) imported as
+                  <strong>{{ importResult.visibility }}</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <button
+                type="button"
+                class="btn btn--secondary"
+                :disabled="importingExercise"
+                @click="closeImportExercise"
+              >
+                {{ importResult ? 'Done' : 'Cancel' }}
+              </button>
+              <button
+                type="button"
+                class="btn btn--primary"
+                :disabled="!importFile || !importTrack || !importLevelId || importingExercise"
+                @click="submitImportExercise"
+              >
+                {{ importingExercise ? 'Importing...' : 'Import draft' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
+
       <!-- Create Lab Modal -->
       <transition name="fade">
         <div v-if="showCreateLabModal" class="modal-overlay" @click.self="showCreateLabModal = false">
@@ -5238,6 +5404,25 @@ const diskUsageLoading = ref(false)
 const pruningImages = ref(false)
 const pruningBuildCache = ref(false)
 const deletingLabImages = ref({})
+
+// Exercise export/import state
+const showImportExerciseModal = ref(false)
+const importFile = ref(null)
+const importTrack = ref('')
+const importLevelId = ref('')
+const importName = ref('')
+const importFlag = ref('')
+const importReuseFlag = ref(false)
+const importingExercise = ref(false)
+const importError = ref('')
+const importResult = ref(null)
+
+const importLevelOptions = computed(() => {
+  const track = curriculumTracks.value.find(
+    (candidate) => candidate.slug === importTrack.value
+  )
+  return track ? track.levels : []
+})
 
 // â”€â”€ Exercise Tester state â”€â”€
 const testerLabList = ref([])
@@ -7728,6 +7913,92 @@ const submitPasswordReset = async () => {
     showAlert(detail || 'Failed to reset password. Please try again.', 'error')
   } finally {
     passwordResetLoading.value = false
+  }
+}
+
+// Exercise export/import actions
+const openImportExercise = () => {
+  showImportExerciseModal.value = true
+  importFile.value = null
+  importTrack.value = ''
+  importLevelId.value = ''
+  importName.value = ''
+  importFlag.value = ''
+  importReuseFlag.value = false
+  importError.value = ''
+  importResult.value = null
+  if (curriculumTracks.value.length === 0) fetchCurriculum()
+}
+
+const closeImportExercise = () => {
+  if (!importingExercise.value) showImportExerciseModal.value = false
+}
+
+const handleImportFile = (event) => {
+  const file = event.target.files?.[0]
+  importError.value = ''
+  importResult.value = null
+  if (!file) {
+    importFile.value = null
+    return
+  }
+  if (!file.name.toLowerCase().endsWith('.zip')) {
+    importFile.value = null
+    importError.value = 'Choose a .zip file.'
+    event.target.value = ''
+    return
+  }
+  importFile.value = file
+}
+
+const submitImportExercise = async () => {
+  if (!importFile.value || !importTrack.value || !importLevelId.value) return
+  importingExercise.value = true
+  importError.value = ''
+  importResult.value = null
+  const form = new FormData()
+  form.append('file', importFile.value)
+  form.append('track', importTrack.value)
+  form.append('level_id', String(importLevelId.value))
+  if (importName.value.trim()) form.append('name', importName.value.trim())
+  if (importFlag.value.trim()) form.append('flag', importFlag.value.trim())
+  if (importReuseFlag.value) form.append('reuse_flag', 'true')
+  try {
+    const { data } = await axios.post('/admin/labs/import', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    importResult.value = data
+    await fetchAll()
+  } catch (e) {
+    importError.value =
+      e.response?.data?.detail || 'Could not import the exercise.'
+  } finally {
+    importingExercise.value = false
+  }
+}
+
+const exportExercise = async (lab) => {
+  try {
+    const response = await axios.get(`/admin/labs/${lab.id}/export`, {
+      responseType: 'blob',
+    })
+    const disposition = response.headers['content-disposition'] || ''
+    const match = /filename="?([^";]+)"?/i.exec(disposition)
+    const filename = match?.[1] || `${lab.slug || 'exercise'}-export.zip`
+    const url = URL.createObjectURL(response.data)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+    showAlert(`Exported ${lab.name}. The flag is replaced with a placeholder.`)
+  } catch (e) {
+    showAlert(
+      'Failed to export exercise: ' + (e.response?.data?.detail || e.message),
+      'error'
+    )
   }
 }
 
@@ -14145,6 +14416,75 @@ watch(activeTab, (tab) => {
   font-size: 0.65rem;
   color: var(--text-muted, #64748b);
   font-weight: 400;
+}
+
+.upload-preview {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+}
+
+.import-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.import-toggle input {
+  margin-top: 0.15rem;
+  accent-color: var(--accent);
+}
+
+.import-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--success, #10b981) 35%, var(--border-color));
+  border-radius: 10px;
+  background: var(--bg-primary);
+}
+
+.import-result__flag {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.import-result__flag code {
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  background: var(--bg-tertiary, rgba(148, 163, 184, 0.15));
+}
+
+.import-result__hint {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.import-result__warnings {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.import-result__warnings ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.import-result__files {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
 }
 
 .form-row {

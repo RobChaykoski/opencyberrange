@@ -14,7 +14,16 @@ import shutil
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File, Form
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Request,
+    Response,
+    UploadFile,
+)
 from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
@@ -36,6 +45,7 @@ from app.models import (
 )
 from app.auth import get_current_instructor_user
 from app.services.audit import log_admin_action, AuditActions
+from app.services import exercise_transfer
 from app.services.docker_manager import get_track_directory_name
 # Lab ZIP upload is an optional authoring capability; absent from editions
 # that do not ship it (the upload endpoint 404s when this import fails).
@@ -922,6 +932,51 @@ async def list_tracks_and_levels(
             ],
         })
     return {"tracks": out}
+
+
+@router.get("/labs/{lab_id}/export")
+async def export_own_lab(
+    request: Request,
+    lab_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_instructor_user),
+):
+    """Download a reusable exercise ZIP with the flag replaced by a placeholder.
+
+    Export is read-only and available to instructors for any catalog exercise
+    they can already see. The original flag is never included on this path.
+    """
+    lab = db.query(Lab).filter(Lab.id == lab_id).first()
+    if lab is None:
+        raise HTTPException(status_code=404, detail="Exercise not found")
+    try:
+        contents, filename = exercise_transfer.export_lab_zip(
+            db, lab, include_flag=False
+        )
+    except exercise_transfer.ExerciseTransferError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    log_admin_action(
+        action=AuditActions.LAB_EXPORTED,
+        admin_user_id=current_user.id,
+        admin_username=current_user.username,
+        target_type="lab",
+        target_id=lab.id,
+        target_identifier=lab.slug,
+        details={"include_flag": False, "self_service": True},
+        ip_address=request.client.host if request.client else None,
+    )
+    safe_name = re.sub(
+        r"[^A-Za-z0-9._-]", "_", filename or "exercise-export.zip"
+    ) or "exercise-export.zip"
+    return Response(
+        content=contents,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{safe_name}"',
+            "Cache-Control": "no-store",
+        },
+    )
 
 
 @router.put("/labs/{lab_id}")

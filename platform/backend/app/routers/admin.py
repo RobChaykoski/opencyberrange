@@ -63,6 +63,7 @@ from app.services.spreadsheet_safety import neutralize_cell
 from app.services.lab_naming import parse_lab_slug
 from app.services.curriculum_manifest import chapter_id_for_workbook
 from app.services.framework_map import resolve as resolve_framework
+from app.services import exercise_transfer
 from app.services.user_transfer import (
     export_users as build_user_export,
     import_users as apply_user_import,
@@ -2490,6 +2491,119 @@ def _format_bytes(n: int) -> str:
     if n >= 1024:
         return f"{n / 1024:.1f} KB"
     return f"{n} B"
+
+
+def _download_filename(name: str) -> str:
+    """Keep a download filename inside a quoted Content-Disposition value."""
+    cleaned = re.sub(r"[^A-Za-z0-9._-]", "_", name or "exercise-export.zip")
+    return cleaned or "exercise-export.zip"
+
+
+@router.get("/labs/{lab_id}/export")
+async def export_exercise(
+    request: Request,
+    lab_id: int,
+    include_flag: bool = Query(False),
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Download an exercise as a reusable authoring ZIP.
+
+    The flag is replaced with a placeholder unless ``include_flag=true`` is
+    explicitly requested for a trusted backup.
+    """
+    lab = db.query(Lab).filter(Lab.id == lab_id).first()
+    if not lab:
+        raise HTTPException(status_code=404, detail="Exercise not found")
+    try:
+        contents, filename = exercise_transfer.export_lab_zip(
+            db, lab, include_flag=include_flag
+        )
+    except exercise_transfer.ExerciseTransferError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    log_admin_action(
+        action=AuditActions.LAB_EXPORTED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="lab",
+        target_id=lab.id,
+        target_identifier=lab.slug,
+        details={"include_flag": include_flag, "bytes": len(contents)},
+        ip_address=request.client.host if request.client else None,
+    )
+    return Response(
+        content=contents,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{_download_filename(filename)}"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+@router.post("/labs/import", status_code=201)
+async def import_exercise(
+    request: Request,
+    file: UploadFile = File(...),
+    track: str = Form(...),
+    level_id: int = Form(...),
+    name: str | None = Form(None),
+    flag: str | None = Form(None),
+    reuse_flag: bool = Form(False),
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Import an exercise ZIP as a draft under a selected track and level.
+
+    If ``flag`` is blank, a new flag is generated and returned once in the
+    response. The imported exercise is never published automatically.
+    """
+    if not file.filename or not file.filename.lower().endswith(".zip"):
+        raise HTTPException(status_code=400, detail="Upload must be a .zip file.")
+    contents = await file.read(exercise_transfer.MAX_IMPORT_BYTES + 1)
+    if len(contents) > exercise_transfer.MAX_IMPORT_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                "ZIP too large (limit "
+                f"{exercise_transfer.MAX_IMPORT_BYTES // (1024 * 1024)} MB)."
+            ),
+        )
+    try:
+        result = exercise_transfer.import_lab_zip(
+            db,
+            user_id=admin.id,
+            contents=contents,
+            track_slug=track,
+            level_id=level_id,
+            name_override=name,
+            flag=flag,
+            reuse_flag=reuse_flag,
+        )
+    except exercise_transfer.ExerciseTransferError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.message)
+
+    log_admin_action(
+        action=AuditActions.LAB_IMPORTED,
+        admin_user_id=admin.id,
+        admin_username=admin.username,
+        target_type="lab",
+        target_id=result["id"],
+        target_identifier=result["slug"],
+        details={"file_count": result["file_count"], "draft": True},
+        ip_address=request.client.host if request.client else None,
+    )
+    message = (
+        f"Exercise '{result['name']}' imported as a draft. "
+        "Review it before publishing."
+    )
+    if result["generated_flag"]:
+        message += (
+            " A new flag was generated; store it now because it is shown only "
+            "in this response."
+        )
+    return {"message": message, **result}
 
 
 # ==================== Statistics ====================
