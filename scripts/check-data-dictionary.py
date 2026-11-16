@@ -17,18 +17,24 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-MODELS = ROOT / "platform" / "backend" / "app" / "models.py"
+MODELS = ROOT / "platform" / "backend" / "app" / "models"
 DICTIONARY = ROOT / "docs" / "DATA-DICTIONARY.md"
 
 TABLE_PATTERN = re.compile(r'__tablename__\s*=\s*"([a-z0-9_]+)"')
 
 
 def main() -> int:
-    if not MODELS.exists() or not DICTIONARY.exists():
-        print("Data dictionary check: models or dictionary file is missing.")
+    if not MODELS.is_dir() or not DICTIONARY.exists():
+        print("Data dictionary check: models directory or dictionary file is missing.")
         return 1
 
-    tables = sorted(set(TABLE_PATTERN.findall(MODELS.read_text(encoding="utf-8"))))
+    tables = sorted(
+        {
+            table
+            for path in MODELS.glob("*.py")
+            for table in TABLE_PATTERN.findall(path.read_text(encoding="utf-8"))
+        }
+    )
     text = DICTIONARY.read_text(encoding="utf-8")
     missing = [table for table in tables if table not in text]
 

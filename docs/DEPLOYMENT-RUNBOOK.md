@@ -50,13 +50,24 @@ Development uses the root compose files:
 
 ```bash
 cd ~/opencyberrange
-docker compose build backend frontend
-docker compose up -d backend frontend
+bash scripts/sync-dev-bind-mount.sh
 ```
 
-The development backend code is bind-mounted from `~/opencyberrange/backend`.
-After pulling, copy the changed backend source into that directory before a
-restart. Production bakes the code into the image and always needs a rebuild.
+The development backend and frontend are bind-mounted from
+`~/opencyberrange/backend` and `~/opencyberrange/frontend`. After a pull, run
+the sync script instead of copying files by hand. It copies source, the
+runtime `software-integrity.json` manifest, makes `platform/labs` readable by
+the backend UID, and recreates only the backend/frontend containers.
+Production bakes the code into the image and always needs a rebuild.
+
+If you pull manually on either host, also run:
+
+```bash
+chmod -R a+rX platform/labs
+```
+
+Otherwise `git` may recreate a modified lab file with the host umask (often
+`660`) and the Software integrity check will report that lab as unreadable.
 
 ### Backup volume ownership
 

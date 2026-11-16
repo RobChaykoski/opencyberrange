@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "bd472d8199c1e65552b123dd8ac806a3c3d97882ee4a2cb3b764ab6a089f7bbc"
+      "sha256": "a4b49e9577412b5b466f95d4de73c5514f66deff62d271ae26189a9807eb37fa"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -66,6 +66,45 @@
     "platform/backend/app/data/competency-taxonomy.yaml": {
       "sha256": "657acd043e3a48b310595ed3a42444f7fea079b2f9b592d02388f6f1a3921746"
     },
+    "platform/backend/app/data/detection-datasets/README.md": {
+      "sha256": "383319fa4559e474c52acfbb26ed3f797d485c65e6ae6f58117f47e1f1e735f9"
+    },
+    "platform/backend/app/data/detection-datasets/kql-queries.yaml": {
+      "sha256": "cac887b18890ecd9c96d4032b899cd69c71c4654489469298b4eb5a2ddc44622"
+    },
+    "platform/backend/app/data/detection-datasets/opensearch-events.jsonl": {
+      "sha256": "7b0f14f160d11b4b746046a2e92dba8dbfe5e385e3f75473538b9324c5907d71"
+    },
+    "platform/backend/app/data/detection-datasets/sigma/dns_tunnel.yml": {
+      "sha256": "51c7fc294156ca696f4061a7d8197c3a80a09e87c3660490e838d2382adca507"
+    },
+    "platform/backend/app/data/detection-datasets/sigma/encoded_powershell.yml": {
+      "sha256": "80d667d6ac98369de59b66ff427860be6254e999804e70fc876b638bbdd5c07c"
+    },
+    "platform/backend/app/data/detection-datasets/sigma/lsass_access.yml": {
+      "sha256": "efdb468a40f9526d7862f09341ffa04c99b4a2e4565d23a68cb8a80af8af907d"
+    },
+    "platform/backend/app/data/detection-datasets/suricata-eve.jsonl": {
+      "sha256": "a93a27e42fce3ce6911bdac62ed6298fefabefe4e63b6deab39c1712643b0c32"
+    },
+    "platform/backend/app/data/detection-datasets/sysmon.jsonl": {
+      "sha256": "669f2d2fe3810db70c87707b4fd34783f6147fc16126000196f4055179650c1e"
+    },
+    "platform/backend/app/data/detection-datasets/windows-security.jsonl": {
+      "sha256": "2f95320621ec5f51b1e36cac14ba838a57d758a1d15d41dd52cb400b82bd1796"
+    },
+    "platform/backend/app/data/detection-datasets/zeek-conn.jsonl": {
+      "sha256": "82edbf6869e8ccc586d395fc91c97daa42a2c2432216e9ccb01f9eb225217ebb"
+    },
+    "platform/backend/app/data/detection-datasets/zeek-dns.jsonl": {
+      "sha256": "71929b2527044be783e8c3b9030b11f7fb210b937f6e08025eed202eabb0deb9"
+    },
+    "platform/backend/app/data/detection-datasets/zeek-http.jsonl": {
+      "sha256": "f1ea46f9640c4110e010840ad949abdb3e4c75424ff70b59d016beb0c47be410"
+    },
+    "platform/backend/app/data/detection-pathway.yaml": {
+      "sha256": "4df826f01fea0fc57616ef7d246c2430bee9e8cd7a52d69d4d2717e3664c3928"
+    },
     "platform/backend/app/data/software-integrity.json": {
       "sha256": "3732a3d664d764c35fa2037dcafc346db5cfe1096ba334452143e2ad288291f5"
     },
@@ -74,6 +113,9 @@
     },
     "platform/backend/app/security/policy_rules.py": {
       "sha256": "b91a8826be3d417d08e7376fc7d1baeb91ea629da3c4d2f5a5ea39551756051d"
+    },
+    "platform/backend/app/services/production_control.py": {
+      "sha256": "79191e58f3c06bd97d5212087b9a7b135cf06a0e9fd3949e341a22625c2f48af"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
@@ -115,10 +157,10 @@
       "sha256": "bf9a9358ba5f341677fee6fe2c2e2ab860fab8f9d38e88ce740d18ea472e46a7"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "89c5a2b58ce5f141ce0300472b190e4986d8f81b11513bdd9abe9243e2c1f197"
+      "sha256": "76c7afdcd9855159ff433060072ddd3e6917f78c48a452a6b8df815a85b4849e"
     },
     "platform/frontend/package.json": {
-      "sha256": "1b3e2c4118840425d9a304783d1826031ce5663b24d5d8d3e9113bc4358f62a5"
+      "sha256": "ad3b29316b741671a2b2576952bb75a29342dfa888c91df1be0470a8584b3126"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
@@ -144,8 +186,14 @@
     "scripts/check-built-docs.py": {
       "sha256": "1669ff84cb7e69ec11f35e115c8e1c7ef51a32d3ea7302c46946e97db8a77fb9"
     },
+    "scripts/check-data-dictionary.py": {
+      "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
+    },
     "scripts/check-licences.py": {
       "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
+    },
+    "scripts/check_db_roles.py": {
+      "sha256": "a188534ab5135c289a572edb7982b38e11d27deea8da9c421ed21af5ffada74b"
     },
     "scripts/create-lab.py": {
       "sha256": "2002b63a342ca1634295cd4ea79c73268893968fe51baaca86ceca3110b1fcf0"
@@ -190,7 +238,10 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "e61dfab1fcda27538ce400075be1fc8d05cfb0974fc4ff09c8e590c1cf98b17f"
+      "sha256": "173cf66de8734d661b952ae63d7302e41b10934726f26c54d4c685003a13dd0f"
+    },
+    "scripts/sync-dev-bind-mount.sh": {
+      "sha256": "f64a4ddccd58f351576bf493686240735270c7a77b773f6005bd9aaa91b56816"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"

@@ -62,6 +62,30 @@ jobs:
         working-directory: platform/backend
         run: pytest -q
 
+      - name: Prove change control and detection pathway invariants
+        working-directory: platform/backend
+        run: pytest -q tests/test_production_control.py tests/test_detection_pathway.py
+
+      - name: Prove database role separation and tenant RLS
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+          export PGPASSWORD=ocr_test
+          psql -h 127.0.0.1 -U ocr_test -d postgres -c "CREATE DATABASE ocr_roles_ci"
+          export OCR_DB_MIGRATOR_PASSWORD="$(python -c 'import secrets;print(secrets.token_urlsafe(48))')"
+          export OCR_DB_RUNTIME_PASSWORD="$(python -c 'import secrets;print(secrets.token_urlsafe(48))')"
+          export OCR_DB_REPORTING_PASSWORD="$(python -c 'import secrets;print(secrets.token_urlsafe(48))')"
+          export OCR_DB_BACKUP_PASSWORD="$(python -c 'import secrets;print(secrets.token_urlsafe(48))')"
+          export OCR_DB_AUDIT_PASSWORD="$(python -c 'import secrets;print(secrets.token_urlsafe(48))')"
+          psql -h 127.0.0.1 -U ocr_test -d ocr_roles_ci -v ON_ERROR_STOP=1 \
+            -f db/bootstrap-db-roles.sql
+          python scripts/check_db_roles.py \
+            --admin-url "postgresql://ocr_test:ocr_test@127.0.0.1:5432/ocr_roles_ci" \
+            --runtime-url "postgresql://ocr_runtime:${OCR_DB_RUNTIME_PASSWORD}@127.0.0.1:5432/ocr_roles_ci" \
+            --migrator-url "postgresql://ocr_migrator:${OCR_DB_MIGRATOR_PASSWORD}@127.0.0.1:5432/ocr_roles_ci"
+          psql -h 127.0.0.1 -U ocr_test -d postgres -c "DROP DATABASE ocr_roles_ci"
+
   frontend:
     name: frontend (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
@@ -88,6 +112,10 @@ jobs:
         working-directory: platform/frontend
         run: npm run lint
 
+      - name: Test
+        working-directory: platform/frontend
+        run: npm test
+
       - name: Build
         working-directory: platform/frontend
         run: npm run build
@@ -107,6 +135,9 @@ jobs:
 
       - name: Check local documentation assets
         run: python scripts/check-doc-assets.py
+
+      - name: Check data dictionary coverage
+        run: python scripts/check-data-dictionary.py
 
       - name: Install documentation link checker dependency
         run: pip install pyyaml==6.0.3

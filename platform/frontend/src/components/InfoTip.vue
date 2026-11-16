@@ -57,11 +57,11 @@ function place() {
   border: 1px solid var(--border-color); border-radius: 8px;
   padding: 0.5rem 0.65rem; font-size: 0.75rem; font-weight: 400; line-height: 1.45;
   box-shadow: 0 8px 24px -10px rgba(0,0,0,.55);
-  opacity: 0; visibility: hidden; transition: opacity .12s;
+  display: none; opacity: 0; visibility: hidden; transition: opacity .12s;
   z-index: 60; white-space: pre-line; text-align: left; text-transform: none; letter-spacing: normal;
 }
 .infotip:hover .infotip__bubble,
-.infotip:focus-visible .infotip__bubble { opacity: 1; visibility: visible; }
+.infotip:focus-visible .infotip__bubble { display: block; opacity: 1; visibility: visible; }
 .infotip__bubble::after {
   content: ''; position: absolute; top: 100%;
   left: calc(50% - var(--tip-shift, 0px)); transform: translateX(-50%);

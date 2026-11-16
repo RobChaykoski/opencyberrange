@@ -350,11 +350,12 @@
           </p>
 
           <div class="security-matrix__legend">
-            <span><span class="security-matrix__mark security-matrix__mark--yes" aria-hidden="true">✓</span> Granted</span>
-            <span><span class="security-matrix__mark security-matrix__mark--no" aria-hidden="true">·</span> Not granted</span>
+            <span><span class="security-matrix__mark security-matrix__mark--yes" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span> Granted</span>
+            <span><span class="security-matrix__mark security-matrix__mark--no" aria-hidden="true">–</span> Not granted</span>
             <span><span class="security-badge security-badge--restricted">restricted</span> private; owner, share, or break-glass only</span>
           </div>
 
+          <div class="security-matrix__clip">
           <div
             class="table-container security-matrix__scroll"
             tabindex="0"
@@ -387,11 +388,11 @@
                       v-if="row.roles[role.key]"
                       class="security-matrix__mark security-matrix__mark--yes"
                     >
-                      <span aria-hidden="true">✓</span>
+                      <span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>
                       <span class="visually-hidden">Granted to {{ role.label }}</span>
                     </span>
                     <span v-else class="security-matrix__mark security-matrix__mark--no">
-                      <span aria-hidden="true">·</span>
+                      <span aria-hidden="true">–</span>
                       <span class="visually-hidden">Not granted to {{ role.label }}</span>
                     </span>
                   </td>
@@ -404,6 +405,7 @@
                 </tr>
               </tbody>
             </table>
+          </div>
           </div>
 
           <p v-if="!filteredMatrixRows.length" class="security-state">
@@ -541,8 +543,8 @@ async function loadEvents() {
     if (filters.severity) params.severity = filters.severity
     if (filters.search) params.search = filters.search
     const [eventResponse, summaryResponse] = await Promise.all([
-      axios.get('/api/admin/security/events', { params: { ...params, limit: 100 } }),
-      axios.get('/api/admin/security/events/summary', { params: { days: 30 } }),
+      axios.get('/admin/security/events', { params: { ...params, limit: 100 } }),
+      axios.get('/admin/security/events/summary', { params: { days: 30 } }),
     ])
     events.value = eventResponse.data.events || []
     summary.value = summaryResponse.data
@@ -554,17 +556,17 @@ async function loadEvents() {
 }
 
 async function loadGrants() {
-  const response = await axios.get('/api/admin/security/break-glass')
+  const response = await axios.get('/admin/security/break-glass')
   grants.value = response.data.grants || []
 }
 
 async function loadServices() {
-  const response = await axios.get('/api/admin/security/service-identities')
+  const response = await axios.get('/admin/security/service-identities')
   services.value = response.data.credentials || []
 }
 
 async function loadRoles() {
-  const response = await axios.get('/api/admin/security/rbac/roles')
+  const response = await axios.get('/admin/security/rbac/roles')
   roles.value = response.data.roles || []
 }
 
@@ -572,7 +574,7 @@ async function loadMatrix() {
   matrixLoading.value = true
   matrixError.value = ''
   try {
-    const response = await axios.get('/api/admin/security/rbac/matrix')
+    const response = await axios.get('/admin/security/rbac/matrix')
     matrix.value = response.data
   } catch (e) {
     matrixError.value = e.response?.data?.detail || 'Could not load the access matrix.'
@@ -599,7 +601,7 @@ async function requestBreakGlass() {
       reference: grantForm.reference || null,
       user_id: grantForm.user_id || null,
     }
-    await axios.post('/api/admin/security/break-glass', payload)
+    await axios.post('/admin/security/break-glass', payload)
     grantForm.reason = ''
     grantForm.reference = ''
     grantForm.user_id = null
@@ -614,7 +616,7 @@ async function requestBreakGlass() {
 
 async function approveGrant(row) {
   try {
-    await axios.post(`/api/admin/security/break-glass/${row.id}/approve`)
+    await axios.post(`/admin/security/break-glass/${row.id}/approve`)
     await loadGrants()
   } catch (e) {
     showToast(e.response?.data?.detail || 'Approval failed.', 'error')
@@ -623,7 +625,7 @@ async function approveGrant(row) {
 
 async function revokeGrant(row) {
   try {
-    await axios.post(`/api/admin/security/break-glass/${row.id}/revoke`, { reason: 'Revoked from security center' })
+    await axios.post(`/admin/security/break-glass/${row.id}/revoke`, { reason: 'Revoked from security center' })
     await loadGrants()
   } catch (e) {
     showToast(e.response?.data?.detail || 'Revocation failed.', 'error')
@@ -634,7 +636,7 @@ async function reviewGrant(row) {
   const note = window.prompt('Review note (required)')
   if (!note?.trim()) return
   try {
-    await axios.post(`/api/admin/security/break-glass/${row.id}/review`, { note })
+    await axios.post(`/admin/security/break-glass/${row.id}/review`, { note })
     await loadGrants()
   } catch (e) {
     showToast(e.response?.data?.detail || 'Review failed.', 'error')
@@ -645,7 +647,7 @@ async function createService() {
   saving.value = true
   newServiceToken.value = ''
   try {
-    const response = await axios.post('/api/admin/security/service-identities', {
+    const response = await axios.post('/admin/security/service-identities', {
       name: serviceForm.name,
       days: serviceForm.days || 90,
       scopes: serviceForm.scopes,
@@ -665,7 +667,7 @@ async function createService() {
 async function revokeService(row) {
   if (!window.confirm(`Revoke service identity "${row.name}"?`)) return
   try {
-    await axios.delete(`/api/admin/security/service-identities/${row.id}`)
+    await axios.delete(`/admin/security/service-identities/${row.id}`)
     await loadServices()
   } catch (e) {
     showToast(e.response?.data?.detail || 'Revocation failed.', 'error')
@@ -676,9 +678,9 @@ onMounted(refreshAll)
 </script>
 
 <style scoped>
-.security-center { display: grid; gap: 1rem; }
+.security-center { display: grid; gap: 1rem; min-width: 0; overflow-x: clip; }
 .security-center__sub { color: var(--text-muted); margin: 0.25rem 0 0; }
-.security-panel { display: grid; gap: 1rem; }
+.security-panel { display: grid; gap: 1rem; min-width: 0; overflow-x: clip; }
 .security-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
 .security-summary__card { border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 12px; padding: 0.75rem; display: grid; gap: 0.25rem; }
 .security-summary__card span { color: var(--text-secondary); font-size: 0.8rem; }
@@ -709,7 +711,8 @@ onMounted(refreshAll)
 .security-token code { display: block; margin-top: 0.35rem; word-break: break-all; color: var(--text-primary); }
 .security-matrix__count { margin: 0; color: var(--text-secondary); font-size: 0.8rem; }
 .security-matrix__legend { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; color: var(--text-secondary); font-size: 0.8rem; }
-.security-matrix__scroll { max-height: 34rem; overflow: auto; border: 1px solid var(--border-color); border-radius: 10px; }
+.security-matrix__scroll { max-width: 100%; min-width: 0; max-height: 34rem; overflow: auto; contain: layout paint; border: 1px solid var(--border-color); border-radius: 10px; }
+.security-matrix__clip { overflow: hidden; max-width: 100%; min-width: 0; }
 .security-matrix { min-width: 980px; border-collapse: collapse; }
 .security-matrix th, .security-matrix td { padding: 0.5rem 0.55rem; border-bottom: 1px solid var(--border-color); vertical-align: top; text-align: left; }
 .security-matrix thead th { position: sticky; top: 0; background: var(--bg-secondary); z-index: 2; }
@@ -719,6 +722,7 @@ onMounted(refreshAll)
 .security-matrix__role { display: block; font-weight: 600; color: var(--text-primary); }
 .security-matrix__cell { text-align: center; }
 .security-matrix__mark { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; border-radius: 999px; font-weight: 700; }
+.security-matrix__mark svg { width: 0.9rem; height: 0.9rem; }
 .security-matrix__mark--yes { color: var(--success); background: var(--success-bg); }
 .security-matrix__mark--no { color: var(--text-muted); }
 .security-matrix__policy { display: flex; flex-wrap: wrap; gap: 0.25rem; min-width: 12rem; }
