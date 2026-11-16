@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/windows-4-6-rdp-session-access-and-flag-retrieval.sh
   steps:
   - name: Verify RDP port 3389 is open

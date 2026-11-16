@@ -13,7 +13,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-final-3-architecture-mock.sh
   steps:
   - name: Portal homepage responds

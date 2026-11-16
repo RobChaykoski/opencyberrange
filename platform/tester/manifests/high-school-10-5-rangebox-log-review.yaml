@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/high-school-10-5-rangebox-log-review.sh
   steps:
   - name: Log endpoint responds

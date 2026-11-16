@@ -525,7 +525,7 @@ def run_one(lab: dict, manifest: dict, args: argparse.Namespace, run_index: int)
         targets = _targets(containers, network)
 
         _start_solver(
-            manifest["solver"]["image"],
+            args.solver_image or manifest["solver"]["image"],
             network,
             temp_dir,
             solver_name,
@@ -635,6 +635,10 @@ def main() -> int:
     parser.add_argument("--rebuild", action="store_true", help="rebuild images on every run")
     parser.add_argument("--keep", action="store_true", help="leave the last project up")
     parser.add_argument("--no-solver-build", action="store_true")
+    parser.add_argument(
+        "--solver-image",
+        help="override the manifest solver image (for a lightweight smoke run)",
+    )
     parser.add_argument("--json", dest="json_path", help="write the result JSON here")
     parser.add_argument("--fail-fast", action="store_true")
     args = parser.parse_args()

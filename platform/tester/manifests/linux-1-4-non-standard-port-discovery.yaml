@@ -15,7 +15,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-1-4-non-standard-port-discovery.sh
   steps:
   - name: Verify HTTP on non-standard port 34567

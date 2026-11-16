@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/network-0-1-ping-basics.sh
   steps:
   - name: Host answers ICMP echo requests

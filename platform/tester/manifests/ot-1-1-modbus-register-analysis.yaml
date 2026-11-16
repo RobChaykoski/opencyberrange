@@ -7,7 +7,7 @@ source: platform/labs/OT/ot-1-1-modbus-register-analysis/lab.yaml
 expected_services: []
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/ot-1-1-modbus-register-analysis.sh
   steps:
   - name: Modbus service is reachable

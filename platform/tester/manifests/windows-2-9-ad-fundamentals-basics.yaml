@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/windows-2-9-ad-fundamentals-basics.sh
   steps:
   - name: Bind with the training administrator and find the service account

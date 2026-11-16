@@ -19,7 +19,7 @@ expected_services:
   - {port: 22, protocol: tcp}
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-1-1-ssh-service-detection.sh
   steps:
     - name: Verify SSH port is open
@@ -75,6 +75,10 @@ python scripts/lab_harness.py --validate-all
 # One lab, three clean runs.
 python scripts/lab_harness.py --lab linux-1-1-ssh-service-detection --runs 3
 
+# Lightweight local smoke when the full tester image is not built yet.
+python scripts/lab_harness.py --lab linux-1-1-ssh-service-detection --runs 1 \
+  --no-build --no-solver-build --solver-image nicolaka/netshoot:latest
+
 # A release gate on the lab runner.
 python scripts/lab_harness.py --all --runs 3 --rebuild --json lab-harness.json
 ```
@@ -85,7 +89,7 @@ The live mode needs Docker, the lab images, and `/dev/kvm` for KVM labs. Build
 the solver image once if it is not present:
 
 ```bash
-docker build -t ocr/tester:current platform/tester
+docker build -t ocr-tester:latest platform/tester
 ```
 
 The solver runs commands from the tester sidecar on the lab's project network.

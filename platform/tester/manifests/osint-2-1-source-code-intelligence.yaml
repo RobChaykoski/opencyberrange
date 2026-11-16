@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/osint-2-1-source-code-intelligence.sh
   steps:
   - name: Dashboard responds

@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/identity-1-2-oauth-oidc-sso.sh
   steps:
   - name: Community ID page responds

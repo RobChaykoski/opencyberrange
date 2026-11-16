@@ -13,7 +13,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/windows-1-5-comprehensive-windows-enumeration.sh
   steps:
   - name: Verify SMB port 445 is open

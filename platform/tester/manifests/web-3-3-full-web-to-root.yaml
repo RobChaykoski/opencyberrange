@@ -13,7 +13,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/web-3-3-full-web-to-root.sh
   steps:
   - name: Web application responds on port 80

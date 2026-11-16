@@ -156,7 +156,7 @@ def build_manifest(lab_dir: Path) -> dict:
             (data.get("test") or {}).get("health_timeout_seconds") or 60
         ),
         "solver": {
-            "image": "ocr/tester:current",
+            "image": "ocr-tester:latest",
             "command": f"/tests/{slug}.sh",
             "steps": [
                 {

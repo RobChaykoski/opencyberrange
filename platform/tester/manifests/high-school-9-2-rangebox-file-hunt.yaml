@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/high-school-9-2-rangebox-file-hunt.sh
   steps:
   - name: Evidence archive is served

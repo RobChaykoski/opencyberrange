@@ -148,7 +148,7 @@
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
     },
     "scripts/generate-lab-manifests.py": {
-      "sha256": "5ac3cd01b44f42d82de797251b631c7bb2a3936ff2d77cffafca6a71b842b9bb"
+      "sha256": "b42fffbf9f9e9e8941f5d0751a53953e5da4de2bb91e0e7d28c6d258434e3f96"
     },
     "scripts/generate-rbac-matrix.py": {
       "sha256": "e6c423a7bd77efce87b02511565d5db376ebc5427d9b9a1b071e44b139251521"
@@ -160,7 +160,7 @@
       "sha256": "47f9b084a529c6ef0460cdb0895f0b90d3adf18c6c37ecf97b4f34bfabe952cf"
     },
     "scripts/lab_harness.py": {
-      "sha256": "2c3db325517c28b59890ccbe199e50a0404c1dd7a01361eb9238a890c4efb3e0"
+      "sha256": "4f78498f2d67a5639b3a061f0c42b3fa3870db6bf00606cbcea9bddf1e474122"
     },
     "scripts/prebuild-labs.sh": {
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"

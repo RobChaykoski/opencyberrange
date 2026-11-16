@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/windows-6-7-mssql-file-system-access-via-xp-cmdshell.sh
   steps:
   - name: Verify MySQL port 3306 is open

@@ -15,7 +15,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-1-7-network-discovery.sh
   steps:
   - name: Port scan discovers multiple services

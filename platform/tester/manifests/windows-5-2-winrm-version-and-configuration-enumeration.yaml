@@ -13,7 +13,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/windows-5-2-winrm-version-and-configuration-enumeration.sh
   steps:
   - name: Verify SSH port 22 is open

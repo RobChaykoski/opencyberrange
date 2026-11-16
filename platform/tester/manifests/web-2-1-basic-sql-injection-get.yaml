@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/web-2-1-basic-sql-injection-get.sh
   steps:
   - name: Web server responds with login page

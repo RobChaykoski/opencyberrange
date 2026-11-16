@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/web-1-5-subdomain-discovery.sh
   steps:
   - name: Main web server responds

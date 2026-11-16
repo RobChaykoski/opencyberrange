@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-2-10-snmp-breadcrumb-trail.sh
   steps:
   - name: SNMP public walk returns sysDescr with hidden community hint

@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/network-2-2-smtp-email-analysis.sh
   steps:
   - name: SSH accessible on analyst workstation

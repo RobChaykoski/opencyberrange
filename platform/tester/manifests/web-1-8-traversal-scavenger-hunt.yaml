@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/web-1-8-traversal-scavenger-hunt.sh
   steps:
   - name: Web application responds

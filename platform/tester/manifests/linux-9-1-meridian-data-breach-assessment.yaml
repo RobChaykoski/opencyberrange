@@ -11,7 +11,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-9-1-meridian-data-breach-assessment.sh
   steps:
   - name: Intranet web server responds

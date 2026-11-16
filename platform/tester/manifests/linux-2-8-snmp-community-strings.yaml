@@ -9,7 +9,7 @@ expected_services:
   protocol: tcp
 health_timeout_seconds: 60
 solver:
-  image: ocr/tester:current
+  image: ocr-tester:latest
   command: /tests/linux-2-8-snmp-community-strings.sh
   steps:
   - name: SNMP port 161 is accessible
