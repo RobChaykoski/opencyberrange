@@ -28,6 +28,7 @@ router = APIRouter()
 
 class RolePermissionsUpdate(BaseModel):
     permissions: list[str] = Field(default_factory=list)
+    reason: Optional[str] = Field(None, min_length=5, max_length=500)
 
 
 class UserRoleGrant(BaseModel):
@@ -256,7 +257,7 @@ async def update_role_permissions(
     _ensure_seeded(db)
     try:
         result = rbac.set_role_permissions(
-            db, actor, role_key, payload.permissions
+            db, actor, role_key, payload.permissions, reason=payload.reason
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

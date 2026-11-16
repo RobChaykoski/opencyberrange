@@ -254,21 +254,280 @@
         aria-labelledby="security-tab-roles"
         class="security-panel"
       >
-      <div class="table-container" v-if="roles.length">
-        <table class="data-table">
-          <caption class="visually-hidden">RBAC roles</caption>
-          <thead><tr><th scope="col">Role</th><th scope="col">Label</th><th scope="col">Tenant scope</th><th scope="col">Permissions</th></tr></thead>
-          <tbody>
-            <tr v-for="row in roles" :key="row.key">
-              <th scope="row" class="security-mono">{{ row.key }}</th>
-              <td>{{ row.label }}</td>
-              <td>{{ row.tenant_scope || 'institution' }}</td>
-              <td>{{ row.permissions.length }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p v-else class="security-state">Role catalog unavailable.</p>
+        <div class="security-section-head">
+          <div>
+            <h3>Role catalog</h3>
+            <p class="security-meta">
+              Roles are the reviewed starting point. A role grant is necessary
+              but not sufficient: policy rules still decide the record, tenant,
+              and consent scope.
+            </p>
+          </div>
+          <button type="button" class="btn btn--outline btn--sm" @click="loadRoles">
+            Refresh roles
+          </button>
+        </div>
+
+        <div class="table-container" v-if="roles.length">
+          <table class="data-table">
+            <caption class="visually-hidden">RBAC roles</caption>
+            <thead>
+              <tr>
+                <th scope="col">Role</th>
+                <th scope="col">Label</th>
+                <th scope="col">Tenant scope</th>
+                <th scope="col">Allowed</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="row in roles" :key="row.key">
+                <th scope="row" class="security-mono">{{ row.key }}</th>
+                <td>{{ row.label }}</td>
+                <td>{{ row.tenant_scope || 'institution' }}</td>
+                <td>{{ row.permissions.length }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn--outline btn--xs"
+                    @click="editRole(row)"
+                  >
+                    Edit permissions
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p v-else class="security-state">Role catalog unavailable.</p>
+
+        <section
+          v-if="selectedRole"
+          class="role-editor"
+          aria-labelledby="role-editor-title"
+        >
+          <div class="security-section-head">
+            <div>
+              <h3 id="role-editor-title">
+                {{ selectedRole.label }}
+                <span class="security-mono security-meta">{{ selectedRole.key }}</span>
+              </h3>
+              <p class="security-meta">
+                Allow adds a grant. Deny removes it; the platform is deny-by-default.
+                Private permissions stay owner/share/break-glass only.
+              </p>
+            </div>
+            <div class="role-editor__actions">
+              <button type="button" class="btn btn--outline btn--sm" @click="resetRoleDraft">
+                Reset
+              </button>
+              <button
+                type="button"
+                class="btn btn--success btn--sm"
+                :disabled="!roleDirty || roleSaving || roleChangeReason.trim().length < 5"
+                @click="saveRolePermissions"
+              >
+                {{ roleSaving ? 'Saving...' : 'Save change set' }}
+              </button>
+            </div>
+          </div>
+
+          <div class="security-summary">
+            <div class="security-summary__card">
+              <span>Adds</span><strong>{{ roleDelta.adds }}</strong>
+            </div>
+            <div class="security-summary__card">
+              <span>Denies</span><strong>{{ roleDelta.denies }}</strong>
+            </div>
+            <div class="security-summary__card">
+              <span>Unchanged</span><strong>{{ roleDelta.unchanged }}</strong>
+            </div>
+            <div class="security-summary__card">
+              <span>Total allowed</span><strong>{{ roleDraft.length }}</strong>
+            </div>
+          </div>
+
+          <div class="security-filters">
+            <label class="security-filters__search">
+              <span>Search permissions</span>
+              <input
+                v-model.trim="permissionSearch"
+                type="search"
+                placeholder="permission, description, category"
+              />
+            </label>
+            <label>
+              <span>Category</span>
+              <select v-model="permissionCategory">
+                <option value="">All categories</option>
+                <option v-for="category in permissionCategories" :key="category" :value="category">
+                  {{ category }}
+                </option>
+              </select>
+            </label>
+            <label class="security-filters__reason">
+              <span>Why is this role changing?</span>
+              <input
+                v-model.trim="roleChangeReason"
+                type="text"
+                maxlength="500"
+                placeholder="Ticket, access review, or reason (required)"
+              />
+            </label>
+          </div>
+
+          <div class="permission-groups">
+            <section
+              v-for="group in filteredPermissionGroups"
+              :key="group.category"
+              class="permission-group"
+            >
+              <h4>{{ group.category }}</h4>
+              <div
+                v-for="permission in group.permissions"
+                :key="permission.key"
+                class="permission-row"
+              >
+                <div class="permission-info">
+                  <code>{{ permission.key }}</code>
+                  <p>{{ permission.description }}</p>
+                  <div class="permission-meta">
+                    <span class="security-badge">{{ permission.scope }}</span>
+                    <span :class="['security-badge', `security-badge--${permission.sensitivity}`]">
+                      {{ permission.sensitivity }}
+                    </span>
+                    <span v-if="permission.read_only" class="security-badge security-badge--readonly">
+                      read-only
+                    </span>
+                    <span v-if="permission.break_glass" class="security-badge security-badge--breakglass">
+                      break-glass
+                    </span>
+                    <span v-if="permission.sensitivity === 'restricted'" class="security-badge security-badge--restricted">
+                      owner/share only
+                    </span>
+                  </div>
+                </div>
+                <div class="permission-actions" role="group" :aria-label="`${permission.key} decision`">
+                  <button
+                    type="button"
+                    class="permission-choice"
+                    :class="{ 'permission-choice--allow': roleHasPermission(permission.key) }"
+                    :disabled="permission.sensitivity === 'restricted'"
+                    :aria-pressed="roleHasPermission(permission.key)"
+                    @click="allowPermission(permission.key)"
+                  >
+                    Allow
+                  </button>
+                  <button
+                    type="button"
+                    class="permission-choice"
+                    :class="{ 'permission-choice--deny': !roleHasPermission(permission.key) }"
+                    :aria-pressed="!roleHasPermission(permission.key)"
+                    @click="denyPermission(permission.key)"
+                  >
+                    Deny
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+          <p v-if="!filteredPermissionGroups.length" class="security-state">
+            No permissions match the current filters.
+          </p>
+          <p class="security-meta">
+            Saving records a <code>rbac.permissions_changed</code> event and
+            invalidates active sessions for users with this role.
+          </p>
+        </section>
+
+        <section class="mac-panel" aria-labelledby="mac-title">
+          <div class="security-section-head">
+            <div>
+              <h3 id="mac-title">Moves, Adds, Changes</h3>
+              <p class="security-meta">
+                Add an expiring extra role, move a user's primary role, or remove
+                an extra role. Every action is audited; reasons are required.
+              </p>
+            </div>
+            <button type="button" class="btn btn--outline btn--sm" @click="loadMacUsers">
+              {{ macLoading ? 'Loading...' : 'Reload users' }}
+            </button>
+          </div>
+
+          <div class="mac-grid">
+            <label>
+              <span>Find user</span>
+              <input v-model.trim="macUserSearch" type="search" placeholder="username, email, or role" />
+            </label>
+            <label>
+              <span>User</span>
+              <select v-model="macSelectedUserId" @change="loadMacUser">
+                <option value="">Select a user</option>
+                <option v-for="user in macFilteredUsers" :key="user.id" :value="String(user.id)">
+                  {{ user.username }} · {{ user.role }}
+                </option>
+              </select>
+            </label>
+            <label>
+              <span>Action</span>
+              <select v-model="macAction" @change="onMacActionChange">
+                <option value="add">Add extra role</option>
+                <option value="move">Move primary role</option>
+                <option value="remove">Remove extra role</option>
+              </select>
+            </label>
+            <label>
+              <span>Role</span>
+              <select v-model="macRoleKey">
+                <option value="">Select a role</option>
+                <option v-for="role in macRoleOptions" :key="role.key" :value="role.key">
+                  {{ role.label }}
+                </option>
+              </select>
+            </label>
+            <label>
+              <span>Reason</span>
+              <input v-model.trim="macReason" type="text" maxlength="500" placeholder="Access review or ticket (required)" />
+            </label>
+            <label v-if="macAction === 'add'">
+              <span>Expires (optional)</span>
+              <input v-model="macExpiresAt" type="datetime-local" />
+            </label>
+          </div>
+
+          <p v-if="macSelectedUser" class="security-meta">
+            Current roles:
+            <span v-for="role in macUserRoles" :key="role" class="security-badge">{{ role }}</span>
+          </p>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn--primary btn--sm"
+              :disabled="macBusy || !macCanSubmit"
+              @click="submitMacChange"
+            >
+              {{ macBusy ? 'Applying...' : 'Apply access change' }}
+            </button>
+          </div>
+
+          <div v-if="macEvents.length" class="mac-history">
+            <h4>Recent RBAC changes</h4>
+            <div class="table-container">
+              <table class="data-table">
+                <thead><tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Actor</th><th scope="col">Target</th><th scope="col">Detail</th></tr></thead>
+                <tbody>
+                  <tr v-for="event in macEvents" :key="event.id">
+                    <td class="security-mono">{{ formatTime(event.occurred_at) }}</td>
+                    <td><code>{{ event.event_type }}</code></td>
+                    <td>{{ event.actor_username || 'system' }}</td>
+                    <td>{{ event.target_label || event.target_id || '—' }}</td>
+                    <td class="security-meta">{{ macEventDetail(event) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
       </div>
     </template>
 
@@ -436,7 +695,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import axios from '../api/axios'
 import { showToast } from './Toast.vue'
 
@@ -456,6 +715,24 @@ const summary = ref(null)
 const grants = ref([])
 const services = ref([])
 const roles = ref([])
+const permissionCatalog = ref([])
+const selectedRoleKey = ref('')
+const roleDraft = ref([])
+const roleChangeReason = ref('')
+const roleSaving = ref(false)
+const permissionSearch = ref('')
+const permissionCategory = ref('')
+const macUsers = ref([])
+const macLoading = ref(false)
+const macUserSearch = ref('')
+const macSelectedUserId = ref('')
+const macAction = ref('add')
+const macRoleKey = ref('')
+const macReason = ref('')
+const macExpiresAt = ref('')
+const macBusy = ref(false)
+const macUserRoles = ref([])
+const macEvents = ref([])
 const matrix = ref(null)
 const matrixLoading = ref(false)
 const matrixError = ref('')
@@ -474,6 +751,85 @@ const eligiblePermissions = [
 const serviceScopes = computed(() => {
   const row = roles.value.find((item) => item.key === 'admin')
   return (row?.permissions || []).filter((item) => !item.includes('.private') && !item.endsWith('.restricted')).sort()
+})
+
+const permissionCategories = computed(() =>
+  [...new Set(permissionCatalog.value.map((item) => item.category || 'Uncategorised'))].sort()
+)
+const filteredPermissionGroups = computed(() => {
+  const query = permissionSearch.value.toLowerCase()
+  const groups = new Map()
+  for (const permission of permissionCatalog.value) {
+    if (permissionCategory.value && (permission.category || 'Uncategorised') !== permissionCategory.value) {
+      continue
+    }
+    if (
+      query &&
+      ![permission.key, permission.description, permission.category]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(query))
+    ) {
+      continue
+    }
+    const category = permission.category || 'Uncategorised'
+    if (!groups.has(category)) groups.set(category, [])
+    groups.get(category).push(permission)
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([category, permissions]) => ({
+      category,
+      permissions: permissions.sort((a, b) => a.key.localeCompare(b.key)),
+    }))
+})
+const selectedRole = computed(() => roles.value.find((row) => row.key === selectedRoleKey.value) || null)
+const roleDraftSet = computed(() => new Set(roleDraft.value))
+const roleDirty = computed(() => {
+  if (!selectedRole.value) return false
+  const original = [...selectedRole.value.permissions].sort()
+  const draft = [...roleDraft.value].sort()
+  return original.length !== draft.length || original.some((key, index) => key !== draft[index])
+})
+const roleDelta = computed(() => {
+  if (!selectedRole.value) return { adds: 0, denies: 0, unchanged: 0 }
+  const original = new Set(selectedRole.value.permissions)
+  const draft = new Set(roleDraft.value)
+  return {
+    adds: [...draft].filter((key) => !original.has(key)).length,
+    denies: [...original].filter((key) => !draft.has(key)).length,
+    unchanged: [...draft].filter((key) => original.has(key)).length,
+  }
+})
+const macFilteredUsers = computed(() => {
+  const query = macUserSearch.value.toLowerCase()
+  const rows = macUsers.value
+  if (!query) return rows.slice(0, 60)
+  return rows
+    .filter((user) =>
+      [user.username, user.email, user.role]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(query))
+    )
+    .slice(0, 60)
+})
+const macSelectedUser = computed(
+  () => macUsers.value.find((user) => String(user.id) === String(macSelectedUserId.value)) || null
+)
+const macExtraRoles = computed(() =>
+  macUserRoles.value.filter((role) => role !== macSelectedUser.value?.role)
+)
+const macRoleOptions = computed(() => {
+  if (macAction.value === 'remove') {
+    return roles.value.filter((role) => macExtraRoles.value.includes(role.key))
+  }
+  return roles.value
+})
+const macCanSubmit = computed(() => {
+  if (!macSelectedUser.value || !macRoleKey.value || macReason.value.trim().length < 5) return false
+  if (macAction.value === 'move' && macRoleKey.value === macSelectedUser.value.role) return false
+  if (macAction.value === 'add' && macUserRoles.value.includes(macRoleKey.value)) return false
+  if (macAction.value === 'remove' && !macExtraRoles.value.includes(macRoleKey.value)) return false
+  return true
 })
 
 const matrixScopes = computed(() => Object.keys(matrix.value?.summary?.scopes || {}))
@@ -570,6 +926,144 @@ async function loadRoles() {
   roles.value = response.data.roles || []
 }
 
+async function loadPermissions() {
+  const response = await axios.get('/admin/security/rbac/permissions')
+  permissionCatalog.value = response.data.permissions || []
+}
+
+function editRole(row) {
+  selectedRoleKey.value = row.key
+  roleDraft.value = [...row.permissions]
+  roleChangeReason.value = ''
+  permissionSearch.value = ''
+  permissionCategory.value = ''
+}
+
+function resetRoleDraft() {
+  if (!selectedRole.value) return
+  roleDraft.value = [...selectedRole.value.permissions]
+  roleChangeReason.value = ''
+}
+
+function roleHasPermission(key) {
+  return roleDraftSet.value.has(key)
+}
+
+function allowPermission(key) {
+  const permission = permissionCatalog.value.find((item) => item.key === key)
+  if (permission?.sensitivity === 'restricted') return
+  if (!roleDraftSet.value.has(key)) roleDraft.value = [...roleDraft.value, key]
+}
+
+function denyPermission(key) {
+  roleDraft.value = roleDraft.value.filter((item) => item !== key)
+}
+
+async function saveRolePermissions() {
+  if (!selectedRole.value || !roleDirty.value) return
+  if (roleChangeReason.value.trim().length < 5) {
+    showToast('Add a reason or ticket for the role change.', 'error')
+    return
+  }
+  roleSaving.value = true
+  try {
+    await axios.put(`/admin/security/rbac/roles/${selectedRole.value.key}/permissions`, {
+      permissions: roleDraft.value,
+      reason: roleChangeReason.value.trim(),
+    })
+    await Promise.all([loadRoles(), loadMatrix(), loadMacEvents()])
+    selectedRoleKey.value = ''
+    roleDraft.value = []
+    roleChangeReason.value = ''
+    showToast('Role grants updated.', 'success')
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    showToast(detail?.message || detail || 'Role update failed.', 'error')
+  } finally {
+    roleSaving.value = false
+  }
+}
+
+async function loadMacUsers() {
+  macLoading.value = true
+  try {
+    const response = await axios.get('/admin/users')
+    macUsers.value = response.data || []
+  } catch (e) {
+    showToast(e.response?.data?.detail || 'Could not load users for access changes.', 'error')
+  } finally {
+    macLoading.value = false
+  }
+}
+
+async function loadMacUser() {
+  macRoleKey.value = ''
+  if (!macSelectedUserId.value) {
+    macUserRoles.value = []
+    return
+  }
+  try {
+    const response = await axios.get(`/admin/security/rbac/users/${macSelectedUserId.value}`)
+    macUserRoles.value = response.data.roles || []
+  } catch (e) {
+    macUserRoles.value = []
+    showToast(e.response?.data?.detail || 'Could not load the user access record.', 'error')
+  }
+}
+
+function onMacActionChange() {
+  macRoleKey.value = ''
+}
+
+async function loadMacEvents() {
+  try {
+    const response = await axios.get('/admin/security/events', {
+      params: { search: 'rbac', limit: 10 },
+    })
+    macEvents.value = response.data.events || []
+  } catch {
+    macEvents.value = []
+  }
+}
+
+function macEventDetail(event) {
+  const detail = event.detail || {}
+  if (detail.reason) return detail.reason
+  if (Array.isArray(detail.permissions)) return `${detail.permissions.length} permission(s)`
+  if (detail.role) return detail.role
+  return event.outcome || '—'
+}
+
+async function submitMacChange() {
+  if (!macCanSubmit.value) return
+  const user = macSelectedUser.value
+  if (!user) return
+  macBusy.value = true
+  try {
+    if (macAction.value === 'add') {
+      await axios.post(`/admin/security/rbac/users/${user.id}/roles`, {
+        role_key: macRoleKey.value,
+        reason: macReason.value.trim(),
+        expires_at: macExpiresAt.value ? new Date(macExpiresAt.value).toISOString() : null,
+      })
+    } else if (macAction.value === 'move') {
+      await axios.put(`/admin/users/${user.id}`, { role: macRoleKey.value })
+    } else {
+      await axios.delete(`/admin/security/rbac/users/${user.id}/roles/${macRoleKey.value}`)
+    }
+    macReason.value = ''
+    macExpiresAt.value = ''
+    macRoleKey.value = ''
+    await Promise.all([loadMacUser(), loadRoles(), loadMacEvents()])
+    showToast('Access change applied.', 'success')
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    showToast(detail?.message || detail || 'Access change failed.', 'error')
+  } finally {
+    macBusy.value = false
+  }
+}
+
 async function loadMatrix() {
   matrixLoading.value = true
   matrixError.value = ''
@@ -585,7 +1079,7 @@ async function loadMatrix() {
 
 async function refreshAll() {
   try {
-    await Promise.all([loadEvents(), loadGrants(), loadServices(), loadRoles(), loadMatrix()])
+    await Promise.all([loadEvents(), loadGrants(), loadServices(), loadRoles(), loadPermissions(), loadMatrix()])
   } catch (e) {
     error.value = e.response?.data?.detail || 'Could not refresh the security center.'
   }
@@ -674,6 +1168,13 @@ async function revokeService(row) {
   }
 }
 
+watch(activeView, (view) => {
+  if (view !== 'roles') return
+  if (!permissionCatalog.value.length) loadPermissions()
+  if (!macUsers.value.length) loadMacUsers()
+  loadMacEvents()
+})
+
 onMounted(refreshAll)
 </script>
 
@@ -733,6 +1234,35 @@ onMounted(refreshAll)
 .security-policy__card h4 { margin: 0; font-size: 0.9rem; color: var(--text-primary); }
 .security-policy__card p { margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; }
 .security-center :is(button, input, select, textarea, [tabindex="0"]):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.security-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.security-section-head h3 { margin: 0; }
+.role-editor, .mac-panel { display: grid; gap: 0.9rem; border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; background: var(--bg-secondary); min-width: 0; }
+.role-editor__actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.security-filters__reason { flex: 1 1 18rem; }
+.permission-groups { display: grid; gap: 1rem; max-height: 34rem; overflow: auto; padding-right: 0.25rem; }
+.permission-group { display: grid; gap: 0; }
+.permission-group h4 { margin: 0 0 0.4rem; font-size: 0.85rem; color: var(--text-primary); }
+.permission-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 0.65rem 0.7rem; border-top: 1px solid var(--border-color); }
+.permission-info { display: grid; gap: 0.2rem; min-width: 0; }
+.permission-info code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.78rem; color: var(--accent-text); overflow-wrap: anywhere; }
+.permission-info p { margin: 0; color: var(--text-secondary); font-size: 0.8rem; line-height: 1.45; }
+.permission-meta { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.permission-actions { display: flex; align-items: flex-start; gap: 0.3rem; flex-shrink: 0; }
+.permission-choice { border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-secondary); padding: 0.3rem 0.55rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+.permission-choice--allow { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+.permission-choice--deny { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+.permission-choice:disabled { opacity: 0.45; cursor: not-allowed; }
+.mac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 0.65rem; }
+.mac-grid label { display: grid; gap: 0.25rem; color: var(--text-secondary); font-size: 0.8rem; }
+.mac-grid input, .mac-grid select { width: 100%; padding: 0.45rem 0.55rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary); }
+.mac-history { display: grid; gap: 0.4rem; }
+.mac-history h4 { margin: 0; }
+
+@media (max-width: 760px) {
+  .permission-row { flex-direction: column; }
+  .permission-actions { align-self: flex-start; }
+}
 @media (max-width: 760px) {
   .security-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .security-form__row { grid-template-columns: 1fr; }

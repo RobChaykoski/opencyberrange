@@ -246,6 +246,8 @@ def set_role_permissions(
     actor: User | None,
     role_key: str,
     permissions: list[str],
+    *,
+    reason: str | None = None,
 ) -> dict:
     """Replace one role's grants. Sensitive private data stays ungrantable."""
     role = db.query(RbacRole).filter(RbacRole.key == role_key).first()
@@ -273,7 +275,11 @@ def set_role_permissions(
         actor=actor,
         target_type="role",
         target_id=role_key,
-        detail={"permissions": sorted(wanted), "count": len(wanted)},
+        detail={
+            "permissions": sorted(wanted),
+            "count": len(wanted),
+            "reason": (reason or "")[:500] or None,
+        },
     )
     return {
         "role": role_key,
