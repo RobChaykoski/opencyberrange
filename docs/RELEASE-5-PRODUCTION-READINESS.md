@@ -1,7 +1,7 @@
 # Release 5 production readiness
 
 Status: **`v5.17.0` is released and deployed.** Development `172.16.16.44` and
-production `172.16.16.41` both run `main` at `ab4fe750` (`v5.17.0`) with Alembic
+production `172.16.16.41` both run `main` at `291d831b` (`v5.17.0`) with Alembic
 `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
@@ -36,8 +36,9 @@ security patches, and operations patches.
 
 ## 5.17.0 deployment record - 2026-11-16
 
-- Deployed from `main` at `ab4fe750` (`v5.17.0`). Backend and frontend were
-  rebuilt from the release commit.
+- Deployed from `main` at `291d831b` (`v5.17.0`). Backend and frontend were
+  rebuilt from the release tree; the integrity manifest and About licence
+  inventory were re-stamped for 5.17.0 before the final backend rebuild.
 - Pre-deploy backup: `~/backups/ocr-backup-20261116-172935.dump` (1.68 MB),
   plus `ocr-backup-20261116-172935.dump.sha256` and
   `platform-env-20261116-172935`.
