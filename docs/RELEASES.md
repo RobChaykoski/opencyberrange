@@ -7,7 +7,8 @@ represent. It exists because the history contains several naming eras.
 
 | Tag | Release | Status |
 |---|---|---|
-| `v5.16.0` | SWOCTS Cyber Range Release 5.16 | Current feature release (signed annotated tag): OpenWrt appliance segmentation lab, persisted learner report snapshots, checked manual publishing |
+| `v5.17.0` | SWOCTS Cyber Range Release 5.17 | Current feature release (signed annotated tag): admin release/update indicator, RBAC/PBAC role editing and Moves/Adds/Changes, ATT&CK Navigator, report-based DFIR pathway, open dataset registry, and OWASP API/web/agentic validation and lab plans |
+| `v5.16.0` | SWOCTS Cyber Range Release 5.16 | Previous feature release (signed annotated tag): OpenWrt appliance segmentation lab, persisted learner report snapshots, checked manual publishing |
 | `v5.15.0` | SWOCTS Cyber Range Release 5.15 | Previous feature release (signed annotated tag): RangeBox launch choice and stop dialog, auth states, Cyber DNA discovery, OT scan assistant and gateway lab, Python 3.13, weekly built-image scan |
 | `v5.14.0` | SWOCTS Cyber Range Release 5.14 | Previous feature release (signed annotated tag): strict cohorts, certificate design consistency, documentation click fix |
 | `v5.13.1` | SWOCTS Cyber Range Release 5.13.1 | Previous patch (signed annotated tag): browser signature verification and public badge CORS |

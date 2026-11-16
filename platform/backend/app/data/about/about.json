@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "5",
-  "release_date": "2026-11-14",
+  "generated_for_release": "5.17.0",
+  "release_date": "2026-11-16",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "5",
+    "version": "5.17.0",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.11",
@@ -524,6 +524,10 @@
       "file": "THIRD_PARTY_NOTICES.md"
     },
     {
+      "label": "Aman-Hardikar-NOTICE",
+      "file": "Aman-Hardikar-NOTICE.txt"
+    },
+    {
       "label": "Apache-2.0",
       "file": "Apache-2.0.txt"
     },
@@ -552,6 +556,14 @@
       "file": "GPL-2.0.txt"
     },
     {
+      "label": "GPL-3.0",
+      "file": "GPL-3.0.txt"
+    },
+    {
+      "label": "Juice-Shop-MIT",
+      "file": "Juice-Shop-MIT.txt"
+    },
+    {
       "label": "LGPL-2.1",
       "file": "LGPL-2.1.txt"
     },
@@ -572,20 +584,64 @@
       "file": "novnc-MPL-2.0.txt"
     },
     {
+      "label": "OpenCRE-CC0-1.0-NOTICE",
+      "file": "OpenCRE-CC0-1.0-NOTICE.txt"
+    },
+    {
       "label": "OpenLDAP-2.8",
       "file": "OpenLDAP-2.8.txt"
+    },
+    {
+      "label": "OWASP-Agentic-Skills-Top10-CC-BY-SA-4.0-NOTICE",
+      "file": "OWASP-Agentic-Skills-Top10-CC-BY-SA-4.0-NOTICE.txt"
+    },
+    {
+      "label": "OWASP-API-Top10-2023-CC-BY-SA-4.0-NOTICE",
+      "file": "OWASP-API-Top10-2023-CC-BY-SA-4.0-NOTICE.txt"
+    },
+    {
+      "label": "OWASP-Cheat-Sheets-CC-BY-SA-4.0-NOTICE",
+      "file": "OWASP-Cheat-Sheets-CC-BY-SA-4.0-NOTICE.txt"
+    },
+    {
+      "label": "OWASP-Top10-2025-CC-BY-3.0-NOTICE",
+      "file": "OWASP-Top10-2025-CC-BY-3.0-NOTICE.txt"
     },
     {
       "label": "pathspec-MPL-2.0",
       "file": "pathspec-MPL-2.0.txt"
     },
     {
+      "label": "PCAP-ATTACK-NOTICE",
+      "file": "PCAP-ATTACK-NOTICE.txt"
+    },
+    {
       "label": "psycopg3-LGPL-3.0",
       "file": "psycopg3-LGPL-3.0.txt"
     },
     {
+      "label": "Security-Datasets-MIT",
+      "file": "Security-Datasets-MIT.txt"
+    },
+    {
+      "label": "theZoo-GPL-3.0-NOTICE",
+      "file": "theZoo-GPL-3.0-NOTICE.txt"
+    },
+    {
+      "label": "Threat-Modeling-Manifesto-CC-BY-4.0-NOTICE",
+      "file": "Threat-Modeling-Manifesto-CC-BY-4.0-NOTICE.txt"
+    },
+    {
+      "label": "UNB-CIC-CITATION",
+      "file": "UNB-CIC-CITATION.txt"
+    },
+    {
       "label": "valkey-BSD-3-Clause",
       "file": "valkey-BSD-3-Clause.txt"
+    },
+    {
+      "label": "vx-underground-NOTICE",
+      "file": "vx-underground-NOTICE.txt"
     },
     {
       "label": "wstunnel-BSD-3-Clause",

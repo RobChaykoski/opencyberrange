@@ -61,6 +61,7 @@ def test_status_reports_behind_and_builds_an_upgrade_path(monkeypatch):
 
 def test_status_uses_cache_without_calling_github_twice(monkeypatch):
     _clear_cache()
+    monkeypatch.setattr(release_check, "APP_VERSION", "5")
     calls = {"count": 0}
 
     def latest():
@@ -98,6 +99,7 @@ def test_status_falls_back_to_unknown_when_github_is_unreachable(monkeypatch):
 
 def test_status_returns_stale_cache_after_a_later_failure(monkeypatch):
     _clear_cache()
+    monkeypatch.setattr(release_check, "APP_VERSION", "5")
     monkeypatch.setattr(
         release_check,
         "_latest_from_github",

@@ -2,7 +2,41 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
-## [Unreleased]
+## [5.17.0] - 2026-11-16
+
+### Release 5.17 highlights
+
+- **Admin release status** — admin-only comparison with the latest GitHub
+  release or semantic tag, a dashboard update banner, and a System health panel
+  with installed/latest versions, release notes, backup/build/migrate/verify
+  commands, runbook links, and the rollback note. The check is cached, works
+  offline with a stale result, and never deploys anything by itself.
+- **RBAC/PBAC editing** — the Security → Roles tab now edits explicit
+  Allow/Deny grants with a required reason, shows Adds/Denies/Unchanged before
+  saving, and records the reason in the security event. The Moves, Adds,
+  Changes panel supports adding an expiring extra role, moving a primary role,
+  and removing an extra role. Sensitive private permissions remain
+  owner/share/break-glass only.
+- **MITRE ATT&CK Navigator** — added to the Tools sidebar and active-lab panel
+  as an allow-listed external tool with an exact-origin CSP frame allowance,
+  sandbox, timeout, and new-tab fallback.
+- **DFIR pathway** — expanded to twelve report-based modules, each requiring a
+  short analyst finding plus an analyst report or reviewed evidence artifact;
+  added the synthetic evidence pack, report template, and validator coverage.
+- **External datasets and lab resources** — added a reviewed registry for
+  Security Datasets (MIT), UNB CIC (citation required), Splunk attack_data
+  (Apache-2.0), theZoo and vx-underground (reference-only live malware),
+  PCAP-ATTACK (no licence), the Aman Hardikar forensics map, OpenCRE, OWASP
+  API Security Top 10 2023, OWASP Top 10 2025, OWASP Agentic Skills Top 10,
+  and the OWASP cheat sheets. A fetch script verifies pinned hashes; reference
+  sources are never vendored.
+- **OWASP validation and labs** — added one baseline for API, web, and agentic
+  security with category status, platform controls, regression evidence, and
+  ten-lab plans for each. Added the pinned OWASP Juice Shop lab application and
+  API/web lab blueprints.
+- **Detection and malware governance** — added the defensive detection pathway
+  and the malware-lab inventory/isolation contract with no live samples in the
+  public repository.
 
 ### Authentication lifecycle
 - Added server-side `auth_sessions` and `refresh_tokens` (migration `0037`).
