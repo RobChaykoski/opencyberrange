@@ -113,6 +113,7 @@ COVERED_FILES = [
     "platform/labs/High School/_shared/app.py",
     "platform/labs/_swsec_shared/app.py",
     "platform/backend/app/services/production_control.py",
+    "platform/backend/app/services/release_check.py",
     "platform/backend/app/data/detection-pathway.yaml",
     "platform/backend/app/data/detection-datasets/README.md",
     "platform/backend/app/data/detection-datasets/windows-security.jsonl",

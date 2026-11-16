@@ -216,6 +216,41 @@
         </div>
       </div>
 
+      <div
+        v-if="releaseCheck && releaseCheck.status === 'behind'"
+        class="release-banner"
+        role="status"
+        aria-live="polite"
+      >
+        <div class="release-banner__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 19V5"/><path d="m5 12 7-7 7 7"/>
+          </svg>
+        </div>
+        <div class="release-banner__body">
+          <strong>Update available: {{ releaseCheck.latest_tag || releaseCheck.latest }}</strong>
+          <p>
+            Installed {{ releaseCheck.installed_normalised || releaseCheck.installed }} ·
+            latest GitHub release {{ releaseCheck.latest_normalised || releaseCheck.latest }}.
+            {{ releaseCheck.release_name || '' }}
+          </p>
+        </div>
+        <div class="release-banner__actions">
+          <a
+            v-if="releaseCheck.release_url"
+            :href="releaseCheck.release_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn--secondary btn--sm"
+          >
+            Release notes
+          </a>
+          <button type="button" class="btn btn--primary btn--sm" @click="openRelease">
+            View upgrade path
+          </button>
+        </div>
+      </div>
+
       <!-- Tab Content -->
       <div class="tab-content">
         <SecurityCenter v-if="activeTab === 'security'" />
@@ -2342,6 +2377,78 @@
 
           <!-- Health Sub-tab -->
           <div v-if="systemSubTab === 'health'">
+            <section
+              v-if="releaseCheck"
+              class="release-panel"
+              :class="`release-panel--${releaseCheck.status}`"
+              aria-labelledby="release-panel-title"
+            >
+              <div class="release-panel__head">
+                <div>
+                  <h3 id="release-panel-title" class="section-title">Release status</h3>
+                  <p class="release-panel__message">{{ releaseCheck.message }}</p>
+                </div>
+                <div class="release-panel__actions">
+                  <a
+                    v-if="releaseCheck.release_url"
+                    :href="releaseCheck.release_url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn--secondary btn--sm"
+                  >
+                    Release notes
+                  </a>
+                  <button
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    :disabled="releaseCheckLoading"
+                    @click="fetchReleaseCheck(true)"
+                  >
+                    {{ releaseCheckLoading ? 'Checking...' : 'Check again' }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="release-panel__meta">
+                <span class="security-badge">Installed {{ releaseCheck.installed_normalised || releaseCheck.installed }}</span>
+                <span v-if="releaseCheck.latest" class="security-badge">Latest {{ releaseCheck.latest_normalised || releaseCheck.latest }}</span>
+                <span class="release-panel__pill" :class="`release-panel__pill--${releaseCheck.status}`">
+                  {{ releaseStatusLabel }}
+                </span>
+                <span v-if="releaseCheck.stale" class="release-panel__stale">Last successful check</span>
+              </div>
+
+              <div v-if="releaseCheck.status === 'behind'" class="release-panel__upgrade">
+                <button
+                  type="button"
+                  class="expand-btn"
+                  :aria-expanded="releasePanelOpen"
+                  @click="releasePanelOpen = !releasePanelOpen"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="expand-icon" :class="{ 'expand-icon--open': releasePanelOpen }">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                  Upgrade path
+                </button>
+                <div v-if="releasePanelOpen" class="release-panel__path">
+                  <p>{{ releaseCheck.upgrade?.summary }}</p>
+                  <ol>
+                    <li v-for="command in releaseCheck.upgrade?.commands || []" :key="command">
+                      <code>{{ command }}</code>
+                    </li>
+                  </ol>
+                  <p class="release-panel__note">{{ releaseCheck.upgrade?.note }}</p>
+                  <div class="release-panel__links">
+                    <a :href="releaseDocUrl(releaseCheck.upgrade?.runbook)" target="_blank" rel="noopener noreferrer">Deployment runbook</a>
+                    <a :href="releaseDocUrl(releaseCheck.upgrade?.readiness)" target="_blank" rel="noopener noreferrer">Production readiness</a>
+                    <a :href="releaseDocUrl(releaseCheck.upgrade?.releases)" target="_blank" rel="noopener noreferrer">Release history</a>
+                  </div>
+                  <p class="release-panel__note">{{ releaseCheck.upgrade?.rollback }}</p>
+                </div>
+              </div>
+              <p v-if="releaseCheckError" class="release-panel__error" role="alert">{{ releaseCheckError }}</p>
+            </section>
+
             <!-- Minimal status (default; plain-language, install-aware, this-install only) -->
             <div class="panel-header">
               <h3 class="section-title">Status</h3>
@@ -5650,6 +5757,11 @@ const eventTypeLabel = (et) => {
 // System status state
 const systemStatus = ref({})
 const systemStatusLoading = ref(false)
+const releaseCheck = ref(null)
+const releaseCheckLoading = ref(false)
+const releaseCheckError = ref('')
+const releasePanelOpen = ref(false)
+let releasePollTimer = null
 const systemMetrics = ref(null)
 const metricsLoading = ref(false)
 const metricsSampling = ref(false)
@@ -6419,6 +6531,45 @@ const clearActivity = async () => {
 }
 
 // Minimal, install-aware status (the default System view)
+const releaseStatusLabel = computed(() => {
+  const status = releaseCheck.value?.status
+  if (status === 'behind') return 'Update available'
+  if (status === 'current') return 'Up to date'
+  if (status === 'ahead') return 'Ahead of release'
+  return 'Release check unavailable'
+})
+
+const releaseDocUrl = (path) => {
+  if (!path) return 'https://github.com/RobChaykoski/opencyberrange'
+  const tag = releaseCheck.value?.latest_tag
+  return tag
+    ? `https://github.com/RobChaykoski/opencyberrange/blob/${tag}/${path}`
+    : `https://github.com/RobChaykoski/opencyberrange/blob/main/${path}`
+}
+
+const fetchReleaseCheck = async (force = false) => {
+  releaseCheckLoading.value = true
+  releaseCheckError.value = ''
+  try {
+    const { data } = await axios.get('/admin/system/release', {
+      params: force ? { force: true } : undefined,
+    })
+    releaseCheck.value = data
+    if (data.status !== 'behind') releasePanelOpen.value = false
+  } catch (e) {
+    releaseCheckError.value =
+      e.response?.data?.detail || 'Could not check the latest GitHub release.'
+  } finally {
+    releaseCheckLoading.value = false
+  }
+}
+
+const openRelease = () => {
+  selectAdminTab('system')
+  systemSubTab.value = 'health'
+  releasePanelOpen.value = true
+}
+
 const fetchSystemStatus = async () => {
   systemStatusLoading.value = true
   try {
@@ -6656,6 +6807,14 @@ const attentionItems = computed(() => {
       label: `${stats.value.locked_users} locked account${stats.value.locked_users === 1 ? '' : 's'}`,
       actionLabel: 'View locked',
       action: openLockedUsers,
+    })
+  }
+  if (releaseCheck.value?.status === 'behind') {
+    items.push({
+      key: 'release',
+      label: `Update available: ${releaseCheck.value.latest_tag || releaseCheck.value.latest}`,
+      actionLabel: 'View upgrade path',
+      action: openRelease,
     })
   }
   if (dashboardHealthLoaded.value && dashboardHealthStatus.value && dashboardHealthStatus.value !== 'ok') {
@@ -7948,14 +8107,17 @@ onMounted(async () => {
   await fetchAll()
   fetchCurriculum()
   fetchDashboardHealth()
+  fetchReleaseCheck()
   fetchRangeboxCapacity()
   healthPollTimer = setInterval(fetchDashboardHealth, 5 * 60 * 1000)
+  releasePollTimer = setInterval(() => fetchReleaseCheck(), 15 * 60 * 1000)
   registrationPollTimer = setInterval(pollNewRegistrations, REGISTRATION_POLL_MS)
   document.addEventListener('visibilitychange', onAdminVisibilityChange)
 })
 
 onUnmounted(() => {
   if (healthPollTimer) clearInterval(healthPollTimer)
+  if (releasePollTimer) { clearInterval(releasePollTimer); releasePollTimer = null }
   if (registrationPollTimer) { clearInterval(registrationPollTimer); registrationPollTimer = null }
   document.removeEventListener('visibilitychange', onAdminVisibilityChange)
   if (_testerPollTimer) { clearTimeout(_testerPollTimer); _testerPollTimer = null }
@@ -9788,6 +9950,182 @@ watch(activeTab, (tab) => {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-left: auto;
+}
+
+.release-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin: 0 0 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--warning) 35%, var(--border-color));
+  border-left: 4px solid var(--warning);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--warning) 9%, var(--bg-secondary));
+}
+
+.release-banner__icon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--warning);
+}
+
+.release-banner__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.release-banner__body strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.release-banner__body p {
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.release-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+.release-panel {
+  display: grid;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+
+.release-panel--behind {
+  border-left: 4px solid var(--warning);
+}
+
+.release-panel--current {
+  border-left: 4px solid var(--success);
+}
+
+.release-panel--ahead,
+.release-panel--unknown {
+  border-left: 4px solid var(--text-muted);
+}
+
+.release-panel__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.release-panel__message {
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.release-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.release-panel__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.release-panel__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.release-panel__pill--behind {
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 14%, transparent);
+}
+
+.release-panel__pill--current {
+  color: var(--success);
+  background: var(--success-bg);
+}
+
+.release-panel__pill--ahead,
+.release-panel__pill--unknown {
+  color: var(--text-muted);
+  background: var(--bg-primary);
+}
+
+.release-panel__stale,
+.release-panel__note {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.release-panel__upgrade {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.release-panel__path {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.release-panel__path ol {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.release-panel__path code {
+  display: block;
+  padding: 0.4rem 0.5rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  font-size: 0.75rem;
+}
+
+.release-panel__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.release-panel__error {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 760px) {
+  .release-banner {
+    flex-direction: column;
+  }
+
+  .release-banner__actions {
+    margin-left: 0;
+  }
 }
 
 /* Scan Warnings */

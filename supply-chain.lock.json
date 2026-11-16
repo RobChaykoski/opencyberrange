@@ -174,6 +174,9 @@
     "platform/backend/app/services/production_control.py": {
       "sha256": "79191e58f3c06bd97d5212087b9a7b135cf06a0e9fd3949e341a22625c2f48af"
     },
+    "platform/backend/app/services/release_check.py": {
+      "sha256": "d1c9d5323da1165abb7fb0b5dc5d3cd73a93cd07e2a0ea058409375b4e68c117"
+    },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
     },
@@ -331,7 +334,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "5fec509dff15513cedaeba04b107398e7ed0951e6fff36f1721d23c1435532a9"
+      "sha256": "1ea67774344f7e5c8c320b9b2332966164aafdfb10e8304082a3489b41f85d7a"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"

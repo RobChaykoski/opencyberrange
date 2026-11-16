@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from typing import List, Literal
 from datetime import datetime, timezone, timedelta
+import asyncio
 import csv
 import io
 import json
@@ -4169,6 +4170,22 @@ async def system_status(
     statuses = [i["status"] for i in items]
     overall = "error" if "error" in statuses else ("warning" if "warning" in statuses else "ok")
     return {"items": items, "overall": overall, "edition": entitlement.edition_name()}
+
+
+@router.get("/system/release", summary="Compare this installation with the latest GitHub release")
+async def system_release_status(
+    force: bool = Query(False),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Return the installed version, latest GitHub release, and upgrade path.
+
+    The result is cached for 15 minutes. A GitHub outage returns the last good
+    result as stale, or ``unknown`` on a first check; the admin page keeps
+    working either way. This endpoint never deploys or changes anything.
+    """
+    from app.services import release_check
+
+    return await asyncio.to_thread(release_check.get_status, force)
 
 
 @router.get("/system/software-integrity", summary="Verify deployed lab content against the release manifest")
