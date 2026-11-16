@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Sync a pulled development checkout into the bind-mounted runtime tree.
+# Sync a pulled development checkout into the runtime tree.
 #
-# The development stack mounts ~/opencyberrange/backend and
-# ~/opencyberrange/frontend instead of baking them into images. Run this after
-# `git pull` so source, the runtime integrity manifest, and lab permissions are
-# current before the containers restart.
+# The development backend is bind-mounted from ~/opencyberrange/backend, while
+# the frontend is baked into its image. Run this after `git pull` so source, the
+# runtime integrity manifest, and lab permissions are current before the
+# containers restart.
 #
 #   bash scripts/sync-dev-bind-mount.sh [repo-dir]
 
@@ -39,6 +39,9 @@ rsync -a \
 # backend runs as a different UID and must be able to read every lab.
 echo "making lab content readable"
 chmod -R a+rX platform/labs 2>/dev/null || true
+
+echo "rebuilding frontend image"
+docker compose build frontend
 
 echo "restarting backend and frontend"
 # A bind-mount source change does not alter the Compose config, so plain

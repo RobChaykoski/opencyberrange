@@ -53,12 +53,13 @@ cd ~/opencyberrange
 bash scripts/sync-dev-bind-mount.sh
 ```
 
-The development backend and frontend are bind-mounted from
-`~/opencyberrange/backend` and `~/opencyberrange/frontend`. After a pull, run
-the sync script instead of copying files by hand. It copies source, the
-runtime `software-integrity.json` manifest, makes `platform/labs` readable by
-the backend UID, and recreates only the backend/frontend containers.
-Production bakes the code into the image and always needs a rebuild.
+The development backend is bind-mounted from `~/opencyberrange/backend`.
+The frontend is baked into its image. After a pull, run the sync script instead
+of copying files by hand. It copies backend and frontend source, the runtime
+`software-integrity.json` manifest, makes `platform/labs` readable by the
+backend UID, rebuilds the frontend image, and recreates only the
+backend/frontend containers. Production bakes both into images and always needs
+a rebuild.
 
 If you pull manually on either host, also run:
 

@@ -241,7 +241,7 @@
       "sha256": "173cf66de8734d661b952ae63d7302e41b10934726f26c54d4c685003a13dd0f"
     },
     "scripts/sync-dev-bind-mount.sh": {
-      "sha256": "49ea5eda023b6f8a63844d872f991b78adb439446966f496bcc6547a2add4f51"
+      "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"
