@@ -64,11 +64,13 @@ a rebuild.
 If you pull manually on either host, also run:
 
 ```bash
-chmod -R a+rX platform/labs
+docker run --rm -v "$PWD/platform/labs:/labs" alpine:3.19 chmod -R a+rX /labs
 ```
 
 Otherwise `git` may recreate a modified lab file with the host umask (often
-`660`) and the Software integrity check will report that lab as unreadable.
+`660`) or the file may be owned by a different account, and the Software
+integrity check will report that lab as unreadable. The container runs as root
+only for this chmod; it does not mount anything else.
 
 ### Rebuild the workbooks after content changes
 
