@@ -30,6 +30,24 @@ LAB_EXCLUDE_DIRS = {
 }
 LAB_EXCLUDE_SUFFIXES = (".pyc", ".pyo")
 LAB_EXCLUDE_FILES = {".DS_Store"}
+# Runtime output written under a lab's container directories is ignored by
+# .gitignore and is not part of the reviewed release. Excluding it keeps the
+# runtime hash aligned with the build-time lock on a host that has built labs.
+LAB_RUNTIME_PARENTS = {"containers"}
+LAB_RUNTIME_DIRS = {"app", "data", "logs"}
+
+
+def _excluded_dir(lab_dir: Path, dirpath: str, name: str) -> bool:
+    if name in LAB_EXCLUDE_DIRS:
+        return True
+    relative = (Path(dirpath) / name).relative_to(lab_dir).parts
+    if (
+        len(relative) >= 3
+        and relative[0] in LAB_RUNTIME_PARENTS
+        and relative[2] in LAB_RUNTIME_DIRS
+    ):
+        return True
+    return False
 
 _CACHE_TTL = 60.0
 _cache: tuple[float, dict] | None = None
@@ -51,7 +69,9 @@ def content_hash(lab_dir: Path) -> str:
     lab_dir = lab_dir.resolve()
     digest = hashlib.sha256()
     for dirpath, dirnames, filenames in os.walk(lab_dir):
-        dirnames[:] = sorted(d for d in dirnames if d not in LAB_EXCLUDE_DIRS)
+        dirnames[:] = sorted(
+            d for d in dirnames if not _excluded_dir(lab_dir, dirpath, d)
+        )
         for filename in sorted(filenames):
             if filename in LAB_EXCLUDE_FILES or filename.endswith(LAB_EXCLUDE_SUFFIXES):
                 continue
@@ -92,12 +112,20 @@ def verify(labs_root: str | None = None) -> dict:
     root = Path(labs_root or os.environ.get("LABS_DIR", "/labs"))
 
     actual: dict[str, str] = {}
+    unreadable: list[dict[str, str]] = []
     if root.is_dir():
-        for compose in root.rglob("docker-compose.yml"):
-            lab_dir = compose.parent
+        for marker in root.rglob("lab.yaml"):
+            lab_dir = marker.parent
             if lab_dir.name in LAB_EXCLUDE_DIRS or lab_dir.name.startswith("_"):
                 continue
-            actual[lab_dir.name] = content_hash(lab_dir)
+            if not (lab_dir / "docker-compose.yml").is_file():
+                continue
+            try:
+                actual[lab_dir.name] = content_hash(lab_dir)
+            except OSError as exc:
+                unreadable.append(
+                    {"slug": lab_dir.name, "reason": str(exc)}
+                )
 
     mismatched = [
         {
@@ -108,9 +136,9 @@ def verify(labs_root: str | None = None) -> dict:
         for slug, digest in sorted(expected.items())
         if slug in actual and actual[slug] != digest
     ]
-    missing = sorted(set(expected) - set(actual))
+    missing = sorted(set(expected) - set(actual) - {row["slug"] for row in unreadable})
     extra = sorted(set(actual) - set(expected))
-    ok = not mismatched and not missing and not extra
+    ok = not mismatched and not missing and not extra and not unreadable
 
     return {
         "ok": ok,
@@ -120,6 +148,7 @@ def verify(labs_root: str | None = None) -> dict:
         "mismatched": mismatched,
         "missing": missing,
         "extra": extra,
+        "unreadable": unreadable,
         "labs_root": str(root),
         "build": _image_info(),
         "checked_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
