@@ -120,7 +120,7 @@ def _validate_lab_quick(lab_path, lab_data):
     compose_path = os.path.join(lab_path, "docker-compose.yml")
     if os.path.exists(compose_path):
         try:
-            with open(compose_path, "r") as f:
+            with open(compose_path, "r", encoding="utf-8") as f:
                 comp = yaml.safe_load(f) or {}
             for svc in comp.get("services", {}).keys():
                 node_ids.add(svc)
@@ -212,6 +212,19 @@ def discover_labs():
             except Exception:
                 db.rollback()  # Column already exists
 
+        # Create any missing tracks/levels before scanning. A new pathway can
+        # introduce a level (for example level 11) that the installed database
+        # has never seen; without this, discovery silently skips those labs.
+        try:
+            from app.routers.admin import _ensure_curriculum_structure
+
+            created, created_levels = _ensure_curriculum_structure(db)
+            if created or created_levels:
+                print(f"Created {created} track(s) and {created_levels} level(s)")
+        except Exception as exc:  # pragma: no cover - defensive for old installs
+            db.rollback()
+            print(f"Curriculum structure check skipped: {exc}")
+
         # Get all tracks and levels
         tracks = {}
         levels = {}
@@ -292,7 +305,7 @@ def discover_labs():
                 
                 # Load lab.yaml
                 try:
-                    with open(yaml_path, 'r') as f:
+                    with open(yaml_path, 'r', encoding='utf-8') as f:
                         lab_data = yaml.safe_load(f)
                 except Exception as e:
                     print(f"  Error reading {yaml_path}: {e}")
@@ -302,7 +315,7 @@ def discover_labs():
                 compose_content = ""
                 if os.path.exists(compose_path):
                     try:
-                        with open(compose_path, 'r') as f:
+                        with open(compose_path, 'r', encoding='utf-8') as f:
                             compose_content = f.read()
                     except Exception as e:
                         print(f"  Warning: can't read docker-compose.yml: {e}")

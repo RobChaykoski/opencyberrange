@@ -1,7 +1,7 @@
 # Validation report
 
-**Release:** 5.17.3
-**Commit:** the commit tagged `v5.17.3`
+**Release:** 5.17.4
+**Commit:** the commit tagged `v5.17.4`
 **Date:** 16 November 2026
 
 This is the reproducible validation record for the current release. Commands
@@ -30,7 +30,7 @@ ruff check app
 ```
 
 - CI backend job: **success**.
-- Clean local test database: **900 passed, 0 failed, 0 skipped**.
+- Clean local test database: **901 passed, 0 failed, 0 skipped**.
 - Security configuration tests cover placeholder secrets, production
   environment, strict authorization, and WireGuard key requirements.
 - Consent tests cover explicit opt-in for Cyber DNA, Cyber GPS, and portfolio.
@@ -63,6 +63,9 @@ python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 - Lab validation: **210 labs, 0 failed checks** (211 entries including `_summary`).
 - Lab metadata: schema validation passed in CI.
 - Tester manifests: **210**, current against the lab definitions.
+- Discovery: the CLI creates missing tracks/levels before scanning; a clean
+  database import produced **210 labs**. The seed defines level 11 for the
+  `windows` and `web` tracks.
 - Tenant RLS: **25 tables** enforced; the regression test asserts the column,
   forced RLS, and four policies, and probes two newly migrated learner tables
   across two institutions.
@@ -86,11 +89,11 @@ python scripts/supply_chain.py --check \
 
 | Check | Result |
 |---|---|
-| `/api/version` | `5.17.3` |
+| `/api/version` | `5.17.4` |
 | `/health` | `200` |
 | Alembic | `0041_tenant_rls_legacy` |
 | Registered labs | `210` |
-| Admin release status | `current` / `v5.17.3` |
+| Admin release status | `current` / `v5.17.4` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
 | Backup | `ocr-backup-20261116-192307.dump` |
 | Restore drill | **PASSED** (47 users) |

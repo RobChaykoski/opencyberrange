@@ -54,7 +54,11 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                       {   'level_number': 9,
                           'name': 'Comprehensive Windows Penetration Test',
                           'description': 'Final comprehensive testing using all skills, with '
-                                         'CrackMapExec as primary automation tool'}]},
+                                         'CrackMapExec as primary automation tool'},
+                      {   'level_number': 11,
+                          'name': 'Active Directory Attack and Remediation',
+                          'description': 'Kerberos roasting, ACL and delegation abuse, AD CS, '
+                                         'DCSync, GPO/LAPS defence, and a capstone.'}]},
     {   'name': 'Linux Fundamentals',
         'slug': 'linux',
         'description': 'Learn Linux enumeration, privilege escalation, and system exploitation '
@@ -104,7 +108,11 @@ TRACKS = [   {   'name': 'Windows Penetration Testing',
                           'description': 'File upload, LFI, RFI'},
                       {   'level_number': 6,
                           'name': 'Advanced Web Exploitation',
-                          'description': 'SSRF, XXE, deserialization'}]},
+                          'description': 'SSRF, XXE, deserialization'},
+                      {   'level_number': 11,
+                          'name': 'Modern Application Security',
+                          'description': 'API, GraphQL, JWT, OAuth, DevSecOps, containers, '
+                                         'Kubernetes, and supply-chain security.'}]},
     {   'name': 'Network Security',
         'slug': 'network',
         'description': 'Learn network analysis, traffic capture, man-in-the-middle attacks, and '

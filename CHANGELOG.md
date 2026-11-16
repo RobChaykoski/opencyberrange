@@ -2,6 +2,22 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.4] - 2026-11-16
+
+### Fixed
+
+- **Lab discovery skipped new levels.** The CLI discovery script now creates
+  missing tracks and levels before scanning (the admin route already did). An
+  existing install therefore registers the level-11 Active Directory and modern
+  application-security labs instead of silently skipping them.
+- The seed curriculum defines level 11 for the `windows` and `web` tracks, so a
+  fresh install has the structure before discovery runs.
+- Discovery reads `lab.yaml` and compose files as UTF-8, so a non-UTF-8 host
+  locale no longer skips the pre-existing `network-1-2-http-traffic-analysis`
+  lab.
+- Added a regression test that asserts the seeded curriculum covers both
+  level-11 pathways.
+
 ## [5.17.3] - 2026-11-16
 
 ### Tenant isolation

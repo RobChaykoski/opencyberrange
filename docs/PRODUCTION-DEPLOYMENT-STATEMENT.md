@@ -10,9 +10,9 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.17.3** |
-| Signed tag | **`v5.17.3`** |
-| Runtime code commit | the commit tagged `v5.17.3` (`git tag -v v5.17.3`) |
+| Release | **5.17.4** |
+| Signed tag | **`v5.17.4`** |
+| Runtime code commit | the commit tagged `v5.17.4` (`git tag -v v5.17.4`) |
 | Alembic revision | **`0040_settings_change_control`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -75,10 +75,10 @@ Admin → Users when convenient.
 - Backend: healthy, `/health` returns `200`.
 - Frontend: healthy.
 - Database and Valkey: healthy.
-- `/api/version` returns `5.17.3`.
+- `/api/version` returns `5.17.4`.
 - Registered labs: **210**.
 - Admin **System → Health → Release status** reports **Up to date** against
-  `v5.17.3`.
+  `v5.17.4`.
 - `ENVIRONMENT=production`.
 - `OCR_DEPLOYMENT_MODE=production`.
 - `OCR_AUTHZ_STRICT=true`.
@@ -105,11 +105,11 @@ to `/auth/reauth` and the regression test asserts the corrected path.
 
 ## Verification record
 
-- `GET /api/version` → `5.17.3`
+- `GET /api/version` → `5.17.4`
 - `GET /health` → `200`
 - `alembic current` → `0041_tenant_rls_legacy (head)`
 - Registered labs → `210`
-- Release status → `current` / `v5.17.3`
+- Release status → `current` / `v5.17.4`
 - Cutover → `deployment_mode=production`, `data_collection_mode=production`
 - Post-cutover backup/restore → **PASSED** (47 users)
 
