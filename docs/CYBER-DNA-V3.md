@@ -1,7 +1,9 @@
 # Cyber DNA v3 — talent discovery graph
 
-Status: **Phase 1 implemented on `main` behind `cyber_dna_v3_enabled=false`.**
-The read APIs are gated; evidence ingestion is live on the completion path.
+Status: **Phase 1 implemented and enabled on development.** Production remains
+on `v5.16.0` with the feature gated off. Development applied migration `0032`,
+backfilled 740 evidence rows for 53 learners, and enabled
+`cyber_dna_v3_enabled`; the affinity gate was verified in both directions.
 
 Owner: OpenCyberRange curriculum and platform
 Target: Release 5.17 line (phased)
@@ -338,6 +340,19 @@ Example affinity payload when the gate is met:
    affinity formula after a term of evidence.
 6. Rollback: set the flag false. Tables remain inert. Dropping them is a later
    destructive migration.
+
+### Phase 1 development rollout — 2026-11-15
+
+- Migration `0032_cyber_dna` applied to development; both DNA tables exist.
+- Backfill dry-run and write: 233 completions, 740 evidence rows, 53 learners,
+  63 activities, 9 domains. Fourteen completions had no competency mapping and
+  were skipped.
+- `cyber_dna_v3_enabled` enabled on development only.
+- API verification with a real learner: 170 evidence rows, behavior signals
+  populated, interest available, affinity gate met (39 labs, 8 domains, 170
+  observations) with 13 pathways; a low-evidence learner correctly returned
+  `available: false` at 4 labs, 1 domain, 16 observations.
+- A behavior snapshot was recorded, read back, and removed after the test.
 
 ## 11. Testing
 

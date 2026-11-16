@@ -1,9 +1,9 @@
 # Next steps
 
-Status: **Release 5.16.0 is deployed to development and production.** The
-platform runs Python 3.13, the security hardening wave is live, the OT track has
-three exercises plus an offline scan assistant, and the user manual reflects the
-current UI.
+Status: **Release 5.16.0 is deployed to development and production. Cyber DNA
+v3 Phase 1 is enabled on development only.** The platform runs Python 3.13, the
+security hardening wave is live, the OT track has three exercises plus an
+offline scan assistant, and the user manual reflects the current UI.
 This page tracks what is left; the deployment record is
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 
@@ -11,8 +11,10 @@ This page tracks what is left; the deployment record is
 
 - **Cyber DNA v3 Phase 1.** The event-driven DNA context, evidence ledger,
   behavior/interest/affinity derivation, snapshot API, gated `30/3/100`
-  affinity, backfill adapter, and erasure hook are implemented on `main` behind
-  `cyber_dna_v3_enabled=false`. See [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md).
+  affinity, backfill adapter, and erasure hook are implemented and enabled on
+  development. Migration `0032` applied; backfill wrote 740 evidence rows for
+  53 learners; both sides of the affinity gate were verified. Production
+  remains gated. See [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md).
 - Network-appliance lab `network-12-6-appliance-segment`: a dual-homed OpenWrt
   24.10.5 appliance with a protected internal segment, a default-deny forward
   chain, and an SSH local-forward pivot. Includes a workbook page, the NET04
@@ -47,9 +49,9 @@ This page tracks what is left; the deployment record is
 
 ## Open queue
 
-1. **Cyber DNA v3 rollout.** Enable `cyber_dna_v3_enabled` on development,
-   run the backfill dry-run, then add the learner UI. Tune behavior weights and
-   the affinity formula after a term of evidence. See
+1. **Cyber DNA v3 rollout.** Development is enabled and backfilled. Next: add
+   the learner UI, tune behavior weights after a term of evidence, then deploy
+   to production with the flag still off and enable it after validation. See
    [`CYBER-DNA-V3.md`](CYBER-DNA-V3.md). Affinity only; employer access is out
    of scope.
 2. **Python 3.15** when it reaches GA. Three interpreter CVEs are fixed only on
