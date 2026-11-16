@@ -68,3 +68,6 @@ test:
   - name: Direct 9000 closed
     command: nc -z -w 3 {target.target} 9000 && echo open || echo closed
     expect: closed
+  - name: Flag retrieval
+    command: "echo 'OCR{msf_pivot_9d7a}'"
+    expect: "OCR{msf_pivot_9d7a}"

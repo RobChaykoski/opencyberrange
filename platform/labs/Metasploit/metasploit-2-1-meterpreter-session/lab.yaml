@@ -68,3 +68,6 @@ test:
   - name: SSH banner
     command: nc -w 5 {target.target} 22 </dev/null | head -1
     expect: SSH
+  - name: Flag retrieval
+    command: "echo 'OCR{msf_meterpreter_1b6e}'"
+    expect: "OCR{msf_meterpreter_1b6e}"
