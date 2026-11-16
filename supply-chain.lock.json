@@ -175,7 +175,7 @@
       "sha256": "79191e58f3c06bd97d5212087b9a7b135cf06a0e9fd3949e341a22625c2f48af"
     },
     "platform/backend/app/services/release_check.py": {
-      "sha256": "d1c9d5323da1165abb7fb0b5dc5d3cd73a93cd07e2a0ea058409375b4e68c117"
+      "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"

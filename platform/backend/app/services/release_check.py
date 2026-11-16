@@ -204,19 +204,19 @@ def get_status(force: bool = False) -> dict[str, Any]:
             status = "behind"
             message = (
                 f"This installation is on {_normalise(installed)}; the latest "
-                f"published GitHub release is {latest['tag']}."
+                f"GitHub release or tag is {latest['tag']}."
             )
         elif latest_key < installed_key:
             status = "ahead"
             message = (
                 f"This installation is on {_normalise(installed)}, ahead of the "
-                f"latest published GitHub release {latest['tag']}."
+                f"latest GitHub release or tag {latest['tag']}."
             )
         else:
             status = "current"
             message = (
-                f"This installation matches the latest published GitHub "
-                f"release {latest['tag']}."
+                f"This installation matches the latest GitHub release or tag "
+                f"{latest['tag']}."
             )
         result = _result(
             installed=installed,
