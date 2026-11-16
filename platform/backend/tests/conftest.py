@@ -88,6 +88,19 @@ def _export_labels_without_database(monkeypatch):
     monkeypatch.setattr("app.services.export_labels.SessionLocal", _unavailable)
 
 
+@pytest.fixture(autouse=True)
+def _isolated_erasure_ledger(tmp_path, monkeypatch):
+    """Keep account erasure away from the deployment's /workbook ledger.
+
+    The default ledger path is ``/workbook/erasure-ledger.jsonl``. A Linux CI
+    runner cannot create that directory, so an API-level erasure test would
+    otherwise fail with ``ledger_unavailable`` before touching the database.
+    """
+    monkeypatch.setenv(
+        "ERASURE_LEDGER_PATH", str(tmp_path / "erasure-ledger.jsonl")
+    )
+
+
 @pytest.fixture(scope="session")
 def client():
     """TestClient WITHOUT the lifespan context.
