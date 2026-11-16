@@ -27,19 +27,26 @@ logger = logging.getLogger(__name__)
 _pool_size = max(1, int(os.environ.get("DB_POOL_SIZE", "10")))
 _max_overflow = max(0, int(os.environ.get("DB_MAX_OVERFLOW", "10")))
 
-_connect_args = {}
-if settings.DATABASE_URL.startswith("postgresql"):
-    # The integrity trigger uses application_name as a fallback when no
-    # authenticated actor context is set: ocr-app => system, anything else =>
-    # unattributed (manual client).
-    _connect_args["application_name"] = "ocr-app"
-    # A runaway analytics query should not hold a pool slot for minutes.
-    _statement_timeout = max(
-        1000, int(os.environ.get("DB_STATEMENT_TIMEOUT_MS", "30000"))
-    )
-    _connect_args["options"] = f"-c statement_timeout={_statement_timeout}"
 
-# Create database engine
+def _connect_args_for(url: str, application_name: str) -> dict:
+    """Connection options shared by the runtime and migrator engines."""
+    args: dict = {}
+    if url.startswith("postgresql"):
+        # The integrity trigger uses application_name as a fallback when no
+        # authenticated actor context is set: ocr-app => system, anything else
+        # => unattributed (manual client). Schema work is attributed to the
+        # migrator, never to a request.
+        args["application_name"] = application_name
+        # A runaway analytics query should not hold a pool slot for minutes.
+        statement_timeout = max(
+            1000, int(os.environ.get("DB_STATEMENT_TIMEOUT_MS", "30000"))
+        )
+        args["options"] = f"-c statement_timeout={statement_timeout}"
+    return args
+
+
+# Create database engine. This identity serves requests and must be a
+# non-superuser without BYPASSRLS in production.
 engine = create_engine(
     settings.DATABASE_URL,
     pool_pre_ping=True,
@@ -51,8 +58,26 @@ engine = create_engine(
     # lets the colder half of the pool age out via pool_recycle instead of
     # every worker keeping all 15 slots open to PostgreSQL.
     pool_use_lifo=True,
-    connect_args=_connect_args,
+    connect_args=_connect_args_for(settings.DATABASE_URL, "ocr-app"),
 )
+
+# Schema identity. It owns the tables and runs Alembic/inline migrations. When
+# no separate URL is configured (tests, development without role separation),
+# it intentionally falls back to the runtime engine.
+_schema_url = (settings.MIGRATOR_DATABASE_URL or "").strip()
+if _schema_url and _schema_url != settings.DATABASE_URL:
+    schema_engine = create_engine(
+        _schema_url,
+        pool_pre_ping=True,
+        pool_size=1,
+        max_overflow=0,
+        pool_recycle=300,
+        pool_timeout=30,
+        pool_use_lifo=True,
+        connect_args=_connect_args_for(_schema_url, "ocr-migrator"),
+    )
+else:
+    schema_engine = engine
 
 # SQLite is used by the local test suite. Enforce foreign keys there so
 # ON DELETE CASCADE behaves like PostgreSQL; without this, deleted users can

@@ -108,6 +108,7 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      MIGRATOR_DATABASE_URL: ${MIGRATOR_DATABASE_URL:-}
       # Production startup requires a separate REPORT_SIGNING_KEY. Set it in
       # .env; startup fails if it is missing or equals JWT_SECRET.
       ENVIRONMENT: production

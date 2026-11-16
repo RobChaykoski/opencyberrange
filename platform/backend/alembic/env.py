@@ -30,7 +30,11 @@ if BACKEND_DIR not in sys.path:
 
 
 def _database_url() -> str:
-    url = os.environ.get("DATABASE_URL", "").strip()
+    # Schema work must use the migrator identity. Fall back to DATABASE_URL for
+    # a single-role development/test database.
+    url = os.environ.get("MIGRATOR_DATABASE_URL", "").strip()
+    if not url:
+        url = os.environ.get("DATABASE_URL", "").strip()
     if not url:
         url = (config.get_main_option("sqlalchemy.url") or "").strip()
     return url

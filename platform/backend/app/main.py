@@ -17,7 +17,7 @@ from sqlalchemy.exc import IntegrityError, OperationalError, ProgrammingError
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from app.database import engine, Base
+from app.database import engine, schema_engine, Base
 # Runtime module contract: modules under app/modules/ wire themselves in by
 # discovery. Register each present module's ORM models with Base.metadata now,
 # before create_all() runs in the lifespan startup.
@@ -149,7 +149,7 @@ def _initialize_schema() -> None:
     DuplicateTable/UniqueViolation startup failures. A PostgreSQL advisory lock
     serializes schema initialization across workers and replicas.
     """
-    with engine.connect() as conn:
+    with schema_engine.connect() as conn:
         is_postgres = conn.dialect.name == "postgresql"
         if is_postgres:
             # Bound the wait: a stale holder must not freeze startup forever.
@@ -195,7 +195,7 @@ def _stamp_or_upgrade_alembic() -> None:
     cfg = Config(str(backend_dir / "alembic.ini"))
     cfg.set_main_option("script_location", str(backend_dir / "alembic"))
 
-    with engine.connect() as conn:
+    with schema_engine.connect() as conn:
         is_postgres = conn.dialect.name == "postgresql"
         if is_postgres:
             # A stale holder must not block startup forever; the inline schema
@@ -207,7 +207,7 @@ def _stamp_or_upgrade_alembic() -> None:
             )
             conn.commit()
         try:
-            inspector = sa_inspect(engine)
+            inspector = sa_inspect(conn)
             current = None
             if "alembic_version" in inspector.get_table_names():
                 row = conn.execute(
@@ -282,8 +282,8 @@ async def lifespan(app: FastAPI):
 
     # Add missing columns to existing tables (safe idempotent migration)
     from sqlalchemy import inspect as sa_inspect
-    with engine.connect() as conn:
-        inspector = sa_inspect(engine)
+    with schema_engine.connect() as conn:
+        inspector = sa_inspect(conn)
         labs_columns = [c['name'] for c in inspector.get_columns('labs')]
         if 'is_course_exclusive' not in labs_columns:
             conn.execute(text("ALTER TABLE labs ADD COLUMN is_course_exclusive BOOLEAN DEFAULT FALSE"))
@@ -464,7 +464,7 @@ async def lifespan(app: FastAPI):
         # --- Achievement studio metadata (group, tier, difficulty, points) ---
         if 'custom_achievements' in inspector.get_table_names():
             custom_columns = {
-                c['name'] for c in sa_inspect(engine).get_columns('custom_achievements')
+                c['name'] for c in sa_inspect(conn).get_columns('custom_achievements')
             }
             custom_ddl = {
                 'group_key': "VARCHAR(30) DEFAULT 'custom' NOT NULL",
@@ -483,7 +483,7 @@ async def lifespan(app: FastAPI):
         # --- Event experience template (Cyber Discovery) ---
         if 'competitions' in inspector.get_table_names():
             competition_columns = {
-                c['name'] for c in sa_inspect(engine).get_columns('competitions')
+                c['name'] for c in sa_inspect(conn).get_columns('competitions')
             }
             if 'experience_key' not in competition_columns:
                 conn.execute(text(
@@ -842,12 +842,37 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning("Alembic stamp/upgrade skipped: %s", exc)
 
+    # Enforce the runtime identity boundary. A superuser or BYPASSRLS role
+    # silently defeats tenant RLS even when FORCE ROW LEVEL SECURITY is set.
+    # Production refuses to serve; development warns so a single-role sandbox
+    # still works.
+    try:
+        with engine.connect() as conn:
+            identity = conn.execute(
+                text(
+                    "SELECT rolsuper, rolbypassrls FROM pg_roles "
+                    "WHERE rolname = current_user"
+                )
+            ).fetchone()
+    except Exception as exc:
+        logger.warning("Runtime database identity check skipped: %s", exc)
+    else:
+        if identity and (identity[0] or identity[1]):
+            detail = "superuser" if identity[0] else "BYPASSRLS"
+            message = (
+                f"The application database role is a {detail}; PostgreSQL RLS "
+                "is bypassed. Use a non-superuser runtime role."
+            )
+            if (settings.ENVIRONMENT or "").lower() in {"production", "prod"}:
+                raise RuntimeError(message)
+            logger.warning(message)
+
     # Append-only change ledger for critical tables. The triggers attribute
     # application writes to the authenticated actor and flag manual writes as
     # unattributed. PostgreSQL only; SQLite tests skip it. A lock timeout is
     # logged rather than taking the whole platform down.
     try:
-        ensure_ledger(engine)
+        ensure_ledger(schema_engine)
     except Exception as exc:
         logger.warning("Integrity ledger setup skipped: %s", exc)
 
@@ -856,14 +881,14 @@ async def lifespan(app: FastAPI):
     try:
         from app.services import tenant_rls
 
-        tenant_rls.apply(engine)
+        tenant_rls.apply(schema_engine)
     except Exception as exc:
         logger.warning("Tenant RLS setup skipped: %s", exc)
 
     try:
         from app.services import db_invariants
 
-        db_invariants.apply(engine)
+        db_invariants.apply(schema_engine)
     except Exception as exc:
         logger.warning("Database invariant setup skipped: %s", exc)
 
@@ -882,7 +907,7 @@ async def lifespan(app: FastAPI):
     try:
         from app.services import security_events as _security_events
 
-        _security_events.ensure_rls(engine)
+        _security_events.ensure_rls(schema_engine)
     except Exception as exc:
         logger.warning("Security event RLS setup skipped: %s", exc)
 

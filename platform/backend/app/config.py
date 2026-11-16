@@ -8,6 +8,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # Database - MUST be set via environment variable in production
     DATABASE_URL: str = ""
+    # Schema owner / migration identity. Production requires a role that is
+    # different from the runtime role, so runtime traffic is subject to RLS.
+    MIGRATOR_DATABASE_URL: str = ""
     
     # JWT - MUST be set via environment variable (generate with: python3 -c "import secrets; print(secrets.token_urlsafe(64))")
     JWT_SECRET: str = ""
@@ -118,6 +121,8 @@ def validate_settings():
     import logging
     errors = []
     warnings = []
+    environment = (settings.ENVIRONMENT or "development").strip().lower()
+    production = environment in {"production", "prod"}
     
     # Validate DATABASE_URL
     if not settings.DATABASE_URL:
@@ -130,6 +135,18 @@ def validate_settings():
         warnings.append(
             "DATABASE_URL contains default password. Change before production deployment."
         )
+
+    if production:
+        if not settings.MIGRATOR_DATABASE_URL:
+            errors.append(
+                "MIGRATOR_DATABASE_URL must be set in production so schema "
+                "changes run as the migrator role, not the runtime role."
+            )
+        elif settings.MIGRATOR_DATABASE_URL == settings.DATABASE_URL:
+            errors.append(
+                "MIGRATOR_DATABASE_URL must use a different role from "
+                "DATABASE_URL so the runtime identity cannot bypass RLS."
+            )
     
     # Validate JWT_SECRET
     if not settings.JWT_SECRET:
@@ -149,8 +166,6 @@ def validate_settings():
 
     # Report manifests need a signing key independent of JWT. A shared key
     # means one compromise forges both sessions and report evidence.
-    environment = (settings.ENVIRONMENT or "development").strip().lower()
-    production = environment in {"production", "prod"}
     if not settings.REPORT_SIGNING_KEY:
         message = (
             "REPORT_SIGNING_KEY is not set; report signing falls back to "

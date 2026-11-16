@@ -24,6 +24,50 @@ PostgreSQL RLS is bypassed.
 - **A migration does not delete learner data.** Destructive data changes require
   an explicit operator action (retention purge or account erasure).
 
+## Database identities
+
+The platform uses separate PostgreSQL identities so the runtime role cannot
+bypass tenant RLS and so schema work is auditable:
+
+| Identity | Purpose | Key attributes |
+|---|---|---|
+| `ocr_migrator` | Owns schema objects; runs Alembic and inline startup DDL | `BYPASSRLS`, no `SUPERUSER`, no `CREATEDB` |
+| `ocr_runtime` | Backend request traffic and background jobs | `NOBYPASSRLS`, no `SUPERUSER` |
+| `ocr_reporting` | Cross-institution reporting | read-only, `BYPASSRLS` |
+| `ocr_backup` | `pg_dump` and restore verification | read-only, `BYPASSRLS` |
+| `ocr_audit` | Security, consent, and change-ledger review | read-only, selected tables, `BYPASSRLS` |
+
+`DATABASE_URL` must use `ocr_runtime`; `MIGRATOR_DATABASE_URL` must use
+`ocr_migrator`. Production refuses to start when the migrator URL is missing or
+identical to the runtime URL, and it refuses to serve when the runtime role is a
+superuser or has `BYPASSRLS`.
+
+Create or refresh the roles after the first deployment of this release:
+
+```bash
+cd ~/opencyberrange/platform   # production
+export OCR_DB_MIGRATOR_PASSWORD='...'
+export OCR_DB_RUNTIME_PASSWORD='...'
+export OCR_DB_REPORTING_PASSWORD='...'
+export OCR_DB_BACKUP_PASSWORD='...'
+export OCR_DB_AUDIT_PASSWORD='...'
+bash ../scripts/bootstrap-db-roles.sh \
+  -f docker-compose.prod.yml -f docker-compose.adopt.yml \
+  -f docker-compose.override.yml
+```
+
+Development runs the same script from the repository root with no compose
+flags. Store the passwords in the deployment `.env`; the bootstrap script reads
+them from the environment and never writes them to the SQL file. Set the
+reporting, backup, and audit URLs in the operator's backup/reporting tooling, not
+in the backend container.
+
+The bootstrap SQL is idempotent and can be re-run after an upgrade. It moves
+existing tables, sequences, views, functions, and types to `ocr_migrator`, grants
+runtime DML plus default privileges for future objects, and grants read access
+to the reporting, backup, and audit roles.
+
+
 ## What happens at backend startup
 
 The backend uses a hybrid schema step. The order is deliberate:
@@ -60,8 +104,7 @@ docker exec ocr-db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" \
   -c "SELECT version_num FROM alembic_version;"
 ```
 
-Expected after Release 4: `0014_performance_indexes` (or the short revision id
-stored in the table; the file name is authoritative).
+Expected after this release: `0039_db_invariants`.
 
 The upgrade verification script also checks for schema drift and reports it.
 
