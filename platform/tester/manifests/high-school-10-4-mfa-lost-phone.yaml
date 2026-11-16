@@ -1,0 +1,36 @@
+# Generated from platform/labs/High School/high-school-10-4-mfa-lost-phone/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-10-4-mfa-lost-phone
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-10-4-mfa-lost-phone/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-10-4-mfa-lost-phone.sh
+  steps:
+  - name: Staff portal responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Public staff profile contains the recovery answer
+    command: curl -s http://{target.portal}:8080/staff/amara | grep -c 'The Lantern Keeper'
+    expect: '1'
+  - name: A wrong recovery answer is rejected
+    command: curl -s -o /dev/null -w '%{http_code}' -X POST -d 'user=amara&answer=Wrong' http://{target.portal}:8080/recover
+    expect: '403'
+  - name: The public answer recovers the account and the token
+    command: curl -s -X POST -d 'user=amara&answer=The+Lantern+Keeper' http://{target.portal}:8080/recover | grep -o 'OCR{[^}]*}'
+    expect: OCR{recovery_is_part_of_mfa}
+expected_flag_count: 1
+expected_flag: OCR{recovery_is_part_of_mfa}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

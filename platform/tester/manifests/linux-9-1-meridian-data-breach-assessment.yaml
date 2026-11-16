@@ -1,0 +1,54 @@
+# Generated from platform/labs/Linux/linux-9-1-meridian-data-breach-assessment/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-9-1-meridian-data-breach-assessment
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-9-1-meridian-data-breach-assessment/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-9-1-meridian-data-breach-assessment.sh
+  steps:
+  - name: Intranet web server responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webserver}/
+    expect: '200'
+  - name: Staff directory page exists
+    command: curl -s http://{target.webserver}/staff/
+    expect: James Park
+  - name: IT notices page exists
+    command: curl -s http://{target.webserver}/notices/
+    expect: backup migration
+  - name: Backups root is access-restricted
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webserver}/backups/
+    expect: '403'
+  - name: Legacy backup directory is accessible
+    command: curl -s http://{target.webserver}/backups/legacy/
+    expect: meridian_dump.sql
+  - name: SQL dump contains database credentials
+    command: curl -s http://{target.webserver}/backups/legacy/meridian_dump.sql | grep -o "M3r1d14n_App_2024#"
+    expect: M3r1d14n_App_2024#
+  - name: MySQL is accessible with dump credentials
+    command: mysql -h {target.dbserver} -u {cred.dbuser.user} -p'{cred.dbuser.pass}' -N -e 'SHOW DATABASES' 2>&1
+    expect: meridian_compliance
+  - name: HR and finance databases are permission-denied
+    command: mysql -h {target.dbserver} -u {cred.dbuser.user} -p'{cred.dbuser.pass}' -N -e 'SELECT * FROM meridian_hr.employees LIMIT 1' 2>&1
+    expect: denied
+  - name: Data classifications table exists in compliance database
+    command: mysql -h {target.dbserver} -u {cred.dbuser.user} -p'{cred.dbuser.pass}' meridian_compliance -N -e 'SELECT classification, record_name FROM data_classifications WHERE classification="PII"' 2>&1
+    expect: PII
+  - name: Flag is in compliance_findings table
+    command: mysql -h {target.dbserver} -u {cred.dbuser.user} -p'{cred.dbuser.pass}' meridian_compliance -N -e 'SELECT finding_detail FROM compliance_findings WHERE severity="CRITICAL"' 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{d4ta_br34ch_3xp0s3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

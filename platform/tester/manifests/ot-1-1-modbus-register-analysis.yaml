@@ -1,0 +1,26 @@
+# Generated from platform/labs/OT/ot-1-1-modbus-register-analysis/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: ot-1-1-modbus-register-analysis
+track: OT
+difficulty: beginner
+source: platform/labs/OT/ot-1-1-modbus-register-analysis/lab.yaml
+expected_services: []
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/ot-1-1-modbus-register-analysis.sh
+  steps:
+  - name: Modbus service is reachable
+    command: python3 -c "import socket;s=socket.create_connection(('{target.plc}',502),5);s.close();print('ok')"
+    expect: ok
+  - name: Holding registers decode to the flag
+    command: python3 -c "import socket,struct;s=socket.create_connection(('{target.plc}',502),5);req=struct.pack('>HHHBBHH',1,0,6,1,3,0,40);s.sendall(req);r=s.recv(256);bc=r[8];vals=struct.unpack('>%dH'%(bc//2),r[9:9+bc]);out=''.join(chr(v) for v in vals if 32<=v<127);print(out.split(chr(0))[0])"
+    expect: OCR{m0dbu5_r3g15t3r5_r3v34l3d}
+expected_flag_count: 1
+expected_flag: OCR{m0dbu5_r3g15t3r5_r3v34l3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

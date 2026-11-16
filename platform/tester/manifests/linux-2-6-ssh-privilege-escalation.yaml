@@ -1,0 +1,31 @@
+# Generated from platform/labs/Linux/linux-2-6-ssh-privilege-escalation/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-2-6-ssh-privilege-escalation
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-2-6-ssh-privilege-escalation/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-2-6-ssh-privilege-escalation.sh
+  steps:
+  - name: Verify SSH port is open
+    command: nc -z -w 5 {target.target} 22 && echo 'port_open'
+    expect: port_open
+  - name: SSH banner check
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: SSH login and retrieve flag via sudo cat
+    command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'sudo cat /root/flag.txt 2>/dev/null' 2>&1
+    expect: OCR{sud0_3sc}
+expected_flag_count: 1
+expected_flag: OCR{sud0_3sc}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

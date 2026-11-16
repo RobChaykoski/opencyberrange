@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "OpenCyberRange lab test manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "lab_id",
+    "track",
+    "difficulty",
+    "source",
+    "expected_services",
+    "health_timeout_seconds",
+    "solver",
+    "expected_flag_count",
+    "expected_flag",
+    "forbidden_networks",
+    "max_memory_mb",
+    "max_cpu"
+  ],
+  "properties": {
+    "lab_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "track": { "type": "string", "minLength": 1 },
+    "difficulty": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "pattern": "^platform/labs/.+/lab\\.yaml$" },
+    "expected_services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["port", "protocol"],
+        "properties": {
+          "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+          "protocol": { "enum": ["tcp", "udp"] }
+        }
+      }
+    },
+    "health_timeout_seconds": { "type": "integer", "minimum": 5, "maximum": 600 },
+    "solver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image", "command", "steps"],
+      "properties": {
+        "image": { "type": "string", "minLength": 1 },
+        "command": { "type": "string", "minLength": 1 },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "command", "expect"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "command": { "type": "string", "minLength": 1 },
+              "expect": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "expected_flag_count": { "type": "integer", "minimum": 0, "maximum": 10 },
+    "expected_flag": { "type": "string" },
+    "forbidden_networks": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "minItems": 1
+    },
+    "max_memory_mb": { "type": "integer", "minimum": 64 },
+    "max_cpu": { "type": "number", "minimum": 0.1 }
+  }
+}

@@ -1,0 +1,41 @@
+# Generated from platform/labs/Forensics/forensics-2-2-topology-forensics-guided/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: forensics-2-2-topology-forensics-guided
+track: Forensics
+difficulty: beginner
+source: platform/labs/Forensics/forensics-2-2-topology-forensics-guided/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/forensics-2-2-topology-forensics-guided.sh
+  steps:
+  - name: SSH to the investigation workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'echo connected' 2>&1
+    expect: connected
+  - name: Router reports its role
+    command: curl -s --connect-timeout 5 http://{target.router}:8080/status
+    expect: '"role": "router"'
+  - name: Workstation uses the router
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'ip route | grep default' 2>&1
+    expect: default via
+  - name: Router forwards IPv4
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.router} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1
+    expect: '1'
+  - name: Recover the case token through the routed path
+    command: IP=$(curl -s --connect-timeout 5 http://{target.router}:8080/status | jq -r '.links[] | select(.peer=="case-svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} "wget -qO- http://$IP/flag" 2>&1
+    expect: OCR{f0r3ns1c_p4th_gu1d3d}
+expected_flag_count: 1
+expected_flag: OCR{f0r3ns1c_p4th_gu1d3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

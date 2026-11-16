@@ -1,0 +1,42 @@
+# Generated from platform/labs/Network/network-1-2-log-correlation/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-1-2-log-correlation
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-1-2-log-correlation/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 53
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-1-2-log-correlation.sh
+  steps:
+  - name: SSH to analysis workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>&1
+    expect: connected
+  - name: Verify PCAP file exists
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'test -f /home/analyst/evidence/capture.pcap && echo pcap_found' 2>&1
+    expect: pcap_found
+  - name: Extract token 1 from HTTP POST body
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -A 2>/dev/null | grep -o "token=[a-z0-9_]*" | sed "s/^token=//" | head -1' 2>&1
+    expect: c0rr3l4t3
+  - name: Extract token 2 from FTP PASS command
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -A 2>/dev/null | grep -o "PASS [a-z0-9_]*" | sed "s/^PASS //" | head -1' 2>&1
+    expect: l0g
+  - name: Extract token 3 from DNS exfiltration query
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'tcpdump -r /home/analyst/evidence/capture.pcap -n port 53 2>/dev/null | grep -o "token_[a-z0-9]*\.exfil\.evil-dns\.net" | head -1 | sed "s/token_//;s/\..*//"' 2>&1
+    expect: hunt
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{c0rr3l4t3_l0g_hunt}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{c0rr3l4t3_l0g_hunt}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1280
+max_cpu: 1.25

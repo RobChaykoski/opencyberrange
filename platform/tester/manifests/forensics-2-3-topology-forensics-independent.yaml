@@ -1,0 +1,41 @@
+# Generated from platform/labs/Forensics/forensics-2-3-topology-forensics-independent/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: forensics-2-3-topology-forensics-independent
+track: Forensics
+difficulty: intermediate
+source: platform/labs/Forensics/forensics-2-3-topology-forensics-independent/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/forensics-2-3-topology-forensics-independent.sh
+  steps:
+  - name: Router reports three links
+    command: curl -s --connect-timeout 5 http://{target.router}:8080/status | jq -r '.links | length'
+    expect: '3'
+  - name: Workstation uses the router
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'ip route | grep default' 2>&1
+    expect: default via
+  - name: Case service is identified
+    command: curl -s --connect-timeout 5 http://{target.case-svc}:8080/status
+    expect: '"node": "case-svc"'
+  - name: Decoy is present but is not the case service
+    command: curl -s --connect-timeout 5 http://{target.decoy}:8080/status
+    expect: '"node": "decoy"'
+  - name: Recover the case token through the routed path
+    command: IP=$(curl -s --connect-timeout 5 http://{target.router}:8080/status | jq -r '.links[] | select(.peer=="case-svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} "wget -qO- http://$IP/flag" 2>&1
+    expect: OCR{f0r3ns1c_p4th_1nd3p3nd3nt}
+expected_flag_count: 1
+expected_flag: OCR{f0r3ns1c_p4th_1nd3p3nd3nt}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

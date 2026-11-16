@@ -1,0 +1,34 @@
+# Generated from platform/labs/Network/network-2-5-attack-chain-analysis/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-2-5-attack-chain-analysis
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-2-5-attack-chain-analysis/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-2-5-attack-chain-analysis.sh
+  steps:
+  - name: SSH accessible on analyst workstation
+    command: nc -w 5 {target.network-2-5} 22 </dev/null | head -1
+    expect: SSH
+  - name: PCAP file exists on analyst workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.network-2-5} 'ls /home/analyst/captures/full-attack.pcap'
+    expect: full-attack.pcap
+  - name: Flag found in PCAP captures
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.network-2-5} 'strings /home/analyst/captures/*.pcap 2>&1 | grep -o "OCR{[^}]*}" | head -1'
+    expect: OCR{full_4tt4ck_ch41n_m4pp3d}
+  - name: Echo confirmed flag
+    command: echo 'OCR{full_4tt4ck_ch41n_m4pp3d}'
+    expect: OCR{full_4tt4ck_ch41n_m4pp3d}
+expected_flag_count: 1
+expected_flag: OCR{full_4tt4ck_ch41n_m4pp3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

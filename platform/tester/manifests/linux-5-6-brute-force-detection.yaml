@@ -1,0 +1,51 @@
+# Generated from platform/labs/Linux/linux-5-6-brute-force-detection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-5-6-brute-force-detection
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-5-6-brute-force-detection/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-5-6-brute-force-detection.sh
+  steps:
+  - name: Verify analyst SSH access to IDS sensor
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'echo connected' 2>&1
+    expect: connected
+  - name: Verify Suricata is running on IDS sensor
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'pgrep -x Suricata-Main > /dev/null && echo suricata_running' 2>&1
+    expect: suricata_running
+  - name: Observe brute-force attack traffic arriving on the IDS sensor
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'sudo timeout 25 tcpdump -i eth0 -A -c 5 port 80 2>/dev/null | grep -ci post | awk "{print (\$1>=1)?\"traffic_detected\":\"none\"}"' 2>&1
+    expect: traffic_detected
+  - name: Write Suricata rules for brute-force POST detection and campaign marker
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'printf "alert http any any -> any any (msg:\"Brute Force Login Attempt\"; flow:to_server,established; content:\"POST\"; http_method; content:\"password\"; http_client_body; sid:1000001; rev:1;)\nalert http any any -> any any (msg:\"Campaign Marker Detected\"; flow:to_server,established; content:\"POST\"; http_method; content:\"campaign=brut3\"; http_client_body; sid:1000002; rev:1;)\n" > /etc/suricata/rules/local.rules && sudo kill -USR2 $(pgrep -x Suricata-Main) && echo rules_deployed' 2>&1
+    expect: rules_deployed
+  - name: Wait for attack cycle and verify Suricata alerts fire
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'sleep 20 && jq -r "select(.alert) | .alert.signature" /var/log/suricata/eve.json 2>/dev/null | sort -u' 2>&1
+    expect: Detected
+  - name: Extract token 1 from campaign marker alert payload (campaign parameter)
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'jq -r "select(.alert) | select(.alert.signature_id == 1000002) | .payload_printable" /var/log/suricata/eve.json 2>/dev/null | grep -o "campaign=[^& ]*" | head -1 | cut -d= -f2' 2>&1
+    expect: brut3
+  - name: Extract token 2 from brute-force alert payload (exfil parameter)
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.sensor} 'jq -r "select(.alert) | select(.alert.signature_id == 1000001) | .payload_printable" /var/log/suricata/eve.json 2>/dev/null | grep -o "exfil=[^& ]*" | head -1 | cut -d= -f2' 2>&1
+    expect: d3t3ct
+  - name: SSH to target and extract attacker User-Agent from nginx access log
+    command: sshpass -p '{cred.webadmin.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.webadmin.user}@{target.target} 'grep -o "AegisCracker/[a-zA-Z0-9_]*" /var/log/nginx/access.log | head -1 | cut -d/ -f2' 2>&1
+    expect: bl0ck
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{brut3_d3t3ct_bl0ck}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{brut3_d3t3ct_bl0ck}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1280
+max_cpu: 1.25

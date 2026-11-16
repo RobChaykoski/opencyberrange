@@ -1,0 +1,30 @@
+# Generated from platform/labs/OSINT/osint-2-2-public-homepage/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-2-2-public-homepage
+track: OSINT
+difficulty: beginner
+source: platform/labs/OSINT/osint-2-2-public-homepage/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/osint-2-2-public-homepage.sh
+  steps:
+  - name: Mirror homepage responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.publicsite}:8080/
+    expect: '200'
+  - name: Flag is present in the page metadata
+    command: curl -s http://{target.publicsite}:8080/ | grep -o 'OCR{[^}]*}'
+    expect: OCR{swocts_v13w_s0urc3}
+expected_flag_count: 1
+expected_flag: OCR{swocts_v13w_s0urc3}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

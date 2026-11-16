@@ -1,0 +1,39 @@
+# Generated from platform/labs/Identity/identity-2-1-identity-lifecycle/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: identity-2-1-identity-lifecycle
+track: Identity
+difficulty: beginner
+source: platform/labs/Identity/identity-2-1-identity-lifecycle/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/identity-2-1-identity-lifecycle.sh
+  steps:
+  - name: Access-review page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Directory is available
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/directory
+    expect: '200'
+  - name: Reports endpoint rejects an anonymous request
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/api/reports
+    expect: '401'
+  - name: A read-only token is denied the export
+    command: curl -s -o /dev/null -w '%{http_code}' 'http://{target.portal}:8080/api/reports?token=tok_amara_staff_2b7c'
+    expect: '403'
+  - name: The stale admin token reveals the training token
+    command: curl -s 'http://{target.portal}:8080/api/reports?token=tok_rowan_9f2c' | grep -o 'OCR{[^}]*}'
+    expect: OCR{leavers_keep_access_until_you_revoke_it}
+expected_flag_count: 1
+expected_flag: OCR{leavers_keep_access_until_you_revoke_it}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

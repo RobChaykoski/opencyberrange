@@ -1,0 +1,31 @@
+# Generated from platform/labs/Windows/windows-7-1-ldap-service-detection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-7-1-ldap-service-detection
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-7-1-ldap-service-detection/lab.yaml
+expected_services:
+- port: 389
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-7-1-ldap-service-detection.sh
+  steps:
+  - name: Verify LDAP port 389 is open
+    command: nmap -Pn -p 389 {target.target} | grep '389/tcp'
+    expect: open
+  - name: Detect LDAP service version
+    command: nmap -Pn -sV -p 389 {target.target} | grep '389/tcp'
+    expect: ldap
+  - name: LDAP search for flag
+    command: ldapsearch -x -H ldap://{target.target} -b 'dc=financecorp,dc=local' description 2>&1 | grep 'OCR{' || (sleep 3 && ldapsearch -x -H ldap://{target.target} -b 'dc=financecorp,dc=local' description 2>&1 | grep 'OCR{')
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{ldap_d3t3ct}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

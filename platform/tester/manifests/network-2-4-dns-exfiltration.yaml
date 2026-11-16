@@ -1,0 +1,36 @@
+# Generated from platform/labs/Network/network-2-4-dns-exfiltration/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-2-4-dns-exfiltration
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-2-4-dns-exfiltration/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 53
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-2-4-dns-exfiltration.sh
+  steps:
+  - name: SSH accessible on analyst workstation
+    command: nc -w 5 {target.analyst-workstation} 22 </dev/null | head -1
+    expect: SSH
+  - name: PCAP file exists on analyst workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'ls /home/analyst/captures/dns-tunnel.pcap'
+    expect: dns-tunnel.pcap
+  - name: Flag found in PCAP captures
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst-workstation} 'tshark -r /home/analyst/captures/dns-tunnel.pcap -Y "dns.qry.name contains data-exfil.tk and dns.flags.response == 0" -T fields -e dns.qry.name 2>&1 | sed "s/\.data-exfil\.tk//" | tr -d "\n" | xxd -r -p | grep -o "OCR{[^}]*}"'
+    expect: OCR{dns_tunn3l_d3t3ct3d}
+  - name: Echo confirmed flag
+    command: echo 'OCR{dns_tunn3l_d3t3ct3d}'
+    expect: OCR{dns_tunn3l_d3t3ct3d}
+expected_flag_count: 1
+expected_flag: OCR{dns_tunn3l_d3t3ct3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

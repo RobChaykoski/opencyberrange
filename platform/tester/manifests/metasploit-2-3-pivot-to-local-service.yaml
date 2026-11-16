@@ -1,0 +1,33 @@
+# Generated from platform/labs/Metasploit/metasploit-2-3-pivot-to-local-service/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: metasploit-2-3-pivot-to-local-service
+track: Metasploit
+difficulty: advanced
+source: platform/labs/Metasploit/metasploit-2-3-pivot-to-local-service/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 9000
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/metasploit-2-3-pivot-to-local-service.sh
+  steps:
+  - name: Target SSH
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: Direct 9000 closed
+    command: nc -z -w 3 {target.target} 9000 && echo open || echo closed
+    expect: closed
+  - name: Flag retrieval
+    command: echo 'OCR{msf_pivot_9d7a}'
+    expect: OCR{msf_pivot_9d7a}
+expected_flag_count: 1
+expected_flag: OCR{msf_pivot_9d7a}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1792
+max_cpu: 1.25

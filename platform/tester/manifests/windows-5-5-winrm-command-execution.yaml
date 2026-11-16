@@ -1,0 +1,31 @@
+# Generated from platform/labs/Windows/windows-5-5-winrm-command-execution/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-5-5-winrm-command-execution
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-5-5-winrm-command-execution/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-5-5-winrm-command-execution.sh
+  steps:
+  - name: Verify SSH port 22 is open
+    command: nmap -Pn -p 22 {target.target} | grep '22/tcp'
+    expect: open
+  - name: Execute remote command via SSH
+    command: sshpass -p '{cred.winrm-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.winrm-user.user}@{target.target} 'whoami && hostname'
+    expect: admin
+  - name: Retrieve flag via SSH
+    command: sshpass -p '{cred.winrm-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.winrm-user.user}@{target.target} 'cat /home/admin/flag.txt'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{w1nrm_cmd_3x3c}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

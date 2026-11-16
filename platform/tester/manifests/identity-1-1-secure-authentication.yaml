@@ -1,0 +1,39 @@
+# Generated from platform/labs/Identity/identity-1-1-secure-authentication/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: identity-1-1-secure-authentication
+track: Identity
+difficulty: beginner
+source: platform/labs/Identity/identity-1-1-secure-authentication/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/identity-1-1-secure-authentication.sh
+  steps:
+  - name: Staff portal responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Admin console rejects an anonymous request
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/admin
+    expect: '401'
+  - name: Demo login sets a session cookie
+    command: 'curl -s -i -X POST -d ''user=amara&password=Library2026!'' http://{target.portal}:8080/login | grep -c ''Set-Cookie: session='''
+    expect: '1'
+  - name: A staff session is denied the admin console
+    command: 'curl -s -o /dev/null -w ''%{http_code}'' -H ''Cookie: session=YW1hcmE6c3RhZmY='' http://{target.portal}:8080/admin'
+    expect: '403'
+  - name: A forged admin session reveals the training token
+    command: 'curl -s -H ''Cookie: session=YWRtaW46YWRtaW4='' http://{target.portal}:8080/admin | grep -o ''OCR{[^}]*}'''
+    expect: OCR{forged_sessions_bypass_mfa}
+expected_flag_count: 1
+expected_flag: OCR{forged_sessions_bypass_mfa}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

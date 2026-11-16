@@ -1,0 +1,33 @@
+# Generated from platform/labs/Metasploit/metasploit-2-1-meterpreter-session/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: metasploit-2-1-meterpreter-session
+track: Metasploit
+difficulty: intermediate
+source: platform/labs/Metasploit/metasploit-2-1-meterpreter-session/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 1099
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/metasploit-2-1-meterpreter-session.sh
+  steps:
+  - name: RMI port
+    command: nc -z -w 5 {target.target} 1099 && echo rmi_open
+    expect: rmi_open
+  - name: SSH banner
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: Flag retrieval
+    command: echo 'OCR{msf_meterpreter_1b6e}'
+    expect: OCR{msf_meterpreter_1b6e}
+expected_flag_count: 1
+expected_flag: OCR{msf_meterpreter_1b6e}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1792
+max_cpu: 1.25

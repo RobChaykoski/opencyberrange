@@ -1,0 +1,36 @@
+# Generated from platform/labs/High School/high-school-12-1-devfest-community-portal/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-12-1-devfest-community-portal
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-12-1-devfest-community-portal/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-12-1-devfest-community-portal.sh
+  steps:
+  - name: DevFest portal responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Speaker page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/speakers/ada-mercer
+    expect: '200'
+  - name: Slide export is served
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/assets/devfest-slide.png
+    expect: '200'
+  - name: Flag is present in the slide metadata
+    command: curl -s http://{target.portal}:8080/assets/devfest-slide.png | grep -a -o 'OCR{[^}]*}'
+    expect: OCR{d3vf3st_c0mmun1ty_p0rtal}
+expected_flag_count: 1
+expected_flag: OCR{d3vf3st_c0mmun1ty_p0rtal}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 416
+max_cpu: 0.45

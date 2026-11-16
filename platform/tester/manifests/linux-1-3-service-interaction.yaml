@@ -1,0 +1,34 @@
+# Generated from platform/labs/Linux/linux-1-3-service-interaction/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-1-3-service-interaction
+track: Linux
+difficulty: beginner
+source: platform/labs/Linux/linux-1-3-service-interaction/lab.yaml
+expected_services:
+- port: 21
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-1-3-service-interaction.sh
+  steps:
+  - name: Verify FTP port is open
+    command: nc -z -w 5 {target.target} 21 && echo 'port_open'
+    expect: port_open
+  - name: Detect FTP service with nmap
+    command: nmap -Pn -n -p 21 -sV {target.target} 2>&1
+    expect: ftp
+  - name: Grab FTP banner via netcat
+    command: nc -w 5 {target.target} 21 </dev/null 2>&1
+    expect: ProFTPD
+  - name: Retrieve flag from FTP welcome banner
+    command: nc -w 5 {target.target} 21 </dev/null 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{ftp_1nt3r4ct}
+expected_flag_count: 1
+expected_flag: OCR{ftp_1nt3r4ct}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

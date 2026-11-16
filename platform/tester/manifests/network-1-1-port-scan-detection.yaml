@@ -1,0 +1,31 @@
+# Generated from platform/labs/Network/network-1-1-port-scan-detection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-1-1-port-scan-detection
+track: Network
+difficulty: beginner
+source: platform/labs/Network/network-1-1-port-scan-detection/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-1-1-port-scan-detection.sh
+  steps:
+  - name: HTTP server responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/
+    expect: '200'
+  - name: Firewall log file accessible
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/firewall.log
+    expect: '200'
+  - name: Flag found in firewall log
+    command: curl -s http://{target.target}/firewall.log | grep -o 'OCR{[^}]*}'
+    expect: OCR{p0rt_sc4n_d3t3ct3d}
+expected_flag_count: 1
+expected_flag: OCR{p0rt_sc4n_d3t3ct3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

@@ -1,0 +1,33 @@
+# Generated from platform/labs/OSINT/osint-1-2-image-intelligence/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-1-2-image-intelligence
+track: OSINT
+difficulty: beginner
+source: platform/labs/OSINT/osint-1-2-image-intelligence/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/osint-1-2-image-intelligence.sh
+  steps:
+  - name: Profile page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/people/dana.whitfield
+    expect: '200'
+  - name: Badge image is served as a PNG
+    command: "curl -s http://{target.intranet}:8080/assets/badge.png | head -c 8 | od -An -tx1 | tr -d ' \n'"
+    expect: 89504e470d0a1a0a
+  - name: Extractor recovers the hidden flag
+    command: curl -s http://{target.intranet}:8080/assets/badge.png -o /tmp/badge.png && curl -s http://{target.intranet}:8080/tools/extract_lsb.py -o /tmp/extract_lsb.py && python3 /tmp/extract_lsb.py /tmp/badge.png
+    expect: OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}
+expected_flag_count: 1
+expected_flag: OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 416
+max_cpu: 0.45

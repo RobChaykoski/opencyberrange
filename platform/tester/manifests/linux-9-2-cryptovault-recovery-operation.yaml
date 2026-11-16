@@ -1,0 +1,40 @@
+# Generated from platform/labs/Linux/linux-9-2-cryptovault-recovery-operation/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-9-2-cryptovault-recovery-operation
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-9-2-cryptovault-recovery-operation/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-9-2-cryptovault-recovery-operation.sh
+  steps:
+  - name: SSH to workstation as analyst
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'whoami' 2>&1
+    expect: analyst
+  - name: Departed employee home directory is readable
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'ls /home/mwebb/' 2>&1
+    expect: audit_backup.enc
+  - name: Bash history reveals openssl encryption
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'cat /home/mwebb/.bash_history 2>/dev/null | grep openssl' 2>&1
+    expect: aes-256-cbc
+  - name: Company encryption policy exists
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'cat /etc/company-policy/encryption-standard.txt' 2>&1
+    expect: Company_Prefix
+  - name: Employee record contains employee ID
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'cat /home/mwebb/employee-record.txt' 2>&1
+    expect: EMP-4471
+  - name: Decrypt the correct archive with reconstructed passphrase
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.workstation} 'openssl enc -aes-256-cbc -d -pbkdf2 -in /home/mwebb/audit_backup.enc -pass pass:CryptoVault-EMP-4471-2025 2>/dev/null' 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{r3c0v3ry_pr0c3dur3_f0ll0w3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1280
+max_cpu: 1.25

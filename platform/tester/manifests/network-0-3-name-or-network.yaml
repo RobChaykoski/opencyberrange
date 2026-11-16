@@ -1,0 +1,36 @@
+# Generated from platform/labs/Network/network-0-3-name-or-network/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-0-3-name-or-network
+track: Network
+difficulty: beginner
+source: platform/labs/Network/network-0-3-name-or-network/lab.yaml
+expected_services:
+- port: 53
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-0-3-name-or-network.sh
+  steps:
+  - name: Stale name resolves to the documentation address
+    command: dig @{target.target} stale.range.local A +short
+    expect: 192.0.2.99
+  - name: TXT note points at the current name
+    command: dig @{target.target} _note.range.local TXT +short
+    expect: portal.range.local
+  - name: Current name resolves to the lab host
+    command: dig @{target.target} portal.range.local A +short | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' && echo address-ok
+    expect: address-ok
+  - name: Portal page contains the flag
+    command: curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'
+    expect: OCR{ch3ck_th3_n4m3_th3n_th3_h0st}
+expected_flag_count: 1
+expected_flag: OCR{ch3ck_th3_n4m3_th3n_th3_h0st}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 352
+max_cpu: 0.4

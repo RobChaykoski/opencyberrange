@@ -19,7 +19,7 @@
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "7a8ebd5094ec612fa7f36a7364cbdb635423afbef52e0bc87f0285895a1f5668"
+      "sha256": "e4f2fafb27366a9a36305671cedfc56ac78327b401392d44f556a81b32ce2978"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
@@ -108,6 +108,12 @@
     "platform/frontend/security-headers.conf": {
       "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
     },
+    "platform/tester/Dockerfile": {
+      "sha256": "11cdc5e74289e5db9e30b324aa813be68652ffdcaffbc719ff4d16a2857d924a"
+    },
+    "platform/tester/manifest.schema.json": {
+      "sha256": "d7e2f982e8a0cf9d43a29bcfe3af85676a98123d63c79e64781f97eacc32cec5"
+    },
     "platform/topology-node/Dockerfile": {
       "sha256": "c25d2ec9cd32a29c10a7de010d057b639a2c0a800a610abcd5b000b18527e981"
     },
@@ -141,6 +147,9 @@
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
     },
+    "scripts/generate-lab-manifests.py": {
+      "sha256": "5ac3cd01b44f42d82de797251b631c7bb2a3936ff2d77cffafca6a71b842b9bb"
+    },
     "scripts/generate-rbac-matrix.py": {
       "sha256": "e6c423a7bd77efce87b02511565d5db376ebc5427d9b9a1b071e44b139251521"
     },
@@ -149,6 +158,9 @@
     },
     "scripts/lab_build_hash.py": {
       "sha256": "47f9b084a529c6ef0460cdb0895f0b90d3adf18c6c37ecf97b4f34bfabe952cf"
+    },
+    "scripts/lab_harness.py": {
+      "sha256": "2c3db325517c28b59890ccbe199e50a0404c1dd7a01361eb9238a890c4efb3e0"
     },
     "scripts/prebuild-labs.sh": {
       "sha256": "0f3a6214adb8453960f0e0672430a8b5e0fb91e4eaa3ae3e800db876295468d2"
@@ -160,7 +172,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "5ad999766f0d6870e61c0e0467f37db97024193f884fa1974bad6106a1e4a8bf"
+      "sha256": "6968745f46cb037dd7da1ae7acb54108cbc65a30d525d0fb5f6ef64343b3af48"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"

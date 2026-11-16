@@ -1,0 +1,33 @@
+# Generated from platform/labs/High School/high-school-9-2-rangebox-file-hunt/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-9-2-rangebox-file-hunt
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-9-2-rangebox-file-hunt/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-9-2-rangebox-file-hunt.sh
+  steps:
+  - name: Evidence archive is served
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.files}:8080/evidence.zip
+    expect: '200'
+  - name: Archive is a valid ZIP file
+    command: curl -s http://{target.files}:8080/evidence.zip | python3 -c "import io,sys,zipfile; print('zip' if zipfile.is_zipfile(io.BytesIO(sys.stdin.buffer.read())) else 'bad')"
+    expect: zip
+  - name: Real token is in archive/old/flag.txt
+    command: curl -s http://{target.files}:8080/evidence.zip | python3 -c "import io,sys,zipfile; z=zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())); print(z.read('evidence/archive/old/flag.txt').decode())" | grep -o 'OCR{[^}]*}'
+    expect: OCR{f1nd_th3_r34l_f1l3}
+expected_flag_count: 1
+expected_flag: OCR{f1nd_th3_r34l_f1l3}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

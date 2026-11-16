@@ -1,0 +1,36 @@
+# Generated from platform/labs/Windows/windows-4-2-rdp-version-enumeration/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-4-2-rdp-version-enumeration
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-4-2-rdp-version-enumeration/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 3389
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-4-2-rdp-version-enumeration.sh
+  steps:
+  - name: Verify RDP port 3389 is open
+    command: nmap -Pn -p 3389 {target.target} | grep '3389/tcp'
+    expect: open
+  - name: Detect RDP service version on port 3389
+    command: nmap -Pn -sV -p 3389 {target.target} | grep '3389/tcp'
+    expect: ms-wbt-server
+  - name: Enumerate RDP encryption capabilities
+    command: nmap -Pn --script rdp-enum-encryption -p 3389 {target.target} 2>&1
+    expect: RDP
+  - name: Retrieve flag via SSH
+    command: sshpass -p 'password123' ssh -o StrictHostKeyChecking=no rdpuser@{target.target} cat /home/rdpuser/flag.txt
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{rdp_v3rs10n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

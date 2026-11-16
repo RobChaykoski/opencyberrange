@@ -1,0 +1,31 @@
+# Generated from platform/labs/Windows/windows-6-5-mssql-basic-query-execution/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-6-5-mssql-basic-query-execution
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-6-5-mssql-basic-query-execution/lab.yaml
+expected_services:
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-6-5-mssql-basic-query-execution.sh
+  steps:
+  - name: Verify MySQL port 3306 is open
+    command: nmap -Pn -p 3306 {target.target} | grep '3306/tcp'
+    expect: open
+  - name: Authenticate and list databases
+    command: mysql --ssl-verify-server-cert=0 -h {target.target} -u {cred.sa.user} -p{cred.sa.pass} -N -e 'SHOW DATABASES' 2>&1
+    expect: testdb
+  - name: Query flag from database
+    command: mysql --ssl-verify-server-cert=0 -h {target.target} -u {cred.sa.user} -p{cred.sa.pass} -N -e 'SELECT flag FROM testdb.flags WHERE id=1' 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{mssql_qu3ry}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

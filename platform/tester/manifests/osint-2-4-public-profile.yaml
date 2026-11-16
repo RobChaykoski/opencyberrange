@@ -1,0 +1,33 @@
+# Generated from platform/labs/OSINT/osint-2-4-public-profile/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-2-4-public-profile
+track: OSINT
+difficulty: beginner
+source: platform/labs/OSINT/osint-2-4-public-profile/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/osint-2-4-public-profile.sh
+  steps:
+  - name: Training mirror responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.profile}:8080/
+    expect: '200'
+  - name: Training mirror links to the live profile
+    command: curl -s http://{target.profile}:8080/ | grep -o 'linkedin.com/in/'
+    expect: linkedin.com/in/
+  - name: Training mirror contains the marker
+    command: curl -s http://{target.profile}:8080/ | grep -o 'OCR{[^}]*}'
+    expect: OCR{linkedIn_0s1nt_m4st3r_2026}
+expected_flag_count: 1
+expected_flag: OCR{linkedIn_0s1nt_m4st3r_2026}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 416
+max_cpu: 0.45

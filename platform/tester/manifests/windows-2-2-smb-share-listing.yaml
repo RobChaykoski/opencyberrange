@@ -1,0 +1,34 @@
+# Generated from platform/labs/Windows/windows-2-2-smb-share-listing/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-2-2-smb-share-listing
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-2-2-smb-share-listing/lab.yaml
+expected_services:
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-2-2-smb-share-listing.sh
+  steps:
+  - name: Verify SMB port 445 is open
+    command: nmap -Pn -p 445 {target.target} | grep '445/tcp'
+    expect: open
+  - name: List SMB shares and find multiple shares
+    command: smbclient -L //{target.target} -N 2>&1
+    expect: backup
+  - name: Confirm public share is listed
+    command: smbclient -L //{target.target} -N 2>&1
+    expect: public
+  - name: Retrieve flag from share listing comments
+    command: smbclient -L //{target.target} -N 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{smb_sh4r3_l1st}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

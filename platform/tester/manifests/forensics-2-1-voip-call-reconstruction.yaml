@@ -1,0 +1,48 @@
+# Generated from platform/labs/Forensics/forensics-2-1-voip-call-reconstruction/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: forensics-2-1-voip-call-reconstruction
+track: Forensics
+difficulty: intermediate
+source: platform/labs/Forensics/forensics-2-1-voip-call-reconstruction/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/forensics-2-1-voip-call-reconstruction.sh
+  steps:
+  - name: Capture is downloadable
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.evidence}:8080/voip-call.pcap
+    expect: '200'
+  - name: Transcript is available for the audio-free path
+    command: curl -s http://{target.evidence}:8080/transcript.txt | grep -c 'Subject line'
+    expect: '1'
+  - name: Capture contains a SIP INVITE
+    command: curl -s http://{target.evidence}:8080/voip-call.pcap | strings | grep -c 'INVITE sip:'
+    expect: '1'
+  - name: Capture contains the SDP media offer
+    command: curl -s http://{target.evidence}:8080/voip-call.pcap | strings | grep -c 'm=audio 40000 RTP/AVP 0'
+    expect: '1'
+  - name: Capture contains the training token
+    command: curl -s http://{target.evidence}:8080/voip-call.pcap | strings | grep -o 'OCR{[^}]*}'
+    expect: OCR{v01c3_c4ll_r3c0n}
+  - name: Capture is large enough to hold the RTP media
+    command: curl -s http://{target.evidence}:8080/voip-call.pcap | python3 -c "import sys; print('large' if len(sys.stdin.buffer.read()) > 100000 else 'small')"
+    expect: large
+  - name: Reconstruction helper produces a 12 second WAV
+    command: curl -s -o /tmp/voip-call.pcap http://{target.evidence}:8080/voip-call.pcap && curl -s -o /tmp/reconstruct.py http://{target.evidence}:8080/reconstruct.py && python3 /tmp/reconstruct.py /tmp/voip-call.pcap /tmp/call.wav >/dev/null 2>&1 && python3 -c "import wave; w=wave.open('/tmp/call.wav'); print(round(w.getnframes()/w.getframerate()))"
+    expect: '12'
+  - name: Assembled flag
+    command: echo 'OCR{v01c3_c4ll_r3c0n}'
+    expect: OCR{v01c3_c4ll_r3c0n}
+expected_flag_count: 1
+expected_flag: OCR{v01c3_c4ll_r3c0n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.45

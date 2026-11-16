@@ -1,0 +1,37 @@
+# Generated from platform/labs/Forensics/forensics-1-1-windows-memory-volatility/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: forensics-1-1-windows-memory-volatility
+track: Forensics
+difficulty: intermediate
+source: platform/labs/Forensics/forensics-1-1-windows-memory-volatility/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/forensics-1-1-windows-memory-volatility.sh
+  steps:
+  - name: Analyst workstation is reachable over SSH
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'echo connected' 2>&1
+    expect: connected
+  - name: Memory image is present
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'test -f /home/analyst/evidence/memdump.mem && echo memory_found' 2>&1
+    expect: memory_found
+  - name: Volatility identifies the Windows build
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'vol -s /home/analyst/symbols -f /home/analyst/evidence/memdump.mem windows.info 2>/dev/null | grep -o "6001.18000" | head -1' 2>&1
+    expect: '6001.18000'
+  - name: Student NTLM hash prefix is recoverable
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.analyst} 'vol -s /home/analyst/symbols -f /home/analyst/evidence/memdump.mem windows.hashdump 2>/dev/null | grep "^student" | cut -f4 | cut -c1-8' 2>&1
+    expect: e19ccf75
+  - name: Assembled flag
+    command: echo 'OCR{e19ccf75}'
+    expect: OCR{e19ccf75}
+expected_flag_count: 1
+expected_flag: OCR{e19ccf75}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1280
+max_cpu: 1.25

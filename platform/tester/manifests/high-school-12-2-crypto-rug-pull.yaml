@@ -1,0 +1,39 @@
+# Generated from platform/labs/High School/high-school-12-2-crypto-rug-pull/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-12-2-crypto-rug-pull
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-12-2-crypto-rug-pull/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-12-2-crypto-rug-pull.sh
+  steps:
+  - name: Token page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Ledger is available
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/ledger.json
+    expect: '200'
+  - name: Ledger contains the outgoing transfer to the drained wallet
+    command: curl -s http://{target.portal}:8080/ledger.json | grep -c 'to.*0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f'
+    expect: '1'
+  - name: A wrong wallet has no case file
+    command: curl -s -o /dev/null -w '%{http_code}' 'http://{target.portal}:8080/case?wallet=0x7a1c3e5b9d2f4a6c8e0b1d3f5a7c9e2b4d6f8a0c'
+    expect: '404'
+  - name: The drained wallet reveals the case token
+    command: curl -s 'http://{target.portal}:8080/case?wallet=0x9f2c4a7b1e5d8c3f6a2b9d0e4c7f1a8b3d6e9c2f' | grep -o 'OCR{[^}]*}'
+    expect: OCR{follow_the_liquidity_not_the_hype}
+expected_flag_count: 1
+expected_flag: OCR{follow_the_liquidity_not_the_hype}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

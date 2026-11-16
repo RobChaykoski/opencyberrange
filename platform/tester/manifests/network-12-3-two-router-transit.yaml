@@ -1,0 +1,41 @@
+# Generated from platform/labs/Network/network-12-3-two-router-transit/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-12-3-two-router-transit
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-12-3-two-router-transit/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-12-3-two-router-transit.sh
+  steps:
+  - name: SSH to the workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'echo connected' 2>&1
+    expect: connected
+  - name: Workstation uses r1 as its default route
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'ip route | grep default' 2>&1
+    expect: default via
+  - name: Both routers forward IPv4
+    command: for h in {target.r1} {target.r2}; do sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@$h 'cat /proc/sys/net/ipv4/ip_forward' 2>&1; done
+    expect: '1'
+  - name: r1 has a route to the service link
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.r1} 'ip route' 2>&1
+    expect: via
+  - name: Retrieve the flag through both routers
+    command: IP=$(curl -s --connect-timeout 5 http://{target.r2}:8080/status | jq -r '.links[] | select(.peer=="svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "wget -qO- http://$IP/flag" 2>&1
+    expect: OCR{tw0_r0ut3rs_0n3_p4th}
+expected_flag_count: 1
+expected_flag: OCR{tw0_r0ut3rs_0n3_p4th}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

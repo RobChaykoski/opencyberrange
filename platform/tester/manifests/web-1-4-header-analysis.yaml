@@ -1,0 +1,31 @@
+# Generated from platform/labs/Web/web-1-4-header-analysis/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-1-4-header-analysis
+track: Web
+difficulty: beginner
+source: platform/labs/Web/web-1-4-header-analysis/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-1-4-header-analysis.sh
+  steps:
+  - name: Web server responds on port 80
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webserver}/
+    expect: '200'
+  - name: Information disclosure headers present
+    command: curl -sI http://{target.webserver}/ | grep -i 'X-Debug-Mode'
+    expect: enabled
+  - name: Flag in X-Secret-Key header on headers endpoint
+    command: curl -sI http://{target.webserver}/headers.php | grep -o 'OCR{[^}]*}'
+    expect: OCR{h34d3r_4n4lys1s_b4s1c}
+expected_flag_count: 1
+expected_flag: OCR{h34d3r_4n4lys1s_b4s1c}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

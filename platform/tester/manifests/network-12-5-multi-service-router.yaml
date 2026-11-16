@@ -1,0 +1,38 @@
+# Generated from platform/labs/Network/network-12-5-multi-service-router/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-12-5-multi-service-router
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-12-5-multi-service-router/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-12-5-multi-service-router.sh
+  steps:
+  - name: Router reports three links
+    command: curl -s --connect-timeout 5 http://{target.r1}:8080/status | jq -r '.links | length'
+    expect: '3'
+  - name: Workstation uses the router
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'ip route | grep default' 2>&1
+    expect: default via
+  - name: Status service is reachable through the router
+    command: IP=$(curl -s --connect-timeout 5 http://{target.r1}:8080/status | jq -r '.links[] | select(.peer=="svc2") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "wget -qO- http://$IP:8080/status" 2>&1
+    expect: '"node": "svc2"'
+  - name: Flag service is reachable through the router
+    command: IP=$(curl -s --connect-timeout 5 http://{target.r1}:8080/status | jq -r '.links[] | select(.peer=="svc1") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "wget -qO- http://$IP/flag" 2>&1
+    expect: OCR{mult1_s3rv1c3_r0ut3}
+expected_flag_count: 1
+expected_flag: OCR{mult1_s3rv1c3_r0ut3}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

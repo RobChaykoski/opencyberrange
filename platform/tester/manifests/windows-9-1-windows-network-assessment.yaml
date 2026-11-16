@@ -1,0 +1,35 @@
+# Generated from platform/labs/Windows/windows-9-1-windows-network-assessment/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-9-1-windows-network-assessment
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-9-1-windows-network-assessment/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 445
+  protocol: tcp
+- port: 3389
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-9-1-windows-network-assessment.sh
+  steps:
+  - name: Verify SMB and RDP services are running
+    command: nmap -sV -p 445,3389 {target.target}
+    expect: 445/tcp
+  - name: Verify HTTP service is accessible
+    command: curl -s http://{target.target}/
+    expect: flag
+  - name: Retrieve flag via HTTP
+    command: curl -s http://{target.target}/flag.txt
+    expect: OCR{n3tw0rk_3num}
+expected_flag_count: 1
+expected_flag: OCR{n3tw0rk_3num}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

@@ -1,0 +1,33 @@
+# Generated from platform/labs/High School/high-school-9-3-cyberchef-base64-basics/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-9-3-cyberchef-base64-basics
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-9-3-cyberchef-base64-basics/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-9-3-cyberchef-base64-basics.sh
+  steps:
+  - name: Practice target responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Message file is served
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/message.txt
+    expect: '200'
+  - name: Base64 message decodes to the training token
+    command: curl -s http://{target.portal}:8080/message.txt | base64 -d | grep -o 'OCR{[^}]*}'
+    expect: OCR{b4s364_is_encoding_not_encryption}
+expected_flag_count: 1
+expected_flag: OCR{b4s364_is_encoding_not_encryption}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

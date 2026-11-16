@@ -1,0 +1,45 @@
+# Generated from platform/labs/High School/high-school-9-8-forwarded-message/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-9-8-forwarded-message
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-9-8-forwarded-message/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-9-8-forwarded-message.sh
+  steps:
+  - name: Practice mirror responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Forwarded notice is served
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/notice.txt
+    expect: '200'
+  - name: Notice does not expose the token in plain text
+    command: curl -s http://{target.portal}:8080/notice.txt | grep -o 'OCR{' | wc -l | tr -d ' '
+    expect: '0'
+  - name: Notice uses the lookalike host and userinfo trick
+    command: curl -s http://{target.portal}:8080/notice.txt | grep -c 'communitycentre.example@grant-portal-secure.example'
+    expect: '1'
+  - name: URL decoding reveals the mirrored file path
+    command: curl -s http://{target.portal}:8080/notice.txt | python3 -c 'import sys,urllib.parse; print(urllib.parse.unquote(sys.stdin.read()))' | grep -c '/files/grant-pack.png'
+    expect: '1'
+  - name: The grant pack is actually a ZIP archive
+    command: curl -s http://{target.portal}:8080/files/grant-pack.png | python3 -c 'import sys; print(sys.stdin.buffer.read(2))'
+    expect: b'PK'
+  - name: Extracting the grant pack reveals the token
+    command: curl -s http://{target.portal}:8080/files/grant-pack.png | python3 -c 'import sys,io,zipfile; print(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read("token.txt").decode())' | grep -o 'OCR{[^}]*}'
+    expect: OCR{decode_then_verify_then_open}
+expected_flag_count: 1
+expected_flag: OCR{decode_then_verify_then_open}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

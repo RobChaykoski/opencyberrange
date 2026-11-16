@@ -1,0 +1,45 @@
+# Generated from platform/labs/High School/high-school-10-3-email-metadata/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-10-3-email-metadata
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-10-3-email-metadata/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-10-3-email-metadata.sh
+  steps:
+  - name: Practice page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.mail}:8080/
+    expect: '200'
+  - name: Raw email is served
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.mail}:8080/email.eml
+    expect: '200'
+  - name: Message has authentication results
+    command: curl -s http://{target.mail}:8080/email.eml | grep -c 'Authentication-Results:'
+    expect: '1'
+  - name: SPF result is a failure
+    command: curl -s http://{target.mail}:8080/email.eml | grep -c 'spf=fail'
+    expect: '1'
+  - name: Message has three routing hops
+    command: curl -s http://{target.mail}:8080/email.eml | grep -c '^Received:'
+    expect: '3'
+  - name: Custom case metadata is present
+    command: curl -s http://{target.mail}:8080/email.eml | grep -c '^X-OCR-Case-Token:'  # security-delta: allow credential-like assignment - lab fixture
+    expect: '1'
+  - name: Case metadata reveals the training token
+    command: curl -s http://{target.mail}:8080/email.eml | grep '^X-OCR-Case-Token:' | grep -o 'OCR{[^}]*}'  # security-delta: allow credential-like assignment - lab fixture
+    expect: OCR{headers_tell_the_real_story}
+expected_flag_count: 1
+expected_flag: OCR{headers_tell_the_real_story}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

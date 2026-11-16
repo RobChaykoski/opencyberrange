@@ -1,0 +1,31 @@
+# Generated from platform/labs/Network/network-0-2-dns-basics/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-0-2-dns-basics
+track: Network
+difficulty: beginner
+source: platform/labs/Network/network-0-2-dns-basics/lab.yaml
+expected_services:
+- port: 53
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-0-2-dns-basics.sh
+  steps:
+  - name: DNS server answers an A query
+    command: dig @{target.target} portal.range.local A +short | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' && echo address-ok
+    expect: address-ok
+  - name: Alias points at the portal name
+    command: dig @{target.target} alias.range.local CNAME +short
+    expect: portal.range.local.
+  - name: TXT record contains the flag
+    command: dig @{target.target} _note.range.local TXT +short
+    expect: OCR{dns_1s_th3_ph0n3b00k}
+expected_flag_count: 1
+expected_flag: OCR{dns_1s_th3_ph0n3b00k}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 320
+max_cpu: 0.35

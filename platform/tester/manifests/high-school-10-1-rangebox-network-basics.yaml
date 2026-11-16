@@ -1,0 +1,30 @@
+# Generated from platform/labs/High School/high-school-10-1-rangebox-network-basics/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-10-1-rangebox-network-basics
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-10-1-rangebox-network-basics/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-10-1-rangebox-network-basics.sh
+  steps:
+  - name: Status endpoint responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.network}:8080/status.json
+    expect: '200'
+  - name: Response includes the training-token header
+    command: curl -s -D - -o /dev/null http://{target.network}:8080/status.json | python3 -c "import sys; print(next(line.split(':', 1)[1].strip() for line in sys.stdin if line.lower().startswith('x-ocr-token:')))"  # security-delta: allow credential-like assignment - lab fixture
+    expect: OCR{h34d3rs_t3ll_st0r13s}
+expected_flag_count: 1
+expected_flag: OCR{h34d3rs_t3ll_st0r13s}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

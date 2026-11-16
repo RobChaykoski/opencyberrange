@@ -227,7 +227,7 @@ These are current, checkable counts from this repository and metrics the platfor
 | Breadth of hands-on practice | Runnable exercises, tracks, and levels | **160** labs expose a workbook page and appear in the generated curriculum table below |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **168 workbook pages**, **113 analysis sections**, **413 analysis questions** |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
-| Automated verification | Per-lab validation checks and flag checks | **650+ validation checks**; flags are stored as hashes |
+| Automated verification | Per-lab validation checks and flag checks | **191 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
 | Course delivery | Assignments, completion, course health, and feedback | Per-student completion, attempt, hint, time, and private feedback records |
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |

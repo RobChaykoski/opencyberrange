@@ -1,0 +1,31 @@
+# Generated from platform/labs/Linux/linux-2-5-ssh-history-analysis/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-2-5-ssh-history-analysis
+track: Linux
+difficulty: intermediate
+source: platform/labs/Linux/linux-2-5-ssh-history-analysis/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-2-5-ssh-history-analysis.sh
+  steps:
+  - name: Verify SSH port is open
+    command: nc -z -w 5 {target.target} 22 && echo 'port_open'
+    expect: port_open
+  - name: SSH banner check
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: SSH login and retrieve flag from bash history
+    command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.ssh-user.user}@{target.target} 'grep OCR ~/.bash_history 2>/dev/null' 2>&1
+    expect: OCR{h1st0ry_l34k}
+expected_flag_count: 1
+expected_flag: OCR{h1st0ry_l34k}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

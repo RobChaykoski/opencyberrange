@@ -1,0 +1,48 @@
+# Generated from platform/labs/Linux/linux-1-8-service-triage/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-1-8-service-triage
+track: Linux
+difficulty: beginner
+source: platform/labs/Linux/linux-1-8-service-triage/lab.yaml
+expected_services:
+- port: 21
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-1-8-service-triage.sh
+  steps:
+  - name: Verify target-alpha responds
+    command: nmap -sn {target.target-alpha} 2>&1 | grep -c 'Host is up'
+    expect: '1'
+  - name: Verify target-bravo responds
+    command: nmap -sn {target.target-bravo} 2>&1 | grep -c 'Host is up'
+    expect: '1'
+  - name: Verify target-charlie responds
+    command: nmap -sn {target.target-charlie} 2>&1 | grep -c 'Host is up'
+    expect: '1'
+  - name: Target-charlie web page contains Vanguard
+    command: curl -s http://{target.target-charlie}/ | grep -q 'Vanguard' && echo yes
+    expect: 'yes'
+  - name: Extract token 1 from target-charlie web page
+    command: 'curl -s http://{target.target-charlie}/ | grep -o ''Token: [a-z0-9_]*'' | awk ''{print $2}'''
+    expect: tr14g3
+  - name: Extract token 2 from target-charlie FTP
+    command: curl -s ftp://{target.target-charlie}/token.txt --connect-timeout 10
+    expect: r34l
+  - name: Extract token 3 from target-charlie port 9999
+    command: 'timeout 3 bash -c ''cat < /dev/tcp/{target.target-charlie}/9999'' 2>&1 | grep -o ''Token: [a-z0-9_]*'' | awk ''{print $2}'''
+    expect: t4rg3t
+  - name: Verify complete flag
+    command: echo 'OCR{tr14g3_r34l_t4rg3t}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{tr14g3_r34l_t4rg3t}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

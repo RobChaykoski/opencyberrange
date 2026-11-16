@@ -1,0 +1,34 @@
+# Generated from platform/labs/Web/web-1-3-http-methods-enumeration/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-1-3-http-methods-enumeration
+track: Web
+difficulty: beginner
+source: platform/labs/Web/web-1-3-http-methods-enumeration/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-1-3-http-methods-enumeration.sh
+  steps:
+  - name: Web server responds on port 80
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webserver}/
+    expect: '200'
+  - name: OPTIONS method returns allowed methods
+    command: curl -s -X OPTIONS http://{target.webserver}/
+    expect: GET, POST, PUT, DELETE, OPTIONS, TRACE
+  - name: PUT method triggers flag creation
+    command: curl -s -X PUT http://{target.webserver}/ -d 'test'
+    expect: PUT method accepted
+  - name: Flag file accessible after PUT
+    command: curl -s http://{target.webserver}/uploads/flag.txt
+    expect: OCR{http_m3th0ds_3num3r4t10n}
+expected_flag_count: 1
+expected_flag: OCR{http_m3th0ds_3num3r4t10n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

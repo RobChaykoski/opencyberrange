@@ -1,0 +1,30 @@
+# Generated from platform/labs/High School/high-school-10-2-rangebox-browser-and-source/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-10-2-rangebox-browser-and-source
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-10-2-rangebox-browser-and-source/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-10-2-rangebox-browser-and-source.sh
+  steps:
+  - name: Staff notes page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.web}:8080/staff-notes.html
+    expect: '200'
+  - name: Page source contains the training token
+    command: curl -s http://{target.web}:8080/staff-notes.html | grep -o 'OCR{[^}]*}'
+    expect: OCR{v13w_th3_s0urc3}
+expected_flag_count: 1
+expected_flag: OCR{v13w_th3_s0urc3}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

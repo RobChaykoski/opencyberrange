@@ -1,0 +1,33 @@
+# Generated from platform/labs/Windows/windows-5-1-winrm-service-detection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-5-1-winrm-service-detection
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-5-1-winrm-service-detection/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 5985
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-5-1-winrm-service-detection.sh
+  steps:
+  - name: Verify SSH port 22 is open
+    command: nmap -Pn -p 22 {target.target} | grep '22/tcp'
+    expect: open
+  - name: Verify WinRM HTTP port 5985 is open
+    command: nmap -Pn -p 5985 {target.target} | grep '5985/tcp'
+    expect: open
+  - name: Retrieve flag via SSH
+    command: sshpass -p '{cred.winrm-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.winrm-user.user}@{target.target} 'cat /home/admin/flag.txt'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{w1nrm_d3t3ct}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

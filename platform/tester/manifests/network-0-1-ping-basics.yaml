@@ -1,0 +1,31 @@
+# Generated from platform/labs/Network/network-0-1-ping-basics/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-0-1-ping-basics
+track: Network
+difficulty: beginner
+source: platform/labs/Network/network-0-1-ping-basics/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-0-1-ping-basics.sh
+  steps:
+  - name: Host answers ICMP echo requests
+    command: ping -c 2 -W 2 {target.target}
+    expect: 0% packet loss
+  - name: Maintenance page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/
+    expect: '200'
+  - name: Flag is on the maintenance page
+    command: curl -s http://{target.target}/ | grep -o 'OCR{[^}]*}'
+    expect: OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}
+expected_flag_count: 1
+expected_flag: OCR{ping_pr0v3s_th3_h0st_n0t_th3_s3rv1c3}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 320
+max_cpu: 0.35

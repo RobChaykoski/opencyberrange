@@ -1,0 +1,47 @@
+# Generated from platform/labs/Network/network-12-6-appliance-segment/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-12-6-appliance-segment
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-12-6-appliance-segment/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 18080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-12-6-appliance-segment.sh
+  steps:
+  - name: SSH to the appliance
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'head -1 /etc/openwrt_release' 2>&1
+    expect: OpenWrt
+  - name: The appliance has two IPv4 segments
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'ip -4 -o addr show | grep global | wc -l' 2>&1
+    expect: '2'
+  - name: The appliance forwards IPv4
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1
+    expect: '1'
+  - name: The protected segment is not directly reachable
+    command: curl -s -o /dev/null -w '%{http_code}' --connect-timeout 3 http://protected/flag || true
+    expect: '000'
+  - name: The forward policy is default-deny
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'nft list chain inet labfw forward' 2>&1
+    expect: policy drop
+  - name: The appliance reaches the protected service
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} 'wget -q -O - http://protected/flag' 2>&1
+    expect: OCR{
+  - name: Pivot through the appliance and retrieve the flag
+    command: PIP=$(sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR {cred.analyst.user}@{target.appliance} "nslookup protected" | sed -n 's/^Address:[[:space:]]*//p' | tail -1); sshpass -p '{cred.analyst.pass}' ssh -f -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR -L 18080:$PIP:80 {cred.analyst.user}@{target.appliance}; sleep 1; curl -s --noproxy '*' http://127.0.0.1:18080/flag
+    expect: OCR{appl1ance_s3gm3nt_p1v0t}
+expected_flag_count: 1
+expected_flag: OCR{appl1ance_s3gm3nt_p1v0t}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

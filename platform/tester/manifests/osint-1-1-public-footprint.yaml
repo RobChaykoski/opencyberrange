@@ -1,0 +1,33 @@
+# Generated from platform/labs/OSINT/osint-1-1-public-footprint/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-1-1-public-footprint
+track: OSINT
+difficulty: beginner
+source: platform/labs/OSINT/osint-1-1-public-footprint/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/osint-1-1-public-footprint.sh
+  steps:
+  - name: Intranet dashboard responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/
+    expect: '200'
+  - name: robots.txt exposes the review path
+    command: curl -s http://{target.intranet}:8080/robots.txt | grep -o '/people/[a-z.]*/notes'
+    expect: /people/dana.whitfield/notes
+  - name: Flag is present in the notes page source
+    command: curl -s http://{target.intranet}:8080/people/dana.whitfield/notes | grep -o 'OCR{[^}]*}'
+    expect: OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}
+expected_flag_count: 1
+expected_flag: OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 416
+max_cpu: 0.45

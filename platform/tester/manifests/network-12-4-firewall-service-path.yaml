@@ -1,0 +1,44 @@
+# Generated from platform/labs/Network/network-12-4-firewall-service-path/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-12-4-firewall-service-path
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-12-4-firewall-service-path/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-12-4-firewall-service-path.sh
+  steps:
+  - name: SSH to the workstation
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'echo connected' 2>&1
+    expect: connected
+  - name: Workstation uses the router
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} 'ip route | grep default' 2>&1
+    expect: default via
+  - name: Router forwards IPv4
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} 'cat /proc/sys/net/ipv4/ip_forward' 2>&1
+    expect: '1'
+  - name: Apply the forward-chain policy
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.fw} "nft delete table inet ocr 2>/dev/null; nft add table inet ocr; nft add chain inet ocr forward '{ type filter hook forward priority 0; policy accept; }'; nft add rule inet ocr forward tcp dport 8080 drop; nft list chain inet ocr forward" 2>&1
+    expect: tcp dport 8080 drop
+  - name: Blocked status port is unreachable
+    command: IP=$(curl -s --connect-timeout 5 http://{target.fw}:8080/status | jq -r '.links[] | select(.peer=="svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "if wget -qO- --timeout=2 http://$IP:8080/status; then echo reachable; else echo blocked; fi" 2>&1
+    expect: blocked
+  - name: Allowed HTTP path still returns the flag
+    command: IP=$(curl -s --connect-timeout 5 http://{target.fw}:8080/status | jq -r '.links[] | select(.peer=="svc") | .peer_ip'); sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.h1} "wget -qO- http://$IP/flag" 2>&1
+    expect: OCR{f1r3w4ll_p4th}
+expected_flag_count: 1
+expected_flag: OCR{f1r3w4ll_p4th}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

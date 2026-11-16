@@ -1,0 +1,36 @@
+# Generated from platform/labs/Network/network-12-2-firewall-policy-hardening/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-12-2-firewall-policy-hardening
+track: Network
+difficulty: intermediate
+source: platform/labs/Network/network-12-2-firewall-policy-hardening/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-12-2-firewall-policy-hardening.sh
+  steps:
+  - name: SSH to firewall
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'echo connected' 2>&1
+    expect: connected
+  - name: Traffic generator is active
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo monitor --count 5 2>/dev/null | head -10' 2>&1
+    expect: ALLOW
+  - name: Web server responds on HTTP
+    command: curl -s -o /dev/null -w '%{http_code}' --connect-timeout 5 http://{target.webserver}/
+    expect: '200'
+  - name: Apply default-deny policy and validate
+    command: sshpass -p '{cred.analyst.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null {cred.analyst.user}@{target.firewall} 'sudo iptables -F FORWARD && sudo iptables -A FORWARD -p tcp --dport 80 -j ACCEPT && sudo iptables -A FORWARD -p tcp --dport 443 -j ACCEPT && sudo iptables -A FORWARD -j DROP && sleep 3 && sudo check-rules' 2>&1
+    expect: OCR{d3f4ult_d3ny_m4st3r}
+expected_flag_count: 1
+expected_flag: OCR{d3f4ult_d3ny_m4st3r}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.75

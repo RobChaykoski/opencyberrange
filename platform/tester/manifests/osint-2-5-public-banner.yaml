@@ -1,0 +1,36 @@
+# Generated from platform/labs/OSINT/osint-2-5-public-banner/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-2-5-public-banner
+track: OSINT
+difficulty: beginner
+source: platform/labs/OSINT/osint-2-5-public-banner/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/osint-2-5-public-banner.sh
+  steps:
+  - name: Mirror responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.shodan}:8080/
+    expect: '200'
+  - name: Organisation query returns the build host
+    command: curl -s 'http://{target.shodan}:8080/?q=org:%22Kestrel%20Ridge%22' | grep -o 'build.kestrel-ridge.example'
+    expect: build.kestrel-ridge.example
+  - name: Product query returns the flag banner
+    command: curl -s 'http://{target.shodan}:8080/?q=product:Jenkins' | grep -o 'OCR{[^}]*}'
+    expect: OCR{sh0d4n_b4nn3r_l34k}
+  - name: JSON API returns the flag
+    command: curl -s 'http://{target.shodan}:8080/api/hosts?q=product:Jenkins' | grep -o 'OCR{[^}]*}'
+    expect: OCR{sh0d4n_b4nn3r_l34k}
+expected_flag_count: 1
+expected_flag: OCR{sh0d4n_b4nn3r_l34k}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 416
+max_cpu: 0.45

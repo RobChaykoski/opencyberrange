@@ -1,0 +1,36 @@
+# Generated from platform/labs/Windows/windows-1-3-windows-service-version-detection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-1-3-windows-service-version-detection
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-1-3-windows-service-version-detection/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-1-3-windows-service-version-detection.sh
+  steps:
+  - name: Verify SMB port 445 is open
+    command: nmap -Pn -p 445 {target.target} | grep '445/tcp'
+    expect: open
+  - name: Detect service versions with nmap -sV
+    command: nmap -Pn -sV -p 445,80 {target.target} | grep 'open'
+    expect: open
+  - name: Confirm Samba version in service detection
+    command: nmap -Pn -sV -p 445 {target.target}
+    expect: Samba
+  - name: Retrieve flag from SMB public share
+    command: smbclient //{target.target}/public -N -c 'get flag.txt -' 2>&1
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{v3rs10n_d3t3ct10n}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

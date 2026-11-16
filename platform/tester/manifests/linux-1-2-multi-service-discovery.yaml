@@ -1,0 +1,47 @@
+# Generated from platform/labs/Linux/linux-1-2-multi-service-discovery/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-1-2-multi-service-discovery
+track: Linux
+difficulty: beginner
+source: platform/labs/Linux/linux-1-2-multi-service-discovery/lab.yaml
+expected_services:
+- port: 21
+  protocol: tcp
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-1-2-multi-service-discovery.sh
+  steps:
+  - name: Verify FTP port is open
+    command: nc -z -w 5 {target.target} 21 && echo 'port_open'
+    expect: port_open
+  - name: Verify SSH port is open
+    command: nc -z -w 5 {target.target} 22 && echo 'port_open'
+    expect: port_open
+  - name: Verify HTTP port is open
+    command: nc -z -w 5 {target.target} 80 && echo 'port_open'
+    expect: port_open
+  - name: Scan all three services with nmap
+    command: nmap -Pn -n -p 21,22,80 -sV {target.target} 2>&1
+    expect: ftp
+  - name: Retrieve flag part 2 from HTTP page
+    command: curl -s http://{target.target}/ 2>&1 | grep -o 's3rv1c3}'
+    expect: s3rv1c3}
+  - name: Retrieve full flag from HTTP source
+    command: 'curl -s http://{target.target}/ 2>&1 | grep -o ''Flag Part 2: [^-]*'' | head -1'
+    expect: s3rv1c3}
+  - name: Combine flag parts from FTP and HTTP
+    command: 'FTP_PART=$( (curl -s --ftp-port - ftp://anonymous@{target.target}/pub/readme.txt --connect-timeout 10 || curl -s ftp://anonymous@{target.target}/pub/readme.txt --connect-timeout 10) | grep -o ''OCR{[^}]*'') && HTTP_PART=$(curl -s http://{target.target}/ | grep -o ''Part 2: [^ <]*'' | sed ''s/Part 2: //'') && echo "${FTP_PART}${HTTP_PART}"'
+    expect: OCR{
+expected_flag_count: 1
+expected_flag: OCR{mult1_s3rv1c3}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1024
+max_cpu: 1.0

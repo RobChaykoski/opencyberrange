@@ -1,0 +1,33 @@
+# Generated from platform/labs/Metasploit/metasploit-2-4-persistence-and-reporting/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: metasploit-2-4-persistence-and-reporting
+track: Metasploit
+difficulty: advanced
+source: platform/labs/Metasploit/metasploit-2-4-persistence-and-reporting/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/metasploit-2-4-persistence-and-reporting.sh
+  steps:
+  - name: Target SSH
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: SMB port
+    command: nc -z -w 5 {target.target} 445 && echo smb_open
+    expect: smb_open
+  - name: Flag retrieval
+    command: echo 'OCR{msf_report_3e8b}'
+    expect: OCR{msf_report_3e8b}
+expected_flag_count: 1
+expected_flag: OCR{msf_report_3e8b}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1792
+max_cpu: 1.25

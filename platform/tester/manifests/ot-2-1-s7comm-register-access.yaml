@@ -1,0 +1,26 @@
+# Generated from platform/labs/OT/ot-2-1-s7comm-register-access/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: ot-2-1-s7comm-register-access
+track: OT
+difficulty: intermediate
+source: platform/labs/OT/ot-2-1-s7comm-register-access/lab.yaml
+expected_services: []
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/ot-2-1-s7comm-register-access.sh
+  steps:
+  - name: S7comm port is reachable
+    command: python3 -c "import socket;s=socket.create_connection(('{target.plc}',102),5);s.close();print('ok')"
+    expect: ok
+  - name: DB1 contains the analyst marker
+    command: python3 -c "import snap7;c=snap7.client.Client();c.connect('{target.plc}',0,1);d=c.db_read(1,0,96);print(d[32:].split(bytes([0]))[0].decode())"
+    expect: OCR{s7c0mm_db_r34d_3xp0s3d}
+expected_flag_count: 1
+expected_flag: OCR{s7c0mm_db_r34d_3xp0s3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

@@ -1,0 +1,40 @@
+# Generated from platform/labs/Linux/linux-1-4-non-standard-port-discovery/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-1-4-non-standard-port-discovery
+track: Linux
+difficulty: beginner
+source: platform/labs/Linux/linux-1-4-non-standard-port-discovery/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 80
+  protocol: tcp
+- port: 22222
+  protocol: tcp
+- port: 34567
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-1-4-non-standard-port-discovery.sh
+  steps:
+  - name: Verify HTTP on non-standard port 34567
+    command: curl -s http://{target.target}:34567/ 2>&1 | grep -o 'TechStart Engineering'
+    expect: TechStart Engineering
+  - name: Verify SSH on non-standard port 22222
+    command: nc -z -w 5 {target.target} 22222 && echo 'port_open'
+    expect: port_open
+  - name: Scan non-standard ports with nmap
+    command: nmap -Pn -n -p 22222,34567 -sV {target.target} 2>&1
+    expect: ssh
+  - name: SSH login and retrieve flag
+    command: sshpass -p '{cred.ssh-user.pass}' ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22222 {cred.ssh-user.user}@{target.target} 'cat /home/techstart/flag.txt' 2>&1
+    expect: OCR{n0n_st4nd4rd}
+expected_flag_count: 1
+expected_flag: OCR{n0n_st4nd4rd}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

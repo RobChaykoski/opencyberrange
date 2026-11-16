@@ -1,0 +1,39 @@
+# Generated from platform/labs/High School/high-school-11-2-media-provenance/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-11-2-media-provenance
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-11-2-media-provenance/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-11-2-media-provenance.sh
+  steps:
+  - name: Verification desk responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Archive lists both submissions
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/archive
+    expect: '200'
+  - name: Provenance data identifies the synthetic tool
+    command: curl -s http://{target.portal}:8080/provenance.json | grep -c 'synthetic-media-studio'
+    expect: '1'
+  - name: The synthetic item has no verification token
+    command: curl -s -o /dev/null -w '%{http_code}' 'http://{target.portal}:8080/verify?id=lantern-festival'
+    expect: '403'
+  - name: The supported item reveals the training token
+    command: curl -s 'http://{target.portal}:8080/verify?id=river-cleanup' | grep -o 'OCR{[^}]*}'
+    expect: OCR{provenance_beats_visual_tells}
+expected_flag_count: 1
+expected_flag: OCR{provenance_beats_visual_tells}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

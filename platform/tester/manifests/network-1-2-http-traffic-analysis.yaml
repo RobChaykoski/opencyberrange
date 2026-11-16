@@ -1,0 +1,31 @@
+# Generated from platform/labs/Network/network-1-2-http-traffic-analysis/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: network-1-2-http-traffic-analysis
+track: Network
+difficulty: beginner
+source: platform/labs/Network/network-1-2-http-traffic-analysis/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/network-1-2-http-traffic-analysis.sh
+  steps:
+  - name: HTTP server responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/
+    expect: '200'
+  - name: PCAP file accessible
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.target}/capture.pcap
+    expect: '200'
+  - name: Flag found in PCAP file
+    command: curl -s http://{target.target}/capture.pcap | strings | grep -o 'OCR{[^}]*}' | head -1
+    expect: OCR{http_cr3d3nt14ls}
+expected_flag_count: 1
+expected_flag: OCR{http_cr3d3nt14ls}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

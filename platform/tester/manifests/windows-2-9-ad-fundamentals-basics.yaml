@@ -1,0 +1,28 @@
+# Generated from platform/labs/Windows/windows-2-9-ad-fundamentals-basics/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-2-9-ad-fundamentals-basics
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-2-9-ad-fundamentals-basics/lab.yaml
+expected_services:
+- port: 389
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/windows-2-9-ad-fundamentals-basics.sh
+  steps:
+  - name: Bind with the training administrator and find the service account
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1
+    expect: S3rv1ce!Pass
+  - name: Recover the case token from the description
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-backup)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{ad_c0nc3pts_ld4p}
+expected_flag_count: 1
+expected_flag: OCR{ad_c0nc3pts_ld4p}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

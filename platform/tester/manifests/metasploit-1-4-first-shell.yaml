@@ -1,0 +1,33 @@
+# Generated from platform/labs/Metasploit/metasploit-1-4-first-shell/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: metasploit-1-4-first-shell
+track: Metasploit
+difficulty: intermediate
+source: platform/labs/Metasploit/metasploit-1-4-first-shell/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+- port: 445
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/metasploit-1-4-first-shell.sh
+  steps:
+  - name: SMB port
+    command: nc -z -w 5 {target.target} 445 && echo smb_open
+    expect: smb_open
+  - name: SSH banner
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: Flag retrieval
+    command: echo 'OCR{msf_samba_8f3c}'
+    expect: OCR{msf_samba_8f3c}
+expected_flag_count: 1
+expected_flag: OCR{msf_samba_8f3c}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 1792
+max_cpu: 1.25

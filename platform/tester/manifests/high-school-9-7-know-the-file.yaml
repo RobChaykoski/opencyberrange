@@ -1,0 +1,39 @@
+# Generated from platform/labs/High School/high-school-9-7-know-the-file/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: high-school-9-7-know-the-file
+track: High School
+difficulty: beginner
+source: platform/labs/High School/high-school-9-7-know-the-file/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/high-school-9-7-know-the-file.sh
+  steps:
+  - name: Practice page responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
+    expect: '200'
+  - name: Shared folder listing responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/downloads/
+    expect: '200'
+  - name: The photo is actually a ZIP archive
+    command: curl -s http://{target.portal}:8080/downloads/event-photo.png | python3 -c 'import sys; print(sys.stdin.buffer.read(2))'
+    expect: b'PK'
+  - name: The budget file is plain text with a decoy token
+    command: curl -s http://{target.portal}:8080/downloads/budget.pdf | grep -o 'OCR{[^}]*}'
+    expect: OCR{d3c0y_n0t_th3_r34l_fl4g}
+  - name: Extracting the archive reveals the real token
+    command: curl -s http://{target.portal}:8080/downloads/event-photo.png | python3 -c 'import sys,io,zipfile; print(zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())).read("token.txt").decode())' | grep -o 'OCR{[^}]*}'
+    expect: OCR{extensions_are_labels_not_evidence}
+expected_flag_count: 1
+expected_flag: OCR{extensions_are_labels_not_evidence}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 384
+max_cpu: 0.4

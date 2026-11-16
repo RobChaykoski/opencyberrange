@@ -1,0 +1,34 @@
+# Generated from platform/labs/Linux/linux-1-1-ssh-service-detection/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: linux-1-1-ssh-service-detection
+track: Linux
+difficulty: beginner
+source: platform/labs/Linux/linux-1-1-ssh-service-detection/lab.yaml
+expected_services:
+- port: 22
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/linux-1-1-ssh-service-detection.sh
+  steps:
+  - name: Verify SSH port is open
+    command: nc -z -w 5 {target.target} 22 && echo 'port_open'
+    expect: port_open
+  - name: Grab SSH banner
+    command: nc -w 5 {target.target} 22 </dev/null | head -1
+    expect: SSH
+  - name: Detect SSH service with nmap version scan
+    command: nmap -Pn -n -p 22 -sV {target.target} 2>&1
+    expect: ssh
+  - name: Retrieve flag from SSH service banner
+    command: nmap -Pn -n -p 22 -sV {target.target} 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{ssh_d3t3ct3d}
+expected_flag_count: 1
+expected_flag: OCR{ssh_d3t3ct3d}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 768
+max_cpu: 0.75

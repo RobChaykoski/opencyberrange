@@ -1,0 +1,33 @@
+# Generated from platform/labs/OSINT/osint-2-1-source-code-intelligence/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: osint-2-1-source-code-intelligence
+track: OSINT
+difficulty: intermediate
+source: platform/labs/OSINT/osint-2-1-source-code-intelligence/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+- port: 8080
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr/tester:current
+  command: /tests/osint-2-1-source-code-intelligence.sh
+  steps:
+  - name: Dashboard responds
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/
+    expect: '200'
+  - name: JavaScript asset is served
+    command: curl -s -o /dev/null -w '%{http_code}' http://{target.intranet}:8080/static/app.js
+    expect: '200'
+  - name: Flag is present in a JavaScript comment
+    command: curl -s http://{target.intranet}:8080/static/app.js | grep -o 'OCR{[^}]*}'
+    expect: OCR{c0d3_c0mm3nts_l34k_s3cr3ts}
+expected_flag_count: 1
+expected_flag: OCR{c0d3_c0mm3nts_l34k_s3cr3ts}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 416
+max_cpu: 0.45
