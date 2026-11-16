@@ -53,6 +53,7 @@ modules:
     estimated_minutes: 90
     prerequisites: []
     datasets: [windows-memory.md]
+    external_datasets: [SDWIN-201018195009, LSASS_campaign_02, T1003.001-atomic-red-team, CIC-MalMem-2022]
     existing_labs: [forensics-1-1-windows-memory-volatility]
     planned_labs: []
     competencies:
@@ -103,6 +104,7 @@ modules:
     estimated_minutes: 100
     prerequisites: [DFIR-01]
     datasets: [linux-memory.md]
+    external_datasets: [CIC-MalMem-2022]
     existing_labs: [forensics-3-1-live-linux-memory]
     planned_labs: []
     competencies:
@@ -128,6 +130,7 @@ modules:
     estimated_minutes: 150
     prerequisites: [DFIR-01, DFIR-03]
     datasets: [windows-artifacts.jsonl]
+    external_datasets: [SDWIN-201018195009, SDWIN-190518202151, T1003.001-atomic-red-team, T1053.005-atomic-red-team, pcap-dcsync, aman-forensics-practice-lab]
     existing_labs: []
     planned_labs: [forensics-4-1-windows-artifacts]
     competencies:
@@ -154,6 +157,7 @@ modules:
     estimated_minutes: 130
     prerequisites: [DFIR-03]
     datasets: [linux-logs.jsonl]
+    external_datasets: [SDLIN-201110074812]
     existing_labs: []
     planned_labs: [forensics-4-2-linux-log-investigation]
     competencies:
@@ -179,6 +183,7 @@ modules:
     estimated_minutes: 120
     prerequisites: [DFIR-02]
     datasets: [email-triage.json]
+    external_datasets: [T1566.001-macro, CIC-Trap4Phish-2025]
     existing_labs: []
     planned_labs: [forensics-4-3-email-triage]
     competencies:
@@ -254,6 +259,7 @@ modules:
     estimated_minutes: 180
     prerequisites: [DFIR-08]
     datasets: [disk-events.jsonl, plaso-timeline.jsonl]
+    external_datasets: [aman-forensics-practice-lab]
     existing_labs: []
     planned_labs: [forensics-6-1-disk-evidence]
     competencies:
@@ -280,6 +286,7 @@ modules:
     estimated_minutes: 180
     prerequisites: [DFIR-02, DFIR-03, DFIR-08]
     datasets: [memory-pcap-correlation.jsonl]
+    external_datasets: [SDWIN-190518210652, T1021.002-atomic-red-team, pcap-lm-psexec, pcap-zerologon]
     existing_labs: []
     planned_labs: [forensics-6-2-memory-pcap-correlation]
     competencies:
@@ -330,6 +337,7 @@ modules:
     estimated_minutes: 240
     prerequisites: [DFIR-04, DFIR-05, DFIR-06, DFIR-07, DFIR-08, DFIR-09, DFIR-10, DFIR-11]
     datasets: [ransomware-case.yaml, timeline-events.jsonl, memory-pcap-correlation.jsonl]
+    external_datasets: [LSASS_campaign_02, thezoo-cryptolocker, vx-underground-malware-archive, aman-forensics-practice-lab]
     existing_labs: []
     planned_labs: [forensics-7-2-ransomware-capstone]
     competencies:

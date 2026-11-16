@@ -70,6 +70,60 @@ their own licences; the project licence does not override them.
 - Release 4 changes are recorded in `CHANGELOG.md`, `versions.yaml`, and the
   About inventory (`platform/backend/app/data/about/about.json`).
 
+## Open lab datasets and reference sources
+
+The platform registers external lab-building sources in
+`platform/backend/app/data/external-datasets.yaml`. The registry records the
+licence, attribution, access, redistribution, commit pin, file size, and
+SHA-256 for every fetchable entry. Raw third-party datasets are not committed
+to this repository.
+
+- **Security Datasets** (MIT, <https://securitydatasets.com/introduction.html>).
+  Open-source attack telemetry from Roberto
+  Rodriguez (@Cyb3rWard0g), Jose Luis Rodriguez (@Cyb3rPandaH), and the Open
+  Threat Research community. The notice is
+  `THIRD_PARTY_LICENSES/Security-Datasets-MIT.txt`. Keep the MIT text with any
+  copied dataset. Some entries contain simulated credential material; review
+  and redact before learner use.
+- **Canadian Institute for Cybersecurity datasets** (CIC dataset terms,
+  <https://www.unb.ca/cic/datasets/index.html>). Datasets from the University
+  of New Brunswick may be redistributed,
+  republished, or mirrored when the named dataset and its research paper are
+  cited. The required citations are in
+  `THIRD_PARTY_LICENSES/UNB-CIC-CITATION.txt`. The dataset page remains the
+  authority for current terms.
+- **Splunk attack_data** (Apache-2.0,
+  <https://github.com/splunk/attack_data>). A curated attack-telemetry repository
+  from Splunk and contributors. It uses Git LFS; fetch the media object, verify
+  the registry SHA-256, and keep the Apache-2.0 licence and any NOTICE
+  requirements.
+- **theZoo** (GPL-3.0-or-later for tooling; malware samples expressly
+  excluded, <https://github.com/ytisf/theZoo>). A live-malware reference
+  collection by Yuval Nativ, Lahad Ludar,
+  5fingers, and contributors. The platform records family-level references
+  only. It never copies, downloads, executes, or serves a theZoo sample. See
+  `THIRD_PARTY_LICENSES/theZoo-GPL-3.0-NOTICE.txt` and
+  `THIRD_PARTY_LICENSES/GPL-3.0.txt`.
+- **vx-underground malware repository** (no licence declared; live malware,
+  <https://vx-underground.org/>). A malware and source-code archive. It is
+  reference-only and is never
+  downloaded, mirrored, or served by the platform. See
+  `THIRD_PARTY_LICENSES/vx-underground-NOTICE.txt`.
+- **PCAP-ATTACK** (no licence declared,
+  <https://github.com/sbousseaden/PCAP-ATTACK>). A public PCAP collection by
+  Samir Bousseaden and contributors. It is reference-only until the author grants a
+  redistribution licence. See `THIRD_PARTY_LICENSES/PCAP-ATTACK-NOTICE.txt`.
+- **Aman Hardikar Forensics Practice Lab mind map** (free to use and share;
+  attribution requested,
+  <https://www.amanhardikar.com/mindmaps/ForensicChallenges.html>). A DFIR
+  challenge and sample-image index by Aman Hardikar. It is a reading reference,
+  not a dataset licence for its linked
+  resources. See `THIRD_PARTY_LICENSES/Aman-Hardikar-NOTICE.txt`.
+
+The handling rules are in `docs/SECURITY-DATASETS.md`. Malware-source rules are
+in `docs/MALWARE-SAMPLE-SOURCES.md`. Run
+`python scripts/check-external-datasets.py` after changing the registry.
+
 ## 2.7.0 update
 
 - No new third-party runtime dependencies are shipped in 2.7.0. Level quizzes

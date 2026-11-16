@@ -86,6 +86,25 @@ The pack is synthetic. It uses documentation ranges (`10.20.0.0/24`),
 personal data, credentials, institutional evidence, keystrokes, mouse movement,
 or exhaustive terminal history.
 
+### External open datasets
+
+Modules may also point to an open dataset through `external_datasets`. The
+registry is `platform/backend/app/data/external-datasets.yaml`; the handling
+guide is [`SECURITY-DATASETS.md`](SECURITY-DATASETS.md).
+
+| Source | Use in this pathway |
+|---|---|
+| **Security Datasets** (MIT) | LSASS memory, credential access, lateral movement, APT29 Day 2, and the LSASS Procdump campaign |
+| **Splunk attack_data** (Apache-2.0) | LSASS access, scheduled tasks, SMB execution, and phishing macro evidence |
+| **Canadian Institute for Cybersecurity datasets** (citation required) | CIC-MalMem-2022 for memory triage and CIC-Trap4Phish-2025 for email triage |
+| **PCAP-ATTACK** (reference only; no licence) | Instructor reading for DCSync, PsExec, and Zerologon captures |
+| **Aman Hardikar Forensics Practice Lab mind map** (attribution) | Lab-design index for host, network, and malware practice material |
+| **theZoo** and **vx-underground malware repository** (reference only) | Family-level reading for the ransomware capstone; no sample is downloaded or served |
+
+The synthetic pack remains the learner evidence. An external source is used
+only after the registry's licence, citation, pin, and hash check passes, and
+with the credential-bearing or live-malware handling note applied.
+
 ## Existing and planned labs
 
 Existing labs:

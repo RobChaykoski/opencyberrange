@@ -145,6 +145,9 @@ jobs:
       - name: Check malware-lab governance
         run: python scripts/check-malware-governance.py
 
+      - name: Check external dataset registry and attribution
+        run: python scripts/check-external-datasets.py
+
       - name: Check minor-safe defaults
         run: python scripts/check-minor-safe.py
 

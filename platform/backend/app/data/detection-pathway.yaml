@@ -29,6 +29,7 @@ modules:
     estimated_minutes: 90
     prerequisites: []
     datasets: [windows-security.jsonl]
+    external_datasets: [SDWIN-190518210652, T1059.001-encoded-powershell, T1021.002-atomic-red-team, T1053.005-atomic-red-team, pcap-kerbrute]
     sigma_rules: []
     competencies:
       - {id: WIN-005, weight: 0.40}
@@ -50,6 +51,7 @@ modules:
     estimated_minutes: 120
     prerequisites: [DET-01]
     datasets: [sysmon.jsonl, windows-security.jsonl]
+    external_datasets: [SDWIN-190518202151, SDWIN-190518210652, T1059.001-encoded-powershell, T1021.002-atomic-red-team]
     sigma_rules: []
     competencies:
       - {id: WIN-018, weight: 0.35}
@@ -71,6 +73,7 @@ modules:
     estimated_minutes: 150
     prerequisites: [DET-02]
     datasets: [sysmon.jsonl, windows-security.jsonl]
+    external_datasets: [SDLIN-201110081941, SDWIN-201018195009, T1059.001-encoded-powershell]
     sigma_rules: [encoded_powershell.yml, lsass_access.yml]
     competencies:
       - {id: TH-007, weight: 0.35}
@@ -92,6 +95,7 @@ modules:
     estimated_minutes: 150
     prerequisites: [DET-02]
     datasets: [zeek-conn.jsonl, zeek-dns.jsonl, zeek-http.jsonl]
+    external_datasets: [SDLIN-201110074812, SDLIN-201110081941, T1048.003-nslookup-exfil, T1071.004-long-dns-query, T1071.001-zeek-http-encoded-post, CIC-Bell-DNS-EXF-2021, CIRA-CIC-DoHBrw-2020, pcap-dns-txt]
     sigma_rules: [dns_tunnel.yml]
     competencies:
       - {id: NET-029, weight: 0.30}
@@ -114,6 +118,7 @@ modules:
     estimated_minutes: 120
     prerequisites: [DET-04]
     datasets: [suricata-eve.jsonl, zeek-dns.jsonl]
+    external_datasets: [T1071.001-zeek-http-encoded-post, CIC-IDS2017, CSE-CIC-IDS2018, CIC-DDoS2019, CIC-UNSW-NB15-2024, pcap-lm-psexec, pcap-zerologon]
     sigma_rules: []
     competencies:
       - {id: SOC-001, weight: 0.35}
@@ -136,6 +141,7 @@ modules:
     estimated_minutes: 180
     prerequisites: [DET-03, DET-05]
     datasets: [opensearch-events.jsonl, windows-security.jsonl, sysmon.jsonl, zeek-dns.jsonl, suricata-eve.jsonl]
+    external_datasets: [Log4Shell, T1190-proxyshell]
     sigma_rules: [encoded_powershell.yml, lsass_access.yml, dns_tunnel.yml]
     competencies:
       - {id: SIEM-001, weight: 0.20}
@@ -158,6 +164,7 @@ modules:
     estimated_minutes: 240
     prerequisites: [DET-01, DET-02, DET-03, DET-04, DET-05, DET-06]
     datasets: [windows-security.jsonl, sysmon.jsonl, zeek-conn.jsonl, zeek-dns.jsonl, zeek-http.jsonl, suricata-eve.jsonl, opensearch-events.jsonl]
+    external_datasets: [Log4Shell, GoldenSAMLADFSMailAccess, APT29-Day2, T1003.001-atomic-red-team, T1048.003-nslookup-exfil, T1190-proxyshell, CIC-IDS2017, CSE-CIC-IDS2018, CIC-Bell-DNS-EXF-2021, thezoo-careto, thezoo-cozybear, thezoo-darkhydrus, pcap-dcsync, pcap-kerbrute]
     sigma_rules: [encoded_powershell.yml, lsass_access.yml, dns_tunnel.yml]
     competencies:
       - {id: TH-001, weight: 0.20}

@@ -1,0 +1,14 @@
+Aman Hardikar Forensics Practice Lab mind map notice
+
+"Forensics Practice Lab" mind map, v1.4, February 2016, by Aman Hardikar.
+Copyright (c) Aman Hardikar.
+
+The page describes the mind map as free to use and share. OpenCyberRange
+attributes the map when it uses the reading list or the challenge index.
+
+The mind map is an index of forensic challenges, CTFs, sample evidence images,
+and tools. It is not a dataset and does not grant a licence to the linked
+resources. Each linked source keeps its own terms, provenance, and safety
+requirements; verify it before use.
+
+Source: https://www.amanhardikar.com/mindmaps/ForensicChallenges.html

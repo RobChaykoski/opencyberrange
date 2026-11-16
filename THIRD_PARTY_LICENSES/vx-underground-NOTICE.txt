@@ -1,0 +1,14 @@
+vx-underground notice
+
+vx-underground is a public malware research archive and source-code
+collection. The collection declares no licence for its samples, and the
+material is live malware.
+
+OpenCyberRange therefore treats vx-underground as reference-only. It does not
+download, copy, execute, mirror, or serve a vx-underground sample, and it does
+not place a sample hash or binary in this repository.
+
+Cite the archive and the original family or author when using its published
+research or metadata.
+
+Source: https://vx-underground.org/

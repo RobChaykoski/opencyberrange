@@ -1,0 +1,1005 @@
+# External open dataset registry
+#
+# This file records the open datasets that lab authors may use to build
+# detection, DFIR, malware-analysis, and network exercises. It is a provenance
+# and handling register, not a copy of the data.
+#
+# Rules:
+#   * raw datasets are not committed to this repository;
+#   * a fetchable dataset is pinned to a commit and every file has a SHA-256;
+#   * citation-required sources must be cited in the lab and in the workbook;
+#   * live malware is never redistributed here;
+#   * a source with no declared licence is reference-only.
+#
+# Run `python scripts/check-external-datasets.py` after changing this file.
+
+version: 1
+policy:
+  cache_root: platform/backend/app/data/external-datasets/cache
+  raw_data_committed: false
+  require_sha256_when_fetchable: true
+  live_malware_committed: false
+  real_pii: false
+  citation_required: true
+  redistributable_sources_only: false
+  notes: >-
+    Public visibility is not the same as a licence. Security Datasets (MIT) and
+    Splunk attack_data (Apache-2.0) may be redistributed with their notices.
+    UNB CIC datasets may be redistributed with the dataset citation and paper.
+    theZoo malware samples are expressly excluded from its GPL licence and are
+    never copied here. PCAP-ATTACK declares no licence and stays reference-only.
+
+sources:
+  - id: security-datasets
+    name: Security Datasets
+    homepage: https://securitydatasets.com/introduction.html
+    repository: https://github.com/OTRF/Security-Datasets
+    licence: MIT
+    licence_url: https://github.com/OTRF/Security-Datasets/blob/master/LICENSE
+    copyright: >-
+      Copyright (c) 2018-2023 Roberto Rodriguez (@Cyb3rWard0g), Jose Luis
+      Rodriguez (@Cyb3rPandaH), and Open Threat Research community contributors.
+    attribution: >-
+      Security Datasets is an open-source project by Roberto Rodriguez
+      (@Cyb3rWard0g), Jose Luis Rodriguez (@Cyb3rPandaH), and the Open Threat
+      Research community. Datasets are replayed attack telemetry, not learner
+      or production telemetry.
+    redistribution: allowed_with_notice
+    access: public
+    pin: d9d40ef123d2c87d5d3df28c96bcab4f0faccc87
+    pin_kind: commit
+    fetch: github_raw
+    fetch_base: https://raw.githubusercontent.com/OTRF/Security-Datasets
+    notes: >-
+      Keep the MIT notice with any copied dataset. The metadata files use
+      simulated lab identities and may contain simulated credential material;
+      review and trim before classroom use. Never expose a credential-bearing
+      telemetry file to a learner without a teaching purpose.
+
+  - id: unb-cic
+    name: Canadian Institute for Cybersecurity datasets
+    homepage: https://www.unb.ca/cic/datasets/index.html
+    repository: null
+    licence: CIC dataset terms
+    licence_url: https://www.unb.ca/cic/datasets/index.html
+    copyright: >-
+      Copyright (c) University of New Brunswick, Canadian Institute for
+      Cybersecurity, and the named dataset authors.
+    attribution: >-
+      Datasets are provided by the Canadian Institute for Cybersecurity (CIC),
+      University of New Brunswick. Any use or redistribution must cite the
+      named dataset and the research paper listed on its dataset page.
+    redistribution: allowed_with_citation
+    access: public_download
+    pin: null
+    pin_kind: page
+    fetch: manual
+    fetch_base: https://www.unb.ca/cic/datasets/
+    notes: >-
+      CIC permits redistribution, republishing, and mirroring in any form when
+      the dataset and paper are cited. Some datasets are large or require a
+      request; do not add a copy to this repository without recording the
+      citation and the exact download page.
+
+  - id: splunk-attack-data
+    name: Splunk attack_data
+    homepage: https://github.com/splunk/attack_data
+    repository: https://github.com/splunk/attack_data
+    licence: Apache-2.0
+    licence_url: https://github.com/splunk/attack_data/blob/master/LICENSE
+    copyright: >-
+      Copyright (c) Splunk Inc. and attack_data contributors.
+    attribution: >-
+      Splunk attack_data is an Apache-2.0 repository of curated attack
+      telemetry for detection development. Keep the licence and NOTICE
+      requirements with any redistributed file.
+    redistribution: allowed_with_notice
+    access: public
+    pin: eb3ab7424aaa4bd7ac8e97fd0af6c1d29944d23c
+    pin_kind: commit
+    fetch: github_lfs
+    fetch_base: https://media.githubusercontent.com/media/splunk/attack_data
+    notes: >-
+      Log files are stored in Git LFS. Fetch the media URL rather than the
+      pointer file, and verify the SHA-256 before use. The YAML descriptors are
+      small and may be fetched from raw.githubusercontent.com.
+
+  - id: thezoo
+    name: theZoo
+    homepage: https://github.com/ytisf/theZoo
+    repository: https://github.com/ytisf/theZoo
+    licence: GPL-3.0-or-later for tooling; malware samples excluded
+    licence_url: https://github.com/ytisf/theZoo/blob/master/README.md
+    copyright: >-
+      Copyright (c) 2015-2021 Yuval Nativ, Lahad Ludar, 5fingers, and theZoo
+      contributors.
+    attribution: >-
+      theZoo is a live-malware reference collection created by Yuval "tisf"
+      Nativ and maintained by Shahak Shalev. Its GPL-3.0 licence covers the
+      collection tooling only; the licence text expressly does not apply to the
+      malware samples or their source code.
+    redistribution: samples_forbidden
+    access: reference_only
+    pin: null
+    pin_kind: repository
+    fetch: never
+    fetch_base: null
+    notes: >-
+      This project never copies, downloads, executes, or links a live theZoo
+      sample from a public lab. theZoo entries are family-level references for
+      instructor preparation and comparative reading. A private, isolated
+      malware-analysis environment requires separate approval, custody, and
+      containment; it is not part of this repository.
+
+  - id: vx-underground
+    name: vx-underground malware repository
+    homepage: https://vx-underground.org/
+    repository: null
+    licence: No licence declared; live malware collection
+    licence_url: null
+    copyright: >-
+      Copyright remains with the vx-underground maintainers and the original
+      sample authors. No licence is declared for the sample collection.
+    attribution: >-
+      vx-underground is a public malware research archive and source-code
+      collection. Cite the repository and the original family or author when
+      using its metadata or published research.
+    redistribution: samples_forbidden
+    access: reference_only
+    pin: null
+    pin_kind: repository
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Treat every file as live malware. This project does not download, copy,
+      execute, or serve a vx-underground sample. Use the archive only as an
+      instructor reading reference or as a pointer for a separately approved,
+      isolated analysis environment with custody and containment controls.
+
+  - id: aman-hardikar-forensics
+    name: Aman Hardikar Forensics Practice Lab mind map
+    homepage: https://www.amanhardikar.com/mindmaps/ForensicChallenges.html
+    repository: null
+    licence: Free to use and share (site statement); attribution requested
+    licence_url: https://www.amanhardikar.com/mindmaps/ForensicChallenges.html
+    copyright: >-
+      Copyright (c) Aman Hardikar. The page describes the mind map as free to
+      use and share.
+    attribution: >-
+      Forensics Practice Lab mind map, v1.4 (2016), by Aman Hardikar. The map
+      is an index of forensic challenges, CTFs, sample evidence images, and
+      tools; each linked source keeps its own terms.
+    redistribution: allowed_with_attribution
+    access: reference
+    pin: null
+    pin_kind: page
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the map to find practice material and to frame a DFIR reading list.
+      Do not treat the map itself as evidence or as a dataset licence. Check
+      the terms, provenance, and safety of every linked resource before use.
+
+  - id: pcap-attack
+    name: PCAP-ATTACK
+    homepage: https://github.com/sbousseaden/PCAP-ATTACK
+    repository: https://github.com/sbousseaden/PCAP-ATTACK
+    licence: No licence declared
+    licence_url: null
+    copyright: >-
+      Copyright remains with the PCAP-ATTACK author and contributors. No
+      licence is declared in the repository.
+    attribution: >-
+      PCAP-ATTACK is a public collection of PCAP samples mapped to ATT&CK
+      tactics by Samir Bousseaden. No licence file is present, so the project
+      treats the captures as reference-only and does not redistribute them.
+    redistribution: forbidden
+    access: reference_only
+    pin: 9ef5476dd6b083f565a1b9d2e59e4a3ae8be8c95
+    pin_kind: commit
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use these captures only as an instructor reading reference until the
+      author grants a redistribution licence. Record the source URL in a lab
+      reading list; do not vendor a capture, bundle it in a container, or serve
+      it from the platform.
+
+datasets:
+  # Security Datasets (MIT)
+  - source: security-datasets
+    id: SDLIN-201110074812
+    title: Arp Cache Discovery
+    kind: atomic
+    platform: [Linux]
+    attack: [T1018]
+    lab_modules: [DET-04, DFIR-05]
+    use: >-
+      Baseline Linux discovery. Compare an `arp -a` cache enumeration with
+      Zeek connection records and a host timeline.
+    handling: >-
+      The archive contains a host event log from a simulated lab VM. Review for
+      lab-only identities before use.
+    files:
+      - path: datasets/atomic/linux/discovery/host/sh_arp_cache.zip
+        bytes: 714
+        sha256: 6527c420ed81314c1580542decb6a996e312673434e9fed2389035b06a3430b1
+        media_type: application/zip
+
+  - source: security-datasets
+    id: SDLIN-201110081941
+    title: DD Binary Padding Hash Change
+    kind: atomic
+    platform: [Linux]
+    attack: [T1027.001]
+    lab_modules: [DET-03, DET-04]
+    use: >-
+      Show how binary padding changes a file hash without changing behaviour;
+      pair it with a Sigma or YARA rule that does not depend on the hash alone.
+    handling: >-
+      Host telemetry only. It is an analysis artefact, not a malware sample.
+    files:
+      - path: datasets/atomic/linux/defense_evasion/host/sh_binary_padding_dd.zip
+        bytes: 680
+        sha256: dbba0766a0ea4e0e90f1eef8bbe3e2c819d1349a9f9081b6d54fa86ecb1d39bc
+        media_type: application/zip
+
+  - source: security-datasets
+    id: SDWIN-201018195009
+    title: Lsass Memory Dump via Comsvcs.dll
+    kind: atomic
+    platform: [Windows]
+    attack: [T1003.001]
+    lab_modules: [DET-03, DFIR-01, DFIR-04]
+    use: >-
+      Trace a credential-dump command through process creation, Sysmon, and
+      memory-analysis evidence. Compare the command line with the resulting
+      access to lsass.exe.
+    handling: >-
+      Contains simulated credential-access telemetry. Do not expose embedded
+      account material as a reusable answer.
+    files:
+      - path: datasets/atomic/windows/credential_access/host/psh_lsass_memory_dump_comsvcs.zip
+        bytes: 17957
+        sha256: 0af9e920220d746432f0972be83ad057629695540aecd68c15869d190786e1ae
+        media_type: application/zip
+
+  - source: security-datasets
+    id: SDWIN-190518202151
+    title: Empire Mimikatz LogonPasswords
+    kind: atomic
+    platform: [Windows]
+    attack: [T1003.001]
+    lab_modules: [DET-02, DFIR-04]
+    use: >-
+      Compare a hostile LSASS read with benign process access, then write a
+      detection that uses access rights and process context rather than a
+      single tool name.
+    handling: >-
+      The metadata and telemetry include simulated plaintext credentials and
+      NT hashes. Instructor review is required; redact before learner use.
+    files:
+      - path: datasets/atomic/windows/credential_access/host/empire_mimikatz_logonpasswords.zip
+        bytes: 716749
+        sha256: bb4c057b62d781be5426e011872ba1a15070c07afbb24848a14458f4b22b06fb
+        media_type: application/zip
+
+  - source: security-datasets
+    id: SDWIN-190518210652
+    title: Empire Invoke PsExec
+    kind: atomic
+    platform: [Windows]
+    attack: [T1021.002]
+    lab_modules: [DET-01, DET-02, DFIR-10]
+    use: >-
+      Reconstruct remote service creation and lateral movement from service
+      control, Security, and Sysmon events.
+    handling: >-
+      Host and network telemetry from a simulated domain. Keep the lab
+      addresses and account names separate from real institutional data.
+    files:
+      - path: datasets/atomic/windows/lateral_movement/host/empire_psexec_dcerpc_tcp_svcctl.zip
+        bytes: 656179
+        sha256: 8f40e7fc86bbbf31ebd50b3ba537cf0f4378392ae3e74de84bee00aeb0de1fa5
+        media_type: application/zip
+
+  - source: security-datasets
+    id: Log4Shell
+    title: Log4Shell CVE-2021-44228
+    kind: compound
+    platform: [Windows, Linux]
+    attack: [T1190, T1203]
+    lab_modules: [DET-06, DET-07]
+    use: >-
+      Correlate a JNDI lookup in a web request with the resulting process and
+      syslog evidence. Practise a multi-source hunt and a false-positive note.
+    handling: >-
+      Network and host telemetry only. The capture is not a live exploit and
+      must not be replayed against a real service.
+    files:
+      - path: datasets/compound/Log4Shell/syslog_sysmon_log4shell_cve2021_44228_jndi_reference.zip
+        bytes: 7031
+        sha256: c667b9e7e3a7969e3ef612e65a7dd5f122c856aa5e8b89db935b82b18d2f8b69
+        media_type: application/zip
+      - path: datasets/compound/Log4Shell/pcap_log4shell_cve2021_44228_jndi_reference.zip
+        bytes: 3439
+        sha256: 8ca6128bb0f14c88d9c2bdd6bb29c6ecd8210e5f8c337a4b66d85c5672491c6a
+        media_type: application/zip
+
+  - source: security-datasets
+    id: GoldenSAMLADFSMailAccess
+    title: Golden SAML AD FS Mail Access
+    kind: compound
+    platform: [Windows, Azure]
+    attack: [T1552.004, T1606.002, T1078.004, T1098.002, T1114]
+    lab_modules: [DET-07]
+    use: >-
+      Build a cloud and on-premises identity timeline: token-signing
+      certificate theft, forged SAML, privileged sign-in, and mailbox access.
+    handling: >-
+      Cloud audit telemetry from a simulated tenant. Do not use real tenant
+      IDs, mailboxes, or sign-in data.
+    files:
+      - path: datasets/compound/GoldenSAMLADFSMailAccess/WindowsEvents.Zip
+        bytes: 7544
+        sha256: d5ed3b0b8040ec2f7406a30d1d6051ee83b37634ec524205dcad0f5dfd5b616a
+        media_type: application/zip
+
+  - source: security-datasets
+    id: LSASS_campaign_02
+    title: LSASS Memory - Procdump campaign
+    kind: compound
+    platform: [Windows]
+    attack: [T1003.001, T1041, T1105]
+    lab_modules: [DFIR-01, DFIR-12]
+    use: >-
+      Follow a multi-stage credential-access and exfiltration campaign from
+      delivery through LSASS access and outbound transfer.
+    handling: >-
+      Use as a capstone evidence set. Keep the synthetic host and account
+      identifiers intact so the timeline remains reproducible.
+    files:
+      - path: datasets/compound/LSASS_campaign_02/metasploit_procdump_lsass_memory_dump_zeek_logs.zip
+        bytes: 10874
+        sha256: b3fba904c0e7785f641628f4c1602fb803ee0557f62625715ea7c291a766ed43
+        media_type: application/zip
+
+  - source: security-datasets
+    id: APT29-Day2
+    title: APT29 ATT&CK Evaluation, Day 2
+    kind: compound
+    platform: [Windows]
+    attack_group: G0016
+    attack: []
+    lab_modules: [DET-07]
+    use: >-
+      Hunt a realistic multi-host APT29 emulation using Zeek and Windows
+      telemetry. Use the ATT&CK group page and the emulation plan to frame
+      hypotheses, not to prescribe a single answer.
+    handling: >-
+      Large host archive; use the smaller Zeek subset for a classroom lab and
+      keep the full archive out of the platform image.
+    files:
+      - path: datasets/compound/apt29/day2/zeek/UTICA-C-zeek_logs.zip
+        bytes: 9859
+        sha256: e3671125fc080cc928b25316ec5c5b88b2d3565d7933dadfa2c6534ceb396e9b
+        media_type: application/zip
+
+  # UNB CIC datasets (citation required)
+  - source: unb-cic
+    id: CIC-IDS2017
+    title: CIC Intrusion Detection Evaluation Dataset 2017
+    kind: benchmark
+    platform: [Network]
+    attack: []
+    tags: [intrusion-detection, network-flows]
+    lab_modules: [DET-05, DET-07]
+    use: >-
+      Baseline network intrusion detection, flow classification, and alert
+      triage. Use a small labelled slice rather than the full capture.
+    citation: >-
+      Iman Sharafaldin, Arash Habibi Lashkari, and Ali A. Ghorbani, "Toward
+      Generating a New Intrusion Detection Dataset and Intrusion Traffic
+      Characterization", 4th International Conference on Information Systems
+      Security and Privacy (ICISSP), Portugal, January 2018.
+    page: https://www.unb.ca/cic/datasets/ids-2017.html
+    download: https://www.unb.ca/cic/datasets/ids-2017.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CSE-CIC-IDS2018
+    title: CSE-CIC-IDS2018 on AWS
+    kind: benchmark
+    platform: [Network, Cloud]
+    attack: []
+    tags: [intrusion-detection, aws, network-flows]
+    lab_modules: [DET-05, DET-07]
+    use: >-
+      Compare on-premises and cloud intrusion telemetry; practise flow
+      selection and labelled evaluation.
+    citation: >-
+      Iman Sharafaldin, Arash Habibi Lashkari, and Ali A. Ghorbani, "Toward
+      Generating a New Intrusion Detection Dataset and Intrusion Traffic
+      Characterization", 4th International Conference on Information Systems
+      Security and Privacy (ICISSP), Portugal, January 2018. Cite the
+      CSE-CIC-IDS2018 dataset and its AWS page as required by CIC.
+    page: https://www.unb.ca/cic/datasets/ids-2018.html
+    download: https://www.unb.ca/cic/datasets/ids-2018.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIC-DDoS2019
+    title: CIC DDoS Evaluation Dataset 2019
+    kind: benchmark
+    platform: [Network]
+    attack: [T1498]
+    tags: [ddos, network-flows]
+    lab_modules: [DET-05]
+    use: >-
+      Distinguish volumetric and application-layer DDoS traffic from benign
+      bursts, then write a disposition and escalation note.
+    citation: >-
+      Iman Sharafaldin, Arash Habibi Lashkari, Saqib Hakak, and Ali A.
+      Ghorbani, "Developing Realistic Distributed Denial of Service (DDoS)
+      Attack Dataset and Taxonomy", IEEE 53rd International Carnahan
+      Conference on Security Technology, Chennai, India, 2019.
+    page: https://www.unb.ca/cic/datasets/ddos-2019.html
+    download: https://www.unb.ca/cic/datasets/ddos-2019.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIC-MalMem-2022
+    title: CIC MalMem 2022
+    kind: benchmark
+    platform: [Windows, Memory]
+    attack: []
+    tags: [memory-forensics, malware-classification]
+    lab_modules: [DFIR-01, DFIR-03]
+    use: >-
+      Memory-image triage and obfuscated-malware feature comparison. Use one
+      labelled family slice for a short finding, not a full classifier build.
+    citation: >-
+      Tristan Carrier, Princy Victor, Ali Tekeoglu, and Arash Habibi Lashkari,
+      "Detecting Obfuscated Malware using Memory Feature Engineering", The 8th
+      International Conference on Information Systems Security and Privacy
+      (ICISSP), 2022.
+    page: https://www.unb.ca/cic/datasets/malmem-2022.html
+    download: https://www.unb.ca/cic/datasets/malmem-2022.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIC-Bell-DNS-EXF-2021
+    title: CIC-Bell DNS Exfiltration 2021
+    kind: benchmark
+    platform: [Network, DNS]
+    attack: [T1048.003]
+    tags: [dns, exfiltration]
+    lab_modules: [DET-04, DET-07]
+    use: >-
+      Detect light and heavy DNS data exfiltration with query length, volume,
+      and entropy features; document a false-positive baseline for resolvers.
+    citation: >-
+      Samaneh Mahdavifar, Amgad Hanafy Salem, Princy Victor, Miguel Garzon,
+      Amir H. Razavi, Natasha Hellberg, and Arash Habibi Lashkari, "Lightweight
+      Hybrid Detection of Data Exfiltration using DNS based on Machine
+      Learning", The 11th IEEE International Conference on Communication and
+      Network Security (ICCNS), December 2021.
+    page: https://www.unb.ca/cic/datasets/dns-exf-2021.html
+    download: https://www.unb.ca/cic/datasets/dns-exf-2021.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CCCS-CIC-AndMal-2020
+    title: CCCS-CIC-AndMal 2020
+    kind: benchmark
+    platform: [Android]
+    attack: []
+    tags: [mobile-malware, malware-classification]
+    lab_modules: []
+    use: >-
+      Android malware-family comparison and behaviour-category review for an
+      advanced mobile-security module. Metadata and static features only; do
+      not install an APK.
+    citation: >-
+      David Sean Keyes, Beiqi Li, Gurdip Kaur, Arash Habibi Lashkari, Francois
+      Gagnon, and Frederic Massicotte, "EntropLyzer: Android Malware
+      Classification and Characterization Using Entropy Analysis of Dynamic
+      Characteristics", RDAAPS, IEEE, McMaster University, 2021. Also cite
+      "DIDroid: Android Malware Classification and Characterization Using Deep
+      Image Learning" as listed on the dataset page.
+    page: https://www.unb.ca/cic/datasets/andmal2020.html
+    download: https://www.unb.ca/cic/datasets/andmal2020.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIRA-CIC-DoHBrw-2020
+    title: CIRA-CIC DoHBrw 2020
+    kind: benchmark
+    platform: [Network, DNS]
+    attack: [T1071.004]
+    tags: [dns-over-https, tunnelling]
+    lab_modules: [DET-04]
+    use: >-
+      Separate benign DoH traffic from DoH tunnelling using time-series and
+      flow features. Discuss why encrypted DNS raises the evidence bar.
+    citation: >-
+      Mohammadreza MontazeriShatoori, Logan Davidson, Gurdip Kaur, and Arash
+      Habibi Lashkari, "Detection of DoH Tunnels using Time-series
+      Classification of Encrypted Traffic", The 5th IEEE Cyber Science and
+      Technology Congress, Calgary, Canada, August 2020.
+    page: https://www.unb.ca/cic/datasets/dohbrw-2020.html
+    download: https://www.unb.ca/cic/datasets/dohbrw-2020.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIC-IoT-Attack-2023
+    title: CIC IoT Attack Dataset 2023
+    kind: benchmark
+    platform: [IoT, Network]
+    attack: []
+    tags: [iot, network-flows]
+    lab_modules: []
+    use: >-
+      IoT attack classification and flow-based detection for an OT/IoT
+      enrichment lab. Keep the dataset citation with any derived chart.
+    citation: >-
+      E. C. P. Neto, S. Dadkhah, R. Ferreira, A. Zohourian, R. Lu, and A. A.
+      Ghorbani, "CICIoT2023: A real-time dataset and benchmark for large-scale
+      attacks in IoT environment", Sensors, 2023.
+    page: https://www.unb.ca/cic/datasets/iotdataset-2023.html
+    download: https://www.unb.ca/cic/datasets/iotdataset-2023.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIC-Trap4Phish-2025
+    title: CIC-Trap4Phish 2025
+    kind: benchmark
+    platform: [Email, Web]
+    attack: [T1566.001, T1566.002]
+    tags: [phishing, quishing, email]
+    lab_modules: [DFIR-06]
+    use: >-
+      Compare phishing URL, attachment, and QR-code features; write a triage
+      decision that separates a lure from a confirmed compromise.
+    citation: >-
+      F. Nejati, M. Rabbani, M. Eskandarian, M. Mirani, G. Piya, I. Opushnyev,
+      A. A. Ghorbani, and S. Dadkhah, "CIC-Trap4Phish: A Unified Multi-Format
+      Dataset for Phishing and Quishing Attachment Detection", arXiv preprint,
+      February 2026.
+    page: https://www.unb.ca/cic/datasets/trap4phish2025.html
+    download: https://www.unb.ca/cic/datasets/trap4phish2025.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  - source: unb-cic
+    id: CIC-UNSW-NB15-2024
+    title: CIC-UNSW-NB15 2024
+    kind: benchmark
+    platform: [Network]
+    attack: []
+    tags: [intrusion-detection, adversarial-ml]
+    lab_modules: [DET-05]
+    use: >-
+      Evaluate a detector under poisoning and evasion pressure; connect model
+      confidence to an analyst escalation decision.
+    citation: >-
+      H. Mohammadian, A. H. Lashkari, and A. Ghorbani, "Poisoning and Evasion:
+      Deep Learning-Based NIDS under Adversarial Attacks", 21st Annual
+      International Conference on Privacy, Security and Trust (PST), 2024.
+    page: https://www.unb.ca/cic/datasets/cic-unsw-nb15.html
+    download: https://www.unb.ca/cic/datasets/cic-unsw-nb15.html
+    access: public_download
+    redistribution: allowed_with_citation
+    files: []
+
+  # Splunk attack_data (Apache-2.0, Git LFS)
+  - source: splunk-attack-data
+    id: T1003.001-atomic-red-team
+    title: LSASS memory access via ProcDump and CreateDump
+    kind: atomic
+    platform: [Windows]
+    attack: [T1003.001]
+    lab_modules: [DET-07, DFIR-01, DFIR-04]
+    use: >-
+      Compare Sysmon process-access and image-load evidence for two LSASS dump
+      tools; build a rule that does not key on one binary name.
+    handling: >-
+      The dataset is attack telemetry, not a sample. Keep the Splunk source and
+      sourcetype labels when importing.
+    files:
+      - path: datasets/attack_techniques/T1003.001/atomic_red_team/windows-sysmon.log
+        bytes: 14235927
+        sha256: a1905850598f1e943708c3329190e29c6cb046389c1575cb2afd6369b5f269f1
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1059.001-encoded-powershell
+    title: Encoded PowerShell execution
+    kind: atomic
+    platform: [Windows]
+    attack: [T1059.001]
+    lab_modules: [DET-01, DET-02, DET-03]
+    use: >-
+      Decode a PowerShell command line, reconstruct the parent process, and
+      test a Sigma rule against encoded and benign launchers.
+    handling: >-
+      Sysmon telemetry. Do not execute the recorded command line.
+    files:
+      - path: datasets/attack_techniques/T1059.001/encoded_powershell/windows-sysmon.log
+        bytes: 2012605
+        sha256: b9c8438a0d8cd62714a38ed093fc583c3318d1cac768c6513ad40a3b8203fd05
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1021.002-atomic-red-team
+    title: SMB/Windows Admin Shares remote execution
+    kind: atomic
+    platform: [Windows]
+    attack: [T1021.002]
+    lab_modules: [DET-01, DET-02, DFIR-10]
+    use: >-
+      Correlate service creation, SMB session setup, and remote process
+      creation across a simulated domain.
+    handling: >-
+      Windows Security telemetry from a simulated attack range.
+    files:
+      - path: datasets/attack_techniques/T1021.002/atomic_red_team/windows-security.log
+        bytes: 6358116
+        sha256: 46f7cd8e006fd626fc64e4a80c65bce3ede4e6701c6d7afc912883e3d70dde2f
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1048.003-nslookup-exfil
+    title: DNS exfiltration with nslookup
+    kind: atomic
+    platform: [Windows, Network]
+    attack: [T1048.003]
+    lab_modules: [DET-04, DET-07]
+    use: >-
+      Find repeated DNS lookups that carry data, then compare them with
+      legitimate resolver traffic and a baseline.
+    handling: >-
+      Sysmon network telemetry. The addresses and domain names are lab-only.
+    files:
+      - path: datasets/attack_techniques/T1048.003/nslookup_exfil/windows-sysmon.log
+        bytes: 5663783
+        sha256: 5d7d8b9acd80ad09e962446a328901b29ba760e3b94aeb6b8ad41f0caddae27f
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1071.004-long-dns-query
+    title: Long DNS query
+    kind: atomic
+    platform: [Windows, Network]
+    attack: [T1071.004]
+    lab_modules: [DET-04]
+    use: >-
+      Use a small DNS-focused sample to teach label length, entropy, and
+      resolver-baseline checks without a full packet capture.
+    handling: >-
+      Small Sysmon DNS sample; safe to use as a classroom query set.
+    files:
+      - path: datasets/attack_techniques/T1071.004/long_dns_query/dns-sysmon.log
+        bytes: 14344
+        sha256: 665351a29bf5545503fb572c808bf9ebf157e74ec6dcc8a098890551db6932ed
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1566.001-macro
+    title: Phishing attachment with macro execution
+    kind: atomic
+    platform: [Windows]
+    attack: [T1566.001]
+    lab_modules: [DFIR-06]
+    use: >-
+      Follow a document lure from mail delivery to child-process execution and
+      separate a blocked attempt from a successful one.
+    handling: >-
+      Large Sysmon archive. Use a filtered slice so the exercise focuses on
+      the evidence chain, not file size.
+    files:
+      - path: datasets/attack_techniques/T1566.001/macro/windows-sysmon.log
+        bytes: 38942255
+        sha256: e0beda8b34a4a5fe0b6d2edd38a918a776a0dd0f15c9d7706f1dbfd2b0a4d591
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1071.001-zeek-http-encoded-post
+    title: Zeek HTTP encoded POST beacon
+    kind: atomic
+    platform: [Network]
+    attack: [T1071.001]
+    lab_modules: [DET-04, DET-05]
+    use: >-
+      Identify base64-encoded POST bodies in Zeek HTTP logs and distinguish
+      beaconing from uploads and ordinary form traffic.
+    handling: >-
+      Small Zeek HTTP sample; no payload execution.
+    files:
+      - path: datasets/attack_techniques/T1071.001/zeek_http_encoded_post/http.log
+        bytes: 2418
+        sha256: 59e15788b109473544e4679c4a6e40f34365f5dbaa49ab1a2efd4253b28c6334
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1053.005-atomic-red-team
+    title: Scheduled task creation
+    kind: atomic
+    platform: [Windows]
+    attack: [T1053.005]
+    lab_modules: [DET-01, DFIR-04]
+    use: >-
+      Pivot from Event ID 4698 to the created task, the running account, and
+      the child process. Compare local and remote task creation.
+    handling: >-
+      Windows Sysmon and Security telemetry from a simulated range.
+    files:
+      - path: datasets/attack_techniques/T1053.005/atomic_red_team/windows-sysmon.log
+        bytes: 11410982
+        sha256: d346ab6c75b3151217dfc2c4c166c951fc16d68c31b7d5a8f3e577d9545ff9f0
+        media_type: text/plain
+        lfs: true
+
+  - source: splunk-attack-data
+    id: T1190-proxyshell
+    title: ProxyShell Exchange exploitation
+    kind: atomic
+    platform: [Windows, Exchange]
+    attack: [T1190]
+    lab_modules: [DET-06, DET-07]
+    use: >-
+      Hunt web-shell and Exchange management events after an internet-facing
+      service exploit; write a timeline and a containment recommendation.
+    handling: >-
+      Exchange management telemetry from a simulated range. Do not replay the
+      exploit against a real Exchange server.
+    files:
+      - path: datasets/attack_techniques/T1190/exchange_events.json
+        bytes: 628321
+        sha256: 1f65d7160245d317f1a9531f26390d483320c0f4fbefe875bfe0ac4ffd287c15
+        media_type: application/json
+        lfs: true
+
+  # theZoo (reference-only; samples excluded from the licence)
+  - source: thezoo
+    id: thezoo-cryptolocker
+    title: CryptoLocker family reference
+    kind: family_reference
+    platform: [Windows]
+    attack: []
+    family: CryptoLocker
+    directory: malware/Binaries/CryptoLocker_10Sep2013
+    lab_modules: [DFIR-12]
+    use: >-
+      Read the family history and published behaviour to frame a ransomware
+      timeline and recovery discussion. The platform's capstone uses synthetic
+      evidence, not this sample.
+    licence: theZoo GPL-3.0 tooling notice; samples expressly excluded
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: thezoo
+    id: thezoo-blackenergy
+    title: BlackEnergy 2.1 family reference
+    kind: family_reference
+    platform: [Windows]
+    attack: []
+    family: BlackEnergy
+    directory: malware/Binaries/BlackEnergy2.1
+    lab_modules: []
+    use: >-
+      Compare an ICS-targeting family's historical behaviour with the OT
+      detection and isolation rules in the platform.
+    licence: theZoo GPL-3.0 tooling notice; samples expressly excluded
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: thezoo
+    id: thezoo-careto
+    title: Careto family reference
+    kind: family_reference
+    platform: [Windows]
+    attack: []
+    family: Careto
+    directory: malware/Binaries/Careto_Feb2014
+    lab_modules: [DET-07]
+    use: >-
+      Use the family's published tradecraft as a reading reference for a
+      long-dwell intrusion hunt. Do not download the sample.
+    licence: theZoo GPL-3.0 tooling notice; samples expressly excluded
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: thezoo
+    id: thezoo-cozybear
+    title: Cozy Bear collection reference
+    kind: family_reference
+    platform: [Windows]
+    attack: []
+    family: Cozy Bear
+    directory: malware/Binaries/Coll.CozyBear
+    lab_modules: [DET-07]
+    use: >-
+      Compare APT29-related tradecraft with the synthetic APT29 Day 2 dataset
+      and the ATT&CK group page.
+    licence: theZoo GPL-3.0 tooling notice; samples expressly excluded
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: thezoo
+    id: thezoo-darkhydrus
+    title: DarkHydrus collection reference
+    kind: family_reference
+    platform: [Windows]
+    attack: []
+    family: DarkHydrus
+    directory: malware/Binaries/Coll.DarkHydrus
+    lab_modules: [DET-07]
+    use: >-
+      Use the published family notes to discuss credential phishing and
+      defence evasion; keep the exercise on synthetic telemetry.
+    licence: theZoo GPL-3.0 tooling notice; samples expressly excluded
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: thezoo
+    id: thezoo-pegasus
+    title: Pegasus for Android family reference
+    kind: family_reference
+    platform: [Android]
+    attack: []
+    family: Pegasus
+    directory: malware/Binaries/Android.PegasusB
+    lab_modules: []
+    use: >-
+      A reading reference for mobile malware governance and the limits of
+      static indicators. It is not installed or executed.
+    licence: theZoo GPL-3.0 tooling notice; samples expressly excluded
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  # PCAP-ATTACK (no licence declared; reference-only)
+  - source: pcap-attack
+    id: pcap-lm-psexec
+    title: PsExec SMB/DCERPC service control
+    kind: pcap
+    platform: [Network, Windows]
+    attack: [T1021.002]
+    lab_modules: [DET-05, DFIR-10]
+    use: >-
+      Instructor reading reference for service-control and SMB evidence. The
+      platform uses a synthetic PCAP for the learner exercise.
+    licence: No licence declared; reference-only
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: pcap-attack
+    id: pcap-dcsync
+    title: DCSync over DRSUAPI
+    kind: pcap
+    platform: [Network, Windows]
+    attack: [T1003.006]
+    lab_modules: [DET-07, DFIR-04]
+    use: >-
+      Compare DRSUAPI replication traffic with legitimate domain-controller
+      replication before writing a detection hypothesis.
+    licence: No licence declared; reference-only
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: pcap-attack
+    id: pcap-zerologon
+    title: Zerologon Netlogon challenge
+    kind: pcap
+    platform: [Network, Windows]
+    attack: [T1210]
+    lab_modules: [DET-05, DFIR-10]
+    use: >-
+      Read the Netlogon exchange to understand why a single-packet signature
+      is fragile and why patching and segmentation matter more.
+    licence: No licence declared; reference-only
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: pcap-attack
+    id: pcap-dns-txt
+    title: Commands over DNS TXT queries
+    kind: pcap
+    platform: [Network, DNS]
+    attack: [T1071.004]
+    lab_modules: [DET-04]
+    use: >-
+      Instructor reference for DNS command-and-control patterns; the learner
+      exercise uses the platform's synthetic Zeek DNS data.
+    licence: No licence declared; reference-only
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  - source: pcap-attack
+    id: pcap-kerbrute
+    title: Kerbrute password spray
+    kind: pcap
+    platform: [Network, Windows]
+    attack: [T1110.003]
+    lab_modules: [DET-01, DET-07]
+    use: >-
+      Compare AS-REQ spray patterns with normal authentication bursts and
+      account lockout policy.
+    licence: No licence declared; reference-only
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  # vx-underground (reference-only; live malware, no licence declared)
+  - source: vx-underground
+    id: vx-underground-malware-archive
+    title: vx-underground malware and source-code archive
+    kind: family_reference
+    platform: [Windows, Linux, macOS, Android]
+    attack: []
+    lab_modules: [DFIR-12]
+    use: >-
+      Use the archive's family index and published research to select a case
+      study for an approved, isolated analysis environment. The platform's
+      learner labs remain synthetic.
+    citation: >-
+      vx-underground malware repository, https://vx-underground.org/, and the
+      original family or author named in the archive entry.
+    licence: No licence declared; live malware collection
+    redistribution: forbidden
+    access: reference_only
+    files: []
+
+  # Aman Hardikar reference index (free to use and share; attribute)
+  - source: aman-hardikar-forensics
+    id: aman-forensics-practice-lab
+    title: Forensics Practice Lab mind map
+    kind: reference_index
+    platform: [Host, Network, Malware]
+    attack: []
+    lab_modules: [DFIR-04, DFIR-09, DFIR-12]
+    use: >-
+      Use the map as a lab-design index for host, network, and malware
+      practice material. It is a starting point for a reading list, not a
+      substitute for a source review or an evidence pack.
+    citation: >-
+      Aman Hardikar, "Forensics Practice Lab" mind map, v1.4, February 2016.
+      https://www.amanhardikar.com/mindmaps/ForensicChallenges.html
+    licence: Free to use and share (site statement); attribution requested
+    redistribution: allowed_with_attribution
+    access: reference
+    files: []

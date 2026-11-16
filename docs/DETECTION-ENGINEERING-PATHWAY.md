@@ -138,6 +138,25 @@ A production deployment must not replace it with live learner telemetry. If an
 institution wants a live exercise, use a separate governed dataset with an
 approved purpose, retention, and access policy.
 
+### External open datasets
+
+The pathway modules also point to reviewed open datasets through the
+`external_datasets` field. The registry is
+`platform/backend/app/data/external-datasets.yaml`; the handling guide is
+[`SECURITY-DATASETS.md`](SECURITY-DATASETS.md).
+
+| Source | Use in this pathway |
+|---|---|
+| **Security Datasets** (MIT) | Credential access, lateral movement, Log4Shell, Golden SAML, LSASS campaign, and APT29 Day 2 |
+| **Splunk attack_data** (Apache-2.0) | Encoded PowerShell, scheduled tasks, SMB execution, DNS exfiltration, macro delivery, encoded HTTP, and ProxyShell |
+| **Canadian Institute for Cybersecurity datasets** (citation required) | IDS/IDS2018, DDoS2019, DNS exfiltration, DoH, IoT, and adversarial NIDS baselines |
+| **PCAP-ATTACK** (reference only; no licence) | Instructor reading for PsExec, DCSync, Zerologon, DNS TXT, and Kerberos spray evidence |
+
+A module that lists an external dataset must use the registry's pinned file and
+SHA-256, or the CIC download page and citation. Do not copy a reference-only
+capture or a live-malware sample into a public lab. The learner exercise always
+uses the synthetic pack above unless the module says otherwise.
+
 ## Evidence and assessment
 
 Every module asks for at least a query result and a triage note; most also ask

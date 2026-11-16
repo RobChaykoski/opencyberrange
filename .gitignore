@@ -42,6 +42,9 @@ node_modules/
 *.bak
 *.cache
 
+# External training datasets fetched on demand (not committed)
+platform/backend/app/data/external-datasets/cache/
+
 # Lab runtime state. The definitions are tracked; what a running container
 # writes underneath them is not.
 labs/*/containers/*/app/

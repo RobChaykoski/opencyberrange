@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "b1637b8deae145ec5766ed053d886a9c1fcbb25fa533b2ed9dd6c942b09fec31"
+      "sha256": "888602b25786829d57e2a458e9aa5c6415918786cde91343afbf292841405b94"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -103,7 +103,7 @@
       "sha256": "f1ea46f9640c4110e010840ad949abdb3e4c75424ff70b59d016beb0c47be410"
     },
     "platform/backend/app/data/detection-pathway.yaml": {
-      "sha256": "4df826f01fea0fc57616ef7d246c2430bee9e8cd7a52d69d4d2717e3664c3928"
+      "sha256": "d76fb590961faadd894c29364e53ecc1ed8ce6a28a9d172f89b1dec381a0e27b"
     },
     "platform/backend/app/data/dfir-datasets/README.md": {
       "sha256": "48422bdf1451ab58daf62a310f44fd54dea39117975792166d2d79a556b18047"
@@ -148,7 +148,10 @@
       "sha256": "8df97bf21eaf01ff635e41981e529120975cc8766dae4b954805cccd8f51b867"
     },
     "platform/backend/app/data/dfir-pathway.yaml": {
-      "sha256": "684bf2ca877a2acc3b999523236d75c2bda3c585a1b0f8353318bbe394dc3064"
+      "sha256": "1f11ed5463247c2e30535a95b1dcda4c3937b6904fd27732dbe7af953d8b4922"
+    },
+    "platform/backend/app/data/external-datasets.yaml": {
+      "sha256": "41f7883b0fad1a14fea30ec3183f612551487605ab0c97584e7ef4241e9f52c0"
     },
     "platform/backend/app/data/external-targets.yaml": {
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
@@ -261,6 +264,9 @@
     "scripts/check-data-dictionary.py": {
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
+    "scripts/check-external-datasets.py": {
+      "sha256": "f07972f8d87b33afbc9263153ff6774461591f10945c4480535ebb83ebb86b47"
+    },
     "scripts/check-external-targets.py": {
       "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"
     },
@@ -287,6 +293,9 @@
     },
     "scripts/deploy-updates.sh": {
       "sha256": "bd853cb729193ae9b6c59708fc8eb7a20e0f9ca5d87300a1fb55952496180954"
+    },
+    "scripts/fetch-external-datasets.py": {
+      "sha256": "aee7a803d482e024f1aeae22e597c52b6c6fdc370b126deed071f69670406cd3"
     },
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
@@ -319,7 +328,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "55bb8084e7b50b60f8b4f96d5ba308545503a127991f4f312230439ea0a778d7"
+      "sha256": "59d0df00ad4cc03e7fb3f95bdaa6596a3d4a5c98c94a87c208871f4bbeae147c"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"
