@@ -75,6 +75,9 @@ COVERED_FILES = [
     "platform/topology-node/entrypoint.py",
     "platform/backend/app/data/software-integrity.json",
     "platform/backend/lab_metadata.schema.json",
+    "platform/backend/app/security/permissions.yaml",
+    "platform/backend/app/security/policy_rules.py",
+    "scripts/generate-rbac-matrix.py",
     "platform/frontend/package.json",
     "platform/frontend/package-lock.json",
     "platform/frontend/Dockerfile",
@@ -90,6 +93,8 @@ COVERED_FILES = [
     "docker-compose.prod.yml",
     "scripts/install-platform.sh",
     "scripts/deploy-updates.sh",
+    "scripts/bootstrap-db-roles.sh",
+    "db/bootstrap-db-roles.sql",
     "scripts/GDG-Deploy.sh",
     "scripts/prebuild-labs.sh",
     "scripts/lab_build_hash.py",
@@ -134,6 +139,22 @@ LAB_EXCLUDE_DIRS = {
 }
 LAB_EXCLUDE_SUFFIXES = (".pyc", ".pyo")
 LAB_EXCLUDE_FILES = {".DS_Store"}
+# Runtime output under a lab's container directories is ignored by .gitignore
+# and is not part of the reviewed release. Keep this aligned with
+# app/services/software_integrity.py.
+LAB_RUNTIME_PARENTS = {"containers"}
+LAB_RUNTIME_DIRS = {"app", "data", "logs"}
+
+
+def _excluded_dir(lab_dir: Path, dirpath: str, name: str) -> bool:
+    if name in LAB_EXCLUDE_DIRS:
+        return True
+    relative = (Path(dirpath) / name).relative_to(lab_dir).parts
+    return (
+        len(relative) >= 3
+        and relative[0] in LAB_RUNTIME_PARENTS
+        and relative[2] in LAB_RUNTIME_DIRS
+    )
 
 IMAGE_SOURCES = [
     "platform/backend/Dockerfile",
@@ -166,7 +187,9 @@ def content_hash(lab_dir: Path) -> str:
     lab_dir = lab_dir.resolve()
     digest = hashlib.sha256()
     for dirpath, dirnames, filenames in os.walk(lab_dir):
-        dirnames[:] = sorted(d for d in dirnames if d not in LAB_EXCLUDE_DIRS)
+        dirnames[:] = sorted(
+            d for d in dirnames if not _excluded_dir(lab_dir, dirpath, d)
+        )
         for filename in sorted(filenames):
             if filename in LAB_EXCLUDE_FILES or filename.endswith(LAB_EXCLUDE_SUFFIXES):
                 continue
@@ -195,8 +218,10 @@ def lab_dirs(labs_root: Path) -> list[Path]:
     if not labs_root.is_dir():
         return []
     found = sorted(
-        path.parent for path in labs_root.rglob("docker-compose.yml")
+        path.parent
+        for path in labs_root.rglob("lab.yaml")
         if path.parent.name not in LAB_EXCLUDE_DIRS
+        and (path.parent / "docker-compose.yml").is_file()
     )
     return found
 

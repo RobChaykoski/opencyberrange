@@ -19,7 +19,7 @@
       "sha256": "f4824fc426bbfbe23c5ad7c67be4a318dec48d662ad015bf9e9690e212c00232"
     },
     ".github/workflows/quality.yml": {
-      "sha256": "d0b2060bd434d3f8436734f537fc73814cde7112f312effb01f09c16c0c456e9"
+      "sha256": "7a8ebd5094ec612fa7f36a7364cbdb635423afbef52e0bc87f0285895a1f5668"
     },
     ".github/workflows/trivy.yml": {
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
@@ -29,6 +29,9 @@
     },
     ".trivyignore.yaml": {
       "sha256": "a95238a63e8bb0514ac76ecbd7cb89259babce4c466adf73c815f8bf0f42a1ad"
+    },
+    "db/bootstrap-db-roles.sql": {
+      "sha256": "0ddd3fb65983a4f54913ddaa6472686692791971868df0d600c2d0c7a63eb3a7"
     },
     "deploy/host-hardening.sh": {
       "sha256": "bb3a02c56b07ded15bdf5628140a22628cf297b3566504a0c669a966a511852b"
@@ -49,7 +52,13 @@
       "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "0962e743d6d208231ceb1c6cee7682f2037638740d4f4f77bf3a2014903daf26"
+      "sha256": "3732a3d664d764c35fa2037dcafc346db5cfe1096ba334452143e2ad288291f5"
+    },
+    "platform/backend/app/security/permissions.yaml": {
+      "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
+    },
+    "platform/backend/app/security/policy_rules.py": {
+      "sha256": "b91a8826be3d417d08e7376fc7d1baeb91ea629da3c4d2f5a5ea39551756051d"
     },
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
@@ -67,7 +76,7 @@
       "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "0daf6c7c2eb6e1e905a80aaefdf16b07c96bc02598df73ba62574cc178ab8748"
+      "sha256": "2cda5e383579d070f5c6b806f6a209f4a3f116fafdad7cf81051a90c2bd1dcc4"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "a1f4aa425bd21d751a302d8e9dc3c03ab1464bca9919a907b495ece173793690"
@@ -91,10 +100,10 @@
       "sha256": "bf9a9358ba5f341677fee6fe2c2e2ab860fab8f9d38e88ce740d18ea472e46a7"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "227fff05acc5b2839302a0443a8f2fd8a47d9ec53a584cf397daf2c73ae75fe7"
+      "sha256": "89c5a2b58ce5f141ce0300472b190e4986d8f81b11513bdd9abe9243e2c1f197"
     },
     "platform/frontend/package.json": {
-      "sha256": "af5581eb98f85d696b9fcc4041700b5dc42f11e7a6d816e46d4ccb2f4e74e713"
+      "sha256": "1b3e2c4118840425d9a304783d1826031ce5663b24d5d8d3e9113bc4358f62a5"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
@@ -107,6 +116,9 @@
     },
     "scripts/GDG-Deploy.sh": {
       "sha256": "7857237da1b405ebd672caf74cc7ef292313e7f847799a8a6d82d09cb718ff7b"
+    },
+    "scripts/bootstrap-db-roles.sh": {
+      "sha256": "1f2a17fab3f43bb18de296372f4a4332615a56b3b341b1ae58ce85646ec0fd80"
     },
     "scripts/check-built-docs.py": {
       "sha256": "1669ff84cb7e69ec11f35e115c8e1c7ef51a32d3ea7302c46946e97db8a77fb9"
@@ -129,6 +141,9 @@
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"
     },
+    "scripts/generate-rbac-matrix.py": {
+      "sha256": "e6c423a7bd77efce87b02511565d5db376ebc5427d9b9a1b071e44b139251521"
+    },
     "scripts/install-platform.sh": {
       "sha256": "f259f1f15414516855b83d07fafa1aa980784f5b489ce0ca5da10a31ea662c4c"
     },
@@ -145,7 +160,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "01f22cbfc56b05947194163a000305ac3a76476644dac47594842900673f416b"
+      "sha256": "5ad999766f0d6870e61c0e0467f37db97024193f884fa1974bad6106a1e4a8bf"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"
@@ -647,27 +662,27 @@
       "services": []
     },
     "metasploit-1-3-validate-before-exploit": {
-      "content_hash": "ac9b9dd4879797c21895ff95e022e80048ffb20c28d78a955f8ba797450ba03f",
+      "content_hash": "bb2ab9fa86f455a32b9a03d918c92251bca8ac9677d379a82a78b098a433572c",
       "services": []
     },
     "metasploit-1-4-first-shell": {
-      "content_hash": "8f3c6edff70a62433cb4a39933b517c2df02f778994e9c91bf2213d2f8bc3e40",
+      "content_hash": "0a0eaa57c143dd6f42002e3a2b669f70f4db7b281f9c5792b8396f0f44bbc863",
       "services": []
     },
     "metasploit-2-1-meterpreter-session": {
-      "content_hash": "b8081c5436c0901a96c3067ac912d55468cb98b8c8f9826866b782d52ba9fbd8",
+      "content_hash": "63f10dbeb861cc964f2fe8259c8a42ff4d038f93095489ef6ab348186be53efa",
       "services": []
     },
     "metasploit-2-2-database-credentials": {
-      "content_hash": "6d90f4c3e851713dca97d7c8103ad3cb2456636458d85fde802b6406e1174a6b",
+      "content_hash": "b768137d116983fad8967d526ae54367c90e5700ff43efa7a0a13e7ec100742a",
       "services": []
     },
     "metasploit-2-3-pivot-to-local-service": {
-      "content_hash": "decc8adf935d41d89a77efe64820a01eea02e308baf530a5a2cdc04403972dcc",
+      "content_hash": "124a71566f683d243ac4b252c870d8a38c20daf5e2c7d6e0bb31b9435d4517dd",
       "services": []
     },
     "metasploit-2-4-persistence-and-reporting": {
-      "content_hash": "d203a34f547b5142e353565445c390c0cd749bb70b4269815d03b63520ae65d4",
+      "content_hash": "6dcd43a1353774847f826cc4407adf16e66965d42a2c0cbb51f06caa234669b3",
       "services": []
     },
     "network-0-1-ping-basics": {
