@@ -1,7 +1,7 @@
 # Validation report
 
-**Release:** 5.17.1
-**Commit:** `b9d99d2a` (signed tag `v5.17.1`)
+**Release:** 5.17.2
+**Commit:** the commit tagged `v5.17.2` (signed tag)
 **Date:** 16 November 2026
 
 This is the reproducible validation record for the current release. Commands
@@ -82,13 +82,14 @@ python scripts/supply_chain.py --check \
 
 | Check | Result |
 |---|---|
-| `/api/version` | `5.17.1` |
+| `/api/version` | `5.17.2` |
 | `/health` | `200` |
 | Alembic | `0040_settings_change_control` |
 | Registered labs | `191` |
-| Admin release status | `current` / `v5.17.1` |
-| Backup | `ocr-backup-20261116-181526.dump` |
-| Restore drill | **PASSED** |
+| Admin release status | `current` / `v5.17.2` |
+| Cutover | `deployment_mode=production`, `data_collection_mode=production` |
+| Backup | `ocr-backup-20261116-192307.dump` |
+| Restore drill | **PASSED** (47 users) |
 
 ## Known gaps
 
@@ -96,9 +97,10 @@ python scripts/supply_chain.py --check \
   [Independent security testing](INDEPENDENT-SECURITY-TESTING.md).
 - Tenant isolation is enforced on the nine RLS tables but not yet on every
   legacy learner-owned table. See [Tenant isolation status](TENANT-ISOLATION-STATUS.md).
-- Production cutover has not run; `deployment_mode=development` and
-  `data_collection_mode=sample` remain. See
+- Production cutover is **complete** (2026-11-16 19:21:54 UTC, ticket `123456`,
+  approver Robert Chaykoski, evidence hash `4f76c44e…`). See
   [Production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md).
+- `smoke_tester` and `tester` remain in production by operator decision.
 - The ATT&CK Navigator iframe requires internet access to
   `mitre-attack.github.io`; the panel fallback is present when the origin is
   blocked.

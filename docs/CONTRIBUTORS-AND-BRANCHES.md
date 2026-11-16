@@ -20,7 +20,8 @@ release document without that person's consent.
 | `canonical/main` on production | Fast-forward source for production | active |
 | `backup` remote | Mirror of the production tree | mirror |
 | `v2` remote | Historical v2 line | historical |
-| `v5.17.1` | Signed current release tag | current |
+| `v5.17.2` | Signed current release tag | current |
+| `v5.17.1` | Previous signed patch release | historical |
 | `v5.17.0` | Previous signed feature release | historical |
 | `v5.0.0`–`v5.16.0` | Signed previous release tags | historical |
 | `v2.7.0` | Unsigned historical tag (documented exception) | historical |

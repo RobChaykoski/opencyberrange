@@ -2,6 +2,24 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.2] - 2026-11-16
+
+### Fixed
+
+- **Re-authentication dialog request path.** The dialog posted to
+  `/api/auth/reauth` through an HTTP client whose base URL is already `/api`,
+  so the request went to `/api/api/auth/reauth` and returned `404 Not Found`.
+  This blocked every re-authentication-gated action, including the production
+  cutover, account export, role changes, and consent revocation. The dialog now
+  posts to `/auth/reauth`. The regression test asserts the corrected path.
+
+### Operations
+
+- Production completed the one-way cutover on 16 November 2026 under ticket
+  `123456`, approved by Robert Chaykoski. Deployment mode and data collection
+  mode are `production`, settings changes require a ticket, and the cutover
+  evidence hash is recorded in the deployment statement.
+
 ## [5.17.1] - 2026-11-16
 
 ### Release hardening

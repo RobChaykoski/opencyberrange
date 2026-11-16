@@ -3,7 +3,7 @@
 ## Status
 
 **Not yet commissioned.** No independent penetration test or third-party
-security assessment has been completed for Release 5.17.1. This page must not
+security assessment has been completed for Release 5.17.2. This page must not
 be cited as evidence that one exists.
 
 ## Why it matters

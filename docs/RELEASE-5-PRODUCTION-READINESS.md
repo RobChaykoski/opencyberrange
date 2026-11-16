@@ -1,13 +1,14 @@
 # Release 5 production readiness
 
-Status: **`v5.17.1` is released and deployed.** Development `172.16.16.44` and
-production `172.16.16.41` both run `main` at `b9d99d2a` (`v5.17.1`) with Alembic
-`0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
+Status: **`v5.17.2` is released and deployed, and production is cut over.**
+Development `172.16.16.44` and production `172.16.16.41` both run `main` at the
+commit tagged `v5.17.2` with Alembic `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
 `v5.14.0`, `v5.15.0`, `v5.16.0`, `v5.17.0`, and `v5.17.1` record the feature
-releases, security patches, and operations patches.
+releases, security patches, and operations patches. `v5.17.2` is the current
+release and the one-way cutover is complete.
 
 ## Ready for production
 
@@ -33,6 +34,34 @@ releases, security patches, and operations patches.
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
 - Migrations `0015`–`0040`, all idempotent and applied on dev and production.
+
+## 5.17.2 deployment record and production cutover - 2026-11-16
+
+- Deployed from `main` at the commit tagged `v5.17.2`; backend and frontend
+  rebuilt from the release tree.
+- Fix: `ReauthDialog.vue` posted to `/api/auth/reauth` through a client whose
+  base URL is already `/api`, producing `/api/api/auth/reauth` and a
+  `404 Not Found`. It now posts to `/auth/reauth`; the regression test asserts
+  the corrected path. This blocked the cutover re-auth challenge and every other
+  re-authentication-gated action.
+- Pre-cutover backup: `~/backups/ocr-backup-20261116-181526.dump`.
+- Post-cutover backup: `~/backups/ocr-backup-20261116-192307.dump`; restore
+  drill **PASSED** (47 users, 191 labs, 42 enrollments, 124 completions,
+  464 achievements, 1322 activity events).
+- **Cutover executed** 2026-11-16 19:21:54 UTC by `swocts` under ticket `123456`,
+  approved by Robert Chaykoski.
+- Evidence hash: `4f76c44efa7a30f70cb098e8da333013ce1aca79db5aee30a53bc78329afcfdf`.
+- Security event `production.cutover` #395 (critical, success); audit action
+  `PRODUCTION_CUTOVER`; `password_confirmed=true`.
+- Settings now: `deployment_mode=production`, `data_collection_mode=production`,
+  `settings_change_ticket_mode=required`.
+- Test-account cleanup: `qa_tester_1114`, `qa_tester_1115`, and
+  `qa_release_check_20261116` erased; users 50 → 47 and admins 2 → 1.
+  `smoke_tester` and `tester` were retained by the operator.
+- Verified: `/api/version` returns `5.17.2`, `/health` 200, 191 labs, release
+  status **Up to date** against `v5.17.2`.
+- Tag `v5.17.2` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814`.
 
 ## 5.17.1 deployment record - 2026-11-16
 

@@ -29,7 +29,7 @@ describe('ReauthDialog', () => {
     await wrapper.find('form').trigger('submit')
     await flushPromises()
 
-    expect(post).toHaveBeenCalledWith('/api/auth/reauth', {
+    expect(post).toHaveBeenCalledWith('/auth/reauth', {
       password: 'correct horse battery staple', // security-delta: allow credential-like assignment
       totp_code: null,
     })

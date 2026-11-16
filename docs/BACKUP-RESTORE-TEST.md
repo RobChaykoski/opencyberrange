@@ -6,8 +6,10 @@ Backup creation is not evidence of recoverability. This page records both.
 
 | Item | Value |
 |---|---|
-| Backup | `~/backups/ocr-backup-20261116-181526.dump` |
-| Restore drill | **PASSED** on 16 November 2026 |
+| Pre-cutover backup | `~/backups/ocr-backup-20261116-181526.dump` |
+| Post-cutover backup | `~/backups/ocr-backup-20261116-192307.dump` |
+| Restore drills | **PASSED** pre- and post-cutover on 16 November 2026 |
+| Post-cutover restored users | 47 |
 | Restored tables compared | users, labs, courses, course_enrollments, lab_completions, achievements, review_requests, activity_events |
 | Backup retention | 14 days by default (`RETENTION_DAYS`) |
 

@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.17.1`).**
+> **Release 5 is the current release line (latest signed `v5.17.2`).**
 >
 > Community participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 > The authoritative deployment state is the

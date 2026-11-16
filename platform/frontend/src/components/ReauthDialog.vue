@@ -72,7 +72,7 @@ async function submit() {
   saving.value = true
   error.value = ''
   try {
-    await api.post('/api/auth/reauth', {
+    await api.post('/auth/reauth', {
       password: password.value,
       totp_code: code.value || null,
     })

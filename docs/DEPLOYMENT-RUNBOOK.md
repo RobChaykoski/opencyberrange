@@ -2,7 +2,7 @@
 
 Operational commands for the two deployed environments.
 
-**Current release:** `5.17.1` (signed tag `v5.17.1`, Alembic
+**Current release:** `5.17.2` (signed tag `v5.17.2`, Alembic
 `0040_settings_change_control`). The admin **System → Health → Release status**
 panel compares the installed version with the latest GitHub release or tag.
 The authoritative deployment state, including whether cutover has run, is in
@@ -376,7 +376,7 @@ baseline. Before deploying:
    `https://mitre-attack.github.io` Navigator origin.
 3. Set the `wiki_origin` platform setting to `https://<host>:8443` if it is not
    already set.
-4. Build with `PLATFORM_VERSION=5.17.1` and confirm `/api/version`.
+4. Build with `PLATFORM_VERSION=5.17.2` and confirm `/api/version`.
 5. Let the backend apply migrations during startup and confirm `alembic current`
    reports `0040_settings_change_control` (head). Do not run
    `alembic upgrade head` by hand while the backend is serving.
@@ -392,7 +392,7 @@ docker compose -f docker-compose.prod.yml -f docker-compose.adopt.yml \
 docker exec ocr-backend alembic current
 ```
 
-Verify `/api/version` reports `5.17.1`, `/health` returns 200, the admin
+Verify `/api/version` reports `5.17.2`, `/health` returns 200, the admin
 **Release status** panel reports **Up to date**, the 8443 workbook loads, and the
 lab list still contains the expected 191 labs. Keep the previous image tags and
 the pre-deploy database dump for rollback. See
