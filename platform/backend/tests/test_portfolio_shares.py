@@ -16,6 +16,13 @@ PASSWORD = "Share#Pass123"  # Test-only credential; security-delta: allow
 pytestmark = pytest.mark.db
 
 
+@pytest.fixture(autouse=True)
+def _suppression_ledger(tmp_path, monkeypatch):
+    monkeypatch.setenv(
+        "CONSENT_SUPPRESSION_PATH", str(tmp_path / "consent-suppression.jsonl")
+    )
+
+
 def _user(db):
     suffix = uuid.uuid4().hex[:8]
     user = User(

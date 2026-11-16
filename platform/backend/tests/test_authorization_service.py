@@ -55,6 +55,13 @@ def _set(db, **values):
 
 
 @pytest.fixture(autouse=True)
+def _suppression_ledger(tmp_path, monkeypatch):
+    monkeypatch.setenv(
+        "CONSENT_SUPPRESSION_PATH", str(tmp_path / "consent-suppression.jsonl")
+    )
+
+
+@pytest.fixture(autouse=True)
 def _reset_security_settings(db_session):
     _set(db_session, **DEFAULTS)
     yield
