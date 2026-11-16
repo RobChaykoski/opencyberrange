@@ -1,0 +1,56 @@
+case_id: DFIR-2026-045
+title: Halcyon Retail ransomware investigation
+status: synthetic training case
+affected_hosts:
+  - WS-17.lab.example
+  - FS-01.lab.example
+  - DC-01.lab.example
+timeline_anchor: "2026-11-12T09:02:10Z"
+initial_access:
+  vector: phishing attachment
+  source: ap@halcyon-retail.example
+  attachment: Invoice_INV-4471.doc
+  sha256: "4444444444444444444444444444444444444444444444444444444444444444"
+execution:
+  - process: powershell.exe
+    parent: WINWORD.EXE
+    command_line: "powershell.exe -NoP -NonI -EncodedCommand SQBFAFgA"
+persistence:
+  - type: registry_run_key
+    key: HKCU\Software\Microsoft\Windows\CurrentVersion\Run\WindowsUpdateSvc
+  - type: scheduled_task
+    name: Updater
+  - type: cron
+    host: linux-ir-01.lab.example
+    entry: "*/5 * * * * /tmp/.update.sh"
+impact:
+  encryption_extension: ".halcyon"
+  ransom_note: "README_RESTORE.txt"
+  encrypted_share: "\\\\FS-01\\finance$"
+  deleted_shadow_copies: true
+  synthetic_encrypted_files:
+    - finance/AP/INV-4471.xlsx.halcyon
+    - finance/AP/INV-4472.xlsx.halcyon
+    - finance/AR/ledger-2026.xlsx.halcyon
+indicators:
+  domains: [updates.lab.example, cdn-sync-update.example]
+  ip_addresses: [10.20.0.53, 10.20.0.80]
+  hashes:
+    - "3333333333333333333333333333333333333333333333333333333333333333"
+    - "4444444444444444444444444444444444444444444444444444444444444444"
+    - "5555555555555555555555555555555555555555555555555555555555555555"
+evidence_sources:
+  - windows_security
+  - sysmon
+  - prefetch
+  - linux_logs
+  - browser_history
+  - email
+  - memory
+  - pcap
+  - disk
+questions:
+  - Establish the initial access, execution, persistence, and impact sequence.
+  - Identify which evidence is missing or destroyed and what cannot be recovered.
+  - Recommend containment, recovery, notification, and lessons learned.
+  - Produce an analyst report with a timestamped evidence table and confidence.

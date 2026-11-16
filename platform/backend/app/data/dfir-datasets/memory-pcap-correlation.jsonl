@@ -1,0 +1,8 @@
+{"@timestamp":"2026-11-12T09:02:10Z","source":"memory","host":"WS-17.lab.example","pid":4812,"process":"powershell.exe","parent_pid":3920,"parent":"WINWORD.EXE","command_line":"powershell.exe -NoP -NonI -EncodedCommand SQBFAFgA"}
+{"@timestamp":"2026-11-12T09:02:12Z","source":"pcap","host":"WS-17.lab.example","src":"10.20.0.15","dst":"10.20.0.53","port":53,"proto":"udp","query":"updates.lab.example","answer":"10.20.0.53"}
+{"@timestamp":"2026-11-12T09:02:14Z","source":"pcap","host":"WS-17.lab.example","src":"10.20.0.15","dst":"10.20.0.80","port":443,"proto":"tcp","sni":"updates.lab.example","bytes":13400}
+{"@timestamp":"2026-11-12T09:02:16Z","source":"memory","host":"WS-17.lab.example","pid":4812,"process":"powershell.exe","handle":"svc_update.dll","path":"C:\\Users\\analyst\\AppData\\Roaming\\svc_update.dll"}
+{"@timestamp":"2026-11-12T09:02:20Z","source":"pcap","host":"WS-17.lab.example","src":"10.20.0.15","dst":"10.20.0.80","port":443,"proto":"tcp","http_method":"POST","http_uri":"/api/v2/task.json","bytes":820}
+{"@timestamp":"2026-11-12T09:03:05Z","source":"memory","host":"DC-01.lab.example","pid":624,"process":"lsass.exe","accessor":"rundll32.exe","access_mask":"0x1010","command_line":"rundll32.exe C:\\Windows\\System32\\comsvcs.dll, MiniDump 624 C:\\Windows\\Temp\\lsass.dmp full"}
+{"@timestamp":"2026-11-12T09:03:10Z","source":"pcap","host":"linux-ir-01.lab.example","src":"10.20.0.44","dst":"10.20.0.80","port":443,"proto":"tcp","sni":"updates.lab.example","bytes":2700}
+{"@timestamp":"2026-11-12T09:04:12Z","source":"pcap","host":"linux-ir-01.lab.example","src":"10.20.0.44","dst":"10.20.0.53","port":53,"proto":"udp","query":"c2f4a91b7d3e5f6081a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708.lab.example","qtype":"TXT","answer":"v=spf1 -all"}

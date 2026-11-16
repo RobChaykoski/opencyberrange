@@ -1,0 +1,10 @@
+{"@timestamp":"2026-11-12T08:55:00Z","source":"browser","host":"WS-17.lab.example","actor":"analyst","event":"visit","detail":"portal.halcyon-retail.example/account/verify","confidence":"high"}
+{"@timestamp":"2026-11-12T08:58:00Z","source":"linux-auth","host":"linux-ir-01.lab.example","actor":"svc_backup","event":"failed_login","detail":"10.20.0.44","confidence":"high"}
+{"@timestamp":"2026-11-12T09:00:15Z","source":"linux-auth","host":"linux-ir-01.lab.example","actor":"svc_backup","event":"accepted_login","detail":"10.20.0.44","confidence":"high"}
+{"@timestamp":"2026-11-12T09:01:00Z","source":"email","host":"mail-relay.example","actor":"ap@halcyon-retail.example","event":"delivered","detail":"INV-4471 to maya.chen","confidence":"medium"}
+{"@timestamp":"2026-11-12T09:02:00Z","source":"browser","host":"WS-17.lab.example","actor":"analyst","event":"download","detail":"Invoice_INV-4471.doc sha256 4444...","confidence":"high"}
+{"@timestamp":"2026-11-12T09:02:10Z","source":"windows-security","host":"WS-17.lab.example","actor":"analyst","event":"process_start","detail":"powershell.exe from WINWORD.EXE","confidence":"high"}
+{"@timestamp":"2026-11-12T09:02:20Z","source":"windows-sysmon","host":"WS-17.lab.example","actor":"analyst","event":"file_create","detail":"svc_update.dll","confidence":"high"}
+{"@timestamp":"2026-11-12T09:03:00Z","source":"linux-cron","host":"linux-ir-01.lab.example","actor":"svc_backup","event":"persistence","detail":"/tmp/.update.sh every 5 minutes","confidence":"high"}
+{"@timestamp":"2026-11-12T09:03:30Z","source":"linux-systemd","host":"linux-ir-01.lab.example","actor":"root","event":"service_start","detail":"updater.service","confidence":"high"}
+{"@timestamp":"2026-11-12T09:06:00Z","source":"prefetch","host":"WS-17.lab.example","actor":"analyst","event":"execution","detail":"POWERSHELL.EXE run count 3","confidence":"medium"}

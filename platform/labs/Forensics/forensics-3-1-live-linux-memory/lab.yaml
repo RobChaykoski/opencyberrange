@@ -16,8 +16,11 @@ mapped_skills:
   - network_systems
 assessment_criteria:
   - Submit the correct flag.
+  - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+  - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
   - Record the acquisition command, file size, and SHA-256 hash.
   - Explain why the flag exists in memory but not in a disk file.
+analyst_finding_required: true
 mitre_attack:
   - tactic: Collection
     technique: T1005

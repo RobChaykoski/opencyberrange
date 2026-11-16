@@ -1,0 +1,29 @@
+{
+  "case_id": "DFIR-2026-044",
+  "message_id": "<20261112090100.7a1c@mail-relay.example.org>",
+  "from": "Accounts Payable <ap@halcyon-retail.example>",
+  "return_path": "bounce@mailer-relay.example",
+  "reply_to": "IT Service Desk <it-support@halcyon-retail.example>",
+  "to": "maya.chen@halcyon-retail.example",
+  "subject": "Invoice INV-4471 overdue - action required",
+  "date": "2026-11-12T09:01:00Z",
+  "received_chain": [
+    "from mail-relay.example (mail-relay.example [203.0.113.47]) by mx.halcyon-retail.example"
+  ],
+  "authentication": {
+    "spf": "fail",
+    "dkim": "none",
+    "dmarc": "fail"
+  },
+  "urls": [
+    "http://portal.halcyon-retail.example/account/verify"
+  ],
+  "attachment": {
+    "filename": "Invoice_INV-4471.doc",
+    "media_type": "application/msword",
+    "size": 3615,
+    "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+    "analysis": "HTML document renamed .doc; contains a synthetic JScript marker only"
+  },
+  "expected_finding": "Sender domain, Return-Path, and Reply-To do not align; SPF and DMARC fail; attachment is not a real Word document."
+}

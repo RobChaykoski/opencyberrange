@@ -91,6 +91,10 @@
       "minItems": 1,
       "items": {"type": "string", "minLength": 1}
     },
+    "analyst_finding_required": {
+      "type": "boolean",
+      "description": "When true, a short analyst finding or evidence artifact is required in addition to the flag."
+    },
     "mitre_attack": {
       "type": "array",
       "items": {"$ref": "#/$defs/mitre"}

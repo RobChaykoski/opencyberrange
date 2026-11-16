@@ -42,6 +42,7 @@ mitre_attack:
 | `learning_outcomes` | list of strings | 3-5 measurable outcomes, each introduced by `# By completion students will be able to:` |
 | `mapped_skills` | list of strings | competency keys, non-empty |
 | `assessment_criteria` | list of strings | how the lab is graded, non-empty |
+| `analyst_finding_required` | boolean | when true, a short analyst finding or evidence artifact is required in addition to the flag |
 | `mitre_attack` | list of mappings | at least one `tactic`, `technique`, and `detection` |
 
 Legacy keys `name`, `duration_minutes`, `objectives`, and

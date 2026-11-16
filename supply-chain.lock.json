@@ -58,7 +58,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "c5ee61176cae61d1ee625361b5bf235d4f6de7ef0b7f839329f3da5824f90804"
+      "sha256": "9c429bd7749da486901d16836b92e80e8336821a17c9788b8fa91671dbc54663"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -105,6 +105,51 @@
     "platform/backend/app/data/detection-pathway.yaml": {
       "sha256": "4df826f01fea0fc57616ef7d246c2430bee9e8cd7a52d69d4d2717e3664c3928"
     },
+    "platform/backend/app/data/dfir-datasets/README.md": {
+      "sha256": "48422bdf1451ab58daf62a310f44fd54dea39117975792166d2d79a556b18047"
+    },
+    "platform/backend/app/data/dfir-datasets/browser-history.jsonl": {
+      "sha256": "9cff00353487967e4802fa320e21394d1175e0d423129eda789b274b8d6e87c4"
+    },
+    "platform/backend/app/data/dfir-datasets/disk-events.jsonl": {
+      "sha256": "adc496610a6f605a25656854136e0922f07dd3d394420ccd2f8ca409e9b4f8de"
+    },
+    "platform/backend/app/data/dfir-datasets/email-triage.json": {
+      "sha256": "3ac483870d1e2c3c82ee7353b382b1f1faaaa2799a7175855fe11eefba3a52e0"
+    },
+    "platform/backend/app/data/dfir-datasets/linux-logs.jsonl": {
+      "sha256": "d4787ab66174fa0c8e86abadd56905540225150f913f45d0f926adbd8c6b6a47"
+    },
+    "platform/backend/app/data/dfir-datasets/linux-memory.md": {
+      "sha256": "b71f22f717e573702801ba1d296e644968903a701eec9f530d31242388021afd"
+    },
+    "platform/backend/app/data/dfir-datasets/memory-pcap-correlation.jsonl": {
+      "sha256": "1880fffa86d6116d7857cdbd8768d71d9b742fcfc7570a9fbf31bbb2b62a23a3"
+    },
+    "platform/backend/app/data/dfir-datasets/network-call.md": {
+      "sha256": "356aea52bab942699dff7ab625e355aa62e5f37c1d67003a9128ad326375e0af"
+    },
+    "platform/backend/app/data/dfir-datasets/plaso-timeline.jsonl": {
+      "sha256": "880b24b3d865a4d5ba2b5ef6bfb7bb009928581fedaea6f563884f0b5f0cf819"
+    },
+    "platform/backend/app/data/dfir-datasets/ransomware-case.yaml": {
+      "sha256": "0f483c97be01c266821b880c72df478001526a4fd65b1bb40b2e74e3251b34a1"
+    },
+    "platform/backend/app/data/dfir-datasets/report-template.md": {
+      "sha256": "feef5249f1149631cf2ab77bafee96a5b44adabe645edf979063658041c47095"
+    },
+    "platform/backend/app/data/dfir-datasets/timeline-events.jsonl": {
+      "sha256": "45648855affd2232ddf3b3086340b0f9f31b14dc3e9e57e35cbdf0d4b267516d"
+    },
+    "platform/backend/app/data/dfir-datasets/windows-artifacts.jsonl": {
+      "sha256": "b14c42f0ae5d51a1aa45a8c33c125a35024118cc385bda5601a2b34fe75515f4"
+    },
+    "platform/backend/app/data/dfir-datasets/windows-memory.md": {
+      "sha256": "8df97bf21eaf01ff635e41981e529120975cc8766dae4b954805cccd8f51b867"
+    },
+    "platform/backend/app/data/dfir-pathway.yaml": {
+      "sha256": "684bf2ca877a2acc3b999523236d75c2bda3c585a1b0f8353318bbe394dc3064"
+    },
     "platform/backend/app/data/external-targets.yaml": {
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
@@ -112,7 +157,7 @@
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "0ff202c140a9245450713f6b0de1b296bdf0a8e035ba4cacf7b1f7b49e5954d0"
+      "sha256": "fbd0ea43050d6758b40aca146718f04a52a72288b2eed2b677cca9ba5d98be66"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -127,7 +172,7 @@
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
     },
     "platform/backend/lab_metadata.schema.json": {
-      "sha256": "faacbf99f5b402288e0051ebe51a5925310cf40c2270c7d93e6f184592b5915c"
+      "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
@@ -271,7 +316,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "8cb7632fd3136160c58347aea25ca6710103eb7247fb2111e749d9bd9d0caaf8"
+      "sha256": "c128fb34c0ebe0b1e245c4f998334626dd908cca7d9b6a320a3a39699d0e8749"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"
@@ -313,27 +358,27 @@
       ]
     },
     "forensics-1-1-windows-memory-volatility": {
-      "content_hash": "f32b40cb656169710aee9969de39280b0955bdcb5de0fc2bb6389c559e058810",
+      "content_hash": "7561931ec5dad1b39ea467817820b4f02111c831aa26f38a88e29ad2d6552535",
       "services": [
         "analyst"
       ]
     },
     "forensics-2-1-voip-call-reconstruction": {
-      "content_hash": "31f076f6621f11548e1307f10795ebe36822b3033cf308003e36ffe53b51f544",
+      "content_hash": "5e4f7e9bc8a237bd8eee030e9f01915458e14e0417aabbcbd450b23407e5b292",
       "services": [
         "evidence"
       ]
     },
     "forensics-2-2-topology-forensics-guided": {
-      "content_hash": "aaf41342b0a3fee8edbc22eb7656c7f52c330184abc49518a50c09835d4d6abe",
+      "content_hash": "20cca8cb49da18013c5da3c5241d63c1fbe55c65fc53007aae813f05a4a5f20b",
       "services": []
     },
     "forensics-2-3-topology-forensics-independent": {
-      "content_hash": "86c414b9f989d08e07a54fb00a244d4546946db98836cd1ad58bd08d12c8d434",
+      "content_hash": "041a95121e14c2a00af85761d4ac407e82b9623f0e44768f47ba28f9c70ba9dd",
       "services": []
     },
     "forensics-3-1-live-linux-memory": {
-      "content_hash": "889e90921f150ae374c121403553d34baa9850f7e29dd4a85627b7e08631650d",
+      "content_hash": "e3dae5be2dc2fde8959ed4914e461571f8682efeafc8388a7bdb67ce2e96df51",
       "services": []
     },
     "high-school-10-1-rangebox-network-basics": {

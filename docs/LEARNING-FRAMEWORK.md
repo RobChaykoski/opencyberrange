@@ -119,6 +119,7 @@ publicly or make high-stakes decisions.
 
 - [Lab metadata schema](LAB-METADATA-SCHEMA.md)
 - [Defensive detection-engineering pathway](DETECTION-ENGINEERING-PATHWAY.md)
+- [Digital forensics and incident response pathway](DFIR-PATHWAY.md)
 - [Malware lab governance](MALWARE-LAB-GOVERNANCE.md)
 - [Minor-safe defaults](MINOR-SAFE-DEFAULTS.md)
 - [System architecture](ARCHITECTURE.md)

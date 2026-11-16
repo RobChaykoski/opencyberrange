@@ -1,0 +1,352 @@
+# Defensive DFIR pathway
+#
+# Expands the current memory and VoIP exercises into a complete investigative
+# progression. Every module requires an analyst report or a reviewed evidence
+# artifact in addition to any flag; a flag alone is not completion evidence.
+
+version: 1
+title: "Digital Forensics and Incident Response"
+status: "reviewed pathway specification"
+audience: >-
+  Intermediate learners who can read endpoint and network evidence and want to
+  move from single-artifact exercises into a complete investigation.
+prerequisites:
+  completed_pathways: ["NET00", "NET02"]
+  baseline_competencies: [FOR-001, FOR-002, FOR-012, NET-030]
+principles:
+  - "Preserve first, analyse second: record the source, hash, time, and custody for every artifact."
+  - "A finding is not evidence until another analyst can reproduce it from the notes."
+  - "Correlate endpoint, memory, disk, email, browser, and network evidence on one timeline."
+  - "State confidence and alternative explanations; do not turn a correlation into a conclusion."
+  - "Every module requires a report or evidence artifact, not only a flag."
+data_policy:
+  synthetic_only: true
+  real_pii: false
+  prohibited_collection: [keystrokes, mouse_movement, exhaustive_terminal_history]
+  dataset_root: "platform/backend/app/data/dfir-datasets"
+  report_template: "platform/backend/app/data/dfir-datasets/report-template.md"
+  notes: >-
+    The evidence pack uses fictional people, hosts, and documentation ranges.
+    A production deployment must not replace it with learner or institutional
+    evidence.
+assessment_policy:
+  report_or_artifact_required: true
+  short_finding_required: true
+  flag_alone_is_not_completion: true
+  evidence_examples:
+    - analyst_report
+    - evidence_artifact
+    - timeline
+    - command_transcript
+    - hashed_acquisition_record
+  rubric:
+    - "Question and scope"
+    - "Sources and custody"
+    - "Method and commands"
+    - "Findings with timestamps and hashes"
+    - "Alternative explanations and confidence"
+    - "Containment, recovery, and lessons learned"
+modules:
+  - id: DFIR-01
+    title: "Windows Memory Analysis"
+    difficulty: beginner
+    estimated_minutes: 90
+    prerequisites: []
+    datasets: [windows-memory.md]
+    existing_labs: [forensics-1-1-windows-memory-volatility]
+    planned_labs: []
+    competencies:
+      - {id: FOR-012, weight: 0.30}
+      - {id: FOR-013, weight: 0.30}
+      - {id: FOR-015, weight: 0.20}
+      - {id: WIN-018, weight: 0.20}
+    evidence: [analyst_report, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "process list and hash extraction checks plus a short acquisition and findings report"
+    outcomes:
+      - "Identify the memory image and operating system with Volatility."
+      - "Explain what a process list can and cannot prove."
+      - "Record the image hash and the commands used."
+      - "Write a memory triage note with a finding, confidence, and next step."
+
+  - id: DFIR-02
+    title: "VoIP and Network Call Reconstruction"
+    difficulty: beginner
+    estimated_minutes: 90
+    prerequisites: [DFIR-01]
+    datasets: [network-call.md]
+    existing_labs: [forensics-2-1-voip-call-reconstruction]
+    planned_labs: []
+    competencies:
+      - {id: NET-029, weight: 0.25}
+      - {id: NET-030, weight: 0.30}
+      - {id: NET-031, weight: 0.25}
+      - {id: FOR-005, weight: 0.20}
+    evidence: [analyst_report, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "SIP/RTP extraction checks plus a call-reconstruction note"
+    outcomes:
+      - "Separate signalling from media and state the codec and ports."
+      - "Reconstruct the media and record the output hash."
+      - "Place the call in a timeline with the participant and endpoint evidence."
+      - "State what the capture proves and what it does not prove."
+
+  - id: DFIR-03
+    title: "Live Linux Memory Acquisition"
+    difficulty: intermediate
+    estimated_minutes: 100
+    prerequisites: [DFIR-01]
+    datasets: [linux-memory.md]
+    existing_labs: [forensics-3-1-live-linux-memory]
+    planned_labs: []
+    competencies:
+      - {id: FOR-012, weight: 0.30}
+      - {id: FOR-013, weight: 0.25}
+      - {id: LIN-024, weight: 0.25}
+      - {id: IR-003, weight: 0.20}
+    evidence: [analyst_report, hashed_acquisition_record, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "AVML acquisition record, image hash, and a process/environment triage report"
+    outcomes:
+      - "Acquire live memory with a documented tool and command."
+      - "Record size, SHA-256, time, and custody."
+      - "Identify the live process and its environment without reading unrelated secrets."
+      - "Explain why the evidence would disappear on reboot."
+
+  - id: DFIR-04
+    title: "Windows Artifact Investigation"
+    difficulty: intermediate
+    estimated_minutes: 150
+    prerequisites: [DFIR-01, DFIR-03]
+    datasets: [windows-artifacts.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-4-1-windows-artifacts]
+    competencies:
+      - {id: FOR-007, weight: 0.30}
+      - {id: FOR-010, weight: 0.25}
+      - {id: WIN-005, weight: 0.25}
+      - {id: WIN-021, weight: 0.20}
+    evidence: [analyst_report, timeline, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "artifact extraction checks plus a report naming source, timestamp, and interpretation"
+    outcomes:
+      - "Read Security, System, and Sysmon events without overstating the result."
+      - "Inspect Run keys, services, scheduled tasks, prefetch, Amcache, and Shimcache for execution and persistence."
+      - "Correlate event-log, prefetch, Amcache, and Shimcache evidence on one host timeline."
+      - "Reconstruct a process tree from process creation and image-load evidence."
+      - "Distinguish execution, installation, and mere presence."
+
+  - id: DFIR-05
+    title: "Linux Log Investigation"
+    difficulty: intermediate
+    estimated_minutes: 130
+    prerequisites: [DFIR-03]
+    datasets: [linux-logs.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-4-2-linux-log-investigation]
+    competencies:
+      - {id: FOR-008, weight: 0.30}
+      - {id: LIN-018, weight: 0.30}
+      - {id: LIN-022, weight: 0.20}
+      - {id: TH-003, weight: 0.20}
+    evidence: [analyst_report, timeline, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "log query checks plus a report with the authentication, sudo, cron, and service evidence"
+    outcomes:
+      - "Correlate sshd, sudo, cron, and systemd records on one host timeline."
+      - "Separate a failed login from a successful session and from privilege escalation."
+      - "Identify persistence through cron, systemd units, or authorized keys."
+      - "State which log sources are missing and how that limits the conclusion."
+
+  - id: DFIR-06
+    title: "Email Triage and Header Analysis"
+    difficulty: intermediate
+    estimated_minutes: 120
+    prerequisites: [DFIR-02]
+    datasets: [email-triage.json]
+    existing_labs: []
+    planned_labs: [forensics-4-3-email-triage]
+    competencies:
+      - {id: FOR-006, weight: 0.30}
+      - {id: NET-024, weight: 0.25}
+      - {id: TH-004, weight: 0.25}
+      - {id: IR-002, weight: 0.20}
+    evidence: [analyst_report, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "header and attachment checks plus a triage report"
+    outcomes:
+      - "Read Received, Return-Path, Reply-To, SPF, DKIM, and DMARC results."
+      - "Determine whether the sender, envelope, and reply path agree."
+      - "Analyse an attachment without executing it and record its hash."
+      - "Record the delivery path, indicators, and a user or mailbox containment recommendation."
+
+  - id: DFIR-07
+    title: "Browser History and Download Forensics"
+    difficulty: intermediate
+    estimated_minutes: 120
+    prerequisites: [DFIR-04]
+    datasets: [browser-history.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-5-1-browser-history]
+    competencies:
+      - {id: FOR-009, weight: 0.35}
+      - {id: FOR-011, weight: 0.30}
+      - {id: WIN-005, weight: 0.20}
+      - {id: IR-002, weight: 0.15}
+    evidence: [analyst_report, timeline, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "history/download query checks plus a user-activity report"
+    outcomes:
+      - "Read browser history, downloads, and autofill metadata without exposing unrelated personal data."
+      - "Link a download to a file hash and a subsequent execution artifact."
+      - "Distinguish a visit, a download, and a successful execution."
+      - "Record the browser profile, timezone, and timestamp interpretation."
+
+  - id: DFIR-08
+    title: "Timeline Reconstruction"
+    difficulty: intermediate
+    estimated_minutes: 160
+    prerequisites: [DFIR-04, DFIR-05, DFIR-07]
+    datasets: [timeline-events.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-5-2-timeline-reconstruction]
+    competencies:
+      - {id: FOR-005, weight: 0.35}
+      - {id: FOR-011, weight: 0.25}
+      - {id: NET-035, weight: 0.20}
+      - {id: TH-003, weight: 0.20}
+    evidence: [analyst_report, timeline, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "normalised timeline checks plus a report explaining ordering and clock assumptions"
+    outcomes:
+      - "Normalise timestamps from multiple sources and state the timezone and clock source."
+      - "Build a defensible sequence with gaps and uncertainty."
+      - "Identify the earliest reliable indicator and the last confirmed action."
+      - "Explain why two events close in time are not necessarily causally related."
+
+  - id: DFIR-09
+    title: "Disk Evidence and Plaso Timeline"
+    difficulty: advanced
+    estimated_minutes: 180
+    prerequisites: [DFIR-08]
+    datasets: [disk-events.jsonl, plaso-timeline.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-6-1-disk-evidence]
+    competencies:
+      - {id: FOR-003, weight: 0.25}
+      - {id: FOR-004, weight: 0.30}
+      - {id: FOR-006, weight: 0.25}
+      - {id: IR-003, weight: 0.20}
+    evidence: [analyst_report, hashed_acquisition_record, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "image hash, partition/filesystem facts, recovered-file checks, and a report"
+    outcomes:
+      - "Record the image source, acquisition method, size, and hash."
+      - "Identify partitions, filesystems, and the relevant MFT or journal records."
+      - "Produce a Plaso/Timesketch-style timeline and explain each source and timestamp type."
+      - "Recover or explain a deleted file without overstating completeness."
+      - "Preserve the original image and work from verified copies."
+
+  - id: DFIR-10
+    title: "Memory and PCAP Correlation"
+    difficulty: advanced
+    estimated_minutes: 180
+    prerequisites: [DFIR-02, DFIR-03, DFIR-08]
+    datasets: [memory-pcap-correlation.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-6-2-memory-pcap-correlation]
+    competencies:
+      - {id: FOR-005, weight: 0.30}
+      - {id: NET-030, weight: 0.25}
+      - {id: FOR-012, weight: 0.25}
+      - {id: TH-004, weight: 0.20}
+    evidence: [analyst_report, timeline, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: true
+      validation: "process/connection correlation checks plus a memory-to-network report"
+    outcomes:
+      - "Match a process or connection in memory to a flow in the capture."
+      - "Use DNS, TLS metadata, and process timing to support or reject a hypothesis."
+      - "Explain NAT, dynamic ports, and timestamp skew as correlation hazards."
+      - "Produce a single incident narrative from endpoint and network evidence."
+
+  - id: DFIR-11
+    title: "Analyst Reporting and Peer Review"
+    difficulty: advanced
+    estimated_minutes: 120
+    prerequisites: [DFIR-08, DFIR-09, DFIR-10]
+    datasets: [report-template.md, timeline-events.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-7-1-analyst-report]
+    competencies:
+      - {id: IR-001, weight: 0.25}
+      - {id: IR-008, weight: 0.25}
+      - {id: IR-009, weight: 0.25}
+      - {id: FOR-005, weight: 0.25}
+    evidence: [analyst_report, timeline]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: false
+      validation: "peer-reviewed report against the DFIR rubric; no flag-only completion"
+    outcomes:
+      - "Write an executive summary, scope, method, findings, and limitations."
+      - "Attach a timestamped evidence table with hashes and source paths."
+      - "State confidence and alternative explanations."
+      - "Give containment, recovery, and lessons-learned recommendations."
+
+  - id: DFIR-12
+    title: "Capstone: Ransomware Investigation"
+    difficulty: advanced
+    estimated_minutes: 240
+    prerequisites: [DFIR-04, DFIR-05, DFIR-06, DFIR-07, DFIR-08, DFIR-09, DFIR-10, DFIR-11]
+    datasets: [ransomware-case.yaml, timeline-events.jsonl, memory-pcap-correlation.jsonl]
+    existing_labs: []
+    planned_labs: [forensics-7-2-ransomware-capstone]
+    competencies:
+      - {id: IR-001, weight: 0.20}
+      - {id: IR-004, weight: 0.20}
+      - {id: IR-005, weight: 0.20}
+      - {id: IR-007, weight: 0.20}
+      - {id: FOR-005, weight: 0.20}
+    evidence: [analyst_report, timeline, evidence_artifact]
+    report_required: true
+    analyst_finding_required: true
+    assessment:
+      deterministic: false
+      validation: "capstone report and evidence pack reviewed against the rubric; flag is supporting evidence only"
+    outcomes:
+      - "Establish the initial access, execution, persistence, and impact sequence."
+      - "Correlate endpoint, memory, disk, email, browser, and network evidence."
+      - "Identify encrypted or deleted evidence and state what cannot be recovered."
+      - "Recommend containment, recovery, notification, and lessons learned."
+      - "Defend the timeline and confidence in a peer review."

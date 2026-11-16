@@ -218,6 +218,8 @@ labs:
       rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
     assessment_criteria:
     - Submit the correct flag.
+    - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+    - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
     - Pass every automated test step in the lab manifest.
     test_steps: 5
     flag_required: true
@@ -274,6 +276,8 @@ labs:
       rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
     assessment_criteria:
     - Submit the correct flag.
+    - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+    - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
     - Pass every automated test step in the lab manifest.
     test_steps: 8
     flag_required: true
@@ -330,6 +334,8 @@ labs:
       rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
     assessment_criteria:
     - Submit the correct flag.
+    - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+    - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
     - Pass every automated test step in the lab manifest.
     test_steps: 5
     flag_required: true
@@ -386,6 +392,8 @@ labs:
       rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
     assessment_criteria:
     - Submit the correct flag.
+    - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+    - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
     - Pass every automated test step in the lab manifest.
     test_steps: 5
     flag_required: true
@@ -442,6 +450,8 @@ labs:
       rationale: Baseline contract derived from the reviewed competency mapping. The evidence types and weights are explicit; live harness evidence and analyst-answer moderation are required before marking reviewed.
     assessment_criteria:
     - Submit the correct flag.
+    - Submit a short analyst finding (what happened, evidence, confidence, next step), not only the flag.
+    - Provide the supporting report or evidence artifact (hash, command transcript, reconstructed output, or timeline).
     - Record the acquisition command, file size, and SHA-256 hash.
     - Explain why the flag exists in memory but not in a disk file.
     test_steps: 4

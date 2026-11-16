@@ -583,10 +583,10 @@ tracks:
   - id: forensics
     pathway_order: 6
     display_name: "Digital Forensics"
-    audience: "Intermediate learners who want to investigate memory and network evidence."
+    audience: "Intermediate learners who want to investigate memory, disk, endpoint, email, browser, and network evidence."
     difficulty: "intermediate"
     prerequisites: ["NET02"]
-    required_environment: "RangeBox with forensic evidence images and PCAPs"
+    required_environment: "RangeBox with forensic evidence images, PCAPs, and the synthetic DFIR evidence pack"
     recommended_next: "osint"
     role_alignment: ["Digital Forensics Examiner", "Incident Responder", "Threat Intelligence Analyst"]
     status: "published"

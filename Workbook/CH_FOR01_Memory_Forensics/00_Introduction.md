@@ -31,6 +31,20 @@ Memory is fragile. It changes constantly and disappears when the machine loses
 power. Investigators capture it early and preserve the image exactly as it was
 acquired.
 
+## Pathway and report requirement
+
+This is the first module of the Digital Forensics and Incident Response
+pathway. The full progression adds Windows artifacts, Linux logs, email
+triage, browser history, timeline reconstruction, disk evidence,
+memory-to-PCAP correlation, an analyst-reporting exercise, and a ransomware
+capstone.
+
+Every module requires an **analyst report or a reviewed evidence artifact**, not
+just a flag. Record the source, acquisition time, SHA-256, commands, findings,
+confidence, and alternative explanations. The pathway specification and report
+template are in `docs/DFIR-PATHWAY.md` and
+`platform/backend/app/data/dfir-datasets/report-template.md`.
+
 ## Evidence Handling
 
 - Treat the memory image as read-only evidence.
