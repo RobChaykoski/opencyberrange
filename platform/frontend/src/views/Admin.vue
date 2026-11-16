@@ -2072,10 +2072,9 @@
                 Save the settings before sending a test.
               </p>
               <p v-if="activeSettingsCategory === 'security'" class="section-desc">
-                Privacy mode is a visual control for screen sharing and
-                shoulder-surfing. The first row changes this browser now; the
-                default row below applies to administrators who have not chosen
-                a preference yet.
+                Configure sign-in and session policy, authorization and tenant
+                boundaries, privacy defaults, security-event handling, and the
+                API surface. Changes are saved as a tracked change set.
               </p>
               <p v-if="activeSettingsCategory === 'wiki'" class="section-desc">
                 Serve workbooks from a separate origin to isolate their scripts
@@ -2095,26 +2094,6 @@
                 <strong>{{ exportClassificationLabel }}</strong>
                 <span>{{ settingsEdits.export_organisation || 'SWOCTS Cyber Range' }}</span>
                 <p>{{ exportHandlingPreview }}</p>
-              </div>
-              <div v-if="activeSettingsCategory === 'security'" class="setting-row">
-                <div class="setting-info">
-                  <span class="setting-key">
-                    Privacy Mode (this browser)
-                    <span class="setting-info-icon" tabindex="0">
-                      i
-                      <span class="setting-tooltip">Masks usernames, emails, display names, and student IDs in admin and instructor views. Hover or focus a masked value to reveal it. This toggle affects only the current browser.</span>
-                    </span>
-                  </span>
-                </div>
-                <div class="setting-control">
-                  <button
-                    class="visibility-toggle"
-                    :class="privacyMode ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'"
-                    @click="togglePrivacy"
-                  >
-                    {{ privacyMode ? 'Enabled' : 'Disabled' }}
-                  </button>
-                </div>
               </div>
               <div v-if="activeSettingsCategory === 'labs'" class="capacity-card">
                 <div class="capacity-card__header">
@@ -2188,92 +2167,118 @@
                   </span>
                 </div>
               </div>
-              <div v-for="(value, key) in filteredSettings" :key="key" class="setting-row">
-                <div class="setting-info">
-                  <span class="setting-key">
-                    {{ friendlyLabel(key) }}
-                    <span v-if="settingDescription(key)" class="setting-info-icon" tabindex="0">
-                      i
-                      <span class="setting-tooltip">{{ settingDescription(key) }}</span>
-                    </span>
-                  </span>
+              <template v-for="row in visibleSettingRows" :key="row.id">
+                <div v-if="row.type === 'header'" class="settings-group__header">
+                  <h3 class="settings-group__title">{{ row.title }}</h3>
+                  <p class="settings-group__desc">{{ row.description }}</p>
                 </div>
-                <div class="setting-control">
-                  <template v-if="value === 'true' || value === 'false'">
+                <div v-else-if="row.type === 'privacy-browser'" class="setting-row setting-row--browser">
+                  <div class="setting-info">
+                    <span class="setting-key">
+                      Privacy Mode (this browser)
+                      <span class="setting-info-icon" tabindex="0">
+                        i
+                        <span class="setting-tooltip">Masks usernames, emails, display names, and student IDs in admin and instructor views. Hover or focus a masked value to reveal it. This toggle affects only the current browser.</span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="setting-control">
                     <button
                       class="visibility-toggle"
-                      :class="settingsEdits[key] === 'true' ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'"
-                      :disabled="togglesSaving[key]"
-                      @click="toggleSetting(key)"
+                      :class="privacyMode ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'"
+                      @click="togglePrivacy"
                     >
-                      {{ togglesSaving[key] ? 'Saving...' : (settingsEdits[key] === 'true' ? 'Enabled' : 'Disabled') }}
+                      {{ privacyMode ? 'Enabled' : 'Disabled' }}
                     </button>
-                  </template>
-                  <template v-else-if="key === 'certificate_design'">
-                    <select v-model="settingsEdits[key]" class="form-input form-input--sm">
-                      <option v-for="design in certificateDesigns" :key="design.value" :value="design.value">
-                        {{ design.label }}
-                      </option>
-                    </select>
-                  </template>
-                  <template v-else-if="key === 'export_classification'">
-                    <select v-model="settingsEdits[key]" class="form-input form-input--sm">
-                      <option value="public">Public</option>
-                      <option value="internal">Internal</option>
-                      <option value="confidential">Confidential</option>
-                      <option value="restricted">Restricted</option>
-                    </select>
-                  </template>
-                  <template v-else-if="key === 'mail_security'">
-                    <select v-model="settingsEdits[key]" class="form-input form-input--sm">
-                      <option value="starttls">STARTTLS (usually port 587)</option>
-                      <option value="ssl">SSL/TLS (usually port 465)</option>
-                      <option value="none">None (usually port 25, not recommended)</option>
-                    </select>
-                  </template>
-                  <template v-else-if="key === 'mail_password'">
-                    <div class="setting-input-group">
-                      <input
-                        v-model="settingsEdits[key]"
-                        type="password"
-                        :placeholder="settingPlaceholder(key)"
-                        :aria-label="friendlyLabel(key)"
-                        class="form-input form-input--sm"
-                      />
-                    </div>
-                  </template>
-                  <template v-else-if="key === 'rangebox_capacity_percent'">
-                    <div class="setting-input-group">
-                      <input
-                        v-model.number="settingsEdits[key]"
-                        type="number"
-                        min="10"
-                        max="100"
-                        step="5"
-                        class="form-input form-input--sm"
-                        :aria-label="friendlyLabel(key)"
-                      />
-                      <span class="setting-unit">%</span>
-                    </div>
-                  </template>
-                  <template v-else-if="key.includes('color')">
-                    <input type="color" v-model="settingsEdits[key]" class="color-input" />
-                  </template>
-                  <template v-else>
-                    <div class="setting-input-group">
-                      <input
-                        v-model="settingsEdits[key]"
-                        :type="value === '••••••••' ? 'password' : 'text'"
-                        :placeholder="settingPlaceholder(key)"
-                        :aria-label="friendlyLabel(key)"
-                        class="form-input form-input--sm"
-                      />
-                      <span v-if="settingUnit(key)" class="setting-unit">{{ settingUnit(key) }}</span>
-                    </div>
-                  </template>
+                  </div>
                 </div>
-              </div>
-              <div v-if="Object.keys(filteredSettings).length === 0" class="empty-state">
+                <div v-else class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-key">
+                      {{ friendlyLabel(row.key) }}
+                      <span v-if="settingDescription(row.key)" class="setting-info-icon" tabindex="0">
+                        i
+                        <span class="setting-tooltip">{{ settingDescription(row.key) }}</span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="setting-control">
+                    <template v-if="row.value === 'true' || row.value === 'false'">
+                      <button
+                        class="visibility-toggle"
+                        :class="settingsEdits[row.key] === 'true' ? 'visibility-toggle--public' : 'visibility-toggle--exclusive'"
+                        :disabled="togglesSaving[row.key]"
+                        @click="toggleSetting(row.key)"
+                      >
+                        {{ togglesSaving[row.key] ? 'Saving...' : (settingsEdits[row.key] === 'true' ? 'Enabled' : 'Disabled') }}
+                      </button>
+                    </template>
+                    <template v-else-if="row.key === 'certificate_design'">
+                      <select v-model="settingsEdits[row.key]" class="form-input form-input--sm">
+                        <option v-for="design in certificateDesigns" :key="design.value" :value="design.value">
+                          {{ design.label }}
+                        </option>
+                      </select>
+                    </template>
+                    <template v-else-if="row.key === 'export_classification'">
+                      <select v-model="settingsEdits[row.key]" class="form-input form-input--sm">
+                        <option value="public">Public</option>
+                        <option value="internal">Internal</option>
+                        <option value="confidential">Confidential</option>
+                        <option value="restricted">Restricted</option>
+                      </select>
+                    </template>
+                    <template v-else-if="row.key === 'mail_security'">
+                      <select v-model="settingsEdits[row.key]" class="form-input form-input--sm">
+                        <option value="starttls">STARTTLS (usually port 587)</option>
+                        <option value="ssl">SSL/TLS (usually port 465)</option>
+                        <option value="none">None (usually port 25, not recommended)</option>
+                      </select>
+                    </template>
+                    <template v-else-if="row.key === 'mail_password'">
+                      <div class="setting-input-group">
+                        <input
+                          v-model="settingsEdits[row.key]"
+                          type="password"
+                          :placeholder="settingPlaceholder(row.key)"
+                          :aria-label="friendlyLabel(row.key)"
+                          class="form-input form-input--sm"
+                        />
+                      </div>
+                    </template>
+                    <template v-else-if="row.key === 'rangebox_capacity_percent'">
+                      <div class="setting-input-group">
+                        <input
+                          v-model.number="settingsEdits[row.key]"
+                          type="number"
+                          min="10"
+                          max="100"
+                          step="5"
+                          class="form-input form-input--sm"
+                          :aria-label="friendlyLabel(row.key)"
+                        />
+                        <span class="setting-unit">%</span>
+                      </div>
+                    </template>
+                    <template v-else-if="row.key.includes('color')">
+                      <input type="color" v-model="settingsEdits[row.key]" class="color-input" />
+                    </template>
+                    <template v-else>
+                      <div class="setting-input-group">
+                        <input
+                          v-model="settingsEdits[row.key]"
+                          :type="row.value === '••••••••' ? 'password' : 'text'"
+                          :placeholder="settingPlaceholder(row.key)"
+                          :aria-label="friendlyLabel(row.key)"
+                          class="form-input form-input--sm"
+                        />
+                        <span v-if="settingUnit(row.key)" class="setting-unit">{{ settingUnit(row.key) }}</span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <div v-if="visibleSettingRows.length === 0" class="empty-state">
                 No settings in this category.
               </div>
             </template>
@@ -5920,6 +5925,134 @@ const filteredSettings = computed(() => {
     )
   }
   return result
+})
+
+const securitySettingGroups = computed(() => {
+  // Group the Security tab by operator intent rather than by database key.
+  // Account and session controls, authorization, privacy, eventing, and the
+  // developer/API surface are different decisions and should not be interleaved.
+  const definitions = [
+    {
+      key: 'deployment',
+      title: 'Deployment and change control',
+      description: 'Production state and the ticket policy for platform changes.',
+      keys: ['data_collection_mode', 'settings_change_ticket_mode'],
+    },
+    {
+      key: 'sessions',
+      title: 'Sign-in, sessions, and MFA',
+      description: 'Authentication policy, token lifetimes, lockout, and recovery.',
+      keys: [
+        'sso_enabled',
+        'require_approval',
+        'jwt_expiration_hours',
+        'refresh_token_days',
+        'reauth_window_minutes',
+        'max_failed_attempts',
+        'lockout_duration_minutes',
+        'mfa_max_failed_attempts',
+        'mfa_lockout_minutes',
+        'mfa_recovery_code_ttl_days',
+        'mfa_recovery_code_count',
+        'password_breach_check_enabled',
+        'password_rehash_days',
+      ],
+    },
+    {
+      key: 'authorization',
+      title: 'Authorization and tenant isolation',
+      description: 'Role limits, tenant boundaries, and emergency access.',
+      keys: [
+        'max_privileged_accounts',
+        'tenant_isolation_enabled',
+        'authorization_strict_startup',
+        'break_glass_enabled',
+        'break_glass_require_mfa',
+        'break_glass_require_approval',
+        'break_glass_max_minutes',
+      ],
+    },
+    {
+      key: 'privacy',
+      title: 'Privacy and data minimization',
+      description: 'Visual privacy, cohort suppression, and share-link lifetime.',
+      keys: [
+        'privacy_default_on',
+        'analytics_min_cohort_size',
+        'portfolio_share_lifetime_days',
+      ],
+    },
+    {
+      key: 'events',
+      title: 'Security events and alerting',
+      description: 'Append-only evidence, HTTP coverage, retention, and alert thresholds.',
+      keys: [
+        'security_event_store_enabled',
+        'security_event_http_logging',
+        'security_event_retention_days',
+        'security_alert_enabled',
+        'security_alert_window_minutes',
+        'security_alert_threshold',
+      ],
+    },
+    {
+      key: 'developer',
+      title: 'API and developer surface',
+      description: 'Expose the interactive API documentation only when an operator needs it.',
+      keys: ['enable_api_docs'],
+    },
+  ]
+  const present = filteredSettings.value
+  const assigned = new Set()
+  const groups = definitions
+    .map((definition) => {
+      const entries = definition.keys
+        .filter((key) => key in present)
+        .map((key) => [key, present[key]])
+      entries.forEach(([key]) => assigned.add(key))
+      return { ...definition, entries }
+    })
+    .filter((group) => group.entries.length > 0)
+  const leftovers = Object.entries(present).filter(([key]) => !assigned.has(key))
+  if (leftovers.length) {
+    groups.push({
+      key: 'other',
+      title: 'Other security settings',
+      description: 'Settings that do not yet belong to a reviewed group.',
+      entries: leftovers,
+    })
+  }
+  return groups
+})
+
+const securitySettingRows = computed(() => {
+  const rows = []
+  for (const group of securitySettingGroups.value) {
+    rows.push({
+      type: 'header',
+      id: `header-${group.key}`,
+      key: `header-${group.key}`,
+      title: group.title,
+      description: group.description,
+    })
+    if (group.key === 'privacy') {
+      rows.push({ type: 'privacy-browser', id: 'privacy-browser', key: 'privacy-browser' })
+    }
+    for (const [key, value] of group.entries) {
+      rows.push({ type: 'setting', id: key, key, value })
+    }
+  }
+  return rows
+})
+
+const visibleSettingRows = computed(() => {
+  if (activeSettingsCategory.value === 'security') return securitySettingRows.value
+  return Object.entries(filteredSettings.value).map(([key, value]) => ({
+    type: 'setting',
+    id: key,
+    key,
+    value,
+  }))
 })
 
 const fetchSettings = async () => {
@@ -12919,6 +13052,32 @@ watch(activeTab, (tab) => {
   background: var(--bg-primary);
   border-radius: 6px;
   border: 1px solid var(--bg-secondary);
+}
+
+.settings-group__header {
+  margin: 1.35rem 0 0.1rem;
+  padding: 0 0.15rem 0.55rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.settings-group__header:first-of-type { margin-top: 0; }
+.settings-group__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+.settings-group__desc {
+  margin: 0.2rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+.setting-row--browser {
+  border-style: dashed;
+}
+
+@media (max-width: 768px) {
+  .settings-group__header { margin-top: 1rem; }
 }
 
 .setting-info {
