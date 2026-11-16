@@ -9,6 +9,7 @@ the database (health, entitlement) run.
 """
 import hashlib
 import os
+import tempfile
 import uuid
 
 import pytest
@@ -37,6 +38,10 @@ os.environ.setdefault("WG_ENCRYPTION_KEY", Fernet.generate_key().decode())
 # Point entitlement at a path that never exists unless a test overrides it,
 # so a stray data/entitlement.json in the working tree cannot leak in.
 os.environ.setdefault("OCR_ENTITLEMENT_FILE", "/nonexistent/pytest-entitlement.json")
+os.environ.setdefault(
+    "CONSENT_SUPPRESSION_PATH",
+    os.path.join(tempfile.gettempdir(), f"ocr-test-consent-{os.getpid()}.jsonl"),
+)
 
 from fastapi.testclient import TestClient  # noqa: E402
 
