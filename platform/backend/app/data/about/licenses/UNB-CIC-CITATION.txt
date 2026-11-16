@@ -1,0 +1,73 @@
+Canadian Institute for Cybersecurity (CIC) dataset terms
+University of New Brunswick
+
+CIC permits redistribution, republishing, and mirroring of its datasets in any
+form when the use or redistribution includes a citation to the named dataset
+and the research paper listed on the dataset page.
+
+The selected datasets and required citations are recorded in
+`platform/backend/app/data/external-datasets.yaml`. The current citations are:
+
+CIC-IDS2017
+  Iman Sharafaldin, Arash Habibi Lashkari, and Ali A. Ghorbani, "Toward
+  Generating a New Intrusion Detection Dataset and Intrusion Traffic
+  Characterization", 4th International Conference on Information Systems
+  Security and Privacy (ICISSP), Portugal, January 2018.
+
+CSE-CIC-IDS2018
+  Cite the CSE-CIC-IDS2018 dataset and its AWS page, plus:
+  Iman Sharafaldin, Arash Habibi Lashkari, and Ali A. Ghorbani, "Toward
+  Generating a New Intrusion Detection Dataset and Intrusion Traffic
+  Characterization", ICISSP, Portugal, January 2018.
+
+CIC-DDoS2019
+  Iman Sharafaldin, Arash Habibi Lashkari, Saqib Hakak, and Ali A. Ghorbani,
+  "Developing Realistic Distributed Denial of Service (DDoS) Attack Dataset
+  and Taxonomy", IEEE 53rd International Carnahan Conference on Security
+  Technology, Chennai, India, 2019.
+
+CIC-MalMem-2022
+  Tristan Carrier, Princy Victor, Ali Tekeoglu, and Arash Habibi Lashkari,
+  "Detecting Obfuscated Malware using Memory Feature Engineering", The 8th
+  International Conference on Information Systems Security and Privacy
+  (ICISSP), 2022.
+
+CIC-Bell-DNS-EXF-2021
+  Samaneh Mahdavifar, Amgad Hanafy Salem, Princy Victor, Miguel Garzon, Amir
+  H. Razavi, Natasha Hellberg, and Arash Habibi Lashkari, "Lightweight Hybrid
+  Detection of Data Exfiltration using DNS based on Machine Learning", The
+  11th IEEE International Conference on Communication and Network Security
+  (ICCNS), December 2021.
+
+CCCS-CIC-AndMal-2020
+  David Sean Keyes, Beiqi Li, Gurdip Kaur, Arash Habibi Lashkari, Francois
+  Gagnon, and Frederic Massicotte, "EntropLyzer: Android Malware
+  Classification and Characterization Using Entropy Analysis of Dynamic
+  Characteristics", RDAAPS, IEEE, McMaster University, 2021. Also cite
+  "DIDroid: Android Malware Classification and Characterization Using Deep
+  Image Learning" as listed on the dataset page.
+
+CIRA-CIC-DoHBrw-2020
+  Mohammadreza MontazeriShatoori, Logan Davidson, Gurdip Kaur, and Arash
+  Habibi Lashkari, "Detection of DoH Tunnels using Time-series Classification
+  of Encrypted Traffic", The 5th IEEE Cyber Science and Technology Congress,
+  Calgary, Canada, August 2020.
+
+CIC-IoT-Attack-2023
+  E. C. P. Neto, S. Dadkhah, R. Ferreira, A. Zohourian, R. Lu, and A. A.
+  Ghorbani, "CICIoT2023: A real-time dataset and benchmark for large-scale
+  attacks in IoT environment", Sensors, 2023.
+
+CIC-Trap4Phish-2025
+  F. Nejati, M. Rabbani, M. Eskandarian, M. Mirani, G. Piya, I. Opushnyev,
+  A. A. Ghorbani, and S. Dadkhah, "CIC-Trap4Phish: A Unified Multi-Format
+  Dataset for Phishing and Quishing Attachment Detection", arXiv preprint,
+  February 2026.
+
+CIC-UNSW-NB15-2024
+  H. Mohammadian, A. H. Lashkari, and A. Ghorbani, "Poisoning and Evasion:
+  Deep Learning-Based NIDS under Adversarial Attacks", 21st Annual
+  International Conference on Privacy, Security and Trust (PST), 2024.
+
+The CIC home page is https://www.unb.ca/cic/datasets/index.html. Each dataset
+page is the authority for its current terms and citation.

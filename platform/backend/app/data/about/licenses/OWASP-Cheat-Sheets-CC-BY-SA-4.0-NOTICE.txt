@@ -1,0 +1,29 @@
+OWASP Cheat Sheet Series notice
+
+The OWASP Cheat Sheet Series is by the OWASP Cheat Sheet Series Team and is
+licensed under Creative Commons Attribution-ShareAlike 4.0 International
+(CC BY-SA 4.0).
+
+You are free to share and adapt the material for any purpose, provided you give
+appropriate credit, link to the licence, indicate changes, and distribute your
+contributions under the same licence.
+
+The platform uses these sheets as review references:
+
+- Docker Security Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html
+- FastAPI Security Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html
+- REST Security Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html
+- Secure Coding with AI Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/Secure_Coding_with_AI_Cheat_Sheet.html
+- Security Terminology Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/Security_Terminology_Cheat_Sheet.html
+- Threat Modeling Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
+- Multi-Tenant Security Cheat Sheet
+  https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html
+
+Licence: https://creativecommons.org/licenses/by-sa/4.0/
+Repository: https://github.com/OWASP/CheatSheetSeries

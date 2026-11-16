@@ -1,0 +1,13 @@
+PCAP-ATTACK notice
+
+PCAP-ATTACK is a public collection of PCAP samples mapped to ATT&CK tactics by
+Samir Bousseaden and contributors.
+
+The repository declares no licence file. Copyright remains with the author and
+contributors, and no permission to redistribute is asserted here.
+
+OpenCyberRange therefore treats PCAP-ATTACK as reference-only. It does not
+vendor a capture, bundle a capture in a container, or serve a capture from the
+platform. Learner exercises use the platform's synthetic PCAP and Zeek data.
+
+Source: https://github.com/sbousseaden/PCAP-ATTACK
