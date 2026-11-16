@@ -278,6 +278,30 @@ sources:
       FastAPI sheet informs route, dependency, validation, and error handling
       review; the Docker sheet informs compose, image, and runtime hardening.
 
+  - id: threat-modeling-manifesto
+    name: Threat Modeling Manifesto
+    homepage: https://www.threatmodelingmanifesto.org/
+    repository: null
+    licence: CC BY 4.0
+    licence_url: https://creativecommons.org/licenses/by/4.0/
+    copyright: >-
+      Copyright (c) the Threat Modeling Manifesto working group. Licensed under
+      Creative Commons Attribution 4.0 International.
+    attribution: >-
+      Threat Modeling Manifesto, the Threat Modeling Manifesto working group,
+      https://www.threatmodelingmanifesto.org/. The four questions and values
+      are used as a design-review reference.
+    redistribution: allowed_with_attribution
+    access: reference
+    pin: null
+    pin_kind: living_document
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the four questions for a lab-design or feature review: what are we
+      working on, what can go wrong, what are we going to do about it, and did
+      we do a good enough job. Keep the attribution with copied text.
+
   - id: opencre
     name: OpenCRE
     homepage: https://www.opencre.org/
@@ -993,6 +1017,27 @@ datasets:
     access: reference
     files: []
 
+  - source: threat-modeling-manifesto
+    id: threat-modeling-manifesto
+    title: Threat Modeling Manifesto
+    kind: standard_index
+    platform: [Web, API, AI]
+    attack: []
+    tags: [threat-modeling, design, privacy, review]
+    lab_modules: []
+    use: >-
+      Frame a lab or feature review with four questions: what are we working
+      on, what can go wrong, what are we going to do about it, and did we do a
+      good enough job. Use the values and principles to keep the review
+      collaborative and evidence-based.
+    citation: >-
+      Threat Modeling Manifesto, Threat Modeling Manifesto working group,
+      https://www.threatmodelingmanifesto.org/.
+    licence: CC BY 4.0
+    redistribution: allowed_with_attribution
+    access: reference
+    files: []
+
   - source: opencre
     id: opencre-explorer
     title: OpenCRE requirement explorer
@@ -1050,6 +1095,90 @@ datasets:
     citation: >-
       OWASP FastAPI Security Cheat Sheet, OWASP Cheat Sheet Series,
       https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-threat-modeling-cheatsheet
+    title: OWASP Threat Modeling Cheat Sheet
+    kind: standard_index
+    platform: [Web, API, AI]
+    attack: []
+    tags: [owasp, threat-modeling, design, abuse-cases]
+    lab_modules: []
+    use: >-
+      Use the threat-modeling workflow for lab and feature design: scope,
+      assets, trust boundaries, adversary goals, abuse cases, controls, and
+      residual risk. It supports the A06 and API6 design reviews and the
+      capstone report rubric.
+    citation: >-
+      OWASP Threat Modeling Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-security-terminology-cheatsheet
+    title: OWASP Security Terminology Cheat Sheet
+    kind: standard_index
+    platform: [Web, API, AI]
+    attack: []
+    tags: [owasp, glossary, terminology, assessment]
+    lab_modules: []
+    use: >-
+      Use the terminology as a shared vocabulary for lab briefs, findings, and
+      rubrics: asset, threat, vulnerability, risk, control, likelihood, impact,
+      residual risk, and confidence. It keeps a learner finding precise without
+      turning the report into a glossary.
+    citation: >-
+      OWASP Security Terminology Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/Security_Terminology_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-secure-coding-with-ai-cheatsheet
+    title: OWASP Secure Coding with AI Cheat Sheet
+    kind: standard_index
+    platform: [AI, Web, API]
+    attack: []
+    tags: [owasp, ai-security, secure-coding, agentic]
+    lab_modules: []
+    use: >-
+      Review secure coding with AI assistants and agents: trust boundaries,
+      prompt and context handling, generated-code review, secret hygiene,
+      dependency review, human approval, and safe tool use. Map each item to an
+      AST10 category and an AI lab evidence step.
+    citation: >-
+      OWASP Secure Coding with AI Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/Secure_Coding_with_AI_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-rest-security-cheatsheet
+    title: OWASP REST Security Cheat Sheet
+    kind: standard_index
+    platform: [API, REST]
+    attack: []
+    tags: [owasp, rest, api-security, validation]
+    lab_modules: []
+    use: >-
+      Review REST-specific API security: resource authorization, HTTP method
+      handling, input validation, content negotiation, error responses,
+      caching, deprecation, and rate limits. Map each item to an API Top 10
+      category and a regression test.
+    citation: >-
+      OWASP REST Security Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html.
     licence: CC BY-SA 4.0
     redistribution: allowed_with_attribution_sharealike
     access: reference

@@ -35,7 +35,7 @@ standards:
           - Server-side ownership and tenant checks on every object route.
           - Route-level auth dependency plus service-level policy decision.
           - Two-owner / two-tenant IDOR regression matrix.
-          - OWASP Multi-Tenant Security Cheat Sheet review for tenant boundaries.
+          - OWASP Multi-Tenant Security and REST Security Cheat Sheet review.
         checks:
           - platform/backend/tests/test_idor_matrix.py
           - platform/backend/tests/test_horizontal_privilege.py
@@ -63,6 +63,7 @@ standards:
         controls:
           - Pydantic request/response schemas and explicit admin projections.
           - Private fields are never returned by generic list endpoints.
+          - OWASP REST Security Cheat Sheet review for resource representations.
         checks:
           - platform/backend/tests/test_input_safety.py
           - platform/backend/tests/test_admin_users.py
@@ -89,6 +90,7 @@ standards:
         controls:
           - Permission dependencies on protected route families.
           - Deny-by-default RBAC/PBAC and startup route audit.
+          - OWASP REST Security Cheat Sheet review for method and resource scope.
         checks:
           - platform/backend/tests/test_route_authorization.py
           - platform/backend/tests/test_access_matrix.py
@@ -102,6 +104,7 @@ standards:
         controls:
           - Login, registration, flag, export, and certificate limits.
           - Approval and reauthentication gates for high-impact actions.
+          - OWASP Threat Modeling Cheat Sheet and Manifesto review for sensitive flows.
         checks:
           - platform/backend/tests/test_auth.py
           - platform/backend/tests/test_flag_submit.py
@@ -131,7 +134,7 @@ standards:
         controls:
           - CSP, HSTS, frame and content-type headers.
           - API docs default-off, explicit CORS origins, no debug mode.
-          - OWASP Docker Security and FastAPI Security Cheat Sheet review.
+          - OWASP Docker, FastAPI, and REST Security Cheat Sheet review.
         checks:
           - scripts/check-nginx-security-headers.py
           - platform/backend/tests/test_compose_security.py
@@ -144,6 +147,7 @@ standards:
         controls:
           - Route audit, object-route manifest, about inventory, and versioned
             API prefixes.
+          - OWASP REST Security Cheat Sheet review for deprecation and caching.
         checks:
           - platform/backend/tests/test_route_authorization.py
           - platform/backend/tests/test_about_inventory.py
@@ -369,6 +373,7 @@ standards:
         controls:
           - Threat model, production change control, approval gates.
           - Separation of duties and explicit data-flow assumptions.
+          - OWASP Threat Modeling Cheat Sheet and Threat Modeling Manifesto review.
         checks:
           - platform/backend/tests/test_production_control.py
           - docs/ARCHITECTURE.md
@@ -574,6 +579,7 @@ standards:
         controls:
           - No automatic skill install; no third-party skill execution.
           - Prompt-injection labs use synthetic content only.
+          - OWASP Secure Coding with AI Cheat Sheet review for generated code and tools.
         checks:
           - platform/labs/AI/ai-1-1-prompt-injection-basics/lab.yaml
           - platform/labs/AI/ai-1-3-indirect-prompt-injection/lab.yaml
@@ -599,6 +605,7 @@ standards:
         controls:
           - Deny-by-default RBAC/PBAC and least-privilege service identities.
           - AI authoring keys are encrypted and owner-only.
+          - OWASP Secure Coding with AI Cheat Sheet review for tool scope and secrets.
         checks:
           - platform/backend/app/security/permissions.py
           - platform/backend/tests/test_access_matrix.py
@@ -621,6 +628,7 @@ standards:
         controls:
           - External content is fetched by authors, not by learner labs.
           - Indirect prompt-injection labs use offline synthetic pages.
+          - OWASP Secure Coding with AI Cheat Sheet review for context and instruction trust.
         checks:
           - platform/labs/AI/ai-1-3-indirect-prompt-injection/lab.yaml
           - docs/MINOR-SAFE-DEFAULTS.md
@@ -657,6 +665,7 @@ standards:
         controls:
           - Static review, link checks, secret scans, and dataset validation.
           - No single pattern match is treated as a safety decision.
+          - OWASP Secure Coding with AI Cheat Sheet review for generated-code checks.
         checks:
           - scripts/check-external-datasets.py
           - scripts/check-links.py
@@ -669,6 +678,7 @@ standards:
         controls:
           - Security events, audit history, RBAC reasons, and change control.
           - AI authoring is optional and owner-scoped.
+          - OWASP Secure Coding with AI Cheat Sheet review for human approval and audit.
         checks:
           - platform/backend/tests/test_security_events.py
           - platform/backend/tests/test_audit_history.py

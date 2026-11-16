@@ -46,6 +46,7 @@ STANDARD_SOURCES = {
     "owasp-top10-2025",
     "owasp-agentic-skills",
     "owasp-cheatsheets",
+    "threat-modeling-manifesto",
     "opencre",
 }
 

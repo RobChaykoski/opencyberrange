@@ -125,7 +125,12 @@ Use these OWASP Cheat Sheets as review aids alongside the regression tests:
 |---|---|
 | [Docker Security](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) | API8, A02, AST06; compose, image, and lab isolation review |
 | [FastAPI Security](https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html) | API2, API3, API5, API8, A02, A07; dependencies, schemas, errors, CORS, docs, tokens |
+| [REST Security](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html) | API1, API3, API5, API8, API9; resource authorization, methods, validation, errors, caching, deprecation |
+| [Secure Coding with AI](https://cheatsheetseries.owasp.org/cheatsheets/Secure_Coding_with_AI_Cheat_Sheet.html) | AST01, AST03, AST05, AST08, AST09; trust boundaries, generated-code review, secret hygiene, human approval |
 | [Multi-Tenant Security](https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html) | API1, API5, A01; tenant identification, isolation, and cross-tenant tests |
+| [Security Terminology](https://cheatsheetseries.owasp.org/cheatsheets/Security_Terminology_Cheat_Sheet.html) | All labs; shared vocabulary for findings, risk, impact, and confidence |
+| [Threat Modeling](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html) | API6, A06, AST05, AST09; scope, assets, trust boundaries, abuse cases, residual risk |
+| [Threat Modeling Manifesto](https://www.threatmodelingmanifesto.org/) | API6, A06; the four review questions and values |
 
 A cheat sheet is guidance. The status in this baseline is based on a platform
 control plus a regression check, not on a checklist alone.

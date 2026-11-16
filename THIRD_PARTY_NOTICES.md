@@ -123,6 +123,10 @@ to this repository.
   controls. The notice is
   `THIRD_PARTY_LICENSES/OWASP-Cheat-Sheets-CC-BY-SA-4.0-NOTICE.txt`. Keep the
   attribution and share-alike terms with any copied text.
+- **Threat Modeling Manifesto** (CC BY 4.0,
+  <https://www.threatmodelingmanifesto.org/>). A design-review reference by the
+  Threat Modeling Manifesto working group. The notice is
+  `THIRD_PARTY_LICENSES/Threat-Modeling-Manifesto-CC-BY-4.0-NOTICE.txt`.
 - **OpenCRE** (CC0-1.0, <https://www.opencre.org/explorer>). The Open Common
   Requirement Enumeration index from the OWASP OpenCRE project. The notice is
   `THIRD_PARTY_LICENSES/OpenCRE-CC0-1.0-NOTICE.txt`. CC0 does not require

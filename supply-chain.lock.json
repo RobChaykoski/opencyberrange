@@ -151,7 +151,7 @@
       "sha256": "1f11ed5463247c2e30535a95b1dcda4c3937b6904fd27732dbe7af953d8b4922"
     },
     "platform/backend/app/data/external-datasets.yaml": {
-      "sha256": "6f81c84217b4dcef3c78d4f61f69ce47e6b722a1e0531fda607c04f7504a82ea"
+      "sha256": "5b2e572553d623799466dc02a4e36f01f1d6d88073e8b0ea24f62a2c7fe8af7f"
     },
     "platform/backend/app/data/external-targets.yaml": {
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
@@ -160,7 +160,7 @@
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
     },
     "platform/backend/app/data/owasp-security-baseline.yaml": {
-      "sha256": "c8521c1916780c98267b0d8a5392e66f622cc35acb8e5154519dfca30b0dcffd"
+      "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
       "sha256": "fbd0ea43050d6758b40aca146718f04a52a72288b2eed2b677cca9ba5d98be66"
@@ -268,7 +268,7 @@
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
     "scripts/check-external-datasets.py": {
-      "sha256": "7998c4c1bf73a18183ee1891cb6d8714cdba4568c638a65f9a75a21e4c491947"
+      "sha256": "0b9f183fa72b30b350e4922cea486f51dba4333ffde61704ce396e9de23ac7a3"
     },
     "scripts/check-external-targets.py": {
       "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"

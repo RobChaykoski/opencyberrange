@@ -25,6 +25,7 @@ A link is not a licence. The sources below have different terms:
 | [**OWASP Agentic Skills Top 10**](https://owasp.github.io/www-project-agentic-skills-top-10/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | 1.0-2026 |
 | [**OpenCRE**](https://www.opencre.org/explorer) | CC0-1.0 | Public domain | Reference index | Live |
 | [**OWASP Cheat Sheet Series**](https://cheatsheetseries.owasp.org/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | Live |
+| [**Threat Modeling Manifesto**](https://www.threatmodelingmanifesto.org/) | CC BY 4.0 | Allowed with attribution | Reference | Living document |
 
 If a source has no declared licence, the default is **reference only**. Public
 visibility does not grant permission to copy, mirror, or serve the material.
@@ -115,12 +116,27 @@ the agentic lab pathway in the same guide.
 related standards and to support a review note. Record the CRE identifier and
 the access date; do not copy the live index into a release.
 
+The **Threat Modeling Manifesto** (CC BY 4.0) provides the four review
+questions and values used in the design and sensitive-flow reviews. It is a
+guide, not a checklist substitute.
+
 The **OWASP Cheat Sheet Series** provides review references. The
 [Docker Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html)
 maps to container, compose, and lab isolation checks. The
 [FastAPI Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html)
 maps to route dependencies, schema validation, error handling, CORS, docs
-gating, rate limits, and token review. Neither replaces a regression test.
+gating, rate limits, and token review. The
+[REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)
+maps to REST resource authorization, method handling, validation, error
+responses, caching, and deprecation. The
+[Secure Coding with AI Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secure_Coding_with_AI_Cheat_Sheet.html)
+maps to AI trust boundaries, generated-code review, secret hygiene, dependency
+review, and human approval. The
+[Security Terminology Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Security_Terminology_Cheat_Sheet.html)
+is the shared glossary for lab briefs and rubrics. The
+[Threat Modeling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html)
+supports design reviews, abuse cases, and residual-risk statements. None of
+them replaces a regression test.
 
 None of these standards is a certification. A mapping marked `partial` means
 the platform has a control and a test, but the category still needs
