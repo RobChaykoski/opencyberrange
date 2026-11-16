@@ -13,7 +13,7 @@
           and is written to align with Canada's Personal Information Protection
           and Electronic Documents Act (PIPEDA).
         </p>
-        <p class="privacy-card__meta">Effective 10 November 2026</p>
+        <p class="privacy-card__meta">Effective 15 November 2026</p>
       </header>
 
       <section>
@@ -186,10 +186,34 @@
         <h2>Consent and withdrawal</h2>
         <p>
           Creating an account and using the platform provides the information
-          needed to operate the training service. Optional features, including
-          account email, surveys, feedback publication, and research
-          participation, are separate choices. You can withdraw optional consent
-          from <strong>Profile &rarr; Privacy and data</strong> or by contacting
+          needed to operate the training service. Optional features are separate
+          choices, not one blanket agreement:
+        </p>
+        <ul>
+          <li><strong>Cyber DNA:</strong> competency evidence, behaviour and interest profiles, affinity signals, and DNA snapshots. On by default.</li>
+          <li><strong>Cyber GPS:</strong> direction finding, learning routes, gap analysis, and readiness views. On by default.</li>
+          <li><strong>Professional portfolio:</strong> stored portfolio and career/report snapshots. On by default.</li>
+          <li><strong>Portfolio sharing:</strong> employer/public share links and public profiles. Off by default.</li>
+          <li><strong>AI coach:</strong> AI conversations, prompt context, embeddings, and memory. Off by default.</li>
+          <li><strong>Research:</strong> learner-level analytics, segmentation, and research datasets. Off by default.</li>
+        </ul>
+        <p>
+          Review and change each one in
+          <strong>Profile &rarr; Security &amp; privacy &rarr; AI and career data</strong>.
+          Revocation takes effect immediately: the feature is blocked and its
+          derived data is queued for deletion. Deletion is verified when it runs
+          and again at 24 hours and 7 days. A keyed suppression record prevents a
+          backup restore or event replay from recreating the deleted data.
+          Re-granting allows new activity but does not restore what was deleted.
+        </p>
+        <p>
+          Revocation does not remove your educational record: completed
+          exercises, attempts, transcripts, certificates, achievements,
+          enrolments, and course progress remain. Account deletion is a separate
+          action under <strong>Privacy and data</strong>.
+        </p>
+        <p>
+          You can also withdraw optional consent by contacting
           <a href="mailto:privacy@swocts.com">privacy@swocts.com</a>. Withdrawal
           may limit optional features but does not affect access to core
           learning records where retention is required by the institution or

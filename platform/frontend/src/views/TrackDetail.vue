@@ -571,7 +571,9 @@
             </button>
           </nav>
           <div
+            ref="workspaceGrid"
             class="active-lab-grid"
+            :style="workspaceGridStyle"
             :class="{
               'active-lab-grid--workspace': workspaceMode,
               'active-lab-grid--tabs': workspaceMode && !wideWorkspace,
@@ -974,6 +976,18 @@
                     {{ workbookExpanded ? 'Shrink workbook' : 'Expand workbook' }}
                   </button>
                   <button
+                    v-if="wideWorkspace"
+                    type="button"
+                    class="btn btn--secondary btn--sm"
+                    title="Reset the desktop and workbook divider positions"
+                    @click="resetWorkspaceSplit"
+                  >
+                    Reset layout
+                  </button>
+                  <span v-if="wideWorkspace" class="workspace-frame__hint">
+                    Drag the dividers to resize
+                  </span>
+                  <button
                     v-if="activeWorkbookUrl"
                     type="button"
                     class="btn btn--secondary btn--sm"
@@ -1001,6 +1015,38 @@
                 The workbook opens when you select this tab.
               </div>
             </section>
+
+            <!-- Resizable workspace dividers (wide screens only). -->
+            <div
+              v-if="wideWorkspace && activeLab"
+              class="workspace-splitter workspace-splitter--vertical"
+              role="separator"
+              aria-orientation="vertical"
+              aria-label="Resize the RangeBox desktop and exercise details"
+              :aria-valuenow="Math.round(splitV)"
+              aria-valuemin="35"
+              aria-valuemax="80"
+              tabindex="0"
+              :style="{ left: `calc(${splitV}% - 0.5rem)` }"
+              @pointerdown.prevent="startWorkspaceSplit('vertical', $event)"
+              @keydown.left.prevent="adjustWorkspaceSplit('vertical', -4)"
+              @keydown.right.prevent="adjustWorkspaceSplit('vertical', 4)"
+            ></div>
+            <div
+              v-if="wideWorkspace && activeLab.lab.workbook"
+              class="workspace-splitter workspace-splitter--horizontal"
+              role="separator"
+              aria-orientation="horizontal"
+              aria-label="Resize the workspace and workbook"
+              :aria-valuenow="Math.round(effectiveSplitH)"
+              aria-valuemin="35"
+              aria-valuemax="82"
+              tabindex="0"
+              :style="{ top: `calc(${effectiveSplitH}% - 0.5rem)` }"
+              @pointerdown.prevent="startWorkspaceSplit('horizontal', $event)"
+              @keydown.up.prevent="adjustWorkspaceSplit('horizontal', -4)"
+              @keydown.down.prevent="adjustWorkspaceSplit('horizontal', 4)"
+            ></div>
           </div>
         </div>
       </div>
@@ -1397,6 +1443,126 @@ const workspaceTab = ref(
 )
 const workbookLoaded = ref(wideWorkspace.value || workspaceTab.value === 'workbook')
 const workbookExpanded = ref(false)
+
+// Drag-to-resize workspace. The split is stored as a percentage and persisted
+// per browser, so a learner who gives the desktop more room keeps that layout
+// on the next exercise. The middle handle resizes desktop/details; the lower
+// handle resizes the workspace/workbook rows.
+const WORKSPACE_SPLIT_V_KEY = 'ocr.workspace.split.v'
+const WORKSPACE_SPLIT_H_KEY = 'ocr.workspace.split.h'
+const clampSplit = (value, min, max) => Math.min(max, Math.max(min, value))
+const loadSplit = (key, fallback, min, max) => {
+  if (typeof window === 'undefined') return fallback
+  const value = Number(window.localStorage.getItem(key))
+  return Number.isFinite(value) ? clampSplit(value, min, max) : fallback
+}
+const workspaceGrid = ref(null)
+const splitV = ref(loadSplit(WORKSPACE_SPLIT_V_KEY, 60, 35, 80))
+const splitH = ref(loadSplit(WORKSPACE_SPLIT_H_KEY, 64, 35, 82))
+const effectiveSplitH = computed(() =>
+  workbookExpanded.value ? 46 : splitH.value
+)
+const workspaceGridStyle = computed(() => {
+  if (!wideWorkspace.value) return {}
+  const columns = `minmax(0, ${splitV.value}fr) minmax(280px, ${100 - splitV.value}fr)`
+  if (!activeLab.value?.lab?.workbook) {
+    return {
+      gridTemplateColumns: columns,
+      gridTemplateRows: 'minmax(0, 1fr)',
+    }
+  }
+  const top = effectiveSplitH.value
+  return {
+    gridTemplateColumns: columns,
+    gridTemplateRows: `minmax(0, ${top}fr) minmax(180px, ${100 - top}fr)`,
+  }
+})
+const splitDrag = ref(null)
+
+const persistWorkspaceSplit = () => {
+  try {
+    window.localStorage.setItem(WORKSPACE_SPLIT_V_KEY, String(splitV.value))
+    window.localStorage.setItem(WORKSPACE_SPLIT_H_KEY, String(splitH.value))
+  } catch {
+    // Private browsing/storage denial must not break resizing.
+  }
+}
+
+const clearSplitBodyClass = () => {
+  document.body.classList.remove(
+    'workspace-resizing--vertical',
+    'workspace-resizing--horizontal'
+  )
+}
+
+const onWorkspaceSplitMove = (event) => {
+  const drag = splitDrag.value
+  if (!drag) return
+  if (drag.axis === 'vertical') {
+    splitV.value = clampSplit(
+      ((event.clientX - drag.rect.left) / drag.rect.width) * 100,
+      35,
+      80
+    )
+  } else {
+    splitH.value = clampSplit(
+      ((event.clientY - drag.rect.top) / drag.rect.height) * 100,
+      35,
+      82
+    )
+  }
+}
+
+const endWorkspaceSplit = () => {
+  if (!splitDrag.value) return
+  splitDrag.value = null
+  clearSplitBodyClass()
+  window.removeEventListener('pointermove', onWorkspaceSplitMove)
+  window.removeEventListener('pointerup', endWorkspaceSplit)
+  window.removeEventListener('pointercancel', endWorkspaceSplit)
+  persistWorkspaceSplit()
+}
+
+const startWorkspaceSplit = (axis, event) => {
+  if (!wideWorkspace.value || !workspaceGrid.value) return
+  if (axis === 'horizontal') workbookExpanded.value = false
+  splitDrag.value = {
+    axis,
+    rect: workspaceGrid.value.getBoundingClientRect(),
+  }
+  document.body.classList.add(
+    axis === 'vertical'
+      ? 'workspace-resizing--vertical'
+      : 'workspace-resizing--horizontal'
+  )
+  window.addEventListener('pointermove', onWorkspaceSplitMove)
+  window.addEventListener('pointerup', endWorkspaceSplit)
+  window.addEventListener('pointercancel', endWorkspaceSplit)
+}
+
+const adjustWorkspaceSplit = (axis, delta) => {
+  if (axis === 'vertical') {
+    splitV.value = clampSplit(splitV.value + delta, 35, 80)
+  } else {
+    workbookExpanded.value = false
+    splitH.value = clampSplit(splitH.value + delta, 35, 82)
+  }
+  persistWorkspaceSplit()
+}
+
+const resetWorkspaceSplit = () => {
+  splitV.value = 60
+  splitH.value = 64
+  workbookExpanded.value = false
+  persistWorkspaceSplit()
+}
+
+onUnmounted(() => {
+  clearSplitBodyClass()
+  window.removeEventListener('pointermove', onWorkspaceSplitMove)
+  window.removeEventListener('pointerup', endWorkspaceSplit)
+  window.removeEventListener('pointercancel', endWorkspaceSplit)
+})
 
 onMounted(() => {
   if (!wideWorkspaceQuery) return
@@ -3724,6 +3890,7 @@ watch(timeRemaining, (val) => {
 }
 
 .active-lab-grid--workspace {
+  position: relative;
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(320px, 1fr);
@@ -3733,6 +3900,72 @@ watch(timeRemaining, (val) => {
     "workbook workbook";
   gap: 1rem;
   min-height: 0;
+}
+
+.workspace-splitter {
+  position: absolute;
+  z-index: 8;
+  touch-action: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.workspace-splitter--vertical {
+  top: 0;
+  bottom: 0;
+  width: 16px;
+  margin-left: -8px;
+  cursor: col-resize;
+}
+
+.workspace-splitter--horizontal {
+  left: 0;
+  right: 0;
+  height: 16px;
+  margin-top: -8px;
+  cursor: row-resize;
+}
+
+.workspace-splitter::after {
+  content: '';
+  display: block;
+  margin: auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--border-color) 75%, transparent);
+  transition: background 0.15s ease;
+}
+
+.workspace-splitter--vertical::after {
+  width: 3px;
+  height: 100%;
+}
+
+.workspace-splitter--horizontal::after {
+  width: 100%;
+  height: 3px;
+}
+
+.workspace-splitter:hover::after,
+.workspace-splitter:focus-visible::after {
+  background: var(--accent);
+}
+
+.workspace-splitter:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+:global(body.workspace-resizing--vertical),
+:global(body.workspace-resizing--vertical *) {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+:global(body.workspace-resizing--horizontal),
+:global(body.workspace-resizing--horizontal *) {
+  cursor: row-resize !important;
+  user-select: none !important;
 }
 
 .active-lab-grid--workspace.active-lab-grid--workbook-expanded {
