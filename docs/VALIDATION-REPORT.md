@@ -1,7 +1,7 @@
 # Validation report
 
 **Release:** 5.17.1
-**Commit:** release commit for `v5.17.1` (runtime code follows the release tree)
+**Commit:** `7c0d0603` (signed tag `v5.17.1`)
 **Date:** 16 November 2026
 
 This is the reproducible validation record for the current release. Commands
@@ -87,7 +87,7 @@ python scripts/supply_chain.py --check \
 | Alembic | `0040_settings_change_control` |
 | Registered labs | `191` |
 | Admin release status | `current` / `v5.17.1` |
-| Backup | `ocr-backup-20261116-175459.dump` |
+| Backup | `ocr-backup-20261116-181526.dump` |
 | Restore drill | **PASSED** |
 
 ## Known gaps

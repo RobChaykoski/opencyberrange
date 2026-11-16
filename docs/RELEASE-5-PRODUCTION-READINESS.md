@@ -1,13 +1,13 @@
 # Release 5 production readiness
 
-Status: **`v5.17.0` is released and deployed.** Development `172.16.16.44` and
-production `172.16.16.41` both run `main` at `291d831b` (`v5.17.0`) with Alembic
+Status: **`v5.17.1` is released and deployed.** Development `172.16.16.44` and
+production `172.16.16.41` both run `main` at `7c0d0603` (`v5.17.1`) with Alembic
 `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
-`v5.14.0`, `v5.15.0`, `v5.16.0`, and `v5.17.0` record the feature releases,
-security patches, and operations patches.
+`v5.14.0`, `v5.15.0`, `v5.16.0`, `v5.17.0`, and `v5.17.1` record the feature
+releases, security patches, and operations patches.
 
 ## Ready for production
 
@@ -33,6 +33,28 @@ security patches, and operations patches.
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
 - Migrations `0015`–`0040`, all idempotent and applied on dev and production.
+
+## 5.17.1 deployment record - 2026-11-16
+
+- Deployed from `main` at `7c0d0603` (`v5.17.1`). Backend and frontend were
+  rebuilt from the release tree.
+- Pre-deploy backup: `~/backups/ocr-backup-20261116-181526.dump` (checksum and
+  platform env recorded alongside it).
+- Restore drill on that backup: **PASSED** (users, labs, courses, enrollments,
+  completions, achievements, review requests, and activity events matched).
+- Alembic remained at `0040_settings_change_control`; no schema migration was
+  required.
+- Verified: backend, frontend, database, and Valkey healthy; `/api/version`
+  returns `5.17.1`; `/health` returns 200; 191 labs registered.
+- Production guards verified: `ENVIRONMENT=production`,
+  `OCR_DEPLOYMENT_MODE=production`, `OCR_AUTHZ_STRICT=true`, WireGuard key set.
+- Consent defaults verified: Cyber DNA, Cyber GPS, and portfolio are opt-in
+  (`default_granted=false`).
+- Admin release status reports **Up to date** against `v5.17.1`.
+- This is a code deployment. Database `deployment_mode` remains `development`
+  and `data_collection_mode` remains `sample`; the one-way cutover has not run.
+- Tag `v5.17.1` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814` at commit `7c0d0603`.
 
 ## 5.17.0 deployment record - 2026-11-16
 

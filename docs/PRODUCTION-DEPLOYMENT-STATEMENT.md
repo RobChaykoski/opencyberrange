@@ -9,27 +9,31 @@ another document disagrees, this page and the signed tag win.
 
 | Item | Value |
 |---|---|
-| Release | **5.17.0** |
-| Signed tag | **`v5.17.0`** |
-| Tag commit | `17c9a7e8` |
-| Runtime code commit | `291d831b` (backend rebuilt; docs commit follows) |
+| Release | **5.17.1** |
+| Signed tag | **`v5.17.1`** |
+| Tag commit | `7c0d0603` |
+| Runtime code commit | `7c0d0603` |
 | Alembic revision | **`0040_settings_change_control`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
-| Pre-deploy backup | `~/backups/ocr-backup-20261116-172935.dump` |
+| Pre-deploy backup | `~/backups/ocr-backup-20261116-181526.dump` |
+| Restore drill | **PASSED** on 16 November 2026 |
 
 ## Deployment state
 
 - Backend: healthy, `/health` returns `200`.
 - Frontend: healthy.
 - Database and Valkey: healthy.
-- `/api/version` returns `5.17.0` with the Release 5.17 name.
+- `/api/version` returns `5.17.1` with the Release 5.17.1 name.
 - Registered labs: **191**.
 - Admin **System → Health → Release status** reports **Up to date** against
-  `v5.17.0`.
+  `v5.17.1`.
 - `ENVIRONMENT=production`.
+- `OCR_DEPLOYMENT_MODE=production`.
+- `OCR_AUTHZ_STRICT=true`.
 - WireGuard encryption key is set.
+- Cyber DNA, Cyber GPS, and portfolio consent defaults are **false** (opt-in).
 - API docs remain disabled (`enable_api_docs=false`).
 
 ## Cutover status
@@ -43,10 +47,11 @@ Current production platform settings:
 | `deployment_mode` | `development` |
 | `data_collection_mode` | `sample` |
 
-The code is deployed and verified, but production still carries the
-development/sample configuration. Sample accounts and sample course data may
-still be present. Do not describe the deployment as a completed production
-cutover until the cutover checklist is signed.
+The code, production environment guards, and consent defaults are deployed and
+verified, but production still carries the development/sample data
+configuration. Sample accounts and sample course data may still be present. Do
+not describe the deployment as a completed production cutover until the cutover
+checklist is signed.
 
 ## Cutover gate
 
@@ -63,12 +68,13 @@ The cutover requires all of the following:
 
 ## Verification record
 
-- `GET /api/version` → `5.17.0`
+- `GET /api/version` → `5.17.1`
 - `GET /health` → `200`
 - `alembic current` → `0040_settings_change_control (head)`
 - Registered labs → `191`
-- Release status → `current` / `v5.17.0`
-- CI on `17c9a7e8` → all workflows green
+- Release status → `current` / `v5.17.1`
+- Backup restore drill → `PASSED`
+- CI on `7c0d0603` → all workflows green
 
 ## Related documents
 
