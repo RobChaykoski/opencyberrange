@@ -2260,6 +2260,18 @@
                         <span class="setting-unit">%</span>
                       </div>
                     </template>
+                    <template v-else-if="row.key === 'data_collection_mode'">
+                      <span class="settings-readonly" title="Changed only by the one-way production cutover.">
+                        {{ row.value }}
+                      </span>
+                    </template>
+                    <template v-else-if="row.key === 'settings_change_ticket_mode'">
+                      <select v-model="settingsEdits[row.key]" class="form-input form-input--sm">
+                        <option value="off">Off</option>
+                        <option value="optional">Optional</option>
+                        <option value="required">Required</option>
+                      </select>
+                    </template>
                     <template v-else-if="row.key.includes('color')">
                       <input type="color" v-model="settingsEdits[row.key]" class="color-input" />
                     </template>
@@ -13167,6 +13179,20 @@ watch(activeTab, (tab) => {
   font-size: 0.75rem;
   color: var(--text-muted, #64748b);
   white-space: nowrap;
+}
+
+.settings-readonly {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: lowercase;
 }
 
 .setting-control {
