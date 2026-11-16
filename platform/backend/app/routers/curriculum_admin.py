@@ -290,11 +290,37 @@ async def reorder_levels(
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
-    """Update level sort order and level numbers from an ordered list of IDs."""
-    for idx, level_id in enumerate(payload.ordered_ids):
-        level = db.query(Level).filter(Level.id == level_id, Level.track_id == track_id).first()
-        if level:
-            level.sort_order = idx
-            level.level_number = idx + 1
+    """Update level sort order and level numbers from an ordered list of IDs.
+
+    A direct renumber collides with the unique (track_id, level_number) index
+    when two levels swap positions, so park the whole track on unique negative
+    numbers first and only then assign the final sequence. Levels omitted from
+    the payload keep their relative order after the listed ones.
+    """
+    by_id = {
+        level.id: level
+        for level in db.query(Level).filter(Level.track_id == track_id).all()
+    }
+    ordered = []
+    seen = set()
+    for level_id in payload.ordered_ids:
+        level = by_id.get(level_id)
+        if level is not None and level.id not in seen:
+            ordered.append(level)
+            seen.add(level.id)
+    ordered.extend(
+        sorted(
+            (level for level in by_id.values() if level.id not in seen),
+            key=lambda level: level.level_number,
+        )
+    )
+
+    for offset, level in enumerate(ordered, start=1):
+        level.level_number = -offset
+    db.flush()
+
+    for idx, level in enumerate(ordered):
+        level.sort_order = idx
+        level.level_number = idx + 1
     db.commit()
     return {"message": "Level order updated"}
