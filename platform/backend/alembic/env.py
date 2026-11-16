@@ -57,6 +57,7 @@ from app.database import Base  # noqa: E402
 # Import every module that defines Base models so metadata is complete.
 import app.models  # noqa: F401,E402
 import app.cyber_dna.models  # noqa: F401,E402
+import app.consent.models  # noqa: F401,E402
 
 target_metadata = Base.metadata
 

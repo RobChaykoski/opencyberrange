@@ -21,6 +21,7 @@ _session_cleanup_task = None
 _backup_task = None
 _revocation_cleanup_task = None
 _metrics_task = None
+_consent_jobs_task = None
 _module_tasks = {}   # label -> asyncio.Task, one per discovered module tick
 
 
@@ -199,6 +200,42 @@ async def cleanup_revocations():
             logger.error("Error in token-revocation cleanup task: %s", exc)
 
 
+def _process_consent_jobs_once() -> dict:
+    """Run due purges/verifications and reconcile the suppression ledger."""
+    from app.consent.service import enforce_suppressions, run_due_jobs
+
+    db: Session = SessionLocal()
+    try:
+        jobs = run_due_jobs(db, limit=50)
+        sweep = enforce_suppressions(db)
+        return {"jobs": jobs, "suppression_sweep": sweep}
+    finally:
+        db.close()
+
+
+async def process_consent_jobs():
+    """Drain the durable consent queue every minute.
+
+    Revocation itself is fast: it records the suppression proof, locks the
+    feature, and enqueues work. This loop performs the destructive cleanup and
+    the immediate/24h/7d verification runs.
+    """
+    while True:
+        try:
+            await asyncio.sleep(60)
+            result = await asyncio.to_thread(_process_consent_jobs_once)
+            checks = result["jobs"].get("purges", 0) + result["jobs"].get(
+                "verifications", 0
+            )
+            if checks:
+                logger.info("Consent queue processed %d job group(s)", checks)
+        except asyncio.CancelledError:
+            logger.info("Consent job loop cancelled")
+            raise
+        except Exception as exc:
+            logger.error("Consent job loop failed: %s", exc)
+
+
 async def collect_system_metrics_loop():
     """Sample host/platform metrics every minute for the admin graphs."""
     while True:
@@ -214,6 +251,7 @@ async def collect_system_metrics_loop():
 def start_scheduler():
     """Start the background scheduler tasks"""
     global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
+    global _consent_jobs_task
 
     logger.info("Starting background scheduler...")
 
@@ -236,6 +274,10 @@ def start_scheduler():
         _metrics_task = asyncio.create_task(collect_system_metrics_loop())
         logger.info("Started system metrics sampler")
 
+    if _consent_jobs_task is None or _consent_jobs_task.done():
+        _consent_jobs_task = asyncio.create_task(process_consent_jobs())
+        logger.info("Started consent revocation job loop")
+
     # Start each present module's background tick. Editions with no
     # optional modules installed have none to start.
     # Adding a module with a scheduler_tick needs no edit to this file.
@@ -254,6 +296,7 @@ async def shutdown_scheduler():
     ``run_until_complete`` would raise "event loop is already running".
     """
     global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
+    global _consent_jobs_task
 
     logger.info("Shutting down background scheduler...")
 
@@ -266,6 +309,8 @@ async def shutdown_scheduler():
         tasks.append(_revocation_cleanup_task)
     if _metrics_task and not _metrics_task.done():
         tasks.append(_metrics_task)
+    if _consent_jobs_task and not _consent_jobs_task.done():
+        tasks.append(_consent_jobs_task)
     tasks.extend(t for t in _module_tasks.values() if t and not t.done())
 
     for t in tasks:
@@ -278,5 +323,6 @@ async def shutdown_scheduler():
     _session_cleanup_task = None
     _backup_task = None
     _metrics_task = None
+    _consent_jobs_task = None
     _module_tasks.clear()
 

@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_active_user
+from app.consent import service as consent_service
 from app.cyber_dna.service import (
     SNAPSHOT_KINDS,
     build_affinity,
@@ -45,6 +46,19 @@ def _require_v3(db: Session) -> None:
         )
 
 
+def _require_consent(db: Session, user: User) -> None:
+    status = consent_service.blocked_status(db, user.id, "cyber_dna")
+    if status:
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "Cyber DNA consent is revoked or a revocation is in progress. "
+                "Re-enable it from Privacy and consent."
+            ),
+            headers={"X-Consent-Status": status},
+        )
+
+
 @router.get("/v3/evidence", summary="Cyber DNA evidence ledger")
 @limiter.limit("30/minute")
 async def get_evidence(
@@ -57,6 +71,7 @@ async def get_evidence(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     items, total = evidence_items(
         db,
         current_user.id,
@@ -79,6 +94,7 @@ async def get_behavior(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     return JSONResponse(
         content=build_behavior(db, current_user.id),
         headers={"Cache-Control": "no-store"},
@@ -93,6 +109,7 @@ async def get_interest(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     return JSONResponse(
         content=build_interest(db, current_user.id),
         headers={"Cache-Control": "no-store"},
@@ -108,6 +125,7 @@ async def get_affinity(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     try:
         return JSONResponse(
             content=build_affinity(db, current_user.id, pathway_id=pathway_id),
@@ -125,6 +143,7 @@ async def get_competencies(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     return JSONResponse(
         content={
             "version": "evidence-2026.1",
@@ -142,6 +161,7 @@ async def get_dna(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     return JSONResponse(
         content=build_dna(db, current_user.id),
         headers={"Cache-Control": "no-store"},
@@ -161,6 +181,7 @@ async def create_snapshot(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     if kind == "behavior_profile":
         payload = build_behavior(db, current_user.id)
     elif kind == "interest_profile":
@@ -202,6 +223,7 @@ async def get_snapshots(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     if kind and kind not in SNAPSHOT_KINDS:
         raise HTTPException(status_code=422, detail="Unknown snapshot kind.")
     rows = list_snapshots(db, current_user.id, kind=kind, limit=limit)
@@ -220,6 +242,7 @@ async def get_one_snapshot(
     current_user: User = Depends(get_current_active_user),
 ):
     _require_v3(db)
+    _require_consent(db, current_user)
     row = get_snapshot(db, current_user.id, snapshot_id)
     if row is None:
         raise HTTPException(status_code=404, detail="Snapshot not found.")

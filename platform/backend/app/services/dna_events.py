@@ -100,6 +100,20 @@ def build_completion_event(
     )
 
 
+def _consent_allows_processing(db: Session, user_id: int) -> bool:
+    """Stop DNA processing as soon as consent is withdrawn or deletion starts.
+
+    The suppression ledger also blocks a replayed completion after a purge, so
+    a backup restore or an at-least-once event retry cannot recreate evidence.
+    """
+    from app.consent.service import blocked_status
+    from app.consent.suppression import is_suppressed
+
+    if blocked_status(db, user_id, "cyber_dna") is not None:
+        return False
+    return not is_suppressed(user_id, "cyber_dna")
+
+
 def emit_completion_event(
     db: Session,
     user_id: int,
@@ -107,6 +121,8 @@ def emit_completion_event(
     lab: Lab | None,
 ) -> int:
     """Build and ingest one completion event. Returns the rows written."""
+    if not _consent_allows_processing(db, user_id):
+        return 0
     event = build_completion_event(db, user_id, completion, lab)
     if event is None:
         return 0

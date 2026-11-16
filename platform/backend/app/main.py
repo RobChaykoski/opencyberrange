@@ -25,6 +25,7 @@ from app import modules as module_registry
 module_registry.register_models()
 from app.routers import auth, labs, admin, curriculum, courses, competitions, dashboard, setup, curriculum_admin, instructor, quiz, profile, exercise_quiz
 from app.cyber_dna import router as dna_router
+from app.consent import router as consent_router
 from app.routers import identity as identity_router
 from app.routers import sso as sso_router
 from app.routers import analytics as analytics_router
@@ -1076,6 +1077,7 @@ app.include_router(competitions.router, prefix="/api/competitions", tags=["Compe
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 app.include_router(profile.router, prefix="/api/profile", tags=["Profile"])
 app.include_router(dna_router.router, prefix="/api/dna", tags=["Cyber DNA"])
+app.include_router(consent_router.router, prefix="/api/consent", tags=["Consent"])
 app.include_router(identity_router.router, prefix="/api/identity", tags=["Identity Providers"])
 app.include_router(sso_router.router, prefix="/api/auth/sso", tags=["Single Sign-On"])
 app.include_router(lti_router.router, prefix="/api/lti", tags=["LTI 1.3"])

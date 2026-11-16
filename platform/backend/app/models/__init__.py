@@ -90,6 +90,14 @@ from app.models.platform import (
     DataIntegrityReview,
     ReportExport,
 )
+from app.consent.models import (
+    ConsentAudit,
+    ConsentEvent,
+    ConsentJob,
+    ConsentRevocation,
+    ConsentState,
+    ConsentSuppression,
+)
 
 __all__ = [
     "Base",
@@ -103,6 +111,12 @@ __all__ = [
     "CompetitionLab",
     "CompetitionParticipant",
     "CompetitionSponsor",
+    "ConsentAudit",
+    "ConsentEvent",
+    "ConsentJob",
+    "ConsentRevocation",
+    "ConsentState",
+    "ConsentSuppression",
     "Course",
     "CourseCohort",
     "CourseCohortMember",

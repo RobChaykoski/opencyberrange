@@ -51,6 +51,7 @@ from app.services.audit import log_admin_action, AuditActions
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.settings_service import get_setting_fresh
 from app.services.privacy import redact_ip
+from app.consent import service as consent_service
 from app.services.survey_consent import (
     SURVEY_CONSENT_UPDATED,
     SURVEY_CONSENT_VERSION,
@@ -1109,6 +1110,7 @@ async def export_user_data(
                 for event in consent_events
             ],
         },
+        "consent": consent_service.export_state(db, uid),
     }
 
 

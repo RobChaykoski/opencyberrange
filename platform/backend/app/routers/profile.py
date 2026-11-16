@@ -43,6 +43,8 @@ from app.services.achievements import (
     resolve_achievement_label,
 )
 from app.services.career_explorer import build_career_atlas
+from app.consent import service as consent_service
+from app.consent.dependencies import consent_detail
 from app.services.competency_assessment import build_competency_assessment_profile
 from app.services.cyber_gps import build_gps
 from app.services.role_readiness import build_role_readiness, roles_catalogue
@@ -367,6 +369,7 @@ async def get_skill_dna(
     current_user: User = Depends(get_current_active_user),
 ):
     """Return the learner's six traits, class, affinities, and titles."""
+    _require_consent(db, current_user, "cyber_dna")
     dna = build_skill_dna(db, current_user)
     if advanced_dna_insights_enabled(db):
         momentum = build_momentum(db, current_user)
@@ -447,6 +450,7 @@ async def get_career_dossier(
     current_user: User = Depends(get_current_active_user),
 ):
     """Return the learner's career-discovery dossier as JSON."""
+    _require_consent(db, current_user, "cyber_dna")
     dossier = build_career_dossier(db, current_user)
     snapshot, _ = record_snapshot(db, current_user, "career_dossier", dossier)
     _log_career_export(request, current_user, "json")
@@ -468,6 +472,7 @@ async def get_career_dossier_markdown(
     current_user: User = Depends(get_current_active_user),
 ):
     """Download the learner's career-discovery dossier as Markdown."""
+    _require_consent(db, current_user, "cyber_dna")
     dossier = build_career_dossier(db, current_user)
     snapshot, _ = record_snapshot(db, current_user, "career_dossier", dossier)
     _log_career_export(request, current_user, "markdown")
@@ -494,6 +499,7 @@ async def get_career_dossier_html(
     current_user: User = Depends(get_current_active_user),
 ):
     """View or print the learner's career-discovery dossier as HTML."""
+    _require_consent(db, current_user, "cyber_dna")
     dossier = build_career_dossier(db, current_user)
     snapshot, _ = record_snapshot(db, current_user, "career_dossier", dossier)
     _log_career_export(request, current_user, "html")
@@ -511,6 +517,16 @@ async def get_career_dossier_html(
             **_snapshot_headers(snapshot),
         },
     )
+
+
+def _require_consent(db: Session, user: User, consent_type: str) -> None:
+    status = consent_service.blocked_status(db, user.id, consent_type)
+    if status:
+        raise HTTPException(
+            status_code=403,
+            detail=consent_detail(consent_type, status),
+            headers={"X-Consent-Status": status},
+        )
 
 
 def _require_portfolio(db: Session):
@@ -545,6 +561,7 @@ async def get_portfolio(
 ):
     """Return the learner's professional portfolio as JSON."""
     _require_portfolio(db)
+    _require_consent(db, current_user, "portfolio")
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
     snapshot, _ = record_snapshot(db, current_user, "portfolio", portfolio)
@@ -568,6 +585,7 @@ async def get_portfolio_markdown(
 ):
     """Download the learner's professional portfolio as Markdown."""
     _require_portfolio(db)
+    _require_consent(db, current_user, "portfolio")
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
     snapshot, _ = record_snapshot(db, current_user, "portfolio", portfolio)
@@ -596,6 +614,7 @@ async def get_portfolio_html(
 ):
     """View or print the learner's professional portfolio as HTML."""
     _require_portfolio(db)
+    _require_consent(db, current_user, "portfolio")
     summary = _build_profile_summary(db, current_user)
     portfolio = build_portfolio(db, current_user, summary)
     snapshot, _ = record_snapshot(db, current_user, "portfolio", portfolio)
@@ -632,7 +651,21 @@ async def list_report_snapshots(
     A stored report is immutable: re-downloading it returns the payload and
     factor weights captured when it was generated.
     """
+    allowed = {
+        "portfolio": "portfolio",
+        "career_dossier": "cyber_dna",
+    }
+    if kind is not None:
+        _require_consent(db, current_user, allowed[kind])
     rows = list_snapshots(db, current_user.id, kind=kind, limit=limit)
+    if kind is None:
+        visible = {
+            snapshot_kind
+            for snapshot_kind, consent_type in allowed.items()
+            if consent_service.blocked_status(db, current_user.id, consent_type)
+            is None
+        }
+        rows = [row for row in rows if row.kind in visible]
     return JSONResponse(
         content={"snapshots": [snapshot_meta(row) for row in rows]},
         headers={"Cache-Control": "no-store"},
@@ -645,6 +678,9 @@ def _owned_snapshot(db: Session, current_user: User, snapshot_id: int):
         raise HTTPException(status_code=404, detail="Report snapshot not found.")
     if row.kind == "portfolio":
         _require_portfolio(db)
+        _require_consent(db, current_user, "portfolio")
+    else:
+        _require_consent(db, current_user, "cyber_dna")
     return row
 
 
@@ -720,6 +756,7 @@ async def get_competencies(
 ):
     """Return the learner's taxonomy evidence and assessment scores."""
     _require_portfolio(db)
+    _require_consent(db, current_user, "cyber_dna")
     profile = build_competency_assessment_profile(db, current_user)
     return JSONResponse(content=profile, headers={"Cache-Control": "no-store"})
 
@@ -746,6 +783,7 @@ async def get_role_readiness(
 ):
     """Answer 'what do I need for this role?' from the learner's evidence."""
     _require_portfolio(db)
+    _require_consent(db, current_user, "cyber_gps")
     summary = _build_profile_summary(db, current_user)
     try:
         readiness = build_role_readiness(db, current_user, role, summary=summary)
@@ -768,6 +806,7 @@ async def post_gps(
     not persisted, logged, or shared with the cohort.
     """
     _require_portfolio(db)
+    _require_consent(db, current_user, "cyber_gps")
     summary = _build_profile_summary(db, current_user)
     answers = payload.answers if payload else {}
     gps = build_gps(db, current_user, answers=answers, summary=summary)
