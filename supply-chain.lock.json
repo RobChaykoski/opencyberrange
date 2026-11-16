@@ -238,7 +238,7 @@
       "sha256": "107c6c242335d422fa18289528403446f46107397eaf810f9127a38357a49afe"
     },
     "scripts/deploy-updates.sh": {
-      "sha256": "be49edebef593720e4fef8c2cae79910c21cb1047fc3e4dc3ed6ec3be12b936f"
+      "sha256": "bd853cb729193ae9b6c59708fc8eb7a20e0f9ca5d87300a1fb55952496180954"
     },
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"

@@ -135,6 +135,19 @@ verify_supply_chain() {
         error_exit "Supply-chain verification failed. Review the drift, then run scripts/supply_chain.py --update only for an intentional change."
     fi
     log "${GREEN}[ok] Supply-chain hashes and signature match${NC}"
+
+    if [ -f "$REPO_DIR/scripts/check-malware-governance.py" ]; then
+        log "${BLUE}Checking malware-lab governance...${NC}"
+        if ! (cd "$REPO_DIR" && python3 scripts/check-malware-governance.py); then
+            error_exit "Malware-lab governance check failed. Do not deploy an ungoverned sample."
+        fi
+    fi
+    if [ -f "$REPO_DIR/scripts/check-minor-safe.py" ]; then
+        log "${BLUE}Checking minor-safe defaults and High School wiki scope...${NC}"
+        if ! (cd "$REPO_DIR" && python3 scripts/check-minor-safe.py); then
+            error_exit "Minor-safe check failed. Do not deploy live or adult content to the High School stream."
+        fi
+    fi
 }
 
 # Create backup
