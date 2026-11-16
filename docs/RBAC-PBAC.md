@@ -44,6 +44,20 @@ The consent admin endpoints already use the policy dependency:
 `privacy.audit.view` for revocation lists/metrics and
 `privacy.revocation.execute` for running purges or the suppression sweep.
 
+## Consent is a separate layer
+
+Authorization answers "may this user do this to this record?". Consent answers
+"may this learner's derived data be processed at all?". Do not fold the two
+together. A learner who grants Cyber DNA consent still cannot read another
+learner's DNA, and an instructor with course scope still cannot read a learner's
+AI transcript. The consent middleware runs before the service; the policy layer
+then scopes the request.
+
+Field-level output follows the same rule: career affinity is never included in a
+response when Cyber GPS consent is missing, and portfolio fields are omitted
+when portfolio sharing is revoked. The field must not leave the API and then be
+hidden by the client.
+
 ## Deliberately deferred
 
 The full multi-tenant academic hierarchy (Institution, Program, ProgramCourse,

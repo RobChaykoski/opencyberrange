@@ -76,6 +76,13 @@ correct flag shows the usual success message and tears the environment down.
     **Open in new tab** for a separate reading tab. The **Pop out** button moves
     the desktop to its own window if you want more room for the workbook.
 
+!!! tip "Resize the workspace"
+    On a wide screen, drag the vertical divider between the RangeBox and the
+    exercise details to give the desktop more room. Drag the horizontal divider
+    above the workbook to change how much height the workbook gets. The split is
+    remembered in your browser; **Reset layout** restores the defaults. The
+    dividers also work with the arrow keys when focused.
+
 **Your own machine** reaches the same targets over the WireGuard tunnel. Use this when you prefer your local tools.
 
 ## Steps to start working

@@ -35,3 +35,28 @@ After a prune, the usage cards drop to reflect the reclaimed space. The button s
 
 !!! tip "Per-exercise image cleanup is separate"
     To clear the cached image for one exercise only, use the **Delete cached Docker images** action on that exercise's row in the Exercises list rather than pruning everything. The same host disk usage also appears on the **System** tab Health card.
+
+## If the modal cannot load usage
+
+Disk Management asks the Docker socket proxy for `/system/df`. The proxy must
+allow read-only `SYSTEM` accounting:
+
+```yaml
+docker-socket-proxy:
+  environment:
+    SYSTEM: 1
+    BUILD: 0   # keep builds off
+```
+
+`SYSTEM` is read-only usage accounting; it does not allow image builds or
+container changes. After upgrading a deployment that predates this setting,
+recreate the proxy:
+
+```bash
+docker compose -f platform/docker-compose.prod.yml up -d docker-socket-proxy
+```
+
+If the proxy still denies the request, the modal reports that disk usage is
+unavailable. Check the proxy log and confirm `SYSTEM=1` is present in
+`docker inspect ocr-docker-proxy --format '{{json .Config.Env}}'`. Do not enable
+`BUILD` just to fix this panel.

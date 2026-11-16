@@ -354,6 +354,36 @@ Example affinity payload when the gate is met:
   `available: false` at 4 labs, 1 domain, 16 observations.
 - A behavior snapshot was recorded, read back, and removed after the test.
 
+## 10.1 Consent and revocation
+
+Cyber DNA is learner-controlled. The feature gate
+(`cyber_dna_v3_enabled`) decides whether the v3 surface ships; consent decides
+whether this learner may use it.
+
+- **Central enforcement.** `/api/dna/*`, `/api/profile/skill-dna`,
+  `/api/profile/competencies`, and `/api/profile/career-dossier` pass through
+  `app/consent/middleware.py` before the route runs. A revoked or purging
+  consent returns `403` with `X-Consent-Status`.
+- **Ingestion stops immediately.** The exercise-side adapter checks the consent
+  state and the suppression ledger before writing evidence. A replayed
+  completion after revocation writes zero rows.
+- **Revocation deletes derived data.** DNA evidence, DNA snapshots, career
+  affinity, and derived reports are removed. Completions, attempts, transcripts,
+  certificates, achievements, and course progress are educational records and
+  remain.
+- **Transactional.** All purge targets for one revocation run in one database
+  transaction; a mid-purge failure leaves every table untouched. Verification
+  runs immediately, at 24 hours, and at 7 days.
+- **Proof, not payload.** The audit records the consent version, completed
+  targets, verification slots, and timestamps. It never stores deleted evidence.
+- **Suppression wins.** A keyed file ledger blocks restore/replay, and the
+  sweep flips a restored `granted` row back to revoked before purging.
+- **Re-grant.** New activity may be recorded again; deleted evidence is not
+  restored.
+
+The learner UI is **Profile → Security & privacy → AI and career data**. See
+[Consent revocation](CONSENT-REVOCATION.md) for the full workflow.
+
 ## 11. Testing
 
 - Event validation and normalization.

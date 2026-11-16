@@ -20,8 +20,9 @@ flowchart TB
     end
 
     subgraph App["Backend container: ocr-backend"]
-        API["FastAPI<br/>auth, RBAC, SSO, REST API"]
-        SCHED["Scheduler<br/>session expiry, cleanup"]
+        CONSENT["Consent enforcement<br/>path matrix + revocation gate"]
+        API["FastAPI<br/>auth, RBAC + policy, SSO, REST API"]
+        SCHED["Scheduler<br/>session expiry, consent jobs, cleanup"]
         ORCH["Lab orchestrator<br/>Docker Compose"]
         SURVEY["Survey consent<br/>versioned statement"]
         WIKI["Wiki publishing<br/>deploy-time builder"]
@@ -34,7 +35,8 @@ flowchart TB
     end
 
     subgraph Data["Persistent data"]
-        PG[("PostgreSQL<br/>users, labs, progress,<br/>consent, SSO state")]
+        PG[("PostgreSQL<br/>users, labs, progress,<br/>consent + revocation jobs, DNA,<br/>audit proof, SSO state")]
+        SUPP[("consent-suppression.jsonl<br/>HMAC suppression proof<br/>on workbook_data")]
         RD[("Valkey<br/>rate-limit counters")]
         WB[("workbook_data<br/>Exercise Studio state")]
         WIKIV[("wiki_data<br/>MkDocs output")]
@@ -63,7 +65,9 @@ flowchart TB
 
     B -->|HTTPS| N
     M -->|HTTPS mobile shell| N
-    N -->|/api| API
+    N -->|/api| CONSENT
+    CONSENT -->|consent granted| API
+    CONSENT -->|revoked: 403| B
     N -->|/wiki| WV
     WV --> WIKIV
 
@@ -74,6 +78,9 @@ flowchart TB
     API --> ORCH
     SCHED --> PG
     SCHED --> ORCH
+    CONSENT --> PG
+    API --> SUPP
+    SCHED --> SUPP
 
     ORCH -->|Docker socket| DOCKER
     DOCKER --> NET
@@ -100,9 +107,12 @@ flowchart TB
    to the FastAPI backend over the private Compose network. At phone widths the
    same SPA switches to the mobile shell with an off-canvas drawer and a student
    bottom tab bar.
-2. The backend authenticates the JWT, checks the role, and reads or writes
-   PostgreSQL. Redis holds shared rate-limit counters so every worker enforces
-   the same limit.
+2. The consent middleware checks the JWT subject and the requested feature
+   domain before the route runs. A revoked or purging feature returns `403`
+   with `X-Consent-Status`; a missing/invalid token passes through so the normal
+   authentication dependency owns the `401`. The backend then checks the role
+   and policy scope and reads or writes PostgreSQL. Redis holds shared
+   rate-limit counters so every worker enforces the same limit.
 3. Starting a lab creates a per-session Docker network and a Compose project.
    The backend uses the Docker socket to start the lab from a prebuilt
    `ocr-lab/<slug>-<service>:latest` image. Session networks are isolated from
@@ -126,6 +136,29 @@ flowchart TB
    path never builds an image in production; a missing image fails with a clear
    prebuild instruction.
 
+## Consent and policy enforcement
+
+Consent is an infrastructure layer. The middleware in
+`app/consent/middleware.py` owns the path-to-domain matrix and runs before every
+mapped feature route. A service does not ask "do I have consent?"; by the time
+it is invoked, consent has already been validated. Route-level checks remain as
+defense in depth, and direct service calls in jobs or tests still use the
+service's own guard.
+
+| Domain | Example paths | Revocation effect |
+|---|---|---|
+| `cyber_dna` | `/api/dna/*`, `/api/profile/skill-dna`, competencies, career dossier | Block DNA APIs and ingestion; purge evidence, DNA snapshots, and derived reports |
+| `cyber_gps` | `/api/profile/gps`, role readiness | Block direction views; GPS is computed on demand, so no persisted cache remains |
+| `portfolio` | `/api/profile/portfolio*`, report snapshots | Block portfolio exports; purge stored portfolio/career snapshots |
+| `portfolio_sharing` | future `/api/portfolio/*` | Revoke share tokens and public profiles |
+| `ai_coach` | future `/api/coach/*` | Purge conversations, embeddings, and AI memory |
+| `research` | future `/api/research/*` | Purge learner-level analytics/research rows |
+
+Authorization is a separate layer (`app/security/`): role grants plus
+deny-by-default resource policy for self-owned, course-scoped, explicitly
+shared, and read-only access. See [Consent revocation](CONSENT-REVOCATION.md)
+and [RBAC + PBAC](RBAC-PBAC.md).
+
 ## Trust boundaries
 
 | Boundary | Control |
@@ -142,6 +175,9 @@ flowchart TB
 | Topology node → lab | Extra `/29` links inside the protected `10.128.0.0/9` range; no host network, bind mounts, or Docker socket; only `NET_ADMIN`/`NET_RAW` |
 | Wiki build → runtime | Builder writes to a volume; frontend mounts it read-only |
 | Survey consent | Explicit opt-in, versioned statement, append-only consent history |
+| Derived-data APIs | Central consent middleware maps Cyber DNA, Cyber GPS, portfolio, AI coach, sharing, and research paths to a consent domain; revoked or purging domains fail closed |
+| Consent revocation | Suppression proof written before the lock; all purge targets for one revocation run in one transaction; verification at 0h/24h/7d; restore sweep re-applies the ledger |
+| Authorization | Role grants plus deny-by-default resource policy for self, course, shared, and read-only access |
 
 ## Threat assessment (STRIDE/DREAD)
 

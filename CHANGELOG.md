@@ -26,6 +26,51 @@ All notable changes to OpenCyberRange are recorded here.
   completions, and explicit DNA erasure in the account-deletion path.
 - The design is in `docs/CYBER-DNA-V3.md`.
 
+### Consent revocation and authorization
+- Added the `app/consent` bounded context: versioned consent state, immutable
+  revocation events, a durable PostgreSQL purge/verify queue, proof-only audits,
+  and a file-backed suppression ledger (migration `0033_consent_revocation`).
+- Revocation blocks the feature immediately, deletes derived intelligence in one
+  transaction, verifies at 0h/24h/7d, and preserves completions, transcripts,
+  certificates, achievements, and course progress. `enforce_suppressions()`
+  blocks replay and re-applies the ledger after a backup restore.
+- Added central consent middleware (`app/consent/middleware.py`) that maps
+  derived-data API paths to a consent domain and rejects revoked/purging
+  requests before the service runs. DNA ingestion also checks consent and the
+  suppression ledger.
+- Added the learner UI at **Profile → Security & privacy → AI and career data**
+  with per-feature cards, removal progress, audit IDs, retained educational
+  records, and consent history.
+- Added `app/security/` with an atomic permission catalog, seeded role grants,
+  and deny-by-default self/course/shared/read-only policy checks. Auditors are
+  read-only, privacy officers can execute revocation work, and administrators do
+  not receive private AI/DNA/GPS data by default.
+- Added `docs/CONSENT-REVOCATION.md`, `docs/RBAC-PBAC.md`, and expanded the
+  privacy notice, security policy, architecture, and user/admin manuals.
+
+### Exercise reuse
+- Added exercise ZIP export and admin import. Exports include the lab source,
+  compose file, containers, manifest, and README; flags are replaced with a
+  placeholder by default. Imports run the existing ZIP validator, preserve the
+  metadata header, generate a new flag unless supplied, and create a draft.
+- Added row-level export to Admin and Instructor exercise lists and an **Import
+  Exercise** modal to the Admin Exercises header.
+
+### Admin and workspace fixes
+- Restored **Scan for Exercises** for administrators when `OCR_DEV_TOOLS=0`.
+- Fixed **Disk Management** by enabling read-only `SYSTEM` accounting on the
+  Docker socket proxy; `BUILD` remains off. The live dev check now returns
+  image, container, volume, and build-cache usage.
+- Added drag-to-resize dividers to the wide-screen RangeBox workspace, with a
+  persisted per-browser split and **Reset layout**.
+
+### Test and documentation updates
+- Added consent/revocation, middleware, policy, exercise-transfer, and Docker
+  disk-usage tests. The backend suite passes 703 tests; `ruff check app tests` is
+  clean. Refreshed the signed supply-chain lock after the proxy change.
+- Added `profile-consent.png` and `admin-import-exercise.png` to the manual and
+  extended the Playwright manual screenshot script to capture the new panels.
+
 ## [5.16.0] - 2026-11-15
 
 ### Labs

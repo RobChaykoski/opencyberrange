@@ -5,6 +5,31 @@ best-effort delete. A revocation must stop processing immediately, remove
 derived intelligence, preserve the educational record, prove what happened, and
 survive a backup restore or event replay.
 
+## Privacy Rule #1
+
+No service may consume Cyber DNA, Cyber GPS, AI coaching, analytics, research,
+or portfolio-sharing APIs unless consent has been validated by shared
+middleware. Services are prohibited from implementing their own consent logic.
+
+`app/consent/middleware.py` is that single enforcement point. It maps API paths
+to a consent domain and rejects a revoked or purging feature before the service
+runs. Router-level checks remain as defense in depth, but a developer should have
+to bypass the middleware deliberately to violate privacy.
+
+| Path prefix | Domain |
+|---|---|
+| `/api/dna` | `cyber_dna` |
+| `/api/profile/skill-dna`, `/career-dossier`, `/competencies` | `cyber_dna` |
+| `/api/profile/gps`, `/role-readiness` | `cyber_gps` |
+| `/api/profile/portfolio`, `/snapshots` | `portfolio` |
+| `/api/portfolio` | `portfolio_sharing` |
+| `/api/coach`, `/api/ai` | `ai_coach` |
+| `/api/research` | `research` |
+
+A missing or invalid token passes through so the normal authentication
+dependency returns `401`. An unexpected enforcement failure returns `503` (fail
+closed). Consent admin endpoints and the learner consent API are never gated.
+
 ## Three tiers
 
 | Tier | Guarantee | Implementation |
@@ -98,7 +123,8 @@ Run the sweep from the scheduler or `POST /api/consent/admin/enforce-suppression
 ## API
 
 The learner-facing dashboard is **Profile → Security & privacy → AI and career
-data**. It lists each consent, the live removal state, what revocation removes,
+data** ([student manual](../Manual-Lite/02_Student_Guide/18_Privacy_And_Your_Data.md),
+screenshot `profile-consent.png`). It lists each consent, the live removal state, what revocation removes,
 what remains, the latest audit proof, and recent consent history, and refreshes
 automatically while a removal is queued, running, or verifying.
 
@@ -152,6 +178,10 @@ export all use the same check.
 `tests/test_consent_revocation.py` covers immediate blocking, atomic purge,
 mid-purge rollback, ledger-failure rollback, idempotent revoke, re-grant,
 suppression replay, restore sweep, scheduled verification, export proof,
-educational-record retention, and registry completeness. `tests/test_security_policy.py`
-covers self, scoped, shared, read-only auditor, privacy-officer, and
-admin-private-default denial.
+educational-record retention, and registry completeness.
+`tests/test_consent_middleware.py` covers the path matrix, revoked/regranted
+requests, token pass-through, and CORS preflight.
+`tests/test_security_policy.py` covers self, scoped, shared, read-only auditor,
+privacy-officer, and admin-private-default denial. The learner dashboard is in
+**Profile → Security & privacy → AI and career data**; the admin operations are
+under `/api/consent/admin/`.

@@ -204,6 +204,11 @@ if (student) {
     await shot(page, '.gps-revisit', path.join(IMG.student, 'profile-cyber-gps-signal.png'), 'fading signal')
     await shot(page, '.atlas', path.join(IMG.student, 'profile-careers.png'), 'career atlas')
   }
+  if (await tab('Security & privacy').count()) {
+    await tab('Security & privacy').click()
+    await page.waitForTimeout(900)
+    await shot(page, '.consent-panel', path.join(IMG.student, 'profile-consent.png'), 'consent panel')
+  }
 
   await go(page, '/events')
   await shot(page, '.community-events', path.join(IMG.student, 'community-events-calendar.png'), 'community events')
@@ -358,6 +363,13 @@ if (admin) {
 
   await go(page, '/admin?tab=labs', 1500)
   await viewportShot(page, path.join(IMG.admin, 'admin-exercises.png'), 'admin exercises')
+  const importExercise = page.getByRole('button', { name: /Import Exercise/i }).first()
+  if (await importExercise.count()) {
+    await importExercise.click()
+    await page.waitForTimeout(900)
+    await shot(page, '.modal', path.join(IMG.admin, 'admin-import-exercise.png'), 'import exercise')
+    await closeOverlay(page)
+  }
   const tracks = page.getByRole('button', { name: /Tracks & Levels/i }).first()
   if (await tracks.count()) {
     await tracks.click()

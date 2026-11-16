@@ -57,3 +57,20 @@ The **+ Add exercises** button opens a picker for adding labs **From an existing
     A per-course display name only changes the label inside this course. The underlying lab and its flag are unchanged.
 
 To set the order students see these labs in, continue to [Exercise Plan and Cohorts](08_Exercise_Plan_and_Cohorts.md). To group labs into timed weeks, see [Creating and Managing Assignments](15_Creating_and_Managing_Assignments.md).
+
+## Exporting an exercise for reuse
+
+In the **Exercises** catalog, the download action on a row exports that exercise
+as a reusable ZIP. The archive contains `lab.yaml`, `docker-compose.yml`, the
+container source, a manifest, and a README.
+
+- The flag is replaced with `OCR{REPLACE_ME}` in instructor exports, so the
+  archive is safe to share.
+- An administrator can import the ZIP from **Admin -> Exercises -> Import
+  Exercise** and assign it to a track and level. The imported exercise is a
+  draft with a newly generated flag.
+- To create a new exercise from a template in this platform, use **Exercise
+  Studio** when it is available on the deployment.
+
+The Admin guide's [Managing Labs](../04_Admin_Guide/08_Managing_Labs.md) page
+documents the archive format and the import steps.

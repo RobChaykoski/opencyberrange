@@ -87,12 +87,44 @@ an inward arrow for decline, and a flat marker for no movement.
     DNA breaks the audit trail and can make reports inconsistent. Correct the
     underlying learning record instead, then let the formula recalculate.
 
+## Consent, revocation, and the DNA boundary
+
+Cyber DNA is learner-controlled. The feature flag decides whether the surface is
+available on this deployment; consent decides whether this learner may use it.
+Both must be true.
+
+- Central middleware (`app/consent/middleware.py`) gates `/api/dna/*`,
+  `/api/profile/skill-dna`, competencies, and the career dossier. A revoked or
+  purging consent returns `403` with `X-Consent-Status` before the service runs.
+- The exercise-side adapter checks consent and the suppression ledger before
+  writing evidence, so a replayed completion after revocation writes zero rows.
+- Revoking Cyber DNA deletes evidence, DNA snapshots, affinity, and derived
+  reports. Completions, attempts, transcripts, certificates, achievements, and
+  course progress are kept.
+- All purge targets run in one transaction; verification runs immediately, at
+  24 hours, and at 7 days. The scheduler drains the job queue every minute.
+- The proof-only audit records the consent version, completed targets, and
+  verification slots. It never stores deleted evidence.
+- `enforce_suppressions()` flips a restored `granted` row back to revoked and
+  purges replayed rows. A re-grant allows new activity but does not restore old
+  data.
+
+Learners use **Profile -> Security & privacy -> AI and career data**; the
+administrator endpoints are under `/api/consent/admin/`. See
+[Privacy, Erasure, and Backups](27_Privacy_And_Erasure.md) for the withdrawal,
+retention, and restore-sweep procedure.
+
 ## RangeBox desktop
 
 The RangeBox is the in-browser noVNC desktop. It is available when the lab
 session has `rangebox_enabled` and a session ID. On desktop, the exercise page
 puts the desktop, briefing, flag panel, and workbook into one workspace. On
 phones, the platform keeps the stacked panel and the mobile gate.
+
+On wide screens, drag the vertical divider between the desktop and the exercise
+details, or the horizontal divider above the workbook, to change the split. The
+layout is persisted per browser. **Reset layout** restores the defaults; the
+dividers also respond to the arrow keys when focused.
 
 ### Controls
 
@@ -121,8 +153,9 @@ rejected for the wrapper around it.
 The workbook is a same-origin iframe in the workspace. The platform hides the
 MkDocs header, tabs, sidebars, and footer inside the frame, widens the article,
 and lets the iframe scroll independently. The learner can read and scroll the
-workbook while the RangeBox stays open. **Expand** increases the workbook pane;
-**Open in new tab** opens the full workbook.
+workbook while the RangeBox stays open. **Expand** increases the workbook pane,
+the divider can be dragged to any height, and **Open in new tab** opens the full
+workbook. **Reset layout** restores the default split.
 
 <figure markdown>
 

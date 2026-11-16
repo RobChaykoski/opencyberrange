@@ -25,6 +25,7 @@ The Exercises tab is where you browse, filter, and act on every lab on the platf
 | --- | --- |
 | Disk Management | Opens the Docker images and build-cache modal |
 | Scan for Exercises | Runs lab discovery to pick up new or changed lab definitions |
+| Import Exercise | Uploads an exercise export ZIP as a draft |
 | + Create Exercise | Opens the modal to define a new exercise |
 
 ## Filter and find an exercise
@@ -44,6 +45,7 @@ Each exercise row carries these actions:
 | Action | Effect |
 | --- | --- |
 | Edit exercise (pencil) | Opens the Edit Exercise modal. See [Editing Lab Metadata](10_Editing_Lab_Metadata.md) |
+| Export exercise (download) | Downloads a reusable ZIP with the flag replaced by a placeholder |
 | Delete cached Docker images (trash) | Clears the cached image so the next spawn rebuilds |
 | Disable/Enable toggle (eye) | Turns the exercise on or off. See [Enabling and Disabling Labs](09_Enabling_and_Disabling_Labs.md) |
 
@@ -63,6 +65,41 @@ flowchart LR
 
 !!! tip "Scan for Exercises picks up new labs"
     After adding or changing a lab definition on disk, click **Scan for Exercises** to register it. Discovery may report scan warnings, which appear in a dismissible banner above the table.
+
+## Export and import exercises
+
+Use **Export exercise** on a row to download the exercise source as a ZIP. The
+archive contains `lab.yaml`, `docker-compose.yml`, the `containers/` files, a
+manifest, and a short README. By default the flag is replaced with
+`OCR{REPLACE_ME}` so the archive is safe to share for reuse. A trusted operator
+can call the export API with `include_flag=true` for a backup; treat that archive
+as credential material.
+
+<figure markdown>
+
+![Import exercise modal with ZIP file, track, level, optional name, optional flag, and the reuse-flag option](img/admin-import-exercise.png)
+
+<figcaption>Import creates a draft. Leave the flag blank to generate a new one; it is shown once after import.</figcaption>
+</figure>
+
+To import:
+
+1. Click **Import Exercise** in the Exercises header.
+2. Select the ZIP, a track, and a level.
+3. Optionally enter a new name or flag. Leave the flag blank to generate one.
+4. Click **Import draft**.
+5. Store the generated flag if one is shown. The exercise is created with
+   visibility **Draft** and owned by you.
+6. Review and test it, then change visibility when it is ready.
+
+The importer runs the same validation as an instructor upload: ZIP size and
+bomb limits, path traversal rejection, required files, and compose checks. It
+never publishes automatically. If `test.steps` or an entrypoint hardcodes the
+old flag, update it to the new flag after import.
+
+The exporter and importer both use the platform's exercise-transfer service;
+the archive format is the same `lab.yaml` + `docker-compose.yml` + `containers/`
+layout described above.
 
 !!! warning "Stale cached images hide changes"
     A cached lab image can mask a changed Dockerfile, so the next spawn runs the old build. Click the per-row **Delete cached Docker images** action to force a rebuild on the next spawn.

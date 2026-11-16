@@ -22,6 +22,10 @@ The user-facing PIPEDA-aligned notice is
 | Learning: enrolments, completions, flag attempts, quiz attempts, achievements, competition entries, completion resets | User-linked tables | Deleted |
 | Lab sessions and containers | `lab_sessions` + Docker, including `rangebox_enabled`, desktop container ID, VNC port, and heartbeat | All sessions destroyed and rows deleted |
 | Survey consent state and history | `users.survey_*`, `survey_consent_events` | Deleted (cascades with the account) |
+| Feature consent state and immutable decision history | `consent_states`, `consent_events` | Deleted (cascades with the account); the proof audit remains under a keyed subject hash |
+| Revocation workflows, purge/verify jobs, proof audits | `consent_revocations`, `consent_jobs`, `consent_audits` | Workflow rows cascade; the proof audit survives with `user_id=NULL` and no deleted payload |
+| Suppression proof | `consent-suppression.jsonl` on `workbook_data` | Retained; keyed subject hash and consent type only |
+| Derived intelligence: DNA evidence, DNA snapshots, portfolio/career snapshots | `dna_evidence_records`, `dna_snapshots`, `learner_snapshots` | Removed by consent revocation; educational records remain |
 | Privacy preferences: under-18 reporting flag, public certificate verification | `users.is_minor`, `users.certificates_public` | Deleted with the account |
 | Report manifests: report ID, filename, SHA-256, HMAC signature, type, course, generator | `report_exports` | Deleted when the course is deleted; a deleted generator is set to `NULL` |
 | Integrity reviews: reviewer username snapshot, decision, note, timestamp | `data_integrity_reviews` | Retained as security evidence; not linked by foreign key, so deleting a reviewer does not rewrite the review |
@@ -55,6 +59,38 @@ Both settings are controlled from **Profile → Security & privacy**. Reports al
 exclude under-18 learners by default; an instructor cannot override that from
 the report page. The report manifest records the report ID, file checksum, and
 server signature, not learner data.
+
+## Consent withdrawal and derived-data destruction
+
+Consent is separate from account erasure. A learner can revoke Cyber DNA, Cyber
+GPS, the professional portfolio, portfolio sharing, AI coaching, or research
+without deleting their account. Revocation is a data-destruction workflow:
+
+1. **Stop processing immediately.** The feature is marked revoked and a
+   persisted `revocation_in_progress` lock is set before the API returns.
+2. **Delete derived intelligence.** Cyber DNA removes competency evidence,
+   DNA snapshots, career affinity, and derived reports. Portfolio removes stored
+   portfolio/career snapshots. Future AI, sharing, and research tables have
+   registered purge and verification hooks. Completions, attempts, transcripts,
+   certificates, achievements, enrolments, and course progress are kept.
+3. **Prove and suppress.** A suppression entry is written to
+   `CONSENT_SUPPRESSION_PATH` (default
+   `/workbook/consent-suppression.jsonl`) before any database change. The
+   proof-only audit records completed targets and verification slots, never the
+   deleted data. A replayed event or a restored backup is blocked by the
+   suppression check and cleaned by `enforce_suppressions()`.
+
+All purge targets for one revocation run in one database transaction, so a
+mid-purge failure leaves every table untouched. Verification runs immediately,
+24 hours later, and 7 days later. The scheduler drains the durable job queue
+every minute; administrators can use `/api/consent/admin/run-jobs` and
+`/api/consent/admin/enforce-suppressions`.
+
+The learner controls live at **Profile → Security & privacy → AI and career
+data**. The API is `/api/consent/`. A revoked feature returns `403` with
+`X-Consent-Status`; re-granting allows new activity but never restores deleted
+data. Central enforcement is in `app/consent/middleware.py`, so a feature service
+cannot be reached through its API without a consent check.
 
 ## User-initiated erasure
 
@@ -169,7 +205,14 @@ first and be prepared to sign in with an account that exists in the restored
 data. Use the portable user import for cross-version moves or when the local
 administrators must be preserved.
 
-A database dump can predate a deletion. After any full restore:
+A database dump can predate a consent revocation as well as an account deletion.
+After any full restore, run the consent sweep
+(`POST /api/consent/admin/enforce-suppressions`, or wait for the scheduler tick).
+It re-applies `consent-suppression.jsonl`, flips restored consent rows back to
+revoked, purges derived DNA/portfolio rows, and writes a `suppression_sweep`
+audit slot.
+
+A database dump can predate an account deletion. After any full restore:
 
 ```bash
 docker compose -f platform/docker-compose.prod.yml -f platform/docker-compose.override.yml \

@@ -8,11 +8,36 @@ that keep a deleted account from coming back.
     the privacy notice, lawful basis, retention schedule, and the rules for
     learners under 18.
 
+## Consent withdrawal is not account deletion
+
+A learner can revoke Cyber DNA, Cyber GPS, the professional portfolio,
+portfolio sharing, AI coaching, or research from **Profile → Security & privacy
+→ AI and career data** without deleting the account. This is a separate
+destruction workflow:
+
+- The feature is blocked immediately.
+- Derived intelligence is deleted: DNA evidence/snapshots, career affinity,
+  derived reports, portfolio snapshots, and future AI/sharing/research tables.
+- Completions, attempts, transcripts, certificates, achievements, enrolments,
+  and course progress remain.
+- A proof-only audit records the consent version, completed targets, and
+  verification slots; it never stores deleted data.
+- A keyed suppression ledger blocks restore/replay. Run the sweep after a
+  restore with `POST /api/consent/admin/enforce-suppressions` or let the
+  scheduler run it every minute.
+- Re-granting allows new activity but does not restore deleted data.
+
+Use `GET /api/consent/admin/metrics` to check purge verification rate, the
+60-minute SLA target, and privacy-registry completeness. Route enforcement is
+central (`app/consent/middleware.py`), with router-level checks as defense in
+depth.
+
 ## Delete an account
 
 **Admin → Users → Delete** requires typing the username. The same erasure
 service runs when a student deletes their own account from
-**Profile → Privacy and data**, and when a pending account is rejected.
+**Profile → Security & privacy → Privacy and data**, and when a pending account
+is rejected.
 
 ### What is erased
 

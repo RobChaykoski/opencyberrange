@@ -34,6 +34,32 @@ A self-hosted cybersecurity training platform that deploys hands-on exercises in
 
 Students also get a profile with completion statistics, certificates, achievements, and a downloadable PDF transcript. They can download their account data or permanently delete their account from the privacy panel; the erasure suppression ledger and backup workflow keep a restore from resurrecting a deleted account. Instructors and administrators manage courses, progress, and the platform from the same interface.
 
+### Privacy and learner control
+
+Consent is an infrastructure layer, not a single checkbox. Cyber DNA, Cyber GPS,
+professional-portfolio snapshots, AI coaching, research analytics, and external
+sharing each have a separate consent domain. Requests to a gated feature pass
+through central middleware before the service is called. Revoking consent
+immediately blocks the feature, deletes derived intelligence, keeps the
+educational record (completions, transcripts, certificates, achievements), and
+writes a proof-only audit. A file-backed suppression ledger prevents a backup
+restore or event replay from recreating deleted data.
+
+- [Consent revocation and data destruction](docs/CONSENT-REVOCATION.md)
+- [RBAC and policy-based authorization](docs/RBAC-PBAC.md)
+- [Privacy, erasure, and backups](docs/PRIVACY-AND-DATA-DELETION.md)
+- [Privacy notice](docs/PRIVACY-NOTICE.md)
+
+Administrators can export an exercise as a reusable ZIP and import it on another
+instance as a draft; the flag is scrubbed by default and a new one is generated
+on import. The RangeBox workspace on wide screens includes drag-to-resize
+dividers between the desktop, exercise details, and workbook, with the split
+remembered per browser.
+
+- [Exercise export and import](docs/EXERCISE-EXPORT-IMPORT.md)
+- [Manual: Disk Management](Manual-Lite/04_Admin_Guide/24_Disk_Management.md)
+- [Manual: Cyber DNA and RangeBox](Manual-Lite/04_Admin_Guide/29_Cyber_DNA_And_RangeBox.md)
+
 ## Branding
 
 **SWOCTS Cyber Range** is the product name, title, and visual identity. The
@@ -88,7 +114,7 @@ The current feature set covers four workstreams:
 | Reporting and evidence | A cross-course **Reports** page with red/amber/green course signals, completion and abandonment, learning reported, trending topics, **skill-tree radar coverage**, CSV/PDF export, accreditation support, and research exports. | Development preview in this tree |
 | Learning analytics | A private **Learning analytics** view for learners and an **Analytics** tab for courses, plus the Competency Framework Engine, Student Feedback Engine, skill-tree radar, exercise health, and the instructor intervention dashboard. | Skill-tree radar delivered; learner/cohort radar, exercise health, and the intervention dashboard remain planned |
 | Mobile student shell | Automatic phone-width detection, an off-canvas navigation drawer, a student bottom tab bar, and explicit fallback behaviour for the embedded RangeBox desktop. | Delivered |
-| RangeBox workspace | A dedicated **RangeBox** tab for standalone practice, plus a combined desktop exercise workspace: RangeBox on the left, scenario/details and flag on the right, and the workbook in a framed bottom pane. Phones and VPN-only labs keep the stacked panel. | Delivered |
+| RangeBox workspace | A dedicated **RangeBox** tab for standalone practice, plus a combined desktop exercise workspace: RangeBox on the left, scenario/details and flag on the right, and the workbook in a framed bottom pane. Wide screens have drag-to-resize dividers and a persisted split; phones and VPN-only labs keep the stacked panel. | Delivered |
 | Network device topology | Labs declare routers, hosts, and flag services as data. The engine allocates per-session `/29` links, enables forwarding, installs routes, and exposes a status endpoint for discovery. | Delivered (routed L3; switch container is Release 5) |
 
 The five priority capabilities are defined in
@@ -121,6 +147,9 @@ Enterprise SSO (OIDC, SAML, LDAP) shipped in Release 4.
 - [Educational material provenance](docs/EDUCATIONAL-PROVENANCE.md)
 - [Learning framework](docs/LEARNING-FRAMEWORK.md)
 - [Lab metadata schema](docs/LAB-METADATA-SCHEMA.md)
+- [Exercise export and import](docs/EXERCISE-EXPORT-IMPORT.md)
+- [Consent revocation and data destruction](docs/CONSENT-REVOCATION.md)
+- [RBAC and policy-based authorization](docs/RBAC-PBAC.md)
 - [OIDC single sign-on](docs/SSO-OIDC.md)
 - [SAML and LDAP single sign-on](docs/SSO-SAML-LDAP.md)
 - [Local Dex + OpenLDAP test stack](deploy/sso/README.md)

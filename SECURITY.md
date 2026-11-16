@@ -5,14 +5,15 @@ SWOCTS Cyber Range is powered by OpenCyberRange. This policy covers the branded 
 ## Supported versions
 
 Security fixes land on the current supported release. The current platform
-release is **4** (`v4`, signed annotated tag), with security fixes also
+release is **5** (`v5.16.0`, signed annotated tag), with security fixes also
 maintained on the **1.1.3** Community / Academic maintenance line where the
 same defect applies.
 
 | Version | Supported |
 |---|---|
-| `v4` / `main` | Yes |
-| `v2.7.0` | Security fixes only - upgrade to `v4` |
+| `v5` / `main` | Yes |
+| `v4` | Security fixes only - upgrade to `v5` |
+| `v2.7.0` | Security fixes only - upgrade to `v5` |
 | `v2.6.0` | Security fixes only - upgrade to `v4` |
 | `v2.5.5` | Security fixes only - upgrade to `v4` |
 | `v2.5.4` | Security fixes only - upgrade to `v4` |
@@ -72,6 +73,66 @@ Commands and the full runbook are in
   counts.
 - The quality audit reports orphaned coaching notes and `NULL` creators for
   review.
+
+## Consent enforcement and revocation
+
+- Every request to a derived-data API passes through
+  `app/consent/middleware.py` before its service is called. The path matrix maps
+  Cyber DNA, Cyber GPS, portfolio snapshots/sharing, AI coaching, and research
+  APIs to their consent domain. Routers retain their own checks as defense in
+  depth, but no service is expected to implement its own consent decision.
+- A missing or invalid token passes through to the normal authentication
+  dependency. A valid token with revoked consent receives `403` with
+  `X-Consent-Status` and a stable `ConsentRequired` payload. An unexpected
+  enforcement failure returns `503` (fail closed).
+- Revocation writes a suppression proof to `CONSENT_SUPPRESSION_PATH` before any
+  database change, then locks the feature and queues purge work. All targets for
+  one revocation run in one database transaction; a mid-purge failure rolls back
+  every table. Verification runs immediately, at 24 hours, and at 7 days.
+- `enforce_suppressions()` scans derived rows and flips a restored `granted`
+  state back to revoked, then purges and verifies the data. The ledger contains
+  an HMAC subject hash and consent type, never a username, email, or deleted
+  payload.
+- The proof-only audit records the consent type/version, completed targets,
+  verification slots, and timestamps. It never stores the deleted data.
+- See [Consent revocation and data destruction](docs/CONSENT-REVOCATION.md).
+
+## Authorization policy
+
+- `app/security/` provides an atomic permission catalog, seeded role grants, and
+  deny-by-default policy checks for self-owned, course-scoped, explicitly shared,
+  and read-only resources.
+- Auditors are read-only. Privacy officers may execute revocation work. An
+  administrator does not receive private AI/DNA/GPS data by default; the owner or
+  an explicit share is required.
+- Existing routers keep their current role dependencies. New privacy surfaces use
+  `require_permission()`, and the consent admin endpoints already use
+  `privacy.audit.view` / `privacy.revocation.execute`.
+- See [RBAC and policy-based authorization](docs/RBAC-PBAC.md).
+
+## Exercise ZIP import
+
+- Imports use the same validator as instructor uploads: size and zip-bomb
+  limits, path-traversal rejection, required `lab.yaml` and
+  `docker-compose.yml`, at least one service, and compose build-context checks.
+- An imported exercise is always `visibility="draft"` and owned by the importer.
+  It is never published automatically.
+- Exports replace the flag with `OCR{REPLACE_ME}` by default. A trusted admin can
+  request the original flag for backup; that archive is credential material.
+  Instructor exports never include the flag. Imports generate a new flag unless
+  one is supplied and return it once.
+- See [Exercise export and import](docs/EXERCISE-EXPORT-IMPORT.md).
+
+## Docker control-plane permissions
+
+- The backend talks to Docker through `tecnativa/docker-socket-proxy`, not the
+  host socket. `CONTAINERS`, `IMAGES`, `NETWORKS`, `VOLUMES`, `INFO`, `POST`,
+  `EXEC`, and read-only `SYSTEM` accounting are enabled; `BUILD` remains off so
+  a compromised backend cannot submit build recipes.
+- `SYSTEM` is used only for `/system/df` so **Admin → Disk Management** can show
+  image, container, volume, and build-cache sizes. It does not enable mutation.
+- The proxy is attached only to the internal `docker_control` network. Lab
+  containers and the frontend are not on it.
 
 ## Supply chain
 
@@ -143,6 +204,18 @@ session.
 | Workbook CSP | Wiki locations allow the Material for MkDocs Google Fonts stylesheet and font files; the SPA policy remains strict |
 | Lab validation | **162 labs, 0 errors, 0 warnings** |
 | Automated regression | `scripts/ui-workspace-regression.mjs` records pass/fail checks and screenshots in `ui-workspace-artifacts/` |
+
+## Security review evidence - 15 November 2026
+
+| Check | Result |
+|---|---|
+| Consent revocation | 19 tests cover immediate blocking, transactional purge/rollback, idempotency, re-grant, suppression replay, restore sweep, scheduled verification, export proof, and policy boundaries |
+| Consent middleware | Unit coverage for the path matrix, revoked/regranted access, token pass-through, and CORS preflight |
+| Exercise transfer | Round-trip ZIP, flag scrubbing/regeneration, metadata preservation, draft status, missing-`lab.yaml` rejection, and admin/instructor export permissions |
+| Disk Management | Live dev check returns image/container/volume/build-cache usage after enabling read-only `SYSTEM` on the socket proxy |
+| RangeBox workspace | Drag-to-resize desktop/details and workspace/workbook dividers with persisted layout; frontend lint and production build pass |
+| Backend regression | `703 passed` in the verification copy; `ruff check app tests` clean |
+| Supply chain | `supply-chain.lock.json` regenerated for the proxy change and re-signed with the release key |
 
 ## Reporting a vulnerability
 

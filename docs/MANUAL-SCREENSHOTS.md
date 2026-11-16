@@ -8,15 +8,17 @@ images do not drift when the interface changes.
 
 - Guest pages: login, registration, and the login screen used by troubleshooting.
 - Student pages: dashboard, sidebar navigation, exercises hub, track page, lab
-  statuses, courses, course overview, VPN setup, profile sections, community
-  events, change password, the mobile shell, and a workbook in its own tab.
+  statuses, courses, course overview, VPN setup, profile sections (including the
+  AI and career data consent panel), community events, change password, the
+  mobile shell, and a workbook in its own tab.
 - Lab workspace (opt-in): the active-lab panel, timer controls, flag form, hints,
-  and the workbook pane.
+  and the workbook pane, including the resizable desktop/details/workbook split.
 - Instructor pages: panel overview, course cards, and every course-management
   sub-tab.
 - Admin pages: overview, pending approvals, create-user form, locked users,
-  exercises, tracks, edit-lab and compose modals, create-lab, disk management,
-  sessions, VPN peers, activity log, settings, features, and the system tab.
+  exercises, import-exercise modal, tracks, edit-lab and compose modals,
+  create-lab, disk management, sessions, VPN peers, activity log, settings,
+  features, and the system tab.
 
 ## Run it
 

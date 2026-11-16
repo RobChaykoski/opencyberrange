@@ -1,6 +1,6 @@
 # SWOCTS Cyber Range privacy notice
 
-**Effective 11 November 2026**
+**Effective 15 November 2026**
 
 This notice explains how the SWOCTS Cyber Range handles personal information.
 It supplements the [SWOCTS Privacy Policy](https://www.swocts.com/privacy) and
@@ -41,6 +41,11 @@ Commissioner of Canada.
 - **Optional feedback and surveys:** pulse responses, course check-ins,
   free-text comments, and research responses only where the learner has opted
   in.
+- **Derived learning intelligence:** Cyber DNA competency evidence and
+  snapshots, Cyber GPS direction views, career affinity, recommendation history,
+  and professional-portfolio snapshots. These are optional and are removed when
+  the matching consent is revoked. Completions, attempts, transcripts,
+  certificates, and achievements are educational records and remain.
 - **VPN and lab access data:** WireGuard public keys, assigned client addresses,
   and session records needed to operate isolated exercises.
 - **RangeBox session metadata:** the desktop image name, container identifier,
@@ -123,12 +128,34 @@ We apply these practices across the platform:
 ## Consent and withdrawal
 
 Creating an account and using the platform provides the information needed to
-operate the training service. Optional features, including account email,
-surveys, feedback publication, and research participation, are separate
-choices. You can withdraw optional consent from **Profile → Privacy and data**
-or by contacting [privacy@swocts.com](mailto:privacy@swocts.com). Withdrawal may
-limit optional features but does not affect access to core learning records
-where retention is required by the institution or law.
+operate the training service. Optional features are separate choices, not one
+blanket agreement:
+
+| Consent | What it enables | Default |
+|---|---|---|
+| Cyber DNA | competency evidence, behaviour/interest profiles, affinity signals, DNA snapshots | on |
+| Cyber GPS | direction finding, learning routes, gap analysis, readiness views | on |
+| Professional portfolio | stored portfolio and career/report snapshots | on |
+| Portfolio sharing | employer/public share links and public profiles | off |
+| AI coach | AI conversations, prompt context, embeddings, memory | off |
+| Research | learner-level analytics, segmentation, research datasets | off |
+
+You can review and change each one from **Profile → Security & privacy → AI and
+career data**. Revocation takes effect immediately: the feature is blocked and
+its derived data is queued for deletion. Deletion is verified when it runs and
+again at 24 hours and 7 days. A keyed suppression record prevents a backup
+restore or event replay from recreating the deleted data. Re-granting allows new
+activity but does not restore what was deleted.
+
+Revocation does **not** remove your educational record: completed exercises,
+attempts, transcripts, certificates, achievements, enrolments, and course
+progress remain. Account deletion is a separate action under **Privacy and
+data** and removes the account itself.
+
+You can also withdraw optional consent by contacting
+[privacy@swocts.com](mailto:privacy@swocts.com). Withdrawal may limit optional
+features but does not affect access to core learning records where retention is
+required by the institution or law.
 
 ## Disclosure and transfers
 

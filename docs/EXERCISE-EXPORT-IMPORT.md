@@ -72,6 +72,13 @@ The importer keeps `title`, `category`, `difficulty`, `estimated_time`,
 workbook/chapter metadata, competency/framework fields, topology/network flags,
 and certificate-counting settings.
 
+## Manual
+
+- Admin: [Managing Labs](../Manual-Lite/04_Admin_Guide/08_Managing_Labs.md),
+  including the import modal screenshot `admin-import-exercise.png`.
+- Instructor: [Assigning Labs to a Course](../Manual-Lite/03_Instructor_Guide/07_Assigning_Labs_to_a_Course.md)
+  for the read-only export action.
+
 ## Tests
 
 `platform/backend/tests/test_exercise_transfer.py` covers:
