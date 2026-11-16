@@ -1018,9 +1018,11 @@ function onMacActionChange() {
 async function loadMacEvents() {
   try {
     const response = await axios.get('/admin/security/events', {
-      params: { search: 'rbac', limit: 10 },
+      params: { search: 'rbac', limit: 25 },
     })
-    macEvents.value = response.data.events || []
+    macEvents.value = (response.data.events || [])
+      .filter((event) => String(event.event_type || '').startsWith('rbac.'))
+      .slice(0, 10)
   } catch {
     macEvents.value = []
   }
