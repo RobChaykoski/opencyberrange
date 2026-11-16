@@ -36,7 +36,7 @@ mitre_attack:
 |---|---|---|
 | `title` | string | 1-100 characters, unique across the catalog |
 | `category` | string | lower-case kebab-case, e.g. `network-analysis` |
-| `difficulty` | string | `beginner`, `intermediate`, or `advanced` |
+| `difficulty` | string | `beginner`, `intermediate`, `advanced`, or `expert` |
 | `estimated_time` | integer | estimated learner minutes, greater than zero |
 | `prerequisites` | list of strings | lab slugs from this catalog; may be empty |
 | `learning_outcomes` | list of strings | 3-5 measurable outcomes, each introduced by `# By completion students will be able to:` |
@@ -45,8 +45,30 @@ mitre_attack:
 | `mitre_attack` | list of mappings | at least one `tactic`, `technique`, and `detection` |
 
 Legacy keys `name`, `duration_minutes`, `objectives`, and
-`learning_objectives` are no longer used. The loader still accepts them during a
-transition, but repository labs and uploads should emit the canonical keys.
+`learning_objectives` are **not accepted**. The loader reads only the canonical
+keys, and the JSON Schema rejects the aliases. All 191 repository labs use the
+canonical names.
+
+## Machine contract
+
+The canonical contract is enforced in three places:
+
+- `platform/backend/lab_metadata.schema.json` — JSON Schema draft 2020-12.
+  Unknown keys are rejected at every level, so a typo fails instead of silently
+  producing an incomplete lab.
+- `scripts/validate_lab_metadata.py` — walks every `lab.yaml`, parses it, and
+  validates it against the schema with a per-file report.
+- The backend CI job runs the validator after linting.
+
+Run it locally:
+
+```bash
+python scripts/validate_lab_metadata.py
+python scripts/validate_lab_metadata.py --labs-dir platform/labs --quiet
+```
+
+`jsonschema` is pinned in `platform/backend/requirements-dev.txt`; it is a
+validation dependency, not a runtime one.
 
 ## Learning outcomes
 

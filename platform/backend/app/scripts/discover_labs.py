@@ -325,7 +325,10 @@ def discover_labs():
                 
                 # Prepare lab data
                 lab_slug = lab_dirname
-                lab_name = lab_data.get('title') or lab_data.get('name', lab_dirname)
+                # Canonical keys only. The 2026-11 audit found all 191 lab.yaml
+                # files on the canonical names, and the JSON Schema gate in
+                # scripts/validate_lab_metadata.py rejects the legacy aliases.
+                lab_name = lab_data.get('title', lab_dirname)
                 description = lab_data.get('description', '')
                 scenario = lab_data.get('scenario', '')
                 scenario_brief = lab_data.get('scenario_brief', '')
@@ -334,10 +337,10 @@ def discover_labs():
                 
                 difficulty = lab_data.get('difficulty', 'beginner')
                 category = lab_data.get('category', 'general')
-                duration = lab_data.get('estimated_time', lab_data.get('duration_minutes', 60))
+                duration = lab_data.get('estimated_time', 60)
                 content_version = str(lab_data.get('content_version') or '').strip() or None
                 
-                learning_outcomes = lab_data.get('learning_outcomes', lab_data.get('objectives', []))
+                learning_outcomes = lab_data.get('learning_outcomes', [])
                 objectives = json.dumps(learning_outcomes)
                 prerequisites = json.dumps(lab_data.get('prerequisites', []) or [])
                 mapped_skills = json.dumps(lab_data.get('mapped_skills', []) or [])

@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "b04f6aed1316af375cab1a6b18b3f1d07683e02c60a34f9df408bace7a634833"
+      "sha256": "bd472d8199c1e65552b123dd8ac806a3c3d97882ee4a2cb3b764ab6a089f7bbc"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -54,11 +54,14 @@
     "platform/backend/app/version.py": {
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
     },
+    "platform/backend/lab_metadata.schema.json": {
+      "sha256": "b2081b39cd5505c5ec5eb6c6055de0a8a4058f62dd4c179c4fe6227e9caa13e3"
+    },
     "platform/backend/pyproject.toml": {
       "sha256": "3c19b92e2a5428519301cce08170fce7ae379dbda1932f142eed36f71315b177"
     },
     "platform/backend/requirements-dev.txt": {
-      "sha256": "b1997e587400b62ff93e77b348ff26df0e35d28e15724d86d76b706e3dd9c828"
+      "sha256": "251b75970b478efabf4dad28b6143ae7d548bc29e1b02ab39b919d0e8cd329ef"
     },
     "platform/backend/requirements.txt": {
       "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
@@ -142,13 +145,16 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "937f58cc39530b0f64b5daa7973ca61eefdf723f6620c36078196b6d65d4488a"
+      "sha256": "01f22cbfc56b05947194163a000305ac3a76476644dac47594842900673f416b"
     },
     "scripts/ui-smoke.mjs": {
       "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
     },
     "scripts/validate-lab.py": {
       "sha256": "2ad2377f23d0a612fe85a0d326c9a668f500fbacf5be1c88c6abb147c6a01960"
+    },
+    "scripts/validate_lab_metadata.py": {
+      "sha256": "6d0cad12c5c6277a02a512b7ee6703def024aa1008a5621a38b2203cd2f3cd20"
     },
     "scripts/verify-lab-builds.sh": {
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"

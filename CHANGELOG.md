@@ -4,6 +4,12 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Lab metadata contract
+- Added `platform/backend/lab_metadata.schema.json` (draft 2020-12) and
+  `scripts/validate_lab_metadata.py`. Unknown keys, missing required fields, and
+  invalid enum values now fail CI. All 191 labs validate; the loader's legacy
+  `name`/`duration_minutes`/`objectives` fallbacks were removed.
+
 ### Cyber DNA v3 — Phase 1
 - Added the Cyber DNA bounded context (`app/cyber_dna`) with its own
   `dna_evidence_records` and `dna_snapshots` tables (migration `0032`). It does

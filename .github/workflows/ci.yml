@@ -55,6 +55,9 @@ jobs:
         working-directory: platform/backend
         run: ruff check app
 
+      - name: Validate lab metadata contract
+        run: python scripts/validate_lab_metadata.py --quiet
+
       - name: Test
         working-directory: platform/backend
         run: pytest -q

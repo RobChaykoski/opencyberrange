@@ -1,0 +1,348 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opencyberrange.local/schemas/lab_metadata.schema.json",
+  "title": "OpenCyberRange lab.yaml",
+  "description": "Canonical metadata contract for one platform/labs/**/lab.yaml file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "category",
+    "difficulty",
+    "estimated_time",
+    "prerequisites",
+    "learning_outcomes",
+    "mapped_skills",
+    "assessment_criteria",
+    "mitre_attack",
+    "description",
+    "flag",
+    "hints",
+    "test"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Learner-facing lab title."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ai",
+        "assessment",
+        "authentication",
+        "credential-attacks",
+        "crypto",
+        "enumeration",
+        "exploitation",
+        "forensics",
+        "general",
+        "network",
+        "network-analysis",
+        "osint",
+        "ot",
+        "post-exploitation",
+        "privesc",
+        "privilege-escalation",
+        "reconnaissance",
+        "web"
+      ],
+      "description": "Lab category; must match scripts/validate-lab.py."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["beginner", "intermediate", "advanced", "expert"]
+    },
+    "estimated_time": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Expected completion time in minutes."
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "description": "Lab slugs or course prerequisites; an empty list is allowed."
+    },
+    "learning_outcomes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "mapped_skills": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "network_systems",
+          "web_api",
+          "identity_access",
+          "incident_forensics",
+          "osint",
+          "malware",
+          "ot_ics",
+          "ai_security"
+        ]
+      }
+    },
+    "assessment_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "mitre_attack": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/mitre"}
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "content_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewed_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "review_status": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenario": {
+      "type": "string"
+    },
+    "flag": {
+      "type": "string",
+      "pattern": "^OCR\\{.+\\}$"
+    },
+    "troubleshooting": {
+      "type": "string"
+    },
+    "defensive_takeaways": {
+      "type": "string"
+    },
+    "difficulty_evidence": {
+      "type": "string"
+    },
+    "difficulty_evidence_source": {
+      "type": "string",
+      "enum": [
+        "author_review",
+        "automated_and_manual_smoke",
+        "platform_analytics",
+        "reviewer_walkthrough",
+        "validator_and_static_walkthrough"
+      ]
+    },
+    "difficulty_evidence_sample": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "difficulty_evidence_quality": {
+      "type": "string",
+      "enum": ["provisional", "observed"]
+    },
+    "difficulty_evidence_reviewed_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "hints": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/hint"}
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/step"}
+        }
+      }
+    },
+    "workbook": {
+      "type": "string"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": ["public", "course", "draft"]
+    },
+    "topology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes"],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/node"}
+        },
+        "edges": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/edge"}
+        }
+      }
+    },
+    "credentials": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/credential"}
+    },
+    "hostnames": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/hostname"}
+    },
+    "tools": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "week": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "randomize_ip_offsets": {
+      "type": "boolean"
+    },
+    "assessment_workbook_exemption": {
+      "type": "string"
+    },
+    "assessment_hint_exemption": {
+      "type": "string"
+    },
+    "counts_toward_certificate": {
+      "type": "boolean"
+    },
+    "connection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "port", "credentials"],
+      "properties": {
+        "type": {"type": "string", "minLength": 1},
+        "port": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "credentials": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["username", "password"],
+          "properties": {
+            "username": {"type": "string"},
+            "password": {"type": "string"}
+          }
+        }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "description"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "mitre": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tactic", "technique", "technique_name", "detection"],
+      "properties": {
+        "tactic": {"type": "string", "minLength": 1},
+        "technique": {"type": "string", "pattern": "^T\\d{4}(?:\\.\\d{3})?$"},
+        "technique_name": {"type": "string", "minLength": 1},
+        "detection": {"type": "string", "minLength": 1}
+      }
+    },
+    "hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1},
+        "id": {"type": ["string", "integer"]},
+        "title": {"type": "string"},
+        "unlock_after_minutes": {"type": "integer", "minimum": 0},
+        "point_cost": {"type": "integer", "minimum": 0}
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "command"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "command": {"type": "string", "minLength": 1},
+        "expect": {"type": "string"},
+        "timeout": {"type": "integer", "minimum": 1}
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "type", "ip_offset"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "type": {
+          "type": "string",
+          "enum": ["server", "workstation", "router", "database", "sensor", "firewall"]
+        },
+        "ip_offset": {"type": "string", "pattern": "^\\d+$"},
+        "ports": {
+          "type": ["array", "null"],
+          "items": {"type": ["integer", "string"]}
+        },
+        "services": {"type": "array", "items": {"type": "string"}},
+        "x": {"type": ["integer", "null"]},
+        "y": {"type": ["integer", "null"]}
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "label", "access"],
+      "properties": {
+        "from": {"type": "string", "minLength": 1},
+        "to": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "access": {
+          "type": "string",
+          "enum": ["direct", "routed", "internal", "passive"]
+        }
+      }
+    },
+    "credential": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "username", "password", "description"],
+      "properties": {
+        "role": {"type": "string", "minLength": 1},
+        "username": {"type": "string", "minLength": 1},
+        "password": {"type": "string"},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "hostname": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ip_offset", "hostname", "description"],
+      "properties": {
+        "ip_offset": {"type": "string", "pattern": "^\\d+$"},
+        "hostname": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
