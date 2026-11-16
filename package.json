@@ -1,0 +1,5 @@
+{
+  "name": "opencyberrange-next",
+  "private": true,
+  "description": "Repository root marker for the OpenCyberRange backend and frontend packages."
+}
