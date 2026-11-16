@@ -4,16 +4,13 @@
 
 - [ ] You can reach the offline mirror at `http://connect.lab:8080`
 - [ ] You have `curl` and `grep`
-- [ ] Optional adult extension: the live public site is reachable from a normal
-      browser. Do not use the live site if you are in a Grades 9-12 cohort.
 
 ## Scenario
 
 SWOCTS Hub is a public community homepage. Like any modern site, it ships
 metadata and source code to every visitor. This exercise uses a reviewed
-offline mirror as the assessed target. The live page is an optional, read-only
-extension for adult learners; the mirror is authoritative for the flag and the
-automated checks.
+offline mirror as the assessed target. The live page is retired from the lab;
+the mirror is authoritative for the flag and the automated checks.
 
 A flag has been placed in the mirror's source for this exercise. The rendered
 page looks ordinary; the flag is in the document metadata. No personal data is

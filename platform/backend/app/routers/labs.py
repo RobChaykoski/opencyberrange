@@ -191,9 +191,20 @@ async def get_labs(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
-    """Get available labs"""
+    """Get available labs for the current user."""
+    from app.routers.curriculum import (
+        _is_lab_visible,
+        get_accessible_exclusive_lab_ids,
+    )
+
     labs = db.query(Lab).filter(Lab.is_active == True).all()
-    return {"labs": [{"id": l.id, "name": l.name, "slug": l.slug} for l in labs]}
+    accessible = get_accessible_exclusive_lab_ids(db, current_user.id)
+    visible = [
+        lab
+        for lab in labs
+        if _is_lab_visible(lab, current_user, accessible)
+    ]
+    return {"labs": [{"id": l.id, "name": l.name, "slug": l.slug} for l in visible]}
 
 
 @router.post("/spawn/{lab_slug}")
@@ -232,7 +243,18 @@ async def spawn_lab(
     # student cannot open. The detail endpoint already enforces this; without
     # the same check here a student can burn a session on a locked lab and
     # only discover the lock when the panel refuses to load.
-    from app.routers.curriculum import lab_unlocked_for_user
+    # The same visibility rule as the exercise list and detail panel. This
+    # blocks a course-only, draft, or minor-excluded lab even if the caller
+    # knows its slug and skips the UI.
+    from app.routers.curriculum import (
+        _is_lab_visible,
+        get_accessible_exclusive_lab_ids,
+        lab_unlocked_for_user,
+    )
+
+    accessible = get_accessible_exclusive_lab_ids(db, current_user.id)
+    if not _is_lab_visible(lab, current_user, accessible, course_context=True):
+        raise HTTPException(status_code=404, detail=f"Lab '{lab_slug}' not found")
 
     if not lab_unlocked_for_user(db, current_user, lab) and not verify_launch_grant(
         launch, current_user.id, lab.id

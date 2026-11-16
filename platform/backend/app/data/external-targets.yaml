@@ -15,7 +15,9 @@ policy:
 targets:
   - id: swocts-public-homepage
     lab: osint-2-2-public-homepage
-    kind: live_public_homepage
+    kind: retired_public_homepage
+    status: retired
+    live_check: false
     url: https://www.swocts.com/
     method: GET
     expected_status: 200
@@ -35,8 +37,8 @@ targets:
       collected. The offline mirror is the assessed path; the live page is an
       optional adult-only extension.
     notes: >-
-      The expected meta marker was absent on 2026-11-16. The lab test and the
-      learner path use the mirror only; the daily job records the live drift.
+      The live marker was absent on 2026-11-16 and the live path is retired. The
+      mirror is the only assessed target; the daily job checks its hash.
 
   - id: opencyberrange-osint-repository-clue
     lab: osint-2-1-source-code-intelligence

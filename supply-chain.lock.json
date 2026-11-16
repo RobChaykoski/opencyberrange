@@ -106,13 +106,13 @@
       "sha256": "4df826f01fea0fc57616ef7d246c2430bee9e8cd7a52d69d4d2717e3664c3928"
     },
     "platform/backend/app/data/external-targets.yaml": {
-      "sha256": "0f0f4fe287b7732e436b24d25f5a78032778f88f44ffa357ff982a744b926130"
+      "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "f05d85993779d409558017cb04b4564debe9a50fe1f60be4da6da9a322b9ddaa"
+      "sha256": "0ff202c140a9245450713f6b0de1b296bdf0a8e035ba4cacf7b1f7b49e5954d0"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -214,7 +214,7 @@
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
     "scripts/check-external-targets.py": {
-      "sha256": "fad4c4b9bc3d8f80854452879e96d1f0d54be87a7e0b8a8ba10ee50a6daf7826"
+      "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"
     },
     "scripts/check-licences.py": {
       "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
@@ -953,7 +953,7 @@
       ]
     },
     "osint-2-2-public-homepage": {
-      "content_hash": "7c14f6131a7d9146d08f32fab9a7f419805093ce4295e01ae9d72df5eed4ba7c",
+      "content_hash": "276d2160f50303918315f09e4df108cbb87240b0f5fb21438b25c81525f52f6f",
       "services": [
         "publicsite"
       ]

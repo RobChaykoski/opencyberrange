@@ -477,8 +477,8 @@ employee badge, and a public code trail:
   staging token left in a developer comment. A bonus flag is in a reviewed local
   repository file; learners do not search GitHub for a real person.
 - **The Public Homepage** — read a reviewed offline mirror of a public homepage,
-  search its document metadata, and find the flag in the page head. Adult
-  learners may compare the live page read-only; the mirror is the assessed path.
+  search its document metadata, and find the flag in the page head. The mirror
+  is the only assessed target; the old live path is retired.
 
 ![The OSINT track](docs/img/osint-track.png)
 
@@ -487,9 +487,10 @@ employee badge, and a public code trail:
 The public homepage exercise is offline-first. Its inventory, content hashes,
 and daily live-target check are in
 [`platform/backend/app/data/external-targets.yaml`](platform/backend/app/data/external-targets.yaml)
-and `scripts/check-external-targets.py`. The optional live target is read-only
-and must never be modified or scraped for personal data. The bonus repository
-clue is a reviewed local file under `platform/labs/OSINT/_shared/leaks/`.
+and `scripts/check-external-targets.py`. The retired live page is not part of
+the learner path and must never be modified or scraped for personal data. The
+bonus repository clue is a reviewed local file under
+`platform/labs/OSINT/_shared/leaks/`.
 
 The matching workbook chapters are **CH OSINT1 -- Digital Footprint
 Foundations** and **CH OSINT2 -- Code and Sources**. The RangeBox, UbuntuBox,

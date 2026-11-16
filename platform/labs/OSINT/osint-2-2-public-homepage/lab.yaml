@@ -28,8 +28,8 @@ review_status: "automated static proof; live walkthrough pending"
 description: "A real community site is part of the target surface. Inspect the source of www.swocts.com, find the flag left in its metadata, and explain why source-code clues are still OSINT."
 visibility: course
 audience: adult
-offline_only: false
-external_targets: [swocts-public-homepage]
+offline_only: true
+external_targets: []
 personal_data: synthetic
 free_text: false
 public_profiles: false
@@ -51,9 +51,8 @@ scenario: |
   rendered page looks ordinary; the flag is in the document metadata.
 
   The mirror at http://connect.lab:8080 is the assessed target and works
-  offline. The live page at https://www.swocts.com is an optional, read-only
-  extension for adult learners. Do not interact with the live site or collect
-  personal data. No personal data is used in this lab.
+  offline. The live page is retired from the lab; the mirror is the only target.
+  No personal data is used in this lab.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."
@@ -86,7 +85,6 @@ hints:
 
       curl -s http://connect.lab:8080/
 
-      The live site is an optional adult extension and is not required.
     unlock_after_minutes: 4
 
   - text: |

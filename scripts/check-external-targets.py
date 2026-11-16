@@ -136,10 +136,11 @@ def main() -> int:
     errors: list[str] = []
     report: list[dict] = []
     for target in targets:
+        before = len(errors)
         errors.extend(_check_offline(target))
         observed: dict = {}
-        if args.offline:
-            report.append({"id": target["id"], "mode": "offline", "ok": not errors})
+        if args.offline or target.get("live_check") is False:
+            report.append({"id": target["id"], "mode": "offline", "ok": len(errors) == before})
             continue
         live_errors, observed = _check_live(target)
         if args.strict and not target.get("marker_required") and observed.get("marker_status") == "absent":
