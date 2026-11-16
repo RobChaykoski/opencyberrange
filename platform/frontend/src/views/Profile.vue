@@ -1298,6 +1298,7 @@
           </form>
         </div>
 
+        <ConsentPanel />
         <SurveyConsentPanel />
         <PrivacyDataPanel :mfa-enabled="!!user.mfa_enabled" />
         </div>
@@ -1316,6 +1317,7 @@ import { useVpnStatus } from '../composables/useVpnStatus'
 import { usePoll } from '../composables/usePoll'
 import { useModules } from '../composables/useModules'
 import { useGpsAnswers } from '../composables/useGpsAnswers'
+import ConsentPanel from '../components/ConsentPanel.vue'
 import PrivacyDataPanel from '../components/PrivacyDataPanel.vue'
 import SurveyConsentPanel from '../components/SurveyConsentPanel.vue'
 import SkillDnaProfile from '../components/SkillDnaProfile.vue'

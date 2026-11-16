@@ -97,6 +97,11 @@ Run the sweep from the scheduler or `POST /api/consent/admin/enforce-suppression
 
 ## API
 
+The learner-facing dashboard is **Profile → Security & privacy → AI and career
+data**. It lists each consent, the live removal state, what revocation removes,
+what remains, the latest audit proof, and recent consent history, and refreshes
+automatically while a removal is queued, running, or verifying.
+
 Learner:
 
 - `GET /api/consent/` — states, revocation history, remaining education records
