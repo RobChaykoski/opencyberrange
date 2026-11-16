@@ -5,6 +5,7 @@ Exercises routes for learning tracks, progress tracking, and flag submission
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request, Response
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, or_
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 import hashlib
@@ -1864,7 +1865,27 @@ async def submit_flag(
                 lab_difficulty_snapshot=lab.difficulty if lab else None,
             )
             db.add(completion)
-        db.commit()
+        try:
+            db.commit()
+        except IntegrityError:
+            # Two submissions can race between the read above and the insert.
+            # The unique (user_id, lab_id) index decides; the loser updates the
+            # winner's row instead of surfacing a 500.
+            db.rollback()
+            existing_completion = db.query(LabCompletion).filter(
+                LabCompletion.user_id == current_user.id,
+                LabCompletion.lab_id == lab_id,
+            ).first()
+            if existing_completion is None:
+                raise
+            existing_completion.flag_submitted = submitted_flag
+            existing_completion.attempts = attempt_count
+            existing_completion.hints_used = hints_used
+            existing_completion.time_spent_minutes = time_spent
+            if started_at_value and not existing_completion.started_at:
+                existing_completion.started_at = started_at_value
+            existing_completion.completed_at = datetime.now(timezone.utc)
+            db.commit()
 
         # Emit the Cyber DNA activity event. The adapter maps the lab to
         # competencies and the DNA package stores evidence in its own tables.

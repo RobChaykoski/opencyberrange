@@ -538,7 +538,14 @@ async def run_exercise_test(
             user_id = test_user.id
 
     # JWT token for real API calls (same token a student would use)
-    test_user_token = create_access_token(data={"sub": test_user.username}) if test_user else ""
+    test_user_token = (
+        create_access_token(
+            data={"sub": test_user.username},
+            security_version=getattr(test_user, "security_version", 1),
+        )
+        if test_user
+        else ""
+    )
 
     admin_id = admin.id
 

@@ -212,7 +212,7 @@ def login_payload(
         _refresh_row, refresh_token = auth_sessions.issue_refresh(
             db, session, user, request=request
         )
-    token_data = {"sub": user.username}
+    token_data = {"sub": user.username, "sec": user.security_version}
     if provider_id is not None:
         token_data["sso_provider_id"] = provider_id
     if session is not None:

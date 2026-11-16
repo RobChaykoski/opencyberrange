@@ -11,8 +11,12 @@ class Settings(BaseSettings):
     
     # JWT - MUST be set via environment variable (generate with: python3 -c "import secrets; print(secrets.token_urlsafe(64))")
     JWT_SECRET: str = ""
+    ENVIRONMENT: str = "development"
     SETUP_TOKEN: str = ""
     JWT_ALGORITHM: str = "HS256"
+    JWT_ISSUER: str = "opencyberrange"
+    JWT_AUDIENCE: str = "ocr-api"
+    JWT_LEEWAY_SECONDS: int = 30
     JWT_EXPIRATION_HOURS: int = 24
     REFRESH_TOKEN_DAYS: int = 30
     SESSION_MAX_PER_USER: int = 10
@@ -142,6 +146,26 @@ def validate_settings():
             "JWT_SECRET contains a default/placeholder value. "
             "Generate a unique random secret before starting the platform."
         )
+
+    # Report manifests need a signing key independent of JWT. A shared key
+    # means one compromise forges both sessions and report evidence.
+    environment = (settings.ENVIRONMENT or "development").strip().lower()
+    production = environment in {"production", "prod"}
+    if not settings.REPORT_SIGNING_KEY:
+        message = (
+            "REPORT_SIGNING_KEY is not set; report signing falls back to "
+            "JWT_SECRET. Set a separate 32+ character key in production."
+        )
+        (errors if production else warnings).append(message)
+    else:
+        if len(settings.REPORT_SIGNING_KEY) < 32:
+            errors.append("REPORT_SIGNING_KEY must be at least 32 characters.")
+        if settings.REPORT_SIGNING_KEY == settings.JWT_SECRET:
+            message = (
+                "REPORT_SIGNING_KEY must not equal JWT_SECRET; use a separate "
+                "key so session and report compromise are independent."
+            )
+            (errors if production else warnings).append(message)
 
     # Validate SETUP_TOKEN. First-run setup requires it in every deployment.
     if settings.SETUP_TOKEN and _is_placeholder_secret(settings.SETUP_TOKEN):

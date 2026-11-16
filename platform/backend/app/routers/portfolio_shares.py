@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.auth import get_current_active_user
+from app.auth import enforce_not_impersonating, get_current_active_user
 from app.database import get_db
 from app.models import User
 from app.security.dependencies import require_permission
@@ -18,7 +18,7 @@ from app.services import portfolio_shares, security_events
 from app.services import reauth as reauth_service
 from app.services.feature_flags import advanced_dna_insights_enabled
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(enforce_not_impersonating)])
 
 
 class ShareCreate(BaseModel):

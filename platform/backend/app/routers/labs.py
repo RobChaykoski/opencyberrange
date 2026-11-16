@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import PlainTextResponse, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 import asyncio
 import logging
@@ -26,7 +27,11 @@ def _prebuild_progress():
         return None
 
 from app.database import get_db
-from app.auth import get_current_active_user, is_impersonating
+from app.auth import (
+    enforce_not_impersonating,
+    get_current_active_user,
+    is_impersonating,
+)
 from app.models import User, Lab, LabSession, WireGuardConfig
 from app.services.docker_manager import DockerManager, get_subnet_id, RangeBoxCapacityError, rangebox_spawn_lock
 from app.services.wireguard_manager import WireGuardManager
@@ -295,7 +300,16 @@ async def spawn_lab(
         expires_at=datetime.now(timezone.utc) + session_delta
     )
     db.add(session)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        # Two launches raced past the check above. The partial unique index
+        # (one starting/running session per user) is the invariant.
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You already have an active lab session. Please stop it first.",
+        )
     db.refresh(session)
 
     # Capture everything the background bring-up needs now. The Request object
@@ -860,7 +874,8 @@ def vpn_is_enabled(db: Session) -> bool:
 async def get_vpn_config(
     request: Request,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    _not_impersonating: User = Depends(enforce_not_impersonating),
 ):
     """Get or generate WireGuard VPN configuration - routes the student's lab /24"""
     # An admin who turns VPN off expects it off, so refuse here rather than only

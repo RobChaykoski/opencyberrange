@@ -320,6 +320,9 @@ async def reset_user_mfa(
     target.mfa_locked_until = None
     target.mfa_last_failed_at = None
     mfa_service.clear_recovery_codes(db, target, commit=False)
+    from app.auth import bump_security_version
+
+    bump_security_version(target)
     db.commit()
 
     revoked = auth_sessions.revoke_all_for_user(db, target.id, "mfa_reset")
@@ -835,6 +838,13 @@ async def update_user(
             # Column doesn't exist yet - skip this update
             logger.warning("must_change_password column does not exist in database. Migration required.")
     
+    if any(
+        key in changes
+        for key in ("role", "institution_id", "is_active", "is_approved", "is_admin")
+    ):
+        from app.auth import bump_security_version
+
+        bump_security_version(user)
     db.commit()
     db.refresh(user)
     

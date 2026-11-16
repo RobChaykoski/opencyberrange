@@ -45,8 +45,11 @@ def test_login_issues_jwt_on_good_creds(client, test_user, test_password):
     # The token must be a real JWT signed with the configured secret and
     # carry the username as its subject.
     claims = jwt.decode(
-        body["access_token"], settings.JWT_SECRET,
+        body["access_token"],
+        settings.JWT_SECRET,
         algorithms=[settings.JWT_ALGORITHM],
+        issuer=settings.JWT_ISSUER,
+        audience=settings.JWT_AUDIENCE,
     )
     assert claims["sub"] == test_user.username
     assert "exp" in claims

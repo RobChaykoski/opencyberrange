@@ -10,10 +10,16 @@ from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 import jwt  # PyJWT
+from jwt import ExpiredSignatureError
+from jwt import InvalidAudienceError
+from jwt import InvalidIssuerError
+from jwt import InvalidTokenError
+from jwt import MissingRequiredClaimError
 from jwt import PyJWTError as JWTError
 from pwdlib import PasswordHash
 from pwdlib.hashers.argon2 import Argon2Hasher
 from pwdlib.hashers.bcrypt import BcryptHasher
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -71,6 +77,13 @@ def set_user_password(user: User, password: str) -> None:
     """Set a user's password and stamp the current rehash policy."""
     user.hashed_password = get_password_hash(password)
     user.password_rehashed_at = datetime.now(timezone.utc)
+    bump_security_version(user)
+
+
+def bump_security_version(user: User) -> int:
+    """Invalidate tokens minted before a security-relevant change."""
+    user.security_version = int(getattr(user, "security_version", 1) or 1) + 1
+    return user.security_version
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -129,20 +142,38 @@ def validate_privileged_password(password: str) -> Optional[str]:
     return _password_policy_error(password)
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
-    """Create a JWT access token with a unique jti claim for revocation support."""
+def create_access_token(
+    data: dict,
+    expires_delta: Optional[timedelta] = None,
+    *,
+    token_type: str = "access",
+    security_version: int | None = None,
+) -> str:
+    """Create a JWT with issuer, audience, purpose, and required claims.
+
+    ``type`` keeps access, impersonation, refresh, reset, and portfolio tokens
+    from being interchangeable. Platform refresh tokens are opaque and never
+    validated by this function.
+    """
+    now = datetime.now(timezone.utc)
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
+        expire = now + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(hours=settings.JWT_EXPIRATION_HOURS)
-    to_encode.update({
-        "exp": expire,
-        "iat": datetime.now(timezone.utc),
-        "jti": str(uuid.uuid4()),
-    })
-    encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
-    return encoded_jwt
+        expire = now + timedelta(hours=settings.JWT_EXPIRATION_HOURS)
+    to_encode.update(
+        {
+            "exp": expire,
+            "nbf": now,
+            "iat": now,
+            "jti": str(uuid.uuid4()),
+            "iss": settings.JWT_ISSUER,
+            "aud": settings.JWT_AUDIENCE,
+            "type": token_type,
+            "sec": int(security_version if security_version is not None else data.get("sec", 1)),
+        }
+    )
+    return jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
 
 
 # ─── Token Revocation (DB-backed) ────────────────────────────────────
@@ -169,7 +200,8 @@ def _prune_expired_revocations(db) -> int:
     """Delete revocation rows older than the JWT lifetime plus slack."""
     from app.models import RevokedToken
     cutoff = datetime.now(timezone.utc) - timedelta(
-        hours=settings.JWT_EXPIRATION_HOURS + 1
+        hours=settings.JWT_EXPIRATION_HOURS,
+        seconds=max(0, int(settings.JWT_LEEWAY_SECONDS)) + 3600,
     )
     return db.query(RevokedToken).filter(RevokedToken.revoked_at < cutoff).delete(
         synchronize_session=False
@@ -295,12 +327,12 @@ def _check_token_revocation(
                 if iat_epoch < revoked_at.timestamp():
                     return True
         return False
-    except Exception:
-        logger.warning(
-            "Revocation check failed (revoked_tokens table missing or DB error); "
-            "treating token as not revoked", exc_info=True
+    except Exception as exc:
+        logger.error(
+            "Revocation check failed; denying authentication (fail-closed)",
+            exc_info=True,
         )
-        return False
+        raise RevocationUnavailable("revocation store unavailable") from exc
     finally:
         if owns_session:
             db.close()
@@ -407,30 +439,98 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     return user
 
 
-def _decode_token(token: str, db: Optional[Session] = None) -> dict:
-    """Decode and validate a JWT token, returning the full payload.
-    Raises HTTPException on invalid/revoked tokens."""
+_JWT_REQUIRED_CLAIMS = ("sub", "exp", "iat", "nbf", "jti", "iss", "aud", "type", "sec")
+_JWT_FORBIDDEN_HEADERS = {"jku", "x5u", "jwk"}
+
+
+class RevocationUnavailable(RuntimeError):
+    """The revocation store could not be queried; authentication must deny."""
+
+
+def _decode_token(
+    token: str,
+    db: Optional[Session] = None,
+    *,
+    expected_types: tuple[str, ...] = ("access",),
+) -> dict:
+    """Decode and validate a platform JWT.
+
+    The algorithm is fixed server-side, issuer/audience/purpose are checked,
+    all security-critical claims are required, and the revocation store is
+    fail-closed. External protocol tokens (OIDC/LTI) use their own validators.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-
-        # One DB round trip covers both individual (jti) revocation and
-        # per-user mass revocation (e.g. admin force-logout).
-        if _check_token_revocation(
-            username, payload.get("jti"), payload.get("iat", 0), db=db
-        ):
-            raise credentials_exception
-
-        return payload
-    except JWTError:
+        header = jwt.get_unverified_header(token)
+        if set(header) & _JWT_FORBIDDEN_HEADERS:
+            raise InvalidTokenError("token header requests an external key")
+        if header.get("alg") != settings.JWT_ALGORITHM:
+            raise InvalidTokenError("unexpected algorithm")
+        payload = jwt.decode(
+            token,
+            settings.JWT_SECRET,
+            algorithms=[settings.JWT_ALGORITHM],
+            issuer=settings.JWT_ISSUER,
+            audience=settings.JWT_AUDIENCE,
+            leeway=max(0, int(settings.JWT_LEEWAY_SECONDS)),
+            options={"require": list(_JWT_REQUIRED_CLAIMS)},
+        )
+    except ExpiredSignatureError:
+        logger.info("JWT rejected: expired")
         raise credentials_exception
+    except MissingRequiredClaimError as exc:
+        logger.info("JWT rejected: missing claim %s", exc.claim)
+        raise credentials_exception
+    except InvalidAudienceError:
+        logger.info("JWT rejected: wrong audience")
+        raise credentials_exception
+    except InvalidIssuerError:
+        logger.info("JWT rejected: wrong issuer")
+        raise credentials_exception
+    except JWTError:
+        logger.info("JWT rejected: invalid token")
+        raise credentials_exception
+
+    if payload.get("type") not in expected_types:
+        logger.info(
+            "JWT rejected: purpose %s not accepted here",
+            payload.get("type"),
+        )
+        raise credentials_exception
+    if payload["type"] == "impersonation":
+        act = payload.get("act")
+        if payload.get("imp") is not True or not isinstance(act, dict) or not act.get("sub"):
+            logger.info("JWT rejected: malformed impersonation claim")
+            raise credentials_exception
+    elif payload.get("imp"):
+        logger.info("JWT rejected: impersonation flag on non-impersonation token")
+        raise credentials_exception
+
+    now = datetime.now(timezone.utc).timestamp()
+    leeway = max(0, int(settings.JWT_LEEWAY_SECONDS))
+    if float(payload.get("iat", 0)) > now + leeway:
+        logger.info("JWT rejected: iat in the future")
+        raise credentials_exception
+
+    # One DB round trip covers both individual (jti) revocation and per-user
+    # mass revocation. A revocation-store failure must deny, not allow.
+    try:
+        revoked = _check_token_revocation(
+            payload["sub"], payload["jti"], payload.get("iat", 0), db=db
+        )
+    except RevocationUnavailable:
+        logger.error("JWT rejected: revocation store unavailable")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Authentication is temporarily unavailable",
+        )
+    if revoked:
+        raise credentials_exception
+    return payload
 
 
 def get_current_user(
@@ -474,7 +574,9 @@ def get_current_user(
         set_actor(actor_type="service", actor_id=service_user.id)
         return service_user
 
-    payload = _decode_token(token, db=db)
+    payload = _decode_token(
+        token, db=db, expected_types=("access", "impersonation")
+    )
     username = payload.get("sub")
 
     user = get_user_by_username(db, username=username)
@@ -492,6 +594,24 @@ def get_current_user(
     user._imp_mode = payload.get("imp_mode")
     user._imp_course_id = payload.get("imp_course_id")
     user._imp_read_only = payload.get("imp_read_only", False)
+
+    if payload.get("type") == "impersonation":
+        original = db.query(User).filter(User.id == user._imp_original_id).first()
+        if (
+            original is None
+            or int(payload.get("sec", 0)) != int(getattr(original, "security_version", 1))
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Impersonation session is no longer valid.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+    elif int(payload.get("sec", 0)) != int(getattr(user, "security_version", 1)):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session is no longer valid. Sign in again.",
+            headers={"WWW-Authenticate": "Bearer", "X-Security-Version": "stale"},
+        )
 
     # A normal login token carries a session id. The session binds the tenant
     # captured at login and is re-checked on every request. Legacy tokens
@@ -632,12 +752,19 @@ def create_impersonation_token(
         "imp_original_id": original_user.id,
         "imp_mode": mode,
         "imp_read_only": True,
+        "act": {"sub": str(original_user.id), "username": original_user.username},
+        "sec": original_user.security_version,
     }
     if course_id is not None:
         data["imp_course_id"] = course_id
     if session_id:
         data["imp_sid"] = session_id
-    return create_access_token(data, expires_delta=expires_delta)
+    return create_access_token(
+        data,
+        expires_delta=expires_delta,
+        token_type="impersonation",
+        security_version=original_user.security_version,
+    )
 
 
 # ─── WebSocket Ticket System ────────────────────────────────────────
@@ -657,11 +784,11 @@ def create_ws_ticket(user_id: int) -> str:
     try:
         # Prune expired tickets while we're here
         db.execute(
-            __import__('sqlalchemy').text("DELETE FROM ws_tickets WHERE expires_at < :now"),
+            text("DELETE FROM ws_tickets WHERE expires_at < :now"),
             {"now": datetime.now(timezone.utc)}
         )
         db.execute(
-            __import__('sqlalchemy').text(
+            text(
                 "INSERT INTO ws_tickets (ticket, user_id, expires_at) VALUES (:ticket, :user_id, :expires_at)"
             ),
             {"ticket": ticket, "user_id": user_id, "expires_at": expires}
@@ -679,7 +806,7 @@ def validate_ws_ticket(ticket: str) -> Optional[int]:
     db = SessionLocal()
     try:
         row = db.execute(
-            __import__('sqlalchemy').text(
+            text(
                 "DELETE FROM ws_tickets WHERE ticket = :ticket RETURNING user_id, expires_at"
             ),
             {"ticket": ticket}

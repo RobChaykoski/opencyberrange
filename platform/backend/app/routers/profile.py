@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 from app.ratelimit import create_limiter
 from sqlalchemy.orm import Session, joinedload
 
-from app.auth import get_current_active_user
+from app.auth import enforce_not_impersonating, get_current_active_user
 from app.database import get_db
 from app.services.audit import log_admin_action, AuditActions
 from app.services.export_labels import export_metadata, html_with_labels, markdown_with_labels
@@ -73,7 +73,7 @@ from app.services.skill_dna import build_skill_dna
 from app.services.growth_velocity import build_growth_velocity
 from app.services.titles import equip_title
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(enforce_not_impersonating)])
 limiter = create_limiter()
 
 

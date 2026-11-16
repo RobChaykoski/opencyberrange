@@ -160,25 +160,24 @@ def test_wall_shows_public_earners_and_resolves_badge_details(
     assert resp.status_code == 200, resp.text
     body = resp.json()
 
-    recent_user_ids = {item["user_id"] for item in body["recent"]}
-    assert test_user.id in recent_user_ids
-    assert celebration_data["other"].id in recent_user_ids
-    assert celebration_data["hidden"].id not in recent_user_ids
-    assert celebration_data["admin"].id not in recent_user_ids
+    # The wall must not expose a stable learner id; identity is the public
+    # display projection only.
+    assert all(item["user_id"] is None for item in body["recent"])
+    assert all(row["user_id"] is None for row in body["spotlight"])
 
     other_items = [
         item for item in body["recent"]
-        if item["user_id"] == celebration_data["other"].id
+        if item["display_name"] == "Ada Lovelace"
     ]
     assert other_items
-    assert all(item["display_name"] == "Ada Lovelace" for item in other_items)
+    assert all(item["username"] == celebration_data["other"].username for item in other_items)
     assert all(item["avatar_data"] for item in other_items)
     assert all(item["avatar_border_style"] == "glow" for item in other_items)
     assert all(item["avatar_border_color"] == "gold" for item in other_items)
 
     other_spotlight = next(
         row for row in body["spotlight"]
-        if row["user_id"] == celebration_data["other"].id
+        if row["display_name"] == "Ada Lovelace"
     )
     assert other_spotlight["avatar_data"]
     assert other_spotlight["avatar_border_style"] == "glow"
@@ -186,7 +185,7 @@ def test_wall_shows_public_earners_and_resolves_badge_details(
 
     first = next(
         item for item in body["recent"]
-        if item["user_id"] == test_user.id
+        if item["is_mine"] is True
         and item["achievement_type"] == "first_blood"
     )
     assert first["label"] == "First Blood"
@@ -202,11 +201,11 @@ def test_wall_shows_public_earners_and_resolves_badge_details(
     assert custom["icon"] == "\U0001F680"
     assert custom["description"] == celebration_data["custom"].description
 
-    spotlight_ids = {row["user_id"] for row in body["spotlight"]}
-    assert test_user.id in spotlight_ids
-    assert celebration_data["other"].id in spotlight_ids
-    assert celebration_data["hidden"].id not in spotlight_ids
-    assert celebration_data["admin"].id not in spotlight_ids
+    spotlight_names = {row["display_name"] for row in body["spotlight"]}
+    assert any(row["is_mine"] is True for row in body["spotlight"])
+    assert "Ada Lovelace" in spotlight_names
+    assert "Hidden Hacker" not in spotlight_names
+    assert celebration_data["admin"].username not in spotlight_names
 
     assert body["stats"]["total_awards"] >= 3
     assert body["stats"]["awards_this_week"] >= 3
@@ -234,8 +233,8 @@ def test_opted_out_user_keeps_a_private_personal_corner(
     assert resp.status_code == 200, resp.text
     body = resp.json()
 
-    assert test_user.id not in {item["user_id"] for item in body["recent"]}
-    assert test_user.id not in {row["user_id"] for row in body["spotlight"]}
+    assert not any(item["is_mine"] is True for item in body["recent"])
+    assert not any(row["is_mine"] is True for row in body["spotlight"])
 
     assert body["me"]["listed"] is False
     assert body["me"]["can_list"] is True
@@ -258,10 +257,9 @@ def test_wall_can_show_the_username(
 
     items = [
         item for item in body["recent"]
-        if item["user_id"] == other.id
+        if item["display_name"] == other.username
     ]
     assert items
-    assert all(item["display_name"] == other.username for item in items)
     assert all(item["username"] == other.username for item in items)
     assert all(item["name_mode"] == "username" for item in items)
 
@@ -281,14 +279,16 @@ def test_wall_can_show_an_anonymous_name(
 
     items = [
         item for item in body["recent"]
-        if item["user_id"] == other.id
+        if item["display_name"] == "Anonymous participant"
     ]
     assert items
-    assert all(item["display_name"] == "Anonymous participant" for item in items)
     assert all(item["username"] is None for item in items)
     assert all(item["name_mode"] == "anonymous" for item in items)
     assert all(item["avatar_data"] is None for item in items)
-    assert other.id in {row["user_id"] for row in body["spotlight"]}
+    assert any(
+        row["display_name"] == "Anonymous participant"
+        for row in body["spotlight"]
+    )
 
 
 def test_avatar_border_settings_round_trip(client, auth_headers):

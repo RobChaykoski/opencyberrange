@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.auth import get_current_active_user
+from app.auth import enforce_not_impersonating, get_current_active_user
 from app.consent import service
 from app.consent.registry import CONSENT_TYPES
 from app.database import get_db
@@ -18,7 +18,7 @@ from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
 from app.services import reauth as reauth_service
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(enforce_not_impersonating)])
 limiter = create_limiter()
 
 

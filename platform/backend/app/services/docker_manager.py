@@ -2830,8 +2830,16 @@ fi
                         if len(parts) == 2 and parts[1].isdigit():
                             project_name = parts[0]
                     
-                    # Check if container belongs to an active session
-                    is_active = project_name and project_name in active_projects
+                    # Check if container belongs to an active session. Compose
+                    # service names can contain hyphens, so match the project
+                    # prefix rather than a lossy rsplit project name.
+                    is_active = bool(
+                        project_name
+                        and any(
+                            container_name.startswith(project + "-")
+                            for project in active_projects
+                        )
+                    )
                     
                     # Remove if:
                     # 1. Container is stopped/exited and older than 30 minutes, OR

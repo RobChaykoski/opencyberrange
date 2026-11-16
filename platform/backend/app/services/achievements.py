@@ -768,8 +768,11 @@ def award_competition_placements(
         code = COMPETITION_PLACEMENT_CODES.get(entry.get("rank"))
         if not code:
             continue
+        user_id = entry.get("_user_id") or entry.get("user_id")
+        if user_id is None:
+            continue
         _award(
-            db, entry["user_id"], None, None,
+            db, user_id, None, None,
             competition_achievement_type(competition.id, code),
         )
 

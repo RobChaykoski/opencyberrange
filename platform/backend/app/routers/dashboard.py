@@ -1731,13 +1731,20 @@ async def celebration_wall(
         )
         user = row.user
         name_mode = (getattr(user, "scoreboard_name_mode", None) or "real_name") if user else "real_name"
-        # Anonymous users keep their border cosmetics but never publish a photo
-        # that could identify them.
-        show_avatar = bool(user and name_mode != "anonymous")
+        # Anonymous and minor accounts never publish a stable user id, a
+        # username, or a photo on the wall.
+        anonymous = bool(
+            user is None
+            or name_mode == "anonymous"
+            or getattr(user, "is_minor", False)
+        )
+        show_avatar = bool(user and not anonymous)
         recent.append({
             "id": row.id,
-            "user_id": row.user_id,
-            "username": user.username if user and name_mode != "anonymous" else None,
+            # The wall is a public projection. Never expose a stable learner id;
+            # ownership is conveyed only by ``is_mine``.
+            "user_id": None,
+            "username": user.username if user and not anonymous else None,
             "display_name": user.scoreboard_name if user else None,
             "name_mode": name_mode,
             "avatar_data": user.avatar_data if show_avatar else None,
@@ -1777,10 +1784,13 @@ async def celebration_wall(
         if user is None:
             continue
         name_mode = getattr(user, "scoreboard_name_mode", None) or "real_name"
-        show_avatar = name_mode != "anonymous"
+        anonymous = name_mode == "anonymous" or bool(
+            getattr(user, "is_minor", False)
+        )
+        show_avatar = not anonymous
         spotlight.append({
-            "user_id": user.id,
-            "username": user.username if name_mode != "anonymous" else None,
+            "user_id": None,
+            "username": None if anonymous else user.username,
             "display_name": user.scoreboard_name,
             "name_mode": name_mode,
             "avatar_data": user.avatar_data if show_avatar else None,

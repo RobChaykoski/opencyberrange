@@ -57,7 +57,8 @@ def main() -> int:
             return 2
 
         token = create_access_token(
-            {"sub": admin.username, "user_id": admin.id, "role": admin.role}
+            {"sub": admin.username, "user_id": admin.id, "role": admin.role},
+            security_version=getattr(admin, "security_version", 1),
         )
         headers = {"Authorization": f"Bearer {token}"}
         response = requests.get(

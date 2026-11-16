@@ -17,6 +17,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 
 from app.database import get_db
 from app.models import (
@@ -1339,9 +1340,16 @@ async def join_course(
         user_id=current_user.id,
     )
     db.add(enrollment)
-    db.flush()  # so _ensure_scope_token can see the row
-    _ensure_scope_token(db, enrollment)
-    db.commit()
+    try:
+        db.flush()  # so _ensure_scope_token can see the row
+        _ensure_scope_token(db, enrollment)
+        db.commit()
+    except IntegrityError:
+        # Two concurrent join requests can both pass the check above. The
+        # unique (course_id, user_id) index is the invariant; the loser gets a
+        # clean "already enrolled" response instead of a 500.
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Already enrolled in this course")
     if course.cohort_strict:
         sync_default_cohort(db, course)
     logger.info(f"User {current_user.username} enrolled in {course.code}")
@@ -1395,10 +1403,17 @@ async def enroll_students_bulk(
             enrolled.append(uid)
 
     if enrolled:
-        db.flush()
-        for ce in new_enrollments:
-            _ensure_scope_token(db, ce)
-        db.commit()
+        try:
+            db.flush()
+            for ce in new_enrollments:
+                _ensure_scope_token(db, ce)
+            db.commit()
+        except IntegrityError:
+            db.rollback()
+            raise HTTPException(
+                status_code=409,
+                detail="One or more learners were enrolled concurrently; refresh and retry.",
+            )
         if course.cohort_strict:
             sync_default_cohort(db, course)
         for uid in enrolled:

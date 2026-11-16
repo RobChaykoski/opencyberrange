@@ -370,6 +370,7 @@ async def lifespan(app: FastAPI):
             ("mfa_locked_until", "TIMESTAMP"),
             ("mfa_recovery_generated_at", "TIMESTAMP"),
             ("password_rehashed_at", "TIMESTAMP"),
+            ("security_version", "INTEGER NOT NULL DEFAULT 1"),
         ):
             if column not in users_columns:
                 conn.execute(text(f"ALTER TABLE users ADD COLUMN {column} {ddl}"))
@@ -859,6 +860,13 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning("Tenant RLS setup skipped: %s", exc)
 
+    try:
+        from app.services import db_invariants
+
+        db_invariants.apply(engine)
+    except Exception as exc:
+        logger.warning("Database invariant setup skipped: %s", exc)
+
     # Seed the reviewed RBAC catalog and install the append-only security event
     # RLS policies. Both are idempotent; an admin's role edits survive a reboot.
     try:
@@ -1266,10 +1274,10 @@ async def impersonation_read_only_middleware(request: Request, call_next):
             if auth_header.startswith("Bearer "):
                 token_str = auth_header[7:]
                 try:
-                    import jwt as _jwt
-                    payload = _jwt.decode(
-                        token_str, settings.JWT_SECRET,
-                        algorithms=[settings.JWT_ALGORITHM],
+                    from app.auth import _decode_token
+
+                    payload = _decode_token(
+                        token_str, expected_types=("access", "impersonation")
                     )
                     if payload.get("imp"):
                         return JSONResponse(

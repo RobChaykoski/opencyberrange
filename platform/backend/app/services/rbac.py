@@ -217,6 +217,28 @@ def permission_catalog(db: Session) -> list[dict]:
     ]
 
 
+def _bump_role_users(db: Session, role_key: str) -> int:
+    from app.auth import bump_security_version
+
+    ids = {
+        row[0]
+        for row in db.query(RbacUserRole.user_id)
+        .filter(RbacUserRole.role_key == role_key)
+        .all()
+    }
+    users = {
+        row.id: row
+        for row in db.query(User)
+        .filter((User.role == role_key) | (User.id.in_(ids)))
+        .all()
+    }
+    for user in users.values():
+        bump_security_version(user)
+    if users:
+        db.commit()
+    return len(users)
+
+
 def set_role_permissions(
     db: Session,
     actor: User | None,
@@ -243,6 +265,7 @@ def set_role_permissions(
     rows = db.query(RbacPermission).filter(RbacPermission.key.in_(wanted)).all()
     role.permissions = rows
     db.commit()
+    _bump_role_users(db, role_key)
     security_events.record(
         "rbac.permissions_changed",
         actor=actor,
@@ -289,6 +312,9 @@ def grant_user_role(
     else:
         row.expires_at = expires_at
         row.reason = (reason or "")[:500] or None
+    from app.auth import bump_security_version
+
+    bump_security_version(user)
     db.commit()
     security_events.record(
         "rbac.role_granted",
@@ -318,6 +344,9 @@ def revoke_user_role(
     if row is None:
         return False
     db.delete(row)
+    from app.auth import bump_security_version
+
+    bump_security_version(user)
     db.commit()
     security_events.record(
         "rbac.role_revoked",

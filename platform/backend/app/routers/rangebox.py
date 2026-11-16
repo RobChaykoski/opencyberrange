@@ -44,18 +44,19 @@ async def _authenticate_ws(token: str) -> tuple[int | None, bool]:
     if user_id is not None:
         return user_id, False
 
-    # Fall back to JWT for backward compatibility
-    import jwt
-    from jwt import PyJWTError as JWTError
-    from app.config import settings
+    # Fall back to the platform validator. It enforces issuer, audience,
+    # purpose, required claims, and revocation.
+    from app.auth import _decode_token
 
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+        payload = _decode_token(
+            token, expected_types=("access", "impersonation")
+        )
         username: str = payload.get("sub")
         if username is None:
             return None, False
         is_imp = bool(payload.get("imp", False))
-    except JWTError:
+    except Exception:
         return None, False
 
     # Look up user in DB
@@ -284,6 +285,9 @@ async def standalone_rangebox_vnc_proxy(
     user_id, ws_imp = await _authenticate_ws(token)
     if user_id is None:
         await websocket.close(code=4401, reason="Invalid token")
+        return
+    if ws_imp:
+        await websocket.close(code=4403, reason="Impersonation is read-only")
         return
 
     rangebox_ip = docker_manager.get_standalone_rangebox_ip(user_id)
@@ -565,6 +569,9 @@ async def rangebox_vnc_proxy(
     user_id, ws_imp = await _authenticate_ws(token)
     if user_id is None:
         await websocket.close(code=4401, reason="Invalid token")
+        return
+    if ws_imp:
+        await websocket.close(code=4403, reason="Impersonation is read-only")
         return
 
     # ── 2. Validate session ownership ────────────────────────────────

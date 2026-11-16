@@ -398,7 +398,9 @@ def _leaderboard(
         )
         anonymous = display_name == "Anonymous participant"
         entries.append({
-            "user_id": user.id,
+            # Anonymous/minor rows must not leak a stable learner identifier
+            # into a public leaderboard payload.
+            "user_id": None if anonymous else user.id,
             "username": None if anonymous else user.username,
             "display_name": display_name,
             "score": score,
@@ -407,6 +409,9 @@ def _leaderboard(
             "source": participant.source or "opt_in",
             "joined_at": _iso(participant.joined_at),
             "is_me": user.id == current_user.id,
+            # Internal only: placement awards need the id even when the
+            # public projection masks an anonymous participant.
+            "_user_id": user.id,
             "_last": last_solved,
             "_joined": participant.joined_at,
         })
@@ -430,6 +435,8 @@ def _leaderboard(
     if _status(competition, datetime.now(timezone.utc)) in ("ended", "archived"):
         award_competition_placements(db, competition, entries)
         db.commit()
+    for entry in entries:
+        entry.pop("_user_id", None)
 
     achievement_rows = db.query(Achievement).filter(
         Achievement.user_id.in_(user_ids),
@@ -582,7 +589,7 @@ async def get_competition(
     current_user: User = Depends(get_current_active_user),
 ):
     competition = _competition_or_404(db, competition_id)
-    if not competition.is_active and current_user.role not in ("instructor", "admin"):
+    if not competition.is_active and not _can_manage(competition, current_user):
         raise HTTPException(status_code=404, detail="Competition not found")
 
     now = datetime.now(timezone.utc)
@@ -613,7 +620,7 @@ async def get_event_discovery(
 ):
     """Return the Cyber Discovery layer for an event, if the event has one."""
     competition = _competition_or_404(db, competition_id)
-    if not competition.is_active and current_user.role not in ("instructor", "admin"):
+    if not competition.is_active and not _can_manage(competition, current_user):
         raise HTTPException(status_code=404, detail="Competition not found")
     plan = devfest.plan_for_experience(competition.experience_key)
     if plan is None:

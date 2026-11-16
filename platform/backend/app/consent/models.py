@@ -61,10 +61,12 @@ class ConsentEvent(Base):
     __tablename__ = "consent_events"
 
     id = Column(Integer, primary_key=True)
+    # SET NULL, not CASCADE: the event is evidence and outlives the account.
+    # The subject is pseudonymized by ConsentAudit.subject_hash instead.
     user_id = Column(
         Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        nullable=True,
         index=True,
     )
     consent_type = Column(String(32), nullable=False)

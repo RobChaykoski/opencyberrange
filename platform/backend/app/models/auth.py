@@ -158,6 +158,12 @@ class User(Base):
     # Last time the stored password hash was rehashed with current Argon2id
     # parameters. Null means "unknown; rehash on the next successful login".
     password_rehashed_at = Column(DateTime, nullable=True)
+    # Monotonic security version. Role, tenant, password, or MFA changes bump
+    # it; access tokens carry the version they were minted with, so a stale
+    # token cannot retain old authority.
+    security_version = Column(
+        Integer, nullable=False, default=1, server_default=text("1")
+    )
 
     created_at = Column(DateTime, server_default=func.now())
 

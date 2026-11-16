@@ -35,6 +35,7 @@ from app.auth import (
     verify_password,
     validate_privileged_password,
     is_impersonating,
+    enforce_not_impersonating,
     create_impersonation_token,
     revoke_token,
     revoke_all_user_tokens,
@@ -460,7 +461,7 @@ async def login(
     # Create access token
     access_token_expires = timedelta(hours=settings.JWT_EXPIRATION_HOURS)
     access_token = create_access_token(
-        data={"sub": user.username, "sid": session.id},
+        data={"sub": user.username, "sid": session.id, "sec": user.security_version},
         expires_delta=access_token_expires
     )
     
@@ -932,6 +933,7 @@ async def export_user_data(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
     _reauth: object = Depends(reauth_service.require_recent_reauth("account export")),
+    _not_impersonating: User = Depends(enforce_not_impersonating),
 ):
     """Return the account holder's personal data in a portable JSON document.
 
@@ -1589,7 +1591,7 @@ async def refresh_access_token(
     session = result["session"]
     expires = timedelta(hours=settings.JWT_EXPIRATION_HOURS)
     access_token = create_access_token(
-        data={"sub": user.username, "sid": session.id},
+        data={"sub": user.username, "sid": session.id, "sec": user.security_version},
         expires_delta=expires,
     )
     from app.services import security_events
@@ -2221,7 +2223,9 @@ async def logout(
 
     Revocation is DB-backed (revoked_tokens table), so a logged-out token is
     dead platform-wide, not just on the worker that handled this request."""
-    payload = _decode_token(token, db=db)
+    payload = _decode_token(
+        token, db=db, expected_types=("access", "impersonation")
+    )
     jti = payload.get("jti")
     if jti:
         revoke_token(jti, float(payload.get("exp", 0)), user_id=current_user.id)
@@ -2346,6 +2350,8 @@ async def verify_mfa(
 
     mfa_service.reset_failures(db, current_user)
     if not current_user.mfa_enabled:
+        # Enabling a second factor is an upgrade, not an authority change.
+        # Do not invalidate the session that just proved possession.
         current_user.mfa_enabled = True
         current_user.mfa_recovery_generated_at = None
         db.commit()
@@ -2402,6 +2408,9 @@ async def disable_mfa(
     current_user.mfa_failed_attempts = 0
     current_user.mfa_locked_until = None
     mfa_service.clear_recovery_codes(db, current_user, commit=False)
+    from app.auth import bump_security_version
+
+    bump_security_version(current_user)
     db.commit()
     # A second-factor change invalidates every existing session and token.
     auth_sessions.revoke_all_for_user(db, current_user.id, "mfa_disabled")
@@ -2594,7 +2603,7 @@ async def exit_impersonation(
     _current_user: User = Depends(get_current_active_user),
 ):
     """Exit impersonation and return a fresh token for the original user."""
-    payload = _decode_token(token)
+    payload = _decode_token(token, db=db, expected_types=("impersonation",))
 
     if not payload.get("imp"):
         raise HTTPException(status_code=400, detail="Not currently impersonating")
@@ -2623,7 +2632,7 @@ async def exit_impersonation(
         db, exit_session, original_user, request=request
     )
     fresh_token = create_access_token(
-        data={"sub": original_user.username, "sid": exit_session.id},
+        data={"sub": original_user.username, "sid": exit_session.id, "sec": original_user.security_version},
         expires_delta=timedelta(hours=settings.JWT_EXPIRATION_HOURS),
     )
 

@@ -33,6 +33,23 @@ ignore = [
     "E741",  # ambiguous variable names (l, O): renaming is churn, not a fix
 ]
 
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/scripts/*",
+    "app/modules/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "def __repr__",
+]
+
 [tool.ruff.lint.per-file-ignores]
 # Seed and script files legitimately shadow names and use star-ish patterns.
 "app/data/*" = ["F401", "F841"]

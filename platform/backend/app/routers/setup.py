@@ -159,7 +159,7 @@ async def complete_setup(
         db, session, admin, request=request
     )
     token = create_access_token(
-        data={"sub": admin.username, "sid": session.id},
+        data={"sub": admin.username, "sid": session.id, "sec": admin.security_version},
         expires_delta=timedelta(hours=24)
     )
 
