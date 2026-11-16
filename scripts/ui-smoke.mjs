@@ -20,7 +20,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { chromium, request } from 'playwright'
+import { chromium, firefox, request, webkit } from 'playwright'
 
 const BASE = (process.env.UI_BASE_URL || '').replace(/\/$/, '')
 let TOKEN = process.env.UI_SMOKE_TOKEN || ''
@@ -98,7 +98,9 @@ if (PRIVACY_USERNAME && PRIVACY_PASSWORD) {
 
 if (EXPECTED) check('API version', version.version === EXPECTED, `${version.version} (expected ${EXPECTED})`)
 
-const browser = await chromium.launch({
+const browserName = (process.env.UI_BROWSER || 'chromium').toLowerCase()
+const launcher = { chromium, firefox, webkit }[browserName] || chromium
+const browser = await launcher.launch({
   headless: true,
   ...(process.env.UI_BROWSER_EXECUTABLE
     ? { executablePath: process.env.UI_BROWSER_EXECUTABLE }

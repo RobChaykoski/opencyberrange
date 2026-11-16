@@ -11,8 +11,15 @@ permissions:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        # noVNC and the SPA are exercised in all three engines. The script also
+        # opens desktop and mobile viewports inside each engine.
+        browser: [chromium, firefox, webkit]
     env:
+      UI_BROWSER: ${{ matrix.browser }}
       UI_BASE_URL: ${{ vars.UI_BASE_URL }}
       UI_SMOKE_TOKEN: ${{ secrets.UI_SMOKE_TOKEN }}
       UI_SMOKE_USERNAME: ${{ secrets.UI_SMOKE_USERNAME }}
@@ -38,14 +45,14 @@ jobs:
             exit 0
           fi
           npm install --no-save playwright
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps "$UI_BROWSER"
           node scripts/ui-smoke.mjs
 
       - name: Upload evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: ui-smoke-evidence
+          name: ui-smoke-evidence-${{ matrix.browser }}
           path: ui-smoke-artifacts/
           if-no-files-found: ignore
           retention-days: 30

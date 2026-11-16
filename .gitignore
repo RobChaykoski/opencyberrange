@@ -72,6 +72,11 @@ ui-verify-artifacts/
 
 # Local lint/report output
 ruff-report.json
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.ruff_cache/
 
 # The workbook wiki and generated routing metadata are build artifacts. They
 # are produced by platform/wiki-builder into the wiki_data volume; never commit
