@@ -1,0 +1,177 @@
+version: "1.0"
+title: "Defensive Detection Engineering"
+status: "reviewed pathway specification"
+audience: >
+  Learners who can read Windows and Linux telemetry and want to move from
+  offensive enumeration and exploitation into detection, triage, and hunting.
+prerequisites:
+  completed_pathways: ["BEG04", "NET00", "LIN01"]
+  baseline_competencies: [NET-029, NET-030, NET-031, LIN-018, WIN-005]
+principles:
+  - "Detection is a hypothesis, not a signature: state the behaviour, the data source, and the expected evidence."
+  - "Every rule ships with a false-positive note, a validation query, and a triage decision."
+  - "Synthetic datasets are used in development. Real learner telemetry is never embedded in a lab."
+  - "Collect only the telemetry needed for the decision: no keystrokes, mouse movement, or terminal history."
+  - "Windows Event Logs, Sysmon, Zeek, Suricata, and KQL/OpenSearch are taught as one evidence chain."
+data_policy:
+  synthetic_only: true
+  real_pii: false
+  prohibited_collection: [keystrokes, mouse_movement, exhaustive_terminal_history]
+  dataset_root: "platform/backend/app/data/detection-datasets"
+  notes: >
+    Datasets use documentation ranges (10.20.0.0/24), example hostnames
+    (lab.example), and fictional users. A production deployment must not replace
+    them with live learner data.
+modules:
+  - id: DET-01
+    title: "Windows Event Log Triage"
+    difficulty: beginner
+    estimated_minutes: 90
+    prerequisites: []
+    datasets: [windows-security.jsonl]
+    sigma_rules: []
+    competencies:
+      - {id: WIN-005, weight: 0.40}
+      - {id: WIN-017, weight: 0.30}
+      - {id: TH-003, weight: 0.30}
+    existing_labs: []
+    planned_labs: [detection-1-1-windows-event-triage]
+    evidence: [query_result, triage_note, artifact]
+    assessment:
+      deterministic: true
+      validation: "automated query result plus a short triage note rubric"
+    outcomes:
+      - "Explain the difference between 4624, 4625, 4688, 4720, and 4672."
+      - "Pivot from a failed-logon cluster to the account and source host."
+      - "Write a triage note with a decision and confidence."
+  - id: DET-02
+    title: "Sysmon Process and Network Telemetry"
+    difficulty: beginner
+    estimated_minutes: 120
+    prerequisites: [DET-01]
+    datasets: [sysmon.jsonl, windows-security.jsonl]
+    sigma_rules: []
+    competencies:
+      - {id: WIN-018, weight: 0.35}
+      - {id: WIN-021, weight: 0.35}
+      - {id: TH-004, weight: 0.30}
+    existing_labs: []
+    planned_labs: [detection-1-2-sysmon-process-tree]
+    evidence: [query_result, triage_note, artifact]
+    assessment:
+      deterministic: true
+      validation: "automated process-tree and network-event checks plus a triage rubric"
+    outcomes:
+      - "Reconstruct an Office-to-PowerShell process tree from Sysmon Event ID 1."
+      - "Correlate a Sysmon network event with a DNS or TLS flow."
+      - "Identify LSASS access and explain why it is credential access."
+  - id: DET-03
+    title: "Sigma Rule Authoring and Review"
+    difficulty: intermediate
+    estimated_minutes: 150
+    prerequisites: [DET-02]
+    datasets: [sysmon.jsonl, windows-security.jsonl]
+    sigma_rules: [encoded_powershell.yml, lsass_access.yml]
+    competencies:
+      - {id: TH-007, weight: 0.35}
+      - {id: TH-008, weight: 0.45}
+      - {id: PROF-001, weight: 0.20}
+    existing_labs: []
+    planned_labs: [detection-2-1-sigma-rule-authoring]
+    evidence: [detection_rule, query_result, triage_note]
+    assessment:
+      deterministic: true
+      validation: "rule schema, positive synthetic match, and a documented false-positive test"
+    outcomes:
+      - "Translate a behaviour into a Sigma logsource, selection, and condition."
+      - "Test a rule against a positive and a benign synthetic event."
+      - "Document false positives and a response recommendation."
+  - id: DET-04
+    title: "Zeek Network Evidence"
+    difficulty: intermediate
+    estimated_minutes: 150
+    prerequisites: [DET-02]
+    datasets: [zeek-conn.jsonl, zeek-dns.jsonl, zeek-http.jsonl]
+    sigma_rules: [dns_tunnel.yml]
+    competencies:
+      - {id: NET-029, weight: 0.30}
+      - {id: NET-031, weight: 0.30}
+      - {id: NET-035, weight: 0.20}
+      - {id: TH-003, weight: 0.20}
+    existing_labs: [network-1-2-log-correlation, network-1-3-dns-anomaly-detection]
+    planned_labs: [detection-2-2-zeek-dns-tunnel]
+    evidence: [query_result, triage_note, artifact]
+    assessment:
+      deterministic: true
+      validation: "conn/DNS/HTTP result checks plus a network evidence note"
+    outcomes:
+      - "Build a baseline from Zeek conn and DNS logs."
+      - "Identify a long-label TXT query consistent with DNS tunnelling."
+      - "Correlate the DNS answer, HTTP POST, and host process evidence."
+  - id: DET-05
+    title: "Suricata Alert Triage"
+    difficulty: intermediate
+    estimated_minutes: 120
+    prerequisites: [DET-04]
+    datasets: [suricata-eve.jsonl, zeek-dns.jsonl]
+    sigma_rules: []
+    competencies:
+      - {id: SOC-001, weight: 0.35}
+      - {id: SOC-002, weight: 0.25}
+      - {id: NET-031, weight: 0.20}
+      - {id: IR-002, weight: 0.20}
+    existing_labs: [linux-5-4-suricata-live-detection, network-1-4-failed-login-analysis]
+    planned_labs: [detection-2-3-suricata-alert-triage]
+    evidence: [triage_note, query_result, artifact]
+    assessment:
+      deterministic: true
+      validation: "alert disposition checks plus a triage rubric"
+    outcomes:
+      - "Separate a true positive from a noisy signature using context."
+      - "Map a Suricata alert to the underlying flow and host evidence."
+      - "Record disposition, severity, and escalation decision."
+  - id: DET-06
+    title: "OpenSearch, Elastic, and KQL-Style Hunting"
+    difficulty: intermediate
+    estimated_minutes: 180
+    prerequisites: [DET-03, DET-05]
+    datasets: [opensearch-events.jsonl, windows-security.jsonl, sysmon.jsonl, zeek-dns.jsonl, suricata-eve.jsonl]
+    sigma_rules: [encoded_powershell.yml, lsass_access.yml, dns_tunnel.yml]
+    competencies:
+      - {id: SIEM-001, weight: 0.20}
+      - {id: SIEM-002, weight: 0.30}
+      - {id: SIEM-003, weight: 0.20}
+      - {id: TH-003, weight: 0.30}
+    existing_labs: [malware-1-4-c2-pcap-wireshark, malware-1-5-inetsim-c2-detection]
+    planned_labs: [detection-3-1-kql-hunt]
+    evidence: [query_result, detection_rule, triage_note, artifact]
+    assessment:
+      deterministic: true
+      validation: "KQL query result checks plus a translation note from Sigma to KQL"
+    outcomes:
+      - "Write KQL-style queries for process, authentication, DNS, and alert data."
+      - "Translate a Sigma rule into an OpenSearch/Elastic query."
+      - "Explain index, field, and timestamp assumptions."
+  - id: DET-07
+    title: "Capstone: Multi-Stage Intrusion Hunt"
+    difficulty: advanced
+    estimated_minutes: 240
+    prerequisites: [DET-01, DET-02, DET-03, DET-04, DET-05, DET-06]
+    datasets: [windows-security.jsonl, sysmon.jsonl, zeek-conn.jsonl, zeek-dns.jsonl, zeek-http.jsonl, suricata-eve.jsonl, opensearch-events.jsonl]
+    sigma_rules: [encoded_powershell.yml, lsass_access.yml, dns_tunnel.yml]
+    competencies:
+      - {id: TH-001, weight: 0.20}
+      - {id: TH-005, weight: 0.25}
+      - {id: IR-001, weight: 0.20}
+      - {id: IR-003, weight: 0.15}
+      - {id: PROF-010, weight: 0.20}
+    existing_labs: [network-1-3-dns-anomaly-detection, network-1-4-failed-login-analysis, malware-1-4-c2-pcap-wireshark, malware-1-5-inetsim-c2-detection]
+    planned_labs: [detection-3-2-multi-stage-hunt]
+    evidence: [query_result, detection_rule, triage_note, artifact]
+    assessment:
+      deterministic: true
+      validation: "multi-source evidence checks, a detection rule, and an incident note rubric"
+    outcomes:
+      - "Build a hypothesis and select the minimum telemetry needed to test it."
+      - "Correlate Windows, Sysmon, Zeek, Suricata, and SIEM evidence into one timeline."
+      - "Write a detection rule and an incident note with containment and recovery recommendations."

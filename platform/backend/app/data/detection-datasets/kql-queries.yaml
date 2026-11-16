@@ -1,0 +1,62 @@
+version: "1.0"
+description: KQL-style synthetic queries for the detection-engineering pathway.
+queries:
+  - id: encoded_powershell
+    title: Encoded PowerShell launched by Office
+    index: sysmon
+    kql: |
+      Sysmon
+      | where EventID == 1
+      | where Image endswith "powershell.exe"
+      | where ParentImage endswith "WINWORD.EXE" or ParentImage endswith "EXCEL.EXE"
+      | where CommandLine contains "-enc" or CommandLine contains "-EncodedCommand"
+      | project Timestamp, Computer, User, Image, ParentImage, CommandLine
+    expected: Encoded PowerShell event from WINWORD.EXE
+  - id: repeated_failed_logons
+    title: Repeated failed logons from one source
+    index: windows-security
+    kql: |
+      SecurityEvent
+      | where EventID == 4625
+      | summarize Failures = count(), First = min(TimeGenerated), Last = max(TimeGenerated)
+          by Account, IpAddress, Computer
+      | where Failures >= 3
+      | order by Failures desc
+    expected: svc_backup with three failures from 10.20.0.44
+  - id: new_service_account
+    title: New account followed by privileged logon
+    index: windows-security
+    kql: |
+      SecurityEvent
+      | where EventID in (4720, 4672)
+      | summarize Events = make_set(EventID) by TargetUserName, Computer
+      | where Events has 4720 and Events has 4672
+    expected: svc_shadow created and granted special privileges
+  - id: long_dns_txt
+    title: Long DNS query with TXT answer
+    index: zeek-dns
+    kql: |
+      ZeekDNS
+      | where qtype_name == "TXT"
+      | where strlen(query) > 60
+      | project Timestamp, id_orig_h, query, answers
+    expected: c2f4... TXT query
+  - id: lsass_access
+    title: Process access to LSASS
+    index: sysmon
+    kql: |
+      Sysmon
+      | where EventID == 10
+      | where TargetImage endswith "\\lsass.exe"
+      | where Image endswith "\\rundll32.exe"
+      | project Timestamp, Computer, User, Image, TargetImage, CommandLine
+    expected: comsvcs MiniDump access to lsass.exe
+  - id: suricata_high_severity
+    title: High-severity Suricata alerts
+    index: suricata-eve
+    kql: |
+      Suricata
+      | where event_type == "alert"
+      | where alert.severity <= 2
+      | project Timestamp, src_ip, dest_ip, alert.signature, alert.severity
+    expected: DNS or TLS alert on the synthetic dataset

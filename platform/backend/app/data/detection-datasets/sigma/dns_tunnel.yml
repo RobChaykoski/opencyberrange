@@ -1,0 +1,21 @@
+title: Long DNS Query with TXT Response
+id: a1b2c3d4-e5f6-4a7b-8c9d-ocr-det-003
+status: test
+description: Detects unusually long DNS labels and TXT answers consistent with DNS tunnelling.
+author: OpenCyberRange Detection Pathway
+date: 2026-11-16
+tags:
+  - attack.command_and_control
+  - attack.t1071.004
+logsource:
+  product: zeek
+  service: dns
+detection:
+  selection_txt:
+    qtype_name: 'TXT'
+  selection_long:
+    query|re: '^[A-Za-z0-9._-]{60,}$'
+  condition: selection_txt and selection_long
+falsepositives:
+  - Legitimate service discovery and ACME validation records.
+level: high

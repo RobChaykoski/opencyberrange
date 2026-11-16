@@ -1,0 +1,26 @@
+title: LSASS Memory Access by Rundll32
+id: 8f2d5c1a-6e3b-4c7d-8a9e-ocr-det-002
+status: test
+description: Detects a process accessing lsass.exe with the comsvcs MiniDump pattern.
+author: OpenCyberRange Detection Pathway
+date: 2026-11-16
+tags:
+  - attack.credential_access
+  - attack.t1003.001
+logsource:
+  product: windows
+  service: sysmon
+  category: process_access
+detection:
+  selection_target:
+    TargetImage|endswith: '\\lsass.exe'
+  selection_source:
+    Image|endswith: '\\rundll32.exe'
+  selection_command:
+    CommandLine|contains:
+      - 'comsvcs.dll'
+      - 'MiniDump'
+  condition: selection_target and selection_source and selection_command
+falsepositives:
+  - Approved forensic capture by an endpoint administrator.
+level: critical
