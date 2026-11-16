@@ -32,6 +32,16 @@ lab in the repository, not only the currently visible ones.
 A lab that cannot meet these defaults does not belong in the stream; move it to
 an adult track or provide an offline, synthetic replacement.
 
+### Deployed visibility check
+
+On 2026-11-16, the development and production `labs` tables each contained 18
+active High School rows, all `public`. No six-row filter exists in the database
+or the curriculum API. A UI view that shows six is a level/course view (the
+Grade 10 set is the only explicit `counts_toward_certificate` subset), not a
+missing or hidden set of labs. If a deployment is expected to expose only six,
+apply an explicit course/level filter and record the decision; do not delete
+the other twelve.
+
 ## What the defaults mean
 
 - **Offline only.** Every target is a lab host or a reserved documentation
