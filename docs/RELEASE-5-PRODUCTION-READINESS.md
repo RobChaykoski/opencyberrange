@@ -1,13 +1,13 @@
 # Release 5 production readiness
 
-Status: **`v5.16.0` is released and deployed.** Development `172.16.16.44` and
-production `172.16.16.41` both run `main` at `6c94ad52` (`v5.16.0`) with Alembic
-`0031_learner_snapshots`. The release tags `v5.0.0`, `v5.0.1`,
+Status: **`v5.17.0` is released and deployed.** Development `172.16.16.44` and
+production `172.16.16.41` both run `main` at `ab4fe750` (`v5.17.0`) with Alembic
+`0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
-`v5.14.0`, `v5.15.0`, and `v5.16.0` record the feature releases, security
-patches, and operations patches.
+`v5.14.0`, `v5.15.0`, `v5.16.0`, and `v5.17.0` record the feature releases,
+security patches, and operations patches.
 
 ## Ready for production
 
@@ -32,7 +32,27 @@ patches, and operations patches.
   documented in `RangeBox/SECURITY-MODEL.md`. noVNC was the 5.0 path; the Kali
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
-- Migrations `0015`–`0030`, all idempotent and applied on dev and production.
+- Migrations `0015`–`0040`, all idempotent and applied on dev and production.
+
+## 5.17.0 deployment record - 2026-11-16
+
+- Deployed from `main` at `ab4fe750` (`v5.17.0`). Backend and frontend were
+  rebuilt from the release commit.
+- Pre-deploy backup: `~/backups/ocr-backup-20261116-172935.dump` (1.68 MB),
+  plus `ocr-backup-20261116-172935.dump.sha256` and
+  `platform-env-20261116-172935`.
+- Alembic remained at `0040_settings_change_control`; no schema migration or
+  manual SQL was required.
+- Verified: backend, frontend, database, and Valkey healthy; `/api/version`
+  returns `5.17.0` with the Release 5.17 name; `/health` returns 200; 191 labs
+  are registered.
+- The admin **Release status** panel is installed and reports the installed
+  version against the latest GitHub release/tag, with the upgrade path and
+  rollback note. The signed `v5.17.0` tag makes the release comparison current.
+- This is a code deployment. The one-way production cutover remains a separate
+  password-confirmed change.
+- Tag `v5.17.0` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814`.
 
 ## 5.16.0 deployment record - 2026-11-15
 
