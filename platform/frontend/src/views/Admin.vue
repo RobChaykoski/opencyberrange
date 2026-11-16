@@ -231,7 +231,7 @@
           <strong>Update available: {{ releaseCheck.latest_tag || releaseCheck.latest }}</strong>
           <p>
             Installed {{ releaseCheck.installed_normalised || releaseCheck.installed }} ·
-            latest GitHub release {{ releaseCheck.latest_normalised || releaseCheck.latest }}.
+            latest GitHub version {{ releaseCheck.latest_normalised || releaseCheck.latest }}.
             {{ releaseCheck.release_name || '' }}
           </p>
         </div>
