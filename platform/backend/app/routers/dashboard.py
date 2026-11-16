@@ -36,6 +36,7 @@ from app.services.achievements import (
     competition_achievement_display,
     competition_achievement_parts,
     custom_achievement_id,
+    HIDDEN_ACHIEVEMENT_TYPES,
     resolve_achievement_label,
 )
 from app.services.pdf_report import generate_dashboard_report
@@ -1579,6 +1580,8 @@ def _public_achievement_or_404(db: Session, achievement_id: int) -> Achievement:
     )
     if achievement is None:
         raise HTTPException(status_code=404, detail="Achievement not found")
+    if achievement.achievement_type in HIDDEN_ACHIEVEMENT_TYPES:
+        raise HTTPException(status_code=404, detail="Achievement is not on the wall")
     owner = achievement.user
     if (
         owner is None

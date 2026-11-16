@@ -412,6 +412,25 @@ def get_current_user(
     # integrity trigger records this on the next flush.
     set_actor(user)
 
+    # The tenant always comes from the server-loaded row, never from the JWT.
+    # Set the request context and bind the current transaction's RLS GUCs.
+    from app.security.tenant import set_tenant
+
+    is_system_admin = (getattr(user, "role", "") or "") == "admin"
+    set_tenant(getattr(user, "institution_id", None), system_admin=is_system_admin)
+    try:
+        from app.services.security_events import set_rls_context
+
+        set_rls_context(
+            db,
+            institution_id=getattr(user, "institution_id", None),
+            system_admin=is_system_admin,
+        )
+    except Exception:
+        # RLS context is defence in depth; a non-PostgreSQL test database or a
+        # missing table must not break authentication.
+        pass
+
     return user
 
 

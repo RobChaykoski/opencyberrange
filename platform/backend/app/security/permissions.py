@@ -1,285 +1,65 @@
-"""Permission catalog and role grants.
+"""Permission catalog and role grants, loaded from ``permissions.yaml``.
 
-This is the PBAC seam for the platform. Existing routers keep their current
-role dependencies; new privacy-sensitive surfaces call :func:`authorize` with a
-permission and, where relevant, a resource owner or course scope. The catalog
-is intentionally small and atomic so it can grow into the full multi-tenant
-matrix without changing call sites.
+The YAML file is authoritative so a release review can diff one readable file.
+It records each permission's description, category, sensitivity, scope, whether
+it is read-only, and whether it is eligible for break-glass access. Role grants
+live here too; the database tables in :mod:`app.models.security` are seeded from
+this file and can then be adjusted by an administrator.
+
+This remains the PBAC seam for the platform: routers call :func:`authorize` with
+a permission and, where relevant, a resource owner, course scope, tenant, or
+explicit share.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 
+import yaml
 
-READ_ONLY_PERMISSIONS = frozenset(
-    {
-        "audit.view",
-        "consent.view",
-        "privacy.audit.view",
-        "reports.view",
-        "class.analytics.view",
-        "student.progress.view",
-        "competency.view",
-        "achievement.view",
-    }
-)
+_CATALOG_PATH = Path(__file__).with_name("permissions.yaml")
+with _CATALOG_PATH.open("r", encoding="utf-8") as handle:
+    _DOCUMENT = yaml.safe_load(handle) or {}
 
-SELF_PERMISSIONS = frozenset(
-    {
-        "profile.view.self",
-        "profile.edit.self",
-        "profile.delete.self",
-        "dna.view.self",
-        "dna.export.self",
-        "dna.delete.self",
-        "gps.view.self",
-        "gps.generate",
-        "gps.disable",
-        "portfolio.view.self",
-        "portfolio.export.self",
-        "portfolio.share",
-        "coach.use",
-        "consent.manage.self",
-        "consent.view.self",
-        "export.request.self",
-        "deletion.request.self",
-        "transcript.view.self",
-    }
-)
-
-SHARED_PERMISSIONS = frozenset(
-    {
-        "portfolio.view.shared",
-        "certificate.view.shared",
-        "shared_profile.view",
-    }
-)
-
-# Staff permissions whose policy requires an owned course/cohort scope.
-SCOPED_PERMISSIONS = frozenset(
-    {
-        "student.progress.view",
-        "class.analytics.view",
-        "competency.view",
-        "achievement.view",
-        "assignment.grade",
-        "feedback.create",
-        "reports.view",
-        "reports.export",
-    }
-)
-
-SENSITIVE_PRIVATE_PERMISSIONS = frozenset(
-    {
-        "coach.transcript.view",
-        "dna.view.private",
-        "gps.view.private",
-        "privacy.consent.read",
-    }
-)
+_PERMISSIONS: dict[str, dict] = _DOCUMENT.get("permissions") or {}
+_ROLES: dict[str, dict] = _DOCUMENT.get("roles") or {}
 
 PERMISSION_CATALOG: dict[str, str] = {
-    # Identity
-    "profile.view.self": "View own profile",
-    "profile.edit.self": "Edit own profile",
-    "profile.delete.self": "Request deletion of own account",
-    "user.manage": "Manage platform users",
-    "role.assign": "Assign roles and scopes",
-    # Learning
-    "lab.view": "View exercises",
-    "lab.start": "Start an exercise",
-    "lab.submit": "Submit exercise work",
-    "workbook.view": "View workbook content",
-    "transcript.view.self": "View own transcript",
-    "course.view": "View courses",
-    "course.create": "Create courses",
-    "course.edit": "Edit courses",
-    "course.archive": "Archive courses",
-    "assignment.manage": "Manage assignments",
-    "assignment.grade": "Grade assignments",
-    "feedback.create": "Create learner feedback",
-    "student.progress.view": "View assigned learners' progress",
-    "class.analytics.view": "View class analytics",
-    # Cyber DNA / GPS
-    "dna.view.self": "View own Cyber DNA",
-    "dna.export.self": "Export own Cyber DNA",
-    "dna.delete.self": "Revoke own Cyber DNA processing",
-    "dna.view.student": "View an assigned learner's competencies",
-    "dna.view.private": "View private DNA notes",
-    "dna.admin": "Administer DNA configuration",
-    "gps.view.self": "View own Cyber GPS",
-    "gps.generate": "Generate own Cyber GPS view",
-    "gps.disable": "Disable own Cyber GPS",
-    "gps.view.student": "View an assigned learner's GPS direction",
-    "gps.view.private": "View private GPS notes",
-    "gps.admin": "Administer GPS configuration",
-    "competency.view": "View competencies for assigned learners",
-    "achievement.view": "View achievements for assigned learners",
-    # Portfolio / sharing
-    "portfolio.view.self": "View own portfolio",
-    "portfolio.export.self": "Export own portfolio",
-    "portfolio.share": "Create or revoke own share links",
-    "portfolio.view.shared": "View a portfolio shared by a learner",
-    "portfolio.admin": "Administer portfolio templates",
-    "certificate.view.shared": "Verify a shared certificate",
-    "shared_profile.view": "View a explicitly shared profile",
-    # AI
-    "coach.use": "Use the AI coach",
-    "coach.transcript.view": "View AI conversations",
-    "coach.admin": "Administer AI coach settings",
-    "coach.moderate": "Moderate AI coach content",
-    # Privacy / reporting
-    "consent.manage.self": "Manage own consent",
-    "consent.view.self": "View own consent state",
-    "export.request.self": "Request an export of own data",
-    "consent.view": "View aggregate consent status",
-    "consent.manage": "Manage another learner's consent",
-    "privacy.audit.view": "View privacy and revocation audit records",
-    "privacy.revocation.execute": "Execute purge and verification jobs",
-    "deletion.request.self": "Request own deletion",
-    "deletion.approve": "Approve a deletion request",
-    "audit.view": "View audit logs",
-    "reports.view": "View reports",
-    "reports.export": "Export reports",
-    "analytics.view": "View analytics",
-    # Administration
-    "institution.manage": "Manage institutions and programs",
-    "faculty.manage": "Manage faculty assignments",
-    "student.enrollment.manage": "Manage learner enrolment",
-    "program.reporting.view": "View program-level reports",
-    "platform.admin": "Platform administration",
-    "readonly": "Read-only access",
+    key: str(meta.get("description") or key) for key, meta in _PERMISSIONS.items()
 }
+PERMISSION_META: dict[str, dict] = dict(_PERMISSIONS)
 
 ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
-    "student": frozenset(
-        {
-            "profile.view.self",
-            "profile.edit.self",
-            "profile.delete.self",
-            "lab.view",
-            "lab.start",
-            "lab.submit",
-            "workbook.view",
-            "transcript.view.self",
-            "dna.view.self",
-            "dna.export.self",
-            "dna.delete.self",
-            "gps.view.self",
-            "gps.generate",
-            "gps.disable",
-            "portfolio.view.self",
-            "portfolio.export.self",
-            "portfolio.share",
-            "coach.use",
-            "consent.manage.self",
-            "consent.view.self",
-            "export.request.self",
-            "deletion.request.self",
-        }
-    ),
-    "instructor": frozenset(
-        {
-            "profile.view.self",
-            "profile.edit.self",
-            "lab.view",
-            "lab.start",
-            "lab.submit",
-            "workbook.view",
-            "course.view",
-            "course.create",
-            "course.edit",
-            "course.archive",
-            "assignment.manage",
-            "assignment.grade",
-            "feedback.create",
-            "student.progress.view",
-            "class.analytics.view",
-            "competency.view",
-            "achievement.view",
-            "reports.view",
-            "reports.export",
-            "consent.view",
-        }
-    ),
-    "teaching_assistant": frozenset(
-        {
-            "profile.view.self",
-            "lab.view",
-            "student.progress.view",
-            "assignment.grade",
-            "feedback.create",
-            "competency.view",
-        }
-    ),
-    "mentor": frozenset(
-        {
-            "profile.view.self",
-            "student.progress.view",
-            "competency.view",
-            "achievement.view",
-        }
-    ),
-    "institution_admin": frozenset(
-        {
-            "profile.view.self",
-            "institution.manage",
-            "faculty.manage",
-            "student.enrollment.manage",
-            "program.reporting.view",
-            "class.analytics.view",
-            "reports.view",
-            "reports.export",
-            "analytics.view",
-            "consent.view",
-            "audit.view",
-        }
-    ),
-    "privacy_officer": frozenset(
-        {
-            "profile.view.self",
-            "consent.view",
-            "consent.manage",
-            "privacy.audit.view",
-            "privacy.revocation.execute",
-            "deletion.approve",
-            "audit.view",
-            "reports.view",
-            "readonly",
-        }
-    ),
-    "auditor": frozenset(
-        {
-            "profile.view.self",
-            "consent.view",
-            "privacy.audit.view",
-            "audit.view",
-            "reports.view",
-            "readonly",
-        }
-    ),
-    "employer": frozenset(
-        {
-            "portfolio.view.shared",
-            "certificate.view.shared",
-            "shared_profile.view",
-        }
-    ),
-    "recruiter": frozenset(
-        {
-            "portfolio.view.shared",
-            "certificate.view.shared",
-            "shared_profile.view",
-        }
-    ),
-    "admin": frozenset(
-        set(PERMISSION_CATALOG)
-        - SENSITIVE_PRIVATE_PERMISSIONS
-    ),
+    role: frozenset(str(item) for item in (meta.get("permissions") or []))
+    for role, meta in _ROLES.items()
 }
-
+ROLE_META: dict[str, dict] = dict(_ROLES)
 SEEDED_ROLES = tuple(ROLE_PERMISSIONS)
+
+READ_ONLY_PERMISSIONS = frozenset(
+    key for key, meta in _PERMISSIONS.items() if meta.get("read_only")
+)
+SELF_PERMISSIONS = frozenset(
+    key for key, meta in _PERMISSIONS.items() if meta.get("scope") == "self"
+)
+SHARED_PERMISSIONS = frozenset(
+    key for key, meta in _PERMISSIONS.items() if meta.get("scope") == "shared"
+)
+SCOPED_PERMISSIONS = frozenset(
+    key for key, meta in _PERMISSIONS.items() if meta.get("scope") == "course"
+)
+SENSITIVE_PRIVATE_PERMISSIONS = frozenset(
+    key for key, meta in _PERMISSIONS.items() if meta.get("sensitivity") == "restricted"
+)
+BREAK_GLASS_PERMISSIONS = frozenset(
+    key for key, meta in _PERMISSIONS.items() if meta.get("break_glass")
+)
+HIGH_SENSITIVITY_PERMISSIONS = frozenset(
+    key
+    for key, meta in _PERMISSIONS.items()
+    if meta.get("sensitivity") in {"high", "critical", "restricted"}
+)
 
 
 @dataclass(frozen=True)
@@ -289,7 +69,62 @@ class PolicyDecision:
     reason: str
     role: str
     scope: dict = field(default_factory=dict)
+    source: str = "role"
+    break_glass_id: int | None = None
+    tenant_id: str | None = None
 
 
 def permissions_for_role(role: str) -> frozenset[str]:
     return ROLE_PERMISSIONS.get((role or "student").strip().lower(), frozenset())
+
+
+def permission_meta(permission: str) -> dict:
+    return PERMISSION_META.get(permission, {})
+
+
+def export_permission_for_rank(rank: int) -> str:
+    """Map a label rank to the atomic export permission it requires."""
+    if rank <= 0:
+        return "export.public"
+    if rank == 1:
+        return "export.internal"
+    if rank == 2:
+        return "export.confidential"
+    return "export.restricted"
+
+
+def validate_catalog() -> list[str]:
+    """Return catalog problems. Startup and tests call this before serving."""
+    problems: list[str] = []
+    for role, granted in ROLE_PERMISSIONS.items():
+        unknown = granted - set(PERMISSION_CATALOG)
+        if unknown:
+            problems.append(f"role {role} grants unknown permissions: {sorted(unknown)}")
+    for role, meta in ROLE_META.items():
+        if role not in ROLE_PERMISSIONS:
+            problems.append(f"role {role} has metadata but no permission list")
+        if not meta.get("label"):
+            problems.append(f"role {role} has no label")
+    restricted = ROLE_PERMISSIONS.get("admin", frozenset()) & SENSITIVE_PRIVATE_PERMISSIONS
+    if restricted:
+        problems.append(f"admin must not receive private permissions: {sorted(restricted)}")
+    for permission in PERMISSION_CATALOG:
+        meta = permission_meta(permission)
+        if meta.get("sensitivity") not in {"low", "medium", "high", "critical", "restricted"}:
+            problems.append(f"permission {permission} has no valid sensitivity")
+        if meta.get("scope") not in {"self", "shared", "course", "global"}:
+            problems.append(f"permission {permission} has no valid scope")
+        # Private permissions are deliberately ungranted: they require an
+        # owner, an explicit share, or a break-glass grant.
+        if permission in SENSITIVE_PRIVATE_PERMISSIONS:
+            continue
+        if not any(permission in granted for granted in ROLE_PERMISSIONS.values()):
+            problems.append(f"permission {permission} is granted to no role")
+    return problems
+
+
+# Fail at import time rather than serving a half-reviewed catalog. The message
+# names the exact drift so a release review can fix it before deployment.
+_PROBLEMS = validate_catalog()
+if _PROBLEMS:
+    raise RuntimeError("permission catalog invalid: " + "; ".join(_PROBLEMS))

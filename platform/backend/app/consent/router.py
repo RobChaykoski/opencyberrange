@@ -111,6 +111,22 @@ async def revoke_consent(
         )
     except service.ConsentConflict as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    from app.services import security_events
+
+    security_events.record(
+        "consent.revoked",
+        actor=current_user,
+        target_type="consent",
+        target_id=consent_type,
+        target_label=consent_type,
+        detail={
+            "consent_type": consent_type,
+            "version": getattr(revocation, "consent_version", None),
+            "reason": payload.reason,
+        },
+    )
+    security_events.mark_request_recorded()
     return {
         "message": (
             "Consent revoked. The feature is blocked immediately while derived "
@@ -140,6 +156,21 @@ async def grant_consent(
         actor="self",
         reason=payload.reason,
     )
+    from app.services import security_events
+
+    security_events.record(
+        "consent.granted",
+        actor=current_user,
+        target_type="consent",
+        target_id=consent_type,
+        target_label=consent_type,
+        detail={
+            "consent_type": consent_type,
+            "version": state.get("version"),
+            "reason": payload.reason,
+        },
+    )
+    security_events.mark_request_recorded()
     return {
         "message": (
             "Consent granted. New activity may be processed again; previously "

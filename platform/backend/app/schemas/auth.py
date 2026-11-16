@@ -50,6 +50,7 @@ class UserAdminResponse(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     organization: Optional[str] = None
+    institution_id: Optional[str] = None
     is_active: Optional[bool] = True
     is_approved: Optional[bool] = False
     is_admin: Optional[bool] = False
@@ -94,6 +95,7 @@ class UserDetailResponse(BaseModel):
     student_id: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    institution_id: Optional[str] = None
     is_active: Optional[bool] = True
     is_approved: Optional[bool] = False
     is_admin: Optional[bool] = False
@@ -142,6 +144,7 @@ class CreateUserRequest(SafeTextModel):
     is_approved: bool = False
     is_admin: bool = False
     role: Optional[str] = "student"
+    institution_id: Optional[str] = Field(None, max_length=64)
 
     __safe_text_fields__ = {
         "first_name": "short",
@@ -175,6 +178,7 @@ class UpdateUserRequest(SafeTextModel):
     first_name: Optional[str] = Field(None, max_length=80)
     last_name: Optional[str] = Field(None, max_length=80)
     organization: Optional[str] = Field(None, max_length=120)
+    institution_id: Optional[str] = Field(None, max_length=64)
     is_active: Optional[bool] = None
     is_approved: Optional[bool] = None
     is_admin: Optional[bool] = None

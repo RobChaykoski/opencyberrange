@@ -47,6 +47,11 @@ restore or event replay from recreating deleted data.
 
 - [Consent revocation and data destruction](docs/CONSENT-REVOCATION.md)
 - [RBAC and policy-based authorization](docs/RBAC-PBAC.md)
+- [Authorization Service and break-glass](docs/AUTHORIZATION-SERVICE.md)
+- [Security event store](docs/SECURITY-EVENTS.md)
+- [Data labels and export enforcement](docs/DATA-LABELS.md)
+- [PIA/TRA findings](docs/PIA-TRA-FINDINGS.md)
+- [Retention policies](docs/RETENTION-POLICIES.md)
 - [Privacy, erasure, and backups](docs/PRIVACY-AND-DATA-DELETION.md)
 - [Privacy notice](docs/PRIVACY-NOTICE.md)
 
@@ -150,6 +155,9 @@ Enterprise SSO (OIDC, SAML, LDAP) shipped in Release 4.
 - [Exercise export and import](docs/EXERCISE-EXPORT-IMPORT.md)
 - [Consent revocation and data destruction](docs/CONSENT-REVOCATION.md)
 - [RBAC and policy-based authorization](docs/RBAC-PBAC.md)
+- [Authorization Service and break-glass](docs/AUTHORIZATION-SERVICE.md)
+- [Security event store](docs/SECURITY-EVENTS.md)
+- [PIA/TRA findings](docs/PIA-TRA-FINDINGS.md)
 - [OIDC single sign-on](docs/SSO-OIDC.md)
 - [SAML and LDAP single sign-on](docs/SSO-SAML-LDAP.md)
 - [Local Dex + OpenLDAP test stack](deploy/sso/README.md)

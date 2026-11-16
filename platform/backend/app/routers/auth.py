@@ -51,6 +51,7 @@ from app.services.audit import log_admin_action, AuditActions
 from app.services.erasure import erase_user, ErasureBlocked
 from app.services.settings_service import get_setting_fresh
 from app.services.privacy import redact_ip
+from app.services.password_breach import enforce_password_breach_check
 from app.consent import service as consent_service
 from app.services.survey_consent import (
     SURVEY_CONSENT_UPDATED,
@@ -274,6 +275,23 @@ async def login(
                 # Admin-locked account
                 logger.info(f"Login attempt for admin-locked account: {form_data.username}")
 
+        from app.services import security_events
+
+        security_events.record(
+            "auth.login_failed",
+            outcome="denied" if existing_user and existing_user.is_locked else "failure",
+            actor_username=form_data.username,
+            target_type="user",
+            target_label=form_data.username,
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            request_id=request.headers.get("x-request-id"),
+            detail={
+                "reason": "locked" if existing_user and existing_user.is_locked else "invalid_credentials",
+                "account_exists": bool(existing_user),
+            },
+        )
+        security_events.mark_request_recorded()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -335,6 +353,21 @@ async def login(
                 logger.info(f"User {user.username} used a recovery code at login")
         if not ok:
             logger.info(f"Failed MFA attempt for user: {user.username}")
+            from app.services import security_events
+
+            security_events.record(
+                "auth.mfa_failed",
+                outcome="failure",
+                actor=user,
+                target_type="user",
+                target_id=user.id,
+                target_label=user.username,
+                ip_address=request.client.host if request.client else None,
+                user_agent=request.headers.get("user-agent"),
+                request_id=request.headers.get("x-request-id"),
+                detail={"reason": "invalid_totp_or_recovery_code"},
+            )
+            security_events.mark_request_recorded()
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid MFA code",
@@ -357,6 +390,21 @@ async def login(
     user.last_login_at = now
     user.last_login_ip = client_ip
     db.commit()
+
+    from app.services import security_events
+
+    security_events.record(
+        "auth.login",
+        actor=user,
+        target_type="user",
+        target_id=user.id,
+        target_label=user.username,
+        ip_address=client_ip,
+        user_agent=request.headers.get("user-agent"),
+        request_id=request.headers.get("x-request-id"),
+        detail={"new_ip": is_new_ip, "mfa": bool(getattr(user, "mfa_enabled", False))},
+    )
+    security_events.mark_request_recorded()
 
     # Streak and learning badges are global and idempotent. A failure here must
     # never block a valid sign-in.
@@ -1315,6 +1363,10 @@ async def register(
     # turns approval off, registrations are auto-approved and can log in at once.
     require_approval = get_setting_fresh(db, "require_approval", "true") != "false"
 
+    # A compromised password is rejected only when the admin has enabled the
+    # breach check; an unavailable API fails open and never blocks sign-up.
+    await enforce_password_breach_check(db, user_data.password)
+
     # Create new user
     hashed_password = get_password_hash(user_data.password)
     new_user = User(
@@ -1372,6 +1424,17 @@ async def register(
     db.refresh(new_user)
 
     logger.info(f"New user registered: {new_user.username} (ID: {new_user.id})")
+
+    from app.services import security_events
+
+    security_events.record(
+        "auth.registered",
+        actor=new_user,
+        target_type="user",
+        target_id=new_user.id,
+        target_label=new_user.username,
+        detail={"approval_required": not bool(new_user.is_approved)},
+    )
 
     log_activity(db, EventTypes.USER_REGISTERED,
                   actor_id=new_user.id, target_type="user",
@@ -1927,6 +1990,8 @@ async def change_password(
                 detail=policy_error
             )
 
+    await enforce_password_breach_check(db, password_data.new_password)
+
     # Update password
     current_user.hashed_password = get_password_hash(password_data.new_password)
     
@@ -1942,6 +2007,21 @@ async def change_password(
     revoke_all_user_tokens(current_user.username)
 
     logger.info(f"User {current_user.username} changed their password and all sessions were revoked")
+
+    from app.services import security_events
+
+    security_events.record(
+        "auth.password_changed",
+        actor=current_user,
+        target_type="user",
+        target_id=current_user.id,
+        target_label=current_user.username,
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        request_id=request.headers.get("x-request-id"),
+        detail={"sessions_revoked": True},
+    )
+    security_events.mark_request_recorded()
 
     return {
         "message": "Password changed successfully. Please log in again.",
@@ -2282,6 +2362,7 @@ async def exit_impersonation(
     request: Request,
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
+    _current_user: User = Depends(get_current_active_user),
 ):
     """Exit impersonation and return a fresh token for the original user."""
     payload = _decode_token(token)

@@ -76,6 +76,68 @@ the interface distinguishes **Suppressed** from **No evidence yet**. Reports and
 exports also exclude suppressed courses from aggregate totals. The default is
 5 learners; set it to 0 only in a trusted test environment.
 
+### Password breach checks
+
+**Password Breach Check** in the Security tab is off by default. When enabled,
+new passwords are checked against the Have I Been Pwned Pwned Passwords range
+API using k-anonymity:
+
+- The platform computes a SHA-1 digest locally and sends only its first five
+  hexadecimal characters. The full password and full hash never leave the
+  server.
+- The response is matched locally by suffix; requests use `Add-Padding`.
+- A listed password is rejected on registration, password change, admin user
+  creation, admin password reset, and first-run setup.
+- If the API is unreachable or returns an unexpected response, the check fails
+  open so an offline install can still create accounts and reset passwords.
+- Nothing from the breach response is stored or logged with the password.
+
+Enable this only after confirming the deployment is allowed to make outbound
+HTTPS requests to `api.pwnedpasswords.com`. Air-gapped deployments should leave
+it off.
+
+### Security events, authorization, and break-glass
+
+The **Security** tab includes the controls behind the append-only security
+event store and the centralized Authorization Service:
+
+- **Security Event Store** writes security, audit, and privacy actions to the
+  queryable event store. PostgreSQL row-level security makes the store
+  append-only; there is no delete endpoint.
+- **Security Event HTTP Logging** adds fallback coverage for sensitive requests
+  that do not have a richer explicit event. Explicit sign-in, consent, export,
+  RBAC, and break-glass events are always written.
+- **Tenant Isolation** enforces `resource.institution_id == actor
+  .institution_id` in the Authorization Service. Keep it on for any
+  multi-institution deployment.
+- **Authorization Strict Startup** refuses to start when a protected API route
+  has no authentication or permission dependency. Review the startup audit
+  before enabling it in production.
+- **Break-glass** is off by default. When enabled, it requires a reason of at
+  least 10 characters, MFA on the requester and target, an optional second
+  operator approval, and a lifetime no longer than
+  **Break-glass Maximum Minutes**. Every use is a `critical` security event and
+  a post-use review is recorded. Break-glass never overrides a learner's
+  revoked consent.
+- **Portfolio Share Lifetime** is the default number of days for a learner's
+  portfolio share link. Only a SHA-256 hash of the token is stored; learners can
+  revoke a link at any time.
+
+The administrator API is under `/api/admin/security`:
+`events`, `events/summary`, `rbac/roles`, `rbac/permissions`,
+`rbac/users/{id}`, `rbac/check`, and `break-glass`. See
+`docs/SECURITY-EVENTS.md` and `docs/AUTHORIZATION-SERVICE.md`.
+
+### Data labels
+
+**Data labels** settings control export classification and handling metadata.
+When **Enforce data-label policy** is on, a download must pass both RBAC
+(`export.data` plus the permission for the effective label) and the
+institution's role, region, and label ceilings. Restricted downloads are
+blocked by default; a reviewed break-glass grant is the exception. Use the
+policy preview endpoint or `docs/DATA-LABELS.md` to check a decision before
+enabling enforcement.
+
 ### Instructor and administrator accounts
 
 **Maximum Privileged Accounts** controls how many instructor and administrator

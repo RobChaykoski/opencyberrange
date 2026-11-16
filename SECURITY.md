@@ -37,6 +37,25 @@ same defect applies.
   migration. Treat the file as credential material. It contains no plaintext
   password, MFA secret, recovery code, trusted device, or VPN key.
 
+## Password breach checks
+
+- The admin setting **Settings -> Security -> Password Breach Check** is off by
+  default so offline and institutional installs do not make an unannounced
+  third-party request.
+- When enabled, new passwords are checked against the Have I Been Pwned Pwned
+  Passwords range API. Only the first five hexadecimal characters of a locally
+  computed SHA-1 digest are sent; the full password and the full digest never
+  leave the server. Requests use `Add-Padding`, and the response is matched
+  locally by suffix.
+- The check covers registration, password change, admin user creation, admin
+  password reset, and first-run setup. A listed password is rejected with a
+  generic `400` message that does not reveal the breach count.
+- The check fails open on timeout, connection failure, or an unexpected HTTP
+  response. A network problem must not block account creation or recovery.
+- SHA-1 is used only as the range-query index. Stored passwords remain Argon2id;
+  no plaintext, full hash, or breach response is logged or persisted.
+- See `app/services/password_breach.py` and `tests/test_password_breach.py`.
+
 ## Database integrity and change attribution
 
 - `scripts/database_integrity.py` computes a SHA-256 checksum for each critical
@@ -57,6 +76,43 @@ same defect applies.
 
 Commands and the full runbook are in
 [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md).
+
+## Authorization, tenants, and break-glass
+
+- Roles are resolved from the database on every request. A role claim in a JWT,
+  request body, query parameter, or custom header is never trusted.
+- `docs/AUTHORIZATION-SERVICE.md` documents the single decision point:
+  RBAC + tenant boundary + resource owner/share + learner consent + optional
+  break-glass.
+- `app/security/permissions.yaml` is the reviewed permission catalog. Private
+  DNA/GPS/AI permissions are granted to **no** role, including `admin`.
+  `python -m app.scripts.review_permissions --check` is the release gate.
+- Non-system roles are confined to their `institution_id`. `institution_admin`
+  is not a system administrator. `docs/PIA-TRA-FINDINGS.md` records the
+  remaining tenant migration.
+- Break-glass access is off by default, MFA-gated, reasoned, time-bound,
+  optionally second-approved, scoped to one permission and learner/course, and
+  every use is a `critical` security event. It never overrides a revoked
+  consent.
+- The startup route audit reports protected endpoints without an
+  authentication/permission dependency. Enterprise deployments can set
+  `authorization_strict_startup=true` to refuse startup.
+
+## Security event store
+
+- Security, audit, and privacy events are written to an append-only
+  `security_events` table. PostgreSQL RLS is enabled and forced; `UPDATE` and
+  `DELETE` affect zero rows and there is no delete API.
+- Reads are tenant-scoped by the `ocr.institution_id` GUC; a system
+  administrator sets `ocr.system_admin`.
+- The runtime database role must not be a superuser. Superusers bypass RLS;
+  startup logs a warning when this is detected.
+- Coverage includes sign-in success/failure, MFA failure, password change,
+  registration, consent grant/revoke, export allow/deny, admin actions, RBAC
+  changes, break-glass request/approval/use/revoke, and portfolio share
+  create/use/revoke. Sensitive HTTP requests without a richer event are caught
+  by a fallback middleware.
+- See `docs/SECURITY-EVENTS.md` and `docs/RETENTION-POLICIES.md`.
 
 ## Deleted and removed users
 

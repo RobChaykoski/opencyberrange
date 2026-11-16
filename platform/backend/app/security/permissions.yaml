@@ -1,0 +1,796 @@
+# Permission catalog and role grants. This file is authoritative.
+# Review every release: sensitivity drives review, break_glass eligibility,
+# and the startup route audit. Use `python -m app.scripts.review_permissions`.
+version: 1
+
+roles:
+  admin:
+    label: "Platform administrator"
+    description: "Platform operations; private data still requires break-glass"
+    rank: 90
+    permissions:
+      - achievement.view
+      - analytics.view
+      - assignment.grade
+      - assignment.manage
+      - audit.view
+      - break_glass.approve
+      - break_glass.request
+      - break_glass.revoke
+      - career_affinity.view.self
+      - certificate.view.shared
+      - class.analytics.view
+      - coach.admin
+      - coach.moderate
+      - coach.use
+      - competency.view
+      - competency.view.self
+      - consent.manage
+      - consent.manage.self
+      - consent.view
+      - consent.view.self
+      - course.archive
+      - course.create
+      - course.edit
+      - course.view
+      - deletion.approve
+      - deletion.request.self
+      - dna.admin
+      - dna.delete.self
+      - dna.export.self
+      - dna.view.self
+      - dna.view.student
+      - export.confidential
+      - export.data
+      - export.internal
+      - export.public
+      - export.request.self
+      - export.restricted
+      - faculty.manage
+      - feedback.create
+      - gps.admin
+      - gps.disable
+      - gps.generate
+      - gps.view.self
+      - gps.view.student
+      - institution.manage
+      - lab.start
+      - lab.submit
+      - lab.view
+      - platform.admin
+      - portfolio.admin
+      - portfolio.export.self
+      - portfolio.share
+      - portfolio.view.self
+      - portfolio.view.shared
+      - privacy.audit.view
+      - privacy.revocation.execute
+      - profile.delete.self
+      - profile.edit.self
+      - profile.view.self
+      - program.reporting.view
+      - rbac.manage
+      - readonly
+      - recommendation.view.self
+      - reports.export
+      - reports.view
+      - role.assign
+      - security.events.view
+      - service.identity.manage
+      - shared_profile.view
+      - student.enrollment.manage
+      - student.progress.view
+      - tenant.manage
+      - transcript.view.self
+      - user.manage
+      - workbook.view
+  auditor:
+    label: "Auditor"
+    description: "Read-only audit and consent status"
+    rank: 45
+    permissions:
+      - audit.view
+      - consent.view
+      - export.data
+      - export.internal
+      - export.public
+      - privacy.audit.view
+      - profile.view.self
+      - readonly
+      - reports.view
+      - security.events.view
+  employer:
+    label: "Employer"
+    description: "Explicitly shared portfolio and certificates"
+    rank: 5
+    permissions:
+      - certificate.view.shared
+      - portfolio.view.shared
+      - shared_profile.view
+  institution_admin:
+    label: "Institution administrator"
+    description: "One institution's faculty, enrolment, and reporting"
+    rank: 40
+    permissions:
+      - analytics.view
+      - audit.view
+      - class.analytics.view
+      - consent.view
+      - export.confidential
+      - export.data
+      - export.internal
+      - export.public
+      - faculty.manage
+      - institution.manage
+      - profile.view.self
+      - program.reporting.view
+      - reports.export
+      - reports.view
+      - security.events.view
+      - student.enrollment.manage
+  instructor:
+    label: "Instructor"
+    description: "Assigned-course teaching and reporting"
+    rank: 30
+    permissions:
+      - achievement.view
+      - assignment.grade
+      - assignment.manage
+      - class.analytics.view
+      - competency.view
+      - consent.view
+      - course.archive
+      - course.create
+      - course.edit
+      - course.view
+      - export.confidential
+      - export.data
+      - export.internal
+      - export.public
+      - feedback.create
+      - lab.start
+      - lab.submit
+      - lab.view
+      - profile.edit.self
+      - profile.view.self
+      - reports.export
+      - reports.view
+      - student.progress.view
+      - workbook.view
+  mentor:
+    label: "Mentor"
+    description: "Assigned-learner progress and competencies"
+    rank: 20
+    permissions:
+      - achievement.view
+      - competency.view
+      - profile.view.self
+      - student.progress.view
+  privacy_officer:
+    label: "Privacy officer"
+    description: "Consent, revocation, privacy audit, deletion approval"
+    rank: 50
+    permissions:
+      - audit.view
+      - break_glass.request
+      - break_glass.revoke
+      - consent.manage
+      - consent.view
+      - deletion.approve
+      - export.confidential
+      - export.data
+      - export.internal
+      - export.public
+      - privacy.audit.view
+      - privacy.revocation.execute
+      - profile.view.self
+      - readonly
+      - reports.view
+      - security.events.view
+  recruiter:
+    label: "Recruiter"
+    description: "Explicitly shared portfolio and certificates"
+    rank: 5
+    permissions:
+      - certificate.view.shared
+      - portfolio.view.shared
+      - shared_profile.view
+  service_account:
+    label: "Service account"
+    description: "Non-human identity with explicit grants only"
+    rank: 0
+    permissions:
+      []
+  student:
+    label: "Student"
+    description: "Own learning, profile, consent, and export request"
+    rank: 10
+    permissions:
+      - career_affinity.view.self
+      - coach.use
+      - competency.view.self
+      - consent.manage.self
+      - consent.view.self
+      - deletion.request.self
+      - dna.delete.self
+      - dna.export.self
+      - dna.view.self
+      - export.confidential
+      - export.data
+      - export.internal
+      - export.public
+      - export.request.self
+      - gps.disable
+      - gps.generate
+      - gps.view.self
+      - lab.start
+      - lab.submit
+      - lab.view
+      - portfolio.export.self
+      - portfolio.share
+      - portfolio.view.self
+      - profile.delete.self
+      - profile.edit.self
+      - profile.view.self
+      - recommendation.view.self
+      - transcript.view.self
+      - workbook.view
+  teaching_assistant:
+    label: "Teaching assistant"
+    description: "Assigned-course grading and feedback"
+    rank: 25
+    permissions:
+      - assignment.grade
+      - competency.view
+      - feedback.create
+      - lab.view
+      - profile.view.self
+      - student.progress.view
+
+permissions:
+  achievement.view:
+    description: "View achievements for assigned learners"
+    category: "learning"
+    sensitivity: medium
+    scope: course
+    read_only: true
+    break_glass: false
+  analytics.view:
+    description: "View analytics"
+    category: "reporting"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  assignment.grade:
+    description: "Grade assignments"
+    category: "learning"
+    sensitivity: medium
+    scope: course
+    read_only: false
+    break_glass: false
+  assignment.manage:
+    description: "Manage assignments"
+    category: "learning"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  audit.view:
+    description: "View audit logs"
+    category: "audit"
+    sensitivity: high
+    scope: global
+    read_only: true
+    break_glass: true
+  break_glass.approve:
+    description: "Approve another operator's break-glass request"
+    category: "security"
+    sensitivity: critical
+    scope: global
+    read_only: false
+    break_glass: false
+  break_glass.request:
+    description: "Request time-bound emergency access"
+    category: "security"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  break_glass.revoke:
+    description: "Revoke an active break-glass grant"
+    category: "security"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  career_affinity.view.self:
+    description: "View own career-affinity signals"
+    category: "privacy"
+    sensitivity: high
+    scope: self
+    read_only: false
+    break_glass: false
+  certificate.view.shared:
+    description: "Verify a shared certificate"
+    category: "sharing"
+    sensitivity: low
+    scope: shared
+    read_only: false
+    break_glass: false
+  class.analytics.view:
+    description: "View class analytics"
+    category: "learning"
+    sensitivity: medium
+    scope: course
+    read_only: true
+    break_glass: false
+  coach.admin:
+    description: "Administer AI coach settings"
+    category: "ai"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  coach.moderate:
+    description: "Moderate AI coach content"
+    category: "ai"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  coach.transcript.view:
+    description: "View AI conversations"
+    category: "ai"
+    sensitivity: restricted
+    scope: global
+    read_only: false
+    break_glass: true
+  coach.use:
+    description: "Use the AI coach"
+    category: "ai"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  competency.view:
+    description: "View competencies for assigned learners"
+    category: "learning"
+    sensitivity: medium
+    scope: course
+    read_only: true
+    break_glass: false
+  competency.view.self:
+    description: "View own competency assessment"
+    category: "learning"
+    sensitivity: low
+    scope: self
+    read_only: false
+    break_glass: false
+  consent.manage:
+    description: "Manage another learner's consent"
+    category: "privacy"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  consent.manage.self:
+    description: "Manage own consent"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  consent.view:
+    description: "View aggregate consent status"
+    category: "privacy"
+    sensitivity: medium
+    scope: global
+    read_only: true
+    break_glass: false
+  consent.view.self:
+    description: "View own consent state"
+    category: "privacy"
+    sensitivity: low
+    scope: self
+    read_only: false
+    break_glass: false
+  course.archive:
+    description: "Archive courses"
+    category: "learning"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  course.create:
+    description: "Create courses"
+    category: "learning"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  course.edit:
+    description: "Edit courses"
+    category: "learning"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  course.view:
+    description: "View courses"
+    category: "learning"
+    sensitivity: low
+    scope: global
+    read_only: false
+    break_glass: false
+  deletion.approve:
+    description: "Approve a deletion request"
+    category: "privacy"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  deletion.request.self:
+    description: "Request own deletion"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  dna.admin:
+    description: "Administer DNA configuration"
+    category: "privacy"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  dna.delete.self:
+    description: "Revoke own Cyber DNA processing"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  dna.export.self:
+    description: "Export own Cyber DNA"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  dna.view.private:
+    description: "View private DNA notes"
+    category: "privacy"
+    sensitivity: restricted
+    scope: global
+    read_only: false
+    break_glass: true
+  dna.view.self:
+    description: "View own Cyber DNA"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  dna.view.student:
+    description: "View an assigned learner's competencies"
+    category: "privacy"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  export.confidential:
+    description: "Export confidential-classified data"
+    category: "export"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  export.data:
+    description: "Export platform data"
+    category: "export"
+    sensitivity: medium
+    scope: global
+    read_only: true
+    break_glass: false
+  export.internal:
+    description: "Export internal-classified data"
+    category: "export"
+    sensitivity: medium
+    scope: global
+    read_only: true
+    break_glass: false
+  export.public:
+    description: "Export public-classified data"
+    category: "export"
+    sensitivity: medium
+    scope: global
+    read_only: true
+    break_glass: false
+  export.request.self:
+    description: "Request an export of own data"
+    category: "export"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  export.restricted:
+    description: "Export restricted-classified data"
+    category: "export"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: true
+  faculty.manage:
+    description: "Manage faculty assignments"
+    category: "institution"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  feedback.create:
+    description: "Create learner feedback"
+    category: "learning"
+    sensitivity: medium
+    scope: course
+    read_only: false
+    break_glass: false
+  gps.admin:
+    description: "Administer GPS configuration"
+    category: "privacy"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  gps.disable:
+    description: "Disable own Cyber GPS"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  gps.generate:
+    description: "Generate own Cyber GPS view"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  gps.view.private:
+    description: "View private GPS notes"
+    category: "privacy"
+    sensitivity: restricted
+    scope: global
+    read_only: false
+    break_glass: true
+  gps.view.self:
+    description: "View own Cyber GPS"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  gps.view.student:
+    description: "View an assigned learner's GPS direction"
+    category: "privacy"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  institution.manage:
+    description: "Manage institutions and programs"
+    category: "institution"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  lab.start:
+    description: "Start an exercise"
+    category: "learning"
+    sensitivity: low
+    scope: global
+    read_only: false
+    break_glass: false
+  lab.submit:
+    description: "Submit exercise work"
+    category: "learning"
+    sensitivity: low
+    scope: global
+    read_only: false
+    break_glass: false
+  lab.view:
+    description: "View exercises"
+    category: "learning"
+    sensitivity: low
+    scope: global
+    read_only: false
+    break_glass: false
+  platform.admin:
+    description: "Platform administration"
+    category: "platform"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  portfolio.admin:
+    description: "Administer portfolio templates"
+    category: "sharing"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  portfolio.export.self:
+    description: "Export own portfolio"
+    category: "sharing"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  portfolio.share:
+    description: "Create or revoke own share links"
+    category: "sharing"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  portfolio.view.self:
+    description: "View own portfolio"
+    category: "sharing"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  portfolio.view.shared:
+    description: "View a portfolio shared by a learner"
+    category: "sharing"
+    sensitivity: low
+    scope: shared
+    read_only: false
+    break_glass: false
+  privacy.audit.view:
+    description: "View privacy and revocation audit records"
+    category: "privacy"
+    sensitivity: high
+    scope: global
+    read_only: true
+    break_glass: false
+  privacy.revocation.execute:
+    description: "Execute purge and verification jobs"
+    category: "privacy"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  profile.delete.self:
+    description: "Request deletion of own account"
+    category: "identity"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  profile.edit.self:
+    description: "Edit own profile"
+    category: "identity"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  profile.view.self:
+    description: "View own profile"
+    category: "identity"
+    sensitivity: low
+    scope: self
+    read_only: false
+    break_glass: false
+  program.reporting.view:
+    description: "View program-level reports"
+    category: "institution"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  rbac.manage:
+    description: "Review roles and change role permission grants"
+    category: "platform"
+    sensitivity: critical
+    scope: global
+    read_only: false
+    break_glass: false
+  readonly:
+    description: "Read-only access"
+    category: "platform"
+    sensitivity: medium
+    scope: global
+    read_only: false
+    break_glass: false
+  recommendation.view.self:
+    description: "View own personalised recommendations"
+    category: "privacy"
+    sensitivity: medium
+    scope: self
+    read_only: false
+    break_glass: false
+  reports.export:
+    description: "Export reports"
+    category: "reporting"
+    sensitivity: medium
+    scope: course
+    read_only: false
+    break_glass: false
+  reports.view:
+    description: "View reports"
+    category: "reporting"
+    sensitivity: medium
+    scope: course
+    read_only: true
+    break_glass: false
+  role.assign:
+    description: "Assign roles and scopes"
+    category: "identity"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  security.events.view:
+    description: "View security, audit, and privacy events"
+    category: "security"
+    sensitivity: high
+    scope: global
+    read_only: true
+    break_glass: false
+  service.identity.manage:
+    description: "Manage non-human service identities"
+    category: "platform"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  shared_profile.view:
+    description: "View a explicitly shared profile"
+    category: "sharing"
+    sensitivity: low
+    scope: shared
+    read_only: false
+    break_glass: false
+  student.enrollment.manage:
+    description: "Manage learner enrolment"
+    category: "learning"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  student.progress.view:
+    description: "View assigned learners' progress"
+    category: "learning"
+    sensitivity: medium
+    scope: course
+    read_only: true
+    break_glass: false
+  tenant.manage:
+    description: "Manage institution tenants and boundaries"
+    category: "institution"
+    sensitivity: critical
+    scope: global
+    read_only: false
+    break_glass: false
+  transcript.view.self:
+    description: "View own transcript"
+    category: "learning"
+    sensitivity: low
+    scope: self
+    read_only: false
+    break_glass: false
+  user.manage:
+    description: "Manage platform users"
+    category: "identity"
+    sensitivity: high
+    scope: global
+    read_only: false
+    break_glass: false
+  workbook.view:
+    description: "View workbook content"
+    category: "learning"
+    sensitivity: low
+    scope: global
+    read_only: false
+    break_glass: false

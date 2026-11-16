@@ -19,6 +19,7 @@ from app.database import get_db
 from app.models import User
 from app.schemas import SetupRequest
 from app.auth import get_password_hash, create_access_token
+from app.services.password_breach import enforce_password_breach_check
 from app.services.settings_service import seed_defaults, get_setting, set_setting
 
 router = APIRouter()
@@ -106,6 +107,8 @@ async def complete_setup(
 
     # Seed default platform settings
     seed_defaults(db)
+
+    await enforce_password_breach_check(db, payload.admin_password)
 
     # Create admin user (pre-approved, active, admin)
     admin = User(

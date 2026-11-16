@@ -90,6 +90,15 @@ from app.models.platform import (
     DataIntegrityReview,
     ReportExport,
 )
+from app.models.security import (
+    BreakGlassGrant,
+    PortfolioShare,
+    RbacPermission,
+    RbacRole,
+    RbacRolePermission,
+    RbacUserRole,
+    SecurityEvent,
+)
 from app.consent.models import (
     ConsentAudit,
     ConsentEvent,
@@ -102,6 +111,7 @@ from app.consent.models import (
 __all__ = [
     "Base",
     "AccommodationEvent",
+    "BreakGlassGrant",
     "Achievement",
     "AchievementCelebration",
     "ActivityEvent",
@@ -158,12 +168,18 @@ __all__ = [
     "LtiScore",
     "OpenBadgeCredential",
     "PlatformSetting",
+    "PortfolioShare",
     "QuizAttempt",
     "QuizQuestion",
+    "RbacPermission",
+    "RbacRole",
+    "RbacRolePermission",
+    "RbacUserRole",
     "ReportExport",
     "RetentionRun",
     "ReviewRequest",
     "RevokedToken",
+    "SecurityEvent",
     "SsoLoginState",
     "SsoLoginTicket",
     "SsoSession",

@@ -104,11 +104,21 @@ We apply these practices across the platform:
   WireGuard key storage, isolated per-lab networks, audit logging, restricted
   administrative access, and access-controlled backup handling. No system is
   perfectly secure.
+- **Password breach checks (optional).** The operator may enable a check that
+  compares a new password against the Have I Been Pwned Pwned Passwords service.
+  Only the first five characters of a locally computed SHA-1 hash are sent; the
+  full password and full hash never leave the platform. The check is off by
+  default, fails open if the service is unreachable, and is not used for
+  existing passwords or sign-in.
 - **Operational logging.** We record sign-in, security, export, and
-  administrative events, including IP addresses and account identifiers where
-  needed for security and audit. We do not use advertising trackers or
-  third-party behavioural analytics. Logs are restricted and retained for a
-  documented period.
+  administrative events, including IP addresses, user-agent strings, request
+  identifiers, and account identifiers where needed for security and audit.
+  The security event store is append-only at the database layer: application
+  users cannot edit or delete evidence. Reads are limited to the operator's
+  institution unless a platform administrator is signed in. We do not use
+  advertising trackers or third-party behavioural analytics. Logs are
+  restricted and retained for a documented period (see
+  `docs/RETENTION-POLICIES.md`).
 - **Vendors and transfers.** Hosting, network, and support providers process
   personal information only under confidentiality and security obligations.
   Where information is processed outside Canada, we take reasonable steps to

@@ -29,6 +29,16 @@ class User(Base):
     first_name = Column(String(80), nullable=True)
     last_name = Column(String(80), nullable=True)
     organization = Column(String(120), nullable=True)
+    # Tenant boundary. Institution administrators and every non-system role are
+    # confined to this value by the Authorization Service; platform `admin` is
+    # the only cross-tenant role and still needs break-glass for private data.
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     # Optional profile avatar as a small base64 data URL (image/png|jpeg|webp).
     # Stored in the row so it survives container rebuilds and needs no shared
     # upload volume; the browser downsizes images before upload.

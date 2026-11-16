@@ -88,6 +88,27 @@ def log_admin_action(
     # codeql[py/clear-text-logging-sensitive-data]
     logger.info(json.dumps(log_entry))
 
+    # Mirror the same action into the queryable, append-only store. A logging
+    # failure must never block the administrative action itself.
+    try:
+        from app.services import security_events
+
+        security_events.record(
+            "admin.action",
+            category="audit",
+            severity="notice",
+            actor_id=admin_user_id,
+            actor_username=admin_username,
+            target_type=target_type,
+            target_id=target_id,
+            target_label=target_identifier,
+            action=action,
+            ip_address=ip_address,
+            detail=log_entry["details"],
+        )
+    except Exception:
+        logger.exception("Could not mirror admin action into the security event store")
+
 
 # Common audit actions
 class AuditActions:

@@ -14,6 +14,7 @@ from app.services.settings_service import get_setting_fresh
 
 ADVANCED_DNA_INSIGHTS = "advanced_dna_insights_enabled"
 CYBER_DNA_V3 = "cyber_dna_v3_enabled"
+PASSWORD_BREACH_CHECK = "password_breach_check_enabled"
 
 _TRUTHY = {"1", "true", "yes", "on", "enabled"}
 
@@ -36,6 +37,16 @@ def advanced_dna_insights_enabled(db: Session) -> bool:
     default ``false``.
     """
     return setting_enabled(db, ADVANCED_DNA_INSIGHTS)
+
+
+def password_breach_check_enabled(db: Session) -> bool:
+    """Return True when new passwords should be checked against HIBP.
+
+    Off by default so an offline or institutional install does not make an
+    unannounced third-party request. The admin can enable it under Settings ->
+    Security.
+    """
+    return setting_enabled(db, PASSWORD_BREACH_CHECK)
 
 
 def cyber_dna_v3_enabled(db: Session) -> bool:

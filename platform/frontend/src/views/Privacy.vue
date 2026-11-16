@@ -147,6 +147,15 @@
             secure.
           </li>
           <li>
+            <strong>Password breach checks (optional).</strong> The operator may
+            enable a check that compares a new password against the Have I Been
+            Pwned Pwned Passwords service. Only the first five characters of a
+            locally computed SHA-1 hash are sent; the full password and full
+            hash never leave the platform. The check is off by default, fails
+            open if the service is unreachable, and is not used for existing
+            passwords or sign-in.
+          </li>
+          <li>
             <strong>Operational logging.</strong> We record sign-in, security,
             export, and administrative events, including IP addresses and
             account identifiers where needed for security and audit. We do not

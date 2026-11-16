@@ -433,6 +433,24 @@ async def list_enrollable_users(
         User.role == 'student',
         User.is_active == True,
     )
+    if current_user.role != 'admin':
+        # A course owner may only see learners already known to one of their
+        # own courses. Without this, any instructor could enumerate every
+        # learner's email and student id across the platform.
+        known_ids = {
+            row[0]
+            for row in db.query(CourseEnrollment.user_id)
+            .join(Course, Course.id == CourseEnrollment.course_id)
+            .filter(Course.instructor_id == current_user.id)
+            .distinct()
+            .all()
+        }
+        if not known_ids:
+            return []
+        query = query.filter(User.id.in_(known_ids))
+        query = query.filter(
+            User.institution_id == getattr(current_user, "institution_id", "default")
+        )
     if enrolled_user_ids:
         query = query.filter(User.id.notin_(enrolled_user_ids))
     users = query.order_by(User.username).all()

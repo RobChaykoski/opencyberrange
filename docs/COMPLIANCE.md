@@ -155,6 +155,26 @@ reviewed and signed by the operator; it is not a completed HECVAT Full.
 - **Penetration test:** internal review evidence is in
   `docs/SECURITY-REVIEW-2026-11.md`. That is not a third-party penetration test.
 
+## Authorization and evidence controls
+
+- **Authorization Service.** `docs/AUTHORIZATION-SERVICE.md` records the
+  RBAC + tenant + consent + break-glass decision model. Roles are loaded from
+  the database, never trusted from a token. Private DNA/GPS/AI data is never
+  role-granted; it requires ownership, an explicit share, or a reviewed
+  break-glass grant.
+- **Permission review.** `app/security/permissions.yaml` is the authoritative
+  catalog with sensitivity and scope. `python -m
+  app.scripts.review_permissions --check` fails the release review on private
+  data over-grant or faculty accumulation of private learner signals.
+- **Security event store.** `docs/SECURITY-EVENTS.md` documents the append-only
+  security/audit/privacy event store, forced PostgreSQL RLS, tenant-scoped
+  reads, sensitive-action coverage, and the administrator API.
+- **PIA/TRA status.** `docs/PIA-TRA-FINDINGS.md` maps every PIA and TRA finding
+  to Completed, Partial, or Planned with code and test evidence.
+- **Retention.** `docs/RETENTION-POLICIES.md` records the product defaults and
+  the operator actions for security-event archive, backup pruning, share
+  expiry, and break-glass review.
+
 ## Release 4 position
 
 Release 4 ships SSO (OIDC/SAML/LDAP), the network device topology engine, the

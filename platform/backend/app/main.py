@@ -41,9 +41,11 @@ from app.routers import reviews as reviews_router
 from app.routers import audit as audit_router
 from app.routers import planning as planning_router
 from app.routers import open_badges as open_badges_router
-from app.services import export_labels as export_labels_service
+from app.services import data_labels as data_labels_service
 from app.routers import reports as reports_router
 from app.routers import question_bank as question_bank_router
+from app.routers import security_admin as security_admin_router
+from app.routers import portfolio_shares as portfolio_shares_router
 from app.services.scheduler import start_scheduler, shutdown_scheduler
 from app.services.db_integrity import ensure_ledger
 from app.config import settings
@@ -345,6 +347,20 @@ async def lifespan(app: FastAPI):
             conn.execute(text("UPDATE users SET role = 'student' WHERE is_admin = FALSE"))
             conn.commit()
             logger.info("Added role column to users table, migrated from is_admin")
+
+        # --- Tenant boundary: add 'institution_id' to users ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        if 'institution_id' not in users_columns:
+            conn.execute(text(
+                "ALTER TABLE users ADD COLUMN institution_id "
+                "VARCHAR(64) DEFAULT 'default' NOT NULL"
+            ))
+            conn.execute(text(
+                "CREATE INDEX IF NOT EXISTS ix_users_institution_id "
+                "ON users (institution_id)"
+            ))
+            conn.commit()
+            logger.info("Added institution_id column to users table")
 
         # --- Profile avatar: add 'avatar_data' to users (base64 data URL) ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
@@ -820,6 +836,48 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning("Integrity ledger setup skipped: %s", exc)
 
+    # Seed the reviewed RBAC catalog and install the append-only security event
+    # RLS policies. Both are idempotent; an admin's role edits survive a reboot.
+    try:
+        from app.services import rbac as _rbac
+
+        _rbac_db = SessionLocal()
+        try:
+            _rbac.seed(_rbac_db)
+        finally:
+            _rbac_db.close()
+    except Exception as exc:
+        logger.warning("RBAC catalog seed skipped: %s", exc)
+    try:
+        from app.services import security_events as _security_events
+
+        _security_events.ensure_rls(engine)
+    except Exception as exc:
+        logger.warning("Security event RLS setup skipped: %s", exc)
+
+    # Enterprise deployments can fail fast when a protected route has no
+    # authentication dependency. The default is a loud warning so a legacy
+    # public endpoint does not take a running platform down during upgrade.
+    try:
+        from app.security.route_audit import audit_routes, strict_startup_enabled
+
+        _audit = audit_routes(app)
+        if _audit["missing"]:
+            logger.warning(
+                "Route authorization audit: %d protected route(s) have no "
+                "recognized auth dependency: %s",
+                len(_audit["missing"]),
+                ", ".join(item["path"] for item in _audit["missing"][:10]),
+            )
+        if strict_startup_enabled():
+            from app.security.route_audit import raise_for_missing
+
+            raise_for_missing(_audit)
+    except RuntimeError:
+        raise
+    except Exception as exc:
+        logger.warning("Route authorization audit skipped: %s", exc)
+
     # Only the advisory-lock leader runs the scheduler; the other workers
     # serve requests but skip the background cleanup loops.
     scheduler_started = _try_acquire_scheduler_leadership()
@@ -884,6 +942,12 @@ async def actor_request_context(request: Request, call_next):
         return response
     finally:
         clear_actor()
+        from app.security.tenant import clear_tenant
+
+        clear_tenant()
+        from app.services.security_events import clear_tenant_context
+
+        clear_tenant_context()
 
 
 def _wiki_frame_ancestor(db) -> str:
@@ -984,9 +1048,99 @@ async def export_label_headers(request: Request, call_next):
         or content_type.startswith("application/pdf")
         or content_type.startswith("text/csv")
     )
-    if is_export:
-        for key, value in export_labels_service.export_response_headers().items():
+    if not is_export:
+        return response
+
+    from app.database import SessionLocal
+
+    db = SessionLocal()
+    try:
+        user = data_labels_service.resolve_request_user(request, db)
+        decision = data_labels_service.evaluate_export(
+            db, user, request.url.path
+        )
+        from app.services import security_events
+
+        if not decision.allowed:
+            logger.warning(
+                "Data-label policy denied export path=%s user_id=%s label=%s reason=%s",
+                request.url.path,
+                getattr(user, "id", None),
+                decision.classification_key,
+                decision.reason,
+            )
+            security_events.record(
+                "export.denied",
+                outcome="denied",
+                actor=user,
+                target_type="export",
+                target_label=request.url.path,
+                path=request.url.path,
+                method=request.method,
+                status_code=403,
+                detail={
+                    "classification": decision.classification,
+                    "classification_key": decision.classification_key,
+                    "reason": decision.reason,
+                },
+            )
+            security_events.mark_request_recorded()
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "error": "DataLabelExportDenied",
+                    "detail": (
+                        "This export is blocked by the institution's "
+                        "data-label policy."
+                    ),
+                    "classification": decision.classification,
+                    "classification_key": decision.classification_key,
+                },
+                headers={
+                    "X-Data-Policy": "denied",
+                    "X-Data-Classification": decision.classification,
+                    "X-Data-Classification-Key": decision.classification_key,
+                },
+            )
+        for key, value in data_labels_service.response_headers(
+            decision, request.url.path
+        ).items():
             response.headers.setdefault(key, value)
+        security_events.record(
+            "export.allowed",
+            actor=user,
+            target_type="export",
+            target_label=request.url.path,
+            path=request.url.path,
+            method=request.method,
+            status_code=response.status_code,
+            detail={
+                "classification": decision.classification,
+                "classification_key": decision.classification_key,
+                "enforced": decision.enforced,
+                "source": decision.source if hasattr(decision, "source") else "role",
+            },
+        )
+        security_events.mark_request_recorded()
+    finally:
+        db.close()
+    return response
+
+
+@app.middleware("http")
+async def security_event_coverage(request: Request, call_next):
+    """Record sensitive requests that do not have a richer explicit event.
+
+    Explicit call sites (login, consent, break-glass, export policy) set a
+    context marker so this fallback does not duplicate them.
+    """
+    response = await call_next(request)
+    try:
+        from app.services import security_events
+
+        security_events.record_http(request, response.status_code)
+    except Exception:
+        logger.exception("Security event coverage middleware failed")
     return response
 
 
@@ -1074,6 +1228,12 @@ async def impersonation_read_only_middleware(request: Request, call_next):
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(labs.router, prefix="/api/labs", tags=["Labs"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(
+    security_admin_router.router,
+    prefix="/api/admin/security",
+    tags=["Security administration"],
+)
+app.include_router(portfolio_shares_router.router, tags=["Portfolio shares"])
 app.include_router(curriculum.router, prefix="/api/exercises", tags=["Exercises"])
 app.include_router(quiz.router, prefix="/api/exercises", tags=["Quizzes"])
 app.include_router(exercise_quiz.router, prefix="/api/exercises", tags=["Exercise Quizzes"])

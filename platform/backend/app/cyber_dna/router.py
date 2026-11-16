@@ -32,6 +32,8 @@ from app.cyber_dna.service import (
 from app.database import get_db
 from app.models import User
 from app.ratelimit import create_limiter
+from app.security.dependencies import require_permission
+from app.security.permissions import PolicyDecision
 from app.services.feature_flags import cyber_dna_v3_enabled
 
 router = APIRouter()
@@ -69,6 +71,7 @@ async def get_evidence(
     offset: int = Query(0, ge=0),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
@@ -92,6 +95,7 @@ async def get_behavior(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
@@ -107,6 +111,7 @@ async def get_interest(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
@@ -123,9 +128,13 @@ async def get_affinity(
     pathway_id: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
+    from app.security.policy import require_allowed
+
+    require_allowed(db, current_user, "career_affinity.view.self")
     try:
         return JSONResponse(
             content=build_affinity(db, current_user.id, pathway_id=pathway_id),
@@ -141,9 +150,13 @@ async def get_competencies(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
+    from app.security.policy import require_allowed
+
+    require_allowed(db, current_user, "competency.view.self")
     return JSONResponse(
         content={
             "version": "evidence-2026.1",
@@ -159,6 +172,7 @@ async def get_dna(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
@@ -179,9 +193,14 @@ async def create_snapshot(
     pathway_id: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
+    if kind == "career_affinity":
+        from app.security.policy import require_allowed
+
+        require_allowed(db, current_user, "career_affinity.view.self")
     if kind == "behavior_profile":
         payload = build_behavior(db, current_user.id)
     elif kind == "interest_profile":
@@ -221,6 +240,7 @@ async def get_snapshots(
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)
@@ -240,6 +260,7 @@ async def get_one_snapshot(
     snapshot_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("dna.view.self")),
 ):
     _require_v3(db)
     _require_consent(db, current_user)

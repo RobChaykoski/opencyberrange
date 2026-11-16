@@ -1,8 +1,11 @@
 # Database schema and Alembic migrations
 
 Audience: operators upgrading a deployment, and reviewers answering change-
-management or disaster-recovery questions. Current schema head: **0032**
-(`0032_cyber_dna`).
+management or disaster-recovery questions. Current schema head: **0034**
+(`0034_security_events_rbac`). It adds the security event store, RBAC tables,
+break-glass grants, portfolio share tokens, and `users.institution_id`. The
+security event store installs forced PostgreSQL row-level security; the
+runtime role must not be a superuser.
 
 ## Short version for operators
 

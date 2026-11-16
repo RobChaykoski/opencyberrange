@@ -4,6 +4,67 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Enforceable data labels
+- Added institutional label schemes (custom JSON levels), path-based minimum
+  classification, role/region ceilings, non-exportable levels, and
+  Restricted-export blocking.
+- Export authorization now requires `export.data`, the atomic permission for
+  the effective label rank, and the institution's role/region ceiling.
+- Added `GET /api/admin/data-labels/policy` to preview a decision and show
+  warnings. Denied exports are recorded as security events.
+- Documented the policy in `docs/DATA-LABELS.md`.
+
+### Authorization Service and RBAC tables
+- Replaced role-string checks on new/high-risk surfaces with
+  `app.services.authorization.AuthorizationService`: RBAC + tenant + owner/share
+  scope + learner consent + optional break-glass.
+- Made `app/security/permissions.yaml` the authoritative reviewed catalog with
+  sensitivity, scope, read-only, and break-glass metadata. Startup validates it;
+  `python -m app.scripts.review_permissions --check` is the release gate.
+- Added persisted `rbac_roles`, `rbac_permissions`, `rbac_role_permissions`, and
+  expiring `rbac_user_roles` tables (migration `0034`). Seeding preserves an
+  administrator's reviewed changes across restarts.
+- Added server-loaded `User.institution_id` tenant isolation. `institution_admin`
+  is not a system administrator; `admin` is the only cross-tenant role.
+- Added owner and tenant helpers that return 404 on a foreign record, plus
+  owner/non-owner regression tests for profile, portfolio, report snapshots,
+  Cyber DNA snapshots, sessions, and consent.
+- Added a startup route audit for protected endpoints without an
+  auth/permission dependency, with optional strict fail-fast.
+- Split private signals: faculty never receive `career_affinity.view.self`,
+  `recommendation.view.self`, or private DNA/GPS/AI permissions. Hidden
+  achievements are excluded from course and celebration walls.
+- Restricted instructor learner enumeration to learners already in the
+  instructor's own courses, in the same tenant.
+
+### Security event store
+- Added append-only `security_events` for security, audit, and privacy actions,
+  with PostgreSQL RLS: INSERT and tenant-scoped SELECT only; UPDATE and DELETE
+  affect zero rows. No delete API. Runtime superuser bypass is warned at startup.
+- Added explicit events for sign-in success/failure, MFA failure, password
+  change, registration, consent grant/revoke, export allow/deny, RBAC changes,
+  break-glass workflow, portfolio share use, and an admin-action mirror.
+- Added a sensitive-HTTP fallback, admin query/summary APIs, and redaction of
+  secret-like detail keys.
+- Documented the store in `docs/SECURITY-EVENTS.md` and retention in
+  `docs/RETENTION-POLICIES.md`.
+
+### Break-glass access
+- Added time-bound emergency grants for private DNA/GPS/AI, Restricted export,
+  and audit access. Off by default; MFA-gated; reasoned; scoped to one learner
+  or course; optionally second-operator approved; no extension; post-use review.
+- Every use is a `critical` security event. Consent revocation cannot be
+  overridden by break-glass.
+
+### Portfolio share links
+- Added hashed bearer tokens with a 30-day default lifetime, revocation,
+  single-use/max-use limits, live consent gating, and audit events. The raw
+  token is returned once and never stored.
+
+### PIA/TRA evidence
+- Added `docs/PIA-TRA-FINDINGS.md` with Completed/Partial/Planned status and
+  code/test evidence for every PIA and TRA finding.
+
 ### Lab metadata contract
 - Added `platform/backend/lab_metadata.schema.json` (draft 2020-12) and
   `scripts/validate_lab_metadata.py`. Unknown keys, missing required fields, and
@@ -47,6 +108,16 @@ All notable changes to OpenCyberRange are recorded here.
   not receive private AI/DNA/GPS data by default.
 - Added `docs/CONSENT-REVOCATION.md`, `docs/RBAC-PBAC.md`, and expanded the
   privacy notice, security policy, architecture, and user/admin manuals.
+
+### Password breach checks
+- Added opt-in checking against the Have I Been Pwned Pwned Passwords range API.
+  Only the first five characters of a locally computed SHA-1 digest leave the
+  server; the full password and full hash are never sent.
+- Wired the check into registration, password change, admin user creation,
+  admin password reset, and first-run setup. The setting is off by default;
+  network failure fails open. Added service and endpoint tests.
+- Documented the control in the security policy, privacy notice, architecture,
+  admin settings manual, and student password guide.
 
 ### Exercise reuse
 - Added exercise ZIP export and admin import. Exports include the lab source,

@@ -58,12 +58,14 @@ from app.services.activity import log_activity, EventTypes
 from app.services.achievements import resolve_achievement_label
 from app.services.backups import backup_directory, create_database_backup
 from app.services.erasure import erase_user, ErasureBlocked
+from app.services.password_breach import enforce_password_breach_check
 from app.services.file_lock import open_locked
 from app.services.spreadsheet_safety import neutralize_cell
 from app.services.lab_naming import parse_lab_slug
 from app.services.curriculum_manifest import chapter_id_for_workbook
 from app.services.framework_map import resolve as resolve_framework
 from app.services import exercise_transfer
+from app.services import data_labels
 from app.services.user_transfer import (
     export_users as build_user_export,
     import_users as apply_user_import,
@@ -535,6 +537,8 @@ async def create_user(
             raise HTTPException(status_code=400, detail=policy_error)
         _enforce_privileged_cap(db)
 
+    await enforce_password_breach_check(db, user_data.password)
+
     user = User(
         username=user_data.username,
         email=user_data.email,
@@ -545,6 +549,7 @@ async def create_user(
         is_approved=user_data.is_approved,
         is_admin=is_admin,
         role=role,
+        institution_id=(user_data.institution_id or admin.institution_id or "default"),
     )
     db.add(user)
     db.commit()
@@ -624,6 +629,12 @@ async def update_user(
     if user_request.organization is not None:
         changes['organization'] = {'old': user.organization, 'new': user_request.organization}
         user.organization = user_request.organization
+    if user_request.institution_id is not None:
+        changes['institution_id'] = {
+            'old': getattr(user, 'institution_id', None),
+            'new': user_request.institution_id,
+        }
+        user.institution_id = user_request.institution_id
     
     # Update account flags
     if user_request.is_active is not None:
@@ -793,6 +804,8 @@ async def reset_password(
         policy_error = validate_privileged_password(password_data.new_password)
         if policy_error:
             raise HTTPException(status_code=400, detail=policy_error)
+
+    await enforce_password_breach_check(db, password_data.new_password)
 
     user.hashed_password = get_password_hash(password_data.new_password)
     user.is_locked = False
@@ -2497,6 +2510,22 @@ def _download_filename(name: str) -> str:
     """Keep a download filename inside a quoted Content-Disposition value."""
     cleaned = re.sub(r"[^A-Za-z0-9._-]", "_", name or "exercise-export.zip")
     return cleaned or "exercise-export.zip"
+
+
+@router.get("/data-labels/policy")
+async def get_data_label_policy(
+    role: str | None = Query(None),
+    path: str | None = Query(None),
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Return the effective label scheme, RBAC map, and export ceilings.
+
+    Use ``role`` and ``path`` to preview a decision before enabling
+    enforcement. Invalid custom JSON is returned as a warning; the built-in
+    scheme stays active until the setting is corrected.
+    """
+    return data_labels.policy_summary(db, role=role, path=path)
 
 
 @router.get("/labs/{lab_id}/export")

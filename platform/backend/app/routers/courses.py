@@ -37,7 +37,7 @@ from app.schemas import (
     AssignmentCreate, AssignmentUpdate, AssignmentLabsRequest,
     CourseFeedbackRequest,
 )
-from app.services.achievements import resolve_achievement_label
+from app.services.achievements import HIDDEN_ACHIEVEMENT_TYPES, resolve_achievement_label
 from app.services.curriculum_manifest import chapter_label
 from app.services.learning_metadata import (
     aggregate_difficulty,
@@ -1862,6 +1862,9 @@ async def list_achievements(
         joinedload(Achievement.lab),
     ).filter(
         Achievement.course_id == course_id,
+        # Hidden achievements are private signal, not a peer leaderboard
+        # feature. The profile applies the same filter per learner.
+        Achievement.achievement_type.notin_(HIDDEN_ACHIEVEMENT_TYPES),
     ).order_by(Achievement.awarded_at.desc()).all()
 
     # Build display_name map for course labs

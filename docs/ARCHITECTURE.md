@@ -154,10 +154,15 @@ service's own guard.
 | `ai_coach` | future `/api/coach/*` | Purge conversations, embeddings, and AI memory |
 | `research` | future `/api/research/*` | Purge learner-level analytics/research rows |
 
-Authorization is a separate layer (`app/security/`): role grants plus
-deny-by-default resource policy for self-owned, course-scoped, explicitly
-shared, and read-only access. See [Consent revocation](CONSENT-REVOCATION.md)
-and [RBAC + PBAC](RBAC-PBAC.md).
+Authorization is a separate layer. `app/services/authorization.py` is the one
+decision point: database-loaded RBAC, tenant boundary, owner/course/share scope,
+learner consent, and optional break-glass. `app/security/` owns the reviewed
+`permissions.yaml` catalog, FastAPI dependency, route audit, and policy seam.
+`app/security/tenant.py` binds the server-loaded tenant to the request; the
+security event store uses forced PostgreSQL RLS to make its evidence
+append-only and tenant-scoped. See [Consent revocation](CONSENT-REVOCATION.md),
+[RBAC + PBAC](RBAC-PBAC.md), [Authorization Service](AUTHORIZATION-SERVICE.md),
+and [Security event store](SECURITY-EVENTS.md).
 
 ## Trust boundaries
 
@@ -178,6 +183,7 @@ and [RBAC + PBAC](RBAC-PBAC.md).
 | Derived-data APIs | Central consent middleware maps Cyber DNA, Cyber GPS, portfolio, AI coach, sharing, and research paths to a consent domain; revoked or purging domains fail closed |
 | Consent revocation | Suppression proof written before the lock; all purge targets for one revocation run in one transaction; verification at 0h/24h/7d; restore sweep re-applies the ledger |
 | Authorization | Role grants plus deny-by-default resource policy for self, course, shared, and read-only access |
+| Password policy → HIBP (optional) | Admin opt-in; only the first five SHA-1 characters leave the server; 3-second timeout, fail-open, no password or full hash logged or stored |
 
 ## Threat assessment (STRIDE/DREAD)
 

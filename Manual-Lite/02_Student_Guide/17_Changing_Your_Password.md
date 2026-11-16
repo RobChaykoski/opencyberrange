@@ -41,6 +41,11 @@ Your new password must meet all of these:
 
 An example that meets the rules is `Range2026#`. Use `#` rather than `!` in your passwords.
 
+If your platform administrator has enabled password breach checks, a password
+that appears in a known public data breach is rejected even when it meets the
+rules above. Choose a different password; the platform does not send your full
+password to the checking service.
+
 ## Forced change
 
 When your account is flagged to change its password, the platform redirects you to the Change Password page and keeps you there until you set a new password. A banner reads "Your password must be changed before you can continue." Complete the form to clear the requirement and continue.
@@ -61,6 +66,7 @@ flowchart LR
 | Current password is incorrect | The current password did not match | Re-enter your current password |
 | Passwords do not match | New and confirm differ | Type the same value in both new fields |
 | Weak password | Missing a length or character class | Meet all four rules above |
+| This password has appeared in a known data breach | The password is listed in a public breach corpus and the admin enabled breach checks | Choose a different password |
 
 !!! note "Submission is rate limited"
     Repeated attempts are limited. If you submit too many times in a short window, wait a minute before trying again.
