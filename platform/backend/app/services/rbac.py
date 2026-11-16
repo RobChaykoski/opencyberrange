@@ -26,6 +26,7 @@ from app.security.permissions import (
     ROLE_PERMISSIONS,
     SENSITIVE_PRIVATE_PERMISSIONS,
     permissions_for_role,
+    role_tenant_scope,
 )
 from app.services import security_events
 
@@ -196,6 +197,7 @@ def role_catalog(db: Session) -> list[dict]:
                 "description": role.description,
                 "rank": role.rank,
                 "is_system": role.is_system,
+                "tenant_scope": role_tenant_scope(role.key),
                 "permissions": sorted(row.key for row in role.permissions),
             }
         )

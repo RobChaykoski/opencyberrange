@@ -8,6 +8,7 @@ roles:
     label: "Platform administrator"
     description: "Platform operations; private data still requires break-glass"
     rank: 90
+    tenant_scope: global
     permissions:
       - achievement.view
       - analytics.view
@@ -89,6 +90,7 @@ roles:
     label: "Auditor"
     description: "Read-only audit and consent status"
     rank: 45
+    tenant_scope: institution
     permissions:
       - audit.view
       - consent.view
@@ -104,6 +106,7 @@ roles:
     label: "Employer"
     description: "Explicitly shared portfolio and certificates"
     rank: 5
+    tenant_scope: shared
     permissions:
       - certificate.view.shared
       - portfolio.view.shared
@@ -112,6 +115,7 @@ roles:
     label: "Institution administrator"
     description: "One institution's faculty, enrolment, and reporting"
     rank: 40
+    tenant_scope: institution
     permissions:
       - analytics.view
       - audit.view
@@ -133,6 +137,7 @@ roles:
     label: "Instructor"
     description: "Assigned-course teaching and reporting"
     rank: 30
+    tenant_scope: institution
     permissions:
       - achievement.view
       - assignment.grade
@@ -162,6 +167,7 @@ roles:
     label: "Mentor"
     description: "Assigned-learner progress and competencies"
     rank: 20
+    tenant_scope: institution
     permissions:
       - achievement.view
       - competency.view
@@ -171,6 +177,7 @@ roles:
     label: "Privacy officer"
     description: "Consent, revocation, privacy audit, deletion approval"
     rank: 50
+    tenant_scope: institution
     permissions:
       - audit.view
       - break_glass.request
@@ -192,6 +199,7 @@ roles:
     label: "Recruiter"
     description: "Explicitly shared portfolio and certificates"
     rank: 5
+    tenant_scope: shared
     permissions:
       - certificate.view.shared
       - portfolio.view.shared
@@ -200,12 +208,14 @@ roles:
     label: "Service account"
     description: "Non-human identity with explicit grants only"
     rank: 0
+    tenant_scope: explicit
     permissions:
       []
   student:
     label: "Student"
     description: "Own learning, profile, consent, and export request"
     rank: 10
+    tenant_scope: institution
     permissions:
       - career_affinity.view.self
       - coach.use
@@ -240,6 +250,7 @@ roles:
     label: "Teaching assistant"
     description: "Assigned-course grading and feedback"
     rank: 25
+    tenant_scope: institution
     permissions:
       - assignment.grade
       - competency.view
@@ -681,7 +692,7 @@ permissions:
     category: "identity"
     sensitivity: low
     scope: self
-    read_only: false
+    read_only: true
     break_glass: false
   program.reporting.view:
     description: "View program-level reports"
@@ -709,7 +720,7 @@ permissions:
     category: "platform"
     sensitivity: medium
     scope: global
-    read_only: false
+    read_only: true
     break_glass: false
   recommendation.view.self:
     description: "View own personalised recommendations"

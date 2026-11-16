@@ -1770,26 +1770,38 @@
         <!-- Settings Tab -->
         <div v-if="activeTab === 'settings'" class="panel">
           <h2 class="panel-title">Platform Settings</h2>
-          <div class="settings-categories">
+          <div class="settings-categories" role="tablist" aria-label="Platform settings categories">
             <button
-              v-for="cat in settingsCategories"
+              v-for="(cat, index) in settingsCategories"
               :key="cat"
+              :id="`settings-tab-${cat}`"
               @click="activeSettingsCategory = cat"
+              @keydown="onSettingsTabKeydown($event, index)"
               class="lab-tab"
               :class="{ 'lab-tab--active': activeSettingsCategory === cat }"
+              role="tab"
+              :aria-selected="activeSettingsCategory === cat"
+              :aria-controls="`settings-panel-${cat}`"
+              :tabindex="activeSettingsCategory === cat ? 0 : -1"
             >
               {{ categoryLabel(cat) }}
               <span
                 v-if="settingsDirtyByCategory[cat]"
                 class="lab-tab__dirty"
-                aria-label="Unsaved changes"
-                title="Unsaved changes"
+                aria-hidden="true"
               ></span>
+              <span v-if="settingsDirtyByCategory[cat]" class="visually-hidden"> (unsaved changes)</span>
             </button>
           </div>
           <p class="settings-scope">
-            These settings apply to this entire deployment. Categories with unsaved edits show a dot; the footer keeps Save and Discard visible.
+            These settings apply to this entire deployment. Categories with unsaved edits show an unsaved-changes marker; the footer keeps Save and Discard visible.
           </p>
+          <div
+            :id="`settings-panel-${activeSettingsCategory}`"
+            role="tabpanel"
+            :aria-labelledby="`settings-tab-${activeSettingsCategory}`"
+            class="settings-panel"
+          >
           <!-- Custom Modules panel with save buttons -->
           <div v-if="activeSettingsCategory === 'modules'" class="settings-form">
             <div v-if="settingsLoading" class="empty-state">Loading settings...</div>
@@ -2108,6 +2120,7 @@
                 {{ savingSettings ? 'Saving...' : 'Save changes' }}
               </button>
             </div>
+          </div>
           </div>
         </div>
 
@@ -5014,6 +5027,20 @@ const settingsCategories = computed(() => {
 })
 const categoryLabels = { general: 'General', exports: 'Data labels', security: 'Security', wiki: 'Wiki', labs: 'Exercises', vpn: 'VPN', email: 'Email', features: 'Features', modules: 'Modules', achievements: 'Achievements', 'question-banks': 'Question banks', identity: 'Identity providers', 'open-badges': 'Open Badges', lti: 'LTI platforms' }
 const categoryLabel = (cat) => categoryLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1)
+
+function onSettingsTabKeydown(event, index) {
+  if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return
+  event.preventDefault()
+  const categories = settingsCategories.value
+  let next = index
+  if (event.key === 'ArrowRight') next = (index + 1) % categories.length
+  if (event.key === 'ArrowLeft') next = (index - 1 + categories.length) % categories.length
+  if (event.key === 'Home') next = 0
+  if (event.key === 'End') next = categories.length - 1
+  activeSettingsCategory.value = categories[next]
+  const buttons = event.currentTarget.parentElement.querySelectorAll('[role="tab"]')
+  buttons[next]?.focus()
+}
 const activeSettingsCategory = ref('security')
 const allSettings = ref({})
 const settingsEdits = reactive({})
@@ -5297,6 +5324,10 @@ const integrityIssues = computed(() => {
     ...(data.extra || []).map((slug) => ({
       slug,
       reason: 'lab is on this server but not in the release manifest',
+    })),
+    ...(data.unreadable || []).map((row) => ({
+      slug: row.slug,
+      reason: `file could not be read by the backend user: ${row.reason}`,
     })),
   ]
 })
@@ -10013,7 +10044,7 @@ watch(activeTab, (tab) => {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid var(--border-primary);
+  border-bottom: 2px solid var(--border-color);
 }
 
 .lab-tab {
@@ -10035,8 +10066,8 @@ watch(activeTab, (tab) => {
 }
 
 .lab-tab--active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .lab-tab__dirty {
@@ -10066,7 +10097,7 @@ watch(activeTab, (tab) => {
   background: var(--bg-secondary);
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--border-color);
 }
 
 .lab-category-header {
@@ -10097,7 +10128,7 @@ watch(activeTab, (tab) => {
 }
 
 .lab-track-name {
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -10406,7 +10437,7 @@ watch(activeTab, (tab) => {
   background: var(--bg-tertiary);
   border-radius: 12px;
   padding: 1.25rem;
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--border-color);
   transition: all 0.2s ease;
 }
 
@@ -10461,7 +10492,7 @@ watch(activeTab, (tab) => {
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .network-label {
@@ -10591,7 +10622,7 @@ watch(activeTab, (tab) => {
   justify-content: flex-end;
   gap: 0.5rem;
   padding-top: 0.75rem;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border-color);
 }
 
 /* Stale session card */
@@ -11157,7 +11188,7 @@ watch(activeTab, (tab) => {
 .course-manage-section {
   margin-top: 1.5rem;
   background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.25rem;
 }
@@ -11165,7 +11196,7 @@ watch(activeTab, (tab) => {
 .retention-panel {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid var(--border-primary);
+  border-top: 1px solid var(--border-color);
 }
 
 .retention-panel__title {
@@ -11250,7 +11281,7 @@ watch(activeTab, (tab) => {
   display: flex;
   gap: 0.25rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sub-tab {
@@ -11270,8 +11301,8 @@ watch(activeTab, (tab) => {
 }
 
 .sub-tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .sub-tab-content {
@@ -11436,7 +11467,7 @@ watch(activeTab, (tab) => {
 }
 
 .lab-checkbox-label input[type="checkbox"] {
-  accent-color: var(--primary);
+  accent-color: var(--accent);
 }
 
 .lab-checkbox-name {
@@ -11903,7 +11934,7 @@ watch(activeTab, (tab) => {
 
 .edit-user-form .form-input:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-bg);
 }
 
@@ -12251,6 +12282,11 @@ watch(activeTab, (tab) => {
   gap: 0.25rem;
   margin-bottom: 1rem;
   flex-wrap: wrap;
+}
+
+.settings-panel {
+  display: grid;
+  gap: 1rem;
 }
 
 .settings-form {
@@ -14256,7 +14292,7 @@ watch(activeTab, (tab) => {
   width: 480px;
   max-width: 90vw;
   background: var(--card-bg, #1e293b);
-  border-left: 1px solid var(--border-primary, #334155);
+  border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -14268,7 +14304,7 @@ watch(activeTab, (tab) => {
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-primary, #334155);
+  border-bottom: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -14305,7 +14341,7 @@ watch(activeTab, (tab) => {
   align-items: center;
   gap: 0.5rem;
   padding: 1rem 1.5rem;
-  border-top: 1px solid var(--border-primary, #334155);
+  border-top: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 
@@ -14317,7 +14353,7 @@ watch(activeTab, (tab) => {
   color: var(--text-muted, #64748b);
   margin: 1.25rem 0 0.75rem;
   padding-bottom: 0.35rem;
-  border-bottom: 1px solid var(--border-primary, #334155);
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -14326,7 +14362,7 @@ watch(activeTab, (tab) => {
 .vm-type-toggle {
   display: flex;
   gap: 0;
-  border: 1px solid var(--border-primary, #334155);
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   overflow: hidden;
 }
@@ -14348,7 +14384,7 @@ watch(activeTab, (tab) => {
 }
 
 .vm-type-toggle button:first-child {
-  border-right: 1px solid var(--border-primary, #334155);
+  border-right: 1px solid var(--border-color);
 }
 
 .vm-type-toggle button.active {

@@ -15,13 +15,17 @@
 
     <div class="sub-tabs" role="tablist" aria-label="Security workspace">
       <button
-        v-for="tab in tabs"
+        v-for="(tab, index) in tabs"
         :key="tab.key"
+        :id="`security-tab-${tab.key}`"
         type="button"
         role="tab"
         :aria-selected="activeView === tab.key"
+        :aria-controls="`security-panel-${tab.key}`"
+        :tabindex="activeView === tab.key ? 0 : -1"
         :class="['sub-tab', { active: activeView === tab.key }]"
         @click="activeView = tab.key"
+        @keydown="onTabKeydown($event, index)"
       >
         {{ tab.label }}
       </button>
@@ -30,6 +34,12 @@
     <p v-if="error" class="security-state security-state--error" role="alert">{{ error }}</p>
 
     <template v-if="activeView === 'events'">
+      <div
+        id="security-panel-events"
+        role="tabpanel"
+        aria-labelledby="security-tab-events"
+        class="security-panel"
+      >
       <div class="security-summary" v-if="summary">
         <div class="security-summary__card">
           <span>Total</span><strong>{{ summary.total }}</strong>
@@ -77,12 +87,12 @@
           <caption class="visually-hidden">Security events, newest first</caption>
           <thead>
             <tr>
-              <th>Time</th>
-              <th>Severity</th>
-              <th>Event</th>
-              <th>Actor</th>
-              <th>Target / path</th>
-              <th>Outcome</th>
+              <th scope="col">Time</th>
+              <th scope="col">Severity</th>
+              <th scope="col">Event</th>
+              <th scope="col">Actor</th>
+              <th scope="col">Target / path</th>
+              <th scope="col">Outcome</th>
             </tr>
           </thead>
           <tbody>
@@ -107,9 +117,16 @@
         </table>
       </div>
       <p v-else class="security-state">No events match the current filters.</p>
+      </div>
     </template>
 
     <template v-else-if="activeView === 'break-glass'">
+      <div
+        id="security-panel-break-glass"
+        role="tabpanel"
+        aria-labelledby="security-tab-break-glass"
+        class="security-panel"
+      >
       <form class="security-form" @submit.prevent="requestBreakGlass">
         <h3>Request emergency access</h3>
         <p class="security-meta">
@@ -149,7 +166,7 @@
         <table class="data-table">
           <caption class="visually-hidden">Break-glass grants</caption>
           <thead>
-            <tr><th>User</th><th>Permission</th><th>Status</th><th>Expires</th><th>Uses</th><th>Review</th><th>Actions</th></tr>
+            <tr><th scope="col">User</th><th scope="col">Permission</th><th scope="col">Status</th><th scope="col">Expires</th><th scope="col">Uses</th><th scope="col">Review</th><th scope="col">Actions</th></tr>
           </thead>
           <tbody>
             <tr v-for="row in grants" :key="row.id">
@@ -169,9 +186,16 @@
         </table>
       </div>
       <p v-else class="security-state">No break-glass grants.</p>
+      </div>
     </template>
 
     <template v-else-if="activeView === 'services'">
+      <div
+        id="security-panel-services"
+        role="tabpanel"
+        aria-labelledby="security-tab-services"
+        class="security-panel"
+      >
       <form class="security-form" @submit.prevent="createService">
         <h3>Create a service identity</h3>
         <p class="security-meta">
@@ -206,7 +230,7 @@
       <div class="table-container" v-if="services.length">
         <table class="data-table">
           <caption class="visually-hidden">Service identities</caption>
-          <thead><tr><th>Name</th><th>User</th><th>Scopes</th><th>Expires</th><th>Last used</th><th>Actions</th></tr></thead>
+          <thead><tr><th scope="col">Name</th><th scope="col">User</th><th scope="col">Scopes</th><th scope="col">Expires</th><th scope="col">Last used</th><th scope="col">Actions</th></tr></thead>
           <tbody>
             <tr v-for="row in services" :key="row.id">
               <td>{{ row.name }}</td>
@@ -220,23 +244,191 @@
         </table>
       </div>
       <p v-else class="security-state">No service identities.</p>
+      </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="activeView === 'roles'">
+      <div
+        id="security-panel-roles"
+        role="tabpanel"
+        aria-labelledby="security-tab-roles"
+        class="security-panel"
+      >
       <div class="table-container" v-if="roles.length">
         <table class="data-table">
           <caption class="visually-hidden">RBAC roles</caption>
-          <thead><tr><th>Role</th><th>Label</th><th>Permissions</th></tr></thead>
+          <thead><tr><th scope="col">Role</th><th scope="col">Label</th><th scope="col">Tenant scope</th><th scope="col">Permissions</th></tr></thead>
           <tbody>
             <tr v-for="row in roles" :key="row.key">
-              <td class="security-mono">{{ row.key }}</td>
+              <th scope="row" class="security-mono">{{ row.key }}</th>
               <td>{{ row.label }}</td>
+              <td>{{ row.tenant_scope || 'institution' }}</td>
               <td>{{ row.permissions.length }}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <p v-else class="security-state">Role catalog unavailable.</p>
+      </div>
+    </template>
+
+    <template v-else>
+      <div
+        id="security-panel-matrix"
+        role="tabpanel"
+        aria-labelledby="security-tab-matrix"
+        class="security-panel"
+      >
+        <div v-if="matrixLoading && !matrix" class="security-state">
+          Loading the access matrix...
+        </div>
+        <p v-else-if="matrixError" class="security-state security-state--error" role="alert">
+          {{ matrixError }}
+        </p>
+        <template v-else-if="matrix">
+          <div class="security-summary">
+            <div class="security-summary__card">
+              <span>Roles</span><strong>{{ matrix.summary.roles }}</strong>
+            </div>
+            <div class="security-summary__card">
+              <span>Permissions</span><strong>{{ matrix.summary.permissions }}</strong>
+            </div>
+            <div class="security-summary__card">
+              <span>Restricted</span><strong>{{ matrix.summary.restricted }}</strong>
+            </div>
+            <div class="security-summary__card">
+              <span>Break-glass eligible</span><strong>{{ matrix.summary.break_glass }}</strong>
+            </div>
+          </div>
+
+          <div class="security-filters">
+            <label class="security-filters__search">
+              <span>Search permissions</span>
+              <input
+                v-model.trim="matrixFilters.search"
+                type="search"
+                placeholder="permission, description, category"
+              />
+            </label>
+            <label>
+              <span>Scope</span>
+              <select v-model="matrixFilters.scope">
+                <option value="">All scopes</option>
+                <option v-for="scope in matrixScopes" :key="scope" :value="scope">{{ scope }}</option>
+              </select>
+            </label>
+            <label>
+              <span>Sensitivity</span>
+              <select v-model="matrixFilters.sensitivity">
+                <option value="">All sensitivities</option>
+                <option v-for="level in matrixSensitivities" :key="level" :value="level">{{ level }}</option>
+              </select>
+            </label>
+            <label>
+              <span>Granted to</span>
+              <select v-model="matrixFilters.role">
+                <option value="">All roles</option>
+                <option v-for="role in matrix.roles" :key="role.key" :value="role.key">{{ role.label }}</option>
+              </select>
+            </label>
+            <label class="security-filter-check">
+              <input v-model="matrixFilters.breakGlass" type="checkbox" />
+              <span>Break-glass eligible only</span>
+            </label>
+            <button
+              type="button"
+              class="btn btn--outline btn--sm"
+              :disabled="!matrixFiltersActive"
+              @click="clearMatrixFilters"
+            >
+              Clear filters
+            </button>
+          </div>
+
+          <p class="security-matrix__count" aria-live="polite">
+            Showing {{ filteredMatrixRows.length }} of {{ matrix.permissions.length }} permissions.
+          </p>
+
+          <div class="security-matrix__legend">
+            <span><span class="security-matrix__mark security-matrix__mark--yes" aria-hidden="true">✓</span> Granted</span>
+            <span><span class="security-matrix__mark security-matrix__mark--no" aria-hidden="true">·</span> Not granted</span>
+            <span><span class="security-badge security-badge--restricted">restricted</span> private; owner, share, or break-glass only</span>
+          </div>
+
+          <div
+            class="table-container security-matrix__scroll"
+            tabindex="0"
+            role="region"
+            aria-label="Role and permission matrix"
+          >
+            <table class="data-table security-matrix">
+              <caption class="visually-hidden">
+                Effective role grants by permission, with policy attributes
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="security-matrix__permission">Permission</th>
+                  <th v-for="role in visibleMatrixRoles" :key="role.key" scope="col">
+                    <span class="security-matrix__role">{{ role.label }}</span>
+                    <span class="security-meta">{{ role.key }} · rank {{ role.rank }}</span>
+                    <span class="security-meta">tenant: {{ role.tenant_scope || 'institution' }}</span>
+                  </th>
+                  <th scope="col">Policy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in filteredMatrixRows" :key="row.key">
+                  <th scope="row" class="security-matrix__permission">
+                    <span class="security-mono">{{ row.key }}</span>
+                    <span class="security-meta">{{ row.description }}</span>
+                  </th>
+                  <td v-for="role in visibleMatrixRoles" :key="role.key" class="security-matrix__cell">
+                    <span
+                      v-if="row.roles[role.key]"
+                      class="security-matrix__mark security-matrix__mark--yes"
+                    >
+                      <span aria-hidden="true">✓</span>
+                      <span class="visually-hidden">Granted to {{ role.label }}</span>
+                    </span>
+                    <span v-else class="security-matrix__mark security-matrix__mark--no">
+                      <span aria-hidden="true">·</span>
+                      <span class="visually-hidden">Not granted to {{ role.label }}</span>
+                    </span>
+                  </td>
+                  <td class="security-matrix__policy">
+                    <span class="security-badge">{{ row.scope }}</span>
+                    <span :class="['security-badge', `security-badge--${row.sensitivity}`]">{{ row.sensitivity }}</span>
+                    <span v-if="row.read_only" class="security-badge security-badge--readonly">read-only</span>
+                    <span v-if="row.break_glass" class="security-badge security-badge--breakglass">break-glass</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p v-if="!filteredMatrixRows.length" class="security-state">
+            No permissions match the current filters.
+            <button type="button" class="btn btn--outline btn--xs" @click="clearMatrixFilters">
+              Clear filters
+            </button>
+          </p>
+
+          <section class="security-policy" aria-labelledby="security-policy-title">
+            <h3 id="security-policy-title">Policy attributes (PBAC)</h3>
+            <p class="security-meta">
+              A role grant is necessary but not sufficient. These rules decide
+              whether the grant applies to a specific record, tenant, or learner.
+            </p>
+            <div class="security-policy__grid">
+              <article v-for="rule in matrix.policy_rules" :key="rule.id" class="security-policy__card">
+                <h4>{{ rule.label }}</h4>
+                <p>{{ rule.rule }}</p>
+                <span class="security-meta">Enforced by: {{ rule.enforced_by }}</span>
+              </article>
+            </div>
+          </section>
+        </template>
+      </div>
     </template>
   </section>
 </template>
@@ -251,6 +443,7 @@ const tabs = [
   { key: 'break-glass', label: 'Break-glass' },
   { key: 'services', label: 'Service identities' },
   { key: 'roles', label: 'Roles' },
+  { key: 'matrix', label: 'Access matrix' },
 ]
 const activeView = ref('events')
 const loading = ref(false)
@@ -261,6 +454,10 @@ const summary = ref(null)
 const grants = ref([])
 const services = ref([])
 const roles = ref([])
+const matrix = ref(null)
+const matrixLoading = ref(false)
+const matrixError = ref('')
+const matrixFilters = reactive({ search: '', scope: '', sensitivity: '', role: '', breakGlass: false })
 const newServiceToken = ref('')
 const filters = reactive({ category: '', severity: '', search: '' })
 const grantForm = reactive({ permission: 'dna.view.private', reason: '', reference: '', minutes: 60, user_id: null })
@@ -276,6 +473,58 @@ const serviceScopes = computed(() => {
   const row = roles.value.find((item) => item.key === 'admin')
   return (row?.permissions || []).filter((item) => !item.includes('.private') && !item.endsWith('.restricted')).sort()
 })
+
+const matrixScopes = computed(() => Object.keys(matrix.value?.summary?.scopes || {}))
+const matrixSensitivities = computed(() => Object.keys(matrix.value?.summary?.sensitivities || {}))
+const matrixFiltersActive = computed(
+  () => Boolean(
+    matrixFilters.search ||
+      matrixFilters.scope ||
+      matrixFilters.sensitivity ||
+      matrixFilters.role ||
+      matrixFilters.breakGlass
+  )
+)
+const visibleMatrixRoles = computed(() => {
+  const all = matrix.value?.roles || []
+  if (!matrixFilters.role) return all
+  return all.filter((role) => role.key === matrixFilters.role)
+})
+const filteredMatrixRows = computed(() => {
+  const rows = matrix.value?.permissions || []
+  const query = matrixFilters.search.toLowerCase()
+  return rows.filter((row) => {
+    if (matrixFilters.scope && row.scope !== matrixFilters.scope) return false
+    if (matrixFilters.sensitivity && row.sensitivity !== matrixFilters.sensitivity) return false
+    if (matrixFilters.breakGlass && !row.break_glass) return false
+    if (matrixFilters.role && !row.roles?.[matrixFilters.role]) return false
+    if (!query) return true
+    return [row.key, row.description, row.category]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(query))
+  })
+})
+
+function clearMatrixFilters() {
+  matrixFilters.search = ''
+  matrixFilters.scope = ''
+  matrixFilters.sensitivity = ''
+  matrixFilters.role = ''
+  matrixFilters.breakGlass = false
+}
+
+function onTabKeydown(event, index) {
+  if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(event.key)) return
+  event.preventDefault()
+  let next = index
+  if (event.key === 'ArrowRight') next = (index + 1) % tabs.length
+  if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length
+  if (event.key === 'Home') next = 0
+  if (event.key === 'End') next = tabs.length - 1
+  activeView.value = tabs[next].key
+  const buttons = event.currentTarget.parentElement.querySelectorAll('[role="tab"]')
+  buttons[next]?.focus()
+}
 
 function formatTime(value) {
   if (!value) return '-'
@@ -319,9 +568,22 @@ async function loadRoles() {
   roles.value = response.data.roles || []
 }
 
+async function loadMatrix() {
+  matrixLoading.value = true
+  matrixError.value = ''
+  try {
+    const response = await axios.get('/api/admin/security/rbac/matrix')
+    matrix.value = response.data
+  } catch (e) {
+    matrixError.value = e.response?.data?.detail || 'Could not load the access matrix.'
+  } finally {
+    matrixLoading.value = false
+  }
+}
+
 async function refreshAll() {
   try {
-    await Promise.all([loadEvents(), loadGrants(), loadServices(), loadRoles()])
+    await Promise.all([loadEvents(), loadGrants(), loadServices(), loadRoles(), loadMatrix()])
   } catch (e) {
     error.value = e.response?.data?.detail || 'Could not refresh the security center.'
   }
@@ -415,33 +677,64 @@ onMounted(refreshAll)
 
 <style scoped>
 .security-center { display: grid; gap: 1rem; }
-.security-center__sub { color: var(--text-muted, #64748b); margin: 0.25rem 0 0; }
+.security-center__sub { color: var(--text-muted); margin: 0.25rem 0 0; }
+.security-panel { display: grid; gap: 1rem; }
 .security-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; }
-.security-summary__card { border: 1px solid var(--border, #e2e8f0); border-radius: 0.5rem; padding: 0.75rem; display: grid; gap: 0.25rem; }
-.security-summary__card span { color: var(--text-muted, #64748b); font-size: 0.8rem; }
-.security-summary__card strong { font-size: 1.4rem; }
+.security-summary__card { border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 12px; padding: 0.75rem; display: grid; gap: 0.25rem; }
+.security-summary__card span { color: var(--text-secondary); font-size: 0.8rem; }
+.security-summary__card strong { font-size: 1.4rem; color: var(--text-primary); }
 .security-filters { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end; }
-.security-filters label { display: grid; gap: 0.25rem; font-size: 0.8rem; }
+.security-filters label { display: grid; gap: 0.25rem; font-size: 0.8rem; color: var(--text-secondary); }
 .security-filters__search { flex: 1 1 16rem; }
-.security-filters input, .security-filters select, .security-form input, .security-form textarea, .security-form select { padding: 0.45rem 0.55rem; border: 1px solid var(--border, #cbd5e1); border-radius: 0.35rem; }
-.security-form { display: grid; gap: 0.75rem; border: 1px solid var(--border, #e2e8f0); border-radius: 0.5rem; padding: 1rem; }
+.security-filter-check { display: flex; align-items: center; gap: 0.4rem; padding-bottom: 0.35rem; }
+.security-filter-check input { width: auto; }
+.security-filters input, .security-filters select, .security-form input, .security-form textarea, .security-form select { padding: 0.45rem 0.55rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-primary); color: var(--text-primary); }
+.security-form { display: grid; gap: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 12px; padding: 1rem; }
 .security-form h3 { margin: 0; }
-.security-form label { display: grid; gap: 0.25rem; font-size: 0.85rem; }
+.security-form label { display: grid; gap: 0.25rem; font-size: 0.85rem; color: var(--text-secondary); }
 .security-form__row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
 .security-scopes { width: 100%; }
-.security-meta { color: var(--text-muted, #64748b); font-size: 0.8rem; }
-.security-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
-.security-badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 999px; font-size: 0.75rem; background: #e2e8f0; color: #334155; }
-.security-badge--critical, .security-badge--revoked { background: #fee2e2; color: #991b1b; }
-.security-badge--warning, .security-badge--pending { background: #fef3c7; color: #92400e; }
-.security-badge--notice, .security-badge--active { background: #dbeafe; color: #1e40af; }
-.security-state { color: var(--text-muted, #64748b); }
-.security-state--error { color: #991b1b; }
+.security-meta { color: var(--text-muted); font-size: 0.8rem; }
+.security-mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; overflow-wrap: anywhere; }
+.security-badge { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 999px; font-size: 0.75rem; background: var(--bg-tertiary); color: var(--text-secondary); }
+.security-badge--critical, .security-badge--revoked, .security-badge--restricted, .security-badge--high { background: var(--danger-bg); color: var(--danger); }
+.security-badge--warning, .security-badge--pending, .security-badge--medium { background: var(--warning-bg); color: var(--warning); }
+.security-badge--notice, .security-badge--active, .security-badge--low { background: var(--accent-bg); color: var(--accent-text); }
+.security-badge--readonly { background: var(--bg-tertiary); color: var(--text-secondary); }
+.security-badge--breakglass { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+.security-state { color: var(--text-muted); }
+.security-state--error { color: var(--danger); }
 .security-actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-.security-token { background: #f8fafc; border: 1px dashed #94a3b8; padding: 0.75rem; border-radius: 0.5rem; }
-.security-token code { display: block; margin-top: 0.35rem; word-break: break-all; }
+.security-token { background: var(--bg-primary); border: 1px dashed var(--border-color); padding: 0.75rem; border-radius: 10px; }
+.security-token code { display: block; margin-top: 0.35rem; word-break: break-all; color: var(--text-primary); }
+.security-matrix__count { margin: 0; color: var(--text-secondary); font-size: 0.8rem; }
+.security-matrix__legend { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; color: var(--text-secondary); font-size: 0.8rem; }
+.security-matrix__scroll { max-height: 34rem; overflow: auto; border: 1px solid var(--border-color); border-radius: 10px; }
+.security-matrix { min-width: 980px; border-collapse: collapse; }
+.security-matrix th, .security-matrix td { padding: 0.5rem 0.55rem; border-bottom: 1px solid var(--border-color); vertical-align: top; text-align: left; }
+.security-matrix thead th { position: sticky; top: 0; background: var(--bg-secondary); z-index: 2; }
+.security-matrix__permission { position: sticky; left: 0; background: var(--bg-secondary); z-index: 1; min-width: 18rem; max-width: 26rem; }
+.security-matrix tbody .security-matrix__permission { background: var(--bg-primary); }
+.security-matrix thead .security-matrix__permission { z-index: 3; }
+.security-matrix__role { display: block; font-weight: 600; color: var(--text-primary); }
+.security-matrix__cell { text-align: center; }
+.security-matrix__mark { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; border-radius: 999px; font-weight: 700; }
+.security-matrix__mark--yes { color: var(--success); background: var(--success-bg); }
+.security-matrix__mark--no { color: var(--text-muted); }
+.security-matrix__policy { display: flex; flex-wrap: wrap; gap: 0.25rem; min-width: 12rem; }
+.security-policy { display: grid; gap: 0.75rem; margin-top: 0.5rem; }
+.security-policy h3 { margin: 0; }
+.security-policy__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.75rem; }
+.security-policy__card { border: 1px solid var(--border-color); background: var(--bg-secondary); border-radius: 10px; padding: 0.85rem; display: grid; gap: 0.35rem; }
+.security-policy__card h4 { margin: 0; font-size: 0.9rem; color: var(--text-primary); }
+.security-policy__card p { margin: 0; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; }
+.security-center :is(button, input, select, textarea, [tabindex="0"]):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (max-width: 760px) {
   .security-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .security-form__row { grid-template-columns: 1fr; }
+  .security-matrix__permission { min-width: 14rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .security-center * { transition: none !important; animation: none !important; }
 }
 </style>

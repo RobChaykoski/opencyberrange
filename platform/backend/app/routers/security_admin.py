@@ -222,6 +222,23 @@ async def list_permissions(
     return {"permissions": rbac.permission_catalog(db)}
 
 
+@router.get("/rbac/matrix", summary="Role and policy access matrix")
+async def rbac_matrix(
+    db: Session = Depends(get_db),
+    _decision: PolicyDecision = Depends(require_permission("security.events.view")),
+):
+    """Return the effective role grants and the PBAC attributes together.
+
+    This is a read-only review surface: it never returns learner data, secrets,
+    or request-scoped decisions. Role grants come from the RBAC tables so an
+    administrator's reviewed edits are what the matrix shows.
+    """
+    _ensure_seeded(db)
+    from app.services import access_matrix
+
+    return access_matrix.build_matrix(db)
+
+
 @router.put(
     "/rbac/roles/{role_key}/permissions",
     summary="Replace one role's permission grants",

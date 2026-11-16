@@ -27,18 +27,25 @@ See `docs/AUTHORIZATION-SERVICE.md` for the full contract and
 
 Roles seeded today:
 
-| Role | Core grants |
-|---|---|
-| `student` | self profile, labs, own DNA/GPS/portfolio, own consent, export/deletion requests |
-| `instructor` | course-scoped progress, class analytics, competency/achievement views, reports |
-| `teaching_assistant` | assigned-course progress, grading, feedback |
-| `mentor` | assigned-learner progress and competencies |
-| `institution_admin` | institution, faculty, enrolment, program reporting; confined to its `institution_id` |
-| `privacy_officer` | consent management, revocation execution, privacy audit, deletion approval |
-| `auditor` | read-only audit, consent status, security events, reports |
-| `employer` / `recruiter` | only explicitly shared portfolio/certificate/profile |
-| `admin` | platform operations and the only cross-tenant role; **not** private AI/DNA/GPS data by default |
-| `service_account` | no default grants; explicit extra roles only |
+| Role | Core grants | Tenant scope |
+|---|---|---|
+| `student` | self profile, labs, own DNA/GPS/portfolio, own consent, export/deletion requests | institution |
+| `instructor` | course-scoped progress, class analytics, competency/achievement views, reports | institution |
+| `teaching_assistant` | assigned-course progress, grading, feedback | institution |
+| `mentor` | assigned-learner progress and competencies | institution |
+| `institution_admin` | institution, faculty, enrolment, program reporting; confined to its `institution_id` | institution |
+| `privacy_officer` | consent management, revocation execution, privacy audit, deletion approval | institution |
+| `auditor` | read-only audit, consent status, security events, reports | institution |
+| `employer` / `recruiter` | only explicitly shared portfolio/certificate/profile | shared |
+| `admin` | platform operations and the only cross-tenant role; **not** private AI/DNA/GPS data by default | global |
+| `service_account` | no default grants; explicit extra roles only | explicit |
+
+The reviewable **RBAC and PBAC matrix** is generated from this catalog in
+[`RBAC-PBAC-MATRIX.md`](RBAC-PBAC-MATRIX.md). The Security Center renders the
+same matrix from the live RBAC tables under **Security center → Access matrix**,
+so administrator edits are visible without regenerating the document. Run
+`python scripts/generate-rbac-matrix.py --check` in review; CI fails when the
+catalog and the document drift.
 
 Policy rules:
 

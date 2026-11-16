@@ -60,6 +60,12 @@ HIGH_SENSITIVITY_PERMISSIONS = frozenset(
     for key, meta in _PERMISSIONS.items()
     if meta.get("sensitivity") in {"high", "critical", "restricted"}
 )
+TENANT_SCOPES = frozenset({"global", "institution", "shared", "explicit"})
+
+
+def role_tenant_scope(role: str) -> str:
+    """Return the reviewed tenant boundary for a role."""
+    return str(ROLE_META.get((role or "").strip().lower(), {}).get("tenant_scope") or "institution")
 
 
 @dataclass(frozen=True)
@@ -105,6 +111,12 @@ def validate_catalog() -> list[str]:
             problems.append(f"role {role} has metadata but no permission list")
         if not meta.get("label"):
             problems.append(f"role {role} has no label")
+        if meta.get("tenant_scope") not in TENANT_SCOPES:
+            problems.append(f"role {role} has no valid tenant_scope")
+    if role_tenant_scope("admin") != "global":
+        problems.append("admin must be the global tenant scope")
+    if role_tenant_scope("service_account") != "explicit":
+        problems.append("service_account must use explicit scopes only")
     restricted = ROLE_PERMISSIONS.get("admin", frozenset()) & SENSITIVE_PRIVATE_PERMISSIONS
     if restricted:
         problems.append(f"admin must not receive private permissions: {sorted(restricted)}")

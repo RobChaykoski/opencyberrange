@@ -43,6 +43,9 @@ jobs:
             --gpg-public-key docs/release-signing-key.asc \
             --gpg-fingerprint 68A817762C831475F00DB54E775050A4C4921814
 
+      - name: Verify RBAC/PBAC matrix is current
+        run: python scripts/generate-rbac-matrix.py --check
+
       - name: Verify runtime integrity manifest is current
         run: |
           python scripts/generate-integrity-manifest.py
