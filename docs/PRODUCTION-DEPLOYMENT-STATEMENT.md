@@ -11,7 +11,7 @@ another document disagrees, this page and the signed tag win.
 |---|---|
 | Release | **5.17.2** |
 | Signed tag | **`v5.17.2`** |
-| Runtime code commit | the commit tagged `v5.17.2` (`git tag -v v5.17.2`) |
+| Runtime code commit | `c19d07c5` (signed tag `v5.17.2`) |
 | Alembic revision | **`0040_settings_change_control`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |

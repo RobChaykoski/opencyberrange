@@ -1,8 +1,8 @@
 # Release 5 production readiness
 
 Status: **`v5.17.2` is released and deployed, and production is cut over.**
-Development `172.16.16.44` and production `172.16.16.41` both run `main` at the
-commit tagged `v5.17.2` with Alembic `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
+Development `172.16.16.44` and production `172.16.16.41` both run `main` at `c19d07c5`
+(`v5.17.2`) with Alembic `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
@@ -37,7 +37,7 @@ release and the one-way cutover is complete.
 
 ## 5.17.2 deployment record and production cutover - 2026-11-16
 
-- Deployed from `main` at the commit tagged `v5.17.2`; backend and frontend
+- Deployed from `main` at `c19d07c5` (`v5.17.2`); backend and frontend
   rebuilt from the release tree.
 - Fix: `ReauthDialog.vue` posted to `/api/auth/reauth` through a client whose
   base URL is already `/api`, producing `/api/api/auth/reauth` and a
