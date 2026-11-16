@@ -10,9 +10,9 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.17.4** |
-| Signed tag | **`v5.17.4`** |
-| Runtime code commit | the commit tagged `v5.17.4` (`git tag -v v5.17.4`) |
+| Release | **5.17.5** |
+| Signed tag | **`v5.17.5`** |
+| Runtime code commit | the commit tagged `v5.17.5` (`git tag -v v5.17.5`) |
 | Alembic revision | **`0040_settings_change_control`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -75,10 +75,10 @@ Admin → Users when convenient.
 - Backend: healthy, `/health` returns `200`.
 - Frontend: healthy.
 - Database and Valkey: healthy.
-- `/api/version` returns `5.17.4`.
+- `/api/version` returns `5.17.5`.
 - Registered labs: **210**.
 - Admin **System → Health → Release status** reports **Up to date** against
-  `v5.17.4`.
+  `v5.17.5`.
 - `ENVIRONMENT=production`.
 - `OCR_DEPLOYMENT_MODE=production`.
 - `OCR_AUTHZ_STRICT=true`.
@@ -94,6 +94,19 @@ is already `/api`, so every re-authentication attempt hit
 re-auth challenge and every other re-authentication-gated action. 5.17.2 posts
 to `/auth/reauth` and the regression test asserts the corrected path.
 
+## 5.17.5 additions
+
+- Documentation cleanup: documentation skill, docs index, category hubs,
+  archive, CODEOWNERS, SUPPORT, and PRIVACY. Current-state counts reconciled to
+  **210 labs, 13 tracks, 25 tenant-RLS tables**.
+- Password-prompt verification: login, re-authentication, change-password,
+  account deletion, admin reset, MFA disable, and the cutover gate accept the
+  correct password and reject wrong, oversized, control-character, and
+  injection-shaped input.
+- Bounded, log-safe login input and `maxlength` on password prompts.
+- Manual screenshots audited for synthetic data; a refresh to the current build
+  is pending demo credentials.
+
 ## 5.17.3 additions
 
 - Migration `0041_tenant_rls_legacy` extends forced tenant RLS to 16 legacy
@@ -105,11 +118,11 @@ to `/auth/reauth` and the regression test asserts the corrected path.
 
 ## Verification record
 
-- `GET /api/version` → `5.17.4`
+- `GET /api/version` → `5.17.5`
 - `GET /health` → `200`
 - `alembic current` → `0041_tenant_rls_legacy (head)`
 - Registered labs → `210`
-- Release status → `current` / `v5.17.4`
+- Release status → `current` / `v5.17.5`
 - Cutover → `deployment_mode=production`, `data_collection_mode=production`
 - Post-cutover backup/restore → **PASSED** (47 users)
 

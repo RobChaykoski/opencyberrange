@@ -1,6 +1,6 @@
 # Curriculum drift report
 
-Generated **16 November 2026** from the tree at release **5.17.4**.
+Generated **16 November 2026** from the tree at release **5.17.5**.
 
 ## Totals
 

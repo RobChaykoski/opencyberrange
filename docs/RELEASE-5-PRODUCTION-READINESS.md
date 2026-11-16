@@ -1,14 +1,14 @@
 # Release 5 production readiness
 
-Status: **`v5.17.4` (Community / Academic edition) is released and deployed, and
+Status: **`v5.17.5` (Community / Academic edition) is released and deployed, and
 production is cut over.** Development `172.16.16.44` and production
-`172.16.16.41` both run `main` at the commit tagged `v5.17.4` with Alembic
+`172.16.16.41` both run `main` at the commit tagged `v5.17.5` with Alembic
 `0041_tenant_rls_legacy`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
 `v5.14.0`, `v5.15.0`, `v5.16.0`, `v5.17.0`, and `v5.17.1` record the feature
-releases, security patches, and operations patches. `v5.17.4` is the current
+releases, security patches, and operations patches. `v5.17.5` is the current
 Community / Academic release and the one-way cutover is complete.
 
 ## Ready for production
@@ -35,6 +35,21 @@ Community / Academic release and the one-way cutover is complete.
   image now uses KasmVNC with a pinned platform-served client (5.11 line), and
   terminal-only mode remains.
 - Migrations `0015`–`0040`, all idempotent and applied on dev and production.
+
+## 5.17.5 deployment record (Community / Academic) - 2026-11-16
+
+- Edition: **Community / Academic** (`lite` entitlement, single-host).
+- Deployed from `main` at the commit tagged `v5.17.5`.
+- Documentation cleanup: documentation skill, docs index, category hubs,
+  archive, CODEOWNERS, SUPPORT, and PRIVACY; current counts reconciled to 210
+  labs and 13 tracks.
+- Password prompts covered by regression tests (login, re-authentication,
+  change-password, account deletion, admin reset, MFA disable, cutover), with a
+  bounded login guard and `maxlength` on every password input.
+- Verified: `/api/version` returns `5.17.5`, `/health` 200, 210 labs, Alembic
+  `0041_tenant_rls_legacy`, cutover state unchanged.
+- Tag `v5.17.5` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814`.
 
 ## 5.17.4 deployment record (Community / Academic) - 2026-11-16
 

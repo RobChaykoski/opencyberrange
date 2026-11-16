@@ -2,6 +2,41 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.5] - 2026-11-16
+
+### Documentation and repository cleanup
+
+- Added the documentation skill, a documentation index, category hubs
+  (`architecture`, `operations`, `curriculum`, `security`, `integrations`,
+  `compliance`), an archive index, `CODEOWNERS`, `SUPPORT.md`, and `PRIVACY.md`.
+- Archived completed cutover, upgrade, Release 4, and Wave records; merged the
+  repository-move record into the cutover record; removed one unreferenced
+  screenshot.
+- Reconciled current-state values: **210 labs, 182 workbook-mapped, 13 tracks,
+  Python 3.13, 25 tenant-RLS tables, 5.17.5**. Labelled the AI agentic, API,
+  Juice Shop, and OWASP plan documents as plan or partly implemented.
+- Added curriculum drift, MkDocs governance, repository hygiene, and
+  open-source readiness reports.
+- Audited the manual screenshots: they use synthetic data and contain no real
+  learner data. A refresh to the current build is pending demo credentials.
+
+### Security and input validation
+
+- Bounded and log-sanitised the login form: oversized input and control
+  characters are rejected with the same generic error as a wrong password.
+- Added `maxlength` and correct `autocomplete` to every password prompt.
+- Added regression tests for login, re-authentication, change-password, account
+  deletion, admin password reset, MFA disable, and the production cutover gate.
+  Each accepts the correct password and rejects a wrong one, plus oversized,
+  control-character, and injection-shaped input.
+
+### Validation
+
+- Backend: **908 passed** on a clean PostgreSQL database.
+- Frontend: **6 passed**; build passed; lint 0 errors.
+- Labs: **210** with **0 failed checks**; manifests, contracts, outcomes, links,
+  assets, API manual, metadata, licences, and strict MkDocs build pass.
+
 ## [5.17.4] - 2026-11-16
 
 ### Fixed

@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "ddb787518c81cd02023a1af62951d44c095f57ff61f7e758391ee2afdb4735ad"
+      "sha256": "83044f23370e9a50c85bf8b97ed8f606ec044d1719e783bd24c12b84723ad6f7"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -187,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "cdbeafb611adc5918822c4f6a5eae32f701f02256eb5959d6e10abb1ff958d41"
+      "sha256": "ec3d436e1759e3baa6cdd41fa5f2de96c79008dfa20e1a245e203167ef7260bd"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
@@ -367,7 +367,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "137e05a01c9afdd630a9aace0db7881438c18d446998d203753ba24991341a27"
+      "sha256": "da8257bb4fb4cd42642d63f1efc9d90a8768ad7ced58516620c54e0ae3834f4c"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1647,6 +1647,6 @@
       ]
     }
   },
-  "release": "5.17.4",
+  "release": "5.17.5",
   "schema": 1
 }

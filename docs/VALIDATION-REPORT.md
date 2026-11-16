@@ -1,7 +1,7 @@
 # Validation report
 
-**Release:** 5.17.4
-**Commit:** the commit tagged `v5.17.4`
+**Release:** 5.17.5
+**Commit:** the commit tagged `v5.17.5`
 **Date:** 16 November 2026
 
 This is the reproducible validation record for the current release. Commands
@@ -93,11 +93,11 @@ python scripts/supply_chain.py --check \
 
 | Check | Result |
 |---|---|
-| `/api/version` | `5.17.4` |
+| `/api/version` | `5.17.5` |
 | `/health` | `200` |
 | Alembic | `0041_tenant_rls_legacy` |
 | Registered labs | `210` |
-| Admin release status | `current` / `v5.17.4` |
+| Admin release status | `current` / `v5.17.5` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
 | Backup | `ocr-backup-20261116-192307.dump` |
 | Restore drill | **PASSED** (47 users) |
