@@ -66,3 +66,21 @@ def test_nginx_sets_forwarded_for_for_api_requests():
         text = (ROOT / "platform" / "frontend" / name).read_text(encoding="utf-8")
         assert "X-Forwarded-For $proxy_add_x_forwarded_for" in text
         assert "X-Real-IP $remote_addr" in text
+
+
+def test_docker_socket_proxy_allows_disk_usage_accounting():
+    """Admin -> Disk Management calls /system/df through the socket proxy.
+
+    The proxy denies every API section that is not explicitly enabled, so a
+    missing SYSTEM flag turns the panel into a 403 instead of a usage summary.
+    """
+    import yaml
+
+    for name in ("docker-compose.dev.yml", "docker-compose.prod.yml"):
+        compose = yaml.safe_load(
+            (ROOT / "platform" / name).read_text(encoding="utf-8")
+        )
+        environment = compose["services"]["docker-socket-proxy"]["environment"]
+        assert environment["SYSTEM"] == 1, name
+        # Disk accounting must not imply that image builds are allowed.
+        assert environment["BUILD"] == 0, name

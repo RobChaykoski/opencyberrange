@@ -64,6 +64,10 @@ services:
       NETWORKS: 1
       VOLUMES: 1
       INFO: 1
+      # Read-only usage accounting for Admin -> Disk Management. SYSTEM only
+      # exposes /system/df (image, container, volume, and build-cache sizes);
+      # BUILD stays off so a compromised backend cannot submit build recipes.
+      SYSTEM: 1
       POST: 1
       EXEC: 1
       BUILD: 0

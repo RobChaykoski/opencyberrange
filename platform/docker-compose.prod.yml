@@ -81,6 +81,10 @@ services:
       NETWORKS: 1
       VOLUMES: 1
       INFO: 1
+      # Read-only usage accounting for Admin -> Disk Management. SYSTEM only
+      # exposes /system/df; BUILD stays off unless on-demand lab builds are
+      # enabled (image builds let a compromised backend run build recipes).
+      SYSTEM: 1
       POST: 1
       EXEC: 1
       # Keep BUILD off unless on-demand lab builds are enabled. Image builds

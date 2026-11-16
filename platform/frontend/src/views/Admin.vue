@@ -617,7 +617,7 @@
               <button @click="openDiskManagement" class="btn btn--secondary btn--sm" title="Manage Docker images and build cache">
                 Disk Management
               </button>
-              <button v-if="devTools" @click="scanLabs" :disabled="scanningLabs" class="btn btn--secondary btn--sm">
+              <button @click="scanLabs" :disabled="scanningLabs" class="btn btn--secondary btn--sm">
                 {{ scanningLabs ? 'Scanning...' : 'Scan for Exercises' }}
               </button>
               <button @click="openCreateLabModal" class="btn btn--success btn--sm">+ Create Exercise</button>
