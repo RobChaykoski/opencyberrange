@@ -41,5 +41,8 @@ echo "making lab content readable"
 chmod -R a+rX platform/labs 2>/dev/null || true
 
 echo "restarting backend and frontend"
-docker compose up -d backend frontend
+# A bind-mount source change does not alter the Compose config, so plain
+# `up -d` leaves the old process running with cached imports. Recreate the
+# two application containers; the database and proxy stay up.
+docker compose up -d --force-recreate backend frontend
 echo "development bind mount is current"
