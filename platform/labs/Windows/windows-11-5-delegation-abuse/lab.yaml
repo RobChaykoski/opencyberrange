@@ -1,0 +1,68 @@
+title: 'Active Directory: Delegation Abuse'
+category: privilege-escalation
+difficulty: advanced
+estimated_time: 110
+prerequisites:
+- windows-11-4-acl-dacl-abuse
+# By completion students will be able to:
+learning_outcomes:
+- Distinguish unconstrained, constrained, and resource-based delegation
+- Identify a delegation configuration that enables impersonation
+- Assess the blast radius of the delegation
+- Recommend the least-privilege configuration
+mapped_skills:
+- identity_access
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Credential Access
+  technique: T1558
+  technique_name: Steal or Forge Kerberos Tickets
+  detection: Alert on ticket requests that target services outside the account's normal delegation scope.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Find an over-broad delegation setting, recover the assessment token, and recommend a constrained alternative.
+scenario: A web service account in the LAB domain is trusted for delegation. Identify the trust and the risk, then recover the token.
+credentials:
+- role: analyst
+  username: cn=admin,dc=lab,dc=example,dc=org
+  password: Adm1nPass2026
+  description: Directory administrator (training account)
+hints:
+- text: Search for accounts whose description mentions TrustedForDelegation.
+- text: The web service account is svc-web.
+- text: Explain why unconstrained delegation is the highest risk.
+flag: OCR{d3l3g4t10n_unb0und3d}
+test:
+  steps:
+  - name: Recover the assessment token from svc-web
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-web)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{d3l3g4t10n_unb0und3d}
+    timeout: 30
+  - name: Explain the defensive control in the report
+    command: echo OCR{d3l3g4t10n_unb0und3d}
+    expect: OCR{d3l3g4t10n_unb0und3d}
+visibility: public
+week: 11
+defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
+difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: ldap
+    label: LAB Directory
+    type: server
+    ip_offset: '10'
+    ports:
+    - 389
+    - 636
+    services:
+    - OpenLDAP
+    - AD-style objects

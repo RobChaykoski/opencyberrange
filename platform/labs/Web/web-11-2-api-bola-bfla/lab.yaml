@@ -1,0 +1,65 @@
+title: 'API Security: BOLA and BFLA'
+category: web
+difficulty: intermediate
+estimated_time: 80
+prerequisites:
+- web-11-1-api-inventory
+# By completion students will be able to:
+learning_outcomes:
+- Explain broken object-level authorization (BOLA)
+- Explain broken function-level authorization (BFLA)
+- Demonstrate access to another user's object
+- Recommend server-side ownership checks
+mapped_skills:
+- web_api
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Privilege Escalation
+  technique: T1078
+  technique_name: Valid Accounts
+  detection: Alert on object access outside the caller's ownership and function-level authorization failures.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Exploit a missing object-ownership check, access the admin object, and recover the assessment token.
+scenario: The API returns user objects by id. Your account is id 1. Request another object and the admin configuration.
+credentials: []
+hints:
+- text: Start with /api/users/1, then request /api/users/2.
+- text: The admin object contains the flag.
+- text: The fix is a server-side ownership and role check, not a hidden id.
+flag: OCR{b0l4_bfl4_0wn3r}
+test:
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/api/users/2 | grep -o 'OCR{[^}]*}'
+    expect: OCR{b0l4_bfl4_0wn3r}
+    timeout: 30
+  - name: Confirm the token
+    command: echo OCR{b0l4_bfl4_0wn3r}
+    expect: OCR{b0l4_bfl4_0wn3r}
+visibility: public
+week: 11
+defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
+difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: webapp
+    label: Lab API
+    type: server
+    ip_offset: '20'
+    ports:
+    - 80
+    services:
+    - Flask
+    - lab API

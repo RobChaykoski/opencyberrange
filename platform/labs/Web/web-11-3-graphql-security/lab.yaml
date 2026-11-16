@@ -1,0 +1,65 @@
+title: 'API Security: GraphQL'
+category: web
+difficulty: intermediate
+estimated_time: 90
+prerequisites:
+- web-11-1-api-inventory
+# By completion students will be able to:
+learning_outcomes:
+- Use GraphQL introspection to recover a schema
+- Identify sensitive fields and missing field-level authorization
+- Test query depth and cost limits
+- Recommend introspection and query controls
+mapped_skills:
+- web_api
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Reconnaissance
+  technique: T1595
+  technique_name: Active Scanning
+  detection: Monitor introspection queries and unusually deep or broad GraphQL requests.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Introspect a GraphQL endpoint, find a sensitive field, and recover the assessment token.
+scenario: The API exposes GraphQL with introspection enabled. Recover the schema, find the debug field, and read the token.
+credentials: []
+hints:
+- text: POST an introspection query to /graphql.
+- text: Look for a debug or internal field in the schema.
+- text: Production hardening includes disabling introspection and limiting query cost.
+flag: OCR{gr4phql_1ntr0sp3ct}
+test:
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/graphql | grep -o 'OCR{[^}]*}'
+    expect: OCR{gr4phql_1ntr0sp3ct}
+    timeout: 30
+  - name: Confirm the token
+    command: echo OCR{gr4phql_1ntr0sp3ct}
+    expect: OCR{gr4phql_1ntr0sp3ct}
+visibility: public
+week: 11
+defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
+difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: webapp
+    label: Lab API
+    type: server
+    ip_offset: '20'
+    ports:
+    - 80
+    services:
+    - Flask
+    - lab API

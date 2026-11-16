@@ -3,7 +3,7 @@
 Status: **planning** (12 November 2026). This is a curriculum roadmap, not a
 release commitment.
 
-The catalogue covers 12 track folders and 191 lab definitions. Classic pentest
+The catalogue covers 12 track folders and 210 lab definitions. Classic pentest
 enumeration is deep (Windows services, Linux privilege escalation, web
 reconnaissance to injection, network analysis). The gaps below are ranked by
 learner value and by how much of the existing RangeBox/tester toolchain they
@@ -21,8 +21,9 @@ and `impacket`, so the tooling is installed and unused.
 [`ACTIVE-DIRECTORY-PATHWAY.md`](ACTIVE-DIRECTORY-PATHWAY.md) and
 `platform/backend/app/data/ad-pathway.yaml`. It covers BloodHound-style
 enumeration, Kerberoasting, AS-REP roasting, ACL/DACL abuse, delegation, AD CS,
-DCSync/tickets, GPO/LAPS defence, and a capstone. The `windows-11-*` labs are
-planned, not yet built.
+DCSync/tickets, GPO/LAPS defence, and a capstone. The nine `windows-11-*` labs
+are implemented and validated (5.17.3); the live harness walkthrough remains
+the review step.
 
 Suggested arc:
 
@@ -66,7 +67,8 @@ Pair the track with the Web track for a "build then break" module.
 [`MODERN-APP-SECURITY-PATHWAY.md`](MODERN-APP-SECURITY-PATHWAY.md) and
 `platform/backend/app/data/modern-appsec-pathway.yaml`. It adds API, GraphQL,
 JWT, OAuth/OIDC, DevSecOps, container, Kubernetes, and supply-chain modules,
-with evidence and fix requirements. The `web-11-*` labs are planned.
+with evidence and fix requirements. The ten `web-11-*` labs are implemented and
+validated (5.17.3); the live harness walkthrough remains the review step.
 
 ### 4. Container and CI/CD security
 

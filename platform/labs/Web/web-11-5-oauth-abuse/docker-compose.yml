@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: api-oauth
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "oauth"
+      LAB_FLAG: "OCR{0auth_r3d1r3ct_byp4ss}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

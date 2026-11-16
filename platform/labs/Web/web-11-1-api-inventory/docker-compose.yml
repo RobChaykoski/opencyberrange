@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: api-inventory
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "inventory"
+      LAB_FLAG: "OCR{4p1_1nv3nt0ry}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

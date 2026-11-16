@@ -1,0 +1,31 @@
+# Generated from platform/labs/Web/web-11-5-oauth-abuse/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-11-5-oauth-abuse
+track: Web
+difficulty: advanced
+source: platform/labs/Web/web-11-5-oauth-abuse/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/web-11-5-oauth-abuse.sh
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+    expect: ''
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/oauth/callback | grep -o 'OCR{[^}]*}'
+    expect: OCR{0auth_r3d1r3ct_byp4ss}
+  - name: Confirm the token
+    command: echo OCR{0auth_r3d1r3ct_byp4ss}
+    expect: OCR{0auth_r3d1r3ct_byp4ss}
+expected_flag_count: 1
+expected_flag: OCR{0auth_r3d1r3ct_byp4ss}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

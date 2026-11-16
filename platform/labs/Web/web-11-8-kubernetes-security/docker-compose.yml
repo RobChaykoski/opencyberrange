@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: k8s-workload
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "kubernetes"
+      LAB_FLAG: "OCR{k8s_rb4c_3sc}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

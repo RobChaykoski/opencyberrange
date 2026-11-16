@@ -1,0 +1,31 @@
+# Generated from platform/labs/Web/web-11-2-api-bola-bfla/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-11-2-api-bola-bfla
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-11-2-api-bola-bfla/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/web-11-2-api-bola-bfla.sh
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+    expect: ''
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/api/users/2 | grep -o 'OCR{[^}]*}'
+    expect: OCR{b0l4_bfl4_0wn3r}
+  - name: Confirm the token
+    command: echo OCR{b0l4_bfl4_0wn3r}
+    expect: OCR{b0l4_bfl4_0wn3r}
+expected_flag_count: 1
+expected_flag: OCR{b0l4_bfl4_0wn3r}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

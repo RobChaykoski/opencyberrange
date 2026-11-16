@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: ci-pipeline
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "devsecops"
+      LAB_FLAG: "OCR{c1_s3cr3t_l34k}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

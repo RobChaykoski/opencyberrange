@@ -1,0 +1,35 @@
+dn: ou=People,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: Groups
+
+dn: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Helpdesk Analyst
+sn: Analyst
+uid: analyst
+mail: analyst@lab.example.org
+userPassword: AnalystPass2026
+description: Helpdesk analyst account
+
+dn: uid=svc-web,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: svc-web
+sn: Service
+uid: svc-web
+mail: svc-web@lab.example.org
+userPassword: S3rv1cePass2026
+description: TrustedForDelegation | unconstrained | assessment token: OCR{d3l3g4t10n_unb0und3d}
+
+dn: cn=Helpdesk,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Helpdesk
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+
+dn: cn=Domain Admins,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Domain Admins
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org

@@ -1,0 +1,28 @@
+# Generated from platform/labs/Windows/windows-11-1-ad-domain-enumeration/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-11-1-ad-domain-enumeration
+track: Windows
+difficulty: beginner
+source: platform/labs/Windows/windows-11-1-ad-domain-enumeration/lab.yaml
+expected_services:
+- port: 389
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/windows-11-1-ad-domain-enumeration.sh
+  steps:
+  - name: Recover the assessment token from svc-sql
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-sql)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{4d_d0m41n_3num}
+  - name: Explain the defensive control in the report
+    command: echo OCR{4d_d0m41n_3num}
+    expect: OCR{4d_d0m41n_3num}
+expected_flag_count: 1
+expected_flag: OCR{4d_d0m41n_3num}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

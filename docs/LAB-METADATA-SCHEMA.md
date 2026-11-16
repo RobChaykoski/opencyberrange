@@ -47,7 +47,7 @@ mitre_attack:
 
 Legacy keys `name`, `duration_minutes`, `objectives`, and
 `learning_objectives` are **not accepted**. The loader reads only the canonical
-keys, and the JSON Schema rejects the aliases. All 191 repository labs use the
+keys, and the JSON Schema rejects the aliases. All 210 repository labs use the
 canonical names.
 
 ## Machine contract

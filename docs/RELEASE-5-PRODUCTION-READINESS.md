@@ -1,14 +1,15 @@
 # Release 5 production readiness
 
-Status: **`v5.17.2` is released and deployed, and production is cut over.**
-Development `172.16.16.44` and production `172.16.16.41` both run `main` at `c19d07c5`
-(`v5.17.2`) with Alembic `0040_settings_change_control`. The release tags `v5.0.0`, `v5.0.1`,
+Status: **`v5.17.3` (Community / Academic edition) is released and deployed, and
+production is cut over.** Development `172.16.16.44` and production
+`172.16.16.41` both run `main` at the commit tagged `v5.17.3` with Alembic
+`0041_tenant_rls_legacy`. The release tags `v5.0.0`, `v5.0.1`,
 `v5.1.0`, `v5.1.1`, `v5.1.2`, `v5.2.0`, `v5.2.1`, `v5.2.2`, `v5.3.0`,
 `v5.3.1`, `v5.4.0`, `v5.5.0`, `v5.6.0`, `v5.7.0`, `v5.8.0`, `v5.8.1`,
 `v5.9.0`, `v5.9.1`, `v5.10.0`, `v5.11.0`, `v5.12.0`, `v5.13.0`, `v5.13.1`,
 `v5.14.0`, `v5.15.0`, `v5.16.0`, `v5.17.0`, and `v5.17.1` record the feature
-releases, security patches, and operations patches. `v5.17.2` is the current
-release and the one-way cutover is complete.
+releases, security patches, and operations patches. `v5.17.3` is the current
+Community / Academic release and the one-way cutover is complete.
 
 ## Ready for production
 
@@ -35,6 +36,23 @@ release and the one-way cutover is complete.
   terminal-only mode remains.
 - Migrations `0015`–`0040`, all idempotent and applied on dev and production.
 
+## 5.17.3 deployment record (Community / Academic) - 2026-11-16
+
+- Edition: **Community / Academic** (`lite` entitlement, single-host).
+- Deployed from `main` at the commit tagged `v5.17.3`; backend and frontend
+  rebuilt from the release tree.
+- Alembic upgraded to `0041_tenant_rls_legacy`; forced tenant RLS now covers 25
+  learner-owned tables (16 added by 0041).
+- Implemented 9 Active Directory (`windows-11-*`) and 10 modern
+  application-security (`web-11-*`) labs; the catalogue is 210 labs with 210
+  tester manifests and 210 competency contracts.
+- Pre-deploy backup and immediate restore drill recorded with the deployment.
+- Verified: `/api/version` returns `5.17.3`, `/health` 200, 210 labs registered,
+  release status **Up to date**, `deployment_mode=production`,
+  `data_collection_mode=production`, `settings_change_ticket_mode=required`.
+- Tag `v5.17.3` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814`.
+
 ## 5.17.2 deployment record and production cutover - 2026-11-16
 
 - Deployed from `main` at `c19d07c5` (`v5.17.2`); backend and frontend
@@ -46,7 +64,7 @@ release and the one-way cutover is complete.
   re-authentication-gated action.
 - Pre-cutover backup: `~/backups/ocr-backup-20261116-181526.dump`.
 - Post-cutover backup: `~/backups/ocr-backup-20261116-192307.dump`; restore
-  drill **PASSED** (47 users, 191 labs, 42 enrollments, 124 completions,
+  drill **PASSED** (47 users, 210 labs, 42 enrollments, 124 completions,
   464 achievements, 1322 activity events).
 - **Cutover executed** 2026-11-16 19:21:54 UTC by `swocts` under ticket `123456`,
   approved by Robert Chaykoski.
@@ -58,7 +76,7 @@ release and the one-way cutover is complete.
 - Test-account cleanup: `qa_tester_1114`, `qa_tester_1115`, and
   `qa_release_check_20261116` erased; users 50 → 47 and admins 2 → 1.
   `smoke_tester` and `tester` were retained by the operator.
-- Verified: `/api/version` returns `5.17.2`, `/health` 200, 191 labs, release
+- Verified: `/api/version` returns `5.17.2`, `/health` 200, 210 labs, release
   status **Up to date** against `v5.17.2`.
 - Tag `v5.17.2` is signed with the release key
   `68A817762C831475F00DB54E775050A4C4921814`.

@@ -1,0 +1,65 @@
+title: 'DevSecOps: Container Security'
+category: web
+difficulty: intermediate
+estimated_time: 90
+prerequisites:
+- web-11-6-devsecops-pipeline
+# By completion students will be able to:
+learning_outcomes:
+- Review a container for root and privilege issues
+- Identify missing capability drops and read-only filesystems
+- Recommend a minimal runtime profile
+- Verify the fix
+mapped_skills:
+- web_api
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Execution
+  technique: T1610
+  technique_name: Deploy Container
+  detection: Alert on privileged containers, host mounts, and root runtime.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Inspect a container runtime, identify the exposure, and recover the assessment token.
+scenario: The service runs as root with a broad profile. Inspect /api/runtime, recover the token, and propose a hardened Dockerfile and compose profile.
+credentials: []
+hints:
+- text: Check the effective uid and the runtime description.
+- text: Non-root, read-only, and dropped capabilities are the baseline.
+- text: The token is returned by the runtime endpoint.
+flag: OCR{c0nt41n3r_r0ot}
+test:
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/api/runtime | grep -o 'OCR{[^}]*}'
+    expect: OCR{c0nt41n3r_r0ot}
+    timeout: 30
+  - name: Confirm the token
+    command: echo OCR{c0nt41n3r_r0ot}
+    expect: OCR{c0nt41n3r_r0ot}
+visibility: public
+week: 11
+defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
+difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: webapp
+    label: Lab API
+    type: server
+    ip_offset: '20'
+    ports:
+    - 80
+    services:
+    - Flask
+    - lab API

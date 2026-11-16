@@ -52,7 +52,7 @@
       "sha256": "62e3fa7fdc02cdc7db0d6aeb3c553882daeaa90967da2706106c0e59e752a3af"
     },
     "platform/backend/app/data/ad-pathway.yaml": {
-      "sha256": "da4659a85c9c0169397f664aa7ddeb018277ccceaac718f72901d7b55829567b"
+      "sha256": "ae7447af25af1e61ceb88a5743dd7c9cf58d75912acf39d94bedf542d25dbd69"
     },
     "platform/backend/app/data/competency-contract-overrides.yaml": {
       "sha256": "13b4360476eb7f01ea93eb037e25e10f1c10f99e538fce2d6a61c6bc7a0745d3"
@@ -61,7 +61,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "9c429bd7749da486901d16836b92e80e8336821a17c9788b8fa91671dbc54663"
+      "sha256": "d40ec3d8f1f9e4c7531afa95c311dd6309924b2b3baee562e33d7997b6a2eac7"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -160,19 +160,19 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "6c66fabf2bb47a8a46204170f0d27a9c633cb52518443290c9ebd13e60a68a0a"
+      "sha256": "b988cf210460ef68f4b88856bf36191131744347d58956a5393e66981d16173e"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
     },
     "platform/backend/app/data/modern-appsec-pathway.yaml": {
-      "sha256": "fafda2cd6178171cb6d89cffe0f731fbf11701feb9e2c698a65824523d58c5cd"
+      "sha256": "9dca7522042e74a79a774cd1e34cacaae6079fb1c5270eb5e99890764ad8b18a"
     },
     "platform/backend/app/data/owasp-security-baseline.yaml": {
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "9b219758fa846b63c0a04d3ca126c51dd6f475bfeed57f159470233fb56b2a8e"
+      "sha256": "bc0dec587b361a3f5fa8d49c4907374b3dd7d427d816cf289e19c1a8ca9cc404"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -187,7 +187,7 @@
       "sha256": "18f211d07b779cb88dbb4e5c71c6ae4d62f4f6e38c71104b901ede93df31f6bd"
     },
     "platform/backend/app/version.py": {
-      "sha256": "aeec4fccec5af312220a9879ff80a301efa4653991c5a19b43ad6bc1809acb3f"
+      "sha256": "8e77c6e543db979eb0cb4f2d93dfa0d3bfd5b91897a875f74248fd598ef15e55"
     },
     "platform/backend/lab_metadata.schema.json": {
       "sha256": "00f133f45f20d1ad4fd2911cfa6e6384f5102d6f7d4502a18885d3f83333353d"
@@ -358,7 +358,7 @@
       "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"
     },
     "scripts/validate-lab.py": {
-      "sha256": "2ad2377f23d0a612fe85a0d326c9a668f500fbacf5be1c88c6abb147c6a01960"
+      "sha256": "53eb429e48c6ebcadba04ac71bc34e77be5176c537921c9698a025ca178d7ea1"
     },
     "scripts/validate_lab_metadata.py": {
       "sha256": "6d0cad12c5c6277a02a512b7ee6703def024aa1008a5621a38b2203cd2f3cd20"
@@ -367,7 +367,7 @@
       "sha256": "f08f563a56860357a3c246993e4fd3da16cf1df35cce49f9890c0b09eb1ab769"
     },
     "versions.yaml": {
-      "sha256": "baa5b505e5ee51dabdd91fc007fc2a2049e73b9457bbfa9f48380f43bda8c888"
+      "sha256": "687c09493d1b071ce1d7d4a0023e679cf718344b8379143bfe1c441abc5cec8b"
     }
   },
   "generator": "scripts/supply_chain.py",
@@ -1141,6 +1141,66 @@
         "webapp"
       ]
     },
+    "web-11-1-api-inventory": {
+      "content_hash": "cc79aef39145968ef75bfe3ce0f36f5b4184b42319cecd0e9569418dd93d088f",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-10-modern-appsec-capstone": {
+      "content_hash": "f75edd80fbf769e25a4aeda72983d1e2012dd96edc96eab4ba79dacff24fe975",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-2-api-bola-bfla": {
+      "content_hash": "738f5ed19554a2e225432a95d785d4f5ee2a95c178b38049f6cf9d90185490f4",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-3-graphql-security": {
+      "content_hash": "29270617bd47f5901747fb9cee84fd1885c577bcf93d6abc6d9cb58d8201f7df",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-4-jwt-security": {
+      "content_hash": "75b185c54c11e7f8c94ec503f9c02a6be554278393358da31669b569f5593250",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-5-oauth-abuse": {
+      "content_hash": "00311ed856fb31b5687c4d26a54a93bd548ac28a6ba901fb31589027d4b8d70e",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-6-devsecops-pipeline": {
+      "content_hash": "e569edee254c9faca2f6c87f3fb8bc4f800d52afc32c429ae5b7990e8ba230eb",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-7-container-security": {
+      "content_hash": "0a02b328da6f1f3dd768edbef1ec6b4ae3f9db0f66584406c42e5f1203739884",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-8-kubernetes-security": {
+      "content_hash": "90a56871a30a4445126b9bcf5e5f8589c9b058445bc1ff4940e68f16290cba18",
+      "services": [
+        "webapp"
+      ]
+    },
+    "web-11-9-supply-chain-integrity": {
+      "content_hash": "423218d0c8d20a5cb50c35cb966a2d0f6581fa205f362cff1213e81ac1b84ad2",
+      "services": [
+        "webapp"
+      ]
+    },
     "web-2-1-basic-sql-injection-get": {
       "content_hash": "65915fdf77ab077da2d90a57896bbbe66fa5b0629e4f0e4b52149aa18c1ca0f3",
       "services": [
@@ -1239,6 +1299,60 @@
         "casemgmt",
         "docserver",
         "portal"
+      ]
+    },
+    "windows-11-1-ad-domain-enumeration": {
+      "content_hash": "34ebac9971f2b3ac0e698ee5037fd9f7471c388d9fadb2f9250bfdc3f2c06eed",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-2-kerberoasting": {
+      "content_hash": "5db653d67cb126270276fa32cd3987bd897c8ec909f5f959d9424eb5c4972b27",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-3-asrep-spray": {
+      "content_hash": "639f5fefea357a0c1b0fa3427141310bd42655c018827b93e992b86920f6415a",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-4-acl-dacl-abuse": {
+      "content_hash": "f1492c74187ebfb9091dadbcbc0935605fba6e05d12c010b149524805413b98c",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-5-delegation-abuse": {
+      "content_hash": "953ae11a6b22eb9a57292129aab7057318dc770212ee3f26601cca2ecc2e68d0",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-6-adcs-abuse": {
+      "content_hash": "541ec013af8f75b60b58c157f5c6a9ce4809135d3342aaeacb5a041cf277b0bb",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-7-dcsync-tickets": {
+      "content_hash": "febab4ef82240cf2b7d914f7ae3616fdb601b7bc7c422b1bd266441d222ac087",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-8-gpo-laps-defence": {
+      "content_hash": "9730621d66180d7eca7fa7522e994c5611af8a264c037c798c85ba445fec246c",
+      "services": [
+        "ldap"
+      ]
+    },
+    "windows-11-9-ad-capstone": {
+      "content_hash": "db68d819aa70c38137359b606accd5b6f0fd1e054a271bd58f1e8af16bf76077",
+      "services": [
+        "ldap"
       ]
     },
     "windows-2-1-smb-connection-test": {
@@ -1533,6 +1647,6 @@
       ]
     }
   },
-  "release": "5.17.2",
+  "release": "5.17.3",
   "schema": 1
 }

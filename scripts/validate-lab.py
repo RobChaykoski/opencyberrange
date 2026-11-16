@@ -379,7 +379,7 @@ def check_flag_consistency(lab_dir):
     SEARCHABLE_EXTENSIONS = {
         ".py", ".html", ".htm", ".js", ".php", ".conf", ".cfg", ".txt",
         ".sh", ".bash", ".yml", ".yaml", ".json", ".xml", ".sql", ".env",
-        ".rb", ".pl", ".go", ".java", ".c", ".cpp", ".rs",
+        ".rb", ".pl", ".go", ".java", ".c", ".cpp", ".rs", ".ldif", ".ldap",
         "",  # Dockerfile has no extension
     }
 

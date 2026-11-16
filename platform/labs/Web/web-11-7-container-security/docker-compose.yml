@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: container-runtime
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "container"
+      LAB_FLAG: "OCR{c0nt41n3r_r0ot}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

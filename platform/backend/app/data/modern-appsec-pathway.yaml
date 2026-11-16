@@ -1,274 +1,396 @@
-# Modern application security pathway
-#
-# Extends the Web and Software Security tracks into API, GraphQL, token,
-# DevSecOps, container, Kubernetes, and supply-chain security. Every module
-# produces an evidence artifact and a short finding with a fix.
-
 version: 1
 title: Modern Application Security
 status: reviewed pathway specification
-audience: >-
-  Learners who can test a web application and want to assess APIs, GraphQL,
-  token flows, CI/CD, containers, Kubernetes, and the software supply chain.
+audience: Learners who can test a web application and want to assess APIs, GraphQL, token flows, CI/CD, containers, Kubernetes, and the software supply chain.
 prerequisites:
-  completed_pathways: [WEB02, SWsec01]
-  baseline_competencies: [WEB-007, WEB-008, WEB-009, WEB-012, NET-022]
+  completed_pathways:
+  - WEB02
+  - SWsec01
+  baseline_competencies:
+  - WEB-007
+  - WEB-008
+  - WEB-009
+  - WEB-012
+  - NET-022
 principles:
-  - "Inventory first: an API, schema, image, or cluster you cannot list is a blind spot."
-  - "Authorization is a server decision; a hidden button, field, or route is not a control."
-  - "Test tokens by their validation rules, not by their appearance."
-  - "A pipeline, image, and cluster are production code; review them like code."
-  - "Every finding names the evidence, the blast radius, and the verification step."
+- 'Inventory first: an API, schema, image, or cluster you cannot list is a blind spot.'
+- Authorization is a server decision; a hidden button, field, or route is not a control.
+- Test tokens by their validation rules, not by their appearance.
+- A pipeline, image, and cluster are production code; review them like code.
+- Every finding names the evidence, the blast radius, and the verification step.
 data_policy:
   synthetic_only: true
   real_pii: false
-  notes: >-
-    Labs use the pinned Juice Shop target, local mocks, or the learner's own
-    disposable cluster. No real tenant, token, registry, or cloud account is
-    used.
+  notes: Labs use the pinned Juice Shop target, local mocks, or the learner's own disposable cluster. No real tenant, token, registry, or cloud account is used.
 pathway_contract:
   evidence_required: true
   report_required: true
   fix_required: true
 modules:
-  - id: MAS-01
-    title: "API Security Foundations and Inventory"
-    difficulty: beginner
-    estimated_minutes: 60
-    prerequisites: []
-    datasets: []
-    existing_labs: [web-2-2-insecure-api-endpoints, web-2-4-api-enumeration-gauntlet]
-    planned_labs: [web-11-1-api-inventory]
-    competencies:
-      - {id: APP-001, weight: 0.40}
-      - {id: APP-002, weight: 0.20}
-      - {id: WEB-012, weight: 0.20}
-      - {id: TH-003, weight: 0.20}
-    evidence: [api_inventory, request_map, analyst_report]
-    report_required: true
-    fix: Maintain a generated API inventory with owner, auth, and version.
-    attack: [T1190, T1595.002]
-    outcomes:
-      - "Build an inventory of routes, methods, auth requirements, and object IDs."
-      - "Separate documented, undocumented, and deprecated endpoints."
-      - "Identify which endpoints return more data than the client needs."
-      - "Write a scoped API assessment plan."
-    safety: "Use the lab API only; do not scan a public service."
-
-  - id: MAS-02
-    title: "API Authorization: BOLA and BFLA"
-    difficulty: intermediate
-    estimated_minutes: 90
-    prerequisites: [MAS-01]
-    datasets: []
-    existing_labs: [web-2-2-insecure-api-endpoints]
-    planned_labs: [web-11-2-api-bola-bfla]
-    competencies:
-      - {id: APP-002, weight: 0.40}
-      - {id: APP-003, weight: 0.30}
-      - {id: WEB-008, weight: 0.15}
-      - {id: IR-002, weight: 0.15}
-    evidence: [request_pair, authorization_decision, fix]
-    report_required: true
-    fix: Enforce object ownership and function permission on the server.
-    attack: [T1078, T1190]
-    outcomes:
-      - "Prove object-level authorization with two accounts and two object IDs."
-      - "Prove function-level authorization on an admin-only route."
-      - "Explain why a hidden route or UI state is not authorization."
-      - "Add a server-side ownership or permission check and a regression test."
-    safety: "Use fictional accounts and objects; never test another learner's data."
-
-  - id: MAS-03
-    title: "GraphQL Security"
-    difficulty: intermediate
-    estimated_minutes: 100
-    prerequisites: [MAS-01]
-    datasets: []
-    existing_labs: []
-    planned_labs: [web-11-3-graphql-security]
-    competencies:
-      - {id: APP-005, weight: 0.30}
-      - {id: APP-006, weight: 0.35}
-      - {id: APP-007, weight: 0.20}
-      - {id: WEB-009, weight: 0.15}
-    evidence: [schema_artifact, query_matrix, authorization_decision, fix]
-    report_required: true
-    fix: Add depth/complexity limits and field-level authorization.
-    attack: [T1190, T1595.002]
-    outcomes:
-      - "Inspect a schema and decide whether introspection should be exposed."
-      - "Test query depth, aliasing, batching, and cost limits without denial of service."
-      - "Check field-level authorization on a sensitive field."
-      - "Recommend depth, complexity, batching, and field-level controls."
-    safety: "Bound query depth and volume; never run a resource-exhaustion test against a shared service."
-
-  - id: MAS-04
-    title: "JWT Security"
-    difficulty: intermediate
-    estimated_minutes: 90
-    prerequisites: [MAS-01]
-    datasets: []
-    existing_labs: [identity-1-2-oauth-oidc-sso]
-    planned_labs: [web-11-4-jwt-security]
-    competencies:
-      - {id: APP-008, weight: 0.45}
-      - {id: APP-011, weight: 0.25}
-      - {id: WEB-007, weight: 0.15}
-      - {id: WEB-010, weight: 0.15}
-    evidence: [redacted_claims, validation_matrix, negative_test, fix]
-    report_required: true
-    fix: Validate signature, claims, expiry, and revocation server-side.
-    attack: [T1550.001, T1528]
-    outcomes:
-      - "Validate signature, algorithm, issuer, audience, expiry, and key identifier."
-      - "Test an expired, tampered, or wrong-audience token in a local copy."
-      - "Explain why disabling signature verification or trusting a client role fails."
-      - "Recommend rotation, revocation, and session binding."
-    safety: "Use synthetic tokens only; redact all real secret material."
-
-  - id: MAS-05
-    title: "OAuth and OIDC Abuse"
-    difficulty: advanced
-    estimated_minutes: 120
-    prerequisites: [MAS-04]
-    datasets: []
-    existing_labs: [identity-1-2-oauth-oidc-sso]
-    planned_labs: [web-11-5-oauth-abuse]
-    competencies:
-      - {id: APP-009, weight: 0.35}
-      - {id: APP-010, weight: 0.35}
-      - {id: APP-011, weight: 0.15}
-      - {id: IR-003, weight: 0.15}
-    evidence: [flow_map, redirect_test, consent_review, fix]
-    report_required: true
-    fix: Use exact redirect URIs, PKCE, state, nonce, and token binding.
-    attack: [T1528, T1550.001, T1566.002]
-    outcomes:
-      - "Map authorization code, PKCE, refresh, and logout flows."
-      - "Test redirect URI matching and state/nonce handling in a local client."
-      - "Explain consent phishing, token leakage, and mix-up attacks."
-      - "Recommend exact redirect URIs, PKCE, state, nonce, and token binding."
-    safety: "Use a local OIDC client and synthetic tenant; never target a real provider."
-
-  - id: MAS-06
-    title: "DevSecOps and CI/CD Security"
-    difficulty: intermediate
-    estimated_minutes: 100
-    prerequisites: [MAS-01]
-    datasets: []
-    existing_labs: [software-security-1-1-hidden-export-route]
-    planned_labs: [web-11-6-devsecops-pipeline]
-    competencies:
-      - {id: APP-012, weight: 0.35}
-      - {id: APP-013, weight: 0.30}
-      - {id: APP-014, weight: 0.20}
-      - {id: PROF-001, weight: 0.15}
-    evidence: [pipeline_review, secret_scan, provenance_check, fix]
-    report_required: true
-    fix: Use least-privilege workflow tokens and signed provenance.
-    attack: [T1552.001, T1195.002]
-    outcomes:
-      - "Review workflow permissions, triggers, secrets, and artifact handling."
-      - "Find a hard-coded or over-scoped secret in a synthetic repository."
-      - "Check dependency pinning, artifact provenance, and build isolation."
-      - "Recommend least-privilege tokens, OIDC federation, and signed artifacts."
-    safety: "Use a disposable repository and synthetic secrets; never push a real token."
-
-  - id: MAS-07
-    title: "Container Security"
-    difficulty: intermediate
-    estimated_minutes: 100
-    prerequisites: [MAS-06]
-    datasets: []
-    existing_labs: []
-    planned_labs: [web-11-7-container-security]
-    competencies:
-      - {id: APP-015, weight: 0.35}
-      - {id: APP-016, weight: 0.25}
-      - {id: APP-017, weight: 0.25}
-      - {id: NET-030, weight: 0.15}
-    evidence: [dockerfile_review, image_scan, runtime_test, fix]
-    report_required: true
-    fix: Run non-root, read-only, capability-dropped containers.
-    attack: [T1610, T1611, T1525]
-    outcomes:
-      - "Review base image, user, capabilities, mounts, and network mode."
-      - "Verify an image tag and digest; explain why latest is not a pin."
-      - "Test a non-root, read-only container with no host socket."
-      - "Recommend a minimal image, non-root user, dropped capabilities, and runtime policy."
-    safety: "Run only the lab container; do not expose the Docker socket."
-
-  - id: MAS-08
-    title: "Kubernetes Security"
-    difficulty: advanced
-    estimated_minutes: 140
-    prerequisites: [MAS-07]
-    datasets: []
-    existing_labs: []
-    planned_labs: [web-11-8-kubernetes-security]
-    competencies:
-      - {id: APP-018, weight: 0.35}
-      - {id: APP-019, weight: 0.25}
-      - {id: APP-020, weight: 0.25}
-      - {id: IR-002, weight: 0.15}
-    evidence: [rbac_matrix, service_account_review, network_policy, fix]
-    report_required: true
-    fix: Apply least-privilege RBAC, workload identity, and default-deny policy.
-    attack: [T1610, T1611, T1552.007]
-    outcomes:
-      - "Map roles, role bindings, cluster roles, and service accounts."
-      - "Find an over-privileged service account or mounted secret."
-      - "Test a default-deny network policy in a disposable cluster."
-      - "Recommend least privilege, workload identity, admission, and secret isolation."
-    safety: "Use a disposable namespace or local cluster; never test a shared cluster."
-
-  - id: MAS-09
-    title: "Supply Chain and Artifact Integrity"
-    difficulty: intermediate
-    estimated_minutes: 90
-    prerequisites: [MAS-06, MAS-07]
-    datasets: []
-    existing_labs: []
-    planned_labs: [web-11-9-supply-chain-integrity]
-    competencies:
-      - {id: APP-021, weight: 0.40}
-      - {id: APP-022, weight: 0.30}
-      - {id: APP-014, weight: 0.15}
-      - {id: IR-008, weight: 0.15}
-    evidence: [sbom_review, signature_check, risk_register, fix]
-    report_required: true
-    fix: Sign artifacts and verify the SBOM and trust anchor.
-    attack: [T1195.001, T1195.002, T1553.002]
-    outcomes:
-      - "Read an SBOM and identify direct and transitive dependencies."
-      - "Verify a signed artifact and explain the trust anchor."
-      - "Assess dependency confusion, typosquatting, and build-system risk."
-      - "Write a risk register entry with owner, likelihood, impact, and verification."
-    safety: "Use a synthetic package and local registry; never publish to a public registry."
-
-  - id: MAS-10
-    title: "Capstone: Modern Application Security Assessment"
-    difficulty: advanced
-    estimated_minutes: 180
-    prerequisites: [MAS-02, MAS-03, MAS-04, MAS-05, MAS-06, MAS-07, MAS-08, MAS-09]
-    datasets: []
-    existing_labs: []
-    planned_labs: [web-11-10-modern-appsec-capstone]
-    competencies:
-      - {id: APP-002, weight: 0.20}
-      - {id: APP-008, weight: 0.15}
-      - {id: APP-015, weight: 0.15}
-      - {id: APP-018, weight: 0.15}
-      - {id: APP-022, weight: 0.15}
-      - {id: PROF-010, weight: 0.20}
-    evidence: [assessment_plan, evidence_pack, analyst_report, remediation_plan]
-    report_required: true
-    fix: Prioritize fixes with a verification step and residual-risk note.
-    attack: [T1190, T1550.001, T1610, T1195]
-    outcomes:
-      - "Scope one API, one token flow, one pipeline, and one runtime target."
-      - "Produce an evidence pack that another analyst can reproduce."
-      - "Separate observed evidence, inference, and missing telemetry."
-      - "Deliver a prioritized remediation plan with verification and residual risk."
-    safety: "Use only the pinned lab targets and disposable local infrastructure."
+- id: MAS-01
+  title: API Security Foundations and Inventory
+  difficulty: beginner
+  estimated_minutes: 60
+  prerequisites: []
+  datasets: []
+  existing_labs:
+  - web-2-2-insecure-api-endpoints
+  - web-2-4-api-enumeration-gauntlet
+  - web-11-1-api-inventory
+  planned_labs: []
+  competencies:
+  - id: APP-001
+    weight: 0.4
+  - id: APP-002
+    weight: 0.2
+  - id: WEB-012
+    weight: 0.2
+  - id: TH-003
+    weight: 0.2
+  evidence:
+  - api_inventory
+  - request_map
+  - analyst_report
+  report_required: true
+  fix: Maintain a generated API inventory with owner, auth, and version.
+  attack:
+  - T1190
+  - T1595.002
+  outcomes:
+  - Build an inventory of routes, methods, auth requirements, and object IDs.
+  - Separate documented, undocumented, and deprecated endpoints.
+  - Identify which endpoints return more data than the client needs.
+  - Write a scoped API assessment plan.
+  safety: Use the lab API only; do not scan a public service.
+- id: MAS-02
+  title: 'API Authorization: BOLA and BFLA'
+  difficulty: intermediate
+  estimated_minutes: 90
+  prerequisites:
+  - MAS-01
+  datasets: []
+  existing_labs:
+  - web-2-2-insecure-api-endpoints
+  - web-11-2-api-bola-bfla
+  planned_labs: []
+  competencies:
+  - id: APP-002
+    weight: 0.4
+  - id: APP-003
+    weight: 0.3
+  - id: WEB-008
+    weight: 0.15
+  - id: IR-002
+    weight: 0.15
+  evidence:
+  - request_pair
+  - authorization_decision
+  - fix
+  report_required: true
+  fix: Enforce object ownership and function permission on the server.
+  attack:
+  - T1078
+  - T1190
+  outcomes:
+  - Prove object-level authorization with two accounts and two object IDs.
+  - Prove function-level authorization on an admin-only route.
+  - Explain why a hidden route or UI state is not authorization.
+  - Add a server-side ownership or permission check and a regression test.
+  safety: Use fictional accounts and objects; never test another learner's data.
+- id: MAS-03
+  title: GraphQL Security
+  difficulty: intermediate
+  estimated_minutes: 100
+  prerequisites:
+  - MAS-01
+  datasets: []
+  existing_labs:
+  - web-11-3-graphql-security
+  planned_labs: []
+  competencies:
+  - id: APP-005
+    weight: 0.3
+  - id: APP-006
+    weight: 0.35
+  - id: APP-007
+    weight: 0.2
+  - id: WEB-009
+    weight: 0.15
+  evidence:
+  - schema_artifact
+  - query_matrix
+  - authorization_decision
+  - fix
+  report_required: true
+  fix: Add depth/complexity limits and field-level authorization.
+  attack:
+  - T1190
+  - T1595.002
+  outcomes:
+  - Inspect a schema and decide whether introspection should be exposed.
+  - Test query depth, aliasing, batching, and cost limits without denial of service.
+  - Check field-level authorization on a sensitive field.
+  - Recommend depth, complexity, batching, and field-level controls.
+  safety: Bound query depth and volume; never run a resource-exhaustion test against a shared service.
+- id: MAS-04
+  title: JWT Security
+  difficulty: intermediate
+  estimated_minutes: 90
+  prerequisites:
+  - MAS-01
+  datasets: []
+  existing_labs:
+  - identity-1-2-oauth-oidc-sso
+  - web-11-4-jwt-security
+  planned_labs: []
+  competencies:
+  - id: APP-008
+    weight: 0.45
+  - id: APP-011
+    weight: 0.25
+  - id: WEB-007
+    weight: 0.15
+  - id: WEB-010
+    weight: 0.15
+  evidence:
+  - redacted_claims
+  - validation_matrix
+  - negative_test
+  - fix
+  report_required: true
+  fix: Validate signature, claims, expiry, and revocation server-side.
+  attack:
+  - T1550.001
+  - T1528
+  outcomes:
+  - Validate signature, algorithm, issuer, audience, expiry, and key identifier.
+  - Test an expired, tampered, or wrong-audience token in a local copy.
+  - Explain why disabling signature verification or trusting a client role fails.
+  - Recommend rotation, revocation, and session binding.
+  safety: Use synthetic tokens only; redact all real secret material.
+- id: MAS-05
+  title: OAuth and OIDC Abuse
+  difficulty: advanced
+  estimated_minutes: 120
+  prerequisites:
+  - MAS-04
+  datasets: []
+  existing_labs:
+  - identity-1-2-oauth-oidc-sso
+  - web-11-5-oauth-abuse
+  planned_labs: []
+  competencies:
+  - id: APP-009
+    weight: 0.35
+  - id: APP-010
+    weight: 0.35
+  - id: APP-011
+    weight: 0.15
+  - id: IR-003
+    weight: 0.15
+  evidence:
+  - flow_map
+  - redirect_test
+  - consent_review
+  - fix
+  report_required: true
+  fix: Use exact redirect URIs, PKCE, state, nonce, and token binding.
+  attack:
+  - T1528
+  - T1550.001
+  - T1566.002
+  outcomes:
+  - Map authorization code, PKCE, refresh, and logout flows.
+  - Test redirect URI matching and state/nonce handling in a local client.
+  - Explain consent phishing, token leakage, and mix-up attacks.
+  - Recommend exact redirect URIs, PKCE, state, nonce, and token binding.
+  safety: Use a local OIDC client and synthetic tenant; never target a real provider.
+- id: MAS-06
+  title: DevSecOps and CI/CD Security
+  difficulty: intermediate
+  estimated_minutes: 100
+  prerequisites:
+  - MAS-01
+  datasets: []
+  existing_labs:
+  - software-security-1-1-hidden-export-route
+  - web-11-6-devsecops-pipeline
+  planned_labs: []
+  competencies:
+  - id: APP-012
+    weight: 0.35
+  - id: APP-013
+    weight: 0.3
+  - id: APP-014
+    weight: 0.2
+  - id: PROF-001
+    weight: 0.15
+  evidence:
+  - pipeline_review
+  - secret_scan
+  - provenance_check
+  - fix
+  report_required: true
+  fix: Use least-privilege workflow tokens and signed provenance.
+  attack:
+  - T1552.001
+  - T1195.002
+  outcomes:
+  - Review workflow permissions, triggers, secrets, and artifact handling.
+  - Find a hard-coded or over-scoped secret in a synthetic repository.
+  - Check dependency pinning, artifact provenance, and build isolation.
+  - Recommend least-privilege tokens, OIDC federation, and signed artifacts.
+  safety: Use a disposable repository and synthetic secrets; never push a real token.
+- id: MAS-07
+  title: Container Security
+  difficulty: intermediate
+  estimated_minutes: 100
+  prerequisites:
+  - MAS-06
+  datasets: []
+  existing_labs:
+  - web-11-7-container-security
+  planned_labs: []
+  competencies:
+  - id: APP-015
+    weight: 0.35
+  - id: APP-016
+    weight: 0.25
+  - id: APP-017
+    weight: 0.25
+  - id: NET-030
+    weight: 0.15
+  evidence:
+  - dockerfile_review
+  - image_scan
+  - runtime_test
+  - fix
+  report_required: true
+  fix: Run non-root, read-only, capability-dropped containers.
+  attack:
+  - T1610
+  - T1611
+  - T1525
+  outcomes:
+  - Review base image, user, capabilities, mounts, and network mode.
+  - Verify an image tag and digest; explain why latest is not a pin.
+  - Test a non-root, read-only container with no host socket.
+  - Recommend a minimal image, non-root user, dropped capabilities, and runtime policy.
+  safety: Run only the lab container; do not expose the Docker socket.
+- id: MAS-08
+  title: Kubernetes Security
+  difficulty: advanced
+  estimated_minutes: 140
+  prerequisites:
+  - MAS-07
+  datasets: []
+  existing_labs:
+  - web-11-8-kubernetes-security
+  planned_labs: []
+  competencies:
+  - id: APP-018
+    weight: 0.35
+  - id: APP-019
+    weight: 0.25
+  - id: APP-020
+    weight: 0.25
+  - id: IR-002
+    weight: 0.15
+  evidence:
+  - rbac_matrix
+  - service_account_review
+  - network_policy
+  - fix
+  report_required: true
+  fix: Apply least-privilege RBAC, workload identity, and default-deny policy.
+  attack:
+  - T1610
+  - T1611
+  - T1552.007
+  outcomes:
+  - Map roles, role bindings, cluster roles, and service accounts.
+  - Find an over-privileged service account or mounted secret.
+  - Test a default-deny network policy in a disposable cluster.
+  - Recommend least privilege, workload identity, admission, and secret isolation.
+  safety: Use a disposable namespace or local cluster; never test a shared cluster.
+- id: MAS-09
+  title: Supply Chain and Artifact Integrity
+  difficulty: intermediate
+  estimated_minutes: 90
+  prerequisites:
+  - MAS-06
+  - MAS-07
+  datasets: []
+  existing_labs:
+  - web-11-9-supply-chain-integrity
+  planned_labs: []
+  competencies:
+  - id: APP-021
+    weight: 0.4
+  - id: APP-022
+    weight: 0.3
+  - id: APP-014
+    weight: 0.15
+  - id: IR-008
+    weight: 0.15
+  evidence:
+  - sbom_review
+  - signature_check
+  - risk_register
+  - fix
+  report_required: true
+  fix: Sign artifacts and verify the SBOM and trust anchor.
+  attack:
+  - T1195.001
+  - T1195.002
+  - T1553.002
+  outcomes:
+  - Read an SBOM and identify direct and transitive dependencies.
+  - Verify a signed artifact and explain the trust anchor.
+  - Assess dependency confusion, typosquatting, and build-system risk.
+  - Write a risk register entry with owner, likelihood, impact, and verification.
+  safety: Use a synthetic package and local registry; never publish to a public registry.
+- id: MAS-10
+  title: 'Capstone: Modern Application Security Assessment'
+  difficulty: advanced
+  estimated_minutes: 180
+  prerequisites:
+  - MAS-02
+  - MAS-03
+  - MAS-04
+  - MAS-05
+  - MAS-06
+  - MAS-07
+  - MAS-08
+  - MAS-09
+  datasets: []
+  existing_labs:
+  - web-11-10-modern-appsec-capstone
+  planned_labs: []
+  competencies:
+  - id: APP-002
+    weight: 0.25
+  - id: APP-008
+    weight: 0.25
+  - id: APP-018
+    weight: 0.25
+  - id: APP-022
+    weight: 0.25
+  evidence:
+  - assessment_plan
+  - evidence_pack
+  - analyst_report
+  - remediation_plan
+  report_required: true
+  fix: Prioritize fixes with a verification step and residual-risk note.
+  attack:
+  - T1190
+  - T1550.001
+  - T1610
+  - T1195
+  outcomes:
+  - Scope one API, one token flow, one pipeline, and one runtime target.
+  - Produce an evidence pack that another analyst can reproduce.
+  - Separate observed evidence, inference, and missing telemetry.
+  - Deliver a prioritized remediation plan with verification and residual risk.
+  safety: Use only the pinned lab targets and disposable local infrastructure.

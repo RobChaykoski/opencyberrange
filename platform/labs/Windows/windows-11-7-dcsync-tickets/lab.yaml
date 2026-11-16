@@ -1,0 +1,68 @@
+title: 'Active Directory: Credential Dumping and Ticket Abuse'
+category: credential-attacks
+difficulty: advanced
+estimated_time: 130
+prerequisites:
+- windows-11-5-delegation-abuse
+# By completion students will be able to:
+learning_outcomes:
+- Explain DCSync and the replication rights it abuses
+- Identify accounts with replication permissions
+- Describe golden and silver ticket risks
+- Recommend tier-0 controls and replication auditing
+mapped_skills:
+- identity_access
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Credential Access
+  technique: T1003.006
+  technique_name: DCSync
+  detection: Alert on directory replication requests from non-domain-controller principals.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Find an account granted replication rights, recover the assessment token, and design the detection.
+scenario: A service account in the LAB domain can request directory replication. Identify the grant, recover the token, and write the detection rule.
+credentials:
+- role: analyst
+  username: cn=admin,dc=lab,dc=example,dc=org
+  password: Adm1nPass2026
+  description: Directory administrator (training account)
+hints:
+- text: Search for Replicating Directory Changes in the account description.
+- text: The service account is svc-dc.
+- text: Detection should focus on non-DC principals requesting replication.
+flag: OCR{dcs4ync_r3pl1c4t10n}
+test:
+  steps:
+  - name: Recover the assessment token from svc-dc
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-dc)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{dcs4ync_r3pl1c4t10n}
+    timeout: 30
+  - name: Explain the defensive control in the report
+    command: echo OCR{dcs4ync_r3pl1c4t10n}
+    expect: OCR{dcs4ync_r3pl1c4t10n}
+visibility: public
+week: 11
+defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
+difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: ldap
+    label: LAB Directory
+    type: server
+    ip_offset: '10'
+    ports:
+    - 389
+    - 636
+    services:
+    - OpenLDAP
+    - AD-style objects

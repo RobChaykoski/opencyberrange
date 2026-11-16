@@ -22,6 +22,15 @@ from sqlalchemy import text
 logger = logging.getLogger(__name__)
 
 # table -> (owner column, optional course column)
+#
+# Only learner/user-owned records are listed here. Authentication tables
+# (sessions, refresh tokens, SSO tickets, RBAC roles), secrets (WireGuard keys,
+# service credentials), and platform operations (security events, audit,
+# break-glass, settings changes) are deliberately excluded: they are read
+# before a tenant context exists, are global by design, or have their own
+# controls. Course-owned content tables without a user owner (cohorts,
+# assignments, requirements, attachments, report exports) remain service- and
+# course-scoped; see docs/TENANT-ISOLATION-STATUS.md for the classification.
 TENANT_TABLES: dict[str, dict[str, str | None]] = {
     "courses": {"owner": "instructor_id", "course": None},
     "course_enrollments": {"owner": "user_id", "course": "course_id"},
@@ -32,6 +41,23 @@ TENANT_TABLES: dict[str, dict[str, str | None]] = {
     "portfolio_share_tokens": {"owner": "user_id", "course": None},
     "dna_evidence_records": {"owner": "learner_id", "course": None},
     "dna_snapshots": {"owner": "learner_id", "course": None},
+    # Legacy learner-owned tables migrated in 0041.
+    "flag_attempts": {"owner": "user_id", "course": None},
+    "review_requests": {"owner": "user_id", "course": "course_id"},
+    "survey_responses": {"owner": "user_id", "course": "course_id"},
+    "user_accommodations": {"owner": "user_id", "course": None},
+    "accommodation_events": {"owner": "user_id", "course": None},
+    "exercise_quiz_attempts": {"owner": "user_id", "course": "course_id"},
+    "exercise_quiz_feedback": {"owner": "user_id", "course": "course_id"},
+    "exercise_reactions": {"owner": "user_id", "course": "course_id"},
+    "exercise_pulse_surveys": {"owner": "user_id", "course": "course_id"},
+    "course_feedback": {"owner": "author_id", "course": "course_id"},
+    "course_completion_resets": {"owner": "user_id", "course": "course_id"},
+    "course_cohort_members": {"owner": "user_id", "course": None},
+    "quiz_attempts": {"owner": "user_id", "course": None},
+    "open_badge_credentials": {"owner": "user_id", "course": None},
+    "lti_scores": {"owner": "user_id", "course": None},
+    "activity_events": {"owner": "actor_id", "course": None},
 }
 
 _RLS_USING = (
@@ -39,6 +65,24 @@ _RLS_USING = (
     "OR institution_id IS NULL "
     "OR institution_id = NULLIF(current_setting('ocr.institution_id', true), '')"
 )
+
+
+def _table_exists(conn, table: str) -> bool:
+    """True when the table exists.
+
+    Migrations import the live ``TENANT_TABLES`` map, so an early revision must
+    skip tables that a later revision has not created yet. Without this check a
+    fresh database would fail at the first tenant migration.
+    """
+    try:
+        return (
+            conn.execute(
+                text("SELECT to_regclass(:name)"), {"name": f"public.{table}"}
+            ).scalar()
+            is not None
+        )
+    except Exception:  # pragma: no cover - dialect without to_regclass
+        return True
 
 
 def _owner_function(table: str, owner: str, course: str | None) -> str:
@@ -76,6 +120,9 @@ def ensure_tenant_schema(conn) -> None:
     if conn.dialect.name != "postgresql":
         return
     for table, spec in TENANT_TABLES.items():
+        if not _table_exists(conn, table):
+            logger.info("Tenant schema skipped for absent table %s", table)
+            continue
         owner = str(spec["owner"])
         course = spec.get("course")
         conn.execute(
@@ -137,6 +184,8 @@ def ensure_tenant_rls(conn) -> None:
     if conn.dialect.name != "postgresql":
         return
     for table in TENANT_TABLES:
+        if not _table_exists(conn, table):
+            continue
         conn.execute(text(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY"))
         conn.execute(text(f"ALTER TABLE {table} FORCE ROW LEVEL SECURITY"))
         for suffix in ("select", "insert", "update", "delete"):

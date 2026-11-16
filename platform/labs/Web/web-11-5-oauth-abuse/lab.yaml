@@ -1,0 +1,65 @@
+title: 'API Security: OAuth and OIDC Abuse'
+category: web
+difficulty: advanced
+estimated_time: 100
+prerequisites:
+- web-11-4-jwt-security
+# By completion students will be able to:
+learning_outcomes:
+- Map an OAuth authorization-code flow
+- Test redirect URI validation
+- Explain state, PKCE, and nonce controls
+- Recommend exact redirect matching and token binding
+mapped_skills:
+- web_api
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Defense Evasion
+  technique: T1550.001
+  technique_name: Application Access Token
+  detection: Alert on redirect URI mismatches and authorization-code replay.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Test an OAuth callback for redirect validation weaknesses and recover the assessment token.
+scenario: The API implements OAuth with a callback. Test redirect handling, recover the token, and propose the fix.
+credentials: []
+hints:
+- text: Inspect the authorize and callback endpoints.
+- text: Try a redirect_uri on a different host or path.
+- text: Exact redirect matching and PKCE close the gap.
+flag: OCR{0auth_r3d1r3ct_byp4ss}
+test:
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/oauth/callback | grep -o 'OCR{[^}]*}'
+    expect: OCR{0auth_r3d1r3ct_byp4ss}
+    timeout: 30
+  - name: Confirm the token
+    command: echo OCR{0auth_r3d1r3ct_byp4ss}
+    expect: OCR{0auth_r3d1r3ct_byp4ss}
+visibility: public
+week: 11
+defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
+difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: webapp
+    label: Lab API
+    type: server
+    ip_offset: '20'
+    ports:
+    - 80
+    services:
+    - Flask
+    - lab API

@@ -1,0 +1,28 @@
+# Generated from platform/labs/Windows/windows-11-9-ad-capstone/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: windows-11-9-ad-capstone
+track: Windows
+difficulty: advanced
+source: platform/labs/Windows/windows-11-9-ad-capstone/lab.yaml
+expected_services:
+- port: 389
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/windows-11-9-ad-capstone.sh
+  steps:
+  - name: Recover the assessment token from svc-capstone
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-capstone)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{4d_c4pst0n3_r3p0rt}
+  - name: Explain the defensive control in the report
+    command: echo OCR{4d_c4pst0n3_r3p0rt}
+    expect: OCR{4d_c4pst0n3_r3p0rt}
+expected_flag_count: 1
+expected_flag: OCR{4d_c4pst0n3_r3p0rt}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

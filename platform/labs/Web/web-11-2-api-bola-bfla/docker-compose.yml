@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: api-bola
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "bola"
+      LAB_FLAG: "OCR{b0l4_bfl4_0wn3r}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

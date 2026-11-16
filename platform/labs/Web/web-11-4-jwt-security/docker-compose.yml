@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: api-jwt
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "jwt"
+      LAB_FLAG: "OCR{jwt_n0n3_4lg}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

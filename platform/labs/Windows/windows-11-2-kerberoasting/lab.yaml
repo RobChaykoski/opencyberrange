@@ -1,0 +1,68 @@
+title: 'Active Directory: Kerberoasting'
+category: credential-attacks
+difficulty: intermediate
+estimated_time: 90
+prerequisites:
+- windows-11-1-ad-domain-enumeration
+# By completion students will be able to:
+learning_outcomes:
+- Explain how SPNs and service tickets enable Kerberoasting
+- Identify kerberoastable service accounts
+- Extract a service-ticket artifact and assess password strength
+- Recommend managed service accounts and rotation
+mapped_skills:
+- identity_access
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Credential Access
+  technique: T1558.003
+  technique_name: Kerberoasting
+  detection: Alert on anomalous SPN ticket requests and service-account password cracking attempts.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Identify a kerberoastable service account, recover the service-ticket artifact, and recommend a defensive fix.
+scenario: The LAB domain has a SQL service account with an SPN. Enumerate the account, recover the assessment token from its service metadata, and write the remediation.
+credentials:
+- role: analyst
+  username: cn=admin,dc=lab,dc=example,dc=org
+  password: Adm1nPass2026
+  description: Directory administrator (training account)
+hints:
+- text: SPNs are recorded in the service account description in this simulated directory.
+- text: Look for MSSQLSvc entries and the account that owns them.
+- text: The token is in the description; explain why the SPN made the account a target.
+flag: OCR{k3rb3r04st_spn}
+test:
+  steps:
+  - name: Recover the assessment token from svc-mssql
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-mssql)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{k3rb3r04st_spn}
+    timeout: 30
+  - name: Explain the defensive control in the report
+    command: echo OCR{k3rb3r04st_spn}
+    expect: OCR{k3rb3r04st_spn}
+visibility: public
+week: 11
+defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
+difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: ldap
+    label: LAB Directory
+    type: server
+    ip_offset: '10'
+    ports:
+    - 389
+    - 636
+    services:
+    - OpenLDAP
+    - AD-style objects

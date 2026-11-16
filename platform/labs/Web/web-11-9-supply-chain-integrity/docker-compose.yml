@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: supplychain-registry
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "supplychain"
+      LAB_FLAG: "OCR{sb0m_s1gn4tur3}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

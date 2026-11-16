@@ -29,8 +29,8 @@ synthetic domain instead of a real one.
 | AD-10 | Capstone: AD Attack Path and Remediation Report | advanced | 180 | full path, evidence, remediation |
 
 The first module uses the existing `windows-2-9-ad-fundamentals-basics` and
-`windows-2-10-ad-to-smb-scenario` labs. The rest are planned labs under the
-`windows-11-*` level.
+`windows-2-10-ad-to-smb-scenario` labs. The rest are the nine `windows-11-*`
+labs implemented in 5.17.3.
 
 ## Evidence contract
 
@@ -54,14 +54,15 @@ A flag alone is not completion evidence.
 - A private, approved environment is required for any real Windows evaluation
   media; the public repository does not ship a Windows image or a live domain.
 
-## Existing and planned labs
+## Labs
 
-Existing:
+Foundation labs:
 
 - `windows-2-9-ad-fundamentals-basics`
 - `windows-2-10-ad-to-smb-scenario`
 
-Planned:
+Pathway labs (implemented in 5.17.3; each has a competency contract, a tester
+manifest, and a directory-backed exercise):
 
 - `windows-11-1-ad-domain-enumeration`
 - `windows-11-2-kerberoasting`

@@ -9,9 +9,10 @@ another document disagrees, this page and the signed tag win.
 
 | Item | Value |
 |---|---|
-| Release | **5.17.2** |
-| Signed tag | **`v5.17.2`** |
-| Runtime code commit | `c19d07c5` (signed tag `v5.17.2`) |
+| Edition | **Community / Academic** (`lite` entitlement, single-host) |
+| Release | **5.17.3** |
+| Signed tag | **`v5.17.3`** |
+| Runtime code commit | the commit tagged `v5.17.3` (`git tag -v v5.17.3`) |
 | Alembic revision | **`0040_settings_change_control`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -74,10 +75,10 @@ Admin → Users when convenient.
 - Backend: healthy, `/health` returns `200`.
 - Frontend: healthy.
 - Database and Valkey: healthy.
-- `/api/version` returns `5.17.2`.
-- Registered labs: **191**.
+- `/api/version` returns `5.17.3`.
+- Registered labs: **210**.
 - Admin **System → Health → Release status** reports **Up to date** against
-  `v5.17.2`.
+  `v5.17.3`.
 - `ENVIRONMENT=production`.
 - `OCR_DEPLOYMENT_MODE=production`.
 - `OCR_AUTHZ_STRICT=true`.
@@ -93,13 +94,22 @@ is already `/api`, so every re-authentication attempt hit
 re-auth challenge and every other re-authentication-gated action. 5.17.2 posts
 to `/auth/reauth` and the regression test asserts the corrected path.
 
+## 5.17.3 additions
+
+- Migration `0041_tenant_rls_legacy` extends forced tenant RLS to 16 legacy
+  learner tables (25 enforced tables total).
+- The 9 Active Directory (`windows-11-*`) and 10 modern application-security
+  (`web-11-*`) pathway labs are implemented; the catalogue is 210 labs.
+- The Community / Academic edition keeps a single `default` institution while
+  the RLS backstop remains edition-agnostic.
+
 ## Verification record
 
-- `GET /api/version` → `5.17.2`
+- `GET /api/version` → `5.17.3`
 - `GET /health` → `200`
-- `alembic current` → `0040_settings_change_control (head)`
-- Registered labs → `191`
-- Release status → `current` / `v5.17.2`
+- `alembic current` → `0041_tenant_rls_legacy (head)`
+- Registered labs → `210`
+- Release status → `current` / `v5.17.3`
 - Cutover → `deployment_mode=production`, `data_collection_mode=production`
 - Post-cutover backup/restore → **PASSED** (47 users)
 

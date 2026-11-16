@@ -59,16 +59,17 @@ A solved challenge or a tool screenshot alone is not evidence.
 - Use a disposable namespace or local cluster for Kubernetes.
 - Use only the pinned lab image and local mocks.
 
-## Existing and planned labs
+## Labs
 
-Existing:
+Foundation labs:
 
 - `web-2-2-insecure-api-endpoints`
 - `web-2-4-api-enumeration-gauntlet`
 - `identity-1-2-oauth-oidc-sso`
 - `software-security-1-1-hidden-export-route`
 
-Planned:
+Pathway labs (implemented in 5.17.3; each has a competency contract, a tester
+manifest, and a container-backed exercise):
 
 - `web-11-1-api-inventory`
 - `web-11-2-api-bola-bfla`

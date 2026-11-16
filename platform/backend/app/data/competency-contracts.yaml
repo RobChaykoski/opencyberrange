@@ -10735,3 +10735,1071 @@ labs:
     usage_source: null
     review_status: baseline_derived
     reviewed_at: null
+  windows-11-1-ad-domain-enumeration:
+    lab_id: windows-11-1-ad-domain-enumeration
+    track: Windows
+    difficulty: beginner
+    expected_duration_minutes: 60
+    prerequisites:
+    - windows-2-9-ad-fundamentals-basics
+    workbook: ''
+    competency_ids:
+    - id: WIN-022
+      weight: 0.4
+    - id: WIN-009
+      weight: 0.2
+    - id: WIN-013
+      weight: 0.2
+    - id: TH-003
+      weight: 0.2
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-1-ad-domain-enumeration.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-2-kerberoasting:
+    lab_id: windows-11-2-kerberoasting
+    track: Windows
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    prerequisites:
+    - windows-11-1-ad-domain-enumeration
+    workbook: ''
+    competency_ids:
+    - id: WIN-023
+      weight: 0.45
+    - id: WIN-013
+      weight: 0.25
+    - id: WIN-020
+      weight: 0.15
+    - id: TH-003
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-2-kerberoasting.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-3-asrep-spray:
+    lab_id: windows-11-3-asrep-spray
+    track: Windows
+    difficulty: intermediate
+    expected_duration_minutes: 80
+    prerequisites:
+    - windows-11-1-ad-domain-enumeration
+    workbook: ''
+    competency_ids:
+    - id: WIN-023
+      weight: 0.35
+    - id: WIN-012
+      weight: 0.25
+    - id: WIN-020
+      weight: 0.2
+    - id: TH-003
+      weight: 0.2
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-3-asrep-spray.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-4-acl-dacl-abuse:
+    lab_id: windows-11-4-acl-dacl-abuse
+    track: Windows
+    difficulty: advanced
+    expected_duration_minutes: 110
+    prerequisites:
+    - windows-11-2-kerberoasting
+    workbook: ''
+    competency_ids:
+    - id: WIN-024
+      weight: 0.45
+    - id: WIN-022
+      weight: 0.2
+    - id: WIN-014
+      weight: 0.15
+    - id: IR-002
+      weight: 0.2
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-4-acl-dacl-abuse.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-5-delegation-abuse:
+    lab_id: windows-11-5-delegation-abuse
+    track: Windows
+    difficulty: advanced
+    expected_duration_minutes: 110
+    prerequisites:
+    - windows-11-4-acl-dacl-abuse
+    workbook: ''
+    competency_ids:
+    - id: WIN-025
+      weight: 0.45
+    - id: WIN-013
+      weight: 0.25
+    - id: WIN-020
+      weight: 0.15
+    - id: IR-003
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-5-delegation-abuse.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-6-adcs-abuse:
+    lab_id: windows-11-6-adcs-abuse
+    track: Windows
+    difficulty: advanced
+    expected_duration_minutes: 110
+    prerequisites:
+    - windows-11-4-acl-dacl-abuse
+    workbook: ''
+    competency_ids:
+    - id: WIN-026
+      weight: 0.45
+    - id: WIN-014
+      weight: 0.2
+    - id: WIN-020
+      weight: 0.15
+    - id: IR-002
+      weight: 0.2
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-6-adcs-abuse.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-7-dcsync-tickets:
+    lab_id: windows-11-7-dcsync-tickets
+    track: Windows
+    difficulty: advanced
+    expected_duration_minutes: 130
+    prerequisites:
+    - windows-11-5-delegation-abuse
+    workbook: ''
+    competency_ids:
+    - id: WIN-027
+      weight: 0.45
+    - id: WIN-023
+      weight: 0.2
+    - id: WIN-021
+      weight: 0.15
+    - id: IR-002
+      weight: 0.2
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-7-dcsync-tickets.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-8-gpo-laps-defence:
+    lab_id: windows-11-8-gpo-laps-defence
+    track: Windows
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    prerequisites:
+    - windows-11-4-acl-dacl-abuse
+    workbook: ''
+    competency_ids:
+    - id: WIN-011
+      weight: 0.3
+    - id: WIN-028
+      weight: 0.4
+    - id: WIN-016
+      weight: 0.15
+    - id: IR-003
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-8-gpo-laps-defence.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  windows-11-9-ad-capstone:
+    lab_id: windows-11-9-ad-capstone
+    track: Windows
+    difficulty: advanced
+    expected_duration_minutes: 160
+    prerequisites:
+    - windows-11-2-kerberoasting
+    - windows-11-4-acl-dacl-abuse
+    - windows-11-7-dcsync-tickets
+    workbook: ''
+    competency_ids:
+    - id: WIN-022
+      weight: 0.2
+    - id: WIN-024
+      weight: 0.2
+    - id: WIN-028
+      weight: 0.3
+    - id: PROF-010
+      weight: 0.3
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/windows-11-9-ad-capstone.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-1-api-inventory:
+    lab_id: web-11-1-api-inventory
+    track: Web
+    difficulty: beginner
+    expected_duration_minutes: 60
+    prerequisites:
+    - web-2-2-insecure-api-endpoints
+    workbook: ''
+    competency_ids:
+    - id: APP-001
+      weight: 0.4
+    - id: APP-002
+      weight: 0.2
+    - id: WEB-012
+      weight: 0.2
+    - id: TH-003
+      weight: 0.2
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-1-api-inventory.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-2-api-bola-bfla:
+    lab_id: web-11-2-api-bola-bfla
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 80
+    prerequisites:
+    - web-11-1-api-inventory
+    workbook: ''
+    competency_ids:
+    - id: APP-002
+      weight: 0.4
+    - id: APP-003
+      weight: 0.3
+    - id: WEB-008
+      weight: 0.15
+    - id: IR-002
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-2-api-bola-bfla.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-3-graphql-security:
+    lab_id: web-11-3-graphql-security
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    prerequisites:
+    - web-11-1-api-inventory
+    workbook: ''
+    competency_ids:
+    - id: APP-005
+      weight: 0.3
+    - id: APP-006
+      weight: 0.35
+    - id: APP-007
+      weight: 0.2
+    - id: WEB-009
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-3-graphql-security.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-4-jwt-security:
+    lab_id: web-11-4-jwt-security
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    prerequisites:
+    - web-11-1-api-inventory
+    workbook: ''
+    competency_ids:
+    - id: APP-008
+      weight: 0.45
+    - id: APP-011
+      weight: 0.25
+    - id: WEB-007
+      weight: 0.15
+    - id: WEB-010
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-4-jwt-security.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-5-oauth-abuse:
+    lab_id: web-11-5-oauth-abuse
+    track: Web
+    difficulty: advanced
+    expected_duration_minutes: 100
+    prerequisites:
+    - web-11-4-jwt-security
+    workbook: ''
+    competency_ids:
+    - id: APP-009
+      weight: 0.35
+    - id: APP-010
+      weight: 0.35
+    - id: APP-011
+      weight: 0.15
+    - id: IR-003
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-5-oauth-abuse.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-6-devsecops-pipeline:
+    lab_id: web-11-6-devsecops-pipeline
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    prerequisites:
+    - web-11-1-api-inventory
+    workbook: ''
+    competency_ids:
+    - id: APP-012
+      weight: 0.35
+    - id: APP-013
+      weight: 0.3
+    - id: APP-014
+      weight: 0.2
+    - id: PROF-001
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-6-devsecops-pipeline.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-7-container-security:
+    lab_id: web-11-7-container-security
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    prerequisites:
+    - web-11-6-devsecops-pipeline
+    workbook: ''
+    competency_ids:
+    - id: APP-015
+      weight: 0.35
+    - id: APP-016
+      weight: 0.25
+    - id: APP-017
+      weight: 0.25
+    - id: NET-030
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-7-container-security.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-8-kubernetes-security:
+    lab_id: web-11-8-kubernetes-security
+    track: Web
+    difficulty: advanced
+    expected_duration_minutes: 120
+    prerequisites:
+    - web-11-7-container-security
+    workbook: ''
+    competency_ids:
+    - id: APP-018
+      weight: 0.35
+    - id: APP-019
+      weight: 0.25
+    - id: APP-020
+      weight: 0.25
+    - id: IR-002
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-8-kubernetes-security.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-9-supply-chain-integrity:
+    lab_id: web-11-9-supply-chain-integrity
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 80
+    prerequisites:
+    - web-11-6-devsecops-pipeline
+    workbook: ''
+    competency_ids:
+    - id: APP-021
+      weight: 0.4
+    - id: APP-022
+      weight: 0.3
+    - id: APP-014
+      weight: 0.15
+    - id: IR-008
+      weight: 0.15
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-9-supply-chain-integrity.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-10-modern-appsec-capstone:
+    lab_id: web-11-10-modern-appsec-capstone
+    track: Web
+    difficulty: advanced
+    expected_duration_minutes: 160
+    prerequisites:
+    - web-11-2-api-bola-bfla
+    - web-11-4-jwt-security
+    - web-11-8-kubernetes-security
+    workbook: ''
+    competency_ids:
+    - id: APP-002
+      weight: 0.25
+    - id: APP-008
+      weight: 0.25
+    - id: APP-018
+      weight: 0.25
+    - id: APP-022
+      weight: 0.25
+    evidence:
+    - type: flag
+      weight: 0.35
+      source: lab.flag
+      validation: exact_match
+    - type: validation_step
+      weight: 0.35
+      source: platform/tester/manifests/web-11-10-modern-appsec-capstone.yaml
+      validation: all_steps_pass
+    - type: analyst_answer
+      weight: 0.2
+      source: workbook.analysis_questions
+      validation: rubric
+    - type: artifact
+      weight: 0.1
+      source: submitted_artifact
+      validation: rubric
+    prohibited_collection:
+    - keystrokes
+    - mouse_movement
+    - exhaustive_terminal_history
+    assessment_reliability:
+      level: medium
+      score: 0.65
+      evidence_completeness: medium
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+    assessment_criteria:
+    - Submit the correct flag.
+    - Pass every automated test step in the lab manifest.
+    test_steps: 3
+    flag_required: true
+    content_version: 5.17.2
+    usage_rank: null
+    usage_completions: null
+    usage_source: null
+    review_status: baseline_derived
+    reviewed_at: null

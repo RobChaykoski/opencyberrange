@@ -1,0 +1,31 @@
+# Generated from platform/labs/Web/web-11-6-devsecops-pipeline/lab.yaml by scripts/generate-lab-manifests.py.
+# Do not edit by hand; change the lab definition or the generator.
+lab_id: web-11-6-devsecops-pipeline
+track: Web
+difficulty: intermediate
+source: platform/labs/Web/web-11-6-devsecops-pipeline/lab.yaml
+expected_services:
+- port: 80
+  protocol: tcp
+health_timeout_seconds: 60
+solver:
+  image: ocr-tester:latest
+  command: /tests/web-11-6-devsecops-pipeline.sh
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+    expect: ''
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/ci/secrets | grep -o 'OCR{[^}]*}'
+    expect: OCR{c1_s3cr3t_l34k}
+  - name: Confirm the token
+    command: echo OCR{c1_s3cr3t_l34k}
+    expect: OCR{c1_s3cr3t_l34k}
+expected_flag_count: 1
+expected_flag: OCR{c1_s3cr3t_l34k}
+forbidden_networks:
+- control-plane
+- database
+- other-learners
+max_memory_mb: 512
+max_cpu: 0.5

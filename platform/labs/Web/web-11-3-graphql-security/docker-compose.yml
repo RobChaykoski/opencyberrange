@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: api-graphql
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "graphql"
+      LAB_FLAG: "OCR{gr4phql_1ntr0sp3ct}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

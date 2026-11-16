@@ -394,7 +394,7 @@ docker exec ocr-backend alembic current
 
 Verify `/api/version` reports `5.17.2`, `/health` returns 200, the admin
 **Release status** panel reports **Up to date**, the 8443 workbook loads, and the
-lab list still contains the expected 191 labs. Keep the previous image tags and
+lab list still contains the expected 210 labs. Keep the previous image tags and
 the pre-deploy database dump for rollback. See
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md).
 

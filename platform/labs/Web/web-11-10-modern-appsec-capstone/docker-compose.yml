@@ -1,0 +1,14 @@
+services:
+  webapp:
+    build:
+      context: ./containers/webapp
+    hostname: appsec-capstone
+    labels:
+      ip_offset: "20"
+    environment:
+      LAB_MODE: "capstone"
+      LAB_FLAG: "OCR{m0d3rn_4pp53c_c4p}"
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+    restart: unless-stopped

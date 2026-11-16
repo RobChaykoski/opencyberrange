@@ -2,6 +2,37 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.3] - 2026-11-16
+
+### Tenant isolation
+
+- Migration `0041_tenant_rls_legacy` extends forced PostgreSQL row-level
+  security to 16 legacy learner-owned tables: `flag_attempts`,
+  `review_requests`, `survey_responses`, `user_accommodations`,
+  `accommodation_events`, `exercise_quiz_attempts`, `exercise_quiz_feedback`,
+  `exercise_reactions`, `exercise_pulse_surveys`, `course_feedback`,
+  `course_completion_resets`, `course_cohort_members`, `quiz_attempts`,
+  `open_badge_credentials`, `lti_scores`, and `activity_events`.
+- Enforced tenant tables: **25**. Each has a derived `institution_id`, a trigger,
+  forced RLS, and select/insert/update/delete policies. The tenant migration now
+  skips tables that do not exist yet at an earlier revision, so a fresh database
+  upgrades cleanly.
+- New regression tests assert the column, forced RLS, and four policies on every
+  table and probe two newly migrated tables across two institutions.
+- Authentication, secret, consent, platform-operation, and shared-definition
+  tables are classified in `docs/TENANT-ISOLATION-STATUS.md` rather than
+  force-scoped.
+
+### Curriculum
+
+- Implemented all 19 pathway labs: 9 Active Directory (`windows-11-*`) and 10
+  modern application-security (`web-11-*`) exercises.
+- Every new lab has a `lab.yaml`, a runnable container definition, a competency
+  contract, and a tester manifest. AD labs use the proven OpenLDAP base; the
+  appsec labs use a small Flask service with one mode per exercise.
+- Lab counts are **210 definitions, 210 tester manifests, 210 contracts, 182
+  workbook-mapped**; `docs/COUNTS.md` is the source of truth.
+
 ## [5.17.2] - 2026-11-16
 
 ### Fixed

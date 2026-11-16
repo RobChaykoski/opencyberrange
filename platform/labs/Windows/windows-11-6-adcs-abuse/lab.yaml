@@ -1,0 +1,68 @@
+title: 'Active Directory: AD CS Abuse'
+category: privilege-escalation
+difficulty: advanced
+estimated_time: 110
+prerequisites:
+- windows-11-4-acl-dacl-abuse
+# By completion students will be able to:
+learning_outcomes:
+- Explain how misconfigured certificate templates enable escalation
+- Identify an enrollee-supplied subject and client-authentication EKU
+- Assess the certificate-based attack path
+- Recommend template hardening and issuance approval
+mapped_skills:
+- identity_access
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Credential Access
+  technique: T1649
+  technique_name: Steal or Forge Authentication Certificates
+  detection: Monitor certificate template changes and issuance to unexpected principals.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Review a simulated AD CS template, identify the dangerous combination, and recover the assessment token.
+scenario: The LAB domain publishes a certificate template with an over-broad enrolment right. Find the template, recover the token, and harden it.
+credentials:
+- role: analyst
+  username: cn=admin,dc=lab,dc=example,dc=org
+  password: Adm1nPass2026
+  description: Directory administrator (training account)
+hints:
+- text: Look for the template metadata on the svc-adcs account.
+- text: Enrollee-supplied subject plus client authentication is the dangerous combination.
+- text: Recommend approval requirements and restricted enrolment.
+flag: OCR{4dcs_t3mpl4t3_3sc}
+test:
+  steps:
+  - name: Recover the assessment token from svc-adcs
+    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-adcs)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    expect: OCR{4dcs_t3mpl4t3_3sc}
+    timeout: 30
+  - name: Explain the defensive control in the report
+    command: echo OCR{4dcs_t3mpl4t3_3sc}
+    expect: OCR{4dcs_t3mpl4t3_3sc}
+visibility: public
+week: 11
+defensive_takeaways: Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.
+troubleshooting: If the bind fails, use the full DN and confirm the service is healthy. If the search returns nothing, confirm the base DN and the uid filter.
+difficulty_evidence: Pathway implementation with a static directory walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: ldap
+    label: LAB Directory
+    type: server
+    ip_offset: '10'
+    ports:
+    - 389
+    - 636
+    services:
+    - OpenLDAP
+    - AD-style objects

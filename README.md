@@ -1,6 +1,10 @@
 # SWOCTS Cyber Range
 
-> **Release 5 is the current release line (latest signed `v5.17.2`).**
+> **Release 5 is the current release line (latest signed `v5.17.3`).**
+>
+> **Edition: Community / Academic** (single-host, `lite` entitlement). The
+> Professional and Enterprise profiles are separate licence tiers built from the
+> same tree; multi-tenant enterprise operation is deferred past Release 5.
 >
 > Community participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 > The authoritative deployment state is the
@@ -28,7 +32,7 @@
 
 [![Platform](https://img.shields.io/badge/platform-Release%205-8b5cf6)](RELEASE_NOTES.md)
 [![Maintenance](https://img.shields.io/badge/community-1.1.3%20maintenance-blue)](docs/SUPPORTED-VERSIONS.md)
-[![Labs](https://img.shields.io/badge/labs-191-blue)](platform/labs/)
+[![Labs](https://img.shields.io/badge/labs-210-blue)](platform/labs/)
 [![Tracks](https://img.shields.io/badge/tracks-12-green)](platform/labs/)
 [![Platform](https://img.shields.io/badge/platform-Docker%20%2B%20WireGuard-orange)](Manual-Lite/00_Server_Deployment/06_Architecture.md)
 [![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue)](LICENSE)
@@ -228,18 +232,18 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **191** lab definitions; **182** expose a workbook page |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **210** lab definitions; **182** expose a workbook page |
 | Guided lab instruction | Workbook walkthroughs and analysis questions | **182 workbook-mapped labs**, with guided analysis sections and questions |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
-| Automated verification | Per-lab validation checks and flag checks | **191 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
+| Automated verification | Per-lab validation checks and flag checks | **210 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
 | Course delivery | Assignments, completion, course health, and feedback | Per-student completion, attempt, hint, time, and private feedback records |
 | Recognition | Achievement and event scoring signals | Completion, no-hint, first-attempt, speed, and first-blood signals |
 | Learner evidence | Profile, transcript, and reports | PDF transcript, completion matrix, and per-course reports |
 | Session isolation | Network separation per learner | One `/24` per session plus WireGuard access |
 
-The badge counts every `lab.yaml` under `platform/labs` (**191** today). A
-running deployment registers all **191** after discovery, and the generated
+The badge counts every `lab.yaml` under `platform/labs` (**210** today). A
+running deployment registers all **210** after discovery, and the generated
 table below lists the **182** that have a workbook page. See [Lab and content
 counts](docs/COUNTS.md) for the exact definitions.
 

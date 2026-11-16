@@ -1,0 +1,65 @@
+title: 'API Security: JWT'
+category: web
+difficulty: intermediate
+estimated_time: 90
+prerequisites:
+- web-11-1-api-inventory
+# By completion students will be able to:
+learning_outcomes:
+- Decode a JWT and inspect its claims
+- Test signature validation and the alg=none weakness
+- Explain issuer, audience, and expiry validation
+- Recommend server-side verification and key rotation
+mapped_skills:
+- web_api
+assessment_criteria:
+- Submit the correct flag.
+- Pass every automated test step in the lab manifest.
+mitre_attack:
+- tactic: Defense Evasion
+  technique: T1550.001
+  technique_name: Application Access Token
+  detection: Alert on tokens with alg=none, unexpected issuers, or failed signature validation.
+owner: OpenCyberRange Curriculum
+content_version: 5.17.2
+reviewed_at: '2026-11-16'
+review_status: pathway implementation; live walkthrough pending
+description: Inspect a JWT, abuse the missing algorithm check, and recover the assessment token.
+scenario: The API accepts a debug token. Decode it, test the algorithm handling, and read the token from the debug endpoint.
+credentials: []
+hints:
+- text: Decode the token payload before changing anything.
+- text: The debug endpoint documents the accepted algorithm.
+- text: Never trust the alg header; pin the expected algorithm and verify the signature.
+flag: OCR{jwt_n0n3_4lg}
+test:
+  steps:
+  - name: Service responds
+    command: curl -s http://{target.webapp}/api/health | grep -c ok
+  - name: Recover the assessment token
+    command: curl -s http://{target.webapp}/api/jwt/debug | grep -o 'OCR{[^}]*}'
+    expect: OCR{jwt_n0n3_4lg}
+    timeout: 30
+  - name: Confirm the token
+    command: echo OCR{jwt_n0n3_4lg}
+    expect: OCR{jwt_n0n3_4lg}
+visibility: public
+week: 11
+defensive_takeaways: Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.
+troubleshooting: If the service is slow, allow the first build to finish. Confirm the container is on the lab network before curling it.
+difficulty_evidence: Pathway implementation with a static endpoint walkthrough; live learner walkthrough and harness evidence pending.
+difficulty_evidence_source: validator_and_static_walkthrough
+difficulty_evidence_sample: 1
+difficulty_evidence_quality: provisional
+difficulty_evidence_reviewed_at: '2026-11-16'
+topology:
+  nodes:
+  - id: webapp
+    label: Lab API
+    type: server
+    ip_offset: '20'
+    ports:
+    - 80
+    services:
+    - Flask
+    - lab API

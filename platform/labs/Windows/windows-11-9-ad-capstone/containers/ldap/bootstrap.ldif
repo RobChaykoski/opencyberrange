@@ -1,0 +1,35 @@
+dn: ou=People,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: Groups
+
+dn: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Helpdesk Analyst
+sn: Analyst
+uid: analyst
+mail: analyst@lab.example.org
+userPassword: AnalystPass2026
+description: Helpdesk analyst account
+
+dn: uid=svc-capstone,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: svc-capstone
+sn: Service
+uid: svc-capstone
+mail: svc-capstone@lab.example.org
+userPassword: S3rv1cePass2026
+description: capstone evidence chain | assessment token: OCR{4d_c4pst0n3_r3p0rt}
+
+dn: cn=Helpdesk,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Helpdesk
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+
+dn: cn=Domain Admins,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Domain Admins
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org

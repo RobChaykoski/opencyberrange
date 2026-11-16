@@ -1,0 +1,37 @@
+dn: ou=People,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=lab,dc=example,dc=org
+objectClass: organizationalUnit
+ou: Groups
+
+dn: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: Helpdesk Analyst
+sn: Analyst
+uid: analyst
+mail: analyst@lab.example.org
+userPassword: AnalystPass2026
+description: Helpdesk analyst account
+
+dn: uid=svc-sql,ou=People,dc=lab,dc=example,dc=org
+objectClass: inetOrgPerson
+cn: svc-sql
+sn: Service
+uid: svc-sql
+mail: svc-sql@lab.example.org
+userPassword: S3rv1cePass2026
+memberOf: CN=SQL Admins,OU=Groups,DC=lab,DC=example,DC=org
+memberOf: CN=Domain Users,OU=Groups,DC=lab,DC=example,DC=org
+description: Domain enumeration target | assessment token: OCR{4d_d0m41n_3num}
+
+dn: cn=Helpdesk,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Helpdesk
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org
+
+dn: cn=Domain Admins,ou=Groups,dc=lab,dc=example,dc=org
+objectClass: groupOfNames
+cn: Domain Admins
+member: uid=analyst,ou=People,dc=lab,dc=example,dc=org
