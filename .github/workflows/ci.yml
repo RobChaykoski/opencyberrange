@@ -130,6 +130,9 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Install documentation checker dependency
+        run: pip install pyyaml==6.0.3
+
       - name: Check SPA security headers
         run: python scripts/check-nginx-security-headers.py
 
