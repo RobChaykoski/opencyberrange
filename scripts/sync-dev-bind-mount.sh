@@ -24,7 +24,6 @@ rsync -a \
   --exclude='*.pyc' \
   --exclude='.pytest_cache/' \
   --exclude='backups/' \
-  --exclude='app/data/about/' \
   platform/backend/ backend/
 rm -f backend/app/models.py backend/app/schemas.py
 
