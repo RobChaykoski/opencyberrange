@@ -156,6 +156,14 @@ def test_erasure_and_active_request_do_not_produce_a_server_error(
         me_future = pool.submit(me)
         deleted = delete_future.result()
         active = me_future.result()
-    assert deleted.status_code < 500, deleted.text
+    assert deleted.status_code < 500, f"{deleted.status_code}: {deleted.text}"
     assert active.status_code in {200, 401}
+    if db_session.query(User).filter(User.id == test_user.id).first() is not None:
+        # An in-flight authenticated request can create a user-owned row
+        # between erasure's cleanup pass and the final user delete. The server
+        # answers with a retryable conflict rather than a 500; the client can
+        # safely repeat the request.
+        assert deleted.status_code == 409, deleted.text
+        retried = delete()
+        assert retried.status_code < 500, f"{retried.status_code}: {retried.text}"
     assert db_session.query(User).filter(User.id == test_user.id).first() is None

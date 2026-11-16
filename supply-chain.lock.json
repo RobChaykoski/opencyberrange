@@ -25,7 +25,7 @@
       "sha256": "4e33daf5440aa286d3144424e8dac52daf6536f36c42b8319e8ea77b635e26a0"
     },
     ".github/workflows/ui-smoke.yml": {
-      "sha256": "353f7d47c289067d77fcbc7d642a328a24ddc7c74707b0163d8bdff227adb0e4"
+      "sha256": "4dd4d773bf74b9bf0cb86038ff443ad028c59176e1aa377fe37dfb544c5e6a9e"
     },
     ".trivyignore.yaml": {
       "sha256": "a95238a63e8bb0514ac76ecbd7cb89259babce4c466adf73c815f8bf0f42a1ad"
@@ -58,16 +58,16 @@
       "sha256": "b2081b39cd5505c5ec5eb6c6055de0a8a4058f62dd4c179c4fe6227e9caa13e3"
     },
     "platform/backend/pyproject.toml": {
-      "sha256": "3c19b92e2a5428519301cce08170fce7ae379dbda1932f142eed36f71315b177"
+      "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
     },
     "platform/backend/requirements-dev.txt": {
-      "sha256": "251b75970b478efabf4dad28b6143ae7d548bc29e1b02ab39b919d0e8cd329ef"
+      "sha256": "deca8e8de24ddd6206831b4f52985e8153d6b4b4b888c479b43e6acc52a27b06"
     },
     "platform/backend/requirements.txt": {
       "sha256": "8586b85b03aa61d3578d4820330759c25f37720bdff17ca1c28a4561b47795d2"
     },
     "platform/docker-compose.prod.yml": {
-      "sha256": "d3c92d848c414aff2d95b5250d539678dec875b40acf939e6b8945aaa0ba4d30"
+      "sha256": "0daf6c7c2eb6e1e905a80aaefdf16b07c96bc02598df73ba62574cc178ab8748"
     },
     "platform/frontend/Dockerfile": {
       "sha256": "a1f4aa425bd21d751a302d8e9dc3c03ab1464bca9919a907b495ece173793690"
@@ -91,10 +91,10 @@
       "sha256": "bf9a9358ba5f341677fee6fe2c2e2ab860fab8f9d38e88ce740d18ea472e46a7"
     },
     "platform/frontend/package-lock.json": {
-      "sha256": "3e631b6dc1306eed068918ec67c7e393ef3dc6107cf8a5ec01819aa758406de5"
+      "sha256": "227fff05acc5b2839302a0443a8f2fd8a47d9ec53a584cf397daf2c73ae75fe7"
     },
     "platform/frontend/package.json": {
-      "sha256": "8a76539e35f6bf523dd1d0148ae88e29d4c1838d51acfed33ada2c1b997f4c4f"
+      "sha256": "af5581eb98f85d696b9fcc4041700b5dc42f11e7a6d816e46d4ccb2f4e74e713"
     },
     "platform/frontend/security-headers.conf": {
       "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
@@ -148,7 +148,7 @@
       "sha256": "01f22cbfc56b05947194163a000305ac3a76476644dac47594842900673f416b"
     },
     "scripts/ui-smoke.mjs": {
-      "sha256": "1a1d58f28502f241387135e91373239a8c86b83c193dc2e0235292ecb4e792e3"
+      "sha256": "b9b266e5517eb35bb0614f6f41f618780b70fdc004e591d787b8d4b02a3bdb3a"
     },
     "scripts/validate-lab.py": {
       "sha256": "2ad2377f23d0a612fe85a0d326c9a668f500fbacf5be1c88c6abb147c6a01960"

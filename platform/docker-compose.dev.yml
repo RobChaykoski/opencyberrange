@@ -93,6 +93,10 @@ services:
       SETUP_TOKEN: ${SETUP_TOKEN:-}
       JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
       JWT_EXPIRATION_HOURS: ${JWT_EXPIRATION_HOURS:-24}
+      # Development warns when this is missing; production refuses to start
+      # without a separate report-signing key.
+      REPORT_SIGNING_KEY: ${REPORT_SIGNING_KEY:-}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
       WG_SERVER_ENDPOINT: ${WG_SERVER_ENDPOINT}
       WG_SERVER_PUBLIC_KEY: ${WG_SERVER_PUBLIC_KEY}
       WG_API_URL: ${WG_API_URL}
