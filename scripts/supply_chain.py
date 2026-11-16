@@ -87,6 +87,7 @@ COVERED_FILES = [
     "scripts/check-external-targets.py",
     "platform/backend/app/data/malware-samples.yaml",
     "platform/backend/app/data/external-datasets.yaml",
+    "platform/backend/app/data/owasp-security-baseline.yaml",
     "platform/backend/app/data/external-targets.yaml",
     "scripts/check-external-datasets.py",
     "scripts/fetch-external-datasets.py",

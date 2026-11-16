@@ -41,6 +41,12 @@ REFERENCE_ONLY_SOURCES = {"thezoo", "vx-underground", "pcap-attack"}
 FETCHABLE_SOURCES = {"security-datasets", "splunk-attack-data"}
 CITATION_SOURCES = {"unb-cic"}
 CONTAINER_SOURCES = {"juice-shop"}
+STANDARD_SOURCES = {
+    "owasp-api-security",
+    "owasp-top10-2025",
+    "owasp-agentic-skills",
+    "opencre",
+}
 
 
 def _read_yaml(path: Path) -> dict:
@@ -180,6 +186,14 @@ def _check_dataset(
                 errors.append(f"{label}: CIC entry needs {field}")
         if not str(dataset.get("page") or "").startswith("https://"):
             errors.append(f"{label}: CIC page must be https")
+    elif source_id in STANDARD_SOURCES:
+        if dataset.get("files"):
+            errors.append(f"{label}: a standards baseline is a reference, not a data file")
+        for field in ("citation", "licence"):
+            if not str(dataset.get(field) or "").strip():
+                errors.append(f"{label}: standards baseline needs {field}")
+        if dataset.get("access") != "reference":
+            errors.append(f"{label}: standards baseline access must be reference")
     elif source_id in CONTAINER_SOURCES:
         if dataset.get("files"):
             errors.append(f"{label}: a container lab application is not a fetched data file")
@@ -282,6 +296,7 @@ def main() -> int:
         "citation_required": sum(1 for item in datasets if item.get("source") in CITATION_SOURCES),
         "reference_only": sum(1 for item in datasets if item.get("source") in REFERENCE_ONLY_SOURCES),
         "container_images": sum(1 for item in datasets if item.get("source") in CONTAINER_SOURCES),
+        "standards": sum(1 for item in datasets if item.get("source") in STANDARD_SOURCES),
         "modules_with_external_data": sum(1 for items in module_external.values() if items),
         "errors": errors,
     }
@@ -296,6 +311,7 @@ def main() -> int:
         print(f"citation required: {report['citation_required']}")
         print(f"reference only: {report['reference_only']}")
         print(f"container lab images: {report['container_images']}")
+        print(f"standards: {report['standards']}")
         print(f"pathway modules with external data: {report['modules_with_external_data']}")
         if errors:
             for error in errors:

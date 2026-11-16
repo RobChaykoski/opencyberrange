@@ -1,0 +1,819 @@
+# OWASP security validation baseline
+#
+# One machine-readable map for the three standards the platform uses:
+#   * OWASP API Security Top 10 2023 (API lab pathway)
+#   * OWASP Top 10 2025 (web application lab pathway)
+#   * OWASP Agentic Skills Top 10 (AI security lab pathway)
+#
+# `checks` are files that prove or exercise the control. `status` is an honest
+# review state, not a certification:
+#   covered = control and regression evidence exist;
+#   partial = a control exists but a feature-level review or lab is still needed;
+#   gap     = no adequate control yet; the note names the work.
+#
+# The API and web lab slugs are planned. Adding a lab to platform/labs is a
+# separate change and must pass scripts/validate-lab.py.
+
+version: 1
+title: OWASP security validation baseline
+standards:
+  - id: owasp-api-top10-2023
+    title: OWASP API Security Top 10 2023
+    edition: 2023
+    url: https://api-security.owasp.org/editions/2023/en/0x00-header/
+    repository: https://github.com/OWASP/API-Security
+    licence: CC BY-SA 4.0
+    attribution: >-
+      OWASP API Security Top 10 2023, OWASP API Security Project team.
+      CC BY-SA 4.0. Derived mappings keep the same terms for OWASP-derived
+      portions.
+    categories:
+      - id: API1
+        title: Broken Object Level Authorization
+        status: covered
+        controls:
+          - Server-side ownership and tenant checks on every object route.
+          - Route-level auth dependency plus service-level policy decision.
+          - Two-owner / two-tenant IDOR regression matrix.
+        checks:
+          - platform/backend/tests/test_idor_matrix.py
+          - platform/backend/tests/test_horizontal_privilege.py
+          - platform/backend/tests/test_object_route_manifest.py
+        note: >-
+          Keep the object-route inventory current when a router gains a new
+          path parameter.
+      - id: API2
+        title: Broken Authentication
+        status: covered
+        controls:
+          - Argon2 password hashing, JWT signature and claim validation.
+          - Token revocation, MFA, session lifecycle, and login rate limits.
+        checks:
+          - platform/backend/tests/test_auth.py
+          - platform/backend/tests/test_jwt_validation.py
+          - platform/backend/tests/test_token_revocation.py
+          - platform/backend/tests/test_mfa.py
+        note: >-
+          SSO and service-identity token paths need the same claim and
+          revocation review when a provider is added.
+      - id: API3
+        title: Broken Object Property Level Authorization
+        status: partial
+        controls:
+          - Pydantic request/response schemas and explicit admin projections.
+          - Private fields are never returned by generic list endpoints.
+        checks:
+          - platform/backend/tests/test_input_safety.py
+          - platform/backend/tests/test_admin_users.py
+          - platform/backend/app/schemas/auth.py
+        note: >-
+          Mass-assignment review is manual. Add a schema-level test for every
+          new writable user, lab, or course field.
+      - id: API4
+        title: Unrestricted Resource Consumption
+        status: covered
+        controls:
+          - Shared rate limiter with Redis-backed counters and per-route limits.
+          - Pagination caps, request-size limits, and lab resource quotas.
+        checks:
+          - platform/backend/tests/test_ratelimit.py
+          - platform/backend/tests/test_concurrency.py
+          - platform/backend/tests/test_stress_state.py
+        note: >-
+          Multi-worker deployments must keep RATELIMIT_STORAGE_URI on a shared
+          backend; memory:// multiplies the effective limit.
+      - id: API5
+        title: Broken Function Level Authorization
+        status: covered
+        controls:
+          - Permission dependencies on protected route families.
+          - Deny-by-default RBAC/PBAC and startup route audit.
+        checks:
+          - platform/backend/tests/test_route_authorization.py
+          - platform/backend/tests/test_access_matrix.py
+          - platform/backend/tests/test_authorization_matrix.py
+        note: >-
+          Admin-only operations require the permission check at the route, not
+          only in the UI or a service helper.
+      - id: API6
+        title: Unrestricted Access to Sensitive Business Flows
+        status: partial
+        controls:
+          - Login, registration, flag, export, and certificate limits.
+          - Approval and reauthentication gates for high-impact actions.
+        checks:
+          - platform/backend/tests/test_auth.py
+          - platform/backend/tests/test_flag_submit.py
+          - platform/backend/tests/test_competitions.py
+          - platform/backend/tests/test_event_certificates.py
+        note: >-
+          Add an explicit flow-abuse review before launching a new checkout,
+          coupon, competition-join, or bulk-export flow.
+      - id: API7
+        title: Server Side Request Forgery
+        status: partial
+        controls:
+          - No user-supplied URL fetch; outbound calls use lab or platform
+            addresses from trusted state.
+          - Container and image validation; no lab metadata endpoint.
+        checks:
+          - platform/backend/tests/test_scripts_hardening.py
+          - platform/backend/tests/test_image_validation.py
+          - platform/backend/tests/test_rangebox_transport.py
+          - docs/NETWORK-SANDBOX.md
+        note: >-
+          Any new webhook, image import, or upstream URL field needs an
+          explicit allow-list and a negative test.
+      - id: API8
+        title: Security Misconfiguration
+        status: covered
+        controls:
+          - CSP, HSTS, frame and content-type headers.
+          - API docs default-off, explicit CORS origins, no debug mode.
+        checks:
+          - scripts/check-nginx-security-headers.py
+          - platform/backend/tests/test_compose_security.py
+          - platform/backend/tests/test_config_secrets.py
+        note: >-
+          The Navigator origin is an exact CSP allowance, not a wildcard.
+      - id: API9
+        title: Improper Inventory Management
+        status: partial
+        controls:
+          - Route audit, object-route manifest, about inventory, and versioned
+            API prefixes.
+        checks:
+          - platform/backend/tests/test_route_authorization.py
+          - platform/backend/tests/test_about_inventory.py
+          - docs/ARCHITECTURE.md
+        note: >-
+          There is no generated deprecation ledger. Add one before exposing a
+          second API version.
+      - id: API10
+        title: Unsafe Consumption of APIs
+        status: partial
+        controls:
+          - Fixed timeouts, TLS validation, and pinned upstream providers.
+          - SSO and outbound integrations fail closed.
+        checks:
+          - platform/backend/tests/test_sso_hardening.py
+          - platform/backend/tests/test_scripts_hardening.py
+          - platform/backend/tests/test_config_secrets.py
+          - docs/SSO-OIDC.md
+        note: >-
+          Add a contract and timeout test for every new third-party API.
+    labs:
+      - id: API-LAB-01
+        category: API1
+        title: Basket object authorization
+        slug: software-security-3-1-api-bola-basket
+        target: juice-shop
+        level: beginner
+        minutes: 60
+        objectives:
+          - Read the basket identifier from the API response.
+          - Attempt to read or modify a second fictional basket.
+          - Explain why the object identifier is not an authorization decision.
+        evidence: [request_pair, response_diff, impact_note]
+        fix: Enforce object ownership on the server for every read and write.
+      - id: API-LAB-02
+        category: API2
+        title: Token claims and session trust
+        slug: software-security-3-2-api-auth-token
+        target: juice-shop
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Inspect the login response and token claims with secrets redacted.
+          - Test an expired or tampered token in a local copy.
+          - State which validation must happen on the server.
+        evidence: [redacted_claims, authorization_decision, validation_plan]
+        fix: Validate signature, issuer, audience, expiry, and authorization.
+      - id: API-LAB-03
+        category: API3
+        title: Mass assignment and property exposure
+        slug: software-security-3-3-api-mass-assignment
+        target: juice-shop
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Find a writable property that the UI does not show.
+          - Test the property with a low-privilege account.
+          - Compare the API response with the schema the client expects.
+        evidence: [request, response, schema_gap, fix]
+        fix: Bind only allow-listed fields and project responses explicitly.
+      - id: API-LAB-04
+        category: API4
+        title: Pagination and rate-limit behaviour
+        slug: software-security-3-4-api-resource-limits
+        target: platform
+        level: beginner
+        minutes: 45
+        objectives:
+          - Read the documented pagination and rate-limit behaviour.
+          - Send a bounded sequence of requests and record the 429 response.
+          - Explain why a shared counter is required for multiple workers.
+        evidence: [bounded_request_log, 429_response, note]
+        fix: Keep shared counters, pagination caps, and per-route limits.
+      - id: API-LAB-05
+        category: API5
+        title: Function-level authorization on an admin route
+        slug: software-security-3-5-api-function-authz
+        target: platform
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Compare a learner token with an instructor token on an admin route.
+          - Record the denial and the permission that should have allowed it.
+          - Show why hiding the button is not an authorization control.
+        evidence: [two_responses, permission_map, fix]
+        fix: Require the permission at the route and in the service decision.
+      - id: API-LAB-06
+        category: API6
+        title: Sensitive flow abuse review
+        slug: software-security-3-6-api-business-flow
+        target: platform
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Map a registration, flag, or export flow and its abuse cases.
+          - Identify the rate limit, approval, or reauthentication gate.
+          - Propose one additional control and a verification step.
+        evidence: [flow_map, abuse_cases, control_plan]
+        fix: Add a server-side flow limit and an auditable approval where needed.
+      - id: API-LAB-07
+        category: API7
+        title: SSRF and outbound fetch design
+        slug: software-security-3-7-api-ssrf
+        target: custom-local
+        level: advanced
+        minutes: 90
+        objectives:
+          - Review an outbound fetch that accepts a URL.
+          - Test the allow-list against localhost, metadata, and lab ranges.
+          - Replace the fetch with a fixed destination or a reviewed allow-list.
+        evidence: [negative_test, block_log, design_fix]
+        fix: Allow-list schemes, hosts, ports, and resolved addresses; deny
+          metadata and platform networks.
+      - id: API-LAB-08
+        category: API8
+        title: API misconfiguration review
+        slug: software-security-3-8-api-misconfiguration
+        target: platform
+        level: beginner
+        minutes: 45
+        objectives:
+          - Check CORS, security headers, API docs, and error responses.
+          - Confirm that docs are off by default and origins are explicit.
+          - Record one regression check for each finding.
+        evidence: [header_table, config_review, regression_checks]
+        fix: Keep exact origins, default-off docs, and production-safe errors.
+      - id: API-LAB-09
+        category: API9
+        title: API inventory and deprecation
+        slug: software-security-3-9-api-inventory
+        target: platform
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Generate the API route and object-route inventory.
+          - Find one route with no owner or version note.
+          - Write a deprecation and retirement record.
+        evidence: [inventory, gap_note, deprecation_record]
+        fix: Keep a generated route inventory and a deprecation ledger.
+      - id: API-LAB-10
+        category: API10
+        title: Unsafe upstream consumption
+        slug: software-security-3-10-api-upstream
+        target: custom-local
+        level: advanced
+        minutes: 75
+        objectives:
+          - Review an outbound integration's timeout, TLS, and error handling.
+          - Simulate a malformed upstream response in a local mock.
+          - Show that the failure is contained and auditable.
+        evidence: [contract_check, failure_test, containment_note]
+        fix: Validate the response, bound the timeout, and fail closed.
+
+  - id: owasp-top10-2025
+    title: OWASP Top 10 2025
+    edition: 2025
+    url: https://top10.owasp.org/2025/
+    repository: https://github.com/OWASP/Top10
+    licence: CC BY 3.0
+    attribution: >-
+      OWASP Top 10 2025, OWASP Top 10 Team. CC BY 3.0.
+    categories:
+      - id: A01
+        title: Broken Access Control
+        status: covered
+        controls:
+          - Server-side object, tenant, course, and role checks.
+          - Deny-by-default RBAC/PBAC and route audit.
+        checks:
+          - platform/backend/tests/test_idor_matrix.py
+          - platform/backend/tests/test_tenant_rls.py
+          - platform/backend/tests/test_access_matrix.py
+        note: Keep the two-owner matrix current for every new object family.
+      - id: A02
+        title: Security Misconfiguration
+        status: covered
+        controls:
+          - CSP, HSTS, frame and content-type headers.
+          - Explicit CORS, default-off docs, secret validation.
+        checks:
+          - scripts/check-nginx-security-headers.py
+          - platform/backend/tests/test_compose_security.py
+          - platform/backend/tests/test_config_secrets.py
+        note: Recheck headers after every frontend proxy change.
+      - id: A03
+        title: Software Supply Chain Failures
+        status: covered
+        controls:
+          - Signed supply-chain lock, pinned actions and images.
+          - SBOM, image scan, release signing, third-party notices.
+        checks:
+          - scripts/supply_chain.py
+          - platform/backend/tests/test_software_integrity.py
+          - docs/SUPPLY-CHAIN.md
+          - .github/workflows/trivy.yml
+        note: Regenerate and sign the lock for every release tree.
+      - id: A04
+        title: Cryptographic Failures
+        status: covered
+        controls:
+          - Argon2 passwords, Fernet-encrypted secrets, TLS.
+          - JWT signing, rotation, and key custody.
+        checks:
+          - platform/backend/tests/test_crypto_rotation.py
+          - platform/backend/tests/test_jwt_validation.py
+          - platform/backend/tests/test_password_policy.py
+        note: Review key rotation and cipher choices when a provider changes.
+      - id: A05
+        title: Injection
+        status: covered
+        controls:
+          - Parameterized SQL, schema validation, output encoding.
+          - Formula and spreadsheet-injection guards on exports.
+        checks:
+          - platform/backend/tests/test_input_safety.py
+          - scripts/lint_sql_safety.py
+          - platform/backend/tests/test_scripts_hardening.py
+        note: Add a regression for every new query builder or export path.
+      - id: A06
+        title: Insecure Design
+        status: partial
+        controls:
+          - Threat model, production change control, approval gates.
+          - Separation of duties and explicit data-flow assumptions.
+        checks:
+          - platform/backend/tests/test_production_control.py
+          - docs/ARCHITECTURE.md
+          - docs/RBAC-PBAC.md
+        note: >-
+          Add a short design review to the lab and feature template so new
+          flows state their abuse cases before implementation.
+      - id: A07
+        title: Authentication Failures
+        status: covered
+        controls:
+          - Login throttling, MFA, breach checks, token revocation.
+          - Session lifecycle and password policy.
+        checks:
+          - platform/backend/tests/test_auth.py
+          - platform/backend/tests/test_auth_lifecycle.py
+          - platform/backend/tests/test_mfa.py
+          - platform/backend/tests/test_password_breach.py
+        note: Keep SSO and service-identity paths in the same review.
+      - id: A08
+        title: Software or Data Integrity Failures
+        status: covered
+        controls:
+          - Signed release lock, content hashes, export labels.
+          - Append-only security events and data-integrity status.
+        checks:
+          - supply-chain.lock.json
+          - platform/backend/tests/test_software_integrity.py
+          - platform/backend/tests/test_data_integrity_status.py
+          - platform/backend/tests/test_export_labels.py
+        note: Verify the signature, not only the lock file.
+      - id: A09
+        title: Security Logging and Alerting Failures
+        status: covered
+        controls:
+          - Append-only security events, audit history, request coverage.
+          - Sensitive-action reasons and actor context.
+        checks:
+          - platform/backend/tests/test_security_events.py
+          - platform/backend/tests/test_audit_history.py
+          - docs/SECURITY-EVENTS.md
+        note: Add an alert rule for every new high-impact event type.
+      - id: A10
+        title: Mishandling of Exceptional Conditions
+        status: partial
+        controls:
+          - Input validation, bounded retries, cleanup and health checks.
+          - Fail-closed handling for security-sensitive errors.
+        checks:
+          - platform/backend/tests/test_crash_cleanup.py
+          - platform/backend/tests/test_resource_cleanup.py
+          - platform/backend/tests/test_health.py
+          - platform/backend/tests/test_input_safety.py
+        note: >-
+          Add a shared error taxonomy so a new route cannot leak a stack trace
+          or turn a validation failure into a 500.
+    labs:
+      - id: WEB-LAB-01
+        category: A01
+        title: Access control across two accounts
+        slug: software-security-4-1-web-access-control
+        target: juice-shop
+        level: beginner
+        minutes: 60
+        objectives:
+          - Compare two fictional accounts on the same object route.
+          - Prove whether the server enforces ownership.
+          - Write the missing server-side check.
+        evidence: [request_pair, authorization_decision, fix]
+        fix: Enforce ownership and role on the server for every object.
+      - id: WEB-LAB-02
+        category: A02
+        title: Browser and API misconfiguration
+        slug: software-security-4-2-web-misconfiguration
+        target: platform
+        level: beginner
+        minutes: 45
+        objectives:
+          - Review CSP, CORS, HSTS, docs exposure, and error bodies.
+          - Explain which control is preventive and which is detective.
+          - Add a regression check for one finding.
+        evidence: [header_table, config_note, regression_check]
+        fix: Keep exact origins, default-off docs, and safe error responses.
+      - id: WEB-LAB-03
+        category: A03
+        title: Dependency and artifact provenance
+        slug: software-security-4-3-web-supply-chain
+        target: platform
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Read the supply-chain lock and a package provenance record.
+          - Find one unpinned or unreviewed dependency.
+          - Write the pin, hash, and review action.
+        evidence: [lock_diff, provenance_note, pin_plan]
+        fix: Pin, hash, sign, and review every shipped artifact.
+      - id: WEB-LAB-04
+        category: A04
+        title: Password and token cryptography
+        slug: software-security-4-4-web-cryptography
+        target: platform
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Identify the password hash and token signing algorithm.
+          - Explain why a fast hash or a client-side secret fails.
+          - Write a rotation and verification step.
+        evidence: [algorithm_inventory, risk_note, rotation_plan]
+        fix: Use slow password hashing and server-side token verification.
+      - id: WEB-LAB-05
+        category: A05
+        title: Injection from input to sink
+        slug: software-security-4-5-web-injection
+        target: juice-shop
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Trace one input to a query, command, or browser sink.
+          - Prove the result with a harmless marker.
+          - Replace concatenation with a safe API.
+        evidence: [payload, sink_trace, safe_fix]
+        fix: Parameterize queries and encode at the output context.
+      - id: WEB-LAB-06
+        category: A06
+        title: Design review of a checkout flow
+        slug: software-security-4-6-web-insecure-design
+        target: juice-shop
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Draw the checkout trust boundaries and abuse cases.
+          - Identify one missing business rule.
+          - Add a server-side control and a test.
+        evidence: [threat_model, abuse_cases, control_test]
+        fix: Put business rules in the server design, not only the UI.
+      - id: WEB-LAB-07
+        category: A07
+        title: Authentication and session failures
+        slug: software-security-4-7-web-authentication
+        target: juice-shop
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Review login, reset, MFA, and session behaviour.
+          - Test one weak control in a local copy.
+          - Document the server-side fix and the user-visible effect.
+        evidence: [flow_map, negative_test, fix]
+        fix: Bound attempts, verify tokens, and revoke sessions on change.
+      - id: WEB-LAB-08
+        category: A08
+        title: Integrity of a release artifact
+        slug: software-security-4-8-web-integrity
+        target: platform
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Verify a signed lock and a lab image digest.
+          - Change one byte and observe the failure.
+          - Explain why a hash without a trust anchor is insufficient.
+        evidence: [verification_log, tamper_test, note]
+        fix: Sign the release and verify before deploy.
+      - id: WEB-LAB-09
+        category: A09
+        title: From event to alert
+        slug: software-security-4-9-web-logging
+        target: platform
+        level: beginner
+        minutes: 45
+        objectives:
+          - Trace a sensitive action to its security event.
+          - Check the actor, reason, target, and outcome.
+          - Write one alert rule and one false-positive note.
+        evidence: [event_record, field_check, alert_rule]
+        fix: Log the decision, not only the request, and alert on the outcome.
+      - id: WEB-LAB-10
+        category: A10
+        title: Exceptional conditions and safe failure
+        slug: software-security-4-10-web-exceptions
+        target: platform
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Send malformed and oversized input to a local endpoint.
+          - Compare the validation error with a server failure.
+          - Add a bounded error path and a cleanup check.
+        evidence: [input_matrix, error_diff, cleanup_check]
+        fix: Validate early, bound retries, and fail closed without leaking.
+
+  - id: owasp-agentic-skills-top10
+    title: OWASP Agentic Skills Top 10
+    edition: "1.0-2026"
+    url: https://owasp.github.io/www-project-agentic-skills-top-10/
+    repository: https://github.com/OWASP/www-project-agentic-skills-top-10
+    licence: CC BY-SA 4.0
+    attribution: >-
+      OWASP Agentic Skills Top 10 (AST10), OWASP Agentic Skills Top 10 project
+      team. CC BY-SA 4.0. The platform uses the categories as an AI security
+      review baseline; it does not install or execute third-party skills.
+    categories:
+      - id: AST01
+        title: Malicious Skills
+        status: partial
+        controls:
+          - No automatic skill install; no third-party skill execution.
+          - Prompt-injection labs use synthetic content only.
+        checks:
+          - platform/labs/AI/ai-1-1-prompt-injection-basics/lab.yaml
+          - platform/labs/AI/ai-1-3-indirect-prompt-injection/lab.yaml
+          - docs/AI-SECURITY-AGENTIC-LABS.md
+        note: >-
+          Add a malicious-skill review lab that inspects a manifest without
+          running it.
+      - id: AST02
+        title: Supply Chain Compromise
+        status: covered
+        controls:
+          - Signed supply-chain lock and pinned dependencies.
+          - No unverified skill registry is enabled.
+        checks:
+          - scripts/supply_chain.py
+          - supply-chain.lock.json
+          - docs/SUPPLY-CHAIN.md
+        note: Keep the skill and model supply chain out of the runtime until a
+          provenance review exists.
+      - id: AST03
+        title: Over-Privileged Skills
+        status: covered
+        controls:
+          - Deny-by-default RBAC/PBAC and least-privilege service identities.
+          - AI authoring keys are encrypted and owner-only.
+        checks:
+          - platform/backend/app/security/permissions.py
+          - platform/backend/tests/test_access_matrix.py
+          - docs/RBAC-PBAC.md
+        note: Review the permission scope of any future agent tool.
+      - id: AST04
+        title: Insecure Metadata
+        status: partial
+        controls:
+          - Schema validation and safe text handling for lab content.
+          - No YAML or JSON is executed as code.
+        checks:
+          - platform/backend/tests/test_input_safety.py
+          - platform/backend/tests/test_lab_text.py
+          - scripts/check-doc-assets.py
+        note: Add a manifest-parser lab with hidden keys and a safe parser.
+      - id: AST05
+        title: Untrusted External Instructions
+        status: partial
+        controls:
+          - External content is fetched by authors, not by learner labs.
+          - Indirect prompt-injection labs use offline synthetic pages.
+        checks:
+          - platform/labs/AI/ai-1-3-indirect-prompt-injection/lab.yaml
+          - docs/MINOR-SAFE-DEFAULTS.md
+          - docs/ANTI-SCRAPING.md
+        note: >-
+          Add an instruction-pinning lab that compares a pinned copy with a
+          changed upstream page.
+      - id: AST06
+        title: Weak Isolation
+        status: covered
+        controls:
+          - Lab isolation, egress deny, disposable storage, and teardown.
+          - No third-party agent process runs on the host.
+        checks:
+          - platform/backend/tests/test_compose_security.py
+          - scripts/audit-lab-isolation.py
+          - docs/NETWORK-SANDBOX.md
+        note: Keep the AI lab target inside the same default-deny network.
+      - id: AST07
+        title: Update Drift
+        status: covered
+        controls:
+          - Immutable pins and SHA-256 checks for external resources.
+          - Signed supply-chain lock and dataset hashes.
+        checks:
+          - platform/backend/app/data/external-datasets.yaml
+          - scripts/check-external-datasets.py
+          - platform/backend/tests/test_software_integrity.py
+        note: Any future model or skill pin must include a digest.
+      - id: AST08
+        title: Poor Scanning
+        status: partial
+        controls:
+          - Static review, link checks, secret scans, and dataset validation.
+          - No single pattern match is treated as a safety decision.
+        checks:
+          - scripts/check-external-datasets.py
+          - scripts/check-links.py
+          - platform/backend/tests/test_input_safety.py
+        note: Add a lab that bypasses a naive keyword scanner with a benign
+          paraphrase, then writes a behavioural check.
+      - id: AST09
+        title: No Governance
+        status: partial
+        controls:
+          - Security events, audit history, RBAC reasons, and change control.
+          - AI authoring is optional and owner-scoped.
+        checks:
+          - platform/backend/tests/test_security_events.py
+          - platform/backend/tests/test_audit_history.py
+          - docs/SECURITY-EVENTS.md
+        note: Add an AI-skill inventory and approval record before enabling a
+          third-party skill.
+      - id: AST10
+        title: Cross-Platform Reuse
+        status: partial
+        controls:
+          - Lab content is platform-neutral and stored as reviewed text.
+          - No skill manifest is imported from another agent platform.
+        checks:
+          - docs/AI-SECURITY-AGENTIC-LABS.md
+          - docs/EDUCATIONAL-PROVENANCE.md
+          - docs/LEARNING-FRAMEWORK.md
+        note: Add a universal-manifest mapping exercise with a reviewed schema.
+    labs:
+      - id: AI-LAB-01
+        category: AST01
+        title: Inspect a malicious skill manifest
+        slug: ai-2-1-malicious-skill-triage
+        target: custom-local
+        level: beginner
+        minutes: 60
+        objectives:
+          - Read a fictional skill manifest without executing it.
+          - Identify hidden instructions, unexpected commands, and data paths.
+          - Write a block or approve decision with a reason.
+        evidence: [manifest_review, decision, block_reason]
+        fix: Sign, scan, and review a skill before it reaches an agent.
+      - id: AI-LAB-02
+        category: AST02
+        title: Skill provenance and registry trust
+        slug: ai-2-2-skill-provenance
+        target: platform
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Compare a signed and an unsigned skill package.
+          - Trace the publisher, version, hash, and review record.
+          - Reject the package that fails the provenance chain.
+        evidence: [provenance_table, rejection, verification_log]
+        fix: Require publisher identity, a signature, and a pinned digest.
+      - id: AI-LAB-03
+        category: AST03
+        title: Reduce an over-privileged skill
+        slug: ai-3-1-skill-least-privilege
+        target: custom-local
+        level: intermediate
+        minutes: 60
+        objectives:
+          - List the permissions a skill requests.
+          - Remove every permission the workflow does not need.
+          - Show the workflow still succeeds with the reduced scope.
+        evidence: [permission_diff, success_run, note]
+        fix: Apply least privilege to the manifest and the runtime identity.
+      - id: AI-LAB-04
+        category: AST04
+        title: Insecure metadata and hidden keys
+        slug: ai-3-2-skill-metadata-review
+        target: custom-local
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Parse a manifest with duplicate, hidden, or nested keys.
+          - Show how a naive parser and a safe parser disagree.
+          - Write the schema and rejection rule.
+        evidence: [parser_diff, schema, rejection_rule]
+        fix: Validate against a strict schema and reject unknown or duplicate
+          keys.
+      - id: AI-LAB-05
+        category: AST05
+        title: Pin untrusted external instructions
+        slug: ai-3-3-external-instruction-pinning
+        target: custom-local
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Compare a pinned instruction page with a changed copy.
+          - Identify an instruction that changes the agent's goal.
+          - Add a hash and review gate before use.
+        evidence: [diff, goal_change_note, pin_record]
+        fix: Pin content by hash and rescan on every update.
+      - id: AI-LAB-06
+        category: AST06
+        title: Isolate an agent workflow
+        slug: ai-4-1-agent-isolation
+        target: platform
+        level: intermediate
+        minutes: 75
+        objectives:
+          - Draw the agent, tool, and data boundaries.
+          - Confirm no egress, no host mount, and no shared secret.
+          - Test teardown and state reset.
+        evidence: [boundary_diagram, isolation_checks, teardown_log]
+        fix: Run the agent in a disposable container with default-deny egress.
+      - id: AI-LAB-07
+        category: AST07
+        title: Detect update drift
+        slug: ai-4-2-skill-update-drift
+        target: platform
+        level: beginner
+        minutes: 45
+        objectives:
+          - Pin a manifest by version and digest.
+          - Replace one byte in a local copy.
+          - Show the verification failure and the safe fallback.
+        evidence: [pin_record, tamper_result, fallback_note]
+        fix: Refuse an unpinned or mismatched skill update.
+      - id: AI-LAB-08
+        category: AST08
+        title: Scanner bypass and behavioural review
+        slug: ai-4-3-skill-scanner-review
+        target: custom-local
+        level: advanced
+        minutes: 75
+        objectives:
+          - Bypass a naive keyword scanner with a benign paraphrase.
+          - Explain why the scanner missed the behaviour.
+          - Write a behavioural check and a human review step.
+        evidence: [bypass_note, behavioural_check, review_decision]
+        fix: Combine static, semantic, and behavioural review; never rely on
+          one pattern match.
+      - id: AI-LAB-09
+        category: AST09
+        title: Skill inventory and approval
+        slug: ai-4-4-skill-governance
+        target: platform
+        level: beginner
+        minutes: 45
+        objectives:
+          - Build an inventory of fictional skills and owners.
+          - Add an approval, review date, and revocation path.
+          - Record the audit event for one decision.
+        evidence: [inventory, approval_record, audit_event]
+        fix: >-
+          Govern skills like service identities with an owner, scope, review,
+          and revocation path.
+      - id: AI-LAB-10
+        category: AST10
+        title: Cross-platform manifest mapping
+        slug: ai-4-5-skill-cross-platform
+        target: custom-local
+        level: intermediate
+        minutes: 60
+        objectives:
+          - Map two fictional platform manifests to one reviewed schema.
+          - Identify fields that change meaning across platforms.
+          - Write a portability warning and a safe import rule.
+        evidence: [mapping_table, semantic_diff, import_rule]
+        fix: Use a reviewed universal schema and reject unmapped fields.

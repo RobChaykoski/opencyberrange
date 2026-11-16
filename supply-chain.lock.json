@@ -151,13 +151,16 @@
       "sha256": "1f11ed5463247c2e30535a95b1dcda4c3937b6904fd27732dbe7af953d8b4922"
     },
     "platform/backend/app/data/external-datasets.yaml": {
-      "sha256": "539699a78006cafbe7f0e40a2491d3b81b487a547aad115dd1810c2bd2195fbd"
+      "sha256": "d49764e62a67fc78064da9baf6716f5098e3020d7bc8bec774895937163bcbd7"
     },
     "platform/backend/app/data/external-targets.yaml": {
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
+    },
+    "platform/backend/app/data/owasp-security-baseline.yaml": {
+      "sha256": "cf3f1fd5e76c52885679d3c6f903c40d751556e66771b9bc4747a229cd2089cd"
     },
     "platform/backend/app/data/software-integrity.json": {
       "sha256": "fbd0ea43050d6758b40aca146718f04a52a72288b2eed2b677cca9ba5d98be66"
@@ -205,10 +208,10 @@
       "sha256": "5e773728234f776d387017e7fe46368a308fc80167c64ffdd6d2a46e86cf4b9e"
     },
     "platform/frontend/nginx-ssl.conf": {
-      "sha256": "c5741dbb294018f6124ea0df1b4a1cbe6c99443a90d78ca200d003e1c3c043e8"
+      "sha256": "1bda0d8dd005ffeedab25cb16ed21fed94e3de51187c6b447bcac5f5319d4860"
     },
     "platform/frontend/nginx.conf": {
-      "sha256": "e4a9eb11c9a357506610bbaca2acb4689fa2f22e313f9be0e053b0a605c58298"
+      "sha256": "de3f29cd52cfcd2875a792d8dbfb1ca116c24047070cff0048010e51f204eafa"
     },
     "platform/frontend/package-lock.json": {
       "sha256": "76c7afdcd9855159ff433060072ddd3e6917f78c48a452a6b8df815a85b4849e"
@@ -217,7 +220,7 @@
       "sha256": "ad3b29316b741671a2b2576952bb75a29342dfa888c91df1be0470a8584b3126"
     },
     "platform/frontend/security-headers.conf": {
-      "sha256": "1020a6e3ce249010704b6c92b7077fc661ed499fe58654b7a960299a67254152"
+      "sha256": "b73d351dc1897888b5b4b5338f9199a00aebdb3bb97bc13b863259197ac7abbd"
     },
     "platform/frontend/src/composables/useToolPanel.js": {
       "sha256": "2af94f01e1971686c7dd0ca2b94552cd6537f1802a3c3ccf0974fce6611d951e"
@@ -265,7 +268,7 @@
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
     "scripts/check-external-datasets.py": {
-      "sha256": "772e9c2f4e3ffdfdd93f94df0eb4ac0b829db2e70b72bbc5b162847518e4451f"
+      "sha256": "85b30aca7337362a1934ccccb764c633278e43e815a04fe56165dd7a37af00d4"
     },
     "scripts/check-external-targets.py": {
       "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"
@@ -328,7 +331,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "59d0df00ad4cc03e7fb3f95bdaa6596a3d4a5c98c94a87c208871f4bbeae147c"
+      "sha256": "5fec509dff15513cedaeba04b107398e7ed0951e6fff36f1721d23c1435532a9"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"

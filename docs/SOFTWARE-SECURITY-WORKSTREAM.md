@@ -222,7 +222,10 @@ Not yet done:
 target resource, not a replacement for the dependency-free
 `_swsec_shared` starter.
 
-The proposed sequence is in [`JUICE-SHOP-LABS.md`](JUICE-SHOP-LABS.md):
+The proposed sequence is in [`JUICE-SHOP-LABS.md`](JUICE-SHOP-LABS.md), with
+the API-specific sequence in [`API-SECURITY-LABS.md`](API-SECURITY-LABS.md) and
+the OWASP Top 10 2025 sequence in
+[`OWASP-TOP10-LABS.md`](OWASP-TOP10-LABS.md).
 
 | Lab | Focus | Evidence |
 |---|---|---|

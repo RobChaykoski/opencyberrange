@@ -103,6 +103,24 @@ to this repository.
   (`bkimminich/juice-shop:v20.4.0@sha256:9bba…`) on an isolated network with
   no egress. The notice is `THIRD_PARTY_LICENSES/Juice-Shop-MIT.txt`. Juice
   Shop is not affiliated with or endorsed by OpenCyberRange.
+- **OWASP API Security Top 10 2023** (CC BY-SA 4.0,
+  <https://api-security.owasp.org/editions/2023/en/0x00-header/>). The API
+  security validation baseline from the OWASP API Security Project team. The
+  notice is `THIRD_PARTY_LICENSES/OWASP-API-Top10-2023-CC-BY-SA-4.0-NOTICE.txt`.
+  Keep the attribution and share-alike terms with any copied category text.
+- **OWASP Top 10 2025** (CC BY 3.0, <https://top10.owasp.org/2025/>). The
+  application-security validation baseline from the OWASP Top 10 Team. The
+  notice is `THIRD_PARTY_LICENSES/OWASP-Top10-2025-CC-BY-3.0-NOTICE.txt`.
+- **OWASP Agentic Skills Top 10** (CC BY-SA 4.0,
+  <https://owasp.github.io/www-project-agentic-skills-top-10/>). The AI skill
+  security baseline from the OWASP Agentic Skills Top 10 project team. The
+  notice is
+  `THIRD_PARTY_LICENSES/OWASP-Agentic-Skills-Top10-CC-BY-SA-4.0-NOTICE.txt`.
+  Keep the attribution and share-alike terms with any copied category text.
+- **OpenCRE** (CC0-1.0, <https://www.opencre.org/explorer>). The Open Common
+  Requirement Enumeration index from the OWASP OpenCRE project. The notice is
+  `THIRD_PARTY_LICENSES/OpenCRE-CC0-1.0-NOTICE.txt`. CC0 does not require
+  attribution; the project is credited here.
 - **theZoo** (GPL-3.0-or-later for tooling; malware samples expressly
   excluded, <https://github.com/ytisf/theZoo>). A live-malware reference
   collection by Yuval Nativ, Lahad Ludar,

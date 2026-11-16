@@ -74,7 +74,9 @@ tmpfs is disposable; removing the container resets the application.
 ## Lab sequence
 
 The sequence is ordered. It starts browser-only and adds one evidence type at a
-time.
+time. The API-focused sequence is in
+[`API-SECURITY-LABS.md`](API-SECURITY-LABS.md); the OWASP Top 10 2025 sequence is
+in [`OWASP-TOP10-LABS.md`](OWASP-TOP10-LABS.md).
 
 ### JSEC-JS-01 — Application reconnaissance and threat model
 

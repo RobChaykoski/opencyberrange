@@ -182,6 +182,102 @@ sources:
       range. The application contains deliberate vulnerabilities; that is the
       teaching point, not a production deployment.
 
+  - id: owasp-api-security
+    name: OWASP API Security Top 10 2023
+    homepage: https://api-security.owasp.org/editions/2023/en/0x00-header/
+    repository: https://github.com/OWASP/API-Security
+    licence: CC BY-SA 4.0
+    licence_url: https://creativecommons.org/licenses/by-sa/4.0/
+    copyright: >-
+      Copyright (c) 2023 OWASP API Security Project team. Licensed under
+      Creative Commons Attribution-ShareAlike 4.0 International.
+    attribution: >-
+      OWASP API Security Top 10 2023, OWASP API Security Project team. The
+      categories and definitions are used as a validation baseline and must be
+      attributed. Derived mappings are shared under the same licence for the
+      OWASP-derived portions.
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    pin: null
+    pin_kind: edition
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the ten categories as an API security review baseline. Do not copy
+      the OWASP text into a lab handout without the CC BY-SA 4.0 notice and
+      share-alike terms.
+
+  - id: owasp-top10-2025
+    name: OWASP Top 10 2025
+    homepage: https://top10.owasp.org/2025/
+    repository: https://github.com/OWASP/Top10
+    licence: CC BY 3.0
+    licence_url: https://creativecommons.org/licenses/by/3.0/
+    copyright: >-
+      Copyright (c) 2021-2025 OWASP Top 10 Team. Licensed under Creative
+      Commons Attribution 3.0 Unported.
+    attribution: >-
+      OWASP Top 10 2025, OWASP Top 10 Team. The categories and definitions are
+      used as an application-security validation baseline and must be
+      attributed.
+    redistribution: allowed_with_attribution
+    access: reference
+    pin: null
+    pin_kind: edition
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the ten categories as a web application security review baseline.
+      Keep the OWASP attribution with any copied category description.
+
+  - id: owasp-agentic-skills
+    name: OWASP Agentic Skills Top 10
+    homepage: https://owasp.github.io/www-project-agentic-skills-top-10/
+    repository: https://github.com/OWASP/www-project-agentic-skills-top-10
+    licence: CC BY-SA 4.0
+    licence_url: https://creativecommons.org/licenses/by-sa/4.0/
+    copyright: >-
+      Copyright (c) 2026 OWASP Agentic Skills Top 10 project team. Licensed
+      under Creative Commons Attribution-ShareAlike 4.0 International.
+    attribution: >-
+      OWASP Agentic Skills Top 10 (AST10), OWASP Agentic Skills Top 10 project
+      team. The categories are used as an AI-security review baseline and must
+      be attributed; derived mappings keep the same terms for OWASP-derived
+      portions.
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    pin: null
+    pin_kind: edition
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the ten categories for AI skill governance, review, and lab design.
+      The platform does not install or execute a third-party agent skill.
+
+  - id: opencre
+    name: OpenCRE
+    homepage: https://www.opencre.org/
+    repository: https://github.com/OWASP/OpenCRE
+    licence: CC0-1.0
+    licence_url: https://creativecommons.org/publicdomain/zero/1.0/
+    copyright: >-
+      OpenCRE catalog and mapping data are released under CC0-1.0 by the OWASP
+      OpenCRE project and contributors.
+    attribution: >-
+      OpenCRE (Open Common Requirement Enumeration) is an OWASP project that
+      links security requirements across standards. Attribution is not
+      required by CC0-1.0, but the project is credited here.
+    redistribution: public_domain
+    access: reference
+    pin: null
+    pin_kind: live_index
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the OpenCRE Explorer to cross-map a requirement to standards and
+      guidance. The live index changes; record the CRE identifier and the
+      access date in the lab or review note rather than copying the index.
+
   - id: aman-hardikar-forensics
     name: Aman Hardikar Forensics Practice Lab mind map
     homepage: https://www.amanhardikar.com/mindmaps/ForensicChallenges.html
@@ -809,6 +905,89 @@ datasets:
         sha256: 1f65d7160245d317f1a9531f26390d483320c0f4fbefe875bfe0ac4ffd287c15
         media_type: application/json
         lfs: true
+
+  # OWASP standards (reference baselines)
+  - source: owasp-api-security
+    id: owasp-api-security-top10-2023
+    title: OWASP API Security Top 10 2023
+    kind: standard
+    platform: [API]
+    attack: []
+    tags: [owasp, api-security, validation-baseline]
+    lab_modules: []
+    use: >-
+      The ten-category API security baseline for platform route review and the
+      API lab pathway. It covers object and function authorization,
+      authentication, property exposure, resource consumption, business-flow
+      abuse, SSRF, misconfiguration, inventory, and unsafe upstream use.
+    citation: >-
+      OWASP API Security Top 10 2023, OWASP API Security Project team,
+      https://api-security.owasp.org/editions/2023/en/0x00-header/.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-top10-2025
+    id: owasp-top10-2025
+    title: OWASP Top 10 2025
+    kind: standard
+    platform: [Web]
+    attack: []
+    tags: [owasp, application-security, validation-baseline]
+    lab_modules: []
+    use: >-
+      The ten-category application-security baseline for web, platform, and
+      supply-chain review and the web lab pathway. It covers access control,
+      misconfiguration, supply chain, cryptography, injection, design,
+      authentication, integrity, logging, and exceptional conditions.
+    citation: >-
+      OWASP Top 10 2025, OWASP Top 10 Team, https://top10.owasp.org/2025/.
+    licence: CC BY 3.0
+    redistribution: allowed_with_attribution
+    access: reference
+    files: []
+
+  - source: owasp-agentic-skills
+    id: owasp-agentic-skills-top10
+    title: OWASP Agentic Skills Top 10
+    kind: standard
+    platform: [AI]
+    attack: []
+    tags: [owasp, ai-security, agentic, validation-baseline]
+    lab_modules: []
+    use: >-
+      The ten-category AI skill security baseline for platform review and the
+      agentic AI lab pathway. It covers malicious skills, supply chain,
+      over-privilege, metadata, external instructions, isolation, update drift,
+      scanning, governance, and cross-platform reuse.
+    citation: >-
+      OWASP Agentic Skills Top 10 (AST10), OWASP Agentic Skills Top 10 project
+      team, https://owasp.github.io/www-project-agentic-skills-top-10/.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: opencre
+    id: opencre-explorer
+    title: OpenCRE requirement explorer
+    kind: standard_index
+    platform: [Web, API, AI]
+    attack: []
+    tags: [opencre, security-requirements, cross-standard-mapping]
+    lab_modules: []
+    use: >-
+      Cross-map a platform requirement to related controls in OWASP, NIST,
+      ISO, and other standards. Use it to support a review note or to design a
+      lab's defensive takeaway; record the CRE identifier and access date.
+    citation: >-
+      OpenCRE (Open Common Requirement Enumeration), OWASP OpenCRE project,
+      https://www.opencre.org/explorer.
+    licence: CC0-1.0
+    redistribution: public_domain
+    access: reference
+    files: []
 
   # OWASP Juice Shop (MIT, pinned lab application)
   - source: juice-shop

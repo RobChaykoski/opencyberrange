@@ -20,6 +20,10 @@ A link is not a licence. The sources below have different terms:
 | [**PCAP-ATTACK**](https://github.com/sbousseaden/PCAP-ATTACK) | No licence declared | Forbidden | Reference only | Commit `9ef5476d` |
 | [**Aman Hardikar Forensics Practice Lab mind map**](https://www.amanhardikar.com/mindmaps/ForensicChallenges.html) | Free to use and share; attribution requested | Allowed with attribution | Reference only | Page |
 | [**OWASP Juice Shop**](https://juice-shop.github.io/) | MIT | Allowed with the MIT notice | Pinned container image | `v20.4.0@sha256:9bba…` |
+| [**OWASP API Security Top 10 2023**](https://api-security.owasp.org/editions/2023/en/0x00-header/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | 2023 edition |
+| [**OWASP Top 10 2025**](https://top10.owasp.org/2025/) | CC BY 3.0 | Allowed with attribution | Reference | 2025 edition |
+| [**OWASP Agentic Skills Top 10**](https://owasp.github.io/www-project-agentic-skills-top-10/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | 1.0-2026 |
+| [**OpenCRE**](https://www.opencre.org/explorer) | CC0-1.0 | Public domain | Reference index | Live |
 
 If a source has no declared licence, the default is **reference only**. Public
 visibility does not grant permission to copy, mirror, or serve the material.
@@ -89,6 +93,30 @@ scheduled tasks, and ProxyShell.
   challenges, CTFs, sample images, and tools. It is free to use and share, and
   we attribute it. Each linked resource keeps its own terms; verify it before
   use.
+
+### Security standards
+
+**OWASP API Security Top 10 2023** is the API validation baseline. Its ten
+categories are mapped to platform routes, tests, and API labs in
+[`OWASP-SECURITY-BASELINE.md`](OWASP-SECURITY-BASELINE.md). The work is
+CC BY-SA 4.0; keep the attribution and share-alike terms with any copied
+category text.
+
+**OWASP Top 10 2025** is the application-security baseline. Its ten categories
+are mapped to platform controls, tests, and web labs in the same guide. The work
+is CC BY 3.0; keep the OWASP attribution.
+
+**OWASP Agentic Skills Top 10** is the AI-security baseline for agent skills.
+Its ten categories are mapped to platform governance, existing AI labs, and
+the agentic lab pathway in the same guide.
+
+**OpenCRE** is a CC0-1.0 requirement index. Use it to cross-map a category to
+related standards and to support a review note. Record the CRE identifier and
+the access date; do not copy the live index into a release.
+
+None of these standards is a certification. A mapping marked `partial` means
+the platform has a control and a test, but the category still needs
+feature-level review or a lab that exercises the gap.
 
 ### Lab applications
 

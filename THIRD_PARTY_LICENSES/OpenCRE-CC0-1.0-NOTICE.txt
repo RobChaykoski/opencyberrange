@@ -1,0 +1,13 @@
+OpenCRE notice
+
+OpenCRE (Open Common Requirement Enumeration) is an OWASP project that links
+security requirements across standards and guidelines.
+
+The OpenCRE catalog and mapping data are released under Creative Commons Zero
+v1.0 Universal (CC0-1.0). CC0 does not require attribution; OpenCyberRange
+credits the project here.
+
+Source: https://www.opencre.org/
+Explorer: https://www.opencre.org/explorer
+Licence: https://creativecommons.org/publicdomain/zero/1.0/
+Repository: https://github.com/OWASP/OpenCRE
