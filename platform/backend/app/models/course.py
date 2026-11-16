@@ -28,6 +28,13 @@ class Course(Base):
     description = Column(Text, nullable=True)
     invite_code = Column(String(20), unique=True, index=True, nullable=False)
     instructor_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     is_active = Column(Boolean, default=False)
@@ -218,6 +225,13 @@ class CourseEnrollment(Base):
     id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     enrolled_at = Column(DateTime, server_default=func.now())
     # Per-student scope token for tracks that scope AD objects per student
     # (e.g. ADPT: svc_kerb_<token>). Auto-assigned on enrollment, NULL for

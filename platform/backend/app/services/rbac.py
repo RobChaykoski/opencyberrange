@@ -180,6 +180,9 @@ def effective_permissions(db: Session | None, user: User) -> frozenset[str]:
     permissions: set[str] = set()
     for role in effective_roles(db, user):
         permissions.update(role_permissions(db, role))
+    # A service credential carries an explicit, narrower scope list. It is
+    # additive to the (empty) service_account role and never widens a human.
+    permissions.update(getattr(user, "_service_scopes", frozenset()))
     return frozenset(permissions)
 
 

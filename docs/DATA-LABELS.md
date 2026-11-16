@@ -152,6 +152,7 @@ GET /api/admin/data-labels/policy?role=student&path=/api/auth/export
   classification when exporting learner records or incident evidence.
 - Backup archives and Open Badges credentials are separate formats. Badges are
   public by design and are not stamped with the internal classification.
-- Enforcement currently applies to response downloads detected as attachments,
-  PDFs, or CSV. JSON export metadata is stamped separately; per-route JSON
-  export authorization is still being migrated.
+- Enforcement applies to attachments, PDFs, CSV, and the JSON export routes
+  (`/api/auth/export`, `/api/identity/providers/export`, career dossier,
+  portfolio, and snapshots). A route can opt another JSON response in with the
+  `X-OCR-Export: json` response header.

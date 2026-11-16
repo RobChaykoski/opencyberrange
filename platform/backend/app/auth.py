@@ -389,6 +389,32 @@ def get_current_user(
     For impersonation tokens (imp=True), returns the impersonated user
     but attaches impersonation metadata to the user object.
     """
+    if token.startswith("ocr_svc_"):
+        from app.services.service_identities import resolve_token
+
+        service_user = resolve_token(db, token)
+        if service_user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate service credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        from app.security.tenant import set_tenant
+
+        set_tenant(getattr(service_user, "institution_id", None), system_admin=False)
+        try:
+            from app.services.security_events import set_rls_context
+
+            set_rls_context(
+                db,
+                institution_id=getattr(service_user, "institution_id", None),
+                system_admin=False,
+            )
+        except Exception:
+            pass
+        set_actor(actor_type="service", actor_id=service_user.id)
+        return service_user
+
     payload = _decode_token(token, db=db)
     username = payload.get("sub")
 
@@ -454,6 +480,33 @@ def get_current_admin_user(
     """Get current admin user"""
     if current_user.role != 'admin':
         raise HTTPException(status_code=403, detail="Not enough permissions")
+    return current_user
+
+
+def get_current_institution_admin_user(
+    current_user: User = Depends(get_current_active_user)
+) -> User:
+    """Require a platform admin or a tenant-scoped institution admin.
+
+    Callers must still filter by the actor's ``institution_id`` unless the actor
+    is the platform ``admin``. This dependency does not grant platform-wide
+    access by itself.
+    """
+    if current_user.role not in ("admin", "institution_admin"):
+        raise HTTPException(status_code=403, detail="Administrator access required")
+    return current_user
+
+
+def get_current_reporting_user(
+    current_user: User = Depends(get_current_active_user)
+) -> User:
+    """Require a teaching/reporting role, including tenant institution admins.
+
+    Course ownership or the matching ``institution_id`` is still enforced by
+    the route's course-scope check.
+    """
+    if current_user.role not in ("instructor", "admin", "institution_admin"):
+        raise HTTPException(status_code=403, detail="Instructor access required")
     return current_user
 
 

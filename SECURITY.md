@@ -88,8 +88,15 @@ Commands and the full runbook are in
   DNA/GPS/AI permissions are granted to **no** role, including `admin`.
   `python -m app.scripts.review_permissions --check` is the release gate.
 - Non-system roles are confined to their `institution_id`. `institution_admin`
-  is not a system administrator. `docs/PIA-TRA-FINDINGS.md` records the
-  remaining tenant migration.
+  is not a system administrator.
+- `courses`, `course_enrollments`, `lab_sessions`, `lab_completions`,
+  `achievements`, `learner_snapshots`, `portfolio_share_tokens`,
+  `dna_evidence_records`, and `dna_snapshots` carry a server-derived
+  `institution_id` and forced PostgreSQL RLS. The runtime role must not be a
+  superuser.
+- Service identities use hashed, scoped, expiring tokens with no password
+  login. They cannot receive private learner permissions.
+- `docs/PIA-TRA-FINDINGS.md` records the remaining tenant migration.
 - Break-glass access is off by default, MFA-gated, reasoned, time-bound,
   optionally second-approved, scoped to one permission and learner/course, and
   every use is a `critical` security event. It never overrides a revoked
@@ -112,6 +119,11 @@ Commands and the full runbook are in
   changes, break-glass request/approval/use/revoke, and portfolio share
   create/use/revoke. Sensitive HTTP requests without a richer event are caught
   by a fallback middleware.
+- A five-minute security-operations loop expires stale break-glass grants and
+  writes deduplicated threshold alerts for repeated authentication failures,
+  denied requests, export denials, and break-glass use.
+- The admin **Security** console exposes events, break-glass, service
+  identities, and the role catalog.
 - See `docs/SECURITY-EVENTS.md` and `docs/RETENTION-POLICIES.md`.
 
 ## Deleted and removed users

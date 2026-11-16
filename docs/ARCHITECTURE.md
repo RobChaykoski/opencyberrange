@@ -158,9 +158,11 @@ Authorization is a separate layer. `app/services/authorization.py` is the one
 decision point: database-loaded RBAC, tenant boundary, owner/course/share scope,
 learner consent, and optional break-glass. `app/security/` owns the reviewed
 `permissions.yaml` catalog, FastAPI dependency, route audit, and policy seam.
-`app/security/tenant.py` binds the server-loaded tenant to the request; the
-security event store uses forced PostgreSQL RLS to make its evidence
-append-only and tenant-scoped. See [Consent revocation](CONSENT-REVOCATION.md),
+`app/security/tenant.py` binds the server-loaded tenant to the request. Forced
+PostgreSQL RLS protects the security event store and nine learner-data tables;
+triggers derive `institution_id` from the owning user or course. Scoped,
+hashed service identities cover non-human integrations without a shared
+administrator key. See [Consent revocation](CONSENT-REVOCATION.md),
 [RBAC + PBAC](RBAC-PBAC.md), [Authorization Service](AUTHORIZATION-SERVICE.md),
 and [Security event store](SECURITY-EVENTS.md).
 

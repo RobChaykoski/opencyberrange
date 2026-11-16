@@ -212,6 +212,13 @@ class LabSession(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     network_id = Column(String(100))
     network_subnet = Column(String(20))
     status = Column(String(20), default="starting")  # starting, running, stopped, expired, error
@@ -250,6 +257,13 @@ class LabCompletion(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     lab_id = Column(Integer, ForeignKey("labs.id"), nullable=False, index=True)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     completed_at = Column(DateTime, server_default=func.now())
     flag_submitted = Column(String(100))
     attempts = Column(Integer, default=1)
@@ -284,6 +298,13 @@ class LearnerSnapshot(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
     )
     kind = Column(String(32), nullable=False)  # career_dossier | portfolio
     schema_version = Column(String(32), nullable=False)

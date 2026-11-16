@@ -325,6 +325,34 @@ def test_break_glass_approval_flow_keeps_grant_pending_until_approved(db_session
     ).allowed is True
 
 
+def test_expired_break_glass_grants_are_closed_with_an_event(db_session):
+    from datetime import datetime, timezone
+
+    rbac.seed(db_session)
+    learner = _user(db_session, "student")
+    admin = _user(db_session, "admin", mfa=True)
+    _set(db_session, break_glass_enabled="true")
+    grant = authorization.create_break_glass(
+        db_session,
+        admin,
+        permission="dna.view.private",
+        reason="expiry test",
+        scope_user_id=learner.id,
+    )
+    grant.expires_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    db_session.commit()
+    assert authorization.expire_stale_grants(db_session) >= 1
+    db_session.refresh(grant)
+    assert grant.status == "expired"
+    event = (
+        db_session.query(SecurityEvent)
+        .filter(SecurityEvent.event_type == "break_glass.expired")
+        .order_by(SecurityEvent.id.desc())
+        .first()
+    )
+    assert event is not None
+
+
 def test_owner_helper_returns_404_for_a_foreign_record(db_session):
     owner = _user(db_session, "student")
     outsider = _user(db_session, "student")

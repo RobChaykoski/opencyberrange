@@ -98,6 +98,7 @@ from app.models.security import (
     RbacRolePermission,
     RbacUserRole,
     SecurityEvent,
+    ServiceCredential,
 )
 from app.consent.models import (
     ConsentAudit,
@@ -180,6 +181,7 @@ __all__ = [
     "ReviewRequest",
     "RevokedToken",
     "SecurityEvent",
+    "ServiceCredential",
     "SsoLoginState",
     "SsoLoginTicket",
     "SsoSession",

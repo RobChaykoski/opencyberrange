@@ -15,7 +15,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.auth import get_current_instructor_user
+from app.auth import get_current_reporting_user
 from app.database import get_db
 from app.export_reason import require_export_reason
 from app.models import Course, CourseFeedback, ExerciseQuizAttempt, User
@@ -442,7 +442,7 @@ def _coaching_rows(db: Session, course: Course) -> list[dict]:
 async def list_reports(
     course_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_reporting_user),
 ):
     """Return the report library for a course the caller can manage."""
     course = _course_or_403(db, course_id, current_user)
@@ -455,7 +455,7 @@ async def course_health_report(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_reporting_user),
 ):
     course = _course_or_403(db, course_id, current_user)
     overview = await course_overview(course_id, db, current_user)
@@ -487,7 +487,7 @@ async def exercise_diagnostics_report(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_reporting_user),
 ):
     course = _course_or_403(db, course_id, current_user)
     _labs, _user_ids, completions, _sessions = _course_context(db, course)
@@ -519,7 +519,7 @@ async def exercise_diagnostics_csv(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_reporting_user),
 ):
     course = _course_or_403(db, course_id, current_user)
     _labs, _user_ids, completions, _sessions = _course_context(db, course)
@@ -604,7 +604,7 @@ async def coaching_queue_csv(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_reporting_user),
 ):
     course = _course_or_403(db, course_id, current_user)
     rows = _coaching_rows(db, course)
@@ -650,7 +650,7 @@ async def coaching_queue_pdf(
     request: Request,
     reason: str = Depends(require_export_reason),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_instructor_user),
+    current_user: User = Depends(get_current_reporting_user),
 ):
     course = _course_or_403(db, course_id, current_user)
     rows = _coaching_rows(db, course)

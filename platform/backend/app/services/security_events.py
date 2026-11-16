@@ -59,11 +59,16 @@ EVENT_TYPES = {
     "rbac.role_granted": ("audit", "warning"),
     "rbac.role_revoked": ("audit", "warning"),
     "rbac.permissions_changed": ("audit", "warning"),
+    "service_identity.created": ("audit", "warning"),
+    "service_identity.revoked": ("audit", "warning"),
+    "service_identity.auth_failed": ("security", "warning"),
     "break_glass.requested": ("security", "notice"),
     "break_glass.approved": ("security", "warning"),
     "break_glass.used": ("security", "critical"),
     "break_glass.revoked": ("security", "warning"),
     "break_glass.reviewed": ("audit", "notice"),
+    "break_glass.expired": ("security", "notice"),
+    "security.alert": ("security", "warning"),
     "consent.granted": ("privacy", "notice"),
     "consent.revoked": ("privacy", "warning"),
     "privacy.exported": ("privacy", "notice"),
@@ -245,10 +250,15 @@ def resolve_request_user(request: Request, db: Session) -> User | None:
     scheme, _, token = header.partition(" ")
     if scheme.lower() != "bearer" or not token.strip():
         return None
+    token = token.strip()
     try:
+        if token.startswith("ocr_svc_"):
+            from app.services.service_identities import resolve_token
+
+            return resolve_token(db, token)
         from app.auth import _decode_token, get_user_by_username
 
-        payload = _decode_token(token.strip(), db)
+        payload = _decode_token(token, db)
         return get_user_by_username(db, username=payload.get("sub"))
     except Exception:
         return None

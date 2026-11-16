@@ -218,7 +218,8 @@
 
       <!-- Tab Content -->
       <div class="tab-content">
-        
+        <SecurityCenter v-if="activeTab === 'security'" />
+
         <!-- Users Tab -->
         <div v-if="activeTab === 'users'" class="panel">
           <!-- Create User Form -->
@@ -4233,6 +4234,7 @@ import IdentityProvidersPanel from '../components/IdentityProvidersPanel.vue'
 import OpenBadgesPanel from '../components/OpenBadgesPanel.vue'
 import AuditHistory from '../components/AuditHistory.vue'
 import LtiPlatformsPanel from '../components/LtiPlatformsPanel.vue'
+import SecurityCenter from '../components/SecurityCenter.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
@@ -4247,7 +4249,7 @@ const { privacyMode, maskUsername, maskEmail, togglePrivacy, setAdminPrivacyDefa
 
 const legacyTabMap = { sessions: 'monitoring', vpn: 'monitoring', activity: 'monitoring', labs: 'exercises', curriculum: 'exercises', tester: 'system' }
 const legacySubTabMap = { sessions: 'sessions', vpn: 'vpn', activity: 'activity', labs: 'manage', curriculum: 'tracks' }
-const validTabs = ['users', 'pending', 'courses', 'exercises', 'monitoring', 'settings', 'system']
+const validTabs = ['users', 'pending', 'courses', 'exercises', 'monitoring', 'security', 'settings', 'system']
 
 const monitoringSubTab = ref('sessions')
 
@@ -4502,6 +4504,7 @@ const adminTabs = computed(() => [
   { key: 'courses', label: 'Courses', count: adminCourses.value.length || null },
   { key: 'exercises', label: 'Exercises' },
   { key: 'monitoring', label: 'Live activity', count: stats.value.active_labs || null },
+  { key: 'security', label: 'Security' },
   { key: 'system', label: 'System' },
   { key: 'settings', label: 'Settings' },
 ])
@@ -4511,7 +4514,7 @@ const adminTabGroups = computed(() => {
   return [
     { label: 'People', tabs: [byKey.users, byKey.pending].filter(Boolean) },
     { label: 'Learning', tabs: [byKey.courses, byKey.exercises].filter(Boolean) },
-    { label: 'Operations', tabs: [byKey.monitoring, byKey.system].filter(Boolean) },
+    { label: 'Operations', tabs: [byKey.monitoring, byKey.security, byKey.system].filter(Boolean) },
     { label: 'Configuration', tabs: [byKey.settings].filter(Boolean) },
   ]
 })

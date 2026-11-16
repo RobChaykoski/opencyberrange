@@ -281,6 +281,7 @@ async def login(
             "auth.login_failed",
             outcome="denied" if existing_user and existing_user.is_locked else "failure",
             actor_username=form_data.username,
+            institution_id=getattr(existing_user, "institution_id", None),
             target_type="user",
             target_label=form_data.username,
             ip_address=request.client.host if request.client else None,

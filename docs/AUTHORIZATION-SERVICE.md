@@ -79,10 +79,49 @@ resource owner's institution differs from the actor's. Course scope derives the
 tenant from the course instructor. `tenant_isolation_enabled` defaults to true.
 
 This is a record-level boundary for services that call the Authorization
-Service. Full PostgreSQL RLS on every legacy table is not enabled yet because
-those tables do not all carry `institution_id`; the security event store is the
-first table with forced RLS. See `docs/PIA-TRA-FINDINGS.md` for the remaining
-migration work.
+Service. It is backed by PostgreSQL RLS on the learner-data tables:
+`courses`, `course_enrollments`, `lab_sessions`, `lab_completions`,
+`achievements`, `learner_snapshots`, `portfolio_share_tokens`,
+`dna_evidence_records`, and `dna_snapshots`.
+
+- A trigger derives `institution_id` from the owning user or course on insert
+  and update. A client cannot choose a tenant.
+- RLS is enabled and forced. The application role cannot bypass it.
+- An authenticated request uses its tenant. An unauthenticated HTTP request
+  sees only the default institution. Background jobs and startup code run as
+  the system principal.
+- Public certificate verification explicitly runs as the system principal for
+  the lookup, because a verifier may hold a certificate from any institution.
+  It returns only public certificate fields.
+
+Legacy tables that do not yet carry `institution_id` are still protected by the
+service-level owner and course checks. See `docs/PIA-TRA-FINDINGS.md` for the
+remaining table migration.
+
+## Service identities
+
+`service_account` is a non-human principal with no password login and no default
+permissions. An administrator creates a credential with an explicit scope list:
+
+```bash
+POST /api/admin/security/service-identities
+{
+  "name": "reporting-exporter",
+  "scopes": ["reports.view", "export.data", "export.confidential"],
+  "days": 90
+}
+```
+
+The raw token (`ocr_svc_<id>_<secret>`) is returned exactly once. Only its
+SHA-256 hash is stored. The token is accepted in the same
+`Authorization: Bearer` header. The Authorization Service resolves the service
+principal from the database and unions the credential's explicit scopes; it
+never inherits a platform administrator's role. Private learner permissions
+cannot be granted to a service identity.
+
+Rotation is create-new then revoke-old. Revocation takes effect on the next
+request. Every create/revoke is an audit event, and every request is attributed
+to the service principal.
 
 ## Consent
 
@@ -184,3 +223,6 @@ break-glass workflow.
   private-data rules.
 - `tests/test_route_authorization.py`: every protected route has a dependency.
 - `tests/test_horizontal_privilege.py`: owner/non-owner and faculty overreach.
+- `tests/test_tenant_rls.py`: tenant derivation and forced RLS.
+- `tests/test_service_identities.py`: scoped tokens, no password login, revocation.
+- `tests/test_institution_admin.py`: tenant-scoped user, stats, and course views.

@@ -74,6 +74,25 @@ Base = declarative_base()
 
 
 if engine.dialect.name == "postgresql":
+    @event.listens_for(Session, "after_begin")
+    def _stamp_session_tenant(session, transaction, connection):
+        """Bind the session transaction to the request/job tenant for RLS.
+
+        Authenticated requests use their server-loaded institution, background
+        jobs run as the system principal, and an unauthenticated HTTP request
+        gets the default institution rather than global visibility.
+        """
+        from app.security.tenant import rls_identity
+
+        institution_id, system_admin = rls_identity()
+        connection.execute(
+            text(
+                "SELECT set_config('ocr.institution_id', :institution_id, true), "
+                "set_config('ocr.system_admin', :system_admin, true)"
+            ),
+            {"institution_id": institution_id, "system_admin": system_admin},
+        )
+
     @event.listens_for(Session, "before_flush")
     def _stamp_actor_context(session, flush_context, instances):
         """Set the request actor for the integrity trigger before a flush.

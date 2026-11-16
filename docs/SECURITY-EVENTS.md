@@ -65,6 +65,35 @@ The application role cannot delete events. Retention is an operator action:
 The recommended default is 365 days (`security_event_retention_days`). Legal
 hold overrides the default. See `docs/RETENTION-POLICIES.md`.
 
+## Alerts
+
+The scheduler runs a five-minute security-operations pass:
+
+1. Expire stale break-glass grants (`break_glass.expired`).
+2. Scan the rolling alert window.
+3. Write deduplicated `security.alert` events.
+
+Alert rules:
+
+| Rule | Default | Severity |
+|---|---|---|
+| Any `break_glass.used` | always | critical |
+| Repeated `auth.login_failed`, `auth.mfa_failed`, `authz.denied`, `http.denied`, `service_identity.auth_failed` | 5 in 15 minutes per actor/IP | warning |
+| Repeated `export.denied` | 5 in 15 minutes per actor/IP | critical |
+
+Settings: `security_alert_enabled`, `security_alert_window_minutes`, and
+`security_alert_threshold`. Alerts appear in the admin **Security** center and
+can be routed to the institution's SIEM from the event store.
+
+## Administrator console
+
+The admin **Security** tab shows:
+
+- event summary cards and a filterable event table;
+- break-glass request, approval, revocation, and post-use review;
+- service-identity creation and revocation (the token is shown once); and
+- the RBAC role catalog and permission counts.
+
 ## Administrator API
 
 All routes require `security.events.view` except role editing, which requires
@@ -86,6 +115,8 @@ All routes require `security.events.view` except role editing, which requires
 | `POST` | `/api/admin/security/break-glass/{id}/approve` | Second-operator approval |
 | `POST` | `/api/admin/security/break-glass/{id}/revoke` | Revoke a grant |
 | `POST` | `/api/admin/security/break-glass/{id}/review` | Close the post-use review |
+| `GET/POST` | `/api/admin/security/service-identities` | List or create scoped non-human credentials |
+| `DELETE` | `/api/admin/security/service-identities/{id}` | Revoke a service credential |
 
 Reading the store is itself an audit event (`security.events_read`).
 
@@ -96,6 +127,9 @@ Reading the store is itself an audit event (`security.events_read`).
 | `security_event_store_enabled` | `true` | Master switch for new writes |
 | `security_event_http_logging` | `true` | HTTP fallback coverage |
 | `security_event_retention_days` | `365` | Recommended retention |
+| `security_alert_enabled` | `true` | Run the threshold alert scan |
+| `security_alert_window_minutes` | `15` | Alert rolling window |
+| `security_alert_threshold` | `5` | Events per actor/IP before an alert |
 | `authorization_strict_startup` | `false` | Refuse startup when a protected route lacks auth |
 
 ## Tests

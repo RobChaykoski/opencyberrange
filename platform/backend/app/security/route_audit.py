@@ -29,7 +29,9 @@ _AUTH_CALLS = {
     "get_current_user",
     "get_current_active_user",
     "get_current_admin_user",
+    "get_current_institution_admin_user",
     "get_current_instructor_user",
+    "get_current_reporting_user",
     "require_permission",
     "require_allowed",
 }

@@ -4,6 +4,34 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Tenant RLS, security operations, and service identities
+- Added `institution_id` to `courses`, `course_enrollments`, `lab_sessions`,
+  `lab_completions`, `achievements`, `learner_snapshots`,
+  `portfolio_share_tokens`, `dna_evidence_records`, and `dna_snapshots`
+  (migration `0035`). Triggers derive the tenant from the owner; clients cannot
+  choose it.
+- Enabled and forced PostgreSQL RLS on those tables. Authenticated requests use
+  their tenant, unauthenticated requests see the default institution, and
+  background jobs run as the system principal. Public certificate verification
+  performs an explicit global lookup for its public fields.
+- Added institution-admin scoping for user list/detail/create/update, statistics,
+  course list/detail, activity log, course analytics, reports, and course audit
+  views. Institution admins cannot promote an account to platform admin or move
+  an account between institutions.
+- Added the admin **Security** console: event summary and filters, break-glass
+  request/approve/revoke/review, service-identity creation/revocation, and role
+  catalog.
+- Added a five-minute security-operations loop: stale break-glass expiry and
+  deduplicated threshold alerts for repeated login failures, denied requests,
+  export denials, and break-glass use.
+- Added hashed, scoped service credentials with expiry, revocation, no password
+  login, and per-request attribution (migration `0036`).
+- JSON exports (`/api/auth/export`, identity provider export, career dossier,
+  portfolio, and snapshots) now participate in data-label enforcement; routes
+  may mark any JSON response with `X-OCR-Export`.
+- Added `tests/test_tenant_rls.py`, `tests/test_service_identities.py`, and
+  `tests/test_institution_admin.py`, plus JSON export and alert tests.
+
 ### Enforceable data labels
 - Added institutional label schemes (custom JSON levels), path-based minimum
   classification, role/region ceilings, non-exportable levels, and

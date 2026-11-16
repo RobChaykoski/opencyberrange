@@ -20,7 +20,7 @@ from app.database import get_db
 from app.models import BreakGlassGrant, RbacRole, User
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
-from app.services import authorization, rbac, security_events
+from app.services import authorization, rbac, security_events, service_identities
 
 router = APIRouter()
 
@@ -58,6 +58,13 @@ class BreakGlassRevoke(BaseModel):
 
 class BreakGlassReview(BaseModel):
     note: str
+
+
+class ServiceIdentityCreate(BaseModel):
+    name: str = Field(..., min_length=3, max_length=120)
+    scopes: list[str] = Field(default_factory=list)
+    days: int = Field(90, ge=1, le=365)
+    institution_id: Optional[str] = Field(None, max_length=64)
 
 
 def _event_payload(row) -> dict:
@@ -325,6 +332,61 @@ async def check_authorization(
         course_id=payload.course_id,
         shared=payload.shared,
     )
+
+
+# --- Service identities ----------------------------------------------------
+
+
+@router.get("/service-identities", summary="List non-human service credentials")
+async def list_service_identities(
+    db: Session = Depends(get_db),
+    actor: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("service.identity.manage")),
+):
+    institution = None if actor.role == "admin" else actor.institution_id
+    return {"credentials": service_identities.list_credentials(db, institution_id=institution)}
+
+
+@router.post("/service-identities", summary="Create a scoped service credential")
+async def create_service_identity(
+    payload: ServiceIdentityCreate,
+    db: Session = Depends(get_db),
+    actor: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("service.identity.manage")),
+):
+    institution = payload.institution_id or actor.institution_id
+    if actor.role != "admin":
+        institution = actor.institution_id
+    row, token = service_identities.create_credential(
+        db,
+        actor,
+        name=payload.name,
+        scopes=payload.scopes,
+        days=payload.days,
+        institution_id=institution,
+    )
+    credentials = service_identities.list_credentials(db, institution_id=institution)
+    credential = next((item for item in credentials if item["id"] == row.id), None)
+    return {
+        "credential": credential,
+        # Returned exactly once. Only the SHA-256 hash is stored.
+        "token": token,
+    }
+
+
+@router.delete(
+    "/service-identities/{credential_id}",
+    summary="Revoke a service credential",
+)
+async def revoke_service_identity(
+    credential_id: int,
+    db: Session = Depends(get_db),
+    actor: User = Depends(get_current_active_user),
+    _decision: PolicyDecision = Depends(require_permission("service.identity.manage")),
+):
+    if not service_identities.revoke_credential(db, actor, credential_id):
+        raise HTTPException(status_code=404, detail="Service credential not found.")
+    return {"revoked": True, "credential_id": credential_id}
 
 
 # --- Break-glass -----------------------------------------------------------

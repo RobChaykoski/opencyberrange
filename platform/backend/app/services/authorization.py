@@ -829,4 +829,13 @@ def expire_stale_grants(db: Session) -> int:
         row.status = "expired"
     if rows:
         db.commit()
+        security_events.record(
+            "break_glass.expired",
+            severity="notice",
+            detail={
+                "count": len(rows),
+                "grant_ids": [row.id for row in rows],
+                "permissions": sorted({row.permission for row in rows}),
+            },
+        )
     return len(rows)

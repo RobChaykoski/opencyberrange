@@ -22,6 +22,7 @@ _backup_task = None
 _revocation_cleanup_task = None
 _metrics_task = None
 _consent_jobs_task = None
+_security_ops_task = None
 _module_tasks = {}   # label -> asyncio.Task, one per discovered module tick
 
 
@@ -236,6 +237,31 @@ async def process_consent_jobs():
             logger.error("Consent job loop failed: %s", exc)
 
 
+def _security_ops_once() -> dict:
+    """Expire stale break-glass grants and run the alert scan."""
+    from app.services import authorization, security_alerts
+
+    db: Session = SessionLocal()
+    try:
+        expired = authorization.expire_stale_grants(db)
+        alerts = security_alerts.scan_and_record(db)
+        return {"expired": expired, **alerts}
+    finally:
+        db.close()
+
+
+async def security_operations_loop():
+    """Expire stale grants and evaluate security alerts every five minutes."""
+    while True:
+        try:
+            await asyncio.to_thread(_security_ops_once)
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            logger.warning("Security operations loop failed: %s", exc)
+        await asyncio.sleep(300)
+
+
 async def collect_system_metrics_loop():
     """Sample host/platform metrics every minute for the admin graphs."""
     while True:
@@ -251,7 +277,7 @@ async def collect_system_metrics_loop():
 def start_scheduler():
     """Start the background scheduler tasks"""
     global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
-    global _consent_jobs_task
+    global _consent_jobs_task, _security_ops_task
 
     logger.info("Starting background scheduler...")
 
@@ -278,6 +304,10 @@ def start_scheduler():
         _consent_jobs_task = asyncio.create_task(process_consent_jobs())
         logger.info("Started consent revocation job loop")
 
+    if _security_ops_task is None or _security_ops_task.done():
+        _security_ops_task = asyncio.create_task(security_operations_loop())
+        logger.info("Started security operations loop")
+
     # Start each present module's background tick. Editions with no
     # optional modules installed have none to start.
     # Adding a module with a scheduler_tick needs no edit to this file.
@@ -296,7 +326,7 @@ async def shutdown_scheduler():
     ``run_until_complete`` would raise "event loop is already running".
     """
     global _session_cleanup_task, _backup_task, _revocation_cleanup_task, _metrics_task
-    global _consent_jobs_task
+    global _consent_jobs_task, _security_ops_task
 
     logger.info("Shutting down background scheduler...")
 
@@ -311,6 +341,8 @@ async def shutdown_scheduler():
         tasks.append(_metrics_task)
     if _consent_jobs_task and not _consent_jobs_task.done():
         tasks.append(_consent_jobs_task)
+    if _security_ops_task and not _security_ops_task.done():
+        tasks.append(_security_ops_task)
     tasks.extend(t for t in _module_tasks.values() if t and not t.done())
 
     for t in tasks:
@@ -324,5 +356,6 @@ async def shutdown_scheduler():
     _backup_task = None
     _metrics_task = None
     _consent_jobs_task = None
+    _security_ops_task = None
     _module_tasks.clear()
 

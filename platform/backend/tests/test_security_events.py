@@ -160,6 +160,41 @@ def test_admin_action_logger_mirrors_into_the_store(db_session):
     assert payload["password"] == "[redacted]"
 
 
+def test_repeated_failures_raise_a_deduplicated_alert(db_session):
+    from app.services import security_alerts
+
+    _set(
+        db_session,
+        security_alert_enabled="true",
+        security_alert_window_minutes="15",
+        security_alert_threshold="2",
+    )
+    for _ in range(2):
+        security_events.record(
+            "auth.login_failed",
+            outcome="failure",
+            actor_username="alert-probe",
+            ip_address="203.0.113.50",
+            detail={"reason": "invalid_credentials"},
+        )
+    found = security_alerts.scan(db_session)
+    assert any(item["event_type"] == "auth.login_failed" for item in found)
+
+    first = security_alerts.scan_and_record(db_session)
+    assert first["recorded"] >= 1
+    second = security_alerts.scan_and_record(db_session)
+    assert second["recorded"] == 0
+
+    row = (
+        db_session.query(SecurityEvent)
+        .filter(SecurityEvent.event_type == "security.alert")
+        .order_by(SecurityEvent.id.desc())
+        .first()
+    )
+    assert row is not None
+    assert row.severity in {"warning", "critical"}
+
+
 @pytest.mark.skipif(
     database.engine.dialect.name != "postgresql",
     reason="PostgreSQL row-level security",

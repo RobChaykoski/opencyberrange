@@ -18,6 +18,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 
 from app.database import Base
@@ -30,6 +31,13 @@ class DnaEvidenceRecord(Base):
 
     id = Column(Integer, primary_key=True)
     learner_id = Column(Integer, nullable=False, index=True)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     event_id = Column(String(120), nullable=False)
     activity_id = Column(String(160), nullable=False)
     activity_category = Column(String(64), nullable=False)
@@ -70,6 +78,13 @@ class DnaSnapshot(Base):
 
     id = Column(Integer, primary_key=True)
     learner_id = Column(Integer, nullable=False, index=True)
+    institution_id = Column(
+        String(64),
+        nullable=False,
+        default="default",
+        server_default=text("'default'"),
+        index=True,
+    )
     kind = Column(String(32), nullable=False)
     schema_version = Column(String(32), nullable=False)
     formula_version = Column(String(32), nullable=True)

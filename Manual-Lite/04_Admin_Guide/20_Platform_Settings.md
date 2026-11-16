@@ -125,8 +125,34 @@ event store and the centralized Authorization Service:
 
 The administrator API is under `/api/admin/security`:
 `events`, `events/summary`, `rbac/roles`, `rbac/permissions`,
-`rbac/users/{id}`, `rbac/check`, and `break-glass`. See
+`rbac/users/{id}`, `rbac/check`, `break-glass`, and `service-identities`. See
 `docs/SECURITY-EVENTS.md` and `docs/AUTHORIZATION-SERVICE.md`.
+
+### Security console
+
+The **Security** tab in the Admin Panel is the operational view:
+
+- **Events** shows summary cards and a filterable table of security, audit, and
+  privacy events. Critical events include repeated authentication failures,
+  export denials, and every break-glass use.
+- **Break-glass** creates, approves, revokes, and reviews emergency grants.
+  Enter a reason and optional incident reference. Learner id scopes the grant
+  to one learner.
+- **Service identities** creates a non-human credential with an explicit scope
+  list. Copy the token immediately; it is shown once and only its hash is
+  stored. Revoke it when the integration is retired.
+- **Roles** shows the reviewed role catalog and permission counts.
+
+The five-minute security-operations loop expires stale break-glass grants and
+writes deduplicated `security.alert` events. Tune the window and threshold with
+**Security Alert Window** and **Security Alert Threshold**.
+
+### Tenant and RLS operations
+
+The runtime database role must be a non-superuser. PostgreSQL superusers bypass
+RLS. On startup the platform backfills `institution_id` from the owning user or
+course, installs derivation triggers, and enables forced RLS on the learner-data
+tables. See `docs/DATABASE-MIGRATIONS.md` and `docs/RETENTION-POLICIES.md`.
 
 ### Data labels
 

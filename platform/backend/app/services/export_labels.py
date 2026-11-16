@@ -78,6 +78,7 @@ EXPORT_CLASSIFICATION_PREFIXES: tuple[tuple[str, str], ...] = (
     ("/api/instructor/labs", "confidential"),
     ("/api/instructor", "confidential"),
     ("/api/auth/export", "confidential"),
+    ("/api/identity/providers/export", "confidential"),
     ("/api/profile/portfolio", "confidential"),
     ("/api/profile/career-dossier", "confidential"),
     ("/api/profile/snapshots", "confidential"),

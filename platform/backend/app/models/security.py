@@ -210,6 +210,40 @@ class BreakGlassGrant(Base):
     )
 
 
+class ServiceCredential(Base):
+    """A hashed bearer credential for a non-human service identity.
+
+    The service principal is a normal ``User`` with role ``service_account`` and
+    no password login. Its permissions come from the explicit ``scopes`` list,
+    never from a shared administrator account. The raw token is returned once.
+    """
+
+    __tablename__ = "service_credentials"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name = Column(String(120), nullable=False)
+    token_hash = Column(String(64), unique=True, nullable=False, index=True)
+    scopes = Column(Text, nullable=False, default="[]", server_default="[]")
+    institution_id = Column(String(64), nullable=True, index=True)
+    created_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    last_used_at = Column(DateTime, nullable=True)
+    revoked_at = Column(DateTime, nullable=True)
+    revoked_by_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+
+    __table_args__ = (
+        Index("ix_service_credentials_user_created", "user_id", "created_at"),
+    )
+
+
 class PortfolioShare(Base):
     """Bearer share link for a learner portfolio.
 
@@ -224,6 +258,7 @@ class PortfolioShare(Base):
     user_id = Column(
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
+    institution_id = Column(String(64), nullable=True, index=True)
     token_hash = Column(String(64), unique=True, nullable=False, index=True)
     label = Column(String(120), nullable=True)
     audience = Column(String(120), nullable=True)

@@ -48,7 +48,14 @@ from app.schemas import (
     LabCreate,
     _password_policy_error,
 )
-from app.auth import get_current_admin_user, get_password_hash, validate_privileged_password, revoke_all_user_tokens, verify_password
+from app.auth import (
+    get_current_admin_user,
+    get_current_institution_admin_user,
+    get_password_hash,
+    validate_privileged_password,
+    revoke_all_user_tokens,
+    verify_password,
+)
 from app import entitlement
 from app.services.docker_manager import DockerManager, get_subnet_id
 from app.services.wireguard_manager import WireGuardManager
@@ -92,21 +99,49 @@ wireguard_manager = WireGuardManager(
 
 # ==================== User Management ====================
 
+
+def _platform_admin(user: User) -> bool:
+    return (getattr(user, "role", "") or "") == "admin"
+
+
+def _scope_users(query, actor: User):
+    """Restrict an account query to the actor's institution."""
+    if _platform_admin(actor):
+        return query
+    return query.filter(User.institution_id == actor.institution_id)
+
+
+def _visible_user_or_404(db: Session, actor: User, user_id: int) -> User:
+    user = _scope_users(db.query(User), actor).filter(User.id == user_id).first()
+    if user is None:
+        # Do not reveal whether another tenant's account exists.
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
 @router.get("/users", response_model=List[UserAdminResponse])
 async def list_users(
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
-    """List all users — bulk-syncs vpn_registered flags from Peer Manager"""
+    """List users — bulk-syncs vpn_registered flags from Peer Manager.
+
+    A platform admin sees every institution; an institution admin sees only its
+    own tenant.
+    """
     # Sync vpn_registered flags against the live Peer Manager peer list.
     # Only update when the API responds (peers is not None) so we don't
     # accidentally reset everyone to False on a transient API failure.
     peers = wireguard_manager.list_peers()
     if peers is not None:
         peer_keys = {p.get("public_key", "").strip() for p in peers}
-        wg_configs = db.query(WireGuardConfig).options(joinedload(WireGuardConfig.user)).all()
+        wg_query = db.query(WireGuardConfig).options(
+            joinedload(WireGuardConfig.user)
+        ).join(User, WireGuardConfig.user_id == User.id)
+        if not _platform_admin(admin):
+            wg_query = wg_query.filter(User.institution_id == admin.institution_id)
         dirty = False
-        for cfg in wg_configs:
+        for cfg in wg_query.all():
             is_registered = cfg.public_key.strip() in peer_keys
             if cfg.user and cfg.user.vpn_registered != is_registered:
                 cfg.user.vpn_registered = is_registered
@@ -114,28 +149,29 @@ async def list_users(
         if dirty:
             db.commit()
 
-    users = db.query(User).all()
-    return users
+    return _scope_users(db.query(User), admin).all()
 
 
 @router.get("/users/pending", response_model=List[UserAdminResponse])
 async def list_pending_users(
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
-    """List users awaiting approval"""
-    users = db.query(User).filter(User.is_approved == False, User.is_active == True).all()
-    return users
+    """List users awaiting approval in the actor's institution."""
+    query = db.query(User).filter(
+        User.is_approved == False, User.is_active == True
+    )
+    return _scope_users(query, admin).all()
 
 
 @router.get("/users/locked", response_model=List[UserAdminResponse])
 async def list_locked_users(
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
-    """List locked user accounts"""
-    users = db.query(User).filter(User.is_locked == True).all()
-    return users
+    """List locked accounts in the actor's institution."""
+    query = db.query(User).filter(User.is_locked == True)
+    return _scope_users(query, admin).all()
 
 
 @router.get("/users/export")
@@ -237,25 +273,20 @@ async def import_users(
 async def get_user(
     user_id: int,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
-    """Get a specific user"""
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+    """Get a specific user in the actor's institution."""
+    return _visible_user_or_404(db, admin, user_id)
 
 
 @router.get("/users/{user_id}/details", response_model=UserDetailResponse)
 async def get_user_details(
     user_id: int,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
     """Get detailed user information with completions and statistics"""
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user = _visible_user_or_404(db, admin, user_id)
     
     # Get completions with lab information - only for enabled labs
     completions_query = db.query(LabCompletion, Lab).join(Lab).filter(
@@ -498,7 +529,7 @@ async def create_user(
     request: Request,
     user_data: CreateUserRequest,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
     """Create a new user - rate limited to 5 per minute"""
     # Check for existing username or email
@@ -529,6 +560,21 @@ async def create_user(
     else:
         role = 'student'
         is_admin = False
+
+    if not _platform_admin(admin):
+        if role == "admin":
+            raise HTTPException(
+                status_code=403,
+                detail="Only a platform administrator can create platform admins.",
+            )
+        if (
+            user_data.institution_id is not None
+            and user_data.institution_id != admin.institution_id
+        ):
+            raise HTTPException(
+                status_code=403,
+                detail="An institution admin can only create users in its institution.",
+            )
 
     # Stricter password policy for privileged accounts
     if role in ('instructor', 'admin'):
@@ -576,12 +622,24 @@ async def update_user(
     user_request: UpdateUserRequest,
     http_request: Request,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
     """Update user details"""
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user = _visible_user_or_404(db, admin, user_id)
+    if not _platform_admin(admin):
+        if user_request.role == "admin" or user_request.is_admin is True:
+            raise HTTPException(
+                status_code=403,
+                detail="Only a platform administrator can promote an account to admin.",
+            )
+        if (
+            user_request.institution_id is not None
+            and user_request.institution_id != admin.institution_id
+        ):
+            raise HTTPException(
+                status_code=403,
+                detail="An institution admin cannot move an account between institutions.",
+            )
 
     # Password changes are a separate, re-authenticated action. Allowing them
     # through the general profile update would bypass the reset audit, rate
@@ -2640,13 +2698,22 @@ async def import_exercise(
 @router.get("/stats")
 async def get_stats(
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
-    """Get platform statistics"""
-    total_users = db.query(func.count(User.id)).scalar()
-    pending_users = db.query(func.count(User.id)).filter(User.is_approved == False, User.is_active == True).scalar()
-    locked_users = db.query(func.count(User.id)).filter(User.is_locked == True).scalar()
-    active_labs = db.query(func.count(LabSession.id)).filter(LabSession.status == "running").scalar()
+    """Get platform or institution statistics."""
+    users_q = _scope_users(db.query(User), admin)
+    total_users = users_q.count()
+    pending_users = _scope_users(
+        db.query(User).filter(User.is_approved == False, User.is_active == True),
+        admin,
+    ).count()
+    locked_users = _scope_users(
+        db.query(User).filter(User.is_locked == True), admin
+    ).count()
+    labs_q = db.query(LabSession).filter(LabSession.status == "running")
+    if not _platform_admin(admin):
+        labs_q = labs_q.filter(LabSession.institution_id == admin.institution_id)
+    active_labs = labs_q.count()
 
     # Get live peer count from Peer Manager; fall back to DB count if API unavailable
     peers = wireguard_manager.list_peers()
@@ -2657,7 +2724,9 @@ async def get_stats(
             if p.get("public_key", "").strip() != settings.WG_SERVER_PUBLIC_KEY
         )
     else:
-        vpn_registered = db.query(func.count(User.id)).filter(User.vpn_registered == True).scalar()
+        vpn_registered = _scope_users(
+            db.query(User).filter(User.vpn_registered == True), admin
+        ).count()
 
     return {
         "total_users": total_users,
@@ -3193,13 +3262,17 @@ async def get_activity_log(
     start_date: str = None,
     end_date: str = None,
     db: Session = Depends(get_db),
-    admin: User = Depends(get_current_admin_user)
+    admin: User = Depends(get_current_institution_admin_user),
 ):
     """Get paginated activity log with optional event type and date range filters."""
     from app.services.activity import EVENT_LABELS
     from datetime import datetime as dt_cls
 
     query = db.query(ActivityEvent).order_by(ActivityEvent.created_at.desc())
+    if not _platform_admin(admin):
+        query = query.join(
+            User, ActivityEvent.actor_id == User.id
+        ).filter(User.institution_id == admin.institution_id)
 
     if event_type:
         query = query.filter(ActivityEvent.event_type == event_type)

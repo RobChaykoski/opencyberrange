@@ -168,7 +168,14 @@ reviewed and signed by the operator; it is not a completed HECVAT Full.
   data over-grant or faculty accumulation of private learner signals.
 - **Security event store.** `docs/SECURITY-EVENTS.md` documents the append-only
   security/audit/privacy event store, forced PostgreSQL RLS, tenant-scoped
-  reads, sensitive-action coverage, and the administrator API.
+  reads, sensitive-action coverage, threshold alerts, the admin Security
+  console, and the administrator API.
+- **Tenant RLS.** `app/services/tenant_rls.py` derives `institution_id` from the
+  owner and enables forced RLS on nine learner-data tables. The runtime role
+  must be a non-superuser. See `docs/AUTHORIZATION-SERVICE.md`.
+- **Service identities.** Non-human credentials are hashed, scoped, expiring,
+  revocable, and cannot use password login. No shared administrator key is
+  required.
 - **PIA/TRA status.** `docs/PIA-TRA-FINDINGS.md` maps every PIA and TRA finding
   to Completed, Partial, or Planned with code and test evidence.
 - **Retention.** `docs/RETENTION-POLICIES.md` records the product defaults and

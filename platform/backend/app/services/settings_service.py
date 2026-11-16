@@ -122,6 +122,12 @@ DEFAULT_SETTINGS = [
      "description": "Require a second operator to approve a break-glass request. Enable this for enterprise deployments.", "is_secret": False},
     {"key": "break_glass_max_minutes", "value": "60", "category": "security",
      "description": "Maximum lifetime of a break-glass grant in minutes. Grants cannot be extended; create a new reviewed grant instead.", "is_secret": False},
+    {"key": "security_alert_enabled", "value": "true", "category": "security",
+     "description": "Run the threshold alert scan over security events. Alerts are written back as security.alert events and shown in the Security console.", "is_secret": False},
+    {"key": "security_alert_window_minutes", "value": "15", "category": "security",
+     "description": "Rolling window for repeated failed logins, denied requests, and export denials.", "is_secret": False},
+    {"key": "security_alert_threshold", "value": "5", "category": "security",
+     "description": "Number of matching events in the window before an alert is raised.", "is_secret": False},
     {"key": "portfolio_share_lifetime_days", "value": "30", "category": "security",
      "description": "Default lifetime for a portfolio share link. The raw token is shown once and only its SHA-256 hash is stored. Learners may revoke a link at any time.", "is_secret": False},
 

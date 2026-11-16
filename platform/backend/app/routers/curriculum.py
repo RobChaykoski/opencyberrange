@@ -1251,6 +1251,12 @@ async def verify_certificate(
     level is still complete. Only public certificate fields are returned; no
     username, email, or account details are exposed.
     """
+    # Public certificate lookup is intentionally global: a verifier may hold a
+    # certificate from any institution. It returns only public certificate
+    # fields and never exposes account details.
+    from app.services.security_events import set_rls_context
+
+    set_rls_context(db, institution_id=None, system_admin=True)
     if certificate_id.upper().startswith("OCR-EVT-"):
         return verify_event_certificate(
             db,

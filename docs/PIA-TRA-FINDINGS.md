@@ -17,7 +17,7 @@ Last reviewed: 2026-11-16.
 | Consent Audit Log | **Completed** | `consent_events`, `consent_audits`, suppression ledger, verification jobs, `/api/consent/admin/*`, `tests/test_consent_revocation.py` | Legal hold duration is institutional |
 | Data Classification | **Completed** | `docs/DATA-CLASSIFICATION.md`, `docs/DATA-LABELS.md`, custom levels, path classification, admin policy endpoint, export middleware | Institution must map its own scheme |
 | Retention Policies | **Partial** | `docs/RETENTION-POLICIES.md`, backup retention setting, consent suppression, event retention setting | Automated purge jobs for every legacy table are not complete; several schedules are operator-run |
-| Export Auditing | **Completed** | `X-Data-*` headers, `export_metadata`, `export.allowed` / `export.denied` security events, `ReportExport` manifest, `tests/test_data_label_policy.py` | External SIEM export is deployment-specific |
+| Export Auditing | **Completed** | `X-Data-*` headers, `export_metadata`, `export.allowed` / `export.denied` security events, JSON export markers and enforcement, `ReportExport` manifest, `tests/test_data_label_policy.py` | External SIEM export is deployment-specific |
 | RBAC | **Completed** | `permissions.yaml`, RBAC tables, Authorization Service, tenant/owner/consent checks, admin RBAC API, `tests/test_authorization_service.py` | Institution-specific role names can be added through extra roles |
 
 ## TRA findings
@@ -27,7 +27,7 @@ Last reviewed: 2026-11-16.
 | RBAC | **Completed** | See PIA RBAC row; deny-by-default, auditor read-only, private data never role-granted | Periodic access review is institutional |
 | MFA | **Completed** | TOTP enrolment, recovery codes, login enforcement, break-glass MFA requirement, `tests/test_auth_security.py` | Institution must enforce enrolment policy |
 | Audit Logging | **Completed** | Append-only `security_events` with forced PostgreSQL RLS, admin-action mirror, sign-in/consent/export/RBAC events, admin query API | Retention archive is operator-run |
-| Institution Boundaries | **Partial** | `User.institution_id`, tenant-aware Authorization Service, cross-tenant denial tests, tenant-scoped RLS on security events | Legacy tables lack `institution_id` and are not all migrated to the service; full table-wide RLS is deferred |
+| Institution Boundaries | **Partial** | `User.institution_id`, tenant-aware Authorization Service, tenant-scoped RLS on nine learner-data tables, institution-admin scoping, cross-tenant tests | A few legacy tables still lack `institution_id` and are protected only by service-level checks |
 | Container Hardening | **Completed** | Docker isolation, default-deny lab egress, read-only/limited runtime settings, integrity checks; see `docs/HARDENING-2026-11.md` | Host kernel hardening is deployment-specific |
 | WireGuard Lifecycle Controls | **Completed** | Peer register/resync/remove audit actions, encrypted keys, firewall ensure, stale-peer cleanup; see `docs/DEPLOYMENT-RUNBOOK.md` | Key rotation cadence is institutional |
 
@@ -37,16 +37,16 @@ Last reviewed: 2026-11-16.
 |---|---|---|---|
 | Horizontal privilege escalation (student reads another student) | Owner check after RBAC; 404 on foreign record; owner/non-owner tests | **Completed** for profile, portfolio, report snapshot, Cyber DNA snapshot, session, consent, and transcript surfaces | `authorization.require_owner`, `tests/test_horizontal_privilege.py` |
 | Vertical privilege escalation (student obtains faculty permissions) | Server-loaded roles, no client role claims, route audit, permission catalog review | **Completed** | `get_current_user`, `route_audit.py`, `review_permissions.py`, `test_jwt_role_tampering_cannot_promote_a_student` |
-| Institution administrator abuse | `institution_admin` is not system `admin`; tenant check; scoped course access | **Partial** | Authorization Service; legacy admin routes still use platform-admin checks and tenant migration is incomplete |
+| Institution administrator abuse | `institution_admin` is not system `admin`; tenant check; scoped user list/detail/create/update, stats, courses, activity, analytics, reports, and course audit | **Partial** | `tests/test_institution_admin.py`; some platform-only operations remain deliberately closed to institution admins |
 | Permission drift | Authoritative `permissions.yaml`, sensitivity metadata, release check, startup validation | **Completed** | `app/security/permissions.yaml`, `python -m app.scripts.review_permissions --check` |
 | Portfolio sharing abuse | 30-day default, hashed token, revocation, single-use/max uses, consent gate, audit events | **Completed** | `app/services/portfolio_shares.py`, `tests/test_portfolio_shares.py` |
 | Cyber DNA overexposure | Separate `competency.view`, `career_affinity.view.self`, `recommendation.view.self`; faculty do not receive private signals | **Completed** | Permission catalog, Cyber DNA dependencies, privacy tests |
 | Broken authorization middleware | Startup route audit; optional strict fail-fast | **Completed** | `authorization_strict_startup`, `tests/test_route_authorization.py` |
 | Consent bypass | Consent evaluated in the Authorization Service before break-glass | **Completed** | `test_revoked_dna_consent_blocks_even_a_break_glass_attempt` |
-| Confused deputy / service-account abuse | `service_account` role with no default grants; explicit extra roles | **Partial** | Role exists; scoped service API keys and rotation workflow are not yet implemented |
+| Confused deputy / service-account abuse | Hashed service tokens with explicit scopes, expiry, revocation, no password login, and per-request attribution | **Completed** | `app/services/service_identities.py`, `/api/admin/security/service-identities`, `tests/test_service_identities.py` |
 | Audit log tampering | Forced RLS, no UPDATE/DELETE policies, no delete API, non-superuser runtime role requirement | **Completed** | `test_rls_denies_update_delete_and_scopes_tenants`, `docs/SECURITY-EVENTS.md` |
 | Break-glass abuse | Reason, MFA, optional second approval, max lifetime, scope limit, critical use event, post-use review | **Completed** | `app/services/authorization.py`, `tests/test_authorization_service.py`, `docs/AUTHORIZATION-SERVICE.md` |
-| Row-level security | Forced RLS on the security event store; tenant GUCs; append-only | **Partial** | Complete on `security_events`; table-wide rollout depends on adding `institution_id` to legacy tenant-owned tables |
+| Row-level security | Forced RLS on the security event store and nine learner-data tables; tenant derivation triggers; tenant GUCs | **Partial** | `app/services/tenant_rls.py`, `tests/test_tenant_rls.py`; remaining legacy tables are service-scoped until they receive `institution_id` |
 | Tenant middleware | Server-loaded tenant context, RLS GUC binding, request cleanup | **Completed** | `app/security/tenant.py`, `get_current_user`, `database.py` session hooks |
 | Permission review automation | `review_permissions --check` and startup catalog validation | **Completed** | `app/scripts/review_permissions.py`, `validate_catalog()` |
 
@@ -70,7 +70,9 @@ cd platform/backend
 python -m app.scripts.review_permissions --check
 python -m pytest tests/test_authorization_service.py \
   tests/test_security_events.py tests/test_horizontal_privilege.py \
-  tests/test_portfolio_shares.py tests/test_route_authorization.py -q
+  tests/test_portfolio_shares.py tests/test_route_authorization.py \
+  tests/test_tenant_rls.py tests/test_service_identities.py \
+  tests/test_institution_admin.py tests/test_data_label_policy.py -q
 ```
 
 A full backend run with `TEST_DATABASE_URL` pointed at a scratch PostgreSQL

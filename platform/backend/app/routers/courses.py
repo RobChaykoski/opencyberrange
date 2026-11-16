@@ -424,6 +424,13 @@ async def list_courses(
     """List courses. Admins see all; instructors see own courses; students see enrolled only."""
     if current_user.role == 'admin':
         courses = db.query(Course).order_by(Course.created_at.desc()).all()
+    elif current_user.role == 'institution_admin':
+        courses = (
+            db.query(Course)
+            .filter(Course.institution_id == current_user.institution_id)
+            .order_by(Course.created_at.desc())
+            .all()
+        )
     elif current_user.role == 'instructor':
         courses = db.query(Course).filter(
             Course.instructor_id == current_user.id,
@@ -437,7 +444,11 @@ async def list_courses(
             Course.is_active == True,
         ).order_by(Course.created_at.desc()).all()
 
-    viewer_id = current_user.id if current_user.role not in ('admin', 'instructor') else None
+    viewer_id = (
+        current_user.id
+        if current_user.role not in ('admin', 'instructor', 'institution_admin')
+        else None
+    )
     responses = [_course_response(c, db, viewer_id) for c in courses]
     # Beginner-first so a learner meets the easiest course before a capstone.
     # Code/name break ties deterministically.
@@ -458,8 +469,17 @@ async def get_course(
     """Get course detail with assigned labs."""
     course = _get_course_or_404(db, course_id)
 
-    # Must be admin, course owner, or enrolled
-    is_instructor = (current_user.role == 'admin') or (course.instructor_id == current_user.id)
+    # Must be admin, institution admin for the course tenant, course owner, or
+    # enrolled.
+    is_institution_admin = (
+        current_user.role == "institution_admin"
+        and course.institution_id == current_user.institution_id
+    )
+    is_instructor = (
+        current_user.role == 'admin'
+        or is_institution_admin
+        or (course.instructor_id == current_user.id)
+    )
     is_enrolled = db.query(CourseEnrollment).filter(
         CourseEnrollment.course_id == course_id,
         CourseEnrollment.user_id == current_user.id,

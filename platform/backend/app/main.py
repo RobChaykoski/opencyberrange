@@ -836,6 +836,15 @@ async def lifespan(app: FastAPI):
     except Exception as exc:
         logger.warning("Integrity ledger setup skipped: %s", exc)
 
+    # Tenant columns, derivation triggers, and forced RLS on the learner-data
+    # tables. This is idempotent and backfills legacy rows from their owner.
+    try:
+        from app.services import tenant_rls
+
+        tenant_rls.apply(engine)
+    except Exception as exc:
+        logger.warning("Tenant RLS setup skipped: %s", exc)
+
     # Seed the reviewed RBAC catalog and install the append-only security event
     # RLS policies. Both are idempotent; an admin's role edits survive a reboot.
     try:
@@ -936,15 +945,19 @@ async def actor_request_context(request: Request, call_next):
     """
     request_id = request.headers.get("x-request-id") or uuid.uuid4().hex
     set_request_id(request_id)
+    from app.security.tenant import begin_request
+
+    begin_request()
     try:
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
         return response
     finally:
         clear_actor()
-        from app.security.tenant import clear_tenant
+        from app.security.tenant import clear_tenant, end_request
 
         clear_tenant()
+        end_request()
         from app.services.security_events import clear_tenant_context
 
         clear_tenant_context()
@@ -1043,13 +1056,32 @@ async def export_label_headers(request: Request, call_next):
     response = await call_next(request)
     content_type = (response.headers.get("content-type") or "").lower()
     disposition = (response.headers.get("content-disposition") or "").lower()
+    # JSON exports do not use an attachment disposition. The route set is small
+    # and explicit so a normal JSON API response is never treated as an export.
+    json_export_paths = (
+        "/api/auth/export",
+        "/api/identity/providers/export",
+        "/api/profile/career-dossier",
+        "/api/profile/portfolio",
+        "/api/profile/snapshots",
+    )
+    json_export = (
+        response.headers.get("x-ocr-export") is not None
+        or any(
+            request.url.path == prefix or request.url.path.startswith(prefix + "/")
+            for prefix in json_export_paths
+        )
+    )
     is_export = (
         "attachment" in disposition
         or content_type.startswith("application/pdf")
         or content_type.startswith("text/csv")
+        or json_export
     )
     if not is_export:
         return response
+    if json_export:
+        response.headers.setdefault("X-OCR-Export", "json")
 
     from app.database import SessionLocal
 

@@ -218,7 +218,15 @@ async def course_student_history(
     course = db.query(Course).filter(Course.id == course_id).first()
     if course is None:
         raise HTTPException(status_code=404, detail="Course not found")
-    if current_user.role != "admin" and course.instructor_id != current_user.id:
+    institution_admin = (
+        current_user.role == "institution_admin"
+        and course.institution_id == current_user.institution_id
+    )
+    if (
+        current_user.role != "admin"
+        and not institution_admin
+        and course.instructor_id != current_user.id
+    ):
         raise HTTPException(status_code=403, detail="Not authorized to audit this course")
 
     student = db.query(User).filter(User.id == user_id).first()

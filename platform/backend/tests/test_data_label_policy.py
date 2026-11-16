@@ -8,6 +8,7 @@ from types import SimpleNamespace
 
 import pytest
 from fastapi import FastAPI, Response
+from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
 from app.auth import get_password_hash
@@ -280,6 +281,32 @@ def test_export_middleware_denies_restricted_and_labels_allowed(
     assert denied.status_code == 403, denied.text
     assert denied.json()["error"] == "DataLabelExportDenied"
     assert denied.headers["x-data-policy"] == "denied"
+
+
+def test_json_export_is_enforced_when_marked(db_session, test_user, auth_headers):
+    _set(db_session, data_label_enforcement_enabled="true")
+
+    app = FastAPI()
+    app.middleware("http")(export_label_headers)
+
+    @app.get("/api/auth/export/demo")
+    def allowed_json_export():
+        return JSONResponse({"account": "self"}, headers={"X-OCR-Export": "json"})
+
+    @app.get("/api/admin/system/backups/demo")
+    def restricted_json_export():
+        return JSONResponse({"backup": "secret"}, headers={"X-OCR-Export": "json"})
+
+    client = TestClient(app)
+    allowed = client.get("/api/auth/export/demo", headers=auth_headers)
+    assert allowed.status_code == 200, allowed.text
+    assert allowed.headers["x-ocr-export"] == "json"
+    assert allowed.headers["x-data-classification"] == "Confidential"
+    assert allowed.headers["x-data-policy"] == "enforced"
+
+    denied = client.get("/api/admin/system/backups/demo", headers=auth_headers)
+    assert denied.status_code == 403
+    assert denied.json()["error"] == "DataLabelExportDenied"
 
 
 def test_admin_policy_endpoint_previews_a_decision(client, db_session):
