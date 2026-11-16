@@ -29,10 +29,13 @@ Each track card shows:
 
 ## Choose a track and open it
 
-Current tracks include Windows Penetration Testing, Linux Fundamentals, Web
-Application Security, Network Security, Malware Analysis, OT/ICS Security, and
-AI Hacking. The available set depends on the edition and content enabled on your
-server.
+Current tracks include Windows Penetration Testing (with the Active Directory
+attack-and-remediation pathway), Linux Fundamentals, Web Application Security
+(with the modern application-security pathway: API, GraphQL, JWT, OAuth,
+DevSecOps, containers, Kubernetes, and supply chain), Network Security, Malware
+Analysis, OT/ICS Security, OSINT, Digital Forensics, Identity and Access, and AI
+Security. Release 5.17 ships **210 lab definitions**. The available set depends
+on the edition and content enabled on your server.
 
 1. Open `/exercises` from the sidebar.
 2. Scan the track cards and read the descriptions to pick a path.

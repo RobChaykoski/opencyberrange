@@ -47,6 +47,30 @@ pages live in the [Professional supplement](09_Professional/index.md) and the
 [Enterprise supplement](10_Enterprise/index.md). See
 [Manual editions](VERSIONS.md) for the feature matrix.
 
+## What's new in Release 5.17
+
+- **Edition:** Community / Academic (`lite` entitlement, single-host). The
+  Professional and Enterprise profiles remain separate licence tiers on the same
+  release line.
+- **210 lab definitions:** the catalogue now includes a nine-lab **Active
+  Directory** pathway (domain enumeration, Kerberoasting, AS-REP roasting,
+  ACL/DACL abuse, delegation, AD CS, DCSync/tickets, GPO/LAPS defence, capstone)
+  and a ten-lab **modern application-security** pathway (API inventory,
+  BOLA/BFLA, GraphQL, JWT, OAuth/OIDC, DevSecOps, containers, Kubernetes,
+  supply chain, capstone).
+- **Tenant isolation:** forced PostgreSQL row-level security covers 25
+  learner-owned tables. The Community / Academic deployment runs one `default`
+  institution, so the backstop is transparent in normal use.
+- **Re-authentication fix:** the re-authentication dialog now calls the correct
+  API path, unblocking exports, role changes, consent revocation, and the
+  production cutover.
+- **Production is cut over:** `deployment_mode=production`,
+  `data_collection_mode=production`, and settings changes require a ticket.
+
+See the
+[production deployment statement](https://github.com/RobChaykoski/opencyberrange/blob/main/docs/PRODUCTION-DEPLOYMENT-STATEMENT.md)
+for the authoritative release and deployment record.
+
 ## Where to start
 
 - New here? Begin with [Getting Started](01_Getting_Started/01_Platform_Overview.md).

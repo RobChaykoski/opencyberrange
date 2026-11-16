@@ -10,8 +10,8 @@ This evidence record applies to the SWOCTS Cyber Range deployment, powered by Op
 > **2.7.0 note:** 2.7.0 adds level quizzes and VPN-only target-IP guidance,
 > with no schema change and no new runtime dependency. The 2.6.0 pass below
 > remains the historical baseline; the 2.7.0 verification is recorded in
-> [`UI-VERIFICATION.md`](UI-VERIFICATION.md) and
-> [`2.7.0-PLAN.md`](2.7.0-PLAN.md).
+> [`UI-VERIFICATION.md`](archive/UI-VERIFICATION.md) and
+> [`2.7.0-PLAN.md`](archive/2.7.0-PLAN.md).
 
 Record one row per verification pass. Do not mark a category “verified” unless
 the evidence was produced for the build being released.

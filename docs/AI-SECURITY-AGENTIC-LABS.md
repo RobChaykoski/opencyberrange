@@ -1,5 +1,10 @@
 # AI security and agentic skill labs
 
+> **Status: plan.** This matrix describes target coverage. The shipped AI labs
+> are counted in [Lab and content counts](COUNTS.md); agentic and agent-abuse
+> modules are not all implemented. Do not present a matrix row as a runnable lab
+> until its slug exists under `platform/labs`.
+
 These labs follow the OWASP Agentic Skills Top 10 (AST10). The
 machine-readable plan is in
 `platform/backend/app/data/owasp-security-baseline.yaml`; the validation matrix

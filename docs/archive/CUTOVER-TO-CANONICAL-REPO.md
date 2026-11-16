@@ -1,8 +1,26 @@
 # Cutover to the canonical repository
 
-Status: the repository is renamed to `RobChaykoski/opencyberrange` and branch
-protection is enabled. The remaining steps are the production host switch and
-archiving the pre-cutover repository.
+Status: **complete (historical record).** The repository is renamed to
+`RobChaykoski/opencyberrange`, branch protection is enabled, and the production
+and development hosts pull from it. The pre-cutover repository is retained as
+the read-only archive and rollback point.
+
+> This page also absorbs the former `MOVE-TO-OPENCYBER-NEXT.md`, which recorded
+> the move from the frozen pre-cutover tree into the staging repository that was
+> later renamed to `RobChaykoski/opencyberrange`. Both steps are complete; the
+> content is kept as a historical record only.
+
+## Repository move (merged from MOVE-TO-OPENCYBER-NEXT.md)
+
+The move copied every tracked file and commit from the frozen pre-cutover
+`main` into the staging tree, replayed the Wave 0 scaffold on top for a linear
+history, and verified the backend tests, frontend build, lab validation, and
+Compose configuration before pushing. The staging repository was created at
+`RobChaykoski/opencyberrange-next`, then renamed to
+`RobChaykoski/opencyberrange`. The old tree remains at
+`RobChaykoski/opencyberrange-backup` as the rollback point. No production host
+was pointed at the staging branch directly; promotion went through a signed
+release tag.
 
 Target end state:
 
@@ -22,7 +40,7 @@ The canonical URLs in the documentation now resolve, and the old
 - `README.md`, `README-UPGRADE.md`, `SECURITY.md`, the issue-template links,
   and the Manual-Lite upgrade guide point at the canonical repository.
 - Version references move from `v2.3.0` to the current `v2.3.2` release line.
-- `docs/MOVE-TO-OPENCYBER-NEXT.md` is marked historical.
+- The former `MOVE-TO-OPENCYBER-NEXT.md` content is merged into this page.
 - `platform/frontend/wiki/` is generated output and is deliberately not edited.
   Rebuild it with `platform/scripts/deploy-wiki.sh build` if you ship the
   checked-in tree.

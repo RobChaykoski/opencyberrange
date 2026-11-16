@@ -49,6 +49,27 @@ still be reviewed, but it cannot be merged into the commercial tier.
   The hook only fails on high-confidence findings. Warnings still need a human
   decision.
 
+### Documentation and screenshots
+
+Follow the
+[documentation skill](.opencode/skills/documentation/SKILL.md). Before opening
+a pull request that changes a version, count, route, setting, or screenshot,
+run:
+
+```bash
+python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
+python scripts/check-doc-assets.py
+python scripts/generate-api-manual.py --check
+python scripts/generate-lab-outcomes.py --check
+python scripts/generate-lab-manifests.py --check
+python -m mkdocs build -f mkdocs-manual-lite.yml --strict
+```
+
+The build must be warning-free. Screenshots must use synthetic demo data on the
+development host, must show the current release, and must be reviewed for
+personal data before commit. See
+[Refreshing the manual screenshots](docs/MANUAL-SCREENSHOTS.md).
+
 ### Reporting Bugs
 
 Open an issue on GitHub with:

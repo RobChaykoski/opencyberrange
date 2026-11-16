@@ -1,0 +1,17 @@
+# Code owners
+
+# Default owner for every path. A review from the owner is required before merge.
+* @RobChaykoski
+
+# Security, privacy, and release authority.
+/SECURITY.md @RobChaykoski
+/PRIVACY.md @RobChaykoski
+/CONTRIBUTING.md @RobChaykoski
+/CODE_OF_CONDUCT.md @RobChaykoski
+/.github/ @RobChaykoski
+/docs/PRODUCTION-DEPLOYMENT-STATEMENT.md @RobChaykoski
+/docs/TENANT-ISOLATION-STATUS.md @RobChaykoski
+/docs/INDEPENDENT-SECURITY-TESTING.md @RobChaykoski
+/platform/backend/app/services/production_control.py @RobChaykoski
+/platform/backend/app/services/tenant_rls.py @RobChaykoski
+/platform/backend/app/security/ @RobChaykoski

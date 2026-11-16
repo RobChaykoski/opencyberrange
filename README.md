@@ -9,8 +9,10 @@
 > Community participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
 > The authoritative deployment state is the
 > [production deployment statement](docs/PRODUCTION-DEPLOYMENT-STATEMENT.md).
+> The documentation index is [`docs/README.md`](docs/README.md); privacy is
+> [`PRIVACY.md`](PRIVACY.md) and support is [`SUPPORT.md`](SUPPORT.md).
 > The local image and stack bring-up is documented in
-> [`docs/RELEASE-5-LOCAL.md`](docs/RELEASE-5-LOCAL.md); the production
+> [`docs/RELEASE-5-LOCAL.md`](docs/archive/RELEASE-5-LOCAL.md); the production
 > readiness record is [`docs/RELEASE-5-PRODUCTION-READINESS.md`](docs/RELEASE-5-PRODUCTION-READINESS.md).
 
 > **SWOCTS Cyber Range** is the SWOCTS-branded deployment of the OpenCyberRange training platform. The product identity, crest, and title are SWOCTS; the underlying platform, code, and upstream attribution remain OpenCyberRange.
@@ -261,8 +263,8 @@ teaching maintenance release.
 Bug fixes and security updates land on the 1.1 line first and are merged forward
 into `main`. The tree contains all history from the pre-cutover tree plus the
 upgrade scaffold and dependency waves. See
-`docs/MOVE-TO-OPENCYBER-NEXT.md` and `docs/CUTOVER-TO-CANONICAL-REPO.md` for the
-migration and cutover trail.
+`docs/archive/CUTOVER-TO-CANONICAL-REPO.md` for the repository migration and
+cutover trail.
 
 ## AI assistance disclosure
 
@@ -432,7 +434,7 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-**Total:** 182 workbook-mapped exercises across 12 tracks.
+**Total:** 182 workbook-mapped exercises across 13 tracks.
 
 Recommended pathway:
 
@@ -1049,12 +1051,12 @@ opencyberrange/
 | [Server Deployment](Manual-Lite/00_Server_Deployment/) | Server administrators deploying the platform |
 | [Supported versions](docs/SUPPORTED-VERSIONS.md) | Operators and contributors checking runtime, dependency, and image pins |
 | [Host OS support](docs/OS-SUPPORT.md) | Administrators choosing between Ubuntu 24.04 and 22.04, and the Ubuntu 26.04 candidate plan |
-| [Program charter](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in the current release |
-| [Enterprise parking lot](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding the current release |
-| [Ubuntu 24.04 migration plan](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving the current release to 24.04 while 1.1.3 supports 22.04 and 24.04 |
+| [Program charter (historical)](docs/V2-PROGRAM-CHARTER.md) | Maintainers and contributors checking whether work belongs in the current release |
+| [Enterprise parking lot (historical)](docs/V3-PARKING-LOT.md) | Maintainers recording deferred features without expanding the current release |
+| [Ubuntu 24.04 migration plan (historical)](docs/V2-UBUNTU-24.04-MIGRATION.md) | Release engineers moving the current release to 24.04 while 1.1.3 supports 22.04 and 24.04 |
 | [Ubuntu 26.04 Valkey vs Redis plan](docs/UBUNTU-26.04-VALKEY-REDIS-TEST-PLAN.md) | Release engineers evaluating the next host baseline and rate-limit store |
-| [V2 24.04 build-out checklist](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment |
-| [Enterprise HA lab pool plan](docs/V3-HA-LAB-POOL.md) | Architects planning the Release 5 multi-host Docker pods, routing, storage, and failure recovery |
+| [V2 24.04 build-out checklist (historical)](docs/V2-24.04-BUILD-OUT.md) | Operators standing up and validating the 24.04 baseline before analytics/reporting deployment |
+| [Enterprise HA lab pool plan (historical)](docs/V3-HA-LAB-POOL.md) | Architects planning the Release 5 multi-host Docker pods, routing, storage, and failure recovery |
 | [Upgrade and Verify](Manual-Lite/00_Server_Deployment/07_Upgrade_And_Verify.md) | Administrators backing up and upgrading a server, labs, and RangeBox images |
 | [Student Guide](Manual-Lite/02_Student_Guide/01_Student_Dashboard.md) | Students using exercises, courses, profiles, and certificates |
 | [Migrating Users](Manual-Lite/04_Admin_Guide/26_Migrating_Users.md) | Admins moving accounts from an earlier installation, in the admin UI or CLI |
@@ -1063,12 +1065,14 @@ opencyberrange/
 | [Security review, November 2026](docs/SECURITY-REVIEW-2026-11.md) | Operators and reviewers tracing each hardening change to its finding and fix |
 | [Privacy notice](docs/PRIVACY-NOTICE.md) | Learners, instructors, and administrators reviewing the PIPEDA-aligned platform notice |
 | [Security policy](SECURITY.md) | Security reporters and reviewers checking scope and export/restore safeguards |
+| [Privacy summary](PRIVACY.md) | Learners, instructors, and administrators checking data handling in plain language |
+| [Support](SUPPORT.md) | Users and contributors choosing the right help route |
 | [Workbook](Workbook/index.md) | Students following step-by-step lab walkthroughs |
 | [AI Hacking Workbook](Workbook/CH_AI01_AI_Foundations/00_Introduction.md) | Students starting the AI Hacking stream |
 | [Architecture](Manual-Lite/00_Server_Deployment/06_Architecture.md) | Developers and operators extending the platform |
 | [System architecture diagram](docs/ARCHITECTURE.md) | Developers and operators reviewing runtime components, trust boundaries, and volumes |
 | [Learning framework](docs/LEARNING-FRAMEWORK.md) | Instructors and curriculum designers mapping tracks, levels, labs, and evidence |
-| [Release analytics plan](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
+| [Release analytics plan (historical)](docs/V2-LEARNING-ANALYTICS.md) | Instructors, developers, and researchers reviewing metrics, reporting, privacy, and the analytics roadmap |
 | [NICE mapping matrix](docs/NICE-MAPPING.md) | Programme reviewers mapping tracks to NICE categories and work roles |
 | [Survey privacy and consent](docs/SURVEY-PRIVACY.md) | Privacy officers and survey operators |
 | [REB-ready survey package](docs/research/REB-SURVEY-PACKAGE.md) | Researchers and REB reviewers preparing a survey protocol |
@@ -1106,13 +1110,13 @@ and (with `--json docs/status-dashboard.json`) a machine-readable snapshot. It c
 `/api/version`, `/api/setup/status`, and the SPA index only; it does not log in
 or read learner records. Docker host and container state still need
 `docker compose ps` on each host. The latest browser verification is recorded in
-[UI verification](docs/UI-VERIFICATION.md).
+[UI verification](docs/archive/UI-VERIFICATION.md).
 
 ## Requirements
 
-- **OS:** Ubuntu 24.04 LTS for new 2.7 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
+- **OS:** Ubuntu 24.04 LTS for new 5.17 installs; the 1.1 maintenance line supports Ubuntu 22.04 and 24.04 LTS. See [Host OS support](docs/OS-SUPPORT.md).
 - **CPU:** 4+ cores (KVM-capable for shared VM labs)
-- **Platform stack:** SWOCTS Cyber Range Release 5 (powered by OpenCyberRange); Python 3.11 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the `WAVE-*.md` documents in `docs/`.
+- **Platform stack:** SWOCTS Cyber Range Release 5 (powered by OpenCyberRange); Python 3.13 runtime, Node 22 frontend build, PostgreSQL 15, Valkey 9.1.3, nginx, and Docker Engine 24+ with Compose v2 on a single host. Multi-host Docker and Kubernetes are v3 candidates, not supported deployment targets. Current pins and the upgrade trail are in [`versions.yaml`](versions.yaml) and the archived Wave documents in [`docs/archive/`](docs/archive/README.md).
 - **RAM:** 32 GB minimum, 64 GB recommended for 20+ concurrent students. Most RAM goes to RangeBoxes (the in-browser desktops), each hard-capped at 2 GB; the platform auto-sizes how many it will start from free memory, keeping an 8 GB reserve. See [Prerequisites and Sizing](Manual-Lite/00_Server_Deployment/01_Prerequisites.md#memory-and-rangebox-capacity).
 - **Disk (production):** 500 GB; pre-building all exercise containers uses ~200 GB of images and cache; exercises then start in seconds for students
 - **Disk (evaluation):** 100 GB; skip pre-building and let containers build on first launch; the first student to start each exercise waits 1-3 minutes while Docker builds the image, but disk stays small until exercises are actually used

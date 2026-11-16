@@ -1,5 +1,11 @@
 # API security labs
 
+> **Status: partly implemented.** The `web-11-*` pathway ships API inventory,
+> BOLA/BFLA, GraphQL, JWT, and OAuth exercises. The full OWASP API Security
+> Top 10 matrix below remains a plan. See
+> [Modern application-security pathway](MODERN-APP-SECURITY-PATHWAY.md) and
+> [Lab and content counts](COUNTS.md).
+
 These labs follow the OWASP API Security Top 10 2023. The machine-readable
 plan is in `platform/backend/app/data/owasp-security-baseline.yaml`; the
 validation matrix is in [`OWASP-SECURITY-BASELINE.md`](OWASP-SECURITY-BASELINE.md).

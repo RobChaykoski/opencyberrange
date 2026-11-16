@@ -274,7 +274,7 @@
                   <input v-model="newUser.email" type="email" placeholder="Email" class="form-input">
                   <input v-model="newUser.first_name" placeholder="First name (optional)" class="form-input" autocomplete="given-name">
                   <input v-model="newUser.last_name" placeholder="Last name (optional)" class="form-input" autocomplete="family-name">
-                  <input v-model="newUser.password" type="password" placeholder="Password" class="form-input">
+                  <input v-model="newUser.password" type="password" maxlength="128" autocomplete="new-password" placeholder="Password" class="form-input">
                 </div>
                 <div class="form-actions">
                   <label class="checkbox-label">
@@ -1954,7 +1954,7 @@
                 </label>
                 <label>
                   <span>Current password</span>
-                  <input v-model="cutoverForm.password" type="password" autocomplete="current-password" />
+                  <input v-model="cutoverForm.password" type="password" maxlength="128" autocomplete="current-password" />
                 </label>
                 <label>
                   <span>Type {{ changeControl?.confirmation_phrase || 'GO PRODUCTION' }} exactly</span>
@@ -4072,6 +4072,7 @@ test:
                             id="reset-admin-password"
                             v-model="passwordResetForm.adminPassword"
                             :type="showAdminPassword ? 'text' : 'password'"
+                            maxlength="128"
                             class="form-input"
                             :class="{ 'error': passwordResetErrors.adminPassword }"
                             autocomplete="current-password"
@@ -4100,6 +4101,7 @@ test:
                             id="reset-new-password"
                             v-model="passwordResetForm.newPassword"
                             :type="showResetPassword ? 'text' : 'password'"
+                            maxlength="128"
                             class="form-input"
                             :class="{ 'error': passwordResetErrors.newPassword }"
                             autocomplete="new-password"
@@ -4126,6 +4128,7 @@ test:
                             id="reset-confirm-password"
                             v-model="passwordResetForm.confirmPassword"
                             :type="showResetConfirmPassword ? 'text' : 'password'"
+                            maxlength="128"
                             class="form-input"
                             :class="{ 'error': passwordResetErrors.confirmPassword }"
                             autocomplete="new-password"

@@ -1,5 +1,9 @@
 # OWASP Top 10 2025 labs
 
+> **Status: plan.** The matrix describes target coverage. Shipped web exercises
+> are counted in [Lab and content counts](COUNTS.md); a matrix row is not
+> runnable until its slug exists under `platform/labs`.
+
 These labs follow the OWASP Top 10 2025. The machine-readable plan is in
 `platform/backend/app/data/owasp-security-baseline.yaml`; the validation matrix
 is in [`OWASP-SECURITY-BASELINE.md`](OWASP-SECURITY-BASELINE.md).

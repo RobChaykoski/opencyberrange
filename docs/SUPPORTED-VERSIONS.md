@@ -137,5 +137,5 @@ upgrade programme with per-lab solve tests.
 | MkDocs 1.x | MkDocs 2.0 is incompatible with Material | When Material supports 2.x |
 | APScheduler 3.x | 4.x is a major API rewrite | Revisit after platform waves |
 
-See [UPGRADE-TO-LATEST-GA-PLAN.md](UPGRADE-TO-LATEST-GA-PLAN.md) for the full
+See [UPGRADE-TO-LATEST-GA-PLAN.md](archive/UPGRADE-TO-LATEST-GA-PLAN.md) for the full
 wave plan, gates, and rollback procedure.

@@ -13,6 +13,7 @@ import base64
 import io
 import logging
 import secrets
+import unicodedata
 import qrcode
 import re
 
@@ -264,6 +265,24 @@ async def login(
     db: Session = Depends(get_db)
 ):
     """Login endpoint - rate limited to 10 attempts per minute"""
+    # Bound the raw form before hashing, logging, or storing it. Oversized
+    # input wastes hashing work, and a newline or control character in a
+    # username can forge log records. The caller sees the same generic error
+    # as a wrong password, so this does not reveal whether an account exists.
+    username = form_data.username or ""
+    password = form_data.password or ""
+    if (
+        len(username) > 150
+        or len(password) > 128
+        or any(unicodedata.category(ch) == "Cc" for ch in username)
+        or any(unicodedata.category(ch) == "Cc" for ch in password)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     # Authenticate first — returns None for non-existent users, wrong
     # passwords, AND locked accounts.  We intentionally return the same
     # generic error for all cases to prevent username enumeration.

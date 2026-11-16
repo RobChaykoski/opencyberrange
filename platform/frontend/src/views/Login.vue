@@ -104,6 +104,7 @@
                 :id="`ldap-pass-${provider.id}`"
                 v-model="ldapState[provider.id].password"
                 type="password"
+                maxlength="128"
                 class="form-input"
                 autocomplete="current-password"
                 :aria-describedby="ldapState[provider.id].error ? `ldap-error-${provider.id}` : undefined"

@@ -21,3 +21,10 @@ labels: enhancement
 ## Additional context
 
 <!-- Links, screenshots, related issues. -->
+
+## Safety and privacy
+
+Do not include a real password, token, private key, learner name, email, IP, or
+another institution's data. For a lab idea, describe a fictional, isolated
+target; do not name a live public host. For a security problem, follow
+[SECURITY.md](../../SECURITY.md) instead of opening this issue.

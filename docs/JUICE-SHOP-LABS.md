@@ -1,5 +1,9 @@
 # OWASP Juice Shop software-security labs
 
+> **Status: author guidance / plan.** Juice Shop exercises are not all shipped.
+> Verify a slug under `platform/labs` before calling one runnable. Shipped
+> software-security labs are counted in [Lab and content counts](COUNTS.md).
+
 Audience: software-security lab authors, instructors, and reviewers.
 
 **OWASP Juice Shop** is an intentionally insecure web application built for

@@ -211,6 +211,29 @@ def test_required_ticket_and_protected_phase_keys(db_session):
         _reset(db_session)
 
 
+def test_cutover_rejects_wrong_password_before_any_change(db_session):
+    _reset(db_session)
+    settings_service.seed_defaults(db_session)
+    admin = _admin(db_session)
+    try:
+        with pytest.raises(production_control.ProductionControlError) as exc:
+            production_control.cutover_to_production(
+                db_session,
+                admin,
+                ticket_number="CHG-BAD-PASS",
+                password="Wrong#Password9",  # security-delta: allow credential-like assignment
+                confirmation="GO PRODUCTION",
+                acknowledge_data_loss=True,
+                acknowledge_one_way=True,
+                reason="Verify the cutover password gate.",
+            )
+        assert exc.value.code == "password_invalid"
+        assert production_control.deployment_mode(db_session) == "development"
+        assert db_session.query(ProductionCutover).count() == 0
+    finally:
+        _reset(db_session)
+
+
 def test_one_way_cutover_clears_sample_accounts_and_encrypts_evidence(
     db_session, monkeypatch
 ):

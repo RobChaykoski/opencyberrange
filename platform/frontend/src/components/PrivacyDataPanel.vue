@@ -157,6 +157,7 @@
             id="delete-account-password"
             v-model="password"
             type="password"
+            maxlength="128"
             class="form-input"
             autocomplete="current-password"
             required

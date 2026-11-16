@@ -4,11 +4,20 @@ Status: **Accepted**
 Date: 2026-11-07
 Supersedes: the separate edition version lines in ADR 0002 and ADR 0003
 
+## Current status (2026-11-16)
+
+> The release number is now **5.17.4** (`v5.17.4`). See
+> [`versions.yaml`](../../versions.yaml) and the
+> [production deployment statement](../PRODUCTION-DEPLOYMENT-STATEMENT.md). The
+> 2.5.0 text below is the historical amendment from 2026-11-08, retained for the
+> decision record.
+
 ## Amendment (2026-11-08)
 
-The one-platform-release-number decision is unchanged. The current release is
-**2.5.0**, a minor release adding organizational course health, two-way course
-feedback, and optional exercise knowledge checks. The previous **2.4.1** patch
+The one-platform-release-number decision is unchanged. At the time of this
+amendment the current release was **2.5.0**, a minor release adding
+organizational course health, two-way course feedback, and optional exercise
+knowledge checks. The previous **2.4.1** patch
 release contained the security and UX remediation for the 2.4.0 feature release
 (mobile student shell, RangeBox workspace, Events, and Live activity). The
 `2.1.4` references below describe the release that established this decision;

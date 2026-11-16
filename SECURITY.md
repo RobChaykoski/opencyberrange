@@ -11,6 +11,7 @@ same defect applies.
 
 | Version | Supported |
 |---|---|
+| `v5.17.x` | Yes — current Community / Academic release |
 | `v5` / `main` | Yes |
 | `v4` | Security fixes only - upgrade to `v5` |
 | `v2.7.0` | Security fixes only - upgrade to `v5` |
@@ -114,21 +115,26 @@ Commands and the full runbook are in
   `python -m app.scripts.review_permissions --check` is the release gate.
 - Non-system roles are confined to their `institution_id`. `institution_admin`
   is not a system administrator.
-- `courses`, `course_enrollments`, `lab_sessions`, `lab_completions`,
-  `achievements`, `learner_snapshots`, `portfolio_share_tokens`,
-  `dna_evidence_records`, and `dna_snapshots` carry a server-derived
-  `institution_id` and forced PostgreSQL RLS. The runtime role must not be a
-  superuser.
+- **25 learner-owned tables** carry a server-derived `institution_id` and forced
+  PostgreSQL RLS, covering courses, enrollments, sessions, completions,
+  achievements, snapshots, DNA, portfolio shares, flag attempts, reviews,
+  surveys, accommodations, exercise interactions, feedback, quiz attempts,
+  badges, LTI scores, and activity events. See
+  [Tenant isolation status](docs/TENANT-ISOLATION-STATUS.md). The runtime role
+  must not be a superuser.
 - Service identities use hashed, scoped, expiring tokens with no password
   login. They cannot receive private learner permissions.
-- `docs/PIA-TRA-FINDINGS.md` records the remaining tenant migration.
+- [Tenant isolation status](docs/TENANT-ISOLATION-STATUS.md) lists the enforced
+  tables and classifies the remaining authentication, consent, course-content,
+  and platform-operation tables.
 - Break-glass access is off by default, MFA-gated, reasoned, time-bound,
   optionally second-approved, scoped to one permission and learner/course, and
   every use is a `critical` security event. It never overrides a revoked
   consent.
 - The startup route audit reports protected endpoints without an
-  authentication/permission dependency. Enterprise deployments can set
-  `authorization_strict_startup=true` to refuse startup.
+  authentication/permission dependency. Production and enterprise deployments
+  set `OCR_AUTHZ_STRICT=1`, which refuses startup when a protected route lacks
+  an authorization dependency.
 
 ## Security event store
 
@@ -286,6 +292,12 @@ Testing must stay inside the lab network. Do not send enumeration, injection, or
 credential traffic to a real host, a public domain, or another learner's
 session.
 
+> **Historical evidence.** The dated sections below record the deployment and
+> test state at the time. Hostnames (`ocr.swocts.com`), versions, and lab counts
+> in them are not current. See the
+> [production deployment statement](docs/PRODUCTION-DEPLOYMENT-STATEMENT.md) and
+> [validation report](docs/VALIDATION-REPORT.md) for the current state.
+
 ## Security review evidence - 11 November 2026
 
 | Check | Result |
@@ -388,14 +400,14 @@ synthetic reproduction.
 
 ## Dependency posture
 
-`pip-audit` and `npm audit --omit=dev` run in CI. At `v2.7.0` the dependency
-audit remains a release gate; a finding that cannot be fixed immediately is
+`pip-audit` and `npm audit --omit=dev` run in CI. The dependency audit remains
+a release gate; a finding that cannot be fixed immediately is
 recorded with an owner and an expiry in the release notes rather than ignored
 silently. The supply-chain lock adds a drift check for the same inputs.
 
 ## OWASP Top 10 baseline
 
-The 2.7.0 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
+The current 5.17 line uses the [OWASP Top 10 security baseline](docs/V2-SECURITY-OWASP-TOP-10.md)
 as a merge and release requirement. It covers the web interface, platform data,
 and delivery process, and it names the tests or evidence expected for each
 category. Exceptions must be recorded with an owner and expiry; an expired

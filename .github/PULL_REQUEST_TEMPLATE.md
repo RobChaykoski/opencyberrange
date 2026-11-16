@@ -31,6 +31,15 @@
 - [ ] Security-relevant actions emit an audit or activity event
 - [ ] `pip-audit` / `npm audit` still clean, or the exception is documented with owner and expiry
 
+## Documentation and privacy checklist
+
+- [ ] Version, tag, and lab counts match `versions.yaml` and `docs/COUNTS.md`
+- [ ] Links, images, the API manual, and the MkDocs strict build pass
+- [ ] Screenshots use synthetic data, show the current release, and contain no personal data
+- [ ] Historical content is archived or labelled; no stale "current" claim remains
+- [ ] New personal data has export, erasure, and retention notes
+- [ ] No secret, real learner data, or live target appears in examples, logs, or screenshots
+
 ## Notes for reviewers
 
 <!-- Migration steps, screenshots, follow-up issues, or accepted risk. -->

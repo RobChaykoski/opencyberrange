@@ -6,7 +6,7 @@ production is cut over.** Development `172.16.16.44` and production
 `0041_tenant_rls_legacy`; see
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md). The local
 image/stack bring-up and deployment evidence are documented in
-[`RELEASE-5-LOCAL.md`](RELEASE-5-LOCAL.md). Everything below is Release 5.
+[`RELEASE-5-LOCAL.md`](archive/RELEASE-5-LOCAL.md). Everything below is Release 5.
 
 Source requirements: the university procurement pack covering FERPA, COPPA,
 GDPR/UK GDPR, CCPA/SOPIPA, PIPEDA/FIPPA/MFIPPA, Quebec Law 25, AODA/WCAG 2.2 AA,

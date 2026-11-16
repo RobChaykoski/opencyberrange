@@ -8,10 +8,10 @@ PolyForm Noncommercial License 1.0.0. Source-available is not the same as open
 source: PolyForm Noncommercial is not an OSI-approved license, because it
 withholds commercial use. Read it before you build on it.
 
-Development happens in a separate private repository. What is published here is
-the Lite release: the platform, the installer, and the lab tracks that edition
-ships. Content packs and the Enterprise tier are not in this repository and are
-not covered by the license in it.
+The public **Community / Academic** tree is this repository: the platform, the
+installer, and the lab tracks that edition ships. Commercial content packs and
+the Enterprise tier are separate and are not covered by the licence in this
+repository.
 
 ## The two grants
 
@@ -27,15 +27,15 @@ Enterprise bundle are licensed per customer under a commercial agreement.
 Nothing in the PolyForm grant extends to them. Contact the owner for
 commercial terms.
 
-## 4 release status
+## Current release status (5.17.4)
 
 - Platform source and content: **PolyForm Noncommercial License 1.0.0**.
-- Release artefact: `v4` is a **signed** annotated tag. The supply-chain lock is
-  signed by the release key and verified with
+- Release artefact: `v5.17.4` is a **signed** annotated tag. The supply-chain
+  lock is signed by the release key and verified with
   `scripts/supply_chain.py --check --signature supply-chain.lock.json.asc`.
   This supersedes the unsigned-tag notes in the older release sections below.
 - Third-party inventory: `scripts/check-licences.py` reports **OK** for the
-  Release 4 tree.
+  current tree.
 - The frontend runtime image is `nginx:alpine`, pinned by digest in
   `platform/frontend/Dockerfile` so a base-image refresh cannot change it
   silently.
@@ -44,14 +44,14 @@ commercial terms.
   licence texts. They are served from the wiki origin rather than a CDN.
 - CyberChef remains a pinned static build in the frontend image
   (`/tools/cyberchef/`, Apache-2.0).
-- Valkey **9.1.3** (BSD-3-Clause) is the rate-limit store in the Release 4
+- Valkey **9.1.3** (BSD-3-Clause) is the rate-limit store in the current
   compose files.
 
 ## Historical release status
 
 The sections below are retained for provenance. They describe older releases and
-are superseded by the Release 4 status above; in particular, the unsigned-tag
-and "Valkey not bundled" notes no longer describe the current tree.
+are superseded by the current status above; in particular, the unsigned-tag and
+"Valkey not bundled" notes no longer describe the current tree.
 
 ### 2.7.0 release status
 

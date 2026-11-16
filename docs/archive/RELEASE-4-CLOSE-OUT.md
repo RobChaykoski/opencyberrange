@@ -72,7 +72,7 @@ origin.
 
 ## Next
 
-Release 5 work is tracked in [`RELEASE-5-SCOPE.md`](RELEASE-5-SCOPE.md):
+Release 5 work is tracked in [`RELEASE-5-SCOPE.md`](../RELEASE-5-SCOPE.md):
 LTI 1.3 Advantage, multi-tenancy/RBAC, accommodation, minor-account mode,
 procurement artifacts, RangeBox modernization, and the frontend serving-layer
 evaluation. Development starts on a `release5` branch and a local Docker stack;

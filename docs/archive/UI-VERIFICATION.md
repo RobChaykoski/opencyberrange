@@ -2,7 +2,7 @@
 
 > **Historical record.** The 2.5.3 sections below keep the placeholder
 > management subnet used at the time. Current host status and build assets are
-> in [Deployment status](status-dashboard.md).
+> in [Deployment status](../status-dashboard.md).
 
 ## Release 4 production deployment (13 November 2026)
 
@@ -449,7 +449,7 @@ Development rerun on **11 November 2026** against `https://172.16.16.44`
   | RangeBox Log Detective | `logs.lab` | 10.4 s | 21.9 s | 200 / 2.6 ms | 43.7 s |
 
   These are single-lab timings on the development host, not a capacity result;
-  use [RangeBox capacity](RANGEBOX-CAPACITY.md) for sizing.
+  use [RangeBox capacity](../RANGEBOX-CAPACITY.md) for sizing.
 - Evidence: `ui-workspace-artifacts/dev-20261111/` and
   `ui-smoke-artifacts/dev-20261111/` on the operator workstation.
 
@@ -889,7 +889,7 @@ to the release record.
 
 A green smoke run proves the deployment is reachable, on the expected version,
 and rendering the checked surfaces. It does **not** measure host capacity; the
-RangeBox capacity test in [RangeBox capacity](RANGEBOX-CAPACITY.md) is the
+RangeBox capacity test in [RangeBox capacity](../RANGEBOX-CAPACITY.md) is the
 sizing evidence.
 
 CI runs the same static checks on every push:
@@ -906,7 +906,7 @@ CI runs the same static checks on every push:
 - Docker host state was not read by the browser test; use
   `docker compose ps` on each deployment host for that check.
 - A smoke run does not measure capacity. Use the
-  [RangeBox capacity test](RANGEBOX-CAPACITY.md) on each host class.
+  [RangeBox capacity test](../RANGEBOX-CAPACITY.md) on each host class.
 - Production `192.168.120.41` was upgraded to `2.4.1`; its admin surface,
   reports, events, profile tabs, skill tree, and mobile layout were verified.
 

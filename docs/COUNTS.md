@@ -12,7 +12,7 @@ when updating the README, release notes, or a deployment record.
 | Labs with a workbook link | **182** | non-empty `workbook:` in `lab.yaml` |
 | Labs without a workbook link | **28** | remaining `lab.yaml` files |
 | Registered labs in dev/prod | **210** | `labs` table after discovery |
-| Tracks | **12** | track folders under `platform/labs` |
+| Tracks | **13** | track folders under `platform/labs` |
 
 The badge and headline should use **210 lab definitions** and, when referring
 to workbook coverage, **182 workbook-mapped labs**. A deployment record should

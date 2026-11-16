@@ -8,10 +8,10 @@ latest-supported-GA platform. The pre-cutover tree remains at
 
 Start with:
 
-- [Upgrade plan](docs/UPGRADE-TO-LATEST-GA-PLAN.md)
+- [Upgrade plan](docs/archive/UPGRADE-TO-LATEST-GA-PLAN.md)
 - [Supported versions](docs/SUPPORTED-VERSIONS.md)
 - [Version inventory](scripts/report-versions.py)
-- [Cutover checklist](docs/CUTOVER-TO-CANONICAL-REPO.md)
+- [Cutover checklist](docs/archive/CUTOVER-TO-CANONICAL-REPO.md)
 
 Wave 0 establishes the baseline and CI before any application dependency is
 changed. Lab and RangeBox images are intentionally out of scope.

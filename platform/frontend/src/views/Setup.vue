@@ -40,11 +40,11 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="setup-admin_password">Password</label>
-          <input v-model="form.admin_password" type="password" id="setup-admin_password" class="form-input" placeholder="Min 8 characters" autocomplete="new-password" />
+          <input v-model="form.admin_password" type="password" maxlength="128" id="setup-admin_password" class="form-input" placeholder="Min 8 characters" autocomplete="new-password" />
         </div>
         <div class="form-group">
           <label class="form-label" for="setup-confirm_password">Confirm Password</label>
-          <input v-model="confirmPassword" type="password" id="setup-confirm_password" class="form-input" placeholder="Repeat password" autocomplete="new-password" />
+          <input v-model="confirmPassword" type="password" maxlength="128" id="setup-confirm_password" class="form-input" placeholder="Repeat password" autocomplete="new-password" />
         </div>
         <div class="form-group" v-if="tokenRequired">
           <label class="form-label" for="setup-setup_token">Setup token</label>

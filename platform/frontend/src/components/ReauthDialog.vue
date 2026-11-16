@@ -16,6 +16,7 @@
             ref="passwordInput"
             v-model="password"
             type="password"
+            maxlength="128"
             autocomplete="current-password"
             required
           />

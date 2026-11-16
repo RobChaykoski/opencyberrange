@@ -55,12 +55,22 @@ That is expected on a deployment without demo data.
 
 ## Rules
 
-- Use demo or test accounts, never a real learner or instructor.
+- Use demo or test accounts, never a real learner or instructor. The current
+  images use synthetic names such as `alex_chen`, `jordan_lee`, and
+  `sso-student`, with `example.edu` addresses.
+- Confirm the served release and catalogue before capturing:
+  `curl -k -s "$UI_BASE_URL/api/version"` must return the current version, and
+  the student profile must show the current exercise total (**210**). A footer
+  that shows only `v5`, or an old total such as 149, means the capture is stale.
 - The script turns **Privacy Mode** off in the capture browser so names are
   readable. Do not publish screenshots that contain real personal data.
 - Capture on the development host, not production.
-- Review the diff before committing: screenshots are binary and easy to miss.
+- Review every diff for PII, secrets, and outdated counts before committing:
+  screenshots are binary and easy to miss.
 - Keep the image paths stable; the manual pages reference them directly.
+- If the demo credentials are unavailable, do not commit a partially refreshed
+  set. Leave the existing images, mark the refresh as pending in the pull
+  request, and do not claim the screenshots are current.
 
 ## Build and check
 

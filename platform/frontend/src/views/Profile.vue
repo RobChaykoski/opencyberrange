@@ -1171,7 +1171,7 @@
 
           <div v-if="user.mfa_enabled" style="margin-top: 0.75rem;">
             <div class="join-row" style="flex-wrap: wrap;">
-              <input v-model="mfa.password" type="password" placeholder="Current password" class="form-input" />
+              <input v-model="mfa.password" type="password" maxlength="128" autocomplete="current-password" placeholder="Current password" class="form-input" />
               <input v-model="mfa.code" type="text" inputmode="numeric" placeholder="6-digit code" class="form-input" />
               <button class="btn btn--ghost-danger" :disabled="mfa.loading" @click="disableMfa">
                 {{ mfa.loading ? 'Disabling...' : 'Disable MFA' }}

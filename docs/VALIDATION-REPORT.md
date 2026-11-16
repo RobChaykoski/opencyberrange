@@ -30,10 +30,14 @@ ruff check app
 ```
 
 - CI backend job: **success**.
-- Clean local test database: **901 passed, 0 failed, 0 skipped**.
+- Clean local test database: **908 passed, 0 failed, 0 skipped**.
 - Security configuration tests cover placeholder secrets, production
   environment, strict authorization, and WireGuard key requirements.
 - Consent tests cover explicit opt-in for Cyber DNA, Cyber GPS, and portfolio.
+- Password prompts (login, re-authentication, change-password, account deletion,
+  admin reset, MFA disable, and the cutover gate) accept the correct password
+  and reject a wrong password. Oversized, control-character, and
+  injection-shaped input is rejected without echoing the value.
 - The API manual and lab-outcomes generators pass their `--check` drift tests.
 
 ## Frontend
@@ -102,8 +106,12 @@ python scripts/supply_chain.py --check \
 
 - Independent penetration testing is **not yet commissioned**. See
   [Independent security testing](INDEPENDENT-SECURITY-TESTING.md).
-- Tenant isolation is enforced on the nine RLS tables but not yet on every
-  legacy learner-owned table. See [Tenant isolation status](TENANT-ISOLATION-STATUS.md).
+- Tenant isolation is enforced on **25** learner-owned tables. Authentication,
+  consent, course-content, and platform-operation tables are classified rather
+  than force-scoped. See [Tenant isolation status](TENANT-ISOLATION-STATUS.md).
+- The manual screenshots use synthetic data but were captured on an older build
+  (footer `v5`, 149 exercises). A refresh needs demo credentials; see
+  [Manual screenshots](MANUAL-SCREENSHOTS.md).
 - Production cutover is **complete** (2026-11-16 19:21:54 UTC, ticket `123456`,
   approver Robert Chaykoski, evidence hash `4f76c44e…`). See
   [Production deployment statement](PRODUCTION-DEPLOYMENT-STATEMENT.md).
