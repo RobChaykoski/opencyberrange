@@ -26,6 +26,7 @@ module_registry.register_models()
 from app.routers import auth, labs, admin, curriculum, courses, competitions, dashboard, setup, curriculum_admin, instructor, quiz, profile, exercise_quiz
 from app.cyber_dna import router as dna_router
 from app.consent import router as consent_router
+from app.consent.middleware import consent_enforcement
 from app.routers import identity as identity_router
 from app.routers import sso as sso_router
 from app.routers import analytics as analytics_router
@@ -856,6 +857,11 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
+
+# Central consent gate for derived-data APIs. Individual routers still check
+# consent as defense in depth, but every request to a mapped path passes here
+# before its service is called.
+app.middleware("http")(consent_enforcement)
 
 # Default off: enable_api_docs has no DB row on a fresh install and
 # get_setting falls back to "false", so an internet-facing deploy hides the
