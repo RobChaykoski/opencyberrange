@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "9543a6cc1248b83c62e052f95e099c9e06165a83782b5f24a6c9c74dea014f94"
+      "sha256": "b1637b8deae145ec5766ed053d886a9c1fcbb25fa533b2ed9dd6c942b09fec31"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
