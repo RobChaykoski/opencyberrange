@@ -69,6 +69,7 @@ const friendlyHttpError = (error) => {
 
 const finishSignIn = async (data) => {
   localStorage.setItem('token', data.access_token)
+  if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token)
   localStorage.setItem('user', JSON.stringify(data.user || {}))
   await setWikiAuthCookie()
   if (updateAuthState) {

@@ -14,6 +14,8 @@ must act.
 | Portfolio share links | 30 days | `portfolio_share_lifetime_days` | Each link also has an absolute `expires_at`; learners can revoke immediately |
 | Break-glass grants | 60 minutes maximum | `break_glass_max_minutes` | A grant never extends; use a new reviewed grant |
 | Service credentials | 90 days default, 365 max | Service identity create form | Create-new then revoke-old; the token hash and audit rows remain as evidence |
+| Login sessions / refresh tokens | 30 days | `refresh_token_days` | Rotation leaves a hash trail; revoked/rotated rows remain for reuse detection and audit |
+| MFA recovery codes | 365 days | `mfa_recovery_code_ttl_days` | Hashed, single-use; replaced as a set; cleared on MFA disable/reset |
 | Consent revocation proof | Durable | `consent_audits`, suppression ledger | Proof survives account erasure; it contains a keyed subject hash, not the deleted payload |
 | Account data export timestamp | Kept with the account | `users.data_exported_at` | Shows when the learner last downloaded their data |
 | Session and activity records | Institution policy | Course/lab tables | Use the retention and erasure tooling; see `docs/PRIVACY-AND-DATA-DELETION.md` |

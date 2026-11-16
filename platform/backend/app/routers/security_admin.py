@@ -21,6 +21,7 @@ from app.models import BreakGlassGrant, RbacRole, User
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
 from app.services import authorization, rbac, security_events, service_identities
+from app.services import reauth as reauth_service
 
 router = APIRouter()
 
@@ -231,6 +232,9 @@ async def update_role_permissions(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("role permission change")
+    ),
 ):
     _ensure_seeded(db)
     try:
@@ -268,6 +272,9 @@ async def grant_user_role(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("role assignment")
+    ),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
@@ -306,6 +313,9 @@ async def revoke_user_role(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("rbac.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("role assignment")
+    ),
 ):
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
@@ -353,6 +363,9 @@ async def create_service_identity(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("service.identity.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("service identity creation")
+    ),
 ):
     institution = payload.institution_id or actor.institution_id
     if actor.role != "admin":
@@ -383,6 +396,9 @@ async def revoke_service_identity(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("service.identity.manage")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("service identity revocation")
+    ),
 ):
     if not service_identities.revoke_credential(db, actor, credential_id):
         raise HTTPException(status_code=404, detail="Service credential not found.")
@@ -412,6 +428,9 @@ async def request_break_glass(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("break_glass.request")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("break-glass request")
+    ),
 ):
     target = None
     if payload.user_id is not None:
@@ -438,6 +457,9 @@ async def approve_break_glass(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("break_glass.approve")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("break-glass approval")
+    ),
 ):
     row = authorization.approve_break_glass(db, actor, grant_id)
     return _grant_payload(db, row)
@@ -450,6 +472,9 @@ async def revoke_break_glass(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("break_glass.revoke")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("break-glass revocation")
+    ),
 ):
     row = authorization.revoke_break_glass(
         db, actor, grant_id, reason=(payload.reason if payload else None)
@@ -464,6 +489,9 @@ async def review_break_glass(
     db: Session = Depends(get_db),
     actor: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("break_glass.approve")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("break-glass review")
+    ),
 ):
     row = authorization.review_break_glass(db, actor, grant_id, note=payload.note)
     return _grant_payload(db, row)

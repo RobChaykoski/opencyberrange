@@ -362,6 +362,20 @@ async def lifespan(app: FastAPI):
             conn.commit()
             logger.info("Added institution_id column to users table")
 
+        # --- MFA lifecycle and password rehash stamps ---
+        users_columns = [c['name'] for c in inspector.get_columns('users')]
+        for column, ddl in (
+            ("mfa_failed_attempts", "INTEGER NOT NULL DEFAULT 0"),
+            ("mfa_last_failed_at", "TIMESTAMP"),
+            ("mfa_locked_until", "TIMESTAMP"),
+            ("mfa_recovery_generated_at", "TIMESTAMP"),
+            ("password_rehashed_at", "TIMESTAMP"),
+        ):
+            if column not in users_columns:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {column} {ddl}"))
+                conn.commit()
+                logger.info("Added %s column to users table", column)
+
         # --- Profile avatar: add 'avatar_data' to users (base64 data URL) ---
         users_columns = [c['name'] for c in inspector.get_columns('users')]
         if 'avatar_data' not in users_columns:
@@ -1088,6 +1102,21 @@ async def export_label_headers(request: Request, call_next):
     db = SessionLocal()
     try:
         user = data_labels_service.resolve_request_user(request, db)
+        if user is not None and (getattr(user, "role", "") or "") != "service_account":
+            from app.services import reauth as reauth_service
+
+            if reauth_service.response_requires_reauth(db, user, "export"):
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "error": "ReauthRequired",
+                        "detail": "Re-authentication is required before an export.",
+                    },
+                    headers={
+                        "X-Reauth-Required": "true",
+                        "X-Reauth-Purpose": "export",
+                    },
+                )
         decision = data_labels_service.evaluate_export(
             db, user, request.url.path
         )

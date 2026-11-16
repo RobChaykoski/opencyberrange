@@ -12,6 +12,7 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <!-- Impersonation Banner -->
     <ImpersonationBanner />
+    <ReauthDialog />
 
     <!-- Theme Toggle (global): dark -> light -> high contrast -->
     <button
@@ -155,6 +156,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppSidebar from './components/AppSidebar.vue'
 import GuidedTour from './components/GuidedTour.vue'
 import ImpersonationBanner from './components/ImpersonationBanner.vue'
+import ReauthDialog from './components/ReauthDialog.vue'
 import MobileTabBar from './components/MobileTabBar.vue'
 import ToolPanel from './components/ToolPanel.vue'
 import { useTheme } from './composables/useTheme'

@@ -247,6 +247,7 @@ def provision_or_link_external_user(
         is_admin=False,
         role=role,
         password_login_disabled=True,
+        password_rehashed_at=datetime.now(timezone.utc),
     )
     db.add(user)
     db.flush()

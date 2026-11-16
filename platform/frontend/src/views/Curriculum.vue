@@ -197,6 +197,7 @@ const fetchTracks = async ({ silent = false } = {}) => {
     console.error('Failed to fetch tracks:', error)
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
+    localStorage.removeItem('refresh_token')
       localStorage.removeItem('user')
       router.push('/login')
     }

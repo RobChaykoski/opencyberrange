@@ -219,6 +219,7 @@ const changePassword = async () => {
     // The backend revokes every outstanding token after a password change.
     // Drop the now-invalid local session before routing to the login page.
     localStorage.removeItem('token')
+    localStorage.removeItem('refresh_token')
     localStorage.removeItem('user')
 
     // Trigger App.vue reactivity update

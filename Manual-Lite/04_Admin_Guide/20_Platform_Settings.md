@@ -147,6 +147,27 @@ The five-minute security-operations loop expires stale break-glass grants and
 writes deduplicated `security.alert` events. Tune the window and threshold with
 **Security Alert Window** and **Security Alert Threshold**.
 
+### Sessions, MFA, and reauthentication
+
+- **Session lifetime** is controlled by **Refresh Token Days** (default 30). A
+  refresh token is single-use and rotates; replaying a rotated token revokes
+  the session family.
+- **Reauthentication Window** (default 15 minutes) controls how long a fresh
+  password + MFA check remains valid for privacy, role, MFA, break-glass,
+  service-identity, and export actions. The Security console and the SPA prompt
+  for reauthentication when the window expires.
+- **MFA lock** is separate from password lockout. Tune **MFA Max Failed
+  Attempts** and **MFA Lockout Minutes**.
+- **Recovery Code TTL** and **Recovery Code Count** control the single-use
+  recovery-code set.
+- **Password Rehash Days** controls when a successful login rehashes an old
+  Argon2id hash with the current parameters.
+- Lost-authenticator recovery is **Admin -> Users -> Reset MFA**. It requires the
+  `mfa.reset` permission, the administrator's own password + MFA, and a written
+  reason. The target's sessions and tokens are revoked.
+
+Full details are in `docs/AUTH-LIFECYCLE.md`.
+
 ### Tenant and RLS operations
 
 The runtime database role must be a non-superuser. PostgreSQL superusers bypass

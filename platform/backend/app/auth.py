@@ -23,9 +23,40 @@ from app.actor import set_actor
 
 logger = logging.getLogger(__name__)
 
-# Argon2 for new hashes. Bcrypt stays as a verifier so accounts created before
-# the migration keep working; a successful login rewrites the hash to Argon2.
-pwd_context = PasswordHash((Argon2Hasher(), BcryptHasher()))
+# Argon2id baseline (OWASP-style: 64 MiB, 3 iterations, 4 lanes). Values are
+# explicit so a library default change cannot silently weaken new hashes.
+ARGON2_PARAMS = {
+    "time_cost": settings.ARGON2_TIME_COST,
+    "memory_cost": settings.ARGON2_MEMORY_COST,
+    "parallelism": settings.ARGON2_PARALLELISM,
+    "hash_len": settings.ARGON2_HASH_LEN,
+    "salt_len": settings.ARGON2_SALT_LEN,
+}
+pwd_context = PasswordHash((Argon2Hasher(**ARGON2_PARAMS), BcryptHasher()))
+
+
+def password_rehash_due(user: User, db: Session | None = None) -> bool:
+    """Return True when the stored hash should be refreshed on login."""
+    if not (getattr(user, "hashed_password", "") or "").startswith("$argon2id$"):
+        return True
+    stamp = getattr(user, "password_rehashed_at", None)
+    if stamp is None:
+        return True
+    days = settings.PASSWORD_REHASH_DAYS
+    if db is not None:
+        try:
+            from app.services import settings_service
+
+            days = int(
+                settings_service.get_setting_fresh(
+                    db, "password_rehash_days", str(settings.PASSWORD_REHASH_DAYS)
+                )
+            )
+        except (TypeError, ValueError):
+            days = settings.PASSWORD_REHASH_DAYS
+    if stamp.tzinfo is None:
+        stamp = stamp.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) - stamp >= timedelta(days=max(1, days))
 
 # OAuth2 scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -34,6 +65,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 def get_password_hash(password: str) -> str:
     """Hash a password with Argon2id."""
     return pwd_context.hash(password)
+
+
+def set_user_password(user: User, password: str) -> None:
+    """Set a user's password and stamp the current rehash policy."""
+    user.hashed_password = get_password_hash(password)
+    user.password_rehashed_at = datetime.now(timezone.utc)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -203,6 +240,9 @@ def revoke_all_user_tokens(username: str) -> None:
         else:
             row.revoked_at = now
         db.commit()
+        from app.services import auth_sessions
+
+        auth_sessions.revoke_all_for_user(db, user.id, "revoke_all_tokens")
     except Exception:
         db.rollback()
         logger.exception("Failed to persist mass revocation for user %s", username)
@@ -336,15 +376,34 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
         db.commit()
         return None
     
-    # Successful login - reset failed attempts and upgrade a legacy hash
+    # Successful login - reset failed attempts and upgrade a legacy or stale
+    # hash. ``verify_and_update`` handles a scheme change (bcrypt -> Argon2id);
+    # ``password_rehash_due`` handles an Argon2id parameter change or an old
+    # rehash stamp, so the policy keeps applying after the initial migration.
     if user.failed_attempts and user.failed_attempts > 0:
         user.failed_attempts = 0
         db.commit()
-    if upgraded_hash and upgraded_hash != user.hashed_password:
-        user.hashed_password = upgraded_hash
-        db.commit()
-        logger.info("Upgraded password hash for user %s", user.username)
-    
+    if upgraded_hash or password_rehash_due(user, db):
+        new_hash = upgraded_hash or get_password_hash(password)
+        if new_hash != user.hashed_password:
+            user.hashed_password = new_hash
+            user.password_rehashed_at = datetime.now(timezone.utc)
+            db.commit()
+            logger.info("Rehashed password for user %s with current Argon2id parameters", user.username)
+            try:
+                from app.services import security_events
+
+                security_events.record(
+                    "auth.password_rehashed",
+                    actor=user,
+                    target_type="user",
+                    target_id=user.id,
+                    target_label=user.username,
+                    detail={"scheme": "argon2id", "params": ARGON2_PARAMS},
+                )
+            except Exception:
+                logger.exception("Could not record password rehash event")
+
     return user
 
 
@@ -434,22 +493,35 @@ def get_current_user(
     user._imp_course_id = payload.get("imp_course_id")
     user._imp_read_only = payload.get("imp_read_only", False)
 
+    # A normal login token carries a session id. The session binds the tenant
+    # captured at login and is re-checked on every request. Legacy tokens
+    # without a sid remain valid only for their short access-token lifetime.
+    from app.services import auth_sessions
+
+    session, session_error = auth_sessions.bind_user(db, user, payload)
+    if session_error:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session expired or no longer valid. Sign in again.",
+            headers={"WWW-Authenticate": "Bearer", "X-Session-Invalid": "true"},
+        )
+
     # Attribute application writes to the authenticated actor. The database
     # integrity trigger records this on the next flush.
     set_actor(user)
 
-    # The tenant always comes from the server-loaded row, never from the JWT.
-    # Set the request context and bind the current transaction's RLS GUCs.
+    # The tenant comes from the session created at login, never from the JWT.
     from app.security.tenant import set_tenant
 
+    tenant_id = session.institution_id if session is not None else getattr(user, "institution_id", None)
     is_system_admin = (getattr(user, "role", "") or "") == "admin"
-    set_tenant(getattr(user, "institution_id", None), system_admin=is_system_admin)
+    set_tenant(tenant_id, system_admin=is_system_admin)
     try:
         from app.services.security_events import set_rls_context
 
         set_rls_context(
             db,
-            institution_id=getattr(user, "institution_id", None),
+            institution_id=tenant_id,
             system_admin=is_system_admin,
         )
     except Exception:

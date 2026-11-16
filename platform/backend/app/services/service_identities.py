@@ -84,6 +84,7 @@ def create_credential(
         is_admin=False,
         role="service_account",
         password_login_disabled=True,
+        password_rehashed_at=_now(),
         institution_id=institution_id or getattr(actor, "institution_id", "default"),
     )
     db.add(service_user)

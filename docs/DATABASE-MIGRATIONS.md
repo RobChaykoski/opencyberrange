@@ -1,12 +1,13 @@
 # Database schema and Alembic migrations
 
 Audience: operators upgrading a deployment, and reviewers answering change-
-management or disaster-recovery questions. Current schema head: **0036**
-(`0036_service_identities`). Revisions 0034-0036 add the security event store,
+management or disaster-recovery questions. Current schema head: **0037**
+(`0037_auth_lifecycle`). Revisions 0034-0037 add the security event store,
 RBAC tables, break-glass grants, portfolio share tokens,
-`users.institution_id`, tenant columns/triggers/RLS on learner-data tables, and
-scoped service credentials. The runtime role must not be a superuser, or
-PostgreSQL RLS is bypassed.
+`users.institution_id`, tenant columns/triggers/RLS on learner-data tables,
+scoped service credentials, server-side sessions, rotating refresh tokens, MFA
+lifecycle fields, and password rehash stamps. The runtime role must not be a
+superuser, or PostgreSQL RLS is bypassed.
 
 ## Short version for operators
 

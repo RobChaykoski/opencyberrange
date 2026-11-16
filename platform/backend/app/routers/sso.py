@@ -404,6 +404,8 @@ async def exchange_ticket(
 
     client_ip = request.client.host if request.client else None
     sso_flow.record_login(db, user, client_ip)
-    response = sso_flow.login_payload(user, provider_id=ticket.provider_id)
+    response = sso_flow.login_payload(
+        user, provider_id=ticket.provider_id, db=db, request=request
+    )
     response["return_to"] = ticket.return_to or "/dashboard"
     return JSONResponse(response, headers={"Cache-Control": "no-store"})

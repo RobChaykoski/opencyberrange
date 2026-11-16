@@ -194,16 +194,38 @@ def record_login(db: Session, user: User, client_ip: str | None) -> None:
         logger.exception("Could not evaluate SSO login achievements for %s", user.username)
 
 
-def login_payload(user: User, provider_id: int | None = None) -> dict:
+def login_payload(
+    user: User,
+    provider_id: int | None = None,
+    *,
+    db: Session | None = None,
+    request=None,
+) -> dict:
+    session = None
+    refresh_token = None
+    if db is not None:
+        from app.services import auth_sessions
+
+        session = auth_sessions.create_session(
+            db, user, request=request, mfa_verified=False, created_by="sso"
+        )
+        _refresh_row, refresh_token = auth_sessions.issue_refresh(
+            db, session, user, request=request
+        )
     token_data = {"sub": user.username}
     if provider_id is not None:
         token_data["sso_provider_id"] = provider_id
+    if session is not None:
+        token_data["sid"] = session.id
     token = create_access_token(
         data=token_data,
         expires_delta=timedelta(hours=settings.JWT_EXPIRATION_HOURS),
     )
     return {
         "access_token": token,
+        "refresh_token": refresh_token,
+        "expires_in": int(timedelta(hours=settings.JWT_EXPIRATION_HOURS).total_seconds()),
+        "session_id": session.id if session else None,
         "token_type": "bearer",
         "user": {
             "id": user.id,
@@ -217,6 +239,7 @@ def login_payload(user: User, provider_id: int | None = None) -> dict:
             "is_approved": user.is_approved,
             "is_active": user.is_active,
             "must_change_password": user.must_change_password,
+            "mfa_enabled": bool(getattr(user, "mfa_enabled", False)),
             "timezone": getattr(user, "timezone", None),
             "equipped_title": getattr(user, "equipped_title", None),
         },

@@ -14,6 +14,15 @@ class Settings(BaseSettings):
     SETUP_TOKEN: str = ""
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
+    REFRESH_TOKEN_DAYS: int = 30
+    SESSION_MAX_PER_USER: int = 10
+    # Explicit Argon2id baseline. Memory cost is KiB; time cost is iterations.
+    ARGON2_TIME_COST: int = 3
+    ARGON2_MEMORY_COST: int = 65536
+    ARGON2_PARALLELISM: int = 4
+    ARGON2_HASH_LEN: int = 32
+    ARGON2_SALT_LEN: int = 16
+    PASSWORD_REHASH_DAYS: int = 365
 
     # Dedicated key for report manifests. Empty falls back to JWT_SECRET with
     # domain separation. Keep it stable so old reports remain verifiable.

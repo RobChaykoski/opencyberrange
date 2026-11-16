@@ -15,6 +15,7 @@ from app.models import User
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
 from app.services import portfolio_shares, security_events
+from app.services import reauth as reauth_service
 from app.services.feature_flags import advanced_dna_insights_enabled
 
 router = APIRouter()
@@ -60,6 +61,9 @@ async def create_share(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("portfolio.share")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("portfolio sharing")
+    ),
 ):
     if not advanced_dna_insights_enabled(db):
         raise HTTPException(status_code=404, detail="The portfolio is not enabled.")
@@ -88,6 +92,9 @@ async def revoke_share(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
     _decision: PolicyDecision = Depends(require_permission("portfolio.share")),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("portfolio sharing")
+    ),
 ):
     if not portfolio_shares.revoke_share(db, current_user, share_id):
         raise HTTPException(status_code=404, detail="Share link not found.")

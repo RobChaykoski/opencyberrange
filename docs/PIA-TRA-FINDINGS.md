@@ -25,7 +25,10 @@ Last reviewed: 2026-11-16.
 | Finding | Status | Evidence | Remaining work |
 |---|---|---|---|
 | RBAC | **Completed** | See PIA RBAC row; deny-by-default, auditor read-only, private data never role-granted | Periodic access review is institutional |
-| MFA | **Completed** | TOTP enrolment, recovery codes, login enforcement, break-glass MFA requirement, `tests/test_auth_security.py` | Institution must enforce enrolment policy |
+| MFA | **Completed** | TOTP enrolment, hashed single-use TTL recovery codes, login enforcement, separate MFA brute-force lock, authorised admin reset, break-glass MFA requirement, `tests/test_auth_lifecycle.py`, `tests/test_mfa.py` | Institution must enforce enrolment policy |
+| Session and refresh-token security | **Completed** | Server-side sessions, tenant-bound context, opaque hashed refresh tokens, rotation and reuse-detection family revocation, per-session revocation | `docs/AUTH-LIFECYCLE.md`, `tests/test_auth_lifecycle.py` |
+| Forced reauthentication | **Completed** | Password + MFA window before privacy, role, MFA, break-glass, service-identity, and export operations | `app/services/reauth.py`, SPA reauthentication dialog |
+| Password hashing | **Completed** | Explicit Argon2id parameters, legacy upgrade, parameter-drift check, recurring rehash stamp and event | `app/auth.py`, `tests/test_auth_lifecycle.py` |
 | Audit Logging | **Completed** | Append-only `security_events` with forced PostgreSQL RLS, admin-action mirror, sign-in/consent/export/RBAC events, admin query API | Retention archive is operator-run |
 | Institution Boundaries | **Partial** | `User.institution_id`, tenant-aware Authorization Service, tenant-scoped RLS on nine learner-data tables, institution-admin scoping, cross-tenant tests | A few legacy tables still lack `institution_id` and are protected only by service-level checks |
 | Container Hardening | **Completed** | Docker isolation, default-deny lab egress, read-only/limited runtime settings, integrity checks; see `docs/HARDENING-2026-11.md` | Host kernel hardening is deployment-specific |
@@ -72,7 +75,8 @@ python -m pytest tests/test_authorization_service.py \
   tests/test_security_events.py tests/test_horizontal_privilege.py \
   tests/test_portfolio_shares.py tests/test_route_authorization.py \
   tests/test_tenant_rls.py tests/test_service_identities.py \
-  tests/test_institution_admin.py tests/test_data_label_policy.py -q
+  tests/test_institution_admin.py tests/test_data_label_policy.py \
+  tests/test_auth_lifecycle.py -q
 ```
 
 A full backend run with `TEST_DATABASE_URL` pointed at a scratch PostgreSQL

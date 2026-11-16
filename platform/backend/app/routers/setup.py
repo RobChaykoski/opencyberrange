@@ -117,12 +117,15 @@ async def complete_setup(
         first_name=payload.first_name,
         last_name=payload.last_name,
         organization=payload.organization,
-        hashed_password=get_password_hash(payload.admin_password),
+        hashed_password=get_password_hash(payload.admin_password),  # rehash stamp set below
         is_admin=True,
         role="admin",
         is_approved=True,
         is_active=True,
     )
+    from datetime import datetime, timezone
+
+    admin.password_rehashed_at = datetime.now(timezone.utc)
     db.add(admin)
     db.commit()
     db.refresh(admin)
@@ -146,15 +149,26 @@ async def complete_setup(
 
     logger.info(f"Setup complete — admin user '{admin.username}' created")
 
-    # Generate JWT for immediate login
+    # Generate JWT for immediate login with a server-side session.
+    from app.services import auth_sessions
+
+    session = auth_sessions.create_session(
+        db, admin, request=request, mfa_verified=False, created_by="setup"
+    )
+    _refresh_row, refresh_token = auth_sessions.issue_refresh(
+        db, session, admin, request=request
+    )
     token = create_access_token(
-        data={"sub": admin.username},
+        data={"sub": admin.username, "sid": session.id},
         expires_delta=timedelta(hours=24)
     )
 
     return {
         "message": "Setup complete",
         "access_token": token,
+        "refresh_token": refresh_token,
+        "expires_in": int(timedelta(hours=24).total_seconds()),
+        "session_id": session.id,
         "token_type": "bearer",
         "user": {
             "id": admin.id,

@@ -388,6 +388,7 @@ const downloadData = async () => {
 
 const clearLocalAccountState = () => {
   localStorage.removeItem('token')
+  localStorage.removeItem('refresh_token')
   localStorage.removeItem('user')
   Object.keys(localStorage)
     .filter((key) => key.startsWith('ocr_orientation_seen_v1_'))

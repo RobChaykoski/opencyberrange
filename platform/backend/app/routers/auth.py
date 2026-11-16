@@ -28,6 +28,7 @@ from app.models import (
 from app.auth import (
     authenticate_user,
     get_password_hash,
+    set_user_password,
     create_access_token,
     get_user_by_username,
     get_current_active_user,
@@ -42,9 +43,19 @@ from app.auth import (
 )
 from app.services import mail
 from app.services import totp as totp_service
+from app.services import mfa as mfa_service
+from app.services import auth_sessions
 from app.services.export_labels import export_metadata
 from app.config import settings
-from app.schemas import ChangePasswordRequest, ImpersonateRequest, ImpersonateResponse, _validate_password, _password_policy_error
+from app.schemas import (
+    ChangePasswordRequest,
+    ImpersonateRequest,
+    ImpersonateResponse,
+    _validate_password,
+    _password_policy_error,
+)
+from app.schemas.auth import ReauthRequest, RefreshRequest
+from app.services import reauth as reauth_service
 from app.services.wireguard_manager import WireGuardManager
 from app.services.activity import log_activity, EventTypes
 from app.services.audit import log_admin_action, AuditActions
@@ -103,8 +114,11 @@ def _registration_rate_limit() -> str:
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: Optional[str] = None
     token_type: str
-    user: dict
+    expires_in: Optional[int] = None
+    session_id: Optional[str] = None
+    user: Optional[dict] = None
 
 
 class UserResponse(BaseModel):
@@ -338,22 +352,14 @@ async def login(
                 detail="MFA code required",
                 headers={"WWW-Authenticate": "Bearer", "X-MFA-Required": "true"},
             )
-        # Accept either a live TOTP code or a single-use recovery code.
-        ok = totp_service.verify_code(user.totp_secret, totp_code)
-        if not ok and getattr(user, "mfa_recovery_codes", None):
-            try:
-                stored = _json.loads(user.mfa_recovery_codes)
-            except Exception:
-                stored = []
-            h = hashlib.sha256(totp_code.strip().upper().encode()).hexdigest()
-            if h in stored:
-                stored.remove(h)
-                user.mfa_recovery_codes = _json.dumps(stored)
-                db.commit()
-                ok = True
-                logger.info(f"User {user.username} used a recovery code at login")
+        # Accept either a live TOTP code or a single-use recovery code. The
+        # lock is separate from password lockout so bad MFA guesses cannot be
+        # used to exhaust the account-lockout channel.
+        mfa_service.assert_mfa_allowed(user, db)
+        ok, method = mfa_service.verify_totp_or_recovery(db, user, totp_code)
         if not ok:
             logger.info(f"Failed MFA attempt for user: {user.username}")
+            mfa_service.record_failure(db, user)
             from app.services import security_events
 
             security_events.record(
@@ -374,6 +380,8 @@ async def login(
                 detail="Invalid MFA code",
                 headers={"WWW-Authenticate": "Bearer", "X-MFA-Required": "true"},
             )
+        if method == "recovery":
+            logger.info(f"User {user.username} used a recovery code at login")
 
     # Record login metadata (session awareness / login notifications).
     client_ip = request.client.host if request.client else None
@@ -430,10 +438,29 @@ async def login(
         # Email delivery is not configured in this deployment; the event is
         # recorded above and surfaced through the activity feed instead.
 
+    # Create the server-side session and its rotating refresh token. The
+    # session captures the tenant so a later account move invalidates it.
+    session = auth_sessions.create_session(
+        db,
+        user,
+        request=request,
+        mfa_verified=bool(getattr(user, "mfa_enabled", False)),
+    )
+    _refresh_row, refresh_token = auth_sessions.issue_refresh(
+        db, session, user, request=request
+    )
+    security_events.record(
+        "auth.session_created",
+        actor=user,
+        target_type="session",
+        target_id=session.id,
+        detail={"mfa_verified": bool(getattr(user, "mfa_enabled", False))},
+    )
+
     # Create access token
     access_token_expires = timedelta(hours=settings.JWT_EXPIRATION_HOURS)
     access_token = create_access_token(
-        data={"sub": user.username},
+        data={"sub": user.username, "sid": session.id},
         expires_delta=access_token_expires
     )
     
@@ -447,6 +474,7 @@ async def login(
         "is_admin": user.role == 'admin' if hasattr(user, 'role') else user.is_admin,
         "is_approved": user.is_approved,
         "must_change_password": getattr(user, 'must_change_password', False),
+        "mfa_enabled": bool(getattr(user, "mfa_enabled", False)),
         "timezone": getattr(user, 'timezone', None),
     }
     
@@ -456,16 +484,17 @@ async def login(
     
     return {
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "token_type": "bearer",
-        "user": user_dict
+        "expires_in": int(access_token_expires.total_seconds()),
+        "session_id": session.id,
+        "user": user_dict,
     }
 
 
 # ==================== User settings (optional security/privacy) ====================
 
-import hashlib
 import json as _json
-import secrets as _secrets
 
 # Avatars are stored inline as a data URL so they survive container rebuilds
 # without a shared upload volume. The browser resizes before upload; the cap
@@ -583,12 +612,9 @@ async def get_user_settings(
             prefs = _json.loads(current_user.notification_prefs)
         except Exception:
             prefs = None
-    recovery_count = 0
-    if getattr(current_user, "mfa_recovery_codes", None):
-        try:
-            recovery_count = len(_json.loads(current_user.mfa_recovery_codes))
-        except Exception:
-            recovery_count = 0
+    recovery_count = mfa_service.recovery_remaining(current_user)
+    recovery_expires_at = mfa_service.recovery_expires_at(db, current_user)
+    session = reauth_service.session_for_user(db, current_user)
     completed_labs = (
         db.query(func.count(LabCompletion.id))
         .filter(
@@ -631,6 +657,11 @@ async def get_user_settings(
         "data_exported_at": getattr(current_user, "data_exported_at", None),
         "mfa_enabled": getattr(current_user, "mfa_enabled", False),
         "recovery_codes_remaining": recovery_count,
+        "recovery_codes_expire_at": (
+            recovery_expires_at.isoformat() if recovery_expires_at else None
+        ),
+        "mfa_locked_until": getattr(current_user, "mfa_locked_until", None),
+        "reauth_at": session.reauth_at if session else None,
         "last_login_at": current_user.last_login_at,
         "last_login_ip": redact_ip(current_user.last_login_ip),
     }
@@ -796,14 +827,21 @@ async def update_survey_consent(
 async def generate_recovery_codes(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("recovery codes")),
 ):
-    # Generate 10 single-use codes; store only their hashes.
-    codes = [_secrets.token_hex(4).upper() for _ in range(10)]
-    hashed = [hashlib.sha256(c.encode()).hexdigest() for c in codes]
-    current_user.mfa_recovery_codes = _json.dumps(hashed)
-    db.commit()
+    if not getattr(current_user, "mfa_enabled", False):
+        raise HTTPException(
+            status_code=400,
+            detail="Enable MFA before generating recovery codes.",
+        )
+    codes, expires_at = mfa_service.generate_recovery_codes(db, current_user)
     logger.info(f"User {current_user.username} generated MFA recovery codes")
-    return {"codes": codes, "message": "Store these codes safely. They will not be shown again."}
+    return {
+        "codes": codes,
+        "remaining": len(codes),
+        "expires_at": expires_at.isoformat() if expires_at else None,
+        "message": "Store these codes safely. They will not be shown again.",
+    }
 
 @router.post("/mfa/recovery-codes/verify")
 async def verify_recovery_code(
@@ -813,45 +851,87 @@ async def verify_recovery_code(
 ):
     if not current_user.mfa_recovery_codes:
         raise HTTPException(status_code=400, detail="No recovery codes available")
-    try:
-        stored = _json.loads(current_user.mfa_recovery_codes)
-    except Exception:
-        stored = []
-    h = hashlib.sha256(body.code.strip().upper().encode()).hexdigest()
-    if h not in stored:
+    mfa_service.assert_mfa_allowed(current_user, db)
+    remaining = mfa_service.consume_recovery_code(db, current_user, body.code)
+    if remaining is None:
+        mfa_service.record_failure(db, current_user)
         raise HTTPException(status_code=401, detail="Invalid recovery code")
-    stored.remove(h)
-    current_user.mfa_recovery_codes = _json.dumps(stored)
-    db.commit()
-    return {"message": "Recovery code accepted", "remaining": len(stored)}
+    return {
+        "message": "Recovery code accepted",
+        "remaining": remaining,
+        "rotate_recommended": remaining <= 2,
+    }
 
 @router.get("/sessions")
 async def list_sessions(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
 ):
+    current = reauth_service.session_for_user(db, current_user)
+    rows = auth_sessions.list_sessions(db, current_user.id)
+    for row in rows:
+        row["ip_address"] = redact_ip(row.get("ip_address"))
+        row["current"] = bool(current and row["id"] == current.id)
     return {
         "current": {
             "last_login_at": current_user.last_login_at,
             "last_login_ip": redact_ip(current_user.last_login_ip),
+            "session_id": getattr(current, "id", None),
         },
-        "note": "Individual session tracking is not stored; use 'Sign out everywhere' to revoke all tokens.",
+        "sessions": rows,
+        "note": "Refreshing a session rotates its token; reuse revokes the session family.",
     }
+
+
+@router.delete("/sessions/{session_id}")
+async def revoke_one_session(
+    session_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("session revocation")),
+):
+    session = auth_sessions.get_active_session(db, session_id)
+    if session is None or session.user_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Session not found.")
+    auth_sessions.revoke_session(db, session, "user_revoked")
+    from app.services import security_events
+
+    security_events.record(
+        "auth.session_revoked",
+        actor=current_user,
+        target_type="session",
+        target_id=session.id,
+        detail={"reason": "user_revoked"},
+    )
+    return {"revoked": True, "session_id": session.id}
+
 
 @router.post("/sessions/revoke-all")
 async def revoke_all_sessions(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("session revocation")),
 ):
+    count = auth_sessions.revoke_all_for_user(db, current_user.id, "user_revoke_all")
     revoke_all_user_tokens(current_user.username)
+    from app.services import security_events
+
+    security_events.record(
+        "auth.session_revoked",
+        actor=current_user,
+        target_type="user",
+        target_id=current_user.id,
+        detail={"reason": "user_revoke_all", "sessions": count},
+    )
     logger.info(f"User {current_user.username} revoked all sessions")
-    return {"message": "All sessions revoked. Please log in again."}
+    return {"message": "All sessions revoked. Please log in again.", "sessions": count}
 
 @router.get("/export")
 async def export_user_data(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("account export")),
 ):
     """Return the account holder's personal data in a portable JSON document.
 
@@ -1186,6 +1266,7 @@ async def delete_my_account(
     body: DeleteAccountRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("account deletion")),
 ):
     """Permanently erase the signed-in account and its personal data.
 
@@ -1214,21 +1295,19 @@ async def delete_my_account(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Enter your authenticator code to delete this account.",
             )
-        ok = totp_service.verify_code(current_user.totp_secret, body.code)
-        if not ok and getattr(current_user, "mfa_recovery_codes", None):
-            try:
-                stored = _json.loads(current_user.mfa_recovery_codes)
-            except Exception:
-                stored = []
-            h = hashlib.sha256(body.code.strip().upper().encode()).hexdigest()
-            # Do not consume the code here: if erasure is blocked (owned
-            # courses or last admin), the code must remain valid.
-            ok = h in stored
+        mfa_service.assert_mfa_allowed(current_user, db)
+        ok = mfa_service.verify_totp(current_user, body.code) or mfa_service.recovery_code_valid(
+            db, current_user, body.code
+        )
         if not ok:
+            mfa_service.record_failure(db, current_user)
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authenticator or recovery code.",
             )
+        mfa_service.reset_failures(db, current_user)
+        # Do not consume the recovery code here: if erasure is blocked (owned
+        # courses or last admin), the code must remain valid.
 
     captured_id = current_user.id
     try:
@@ -1384,6 +1463,7 @@ async def register(
         is_locked=False,
         failed_attempts=0
     )
+    new_user.password_rehashed_at = datetime.now(timezone.utc)
     
     db.add(new_user)
     db.flush()  # assign new_user.id without ending the transaction
@@ -1453,6 +1533,107 @@ async def register(
         )
 
     return new_user
+
+
+@router.post("/refresh", response_model=Token)
+@limiter.limit("30/minute")
+async def refresh_access_token(
+    request: Request,
+    body: RefreshRequest,
+    db: Session = Depends(get_db),
+):
+    """Rotate a refresh token and issue a new access/refresh pair.
+
+    A rotated token is single-use. Replaying it revokes the whole rotation
+    family and the bound session, then returns 401.
+    """
+    try:
+        result = auth_sessions.rotate_refresh(db, body.refresh_token, request=request)
+    except auth_sessions.RefreshReuse:
+        from app.services import security_events
+
+        security_events.record(
+            "auth.refresh_reuse",
+            outcome="denied",
+            severity="critical",
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            request_id=request.headers.get("x-request-id"),
+            detail={"reason": "rotated_token_replayed"},
+        )
+        security_events.mark_request_recorded()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token reuse detected. Sign in again.",
+            headers={"WWW-Authenticate": "Bearer", "X-Refresh-Reuse": "true"},
+        )
+    except auth_sessions.RefreshInvalid:
+        from app.services import security_events
+
+        security_events.record(
+            "auth.refresh_invalid",
+            outcome="denied",
+            severity="warning",
+            ip_address=request.client.host if request.client else None,
+            user_agent=request.headers.get("user-agent"),
+            request_id=request.headers.get("x-request-id"),
+        )
+        security_events.mark_request_recorded()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token is invalid or expired. Sign in again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    user = result["user"]
+    session = result["session"]
+    expires = timedelta(hours=settings.JWT_EXPIRATION_HOURS)
+    access_token = create_access_token(
+        data={"sub": user.username, "sid": session.id},
+        expires_delta=expires,
+    )
+    from app.services import security_events
+
+    security_events.record(
+        "auth.refresh_rotated",
+        actor=user,
+        target_type="session",
+        target_id=session.id,
+        detail={"access_expires_in": int(expires.total_seconds())},
+    )
+    security_events.mark_request_recorded()
+    return {
+        "access_token": access_token,
+        "refresh_token": result["refresh_token"],
+        "token_type": "bearer",
+        "expires_in": int(expires.total_seconds()),
+        "session_id": session.id,
+    }
+
+
+@router.post("/reauth")
+@limiter.limit("10/minute")
+async def reauthenticate(
+    request: Request,
+    body: ReauthRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user),
+):
+    """Open the short reauthentication window for sensitive operations."""
+    session = reauth_service.session_for_user(db, current_user)
+    if session is None:
+        raise HTTPException(
+            status_code=403,
+            detail="A session-bound login is required before re-authentication.",
+            headers={"X-Reauth-Required": "true"},
+        )
+    reauth_service.verify_credentials(db, current_user, body.password, body.totp_code)
+    reauth_service.mark_reauthenticated(db, current_user, session)
+    return {
+        "reauth": True,
+        "session_id": session.id,
+        "message": "Re-authentication successful.",
+    }
 
 
 @router.get("/me")
@@ -1994,7 +2175,7 @@ async def change_password(
     await enforce_password_breach_check(db, password_data.new_password)
 
     # Update password
-    current_user.hashed_password = get_password_hash(password_data.new_password)
+    set_user_password(current_user, password_data.new_password)
     
     # Clear must_change_password flag if set
     if hasattr(current_user, 'must_change_password') and current_user.must_change_password:
@@ -2040,10 +2221,22 @@ async def logout(
 
     Revocation is DB-backed (revoked_tokens table), so a logged-out token is
     dead platform-wide, not just on the worker that handled this request."""
-    payload = _decode_token(token)
+    payload = _decode_token(token, db=db)
     jti = payload.get("jti")
     if jti:
         revoke_token(jti, float(payload.get("exp", 0)), user_id=current_user.id)
+    session = reauth_service.session_for_user(db, current_user)
+    if session is not None:
+        auth_sessions.revoke_session(db, session, "logout")
+        from app.services import security_events
+
+        security_events.record(
+            "auth.session_revoked",
+            actor=current_user,
+            target_type="session",
+            target_id=session.id,
+            detail={"reason": "logout"},
+        )
 
     # Only SSO-issued tokens redirect to the IdP. A local password login for an
     # SSO-linked account stays on the local logout path.
@@ -2078,6 +2271,7 @@ async def enroll_mfa(
     request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("MFA enrollment")),
 ):
     """Start TOTP enrollment: generate a secret and return the otpauth URI.
 
@@ -2142,18 +2336,34 @@ async def verify_mfa(
             detail="No MFA enrollment in progress. Call /mfa/enroll first."
         )
 
-    if not totp_service.verify_code(current_user.totp_secret, body.code):
+    mfa_service.assert_mfa_allowed(current_user, db)
+    if not mfa_service.verify_totp(current_user, body.code):
+        mfa_service.record_failure(db, current_user)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid MFA code"
         )
 
+    mfa_service.reset_failures(db, current_user)
     if not current_user.mfa_enabled:
         current_user.mfa_enabled = True
+        current_user.mfa_recovery_generated_at = None
         db.commit()
         logger.info(f"User {current_user.username} enabled MFA")
+        from app.services import security_events
 
-    return {"mfa_enabled": True}
+        security_events.record(
+            "auth.mfa_enabled",
+            actor=current_user,
+            target_type="user",
+            target_id=current_user.id,
+            detail={"recovery_codes": mfa_service.recovery_remaining(current_user)},
+        )
+
+    return {
+        "mfa_enabled": True,
+        "recovery_codes_remaining": mfa_service.recovery_remaining(current_user),
+    }
 
 
 @router.post("/mfa/disable")
@@ -2163,6 +2373,7 @@ async def disable_mfa(
     body: MfaDisableRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(reauth_service.require_recent_reauth("MFA disable")),
 ):
     """Turn MFA off. Requires the account password AND a current TOTP code,
     so a hijacked session alone cannot strip the second factor."""
@@ -2178,7 +2389,9 @@ async def disable_mfa(
             detail="Password is incorrect"
         )
 
+    mfa_service.assert_mfa_allowed(current_user, db)
     if not totp_service.verify_code(current_user.totp_secret, body.code):
+        mfa_service.record_failure(db, current_user)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid MFA code"
@@ -2186,11 +2399,26 @@ async def disable_mfa(
 
     current_user.mfa_enabled = False
     current_user.totp_secret = None
+    current_user.mfa_failed_attempts = 0
+    current_user.mfa_locked_until = None
+    mfa_service.clear_recovery_codes(db, current_user, commit=False)
     db.commit()
+    # A second-factor change invalidates every existing session and token.
+    auth_sessions.revoke_all_for_user(db, current_user.id, "mfa_disabled")
+    revoke_all_user_tokens(current_user.username)
 
+    from app.services import security_events
+
+    security_events.record(
+        "auth.mfa_disabled",
+        actor=current_user,
+        target_type="user",
+        target_id=current_user.id,
+        detail={"sessions_revoked": True},
+    )
     logger.info(f"User {current_user.username} disabled MFA")
 
-    return {"mfa_enabled": False}
+    return {"mfa_enabled": False, "reauth_required": True}
 
 
 # ==================== Impersonation ====================
@@ -2383,9 +2611,19 @@ async def exit_impersonation(
     if original_user.role not in ('admin', 'instructor'):
         raise HTTPException(status_code=403, detail="Original user no longer has impersonation privileges")
 
-    # Create a fresh standard token for the original user
+    # Create a fresh standard session and token for the original user.
+    exit_session = auth_sessions.create_session(
+        db,
+        original_user,
+        request=request,
+        mfa_verified=False,
+        created_by="impersonation_exit",
+    )
+    _exit_refresh_row, exit_refresh_token = auth_sessions.issue_refresh(
+        db, exit_session, original_user, request=request
+    )
     fresh_token = create_access_token(
-        data={"sub": original_user.username},
+        data={"sub": original_user.username, "sid": exit_session.id},
         expires_delta=timedelta(hours=settings.JWT_EXPIRATION_HOURS),
     )
 
@@ -2433,7 +2671,12 @@ async def exit_impersonation(
 
     return {
         "access_token": fresh_token,
+        "refresh_token": exit_refresh_token,
         "token_type": "bearer",
+        "expires_in": int(
+            timedelta(hours=settings.JWT_EXPIRATION_HOURS).total_seconds()
+        ),
+        "session_id": exit_session.id,
         "user": user_dict,
     }
 

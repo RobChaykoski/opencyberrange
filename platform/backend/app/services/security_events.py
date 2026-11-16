@@ -50,10 +50,25 @@ EVENT_TYPES = {
     "auth.login": ("security", "notice"),
     "auth.login_failed": ("security", "warning"),
     "auth.mfa_failed": ("security", "warning"),
+    "auth.mfa_locked": ("security", "warning"),
+    "auth.mfa_enabled": ("security", "notice"),
+    "auth.mfa_disabled": ("security", "warning"),
+    "auth.mfa_reset": ("security", "critical"),
+    "auth.recovery_codes_generated": ("security", "notice"),
+    "auth.recovery_codes_expired": ("security", "warning"),
+    "auth.recovery_code_used": ("security", "warning"),
     "auth.password_changed": ("security", "notice"),
     "auth.password_reset": ("security", "notice"),
+    "auth.password_rehashed": ("security", "info"),
     "auth.registered": ("security", "info"),
     "auth.account_locked": ("security", "warning"),
+    "auth.reauthenticated": ("security", "notice"),
+    "auth.reauth_failed": ("security", "warning"),
+    "auth.refresh_rotated": ("security", "info"),
+    "auth.refresh_invalid": ("security", "warning"),
+    "auth.refresh_reuse": ("security", "critical"),
+    "auth.session_created": ("security", "info"),
+    "auth.session_revoked": ("security", "notice"),
     "auth.denied": ("security", "warning"),
     "authz.denied": ("security", "warning"),
     "rbac.role_granted": ("audit", "warning"),
@@ -259,7 +274,12 @@ def resolve_request_user(request: Request, db: Session) -> User | None:
         from app.auth import _decode_token, get_user_by_username
 
         payload = _decode_token(token, db)
-        return get_user_by_username(db, username=payload.get("sub"))
+        user = get_user_by_username(db, username=payload.get("sub"))
+        if user is not None:
+            from app.services import auth_sessions
+
+            auth_sessions.bind_user(db, user, payload)
+        return user
     except Exception:
         return None
 

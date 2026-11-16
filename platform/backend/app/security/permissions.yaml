@@ -74,6 +74,7 @@ roles:
       - recommendation.view.self
       - reports.export
       - reports.view
+      - mfa.reset
       - role.assign
       - security.events.view
       - service.identity.manage
@@ -687,6 +688,13 @@ permissions:
     category: "institution"
     sensitivity: medium
     scope: global
+    read_only: false
+    break_glass: false
+  mfa.reset:
+    description: "Reset another account's MFA enrollment and recovery codes"
+    category: "identity"
+    sensitivity: "critical"
+    scope: "global"
     read_only: false
     break_glass: false
   rbac.manage:

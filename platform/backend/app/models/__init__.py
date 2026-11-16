@@ -3,6 +3,8 @@
 from app.database import Base
 from app.models.auth import (
     User,
+    AuthSession,
+    RefreshToken,
     IdentityProvider,
     ExternalIdentity,
     SsoLoginState,
@@ -117,6 +119,7 @@ __all__ = [
     "AchievementCelebration",
     "ActivityEvent",
     "Assignment",
+    "AuthSession",
     "AssignmentLab",
     "Competition",
     "CompetitionLab",
@@ -176,6 +179,7 @@ __all__ = [
     "RbacRole",
     "RbacRolePermission",
     "RbacUserRole",
+    "RefreshToken",
     "ReportExport",
     "RetentionRun",
     "ReviewRequest",

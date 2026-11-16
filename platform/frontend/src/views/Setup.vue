@@ -271,6 +271,7 @@ const completeSetup = async () => {
 
     // Store token and user for immediate login
     localStorage.setItem('token', data.access_token)
+    if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token)
     localStorage.setItem('user', JSON.stringify(data.user))
     applyPrivacyDefaultForRole(data.user?.role)
 

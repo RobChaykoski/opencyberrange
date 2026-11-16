@@ -176,6 +176,10 @@ reviewed and signed by the operator; it is not a completed HECVAT Full.
 - **Service identities.** Non-human credentials are hashed, scoped, expiring,
   revocable, and cannot use password login. No shared administrator key is
   required.
+- **Authentication lifecycle.** `docs/AUTH-LIFECYCLE.md` records server-side
+  sessions, tenant-bound context, rotating refresh tokens with reuse detection,
+  recovery-code TTL/single-use, MFA brute-force throttling, authorised MFA
+  reset, forced reauthentication, and the explicit Argon2id/rehash policy.
 - **PIA/TRA status.** `docs/PIA-TRA-FINDINGS.md` maps every PIA and TRA finding
   to Completed, Partial, or Planned with code and test evidence.
 - **Retention.** `docs/RETENTION-POLICIES.md` records the product defaults and

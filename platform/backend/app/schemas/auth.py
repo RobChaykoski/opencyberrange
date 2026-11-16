@@ -253,9 +253,21 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class RefreshRequest(BaseModel):
+    refresh_token: str = Field(..., min_length=16, max_length=512)
+
+
+class ReauthRequest(BaseModel):
+    password: str = Field(..., min_length=1, max_length=128)
+    totp_code: Optional[str] = Field(None, min_length=6, max_length=16)
+
+
 class TokenResponse(BaseModel):
     access_token: str
+    refresh_token: Optional[str] = None
     token_type: str = "bearer"
+    expires_in: Optional[int] = None
+    session_id: Optional[str] = None
 
 
 class SetupRequest(SafeTextModel):

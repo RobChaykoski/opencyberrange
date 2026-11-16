@@ -641,6 +641,7 @@ const handleLogin = async () => {
     })
 
     localStorage.setItem('token', response.data.access_token)
+    if (response.data.refresh_token) localStorage.setItem('refresh_token', response.data.refresh_token)
     localStorage.setItem('user', JSON.stringify(response.data.user))
     applyPrivacyDefaultForRole(response.data.user?.role)
     capsLockOn.value = false

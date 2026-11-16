@@ -16,6 +16,7 @@ from app.models import User
 from app.ratelimit import create_limiter
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
+from app.services import reauth as reauth_service
 
 router = APIRouter()
 limiter = create_limiter()
@@ -96,6 +97,9 @@ async def revoke_consent(
     payload: ConsentRevokeRequest | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("consent revocation")
+    ),
 ):
     """Immediately block a feature and queue destructive cleanup."""
     _spec_or_404(consent_type)
@@ -145,6 +149,9 @@ async def grant_consent(
     payload: ConsentGrantRequest | None = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("consent change")
+    ),
 ):
     """Re-enable a feature. Previously deleted data stays deleted."""
     _spec_or_404(consent_type)

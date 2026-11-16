@@ -306,11 +306,20 @@ def resolve_request_user(request: Request, db: Session) -> User | None:
     scheme, _, token = header.partition(" ")
     if scheme.lower() != "bearer" or not token.strip():
         return None
+    token = token.strip()
     try:
-        payload = _decode_token(token.strip(), db)
+        if token.startswith("ocr_svc_"):
+            from app.services.service_identities import resolve_token
+
+            return resolve_token(db, token)
+        payload = _decode_token(token, db)
     except HTTPException:
         return None
     user = get_user_by_username(db, username=payload.get("sub"))
+    if user is not None:
+        from app.services import auth_sessions
+
+        auth_sessions.bind_user(db, user, payload)
     return user
 
 

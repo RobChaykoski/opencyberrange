@@ -52,11 +52,17 @@ from app.auth import (
     get_current_admin_user,
     get_current_institution_admin_user,
     get_password_hash,
+    set_user_password,
     validate_privileged_password,
     revoke_all_user_tokens,
     verify_password,
 )
 from app import entitlement
+from app.security.dependencies import require_permission
+from app.security.permissions import PolicyDecision
+from app.services import auth_sessions
+from app.services import mfa as mfa_service
+from app.services import reauth as reauth_service
 from app.services.docker_manager import DockerManager, get_subnet_id
 from app.services.wireguard_manager import WireGuardManager
 from app.services.audit import log_admin_action, AuditActions
@@ -277,6 +283,83 @@ async def get_user(
 ):
     """Get a specific user in the actor's institution."""
     return _visible_user_or_404(db, admin, user_id)
+
+
+class MfaResetRequest(BaseModel):
+    reason: str = Field(..., min_length=10, max_length=500)
+    admin_password: str = Field(..., min_length=1, max_length=128)
+    totp_code: str | None = Field(None, min_length=6, max_length=16)
+
+
+@router.post("/users/{user_id}/mfa/reset", summary="Reset another account's MFA")
+async def reset_user_mfa(
+    user_id: int,
+    body: MfaResetRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    actor: User = Depends(get_current_institution_admin_user),
+    _decision: PolicyDecision = Depends(require_permission("mfa.reset")),
+):
+    """Reset MFA after a fresh password + MFA reauthentication.
+
+    The operator must prove possession of their own credentials, the reason is
+    recorded, and the target's sessions and refresh families are revoked. This
+    is the supported recovery path for a lost authenticator; there is no
+    unauthenticated reset endpoint.
+    """
+    target = _visible_user_or_404(db, actor, user_id)
+    target_had_mfa = bool(target.mfa_enabled)
+    reauth_service.verify_credentials(db, actor, body.admin_password, body.totp_code)
+    actor_session = reauth_service.session_for_user(db, actor)
+    if actor_session is not None:
+        reauth_service.mark_reauthenticated(db, actor, actor_session)
+
+    target.totp_secret = None
+    target.mfa_enabled = False
+    target.mfa_failed_attempts = 0
+    target.mfa_locked_until = None
+    target.mfa_last_failed_at = None
+    mfa_service.clear_recovery_codes(db, target, commit=False)
+    db.commit()
+
+    revoked = auth_sessions.revoke_all_for_user(db, target.id, "mfa_reset")
+    revoke_all_user_tokens(target.username)
+
+    from app.services import security_events
+
+    security_events.record(
+        "auth.mfa_reset",
+        severity="critical",
+        actor=actor,
+        target_type="user",
+        target_id=target.id,
+        target_label=target.username,
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent"),
+        request_id=request.headers.get("x-request-id"),
+        detail={
+            "reason": body.reason,
+            "sessions_revoked": revoked,
+            "target_has_mfa_before": target_had_mfa,
+        },
+    )
+    security_events.mark_request_recorded()
+    log_admin_action(
+        action="MFA_RESET",
+        admin_user_id=actor.id,
+        admin_username=actor.username,
+        target_type="user",
+        target_id=target.id,
+        target_identifier=target.username,
+        details={"reason": body.reason, "sessions_revoked": revoked},
+        ip_address=request.client.host if request.client else None,
+    )
+    return {
+        "reset": True,
+        "user_id": target.id,
+        "username": target.username,
+        "sessions_revoked": revoked,
+    }
 
 
 @router.get("/users/{user_id}/details", response_model=UserDetailResponse)
@@ -530,6 +613,9 @@ async def create_user(
     user_data: CreateUserRequest,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("user creation")
+    ),
 ):
     """Create a new user - rate limited to 5 per minute"""
     # Check for existing username or email
@@ -591,12 +677,13 @@ async def create_user(
         student_id=user_data.student_id,
         first_name=user_data.first_name,
         last_name=user_data.last_name,
-        hashed_password=get_password_hash(user_data.password),
+        hashed_password=get_password_hash(user_data.password),  # rehash stamp set below
         is_approved=user_data.is_approved,
         is_admin=is_admin,
         role=role,
         institution_id=(user_data.institution_id or admin.institution_id or "default"),
     )
+    user.password_rehashed_at = datetime.now(timezone.utc)
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -623,6 +710,9 @@ async def update_user(
     http_request: Request,
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("user update")
+    ),
 ):
     """Update user details"""
     user = _visible_user_or_404(db, admin, user_id)
@@ -865,7 +955,7 @@ async def reset_password(
 
     await enforce_password_breach_check(db, password_data.new_password)
 
-    user.hashed_password = get_password_hash(password_data.new_password)
+    set_user_password(user, password_data.new_password)
     user.is_locked = False
     user.failed_attempts = 0
     user.locked_at = None

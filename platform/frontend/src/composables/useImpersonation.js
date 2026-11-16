@@ -35,6 +35,7 @@ export function useImpersonation() {
     // Save current real session
     const original = {
       token: localStorage.getItem('token'),
+      refresh_token: localStorage.getItem('refresh_token'),
       user: localStorage.getItem('user'),
       returnPath: window.location.pathname + window.location.search,
     }
@@ -42,6 +43,7 @@ export function useImpersonation() {
 
     // Swap in impersonation session
     localStorage.setItem('token', token)
+    localStorage.removeItem('refresh_token')
     localStorage.setItem('user', JSON.stringify(impUser))
 
     // Set impersonation flag and metadata
@@ -83,6 +85,7 @@ export function useImpersonation() {
       if (res.ok) {
         const data = await res.json()
         localStorage.setItem('token', data.access_token)
+        if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token)
         localStorage.setItem('user', JSON.stringify(data.user))
         applyPrivacyDefaultForRole(data.user?.role)
       } else {
@@ -119,6 +122,7 @@ export function useImpersonation() {
     const saved = JSON.parse(sessionStorage.getItem(ORIGINAL_SESSION_KEY) || '{}')
     if (saved.token) {
       localStorage.setItem('token', saved.token)
+      if (saved.refresh_token) localStorage.setItem('refresh_token', saved.refresh_token)
     }
     if (saved.user) {
       localStorage.setItem('user', saved.user)

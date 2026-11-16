@@ -77,6 +77,31 @@ same defect applies.
 Commands and the full runbook are in
 [Database integrity and change attribution](docs/DATABASE-INTEGRITY.md).
 
+## Sessions, refresh tokens, MFA, and reauthentication
+
+- Every login creates a server-side session bound to the tenant captured at
+  login. Access JWTs carry the session id; changing the account's tenant
+  invalidates existing sessions.
+- Refresh tokens are opaque, hashed, single-use, and rotate within a family.
+  Replaying a rotated token revokes the entire family and session and writes a
+  `critical` event.
+- Recovery codes are hashed, single-use, TTL-limited, replaced as a set, and
+  cleared on MFA disable/reset.
+- MFA failures have their own counter and lock (`mfa_max_failed_attempts`,
+  `mfa_lockout_minutes`), separate from password lockout.
+- Lost-authenticator recovery uses `POST /api/admin/users/{id}/mfa/reset`, which
+  requires the `mfa.reset` permission, the operator's password + MFA, a written
+  reason, tenant visibility, and full session/token revocation for the target.
+- Privacy, role, MFA, break-glass, service-identity, and export operations
+  require a recent password + MFA reauthentication
+  (`reauth_window_minutes`, default 15). The API returns
+  `X-Reauth-Required: true`; the SPA opens a reauthentication dialog.
+- New passwords use Argon2id with explicit 64 MiB / 3 iterations / 4 lanes /
+  32-byte hash / 16-byte salt parameters. Successful login upgrades legacy
+  hashes, checks for parameter drift, and rehashes hashes older than
+  `password_rehash_days` (default 365).
+- Full details are in `docs/AUTH-LIFECYCLE.md`.
+
 ## Authorization, tenants, and break-glass
 
 - Roles are resolved from the database on every request. A role claim in a JWT,

@@ -4,6 +4,31 @@ All notable changes to OpenCyberRange are recorded here.
 
 ## [Unreleased]
 
+### Authentication lifecycle
+- Added server-side `auth_sessions` and `refresh_tokens` (migration `0037`).
+  Access JWTs carry a session id; sessions bind the tenant captured at login.
+- Added opaque, hashed, rotating refresh tokens with reuse detection: replaying
+  a rotated token revokes the whole family and session.
+- Added `POST /api/auth/refresh`, `POST /api/auth/reauth`, real session listing,
+  per-session revocation, and session-bound tenant checks.
+- Added TOTP recovery-code lifecycle: 10 hashed codes by default, single-use,
+  TTL-limited, regenerated as a set, cleared on disable/reset, with remaining
+  count and expiry metadata.
+- Added MFA brute-force throttling with a separate counter and lock from
+  password lockout (`mfa_max_failed_attempts`, `mfa_lockout_minutes`).
+- Added authorised MFA reset for lost authenticators: `mfa.reset` permission,
+  operator password + MFA, written reason, tenant visibility, session/token
+  revocation, and a `critical` event.
+- Added forced reauthentication for privacy, role, MFA, break-glass,
+  service-identity, session-revocation, and export operations. The SPA opens a
+  reauthentication dialog on `X-Reauth-Required`.
+- Added explicit Argon2id parameters (64 MiB, 3 iterations, 4 lanes, 32-byte
+  hash, 16-byte salt) and a recurring rehash policy (`password_rehash_days`,
+  `users.password_rehashed_at`, `auth.password_rehashed`).
+- Updated the SPA to store refresh tokens, retry one request after a refresh,
+  and clear refresh state on logout/session failure.
+- Added `tests/test_auth_lifecycle.py` and `docs/AUTH-LIFECYCLE.md`.
+
 ### Tenant RLS, security operations, and service identities
 - Added `institution_id` to `courses`, `course_enrollments`, `lab_sessions`,
   `lab_completions`, `achievements`, `learner_snapshots`,

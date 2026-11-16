@@ -144,6 +144,20 @@ class User(Base):
     # encrypted-at-rest secret, not just the raw base32 value.
     totp_secret = Column(String(255), nullable=True)
     mfa_enabled = Column(Boolean, default=False, server_default=text("false"), nullable=False)
+    # MFA brute-force throttling. These are separate from password lockout so a
+    # stolen password cannot exhaust the account lockout counter with bad TOTP
+    # codes, and a valid password plus bad MFA codes has its own delay.
+    mfa_failed_attempts = Column(
+        Integer, default=0, server_default=text("0"), nullable=False
+    )
+    mfa_last_failed_at = Column(DateTime, nullable=True)
+    mfa_locked_until = Column(DateTime, nullable=True)
+    # Recovery-code lifecycle. The hashes remain in mfa_recovery_codes; this
+    # timestamp lets the platform expire and rotate the set.
+    mfa_recovery_generated_at = Column(DateTime, nullable=True)
+    # Last time the stored password hash was rehashed with current Argon2id
+    # parameters. Null means "unknown; rehash on the next successful login".
+    password_rehashed_at = Column(DateTime, nullable=True)
 
     created_at = Column(DateTime, server_default=func.now())
 
@@ -358,6 +372,77 @@ class RevokedToken(Base):
 
     __table_args__ = (
         Index('ix_revoked_tokens_user', 'user_id'),
+    )
+
+
+class AuthSession(Base):
+    """Server-side login session bound to one tenant.
+
+    Access tokens carry the session id. The tenant is captured at login and
+    re-checked on every request, so moving an account between institutions
+    invalidates its existing sessions instead of silently changing their scope.
+    """
+
+    __tablename__ = "auth_sessions"
+
+    id = Column(String(36), primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    institution_id = Column(String(64), nullable=False, index=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    last_seen_at = Column(DateTime, server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    revoked_at = Column(DateTime, nullable=True)
+    revoked_reason = Column(String(64), nullable=True)
+    ip_address = Column(String(64), nullable=True)
+    user_agent = Column(String(300), nullable=True)
+    mfa_verified_at = Column(DateTime, nullable=True)
+    reauth_at = Column(DateTime, nullable=True)
+    created_by = Column(String(32), nullable=True)
+
+    __table_args__ = (
+        Index("ix_auth_sessions_user_active", "user_id", "revoked_at", "expires_at"),
+        Index("ix_auth_sessions_institution", "institution_id"),
+    )
+
+
+class RefreshToken(Base):
+    """Rotating opaque refresh token. Only its SHA-256 hash is stored.
+
+    A token belongs to a session and a rotation family. Presenting a token that
+    has already been rotated is treated as theft: the whole family and its
+    session are revoked.
+    """
+
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True)
+    jti = Column(String(64), unique=True, nullable=False, index=True)
+    session_id = Column(
+        String(36),
+        ForeignKey("auth_sessions.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    family_id = Column(String(36), nullable=False, index=True)
+    token_hash = Column(String(64), nullable=False, index=True)
+    institution_id = Column(String(64), nullable=False, index=True)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime, nullable=False, index=True)
+    rotated_at = Column(DateTime, nullable=True)
+    revoked_at = Column(DateTime, nullable=True)
+    replaced_by_jti = Column(String(64), nullable=True)
+    reuse_detected_at = Column(DateTime, nullable=True)
+    ip_address = Column(String(64), nullable=True)
+    user_agent = Column(String(300), nullable=True)
+
+    __table_args__ = (
+        Index("ix_refresh_tokens_family_active", "family_id", "revoked_at"),
+        Index("ix_refresh_tokens_session", "session_id"),
     )
 
 
