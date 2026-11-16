@@ -45,6 +45,7 @@ STANDARD_SOURCES = {
     "owasp-api-security",
     "owasp-top10-2025",
     "owasp-agentic-skills",
+    "owasp-cheatsheets",
     "opencre",
 }
 

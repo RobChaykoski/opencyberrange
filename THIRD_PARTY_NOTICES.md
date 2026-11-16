@@ -117,6 +117,12 @@ to this repository.
   notice is
   `THIRD_PARTY_LICENSES/OWASP-Agentic-Skills-Top10-CC-BY-SA-4.0-NOTICE.txt`.
   Keep the attribution and share-alike terms with any copied category text.
+- **OWASP Cheat Sheet Series** (CC BY-SA 4.0,
+  <https://cheatsheetseries.owasp.org/>). The Docker Security and FastAPI
+  Security cheat sheets are review references for container isolation and API
+  controls. The notice is
+  `THIRD_PARTY_LICENSES/OWASP-Cheat-Sheets-CC-BY-SA-4.0-NOTICE.txt`. Keep the
+  attribution and share-alike terms with any copied text.
 - **OpenCRE** (CC0-1.0, <https://www.opencre.org/explorer>). The Open Common
   Requirement Enumeration index from the OWASP OpenCRE project. The notice is
   `THIRD_PARTY_LICENSES/OpenCRE-CC0-1.0-NOTICE.txt`. CC0 does not require

@@ -117,6 +117,19 @@ OpenCRE is CC0-1.0. The mapping note does not copy the index; it records the
 reference and the review decision. This is especially useful for API6, API9,
 A06, A10, and the AST categories marked `partial`.
 
+## Cheat sheet cross-references
+
+Use these OWASP Cheat Sheets as review aids alongside the regression tests:
+
+| Cheat sheet | Baseline categories |
+|---|---|
+| [Docker Security](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html) | API8, A02, AST06; compose, image, and lab isolation review |
+| [FastAPI Security](https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html) | API2, API3, API5, API8, A02, A07; dependencies, schemas, errors, CORS, docs, tokens |
+| [Multi-Tenant Security](https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html) | API1, API5, A01; tenant identification, isolation, and cross-tenant tests |
+
+A cheat sheet is guidance. The status in this baseline is based on a platform
+control plus a regression check, not on a checklist alone.
+
 ## Attribution
 
 OWASP API Security Top 10 2023 is CC BY-SA 4.0, OWASP API Security Project team.

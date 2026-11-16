@@ -254,6 +254,30 @@ sources:
       Use the ten categories for AI skill governance, review, and lab design.
       The platform does not install or execute a third-party agent skill.
 
+  - id: owasp-cheatsheets
+    name: OWASP Cheat Sheet Series
+    homepage: https://cheatsheetseries.owasp.org/
+    repository: https://github.com/OWASP/CheatSheetSeries
+    licence: CC BY-SA 4.0
+    licence_url: https://creativecommons.org/licenses/by-sa/4.0/
+    copyright: >-
+      Copyright (c) OWASP Cheat Sheet Series Team. Licensed under Creative
+      Commons Attribution-ShareAlike 4.0 International.
+    attribution: >-
+      OWASP Cheat Sheet Series, OWASP Cheat Sheet Series Team. The Docker
+      Security and FastAPI Security cheat sheets are used as review references
+      and must be attributed.
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    pin: null
+    pin_kind: live_series
+    fetch: never
+    fetch_base: null
+    notes: >-
+      Use the cheat sheets as review aids, not as a substitute for a test. The
+      FastAPI sheet informs route, dependency, validation, and error handling
+      review; the Docker sheet informs compose, image, and runtime hardening.
+
   - id: opencre
     name: OpenCRE
     homepage: https://www.opencre.org/
@@ -986,6 +1010,68 @@ datasets:
       https://www.opencre.org/explorer.
     licence: CC0-1.0
     redistribution: public_domain
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-docker-security-cheatsheet
+    title: OWASP Docker Security Cheat Sheet
+    kind: standard_index
+    platform: [Container, Docker]
+    attack: []
+    tags: [owasp, docker, container-hardening, isolation]
+    lab_modules: []
+    use: >-
+      Review container and compose hardening: image provenance, least
+      privilege, read-only filesystems, dropped capabilities, no host
+      networking or mounts, bounded resources, secrets handling, and runtime
+      monitoring. Map each review item to a compose or isolation check.
+    citation: >-
+      OWASP Docker Security Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-fastapi-security-cheatsheet
+    title: OWASP FastAPI Security Cheat Sheet
+    kind: standard_index
+    platform: [API, FastAPI]
+    attack: []
+    tags: [owasp, fastapi, api-security, validation]
+    lab_modules: []
+    use: >-
+      Review FastAPI-specific API security: dependency-based authentication,
+      request and response schemas, error handling, CORS, docs exposure, rate
+      limits, token validation, and safe serialization. Map each item to an API
+      Top 10 category and a regression test.
+    citation: >-
+      OWASP FastAPI Security Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
+    access: reference
+    files: []
+
+  - source: owasp-cheatsheets
+    id: owasp-multitenant-security-cheatsheet
+    title: OWASP Multi-Tenant Security Cheat Sheet
+    kind: standard_index
+    platform: [Web, API]
+    attack: []
+    tags: [owasp, multi-tenant, tenant-isolation, access-control]
+    lab_modules: []
+    use: >-
+      Review tenant identification, data isolation, authorization boundaries,
+      cache and queue partitioning, per-tenant rate limits, and cross-tenant
+      test cases. Map each review item to the tenant RLS and IDOR checks.
+    citation: >-
+      OWASP Multi-Tenant Security Cheat Sheet, OWASP Cheat Sheet Series,
+      https://cheatsheetseries.owasp.org/cheatsheets/Multi_Tenant_Security_Cheat_Sheet.html.
+    licence: CC BY-SA 4.0
+    redistribution: allowed_with_attribution_sharealike
     access: reference
     files: []
 

@@ -35,6 +35,7 @@ standards:
           - Server-side ownership and tenant checks on every object route.
           - Route-level auth dependency plus service-level policy decision.
           - Two-owner / two-tenant IDOR regression matrix.
+          - OWASP Multi-Tenant Security Cheat Sheet review for tenant boundaries.
         checks:
           - platform/backend/tests/test_idor_matrix.py
           - platform/backend/tests/test_horizontal_privilege.py
@@ -130,6 +131,7 @@ standards:
         controls:
           - CSP, HSTS, frame and content-type headers.
           - API docs default-off, explicit CORS origins, no debug mode.
+          - OWASP Docker Security and FastAPI Security Cheat Sheet review.
         checks:
           - scripts/check-nginx-security-headers.py
           - platform/backend/tests/test_compose_security.py
@@ -321,6 +323,7 @@ standards:
         controls:
           - CSP, HSTS, frame and content-type headers.
           - Explicit CORS, default-off docs, secret validation.
+          - OWASP Docker Security and FastAPI Security Cheat Sheet review.
         checks:
           - scripts/check-nginx-security-headers.py
           - platform/backend/tests/test_compose_security.py
@@ -631,6 +634,7 @@ standards:
         controls:
           - Lab isolation, egress deny, disposable storage, and teardown.
           - No third-party agent process runs on the host.
+          - OWASP Docker Security Cheat Sheet review for the lab container.
         checks:
           - platform/backend/tests/test_compose_security.py
           - scripts/audit-lab-isolation.py

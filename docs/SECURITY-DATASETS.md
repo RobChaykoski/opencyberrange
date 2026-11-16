@@ -24,6 +24,7 @@ A link is not a licence. The sources below have different terms:
 | [**OWASP Top 10 2025**](https://top10.owasp.org/2025/) | CC BY 3.0 | Allowed with attribution | Reference | 2025 edition |
 | [**OWASP Agentic Skills Top 10**](https://owasp.github.io/www-project-agentic-skills-top-10/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | 1.0-2026 |
 | [**OpenCRE**](https://www.opencre.org/explorer) | CC0-1.0 | Public domain | Reference index | Live |
+| [**OWASP Cheat Sheet Series**](https://cheatsheetseries.owasp.org/) | CC BY-SA 4.0 | Allowed with attribution and share-alike | Reference | Live |
 
 If a source has no declared licence, the default is **reference only**. Public
 visibility does not grant permission to copy, mirror, or serve the material.
@@ -113,6 +114,13 @@ the agentic lab pathway in the same guide.
 **OpenCRE** is a CC0-1.0 requirement index. Use it to cross-map a category to
 related standards and to support a review note. Record the CRE identifier and
 the access date; do not copy the live index into a release.
+
+The **OWASP Cheat Sheet Series** provides review references. The
+[Docker Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html)
+maps to container, compose, and lab isolation checks. The
+[FastAPI Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/FastAPI_Security_Cheat_Sheet.html)
+maps to route dependencies, schema validation, error handling, CORS, docs
+gating, rate limits, and token review. Neither replaces a regression test.
 
 None of these standards is a certification. A mapping marked `partial` means
 the platform has a control and a test, but the category still needs
