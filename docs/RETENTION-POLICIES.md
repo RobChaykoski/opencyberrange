@@ -19,6 +19,8 @@ must act.
 | Consent revocation proof | Durable | `consent_audits`, suppression ledger | Proof survives account erasure; it contains a keyed subject hash, not the deleted payload |
 | Account data export timestamp | Kept with the account | `users.data_exported_at` | Shows when the learner last downloaded their data |
 | Session and activity records | Institution policy | Course/lab tables | Use the retention and erasure tooling; see `docs/PRIVACY-AND-DATA-DELETION.md` |
+| Settings change sets | At least 1 year; institution audit schedule | `settings_change_requests` | Ticket and reason are encrypted; secret values are redacted; rows are retained as change evidence |
+| Production cutover evidence | Permanent audit evidence | `production_cutovers` | Ticket and notes are encrypted; only counts and an evidence hash are stored |
 
 ## Security events
 

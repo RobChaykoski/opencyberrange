@@ -110,6 +110,12 @@ DEFAULT_SETTINGS = [
      "description": "Capture sensitive HTTP requests that do not have a richer explicit event. Disable only for a high-volume deployment with an external audit pipeline.", "is_secret": False},
     {"key": "security_event_retention_days", "value": "365", "category": "security",
      "description": "Recommended retention for security events. The application role cannot delete events; retention is applied by an operator with an elevated maintenance role under the institution's retention schedule.", "is_secret": False},
+    {"key": "deployment_mode", "value": "development", "category": "security",
+     "description": "Deployment phase. Development is for sample data and review. Production is a one-way cutover: it requires a ticket, the current password, explicit data-loss and one-way acknowledgements, clears sample/test accounts, and cannot be reversed from the application. Only the cutover workflow can change this value.", "is_secret": False},
+    {"key": "data_collection_mode", "value": "sample", "category": "security",
+     "description": "Data collection state. Sample data is not production evidence. The production cutover sets this to production and only real learner evidence is collected afterwards. Only the cutover workflow can change this value.", "is_secret": False},
+    {"key": "settings_change_ticket_mode", "value": "optional", "category": "security",
+     "description": "Ticket requirement for settings changes: off, optional, or required. Production defaults to required after cutover. A required ticket must be listed with the change set and reason; every apply, revert, and cutover is recorded in the security event store and audit log.", "is_secret": False},
     {"key": "tenant_isolation_enabled", "value": "true", "category": "security",
      "description": "Enforce the tenant boundary in the Authorization Service. Non-system roles may only access records whose owner has the same institution_id. Disable only for a single-institution test deployment.", "is_secret": False},
     {"key": "authorization_strict_startup", "value": "false", "category": "security",
@@ -251,6 +257,11 @@ def _invalidate_cache() -> None:
     _cache = {}
     _cache_loaded = False
     _cache_loaded_at = 0.0
+
+
+def invalidate_cache() -> None:
+    """Public invalidation hook for change-control writes."""
+    _invalidate_cache()
 
 
 def _is_cache_stale() -> bool:

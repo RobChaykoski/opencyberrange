@@ -67,6 +67,8 @@ from app.schemas.dashboard import (
 from app.schemas.settings import (
     SettingsBulkUpdate,
     MailTestRequest,
+    SettingsChangeRevert,
+    ProductionCutoverRequest,
     CustomAchievementCreate,
     CustomAchievementUpdate,
 )
@@ -109,6 +111,8 @@ __all__ = [
     "MinorConsentRequest",
     "PulseDataPoint",
     "PulseResponse",
+    "ProductionCutoverRequest",
+    "SettingsChangeRevert",
     "ReorderRequest",
     "ResetPasswordRequest",
     "SafeTextModel",

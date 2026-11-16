@@ -13,6 +13,21 @@ from app.schemas.common import SafeTextModel
 
 class SettingsBulkUpdate(BaseModel):
     settings: dict  # {"key": "value", ...}
+    ticket_number: Optional[str] = Field(None, max_length=80)
+    reason: Optional[str] = Field(None, max_length=2000)
+
+
+class SettingsChangeRevert(BaseModel):
+    reason: str = Field(..., min_length=5, max_length=2000)
+
+
+class ProductionCutoverRequest(BaseModel):
+    ticket_number: str = Field(..., min_length=2, max_length=80)
+    password: str = Field(..., min_length=1, max_length=200)
+    confirmation: str = Field(..., max_length=40)
+    acknowledge_data_loss: bool
+    acknowledge_one_way: bool
+    reason: str = Field(..., min_length=5, max_length=2000)
 
 
 class MailTestRequest(BaseModel):

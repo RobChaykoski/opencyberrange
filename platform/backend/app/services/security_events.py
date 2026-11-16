@@ -95,6 +95,10 @@ EVENT_TYPES = {
     "portfolio.share_used": ("privacy", "notice"),
     "portfolio.share_revoked": ("privacy", "notice"),
     "security.events_read": ("audit", "info"),
+    "settings.change_applied": ("audit", "notice"),
+    "settings.change_reverted": ("audit", "warning"),
+    "production.cutover": ("security", "critical"),
+    "production.cutover_denied": ("security", "critical"),
     "http.denied": ("security", "warning"),
 }
 

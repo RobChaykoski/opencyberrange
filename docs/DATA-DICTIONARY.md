@@ -216,6 +216,37 @@ UI and the API documentation.
 | `derived.competency_score` | Evidence summary across mapped exercises | Show growth, not mastery | Service | Computed on read | Self; instructor aggregate; admin | `self`, `reports` | Recomputed |
 | `derived.free_text_themes` | Aggregated themes from comments | Identify recurring confusion | Consent | Computed on read; source comments retained per consent | Instructor aggregate above minimum cohort; admin | `analytics` aggregate only | Recomputed |
 
+## Sessions, RBAC, and security evidence
+
+| Field | Description | Purpose | Authority | Retention | Access | Exports | On deletion |
+|---|---|---|---|---|---|---|---|
+| `auth_sessions.id`, `user_id`, `institution_id`, `created_at`, `last_seen_at`, `expires_at`, `revoked_at`, `revoked_reason` | Server-side session bound to one tenant | Session lifecycle and immediate revocation | Security | Session lifetime plus audit window | Auth service; admin | `self` (metadata only) | Deleted |
+| `auth_sessions.ip_address`, `user_agent`, `mfa_verified_at`, `reauth_at`, `created_by` | Session context and recent reauthentication evidence | Abuse review and high-impact operation gates | Security | Session lifetime plus audit window | Auth service; admin | Not in learner reports | Deleted |
+| `refresh_tokens.jti`, `session_id`, `user_id`, `family_id`, `token_hash`, `institution_id`, `created_at`, `expires_at`, `rotated_at`, `revoked_at`, `replaced_by_jti`, `reuse_detected_at` | Rotating opaque refresh-token record; only a SHA-256 hash is stored | Session renewal and reuse/theft detection | Security | Token/session lifetime | Auth service only | Never | Deleted |
+| `refresh_tokens.ip_address`, `user_agent` | Refresh context | Abuse investigation | Security | Session lifetime | Auth service; admin | Never | Deleted |
+| `rbac_roles.key`, `label`, `description`, `rank`, `is_system` | Reviewed role catalog | Role-based access control | Security | Release lifetime | Admin; authorization service | Not exported | Kept as configuration |
+| `rbac_permissions.key`, `description`, `category`, `sensitivity` | Reviewed permission catalog | Permission-based access control | Security | Release lifetime | Admin; authorization service | Not exported | Kept as configuration |
+| `rbac_role_permissions.role_key`, `permission_key` | Role-to-permission grants | Effective RBAC grants | Security | Release lifetime | Admin; authorization service | Not exported | Kept as configuration |
+| `rbac_user_roles.user_id`, `role_key`, `granted_by`, `granted_at`, `expires_at` | Expiring extra role assignment | Temporary elevation | Security | Grant lifetime plus audit window | Admin; authorization service | Not exported | Deleted with the user |
+| `security_events.id`, `occurred_at`, `category`, `severity`, `event_type`, `action`, `outcome` | Append-only security, audit, and privacy event | Detection, investigation, and evidence | Security / Legal | 365 days recommended; operator archive/prune | Admin; auditor; security service | Not in learner exports | Kept; actor references anonymised |
+| `security_events.actor_id`, `actor_username`, `actor_role`, `institution_id` | Actor context for an event | Attribution and tenant review | Security | Event retention | Admin; auditor | Not in learner exports | Actor references anonymised |
+| `security_events.target_type`, `target_id`, `target_label`, `path`, `method`, `status_code`, `ip_address`, `user_agent`, `detail`, `request_id` | Target and request context | Reproduce and scope an event | Security | Event retention | Admin; auditor | Not in learner exports | Target/learner identifiers anonymised; IP removed by erasure |
+| `break_glass_grants.user_id`, `permission`, `reason`, `reference`, `status`, `approved_by`, `expires_at`, `use_count`, `review_status` | Time-bound emergency access evidence | Controlled exception handling | Security / Legal | Audit retention | Admin; privacy officer; auditor | Not in learner exports | Kept as audit evidence; actor references anonymised |
+| `service_credentials.name`, `username`, `scopes`, `token_hash`, `created_at`, `expires_at`, `last_used_at`, `revoked_at` | Non-human service identity; only a token hash is stored | Machine-to-machine access | Security | Credential lifetime plus audit window | Admin; service identity owner | Never | Revoked; non-personal record retained |
+| `portfolio_share_tokens.token_hash`, `user_id`, `scope`, `expires_at`, `single_use`, `used_at`, `revoked_at` | Hashed portfolio/certificate share link | Explicit, revocable sharing | Consent / Service | Until expiry or revocation | Self; share holder for the shared fields | Shared fields only | Deleted or revoked |
+| `settings_change_requests.ticket_number`, `reason`, `environment`, `status`, `actor_id`, `actor_username` | Ticket-gated settings change metadata; ticket and reason are Fernet-encrypted | Change control and auditability | Security / Legal | Audit retention; at least 1 year, institution schedule | Admin; auditor | Not exported | Kept as audit evidence; actor references anonymised |
+| `settings_change_requests.before_values`, `after_values`, `secret_keys`, `change_hash`, `applied_at`, `reverted_at`, `reverted_by_username`, `revert_reason` | Revertible before/after snapshots; secret setting values are replaced with `[secret]`; revert reason is encrypted | Prove what changed and restore safely | Security / Legal | Audit retention | Admin; auditor | Not exported | Kept as audit evidence; no secret values stored |
+| `production_cutovers.actor_id`, `actor_username`, `ticket_number`, `notes`, `cutover_at`, `sample_data_summary`, `password_confirmed`, `evidence_hash` | One-way production transition evidence; ticket and notes are encrypted, summary contains counts only, no password is stored | Prove authorised cutover and data cleanup | Security / Legal | Permanent audit evidence | Admin; auditor | Not exported | Immutable; kept |
+
+## Masking, encryption, and change control
+
+- Secret platform settings (SMTP password, IdP secrets, Open Badge signing key, and similar) are Fernet-encrypted at rest by `settings_service`; the API returns a fixed mask and never the stored value.
+- Passwords are stored only as Argon2id hashes. Refresh tokens, service tokens, and portfolio share tokens store only SHA-256 hashes.
+- `settings_change_requests` encrypts the ticket number and reason. It never stores a secret setting value: secret keys are recorded as `[secret]` in before/after snapshots and listed in `secret_keys`.
+- `production_cutovers` encrypts the ticket and approval notes, stores only deletion counts and an evidence hash, and never stores the administrator password.
+- The production cutover is one-way from the application. It requires a ticket, the current password, the exact `GO PRODUCTION` phrase, and explicit data-loss and one-way acknowledgements. Every apply, revert, denied cutover, and completed cutover is written to the append-only security event store and audit log.
+- Sample/test accounts matching the documented test patterns are erased through the privacy erasure path. Security and audit evidence is retained or anonymised, not silently deleted.
+
 ## Retention schedule
 
 | Data class | Default retention | Notes |

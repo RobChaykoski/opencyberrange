@@ -1770,6 +1770,192 @@
         <!-- Settings Tab -->
         <div v-if="activeTab === 'settings'" class="panel">
           <h2 class="panel-title">Platform Settings</h2>
+          <section class="change-control" aria-labelledby="change-control-title">
+            <div class="change-control__header">
+              <div>
+                <h3 id="change-control-title">Production change control</h3>
+                <p class="change-control__sub">
+                  Settings changes are recorded with their ticket, reason, actor, and
+                  before/after values. Secret values are redacted from the change set.
+                </p>
+              </div>
+              <span
+                class="change-mode"
+                :class="isProduction ? 'change-mode--prod' : 'change-mode--dev'"
+              >
+                {{ isProduction ? 'Production locked' : 'Development / sample data' }}
+              </span>
+            </div>
+
+            <p v-if="changeControlError" class="change-control__error" role="alert">
+              {{ changeControlError }}
+            </p>
+
+            <div class="change-warning" role="alert">
+              <strong>
+                <span aria-hidden="true">⚠</span>
+                {{ isProduction ? 'Production data protection' : 'Sample data only' }}
+              </strong>
+              <p v-if="isProduction">
+                This deployment is production-locked. Settings changes require a ticket,
+                are saved as a revertible change set, and are written to the security
+                event store and audit log. Review the privacy and integrity impact before
+                saving.
+              </p>
+              <p v-else>
+                This deployment is still in development. The records here are sample
+                data and are not production assessment evidence. Going to production is a
+                one-way action that removes sample/test accounts and locks the deployment.
+              </p>
+              <ul v-if="changeControlWarnings.length">
+                <li v-for="warning in changeControlWarnings" :key="warning">{{ warning }}</li>
+              </ul>
+            </div>
+
+            <div class="change-fields">
+              <label>
+                <span>Ticket number <small>{{ ticketRequirementLabel }}</small></span>
+                <input
+                  v-model.trim="changeTicket"
+                  type="text"
+                  maxlength="80"
+                  placeholder="e.g. CHG-2026-0042"
+                  autocomplete="off"
+                />
+              </label>
+              <label>
+                <span>Ticket details / reason</span>
+                <textarea
+                  v-model.trim="changeReason"
+                  rows="2"
+                  maxlength="2000"
+                  placeholder="Summarise the approved change, affected settings, and expected impact."
+                ></textarea>
+              </label>
+            </div>
+
+            <div v-if="changeSummary.length" class="change-summary">
+              <h4>Changes in this save ({{ changeSummary.length }})</h4>
+              <ul>
+                <li v-for="change in changeSummary" :key="change.key">
+                  <code>{{ change.key }}</code>
+                  <span>{{ change.label }}</span>
+                  <span class="change-summary__arrow" aria-hidden="true">→</span>
+                  <strong>{{ change.after }}</strong>
+                  <span class="change-summary__before">was {{ change.before }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <details v-if="changeHistory.length" class="change-history">
+              <summary>Recent change history ({{ changeHistory.length }})</summary>
+              <div class="table-container">
+                <table class="data-table">
+                  <caption class="visually-hidden">Recent settings change sets</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Applied</th>
+                      <th scope="col">Ticket</th>
+                      <th scope="col">Actor</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Keys</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="change in changeHistory" :key="change.id">
+                      <td>{{ formatChangeTime(change.applied_at) }}</td>
+                      <td><code>{{ change.ticket_number || '—' }}</code></td>
+                      <td>{{ change.actor_username }}</td>
+                      <td>
+                        <span class="change-status" :class="`change-status--${change.status}`">
+                          {{ change.status }}
+                        </span>
+                      </td>
+                      <td>{{ Object.keys(change.after || {}).join(', ') }}</td>
+                      <td>
+                        <button
+                          v-if="change.status === 'applied'"
+                          type="button"
+                          class="btn btn--outline btn--xs"
+                          :disabled="revertingChange === change.id"
+                          @click="revertChange(change)"
+                        >
+                          {{ revertingChange === change.id ? 'Reverting...' : 'Revert' }}
+                        </button>
+                        <span v-else class="change-history__note">
+                          {{ change.reverted_by_username ? `by ${change.reverted_by_username}` : 'closed' }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+
+            <section v-if="!isProduction" class="cutover" aria-labelledby="cutover-title">
+              <h3 id="cutover-title">Transition to production</h3>
+              <div class="cutover__warning" role="alert">
+                <strong>One-way action. Read before continuing.</strong>
+                <ul>
+                  <li>
+                    This permanently deletes
+                    <strong>{{ changeControl?.sample_users || 0 }}</strong>
+                    sample/test account(s) and their learner records.
+                  </li>
+                  <li>It cannot be reversed from the application; recovery requires a database restore and operator approval.</li>
+                  <li>Security, audit, and consent evidence is retained or anonymised, not silently destroyed.</li>
+                  <li>The ticket, your identity, the time, the deletion counts, and an evidence hash are recorded.</li>
+                </ul>
+              </div>
+              <div class="cutover__fields">
+                <label>
+                  <span>Cutover ticket</span>
+                  <input v-model.trim="cutoverForm.ticket_number" type="text" maxlength="80" autocomplete="off" />
+                </label>
+                <label>
+                  <span>Approval details</span>
+                  <textarea v-model.trim="cutoverForm.reason" rows="2" maxlength="2000"></textarea>
+                </label>
+                <label>
+                  <span>Current password</span>
+                  <input v-model="cutoverForm.password" type="password" autocomplete="current-password" />
+                </label>
+                <label>
+                  <span>Type {{ changeControl?.confirmation_phrase || 'GO PRODUCTION' }} exactly</span>
+                  <input v-model="cutoverForm.confirmation" type="text" autocomplete="off" />
+                </label>
+              </div>
+              <label class="cutover__check">
+                <input v-model="cutoverForm.acknowledge_data_loss" type="checkbox" />
+                <span>I understand that sample/test accounts and their learner records will be permanently deleted.</span>
+              </label>
+              <label class="cutover__check">
+                <input v-model="cutoverForm.acknowledge_one_way" type="checkbox" />
+                <span>I understand that production is one-way and cannot be reversed from this interface.</span>
+              </label>
+              <button
+                type="button"
+                class="btn btn--danger"
+                :disabled="cutoverBusy || !canCutover"
+                @click="runCutover"
+              >
+                {{ cutoverBusy ? 'Completing cutover...' : 'Complete one-way production cutover' }}
+              </button>
+              <p v-if="!canCutover" class="cutover__hint">
+                Enter the ticket, approval details, password, exact confirmation phrase,
+                and both acknowledgements to enable this action.
+              </p>
+            </section>
+            <div v-else class="cutover cutover--locked">
+              <strong>Production is locked.</strong>
+              <p>
+                The one-way cutover is complete. Settings changes still require a ticket
+                and remain revertible as change sets.
+              </p>
+            </div>
+          </section>
+
           <div class="settings-categories" role="tablist" aria-label="Platform settings categories">
             <button
               v-for="(cat, index) in settingsCategories"
@@ -5072,6 +5258,157 @@ const togglesSaving = reactive({})
 const settingsLoading = ref(false)
 const savingSettings = ref(false)
 const sendingTestMail = ref(false)
+const changeControl = ref(null)
+const changeHistory = ref([])
+const changeControlError = ref('')
+const changeTicket = ref('')
+const changeReason = ref('')
+const revertingChange = ref(null)
+const cutoverBusy = ref(false)
+const cutoverForm = reactive({
+  ticket_number: '',
+  reason: '',
+  password: '',
+  confirmation: '',
+  acknowledge_data_loss: false,
+  acknowledge_one_way: false,
+})
+
+const isProduction = computed(
+  () =>
+    changeControl.value?.is_production === true ||
+    changeControl.value?.deployment_mode === 'production'
+)
+const ticketRequirementLabel = computed(() => {
+  const mode = changeControl.value?.ticket_mode || 'optional'
+  if (isProduction.value || mode === 'required') return '(required)'
+  if (mode === 'optional') return '(optional)'
+  return '(not required)'
+})
+const changeControlWarnings = computed(
+  () => changeControl.value?.warnings || []
+)
+const changeSummary = computed(() => {
+  const rows = []
+  for (const [key, value] of Object.entries(allSettings.value)) {
+    if (hiddenSettingKeys.value.has(key)) continue
+    const before = String(value?.value ?? '')
+    const after = String(settingsEdits[key] ?? '')
+    if (before === after) continue
+    const secret = Boolean(value?.is_secret)
+    rows.push({
+      key,
+      label: friendlyLabel(key),
+      before: secret ? '[secret]' : before || '(empty)',
+      after: secret ? '[secret]' : after || '(empty)',
+    })
+  }
+  return rows
+})
+const canCutover = computed(() => {
+  const form = cutoverForm
+  return Boolean(
+    changeControl.value &&
+      !isProduction.value &&
+      form.ticket_number.trim() &&
+      form.reason.trim().length >= 5 &&
+      form.password &&
+      form.confirmation === (changeControl.value.confirmation_phrase || 'GO PRODUCTION') &&
+      form.acknowledge_data_loss &&
+      form.acknowledge_one_way
+  )
+})
+
+function formatChangeTime(value) {
+  if (!value) return '—'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleString()
+}
+
+async function fetchChangeControl() {
+  changeControlError.value = ''
+  try {
+    const [preview, history] = await Promise.all([
+      axios.get('/settings/production/preview'),
+      axios.get('/settings/change-requests', { params: { limit: 25 } }),
+    ])
+    changeControl.value = preview.data
+    changeHistory.value = history.data.changes || []
+  } catch (e) {
+    changeControlError.value =
+      e.response?.data?.detail?.message ||
+      e.response?.data?.detail ||
+      'Could not load production change control.'
+  }
+}
+
+async function revertChange(change) {
+  const reason = window.prompt(
+    `Why revert ticket ${change.ticket_number || change.id}? (required, minimum 5 characters)`
+  )
+  if (!reason || reason.trim().length < 5) return
+  if (!window.confirm(`Revert the settings change set for ticket ${change.ticket_number || change.id}?`)) {
+    return
+  }
+  revertingChange.value = change.id
+  try {
+    await axios.post(`/settings/change-requests/${change.id}/revert`, {
+      reason: reason.trim(),
+    })
+    await Promise.all([fetchSettings(), fetchChangeControl()])
+    showAlert('Change set reverted. The previous values are restored.', 'success')
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    showAlert(
+      detail?.message || detail || 'Could not revert the change set.',
+      'error'
+    )
+  } finally {
+    revertingChange.value = null
+  }
+}
+
+async function runCutover() {
+  if (!canCutover.value) return
+  const summary = changeControl.value
+  const message =
+    `Complete the one-way production cutover?\n\n` +
+    `Ticket: ${cutoverForm.ticket_number}\n` +
+    `Sample/test accounts: ${summary?.sample_users || 0}\n` +
+    `This permanently deletes those accounts and their learner records, ` +
+    `locks the deployment, and cannot be reversed from the application.`
+  if (!window.confirm(message)) return
+  cutoverBusy.value = true
+  try {
+    const { data } = await axios.post('/settings/production/cutover', {
+      ticket_number: cutoverForm.ticket_number.trim(),
+      reason: cutoverForm.reason.trim(),
+      password: cutoverForm.password,
+      confirmation: cutoverForm.confirmation,
+      acknowledge_data_loss: cutoverForm.acknowledge_data_loss,
+      acknowledge_one_way: cutoverForm.acknowledge_one_way,
+    })
+    cutoverForm.password = ''
+    cutoverForm.confirmation = ''
+    cutoverForm.ticket_number = ''
+    cutoverForm.reason = ''
+    cutoverForm.acknowledge_data_loss = false
+    cutoverForm.acknowledge_one_way = false
+    await Promise.all([fetchSettings(), fetchChangeControl()])
+    showAlert(
+      `Production cutover complete. Evidence hash ${data.evidence_hash}.`,
+      'success'
+    )
+  } catch (e) {
+    const detail = e.response?.data?.detail
+    showAlert(
+      detail?.message || detail || 'The production cutover failed.',
+      'error'
+    )
+  } finally {
+    cutoverBusy.value = false
+  }
+}
 
 // --- RangeBox capacity policy ---
 const rangeboxCapacity = ref(null)
@@ -5162,6 +5499,11 @@ async function saveModule(key) {
   const newValue = moduleStagedEdits[key]
   if (newValue === undefined) return
 
+  const ticketError = changeTicketError()
+  if (ticketError) {
+    showAlert(ticketError, 'error')
+    return
+  }
   moduleToggling.value = key
   moduleLog[key] = []
   const label = MODULE_DEFS.find(m => m.key === key)?.label || key
@@ -5172,7 +5514,11 @@ async function saveModule(key) {
   try {
     // Save the setting
     moduleLogPush(key, 'info', 'Saving setting...')
-    await axios.put('/settings/', { settings: { [key]: String(newValue) } })
+    await axios.put('/settings/', {
+      settings: { [key]: String(newValue) },
+      ticket_number: changeTicket.value.trim() || null,
+      reason: changeReason.value.trim() || null,
+    })
     settingsEdits[key] = String(newValue)
     delete moduleStagedEdits[key]
     moduleLogPush(key, 'success', 'Setting saved.')
@@ -5586,6 +5932,7 @@ const fetchSettings = async () => {
       allSettings.value[item.key] = item
       settingsEdits[item.key] = item.value
     }
+    await fetchChangeControl()
   } catch (e) {
     showAlert('Failed to load settings', 'error')
   } finally {
@@ -5598,7 +5945,25 @@ const fetchSettings = async () => {
 // where that model fits: nobody wants a half-typed value written on each
 // keystroke. The switch is applied optimistically and rolled back if the write
 // fails, so what the toggle shows is always what is stored.
+function changeTicketError() {
+  const required =
+    isProduction.value || changeControl.value?.ticket_mode === 'required'
+  if (!required) return ''
+  if (!changeTicket.value.trim()) {
+    return 'A ticket number is required before changing settings in production.'
+  }
+  if (changeReason.value.trim().length < 5) {
+    return 'Add the ticket details or approval reason (at least 5 characters).'
+  }
+  return ''
+}
+
 const toggleSetting = async (key) => {
+  const ticketError = changeTicketError()
+  if (ticketError) {
+    showAlert(ticketError, 'error')
+    return
+  }
   if (togglesSaving[key]) return
   const previous = settingsEdits[key]
   const next = previous === 'true' ? 'false' : 'true'
@@ -5614,9 +5979,14 @@ const toggleSetting = async (key) => {
   settingsEdits[key] = next
   togglesSaving[key] = true
   try {
-    await axios.put('/settings/', { settings: { [key]: next } })
+    await axios.put('/settings/', {
+      settings: { [key]: next },
+      ticket_number: changeTicket.value.trim() || null,
+      reason: changeReason.value.trim() || null,
+    })
     if (allSettings.value[key]) allSettings.value[key].value = next
     if (key === 'privacy_default_on') setAdminPrivacyDefault(next === 'true')
+    await fetchChangeControl()
   } catch (e) {
     settingsEdits[key] = previous
     showAlert(e.response?.data?.detail || 'Failed to save setting', 'error')
@@ -5648,20 +6018,52 @@ const discardSettings = () => {
 }
 
 const saveSettings = async () => {
+  const ticketError = changeTicketError()
+  if (ticketError) {
+    showAlert(ticketError, 'error')
+    return
+  }
+  if (!settingsDirty.value) return
+  const summary = changeSummary.value
+  const ticketText = changeTicket.value.trim()
+  const confirmation = window.confirm(
+    `Apply ${summary.length} settings change(s)` +
+      (ticketText ? ` under ticket ${ticketText}` : '') +
+      '?\n\n' +
+      summary
+        .map((row) => `${row.key}: ${row.before} → ${row.after}`)
+        .join('\n') +
+      (isProduction.value
+        ? '\n\nThis is production. The change set is tracked and may be reverted.'
+        : '')
+  )
+  if (!confirmation) return
+
   savingSettings.value = true
   try {
     const payload = {}
     for (const [key, val] of Object.entries(settingsEdits)) {
       if (val !== '••••••••') payload[key] = val
     }
-    await axios.put('/settings/', { settings: payload })
+    await axios.put('/settings/', {
+      settings: payload,
+      ticket_number: ticketText || null,
+      reason: changeReason.value.trim() || null,
+    })
     for (const [key, val] of Object.entries(payload)) {
       if (allSettings.value[key]) allSettings.value[key].value = val
     }
-    showAlert('Settings saved')
+    changeTicket.value = ''
+    changeReason.value = ''
+    await fetchChangeControl()
+    showAlert('Settings saved as a tracked change set.')
     if (activeSettingsCategory.value === 'labs') fetchRangeboxCapacity()
   } catch (e) {
-    showAlert(e.response?.data?.detail || 'Failed to save settings', 'error')
+    const detail = e.response?.data?.detail
+    showAlert(
+      detail?.message || detail || 'Failed to save settings',
+      'error'
+    )
   } finally {
     savingSettings.value = false
   }
@@ -5680,6 +6082,11 @@ const fetchRangeboxCapacity = async () => {
 }
 
 const saveCapacityPercent = async () => {
+  const ticketError = changeTicketError()
+  if (ticketError) {
+    showAlert(ticketError, 'error')
+    return false
+  }
   const value = Number(settingsEdits.rangebox_capacity_percent)
   if (!Number.isFinite(value) || value < 10 || value > 100) {
     showAlert('RangeBox capacity percentage must be between 10 and 100.', 'error')
@@ -5688,6 +6095,8 @@ const saveCapacityPercent = async () => {
   try {
     await axios.put('/settings/', {
       settings: { rangebox_capacity_percent: String(Math.round(value)) },
+      ticket_number: changeTicket.value.trim() || null,
+      reason: changeReason.value.trim() || null,
     })
     if (allSettings.value.rangebox_capacity_percent) {
       allSettings.value.rangebox_capacity_percent.value = String(Math.round(value))
@@ -12287,6 +12696,88 @@ watch(activeTab, (tab) => {
 .settings-panel {
   display: grid;
   gap: 1rem;
+}
+
+.change-control {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-secondary);
+}
+.change-control__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.change-control__header h3 { margin: 0; }
+.change-control__sub { margin: 0.25rem 0 0; color: var(--text-secondary); font-size: 0.85rem; }
+.change-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.change-mode--prod { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+.change-mode--dev { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning); }
+.change-control__error { margin: 0; color: var(--danger); }
+.change-warning {
+  border: 1px solid var(--warning);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--warning-bg);
+  padding: 0.75rem 0.9rem;
+  color: var(--text-primary);
+}
+.change-warning strong { display: block; margin-bottom: 0.35rem; color: var(--warning); }
+.change-warning p { margin: 0 0 0.45rem; color: var(--text-secondary); font-size: 0.85rem; }
+.change-warning ul { margin: 0.25rem 0 0; padding-left: 1.25rem; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.5; }
+.change-fields { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); gap: 0.75rem; }
+.change-fields label { display: grid; gap: 0.3rem; color: var(--text-secondary); font-size: 0.82rem; }
+.change-fields small { color: var(--text-muted); }
+.change-fields input, .change-fields textarea, .cutover__fields input, .cutover__fields textarea {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+.change-summary { border: 1px solid var(--border-color); border-radius: 8px; padding: 0.65rem 0.8rem; background: var(--bg-primary); }
+.change-summary h4 { margin: 0 0 0.4rem; font-size: 0.85rem; }
+.change-summary ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.35rem; }
+.change-summary li { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: baseline; font-size: 0.8rem; }
+.change-summary code { font-family: "JetBrains Mono", ui-monospace, monospace; color: var(--text-secondary); }
+.change-summary__arrow { color: var(--text-muted); }
+.change-summary__before { color: var(--text-muted); font-size: 0.75rem; }
+.change-history summary { cursor: pointer; color: var(--accent-text); font-weight: 600; }
+.change-history__note { color: var(--text-muted); font-size: 0.78rem; }
+.change-status { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 999px; font-size: 0.72rem; background: var(--bg-tertiary); color: var(--text-secondary); }
+.change-status--applied { background: var(--success-bg); color: var(--success); }
+.change-status--reverted { background: var(--warning-bg); color: var(--warning); }
+.cutover { display: grid; gap: 0.75rem; border: 1px solid var(--danger); border-radius: 10px; padding: 0.9rem; background: var(--danger-bg); }
+.cutover h3 { margin: 0; color: var(--danger); }
+.cutover__warning strong { display: block; margin-bottom: 0.35rem; color: var(--danger); }
+.cutover__warning ul { margin: 0; padding-left: 1.25rem; color: var(--text-secondary); font-size: 0.82rem; line-height: 1.55; }
+.cutover__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.cutover__fields label { display: grid; gap: 0.3rem; color: var(--text-secondary); font-size: 0.82rem; }
+.cutover__check { display: flex; align-items: flex-start; gap: 0.5rem; color: var(--text-secondary); font-size: 0.82rem; }
+.cutover__check input { margin-top: 0.2rem; }
+.cutover__hint { margin: 0; color: var(--text-muted); font-size: 0.78rem; }
+.cutover--locked { background: var(--bg-primary); border-color: var(--border-color); }
+.cutover--locked strong { color: var(--success); }
+.cutover--locked p { margin: 0; color: var(--text-secondary); font-size: 0.85rem; }
+
+@media (max-width: 768px) {
+  .change-control__header { flex-direction: column; }
+  .change-fields, .cutover__fields { grid-template-columns: 1fr; }
 }
 
 .settings-form {

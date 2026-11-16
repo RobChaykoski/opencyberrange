@@ -143,3 +143,54 @@ class ReportExport(Base):
 
     course = relationship("Course")
     generator = relationship("User")
+
+
+class SettingsChangeRequest(Base):
+    """A reviewed settings change set.
+
+    ``ticket_number``, ``reason``, and the before/after snapshots are stored
+    encrypted or redacted. Secret setting values never enter this table in
+    clear text. The row is the audit record for an apply/revert pair.
+    """
+
+    __tablename__ = "settings_change_requests"
+
+    id = Column(Integer, primary_key=True)
+    ticket_number = Column(Text, nullable=True)  # Fernet-encrypted
+    reason = Column(Text, nullable=True)  # Fernet-encrypted
+    environment = Column(String(20), nullable=False, default="development")
+    status = Column(String(16), nullable=False, default="applied", index=True)
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    actor_username = Column(String(64), nullable=False)
+    before_values = Column(Text, nullable=False)  # JSON; secrets replaced
+    after_values = Column(Text, nullable=False)
+    secret_keys = Column(Text, nullable=False, default="[]")
+    change_hash = Column(String(64), nullable=False)
+    applied_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    reverted_at = Column(DateTime(timezone=True), nullable=True)
+    reverted_by_username = Column(String(64), nullable=True)
+    revert_reason = Column(Text, nullable=True)  # Fernet-encrypted
+
+
+class ProductionCutover(Base):
+    """One-way production transition evidence.
+
+    Stores counts and hashes, not learner identifiers or passwords. The ticket
+    and notes are encrypted at rest; the password is never stored.
+    """
+
+    __tablename__ = "production_cutovers"
+
+    id = Column(Integer, primary_key=True)
+    actor_id = Column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    actor_username = Column(String(64), nullable=False)
+    ticket_number = Column(Text, nullable=False)  # Fernet-encrypted
+    notes = Column(Text, nullable=True)  # Fernet-encrypted
+    cutover_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    sample_data_summary = Column(Text, nullable=False)  # JSON counts only
+    password_confirmed = Column(Boolean, nullable=False, default=False)
+    evidence_hash = Column(String(64), nullable=False, index=True)

@@ -119,6 +119,28 @@ Deleting a course is a separate action and is never part of account erasure.
 That distinction protects other students' enrolments, assignments, and
 achievements.
 
+## Production cutover and sample data
+
+A development deployment contains sample/test accounts and sample learner
+records. They are not production assessment evidence. The production cutover
+is a one-way action that:
+
+- requires a ticket, the current administrator password, the exact
+  `GO PRODUCTION` phrase, and explicit data-loss and one-way acknowledgements;
+- erases sample/test accounts through the normal privacy erasure path, which
+  retains or anonymises security/audit evidence rather than silently deleting
+  it;
+- sets `deployment_mode=production` and `data_collection_mode=production`;
+- sets settings change control to require tickets;
+- records the actor, encrypted ticket and notes, deletion counts, and an
+  evidence hash in `production_cutovers` and the security event store.
+
+The transition cannot be reversed from the application. Returning to
+development requires a database restore and operator approval, and the restore
+must re-apply the live suppression/erasure evidence. Settings changes before
+and after cutover are stored as revertible change sets with encrypted tickets
+and reasons; secret setting values are never stored in a change set.
+
 ## What is retained, and why
 
 - **Anonymised activity events.** The event type and timestamp remain for

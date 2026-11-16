@@ -1,15 +1,16 @@
 # Database schema and Alembic migrations
 
 Audience: operators upgrading a deployment, and reviewers answering change-
-management or disaster-recovery questions. Current schema head: **0039**
-(`0039_db_invariants`). Revisions 0034-0039 add the security event store,
+management or disaster-recovery questions. Current schema head: **0040**
+(`0040_settings_change_control`). Revisions 0034-0040 add the security event store,
 RBAC tables, break-glass grants, portfolio share tokens,
 `users.institution_id`, tenant columns/triggers/RLS on learner-data tables,
 scoped service credentials, server-side sessions, rotating refresh tokens, MFA
 lifecycle fields, password rehash stamps, the per-user security version that
 invalidates stale tokens on authority changes, enrollment uniqueness, and
-append-only consent evidence. The runtime role must not be a superuser, or
-PostgreSQL RLS is bypassed.
+append-only consent evidence, and ticket-gated settings change control with
+encrypted change evidence and a one-way production cutover record. The runtime
+role must not be a superuser, or PostgreSQL RLS is bypassed.
 
 ## Short version for operators
 

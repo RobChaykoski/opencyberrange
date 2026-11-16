@@ -16,8 +16,11 @@ from app.auth import get_current_admin_user
 from app.models import User, CustomAchievement
 from app.schemas import (
     SettingsBulkUpdate, MailTestRequest, CustomAchievementCreate, CustomAchievementUpdate,
+    SettingsChangeRevert, ProductionCutoverRequest,
 )
 from app.services import mail, settings_service
+from app.services import production_control
+from app.services import reauth as reauth_service
 from app.services import rangebox_capacity
 from app.services.achievements import CUSTOM_ACHIEVEMENT_TRIGGERS
 from app.services.achievement_catalogue import (
@@ -35,6 +38,19 @@ from app.services.audit import log_admin_action, AuditActions
 
 router = APIRouter()
 limiter = create_limiter()
+
+
+def _control_http(exc: production_control.ProductionControlError, *, structured: bool = False):
+    detail = (
+        {
+            "code": exc.code,
+            "message": exc.message,
+            "details": exc.details,
+        }
+        if structured
+        else exc.message
+    )
+    return HTTPException(status_code=exc.status_code, detail=detail)
 
 
 def _validate_public_origin(value: str, key: str) -> None:
@@ -324,6 +340,83 @@ async def get_all_settings(
     return settings_service.get_all_settings(db)
 
 
+@router.get("/change-requests")
+async def list_change_requests(
+    limit: int = 50,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Recent settings change sets with encrypted ticket/reason fields."""
+    return {"changes": production_control.list_changes(db, limit=limit)}
+
+
+@router.post("/change-requests/{change_id}/revert")
+async def revert_change_request(
+    change_id: int,
+    payload: SettingsChangeRevert,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("settings revert")
+    ),
+):
+    """Apply the inverse of an applied change set after checking for drift."""
+    try:
+        result = production_control.revert_change_set(
+            db,
+            admin,
+            change_id,
+            reason=payload.reason,
+            request_ip=request.client.host if request.client else None,
+        )
+    except production_control.ProductionControlError as exc:
+        raise _control_http(exc, structured=True) from exc
+    return {"change": result, "message": "Change set reverted"}
+
+
+@router.get("/production/preview")
+async def production_preview(
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+):
+    """Preview the one-way cutover and the sample data that would be removed."""
+    return production_control.sample_data_preview(db)
+
+
+@router.post("/production/cutover")
+async def production_cutover(
+    payload: ProductionCutoverRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_current_admin_user),
+    _reauth: object = Depends(
+        reauth_service.require_recent_reauth("production cutover")
+    ),
+):
+    """Complete the one-way production transition.
+
+    Requires a ticket, the current password, the exact confirmation phrase,
+    and both acknowledgements. The action is irreversible from the application
+    and is recorded with an evidence hash.
+    """
+    try:
+        result = production_control.cutover_to_production(
+            db,
+            admin,
+            ticket_number=payload.ticket_number,
+            password=payload.password,
+            confirmation=payload.confirmation,
+            acknowledge_data_loss=payload.acknowledge_data_loss,
+            acknowledge_one_way=payload.acknowledge_one_way,
+            reason=payload.reason,
+            request_ip=request.client.host if request.client else None,
+        )
+    except production_control.ProductionControlError as exc:
+        raise _control_http(exc, structured=True) from exc
+    return result
+
+
 @router.get("/{category}")
 async def get_settings_by_category(
     category: str,
@@ -420,17 +513,31 @@ async def update_settings(
             )
         clean["rangebox_capacity_percent"] = str(percent)
 
-    count = settings_service.bulk_update_settings(db, clean)
-    if "rangebox_capacity_percent" in clean:
-        rangebox_capacity.invalidate_cache()
+    if "settings_change_ticket_mode" in clean:
+        if str(clean["settings_change_ticket_mode"]) not in {
+            "off",
+            "optional",
+            "required",
+        }:
+            raise HTTPException(
+                status_code=422,
+                detail="Ticket mode must be off, optional, or required.",
+            )
 
-    log_admin_action(
-        action=AuditActions.SETTINGS_UPDATED,
-        admin_user_id=admin.id,
-        admin_username=admin.username,
-        target_type="settings",
-        details={"keys_updated": list(clean.keys()), "count": count},
-        ip_address=request.client.host if request.client else None
-    )
+    try:
+        change = production_control.apply_change_set(
+            db,
+            admin,
+            clean,
+            ticket_number=payload.ticket_number,
+            reason=payload.reason,
+            request_ip=request.client.host if request.client else None,
+        )
+    except production_control.ProductionControlError as exc:
+        raise _control_http(exc) from exc
 
-    return {"message": f"Updated {count} settings", "count": count}
+    return {
+        "message": f"Updated {len(clean)} settings",
+        "count": len(clean),
+        "change": change,
+    }

@@ -91,6 +91,8 @@ from app.models.platform import (
     DataIntegrityLedger,
     DataIntegrityReview,
     ReportExport,
+    SettingsChangeRequest,
+    ProductionCutover,
 )
 from app.models.security import (
     BreakGlassGrant,
@@ -182,6 +184,8 @@ __all__ = [
     "RefreshToken",
     "ReportExport",
     "RetentionRun",
+    "SettingsChangeRequest",
+    "ProductionCutover",
     "ReviewRequest",
     "RevokedToken",
     "SecurityEvent",

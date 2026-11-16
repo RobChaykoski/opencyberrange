@@ -9,8 +9,9 @@ not only by application convention.
 | Category | What it answers | Examples |
 |---|---|---|
 | `security` | Who tried to authenticate, escalate, or reach a denied action? | `auth.login_failed`, `auth.mfa_failed`, `authz.denied`, `http.denied`, `break_glass.used` |
-| `audit` | Who changed a role, setting, record, or configuration? | `admin.action`, `rbac.permissions_changed`, `export.allowed`, `security.events_read` |
+| `audit` | Who changed a role, setting, record, or configuration? | `admin.action`, `rbac.permissions_changed`, `settings.change_applied`, `settings.change_reverted`, `export.allowed`, `security.events_read` |
 | `privacy` | Who accessed, exported, revoked, or erased personal data? | `consent.revoked`, `consent.granted`, `portfolio.share_used`, `privacy.exported` |
+| `security` (cutover) | Who made a one-way production transition or attempted a denied action? | `production.cutover`, `production.cutover_denied` |
 
 Severity is `info`, `notice`, `warning`, or `critical`. Outcome is `success`,
 `failure`, `denied`, or `error`.

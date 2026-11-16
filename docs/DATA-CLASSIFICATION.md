@@ -28,6 +28,10 @@ checks still apply first. See [Export data labels](DATA-LABELS.md).
 | Consent state/history, revocation proof, suppression ledger | Restricted | Account lifetime; proof audit survives under a keyed subject hash | Consent section in the account export; no deleted payload |
 | Activity/audit events | Internal | Short documented window (up to 90 days default) | Admin export with recorded reason |
 | Security/audit/privacy event store | Restricted | 365 days recommended; append-only, operator archive/prune | Admin query API; never a learner export |
+| Authentication sessions and refresh-token hashes | Restricted | Session/token lifetime plus audit window | Auth service; admin metadata only; never a learner export |
+| RBAC role catalog and permission grants | Internal | Release lifetime | Admin and authorization service; never a learner export |
+| Settings change sets (ticket/reason encrypted; secret values redacted) | Internal | Audit retention; at least one year, institution schedule | Admin/auditor; never a learner export |
+| Production cutover evidence (ticket/notes encrypted; counts and hash only) | Restricted | Permanent audit evidence | Admin/auditor; never a learner export |
 | Database integrity ledger | Restricted | Release/audit schedule | Not a learner export |
 | Reports and report manifests | Confidential | Course/institution schedule | PDF/CSV label + manifest |
 | Backups | Restricted | 30 days by default | Operator-only, access-controlled |
@@ -52,6 +56,11 @@ checks still apply first. See [Export data labels](DATA-LABELS.md).
   append-only store described in [Security event store](SECURITY-EVENTS.md).
 - **Data dictionary:** table-by-table definitions live in
   [Data dictionary](DATA-DICTIONARY.md).
+- **Change control:** production settings changes are ticket-gated change sets.
+  Ticket numbers and reasons are Fernet-encrypted, secret values are redacted,
+  and every apply/revert is a security event. The one-way production cutover
+  removes sample/test accounts, records an evidence hash, and cannot be
+  reversed from the application. See [Data dictionary](DATA-DICTIONARY.md).
 
 ## Limits
 
