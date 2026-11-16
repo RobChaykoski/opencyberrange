@@ -40,6 +40,7 @@ ATTACK_RE = re.compile(r"^(T\d{4}(?:\.\d{3})?|G\d{4})$")
 REFERENCE_ONLY_SOURCES = {"thezoo", "vx-underground", "pcap-attack"}
 FETCHABLE_SOURCES = {"security-datasets", "splunk-attack-data"}
 CITATION_SOURCES = {"unb-cic"}
+CONTAINER_SOURCES = {"juice-shop"}
 
 
 def _read_yaml(path: Path) -> dict:
@@ -98,6 +99,11 @@ def _check_source(source: dict, errors: list[str]) -> None:
             errors.append(f"{label}: a fetchable source needs a commit pin")
         if not str(source.get("fetch_base") or "").startswith("https://"):
             errors.append(f"{label}: a fetchable source needs an https fetch_base")
+    if source.get("fetch") == "container":
+        if not source.get("pin"):
+            errors.append(f"{label}: a container source needs a pinned tag and digest")
+        if not str(source.get("fetch_base") or "").strip():
+            errors.append(f"{label}: a container source needs an image reference")
     if source.get("redistribution") == "forbidden" and source.get("access") != "reference_only":
         errors.append(f"{label}: forbidden redistribution must be reference_only")
 
@@ -174,6 +180,15 @@ def _check_dataset(
                 errors.append(f"{label}: CIC entry needs {field}")
         if not str(dataset.get("page") or "").startswith("https://"):
             errors.append(f"{label}: CIC page must be https")
+    elif source_id in CONTAINER_SOURCES:
+        if dataset.get("files"):
+            errors.append(f"{label}: a container lab application is not a fetched data file")
+        if not str(dataset.get("image") or "").strip():
+            errors.append(f"{label}: a container lab needs an image reference")
+        if not re.match(r"^sha256:[0-9a-f]{64}$", str(dataset.get("image_digest") or "")):
+            errors.append(f"{label}: image_digest must be a sha256 digest")
+        if dataset.get("access") != "container_image":
+            errors.append(f"{label}: container lab access must be container_image")
     elif source_id == "aman-hardikar-forensics":
         if dataset.get("files"):
             errors.append(f"{label}: the mind map is an index, not a data file")
@@ -266,6 +281,7 @@ def main() -> int:
         "fetchable": sum(1 for item in datasets if item.get("source") in FETCHABLE_SOURCES),
         "citation_required": sum(1 for item in datasets if item.get("source") in CITATION_SOURCES),
         "reference_only": sum(1 for item in datasets if item.get("source") in REFERENCE_ONLY_SOURCES),
+        "container_images": sum(1 for item in datasets if item.get("source") in CONTAINER_SOURCES),
         "modules_with_external_data": sum(1 for items in module_external.values() if items),
         "errors": errors,
     }
@@ -279,6 +295,7 @@ def main() -> int:
         print(f"fetchable: {report['fetchable']}")
         print(f"citation required: {report['citation_required']}")
         print(f"reference only: {report['reference_only']}")
+        print(f"container lab images: {report['container_images']}")
         print(f"pathway modules with external data: {report['modules_with_external_data']}")
         if errors:
             for error in errors:

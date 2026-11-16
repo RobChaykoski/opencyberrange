@@ -151,7 +151,7 @@
       "sha256": "1f11ed5463247c2e30535a95b1dcda4c3937b6904fd27732dbe7af953d8b4922"
     },
     "platform/backend/app/data/external-datasets.yaml": {
-      "sha256": "41f7883b0fad1a14fea30ec3183f612551487605ab0c97584e7ef4241e9f52c0"
+      "sha256": "539699a78006cafbe7f0e40a2491d3b81b487a547aad115dd1810c2bd2195fbd"
     },
     "platform/backend/app/data/external-targets.yaml": {
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
@@ -265,7 +265,7 @@
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
     "scripts/check-external-datasets.py": {
-      "sha256": "f07972f8d87b33afbc9263153ff6774461591f10945c4480535ebb83ebb86b47"
+      "sha256": "772e9c2f4e3ffdfdd93f94df0eb4ac0b829db2e70b72bbc5b162847518e4451f"
     },
     "scripts/check-external-targets.py": {
       "sha256": "6836a51290b66c4888e35d7b4e4dbf6ce7e46180ce5bd6914f6bfaa349a408e0"
@@ -295,7 +295,7 @@
       "sha256": "bd853cb729193ae9b6c59708fc8eb7a20e0f9ca5d87300a1fb55952496180954"
     },
     "scripts/fetch-external-datasets.py": {
-      "sha256": "aee7a803d482e024f1aeae22e597c52b6c6fdc370b126deed071f69670406cd3"
+      "sha256": "8860a9a4742af0c4d0962b36c5b46ebfadc856a22ee1bc7a02c473005ce2f386"
     },
     "scripts/generate-about.py": {
       "sha256": "c6d9a3bf22371e6cf824a7fb2115d7a8b1aca617182760dddbee88439fbbd0b1"

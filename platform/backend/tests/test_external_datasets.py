@@ -14,6 +14,7 @@ REGISTRY = DATA / "external-datasets.yaml"
 DETECTION = DATA / "detection-pathway.yaml"
 DFIR = DATA / "dfir-pathway.yaml"
 REFERENCE_ONLY = {"thezoo", "vx-underground", "pcap-attack"}
+CONTAINER = {"juice-shop"}
 
 
 def _load(path: Path) -> dict:
@@ -56,6 +57,11 @@ def test_every_external_reference_is_reciprocal():
             assert dataset.get("access") == "reference_only", dataset["id"]
             assert dataset.get("redistribution") == "forbidden", dataset["id"]
             assert not dataset.get("files"), dataset["id"]
+        if source["id"] in CONTAINER:
+            assert dataset.get("access") == "container_image", dataset["id"]
+            assert dataset.get("image"), dataset["id"]
+            assert str(dataset.get("image_digest", "")).startswith("sha256:"), dataset["id"]
+            assert not dataset.get("files"), dataset["id"]
 
     for module_id, module in modules.items():
         for dataset_id in module.get("external_datasets") or []:
@@ -77,5 +83,8 @@ def test_fetchable_entries_are_hashed_and_pinned():
             for item in dataset["files"]:
                 assert len(item["sha256"]) == 64, (dataset["id"], item["path"])
                 assert item["bytes"] > 0, (dataset["id"], item["path"])
-        if source["id"] in {"thezoo", "vx-underground", "pcap-attack"}:
+        if source["id"] in {"thezoo", "vx-underground", "pcap-attack", "juice-shop"}:
             assert not dataset.get("files"), dataset["id"]
+        if source["id"] == "juice-shop":
+            assert source.get("pin"), source["id"]
+            assert dataset.get("image", "").startswith("bkimminich/juice-shop:"), dataset["id"]

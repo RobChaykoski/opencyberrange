@@ -97,6 +97,12 @@ to this repository.
   from Splunk and contributors. It uses Git LFS; fetch the media object, verify
   the registry SHA-256, and keep the Apache-2.0 licence and any NOTICE
   requirements.
+- **OWASP Juice Shop** (MIT, <https://juice-shop.github.io/>). An
+  intentionally insecure web application by Bjoern Kimminich and the OWASP
+  Juice Shop contributors. It is used as a pinned lab application
+  (`bkimminich/juice-shop:v20.4.0@sha256:9bba…`) on an isolated network with
+  no egress. The notice is `THIRD_PARTY_LICENSES/Juice-Shop-MIT.txt`. Juice
+  Shop is not affiliated with or endorsed by OpenCyberRange.
 - **theZoo** (GPL-3.0-or-later for tooling; malware samples expressly
   excluded, <https://github.com/ytisf/theZoo>). A live-malware reference
   collection by Yuval Nativ, Lahad Ludar,

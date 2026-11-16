@@ -123,6 +123,7 @@ publicly or make high-stakes decisions.
 - [Malware lab governance](MALWARE-LAB-GOVERNANCE.md)
 - [Malware sample sources and reference handling](MALWARE-SAMPLE-SOURCES.md)
 - [External open datasets for lab building](SECURITY-DATASETS.md)
+- [OWASP Juice Shop software-security labs](JUICE-SHOP-LABS.md)
 - [MITRE ATT&CK Navigator tool](ATTACK-NAVIGATOR.md)
 - [Minor-safe defaults](MINOR-SAFE-DEFAULTS.md)
 - [System architecture](ARCHITECTURE.md)

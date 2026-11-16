@@ -156,6 +156,32 @@ sources:
       instructor reading reference or as a pointer for a separately approved,
       isolated analysis environment with custody and containment controls.
 
+  - id: juice-shop
+    name: OWASP Juice Shop
+    homepage: https://juice-shop.github.io/
+    repository: https://github.com/juice-shop/juice-shop
+    licence: MIT
+    licence_url: https://github.com/juice-shop/juice-shop/blob/master/LICENSE
+    copyright: >-
+      Copyright (c) 2014-2026 Bjoern Kimminich and the OWASP Juice Shop
+      contributors.
+    attribution: >-
+      OWASP Juice Shop is an intentionally insecure web application by Bjoern
+      Kimminich and the OWASP Juice Shop contributors. It is MIT-licensed and is
+      not affiliated with or endorsed by OpenCyberRange.
+    redistribution: allowed_with_notice
+    access: container_image
+    pin: v20.4.0@sha256:9bbaecc41791f00b002bc65931cc5ff355fbdb941fa72b06558c18dace43197b
+    pin_kind: image_digest
+    fetch: container
+    fetch_base: docker.io/bkimminich/juice-shop
+    notes: >-
+      Run the official image on an isolated lab network with no internet
+      egress. Pin the tag and digest, use disposable storage, reset the
+      database between learners, and never expose the service outside the lab
+      range. The application contains deliberate vulnerabilities; that is the
+      teaching point, not a production deployment.
+
   - id: aman-hardikar-forensics
     name: Aman Hardikar Forensics Practice Lab mind map
     homepage: https://www.amanhardikar.com/mindmaps/ForensicChallenges.html
@@ -783,6 +809,27 @@ datasets:
         sha256: 1f65d7160245d317f1a9531f26390d483320c0f4fbefe875bfe0ac4ffd287c15
         media_type: application/json
         lfs: true
+
+  # OWASP Juice Shop (MIT, pinned lab application)
+  - source: juice-shop
+    id: juice-shop-web-lab
+    title: OWASP Juice Shop web application lab target
+    kind: lab_application
+    platform: [Web]
+    attack: [T1190]
+    tags: [owasp-top-10, web-application, javascript, api]
+    lab_modules: []
+    use: >-
+      A pinned target for software-security labs: reconnaissance, broken
+      access control, injection, XSS, authentication and JWT, and a
+      report-based web capstone. Use only the official image on an isolated
+      lab network and reset it between learners.
+    image: bkimminich/juice-shop:v20.4.0
+    image_digest: sha256:9bbaecc41791f00b002bc65931cc5ff355fbdb941fa72b06558c18dace43197b
+    licence: MIT
+    redistribution: allowed_with_notice
+    access: container_image
+    files: []
 
   # theZoo (reference-only; samples excluded from the licence)
   - source: thezoo

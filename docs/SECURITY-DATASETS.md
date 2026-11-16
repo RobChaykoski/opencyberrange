@@ -19,6 +19,7 @@ A link is not a licence. The sources below have different terms:
 | [**vx-underground malware repository**](https://vx-underground.org/) | No licence declared; live malware | Forbidden | Reference only | Repository |
 | [**PCAP-ATTACK**](https://github.com/sbousseaden/PCAP-ATTACK) | No licence declared | Forbidden | Reference only | Commit `9ef5476d` |
 | [**Aman Hardikar Forensics Practice Lab mind map**](https://www.amanhardikar.com/mindmaps/ForensicChallenges.html) | Free to use and share; attribution requested | Allowed with attribution | Reference only | Page |
+| [**OWASP Juice Shop**](https://juice-shop.github.io/) | MIT | Allowed with the MIT notice | Pinned container image | `v20.4.0@sha256:9bba…` |
 
 If a source has no declared licence, the default is **reference only**. Public
 visibility does not grant permission to copy, mirror, or serve the material.
@@ -88,6 +89,22 @@ scheduled tasks, and ProxyShell.
   challenges, CTFs, sample images, and tools. It is free to use and share, and
   we attribute it. Each linked resource keeps its own terms; verify it before
   use.
+
+### Lab applications
+
+**OWASP Juice Shop** is an MIT-licensed intentionally insecure web application
+by Bjoern Kimminich and the OWASP Juice Shop contributors. It is registered as
+a pinned lab application, not a dataset:
+
+- image: `bkimminich/juice-shop:v20.4.0`
+- digest: `sha256:9bbaecc41791f00b002bc65931cc5ff355fbdb941fa72b06558c18dace43197b`
+- access: container image
+- handling: isolated lab network, no egress, disposable storage, reset between
+  learners, no real user data, no public exposure
+
+See [`JUICE-SHOP-LABS.md`](JUICE-SHOP-LABS.md) for the lab blueprint, safety
+rules, and evidence expectations. Juice Shop is not affiliated with or endorsed
+by OpenCyberRange.
 
 ## Fetching a dataset
 

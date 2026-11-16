@@ -214,3 +214,31 @@ Not yet done:
 - Levels 3–5 lab content and the exploit-development workbook.
 - A dedicated `mkdocs` build check (the local MkDocs 2.0 install is incompatible
   with Material; the config uses the same structure as the existing manuals).
+
+## 11. OWASP Juice Shop lab resource
+
+**OWASP Juice Shop** is registered as a pinned lab application in
+`platform/backend/app/data/external-datasets.yaml` and is MIT-licensed. It is a
+target resource, not a replacement for the dependency-free
+`_swsec_shared` starter.
+
+The proposed sequence is in [`JUICE-SHOP-LABS.md`](JUICE-SHOP-LABS.md):
+
+| Lab | Focus | Evidence |
+|---|---|---|
+| JSEC-JS-01 | Reconnaissance and threat model | Route map and trust boundaries |
+| JSEC-JS-02 | Broken access control | Two requests with different object IDs |
+| JSEC-JS-03 | Injection | Payload, response, and parameterized-query fix |
+| JSEC-JS-04 | XSS and browser boundary | Sink, rendered result, and output-encoding fix |
+| JSEC-JS-05 | Authentication and JWT | Redacted claims and server-side validation plan |
+| JSEC-JS-06 | Capstone chain and report | Timeline, impact, fix, and verification |
+
+Each lab uses the official image pinned by tag and digest, runs with no
+internet egress, has no published ports or host mounts, resets between
+learners, and requires a short finding with a defensive fix. The Juice Shop
+scoreboard is a practice aid, not the assessment.
+
+The image is
+`bkimminich/juice-shop:v20.4.0@sha256:9bbaecc41791f00b002bc65931cc5ff355fbdb941fa72b06558c18dace43197b`.
+Attribution and licence terms are in
+`THIRD_PARTY_LICENSES/Juice-Shop-MIT.txt`.

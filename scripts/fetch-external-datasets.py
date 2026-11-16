@@ -32,6 +32,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "platform/backend/app/data/external-datasets.yaml"
 FETCHABLE = {"security-datasets", "splunk-attack-data"}
+CONTAINER = {"juice-shop"}
 USER_AGENT = "OpenCyberRange-dataset-fetch/1.0"
 
 
@@ -164,6 +165,15 @@ def main() -> int:
                     "dataset": dataset_id,
                     "status": "MANUAL",
                     "file": dataset.get("page"),
+                }
+            )
+            continue
+        if source_id in CONTAINER:
+            rows.append(
+                {
+                    "dataset": dataset_id,
+                    "status": "CONTAINER",
+                    "file": f"{dataset.get('image')}@{dataset.get('image_digest')}",
                 }
             )
             continue
