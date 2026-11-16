@@ -6834,40 +6834,36 @@ labs:
     expected_duration_minutes: 60
     workbook: ''
     skills_earned:
-    - id: APP-001
-      name: API Inventory and Documentation
+    - id: WEB-001
+      name: HTML Fundamentals
       weight: 0.4
-    - id: APP-002
-      name: Object-Level Authorization
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
       weight: 0.2
-    - id: WEB-012
-      name: API Security Fundamentals
-      weight: 0.2
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
     competencies_proven:
-    - id: APP-001
-      name: API Inventory and Documentation
+    - id: WEB-001
+      name: HTML Fundamentals
       weight: 0.4
-      category: API Security
-    - id: APP-002
-      name: Object-Level Authorization
-      weight: 0.2
-      category: API Security
-    - id: WEB-012
-      name: API Security Fundamentals
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
       weight: 0.2
       category: Web Security
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.2
-      category: Hunting
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
     knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: TH
-      label: Threat Hunting
     - id: WEB
       label: Web Technologies
     practice_axes:
@@ -6880,8 +6876,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   web-11-10-modern-appsec-capstone:
@@ -6890,308 +6887,38 @@ labs:
     expected_duration_minutes: 160
     workbook: ''
     skills_earned:
-    - id: APP-002
-      name: Object-Level Authorization
-      weight: 0.25
-    - id: APP-008
-      name: JWT Validation
-      weight: 0.25
-    - id: APP-018
-      name: Kubernetes RBAC
-      weight: 0.25
-    - id: APP-022
-      name: Supply Chain Risk Assessment
-      weight: 0.25
-    competencies_proven:
-    - id: APP-002
-      name: Object-Level Authorization
-      weight: 0.25
-      category: API Security
-    - id: APP-008
-      name: JWT Validation
-      weight: 0.25
-      category: Token and Identity Security
-    - id: APP-018
-      name: Kubernetes RBAC
-      weight: 0.25
-      category: Kubernetes Security
-    - id: APP-022
-      name: Supply Chain Risk Assessment
-      weight: 0.25
-      category: Software Supply Chain
-    knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    practice_axes:
-    - Web and API
-    evidence_artifacts:
-    - flag
-    - automated validation
-    - analyst finding
-    - submitted artifact
-    confidence:
-      score: 0.65
-      level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
-    review_status: baseline_derived
-    reviewed_at: null
-  web-11-2-api-bola-bfla:
-    track: Web
-    difficulty: intermediate
-    expected_duration_minutes: 80
-    workbook: ''
-    skills_earned:
-    - id: APP-002
-      name: Object-Level Authorization
+    - id: IR-008
+      name: Executive Reporting
       weight: 0.4
-    - id: APP-003
-      name: Function-Level Authorization
+    - id: IR-009
+      name: Incident Documentation
       weight: 0.3
-    - id: WEB-008
-      name: Authorization Concepts
-      weight: 0.15
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.15
+    - id: PROF-003
+      name: Risk Assessment
+      weight: 0.2
+    - id: PROF-010
+      name: Report Writing
+      weight: 0.1
     competencies_proven:
-    - id: APP-002
-      name: Object-Level Authorization
+    - id: IR-008
+      name: Executive Reporting
       weight: 0.4
-      category: API Security
-    - id: APP-003
-      name: Function-Level Authorization
+      category: Communication
+    - id: IR-009
+      name: Incident Documentation
       weight: 0.3
-      category: API Security
-    - id: WEB-008
-      name: Authorization Concepts
-      weight: 0.15
-      category: Web Security
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.15
-      category: Response Process
-    knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: IR
-      label: Incident Response
-    - id: WEB
-      label: Web Technologies
-    practice_axes:
-    - Web and API
-    evidence_artifacts:
-    - flag
-    - automated validation
-    - analyst finding
-    - submitted artifact
-    confidence:
-      score: 0.65
-      level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
-    review_status: baseline_derived
-    reviewed_at: null
-  web-11-3-graphql-security:
-    track: Web
-    difficulty: intermediate
-    expected_duration_minutes: 90
-    workbook: ''
-    skills_earned:
-    - id: APP-005
-      name: GraphQL Schema and Introspection
-      weight: 0.3
-    - id: APP-006
-      name: Query Depth and Batching Abuse
-      weight: 0.35
-    - id: APP-007
-      name: GraphQL Field-Level Authorization
+      category: Communication
+    - id: PROF-003
+      name: Risk Assessment
       weight: 0.2
-    - id: WEB-009
-      name: Input Validation
-      weight: 0.15
-    competencies_proven:
-    - id: APP-005
-      name: GraphQL Schema and Introspection
-      weight: 0.3
-      category: GraphQL Security
-    - id: APP-006
-      name: Query Depth and Batching Abuse
-      weight: 0.35
-      category: GraphQL Security
-    - id: APP-007
-      name: GraphQL Field-Level Authorization
-      weight: 0.2
-      category: GraphQL Security
-    - id: WEB-009
-      name: Input Validation
-      weight: 0.15
-      category: Web Security
-    knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: WEB
-      label: Web Technologies
-    practice_axes:
-    - Web and API
-    evidence_artifacts:
-    - flag
-    - automated validation
-    - analyst finding
-    - submitted artifact
-    confidence:
-      score: 0.65
-      level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
-    review_status: baseline_derived
-    reviewed_at: null
-  web-11-4-jwt-security:
-    track: Web
-    difficulty: intermediate
-    expected_duration_minutes: 90
-    workbook: ''
-    skills_earned:
-    - id: APP-008
-      name: JWT Validation
-      weight: 0.45
-    - id: APP-011
-      name: Token Revocation and Session Binding
-      weight: 0.25
-    - id: WEB-007
-      name: Authentication Security
-      weight: 0.15
-    - id: WEB-010
-      name: Session Security
-      weight: 0.15
-    competencies_proven:
-    - id: APP-008
-      name: JWT Validation
-      weight: 0.45
-      category: Token and Identity Security
-    - id: APP-011
-      name: Token Revocation and Session Binding
-      weight: 0.25
-      category: Token and Identity Security
-    - id: WEB-007
-      name: Authentication Security
-      weight: 0.15
-      category: Web Security
-    - id: WEB-010
-      name: Session Security
-      weight: 0.15
-      category: Web Security
-    knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: WEB
-      label: Web Technologies
-    practice_axes:
-    - Web and API
-    evidence_artifacts:
-    - flag
-    - automated validation
-    - analyst finding
-    - submitted artifact
-    confidence:
-      score: 0.65
-      level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
-    review_status: baseline_derived
-    reviewed_at: null
-  web-11-5-oauth-abuse:
-    track: Web
-    difficulty: advanced
-    expected_duration_minutes: 100
-    workbook: ''
-    skills_earned:
-    - id: APP-009
-      name: OAuth and OIDC Flows
-      weight: 0.35
-    - id: APP-010
-      name: Redirect URI and Consent Abuse
-      weight: 0.35
-    - id: APP-011
-      name: Token Revocation and Session Binding
-      weight: 0.15
-    - id: IR-003
-      name: Evidence Collection
-      weight: 0.15
-    competencies_proven:
-    - id: APP-009
-      name: OAuth and OIDC Flows
-      weight: 0.35
-      category: Token and Identity Security
-    - id: APP-010
-      name: Redirect URI and Consent Abuse
-      weight: 0.35
-      category: Token and Identity Security
-    - id: APP-011
-      name: Token Revocation and Session Binding
-      weight: 0.15
-      category: Token and Identity Security
-    - id: IR-003
-      name: Evidence Collection
-      weight: 0.15
-      category: Response Process
-    knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: IR
-      label: Incident Response
-    practice_axes:
-    - Web and API
-    evidence_artifacts:
-    - flag
-    - automated validation
-    - analyst finding
-    - submitted artifact
-    confidence:
-      score: 0.65
-      level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
-    review_status: baseline_derived
-    reviewed_at: null
-  web-11-6-devsecops-pipeline:
-    track: Web
-    difficulty: intermediate
-    expected_duration_minutes: 90
-    workbook: ''
-    skills_earned:
-    - id: APP-012
-      name: Secure CI/CD Pipelines
-      weight: 0.35
-    - id: APP-013
-      name: Secret and Dependency Scanning
-      weight: 0.3
-    - id: APP-014
-      name: Build Artifact Provenance
-      weight: 0.2
-    - id: PROF-001
-      name: Technical Documentation
-      weight: 0.15
-    competencies_proven:
-    - id: APP-012
-      name: Secure CI/CD Pipelines
-      weight: 0.35
-      category: DevSecOps
-    - id: APP-013
-      name: Secret and Dependency Scanning
-      weight: 0.3
-      category: DevSecOps
-    - id: APP-014
-      name: Build Artifact Provenance
-      weight: 0.2
-      category: DevSecOps
-    - id: PROF-001
-      name: Technical Documentation
-      weight: 0.15
+      category: Professional Practice
+    - id: PROF-010
+      name: Report Writing
+      weight: 0.1
       category: Professional Practice
     knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
+    - id: IR
+      label: Incident Response
     - id: PROF
       label: Professional Skills
     practice_axes:
@@ -7204,8 +6931,274 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-2-api-bola-bfla:
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 80
+    workbook: ''
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-3-graphql-security:
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    workbook: ''
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-4-jwt-security:
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    workbook: ''
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-5-oauth-abuse:
+    track: Web
+    difficulty: advanced
+    expected_duration_minutes: 100
+    workbook: ''
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
+    review_status: baseline_derived
+    reviewed_at: null
+  web-11-6-devsecops-pipeline:
+    track: Web
+    difficulty: intermediate
+    expected_duration_minutes: 90
+    workbook: ''
+    skills_earned:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+    competencies_proven:
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
+    knowledge_domains:
+    - id: WEB
+      label: Web Technologies
+    practice_axes:
+    - Web and API
+    evidence_artifacts:
+    - flag
+    - automated validation
+    - analyst finding
+    - submitted artifact
+    confidence:
+      score: 0.65
+      level: medium
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   web-11-7-container-security:
@@ -7214,40 +7207,38 @@ labs:
     expected_duration_minutes: 90
     workbook: ''
     skills_earned:
-    - id: APP-015
-      name: Container Hardening
-      weight: 0.35
-    - id: APP-016
-      name: Image Provenance and Pinning
-      weight: 0.25
-    - id: APP-017
-      name: Container Runtime Isolation
-      weight: 0.25
-    - id: NET-030
-      name: Packet Capture Analysis
-      weight: 0.15
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
     competencies_proven:
-    - id: APP-015
-      name: Container Hardening
-      weight: 0.35
-      category: Container Security
-    - id: APP-016
-      name: Image Provenance and Pinning
-      weight: 0.25
-      category: Container Security
-    - id: APP-017
-      name: Container Runtime Isolation
-      weight: 0.25
-      category: Container Security
-    - id: NET-030
-      name: Packet Capture Analysis
-      weight: 0.15
-      category: Network Analysis
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
     knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: NET
-      label: Networking
+    - id: WEB
+      label: Web Technologies
     practice_axes:
     - Web and API
     evidence_artifacts:
@@ -7258,8 +7249,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   web-11-8-kubernetes-security:
@@ -7268,40 +7260,38 @@ labs:
     expected_duration_minutes: 120
     workbook: ''
     skills_earned:
-    - id: APP-018
-      name: Kubernetes RBAC
-      weight: 0.35
-    - id: APP-019
-      name: Service Accounts and Secrets
-      weight: 0.25
-    - id: APP-020
-      name: Network Policy and Admission Control
-      weight: 0.25
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.15
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
     competencies_proven:
-    - id: APP-018
-      name: Kubernetes RBAC
-      weight: 0.35
-      category: Kubernetes Security
-    - id: APP-019
-      name: Service Accounts and Secrets
-      weight: 0.25
-      category: Kubernetes Security
-    - id: APP-020
-      name: Network Policy and Admission Control
-      weight: 0.25
-      category: Kubernetes Security
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.15
-      category: Response Process
+    - id: WEB-001
+      name: HTML Fundamentals
+      weight: 0.4
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
+      weight: 0.3
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
     knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: IR
-      label: Incident Response
+    - id: WEB
+      label: Web Technologies
     practice_axes:
     - Web and API
     evidence_artifacts:
@@ -7312,8 +7302,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   web-11-9-supply-chain-integrity:
@@ -7322,40 +7313,38 @@ labs:
     expected_duration_minutes: 80
     workbook: ''
     skills_earned:
-    - id: APP-021
-      name: SBOM and Artifact Signing
+    - id: WEB-001
+      name: HTML Fundamentals
       weight: 0.4
-    - id: APP-022
-      name: Supply Chain Risk Assessment
+    - id: WEB-005
+      name: HTTP Methods
       weight: 0.3
-    - id: APP-014
-      name: Build Artifact Provenance
-      weight: 0.15
-    - id: IR-008
-      name: Executive Reporting
-      weight: 0.15
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
     competencies_proven:
-    - id: APP-021
-      name: SBOM and Artifact Signing
+    - id: WEB-001
+      name: HTML Fundamentals
       weight: 0.4
-      category: Software Supply Chain
-    - id: APP-022
-      name: Supply Chain Risk Assessment
+      category: Web Fundamentals
+    - id: WEB-005
+      name: HTTP Methods
       weight: 0.3
-      category: Software Supply Chain
-    - id: APP-014
-      name: Build Artifact Provenance
-      weight: 0.15
-      category: DevSecOps
-    - id: IR-008
-      name: Executive Reporting
-      weight: 0.15
-      category: Communication
+      category: Web Fundamentals
+    - id: WEB-009
+      name: Input Validation
+      weight: 0.2
+      category: Web Security
+    - id: WEB-019
+      name: OWASP Top 10 Mapping
+      weight: 0.1
+      category: Web Vulnerabilities
     knowledge_domains:
-    - id: APPSEC
-      label: Modern Application Security
-    - id: IR
-      label: Incident Response
+    - id: WEB
+      label: Web Technologies
     practice_axes:
     - Web and API
     evidence_artifacts:
@@ -7366,8 +7355,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   web-2-1-basic-sql-injection-get:
@@ -8149,38 +8139,36 @@ labs:
     expected_duration_minutes: 60
     workbook: ''
     skills_earned:
-    - id: WIN-022
-      name: AD Enumeration and Attack-Path Mapping
+    - id: WIN-001
+      name: Windows Administration
       weight: 0.4
-    - id: WIN-009
-      name: Active Directory Fundamentals
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+    - id: WIN-003
+      name: Services Management
       weight: 0.2
-    - id: WIN-013
-      name: Kerberos Fundamentals
-      weight: 0.2
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.2
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
     competencies_proven:
-    - id: WIN-022
-      name: AD Enumeration and Attack-Path Mapping
+    - id: WIN-001
+      name: Windows Administration
       weight: 0.4
-      category: Active Directory
-    - id: WIN-009
-      name: Active Directory Fundamentals
+      category: Windows Administration
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+      category: Windows Administration
+    - id: WIN-003
+      name: Services Management
       weight: 0.2
-      category: Active Directory
-    - id: WIN-013
-      name: Kerberos Fundamentals
-      weight: 0.2
-      category: Active Directory
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.2
-      category: Hunting
+      category: Windows Administration
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
+      category: Windows Administration
     knowledge_domains:
-    - id: TH
-      label: Threat Hunting
     - id: WIN
       label: Windows
     practice_axes:
@@ -8193,8 +8181,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-2-kerberoasting:
@@ -8203,38 +8192,36 @@ labs:
     expected_duration_minutes: 90
     workbook: ''
     skills_earned:
-    - id: WIN-023
-      name: Kerberoasting and AS-REP Roasting
-      weight: 0.45
-    - id: WIN-013
-      name: Kerberos Fundamentals
-      weight: 0.25
-    - id: WIN-020
-      name: Attack Surface Review
-      weight: 0.15
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.15
+    - id: WIN-001
+      name: Windows Administration
+      weight: 0.4
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+    - id: WIN-003
+      name: Services Management
+      weight: 0.2
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
     competencies_proven:
-    - id: WIN-023
-      name: Kerberoasting and AS-REP Roasting
-      weight: 0.45
-      category: Active Directory
-    - id: WIN-013
-      name: Kerberos Fundamentals
-      weight: 0.25
-      category: Active Directory
-    - id: WIN-020
-      name: Attack Surface Review
-      weight: 0.15
-      category: Windows Security
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.15
-      category: Hunting
+    - id: WIN-001
+      name: Windows Administration
+      weight: 0.4
+      category: Windows Administration
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+      category: Windows Administration
+    - id: WIN-003
+      name: Services Management
+      weight: 0.2
+      category: Windows Administration
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
+      category: Windows Administration
     knowledge_domains:
-    - id: TH
-      label: Threat Hunting
     - id: WIN
       label: Windows
     practice_axes:
@@ -8247,8 +8234,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-3-asrep-spray:
@@ -8257,38 +8245,36 @@ labs:
     expected_duration_minutes: 80
     workbook: ''
     skills_earned:
-    - id: WIN-023
-      name: Kerberoasting and AS-REP Roasting
-      weight: 0.35
-    - id: WIN-012
-      name: Authentication Concepts
-      weight: 0.25
-    - id: WIN-020
-      name: Attack Surface Review
+    - id: WIN-001
+      name: Windows Administration
+      weight: 0.4
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+    - id: WIN-003
+      name: Services Management
       weight: 0.2
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.2
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
     competencies_proven:
-    - id: WIN-023
-      name: Kerberoasting and AS-REP Roasting
-      weight: 0.35
-      category: Active Directory
-    - id: WIN-012
-      name: Authentication Concepts
-      weight: 0.25
-      category: Active Directory
-    - id: WIN-020
-      name: Attack Surface Review
+    - id: WIN-001
+      name: Windows Administration
+      weight: 0.4
+      category: Windows Administration
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+      category: Windows Administration
+    - id: WIN-003
+      name: Services Management
       weight: 0.2
-      category: Windows Security
-    - id: TH-003
-      name: Investigative Queries
-      weight: 0.2
-      category: Hunting
+      category: Windows Administration
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
+      category: Windows Administration
     knowledge_domains:
-    - id: TH
-      label: Threat Hunting
     - id: WIN
       label: Windows
     practice_axes:
@@ -8301,8 +8287,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-4-acl-dacl-abuse:
@@ -8311,38 +8298,31 @@ labs:
     expected_duration_minutes: 110
     workbook: ''
     skills_earned:
-    - id: WIN-024
-      name: ACL and DACL Abuse
-      weight: 0.45
-    - id: WIN-022
-      name: AD Enumeration and Attack-Path Mapping
-      weight: 0.2
-    - id: WIN-014
-      name: Domain Administration
-      weight: 0.15
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.2
+    - id: LIN-020
+      name: Sudo Configuration
+      weight: 0.4
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.35
+    - id: WIN-021
+      name: Persistence Detection
+      weight: 0.25
     competencies_proven:
-    - id: WIN-024
-      name: ACL and DACL Abuse
-      weight: 0.45
+    - id: LIN-020
+      name: Sudo Configuration
+      weight: 0.4
+      category: Linux Security
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.35
       category: Active Directory
-    - id: WIN-022
-      name: AD Enumeration and Attack-Path Mapping
-      weight: 0.2
-      category: Active Directory
-    - id: WIN-014
-      name: Domain Administration
-      weight: 0.15
-      category: Active Directory
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.2
-      category: Response Process
+    - id: WIN-021
+      name: Persistence Detection
+      weight: 0.25
+      category: Windows Security
     knowledge_domains:
-    - id: IR
-      label: Incident Response
+    - id: LIN
+      label: Linux
     - id: WIN
       label: Windows
     practice_axes:
@@ -8355,8 +8335,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-5-delegation-abuse:
@@ -8365,38 +8346,31 @@ labs:
     expected_duration_minutes: 110
     workbook: ''
     skills_earned:
-    - id: WIN-025
-      name: Delegation Abuse
-      weight: 0.45
-    - id: WIN-013
-      name: Kerberos Fundamentals
+    - id: LIN-020
+      name: Sudo Configuration
+      weight: 0.4
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.35
+    - id: WIN-021
+      name: Persistence Detection
       weight: 0.25
-    - id: WIN-020
-      name: Attack Surface Review
-      weight: 0.15
-    - id: IR-003
-      name: Evidence Collection
-      weight: 0.15
     competencies_proven:
-    - id: WIN-025
-      name: Delegation Abuse
-      weight: 0.45
+    - id: LIN-020
+      name: Sudo Configuration
+      weight: 0.4
+      category: Linux Security
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.35
       category: Active Directory
-    - id: WIN-013
-      name: Kerberos Fundamentals
+    - id: WIN-021
+      name: Persistence Detection
       weight: 0.25
-      category: Active Directory
-    - id: WIN-020
-      name: Attack Surface Review
-      weight: 0.15
       category: Windows Security
-    - id: IR-003
-      name: Evidence Collection
-      weight: 0.15
-      category: Response Process
     knowledge_domains:
-    - id: IR
-      label: Incident Response
+    - id: LIN
+      label: Linux
     - id: WIN
       label: Windows
     practice_axes:
@@ -8409,8 +8383,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-6-adcs-abuse:
@@ -8419,38 +8394,31 @@ labs:
     expected_duration_minutes: 110
     workbook: ''
     skills_earned:
-    - id: WIN-026
-      name: AD CS Abuse
-      weight: 0.45
-    - id: WIN-014
-      name: Domain Administration
-      weight: 0.2
-    - id: WIN-020
-      name: Attack Surface Review
-      weight: 0.15
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.2
+    - id: LIN-020
+      name: Sudo Configuration
+      weight: 0.4
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.35
+    - id: WIN-021
+      name: Persistence Detection
+      weight: 0.25
     competencies_proven:
-    - id: WIN-026
-      name: AD CS Abuse
-      weight: 0.45
+    - id: LIN-020
+      name: Sudo Configuration
+      weight: 0.4
+      category: Linux Security
+    - id: WIN-012
+      name: Authentication Concepts
+      weight: 0.35
       category: Active Directory
-    - id: WIN-014
-      name: Domain Administration
-      weight: 0.2
-      category: Active Directory
-    - id: WIN-020
-      name: Attack Surface Review
-      weight: 0.15
+    - id: WIN-021
+      name: Persistence Detection
+      weight: 0.25
       category: Windows Security
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.2
-      category: Response Process
     knowledge_domains:
-    - id: IR
-      label: Incident Response
+    - id: LIN
+      label: Linux
     - id: WIN
       label: Windows
     practice_axes:
@@ -8463,8 +8431,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-7-dcsync-tickets:
@@ -8473,38 +8442,36 @@ labs:
     expected_duration_minutes: 130
     workbook: ''
     skills_earned:
-    - id: WIN-027
-      name: Ticket Forgery and DCSync
-      weight: 0.45
-    - id: WIN-023
-      name: Kerberoasting and AS-REP Roasting
+    - id: WIN-001
+      name: Windows Administration
+      weight: 0.4
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+    - id: WIN-003
+      name: Services Management
       weight: 0.2
-    - id: WIN-021
-      name: Persistence Detection
-      weight: 0.15
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.2
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
     competencies_proven:
-    - id: WIN-027
-      name: Ticket Forgery and DCSync
-      weight: 0.45
-      category: Active Directory
-    - id: WIN-023
-      name: Kerberoasting and AS-REP Roasting
+    - id: WIN-001
+      name: Windows Administration
+      weight: 0.4
+      category: Windows Administration
+    - id: WIN-002
+      name: Local Users and Groups
+      weight: 0.3
+      category: Windows Administration
+    - id: WIN-003
+      name: Services Management
       weight: 0.2
-      category: Active Directory
-    - id: WIN-021
-      name: Persistence Detection
-      weight: 0.15
-      category: Windows Security
-    - id: IR-002
-      name: Triage Techniques
-      weight: 0.2
-      category: Response Process
+      category: Windows Administration
+    - id: WIN-004
+      name: Windows Registry
+      weight: 0.1
+      category: Windows Administration
     knowledge_domains:
-    - id: IR
-      label: Incident Response
     - id: WIN
       label: Windows
     practice_axes:
@@ -8517,8 +8484,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-8-gpo-laps-defence:
@@ -8527,38 +8495,40 @@ labs:
     expected_duration_minutes: 90
     workbook: ''
     skills_earned:
-    - id: WIN-011
-      name: Group Policy
-      weight: 0.3
-    - id: WIN-028
-      name: AD Tiering
+    - id: WIN-012
+      name: Authentication Concepts
       weight: 0.4
-    - id: WIN-016
-      name: Windows Hardening
-      weight: 0.15
-    - id: IR-003
-      name: Evidence Collection
-      weight: 0.15
+    - id: WEB-007
+      name: Authentication Security
+      weight: 0.3
+    - id: WEB-010
+      name: Session Security
+      weight: 0.2
+    - id: CLD-002
+      name: Microsoft Entra ID
+      weight: 0.1
     competencies_proven:
-    - id: WIN-011
-      name: Group Policy
-      weight: 0.3
-      category: Active Directory
-    - id: WIN-028
-      name: AD Tiering
+    - id: WIN-012
+      name: Authentication Concepts
       weight: 0.4
       category: Active Directory
-    - id: WIN-016
-      name: Windows Hardening
-      weight: 0.15
-      category: Windows Security
-    - id: IR-003
-      name: Evidence Collection
-      weight: 0.15
-      category: Response Process
+    - id: WEB-007
+      name: Authentication Security
+      weight: 0.3
+      category: Web Security
+    - id: WEB-010
+      name: Session Security
+      weight: 0.2
+      category: Web Security
+    - id: CLD-002
+      name: Microsoft Entra ID
+      weight: 0.1
+      category: Azure
     knowledge_domains:
-    - id: IR
-      label: Incident Response
+    - id: CLD
+      label: Cloud Security
+    - id: WEB
+      label: Web Technologies
     - id: WIN
       label: Windows
     practice_axes:
@@ -8571,8 +8541,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-11-9-ad-capstone:
@@ -8581,40 +8552,40 @@ labs:
     expected_duration_minutes: 160
     workbook: ''
     skills_earned:
-    - id: WIN-022
-      name: AD Enumeration and Attack-Path Mapping
-      weight: 0.2
-    - id: WIN-024
-      name: ACL and DACL Abuse
-      weight: 0.2
-    - id: WIN-028
-      name: AD Tiering
+    - id: IR-008
+      name: Executive Reporting
+      weight: 0.4
+    - id: IR-009
+      name: Incident Documentation
       weight: 0.3
+    - id: PROF-003
+      name: Risk Assessment
+      weight: 0.2
     - id: PROF-010
       name: Report Writing
-      weight: 0.3
+      weight: 0.1
     competencies_proven:
-    - id: WIN-022
-      name: AD Enumeration and Attack-Path Mapping
-      weight: 0.2
-      category: Active Directory
-    - id: WIN-024
-      name: ACL and DACL Abuse
-      weight: 0.2
-      category: Active Directory
-    - id: WIN-028
-      name: AD Tiering
+    - id: IR-008
+      name: Executive Reporting
+      weight: 0.4
+      category: Communication
+    - id: IR-009
+      name: Incident Documentation
       weight: 0.3
-      category: Active Directory
+      category: Communication
+    - id: PROF-003
+      name: Risk Assessment
+      weight: 0.2
+      category: Professional Practice
     - id: PROF-010
       name: Report Writing
-      weight: 0.3
+      weight: 0.1
       category: Professional Practice
     knowledge_domains:
+    - id: IR
+      label: Incident Response
     - id: PROF
       label: Professional Skills
-    - id: WIN
-      label: Windows
     practice_axes:
     - Identity and access
     evidence_artifacts:
@@ -8625,8 +8596,9 @@ labs:
     confidence:
       score: 0.65
       level: medium
-      basis: Pathway implementation derived from the reviewed competency mapping. Evidence types and weights
-        are explicit; live harness and analyst-answer moderation are required before marking reviewed.
+      basis: Baseline contract derived from the reviewed competency mapping. The evidence types and weights
+        are explicit; live harness evidence and analyst-answer moderation are required before marking
+        reviewed.
     review_status: baseline_derived
     reviewed_at: null
   windows-2-1-smb-connection-test:
