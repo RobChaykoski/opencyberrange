@@ -1,0 +1,62 @@
+# External OSINT targets and their offline mirrors.
+#
+# A live target is optional evidence. The offline mirror is the assessed path
+# and must always be present, reviewed, and hash-checked. The daily job records
+# drift; it never treats a public page as a place to collect personal data.
+
+version: 1
+policy:
+  offline_mirror_required: true
+  allow_personal_data: false
+  live_target_use: read_only
+  audience: adult
+  check_frequency: daily
+
+targets:
+  - id: swocts-public-homepage
+    lab: osint-2-2-public-homepage
+    kind: live_public_homepage
+    url: https://www.swocts.com/
+    method: GET
+    expected_status: 200
+    expected_marker: "x-swocts-osint: OCR{swocts_v13w_s0urc3}"
+    offline_marker: "OCR{swocts_v13w_s0urc3}"
+    marker_required: false
+    marker_status: absent
+    raw_sha256: 43cc97657dc027a2d649daaa98eb40c09d6a87a3694b574e237aa6b5b8ed669c
+    stable_sha256: fb3785a091260692a59042ba068d9d5150b362a4f3165ada93e9be97dadcf45e
+    checked_at: "2026-11-16"
+    offline_mirror: platform/labs/OSINT/_shared/mirrors/swocts-public-homepage.html
+    offline_mirror_sha256: b7a341105dcea4663761dd6f35ead5e2b59467d572c04cbb1febbc0b569dd27e
+    pii: none
+    audience: adult
+    authorization: >-
+      Read-only use of a public community homepage. No personal data is
+      collected. The offline mirror is the assessed path; the live page is an
+      optional adult-only extension.
+    notes: >-
+      The expected meta marker was absent on 2026-11-16. The lab test and the
+      learner path use the mirror only; the daily job records the live drift.
+
+  - id: opencyberrange-osint-repository-clue
+    lab: osint-2-1-source-code-intelligence
+    kind: public_repository_file
+    url: https://raw.githubusercontent.com/RobChaykoski/opencyberrange/main/platform/labs/OSINT/_shared/leaks/kestrel-ridge-staging-note.md
+    method: GET
+    expected_status: 200
+    expected_marker: "OCR{gh_st4g1ng_n0t3_l34k}"
+    offline_marker: "OCR{gh_st4g1ng_n0t3_l34k}"
+    marker_required: true
+    raw_sha256: 9d8f5e52c8d0cb79fe9caf7c3c302e409ca192e81ef7616414af44667812c0d8
+    stable_sha256: 9d8f5e52c8d0cb79fe9caf7c3c302e409ca192e81ef7616414af44667812c0d8
+    checked_at: "2026-11-16"
+    offline_mirror: platform/labs/OSINT/_shared/leaks/kestrel-ridge-staging-note.md
+    offline_mirror_sha256: 9d8f5e52c8d0cb79fe9caf7c3c302e409ca192e81ef7616414af44667812c0d8
+    pii: none
+    audience: adult
+    authorization: >-
+      The clue is a reviewed OpenCyberRange file in the public repository. The
+      local file is authoritative; the raw GitHub URL is an optional path.
+    notes: >-
+      Adult-only extension. The offline mirror is the assessed path. The local
+      file is fictional and contains no real personal data.

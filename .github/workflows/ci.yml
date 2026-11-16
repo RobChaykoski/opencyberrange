@@ -139,6 +139,15 @@ jobs:
       - name: Check data dictionary coverage
         run: python scripts/check-data-dictionary.py
 
+      - name: Check malware-lab governance
+        run: python scripts/check-malware-governance.py
+
+      - name: Check minor-safe defaults
+        run: python scripts/check-minor-safe.py
+
+      - name: Check OSINT offline mirrors
+        run: python scripts/check-external-targets.py --offline
+
       - name: Install documentation link checker dependency
         run: pip install pyyaml==6.0.3
 

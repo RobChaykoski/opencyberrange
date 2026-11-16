@@ -26,6 +26,15 @@ reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Kestrel Ridge's intranet exposes a people directory, a kudos wall, and a robots.txt that was never meant to be a secret. Follow the trail from the dashboard to a restricted notes page and recover the flag from its source."
 visibility: public
+audience: general
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
 flag: "OCR{r0b0ts_txt_1s_n0t_4_s3cr3t}"
 
 tools:

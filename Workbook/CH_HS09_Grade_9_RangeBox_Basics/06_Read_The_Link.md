@@ -41,7 +41,7 @@ button. Copy the whole message. Do not click the link inside it.
 The message contains a link like this:
 
 ```text
-https://windsorlibrary.example@windosrlibrary-secure.example/verify?next=%2Faccount%2Ftoken%2F...
+https://riversidelibrary.example@windosrlibrary-secure.example/verify?next=%2Faccount%2Ftoken%2F...
 ```
 
 Read it from the scheme to the right:
@@ -49,7 +49,7 @@ Read it from the scheme to the right:
 | Part | Value | What it means |
 |---|---|---|
 | Scheme | `https` | The connection is encrypted. It does not prove the site is honest. |
-| Userinfo | `windsorlibrary.example` | Text before `@`. A browser treats it as a username, not the site. |
+| Userinfo | `riversidelibrary.example` | Text before `@`. A browser treats it as a username, not the site. |
 | Host | `windosrlibrary-secure.example` | The real destination. Notice the letters `osr`. |
 | Path | `/verify` | The page being requested on that host. |
 | Query | `next=%2Faccount%2Ftoken%2F...` | Extra data. Percent-encoding hides characters. |

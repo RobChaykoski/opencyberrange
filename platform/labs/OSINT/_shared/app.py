@@ -13,8 +13,9 @@ lab selects a mode with LAB_MODE and supplies its own FLAG:
     responsive_leak - the mobile renderer receives a contact card that the
                       desktop renderer never sees. The flag is only in the
                       mobile response.
-    public_profile_external - a training mirror of an instructor-owned public
-                      profile, plus a link to the live profile for the phone.
+    public_profile_external - a training mirror of a fictional public profile.
+                      The assessed path is local and offline; there is no live
+                      social-media target.
     shodan_mirror   - a synthetic Shodan-style search over fictional hosts. The
                       flag is in one verbose banner.
 
@@ -32,14 +33,16 @@ MODE = os.environ.get("LAB_MODE", "public_profile")
 FLAG = os.environ.get("FLAG", "OCR{osint_flag_not_set}")
 COMPANY = os.environ.get("COMPANY", "Kestrel Ridge")
 PORT = int(os.environ.get("PORT", "8080"))
-PROFILE_URL = os.environ.get(
-    "PROFILE_URL",
-    "https://www.linkedin.com/in/your-profile/",
-)
 
 HERE = Path(__file__).resolve().parent
 ASSETS = HERE / "assets"
 TOOLS = HERE / "tools"
+MIRRORS = HERE / "mirrors"
+FICTION_NOTICE = (
+    "Fictional training data. People, organisations, and events on this page "
+    "are invented for the exercise unless explicitly marked as a live public "
+    "target. Do not use these details against a real person or service."
+)
 
 PEOPLE = [
     {
@@ -348,7 +351,9 @@ def _shell(title: str, body: str, active: str = "") -> str:
     {body}
   </main>
   <footer>
-    Kestrel Connect · Internal use only · Build 2026.10.31 · {_esc(COMPANY)}
+    Kestrel Connect · Fictional training data · Build 2026.10.31 · {_esc(COMPANY)}<br>
+    People, organisations, and events are invented unless the page explicitly
+    names a live public target. Do not use these details against a real person.
   </footer>
   <script src="/static/app.js"></script>
 </body>
@@ -589,7 +594,7 @@ DEV_FEST_SPEAKERS = [
         "slug": "sam-okafor",
         "name": "Sam Okafor",
         "role": "Community Program Lead",
-        "org": "Windsor Tech Collective",
+        "org": "Riverside Community Tech",
         "track": "Leadership and Entrepreneurship",
         "talk": "From Side Project to Community Program",
         "abstract": (
@@ -636,7 +641,7 @@ def _devfest_shell(title: str, body: str, active: str = "") -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{_esc(title)} · DevFest Windsor-Essex 2026</title>
+  <title>{_esc(title)} · Community Dev Day 2026</title>
   <style>
     :root {{
       color-scheme: dark;
@@ -795,14 +800,14 @@ def _devfest_shell(title: str, body: str, active: str = "") -> str:
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/"><strong>DevFest</strong><span>Windsor-Essex 2026</span></a>
+    <a class="brand" href="/"><strong>Community Dev Day</strong><span>Riverside 2026</span></a>
     <nav class="nav">{links}</nav>
     <span class="pill">November 21, 2026</span>
   </header>
   <main>{body}</main>
   <footer>
-    DevFest Windsor-Essex 2026 · Windsor, ON · Community partner: Southwestern Ontario Cybersecurity Hub<br>
-    Training simulation. Speakers, sessions, and files are fictional.
+    Community Dev Day 2026 · Riverside, ON · Community partner: OpenCyberRange Community<br>
+    Training simulation. The event, speakers, sessions, organisations, and files are fictional.
   </footer>
 </body>
 </html>"""
@@ -824,12 +829,12 @@ def _devfest_home() -> str:
     )
     body = f"""
     <section class="hero">
-      <p class="eyebrow">Community conference · Windsor, Ontario</p>
-      <h1>DevFest Windsor-Essex 2026</h1>
+      <p class="eyebrow">Community conference · Riverside, Ontario</p>
+      <h1>Community Dev Day 2026</h1>
       <p>One day of cloud, AI, full-stack, and community building. This portal
       is the volunteer-run home for the schedule, speakers, and speaker files.</p>
       <span class="tag">November 21, 2026</span>
-      <span class="tag">Windsor, ON</span>
+      <span class="tag">Riverside, ON</span>
       <span class="tag">Community partner: SWOCTS</span>
     </section>
     <div class="grid">
@@ -845,7 +850,7 @@ def _devfest_home() -> str:
       </section>
       <section class="card card--wide">
         <h2>About the community day</h2>
-        <p class="muted">DevFest is built by volunteers, for the local tech
+        <p class="muted">Community Dev Day is built by volunteers, for the local tech
         community. Sessions are beginner-friendly, and every track includes a
         practical takeaway you can use in the next project.</p>
       </section>
@@ -927,7 +932,7 @@ def _browser_metadata_viewer() -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PNG metadata viewer · DevFest Windsor-Essex</title>
+  <title>PNG metadata viewer · Community Dev Day</title>
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
@@ -1187,79 +1192,13 @@ def _browser_extractor() -> str:
 
 
 def _swocts_mirror() -> str:
-    """Offline mirror of the public SWOCTS homepage for the source-code lab.
+    """Serve the reviewed offline mirror of the public SWOCTS homepage.
 
-    The real target is https://www.swocts.com. This mirror repeats the same
-    meta tag so the exercise can be validated without outbound internet.
+    The live target is optional and read-only. The mirror is the assessed path
+    and is the only page the lab test calls.
     """
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SWOCTS Hub</title>
-  <meta name="description" content="Southwestern Ontario Cybersecurity Hub - Uniting professionals through events, workshops, and community.">
-  <meta name="x-swocts-osint" content="{_esc(FLAG)}">
-  <!-- Local mirror for the OpenCyberRange OSINT exercise. Live target: https://www.swocts.com -->
-  <style>
-    :root {{ color-scheme: dark; }}
-    * {{ box-sizing: border-box; }}
-    body {{
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 2rem;
-      background:
-        radial-gradient(circle at 18% 10%, rgba(56, 189, 248, 0.22), transparent 34rem),
-        radial-gradient(circle at 82% 84%, rgba(45, 212, 191, 0.18), transparent 32rem),
-        #07111c;
-      color: #e8eef5;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    }}
-    main {{
-      width: min(780px, 100%);
-      padding: clamp(1.5rem, 5vw, 3rem);
-      border: 1px solid #27435a;
-      border-radius: 20px;
-      background: rgba(13, 28, 43, 0.88);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
-    }}
-    .eyebrow {{
-      margin: 0 0 0.5rem;
-      color: #5eead4;
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }}
-    h1 {{ margin: 0 0 0.75rem; font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.02; letter-spacing: -0.04em; }}
-    p {{ color: #9fb3c8; line-height: 1.65; }}
-    .pill {{
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.35rem 0.7rem;
-      border: 1px solid #27435a;
-      border-radius: 999px;
-      color: #5eead4;
-      font-size: 0.72rem;
-      font-weight: 700;
-    }}
-    code {{ color: #f5c76a; }}
-  </style>
-</head>
-<body>
-  <main>
-    <p class="eyebrow">Southwestern Ontario Cybersecurity Hub</p>
-    <h1>SWOCTS Hub</h1>
-    <p>Uniting cybersecurity professionals through free, open-source events,
-    workshops, and community collaboration.</p>
-    <p>This is a local mirror of the public homepage used for an OSINT
-    exercise. The live target is <code>https://www.swocts.com</code>.</p>
-    <span class="pill">View the page source</span>
-  </main>
-</body>
-</html>"""
+    template = (MIRRORS / "swocts-public-homepage.html").read_text(encoding="utf-8")
+    return template.replace("{{FLAG}}", _esc(FLAG))
 
 
 def _shodan_hosts() -> list[dict]:
@@ -1474,41 +1413,36 @@ def _responsive_page(mobile: bool) -> str:
 
 
 def _public_profile_page() -> str:
-    """Serve a training mirror of an instructor-owned public profile."""
+    """Serve a fictional public profile for the offline OSINT exercise."""
     body = f"""
     <p class="eyebrow">Public profile · OSINT</p>
-    <h1>Instructor public profile</h1>
+    <h1>Riley Chen</h1>
     <p class="muted">
-      This is a training mirror of the public About section. The live profile is
-      linked for the phone path.
+      Community cloud engineer · Northstar Community Cloud · fictional persona
     </p>
     <div class="grid">
       <section class="card">
         <p class="eyebrow">About</p>
         <h2>Public bio</h2>
         <p>
-          Cybersecurity educator and programme builder. I teach public-source
-          investigation, defensive operations, and evidence-based reporting.
+          Riley builds small cloud services for community organisations and
+          writes about responsible prototyping, accessibility, and evidence-based
+          reporting. This is a fictional training persona.
         </p>
         <p><strong>Research marker:</strong> <code>{_esc(FLAG)}</code></p>
       </section>
       <section class="card">
-        <p class="eyebrow">Live path</p>
-        <h2>Open on your phone</h2>
+        <p class="eyebrow">Offline path</p>
+        <h2>Read the mirror</h2>
         <p>
-          Scan the QR code in the workbook or open the live public profile on
-          your phone. Only the instructor-owned profile is in scope.
-        </p>
-        <p>
-          <a href="{_esc(PROFILE_URL)}" rel="noopener noreferrer" target="_blank">
-            Open the public profile
-          </a>
+          This local mirror is the assessed path. There is no live social-media
+          target, no QR code to a real profile, and no personal data.
         </p>
       </section>
     </div>
     <p class="muted">
-      This training mirror is fictional. It does not collect, store, or transmit
-      personal data.
+      This profile is fictional. It does not collect, store, or transmit personal
+      data. Do not search for a real person.
     </p>
     """
     return _shell("Public profile", body, active="people")
@@ -1524,6 +1458,17 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'none'; style-src 'unsafe-inline'; "
+            "img-src 'self' data:; script-src 'self' 'unsafe-inline'; "
+            "connect-src 'self'; base-uri 'none'; form-action 'self'; "
+            "frame-ancestors 'none'",
+        )
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(body)
@@ -1575,14 +1520,13 @@ class Handler(BaseHTTPRequestHandler):
             elif path == "/api/profile":
                 self._json(
                     {
-                        "name": "Instructor public profile",
+                        "name": "Riley Chen",
                         "about": (
-                            "Cybersecurity educator and programme builder. "
-                            "Public-source investigation, defensive operations, "
-                            "and evidence-based reporting."
+                            "Community cloud engineer at Northstar Community "
+                            "Cloud. Fictional training persona."
                         ),
                         "research_marker": FLAG,
-                        "profile_url": PROFILE_URL,
+                        "profile_url": None,
                     }
                 )
             elif path == "/robots.txt":
@@ -1682,7 +1626,7 @@ class Handler(BaseHTTPRequestHandler):
                     self._send(404, b"slide unavailable\n", "text/plain")
             else:
                 self._html(_devfest_shell(
-                    "Not found", "<h1>That page is not on the DevFest portal.</h1>"
+                    "Not found", "<h1>That page is not on the Community Dev Day portal.</h1>"
                 ), 404)
             return
 

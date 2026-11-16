@@ -29,6 +29,15 @@ reviewed_at: "2026-11-11"
 review_status: "automated static proof; live walkthrough pending"
 description: "Open a page in the RangeBox browser, then look at the HTML the browser received. Find the training token in a source comment and learn why comments should be reviewed before publishing."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 counts_toward_certificate: true
 flag: "OCR{v13w_th3_s0urc3}"
 

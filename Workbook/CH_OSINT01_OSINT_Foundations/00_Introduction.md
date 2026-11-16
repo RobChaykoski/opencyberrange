@@ -38,8 +38,10 @@ public artifacts reveal. You will:
 3. review the site's front-end code and a public repository for leaked
    staging material.
 
-Every target is simulated. The people, badges, and tokens are fictional, and
-nothing in this track reaches the real internet.
+Every target is simulated and every person, badge, and token is fictional. The
+assessed OSINT path is offline. Two optional extensions in the advanced OSINT
+chapter may reference a public page read-only; they are adult-only, inventoried,
+mirrored, and hash-checked. They are never required for a lab or a grade.
 
 ## Track Map
 

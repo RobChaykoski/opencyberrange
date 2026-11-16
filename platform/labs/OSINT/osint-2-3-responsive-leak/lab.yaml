@@ -30,7 +30,16 @@ content_version: "2.5.3"
 reviewed_at: "2026-11-11"
 review_status: "automated static proof; live walkthrough pending"
 description: "The Kestrel Ridge staff portal serves a different profile to phones than to desktop browsers. Use your phone to open the mobile build, compare the two renderers, and recover the flag from the contact card that desktop clients never see."
-visibility: public
+visibility: course
+audience: adult
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
 flag: "OCR{m0b1l3_r3nd3r3r_l34k}"
 
 tools:

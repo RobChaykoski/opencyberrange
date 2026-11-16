@@ -1,41 +1,19 @@
-# SWOCTS source-code flag
+# Public homepage source marker (internal note)
 
-The OSINT exercise **The Public Homepage** expects this marker in the source
-of `https://www.swocts.com`:
+The OSINT exercise **The Public Homepage** uses a reviewed offline mirror at
+`platform/labs/OSINT/_shared/mirrors/swocts-public-homepage.html`. The mirror is
+the assessed target and contains the marker:
 
 ```text
 OCR{swocts_v13w_s0urc3}
 ```
 
-## Next.js (app router)
+The live page at `https://www.swocts.com` is an optional, read-only adult
+extension. Do not modify a third-party site, add a tag to it, or contact its
+owners as part of a lab. If the live page is used, only read the public source
+and never collect personal data.
 
-Add a custom metadata field in the root layout, for example `app/layout.tsx`:
-
-```tsx
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  // ...existing metadata
-  other: {
-    "x-swocts-osint": "OCR{swocts_v13w_s0urc3}",
-  },
-};
-```
-
-Next.js renders this as:
-
-```html
-<meta name="x-swocts-osint" content="OCR{swocts_v13w_s0urc3}"/>
-```
-
-## Static HTML
-
-If the site is not using the Next.js metadata API, place this in the document
-head:
-
-```html
-<meta name="x-swocts-osint" content="OCR{swocts_v13w_s0urc3}" />
-```
-
-Keep the value identical to the lab flag. The lab checks the submitted value
-case-sensitively.
+The offline mirror is the source of truth for the flag and the automated check.
+If the mirror changes, update its SHA-256 in
+`platform/backend/app/data/external-targets.yaml` and run
+`python scripts/check-external-targets.py --offline`.

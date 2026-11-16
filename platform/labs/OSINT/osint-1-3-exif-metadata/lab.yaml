@@ -26,6 +26,15 @@ reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A published evidence photo still carries its camera, timestamp, GPS coordinates, and an internal note. Recover the flag from the file metadata and document the privacy leak."
 visibility: public
+audience: general
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
 flag: "OCR{ex1f_m3tadata_l34ks}"
 # Bonus lab: it sits in Level 1 but does not block the Level 1 certificate,
 # so adding it cannot invalidate certificates students already earned.
@@ -97,7 +106,7 @@ hints:
 
   - text: |
       The flag is stored in the `UserComment` field. The GPS coordinates are
-      42°18'53"N, 83°2'11"W. Convert them to decimal with `exiftool -c "%.6f"`
+      0°0'0"N, 0°0'0"E. Convert them to decimal with `exiftool -c "%.6f"`
       and explain why publishing the original file leaks the camera location.
     unlock_after_minutes: 20
 

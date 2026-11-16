@@ -858,13 +858,13 @@ labs:
     - high-school-10-4-mfa-lost-phone
     workbook: wiki/range/high-school/CH_HS11_Grade_11_Defensive_Security/02_Media_Provenance/
     competency_ids:
-    - id: OSINT-001
+    - id: FOR-001
       weight: 0.4
-    - id: OSINT-002
+    - id: FOR-005
       weight: 0.3
-    - id: OSINT-008
+    - id: FOR-006
       weight: 0.2
-    - id: OSINT-012
+    - id: FOR-007
       weight: 0.1
     evidence:
     - type: flag
@@ -913,16 +913,14 @@ labs:
     expected_duration_minutes: 25
     prerequisites:
     - high-school-11-1-rangebox-log-detective
-    workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/
+    workbook: wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_Community Dev Day_Community_Portal/
     competency_ids:
-    - id: OSINT-001
+    - id: PROF-001
       weight: 0.4
-    - id: OSINT-002
-      weight: 0.3
-    - id: OSINT-008
-      weight: 0.2
-    - id: OSINT-012
-      weight: 0.1
+    - id: PROF-004
+      weight: 0.35
+    - id: PROF-007
+      weight: 0.25
     evidence:
     - type: flag
       weight: 0.35
@@ -975,9 +973,9 @@ labs:
       weight: 0.4
     - id: OSINT-002
       weight: 0.3
-    - id: OSINT-008
+    - id: OSINT-003
       weight: 0.2
-    - id: OSINT-012
+    - id: OSINT-004
       weight: 0.1
     evidence:
     - type: flag

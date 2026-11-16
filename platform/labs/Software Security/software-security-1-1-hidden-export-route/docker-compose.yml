@@ -11,7 +11,7 @@ services:
     environment:
       LAB_MODE: "code_review"
       FLAG: "OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}"
-      COMPANY: "DevFest Windsor-Essex"
+      COMPANY: "Community Dev Day"
       PORT: "8080"
       EXPORT_TOKEN: "devfest-export-2026"
     read_only: true

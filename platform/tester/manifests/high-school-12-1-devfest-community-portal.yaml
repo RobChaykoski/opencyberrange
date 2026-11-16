@@ -14,7 +14,7 @@ solver:
   image: ocr-tester:latest
   command: /tests/high-school-12-1-devfest-community-portal.sh
   steps:
-  - name: DevFest portal responds
+  - name: Community Dev Day portal responds
     command: curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/
     expect: '200'
   - name: Speaker page responds

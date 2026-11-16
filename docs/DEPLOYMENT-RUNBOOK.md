@@ -70,6 +70,22 @@ chmod -R a+rX platform/labs
 Otherwise `git` may recreate a modified lab file with the host umask (often
 `660`) and the Software integrity check will report that lab as unreadable.
 
+### Rebuild the workbooks after content changes
+
+The High School wiki must not ship OSINT or malware chapters. After pulling
+content or changing `mkdocs-highschool.yml`, rebuild the wiki volume:
+
+```bash
+bash scripts/build-wiki.sh
+```
+
+Then confirm the High School tree contains no `CH_OSINT*`, `instructor-owned`,
+`linkedin.com/in/`, or `profile-qr.png` text. The repository check is:
+
+```bash
+python scripts/check-minor-safe.py
+```
+
 ### Backup volume ownership
 
 The `backups_data` volume must be writable by the backend UID `10001`. After a

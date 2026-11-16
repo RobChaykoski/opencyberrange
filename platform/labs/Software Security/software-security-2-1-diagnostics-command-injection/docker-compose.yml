@@ -11,7 +11,7 @@ services:
     environment:
       LAB_MODE: "command_injection"
       FLAG: "OCR{sh3ll_1nj3ct10n_1s_4_bug}"
-      COMPANY: "DevFest Windsor-Essex"
+      COMPANY: "Community Dev Day"
       PORT: "8080"
       FLAG_PATH: "/tmp/flag"
     read_only: true

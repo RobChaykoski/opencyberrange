@@ -34,6 +34,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A volunteer forwards a grant review notice with a polished message, a lookalike link, and a file that is not what it claims to be. Decode the link, request the mirrored file, check its real type, and recover the training token. This capstone combines the link and file safety exercises."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{decode_then_verify_then_open}"
 
 tools:

@@ -29,6 +29,15 @@ reviewed_at: "2026-11-11"
 review_status: "automated static proof; live smoke test passed; student walkthrough pending"
 description: "Read a small synthetic web access log, find the repeated failed requests and the one unusual success, and recover the training token without treating one event as an attack."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 counts_toward_certificate: true
 flag: "OCR{l0gs_ar3_3v1d3nc3}"
 

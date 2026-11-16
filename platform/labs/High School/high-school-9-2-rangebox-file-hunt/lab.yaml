@@ -29,6 +29,15 @@ reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Practice the file commands you need in every later lab. Download a small evidence archive, unpack it, and use find and grep to pick the real token out of the decoys."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{f1nd_th3_r34l_f1l3}"
 
 tools:

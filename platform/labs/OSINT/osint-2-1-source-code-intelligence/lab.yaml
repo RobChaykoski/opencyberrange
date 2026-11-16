@@ -28,7 +28,16 @@ content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "The Kestrel Connect front end ships a small JavaScript bundle. A leftover developer comment still carries a staging token. Review the code like an outside researcher and recover the flag."
-visibility: public
+visibility: course
+audience: adult
+offline_only: false
+external_targets: [opencyberrange-osint-repository-clue]
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
 flag: "OCR{c0d3_c0mm3nts_l34k_s3cr3ts}"
 
 tools:
@@ -45,9 +54,11 @@ scenario: |
   surface as a source: JavaScript, CSS, comments, source maps, and the public
   repository are all fair game.
 
-  A second bonus flag has escaped into the public OpenCyberRange repository.
-  Search for Kestrel Ridge or the badge ID KR-0421 to find the staging note.
-  That flag is not required to complete this exercise.
+  A second bonus flag is in a reviewed file in this repository:
+  platform/labs/OSINT/_shared/leaks/kestrel-ridge-staging-note.md.
+  Read that local file. Do not search GitHub for a real person, employer, or
+  unrelated repository. The bonus flag is not required to complete this
+  exercise.
 
 troubleshooting: "If the target is unreachable, confirm the lab is running and use the hostname shown in the exercise. If a command returns an unexpected error, check the port, path, and credentials before assuming the technique failed. Report a persistent technical failure to the instructor so it is not mistaken for learning difficulty."
 defensive_takeaways: "Minimise public metadata and review what the organisation publishes about people, systems, and suppliers."

@@ -3,7 +3,7 @@
 
 Two modes:
 
-  code_review         A fictional DevFest speaker portal. The shipped JavaScript
+  code_review         A fictional Community Dev Day speaker portal. The shipped JavaScript
                       contains a temporary export route and token; the route
                       returns the flag only when the token is supplied. The
                       lesson is that client-side code is public and a hidden
@@ -26,7 +26,7 @@ from urllib.parse import parse_qs, urlparse
 
 MODE = os.environ.get("LAB_MODE", "code_review")
 FLAG = os.environ.get("FLAG", "OCR{software_security_flag_not_set}")
-COMPANY = os.environ.get("COMPANY", "DevFest Windsor-Essex")
+COMPANY = os.environ.get("COMPANY", "Community Dev Day")
 PORT = int(os.environ.get("PORT", "8080"))
 FLAG_PATH = Path(os.environ.get("FLAG_PATH", "/tmp/flag"))
 EXPORT_TOKEN = os.environ.get("EXPORT_TOKEN", "devfest-export-2026")
@@ -79,7 +79,7 @@ def code_review_home() -> str:
         "Speaker Portal",
         """
         <h2>Community speaker portal</h2>
-        <p>Welcome to the DevFest volunteer portal. The community track keeps
+        <p>Welcome to the Community Dev Day volunteer portal. The community track keeps
         speaker exports and handoff notes here.</p>
         <div class="card">
           <p><strong>Ada Mercer</strong><br>Community track speaker</p>
@@ -101,7 +101,7 @@ def diagnostics_home() -> str:
         "Network Diagnostics",
         """
         <h2>Host lookup</h2>
-        <p>Enter a hostname or IP address to check that the DevFest network can
+        <p>Enter a hostname or IP address to check that the Community Dev Day network can
         resolve it.</p>
         <form action="/lookup" method="get">
           <label for="host">Hostname or IP</label><br>
@@ -159,7 +159,7 @@ class Handler(BaseHTTPRequestHandler):
                 return
             if path == "/static/app.js":
                 script = (
-                    "/* DevFest speaker portal bootstrap.\n"
+                    "/* Community Dev Day speaker portal bootstrap.\n"
                     " * TODO(ada): remove the temporary export route before launch.\n"
                     f" * Export route: /admin/export?token={EXPORT_TOKEN}\n"
                     " */\n"

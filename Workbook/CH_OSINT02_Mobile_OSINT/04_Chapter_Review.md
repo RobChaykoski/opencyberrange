@@ -39,7 +39,7 @@ curl -s -A "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)" \
 
 ## Next step
 
-The public-profile exercise uses an instructor-owned profile as an authorised
-OSINT source. The banner exercise uses a synthetic Shodan-style mirror with
-fictional hosts. All three keep the same rule: only the authorised target in the
-brief, and no collection of real personal data.
+The public-profile exercise uses a fictional profile and a local mirror. The
+banner exercise uses a synthetic Shodan-style mirror with fictional hosts. All
+three keep the same rule: only the authorised target in the brief, and no
+collection of real personal data.

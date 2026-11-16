@@ -28,6 +28,15 @@ reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A gentle first exercise in the browser-based RangeBox desktop. Open the terminal, run four basic commands, and retrieve a welcome file from a safe practice target. No prior experience needed."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{r4ng3b0x_f1rst_st3ps}"
 
 tools:

@@ -11,7 +11,7 @@ services:
     environment:
       LAB_MODE: "devfest"
       FLAG: "OCR{d3vf3st_c0mmun1ty_p0rtal}"
-      COMPANY: "DevFest Windsor-Essex"
+      COMPANY: "Community Dev Day"
       PORT: "8080"
     read_only: true
     tmpfs:

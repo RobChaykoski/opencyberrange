@@ -1,5 +1,5 @@
 title: "Media Provenance: Is It Real?"
-category: osint
+category: forensics
 difficulty: beginner
 estimated_time: 35
 prerequisites:
@@ -29,6 +29,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community newsroom has two images from the same weekend. One has a verifiable source and independent corroboration; the other arrived anonymously with synthetic-media metadata. Compare provenance, metadata, hashes, and corroboration, then request a verification token for the supported item."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{provenance_beats_visual_tells}"
 
 tools:

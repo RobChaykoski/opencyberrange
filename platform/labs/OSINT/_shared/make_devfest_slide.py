@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fictional DevFest Windsor-Essex speaker slide export.
+"""Generate the fictional Community Dev Day speaker slide export.
 
 The slide is visually a normal conference export. The flag lives in the PNG
 text metadata (the speaker notes), which is the lesson for the high-school
@@ -50,7 +50,7 @@ def main():
     draw.rectangle((64, 64, width - 64, height - 64), outline=(125, 211, 252), width=2)
     draw.rectangle((92, 92, width - 92, height - 92), outline=(251, 191, 36), width=1)
 
-    draw.text((110, 120), "DEVFEST WINDSOR-ESSEX 2026", font=font(26, True), fill=(251, 191, 36))
+    draw.text((110, 120), "COMMUNITY DEV DAY 2026", font=font(26, True), fill=(251, 191, 36))
     draw.text((110, 158), "COMMUNITY CLOUD TRACK", font=font(15, True), fill=(183, 177, 206))
 
     draw.text((110, 250), "Shipping Small", font=font(58, True), fill=(244, 241, 255))
@@ -58,19 +58,19 @@ def main():
 
     draw.text((110, 420), "Ada Mercer", font=font(30, True), fill=(244, 241, 255))
     draw.text((110, 462), "Community Cloud Engineer · Civic Stack Co-op", font=font(18), fill=(183, 177, 206))
-    draw.text((110, 500), "November 21, 2026 · Windsor, ON", font=font(18), fill=(183, 177, 206))
+    draw.text((110, 500), "November 21, 2026 · Riverside, ON", font=font(18), fill=(183, 177, 206))
 
     draw.rounded_rectangle((110, 570, 560, 620), radius=10, outline=(58, 47, 104), width=1)
     draw.text((130, 585), "TRAINING PERSONA · ALL DETAILS FICTIONAL", font=font(14, True), fill=(183, 177, 206))
 
-    draw.text((940, 640), "devfest.lab", font=font(14, True), fill=(125, 211, 252))
+    draw.text((940, 640), "communitydevday.lab", font=font(14, True), fill=(125, 211, 252))
 
     from PIL.PngImagePlugin import PngInfo
 
     info = PngInfo()
     info.add_text("Title", "Shipping Small: Cloud Run for Community Projects")
     info.add_text("Author", "Ada Mercer (fictional training persona)")
-    info.add_text("Software", "DevFest Community Slide Export v1.2")
+    info.add_text("Software", "Community Dev Day Community Slide Export v1.2")
     info.add_text(
         "Description",
         "Speaker notes: the community track handoff token is "

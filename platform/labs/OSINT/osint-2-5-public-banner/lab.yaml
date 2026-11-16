@@ -30,7 +30,16 @@ content_version: "2.5.3"
 reviewed_at: "2026-11-11"
 review_status: "automated static proof; live walkthrough pending"
 description: "A synthetic Shodan-style mirror lists fictional public hosts for Kestrel Ridge. Use your phone to search the mirror, find the build server, and recover the flag from its verbose banner. The mirror never queries the real internet."
-visibility: public
+visibility: course
+audience: adult
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
 flag: "OCR{sh0d4n_b4nn3r_l34k}"
 
 tools:

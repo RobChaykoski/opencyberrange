@@ -2,6 +2,57 @@ site_name: "SWOCTS Cyber Range - Beginner Cybersecurity"
 site_description: "A beginner-only cybersecurity pathway with staged RangeBox, command-line, network, and defensive-evidence skills in the SWOCTS Cyber Range"
 site_url: ""
 docs_dir: Workbook
+exclude_docs: |
+  FREE-TRAINING-AND-CERTIFICATIONS.md
+  FREE-TRAINING-AND-CERTIFICATIONS/**
+  COVERAGE.md
+  CH01_Enumeration/**
+  CH02_SMB_Reconnaissance/**
+  CH03_SMB_Credential_Attacks/**
+  CH04_RDP_Exploitation/**
+  CH05_WinRM_Exploitation/**
+  CH06_MSSQL_Exploitation/**
+  CH07_LDAP_Enumeration/**
+  CH08_Credential_Reuse/**
+  CH09_Assessment/**
+  CH_AI01_AI_Foundations/**
+  CH_FOR01_Memory_Forensics/**
+  CH_FOR02_Network_Forensics/**
+  CH_FOR03_Live_Memory/**
+  CH_FOR03_Topology_Forensics/**
+  CH_IAM01_Identity_And_Access/**
+  CH_LIN01B_Network_Discovery/**
+  CH_LIN01_Linux_Service_Enumeration/**
+  CH_LIN02B_SMB_SNMP/**
+  CH_LIN02_SSH_Authentication/**
+  CH_LIN03B_Privilege_Hashes/**
+  CH_LIN03_SSH_Post_Exploitation/**
+  CH_LIN04_Lateral_Movement/**
+  CH_LIN05_Detection/**
+  CH_LIN09_Assessments/**
+  CH_MAL01_Malware_Fundamentals/**
+  CH_MAL02_Executable_Analysis/**
+  CH_MAL03_Detection_And_Triage/**
+  CH_MSF00_Track_Introduction/**
+  CH_MSF01_Framework_Fundamentals/**
+  CH_MSF02_Exploitation_and_Post_Exploitation/**
+  CH_N0_Network_Foundations/**
+  CH_NET01B_Traffic_And_Logs/**
+  CH_NET01_Log_Analysis/**
+  CH_NET02_PCAP_Forensics/**
+  CH_NET12_Device_Topology/**
+  CH_NETSY12_Firewalls/**
+  CH_OSINT01_OSINT_Foundations/**
+  CH_OSINT02_Mobile_OSINT/**
+  CH_OT01_Modbus_Fundamentals/**
+  CH_OT02_S7comm_Data_Blocks/**
+  CH_SWSEC_Software_Security/**
+  CH_WEB01B_Advanced_Recon/**
+  CH_WEB01_Web_Reconnaissance/**
+  CH_WEB02B_API_And_Injection/**
+  CH_WEB02_Web_Exploitation/**
+  CH_WEB03_Advanced_Exploitation/**
+  CH_WIN10_AD_Authentication/**
 site_dir: _site_highschool
 copyright: 'SWOCTS Cyber Range | Powered by <a class="ocr-powered" href="https://github.com/RobChaykoski/opencyberrange">OpenCyberRange</a>'
 
@@ -118,4 +169,3 @@ nav:
     - "Exercise 4.1 -- DevFest Community Portal": CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal.md
     - "Exercise 4.2 -- Crypto Rug Pull": CH_HS12_Grade_12_Applied_Cybersecurity/02_Crypto_Rug_Pull.md
     - "Chapter Review": CH_HS12_Grade_12_Applied_Cybersecurity/03_Chapter_Review.md
-  - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

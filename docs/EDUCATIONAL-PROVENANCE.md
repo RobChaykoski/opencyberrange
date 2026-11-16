@@ -92,8 +92,12 @@ two framework references so the mapping remains reviewable.
 
 - Organisations, people, domains, credentials, flags, logs, emails, and
   artefacts are fictional unless a page explicitly cites a public source.
-- Lab targets resolve only inside the isolated lab network. Do not test the
-  commands against real hosts.
+- Lab targets resolve inside the isolated lab network. The adult-only OSINT
+  track has two optional, read-only public extensions; they are inventoried in
+  `platform/backend/app/data/external-targets.yaml`, must have an offline mirror
+  and content hash, and must never be attacked, scraped for personal data, or
+  used to interact with a real person.
+- Do not test lab commands against real hosts.
 - Training flags (`OCR{...}`) are not secrets and must not be reused outside the
   lab.
 - Third-party names and trademarks belong to their owners and are used for

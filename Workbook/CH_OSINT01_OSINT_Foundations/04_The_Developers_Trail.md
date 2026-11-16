@@ -16,7 +16,7 @@ This is the bonus challenge in the OSINT track. Treat the public web surface
 as a source: JavaScript, CSS, comments, source maps, and the public repository
 are all fair game.
 
-A second bonus flag has escaped into the public SWOCTS Cyber Range repository.
+A second bonus flag has escaped into the reviewed OpenCyberRange repository file.
 That one is not required to complete this exercise, but it is part of the
 same lesson: public code leaks.
 
@@ -126,5 +126,5 @@ search indexes.
 
 - Fetch `/static/app.js` directly; do not rely on the rendered dashboard.
 - Search for `TODO`, `token`, `staging`, or `OCR`.
-- For the bonus flag, search the public repository for `Kestrel Ridge` or
+- For the bonus flag, read the reviewed repository file for `Kestrel Ridge` or
   `KR-0421`.

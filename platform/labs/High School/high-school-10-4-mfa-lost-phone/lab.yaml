@@ -29,6 +29,15 @@ reviewed_at: "2026-11-11"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community centre volunteer lost their phone. The account uses a password and an authenticator app, but the recovery question can be answered from the public staff directory. Find the answer, recover the account, and explain why recovery is part of MFA."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 counts_toward_certificate: true
 flag: "OCR{recovery_is_part_of_mfa}"
 

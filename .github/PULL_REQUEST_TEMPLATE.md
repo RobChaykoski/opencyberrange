@@ -23,7 +23,7 @@
 ## Security checklist
 
 - [ ] OWASP Top 10 categories touched are listed (see `docs/V2-SECURITY-OWASP-TOP-10.md`)
-- [ ] No real credentials, personal data, or live targets added
+- [ ] No operational malware, real personal data, or unauthorised live targets added. Any live OSINT target has an inventory entry, an offline mirror, a content hash, and a read-only authorisation note
 - [ ] New lab content is fictional and isolated
 - [ ] Authorization checks added or preserved on new endpoints, with allowed/denied tests
 - [ ] New rich text/markdown is sanitized and has an XSS regression test

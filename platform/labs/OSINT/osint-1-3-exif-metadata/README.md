@@ -46,8 +46,8 @@ The important fields are:
 |---|---|
 | `Make` / `Model` | Canon / EOS R6 |
 | `DateTimeOriginal` | 2026:10:24 14:32:11 |
-| `GPSLatitude` | 42° 18' 53" N |
-| `GPSLongitude` | 83° 2' 11" W |
+| `GPSLatitude` | 0° 0' 0" N |
+| `GPSLongitude` | 0° 0' 0" E |
 | `ImageDescription` | Loading bay camera 3, frame 0042 |
 | `UserComment` | `OCR{ex1f_m3tadata_l34ks}` |
 
@@ -66,7 +66,7 @@ identify -verbose evidence.jpg | grep -i -A2 'exif'
 exiftool -c "%.6f" -GPSLatitude -GPSLongitude evidence.jpg
 ```
 
-The coordinates resolve to the loading bay area in Windsor, Ontario. Publishing
+The coordinates are deliberately set to 0,0 (a reserved synthetic location), not a real place. Publishing
 the original file leaks the camera location even when the visible content is
 innocuous.
 

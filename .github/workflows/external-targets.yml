@@ -1,0 +1,49 @@
+name: External OSINT target check
+
+# Live targets are optional evidence; the offline mirror is the assessed path.
+# This job runs daily so a changed or missing live target is visible before a
+# class depends on it. It never scrapes personal data or a social profile.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check live targets and offline mirrors
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install checker dependency
+        run: pip install pyyaml==6.0.3
+
+      - name: Check offline mirrors
+        run: python scripts/check-external-targets.py --offline
+
+      - name: Check live targets and record drift
+        run: |
+          set -euo pipefail
+          python scripts/check-external-targets.py --json | tee external-targets.json
+          {
+            echo "### External OSINT target check"
+            echo ""
+            python scripts/check-external-targets.py || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-targets
+          path: external-targets.json
+          retention-days: 30

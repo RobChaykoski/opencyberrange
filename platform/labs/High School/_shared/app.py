@@ -124,7 +124,7 @@ def page(title: str, body: str) -> str:
   </header>
   <main class="wrap">
     {body}
-    <p class="footer">A safe, fictional training target. Nothing here is real data.</p>
+    <p class="footer">A safe, fictional training target. Every person, organisation, and event here is invented; nothing is real data.</p>
   </main>
 </body>
 </html>
@@ -349,11 +349,11 @@ def _linkcheck_message() -> str:
     """A fictional message whose link hides the real host and an encoded token."""
     encoded_flag = quote(FLAG, safe="")
     return (
-        "From: Windsor Community Library <updates@windsorlibrary.example>\n"
+        "From: Riverside Community Library <updates@riversidelibrary.example>\n"
         "Subject: Your library account needs one quick check\n\n"
         "Hello,\n\n"
         "We are updating our catalogue. Please confirm your account within 24 hours:\n\n"
-        "https://windsorlibrary.example@windosrlibrary-secure.example/verify"
+        "https://riversidelibrary.example@windosrlibrary-secure.example/verify"
         f"?next=%2Faccount%2Ftoken%2F{encoded_flag}\n\n"
         "If you did not request this, ignore this message.\n\n"
         "Thank you,\n"
@@ -755,7 +755,12 @@ def mfa_recover_body(error: str = "") -> str:
           </div>
           <div class="form-row">
             <label for="answer">What is your favourite book?</label>
-            <input id="answer" name="answer" autocomplete="off" required>
+            <select id="answer" name="answer" required>
+              <option value="">Choose a title</option>
+              <option value="The Lantern Keeper">The Lantern Keeper</option>
+              <option value="The Quiet Harbour">The Quiet Harbour</option>
+              <option value="A Map of Small Things">A Map of Small Things</option>
+            </select>
           </div>
           <button class="button" type="submit">Recover account</button>
         </form>
@@ -793,7 +798,7 @@ PROVENANCE_ITEMS = {
         "uploaded_at": "2026-11-09 16:10",
         "camera": "Pixel 8",
         "software": "Camera 9.2",
-        "gps": "42.31, -83.02",
+        "gps": "0.00, 0.00",
         "corroboration": "Venue log and a second photographer",
         "claim": "The cleanup happened on 9 November.",
         "synthetic": False,

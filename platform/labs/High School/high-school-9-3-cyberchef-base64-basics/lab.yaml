@@ -28,6 +28,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A gentle introduction to CyberChef. A community library received a Base64-encoded partner note. Open CyberChef from the platform menu, decode the message, and recover the training token. No prior CyberChef experience needed."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{b4s364_is_encoding_not_encryption}"
 
 tools:

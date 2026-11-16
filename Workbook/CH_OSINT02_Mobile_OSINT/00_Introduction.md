@@ -15,12 +15,14 @@ other view never shows.
 The chapter starts with **The Mobile Build** and **The Public Profile**. The
 staff portal serves a different profile to phones than to desktop browsers. The
 mobile template contains a contact card that the desktop template does not
-render. The public-profile exercise uses the instructor-owned profile as an
-authorised OSINT source. The third exercise searches a synthetic Shodan-style
-mirror for a verbose service banner.
+render. The public-profile exercise uses a fictional profile and a local mirror
+as the authorised OSINT source. The third exercise searches a synthetic
+Shodan-style mirror for a verbose service banner.
 
-!!! warning "Authorised, synthetic targets only"
-    Every target in this chapter is fictional and isolated. Do not point these
+!!! warning "Authorised, fictional targets only"
+    Every assessed target in this chapter is fictional and offline. The
+    advanced public-profile and banner exercises use local mirrors; there is no
+    QR code to a real profile and no phone requirement. Do not point these
     techniques at a real employer, a real person, or a live third-party service.
     The lesson is about renderer and client differences, not about bypassing
     someone else's access control.

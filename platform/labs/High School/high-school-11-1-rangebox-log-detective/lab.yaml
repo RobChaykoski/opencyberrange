@@ -29,6 +29,15 @@ reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "Read a small web server access log, spot the probing requests, and recover the training token from the one request that should never have succeeded."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{l0gs_t3ll_th3_st0ry}"
 
 tools:

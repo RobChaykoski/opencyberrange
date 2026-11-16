@@ -18,7 +18,7 @@
 
 ## Reflection
 
-1. Which part of the DevFest activity required the most careful reading?
+1. Which part of the Community Dev Day activity required the most careful reading?
 2. What evidence did you record, and where did it come from?
 3. What would you remove from the slide before publishing it?
 4. How would you explain the risk to someone who has never heard of metadata?
@@ -37,7 +37,7 @@
 - Try the OSINT track for a deeper look at public-source investigation.
 - Try the Network Foundations level to learn how the web request reaches the
   portal.
-- Ask your teacher about the DevFest competition and how to join.
+- Ask your teacher about the Community Dev Day competition and how to join.
 
 ## Free practice and certification next steps
 

@@ -1,3 +1,5 @@
+> **Fictional training data.** Kestrel Ridge, Owen Brooks, and this note are invented for an OSINT exercise. Do not contact or search for a real person or organisation.
+
 # Kestrel Ridge — staging handoff
 
 **Owner:** Owen Brooks, Platform  

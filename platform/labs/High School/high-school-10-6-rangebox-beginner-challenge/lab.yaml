@@ -31,6 +31,15 @@ reviewed_at: "2026-11-11"
 review_status: "automated static proof; live smoke test passed; student walkthrough pending"
 description: "A bounded beginner challenge: verify the target, confirm the service answers, read a synthetic log, record evidence, and explain what the log does and does not prove."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 counts_toward_certificate: true
 flag: "OCR{3v1d3nc3_b3f0r3_act10n}"
 

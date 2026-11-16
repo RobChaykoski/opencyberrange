@@ -455,10 +455,10 @@ tracks:
   - id: osint
     pathway_order: 7
     display_name: "OSINT"
-    audience: "Beginner-to-intermediate learners who want public-source investigation skills."
+    audience: "Adult learners who want public-source investigation skills; Grades 9-12 are not assigned the live extensions."
     difficulty: "beginner"
     prerequisites: ["NET00"]
-    required_environment: "Browser and RangeBox; public-source simulation"
+    required_environment: "Browser and RangeBox; offline mirrors, with optional read-only adult extensions"
     recommended_next: "identity"
     role_alignment: ["OSINT Analyst", "Threat Intelligence Analyst", "Investigator"]
     status: "published"
@@ -487,7 +487,7 @@ tracks:
   - id: high-school
     pathway_order: 1
     display_name: "Beginner Cybersecurity"
-    audience: "New learners with everyday computer experience and no assumed cybersecurity background."
+    audience: "Grades 9-12 learners with everyday computer experience and no assumed cybersecurity background."
     difficulty: "beginner"
     prerequisites: []
     required_environment: "RangeBox with browser, terminal, and beginner lab targets"

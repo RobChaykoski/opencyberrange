@@ -28,6 +28,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A beginner CyberChef exercise with a simple Caesar shift. Read a short shifted note from a fictional community partner, use ROT13 or Caesar Brute Force, and recover the training token. Builds on the Base64 lab."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{r0t13_is_not_s3cur3}"
 
 tools:

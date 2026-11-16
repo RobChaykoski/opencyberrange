@@ -94,8 +94,8 @@ Model               : EOS R6
 DateTimeOriginal    : 2026:10:24 14:32:11
 ImageDescription    : Loading bay camera 3, frame 0042...
 UserComment         : OCR{...}
-GPSLatitude         : 42 deg 18' 53.00" N
-GPSLongitude        : 83 deg 2' 11.00" W
+GPSLatitude         : 0 deg 0' 0.00" N
+GPSLongitude        : 0 deg 0' 0.00" E
 ```
 
 If `exiftool` is not installed, use `exiv2` or search the raw file:

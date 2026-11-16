@@ -302,6 +302,13 @@ def _is_lab_visible(lab, user, accessible_course_lab_ids: set, *, course_context
         return True
     if not lab.is_active:
         return False
+    # Fictional OSINT scenarios can involve public-profile, phone, or live-site
+    # material that is not appropriate as a default for a learner who has
+    # declared themselves under 18. The High School pathway keeps its own
+    # local, synthetic exercises; the OSINT track remains available to adults
+    # and to instructor-assigned courses.
+    if getattr(user, "is_minor", False) and getattr(lab, "category", "") == "osint":
+        return False
     if vis == 'public':
         return True
     if vis == 'draft':

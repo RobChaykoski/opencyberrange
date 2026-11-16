@@ -175,6 +175,37 @@
       "type": "string",
       "enum": ["public", "course", "draft"]
     },
+    "audience": {
+      "type": "string",
+      "enum": ["general", "grades_9_12", "adult"]
+    },
+    "offline_only": {
+      "type": "boolean"
+    },
+    "external_targets": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "personal_data": {
+      "type": "string",
+      "enum": ["none", "synthetic"]
+    },
+    "free_text": {
+      "type": "boolean"
+    },
+    "public_profiles": {
+      "type": "boolean"
+    },
+    "phone_required": {
+      "type": "boolean"
+    },
+    "analytics": {
+      "type": "string",
+      "enum": ["none", "aggregate_only", "standard"]
+    },
+    "minor_safe_defaults": {
+      "type": "boolean"
+    },
     "topology": {
       "type": "object",
       "additionalProperties": false,

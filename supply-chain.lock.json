@@ -4,7 +4,7 @@
       "sha256": "ff442fa83f123d460e1116ed4ddc1b79bd7ff1f739e3cd18cd3c431a0435cb7f"
     },
     ".github/workflows/ci.yml": {
-      "sha256": "a4b49e9577412b5b466f95d4de73c5514f66deff62d271ae26189a9807eb37fa"
+      "sha256": "9543a6cc1248b83c62e052f95e099c9e06165a83782b5f24a6c9c74dea014f94"
     },
     ".github/workflows/codeql.yml": {
       "sha256": "528819da40419208ef852227581745b47d55b666c5fc6726eb5f47b2a9a4dcc5"
@@ -58,7 +58,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "ca68acd6b6349e21311d29456c8a012600135affc71b1cd5a0c45fe0cfd64f14"
+      "sha256": "c5ee61176cae61d1ee625361b5bf235d4f6de7ef0b7f839329f3da5824f90804"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -105,8 +105,14 @@
     "platform/backend/app/data/detection-pathway.yaml": {
       "sha256": "4df826f01fea0fc57616ef7d246c2430bee9e8cd7a52d69d4d2717e3664c3928"
     },
+    "platform/backend/app/data/external-targets.yaml": {
+      "sha256": "0f0f4fe287b7732e436b24d25f5a78032778f88f44ffa357ff982a744b926130"
+    },
+    "platform/backend/app/data/malware-samples.yaml": {
+      "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
+    },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "3732a3d664d764c35fa2037dcafc346db5cfe1096ba334452143e2ad288291f5"
+      "sha256": "f05d85993779d409558017cb04b4564debe9a50fe1f60be4da6da9a322b9ddaa"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -121,7 +127,7 @@
       "sha256": "d442f4b7fb9621e634d88bca56cf1fbc66abab02cb20c8dff1691c7a9400b352"
     },
     "platform/backend/lab_metadata.schema.json": {
-      "sha256": "b2081b39cd5505c5ec5eb6c6055de0a8a4058f62dd4c179c4fe6227e9caa13e3"
+      "sha256": "faacbf99f5b402288e0051ebe51a5925310cf40c2270c7d93e6f184592b5915c"
     },
     "platform/backend/pyproject.toml": {
       "sha256": "b6722dd013e620bc829bbeba74ce77a8a3fdac42f75d6f9804d74dc91f75196f"
@@ -165,6 +171,24 @@
     "platform/frontend/security-headers.conf": {
       "sha256": "3962bb62065d3641346a399dbe201af79fde1b9f083bb0ac34143980d8053871"
     },
+    "platform/labs/High School/_shared/app.py": {
+      "sha256": "e379a1840c4f522e34ba54d72b409ae8464b5babb10e08a409dbedd267b9dfd8"
+    },
+    "platform/labs/OSINT/_shared/app.py": {
+      "sha256": "ba457462040994e9020e976dac1e27425c0d1c4ad67603ce8fb36c246053ea66"
+    },
+    "platform/labs/OSINT/_shared/leaks/kestrel-ridge-staging-note.md": {
+      "sha256": "9d8f5e52c8d0cb79fe9caf7c3c302e409ca192e81ef7616414af44667812c0d8"
+    },
+    "platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md": {
+      "sha256": "bd46fe0499044374279f6baabfeba36cf9efb51ea90220fd99ddb321cca8578c"
+    },
+    "platform/labs/OSINT/_shared/mirrors/swocts-public-homepage.html": {
+      "sha256": "b7a341105dcea4663761dd6f35ead5e2b59467d572c04cbb1febbc0b569dd27e"
+    },
+    "platform/labs/_swsec_shared/app.py": {
+      "sha256": "8f95e55cdf2f480459deff52eacf188f40bf082932a07b9ea0e4b68ebc1e396a"
+    },
     "platform/tester/Dockerfile": {
       "sha256": "11cdc5e74289e5db9e30b324aa813be68652ffdcaffbc719ff4d16a2857d924a"
     },
@@ -189,8 +213,17 @@
     "scripts/check-data-dictionary.py": {
       "sha256": "c89d73e5f83b86e67e7c3cba2f1b9b7c3781bbbdbdec1096217bee5bc2318b5b"
     },
+    "scripts/check-external-targets.py": {
+      "sha256": "fad4c4b9bc3d8f80854452879e96d1f0d54be87a7e0b8a8ba10ee50a6daf7826"
+    },
     "scripts/check-licences.py": {
       "sha256": "535634890ffc65b0dc4a35f4f36dd6a62ca27b6ae350233b17332894ca71f7a1"
+    },
+    "scripts/check-malware-governance.py": {
+      "sha256": "0cda2659d14548bf73d4b9238e8d591008a86b9f62990a7dbd0baf28efcb4934"
+    },
+    "scripts/check-minor-safe.py": {
+      "sha256": "59be07a3a748ecc99b2e7bd1216d2c6e3ea62209c4abe800500c3c2c176ba3e3"
     },
     "scripts/check_db_roles.py": {
       "sha256": "a188534ab5135c289a572edb7982b38e11d27deea8da9c421ed21af5ffada74b"
@@ -238,7 +271,7 @@
       "sha256": "e5bf60e7aec4d1724d6409c6133511bb0d3fa4ffecf511497444d8a476eacda0"
     },
     "scripts/supply_chain.py": {
-      "sha256": "173cf66de8734d661b952ae63d7302e41b10934726f26c54d4c685003a13dd0f"
+      "sha256": "8cb7632fd3136160c58347aea25ca6710103eb7247fb2111e749d9bd9d0caaf8"
     },
     "scripts/sync-dev-bind-mount.sh": {
       "sha256": "6643843e3ffdc02cbad13b6c1a3f6569a3b99dd088ccd83852d8f280e0ab1692"
@@ -304,109 +337,109 @@
       "services": []
     },
     "high-school-10-1-rangebox-network-basics": {
-      "content_hash": "63cdaba0241c4204d499777cba0d763b56c7b034a154fffb7a7439cfa17e48ce",
+      "content_hash": "b94c08a11b61c5b098a22588acbe5d02740412d10882188bf63c23a2d2b5ee71",
       "services": [
         "network"
       ]
     },
     "high-school-10-2-rangebox-browser-and-source": {
-      "content_hash": "0421e305ebc2b0b2e9ef166ca425a30728f91155381b1d0cebcda2b50217bbec",
+      "content_hash": "748c7d46d6ff5cf590b64a7860d638993f0eeb2dea0ae8a8e96ec5f618f959af",
       "services": [
         "web"
       ]
     },
     "high-school-10-3-email-metadata": {
-      "content_hash": "63d255ff555a65dacc3aaa90e075be6d7ebe301a6b8c0773ae13a9b255a93e69",
+      "content_hash": "32d6bca87cd52dd152d3b6c9bc2ef6744462c5504c11af99dda18cff4d982572",
       "services": [
         "portal"
       ]
     },
     "high-school-10-4-mfa-lost-phone": {
-      "content_hash": "292c66b03d29919a75dd17329c7a8abc03d31b985a164f1c2c32080ddce94ead",
+      "content_hash": "e1f18021b8c71e99c8a1f7d59a90d76f54636ae4ad9756e8946b1671a88f8566",
       "services": [
         "portal"
       ]
     },
     "high-school-10-5-rangebox-log-review": {
-      "content_hash": "e462c20f5023ed5adcc291148defe194945e505d9e8e811c92dde5e60a24a83b",
+      "content_hash": "4b8e79d6475c55e56a232cc24efc81d773118da973823613d0b0c2c03fe2ba95",
       "services": [
         "events"
       ]
     },
     "high-school-10-6-rangebox-beginner-challenge": {
-      "content_hash": "f8795b2ade2bf874a540b22d12584d5d21bcbd5159d8db36378f0e505bbbc90d",
+      "content_hash": "207752b4147657b825e221112a639b2cff0c3e56ff7c5acefcfb694393183f4e",
       "services": [
         "challenge"
       ]
     },
     "high-school-11-1-rangebox-log-detective": {
-      "content_hash": "e573dc0190da01e69a152690e0e7c7b8b14a575d2a4c943e6f719224f79d1948",
+      "content_hash": "ba4fedc0a2bf5cceb121d10ee2caa21fcdc44b28eed801a3d3b05a49507150de",
       "services": [
         "logs"
       ]
     },
     "high-school-11-2-media-provenance": {
-      "content_hash": "478bb9990aeadccb0095f4e831be04633937e756a4fb40a3131a8d40117b754d",
+      "content_hash": "188197578bcfe120da840424a016b5bac29defb9d5642bbef4be9fc65be84c01",
       "services": [
         "portal"
       ]
     },
     "high-school-12-1-devfest-community-portal": {
-      "content_hash": "c672fd9c6a48731a39a54e48950aa99309791a803740f8bd34946e6014095c64",
+      "content_hash": "c326fd324368afb26101aa6c4b744679eca87193a80a9c08632ba298e6b6638d",
       "services": [
         "portal"
       ]
     },
     "high-school-12-2-crypto-rug-pull": {
-      "content_hash": "97a6b902a99ff7dce07f208e5279e0bf2d0448fa8df47f0deb7d42cdfea1becd",
+      "content_hash": "1aab65004c473eb516c99d09100171a0e9ce71c48c4d21b0a1323097757e3218",
       "services": [
         "portal"
       ]
     },
     "high-school-9-1-rangebox-first-steps": {
-      "content_hash": "5585033ee6b57886c677ad42b823740c9eed442925f38e3df56422532334f4c6",
+      "content_hash": "ef5441b6b764f9262b8bca20903dd5f701d12310a9dce1ca3760216fb5fdf3dd",
       "services": [
         "portal"
       ]
     },
     "high-school-9-2-rangebox-file-hunt": {
-      "content_hash": "43b02c85c9f109f12935f2b90283914913c05e9df1d7656f6bf35cbf12dd1f8f",
+      "content_hash": "df1c1f62e81fcd7fd9d153e4766fab3463b626c5a1506af756a87dd35ce0c9d0",
       "services": [
         "files"
       ]
     },
     "high-school-9-3-cyberchef-base64-basics": {
-      "content_hash": "e72bccd2236d47abc541d17a8578ab606d3d484d1870376f543b6004ea06149c",
+      "content_hash": "ed4061cc96a041dbe65efcd929cf0d4f47841c738f3c6f7437698d2c9e77febd",
       "services": [
         "portal"
       ]
     },
     "high-school-9-4-cyberchef-caesar-shift": {
-      "content_hash": "c2640651d7d5e063ce630cb0769015baaa57087400f7df3f305a41ee6654dad1",
+      "content_hash": "376f70723c31685a3d07950528b45d454f471299d7ccce60c76096c60575c2f9",
       "services": [
         "portal"
       ]
     },
     "high-school-9-5-cyberchef-layered-message": {
-      "content_hash": "7fee986c61fba4a4e97ab956958b78d129d55380a0d22f45600d3c3ed898780e",
+      "content_hash": "e8a6823e36f9dbb5d9e8e38fd59e10c9b244ac5034ff485a724799eb222e770e",
       "services": [
         "portal"
       ]
     },
     "high-school-9-6-read-the-link": {
-      "content_hash": "c3a591de2112bb072d96fe54e1c0d19eff68522efd12a17fa966cbcd9901a610",
+      "content_hash": "121a2e0b693c1adf736a10395b4d04e7426cf3cdc57a0eda03ba7bf03a685334",
       "services": [
         "portal"
       ]
     },
     "high-school-9-7-know-the-file": {
-      "content_hash": "f7958d7a5142accbb6500a86272d1f1ddf26c520c5863b3796f0a95682ffd90c",
+      "content_hash": "90e46fa96c9bfccb0b14bc13386601de1b0e3e160c58530881705f9fbf51063d",
       "services": [
         "portal"
       ]
     },
     "high-school-9-8-forwarded-message": {
-      "content_hash": "10fefa64ed2e112687978040dacb11bf50140a18a322de54a904c6c467a3312a",
+      "content_hash": "9527ff65f888423e87b6f8767f07a2608c831accaccc089d2788dd42ac5137ba",
       "services": [
         "portal"
       ]
@@ -672,44 +705,44 @@
       ]
     },
     "malware-1-1-eicar-triage": {
-      "content_hash": "2127386d79246235934fb9251317ec7786a94a7d9351d5347427c224f346d5cb",
+      "content_hash": "d952734808e3c793b9505f4ae41a7ee2473feb6ce3f587fae42d8359beb94a95",
       "services": [
         "evidence"
       ]
     },
     "malware-1-2-strings-static-analysis": {
-      "content_hash": "ae6d143aa97297be30102a1c1c329f2f61433bbd7772b5fc88fefba04ea4488c",
+      "content_hash": "52d2857604e920b88a29bf347abf78272ac8fb6fa7f132a46c381862d70776df",
       "services": [
         "evidence"
       ]
     },
     "malware-1-3-ghidra-static-reversing": {
-      "content_hash": "836d71e4f5c49f4c403d5ad566bc0bccf16ec6a765f5b289b31863641072f1aa",
+      "content_hash": "3096f890b2cb31051d5f02a04094362475ee9c56da16e8e78838b9c777d8797d",
       "services": [
         "evidence"
       ]
     },
     "malware-1-4-c2-pcap-wireshark": {
-      "content_hash": "2a2cd9e15d495451b413ee4de50bfe8c590bbfed9438b46a425cccda8d3e1f17",
+      "content_hash": "ccf77286f19a6324b30ad93ebbc8f48b21b786e560b113d07b0c8dda55f895e5",
       "services": [
         "evidence"
       ]
     },
     "malware-1-5-inetsim-c2-detection": {
-      "content_hash": "92d6444644b1a94224ccca427655f48ae3602c9cf3b1824e3d254967df2314d1",
+      "content_hash": "8d283495b32721692d0bba62a8fa8c7c2d085bce5c06cdbb2ef81e4439ed6609",
       "services": [
         "inetsim",
         "victim"
       ]
     },
     "malware-1-6-email-attachment-analysis": {
-      "content_hash": "834538cf8577b2288aa550446730be51d76cfe3b9960d143775d60b6d0e75148",
+      "content_hash": "6fa6ff134ee9e952bf63ebd2a27e683165b8319e18c751478fa466ff2969bcda",
       "services": [
         "evidence"
       ]
     },
     "malware-1-7-embedded-js-worddoc-inetsim": {
-      "content_hash": "6fc04d972e0ca9d94374d677ec453a32708dd8567687e51f6cc5b30af65d11c2",
+      "content_hash": "5b167a9a76181cf367808e1c4d60dfc520011e17cd57cdff59de156b49147c18",
       "services": [
         "evidence",
         "inetsim",
@@ -717,19 +750,19 @@
       ]
     },
     "malware-2-1-pe-header-analysis": {
-      "content_hash": "265e25bf4cf798c284db7aa697c2dd823a8a9a4f945924a62e9df2810639ac18",
+      "content_hash": "464fd00f4edfff27fb73c219e6e1ffca05ad1d52219efdbd2bf1938b6c2991af",
       "services": [
         "evidence"
       ]
     },
     "malware-2-2-yara-fundamentals": {
-      "content_hash": "8588dc31732e75dfe4230488ed1a09b9e8b03799009185e6e418f938242e083c",
+      "content_hash": "dc668e2afc2aefca46b35a4dcd740d79bfc2d47c2f6bb89c8977ce0f0e401fe1",
       "services": [
         "target"
       ]
     },
     "malware-2-3-yara-incident-triage": {
-      "content_hash": "462d5fb4687cd6983e8e4de1976cc073b95b18652b326acb69ed51bc75949339",
+      "content_hash": "43a603c89e541a611340cc050ccec349a5fe931c8b0f6153e93488275b8b2b29",
       "services": [
         "target"
       ]
@@ -896,49 +929,49 @@
       ]
     },
     "osint-1-1-public-footprint": {
-      "content_hash": "297bd8de721467ba9f678a299c45699b352c9c267b18a5a48671b8c3e6255f21",
+      "content_hash": "16f566a0674e47513bcd87eb685ba2725e5dc020f6425a2863e5ccc99315ab76",
       "services": [
         "intranet"
       ]
     },
     "osint-1-2-image-intelligence": {
-      "content_hash": "1eb7114c3f58e922220dc105b156ede33b560363055b9e0dee046fed212d1737",
+      "content_hash": "dc0378f9450892c7c35f605273adac3e7071d11f65c254ca47fc7b6e36933053",
       "services": [
         "intranet"
       ]
     },
     "osint-1-3-exif-metadata": {
-      "content_hash": "8d5ef2534b434e424be558afafd1e76d0f17242096563e98631a3f1fe0295f65",
+      "content_hash": "8168943e171c9fa4f5a5b1cac871b33ddf36c1cf168258152ce1fca037fb81df",
       "services": [
         "archive"
       ]
     },
     "osint-2-1-source-code-intelligence": {
-      "content_hash": "47d0b484bc061e602b6d3aa7af14e320375745b2a7864d670f4d91e4965ebad8",
+      "content_hash": "49c642feba02af62d2116755531127cabb87629767eb1614c168b5d2ee06d3ea",
       "services": [
         "intranet"
       ]
     },
     "osint-2-2-public-homepage": {
-      "content_hash": "c264cae6c668245d079977f20314a8590fece04ac967dcfcd17e8ff730e8b069",
+      "content_hash": "7c14f6131a7d9146d08f32fab9a7f419805093ce4295e01ae9d72df5eed4ba7c",
       "services": [
         "publicsite"
       ]
     },
     "osint-2-3-responsive-leak": {
-      "content_hash": "6f9703ad730014c4fd44b49f1bfbfde0afb19aaadf590d73764e8634b8189300",
+      "content_hash": "430c1a53e4a4b70384bcc0b5c44ee0d1c19af301789f588d1a9dcb4d032f2766",
       "services": [
         "intranet"
       ]
     },
     "osint-2-4-public-profile": {
-      "content_hash": "e68d537d8a45495c2953dc8a6a1d62b6ba053837aad1bd58eac48a096600bf96",
+      "content_hash": "2200b80c5a7b9d69ec01e01770210f1e7e9443d068a5bb119522c1663b447761",
       "services": [
         "intranet"
       ]
     },
     "osint-2-5-public-banner": {
-      "content_hash": "73fa1247efb7eff3e1c2fe94485751867c3d15d73abec63aa0fd286de7719372",
+      "content_hash": "f9b80f037484ef9bc31dd1b9d76982daf186c048f80a02d72e461da6909e28ad",
       "services": [
         "intranet"
       ]
@@ -969,13 +1002,13 @@
       ]
     },
     "software-security-1-1-hidden-export-route": {
-      "content_hash": "93c066862f1c7bd51afceeb9a4e4c26e2a37294fe6eb127e91e76f5d77360a9f",
+      "content_hash": "1b28f93ab7ebc0e52e0994fd8b765eb2b98df947b0879f2de0d48e91ec8a52c7",
       "services": [
         "portal"
       ]
     },
     "software-security-2-1-diagnostics-command-injection": {
-      "content_hash": "a43b4afbe37cc1eedb7723d3b1703539a850308ec72d332611908a30f2f90fff",
+      "content_hash": "41a059253149d378e04af9f21b8d37d0431b54fe9f0330a0174467aee51ebc3d",
       "services": [
         "diagnostics"
       ]

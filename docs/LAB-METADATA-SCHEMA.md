@@ -178,6 +178,32 @@ Authored mappings take precedence over the old track/category heuristic. A
 completion snapshot therefore records the lab's declared skills, and the
 competency radar and analytics follow the manifest.
 
+## Audience and minor-safe defaults
+
+The optional `audience` field is `general`, `grades_9_12`, or `adult`. It
+describes the intended cohort, not a learner's declared age. The advanced
+OSINT labs (2.x) are `audience: adult` and `visibility: course`; they are
+instructor-assigned extensions. A learner whose account is marked under 18 does
+not see `category: osint` labs in the main list.
+
+Every High School lab also declares:
+
+```yaml
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
+```
+
+`scripts/check-minor-safe.py` fails if a High School lab is missing these
+values, uses a non-local scenario target, carries real location data, or if the
+built High School wiki contains an OSINT/malware chapter or live-target text.
+See [Minor-safe defaults](MINOR-SAFE-DEFAULTS.md).
+
 ## Tooling
 
 Run the standardizer from the repository root:

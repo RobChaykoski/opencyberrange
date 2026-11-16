@@ -24,7 +24,7 @@ solver:
     command: curl -s http://{target.portal}:8080/message.txt | grep -o 'OCR{' | wc -l | tr -d ' '
     expect: '0'
   - name: Message uses the lookalike host and userinfo trick
-    command: curl -s http://{target.portal}:8080/message.txt | grep -c 'windsorlibrary.example@windosrlibrary-secure.example'
+    command: curl -s http://{target.portal}:8080/message.txt | grep -c 'riversidelibrary.example@windosrlibrary-secure.example'
     expect: '1'
   - name: URL decoding reveals the training token
     command: curl -s http://{target.portal}:8080/message.txt | python3 -c 'import sys,urllib.parse; print(urllib.parse.unquote(sys.stdin.read()))' | grep -o 'OCR{[^}]*}'

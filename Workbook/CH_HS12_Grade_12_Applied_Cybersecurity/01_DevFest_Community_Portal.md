@@ -1,4 +1,4 @@
-# Exercise 4.1: DevFest Community Portal
+# Exercise 4.1: Community Dev Day Portal
 
 ## Before You Begin
 
@@ -14,7 +14,7 @@
 
 ## Scenario
 
-DevFest Windsor-Essex is a community developer conference. The volunteer team
+Community Dev Day is a community developer conference. The volunteer team
 built a small portal for the schedule, speakers, and shared slide exports.
 
 One speaker exported a slide deck as a PNG. The slides look ordinary, but the
@@ -24,7 +24,7 @@ handoff.
 Your job is to find the flag and explain **why a public file can reveal more
 than its visible content**.
 
-![A fictional DevFest speaker slide](img/devfest-slide.png)
+![A fictional Community Dev Day speaker slide](img/devfest-slide.png)
 
 ## Your Objectives
 
@@ -98,7 +98,7 @@ before publishing a file.
 
 **3. Which school projects might accidentally include personal metadata?**
 
-**4. How could the DevFest team check files before publishing them?**
+**4. How could the Community Dev Day team check files before publishing them?**
 
 **5. What would you do if a public file contained a real person's information?**
 

@@ -1,5 +1,5 @@
-title: DevFest Community Portal
-category: osint
+title: Community Dev Day Portal
+category: general
 difficulty: beginner
 estimated_time: 25
 prerequisites:
@@ -28,15 +28,24 @@ owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
-description: "A gentle, browser-only OSINT challenge for the Windsor-Essex DevFest community. Explore a fictional conference portal, open a speaker's slide export, and read the metadata to recover the flag. No prior experience needed."
+description: "A gentle, browser-only OSINT challenge for the Riverside Community Dev Day community. Explore a fictional conference portal, open a speaker's slide export, and read the metadata to recover the flag. No prior experience needed."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{d3vf3st_c0mmun1ty_p0rtal}"
 
 tools:
   - browser
 
 scenario: |
-  DevFest Windsor-Essex is a community developer conference. The volunteer
+  Community Dev Day is a community developer conference. The volunteer
   team built a small portal for the schedule, speakers, and shared slide
   exports.
 
@@ -57,17 +66,17 @@ difficulty_evidence_source: "reviewer_walkthrough"
 difficulty_evidence_sample: 1
 difficulty_evidence_quality: "provisional"
 difficulty_evidence_reviewed_at: "2026-11-08"
-workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_DevFest_Community_Portal/"
+workbook: "wiki/range/high-school/CH_HS12_Grade_12_Applied_Cybersecurity/01_Community Dev Day_Community_Portal/"
 
 hostnames:
   - ip_offset: "90"
     hostname: "devfest.lab"
-    description: "DevFest community portal (HTTP 8080)"
+    description: "Community Dev Day community portal (HTTP 8080)"
 
 topology:
   nodes:
     - id: "portal"
-      label: "DevFest community portal"
+      label: "Community Dev Day community portal"
       type: "server"
       ip_offset: "90"
       ports: [8080]
@@ -104,7 +113,7 @@ hints:
 
 test:
   steps:
-    - name: "DevFest portal responds"
+    - name: "Community Dev Day portal responds"
       command: "curl -s -o /dev/null -w '%{http_code}' http://{target.portal}:8080/"
       expect: "200"
       timeout: 20

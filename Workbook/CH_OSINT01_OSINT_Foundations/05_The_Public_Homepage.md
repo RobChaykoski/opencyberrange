@@ -2,23 +2,22 @@
 
 ## Before You Begin
 
-- [ ] You can reach `https://www.swocts.com` from your browser or terminal
-- [ ] If you are working offline, you can reach the mirror at
-      `http://connect.lab:8080`
+- [ ] You can reach the offline mirror at `http://connect.lab:8080`
 - [ ] You have `curl` and `grep`
+- [ ] Optional adult extension: the live public site is reachable from a normal
+      browser. Do not use the live site if you are in a Grades 9-12 cohort.
 
 ## Scenario
 
-SWOCTS Hub is the public home of the Southwestern Ontario Cybersecurity
-community. Like any modern site, it ships metadata and source code to every
-visitor.
+SWOCTS Hub is a public community homepage. Like any modern site, it ships
+metadata and source code to every visitor. This exercise uses a reviewed
+offline mirror as the assessed target. The live page is an optional, read-only
+extension for adult learners; the mirror is authoritative for the flag and the
+automated checks.
 
-A flag has been placed in the site's source for this exercise. The rendered
-page looks ordinary; the flag is in the document metadata.
-
-The live target is **https://www.swocts.com**. A local mirror is available at
-`http://connect.lab:8080` for offline practice and validation. Use the live
-site when you can, then confirm the same technique against the mirror.
+A flag has been placed in the mirror's source for this exercise. The rendered
+page looks ordinary; the flag is in the document metadata. No personal data is
+collected.
 
 ## Your Objectives
 
@@ -42,28 +41,21 @@ Most visitors never see the head. An OSINT researcher reads it.
 
 ## Walkthrough
 
-### Step 1: Open the live site
+### Step 1: Open the mirror
 
-Browse to:
-
-```text
-https://www.swocts.com
-```
-
-Use **View Page Source** (not the browser's rendered text view). If you are
-working offline, open the mirror:
+Open:
 
 ```text
 http://connect.lab:8080
 ```
 
+Use **View Page Source** (not the browser's rendered text view).
+
+If you are an adult learner and the live page is available, you may compare it
+read-only at `https://www.swocts.com/`. Do not interact with the site or collect
+personal data.
+
 ### Step 2: Fetch the source
-
-```bash
-curl -s https://www.swocts.com/ -o swocts.html
-```
-
-If the live site is unavailable, use the mirror:
 
 ```bash
 curl -s http://connect.lab:8080/ -o swocts.html

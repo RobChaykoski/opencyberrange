@@ -28,6 +28,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community library patron receives an account notice with a link that looks almost right. Inspect the URL without clicking it, decode the hidden path with CyberChef, and recover the training token. Builds directly on the three CyberChef decoding exercises."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{read_the_host_not_the_wrapper}"
 
 tools:
@@ -91,7 +100,7 @@ hints:
   - text: |
       Everything before the `@` is a username, not the site. The real host
       starts after the `@`. Compare it letter by letter with
-      `windsorlibrary.example`: one letter is out of order.
+      `riversidelibrary.example`: one letter is out of order.
     unlock_after_minutes: 8
 
   - text: |
@@ -118,7 +127,7 @@ test:
       timeout: 20
 
     - name: "Message uses the lookalike host and userinfo trick"
-      command: "curl -s http://{target.portal}:8080/message.txt | grep -c 'windsorlibrary.example@windosrlibrary-secure.example'"
+      command: "curl -s http://{target.portal}:8080/message.txt | grep -c 'riversidelibrary.example@windosrlibrary-secure.example'"
       expect: "1"
       timeout: 20
 

@@ -31,6 +31,15 @@ reviewed_at: "2026-11-11"
 review_status: "automated static proof; live walkthrough pending"
 description: "Use the RangeBox terminal to talk to a small web service. Read a status code, inspect response headers, and find the training token that never appears in the page body."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 counts_toward_certificate: true
 flag: "OCR{h34d3rs_t3ll_st0r13s}"
 

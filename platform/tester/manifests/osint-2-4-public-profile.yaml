@@ -17,14 +17,14 @@ solver:
   - name: Training mirror responds
     command: curl -s -o /dev/null -w '%{http_code}' http://{target.profile}:8080/
     expect: '200'
-  - name: Training mirror links to the live profile
-    command: curl -s http://{target.profile}:8080/ | grep -o 'linkedin.com/in/'
-    expect: linkedin.com/in/
+  - name: Training mirror names the fictional organisation
+    command: curl -s http://{target.profile}:8080/ | grep -o 'Northstar Community Cloud'
+    expect: Northstar Community Cloud
   - name: Training mirror contains the marker
     command: curl -s http://{target.profile}:8080/ | grep -o 'OCR{[^}]*}'
-    expect: OCR{linkedIn_0s1nt_m4st3r_2026}
+    expect: OCR{f1ct10n4l_pr0f1l3_0s1nt_2026}
 expected_flag_count: 1
-expected_flag: OCR{linkedIn_0s1nt_m4st3r_2026}
+expected_flag: OCR{f1ct10n4l_pr0f1l3_0s1nt_2026}
 forbidden_networks:
 - control-plane
 - database

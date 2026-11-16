@@ -1,5 +1,5 @@
 title: "Crypto Rug Pull: Follow the Liquidity"
-category: osint
+category: crypto
 difficulty: beginner
 estimated_time: 35
 prerequisites:
@@ -29,6 +29,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A community token promises guaranteed returns and asks supporters to connect a wallet. Trace the simulated ledger, identify the wallet that removed the liquidity, and recover the case token. Defensive education only: no real token, wallet, or money."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{follow_the_liquidity_not_the_hype}"
 
 tools:

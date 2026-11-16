@@ -3,39 +3,34 @@
 **Track:** OSINT · **Difficulty:** Beginner · **Estimated time:** 20 minutes
 
 **Framework alignment:** [MITRE ATT&CK](https://attack.mitre.org/) Reconnaissance
-T1593.001 Search Open Websites/Domains: Social Media and T1589.002 Gather Victim
-Identity Information: Email Addresses.
+T1593.001 Search Open Websites/Domains: Social Media.
 
 ## Before You Begin
 
-- This exercise uses the instructor's own public professional profile with
-  explicit consent. The marker is intentionally public.
-- Only the profile linked in the lab brief is in scope. Do not search another
-  person's profile, send connection requests, or collect personal data.
-- A phone is recommended. The lab also serves a training mirror for offline
-  practice.
+- This exercise uses a **fictional** public profile. Riley Chen and Northstar
+  Community Cloud are invented for the lab; they are not real people or
+  organisations.
+- The assessed path is the local mirror served by the lab. There is no live
+  social-media account, no QR code, and no phone requirement.
+- Do not search for a real person, send connection requests, or collect personal
+  data. The lab records no free-text input.
 
 ## Scenario
 
-The instructor has placed a research marker in the public **About** section of
-their own professional profile. Your job is to find it the way a researcher
-would: open the public profile, read the public section, and record the marker.
+A fictional community cloud engineer has a public profile. A research marker is
+in the public **About** section. Your job is to find it the way a researcher
+would: read the public page, record the marker, and explain why a public field is
+not a secret.
 
-<figure markdown>
-
-![QR code linking to the instructor-owned public profile](img/profile-qr.png)
-
-<figcaption>Scan this code with your phone. The committed QR points at a placeholder URL; regenerate it with the instructor's real public profile URL before class.</figcaption>
-</figure>
-
-!!! warning "Authorised target only"
-    This is an authorised, instructor-owned profile. Do not reuse the technique
-    on another person, a real employer, or a third-party service. Do not collect
-    email addresses, phone numbers, connections, or any other personal data.
+!!! warning "Fictional target only"
+    Riley Chen and Northstar Community Cloud are training personas. Do not reuse
+    the technique on a real person, employer, or third-party service. Do not
+    collect email addresses, phone numbers, connections, or any other personal
+    data.
 
 ## Objectives
 
-1. Open the public profile on your phone.
+1. Open the local profile mirror.
 2. Read the public About section and identify the research marker.
 3. Explain why a public marker is not a secret.
 4. Submit the marker as the flag.
@@ -54,25 +49,20 @@ retained.
 
 ## Walkthrough
 
-### 1. Open the profile on your phone
+### 1. Open the local mirror
 
-Scan the QR code above, or open the profile URL from the lab brief. If the live
-profile is not reachable, use the training mirror at the lab target:
+Use the lab target shown in the exercise panel:
 
 ```text
 http://<target>:8080/
 ```
 
-The training mirror contains the same public About text for offline practice.
+The mirror is offline and contains only fictional text. It does not contact a
+social network.
 
 ### 2. Read the public About section
 
 Look for the **Research marker** line. The marker is the flag. Copy it exactly.
-
-!!! note "Flag case"
-    The platform expects the uppercase `OCR{...}` form. If the live profile still
-    shows a lowercase `ocr{...}` marker, the instructor should update the public
-    text to the uppercase form so the live path and the platform flag match.
 
 ### 3. Submit the flag
 
@@ -80,13 +70,14 @@ Paste the marker into the exercise page and submit it.
 
 ## Analysis Questions
 
-1. What did the public profile tell you about the person's role and work?
+1. What did the public profile tell you about the fictional person's role and
+   work?
 2. Which fields were intentionally public, and which fields would you avoid
    publishing?
 3. Why is a marker in a public profile not a secret?
 4. What would you check before posting a public profile in your own name?
-5. How would you verify that the profile you found is the authorised target and
-   not someone with the same name?
+5. Why is it safer to practise on a fictional mirror than on a real person's
+   profile?
 
 ## Defensive Takeaways
 
@@ -100,8 +91,8 @@ Paste the marker into the exercise page and submit it.
 
 ## If You Get Stuck
 
-- The QR code may point at a placeholder. Use the training mirror at the lab
-  target if the live profile is unavailable.
+- The lab is offline by design. Use the mirror at the lab target; there is no
+  live profile to open.
 - The marker is in the About section, not in a connection list or a private
   message.
 - If the flag is rejected, copy the marker exactly and confirm the uppercase

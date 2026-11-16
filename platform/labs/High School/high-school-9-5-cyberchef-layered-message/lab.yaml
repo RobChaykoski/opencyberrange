@@ -28,6 +28,15 @@ reviewed_at: "2026-11-10"
 review_status: "static student walkthrough; live lab run pending"
 description: "A short layered-decoding challenge for beginners. A fictional library message has both a Base64 layer and a Caesar shift. Use CyberChef in the right order, recover the training token, and explain why layered encoding is not security."
 visibility: public
+audience: grades_9_12
+offline_only: true
+external_targets: []
+personal_data: none
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: true
 flag: "OCR{l4y3r5_ar3_not_s3curity}"
 
 tools:

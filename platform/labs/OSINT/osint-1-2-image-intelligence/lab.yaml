@@ -27,6 +27,15 @@ reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
 description: "A Kestrel Ridge employee badge photo is public. The metadata looks ordinary, but the pixels carry more than they should. Extract the hidden payload and recover the flag."
 visibility: public
+audience: general
+offline_only: true
+external_targets: []
+personal_data: synthetic
+free_text: false
+public_profiles: false
+phone_required: false
+analytics: aggregate_only
+minor_safe_defaults: false
 flag: "OCR{lsb_st3g0_h1d3s_1n_pl41n_s1ght}"
 
 tools:

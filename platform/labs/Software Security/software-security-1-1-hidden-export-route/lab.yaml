@@ -25,7 +25,7 @@ owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
-description: "A browser-only source review for the DevFest software-security starter. The volunteer portal ships its JavaScript to every visitor; a temporary export route and token are still in the bundle. Find the route and recover the flag without using a terminal."
+description: "A browser-only source review for the Community Dev Day software-security starter. The volunteer portal ships its JavaScript to every visitor; a temporary export route and token are still in the bundle. Find the route and recover the flag without using a terminal."
 visibility: public
 flag: "OCR{cl13nt_s1d3_s3cr3ts_4r3_publ1c}"
 
@@ -33,7 +33,7 @@ tools:
   - browser
 
 scenario: |
-  DevFest Windsor-Essex runs a small volunteer portal for speaker handoffs and
+  Community Dev Day runs a small volunteer portal for speaker handoffs and
   community-track exports. The portal is a training target: every person,
   speaker, and file in it is fictional.
 
@@ -57,12 +57,12 @@ workbook: "wiki/range/software-security/CH_SWSEC_Software_Security/01_Hidden_Exp
 hostnames:
   - ip_offset: "91"
     hostname: "review.lab"
-    description: "DevFest speaker portal (HTTP 8080)"
+    description: "Community Dev Day speaker portal (HTTP 8080)"
 
 topology:
   nodes:
     - id: "portal"
-      label: "DevFest speaker portal"
+      label: "Community Dev Day speaker portal"
       type: "server"
       ip_offset: "91"
       ports: [8080]

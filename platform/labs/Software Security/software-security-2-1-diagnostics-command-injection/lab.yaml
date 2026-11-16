@@ -26,7 +26,7 @@ owner: "OpenCyberRange Curriculum"
 content_version: "2.5.3"
 reviewed_at: "2026-11-08"
 review_status: "automated static proof; live walkthrough pending"
-description: "A browser-only command-injection starter for the DevFest software-security track. A small network diagnostics page passes a hostname to a shell. Find the injection point and read the flag, then explain how to remove the shell safely."
+description: "A browser-only command-injection starter for the Community Dev Day software-security track. A small network diagnostics page passes a hostname to a shell. Find the injection point and read the flag, then explain how to remove the shell safely."
 visibility: public
 flag: "OCR{sh3ll_1nj3ct10n_1s_4_bug}"
 
@@ -34,7 +34,7 @@ tools:
   - browser
 
 scenario: |
-  The DevFest volunteer team added a small diagnostics page to check that
+  The Community Dev Day volunteer team added a small diagnostics page to check that
   conference network names resolve. It accepts a hostname and prints the
   lookup result.
 
@@ -58,12 +58,12 @@ workbook: "wiki/range/software-security/CH_SWSEC_Software_Security/02_Diagnostic
 hostnames:
   - ip_offset: "92"
     hostname: "diag.lab"
-    description: "DevFest diagnostics page (HTTP 8080)"
+    description: "Community Dev Day diagnostics page (HTTP 8080)"
 
 topology:
   nodes:
     - id: "diagnostics"
-      label: "DevFest diagnostics page"
+      label: "Community Dev Day diagnostics page"
       type: "server"
       ip_offset: "92"
       ports: [8080]

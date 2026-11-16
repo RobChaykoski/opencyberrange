@@ -1,6 +1,6 @@
 # Phone OSINT exercises
 
-Status: **All three exercises implemented.**
+Status: **All three exercises implemented; Exercise 2 is offline and fictional.**
 
 Audience: OSINT learners and instructors.
 
@@ -28,11 +28,10 @@ public profile, or search a public-data mirror. The goal is to teach:
 
 ## Safety and authorisation
 
-- All targets are fictional and isolated, except the instructor-owned public
-  profile in Exercise 2.
-- Exercise 2 uses the instructor's own profile with explicit consent. The flag is
-  intentionally public. Do not search another person's profile, send connection
-  requests, or collect personal data.
+- All targets are fictional and isolated. Exercise 2 uses a fictional public
+  profile and an offline mirror; there is no real social-media target.
+- Do not search for a real person, send connection requests, or collect personal
+  data. The lab records no free-text input.
 - Exercise 3 uses a **synthetic Shodan mirror**. Do not query real Shodan for
   third-party hosts. Real Shodan queries can expose real systems, are not
   reproducible for a class, and require a key and terms review.
@@ -56,37 +55,22 @@ Information: Client Configurations.
 **Defensive lesson:** authorise every request before choosing a template. Return
 only the fields the authenticated user may see, regardless of the client class.
 
-## Exercise 2 -- The Public Profile (implemented)
+## Exercise 2 -- The Public Profile (implemented, offline)
 
 **Lab:** `platform/labs/OSINT/osint-2-4-public-profile`
 **Workbook:** `Workbook/CH_OSINT02_Mobile_OSINT/02_The_Public_Profile.md`
 
-The instructor places a marker in the **About** section of their own public
-LinkedIn profile. The learner uses the phone to open the profile and find the
-marker. A training mirror of the same text is served by the lab for offline
-practice and automated validation. The lab's `PROFILE_URL` environment variable
-is a placeholder until the instructor sets the real public profile URL; the QR
-code in the workbook must be regenerated for the same URL.
+The lab serves a **fictional** public profile for Riley Chen at Northstar
+Community Cloud. The marker is in the public About section. The assessed path is
+the local mirror; there is no live LinkedIn target, no QR code, and no phone
+requirement. The lab collects no personal data.
 
-**Flag:** `OCR{linkedIn_0s1nt_m4st3r_2026}`
+**Flag:** `OCR{f1ct10n4l_pr0f1l3_0s1nt_2026}`
 
-!!! note "Flag case"
-    The platform validator expects `OCR{...}`. If the LinkedIn About currently
-    contains `ocr{...}`, update the public text to the uppercase form so the live
-    path and the platform flag match exactly.
+**Setup:** none. The lab image contains the fictional profile and the flag. Do
+not add a real profile URL or regenerate a QR code for a real person.
 
-**Setup:**
-
-1. Put the uppercase marker in the instructor's public LinkedIn About section.
-2. Set `PROFILE_URL` in the lab environment to the public profile URL.
-3. Generate the QR code for the phone with
-   `python scripts/generate-osint-qr.py --url "<profile-url>" --out <lab>/assets/profile-qr.png`.
-4. Confirm the profile is public and contains no other personal data that the
-   exercise does not need.
-
-**ATT&CK:** T1593.001 Search Open Websites/Domains: Social Media; T1589.002
-Gather Victim Identity Information: Email Addresses (only if the public profile
-shows one; do not collect it).
+**ATT&CK:** T1593.001 Search Open Websites/Domains: Social Media.
 
 **Defensive lesson:** public profiles are an OSINT source. Minimise what is
 public, review it periodically, and separate personal and professional presence.
@@ -129,8 +113,8 @@ teacher-provided API key, and record the acceptable-use decision.
    public-profile mirror and the synthetic Shodan search.
 2. Add the two lab directories with `lab.yaml` and `docker-compose.yml`.
 3. Add the workbook chapters and the `mkdocs-osint.yml` nav entries.
-4. Add the QR generator and a test that the lab page includes the QR and the
-   profile URL, but not the flag in the desktop response.
+4. Keep the profile exercise offline: no QR to a real profile, no live profile
+   URL, and a test that the lab page contains the fictional marker.
 5. Update `curriculum-manifest.yaml` with the new chapter and exercise counts.
 6. Run `validate-lab.py`, `check-doc-assets.py`, `check-links.py --mkdocs`, and
    the security delta review.

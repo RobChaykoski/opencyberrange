@@ -474,20 +474,22 @@ employee badge, and a public code trail:
   dependency-free Python extractor, a browser-based extractor for shared or
   low-tooling devices, and also works with `zsteg`.
 - **The Developer's Trail** — fetch a static JavaScript asset and recover a
-  staging token left in a developer comment. This exercise also includes a
-  bonus flag hidden in the public OpenCyberRange repository.
-- **The Public Homepage** — treat a live public site (`www.swocts.com`) as an
-  OSINT source, search its document metadata, and find the flag left in the
-  page head. A local mirror is available for offline practice.
+  staging token left in a developer comment. A bonus flag is in a reviewed local
+  repository file; learners do not search GitHub for a real person.
+- **The Public Homepage** — read a reviewed offline mirror of a public homepage,
+  search its document metadata, and find the flag in the page head. Adult
+  learners may compare the live page read-only; the mirror is the assessed path.
 
 ![The OSINT track](docs/img/osint-track.png)
 
 ![Badge Photo Intelligence workbook](docs/img/osint-workbook.png)
 
-The live SWOCTS exercise expects the meta tag documented in
-[`platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md`](platform/labs/OSINT/_shared/leaks/swocts-source-snippet.md).
-The GitHub bonus flag is discoverable by searching the public repository for
-`Kestrel Ridge` or `KR-0421`.
+The public homepage exercise is offline-first. Its inventory, content hashes,
+and daily live-target check are in
+[`platform/backend/app/data/external-targets.yaml`](platform/backend/app/data/external-targets.yaml)
+and `scripts/check-external-targets.py`. The optional live target is read-only
+and must never be modified or scraped for personal data. The bonus repository
+clue is a reviewed local file under `platform/labs/OSINT/_shared/leaks/`.
 
 The matching workbook chapters are **CH OSINT1 -- Digital Footprint
 Foundations** and **CH OSINT2 -- Code and Sources**. The RangeBox, UbuntuBox,
