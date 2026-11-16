@@ -183,6 +183,25 @@ still separates one lab from another; the firewall allows the lab ranges so
 shared targets and routed exercises keep working. DNS through Docker's embedded
 resolver remains a residual exfiltration path.
 
+## Database connection budget
+
+The supported single-worker shape needs enough pooled connections for the
+concurrent admin Security Center panels and the HTTP security-event recorder.
+Keep `DB_POOL_SIZE` and `DB_MAX_OVERFLOW` at **16 + 16** unless you have raised
+PostgreSQL `max_connections`. The ceiling is
+`(DB_POOL_SIZE + DB_MAX_OVERFLOW) * OCR_UVICORN_WORKERS`; it must stay below the
+database limit minus reserved slots.
+
+If the admin Security Center hangs and the backend log reports
+`QueuePool limit ... reached`, restart the backend and verify:
+
+```bash
+docker exec ocr-db psql -U labuser -d labdb \
+  -c "SELECT state, count(*) FROM pg_stat_activity GROUP BY state"
+```
+
+A healthy idle backend shows `idle` connections, not `idle in transaction`.
+
 ## Host health and package status
 
 `scripts/collect-host-health.sh` writes the host OS/kernel, upgradable and

@@ -21,11 +21,13 @@ logger = logging.getLogger(__name__)
 # PostgreSQL max_connections minus reserved slots: a 9-worker deployment with
 # the old 5 + 10 defaults could ask for 135 connections against a 100 limit.
 # Single-worker is the supported shape. The SPA fires a burst of dashboard,
-# analytics, and admin requests on one page, so 4 + 4 exhausted the pool and
-# then blocked the event loop; 10 + 10 leaves headroom while staying at 20
-# connections for the supported deployment and 180 for a 9-worker scale-out.
-_pool_size = max(1, int(os.environ.get("DB_POOL_SIZE", "10")))
-_max_overflow = max(0, int(os.environ.get("DB_MAX_OVERFLOW", "10")))
+# analytics, and admin requests on one page. The Security Center alone opens
+# several panels at once, and the HTTP security-event recorder needs a
+# connection while the request still holds its own. 16 + 16 leaves headroom
+# for that burst on the supported single worker; scale-out deployments must
+# raise PostgreSQL max_connections instead of shrinking this headroom.
+_pool_size = max(1, int(os.environ.get("DB_POOL_SIZE", "16")))
+_max_overflow = max(0, int(os.environ.get("DB_MAX_OVERFLOW", "16")))
 
 
 def _connect_args_for(url: str, application_name: str) -> dict:
