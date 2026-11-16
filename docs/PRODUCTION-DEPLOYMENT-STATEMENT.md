@@ -12,14 +12,15 @@ another document disagrees, this page and the signed tag win.
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
 | Release | **5.17.5** |
 | Signed tag | **`v5.17.5`** |
-| Runtime code commit | the commit tagged `v5.17.5` (`git tag -v v5.17.5`) |
-| Alembic revision | **`0040_settings_change_control`** |
+| Runtime code commit | `eddaf74f` (signed tag `v5.17.5`) |
+| Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
 | Repository | `RobChaykoski/opencyberrange` (`main`) |
 | Pre-cutover backup | `~/backups/ocr-backup-20261116-181526.dump` |
 | Post-cutover backup | `~/backups/ocr-backup-20261116-192307.dump` |
-| Restore drills | **PASSED** (pre-cutover and post-cutover) |
+| 5.17.5 backup | `~/backups/ocr-backup-20261116-223835.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, and post-5.17.5) |
 
 ## Production cutover: COMPLETE
 
@@ -103,6 +104,9 @@ to `/auth/reauth` and the regression test asserts the corrected path.
   account deletion, admin reset, MFA disable, and the cutover gate accept the
   correct password and reject wrong, oversized, control-character, and
   injection-shaped input.
+- Live deployed check on development: correct login, re-authentication, and
+  change-password returned `200`; wrong, oversized, and newline inputs returned
+  `401`; the temporary verification account was removed.
 - Bounded, log-safe login input and `maxlength` on password prompts.
 - Manual screenshots audited for synthetic data; a refresh to the current build
   is pending demo credentials.

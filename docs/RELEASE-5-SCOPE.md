@@ -2,7 +2,7 @@
 
 Status: **released and deployed as `v5.17.5` (Community / Academic), and
 production is cut over.** Development `172.16.16.44` and production
-`172.16.16.41` run `main` at the commit tagged `v5.17.5` with Alembic
+`172.16.16.41` run `main` at `eddaf74f` (`v5.17.5`) with Alembic
 `0041_tenant_rls_legacy`; see
 [`RELEASE-5-PRODUCTION-READINESS.md`](RELEASE-5-PRODUCTION-READINESS.md). The local
 image/stack bring-up and deployment evidence are documented in

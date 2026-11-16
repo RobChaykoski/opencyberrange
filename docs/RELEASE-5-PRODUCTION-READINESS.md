@@ -39,15 +39,20 @@ Community / Academic release and the one-way cutover is complete.
 ## 5.17.5 deployment record (Community / Academic) - 2026-11-16
 
 - Edition: **Community / Academic** (`lite` entitlement, single-host).
-- Deployed from `main` at the commit tagged `v5.17.5`.
+- Deployed from `main` at `eddaf74f` (`v5.17.5`).
 - Documentation cleanup: documentation skill, docs index, category hubs,
   archive, CODEOWNERS, SUPPORT, and PRIVACY; current counts reconciled to 210
   labs and 13 tracks.
 - Password prompts covered by regression tests (login, re-authentication,
   change-password, account deletion, admin reset, MFA disable, cutover), with a
   bounded login guard and `maxlength` on every password input.
+- Live deployed check on development: correct login, re-authentication, and
+  change-password returned `200`; wrong, oversized, and newline inputs returned
+  `401`; the temporary account was removed.
 - Verified: `/api/version` returns `5.17.5`, `/health` 200, 210 labs, Alembic
   `0041_tenant_rls_legacy`, cutover state unchanged.
+- Post-deploy backup `ocr-backup-20261116-223835.dump`; restore drill **PASSED**
+  (47 users, 210 labs).
 - Tag `v5.17.5` is signed with the release key
   `68A817762C831475F00DB54E775050A4C4921814`.
 

@@ -1,7 +1,7 @@
 # Validation report
 
 **Release:** 5.17.5
-**Commit:** the commit tagged `v5.17.5`
+**Commit:** `eddaf74f` (signed tag `v5.17.5`)
 **Date:** 16 November 2026
 
 This is the reproducible validation record for the current release. Commands
@@ -99,8 +99,9 @@ python scripts/supply_chain.py --check \
 | Registered labs | `210` |
 | Admin release status | `current` / `v5.17.5` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
-| Backup | `ocr-backup-20261116-192307.dump` |
-| Restore drill | **PASSED** (47 users) |
+| Backup | `ocr-backup-20261116-223835.dump` |
+| Restore drill | **PASSED** (47 users, 210 labs) |
+| Live password check | correct login/reauth/change = `200`; wrong/oversized/newline = `401` |
 
 ## Known gaps
 
