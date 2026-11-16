@@ -70,6 +70,33 @@ python scripts/validate_lab_metadata.py --labs-dir platform/labs --quiet
 `jsonschema` is pinned in `platform/backend/requirements-dev.txt`; it is a
 validation dependency, not a runtime one.
 
+## Competency contract
+
+Every lab also has a competency contract in
+`platform/backend/app/data/competency-contracts.yaml`. The contract is
+generated from `competency-taxonomy.yaml`, `competency-mapping.yaml`,
+`lab.yaml`, and the curated high-use overrides. It records:
+
+- competency taxonomy IDs with explicit weights (sum `1.0`);
+- prerequisites, difficulty, and expected duration;
+- four evidence types with weights (sum `1.0`): lab flag, automated validation
+  steps, workbook analyst answers, and a submitted artifact;
+- an assessment-reliability level, score, determinism, evidence completeness,
+  independent-validation status, and rationale;
+- a prohibited-collection list: keystrokes, mouse movement, and exhaustive
+  terminal history are never collected.
+
+The 25 labs with the most production completions are curated first in
+`competency-contract-overrides.yaml`. A generated baseline covers every other
+lab and is marked `baseline_derived` until a reviewer records a live three-run
+harness result. See [`COMPETENCY-CONTRACTS.md`](COMPETENCY-CONTRACTS.md) for the
+coverage and review queue.
+
+```bash
+python scripts/generate-competency-contracts.py
+python scripts/generate-competency-contracts.py --check
+```
+
 ## Learning outcomes
 
 Every lab introduces its outcomes with the fixed line:

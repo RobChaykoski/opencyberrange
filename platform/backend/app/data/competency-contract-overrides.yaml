@@ -1,0 +1,605 @@
+version: '1.0'
+reviewed_at: '2026-11-16'
+usage_source: Production lab_completions, queried 2026-11-16
+basis: Curated first pass for the 25 production labs with the most recorded completions in the live platform. The remaining labs receive a generated baseline from the reviewed competency mapping and are marked for review.
+labs:
+  windows-1-1-basic-port-scan:
+    usage_rank: 1
+    usage_completions: 7
+    competency_ids:
+    - id: WIN-020
+      weight: 0.35
+    - id: NET-033
+      weight: 0.35
+    - id: NET-031
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  linux-1-1-ssh-service-detection:
+    usage_rank: 2
+    usage_completions: 6
+    competency_ids:
+    - id: NET-031
+      weight: 0.35
+    - id: LIN-008
+      weight: 0.35
+    - id: LIN-021
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.95
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: automated_harness
+      rationale: 'Three clean live harness runs passed on 2026-11-16: health, isolation, declared port, flag retrieval, repeat solve, resource ceiling, reset, and teardown.'
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-1-2-multiple-port-discovery:
+    usage_rank: 3
+    usage_completions: 5
+    competency_ids:
+    - id: WIN-020
+      weight: 0.4
+    - id: NET-033
+      weight: 0.35
+    - id: NET-031
+      weight: 0.25
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-1-3-windows-service-version-detection:
+    usage_rank: 4
+    usage_completions: 5
+    competency_ids:
+    - id: NET-031
+      weight: 0.4
+    - id: WIN-003
+      weight: 0.3
+    - id: WIN-020
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-1-4-windows-os-detection:
+    usage_rank: 5
+    usage_completions: 5
+    competency_ids:
+    - id: NET-031
+      weight: 0.35
+    - id: WIN-001
+      weight: 0.35
+    - id: WIN-020
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-1-5-comprehensive-windows-enumeration:
+    usage_rank: 6
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-020
+      weight: 0.35
+    - id: NET-033
+      weight: 0.35
+    - id: PROF-001
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-1-smb-connection-test:
+    usage_rank: 7
+    usage_completions: 3
+    competency_ids:
+    - id: NET-028
+      weight: 0.35
+    - id: WIN-012
+      weight: 0.35
+    - id: WIN-009
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-2-smb-share-listing:
+    usage_rank: 8
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-009
+      weight: 0.35
+    - id: WIN-020
+      weight: 0.35
+    - id: PROF-001
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-3-smb-anonymous-share-access:
+    usage_rank: 9
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.4
+    - id: WIN-020
+      weight: 0.3
+    - id: NET-028
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-4-smb-file-retrieval:
+    usage_rank: 10
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-009
+      weight: 0.35
+    - id: FOR-006
+      weight: 0.35
+    - id: PROF-001
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-5-smb-null-session-connection:
+    usage_rank: 11
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.4
+    - id: NET-028
+      weight: 0.35
+    - id: WIN-020
+      weight: 0.25
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-6-smb-null-session-share-enumeration:
+    usage_rank: 12
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.35
+    - id: NET-028
+      weight: 0.35
+    - id: WIN-020
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-7-smb-user-enumeration-via-null-session:
+    usage_rank: 13
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-002
+      weight: 0.35
+    - id: WIN-012
+      weight: 0.35
+    - id: NET-028
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-2-8-smb-comprehensive-null-session-enumeration:
+    usage_rank: 14
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.35
+    - id: WIN-020
+      weight: 0.35
+    - id: PROF-001
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-3-1-smb-manual-credential-test:
+    usage_rank: 15
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.4
+    - id: WIN-002
+      weight: 0.3
+    - id: PROF-004
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-3-2-smb-multiple-credential-testing:
+    usage_rank: 16
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.4
+    - id: WIN-020
+      weight: 0.3
+    - id: PROF-008
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  windows-3-3-smb-single-user-brute-force:
+    usage_rank: 17
+    usage_completions: 3
+    competency_ids:
+    - id: WIN-012
+      weight: 0.35
+    - id: IR-002
+      weight: 0.35
+    - id: PROF-008
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  linux-1-2-multi-service-discovery:
+    usage_rank: 18
+    usage_completions: 2
+    competency_ids:
+    - id: LIN-008
+      weight: 0.4
+    - id: NET-031
+      weight: 0.3
+    - id: NET-033
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  linux-1-3-service-interaction:
+    usage_rank: 19
+    usage_completions: 2
+    competency_ids:
+    - id: LIN-008
+      weight: 0.35
+    - id: NET-023
+      weight: 0.35
+    - id: PROF-001
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  linux-1-4-non-standard-port-discovery:
+    usage_rank: 20
+    usage_completions: 2
+    competency_ids:
+    - id: NET-033
+      weight: 0.4
+    - id: LIN-008
+      weight: 0.3
+    - id: NET-031
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  linux-1-5-nse-script-enumeration:
+    usage_rank: 21
+    usage_completions: 2
+    competency_ids:
+    - id: NET-033
+      weight: 0.4
+    - id: LIN-011
+      weight: 0.3
+    - id: PROF-001
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  linux-1-6-version-vulnerability-identification:
+    usage_rank: 22
+    usage_completions: 2
+    competency_ids:
+    - id: NET-031
+      weight: 0.4
+    - id: PROF-003
+      weight: 0.3
+    - id: LIN-019
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  network-0-1-ping-basics:
+    usage_rank: 23
+    usage_completions: 2
+    competency_ids:
+    - id: NET-001
+      weight: 0.35
+    - id: NET-011
+      weight: 0.35
+    - id: NET-033
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  network-0-2-dns-basics:
+    usage_rank: 24
+    usage_completions: 2
+    competency_ids:
+    - id: NET-021
+      weight: 0.5
+    - id: NET-011
+      weight: 0.25
+    - id: NET-033
+      weight: 0.25
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'
+  web-1-1-basic-directory-enumeration:
+    usage_rank: 25
+    usage_completions: 2
+    competency_ids:
+    - id: WEB-005
+      weight: 0.35
+    - id: WEB-009
+      weight: 0.35
+    - id: NET-033
+      weight: 0.3
+    evidence_weights:
+      flag: 0.35
+      validation_step: 0.35
+      analyst_answer: 0.2
+      artifact: 0.1
+    assessment_reliability:
+      level: high
+      score: 0.85
+      evidence_completeness: high
+      determinism: deterministic
+      independent_validation: pending
+      rationale: Curated evidence map for a high-use lab. The flag, solve-step, analyst-answer, and artifact contract is explicit; the three-run live harness evidence is recorded separately.
+    review_status: reviewed
+    reviewed_at: '2026-11-16'

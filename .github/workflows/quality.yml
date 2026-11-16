@@ -46,6 +46,9 @@ jobs:
       - name: Verify RBAC/PBAC matrix is current
         run: python scripts/generate-rbac-matrix.py --check
 
+      - name: Verify competency contracts are current
+        run: python scripts/generate-competency-contracts.py --check
+
       - name: Verify lab test manifests are current
         run: python scripts/generate-lab-manifests.py --check
 

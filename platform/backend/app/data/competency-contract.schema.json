@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "OpenCyberRange competency contract bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "basis", "prohibited_collection", "labs"],
+  "properties": {
+    "version": { "type": "string" },
+    "basis": { "type": "string", "minLength": 20 },
+    "prohibited_collection": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "labs": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/definitions/contract" }
+    }
+  },
+  "definitions": {
+    "weightedCompetency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "weight"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Z]{2,6}-[0-9]{3}$" },
+        "weight": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "weight", "source", "validation"],
+      "properties": {
+        "type": {
+          "enum": ["flag", "validation_step", "analyst_answer", "artifact"]
+        },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "validation": {
+          "enum": ["exact_match", "all_steps_pass", "rubric"]
+        }
+      }
+    },
+    "reliability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "score",
+        "evidence_completeness",
+        "determinism",
+        "independent_validation",
+        "rationale"
+      ],
+      "properties": {
+        "level": { "enum": ["high", "medium", "low"] },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_completeness": { "enum": ["high", "medium", "low"] },
+        "determinism": {
+          "enum": ["deterministic", "mixed", "manual_review"]
+        },
+        "independent_validation": {
+          "enum": ["automated_harness", "pending", "manual_review", "mixed"]
+        },
+        "rationale": { "type": "string", "minLength": 20 }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lab_id",
+        "track",
+        "difficulty",
+        "expected_duration_minutes",
+        "prerequisites",
+        "workbook",
+        "competency_ids",
+        "evidence",
+        "prohibited_collection",
+        "assessment_reliability",
+        "assessment_criteria",
+        "test_steps",
+        "flag_required",
+        "content_version",
+        "usage_rank",
+        "usage_completions",
+        "usage_source",
+        "review_status",
+        "reviewed_at"
+      ],
+      "properties": {
+        "lab_id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "track": { "type": "string", "minLength": 1 },
+        "difficulty": {
+          "enum": ["beginner", "intermediate", "advanced", "expert", "unknown"]
+        },
+        "expected_duration_minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "workbook": { "type": "string" },
+        "competency_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "$ref": "#/definitions/weightedCompetency" }
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/definitions/evidence" }
+        },
+        "prohibited_collection": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "assessment_reliability": { "$ref": "#/definitions/reliability" },
+        "assessment_criteria": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "test_steps": { "type": "integer", "minimum": 0 },
+        "flag_required": { "type": "boolean" },
+        "content_version": { "type": "string" },
+        "usage_rank": { "type": ["integer", "null"], "minimum": 1 },
+        "usage_completions": { "type": ["integer", "null"], "minimum": 0 },
+        "usage_source": { "type": ["string", "null"] },
+        "review_status": { "enum": ["reviewed", "baseline_derived"] },
+        "reviewed_at": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
