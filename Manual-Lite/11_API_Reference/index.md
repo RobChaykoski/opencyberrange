@@ -3078,7 +3078,7 @@ Rotate a refresh token and issue a new access/refresh pair.  A rotated token is 
 
 **Register**
 
-Register a new user.  Per-IP limits are strict normally (5/minute; 30/hour; 100/day) and relax to a burst allowance (20/minute; 120/hour; 400/day) while a competition window is live. The invite-code and approval gates remain the controls that decide *who* may register.
+Register a new user.  Per-IP limits are strict normally (5/minute; 30/hour; 100/day) and relax to a burst allowance (20/minute; 120/hour; 400/day) from ``EVENT_BURST_BUFFER_MINUTES`` before a competition starts until the same margin after it ends. The invite-code and approval gates remain the controls that decide *who* may register.
 
 **Authentication:** Public
 
