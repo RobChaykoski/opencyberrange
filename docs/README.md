@@ -37,6 +37,21 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
   [MkDocs governance](MKDOCS-GOVERNANCE.md)
 - [Open-source readiness](OPEN-SOURCE-READINESS.md)
 
+## Release 6 planning
+
+Release 6 is a plan, not a shipped release. The order is competency, evidence,
+capstones and analytics, scale, federation, then the AI mentor.
+
+- [Release 6 scope](RELEASE-6-SCOPE.md)
+- [Competency Framework](COMPETENCY-FRAMEWORK.md)
+- [Evidence Engine](EVIDENCE-ENGINE.md)
+- [Capstone Builder](CAPSTONE-BUILDER.md)
+- [Instructor Analytics](INSTRUCTOR-ANALYTICS.md)
+- [HA and Kubernetes](HA-AND-KUBERNETES.md)
+- [Federation](FEDERATION.md)
+- [AI Mentor](AI-MENTOR.md)
+- [ADR 0005: Release 6 is evidence-first](decisions/0005-release-6-evidence-first.md)
+
 ## Architecture and security
 
 - [Architecture](ARCHITECTURE.md)

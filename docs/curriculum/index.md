@@ -18,6 +18,10 @@ How exercises, outcomes, and credentials fit together.
 | [Exercise quizzes](../EXERCISE-QUIZZES.md) | Optional knowledge checks |
 | [Certification question banks](../CERTIFICATION-QUESTION-BANKS.md) | Bank format and review |
 | [Question bank sources](../QUESTION-BANK-SOURCES.md) | Licensed and reviewed sources |
+| [Competency Framework](../COMPETENCY-FRAMEWORK.md) | Release 6 plan for the authoritative taxonomy, hierarchy, scoring, and mappings |
+| [Evidence Engine](../EVIDENCE-ENGINE.md) | Release 6 plan for evidence records, rubrics, and instructor review |
+| [Capstone Builder](../CAPSTONE-BUILDER.md) | Release 6 plan for competency-driven capstone generation |
+| [Instructor Analytics](../INSTRUCTOR-ANALYTICS.md) | Release 6 plan for cohort competency, lab, velocity, and drop-off dashboards |
 | [Cyber DNA](../CYBER-DNA-V3.md) | The competency evidence model |
 | [Cyber GPS schema](../CYBER-GPS-SCHEMA.md) | Career-signal schema |
 | [Skill DNA](../SKILL-DNA.md) | Skill branches and evidence |
