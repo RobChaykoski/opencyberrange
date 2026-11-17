@@ -66,3 +66,4 @@ topology:
     services:
     - OpenLDAP
     - AD-style objects
+workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/04_ACL_and_DACL_Abuse/

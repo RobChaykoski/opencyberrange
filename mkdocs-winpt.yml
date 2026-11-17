@@ -151,4 +151,15 @@ nav:
     - Introduction: CH_WIN10_AD_Authentication/00_Introduction.md
     - "Exercise 10.1 -- AD Fundamentals": CH_WIN10_AD_Authentication/01_AD_Fundamentals.md
     - "Exercise 10.2 -- From Directory to Share": CH_WIN10_AD_Authentication/02_AD_to_SMB.md
+  - "WIN11: Active Directory Attack and Remediation":
+    - Introduction: CH_WIN11_AD_Pathway/00_Introduction.md
+    - "Exercise 11.1 -- Domain Enumeration and Attack-Path Mapping": CH_WIN11_AD_Pathway/01_AD_Domain_Enumeration.md
+    - "Exercise 11.2 -- Kerberoasting": CH_WIN11_AD_Pathway/02_Kerberoasting.md
+    - "Exercise 11.3 -- AS-REP Roasting and Password Spray": CH_WIN11_AD_Pathway/03_AS_REP_Roasting.md
+    - "Exercise 11.4 -- ACL and DACL Abuse": CH_WIN11_AD_Pathway/04_ACL_and_DACL_Abuse.md
+    - "Exercise 11.5 -- Delegation Abuse": CH_WIN11_AD_Pathway/05_Delegation_Abuse.md
+    - "Exercise 11.6 -- AD CS Abuse": CH_WIN11_AD_Pathway/06_AD_CS_Abuse.md
+    - "Exercise 11.7 -- Credential Dumping and Ticket Abuse": CH_WIN11_AD_Pathway/07_DCSync_and_Tickets.md
+    - "Exercise 11.8 -- GPO, LAPS, and Tiered Administration Defence": CH_WIN11_AD_Pathway/08_GPO_and_LAPS_Defence.md
+    - "Exercise 11.9 -- Attack Path and Remediation Capstone": CH_WIN11_AD_Pathway/09_AD_Capstone.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

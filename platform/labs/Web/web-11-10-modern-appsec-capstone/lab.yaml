@@ -65,3 +65,4 @@ topology:
     services:
     - Flask
     - lab API
+workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/10_AppSec_Capstone/

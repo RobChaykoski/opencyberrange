@@ -7194,7 +7194,7 @@ labs:
     expected_duration_minutes: 60
     prerequisites:
     - web-2-2-insecure-api-endpoints
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/01_API_Inventory/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7252,7 +7252,7 @@ labs:
     - web-11-2-api-bola-bfla
     - web-11-4-jwt-security
     - web-11-8-kubernetes-security
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/10_AppSec_Capstone/
     competency_ids:
     - id: IR-008
       weight: 0.4
@@ -7308,7 +7308,7 @@ labs:
     expected_duration_minutes: 80
     prerequisites:
     - web-11-1-api-inventory
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/02_BOLA_and_BFLA/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7364,7 +7364,7 @@ labs:
     expected_duration_minutes: 90
     prerequisites:
     - web-11-1-api-inventory
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/03_GraphQL_Security/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7420,7 +7420,7 @@ labs:
     expected_duration_minutes: 90
     prerequisites:
     - web-11-1-api-inventory
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/04_JWT_Security/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7476,7 +7476,7 @@ labs:
     expected_duration_minutes: 100
     prerequisites:
     - web-11-4-jwt-security
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/05_OAuth_Abuse/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7532,7 +7532,7 @@ labs:
     expected_duration_minutes: 90
     prerequisites:
     - web-11-1-api-inventory
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/06_DevSecOps_Pipeline/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7588,7 +7588,7 @@ labs:
     expected_duration_minutes: 90
     prerequisites:
     - web-11-6-devsecops-pipeline
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/07_Container_Security/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7644,7 +7644,7 @@ labs:
     expected_duration_minutes: 120
     prerequisites:
     - web-11-7-container-security
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/08_Kubernetes_Security/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -7700,7 +7700,7 @@ labs:
     expected_duration_minutes: 80
     prerequisites:
     - web-11-6-devsecops-pipeline
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/09_Supply_Chain_Integrity/
     competency_ids:
     - id: WEB-001
       weight: 0.4
@@ -8598,7 +8598,7 @@ labs:
     expected_duration_minutes: 60
     prerequisites:
     - windows-2-9-ad-fundamentals-basics
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/01_AD_Domain_Enumeration/
     competency_ids:
     - id: WIN-001
       weight: 0.4
@@ -8654,7 +8654,7 @@ labs:
     expected_duration_minutes: 90
     prerequisites:
     - windows-11-1-ad-domain-enumeration
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/02_Kerberoasting/
     competency_ids:
     - id: WIN-001
       weight: 0.4
@@ -8710,7 +8710,7 @@ labs:
     expected_duration_minutes: 80
     prerequisites:
     - windows-11-1-ad-domain-enumeration
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/03_AS_REP_Roasting/
     competency_ids:
     - id: WIN-001
       weight: 0.4
@@ -8766,7 +8766,7 @@ labs:
     expected_duration_minutes: 110
     prerequisites:
     - windows-11-2-kerberoasting
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/04_ACL_and_DACL_Abuse/
     competency_ids:
     - id: LIN-020
       weight: 0.4
@@ -8820,7 +8820,7 @@ labs:
     expected_duration_minutes: 110
     prerequisites:
     - windows-11-4-acl-dacl-abuse
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/05_Delegation_Abuse/
     competency_ids:
     - id: LIN-020
       weight: 0.4
@@ -8874,7 +8874,7 @@ labs:
     expected_duration_minutes: 110
     prerequisites:
     - windows-11-4-acl-dacl-abuse
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/06_AD_CS_Abuse/
     competency_ids:
     - id: LIN-020
       weight: 0.4
@@ -8928,7 +8928,7 @@ labs:
     expected_duration_minutes: 130
     prerequisites:
     - windows-11-5-delegation-abuse
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/07_DCSync_and_Tickets/
     competency_ids:
     - id: WIN-001
       weight: 0.4
@@ -8984,7 +8984,7 @@ labs:
     expected_duration_minutes: 90
     prerequisites:
     - windows-11-4-acl-dacl-abuse
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/08_GPO_and_LAPS_Defence/
     competency_ids:
     - id: WIN-012
       weight: 0.4
@@ -9042,7 +9042,7 @@ labs:
     - windows-11-2-kerberoasting
     - windows-11-4-acl-dacl-abuse
     - windows-11-7-dcsync-tickets
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/09_AD_Capstone/
     competency_ids:
     - id: IR-008
       weight: 0.4

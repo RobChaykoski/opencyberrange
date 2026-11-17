@@ -9,8 +9,8 @@ Generated **16 November 2026** from the tree at release **5.17.5**.
 | Lab definitions | **210** | every `platform/labs/**/lab.yaml` |
 | Tester manifests | **210** | `platform/tester/manifests/*.yaml` |
 | Competency contracts | **210** | `platform/backend/app/data/competency-contracts.yaml` |
-| Workbook-mapped labs | **182** | non-empty `workbook:` |
-| Labs without a workbook link | **28** | remaining |
+| Workbook-mapped labs | **201** | non-empty `workbook:` |
+| Labs without a workbook link | **9** | remaining |
 | Tracks | **13** | track folders under `platform/labs` |
 | Registered in production | **210** | after discovery, verified 16 November 2026 |
 
@@ -31,8 +31,8 @@ The canonical definitions are in [Lab and content counts](COUNTS.md).
 | OSINT | 8 | 1, 2 | 8 |
 | OT | 4 | 1, 2 | 4 |
 | Software Security | 2 | 1, 2 | 2 |
-| Web | 26 | 1, 2, 3, **11** | 16 |
-| Windows | 64 | 1–11 | 53 |
+| Web | 26 | 1, 2, 3, **11** | 26 |
+| Windows | 64 | 1–11 | 62 |
 
 ## Progression
 
@@ -89,8 +89,7 @@ The canonical definitions are in [Lab and content counts](COUNTS.md).
 
 ## Remaining work
 
-- **28 labs without a workbook link** (19 new pathway labs plus 9 existing).
-  Add workbook pages or record an exemption.
+- **9 labs without a workbook link.** Add pages or record an exemption.
 - **Live harness:** the static validators are clean; the 210-lab live harness
   still needs three clean runs. One AD and one appsec container have been built
   and proved to serve their flags.

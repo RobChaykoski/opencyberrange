@@ -102,4 +102,16 @@ nav:
     - "Exercise 3.1 -- Hidden Login Discovery": CH_WEB03_Advanced_Exploitation/01_Hidden_Login_Discovery.md
     - "Exercise 3.2 -- SQL Injection to Shell": CH_WEB03_Advanced_Exploitation/02_SQL_Injection_To_Shell.md
     - "Exercise 3.3 -- Full Web-to-Root": CH_WEB03_Advanced_Exploitation/03_Full_Web_To_Root.md
+  - "WEB11: Modern Application Security":
+    - Introduction: CH_WEB11_AppSec_Pathway/00_Introduction.md
+    - "Exercise W11.1 -- API Security Inventory": CH_WEB11_AppSec_Pathway/01_API_Inventory.md
+    - "Exercise W11.2 -- BOLA and BFLA": CH_WEB11_AppSec_Pathway/02_BOLA_and_BFLA.md
+    - "Exercise W11.3 -- GraphQL Security": CH_WEB11_AppSec_Pathway/03_GraphQL_Security.md
+    - "Exercise W11.4 -- JWT Security": CH_WEB11_AppSec_Pathway/04_JWT_Security.md
+    - "Exercise W11.5 -- OAuth and OIDC Abuse": CH_WEB11_AppSec_Pathway/05_OAuth_Abuse.md
+    - "Exercise W11.6 -- CI/CD Pipeline Security": CH_WEB11_AppSec_Pathway/06_DevSecOps_Pipeline.md
+    - "Exercise W11.7 -- Container Security": CH_WEB11_AppSec_Pathway/07_Container_Security.md
+    - "Exercise W11.8 -- Kubernetes Security": CH_WEB11_AppSec_Pathway/08_Kubernetes_Security.md
+    - "Exercise W11.9 -- Supply Chain and Artifact Integrity": CH_WEB11_AppSec_Pathway/09_Supply_Chain_Integrity.md
+    - "Exercise W11.10 -- Modern Application Security Capstone": CH_WEB11_AppSec_Pathway/10_AppSec_Capstone.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

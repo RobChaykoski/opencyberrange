@@ -234,8 +234,8 @@ These are current, checkable counts from this repository and metrics the platfor
 
 | Outcome | How it is measured | Baseline in this repository |
 |---|---|---|
-| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **210** lab definitions; **182** expose a workbook page |
-| Guided lab instruction | Workbook walkthroughs and analysis questions | **182 workbook-mapped labs**, with guided analysis sections and questions |
+| Breadth of hands-on practice | Runnable exercises, tracks, and levels | **210** lab definitions; **201** expose a workbook page |
+| Guided lab instruction | Workbook walkthroughs and analysis questions | **201 workbook-mapped labs**, with guided analysis sections and questions |
 | Supported practice | Hints available and hint usage recorded per completion | **500+ hints**; hints used are stored with each completion |
 | Automated verification | Per-lab validation checks and flag checks | **210 lab contracts**, each run through **10 checks × 3 clean runs** by `scripts/lab_harness.py`; flags are stored as hashes |
 | Skill progression | Sequential level completion and level certificates | Level gates and **certificates for each completed level** |
@@ -246,7 +246,7 @@ These are current, checkable counts from this repository and metrics the platfor
 
 The badge counts every `lab.yaml` under `platform/labs` (**210** today). A
 running deployment registers all **210** after discovery, and the generated
-table below lists the **182** that have a workbook page. See [Lab and content
+table below lists the **201** that have a workbook page. See [Lab and content
 counts](docs/COUNTS.md) for the exact definitions.
 
 ### Release and repositories
@@ -434,7 +434,7 @@ Regenerate with `python scripts/generate-curriculum-docs.py`; CI can use
 | `winpt` | Windows Penetration Testing | Intermediate learners who have completed the beginner pathway or have equivalent terminal and networking experience. | intermediate | BEG04, NET00 | 51 | 102h 00m | published |
 | `linpt` | Linux Fundamentals | Intermediate learners building Linux enumeration, SSH access, privilege escalation, and detection skills. | intermediate | WIN09 | 30 | 38h 45m | published |
 
-**Total:** 182 workbook-mapped exercises across 13 tracks.
+**Total:** 201 workbook-mapped exercises across 13 tracks.
 
 Recommended pathway:
 

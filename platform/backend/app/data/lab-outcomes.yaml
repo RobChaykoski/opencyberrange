@@ -6832,7 +6832,7 @@ labs:
     track: Web
     difficulty: beginner
     expected_duration_minutes: 60
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/01_API_Inventory/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -6885,7 +6885,7 @@ labs:
     track: Web
     difficulty: advanced
     expected_duration_minutes: 160
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/10_AppSec_Capstone/
     skills_earned:
     - id: IR-008
       name: Executive Reporting
@@ -6940,7 +6940,7 @@ labs:
     track: Web
     difficulty: intermediate
     expected_duration_minutes: 80
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/02_BOLA_and_BFLA/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -6993,7 +6993,7 @@ labs:
     track: Web
     difficulty: intermediate
     expected_duration_minutes: 90
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/03_GraphQL_Security/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -7046,7 +7046,7 @@ labs:
     track: Web
     difficulty: intermediate
     expected_duration_minutes: 90
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/04_JWT_Security/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -7099,7 +7099,7 @@ labs:
     track: Web
     difficulty: advanced
     expected_duration_minutes: 100
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/05_OAuth_Abuse/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -7152,7 +7152,7 @@ labs:
     track: Web
     difficulty: intermediate
     expected_duration_minutes: 90
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/06_DevSecOps_Pipeline/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -7205,7 +7205,7 @@ labs:
     track: Web
     difficulty: intermediate
     expected_duration_minutes: 90
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/07_Container_Security/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -7258,7 +7258,7 @@ labs:
     track: Web
     difficulty: advanced
     expected_duration_minutes: 120
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/08_Kubernetes_Security/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -7311,7 +7311,7 @@ labs:
     track: Web
     difficulty: intermediate
     expected_duration_minutes: 80
-    workbook: ''
+    workbook: wiki/range/webpt/CH_WEB11_AppSec_Pathway/09_Supply_Chain_Integrity/
     skills_earned:
     - id: WEB-001
       name: HTML Fundamentals
@@ -8137,7 +8137,7 @@ labs:
     track: Windows
     difficulty: beginner
     expected_duration_minutes: 60
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/01_AD_Domain_Enumeration/
     skills_earned:
     - id: WIN-001
       name: Windows Administration
@@ -8190,7 +8190,7 @@ labs:
     track: Windows
     difficulty: intermediate
     expected_duration_minutes: 90
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/02_Kerberoasting/
     skills_earned:
     - id: WIN-001
       name: Windows Administration
@@ -8243,7 +8243,7 @@ labs:
     track: Windows
     difficulty: intermediate
     expected_duration_minutes: 80
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/03_AS_REP_Roasting/
     skills_earned:
     - id: WIN-001
       name: Windows Administration
@@ -8296,7 +8296,7 @@ labs:
     track: Windows
     difficulty: advanced
     expected_duration_minutes: 110
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/04_ACL_and_DACL_Abuse/
     skills_earned:
     - id: LIN-020
       name: Sudo Configuration
@@ -8344,7 +8344,7 @@ labs:
     track: Windows
     difficulty: advanced
     expected_duration_minutes: 110
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/05_Delegation_Abuse/
     skills_earned:
     - id: LIN-020
       name: Sudo Configuration
@@ -8392,7 +8392,7 @@ labs:
     track: Windows
     difficulty: advanced
     expected_duration_minutes: 110
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/06_AD_CS_Abuse/
     skills_earned:
     - id: LIN-020
       name: Sudo Configuration
@@ -8440,7 +8440,7 @@ labs:
     track: Windows
     difficulty: advanced
     expected_duration_minutes: 130
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/07_DCSync_and_Tickets/
     skills_earned:
     - id: WIN-001
       name: Windows Administration
@@ -8493,7 +8493,7 @@ labs:
     track: Windows
     difficulty: intermediate
     expected_duration_minutes: 90
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/08_GPO_and_LAPS_Defence/
     skills_earned:
     - id: WIN-012
       name: Authentication Concepts
@@ -8550,7 +8550,7 @@ labs:
     track: Windows
     difficulty: advanced
     expected_duration_minutes: 160
-    workbook: ''
+    workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/09_AD_Capstone/
     skills_earned:
     - id: IR-008
       name: Executive Reporting

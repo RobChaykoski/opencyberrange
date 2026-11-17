@@ -66,3 +66,4 @@ topology:
     services:
     - OpenLDAP
     - AD-style objects
+workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/03_AS_REP_Roasting/

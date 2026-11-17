@@ -9,13 +9,13 @@ when updating the README, release notes, or a deployment record.
 | Unique lab slugs | **210** | directory name of each `lab.yaml` |
 | Tester manifests | **210** | `platform/tester/manifests/*.yaml` |
 | Competency contracts | **210** | `platform/backend/app/data/competency-contracts.yaml` |
-| Labs with a workbook link | **182** | non-empty `workbook:` in `lab.yaml` |
-| Labs without a workbook link | **28** | remaining `lab.yaml` files |
+| Labs with a workbook link | **201** | non-empty `workbook:` in `lab.yaml` |
+| Labs without a workbook link | **9** | remaining `lab.yaml` files |
 | Registered labs in dev/prod | **210** | `labs` table after discovery |
 | Tracks | **13** | track folders under `platform/labs` |
 
 The badge and headline should use **210 lab definitions** and, when referring
-to workbook coverage, **182 workbook-mapped labs**. A deployment record should
+to workbook coverage, **201 workbook-mapped labs**. A deployment record should
 say **210 registered labs** only after lab discovery has run.
 
 The 5.17.2 wave added 19 pathway labs: 9 Active Directory exercises

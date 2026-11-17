@@ -42,7 +42,7 @@ A fresh-contributor review for the Community / Academic edition.
 
 - Backend: **908 passed** on a clean PostgreSQL database.
 - Frontend: **6 passed**; build passed.
-- Labs: **210 definitions, 210 manifests, 210 contracts, 182 workbook-mapped**.
+- Labs: **210 definitions, 210 manifests, 210 contracts, 201 workbook-mapped**.
 - `validate-lab.py --all`: **210 labs, 0 failed checks**.
 - Metadata, outcomes, manifests, API manual, licence, external-dataset, and
   documentation-link checks: passed.

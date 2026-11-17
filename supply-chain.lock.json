@@ -61,7 +61,7 @@
       "sha256": "b4e5cc77a8408624fcdd3b95e22773d1ce59fd5ea755e4100e1bae7c47648460"
     },
     "platform/backend/app/data/competency-contracts.yaml": {
-      "sha256": "989c748752a0b435306bde9be0e1886cd58713e57f090fcdbff01535274d53c7"
+      "sha256": "42c31d5242956e4e2c0b04c3ff0ac6c5e14fabfc758026f309275e5a121a20c7"
     },
     "platform/backend/app/data/competency-mapping.yaml": {
       "sha256": "23cd82a50b8c2c23970cdc5a9eb77afcc0e5a96b018bcd5fa791e5b306fc0c32"
@@ -160,7 +160,7 @@
       "sha256": "d073d2202db1e15c9b259640ea31cde86fc10329b3918c9fdc18fab906fd4d4d"
     },
     "platform/backend/app/data/lab-outcomes.yaml": {
-      "sha256": "4755632cbbfac3b619be146fc404f061e53d186c1eb1f5fe17e39f1987ad8565"
+      "sha256": "5f145f33bf046d8c19a6b3c48b31b100f9573992e1f2f106ff676678d16c25b1"
     },
     "platform/backend/app/data/malware-samples.yaml": {
       "sha256": "4e6a00ce7febc54336c44fe167b45180fbc8ae8cbb4343f772b2ad0554cc77be"
@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "5226a6b120c24f61830d4f59e3166d61f7b976465518ce29cdbc70a53d16726b"
+      "sha256": "0bbd8fa6bb97466dd4a2f1616ee8df20b873192e51e8a6ed88c87fa2913ecf00"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -1142,61 +1142,61 @@
       ]
     },
     "web-11-1-api-inventory": {
-      "content_hash": "cc79aef39145968ef75bfe3ce0f36f5b4184b42319cecd0e9569418dd93d088f",
+      "content_hash": "8cd192590bee7adeaf78eb6ed0c3585597882fb3a857fc27ec6cdef46d78fcd0",
       "services": [
         "webapp"
       ]
     },
     "web-11-10-modern-appsec-capstone": {
-      "content_hash": "f75edd80fbf769e25a4aeda72983d1e2012dd96edc96eab4ba79dacff24fe975",
+      "content_hash": "cb51a3ccab844375ccfe2b1f644a45a2445e48612cef486de72d2f4c3610e681",
       "services": [
         "webapp"
       ]
     },
     "web-11-2-api-bola-bfla": {
-      "content_hash": "738f5ed19554a2e225432a95d785d4f5ee2a95c178b38049f6cf9d90185490f4",
+      "content_hash": "566b56c574ef66e5d963e724d067595b60edd0c0c6d43ca6dc88bd991638c4c9",
       "services": [
         "webapp"
       ]
     },
     "web-11-3-graphql-security": {
-      "content_hash": "29270617bd47f5901747fb9cee84fd1885c577bcf93d6abc6d9cb58d8201f7df",
+      "content_hash": "5152addfc575815fe0fc899a714a93be3bb00b201b24a9cc17992d4c0965deb4",
       "services": [
         "webapp"
       ]
     },
     "web-11-4-jwt-security": {
-      "content_hash": "75b185c54c11e7f8c94ec503f9c02a6be554278393358da31669b569f5593250",
+      "content_hash": "d9df4df601960bf55726063e8bc34b6e05f3ed16e3df29e836a80f6835dbd984",
       "services": [
         "webapp"
       ]
     },
     "web-11-5-oauth-abuse": {
-      "content_hash": "00311ed856fb31b5687c4d26a54a93bd548ac28a6ba901fb31589027d4b8d70e",
+      "content_hash": "f1e1e21f33a30a694b7bd4b59bd70cc82e47fe67869614b810ba06d19200474d",
       "services": [
         "webapp"
       ]
     },
     "web-11-6-devsecops-pipeline": {
-      "content_hash": "e569edee254c9faca2f6c87f3fb8bc4f800d52afc32c429ae5b7990e8ba230eb",
+      "content_hash": "8462188ee8f14e88f46c7e76d76db8a1b25be5457a6d134ec5277f0e215cfe90",
       "services": [
         "webapp"
       ]
     },
     "web-11-7-container-security": {
-      "content_hash": "0a02b328da6f1f3dd768edbef1ec6b4ae3f9db0f66584406c42e5f1203739884",
+      "content_hash": "dc0b5eaea2c33336861482787b4dd0df4d17b58faa40610df2ff01b0dd76b834",
       "services": [
         "webapp"
       ]
     },
     "web-11-8-kubernetes-security": {
-      "content_hash": "90a56871a30a4445126b9bcf5e5f8589c9b058445bc1ff4940e68f16290cba18",
+      "content_hash": "4e9d3b298cd78caa8ddaf733a1daf49c3b3a21557cd2d3197c4354eb38c4ab2d",
       "services": [
         "webapp"
       ]
     },
     "web-11-9-supply-chain-integrity": {
-      "content_hash": "423218d0c8d20a5cb50c35cb966a2d0f6581fa205f362cff1213e81ac1b84ad2",
+      "content_hash": "63246d6892e002fe55368b7710c5cf0b162b4ba656b682fb48bea2c7a2aa7abe",
       "services": [
         "webapp"
       ]
@@ -1302,55 +1302,55 @@
       ]
     },
     "windows-11-1-ad-domain-enumeration": {
-      "content_hash": "8a0c9faba08ba082439c55f8f6295572c34b6f3113eac89776a75924310dd725",
+      "content_hash": "62d21d933785ab68d3ced791a6506421570dfc950e4dbcf34b1fb091abc21436",
       "services": [
         "ldap"
       ]
     },
     "windows-11-2-kerberoasting": {
-      "content_hash": "689a2e69c69e23ab5e8dfae5ccb6aa279e84cbd9f6a94ec7b37c5c0f818c3a47",
+      "content_hash": "fec45812c0cbb24abc42d27414cc5c8883c78adca3474194eb6ea1b146b5241c",
       "services": [
         "ldap"
       ]
     },
     "windows-11-3-asrep-spray": {
-      "content_hash": "8bdb31e60d9e7b00fd4b128f7c4be09ae2cfe66ae113c08b2e6d6949a813d111",
+      "content_hash": "8c93428ffe10cd68be050036a5941cb993326087c9bd093188885cddbe6de6f3",
       "services": [
         "ldap"
       ]
     },
     "windows-11-4-acl-dacl-abuse": {
-      "content_hash": "112e125aee840e50270ab768f31129797a941f450127727f49f7faad8f2b01a5",
+      "content_hash": "0869aa29fdbe1a6cd7f1e3df4dab50859e008017e41c65c16052607392b756c2",
       "services": [
         "ldap"
       ]
     },
     "windows-11-5-delegation-abuse": {
-      "content_hash": "5b2ff420da66028cb5cf887602b6d6823d38b37b052af893f83ec86d7de7178a",
+      "content_hash": "b2666dea171344538c58255886319c09f3013a4b8588be37bd3100fe9144b961",
       "services": [
         "ldap"
       ]
     },
     "windows-11-6-adcs-abuse": {
-      "content_hash": "461efada46a34cc6d338c114a2df231a99b25e06ef580706a7b2037431918174",
+      "content_hash": "558257a9a620fc435f6c84eb53e4315a5e6ebe3159a56d68b8a62e9b37e6ecac",
       "services": [
         "ldap"
       ]
     },
     "windows-11-7-dcsync-tickets": {
-      "content_hash": "bd8dabaf9cc6babb1fd6d779949a105414d0d84eefd0b26874f64f3197f96337",
+      "content_hash": "ff00b31555c9e2fd43aef36faeb38311034e811541cf02d372ec2265d0edfa8f",
       "services": [
         "ldap"
       ]
     },
     "windows-11-8-gpo-laps-defence": {
-      "content_hash": "e30a4c4ea858f04f6c636c1975562b90ef2adf43b92c3fc9cb06d2595e974889",
+      "content_hash": "845597849e405b83e53d0b3d36904508b8cf5faf37c0b960e1bed2c9b2a9b2ed",
       "services": [
         "ldap"
       ]
     },
     "windows-11-9-ad-capstone": {
-      "content_hash": "ddc70a037f81e55fe0f37cb62f978d2aff36dd1d71291785c917186fe82bf617",
+      "content_hash": "06bb8e5bc8f0f0a00d79380fb954223dace1e0bfc3ecea4b04357c19c34cf8a2",
       "services": [
         "ldap"
       ]

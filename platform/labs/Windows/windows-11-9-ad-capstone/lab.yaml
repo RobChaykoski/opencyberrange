@@ -68,3 +68,4 @@ topology:
     services:
     - OpenLDAP
     - AD-style objects
+workbook: wiki/range/winpt/CH_WIN11_AD_Pathway/09_AD_Capstone/
