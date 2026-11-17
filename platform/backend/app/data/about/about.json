@@ -1,9 +1,9 @@
 {
-  "generated_for_release": "5.17.6",
+  "generated_for_release": "5.17.7",
   "release_date": "2026-11-17",
   "platform": {
     "name": "SWOCTS Cyber Range",
-    "version": "5.17.6",
+    "version": "5.17.7",
     "status": "release",
     "edition": "Community / Academic",
     "python": "3.13",

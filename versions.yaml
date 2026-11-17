@@ -9,7 +9,7 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.17.6"
+  version: "5.17.7"
   status: "release"
   date: "2026-11-17"
 
@@ -41,13 +41,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.17.6"
+  version: "5.17.7"
   status: "release"
   date: "2026-11-17"
 
 development:
-  version: "5.17.6"
-  focus: "Post-5.17 patch: settings-ticket UX, pathway workbook questions, pathway completion badges, and privacy-safe manual screenshots"
+  version: "5.17.7"
+  focus: "Post-5.17 patch: course enrollment navigation, exercise review status, settings-ticket UX, pathway workbook questions, and pathway completion badges"
 
 policy:
   name: latest-supported-ga

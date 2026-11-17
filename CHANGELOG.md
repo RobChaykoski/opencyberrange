@@ -2,6 +2,33 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.7] - 2026-11-17
+
+### Course management
+
+- Fixed the admin course-management dead end: **Manage** now opens the
+  Instructor Panel course workspace directly at the selected course, where the
+  working **Enroll Students** flow lives. The learner-facing course page remains
+  a separate view.
+- The admin panel now says **Manage students** and **View course page** instead
+  of sending administrators to a page with no enrollment controls.
+- Verified from the admin path: the selected course opens, the enrollable-user
+  list loads, and enrollment returns **1 student enrolled**.
+
+### Exercise review status
+
+- Added a **Review** column to Admin > Exercises. It shows the competency
+  contract state (`Reviewed`, `Pathway`, `Baseline`, `Pending`, `Unmapped`),
+  with content version, review date, and flag presence in the tooltip.
+- This is a review-record indicator, not a live harness result. A separate
+  **Run exercise tester** action remains available per exercise.
+
+### Validation
+
+- 8/8 Playwright checks for admin course navigation and enrollment.
+- 25 review badges render on the exercises page.
+- Backend curriculum admin tests pass; frontend lint and production build pass.
+
 ## [5.17.6] - 2026-11-17
 
 ### Production settings UX
