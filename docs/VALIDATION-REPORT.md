@@ -103,8 +103,8 @@ python scripts/supply_chain.py --check \
 | Registered labs | `210` |
 | Admin release status | `current` / `v5.17.5` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
-| Backup | `ocr-backup-20261116-223835.dump` |
-| Restore drill | **PASSED** (47 users, 210 labs) |
+| Backup | `ocr-backup-20261117-012455.dump` |
+| Restore drill | **PASSED** (47 users, 210 labs, 41 enrollments, 463 achievements) |
 | Live password check | correct login/reauth/change = `200`; wrong/oversized/newline = `401` |
 
 ## Known gaps

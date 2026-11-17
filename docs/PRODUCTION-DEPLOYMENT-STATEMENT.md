@@ -20,7 +20,8 @@ another document disagrees, this page and the signed tag win.
 | Pre-cutover backup | `~/backups/ocr-backup-20261116-181526.dump` |
 | Post-cutover backup | `~/backups/ocr-backup-20261116-192307.dump` |
 | 5.17.5 backup | `~/backups/ocr-backup-20261116-223835.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, and post-5.17.5) |
+| Final backup (post-cleanup) | `~/backups/ocr-backup-20261117-012455.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, and final) |
 
 ## Production cutover: COMPLETE
 

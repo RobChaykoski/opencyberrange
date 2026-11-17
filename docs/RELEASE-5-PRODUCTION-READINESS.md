@@ -59,8 +59,9 @@ Community / Academic release and the one-way cutover is complete.
   and learner data preserved.
 - Verified: `/api/version` returns `5.17.5`, `/health` 200, 210 labs, Alembic
   `0041_tenant_rls_legacy`, cutover state unchanged.
-- Post-deploy backup `ocr-backup-20261116-223835.dump`; restore drill **PASSED**
-  (47 users, 210 labs).
+- Post-deploy backup `ocr-backup-20261116-223835.dump`; final post-cleanup backup
+  `ocr-backup-20261117-012455.dump`; restore drills **PASSED** (47 users, 210
+  labs, 41 enrollments, 463 achievements).
 - Tag `v5.17.5` is signed with the release key
   `68A817762C831475F00DB54E775050A4C4921814`.
 
