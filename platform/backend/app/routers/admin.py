@@ -16,7 +16,7 @@ from fastapi import (
 )
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
-from typing import List, Literal
+from typing import List, Literal, Union
 from datetime import datetime, timezone, timedelta
 import asyncio
 import csv
@@ -47,6 +47,7 @@ from app.schemas import (
     ResetPasswordRequest,
     UpdateLabRequest,
     LabCreate,
+    UserPage,
     _password_policy_error,
 )
 from app.auth import (
@@ -84,6 +85,7 @@ from app.services.user_transfer import (
     export_users as build_user_export,
     import_users as apply_user_import,
 )
+from app.pagination import normalize_page, page_meta, paginate
 from app.export_reason import require_export_reason
 from app.config import settings
 
@@ -126,15 +128,18 @@ def _visible_user_or_404(db: Session, actor: User, user_id: int) -> User:
     return user
 
 
-@router.get("/users", response_model=List[UserAdminResponse])
+@router.get("/users", response_model=Union[List[UserAdminResponse], UserPage])
 async def list_users(
+    page: int | None = Query(None, ge=1),
+    per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_institution_admin_user),
 ):
     """List users — bulk-syncs vpn_registered flags from Peer Manager.
 
     A platform admin sees every institution; an institution admin sees only its
-    own tenant.
+    own tenant. Without ``page``/``per_page`` this keeps the original array
+    response; supplying either returns a page envelope with totals.
     """
     # Sync vpn_registered flags against the live Peer Manager peer list.
     # Only update when the API responds (peers is not None) so we don't
@@ -156,7 +161,13 @@ async def list_users(
         if dirty:
             db.commit()
 
-    return _scope_users(db.query(User), admin).all()
+    query = _scope_users(db.query(User), admin).order_by(User.id)
+    if page is None and per_page is None:
+        return query.all()
+
+    page, per_page = normalize_page(page, per_page)
+    users, total = paginate(query, page, per_page)
+    return {"users": users, **page_meta(total, page, per_page)}
 
 
 @router.get("/users/pending", response_model=List[UserAdminResponse])
@@ -376,7 +387,9 @@ async def get_user_details(
     user = _visible_user_or_404(db, admin, user_id)
     
     # Get completions with lab information - only for enabled labs
-    completions_query = db.query(LabCompletion, Lab).join(Lab).filter(
+    completions_query = db.query(LabCompletion, Lab).join(Lab).options(
+        joinedload(Lab.level).joinedload(Level.track)
+    ).filter(
         LabCompletion.user_id == user_id,
         Lab.is_active == True
     ).order_by(LabCompletion.completed_at.desc())
@@ -1321,29 +1334,47 @@ async def bulk_toggle_labs(
 
 # ==================== Session Management ====================
 
+def _active_session_payload(session) -> dict:
+    return {
+        "id": session.id,
+        "user_id": session.user_id,
+        "username": session.user.username,
+        "lab_name": session.lab.name,
+        "lab_slug": session.lab.slug,
+        "network_subnet": session.network_subnet,
+        "is_diagnostic": bool(session.is_diagnostic),
+        "started_at": session.started_at,
+        "expires_at": session.expires_at,
+    }
+
+
 @router.get("/sessions/active")
 async def list_active_sessions(
+    page: int | None = Query(None, ge=1),
+    per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
-    """List all active lab sessions"""
-    sessions = (
+    """List active lab sessions.
+
+    Without ``page``/``per_page`` this keeps the original array response;
+    supplying either returns a page envelope with totals.
+    """
+    query = (
         db.query(LabSession)
         .options(joinedload(LabSession.user), joinedload(LabSession.lab))
         .filter(LabSession.status == "running")
-        .all()
+        .order_by(LabSession.id)
     )
-    return [{
-        "id": s.id,
-        "user_id": s.user_id,
-        "username": s.user.username,
-        "lab_name": s.lab.name,
-        "lab_slug": s.lab.slug,
-        "network_subnet": s.network_subnet,
-        "is_diagnostic": bool(s.is_diagnostic),
-        "started_at": s.started_at,
-        "expires_at": s.expires_at
-    } for s in sessions]
+    if page is None and per_page is None:
+        return [_active_session_payload(s) for s in query.all()]
+
+    page, per_page = normalize_page(page, per_page)
+    sessions, total = paginate(query, page, per_page)
+    return {
+        "sessions": [_active_session_payload(s) for s in sessions],
+        **page_meta(total, page, per_page),
+    }
 
 
 @router.get("/sessions/history")
@@ -2173,6 +2204,8 @@ def _format_bytes(value) -> str:
 
 @router.get("/vpn/peers")
 async def list_vpn_peers(
+    page: int | None = Query(None, ge=1),
+    per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
@@ -2190,7 +2223,10 @@ async def list_vpn_peers(
         # If API is unavailable, return empty list instead of error
         if not peers:
             logger.debug("Peer Manager API unavailable, returning empty peer list")
-            return {"peers": []}
+            if page is None and per_page is None:
+                return {"peers": []}
+            page, per_page = normalize_page(page, per_page)
+            return {"peers": [], **page_meta(0, page, per_page)}
 
         # Build lookups so we can detect peers that occupy a slot the DB
         # believes belongs to a different key (stale duplicate)
@@ -2263,11 +2299,23 @@ async def list_vpn_peers(
                 "repair_user_id": repair_user_id,
             })
 
-        return {"peers": enriched_peers}
+        if page is None and per_page is None:
+            return {"peers": enriched_peers}
+
+        page, per_page = normalize_page(page, per_page)
+        total = len(enriched_peers)
+        start = (page - 1) * per_page
+        return {
+            "peers": enriched_peers[start:start + per_page],
+            **page_meta(total, page, per_page),
+        }
     except Exception as e:
         logger.warning(f"Failed to list VPN peers: {e}, returning empty list")
         # Return empty list instead of error to prevent UI blocking
-        return {"peers": []}
+        if page is None and per_page is None:
+            return {"peers": []}
+        page, per_page = normalize_page(page, per_page)
+        return {"peers": [], **page_meta(0, page, per_page)}
 
 
 @router.post("/vpn/peers/{user_id}/repair")
@@ -2329,10 +2377,12 @@ async def repair_vpn_peer(
 
 @router.get("/vpn/status")
 async def vpn_sync_status(
+    page: int | None = Query(None, ge=1),
+    per_page: int | None = Query(None, ge=1, le=200),
     db: Session = Depends(get_db),
     admin: User = Depends(get_current_admin_user)
 ):
-    """Get VPN sync status - compare DB to Peer Manager"""
+    """Get VPN sync status - compare DB to Peer Manager."""
     # Get all users with WireGuard configs
     wg_configs = db.query(WireGuardConfig).all()
     
@@ -2358,11 +2408,25 @@ async def vpn_sync_status(
         else:
             unregistered.append(info)
     
-    return {
+    response = {
         "registered_count": len(registered),
         "unregistered_count": len(unregistered),
         "registered": registered,
-        "unregistered": unregistered
+        "unregistered": unregistered,
+    }
+    if page is None and per_page is None:
+        return response
+
+    page, per_page = normalize_page(page, per_page)
+    start = (page - 1) * per_page
+    return {
+        **response,
+        "registered": registered[start:start + per_page],
+        "unregistered": unregistered[start:start + per_page],
+        "page": page,
+        "per_page": per_page,
+        "registered_pages": page_meta(len(registered), page, per_page)["pages"],
+        "unregistered_pages": page_meta(len(unregistered), page, per_page)["pages"],
     }
 
 
@@ -4440,12 +4504,15 @@ def _start_stress_test_run(
         if event.get("type") == "complete":
             state = _stress_read_state(run_id)
             state["results"] = event.get("results")
-            state["status"] = "cancelled" if event.get("results", {}).get("cancelled") else "completed"
+            # Leave the run "running" until the thread has removed its temporary
+            # users, so a second run cannot start while cleanup is in progress.
             _stress_write_state(run_id, state)
             if level == 4:
                 _record_capacity_test_result(event.get("results") or {})
 
     def _run_in_thread():
+        final_status = "error"
+        result = None
         try:
             from stress_test import run_stress_test
             result = run_stress_test(
@@ -4456,16 +4523,9 @@ def _start_stress_test_run(
                 event_callback=event_callback,
                 cancel_flag=cancel_flag,
             )
-            state = _stress_read_state(run_id)
-            if state.get("status") == "running":
-                state["results"] = result
-                state["status"] = "cancelled" if result.get("cancelled") else "completed"
-                _stress_write_state(run_id, state)
+            final_status = "cancelled" if result.get("cancelled") else "completed"
         except Exception as exc:
             logger.error("Stress test error for run %s: %s", run_id, exc)
-            state = _stress_read_state(run_id)
-            state["status"] = "error"
-            _stress_write_state(run_id, state)
             _stress_append_event(run_id, {
                 "type": "line",
                 "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S"),
@@ -4473,6 +4533,15 @@ def _start_stress_test_run(
                 "message": f"Stress test crashed: {str(exc)[:200]}",
             })
         finally:
+            # App-started runs create temporary accounts. Remove them even when
+            # the test was cancelled or crashed, before publishing the final
+            # status so the admin UI cannot start another run mid-cleanup.
+            _stress_cleanup_users(run_id)
+            state = _stress_read_state(run_id)
+            state["status"] = final_status
+            if result is not None:
+                state["results"] = result
+            _stress_write_state(run_id, state)
             _stress_cancel_flags.pop(run_id, None)
 
     t = threading.Thread(target=_run_in_thread, daemon=True)
@@ -4797,6 +4866,31 @@ def _stress_append_event(run_id: str, event: dict) -> None:
     with _stress_state_lock:
         with open(_stress_path(run_id, "events.jsonl"), "a", encoding="utf-8") as handle:
             handle.write(json.dumps(event, default=str) + "\n")
+
+
+def _stress_cleanup_users(run_id: str) -> None:
+    """Remove the temporary users created by an app-started stress test.
+
+    The CLI keeps its opt-in ``--cleanup`` behaviour. Runs launched from the
+    admin UI are short-lived smoke or capacity tests, so their accounts must not
+    be left in the user list. Cleanup failures are reported in the run log and
+    do not hide the test results.
+    """
+    def emit(message: str, level: str = "info") -> None:
+        _stress_append_event(run_id, {
+            "type": "line",
+            "timestamp": datetime.now(timezone.utc).strftime("%H:%M:%S"),
+            "level": level,
+            "message": message,
+        })
+
+    emit("Removing stress-test users...")
+    try:
+        from stress_test import cleanup_test_data
+        cleanup_test_data(emit=emit)
+    except Exception as exc:
+        logger.warning("Stress-test user cleanup failed for run %s: %s", run_id, exc)
+        emit(f"Cleanup failed: {str(exc)[:200]}", level="error")
 
 
 def _stress_read_events(run_id: str, after: int = 0) -> list[dict]:

@@ -5,6 +5,8 @@ import uuid
 from app.auth import get_password_hash
 from app.models import User
 
+# Test-only fixture credential; never used outside the pytest database.
+# security-delta: allow credential-like assignment
 PASSWORD = "Admin#Pass123"
 
 
@@ -45,6 +47,22 @@ def test_admin_user_list_includes_last_sign_in(client, db_session, monkeypatch):
     assert row["role"] == "admin"
     assert row["is_locked"] is False
     assert row["vpn_registered"] is False
+
+
+def test_admin_user_list_can_be_paginated(client, db_session, monkeypatch):
+    from app.routers import admin as admin_router
+
+    monkeypatch.setattr(admin_router.wireguard_manager, "list_peers", lambda: None)
+    admin, headers = _make_admin(client, db_session)
+
+    resp = client.get("/api/admin/users?page=1&per_page=1", headers=headers)
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["page"] == 1
+    assert body["per_page"] == 1
+    assert body["total"] >= 1
+    assert len(body["users"]) == 1
 
 
 def test_admin_user_detail_includes_last_sign_in(client, db_session):

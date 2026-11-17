@@ -51,6 +51,7 @@ from app.services.db_integrity import ensure_ledger
 from app.config import settings
 from app.version import APP_VERSION, RELEASE_NAME
 from app.ratelimit import create_limiter
+from app.request_limits import BodySizeLimitMiddleware
 from app.actor import set_request_id, clear_actor
 
 # Configure logging
@@ -1316,6 +1317,11 @@ async def impersonation_read_only_middleware(request: Request, call_next):
                 except Exception:
                     pass  # Let downstream auth handle invalid tokens
     return await call_next(request)
+
+
+# Reject oversized request bodies before routing. Upload routes get a larger
+# per-path allowance; everything else stays at the default JSON/form cap.
+app.add_middleware(BodySizeLimitMiddleware)
 
 
 # Include routers

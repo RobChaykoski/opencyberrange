@@ -116,7 +116,7 @@ HTTP and WebSocket traffic.
 | WebSockets on | The browser noVNC client opens a WebSocket under `/api/rangebox/.../vnc`. |
 | 3600s read/send timeout | A lab terminal or SSE stream can stay open far longer than the 60s default. |
 | Buffering off | SSE responses (`text/event-stream`) must reach the browser as they are produced. |
-| 64 MB body limit | Workbook ZIPs are capped at 50 MB in the backend; the default 1 MB would reject them. |
+| 520 MB body limit | The largest upload is the 512 MB database restore snapshot; the backend caps ordinary API bodies at 10 MB and upload routes separately. |
 | `X-Forwarded-For $remote_addr` | The app records client IPs for audit and rate limiting; do not trust a client-supplied chain. |
 | Crawler `403` | The platform is private; search and AI crawlers have no legitimate reason to fetch it. |
 
@@ -182,14 +182,16 @@ proxy_buffering off;
 proxy_request_buffering off;
 proxy_socket_keepalive on;
 
-# Workbook ZIPs are capped at 50 MB in the app; leave headroom
-client_max_body_size 64m;
+# The largest upload is a 512 MB database restore snapshot; leave headroom.
+# The app caps ordinary API bodies at 10 MB and each upload route separately.
+client_max_body_size 520m;
 ```
 
 Keep timeouts and buffering scoped to the interactive host rather than global.
 A static or download-heavy host can use buffering and shorter timeouts, while
-an interactive host needs long-lived streams. A large `client_max_body_size` on
-every host also removes a useful upload limit.
+an interactive host needs long-lived streams. Keep `client_max_body_size` scoped
+to the API host as well: the proxy ceiling allows the largest upload, while the
+application still rejects oversized bodies on ordinary routes.
 
 NPM regenerates `/data/nginx/proxy_host/*.conf` from its database when a host is
 saved, so edit hosts through the UI or API; hand edits to those generated files

@@ -3192,10 +3192,14 @@
                 <button @click="downloadStressReport" class="btn btn--secondary btn--sm" :disabled="stressRunning || !stressResults" title="Download PDF report">
                   PDF Report
                 </button>
-                <button @click="stressCleanup" class="btn btn--secondary btn--sm" :disabled="stressRunning" title="Remove test users from database">
+                <button @click="stressCleanup" class="btn btn--secondary btn--sm" :disabled="stressRunning" title="Remove leftover test users from the database">
                   Cleanup
                 </button>
               </div>
+            </div>
+
+            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 1rem;">
+              Test accounts are created for the run and removed automatically when it finishes. Cleanup removes accounts left behind by an interrupted or older run.
             </div>
 
             <div v-if="stressLevel === 3" style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 0.5rem; padding: 0.5rem 0.75rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--warning);">

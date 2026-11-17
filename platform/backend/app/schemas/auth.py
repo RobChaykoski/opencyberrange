@@ -69,6 +69,16 @@ class UserAdminResponse(BaseModel):
         from_attributes = True
 
 
+class UserPage(BaseModel):
+    """One page of admin user rows, with the total for the current scope."""
+
+    users: List[UserAdminResponse]
+    total: int
+    page: int
+    per_page: int
+    pages: int
+
+
 class LabCompletionDetail(BaseModel):
     """Lab completion information for user detail view"""
     lab_id: int
