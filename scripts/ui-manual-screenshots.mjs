@@ -456,7 +456,29 @@ if (admin) {
   if (await features.count()) {
     await features.click()
     await page.waitForTimeout(900)
-    await viewportShot(page, path.join(IMG.admin, 'admin-settings-features.png'), 'features')
+    // Crop to the category tabs and the feature rows so the development-only
+    // cutover block above does not dominate a settings figure.
+    const categories = page.locator('.settings-categories').first()
+    const panel = page.locator('.settings-panel').first()
+    await categories.scrollIntoViewIfNeeded()
+    await page.waitForTimeout(300)
+    const top = await categories.boundingBox()
+    const bottom = await panel.boundingBox()
+    if (top && bottom) {
+      await page.screenshot({
+        path: path.join(IMG.admin, 'admin-settings-features.png'),
+        animations: 'disabled',
+        clip: {
+          x: Math.max(0, Math.min(top.x, bottom.x) - 8),
+          y: Math.max(0, top.y - 8),
+          width: Math.max(top.width, bottom.width) + 16,
+          height: bottom.y + bottom.height - top.y + 16,
+        },
+      })
+      report.push('OK features')
+    } else {
+      report.push('SKIP features: settings regions not visible')
+    }
   } else {
     report.push('SKIP features tab: not found')
   }
