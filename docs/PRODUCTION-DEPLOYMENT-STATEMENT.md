@@ -13,6 +13,7 @@ another document disagrees, this page and the signed tag win.
 | Release | **5.17.6** |
 | Signed tag | **`v5.17.6`** |
 | Runtime code commit | `d2b2285d` (signed tag `v5.17.6`) |
+| Post-release content update | `e9b2c602` (XSS/CSRF study page, Web track knowledge-check items, IoT reference map; no schema or runtime code change) |
 | Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -116,6 +117,16 @@ to `/auth/reauth` and the regression test asserts the corrected path.
   (ticket `123456`); users returned to **47**.
 - Validation: 909 backend tests, frontend lint/tests/build, 38/38 UI smoke
   checks, link/doc-asset/workbook/lab/quiz/security checks pass.
+
+### Post-release content update
+
+- Commit `e9b2c602` adds original study material for browser-side trust
+  boundaries (XSS/CSRF), API security, and IoT/embedded security, plus seven
+  original Web track knowledge-check questions. External platforms remain
+  references only; no scenarios, questions, answers, flags, screenshots, or
+  assets were copied.
+- This is a content and documentation update on the 5.17.6 runtime; it does not
+  change the schema, migrations, or application code.
 
 ## 5.17.5 additions
 
