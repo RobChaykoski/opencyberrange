@@ -1077,6 +1077,7 @@ async def list_labs(
     """List all labs with track and level information"""
     from sqlalchemy.orm import joinedload
     from app.models import Level
+    from app.services.competency_contract import contract_for_lab
     
     labs = db.query(Lab).options(
         joinedload(Lab.level).joinedload(Level.track),
@@ -1086,6 +1087,7 @@ async def list_labs(
     # Convert to dict format with track/level info
     result = []
     for lab in labs:
+        contract = contract_for_lab(lab.slug) or {}
         lab_dict = {
             "id": lab.id,
             "name": lab.name,
@@ -1105,6 +1107,10 @@ async def list_labs(
             "visibility": getattr(lab, 'visibility', 'public'),
             "created_by": getattr(lab, 'created_by', None),
             "created_by_username": lab.creator.username if lab.creator else None,
+            "review_status": contract.get("review_status") or "unmapped",
+            "reviewed_at": contract.get("reviewed_at"),
+            "content_version": contract.get("content_version") or lab.content_version,
+            "has_flag": bool(lab.flag_hash),
         }
         result.append(lab_dict)
     

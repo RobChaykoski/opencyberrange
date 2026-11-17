@@ -258,3 +258,20 @@ def test_track_reorder_and_missing_ids(client, db_session):
         headers=headers,
     )
     assert unknown_level.status_code == 200
+
+def test_admin_labs_include_review_status(client, db_session, test_lab):
+    """The exercises table can show contract review state without a second call."""
+    admin = _make_user(db_session)
+    headers = _headers(client, admin)
+    response = client.get("/api/admin/labs", headers=headers)
+    assert response.status_code == 200, response.text
+    row = next(item for item in response.json() if item["id"] == test_lab.id)
+    assert row["review_status"] in {
+        "reviewed",
+        "pathway_implementation",
+        "baseline_derived",
+        "pending",
+        "unmapped",
+    }
+    assert "content_version" in row
+    assert isinstance(row["has_flag"], bool)

@@ -762,12 +762,13 @@
                         <th>Difficulty</th>
                         <th>Duration</th>
                         <th>Visibility</th>
+                        <th>Review</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr v-if="adminFilteredLabs.length === 0">
-                        <td colspan="6" class="empty-row">No exercises match your filters</td>
+                        <td colspan="7" class="empty-row">No exercises match your filters</td>
                       </tr>
                       <template v-for="lab in paginatedAdminLabs" :key="lab.id">
                       <tr :class="{ 'row--inactive': !lab.is_active }">
@@ -800,6 +801,15 @@
                             <option value="pending_public">Pending</option>
                             <option value="draft">Draft</option>
                           </select>
+                        </td>
+                        <td>
+                          <span
+                            class="review-badge"
+                            :class="'review-badge--' + reviewStatusMeta(lab.review_status).class"
+                            :title="reviewStatusTitle(lab)"
+                          >
+                            {{ reviewStatusMeta(lab.review_status).label }}
+                          </span>
                         </td>
                         <td>
                           <div class="exercise-actions">
@@ -1745,8 +1755,11 @@
             <div class="panel-header">
               <h3 class="panel-title">{{ managingCourse.name }} ({{ managingCourse.code }})</h3>
               <div style="display: flex; gap: 0.5rem;">
-                <router-link :to="`/courses/${managingCourse.id}`" class="btn btn--primary btn--sm">
-                  Open Course &rarr;
+                <button @click="openCourseManagement" class="btn btn--primary btn--sm">
+                  Manage students &rarr;
+                </button>
+                <router-link :to="`/courses/${managingCourse.id}`" class="btn btn--secondary btn--sm">
+                  View course page
                 </router-link>
                 <button @click="managingCourse = null" class="btn btn--secondary btn--sm">Close</button>
               </div>
@@ -1765,7 +1778,8 @@
               <span>Invite: <code class="invite-code-admin" @click="copyToClipboard(managingCourse.invite_code)" style="cursor: pointer;">{{ managingCourse.invite_code }}</code></span>
             </div>
             <p style="color: var(--text-muted); font-size: 0.8125rem; margin: 0;">
-              Use <strong>Open Course</strong> to manage students, exercises, assignments, analytics, and reports.
+              Use <strong>Manage students</strong> to add or remove learners, assign exercises,
+              and review progress. <strong>View course page</strong> opens the learner-facing view.
             </p>
             <div class="retention-panel">
               <h4 class="retention-panel__title">Records retention</h4>
@@ -9377,6 +9391,26 @@ const enrollableUsers = computed(() => {
   return users.value.filter(u => u.role !== 'admin' && !enrolledIds.has(u.id))
 })
 
+const REVIEW_STATUS_META = {
+  reviewed: { label: 'Reviewed', class: 'reviewed' },
+  pathway_implementation: { label: 'Pathway', class: 'provisional' },
+  baseline_derived: { label: 'Baseline', class: 'provisional' },
+  pending: { label: 'Pending', class: 'pending' },
+  unmapped: { label: 'Unmapped', class: 'missing' },
+}
+
+function reviewStatusMeta(status) {
+  return REVIEW_STATUS_META[status] || { label: 'Unreviewed', class: 'missing' }
+}
+
+function reviewStatusTitle(lab) {
+  const parts = [reviewStatusMeta(lab.review_status).label]
+  if (lab.content_version) parts.push(`content v${lab.content_version}`)
+  if (lab.reviewed_at) parts.push(`reviewed ${lab.reviewed_at}`)
+  if (!lab.has_flag) parts.push('no flag hash')
+  return parts.join(' · ')
+}
+
 // Group labs for assignment by Track > Level, excluding already-assigned labs
 const assignLabsByTrackLevel = computed(() => {
   const assignedIds = new Set(courseLabs.value.map(l => l.id))
@@ -9612,6 +9646,16 @@ const openCourseManager = (course) => {
     managingCourse.value = course
     loadRetention(course.id)
   }
+}
+
+const openCourseManagement = () => {
+  if (!managingCourse.value) return
+  // Enrollment and exercise management live in the Instructor Panel course
+  // workspace. The learner-facing course page does not expose admin controls.
+  router.push({
+    path: '/instructor',
+    query: { tab: 'courses', course: String(managingCourse.value.id) },
+  })
 }
 
 const fetchCourseStudents = async () => {
@@ -11303,6 +11347,42 @@ watch(activeTab, (tab) => {
   display: flex;
   gap: 0.5rem;
   flex-shrink: 0;
+}
+
+.review-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.review-badge--reviewed {
+  border-color: rgba(34, 197, 94, 0.35);
+  color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.review-badge--provisional {
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--warning);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.review-badge--pending {
+  border-color: rgba(59, 130, 246, 0.35);
+  color: var(--accent-text);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.review-badge--missing {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .exercise-action-btn {

@@ -1874,7 +1874,7 @@ const savingSettings = ref(false)
 // Student enrollment state
 const enrollableUsers = ref([])
 const enrolling = ref(false)
-const isAdmin = currentUser.role === 'admin'
+const isAdmin = currentUser.role === 'admin' || currentUser.is_admin === true
 const enrollSearch = ref('')
 const selectedEnrollIds = ref(new Set())
 
@@ -1898,6 +1898,8 @@ watch(() => route.query.tab, (newTab) => {
     activeTab.value = newTab
   }
 })
+
+watch(() => route.query.course, () => openCourseFromQuery())
 
 function switchTab(tab) {
   activeTab.value = tab
@@ -2299,6 +2301,16 @@ async function openCourseManagerTab(course, tab) {
   enrollSearch.value = ''
   if (tab === 'reports') fetchReportCatalog()
   await Promise.all([fetchCourseStudents(), fetchCourseLabs(), fetchAvailableLabs(), fetchAssignments(), isAdmin ? fetchEnrollableUsers() : Promise.resolve()])
+}
+
+async function openCourseFromQuery() {
+  const raw = route.query.course
+  const id = Number(Array.isArray(raw) ? raw[0] : raw)
+  if (!Number.isFinite(id) || id <= 0) return
+  activeTab.value = 'courses'
+  if (!courses.value.length) await fetchCourses()
+  const course = courses.value.find((row) => Number(row.id) === id)
+  if (course) await openCourseManagerTab(course, 'students')
 }
 
 async function fetchCourseStudents() {
@@ -3412,14 +3424,15 @@ watch(activeTab, (tab) => {
   if (tab === 'overview') fetchOverview()
 })
 
-onMounted(() => {
+onMounted(async () => {
   fetchModules()
-  fetchCourses()
+  await fetchCourses()
   fetchLabs()
   fetchLabAssignments()
   fetchTesterResults()
   checkActiveTestRun()
   if (activeTab.value === 'overview') fetchOverview()
+  await openCourseFromQuery()
 })
 
 onUnmounted(() => {
