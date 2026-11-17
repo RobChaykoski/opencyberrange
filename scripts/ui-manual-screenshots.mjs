@@ -29,12 +29,23 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { chromium, request } from 'playwright'
+import { createRequire } from 'node:module'
+
+// The repository root has no node_modules; Playwright is installed with the
+// frontend. Resolve it from that package so the documented root-level command
+// works without NODE_PATH or a second install.
+const require = createRequire(
+  new URL('../platform/frontend/package.json', import.meta.url),
+)
+const { chromium, request } = require('playwright')
 
 const BASE = (process.env.UI_BASE_URL || '').replace(/\/$/, '')
 const ROOT = process.cwd()
 const ACTIVE_LAB = process.env.UI_MANUAL_ACTIVE_LAB === '1'
 const SKIP_ADMIN = process.env.UI_MANUAL_SKIP_ADMIN === '1'
+// Keep Privacy Mode on when the target database may contain real users. Use
+// this for any shared development host that mirrors production accounts.
+const KEEP_PRIVACY = process.env.UI_MANUAL_PRIVACY === '1'
 
 const IMG = {
   start: path.join(ROOT, 'Manual-Lite', '01_Getting_Started', 'img'),
@@ -97,13 +108,16 @@ async function contextFor(session, viewport = { width: 1440, height: 1100 }) {
     deviceScaleFactor: 2,
   })
   if (session) {
-    await context.addInitScript(({ token, user }) => {
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('theme', 'dark')
-      localStorage.setItem('privacy-mode', 'off')
-      localStorage.setItem('ocr_orientation_seen_v1_' + user.username, '1')
-    }, session)
+    await context.addInitScript(
+      ({ token, user, keepPrivacy }) => {
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+        localStorage.setItem('theme', 'dark')
+        localStorage.setItem('privacy-mode', keepPrivacy ? 'on' : 'off')
+        localStorage.setItem('ocr_orientation_seen_v1_' + user.username, '1')
+      },
+      { ...session, keepPrivacy: KEEP_PRIVACY },
+    )
   }
   const page = await context.newPage()
   page.setDefaultTimeout(15000)

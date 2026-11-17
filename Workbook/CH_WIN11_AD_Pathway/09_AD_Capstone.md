@@ -24,6 +24,16 @@ The LAB domain contains several weaknesses from the pathway. Build the path from
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Which findings form the attack chain, and what evidence supports each link?**
+
+**2. Which weakness would you fix first, and why?**
+
+**3. How do you distinguish a confirmed finding from an inference?**
+
+**4. What belongs in the executive summary versus the technical report?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

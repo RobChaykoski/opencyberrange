@@ -24,6 +24,16 @@ The helpdesk group has an unexpected right over a privileged group. Find the gra
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What is the difference between an ACE, a DACL, and an ACL?**
+
+**2. Why are GenericAll, WriteDACL, and GenericWrite dangerous on a privileged group?**
+
+**3. Which group membership and ACL edge creates the escalation path in this lab?**
+
+**4. How would you audit and tier the excessive right?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

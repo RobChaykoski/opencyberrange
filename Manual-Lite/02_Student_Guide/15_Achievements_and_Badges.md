@@ -1,6 +1,6 @@
 # Achievements and Badges
 
-Earn achievements for how you solve labs inside a course and how far you explore: solving first, solving without hints, solving on your first attempt, and reaching learning milestones. Achievements are course scoped; your profile and the Celebration Wall show what you have earned.
+Earn achievements for how you solve labs inside a course and how far you explore: solving first, solving without hints, solving on your first attempt, and reaching learning milestones. Most achievements are course scoped; a few range-wide badges are earned from practice across the catalogue. Your profile and the Celebration Wall show what you have earned.
 
 ## Prerequisites
 
@@ -59,6 +59,17 @@ under **Admin -> Settings -> Achievements**.
     The milestones reward curiosity, practice, and understanding. They do not
     require speed, and they are not a measure of whether someone belongs in
     cybersecurity.
+
+## Pathway achievements
+
+Complete every exercise in a level-11 pathway to earn a range-wide badge. These
+badges appear on your profile under **Across the range**, whether the pathway
+was assigned to a course or you played it from the catalogue.
+
+| Badge | How you earn it |
+|-------|-----------------|
+| Directory Pathfinder | Complete all nine Active Directory pathway exercises |
+| AppSec Architect | Complete all ten Modern Application Security pathway exercises |
 
 ## Tiers, points, and the sampled quiz ladder
 

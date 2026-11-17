@@ -24,6 +24,16 @@ A service account in the LAB domain can request directory replication. Identify 
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Which directory replication rights does DCSync abuse?**
+
+**2. Why is a non-domain-controller principal requesting replication suspicious?**
+
+**3. How do golden and silver tickets differ in what they grant?**
+
+**4. Which tier-0 and audit controls reduce the risk?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

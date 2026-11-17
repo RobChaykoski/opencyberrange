@@ -24,6 +24,16 @@ The LAB domain has a workstation baseline. Review the LAPS and GPO settings, rec
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. How does LAPS remove the shared local-administrator password problem?**
+
+**2. Why is GPO delegation a privilege boundary, not just an administration setting?**
+
+**3. Which baseline controls are missing in this lab's scenario?**
+
+**4. What would you monitor for GPO and LAPS abuse?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

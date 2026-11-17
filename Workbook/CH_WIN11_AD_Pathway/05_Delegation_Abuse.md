@@ -24,6 +24,16 @@ A web service account in the LAB domain is trusted for delegation. Identify the 
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Distinguish unconstrained, constrained, and resource-based delegation.**
+
+**2. Why is unconstrained delegation the highest-risk form?**
+
+**3. What is the blast radius of the svc-web delegation trust?**
+
+**4. Which configuration and monitoring controls reduce that blast radius?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

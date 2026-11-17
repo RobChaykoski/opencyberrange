@@ -24,6 +24,16 @@ The capstone service exposes several weaknesses from the pathway. Build the chai
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Which findings form the assessment chain, and what evidence supports each?**
+
+**2. Which finding has the greatest blast radius, and why?**
+
+**3. How do you separate a confirmed weakness from an inference?**
+
+**4. What belongs in the executive summary versus the technical report?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

@@ -24,6 +24,16 @@ The LAB domain publishes a certificate template with an over-broad enrolment rig
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Which two certificate-template settings combine into the dangerous path?**
+
+**2. Why does an enrollee-supplied subject matter for client authentication?**
+
+**3. What approval and enrolment controls harden the template?**
+
+**4. Which events detect unexpected certificate issuance?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

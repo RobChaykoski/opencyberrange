@@ -1805,7 +1805,12 @@
         <!-- Settings Tab -->
         <div v-if="activeTab === 'settings'" class="panel">
           <h2 class="panel-title">Platform Settings</h2>
-          <section class="change-control" aria-labelledby="change-control-title">
+          <section
+            ref="changeControlPanel"
+            class="change-control"
+            :class="{ 'change-control--attention': ticketHintVisible }"
+            aria-labelledby="change-control-title"
+          >
             <div class="change-control__header">
               <div>
                 <h3 id="change-control-title">Production change control</h3>
@@ -1851,6 +1856,7 @@
               <label>
                 <span>Ticket number <small>{{ ticketRequirementLabel }}</small></span>
                 <input
+                  ref="changeTicketInput"
                   v-model.trim="changeTicket"
                   type="text"
                   maxlength="80"
@@ -1861,6 +1867,7 @@
               <label>
                 <span>Ticket details / reason</span>
                 <textarea
+                  ref="changeReasonInput"
                   v-model.trim="changeReason"
                   rows="2"
                   maxlength="2000"
@@ -2181,6 +2188,23 @@
                   would be <strong>{{ capacityPreviewMax ?? '—' }}</strong> RangeBoxes. The
                   percentage applies to the measured ceiling when one exists, otherwise to
                   the computed maximum. Save the setting to apply it.
+                </p>
+                <p
+                  v-if="ticketRequired && !changeTicketReady"
+                  class="capacity-ticket-hint"
+                  role="alert"
+                >
+                  <span>
+                    A ticket number and approval reason are required before this test can
+                    run. Enter them in Production change control at the top of this page.
+                  </span>
+                  <button
+                    type="button"
+                    class="capacity-ticket-hint__action"
+                    @click="focusChangeControl(changeTicketMissing ? 'ticket' : 'reason')"
+                  >
+                    Enter ticket details
+                  </button>
                 </p>
                 <div class="capacity-actions">
                   <button
@@ -5390,6 +5414,10 @@ const changeHistory = ref([])
 const changeControlError = ref('')
 const changeTicket = ref('')
 const changeReason = ref('')
+const changeTicketInput = ref(null)
+const changeReasonInput = ref(null)
+const changeControlPanel = ref(null)
+const ticketHintVisible = ref(false)
 const revertingChange = ref(null)
 const cutoverBusy = ref(false)
 const cutoverForm = reactive({
@@ -6210,12 +6238,52 @@ function changeTicketError() {
     isProduction.value || changeControl.value?.ticket_mode === 'required'
   if (!required) return ''
   if (!changeTicket.value.trim()) {
-    return 'A ticket number is required before changing settings in production.'
+    return (
+      'A ticket number is required before changing settings in production. ' +
+      'Enter it in Production change control at the top of this page.'
+    )
   }
   if (changeReason.value.trim().length < 5) {
-    return 'Add the ticket details or approval reason (at least 5 characters).'
+    return (
+      'Add the ticket details or approval reason (at least 5 characters) ' +
+      'in Production change control.'
+    )
   }
   return ''
+}
+
+const ticketRequired = computed(
+  () =>
+    isProduction.value || changeControl.value?.ticket_mode === 'required',
+)
+const changeTicketMissing = computed(
+  () => ticketRequired.value && !changeTicket.value.trim(),
+)
+const changeTicketReady = computed(() => !changeTicketError())
+
+// Bring the production change-control fields into view and put the cursor in
+// the field that is still missing. The ceiling test lives further down the
+// settings page, so an alert alone left the operator hunting for the fields.
+async function focusChangeControl(field = 'ticket') {
+  ticketHintVisible.value = true
+  await nextTick()
+  changeControlPanel.value?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
+  const input =
+    field === 'reason' ? changeReasonInput.value : changeTicketInput.value
+  input?.focus?.({ preventScroll: true })
+}
+
+// Returns true when the change may proceed; false after showing the reason and
+// focusing the missing field.
+async function ensureChangeTicket() {
+  const error = changeTicketError()
+  if (!error) {
+    ticketHintVisible.value = false
+    return true
+  }
+  showAlert(error, 'error')
+  await focusChangeControl(changeTicketMissing.value ? 'ticket' : 'reason')
+  return false
 }
 
 const toggleSetting = async (key) => {
@@ -6342,11 +6410,7 @@ const fetchRangeboxCapacity = async () => {
 }
 
 const saveCapacityPercent = async () => {
-  const ticketError = changeTicketError()
-  if (ticketError) {
-    showAlert(ticketError, 'error')
-    return false
-  }
+  if (!(await ensureChangeTicket())) return false
   const value = Number(settingsEdits.rangebox_capacity_percent)
   if (!Number.isFinite(value) || value < 10 || value > 100) {
     showAlert('RangeBox capacity percentage must be between 10 and 100.', 'error')
@@ -6371,6 +6435,10 @@ const saveCapacityPercent = async () => {
 }
 
 const runCapacityTest = async () => {
+  // The test saves the capacity percentage first, which is a settings change.
+  // Check the ticket up front so the operator is not asked to confirm a test
+  // that cannot start, and so the missing field is brought into view.
+  if (!(await ensureChangeTicket())) return
   const ceiling = Number(rangeboxCapacity.value?.computed_max || 0)
   if (!ceiling) {
     showAlert('Refresh the capacity information before running a test.', 'error')
@@ -13193,6 +13261,11 @@ watch(activeTab, (tab) => {
   border-radius: 12px;
   background: var(--bg-secondary);
 }
+.change-control--attention {
+  border-color: var(--warning, #d97706);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--warning, #d97706) 22%, transparent);
+  scroll-margin: 5rem;
+}
 .change-control__header {
   display: flex;
   justify-content: space-between;
@@ -13346,6 +13419,38 @@ watch(activeTab, (tab) => {
   align-items: center;
   gap: 0.6rem;
   flex-wrap: wrap;
+}
+
+.capacity-ticket-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--warning, #d97706);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warning, #d97706) 10%, transparent);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.capacity-ticket-hint__action {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent, #2563eb);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.capacity-ticket-hint__action:focus-visible {
+  outline: 2px solid var(--accent, #2563eb);
+  outline-offset: 2px;
 }
 
 .capacity-last {

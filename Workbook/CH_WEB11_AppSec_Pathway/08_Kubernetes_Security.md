@@ -24,6 +24,16 @@ The workload uses a broad service account. Inspect /api/k8s/secrets, recover the
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Why is a broad service account a privilege-escalation path?**
+
+**2. How do privileged pods and hostPath mounts enable a host escape?**
+
+**3. What does a default-deny network policy change?**
+
+**4. Which admission control would block this workload?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

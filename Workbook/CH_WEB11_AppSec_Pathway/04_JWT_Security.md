@@ -24,6 +24,16 @@ The API accepts a debug token. Decode it, test the algorithm handling, and read 
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Which parts of a JWT are encoded, and which part is signed?**
+
+**2. Why is accepting `alg=none` dangerous?**
+
+**3. Which claims must the server validate before trusting a token?**
+
+**4. What should happen when signature validation fails?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

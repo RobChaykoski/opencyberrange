@@ -24,6 +24,16 @@ A legacy service account in the LAB domain has pre-authentication disabled. Find
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What does Kerberos pre-authentication protect, and what happens when it is disabled?**
+
+**2. How does AS-REP roasting differ from password spraying?**
+
+**3. Why does spraying risk account lockout, and how should the request rate be controlled?**
+
+**4. Which policy and detection controls remove the exposure?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

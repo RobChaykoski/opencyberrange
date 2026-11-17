@@ -24,6 +24,16 @@ The LAB domain has a SQL service account with an SPN. Enumerate the account, rec
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What makes a service account kerberoastable?**
+
+**2. Why can a service ticket be attacked offline once it is requested?**
+
+**3. Which account-type and password changes reduce the risk without breaking the service?**
+
+**4. What ticket-request pattern should detection alert on?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

@@ -113,7 +113,11 @@ to `/auth/reauth` and the regression test asserts the corrected path.
   is pending demo credentials.
 - Workbook: `CH_WIN11_AD_Pathway` and `CH_WEB11_AppSec_Pathway` added, raising
   coverage to **201 of 210** labs; the workbook wiki was rebuilt and the new
-  chapters are served.
+  chapters are served. Each of the 19 pages includes the required Analysis
+  Questions.
+- Pathway achievements: `ad_pathfinder` (all nine AD exercises) and
+  `appsec_architect` (all ten AppSec exercises) are global completion badges,
+  registered in the catalogue and covered by a regression test.
 - Live harness: all **19 new pathway labs** pass one clean run. The AD solver now
   waits for the LDAP bootstrap and disables LDIF line wrapping.
 - Residual smoke-test account `smoke_tester` removed; users 48 → 47, real users

@@ -24,6 +24,16 @@ A public API ships with documentation, but an internal inventory endpoint is exp
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Why is an undocumented endpoint a larger risk than a documented one?**
+
+**2. How do you classify an endpoint by authentication and data sensitivity?**
+
+**3. What evidence belongs in an API inventory?**
+
+**4. Which control prevents an internal endpoint from being exposed?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

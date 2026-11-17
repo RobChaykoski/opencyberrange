@@ -24,6 +24,16 @@ The range hosts a simulated LAB domain. You have a training analyst account. Enu
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Why does the bind require a full distinguished name rather than a short account name?**
+
+**2. Which attributes reveal service accounts, and why should a description never hold a credential?**
+
+**3. What evidence proves the path from the analyst account to a privileged group?**
+
+**4. Which detection would catch a broad directory enumeration without blocking normal helpdesk searches?**
+
 ## Defensive takeaway
 
 Tier administration, managed service accounts, least-privilege ACLs, and directory-change auditing remove this class of path.

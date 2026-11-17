@@ -24,6 +24,16 @@ The API returns user objects by id. Your account is id 1. Request another object
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What is the difference between BOLA and BFLA?**
+
+**2. Why does hiding an object identifier not fix broken object-level authorization?**
+
+**3. Where must the ownership check run, and what should it compare?**
+
+**4. Which log signal detects access to another user's object?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

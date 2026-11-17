@@ -24,6 +24,16 @@ A CI service exposes a build artefact. Inspect it, recover the token, and recomm
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Which pipeline artefact exposed the secret?**
+
+**2. Why are broad workflow token permissions dangerous?**
+
+**3. What is the difference between secret scanning and secret rotation?**
+
+**4. Which provenance control would you add before deployment?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

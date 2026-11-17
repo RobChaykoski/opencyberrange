@@ -24,6 +24,16 @@ The API exposes GraphQL with introspection enabled. Recover the schema, find the
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What does GraphQL introspection reveal to an attacker?**
+
+**2. Why does introspection alone not prove a vulnerability?**
+
+**3. How do depth and cost limits reduce abuse?**
+
+**4. Which field-level authorization check was missing?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

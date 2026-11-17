@@ -27,6 +27,8 @@ export UI_BASE_URL=https://172.16.16.44
 export UI_STUDENT_USERNAME="..." UI_STUDENT_PASSWORD="..."
 export UI_INSTRUCTOR_USERNAME="..." UI_INSTRUCTOR_PASSWORD="..."
 export UI_ADMIN_USERNAME="..." UI_ADMIN_PASSWORD="..."
+# Keep Privacy Mode on when the capture host mirrors production users.
+export UI_MANUAL_PRIVACY=1
 node scripts/ui-manual-screenshots.mjs
 ```
 
@@ -37,6 +39,9 @@ Optional flags:
   left unchanged.
 - `UI_MANUAL_SKIP_ADMIN=1` skips the admin section when no admin account is
   available.
+- `UI_MANUAL_PRIVACY=1` leaves Privacy Mode on, which masks usernames, emails,
+  and display names. Use it whenever the capture host mirrors production users;
+  the current development host does.
 
 Install the browser once per machine with `npx playwright install chromium`
 from `platform/frontend/`.
@@ -62,8 +67,10 @@ That is expected on a deployment without demo data.
   `curl -k -s "$UI_BASE_URL/api/version"` must return the current version, and
   the student profile must show the current exercise total (**210**). A footer
   that shows only `v5`, or an old total such as 149, means the capture is stale.
-- The script turns **Privacy Mode** off in the capture browser so names are
-  readable. Do not publish screenshots that contain real personal data.
+- The script turns **Privacy Mode** off by default so names are readable. On a
+  host that mirrors production users, set `UI_MANUAL_PRIVACY=1` and keep it on;
+  the masks make a mistaken real account safe to publish. Do not publish
+  screenshots that contain unmasked personal data either way.
 - Capture on the development host, not production.
 - Review every diff for PII, secrets, and outdated counts before committing:
   screenshots are binary and easy to miss.

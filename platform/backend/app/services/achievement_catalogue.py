@@ -19,6 +19,8 @@ from app.models import CustomAchievement
 from app.services.achievements import (
     ACHIEVEMENT_DESCRIPTIONS,
     ACHIEVEMENT_LABELS,
+    AD_PATHFINDER,
+    APPSEC_ARCHITECT,
     BUILTIN_ACHIEVEMENT_ICONS,
     CUSTOM_ACHIEVEMENT_TRIGGERS,
     HIDDEN_ACHIEVEMENT_TYPES,
@@ -138,6 +140,8 @@ BUILTIN_METADATA: dict[str, tuple[str, str, str]] = {
     "provenance_analyst": ("hidden", "silver", "standard"),
     "liquidity_tracker": ("hidden", "silver", "standard"),
     "digital_frontier": ("tracks", "platinum", "advanced"),
+    AD_PATHFINDER: ("tracks", "platinum", "advanced"),
+    APPSEC_ARCHITECT: ("tracks", "platinum", "expert"),
     "learning_hours_1": ("consistency", "bronze", "starter"),
     "learning_hours_5": ("consistency", "silver", "standard"),
     "learning_hours_15": ("consistency", "gold", "advanced"),

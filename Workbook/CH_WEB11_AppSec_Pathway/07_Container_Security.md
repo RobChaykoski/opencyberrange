@@ -24,6 +24,16 @@ The service runs as root with a broad profile. Inspect /api/runtime, recover the
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. Why does running as root increase the impact of a container compromise?**
+
+**2. Which runtime controls form a minimal container profile?**
+
+**3. How do you verify the hardened profile actually took effect?**
+
+**4. Which alert detects a privileged container or host mount?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

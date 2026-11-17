@@ -24,6 +24,16 @@ The API implements OAuth with a callback. Test redirect handling, recover the to
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What are the steps in the authorization-code flow?**
+
+**2. Why must the redirect URI match exactly rather than by prefix?**
+
+**3. What do `state`, PKCE, and `nonce` protect against?**
+
+**4. Which log signal indicates redirect or authorization-code replay abuse?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

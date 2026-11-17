@@ -24,6 +24,16 @@ A registry serves an artefact without a valid signature. Inspect the SBOM, recov
 - The assessment flag.
 - A short note that names the weakness and the defensive control.
 
+## Analysis Questions
+
+**1. What does an SBOM prove, and what does it not prove?**
+
+**2. Why is a hash comparison insufficient without a trusted signature?**
+
+**3. Where should signature verification run in the pipeline?**
+
+**4. Which response step is required after a substituted artefact is found?**
+
 ## Defensive takeaway
 
 Server-side authorization, strict token validation, least-privilege runtime, and artifact verification remove this class of weakness.

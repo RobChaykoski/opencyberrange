@@ -498,3 +498,72 @@ def test_collection_badges_for_new_tracks(
             ).delete(synchronize_session=False)
             db_session.commit()
 
+
+
+def test_pathway_collection_badges(db_session, test_user, test_lab):
+    """Finishing a level-11 pathway awards its range-wide badge once."""
+    from app.models import Achievement, Lab, LabCompletion
+    from app.services.achievements import (
+        AD_PATHWAY_LAB_SLUGS,
+        APPSEC_PATHWAY_LAB_SLUGS,
+        _check_collection_achievements,
+    )
+
+    created = []
+    for slug in (*AD_PATHWAY_LAB_SLUGS, *APPSEC_PATHWAY_LAB_SLUGS):
+        lab = Lab(
+            name=f"Pathway Test {slug}",
+            slug=slug,
+            description="Created by test_pathway_collection_badges",
+            compose_file="services: {}\n",
+            is_active=True,
+            visibility="public",
+            level_id=test_lab.level_id,
+        )
+        db_session.add(lab)
+        created.append(lab)
+    db_session.commit()
+
+    try:
+        _check_collection_achievements(db_session, test_user.id)
+        before = {
+            row.achievement_type
+            for row in db_session.query(Achievement).filter(
+                Achievement.user_id == test_user.id,
+                Achievement.achievement_type.in_(
+                    ("ad_pathfinder", "appsec_architect")
+                ),
+            ).all()
+        }
+        assert before == set()
+
+        for lab in created:
+            db_session.add(LabCompletion(
+                user_id=test_user.id,
+                lab_id=lab.id,
+                flag_submitted="OCR{pathway-collection-test}",
+            ))
+        db_session.commit()
+
+        _check_collection_achievements(db_session, test_user.id)
+        db_session.flush()
+        awarded = {
+            row.achievement_type
+            for row in db_session.query(Achievement).filter(
+                Achievement.user_id == test_user.id,
+                Achievement.achievement_type.in_(
+                    ("ad_pathfinder", "appsec_architect")
+                ),
+            ).all()
+        }
+        assert awarded == {"ad_pathfinder", "appsec_architect"}
+    finally:
+        ids = [lab.id for lab in created]
+        if ids:
+            db_session.query(LabCompletion).filter(
+                LabCompletion.lab_id.in_(ids)
+            ).delete(synchronize_session=False)
+            db_session.query(Lab).filter(
+                Lab.id.in_(ids)
+            ).delete(synchronize_session=False)
+            db_session.commit()

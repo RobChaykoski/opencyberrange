@@ -75,7 +75,9 @@ python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
   across two institutions.
 - Live harness: all **19 new pathway labs** passed one clean run after the LDAP
   startup and LDIF-wrap fixes. The full 210-lab, three-run harness remains.
-- Workbook coverage: **201 of 210** labs after the two pathway chapters.
+- Workbook coverage: **201 of 210** labs after the two pathway chapters. All 19
+  pathway pages carry the required Analysis Questions, and each pathway awards a
+  range-wide completion badge (`ad_pathfinder`, `appsec_architect`).
 - Malware governance: passed.
 - External dataset registry: passed.
 - Documentation links: passed after the API manual link fix.
