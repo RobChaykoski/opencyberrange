@@ -73,6 +73,9 @@ python scripts/check-links.py Manual-Lite docs Workbook --mkdocs
 - Tenant RLS: **25 tables** enforced; the regression test asserts the column,
   forced RLS, and four policies, and probes two newly migrated learner tables
   across two institutions.
+- Live harness: all **19 new pathway labs** passed one clean run after the LDAP
+  startup and LDIF-wrap fixes. The full 210-lab, three-run harness remains.
+- Workbook coverage: **201 of 210** labs after the two pathway chapters.
 - Malware governance: passed.
 - External dataset registry: passed.
 - Documentation links: passed after the API manual link fix.
@@ -96,6 +99,7 @@ python scripts/supply_chain.py --check \
 | `/api/version` | `5.17.5` |
 | `/health` | `200` |
 | Alembic | `0041_tenant_rls_legacy` |
+| Content refresh | `3379f27f` (workbook 201/210, live harness 19/19) |
 | Registered labs | `210` |
 | Admin release status | `current` / `v5.17.5` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |

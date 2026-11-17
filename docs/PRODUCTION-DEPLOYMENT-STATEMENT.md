@@ -12,7 +12,7 @@ another document disagrees, this page and the signed tag win.
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
 | Release | **5.17.5** |
 | Signed tag | **`v5.17.5`** |
-| Runtime code commit | `eddaf74f` (signed tag `v5.17.5`) |
+| Runtime code commit | `3379f27f` (content refresh; signed tag `v5.17.5` at `eddaf74f`) |
 | Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -110,6 +110,13 @@ to `/auth/reauth` and the regression test asserts the corrected path.
 - Bounded, log-safe login input and `maxlength` on password prompts.
 - Manual screenshots audited for synthetic data; a refresh to the current build
   is pending demo credentials.
+- Workbook: `CH_WIN11_AD_Pathway` and `CH_WEB11_AppSec_Pathway` added, raising
+  coverage to **201 of 210** labs; the workbook wiki was rebuilt and the new
+  chapters are served.
+- Live harness: all **19 new pathway labs** pass one clean run. The AD solver now
+  waits for the LDAP bootstrap and disables LDIF line wrapping.
+- Residual smoke-test account `smoke_tester` removed; users 48 → 47, real users
+  and learner data preserved.
 
 ## 5.17.3 additions
 

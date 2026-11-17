@@ -49,6 +49,14 @@ Community / Academic release and the one-way cutover is complete.
 - Live deployed check on development: correct login, re-authentication, and
   change-password returned `200`; wrong, oversized, and newline inputs returned
   `401`; the temporary account was removed.
+- Content refresh at `3379f27f`: workbook chapters `CH_WIN11_AD_Pathway` and
+  `CH_WEB11_AppSec_Pathway` added (**201 of 210** workbook-mapped), the workbook
+  wiki rebuilt and served, lab metadata refreshed, and the backend rebuilt with
+  the updated tester manifests.
+- Live harness: all **19 new pathway labs** pass one clean run; the AD solver
+  waits for the LDAP bootstrap and disables LDIF wrapping.
+- Residual smoke-test account `smoke_tester` removed (48 → 47 users); real users
+  and learner data preserved.
 - Verified: `/api/version` returns `5.17.5`, `/health` 200, 210 labs, Alembic
   `0041_tenant_rls_legacy`, cutover state unchanged.
 - Post-deploy backup `ocr-backup-20261116-223835.dump`; restore drill **PASSED**

@@ -89,9 +89,9 @@ The canonical definitions are in [Lab and content counts](COUNTS.md).
 
 ## Remaining work
 
-- **9 labs without a workbook link.** Add pages or record an exemption.
-- **Live harness:** the static validators are clean; the 210-lab live harness
-  still needs three clean runs. One AD and one appsec container have been built
-  and proved to serve their flags.
+- **9 labs without a workbook link.** Add pages or record an exemption. The 19
+  new pathway labs now have workbook chapters, so coverage is **201 of 210**.
+- **Live harness:** all **19 new pathway labs** pass one clean run (10 appsec and
+  9 AD). The full 210-lab live harness still needs three clean runs.
 - **Independent security testing:** not yet commissioned; see
   [Independent security testing](INDEPENDENT-SECURITY-TESTING.md).

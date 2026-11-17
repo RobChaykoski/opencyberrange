@@ -63,6 +63,20 @@ each before removal:
 - `platform/scripts/harden-firewall.sh`, `init_database.sh`, `manage-users.sh`
   — manual operations helpers; keep unless the runbook stops using them.
 
+## Residual test accounts
+
+- `smoke_tester` was removed from production with the erasure ledger, audit
+  record, and security event (48 → 47 users). Real users and learner data were
+  preserved.
+- `tester` remains. Its personal-looking email is ambiguous, so it is not
+  treated as test-only without a separate confirmation.
+
+## Workbook coverage
+
+The 19 new pathway labs now have workbook chapters
+(`CH_WIN11_AD_Pathway`, `CH_WEB11_AppSec_Pathway`); coverage is **201 of 210**.
+The remaining 9 labs have no workbook by design.
+
 ## Migrations and CI
 
 - The Alembic revision graph is linear and ends at
