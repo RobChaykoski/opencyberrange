@@ -127,6 +127,14 @@ to `/auth/reauth` and the regression test asserts the corrected path.
 - Prebuilt the **22 missing lab images** (3 Identity, 10 Web-11 application
   security, and 9 Windows-11 Active Directory) so a first spawn does not wait
   for an image build.
+- Login and registration limits now follow the live competition window
+  automatically: **40/minute** login and **20/minute** registration per IP from
+  `EVENT_BURST_BUFFER_MINUTES` (default 30) before the DevFest event until the
+  same margin after it, with the strict limits outside it. The check is cached
+  per worker and falls back to strict limits if the database read fails.
+- The RangeBox live cap is pinned to **15** (the measured ceiling) for the
+  mixed-desktop event. Clear `MAX_CONCURRENT_RANGEBOXES` to return to the 75%
+  setting.
 
 ## 5.17.6 additions
 

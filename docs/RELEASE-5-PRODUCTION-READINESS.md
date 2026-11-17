@@ -60,6 +60,10 @@ Community / Academic release and the one-way cutover is complete.
   cache / 200 connections, the backend runs 4 uvicorn workers with shared
   Valkey rate-limit counters, and the 22 missing Identity, Web-11, and
   Windows-11 lab images were prebuilt.
+- The DevFest competition now widens the per-IP login and registration limits
+  from 30 minutes before the event until 30 minutes after it (40/minute login,
+  20/minute registration), and the RangeBox live cap is pinned to the measured
+  ceiling of 15 for the mixed-desktop event.
 - Tag `v5.17.7` is signed with the release key
   `68A817762C831475F00DB54E775050A4C4921814`.
 
