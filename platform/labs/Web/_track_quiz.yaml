@@ -59,3 +59,101 @@ questions:
     reference:
       label: "OWASP password storage cheat sheet"
       url: "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+
+  - id: "web-track-6"
+    prompt: "Which statement best distinguishes reflected XSS from stored XSS?"
+    options: [
+      "Reflected XSS is stored in the database; stored XSS appears only in the URL.",
+      "Reflected XSS appears in the immediate response to a crafted request; stored XSS persists server-side and is served to other users.",
+      "Reflected XSS affects only the server; stored XSS affects only the attacker's browser.",
+      "Both require the victim to install malware."
+    ]
+    correct: 1
+    explanation: "Reflected XSS is echoed in the response to one crafted request. Stored XSS is saved by the application and later served to other users, so it can reach a wider audience."
+    reference:
+      label: "OWASP cross-site scripting prevention"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+
+  - id: "web-track-7"
+    prompt: "Why must output encoding be context-dependent?"
+    options: [
+      "HTML text, attributes, URLs, and JavaScript contexts have different escaping rules.",
+      "One encoding scheme is safe in every context.",
+      "Encoding is only needed for SQL queries.",
+      "A content security policy replaces output encoding."
+    ]
+    correct: 0
+    explanation: "A value that is safely encoded for HTML text may still break out of an attribute, URL, or script context. Encode for the exact sink that will receive the data."
+    reference:
+      label: "OWASP XSS prevention: output encoding"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
+
+  - id: "web-track-8"
+    prompt: "Which control best limits the impact of an XSS flaw if an injection still occurs?"
+    options: [
+      "A restrictive Content-Security-Policy",
+      "Longer passwords",
+      "Hiding error pages",
+      "Disabling HTTPS"
+    ]
+    correct: 0
+    explanation: "Content-Security-Policy restricts where scripts can load from and can block inline script. It is defence-in-depth; correct output encoding and safe DOM APIs are still required."
+    reference:
+      label: "MDN Content-Security-Policy"
+      url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP"
+
+  - id: "web-track-9"
+    prompt: "What makes a cross-site request forgery (CSRF) attack possible?"
+    options: [
+      "The browser automatically attaches ambient credentials, such as cookies, to cross-site requests, and the server cannot tell whether the user intended the action.",
+      "The attacker knows the user's password.",
+      "The server uses HTTPS.",
+      "The application returns JSON instead of HTML."
+    ]
+    correct: 0
+    explanation: "CSRF abuses the browser's automatic credential handling. The attacker does not need to read the response; the state-changing request is sent with the victim's existing session."
+    reference:
+      label: "OWASP CSRF prevention"
+      url: "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
+
+  - id: "web-track-10"
+    prompt: "Which combination is the strongest CSRF defence for a state-changing request?"
+    options: [
+      "SameSite cookies plus a server-validated, unpredictable token tied to the session",
+      "A CAPTCHA on every page",
+      "Hiding the form action in JavaScript",
+      "TLS alone"
+    ]
+    correct: 0
+    explanation: "SameSite limits cross-site cookie sending, while a synchroniser token proves the request came from the application. Origin or Referer checks add defence-in-depth."
+    reference:
+      label: "MDN SameSite cookies"
+      url: "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite"
+
+  - id: "web-track-11"
+    prompt: "An API authenticates the caller but returns another user's object when its identifier is changed. What is the primary fix?"
+    options: [
+      "Enforce a server-side ownership and authorization check on every object request.",
+      "Hide the object identifier in the interface.",
+      "Rotate API keys more often.",
+      "Return JSON instead of XML."
+    ]
+    correct: 0
+    explanation: "This is broken object-level authorization (BOLA). Hiding an identifier is not access control; the server must verify that the caller may access that specific object."
+    reference:
+      label: "OWASP API Security Top 10 2023: BOLA"
+      url: "https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/"
+
+  - id: "web-track-12"
+    prompt: "Which API response practice reduces information leakage?"
+    options: [
+      "Return a safe, documented content type and generic error data.",
+      "Copy the client's Accept header directly into Content-Type.",
+      "Return full stack traces to speed up support.",
+      "Include internal host names and database identifiers in errors."
+    ]
+    correct: 0
+    explanation: "The API should choose a safe response type and keep internal details out of errors. Accept-header reflection and verbose errors can turn a minor fault into an information disclosure."
+    reference:
+      label: "Government of Canada API security best practices"
+      url: "https://www.canada.ca/en/government/system/digital-government/digital-government-innovations/enabling-interoperability/api-guidance/security.html"

@@ -87,6 +87,7 @@ nav:
     - Introduction: CH_WEB02_Web_Exploitation/00_Introduction.md
     - "Exercise W2.1 -- Basic SQL Injection": CH_WEB02_Web_Exploitation/01_Basic_SQL_Injection.md
     - Chapter Review: CH_WEB02_Web_Exploitation/02_Chapter_Review.md
+    - "Further Study -- XSS and CSRF": CH_WEB02_Web_Exploitation/03_XSS_and_CSRF.md
   - "WEB01B: Advanced Recon and Traversal":
     - Introduction: CH_WEB01B_Advanced_Recon/00_Introduction.md
     - "Exercise 1.7 -- Directory Traversal": CH_WEB01B_Advanced_Recon/01_Directory_Traversal.md

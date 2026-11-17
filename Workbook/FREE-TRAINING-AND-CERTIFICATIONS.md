@@ -28,6 +28,36 @@ Source: [SWOCTS Resources](https://www.swocts.com/resources), reviewed
 | Software Security (CH SWSEC) | [PortSwigger Web Security Academy](https://portswigger.net/web-security) | [Linux Foundation](https://training.linuxfoundation.org/resources/) | [ISC2 CC](https://www.isc2.org/landing/1mcc) |
 | High School (CH HS09-HS12) | [Cisco NetAcad](https://www.netacad.com/), [MediaSmarts](https://mediasmarts.ca/) | [TryHackMe](https://tryhackme.com/), [CyLab Security Academy](https://learn.cylabacademy.org/), [FTC crypto scams](https://consumer.ftc.gov/articles/what-know-about-cryptocurrency-scams) | [ISC2 CC](https://www.isc2.org/landing/1mcc), [IBM SkillsBuild](https://skillsbuild.org/learning-catalog), [Microsoft Learn SC-900](https://learn.microsoft.com/en-us/credentials/certifications/security-compliance-and-identity-fundamentals/) |
 
+## Web, API, and browser-security references
+
+Use these to deepen the web, API, and software-security chapters. They are
+external references, not platform exercises.
+
+| Topic | Reference |
+|---|---|
+| XSS, CSRF, and browser trust boundaries | [PortSwigger Web Security Academy](https://portswigger.net/web-security/all-labs), [XSS](https://portswigger.net/web-security/cross-site-scripting), [CSRF](https://portswigger.net/web-security/csrf) |
+| API security | [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/), [Government of Canada API security primer](https://www.canada.ca/en/government/system/digital-government/digital-government-innovations/enabling-interoperability/api-guidance/security.html), [IBM API security best practices](https://www.ibm.com/think/insights/api-security-best-practices) |
+| Output encoding and browser controls | [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html), [MDN Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) |
+| CSRF and cookies | [OWASP CSRF Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html), [MDN SameSite cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite) |
+| Beginner cybersecurity review | [W3Schools cybersecurity tutorial and quiz](https://www.w3schools.com/cybersecurity/cybersecurity_quiz.php) |
+| Blue-team practice | [LetsDefend free resources](https://github.com/LetsDefend/Free-Cybersecurity-Resources), [LetsDefend network protocols lesson](https://app.letsdefend.io/training/lessons/network-protocols) |
+| OT/ICS topics | [NIST SP 800-82](https://csrc.nist.gov/publications/detail/sp/800-82/rev-3/final), [MITRE ATT&CK for ICS](https://attack.mitre.org/matrices/ics/), official EC-Council ICS/SCADA certification page |
+| IoT security | [Government of Canada ITSAP.00.012](https://www.cyber.gc.ca/en/guidance/internet-things-iot-security-itsap00012), [OWASP IoT Top 10](https://owasp.org/www-project-internet-of-things/) |
+
+Official certification pages and objectives are useful for topic mapping only.
+Do not copy practice questions, answer keys, or braindumps from any provider.
+
+## Tools
+
+- [Burp Suite Community Edition](https://portswigger.net/burp/communitydownload) -
+  free proxy and repeater for authorised web testing. Install it from
+  PortSwigger; it is not bundled with the platform.
+- [OWASP ZAP](https://www.zaproxy.org/) - open-source web proxy and scanner.
+- [Wireshark](https://www.wireshark.org/) and [Nmap](https://nmap.org/) - packet
+  analysis and network discovery.
+- [CyberChef](https://gchq.github.io/CyberChef/) - encoding and data
+  transformation; the platform also serves a local copy in the Tools panel.
+
 ## CTF and deeper practice
 
 These are optional external references for learners who want more challenge or a
@@ -73,8 +103,13 @@ third-party sites.
 ## Attribution and disclaimers
 
 The resources are third-party services. Link to them; do not copy their course
-content or branding into the platform. The SWOCTS page and provider terms can
-change. A free course does not guarantee a free exam, and a certificate does not
-guarantee a role. See the
+content, question banks, scenarios, flags, screenshots, or branding into the
+platform. The SWOCTS page and provider terms can change. A free course does not
+guarantee a free exam, and a certificate does not guarantee a role. See the
 [SWOCTS resources page](https://www.swocts.com/resources) for the current
 list.
+
+External platforms, including Hack The Box, TryHackMe, OffSec, PortSwigger Web
+Security Academy, LetsDefend, CTF platforms, and commercial certification
+question banks, are **references only**. Their terms apply. The platform does
+not redistribute their content, and a link is not an endorsement or a licence.

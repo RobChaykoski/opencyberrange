@@ -91,6 +91,10 @@ The canonical definitions are in [Lab and content counts](COUNTS.md).
 
 - **9 labs without a workbook link.** Add pages or record an exemption. The 19
   new pathway labs now have workbook chapters, so coverage is **201 of 210**.
+- **Browser-side XSS and CSRF.** A further-study page and original Web track
+  knowledge-check items were added, but there is not yet a dedicated vulnerable
+  web lab for either topic. Treat the current page as reading and review, not a
+  assessed exercise.
 - **Live harness:** all **19 new pathway labs** pass one clean run (10 appsec and
   9 AD). The full 210-lab live harness still needs three clean runs.
 - **Independent security testing:** not yet commissioned; see
