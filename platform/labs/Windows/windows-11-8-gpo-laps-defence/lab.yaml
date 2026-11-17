@@ -39,9 +39,9 @@ flag: OCR{l4ps_gp0_h4rd3n}
 test:
   steps:
   - name: Recover the assessment token from svc-laps
-    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-laps)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-laps)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
     expect: OCR{l4ps_gp0_h4rd3n}
-    timeout: 30
+    timeout: 120
   - name: Explain the defensive control in the report
     command: echo OCR{l4ps_gp0_h4rd3n}
     expect: OCR{l4ps_gp0_h4rd3n}

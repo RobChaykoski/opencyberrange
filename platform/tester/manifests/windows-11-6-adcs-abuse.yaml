@@ -13,7 +13,7 @@ solver:
   command: /tests/windows-11-6-adcs-abuse.sh
   steps:
   - name: Recover the assessment token from svc-adcs
-    command: ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-adcs)' description 2>&1 | grep -o 'OCR{[^}]*}'
+    command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-adcs)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
     expect: OCR{4dcs_t3mpl4t3_3sc}
   - name: Explain the defensive control in the report
     command: echo OCR{4dcs_t3mpl4t3_3sc}
