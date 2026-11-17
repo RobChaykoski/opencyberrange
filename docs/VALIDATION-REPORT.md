@@ -103,12 +103,12 @@ python scripts/supply_chain.py --check \
 | Alembic | `0041_tenant_rls_legacy` |
 | Content refresh | `3379f27f` (workbook 201/210, live harness 19/19) |
 | Registered labs | `210` (170 public, 40 course-scoped) |
-| Users | `87` (47 human + 40 stress-test) |
+| Users | `47` (44 students, 2 instructors, 1 admin) |
 | Courses | `2` |
 | Admin release status | `current` / `v5.17.7` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
-| Backup | `ocr-backup-20261117-035821.dump` |
-| Restore drill | **PASSED** (87 users, 2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements) |
+| Backup | `ocr-backup-20261117-035821.dump`; post-load-test `ocr-backup-20261117-041146.dump` |
+| Restore drill | **PASSED** on the pre-cleanup backup (87 users, 2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements) |
 | Live password check | correct login/reauth/change = `200`; wrong/oversized/newline = `401` |
 
 ## Known gaps

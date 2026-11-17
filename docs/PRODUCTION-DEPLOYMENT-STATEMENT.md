@@ -108,10 +108,25 @@ to `/auth/reauth` and the regression test asserts the corrected path.
   state, with content version, review date, and flag presence in the tooltip.
 - Verified with 8/8 Playwright checks from the admin path and 38/38 general UI
   smoke checks.
-- Current production data: **87 users** (47 human accounts plus 40
-  `stresstest_*` accounts created by a stress test) and **2 courses**. The
-  stress-test accounts are test data and are reported, not removed, pending
-  operator confirmation.
+- Production data after the load test: the **40 `stresstest_*` accounts** were
+  erased through the normal erasure path on 2026-11-17 (suppression ledger
+  updated), leaving **47 accounts** (44 students, 2 instructors, 1 admin),
+  **2 courses**, and **46 enrollments**.
+
+### Saturday readiness tuning (2026-11-17)
+
+- PostgreSQL now runs with `shared_buffers=2GB`, `effective_cache_size=24GB`,
+  `work_mem=32MB`, `maintenance_work_mem=1GB`, `max_connections=200`, and
+  `random_page_cost=1.1`. The running container had been using stock defaults
+  because the compose override replaces the tuned `postgres` command.
+- Backend scaled from **1 to 4 uvicorn workers**; the 20+20 pool keeps the
+  ceiling at 160 connections under the new 200 limit. Rate-limit counters are
+  shared through Valkey, so limits stay global across workers.
+- A fresh pre-change backup `ocr-backup-20261117-041146.dump` was taken and
+  synced off-host before the cleanup and restart.
+- Prebuilt the **22 missing lab images** (3 Identity, 10 Web-11 application
+  security, and 9 Windows-11 Active Directory) so a first spawn does not wait
+  for an image build.
 
 ## 5.17.6 additions
 

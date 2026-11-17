@@ -47,10 +47,19 @@ Community / Academic release and the one-way cutover is complete.
   content version, review date, and flag presence.
 - Verified with 8/8 Playwright checks from the admin path and 38/38 general UI
   smoke checks.
-- Production data: **87 users** (47 human + 40 `stresstest_*` test accounts),
-  **2 courses**, 210 labs (170 public / 40 course-scoped), 201 workbook-mapped.
-- Backup `ocr-backup-20261117-035821.dump`; restore drill **PASSED** (87 users,
-  2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements).
+- Production data: **47 users** (44 students, 2 instructors, 1 admin) and
+  **2 courses**; 210 labs (170 public / 40 course-scoped), 201 workbook-mapped.
+  The 40 `stresstest_*` accounts from the load test were erased through the
+  normal erasure path after the run.
+- Backup `ocr-backup-20261117-035821.dump`; restore drill **PASSED** on the
+  pre-cleanup data (87 users, 2 courses, 210 labs, 41 enrollments, 124
+  completions, 463 achievements). A second pre-change backup
+  `ocr-backup-20261117-041146.dump` was synced off-host before the cleanup and
+  tuning restart.
+- Saturday readiness: PostgreSQL tuned to 2 GB shared buffers / 24 GB planner
+  cache / 200 connections, the backend runs 4 uvicorn workers with shared
+  Valkey rate-limit counters, and the 22 missing Identity, Web-11, and
+  Windows-11 lab images were prebuilt.
 - Tag `v5.17.7` is signed with the release key
   `68A817762C831475F00DB54E775050A4C4921814`.
 

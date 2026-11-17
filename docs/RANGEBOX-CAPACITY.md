@@ -47,6 +47,11 @@ The ceiling is the measured Level 4 stress-test maximum when one has been
 recorded; until then it is the computed maximum. The remaining quarter is
 headroom for the backend, database, SIEM, and interactive VNC.
 
+On **17 November 2026** the production host recorded a measured Level 4
+ceiling of **15**, so its default 75% live cap is **11**. Re-run the ceiling
+test on an idle host to record a higher measured maximum before an event that
+needs more concurrent desktops.
+
 On **11 November 2026** both deployed hosts reported a computed maximum of
 **20** and a live cap of **15** at the default 75%. Memory allows 27 boxes on
 these 62 GiB hosts, but the two-core CPU reserve with a 0.5-core quota allows
