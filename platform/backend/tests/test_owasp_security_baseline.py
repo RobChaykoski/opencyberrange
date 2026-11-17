@@ -117,6 +117,15 @@ def test_sensitive_routers_keep_rate_limits_and_docs_gating():
     assert "ENABLE_API_DOCS" in main
 
 
+def test_auth_rate_limits_are_event_aware():
+    auth = (ROOT / "platform/backend/app/routers/auth.py").read_text(encoding="utf-8")
+    assert "@limiter.limit(login_rate_limit)" in auth
+    assert "@limiter.limit(registration_rate_limit)" in auth
+    assert "EVENT_BURST_BUFFER_MINUTES" in (
+        ROOT / "platform/backend/app/services/event_burst.py"
+    ).read_text(encoding="utf-8")
+
+
 def test_security_headers_and_supply_chain_evidence_exist():
     snippet = (ROOT / "platform/frontend/security-headers.conf").read_text(encoding="utf-8")
     assert "Content-Security-Policy" in snippet

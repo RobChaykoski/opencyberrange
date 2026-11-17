@@ -18,6 +18,7 @@ import qrcode
 import re
 
 from app.ratelimit import create_limiter
+from app.services.event_burst import login_rate_limit, registration_rate_limit
 from app.services.input_safety import normalize_text
 from app.database import get_db
 from app.models import (
@@ -79,38 +80,6 @@ router = APIRouter()
 
 # Rate limiter for auth endpoints - stricter limits for security
 limiter = create_limiter()
-
-
-def _registration_rate_limit() -> str:
-    """Per-IP registration limits, relaxed while a competition is live.
-
-    A DevFest-style event sends a room of sign-ups through one NAT address in
-    a few minutes, which the normal limits would reject. Inside an active,
-    non-archived event window the burst allowance applies; outside it the
-    stricter limits do. Read at request time so no restart is needed.
-    """
-    try:
-        from datetime import datetime, timezone
-
-        from app.database import SessionLocal
-        from app.models import Competition
-
-        db = SessionLocal()
-        try:
-            now = datetime.now(timezone.utc).replace(tzinfo=None)
-            live = db.query(Competition.id).filter(
-                Competition.is_active == True,
-                Competition.is_archived == False,
-                Competition.start_at <= now,
-                Competition.end_at >= now,
-            ).first()
-        finally:
-            db.close()
-        if live:
-            return "20/minute;120/hour;400/day"
-    except Exception:
-        logger.warning("Registration burst check failed; using strict limits", exc_info=True)
-    return "5/minute;30/hour;100/day"
 
 
 
@@ -257,7 +226,7 @@ async def forgot_username(
 
 
 @router.post("/login", response_model=Token)
-@limiter.limit("10/minute")  # 10 login attempts per minute per IP
+@limiter.limit(login_rate_limit)  # 10/minute normally; burst around an event
 async def login(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -1384,7 +1353,7 @@ async def request_account_deletion(
     )
 
 @router.post("/register", response_model=UserResponse)
-@limiter.limit(_registration_rate_limit)
+@limiter.limit(registration_rate_limit)
 async def register(
     request: Request,
     user_data: RegisterRequest,
@@ -1394,9 +1363,10 @@ async def register(
     """Register a new user.
 
     Per-IP limits are strict normally (5/minute; 30/hour; 100/day) and relax
-    to a burst allowance (20/minute; 120/hour; 400/day) while a competition
-    window is live. The invite-code and approval gates remain the controls
-    that decide *who* may register.
+    to a burst allowance (20/minute; 120/hour; 400/day) from
+    ``EVENT_BURST_BUFFER_MINUTES`` before a competition starts until the same
+    margin after it ends. The invite-code and approval gates remain the
+    controls that decide *who* may register.
     """
     # Check for existing username, email, or student_id.
     # Use a single generic error to prevent account enumeration.

@@ -136,6 +136,30 @@ On successful login:
 All password writes (registration, admin create/reset, change password, setup,
 SSO provisioning, service identities) stamp the policy timestamp.
 
+## Rate limits and event windows
+
+Per-IP login and registration limits apply at the router. Normally:
+
+| Endpoint | Per-IP limit |
+|---|---|
+| Login | 10/minute |
+| Registration | 5/minute; 30/hour; 100/day |
+
+An active, non-archived competition is the platform's scheduled event. From
+`EVENT_BURST_BUFFER_MINUTES` (default 30) before `start_at` until the same
+margin after `end_at`, the limits relax to:
+
+| Endpoint | Event-window limit |
+|---|---|
+| Login | 40/minute |
+| Registration | 20/minute; 120/hour; 400/day |
+
+The check runs per request and is cached per worker for 20 seconds, so moving a
+competition in the admin UI takes effect without a restart. A database failure
+falls back to the strict limits. `LOGIN_RATE_LIMIT` and
+`LOGIN_BURST_RATE_LIMIT` override the login values; the invite-code and
+approval gates still decide who may register.
+
 ## Tests
 
 `tests/test_auth_lifecycle.py` covers refresh rotation/reuse, tenant-bound
