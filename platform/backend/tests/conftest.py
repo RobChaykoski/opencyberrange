@@ -22,8 +22,11 @@ TEST_DATABASE_URL = (
 # A syntactically valid but unreachable URL keeps module imports working when
 # no test database is provided. SQLAlchemy connects lazily, so nothing dials
 # this address unless a DB-backed test runs, and those skip instead.
+# connect_timeout stops a test that forgets its db fixture from blocking for
+# minutes on a firewalled port; it fails fast with a clear error instead.
 _PLACEHOLDER_URL = (
     "postgresql://ocr_test:ocr_test@127.0.0.1:59999/ocr_test_placeholder"
+    "?connect_timeout=3"
 )
 
 # Real environment variables win over .env in pydantic-settings, so setting
@@ -75,6 +78,22 @@ for _mod in (
 
 TEST_PASSWORD = "Correct#Horse7Battery"
 TEST_FLAG = "OCR{pytest_smoke_flag}"
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip db-marked tests when no test database is configured.
+
+    The db_session fixture already skips its own tests, but some API tests
+    depend on the database indirectly: middleware reads settings on every
+    request, before the route or its auth check runs. Without this hook those
+    tests try the placeholder URL and fail instead of skipping.
+    """
+    if TEST_DATABASE_URL:
+        return
+    skip = pytest.mark.skip(reason="TEST_DATABASE_URL not set; DB-backed test skipped")
+    for item in items:
+        if item.get_closest_marker("db"):
+            item.add_marker(skip)
 
 
 @pytest.fixture(autouse=True)

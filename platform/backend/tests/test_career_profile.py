@@ -1,5 +1,7 @@
 """Career dossier rendering and access safeguards."""
 
+import pytest
+
 from app.routers.profile import _safe_export_name
 from app.services.career_profile import render_html, render_markdown
 
@@ -206,6 +208,7 @@ def test_career_export_filename_is_sanitised():
     assert _safe_export_name('') == 'learner'
 
 
+@pytest.mark.db
 def test_career_endpoints_require_authentication(client):
     for path in (
         "/api/profile/career-dossier",

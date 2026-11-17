@@ -42,6 +42,7 @@ def test_parse_certificate_id_rejects_overlong_input():
 
 
 @pytest.mark.parametrize("value", INVALID_CERTIFICATE_IDS)
+@pytest.mark.db
 def test_verify_endpoint_rejects_invalid_certificate_ids(client, value):
     response = client.get(
         f"/api/exercises/verify/certificate/{quote(value, safe='')}"
