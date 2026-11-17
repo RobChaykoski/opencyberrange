@@ -19,6 +19,14 @@ The Exercises tab is where you browse, filter, and act on every lab on the platf
 <figcaption>The Exercises tab lists every exercise, with a left sidebar for topic, status, and management views.</figcaption>
 </figure>
 
+## Review status
+
+The **Review** column shows the current competency-contract state for an
+exercise: **Reviewed**, **Pathway**, **Baseline**, **Pending**, or **Unmapped**.
+Hover the badge to see the content version, review date, and whether a flag is
+recorded. This is a review-record indicator, not proof of a live harness run.
+Use the test-tube action on a row to run the exercise tester.
+
 ## Header buttons
 
 | Button | Action |
