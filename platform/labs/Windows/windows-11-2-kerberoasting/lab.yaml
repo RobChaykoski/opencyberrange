@@ -39,7 +39,7 @@ flag: OCR{k3rb3r04st_spn}
 test:
   steps:
   - name: Recover the assessment token from svc-mssql
-    command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-mssql)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
+    command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -o ldif-wrap=no -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-mssql)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
     expect: OCR{k3rb3r04st_spn}
     timeout: 120
   - name: Explain the defensive control in the report

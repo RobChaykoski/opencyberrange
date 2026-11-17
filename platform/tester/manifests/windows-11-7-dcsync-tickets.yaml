@@ -13,7 +13,7 @@ solver:
   command: /tests/windows-11-7-dcsync-tickets.sh
   steps:
   - name: Recover the assessment token from svc-dc
-    command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-dc)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
+    command: i=0; while [ $i -lt 30 ]; do out=$(ldapsearch -x -o ldif-wrap=no -H ldap://{target.ldap} -D '{cred.analyst.user}' -w '{cred.analyst.pass}' -b 'dc=lab,dc=example,dc=org' '(uid=svc-dc)' description 2>&1); echo "$out" | grep -o 'OCR{[^}]*}' && exit 0; i=$((i+1)); sleep 2; done; echo "$out"; exit 1
     expect: OCR{dcs4ync_r3pl1c4t10n}
   - name: Explain the defensive control in the report
     command: echo OCR{dcs4ync_r3pl1c4t10n}

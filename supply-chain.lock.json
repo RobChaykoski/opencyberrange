@@ -172,7 +172,7 @@
       "sha256": "a67628fe072235c02aeecb19b468f5c71fd4e5d66163f6a3a2c4c3c19caa3fc4"
     },
     "platform/backend/app/data/software-integrity.json": {
-      "sha256": "b3522154016d647200a91cc6947acf0065402ccc34a4796abdf1c62839dade92"
+      "sha256": "5226a6b120c24f61830d4f59e3166d61f7b976465518ce29cdbc70a53d16726b"
     },
     "platform/backend/app/security/permissions.yaml": {
       "sha256": "8df4a537d137d826dbad3e333c09a02ac87a8ec281cf40c1dc3767b418ca0404"
@@ -1302,55 +1302,55 @@
       ]
     },
     "windows-11-1-ad-domain-enumeration": {
-      "content_hash": "62f28e4459376024ff6b90e98cd39af70c75bf45d115ede0ce4496e3d49d2e16",
+      "content_hash": "8a0c9faba08ba082439c55f8f6295572c34b6f3113eac89776a75924310dd725",
       "services": [
         "ldap"
       ]
     },
     "windows-11-2-kerberoasting": {
-      "content_hash": "a251f22463405b5cfcf260708c0da1159b48622d8e3f14ed16a675f2e0fac541",
+      "content_hash": "689a2e69c69e23ab5e8dfae5ccb6aa279e84cbd9f6a94ec7b37c5c0f818c3a47",
       "services": [
         "ldap"
       ]
     },
     "windows-11-3-asrep-spray": {
-      "content_hash": "4d718ec0401d674045dfa9bb6cecb10d81293746caad8b2a02e68e2348d4bf42",
+      "content_hash": "8bdb31e60d9e7b00fd4b128f7c4be09ae2cfe66ae113c08b2e6d6949a813d111",
       "services": [
         "ldap"
       ]
     },
     "windows-11-4-acl-dacl-abuse": {
-      "content_hash": "7a5f77fbee5889ebfdebc5651d809cf493a5b5d4266ca19b325245687256e3a6",
+      "content_hash": "112e125aee840e50270ab768f31129797a941f450127727f49f7faad8f2b01a5",
       "services": [
         "ldap"
       ]
     },
     "windows-11-5-delegation-abuse": {
-      "content_hash": "9ece88b2716a08bc5a826bae1eab0327401d8cdaab2ac2be29ca5e1869821f37",
+      "content_hash": "5b2ff420da66028cb5cf887602b6d6823d38b37b052af893f83ec86d7de7178a",
       "services": [
         "ldap"
       ]
     },
     "windows-11-6-adcs-abuse": {
-      "content_hash": "2b8da8880daec8e624eb983307c920d75c6c5bc8397a9c0a547944b5d38376a1",
+      "content_hash": "461efada46a34cc6d338c114a2df231a99b25e06ef580706a7b2037431918174",
       "services": [
         "ldap"
       ]
     },
     "windows-11-7-dcsync-tickets": {
-      "content_hash": "5fa92b6b93ca2ba302ed521bf41059298cb4ea7837ea2c7262f03bf2049bd71a",
+      "content_hash": "bd8dabaf9cc6babb1fd6d779949a105414d0d84eefd0b26874f64f3197f96337",
       "services": [
         "ldap"
       ]
     },
     "windows-11-8-gpo-laps-defence": {
-      "content_hash": "c82a1624c1841c1a969696e911d06151589acecba6c1ba7e9c8f9c7ef71968bc",
+      "content_hash": "e30a4c4ea858f04f6c636c1975562b90ef2adf43b92c3fc9cb06d2595e974889",
       "services": [
         "ldap"
       ]
     },
     "windows-11-9-ad-capstone": {
-      "content_hash": "4ca9355361d20e041ef93f8eac587da951346fcb6ce8b04fc979438bb6e8bc1b",
+      "content_hash": "ddc70a037f81e55fe0f37cb62f978d2aff36dd1d71291785c917186fe82bf617",
       "services": [
         "ldap"
       ]
