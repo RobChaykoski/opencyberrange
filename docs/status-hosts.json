@@ -3,14 +3,15 @@
     "label": "OCR",
     "role": "production",
     "url": "https://ctfd.swocts.com",
-    "expected_version": "5.17.6",
+    "expected_version": "5.17.7",
     "line": "OCR production deployment"
   },
   {
     "label": "OCR dev",
     "role": "development",
     "url": "https://172.16.16.44",
-    "expected_version": "5.17.6",
+    "expected_version": "5.17.7",
     "line": "OCR development deployment"
   }
 ]
+

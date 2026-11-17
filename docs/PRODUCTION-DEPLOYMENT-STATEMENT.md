@@ -10,9 +10,9 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.17.6** |
-| Signed tag | **`v5.17.6`** |
-| Runtime code commit | `d2b2285d` (signed tag `v5.17.6`) |
+| Release | **5.17.7** |
+| Signed tag | **`v5.17.7`** |
+| Runtime code commit | `a7a9509a` (signed tag `v5.17.7`) |
 | Post-release content update | `e9b2c602` (XSS/CSRF study page, Web track knowledge-check items, IoT reference map; no schema or runtime code change) |
 | Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
@@ -23,7 +23,8 @@ another document disagrees, this page and the signed tag win.
 | 5.17.5 backup | `~/backups/ocr-backup-20261116-223835.dump` |
 | Final backup (post-cleanup) | `~/backups/ocr-backup-20261117-012455.dump` |
 | 5.17.6 backup | `~/backups/ocr-backup-20261117-025053.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, and 5.17.6) |
+| 5.17.7 backup | `~/backups/ocr-backup-20261117-035821.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, and 5.17.7) |
 
 ## Production cutover: COMPLETE
 
@@ -98,6 +99,20 @@ is already `/api`, so every re-authentication attempt hit
 re-auth challenge and every other re-authentication-gated action. 5.17.2 posts
 to `/auth/reauth` and the regression test asserts the corrected path.
 
+## 5.17.7 additions
+
+- Fixed admin course management: **Manage students** now opens the Instructor
+  Panel course workspace at the selected course, where the working Enroll
+  Students flow lives. **View course page** opens the learner-facing page.
+- Added a **Review** column to Admin > Exercises for the competency-contract
+  state, with content version, review date, and flag presence in the tooltip.
+- Verified with 8/8 Playwright checks from the admin path and 38/38 general UI
+  smoke checks.
+- Current production data: **87 users** (47 human accounts plus 40
+  `stresstest_*` accounts created by a stress test) and **2 courses**. The
+  stress-test accounts are test data and are reported, not removed, pending
+  operator confirmation.
+
 ## 5.17.6 additions
 
 - Production settings UX: **Run ceiling test** now checks the ticket and reason
@@ -166,13 +181,13 @@ to `/auth/reauth` and the regression test asserts the corrected path.
 
 ## Verification record
 
-- `GET /api/version` → `5.17.6`
+- `GET /api/version` → `5.17.7`
 - `GET /health` → `200`
 - `alembic current` → `0041_tenant_rls_legacy (head)`
 - Registered labs → `210` (170 public, 40 course-scoped)
-- Release status → `current` / `v5.17.6`
+- Release status → `current` / `v5.17.7`
 - Cutover → `deployment_mode=production`, `data_collection_mode=production`
-- 5.17.6 backup/restore → **PASSED** (47 users, 210 labs, 41 enrollments, 124 completions, 463 achievements)
+- 5.17.7 backup/restore → **PASSED** (87 users, 2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements)
 
 ## Related documents
 

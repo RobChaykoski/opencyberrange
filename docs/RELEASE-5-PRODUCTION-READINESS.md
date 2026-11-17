@@ -36,6 +36,24 @@ Community / Academic release and the one-way cutover is complete.
   terminal-only mode remains.
 - Migrations `0015`–`0040`, all idempotent and applied on dev and production.
 
+## 5.17.7 deployment record (Community / Academic) - 2026-11-17
+
+- Edition: **Community / Academic** (`lite` entitlement, single-host).
+- Deployed from `main` at `a7a9509a` (`v5.17.7`).
+- Course management: **Manage students** now opens the Instructor Panel course
+  workspace directly at the selected course, where enrollment works. **View
+  course page** opens the learner-facing page.
+- Exercises: added a **Review** column showing competency-contract state,
+  content version, review date, and flag presence.
+- Verified with 8/8 Playwright checks from the admin path and 38/38 general UI
+  smoke checks.
+- Production data: **87 users** (47 human + 40 `stresstest_*` test accounts),
+  **2 courses**, 210 labs (170 public / 40 course-scoped), 201 workbook-mapped.
+- Backup `ocr-backup-20261117-035821.dump`; restore drill **PASSED** (87 users,
+  2 courses, 210 labs, 41 enrollments, 124 completions, 463 achievements).
+- Tag `v5.17.7` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814`.
+
 ## 5.17.6 deployment record (Community / Academic) - 2026-11-17
 
 - Edition: **Community / Academic** (`lite` entitlement, single-host).
