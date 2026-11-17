@@ -62,7 +62,7 @@ model** across those pieces.
 |---|---|---|---|---|
 | 1 | [Competency Framework](COMPETENCY-FRAMEWORK.md) | Authoritative, versioned competency model and object mappings | - | 6.0 |
 | 2 | [Evidence Engine](EVIDENCE-ENGINE.md) | Evidence records, rubrics, automated collection, instructor review | Pillar 1 | 6.0 |
-| 3 | [Capstone Builder](CAPSTONE-BUILDER.md) | Competency-driven capstone generation and validation (Priority 5) | Pillars 1, 2 | 6.1 |
+| 3 | [Capstone Builder](CAPSTONE-BUILDER.md) | Competency-driven capstone generation and validation (requested Priority 5 automation) | Pillars 1, 2 | 6.1 |
 | 4 | [Instructor Analytics](INSTRUCTOR-ANALYTICS.md) | Cohort competency, weakest domains, failed labs, velocity, utilization, drop-off | Pillars 1, 2 | 6.1 |
 | 5 | [HA and Kubernetes](HA-AND-KUBERNETES.md) | Highly available control plane and a scale-out lab node pool | Pillar 2 (evidence continuity) | 6.2 |
 | 6 | [Federation](FEDERATION.md) | Signed exchange of competencies, content, rubrics, and capstones; no learner data | Pillars 1, 2, 3 | 6.3 |
