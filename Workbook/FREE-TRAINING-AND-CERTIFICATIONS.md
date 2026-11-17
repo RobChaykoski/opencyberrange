@@ -57,6 +57,11 @@ Do not copy practice questions, answer keys, or braindumps from any provider.
   analysis and network discovery.
 - [CyberChef](https://gchq.github.io/CyberChef/) - encoding and data
   transformation; the platform also serves a local copy in the Tools panel.
+- [EXPLIOT](https://expliot.io/open-source-framework/) and
+  [HomePWN](https://github.com/Telefonica/HomePWN) - third-party IoT and
+  embedded testing frameworks. Check their licence, pin a reviewed version, and
+  use them only on devices you own or have written permission to test. Do not
+  connect an unreviewed tool to the platform lab network.
 
 ## CTF and deeper practice
 
