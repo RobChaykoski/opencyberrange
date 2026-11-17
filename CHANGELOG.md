@@ -2,6 +2,50 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.17.6] - 2026-11-17
+
+### Production settings UX
+
+- **Run ceiling test** now checks the production ticket gate before the
+  confirmation prompt. With no ticket, it shows an inline hint beside the
+  RangeBox capacity card, highlights Production change control, scrolls it into
+  view, and focuses the missing ticket or reason field. A valid ticket and
+  reason show the normal confirmation.
+- The inline hint is visible on load in production, so the requirement is
+  discoverable before the operator clicks the test.
+- Added a regression test for the full gate, and verified the production
+  presentation on dev with **16/16** Playwright checks at desktop and mobile
+  widths.
+
+### Workbook and achievements
+
+- Added the required **Analysis Questions** section to all 19 level-11 pathway
+  workbook pages.
+- Added two range-wide completion badges: **Directory Pathfinder**
+  (`ad_pathfinder`, all nine Active Directory exercises) and **AppSec Architect**
+  (`appsec_architect`, all ten Modern Application Security exercises). Both are
+  in the achievement catalogue, the manual, and a regression test.
+- Clarified the lab counts: **210** registered labs, of which **170** are in the
+  public catalogue and **40** are course-scoped. The student dashboard correctly
+  shows 170.
+
+### Manual and evidence
+
+- Refreshed **52** manual screenshots from dev with Privacy Mode explicitly on
+  for admin and instructor captures. Replaced the stale locked-accounts image
+  and populated the pending and locked states with synthetic demo accounts.
+- Recorded the demo-account workflow and the `UI_MANUAL_PRIVACY=1` requirement
+  in `docs/MANUAL-SCREENSHOTS.md`.
+
+### Validation
+
+- Backend: **909 passed** on a clean PostgreSQL database.
+- Frontend: lint, tests, and production build pass.
+- Links, document assets, workbook coverage, lab metadata, quiz banks, and the
+  security-delta review pass.
+- The previous full-suite errors were test-database contamination (duplicate
+  track slugs); a clean schema run passes.
+
 ## [5.17.5] - 2026-11-16
 
 ### Documentation and repository cleanup

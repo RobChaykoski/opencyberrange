@@ -1,8 +1,8 @@
 # Validation report
 
-**Release:** 5.17.5
-**Commit:** `eddaf74f` (signed tag `v5.17.5`)
-**Date:** 16 November 2026
+**Release:** 5.17.6
+**Commit:** tag `v5.17.6` (recorded after the release commit)
+**Date:** 17 November 2026
 
 This is the reproducible validation record for the current release. Commands
 are run from the repository root unless noted.
@@ -98,12 +98,12 @@ python scripts/supply_chain.py --check \
 
 | Check | Result |
 |---|---|
-| `/api/version` | `5.17.5` |
+| `/api/version` | `5.17.6` |
 | `/health` | `200` |
 | Alembic | `0041_tenant_rls_legacy` |
 | Content refresh | `3379f27f` (workbook 201/210, live harness 19/19) |
-| Registered labs | `210` |
-| Admin release status | `current` / `v5.17.5` |
+| Registered labs | `210` (170 public, 40 course-scoped) |
+| Admin release status | `current` / `v5.17.6` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
 | Backup | `ocr-backup-20261117-012455.dump` |
 | Restore drill | **PASSED** (47 users, 210 labs, 41 enrollments, 463 achievements) |

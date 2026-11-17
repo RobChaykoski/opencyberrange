@@ -61,11 +61,13 @@ That is expected on a deployment without demo data.
 ## Rules
 
 - Use demo or test accounts, never a real learner or instructor. The current
-  images use synthetic names such as `alex_chen`, `jordan_lee`, and
-  `sso-student`, with `example.edu` addresses.
+  images use synthetic names such as `alex_chen`, `demotest_instructor_01`,
+  `demo_shots_admin`, `demo_shots_pending`, and `demo_shots_locked`, with
+  `example.edu` / `example.invalid` addresses.
 - Confirm the served release and catalogue before capturing:
   `curl -k -s "$UI_BASE_URL/api/version"` must return the current version, and
-  the student profile must show the current exercise total (**210**). A footer
+  the student dashboard must show the current **public** exercise total (**170**;
+  the database has 210 registered labs, of which 40 are course-scoped). A footer
   that shows only `v5`, or an old total such as 149, means the capture is stale.
 - The script turns **Privacy Mode** off by default so names are readable. On a
   host that mirrors production users, set `UI_MANUAL_PRIVACY=1` and keep it on;

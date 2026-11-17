@@ -9,9 +9,9 @@
 # docs/decisions/0004-single-platform-release-version.md.
 platform:
   name: "SWOCTS Cyber Range"
-  version: "5.17.5"
+  version: "5.17.6"
   status: "release"
-  date: "2026-11-16"
+  date: "2026-11-17"
 
 editions:
   community_academic:
@@ -41,13 +41,13 @@ maintenance_lines:
     note: "Existing single-host teaching installs; new installs use the Release 5 tree with the Community / Academic profile."
 
 release:
-  version: "5.17.5"
+  version: "5.17.6"
   status: "release"
-  date: "2026-11-16"
+  date: "2026-11-17"
 
 development:
-  version: "5.17.5"
-  focus: "Post-5.17 work: Active Directory and modern application-security pathways, report-based labs, and multi-tenancy research"
+  version: "5.17.6"
+  focus: "Post-5.17 patch: settings-ticket UX, pathway workbook questions, pathway completion badges, and privacy-safe manual screenshots"
 
 policy:
   name: latest-supported-ga

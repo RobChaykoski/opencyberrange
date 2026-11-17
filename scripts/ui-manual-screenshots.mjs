@@ -21,9 +21,10 @@
  * SKIP and leaves the existing image in place.
  *
  * The script signs in through the API, sets the browser token in
- * localStorage, turns Privacy Mode off for admin shots, and writes PNGs under
- * Manual-Lite/**. It performs GETs plus, when UI_MANUAL_ACTIVE_LAB=1, one lab
- * spawn and stop.
+ * localStorage, sets Privacy Mode (off by default; keep it on with
+ * UI_MANUAL_PRIVACY=1 when the host mirrors production users), and writes PNGs
+ * under Manual-Lite/**. It performs GETs plus, when UI_MANUAL_ACTIVE_LAB=1, one
+ * lab spawn and stop.
  *
  * Requires Playwright: npx playwright install chromium
  */
@@ -114,6 +115,9 @@ async function contextFor(session, viewport = { width: 1440, height: 1100 }) {
         localStorage.setItem('user', JSON.stringify(user))
         localStorage.setItem('theme', 'dark')
         localStorage.setItem('privacy-mode', keepPrivacy ? 'on' : 'off')
+        // Mark the choice explicit so the role default does not override it for
+        // instructor captures.
+        localStorage.setItem('privacy-mode-explicit', '1')
         localStorage.setItem('ocr_orientation_seen_v1_' + user.username, '1')
       },
       { ...session, keepPrivacy: KEEP_PRIVACY },
@@ -368,11 +372,16 @@ if (admin) {
     await page.waitForTimeout(1100)
     await viewportShot(page, path.join(IMG.admin, 'admin-pending.png'), 'pending approvals')
   }
+  // The pending tab replaces the user table, so return to Users before using
+  // the status filter for the locked-account capture.
+  await go(page, '/admin?tab=users')
   const filter = page.locator('select').filter({ has: page.locator('option[value="locked"]') }).first()
   if (await filter.count()) {
     await filter.selectOption('locked')
     await page.waitForTimeout(1100)
     await viewportShot(page, path.join(IMG.admin, 'admin-locked-users.png'), 'locked users')
+  } else {
+    report.push('SKIP locked users: status filter not found')
   }
 
   await go(page, '/admin?tab=labs', 1500)
@@ -443,11 +452,13 @@ if (admin) {
 
   await go(page, '/admin?tab=settings', 1500)
   await viewportShot(page, path.join(IMG.admin, 'admin-settings.png'), 'settings')
-  const features = page.getByRole('button', { name: /^Features/ }).first()
+  const features = page.getByRole('tab', { name: /^Features/ }).first()
   if (await features.count()) {
     await features.click()
     await page.waitForTimeout(900)
     await viewportShot(page, path.join(IMG.admin, 'admin-settings-features.png'), 'features')
+  } else {
+    report.push('SKIP features tab: not found')
   }
 
   await go(page, '/admin?tab=system', 1500)

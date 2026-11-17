@@ -12,11 +12,17 @@ when updating the README, release notes, or a deployment record.
 | Labs with a workbook link | **201** | non-empty `workbook:` in `lab.yaml` |
 | Labs without a workbook link | **9** | remaining `lab.yaml` files |
 | Registered labs in dev/prod | **210** | `labs` table after discovery |
+| Public catalogue labs | **170** | `visibility = 'public'`; what a student sees before course enrolment |
+| Course-scoped labs | **40** | `visibility = 'course'`; visible only inside an assigned course |
 | Tracks | **13** | track folders under `platform/labs` |
 
 The badge and headline should use **210 lab definitions** and, when referring
 to workbook coverage, **201 workbook-mapped labs**. A deployment record should
 say **210 registered labs** only after lab discovery has run.
+
+The student dashboard and exercise catalogue show **170 public exercises**,
+because 40 of the 210 are course-scoped. Do not treat the 170 total as a
+missing-content bug; confirm the public/course split before changing the count.
 
 The 5.17.2 wave added 19 pathway labs: 9 Active Directory exercises
 (`windows-11-*`) and 10 modern application-security exercises (`web-11-*`).
