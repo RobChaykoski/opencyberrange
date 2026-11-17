@@ -58,6 +58,7 @@ The signed tag and [`versions.yaml`](../versions.yaml) win over any page.
 - [DFIR pathway](DFIR-PATHWAY.md) and [detection engineering](DETECTION-ENGINEERING-PATHWAY.md)
 - [Content gap analysis](CONTENT-GAP-ANALYSIS.md)
 - [Curriculum drift report](CURRICULUM-DRIFT-REPORT.md)
+- [Educational provenance and external-source licence boundaries](EDUCATIONAL-PROVENANCE.md)
 
 ## Privacy and data protection
 

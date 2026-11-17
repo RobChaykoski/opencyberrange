@@ -36,6 +36,32 @@ Community / Academic release and the one-way cutover is complete.
   terminal-only mode remains.
 - Migrations `0015`–`0040`, all idempotent and applied on dev and production.
 
+## 5.17.6 deployment record (Community / Academic) - 2026-11-17
+
+- Edition: **Community / Academic** (`lite` entitlement, single-host).
+- Deployed from `main` at `d2b2285d` (`v5.17.6`).
+- Settings UX: **Run ceiling test** now checks the ticket and reason first,
+  shows an inline hint beside the RangeBox capacity card, highlights Production
+  change control, and focuses the missing field. Verified with 16/16 Playwright
+  checks on the production presentation at desktop and mobile widths.
+- Workbook: Analysis Questions added to all 19 level-11 pathway pages;
+  coverage remains **201 of 210**.
+- Achievements: `ad_pathfinder` and `appsec_architect` are live global
+  completion badges.
+- Manual: 53 screenshots refreshed on dev with Privacy Mode explicitly on for
+  admin and instructor views.
+- Counts: **210 registered labs** = **170 public** + **40 course-scoped**.
+- Removed the revoked `Test-api` service identity and credential (ticket
+  `123456`); users returned to **47**.
+- Verified: `/api/version` returns `5.17.6`, `/health` 200, 210 labs, 201
+  workbook-mapped, Alembic `0041_tenant_rls_legacy`, cutover state unchanged.
+- Backup `ocr-backup-20261117-025053.dump`; restore drill **PASSED** (47 users,
+  210 labs, 41 enrollments, 124 completions, 463 achievements).
+- Tag `v5.17.6` is signed with the release key
+  `68A817762C831475F00DB54E775050A4C4921814`.
+- Validation: 909 backend tests, frontend lint/tests/build, 38/38 UI smoke
+  checks, and content/security checks pass.
+
 ## 5.17.5 deployment record (Community / Academic) - 2026-11-16
 
 - Edition: **Community / Academic** (`lite` entitlement, single-host).

@@ -1,7 +1,7 @@
 # Educational material provenance
 
-Status: **Current for the 2.6.0 line**
-Last reviewed: **11 November 2026**
+Status: **Current for the 5.17.6 line**
+Last reviewed: **17 November 2026**
 
 This page records where the OpenCyberRange / SWOCTS Cyber Range educational
 material comes from, how it is reviewed, and what its limits are. It covers
@@ -70,6 +70,52 @@ has not yet been demonstrated end to end in a live session by a reviewer.
 Automated checks prove consistency, not instructional quality. A lab that passes
 every script can still be confusing, too long, or based on a misleading clue;
 that is what the student-tester and design-tester reviews are for.
+
+## External training platforms and licence boundaries
+
+External platforms are **reference material only**. This includes Hack The Box,
+TryHackMe, OffSec, PortSwigger Web Security Academy, LetsDefend, CTF platforms,
+commercial certification question banks (CompTIA, EC-Council, CyberArk,
+Microsoft exam prep, and similar), and paid course providers.
+
+Do not copy, adapt, closely paraphrase, or incorporate:
+
+- scenario or challenge text;
+- question text, answer options, answer keys, or explanations;
+- flags, solutions, walkthroughs, or screenshots;
+- lab files, virtual machines, container images, or course assets;
+- logos, branding, or any implication of endorsement.
+
+Do not treat a public practice question as a template. Read the source only to
+understand topic coverage, close it, and write an original question or scenario.
+Cite the public standard or official documentation that supports the answer, not
+the commercial question bank. If a sentence is recognisable from the source, it
+has been copied too closely.
+
+Public standards and official documentation are allowed as references, for
+example NIST publications, MITRE ATT&CK, OWASP projects and cheat sheets, CIS
+Benchmarks, IEC 62443, ISO/IEC 27001, Microsoft Learn, and vendor API and
+security documentation. Official exam objectives may be used to map topic
+coverage; they do not authorise copying exam items or braindumps.
+
+Third-party code, images, and data need a compatible licence, attribution, and a
+recorded source before they enter the repository. **A repository with no licence
+is not usable.** If the licence is unclear, do not copy it; ask the owner. The
+`gideon-pbq-generator` repository is not integrated for this reason.
+
+CTF platforms are never a source of flags, challenge text, or solutions. A
+public write-up may be read for general understanding, but the resulting lab
+must be independently designed, use new targets and flags, and cite public
+standards where relevant.
+
+Review checklist:
+
+1. Is every learner-facing sentence original?
+2. Is the source a public standard or official documentation, not a commercial
+   question bank or paid course?
+3. Are names, targets, flags, and data new?
+4. Is third-party code or media covered by a compatible licence and attribution?
+5. If unsure, has the content been removed or escalated before merge?
 
 ## Framework references
 

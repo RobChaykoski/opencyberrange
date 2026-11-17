@@ -1,6 +1,6 @@
 # Production deployment statement
 
-**Statement date:** 16 November 2026
+**Statement date:** 17 November 2026
 
 This is the authoritative statement for the current production deployment. If
 another document disagrees, this page and the signed tag win.
@@ -10,9 +10,9 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.17.5** |
-| Signed tag | **`v5.17.5`** |
-| Runtime code commit | `3379f27f` (content refresh; signed tag `v5.17.5` at `eddaf74f`) |
+| Release | **5.17.6** |
+| Signed tag | **`v5.17.6`** |
+| Runtime code commit | `d2b2285d` (signed tag `v5.17.6`) |
 | Alembic revision | **`0041_tenant_rls_legacy`** |
 | Development host | `172.16.16.44` |
 | Production host | `172.16.16.41` / `https://ctfd.swocts.com` |
@@ -21,7 +21,8 @@ another document disagrees, this page and the signed tag win.
 | Post-cutover backup | `~/backups/ocr-backup-20261116-192307.dump` |
 | 5.17.5 backup | `~/backups/ocr-backup-20261116-223835.dump` |
 | Final backup (post-cleanup) | `~/backups/ocr-backup-20261117-012455.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, and final) |
+| 5.17.6 backup | `~/backups/ocr-backup-20261117-025053.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, and 5.17.6) |
 
 ## Production cutover: COMPLETE
 
@@ -96,6 +97,26 @@ is already `/api`, so every re-authentication attempt hit
 re-auth challenge and every other re-authentication-gated action. 5.17.2 posts
 to `/auth/reauth` and the regression test asserts the corrected path.
 
+## 5.17.6 additions
+
+- Production settings UX: **Run ceiling test** now checks the ticket and reason
+  before the confirmation prompt, shows an inline hint beside the RangeBox
+  capacity card, highlights Production change control, and focuses the missing
+  field. Verified with 16/16 Playwright checks on the production presentation.
+- Workbook: added the required Analysis Questions to all 19 level-11 pathway
+  pages. Coverage remains **201 of 210**.
+- Achievements: `ad_pathfinder` (all nine AD exercises) and
+  `appsec_architect` (all ten AppSec exercises) are live global completion
+  badges, visible in the catalogue and manual.
+- Manual: 53 screenshots refreshed on dev with Privacy Mode explicitly on for
+  admin and instructor views; populated pending and locked demo states.
+- Counts clarified: **210 registered labs** = **170 public** + **40
+  course-scoped**.
+- Removed the revoked `Test-api` service identity and its service credential
+  (ticket `123456`); users returned to **47**.
+- Validation: 909 backend tests, frontend lint/tests/build, 38/38 UI smoke
+  checks, link/doc-asset/workbook/lab/quiz/security checks pass.
+
 ## 5.17.5 additions
 
 - Documentation cleanup: documentation skill, docs index, category hubs,
@@ -134,13 +155,13 @@ to `/auth/reauth` and the regression test asserts the corrected path.
 
 ## Verification record
 
-- `GET /api/version` → `5.17.5`
+- `GET /api/version` → `5.17.6`
 - `GET /health` → `200`
 - `alembic current` → `0041_tenant_rls_legacy (head)`
-- Registered labs → `210`
-- Release status → `current` / `v5.17.5`
+- Registered labs → `210` (170 public, 40 course-scoped)
+- Release status → `current` / `v5.17.6`
 - Cutover → `deployment_mode=production`, `data_collection_mode=production`
-- Post-cutover backup/restore → **PASSED** (47 users)
+- 5.17.6 backup/restore → **PASSED** (47 users, 210 labs, 41 enrollments, 124 completions, 463 achievements)
 
 ## Related documents
 

@@ -1,7 +1,7 @@
 # Validation report
 
 **Release:** 5.17.6
-**Commit:** tag `v5.17.6` (recorded after the release commit)
+**Commit:** `d2b2285d` (signed tag `v5.17.6`)
 **Date:** 17 November 2026
 
 This is the reproducible validation record for the current release. Commands
@@ -105,8 +105,8 @@ python scripts/supply_chain.py --check \
 | Registered labs | `210` (170 public, 40 course-scoped) |
 | Admin release status | `current` / `v5.17.6` |
 | Cutover | `deployment_mode=production`, `data_collection_mode=production` |
-| Backup | `ocr-backup-20261117-012455.dump` |
-| Restore drill | **PASSED** (47 users, 210 labs, 41 enrollments, 463 achievements) |
+| Backup | `ocr-backup-20261117-025053.dump` |
+| Restore drill | **PASSED** (47 users, 210 labs, 41 enrollments, 124 completions, 463 achievements) |
 | Live password check | correct login/reauth/change = `200`; wrong/oversized/newline = `401` |
 
 ## Known gaps

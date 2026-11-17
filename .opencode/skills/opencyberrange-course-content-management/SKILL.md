@@ -163,6 +163,10 @@ Rules:
 - No real secrets, personal data, or live malware.
 - Defence is taught alongside attack.
 - The workbook and lab test steps agree.
+- Learner-facing text is original. External platforms, commercial question
+  banks, CTF write-ups, and paid courses are references only; never copy their
+  scenarios, questions, answers, flags, screenshots, or assets. See
+  `docs/EDUCATIONAL-PROVENANCE.md`.
 
 ## Optional knowledge checks
 
@@ -180,6 +184,11 @@ Knowledge checks are benchmark practice, never exam items or gates.
 - Collect optional post-quiz ratings for satisfaction, relevance, usefulness,
   and ease of use; aggregate them into the course experience report.
 - Do not copy real exam questions, braindumps, or NDA-protected material.
+- Do not copy question text, scenarios, answers, flags, or explanations from
+  Hack The Box, TryHackMe, OffSec, PortSwigger Academy, LetsDefend, CTF
+  platforms, commercial question banks, or paid courses. Use them only to
+  understand topic coverage, then write original questions and cite a public
+  standard or official documentation.
 - Keep the bank expandable: content lives beside the lab and is validated by
   `scripts/check-quiz-banks.py`.
 
