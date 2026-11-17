@@ -6,6 +6,7 @@ exclude_docs: |
   FREE-TRAINING-AND-CERTIFICATIONS.md
   FREE-TRAINING-AND-CERTIFICATIONS/**
   COVERAGE.md
+  IOT-SECURITY-REFERENCES.md
   CH01_Enumeration/**
   CH02_SMB_Reconnaissance/**
   CH03_SMB_Credential_Attacks/**

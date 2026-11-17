@@ -83,4 +83,5 @@ nav:
     - "Exercise 2.1 -- The Public Profile": CH_OSINT02_Mobile_OSINT/02_The_Public_Profile.md
     - "Exercise 3.1 -- The Public Banner": CH_OSINT02_Mobile_OSINT/03_The_Public_Banner.md
     - Chapter Review: CH_OSINT02_Mobile_OSINT/04_Chapter_Review.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

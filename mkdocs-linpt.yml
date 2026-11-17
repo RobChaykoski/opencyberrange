@@ -120,4 +120,5 @@ nav:
     - Introduction: CH_LIN09_Assessments/00_Introduction.md
     - "Assessment 9.1 -- Meridian Data Breach": CH_LIN09_Assessments/01_Meridian_Data_Breach_Assessment.md
     - "Assessment 9.2 -- CryptoVault Recovery": CH_LIN09_Assessments/02_CryptoVault_Recovery_Operation.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

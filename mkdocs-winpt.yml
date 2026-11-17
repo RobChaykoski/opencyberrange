@@ -162,4 +162,5 @@ nav:
     - "Exercise 11.7 -- Credential Dumping and Ticket Abuse": CH_WIN11_AD_Pathway/07_DCSync_and_Tickets.md
     - "Exercise 11.8 -- GPO, LAPS, and Tiered Administration Defence": CH_WIN11_AD_Pathway/08_GPO_and_LAPS_Defence.md
     - "Exercise 11.9 -- Attack Path and Remediation Capstone": CH_WIN11_AD_Pathway/09_AD_Capstone.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

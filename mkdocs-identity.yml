@@ -75,4 +75,5 @@ nav:
     - "OAuth and OIDC": CH_IAM01_Identity_And_Access/02_OAuth_OIDC.md
     - "Identity Lifecycle": CH_IAM01_Identity_And_Access/03_Identity_Lifecycle.md
     - Chapter Review: CH_IAM01_Identity_And_Access/04_Chapter_Review.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

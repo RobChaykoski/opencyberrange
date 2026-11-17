@@ -80,4 +80,5 @@ nav:
     - "Exercise 2.2 -- Database Credentials and Data Access": CH_MSF02_Exploitation_and_Post_Exploitation/02_Database_Credentials_and_Data_Access.md
     - "Exercise 2.3 -- Pivot to a Local-Only Service": CH_MSF02_Exploitation_and_Post_Exploitation/03_Pivot_to_Local_Service.md
     - "Exercise 2.4 -- Persistence, Evidence, and Cleanup": CH_MSF02_Exploitation_and_Post_Exploitation/04_Persistence_Evidence_and_Cleanup.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

@@ -42,7 +42,10 @@ external references, not platform exercises.
 | Beginner cybersecurity review | [W3Schools cybersecurity tutorial and quiz](https://www.w3schools.com/cybersecurity/cybersecurity_quiz.php) |
 | Blue-team practice | [LetsDefend free resources](https://github.com/LetsDefend/Free-Cybersecurity-Resources), [LetsDefend network protocols lesson](https://app.letsdefend.io/training/lessons/network-protocols) |
 | OT/ICS topics | [NIST SP 800-82](https://csrc.nist.gov/publications/detail/sp/800-82/rev-3/final), [MITRE ATT&CK for ICS](https://attack.mitre.org/matrices/ics/), official EC-Council ICS/SCADA certification page |
-| IoT security | [Government of Canada ITSAP.00.012](https://www.cyber.gc.ca/en/guidance/internet-things-iot-security-itsap00012), [OWASP IoT Top 10](https://owasp.org/www-project-internet-of-things/) |
+| IoT security | [Government of Canada ITSAP.00.012](https://www.cyber.gc.ca/en/guidance/internet-things-iot-security-itsap00012), [OWASP IoT Top 10](https://owasp.org/www-project-internet-of-things/), [OWASP IoTGoat](https://github.com/OWASP/IoTGoat) |
+
+See [IoT Security: Reference Map](IOT-SECURITY-REFERENCES.md) for firmware,
+network, printer, and update-integrity study material.
 
 Official certification pages and objectives are useful for topic mapping only.
 Do not copy practice questions, answer keys, or braindumps from any provider.

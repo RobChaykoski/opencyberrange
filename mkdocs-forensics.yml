@@ -81,4 +81,5 @@ nav:
     - "Independent Path Reconstruction": CH_FOR03_Topology_Forensics/02_Independent_Path.md
   - "FOR04: Live Memory":
     - "Exercise 3.1 -- Live Linux Memory Acquisition": CH_FOR03_Live_Memory/01_Live_Linux_Memory.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

@@ -106,4 +106,5 @@ nav:
     - Introduction: CH_NET01B_Traffic_And_Logs/00_Introduction.md
     - "Exercise 1.1 -- Packet Capture Analysis": CH_NET01B_Traffic_And_Logs/01_Packet_Capture_Analysis.md
     - "Exercise 1.2 -- Log Correlation": CH_NET01B_Traffic_And_Logs/02_Log_Correlation.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md

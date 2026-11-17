@@ -78,4 +78,5 @@ nav:
     - Introduction: CH_OT02_S7comm_Data_Blocks/00_Introduction.md
     - "Exercise 2.1 -- S7comm Data Block Read": CH_OT02_S7comm_Data_Blocks/01_S7comm_Data_Block_Read.md
     - Chapter Review: CH_OT02_S7comm_Data_Blocks/02_Chapter_Review.md
+  - "IoT security references": IOT-SECURITY-REFERENCES.md
   - "Free training and certifications": FREE-TRAINING-AND-CERTIFICATIONS.md
