@@ -11,6 +11,7 @@ import os
 import time as _time
 from typing import Optional, Dict, List
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.crypto import decrypt_secret, encrypt_secret, is_encrypted
@@ -473,7 +474,16 @@ def seed_defaults(db: Session) -> int:
         resynced += 1
 
     if created or resynced:
-        db.commit()
+        try:
+            db.commit()
+        except IntegrityError:
+            # Production runs multiple Uvicorn workers. Each worker calls this
+            # at startup and may see the same missing rows. The first commit
+            # wins; the others must roll back instead of crash-looping.
+            db.rollback()
+            created = 0
+            resynced = 0
+            logger.info("Another worker seeded default platform settings first")
         _invalidate_cache()
         if created:
             logger.info(f"Seeded {created} default platform settings")
