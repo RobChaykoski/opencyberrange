@@ -53,7 +53,9 @@ and learner machines can reach them:
 
 Validated on 19 November 2026 with Moodle 5.0.1, Authentik 2026.8.5,
 NetBox, Ralph, and Fleet. The validator reported all checks passing on both the
-workstation and the development host.
+workstation and the development host. Ralph's lab admin is seeded from
+`RALPH_ADMIN_*`; OpenIAM's official compose stack is fetched on the dev host but
+is not started by default.
 
 Do not treat these URLs as production. They are lab endpoints on the dev network
 and must stay off the production host.
