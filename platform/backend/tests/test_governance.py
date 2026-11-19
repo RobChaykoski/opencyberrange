@@ -28,7 +28,7 @@ def test_governance_dashboards_enforce_roles(client, db_session):
         user = User(
             username=f"governance_{role}_{suffix}",
             email=f"governance_{role}_{suffix}@university.edu",
-            hashed_password=get_password_hash(PASSWORD),
+            hashed_password=get_password_hash(TEST_PASSWORD),
             is_active=True,
             is_approved=True,
             role=role,
