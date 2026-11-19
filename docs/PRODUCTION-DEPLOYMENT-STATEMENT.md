@@ -10,9 +10,9 @@ another document disagrees, this page and the signed tag win.
 | Item | Value |
 |---|---|
 | Edition | **Community / Academic** (`lite` entitlement, single-host) |
-| Release | **5.27.2** |
-| Signed tag | **`v5.27.2`** |
-| Runtime code commit | `57d654b0` (signed tag `v5.27.2`) |
+| Release | **5.27.3** |
+| Signed tag | **`v5.27.3`** |
+| Runtime code commit | `82b5417a` (signed tag `v5.27.3`) |
 | Previous release | `5.27.0` (signed tag `v5.27.0` at `ac18f7bd`) |
 | Alembic revision | **`0047_lab_nice_metadata`** |
 | Development host | `172.16.16.44` |
@@ -35,7 +35,29 @@ another document disagrees, this page and the signed tag win.
 | 5.27.0 backup | `~/backups/ocr-backup-20261119-083401.dump` |
 | 5.27.1 backup | `~/backups/ocr-backup-20261119-194808.dump` |
 | 5.27.2 backup | `~/backups/ocr-backup-20261119-201613.dump` |
-| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, and 5.27.2) |
+| 5.27.3 backup | `~/backups/ocr-backup-20261119-205049.dump` |
+| Restore drills | **PASSED** (pre-cutover, post-cutover, post-5.17.5, final, 5.17.6, 5.17.7, 19 November deploy, 5.19.0, 5.20.0, 5.21.0, 5.22.0, 5.27.0, 5.27.1, 5.27.2, and 5.27.3) |
+
+## 5.27.3 deployment verification
+
+Deployed on 19 November 2026 to development and production.
+
+| Check | Development | Production |
+|---|---|---|
+| `/api/version` | `5.27.3` | `5.27.3` |
+| Alembic | `0048_performance_indexes` (head) | `0048_performance_indexes` (head) |
+| Performance indexes | 5 present | 5 present |
+| Build asset | `index-Da4XZRrW.js` | `index-Da4XZRrW.js` |
+| Asset cache | `public, max-age=31536000, immutable` | same |
+
+Warm dev measurements before/after the change: `/api/labs` 77 ms → 45 ms,
+student dashboard 99 ms → 77 ms, `/api/auth/me` remains around 28 ms without a
+Peer Manager round-trip.
+
+The pre-deploy production backup is
+`~/backups/ocr-backup-20261119-205049.dump` (2.4 MB, 1,700 objects). The restore
+drill passed with 67 users, 210 labs, 46 enrolments, 124 completions, 465
+achievements, and 1,386 activity events.
 
 ## 5.27.2 deployment verification
 

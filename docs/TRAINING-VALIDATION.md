@@ -4,7 +4,7 @@
 
 **Environment:** development host `172.16.16.44`
 
-**Release line:** 5.27.1
+**Release line:** 5.27.3
 
 **Scope:** the dev-only training stack, the dev OpenCyberRange instance, and the
 LTI launch path. Production was not involved.
