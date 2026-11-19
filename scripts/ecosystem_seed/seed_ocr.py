@@ -10,7 +10,7 @@ This is additive and idempotent. It is for the development instance only.
 from __future__ import annotations
 
 import os
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from app.auth import get_password_hash
 from app.database import SessionLocal
@@ -68,7 +68,7 @@ def main() -> None:
 
         course = session.query(Course).filter(Course.code == COURSE_CODE).first()
         if course is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             course = Course(
                 name="Capstone: Multi-Student Cohort Defence",
                 code=COURSE_CODE,
@@ -173,7 +173,7 @@ def main() -> None:
         # teaching assistant. It proves cross-course scope denial.
         single = session.query(Course).filter(Course.code == "OCR-CAP-SINGLE").first()
         if single is None:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             single = Course(
                 name="Capstone: Single-Student Security Operations",
                 code="OCR-CAP-SINGLE",
