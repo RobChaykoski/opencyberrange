@@ -74,7 +74,9 @@ First-run notes:
 
 - NetBox creates its superuser from `SUPERUSER_*` values derived from `.env`.
 - Fleet needs a one-time database initialisation:
-  `docker compose --profile endpoint run --rm --entrypoint fleet fleet prepare db`
+  `docker compose --profile endpoint run --rm -T --entrypoint /bin/sh fleet -c 'fleet prepare db' < /dev/null`.
+  If that command is interrupted, remove the Fleet database volume and run it
+  again; a half-migrated lab database will not serve.
 - Ralph needs its first admin created in the web UI.
 - Authentik needs its initial `akadmin` password set from the container logs.
 

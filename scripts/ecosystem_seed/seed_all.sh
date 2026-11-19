@@ -46,7 +46,7 @@ fi
 echo "== Ralph =="
 if docker compose --profile assets ps --services --filter status=running | grep -qx ralph; then
   echo "Ralph is running. Create the first admin in the web UI, then load fake assets."
-  echo "  http://127.0.0.1:${RALPH_PORT:-8084}/"
+  echo "  http://${RALPH_BIND:-127.0.0.1}:${RALPH_PORT:-8084}/"
 else
   echo "SKIP: Ralph is not running"
 fi
@@ -54,7 +54,7 @@ fi
 echo "== Fleet =="
 if docker compose --profile endpoint ps --services --filter status=running | grep -qx fleet; then
   echo "Fleet is running. Complete first-run setup and enrol fake hosts only."
-  echo "  http://127.0.0.1:${FLEET_PORT:-8082}/"
+  echo "  http://${FLEET_BIND:-127.0.0.1}:${FLEET_PORT:-8082}/"
 else
   echo "SKIP: Fleet is not running"
 fi
@@ -62,7 +62,7 @@ fi
 echo "== Authentik =="
 if docker compose --profile sso ps --services --filter status=running | grep -qx authentik-server; then
   echo "Authentik is running. Create fake groups and users in the admin UI."
-  echo "  http://127.0.0.1:${AUTHENTIK_PORT:-9000}/"
+  echo "  http://${AUTHENTIK_BIND:-127.0.0.1}:${AUTHENTIK_PORT:-9000}/"
 else
   echo "SKIP: Authentik is not running"
 fi

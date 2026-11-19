@@ -46,7 +46,10 @@ fail() { echo "FAIL: $1"; failures=$((failures + 1)); }
 skip() { echo "SKIP: $1"; skips=$((skips + 1)); }
 
 http_code() {
-  curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$1" || echo "000"
+  local code
+  code="$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$1" 2>/dev/null)" || true
+  [ -n "$code" ] || code="000"
+  printf '%s' "$code"
 }
 
 expect_http() {
