@@ -51,6 +51,7 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [Federation](FEDERATION.md)
 - [AI Mentor](AI-MENTOR.md)
 - [ADR 0005: Release 6 is evidence-first](decisions/0005-release-6-evidence-first.md)
+- [ADR 0006: Identity platform roles](decisions/0006-identity-platform-roles.md)
 
 ## Architecture and security
 
@@ -114,6 +115,8 @@ capstones and analytics, scale, federation, then the AI mentor.
 - [Simulated cloud range](SIMULATED-CLOUD.md)
 - [Deployment status](status-dashboard.md)
 - [Community events calendar](COMMUNITY-EVENTS-CALENDAR.md)
+- [2027 curriculum tracks](CURRICULUM-TRACKS-2027.md)
+- [NICE Framework ingestion](NICE-FRAMEWORK-INGESTION.md)
 - [Procurement requirements](PROCUREMENT-REQUIREMENTS.md) and [compliance](COMPLIANCE.md)
 - [HECVAT](HECVAT.md)
 - [Manual screenshots](MANUAL-SCREENSHOTS.md)

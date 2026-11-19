@@ -50,6 +50,7 @@ _PROTECTED_PREFIXES = (
     "/api/lti",
     "/api/setup",
     "/api/security",
+    "/api/nice",
 )
 
 # Authentication routes that are intentionally public. Sensitive auth routes

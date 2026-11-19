@@ -507,6 +507,11 @@ owner-only unless an explicit share or break-glass grant exists.
 | `GET` | `/api/lti/login` | Lti Login | Public |
 | `POST` | `/api/lti/login` | Lti Login | Public |
 | `GET` | `/api/modules/` | Get Modules Status | OAuth2PasswordBearer |
+| `GET` | `/api/nice/components` | Nice Components | OAuth2PasswordBearer |
+| `GET` | `/api/nice/labs/{lab_id}` | Get Lab Nice Mappings | OAuth2PasswordBearer |
+| `PUT` | `/api/nice/labs/{lab_id}` | Set Lab Nice Mappings | OAuth2PasswordBearer |
+| `POST` | `/api/nice/refresh` | Refresh Nice Framework | OAuth2PasswordBearer |
+| `GET` | `/api/nice/status` | Nice Status | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-assessment` | Short career-direction questions | OAuth2PasswordBearer |
 | `POST` | `/api/profile/career-assessment` | Score a short career-direction check | OAuth2PasswordBearer |
 | `GET` | `/api/profile/career-dossier` | Career-profile dossier (JSON) | OAuth2PasswordBearer |
@@ -1039,6 +1044,7 @@ Create a new lab from the web UI.
 | `flag` | string or null | no |  |
 | `visibility` | string or null | no |  |
 | `lab_yaml` | string or null | no |  |
+| `nice` | object or null | no |  |
 
 **Responses**
 
@@ -1134,6 +1140,7 @@ Update lab settings
 | `mapped_skills` | string or null | no |  |
 | `assessment_criteria` | string or null | no |  |
 | `mitre_attack` | string or null | no |  |
+| `nice` | object or null | no |  |
 
 **Responses**
 
@@ -7253,6 +7260,113 @@ Get VPN registration status for current user - checks Peer Manager directly
 **Get Modules Status**
 
 Return enabled/disabled status of the optional modules this build ships.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Responses**
+
+- `200`: Successful Response
+
+## NICE Framework
+
+### `GET /api/nice/components`
+
+**Nice Components**
+
+Search NICE components for the authoring dropdown.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `component_type` | query | `work_role` | `task` | `knowledge` | `skill` | no |  |
+| `q` | query | string | no |  |
+| `work_role` | query | string or null | no |  |
+| `limit` | query | integer | no |  |
+| `offset` | query | integer | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/nice/labs/{lab_id}`
+
+**Get Lab Nice Mappings**
+
+Return the selected NICE components for one lab.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_id` | path | integer | yes |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `PUT /api/nice/labs/{lab_id}`
+
+**Set Lab Nice Mappings**
+
+Replace the NICE components selected for one lab.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Parameters**
+
+| Parameter | In | Type | Required | Description |
+|---|---|---|---|---|
+| `lab_id` | path | integer | yes |  |
+
+**Request body** (`application/json`)
+
+**Schema:** `NiceSelection`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `work_role` | array[string] | no |  |
+| `task` | array[string] | no |  |
+| `knowledge` | array[string] | no |  |
+| `skill` | array[string] | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `POST /api/nice/refresh`
+
+**Refresh Nice Framework**
+
+Refresh NICE components from NIST or the bundled snapshot.
+
+**Authentication:** OAuth2PasswordBearer
+
+**Request body** (`application/json`)
+
+**Schema:** `NiceRefreshRequest`
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `source` | `official` | `snapshot` | no |  |
+
+**Responses**
+
+- `200`: Successful Response
+- `422`: Validation Error — `HTTPValidationError`
+
+### `GET /api/nice/status`
+
+**Nice Status**
+
+Return the installed NICE Framework version and component counts.
 
 **Authentication:** OAuth2PasswordBearer
 

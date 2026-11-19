@@ -64,6 +64,7 @@ from app import entitlement
 from app.security.dependencies import require_permission
 from app.security.permissions import PolicyDecision
 from app.services import auth_sessions
+from app.services import nice_framework
 from app.services import mail
 from app.services import mfa as mfa_service
 from app.services import reauth as reauth_service
@@ -1185,6 +1186,13 @@ async def update_lab(
         lab.assessment_criteria = request.assessment_criteria
     if request.mitre_attack is not None:
         lab.mitre_attack = request.mitre_attack
+    if request.nice is not None:
+        missing = nice_framework.validate_selections(db, request.nice)
+        if missing:
+            raise HTTPException(
+                status_code=400,
+                detail="Unknown or inactive NICE components: " + ", ".join(missing),
+            )
     if request.is_active is not None:
         lab.is_active = request.is_active
     if request.is_course_exclusive is not None:
@@ -1241,6 +1249,13 @@ async def update_lab(
 
     db.commit()
     db.refresh(lab)
+    if request.nice is not None:
+        nice_framework.set_lab_mappings(
+            db,
+            lab_id=lab.id,
+            selections=request.nice,
+            created_by_id=admin.id,
+        )
     return {"message": f"Lab {lab.name} updated"}
 
 
@@ -3035,6 +3050,14 @@ async def create_lab(
     chapter_id = chapter_id_for_workbook(lab_data.get("workbook"))
     framework = resolve_framework(slug, chapter_id, lab_data)
 
+    if payload.nice:
+        missing = nice_framework.validate_selections(db, payload.nice)
+        if missing:
+            raise HTTPException(
+                status_code=400,
+                detail="Unknown or inactive NICE components: " + ", ".join(missing),
+            )
+
     lab = Lab(
         name=name,
         slug=slug,
@@ -3067,6 +3090,14 @@ async def create_lab(
     db.add(lab)
     db.commit()
     db.refresh(lab)
+
+    if payload.nice:
+        nice_framework.set_lab_mappings(
+            db,
+            lab_id=lab.id,
+            selections=payload.nice,
+            created_by_id=admin.id,
+        )
 
     log_admin_action(
         action=AuditActions.LAB_CREATED,

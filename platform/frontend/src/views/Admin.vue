@@ -3828,6 +3828,8 @@ test:
               </div>
             </div>
 
+            <NiceMappingPicker v-model="createLabForm.nice" />
+
             <div class="modal-actions">
               <button @click="showCreateLabModal = false" class="btn btn--secondary">Cancel</button>
               <button @click="createNewLab" class="btn btn--success">Create Exercise</button>
@@ -3907,6 +3909,7 @@ test:
                   {{ flagRevealError }}
                 </p>
               </div>
+              <NiceMappingPicker v-model="editNice" />
             </div>
             <div v-if="labEditTab === 'compose'" class="form-group">
               <label class="form-label">Docker Compose</label>
@@ -4625,6 +4628,7 @@ import OpenBadgesPanel from '../components/OpenBadgesPanel.vue'
 import AuditHistory from '../components/AuditHistory.vue'
 import LtiPlatformsPanel from '../components/LtiPlatformsPanel.vue'
 import SecurityCenter from '../components/SecurityCenter.vue'
+import NiceMappingPicker from '../components/NiceMappingPicker.vue'
 import { getUserTimeZone } from '../utils/timezone'
 import { requireExportReason } from '../utils/exportReason'
 import { ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
@@ -5309,6 +5313,8 @@ const editingSelf = computed(() => {
 })
 
 const editLab = ref(null)
+const editNice = ref({ work_role: [], task: [], knowledge: [], skill: [] })
+const editNiceLoaded = ref(false)
 const trackCatalog = ref([])  // [{id, name, slug, levels: [{id,name,level_number}]}]
 const editTrackId = ref(null)  // selected track in edit modal (null = uncategorized)
 const editLevelOptions = computed(() => {
@@ -7941,7 +7947,8 @@ const createLabMode = ref('yaml')
 const createLabForm = reactive({
   name: '', slug: '', description: '', scenario: '', difficulty: 'beginner', category: 'general',
   duration_minutes: 60, level_id: null, compose_file: '', flag: '', visibility: 'public',
-  lab_yaml: '', objectives: '', hints: ''
+  lab_yaml: '', objectives: '', hints: '',
+  nice: { work_role: [], task: [], knowledge: [], skill: [] },
 })
 const yamlParsed = ref(null)
 const yamlParseError = ref('')
@@ -7950,7 +7957,8 @@ const openCreateLabModal = () => {
   Object.assign(createLabForm, {
     name: '', slug: '', description: '', scenario: '', difficulty: 'beginner', category: 'general',
     duration_minutes: 60, level_id: null, compose_file: '', flag: '', visibility: 'public',
-    lab_yaml: '', objectives: '', hints: ''
+    lab_yaml: '', objectives: '', hints: '',
+    nice: { work_role: [], task: [], knowledge: [], skill: [] },
   })
   createLabMode.value = 'yaml'
   yamlParsed.value = null
@@ -8946,6 +8954,14 @@ const openLabEditModal = async (lab) => {
       trackCatalog.value.length ? Promise.resolve() :
         axios.get('/instructor/tracks-and-levels').then(r => { trackCatalog.value = r.data.tracks || [] })
     ])
+    const niceResponse = await axios.get(`/nice/labs/${lab.id}`).catch(() => ({ data: {} }))
+    editNice.value = {
+      work_role: (niceResponse.data.work_role || []).map(item => item.code),
+      task: (niceResponse.data.task || []).map(item => item.code),
+      knowledge: (niceResponse.data.knowledge || []).map(item => item.code),
+      skill: (niceResponse.data.skill || []).map(item => item.code),
+    }
+    editNiceLoaded.value = Boolean(niceResponse.data.version || niceResponse.data.work_role)
     editLab.value = { ...data }
     // Resolve current track from level_id
     const lvlId = data.level_id
@@ -9004,6 +9020,7 @@ const saveLabEdit = async () => {
       difficulty: editLab.value.difficulty,
       level_id: editLab.value.level_id ?? null,
     }
+    if (editNiceLoaded.value) payload.nice = editNice.value
     await Promise.all([
       axios.put(`/admin/labs/${editLab.value.id}`, payload),
       axios.put(`/admin/labs/${editLab.value.id}/compose`, { compose_file: editLab.value.compose_file || '' })

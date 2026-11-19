@@ -49,6 +49,7 @@ class UpdateLabRequest(SafeTextModel):
     mapped_skills: Optional[str] = None
     assessment_criteria: Optional[str] = None
     mitre_attack: Optional[str] = None
+    nice: Optional[dict] = None
 
     __safe_text_fields__ = {
         "name": "short",
@@ -117,6 +118,7 @@ class LabCreate(SafeTextModel):
     flag: Optional[str] = None
     visibility: Optional[str] = None
     lab_yaml: Optional[str] = None
+    nice: Optional[dict] = None
 
     __safe_text_fields__ = {
         "name": "short",

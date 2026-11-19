@@ -35,6 +35,7 @@ from app.routers import modules as modules_router
 from app.routers import rangebox as rangebox_router
 from app.routers import about as about_router
 from app.routers import public_config as public_config_router
+from app.routers import nice as nice_router
 from app.routers import lti as lti_router
 from app.routers import accommodations as accommodations_router
 from app.routers import reviews as reviews_router
@@ -753,6 +754,19 @@ async def lifespan(app: FastAPI):
     finally:
         settings_db.close()
 
+    # Seed NICE Framework reference data from the bundled snapshot on first
+    # boot so the authoring dropdown works without outbound network access.
+    try:
+        from app.services.nice_framework import seed_if_empty as _seed_nice
+
+        _nice_db = SessionLocal()
+        try:
+            _seed_nice(_nice_db)
+        finally:
+            _nice_db.close()
+    except Exception as _exc:
+        logger.warning("NICE Framework seed skipped: %s", _exc)
+
     # Enable each optional module this tier's entitlement grants, so the runtime
     # gate (module_access_control middleware) unlocks without a manual toggle.
     # entitlement.modules is written by the release pipeline from the tier's
@@ -1360,6 +1374,7 @@ app.include_router(modules_router.router, prefix="/api/modules", tags=["Modules"
 app.include_router(rangebox_router.router, prefix="/api/rangebox", tags=["RangeBox"])
 app.include_router(about_router.router, prefix="/api/about", tags=["About"])
 app.include_router(public_config_router.router, prefix="/api", tags=["Public config"])
+app.include_router(nice_router.router, prefix="/api/nice", tags=["NICE Framework"])
 app.include_router(reports_router.router, prefix="/api", tags=["Reports"])
 app.include_router(
     question_bank_router.router,

@@ -564,9 +564,11 @@ tracks:
     audience: "Intermediate learners interested in authentication, federation, and account lifecycle."
     difficulty: "intermediate"
     prerequisites: ["NET00"]
-    required_environment: "RangeBox with browser and identity lab targets"
+    required_environment: "RangeBox with browser and identity lab targets; Keycloak, Authentik, and OpenIAM containers or VMs"
     recommended_next: "forensics"
     role_alignment: ["IAM Analyst", "SOC Analyst", "Identity Engineer"]
+    framework_alignment:
+      nice_work_roles: ["PD-WRL-001", "IO-WRL-005", "IO-WRL-006", "DD-WRL-001"]
     status: "published"
     chapters:
       - id: IAM01
@@ -576,9 +578,81 @@ tracks:
         prerequisites: [NET00]
         exercises: 3
         estimated_minutes: 135
-        recommended_next: FOR01
+        recommended_next: IAM02
         status: published
         intro: CH_IAM01_Identity_And_Access/00_Introduction.md
+      - id: IAM02
+        directory: CH_IAM02_Active_Directory_Kerberos
+        display_name: "Active Directory and Kerberos"
+        difficulty: "intermediate"
+        prerequisites: [IAM01]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: IAM03
+        status: planned
+      - id: IAM03
+        directory: CH_IAM03_Entra_ID_Hybrid
+        display_name: "Entra ID and Hybrid Identity"
+        difficulty: "intermediate"
+        prerequisites: [IAM02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: IAM04
+        status: planned
+      - id: IAM04
+        directory: CH_IAM04_Keycloak_OIDC
+        display_name: "Keycloak and OIDC"
+        difficulty: "intermediate"
+        prerequisites: [IAM02]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: IAM05
+        status: planned
+      - id: IAM05
+        directory: CH_IAM05_Authentik_MFA
+        display_name: "Authentik and MFA"
+        difficulty: "intermediate"
+        prerequisites: [IAM04]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: IAM06
+        status: planned
+      - id: IAM06
+        directory: CH_IAM06_Federation_SAML_OIDC
+        display_name: "Federation: SAML and OIDC"
+        difficulty: "advanced"
+        prerequisites: [IAM04, IAM05]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: IAM07
+        status: planned
+      - id: IAM07
+        directory: CH_IAM07_Access_Review_JML
+        display_name: "Access Review and Joiner/Mover/Leaver"
+        difficulty: "intermediate"
+        prerequisites: [IAM02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: IAM08
+        status: planned
+      - id: IAM08
+        directory: CH_IAM08_OpenIAM_Governance
+        display_name: "OpenIAM Identity Governance"
+        difficulty: "advanced"
+        prerequisites: [IAM07]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: IAM09
+        status: planned
+      - id: IAM09
+        directory: CH_IAM09_IAM_Capstone
+        display_name: "IAM Capstone"
+        difficulty: "advanced"
+        prerequisites: [IAM03, IAM06, IAM08]
+        exercises: 2
+        estimated_minutes: 360
+        recommended_next: FOR01
+        status: planned
 
   - id: forensics
     pathway_order: 6
@@ -621,3 +695,225 @@ tracks:
         recommended_next: OSINT01
         status: published
         intro: CH_FOR03_Topology_Forensics/00_Introduction.md
+
+  - id: vm
+    pathway_order: 12
+    display_name: "Vulnerability Management"
+    audience: "Learners moving from exploitation into defensive exposure management, asset ownership, and remediation."
+    difficulty: "intermediate"
+    prerequisites: ["BEG04", "NET00"]
+    required_environment: "RangeBox with Linux and Windows targets, OpenVAS/Greenbone, and a synthetic asset inventory"
+    recommended_next: "soc"
+    role_alignment: ["Vulnerability Management Analyst", "Security Analyst", "Risk Analyst", "Patch Manager"]
+    framework_alignment:
+      nice_work_roles: ["PD-WRL-007", "PD-WRL-004", "IO-WRL-006", "PD-WRL-001"]
+    status: "planned"
+    chapters:
+      - id: VM01
+        directory: CH_VM01_Asset_Inventory_Exposure
+        display_name: "Asset Inventory and Exposure"
+        difficulty: "beginner"
+        prerequisites: [NET00]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: VM02
+        status: planned
+      - id: VM02
+        directory: CH_VM02_OpenVAS_Authenticated_Scanning
+        display_name: "Authenticated Scanning with OpenVAS"
+        difficulty: "intermediate"
+        prerequisites: [VM01]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: VM03
+        status: planned
+      - id: VM03
+        directory: CH_VM03_Nessus_Concepts_Comparison
+        display_name: "Nessus Concepts and Scan Comparison"
+        difficulty: "intermediate"
+        prerequisites: [VM02]
+        exercises: 3
+        estimated_minutes: 360
+        recommended_next: VM04
+        status: planned
+      - id: VM04
+        directory: CH_VM04_Risk_Scoring_Prioritisation
+        display_name: "Risk Scoring and Prioritisation"
+        difficulty: "intermediate"
+        prerequisites: [VM01]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: VM05
+        status: planned
+      - id: VM05
+        directory: CH_VM05_Patch_Validation
+        display_name: "Patch Validation"
+        difficulty: "intermediate"
+        prerequisites: [VM02, VM04]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: VM06
+        status: planned
+      - id: VM06
+        directory: CH_VM06_Exceptions_Remediation
+        display_name: "Exceptions and Remediation Workflow"
+        difficulty: "intermediate"
+        prerequisites: [VM04]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: VM07
+        status: planned
+      - id: VM07
+        directory: CH_VM07_VM_Capstone
+        display_name: "Vulnerability Management Capstone"
+        difficulty: "advanced"
+        prerequisites: [VM05, VM06]
+        exercises: 2
+        estimated_minutes: 360
+        recommended_next: SOC01
+        status: planned
+
+  - id: soc
+    pathway_order: 13
+    display_name: "Security Operations"
+    audience: "Learners who want hands-on detection, triage, hunting, and case management with open-source telemetry."
+    difficulty: "intermediate"
+    prerequisites: ["NET02", "FOR01"]
+    required_environment: "RangeBox with Sysmon, Suricata, Zeek, and Wazuh; Security Onion as an optional heavy profile"
+    recommended_next: "forensics"
+    role_alignment: ["SOC Analyst", "Detection Engineer", "Incident Responder", "Threat Hunter"]
+    framework_alignment:
+      nice_work_roles: ["PD-WRL-001", "PD-WRL-003", "PD-WRL-006", "PD-WRL-002"]
+    status: "planned"
+    chapters:
+      - id: SOC01
+        directory: CH_SOC01_Telemetry_Foundations
+        display_name: "Telemetry Foundations"
+        difficulty: "beginner"
+        prerequisites: [NET02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: SOC02
+        status: planned
+      - id: SOC02
+        directory: CH_SOC02_Suricata_Detection
+        display_name: "Network Detection with Suricata"
+        difficulty: "intermediate"
+        prerequisites: [SOC01]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: SOC03
+        status: planned
+      - id: SOC03
+        directory: CH_SOC03_Zeek_Hunting
+        display_name: "Network Metadata and Hunting with Zeek"
+        difficulty: "intermediate"
+        prerequisites: [SOC02]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: SOC04
+        status: planned
+      - id: SOC04
+        directory: CH_SOC04_Wazuh_Endpoint_Detection
+        display_name: "Endpoint Detection with Wazuh"
+        difficulty: "intermediate"
+        prerequisites: [SOC01]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: SOC05
+        status: planned
+      - id: SOC05
+        directory: CH_SOC05_Alert_Triage_Cases
+        display_name: "Alert Triage and Case Management"
+        difficulty: "intermediate"
+        prerequisites: [SOC02, SOC04]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: SOC06
+        status: planned
+      - id: SOC06
+        directory: CH_SOC06_Detection_As_Code
+        display_name: "Detection as Code"
+        difficulty: "advanced"
+        prerequisites: [SOC02, SOC04]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: SOC07
+        status: planned
+      - id: SOC07
+        directory: CH_SOC07_Security_Onion_Capstone
+        display_name: "Security Onion Capstone"
+        difficulty: "advanced"
+        prerequisites: [SOC03, SOC05, SOC06]
+        exercises: 3
+        estimated_minutes: 480
+        recommended_next: FOR01
+        status: planned
+
+  - id: platform
+    pathway_order: 14
+    display_name: "Platform Engineering"
+    audience: "Learners who build and operate the delivery platform: containers, Kubernetes, CI/CD, infrastructure as code, and configuration management."
+    difficulty: "intermediate"
+    prerequisites: ["LIN01", "NET00"]
+    required_environment: "RangeBox with Docker, a local Kubernetes cluster, GitHub Actions workflow fixtures, Terraform, and Ansible"
+    recommended_next: "soc"
+    role_alignment: ["Platform Engineer", "DevSecOps Engineer", "Cloud Security Engineer", "Site Reliability Engineer"]
+    framework_alignment:
+      nice_work_roles: ["DD-WRL-003", "DD-WRL-004", "DD-WRL-005", "IO-WRL-005", "DD-WRL-001"]
+    status: "planned"
+    chapters:
+      - id: PLAT01
+        directory: CH_PLAT01_Docker_Containers
+        display_name: "Docker and Container Security"
+        difficulty: "beginner"
+        prerequisites: [LIN01]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: PLAT02
+        status: planned
+      - id: PLAT02
+        directory: CH_PLAT02_Kubernetes_Hardening
+        display_name: "Kubernetes Fundamentals and Hardening"
+        difficulty: "intermediate"
+        prerequisites: [PLAT01]
+        exercises: 6
+        estimated_minutes: 720
+        recommended_next: PLAT03
+        status: planned
+      - id: PLAT03
+        directory: CH_PLAT03_GitHub_Actions_CI
+        display_name: "CI/CD with GitHub Actions"
+        difficulty: "intermediate"
+        prerequisites: [PLAT01]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: PLAT04
+        status: planned
+      - id: PLAT04
+        directory: CH_PLAT04_Terraform_IaC
+        display_name: "Terraform and Infrastructure as Code"
+        difficulty: "intermediate"
+        prerequisites: [PLAT02]
+        exercises: 5
+        estimated_minutes: 600
+        recommended_next: PLAT05
+        status: planned
+      - id: PLAT05
+        directory: CH_PLAT05_Ansible_Configuration
+        display_name: "Ansible and Configuration Management"
+        difficulty: "intermediate"
+        prerequisites: [PLAT01]
+        exercises: 4
+        estimated_minutes: 480
+        recommended_next: PLAT06
+        status: planned
+      - id: PLAT06
+        directory: CH_PLAT06_Platform_Capstone
+        display_name: "Platform Engineering Capstone"
+        difficulty: "advanced"
+        prerequisites: [PLAT03, PLAT04, PLAT05]
+        exercises: 2
+        estimated_minutes: 360
+        recommended_next: SOC01
+        status: planned

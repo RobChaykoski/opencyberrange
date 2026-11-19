@@ -2,6 +2,18 @@
 
 All notable changes to OpenCyberRange are recorded here.
 
+## [5.24.0] - 2026-11-19
+
+### NICE Framework ingestion and curriculum scaffold
+
+- Added NICE Framework v2.2.0 ingestion from the official NIST JSON, with a bundled compressed snapshot for first boot and offline installs.
+- Added `nice_components`, `nice_links`, `nice_framework_meta`, and `lab_nice_components`, plus the `0045_nice_framework` migration.
+- Added instructor component search, lab mapping, admin refresh, and a NICE status endpoint.
+- Added a NICE mapping picker to the exercise create and edit forms. Selections are validated against the installed component catalogue.
+- Scaffolded the IAM, Vulnerability Management, Security Operations, and Platform Engineering tracks in the curriculum manifest, with NICE v2.2.0 work-role alignment and a content lifecycle.
+- Added OpenIAM to the IAM governance sequence and documented the 2027 track build order.
+- Recorded ADR 0006: Authentik is the operational SSO platform, Keycloak is the advanced enterprise-IAM lab, and OpenIAM is the identity-governance lab.
+
 ## [5.23.0] - 2026-11-19
 
 ### Live community events calendar

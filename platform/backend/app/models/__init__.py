@@ -105,6 +105,12 @@ from app.models.security import (
     ServiceCredential,
 )
 from app.models.readiness import ReadinessStudentNote, ReadinessLabReview
+from app.models.nice import (
+    LabNiceComponent,
+    NiceComponent,
+    NiceFrameworkMeta,
+    NiceLink,
+)
 from app.consent.models import (
     ConsentAudit,
     ConsentEvent,
@@ -116,6 +122,10 @@ from app.consent.models import (
 
 __all__ = [
     "Base",
+    "LabNiceComponent",
+    "NiceComponent",
+    "NiceFrameworkMeta",
+    "NiceLink",
     "AccommodationEvent",
     "BreakGlassGrant",
     "Achievement",
