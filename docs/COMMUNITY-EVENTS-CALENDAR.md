@@ -20,11 +20,15 @@ No API key is used. The calendar ID can be overridden with
 
 - The backend fetches the feed server-side, so the browser never calls a
   third-party origin.
-- The parsed event list is cached in process for 15 minutes.
+- The parsed event list is cached in process for 15 minutes, with a 60-second
+  failure backoff and a 24-hour maximum stale window.
+- Feed bodies are capped at 5 MB. Recurrences are limited to daily, weekly,
+  monthly, or yearly rules, with per-event and total event caps.
 - Recurring events are expanded for a bounded window: 45 days in the past and
   730 days in the future.
 - All-day events use an inclusive end date, matching the calendar UI.
 - Descriptions are converted to plain text and truncated.
+- A malformed event is skipped without dropping the rest of the feed.
 - If the feed is unavailable, the endpoint returns the last cached copy when it
   has one. If there is no cached copy, the frontend keeps its saved community
   events and shows a short status message.

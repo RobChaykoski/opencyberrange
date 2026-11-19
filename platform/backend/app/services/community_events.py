@@ -41,11 +41,20 @@ SWOCTS_ICS_URL = (
 )
 
 CACHE_SECONDS = 15 * 60
+FAILURE_BACKOFF_SECONDS = 60
+STALE_MAX_SECONDS = 24 * 60 * 60
 PAST_WINDOW_DAYS = 45
 FUTURE_WINDOW_DAYS = 730
 REQUEST_TIMEOUT = 15
+MAX_FEED_BYTES = 5 * 1024 * 1024
+MAX_EVENTS = 1500
+MAX_OCCURRENCES_PER_EVENT = 250
+ALLOWED_FREQUENCIES = {"DAILY", "WEEKLY", "MONTHLY", "YEARLY"}
+TITLE_LIMIT = 200
+LOCATION_LIMIT = 300
+URL_LIMIT = 2000
 
-_CACHE: dict = {"at": 0.0, "payload": None}
+_CACHE: dict = {"at": 0.0, "failure_at": 0.0, "payload": None}
 _CACHE_LOCK = threading.Lock()
 
 _TAG = re.compile(r"<[^>]+>")
@@ -70,6 +79,12 @@ def get_community_events(force: bool = False) -> dict:
         cached = _CACHE["payload"]
         if cached and not force and now - _CACHE["at"] < CACHE_SECONDS:
             return {**cached, "cached": True, "stale": False}
+        if (
+            not force
+            and _CACHE["failure_at"]
+            and now - _CACHE["failure_at"] < FAILURE_BACKOFF_SECONDS
+        ):
+            return _unavailable()
         try:
             text = _download_ics()
             events = parse_ics(text)
@@ -83,30 +98,44 @@ def get_community_events(force: bool = False) -> dict:
             }
             _CACHE["payload"] = payload
             _CACHE["at"] = now
+            _CACHE["failure_at"] = 0.0
             return payload
         except Exception as exc:  # noqa: BLE001 - the page must still render
             logger.warning("SWOCTS calendar fetch failed: %s", exc)
-            if cached:
+            _CACHE["failure_at"] = now
+            if cached and now - _CACHE["at"] <= STALE_MAX_SECONDS:
                 return {**cached, "cached": True, "stale": True}
-            return {
-                "events": [],
-                "source": source_payload(),
-                "available": False,
-                "fetched_at": None,
-                "cached": False,
-                "stale": False,
-                "error": "The community calendar is temporarily unavailable.",
-            }
+            return _unavailable()
+
+
+def _unavailable() -> dict:
+    return {
+        "events": [],
+        "source": source_payload(),
+        "available": False,
+        "fetched_at": None,
+        "cached": False,
+        "stale": False,
+        "error": "The community calendar is temporarily unavailable.",
+    }
 
 
 def _download_ics() -> str:
-    response = requests.get(
+    chunks: list[bytes] = []
+    size = 0
+    with requests.get(
         SWOCTS_ICS_URL,
         timeout=REQUEST_TIMEOUT,
         headers={"User-Agent": "OpenCyberRange community calendar/1.0"},
-    )
-    response.raise_for_status()
-    text = response.text
+        stream=True,
+    ) as response:
+        response.raise_for_status()
+        for chunk in response.iter_content(chunk_size=65536):
+            size += len(chunk)
+            if size > MAX_FEED_BYTES:
+                raise ValueError("The community calendar feed is too large")
+            chunks.append(chunk)
+    text = b"".join(chunks).decode("utf-8", errors="replace").lstrip("\ufeff")
     if "BEGIN:VCALENDAR" not in text or "BEGIN:VEVENT" not in text:
         raise ValueError("The calendar response was not an iCalendar feed")
     return text
@@ -203,9 +232,14 @@ def parse_ics(
             continue
         if upper == "END:VEVENT":
             if current is not None:
-                _add_event(events, current, calendar_zone, window_start, window_end)
+                try:
+                    _add_event(events, current, calendar_zone, window_start, window_end)
+                except Exception as exc:  # noqa: BLE001 - skip one bad event
+                    logger.debug("Skipped a malformed calendar event: %s", exc)
             current = None
             continue
+        if len(events) >= MAX_EVENTS:
+            break
         if current is None:
             continue
         parsed = _split_property(line)
@@ -238,21 +272,43 @@ def _add_event(
         end = start
     duration = end - start
 
-    title = _text(data.get("SUMMARY", ({}, "Community event"))[1]) or "Community event"
+    title = _shorten(
+        _text(data.get("SUMMARY", ({}, "Community event"))[1]),
+        TITLE_LIMIT,
+    ) or "Community event"
     uid = _text(data.get("UID", ({}, ""))[1])
-    location = _text(data.get("LOCATION", ({}, ""))[1]) or "Southwestern Ontario"
+    location = _shorten(
+        _text(data.get("LOCATION", ({}, ""))[1]),
+        LOCATION_LIMIT,
+    ) or "Southwestern Ontario"
     description = _shorten(_text(data.get("DESCRIPTION", ({}, ""))[1]))
-    url = _text(data.get("URL", ({}, SWOCTS_CALENDAR_URL))[1])
+    url = _shorten(
+        _text(data.get("URL", ({}, SWOCTS_CALENDAR_URL))[1]),
+        URL_LIMIT,
+    )
     if not url.lower().startswith(("http://", "https://")):
         url = SWOCTS_CALENDAR_URL
 
     occurrences: list[datetime] = []
     rule_raw = data.get("RRULE")
     if rule_raw:
-        try:
-            rule = rrule.rrulestr(f"RRULE:{rule_raw[1]}", dtstart=start)
-            occurrences = list(rule.between(window_start, window_end, inc=True))
-        except Exception:  # noqa: BLE001 - keep the first occurrence
+        frequency = next(
+            (
+                part.split("=", 1)[1].upper()
+                for part in rule_raw[1].split(";")
+                if part.upper().startswith("FREQ=")
+            ),
+            "",
+        )
+        if frequency in ALLOWED_FREQUENCIES:
+            try:
+                rule = rrule.rrulestr(f"RRULE:{rule_raw[1]}", dtstart=start)
+                occurrences = list(
+                    rule.between(window_start, window_end, inc=True)
+                )[:MAX_OCCURRENCES_PER_EVENT]
+            except Exception:  # noqa: BLE001 - keep the first occurrence
+                occurrences = [start] if window_start <= start <= window_end else []
+        else:
             occurrences = [start] if window_start <= start <= window_end else []
     elif window_start <= start <= window_end:
         occurrences = [start]
@@ -274,6 +330,8 @@ def _add_event(
     for occurrence in occurrences:
         if occurrence in excluded:
             continue
+        if len(events) >= MAX_EVENTS:
+            break
         occurrence_end = occurrence + duration
         event_id = _event_id(uid, occurrence, title)
         events[event_id] = {

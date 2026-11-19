@@ -191,6 +191,14 @@ def validate_settings():
                 "MIGRATOR_DATABASE_URL must use a different role from "
                 "DATABASE_URL so the runtime identity cannot bypass RLS."
             )
+        if (
+            settings.BACKUP_DATABASE_URL
+            and settings.BACKUP_DATABASE_URL == settings.DATABASE_URL
+        ):
+            errors.append(
+                "BACKUP_DATABASE_URL must not use the runtime role; pg_dump "
+                "must run as a role with BYPASSRLS."
+            )
     
     # Validate JWT_SECRET
     if not settings.JWT_SECRET:

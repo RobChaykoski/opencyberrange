@@ -10,6 +10,8 @@ All notable changes to OpenCyberRange are recorded here.
 - The backend parses the public iCalendar feed, expands recurrences, handles all-day events and folded lines, strips HTML from descriptions, and caches the result for 15 minutes.
 - The endpoint falls back to the last cached copy when the feed is unavailable, and the frontend keeps saved events as a final fallback.
 - Added `GET /api/public/community-events` and `OCR_SWOCTS_CALENDAR_ID`.
+- Hardened the feed reader with a 5 MB body cap, a recurrence-frequency allowlist, per-event and total event caps, and a short failure backoff. A malformed event is skipped instead of dropping the feed.
+- Production configuration now rejects a `BACKUP_DATABASE_URL` that reuses the RLS-constrained runtime role.
 - Added parser, endpoint, component, and merge tests, plus the community calendar operations note.
 
 ## [5.22.0] - 2026-11-19

@@ -1445,6 +1445,14 @@ async def add_readiness_note(
                 status_code=400,
                 detail="The case owner must be an active instructor or administrator.",
             )
+        if owner.role != "admin" and owner.id not in {
+            current_user.id,
+            course.instructor_id,
+        }:
+            raise HTTPException(
+                status_code=400,
+                detail="The case owner must be the course instructor or an administrator.",
+            )
         owner_id = owner.id
     note = ReadinessStudentNote(
         institution_id=course.institution_id,

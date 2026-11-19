@@ -54,6 +54,38 @@ def test_parse_ics_treats_all_day_end_as_exclusive():
     assert all_day["end"] == "2027-01-29T00:00:00-05:00"
 
 
+def test_disallowed_frequency_does_not_expand():
+    feed = """BEGIN:VCALENDAR
+BEGIN:VEVENT
+DTSTART:20261208T180000Z
+DTEND:20261208T190000Z
+RRULE:FREQ=SECONDLY
+UID:seconds-1
+SUMMARY:Unsafe frequency
+END:VEVENT
+END:VCALENDAR
+"""
+    events = parse_ics(feed, now=datetime(2026, 12, 1, tzinfo=timezone.utc))
+    assert len(events) == 1
+
+
+def test_malformed_event_is_skipped():
+    feed = """BEGIN:VCALENDAR
+BEGIN:VEVENT
+SUMMARY:Missing start
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20261208T180000Z
+DTEND:20261208T190000Z
+UID:valid-1
+SUMMARY:Valid event
+END:VEVENT
+END:VCALENDAR
+"""
+    events = parse_ics(feed, now=datetime(2026, 12, 1, tzinfo=timezone.utc))
+    assert [event["title"] for event in events] == ["Valid event"]
+
+
 def test_community_events_endpoint(client, monkeypatch):
     from app.routers import public_config
 
